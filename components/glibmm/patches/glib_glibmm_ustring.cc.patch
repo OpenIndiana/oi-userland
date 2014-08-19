@@ -1,0 +1,82 @@
+OI (and Solaris) iconv doesn't support WCHAR_T <-> UTF-8 conversions 
+( https://www.illumos.org/issues/5089 ). This patch assumes UTF-8 locale 
+and uses wcsrtombs/mbsrtowcs to convert characters between UTF-8 and 
+WCHAR_T. For non-UTF-8 locales (including C) more work is needed (perhaps,
+using setlocale to detect current locale and iconv for actual conversion could work).
+
+--- glibmm-2.28.2/glib/glibmm/ustring.cc.~1~	2011-05-11 14:23:15.000000000 +0400
++++ glibmm-2.28.2/glib/glibmm/ustring.cc	2014-08-19 12:43:48.503811716 +0400
+@@ -1275,7 +1275,24 @@
+   glong n_bytes = 0;
+   const ScopedPtr<char> buf (g_utf16_to_utf8(reinterpret_cast<const gunichar2*>(str.data()),
+                                              str.size(), 0, &n_bytes, &error));
+-# else
++# elif defined(__sun)
++  gsize n_bytes = 0;
++  size_t new_sz = (str.size()+1) * MB_LEN_MAX;
++
++  gchar *new_str = (gchar *) malloc(new_sz);
++  if (new_str) {
++    const wchar_t *ptr=str.data();
++    n_bytes=wcsrtombs((char*)new_str,(const wchar_t**) &ptr,new_sz,NULL);
++    if (n_bytes<0){
++      error=g_error_new(G_CONVERT_ERROR,G_CONVERT_ERROR_FAILED,"Can't convert string to utf-8");
++    } else {
++        new_str[n_bytes]='\0';
++    }
++  } else{
++      error=g_error_new(G_CONVERT_ERROR,G_CONVERT_ERROR_FAILED,"Can't convert string to utf-8. Couldn't allocate memory.");
++  }
++  const ScopedPtr<char> buf (new_str);
++# else 
+   gsize n_bytes = 0;
+   const ScopedPtr<char> buf (g_convert(reinterpret_cast<const char*>(str.data()),
+                                        str.size() * sizeof(std::wstring::value_type),
+@@ -1359,6 +1376,23 @@
+   glong n_bytes = 0;
+   const ScopedPtr<char> buf (g_utf16_to_utf8(reinterpret_cast<const gunichar2*>(wstr.data()),
+                                              wstr.size(), 0, &n_bytes, &error));
++#elif defined(__sun)
++  gsize n_bytes =0;
++  size_t new_sz = (wstr.size()+1) * MB_LEN_MAX;
++
++  gchar *new_str =(gchar*) malloc(new_sz);
++  if (new_str) {
++    const wchar_t * ptr=wstr.data();
++    n_bytes=wcsrtombs((char*)new_str,(const wchar_t **)&ptr,new_sz,NULL);
++    if (n_bytes<0){
++      error=g_error_new(G_CONVERT_ERROR,G_CONVERT_ERROR_FAILED,"Can't convert string to utf-8");
++    } else {
++        new_str[n_bytes]='\0';
++    }
++  } else{
++      error=g_error_new(G_CONVERT_ERROR,G_CONVERT_ERROR_FAILED,"Can't convert string to utf-8. Couldn't allocate memory.");
++  }
++  const ScopedPtr<char> buf (new_str);
+ #else
+   gsize n_bytes = 0;
+   const ScopedPtr<char> buf (g_convert(reinterpret_cast<const char*>(wstr.data()),
+@@ -1388,6 +1422,23 @@
+   // Avoid going through iconv if wchar_t always contains UTF-16.
+   const ScopedPtr<gunichar2> buf (g_utf8_to_utf16(utf8_string.raw().data(),
+                                                   utf8_string.raw().size(), 0, 0, &error));
++#elif defined(__sun)
++  size_t new_sz = utf8_string.raw().size() * MB_LEN_MAX;
++  int n_bytes;
++
++  wchar_t *new_str = (wchar_t *) malloc(new_sz);
++  if (new_str) {
++    const char* ptr=utf8_string.raw().data();
++    n_bytes=mbsrtowcs(new_str,(const char**) & ptr,new_sz,NULL);
++    if (n_bytes<0){
++      error=g_error_new(G_CONVERT_ERROR,G_CONVERT_ERROR_FAILED,"Can't convert string to utf-8");
++    } else {
++        new_str[n_bytes]='\0';
++    }
++  } else{
++      error=g_error_new(G_CONVERT_ERROR,G_CONVERT_ERROR_FAILED,"Can't convert string to utf-8. Couldn't allocate memory.");
++  }
++  const ScopedPtr<char> buf ((gchar*)new_str);
+ #else
+   // TODO: For some reason the conversion from UTF-8 to WCHAR_T doesn't work
+   // with g_convert(), while iconv on the command line handles it just fine.
