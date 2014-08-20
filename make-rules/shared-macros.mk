@@ -304,8 +304,10 @@ RUBY_LIB_VERSION =	1.9.1
 RUBY.1.8 =	/usr/ruby/1.8/bin/ruby
 RUBY.1.9 =	/usr/ruby/1.9/bin/ruby
 RUBY =		$(RUBY.$(RUBY_VERSION))
-
-VENDOR_RUBY = /usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)
+# Use the ruby lib versions to represent the RUBY_VERSIONS that
+# need to get built.  This is done because during package transformations
+# both the ruby version and the ruby library version are needed. 
+RUBY_VERSIONS = $(RUBY_LIB_VERSION)
 
 PYTHON.2.6.VENDOR_PACKAGES.32 = /usr/lib/python2.6/vendor-packages
 PYTHON.2.6.VENDOR_PACKAGES.64 = /usr/lib/python2.6/vendor-packages/64

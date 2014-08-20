@@ -18,31 +18,42 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
 #
+GEM=/usr/ruby/$(RUBY_VERSION)/bin/gem
 
-VENDOR_RUBY = /usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)
+VENDOR_GEM_DIR=/usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)
 
-# default user executable binaries to /usr/bin
-INSTALL_RB_BINDIR =	$(USRBINDIR)
+# Name of the gem spec to use.  This will typically be
+# <component_name>.gemspec
+GEMSPEC=$(COMPONENT_NAME).gemspec
 
-# install.rb scripts do not have any concept of 'build' so make this a
-# no-op
+
+# Some gems projects have to be built using rake
+# Allow GEM build/install commands to be overwritten
+# to account for possible differences
+GEM_BUILD_ACTION=(cd $(@D); $(GEM) build $(GEMSPEC))
+
+GEM_INSTALL_ACTION=\
+	$(GEM) install -V --local --install-dir $(PROTO_DIR)/$(VENDOR_GEM_DIR) \
+	     --bindir $(PROTO_DIR)/$(VENDOR_GEM_DIR)/bin --force \
+	     $(@D)/$(COMPONENT_ARCHIVE)
+
 $(BUILD_DIR)/%/.built:  $(SOURCE_DIR)/.prep
 	$(RM) -r $(@D) ; $(MKDIR) $(@D)
+	$(CLONEY) $(SOURCE_DIR) $(@D)
 	$(COMPONENT_PRE_BUILD_ACTION)
+	# Build the gem and cause the generation of a new gem spec
+	# file in $(COMPONENT_SRC)
+	$(GEM_BUILD_ACTION)
 	$(COMPONENT_POST_BUILD_ACTION)
 	$(TOUCH) $@
 
-# install the source into the proto directory
 $(BUILD_DIR)/%/.installed:      $(BUILD_DIR)/%/.built
 	$(COMPONENT_PRE_INSTALL_ACTION)
-	(cd $(SOURCE_DIR) ; $(ENV) $(COMPONENT_INSTALL_ENV) \
-                ./install.rb --destdir=$(PROTO_DIR) \
-                --ruby=$(RUBY) \
-                --bindir=$(INSTALL_RB_BINDIR) \
-                --sitelibdir=$(VENDOR_RUBY) \
-                --mandir=$(USRSHAREMANDIR))
+	$(MKDIR) $(PROTO_DIR)/$(GEM_DIR)
+	# Install the new recreated gem
+	$(GEM_INSTALL_ACTION)
 	$(COMPONENT_POST_INSTALL_ACTION)
 	$(TOUCH) $@
 
