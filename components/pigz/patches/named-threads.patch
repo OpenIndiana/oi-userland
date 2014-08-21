@@ -1,0 +1,52 @@
+# HG changeset patch
+# User Michael Gerdts <mike.gerdts@oracle.com>
+# Date 1412623353 25200
+#      Mon Oct 06 12:22:33 2014 -0700
+# Node ID 0293c398eda727bf812a867600a25b7831928db7
+# Parent  b63f212d891d9cffbc8f4a0e2293532fe44aaa16
+name threads to improve observability - developed by Oracle
+Not submitted upstream: Uses feature first present in Solaris 12
+
+diff -r b63f212d891d -r 0293c398eda7 yarn.c
+--- a/yarn.c
++++ b/yarn.c
+@@ -258,7 +258,12 @@
+ 
+ /* not all POSIX implementations create threads as joinable by default, so that
+    is made explicit here */
++#ifdef HAVE_PTHREAD_SETNAME_NP
++#undef launch
++thread *launch(const char *probename, void (*probe)(void *), void *payload)
++#else
+ thread *launch(void (*probe)(void *), void *payload)
++#endif
+ {
+     int ret;
+     thread *th;
+@@ -284,7 +289,9 @@
+         (ret = pthread_create(&(th->id), &attr, ignition, capsule)) ||
+         (ret = pthread_attr_destroy(&attr)))
+         fail(ret);
+-
++#ifdef HAVE_PTHREAD_SETNAME_NP
++    (void)pthread_setname_np(th->id, probename);
++#endif
+     /* put the thread in the threads list for join_all() */
+     th->done = 0;
+     th->next = threads;
+diff -r b63f212d891d -r 0293c398eda7 yarn.h
+--- a/yarn.h
++++ b/yarn.h
+@@ -115,7 +115,12 @@
+ void yarn_mem(void *(*)(size_t), void (*)(void *));
+ 
+ typedef struct thread_s thread;
++#ifdef HAVE_PTHREAD_SETNAME_NP
++thread *launch(const char *, void (*)(void *), void *);
++#define launch(p, a) launch(#p, p, a)
++#else
+ thread *launch(void (*)(void *), void *);
++#endif
+ void join(thread *);
+ int join_all(void);
+ void destruct(thread *);
