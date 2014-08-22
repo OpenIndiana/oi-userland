@@ -16,12 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	barman
-COMPONENT_VERSION= 	1.2.3
+COMPONENT_VERSION= 	1.3.3
 COMPONENT_SUMMARY= 	An administration tool for disaster recovery of PostgreSQL servers 
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:3ea69770345c886111054aa37d5eb2dad7a191eef131c14f8db5e7517cfb03d7
+  sha256:3e3af2fec16ac2836965a4c135d9ef4959ed690fb40ef06571d03ff526448468
 COMPONENT_ARCHIVE_URL= \
   http://sourceforge.net/projects/pgbarman/files/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://pgbarman.org/
