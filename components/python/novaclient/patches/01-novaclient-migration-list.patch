@@ -1,0 +1,15 @@
+# Patch to prevent nova migration-list from generating an error.
+# This patch has not yet been submitted upstream. 
+
+--- python-novaclient-2.17.0/novaclient/base.py.orig        2014-08-22 16:12:58.186693128 -0600
++++ python-novaclient-2.17.0/novaclient/base.py     2014-08-22 16:16:19.119321660 -0600
+@@ -73,7 +73,7 @@
+             try:
+                 data = data['values']
+             except KeyError:
+-                pass
++                data = []
+
+         with self.completion_cache('human_id', obj_class, mode="w"):
+             with self.completion_cache('uuid', obj_class, mode="w"):
+
