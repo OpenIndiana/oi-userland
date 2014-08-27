@@ -29,7 +29,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openldap
 COMPONENT_VERSION=	2.4.39
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://www.openldap.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
@@ -63,8 +63,8 @@ COMPONENT_PRE_BUILD_ACTION = \
 	  cd $(SDFVER); $(PERL) Makefile.PL; \
 		$(GMAKE))
 
-# we need to enable large file support
-CFLAGS += $(CPP_LARGEFILES)
+# we need to enable large file support and build PIC for our shared libraries
+CFLAGS += $(CPP_LARGEFILES) $(CC_PIC)
 
 CONFIGURE_ENV += "ac_cv_lib_net_main=no"
 CONFIGURE_ENV += "ac_cv_lib_net_socket==no"
@@ -84,6 +84,7 @@ CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --enable-bdb
 CONFIGURE_OPTIONS += --enable-hdb
 CONFIGURE_OPTIONS += --enable-null
+CONFIGURE_OPTIONS += --enable-ldap
 CONFIGURE_OPTIONS += --enable-passwd	 
 CONFIGURE_OPTIONS += --enable-shell
 CONFIGURE_OPTIONS += --with-cyrus-sasl
