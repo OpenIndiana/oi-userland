@@ -337,9 +337,11 @@ PYTHON.2.7.64 =	$(USRBIN.64)/python2.7
 PYTHON.2.7 =	$(USRBIN)/python2.7
 
 # Although we build Python 3 64-bit only, the BUILD_NO_ARCH macro is written
-# in such a way that we still need the .32 macro below.
+# in such a way that we still need the .32 macro below.  And since we build
+# 64-bit only, we stick it directly in usr/bin (i.e., the 32-bit path) rather
+# than the 64-bit path.
 PYTHON.3.4.32 =	$(USRBIN.32)/python3.4
-PYTHON.3.4.64 =	$(USRBIN.64)/python3.4
+PYTHON.3.4.64 =	$(USRBIN.32)/python3.4
 PYTHON.3.4 =	$(USRBIN)/python3.4
 
 PYTHON.32 =	$(PYTHON.$(PYTHON_VERSION).32)

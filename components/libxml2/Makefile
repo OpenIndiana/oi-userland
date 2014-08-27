@@ -74,12 +74,16 @@ COMPONENT_PREP_ACTION += (cd $(@D) ; cp ../mapfile libxml2.syms ; autoreconf -if
 # 64-bit only, so we have an extra sed edit below to force the .py files into
 # the 32-bit location and we manually specify the 32-bit path in the manifest
 # to correct for the .so file being installed there instead of the 64-bit path
-# where it belongs.
+# where it belongs.  Further, Python 3.4 needs an extra 'm' on the link and
+# include paths, plus a tweak to the binary path; see PEP 3149 for details.
 COMPONENT_POST_CONFIGURE_ACTION = \
     (cd $(@D) ; cp -rp python python2.7 ; \
     $(GSED) -i -e 's/2[.]6/2.7/g' `find python2.7 -name Makefile` ; \
      cd $(@D) ; cp -rp python python3.4 ; \
-    $(GSED) -i -e 's/2[.]6/3.4/g' -e 's|vendor-packages/64|vendor-packages|' \
+    $(GSED) -i -e 's|-lpython2[.]6|-lpython3.4m|' \
+     -e 's|usr/bin/$(MACH64)/python2[.]6|usr/bin/python3.4m|' \
+     -e 's|usr/include/python2[.]6|usr/include/python3.4m|' \
+     -e 's/2[.]6/3.4/g' -e 's|vendor-packages/64|vendor-packages|' \
      `find python3.4 -name Makefile` ; \
 )
 

@@ -18,16 +18,16 @@ some point, but the suitability (or lack thereof) has not yet been determined.
  
 +SHLIB_FLAGS = -shared -fpic
 +
-+libpython3.4_db.so.1.0:        $(srcdir)/py_db/libpython34_db.c
++libpython$(LDVERSION)_db.so.1.0:        $(srcdir)/py_db/libpython34_db.c
 +	$(CC) -o $@ $(CFLAGS) $(PY_CPPFLAGS) $(CPPFLAGS) $(SHLIB_FLAGS) $<
 +
 +check_offset:  $(srcdir)/py_db/check_offsets.c
 +	$(CC) -o $@ $(CFLAGS) $(PY_CPPFLAGS) $(CPPFLAGS) $<
 +
-+build-py_db:   libpython3.4_db.so.1.0 check_offset
++build-py_db:   libpython$(LDVERSION)_db.so.1.0 check_offset
 +
-+install-py_db: libpython3.4_db.so.1.0 check_offset
-+	$(INSTALL_SHARED) libpython3.4_db.so.1.0 $(DESTDIR)$(LIBDIR)
++install-py_db: libpython$(LDVERSION)_db.so.1.0 check_offset
++	$(INSTALL_SHARED) libpython$(LDVERSION)_db.so.1.0 $(DESTDIR)$(LIBDIR)
 +	$(INSTALL_PROGRAM) check_offset $(DESTDIR)$(BINDIR)
  
  Modules/Setup: $(srcdir)/Modules/Setup.dist

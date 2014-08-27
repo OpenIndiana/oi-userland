@@ -42,8 +42,11 @@ file path=usr/lib/python$(PYVER)/vendor-packages/prettytable-$(COMPONENT_VERSION
 file path=usr/lib/python$(PYVER)/vendor-packages/prettytable-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
 # Python 2.x & 3.x, import "html" modules with slightly different syntax:
 # 2.x uses lower-case; 3.x uses upper-case; hence the expression below.
+# The bypass for unicodedata is temporary until pkgdepend learns about PEP
+# 3149, new in Python 3.x; see 19510349.
 file path=usr/lib/python$(PYVER)/vendor-packages/prettytable.py \
-    pkg.depend.bypass-generate=.*[Hh][Tt][Mm][Ll].*
+    pkg.depend.bypass-generate=.*[Hh][Tt][Mm][Ll].* \
+    pkg.depend.bypass-generate=.*unicodedata.*
 license prettytable.license license=BSD
 
 # force the rename with an optional dependency on the old name

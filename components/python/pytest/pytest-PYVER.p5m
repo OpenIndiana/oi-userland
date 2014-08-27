@@ -68,8 +68,11 @@ file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/runner.py
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/skipping.py
 # Python 3 has pickle instead of cPickle. The code is written properly, but
 # pkgdepend is not (yet) smart enough to grok the difference; see 18697587.
+# The bypass for zlib is temporary until pkgdepend learns about PEP 3149,
+# new in Python 3.x; see 19510349.
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/standalonetemplate.py \
-    pkg.depend.bypass-generate=.*cPickle.*
+    pkg.depend.bypass-generate=.*cPickle.* \
+    pkg.depend.bypass-generate=.*zlib.*
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/terminal.py
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/tmpdir.py
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/unittest.py

@@ -101,9 +101,6 @@ CONFIGURE_OPTIONS  +=		--with-dtrace
 CONFIGURE_OPTIONS  +=		--with-system-expat
 CONFIGURE_OPTIONS  +=		--with-system-ffi
 CONFIGURE_OPTIONS  +=		--without-gcc
-# Building with pymalloc is the default, but that causes core dumps;
-# see http://bugs.python.org/issue21412 for details.
-CONFIGURE_OPTIONS  +=		--without-pymalloc
 CONFIGURE_OPTIONS  +=		--without-ensurepip
 CONFIGURE_OPTIONS  +=		--enable-ipv6
 CONFIGURE_OPTIONS  +=		CPPFLAGS="$(CPPFLAGS)"

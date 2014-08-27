@@ -1,0 +1,45 @@
+This patch comes from upstream; it will likely no longer be needed whenever
+Python 3.4.2 becomes available.
+
+# HG changeset patch
+# Parent 7fafbb7e1a8fbcb8875e25d8cd07273069127556
+Issue #21166: Prevent possible segfaults and other random failures of
+python --generate-posix-vars in pybuilddir.txt build target by ensuring
+that pybuilddir.txt is always regenerated when configure is run and
+that the newly built skeleton python does not inadvertently import
+modules from previously installed instances.
+
+--- Python-3.4.1/Makefile.pre.in	Mon Aug 11 15:01:28 2014 -0500
++++ Python-3.4.1/Makefile.pre.in	Mon Aug 11 18:16:56 2014 -0700
+@@ -557,8 +557,18 @@
+ # Create build directory and generate the sysconfig build-time data there.
+ # pybuilddir.txt contains the name of the build dir and is used for
+ # sys.path fixup -- see Modules/getpath.c.
++# Since this step runs before shared modules are built, try to avoid bootstrap
++# problems by creating a dummy pybuildstr.txt just to allow interpreter
++# initialization to succeed.  It will be overwritten by generate-posix-vars
++# or removed in case of failure.
+ pybuilddir.txt: $(BUILDPYTHON)
+-	$(RUNSHARED) $(PYTHON_FOR_BUILD) -S -m sysconfig --generate-posix-vars
++	@echo "none" > ./pybuilddir.txt
++	$(RUNSHARED) $(PYTHON_FOR_BUILD) -S -m sysconfig --generate-posix-vars ;\
++	if test $$? -ne 0 ; then \
++		echo "generate-posix-vars failed" ; \
++		rm -f ./pybuilddir.txt ; \
++		exit 1 ; \
++	fi
+ 
+ # Build the shared modules
+ # Under GNU make, MAKEFLAGS are sorted and normalized; the 's' for
+--- Python-3.4.1/configure.ac	Mon Aug 11 15:01:28 2014 -0500
++++ Python-3.4.1/configure.ac	Mon Aug 11 18:16:56 2014 -0700
+@@ -53,6 +53,9 @@
+ AC_SUBST(build)
+ AC_SUBST(host)
+ 
++# pybuilddir.txt will be created by --generate-posix-vars in the Makefile
++rm -f pybuilddir.txt
++
+ if test "$cross_compiling" = yes; then
+     AC_MSG_CHECKING([for python interpreter for cross build])
+     if test -z "$PYTHON_FOR_BUILD"; then

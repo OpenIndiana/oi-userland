@@ -47,9 +47,12 @@ file path=usr/lib/python$(PYVER)/vendor-packages/pep8-$(COMPONENT_VERSION)-py$(P
 file path=usr/lib/python$(PYVER)/vendor-packages/pep8-$(COMPONENT_VERSION)-py$(PYVER).egg-info/namespace_packages.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/pep8-$(COMPONENT_VERSION)-py$(PYVER).egg-info/not-zip-safe
 file path=usr/lib/python$(PYVER)/vendor-packages/pep8-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
+# The bypass for time is temporary until pkgdepend learns about PEP 3149,
+# new in Python 3.x; see 19510349.
 file path=usr/lib/python$(PYVER)/vendor-packages/pep8.py \
     pkg.depend.bypass-generate=.*/[Cc]onfig[Pp]arser.* \
-    pkg.depend.bypass-generate=.*/testsuite.*
+    pkg.depend.bypass-generate=.*/testsuite.* \
+    pkg.depend.bypass-generate=.*/time.*
 file usr/share/man/man1/pep8.1 path=usr/share/man/man1/pep8-$(PYVER).1
 link path=usr/share/man/man1/pep8.1 target=pep8-$(PYVER).1 mediator=python \
     mediator-version=$(PYVER)
