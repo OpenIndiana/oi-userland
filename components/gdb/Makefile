@@ -27,6 +27,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gdb
 COMPONENT_VERSION=	7.6.2
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
@@ -52,7 +53,8 @@ CFLAGS_EXTRA = -Wall -Wno-long-long -Wcast-align -fno-omit-frame-pointer
 
 CFLAGS = $(CC_BITS) $(CFLAGS_EXTRA) $(CFLAGS_$(MACH))
 CXXFLAGS = $(CC_BITS) $(CFLAGS_EXTRA) $(CFLAGS_$(MACH))
-CPPFLAGS = -D_REENTRANT -I/usr/include/ncurses
+CPPFLAGS.32 = -D_STRUCTURED_PROC=1
+CPPFLAGS = -D_REENTRANT -I/usr/include/ncurses $(CPPFLAGS.$(BITS))
 LDFLAGS.32 = -L/usr/gnu/lib -R/usr/gnu/lib
 LDFLAGS.64 = -L/usr/gnu/lib/$(MACH64) -R/usr/gnu/lib/$(MACH64)
 LDFLAGS += $(LDFLAGS.$(BITS))
@@ -75,8 +77,8 @@ CONFIGURE_OPTIONS += --without-auto-load-safe-path
 CONFIGURE_OPTIONS += --with-python=yes
 CONFIGURE_OPTIONS += --with-libexpat-prefix=/usr/lib
 CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS.32 += --disable-largefile
-CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(BITS))
+
+COMPONENT_BUILD_ENV += $(CONFIGURE_ENV)
 
 # Generate the newly added Solaris instruction and
 # register tables which weren't there by default.
