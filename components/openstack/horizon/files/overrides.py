@@ -54,8 +54,6 @@ from openstack_dashboard.dashboards.project.networks.tables import \
     NetworksTable as projectNetworksTable
 from openstack_dashboard.dashboards.project.networks.workflows import \
     CreateNetworkInfoAction, CreateSubnetDetailAction, CreateSubnetInfoAction
-from openstack_dashboard.dashboards.project.stacks.tabs import \
-    StackDetailTabs, StackEventsTab, StackOverviewTab, StackResourcesTab
 
 # Remove 'PostCreationStep' from Project/Instances/Launch Instance
 create_instance.LaunchInstance.default_steps = (
@@ -146,11 +144,7 @@ CreateSubnetInfoAction.base_fields['no_gateway'].widget.attrs['disabled'] = \
 # Project/Images & Snapshots/Actions
 ImagesTable._meta.row_actions = (LaunchImage, EditImage, DeleteImage,)
 
-# Change 'allocation_pools' and 'host_routes' fields to read-only in
+# Change 'host_routes' field to read-only in
 # Project/Networks/Create Network/Subnet Detail
 base_fields = CreateSubnetDetailAction.base_fields
-base_fields['allocation_pools'].widget.attrs['readonly'] = 'readonly'
 base_fields['host_routes'].widget.attrs['readonly'] = 'readonly'
-
-# Remove 'StackTopologyTab' from Project/Stacks/StackDetailTabs
-StackDetailTabs.tabs = (StackOverviewTab, StackResourcesTab, StackEventsTab)

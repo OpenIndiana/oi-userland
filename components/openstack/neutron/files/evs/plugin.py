@@ -118,6 +118,13 @@ class EVSRpcCallbacks(dhcp_rpc_base.DhcpRpcCallbackMixin,
         '''
         return q_rpc.PluginRpcDispatcher([self])
 
+    def report_state(self, context, **kwargs):
+        # TODO(gmoodalb): This method is currently no-op and is included
+        # here to avoid Python traceback thrown every time Neutron L3/DHCP
+        # agent is restarted. When we support Network Agents Information,
+        # we will implement this function
+        pass
+
 
 class EVSNeutronPluginV2(db_base_plugin_v2.NeutronDbPluginV2,
                          external_net_db.External_net_db_mixin,
@@ -243,9 +250,9 @@ class EVSNeutronPluginV2(db_base_plugin_v2.NeutronDbPluginV2,
         for prop in evs.props:
             if prop.name == 'l2-type':
                 networkdict[providernet.NETWORK_TYPE] = prop.value
-            if prop.name == 'vlanid' or prop.name == 'vni':
+            elif prop.name == 'vlanid' or prop.name == 'vni':
                 networkdict[providernet.SEGMENTATION_ID] = int(prop.value)
-            if prop.name == NETWORK_EVS_ATTRIBUTE_MAP[external_net.EXTERNAL]:
+            elif prop.name == NETWORK_EVS_ATTRIBUTE_MAP[external_net.EXTERNAL]:
                 networkdict[external_net.EXTERNAL] = \
                     (True if prop.value == 'True' else False)
         # fixed values as EVS framework doesn't support this
@@ -272,40 +279,28 @@ class EVSNeutronPluginV2(db_base_plugin_v2.NeutronDbPluginV2,
         for prop in ipnet.props:
             if prop.name == 'defrouter':
                 subnetdict['gateway_ip'] = prop.value
-            if prop.name == 'subnet':
+            elif prop.name == 'subnet':
                 subnetdict['cidr'] = prop.value
-            if prop.name == SUBNET_IPNET_ATTRIBUTE_MAP['enable_dhcp']:
+            elif prop.name == SUBNET_IPNET_ATTRIBUTE_MAP['enable_dhcp']:
                 subnetdict['enable_dhcp'] = \
                     (True if prop.value == 'True' else False)
-            if prop.name == SUBNET_IPNET_ATTRIBUTE_MAP['dns_nameservers']:
+            elif prop.name == SUBNET_IPNET_ATTRIBUTE_MAP['dns_nameservers']:
                 subnetdict['dns_nameservers'] = prop.value.split(',')
-            if prop.name == SUBNET_IPNET_ATTRIBUTE_MAP['host_routes']:
+            elif prop.name == SUBNET_IPNET_ATTRIBUTE_MAP['host_routes']:
                 hrlist = []
                 vlist = prop.value.split(',')
                 for i in range(0, len(vlist), 2):
                     hrlist.append({vlist[i]: vlist[i + 1]})
                 subnetdict['host_routes'] = hrlist
-        # EVS Controller returns a pool that includes gateway_ip as-well,
-        # however neutron expects pool without gateway_ip. So, we determine
-        # the pool ourselves here.
-        assert 'gateway_ip' in subnetdict
-        start_ip = netaddr.IPAddress(ipnet.start)
-        end_ip = netaddr.IPAddress(ipnet.end)
-        gw_ip = netaddr.IPAddress(subnetdict['gateway_ip'])
-        pools = []
-        if gw_ip == start_ip:
-            pools.append({'start': str(netaddr.IPAddress(start_ip + 1)),
-                          'end': str(netaddr.IPAddress(end_ip))})
-        elif gw_ip == end_ip:
-            pools.append({'start': str(netaddr.IPAddress(start_ip)),
-                          'end': str(netaddr.IPAddress(end_ip - 1))})
-        else:
-            pools.append({'start': str(netaddr.IPAddress(start_ip)),
-                          'end': str(netaddr.IPAddress(gw_ip - 1))})
-            pools.append({'start': str(netaddr.IPAddress(gw_ip + 1)),
-                          'end': str(netaddr.IPAddress(end_ip))})
-
-        subnetdict['allocation_pools'] = pools
+            elif prop.name == 'pool':
+                poollist = []
+                for pool in prop.value.split(','):
+                    if '-' not in pool:
+                        start = end = pool
+                    else:
+                        start, end = pool.split('-')
+                    poollist.append(dict(start=start, end=end))
+                subnetdict['allocation_pools'] = poollist
         subnetdict['shared'] = False
 
         return subnetdict
@@ -324,16 +319,16 @@ class EVSNeutronPluginV2(db_base_plugin_v2.NeutronDbPluginV2,
         for prop in vport.props:
             if (prop.name == 'macaddr'):
                 portdict['mac_address'] = prop.value
-            if (prop.name == 'ipaddr'):
+            elif (prop.name == 'ipaddr'):
                 evs = self.get_network(context, vport.evsuuid)
                 portdict['fixed_ips'] = \
                     [{
                         'ip_address': prop.value.split('/')[0],
                         'subnet_id': evs['subnets'][0],
                     }]
-            if (prop.name == 'OpenStack:device_id'):
+            elif (prop.name == 'OpenStack:device_id'):
                 portdict['device_id'] = prop.value
-            if (prop.name == 'OpenStack:device_owner'):
+            elif (prop.name == 'OpenStack:device_owner'):
                 portdict['device_owner'] = prop.value
         portdict['security_groups'] = []
         portdict['status'] = 'ACTIVE'
@@ -388,10 +383,6 @@ class EVSNeutronPluginV2(db_base_plugin_v2.NeutronDbPluginV2,
          connect to the EVS, through a VPort, will get an IP address from the
          IPnet associated with the EVS.
         """
-        if (subnet['subnet']['allocation_pools'] is not
-                attributes.ATTR_NOT_SPECIFIED):
-            # user specified --allocation-pool and we don't support it
-            raise EVSOpNotSupported(_("cannot use --allocation-pool"))
         ipnetname = subnet['subnet']['name']
         if not ipnetname:
             ipnetname = None
@@ -406,6 +397,21 @@ class EVSNeutronPluginV2(db_base_plugin_v2.NeutronDbPluginV2,
 
         if defrouter is not attributes.ATTR_NOT_SPECIFIED:
             proplist.append('defrouter=%s' % (defrouter))
+
+        # obtain the optional allocation pool
+        pools = subnet['subnet']['allocation_pools']
+        if pools is not attributes.ATTR_NOT_SPECIFIED:
+            poolstr = ""
+            for pool in pools:
+                if poolstr:
+                    poolstr += ","
+                # if start and end address is same, EVS expects the address
+                # to be provided as-is instead of x.x.x.x-x.x.x.x
+                if pool['start'] == pool['end']:
+                    poolstr += pool['start']
+                else:
+                    poolstr += "%s-%s" % (pool['start'], pool['end'])
+            proplist.append('pool=%s' % (poolstr))
 
         # obtain the optional DNS nameservers
         nameservers = subnet['subnet']['dns_nameservers']
