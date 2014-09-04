@@ -1,0 +1,34 @@
+Patch for FACT-660 Facter on Solaris 11.2+ should report if zones are supported
+Upstream bug: https://tickets.puppetlabs.com/browse/FACT-660
+--- facter-2.1.0/lib/facter/util/solaris_zones.rb.orig	2014-08-19 13:49:14.721574641 -0600
++++ facter-2.1.0/lib/facter/util/solaris_zones.rb	2014-08-19 13:50:03.475818042 -0600
+@@ -156,3 +156,29 @@
+   end
+ end
+ end
++
++Facter.add("kernel_zone") do
++  confine :operatingsystem => :Solaris
++  setcode do
++      virtinfo = %x{/sbin/virtinfo list -H -o class kernel-zone 2>/dev/null}
++      case virtinfo.chomp!
++      when "supported", "current", "parent"
++          virtinfo
++      else
++          "unsupported"
++      end
++  end
++end
++
++Facter.add("non_global_zone") do
++  confine :operatingsystem => :Solaris
++  setcode do
++      virtinfo = %x{/sbin/virtinfo list -H -o class non-global-zone 2>/dev/null}
++      case virtinfo.chomp!
++      when "supported", "current"
++          virtinfo
++      else
++          "unsupported"
++      end
++  end
++end

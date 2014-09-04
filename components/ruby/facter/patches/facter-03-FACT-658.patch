@@ -1,0 +1,20 @@
+Patch for FACT-658 facter doesn't parse gnu uptime output
+Upstream bug: https://tickets.puppetlabs.com/browse/FACT-658
+--- facter-2.1.0/lib/facter/util/uptime.rb.orig	2014-08-15 10:19:59.183717181 -0600
++++ facter-2.1.0/lib/facter/util/uptime.rb	2014-08-15 10:44:49.611645182 -0600
+@@ -76,6 +76,14 @@
+   end
+ 
+   def self.uptime_executable_cmd
+-    "uptime"
++    if Facter.value(:kernel) == 'SunOS'
++      # Facter doesn't work with gnu uptime
++      # force use of /usr/bin/uptime
++      # in case user PATH has /usr/gnu/bin
++      # before /usr/bin
++      "/usr/bin/uptime"
++    else
++      "uptime"
++    end
+   end
+ end

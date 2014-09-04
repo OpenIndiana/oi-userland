@@ -1,0 +1,13 @@
+Patch for FACT-547 Limit the output of prtdiag on Solaris
+Upstream bug: https://tickets.puppetlabs.com/browse/FACT-547
+--- facter-2.1.0/lib/facter/util/manufacturer.rb.orig	2014-08-14 12:58:39.037467412 -0600
++++ facter-2.1.0/lib/facter/util/manufacturer.rb	2014-08-14 12:59:25.145156708 -0600
+@@ -60,7 +60,7 @@
+ 
+   def self.prtdiag_sparc_find_system_info()
+     # Parses prtdiag for a SPARC architecture string, won't work with Solaris x86
+-    output = Facter::Core::Execution.exec('/usr/sbin/prtdiag 2>/dev/null')
++    output = Facter::Core::Execution.exec('/usr/sbin/prtdiag 2>/dev/null | /usr/bin/head')
+ 
+     # System Configuration:  Sun Microsystems  sun4u Sun SPARC Enterprise M3000 Server
+     if output and output =~ /^System Configuration:\s+(.+?)\s+(sun\d+\S+)\s+(.+)/

@@ -39,10 +39,10 @@ include $(WS_TOP)/make-rules/install.rb.mk
 include $(WS_TOP)/make-rules/ips.mk
 
 # puppet requires facter to build
-COMPONENT_INSTALL_ENV	+= RUBYLIB="$(COMPONENT_DIR)/../facter/build/prototype/$(MACH)$(VENDOR_RUBY)"
+COMPONENT_INSTALL_ENV	+= RUBYLIB="$(COMPONENT_DIR)/../ruby/facter/build/prototype/$(MACH)$(VENDOR_RUBY)"
 
-../facter/build/%/.installed:
-	(cd ../facter ; $(GMAKE) install)
+../ruby/facter/build/%/.installed:
+	(cd ../ruby/facter ; $(GMAKE) install)
 
 # set the bindir to /usr/sbin
 INSTALL_RB_BINDIR =	$(USRSBINDIR)
@@ -59,7 +59,7 @@ build:		$(BUILD_64)
 	(cd ext; $(RUBY) extconf.rb; $(GMAKE))
 
 # make sure facter is installed first
-install:	../facter/build/$(MACH64)/.installed $(INSTALL_64)
+install:	../ruby/facter/build/$(MACH64)/.installed $(INSTALL_64)
 
 clean::
 	@if [ -f ext/Makefile ]; then \

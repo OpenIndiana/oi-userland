@@ -1,0 +1,42 @@
+Patch for FACT-662 Extend ldom.rb to indicate whether ldom creation is supported
+Upstream bug: https://tickets.puppetlabs.com/browse/FACT-662
+--- facter-2.1.0/lib/facter/ldom.rb.orig	2014-08-20 10:20:46.279840866 -0600
++++ facter-2.1.0/lib/facter/ldom.rb	2014-08-20 10:25:26.560542193 -0600
+@@ -46,4 +46,37 @@
+       end
+     end
+   end
++
++
++  #
++  # Resolution: Provides the following logical_domain information.
++  # current: The current environment is logical domain.
++  # supported: The current environment is control domain which can have logical
++  #      domain
++  # unsupported: Logical domain is not supported on the environment
++  #
++  Facter.add("logical_domain") do
++    setcode do
++      virtinfo = %x{/sbin/virtinfo list -H -o class logical-domain 2>/dev/null}
++      virtinfo = virtinfo.split("\n")
++      virtinfo = virtinfo[0] # Doesn't need to check each logical-domain class
++
++      case virtinfo
++      when "supported"
++        virtinfo
++      when "current"
++        # Even control domain can have "logical_domain => current"
++        # To verify, control-role property should be examined.
++        ctrl_role = %x{virtinfo -c current get -Ho value control-role logical-domain 2> /dev/null}
++        case ctrl_role.chomp!
++        when "true"
++          "supported"
++        when "false"
++          virtinfo
++        end
++      else
++        "unsupported"
++      end
++    end
++  end
+ end

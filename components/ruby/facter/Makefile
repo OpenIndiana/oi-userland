@@ -1,4 +1,4 @@
-#
+
 # CDDL HEADER START
 #
 # The contents of this file are subject to the terms of the
@@ -20,23 +20,27 @@
 #
 # Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		facter
-COMPONENT_VERSION=	1.6.18
-COMPONENT_PROJECT_URL=	http://puppetlabs.com/
+COMPONENT_VERSION=	2.1.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).gem
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:18a63a04a32713c52270000c548fd1fcdf66e30e8ec29ace65225f12f5517f2b
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)downloads/facter/$(COMPONENT_ARCHIVE)
+    sha256:f4c5573d309520fed49651f36d5a0366bf40609a0ff04a34266a01d263704f17
+COMPONENT_ARCHIVE_URL=	http://rubygems.org/gems/$(COMPONENT_SRC).gem
+COMPONENT_PROJECT_URL=  http://puppetlabs.com/facter
 COMPONENT_BUGDB=	utility/puppet
 
-TPNO=			15127
+TPNO=                   18642
+
+# No gemspec is shipped with the gem. Create one
+COMPONENT_POST_UNPACK_ACTION= \
+    $(GEM) spec $(COMPONENT_ARCHIVE) > $(SOURCE_DIR)/$(GEMSPEC)
 
 include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/install.rb.mk
 include $(WS_TOP)/make-rules/ips.mk
+include $(WS_TOP)/make-rules/gem.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
@@ -48,7 +52,7 @@ install:	$(INSTALL_64)
 # facter requires the installation of the following rubygems to run
 # the unittests:  rspec rspec-expectations mocha rake rack hiera
 # Disable the tests until these rubygems are available.
-test:	$(NO_TESTS)
+test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
