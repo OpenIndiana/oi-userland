@@ -2037,9 +2037,20 @@ $.btn-primary:active,
 }
 .btn-danger {
   background: #0074CD;
-  /*font-weight: bold;*/
-  border: 1px solid #0074CD;
-  color: #FFFFFF
+  font-weight: bold;
+  /*background-image: -moz-linear-gradient(top, #ee5f5b, #bd362f);
+  background-image: -ms-linear-gradient(top, #ee5f5b, #bd362f);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ee5f5b), to(#bd362f));
+  background-image: -webkit-linear-gradient(top, #ee5f5b, #bd362f);
+  background-image: -o-linear-gradient(top, #ee5f5b, #bd362f);
+  background-image: linear-gradient(top, #ee5f5b, #bd362f);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ee5f5b', endColorstr='#bd362f', GradientType=0);
+  border-color: #bd362f #bd362f #802420;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);*/
+ border: 1px solid #0074CD;
+ color: #FFFFFF
 }
 
 .btn-danger.active,
@@ -2172,8 +2183,7 @@ input[type="submit"].btn.small {
 }
 .topologyNavi .btn-group {
 	margin-left: 5px;
-	margin-top: 5px;
-	float: left;
+	float: right;
 }
 .btn-group:before,
 .btn-group:after {
@@ -4449,17 +4459,18 @@ form.horizontal fieldset {
 
 .workflow td.actions {
   vertical-align: top;
-  width: 308px;
+  width: 319px;
   padding-right: 10px;
 }
 .workflow td.help_text {
   vertical-align: top;
-  width: 340px;
+  width: 318px;
   padding-left: 10px;
   border-left: 1px solid #DDD;
 }
 .workflow fieldset > table {
   margin-bottom: 0;
+  width: 100%;
 }
 .clear {
   clear: both;
@@ -5142,17 +5153,17 @@ ul.no_results li {
 #browser_wrapper {
   width: 100%;
   min-width: 1000px;
-  background-color: #eeeeee;
-  border: 1px solid #dddddd;
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  border-radius: 4px;
+  border: none;
+  background: #FFFFFF;
+  margin-top: -40px;
 }
 #browser_wrapper .tfoot {
   clear: both;
   padding: 8px;
-  border-top: 1px solid #dddddd;
-  background-color: #F1F1F1;
+  border: 1px solid #D5DFE6;
+  border-left: none;
+  border-right: none;
+  background-color: #F9F9F9;
   font-size: 11px;
   line-height: 14px;
 }
@@ -5181,7 +5192,8 @@ ul.no_results li {
   border-top-right-radius: 0;
 }
 #browser_wrapper div.navigation_wrapper td:first-child {
-  border-left: 0 none;
+  /*border-left: 1px solid #D5DFE6;*/
+  border-left: none;
 }
 #browser_wrapper div.navigation_wrapper td.breadcrumb_td {
   padding-right: 0px;
@@ -5223,7 +5235,8 @@ ul.no_results li {
   border-bottom: 1px solid #dddddd;
 }
 #browser_wrapper div.content_wrapper td:last-child {
-  border-right: 0 none;
+  /*border-right: 1px solid #D5DFE6;*/
+  border-bottom: none;
 }
 #browser_wrapper div.content_wrapper td.breadcrumb_td {
   padding-left: 0px;
@@ -5243,21 +5256,31 @@ ul.no_results li {
 }
 #browser_wrapper table {
   border-collapse: collapse;
+  border: none;
 }
 #browser_wrapper table thead tr th {
-  border-bottom: none;
-  background-color: #eeeeee;
+  border-bottom: 1px solid #D5DFE6;
+  background-color: #FFFFFF;
+  height: 80px;
 }
 #browser_wrapper table tbody tr:last-child td {
-  border-bottom: 1px solid #ddd;
+  border: none;
+  border-right: 1px solid #D5DFE6;
   border-radius: 0;
 }
+#browser_wrapper table tbody tr.empty:hover {
+	background: #FFFFFF;
+	border-right: none;
+}
 #browser_wrapper table tbody tr.empty td {
+  border: none;	
   height: 28px;
   padding: 10px;
+  background: #FFFFFF;
 }
 #browser_wrapper table tbody td.actions_column {
   position: static;
+  min-width: 172px;
 }
 #browser_wrapper .breadcrumb {
   padding: 6px;
@@ -6027,6 +6050,41 @@ td.normal_column, td.actions_column {
 .topologyNavi {
   height: 80px;
 }
+.quota-dynamic {
+  height: 200px; 
+  min-width: 100%;
+}
+.d3_quota_bar {
+  float: left;	
+  width: 160px;
+  text-align: center;
+  position: relative;
+  left: -30px;
+}
+#date_form h3 {
+	margin-bottom: 19px;
+}
+
+#volumes, #volume-types {
+  position: relative;
+  top: -8px;
+}
+td.normal_column, td.actions_column {
+	font-size: 12px;
+	color:#000000;
+	border-left: 1px solid #EEEEEE;
+}
+.display_name {
+	line-height: 36px;
+}
+.nodata {
+	display: none;
+}
+
+#no_update_flavor_access_members li {
+  line-height: 24px;
+  height: 48px;
+}
 
 .topologyBalloon {
   display: none;
@@ -6116,14 +6174,13 @@ td.normal_column, td.actions_column {
   content: "Terminating ";
 }
 .topologyBalloon table.detaiInfoTable {
-  margin: 0px 0px 8px 0px;
-
+  margin-bottom: 5px;
 }
 .topologyBalloon table.detaiInfoTable caption {
   text-align: left;
-  font-size: 16px;
+  font-size: 12px;
   font-weight: bold;
-  margin-bottom: 3px;
+  margin-bottom: 0px;
 }
 .topologyBalloon table.detaiInfoTable th, .topologyBalloon table.detaiInfoTable td {
   text-align: left;
@@ -6146,9 +6203,6 @@ td.normal_column, td.actions_column {
 }
 .topologyBalloon table.detaiInfoTable th.device {
   text-align: right;
-  font-size: 12px;
-  color: #333333;  
-  padding-left: 12px;
 }
 .topologyBalloon table.detaiInfoTable td {
   padding-right: 5px;
@@ -6205,39 +6259,10 @@ td.normal_column, td.actions_column {
   top: 31px;
   left: auto;
 }
-
-.quota-dynamic {
-  height: 200px; 
-  min-width: 840px;
-}
-.d3_quota_bar {
-  float: left;	
-  width: 160px;
-  text-align: center;
-  position: relative;
-  left: -30px;
-}
-#date_form h3 {
-	margin-bottom: 19px;
-}
-
-#volumes, #volume-types {
-  position: relative;
-  top: -8px;
-}
-td.normal_column, td.actions_column {
-	font-size: 12px;
-	color:#000000;
-	border-left: 1px solid #EEEEEE;
-}
-.display_name {
-	line-height: 36px;
-}
-.nodata {
-	display: none;
-}
-
-#no_update_flavor_access_members li {
-  line-height: 24px;
-  height: 48px;
+#topologyMessages {
+  width: 1px;
+  height: 1px;
+  visibility: hidden;
+  position: absolute;
+  top: -100px;
 }
