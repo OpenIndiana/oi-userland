@@ -1,1 +1,1 @@
-puppet:		facter
+puppet:		ruby/facter
