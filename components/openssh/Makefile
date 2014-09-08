@@ -47,7 +47,17 @@ include ../../make-rules/ips.mk
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
 
-CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS) -DSET_USE_PAM -DDEPRECATE_SUNSSH_OPT -DKRB5_BUILD_FIX -DAUE_openssh=6172 -DDTRACE_SFTP -DDISABLE_BANNER -DPAM_ENHANCEMENT -DPAM_BUGFIX"
+CFLAGS += -DSET_USE_PAM
+CFLAGS += -DDEPRECATE_SUNSSH_OPT
+CFLAGS += -DKRB5_BUILD_FIX
+CFLAGS += -DAUE_openssh=6172
+CFLAGS += -DDTRACE_SFTP
+CFLAGS += -DDISABLE_BANNER
+CFLAGS += -DPAM_ENHANCEMENT
+CFLAGS += -DPAM_BUGFIX
+CFLAGS += -DOPTION_DEFAULT_VALUE
+
+CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)" 
 
 # We need to disable lazyloading of dynamic dependent libraries. During the
 # pre-authentication phase, sshd will chroot to /var/empty which doesn't

@@ -1,0 +1,60 @@
+#
+# The default value of the GSSAPIAuthentication option is yes in SunSSH, but
+# no in OpenSSH. To make the transition smoother from SunSSH to OpenSSH, we 
+# change the default value of this option to be yes in OpenSSH also. This is
+# for Solaris only, we will not contribute back this changes to the upstream.
+#
+--- orig/readconf.c	Thu Sep  4 17:27:04 2014
++++ new/readconf.c	Thu Sep  4 17:51:24 2014
+@@ -1593,7 +1593,11 @@
+ 	if (options->challenge_response_authentication == -1)
+ 		options->challenge_response_authentication = 1;
+ 	if (options->gss_authentication == -1)
++#ifdef OPTION_DEFAULT_VALUE
++		options->gss_authentication = 1;
++#else
+ 		options->gss_authentication = 0;
++#endif
+ 	if (options->gss_deleg_creds == -1)
+ 		options->gss_deleg_creds = 0;
+ 	if (options->password_authentication == -1)
+--- orig/servconf.c	Thu Sep  4 17:17:58 2014
++++ new/servconf.c	Thu Sep  4 17:50:50 2014
+@@ -244,7 +244,11 @@
+ 	if (options->kerberos_get_afs_token == -1)
+ 		options->kerberos_get_afs_token = 0;
+ 	if (options->gss_authentication == -1)
++#ifdef OPTION_DEFAULT_VALUE
++		options->gss_authentication = 1;
++#else
+ 		options->gss_authentication = 0;
++#endif
+ 	if (options->gss_cleanup_creds == -1)
+ 		options->gss_cleanup_creds = 1;
+ 	if (options->password_authentication == -1)
+--- orig/ssh_config.5	Thu Sep  4 17:58:05 2014
++++ new/ssh_config.5	Thu Sep  4 17:59:06 2014
+@@ -673,8 +673,8 @@
+ .Pa /etc/ssh/ssh_known_hosts2 .
+ .It Cm GSSAPIAuthentication
+ Specifies whether user authentication based on GSSAPI is allowed.
+-The default is
+-.Dq no .
++The default on Solaris is
++.Dq yes .
+ Note that this option applies to protocol version 2 only.
+ .It Cm GSSAPIDelegateCredentials
+ Forward (delegate) credentials to the server.
+--- orig/sshd_config.5	Thu Sep  4 17:58:07 2014
++++ new/sshd_config.5	Thu Sep  4 17:59:40 2014
+@@ -490,8 +490,8 @@
+ .Dq no .
+ .It Cm GSSAPIAuthentication
+ Specifies whether user authentication based on GSSAPI is allowed.
+-The default is
+-.Dq no .
++The default on Solaris is
++.Dq yes .
+ Note that this option applies to protocol version 2 only.
+ .It Cm GSSAPICleanupCredentials
+ Specifies whether to automatically destroy the user's credentials cache
