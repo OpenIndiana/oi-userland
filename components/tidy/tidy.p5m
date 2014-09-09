@@ -21,12 +21,13 @@
 # Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
+<transform file path=usr/share/doc/tidy/html/api/(.+)$ -> \
+    set action.hash usr/share/doc/tidy/api/%<\1> >
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
-set name=pkg.fmri \
-    value=pkg:/text/tidy@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/text/tidy@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="The HTML Tidy Library."
 set name=pkg.description \
     value="HTML Tidy is an open source program and library for checking and generating clean XHTML/HTML."
-set name=pkg.summary value="The HTML Tidy Library."
 set name=com.oracle.info.description value="the HTML Tidy utility"
 set name=com.oracle.info.tpno value=$(TPNO)
 set name=info.classification \
@@ -41,335 +42,214 @@ file include/buffio.h path=usr/include/tidy/buffio.h
 file include/platform.h path=usr/include/tidy/platform.h
 file include/tidy.h path=usr/include/tidy/tidy.h
 file include/tidyenum.h path=usr/include/tidy/tidyenum.h
+link path=usr/lib/$(MACH64)/libtidy-1.0.so target=libtidy-1.0.so.0.0.0
+link path=usr/lib/$(MACH64)/libtidy-1.0.so.0 target=libtidy-1.0.so.0.0.0
 file path=usr/lib/$(MACH64)/libtidy-1.0.so.0.0.0
+link path=usr/lib/$(MACH64)/libtidy.so target=libtidy-1.0.so.0.0.0
 file path=usr/lib/$(MACH64)/llib-ltidy.ln
+link path=usr/lib/libtidy-1.0.so target=libtidy-1.0.so.0.0.0
+link path=usr/lib/libtidy-1.0.so.0 target=libtidy-1.0.so.0.0.0
 file path=usr/lib/libtidy-1.0.so.0.0.0
+link path=usr/lib/libtidy.so target=libtidy-1.0.so.0.0.0
 file path=usr/lib/llib-ltidy
 file path=usr/lib/llib-ltidy.ln
-file htmldoc/Overview.html path=usr/share/doc/tidy/html/Overview.html
-file htmldoc/api/TidyNodeIter_8h_source.html \
-    path=usr/share/doc/tidy/html/api/TidyNodeIter_8h_source.html
-file htmldoc/api/access_8h_source.html \
-    path=usr/share/doc/tidy/html/api/access_8h_source.html
-file htmldoc/api/annotated.html \
-    path=usr/share/doc/tidy/html/api/annotated.html
-file htmldoc/api/annotated.js path=usr/share/doc/tidy/html/api/annotated.js
-file htmldoc/api/attrdict_8h_source.html \
-    path=usr/share/doc/tidy/html/api/attrdict_8h_source.html
-file htmldoc/api/attrs_8h_source.html \
-    path=usr/share/doc/tidy/html/api/attrs_8h_source.html
-file htmldoc/api/bc_s.png path=usr/share/doc/tidy/html/api/bc_s.png
-file htmldoc/api/buffio_8h.html \
-    path=usr/share/doc/tidy/html/api/buffio_8h.html
-file htmldoc/api/buffio_8h.js path=usr/share/doc/tidy/html/api/buffio_8h.js
-file htmldoc/api/buffio_8h_source.html \
-    path=usr/share/doc/tidy/html/api/buffio_8h_source.html
-file htmldoc/api/charsets_8h_source.html \
-    path=usr/share/doc/tidy/html/api/charsets_8h_source.html
-file htmldoc/api/classes.html path=usr/share/doc/tidy/html/api/classes.html
-file htmldoc/api/clean_8h_source.html \
-    path=usr/share/doc/tidy/html/api/clean_8h_source.html
-file htmldoc/api/closed.png path=usr/share/doc/tidy/html/api/closed.png
-file htmldoc/api/config_8h_source.html \
-    path=usr/share/doc/tidy/html/api/config_8h_source.html
-file htmldoc/api/deprecated.html \
-    path=usr/share/doc/tidy/html/api/deprecated.html
-file htmldoc/api/doxygen.css path=usr/share/doc/tidy/html/api/doxygen.css
-file htmldoc/api/doxygen.png path=usr/share/doc/tidy/html/api/doxygen.png
-file htmldoc/api/entities_8h_source.html \
-    path=usr/share/doc/tidy/html/api/entities_8h_source.html
-file htmldoc/api/fileio_8h.html \
-    path=usr/share/doc/tidy/html/api/fileio_8h.html
-file htmldoc/api/fileio_8h.js path=usr/share/doc/tidy/html/api/fileio_8h.js
-file htmldoc/api/fileio_8h_source.html \
-    path=usr/share/doc/tidy/html/api/fileio_8h_source.html
-file htmldoc/api/files.html path=usr/share/doc/tidy/html/api/files.html
-file htmldoc/api/files.js path=usr/share/doc/tidy/html/api/files.js
-file htmldoc/api/forward_8h_source.html \
-    path=usr/share/doc/tidy/html/api/forward_8h_source.html
-file htmldoc/api/ftv2blank.png path=usr/share/doc/tidy/html/api/ftv2blank.png
-file htmldoc/api/ftv2doc.png path=usr/share/doc/tidy/html/api/ftv2doc.png
-file htmldoc/api/ftv2folderclosed.png \
-    path=usr/share/doc/tidy/html/api/ftv2folderclosed.png
-file htmldoc/api/ftv2folderopen.png \
-    path=usr/share/doc/tidy/html/api/ftv2folderopen.png
-file htmldoc/api/ftv2lastnode.png \
-    path=usr/share/doc/tidy/html/api/ftv2lastnode.png
-file htmldoc/api/ftv2link.png path=usr/share/doc/tidy/html/api/ftv2link.png
-file htmldoc/api/ftv2mlastnode.png \
-    path=usr/share/doc/tidy/html/api/ftv2mlastnode.png
-file htmldoc/api/ftv2mnode.png path=usr/share/doc/tidy/html/api/ftv2mnode.png
-file htmldoc/api/ftv2node.png path=usr/share/doc/tidy/html/api/ftv2node.png
-file htmldoc/api/ftv2plastnode.png \
-    path=usr/share/doc/tidy/html/api/ftv2plastnode.png
-file htmldoc/api/ftv2pnode.png path=usr/share/doc/tidy/html/api/ftv2pnode.png
-file htmldoc/api/ftv2splitbar.png \
-    path=usr/share/doc/tidy/html/api/ftv2splitbar.png
-file htmldoc/api/ftv2vertline.png \
-    path=usr/share/doc/tidy/html/api/ftv2vertline.png
-file htmldoc/api/functions.html \
-    path=usr/share/doc/tidy/html/api/functions.html
-file htmldoc/api/functions_func.html \
-    path=usr/share/doc/tidy/html/api/functions_func.html
-file htmldoc/api/functions_vars.html \
-    path=usr/share/doc/tidy/html/api/functions_vars.html
-file htmldoc/api/globals.html path=usr/share/doc/tidy/html/api/globals.html
-file htmldoc/api/globals_defs.html \
-    path=usr/share/doc/tidy/html/api/globals_defs.html
-file htmldoc/api/globals_func.html \
-    path=usr/share/doc/tidy/html/api/globals_func.html
-file htmldoc/api/globals_type.html \
-    path=usr/share/doc/tidy/html/api/globals_type.html
-file htmldoc/api/group__AttrGet.html \
-    path=usr/share/doc/tidy/html/api/group__AttrGet.html
-file htmldoc/api/group__AttrGet.js \
-    path=usr/share/doc/tidy/html/api/group__AttrGet.js
-file htmldoc/api/group__AttrGetAttributeName.html \
-    path=usr/share/doc/tidy/html/api/group__AttrGetAttributeName.html
-file htmldoc/api/group__AttrIsAttributeName.html \
-    path=usr/share/doc/tidy/html/api/group__AttrIsAttributeName.html
-file htmldoc/api/group__Attribute.html \
-    path=usr/share/doc/tidy/html/api/group__Attribute.html
-file htmldoc/api/group__Attribute.js \
-    path=usr/share/doc/tidy/html/api/group__Attribute.js
-file htmldoc/api/group__Basic.html \
-    path=usr/share/doc/tidy/html/api/group__Basic.html
-file htmldoc/api/group__Clean.html \
-    path=usr/share/doc/tidy/html/api/group__Clean.html
-file htmldoc/api/group__Configuration.html \
-    path=usr/share/doc/tidy/html/api/group__Configuration.html
-file htmldoc/api/group__IO.html \
-    path=usr/share/doc/tidy/html/api/group__IO.html
-file htmldoc/api/group__Memory.html \
-    path=usr/share/doc/tidy/html/api/group__Memory.html
-file htmldoc/api/group__NodeAsk.html \
-    path=usr/share/doc/tidy/html/api/group__NodeAsk.html
-file htmldoc/api/group__NodeAsk.js \
-    path=usr/share/doc/tidy/html/api/group__NodeAsk.js
-file htmldoc/api/group__NodeIsElementName.html \
-    path=usr/share/doc/tidy/html/api/group__NodeIsElementName.html
-file htmldoc/api/group__Opaque.html \
-    path=usr/share/doc/tidy/html/api/group__Opaque.html
-file htmldoc/api/group__Parse.html \
-    path=usr/share/doc/tidy/html/api/group__Parse.html
-file htmldoc/api/group__Save.html \
-    path=usr/share/doc/tidy/html/api/group__Save.html
-file htmldoc/api/group__Tree.html \
-    path=usr/share/doc/tidy/html/api/group__Tree.html
-file htmldoc/api/httpio_8h_source.html \
-    path=usr/share/doc/tidy/html/api/httpio_8h_source.html
-file htmldoc/api/iconvtc_8h_source.html \
-    path=usr/share/doc/tidy/html/api/iconvtc_8h_source.html
-file htmldoc/api/index.html path=usr/share/doc/tidy/html/api/index.html
-file htmldoc/api/jquery.js path=usr/share/doc/tidy/html/api/jquery.js
-file htmldoc/api/lexer_8h_source.html \
-    path=usr/share/doc/tidy/html/api/lexer_8h_source.html
-file htmldoc/api/mappedio_8h_source.html \
-    path=usr/share/doc/tidy/html/api/mappedio_8h_source.html
-file htmldoc/api/message_8h_source.html \
-    path=usr/share/doc/tidy/html/api/message_8h_source.html
-file htmldoc/api/modules.html path=usr/share/doc/tidy/html/api/modules.html
-file htmldoc/api/modules.js path=usr/share/doc/tidy/html/api/modules.js
-file htmldoc/api/nav_f.png path=usr/share/doc/tidy/html/api/nav_f.png
-file htmldoc/api/nav_h.png path=usr/share/doc/tidy/html/api/nav_h.png
-file htmldoc/api/navtree.css path=usr/share/doc/tidy/html/api/navtree.css
-file htmldoc/api/navtree.js path=usr/share/doc/tidy/html/api/navtree.js
-file htmldoc/api/navtreeindex.js \
-    path=usr/share/doc/tidy/html/api/navtreeindex.js
-file htmldoc/api/open.png path=usr/share/doc/tidy/html/api/open.png
-file htmldoc/api/pages.html path=usr/share/doc/tidy/html/api/pages.html
-file htmldoc/api/pages.js path=usr/share/doc/tidy/html/api/pages.js
-file htmldoc/api/parser_8h_source.html \
-    path=usr/share/doc/tidy/html/api/parser_8h_source.html
-file htmldoc/api/platform_8h_source.html \
-    path=usr/share/doc/tidy/html/api/platform_8h_source.html
-file htmldoc/api/pprint_8h_source.html \
-    path=usr/share/doc/tidy/html/api/pprint_8h_source.html
-file htmldoc/api/resize.js path=usr/share/doc/tidy/html/api/resize.js
-file htmldoc/api/streamio_8h_source.html \
-    path=usr/share/doc/tidy/html/api/streamio_8h_source.html
-file htmldoc/api/structAllOption__t.html \
-    path=usr/share/doc/tidy/html/api/structAllOption__t.html
-file htmldoc/api/structAllOption__t.js \
-    path=usr/share/doc/tidy/html/api/structAllOption__t.js
-file htmldoc/api/structCmdOptDesc.html \
-    path=usr/share/doc/tidy/html/api/structCmdOptDesc.html
-file htmldoc/api/structCmdOptDesc.js \
-    path=usr/share/doc/tidy/html/api/structCmdOptDesc.js
-file htmldoc/api/structOptionDesc.html \
-    path=usr/share/doc/tidy/html/api/structOptionDesc.html
-file htmldoc/api/structOptionDesc.js \
-    path=usr/share/doc/tidy/html/api/structOptionDesc.js
-file htmldoc/api/structStream.html \
-    path=usr/share/doc/tidy/html/api/structStream.html
-file htmldoc/api/structStream.js \
-    path=usr/share/doc/tidy/html/api/structStream.js
-file htmldoc/api/structTidyAttr.html \
-    path=usr/share/doc/tidy/html/api/structTidyAttr.html
-file htmldoc/api/structTidyDoc.html \
-    path=usr/share/doc/tidy/html/api/structTidyDoc.html
-file htmldoc/api/structTidyNode.html \
-    path=usr/share/doc/tidy/html/api/structTidyNode.html
-file htmldoc/api/structTidyOption.html \
-    path=usr/share/doc/tidy/html/api/structTidyOption.html
-file htmldoc/api/structTidyOptionDoc.html \
-    path=usr/share/doc/tidy/html/api/structTidyOptionDoc.html
-file htmldoc/api/structTidyOptionDoc.js \
-    path=usr/share/doc/tidy/html/api/structTidyOptionDoc.js
-file htmldoc/api/struct__Anchor.html \
-    path=usr/share/doc/tidy/html/api/struct__Anchor.html
-file htmldoc/api/struct__Anchor.js \
-    path=usr/share/doc/tidy/html/api/struct__Anchor.js
-file htmldoc/api/struct__AttVal.html \
-    path=usr/share/doc/tidy/html/api/struct__AttVal.html
-file htmldoc/api/struct__AttVal.js \
-    path=usr/share/doc/tidy/html/api/struct__AttVal.js
-file htmldoc/api/struct__AttrHash.html \
-    path=usr/share/doc/tidy/html/api/struct__AttrHash.html
-file htmldoc/api/struct__AttrHash.js \
-    path=usr/share/doc/tidy/html/api/struct__AttrHash.js
-file htmldoc/api/struct__AttrVersion.html \
-    path=usr/share/doc/tidy/html/api/struct__AttrVersion.html
-file htmldoc/api/struct__AttrVersion.js \
-    path=usr/share/doc/tidy/html/api/struct__AttrVersion.js
-file htmldoc/api/struct__Attribute.html \
-    path=usr/share/doc/tidy/html/api/struct__Attribute.html
-file htmldoc/api/struct__Attribute.js \
-    path=usr/share/doc/tidy/html/api/struct__Attribute.js
-file htmldoc/api/struct__Dict.html \
-    path=usr/share/doc/tidy/html/api/struct__Dict.html
-file htmldoc/api/struct__Dict.js \
-    path=usr/share/doc/tidy/html/api/struct__Dict.js
-file htmldoc/api/struct__DictHash.html \
-    path=usr/share/doc/tidy/html/api/struct__DictHash.html
-file htmldoc/api/struct__DictHash.js \
-    path=usr/share/doc/tidy/html/api/struct__DictHash.js
-file htmldoc/api/struct__HTTPInputSource.html \
-    path=usr/share/doc/tidy/html/api/struct__HTTPInputSource.html
-file htmldoc/api/struct__HTTPInputSource.js \
-    path=usr/share/doc/tidy/html/api/struct__HTTPInputSource.js
-file htmldoc/api/struct__IStack.html \
-    path=usr/share/doc/tidy/html/api/struct__IStack.html
-file htmldoc/api/struct__IStack.js \
-    path=usr/share/doc/tidy/html/api/struct__IStack.js
-file htmldoc/api/struct__Lexer.html \
-    path=usr/share/doc/tidy/html/api/struct__Lexer.html
-file htmldoc/api/struct__Lexer.js \
-    path=usr/share/doc/tidy/html/api/struct__Lexer.js
-file htmldoc/api/struct__Node.html \
-    path=usr/share/doc/tidy/html/api/struct__Node.html
-file htmldoc/api/struct__Node.js \
-    path=usr/share/doc/tidy/html/api/struct__Node.js
-file htmldoc/api/struct__StreamIn.html \
-    path=usr/share/doc/tidy/html/api/struct__StreamIn.html
-file htmldoc/api/struct__StreamIn.js \
-    path=usr/share/doc/tidy/html/api/struct__StreamIn.js
-file htmldoc/api/struct__StreamOut.html \
-    path=usr/share/doc/tidy/html/api/struct__StreamOut.html
-file htmldoc/api/struct__StreamOut.js \
-    path=usr/share/doc/tidy/html/api/struct__StreamOut.js
-file htmldoc/api/struct__Style.html \
-    path=usr/share/doc/tidy/html/api/struct__Style.html
-file htmldoc/api/struct__Style.js \
-    path=usr/share/doc/tidy/html/api/struct__Style.js
-file htmldoc/api/struct__StyleProp.html \
-    path=usr/share/doc/tidy/html/api/struct__StyleProp.html
-file htmldoc/api/struct__StyleProp.js \
-    path=usr/share/doc/tidy/html/api/struct__StyleProp.js
-file htmldoc/api/struct__TidyAllocator.html \
-    path=usr/share/doc/tidy/html/api/struct__TidyAllocator.html
-file htmldoc/api/struct__TidyAllocator.js \
-    path=usr/share/doc/tidy/html/api/struct__TidyAllocator.js
-file htmldoc/api/struct__TidyAllocatorVtbl.html \
-    path=usr/share/doc/tidy/html/api/struct__TidyAllocatorVtbl.html
-file htmldoc/api/struct__TidyAllocatorVtbl.js \
-    path=usr/share/doc/tidy/html/api/struct__TidyAllocatorVtbl.js
-file htmldoc/api/struct__TidyAttribImpl.html \
-    path=usr/share/doc/tidy/html/api/struct__TidyAttribImpl.html
-file htmldoc/api/struct__TidyAttribImpl.js \
-    path=usr/share/doc/tidy/html/api/struct__TidyAttribImpl.js
-file htmldoc/api/struct__TidyBuffer.html \
-    path=usr/share/doc/tidy/html/api/struct__TidyBuffer.html
-file htmldoc/api/struct__TidyBuffer.js \
-    path=usr/share/doc/tidy/html/api/struct__TidyBuffer.js
-file htmldoc/api/struct__TidyDocImpl.html \
-    path=usr/share/doc/tidy/html/api/struct__TidyDocImpl.html
-file htmldoc/api/struct__TidyDocImpl.js \
-    path=usr/share/doc/tidy/html/api/struct__TidyDocImpl.js
-file htmldoc/api/struct__TidyIndent.html \
-    path=usr/share/doc/tidy/html/api/struct__TidyIndent.html
-file htmldoc/api/struct__TidyIndent.js \
-    path=usr/share/doc/tidy/html/api/struct__TidyIndent.js
-file htmldoc/api/struct__TidyInputSource.html \
-    path=usr/share/doc/tidy/html/api/struct__TidyInputSource.html
-file htmldoc/api/struct__TidyInputSource.js \
-    path=usr/share/doc/tidy/html/api/struct__TidyInputSource.js
-file htmldoc/api/struct__TidyNodeIter.html \
-    path=usr/share/doc/tidy/html/api/struct__TidyNodeIter.html
-file htmldoc/api/struct__TidyNodeIter.js \
-    path=usr/share/doc/tidy/html/api/struct__TidyNodeIter.js
-file htmldoc/api/struct__TidyOutputSink.html \
-    path=usr/share/doc/tidy/html/api/struct__TidyOutputSink.html
-file htmldoc/api/struct__TidyOutputSink.js \
-    path=usr/share/doc/tidy/html/api/struct__TidyOutputSink.js
-file htmldoc/api/struct__TidyPrintImpl.html \
-    path=usr/share/doc/tidy/html/api/struct__TidyPrintImpl.html
-file htmldoc/api/struct__TidyPrintImpl.js \
-    path=usr/share/doc/tidy/html/api/struct__TidyPrintImpl.js
-file htmldoc/api/struct__TidyTagImpl.html \
-    path=usr/share/doc/tidy/html/api/struct__TidyTagImpl.html
-file htmldoc/api/struct__TidyTagImpl.js \
-    path=usr/share/doc/tidy/html/api/struct__TidyTagImpl.js
-file htmldoc/api/struct__colors.html \
-    path=usr/share/doc/tidy/html/api/struct__colors.html
-file htmldoc/api/struct__colors.js \
-    path=usr/share/doc/tidy/html/api/struct__colors.js
-file htmldoc/api/struct__entity.html \
-    path=usr/share/doc/tidy/html/api/struct__entity.html
-file htmldoc/api/struct__entity.js \
-    path=usr/share/doc/tidy/html/api/struct__entity.js
-file htmldoc/api/struct__fp__input__source.html \
-    path=usr/share/doc/tidy/html/api/struct__fp__input__source.html
-file htmldoc/api/struct__fp__input__source.js \
-    path=usr/share/doc/tidy/html/api/struct__fp__input__source.js
-file htmldoc/api/struct__tidy__config.html \
-    path=usr/share/doc/tidy/html/api/struct__tidy__config.html
-file htmldoc/api/struct__tidy__config.js \
-    path=usr/share/doc/tidy/html/api/struct__tidy__config.js
-file htmldoc/api/struct__tidy__option.html \
-    path=usr/share/doc/tidy/html/api/struct__tidy__option.html
-file htmldoc/api/struct__tidy__option.js \
-    path=usr/share/doc/tidy/html/api/struct__tidy__option.js
-file htmldoc/api/tab_a.png path=usr/share/doc/tidy/html/api/tab_a.png
-file htmldoc/api/tab_b.png path=usr/share/doc/tidy/html/api/tab_b.png
-file htmldoc/api/tab_h.png path=usr/share/doc/tidy/html/api/tab_h.png
-file htmldoc/api/tab_s.png path=usr/share/doc/tidy/html/api/tab_s.png
-file htmldoc/api/tabs.css path=usr/share/doc/tidy/html/api/tabs.css
-file htmldoc/api/tags_8h_source.html \
-    path=usr/share/doc/tidy/html/api/tags_8h_source.html
-file htmldoc/api/tidy-int_8h_source.html \
-    path=usr/share/doc/tidy/html/api/tidy-int_8h_source.html
-file htmldoc/api/tidy_8h.html path=usr/share/doc/tidy/html/api/tidy_8h.html
-file htmldoc/api/tidy_8h.js path=usr/share/doc/tidy/html/api/tidy_8h.js
-file htmldoc/api/tidy_8h_source.html \
-    path=usr/share/doc/tidy/html/api/tidy_8h_source.html
-file files/tidyenum_8h.html path=usr/share/doc/tidy/html/api/tidyenum_8h.html
-file htmldoc/api/tidyenum_8h_source.html \
-    path=usr/share/doc/tidy/html/api/tidyenum_8h_source.html
-file htmldoc/api/tmbstr_8h_source.html \
-    path=usr/share/doc/tidy/html/api/tmbstr_8h_source.html
-file files/tree.js path=usr/share/doc/tidy/html/api/tree.js
-file files/treeview.js path=usr/share/doc/tidy/html/api/treeview.js
-file htmldoc/api/unionTidyOptionValue.html \
-    path=usr/share/doc/tidy/html/api/unionTidyOptionValue.html
-file htmldoc/api/unionTidyOptionValue.js \
-    path=usr/share/doc/tidy/html/api/unionTidyOptionValue.js
-file htmldoc/api/utf8_8h_source.html \
-    path=usr/share/doc/tidy/html/api/utf8_8h_source.html
-file htmldoc/api/version_8h_source.html \
-    path=usr/share/doc/tidy/html/api/version_8h_source.html
-file htmldoc/api/win32tc_8h_source.html \
-    path=usr/share/doc/tidy/html/api/win32tc_8h_source.html
+file path=usr/share/doc/tidy/html/api/TidyNodeIter_8h_source.html
+file path=usr/share/doc/tidy/html/api/access_8h_source.html
+file path=usr/share/doc/tidy/html/api/annotated.html
+file path=usr/share/doc/tidy/html/api/annotated.js
+file path=usr/share/doc/tidy/html/api/attrdict_8h_source.html
+file path=usr/share/doc/tidy/html/api/attrs_8h_source.html
+file path=usr/share/doc/tidy/html/api/bc_s.png
+file path=usr/share/doc/tidy/html/api/bdwn.png
+file path=usr/share/doc/tidy/html/api/buffio_8h.html
+file path=usr/share/doc/tidy/html/api/buffio_8h.js
+file path=usr/share/doc/tidy/html/api/buffio_8h_source.html
+file path=usr/share/doc/tidy/html/api/charsets_8h_source.html
+file path=usr/share/doc/tidy/html/api/classes.html
+file path=usr/share/doc/tidy/html/api/clean_8h_source.html
+file path=usr/share/doc/tidy/html/api/closed.png
+file path=usr/share/doc/tidy/html/api/config_8h_source.html
+file path=usr/share/doc/tidy/html/api/deprecated.html
+file path=usr/share/doc/tidy/html/api/dir_68267d1309a1af8e8297ef4c3efbcdba.html
+file path=usr/share/doc/tidy/html/api/dir_8c0381a6091af7a47ae909a45b674508.html
+file path=usr/share/doc/tidy/html/api/dir_9f97b40203d0b7782e2ba57c500dd0f3.html
+file path=usr/share/doc/tidy/html/api/dir_d44c64559bbebec7f509842c48db8b23.html
+file path=usr/share/doc/tidy/html/api/doxygen.css
+file path=usr/share/doc/tidy/html/api/doxygen.png
+file path=usr/share/doc/tidy/html/api/dynsections.js
+file path=usr/share/doc/tidy/html/api/entities_8h_source.html
+file path=usr/share/doc/tidy/html/api/fileio_8h.html
+file path=usr/share/doc/tidy/html/api/fileio_8h.js
+file path=usr/share/doc/tidy/html/api/fileio_8h_source.html
+file path=usr/share/doc/tidy/html/api/files.html
+file path=usr/share/doc/tidy/html/api/files.js
+file path=usr/share/doc/tidy/html/api/forward_8h_source.html
+file path=usr/share/doc/tidy/html/api/ftv2blank.png
+file path=usr/share/doc/tidy/html/api/ftv2doc.png
+file path=usr/share/doc/tidy/html/api/ftv2folderclosed.png
+file path=usr/share/doc/tidy/html/api/ftv2folderopen.png
+file path=usr/share/doc/tidy/html/api/ftv2lastnode.png
+file path=usr/share/doc/tidy/html/api/ftv2link.png
+file path=usr/share/doc/tidy/html/api/ftv2mlastnode.png
+file path=usr/share/doc/tidy/html/api/ftv2mnode.png
+file path=usr/share/doc/tidy/html/api/ftv2node.png
+file path=usr/share/doc/tidy/html/api/ftv2plastnode.png
+file path=usr/share/doc/tidy/html/api/ftv2pnode.png
+file path=usr/share/doc/tidy/html/api/ftv2splitbar.png
+file path=usr/share/doc/tidy/html/api/ftv2vertline.png
+file path=usr/share/doc/tidy/html/api/functions.html
+file path=usr/share/doc/tidy/html/api/functions_func.html
+file path=usr/share/doc/tidy/html/api/functions_vars.html
+file path=usr/share/doc/tidy/html/api/globals.html
+file path=usr/share/doc/tidy/html/api/globals_defs.html
+file path=usr/share/doc/tidy/html/api/globals_func.html
+file path=usr/share/doc/tidy/html/api/globals_type.html
+file path=usr/share/doc/tidy/html/api/group__AttrGet.html
+file path=usr/share/doc/tidy/html/api/group__AttrGet.js
+file path=usr/share/doc/tidy/html/api/group__AttrGetAttributeName.html
+file path=usr/share/doc/tidy/html/api/group__AttrIsAttributeName.html
+file path=usr/share/doc/tidy/html/api/group__Attribute.html
+file path=usr/share/doc/tidy/html/api/group__Attribute.js
+file path=usr/share/doc/tidy/html/api/group__Basic.html
+file path=usr/share/doc/tidy/html/api/group__Basic.js
+file path=usr/share/doc/tidy/html/api/group__Clean.html
+file path=usr/share/doc/tidy/html/api/group__Clean.js
+file path=usr/share/doc/tidy/html/api/group__Configuration.html
+file path=usr/share/doc/tidy/html/api/group__Configuration.js
+file path=usr/share/doc/tidy/html/api/group__IO.html
+file path=usr/share/doc/tidy/html/api/group__IO.js
+file path=usr/share/doc/tidy/html/api/group__Memory.html
+file path=usr/share/doc/tidy/html/api/group__Memory.js
+file path=usr/share/doc/tidy/html/api/group__NodeAsk.html
+file path=usr/share/doc/tidy/html/api/group__NodeAsk.js
+file path=usr/share/doc/tidy/html/api/group__NodeIsElementName.html
+file path=usr/share/doc/tidy/html/api/group__Opaque.html
+file path=usr/share/doc/tidy/html/api/group__Opaque.js
+file path=usr/share/doc/tidy/html/api/group__Parse.html
+file path=usr/share/doc/tidy/html/api/group__Parse.js
+file path=usr/share/doc/tidy/html/api/group__Save.html
+file path=usr/share/doc/tidy/html/api/group__Save.js
+file path=usr/share/doc/tidy/html/api/group__Tree.html
+file path=usr/share/doc/tidy/html/api/httpio_8h_source.html
+file path=usr/share/doc/tidy/html/api/iconvtc_8h_source.html
+file path=usr/share/doc/tidy/html/api/index.html
+file path=usr/share/doc/tidy/html/api/jquery.js
+file path=usr/share/doc/tidy/html/api/lexer_8h_source.html
+file path=usr/share/doc/tidy/html/api/mappedio_8h_source.html
+file path=usr/share/doc/tidy/html/api/message_8h_source.html
+file path=usr/share/doc/tidy/html/api/modules.html
+file path=usr/share/doc/tidy/html/api/modules.js
+file path=usr/share/doc/tidy/html/api/nav_f.png
+file path=usr/share/doc/tidy/html/api/nav_g.png
+file path=usr/share/doc/tidy/html/api/nav_h.png
+file path=usr/share/doc/tidy/html/api/navtree.css
+file path=usr/share/doc/tidy/html/api/navtree.js
+file path=usr/share/doc/tidy/html/api/navtreeindex0.js
+file path=usr/share/doc/tidy/html/api/navtreeindex1.js
+file path=usr/share/doc/tidy/html/api/navtreeindex2.js
+file path=usr/share/doc/tidy/html/api/navtreeindex3.js
+file path=usr/share/doc/tidy/html/api/open.png
+file path=usr/share/doc/tidy/html/api/pages.html
+file path=usr/share/doc/tidy/html/api/parser_8h_source.html
+file path=usr/share/doc/tidy/html/api/platform_8h_source.html
+file path=usr/share/doc/tidy/html/api/pprint_8h_source.html
+file path=usr/share/doc/tidy/html/api/resize.js
+file path=usr/share/doc/tidy/html/api/streamio_8h_source.html
+file path=usr/share/doc/tidy/html/api/structAllOption__t.html
+file path=usr/share/doc/tidy/html/api/structAllOption__t.js
+file path=usr/share/doc/tidy/html/api/structCmdOptDesc.html
+file path=usr/share/doc/tidy/html/api/structCmdOptDesc.js
+file path=usr/share/doc/tidy/html/api/structOptionDesc.html
+file path=usr/share/doc/tidy/html/api/structOptionDesc.js
+file path=usr/share/doc/tidy/html/api/structStream.html
+file path=usr/share/doc/tidy/html/api/structStream.js
+file path=usr/share/doc/tidy/html/api/structTidyAttr.html
+file path=usr/share/doc/tidy/html/api/structTidyDoc.html
+file path=usr/share/doc/tidy/html/api/structTidyNode.html
+file path=usr/share/doc/tidy/html/api/structTidyOption.html
+file path=usr/share/doc/tidy/html/api/structTidyOptionDoc.html
+file path=usr/share/doc/tidy/html/api/structTidyOptionDoc.js
+file path=usr/share/doc/tidy/html/api/struct__Anchor.html
+file path=usr/share/doc/tidy/html/api/struct__Anchor.js
+file path=usr/share/doc/tidy/html/api/struct__AttVal.html
+file path=usr/share/doc/tidy/html/api/struct__AttVal.js
+file path=usr/share/doc/tidy/html/api/struct__AttrHash.html
+file path=usr/share/doc/tidy/html/api/struct__AttrHash.js
+file path=usr/share/doc/tidy/html/api/struct__AttrVersion.html
+file path=usr/share/doc/tidy/html/api/struct__AttrVersion.js
+file path=usr/share/doc/tidy/html/api/struct__Attribute.html
+file path=usr/share/doc/tidy/html/api/struct__Attribute.js
+file path=usr/share/doc/tidy/html/api/struct__Dict.html
+file path=usr/share/doc/tidy/html/api/struct__Dict.js
+file path=usr/share/doc/tidy/html/api/struct__DictHash.html
+file path=usr/share/doc/tidy/html/api/struct__DictHash.js
+file path=usr/share/doc/tidy/html/api/struct__HTTPInputSource.html
+file path=usr/share/doc/tidy/html/api/struct__HTTPInputSource.js
+file path=usr/share/doc/tidy/html/api/struct__IStack.html
+file path=usr/share/doc/tidy/html/api/struct__IStack.js
+file path=usr/share/doc/tidy/html/api/struct__Lexer.html
+file path=usr/share/doc/tidy/html/api/struct__Lexer.js
+file path=usr/share/doc/tidy/html/api/struct__Node.html
+file path=usr/share/doc/tidy/html/api/struct__Node.js
+file path=usr/share/doc/tidy/html/api/struct__StreamIn.html
+file path=usr/share/doc/tidy/html/api/struct__StreamIn.js
+file path=usr/share/doc/tidy/html/api/struct__StreamOut.html
+file path=usr/share/doc/tidy/html/api/struct__StreamOut.js
+file path=usr/share/doc/tidy/html/api/struct__Style.html
+file path=usr/share/doc/tidy/html/api/struct__Style.js
+file path=usr/share/doc/tidy/html/api/struct__StyleProp.html
+file path=usr/share/doc/tidy/html/api/struct__StyleProp.js
+file path=usr/share/doc/tidy/html/api/struct__TidyAllocator.html
+file path=usr/share/doc/tidy/html/api/struct__TidyAllocator.js
+file path=usr/share/doc/tidy/html/api/struct__TidyAllocatorVtbl.html
+file path=usr/share/doc/tidy/html/api/struct__TidyAllocatorVtbl.js
+file path=usr/share/doc/tidy/html/api/struct__TidyAttribImpl.html
+file path=usr/share/doc/tidy/html/api/struct__TidyAttribImpl.js
+file path=usr/share/doc/tidy/html/api/struct__TidyBuffer.html
+file path=usr/share/doc/tidy/html/api/struct__TidyBuffer.js
+file path=usr/share/doc/tidy/html/api/struct__TidyDocImpl.html
+file path=usr/share/doc/tidy/html/api/struct__TidyDocImpl.js
+file path=usr/share/doc/tidy/html/api/struct__TidyIndent.html
+file path=usr/share/doc/tidy/html/api/struct__TidyIndent.js
+file path=usr/share/doc/tidy/html/api/struct__TidyInputSource.html
+file path=usr/share/doc/tidy/html/api/struct__TidyInputSource.js
+file path=usr/share/doc/tidy/html/api/struct__TidyNodeIter.html
+file path=usr/share/doc/tidy/html/api/struct__TidyNodeIter.js
+file path=usr/share/doc/tidy/html/api/struct__TidyOutputSink.html
+file path=usr/share/doc/tidy/html/api/struct__TidyOutputSink.js
+file path=usr/share/doc/tidy/html/api/struct__TidyPrintImpl.html
+file path=usr/share/doc/tidy/html/api/struct__TidyPrintImpl.js
+file path=usr/share/doc/tidy/html/api/struct__TidyTagImpl.html
+file path=usr/share/doc/tidy/html/api/struct__TidyTagImpl.js
+file path=usr/share/doc/tidy/html/api/struct__colors.html
+file path=usr/share/doc/tidy/html/api/struct__colors.js
+file path=usr/share/doc/tidy/html/api/struct__entity.html
+file path=usr/share/doc/tidy/html/api/struct__entity.js
+file path=usr/share/doc/tidy/html/api/struct__fp__input__source.html
+file path=usr/share/doc/tidy/html/api/struct__fp__input__source.js
+file path=usr/share/doc/tidy/html/api/struct__tidy__config.html
+file path=usr/share/doc/tidy/html/api/struct__tidy__config.js
+file path=usr/share/doc/tidy/html/api/struct__tidy__option.html
+file path=usr/share/doc/tidy/html/api/struct__tidy__option.js
+file path=usr/share/doc/tidy/html/api/sync_off.png
+file path=usr/share/doc/tidy/html/api/sync_on.png
+file path=usr/share/doc/tidy/html/api/tab_a.png
+file path=usr/share/doc/tidy/html/api/tab_b.png
+file path=usr/share/doc/tidy/html/api/tab_h.png
+file path=usr/share/doc/tidy/html/api/tab_s.png
+file path=usr/share/doc/tidy/html/api/tabs.css
+file path=usr/share/doc/tidy/html/api/tags_8h_source.html
+file path=usr/share/doc/tidy/html/api/tidy-int_8h_source.html
+file path=usr/share/doc/tidy/html/api/tidy_8h.html
+file path=usr/share/doc/tidy/html/api/tidy_8h.js
+file path=usr/share/doc/tidy/html/api/tidy_8h_source.html
+file path=usr/share/doc/tidy/html/api/tidyenum_8h_source.html
+file path=usr/share/doc/tidy/html/api/tmbstr_8h_source.html
+file path=usr/share/doc/tidy/html/api/unionTidyOptionValue.html
+file path=usr/share/doc/tidy/html/api/unionTidyOptionValue.js
+file path=usr/share/doc/tidy/html/api/utf8_8h_source.html
+file path=usr/share/doc/tidy/html/api/version_8h_source.html
+file path=usr/share/doc/tidy/html/api/win32tc_8h_source.html
 file htmldoc/checked_by_tidy.gif \
     path=usr/share/doc/tidy/html/checked_by_tidy.gif
 file htmldoc/doxygen.cfg path=usr/share/doc/tidy/html/doxygen.cfg
@@ -378,8 +258,7 @@ file htmldoc/grid.gif path=usr/share/doc/tidy/html/grid.gif
 file htmldoc/license.html path=usr/share/doc/tidy/html/license.html
 file htmldoc/pending.html path=usr/share/doc/tidy/html/pending.html
 file htmldoc/quickref-html.xsl path=usr/share/doc/tidy/html/quickref-html.xsl
-file htmldoc/release-notes.html \
-    path=usr/share/doc/tidy/html/release-notes.html
+file htmldoc/release-notes.html path=usr/share/doc/tidy/html/release-notes.html
 file htmldoc/tidy.css path=usr/share/doc/tidy/html/tidy.css
 file htmldoc/tidy.gif path=usr/share/doc/tidy/html/tidy.gif
 file htmldoc/tidy1.xsl path=usr/share/doc/tidy/html/tidy1.xsl
@@ -387,9 +266,3 @@ file files/tab2space.1 path=usr/share/man/man1/tab2space.1
 file files/tidy.1 path=usr/share/man/man1/tidy.1
 file files/libtidy.3 path=usr/share/man/man3/libtidy.3
 license tidy.license license=W3C
-link path=usr/lib/$(MACH64)/libtidy-1.0.so target=libtidy-1.0.so.0.0.0
-link path=usr/lib/$(MACH64)/libtidy-1.0.so.0 target=libtidy-1.0.so.0.0.0
-link path=usr/lib/$(MACH64)/libtidy.so target=libtidy-1.0.so.0.0.0
-link path=usr/lib/libtidy-1.0.so target=libtidy-1.0.so.0.0.0
-link path=usr/lib/libtidy-1.0.so.0 target=libtidy-1.0.so.0.0.0
-link path=usr/lib/libtidy.so target=libtidy-1.0.so.0.0.0
