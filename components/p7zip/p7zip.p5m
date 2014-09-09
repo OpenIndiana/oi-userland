@@ -19,7 +19,7 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
@@ -39,8 +39,11 @@ file usr/lib/p7zip/7z path=usr/bin/7z
 file usr/lib/p7zip/7za path=usr/bin/7za
 file usr/lib/p7zip/7zr path=usr/bin/7zr
 file contrib/gzip-like_CLI_wrapper_for_7z/p7zip path=usr/bin/p7zip
-file usr/lib/p7zip/7z.so path=usr/lib/7z/7z.so
-file usr/lib/p7zip/Codecs/Rar29.so path=usr/lib/7z/Codecs/Rar29.so
+# Prevent "64-bit binary in 32-bit path" errors, which don't apply here.
+file usr/lib/p7zip/7z.so path=usr/lib/7z/7z.so \
+    pkg.linted.userland.action001.2=true
+file usr/lib/p7zip/Codecs/Rar29.so path=usr/lib/7z/Codecs/Rar29.so \
+    pkg.linted.userland.action001.2=true
 file path=usr/share/doc/p7zip/ChangeLog
 file path=usr/share/doc/p7zip/DOCS/7zC.txt
 file path=usr/share/doc/p7zip/DOCS/7zFormat.txt

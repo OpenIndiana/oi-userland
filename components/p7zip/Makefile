@@ -59,13 +59,15 @@ $(BUILD_DIR)/%: $(SOURCE_DIR)/DOCS/%
 $(BUILD_DIR)/copying.txt: $(SOURCE_DIR)/DOCS/copying.txt
 	$(CP) $(SOURCE_DIR)/DOCS/copying.txt $@
 
+ASLR_MODE = $(ASLR_ENABLE)
+
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
 EXTRATARGETS = \
 	$(BUILD_DIR)/copying.txt $(BUILD_DIR)/unRarLicense.txt
 
-install:	build $(INSTALL_32) $(EXTRATARGETS)
+install:	build $(INSTALL_64) $(EXTRATARGETS)
 
 # When p7zip's install target is run, it creates all its directories mode 555,
 # so they're impossible to remove without adding the write bit first.
@@ -74,10 +76,10 @@ COMPONENT_POST_INSTALL_ACTION += $(CHMOD) -R u+w $(PROTO_DIR);
 COMPONENT_POST_INSTALL_ACTION += $(GSED) -i -e 's/\r//' $(PROTO_DIR)/usr/man/man1/7zr.1
 
 # build does this always
-test:	$(BUILD_32)
-	cd $(BUILD_DIR_32) && $(MAKE) -e test P7ZIP_HOME_DIR=$(BUILD_DIR_32)/bin
-	cd $(BUILD_DIR_32) && $(MAKE) -e test_7z P7ZIP_HOME_DIR=$(BUILD_DIR_32)/bin
-	cd $(BUILD_DIR_32) && $(MAKE) -e test_7zr P7ZIP_HOME_DIR=$(BUILD_DIR_32)/bin
+test:	$(BUILD_64)
+	cd $(BUILD_DIR_64) && $(MAKE) -e test P7ZIP_HOME_DIR=$(BUILD_DIR_64)/bin
+	cd $(BUILD_DIR_64) && $(MAKE) -e test_7z P7ZIP_HOME_DIR=$(BUILD_DIR_64)/bin
+	cd $(BUILD_DIR_64) && $(MAKE) -e test_7zr P7ZIP_HOME_DIR=$(BUILD_DIR_64)/bin
 
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
