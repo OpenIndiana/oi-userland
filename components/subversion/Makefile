@@ -29,7 +29,7 @@ PATH=$(dir $(CC)):$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
 
 COMPONENT_NAME=		subversion
 COMPONENT_VERSION=	1.7.5
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://subversion.apache.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -82,8 +82,7 @@ COMPONENT_POST_CONFIGURE_ACTION = \
     cd $(SOURCE_DIR) ; \
 	$(PYTHON.$(BITS)) ./build/transform_sql.py ./subversion/libsvn_fs_fs/rep-cache-db.sql < ./subversion/libsvn_fs_fs/rep-cache-db.sql > $(BUILD_DIR_$(BITS))/subversion/libsvn_fs_fs/rep-cache-db.h 2>&1 )
 
-COMPONENT_BUILD_TARGETS.32 = all swig-py swig-pl javahl
-COMPONENT_BUILD_TARGETS.64 = all swig-py javahl
+COMPONENT_BUILD_TARGETS = all swig-py javahl
 COMPONENT_INSTALL_TARGETS.32 = install install-lib \
 			    install-swig-pl install-swig-py \
 			    install-javahl install-javahl-lib \
@@ -143,6 +142,11 @@ CONFIGURE_OPTIONS += --with-neon=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --with-apr=$(APR-CONFIG.$(BITS))
 CONFIGURE_OPTIONS += --with-apr-util=$(APU-CONFIG.$(BITS))
 CONFIGURE_OPTIONS += --with-apxs=$(APXS.$(BITS))
+
+COMPONENT_POST_BUILD_ACTION.32 += \
+        ( cd $(BUILD_DIR_$(BITS)) && \
+            $(GMAKE) -j1 swig-pl )
+COMPONENT_POST_BUILD_ACTION = $(COMPONENT_POST_BUILD_ACTION.$(BITS))
 
 # Swig overwrites the 32-bit directory with 64-bit objects.
 # So we work around that.
