@@ -1,0 +1,17 @@
+Patch origin: in-house
+Patch status: Solaris-specific; not suitable for upstream
+
+Allows SMF method to override Apache binary and provide additional
+arguments and thus select desired MPM.
+
+--- support/apachectl.in
++++ support/apachectl.in
+@@ -42,7 +42,7 @@
+ # --------------------                              --------------------
+ # 
+ # the path to your httpd binary, including options if necessary
+-HTTPD='@exp_sbindir@/@progname@'
++HTTPD=${HTTPD:-@exp_sbindir@/@progname@}
+ #
+ # pick up any necessary environment variables
+ if test -f @exp_sbindir@/envvars; then

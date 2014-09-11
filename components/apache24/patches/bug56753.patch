@@ -1,0 +1,63 @@
+Patch origin: in-house
+Patch status: under investigation, submitted upstream
+
+https://issues.apache.org/bugzilla/show_bug.cgi?id=56753
+
+--- modules/lua/lua_apr.c
++++ modules/lua/lua_apr.c
+@@ -82,7 +82,7 @@
+ int ap_lua_init(lua_State *L, apr_pool_t *p)
+ {
+     luaL_newmetatable(L, "Apr.Table");
+-    luaL_register(L, "apr_table", lua_table_methods);
++    luaL_setfuncs(L, lua_table_methods, 0);
+     lua_pushstring(L, "__index");
+     lua_pushstring(L, "get");
+     lua_gettable(L, 2);
+--- modules/lua/lua_config.c
++++ modules/lua/lua_config.c
+@@ -263,13 +263,13 @@
+     lua_pushvalue(L, -1);
+ 
+     lua_setfield(L, -2, "__index");
+-    luaL_register(L, NULL, cfg_methods);        /* [metatable] */
++    luaL_setfuncs(L, cfg_methods, 0);           /* [metatable] */
+ 
+ 
+     luaL_newmetatable(L, "Apache2.CommandParameters");
+     lua_pushvalue(L, -1);
+ 
+     lua_setfield(L, -2, "__index");
+-    luaL_register(L, NULL, cmd_methods);        /* [metatable] */
++    luaL_setfuncs(L, cmd_methods, 0);           /* [metatable] */
+ 
+ }
+--- modules/lua/lua_request.c
++++ modules/lua/lua_request.c
+@@ -2878,7 +2878,7 @@
+     lua_pushvalue(L, -1);
+ 
+     lua_setfield(L, -2, "__index");
+-    luaL_register(L, NULL, request_methods);    /* [metatable] */
++    luaL_setfuncs(L, request_methods, 0);       /* [metatable] */
+ 
+     lua_pop(L, 2);
+ 
+@@ -2886,7 +2886,7 @@
+     lua_pushvalue(L, -1);
+ 
+     lua_setfield(L, -2, "__index");
+-    luaL_register(L, NULL, connection_methods); /* [metatable] */
++    luaL_setfuncs(L,  connection_methods, 0);  /* [metatable] */
+ 
+     lua_pop(L, 2);
+ 
+@@ -2894,7 +2894,7 @@
+     lua_pushvalue(L, -1);
+ 
+     lua_setfield(L, -2, "__index");
+-    luaL_register(L, NULL, server_methods);     /* [metatable] */
++    luaL_setfuncs(L, server_methods, 0);       /* [metatable] */
+ 
+     lua_pop(L, 2);
+ 

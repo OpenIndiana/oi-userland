@@ -1,0 +1,116 @@
+#!/sbin/sh
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+#
+# Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
+#
+
+. /lib/svc/share/smf_include.sh
+
+APACHE_VERSION=
+APACHE_USR_ROOT=/usr/apache2
+APACHE_ETC_ROOT=/etc/apache2
+APACHE_VAR_ROOT=/var/apache2
+
+#if startup options contain multiple arguments separated by a blank,
+#then they should be specified as below
+#e.g., %> svccfg -s apache24 setprop httpd/startup_options=\("-f" "/etc/apache2/2.4/new.conf"\)
+#
+STARTUP_OPTIONS=
+
+getprop() {
+    PROPVAL=""
+    svcprop -q -p $1 ${SMF_FMRI}
+    if [ $? -eq 0 ] ; then
+        PROPVAL=`svcprop -p $1 ${SMF_FMRI}`
+        if [ "${PROPVAL}" = "\"\"" ] ; then
+            PROPVAL=""
+        fi
+        return
+    fi
+    return
+}
+
+# Check whether alternate config file was specified using option -f.
+# If it's the case, Apache will search in the same directory for
+# availability of environment file.
+envvars_path_update() {
+    eval "set -- $1"
+    while [ $# -gt 0 ]; do
+        case "$1" in
+          -f) APACHE_USER_ENVVARS=`dirname "${2:-}"`/envvars; break;;
+          -f*) APACHE_USER_ENVVARS=`dirname "${1#-f}"`/envvars; break;;
+        esac
+        shift
+    done
+}
+
+APACHE_VERSION=`echo ${SMF_FMRI} | sed 's/[^0-9]//g;s/./\.&/g;s/^\.//'` 
+if [ "x${APACHE_VERSION}" != "x" ]; then
+    echo "Apache version is ${APACHE_VERSION}"
+    APACHE_USR_ROOT=${APACHE_USR_ROOT}/${APACHE_VERSION}
+    APACHE_ETC_ROOT=${APACHE_ETC_ROOT}/${APACHE_VERSION}
+    APACHE_VAR_ROOT=${APACHE_VAR_ROOT}/${APACHE_VERSION}
+fi
+
+APACHE_USER_ENVVARS=${APACHE_ETC_ROOT}/envvars
+
+APACHE_HOME=${APACHE_USR_ROOT}
+APACHE_BIN=${APACHE_HOME}/bin
+HTTPD=${APACHE_BIN}/httpd
+
+getprop httpd/startup_options
+if [ "${PROPVAL}" != "" ] ; then
+	echo startupoptions set
+	echo val=${PROPVAL}
+	STARTUP_OPTIONS="${PROPVAL} -k"
+        envvars_path_update "${PROPVAL}"
+fi
+
+getprop httpd/MPM
+if [ "${PROPVAL}x" == "workerx" ] || [ "${PROPVAL}x" == "preforkx" ] ; then
+	HTTPD="${HTTPD} -D ${PROPVAL}"
+fi
+
+case "$1" in
+start)
+	cmd="start"
+	;;
+refresh)
+	cmd="graceful"
+	;;
+stop)
+	cmd="stop"
+	;;
+*)
+	echo "Usage: $0 {start|stop|refresh}"
+	exit $SMF_EXIT_ERR_CONFIG
+	;;
+esac
+
+HTTPD="${HTTPD}" APACHE_USER_ENVVARS="${APACHE_USER_ENVVARS}" ${APACHE_BIN}/apachectl ${STARTUP_OPTIONS} ${cmd} 2>&1
+
+if [ $? -ne 0 ]; then
+    echo "Server failed to start. Check the error log (defaults to ${APACHE_VAR_ROOT}/logs/error_log) for more information, if any."
+    exit $SMF_EXIT_ERR_FATAL
+fi
+
+exit $SMF_EXIT_OK

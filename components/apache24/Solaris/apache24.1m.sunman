@@ -1,8 +1,8 @@
 '\" te
-.\" Copyright (c) 2008, 2014, Oracle and/or its affiliates. All rights reserved.
-.TH apache22 1M "Jul 2014" "SunOS 5.12" "System Administration Commands"
+.\" Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
+.TH apache24 1M "Jul 2014" "SunOS 5.12" "System Administration Commands"
 .SH NAME
-apache2 \- Apache HTTP Server Version 2.2 overview
+apache2 \- Apache HTTP Server Version 2.4 overview
 .SH SYNOPSIS
 .LP
 .nf
@@ -12,13 +12,24 @@ apache2 \- Apache HTTP Server Version 2.2 overview
 .SH DESCRIPTION
 .sp
 .LP
-Apache HTTP Server Version 2.2 (Apache 2) consists of a main  server daemon,
+Apache HTTP Server Version 2.4 (Apache 2) consists of a main  server daemon,
 loadable server modules,  some additional  support utilities, configuration
 files, and documentation.
 .sp
 .LP
-Both 32-bit and 64-bit versions of the servers are installed. It also
-includes two of the most popular MPMs - Prefork and Worker.
+Note Apache 2.4 is 64-bit only and Apache 2.2 modules are not
+binary compatible with 2.4.
+.sp
+Several Apache 2 modules are bundled in separate packages to reduce number of
+dependencies of main package. These are:
+.sp
+.in +2
+.nf
+web/server/apache-24/apache-dbd
+web/server/apache-24/apache-ldap
+web/server/apache-24/apache-lua
+.fi
+.in -2
 .sp
 Apache 2 can be enabled by authorized user within the service
 management facility (SMF), using the following fault management
@@ -26,7 +37,7 @@ resource identifier (FMRI):
 .sp
 .in +2
 .nf
-svc:/network/http:apache22
+svc:/network/http:apache24
 .fi
 .in -2
 .sp
@@ -37,8 +48,7 @@ tab(^G) allbox;
 cw(2.750000i)| cw(2.750000i)
 lw(2.750000i)| lw(2.750000i).
 SMF Property Name^Value 
-httpd/server_type^prefork (default) or worker 
-httpd/enable_64bit^true or false(default)
+httpd/MPM^event (default), prefork or worker 
 httpd/startup_options^valid apachectl options
 .TE
 .SH FILES
@@ -52,14 +62,7 @@ Note :
 .ie t \(bu
 .el o
 The string \fB[version]\fR should be expanded
-to \fB"MAJOR.MINOR"\fR. For example, \fB/usr/apache2/2.2/*\fR.
-.RE
-.RS +4
-.TP
-.ie t \(bu
-.el o
-\fB[isainfo]\fR represents the output of \fBisainfo
--n\fR on 64-bit platform.
+to \fB"MAJOR.MINOR"\fR. For example, \fB/usr/apache2/2.4/*\fR.
 .RE
 .RS +4
 .TP
@@ -104,10 +107,7 @@ option via SMF property httpd/startup_options.
 Contains additional server configuration files.
 .sp
 By default, server will load all the \fB\&.conf\fR files
-placed under this directory. It also has 2 additional \fB\&.load\fR configuration
-files-\fBmodules-32.load\fR and \fBmodules-64.load\fR which
-contain \fBLoadModule\fR directives for loading the 32 and 64-bit
-bundled Apache 2 modules respectively.
+placed under this directory.
 .RE
 
 .sp
@@ -191,20 +191,7 @@ the file to \fBconf.d\fR directory and modify as per the need.
 .ad
 .sp .6
 .RS 4n
-Contains the 32-bit httpd (Prefork MPM) and httpd.worker (Worker
-MPM) executable as well as other utility programs.
-.RE
-
-.sp
-.ne 2
-.mk
-.na
-\fB\fB/usr/apache2/[version]/bin/[isainfo]/\fR\fR
-.ad
-.sp .6
-.RS 4n
-Contains the 64-bit httpd (Prefork MPM) and httpd.worker (Worker
-MPM) executables as well as other utility programs.
+Contains the main httpd executable as well as other utility programs.
 .RE
 
 .sp
@@ -212,7 +199,6 @@ MPM) executables as well as other utility programs.
 .mk
 .na
 \fB\fB/usr/apache2/[version]/bin/envvars\fR\fR
-\fB\fB/usr/apache2/[version]/bin/[isainfo]/envvars\fR\fR
 .ad
 .sp .6
 .RS 4n
@@ -254,20 +240,7 @@ various optional server extensions with \fBapxs(8)\fR.
 .ad
 .sp .6
 .RS 4n
-Contains 32-bit loadable modules (DSOs) supplied with the
-server.
-.RE
-
-.sp
-.ne 2
-.mk
-.na
-\fB\fB/usr/apache2/[version]/libexec/[isainfo]/\fR\fR
-.ad
-.sp .6
-.RS 4n
-Contains 64-bit loadable modules (DSOs) supplied with the
-server.
+Contains loadable modules (DSOs) supplied with the server.
 .RE
 
 .sp
@@ -282,39 +255,6 @@ Contains man pages for the server, utility programs, and \fBmod_perl\fR.
 .sp
 Add this directory to your MANPATH to read the Apache 2 man pages. See
 Notes.
-.RE
-
-.sp
-.ne 2
-.mk
-.na
-\fB\fB/usr/apache2/[version]/lib/\fR\fR
-.ad
-.sp .6
-.RS 4n
-Contains the 32-bit Apache 2 core libraries.
-.RE
-
-.sp
-.ne 2
-.mk
-.na
-\fB\fB/usr/apache2/[version]/lib/[isainfo]/\fR\fR
-.ad
-.sp .6
-.RS 4n
-Contains the 64-bit Apache 2 core libraries.
-.RE
-
-.sp
-.ne 2
-.mk
-.na
-\fB\fB/usr/apache2/[version]/lib/perl/\fR\fR
-.ad
-.sp .6
-.RS 4n
-Contains the 32-bit modules and library files used by the \fBmod_perl\fR extension to Apache 2.
 .RE
 
 .sp
@@ -366,24 +306,15 @@ This should not be changed.
 .ad
 .sp .6
 .RS 4n
-Place holder for 32-bit user Apache 2 modules.
+Place holder for user Apache 2 modules.
 .sp
-Any 32-bit modules which are added using \fBapxs(8)\fR are
-copied into this directory.
+Any modules which are added using \fBapxs(8)\fR are copied into this directory.
 .RE
 
 .sp
 .ne 2
 .mk
 .na
-\fB\fB/var/apache2/[version]/libexec/[isainfo]/\fR\fR
-.ad
-.sp .6
-.RS 4n
-Place holder for 64-bit user Apache 2 modules.
-.sp
-Any 64-bit modules which are added using \fBapxs(8)\fR are
-copied into this directory.
 .RE
 
 .sp
@@ -426,35 +357,23 @@ Contains pkg(5) version based mediated symbolic links to the various
 Apache 2 utility programs.
 .RE
 
+
 .SH EXAMPLES
 .LP
-\fBExample 1 \fRTo enable 64-bit server
+\fBExample 1 \fRTo switch to worker MPM type
 .sp
 
 .in +2
 .nf
-# \fBsvccfg -s apache22 setprop httpd/enable_64bit=false\fR
-# \fBsvcadm refresh apache22\fR
-# \fBsvcadm enable apache22\fR
+# \fBsvccfg -s apache24 setprop httpd/MPM=worker\fR
+# \fBsvcadm refresh apache24\fR
+# \fBsvcadm restart apache24\fR
 .fi
 .in -2
 .sp
 
 .LP
-\fBExample 2 \fRTo switch to worker server type
-.sp
-
-.in +2
-.nf
-# \fBsvccfg -s apache22 setprop httpd/server_type=worker\fR
-# \fBsvcadm refresh apache22\fR
-# \fBsvcadm restart apache22\fR
-.fi
-.in -2
-.sp
-
-.LP
-\fBExample 3 \fRCreate new SMF apache instance
+\fBExample 2 \fRCreate new SMF apache instance
 .sp
 .LP
 This expects that valid configuration exists in
@@ -464,13 +383,13 @@ ErrorLog and CustomLog).
 .sp
 .in +2
 .nf
-# \fBcp /lib/svc/manifest/network/http-apache22.xml my-apache22.xml\fR
+# \fBcp /lib/svc/manifest/network/http-apache24.xml my-apache24.xml\fR
 .sp
-Edit my-apache22.xml and rename instance name to my-apache22.
+Edit my-apache24.xml and rename instance name to my-apache24.
 
-# \fBsvccfg import my-apache22.xml\fR
-# \fBsvccfg -s my-apache22 setprop httpd/startup_options=\\("-f" "/var/myapache/httpd.conf"\\)\fR
-# \fBsvcadm refresh my-apache22\fR
+# \fBsvccfg import my-apache24.xml\fR
+# \fBsvccfg -s my-apache24 setprop httpd/startup_options=\\("-f" "/var/myapache/httpd.conf"\\)\fR
+# \fBsvcadm refresh my-apache24\fR
 .fi
 .in -2
 .sp

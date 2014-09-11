@@ -1,0 +1,18 @@
+Patch origin: in-house
+Patch status: Solaris-specific; not suitable for upstream
+
+Allows to build our mod_auth_gss with Apache.
+
+--- modules/aaa/config.m4
++++ modules/aaa/config.m4
+@@ -54,6 +54,10 @@
+     enable_authnz_ldap=no
+   fi
+ ])
++APACHE_MODULE(auth_gss, GSS based authentication, , , most, [
++  MOD_AUTH_GSS_LDADD="-lgss"
++  AC_SUBST(MOD_AUTH_GSS_LDADD)
++])
+ 
+ dnl FastCGI authorizer interface, supporting authn and authz.
+ APACHE_MODULE(authnz_fcgi,

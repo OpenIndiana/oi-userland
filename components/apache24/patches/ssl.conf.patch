@@ -1,0 +1,26 @@
+Patch origin: in-house
+Patch status: Solaris-specific; not suitable for upstream
+
+--- docs/conf/extra/httpd-ssl.conf.in
++++ docs/conf/extra/httpd-ssl.conf.in
+@@ -24,9 +24,9 @@
+ # Manual for more details.
+ #
+ #SSLRandomSeed startup file:/dev/random  512
+-#SSLRandomSeed startup file:/dev/urandom 512
++SSLRandomSeed startup file:/dev/urandom 512
+ #SSLRandomSeed connect file:/dev/random  512
+-#SSLRandomSeed connect file:/dev/urandom 512
++SSLRandomSeed connect file:/dev/urandom 512
+ 
+ 
+ #
+@@ -81,7 +81,7 @@
+ 
+ #   General setup for the virtual host
+ DocumentRoot "@exp_htdocsdir@"
+-ServerName www.example.com:@@SSLPort@@
++ServerName 127.0.0.1:@@SSLPort@@
+ ServerAdmin you@example.com
+ ErrorLog "@exp_logfiledir@/error_log"
+ TransferLog "@exp_logfiledir@/access_log"

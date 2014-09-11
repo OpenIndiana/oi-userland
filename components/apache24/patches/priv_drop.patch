@@ -1,0 +1,42 @@
+Patch origin: in-house
+Patch status: Solaris-specific; not suitable for upstream
+
+Drops extra privilege which was given via SMF manifest file.
+
+--- server/main.c
++++ server/main.c
+@@ -45,6 +45,8 @@
+ #include <unistd.h>
+ #endif
+ 
++#include <priv.h>
++
+ /* WARNING: Win32 binds http_main.c dynamically to the server. Please place
+  *          extern functions and global data in another appropriate module.
+  *
+@@ -452,6 +454,7 @@
+     apr_status_t rv;
+     module **mod;
+     const char *opt_arg;
++    priv_set_t *tset;
+     APR_OPTIONAL_FN_TYPE(ap_signal_server) *signal_server;
+ 
+     AP_MONCONTROL(0); /* turn off profiling of startup */
+@@ -788,6 +806,17 @@
+ 
+         ap_run_optional_fn_retrieve();
+ 
++
++        /* here we drop privileges we won't need any more */
++        tset = priv_allocset();
++        priv_emptyset(tset);
++        priv_addset(tset, PRIV_NET_PRIVADDR);
++        if (setppriv(PRIV_OFF, PRIV_PERMITTED, tset) != 0) {
++           ap_log_error(APLOG_MARK, APLOG_EMERG, 0, NULL,
++                         APLOGNO(00021) "Unable to drop unneeded privilege.");
++            destroy_and_exit_process(process, 1);
++        }
++
+         ap_main_state = AP_SQ_MS_RUN_MPM;
+         if (ap_run_mpm(pconf, plog, ap_server_conf) != OK)
+             break;
