@@ -25,7 +25,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lua
 COMPONENT_VERSION=	5.2.2
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://www.lua.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -39,6 +39,8 @@ COMPONENT_ARCHIVE_1=	$(LUA_TESTS).tar.gz
 COMPONENT_ARCHIVE_HASH_1= \
     sha256:07c1071c66d9cb4dc80200ed430fc21ebbbccf1f55148b87eb0b9522932e4eb6
 COMPONENT_ARCHIVE_URL_1= $(COMPONENT_PROJECT_URL)/tests/5.2/$(COMPONENT_ARCHIVE_1)
+
+CLEAN_PATHS += $(LUA_TESTS)
 
 
 include $(WS_TOP)/make-rules/prep.mk
@@ -74,7 +76,7 @@ build:		$(BUILD_32_and_64)
 install:	$(INSTALL_32_and_64) $(BUILD_DIR)/lua-64.pc
 		
 test: 		install
-		(gzip -dc $(LUA_TESTS).tar.gz | tar xopf -; \
+		(gzip -dc $(USERLAND_ARCHIVES)$(LUA_TESTS).tar.gz | tar xopf -; \
 		cd $(LUA_TESTS); $(ENV) LD_LIBRARY_PATH=$(PROTOUSRLIBDIR) \
 		$(PROTOUSRBINDIR)/$(COMPONENT_NAME) -e"_U=true" all.lua; \
 		$(ENV) LD_LIBRARY_PATH=$(PROTOUSRLIBDIR64) \
