@@ -20,29 +20,32 @@
 #
 # Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		puppet
-COMPONENT_VERSION=	3.4.1
+COMPONENT_VERSION=	3.6.2
 COMPONENT_PROJECT_URL=	http://puppetlabs.com/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e6a929699a83c2bc1d1661674172ba7e92b6fb4235fa594cc2f3219925504b93
+    sha256:9114c63108c58e39db84937cb8f7e1add3dcbaa08fd730f631de6a7f64a3c360
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)downloads/puppet/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/puppet
 
-TPNO=			16191
+TPNO=			18128
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/install.rb.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-# puppet requires facter to build
-COMPONENT_INSTALL_ENV	+= RUBYLIB="$(COMPONENT_DIR)/../ruby/facter/build/prototype/$(MACH)$(VENDOR_RUBY)"
+# puppet requires facter and hiera as part of the install phase 
+COMPONENT_INSTALL_ENV	+= RUBYLIB="$(COMPONENT_DIR)/../facter/build/$(MACH64)lib:$(COMPONENT_DIR)/../hiera/build/$(MACH64)/lib"
 
-../ruby/facter/build/%/.installed:
-	(cd ../ruby/facter ; $(GMAKE) install)
+../facter/build/%/.installed:
+	(cd ../facter ; $(GMAKE) install)
+
+../hiera/build/%/.installed:
+	(cd ../hiera ; $(GMAKE) install)
 
 # set the bindir to /usr/sbin
 INSTALL_RB_BINDIR =	$(USRSBINDIR)
@@ -58,8 +61,8 @@ build:		$(BUILD_64)
 	# Ruby extension for auditing
 	(cd ext; $(RUBY) extconf.rb; $(GMAKE))
 
-# make sure facter is installed first
-install:	../ruby/facter/build/$(MACH64)/.installed $(INSTALL_64)
+# make sure facter and hiera are installed first
+install:	../facter/build/$(MACH64)/.installed ../hiera/build/$(MACH64)/.installed $(INSTALL_64)
 
 clean::
 	@if [ -f ext/Makefile ]; then \
@@ -67,7 +70,7 @@ clean::
 	fi
 
 # puppet requires the installation of the following rubygems to run
-# the unittests:  rspec rspec-expectations mocha rake rack hiera rgen
+# the unittests:  rspec rspec-expectations mocha rack rgen
 # Disable the tests until these rubygems are available.
 test:		$(NO_TESTS)
 

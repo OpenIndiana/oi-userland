@@ -1,7 +1,7 @@
 Add auditing support to agent execution
 
---- puppet-3.4.1/lib/puppet/agent.rb.orig	2013-03-08 16:03:45.000000000 -0700
-+++ puppet-3.4.1/lib/puppet/agent.rb	2013-03-08 16:03:45.000000000 -0700
+--- puppet-3.6.2/lib/puppet/agent.rb.orig	2014-06-18 09:30:30.571283131 -0600
++++ puppet-3.6.2/lib/puppet/agent.rb	2014-06-16 10:47:24.851029500 -0600
 @@ -1,4 +1,7 @@
  require 'puppet/application'
 +if Facter.value(:osfamily) == "Solaris"
@@ -10,7 +10,7 @@ Add auditing support to agent execution
  
  # A general class for triggering a run of another
  # class.
-@@ -35,6 +38,11 @@
+@@ -37,6 +40,11 @@
        return
      end
  
@@ -21,8 +21,8 @@ Add auditing support to agent execution
 +
      result = nil
      block_run = Puppet::Application.controlled_run do
-       splay
-@@ -50,6 +58,10 @@
+       splay client_options.fetch :splay, Puppet[:splay]
+@@ -52,6 +60,10 @@
            end
          end
        end

@@ -1,1 +1,0 @@
-puppet:		ruby/facter
