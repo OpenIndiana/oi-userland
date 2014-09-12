@@ -1,0 +1,58 @@
+This patch is Solaris-specific and thus will not be contributed upstream.
+
+--- mailman-2.1.18-1/misc/mailman.in.~1~	2014-05-06 09:43:56.000000000 -0700
++++ mailman-2.1.18-1/misc/mailman.in	2014-09-12 11:27:53.659779385 -0700
+@@ -33,13 +33,53 @@
+ # config: @prefix@/Mailman/mm_cfg.py
+ # pidfile: @prefix@/data/master-qrunner.pid
+ 
++. /lib/svc/share/smf_include.sh
++
+ PYTHON=@PYTHON@
+ MAILMANHOME=@prefix@
+ MAILMANCTL=$MAILMANHOME/bin/mailmanctl
++DATABASEDIR=/var/share/mailman
++
++# arguments:
++# $1 (required): directory to check for and create if needed
++# $2 (optional): mode
++create_if_needed()
++{
++    dir=$1
++    mode=02775
++    [[ $# -ge 2 ]] && mode=$2
++    if [[ ! -d $dir ]]; then
++	mkdir -m $mode $dir
++	chown mailman:mailman $dir
++    fi
++}
+ 
+ case "$1" in
+ 'start')
+     #rm -f $MAILMANHOME/locks/*
++
++    # Directories under /var/share are only created after a reboot, when
++    # an early-in-boot service migrates them from /var/.migrate .  To allow
++    # Mailman to be used after initial 'pkg install' before such a reboot,
++    # we manually create the required directories here if needed.
++    if [[ ! -d $DATABASEDIR ]]; then
++	mkdir $DATABASEDIR
++	create_if_needed $DATABASEDIR/archives
++	create_if_needed $DATABASEDIR/archives/private 02771
++	create_if_needed $DATABASEDIR/archives/public
++	create_if_needed $DATABASEDIR/lists
++	create_if_needed $DATABASEDIR/locks
++	create_if_needed $DATABASEDIR/logs
++	create_if_needed $DATABASEDIR/qfiles
++	create_if_needed $DATABASEDIR/spam
++    fi
++
++    # A single "site" list called mailman needs to exist first.  Check for
++    # it and create it if needed.
++    $MAILMANHOME/bin/list_lists -b | grep -q "^mailman$"
++    if [[ $? -ne 0 ]]; then
++	$MAILMANHOME/bin/newlist -q -e 127.0.0.1 mailman postmaster@127.0.0.1 mailman
++    fi
+     $PYTHON $MAILMANCTL -s -q start
+     ;;
+ 

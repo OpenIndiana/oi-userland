@@ -1,0 +1,29 @@
+This patch has not yet been contributed upstream, but that is planned.
+
+--- mailman-2.1.18-1/configure.~1~	2014-05-06 09:43:56.000000000 -0700
++++ mailman-2.1.18-1/configure	2014-09-12 10:59:09.653064688 -0700
+@@ -4564,6 +4564,13 @@
+ # scripts.  They're removed on a make distclean, so we make them here.
+ mkdir -p build/bin build/contrib build/cron
+ 
++# For when $builddir != $srcdir, we need to create the messages sub-dirs
++# under $builddir, or .po -> .mo compilation will fail.
++for i in $srcdir/messages/*/LC_MESSAGES ; do
++    j=`echo $i | sed -e "s|$srcdir/||"`
++    mkdir -p $j
++done
++
+ ac_config_files="$ac_config_files misc/paths.py Mailman/Defaults.py Mailman/mm_cfg.py.dist src/Makefile misc/Makefile bin/Makefile Mailman/Makefile Mailman/Cgi/Makefile Mailman/Logging/Makefile Mailman/Archiver/Makefile Mailman/Commands/Makefile Mailman/Handlers/Makefile Mailman/Bouncers/Makefile Mailman/Queue/Makefile Mailman/MTA/Makefile Mailman/Gui/Makefile templates/Makefile cron/Makefile scripts/Makefile messages/Makefile cron/crontab.in misc/mailman Makefile tests/Makefile tests/bounces/Makefile tests/msgs/Makefile $SCRIPTS"
+ 
+ ac_config_commands="$ac_config_commands default"
+--- mailman-2.1.18-1/messages/Makefile.in.orig	2014-05-06 09:43:56.000000000 -0700
++++ mailman-2.1.18-1/messages/Makefile.in	2014-09-12 11:12:16.177368152 -0700
+@@ -105,7 +105,7 @@
+ 	@for d in $(LANGUAGES); \
+ 	do \
+ 	    po=$(srcdir)/$$d/LC_MESSAGES/mailman.po; \
+-	    mo=$(srcdir)/$$d/LC_MESSAGES/mailman.mo; \
++	    mo=$$d/LC_MESSAGES/mailman.mo; \
+ 	    dir=$(DESTDIR)$(prefix)/messages/$$d/LC_MESSAGES; \
+ 	    $(INSTALL) -m $(FILEMODE) $$po $$dir; \
+  	    $(INSTALL) -m $(FILEMODE) $$mo $$dir; \
