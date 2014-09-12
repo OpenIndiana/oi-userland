@@ -1,1 +1,1 @@
-puppet:		ruby/facter ruby/hiera
+ruby/puppet:		ruby/facter ruby/hiera
