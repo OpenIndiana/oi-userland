@@ -44,36 +44,32 @@ class IPfiltersManager(object):
         else:
             ippool.remove_pool()
 
-    def add_nat_rules(self, rules, version='4'):
-        # Solaris doesn't support IPv6 NAT rules
-        assert version == '4'
+    def add_nat_rules(self, rules):
         ipnat = net_lib.IPnatCommand()
         ipnat.add_rules(rules)
         # we successfully added the nat rules, update the local copy
         for rule in rules:
             self.ipv4['nat'].append(rule)
 
-    def remove_nat_rules(self, rules, version='4'):
-        # Solaris doesn't support IPv6 NAT rules
-        assert version == '4'
+    def remove_nat_rules(self, rules):
         ipnat = net_lib.IPnatCommand()
         ipnat.remove_rules(rules)
         # we successfully removed the nat rules, update the local copy
         for rule in rules:
             self.ipv4['nat'].remove(rule)
 
-    def add_ipf_rules(self, rules, version='4'):
+    def add_ipf_rules(self, rules, version=4):
         ipf = net_lib.IPfilterCommand()
         ipf.add_rules(rules, version)
-        version_rules = (self.ipv4['filter'] if version == '4' else
+        version_rules = (self.ipv4['filter'] if version == 4 else
                          self.ipv6['filter'])
         for rule in rules:
             version_rules.append(rule)
 
-    def remove_ipf_rules(self, rules, version='4'):
+    def remove_ipf_rules(self, rules, version=4):
         ipf = net_lib.IPfilterCommand()
         ipf.remove_rules(rules, version)
-        version_rules = (self.ipv4['filter'] if version == '4' else
+        version_rules = (self.ipv4['filter'] if version == 4 else
                          self.ipv6['filter'])
         for rule in rules:
             version_rules.remove(rule)

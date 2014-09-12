@@ -83,12 +83,17 @@ class SolarisVNICDriver(object):
         return vnicname.replace('-', '_')
 
     def plug(self, tenant_id, network_id, port_id, datalink_name,
-             namespace=None, prefix=None):
+             namespace=None, prefix=None, protection=False):
         """Plug in the interface."""
 
         evs_vport = ('%s/%s') % (network_id, port_id)
         dl = net_lib.Datalink(datalink_name)
         dl.connect_vnic(evs_vport, tenant_id)
+
+        if not protection:
+            cmd = ['/usr/sbin/evsadm', 'set-vportprop', '-T', tenant_id,
+                   '-p', 'protection=none', evs_vport]
+            utils.execute(cmd)
 
     def unplug(self, device_name, namespace=None, prefix=None):
         """Unplug the interface."""

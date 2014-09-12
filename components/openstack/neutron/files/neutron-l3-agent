@@ -81,7 +81,8 @@ def remove_ipfilter_rules(version):
         if not prog.search(ipf):
             continue
         # capture the IP pool name
-        ippool_names.append(ipf.split('pool/')[1])
+        if 'pool/' in ipf:
+            ippool_names.append(ipf.split('pool/')[1])
 
         try:
             # remove the IP Filter rule
@@ -112,32 +113,9 @@ def stop():
     except CalledProcessError as err:
         print "failed to kill the SMF contract: %s" % (err)
         return smf_include.SMF_EXIT_ERR_FATAL
-    # remove VNICs associated with L3 agent
-    cmd = ["/usr/sbin/ipadm", "show-if", "-p", "-o", "ifname"]
-    p = Popen(cmd, stdout=PIPE, stderr=PIPE)
-    output, error = p.communicate()
-    if p.returncode != 0:
-        print "failed to retrieve IP interface names"
-        return smf_include.SMF_EXIT_ERR_CONFIG
 
-    ifnames = output.splitlines()
-    # L3 agent datalinks are always 15 characters in length. They start
-    # with either 'l3i' or 'l3e', end with '_0', and in between they are
-    # hexadecimal digits.
-    prog = re.compile('l3[ie][0-9A-Fa-f\_]{10}_0')
-    for ifname in ifnames:
-        if not prog.search(ifname):
-            continue
-        try:
-            # first remove the IP
-            check_call(["/usr/bin/pfexec", "/usr/sbin/ipadm", "delete-ip",
-                        ifname])
-            # next remove the VNIC
-            check_call(["/usr/bin/pfexec", "/usr/sbin/dladm", "delete-vnic",
-                        ifname])
-        except CalledProcessError as err:
-            print "failed to remove datalinks used by L3 agent: %s" % (err)
-            return smf_include.SMF_EXIT_ERR_FATAL
+    # We need to first remove the IP filter rules and then remove
+    # the IP interfaces on which the rules were applied.
 
     # remove IPv4 Filter rules added by neutron-l3-agent
     rv = remove_ipfilter_rules(4)
@@ -171,6 +149,33 @@ def stop():
                        stdin=p.stdout)
         except CalledProcessError as err:
             print "failed to remove IP NAT rule %s: %s" % (ipnat_rule, err)
+            return smf_include.SMF_EXIT_ERR_FATAL
+
+    # remove VNICs associated with L3 agent
+    cmd = ["/usr/sbin/ipadm", "show-if", "-p", "-o", "ifname"]
+    p = Popen(cmd, stdout=PIPE, stderr=PIPE)
+    output, error = p.communicate()
+    if p.returncode != 0:
+        print "failed to retrieve IP interface names"
+        return smf_include.SMF_EXIT_ERR_CONFIG
+
+    ifnames = output.splitlines()
+    # L3 agent datalinks are always 15 characters in length. They start
+    # with either 'l3i' or 'l3e', end with '_0', and in between they are
+    # hexadecimal digits.
+    prog = re.compile('l3[ie][0-9A-Fa-f\_]{10}_0')
+    for ifname in ifnames:
+        if not prog.search(ifname):
+            continue
+        try:
+            # first remove the IP
+            check_call(["/usr/bin/pfexec", "/usr/sbin/ipadm", "delete-ip",
+                        ifname])
+            # next remove the VNIC
+            check_call(["/usr/bin/pfexec", "/usr/sbin/dladm", "delete-vnic",
+                        ifname])
+        except CalledProcessError as err:
+            print "failed to remove datalinks used by L3 agent: %s" % (err)
             return smf_include.SMF_EXIT_ERR_FATAL
 
     return smf_include.SMF_EXIT_OK

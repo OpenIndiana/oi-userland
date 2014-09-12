@@ -260,80 +260,156 @@ class EVSL3NATAgent(l3_agent.L3NATAgent):
                    gw_ip]
             utils.execute(cmd, check_exit_code=False)
 
+            # for each of the internal ports, add Policy Based
+            # Routing (PBR) rule
+            for port in ri.internal_ports:
+                internal_dlname = self.get_internal_device_name(port['id'])
+                rules = ['pass in on %s to %s:%s from any to any' %
+                         (internal_dlname, external_dlname, gw_ip)]
+                ipversion = netaddr.IPNetwork(port['subnet']['cidr']).version
+                ri.ipfilters_manager.add_ipf_rules(rules, ipversion)
+
     def external_gateway_removed(self, ri, ex_gw_port,
                                  external_dlname, internal_cidrs):
 
-        if net_lib.Datalink.datalink_exists(external_dlname):
-            self.driver.fini_l3(external_dlname)
-            self.driver.unplug(external_dlname)
         gw_ip = ex_gw_port['subnet']['gateway_ip']
         if gw_ip:
+            # remove PBR rules
+            for port in ri.internal_ports:
+                internal_dlname = self.get_internal_device_name(port['id'])
+                rules = ['pass in on %s to %s:%s from any to any' %
+                         (internal_dlname, external_dlname, gw_ip)]
+                ipversion = netaddr.IPNetwork(port['subnet']['cidr']).version
+                ri.ipfilters_manager.remove_ipf_rules(rules, ipversion)
+
             cmd = ['/usr/bin/pfexec', '/usr/sbin/route', 'delete', 'default',
                    gw_ip]
             utils.execute(cmd, check_exit_code=False)
 
-    def _get_ippool_name(self, mac_address):
-        # generate a unique-name for ippool(1m) from that last 3
-        # bytes of mac-address
-        mac_suffix = mac_address.split(':')[3:]
-        return int("".join(mac_suffix), 16)
+        if net_lib.Datalink.datalink_exists(external_dlname):
+            self.driver.fini_l3(external_dlname)
+            self.driver.unplug(external_dlname)
+
+    def _get_ippool_name(self, mac_address, suffix=None):
+        # Generate a unique-name for ippool(1m) from that last 3
+        # bytes of mac-address. It is called pool name, but it is
+        # actually a 32 bit integer
+        name = mac_address.split(':')[3:]
+        if suffix:
+            name.append(suffix)
+        return int("".join(name), 16)
 
     def internal_network_added(self, ri, port):
-
         internal_dlname = self.get_internal_device_name(port['id'])
-        if not net_lib.Datalink.datalink_exists(internal_dlname):
-            self.driver.plug(port['tenant_id'], port['network_id'], port['id'],
-                             internal_dlname)
+        # driver just returns if datalink and IP interface already exists
+        self.driver.plug(port['tenant_id'], port['network_id'], port['id'],
+                         internal_dlname)
         self.driver.init_l3(internal_dlname, [port['ip_cidr']])
 
-        # add ippool(1m) for the new internal port
-        new_ippool_name = self._get_ippool_name(port['mac_address'])
-        ri.ipfilters_manager.add_ippool(new_ippool_name, None)
+        # Since we support shared router model, we need to block the new
+        # internal port from reaching other tenant's ports
+        block_pname = self._get_ippool_name(port['mac_address'])
+        ri.ipfilters_manager.add_ippool(block_pname, None)
+        if self.conf.allow_forwarding_between_networks:
+            # If allow_forwarding_between_networks is set, then we need to
+            # allow forwarding of packets between same tenant's ports.
+            allow_pname = self._get_ippool_name(port['mac_address'], '0')
+            ri.ipfilters_manager.add_ippool(allow_pname, None)
 
         # walk through the other internal ports and retrieve their
         # cidrs and at the same time add the new internal port's
         # cidr to them
-        subnet_cidr = port['subnet']['cidr']
-        other_subnet_cidrs = []
-        for oip in ri.internal_ports:
-            if oip['mac_address'] != port['mac_address']:
-                if (self.conf.allow_forwarding_between_networks and
-                        oip['tenant_id'] == port['tenant_id']):
-                    continue
-                other_subnet_cidrs.append(oip['subnet']['cidr'])
-                ippool_name = self._get_ippool_name(oip['mac_address'])
-                ri.ipfilters_manager.add_ippool(ippool_name, [subnet_cidr])
-        # update the new port's pool with other port's cidrs
-        ri.ipfilters_manager.add_ippool(new_ippool_name, other_subnet_cidrs)
+        port_subnet = port['subnet']['cidr']
+        block_subnets = []
+        allow_subnets = []
+        for internal_port in ri.internal_ports:
+            if internal_port['mac_address'] == port['mac_address']:
+                continue
+            if (self.conf.allow_forwarding_between_networks and
+                    internal_port['tenant_id'] == port['tenant_id']):
+                allow_subnets.append(internal_port['subnet']['cidr'])
+                # we need to add the port's subnet to this internal_port's
+                # allowed_subnet_pool
+                iport_allow_pname = \
+                    self._get_ippool_name(internal_port['mac_address'], '0')
+                ri.ipfilters_manager.add_ippool(iport_allow_pname,
+                                                [port_subnet])
+            else:
+                block_subnets.append(internal_port['subnet']['cidr'])
+                iport_block_pname = \
+                    self._get_ippool_name(internal_port['mac_address'])
+                ri.ipfilters_manager.add_ippool(iport_block_pname,
+                                                [port_subnet])
+        # update the new port's pool with other ports' subnet
+        ri.ipfilters_manager.add_ippool(block_pname, block_subnets)
+        if self.conf.allow_forwarding_between_networks:
+            ri.ipfilters_manager.add_ippool(allow_pname, allow_subnets)
 
-        # now setup the IPF rule
+        # now setup the IPF rules
         rules = ['block in quick on %s from %s to pool/%d' %
-                 (internal_dlname, subnet_cidr, new_ippool_name)]
-        ipversion = netaddr.IPNetwork(subnet_cidr).version
+                 (internal_dlname, port_subnet, block_pname)]
+        # pass in packets between networks that belong to same tenant
+        if self.conf.allow_forwarding_between_networks:
+            rules.append('pass in quick on %s from %s to pool/%d' %
+                         (internal_dlname, port_subnet, allow_pname))
+        # if the external gateway is already setup for the shared router,
+        # then we need to add Policy Based Routing (PBR) for this internal
+        # network
+        ex_gw_port = ri.ex_gw_port
+        ex_gw_ip = (ex_gw_port['subnet']['gateway_ip'] if ex_gw_port else None)
+        if ex_gw_ip:
+            external_dlname = self.get_external_device_name(ex_gw_port['id'])
+            rules.append('pass in on %s to %s:%s from any to any' %
+                         (internal_dlname, external_dlname, ex_gw_ip))
+
+        ipversion = netaddr.IPNetwork(port_subnet).version
         ri.ipfilters_manager.add_ipf_rules(rules, ipversion)
 
     def internal_network_removed(self, ri, port):
         internal_dlname = self.get_internal_device_name(port['id'])
-        if net_lib.Datalink.datalink_exists(internal_dlname):
-            self.driver.fini_l3(internal_dlname)
-            self.driver.unplug(internal_dlname)
-
-        # remove all the IP filter rules that we added during addition.
-        ippool_name = self._get_ippool_name(port['mac_address'])
+        port_subnet = port['subnet']['cidr']
+        # remove all the IP filter rules that we added during
+        # internal network addition
+        block_pname = self._get_ippool_name(port['mac_address'])
         rules = ['block in quick on %s from %s to pool/%d' %
-                 (internal_dlname, port['subnet']['cidr'], ippool_name)]
+                 (internal_dlname, port_subnet, block_pname)]
+        if self.conf.allow_forwarding_between_networks:
+            allow_pname = self._get_ippool_name(port['mac_address'], '0')
+            rules.append('pass in quick on %s from %s to pool/%d' %
+                         (internal_dlname, port_subnet, allow_pname))
+
+        # remove all the IP filter rules that we added during
+        # external network addition
+        ex_gw_port = ri.ex_gw_port
+        ex_gw_ip = (ex_gw_port['subnet']['gateway_ip'] if ex_gw_port else None)
+        if ex_gw_ip:
+            external_dlname = self.get_external_device_name(ex_gw_port['id'])
+            rules.append('pass in on %s to %s:%s from any to any' %
+                         (internal_dlname, external_dlname, ex_gw_ip))
         ipversion = netaddr.IPNetwork(port['subnet']['cidr']).version
         ri.ipfilters_manager.remove_ipf_rules(rules, ipversion)
+
         # remove the ippool
-        ri.ipfilters_manager.remove_ippool(ippool_name, None)
+        ri.ipfilters_manager.remove_ippool(block_pname, None)
+        if self.conf.allow_forwarding_between_networks:
+            ri.ipfilters_manager.remove_ippool(allow_pname, None)
+
         for internal_port in ri.internal_ports:
             if (self.conf.allow_forwarding_between_networks and
                     internal_port['tenant_id'] == port['tenant_id']):
-                continue
-            ippool_name = \
-                self._get_ippool_name(internal_port['mac_address'])
-            subnet_cidr = internal_port['subnet']['cidr']
-            ri.ipfilters_manager.remove_ippool(ippool_name, [subnet_cidr])
+                iport_allow_pname = \
+                    self._get_ippool_name(internal_port['mac_address'], '0')
+                ri.ipfilters_manager.remove_ippool(iport_allow_pname,
+                                                   [port_subnet])
+            else:
+                iport_block_pname = \
+                    self._get_ippool_name(internal_port['mac_address'])
+                ri.ipfilters_manager.remove_ippool(iport_block_pname,
+                                                   [port_subnet])
+
+        if net_lib.Datalink.datalink_exists(internal_dlname):
+            self.driver.fini_l3(internal_dlname)
+            self.driver.unplug(internal_dlname)
 
     def routers_updated(self, context, routers):
         super(EVSL3NATAgent, self).routers_updated(context, routers)

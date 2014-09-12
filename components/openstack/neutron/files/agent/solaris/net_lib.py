@@ -109,7 +109,7 @@ class IPInterface(CommandBase):
         if temp:
             cmd.append('-t')
 
-        return self.execute_with_pfexec(cmd)
+        self.execute_with_pfexec(cmd)
 
     def delete_address(self, ipaddr):
         if not self.ipaddr_exists(self._ifname, ipaddr):
@@ -166,7 +166,7 @@ class Datalink(CommandBase):
             cmd.append('-T')
             cmd.append(tenantname)
 
-        return self.execute_with_pfexec(cmd)
+        self.execute_with_pfexec(cmd)
 
     def create_vnic(self, lower_link, mac_address=None, vid=None, temp=True):
         if self.datalink_exists(self._dlname):
@@ -187,14 +187,14 @@ class Datalink(CommandBase):
         if temp:
             cmd.append('-t')
 
-        return self.execute_with_pfexec(cmd)
+        self.execute_with_pfexec(cmd)
 
     def delete_vnic(self):
         if not self.datalink_exists(self._dlname):
             return
 
         cmd = ['/usr/sbin/dladm', 'delete-vnic', self._dlname]
-        return self.execute_with_pfexec(cmd)
+        self.execute_with_pfexec(cmd)
 
 
 class IPpoolCommand(CommandBase):
@@ -280,30 +280,38 @@ class IPfilterCommand(CommandBase):
 
     def add_rules(self, rules, version=4):
         rules = self._split_rules(rules, version)[1]
-        process_input = '\n'.join(rules)
+        if not rules:
+            return
+        process_input = '\n'.join(rules) + '\n'
         cmd = ['/usr/sbin/ipf', '-f', '-']
         if version == 6:
             cmd.insert(1, '-6')
-        return self.execute_with_pfexec(cmd, process_input=process_input)
+        self.execute_with_pfexec(cmd, process_input=process_input)
 
     def remove_rules(self, rules, version=4):
         rules = self._split_rules(rules, version)[0]
-        process_input = '\n'.join(rules)
+        if not rules:
+            return
+        process_input = '\n'.join(rules) + '\n'
         cmd = ['/usr/sbin/ipf', '-r', '-f', '-']
         if version == 6:
             cmd.insert(1, '-6')
-        return self.execute_with_pfexec(cmd, process_input=process_input)
+        self.execute_with_pfexec(cmd, process_input=process_input)
 
 
 class IPnatCommand(CommandBase):
     '''Wrapper around Solaris ipnat(1m) command'''
 
     def add_rules(self, rules):
-        process_input = '\n'.join(rules)
+        if not rules:
+            return
+        process_input = '\n'.join(rules) + '\n'
         cmd = ['/usr/sbin/ipnat', '-f', '-']
-        return self.execute_with_pfexec(cmd, process_input=process_input)
+        self.execute_with_pfexec(cmd, process_input=process_input)
 
     def remove_rules(self, rules):
-        process_input = '\n'.join(rules)
+        if not rules:
+            return
+        process_input = '\n'.join(rules) + '\n'
         cmd = ['/usr/sbin/ipnat', '-r', '-f', '-']
-        return self.execute_with_pfexec(cmd, process_input=process_input)
+        self.execute_with_pfexec(cmd, process_input=process_input)
