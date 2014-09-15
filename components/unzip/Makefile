@@ -34,7 +34,7 @@ COMPONENT_ARCHIVE_URL=	ftp://ftp.info-zip.org/pub/infozip/src/$(COMPONENT_ARCHIV
 COMPONENT_PROJECT_URL=http://www.info-zip.org/UnZip.html
 COMPONENT_BUGDB=	utility/zip
 
-TPNO=			9100
+TPNO=			16388
 
 include ../../make-rules/prep.mk
 include ../../make-rules/justmake.mk
