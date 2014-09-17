@@ -1,0 +1,16 @@
+ioctl(TIOCSWINSZ) will sporadically fail with an ENXIO.  Ignoring this
+harmless condition doesn't affect tmux behavior.
+In-house patch.  Has been filed upstream as ticket #158
+    https://sourceforge.net/p/tmux/tickets/158/
+As of filing time, too early to determine whether it will be accepted or not.
+--- ORIGINAL/server-client.c	2013-03-26 12:22:31.000000000 -0700
++++ tmux-1.8/server-client.c	2014-09-15 07:56:17.821757634 -0700
+@@ -541,7 +541,7 @@
+ 		 * other platforms and ignoring it doesn't seem to cause any
+ 		 * issues.
+ 		 */
+-		if (errno != EINVAL)
++		if (errno != EINVAL && errno != ENXIO)
+ #endif
+ 		fatal("ioctl failed");
+ 	}
