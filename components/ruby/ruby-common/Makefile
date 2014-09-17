@@ -31,6 +31,10 @@ COMPONENT_BUGDB=	utility/ruby
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
+# This package delivers no files and has no dependencies.
+EXTDEPFILES = $(NULLDEPFILE)
+LICENSE_TRANSFORMS=
+
 # nothing to download or build; just publish the package
 download prep build install test:
 
