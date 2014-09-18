@@ -73,15 +73,9 @@ Puppet::Type.type(:address_properties).provide(:address_properties) do
     end
 
     def properties=(value)
-        ipadm("set-addrprop", add_properties(value), @resource[:name])
-    end
-
-    def add_properties(props)
-        a = []
-        props.each do |key, value|
-            a << "#{key}=#{value}"
+        value.each do |key, value|
+            ipadm("set-addrprop", "-p", "#{key}=#{value}", @resource[:name])
         end
-        properties = Array["-p", a.join(",")]
     end
 
     def exists?
@@ -107,7 +101,9 @@ Puppet::Type.type(:address_properties).provide(:address_properties) do
     end
 
     def create
-        ipadm("set-addrprop", add_properties(@addrprops), @resource[:address])
+        @addrprops.each do |key, value|
+            ipadm("set-addrprop", "-p", "#{key}=#{value}", @resource[:address])
+        end
     end
 
     def exec_cmd(*cmd)

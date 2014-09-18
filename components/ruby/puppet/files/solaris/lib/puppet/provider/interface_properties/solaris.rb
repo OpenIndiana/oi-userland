@@ -73,15 +73,9 @@ Puppet::Type.type(:interface_properties).provide(:interface_properties) do
     end
 
     def properties=(value)
-        ipadm("set-ifprop", add_properties(value), @resource[:name])
-    end
-
-    def add_properties(props)
-        a = []
-        props.each do |key, value|
-            a << "#{key}=#{value}"
+        value.each do |key, value|
+            ipadm("set-ifprop", "-p", "#{key}=#{value}", @resource[:name])
         end
-        properties = Array["-p", a.join(",")]
     end
 
     def exists?
@@ -111,7 +105,9 @@ Puppet::Type.type(:interface_properties).provide(:interface_properties) do
 
     def create
         name, proto = @resource[:interface].split("/")
-        ipadm("set-ifprop", "-m", proto, add_properties(@ifprops), name)
+        @ifprops.each do |key, value|
+            ipadm("set-ifprop", "-m", proto, "-p", "#{key}=#{value}", name)
+        end
     end
 
     def exec_cmd(*cmd)

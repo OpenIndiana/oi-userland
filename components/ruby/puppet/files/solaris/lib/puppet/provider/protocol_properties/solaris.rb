@@ -73,17 +73,11 @@ Puppet::Type.type(:protocol_properties).provide(:protocol_properties) do
     end
 
     def properties=(value)
-        ipadm("set-prop", "-p", add_properties(value), @resource[:name])
+        value.each do |key, value|
+            ipadm("set-prop", "-p", "#{key}=#{value}", @resource[:name])
+        end
     end
 
-    def add_properties(props)
-        a = []
-        props.each do |key, value|
-            a << "#{key}=#{value}"
-        end
-        properties = Array["-p", a.join(",")]
-    end
-    
     def exists?
         if @resource[:properties] == nil
             return :false
@@ -107,7 +101,9 @@ Puppet::Type.type(:protocol_properties).provide(:protocol_properties) do
     end
 
     def create
-        ipadm("set-prop", add_properties(@protoprops), @resource[:name])
+        @protoprops.each do |key, value|
+            ipadm("set-prop", "-p", "#{key}=#{value}", @resource[:name])
+        end
     end
 
     def exec_cmd(*cmd)
