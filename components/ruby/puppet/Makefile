@@ -39,7 +39,7 @@ include $(WS_TOP)/make-rules/install.rb.mk
 include $(WS_TOP)/make-rules/ips.mk
 
 # puppet requires facter and hiera as part of the install phase 
-COMPONENT_INSTALL_ENV	+= RUBYLIB="$(COMPONENT_DIR)/../facter/build/$(MACH64)lib:$(COMPONENT_DIR)/../hiera/build/$(MACH64)/lib"
+COMPONENT_INSTALL_ENV	+= RUBYLIB="$(COMPONENT_DIR)/../facter/build/$(MACH64)/lib:$(COMPONENT_DIR)/../hiera/build/$(MACH64)/lib"
 
 ../facter/build/%/.installed:
 	(cd ../facter ; $(GMAKE) install)
