@@ -37,6 +37,8 @@ COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 clean::
 	$(RM) $(SOURCE_DIR)/.prep
 
+download:
+
 build: $(BUILD_32)
 
 install: $(INSTALL_32)
