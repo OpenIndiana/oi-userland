@@ -1,0 +1,56 @@
+#
+# Private symbol cannot_audit() was demoted to local in libbsm.so and is no
+# longer available to its consumers. For OpenSSH sshd this was causing runtime
+# linker errors at accepting connections from clients.
+#
+# On S12 audit is always enabled. As an interim solution to unbreak OpenSSH
+# with S12_57+ libbsm.so, we remove the calls to cannot_audit().
+#
+# Symbol aug_get_machine was demoted to local too. OpenSSH configure checks
+# for aug_get_machine in libbsm.so and provides its own implementation if not
+# present. To avoid OpenSSH built on an S12_56- build machine failing with
+# run-time liker error on S12_57+ system, we overrule configure's
+# HAVE_AUG_GET_MACHINE directly in the code.
+#
+# This patch will be removed once 19629847 is integrated.
+#
+diff -ur old/audit-bsm.c new/audit-bsm.c
+--- old/audit-bsm.c	2012-02-23 15:40:43.000000000 -0800
++++ new/audit-bsm.c	2014-09-18 05:16:43.210289238 -0700
+@@ -81,9 +81,6 @@
+ #define AUToReturnFunc(a,b)	au_to_return((a), (u_int)(b))
+ #endif
+ 
+-#ifndef cannot_audit
+-extern int	cannot_audit(int);
+-#endif
+ extern void	aug_init(void);
+ extern void	aug_save_auid(au_id_t);
+ extern void	aug_save_uid(uid_t);
+@@ -126,6 +123,8 @@
+ 
+ /* Below is the low-level BSM interface code */
+ 
++/* Force local definition of aug_get_machine */
++#undef HAVE_AUG_GET_MACHINE
+ /*
+  * aug_get_machine is only required on IPv6 capable machines, we use a
+  * different mechanism in audit_connection_from() for IPv4-only machines.
+@@ -355,8 +354,6 @@
+ 	AuditInfoTermID *tid = &ssh_bsm_tid;
+ 	char buf[1024];
+ 
+-	if (cannot_audit(0))
+-		return;
+ 	debug3("BSM audit: connection from %.100s port %d", host, port);
+ 
+ 	/* populate our terminal id structure */
+@@ -400,8 +397,6 @@
+ 	static int logged_in = 0;
+ 	const char *user = the_authctxt ? the_authctxt->user : "(unknown user)";
+ 
+-	if (cannot_audit(0))
+-		return;
+ 
+ 	switch(event) {
+ 	case SSH_AUTH_SUCCESS:
