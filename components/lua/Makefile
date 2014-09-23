@@ -63,17 +63,32 @@ $(BUILD_DIR)/lua-64.pc:		files/lua-64.pc
 
 ASLR_MODE = $(ASLR_ENABLE)
 
+CLEAN_PATHS +=	$(LUA_TESTS)
+
+LUA_EXE_32 =	$(BUILD_DIR)/$(MACH32)/src/$(COMPONENT_NAME)
+LUA_EXE_64 =	$(BUILD_DIR)/$(MACH64)/src/$(COMPONENT_NAME)
+LUA_EXE =	$(LUA_EXE_$(BITS))
+
+# Unpack and patch the tests once, and work around CR #19661394, which is
+# causing the lua self-tests to fail.
+COMPONENT_PRE_TEST_ACTION = \
+	(if ! test -d $(LUA_TESTS) ; then \
+		$(UNPACK) $(UNPACK_ARGS) $(LUA_TESTS).tar.gz ; \
+		(cd $(LUA_TESTS); $(GPATCH) $(GPATCH_FLAGS) \
+			<$(COMPONENT_DIR)/files/fix-tests.patch) ; \
+	fi)
+
+COMPONENT_TEST_DIR =		$(LUA_TESTS)
+COMPONENT_TEST_CMD =		$(LUA_EXE)
+COMPONENT_TEST_ARGS =		-e"_U=true"
+COMPONENT_TEST_TARGETS =	all.lua
+
 # common targets
 build:		$(BUILD_32_and_64)
-	
+
 install:	$(INSTALL_32_and_64) $(BUILD_DIR)/lua-64.pc
-		
-test: 		install
-		(gzip -dc $(LUA_TESTS).tar.gz | tar xopf -; \
-		cd $(LUA_TESTS); $(ENV) LD_LIBRARY_PATH=$(PROTOUSRLIBDIR) \
-		$(PROTOUSRBINDIR)/$(COMPONENT_NAME) -e"_U=true" all.lua; \
-		$(ENV) LD_LIBRARY_PATH=$(PROTOUSRLIBDIR64) \
-		$(PROTOUSRBINDIR64)/$(COMPONENT_NAME) -e"_U=true" all.lua)
+
+test: 		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
 

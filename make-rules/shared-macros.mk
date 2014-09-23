@@ -230,6 +230,9 @@ TEST_32_and_64 =	$(TEST_32) $(TEST_64)
 $(BUILD_DIR_32)/.tested:       BITS=32
 $(BUILD_DIR_64)/.tested:       BITS=64
 
+# set the default command to use for test of the component
+COMPONENT_TEST_CMD =		$(GMAKE)
+
 # set the default target for test of the component
 COMPONENT_TEST_TARGETS =	check
 
