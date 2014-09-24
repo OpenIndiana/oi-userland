@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -38,6 +38,8 @@ COMPONENT_ARCHIVE_HASH=	 \
 	sha256:169e56bde7df2822c48e5dc8c3cebc6033a47fd278c8783aaf32770ca295fdcc
 COMPONENT_ARCHIVE_URL=	http://archive.ntp.org/ntp4/ntp-dev/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB= service/ntp
+
+TPNO=			18350
 
 PATCH_LEVEL = 0
 
