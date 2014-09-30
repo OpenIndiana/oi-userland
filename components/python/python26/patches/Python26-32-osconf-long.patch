@@ -1,0 +1,14 @@
+# http://bugs.python.org/issue17964 was fixed in 3.4 but not back-ported so we
+# need this patch for 2.6 .
+
+--- Python-2.6.8/Modules/posixmodule.c.orig	2013-09-10 14:48:19.058672610 -0700
++++ Python-2.6.8/Modules/posixmodule.c	2013-09-10 14:48:49.872618578 -0700
+@@ -8188,7 +8188,7 @@
+     int name;
+ 
+     if (PyArg_ParseTuple(args, "O&:sysconf", conv_sysconf_confname, &name)) {
+-        int value;
++        long value;
+ 
+         errno = 0;
+         value = sysconf(name);
