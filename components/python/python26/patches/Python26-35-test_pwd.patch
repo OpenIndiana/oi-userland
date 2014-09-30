@@ -1,0 +1,30 @@
+This patch essentially comes from upstream, as it was taken from the
+corresponding 2.7 file, slightly adapted to avoid using an assert
+construct that was not introduced until 2.7 .
+
+--- Python-2.6.8/Lib/test/test_pwd.py~	Tue Jul 22 00:09:21 2014
++++ Python-2.6.8/Lib/test/test_pwd.py	Tue Aug 12 08:53:07 2014
+@@ -1,3 +1,4 @@
++import sys
+ import unittest
+ from test import test_support
+
+@@ -83,11 +84,13 @@
+
+         self.assertRaises(KeyError, pwd.getpwnam, fakename)
+
+-        # Choose a non-existent uid.
+-        fakeuid = 4127
+-        while fakeuid in byuids:
+-            fakeuid = (fakeuid * 3) % 0x10000
+-
++        # In some cases, byuids isn't a complete list of all users in the
++        # system, so if we try to pick a value not in byuids (via a perturbing
++        # loop, say), pwd.getpwuid() might still be able to find data for that
++        # uid. Using sys.maxint may provoke the same problems, but hopefully
++        # it will be a more repeatable failure.
++        fakeuid = sys.maxint
++        self.assert_(fakeuid not in byuids)
+         self.assertRaises(KeyError, pwd.getpwuid, fakeuid)
+
+ def test_main():

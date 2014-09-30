@@ -1,0 +1,13 @@
+# This patch comes from upstream: http://bugs.python.org/issue10585
+
+--- Python-2.6.8/Lib/test/test_posix.py.orig	2012-04-10 08:32:07.000000000 -0700
++++ Python-2.6.8/Lib/test/test_posix.py	2014-03-24 14:46:34.624941892 -0700
+@@ -353,7 +353,7 @@
+             def test_setgroups(self):
+                 for groups in [[0], range(16)]:
+                     posix.setgroups(groups)
+-                    self.assertListEqual(groups, posix.getgroups())
++                    self.assertEqual(groups, posix.getgroups())
+ 
+ 
+ def test_main():
