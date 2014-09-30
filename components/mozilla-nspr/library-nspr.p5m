@@ -1,0 +1,43 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL)". You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2011, Andrzej Szeszo
+# Copyright 2013, Jon Tibble
+#
+
+set name=pkg.fmri value=pkg:/library/nspr@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Netscape Portable Runtime"
+set name=info.classification value=org.opensolaris.category.2008:System/Libraries
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license nspr.license license="MPL 1.1/GPL 2.0/LGPL 2.1"
+
+file path=usr/lib/mps/$(MACH64)/libnspr4.so
+file path=usr/lib/mps/$(MACH64)/libplc4.so
+file path=usr/lib/mps/$(MACH64)/libplds4.so
+
+file path=usr/lib/mps/libnspr4.so
+file path=usr/lib/mps/libplc4.so
+file path=usr/lib/mps/libplds4.so
+
+link path=usr/lib/mps/64 target=$(MACH64)
+link path=usr/lib/mps/secv1/$(MACH64)/libnspr4.so \
+    target=../../$(MACH64)/libnspr4.so
+link path=usr/lib/mps/secv1/$(MACH64)/libplc4.so \
+    target=../../$(MACH64)/libplc4.so
+link path=usr/lib/mps/secv1/$(MACH64)/libplds4.so \
+    target=../../$(MACH64)/libplds4.so
+link path=usr/lib/mps/secv1/64 target=$(MACH64)
+link path=usr/lib/mps/secv1/libnspr4.so target=../libnspr4.so
+link path=usr/lib/mps/secv1/libplc4.so target=../libplc4.so
+link path=usr/lib/mps/secv1/libplds4.so target=../libplds4.so

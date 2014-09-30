@@ -1,0 +1,28 @@
+--- nss-3.16.5/nss/tests/all.sh.~1~	2014-09-27 12:23:44.575799585 +0400
++++ nss-3.16.5/nss/tests/all.sh	2014-09-27 12:29:58.108115822 +0400
+@@ -301,7 +301,7 @@
+ # following test for modutil should check for that instead.
+ # Exception: when building softoken only, shlibsign is the
+ # last file created.
+-if [ ${NSS_BUILD_SOFTOKEN_ONLY} -eq "1" ]; then
++if [ "${NSS_BUILD_SOFTOKEN_ONLY}" = "1" ]; then
+   LAST_FILE_BUILT=shlibsign
+ else
+   LAST_FILE_BUILT=modutil
+--- nss-3.16.5/nss/tests/common/init.sh.~1~	2014-09-27 13:19:41.616081775 +0400
++++ nss-3.16.5/nss/tests/common/init.sh	2014-09-27 13:20:17.474756568 +0400
+@@ -369,10 +369,10 @@
+             ;;
+     esac
+ 
+-    if [ -z "${DOMSUF}" -a "${OS_ARCH}" != "Android" ]; then
+-        echo "$SCRIPTNAME: Fatal DOMSUF env. variable is not defined."
+-        exit 1 #does not need to be Exit, very early in script
+-    fi
++#    if [ -z "${DOMSUF}" -a "${OS_ARCH}" != "Android" ]; then
++#        echo "$SCRIPTNAME: Fatal DOMSUF env. variable is not defined."
++#        exit 1 #does not need to be Exit, very early in script
++#    fi
+ 
+ #HOSTADDR was a workaround for the dist. stress test, and is probably 
+ #not needed anymore (purpose: be able to use IP address for the server 
