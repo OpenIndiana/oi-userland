@@ -103,6 +103,7 @@ CONFIGURE_OPTIONS  +=		--with-system-ffi
 CONFIGURE_OPTIONS  +=		--without-gcc
 CONFIGURE_OPTIONS  +=		--without-ensurepip
 CONFIGURE_OPTIONS  +=		--enable-ipv6
+CONFIGURE_OPTIONS  +=		--bindir=/usr/bin
 CONFIGURE_OPTIONS  +=		CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_OPTIONS  +=		LDFLAGS="$(LDFLAGS)"
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
