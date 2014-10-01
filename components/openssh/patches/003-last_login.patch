@@ -1,32 +1,69 @@
-# This change is Solaris-specific and thus is not being contributed back
-# to the upstream community.  Details:
+# The man page change here is Solaris-specific and thus is not being
+# contributed back to the upstream community.  The servconf.c change
+# was developed in-house and has been submitted upstream to OpenSSH for
+# their consideration:
+# https://bugzilla.mindrot.org/show_bug.cgi?id=2278
 #
-# OpenSSH updates lastlog when users login however on Solaris the
-# pam_open_session(3PAM) function handles this so we avoid the
-# redundant additional upating of lastlog here.  We can't disable all
-# lastlog references with --disable-lastlog or NO_SSH_LASTLOG since that
-# prevents the 'Last login: ...' message from being displayed.  Thus
-# we just prevent OpenSSH from updating lastlog since reading from
-# lastlog is fine.  Other PAM implementations don't update lastlog
-# during session management so this change is Solaris-specific and
-# thus isn't being contributed back to the upstream community.
+# OpenSSH normally updates lastlog when users login and reads lastlog to
+# determine the last login time of the user however on Solaris the
+# pam_unix_session(5) module handles both of these tasks so we compile
+# OpenSSH with --disable-lastlog to disable all lastlog references.
+# This means the sshd_config option of PrintLastLog is now ignored and
+# can't be changed so we update sshd's configuration parsing to flag
+# this as unsupported and update the man page here.
 #
-*** orig/loginrec.c	Thu Oct  4 16:08:42 2012
---- new/loginrec.c      Thu Sep  4 16:41:24 2014
+*** old/servconf.c Wed Sep 17 02:54:26 2014
+--- new/servconf.c Wed Sep 17 02:56:55 2014
 ***************
-*** 444,450 ****
-  #ifdef USE_LOGIN
-  	syslogin_write_entry(li);
-  #endif
-! #ifdef USE_LASTLOG
-  	if (li->type == LTYPE_LOGIN)
-  		lastlog_write_entry(li);
-  #endif
---- 444,450 ----
-  #ifdef USE_LOGIN
-  	syslogin_write_entry(li);
-  #endif
-! #if defined(USE_LASTLOG) && !defined(PAM_SUN_CODEBASE)
-  	if (li->type == LTYPE_LOGIN)
-  		lastlog_write_entry(li);
-  #endif
+*** 432,438 ****
+--- 432,442 ----
+  	{ "listenaddress", sListenAddress, SSHCFG_GLOBAL },
+  	{ "addressfamily", sAddressFamily, SSHCFG_GLOBAL },
+  	{ "printmotd", sPrintMotd, SSHCFG_GLOBAL },
++ #ifdef DISABLE_LASTLOG
++ 	{ "printlastlog", sUnsupported, SSHCFG_GLOBAL },
++ #else
+  	{ "printlastlog", sPrintLastLog, SSHCFG_GLOBAL },
++ #endif
+  	{ "ignorerhosts", sIgnoreRhosts, SSHCFG_GLOBAL },
+  	{ "ignoreuserknownhosts", sIgnoreUserKnownHosts, SSHCFG_GLOBAL },
+  	{ "x11forwarding", sX11Forwarding, SSHCFG_ALL },
+*** old/sshd_config.5	Tue Sep 16 06:24:13 2014
+--- new/sshd_config.5	Tue Sep 16 06:47:47 2014
+***************
+*** 1008,1015 ****
+  .Xr sshd 1M
+  should print the date and time of the last user login when a user logs
+  in interactively.
+! The default is
+! .Dq yes .
+  .It Cm PrintMotd
+  Specifies whether
+  .Xr sshd 1M
+--- 1008,1015 ----
+  .Xr sshd 1M
+  should print the date and time of the last user login when a user logs
+  in interactively.
+! On Solaris this option is always ignored since pam_unix_session(5)
+! reports the last login time.
+  .It Cm PrintMotd
+  Specifies whether
+  .Xr sshd 1M
+***************
+*** 1349,1355 ****
+  (though not necessary) that it be world-readable.
+  .El
+  .Sh SEE ALSO
+! .Xr sshd 8
+  .Sh AUTHORS
+  OpenSSH is a derivative of the original and free
+  ssh 1.2.12 release by Tatu Ylonen.
+--- 1349,1356 ----
+  (though not necessary) that it be world-readable.
+  .El
+  .Sh SEE ALSO
+! .Xr sshd 8 ,
+! .Xr pam_unix_session 5
+  .Sh AUTHORS
+  OpenSSH is a derivative of the original and free
+  ssh 1.2.12 release by Tatu Ylonen.
