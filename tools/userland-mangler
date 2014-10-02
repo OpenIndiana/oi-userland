@@ -217,7 +217,7 @@ def mangle_cddl(manifest, action, text):
 	strip_cddl = action.attrs.pop('mangler.strip_cddl', 'true')
 	if strip_cddl is 'false':
 		return text
-	cddl_re = re.compile('^[^\n]*CDDL HEADER START.+CDDL HEADER END[^\n]*$',
+	cddl_re = re.compile('^[^\n]*CDDL HEADER START.+CDDL HEADER END[^\n]*\n',
 			     re.MULTILINE|re.DOTALL)
 	return cddl_re.sub('', text)
 
