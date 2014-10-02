@@ -1,0 +1,14 @@
+Reverse includes so that new headers are found before possibly incompatible system headers
+
+--- nss-3.16.5/nss/coreconf/ruleset.mk.~1~	2014-09-25 19:46:22.722625276 +0400
++++ nss-3.16.5/nss/coreconf/ruleset.mk	2014-09-25 19:47:20.600942252 +0400
+@@ -198,6 +198,9 @@
+     endif
+ endif
+ 
++reverse = $(if $(1),$(call reverse,$(wordlist 2,$(words $(1)),$(1)))) $(firstword $(1))
++INCLUDES := $(call reverse,$(INCLUDES))
++
+ ifdef SYSTEM_INCL_DIR
+     YOPT = -Y$(SYSTEM_INCL_DIR)
+ endif
