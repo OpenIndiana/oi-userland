@@ -1,0 +1,31 @@
+Changes needed to make the hexdump and tailf tests work correctly.
+
+These will be passed upstream.
+
+--- util-linux-2.24.2/tests/ts/hexdump/empty-format.orig	2014-06-06 08:21:49.459889429 -0700
++++ util-linux-2.24.2/tests/ts/hexdump/empty-format	2014-06-06 08:31:18.548924420 -0700
+@@ -18,9 +18,10 @@
+ . $TS_TOPDIR/functions.sh
+ ts_init "$*"
+ 
+-INPUT=$(printf \\1)
+-$TS_CMD_HEXDUMP -n1 -ve '2 "" "%x"' <<< $INPUT 2>&1 >> $TS_OUTPUT
++$TS_CMD_HEXDUMP -b $TS_SELF/hexdump-input >> $TS_OUTPUT
+ 
+-$TS_CMD_HEXDUMP -n1 -ve '4 "%x"' -e '2 ""' <<< $INPUT 2>&1 >> $TS_OUTPUT
++$TS_CMD_HEXDUMP -c $TS_SELF/hexdump-input >> $TS_OUTPUT
++
++$TS_CMD_HEXDUMP -C $TS_SELF/hexdump-input >> $TS_OUTPUT
+ 
+ ts_finalize
+--- util-linux-2.24.2/tests/ts/tailf/simple.orig	2014-06-04 07:52:07.774218747 -0700
++++ util-linux-2.24.2/tests/ts/tailf/simple	2014-06-04 07:51:51.126976578 -0700
+@@ -27,7 +27,7 @@
+ 
+ sleep 0.1
+ echo {0..9} >> $INPUT
+-sleep 0.1
++sleep 0.2
+ 
+ rm -f $INPUT
+ 
