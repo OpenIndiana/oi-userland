@@ -1,0 +1,123 @@
+Changes to make "gmake parfait" work. In other words, instead of using
+"-include config.h" as part of the build, replace this with the addition
+of a:
+
+#include "config.h"
+
+at the beginning of all the source files that get information from this
+file.
+
+This patch can be removed when Parfait CR #19730835 is fixed.
+
+These changes will not be sent upstream.
+
+--- util-linux-2.24.2/Makefile.in.orig	2014-10-03 13:10:39.157296040 -0700
++++ util-linux-2.24.2/Makefile.in	2014-10-03 13:10:56.518794681 -0700
+@@ -3267,7 +3267,6 @@
+ usrlib_execdir = @usrlib_execdir@
+ usrsbin_execdir = @usrsbin_execdir@
+ AM_CPPFLAGS = \
+-	-include config.h \
+ 	-I$(top_srcdir)/include \
+ 	-DLOCALEDIR=\"$(localedir)\" \
+ 	-D_PATH_LOCALSTATEDIR=\"${localstatedir}\"
+--- util-linux-2.24.2/text-utils/colcrt.c.orig	2014-10-03 12:57:37.229875653 -0700
++++ util-linux-2.24.2/text-utils/colcrt.c	2014-10-03 13:04:07.012470027 -0700
+@@ -38,6 +38,7 @@
+  * 	modified to work correctly in multi-byte locales
+  */
+ 
++#include "config.h"
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <unistd.h>		/* for close() */
+--- util-linux-2.24.2/text-utils/colrm.c.orig	2014-10-03 12:57:37.234365767 -0700
++++ util-linux-2.24.2/text-utils/colrm.c	2014-10-03 13:04:22.353214979 -0700
+@@ -38,6 +38,7 @@
+  * 	modified to work correctly in multi-byte locales
+  */
+ 
++#include "config.h"
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <getopt.h>
+--- util-linux-2.24.2/text-utils/column.c.orig	2014-10-03 12:57:37.238786225 -0700
++++ util-linux-2.24.2/text-utils/column.c	2014-10-03 13:04:35.246011917 -0700
+@@ -38,6 +38,7 @@
+  * 	modified to work correctly in multi-byte locales
+  */
+ 
++#include "config.h"
+ #include <sys/types.h>
+ #include <sys/ioctl.h>
+ 
+--- util-linux-2.24.2/text-utils/hexdump.c.orig	2014-10-03 12:57:37.243108535 -0700
++++ util-linux-2.24.2/text-utils/hexdump.c	2014-10-03 13:04:47.087065662 -0700
+@@ -35,6 +35,7 @@
+   * - added Native Language Support
+   */
+ 
++#include "config.h"
+ #include <sys/types.h>
+ #include <stdio.h>
+ #include <string.h>
+--- util-linux-2.24.2/text-utils/hexsyntax.c.orig	2014-10-03 12:57:37.245992188 -0700
++++ util-linux-2.24.2/text-utils/hexsyntax.c	2014-10-03 13:04:59.228066989 -0700
+@@ -35,6 +35,7 @@
+   * - added Native Language Support
+   */
+ 
++#include "config.h"
+ #include <sys/types.h>
+ #include <unistd.h>
+ #include <stdlib.h>
+--- util-linux-2.24.2/text-utils/rev.c.orig	2014-10-03 12:57:37.248641691 -0700
++++ util-linux-2.24.2/text-utils/rev.c	2014-10-03 13:05:12.227532484 -0700
+@@ -48,6 +48,7 @@
+  *      Changed tab indentation to 8 chars for better reading the code
+  */
+ 
++#include "config.h"
+ #include <stdarg.h>
+ #include <sys/types.h>
+ #include <errno.h>
+--- util-linux-2.24.2/text-utils/tailf.c.orig	2014-10-03 12:57:37.251263508 -0700
++++ util-linux-2.24.2/text-utils/tailf.c	2014-10-03 13:05:24.645043233 -0700
+@@ -26,6 +26,7 @@
+  * flushed back to disk.  This is sort of a "stealth" tail.
+  */
+ 
++#include "config.h"
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <unistd.h>
+--- util-linux-2.24.2/lib/colors.c.orig	2014-10-03 12:57:53.090779693 -0700
++++ util-linux-2.24.2/lib/colors.c	2014-10-03 13:05:42.799702714 -0700
+@@ -4,6 +4,7 @@
+  * This file may be distributed under the terms of the
+  * GNU Lesser General Public License.
+  */
++#include "config.h"
+ #include <c.h>
+ #include <assert.h>
+ 
+--- util-linux-2.24.2/lib/fileutils.c.orig	2014-10-03 12:57:58.764773604 -0700
++++ util-linux-2.24.2/lib/fileutils.c	2014-10-03 13:05:52.790897687 -0700
+@@ -2,6 +2,7 @@
+  * Copyright (C) 2012 Sami Kerola <kerolasa@iki.fi>
+  */
+ 
++#include "config.h"
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <sys/stat.h>
+--- util-linux-2.24.2/lib/tt.c.orig	2014-10-03 12:58:03.068722737 -0700
++++ util-linux-2.24.2/lib/tt.c	2014-10-03 13:06:03.548849305 -0700
+@@ -10,6 +10,7 @@
+  * This file may be redistributed under the terms of the
+  * GNU Lesser General Public License.
+  */
++#include "config.h"
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <unistd.h>

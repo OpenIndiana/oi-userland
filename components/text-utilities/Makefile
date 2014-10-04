@@ -21,9 +21,6 @@
 # Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
-# parfait doesn't seem to like -include (19730835)
-export PARFAIT_BUILD=no
-
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		text-utilities
