@@ -1,0 +1,18 @@
+http://bugs.proftpd.org/show_bug.cgi?id=4109
+https://github.com/proftpd/proftpd/commit/0b8afb267eb6fd6acf98595a8c2812cd27ac11a0
+
+diff --git a/src/inet.c b/src/inet.c
+index f5602e0..d0a0631 100644
+--- a/src/inet.c
++++ b/src/inet.c
+@@ -770,8 +770,9 @@ int pr_inet_set_proto_opts(pool *p, conn_t *c, int mss, int nodelay,
+   if (pr_netaddr_use_ipv6()) {
+     /* Only set TCLASS flags on IPv6 sockets; IPv4 sockets use TOS. */
+     if (pr_netaddr_get_family(c->local_addr) == AF_INET6) {
++      int level = ipv6_proto;
+       if (c->listen_fd != -1) {
+-        if (setsockopt(c->listen_fd, ip_level, IPV6_TCLASS, (void *) &tos,
++        if (setsockopt(c->listen_fd, level, IPV6_TCLASS, (void *) &tos,
+             sizeof(tos)) < 0) {
+           pr_log_pri(PR_LOG_NOTICE, "error setting listen fd IPV6_TCLASS: %s",
+             strerror(errno));
