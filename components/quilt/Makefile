@@ -71,6 +71,7 @@ CONFIGURE_OPTIONS += --with-perl=/usr/perl5/$(PERL_VERSION)/bin/perl
 CONFIGURE_OPTIONS += --with-pod2man=/usr/perl5/$(PERL_VERSION)/bin/pod2man
 CONFIGURE_OPTIONS += --with-xgettext=/usr/bin/gxgettext
 CONFIGURE_OPTIONS += --with-msgfmt=/usr/bin/gmsgfmt
+CONFIGURE_OPTIONS += --without-column
 
 CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
 
