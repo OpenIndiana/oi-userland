@@ -1,6 +1,6 @@
 #
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL)". You may
+# Common Development and Distribution License ("CDDL"). You may
 # only use this file in accordance with the terms of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
@@ -9,18 +9,17 @@
 #
 
 #
-# Copyright 2011 Josef 'Jeff' Sipek <jeffpc@josefsipek.net>
+# Copyright 2014 Josef 'Jeff' Sipek <jeffpc@josefsipek.net>
 #
 
-<transform file path=usr/share/man/.+ -> default mangler.man.stability uncommitted>
-set name=pkg.fmri value=pkg:/x11/xmessage@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="xmessage - display a message or query in a window"
-set name=info.classification value="org.opensolaris.category.2008:Applications/Accessories"
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+set name=info.classification value=org.opensolaris.category.2008:Applications/Accessories
 
-license xmessage.license license='MIT'
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 dir path=usr
 dir path=usr/bin
