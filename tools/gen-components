@@ -19,12 +19,12 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2013, Oracle and/or it's affiliates.  All rights reserved.
+# Copyright (c) 2012, 2014, Oracle and/or it's affiliates.  All rights reserved.
 #
 #
 # gen_components
-# A simple script to generate (on stdout), the component.html web page 
-# found at: http://userland.us.oracle.com/components.html
+# A simple script to generate (on stdout), the component.html web page
+# found at: http://userland.us.oracle.com/component-lists/s12.html
 #
 
 import getopt
@@ -32,12 +32,6 @@ import os
 import sys
 
 debug = False
-
-# TPNO string to search for in each .p5m file.
-TPNO_str = "com.oracle.info.tpno"
-
-# Hashtable of components with TPNOs keyed by component name.
-comp_TPNOs = {}
 
 # Hashtable of RE's, RM's and Teams keyed by component path.
 owners = {}
@@ -127,55 +121,6 @@ def read_owners(owners_file):
 
     return owners
 
-# Return a hashtable of components with TPNOs keyed by component name.
-def find_TPNOs(workspace):
-    comp_TPNOs = {}
-    for directory, _, files in os.walk(workspace + "/components"):
-        for filename in files:
-            if filename.endswith(".p5m"):
-                pathname = os.path.join(directory, filename)
-                fin = open(pathname, 'r')
-                lines = fin.readlines()
-                fin.close()
-
-                for line in lines:
-                    line = line.replace("\n", "")
-                    n = line.find(TPNO_str)
-                    if n != -1:
-                        tpno_str = line[n:].split("=")[1]
-                        try:
-                            # Check that the TPNO is a valid number.
-                            tpno = int(tpno_str)
-                            if debug:
-                                print >> sys.stderr, "TPNO: %s: %s" % \
-                                    (directory, tpno_str)
-                            comp_TPNOs[directory] = tpno_str
-                        except:
-                            # Check to see if line end in a "\" character in
-                            # which case, it's an attribute rather than an
-                            # set name action, so extract it a different way.
-                            try:
-                                n += len(TPNO_str)+1
-                                tpno_str = line[n:].split()[0]
-                                # Check that the TPNO is a valid number.
-                                tpno = int(tpno_str)
-                                if debug:
-                                    print >> sys.stderr, "TPNO: %s: %s" % \
-                                        (directory, tpno_str)
-
-                                # If it's an attribute, there might be more
-                                # than one TPNO for this component.
-                                if directory in comp_TPNOs:
-                                    entry = comp_TPNOs[directory]
-                                    tpno_str = "%s,%s" % (entry, tpno_str)
-
-                                comp_TPNOs[directory] = tpno_str
-                            except:
-                                print >> sys.stderr, \
-                                    "Unable to read TPNO: %s" % pathname
-
-    return(comp_TPNOs)
-
 # Return a sorted list of the directories containing one or more .p5m files.
 def find_p5m_dirs(workspace):
     p5m_dirs = []
@@ -217,21 +162,15 @@ def gen_reports(workspace, component_dir):
     if debug:
         print >> sys.stderr, "Processing %s" % component_dir
 
-    try:
-        tpno = comp_TPNOs[component_dir]
-    except:
-        tpno = ""
-
     re, rm, team = get_owner(component_dir)
     makefiles = "-f Makefile -f %s/make-rules/component-report" % workspace
     targets = "clean component-hook"
     template = "cd %s; "
-    template += "TPNO='%s' "
     template += "RESPONSIBLE_ENGINEER='%s' "
     template += "RESPONSIBLE_MANAGER='%s' "
     template += "TEAM='%s' "
     template += "gmake COMPONENT_HOOK='gmake %s component-report' %s"
-    cmd = template % (component_dir, tpno, re, rm, team, makefiles, targets)
+    cmd = template % (component_dir, re, rm, team, makefiles, targets)
 
     if debug:
         print >> sys.stderr, "gen_reports: command: `%s`" % cmd
@@ -299,7 +238,6 @@ if __name__ == "__main__":
  
     owners = read_owners(owners_file)
     write_preamble()
-    comp_TPNOs = find_TPNOs(workspace)
     p5m_dirs = find_p5m_dirs(workspace)
     for p5m_dir in p5m_dirs:
         gen_reports(workspace, p5m_dir)
