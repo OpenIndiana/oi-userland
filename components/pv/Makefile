@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -34,6 +34,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:f93a5eda47d4607e35020622717ade5bc0e5ee82123a97331090f19e0b907c5f
 COMPONENT_ARCHIVE_URL=	http://pipeviewer.googlecode.com/files/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/pv
+
+TPNO=			19386
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
