@@ -24,22 +24,24 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		patch
-COMPONENT_VERSION=	2.5.9
+COMPONENT_VERSION=	2.7.1
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/patch/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:ecb5c6469d732bcf01d6ec1afe9e64f1668caba5bfdb103c28d7f537ba3cdb8a
+    sha256:c05f28668c3474bc63adcd48abae921d15e71c254fbebdbaeda40456d64039d5
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/patch/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gpatch
 
-TPNO=			8588
+TPNO=			18936
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
+
+COMPONENT_INSTALL_ARGS += bindir=$(USRBINDIR)
 
 ASLR_MODE = $(ASLR_ENABLE)
 
@@ -48,7 +50,7 @@ build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
 
-test:		$(NO_TESTS)
+test:		$(TEST_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
