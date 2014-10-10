@@ -185,5 +185,43 @@ Publication.
     Once manifest validation has occurred, the package(s) is/are finally
     published to the workspace package repository.
 
+Renames
+
+    Renames in IPS are tricky.  We will use a case study to illustrate how
+    this needs to work.
+
+    All of the library/python-2/FOO modules that we had in Userland at the
+    time were renamed to library/python/FOO in s12_41.  This involved:
+    * changing the FMRI to drop the "-2"
+    * adding an optional dependency on the old name at the version and build
+      in which the rename occurred; this forces the rename
+      * depend type=optional fmri=library/python-2/FOO-$(PYV)@VERSION,BUILD
+      where FOO is the component name (e.g., "alembic", "amqp", etc.),
+      "$(PYV)" is that literal string, VERSION was the expanded value of
+      COMPONENT_VERSION from each component's Makefile (e.g., "0.6.0"
+      for alembic, "1.0.12" for amqp, etc.), and BUILD was set to
+      "5.12-5.12.0.0.0.41.0".  Note that BUILD needs to be set to
+      the value of the build you are integrating into.
+    * one or more new manifests (typically one for the versionless package,
+      plus one for each versioned instance of the package) with actions:
+      * set name=pkg.fmri value=pkg:/library/python-2/FOO@VERSION,BUILD
+      * set name=pkg.renamed value=true
+      * set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+      * depend fmri=library/python/FOO type=require
+      where FOO, VERSION and BUILD are all as above.
+
+    So far, not too bad.  This gets slightly more complicated when back-
+    porting in that BUILD needs to be set to the back-port build (e.g.,
+    "5.11-0.175.3.0.0.8.0", as was the case for tkinter-27) rather than
+    the S12 build.
+
+    If the component is at the same version as when the rename was done, then
+    that's it.  But if the component has since been upgraded, then care must
+    be taken to set VERSION in both places above to the value that it was in
+    s12_41 when the rename was originally done.  In particular, the latest
+    version of a package name in an earlier release branch must not be greater
+    than the latest version of that same package name in the newer release
+    branch.  Otherwise the audits from Release Engineering will complain and
+    our gatekeeper will make you do a follow-up push to fix this.
 
 # vi:set fdm=marker expandtab ts=4:
