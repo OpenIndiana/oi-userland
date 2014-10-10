@@ -56,6 +56,15 @@ COMPONENT_INSTALL_ARGS+=	CFLAGS="$(CFLAGS)"
 COMPONENT_POST_UNPACK_ACTION= \
 	$(RM) $(COMPONENT_SRC)/gnu/*.o
 
+# The getopt source directory contains bash and tcsh getopt example scripts.
+TEST_ARGS = -a par1 'another arg' --c-long 'wow\!*\?' -cmore -b " very long "
+COMPONENT_TEST_ENV +=		PATH=$(BUILD_DIR_$(BITS)):$(PATH)
+COMPONENT_TEST_DIR =		$(SOURCE_DIR)
+COMPONENT_TEST_CMD =		getopt-parse.bash $(TEST_ARGS); \
+				$(ENV) $(COMPONENT_TEST_ENV) \
+				getopt-parse.tcsh $(TEST_ARGS)
+COMPONENT_TEST_TARGETS =
+
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
@@ -63,7 +72,7 @@ build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
 
-test:		$(NO_TESTS)
+test:		$(TEST_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
