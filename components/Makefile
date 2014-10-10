@@ -134,15 +134,18 @@ $(COMPONENT_DIRS):	$(WS_LOGS) setup FORCE
 	 $(BASS_O_MATIC) $(TEMPLATE_ZONE:%=--template-zone %) \
 			 $(@:%=--component %) --make $(TARGET) $(LOG)
 
+# Turn userland-incorporator warnings into build failures
+INCORPORATE_WERROR ?= --Werror
+
 incorporation:
 	$(PKGREPO) refresh -s $(PKG_REPO)
 	$(WS_TOOLS)/userland-incorporator --repository $(PKG_REPO) \
-	  -p pkg:/consolidation/$(CONSOLIDATION)/$(CONSOLIDATION)-incorporation@0.$(OS_VERSION),$(BUILD_VERSION) \
-	  -s "$(CONSOLIDATION) consolidation incorporation" \
-	  -d "This incorporation constrains packages from the $(CONSOLIDATION) consolidation" \
-	  -c $(CONSOLIDATION) >$(WS_LOGS)/$(CONSOLIDATION)-incorporation.p5m
-	$(PKGSEND) -s $(PKG_REPO) publish --fmri-in-manifest \
-	  $(WS_LOGS)/$(CONSOLIDATION)-incorporation.p5m
+          --version=0.$(OS_VERSION),$(BUILD_VERSION) -p $(PUBLISHER) \
+	  -c $(CONSOLIDATION) --destdir=$(WS_LOGS) $(INCORPORATE_WERROR)
+	for incorporation in $(WS_LOGS)/*.p5m ; do \
+	    $(PKGSEND) -s $(PKG_REPO) publish --fmri-in-manifest \
+	               $${incorporation} ; \
+	done
 
 publish:
 	$(MAKE) incorporation

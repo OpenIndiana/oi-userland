@@ -1,0 +1,68 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
+#
+
+#
+# We are overloading the org.opensolaris.consolidation package attribute to 
+# maintain information about which incorporations a package should belong to.
+# This is done by including 'incorporation' decorations in the attribute.
+# Ex:
+#    set name=org.opensolaris.consolidation value=userland \
+#        incorporate=consolidation/userland/userland-incorporation
+#
+# In the process of package generation, we convert those decorations to
+# a separate package attribute (pkg.tmp.incorporate) and drop them from
+# the consolidation attribute. A special value of 'none' will cause the
+# package to be unincorporated and float freely from the rest of the
+# packages.  Note that unincorporated packages don't automatically get
+# updated with the rest of the system when 'pkg update' is run unless the
+# unincorporated package(s) are specified on the command line.
+#
+
+#
+# Add a default incorporate decoration if none exists.
+#
+<transform set name=org.opensolaris.consolidation -> \
+    default incorporate consolidation/userland/userland-incorporation>
+
+#
+# convert the org.opensolaris.consolidation 'incorporate' attribute
+# to a package attribute containing the incorporations that should
+# be used in incorporating this package.
+#
+<transform set name=org.opensolaris.consolidation -> emit \
+    set name=pkg.tmp.incorporate \
+        value=%(incorporate;sep=' value=')> 
+
+#
+# don't incorporate a package that is tagged for unincorporation.
+#
+<transform set name=pkg.tmp.incorporate value=none -> drop>
+
+#
+# Remove any incorporate decoration from the org.opensolaris.consolidation 
+# package attribute.
+#
+<transform set name=org.opensolaris.consolidation -> \
+    delete incorporate .*>

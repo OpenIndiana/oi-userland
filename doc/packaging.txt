@@ -80,6 +80,16 @@ Manually generated actions
     * org.opensolaris.arc-caseid is typically "PSARC/YYYY/###" and multiple
       different values are allowed.
     * pkg.summary is a short synopsis of what the package provides.
+    * org.opensolaris.consolidation is the name of the consolidation delivering
+      the package.  In Userland, this is $(CONSOLIDATION) (which expands to
+      "Userland" during the build).  Manifests in the Userland gate can also
+      decorate this package attribute with an 'incorporate={incorporation-name}'
+      decoration to specify where the package should be incorporated at the end
+      of the userland build.  A special value of 'none' will cause the package
+      to be unincorporated and float freely from the rest of the rest of the
+      packages.  Note that unincorporated packages don't automatically get
+      updated with the rest of the system when 'pkg update' is run unless the
+      unincorporated package(s) are specified on the command line.
 
 Mogrified Manifest
     The canonical manifest is combined with a set of the transforms

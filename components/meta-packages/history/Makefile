@@ -53,7 +53,8 @@ $(BUILD_DIR):
 	$(MKDIR) $@
 
 $(MANIFEST_BASE)-%.mogrified: %.p5m $(BUILD_DIR)
-	$(PKGMOGRIFY) -D CONSOLIDATION=$(CONSOLIDATION) $< > $@
+	$(PKGMOGRIFY) -D CONSOLIDATION=$(CONSOLIDATION) $< \
+	              $(WS_TOP)/transforms/incorporate > $@
 
 $(MANIFEST_BASE)-%.published: $(MANIFEST_BASE)-%.mogrified $(BUILD_DIR)
 	$(PKGSEND) -s $(PKG_REPO) publish --fmri-in-manifest --no-catalog $<

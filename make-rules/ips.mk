@@ -76,6 +76,7 @@ PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/python-rename
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/python-3-groups
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/python-3-soabi
 PUBLISH_TRANSFORMS +=	$(PKGMOGRIFY_TRANSFORMS)
+PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/incorporate
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/publish-cleanup
 
 PKG_MACROS +=		MACH=$(MACH)
