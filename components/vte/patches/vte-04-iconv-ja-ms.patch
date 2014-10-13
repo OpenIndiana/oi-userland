@@ -1,0 +1,27 @@
+diff -ruN vte-0.26.2.org/src/vteconv.c vte-0.26.2/src/vteconv.c
+--- vte-0.26.2.org/src/vteconv.c	2010-07-16 02:08:44.000000000 +0900
++++ vte-0.26.2/src/vteconv.c	2013-02-12 14:00:43.786875372 +0900
+@@ -143,6 +143,23 @@
+ 	real_source = source;
+ 	real_target = target;
+ 
++	/*
++	 * Use the conversion with EUC-JP-MS/CP932 because we want to use
++ 	 * fullwidth characters as possible for Windows compatibility. 
++	 * This patch is needed only in s11ur because EUC-JP-MS/CP932 are
++	 * default in s12 by 15800276.
++	 */
++	if (g_ascii_strcasecmp(target, "EUC-JP") == 0) {
++		real_target = "EUC-JP-MS";
++	} else if (g_ascii_strcasecmp(target, "SHIFT_JIS") == 0) {
++		real_target = "CP932";
++	}
++	if (g_ascii_strcasecmp(source, "EUC-JP") == 0) {
++		real_source = "EUC-JP-MS";
++	} else if (g_ascii_strcasecmp(source, "SHIFT_JIS") == 0) {
++		real_source = "CP932";
++	}
++
+ 	/* Determine if we need to convert gunichars to UTF-8 on input. */
+ 	if (strcmp(target, VTE_CONV_GUNICHAR_TYPE) == 0) {
+ 		real_target = "UTF-8";
