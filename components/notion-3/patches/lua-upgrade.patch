@@ -1,0 +1,119 @@
+diff -ur notion-3-2014052800.mangled/contrib/scripts/simple_bindings.lua notion-3-2014052800/contrib/scripts/simple_bindings.lua
+--- notion-3-2014052800.mangled/contrib/scripts/simple_bindings.lua	2014-05-27 18:00:18.000000000 -0400
++++ notion-3-2014052800/contrib/scripts/simple_bindings.lua	2014-08-04 03:54:53.380883374 -0400
+@@ -54,7 +54,7 @@
+ if not ioncore then
+     ioncore = {get_paths = function() return {userdir="/home/deryni/.ion3"} end}
+     warn = print
+-    loadstring = function(str) return function() print(str) end end
++    load = function(str) return function() print(str) end end
+ end
+ 
+ --}}} Standalone hacks
+@@ -164,7 +164,7 @@
+         str = str.."\tkpress(\""..bind.keystr..[[", "]]..bind.bindstr.."\"),\n"
+     end
+     str = str.."})"
+-    loadstring(str)()
++    load(str)()
+ end
+ 
+ -- vim: set expandtab sw=4:
+diff -ur notion-3-2014052800.mangled/contrib/statusbar/statusbar_external.lua notion-3-2014052800/contrib/statusbar/statusbar_external.lua
+--- notion-3-2014052800.mangled/contrib/statusbar/statusbar_external.lua	2014-05-27 18:00:18.000000000 -0400
++++ notion-3-2014052800/contrib/statusbar/statusbar_external.lua	2014-08-04 03:54:53.381313664 -0400
+@@ -209,7 +209,7 @@
+ -- Start all
+ for key in pairs(statusbar_external) do
+     timers[key] = ioncore.create_timer()
+-	callbacks[key] = loadstring("start_execute("..key..")")
++	callbacks[key] = load("start_execute("..key..")")
+     start_execute(key)
+ end
+ 
+diff -ur notion-3-2014052800.mangled/contrib/statusd/legacy/statusd_sysmon.lua notion-3-2014052800/contrib/statusd/legacy/statusd_sysmon.lua
+--- notion-3-2014052800.mangled/contrib/statusd/legacy/statusd_sysmon.lua	2014-05-27 18:00:18.000000000 -0400
++++ notion-3-2014052800/contrib/statusd/legacy/statusd_sysmon.lua	2014-08-04 03:54:53.381656408 -0400
+@@ -185,7 +185,7 @@
+         return (metrics[arg1] or "")
+     end)
+     sysmon_st = string.gsub (sysmon_st, "%$%{(.-)%}", function (arg1)
+-	return loadstring("return "..arg1)()
++	return load("return "..arg1)()
+     end)
+     -- replacing the '%%' macros with the '%' symbol
+     sysmon_st = string.gsub (sysmon_st, "%%%%", "%%")
+diff -ur notion-3-2014052800.mangled/ioncore/ioncore_bindings.lua notion-3-2014052800/ioncore/ioncore_bindings.lua
+--- notion-3-2014052800.mangled/ioncore/ioncore_bindings.lua	2014-05-27 18:00:18.000000000 -0400
++++ notion-3-2014052800/ioncore/ioncore_bindings.lua	2014-08-04 03:54:53.382014910 -0400
+@@ -47,7 +47,7 @@
+         
+         local gfncode="return function(_, _sub, _chld) "..guardcode.." return true end"
+         local gerr
+-        gfn, gerr=loadstring(gfncode, guardcode)
++        gfn, gerr=load(gfncode, guardcode)
+         if not gfn then
+             ioncore.warn_traced(TR("Error compiling guard: %s", gerr))
+         end
+@@ -69,7 +69,7 @@
+     if type(cmd)=="string" then
+         local fncode=("return function(_, _sub, _chld) local d = "
+                        ..cmd.." end")
+-        local fn, err=loadstring(fncode, cmd)
++        local fn, err=load(fncode, cmd)
+         if not fn then
+             ioncore.warn_traced(TR("Error in command string: ")..err)
+             return
+diff -ur notion-3-2014052800.mangled/mod_query/mod_query.lua notion-3-2014052800/mod_query/mod_query.lua
+--- notion-3-2014052800.mangled/mod_query/mod_query.lua	2014-05-27 18:00:18.000000000 -0400
++++ notion-3-2014052800/mod_query/mod_query.lua	2014-08-04 03:54:53.382604012 -0400
+@@ -1048,7 +1048,7 @@
+         end
+         err=collect_errors(f)
+     else
+-        local f, err=loadstring(code)
++        local f, err=load(code)
+         if not f then
+             mod_query.warn(mplex, err)
+             return
+diff -ur notion-3-2014052800.mangled/mod_xinerama/mod_xinerama.lua notion-3-2014052800/mod_xinerama/mod_xinerama.lua
+--- notion-3-2014052800.mangled/mod_xinerama/mod_xinerama.lua	2014-05-27 18:00:18.000000000 -0400
++++ notion-3-2014052800/mod_xinerama/mod_xinerama.lua	2014-08-04 04:24:22.371015820 -0400
+@@ -138,6 +138,17 @@
+     return x_in and y_in
+ end
+ 
++-- table.maxn doesn't exist in lua 5.2
++local function table_maxn(t)
++    local mn = 0
++    for k, v in pairs(t) do
++        if mn < k then
++            mn = k
++        end
++    end
++    return mn
++end
++
+ --DOC
+ -- Merges overlapping screens. I.e. it finds set of smallest rectangles,
+ -- such that these rectangles do not overlap and such that they contain
+@@ -176,8 +187,8 @@
+ 		end
+ 	    end
+ 	end
+-	if not pos then pos = table.maxn(ret)+1 end
+-	table.insert(ret, pos, newscreen)
++	if not pos then pos = table_maxn(ret)+1 end
++	ret[pos] = newscreen
+     end
+     fix_representations(ret)
+     return ret
+@@ -276,7 +287,7 @@
+ 
+ 	-- pos keeps index of first set that we merged in this loop,
+ 	-- we want to insert the product of this merge to pos.
+-	if not pos then pos = table.maxn(screensets)+1 end
++	if not pos then pos = table_maxn(screensets)+1 end
+ 	table.insert(screensets, pos, mergedset)
+     end
+ 
