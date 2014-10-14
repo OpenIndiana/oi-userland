@@ -23,8 +23,8 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		isc-dhcp
-COMPONENT_VERSION=	4.1-ESV-R7
-IPS_COMPONENT_VERSION=	4.1.0.7
+COMPONENT_VERSION=	4.2.7
+IPS_COMPONENT_VERSION=	4.2.7
 COMPONENT_SRC_NAME=	dhcp
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -32,15 +32,15 @@ COMPONENT_PROJECT_URL=	http://www.isc.org/software/dhcp/
 COMPONENT_ARCHIVE_URL=  \
     http://ftp.isc.org/isc/dhcp/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= \
-    sha256:25d579291a13ccce39c5dbb0e2f2ce8e974c82015bc4e3ee653cf95a4ed15ca4
+    sha256:dc5c15147721aae52e83e6d7305f05e70eff126f39f1ea11953fd812faa2b781
 COMPONENT_BUGDB=	service/dhcp-server
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-COMPONENT_PRE_CONFIGURE_ACTION = \
-	($(CLONEY) $(SOURCE_DIR) $(@D))
+CONFIGURE_SCRIPT	= $(@D)/configure
+COMPONENT_PRE_CONFIGURE_ACTION+=	$(CP) -R $(SOURCE_DIR)/* $(@D)/
 
 CONFIGURE_OPTIONS  +=	--sysconfdir=$(ETCDIR)/inet
 CONFIGURE_OPTIONS  +=	--sbindir=$(USRLIBDIR)/inet
