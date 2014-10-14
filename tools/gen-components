@@ -126,6 +126,8 @@ def find_p5m_dirs(workspace):
     p5m_dirs = []
     for dir, _, files in os.walk(workspace + "/components"):
         for file in files:
+            if dir.endswith("meta-packages/history"):
+                continue;
             if file.endswith(".p5m"):
                 p5m_dirs.append(dir)
 
