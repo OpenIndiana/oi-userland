@@ -1,0 +1,572 @@
+--- liboil-0.3.16/configure.ac-orig	2010-03-31 16:27:48.050482382 -0500
++++ liboil-0.3.16/configure.ac	2010-03-31 16:47:06.074555274 -0500
+@@ -241,6 +241,31 @@ if test "x$HAVE_SSSE3_ASM" = xyes ; then
+   AC_DEFINE(HAVE_SSSE3_ASM, 1, [Defined if compiler/assembler can handle SSSE3 instructions])
+ fi
+ 
++# Checks for Sun Studio compilers
++AC_CHECK_DECL([__SUNPRO_C], [HAVE_SUNCC="yes"], [HAVE_SUNCC="no"])
++if test x$HAVE_SUNCC="xyes" ; then
++  case $host_os in
++    solaris*)
++      # When building binaries, apply a mapfile to ensure that the
++      # binaries are not flagged as only able to run on MMX+SSE capable CPUs
++      # since they check at runtime before using those instructions.
++      # Not all linkers grok the mapfile format so we check for that first.
++
++      use_hwcap_mapfile=no
++      AC_MSG_CHECKING(whether to use a hardware capability map file)
++      hwcap_save_LDFLAGS="$LDFLAGS"
++      LIBOIL_HWCAP_LDFLAGS='-Wl,-M,$(srcdir)/solaris-hwcap.mapfile'
++      LDFLAGS="$LDFLAGS -Wl,-M,liboil/solaris-hwcap.mapfile"
++      AC_LINK_IFELSE([int main() { return 0; }],
++     		use_hwcap_mapfile=yes,
++     		LIBOIL_HWCAP_LDFLAGS="")
++      LDFLAGS="$hwcap_save_LDFLAGS"
++      AC_SUBST(LIBOIL_HWCAP_LDFLAGS)
++      AC_MSG_RESULT($use_hwcap_mapfile)
++      ;;
++  esac
++fi
++
+ AC_DEFINE(OIL_EXPORTS, 1, [Defined for compiling internal code])
+ 
+ LIBOIL_CFLAGS="$LIBOIL_CFLAGS -D_BSD_SOURCE -D_GNU_SOURCE -I\$(top_srcdir) -DOIL_ENABLE_UNSTABLE_API"
+--- liboil-0.3.16/liboil/Makefile.am-orig	2010-03-31 16:28:32.687722289 -0500
++++ liboil-0.3.16/liboil/Makefile.am	2010-03-31 16:34:50.756904945 -0500
+@@ -105,13 +105,15 @@ liboilfunctions_la_LIBADD += \
+ 	deprecated/libdeprecated.la
+ endif
+ liboilfunctions_la_LDFLAGS = \
+-	-no-undefined
++	-no-undefined \
++	$(LIBOIL_HWCAP_LDFLAGS)
+ 
+ liboiltmp1_la_SOURCES = \
+ 	liboiltmp.c
+ liboiltmp1_la_LDFLAGS = \
+ 	-no-undefined \
+-	-export-symbols-regex 'oil_'
++	-export-symbols-regex 'oil_' \
++	$(LIBOIL_HWCAP_LDFLAGS)
+ liboiltmp1_la_LIBADD = \
+ 	liboilfunctions.la \
+ 	$(LIBM) $(LIBRT)
+@@ -172,7 +174,8 @@ liboil_@LIBOIL_MAJORMINOR@_la_CFLAGS = $
+ liboil_@LIBOIL_MAJORMINOR@_la_LDFLAGS = \
+ 	-no-undefined \
+ 	-version-info $(LIBOIL_LIBVERSION) \
+-	-export-symbols-regex '^oil_'
++	-export-symbols-regex '^oil_' \
++	$(LIBOIL_HWCAP_LDFLAGS)
+ 
+ # This is required to use 'make -j2'. Automake doesn't seem to notice
+ # that one of the dependencies is in this directory.
+@@ -252,6 +255,7 @@ liboil_@LIBOIL_OLD_MAJORMINOR@_la_LIBADD
+ liboil_@LIBOIL_OLD_MAJORMINOR@_la_LDFLAGS = \
+ 	-no-undefined \
+ 	-version-info $(LIBOIL_LIBVERSION) \
+-	-export-symbols-regex '^oil_'
++	-export-symbols-regex '^oil_' \
++	$(LIBOIL_HWCAP_LDFLAGS)
+ endif
+ 
+--- liboil-0.3.16/m4/as-host-defines.m4-orig	2010-04-02 18:00:05.109471540 -0500
++++ liboil-0.3.16/m4/as-host-defines.m4	2010-04-02 17:55:02.467785745 -0500
+@@ -10,22 +10,38 @@ dnl AS_HOST_DEFINES()
+ 
+ AC_DEFUN([AS_HOST_DEFINES],
+ [
+-  case "x${host_cpu}" in
+-    xi?86 | k?)
+-      HAVE_I386=yes
+-      AC_DEFINE(HAVE_I386, 1, [Defined if host is i386])
+-      ;;
+-    xx86_64|xamd64)
+-      HAVE_AMD64=yes
+-      AC_DEFINE(HAVE_AMD64, 1, [Defined if host is amd64])
+-      ;;
+-    xpowerpc|xppc|xpowerpc64|xppc64)
+-      HAVE_POWERPC=yes
+-      AC_DEFINE(HAVE_POWERPC, 1, [Defined if host is powerpc])
+-      ;;
+-    xarm)
+-      HAVE_ARM=yes
+-      AC_DEFINE(HAVE_ARM, 1, [Defined if host is arm])
++  case $host_os in
++    solaris*)
++      AC_CHECK_DECL([__amd64], [AMD64_ABI="yes"], [AMD64_ABI="no"])
++      AC_CHECK_DECL([__i386],  [I386_ABI="yes"], [I386_ABI="no"])
++      if test "x$I386_ABI" = "xyes" ; then
++        HAVE_I386=yes
++        AC_DEFINE(HAVE_I386, 1, [Defined if host is i386])
++      fi
++      if test "x$AMD64_ABI" = "xyes" ; then
++        HAVE_AMD64=yes
++        AC_DEFINE(HAVE_AMD64, 1, [Defined if host is amd64])
++      fi
++      ;;
++    *)
++      case "x${host_cpu}" in
++        xi?86 | k?)
++          HAVE_I386=yes
++          AC_DEFINE(HAVE_I386, 1, [Defined if host is i386])
++          ;;
++        xx86_64|xamd64)
++          HAVE_AMD64=yes
++          AC_DEFINE(HAVE_AMD64, 1, [Defined if host is amd64])
++          ;;
++        xpowerpc|xppc|xpowerpc64|xppc64)
++          HAVE_POWERPC=yes
++          AC_DEFINE(HAVE_POWERPC, 1, [Defined if host is powerpc])
++          ;;
++        xarm)
++          HAVE_ARM=yes
++          AC_DEFINE(HAVE_ARM, 1, [Defined if host is arm])
++          ;;
++      esac
+       ;;
+   esac
+ 
+--- liboil-0.3.16/m4/as-gcc-inline-assembly.m4-orig	2010-03-30 15:11:24.758367535 -0500
++++ liboil-0.3.16/m4/as-gcc-inline-assembly.m4	2010-03-30 19:09:25.330976472 -0500
+@@ -16,6 +16,7 @@ AC_DEFUN([AS_GCC_INLINE_ASSEMBLY],
+   AC_MSG_CHECKING([if compiler supports gcc-style inline assembly])
+ 
+   AC_TRY_COMPILE([], [
++#ifndef __SUNPRO_C
+ #ifndef __GNUC__
+ #error Not GCC
+ #endif
+@@ -24,6 +25,7 @@ AC_DEFUN([AS_GCC_INLINE_ASSEMBLY],
+ #error GCC before 3.4 has critical bugs compiling inline assembly
+ #endif
+ #endif
++#endif
+ __asm__ (""::) ], [flag_ok=yes], [flag_ok=no])
+ 
+   if test "X$flag_ok" = Xyes ; then
+@@ -58,6 +60,7 @@ AC_DEFUN([AS_GCC_INLINE_ASM_INSTRUCTION]
+   AC_MSG_CHECKING([if compiler supports '$1' asm instruction])
+ 
+   AC_TRY_COMPILE([], [
++#ifndef __SUNPRO_C
+ #ifndef __GNUC__
+ #error Not GCC
+ #endif
+@@ -66,6 +69,7 @@ AC_DEFUN([AS_GCC_INLINE_ASM_INSTRUCTION]
+ #error GCC before 3.4 has critical bugs compiling inline assembly
+ #endif
+ #endif
++#endif
+ __asm__ ("$1"::) ], [flag_ok=yes], [flag_ok=no])
+ 
+   if test "X$flag_ok" = Xyes ; then
+--- liboil-0.3.16/m4/as-intrinsics.m4-orig	2010-03-31 16:28:18.254915354 -0500
++++ liboil-0.3.16/m4/as-intrinsics.m4	2010-03-31 16:35:32.424331700 -0500
+@@ -15,12 +15,35 @@ AC_DEFUN([AS_MMX_INTRINSICS],
+ [
+   AC_MSG_CHECKING([if compiler supports MMX intrinsics])
+ 
+-  save_CFLAGS="$CFLAGS"
+-  CFLAGS="$CFLAGS -mmmx"
+-  AC_TRY_COMPILE([#include <mmintrin.h>], [_mm_empty()], [flag_ok=yes], [flag_ok=no])
+-  CFLAGS="$save_CFLAGS"
++  case $host_os in
++    solaris*)
++      dnl Note Sun Studio does not have -xarch=mmx, so only support MMX if SSE is
++      dnl also supported.
++
++      AC_CHECK_DECL([__amd64], [AMD64_ABI="yes"], [AMD64_ABI="no"])
++      AC_CHECK_DECL([__i386],  [I386_ABI="yes"], [I386_ABI="no"])
++
++      flag_ok=no
++      if test "x$AMD64_ABI" = "xyes" ; then
++        $1="-m64"
++        flag_ok=yes
++      else
++        if test "x$I386_ABI" = "xyes" ; then
++          $1="-mmmx"
++          flag_ok=yes
++        fi
++      fi
++      ;;
++    *)
++      save_CFLAGS="$CFLAGS"
++      CFLAGS="$CFLAGS -mmmx"
++      AC_TRY_COMPILE([#include <mmintrin.h>], [_mm_empty()], [flag_ok=yes], [flag_ok=no])
++      CFLAGS="$save_CFLAGS"
++
++      $1="-mmmx"
++      ;;
++  esac
+ 
+-  $1="-mmmx"
+   if test "X$flag_ok" = Xyes ; then
+     $2
+     true
+@@ -41,18 +64,38 @@ AC_DEFUN([AS_SSE_INTRINSICS],
+ [
+   AC_MSG_CHECKING([if compiler supports SSE intrinsics])
+ 
+-  save_CFLAGS="$CFLAGS"
+-  CFLAGS="$CFLAGS -msse"
+-  AC_TRY_COMPILE([#include <xmmintrin.h>], [
++  case $host_os in
++    solaris*)
++      AC_CHECK_DECL([__amd64], [AMD64_ABI="yes"], [AMD64_ABI="no"])
++      AC_CHECK_DECL([__i386],  [I386_ABI="yes"], [I386_ABI="no"])
++
++      flag_ok=no
++      if test "x$AMD64_ABI" = "xyes" ; then
++        $1="-m64"
++        flag_ok=yes
++      else
++        if test "x$I386_ABI" = "xyes" ; then
++          $1="-msse"
++          flag_ok=yes
++        fi
++      fi
++      ;;
++    *)
++      save_CFLAGS="$CFLAGS"
++      CFLAGS="$CFLAGS -msse"
++      AC_TRY_COMPILE([#include <xmmintrin.h>], [
+ #ifdef __GNUC_MINOR__
+ #if (__GNUC__ * 1000 + __GNUC_MINOR__) < 4002
+ #error GCC before 4.2 has critical bugs compiling SSE intrinsics
+ #endif
+ #endif
+ __m128 a; a = _mm_or_ps(a,a)], [flag_ok=yes], [flag_ok=no])
+-  CFLAGS="$save_CFLAGS"
++      CFLAGS="$save_CFLAGS"
++
++      $1="-msse"
++      ;;
++  esac
+ 
+-  $1="-msse"
+   if test "X$flag_ok" = Xyes ; then
+     $2
+     true
+@@ -73,18 +116,39 @@ AC_DEFUN([AS_SSE2_INTRINSICS],
+ [
+   AC_MSG_CHECKING([if compiler supports SSE2 intrinsics])
+ 
+-  save_CFLAGS="$CFLAGS"
+-  CFLAGS="$CFLAGS -msse2"
+-  AC_TRY_COMPILE([#include <emmintrin.h>], [
++  case $host_os in
++    solaris*)
++      AC_CHECK_DECL([__amd64], [AMD64_ABI="yes"], [AMD64_ABI="no"])
++      AC_CHECK_DECL([__i386],  [I386_ABI="yes"], [I386_ABI="no"])
++
++      flag_ok=no
++      if test "x$AMD64_ABI" = "xyes" ; then
++        $1="-m64"
++        flag_ok=yes
++      else
++        if test "x$I386_ABI" = "xyes" ; then
++          $1="-msse2"
++          flag_ok=yes
++        fi
++      fi
++      ;;
++
++    *)
++      save_CFLAGS="$CFLAGS"
++      CFLAGS="$CFLAGS -msse2"
++      AC_TRY_COMPILE([#include <emmintrin.h>], [
+ #ifdef __GNUC_MINOR__
+ #if (__GNUC__ * 1000 + __GNUC_MINOR__) < 4002
+ #error GCC before 4.2 has critical bugs compiling SSE2 intrinsics
+ #endif
+ #endif
+ __m128i a; a = _mm_setzero_si128(); a = _mm_srli_epi16(a,8)], [flag_ok=yes], [flag_ok=no])
+-  CFLAGS="$save_CFLAGS"
++      CFLAGS="$save_CFLAGS"
++
++      $1="-msse2"
++      ;;
++  esac
+ 
+-  $1="-msse2"
+   if test "X$flag_ok" = Xyes ; then
+     $2
+     true
+@@ -105,18 +169,38 @@ AC_DEFUN([AS_SSE3_INTRINSICS],
+ [
+   AC_MSG_CHECKING([if compiler supports SSE3 intrinsics])
+ 
+-  save_CFLAGS="$CFLAGS"
+-  CFLAGS="$CFLAGS -msse3"
+-  AC_TRY_COMPILE([#include <pmmintrin.h>], [
++  case $host_os in
++    solaris*)
++      AC_CHECK_DECL([__amd64], [AMD64_ABI="yes"], [AMD64_ABI="no"])
++      AC_CHECK_DECL([__i386],  [I386_ABI="yes"], [I386_ABI="no"])
++
++      flag_ok=no
++      if test "x$AMD64_ABI" = "xyes" ; then
++        $1="-m64"
++        flag_ok=yes
++      else
++        if test "x$I386_ABI" = "xyes" ; then
++          $1="-msse3"
++          flag_ok=yes
++        fi
++      fi
++      ;;
++    *)
++      save_CFLAGS="$CFLAGS"
++      CFLAGS="$CFLAGS -msse3"
++      AC_TRY_COMPILE([#include <pmmintrin.h>], [
+ #ifdef __GNUC_MINOR__
+ #if (__GNUC__ * 1000 + __GNUC_MINOR__) < 4002
+ #error GCC before 4.2 has critical bugs compiling SSE2 intrinsics
+ #endif
+ #endif
+ __m128 a; a = _mm_addsub_ps(a,a)], [flag_ok=yes], [flag_ok=no])
+-  CFLAGS="$save_CFLAGS"
++      CFLAGS="$save_CFLAGS"
++
++      $1="-msse3"
++      ;;
++  esac
+ 
+-  $1="-msse3"
+   if test "X$flag_ok" = Xyes ; then
+     $2
+     true
+@@ -137,12 +221,26 @@ AC_DEFUN([AS_3DNOW_INTRINSICS],
+ [
+   AC_MSG_CHECKING([if compiler supports 3DNOW intrinsics])
+ 
+-  save_CFLAGS="$CFLAGS"
+-  CFLAGS="$CFLAGS -m3dnow"
+-  AC_TRY_COMPILE([#include <mm3dnow.h>], [_m_femms()], [flag_ok=yes], [flag_ok=no])
+-  CFLAGS="$save_CFLAGS"
++  case $host_os in
++    solaris*)
++      AC_CHECK_DECL([__amd64], [AMD64_ABI="yes"], [AMD64_ABI="no"])
++      AC_CHECK_DECL([__i386],  [I386_ABI="yes"], [I386_ABI="no"])
++
++      flag_ok=no
++      if test "x$AMD64_ABI" = "xyes" ; then
++        $1="-m64"
++      fi
++      ;;
++    *)
++      save_CFLAGS="$CFLAGS"
++      CFLAGS="$CFLAGS -m3dnow"
++      AC_TRY_COMPILE([#include <mm3dnow.h>], [_m_femms()], [flag_ok=yes], [flag_ok=no])
++      CFLAGS="$save_CFLAGS"
++
++      $1="-m3dnow"
++      ;;
++  esac
+ 
+-  $1="-m3dnow"
+   if test "X$flag_ok" = Xyes ; then
+     $2
+     true
+@@ -163,12 +261,26 @@ AC_DEFUN([AS_3DNOWEXT_INTRINSICS],
+ [
+   AC_MSG_CHECKING([if compiler supports 3DNOWEXT intrinsics])
+ 
+-  save_CFLAGS="$CFLAGS"
+-  CFLAGS="$CFLAGS -m3dnow -march=athlon"
+-  AC_TRY_COMPILE([#include <mm3dnow.h>], [__m64 a;a=_m_pf2iw(a)], [flag_ok=yes], [flag_ok=no])
+-  CFLAGS="$save_CFLAGS"
++  case $host_os in
++    solaris*)
++      AC_CHECK_DECL([__amd64], [AMD64_ABI="yes"], [AMD64_ABI="no"])
++      AC_CHECK_DECL([__i386],  [I386_ABI="yes"], [I386_ABI="no"])
++
++      if test "x$AMD64_ABI" = "xyes" ; then
++        $1="-m64"
++        flag_ok=yes
++      fi
++      ;;
++    *)
++      save_CFLAGS="$CFLAGS"
++      CFLAGS="$CFLAGS -m3dnow -march=athlon"
++      AC_TRY_COMPILE([#include <mm3dnow.h>], [__m64 a;a=_m_pf2iw(a)], [flag_ok=yes], [flag_ok=no])
++      CFLAGS="$save_CFLAGS"
++
++      $1="-m3dnow -march=athlon"
++      ;;
++  esac
+ 
+-  $1="-m3dnow -march=athlon"
+   if test "X$flag_ok" = Xyes ; then
+     $2
+     true
+@@ -189,12 +301,21 @@ AC_DEFUN([AS_ALTIVEC_INTRINSICS],
+ [
+   AC_MSG_CHECKING([if compiler supports ALTIVEC intrinsics])
+ 
+-  save_CFLAGS="$CFLAGS"
+-  CFLAGS="$CFLAGS -maltivec"
+-  AC_TRY_COMPILE([#include <altivec.h>], [__vector a; a = vec_or(a,a)], [flag_ok=yes], [flag_ok=no])
+-  CFLAGS="$save_CFLAGS"
++  case $host_os in
++    solaris*)
++      flag_ok=no
++      $1=""
++      ;;
++    *)
++      save_CFLAGS="$CFLAGS"
++      CFLAGS="$CFLAGS -maltivec"
++      AC_TRY_COMPILE([#include <altivec.h>], [__vector a; a = vec_or(a,a)], [flag_ok=yes], [flag_ok=no])
++      CFLAGS="$save_CFLAGS"
++
++      $1="-maltivec"
++    ;;
++  esac
+ 
+-  $1="-maltivec"
+   if test "X$flag_ok" = Xyes ; then
+     $2
+     true
+--- liboil-0.3.16/liboil/i386_amd64/multiply_and_acc.c-orig	2010-03-31 16:40:26.975957343 -0500
++++ liboil-0.3.16/liboil/i386_amd64/multiply_and_acc.c	2010-03-31 16:46:04.547795614 -0500
+@@ -29,7 +29,7 @@ multiply_and_acc_6xn_s16_u8_mmx (int16_t
+       "  jnz 1b\n"
+       "  emms\n"
+       : "+r" (i1), "+r" (s1), "+r" (s2), "+m" (n)
+-#ifdef __i386__
++#if defined(__i386__) || defined(__i386)
+       : "m" (is1), "m" (ss1), "m" (ss2)
+ #else
+       : "r" ((long)is1), "r" ((long)ss1), "r" ((long)ss2)
+@@ -65,7 +65,7 @@ multiply_and_acc_8xn_s16_u8_mmx (int16_t
+       "  jnz 1b\n"
+       "  emms\n"
+       : "+r" (i1), "+r" (s1), "+r" (s2), "+m" (n)
+-#ifdef __i386__
++#if defined(__i386__) || defined(__i386)
+       : "m" (is1), "m" (ss1), "m" (ss2)
+ #else
+       : "r" ((long)is1), "r" ((long)ss1), "r" ((long)ss2)
+@@ -111,7 +111,7 @@ multiply_and_acc_16xn_s16_u8_mmx (int16_
+       "  jnz 1b\n"
+       "  emms\n"
+       : "+r" (i1), "+r" (s1), "+r" (s2), "+m" (n)
+-#ifdef __i386__
++#if defined(__i386__) || defined(__i386)
+       : "m" (is1), "m" (ss1), "m" (ss2)
+ #else
+       : "r" ((long)is1), "r" ((long)ss1), "r" ((long)ss2)
+@@ -167,7 +167,7 @@ multiply_and_acc_24xn_s16_u8_mmx (int16_
+       "  jnz 1b\n"
+       "  emms\n"
+       : "+r" (i1), "+r" (s1), "+r" (s2), "+m" (n)
+-#ifdef __i386__
++#if defined(__i386__) || defined(__i386)
+       : "m" (is1), "m" (ss1), "m" (ss2)
+ #else
+       : "r" ((long)is1), "r" ((long)ss1), "r" ((long)ss2)
+--- liboil-0.3.16/liboil/i386_amd64/copy.c-orig	2010-03-31 16:39:11.299623785 -0500
++++ liboil-0.3.16/liboil/i386_amd64/copy.c	2010-03-31 16:40:06.764215022 -0500
+@@ -327,7 +327,7 @@ static void splat_u8_ns_mmx2a (uint8_t *
+     "  punpcklbw %%mm0, %%mm0\n"
+     "  movq %%mm0, (%0)\n"
+     "  movq %%mm0, 8(%0)\n"
+-#ifdef __i386__
++#if defined(__i386__) || defined(__i386)
+     "  mov %1, %[tmp]\n"
+ #elif defined(__amd64__)
+     /* ugh this is gross */
+--- liboil-0.3.16/liboil/fb/fbmmx.c-orig	2010-03-30 14:54:10.754703273 -0500
++++ liboil-0.3.16/liboil/fb/fbmmx.c	2010-03-30 14:54:18.144142149 -0500
+@@ -662,10 +662,15 @@ void fbComposeSetupMMX(void)
+ 
+ /* ------------------ MMX code paths called from fbpict.c ----------------------- */
+ 
++#if defined(__SUNPRO_C)
++typedef __m64 m64_ull;
++typedef m64_ull mmxdatafield;
++#else
+ typedef union {
+   __m64 m64;
+   uint64_t ull;
+ } m64_ull;
++#endif
+ 
+ typedef struct
+ {
+@@ -688,6 +693,23 @@ typedef struct
+ 
+ static const MMXData c =
+ {
++#if defined(__SUNPRO_C)
++    .mmx_4x00ff =			0x00ff00ff00ff00ffULL,
++    .mmx_4x0080 =			0x0080008000800080ULL,
++    .mmx_565_rgb =			0x000001f0003f001fULL,
++    .mmx_565_r =			0x000000f800000000ULL,
++    .mmx_565_g =			0x0000000000fc0000ULL,
++    .mmx_565_b =			0x00000000000000f8ULL,
++    .mmx_mask_0 =			0xffffffffffff0000ULL,
++    .mmx_mask_1 =			0xffffffff0000ffffULL,
++    .mmx_mask_2 =			0xffff0000ffffffffULL,
++    .mmx_mask_3 =			0x0000ffffffffffffULL,
++    .mmx_full_alpha =			0x00ff000000000000ULL,
++    .mmx_565_unpack_multiplier =	0x0000008404100840ULL,
++    .mmx_ffff0000ffff0000 =		0xffff0000ffff0000ULL,
++    .mmx_0000ffff00000000 =		0x0000ffff00000000ULL,
++    .mmx_000000000000ffff =		0x000000000000ffffULL,
++#else
+     .mmx_4x00ff.ull =			0x00ff00ff00ff00ffULL,
+     .mmx_4x0080.ull =			0x0080008000800080ULL,
+     .mmx_565_rgb.ull =			0x000001f0003f001fULL,
+@@ -703,9 +725,16 @@ static const MMXData c =
+     .mmx_ffff0000ffff0000.ull =		0xffff0000ffff0000ULL,
+     .mmx_0000ffff00000000.ull =		0x0000ffff00000000ULL,
+     .mmx_000000000000ffff.ull =		0x000000000000ffffULL,
++#endif
+ };
+ 
++#if defined(__GNUC__)
+ #define MC(x) ((__m64) c.mmx_##x.m64)
++#elif defined(__SUNPRO_C)
++#define MC(x) c.mmx_##x
++#else
++#error "Unsupported compiler."
++#endif
+ 
+ static __inline__ __m64
+ shift (__m64 v, int s)
+--- liboil-0.3.16/liboil/liboiltest.c-orig	2010-04-05 22:31:02.739988219 -0500
++++ liboil-0.3.16/liboil/liboiltest.c	2010-04-05 22:35:47.292816790 -0500
+@@ -327,6 +327,10 @@ check_guard (uint8_t *data, int n, int g
+   return 1;
+ }
+ 
++#if defined(__SUNPRO_C)
++#define LCAST(d) ((unsigned long long *) &d)[0]
++#endif
++
+ /**
+  * oil_test_check_impl:
+  * @test: the OilTest
+@@ -396,7 +400,11 @@ oil_test_check_impl (OilTest *test, OilF
+       }
+     }
+   }
++#if defined(__SUNPRO_C)
++  OIL_DEBUG("sum of absolute differences %g for %d values", LCAST(x), n);
++#else
+   OIL_DEBUG("sum of absolute differences %g for %d values", x, n);
++#endif
+   test->sum_abs_diff = x;
+   test->n_points = n;
+ 
+--- /dev/null	2010-03-31 17:48:49.000000000 -0500
++++ liboil-0.3.16/liboil/solaris-hwcap.mapfile	2010-03-31 17:52:00.993460669 -0500
+@@ -0,0 +1,5 @@
++# Override the linker's detection of CMOV/MMX/SSE instructions so this
++# library isn't flagged as only usable on CPU's with those ISA's, since it
++# checks at runtime for availability before calling them
++
++hwcap_1 = V0x0 FPU OVERRIDE;
