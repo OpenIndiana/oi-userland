@@ -1,5 +1,7 @@
---- rsyslog/tools/rsyslogd.8	Mon Apr 18 06:36:33 2011
-+++ rsyslog/tools/rsyslogd.8	Fri May 25 11:13:23 2012
+# Solaris-specific patch. Not going upstream.
+# Covers Solaris-specific configuration and makes it compatible with nroff.
+--- rsyslog/tools/rsyslogd.8	2011-04-18 06:36:33.000000000 -0700
++++ rsyslog/tools/rsyslogd.8	2014-10-14 09:41:01.559928606 -0700
 @@ -1,7 +1,8 @@
 +'\" te
  .\" Copyright 2004-2008 Rainer Gerhards and Adiscon for the rsyslog modifications
@@ -10,28 +12,54 @@
  .SH NAME
  rsyslogd \- reliable and extended syslogd 
  .SH SYNOPSIS
-@@ -44,17 +45,14 @@
+@@ -44,17 +45,16 @@
  unix domain sockets enables this utility to support both local
  and remote logging.
  
 -.B Note that this version of rsyslog ships with extensive documentation in html format.
 -This is provided in the ./doc subdirectory and probably
 -in a separate package if you installed rsyslog via a packaging system.
++.B "Note that this version of rsyslog ships with extensive documentation in html format."
++This is provided in the /usr/share/doc/rsyslog directory.
  To use rsyslog's advanced features, you
  .B need
--to look at the html documentation, because the man pages only cover
-+to look at the online documentation, because the man pages only cover
+ to look at the html documentation, because the man pages only cover
  basic aspects of operation.
 -.B For details and configuration examples, see the rsyslog.conf (5)
-+.B For details and configuration examples, see the rsyslog.conf (4)
- .B man page and the online documentation at http://www.rsyslog.com/doc
+-.B man page and the online documentation at http://www.rsyslog.com/doc
++.B "For details and configuration examples, see the rsyslog.conf (4)"
++.B "man page and the online documentation at http://www.rsyslog.com/doc"
  
 -.BR Rsyslogd (8)
 +.BR rsyslogd (1M)
  is derived from the sysklogd package which in turn is derived from the
  stock BSD sources.
  
-@@ -170,7 +168,8 @@
+@@ -93,9 +93,9 @@
+ 
+ .LP
+ .SH OPTIONS
+-.B Note that in version 3 of rsyslog a number of command line options
+-.B have been deprecated and replaced with config file directives. The
+-.B -c option controls the backward compatibility mode in use.
++.B "Note that in version 3 of rsyslog a number of command line options"
++.B "have been deprecated and replaced with config file directives. The"
++.B "-c option controls the backward compatibility mode in use."
+ .TP
+ .BI "\-A"
+ When sending UDP messages, there are potentially multiple paths to
+@@ -132,8 +132,8 @@
+ is the rsyslog version that it shall be
+ compatible with. Using -c0 tells rsyslog to be command-line compatible
+ to sysklogd, which is the default if -c is not given.
+-.B Please note that rsyslogd issues warning messages if the -c3
+-.B command line option is not given.
++.B "Please note that rsyslogd issues warning messages if the -c3"
++.B "command line option is not given."
+ This is to alert you that your are running in compatibility
+ mode. Compatibility mode interferes with your rsyslog.conf commands and
+ may cause some undesired side-effects. It is meant to be used with a
+@@ -170,7 +170,8 @@
  Avoid auto-backgrounding.  This is needed especially if the
  .B rsyslogd
  is started and controlled by
@@ -41,7 +69,7 @@
  .TP
  .B "\-N " "level"
  Do a coNfig check. Do NOT run in regular mode, just check configuration
-@@ -181,9 +180,6 @@
+@@ -181,9 +182,6 @@
  not specifying the -N option at all (so this makes limited sense) and
  1 actually activates the code. Later, higher levels will mean more
  verbosity (this is a forward-compatibility option).
@@ -51,7 +79,7 @@
  .TP
  .BI "\-q " "add hostname if DNS fails during ACL processing"
  During ACL processing, hostnames are resolved to IP addresses for
-@@ -257,7 +253,7 @@
+@@ -257,7 +255,7 @@
  operation and should only be done when actually necessary. Actually, it is
  a rsyslgod stop immediately followed by a restart. Future versions will remove
  this restart functionality of HUP (it will go away in v5). So it is advised to use
@@ -60,7 +88,7 @@
  to activate configuration changes.
  .TP
  .B TERM ", " INT ", " QUIT
-@@ -330,12 +326,10 @@
+@@ -330,12 +328,10 @@
  The file containing the process id of 
  .BR rsyslogd .
  .TP
@@ -75,7 +103,7 @@
  .SH ENVIRONMENT
  .TP
  .B RSYSLOG_DEBUG
-@@ -378,20 +372,42 @@
+@@ -378,20 +374,42 @@
  .B RSYSLOG_MODDIR
  Provides the default directory in which loadable modules reside.
  .PD

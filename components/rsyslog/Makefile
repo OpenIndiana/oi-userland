@@ -66,5 +66,6 @@ test:		$(TEST_64)
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 PKG_PROTO_DIRS +=	$(COMPONENT_DIR)/files
+PKG_PROTO_DIRS +=	$(COMPONENT_SRC)
 
 include ../../make-rules/depend.mk
