@@ -1,0 +1,359 @@
+--- liboil-0.3.17/liboil/i386_amd64/convert.c-orig	2010-04-15 14:34:29.693567169 -0500
++++ liboil-0.3.17/liboil/i386_amd64/convert.c	2010-04-15 14:34:47.168164102 -0500
+@@ -61,6 +61,7 @@ convert_u8_s16_mmx (uint8_t * dest, cons
+ }
+ OIL_DEFINE_IMPL_FULL (convert_u8_s16_mmx, convert_u8_s16, OIL_IMPL_FLAG_MMX);
+ 
++#if 0
+ static void
+ convert_u8_s16_mmx_2 (uint8_t * dest, const int16_t * src, int n)
+ {
+@@ -106,6 +107,7 @@ convert_u8_s16_mmx_2 (uint8_t * dest, co
+   __asm__ __volatile__ ("emms\n");
+ }
+ OIL_DEFINE_IMPL_FULL (convert_u8_s16_mmx_2, convert_u8_s16, OIL_IMPL_FLAG_MMX);
++#endif
+ 
+ static void
+ convert_s16_u8_mmx (int16_t * dest, const uint8_t * src, int n)
+--- liboil-0.3.16/liboil/i386_amd64/yuv.c-orig	2010-04-08 12:07:09.131114728 -0500
++++ liboil-0.3.16/liboil/i386_amd64/yuv.c	2010-04-08 12:07:53.826906101 -0500
+@@ -3,6 +3,7 @@
+ #include <liboil/liboilclasses.h>
+ 
+ 
++#if 0
+ void
+ packyuyv_mmx (uint32_t *d, uint8_t *s1_nx2, uint8_t *s2, uint8_t *s3, int n)
+ {
+@@ -99,4 +100,5 @@ packyuyv_mmx2 (uint32_t *d, uint8_t *s1_
+   }
+ }
+ OIL_DEFINE_IMPL_FULL (packyuyv_mmx2, packyuyv, OIL_IMPL_FLAG_MMX);
++#endif
+ 
+--- liboil-0.3.16/liboil/i386_amd64/mas.c-orig	2010-04-08 11:34:33.694242943 -0500
++++ liboil-0.3.16/liboil/i386_amd64/mas.c	2010-04-08 13:11:03.460299411 -0500
+@@ -3,6 +3,7 @@
+ #include <liboil/liboilclasses.h>
+ 
+ 
++#if 0
+ void
+ mas10_u8_mmx (uint8_t *d, const uint8_t *s1_np9, const int16_t *s2_10,
+         const int16_t *s3_2, int n)
+@@ -734,6 +735,7 @@ mas8_u8_sym_mmx_5 (uint8_t *d, const uin
+       : "ecx");
+ }
+ OIL_DEFINE_IMPL_FULL (mas8_u8_sym_mmx_5, mas8_u8_sym_l15, OIL_IMPL_FLAG_MMX|OIL_IMPL_FLAG_MMXEXT);
++#endif
+ 
+ #ifdef HAVE_SSSE3_ASM
+ void
+@@ -893,6 +895,7 @@ mas8_u8_supersym_mmx (uint8_t *d, const 
+ OIL_DEFINE_IMPL_FULL (mas8_u8_supersym_mmx, mas8_u8_sym_l15, OIL_IMPL_FLAG_MMX|OIL_IMPL_FLAG_MMXEXT);
+ #endif
+ 
++#if 0
+ void
+ mas12_addc_rshift_decim2_u8_mmx_4 (uint8_t *d, const uint8_t *s1_2xnp11,
+     const int16_t *s2_12, const int16_t *s3_2, int n)
+@@ -947,6 +950,7 @@ mas12_addc_rshift_decim2_u8_mmx_4 (uint8
+ }
+ OIL_DEFINE_IMPL_FULL (mas12_addc_rshift_decim2_u8_mmx_4,
+     mas12_addc_rshift_decim2_u8, OIL_IMPL_FLAG_MMX|OIL_IMPL_FLAG_MMXEXT);
++#endif
+ 
+ #if 0
+ void
+--- liboil-0.3.16/liboil/i386_amd64/copy.c-orig	2010-04-08 11:32:46.460572471 -0500
++++ liboil-0.3.16/liboil/i386_amd64/copy.c	2010-04-08 12:40:53.025051322 -0500
+@@ -256,7 +256,6 @@ copy_u8_mmx5 (uint8_t *dest, uint8_t *sr
+ }
+ OIL_DEFINE_IMPL_FULL (copy_u8_mmx5, copy_u8, OIL_IMPL_FLAG_MMX);
+ 
+-
+ static void splat_u8_ns_i386_mmx (uint8_t *dest, const uint8_t *param, int n)
+ {
+   uint32_t p;
+@@ -306,6 +305,7 @@ static void splat_u8_ns_mmx2 (uint8_t *d
+ }
+ OIL_DEFINE_IMPL_FULL(splat_u8_ns_mmx2, splat_u8_ns, OIL_IMPL_FLAG_MMX);
+ 
++#if 0
+ static void splat_u8_ns_mmx2a (uint8_t *dest, const uint8_t *param, int n)
+ {
+   uint32_t p;
+@@ -435,4 +435,4 @@ static void splat_u16_ns_mmx_3 (uint16_t
+     : "ecx");
+ }
+ OIL_DEFINE_IMPL_FULL (splat_u16_ns_mmx_3, splat_u16_ns, OIL_IMPL_FLAG_MMX|OIL_IMPL_FLAG_MMXEXT);
+-
++#endif
+--- liboil-0.3.16/liboil/i386_amd64/mt19937.c-orig	2010-04-08 11:35:26.503879386 -0500
++++ liboil-0.3.16/liboil/i386_amd64/mt19937.c	2010-04-08 12:49:33.973854216 -0500
+@@ -232,6 +232,7 @@ mt19937_i386_mmx_2 (uint32_t *d, uint32_
+ OIL_DEFINE_IMPL_FULL (mt19937_i386_mmx_2, mt19937, OIL_IMPL_FLAG_MMX | OIL_IMPL_FLAG_MMXEXT);
+ 
+ 
++#if 0
+ static void
+ mt19937_i386_mmx_3 (uint32_t *d, uint32_t *mt)
+ {
+@@ -324,6 +325,7 @@ mt19937_i386_mmx_3 (uint32_t *d, uint32_
+ 
+ }
+ OIL_DEFINE_IMPL_FULL (mt19937_i386_mmx_3, mt19937, OIL_IMPL_FLAG_MMX | OIL_IMPL_FLAG_MMXEXT);
++#endif
+ 
+ #undef TWIST
+ #undef TWIST2
+--- liboil-0.3.16/liboil/i386_amd64/sad8x8.c-orig	2010-04-08 11:35:45.557471388 -0500
++++ liboil-0.3.16/liboil/i386_amd64/sad8x8.c	2010-04-08 12:59:18.475624130 -0500
+@@ -33,7 +33,7 @@
+ #include <liboil/liboilclasses.h>
+ #include <stddef.h>
+ 
+-
++#if 0
+ static void
+ sad8x8_u8_mmx (uint32_t * dest, uint8_t * src1, int sstr1, uint8_t * src2,
+     int sstr2)
+@@ -91,6 +91,7 @@ sad8x8_u8_mmx (uint32_t * dest, uint8_t 
+   *dest = diff;
+ }
+ OIL_DEFINE_IMPL_FULL (sad8x8_u8_mmx, sad8x8_u8, OIL_IMPL_FLAG_MMX);
++#endif
+ 
+ static void
+ sad8x8_u8_mmxext (uint32_t * dest, uint8_t * src1, int sstr1, uint8_t * src2,
+@@ -289,6 +290,7 @@ sad8x8_u8_mmxext_4 (uint32_t * dest, uin
+ }
+ OIL_DEFINE_IMPL_FULL (sad8x8_u8_mmxext_4, sad8x8_u8, OIL_IMPL_FLAG_MMX | OIL_IMPL_FLAG_MMXEXT);
+ 
++#if 0
+ static void
+ sad8x8_8xn_u8_psadbw (uint32_t * dest, uint8_t * src1, int sstr1, uint8_t * src2,
+     int sstr2, int n)
+@@ -363,6 +365,7 @@ sad8x8_8xn_u8_psadbw (uint32_t * dest, u
+   );
+ }
+ OIL_DEFINE_IMPL_FULL (sad8x8_8xn_u8_psadbw, sad8x8_8xn_u8, OIL_IMPL_FLAG_MMX | OIL_IMPL_FLAG_MMXEXT);
++#endif
+ 
+ 
+ static void
+@@ -777,6 +780,7 @@ combine2_16xn_u8_mmx (uint8_t *d, int ds
+ }
+ OIL_DEFINE_IMPL_FULL (combine2_16xn_u8_mmx, combine2_16xn_u8, OIL_IMPL_FLAG_MMX|OIL_IMPL_FLAG_MMXEXT);
+ 
++#if 0
+ #define AVG2_4(offset) \
+         "  movd " #offset "(%1), %%mm0\n" \
+         "  punpcklbw %%mm7, %%mm0\n" \
+@@ -889,4 +893,4 @@ avg2_32xn_u8_mmx (uint8_t *d, int ds1, u
+   asm volatile ("emms");
+ }
+ OIL_DEFINE_IMPL_FULL (avg2_32xn_u8_mmx, avg2_32xn_u8, OIL_IMPL_FLAG_MMX|OIL_IMPL_FLAG_MMXEXT);
+-
++#endif
+--- liboil-0.3.16/liboil/i386_amd64/multiply_and_acc.c-orig	2010-04-08 11:35:05.517375333 -0500
++++ liboil-0.3.16/liboil/i386_amd64/multiply_and_acc.c	2010-04-08 13:12:14.373386908 -0500
+@@ -2,6 +2,7 @@
+ #include <liboil/liboilfunction.h>
+ #include <liboil/liboilclasses.h>
+ 
++#if 0
+ void
+ multiply_and_acc_6xn_s16_u8_mmx (int16_t *i1, int is1, int16_t *s1,
+     int ss1, uint8_t *s2, int ss2, int n)
+@@ -178,7 +179,6 @@ OIL_DEFINE_IMPL_FULL (multiply_and_acc_2
+     multiply_and_acc_24xn_s16_u8, OIL_IMPL_FLAG_MMX);
+ 
+ 
+-#if 0
+ void
+ mas2_add_s16_sse (int16_t *d1, int16_t *s1, int16_t *s2, int16_t *s3_2,
+     int16_t *s4_2, int n)
+--- liboil-0.3.16/liboil/i386/sad8x8avg_i386.c-orig	2010-04-08 10:47:59.428085736 -0500
++++ liboil-0.3.16/liboil/i386/sad8x8avg_i386.c	2010-04-08 12:26:18.364764404 -0500
+@@ -33,6 +33,7 @@
+ 
+ OIL_DECLARE_CLASS (sad8x8_u8_avg);
+ 
++#if 0
+ static void
+ sad8x8_u8_avg_mmx (uint32_t *dest, uint8_t *src1, int ss1, uint8_t *src2, uint8_t *src3, int ss2)
+ {
+@@ -140,3 +141,4 @@ sad8x8_u8_avg_mmxext (uint32_t *dest, ui
+   *dest = diff;
+ }
+ OIL_DEFINE_IMPL_FULL (sad8x8_u8_avg_mmxext, sad8x8_u8_avg, OIL_IMPL_FLAG_MMX | OIL_IMPL_FLAG_MMXEXT);
++#endif
+--- liboil-0.3.16/liboil/i386/diff8x8_i386.c-orig	2010-04-08 10:38:46.418919506 -0500
++++ liboil-0.3.16/liboil/i386/diff8x8_i386.c	2010-04-08 13:00:49.093277760 -0500
+@@ -84,6 +84,7 @@ diff8x8_s16_u8_mmx (int16_t *dest, uint8
+ }
+ OIL_DEFINE_IMPL_FULL (diff8x8_s16_u8_mmx, diff8x8_s16_u8, OIL_IMPL_FLAG_MMX);
+ 
++#if 0
+ static void
+ diff8x8_const128_s16_u8_mmx (int16_t *dest, uint8_t *src1, int ss1)
+ {
+@@ -128,7 +129,9 @@ diff8x8_const128_s16_u8_mmx (int16_t *de
+   );
+ }
+ OIL_DEFINE_IMPL_FULL (diff8x8_const128_s16_u8_mmx, diff8x8_const128_s16_u8, OIL_IMPL_FLAG_MMX);
++#endif
+ 
++#if 0
+ static void
+ diff8x8_average_s16_u8_mmx (int16_t *dest, uint8_t *src1, int ss1, uint8_t *src2, int ss2, uint8_t *src3)
+ {
+@@ -186,4 +189,5 @@ diff8x8_average_s16_u8_mmx (int16_t *des
+   );
+ }
+ OIL_DEFINE_IMPL_FULL (diff8x8_average_s16_u8_mmx, diff8x8_average_s16_u8, OIL_IMPL_FLAG_MMX);
++#endif
+ 
+--- liboil-0.3.16/liboil/i386/error8x8_i386.c-orig	2010-04-08 10:40:01.141129823 -0500
++++ liboil-0.3.16/liboil/i386/error8x8_i386.c	2010-04-08 12:24:54.131037212 -0500
+@@ -95,6 +95,7 @@ err_intra8x8_u8_mmx (uint32_t *dest, uin
+ }
+ OIL_DEFINE_IMPL_FULL (err_intra8x8_u8_mmx, err_intra8x8_u8, OIL_IMPL_FLAG_MMX);
+ 
++#if 0
+ static void
+ err_inter8x8_u8_mmx (uint32_t *dest, uint8_t *src1, int ss1, uint8_t *src2, int ss2)
+ {
+@@ -248,6 +249,7 @@ err_inter8x8_u8_avg_mmx (uint32_t *dest,
+ }
+ 
+ OIL_DEFINE_IMPL_FULL (err_inter8x8_u8_avg_mmx, err_inter8x8_u8_avg, OIL_IMPL_FLAG_MMX);
++#endif
+  
+ #ifdef ENABLE_BROKEN_IMPLS
+ static void
+--- liboil-0.3.16/liboil/i386/wavelet.c-orig	2010-04-08 10:48:53.456139667 -0500
++++ liboil-0.3.16/liboil/i386/wavelet.c	2010-04-08 12:36:08.380045855 -0500
+@@ -104,6 +104,7 @@ deinterleave2_c_1 (int16_t *d1, int16_t 
+ }
+ OIL_DEFINE_IMPL (deinterleave2_c_1, deinterleave2_s16);
+ 
++#if 0
+ void
+ deinterleave2_asm (int16_t *d1, int16_t *d2, int16_t *s_2xn, int n)
+ {
+@@ -290,7 +291,6 @@ deinterleave2_mmx_4 (int16_t *d1, int16_
+ }
+ OIL_DEFINE_IMPL_FULL (deinterleave2_mmx_4, deinterleave2_s16, OIL_IMPL_FLAG_MMX);
+ 
+-
+ void
+ lift_add_mult_shift12_i386_mmx (int16_t *d, int16_t *s1, int16_t *s2,
+     int16_t *s3, int16_t *s4, int n)
+@@ -596,6 +596,7 @@ synth_53_mmx (int16_t *d_2xn, int16_t *s
+ }
+ OIL_DEFINE_IMPL_FULL (synth_53_mmx, synth_53, OIL_IMPL_FLAG_MMX);
+ #endif
++#endif
+ 
+ 
+ void
+@@ -1373,6 +1374,7 @@ mas8_add_s16_sse2 (int16_t *d1, int16_t 
+ OIL_DEFINE_IMPL_FULL (mas8_add_s16_sse2, mas8_add_s16, OIL_IMPL_FLAG_SSE);
+ #endif
+ 
++#if 0
+ void
+ mas2_across_add_s16_mmx (int16_t *d1, int16_t *s1, int16_t *s2, int16_t *s3,
+     int16_t *s4_2, int16_t *s5_2, int n)
+@@ -1455,6 +1457,7 @@ mas2_across_add_s16_mmx (int16_t *d1, in
+ }
+ OIL_DEFINE_IMPL_FULL (mas2_across_add_s16_mmx, mas2_across_add_s16,
+     OIL_IMPL_FLAG_MMX | OIL_IMPL_FLAG_MMXEXT);
++#endif
+ 
+ void
+ add_const_rshift_s16_mmx(int16_t *d1, int16_t *s1, int16_t *s2_2, int n)
+@@ -1603,6 +1606,7 @@ multiply_and_add_s16_u8_mmx_2(int16_t *d
+ OIL_DEFINE_IMPL_FULL (multiply_and_add_s16_u8_mmx_2, multiply_and_add_s16_u8,
+     OIL_IMPL_FLAG_MMX);
+ 
++#if 0
+ void
+ multiply_and_acc_12xn_s16_u8_mmx (int16_t *i1, int is1, int16_t *s1,
+     int ss1, uint8_t *s2, int ss2, int n)
+@@ -1639,6 +1643,7 @@ multiply_and_acc_12xn_s16_u8_mmx (int16_
+ }
+ OIL_DEFINE_IMPL_FULL (multiply_and_acc_12xn_s16_u8_mmx,
+     multiply_and_acc_12xn_s16_u8, OIL_IMPL_FLAG_MMX);
++#endif
+ 
+ #ifdef ENABLE_BROKEN_IMPLS
+ void
+@@ -1719,7 +1724,6 @@ mas4_across_add_s16_mmx (int16_t *d, int
+ }
+ OIL_DEFINE_IMPL_FULL (mas4_across_add_s16_mmx, mas4_across_add_s16,
+     OIL_IMPL_FLAG_MMX|OIL_IMPL_FLAG_MMXEXT);
+-#endif
+ 
+ void
+ mas4_across_add_s16_mmx (int16_t *d, int16_t *s1, int16_t *s2_nx4, int sstr2,
+@@ -2047,5 +2051,6 @@ lshift_s16_mmx_2(int16_t *d1, int16_t *s
+       : "ecx");
+ }
+ OIL_DEFINE_IMPL_FULL (lshift_s16_mmx_2, lshift_s16, OIL_IMPL_FLAG_MMX);
++#endif
+ 
+ 
+--- liboil-0.3.16/liboil/i386/md5_i386.c-orig	2010-04-08 10:41:58.951515808 -0500
++++ liboil-0.3.16/liboil/i386/md5_i386.c	2010-04-08 13:08:09.599963383 -0500
+@@ -33,6 +33,7 @@
+ #include <liboil/liboilclasses.h>
+ 
+ 
++#if 0
+ #define F1(x, y, z) (z ^ (x & (y ^ z)))
+ #define F2(x, y, z) F1(z, x, y)
+ #define F3(x, y, z) (x ^ y ^ z)
+@@ -520,4 +521,5 @@ md5_asm3(uint32_t *state, uint32_t *src)
+ 
+ OIL_DEFINE_IMPL_ASM (md5_asm3, md5);
+ #endif
++#endif
+ 
+--- liboil-0.3.16/liboil/i386/mult8x8_i386.c-orig	2010-04-08 10:47:27.732953570 -0500
++++ liboil-0.3.16/liboil/i386/mult8x8_i386.c	2010-04-08 12:25:41.555657336 -0500
+@@ -35,6 +35,7 @@
+ #include <math.h>
+ 
+ 
++#if 0
+ static void
+ mult8x8_s16_mmx(int16_t *dest, int16_t *src1, int16_t *src2, int dstr, int sstr1,
+     int sstr2)
+@@ -131,4 +132,5 @@ mult8x8_s16_mmx(int16_t *dest, int16_t *
+ }
+ 
+ OIL_DEFINE_IMPL_FULL (mult8x8_s16_mmx, mult8x8_s16, OIL_IMPL_FLAG_MMX);
++#endif
+ 
+--- liboil-0.3.16/liboil/i386/abs_i386.c-orig	2010-04-08 11:31:15.033982276 -0500
++++ liboil-0.3.16/liboil/i386/abs_i386.c	2010-04-08 13:13:19.334990752 -0500
+@@ -107,6 +107,7 @@ abs_u16_s16_i386asm2 (uint16_t * dest, i
+ OIL_DEFINE_IMPL_FULL (abs_u16_s16_i386asm2, abs_u16_s16, OIL_IMPL_FLAG_CMOV);
+ #endif
+ 
++#if 0
+ static void
+ abs_u16_s16_i386asm3 (uint16_t * dest, int dstr, int16_t * src, int sstr, int n)
+ {
+@@ -128,6 +129,7 @@ abs_u16_s16_i386asm3 (uint16_t * dest, i
+       : "eax", "edx");
+ }
+ OIL_DEFINE_IMPL_ASM (abs_u16_s16_i386asm3, abs_u16_s16);
++#endif
+ 
+ 
+ 
