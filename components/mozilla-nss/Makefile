@@ -17,12 +17,12 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nss
-COMPONENT_VERSION=	3.16.5
+COMPONENT_VERSION=	3.16.6
 COMPONENT_PROJECT_URL=	https://developer.mozilla.org/ru/docs/NSS
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:e744b9fb2a6291d7eaf1b3f0157082f4214984db33f896e4adf3141340d64196
-COMPONENT_ARCHIVE_URL=	ftp://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_3_16_5_RTM/src/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:955b4cd8c5769d94b0455767efbe315ca6956ba24c15a3494e62fcccc989e752
+COMPONENT_ARCHIVE_URL=	ftp://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_3_16_6_RTM/src/$(COMPONENT_ARCHIVE)
 
 # Enable compiler optimizations and disable debugging code
 COMPONENT_BUILD_ENV += BUILD_OPT=1
