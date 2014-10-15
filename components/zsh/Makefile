@@ -27,16 +27,16 @@ include ../../make-rules/shared-macros.mk
 include ../../make-rules/shared-targets.mk
 
 COMPONENT_NAME=		zsh
-COMPONENT_VERSION=	5.0.5
+COMPONENT_VERSION=	5.0.7
 COMPONENT_PROJECT_URL=	http://www.zsh.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:6624d2fb6c8fa4e044d2b009f86ed1617fe8583c83acfceba7ec82826cfa8eaf
+    sha256:544e27de81740286b916d1d77c9f48ad7c26ad7943ed96d278abee67cf6704b3
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/zsh/zsh/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/zsh
 
-TPNO=			19296
+TPNO=			19477
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
