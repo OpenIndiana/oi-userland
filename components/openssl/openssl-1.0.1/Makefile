@@ -28,15 +28,15 @@ COMPONENT_NAME =	openssl
 # When upgrading OpenSSL, please, DON'T FORGET TO TEST WANBOOT too. 
 # For more information about wanboot-openssl testing, please refer to
 # ../README.
-COMPONENT_VERSION =	1.0.1i
+COMPONENT_VERSION =	1.0.1j
 # Version for IPS. It is easier to do it manually than convert the letter to a
 # number while taking into account that there might be no letter at all.
-IPS_COMPONENT_VERSION = 1.0.1.9
+IPS_COMPONENT_VERSION = 1.0.1.10
 COMPONENT_PROJECT_URL=	http://www.openssl.org/
 COMPONENT_SRC =		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:3c179f46ca77069a6a0bac70212a9b3b838b2f66129cb52d568837fc79d8fcc7
+    sha256:1b60ca8789ba6f03e8ef20da2293b8dc131c39d83814e775069f02d26354edf3
 COMPONENT_ARCHIVE_URL =	$(COMPONENT_PROJECT_URL)source/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/openssl
 
