@@ -1,4 +1,4 @@
-#!/usr/bin/python2.6
+#!/usr/bin/python2.7
 #
 # CDDL HEADER START
 #
@@ -19,7 +19,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 #
 # userland-mangler - a file mangling utility
@@ -273,6 +273,23 @@ def mangle_paths(manifest, search_paths, destination):
 					mangle_path(manifest, action, src, dest)
 					break
 
+def mangle_manifest(manifest):
+	# Check for file content and remove tpno data and license actions if
+	# there is no content in the package that can be licensed.
+	manifest_has_file_content = False
+
+	for action in manifest.gen_actions_by_type("file"):
+		manifest_has_file_content = True
+		break
+
+	if not manifest_has_file_content:
+		# search for and remove 'set name=com.oracle.info.tpno ...'
+		for action in manifest.gen_actions_by_type("set"):
+			if (action.attrs["name"] == "com.oracle.info.tpno"):
+				manifest.actions.remove(action)
+		for action in manifest.gen_actions_by_type("license"):
+			manifest.actions.remove(action)
+
 def load_manifest(manifest_file):
 	manifest = pkg.manifest.Manifest()
 	manifest.set_content(pathname=manifest_file)
@@ -321,6 +338,7 @@ def main():
 
 	for manifest in manifests:
 		mangle_paths(manifest, search_paths, destination)
+		mangle_manifest(manifest)
 		print manifest
 
 	sys.exit(0)
