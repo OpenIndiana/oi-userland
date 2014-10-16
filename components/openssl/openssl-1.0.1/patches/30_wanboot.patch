@@ -425,3 +425,17 @@
  
  		/* Do the message type and length last */
  		d=p= &(buf[4]);
+--- openssl-1.0.1f/ssl/s3_lib.c       Wed Oct 15 11:18:30 2014
++++ openssl-1.0.1f/ssl/s3_lib.c.new    Wed Oct 15 11:20:07 2014
+@@ -3364,7 +3364,11 @@
+ 			return 1;
+ 		/* Apparently we're using a version-flexible SSL_METHOD
+ 		 * (not at its highest protocol version). */
++#ifndef	_BOOT
+ 		if (s->ctx->method->version == SSLv23_method()->version)
++#else
++		if (s->ctx->method->version == TLS1_2_VERSION)
++#endif
+ 			{
+ #if TLS_MAX_VERSION != TLS1_2_VERSION
+ #  error Code needs update for SSLv23_method() support beyond TLS1_2_VERSION.

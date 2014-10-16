@@ -29,18 +29,18 @@ PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin:/usr/perl5/bin
 COMPONENT_NAME =	openssl-fips-140
 # Note that this is the OpenSSL version that is used to build FIPS-140 certified
 # libraries. However, we use the FIPS canister version for the IPS package.
-COMPONENT_VERSION =	1.0.1i
+COMPONENT_VERSION =	1.0.1j
 IPS_COMPONENT_VERSION = 2.0.6
 COMPONENT_PROJECT_URL=	http://www.openssl.org/
 COMPONENT_SRC_NAME =	openssl
 COMPONENT_SRC =		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:3c179f46ca77069a6a0bac70212a9b3b838b2f66129cb52d568837fc79d8fcc7
+    sha256:1b60ca8789ba6f03e8ef20da2293b8dc131c39d83814e775069f02d26354edf3
 COMPONENT_ARCHIVE_URL =	$(COMPONENT_PROJECT_URL)source/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/openssl
 
-TPNO=			18553
+TPNO=			19492
 
 # OpenSSL FIPS directory
 OPENSSL_FIPS_DIR = $(COMPONENT_DIR)/../openssl-fips
