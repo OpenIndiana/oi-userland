@@ -53,7 +53,9 @@ CONFIGURE_ENV +=	"LDFLAGS=$(LDFLAGS) -m64"
 CONFIGURE_OPTIONS +=	--with-ldap
 CONFIGURE_OPTIONS +=	--with-project
 CONFIGURE_OPTIONS +=	--with-timedir=/system/volatile/sudo
-CONFIGURE_OPTIONS +=	--with-pam --with-pam-login
+CONFIGURE_OPTIONS +=	--with-pam
+CONFIGURE_OPTIONS +=	--with-pam-login
+CONFIGURE_OPTIONS +=	--disable-pam-session
 CONFIGURE_OPTIONS +=	--with-tty-tickets
 CONFIGURE_OPTIONS +=	--without-insults
 CONFIGURE_OPTIONS +=	--without-lecture
