@@ -1,0 +1,24 @@
+--- ./Makefile.system.orig	2015-02-09 16:28:21.406004454 +0000
++++ ./Makefile.system	2015-02-09 16:31:16.427027007 +0000
+@@ -385,8 +385,7 @@
+ 
+ ifeq ($(DYNAMIC_ARCH), 1)
+ ifeq ($(ARCH), x86)
+-DYNAMIC_CORE = KATMAI COPPERMINE NORTHWOOD PRESCOTT BANIAS \
+-	       CORE2 PENRYN DUNNINGTON NEHALEM ATHLON OPTERON OPTERON_SSE3 BARCELONA BOBCAT ATOM NANO
++DYNAMIC_CORE = PRESCOTT CORE2 PENRYN DUNNINGTON NEHALEM ATHLON OPTERON OPTERON_SSE3 BARCELONA BOBCAT ATOM NANO 
+ endif
+ 
+ ifeq ($(ARCH), x86_64)
+--- xianyi-OpenBLAS-aceee4e/driver/others/dynamic.c.orig	2015-02-09 22:01:44.997867567 +0000
++++ xianyi-OpenBLAS-aceee4e/driver/others/dynamic.c	2015-02-09 22:07:40.233707692 +0000
+@@ -38,7 +38,8 @@
+ 
+ #include "common.h"
+ 
+-
++// Disable 32bit-only architectures
++#undef ARCH_X86
+ #ifdef ARCH_X86
+ #define EXTERN extern
+ #else
