@@ -230,6 +230,9 @@ TEST_32_and_64 =	$(TEST_32) $(TEST_64)
 $(BUILD_DIR_32)/.tested:       BITS=32
 $(BUILD_DIR_64)/.tested:       BITS=64
 
+# set the default env command to use for test of the component
+COMPONENT_TEST_ENV_CMD =        $(ENV)
+
 # set the default command to use for test of the component
 COMPONENT_TEST_CMD =		$(GMAKE)
 

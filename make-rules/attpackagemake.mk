@@ -91,7 +91,8 @@ $(BUILD_DIR)/%/.installed:	$(BUILD_DIR)/%/.built
 # test the built source
 $(BUILD_DIR)/%/.tested: $(BUILD_DIR)/%/.built
 	$(COMPONENT_PRE_TEST_ACTION)
-	cd $(COMPONENT_TEST_DIR); $(ENV) $(COMPONENT_TEST_ENV) \
+	cd $(COMPONENT_TEST_DIR); $(COMPONENT_TEST_ENV_CMD) \
+		$(COMPONENT_TEST_ENV) \
 		bin/package test $(COMPONENT_TEST_TARGETS) \
 		$(COMPONENT_TEST_ARGS)
 	$(COMPONENT_POST_TEST_ACTION)

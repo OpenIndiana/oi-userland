@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 ANT=/usr/bin/ant
@@ -44,6 +44,17 @@ $(BUILD_DIR)/%/.installed:	$(BUILD_DIR)/%/.built
 	(cd $(@D) ; $(ENV) $(COMPONENT_INSTALL_ENV) \
 		$(ANT) $(COMPONENT_INSTALL_ARGS) $(COMPONENT_INSTALL_TARGETS))
 	$(COMPONENT_POST_INSTALL_ACTION)
+	$(TOUCH) $@
+
+COMPONENT_TEST_ENV += JAVA_HOME="$(JAVA_HOME)"
+COMPONENT_TEST_CMD = $(ANT)
+# test the built source
+$(BUILD_DIR)/%/.tested: $(BUILD_DIR)/%/.built
+	$(COMPONENT_PRE_TEST_ACTION)
+	(cd $(COMPONENT_TEST_DIR) ; $(ENV) $(COMPONENT_TEST_ENV) \
+		$(COMPONENT_TEST_CMD) \
+			$(COMPONENT_TEST_ARGS) $(COMPONENT_TEST_TARGETS))
+	$(COMPONENT_POST_TEST_ACTION)
 	$(TOUCH) $@
 
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)

@@ -71,15 +71,8 @@ COMPONENT_INSTALL_ARGS += INSTALL_TOP=$(PROTOUSRDIR)
 $(INSTALL_64):  COMPONENT_INSTALL_ARGS += INSTALL_LIB=$(PROTOUSRLIBDIR64)
 $(INSTALL_64):  COMPONENT_INSTALL_ARGS += INSTALL_SBIN=$(PROTOUSRBINDIR64)
 
-ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
-build:          $(BUILD_64)
-
-install:        $(INSTALL_64)
-
-test:           install
-		($(ENV) LD_LIBRARY_PATH=$(PROTOUSRLIBDIR64) \
+COMPONENT_TEST_ENV +=	LD_LIBRARY_PATH=$(PROTOUSRLIBDIR64)
+COMPONENT_TEST_CMD =	\
 		$(PROTOUSRDIR)/sbin/$(MACH64)/smp_conf_general -V; \
 		$(PROTOUSRDIR)/sbin/$(MACH64)/smp_conf_phy_event -V; \
 		$(PROTOUSRDIR)/sbin/$(MACH64)/smp_conf_route_info -V; \
@@ -108,7 +101,16 @@ test:           install
 		$(PROTOUSRDIR)/sbin/$(MACH64)/smp_zone_activate -V; \
 		$(PROTOUSRDIR)/sbin/$(MACH64)/smp_zone_lock -V; \
 		$(PROTOUSRDIR)/sbin/$(MACH64)/smp_zone_unlock -V; \
-		$(PROTOUSRDIR)/sbin/$(MACH64)/smp_zoned_broadcast -V)
+		$(PROTOUSRDIR)/sbin/$(MACH64)/smp_zoned_broadcast -V
+
+ASLR_MODE = $(ASLR_ENABLE)
+
+# common targets
+build:          $(BUILD_64)
+
+install:        $(INSTALL_64)
+
+test:           install $(TEST_64)
 
 BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
 

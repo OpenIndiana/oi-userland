@@ -108,8 +108,6 @@ build: $(VARIANTS:%=%/.built)
 # install gs and ijs
 install: $(VARIANTS:%=%/.installed)
 
-# empty test target
-test:
-	@echo "no tests available"
+test:	$(NO_TESTS)
 
 include ../../make-rules/depend.mk

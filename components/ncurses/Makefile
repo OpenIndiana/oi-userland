@@ -69,6 +69,9 @@ COMPONENT_POST_INSTALL_ACTION += \
 	$(CP) /usr/share/lib/terminfo/s/sun-color \
 	$(PROTO_DIR)$(GNUSHARE)/terminfo/s/
 
+COMPONENT_TEST_DIR =		$(BUILD_DIR)/$(MACH$(BITS))/test
+COMPONENT_TEST_TARGETS =
+
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
@@ -76,9 +79,7 @@ build:          $(BUILD_32_and_64)
 
 install:        $(INSTALL_32_and_64)
 
-test:           $(BUILD_32_and_64)
-		(cd $(BUILD_DIR)/$(MACH32)/test; $(GMAKE))
-		(cd $(BUILD_DIR)/$(MACH64)/test; $(GMAKE))
+test:           $(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
 

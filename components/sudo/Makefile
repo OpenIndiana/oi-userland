@@ -71,6 +71,23 @@ COMPONENT_INSTALL_TARGETS = install
 COMPONENT_INSTALL_ARGS += bindir=$(USRBINDIR)
 COMPONENT_INSTALL_ARGS += sbindir=$(USRSBINDIR)
 
+# Since linking with libmd.so (which provides sha2 capability on
+# Solaris) is optional, we have a check here to make sure that the
+# configure script found it correctly.
+# http://www.sudo.ws/bugs/show_bug.cgi?id=641
+# Make sure that sudo is NOT built with its internal sha2 implementation
+# ... but is linked with libmd instead
+COMPONENT_TEST_ENV_CMD =
+COMPONENT_TEST_CMD = \
+	if [[ -n $$( elfdump -s "$(VISUDO)" | grep SHA256Init | grep -v UNDEF ) ]]; then \
+		echo "SHA256Init is not an undefined symbol in $(VISUDO)"; \
+		exit 1; \
+	fi; \
+	if [[ -z $$( elfdump -d "$(VISUDO)" | grep 'NEEDED .* libmd.so' ) ]]; then \
+		echo "$(VISUDO) is not linked against libmd.so"; \
+		exit 1; \
+	fi
+COMPONENT_TEST_TARGETS =
 
 # Enable aslr for this component
 ASLR_MODE = $(ASLR_ENABLE)
@@ -82,23 +99,7 @@ build:		$(BUILD_64)
 install:	$(INSTALL_64)
 
 VISUDO=$(BUILD_DIR_64)/plugins/sudoers/visudo
-test:
-	# Since linking with libmd.so (which provides sha2 capability on
-	# Solaris) is optional, we have a check here to make sure that the
-	# configure script found it correctly.
-	# http://www.sudo.ws/bugs/show_bug.cgi?id=641
-
-	# Make sure that sudo is NOT built with it's internal sha2 implementation
-	if [[ -n $$( elfdump -s "$(VISUDO)" | grep SHA256Init | grep -v UNDEF ) ]]; then \
-		echo "SHA256Init is not an undefined symbol in $(VISUDO)"; \
-		exit 1; \
-	fi
-	# ... but is linked with libmd instead
-	if [[ -z $$( elfdump -d "$(VISUDO)" | grep 'NEEDED .* libmd.so' ) ]]; then \
-		echo "$(VISUDO) is not linked against libmd.so"; \
-		exit 1; \
-	fi
-
+test:		$(TEST_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

@@ -47,17 +47,20 @@ COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 PKG_PROTO_DIRS += $(BUILD_DIR)/$(MACH32)
 
+# We delegate the running of the tests to a script because it's easier to find
+# and use unique free ports in a single process, and it's easier to make sure
+# that we don't leave any servers running if the tests themselves fail.
+COMPONENT_TEST_DIR =		$(COMPONENT_DIR)
+COMPONENT_TEST_CMD =		$(PYTHON)
+COMPONENT_TEST_TARGETS =	test.py $(TEST_32)
+
 # common targets
 build:		$(BUILD_32)
 
 # The install target in the rabbitmq makefile isn't useful to us.
 install:
 
-# We delegate the running of the tests to a script because it's easier to find
-# and use unique free ports in a single process, and it's easier to make sure
-# that we don't leave any servers running if the tests themselves fail.
-test:
-	$(PYTHON) test.py $(TEST_32)
+test:		$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

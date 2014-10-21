@@ -179,8 +179,7 @@ build:          $(BUILD_64)
 
 install:	$(BUILD_64) $(BUILD_DIR)/$(MACH64)-x/.installed 
 
-test:
-	@echo "no tests available"
+test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

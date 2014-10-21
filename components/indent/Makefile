@@ -46,6 +46,11 @@ COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
 
+COMPONENT_TEST_DIR =		$(@D)/regression
+# Need to put /usr/gnu/bin at the front of $PATH for GNU diff.
+COMPONENT_TEST_ENV +=		PATH=$(GNUBIN):/usr/bin
+COMPONENT_TEST_TARGETS =	test
+
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
@@ -53,9 +58,7 @@ build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
 
-# Need to put /usr/gnu/bin at the front of $PATH for GNU diff.
-test:		install
-	@cd $(BUILD_DIR_64)/regression; PATH=/usr/gnu/bin:/usr/bin $(MAKE) test
+test:		install $(TEST_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

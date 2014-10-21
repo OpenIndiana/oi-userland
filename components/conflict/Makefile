@@ -57,6 +57,10 @@ CONFIGURE_ENV += "CC=$(CC)"
 CONFIGURE_OPTIONS = --prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --mandir=$(CONFIGURE_MANDIR)
 
+COMPONENT_TEST_DIR =	$(BUILD_DIR_64)
+COMPONENT_TEST_CMD =	./run_test.sh
+COMPONENT_TEST_TARGETS =
+
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
@@ -64,8 +68,7 @@ build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
 
-test:		build
-	@cd $(BUILD_DIR_64); ./run_test.sh
+test:		$(TEST_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

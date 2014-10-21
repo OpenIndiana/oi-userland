@@ -88,15 +88,16 @@ COMPONENT_PRE_TEST_ACTION = ( \
 	$(CP) $(COMPONENT_DIR)/files/hexdump-expected \
 		$(COMPONENT_SRC)/tests/expected/hexdump/empty-format; )
 
+COMPONENT_TEST_CMD =		./run.sh
+COMPONENT_TEST_ARGS =		--verbose
+COMPONENT_TEST_TARGETS =	colrm column hexdump tailf
+
 # common targets
 build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
 
-test:		install
-	$(COMPONENT_PRE_TEST_ACTION)
-	(cd $(COMPONENT_TEST_DIR) ; $(ENV) $(COMPONENT_TEST_ENV) \
-		./run.sh --verbose colrm column hexdump tailf)
+test:		install $(TEST_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

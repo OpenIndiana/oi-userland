@@ -47,6 +47,10 @@ include ../../make-rules/ips.mk
 # the tests fail horribly with -Bdirect
 LD_B_DIRECT=
 
+COMPONENT_TEST_DIR =		$(@D)
+COMPONENT_TEST_ENV =		P7ZIP_HOME_DIR=$(BUILD_DIR)/$(MACH$(BITS))/bin
+COMPONENT_TEST_TARGETS =	test test_7z test_7zr
+
 COMPONENT_PREP_ACTION = (cd $(@D); cp ../makefile.solaris makefile.machine)
 COMPONENT_BUILD_TARGETS = all3
 COMPONENT_INSTALL_ARGS += DEST_HOME=/usr DEST_DIR=$(PROTO_DIR)
@@ -76,11 +80,7 @@ COMPONENT_POST_INSTALL_ACTION += $(CHMOD) -R u+w $(PROTO_DIR);
 COMPONENT_POST_INSTALL_ACTION += $(GSED) -i -e 's/\r//' $(PROTO_DIR)/usr/man/man1/7zr.1
 
 # build does this always
-test:	$(BUILD_64)
-	cd $(BUILD_DIR_64) && $(MAKE) -e test P7ZIP_HOME_DIR=$(BUILD_DIR_64)/bin
-	cd $(BUILD_DIR_64) && $(MAKE) -e test_7z P7ZIP_HOME_DIR=$(BUILD_DIR_64)/bin
-	cd $(BUILD_DIR_64) && $(MAKE) -e test_7zr P7ZIP_HOME_DIR=$(BUILD_DIR_64)/bin
-
+test:	$(TEST_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

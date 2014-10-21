@@ -88,20 +88,21 @@ COMPONENT_BUILD_ENV += SHELL=$(CONFIG_SHELL)
 
 COMPONENT_BUILD_TARGETS=bootstrap
 
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32) 
-
 # To ensure that all tests that are expected to pass actually
-# pass, we have to increase the stacksize limit to at least 
+# pass, we have to increase the stacksize limit to at least
 # 16384 Kb. Otherwise we'll get spurious failures in the test
 # harness (gcc.c-torture/compile/limits-exprparen.c and others).
 # With the soft stacksize limit set to 16384 we get very good
 # test results.
-test:
-	( cd $(BUILD_DIR_32)/gcc ; \
-	    ulimit -Ss 16384 ; \
-	    $(GMAKE) -k -i check )
+COMPONENT_TEST_DIR =	$(BUILD_DIR_32)/gcc
+COMPONENT_TEST_CMD =	ulimit -Ss 16384 ; $(GMAKE)
+COMPONENT_TEST_ARGS =	-k -i
+
+build:		$(BUILD_32)
+
+install:	$(INSTALL_32) 
+
+test:		$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

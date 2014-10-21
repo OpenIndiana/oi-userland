@@ -231,6 +231,21 @@ COMPONENT_POST_BUILD_ACTION = \
 	$(GCP) -rpd $(COMPONENT_SRC) $(COMPONENT_SRC)-$(BITS) ; \
 	$(RM) -rf $(COMPONENT_SRC) )
 
+COMPONENT_PRE_TEST_ACTION = \
+        $(CP) -p $(COMPONENT_DIR)/Solaris/prep_build_area.sh \
+            $(COMPONENT_DIR)/ ; \
+        $(CHMOD) 0755 $(COMPONENT_DIR)/prep_build_area.sh ; \
+        $(SHELL) $(COMPONENT_DIR)/prep_build_area.sh $(CC_BITS) \
+            -builddir=$(BUILD_DIR)/$(MACH$(BITS)) \
+            -srcdir=$(TOPDIR)-$(BITS)
+COMPONENT_TEST_DIR = $(BUILD_DIR)/$(MACH$(BITS))/build/tests
+COMPONENT_TEST_CMD = \
+	$(CP) -p $(COMPONENT_DIR)/Solaris/run_tests.sh . ; \
+	$(CHMOD) 0755 run_tests.sh ; \
+	$(SHELL) ./run_tests.sh > \
+		$(COMPONENT_DIR)/runtests-$(MACH).out 2>&1
+COMPONENT_TEST_TARGETS =
+
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 build: $(BUILD_32) $(BUILD_64)
@@ -254,28 +269,7 @@ install: $(BUILD_DIR_32)/.built $(BUILD_DIR_64)/.built
 	    -mach64=$(MACH64) )
 	test -d $(TOPDIR) || $(MKDIR) $(TOPDIR)
 
-test:
-	test -d $(BUILD_DIR_32) || echo "$(BUILD_DIR_32) does not exist!"
-	test -d $(BUILD_DIR_64) || echo "$(BUILD_DIR_64) does not exist!"
-	$(CP) -p $(COMPONENT_DIR)/Solaris/prep_build_area.sh \
-	    $(COMPONENT_DIR)/
-	$(CHMOD) 0755 $(COMPONENT_DIR)/prep_build_area.sh
-	$(SHELL) $(COMPONENT_DIR)/prep_build_area.sh -m32 \
-	    -builddir=$(BUILD_DIR_32) \
-	    -srcdir=$(TOPDIR)-32
-	$(SHELL) $(COMPONENT_DIR)/prep_build_area.sh -m64 \
-	    -builddir=$(BUILD_DIR_64) \
-	    -srcdir=$(TOPDIR)-64
-	( cd $(BUILD_DIR_32)/build/tests ; \
-	    $(CP) -p $(COMPONENT_DIR)/Solaris/run_tests.sh . ; \
-	    $(CHMOD) 0755 run_tests.sh ; \
-	    $(SHELL) ./run_tests.sh > \
-		$(COMPONENT_DIR)/runtests-$(MACH).out 2>&1 )
-	( cd $(BUILD_DIR_64)/build/tests ; \
-	    $(CP) -p $(COMPONENT_DIR)/Solaris/run_tests.sh . ; \
-	    $(CHMOD) 0755 run_tests.sh ; \
-	    $(SHELL) ./run_tests.sh > \
-		$(COMPONENT_DIR)/runtests-$(MACH64).out 2>&1 )
+test:	$(TEST_32_and_64)
 
 clean::
 	$(RM) -r $(COMPONENT_SRC) $(COMPONENT_SRC)-32 $(COMPONENT_SRC)-64

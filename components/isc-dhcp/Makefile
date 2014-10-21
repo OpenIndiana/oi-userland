@@ -55,14 +55,15 @@ CONFIGURE_OPTIONS  +=	--enable-ipv4-pktinfo
 CPPFLAGS  +=	        -DNOMINUM
 CONFIGURE_OPTIONS  +=   CPPFLAGS="$(CPPFLAGS)"
 
+COMPONENT_TEST_DIR =	$(@D)
+
 build:		$(BUILD_32)
 
 install:	build $(INSTALL_32) $(PROTO_DIR)/dhcpd.leases
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-test:	build
-	@cd $(BUILD_DIR_32); $(MAKE) check
+test:		$(TEST_32)
 
 $(PROTO_DIR)/dhcpd.leases:	$(INSTALL_32)
 	$(TOUCH) $@
