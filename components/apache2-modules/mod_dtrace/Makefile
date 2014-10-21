@@ -32,18 +32,11 @@ TPNO=			8876
 
 include ../../../make-rules/justmake.mk
 include ../../../make-rules/ips.mk
+include ../modules.mk
 
-APACHE_USR_PREFIX=/usr/apache2/2.2
-
-$(BUILD_DIR_32)/.built:	COMPONENT_BUILD_ARGS +=	APXS=$(APACHE_USR_PREFIX)/bin/apxs
-$(BUILD_DIR_64)/.built:	COMPONENT_BUILD_ARGS +=	APXS=$(APACHE_USR_PREFIX)/bin/$(MACH64)/apxs
-$(BUILD_DIR_32)/.built:	COMPONENT_BUILD_ARGS +=	DTRACE="/usr/sbin/dtrace -32"
-$(BUILD_DIR_64)/.built:	COMPONENT_BUILD_ARGS +=	DTRACE="/usr/sbin/dtrace -64"
-
-PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
-ifeq   ($(strip $(PARFAIT_BUILD)),yes)
-PATH=$(PARFAIT_TOOLS):$(SPRO_VROOT)/bin:/usr/bin
-endif
+COMPONENT_BUILD_ARGS +=	APXS=$(APXS)
+COMPONENT_BUILD_ARGS +=	DTRACE="/usr/sbin/dtrace -$(BITS)"
+COMPONENT_BUILD_ARGS +=	PATH="$(PATH)"
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 

@@ -25,60 +25,53 @@
 
 include ../../../make-rules/shared-macros.mk
 
-PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
-ifeq   ($(strip $(PARFAIT_BUILD)),yes)
-PATH=$(PARFAIT_TOOLS):$(SPRO_VROOT)/bin:/usr/bin
-endif
-
 COMPONENT_NAME=		mod_wsgi
-COMPONENT_VERSION=	3.3
+COMPONENT_VERSION=	4.3.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:d96e1078990484cfe5579df1e95dc73f009495e9c3f9a066b0983650bd9e3243
-COMPONENT_ARCHIVE_URL=	http://modwsgi.googlecode.com/files/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:89dfcc8564bb8781f36370c80c6fbeef9ec0723dec273231f4f760760d8e813d
+COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/source/m/mod_wsgi/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://code.google.com/p/modwsgi/
 COMPONENT_BUGDB=	utility/apache
 
-TPNO=			7687
+TPNO=			19269
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
+include ../modules.mk
+
+APACHE_USR_PREFIX = /usr/apache2/
+
+VARIANT_AP_22_PY26 = $(BUILD_DIR)/apache22-python26
+VARIANT_AP_22_PY27 = $(BUILD_DIR)/apache22-python27
+VARIANT_AP_22_PY34 = $(BUILD_DIR)/apache22-python34
+VARIANT_AP_24_PY26 = $(BUILD_DIR)/apache24-pytohn26
+VARIANT_AP_24_PY27 = $(BUILD_DIR)/apache24-python27
+VARIANT_AP_24_PY34 = $(BUILD_DIR)/apache24-python34
+
+VARIANTS_32 = $(VARIANT_AP_22_PY26) $(VARIANT_AP_22_PY27)
+VARIANTS_64 = $(VARIANT_AP_22_PY26) $(VARIANT_AP_22_PY27) $(VARIANT_AP_22_PY34) \
+              $(VARIANT_AP_24_PY26) $(VARIANT_AP_24_PY27) $(VARIANT_AP_24_PY34)
+
+$(BUILD_DIR)/apache22-%/$(MACH32)/.configured: APXS=$(APACHE_USR_PREFIX)/2.2/bin/apxs
+$(BUILD_DIR)/apache22-%/$(MACH64)/.configured: APXS=$(APACHE_USR_PREFIX)/2.2/bin/$(MACH64)/apxs
+$(BUILD_DIR)/apache24-%/$(MACH64)/.configured: APXS=$(APACHE_USR_PREFIX)/2.4/bin/apxs
+
+$(BUILD_DIR)/apache2%-python26/$(MACH32)/.configured: PYTHON=$(PYTHON.2.6.32)
+$(BUILD_DIR)/apache2%-python26/$(MACH64)/.configured: PYTHON=$(PYTHON.2.6.64)
+$(BUILD_DIR)/apache2%-python27/$(MACH32)/.configured: PYTHON=$(PYTHON.2.7.32)
+$(BUILD_DIR)/apache2%-python27/$(MACH64)/.configured: PYTHON=$(PYTHON.2.7.64)
+$(BUILD_DIR)/apache2%-python34/$(MACH32)/.configured: PYTHON=$(PYTHON.3.4.32)
+$(BUILD_DIR)/apache2%-python34/$(MACH64)/.configured: PYTHON=$(PYTHON.3.4.64)
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
-# The following four paragraphs are copied from setup.py.mk
-# but since mod_wsgi doesn't use setup.py, we can't just include
-# setup.py.mk
-$(BUILD_DIR)/%-2.6/.built:		PYTHON_VERSION=2.6
-$(BUILD_DIR)/%-2.7/.built:		PYTHON_VERSION=2.7
-$(BUILD_DIR)/$(MACH32)-%/.built:	BITS=32
-$(BUILD_DIR)/$(MACH64)-%/.built:	BITS=64
-
-$(BUILD_DIR)/%-2.6/.installed:	PYTHON_VERSION=2.6
-$(BUILD_DIR)/%-2.7/.installed:  PYTHON_VERSION=2.7
-$(BUILD_DIR)/$(MACH32)-%/.installed:	BITS=32
-$(BUILD_DIR)/$(MACH64)-%/.installed:	BITS=64
-
-BUILD_32 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH32)-%/.built)
-BUILD_64 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.built)
-
-INSTALL_32 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH32)-%/.installed)
-INSTALL_64 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.installed)
-
-$(BUILD_32): CONFIGURE_OPTIONS += --with-python=$(PYTHON.32)
-$(BUILD_64): CONFIGURE_OPTIONS += --with-apxs=/usr/bin/$(MACH64)/apxs --with-python=$(PYTHON.64)
+CONFIGURE_OPTIONS += --with-python=$(PYTHON)
+CONFIGURE_OPTIONS += --with-apxs=$(APXS)
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
-$(INSTALL_32): COMPONENT_POST_INSTALL_ACTION = \
-	(cd $(PROTO_DIR)/usr/apache2/2.2/libexec ; \
-		$(MV) mod_wsgi.so mod_wsgi-$(PYTHON_VERSION).so)
-
-$(INSTALL_64): COMPONENT_POST_INSTALL_ACTION = \
-	(cd $(PROTO_DIR)/usr/apache2/2.2/libexec/$(MACH64) ; \
-		$(MV) mod_wsgi.so mod_wsgi-$(PYTHON_VERSION).so)
 
 # common targets
 build:		$(BUILD_32_and_64)

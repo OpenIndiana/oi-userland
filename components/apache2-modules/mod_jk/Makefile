@@ -23,42 +23,31 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mod_jk
-COMPONENT_VERSION=	1.2.28
+COMPONENT_VERSION=	1.2.40
 COMPONENT_PROJECT_URL=	http://tomcat.apache.org/connectors-doc/
 COMPONENT_SRC_NAME=	tomcat-connectors
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)-src
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:898fddced320754121b53b3292d1d20a31bebc6733d5aeb92367143f8941fe6f
-COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/tomcat/tomcat-connectors/jk/source/jk-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+    sha256:895e347c4dff74049a848603fb29958e6cf429ea0fc708d514b3a8958236705d
+COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/tomcat/tomcat-connectors/jk/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/apache
 
-TPNO=			9082
+TPNO=			19268
+
+CONFIGURE_DEFAULT_DIRS=no
+DEFAULT_COMPILER=no
 
 include ../../../make-rules/prep.mk
 include ../../../make-rules/configure.mk
 include ../../../make-rules/ips.mk
+include ../modules.mk
 
 PATCH_LEVEL=0
 
-APACHE_USR_PREFIX=/usr/apache2/2.2
-
 CONFIGURE_SCRIPT = $(SOURCE_DIR)/native/configure
 
-# Forcing CC from environment instead. Using one provided by apxs doesn't
-# make mod_jk build.
-CC=
-
-CONFIGURE_OPTIONS.32 += --with-apxs=$(APACHE_USR_PREFIX)/bin/apxs
-CONFIGURE_OPTIONS.64 += --with-apxs=$(APACHE_USR_PREFIX)/bin/$(MACH64)/apxs
-
-# Header files are missing during build without cloning.
-COMPONENT_PRE_CONFIGURE_ACTION += ($(CLONEY) $(SOURCE_DIR)/native $(@D));
-
-PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
-ifeq   ($(strip $(PARFAIT_BUILD)),yes)
-PATH=$(PARFAIT_TOOLS):$(SPRO_VROOT)/bin:/usr/bin
-endif
+CONFIGURE_OPTIONS += --with-apxs=$(APXS)
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 

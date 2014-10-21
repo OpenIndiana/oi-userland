@@ -39,17 +39,17 @@ TPNO=			18233
 include ../../../make-rules/prep.mk
 include ../../../make-rules/configure.mk
 include ../../../make-rules/ips.mk
+include ../modules.mk
 
-APACHE_USR_PREFIX=/usr/apache2/2.2
-
-APXS.32=	$(APACHE_USR_PREFIX)/bin/apxs
-APXS.64=	$(APACHE_USR_PREFIX)/bin/$(MACH64)/apxs
+COMPONENT_POST_UNPACK_ACTION += \
+  (cd $(SOURCE_DIR); \
+  $(CP) modsecurity.conf-recommended modsecurity-24.conf-recommended)
 
 CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS += LTFLAGS="--silent --tag=CC"
-CONFIGURE_OPTIONS += --with-apxs=$(APXS.$(BITS))
-CONFIGURE_OPTIONS += --with-apr=`$(APXS.$(BITS)) -q APR_CONFIG`
-CONFIGURE_OPTIONS += --with-apu=`$(APXS.$(BITS)) -q APU_CONFIG`
+CONFIGURE_OPTIONS += --with-apxs=$(APXS)
+CONFIGURE_OPTIONS += --with-apr=`$(APXS) -q APR_CONFIG`
+CONFIGURE_OPTIONS += --with-apu=`$(APXS) -q APU_CONFIG`
 
 COMPONENT_TEST_ARGS += CFLAGS="$(CFLAGS) -DMSC_TEST"
 

@@ -37,20 +37,11 @@ TPNO=			8878
 include ../../../make-rules/prep.mk
 include ../../../make-rules/justmake.mk
 include ../../../make-rules/ips.mk
+include ../modules.mk
 
 PATCH_LEVEL=0
 
-APACHE_USR_PREFIX=/usr/apache2/2.2
-
-$(BUILD_DIR_32)/.built:	APXS=$(APACHE_USR_PREFIX)/bin/apxs
-$(BUILD_DIR_64)/.built:	APXS=$(APACHE_USR_PREFIX)/bin/$(MACH64)/apxs
-
 COMPONENT_PRE_BUILD_ACTION= ( cd $(@D); APXS=$(APXS) ./configure.apxs )
-
-PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
-ifeq   ($(strip $(PARFAIT_BUILD)),yes)
-PATH=$(PARFAIT_TOOLS):$(SPRO_VROOT)/bin:/usr/bin
-endif
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
