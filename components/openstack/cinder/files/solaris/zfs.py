@@ -21,6 +21,7 @@ Drivers for Solaris ZFS operations in local and iSCSI modes
 
 import abc
 import os
+import time
 
 from oslo.config import cfg
 
@@ -272,6 +273,22 @@ class STMFDriver(ZFSVolumeDriver):
     def __init__(self, *args, **kwargs):
         super(STMFDriver, self).__init__(*args, **kwargs)
 
+    def _stmf_execute(self, *cmd):
+        """Handle the possible race during the local execution."""
+        tries = 0
+        while True:
+            try:
+                self._execute(*cmd)
+                return
+            except processutils.ProcessExecutionError as ex:
+                tries = tries + 1
+
+                if tries >= self.configuration.num_shell_tries or \
+                        'resource busy' not in ex.stderr:
+                    raise
+
+                time.sleep(tries ** 2)
+
     def _check_target(self, target, protocol):
         """Verify if the target exists."""
         (out, _err) = self._execute('/usr/sbin/stmfadm', 'list-target')
@@ -383,7 +400,7 @@ class ZFSISCSIDriver(STMFDriver, driver.ISCSIDriver):
         zvol = self._get_zvol_path(volume)
 
         # Create a Logical Unit (LU)
-        self._execute('/usr/sbin/stmfadm', 'create-lu', zvol)
+        self._stmf_execute('/usr/sbin/stmfadm', 'create-lu', zvol)
         luid = self._get_luid(volume)
         if not luid:
             msg = (_("Failed to create LU for volume '%s'")
@@ -392,20 +409,21 @@ class ZFSISCSIDriver(STMFDriver, driver.ISCSIDriver):
 
         # Create a target group and a target belonging to the target group
         target_group = 'tg-%s' % volume['name']
-        self._execute('/usr/sbin/stmfadm', 'create-tg', target_group)
+        self._stmf_execute('/usr/sbin/stmfadm', 'create-tg', target_group)
 
         target_name = '%s%s' % (self.configuration.iscsi_target_prefix,
                                 volume['name'])
-        self._execute('/usr/sbin/stmfadm', 'add-tg-member', '-g',
-                      target_group, target_name)
+        self._stmf_execute('/usr/sbin/stmfadm', 'add-tg-member', '-g',
+                           target_group, target_name)
 
-        self._execute('/usr/sbin/itadm', 'create-target', '-n', target_name)
+        self._stmf_execute('/usr/sbin/itadm', 'create-target', '-n',
+                           target_name)
         assert self._check_target(target_name, 'iSCSI')
 
         # Add a view entry to the logical unit with the specified LUN, 8776
         if luid is not None:
-            self._execute('/usr/sbin/stmfadm', 'add-view', '-n', 8776, '-t',
-                          target_group, luid)
+            self._stmf_execute('/usr/sbin/stmfadm', 'add-view', '-n', 8776,
+                               '-t', target_group, luid)
 
     def remove_export(self, context, volume):
         """Remove an export for a volume.
@@ -422,21 +440,22 @@ class ZFSISCSIDriver(STMFDriver, driver.ISCSIDriver):
         if luid is not None:
             view_lun = self._get_view_and_lun(luid)
             if view_lun['view']:
-                self._execute('/usr/sbin/stmfadm', 'remove-view', '-l',
-                              luid, view_lun['view'])
+                self._stmf_execute('/usr/sbin/stmfadm', 'remove-view', '-l',
+                                   luid, view_lun['view'])
 
         # Remove the target and its target group
         if self._check_target(target_name, 'iSCSI'):
-            self._execute('/usr/sbin/stmfadm', 'offline-target', target_name)
-            self._execute('/usr/sbin/itadm', 'delete-target', '-f',
-                          target_name)
+            self._stmf_execute('/usr/sbin/stmfadm', 'offline-target',
+                               target_name)
+            self._stmf_execute('/usr/sbin/itadm', 'delete-target', '-f',
+                               target_name)
 
         if self._check_tg(target_group):
-            self._execute('/usr/sbin/stmfadm', 'delete-tg', target_group)
+            self._stmf_execute('/usr/sbin/stmfadm', 'delete-tg', target_group)
 
         # Remove the LU
         if luid is not None:
-            self._execute('/usr/sbin/stmfadm', 'delete-lu', luid)
+            self._stmf_execute('/usr/sbin/stmfadm', 'delete-lu', luid)
 
     def _get_iscsi_properties(self, volume):
         """Get iSCSI configuration
@@ -471,7 +490,7 @@ class ZFSISCSIDriver(STMFDriver, driver.ISCSIDriver):
                                        (self.configuration.iscsi_ip_address,
                                         self.configuration.iscsi_port))
         view_lun = self._get_view_and_lun(luid)
-        if view_lun['lun']:
+        if view_lun['lun'] is not None:
             properties['target_lun'] = view_lun['lun']
         properties['volume_id'] = volume['id']
 
@@ -606,7 +625,7 @@ class ZFSFCDriver(STMFDriver, driver.FibreChannelDriver):
         zvol = self._get_zvol_path(volume)
 
         # Create a Logical Unit (LU)
-        self._execute('/usr/sbin/stmfadm', 'create-lu', zvol)
+        self._stmf_execute('/usr/sbin/stmfadm', 'create-lu', zvol)
         luid = self._get_luid(volume)
         if not luid:
             msg = (_("Failed to create logic unit for volume '%s'")
@@ -626,21 +645,22 @@ class ZFSFCDriver(STMFDriver, driver.FibreChannelDriver):
                 raise exception.VolumeBackendAPIException(data=msg)
 
             # Create a target group for the wwn
-            self._execute('/usr/sbin/stmfadm', 'create-tg', target_group)
+            self._stmf_execute('/usr/sbin/stmfadm', 'create-tg', target_group)
 
             # Enable the target and add it to the 'tg-wwn-xxx' group
-            self._execute('/usr/sbin/stmfadm', 'offline-target',
-                          'wwn.%s' % wwn)
-            self._execute('/usr/sbin/stmfadm', 'add-tg-member', '-g',
-                          target_group, 'wwn.%s' % wwn)
-            self._execute('/usr/sbin/stmfadm', 'online-target', 'wwn.%s' % wwn)
+            self._stmf_execute('/usr/sbin/stmfadm', 'offline-target',
+                               'wwn.%s' % wwn)
+            self._stmf_execute('/usr/sbin/stmfadm', 'add-tg-member', '-g',
+                               target_group, 'wwn.%s' % wwn)
+            self._stmf_execute('/usr/sbin/stmfadm', 'online-target',
+                               'wwn.%s' % wwn)
         assert self._target_in_tg(wwn, target_group)
 
         # Add a logical unit view entry
         # TODO(Strony): replace the auto assigned LUN with '-n' option
         if luid is not None:
-            self._execute('/usr/sbin/stmfadm', 'add-view', '-t',
-                          target_group, luid)
+            self._stmf_execute('/usr/sbin/stmfadm', 'add-view', '-t',
+                               target_group, luid)
 
     def remove_export(self, context, volume):
         """Remove an export for a volume."""
@@ -653,20 +673,20 @@ class ZFSFCDriver(STMFDriver, driver.FibreChannelDriver):
             target_group = 'tg-wwn-%s' % wwn
             view_lun = self._get_view_and_lun(luid)
             if view_lun['view']:
-                self._execute('/usr/sbin/stmfadm', 'remove-view', '-l',
-                              luid, view_lun['view'])
+                self._stmf_execute('/usr/sbin/stmfadm', 'remove-view', '-l',
+                                   luid, view_lun['view'])
 
             # Remove the target group when only one LU exists.
             if self._only_lu(luid):
                 if self._check_target(target_wwn, 'Channel'):
-                    self._execute('/usr/sbin/stmfadm', 'offline-target',
-                                  target_wwn)
+                    self._stmf_execute('/usr/sbin/stmfadm', 'offline-target',
+                                       target_wwn)
                 if self._check_tg(target_group):
-                    self._execute('/usr/sbin/stmfadm', 'delete-tg',
-                                  target_group)
+                    self._stmf_execute('/usr/sbin/stmfadm', 'delete-tg',
+                                       target_group)
 
             # Remove the LU
-            self._execute('/usr/sbin/stmfadm', 'delete-lu', luid)
+            self._stmf_execute('/usr/sbin/stmfadm', 'delete-lu', luid)
 
     def _get_fc_properties(self, volume):
         """Get Fibre Channel configuration.
@@ -693,7 +713,7 @@ class ZFSFCDriver(STMFDriver, driver.FibreChannelDriver):
         properties['target_discovered'] = True
         properties['target_wwn'] = wwns
         view_lun = self._get_view_and_lun(luid)
-        if view_lun['lun']:
+        if view_lun['lun'] is not None:
             properties['target_lun'] = view_lun['lun']
         return properties
 
