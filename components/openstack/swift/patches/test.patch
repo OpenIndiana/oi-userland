@@ -5,10 +5,21 @@ Various testing fixes:
 
   - Solaris doesn't yet support syslog logging to /dev/log.
 
+  - Solaris exclusive file locks don't fail when applied multiple times
+    from a single process (it has to happen in a separate process).
+
+  - Uncomment portions of test/sample.conf to match what we ship in
+    /etc/swift/swift.conf, since the latter can't be read without
+    sufficient privileges.  This allows us to set SWIFT_TEST_CONFIG_FILE
+    and run the functional tests.
+
 The first, while potentially useful elsewhere, is really only an issue on
 Solaris because Linux runs almost exclusively 64-bit, which makes this a
-non-issue.  The last is Solaris-only -- though clearly a similar problem
-exists on MacOS -- and we will want to fix this in our Python.
+non-issue.  The second is Solaris-only -- though clearly a similar problem
+exists on MacOS -- and we will want to fix this in our Python.  The third
+is not in a form that is worth sending upstream.  To test this properly,
+the test should fork a separate process to test the lock, which should work
+regardless of the OS.
 
 diff --git a/test/unit/__init__.py b/test/unit/__init__.py
 --- a/test/unit/__init__.py
@@ -58,3 +69,53 @@ diff --git a/test/unit/common/test_utils.py b/test/unit/common/test_utils.py
                      os.path.isfile('/dev/log') or \
                      os.path.isdir('/dev/log'):
                  # Since socket on OSX is in /var/run/syslog, there will be
+diff --git a/test/unit/common/test_utils.py b/test/unit/common/test_utils.py
+--- a/test/unit/common/test_utils.py
++++ b/test/unit/common/test_utils.py
+@@ -46,6 +46,7 @@
+ from tempfile import TemporaryFile, NamedTemporaryFile, mkdtemp
+ from netifaces import AF_INET6
+ from mock import MagicMock, patch
++from nose import SkipTest
+ 
+ from swift.common.exceptions import (Timeout, MessageTimeout,
+                                      ConnectionTimeout, LockTimeout)
+@@ -1406,6 +1407,8 @@
+                 MagicMock(side_effect=BaseException('test3')))
+ 
+     def test_lock_file(self):
++        if sys.platform == 'sunos5':
++            raise SkipTest
+         flags = os.O_CREAT | os.O_RDWR
+         with NamedTemporaryFile(delete=False) as nt:
+             nt.write("test string")
+diff --git a/test/sample.conf b/test/unit/sample.conf
+--- a/test/sample.conf
++++ b/test/sample.conf
+@@ -29,16 +29,16 @@ password3 = testing3
+ # to set them from /etc/swift/swift.conf. If that file isn't found,
+ # the test runner will skip tests that depend on these values.
+ # Note that the cluster must have "sane" values for the test suite to pass.
+-#max_file_size = 5368709122
+-#max_meta_name_length = 128
+-#max_meta_value_length = 256
+-#max_meta_count = 90
+-#max_meta_overall_size = 4096
+-#max_object_name_length = 1024
+-#container_listing_limit = 10000
+-#account_listing_limit = 10000
+-#max_account_name_length = 256
+-#max_container_name_length = 256
++max_file_size = 5368709122
++max_meta_name_length = 128
++max_meta_value_length = 256
++max_meta_count = 90
++max_meta_overall_size = 4096
++max_object_name_length = 1024
++container_listing_limit = 10000
++account_listing_limit = 10000
++max_account_name_length = 256
++max_container_name_length = 256
+ 
+ collate = C
+ 
