@@ -126,7 +126,7 @@ not suitable for upstream.
  
 --- Python-3.4.1/Lib/importlib/_bootstrap.py.~1~	2014-05-18 22:19:38.000000000 -0700
 +++ Python-3.4.1/Lib/importlib/_bootstrap.py	2014-08-27 08:46:00.145242823 -0700
-@@ -2046,6 +2046,15 @@
+@@ -2046,6 +2046,14 @@
                  is_namespace = _path_isdir(base_path)
          # Check for a file w/ a proper suffix exists.
          for suffix, loader_class in self._loaders:
@@ -137,7 +137,6 @@ not suitable for upstream.
 +                full_path = _path_join(self.path, '64', tail_module + suffix)
 +                _verbose_message('trying {}'.format(full_path), verbosity=2)
 +                if _path_isfile(full_path):
-+                    self.path += '/64'
 +                    return self._get_spec(loader_class, fullname, full_path, None, target)
              full_path = _path_join(self.path, tail_module + suffix)
              _verbose_message('trying {}'.format(full_path), verbosity=2)
