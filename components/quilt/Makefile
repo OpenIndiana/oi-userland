@@ -55,9 +55,6 @@ PATCH_LEVEL=	0
 # generated README and man pages.
 COMPONENT_BUILD_ARGS+=	--no-print-directory
 
-# Quilt will need this option until Solaris has GNU getopt.
-CONFIGURE_OPTIONS += --without-getopt
-
 CONFIGURE_OPTIONS += --with-cp=/usr/gnu/bin/cp
 CONFIGURE_OPTIONS += --with-date=/usr/gnu/bin/date
 CONFIGURE_OPTIONS += --with-grep=/usr/gnu/bin/grep
@@ -71,7 +68,6 @@ CONFIGURE_OPTIONS += --with-perl=/usr/perl5/$(PERL_VERSION)/bin/perl
 CONFIGURE_OPTIONS += --with-pod2man=/usr/perl5/$(PERL_VERSION)/bin/pod2man
 CONFIGURE_OPTIONS += --with-xgettext=/usr/bin/gxgettext
 CONFIGURE_OPTIONS += --with-msgfmt=/usr/bin/gmsgfmt
-CONFIGURE_OPTIONS += --without-column
 
 CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
 
