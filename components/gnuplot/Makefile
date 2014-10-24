@@ -51,15 +51,20 @@ CONFIGURE_OPTIONS  += --infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  += --x-libraries=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS  += CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  += CXXFLAGS="$(CXXFLAGS)"
+CONFIGURE_OPTIONS  += LDFLAGS="$(LDFLAGS)"
+CONFIGURE_OPTIONS  += WX_CONFIG="/usr/bin/$(MACH64)/wx-config"
+
+# Enable aslr for this component
+ASLR_MODE = $(ASLR_ENABLE)
 
 include ../../make-rules/shared-targets.mk
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
-test:		$(TEST_32)
+test:		$(TEST_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
