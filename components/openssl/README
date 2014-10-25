@@ -30,7 +30,7 @@ for static 1.0.1 bits to link with standalone wanboot binary, once for 1.0.1
 fips-140, and once for 1.0.1 FIPS-140 canister (in the openssl-fips component)
 needed to build 1.0.1 FIPS-140 certified libraries. All builds apart from 
 static libraries for wanboot are done for 32 and 64 bits. So, in total, OpenSSL
-is built seven times. OpenSSL for wanboot is only build on sparc.
+is built seven times. OpenSSL for wanboot is only built on sparc.
 
 See also comments in all the Makefiles for more information.
 
@@ -238,14 +238,14 @@ Wanboot is a statically linked standalone binary and it is loaded on a fixed
 address before execution. This address is defined in 
 $ON/usr/src/psm/stand/boot/sparc/common/mapfile:
 
-     27 LOAD_SEGMENT text {
-     28 	FLAGS = READ EXECUTE;
-     29 	VADDR = 0x130000;
-     30 	ASSIGN_SECTION {
-     31 		TYPE = PROGBITS;
-     32 		FLAGS = ALLOC !WRITE;
-     33 	};
-     34 };
+	LOAD_SEGMENT text {
+		FLAGS = READ EXECUTE;
+		VADDR = 0x130000;
+		ASSIGN_SECTION {
+			TYPE = PROGBITS;
+			FLAGS = ALLOC !WRITE;
+		};
+	};
 
 This address (VADDR) NEEDS TO BE GREATER THEN 
     size of wanboot binary + 0x4000

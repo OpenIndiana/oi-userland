@@ -1163,7 +1163,22 @@ static int pk11_library_init(ENGINE *e)
 		}
 
 
-	/* Attempt to load PKCS#11 library */
+	/*
+	 * If initialization of the locks fails pk11_init_all_locks()
+	 * will do the cleanup.
+	 */
+	if (!pk11_init_all_locks())
+		goto err;
+	for (i = 0; i < OP_MAX; i++)
+		session_cache[i].head = NULL;
+	/*
+	 * Initialize active lists. We only use active lists
+	 * for asymmetric ciphers.
+	 */
+	for (i = 0; i < OP_MAX; i++)
+		active_list[i] = NULL;
+
+	/* Attempt to load PKCS#11 library. */
 	if (!pk11_dso)
 		{
 		pk11_dso = DSO_load(NULL, get_PK11_LIBNAME(), NULL, 0);
@@ -1250,20 +1265,6 @@ static int pk11_library_init(ENGINE *e)
 
 	pk11_library_initialized = CK_TRUE;
 	pk11_pid = getpid();
-	/*
-	 * if initialization of the locks fails pk11_init_all_locks()
-	 * will do the cleanup.
-	 */
-	if (!pk11_init_all_locks())
-		goto err;
-	for (i = 0; i < OP_MAX; i++)
-		session_cache[i].head = NULL;
-	/*
-	 * initialize active lists. We only use active lists
-	 * for asymmetric ciphers.
-	 */
-	for (i = 0; i < OP_MAX; i++)
-		active_list[i] = NULL;
 
 	if (!pk11_atfork_initialized)
 		{
@@ -1329,8 +1330,12 @@ static int pk11_finish(ENGINE *e)
 	for (i = 0; i < OP_MAX; i++)
 		pk11_free_active_list(i);
 
-	pFuncList->C_CloseSession(global_session);
-	global_session = CK_INVALID_HANDLE;
+	/* Global session is not present when there are no slots. */
+	if (global_session != CK_INVALID_HANDLE)
+		{
+		pFuncList->C_CloseSession(global_session);
+		global_session = CK_INVALID_HANDLE;
+		}
 
 	/*
 	 * Since we are part of a library (libcrypto.so), calling this function
