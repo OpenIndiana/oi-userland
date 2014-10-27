@@ -42,14 +42,14 @@ ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 COMPONENT_TEST_DIR =    $(SOURCE_DIR)
 COMPONENT_TEST_ARGS =   test_six.py
+COMPONENT_TEST_CMD =	py.test-$(PYTHON_VERSION)
 
 # common targets
 build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
-# Tests require the py Python module which hasn't been integrated yet.
-test:		$(NO_TESTS)
+test:		$(TEST_NO_ARCH)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
