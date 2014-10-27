@@ -264,8 +264,9 @@ class EVSL3NATAgent(l3_agent.L3NATAgent):
             # Routing (PBR) rule
             for port in ri.internal_ports:
                 internal_dlname = self.get_internal_device_name(port['id'])
-                rules = ['pass in on %s to %s:%s from any to any' %
-                         (internal_dlname, external_dlname, gw_ip)]
+                rules = ['pass in on %s to %s:%s from any to !%s' %
+                         (internal_dlname, external_dlname, gw_ip,
+                          port['subnet']['cidr'])]
                 ipversion = netaddr.IPNetwork(port['subnet']['cidr']).version
                 ri.ipfilters_manager.add_ipf_rules(rules, ipversion)
 
@@ -277,8 +278,9 @@ class EVSL3NATAgent(l3_agent.L3NATAgent):
             # remove PBR rules
             for port in ri.internal_ports:
                 internal_dlname = self.get_internal_device_name(port['id'])
-                rules = ['pass in on %s to %s:%s from any to any' %
-                         (internal_dlname, external_dlname, gw_ip)]
+                rules = ['pass in on %s to %s:%s from any to !%s' %
+                         (internal_dlname, external_dlname, gw_ip,
+                          port['subnet']['cidr'])]
                 ipversion = netaddr.IPNetwork(port['subnet']['cidr']).version
                 ri.ipfilters_manager.remove_ipf_rules(rules, ipversion)
 
@@ -359,8 +361,9 @@ class EVSL3NATAgent(l3_agent.L3NATAgent):
         ex_gw_ip = (ex_gw_port['subnet']['gateway_ip'] if ex_gw_port else None)
         if ex_gw_ip:
             external_dlname = self.get_external_device_name(ex_gw_port['id'])
-            rules.append('pass in on %s to %s:%s from any to any' %
-                         (internal_dlname, external_dlname, ex_gw_ip))
+            rules.append('pass in on %s to %s:%s from any to !%s' %
+                         (internal_dlname, external_dlname, ex_gw_ip,
+                          port_subnet))
 
         ipversion = netaddr.IPNetwork(port_subnet).version
         ri.ipfilters_manager.add_ipf_rules(rules, ipversion)
@@ -384,8 +387,9 @@ class EVSL3NATAgent(l3_agent.L3NATAgent):
         ex_gw_ip = (ex_gw_port['subnet']['gateway_ip'] if ex_gw_port else None)
         if ex_gw_ip:
             external_dlname = self.get_external_device_name(ex_gw_port['id'])
-            rules.append('pass in on %s to %s:%s from any to any' %
-                         (internal_dlname, external_dlname, ex_gw_ip))
+            rules.append('pass in on %s to %s:%s from any to !%s' %
+                         (internal_dlname, external_dlname, ex_gw_ip,
+                          port_subnet))
         ipversion = netaddr.IPNetwork(port['subnet']['cidr']).version
         ri.ipfilters_manager.remove_ipf_rules(rules, ipversion)
 
