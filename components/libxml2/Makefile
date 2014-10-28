@@ -26,12 +26,12 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libxml2
-COMPONENT_VERSION=	2.9.2
+COMPONENT_VERSION=	2.9.1
 COMPONENT_PROJECT_URL=	http://xmlsoft.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:5178c30b151d044aefb1b08bf54c3003a0ac55c59c866763997529d60770d5bc
+    sha256:fd3c64cb66f2c4ea27e934d275904d92cec494a8e8405613780cbc8a71680fdb
 COMPONENT_ARCHIVE_URL=	ftp://xmlsoft.org/libxml2/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libxml
 
@@ -41,7 +41,7 @@ COMPONENT_ARCHIVE_HASH_1= \
     sha256:96151685cec997e1f9f3387e3626d61e6284d4d6e66e0e440c209286c03e9cc7
 COMPONENT_ARCHIVE_URL_1= http://www.w3.org/XML/Test/$(COMPONENT_ARCHIVE_1)
 
-TPNO=			19552
+TPNO=			17981
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
@@ -55,11 +55,11 @@ CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --with-pic
 CONFIGURE_OPTIONS += --with-threads
 CONFIGURE_OPTIONS += --with-python=$(PYTHON.$(BITS))
-CONFIGURE_OPTIONS += --with-python-install-dir=$(PYTHON_VENDOR_PACKAGES)
 # Cannot link to lzma since it's not in /lib.
 CONFIGURE_OPTIONS += --without-lzma
 CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS += LDFLAGS="$(LDFLAGS)"
+CONFIGURE_OPTIONS += PYTHON_VENDOR_PACKAGES=$(PYTHON_VENDOR_PACKAGES)
 
 COMPONENT_PREP_ACTION += (cd $(@D) ; cp ../mapfile libxml2.syms ; autoreconf -if)
 

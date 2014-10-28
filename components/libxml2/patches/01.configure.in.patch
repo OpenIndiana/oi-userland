@@ -1,0 +1,17 @@
+# fix configure so that we can override the site-packages directory to match
+# the way we deliver python modules in Solaris.
+#
+--- libxml2-2.7.6/configure.in.orig	Tue Oct  6 09:28:58 2009
++++ libxml2-2.7.6/configure.in	Mon Mar 21 00:39:24 2011
+@@ -757,6 +757,10 @@
+ if test "$PYTHON_INCLUDES" != ""
+ then
+     PYTHON_SUBDIR=python
++    if test "${PYTHON_VENDOR_PACKAGES}" != ""
++    then
++        PYTHON_SITE_PACKAGES=$PYTHON_VENDOR_PACKAGES
++    fi
+ else
+     PYTHON_SUBDIR=
+ fi
+
