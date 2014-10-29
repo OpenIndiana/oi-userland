@@ -1,0 +1,324 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Getting Started &mdash; Jansson 2.7 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '2.7',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Jansson 2.7 documentation" href="index.html" />
+    <link rel="next" title="Upgrading from 1.x" href="upgrading.html" />
+    <link rel="prev" title="Jansson Documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="upgrading.html" title="Upgrading from 1.x"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Jansson Documentation"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Jansson 2.7 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="getting-started">
+<h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="compiling-and-installing-jansson">
+<h2>Compiling and Installing Jansson<a class="headerlink" href="#compiling-and-installing-jansson" title="Permalink to this headline">¶</a></h2>
+<p>The Jansson source is available at
+<a class="reference external" href="http://www.digip.org/jansson/releases/">http://www.digip.org/jansson/releases/</a>.</p>
+<div class="section" id="unix-like-systems-including-mingw">
+<h3>Unix-like systems (including MinGW)<a class="headerlink" href="#unix-like-systems-including-mingw" title="Permalink to this headline">¶</a></h3>
+<p>Unpack the source tarball and change to the source directory:</p>
+<pre class="literal-block">
+bunzip2 -c jansson-2.7.tar.bz2 | tar xf -
+cd jansson-2.7
+</pre>
+<p>The source uses GNU Autotools (<a class="reference external" href="http://www.gnu.org/software/autoconf/">autoconf</a>, <a class="reference external" href="http://www.gnu.org/software/automake/">automake</a>, <a class="reference external" href="http://www.gnu.org/software/libtool/">libtool</a>), so
+compiling and installing is extremely simple:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="p">.</span><span class="o">/</span><span class="n">configure</span>
+<span class="n">make</span>
+<span class="n">make</span> <span class="n">check</span>
+<span class="n">make</span> <span class="n">install</span>
+</pre></div>
+</div>
+<p>To change the destination directory (<tt class="docutils literal"><span class="pre">/usr/local</span></tt> by default), use
+the <tt class="docutils literal"><span class="pre">--prefix=DIR</span></tt> argument to <tt class="docutils literal"><span class="pre">./configure</span></tt>. See <tt class="docutils literal"><span class="pre">./configure</span>
+<span class="pre">--help</span></tt> for the list of all possible installation options. (There are
+no options to customize the resulting Jansson binary.)</p>
+<p>The command <tt class="docutils literal"><span class="pre">make</span> <span class="pre">check</span></tt> runs the test suite distributed with
+Jansson. This step is not strictly necessary, but it may find possible
+problems that Jansson has on your platform. If any problems are found,
+please report them.</p>
+<p>If you obtained the source from a Git repository (or any other source
+control system), there&#8217;s no <tt class="docutils literal"><span class="pre">./configure</span></tt> script as it&#8217;s not kept in
+version control. To create the script, the build system needs to be
+bootstrapped. There are many ways to do this, but the easiest one is
+to use <tt class="docutils literal"><span class="pre">autoreconf</span></tt>:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="n">autoreconf</span> <span class="o">-</span><span class="n">vi</span>
+</pre></div>
+</div>
+<p>This command creates the <tt class="docutils literal"><span class="pre">./configure</span></tt> script, which can then be
+used as described above.</p>
+</div>
+<div class="section" id="cmake-various-platforms-including-windows">
+<span id="build-cmake"></span><h3>CMake (various platforms, including Windows)<a class="headerlink" href="#cmake-various-platforms-including-windows" title="Permalink to this headline">¶</a></h3>
+<p>Jansson can be built using <a class="reference external" href="http://www.cmake.org">CMake</a>. Create a build directory for an
+out-of-tree build, change to that directory, and run <tt class="docutils literal"><span class="pre">cmake</span></tt> (or <tt class="docutils literal"><span class="pre">ccmake</span></tt>,
+<tt class="docutils literal"><span class="pre">cmake-gui</span></tt>, or similar) to configure the project.</p>
+<p>See the examples below for more detailed information.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">In the below examples <tt class="docutils literal"><span class="pre">..</span></tt> is used as an argument for <tt class="docutils literal"><span class="pre">cmake</span></tt>.
+This is simply the path to the jansson project root directory.
+In the example it is assumed you&#8217;ve created a sub-directory <tt class="docutils literal"><span class="pre">build</span></tt>
+and are using that. You could use any path you want.</p>
+</div>
+<div class="section" id="unix-make-files">
+<span id="build-cmake-unix"></span><h4>Unix (Make files)<a class="headerlink" href="#unix-make-files" title="Permalink to this headline">¶</a></h4>
+<p>Generating make files on unix:</p>
+<pre class="literal-block">
+bunzip2 -c jansson-2.7.tar.bz2 | tar xf -
+cd jansson-2.7
+
+mkdir build
+cd build
+cmake .. # or <tt class="xref c c-func docutils literal"><span class="pre">ccmake</span> <span class="pre">..()</span></tt> for a GUI.
+</pre>
+<p>Then to build:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="n">make</span>
+<span class="n">make</span> <span class="n">check</span>
+<span class="n">make</span> <span class="n">install</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="windows-visual-studio">
+<h4>Windows (Visual Studio)<a class="headerlink" href="#windows-visual-studio" title="Permalink to this headline">¶</a></h4>
+<p>Creating Visual Studio project files from the command line:</p>
+<pre class="literal-block">
+&lt;unpack&gt;
+cd jansson-2.7
+
+md build
+cd build
+cmake -G &quot;Visual Studio 10&quot; ..
+</pre>
+<p>You will now have a <em>Visual Studio Solution</em> in your build directory.
+To run the unit tests build the <tt class="docutils literal"><span class="pre">RUN_TESTS</span></tt> project.</p>
+<p>If you prefer a GUI the <tt class="docutils literal"><span class="pre">cmake</span></tt> line in the above example can
+be replaced with:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="n">cmake</span><span class="o">-</span><span class="n">gui</span> <span class="p">..</span>
+</pre></div>
+</div>
+<p>For command line help (including a list of available generators)
+for <a class="reference external" href="http://www.cmake.org">CMake</a> simply run:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="n">cmake</span>
+</pre></div>
+</div>
+<p>To list available <a class="reference external" href="http://www.cmake.org">CMake</a> settings (and what they are currently set to)
+for the project, run:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="n">cmake</span> <span class="o">-</span><span class="n">LH</span> <span class="p">..</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="mac-osx-xcode">
+<h4>Mac OSX (Xcode)<a class="headerlink" href="#mac-osx-xcode" title="Permalink to this headline">¶</a></h4>
+<p>If you prefer using Xcode instead of make files on OSX,
+do the following. (Use the same steps as
+for <a class="reference internal" href="#build-cmake-unix"><em>Unix</em></a>):</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="p">...</span>
+<span class="n">cmake</span> <span class="o">-</span><span class="n">G</span> <span class="s">&quot;Xcode&quot;</span> <span class="p">..</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="additional-cmake-settings">
+<h4>Additional CMake settings<a class="headerlink" href="#additional-cmake-settings" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="shared-library">
+<h5>Shared library<a class="headerlink" href="#shared-library" title="Permalink to this headline">¶</a></h5>
+<p>By default the <a class="reference external" href="http://www.cmake.org">CMake</a> project will generate build files for building the
+static library. To build the shared version use:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="p">...</span>
+<span class="n">cmake</span> <span class="o">-</span><span class="n">DJANSSON_BUILD_SHARED_LIBS</span><span class="o">=</span><span class="mi">1</span> <span class="p">..</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="changing-install-directory-same-as-autoconf-prefix">
+<h5>Changing install directory (same as autoconf &#8211;prefix)<a class="headerlink" href="#changing-install-directory-same-as-autoconf-prefix" title="Permalink to this headline">¶</a></h5>
+<p>Just as with the <a class="reference external" href="http://www.gnu.org/software/autoconf/">autoconf</a> project you can change the destination directory
+for <tt class="docutils literal"><span class="pre">make</span> <span class="pre">install</span></tt>. The equivalent for autoconfs <tt class="docutils literal"><span class="pre">./configure</span> <span class="pre">--prefix</span></tt>
+in <a class="reference external" href="http://www.cmake.org">CMake</a> is:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="p">...</span>
+<span class="n">cmake</span> <span class="o">-</span><span class="n">DCMAKE_INSTALL_PREFIX</span><span class="o">:</span><span class="n">PATH</span><span class="o">=/</span><span class="n">some</span><span class="o">/</span><span class="n">other</span><span class="o">/</span><span class="n">path</span> <span class="p">..</span>
+<span class="n">make</span> <span class="n">install</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="android">
+<h3>Android<a class="headerlink" href="#android" title="Permalink to this headline">¶</a></h3>
+<p>Jansson can be built for Android platforms. Android.mk is in the
+source root directory. The configuration header file is located in the
+<tt class="docutils literal"><span class="pre">android</span></tt> directory in the source distribution.</p>
+</div>
+<div class="section" id="other-systems">
+<h3>Other Systems<a class="headerlink" href="#other-systems" title="Permalink to this headline">¶</a></h3>
+<p>On non Unix-like systems, you may be unable to run the <tt class="docutils literal"><span class="pre">./configure</span></tt>
+script. In this case, follow these steps. All the files mentioned can
+be found in the <tt class="docutils literal"><span class="pre">src/</span></tt> directory.</p>
+<ol class="arabic simple">
+<li>Create <tt class="docutils literal"><span class="pre">jansson_config.h</span></tt> (which has some platform-specific
+parameters that are normally filled in by the <tt class="docutils literal"><span class="pre">./configure</span></tt>
+script). Edit <tt class="docutils literal"><span class="pre">jansson_config.h.in</span></tt>, replacing all <tt class="docutils literal"><span class="pre">&#64;variable&#64;</span></tt>
+placeholders, and rename the file to <tt class="docutils literal"><span class="pre">jansson_config.h</span></tt>.</li>
+<li>Make <tt class="docutils literal"><span class="pre">jansson.h</span></tt> and <tt class="docutils literal"><span class="pre">jansson_config.h</span></tt> available to the
+compiler, so that they can be found when compiling programs that
+use Jansson.</li>
+<li>Compile all the <tt class="docutils literal"><span class="pre">.c</span></tt> files (in the <tt class="docutils literal"><span class="pre">src/</span></tt> directory) into a
+library file. Make the library available to the compiler, as in
+step 2.</li>
+</ol>
+</div>
+<div class="section" id="building-the-documentation">
+<h3>Building the Documentation<a class="headerlink" href="#building-the-documentation" title="Permalink to this headline">¶</a></h3>
+<p>(This subsection describes how to build the HTML documentation you are
+currently reading, so it can be safely skipped.)</p>
+<p>Documentation is in the <tt class="docutils literal"><span class="pre">doc/</span></tt> subdirectory. It&#8217;s written in
+<a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> with <a class="reference external" href="http://sphinx.pocoo.org/">Sphinx</a> annotations. To generate the HTML
+documentation, invoke:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="n">make</span> <span class="n">html</span>
+</pre></div>
+</div>
+<p>and point your browser to <tt class="docutils literal"><span class="pre">doc/_build/html/index.html</span></tt>. <a class="reference external" href="http://sphinx.pocoo.org/">Sphinx</a> 1.0
+or newer is required to generate the documentation.</p>
+</div>
+</div>
+<div class="section" id="compiling-programs-that-use-jansson">
+<h2>Compiling Programs that Use Jansson<a class="headerlink" href="#compiling-programs-that-use-jansson" title="Permalink to this headline">¶</a></h2>
+<p>Jansson involves one C header file, <tt class="file docutils literal"><span class="pre">jansson.h</span></tt>, so it&#8217;s enough
+to put the line</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="cp">#include &lt;jansson.h&gt;</span>
+</pre></div>
+</div>
+<p>in the beginning of every source file that uses Jansson.</p>
+<p>There&#8217;s also just one library to link with, <tt class="docutils literal"><span class="pre">libjansson</span></tt>. Compile and
+link the program as follows:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="n">cc</span> <span class="o">-</span><span class="n">I /usr/include/jansson</span> <span class="o">-</span><span class="n">o</span> <span class="n">prog</span> <span class="n">prog</span><span class="p">.</span><span class="n">c</span> <span class="o">-</span><span class="n">ljansson</span>
+</pre></div>
+</div>
+<p>Starting from version 1.2, there&#8217;s also support for <a class="reference external" href="http://pkg-config.freedesktop.org/">pkg-config</a>:</p>
+<div class="highlight-c"><div class="highlight"><pre>cc -o prog prog.c `pkg-config --cflags --libs jansson`
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Getting Started</a><ul>
+<li><a class="reference internal" href="#compiling-and-installing-jansson">Compiling and Installing Jansson</a><ul>
+<li><a class="reference internal" href="#unix-like-systems-including-mingw">Unix-like systems (including MinGW)</a></li>
+<li><a class="reference internal" href="#cmake-various-platforms-including-windows">CMake (various platforms, including Windows)</a><ul>
+<li><a class="reference internal" href="#unix-make-files">Unix (Make files)</a></li>
+<li><a class="reference internal" href="#windows-visual-studio">Windows (Visual Studio)</a></li>
+<li><a class="reference internal" href="#mac-osx-xcode">Mac OSX (Xcode)</a></li>
+<li><a class="reference internal" href="#additional-cmake-settings">Additional CMake settings</a><ul>
+<li><a class="reference internal" href="#shared-library">Shared library</a></li>
+<li><a class="reference internal" href="#changing-install-directory-same-as-autoconf-prefix">Changing install directory (same as autoconf &#8211;prefix)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#android">Android</a></li>
+<li><a class="reference internal" href="#other-systems">Other Systems</a></li>
+<li><a class="reference internal" href="#building-the-documentation">Building the Documentation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#compiling-programs-that-use-jansson">Compiling Programs that Use Jansson</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Jansson Documentation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="upgrading.html"
+                        title="next chapter">Upgrading from 1.x</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/gettingstarted.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="upgrading.html" title="Upgrading from 1.x"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Jansson Documentation"
+             >previous</a> |</li>
+        <li><a href="index.html">Jansson 2.7 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2009-2014, Petri Lehtinen.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

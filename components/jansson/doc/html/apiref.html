@@ -1,0 +1,1785 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>API Reference &mdash; Jansson 2.7 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '2.7',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Jansson 2.7 documentation" href="index.html" />
+    <link rel="next" title="Changes in Jansson" href="changes.html" />
+    <link rel="prev" title="Portability" href="portability.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="changes.html" title="Changes in Jansson"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="portability.html" title="Portability"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Jansson 2.7 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="api-reference">
+<span id="apiref"></span><h1>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="preliminaries">
+<h2>Preliminaries<a class="headerlink" href="#preliminaries" title="Permalink to this headline">¶</a></h2>
+<p>All declarations are in <tt class="file docutils literal"><span class="pre">jansson.h</span></tt>, so it&#8217;s enough to</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="cp">#include &lt;jansson.h&gt;</span>
+</pre></div>
+</div>
+<p>in each source file.</p>
+<p>All constants are prefixed with <tt class="docutils literal"><span class="pre">JSON_</span></tt> (except for those describing
+the library version, prefixed with <tt class="docutils literal"><span class="pre">JANSSON_</span></tt>). Other identifiers
+are prefixed with <tt class="docutils literal"><span class="pre">json_</span></tt>. Type names are suffixed with <tt class="docutils literal"><span class="pre">_t</span></tt> and
+<tt class="docutils literal"><span class="pre">typedef</span></tt>&#8216;d so that the <tt class="docutils literal"><span class="pre">struct</span></tt> keyword need not be used.</p>
+</div>
+<div class="section" id="library-version">
+<h2>Library Version<a class="headerlink" href="#library-version" title="Permalink to this headline">¶</a></h2>
+<p>The Jansson version is of the form <em>A.B.C</em>, where <em>A</em> is the major
+version, <em>B</em> is the minor version and <em>C</em> is the micro version. If the
+micro version is zero, it&#8217;s omitted from the version string, i.e. the
+version string is just <em>A.B</em>.</p>
+<p>When a new release only fixes bugs and doesn&#8217;t add new features or
+functionality, the micro version is incremented. When new features are
+added in a backwards compatible way, the minor version is incremented
+and the micro version is set to zero. When there are backwards
+incompatible changes, the major version is incremented and others are
+set to zero.</p>
+<p>The following preprocessor constants specify the current version of
+the library:</p>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">JANSSON_MAJOR_VERSION</span></tt>, <tt class="docutils literal"><span class="pre">JANSSON_MINOR_VERSION</span></tt>, <tt class="docutils literal"><span class="pre">JANSSON_MICRO_VERSION</span></tt></dt>
+<dd>Integers specifying the major, minor and micro versions,
+respectively.</dd>
+<dt><tt class="docutils literal"><span class="pre">JANSSON_VERSION</span></tt></dt>
+<dd>A string representation of the current version, e.g. <tt class="docutils literal"><span class="pre">&quot;1.2.1&quot;</span></tt> or
+<tt class="docutils literal"><span class="pre">&quot;1.3&quot;</span></tt>.</dd>
+<dt><tt class="docutils literal"><span class="pre">JANSSON_VERSION_HEX</span></tt></dt>
+<dd><p class="first">A 3-byte hexadecimal representation of the version, e.g.
+<tt class="docutils literal"><span class="pre">0x010201</span></tt> for version 1.2.1 and <tt class="docutils literal"><span class="pre">0x010300</span></tt> for version 1.3.
+This is useful in numeric comparisions, e.g.:</p>
+<div class="last highlight-c"><div class="highlight"><pre><span class="cp">#if JANSSON_VERSION_HEX &gt;= 0x010300</span>
+<span class="cm">/* Code specific to version 1.3 and above */</span>
+<span class="cp">#endif</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</div>
+<div class="section" id="value-representation">
+<h2>Value Representation<a class="headerlink" href="#value-representation" title="Permalink to this headline">¶</a></h2>
+<p>The JSON specification (<span class="target" id="index-0"></span><a class="rfc reference external" href="http://tools.ietf.org/html/rfc4627.html"><strong>RFC 4627</strong></a>) defines the following data types:
+<em>object</em>, <em>array</em>, <em>string</em>, <em>number</em>, <em>boolean</em>, and <em>null</em>. JSON
+types are used dynamically; arrays and objects can hold any other data
+type, including themselves. For this reason, Jansson&#8217;s type system is
+also dynamic in nature. There&#8217;s one C type to represent all JSON
+values, and this structure knows the type of the JSON value it holds.</p>
+<dl class="type">
+<dt id="c.json_t">
+<tt class="descname">json_t</tt><a class="headerlink" href="#c.json_t" title="Permalink to this definition">¶</a></dt>
+<dd><p>This data structure is used throughout the library to represent all
+JSON values. It always contains the type of the JSON value it holds
+and the value&#8217;s reference count. The rest depends on the type of the
+value.</p>
+</dd></dl>
+
+<p>Objects of <a class="reference internal" href="#c.json_t" title="json_t"><tt class="xref c c-type docutils literal"><span class="pre">json_t</span></tt></a> are always used through a pointer. There
+are APIs for querying the type, manipulating the reference count, and
+for constructing and manipulating values of different types.</p>
+<p>Unless noted otherwise, all API functions return an error value if an
+error occurs. Depending on the function&#8217;s signature, the error value
+is either <em>NULL</em> or -1. Invalid arguments or invalid input are
+apparent sources for errors. Memory allocation and I/O operations may
+also cause errors.</p>
+<div class="section" id="type">
+<h3>Type<a class="headerlink" href="#type" title="Permalink to this headline">¶</a></h3>
+<p>The type of a JSON value is queried and tested using the following
+functions:</p>
+<dl class="type">
+<dt id="c.json_type">
+enum <tt class="descname">json_type</tt><a class="headerlink" href="#c.json_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>The type of a JSON value. The following members are defined:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">JSON_OBJECT</span></tt></td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">JSON_ARRAY</span></tt></td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">JSON_STRING</span></tt></td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">JSON_INTEGER</span></tt></td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">JSON_REAL</span></tt></td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">JSON_TRUE</span></tt></td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">JSON_FALSE</span></tt></td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">JSON_NULL</span></tt></td>
+</tr>
+</tbody>
+</table>
+<p>These correspond to JSON object, array, string, number, boolean and
+null. A number is represented by either a value of the type
+<tt class="docutils literal"><span class="pre">JSON_INTEGER</span></tt> or of the type <tt class="docutils literal"><span class="pre">JSON_REAL</span></tt>. A true boolean value
+is represented by a value of the type <tt class="docutils literal"><span class="pre">JSON_TRUE</span></tt> and false by a
+value of the type <tt class="docutils literal"><span class="pre">JSON_FALSE</span></tt>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_typeof">
+int <tt class="descname">json_typeof</tt><big>(</big>const <a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*json</em><big>)</big><a class="headerlink" href="#c.json_typeof" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the type of the JSON value (a <a class="reference internal" href="#c.json_type" title="json_type"><tt class="xref c c-type docutils literal"><span class="pre">json_type</span></tt></a> cast to
+<tt class="xref c c-type docutils literal"><span class="pre">int</span></tt>). <em>json</em> MUST NOT be <em>NULL</em>. This function is actually
+implemented as a macro for speed.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_is_object">
+<tt class="descname">json_is_object</tt><big>(</big>const <a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*json</em><big>)</big><a class="headerlink" href="#c.json_is_object" title="Permalink to this definition">¶</a></dt>
+<dt id="c.json_is_array">
+<tt class="descname">json_is_array</tt><big>(</big>const <a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*json</em><big>)</big><a class="headerlink" href="#c.json_is_array" title="Permalink to this definition">¶</a></dt>
+<dt id="c.json_is_string">
+<tt class="descname">json_is_string</tt><big>(</big>const <a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*json</em><big>)</big><a class="headerlink" href="#c.json_is_string" title="Permalink to this definition">¶</a></dt>
+<dt id="c.json_is_integer">
+<tt class="descname">json_is_integer</tt><big>(</big>const <a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*json</em><big>)</big><a class="headerlink" href="#c.json_is_integer" title="Permalink to this definition">¶</a></dt>
+<dt id="c.json_is_real">
+<tt class="descname">json_is_real</tt><big>(</big>const <a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*json</em><big>)</big><a class="headerlink" href="#c.json_is_real" title="Permalink to this definition">¶</a></dt>
+<dt id="c.json_is_true">
+<tt class="descname">json_is_true</tt><big>(</big>const <a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*json</em><big>)</big><a class="headerlink" href="#c.json_is_true" title="Permalink to this definition">¶</a></dt>
+<dt id="c.json_is_false">
+<tt class="descname">json_is_false</tt><big>(</big>const <a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*json</em><big>)</big><a class="headerlink" href="#c.json_is_false" title="Permalink to this definition">¶</a></dt>
+<dt id="c.json_is_null">
+<tt class="descname">json_is_null</tt><big>(</big>const <a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*json</em><big>)</big><a class="headerlink" href="#c.json_is_null" title="Permalink to this definition">¶</a></dt>
+<dd><p>These functions (actually macros) return true (non-zero) for values
+of the given type, and false (zero) for values of other types and
+for <em>NULL</em>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_is_number">
+<tt class="descname">json_is_number</tt><big>(</big>const <a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*json</em><big>)</big><a class="headerlink" href="#c.json_is_number" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns true for values of types <tt class="docutils literal"><span class="pre">JSON_INTEGER</span></tt> and
+<tt class="docutils literal"><span class="pre">JSON_REAL</span></tt>, and false for other types and for <em>NULL</em>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_is_boolean">
+<tt class="descname">json_is_boolean</tt><big>(</big>const <a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*json</em><big>)</big><a class="headerlink" href="#c.json_is_boolean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns true for types <tt class="docutils literal"><span class="pre">JSON_TRUE</span></tt> and <tt class="docutils literal"><span class="pre">JSON_FALSE</span></tt>, and false
+for values of other types and for <em>NULL</em>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_boolean_value">
+<tt class="descname">json_boolean_value</tt><big>(</big>const <a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*json</em><big>)</big><a class="headerlink" href="#c.json_boolean_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias of <a class="reference internal" href="#c.json_is_true" title="json_is_true"><tt class="xref c c-func docutils literal"><span class="pre">json_is_true()</span></tt></a>, i.e. returns 1 for <tt class="docutils literal"><span class="pre">JSON_TRUE</span></tt>
+and 0 otherwise.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 2.7.</span></p>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="reference-count">
+<span id="apiref-reference-count"></span><h3>Reference Count<a class="headerlink" href="#reference-count" title="Permalink to this headline">¶</a></h3>
+<p>The reference count is used to track whether a value is still in use
+or not. When a value is created, it&#8217;s reference count is set to 1. If
+a reference to a value is kept (e.g. a value is stored somewhere for
+later use), its reference count is incremented, and when the value is
+no longer needed, the reference count is decremented. When the
+reference count drops to zero, there are no references left, and the
+value can be destroyed.</p>
+<p>The following functions are used to manipulate the reference count.</p>
+<dl class="function">
+<dt id="c.json_incref">
+<a class="reference internal" href="#c.json_t" title="json_t">json_t</a> *<tt class="descname">json_incref</tt><big>(</big><a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*json</em><big>)</big><a class="headerlink" href="#c.json_incref" title="Permalink to this definition">¶</a></dt>
+<dd><p>Increment the reference count of <em>json</em> if it&#8217;s not <em>NULL</em>.
+Returns <em>json</em>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_decref">
+void <tt class="descname">json_decref</tt><big>(</big><a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*json</em><big>)</big><a class="headerlink" href="#c.json_decref" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decrement the reference count of <em>json</em>. As soon as a call to
+<a class="reference internal" href="#c.json_decref" title="json_decref"><tt class="xref c c-func docutils literal"><span class="pre">json_decref()</span></tt></a> drops the reference count to zero, the value
+is destroyed and it can no longer be used.</p>
+</dd></dl>
+
+<p>Functions creating new JSON values set the reference count to 1. These
+functions are said to return a <strong>new reference</strong>. Other functions
+returning (existing) JSON values do not normally increase the
+reference count. These functions are said to return a <strong>borrowed
+reference</strong>. So, if the user will hold a reference to a value returned
+as a borrowed reference, he must call <a class="reference internal" href="#c.json_incref" title="json_incref"><tt class="xref c c-func docutils literal"><span class="pre">json_incref()</span></tt></a>. As soon as
+the value is no longer needed, <a class="reference internal" href="#c.json_decref" title="json_decref"><tt class="xref c c-func docutils literal"><span class="pre">json_decref()</span></tt></a> should be called
+to release the reference.</p>
+<p>Normally, all functions accepting a JSON value as an argument will
+manage the reference, i.e. increase and decrease the reference count
+as needed. However, some functions <strong>steal</strong> the reference, i.e. they
+have the same result as if the user called <a class="reference internal" href="#c.json_decref" title="json_decref"><tt class="xref c c-func docutils literal"><span class="pre">json_decref()</span></tt></a> on
+the argument right after calling the function. These functions are
+suffixed with <tt class="docutils literal"><span class="pre">_new</span></tt> or have <tt class="docutils literal"><span class="pre">_new_</span></tt> somewhere in their name.</p>
+<p>For example, the following code creates a new JSON array and appends
+an integer to it:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="kt">json_t</span> <span class="o">*</span><span class="n">array</span><span class="p">,</span> <span class="o">*</span><span class="n">integer</span><span class="p">;</span>
+
+<span class="n">array</span> <span class="o">=</span> <span class="n">json_array</span><span class="p">();</span>
+<span class="n">integer</span> <span class="o">=</span> <span class="n">json_integer</span><span class="p">(</span><span class="mi">42</span><span class="p">);</span>
+
+<span class="n">json_array_append</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">integer</span><span class="p">);</span>
+<span class="n">json_decref</span><span class="p">(</span><span class="n">integer</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Note how the caller has to release the reference to the integer value
+by calling <a class="reference internal" href="#c.json_decref" title="json_decref"><tt class="xref c c-func docutils literal"><span class="pre">json_decref()</span></tt></a>. By using a reference stealing
+function <a class="reference internal" href="#c.json_array_append_new" title="json_array_append_new"><tt class="xref c c-func docutils literal"><span class="pre">json_array_append_new()</span></tt></a> instead of
+<a class="reference internal" href="#c.json_array_append" title="json_array_append"><tt class="xref c c-func docutils literal"><span class="pre">json_array_append()</span></tt></a>, the code becomes much simpler:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="kt">json_t</span> <span class="o">*</span><span class="n">array</span> <span class="o">=</span> <span class="n">json_array</span><span class="p">();</span>
+<span class="n">json_array_append_new</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">json_integer</span><span class="p">(</span><span class="mi">42</span><span class="p">));</span>
+</pre></div>
+</div>
+<p>In this case, the user doesn&#8217;t have to explicitly release the
+reference to the integer value, as <a class="reference internal" href="#c.json_array_append_new" title="json_array_append_new"><tt class="xref c c-func docutils literal"><span class="pre">json_array_append_new()</span></tt></a>
+steals the reference when appending the value to the array.</p>
+<p>In the following sections it is clearly documented whether a function
+will return a new or borrowed reference or steal a reference to its
+argument.</p>
+</div>
+<div class="section" id="circular-references">
+<h3>Circular References<a class="headerlink" href="#circular-references" title="Permalink to this headline">¶</a></h3>
+<p>A circular reference is created when an object or an array is,
+directly or indirectly, inserted inside itself. The direct case is
+simple:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="kt">json_t</span> <span class="o">*</span><span class="n">obj</span> <span class="o">=</span> <span class="n">json_object</span><span class="p">();</span>
+<span class="n">json_object_set</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="n">obj</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Jansson will refuse to do this, and <a class="reference internal" href="#c.json_object_set" title="json_object_set"><tt class="xref c c-func docutils literal"><span class="pre">json_object_set()</span></tt></a> (and
+all the other such functions for objects and arrays) will return with
+an error status. The indirect case is the dangerous one:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="kt">json_t</span> <span class="o">*</span><span class="n">arr1</span> <span class="o">=</span> <span class="n">json_array</span><span class="p">(),</span> <span class="o">*</span><span class="n">arr2</span> <span class="o">=</span> <span class="n">json_array</span><span class="p">();</span>
+<span class="n">json_array_append</span><span class="p">(</span><span class="n">arr1</span><span class="p">,</span> <span class="n">arr2</span><span class="p">);</span>
+<span class="n">json_array_append</span><span class="p">(</span><span class="n">arr2</span><span class="p">,</span> <span class="n">arr1</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>In this example, the array <tt class="docutils literal"><span class="pre">arr2</span></tt> is contained in the array
+<tt class="docutils literal"><span class="pre">arr1</span></tt>, and vice versa. Jansson cannot check for this kind of
+indirect circular references without a performance hit, so it&#8217;s up to
+the user to avoid them.</p>
+<p>If a circular reference is created, the memory consumed by the values
+cannot be freed by <a class="reference internal" href="#c.json_decref" title="json_decref"><tt class="xref c c-func docutils literal"><span class="pre">json_decref()</span></tt></a>. The reference counts never
+drops to zero because the values are keeping the references to each
+other. Moreover, trying to encode the values with any of the encoding
+functions will fail. The encoder detects circular references and
+returns an error status.</p>
+</div>
+</div>
+<div class="section" id="true-false-and-null">
+<h2>True, False and Null<a class="headerlink" href="#true-false-and-null" title="Permalink to this headline">¶</a></h2>
+<p>These three values are implemented as singletons, so the returned
+pointers won&#8217;t change between invocations of these functions.</p>
+<dl class="function">
+<dt id="c.json_true">
+<a class="reference internal" href="#c.json_t" title="json_t">json_t</a> *<tt class="descname">json_true</tt><big>(</big>void<big>)</big><a class="headerlink" href="#c.json_true" title="Permalink to this definition">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>Returns the JSON true value.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_false">
+<a class="reference internal" href="#c.json_t" title="json_t">json_t</a> *<tt class="descname">json_false</tt><big>(</big>void<big>)</big><a class="headerlink" href="#c.json_false" title="Permalink to this definition">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>Returns the JSON false value.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_boolean">
+<a class="reference internal" href="#c.json_t" title="json_t">json_t</a> *<tt class="descname">json_boolean</tt><big>(</big>val<big>)</big><a class="headerlink" href="#c.json_boolean" title="Permalink to this definition">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>Returns JSON false if <tt class="docutils literal"><span class="pre">val</span></tt> is zero, and JSON true otherwise.
+This is a macro, and equivalent to <tt class="docutils literal"><span class="pre">val</span> <span class="pre">?</span> <span class="pre">json_true()</span> <span class="pre">:</span>
+<span class="pre">json_false()</span></tt>.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 2.4.</span></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_null">
+<a class="reference internal" href="#c.json_t" title="json_t">json_t</a> *<tt class="descname">json_null</tt><big>(</big>void<big>)</big><a class="headerlink" href="#c.json_null" title="Permalink to this definition">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>Returns the JSON null value.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="string">
+<h2>String<a class="headerlink" href="#string" title="Permalink to this headline">¶</a></h2>
+<p>Jansson uses UTF-8 as the character encoding. All JSON strings must be
+valid UTF-8 (or ASCII, as it&#8217;s a subset of UTF-8). All Unicode
+codepoints U+0000 through U+10FFFF are allowed, but you must use
+length-aware functions if you wish to embed NUL bytes in strings.</p>
+<dl class="function">
+<dt id="c.json_string">
+<a class="reference internal" href="#c.json_t" title="json_t">json_t</a> *<tt class="descname">json_string</tt><big>(</big>const char<em>&nbsp;*value</em><big>)</big><a class="headerlink" href="#c.json_string" title="Permalink to this definition">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>Returns a new JSON string, or <em>NULL</em> on error. <em>value</em> must be a
+valid null terminated UTF-8 encoded Unicode string.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_stringn">
+<a class="reference internal" href="#c.json_t" title="json_t">json_t</a> *<tt class="descname">json_stringn</tt><big>(</big>const char<em>&nbsp;*value</em>, size_t<em>&nbsp;len</em><big>)</big><a class="headerlink" href="#c.json_stringn" title="Permalink to this definition">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>Like <a class="reference internal" href="#c.json_string" title="json_string"><tt class="xref c c-func docutils literal"><span class="pre">json_string()</span></tt></a>, but with explicit length, so <em>value</em> may
+contain null characters or not be null terminated.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_string_nocheck">
+<a class="reference internal" href="#c.json_t" title="json_t">json_t</a> *<tt class="descname">json_string_nocheck</tt><big>(</big>const char<em>&nbsp;*value</em><big>)</big><a class="headerlink" href="#c.json_string_nocheck" title="Permalink to this definition">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>Like <a class="reference internal" href="#c.json_string" title="json_string"><tt class="xref c c-func docutils literal"><span class="pre">json_string()</span></tt></a>, but doesn&#8217;t check that <em>value</em> is valid
+UTF-8. Use this function only if you are certain that this really
+is the case (e.g. you have already checked it by other means).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_stringn_nocheck">
+<a class="reference internal" href="#c.json_t" title="json_t">json_t</a> *<tt class="descname">json_stringn_nocheck</tt><big>(</big>const char<em>&nbsp;*value</em>, size_t<em>&nbsp;len</em><big>)</big><a class="headerlink" href="#c.json_stringn_nocheck" title="Permalink to this definition">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>Like <a class="reference internal" href="#c.json_string_nocheck" title="json_string_nocheck"><tt class="xref c c-func docutils literal"><span class="pre">json_string_nocheck()</span></tt></a>, but with explicit length, so
+<em>value</em> may contain null characters or not be null terminated.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_string_value">
+const char *<tt class="descname">json_string_value</tt><big>(</big>const <a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*string</em><big>)</big><a class="headerlink" href="#c.json_string_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the associated value of <em>string</em> as a null terminated UTF-8
+encoded string, or <em>NULL</em> if <em>string</em> is not a JSON string.</p>
+<p>The retuned value is read-only and must not be modified or freed by
+the user. It is valid as long as <em>string</em> exists, i.e. as long as
+its reference count has not dropped to zero.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_string_length">
+size_t <tt class="descname">json_string_length</tt><big>(</big>const <a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*string</em><big>)</big><a class="headerlink" href="#c.json_string_length" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the length of <em>string</em> in its UTF-8 presentation, or zero
+if <em>string</em> is not a JSON string.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_string_set">
+int <tt class="descname">json_string_set</tt><big>(</big>const <a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*string</em>, const char<em>&nbsp;*value</em><big>)</big><a class="headerlink" href="#c.json_string_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the associated value of <em>string</em> to <em>value</em>. <em>value</em> must be a
+valid UTF-8 encoded Unicode string. Returns 0 on success and -1 on
+error.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_string_setn">
+int <tt class="descname">json_string_setn</tt><big>(</big><a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*string</em>, const char<em>&nbsp;*value</em>, size_t<em>&nbsp;len</em><big>)</big><a class="headerlink" href="#c.json_string_setn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like <a class="reference internal" href="#c.json_string_set" title="json_string_set"><tt class="xref c c-func docutils literal"><span class="pre">json_string_set()</span></tt></a>, but with explicit length, so <em>value</em>
+may contain null characters or not be null terminated.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_string_set_nocheck">
+int <tt class="descname">json_string_set_nocheck</tt><big>(</big>const <a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*string</em>, const char<em>&nbsp;*value</em><big>)</big><a class="headerlink" href="#c.json_string_set_nocheck" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like <a class="reference internal" href="#c.json_string_set" title="json_string_set"><tt class="xref c c-func docutils literal"><span class="pre">json_string_set()</span></tt></a>, but doesn&#8217;t check that <em>value</em> is
+valid UTF-8. Use this function only if you are certain that this
+really is the case (e.g. you have already checked it by other
+means).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_string_setn_nocheck">
+int <tt class="descname">json_string_setn_nocheck</tt><big>(</big><a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*string</em>, const char<em>&nbsp;*value</em>, size_t<em>&nbsp;len</em><big>)</big><a class="headerlink" href="#c.json_string_setn_nocheck" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like <a class="reference internal" href="#c.json_string_set_nocheck" title="json_string_set_nocheck"><tt class="xref c c-func docutils literal"><span class="pre">json_string_set_nocheck()</span></tt></a>, but with explicit length,
+so <em>value</em> may contain null characters or not be null terminated.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="number">
+<h2>Number<a class="headerlink" href="#number" title="Permalink to this headline">¶</a></h2>
+<p>The JSON specification only contains one numeric type, &#8220;number&#8221;. The C
+programming language has distinct types for integer and floating-point
+numbers, so for practical reasons Jansson also has distinct types for
+the two. They are called &#8220;integer&#8221; and &#8220;real&#8221;, respectively. For more
+information, see <a class="reference internal" href="conformance.html#rfc-conformance"><em>RFC Conformance</em></a>.</p>
+<dl class="type">
+<dt id="c.json_int_t">
+<tt class="descname">json_int_t</tt><a class="headerlink" href="#c.json_int_t" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the C type that is used to store JSON integer values. It
+represents the widest integer type available on your system. In
+practice it&#8217;s just a typedef of <tt class="docutils literal"><span class="pre">long</span> <span class="pre">long</span></tt> if your compiler
+supports it, otherwise <tt class="docutils literal"><span class="pre">long</span></tt>.</p>
+<p>Usually, you can safely use plain <tt class="docutils literal"><span class="pre">int</span></tt> in place of
+<tt class="docutils literal"><span class="pre">json_int_t</span></tt>, and the implicit C integer conversion handles the
+rest. Only when you know that you need the full 64-bit range, you
+should use <tt class="docutils literal"><span class="pre">json_int_t</span></tt> explicitly.</p>
+</dd></dl>
+
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">JSON_INTEGER_IS_LONG_LONG</span></tt></dt>
+<dd><p class="first">This is a preprocessor variable that holds the value 1 if
+<a class="reference internal" href="#c.json_int_t" title="json_int_t"><tt class="xref c c-type docutils literal"><span class="pre">json_int_t</span></tt></a> is <tt class="docutils literal"><span class="pre">long</span> <span class="pre">long</span></tt>, and 0 if it&#8217;s <tt class="docutils literal"><span class="pre">long</span></tt>. It
+can be used as follows:</p>
+<div class="last highlight-c"><div class="highlight"><pre><span class="cp">#if JSON_INTEGER_IS_LONG_LONG</span>
+<span class="cm">/* Code specific for long long */</span>
+<span class="cp">#else</span>
+<span class="cm">/* Code specific for long */</span>
+<span class="cp">#endif</span>
+</pre></div>
+</div>
+</dd>
+<dt><tt class="docutils literal"><span class="pre">JSON_INTEGER_FORMAT</span></tt></dt>
+<dd><p class="first">This is a macro that expands to a <tt class="xref c c-func docutils literal"><span class="pre">printf()</span></tt> conversion
+specifier that corresponds to <a class="reference internal" href="#c.json_int_t" title="json_int_t"><tt class="xref c c-type docutils literal"><span class="pre">json_int_t</span></tt></a>, without the
+leading <tt class="docutils literal"><span class="pre">%</span></tt> sign, i.e. either <tt class="docutils literal"><span class="pre">&quot;lld&quot;</span></tt> or <tt class="docutils literal"><span class="pre">&quot;ld&quot;</span></tt>. This macro
+is required because the actual type of <a class="reference internal" href="#c.json_int_t" title="json_int_t"><tt class="xref c c-type docutils literal"><span class="pre">json_int_t</span></tt></a> can be
+either <tt class="docutils literal"><span class="pre">long</span></tt> or <tt class="docutils literal"><span class="pre">long</span> <span class="pre">long</span></tt>, and <tt class="xref c c-func docutils literal"><span class="pre">printf()</span></tt> reuiqres
+different length modifiers for the two.</p>
+<p>Example:</p>
+<div class="last highlight-c"><div class="highlight"><pre><span class="kt">json_int_t</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">123123123</span><span class="p">;</span>
+<span class="n">printf</span><span class="p">(</span><span class="s">&quot;x is %&quot;</span> <span class="n">JSON_INTEGER_FORMAT</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">);</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<dl class="function">
+<dt id="c.json_integer">
+<a class="reference internal" href="#c.json_t" title="json_t">json_t</a> *<tt class="descname">json_integer</tt><big>(</big><a class="reference internal" href="#c.json_int_t" title="json_int_t">json_int_t</a><em>&nbsp;value</em><big>)</big><a class="headerlink" href="#c.json_integer" title="Permalink to this definition">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>Returns a new JSON integer, or <em>NULL</em> on error.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_integer_value">
+<a class="reference internal" href="#c.json_int_t" title="json_int_t">json_int_t</a> <tt class="descname">json_integer_value</tt><big>(</big>const <a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*integer</em><big>)</big><a class="headerlink" href="#c.json_integer_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the associated value of <em>integer</em>, or 0 if <em>json</em> is not a
+JSON integer.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_integer_set">
+int <tt class="descname">json_integer_set</tt><big>(</big>const <a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*integer</em>, <a class="reference internal" href="#c.json_int_t" title="json_int_t">json_int_t</a><em>&nbsp;value</em><big>)</big><a class="headerlink" href="#c.json_integer_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the associated value of <em>integer</em> to <em>value</em>. Returns 0 on
+success and -1 if <em>integer</em> is not a JSON integer.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_real">
+<a class="reference internal" href="#c.json_t" title="json_t">json_t</a> *<tt class="descname">json_real</tt><big>(</big>double<em>&nbsp;value</em><big>)</big><a class="headerlink" href="#c.json_real" title="Permalink to this definition">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>Returns a new JSON real, or <em>NULL</em> on error.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_real_value">
+double <tt class="descname">json_real_value</tt><big>(</big>const <a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*real</em><big>)</big><a class="headerlink" href="#c.json_real_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the associated value of <em>real</em>, or 0.0 if <em>real</em> is not a
+JSON real.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_real_set">
+int <tt class="descname">json_real_set</tt><big>(</big>const <a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*real</em>, double<em>&nbsp;value</em><big>)</big><a class="headerlink" href="#c.json_real_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the associated value of <em>real</em> to <em>value</em>. Returns 0 on
+success and -1 if <em>real</em> is not a JSON real.</p>
+</dd></dl>
+
+<p>In addition to the functions above, there&#8217;s a common query function
+for integers and reals:</p>
+<dl class="function">
+<dt id="c.json_number_value">
+double <tt class="descname">json_number_value</tt><big>(</big>const <a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*json</em><big>)</big><a class="headerlink" href="#c.json_number_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the associated value of the JSON integer or JSON real
+<em>json</em>, cast to double regardless of the actual type. If <em>json</em> is
+neither JSON real nor JSON integer, 0.0 is returned.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="array">
+<h2>Array<a class="headerlink" href="#array" title="Permalink to this headline">¶</a></h2>
+<p>A JSON array is an ordered collection of other JSON values.</p>
+<dl class="function">
+<dt id="c.json_array">
+<a class="reference internal" href="#c.json_t" title="json_t">json_t</a> *<tt class="descname">json_array</tt><big>(</big>void<big>)</big><a class="headerlink" href="#c.json_array" title="Permalink to this definition">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>Returns a new JSON array, or <em>NULL</em> on error. Initially, the array
+is empty.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_array_size">
+size_t <tt class="descname">json_array_size</tt><big>(</big>const <a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*array</em><big>)</big><a class="headerlink" href="#c.json_array_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the number of elements in <em>array</em>, or 0 if <em>array</em> is NULL
+or not a JSON array.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_array_get">
+<a class="reference internal" href="#c.json_t" title="json_t">json_t</a> *<tt class="descname">json_array_get</tt><big>(</big>const <a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*array</em>, size_t<em>&nbsp;index</em><big>)</big><a class="headerlink" href="#c.json_array_get" title="Permalink to this definition">¶</a></dt>
+<dd><em class="refcount">Return value: Borrowed reference.</em><p>Returns the element in <em>array</em> at position <em>index</em>. The valid range
+for <em>index</em> is from 0 to the return value of
+<a class="reference internal" href="#c.json_array_size" title="json_array_size"><tt class="xref c c-func docutils literal"><span class="pre">json_array_size()</span></tt></a> minus 1. If <em>array</em> is not a JSON array,
+if <em>array</em> is <em>NULL</em>, or if <em>index</em> is out of range, <em>NULL</em> is
+returned.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_array_set">
+int <tt class="descname">json_array_set</tt><big>(</big><a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*array</em>, size_t<em>&nbsp;index</em>, <a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*value</em><big>)</big><a class="headerlink" href="#c.json_array_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Replaces the element in <em>array</em> at position <em>index</em> with <em>value</em>.
+The valid range for <em>index</em> is from 0 to the return value of
+<a class="reference internal" href="#c.json_array_size" title="json_array_size"><tt class="xref c c-func docutils literal"><span class="pre">json_array_size()</span></tt></a> minus 1. Returns 0 on success and -1 on
+error.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_array_set_new">
+int <tt class="descname">json_array_set_new</tt><big>(</big><a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*array</em>, size_t<em>&nbsp;index</em>, <a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*value</em><big>)</big><a class="headerlink" href="#c.json_array_set_new" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like <a class="reference internal" href="#c.json_array_set" title="json_array_set"><tt class="xref c c-func docutils literal"><span class="pre">json_array_set()</span></tt></a> but steals the reference to <em>value</em>.
+This is useful when <em>value</em> is newly created and not used after
+the call.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_array_append">
+int <tt class="descname">json_array_append</tt><big>(</big><a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*array</em>, <a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*value</em><big>)</big><a class="headerlink" href="#c.json_array_append" title="Permalink to this definition">¶</a></dt>
+<dd><p>Appends <em>value</em> to the end of <em>array</em>, growing the size of <em>array</em>
+by 1. Returns 0 on success and -1 on error.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_array_append_new">
+int <tt class="descname">json_array_append_new</tt><big>(</big><a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*array</em>, <a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*value</em><big>)</big><a class="headerlink" href="#c.json_array_append_new" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like <a class="reference internal" href="#c.json_array_append" title="json_array_append"><tt class="xref c c-func docutils literal"><span class="pre">json_array_append()</span></tt></a> but steals the reference to
+<em>value</em>. This is useful when <em>value</em> is newly created and not used
+after the call.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_array_insert">
+int <tt class="descname">json_array_insert</tt><big>(</big><a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*array</em>, size_t<em>&nbsp;index</em>, <a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*value</em><big>)</big><a class="headerlink" href="#c.json_array_insert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inserts <em>value</em> to <em>array</em> at position <em>index</em>, shifting the
+elements at <em>index</em> and after it one position towards the end of
+the array. Returns 0 on success and -1 on error.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_array_insert_new">
+int <tt class="descname">json_array_insert_new</tt><big>(</big><a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*array</em>, size_t<em>&nbsp;index</em>, <a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*value</em><big>)</big><a class="headerlink" href="#c.json_array_insert_new" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like <a class="reference internal" href="#c.json_array_insert" title="json_array_insert"><tt class="xref c c-func docutils literal"><span class="pre">json_array_insert()</span></tt></a> but steals the reference to
+<em>value</em>. This is useful when <em>value</em> is newly created and not used
+after the call.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_array_remove">
+int <tt class="descname">json_array_remove</tt><big>(</big><a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*array</em>, size_t<em>&nbsp;index</em><big>)</big><a class="headerlink" href="#c.json_array_remove" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes the element in <em>array</em> at position <em>index</em>, shifting the
+elements after <em>index</em> one position towards the start of the array.
+Returns 0 on success and -1 on error. The reference count of the
+removed value is decremented.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_array_clear">
+int <tt class="descname">json_array_clear</tt><big>(</big><a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*array</em><big>)</big><a class="headerlink" href="#c.json_array_clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes all elements from <em>array</em>. Returns 0 on sucess and -1 on
+error. The reference count of all removed values are decremented.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_array_extend">
+int <tt class="descname">json_array_extend</tt><big>(</big><a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*array</em>, <a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*other_array</em><big>)</big><a class="headerlink" href="#c.json_array_extend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Appends all elements in <em>other_array</em> to the end of <em>array</em>.
+Returns 0 on success and -1 on error.</p>
+</dd></dl>
+
+<p>The following macro can be used to iterate through all elements
+in an array.</p>
+<dl class="function">
+<dt id="c.json_array_foreach">
+<tt class="descname">json_array_foreach</tt><big>(</big>array, index, value<big>)</big><a class="headerlink" href="#c.json_array_foreach" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterate over every element of <tt class="docutils literal"><span class="pre">array</span></tt>, running the block
+of code that follows each time with the proper values set to
+variables <tt class="docutils literal"><span class="pre">index</span></tt> and <tt class="docutils literal"><span class="pre">value</span></tt>, of types <tt class="xref c c-type docutils literal"><span class="pre">size_t</span></tt> and
+<a class="reference internal" href="#c.json_t" title="json_t"><tt class="xref c c-type docutils literal"><span class="pre">json_t</span> <span class="pre">*</span></tt></a> respectively. Example:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="cm">/* array is a JSON array */</span>
+<span class="kt">size_t</span> <span class="n">index</span><span class="p">;</span>
+<span class="kt">json_t</span> <span class="o">*</span><span class="n">value</span><span class="p">;</span>
+
+<span class="n">json_array_foreach</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="p">{</span>
+    <span class="cm">/* block of code that uses index and value */</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The items are returned in increasing index order.</p>
+<p>This macro expands to an ordinary <tt class="docutils literal"><span class="pre">for</span></tt> statement upon
+preprocessing, so its performance is equivalent to that of
+hand-written code using the array access functions.
+The main advantage of this macro is that it abstracts
+away the complexity, and makes for shorter, more
+concise code.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 2.5.</span></p>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="object">
+<h2>Object<a class="headerlink" href="#object" title="Permalink to this headline">¶</a></h2>
+<p>A JSON object is a dictionary of key-value pairs, where the key is a
+Unicode string and the value is any JSON value.</p>
+<p>Even though NUL bytes are allowed in string values, they are not
+allowed in object keys.</p>
+<dl class="function">
+<dt id="c.json_object">
+<a class="reference internal" href="#c.json_t" title="json_t">json_t</a> *<tt class="descname">json_object</tt><big>(</big>void<big>)</big><a class="headerlink" href="#c.json_object" title="Permalink to this definition">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>Returns a new JSON object, or <em>NULL</em> on error. Initially, the
+object is empty.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_object_size">
+size_t <tt class="descname">json_object_size</tt><big>(</big>const <a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*object</em><big>)</big><a class="headerlink" href="#c.json_object_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the number of elements in <em>object</em>, or 0 if <em>object</em> is not
+a JSON object.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_object_get">
+<a class="reference internal" href="#c.json_t" title="json_t">json_t</a> *<tt class="descname">json_object_get</tt><big>(</big>const <a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*object</em>, const char<em>&nbsp;*key</em><big>)</big><a class="headerlink" href="#c.json_object_get" title="Permalink to this definition">¶</a></dt>
+<dd><em class="refcount">Return value: Borrowed reference.</em><p>Get a value corresponding to <em>key</em> from <em>object</em>. Returns <em>NULL</em> if
+<em>key</em> is not found and on error.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_object_set">
+int <tt class="descname">json_object_set</tt><big>(</big><a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*object</em>, const char<em>&nbsp;*key</em>, <a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*value</em><big>)</big><a class="headerlink" href="#c.json_object_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the value of <em>key</em> to <em>value</em> in <em>object</em>. <em>key</em> must be a
+valid null terminated UTF-8 encoded Unicode string. If there
+already is a value for <em>key</em>, it is replaced by the new value.
+Returns 0 on success and -1 on error.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_object_set_nocheck">
+int <tt class="descname">json_object_set_nocheck</tt><big>(</big><a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*object</em>, const char<em>&nbsp;*key</em>, <a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*value</em><big>)</big><a class="headerlink" href="#c.json_object_set_nocheck" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like <a class="reference internal" href="#c.json_object_set" title="json_object_set"><tt class="xref c c-func docutils literal"><span class="pre">json_object_set()</span></tt></a>, but doesn&#8217;t check that <em>key</em> is
+valid UTF-8. Use this function only if you are certain that this
+really is the case (e.g. you have already checked it by other
+means).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_object_set_new">
+int <tt class="descname">json_object_set_new</tt><big>(</big><a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*object</em>, const char<em>&nbsp;*key</em>, <a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*value</em><big>)</big><a class="headerlink" href="#c.json_object_set_new" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like <a class="reference internal" href="#c.json_object_set" title="json_object_set"><tt class="xref c c-func docutils literal"><span class="pre">json_object_set()</span></tt></a> but steals the reference to
+<em>value</em>. This is useful when <em>value</em> is newly created and not used
+after the call.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_object_set_new_nocheck">
+int <tt class="descname">json_object_set_new_nocheck</tt><big>(</big><a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*object</em>, const char<em>&nbsp;*key</em>, <a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*value</em><big>)</big><a class="headerlink" href="#c.json_object_set_new_nocheck" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like <a class="reference internal" href="#c.json_object_set_new" title="json_object_set_new"><tt class="xref c c-func docutils literal"><span class="pre">json_object_set_new()</span></tt></a>, but doesn&#8217;t check that <em>key</em> is
+valid UTF-8. Use this function only if you are certain that this
+really is the case (e.g. you have already checked it by other
+means).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_object_del">
+int <tt class="descname">json_object_del</tt><big>(</big><a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*object</em>, const char<em>&nbsp;*key</em><big>)</big><a class="headerlink" href="#c.json_object_del" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete <em>key</em> from <em>object</em> if it exists. Returns 0 on success, or
+-1 if <em>key</em> was not found. The reference count of the removed value
+is decremented.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_object_clear">
+int <tt class="descname">json_object_clear</tt><big>(</big><a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*object</em><big>)</big><a class="headerlink" href="#c.json_object_clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove all elements from <em>object</em>. Returns 0 on success and -1 if
+<em>object</em> is not a JSON object. The reference count of all removed
+values are decremented.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_object_update">
+int <tt class="descname">json_object_update</tt><big>(</big><a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*object</em>, <a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*other</em><big>)</big><a class="headerlink" href="#c.json_object_update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update <em>object</em> with the key-value pairs from <em>other</em>, overwriting
+existing keys. Returns 0 on success or -1 on error.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_object_update_existing">
+int <tt class="descname">json_object_update_existing</tt><big>(</big><a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*object</em>, <a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*other</em><big>)</big><a class="headerlink" href="#c.json_object_update_existing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like <a class="reference internal" href="#c.json_object_update" title="json_object_update"><tt class="xref c c-func docutils literal"><span class="pre">json_object_update()</span></tt></a>, but only the values of existing
+keys are updated. No new keys are created. Returns 0 on success or
+-1 on error.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 2.3.</span></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_object_update_missing">
+int <tt class="descname">json_object_update_missing</tt><big>(</big><a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*object</em>, <a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*other</em><big>)</big><a class="headerlink" href="#c.json_object_update_missing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like <a class="reference internal" href="#c.json_object_update" title="json_object_update"><tt class="xref c c-func docutils literal"><span class="pre">json_object_update()</span></tt></a>, but only new keys are created.
+The value of any existing key is not changed. Returns 0 on success
+or -1 on error.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 2.3.</span></p>
+</div>
+</dd></dl>
+
+<p>The following macro can be used to iterate through all key-value pairs
+in an object.</p>
+<dl class="function">
+<dt id="c.json_object_foreach">
+<tt class="descname">json_object_foreach</tt><big>(</big>object, key, value<big>)</big><a class="headerlink" href="#c.json_object_foreach" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterate over every key-value pair of <tt class="docutils literal"><span class="pre">object</span></tt>, running the block
+of code that follows each time with the proper values set to
+variables <tt class="docutils literal"><span class="pre">key</span></tt> and <tt class="docutils literal"><span class="pre">value</span></tt>, of types <tt class="xref c c-type docutils literal"><span class="pre">const</span> <span class="pre">char</span> <span class="pre">*</span></tt> and
+<a class="reference internal" href="#c.json_t" title="json_t"><tt class="xref c c-type docutils literal"><span class="pre">json_t</span> <span class="pre">*</span></tt></a> respectively. Example:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="cm">/* obj is a JSON object */</span>
+<span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">key</span><span class="p">;</span>
+<span class="kt">json_t</span> <span class="o">*</span><span class="n">value</span><span class="p">;</span>
+
+<span class="n">json_object_foreach</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="p">{</span>
+    <span class="cm">/* block of code that uses key and value */</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The items are not returned in any particular order.</p>
+<p>This macro expands to an ordinary <tt class="docutils literal"><span class="pre">for</span></tt> statement upon
+preprocessing, so its performance is equivalent to that of
+hand-written iteration code using the object iteration protocol
+(see below). The main advantage of this macro is that it abstracts
+away the complexity behind iteration, and makes for shorter, more
+concise code.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 2.3.</span></p>
+</div>
+</dd></dl>
+
+<p>The following functions implement an iteration protocol for objects,
+allowing to iterate through all key-value pairs in an object. The
+items are not returned in any particular order, as this would require
+sorting due to the internal hashtable implementation.</p>
+<dl class="function">
+<dt id="c.json_object_iter">
+void *<tt class="descname">json_object_iter</tt><big>(</big><a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*object</em><big>)</big><a class="headerlink" href="#c.json_object_iter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an opaque iterator which can be used to iterate over all
+key-value pairs in <em>object</em>, or <em>NULL</em> if <em>object</em> is empty.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_object_iter_at">
+void *<tt class="descname">json_object_iter_at</tt><big>(</big><a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*object</em>, const char<em>&nbsp;*key</em><big>)</big><a class="headerlink" href="#c.json_object_iter_at" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like <a class="reference internal" href="#c.json_object_iter" title="json_object_iter"><tt class="xref c c-func docutils literal"><span class="pre">json_object_iter()</span></tt></a>, but returns an iterator to the
+key-value pair in <em>object</em> whose key is equal to <em>key</em>, or NULL if
+<em>key</em> is not found in <em>object</em>. Iterating forward to the end of
+<em>object</em> only yields all key-value pairs of the object if <em>key</em>
+happens to be the first key in the underlying hash table.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_object_iter_next">
+void *<tt class="descname">json_object_iter_next</tt><big>(</big><a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*object</em>, void<em>&nbsp;*iter</em><big>)</big><a class="headerlink" href="#c.json_object_iter_next" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an iterator pointing to the next key-value pair in <em>object</em>
+after <em>iter</em>, or <em>NULL</em> if the whole object has been iterated
+through.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_object_iter_key">
+const char *<tt class="descname">json_object_iter_key</tt><big>(</big>void<em>&nbsp;*iter</em><big>)</big><a class="headerlink" href="#c.json_object_iter_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract the associated key from <em>iter</em>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_object_iter_value">
+<a class="reference internal" href="#c.json_t" title="json_t">json_t</a> *<tt class="descname">json_object_iter_value</tt><big>(</big>void<em>&nbsp;*iter</em><big>)</big><a class="headerlink" href="#c.json_object_iter_value" title="Permalink to this definition">¶</a></dt>
+<dd><em class="refcount">Return value: Borrowed reference.</em><p>Extract the associated value from <em>iter</em>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_object_iter_set">
+int <tt class="descname">json_object_iter_set</tt><big>(</big><a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*object</em>, void<em>&nbsp;*iter</em>, <a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*value</em><big>)</big><a class="headerlink" href="#c.json_object_iter_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the value of the key-value pair in <em>object</em>, that is pointed to
+by <em>iter</em>, to <em>value</em>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_object_iter_set_new">
+int <tt class="descname">json_object_iter_set_new</tt><big>(</big><a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*object</em>, void<em>&nbsp;*iter</em>, <a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*value</em><big>)</big><a class="headerlink" href="#c.json_object_iter_set_new" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like <a class="reference internal" href="#c.json_object_iter_set" title="json_object_iter_set"><tt class="xref c c-func docutils literal"><span class="pre">json_object_iter_set()</span></tt></a>, but steals the reference to
+<em>value</em>. This is useful when <em>value</em> is newly created and not used
+after the call.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_object_key_to_iter">
+void *<tt class="descname">json_object_key_to_iter</tt><big>(</big>const char<em>&nbsp;*key</em><big>)</big><a class="headerlink" href="#c.json_object_key_to_iter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like <a class="reference internal" href="#c.json_object_iter_at" title="json_object_iter_at"><tt class="xref c c-func docutils literal"><span class="pre">json_object_iter_at()</span></tt></a>, but much faster. Only works for
+values returned by <a class="reference internal" href="#c.json_object_iter_key" title="json_object_iter_key"><tt class="xref c c-func docutils literal"><span class="pre">json_object_iter_key()</span></tt></a>. Using other keys
+will lead to segfaults. This function is used internally to
+implement <a class="reference internal" href="#c.json_object_foreach" title="json_object_foreach"><tt class="xref c c-func docutils literal"><span class="pre">json_object_foreach()</span></tt></a>.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 2.3.</span></p>
+</div>
+</dd></dl>
+
+<p>The iteration protocol can be used for example as follows:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="cm">/* obj is a JSON object */</span>
+<span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">key</span><span class="p">;</span>
+<span class="kt">json_t</span> <span class="o">*</span><span class="n">value</span><span class="p">;</span>
+
+<span class="kt">void</span> <span class="o">*</span><span class="n">iter</span> <span class="o">=</span> <span class="n">json_object_iter</span><span class="p">(</span><span class="n">obj</span><span class="p">);</span>
+<span class="k">while</span><span class="p">(</span><span class="n">iter</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="n">json_object_iter_key</span><span class="p">(</span><span class="n">iter</span><span class="p">);</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">json_object_iter_value</span><span class="p">(</span><span class="n">iter</span><span class="p">);</span>
+    <span class="cm">/* use key and value ... */</span>
+    <span class="n">iter</span> <span class="o">=</span> <span class="n">json_object_iter_next</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">iter</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl class="function">
+<dt id="c.json_object_seed">
+void <tt class="descname">json_object_seed</tt><big>(</big>size_t<em>&nbsp;seed</em><big>)</big><a class="headerlink" href="#c.json_object_seed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Seed the hash function used in Jansson&#8217;s hashtable implementation.
+The seed is used to randomize the hash function so that an
+attacker cannot control its output.</p>
+<p>If <em>seed</em> is 0, Jansson generates the seed itselfy by reading
+random data from the operating system&#8217;s entropy sources. If no
+entropy sources are available, falls back to using a combination
+of the current timestamp (with microsecond precision if possible)
+and the process ID.</p>
+<p>If called at all, this function must be called before any calls to
+<a class="reference internal" href="#c.json_object" title="json_object"><tt class="xref c c-func docutils literal"><span class="pre">json_object()</span></tt></a>, either explicit or implicit. If this
+function is not called by the user, the first call to
+<a class="reference internal" href="#c.json_object" title="json_object"><tt class="xref c c-func docutils literal"><span class="pre">json_object()</span></tt></a> (either explicit or implicit) seeds the hash
+function. See <a class="reference internal" href="portability.html#portability-thread-safety"><em>Thread safety</em></a> for notes on thread
+safety.</p>
+<p>If repeatable results are required, for e.g. unit tests, the hash
+function can be &#8220;unrandomized&#8221; by calling <a class="reference internal" href="#c.json_object_seed" title="json_object_seed"><tt class="xref c c-func docutils literal"><span class="pre">json_object_seed()</span></tt></a>
+with a constant value on program startup, e.g.
+<tt class="docutils literal"><span class="pre">json_object_seed(1)</span></tt>.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 2.6.</span></p>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="error-reporting">
+<h2>Error reporting<a class="headerlink" href="#error-reporting" title="Permalink to this headline">¶</a></h2>
+<p>Jansson uses a single struct type to pass error information to the
+user. See sections <a class="reference internal" href="#apiref-decoding"><em>Decoding</em></a>, <a class="reference internal" href="#apiref-pack"><em>Building Values</em></a> and
+<a class="reference internal" href="#apiref-unpack"><em>Parsing and Validating Values</em></a> for functions that pass error information using
+this struct.</p>
+<dl class="type">
+<dt id="c.json_error_t">
+<tt class="descname">json_error_t</tt><a class="headerlink" href="#c.json_error_t" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="member">
+<dt>
+<tt class="descname">char text[]</tt></dt>
+<dd><p>The error message (in UTF-8), or an empty string if a message is
+not available.</p>
+</dd></dl>
+
+<dl class="member">
+<dt>
+<tt class="descname">char source[]</tt></dt>
+<dd><p>Source of the error. This can be (a part of) the file name or a
+special identifier in angle brackers (e.g. <tt class="docutils literal"><span class="pre">&lt;string&gt;</span></tt>).</p>
+</dd></dl>
+
+<dl class="member">
+<dt id="c.json_error_t.line">
+int <tt class="descname">line</tt><a class="headerlink" href="#c.json_error_t.line" title="Permalink to this definition">¶</a></dt>
+<dd><p>The line number on which the error occurred.</p>
+</dd></dl>
+
+<dl class="member">
+<dt id="c.json_error_t.column">
+int <tt class="descname">column</tt><a class="headerlink" href="#c.json_error_t.column" title="Permalink to this definition">¶</a></dt>
+<dd><p>The column on which the error occurred. Note that this is the
+<em>character column</em>, not the byte column, i.e. a multibyte UTF-8
+character counts as one column.</p>
+</dd></dl>
+
+<dl class="member">
+<dt id="c.json_error_t.position">
+size_t <tt class="descname">position</tt><a class="headerlink" href="#c.json_error_t.position" title="Permalink to this definition">¶</a></dt>
+<dd><p>The position in bytes from the start of the input. This is
+useful for debugging Unicode encoding problems.</p>
+</dd></dl>
+
+</dd></dl>
+
+<p>The normal use of <a class="reference internal" href="#c.json_error_t" title="json_error_t"><tt class="xref c c-type docutils literal"><span class="pre">json_error_t</span></tt></a> is to allocate it on the stack,
+and pass a pointer to a function. Example:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kt">json_t</span> <span class="o">*</span><span class="n">json</span><span class="p">;</span>
+    <span class="kt">json_error_t</span> <span class="n">error</span><span class="p">;</span>
+
+    <span class="n">json</span> <span class="o">=</span> <span class="n">json_load_file</span><span class="p">(</span><span class="s">&quot;/path/to/file.json&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">error</span><span class="p">);</span>
+    <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">json</span><span class="p">)</span> <span class="p">{</span>
+        <span class="cm">/* the error variable contains error information */</span>
+    <span class="p">}</span>
+    <span class="p">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Also note that if the call succeeded (<tt class="docutils literal"><span class="pre">json</span> <span class="pre">!=</span> <span class="pre">NULL</span></tt> in the above
+example), the contents of <tt class="docutils literal"><span class="pre">error</span></tt> are generally left unspecified.
+The decoding functions write to the <tt class="docutils literal"><span class="pre">position</span></tt> member also on
+success. See <a class="reference internal" href="#apiref-decoding"><em>Decoding</em></a> for more info.</p>
+<p>All functions also accept <em>NULL</em> as the <a class="reference internal" href="#c.json_error_t" title="json_error_t"><tt class="xref c c-type docutils literal"><span class="pre">json_error_t</span></tt></a> pointer,
+in which case no error information is returned to the caller.</p>
+</div>
+<div class="section" id="encoding">
+<h2>Encoding<a class="headerlink" href="#encoding" title="Permalink to this headline">¶</a></h2>
+<p>This sections describes the functions that can be used to encode
+values to JSON. By default, only objects and arrays can be encoded
+directly, since they are the only valid <em>root</em> values of a JSON text.
+To encode any JSON value, use the <tt class="docutils literal"><span class="pre">JSON_ENCODE_ANY</span></tt> flag (see
+below).</p>
+<p>By default, the output has no newlines, and spaces are used between
+array and object elements for a readable output. This behavior can be
+altered by using the <tt class="docutils literal"><span class="pre">JSON_INDENT</span></tt> and <tt class="docutils literal"><span class="pre">JSON_COMPACT</span></tt> flags
+described below. A newline is never appended to the end of the encoded
+JSON data.</p>
+<p>Each function takes a <em>flags</em> parameter that controls some aspects of
+how the data is encoded. Its default value is 0. The following macros
+can be ORed together to obtain <em>flags</em>.</p>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">JSON_INDENT(n)</span></tt></dt>
+<dd><p class="first">Pretty-print the result, using newlines between array and object
+items, and indenting with <em>n</em> spaces. The valid range for <em>n</em> is
+between 0 and 31 (inclusive), other values result in an undefined
+output. If <tt class="docutils literal"><span class="pre">JSON_INDENT</span></tt> is not used or <em>n</em> is 0, no newlines are
+inserted between array and object items.</p>
+<p>The <tt class="docutils literal"><span class="pre">JSON_MAX_INDENT</span></tt> constant defines the maximum indentation
+that can be used, and its value is 31.</p>
+<div class="last versionchanged">
+<p><span class="versionmodified">Changed in version 2.7: </span>Added <tt class="docutils literal"><span class="pre">JSON_MAX_INDENT</span></tt>.</p>
+</div>
+</dd>
+<dt><tt class="docutils literal"><span class="pre">JSON_COMPACT</span></tt></dt>
+<dd>This flag enables a compact representation, i.e. sets the separator
+between array and object items to <tt class="docutils literal"><span class="pre">&quot;,&quot;</span></tt> and between object keys
+and values to <tt class="docutils literal"><span class="pre">&quot;:&quot;</span></tt>. Without this flag, the corresponding
+separators are <tt class="docutils literal"><span class="pre">&quot;,</span> <span class="pre">&quot;</span></tt> and <tt class="docutils literal"><span class="pre">&quot;:</span> <span class="pre">&quot;</span></tt> for more readable output.</dd>
+<dt><tt class="docutils literal"><span class="pre">JSON_ENSURE_ASCII</span></tt></dt>
+<dd>If this flag is used, the output is guaranteed to consist only of
+ASCII characters. This is achived by escaping all Unicode
+characters outside the ASCII range.</dd>
+<dt><tt class="docutils literal"><span class="pre">JSON_SORT_KEYS</span></tt></dt>
+<dd>If this flag is used, all the objects in output are sorted by key.
+This is useful e.g. if two JSON texts are diffed or visually
+compared.</dd>
+<dt><tt class="docutils literal"><span class="pre">JSON_PRESERVE_ORDER</span></tt></dt>
+<dd>If this flag is used, object keys in the output are sorted into the
+same order in which they were first inserted to the object. For
+example, decoding a JSON text and then encoding with this flag
+preserves the order of object keys.</dd>
+<dt><tt class="docutils literal"><span class="pre">JSON_ENCODE_ANY</span></tt></dt>
+<dd><p class="first">Specifying this flag makes it possible to encode any JSON value on
+its own. Without it, only objects and arrays can be passed as the
+<em>root</em> value to the encoding functions.</p>
+<p><strong>Note:</strong> Encoding any value may be useful in some scenarios, but
+it&#8217;s generally discouraged as it violates strict compatiblity with
+<span class="target" id="index-1"></span><a class="rfc reference external" href="http://tools.ietf.org/html/rfc4627.html"><strong>RFC 4627</strong></a>. If you use this flag, don&#8217;t expect interoperatibility
+with other JSON systems.</p>
+<div class="last versionadded">
+<p><span class="versionmodified">New in version 2.1.</span></p>
+</div>
+</dd>
+<dt><tt class="docutils literal"><span class="pre">JSON_ESCAPE_SLASH</span></tt></dt>
+<dd><p class="first">Escape the <tt class="docutils literal"><span class="pre">/</span></tt> characters in strings with <tt class="docutils literal"><span class="pre">\/</span></tt>.</p>
+<div class="last versionadded">
+<p><span class="versionmodified">New in version 2.4.</span></p>
+</div>
+</dd>
+<dt><tt class="docutils literal"><span class="pre">JSON_REAL_PRECISION(n)</span></tt></dt>
+<dd><p class="first">Output all real numbers with at most <em>n</em> digits of precision. The
+valid range for <em>n</em> is between 0 and 31 (inclusive), and other
+values result in an undefined behavior.</p>
+<p>By default, the precision is 17, to correctly and losslessly encode
+all IEEE 754 double precision floating point numbers.</p>
+<div class="last versionadded">
+<p><span class="versionmodified">New in version 2.7.</span></p>
+</div>
+</dd>
+</dl>
+<p>The following functions perform the actual JSON encoding. The result
+is in UTF-8.</p>
+<dl class="function">
+<dt id="c.json_dumps">
+char *<tt class="descname">json_dumps</tt><big>(</big>const <a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*root</em>, size_t<em>&nbsp;flags</em><big>)</big><a class="headerlink" href="#c.json_dumps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the JSON representation of <em>root</em> as a string, or <em>NULL</em> on
+error. <em>flags</em> is described above. The return value must be freed
+by the caller using <tt class="xref c c-func docutils literal"><span class="pre">free()</span></tt>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_dumpf">
+int <tt class="descname">json_dumpf</tt><big>(</big>const <a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*root</em>, FILE<em>&nbsp;*output</em>, size_t<em>&nbsp;flags</em><big>)</big><a class="headerlink" href="#c.json_dumpf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the JSON representation of <em>root</em> to the stream <em>output</em>.
+<em>flags</em> is described above. Returns 0 on success and -1 on error.
+If an error occurs, something may have already been written to
+<em>output</em>. In this case, the output is undefined and most likely not
+valid JSON.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_dump_file">
+int <tt class="descname">json_dump_file</tt><big>(</big>const <a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*json</em>, const char<em>&nbsp;*path</em>, size_t<em>&nbsp;flags</em><big>)</big><a class="headerlink" href="#c.json_dump_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the JSON representation of <em>root</em> to the file <em>path</em>. If
+<em>path</em> already exists, it is overwritten. <em>flags</em> is described
+above. Returns 0 on success and -1 on error.</p>
+</dd></dl>
+
+<dl class="type">
+<dt id="c.json_dump_callback_t">
+<tt class="descname">json_dump_callback_t</tt><a class="headerlink" href="#c.json_dump_callback_t" title="Permalink to this definition">¶</a></dt>
+<dd><p>A typedef for a function that&#8217;s called by
+<a class="reference internal" href="#c.json_dump_callback" title="json_dump_callback"><tt class="xref c c-func docutils literal"><span class="pre">json_dump_callback()</span></tt></a>:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="k">typedef</span> <span class="nf">int</span> <span class="p">(</span><span class="o">*</span><span class="kt">json_dump_callback_t</span><span class="p">)(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">buffer</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">size</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="n">data</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><em>buffer</em> points to a buffer containing a chunk of output, <em>size</em> is
+the length of the buffer, and <em>data</em> is the corresponding
+<a class="reference internal" href="#c.json_dump_callback" title="json_dump_callback"><tt class="xref c c-func docutils literal"><span class="pre">json_dump_callback()</span></tt></a> argument passed through.</p>
+<p>On error, the function should return -1 to stop the encoding
+process. On success, it should return 0.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 2.2.</span></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_dump_callback">
+int <tt class="descname">json_dump_callback</tt><big>(</big>const <a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*json</em>, <a class="reference internal" href="#c.json_dump_callback_t" title="json_dump_callback_t">json_dump_callback_t</a><em>&nbsp;callback</em>, void<em>&nbsp;*data</em>, size_t<em>&nbsp;flags</em><big>)</big><a class="headerlink" href="#c.json_dump_callback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call <em>callback</em> repeatedly, passing a chunk of the JSON
+representation of <em>root</em> each time. <em>flags</em> is described above.
+Returns 0 on success and -1 on error.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 2.2.</span></p>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="decoding">
+<span id="apiref-decoding"></span><h2>Decoding<a class="headerlink" href="#decoding" title="Permalink to this headline">¶</a></h2>
+<p>This sections describes the functions that can be used to decode JSON
+text to the Jansson representation of JSON data. The JSON
+specification requires that a JSON text is either a serialized array
+or object, and this requirement is also enforced with the following
+functions. In other words, the top level value in the JSON text being
+decoded must be either array or object. To decode any JSON value, use
+the <tt class="docutils literal"><span class="pre">JSON_DECODE_ANY</span></tt> flag (see below).</p>
+<p>See <a class="reference internal" href="conformance.html#rfc-conformance"><em>RFC Conformance</em></a> for a discussion on Jansson&#8217;s conformance
+to the JSON specification. It explains many design decisions that
+affect especially the behavior of the decoder.</p>
+<p>Each function takes a <em>flags</em> parameter that can be used to control
+the behavior of the decoder. Its default value is 0. The following
+macros can be ORed together to obtain <em>flags</em>.</p>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">JSON_REJECT_DUPLICATES</span></tt></dt>
+<dd><p class="first">Issue a decoding error if any JSON object in the input text
+contains duplicate keys. Without this flag, the value of the last
+occurence of each key ends up in the result. Key equivalence is
+checked byte-by-byte, without special Unicode comparison
+algorithms.</p>
+<div class="last versionadded">
+<p><span class="versionmodified">New in version 2.1.</span></p>
+</div>
+</dd>
+<dt><tt class="docutils literal"><span class="pre">JSON_DECODE_ANY</span></tt></dt>
+<dd><p class="first">By default, the decoder expects an array or object as the input.
+With this flag enabled, the decoder accepts any valid JSON value.</p>
+<p><strong>Note:</strong> Decoding any value may be useful in some scenarios, but
+it&#8217;s generally discouraged as it violates strict compatiblity with
+<span class="target" id="index-2"></span><a class="rfc reference external" href="http://tools.ietf.org/html/rfc4627.html"><strong>RFC 4627</strong></a>. If you use this flag, don&#8217;t expect interoperatibility
+with other JSON systems.</p>
+<div class="last versionadded">
+<p><span class="versionmodified">New in version 2.3.</span></p>
+</div>
+</dd>
+<dt><tt class="docutils literal"><span class="pre">JSON_DISABLE_EOF_CHECK</span></tt></dt>
+<dd><p class="first">By default, the decoder expects that its whole input constitutes a
+valid JSON text, and issues an error if there&#8217;s extra data after
+the otherwise valid JSON input. With this flag enabled, the decoder
+stops after decoding a valid JSON array or object, and thus allows
+extra data after the JSON text.</p>
+<p>Normally, reading will stop when the last <tt class="docutils literal"><span class="pre">]</span></tt> or <tt class="docutils literal"><span class="pre">}</span></tt> in the
+JSON input is encountered. If both <tt class="docutils literal"><span class="pre">JSON_DISABLE_EOF_CHECK</span></tt> and
+<tt class="docutils literal"><span class="pre">JSON_DECODE_ANY</span></tt> flags are used, the decoder may read one extra
+UTF-8 code unit (up to 4 bytes of input). For example, decoding
+<tt class="docutils literal"><span class="pre">4true</span></tt> correctly decodes the integer 4, but also reads the
+<tt class="docutils literal"><span class="pre">t</span></tt>. For this reason, if reading multiple consecutive values that
+are not arrays or objects, they should be separated by at least one
+whitespace character.</p>
+<div class="last versionadded">
+<p><span class="versionmodified">New in version 2.1.</span></p>
+</div>
+</dd>
+<dt><tt class="docutils literal"><span class="pre">JSON_DECODE_INT_AS_REAL</span></tt></dt>
+<dd><p class="first">JSON defines only one number type. Jansson distinguishes between
+ints and reals. For more information see <a class="reference internal" href="conformance.html#real-vs-integer"><em>Real vs. Integer</em></a>.
+With this flag enabled the decoder interprets all numbers as real
+values. Integers that do not have an exact double representation
+will silently result in a loss of precision. Integers that cause
+a double overflow will cause an error.</p>
+<div class="last versionadded">
+<p><span class="versionmodified">New in version 2.5.</span></p>
+</div>
+</dd>
+<dt><tt class="docutils literal"><span class="pre">JSON_ALLOW_NUL</span></tt></dt>
+<dd><p class="first">Allow <tt class="docutils literal"><span class="pre">\u0000</span></tt> escape inside string values. This is a safety
+measure; If you know your input can contain NUL bytes, use this
+flag. If you don&#8217;t use this flag, you don&#8217;t have to worry about NUL
+bytes inside strings unless you explicitly create themselves by
+using e.g. <a class="reference internal" href="#c.json_stringn" title="json_stringn"><tt class="xref c c-func docutils literal"><span class="pre">json_stringn()</span></tt></a> or <tt class="docutils literal"><span class="pre">s#</span></tt> format specifier for
+<a class="reference internal" href="#c.json_pack" title="json_pack"><tt class="xref c c-func docutils literal"><span class="pre">json_pack()</span></tt></a>.</p>
+<p>Object keys cannot have embedded NUL bytes even if this flag is
+used.</p>
+<div class="last versionadded">
+<p><span class="versionmodified">New in version 2.6.</span></p>
+</div>
+</dd>
+</dl>
+<p>Each function also takes an optional <a class="reference internal" href="#c.json_error_t" title="json_error_t"><tt class="xref c c-type docutils literal"><span class="pre">json_error_t</span></tt></a> parameter
+that is filled with error information if decoding fails. It&#8217;s also
+updated on success; the number of bytes of input read is written to
+its <tt class="docutils literal"><span class="pre">position</span></tt> field. This is especially useful when using
+<tt class="docutils literal"><span class="pre">JSON_DISABLE_EOF_CHECK</span></tt> to read multiple consecutive JSON texts.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 2.3: </span>Number of bytes of input read is written to the <tt class="docutils literal"><span class="pre">position</span></tt> field
+of the <a class="reference internal" href="#c.json_error_t" title="json_error_t"><tt class="xref c c-type docutils literal"><span class="pre">json_error_t</span></tt></a> structure.</p>
+</div>
+<p>If no error or position information is needed, you can pass <em>NULL</em>.</p>
+<p>The following functions perform the actual JSON decoding.</p>
+<dl class="function">
+<dt id="c.json_loads">
+<a class="reference internal" href="#c.json_t" title="json_t">json_t</a> *<tt class="descname">json_loads</tt><big>(</big>const char<em>&nbsp;*input</em>, size_t<em>&nbsp;flags</em>, <a class="reference internal" href="#c.json_error_t" title="json_error_t">json_error_t</a><em>&nbsp;*error</em><big>)</big><a class="headerlink" href="#c.json_loads" title="Permalink to this definition">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>Decodes the JSON string <em>input</em> and returns the array or object it
+contains, or <em>NULL</em> on error, in which case <em>error</em> is filled with
+information about the error. <em>flags</em> is described above.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_loadb">
+<a class="reference internal" href="#c.json_t" title="json_t">json_t</a> *<tt class="descname">json_loadb</tt><big>(</big>const char<em>&nbsp;*buffer</em>, size_t<em>&nbsp;buflen</em>, size_t<em>&nbsp;flags</em>, <a class="reference internal" href="#c.json_error_t" title="json_error_t">json_error_t</a><em>&nbsp;*error</em><big>)</big><a class="headerlink" href="#c.json_loadb" title="Permalink to this definition">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>Decodes the JSON string <em>buffer</em>, whose length is <em>buflen</em>, and
+returns the array or object it contains, or <em>NULL</em> on error, in
+which case <em>error</em> is filled with information about the error. This
+is similar to <a class="reference internal" href="#c.json_loads" title="json_loads"><tt class="xref c c-func docutils literal"><span class="pre">json_loads()</span></tt></a> except that the string doesn&#8217;t
+need to be null-terminated. <em>flags</em> is described above.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 2.1.</span></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_loadf">
+<a class="reference internal" href="#c.json_t" title="json_t">json_t</a> *<tt class="descname">json_loadf</tt><big>(</big>FILE<em>&nbsp;*input</em>, size_t<em>&nbsp;flags</em>, <a class="reference internal" href="#c.json_error_t" title="json_error_t">json_error_t</a><em>&nbsp;*error</em><big>)</big><a class="headerlink" href="#c.json_loadf" title="Permalink to this definition">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>Decodes the JSON text in stream <em>input</em> and returns the array or
+object it contains, or <em>NULL</em> on error, in which case <em>error</em> is
+filled with information about the error. <em>flags</em> is described
+above.</p>
+<p>This function will start reading the input from whatever position
+the input file was, without attempting to seek first. If an error
+occurs, the file position will be left indeterminate. On success,
+the file position will be at EOF, unless <tt class="docutils literal"><span class="pre">JSON_DISABLE_EOF_CHECK</span></tt>
+flag was used. In this case, the file position will be at the first
+character after the last <tt class="docutils literal"><span class="pre">]</span></tt> or <tt class="docutils literal"><span class="pre">}</span></tt> in the JSON input. This
+allows calling <a class="reference internal" href="#c.json_loadf" title="json_loadf"><tt class="xref c c-func docutils literal"><span class="pre">json_loadf()</span></tt></a> on the same <tt class="docutils literal"><span class="pre">FILE</span></tt> object
+multiple times, if the input consists of consecutive JSON texts,
+possibly separated by whitespace.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_load_file">
+<a class="reference internal" href="#c.json_t" title="json_t">json_t</a> *<tt class="descname">json_load_file</tt><big>(</big>const char<em>&nbsp;*path</em>, size_t<em>&nbsp;flags</em>, <a class="reference internal" href="#c.json_error_t" title="json_error_t">json_error_t</a><em>&nbsp;*error</em><big>)</big><a class="headerlink" href="#c.json_load_file" title="Permalink to this definition">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>Decodes the JSON text in file <em>path</em> and returns the array or
+object it contains, or <em>NULL</em> on error, in which case <em>error</em> is
+filled with information about the error. <em>flags</em> is described
+above.</p>
+</dd></dl>
+
+<dl class="type">
+<dt id="c.json_load_callback_t">
+<tt class="descname">json_load_callback_t</tt><a class="headerlink" href="#c.json_load_callback_t" title="Permalink to this definition">¶</a></dt>
+<dd><p>A typedef for a function that&#8217;s called by
+<a class="reference internal" href="#c.json_load_callback" title="json_load_callback"><tt class="xref c c-func docutils literal"><span class="pre">json_load_callback()</span></tt></a> to read a chunk of input data:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="k">typedef</span> <span class="nf">size_t</span> <span class="p">(</span><span class="o">*</span><span class="kt">json_load_callback_t</span><span class="p">)(</span><span class="kt">void</span> <span class="o">*</span><span class="n">buffer</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">buflen</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="n">data</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><em>buffer</em> points to a buffer of <em>buflen</em> bytes, and <em>data</em> is the
+corresponding <a class="reference internal" href="#c.json_load_callback" title="json_load_callback"><tt class="xref c c-func docutils literal"><span class="pre">json_load_callback()</span></tt></a> argument passed through.</p>
+<p>On success, the function should return the number of bytes read; a
+returned value of 0 indicates that no data was read and that the
+end of file has been reached. On error, the function should return
+<tt class="docutils literal"><span class="pre">(size_t)-1</span></tt> to abort the decoding process.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 2.4.</span></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_load_callback">
+<a class="reference internal" href="#c.json_t" title="json_t">json_t</a> *<tt class="descname">json_load_callback</tt><big>(</big><a class="reference internal" href="#c.json_load_callback_t" title="json_load_callback_t">json_load_callback_t</a><em>&nbsp;callback</em>, void<em>&nbsp;*data</em>, size_t<em>&nbsp;flags</em>, <a class="reference internal" href="#c.json_error_t" title="json_error_t">json_error_t</a><em>&nbsp;*error</em><big>)</big><a class="headerlink" href="#c.json_load_callback" title="Permalink to this definition">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>Decodes the JSON text produced by repeated calls to <em>callback</em>, and
+returns the array or object it contains, or <em>NULL</em> on error, in
+which case <em>error</em> is filled with information about the error.
+<em>data</em> is passed through to <em>callback</em> on each call. <em>flags</em> is
+described above.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 2.4.</span></p>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="building-values">
+<span id="apiref-pack"></span><h2>Building Values<a class="headerlink" href="#building-values" title="Permalink to this headline">¶</a></h2>
+<p>This section describes functions that help to create, or <em>pack</em>,
+complex JSON values, especially nested objects and arrays. Value
+building is based on a <em>format string</em> that is used to tell the
+functions about the expected arguments.</p>
+<p>For example, the format string <tt class="docutils literal"><span class="pre">&quot;i&quot;</span></tt> specifies a single integer
+value, while the format string <tt class="docutils literal"><span class="pre">&quot;[ssb]&quot;</span></tt> or the equivalent <tt class="docutils literal"><span class="pre">&quot;[s,</span> <span class="pre">s,</span>
+<span class="pre">b]&quot;</span></tt> specifies an array value with two strings and a boolean as its
+items:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="cm">/* Create the JSON integer 42 */</span>
+<span class="n">json_pack</span><span class="p">(</span><span class="s">&quot;i&quot;</span><span class="p">,</span> <span class="mi">42</span><span class="p">);</span>
+
+<span class="cm">/* Create the JSON array [&quot;foo&quot;, &quot;bar&quot;, true] */</span>
+<span class="n">json_pack</span><span class="p">(</span><span class="s">&quot;[ssb]&quot;</span><span class="p">,</span> <span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="s">&quot;bar&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Here&#8217;s the full list of format specifiers. The type in parentheses
+denotes the resulting JSON type, and the type in brackets (if any)
+denotes the C type that is expected as the corresponding argument or
+arguments.</p>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">s</span></tt> (string) [const char *]</dt>
+<dd>Convert a NULL terminated UTF-8 string to a JSON string.</dd>
+<dt><tt class="docutils literal"><span class="pre">s#</span></tt> (string) [const char *, int]</dt>
+<dd><p class="first">Convert a UTF-8 buffer of a given length to a JSON string.</p>
+<div class="last versionadded">
+<p><span class="versionmodified">New in version 2.5.</span></p>
+</div>
+</dd>
+<dt><tt class="docutils literal"><span class="pre">s%</span></tt> (string) [const char *, size_t]</dt>
+<dd><p class="first">Like <tt class="docutils literal"><span class="pre">s#</span></tt> but the length argument is of type <tt class="xref c c-type docutils literal"><span class="pre">size_t</span></tt>.</p>
+<div class="last versionadded">
+<p><span class="versionmodified">New in version 2.6.</span></p>
+</div>
+</dd>
+<dt><tt class="docutils literal"><span class="pre">+</span></tt> [const char *]</dt>
+<dd><p class="first">Like <tt class="docutils literal"><span class="pre">s</span></tt>, but concatenate to the previous string. Only valid
+after <tt class="docutils literal"><span class="pre">s</span></tt>, <tt class="docutils literal"><span class="pre">s#</span></tt>, <tt class="docutils literal"><span class="pre">+</span></tt> or <tt class="docutils literal"><span class="pre">+#</span></tt>.</p>
+<div class="last versionadded">
+<p><span class="versionmodified">New in version 2.5.</span></p>
+</div>
+</dd>
+<dt><tt class="docutils literal"><span class="pre">+#</span></tt> [const char *, int]</dt>
+<dd><p class="first">Like <tt class="docutils literal"><span class="pre">s#</span></tt>, but concatenate to the previous string. Only valid
+after <tt class="docutils literal"><span class="pre">s</span></tt>, <tt class="docutils literal"><span class="pre">s#</span></tt>, <tt class="docutils literal"><span class="pre">+</span></tt> or <tt class="docutils literal"><span class="pre">+#</span></tt>.</p>
+<div class="last versionadded">
+<p><span class="versionmodified">New in version 2.5.</span></p>
+</div>
+</dd>
+<dt><tt class="docutils literal"><span class="pre">+%</span></tt> (string) [const char *, size_t]</dt>
+<dd><p class="first">Like <tt class="docutils literal"><span class="pre">+#</span></tt> but the length argument is of type <tt class="xref c c-type docutils literal"><span class="pre">size_t</span></tt>.</p>
+<div class="last versionadded">
+<p><span class="versionmodified">New in version 2.6.</span></p>
+</div>
+</dd>
+<dt><tt class="docutils literal"><span class="pre">n</span></tt> (null)</dt>
+<dd>Output a JSON null value. No argument is consumed.</dd>
+<dt><tt class="docutils literal"><span class="pre">b</span></tt> (boolean) [int]</dt>
+<dd>Convert a C <tt class="xref c c-type docutils literal"><span class="pre">int</span></tt> to JSON boolean value. Zero is converted
+to <tt class="docutils literal"><span class="pre">false</span></tt> and non-zero to <tt class="docutils literal"><span class="pre">true</span></tt>.</dd>
+<dt><tt class="docutils literal"><span class="pre">i</span></tt> (integer) [int]</dt>
+<dd>Convert a C <tt class="xref c c-type docutils literal"><span class="pre">int</span></tt> to JSON integer.</dd>
+<dt><tt class="docutils literal"><span class="pre">I</span></tt> (integer) [json_int_t]</dt>
+<dd>Convert a C <a class="reference internal" href="#c.json_int_t" title="json_int_t"><tt class="xref c c-type docutils literal"><span class="pre">json_int_t</span></tt></a> to JSON integer.</dd>
+<dt><tt class="docutils literal"><span class="pre">f</span></tt> (real) [double]</dt>
+<dd>Convert a C <tt class="xref c c-type docutils literal"><span class="pre">double</span></tt> to JSON real.</dd>
+<dt><tt class="docutils literal"><span class="pre">o</span></tt> (any value) [json_t *]</dt>
+<dd>Output any given JSON value as-is. If the value is added to an
+array or object, the reference to the value passed to <tt class="docutils literal"><span class="pre">o</span></tt> is
+stolen by the container.</dd>
+<dt><tt class="docutils literal"><span class="pre">O</span></tt> (any value) [json_t *]</dt>
+<dd>Like <tt class="docutils literal"><span class="pre">o</span></tt>, but the argument&#8217;s reference count is incremented.
+This is useful if you pack into an array or object and want to
+keep the reference for the JSON value consumed by <tt class="docutils literal"><span class="pre">O</span></tt> to
+yourself.</dd>
+<dt><tt class="docutils literal"><span class="pre">[fmt]</span></tt> (array)</dt>
+<dd>Build an array with contents from the inner format string. <tt class="docutils literal"><span class="pre">fmt</span></tt>
+may contain objects and arrays, i.e. recursive value building is
+supported.</dd>
+<dt><tt class="docutils literal"><span class="pre">{fmt}</span></tt> (object)</dt>
+<dd>Build an object with contents from the inner format string
+<tt class="docutils literal"><span class="pre">fmt</span></tt>. The first, third, etc. format specifier represent a key,
+and must be a string (see <tt class="docutils literal"><span class="pre">s</span></tt>, <tt class="docutils literal"><span class="pre">s#</span></tt>, <tt class="docutils literal"><span class="pre">+</span></tt> and <tt class="docutils literal"><span class="pre">+#</span></tt> above),
+as object keys are always strings. The second, fourth, etc. format
+specifier represent a value. Any value may be an object or array,
+i.e. recursive value building is supported.</dd>
+</dl>
+<p>Whitespace, <tt class="docutils literal"><span class="pre">:</span></tt> and <tt class="docutils literal"><span class="pre">,</span></tt> are ignored.</p>
+<p>The following functions compose the value building API:</p>
+<dl class="function">
+<dt id="c.json_pack">
+<a class="reference internal" href="#c.json_t" title="json_t">json_t</a> *<tt class="descname">json_pack</tt><big>(</big>const char<em>&nbsp;*fmt</em>, ...<big>)</big><a class="headerlink" href="#c.json_pack" title="Permalink to this definition">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>Build a new JSON value according to the format string <em>fmt</em>. For
+each format specifier (except for <tt class="docutils literal"><span class="pre">{}[]n</span></tt>), one or more arguments
+are consumed and used to build the corresponding value. Returns
+<em>NULL</em> on error.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_pack_ex">
+<a class="reference internal" href="#c.json_t" title="json_t">json_t</a> *<tt class="descname">json_pack_ex</tt><big>(</big><a class="reference internal" href="#c.json_error_t" title="json_error_t">json_error_t</a><em>&nbsp;*error</em>, size_t<em>&nbsp;flags</em>, const char<em>&nbsp;*fmt</em>, ...<big>)</big><a class="headerlink" href="#c.json_pack_ex" title="Permalink to this definition">¶</a></dt>
+<dt id="c.json_vpack_ex">
+<a class="reference internal" href="#c.json_t" title="json_t">json_t</a> *<tt class="descname">json_vpack_ex</tt><big>(</big><a class="reference internal" href="#c.json_error_t" title="json_error_t">json_error_t</a><em>&nbsp;*error</em>, size_t<em>&nbsp;flags</em>, const char<em>&nbsp;*fmt</em>, va_list<em>&nbsp;ap</em><big>)</big><a class="headerlink" href="#c.json_vpack_ex" title="Permalink to this definition">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>Like <a class="reference internal" href="#c.json_pack" title="json_pack"><tt class="xref c c-func docutils literal"><span class="pre">json_pack()</span></tt></a>, but an in the case of an error, an error
+message is written to <em>error</em>, if it&#8217;s not <em>NULL</em>. The <em>flags</em>
+parameter is currently unused and should be set to 0.</p>
+<p>As only the errors in format string (and out-of-memory errors) can
+be caught by the packer, these two functions are most likely only
+useful for debugging format strings.</p>
+</dd></dl>
+
+<p>More examples:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="cm">/* Build an empty JSON object */</span>
+<span class="n">json_pack</span><span class="p">(</span><span class="s">&quot;{}&quot;</span><span class="p">);</span>
+
+<span class="cm">/* Build the JSON object {&quot;foo&quot;: 42, &quot;bar&quot;: 7} */</span>
+<span class="n">json_pack</span><span class="p">(</span><span class="s">&quot;{sisi}&quot;</span><span class="p">,</span> <span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="s">&quot;bar&quot;</span><span class="p">,</span> <span class="mi">7</span><span class="p">);</span>
+
+<span class="cm">/* Like above, &#39;:&#39;, &#39;,&#39; and whitespace are ignored */</span>
+<span class="n">json_pack</span><span class="p">(</span><span class="s">&quot;{s:i, s:i}&quot;</span><span class="p">,</span> <span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="s">&quot;bar&quot;</span><span class="p">,</span> <span class="mi">7</span><span class="p">);</span>
+
+<span class="cm">/* Build the JSON array [[1, 2], {&quot;cool&quot;: true}] */</span>
+<span class="n">json_pack</span><span class="p">(</span><span class="s">&quot;[[i,i],{s:b}]&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&quot;cool&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+
+<span class="cm">/* Build a string from a non-NUL terminated buffer */</span>
+<span class="kt">char</span> <span class="n">buffer</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="sc">&#39;t&#39;</span><span class="p">,</span> <span class="sc">&#39;e&#39;</span><span class="p">,</span> <span class="sc">&#39;s&#39;</span><span class="p">,</span> <span class="sc">&#39;t&#39;</span><span class="p">};</span>
+<span class="n">json_pack</span><span class="p">(</span><span class="s">&quot;s#&quot;</span><span class="p">,</span> <span class="n">buffer</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
+
+<span class="cm">/* Concatentate strings together to build the JSON string &quot;foobarbaz&quot; */</span>
+<span class="n">json_pack</span><span class="p">(</span><span class="s">&quot;s++&quot;</span><span class="p">,</span> <span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="s">&quot;bar&quot;</span><span class="p">,</span> <span class="s">&quot;baz&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="parsing-and-validating-values">
+<span id="apiref-unpack"></span><h2>Parsing and Validating Values<a class="headerlink" href="#parsing-and-validating-values" title="Permalink to this headline">¶</a></h2>
+<p>This section describes functions that help to validate complex values
+and extract, or <em>unpack</em>, data from them. Like <a class="reference internal" href="#apiref-pack"><em>building values</em></a>, this is also based on format strings.</p>
+<p>While a JSON value is unpacked, the type specified in the format
+string is checked to match that of the JSON value. This is the
+validation part of the process. In addition to this, the unpacking
+functions can also check that all items of arrays and objects are
+unpacked. This check be enabled with the format specifier <tt class="docutils literal"><span class="pre">!</span></tt> or by
+using the flag <tt class="docutils literal"><span class="pre">JSON_STRICT</span></tt>. See below for details.</p>
+<p>Here&#8217;s the full list of format specifiers. The type in parentheses
+denotes the JSON type, and the type in brackets (if any) denotes the C
+type whose address should be passed.</p>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">s</span></tt> (string) [const char *]</dt>
+<dd>Convert a JSON string to a pointer to a NULL terminated UTF-8
+string. The resulting string is extracted by using
+<a class="reference internal" href="#c.json_string_value" title="json_string_value"><tt class="xref c c-func docutils literal"><span class="pre">json_string_value()</span></tt></a> internally, so it exists as long as
+there are still references to the corresponding JSON string.</dd>
+<dt><tt class="docutils literal"><span class="pre">s%</span></tt> (string) [const char *, size_t *]</dt>
+<dd><p class="first">Convert a JSON string to a pointer to a NULL terminated UTF-8
+string and its length.</p>
+<div class="last versionadded">
+<p><span class="versionmodified">New in version 2.6.</span></p>
+</div>
+</dd>
+<dt><tt class="docutils literal"><span class="pre">n</span></tt> (null)</dt>
+<dd>Expect a JSON null value. Nothing is extracted.</dd>
+<dt><tt class="docutils literal"><span class="pre">b</span></tt> (boolean) [int]</dt>
+<dd>Convert a JSON boolean value to a C <tt class="xref c c-type docutils literal"><span class="pre">int</span></tt>, so that <tt class="docutils literal"><span class="pre">true</span></tt>
+is converted to 1 and <tt class="docutils literal"><span class="pre">false</span></tt> to 0.</dd>
+<dt><tt class="docutils literal"><span class="pre">i</span></tt> (integer) [int]</dt>
+<dd>Convert a JSON integer to C <tt class="xref c c-type docutils literal"><span class="pre">int</span></tt>.</dd>
+<dt><tt class="docutils literal"><span class="pre">I</span></tt> (integer) [json_int_t]</dt>
+<dd>Convert a JSON integer to C <a class="reference internal" href="#c.json_int_t" title="json_int_t"><tt class="xref c c-type docutils literal"><span class="pre">json_int_t</span></tt></a>.</dd>
+<dt><tt class="docutils literal"><span class="pre">f</span></tt> (real) [double]</dt>
+<dd>Convert a JSON real to C <tt class="xref c c-type docutils literal"><span class="pre">double</span></tt>.</dd>
+<dt><tt class="docutils literal"><span class="pre">F</span></tt> (integer or real) [double]</dt>
+<dd>Convert a JSON number (integer or real) to C <tt class="xref c c-type docutils literal"><span class="pre">double</span></tt>.</dd>
+<dt><tt class="docutils literal"><span class="pre">o</span></tt> (any value) [json_t *]</dt>
+<dd>Store a JSON value with no conversion to a <a class="reference internal" href="#c.json_t" title="json_t"><tt class="xref c c-type docutils literal"><span class="pre">json_t</span></tt></a> pointer.</dd>
+<dt><tt class="docutils literal"><span class="pre">O</span></tt> (any value) [json_t *]</dt>
+<dd>Like <tt class="docutils literal"><span class="pre">O</span></tt>, but the JSON value&#8217;s reference count is incremented.</dd>
+<dt><tt class="docutils literal"><span class="pre">[fmt]</span></tt> (array)</dt>
+<dd>Convert each item in the JSON array according to the inner format
+string. <tt class="docutils literal"><span class="pre">fmt</span></tt> may contain objects and arrays, i.e. recursive
+value extraction is supporetd.</dd>
+<dt><tt class="docutils literal"><span class="pre">{fmt}</span></tt> (object)</dt>
+<dd><p class="first">Convert each item in the JSON object according to the inner format
+string <tt class="docutils literal"><span class="pre">fmt</span></tt>. The first, third, etc. format specifier represent
+a key, and must be <tt class="docutils literal"><span class="pre">s</span></tt>. The corresponding argument to unpack
+functions is read as the object key. The second fourth, etc.
+format specifier represent a value and is written to the address
+given as the corresponding argument. <strong>Note</strong> that every other
+argument is read from and every other is written to.</p>
+<p><tt class="docutils literal"><span class="pre">fmt</span></tt> may contain objects and arrays as values, i.e. recursive
+value extraction is supporetd.</p>
+<div class="last versionadded">
+<p><span class="versionmodified">New in version 2.3: </span>Any <tt class="docutils literal"><span class="pre">s</span></tt> representing a key may be suffixed with a <tt class="docutils literal"><span class="pre">?</span></tt> to
+make the key optional. If the key is not found, nothing is
+extracted. See below for an example.</p>
+</div>
+</dd>
+<dt><tt class="docutils literal"><span class="pre">!</span></tt></dt>
+<dd>This special format specifier is used to enable the check that
+all object and array items are accessed, on a per-value basis. It
+must appear inside an array or object as the last format specifier
+before the closing bracket or brace. To enable the check globally,
+use the <tt class="docutils literal"><span class="pre">JSON_STRICT</span></tt> unpacking flag.</dd>
+<dt><tt class="docutils literal"><span class="pre">*</span></tt></dt>
+<dd>This special format specifier is the opposite of <tt class="docutils literal"><span class="pre">!</span></tt>. If the
+<tt class="docutils literal"><span class="pre">JSON_STRICT</span></tt> flag is used, <tt class="docutils literal"><span class="pre">*</span></tt> can be used to disable the
+strict check on a per-value basis. It must appear inside an array
+or object as the last format specifier before the closing bracket
+or brace.</dd>
+</dl>
+<p>Whitespace, <tt class="docutils literal"><span class="pre">:</span></tt> and <tt class="docutils literal"><span class="pre">,</span></tt> are ignored.</p>
+<p>The following functions compose the parsing and validation API:</p>
+<dl class="function">
+<dt id="c.json_unpack">
+int <tt class="descname">json_unpack</tt><big>(</big><a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*root</em>, const char<em>&nbsp;*fmt</em>, ...<big>)</big><a class="headerlink" href="#c.json_unpack" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validate and unpack the JSON value <em>root</em> according to the format
+string <em>fmt</em>. Returns 0 on success and -1 on failure.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_unpack_ex">
+int <tt class="descname">json_unpack_ex</tt><big>(</big><a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*root</em>, <a class="reference internal" href="#c.json_error_t" title="json_error_t">json_error_t</a><em>&nbsp;*error</em>, size_t<em>&nbsp;flags</em>, const char<em>&nbsp;*fmt</em>, ...<big>)</big><a class="headerlink" href="#c.json_unpack_ex" title="Permalink to this definition">¶</a></dt>
+<dt id="c.json_vunpack_ex">
+int <tt class="descname">json_vunpack_ex</tt><big>(</big><a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*root</em>, <a class="reference internal" href="#c.json_error_t" title="json_error_t">json_error_t</a><em>&nbsp;*error</em>, size_t<em>&nbsp;flags</em>, const char<em>&nbsp;*fmt</em>, va_list<em>&nbsp;ap</em><big>)</big><a class="headerlink" href="#c.json_vunpack_ex" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validate and unpack the JSON value <em>root</em> according to the format
+string <em>fmt</em>. If an error occurs and <em>error</em> is not <em>NULL</em>, write
+error information to <em>error</em>. <em>flags</em> can be used to control the
+behaviour of the unpacker, see below for the flags. Returns 0 on
+success and -1 on failure.</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>The first argument of all unpack functions is <tt class="docutils literal"><span class="pre">json_t</span> <span class="pre">*root</span></tt>
+instead of <tt class="docutils literal"><span class="pre">const</span> <span class="pre">json_t</span> <span class="pre">*root</span></tt>, because the use of <tt class="docutils literal"><span class="pre">O</span></tt> format
+specifier causes the reference count of <tt class="docutils literal"><span class="pre">root</span></tt>, or some value
+reachable from <tt class="docutils literal"><span class="pre">root</span></tt>, to be increased. Furthermore, the <tt class="docutils literal"><span class="pre">o</span></tt>
+format specifier may be used to extract a value as-is, which allows
+modifying the structure or contents of a value reachable from
+<tt class="docutils literal"><span class="pre">root</span></tt>.</p>
+<p class="last">If the <tt class="docutils literal"><span class="pre">O</span></tt> and <tt class="docutils literal"><span class="pre">o</span></tt> format specifiers are not used, it&#8217;s
+perfectly safe to cast a <tt class="docutils literal"><span class="pre">const</span> <span class="pre">json_t</span> <span class="pre">*</span></tt> variable to plain
+<tt class="docutils literal"><span class="pre">json_t</span> <span class="pre">*</span></tt> when used with these functions.</p>
+</div>
+<p>The following unpacking flags are available:</p>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">JSON_STRICT</span></tt></dt>
+<dd>Enable the extra validation step checking that all object and
+array items are unpacked. This is equivalent to appending the
+format specifier <tt class="docutils literal"><span class="pre">!</span></tt> to the end of every array and object in the
+format string.</dd>
+<dt><tt class="docutils literal"><span class="pre">JSON_VALIDATE_ONLY</span></tt></dt>
+<dd>Don&#8217;t extract any data, just validate the JSON value against the
+given format string. Note that object keys must still be specified
+after the format string.</dd>
+</dl>
+<p>Examples:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="cm">/* root is the JSON integer 42 */</span>
+<span class="kt">int</span> <span class="n">myint</span><span class="p">;</span>
+<span class="n">json_unpack</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s">&quot;i&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">myint</span><span class="p">);</span>
+<span class="n">assert</span><span class="p">(</span><span class="n">myint</span> <span class="o">==</span> <span class="mi">42</span><span class="p">);</span>
+
+<span class="cm">/* root is the JSON object {&quot;foo&quot;: &quot;bar&quot;, &quot;quux&quot;: true} */</span>
+<span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">str</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">boolean</span><span class="p">;</span>
+<span class="n">json_unpack</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s">&quot;{s:s, s:b}&quot;</span><span class="p">,</span> <span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">str</span><span class="p">,</span> <span class="s">&quot;quux&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">boolean</span><span class="p">);</span>
+<span class="n">assert</span><span class="p">(</span><span class="n">strcmp</span><span class="p">(</span><span class="n">str</span><span class="p">,</span> <span class="s">&quot;bar&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">boolean</span> <span class="o">==</span> <span class="mi">1</span><span class="p">);</span>
+
+<span class="cm">/* root is the JSON array [[1, 2], {&quot;baz&quot;: null} */</span>
+<span class="kt">json_error_t</span> <span class="n">error</span><span class="p">;</span>
+<span class="n">json_unpack_ex</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">error</span><span class="p">,</span> <span class="n">JSON_VALIDATE_ONLY</span><span class="p">,</span> <span class="s">&quot;[[i,i], {s:n}]&quot;</span><span class="p">,</span> <span class="s">&quot;baz&quot;</span><span class="p">);</span>
+<span class="cm">/* returns 0 for validation success, nothing is extracted */</span>
+
+<span class="cm">/* root is the JSON array [1, 2, 3, 4, 5] */</span>
+<span class="kt">int</span> <span class="n">myint1</span><span class="p">,</span> <span class="n">myint2</span><span class="p">;</span>
+<span class="n">json_unpack</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s">&quot;[ii!]&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">myint1</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">myint2</span><span class="p">);</span>
+<span class="cm">/* returns -1 for failed validation */</span>
+
+<span class="cm">/* root is an empty JSON object */</span>
+<span class="kt">int</span> <span class="n">myint</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">myint2</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="n">json_unpack</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s">&quot;{s?i, s?[ii]}&quot;</span><span class="p">,</span>
+            <span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">myint1</span><span class="p">,</span>
+            <span class="s">&quot;bar&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">myint2</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">myint3</span><span class="p">);</span>
+<span class="cm">/* myint1, myint2 or myint3 is no touched as &quot;foo&quot; and &quot;bar&quot; don&#39;t exist */</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="equality">
+<h2>Equality<a class="headerlink" href="#equality" title="Permalink to this headline">¶</a></h2>
+<p>Testing for equality of two JSON values cannot, in general, be
+achieved using the <tt class="docutils literal"><span class="pre">==</span></tt> operator. Equality in the terms of the
+<tt class="docutils literal"><span class="pre">==</span></tt> operator states that the two <a class="reference internal" href="#c.json_t" title="json_t"><tt class="xref c c-type docutils literal"><span class="pre">json_t</span></tt></a> pointers point to
+exactly the same JSON value. However, two JSON values can be equal not
+only if they are exactly the same value, but also if they have equal
+&#8220;contents&#8221;:</p>
+<ul class="simple">
+<li>Two integer or real values are equal if their contained numeric
+values are equal. An integer value is never equal to a real value,
+though.</li>
+<li>Two strings are equal if their contained UTF-8 strings are equal,
+byte by byte. Unicode comparison algorithms are not implemented.</li>
+<li>Two arrays are equal if they have the same number of elements and
+each element in the first array is equal to the corresponding
+element in the second array.</li>
+<li>Two objects are equal if they have exactly the same keys and the
+value for each key in the first object is equal to the value of the
+corresponding key in the second object.</li>
+<li>Two true, false or null values have no &#8220;contents&#8221;, so they are equal
+if their types are equal. (Because these values are singletons,
+their equality can actually be tested with <tt class="docutils literal"><span class="pre">==</span></tt>.)</li>
+</ul>
+<p>The following function can be used to test whether two JSON values are
+equal.</p>
+<dl class="function">
+<dt id="c.json_equal">
+int <tt class="descname">json_equal</tt><big>(</big><a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*value1</em>, <a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*value2</em><big>)</big><a class="headerlink" href="#c.json_equal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns 1 if <em>value1</em> and <em>value2</em> are equal, as defined above.
+Returns 0 if they are inequal or one or both of the pointers are
+<em>NULL</em>.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="copying">
+<h2>Copying<a class="headerlink" href="#copying" title="Permalink to this headline">¶</a></h2>
+<p>Because of reference counting, passing JSON values around doesn&#8217;t
+require copying them. But sometimes a fresh copy of a JSON value is
+needed. For example, if you need to modify an array, but still want to
+use the original afterwards, you should take a copy of it first.</p>
+<p>Jansson supports two kinds of copying: shallow and deep. There is a
+difference between these methods only for arrays and objects. Shallow
+copying only copies the first level value (array or object) and uses
+the same child values in the copied value. Deep copying makes a fresh
+copy of the child values, too. Moreover, all the child values are deep
+copied in a recursive fashion.</p>
+<dl class="function">
+<dt id="c.json_copy">
+<a class="reference internal" href="#c.json_t" title="json_t">json_t</a> *<tt class="descname">json_copy</tt><big>(</big><a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*value</em><big>)</big><a class="headerlink" href="#c.json_copy" title="Permalink to this definition">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>Returns a shallow copy of <em>value</em>, or <em>NULL</em> on error.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_deep_copy">
+<a class="reference internal" href="#c.json_t" title="json_t">json_t</a> *<tt class="descname">json_deep_copy</tt><big>(</big>const <a class="reference internal" href="#c.json_t" title="json_t">json_t</a><em>&nbsp;*value</em><big>)</big><a class="headerlink" href="#c.json_deep_copy" title="Permalink to this definition">¶</a></dt>
+<dd><em class="refcount">Return value: New reference.</em><p>Returns a deep copy of <em>value</em>, or <em>NULL</em> on error.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="custom-memory-allocation">
+<span id="apiref-custom-memory-allocation"></span><h2>Custom Memory Allocation<a class="headerlink" href="#custom-memory-allocation" title="Permalink to this headline">¶</a></h2>
+<p>By default, Jansson uses <tt class="xref c c-func docutils literal"><span class="pre">malloc()</span></tt> and <tt class="xref c c-func docutils literal"><span class="pre">free()</span></tt> for
+memory allocation. These functions can be overridden if custom
+behavior is needed.</p>
+<dl class="type">
+<dt id="c.json_malloc_t">
+<tt class="descname">json_malloc_t</tt><a class="headerlink" href="#c.json_malloc_t" title="Permalink to this definition">¶</a></dt>
+<dd><p>A typedef for a function pointer with <tt class="xref c c-func docutils literal"><span class="pre">malloc()</span></tt>&#8216;s
+signature:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="k">typedef</span> <span class="kt">void</span> <span class="o">*</span><span class="p">(</span><span class="o">*</span><span class="kt">json_malloc_t</span><span class="p">)(</span><span class="kt">size_t</span><span class="p">);</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="type">
+<dt id="c.json_free_t">
+<tt class="descname">json_free_t</tt><a class="headerlink" href="#c.json_free_t" title="Permalink to this definition">¶</a></dt>
+<dd><p>A typedef for a function pointer with <tt class="xref c c-func docutils literal"><span class="pre">free()</span></tt>&#8216;s
+signature:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="k">typedef</span> <span class="nf">void</span> <span class="p">(</span><span class="o">*</span><span class="kt">json_free_t</span><span class="p">)(</span><span class="kt">void</span> <span class="o">*</span><span class="p">);</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="c.json_set_alloc_funcs">
+void <tt class="descname">json_set_alloc_funcs</tt><big>(</big><a class="reference internal" href="#c.json_malloc_t" title="json_malloc_t">json_malloc_t</a><em>&nbsp;malloc_fn</em>, <a class="reference internal" href="#c.json_free_t" title="json_free_t">json_free_t</a><em>&nbsp;free_fn</em><big>)</big><a class="headerlink" href="#c.json_set_alloc_funcs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use <em>malloc_fn</em> instead of <tt class="xref c c-func docutils literal"><span class="pre">malloc()</span></tt> and <em>free_fn</em> instead
+of <tt class="xref c c-func docutils literal"><span class="pre">free()</span></tt>. This function has to be called before any other
+Jansson&#8217;s API functions to ensure that all memory operations use
+the same functions.</p>
+</dd></dl>
+
+<p><strong>Examples:</strong></p>
+<p>Circumvent problems with different CRT heaps on Windows by using
+application&#8217;s <tt class="xref c c-func docutils literal"><span class="pre">malloc()</span></tt> and <tt class="xref c c-func docutils literal"><span class="pre">free()</span></tt>:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="n">json_set_alloc_funcs</span><span class="p">(</span><span class="n">malloc</span><span class="p">,</span> <span class="n">free</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Use the <a class="reference external" href="http://www.hpl.hp.com/personal/Hans_Boehm/gc/">Boehm&#8217;s conservative garbage collector</a> for memory
+operations:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="n">json_set_alloc_funcs</span><span class="p">(</span><span class="n">GC_malloc</span><span class="p">,</span> <span class="n">GC_free</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Allow storing sensitive data (e.g. passwords or encryption keys) in
+JSON structures by zeroing all memory when freed:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="k">static</span> <span class="kt">void</span> <span class="o">*</span><span class="nf">secure_malloc</span><span class="p">(</span><span class="kt">size_t</span> <span class="n">size</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="cm">/* Store the memory area size in the beginning of the block */</span>
+    <span class="kt">void</span> <span class="o">*</span><span class="n">ptr</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="n">size</span> <span class="o">+</span> <span class="mi">8</span><span class="p">);</span>
+    <span class="o">*</span><span class="p">((</span><span class="kt">size_t</span> <span class="o">*</span><span class="p">)</span><span class="n">ptr</span><span class="p">)</span> <span class="o">=</span> <span class="n">size</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">ptr</span> <span class="o">+</span> <span class="mi">8</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">static</span> <span class="kt">void</span> <span class="nf">secure_free</span><span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="n">ptr</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">size_t</span> <span class="n">size</span><span class="p">;</span>
+
+    <span class="n">ptr</span> <span class="o">-=</span> <span class="mi">8</span><span class="p">;</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="o">*</span><span class="p">((</span><span class="kt">size_t</span> <span class="o">*</span><span class="p">)</span><span class="n">ptr</span><span class="p">);</span>
+
+    <span class="n">guaranteed_memset</span><span class="p">(</span><span class="n">ptr</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">size</span> <span class="o">+</span> <span class="mi">8</span><span class="p">);</span>
+    <span class="n">free</span><span class="p">(</span><span class="n">ptr</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">json_set_alloc_funcs</span><span class="p">(</span><span class="n">secure_malloc</span><span class="p">,</span> <span class="n">secure_free</span><span class="p">);</span>
+    <span class="cm">/* ... */</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>For more information about the issues of storing sensitive data in
+memory, see
+<a class="reference external" href="http://www.dwheeler.com/secure-programs/Secure-Programs-HOWTO/protect-secrets.html">http://www.dwheeler.com/secure-programs/Secure-Programs-HOWTO/protect-secrets.html</a>.
+The page also explains the <tt class="xref c c-func docutils literal"><span class="pre">guaranteed_memset()</span></tt> function used
+in the example and gives a sample implementation for it.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">API Reference</a><ul>
+<li><a class="reference internal" href="#preliminaries">Preliminaries</a></li>
+<li><a class="reference internal" href="#library-version">Library Version</a></li>
+<li><a class="reference internal" href="#value-representation">Value Representation</a><ul>
+<li><a class="reference internal" href="#type">Type</a></li>
+<li><a class="reference internal" href="#reference-count">Reference Count</a></li>
+<li><a class="reference internal" href="#circular-references">Circular References</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#true-false-and-null">True, False and Null</a></li>
+<li><a class="reference internal" href="#string">String</a></li>
+<li><a class="reference internal" href="#number">Number</a></li>
+<li><a class="reference internal" href="#array">Array</a></li>
+<li><a class="reference internal" href="#object">Object</a></li>
+<li><a class="reference internal" href="#error-reporting">Error reporting</a></li>
+<li><a class="reference internal" href="#encoding">Encoding</a></li>
+<li><a class="reference internal" href="#decoding">Decoding</a></li>
+<li><a class="reference internal" href="#building-values">Building Values</a></li>
+<li><a class="reference internal" href="#parsing-and-validating-values">Parsing and Validating Values</a></li>
+<li><a class="reference internal" href="#equality">Equality</a></li>
+<li><a class="reference internal" href="#copying">Copying</a></li>
+<li><a class="reference internal" href="#custom-memory-allocation">Custom Memory Allocation</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="portability.html"
+                        title="previous chapter">Portability</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="changes.html"
+                        title="next chapter">Changes in Jansson</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/apiref.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="changes.html" title="Changes in Jansson"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="portability.html" title="Portability"
+             >previous</a> |</li>
+        <li><a href="index.html">Jansson 2.7 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2009-2014, Petri Lehtinen.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

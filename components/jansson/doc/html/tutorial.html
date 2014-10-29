@@ -1,0 +1,371 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Tutorial &mdash; Jansson 2.7 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '2.7',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Jansson 2.7 documentation" href="index.html" />
+    <link rel="next" title="RFC Conformance" href="conformance.html" />
+    <link rel="prev" title="Upgrading from 1.x" href="upgrading.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="conformance.html" title="RFC Conformance"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="upgrading.html" title="Upgrading from 1.x"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Jansson 2.7 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="tutorial">
+<span id="id1"></span><h1>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
+<p>In this tutorial, we create a program that fetches the latest commits
+of a repository in <a class="reference external" href="https://github.com/">GitHub</a> over the web. <a class="reference external" href="http://developer.github.com/">GitHub API</a> uses JSON, so
+the result can be parsed using Jansson.</p>
+<p>To stick to the the scope of this tutorial, we will only cover the the
+parts of the program related to handling JSON data. For the best user
+experience, the full source code is available:
+<a class="reference download internal" href="_downloads/github_commits.c"><tt class="xref download docutils literal"><span class="pre">github_commits.c</span></tt></a>. To compile it (on Unix-like systems with
+gcc), use the following command:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="n">gcc</span> <span class="o">-</span><span class="n">o</span> <span class="n">github_commits</span> <span class="n">github_commits</span><span class="p">.</span><span class="n">c</span> <span class="o">-</span><span class="n">ljansson</span> <span class="o">-</span><span class="n">lcurl</span>
+</pre></div>
+</div>
+<p><a class="reference external" href="http://curl.haxx.se/">libcurl</a> is used to communicate over the web, so it is required to
+compile the program.</p>
+<p>The command line syntax is:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="n">github_commits</span> <span class="n">USER</span> <span class="n">REPOSITORY</span>
+</pre></div>
+</div>
+<p><tt class="docutils literal"><span class="pre">USER</span></tt> is a GitHub user ID and <tt class="docutils literal"><span class="pre">REPOSITORY</span></tt> is the repository
+name. Please note that the GitHub API is rate limited, so if you run
+the program too many times within a short period of time, the sever
+starts to respond with an error.</p>
+<div class="section" id="the-github-repo-commits-api">
+<span id="tutorial-github-commits-api"></span><h2>The GitHub Repo Commits API<a class="headerlink" href="#the-github-repo-commits-api" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference external" href="http://developer.github.com/v3/repos/commits/">GitHub Repo Commits API</a> is used by sending HTTP requests to
+URLs like <tt class="docutils literal"><span class="pre">https://api.github.com/repos/USER/REPOSITORY/commits</span></tt>,
+where <tt class="docutils literal"><span class="pre">USER</span></tt> and <tt class="docutils literal"><span class="pre">REPOSITORY</span></tt> are the GitHub user ID and the name
+of the repository whose commits are to be listed, respectively.</p>
+<p>GitHub responds with a JSON array of the following form:</p>
+<div class="highlight-none"><div class="highlight"><pre>[
+    {
+        &quot;sha&quot;: &quot;&lt;the commit ID&gt;&quot;,
+        &quot;commit&quot;: {
+            &quot;message&quot;: &quot;&lt;the commit message&gt;&quot;,
+            &lt;more fields, not important to this tutorial...&gt;
+        },
+        &lt;more fields...&gt;
+    },
+    {
+        &quot;sha&quot;: &quot;&lt;the commit ID&gt;&quot;,
+        &quot;commit&quot;: {
+            &quot;message&quot;: &quot;&lt;the commit message&gt;&quot;,
+            &lt;more fields...&gt;
+        },
+        &lt;more fields...&gt;
+    },
+    &lt;more commits...&gt;
+]
+</pre></div>
+</div>
+<p>In our program, the HTTP request is sent using the following
+function:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="k">static</span> <span class="kt">char</span> <span class="o">*</span><span class="nf">request</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">url</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>It takes the URL as a parameter, preforms a HTTP GET request, and
+returns a newly allocated string that contains the response body. If
+the request fails, an error message is printed to stderr and the
+return value is <em>NULL</em>. For full details, refer to <a class="reference download internal" href="_downloads/github_commits.c"><tt class="xref download docutils literal"><span class="pre">the</span> <span class="pre">code</span></tt></a>, as the actual implementation is not important
+here.</p>
+</div>
+<div class="section" id="the-program">
+<span id="tutorial-the-program"></span><h2>The Program<a class="headerlink" href="#the-program" title="Permalink to this headline">¶</a></h2>
+<p>First the includes:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="cp">#include &lt;string.h&gt;</span>
+<span class="cp">#include &lt;jansson.h&gt;</span>
+</pre></div>
+</div>
+<p>Like all the programs using Jansson, we need to include
+<tt class="file docutils literal"><span class="pre">jansson.h</span></tt>.</p>
+<p>The following definitions are used to build the GitHub API request
+URL:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="cp">#define URL_FORMAT   &quot;https:</span><span class="c1">//api.github.com/repos/%s/%s/commits&quot;</span>
+<span class="cp">#define URL_SIZE     256</span>
+</pre></div>
+</div>
+<p>The following function is used when formatting the result to find the
+first newline in the commit message:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="cm">/* Return the offset of the first newline in text or the length of</span>
+<span class="cm">   text if there&#39;s no newline */</span>
+<span class="k">static</span> <span class="kt">int</span> <span class="nf">newline_offset</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">text</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">newline</span> <span class="o">=</span> <span class="n">strchr</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="sc">&#39;\n&#39;</span><span class="p">);</span>
+    <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">newline</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">strlen</span><span class="p">(</span><span class="n">text</span><span class="p">);</span>
+    <span class="k">else</span>
+        <span class="k">return</span> <span class="p">(</span><span class="kt">int</span><span class="p">)(</span><span class="n">newline</span> <span class="o">-</span> <span class="n">text</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The main function follows. In the beginning, we first declare a bunch
+of variables and check the command line parameters:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span>
+<span class="p">{</span>
+    <span class="kt">size_t</span> <span class="n">i</span><span class="p">;</span>
+    <span class="kt">char</span> <span class="o">*</span><span class="n">text</span><span class="p">;</span>
+    <span class="kt">char</span> <span class="n">url</span><span class="p">[</span><span class="n">URL_SIZE</span><span class="p">];</span>
+
+    <span class="kt">json_t</span> <span class="o">*</span><span class="n">root</span><span class="p">;</span>
+    <span class="kt">json_error_t</span> <span class="n">error</span><span class="p">;</span>
+
+    <span class="k">if</span><span class="p">(</span><span class="n">argc</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&quot;usage: %s USER REPOSITORY</span><span class="se">\n\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+        <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&quot;List commits at USER&#39;s REPOSITORY.</span><span class="se">\n\n</span><span class="s">&quot;</span><span class="p">);</span>
+        <span class="k">return</span> <span class="mi">2</span><span class="p">;</span>
+    <span class="p">}</span>
+</pre></div>
+</div>
+<p>Then we build the request URL using the user and repository names
+given as command line parameters:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="n">snprintf</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">URL_SIZE</span><span class="p">,</span> <span class="n">URL_FORMAT</span><span class="p">,</span> <span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+</pre></div>
+</div>
+<p>This uses the <tt class="docutils literal"><span class="pre">URL_SIZE</span></tt> and <tt class="docutils literal"><span class="pre">URL_FORMAT</span></tt> constants defined above.
+Now we&#8217;re ready to actually request the JSON data over the web:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="n">text</span> <span class="o">=</span> <span class="n">request</span><span class="p">(</span><span class="n">url</span><span class="p">);</span>
+<span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">text</span><span class="p">)</span>
+    <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>If an error occurs, our function <tt class="docutils literal"><span class="pre">request</span></tt> prints the error and
+returns <em>NULL</em>, so it&#8217;s enough to just return 1 from the main
+function.</p>
+<p>Next we&#8217;ll call <a class="reference internal" href="apiref.html#c.json_loads" title="json_loads"><tt class="xref c c-func docutils literal"><span class="pre">json_loads()</span></tt></a> to decode the JSON text we got
+as a response:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="n">root</span> <span class="o">=</span> <span class="n">json_loads</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">error</span><span class="p">);</span>
+<span class="n">free</span><span class="p">(</span><span class="n">text</span><span class="p">);</span>
+
+<span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">root</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&quot;error: on line %d: %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">error</span><span class="p">.</span><span class="n">line</span><span class="p">,</span> <span class="n">error</span><span class="p">.</span><span class="n">text</span><span class="p">);</span>
+    <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>We don&#8217;t need the JSON text anymore, so we can free the <tt class="docutils literal"><span class="pre">text</span></tt>
+variable right after decoding it. If <a class="reference internal" href="apiref.html#c.json_loads" title="json_loads"><tt class="xref c c-func docutils literal"><span class="pre">json_loads()</span></tt></a> fails, it
+returns <em>NULL</em> and sets error information to the <a class="reference internal" href="apiref.html#c.json_error_t" title="json_error_t"><tt class="xref c c-type docutils literal"><span class="pre">json_error_t</span></tt></a>
+structure given as the second parameter. In this case, our program
+prints the error information out and returns 1 from the main function.</p>
+<p>Now we&#8217;re ready to extract the data out of the decoded JSON response.
+The structure of the response JSON was explained in section
+<a class="reference internal" href="#tutorial-github-commits-api"><em>The GitHub Repo Commits API</em></a>.</p>
+<p>We check that the returned value really is an array:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">json_is_array</span><span class="p">(</span><span class="n">root</span><span class="p">))</span>
+<span class="p">{</span>
+    <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&quot;error: root is not an array</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+    <span class="n">json_decref</span><span class="p">(</span><span class="n">root</span><span class="p">);</span>
+    <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Then we proceed to loop over all the commits in the array:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">json_array_size</span><span class="p">(</span><span class="n">root</span><span class="p">);</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">json_t</span> <span class="o">*</span><span class="n">data</span><span class="p">,</span> <span class="o">*</span><span class="n">sha</span><span class="p">,</span> <span class="o">*</span><span class="n">commit</span><span class="p">,</span> <span class="o">*</span><span class="n">message</span><span class="p">;</span>
+    <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">message_text</span><span class="p">;</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="n">json_array_get</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">i</span><span class="p">);</span>
+    <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">json_is_object</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+    <span class="p">{</span>
+        <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&quot;error: commit data %d is not an object</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="n">json_decref</span><span class="p">(</span><span class="n">root</span><span class="p">);</span>
+        <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">...</span>
+</pre></div>
+</div>
+<p>The function <a class="reference internal" href="apiref.html#c.json_array_size" title="json_array_size"><tt class="xref c c-func docutils literal"><span class="pre">json_array_size()</span></tt></a> returns the size of a JSON
+array. First, we again declare some variables and then extract the
+i&#8217;th element of the <tt class="docutils literal"><span class="pre">root</span></tt> array using <a class="reference internal" href="apiref.html#c.json_array_get" title="json_array_get"><tt class="xref c c-func docutils literal"><span class="pre">json_array_get()</span></tt></a>.
+We also check that the resulting value is a JSON object.</p>
+<p>Next we&#8217;ll extract the commit ID (a hexadecimal SHA-1 sum),
+intermediate commit info object, and the commit message from that
+object. We also do proper type checks:</p>
+<div class="highlight-c"><div class="highlight"><pre>    <span class="n">sha</span> <span class="o">=</span> <span class="n">json_object_get</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s">&quot;sha&quot;</span><span class="p">);</span>
+    <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">json_is_string</span><span class="p">(</span><span class="n">sha</span><span class="p">))</span>
+    <span class="p">{</span>
+        <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&quot;error: commit %d: sha is not a string</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="n">json_decref</span><span class="p">(</span><span class="n">root</span><span class="p">);</span>
+        <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="n">commit</span> <span class="o">=</span> <span class="n">json_object_get</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s">&quot;commit&quot;</span><span class="p">);</span>
+    <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">json_is_object</span><span class="p">(</span><span class="n">commit</span><span class="p">))</span>
+    <span class="p">{</span>
+        <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&quot;error: commit %d: commit is not an object</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="n">json_decref</span><span class="p">(</span><span class="n">root</span><span class="p">);</span>
+        <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="n">message</span> <span class="o">=</span> <span class="n">json_object_get</span><span class="p">(</span><span class="n">commit</span><span class="p">,</span> <span class="s">&quot;message&quot;</span><span class="p">);</span>
+    <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">json_is_string</span><span class="p">(</span><span class="n">message</span><span class="p">))</span>
+    <span class="p">{</span>
+        <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&quot;error: commit %d: message is not a string</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="n">json_decref</span><span class="p">(</span><span class="n">root</span><span class="p">);</span>
+        <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">...</span>
+</pre></div>
+</div>
+<p>And finally, we&#8217;ll print the first 8 characters of the commit ID and
+the first line of the commit message. A C-style string is extracted
+from a JSON string using <a class="reference internal" href="apiref.html#c.json_string_value" title="json_string_value"><tt class="xref c c-func docutils literal"><span class="pre">json_string_value()</span></tt></a>:</p>
+<div class="highlight-c"><div class="highlight"><pre>    <span class="n">message_text</span> <span class="o">=</span> <span class="n">json_string_value</span><span class="p">(</span><span class="n">message</span><span class="p">);</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;%.8s %.*s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span>
+           <span class="n">json_string_value</span><span class="p">(</span><span class="n">id</span><span class="p">),</span>
+           <span class="n">newline_offset</span><span class="p">(</span><span class="n">message_text</span><span class="p">),</span>
+           <span class="n">message_text</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>After sending the HTTP request, we decoded the JSON text using
+<a class="reference internal" href="apiref.html#c.json_loads" title="json_loads"><tt class="xref c c-func docutils literal"><span class="pre">json_loads()</span></tt></a>, remember? It returns a <em>new reference</em> to the
+JSON value it decodes. When we&#8217;re finished with the value, we&#8217;ll need
+to decrease the reference count using <a class="reference internal" href="apiref.html#c.json_decref" title="json_decref"><tt class="xref c c-func docutils literal"><span class="pre">json_decref()</span></tt></a>. This way
+Jansson can release the resources:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="n">json_decref</span><span class="p">(</span><span class="n">root</span><span class="p">);</span>
+<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>For a detailed explanation of reference counting in Jansson, see
+<a class="reference internal" href="apiref.html#apiref-reference-count"><em>Reference Count</em></a> in <a class="reference internal" href="apiref.html#apiref"><em>API Reference</em></a>.</p>
+<p>The program&#8217;s ready, let&#8217;s test it and view the latest commits in
+Jansson&#8217;s repository:</p>
+<div class="highlight-c"><div class="highlight"><pre>$ ./github_commits akheron jansson
+1581f26a Merge branch &#39;2.3&#39;
+aabfd493 load: Change buffer_pos to be a size_t
+bd72efbd load: Avoid unexpected behaviour in macro expansion
+e8fd3e30 Document and tweak json_load_callback()
+873eddaf Merge pull request #60 from rogerz/contrib
+bd2c0c73 Ignore the binary test_load_callback
+17a51a4b Merge branch &#39;2.3&#39;
+09c39adc Add json_load_callback to the list of exported symbols
+cbb80baf Merge pull request #57 from rogerz/contrib
+040bd7b0 Add json_load_callback()
+2637faa4 Make test stripping locale independent
+&lt;...&gt;
+</pre></div>
+</div>
+</div>
+<div class="section" id="conclusion">
+<h2>Conclusion<a class="headerlink" href="#conclusion" title="Permalink to this headline">¶</a></h2>
+<p>In this tutorial, we implemented a program that fetches the latest
+commits of a GitHub repository using the GitHub Repo Commits API.
+Jansson was used to decode the JSON response and to extract the commit
+data.</p>
+<p>This tutorial only covered a small part of Jansson. For example, we
+did not create or manipulate JSON values at all. Proceed to
+<a class="reference internal" href="apiref.html#apiref"><em>API Reference</em></a> to explore all features of Jansson.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Tutorial</a><ul>
+<li><a class="reference internal" href="#the-github-repo-commits-api">The GitHub Repo Commits API</a></li>
+<li><a class="reference internal" href="#the-program">The Program</a></li>
+<li><a class="reference internal" href="#conclusion">Conclusion</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="upgrading.html"
+                        title="previous chapter">Upgrading from 1.x</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="conformance.html"
+                        title="next chapter">RFC Conformance</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/tutorial.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="conformance.html" title="RFC Conformance"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="upgrading.html" title="Upgrading from 1.x"
+             >previous</a> |</li>
+        <li><a href="index.html">Jansson 2.7 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2009-2014, Petri Lehtinen.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

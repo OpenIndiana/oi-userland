@@ -1,0 +1,3652 @@
+.\" Man page generated from reStructuredText.
+.
+.TH "JANSSON" "3LIB" "October 28, 2014" "2.7" "Jansson"
+.SH NAME
+jansson \- Jansson Documentation
+.sp
+This is the documentation for \fI\%Jansson\fP 2.7, last updated October 28, 2014\&.
+.SH INTRODUCTION
+.sp
+\fI\%Jansson\fP is a C library for encoding, decoding and manipulating JSON
+data. Its main features and design principles are:
+.INDENT 0.0
+.IP \(bu 2
+Simple and intuitive API and data model
+.IP \(bu 2
+Comprehensive documentation
+.IP \(bu 2
+No dependencies on other libraries
+.IP \(bu 2
+Full Unicode support (UTF\-8)
+.IP \(bu 2
+Extensive test suite
+.UNINDENT
+.sp
+Jansson is licensed under the \fI\%MIT license\fP; see LICENSE in the
+source distribution for details.
+.sp
+Jansson is used in production and its API is stable. It works on
+numerous platforms, including numerous Unix like systems and Windows.
+It\(aqs suitable for use on any system, including desktop, server, and
+small embedded systems.
+.SH CONTENTS
+.SS Getting Started
+.SS Compiling and Installing Jansson
+.sp
+The Jansson source is available at
+\fI\%http://www.digip.org/jansson/releases/\fP\&.
+.SS Unix\-like systems (including MinGW)
+.sp
+Unpack the source tarball and change to the source directory:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+bunzip2 \-c jansson\-2.7\&.tar.bz2 | tar xf \-
+cd jansson\-2.7
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+The source uses GNU Autotools (\fI\%autoconf\fP, \fI\%automake\fP, \fI\%libtool\fP), so
+compiling and installing is extremely simple:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+\&./configure
+make
+make check
+make install
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+To change the destination directory (\fB/usr/local\fP by default), use
+the \fB\-\-prefix=DIR\fP argument to \fB\&./configure\fP\&. See \fB\&./configure
+\-\-help\fP for the list of all possible installation options. (There are
+no options to customize the resulting Jansson binary.)
+.sp
+The command \fBmake check\fP runs the test suite distributed with
+Jansson. This step is not strictly necessary, but it may find possible
+problems that Jansson has on your platform. If any problems are found,
+please report them.
+.sp
+If you obtained the source from a Git repository (or any other source
+control system), there\(aqs no \fB\&./configure\fP script as it\(aqs not kept in
+version control. To create the script, the build system needs to be
+bootstrapped. There are many ways to do this, but the easiest one is
+to use \fBautoreconf\fP:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+autoreconf \-vi
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+This command creates the \fB\&./configure\fP script, which can then be
+used as described above.
+.SS CMake (various platforms, including Windows)
+.sp
+Jansson can be built using \fI\%CMake\fP\&. Create a build directory for an
+out\-of\-tree build, change to that directory, and run \fBcmake\fP (or \fBccmake\fP,
+\fBcmake\-gui\fP, or similar) to configure the project.
+.sp
+See the examples below for more detailed information.
+.sp
+\fBNOTE:\fP
+.INDENT 0.0
+.INDENT 3.5
+In the below examples \fB\&..\fP is used as an argument for \fBcmake\fP\&.
+This is simply the path to the jansson project root directory.
+In the example it is assumed you\(aqve created a sub\-directory \fBbuild\fP
+and are using that. You could use any path you want.
+.UNINDENT
+.UNINDENT
+.SS Unix (Make files)
+.sp
+Generating make files on unix:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+bunzip2 \-c jansson\-2.7\&.tar.bz2 | tar xf \-
+cd jansson\-2.7
+
+mkdir build
+cd build
+cmake .. # or \fBccmake ..()\fP for a GUI.
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+Then to build:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+make
+make check
+make install
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.SS Windows (Visual Studio)
+.sp
+Creating Visual Studio project files from the command line:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+<unpack>
+cd jansson\-2.7
+
+md build
+cd build
+cmake \-G "Visual Studio 10" ..
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+You will now have a \fIVisual Studio Solution\fP in your build directory.
+To run the unit tests build the \fBRUN_TESTS\fP project.
+.sp
+If you prefer a GUI the \fBcmake\fP line in the above example can
+be replaced with:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+cmake\-gui ..
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+For command line help (including a list of available generators)
+for \fI\%CMake\fP simply run:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+cmake
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+To list available \fI\%CMake\fP settings (and what they are currently set to)
+for the project, run:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+cmake \-LH ..
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.SS Mac OSX (Xcode)
+.sp
+If you prefer using Xcode instead of make files on OSX,
+do the following. (Use the same steps as
+for \fIUnix\fP):
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+\&...
+cmake \-G "Xcode" ..
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.SS Additional CMake settings
+.SS Shared library
+.sp
+By default the \fI\%CMake\fP project will generate build files for building the
+static library. To build the shared version use:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+\&...
+cmake \-DJANSSON_BUILD_SHARED_LIBS=1 ..
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.SS Changing install directory (same as autoconf \-\-prefix)
+.sp
+Just as with the \fI\%autoconf\fP project you can change the destination directory
+for \fBmake install\fP\&. The equivalent for autoconfs \fB\&./configure \-\-prefix\fP
+in \fI\%CMake\fP is:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+\&...
+cmake \-DCMAKE_INSTALL_PREFIX:PATH=/some/other/path ..
+make install
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.SS Android
+.sp
+Jansson can be built for Android platforms. Android.mk is in the
+source root directory. The configuration header file is located in the
+\fBandroid\fP directory in the source distribution.
+.SS Other Systems
+.sp
+On non Unix\-like systems, you may be unable to run the \fB\&./configure\fP
+script. In this case, follow these steps. All the files mentioned can
+be found in the \fBsrc/\fP directory.
+.INDENT 0.0
+.IP 1. 3
+Create \fBjansson_config.h\fP (which has some platform\-specific
+parameters that are normally filled in by the \fB\&./configure\fP
+script). Edit \fBjansson_config.h.in\fP, replacing all \fB@variable@\fP
+placeholders, and rename the file to \fBjansson_config.h\fP\&.
+.IP 2. 3
+Make \fBjansson.h\fP and \fBjansson_config.h\fP available to the
+compiler, so that they can be found when compiling programs that
+use Jansson.
+.IP 3. 3
+Compile all the \fB\&.c\fP files (in the \fBsrc/\fP directory) into a
+library file. Make the library available to the compiler, as in
+step 2.
+.UNINDENT
+.SS Building the Documentation
+.sp
+(This subsection describes how to build the HTML documentation you are
+currently reading, so it can be safely skipped.)
+.sp
+Documentation is in the \fBdoc/\fP subdirectory. It\(aqs written in
+\fI\%reStructuredText\fP with \fI\%Sphinx\fP annotations. To generate the HTML
+documentation, invoke:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+make html
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+and point your browser to \fBdoc/_build/html/index.html\fP\&. \fI\%Sphinx\fP 1.0
+or newer is required to generate the documentation.
+.SS Compiling Programs that Use Jansson
+.sp
+Jansson involves one C header file, \fBjansson.h\fP, so it\(aqs enough
+to put the line
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+#include <jansson.h>
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+in the beginning of every source file that uses Jansson.
+.sp
+There\(aqs also just one library to link with, \fBlibjansson\fP\&. Compile and
+link the program as follows:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+cc \-I/usr/include/jansson \-o prog prog.c \-ljansson
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+Starting from version 1.2, there\(aqs also support for \fI\%pkg\-config\fP:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+cc \-o prog prog.c \(gapkg\-config \-\-cflags \-\-libs jansson\(ga
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.SS Upgrading from 1.x
+.sp
+This chapter lists the backwards incompatible changes introduced in
+Jansson 2.0, and the steps that are needed for upgrading your code.
+.sp
+\fBThe incompatibilities are not dramatic.\fP The biggest change is that
+all decoding functions now require and extra parameter. Most programs
+can be modified to work with 2.0 by adding a \fB0\fP as the second
+parameter to all calls of \fBjson_loads()\fP, \fBjson_loadf()\fP
+and \fBjson_load_file()\fP\&.
+.SS Compatibility
+.sp
+Jansson 2.0 is backwards incompatible with the Jansson 1.x releases.
+It is ABI incompatible, i.e. all programs dynamically linking to the
+Jansson library need to be recompiled. It\(aqs also API incompatible,
+i.e. the source code of programs using Jansson 1.x may need
+modifications to make them compile against Jansson 2.0.
+.sp
+All the 2.x releases are guaranteed to be backwards compatible for
+both ABI and API, so no recompilation or source changes are needed
+when upgrading from 2.x to 2.y.
+.SS List of Incompatible Changes
+.INDENT 0.0
+.TP
+.B \fBDecoding flags\fP
+For future needs, a \fBflags\fP parameter was added as the second
+parameter to all decoding functions, i.e. \fBjson_loads()\fP,
+\fBjson_loadf()\fP and \fBjson_load_file()\fP\&. All calls to
+these functions need to be changed by adding a \fB0\fP as the second
+argument. For example:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+/* old code */
+json_loads(input, &error);
+
+/* new code */
+json_loads(input, 0, &error);
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.TP
+.B \fBUnderlying type of JSON integers\fP
+The underlying C type of JSON integers has been changed from
+\fBint\fP to the widest available signed integer type, i.e.
+\fBlong long\fP or \fBlong\fP, depending on whether
+\fBlong long\fP is supported on your system or not. This makes
+the whole 64\-bit integer range available on most modern systems.
+.sp
+\fBjansson.h\fP has a typedef \fBjson_int_t\fP to the underlying
+integer type. \fBint\fP should still be used in most cases when
+dealing with smallish JSON integers, as the compiler handles
+implicit type coercion. Only when the full 64\-bit range is needed,
+\fBjson_int_t\fP should be explicitly used.
+.TP
+.B \fBMaximum encoder indentation depth\fP
+The maximum argument of the \fBJSON_INDENT()\fP macro has been
+changed from 255 to 31, to free up bits from the \fBflags\fP
+parameter of \fBjson_dumps()\fP, \fBjson_dumpf()\fP and
+\fBjson_dump_file()\fP\&. If your code uses a bigger indentation
+than 31, it needs to be changed.
+.TP
+.B \fBUnsigned integers in API functions\fP
+Version 2.0 unifies unsigned integer usage in the API. All uses of
+\fBunsigned int\fP and \fBunsigned long\fP have been replaced
+with \fBsize_t\fP\&. This includes flags, container sizes, etc.
+This should not require source code changes, as both
+\fBunsigned int\fP and \fBunsigned long\fP are usually
+compatible with \fBsize_t\fP\&.
+.UNINDENT
+.SS Tutorial
+.sp
+In this tutorial, we create a program that fetches the latest commits
+of a repository in \fI\%GitHub\fP over the web. \fI\%GitHub API\fP uses JSON, so
+the result can be parsed using Jansson.
+.sp
+To stick to the the scope of this tutorial, we will only cover the the
+parts of the program related to handling JSON data. For the best user
+experience, the full source code is available:
+\fBgithub_commits.c\fP\&. To compile it (on Unix\-like systems with
+gcc), use the following command:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+gcc \-o github_commits github_commits.c \-ljansson \-lcurl
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+\fI\%libcurl\fP is used to communicate over the web, so it is required to
+compile the program.
+.sp
+The command line syntax is:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+github_commits USER REPOSITORY
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+\fBUSER\fP is a GitHub user ID and \fBREPOSITORY\fP is the repository
+name. Please note that the GitHub API is rate limited, so if you run
+the program too many times within a short period of time, the sever
+starts to respond with an error.
+.SS The GitHub Repo Commits API
+.sp
+The \fI\%GitHub Repo Commits API\fP is used by sending HTTP requests to
+URLs like \fBhttps://api.github.com/repos/USER/REPOSITORY/commits\fP,
+where \fBUSER\fP and \fBREPOSITORY\fP are the GitHub user ID and the name
+of the repository whose commits are to be listed, respectively.
+.sp
+GitHub responds with a JSON array of the following form:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+[
+    {
+        "sha": "<the commit ID>",
+        "commit": {
+            "message": "<the commit message>",
+            <more fields, not important to this tutorial...>
+        },
+        <more fields...>
+    },
+    {
+        "sha": "<the commit ID>",
+        "commit": {
+            "message": "<the commit message>",
+            <more fields...>
+        },
+        <more fields...>
+    },
+    <more commits...>
+]
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+In our program, the HTTP request is sent using the following
+function:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+static char *request(const char *url);
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+It takes the URL as a parameter, preforms a HTTP GET request, and
+returns a newly allocated string that contains the response body. If
+the request fails, an error message is printed to stderr and the
+return value is \fINULL\fP\&. For full details, refer to \fBthe code\fP, as the actual implementation is not important
+here.
+.SS The Program
+.sp
+First the includes:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+#include <string.h>
+#include <jansson.h>
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+Like all the programs using Jansson, we need to include
+\fBjansson.h\fP\&.
+.sp
+The following definitions are used to build the GitHub API request
+URL:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+#define URL_FORMAT   "https://api.github.com/repos/%s/%s/commits"
+#define URL_SIZE     256
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+The following function is used when formatting the result to find the
+first newline in the commit message:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+/* Return the offset of the first newline in text or the length of
+   text if there\(aqs no newline */
+static int newline_offset(const char *text)
+{
+    const char *newline = strchr(text, \(aq\en\(aq);
+    if(!newline)
+        return strlen(text);
+    else
+        return (int)(newline \- text);
+}
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+The main function follows. In the beginning, we first declare a bunch
+of variables and check the command line parameters:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+int main(int argc, char *argv[])
+{
+    size_t i;
+    char *text;
+    char url[URL_SIZE];
+
+    json_t *root;
+    json_error_t error;
+
+    if(argc != 3)
+    {
+        fprintf(stderr, "usage: %s USER REPOSITORY\en\en", argv[0]);
+        fprintf(stderr, "List commits at USER\(aqs REPOSITORY.\en\en");
+        return 2;
+    }
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+Then we build the request URL using the user and repository names
+given as command line parameters:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+snprintf(url, URL_SIZE, URL_FORMAT, argv[1], argv[2]);
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+This uses the \fBURL_SIZE\fP and \fBURL_FORMAT\fP constants defined above.
+Now we\(aqre ready to actually request the JSON data over the web:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+text = request(url);
+if(!text)
+    return 1;
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+If an error occurs, our function \fBrequest\fP prints the error and
+returns \fINULL\fP, so it\(aqs enough to just return 1 from the main
+function.
+.sp
+Next we\(aqll call \fBjson_loads()\fP to decode the JSON text we got
+as a response:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+root = json_loads(text, 0, &error);
+free(text);
+
+if(!root)
+{
+    fprintf(stderr, "error: on line %d: %s\en", error.line, error.text);
+    return 1;
+}
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+We don\(aqt need the JSON text anymore, so we can free the \fBtext\fP
+variable right after decoding it. If \fBjson_loads()\fP fails, it
+returns \fINULL\fP and sets error information to the \fBjson_error_t\fP
+structure given as the second parameter. In this case, our program
+prints the error information out and returns 1 from the main function.
+.sp
+Now we\(aqre ready to extract the data out of the decoded JSON response.
+The structure of the response JSON was explained in section
+\fI\%The GitHub Repo Commits API\fP\&.
+.sp
+We check that the returned value really is an array:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+if(!json_is_array(root))
+{
+    fprintf(stderr, "error: root is not an array\en");
+    json_decref(root);
+    return 1;
+}
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+Then we proceed to loop over all the commits in the array:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+for(i = 0; i < json_array_size(root); i++)
+{
+    json_t *data, *sha, *commit, *message;
+    const char *message_text;
+
+    data = json_array_get(root, i);
+    if(!json_is_object(data))
+    {
+        fprintf(stderr, "error: commit data %d is not an object\en", i + 1);
+        json_decref(root);
+        return 1;
+    }
+\&...
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+The function \fBjson_array_size()\fP returns the size of a JSON
+array. First, we again declare some variables and then extract the
+i\(aqth element of the \fBroot\fP array using \fBjson_array_get()\fP\&.
+We also check that the resulting value is a JSON object.
+.sp
+Next we\(aqll extract the commit ID (a hexadecimal SHA\-1 sum),
+intermediate commit info object, and the commit message from that
+object. We also do proper type checks:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+    sha = json_object_get(data, "sha");
+    if(!json_is_string(sha))
+    {
+        fprintf(stderr, "error: commit %d: sha is not a string\en", i + 1);
+        json_decref(root);
+        return 1;
+    }
+
+    commit = json_object_get(data, "commit");
+    if(!json_is_object(commit))
+    {
+        fprintf(stderr, "error: commit %d: commit is not an object\en", i + 1);
+        json_decref(root);
+        return 1;
+    }
+
+    message = json_object_get(commit, "message");
+    if(!json_is_string(message))
+    {
+        fprintf(stderr, "error: commit %d: message is not a string\en", i + 1);
+        json_decref(root);
+        return 1;
+    }
+\&...
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+And finally, we\(aqll print the first 8 characters of the commit ID and
+the first line of the commit message. A C\-style string is extracted
+from a JSON string using \fBjson_string_value()\fP:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+    message_text = json_string_value(message);
+    printf("%.8s %.*s\en",
+           json_string_value(id),
+           newline_offset(message_text),
+           message_text);
+}
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+After sending the HTTP request, we decoded the JSON text using
+\fBjson_loads()\fP, remember? It returns a \fInew reference\fP to the
+JSON value it decodes. When we\(aqre finished with the value, we\(aqll need
+to decrease the reference count using \fBjson_decref()\fP\&. This way
+Jansson can release the resources:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+json_decref(root);
+return 0;
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+For a detailed explanation of reference counting in Jansson, see
+\fIapiref\-reference\-count\fP in \fIapiref\fP\&.
+.sp
+The program\(aqs ready, let\(aqs test it and view the latest commits in
+Jansson\(aqs repository:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+$ ./github_commits akheron jansson
+1581f26a Merge branch \(aq2.3\(aq
+aabfd493 load: Change buffer_pos to be a size_t
+bd72efbd load: Avoid unexpected behaviour in macro expansion
+e8fd3e30 Document and tweak json_load_callback()
+873eddaf Merge pull request #60 from rogerz/contrib
+bd2c0c73 Ignore the binary test_load_callback
+17a51a4b Merge branch \(aq2.3\(aq
+09c39adc Add json_load_callback to the list of exported symbols
+cbb80baf Merge pull request #57 from rogerz/contrib
+040bd7b0 Add json_load_callback()
+2637faa4 Make test stripping locale independent
+<...>
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.SS Conclusion
+.sp
+In this tutorial, we implemented a program that fetches the latest
+commits of a GitHub repository using the GitHub Repo Commits API.
+Jansson was used to decode the JSON response and to extract the commit
+data.
+.sp
+This tutorial only covered a small part of Jansson. For example, we
+did not create or manipulate JSON values at all. Proceed to
+\fIapiref\fP to explore all features of Jansson.
+.SS RFC Conformance
+.sp
+JSON is specified in \fI\%RFC 4627\fP, \fI"The application/json Media Type
+for JavaScript Object Notation (JSON)"\fP\&.
+.SS Character Encoding
+.sp
+Jansson only supports UTF\-8 encoded JSON texts. It does not support or
+auto\-detect any of the other encodings mentioned in the RFC, namely
+UTF\-16LE, UTF\-16BE, UTF\-32LE or UTF\-32BE. Pure ASCII is supported, as
+it\(aqs a subset of UTF\-8.
+.SS Strings
+.sp
+JSON strings are mapped to C\-style null\-terminated character arrays,
+and UTF\-8 encoding is used internally.
+.sp
+All Unicode codepoints U+0000 through U+10FFFF are allowed in string
+values. However, U+0000 is not allowed in object keys because of API
+restrictions.
+.sp
+Unicode normalization or any other transformation is never performed
+on any strings (string values or object keys). When checking for
+equivalence of strings or object keys, the comparison is performed
+byte by byte between the original UTF\-8 representations of the
+strings.
+.SS Numbers
+.SS Real vs. Integer
+.sp
+JSON makes no distinction between real and integer numbers; Jansson
+does. Real numbers are mapped to the \fBdouble\fP type and integers to
+the \fBjson_int_t\fP type, which is a typedef of \fBlong long\fP or
+\fBlong\fP, depending on whether \fBlong long\fP is supported by your
+compiler or not.
+.sp
+A JSON number is considered to be a real number if its lexical
+representation includes one of \fBe\fP, \fBE\fP, or \fB\&.\fP; regardless if
+its actual numeric value is a true integer (e.g., all of \fB1E6\fP,
+\fB3.0\fP, \fB400E\-2\fP, and \fB3.14E3\fP are mathematical integers, but
+will be treated as real values). With the \fBJSON_DECODE_INT_AS_REAL\fP
+decoder flag set all numbers are interpreted as real.
+.sp
+All other JSON numbers are considered integers.
+.sp
+When encoding to JSON, real values are always represented
+with a fractional part; e.g., the \fBdouble\fP value 3.0 will be
+represented in JSON as \fB3.0\fP, not \fB3\fP\&.
+.SS Overflow, Underflow & Precision
+.sp
+Real numbers whose absolute values are too small to be represented in
+a C \fBdouble\fP will be silently estimated with 0.0. Thus, depending on
+platform, JSON numbers very close to zero such as 1E\-999 may result in
+0.0.
+.sp
+Real numbers whose absolute values are too large to be represented in
+a C \fBdouble\fP will result in an overflow error (a JSON decoding
+error). Thus, depending on platform, JSON numbers like 1E+999 or
+\-1E+999 may result in a parsing error.
+.sp
+Likewise, integer numbers whose absolute values are too large to be
+represented in the \fBjson_int_t\fP type (see above) will result in an
+overflow error (a JSON decoding error). Thus, depending on platform,
+JSON numbers like 1000000000000000 may result in parsing error.
+.sp
+Parsing JSON real numbers may result in a loss of precision. As long
+as overflow does not occur (i.e. a total loss of precision), the
+rounded approximate value is silently used. Thus the JSON number
+1.000000000000000005 may, depending on platform, result in the
+\fBdouble\fP value 1.0.
+.SS Signed zeros
+.sp
+JSON makes no statement about what a number means; however Javascript
+(ECMAscript) does state that +0.0 and \-0.0 must be treated as being
+distinct values, i.e. \-0.0 ≠ 0.0. Jansson relies on the
+underlying floating point library in the C environment in which it is
+compiled. Therefore it is platform\-dependent whether 0.0 and \-0.0 will
+be distinct values. Most platforms that use the IEEE 754
+floating\-point standard will support signed zeros.
+.sp
+Note that this only applies to floating\-point; neither JSON, C, or
+IEEE support the concept of signed integer zeros.
+.SS Types
+.sp
+No support is provided in Jansson for any C numeric types other than
+\fBjson_int_t\fP and \fBdouble\fP\&. This excludes things such as unsigned
+types, \fBlong double\fP, etc. Obviously, shorter types like \fBshort\fP,
+\fBint\fP, \fBlong\fP (if \fBjson_int_t\fP is \fBlong long\fP) and \fBfloat\fP
+are implicitly handled via the ordinary C type coercion rules (subject
+to overflow semantics). Also, no support or hooks are provided for any
+supplemental "bignum" type add\-on packages.
+.SS Portability
+.SS Thread safety
+.sp
+Jansson is thread safe and has no mutable global state. The only
+exceptions are the hash function seed and memory allocation functions,
+see below.
+.sp
+There\(aqs no locking performed inside Jansson\(aqs code, so a multithreaded
+program must perform its own locking if JSON values are shared by
+multiple threads. Jansson\(aqs reference counting semantics may make this
+a bit harder than it seems, as it\(aqs possible to have a reference to a
+value that\(aqs also stored inside a list or object. Modifying the
+container (adding or removing values) may trigger concurrent access to
+such values, as containers manage the reference count of their
+contained values. Bugs involving concurrent incrementing or
+decrementing of deference counts may be hard to track.
+.sp
+The encoding functions (\fBjson_dumps()\fP and friends) track
+reference loops by modifying the internal state of objects and arrays.
+For this reason, encoding functions must not be run on the same JSON
+values in two separate threads at the same time. As already noted
+above, be especially careful if two arrays or objects share their
+contained values with another array or object.
+.sp
+If you want to make sure that two JSON value hierarchies do not
+contain shared values, use \fBjson_deep_copy()\fP to make copies.
+.SS Hash function seed
+.sp
+To prevent an attacker from intentionally causing large JSON objects
+with specially crafted keys to perform very slow, the hash function
+used by Jansson is randomized using a seed value. The seed is
+automatically generated on the first explicit or implicit call to
+\fBjson_object()\fP, if \fBjson_object_seed()\fP has not been
+called beforehand.
+.sp
+The seed is generated by using operating system\(aqs entropy sources if
+they are available (\fB/dev/urandom\fP, \fBCryptGenRandom()\fP). The
+initialization is done in as thread safe manner as possible, by using
+architecture specific lockless operations if provided by the platform
+or the compiler.
+.sp
+If you\(aqre using threads, it\(aqs recommended to autoseed the hashtable
+explicitly before spawning any threads by calling
+\fBjson_object_seed(0)\fP , especially if you\(aqre unsure whether the
+initialization is thread safe on your platform.
+.SS Memory allocation functions
+.sp
+Memory allocation functions should be set at most once, and only on
+program startup. See \fIapiref\-custom\-memory\-allocation\fP\&.
+.SS Locale
+.sp
+Jansson works fine under any locale.
+.sp
+However, if the host program is multithreaded and uses \fBsetlocale()\fP
+to switch the locale in one thread while Jansson is currently encoding
+or decoding JSON data in another thread, the result may be wrong or
+the program may even crash.
+.sp
+Jansson uses locale specific functions for certain string conversions
+in the encoder and decoder, and then converts the locale specific
+values to/from the JSON representation. This fails if the locale
+changes between the string conversion and the locale\-to\-JSON
+conversion. This can only happen in multithreaded programs that use
+\fBsetlocale()\fP, because \fBsetlocale()\fP switches the locale for all
+running threads, not only the thread that calls \fBsetlocale()\fP\&.
+.sp
+If your program uses \fBsetlocale()\fP as described above, consider
+using the thread\-safe \fBuselocale()\fP instead.
+.SS API Reference
+.SS Preliminaries
+.sp
+All declarations are in \fBjansson.h\fP, so it\(aqs enough to
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+#include <jansson.h>
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+in each source file.
+.sp
+All constants are prefixed with \fBJSON_\fP (except for those describing
+the library version, prefixed with \fBJANSSON_\fP). Other identifiers
+are prefixed with \fBjson_\fP\&. Type names are suffixed with \fB_t\fP and
+\fBtypedef\fP\(aqd so that the \fBstruct\fP keyword need not be used.
+.SS Library Version
+.sp
+The Jansson version is of the form \fIA.B.C\fP, where \fIA\fP is the major
+version, \fIB\fP is the minor version and \fIC\fP is the micro version. If the
+micro version is zero, it\(aqs omitted from the version string, i.e. the
+version string is just \fIA.B\fP\&.
+.sp
+When a new release only fixes bugs and doesn\(aqt add new features or
+functionality, the micro version is incremented. When new features are
+added in a backwards compatible way, the minor version is incremented
+and the micro version is set to zero. When there are backwards
+incompatible changes, the major version is incremented and others are
+set to zero.
+.sp
+The following preprocessor constants specify the current version of
+the library:
+.INDENT 0.0
+.TP
+.B \fBJANSSON_MAJOR_VERSION\fP, \fBJANSSON_MINOR_VERSION\fP, \fBJANSSON_MICRO_VERSION\fP
+Integers specifying the major, minor and micro versions,
+respectively.
+.TP
+.B \fBJANSSON_VERSION\fP
+A string representation of the current version, e.g. \fB"1.2.1"\fP or
+\fB"1.3"\fP\&.
+.TP
+.B \fBJANSSON_VERSION_HEX\fP
+A 3\-byte hexadecimal representation of the version, e.g.
+\fB0x010201\fP for version 1.2.1 and \fB0x010300\fP for version 1.3.
+This is useful in numeric comparisions, e.g.:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+#if JANSSON_VERSION_HEX >= 0x010300
+/* Code specific to version 1.3 and above */
+#endif
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.SS Value Representation
+.sp
+The JSON specification (\fI\%RFC 4627\fP) defines the following data types:
+\fIobject\fP, \fIarray\fP, \fIstring\fP, \fInumber\fP, \fIboolean\fP, and \fInull\fP\&. JSON
+types are used dynamically; arrays and objects can hold any other data
+type, including themselves. For this reason, Jansson\(aqs type system is
+also dynamic in nature. There\(aqs one C type to represent all JSON
+values, and this structure knows the type of the JSON value it holds.
+.INDENT 0.0
+.TP
+.B json_t
+This data structure is used throughout the library to represent all
+JSON values. It always contains the type of the JSON value it holds
+and the value\(aqs reference count. The rest depends on the type of the
+value.
+.UNINDENT
+.sp
+Objects of \fBjson_t\fP are always used through a pointer. There
+are APIs for querying the type, manipulating the reference count, and
+for constructing and manipulating values of different types.
+.sp
+Unless noted otherwise, all API functions return an error value if an
+error occurs. Depending on the function\(aqs signature, the error value
+is either \fINULL\fP or \-1. Invalid arguments or invalid input are
+apparent sources for errors. Memory allocation and I/O operations may
+also cause errors.
+.SS Type
+.sp
+The type of a JSON value is queried and tested using the following
+functions:
+.INDENT 0.0
+.TP
+.B enum json_type
+The type of a JSON value. The following members are defined:
+.TS
+center;
+|l|.
+_
+T{
+\fBJSON_OBJECT\fP
+T}
+_
+T{
+\fBJSON_ARRAY\fP
+T}
+_
+T{
+\fBJSON_STRING\fP
+T}
+_
+T{
+\fBJSON_INTEGER\fP
+T}
+_
+T{
+\fBJSON_REAL\fP
+T}
+_
+T{
+\fBJSON_TRUE\fP
+T}
+_
+T{
+\fBJSON_FALSE\fP
+T}
+_
+T{
+\fBJSON_NULL\fP
+T}
+_
+.TE
+.sp
+These correspond to JSON object, array, string, number, boolean and
+null. A number is represented by either a value of the type
+\fBJSON_INTEGER\fP or of the type \fBJSON_REAL\fP\&. A true boolean value
+is represented by a value of the type \fBJSON_TRUE\fP and false by a
+value of the type \fBJSON_FALSE\fP\&.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B int json_typeof(const json_t\fI\ *json\fP)
+Return the type of the JSON value (a \fBjson_type\fP cast to
+\fBint\fP). \fIjson\fP MUST NOT be \fINULL\fP\&. This function is actually
+implemented as a macro for speed.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B json_is_object(const json_t\fI\ *json\fP)
+.TP
+.B json_is_array(const json_t\fI\ *json\fP)
+.TP
+.B json_is_string(const json_t\fI\ *json\fP)
+.TP
+.B json_is_integer(const json_t\fI\ *json\fP)
+.TP
+.B json_is_real(const json_t\fI\ *json\fP)
+.TP
+.B json_is_true(const json_t\fI\ *json\fP)
+.TP
+.B json_is_false(const json_t\fI\ *json\fP)
+.TP
+.B json_is_null(const json_t\fI\ *json\fP)
+These functions (actually macros) return true (non\-zero) for values
+of the given type, and false (zero) for values of other types and
+for \fINULL\fP\&.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B json_is_number(const json_t\fI\ *json\fP)
+Returns true for values of types \fBJSON_INTEGER\fP and
+\fBJSON_REAL\fP, and false for other types and for \fINULL\fP\&.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B json_is_boolean(const json_t\fI\ *json\fP)
+Returns true for types \fBJSON_TRUE\fP and \fBJSON_FALSE\fP, and false
+for values of other types and for \fINULL\fP\&.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B json_boolean_value(const json_t\fI\ *json\fP)
+Alias of \fBjson_is_true()\fP, i.e. returns 1 for \fBJSON_TRUE\fP
+and 0 otherwise.
+.sp
+New in version 2.7.
+
+.UNINDENT
+.SS Reference Count
+.sp
+The reference count is used to track whether a value is still in use
+or not. When a value is created, it\(aqs reference count is set to 1. If
+a reference to a value is kept (e.g. a value is stored somewhere for
+later use), its reference count is incremented, and when the value is
+no longer needed, the reference count is decremented. When the
+reference count drops to zero, there are no references left, and the
+value can be destroyed.
+.sp
+The following functions are used to manipulate the reference count.
+.INDENT 0.0
+.TP
+.B json_t *json_incref(json_t\fI\ *json\fP)
+Increment the reference count of \fIjson\fP if it\(aqs not \fINULL\fP\&.
+Returns \fIjson\fP\&.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B void json_decref(json_t\fI\ *json\fP)
+Decrement the reference count of \fIjson\fP\&. As soon as a call to
+\fBjson_decref()\fP drops the reference count to zero, the value
+is destroyed and it can no longer be used.
+.UNINDENT
+.sp
+Functions creating new JSON values set the reference count to 1. These
+functions are said to return a \fBnew reference\fP\&. Other functions
+returning (existing) JSON values do not normally increase the
+reference count. These functions are said to return a \fBborrowed
+reference\fP\&. So, if the user will hold a reference to a value returned
+as a borrowed reference, he must call \fBjson_incref()\fP\&. As soon as
+the value is no longer needed, \fBjson_decref()\fP should be called
+to release the reference.
+.sp
+Normally, all functions accepting a JSON value as an argument will
+manage the reference, i.e. increase and decrease the reference count
+as needed. However, some functions \fBsteal\fP the reference, i.e. they
+have the same result as if the user called \fBjson_decref()\fP on
+the argument right after calling the function. These functions are
+suffixed with \fB_new\fP or have \fB_new_\fP somewhere in their name.
+.sp
+For example, the following code creates a new JSON array and appends
+an integer to it:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+json_t *array, *integer;
+
+array = json_array();
+integer = json_integer(42);
+
+json_array_append(array, integer);
+json_decref(integer);
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+Note how the caller has to release the reference to the integer value
+by calling \fBjson_decref()\fP\&. By using a reference stealing
+function \fBjson_array_append_new()\fP instead of
+\fBjson_array_append()\fP, the code becomes much simpler:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+json_t *array = json_array();
+json_array_append_new(array, json_integer(42));
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+In this case, the user doesn\(aqt have to explicitly release the
+reference to the integer value, as \fBjson_array_append_new()\fP
+steals the reference when appending the value to the array.
+.sp
+In the following sections it is clearly documented whether a function
+will return a new or borrowed reference or steal a reference to its
+argument.
+.SS Circular References
+.sp
+A circular reference is created when an object or an array is,
+directly or indirectly, inserted inside itself. The direct case is
+simple:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+json_t *obj = json_object();
+json_object_set(obj, "foo", obj);
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+Jansson will refuse to do this, and \fBjson_object_set()\fP (and
+all the other such functions for objects and arrays) will return with
+an error status. The indirect case is the dangerous one:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+json_t *arr1 = json_array(), *arr2 = json_array();
+json_array_append(arr1, arr2);
+json_array_append(arr2, arr1);
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+In this example, the array \fBarr2\fP is contained in the array
+\fBarr1\fP, and vice versa. Jansson cannot check for this kind of
+indirect circular references without a performance hit, so it\(aqs up to
+the user to avoid them.
+.sp
+If a circular reference is created, the memory consumed by the values
+cannot be freed by \fBjson_decref()\fP\&. The reference counts never
+drops to zero because the values are keeping the references to each
+other. Moreover, trying to encode the values with any of the encoding
+functions will fail. The encoder detects circular references and
+returns an error status.
+.SS True, False and Null
+.sp
+These three values are implemented as singletons, so the returned
+pointers won\(aqt change between invocations of these functions.
+.INDENT 0.0
+.TP
+.B json_t *json_true(void)
+Return value: New reference.
+.sp
+Returns the JSON true value.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B json_t *json_false(void)
+Return value: New reference.
+.sp
+Returns the JSON false value.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B json_t *json_boolean(val)
+Return value: New reference.
+.sp
+Returns JSON false if \fBval\fP is zero, and JSON true otherwise.
+This is a macro, and equivalent to \fBval ? json_true() :
+json_false()\fP\&.
+.sp
+New in version 2.4.
+
+.UNINDENT
+.INDENT 0.0
+.TP
+.B json_t *json_null(void)
+Return value: New reference.
+.sp
+Returns the JSON null value.
+.UNINDENT
+.SS String
+.sp
+Jansson uses UTF\-8 as the character encoding. All JSON strings must be
+valid UTF\-8 (or ASCII, as it\(aqs a subset of UTF\-8). All Unicode
+codepoints U+0000 through U+10FFFF are allowed, but you must use
+length\-aware functions if you wish to embed NUL bytes in strings.
+.INDENT 0.0
+.TP
+.B json_t *json_string(const char\fI\ *value\fP)
+Return value: New reference.
+.sp
+Returns a new JSON string, or \fINULL\fP on error. \fIvalue\fP must be a
+valid null terminated UTF\-8 encoded Unicode string.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B json_t *json_stringn(const char\fI\ *value\fP, size_t\fI\ len\fP)
+Return value: New reference.
+.sp
+Like \fBjson_string()\fP, but with explicit length, so \fIvalue\fP may
+contain null characters or not be null terminated.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B json_t *json_string_nocheck(const char\fI\ *value\fP)
+Return value: New reference.
+.sp
+Like \fBjson_string()\fP, but doesn\(aqt check that \fIvalue\fP is valid
+UTF\-8. Use this function only if you are certain that this really
+is the case (e.g. you have already checked it by other means).
+.UNINDENT
+.INDENT 0.0
+.TP
+.B json_t *json_stringn_nocheck(const char\fI\ *value\fP, size_t\fI\ len\fP)
+Return value: New reference.
+.sp
+Like \fBjson_string_nocheck()\fP, but with explicit length, so
+\fIvalue\fP may contain null characters or not be null terminated.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B const char *json_string_value(const json_t\fI\ *string\fP)
+Returns the associated value of \fIstring\fP as a null terminated UTF\-8
+encoded string, or \fINULL\fP if \fIstring\fP is not a JSON string.
+.sp
+The retuned value is read\-only and must not be modified or freed by
+the user. It is valid as long as \fIstring\fP exists, i.e. as long as
+its reference count has not dropped to zero.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B size_t json_string_length(const json_t\fI\ *string\fP)
+Returns the length of \fIstring\fP in its UTF\-8 presentation, or zero
+if \fIstring\fP is not a JSON string.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B int json_string_set(const json_t\fI\ *string\fP, const char\fI\ *value\fP)
+Sets the associated value of \fIstring\fP to \fIvalue\fP\&. \fIvalue\fP must be a
+valid UTF\-8 encoded Unicode string. Returns 0 on success and \-1 on
+error.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B int json_string_setn(json_t\fI\ *string\fP, const char\fI\ *value\fP, size_t\fI\ len\fP)
+Like \fBjson_string_set()\fP, but with explicit length, so \fIvalue\fP
+may contain null characters or not be null terminated.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B int json_string_set_nocheck(const json_t\fI\ *string\fP, const char\fI\ *value\fP)
+Like \fBjson_string_set()\fP, but doesn\(aqt check that \fIvalue\fP is
+valid UTF\-8. Use this function only if you are certain that this
+really is the case (e.g. you have already checked it by other
+means).
+.UNINDENT
+.INDENT 0.0
+.TP
+.B int json_string_setn_nocheck(json_t\fI\ *string\fP, const char\fI\ *value\fP, size_t\fI\ len\fP)
+Like \fBjson_string_set_nocheck()\fP, but with explicit length,
+so \fIvalue\fP may contain null characters or not be null terminated.
+.UNINDENT
+.SS Number
+.sp
+The JSON specification only contains one numeric type, "number". The C
+programming language has distinct types for integer and floating\-point
+numbers, so for practical reasons Jansson also has distinct types for
+the two. They are called "integer" and "real", respectively. For more
+information, see \fIrfc\-conformance\fP\&.
+.INDENT 0.0
+.TP
+.B json_int_t
+This is the C type that is used to store JSON integer values. It
+represents the widest integer type available on your system. In
+practice it\(aqs just a typedef of \fBlong long\fP if your compiler
+supports it, otherwise \fBlong\fP\&.
+.sp
+Usually, you can safely use plain \fBint\fP in place of
+\fBjson_int_t\fP, and the implicit C integer conversion handles the
+rest. Only when you know that you need the full 64\-bit range, you
+should use \fBjson_int_t\fP explicitly.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \fBJSON_INTEGER_IS_LONG_LONG\fP
+This is a preprocessor variable that holds the value 1 if
+\fBjson_int_t\fP is \fBlong long\fP, and 0 if it\(aqs \fBlong\fP\&. It
+can be used as follows:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+#if JSON_INTEGER_IS_LONG_LONG
+/* Code specific for long long */
+#else
+/* Code specific for long */
+#endif
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.TP
+.B \fBJSON_INTEGER_FORMAT\fP
+This is a macro that expands to a \fBprintf()\fP conversion
+specifier that corresponds to \fBjson_int_t\fP, without the
+leading \fB%\fP sign, i.e. either \fB"lld"\fP or \fB"ld"\fP\&. This macro
+is required because the actual type of \fBjson_int_t\fP can be
+either \fBlong\fP or \fBlong long\fP, and \fBprintf()\fP reuiqres
+different length modifiers for the two.
+.sp
+Example:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+json_int_t x = 123123123;
+printf("x is %" JSON_INTEGER_FORMAT "\en", x);
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B json_t *json_integer(json_int_t\fI\ value\fP)
+Return value: New reference.
+.sp
+Returns a new JSON integer, or \fINULL\fP on error.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B json_int_t json_integer_value(const json_t\fI\ *integer\fP)
+Returns the associated value of \fIinteger\fP, or 0 if \fIjson\fP is not a
+JSON integer.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B int json_integer_set(const json_t\fI\ *integer\fP, json_int_t\fI\ value\fP)
+Sets the associated value of \fIinteger\fP to \fIvalue\fP\&. Returns 0 on
+success and \-1 if \fIinteger\fP is not a JSON integer.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B json_t *json_real(double\fI\ value\fP)
+Return value: New reference.
+.sp
+Returns a new JSON real, or \fINULL\fP on error.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B double json_real_value(const json_t\fI\ *real\fP)
+Returns the associated value of \fIreal\fP, or 0.0 if \fIreal\fP is not a
+JSON real.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B int json_real_set(const json_t\fI\ *real\fP, double\fI\ value\fP)
+Sets the associated value of \fIreal\fP to \fIvalue\fP\&. Returns 0 on
+success and \-1 if \fIreal\fP is not a JSON real.
+.UNINDENT
+.sp
+In addition to the functions above, there\(aqs a common query function
+for integers and reals:
+.INDENT 0.0
+.TP
+.B double json_number_value(const json_t\fI\ *json\fP)
+Returns the associated value of the JSON integer or JSON real
+\fIjson\fP, cast to double regardless of the actual type. If \fIjson\fP is
+neither JSON real nor JSON integer, 0.0 is returned.
+.UNINDENT
+.SS Array
+.sp
+A JSON array is an ordered collection of other JSON values.
+.INDENT 0.0
+.TP
+.B json_t *json_array(void)
+Return value: New reference.
+.sp
+Returns a new JSON array, or \fINULL\fP on error. Initially, the array
+is empty.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B size_t json_array_size(const json_t\fI\ *array\fP)
+Returns the number of elements in \fIarray\fP, or 0 if \fIarray\fP is NULL
+or not a JSON array.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B json_t *json_array_get(const json_t\fI\ *array\fP, size_t\fI\ index\fP)
+Return value: Borrowed reference.
+.sp
+Returns the element in \fIarray\fP at position \fIindex\fP\&. The valid range
+for \fIindex\fP is from 0 to the return value of
+\fBjson_array_size()\fP minus 1. If \fIarray\fP is not a JSON array,
+if \fIarray\fP is \fINULL\fP, or if \fIindex\fP is out of range, \fINULL\fP is
+returned.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B int json_array_set(json_t\fI\ *array\fP, size_t\fI\ index\fP, json_t\fI\ *value\fP)
+Replaces the element in \fIarray\fP at position \fIindex\fP with \fIvalue\fP\&.
+The valid range for \fIindex\fP is from 0 to the return value of
+\fBjson_array_size()\fP minus 1. Returns 0 on success and \-1 on
+error.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B int json_array_set_new(json_t\fI\ *array\fP, size_t\fI\ index\fP, json_t\fI\ *value\fP)
+Like \fBjson_array_set()\fP but steals the reference to \fIvalue\fP\&.
+This is useful when \fIvalue\fP is newly created and not used after
+the call.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B int json_array_append(json_t\fI\ *array\fP, json_t\fI\ *value\fP)
+Appends \fIvalue\fP to the end of \fIarray\fP, growing the size of \fIarray\fP
+by 1. Returns 0 on success and \-1 on error.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B int json_array_append_new(json_t\fI\ *array\fP, json_t\fI\ *value\fP)
+Like \fBjson_array_append()\fP but steals the reference to
+\fIvalue\fP\&. This is useful when \fIvalue\fP is newly created and not used
+after the call.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B int json_array_insert(json_t\fI\ *array\fP, size_t\fI\ index\fP, json_t\fI\ *value\fP)
+Inserts \fIvalue\fP to \fIarray\fP at position \fIindex\fP, shifting the
+elements at \fIindex\fP and after it one position towards the end of
+the array. Returns 0 on success and \-1 on error.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B int json_array_insert_new(json_t\fI\ *array\fP, size_t\fI\ index\fP, json_t\fI\ *value\fP)
+Like \fBjson_array_insert()\fP but steals the reference to
+\fIvalue\fP\&. This is useful when \fIvalue\fP is newly created and not used
+after the call.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B int json_array_remove(json_t\fI\ *array\fP, size_t\fI\ index\fP)
+Removes the element in \fIarray\fP at position \fIindex\fP, shifting the
+elements after \fIindex\fP one position towards the start of the array.
+Returns 0 on success and \-1 on error. The reference count of the
+removed value is decremented.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B int json_array_clear(json_t\fI\ *array\fP)
+Removes all elements from \fIarray\fP\&. Returns 0 on sucess and \-1 on
+error. The reference count of all removed values are decremented.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B int json_array_extend(json_t\fI\ *array\fP, json_t\fI\ *other_array\fP)
+Appends all elements in \fIother_array\fP to the end of \fIarray\fP\&.
+Returns 0 on success and \-1 on error.
+.UNINDENT
+.sp
+The following macro can be used to iterate through all elements
+in an array.
+.INDENT 0.0
+.TP
+.B json_array_foreach(array, index, value)
+Iterate over every element of \fBarray\fP, running the block
+of code that follows each time with the proper values set to
+variables \fBindex\fP and \fBvalue\fP, of types \fBsize_t\fP and
+\fBjson_t *\fP respectively. Example:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+/* array is a JSON array */
+size_t index;
+json_t *value;
+
+json_array_foreach(array, index, value) {
+    /* block of code that uses index and value */
+}
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+The items are returned in increasing index order.
+.sp
+This macro expands to an ordinary \fBfor\fP statement upon
+preprocessing, so its performance is equivalent to that of
+hand\-written code using the array access functions.
+The main advantage of this macro is that it abstracts
+away the complexity, and makes for shorter, more
+concise code.
+.sp
+New in version 2.5.
+
+.UNINDENT
+.SS Object
+.sp
+A JSON object is a dictionary of key\-value pairs, where the key is a
+Unicode string and the value is any JSON value.
+.sp
+Even though NUL bytes are allowed in string values, they are not
+allowed in object keys.
+.INDENT 0.0
+.TP
+.B json_t *json_object(void)
+Return value: New reference.
+.sp
+Returns a new JSON object, or \fINULL\fP on error. Initially, the
+object is empty.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B size_t json_object_size(const json_t\fI\ *object\fP)
+Returns the number of elements in \fIobject\fP, or 0 if \fIobject\fP is not
+a JSON object.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B json_t *json_object_get(const json_t\fI\ *object\fP, const char\fI\ *key\fP)
+Return value: Borrowed reference.
+.sp
+Get a value corresponding to \fIkey\fP from \fIobject\fP\&. Returns \fINULL\fP if
+\fIkey\fP is not found and on error.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B int json_object_set(json_t\fI\ *object\fP, const char\fI\ *key\fP, json_t\fI\ *value\fP)
+Set the value of \fIkey\fP to \fIvalue\fP in \fIobject\fP\&. \fIkey\fP must be a
+valid null terminated UTF\-8 encoded Unicode string. If there
+already is a value for \fIkey\fP, it is replaced by the new value.
+Returns 0 on success and \-1 on error.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B int json_object_set_nocheck(json_t\fI\ *object\fP, const char\fI\ *key\fP, json_t\fI\ *value\fP)
+Like \fBjson_object_set()\fP, but doesn\(aqt check that \fIkey\fP is
+valid UTF\-8. Use this function only if you are certain that this
+really is the case (e.g. you have already checked it by other
+means).
+.UNINDENT
+.INDENT 0.0
+.TP
+.B int json_object_set_new(json_t\fI\ *object\fP, const char\fI\ *key\fP, json_t\fI\ *value\fP)
+Like \fBjson_object_set()\fP but steals the reference to
+\fIvalue\fP\&. This is useful when \fIvalue\fP is newly created and not used
+after the call.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B int json_object_set_new_nocheck(json_t\fI\ *object\fP, const char\fI\ *key\fP, json_t\fI\ *value\fP)
+Like \fBjson_object_set_new()\fP, but doesn\(aqt check that \fIkey\fP is
+valid UTF\-8. Use this function only if you are certain that this
+really is the case (e.g. you have already checked it by other
+means).
+.UNINDENT
+.INDENT 0.0
+.TP
+.B int json_object_del(json_t\fI\ *object\fP, const char\fI\ *key\fP)
+Delete \fIkey\fP from \fIobject\fP if it exists. Returns 0 on success, or
+\-1 if \fIkey\fP was not found. The reference count of the removed value
+is decremented.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B int json_object_clear(json_t\fI\ *object\fP)
+Remove all elements from \fIobject\fP\&. Returns 0 on success and \-1 if
+\fIobject\fP is not a JSON object. The reference count of all removed
+values are decremented.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B int json_object_update(json_t\fI\ *object\fP, json_t\fI\ *other\fP)
+Update \fIobject\fP with the key\-value pairs from \fIother\fP, overwriting
+existing keys. Returns 0 on success or \-1 on error.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B int json_object_update_existing(json_t\fI\ *object\fP, json_t\fI\ *other\fP)
+Like \fBjson_object_update()\fP, but only the values of existing
+keys are updated. No new keys are created. Returns 0 on success or
+\-1 on error.
+.sp
+New in version 2.3.
+
+.UNINDENT
+.INDENT 0.0
+.TP
+.B int json_object_update_missing(json_t\fI\ *object\fP, json_t\fI\ *other\fP)
+Like \fBjson_object_update()\fP, but only new keys are created.
+The value of any existing key is not changed. Returns 0 on success
+or \-1 on error.
+.sp
+New in version 2.3.
+
+.UNINDENT
+.sp
+The following macro can be used to iterate through all key\-value pairs
+in an object.
+.INDENT 0.0
+.TP
+.B json_object_foreach(object, key, value)
+Iterate over every key\-value pair of \fBobject\fP, running the block
+of code that follows each time with the proper values set to
+variables \fBkey\fP and \fBvalue\fP, of types \fBconst char *\fP and
+\fBjson_t *\fP respectively. Example:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+/* obj is a JSON object */
+const char *key;
+json_t *value;
+
+json_object_foreach(obj, key, value) {
+    /* block of code that uses key and value */
+}
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+The items are not returned in any particular order.
+.sp
+This macro expands to an ordinary \fBfor\fP statement upon
+preprocessing, so its performance is equivalent to that of
+hand\-written iteration code using the object iteration protocol
+(see below). The main advantage of this macro is that it abstracts
+away the complexity behind iteration, and makes for shorter, more
+concise code.
+.sp
+New in version 2.3.
+
+.UNINDENT
+.sp
+The following functions implement an iteration protocol for objects,
+allowing to iterate through all key\-value pairs in an object. The
+items are not returned in any particular order, as this would require
+sorting due to the internal hashtable implementation.
+.INDENT 0.0
+.TP
+.B void *json_object_iter(json_t\fI\ *object\fP)
+Returns an opaque iterator which can be used to iterate over all
+key\-value pairs in \fIobject\fP, or \fINULL\fP if \fIobject\fP is empty.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B void *json_object_iter_at(json_t\fI\ *object\fP, const char\fI\ *key\fP)
+Like \fBjson_object_iter()\fP, but returns an iterator to the
+key\-value pair in \fIobject\fP whose key is equal to \fIkey\fP, or NULL if
+\fIkey\fP is not found in \fIobject\fP\&. Iterating forward to the end of
+\fIobject\fP only yields all key\-value pairs of the object if \fIkey\fP
+happens to be the first key in the underlying hash table.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B void *json_object_iter_next(json_t\fI\ *object\fP, void\fI\ *iter\fP)
+Returns an iterator pointing to the next key\-value pair in \fIobject\fP
+after \fIiter\fP, or \fINULL\fP if the whole object has been iterated
+through.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B const char *json_object_iter_key(void\fI\ *iter\fP)
+Extract the associated key from \fIiter\fP\&.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B json_t *json_object_iter_value(void\fI\ *iter\fP)
+Return value: Borrowed reference.
+.sp
+Extract the associated value from \fIiter\fP\&.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B int json_object_iter_set(json_t\fI\ *object\fP, void\fI\ *iter\fP, json_t\fI\ *value\fP)
+Set the value of the key\-value pair in \fIobject\fP, that is pointed to
+by \fIiter\fP, to \fIvalue\fP\&.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B int json_object_iter_set_new(json_t\fI\ *object\fP, void\fI\ *iter\fP, json_t\fI\ *value\fP)
+Like \fBjson_object_iter_set()\fP, but steals the reference to
+\fIvalue\fP\&. This is useful when \fIvalue\fP is newly created and not used
+after the call.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B void *json_object_key_to_iter(const char\fI\ *key\fP)
+Like \fBjson_object_iter_at()\fP, but much faster. Only works for
+values returned by \fBjson_object_iter_key()\fP\&. Using other keys
+will lead to segfaults. This function is used internally to
+implement \fBjson_object_foreach()\fP\&.
+.sp
+New in version 2.3.
+
+.UNINDENT
+.sp
+The iteration protocol can be used for example as follows:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+/* obj is a JSON object */
+const char *key;
+json_t *value;
+
+void *iter = json_object_iter(obj);
+while(iter)
+{
+    key = json_object_iter_key(iter);
+    value = json_object_iter_value(iter);
+    /* use key and value ... */
+    iter = json_object_iter_next(obj, iter);
+}
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B void json_object_seed(size_t\fI\ seed\fP)
+Seed the hash function used in Jansson\(aqs hashtable implementation.
+The seed is used to randomize the hash function so that an
+attacker cannot control its output.
+.sp
+If \fIseed\fP is 0, Jansson generates the seed itselfy by reading
+random data from the operating system\(aqs entropy sources. If no
+entropy sources are available, falls back to using a combination
+of the current timestamp (with microsecond precision if possible)
+and the process ID.
+.sp
+If called at all, this function must be called before any calls to
+\fBjson_object()\fP, either explicit or implicit. If this
+function is not called by the user, the first call to
+\fBjson_object()\fP (either explicit or implicit) seeds the hash
+function. See \fIportability\-thread\-safety\fP for notes on thread
+safety.
+.sp
+If repeatable results are required, for e.g. unit tests, the hash
+function can be "unrandomized" by calling \fBjson_object_seed()\fP
+with a constant value on program startup, e.g.
+\fBjson_object_seed(1)\fP\&.
+.sp
+New in version 2.6.
+
+.UNINDENT
+.SS Error reporting
+.sp
+Jansson uses a single struct type to pass error information to the
+user. See sections \fIapiref\-decoding\fP, \fIapiref\-pack\fP and
+\fIapiref\-unpack\fP for functions that pass error information using
+this struct.
+.INDENT 0.0
+.TP
+.B json_error_t
+.INDENT 7.0
+.TP
+.B char text[]
+The error message (in UTF\-8), or an empty string if a message is
+not available.
+.UNINDENT
+.INDENT 7.0
+.TP
+.B char source[]
+Source of the error. This can be (a part of) the file name or a
+special identifier in angle brackers (e.g. \fB<string>\fP).
+.UNINDENT
+.INDENT 7.0
+.TP
+.B int line
+The line number on which the error occurred.
+.UNINDENT
+.INDENT 7.0
+.TP
+.B int column
+The column on which the error occurred. Note that this is the
+\fIcharacter column\fP, not the byte column, i.e. a multibyte UTF\-8
+character counts as one column.
+.UNINDENT
+.INDENT 7.0
+.TP
+.B size_t position
+The position in bytes from the start of the input. This is
+useful for debugging Unicode encoding problems.
+.UNINDENT
+.UNINDENT
+.sp
+The normal use of \fBjson_error_t\fP is to allocate it on the stack,
+and pass a pointer to a function. Example:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+int main() {
+    json_t *json;
+    json_error_t error;
+
+    json = json_load_file("/path/to/file.json", 0, &error);
+    if(!json) {
+        /* the error variable contains error information */
+    }
+    ...
+}
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+Also note that if the call succeeded (\fBjson != NULL\fP in the above
+example), the contents of \fBerror\fP are generally left unspecified.
+The decoding functions write to the \fBposition\fP member also on
+success. See \fIapiref\-decoding\fP for more info.
+.sp
+All functions also accept \fINULL\fP as the \fBjson_error_t\fP pointer,
+in which case no error information is returned to the caller.
+.SS Encoding
+.sp
+This sections describes the functions that can be used to encode
+values to JSON. By default, only objects and arrays can be encoded
+directly, since they are the only valid \fIroot\fP values of a JSON text.
+To encode any JSON value, use the \fBJSON_ENCODE_ANY\fP flag (see
+below).
+.sp
+By default, the output has no newlines, and spaces are used between
+array and object elements for a readable output. This behavior can be
+altered by using the \fBJSON_INDENT\fP and \fBJSON_COMPACT\fP flags
+described below. A newline is never appended to the end of the encoded
+JSON data.
+.sp
+Each function takes a \fIflags\fP parameter that controls some aspects of
+how the data is encoded. Its default value is 0. The following macros
+can be ORed together to obtain \fIflags\fP\&.
+.INDENT 0.0
+.TP
+.B \fBJSON_INDENT(n)\fP
+Pretty\-print the result, using newlines between array and object
+items, and indenting with \fIn\fP spaces. The valid range for \fIn\fP is
+between 0 and 31 (inclusive), other values result in an undefined
+output. If \fBJSON_INDENT\fP is not used or \fIn\fP is 0, no newlines are
+inserted between array and object items.
+.sp
+The \fBJSON_MAX_INDENT\fP constant defines the maximum indentation
+that can be used, and its value is 31.
+.sp
+Changed in version 2.7: Added \fBJSON_MAX_INDENT\fP\&.
+
+.TP
+.B \fBJSON_COMPACT\fP
+This flag enables a compact representation, i.e. sets the separator
+between array and object items to \fB","\fP and between object keys
+and values to \fB":"\fP\&. Without this flag, the corresponding
+separators are \fB", "\fP and \fB": "\fP for more readable output.
+.TP
+.B \fBJSON_ENSURE_ASCII\fP
+If this flag is used, the output is guaranteed to consist only of
+ASCII characters. This is achived by escaping all Unicode
+characters outside the ASCII range.
+.TP
+.B \fBJSON_SORT_KEYS\fP
+If this flag is used, all the objects in output are sorted by key.
+This is useful e.g. if two JSON texts are diffed or visually
+compared.
+.TP
+.B \fBJSON_PRESERVE_ORDER\fP
+If this flag is used, object keys in the output are sorted into the
+same order in which they were first inserted to the object. For
+example, decoding a JSON text and then encoding with this flag
+preserves the order of object keys.
+.TP
+.B \fBJSON_ENCODE_ANY\fP
+Specifying this flag makes it possible to encode any JSON value on
+its own. Without it, only objects and arrays can be passed as the
+\fIroot\fP value to the encoding functions.
+.sp
+\fBNote:\fP Encoding any value may be useful in some scenarios, but
+it\(aqs generally discouraged as it violates strict compatiblity with
+\fI\%RFC 4627\fP\&. If you use this flag, don\(aqt expect interoperatibility
+with other JSON systems.
+.sp
+New in version 2.1.
+
+.TP
+.B \fBJSON_ESCAPE_SLASH\fP
+Escape the \fB/\fP characters in strings with \fB\e/\fP\&.
+.sp
+New in version 2.4.
+
+.TP
+.B \fBJSON_REAL_PRECISION(n)\fP
+Output all real numbers with at most \fIn\fP digits of precision. The
+valid range for \fIn\fP is between 0 and 31 (inclusive), and other
+values result in an undefined behavior.
+.sp
+By default, the precision is 17, to correctly and losslessly encode
+all IEEE 754 double precision floating point numbers.
+.sp
+New in version 2.7.
+
+.UNINDENT
+.sp
+The following functions perform the actual JSON encoding. The result
+is in UTF\-8.
+.INDENT 0.0
+.TP
+.B char *json_dumps(const json_t\fI\ *root\fP, size_t\fI\ flags\fP)
+Returns the JSON representation of \fIroot\fP as a string, or \fINULL\fP on
+error. \fIflags\fP is described above. The return value must be freed
+by the caller using \fBfree()\fP\&.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B int json_dumpf(const json_t\fI\ *root\fP, FILE\fI\ *output\fP, size_t\fI\ flags\fP)
+Write the JSON representation of \fIroot\fP to the stream \fIoutput\fP\&.
+\fIflags\fP is described above. Returns 0 on success and \-1 on error.
+If an error occurs, something may have already been written to
+\fIoutput\fP\&. In this case, the output is undefined and most likely not
+valid JSON.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B int json_dump_file(const json_t\fI\ *json\fP, const char\fI\ *path\fP, size_t\fI\ flags\fP)
+Write the JSON representation of \fIroot\fP to the file \fIpath\fP\&. If
+\fIpath\fP already exists, it is overwritten. \fIflags\fP is described
+above. Returns 0 on success and \-1 on error.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B json_dump_callback_t
+A typedef for a function that\(aqs called by
+\fBjson_dump_callback()\fP:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+typedef int (*json_dump_callback_t)(const char *buffer, size_t size, void *data);
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+\fIbuffer\fP points to a buffer containing a chunk of output, \fIsize\fP is
+the length of the buffer, and \fIdata\fP is the corresponding
+\fBjson_dump_callback()\fP argument passed through.
+.sp
+On error, the function should return \-1 to stop the encoding
+process. On success, it should return 0.
+.sp
+New in version 2.2.
+
+.UNINDENT
+.INDENT 0.0
+.TP
+.B int json_dump_callback(const json_t\fI\ *json\fP, json_dump_callback_t\fI\ callback\fP, void\fI\ *data\fP, size_t\fI\ flags\fP)
+Call \fIcallback\fP repeatedly, passing a chunk of the JSON
+representation of \fIroot\fP each time. \fIflags\fP is described above.
+Returns 0 on success and \-1 on error.
+.sp
+New in version 2.2.
+
+.UNINDENT
+.SS Decoding
+.sp
+This sections describes the functions that can be used to decode JSON
+text to the Jansson representation of JSON data. The JSON
+specification requires that a JSON text is either a serialized array
+or object, and this requirement is also enforced with the following
+functions. In other words, the top level value in the JSON text being
+decoded must be either array or object. To decode any JSON value, use
+the \fBJSON_DECODE_ANY\fP flag (see below).
+.sp
+See \fIrfc\-conformance\fP for a discussion on Jansson\(aqs conformance
+to the JSON specification. It explains many design decisions that
+affect especially the behavior of the decoder.
+.sp
+Each function takes a \fIflags\fP parameter that can be used to control
+the behavior of the decoder. Its default value is 0. The following
+macros can be ORed together to obtain \fIflags\fP\&.
+.INDENT 0.0
+.TP
+.B \fBJSON_REJECT_DUPLICATES\fP
+Issue a decoding error if any JSON object in the input text
+contains duplicate keys. Without this flag, the value of the last
+occurence of each key ends up in the result. Key equivalence is
+checked byte\-by\-byte, without special Unicode comparison
+algorithms.
+.sp
+New in version 2.1.
+
+.TP
+.B \fBJSON_DECODE_ANY\fP
+By default, the decoder expects an array or object as the input.
+With this flag enabled, the decoder accepts any valid JSON value.
+.sp
+\fBNote:\fP Decoding any value may be useful in some scenarios, but
+it\(aqs generally discouraged as it violates strict compatiblity with
+\fI\%RFC 4627\fP\&. If you use this flag, don\(aqt expect interoperatibility
+with other JSON systems.
+.sp
+New in version 2.3.
+
+.TP
+.B \fBJSON_DISABLE_EOF_CHECK\fP
+By default, the decoder expects that its whole input constitutes a
+valid JSON text, and issues an error if there\(aqs extra data after
+the otherwise valid JSON input. With this flag enabled, the decoder
+stops after decoding a valid JSON array or object, and thus allows
+extra data after the JSON text.
+.sp
+Normally, reading will stop when the last \fB]\fP or \fB}\fP in the
+JSON input is encountered. If both \fBJSON_DISABLE_EOF_CHECK\fP and
+\fBJSON_DECODE_ANY\fP flags are used, the decoder may read one extra
+UTF\-8 code unit (up to 4 bytes of input). For example, decoding
+\fB4true\fP correctly decodes the integer 4, but also reads the
+\fBt\fP\&. For this reason, if reading multiple consecutive values that
+are not arrays or objects, they should be separated by at least one
+whitespace character.
+.sp
+New in version 2.1.
+
+.TP
+.B \fBJSON_DECODE_INT_AS_REAL\fP
+JSON defines only one number type. Jansson distinguishes between
+ints and reals. For more information see \fIreal\-vs\-integer\fP\&.
+With this flag enabled the decoder interprets all numbers as real
+values. Integers that do not have an exact double representation
+will silently result in a loss of precision. Integers that cause
+a double overflow will cause an error.
+.sp
+New in version 2.5.
+
+.TP
+.B \fBJSON_ALLOW_NUL\fP
+Allow \fB\eu0000\fP escape inside string values. This is a safety
+measure; If you know your input can contain NUL bytes, use this
+flag. If you don\(aqt use this flag, you don\(aqt have to worry about NUL
+bytes inside strings unless you explicitly create themselves by
+using e.g. \fBjson_stringn()\fP or \fBs#\fP format specifier for
+\fBjson_pack()\fP\&.
+.sp
+Object keys cannot have embedded NUL bytes even if this flag is
+used.
+.sp
+New in version 2.6.
+
+.UNINDENT
+.sp
+Each function also takes an optional \fBjson_error_t\fP parameter
+that is filled with error information if decoding fails. It\(aqs also
+updated on success; the number of bytes of input read is written to
+its \fBposition\fP field. This is especially useful when using
+\fBJSON_DISABLE_EOF_CHECK\fP to read multiple consecutive JSON texts.
+.sp
+New in version 2.3: Number of bytes of input read is written to the \fBposition\fP field
+of the \fBjson_error_t\fP structure.
+
+.sp
+If no error or position information is needed, you can pass \fINULL\fP\&.
+.sp
+The following functions perform the actual JSON decoding.
+.INDENT 0.0
+.TP
+.B json_t *json_loads(const char\fI\ *input\fP, size_t\fI\ flags\fP, json_error_t\fI\ *error\fP)
+Return value: New reference.
+.sp
+Decodes the JSON string \fIinput\fP and returns the array or object it
+contains, or \fINULL\fP on error, in which case \fIerror\fP is filled with
+information about the error. \fIflags\fP is described above.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B json_t *json_loadb(const char\fI\ *buffer\fP, size_t\fI\ buflen\fP, size_t\fI\ flags\fP, json_error_t\fI\ *error\fP)
+Return value: New reference.
+.sp
+Decodes the JSON string \fIbuffer\fP, whose length is \fIbuflen\fP, and
+returns the array or object it contains, or \fINULL\fP on error, in
+which case \fIerror\fP is filled with information about the error. This
+is similar to \fBjson_loads()\fP except that the string doesn\(aqt
+need to be null\-terminated. \fIflags\fP is described above.
+.sp
+New in version 2.1.
+
+.UNINDENT
+.INDENT 0.0
+.TP
+.B json_t *json_loadf(FILE\fI\ *input\fP, size_t\fI\ flags\fP, json_error_t\fI\ *error\fP)
+Return value: New reference.
+.sp
+Decodes the JSON text in stream \fIinput\fP and returns the array or
+object it contains, or \fINULL\fP on error, in which case \fIerror\fP is
+filled with information about the error. \fIflags\fP is described
+above.
+.sp
+This function will start reading the input from whatever position
+the input file was, without attempting to seek first. If an error
+occurs, the file position will be left indeterminate. On success,
+the file position will be at EOF, unless \fBJSON_DISABLE_EOF_CHECK\fP
+flag was used. In this case, the file position will be at the first
+character after the last \fB]\fP or \fB}\fP in the JSON input. This
+allows calling \fBjson_loadf()\fP on the same \fBFILE\fP object
+multiple times, if the input consists of consecutive JSON texts,
+possibly separated by whitespace.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B json_t *json_load_file(const char\fI\ *path\fP, size_t\fI\ flags\fP, json_error_t\fI\ *error\fP)
+Return value: New reference.
+.sp
+Decodes the JSON text in file \fIpath\fP and returns the array or
+object it contains, or \fINULL\fP on error, in which case \fIerror\fP is
+filled with information about the error. \fIflags\fP is described
+above.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B json_load_callback_t
+A typedef for a function that\(aqs called by
+\fBjson_load_callback()\fP to read a chunk of input data:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+typedef size_t (*json_load_callback_t)(void *buffer, size_t buflen, void *data);
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+\fIbuffer\fP points to a buffer of \fIbuflen\fP bytes, and \fIdata\fP is the
+corresponding \fBjson_load_callback()\fP argument passed through.
+.sp
+On success, the function should return the number of bytes read; a
+returned value of 0 indicates that no data was read and that the
+end of file has been reached. On error, the function should return
+\fB(size_t)\-1\fP to abort the decoding process.
+.sp
+New in version 2.4.
+
+.UNINDENT
+.INDENT 0.0
+.TP
+.B json_t *json_load_callback(json_load_callback_t\fI\ callback\fP, void\fI\ *data\fP, size_t\fI\ flags\fP, json_error_t\fI\ *error\fP)
+Return value: New reference.
+.sp
+Decodes the JSON text produced by repeated calls to \fIcallback\fP, and
+returns the array or object it contains, or \fINULL\fP on error, in
+which case \fIerror\fP is filled with information about the error.
+\fIdata\fP is passed through to \fIcallback\fP on each call. \fIflags\fP is
+described above.
+.sp
+New in version 2.4.
+
+.UNINDENT
+.SS Building Values
+.sp
+This section describes functions that help to create, or \fIpack\fP,
+complex JSON values, especially nested objects and arrays. Value
+building is based on a \fIformat string\fP that is used to tell the
+functions about the expected arguments.
+.sp
+For example, the format string \fB"i"\fP specifies a single integer
+value, while the format string \fB"[ssb]"\fP or the equivalent \fB"[s, s,
+b]"\fP specifies an array value with two strings and a boolean as its
+items:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+/* Create the JSON integer 42 */
+json_pack("i", 42);
+
+/* Create the JSON array ["foo", "bar", true] */
+json_pack("[ssb]", "foo", "bar", 1);
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+Here\(aqs the full list of format specifiers. The type in parentheses
+denotes the resulting JSON type, and the type in brackets (if any)
+denotes the C type that is expected as the corresponding argument or
+arguments.
+.INDENT 0.0
+.TP
+.B \fBs\fP (string) [const char *]
+Convert a NULL terminated UTF\-8 string to a JSON string.
+.TP
+.B \fBs#\fP (string) [const char *, int]
+Convert a UTF\-8 buffer of a given length to a JSON string.
+.sp
+New in version 2.5.
+
+.TP
+.B \fBs%\fP (string) [const char *, size_t]
+Like \fBs#\fP but the length argument is of type \fBsize_t\fP\&.
+.sp
+New in version 2.6.
+
+.TP
+.B \fB+\fP [const char *]
+Like \fBs\fP, but concatenate to the previous string. Only valid
+after \fBs\fP, \fBs#\fP, \fB+\fP or \fB+#\fP\&.
+.sp
+New in version 2.5.
+
+.TP
+.B \fB+#\fP [const char *, int]
+Like \fBs#\fP, but concatenate to the previous string. Only valid
+after \fBs\fP, \fBs#\fP, \fB+\fP or \fB+#\fP\&.
+.sp
+New in version 2.5.
+
+.TP
+.B \fB+%\fP (string) [const char *, size_t]
+Like \fB+#\fP but the length argument is of type \fBsize_t\fP\&.
+.sp
+New in version 2.6.
+
+.TP
+.B \fBn\fP (null)
+Output a JSON null value. No argument is consumed.
+.TP
+.B \fBb\fP (boolean) [int]
+Convert a C \fBint\fP to JSON boolean value. Zero is converted
+to \fBfalse\fP and non\-zero to \fBtrue\fP\&.
+.TP
+.B \fBi\fP (integer) [int]
+Convert a C \fBint\fP to JSON integer.
+.TP
+.B \fBI\fP (integer) [json_int_t]
+Convert a C \fBjson_int_t\fP to JSON integer.
+.TP
+.B \fBf\fP (real) [double]
+Convert a C \fBdouble\fP to JSON real.
+.TP
+.B \fBo\fP (any value) [json_t *]
+Output any given JSON value as\-is. If the value is added to an
+array or object, the reference to the value passed to \fBo\fP is
+stolen by the container.
+.TP
+.B \fBO\fP (any value) [json_t *]
+Like \fBo\fP, but the argument\(aqs reference count is incremented.
+This is useful if you pack into an array or object and want to
+keep the reference for the JSON value consumed by \fBO\fP to
+yourself.
+.TP
+.B \fB[fmt]\fP (array)
+Build an array with contents from the inner format string. \fBfmt\fP
+may contain objects and arrays, i.e. recursive value building is
+supported.
+.TP
+.B \fB{fmt}\fP (object)
+Build an object with contents from the inner format string
+\fBfmt\fP\&. The first, third, etc. format specifier represent a key,
+and must be a string (see \fBs\fP, \fBs#\fP, \fB+\fP and \fB+#\fP above),
+as object keys are always strings. The second, fourth, etc. format
+specifier represent a value. Any value may be an object or array,
+i.e. recursive value building is supported.
+.UNINDENT
+.sp
+Whitespace, \fB:\fP and \fB,\fP are ignored.
+.sp
+The following functions compose the value building API:
+.INDENT 0.0
+.TP
+.B json_t *json_pack(const char\fI\ *fmt\fP, \&...)
+Return value: New reference.
+.sp
+Build a new JSON value according to the format string \fIfmt\fP\&. For
+each format specifier (except for \fB{}[]n\fP), one or more arguments
+are consumed and used to build the corresponding value. Returns
+\fINULL\fP on error.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B json_t *json_pack_ex(json_error_t\fI\ *error\fP, size_t\fI\ flags\fP, const char\fI\ *fmt\fP, \&...)
+.TP
+.B json_t *json_vpack_ex(json_error_t\fI\ *error\fP, size_t\fI\ flags\fP, const char\fI\ *fmt\fP, va_list\fI\ ap\fP)
+Return value: New reference.
+.sp
+Like \fBjson_pack()\fP, but an in the case of an error, an error
+message is written to \fIerror\fP, if it\(aqs not \fINULL\fP\&. The \fIflags\fP
+parameter is currently unused and should be set to 0.
+.sp
+As only the errors in format string (and out\-of\-memory errors) can
+be caught by the packer, these two functions are most likely only
+useful for debugging format strings.
+.UNINDENT
+.sp
+More examples:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+/* Build an empty JSON object */
+json_pack("{}");
+
+/* Build the JSON object {"foo": 42, "bar": 7} */
+json_pack("{sisi}", "foo", 42, "bar", 7);
+
+/* Like above, \(aq:\(aq, \(aq,\(aq and whitespace are ignored */
+json_pack("{s:i, s:i}", "foo", 42, "bar", 7);
+
+/* Build the JSON array [[1, 2], {"cool": true}] */
+json_pack("[[i,i],{s:b}]", 1, 2, "cool", 1);
+
+/* Build a string from a non\-NUL terminated buffer */
+char buffer[4] = {\(aqt\(aq, \(aqe\(aq, \(aqs\(aq, \(aqt\(aq};
+json_pack("s#", buffer, 4);
+
+/* Concatentate strings together to build the JSON string "foobarbaz" */
+json_pack("s++", "foo", "bar", "baz");
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.SS Parsing and Validating Values
+.sp
+This section describes functions that help to validate complex values
+and extract, or \fIunpack\fP, data from them. Like \fIbuilding values\fP, this is also based on format strings.
+.sp
+While a JSON value is unpacked, the type specified in the format
+string is checked to match that of the JSON value. This is the
+validation part of the process. In addition to this, the unpacking
+functions can also check that all items of arrays and objects are
+unpacked. This check be enabled with the format specifier \fB!\fP or by
+using the flag \fBJSON_STRICT\fP\&. See below for details.
+.sp
+Here\(aqs the full list of format specifiers. The type in parentheses
+denotes the JSON type, and the type in brackets (if any) denotes the C
+type whose address should be passed.
+.INDENT 0.0
+.TP
+.B \fBs\fP (string) [const char *]
+Convert a JSON string to a pointer to a NULL terminated UTF\-8
+string. The resulting string is extracted by using
+\fBjson_string_value()\fP internally, so it exists as long as
+there are still references to the corresponding JSON string.
+.TP
+.B \fBs%\fP (string) [const char *, size_t *]
+Convert a JSON string to a pointer to a NULL terminated UTF\-8
+string and its length.
+.sp
+New in version 2.6.
+
+.TP
+.B \fBn\fP (null)
+Expect a JSON null value. Nothing is extracted.
+.TP
+.B \fBb\fP (boolean) [int]
+Convert a JSON boolean value to a C \fBint\fP, so that \fBtrue\fP
+is converted to 1 and \fBfalse\fP to 0.
+.TP
+.B \fBi\fP (integer) [int]
+Convert a JSON integer to C \fBint\fP\&.
+.TP
+.B \fBI\fP (integer) [json_int_t]
+Convert a JSON integer to C \fBjson_int_t\fP\&.
+.TP
+.B \fBf\fP (real) [double]
+Convert a JSON real to C \fBdouble\fP\&.
+.TP
+.B \fBF\fP (integer or real) [double]
+Convert a JSON number (integer or real) to C \fBdouble\fP\&.
+.TP
+.B \fBo\fP (any value) [json_t *]
+Store a JSON value with no conversion to a \fBjson_t\fP pointer.
+.TP
+.B \fBO\fP (any value) [json_t *]
+Like \fBO\fP, but the JSON value\(aqs reference count is incremented.
+.TP
+.B \fB[fmt]\fP (array)
+Convert each item in the JSON array according to the inner format
+string. \fBfmt\fP may contain objects and arrays, i.e. recursive
+value extraction is supporetd.
+.TP
+.B \fB{fmt}\fP (object)
+Convert each item in the JSON object according to the inner format
+string \fBfmt\fP\&. The first, third, etc. format specifier represent
+a key, and must be \fBs\fP\&. The corresponding argument to unpack
+functions is read as the object key. The second fourth, etc.
+format specifier represent a value and is written to the address
+given as the corresponding argument. \fBNote\fP that every other
+argument is read from and every other is written to.
+.sp
+\fBfmt\fP may contain objects and arrays as values, i.e. recursive
+value extraction is supporetd.
+.sp
+New in version 2.3: Any \fBs\fP representing a key may be suffixed with a \fB?\fP to
+make the key optional. If the key is not found, nothing is
+extracted. See below for an example.
+
+.TP
+.B \fB!\fP
+This special format specifier is used to enable the check that
+all object and array items are accessed, on a per\-value basis. It
+must appear inside an array or object as the last format specifier
+before the closing bracket or brace. To enable the check globally,
+use the \fBJSON_STRICT\fP unpacking flag.
+.TP
+.B \fB*\fP
+This special format specifier is the opposite of \fB!\fP\&. If the
+\fBJSON_STRICT\fP flag is used, \fB*\fP can be used to disable the
+strict check on a per\-value basis. It must appear inside an array
+or object as the last format specifier before the closing bracket
+or brace.
+.UNINDENT
+.sp
+Whitespace, \fB:\fP and \fB,\fP are ignored.
+.sp
+The following functions compose the parsing and validation API:
+.INDENT 0.0
+.TP
+.B int json_unpack(json_t\fI\ *root\fP, const char\fI\ *fmt\fP, \&...)
+Validate and unpack the JSON value \fIroot\fP according to the format
+string \fIfmt\fP\&. Returns 0 on success and \-1 on failure.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B int json_unpack_ex(json_t\fI\ *root\fP, json_error_t\fI\ *error\fP, size_t\fI\ flags\fP, const char\fI\ *fmt\fP, \&...)
+.TP
+.B int json_vunpack_ex(json_t\fI\ *root\fP, json_error_t\fI\ *error\fP, size_t\fI\ flags\fP, const char\fI\ *fmt\fP, va_list\fI\ ap\fP)
+Validate and unpack the JSON value \fIroot\fP according to the format
+string \fIfmt\fP\&. If an error occurs and \fIerror\fP is not \fINULL\fP, write
+error information to \fIerror\fP\&. \fIflags\fP can be used to control the
+behaviour of the unpacker, see below for the flags. Returns 0 on
+success and \-1 on failure.
+.UNINDENT
+.sp
+\fBNOTE:\fP
+.INDENT 0.0
+.INDENT 3.5
+The first argument of all unpack functions is \fBjson_t *root\fP
+instead of \fBconst json_t *root\fP, because the use of \fBO\fP format
+specifier causes the reference count of \fBroot\fP, or some value
+reachable from \fBroot\fP, to be increased. Furthermore, the \fBo\fP
+format specifier may be used to extract a value as\-is, which allows
+modifying the structure or contents of a value reachable from
+\fBroot\fP\&.
+.sp
+If the \fBO\fP and \fBo\fP format specifiers are not used, it\(aqs
+perfectly safe to cast a \fBconst json_t *\fP variable to plain
+\fBjson_t *\fP when used with these functions.
+.UNINDENT
+.UNINDENT
+.sp
+The following unpacking flags are available:
+.INDENT 0.0
+.TP
+.B \fBJSON_STRICT\fP
+Enable the extra validation step checking that all object and
+array items are unpacked. This is equivalent to appending the
+format specifier \fB!\fP to the end of every array and object in the
+format string.
+.TP
+.B \fBJSON_VALIDATE_ONLY\fP
+Don\(aqt extract any data, just validate the JSON value against the
+given format string. Note that object keys must still be specified
+after the format string.
+.UNINDENT
+.sp
+Examples:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+/* root is the JSON integer 42 */
+int myint;
+json_unpack(root, "i", &myint);
+assert(myint == 42);
+
+/* root is the JSON object {"foo": "bar", "quux": true} */
+const char *str;
+int boolean;
+json_unpack(root, "{s:s, s:b}", "foo", &str, "quux", &boolean);
+assert(strcmp(str, "bar") == 0 && boolean == 1);
+
+/* root is the JSON array [[1, 2], {"baz": null} */
+json_error_t error;
+json_unpack_ex(root, &error, JSON_VALIDATE_ONLY, "[[i,i], {s:n}]", "baz");
+/* returns 0 for validation success, nothing is extracted */
+
+/* root is the JSON array [1, 2, 3, 4, 5] */
+int myint1, myint2;
+json_unpack(root, "[ii!]", &myint1, &myint2);
+/* returns \-1 for failed validation */
+
+/* root is an empty JSON object */
+int myint = 0, myint2 = 0;
+json_unpack(root, "{s?i, s?[ii]}",
+            "foo", &myint1,
+            "bar", &myint2, &myint3);
+/* myint1, myint2 or myint3 is no touched as "foo" and "bar" don\(aqt exist */
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.SS Equality
+.sp
+Testing for equality of two JSON values cannot, in general, be
+achieved using the \fB==\fP operator. Equality in the terms of the
+\fB==\fP operator states that the two \fBjson_t\fP pointers point to
+exactly the same JSON value. However, two JSON values can be equal not
+only if they are exactly the same value, but also if they have equal
+"contents":
+.INDENT 0.0
+.IP \(bu 2
+Two integer or real values are equal if their contained numeric
+values are equal. An integer value is never equal to a real value,
+though.
+.IP \(bu 2
+Two strings are equal if their contained UTF\-8 strings are equal,
+byte by byte. Unicode comparison algorithms are not implemented.
+.IP \(bu 2
+Two arrays are equal if they have the same number of elements and
+each element in the first array is equal to the corresponding
+element in the second array.
+.IP \(bu 2
+Two objects are equal if they have exactly the same keys and the
+value for each key in the first object is equal to the value of the
+corresponding key in the second object.
+.IP \(bu 2
+Two true, false or null values have no "contents", so they are equal
+if their types are equal. (Because these values are singletons,
+their equality can actually be tested with \fB==\fP\&.)
+.UNINDENT
+.sp
+The following function can be used to test whether two JSON values are
+equal.
+.INDENT 0.0
+.TP
+.B int json_equal(json_t\fI\ *value1\fP, json_t\fI\ *value2\fP)
+Returns 1 if \fIvalue1\fP and \fIvalue2\fP are equal, as defined above.
+Returns 0 if they are inequal or one or both of the pointers are
+\fINULL\fP\&.
+.UNINDENT
+.SS Copying
+.sp
+Because of reference counting, passing JSON values around doesn\(aqt
+require copying them. But sometimes a fresh copy of a JSON value is
+needed. For example, if you need to modify an array, but still want to
+use the original afterwards, you should take a copy of it first.
+.sp
+Jansson supports two kinds of copying: shallow and deep. There is a
+difference between these methods only for arrays and objects. Shallow
+copying only copies the first level value (array or object) and uses
+the same child values in the copied value. Deep copying makes a fresh
+copy of the child values, too. Moreover, all the child values are deep
+copied in a recursive fashion.
+.INDENT 0.0
+.TP
+.B json_t *json_copy(json_t\fI\ *value\fP)
+Return value: New reference.
+.sp
+Returns a shallow copy of \fIvalue\fP, or \fINULL\fP on error.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B json_t *json_deep_copy(const json_t\fI\ *value\fP)
+Return value: New reference.
+.sp
+Returns a deep copy of \fIvalue\fP, or \fINULL\fP on error.
+.UNINDENT
+.SS Custom Memory Allocation
+.sp
+By default, Jansson uses \fBmalloc()\fP and \fBfree()\fP for
+memory allocation. These functions can be overridden if custom
+behavior is needed.
+.INDENT 0.0
+.TP
+.B json_malloc_t
+A typedef for a function pointer with \fBmalloc()\fP\(aqs
+signature:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+typedef void *(*json_malloc_t)(size_t);
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B json_free_t
+A typedef for a function pointer with \fBfree()\fP\(aqs
+signature:
+.INDENT 7.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+typedef void (*json_free_t)(void *);
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B void json_set_alloc_funcs(json_malloc_t\fI\ malloc_fn\fP, json_free_t\fI\ free_fn\fP)
+Use \fImalloc_fn\fP instead of \fBmalloc()\fP and \fIfree_fn\fP instead
+of \fBfree()\fP\&. This function has to be called before any other
+Jansson\(aqs API functions to ensure that all memory operations use
+the same functions.
+.UNINDENT
+.sp
+\fBExamples:\fP
+.sp
+Circumvent problems with different CRT heaps on Windows by using
+application\(aqs \fBmalloc()\fP and \fBfree()\fP:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+json_set_alloc_funcs(malloc, free);
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+Use the \fI\%Boehm\(aqs conservative garbage collector\fP for memory
+operations:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+json_set_alloc_funcs(GC_malloc, GC_free);
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+Allow storing sensitive data (e.g. passwords or encryption keys) in
+JSON structures by zeroing all memory when freed:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft CW
+static void *secure_malloc(size_t size)
+{
+    /* Store the memory area size in the beginning of the block */
+    void *ptr = malloc(size + 8);
+    *((size_t *)ptr) = size;
+    return ptr + 8;
+}
+
+static void secure_free(void *ptr)
+{
+    size_t size;
+
+    ptr \-= 8;
+    size = *((size_t *)ptr);
+
+    guaranteed_memset(ptr, 0, size + 8);
+    free(ptr);
+}
+
+int main()
+{
+    json_set_alloc_funcs(secure_malloc, secure_free);
+    /* ... */
+}
+.ft R
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+For more information about the issues of storing sensitive data in
+memory, see
+\fI\%http://www.dwheeler.com/secure\-programs/Secure\-Programs\-HOWTO/protect\-secrets.html\fP\&.
+The page also explains the \fBguaranteed_memset()\fP function used
+in the example and gives a sample implementation for it.
+.SS Changes in Jansson
+.SS Version 2.7
+.sp
+Released 2014\-10\-02
+.INDENT 0.0
+.IP \(bu 2
+New features:
+.INDENT 2.0
+.IP \(bu 2
+\fBjson_pack()\fP and friends: Add format specifiers \fBs%\fP and \fB+%\fP
+for a size_t string length (#141).
+.IP \(bu 2
+\fBjson_unpack()\fP and friends: Add format specifier \fBs%\fP for
+unpacking the string length along with the string itself (#141).
+.IP \(bu 2
+Add length\-aware string constructors \fBjson_stringn()\fP and
+\fBjson_stringn_nocheck()\fP, length\-aware string mutators
+\fBjson_string_setn()\fP and \fBjson_string_setn_nocheck()\fP, and a
+function for getting string\(aqs length \fBjson_string_length()\fP (#141,
+#143).
+.IP \(bu 2
+Support \fB\eu0000\fP escapes in the decoder. The support can be
+enabled by using the \fBJSON_ALLOW_NUL\fP decoding flag (#141).
+.IP \(bu 2
+Add \fBjson_boolean_value()\fP as an alias for \fBjson_is_true()\fP
+(#146).
+.IP \(bu 2
+Add JSON_REAL_PRECISION encoding flag/macro for controlling real
+number precision (#178).
+.IP \(bu 2
+Define the maximum indentation as JSON_MAX_INDENT (#191).
+.UNINDENT
+.IP \(bu 2
+Bug fixes:
+.INDENT 2.0
+.IP \(bu 2
+Some malformed \fB\euNNNN\fP escapes could crash the decoder with an
+assertion failure.
+.IP \(bu 2
+Avoid integer overflows with very long strings in UTF\-8 decoder and
+hashtable.
+.IP \(bu 2
+Check for \fINULL\fP key in \fBjson_object_get()\fP and
+\fBjson_object_del()\fP (#151).
+.IP \(bu 2
+Enhance hashtable seeding on Windows (#162).
+.IP \(bu 2
+\fBjson_unpack()\fP: Allow mixing JSON_STRICT with optional keys
+(#162, #163).
+.IP \(bu 2
+Fix int/int32 mismatch (#142).
+.IP \(bu 2
+Parse subnormal numbers correctly (#202).
+.UNINDENT
+.IP \(bu 2
+Build:
+.INDENT 2.0
+.IP \(bu 2
+Remove VS2010 build files. CMake should be used on Windows instead
+(#165).
+.IP \(bu 2
+Fix CMake build flags for MinGW (#193).
+.IP \(bu 2
+Add CMake config files for find_package. Rename config.h to
+jansson_private_config.h (#157, #159).
+.IP \(bu 2
+Make Valgrind checks work with CMake (#160).
+.IP \(bu 2
+Fix feature checks to use correct __ATOMIC flags.
+.IP \(bu 2
+Fix CMake checks for uint16_t and uint8_t support (#177).
+.IP \(bu 2
+Make Jansson build on SmartOS/Solaris (#171).
+.IP \(bu 2
+Work around a GCC bug on Solaris (#175).
+.IP \(bu 2
+Fix autoreconf on Debian (#182).
+.IP \(bu 2
+Don\(aqt use GNU make specific export for global AM_CFLAGS (#203,
+#204).
+.IP \(bu 2
+Fix building on Android using the supplied Android.mk (#166,
+#174).
+.IP \(bu 2
+Android.mk: Add \-DHAVE_STDINT_H to LOCAL_CFLAGS (#200).
+.UNINDENT
+.IP \(bu 2
+Documentation:
+.INDENT 2.0
+.IP \(bu 2
+Document JANSSON_BUILD_SHARED_LIBS CMake option (#187).
+.UNINDENT
+.IP \(bu 2
+Tests:
+.INDENT 2.0
+.IP \(bu 2
+Close file handles correctly (#198).
+.UNINDENT
+.IP \(bu 2
+Other changes:
+.INDENT 2.0
+.IP \(bu 2
+\fB\euNNNN\fP escapes are now encoded in upper case for better
+readability.
+.IP \(bu 2
+Enable usage of AddressSanitizer (#180).
+.UNINDENT
+.UNINDENT
+.SS Version 2.6
+.sp
+Released 2014\-02\-11
+.INDENT 0.0
+.IP \(bu 2
+Security:
+.INDENT 2.0
+.IP \(bu 2
+CVE\-2013\-6401: The hash function used by the hashtable
+implementation has been changed, and is automatically seeded with
+random data when the first JSON object is created. This prevents
+an attacker from causing large JSON objects with specially crafted
+keys perform poorly.
+.UNINDENT
+.IP \(bu 2
+New features:
+.INDENT 2.0
+.IP \(bu 2
+\fBjson_object_seed()\fP: Set the seed value of the hash function.
+.UNINDENT
+.IP \(bu 2
+Bug fixes:
+.INDENT 2.0
+.IP \(bu 2
+Include CMake specific files in the release tarball.
+.UNINDENT
+.IP \(bu 2
+Documentation:
+.INDENT 2.0
+.IP \(bu 2
+Fix tutorial source to send a User\-Agent header, which is now
+required by the GitHub API.
+.IP \(bu 2
+Set all memory to zero in secure_free() example.
+.UNINDENT
+.UNINDENT
+.SS Version 2.5
+.sp
+Released 2013\-09\-19
+.INDENT 0.0
+.IP \(bu 2
+New features:
+.INDENT 2.0
+.IP \(bu 2
+\fBjson_pack()\fP and friends: Add format specifiers \fBs#\fP, \fB+\fP and
+\fB+#\fP\&.
+.IP \(bu 2
+Add \fBJSON_DECODE_INT_AS_REAL\fP decoding flag to treat all numbers
+as real in the decoder (#123).
+.IP \(bu 2
+Add \fBjson_array_foreach()\fP, paralleling \fBjson_object_foreach()\fP
+(#118).
+.UNINDENT
+.IP \(bu 2
+Bug fixes:
+.INDENT 2.0
+.IP \(bu 2
+\fBjson_dumps()\fP and friends: Don\(aqt crash if json is \fINULL\fP and
+\fBJSON_ENCODE_ANY\fP is set.
+.IP \(bu 2
+Fix a theoretical integer overflow in \fBjsonp_strdup()\fP\&.
+.IP \(bu 2
+Fix \fBl_isxdigit()\fP macro (#97).
+.IP \(bu 2
+Fix an off\-by\-one error in \fBjson_array_remove()\fP\&.
+.UNINDENT
+.IP \(bu 2
+Build:
+.INDENT 2.0
+.IP \(bu 2
+Support CMake in addition to GNU Autotools (#106, #107, #112,
+#115, #120, #127).
+.IP \(bu 2
+Support building for Android (#109).
+.IP \(bu 2
+Don\(aqt use \fB\-Werror\fP by default.
+.IP \(bu 2
+Support building and testing with VPATH (#93).
+.IP \(bu 2
+Fix compilation when \fBNDEBUG\fP is defined (#128)
+.UNINDENT
+.IP \(bu 2
+Tests:
+.INDENT 2.0
+.IP \(bu 2
+Fix a refleak in \fBtest/bin/json_process.c\fP\&.
+.UNINDENT
+.IP \(bu 2
+Documentation:
+.INDENT 2.0
+.IP \(bu 2
+Clarify the return value of \fBjson_load_callback_t()\fP\&.
+.IP \(bu 2
+Document how to circumvent problems with separate heaps on Windows.
+.IP \(bu 2
+Fix memory leaks and warnings in \fBgithub_commits.c\fP\&.
+.IP \(bu 2
+Use \fBjson_decref()\fP properly in tutorial.
+.UNINDENT
+.IP \(bu 2
+Other:
+.INDENT 2.0
+.IP \(bu 2
+Make it possible to forward declare \fBstruct json_t\fP\&.
+.UNINDENT
+.UNINDENT
+.SS Version 2.4
+.sp
+Released 2012\-09\-23
+.INDENT 0.0
+.IP \(bu 2
+New features:
+.INDENT 2.0
+.IP \(bu 2
+Add \fBjson_boolean()\fP macro that returns the JSON true or false
+value based on its argument (#86).
+.IP \(bu 2
+Add \fBjson_load_callback()\fP that calls a callback function
+repeatedly to read the JSON input (#57).
+.IP \(bu 2
+Add JSON_ESCAPE_SLASH encoding flag to escape all occurences of
+\fB/\fP with \fB\e/\fP\&.
+.UNINDENT
+.IP \(bu 2
+Bug fixes:
+.INDENT 2.0
+.IP \(bu 2
+Check for and reject NaN and Inf values for reals. Encoding these
+values resulted in invalid JSON.
+.IP \(bu 2
+Fix \fBjson_real_set()\fP to return \-1 on error.
+.UNINDENT
+.IP \(bu 2
+Build:
+.INDENT 2.0
+.IP \(bu 2
+Jansson now builds on Windows with Visual Studio 2010, and
+includes solution and project files in \fBwin32/vs2010/\fP
+directory.
+.IP \(bu 2
+Fix build warnings (#77, #78).
+.IP \(bu 2
+Add \fB\-no\-undefined\fP to LDFLAGS (#90).
+.UNINDENT
+.IP \(bu 2
+Tests:
+.INDENT 2.0
+.IP \(bu 2
+Fix the symbol exports test on Linux/PPC64 (#88).
+.UNINDENT
+.IP \(bu 2
+Documentation:
+.INDENT 2.0
+.IP \(bu 2
+Fix typos (#73, #84).
+.UNINDENT
+.UNINDENT
+.SS Version 2.3.1
+.sp
+Released 2012\-04\-20
+.INDENT 0.0
+.IP \(bu 2
+Build issues:
+.INDENT 2.0
+.IP \(bu 2
+Only use \fBlong long\fP if \fBstrtoll()\fP is also available.
+.UNINDENT
+.IP \(bu 2
+Documentation:
+.INDENT 2.0
+.IP \(bu 2
+Fix the names of library version constants in documentation. (#52)
+.IP \(bu 2
+Change the tutorial to use GitHub API v3. (#65)
+.UNINDENT
+.IP \(bu 2
+Tests:
+.INDENT 2.0
+.IP \(bu 2
+Make some tests locale independent. (#51)
+.IP \(bu 2
+Distribute the library exports test in the tarball.
+.IP \(bu 2
+Make test run on shells that don\(aqt support the \fBexport FOO=bar\fP
+syntax.
+.UNINDENT
+.UNINDENT
+.SS Version 2.3
+.sp
+Released 2012\-01\-27
+.INDENT 0.0
+.IP \(bu 2
+New features:
+.INDENT 2.0
+.IP \(bu 2
+\fBjson_unpack()\fP and friends: Add support for optional object keys
+with the \fB{s?o}\fP syntax.
+.IP \(bu 2
+Add \fBjson_object_update_existing()\fP and
+\fBjson_object_update_missing()\fP, for updating only existing keys or
+only adding missing keys to an object. (#37)
+.IP \(bu 2
+Add \fBjson_object_foreach()\fP for more convenient iteration over
+objects. (#45, #46)
+.IP \(bu 2
+When decoding JSON, write the number of bytes that were read from
+input to \fBerror.position\fP also on success. This is handy with
+\fBJSON_DISABLE_EOF_CHECK\fP\&.
+.IP \(bu 2
+Add support for decoding any JSON value, not just arrays or
+objects. The support is enabled with the new \fBJSON_DECODE_ANY\fP
+flag. Patch by Andrea Marchesini. (#4)
+.UNINDENT
+.IP \(bu 2
+Bug fixes
+.INDENT 2.0
+.IP \(bu 2
+Avoid problems with object\(aqs serial number growing too big. (#40,
+#41)
+.IP \(bu 2
+Decoding functions now return NULL if the first argument is NULL.
+Patch by Andrea Marchesini.
+.IP \(bu 2
+Include \fBjansson_config.h.win32\fP in the distribution tarball.
+.IP \(bu 2
+Remove \fB+\fP and leading zeros from exponents in the encoder.
+(#39)
+.IP \(bu 2
+Make Jansson build and work on MinGW. (#39, #38)
+.UNINDENT
+.IP \(bu 2
+Documentation
+.INDENT 2.0
+.IP \(bu 2
+Note that the same JSON values must not be encoded in parallel by
+separate threads. (#42)
+.IP \(bu 2
+Document MinGW support.
+.UNINDENT
+.UNINDENT
+.SS Version 2.2.1
+.sp
+Released 2011\-10\-06
+.INDENT 0.0
+.IP \(bu 2
+Bug fixes:
+.INDENT 2.0
+.IP \(bu 2
+Fix real number encoding and decoding under non\-C locales. (#32)
+.IP \(bu 2
+Fix identifier decoding under non\-UTF\-8 locales. (#35)
+.IP \(bu 2
+\fBjson_load_file()\fP: Open the input file in binary mode for maximum
+compatiblity.
+.UNINDENT
+.IP \(bu 2
+Documentation:
+.INDENT 2.0
+.IP \(bu 2
+Clarify the lifecycle of the result of the \fBs\fP fromat of
+\fBjson_unpack()\fP\&. (#31)
+.IP \(bu 2
+Add some portability info. (#36)
+.IP \(bu 2
+Little clarifications here and there.
+.UNINDENT
+.IP \(bu 2
+Other:
+.INDENT 2.0
+.IP \(bu 2
+Some style fixes, issues detected by static analyzers.
+.UNINDENT
+.UNINDENT
+.SS Version 2.2
+.sp
+Released 2011\-09\-03
+.INDENT 0.0
+.IP \(bu 2
+New features:
+.INDENT 2.0
+.IP \(bu 2
+\fBjson_dump_callback()\fP: Pass the encoder output to a callback
+function in chunks.
+.UNINDENT
+.IP \(bu 2
+Bug fixes:
+.INDENT 2.0
+.IP \(bu 2
+\fBjson_string_set()\fP: Check that target is a string and value is
+not NULL.
+.UNINDENT
+.IP \(bu 2
+Other:
+.INDENT 2.0
+.IP \(bu 2
+Documentation typo fixes and clarifications.
+.UNINDENT
+.UNINDENT
+.SS Version 2.1
+.sp
+Released 2011\-06\-10
+.INDENT 0.0
+.IP \(bu 2
+New features:
+.INDENT 2.0
+.IP \(bu 2
+\fBjson_loadb()\fP: Decode a string with a given size, useful if the
+string is not null terminated.
+.IP \(bu 2
+Add \fBJSON_ENCODE_ANY\fP encoding flag to allow encoding any JSON
+value. By default, only arrays and objects can be encoded. (#19)
+.IP \(bu 2
+Add \fBJSON_REJECT_DUPLICATES\fP decoding flag to issue a decoding
+error if any JSON object in the input contins duplicate keys. (#3)
+.IP \(bu 2
+Add \fBJSON_DISABLE_EOF_CHECK\fP decoding flag to stop decoding after a
+valid JSON input. This allows other data after the JSON data.
+.UNINDENT
+.IP \(bu 2
+Bug fixes:
+.INDENT 2.0
+.IP \(bu 2
+Fix an additional memory leak when memory allocation fails in
+\fBjson_object_set()\fP and friends.
+.IP \(bu 2
+Clear errno before calling \fBstrtod()\fP for better portability. (#27)
+.UNINDENT
+.IP \(bu 2
+Building:
+.INDENT 2.0
+.IP \(bu 2
+Avoid set\-but\-not\-used warning/error in a test. (#20)
+.UNINDENT
+.IP \(bu 2
+Other:
+.INDENT 2.0
+.IP \(bu 2
+Minor clarifications to documentation.
+.UNINDENT
+.UNINDENT
+.SS Version 2.0.1
+.sp
+Released 2011\-03\-31
+.INDENT 0.0
+.IP \(bu 2
+Bug fixes:
+.INDENT 2.0
+.IP \(bu 2
+Replace a few \fBmalloc()\fP and \fBfree()\fP calls with their
+counterparts that support custom memory management.
+.IP \(bu 2
+Fix object key hashing in json_unpack() strict checking mode.
+.IP \(bu 2
+Fix the parentheses in \fBJANSSON_VERSION_HEX\fP macro.
+.IP \(bu 2
+Fix \fBjson_object_size()\fP return value.
+.IP \(bu 2
+Fix a few compilation issues.
+.UNINDENT
+.IP \(bu 2
+Portability:
+.INDENT 2.0
+.IP \(bu 2
+Enhance portability of \fBva_copy()\fP\&.
+.IP \(bu 2
+Test framework portability enhancements.
+.UNINDENT
+.IP \(bu 2
+Documentation:
+.INDENT 2.0
+.IP \(bu 2
+Distribute \fBdoc/upgrading.rst\fP with the source tarball.
+.IP \(bu 2
+Build documentation in strict mode in \fBmake distcheck\fP\&.
+.UNINDENT
+.UNINDENT
+.SS Version 2.0
+.sp
+Released 2011\-02\-28
+.sp
+This release is backwards incompatible with the 1.x release series.
+See the chapter "Upgrading from older versions" in documentation for
+details.
+.INDENT 0.0
+.IP \(bu 2
+Backwards incompatible changes:
+.INDENT 2.0
+.IP \(bu 2
+Unify unsigned integer usage in the API: All occurences of
+unsigned int and unsigned long have been replaced with size_t.
+.IP \(bu 2
+Change JSON integer\(aqs underlying type to the widest signed integer
+type available, i.e. long long if it\(aqs supported, otherwise long.
+Add a typedef json_int_t that defines the type.
+.IP \(bu 2
+Change the maximum indentation depth to 31 spaces in encoder. This
+frees up bits from the flags parameter of encoding functions
+\fBjson_dumpf()\fP, \fBjson_dumps()\fP and \fBjson_dump_file()\fP\&.
+.IP \(bu 2
+For future needs, add a flags parameter to all decoding functions
+\fBjson_loadf()\fP, \fBjson_loads()\fP and \fBjson_load_file()\fP\&.
+.UNINDENT
+.IP \(bu 2
+New features
+.INDENT 2.0
+.IP \(bu 2
+\fBjson_pack()\fP, \fBjson_pack_ex()\fP, \fBjson_vpack_ex()\fP: Create JSON
+values based on a format string.
+.IP \(bu 2
+\fBjson_unpack()\fP, \fBjson_unpack_ex()\fP, \fBjson_vunpack_ex()\fP: Simple
+value extraction and validation functionality based on a format
+string.
+.IP \(bu 2
+Add column, position and source fields to the \fBjson_error_t\fP
+struct.
+.IP \(bu 2
+Enhance error reporting in the decoder.
+.IP \(bu 2
+\fBJANSSON_VERSION\fP et al.: Preprocessor constants that define the
+library version.
+.IP \(bu 2
+\fBjson_set_alloc_funcs()\fP: Set custom memory allocation functions.
+.UNINDENT
+.IP \(bu 2
+Fix many portability issues, especially on Windows.
+.IP \(bu 2
+Configuration
+.INDENT 2.0
+.IP \(bu 2
+Add file \fBjansson_config.h\fP that contains site specific
+configuration. It\(aqs created automatically by the configure script,
+or can be created by hand if the configure script cannot be used.
+The file \fBjansson_config.h.win32\fP can be used without
+modifications on Windows systems.
+.IP \(bu 2
+Add a section to documentation describing how to build Jansson on
+Windows.
+.IP \(bu 2
+Documentation now requires Sphinx 1.0 or newer.
+.UNINDENT
+.UNINDENT
+.SS Version 1.3
+.sp
+Released 2010\-06\-13
+.INDENT 0.0
+.IP \(bu 2
+New functions:
+.INDENT 2.0
+.IP \(bu 2
+\fBjson_object_iter_set()\fP, \fBjson_object_iter_set_new()\fP: Change
+object contents while iterating over it.
+.IP \(bu 2
+\fBjson_object_iter_at()\fP: Return an iterator that points to a
+specific object item.
+.UNINDENT
+.IP \(bu 2
+New encoding flags:
+.INDENT 2.0
+.IP \(bu 2
+\fBJSON_PRESERVE_ORDER\fP: Preserve the insertion order of object
+keys.
+.UNINDENT
+.IP \(bu 2
+Bug fixes:
+.INDENT 2.0
+.IP \(bu 2
+Fix an error that occured when an array or object was first
+encoded as empty, then populated with some data, and then
+re\-encoded
+.IP \(bu 2
+Fix the situation like above, but when the first encoding resulted
+in an error
+.UNINDENT
+.IP \(bu 2
+Documentation:
+.INDENT 2.0
+.IP \(bu 2
+Clarify the documentation on reference stealing, providing an
+example usage pattern
+.UNINDENT
+.UNINDENT
+.SS Version 1.2.1
+.sp
+Released 2010\-04\-03
+.INDENT 0.0
+.IP \(bu 2
+Bug fixes:
+.INDENT 2.0
+.IP \(bu 2
+Fix reference counting on \fBtrue\fP, \fBfalse\fP and \fBnull\fP
+.IP \(bu 2
+Estimate real number underflows in decoder with 0.0 instead of
+issuing an error
+.UNINDENT
+.IP \(bu 2
+Portability:
+.INDENT 2.0
+.IP \(bu 2
+Make \fBint32_t\fP available on all systems
+.IP \(bu 2
+Support compilers that don\(aqt have the \fBinline\fP keyword
+.IP \(bu 2
+Require Autoconf 2.60 (for \fBint32_t\fP)
+.UNINDENT
+.IP \(bu 2
+Tests:
+.INDENT 2.0
+.IP \(bu 2
+Print test names correctly when \fBVERBOSE=1\fP
+.IP \(bu 2
+\fBtest/suites/api\fP: Fail when a test fails
+.IP \(bu 2
+Enhance tests for iterators
+.IP \(bu 2
+Enhance tests for decoding texts that contain null bytes
+.UNINDENT
+.IP \(bu 2
+Documentation:
+.INDENT 2.0
+.IP \(bu 2
+Don\(aqt remove \fBchanges.rst\fP in \fBmake clean\fP
+.IP \(bu 2
+Add a chapter on RFC conformance
+.UNINDENT
+.UNINDENT
+.SS Version 1.2
+.sp
+Released 2010\-01\-21
+.INDENT 0.0
+.IP \(bu 2
+New functions:
+.INDENT 2.0
+.IP \(bu 2
+\fBjson_equal()\fP: Test whether two JSON values are equal
+.IP \(bu 2
+\fBjson_copy()\fP and \fBjson_deep_copy()\fP: Make shallow and deep copies
+of JSON values
+.IP \(bu 2
+Add a version of all functions taking a string argument that
+doesn\(aqt check for valid UTF\-8: \fBjson_string_nocheck()\fP,
+\fBjson_string_set_nocheck()\fP, \fBjson_object_set_nocheck()\fP,
+\fBjson_object_set_new_nocheck()\fP
+.UNINDENT
+.IP \(bu 2
+New encoding flags:
+.INDENT 2.0
+.IP \(bu 2
+\fBJSON_SORT_KEYS\fP: Sort objects by key
+.IP \(bu 2
+\fBJSON_ENSURE_ASCII\fP: Escape all non\-ASCII Unicode characters
+.IP \(bu 2
+\fBJSON_COMPACT\fP: Use a compact representation with all unneeded
+whitespace stripped
+.UNINDENT
+.IP \(bu 2
+Bug fixes:
+.INDENT 2.0
+.IP \(bu 2
+Revise and unify whitespace usage in encoder: Add spaces between
+array and object items, never append newline to output.
+.IP \(bu 2
+Remove const qualifier from the \fBjson_t\fP parameter in
+\fBjson_string_set()\fP, \fBjson_integer_set()\fP and \fBjson_real_set()\fP\&.
+.IP \(bu 2
+Use \fBint32_t\fP internally for representing Unicode code points
+(int is not enough on all platforms)
+.UNINDENT
+.IP \(bu 2
+Other changes:
+.INDENT 2.0
+.IP \(bu 2
+Convert \fBCHANGES\fP (this file) to reStructured text and add it to
+HTML documentation
+.IP \(bu 2
+The test system has been refactored. Python is no longer required
+to run the tests.
+.IP \(bu 2
+Documentation can now be built by invoking \fBmake html\fP
+.IP \(bu 2
+Support for pkg\-config
+.UNINDENT
+.UNINDENT
+.SS Version 1.1.3
+.sp
+Released 2009\-12\-18
+.INDENT 0.0
+.IP \(bu 2
+Encode reals correctly, so that first encoding and then decoding a
+real always produces the same value
+.IP \(bu 2
+Don\(aqt export private symbols in \fBlibjansson.so\fP
+.UNINDENT
+.SS Version 1.1.2
+.sp
+Released 2009\-11\-08
+.INDENT 0.0
+.IP \(bu 2
+Fix a bug where an error message was not produced if the input file
+could not be opened in \fBjson_load_file()\fP
+.IP \(bu 2
+Fix an assertion failure in decoder caused by a minus sign without a
+digit after it
+.IP \(bu 2
+Remove an unneeded include of \fBstdint.h\fP in \fBjansson.h\fP
+.UNINDENT
+.SS Version 1.1.1
+.sp
+Released 2009\-10\-26
+.INDENT 0.0
+.IP \(bu 2
+All documentation files were not distributed with v1.1; build
+documentation in make distcheck to prevent this in the future
+.IP \(bu 2
+Fix v1.1 release date in \fBCHANGES\fP
+.UNINDENT
+.SS Version 1.1
+.sp
+Released 2009\-10\-20
+.INDENT 0.0
+.IP \(bu 2
+API additions and improvements:
+.INDENT 2.0
+.IP \(bu 2
+Extend array and object APIs
+.IP \(bu 2
+Add functions to modify integer, real and string values
+.IP \(bu 2
+Improve argument validation
+.IP \(bu 2
+Use unsigned int instead of \fBuint32_t\fP for encoding flags
+.UNINDENT
+.IP \(bu 2
+Enhance documentation
+.INDENT 2.0
+.IP \(bu 2
+Add getting started guide and tutorial
+.IP \(bu 2
+Fix some typos
+.IP \(bu 2
+General clarifications and cleanup
+.UNINDENT
+.IP \(bu 2
+Check for integer and real overflows and underflows in decoder
+.IP \(bu 2
+Make singleton values thread\-safe (\fBtrue\fP, \fBfalse\fP and \fBnull\fP)
+.IP \(bu 2
+Enhance circular reference handling
+.IP \(bu 2
+Don\(aqt define \fB\-std=c99\fP in \fBAM_CFLAGS\fP
+.IP \(bu 2
+Add C++ guards to \fBjansson.h\fP
+.IP \(bu 2
+Minor performance and portability improvements
+.IP \(bu 2
+Expand test coverage
+.UNINDENT
+.SS Version 1.0.4
+.sp
+Released 2009\-10\-11
+.INDENT 0.0
+.IP \(bu 2
+Relax Autoconf version requirement to 2.59
+.IP \(bu 2
+Make Jansson compile on platforms where plain \fBchar\fP is unsigned
+.IP \(bu 2
+Fix API tests for object
+.UNINDENT
+.SS Version 1.0.3
+.sp
+Released 2009\-09\-14
+.INDENT 0.0
+.IP \(bu 2
+Check for integer and real overflows and underflows in decoder
+.IP \(bu 2
+Use the Python json module for tests, or simplejson if the json
+module is not found
+.IP \(bu 2
+Distribute changelog (this file)
+.UNINDENT
+.SS Version 1.0.2
+.sp
+Released 2009\-09\-08
+.INDENT 0.0
+.IP \(bu 2
+Handle EOF correctly in decoder
+.UNINDENT
+.SS Version 1.0.1
+.sp
+Released 2009\-09\-04
+.INDENT 0.0
+.IP \(bu 2
+Fixed broken \fBjson_is_boolean()\fP
+.UNINDENT
+.SS Version 1.0
+.sp
+Released 2009\-08\-25
+.INDENT 0.0
+.IP \(bu 2
+Initial release
+.UNINDENT
+.INDENT 0.0
+.IP \(bu 2
+\fIgenindex\fP
+.IP \(bu 2
+\fIsearch\fP
+.UNINDENT
+.sp
+.SH AUTHOR
+Petri Lehtinen
+.SH COPYRIGHT
+2009-2014, Petri Lehtinen
+.\" Generated by docutils manpage writer.
+.

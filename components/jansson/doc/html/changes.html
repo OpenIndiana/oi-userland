@@ -1,0 +1,720 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Changes in Jansson &mdash; Jansson 2.7 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '2.7',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Jansson 2.7 documentation" href="index.html" />
+    <link rel="prev" title="API Reference" href="apiref.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="apiref.html" title="API Reference"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Jansson 2.7 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="changes-in-jansson">
+<h1>Changes in Jansson<a class="headerlink" href="#changes-in-jansson" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="version-2-7">
+<h2>Version 2.7<a class="headerlink" href="#version-2-7" title="Permalink to this headline">¶</a></h2>
+<p>Released 2014-10-02</p>
+<ul class="simple">
+<li>New features:<ul>
+<li><a class="reference internal" href="apiref.html#c.json_pack" title="json_pack"><tt class="xref c c-func docutils literal"><span class="pre">json_pack()</span></tt></a> and friends: Add format specifiers <tt class="docutils literal"><span class="pre">s%</span></tt> and <tt class="docutils literal"><span class="pre">+%</span></tt>
+for a size_t string length (#141).</li>
+<li><a class="reference internal" href="apiref.html#c.json_unpack" title="json_unpack"><tt class="xref c c-func docutils literal"><span class="pre">json_unpack()</span></tt></a> and friends: Add format specifier <tt class="docutils literal"><span class="pre">s%</span></tt> for
+unpacking the string length along with the string itself (#141).</li>
+<li>Add length-aware string constructors <a class="reference internal" href="apiref.html#c.json_stringn" title="json_stringn"><tt class="xref c c-func docutils literal"><span class="pre">json_stringn()</span></tt></a> and
+<a class="reference internal" href="apiref.html#c.json_stringn_nocheck" title="json_stringn_nocheck"><tt class="xref c c-func docutils literal"><span class="pre">json_stringn_nocheck()</span></tt></a>, length-aware string mutators
+<a class="reference internal" href="apiref.html#c.json_string_setn" title="json_string_setn"><tt class="xref c c-func docutils literal"><span class="pre">json_string_setn()</span></tt></a> and <a class="reference internal" href="apiref.html#c.json_string_setn_nocheck" title="json_string_setn_nocheck"><tt class="xref c c-func docutils literal"><span class="pre">json_string_setn_nocheck()</span></tt></a>, and a
+function for getting string&#8217;s length <a class="reference internal" href="apiref.html#c.json_string_length" title="json_string_length"><tt class="xref c c-func docutils literal"><span class="pre">json_string_length()</span></tt></a> (#141,
+#143).</li>
+<li>Support <tt class="docutils literal"><span class="pre">\u0000</span></tt> escapes in the decoder. The support can be
+enabled by using the <tt class="docutils literal"><span class="pre">JSON_ALLOW_NUL</span></tt> decoding flag (#141).</li>
+<li>Add <a class="reference internal" href="apiref.html#c.json_boolean_value" title="json_boolean_value"><tt class="xref c c-func docutils literal"><span class="pre">json_boolean_value()</span></tt></a> as an alias for <a class="reference internal" href="apiref.html#c.json_is_true" title="json_is_true"><tt class="xref c c-func docutils literal"><span class="pre">json_is_true()</span></tt></a>
+(#146).</li>
+<li>Add JSON_REAL_PRECISION encoding flag/macro for controlling real
+number precision (#178).</li>
+<li>Define the maximum indentation as JSON_MAX_INDENT (#191).</li>
+</ul>
+</li>
+<li>Bug fixes:<ul>
+<li>Some malformed <tt class="docutils literal"><span class="pre">\uNNNN</span></tt> escapes could crash the decoder with an
+assertion failure.</li>
+<li>Avoid integer overflows with very long strings in UTF-8 decoder and
+hashtable.</li>
+<li>Check for <em>NULL</em> key in <a class="reference internal" href="apiref.html#c.json_object_get" title="json_object_get"><tt class="xref c c-func docutils literal"><span class="pre">json_object_get()</span></tt></a> and
+<a class="reference internal" href="apiref.html#c.json_object_del" title="json_object_del"><tt class="xref c c-func docutils literal"><span class="pre">json_object_del()</span></tt></a> (#151).</li>
+<li>Enhance hashtable seeding on Windows (#162).</li>
+<li><a class="reference internal" href="apiref.html#c.json_unpack" title="json_unpack"><tt class="xref c c-func docutils literal"><span class="pre">json_unpack()</span></tt></a>: Allow mixing JSON_STRICT with optional keys
+(#162, #163).</li>
+<li>Fix int/int32 mismatch (#142).</li>
+<li>Parse subnormal numbers correctly (#202).</li>
+</ul>
+</li>
+<li>Build:<ul>
+<li>Remove VS2010 build files. CMake should be used on Windows instead
+(#165).</li>
+<li>Fix CMake build flags for MinGW (#193).</li>
+<li>Add CMake config files for find_package. Rename config.h to
+jansson_private_config.h (#157, #159).</li>
+<li>Make Valgrind checks work with CMake (#160).</li>
+<li>Fix feature checks to use correct __ATOMIC flags.</li>
+<li>Fix CMake checks for uint16_t and uint8_t support (#177).</li>
+<li>Make Jansson build on SmartOS/Solaris (#171).</li>
+<li>Work around a GCC bug on Solaris (#175).</li>
+<li>Fix autoreconf on Debian (#182).</li>
+<li>Don&#8217;t use GNU make specific export for global AM_CFLAGS (#203,
+#204).</li>
+<li>Fix building on Android using the supplied Android.mk (#166,
+#174).</li>
+<li>Android.mk: Add -DHAVE_STDINT_H to LOCAL_CFLAGS (#200).</li>
+</ul>
+</li>
+<li>Documentation:<ul>
+<li>Document JANSSON_BUILD_SHARED_LIBS CMake option (#187).</li>
+</ul>
+</li>
+<li>Tests:<ul>
+<li>Close file handles correctly (#198).</li>
+</ul>
+</li>
+<li>Other changes:<ul>
+<li><tt class="docutils literal"><span class="pre">\uNNNN</span></tt> escapes are now encoded in upper case for better
+readability.</li>
+<li>Enable usage of AddressSanitizer (#180).</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="version-2-6">
+<h2>Version 2.6<a class="headerlink" href="#version-2-6" title="Permalink to this headline">¶</a></h2>
+<p>Released 2014-02-11</p>
+<ul class="simple">
+<li>Security:<ul>
+<li>CVE-2013-6401: The hash function used by the hashtable
+implementation has been changed, and is automatically seeded with
+random data when the first JSON object is created. This prevents
+an attacker from causing large JSON objects with specially crafted
+keys perform poorly.</li>
+</ul>
+</li>
+<li>New features:<ul>
+<li><a class="reference internal" href="apiref.html#c.json_object_seed" title="json_object_seed"><tt class="xref c c-func docutils literal"><span class="pre">json_object_seed()</span></tt></a>: Set the seed value of the hash function.</li>
+</ul>
+</li>
+<li>Bug fixes:<ul>
+<li>Include CMake specific files in the release tarball.</li>
+</ul>
+</li>
+<li>Documentation:<ul>
+<li>Fix tutorial source to send a User-Agent header, which is now
+required by the GitHub API.</li>
+<li>Set all memory to zero in secure_free() example.</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="version-2-5">
+<h2>Version 2.5<a class="headerlink" href="#version-2-5" title="Permalink to this headline">¶</a></h2>
+<p>Released 2013-09-19</p>
+<ul class="simple">
+<li>New features:<ul>
+<li><a class="reference internal" href="apiref.html#c.json_pack" title="json_pack"><tt class="xref c c-func docutils literal"><span class="pre">json_pack()</span></tt></a> and friends: Add format specifiers <tt class="docutils literal"><span class="pre">s#</span></tt>, <tt class="docutils literal"><span class="pre">+</span></tt> and
+<tt class="docutils literal"><span class="pre">+#</span></tt>.</li>
+<li>Add <tt class="docutils literal"><span class="pre">JSON_DECODE_INT_AS_REAL</span></tt> decoding flag to treat all numbers
+as real in the decoder (#123).</li>
+<li>Add <a class="reference internal" href="apiref.html#c.json_array_foreach" title="json_array_foreach"><tt class="xref c c-func docutils literal"><span class="pre">json_array_foreach()</span></tt></a>, paralleling <a class="reference internal" href="apiref.html#c.json_object_foreach" title="json_object_foreach"><tt class="xref c c-func docutils literal"><span class="pre">json_object_foreach()</span></tt></a>
+(#118).</li>
+</ul>
+</li>
+<li>Bug fixes:<ul>
+<li><a class="reference internal" href="apiref.html#c.json_dumps" title="json_dumps"><tt class="xref c c-func docutils literal"><span class="pre">json_dumps()</span></tt></a> and friends: Don&#8217;t crash if json is <em>NULL</em> and
+<tt class="docutils literal"><span class="pre">JSON_ENCODE_ANY</span></tt> is set.</li>
+<li>Fix a theoretical integer overflow in <tt class="xref c c-func docutils literal"><span class="pre">jsonp_strdup()</span></tt>.</li>
+<li>Fix <tt class="xref c c-func docutils literal"><span class="pre">l_isxdigit()</span></tt> macro (#97).</li>
+<li>Fix an off-by-one error in <a class="reference internal" href="apiref.html#c.json_array_remove" title="json_array_remove"><tt class="xref c c-func docutils literal"><span class="pre">json_array_remove()</span></tt></a>.</li>
+</ul>
+</li>
+<li>Build:<ul>
+<li>Support CMake in addition to GNU Autotools (#106, #107, #112,
+#115, #120, #127).</li>
+<li>Support building for Android (#109).</li>
+<li>Don&#8217;t use <tt class="docutils literal"><span class="pre">-Werror</span></tt> by default.</li>
+<li>Support building and testing with VPATH (#93).</li>
+<li>Fix compilation when <tt class="docutils literal"><span class="pre">NDEBUG</span></tt> is defined (#128)</li>
+</ul>
+</li>
+<li>Tests:<ul>
+<li>Fix a refleak in <tt class="docutils literal"><span class="pre">test/bin/json_process.c</span></tt>.</li>
+</ul>
+</li>
+<li>Documentation:<ul>
+<li>Clarify the return value of <a class="reference internal" href="apiref.html#c.json_load_callback_t" title="json_load_callback_t"><tt class="xref c c-func docutils literal"><span class="pre">json_load_callback_t()</span></tt></a>.</li>
+<li>Document how to circumvent problems with separate heaps on Windows.</li>
+<li>Fix memory leaks and warnings in <tt class="docutils literal"><span class="pre">github_commits.c</span></tt>.</li>
+<li>Use <a class="reference internal" href="apiref.html#c.json_decref" title="json_decref"><tt class="xref c c-func docutils literal"><span class="pre">json_decref()</span></tt></a> properly in tutorial.</li>
+</ul>
+</li>
+<li>Other:<ul>
+<li>Make it possible to forward declare <tt class="docutils literal"><span class="pre">struct</span> <span class="pre">json_t</span></tt>.</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="version-2-4">
+<h2>Version 2.4<a class="headerlink" href="#version-2-4" title="Permalink to this headline">¶</a></h2>
+<p>Released 2012-09-23</p>
+<ul class="simple">
+<li>New features:<ul>
+<li>Add <a class="reference internal" href="apiref.html#c.json_boolean" title="json_boolean"><tt class="xref c c-func docutils literal"><span class="pre">json_boolean()</span></tt></a> macro that returns the JSON true or false
+value based on its argument (#86).</li>
+<li>Add <a class="reference internal" href="apiref.html#c.json_load_callback" title="json_load_callback"><tt class="xref c c-func docutils literal"><span class="pre">json_load_callback()</span></tt></a> that calls a callback function
+repeatedly to read the JSON input (#57).</li>
+<li>Add JSON_ESCAPE_SLASH encoding flag to escape all occurences of
+<tt class="docutils literal"><span class="pre">/</span></tt> with <tt class="docutils literal"><span class="pre">\/</span></tt>.</li>
+</ul>
+</li>
+<li>Bug fixes:<ul>
+<li>Check for and reject NaN and Inf values for reals. Encoding these
+values resulted in invalid JSON.</li>
+<li>Fix <a class="reference internal" href="apiref.html#c.json_real_set" title="json_real_set"><tt class="xref c c-func docutils literal"><span class="pre">json_real_set()</span></tt></a> to return -1 on error.</li>
+</ul>
+</li>
+<li>Build:<ul>
+<li>Jansson now builds on Windows with Visual Studio 2010, and
+includes solution and project files in <tt class="docutils literal"><span class="pre">win32/vs2010/</span></tt>
+directory.</li>
+<li>Fix build warnings (#77, #78).</li>
+<li>Add <tt class="docutils literal"><span class="pre">-no-undefined</span></tt> to LDFLAGS (#90).</li>
+</ul>
+</li>
+<li>Tests:<ul>
+<li>Fix the symbol exports test on Linux/PPC64 (#88).</li>
+</ul>
+</li>
+<li>Documentation:<ul>
+<li>Fix typos (#73, #84).</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="version-2-3-1">
+<h2>Version 2.3.1<a class="headerlink" href="#version-2-3-1" title="Permalink to this headline">¶</a></h2>
+<p>Released 2012-04-20</p>
+<ul class="simple">
+<li>Build issues:<ul>
+<li>Only use <tt class="docutils literal"><span class="pre">long</span> <span class="pre">long</span></tt> if <tt class="docutils literal"><span class="pre">strtoll()</span></tt> is also available.</li>
+</ul>
+</li>
+<li>Documentation:<ul>
+<li>Fix the names of library version constants in documentation. (#52)</li>
+<li>Change the tutorial to use GitHub API v3. (#65)</li>
+</ul>
+</li>
+<li>Tests:<ul>
+<li>Make some tests locale independent. (#51)</li>
+<li>Distribute the library exports test in the tarball.</li>
+<li>Make test run on shells that don&#8217;t support the <tt class="docutils literal"><span class="pre">export</span> <span class="pre">FOO=bar</span></tt>
+syntax.</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="version-2-3">
+<h2>Version 2.3<a class="headerlink" href="#version-2-3" title="Permalink to this headline">¶</a></h2>
+<p>Released 2012-01-27</p>
+<ul class="simple">
+<li>New features:<ul>
+<li><a class="reference internal" href="apiref.html#c.json_unpack" title="json_unpack"><tt class="xref c c-func docutils literal"><span class="pre">json_unpack()</span></tt></a> and friends: Add support for optional object keys
+with the <tt class="docutils literal"><span class="pre">{s?o}</span></tt> syntax.</li>
+<li>Add <a class="reference internal" href="apiref.html#c.json_object_update_existing" title="json_object_update_existing"><tt class="xref c c-func docutils literal"><span class="pre">json_object_update_existing()</span></tt></a> and
+<a class="reference internal" href="apiref.html#c.json_object_update_missing" title="json_object_update_missing"><tt class="xref c c-func docutils literal"><span class="pre">json_object_update_missing()</span></tt></a>, for updating only existing keys or
+only adding missing keys to an object. (#37)</li>
+<li>Add <a class="reference internal" href="apiref.html#c.json_object_foreach" title="json_object_foreach"><tt class="xref c c-func docutils literal"><span class="pre">json_object_foreach()</span></tt></a> for more convenient iteration over
+objects. (#45, #46)</li>
+<li>When decoding JSON, write the number of bytes that were read from
+input to <tt class="docutils literal"><span class="pre">error.position</span></tt> also on success. This is handy with
+<tt class="docutils literal"><span class="pre">JSON_DISABLE_EOF_CHECK</span></tt>.</li>
+<li>Add support for decoding any JSON value, not just arrays or
+objects. The support is enabled with the new <tt class="docutils literal"><span class="pre">JSON_DECODE_ANY</span></tt>
+flag. Patch by Andrea Marchesini. (#4)</li>
+</ul>
+</li>
+<li>Bug fixes<ul>
+<li>Avoid problems with object&#8217;s serial number growing too big. (#40,
+#41)</li>
+<li>Decoding functions now return NULL if the first argument is NULL.
+Patch by Andrea Marchesini.</li>
+<li>Include <tt class="docutils literal"><span class="pre">jansson_config.h.win32</span></tt> in the distribution tarball.</li>
+<li>Remove <tt class="docutils literal"><span class="pre">+</span></tt> and leading zeros from exponents in the encoder.
+(#39)</li>
+<li>Make Jansson build and work on MinGW. (#39, #38)</li>
+</ul>
+</li>
+<li>Documentation<ul>
+<li>Note that the same JSON values must not be encoded in parallel by
+separate threads. (#42)</li>
+<li>Document MinGW support.</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="version-2-2-1">
+<h2>Version 2.2.1<a class="headerlink" href="#version-2-2-1" title="Permalink to this headline">¶</a></h2>
+<p>Released 2011-10-06</p>
+<ul class="simple">
+<li>Bug fixes:<ul>
+<li>Fix real number encoding and decoding under non-C locales. (#32)</li>
+<li>Fix identifier decoding under non-UTF-8 locales. (#35)</li>
+<li><a class="reference internal" href="apiref.html#c.json_load_file" title="json_load_file"><tt class="xref c c-func docutils literal"><span class="pre">json_load_file()</span></tt></a>: Open the input file in binary mode for maximum
+compatiblity.</li>
+</ul>
+</li>
+<li>Documentation:<ul>
+<li>Clarify the lifecycle of the result of the <tt class="docutils literal"><span class="pre">s</span></tt> fromat of
+<a class="reference internal" href="apiref.html#c.json_unpack" title="json_unpack"><tt class="xref c c-func docutils literal"><span class="pre">json_unpack()</span></tt></a>. (#31)</li>
+<li>Add some portability info. (#36)</li>
+<li>Little clarifications here and there.</li>
+</ul>
+</li>
+<li>Other:<ul>
+<li>Some style fixes, issues detected by static analyzers.</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="version-2-2">
+<h2>Version 2.2<a class="headerlink" href="#version-2-2" title="Permalink to this headline">¶</a></h2>
+<p>Released 2011-09-03</p>
+<ul class="simple">
+<li>New features:<ul>
+<li><a class="reference internal" href="apiref.html#c.json_dump_callback" title="json_dump_callback"><tt class="xref c c-func docutils literal"><span class="pre">json_dump_callback()</span></tt></a>: Pass the encoder output to a callback
+function in chunks.</li>
+</ul>
+</li>
+<li>Bug fixes:<ul>
+<li><a class="reference internal" href="apiref.html#c.json_string_set" title="json_string_set"><tt class="xref c c-func docutils literal"><span class="pre">json_string_set()</span></tt></a>: Check that target is a string and value is
+not NULL.</li>
+</ul>
+</li>
+<li>Other:<ul>
+<li>Documentation typo fixes and clarifications.</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="version-2-1">
+<h2>Version 2.1<a class="headerlink" href="#version-2-1" title="Permalink to this headline">¶</a></h2>
+<p>Released 2011-06-10</p>
+<ul class="simple">
+<li>New features:<ul>
+<li><a class="reference internal" href="apiref.html#c.json_loadb" title="json_loadb"><tt class="xref c c-func docutils literal"><span class="pre">json_loadb()</span></tt></a>: Decode a string with a given size, useful if the
+string is not null terminated.</li>
+<li>Add <tt class="docutils literal"><span class="pre">JSON_ENCODE_ANY</span></tt> encoding flag to allow encoding any JSON
+value. By default, only arrays and objects can be encoded. (#19)</li>
+<li>Add <tt class="docutils literal"><span class="pre">JSON_REJECT_DUPLICATES</span></tt> decoding flag to issue a decoding
+error if any JSON object in the input contins duplicate keys. (#3)</li>
+<li>Add <tt class="docutils literal"><span class="pre">JSON_DISABLE_EOF_CHECK</span></tt> decoding flag to stop decoding after a
+valid JSON input. This allows other data after the JSON data.</li>
+</ul>
+</li>
+<li>Bug fixes:<ul>
+<li>Fix an additional memory leak when memory allocation fails in
+<a class="reference internal" href="apiref.html#c.json_object_set" title="json_object_set"><tt class="xref c c-func docutils literal"><span class="pre">json_object_set()</span></tt></a> and friends.</li>
+<li>Clear errno before calling <tt class="xref c c-func docutils literal"><span class="pre">strtod()</span></tt> for better portability. (#27)</li>
+</ul>
+</li>
+<li>Building:<ul>
+<li>Avoid set-but-not-used warning/error in a test. (#20)</li>
+</ul>
+</li>
+<li>Other:<ul>
+<li>Minor clarifications to documentation.</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="version-2-0-1">
+<h2>Version 2.0.1<a class="headerlink" href="#version-2-0-1" title="Permalink to this headline">¶</a></h2>
+<p>Released 2011-03-31</p>
+<ul class="simple">
+<li>Bug fixes:<ul>
+<li>Replace a few <tt class="xref c c-func docutils literal"><span class="pre">malloc()</span></tt> and <tt class="xref c c-func docutils literal"><span class="pre">free()</span></tt> calls with their
+counterparts that support custom memory management.</li>
+<li>Fix object key hashing in json_unpack() strict checking mode.</li>
+<li>Fix the parentheses in <tt class="docutils literal"><span class="pre">JANSSON_VERSION_HEX</span></tt> macro.</li>
+<li>Fix <a class="reference internal" href="apiref.html#c.json_object_size" title="json_object_size"><tt class="xref c c-func docutils literal"><span class="pre">json_object_size()</span></tt></a> return value.</li>
+<li>Fix a few compilation issues.</li>
+</ul>
+</li>
+<li>Portability:<ul>
+<li>Enhance portability of <tt class="xref c c-func docutils literal"><span class="pre">va_copy()</span></tt>.</li>
+<li>Test framework portability enhancements.</li>
+</ul>
+</li>
+<li>Documentation:<ul>
+<li>Distribute <tt class="docutils literal"><span class="pre">doc/upgrading.rst</span></tt> with the source tarball.</li>
+<li>Build documentation in strict mode in <tt class="docutils literal"><span class="pre">make</span> <span class="pre">distcheck</span></tt>.</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="version-2-0">
+<h2>Version 2.0<a class="headerlink" href="#version-2-0" title="Permalink to this headline">¶</a></h2>
+<p>Released 2011-02-28</p>
+<p>This release is backwards incompatible with the 1.x release series.
+See the chapter &#8220;Upgrading from older versions&#8221; in documentation for
+details.</p>
+<ul class="simple">
+<li>Backwards incompatible changes:<ul>
+<li>Unify unsigned integer usage in the API: All occurences of
+unsigned int and unsigned long have been replaced with size_t.</li>
+<li>Change JSON integer&#8217;s underlying type to the widest signed integer
+type available, i.e. long long if it&#8217;s supported, otherwise long.
+Add a typedef json_int_t that defines the type.</li>
+<li>Change the maximum indentation depth to 31 spaces in encoder. This
+frees up bits from the flags parameter of encoding functions
+<a class="reference internal" href="apiref.html#c.json_dumpf" title="json_dumpf"><tt class="xref c c-func docutils literal"><span class="pre">json_dumpf()</span></tt></a>, <a class="reference internal" href="apiref.html#c.json_dumps" title="json_dumps"><tt class="xref c c-func docutils literal"><span class="pre">json_dumps()</span></tt></a> and <a class="reference internal" href="apiref.html#c.json_dump_file" title="json_dump_file"><tt class="xref c c-func docutils literal"><span class="pre">json_dump_file()</span></tt></a>.</li>
+<li>For future needs, add a flags parameter to all decoding functions
+<a class="reference internal" href="apiref.html#c.json_loadf" title="json_loadf"><tt class="xref c c-func docutils literal"><span class="pre">json_loadf()</span></tt></a>, <a class="reference internal" href="apiref.html#c.json_loads" title="json_loads"><tt class="xref c c-func docutils literal"><span class="pre">json_loads()</span></tt></a> and <a class="reference internal" href="apiref.html#c.json_load_file" title="json_load_file"><tt class="xref c c-func docutils literal"><span class="pre">json_load_file()</span></tt></a>.</li>
+</ul>
+</li>
+<li>New features<ul>
+<li><a class="reference internal" href="apiref.html#c.json_pack" title="json_pack"><tt class="xref c c-func docutils literal"><span class="pre">json_pack()</span></tt></a>, <a class="reference internal" href="apiref.html#c.json_pack_ex" title="json_pack_ex"><tt class="xref c c-func docutils literal"><span class="pre">json_pack_ex()</span></tt></a>, <a class="reference internal" href="apiref.html#c.json_vpack_ex" title="json_vpack_ex"><tt class="xref c c-func docutils literal"><span class="pre">json_vpack_ex()</span></tt></a>: Create JSON
+values based on a format string.</li>
+<li><a class="reference internal" href="apiref.html#c.json_unpack" title="json_unpack"><tt class="xref c c-func docutils literal"><span class="pre">json_unpack()</span></tt></a>, <a class="reference internal" href="apiref.html#c.json_unpack_ex" title="json_unpack_ex"><tt class="xref c c-func docutils literal"><span class="pre">json_unpack_ex()</span></tt></a>, <a class="reference internal" href="apiref.html#c.json_vunpack_ex" title="json_vunpack_ex"><tt class="xref c c-func docutils literal"><span class="pre">json_vunpack_ex()</span></tt></a>: Simple
+value extraction and validation functionality based on a format
+string.</li>
+<li>Add column, position and source fields to the <tt class="docutils literal"><span class="pre">json_error_t</span></tt>
+struct.</li>
+<li>Enhance error reporting in the decoder.</li>
+<li><tt class="docutils literal"><span class="pre">JANSSON_VERSION</span></tt> et al.: Preprocessor constants that define the
+library version.</li>
+<li><a class="reference internal" href="apiref.html#c.json_set_alloc_funcs" title="json_set_alloc_funcs"><tt class="xref c c-func docutils literal"><span class="pre">json_set_alloc_funcs()</span></tt></a>: Set custom memory allocation functions.</li>
+</ul>
+</li>
+<li>Fix many portability issues, especially on Windows.</li>
+<li>Configuration<ul>
+<li>Add file <tt class="docutils literal"><span class="pre">jansson_config.h</span></tt> that contains site specific
+configuration. It&#8217;s created automatically by the configure script,
+or can be created by hand if the configure script cannot be used.
+The file <tt class="docutils literal"><span class="pre">jansson_config.h.win32</span></tt> can be used without
+modifications on Windows systems.</li>
+<li>Add a section to documentation describing how to build Jansson on
+Windows.</li>
+<li>Documentation now requires Sphinx 1.0 or newer.</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="version-1-3">
+<h2>Version 1.3<a class="headerlink" href="#version-1-3" title="Permalink to this headline">¶</a></h2>
+<p>Released 2010-06-13</p>
+<ul class="simple">
+<li>New functions:<ul>
+<li><a class="reference internal" href="apiref.html#c.json_object_iter_set" title="json_object_iter_set"><tt class="xref c c-func docutils literal"><span class="pre">json_object_iter_set()</span></tt></a>, <a class="reference internal" href="apiref.html#c.json_object_iter_set_new" title="json_object_iter_set_new"><tt class="xref c c-func docutils literal"><span class="pre">json_object_iter_set_new()</span></tt></a>: Change
+object contents while iterating over it.</li>
+<li><a class="reference internal" href="apiref.html#c.json_object_iter_at" title="json_object_iter_at"><tt class="xref c c-func docutils literal"><span class="pre">json_object_iter_at()</span></tt></a>: Return an iterator that points to a
+specific object item.</li>
+</ul>
+</li>
+<li>New encoding flags:<ul>
+<li><tt class="docutils literal"><span class="pre">JSON_PRESERVE_ORDER</span></tt>: Preserve the insertion order of object
+keys.</li>
+</ul>
+</li>
+<li>Bug fixes:<ul>
+<li>Fix an error that occured when an array or object was first
+encoded as empty, then populated with some data, and then
+re-encoded</li>
+<li>Fix the situation like above, but when the first encoding resulted
+in an error</li>
+</ul>
+</li>
+<li>Documentation:<ul>
+<li>Clarify the documentation on reference stealing, providing an
+example usage pattern</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="version-1-2-1">
+<h2>Version 1.2.1<a class="headerlink" href="#version-1-2-1" title="Permalink to this headline">¶</a></h2>
+<p>Released 2010-04-03</p>
+<ul class="simple">
+<li>Bug fixes:<ul>
+<li>Fix reference counting on <tt class="docutils literal"><span class="pre">true</span></tt>, <tt class="docutils literal"><span class="pre">false</span></tt> and <tt class="docutils literal"><span class="pre">null</span></tt></li>
+<li>Estimate real number underflows in decoder with 0.0 instead of
+issuing an error</li>
+</ul>
+</li>
+<li>Portability:<ul>
+<li>Make <tt class="docutils literal"><span class="pre">int32_t</span></tt> available on all systems</li>
+<li>Support compilers that don&#8217;t have the <tt class="docutils literal"><span class="pre">inline</span></tt> keyword</li>
+<li>Require Autoconf 2.60 (for <tt class="docutils literal"><span class="pre">int32_t</span></tt>)</li>
+</ul>
+</li>
+<li>Tests:<ul>
+<li>Print test names correctly when <tt class="docutils literal"><span class="pre">VERBOSE=1</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">test/suites/api</span></tt>: Fail when a test fails</li>
+<li>Enhance tests for iterators</li>
+<li>Enhance tests for decoding texts that contain null bytes</li>
+</ul>
+</li>
+<li>Documentation:<ul>
+<li>Don&#8217;t remove <tt class="docutils literal"><span class="pre">changes.rst</span></tt> in <tt class="docutils literal"><span class="pre">make</span> <span class="pre">clean</span></tt></li>
+<li>Add a chapter on RFC conformance</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="version-1-2">
+<h2>Version 1.2<a class="headerlink" href="#version-1-2" title="Permalink to this headline">¶</a></h2>
+<p>Released 2010-01-21</p>
+<ul class="simple">
+<li>New functions:<ul>
+<li><a class="reference internal" href="apiref.html#c.json_equal" title="json_equal"><tt class="xref c c-func docutils literal"><span class="pre">json_equal()</span></tt></a>: Test whether two JSON values are equal</li>
+<li><a class="reference internal" href="apiref.html#c.json_copy" title="json_copy"><tt class="xref c c-func docutils literal"><span class="pre">json_copy()</span></tt></a> and <a class="reference internal" href="apiref.html#c.json_deep_copy" title="json_deep_copy"><tt class="xref c c-func docutils literal"><span class="pre">json_deep_copy()</span></tt></a>: Make shallow and deep copies
+of JSON values</li>
+<li>Add a version of all functions taking a string argument that
+doesn&#8217;t check for valid UTF-8: <a class="reference internal" href="apiref.html#c.json_string_nocheck" title="json_string_nocheck"><tt class="xref c c-func docutils literal"><span class="pre">json_string_nocheck()</span></tt></a>,
+<a class="reference internal" href="apiref.html#c.json_string_set_nocheck" title="json_string_set_nocheck"><tt class="xref c c-func docutils literal"><span class="pre">json_string_set_nocheck()</span></tt></a>, <a class="reference internal" href="apiref.html#c.json_object_set_nocheck" title="json_object_set_nocheck"><tt class="xref c c-func docutils literal"><span class="pre">json_object_set_nocheck()</span></tt></a>,
+<a class="reference internal" href="apiref.html#c.json_object_set_new_nocheck" title="json_object_set_new_nocheck"><tt class="xref c c-func docutils literal"><span class="pre">json_object_set_new_nocheck()</span></tt></a></li>
+</ul>
+</li>
+<li>New encoding flags:<ul>
+<li><tt class="docutils literal"><span class="pre">JSON_SORT_KEYS</span></tt>: Sort objects by key</li>
+<li><tt class="docutils literal"><span class="pre">JSON_ENSURE_ASCII</span></tt>: Escape all non-ASCII Unicode characters</li>
+<li><tt class="docutils literal"><span class="pre">JSON_COMPACT</span></tt>: Use a compact representation with all unneeded
+whitespace stripped</li>
+</ul>
+</li>
+<li>Bug fixes:<ul>
+<li>Revise and unify whitespace usage in encoder: Add spaces between
+array and object items, never append newline to output.</li>
+<li>Remove const qualifier from the <tt class="docutils literal"><span class="pre">json_t</span></tt> parameter in
+<a class="reference internal" href="apiref.html#c.json_string_set" title="json_string_set"><tt class="xref c c-func docutils literal"><span class="pre">json_string_set()</span></tt></a>, <a class="reference internal" href="apiref.html#c.json_integer_set" title="json_integer_set"><tt class="xref c c-func docutils literal"><span class="pre">json_integer_set()</span></tt></a> and <a class="reference internal" href="apiref.html#c.json_real_set" title="json_real_set"><tt class="xref c c-func docutils literal"><span class="pre">json_real_set()</span></tt></a>.</li>
+<li>Use <tt class="docutils literal"><span class="pre">int32_t</span></tt> internally for representing Unicode code points
+(int is not enough on all platforms)</li>
+</ul>
+</li>
+<li>Other changes:<ul>
+<li>Convert <tt class="docutils literal"><span class="pre">CHANGES</span></tt> (this file) to reStructured text and add it to
+HTML documentation</li>
+<li>The test system has been refactored. Python is no longer required
+to run the tests.</li>
+<li>Documentation can now be built by invoking <tt class="docutils literal"><span class="pre">make</span> <span class="pre">html</span></tt></li>
+<li>Support for pkg-config</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="version-1-1-3">
+<h2>Version 1.1.3<a class="headerlink" href="#version-1-1-3" title="Permalink to this headline">¶</a></h2>
+<p>Released 2009-12-18</p>
+<ul class="simple">
+<li>Encode reals correctly, so that first encoding and then decoding a
+real always produces the same value</li>
+<li>Don&#8217;t export private symbols in <tt class="docutils literal"><span class="pre">libjansson.so</span></tt></li>
+</ul>
+</div>
+<div class="section" id="version-1-1-2">
+<h2>Version 1.1.2<a class="headerlink" href="#version-1-1-2" title="Permalink to this headline">¶</a></h2>
+<p>Released 2009-11-08</p>
+<ul class="simple">
+<li>Fix a bug where an error message was not produced if the input file
+could not be opened in <a class="reference internal" href="apiref.html#c.json_load_file" title="json_load_file"><tt class="xref c c-func docutils literal"><span class="pre">json_load_file()</span></tt></a></li>
+<li>Fix an assertion failure in decoder caused by a minus sign without a
+digit after it</li>
+<li>Remove an unneeded include of <tt class="docutils literal"><span class="pre">stdint.h</span></tt> in <tt class="docutils literal"><span class="pre">jansson.h</span></tt></li>
+</ul>
+</div>
+<div class="section" id="version-1-1-1">
+<h2>Version 1.1.1<a class="headerlink" href="#version-1-1-1" title="Permalink to this headline">¶</a></h2>
+<p>Released 2009-10-26</p>
+<ul class="simple">
+<li>All documentation files were not distributed with v1.1; build
+documentation in make distcheck to prevent this in the future</li>
+<li>Fix v1.1 release date in <tt class="docutils literal"><span class="pre">CHANGES</span></tt></li>
+</ul>
+</div>
+<div class="section" id="version-1-1">
+<h2>Version 1.1<a class="headerlink" href="#version-1-1" title="Permalink to this headline">¶</a></h2>
+<p>Released 2009-10-20</p>
+<ul class="simple">
+<li>API additions and improvements:<ul>
+<li>Extend array and object APIs</li>
+<li>Add functions to modify integer, real and string values</li>
+<li>Improve argument validation</li>
+<li>Use unsigned int instead of <tt class="docutils literal"><span class="pre">uint32_t</span></tt> for encoding flags</li>
+</ul>
+</li>
+<li>Enhance documentation<ul>
+<li>Add getting started guide and tutorial</li>
+<li>Fix some typos</li>
+<li>General clarifications and cleanup</li>
+</ul>
+</li>
+<li>Check for integer and real overflows and underflows in decoder</li>
+<li>Make singleton values thread-safe (<tt class="docutils literal"><span class="pre">true</span></tt>, <tt class="docutils literal"><span class="pre">false</span></tt> and <tt class="docutils literal"><span class="pre">null</span></tt>)</li>
+<li>Enhance circular reference handling</li>
+<li>Don&#8217;t define <tt class="docutils literal"><span class="pre">-std=c99</span></tt> in <tt class="docutils literal"><span class="pre">AM_CFLAGS</span></tt></li>
+<li>Add C++ guards to <tt class="docutils literal"><span class="pre">jansson.h</span></tt></li>
+<li>Minor performance and portability improvements</li>
+<li>Expand test coverage</li>
+</ul>
+</div>
+<div class="section" id="version-1-0-4">
+<h2>Version 1.0.4<a class="headerlink" href="#version-1-0-4" title="Permalink to this headline">¶</a></h2>
+<p>Released 2009-10-11</p>
+<ul class="simple">
+<li>Relax Autoconf version requirement to 2.59</li>
+<li>Make Jansson compile on platforms where plain <tt class="docutils literal"><span class="pre">char</span></tt> is unsigned</li>
+<li>Fix API tests for object</li>
+</ul>
+</div>
+<div class="section" id="version-1-0-3">
+<h2>Version 1.0.3<a class="headerlink" href="#version-1-0-3" title="Permalink to this headline">¶</a></h2>
+<p>Released 2009-09-14</p>
+<ul class="simple">
+<li>Check for integer and real overflows and underflows in decoder</li>
+<li>Use the Python json module for tests, or simplejson if the json
+module is not found</li>
+<li>Distribute changelog (this file)</li>
+</ul>
+</div>
+<div class="section" id="version-1-0-2">
+<h2>Version 1.0.2<a class="headerlink" href="#version-1-0-2" title="Permalink to this headline">¶</a></h2>
+<p>Released 2009-09-08</p>
+<ul class="simple">
+<li>Handle EOF correctly in decoder</li>
+</ul>
+</div>
+<div class="section" id="version-1-0-1">
+<h2>Version 1.0.1<a class="headerlink" href="#version-1-0-1" title="Permalink to this headline">¶</a></h2>
+<p>Released 2009-09-04</p>
+<ul class="simple">
+<li>Fixed broken <a class="reference internal" href="apiref.html#c.json_is_boolean" title="json_is_boolean"><tt class="xref c c-func docutils literal"><span class="pre">json_is_boolean()</span></tt></a></li>
+</ul>
+</div>
+<div class="section" id="version-1-0">
+<h2>Version 1.0<a class="headerlink" href="#version-1-0" title="Permalink to this headline">¶</a></h2>
+<p>Released 2009-08-25</p>
+<ul class="simple">
+<li>Initial release</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Changes in Jansson</a><ul>
+<li><a class="reference internal" href="#version-2-7">Version 2.7</a></li>
+<li><a class="reference internal" href="#version-2-6">Version 2.6</a></li>
+<li><a class="reference internal" href="#version-2-5">Version 2.5</a></li>
+<li><a class="reference internal" href="#version-2-4">Version 2.4</a></li>
+<li><a class="reference internal" href="#version-2-3-1">Version 2.3.1</a></li>
+<li><a class="reference internal" href="#version-2-3">Version 2.3</a></li>
+<li><a class="reference internal" href="#version-2-2-1">Version 2.2.1</a></li>
+<li><a class="reference internal" href="#version-2-2">Version 2.2</a></li>
+<li><a class="reference internal" href="#version-2-1">Version 2.1</a></li>
+<li><a class="reference internal" href="#version-2-0-1">Version 2.0.1</a></li>
+<li><a class="reference internal" href="#version-2-0">Version 2.0</a></li>
+<li><a class="reference internal" href="#version-1-3">Version 1.3</a></li>
+<li><a class="reference internal" href="#version-1-2-1">Version 1.2.1</a></li>
+<li><a class="reference internal" href="#version-1-2">Version 1.2</a></li>
+<li><a class="reference internal" href="#version-1-1-3">Version 1.1.3</a></li>
+<li><a class="reference internal" href="#version-1-1-2">Version 1.1.2</a></li>
+<li><a class="reference internal" href="#version-1-1-1">Version 1.1.1</a></li>
+<li><a class="reference internal" href="#version-1-1">Version 1.1</a></li>
+<li><a class="reference internal" href="#version-1-0-4">Version 1.0.4</a></li>
+<li><a class="reference internal" href="#version-1-0-3">Version 1.0.3</a></li>
+<li><a class="reference internal" href="#version-1-0-2">Version 1.0.2</a></li>
+<li><a class="reference internal" href="#version-1-0-1">Version 1.0.1</a></li>
+<li><a class="reference internal" href="#version-1-0">Version 1.0</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="apiref.html"
+                        title="previous chapter">API Reference</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/changes.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="apiref.html" title="API Reference"
+             >previous</a> |</li>
+        <li><a href="index.html">Jansson 2.7 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2009-2014, Petri Lehtinen.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

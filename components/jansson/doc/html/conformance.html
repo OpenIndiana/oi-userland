@@ -1,0 +1,211 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>RFC Conformance &mdash; Jansson 2.7 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '2.7',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Jansson 2.7 documentation" href="index.html" />
+    <link rel="next" title="Portability" href="portability.html" />
+    <link rel="prev" title="Tutorial" href="tutorial.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="portability.html" title="Portability"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="tutorial.html" title="Tutorial"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Jansson 2.7 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="rfc-conformance">
+<span id="id1"></span><h1>RFC Conformance<a class="headerlink" href="#rfc-conformance" title="Permalink to this headline">¶</a></h1>
+<p>JSON is specified in <span class="target" id="index-0"></span><a class="rfc reference external" href="http://tools.ietf.org/html/rfc4627.html"><strong>RFC 4627</strong></a>, <em>&#8220;The application/json Media Type
+for JavaScript Object Notation (JSON)&#8221;</em>.</p>
+<div class="section" id="character-encoding">
+<h2>Character Encoding<a class="headerlink" href="#character-encoding" title="Permalink to this headline">¶</a></h2>
+<p>Jansson only supports UTF-8 encoded JSON texts. It does not support or
+auto-detect any of the other encodings mentioned in the RFC, namely
+UTF-16LE, UTF-16BE, UTF-32LE or UTF-32BE. Pure ASCII is supported, as
+it&#8217;s a subset of UTF-8.</p>
+</div>
+<div class="section" id="strings">
+<h2>Strings<a class="headerlink" href="#strings" title="Permalink to this headline">¶</a></h2>
+<p>JSON strings are mapped to C-style null-terminated character arrays,
+and UTF-8 encoding is used internally.</p>
+<p>All Unicode codepoints U+0000 through U+10FFFF are allowed in string
+values. However, U+0000 is not allowed in object keys because of API
+restrictions.</p>
+<p>Unicode normalization or any other transformation is never performed
+on any strings (string values or object keys). When checking for
+equivalence of strings or object keys, the comparison is performed
+byte by byte between the original UTF-8 representations of the
+strings.</p>
+</div>
+<div class="section" id="numbers">
+<h2>Numbers<a class="headerlink" href="#numbers" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="real-vs-integer">
+<span id="id2"></span><h3>Real vs. Integer<a class="headerlink" href="#real-vs-integer" title="Permalink to this headline">¶</a></h3>
+<p>JSON makes no distinction between real and integer numbers; Jansson
+does. Real numbers are mapped to the <tt class="docutils literal"><span class="pre">double</span></tt> type and integers to
+the <tt class="docutils literal"><span class="pre">json_int_t</span></tt> type, which is a typedef of <tt class="docutils literal"><span class="pre">long</span> <span class="pre">long</span></tt> or
+<tt class="docutils literal"><span class="pre">long</span></tt>, depending on whether <tt class="docutils literal"><span class="pre">long</span> <span class="pre">long</span></tt> is supported by your
+compiler or not.</p>
+<p>A JSON number is considered to be a real number if its lexical
+representation includes one of <tt class="docutils literal"><span class="pre">e</span></tt>, <tt class="docutils literal"><span class="pre">E</span></tt>, or <tt class="docutils literal"><span class="pre">.</span></tt>; regardless if
+its actual numeric value is a true integer (e.g., all of <tt class="docutils literal"><span class="pre">1E6</span></tt>,
+<tt class="docutils literal"><span class="pre">3.0</span></tt>, <tt class="docutils literal"><span class="pre">400E-2</span></tt>, and <tt class="docutils literal"><span class="pre">3.14E3</span></tt> are mathematical integers, but
+will be treated as real values). With the <tt class="docutils literal"><span class="pre">JSON_DECODE_INT_AS_REAL</span></tt>
+decoder flag set all numbers are interpreted as real.</p>
+<p>All other JSON numbers are considered integers.</p>
+<p>When encoding to JSON, real values are always represented
+with a fractional part; e.g., the <tt class="docutils literal"><span class="pre">double</span></tt> value 3.0 will be
+represented in JSON as <tt class="docutils literal"><span class="pre">3.0</span></tt>, not <tt class="docutils literal"><span class="pre">3</span></tt>.</p>
+</div>
+<div class="section" id="overflow-underflow-precision">
+<h3>Overflow, Underflow &amp; Precision<a class="headerlink" href="#overflow-underflow-precision" title="Permalink to this headline">¶</a></h3>
+<p>Real numbers whose absolute values are too small to be represented in
+a C <tt class="docutils literal"><span class="pre">double</span></tt> will be silently estimated with 0.0. Thus, depending on
+platform, JSON numbers very close to zero such as 1E-999 may result in
+0.0.</p>
+<p>Real numbers whose absolute values are too large to be represented in
+a C <tt class="docutils literal"><span class="pre">double</span></tt> will result in an overflow error (a JSON decoding
+error). Thus, depending on platform, JSON numbers like 1E+999 or
+-1E+999 may result in a parsing error.</p>
+<p>Likewise, integer numbers whose absolute values are too large to be
+represented in the <tt class="docutils literal"><span class="pre">json_int_t</span></tt> type (see above) will result in an
+overflow error (a JSON decoding error). Thus, depending on platform,
+JSON numbers like 1000000000000000 may result in parsing error.</p>
+<p>Parsing JSON real numbers may result in a loss of precision. As long
+as overflow does not occur (i.e. a total loss of precision), the
+rounded approximate value is silently used. Thus the JSON number
+1.000000000000000005 may, depending on platform, result in the
+<tt class="docutils literal"><span class="pre">double</span></tt> value 1.0.</p>
+</div>
+<div class="section" id="signed-zeros">
+<h3>Signed zeros<a class="headerlink" href="#signed-zeros" title="Permalink to this headline">¶</a></h3>
+<p>JSON makes no statement about what a number means; however Javascript
+(ECMAscript) does state that +0.0 and -0.0 must be treated as being
+distinct values, i.e. -0.0 ≠ 0.0. Jansson relies on the
+underlying floating point library in the C environment in which it is
+compiled. Therefore it is platform-dependent whether 0.0 and -0.0 will
+be distinct values. Most platforms that use the IEEE 754
+floating-point standard will support signed zeros.</p>
+<p>Note that this only applies to floating-point; neither JSON, C, or
+IEEE support the concept of signed integer zeros.</p>
+</div>
+<div class="section" id="types">
+<h3>Types<a class="headerlink" href="#types" title="Permalink to this headline">¶</a></h3>
+<p>No support is provided in Jansson for any C numeric types other than
+<tt class="docutils literal"><span class="pre">json_int_t</span></tt> and <tt class="docutils literal"><span class="pre">double</span></tt>. This excludes things such as unsigned
+types, <tt class="docutils literal"><span class="pre">long</span> <span class="pre">double</span></tt>, etc. Obviously, shorter types like <tt class="docutils literal"><span class="pre">short</span></tt>,
+<tt class="docutils literal"><span class="pre">int</span></tt>, <tt class="docutils literal"><span class="pre">long</span></tt> (if <tt class="docutils literal"><span class="pre">json_int_t</span></tt> is <tt class="docutils literal"><span class="pre">long</span> <span class="pre">long</span></tt>) and <tt class="docutils literal"><span class="pre">float</span></tt>
+are implicitly handled via the ordinary C type coercion rules (subject
+to overflow semantics). Also, no support or hooks are provided for any
+supplemental &#8220;bignum&#8221; type add-on packages.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">RFC Conformance</a><ul>
+<li><a class="reference internal" href="#character-encoding">Character Encoding</a></li>
+<li><a class="reference internal" href="#strings">Strings</a></li>
+<li><a class="reference internal" href="#numbers">Numbers</a><ul>
+<li><a class="reference internal" href="#real-vs-integer">Real vs. Integer</a></li>
+<li><a class="reference internal" href="#overflow-underflow-precision">Overflow, Underflow &amp; Precision</a></li>
+<li><a class="reference internal" href="#signed-zeros">Signed zeros</a></li>
+<li><a class="reference internal" href="#types">Types</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="tutorial.html"
+                        title="previous chapter">Tutorial</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="portability.html"
+                        title="next chapter">Portability</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/conformance.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="portability.html" title="Portability"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="tutorial.html" title="Tutorial"
+             >previous</a> |</li>
+        <li><a href="index.html">Jansson 2.7 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2009-2014, Petri Lehtinen.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

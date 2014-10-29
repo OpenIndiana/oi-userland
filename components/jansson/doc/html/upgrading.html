@@ -1,0 +1,181 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Upgrading from 1.x &mdash; Jansson 2.7 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '2.7',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Jansson 2.7 documentation" href="index.html" />
+    <link rel="next" title="Tutorial" href="tutorial.html" />
+    <link rel="prev" title="Getting Started" href="gettingstarted.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="tutorial.html" title="Tutorial"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="gettingstarted.html" title="Getting Started"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Jansson 2.7 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="upgrading-from-1-x">
+<h1>Upgrading from 1.x<a class="headerlink" href="#upgrading-from-1-x" title="Permalink to this headline">¶</a></h1>
+<p>This chapter lists the backwards incompatible changes introduced in
+Jansson 2.0, and the steps that are needed for upgrading your code.</p>
+<p><strong>The incompatibilities are not dramatic.</strong> The biggest change is that
+all decoding functions now require and extra parameter. Most programs
+can be modified to work with 2.0 by adding a <tt class="docutils literal"><span class="pre">0</span></tt> as the second
+parameter to all calls of <a class="reference internal" href="apiref.html#c.json_loads" title="json_loads"><tt class="xref c c-func docutils literal"><span class="pre">json_loads()</span></tt></a>, <a class="reference internal" href="apiref.html#c.json_loadf" title="json_loadf"><tt class="xref c c-func docutils literal"><span class="pre">json_loadf()</span></tt></a>
+and <a class="reference internal" href="apiref.html#c.json_load_file" title="json_load_file"><tt class="xref c c-func docutils literal"><span class="pre">json_load_file()</span></tt></a>.</p>
+<div class="section" id="compatibility">
+<h2>Compatibility<a class="headerlink" href="#compatibility" title="Permalink to this headline">¶</a></h2>
+<p>Jansson 2.0 is backwards incompatible with the Jansson 1.x releases.
+It is ABI incompatible, i.e. all programs dynamically linking to the
+Jansson library need to be recompiled. It&#8217;s also API incompatible,
+i.e. the source code of programs using Jansson 1.x may need
+modifications to make them compile against Jansson 2.0.</p>
+<p>All the 2.x releases are guaranteed to be backwards compatible for
+both ABI and API, so no recompilation or source changes are needed
+when upgrading from 2.x to 2.y.</p>
+</div>
+<div class="section" id="list-of-incompatible-changes">
+<h2>List of Incompatible Changes<a class="headerlink" href="#list-of-incompatible-changes" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt><strong>Decoding flags</strong></dt>
+<dd><p class="first">For future needs, a <tt class="docutils literal"><span class="pre">flags</span></tt> parameter was added as the second
+parameter to all decoding functions, i.e. <a class="reference internal" href="apiref.html#c.json_loads" title="json_loads"><tt class="xref c c-func docutils literal"><span class="pre">json_loads()</span></tt></a>,
+<a class="reference internal" href="apiref.html#c.json_loadf" title="json_loadf"><tt class="xref c c-func docutils literal"><span class="pre">json_loadf()</span></tt></a> and <a class="reference internal" href="apiref.html#c.json_load_file" title="json_load_file"><tt class="xref c c-func docutils literal"><span class="pre">json_load_file()</span></tt></a>. All calls to
+these functions need to be changed by adding a <tt class="docutils literal"><span class="pre">0</span></tt> as the second
+argument. For example:</p>
+<div class="last highlight-c"><div class="highlight"><pre><span class="cm">/* old code */</span>
+<span class="n">json_loads</span><span class="p">(</span><span class="n">input</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">error</span><span class="p">);</span>
+
+<span class="cm">/* new code */</span>
+<span class="n">json_loads</span><span class="p">(</span><span class="n">input</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">error</span><span class="p">);</span>
+</pre></div>
+</div>
+</dd>
+<dt><strong>Underlying type of JSON integers</strong></dt>
+<dd><p class="first">The underlying C type of JSON integers has been changed from
+<tt class="xref c c-type docutils literal"><span class="pre">int</span></tt> to the widest available signed integer type, i.e.
+<tt class="xref c c-type docutils literal"><span class="pre">long</span> <span class="pre">long</span></tt> or <tt class="xref c c-type docutils literal"><span class="pre">long</span></tt>, depending on whether
+<tt class="xref c c-type docutils literal"><span class="pre">long</span> <span class="pre">long</span></tt> is supported on your system or not. This makes
+the whole 64-bit integer range available on most modern systems.</p>
+<p class="last"><tt class="docutils literal"><span class="pre">jansson.h</span></tt> has a typedef <a class="reference internal" href="apiref.html#c.json_int_t" title="json_int_t"><tt class="xref c c-type docutils literal"><span class="pre">json_int_t</span></tt></a> to the underlying
+integer type. <tt class="xref c c-type docutils literal"><span class="pre">int</span></tt> should still be used in most cases when
+dealing with smallish JSON integers, as the compiler handles
+implicit type coercion. Only when the full 64-bit range is needed,
+<a class="reference internal" href="apiref.html#c.json_int_t" title="json_int_t"><tt class="xref c c-type docutils literal"><span class="pre">json_int_t</span></tt></a> should be explicitly used.</p>
+</dd>
+<dt><strong>Maximum encoder indentation depth</strong></dt>
+<dd>The maximum argument of the <tt class="docutils literal"><span class="pre">JSON_INDENT()</span></tt> macro has been
+changed from 255 to 31, to free up bits from the <tt class="docutils literal"><span class="pre">flags</span></tt>
+parameter of <a class="reference internal" href="apiref.html#c.json_dumps" title="json_dumps"><tt class="xref c c-func docutils literal"><span class="pre">json_dumps()</span></tt></a>, <a class="reference internal" href="apiref.html#c.json_dumpf" title="json_dumpf"><tt class="xref c c-func docutils literal"><span class="pre">json_dumpf()</span></tt></a> and
+<a class="reference internal" href="apiref.html#c.json_dump_file" title="json_dump_file"><tt class="xref c c-func docutils literal"><span class="pre">json_dump_file()</span></tt></a>. If your code uses a bigger indentation
+than 31, it needs to be changed.</dd>
+<dt><strong>Unsigned integers in API functions</strong></dt>
+<dd>Version 2.0 unifies unsigned integer usage in the API. All uses of
+<tt class="xref c c-type docutils literal"><span class="pre">unsigned</span> <span class="pre">int</span></tt> and <tt class="xref c c-type docutils literal"><span class="pre">unsigned</span> <span class="pre">long</span></tt> have been replaced
+with <tt class="xref c c-type docutils literal"><span class="pre">size_t</span></tt>. This includes flags, container sizes, etc.
+This should not require source code changes, as both
+<tt class="xref c c-type docutils literal"><span class="pre">unsigned</span> <span class="pre">int</span></tt> and <tt class="xref c c-type docutils literal"><span class="pre">unsigned</span> <span class="pre">long</span></tt> are usually
+compatible with <tt class="xref c c-type docutils literal"><span class="pre">size_t</span></tt>.</dd>
+</dl>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Upgrading from 1.x</a><ul>
+<li><a class="reference internal" href="#compatibility">Compatibility</a></li>
+<li><a class="reference internal" href="#list-of-incompatible-changes">List of Incompatible Changes</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="gettingstarted.html"
+                        title="previous chapter">Getting Started</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="tutorial.html"
+                        title="next chapter">Tutorial</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/upgrading.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="tutorial.html" title="Tutorial"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="gettingstarted.html" title="Getting Started"
+             >previous</a> |</li>
+        <li><a href="index.html">Jansson 2.7 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2009-2014, Petri Lehtinen.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>
