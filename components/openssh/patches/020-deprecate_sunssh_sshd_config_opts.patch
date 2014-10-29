@@ -1,0 +1,47 @@
+#
+# Originally we planned to only deprecate client config (ssh_config) options 
+# and leave it up to system administrators to remove all SunSSH specific
+# server config (sshd_config) options. In internal testing we have discovered,
+# that this would bring too much trouble to the said administrators.
+# The probability of these options appearing in existing sshd_config files
+# is higher than initially though, because some of the options have been in
+# default sshd_config file for very long time. Also the consequence of
+# unknown server option is harsh - ssh service goes to maintenance mode
+# possible rendering the instance not accessible. For this reason we will
+# deprecate SunSSH specific sshd_config options too.
+#
+# This is a Solaris specific change to ease the transition and will not be
+# offered upstream.
+#
+diff -ur old/servconf.c new/servconf.c
+--- old/servconf.c	2014-10-29 07:27:34.549410967 -0700
++++ new/servconf.c	2014-10-29 07:27:58.775996557 -0700
+@@ -516,6 +516,28 @@
+         { "pamserviceprefix", sPAMServicePrefix, SSHCFG_GLOBAL },
+         { "pamservicename", sPAMServiceName, SSHCFG_GLOBAL },
+ #endif
++#ifdef DEPRECATE_SUNSSH_OPT
++	/*
++	 * On Solaris, to make the transition from SunSSH to OpenSSH as smooth
++	 * as possible, we will deprecate SunSSH-only options in OpenSSH.
++	 * Therefore on a system having one of the following options in
++	 * /etc/ssh/sshd_config, change to OpenSSH will not result in service
++	 * network/ssh going to maintenance. Instead, a warning will be printed
++	 * to /var/svc/log/network-ssh:default.log. Note that
++	 * this is an interim enhancement to OpenSSH to make the transition
++	 * smoother.  If a deprecated SunSSH-only option is migrated to OpenSSH
++	 * later, then it will be changed from deprecated to supported.
++	 */
++	{ "maxauthtrieslog", sDeprecated, SSHCFG_GLOBAL },
++	{ "lookupclienthostnames", sDeprecated, SSHCFG_GLOBAL },
++	{ "useopensslengine", sDeprecated, SSHCFG_GLOBAL },
++	{ "preuserauthhook", sDeprecated, SSHCFG_ALL},
++	{ "kmfpolicydatabase", sDeprecated, SSHCFG_GLOBAL },
++	{ "kmfpolicyname", sDeprecated, SSHCFG_GLOBAL },
++	{ "trustedanchorkeystore", sDeprecated, SSHCFG_GLOBAL },
++	{ "useunsupportedsshv1", sDeprecated, SSHCFG_GLOBAL },
++	{ "usefips140", sDeprecated, SSHCFG_ALL},
++#endif
+ 	{ NULL, sBadOption, 0 }
+ };
+ 
