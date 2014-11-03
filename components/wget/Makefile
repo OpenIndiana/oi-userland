@@ -23,16 +23,16 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		wget
-COMPONENT_VERSION=	1.14
+COMPONENT_VERSION=	1.16
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/wget/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:1761d7f7c6a2ad6c8d494d239c53f0c17126efb6449ada16dee3a66d87a4147b
+    sha256:9261dd090a17687b6dc0682a257e90a926def15624b650e8f799af57e5c8b0e7
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/wget/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/wget
 
-TPNO=			9188
+TPNO=			19782
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
@@ -52,19 +52,27 @@ CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	PATH="$(PATH):/usr/perl5/bin"
 
 # Wget test suite will skip majority of tests with few Perl modules
-# missing on system. By uncommenting following lines it will pass 68
-# tests  out of 70 total tests (2 tests are skipped).
+# missing on system. By uncommenting following lines it will pass 82
+# tests  out of 83 total tests (1 test in which wget tries to output
+# to a non-existing device /dev/full fails with wrong error code).
 #URI=URI-1.60
 #WWW=libwww-perl-5.837
+#SOCK=IO-Socket-SSL-2.005
 #COMPONENT_TEST_ENV = "http_proxy="
+#COMPONENT_TEST_ENV += "https_proxy="
+#COMPONENT_TEST_ENV += "ftp_proxy="
+#COMPONENT_TEST_ENV += "no_proxy="
 #COMPONENT_PRE_TEST_ACTION = ( \
 	cd $(COMPONENT_SRC)/tests; \
 	wget http://search.cpan.org/CPAN/authors/id/G/GA/GAAS/$(URI).tar.gz; \
 	wget http://search.cpan.org/CPAN/authors/id/G/GA/GAAS/$(WWW).tar.gz; \
+	wget http://cpan.metacpan.org/authors/id/S/SU/SULLR/$(SOCK).tar.gz; \
 	gtar --get $(URI)/URI $(URI)/URI.pm \
 	     --strip-components=1 -f $(URI).tar.gz; \
 	gtar --get $(WWW)/lib/HTTP $(WWW)/lib/LWP $(WWW)/lib/LWP.pm \
-	     --strip-components=2 -f $(WWW).tar.gz; )
+	     --strip-components=2 -f $(WWW).tar.gz; \
+	gtar --get $(SOCK)/lib/IO/Socket/SSL $(SOCK)/lib/IO/Socket/SSL.pm \
+	     --strip-components=2 -f $(SOCK).tar.gz; )
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
