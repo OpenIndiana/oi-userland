@@ -1,3 +1,6 @@
+# This patch was developed in-house. Since it is Solaris-specific,
+# it is not suitable for upstream.
+#
 diff -r -u /tmp/846623/libibverbs-1.1.4/Makefile.am libibverbs-1.1.4/Makefile.am
 --- /tmp/846623/libibverbs-1.1.4/Makefile.am	Thu Feb  3 01:53:17 2011
 +++ libibverbs-1.1.4/Makefile.am	Fri Feb 11 04:02:12 2011
@@ -2524,6 +2527,27 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/Makefile.in libibverbs-1.1.4/Makefile.in
  device_list.o: examples/device_list.c
  @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT device_list.o -MD -MP -MF $(DEPDIR)/device_list.Tpo -c -o device_list.o `test -f 'examples/device_list.c' || echo '$(srcdir)/'`examples/device_list.c
  @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/device_list.Tpo $(DEPDIR)/device_list.Po
+diff -r -u /tmp/846623/libibverbs-1.1.4/examples/uc_pingpong.c libibverbs-1.1.4/examples/uc_pingpong.c
+--- /tmp/846623/libibverbs-1.1.4/examples/uc_pingpong.c	Thu Mar 10 06:58:21 2011
++++ libibverbs-1.1.4/examples/uc_pingpong.c	Tue Aug 19 10:46:28 2014
+@@ -144,7 +144,7 @@
+ 
+ 	n = getaddrinfo(servername, service, &hints, &res);
+ 
+-	if (n < 0) {
++	if (n != 0) {
+ 		fprintf(stderr, "%s for %s:%d\n", gai_strerror(n), servername, port);
+ 		free(service);
+ 		return NULL;
+@@ -219,7 +219,7 @@
+ 
+ 	n = getaddrinfo(NULL, service, &hints, &res);
+ 
+-	if (n < 0) {
++	if (n != 0) {
+ 		fprintf(stderr, "%s for port %d\n", gai_strerror(n), port);
+ 		free(service);
+ 		return NULL;
 diff -r -u /tmp/846623/libibverbs-1.1.4/examples/asyncwatch.c libibverbs-1.1.4/examples/asyncwatch.c
 --- /tmp/846623/libibverbs-1.1.4/examples/asyncwatch.c	Thu Mar 10 06:58:21 2011
 +++ libibverbs-1.1.4/examples/asyncwatch.c	Fri Feb 11 04:02:18 2011
@@ -2916,51 +2940,87 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/examples/asyncwatch.c libibverbs-1.1.4/e
 diff -r -u /tmp/846623/libibverbs-1.1.4/examples/srq_pingpong.c libibverbs-1.1.4/examples/srq_pingpong.c
 --- /tmp/846623/libibverbs-1.1.4/examples/srq_pingpong.c	Thu Mar 10 06:58:21 2011
 +++ libibverbs-1.1.4/examples/srq_pingpong.c	Wed Jun  8 09:46:34 2011
-@@ -171,6 +171,12 @@
+@@ -165,8 +165,13 @@
+ 
+ 	n = getaddrinfo(servername, service, &hints, &res);
+ 
+-	if (n < 0) {
+-		fprintf(stderr, "%s for %s:%d\n", gai_strerror(n), servername, port);
++	if (n != 0) {
++		if (n == EAI_NONAME)
++			fprintf(stderr,
++			    "Name or service not known for %s:%d\n", servername, port);
++		else
++			fprintf(stderr,
++			    "%s for %s:%d\n", gai_strerror(n), servername, port);
+ 		free(service);
  		return NULL;
  	}
+@@ -253,7 +258,7 @@
  
-+	if (n == EAI_NONAME) {
-+		fprintf(stderr, "Name or service not known for %s:%d\n", servername, port);
-+		free(service);
-+		return NULL;
-+	}
-+
- 	for (t = res; t; t = t->ai_next) {
- 		sockfd = socket(t->ai_family, t->ai_socktype, t->ai_protocol);
- 		if (sockfd >= 0) {
+ 	n = getaddrinfo(NULL, service, &hints, &res);
+ 
+-	if (n < 0) {
++	if (n != 0) {
+ 		fprintf(stderr, "%s for port %d\n", gai_strerror(n), port);
+ 		free(service);
+ 		return NULL;
 diff -r -u /tmp/846623/libibverbs-1.1.4/examples/ud_pingpong.c libibverbs-1.1.4/examples/ud_pingpong.c
 --- /tmp/846623/libibverbs-1.1.4/examples/ud_pingpong.c	Thu Mar 10 06:58:21 2011
 +++ libibverbs-1.1.4/examples/ud_pingpong.c	Wed Jun  8 09:46:34 2011
-@@ -149,6 +149,12 @@
+@@ -143,8 +143,13 @@
+ 
+ 	n = getaddrinfo(servername, service, &hints, &res);
+ 
+-	if (n < 0) {
+-		fprintf(stderr, "%s for %s:%d\n", gai_strerror(n), servername, port);
++	if (n != 0) {
++		if (n == EAI_NONAME)
++			fprintf(stderr,
++			    "Name or service not known for %s:%d\n", servername, port);
++		else
++			fprintf(stderr,
++			    "%s for %s:%d\n", gai_strerror(n), servername, port);
+ 		free(service);
  		return NULL;
  	}
+@@ -217,7 +222,7 @@
  
-+	if (n == EAI_NONAME) {
-+		fprintf(stderr, "Name or service not known for %s:%d\n", servername, port);
-+		free(service);
-+		return NULL;
-+	}
-+
- 	for (t = res; t; t = t->ai_next) {
- 		sockfd = socket(t->ai_family, t->ai_socktype, t->ai_protocol);
- 		if (sockfd >= 0) {
+ 	n = getaddrinfo(NULL, service, &hints, &res);
+ 
+-	if (n < 0) {
++	if (n != 0) {
+ 		fprintf(stderr, "%s for port %d\n", gai_strerror(n), port);
+ 		free(service);
+ 		return NULL;
 diff -r -u /tmp/846623/libibverbs-1.1.4/examples/rc_pingpong.c libibverbs-1.1.4/examples/rc_pingpong.c
 --- /tmp/846623/libibverbs-1.1.4/examples/rc_pingpong.c	Thu Mar 10 06:58:21 2011
 +++ libibverbs-1.1.4/examples/rc_pingpong.c	Wed Jun  8 09:46:34 2011
-@@ -161,6 +161,12 @@
+@@ -155,8 +155,13 @@
+ 
+ 	n = getaddrinfo(servername, service, &hints, &res);
+ 
+-	if (n < 0) {
+-		fprintf(stderr, "%s for %s:%d\n", gai_strerror(n), servername, port);
++	if (n != 0) {
++		if (n == EAI_NONAME)
++			fprintf(stderr,
++			    "Name or service not known for %s:%d\n", servername, port);
++		else
++			fprintf(stderr,
++			    "%s for %s:%d\n", gai_strerror(n), servername, port);
+ 		free(service);
  		return NULL;
  	}
+@@ -230,7 +235,7 @@
  
-+	if (n == EAI_NONAME) {
-+		fprintf(stderr, "Name or service not known for %s:%d\n", servername, port);
-+		free(service);
-+		return NULL;
-+	}
-+
- 	for (t = res; t; t = t->ai_next) {
- 		sockfd = socket(t->ai_family, t->ai_socktype, t->ai_protocol);
- 		if (sockfd >= 0) {
+ 	n = getaddrinfo(NULL, service, &hints, &res);
+ 
+-	if (n < 0) {
++	if (n != 0) {
+ 		fprintf(stderr, "%s for port %d\n", gai_strerror(n), port);
+ 		free(service);
+ 		return NULL;
 diff -r -u /tmp/846623/libibverbs-1.1.4/examples/device_list.c libibverbs-1.1.4/examples/device_list.c
 --- /tmp/846623/libibverbs-1.1.4/examples/device_list.c	Sun Nov  1 06:47:19 2009
 +++ libibverbs-1.1.4/examples/device_list.c	Fri Feb 11 04:02:18 2011

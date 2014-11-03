@@ -371,13 +371,8 @@ uverbs_cache_init()
 	uverbs_cache_info_t	info;
 	int			dev_num, fd, i, bufsize, hca_cnt;
 	char			uverbs_devpath[MAXPATHLEN];
-#ifndef	IB_USER_VERBS_V2_IN_V1
 	sol_uverbs_info_t	*uverbs_infop;
 	sol_uverbs_hca_info_t	*hca_infop;
-#else
-	sol_uverbs_info_v2_t	*uverbs_infop;
-	sol_uverbs_hca_info_v2_t	*hca_infop;
-#endif
 	char *buf;
 
 	snprintf(uverbs_devpath, MAXPATHLEN, "%s/%s%d",
@@ -394,20 +389,11 @@ uverbs_cache_init()
 		goto error_exit1;
 	}
 
-#ifndef	IB_USER_VERBS_V2_IN_V1
 	bufsize = sizeof (sol_uverbs_info_t) + sizeof (sol_uverbs_hca_info_t) *
 	    MAX_HCAS;
-#else
-	bufsize = sizeof (sol_uverbs_info_v2_t) +
-	    sizeof (sol_uverbs_hca_info_v2_t) * MAX_HCAS;
-#endif
 	buf = malloc(bufsize);
 	memset(buf, 0, bufsize);
-#ifndef	IB_USER_VERBS_V2_IN_V1
 	uverbs_infop = (sol_uverbs_info_t *)buf;
-#else
-	uverbs_infop = (sol_uverbs_info_v2_t *)buf;
-#endif
 	uverbs_infop->uverbs_hca_cnt = MAX_HCAS;
 
 	if (ioctl(fd, UVERBS_IOCTL_GET_HCA_INFO, uverbs_infop) != 0) {

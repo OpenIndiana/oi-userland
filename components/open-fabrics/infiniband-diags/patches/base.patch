@@ -1,3 +1,6 @@
+# This patch was developed in-house. Since it is Solaris-specific,
+# it is not suitable for upstream.
+#
 diff -r -u /tmp/infiniband-diags-1.5.8/Makefile.am infiniband-diags-1.5.8/Makefile.am
 --- /tmp/infiniband-diags-1.5.8/Makefile.am	Wed Feb 16 02:13:21 2011
 +++ infiniband-diags-1.5.8/Makefile.am	Fri Feb 25 03:09:22 2011
@@ -1928,7 +1931,18 @@ diff -r -u /tmp/infiniband-diags-1.5.8/src/ibstat.c infiniband-diags-1.5.8/src/i
 diff -r -u /tmp/infiniband-diags-1.5.8/src/ibdiag_common.c infiniband-diags-1.5.8/src/ibdiag_common.c
 --- /tmp/infiniband-diags-1.5.8/src/ibdiag_common.c	Wed Feb 16 02:13:21 2011
 +++ infiniband-diags-1.5.8/src/ibdiag_common.c	Tue May  3 13:50:05 2011
-@@ -330,7 +330,7 @@
+@@ -322,15 +322,17 @@
+ 	char buf[512];
+ 	va_list va;
+ 	int n;
++	int bufsz;
+ 
+ 	va_start(va, msg);
+-	n = vsprintf(buf, msg, va);
++	bufsz = strlen(msg) < sizeof (buf) ? strlen(msg) : sizeof (buf);
++	n = vsnprintf(buf, bufsz, msg, va);
+ 	va_end(va);
+ 	buf[n] = 0;
  
  	if (ibdebug)
  		printf("%s: iberror: [pid %d] %s: failed: %s\n",
