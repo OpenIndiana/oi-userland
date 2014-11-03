@@ -41,6 +41,8 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
+PATCH_LEVEL = 0
+
 # AsciiDoc configuration and data files belong in /usr/share, not /etc based
 # on discussion from ARC pre-review.
 #
@@ -67,20 +69,26 @@ build:		$(BUILD_64)
 install:	$(INSTALL_64)
 
 # Tests require image/graphviz to be installed.  Some tests also want to run
-# programs named latex, lilypad, abc2ly and source-highlight which are not
-# available on Solaris, so these tests fail.
-#
+# programs which are not automatically available on Solaris (latex, abc2ly
+# and lilypad), so these tests will output messages of the form:
+# latex2png.py: failed command: latex ...
+# music2png.py: failed command: abc2ly ...
+# music2png.py: failed command: lilypond ...
 COMPONENT_PRE_TEST_ACTION = \
-    (cd $(@D); \
-     ln -s asciidoc.py asciidoc; \
-     export PATH=$(@D):$$PATH; \
-     cd tests; \
-     python$(PYTHON_VERSION) ./asciidocapi.py; \
-     if [ $$? -eq 0 ] ; \
-       then print "asciidocapi test passed"; else print "asciidocapi test failed"; \
-     fi; \
-     python$(PYTHON_VERSION) ./testasciidoc.py update; \
-     python$(PYTHON_VERSION) ./testasciidoc.py run; )
+	(cd $(@D); ln -s asciidoc.py asciidoc)
+
+COMPONENT_TEST_DIR =	$(@D)/tests
+COMPONENT_TEST_ENV_CMD =
+COMPONENT_TEST_ENV =	export PATH=$(@D):$$PATH;
+COMPONENT_TEST_CMD =	\
+	python$(PYTHON_VERSION) ./asciidocapi.py; \
+	if [ $$? -eq 0 ] ; \
+		then print "asciidocapi test passed"; \
+		else print "asciidocapi test failed"; \
+	fi; \
+	python$(PYTHON_VERSION) ./testasciidoc.py update; \
+	python$(PYTHON_VERSION) ./testasciidoc.py run
+COMPONENT_TEST_TARGETS =
 
 test:           $(TEST_64)
 
