@@ -26,16 +26,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pep8
-COMPONENT_VERSION=	1.4.6
+COMPONENT_VERSION=	1.5.7
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  http://pypi.python.org/pypi/pep8
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:603a46e5c358ce20ac4807a0eeafac7505d1125a4c1bd8378757ada06f61bed8
+    sha256:15b42131b25f376165d195fe4e17b0a28311182aaf9330d5eb575bbeda5a6989
 COMPONENT_ARCHIVE_URL=	http://pypi.python.org/packages/source/p/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/pep8
 
-TPNO=			16771
+TPNO=			20014
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
