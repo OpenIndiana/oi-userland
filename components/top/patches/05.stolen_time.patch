@@ -1,0 +1,546 @@
+#
+# This patch was included to address:
+# 16988337 Stolen time should be visible in output of top(1)
+#
+# Upstream BugDB: https://sourceforge.net/p/unixtop/bugs/
+# Upstream BugURL: https://sourceforge.net/p/unixtop/bugs/55/
+#
+--- a/machine/m_sunos5.c	Fri May 24 15:39:52 2013 +0200
++++ b/machine/m_sunos5.c	Wed Nov 05 13:48:21 2014 +0100
+@@ -7,8 +7,7 @@
+  * This is the machine-dependent module for SunOS 5.x (Solaris 2).
+  * There is some support for MP architectures.
+  * This makes top work on all revisions of SunOS 5 from 5.0
+- * through 5.9 (otherwise known as Solaris 9).  It has not been
+- * tested on SunOS 5.10.
++ * through 5.11 (otherwise known as Solaris 11).
+  *
+  * AUTHORS:      Torsten Kasch 		<torsten@techfak.uni-bielefeld.de>
+  *               Robert Boucher		<boucher@sofkin.ca>
+@@ -18,6 +17,7 @@
+  *               Petri Kutvonen         <kutvonen@cs.helsinki.fi>
+  *	         Casper Dik             <casper.dik@sun.com>
+  *               Tim Pugh               <tpugh@oce.orst.edu>
++ *               Stanislav Kozina       <stanislav.kozina@oracle.com>
+  */
+ 
+ #define _KMEMUSER
+@@ -112,6 +112,11 @@
+ #define USE_KSTAT
+ #endif
+ #ifdef USE_KSTAT
++
++# if OSREV >= 510
++#  define USE_NAMED_CPU_KSTAT
++# endif
++
+ #include <kstat.h>
+ /*
+  * Some kstats are fixed at 32 bits, these will be specified as ui32; some
+@@ -235,18 +240,35 @@
+  */
+ struct cpustats
+ {
+-    unsigned int states[CPUSTATES];
+-    uint_t pswitch;
+-    uint_t trap;
+-    uint_t intr;
+-    uint_t syscall;
+-    uint_t sysfork;
+-    uint_t sysvfork;
+-    uint_t pfault;
+-    uint_t pgin;
+-    uint_t pgout;
++    uint64_t states[CPUSTATES];
++    uint64_t pswitch;
++    uint64_t trap;
++    uint64_t intr;
++    uint64_t syscall;
++    uint64_t sysfork;
++    uint64_t sysvfork;
++    uint64_t pfault;
++    uint64_t pgin;
++    uint64_t pgout;
+ };
+ 
++#ifdef USE_NAMED_CPU_KSTAT
++static int cpu_ticks_idle_index = -1;
++static int cpu_ticks_user_index = -1;
++static int cpu_ticks_kernel_index = -1;
++static int cpu_ticks_stolen_index = -1;
++static int pswitch_index = -1;
++static int trap_index = -1;
++static int intr_index = -1;
++static int syscall_index = -1;
++static int sysfork_index = -1;
++static int sysvfork_index = -1;
++static int hat_fault_index = -1;
++static int as_fault_index = -1;
++static int pgin_index = -1;
++static int pgout_index = -1;
++#endif
++
+ /*
+  * GCC assumes that all doubles are aligned.  Unfortunately it
+  * doesn't round up the structure size to be a multiple of 8.
+@@ -280,9 +302,12 @@
+ 
+ int cpu_states[CPUSTATES];
+ char *cpustatenames[] =
+-{"idle", "user", "kernel", "iowait", "swap", NULL};
+-#define CPUSTATE_IOWAIT 3
+-#define CPUSTATE_SWAP   4
++{"idle", "user", "kernel", "stolen", "swap", NULL};
++#define CPUSTATE_IDLE     0
++#define CPUSTATE_USER     1
++#define CPUSTATE_KERNEL   2
++#define CPUSTATE_STOLEN   3
++#define CPUSTATE_SWAP     4
+ 
+ 
+ /* these are for detailing the memory statistics */
+@@ -773,36 +798,33 @@
+ }
+ 
+ /*
+- * int kstat_safe_namematch(int num, kstat_t *ksp, char *name, void *buf)
+- *
+- * Safe scan of kstat chain for names starting with "name".  Matches
+- * are copied in to "ksp", and kstat_read is called on each match using
+- * "buf" as a buffer of length "size".  The actual number of records
+- * found is returned.  Up to "num" kstats are copied in to "ksp", but
+- * no more.  If any kstat_read indicates that the chain has changed, then
+- * the whole process is restarted.
++ * Safe scan of kstat chain for names starting with "module", "name" or
++ * "class". Every condition is ignored if set to empty string.
++ * kstat_read is called on each match. The actual number of records
++ * found is returned.  If any kstat_read indicates that the chain has changed,
++ * then the whole process is restarted.
+  */
+ 
+ int
+-kstat_safe_namematch(int num, kstat_t **ksparg, char *name, void *buf, int size)
+-
++kstat_safe_lookup(int num, kstat_t **ksparg, char *class, char *module,
++		     char *name)
+ {
+     kstat_t *ks;
+     kstat_t **ksp;
+     kid_t new_kcid;
+-    int namelen;
++    int classlen, modlen, namelen;
+     int count;
+     int changed;
+-    char *cbuf;
+ 
+-    dprintf("kstat_safe_namematch(%d, %08x, %s, %08x, %d)\n",
+-	    num, ksparg, name, buf, size);
++    dprintf("kstat_safe_lookup(%d, %08x, %s, %s, %s)\n",
++	num, ksparg, class, module, name);
+ 
++    classlen = strlen(class);
++    modlen = strlen(module);
+     namelen = strlen(name);
+ 
+     do {
+ 	/* initialize before the scan */
+-	cbuf = (char *)buf;
+ 	ksp = ksparg;
+ 	count = 0;
+ 	changed = 0;
+@@ -810,18 +832,23 @@
+ 	/* scan the chain for matching kstats */
+ 	for (ks = kc->kc_chain; ks != NULL; ks = ks->ks_next)
+ 	{
+-	    if (strncmp(ks->ks_name, name, namelen) == 0)
++	    if ((strncmp(ks->ks_class, class, classlen) == 0) &&
++	        (strncmp(ks->ks_module, module, modlen) == 0) &&
++	        (strncmp(ks->ks_name, name, namelen) == 0))
+ 	    {
++		dprintf("kstat_safe_lookup found instance %d (%p)\n",
++			ks->ks_instance, ks);
++
+ 		/* this kstat matches: save it if there is room */
+ 		if (count++ < num)
+ 		{
+ 		    /* read the kstat */
+-		    new_kcid = kstat_read(kc, ks, cbuf);
++		    new_kcid = kstat_read(kc, ks, NULL);
+ 
+ 		    /* if the chain changed, update it */
+ 		    if (new_kcid != kcid)
+ 		    {
+-			dprintf("kstat_safe_namematch: chain changed to %d...updating\n",
++			dprintf("kstat_safe_lookup: chain changed to %d...updating\n",
+ 				new_kcid);
+ 			changed = 1;
+ 			kcid = kstat_chain_update(kc);
+@@ -832,18 +859,64 @@
+ 		    }
+ 
+ 		    /* move to the next buffers */
+-		    cbuf += size;
+ 		    *ksp++ = ks;
+ 		}
+ 	    }
+ 	}
+     } while(changed);
+ 
+-    dprintf("kstat_safe_namematch returns %d\n", count);
++    dprintf("kstat_safe_lookup returns %d\n", count);
+ 
+     return count;
+ }
+ 
++#ifdef USE_NAMED_CPU_KSTAT
++/*
++ * If index_ptr integer value is > -1 then the index points to the
++ * string entry in the ks_data that we are interested in. Otherwise
++ * we will need to walk the array.
++ */
++static uint64_t
++kstat_safe_datalookup(kstat_t *kstat, char *name, int *index_ptr)
++{
++    int i;
++    int size;
++    int index;
++    char *namep, *datap;
++    kstat_named_t *data;
++
++    if (kstat->ks_type != KSTAT_TYPE_NAMED)
++	    return (0);
++
++    size = sizeof (kstat_named_t);
++    namep = KSTAT_NAMED_PTR(kstat)->name;
++
++    index = *index_ptr;
++    if (index >= 0) {
++	    /* Short cut to the information. */
++	    datap = kstat->ks_data;
++	    data = (kstat_named_t *)&datap[size*index];
++	    if (data->data_type != KSTAT_DATA_UINT64)
++		    return (0);
++	    return (data->value.ui64);
++    }
++
++    /* Need to go find the string. */
++    data = kstat->ks_data;
++    for (i = 0; i < kstat->ks_ndata; i++) {
++	    if (strcmp(name, namep) == 0) {
++		    *index_ptr = i;
++		    if (data->data_type != KSTAT_DATA_UINT64)
++			    return (0);
++		    return (data->value.ui64);
++	    }
++	    namep += size;
++	    data++;
++    }
++    return (0);
++}
++#endif /* USE_NAMED_CPU_KSTAT */
++
+ static kstat_t *ks_system_misc = NULL;
+ 
+ #endif /* USE_KSTAT */
+@@ -936,36 +1009,55 @@
+ 
+ {
+ #ifdef USE_KSTAT
++#ifdef USE_NAMED_CPU_KSTAT
++    static kstat_t **cpu_sys_ks = NULL, **cpu_vm_ks = NULL;
++    kstat_t *cpu_sys_stat_p, *cpu_vm_stat_p;
++#else
+     static kstat_t **cpu_ks = NULL;
+-    static cpu_stat_t *cpu_stat = NULL;
++    cpu_stat_t cpu_stat;
++#endif
++    static kid_t cpu_kcid = 0;
+     static unsigned int nelems = 0;
+-    cpu_stat_t *cpu_stat_p;
+-    int i, cpu_num;
++    static int cpu_num = 0, cpu_vm_num = 0;
++    int i;
+     struct cpustats *cpustats_p;
+ 
+     dprintf("get_cpustats(%d -> %d, %08x)\n", cnt, *cnt, cpustats);
+ 
+-    while (nelems > 0 ?
+-	   (cpu_num = kstat_safe_namematch(nelems,
+-					   cpu_ks,
+-					   "cpu_stat",
+-					   cpu_stat,
+-					   sizeof(cpu_stat_t))) > nelems :
+-	   (cpu_num = get_ncpus()) > 0)
++    /* Grab initial number of cpus */
++    if (nelems == 0) {
++	    cpu_vm_num = cpu_num = get_ncpus();
++	    if (cpu_num <= 0)
++		    return (cpustats);
++    }
++
++reload:
++    /* Make sure we have enough space for all cpus */
++    while (cpu_kcid != kcid || cpu_num != cpu_vm_num || cpu_num > nelems)
+     {
+ 	/* reallocate the arrays */
+ 	dprintf("realloc from %d to %d\n", nelems, cpu_num);
+ 	nelems = cpu_num;
+-	if (cpu_ks != NULL)
+-	{
+-	    free(cpu_ks);
++#ifdef USE_NAMED_CPU_KSTAT
++	free(cpu_sys_ks);
++	free(cpu_vm_ks);
++	cpu_sys_ks = (kstat_t **)calloc(nelems, sizeof(kstat_t *));
++	cpu_vm_ks = (kstat_t **)calloc(nelems, sizeof(kstat_t *));
++
++	if (cpu_sys_ks == NULL || cpu_vm_ks == NULL) {
++		puts("Allocation failed\n");
++		abort();
+ 	}
++
++	cpu_num = kstat_safe_lookup(nelems, cpu_sys_ks, "misc", "cpu", "sys");
++	cpu_vm_num = kstat_safe_lookup(nelems, cpu_vm_ks, "misc", "cpu", "vm");
++#else
++	free(cpu_ks);
+ 	cpu_ks = (kstat_t **)calloc(nelems, sizeof(kstat_t *));
+-	if (cpu_stat != NULL)
+-	{
+-	    free(cpu_stat);
+-	}
+-	cpu_stat = (cpu_stat_t *)malloc(nelems * sizeof(cpu_stat_t));
++	cpu_num = cpu_vm_num =
++	    kstat_safe_lookup(nelems, cpu_ks, "misc", "cpu_stat", "");
++#endif
++	cpu_kcid = kcid;
+     }
+ 
+     /* do we have more cpus than our caller? */
+@@ -975,36 +1067,96 @@
+ 	dprintf("realloc array from %d to %d\n", *cnt, cpu_num);
+ 	*cnt = cpu_num;
+ 	cpustats = (struct cpustats *)realloc(cpustats,
+-					      cpu_num * sizeof(struct cpustats));
++		cpu_num * sizeof(struct cpustats));
+     }
+ 
+-    cpu_stat_p = cpu_stat;
+     cpustats_p = cpustats;
+     for (i = 0; i < cpu_num; i++)
+     {
+-	dprintf("cpu %d %08x: idle %u, user %u, syscall %u\n", i, cpu_stat_p,
+-		cpu_stat_p->cpu_sysinfo.cpu[0],
+-		cpu_stat_p->cpu_sysinfo.cpu[1],
+-		cpu_stat_p->cpu_sysinfo.syscall);
++#ifdef USE_NAMED_CPU_KSTAT
++	cpu_sys_stat_p = cpu_sys_ks[i];
++	cpu_vm_stat_p = cpu_vm_ks[i];
+ 
+-	cpustats_p->states[CPU_IDLE] = cpu_stat_p->cpu_sysinfo.cpu[CPU_IDLE];
+-	cpustats_p->states[CPU_USER] = cpu_stat_p->cpu_sysinfo.cpu[CPU_USER];
+-	cpustats_p->states[CPU_KERNEL] = cpu_stat_p->cpu_sysinfo.cpu[CPU_KERNEL];
+-	cpustats_p->states[CPUSTATE_IOWAIT] = cpu_stat_p->cpu_sysinfo.wait[W_IO] +
+-	    cpu_stat_p->cpu_sysinfo.wait[W_PIO];
+-	cpustats_p->states[CPUSTATE_SWAP] = cpu_stat_p->cpu_sysinfo.wait[W_SWAP];
+-	cpustats_p->pswitch = cpu_stat_p->cpu_sysinfo.pswitch;
+-	cpustats_p->trap = cpu_stat_p->cpu_sysinfo.trap;
+-	cpustats_p->intr = cpu_stat_p->cpu_sysinfo.intr;
+-	cpustats_p->syscall = cpu_stat_p->cpu_sysinfo.syscall;
+-	cpustats_p->sysfork = cpu_stat_p->cpu_sysinfo.sysfork;
+-	cpustats_p->sysvfork = cpu_stat_p->cpu_sysinfo.sysvfork;
+-	cpustats_p->pfault = cpu_stat_p->cpu_vminfo.hat_fault +
+-	    cpu_stat_p->cpu_vminfo.as_fault;
+-	cpustats_p->pgin = cpu_stat_p->cpu_vminfo.pgin;
+-	cpustats_p->pgout = cpu_stat_p->cpu_vminfo.pgout;
++	/*
++	 * If kstat id has changed, update the kstat headers and re-allocate
++	 * the arrays accordingly.
++	 */
++	if (((cpu_kcid = kstat_read(kc, cpu_sys_stat_p, NULL)) != kcid) ||
++		((cpu_kcid = kstat_read(kc, cpu_vm_stat_p, NULL)) != kcid))
++	    goto reload;
++
++	dprintf("cpu %d %08x: idle %llu, user %llu, syscall %llu\n",
++		i, cpu_sys_stat_p,
++		kstat_safe_datalookup(cpu_sys_stat_p, "cpu_ticks_idle",
++		&cpu_ticks_idle_index),
++		kstat_safe_datalookup(cpu_sys_stat_p, "cpu_ticks_user",
++		&cpu_ticks_user_index),
++		kstat_safe_datalookup(cpu_sys_stat_p, "syscall",
++		&syscall_index));
++
++	cpustats_p->states[CPUSTATE_IDLE] =
++		kstat_safe_datalookup(cpu_sys_stat_p, "cpu_ticks_idle",
++		&cpu_ticks_idle_index);
++	cpustats_p->states[CPUSTATE_USER] =
++		kstat_safe_datalookup(cpu_sys_stat_p, "cpu_ticks_user",
++		&cpu_ticks_user_index);
++	cpustats_p->states[CPUSTATE_KERNEL] =
++		kstat_safe_datalookup(cpu_sys_stat_p, "cpu_ticks_kernel",
++		&cpu_ticks_kernel_index);
++	cpustats_p->states[CPUSTATE_STOLEN] =
++		kstat_safe_datalookup(cpu_sys_stat_p, "cpu_ticks_stolen",
++		&cpu_ticks_stolen_index);
++	cpustats_p->states[CPUSTATE_SWAP] = 0;
++	cpustats_p->pswitch = kstat_safe_datalookup(cpu_sys_stat_p, "pswitch",
++		&pswitch_index);
++	cpustats_p->trap = kstat_safe_datalookup(cpu_sys_stat_p, "trap",
++		&trap_index);
++	cpustats_p->intr = kstat_safe_datalookup(cpu_sys_stat_p, "intr",
++		&intr_index);
++	cpustats_p->syscall = kstat_safe_datalookup(cpu_sys_stat_p, "syscall",
++		&syscall_index);
++	cpustats_p->sysfork = kstat_safe_datalookup(cpu_sys_stat_p, "sysfork",
++		&sysfork_index);
++	cpustats_p->sysvfork = kstat_safe_datalookup(cpu_sys_stat_p, "sysvfork",
++		&sysvfork_index);
++	cpustats_p->pfault = kstat_safe_datalookup(cpu_vm_stat_p, "hat_fault",
++		&hat_fault_index) +
++		kstat_safe_datalookup(cpu_vm_stat_p, "as_fault",
++		&as_fault_index);
++	cpustats_p->pgin = kstat_safe_datalookup(cpu_vm_stat_p, "pgin",
++		&pgin_index);
++	cpustats_p->pgout = kstat_safe_datalookup(cpu_vm_stat_p, "pgout",
++		&pgout_index);
++#else
++	if ((cpu_kcid = kstat_read(kc, cpu_ks[i], &cpu_stat)) != kcid)
++	    goto reload;
++
++	dprintf("cpu %d %08x: idle %u, user %u, syscall %u\n", i, cpu_stat,
++		cpu_stat.cpu_sysinfo.cpu[CPUSTATE_IDLE],
++		cpu_stat.cpu_sysinfo.cpu[CPUSTATE_USER],
++		cpu_stat.cpu_sysinfo.syscall);
++
++	cpustats_p->states[CPUSTATE_IDLE] =
++		(uint64_t)cpu_stat.cpu_sysinfo.cpu[CPU_IDLE];
++	cpustats_p->states[CPUSTATE_USER] =
++		(uint64_t)cpu_stat.cpu_sysinfo.cpu[CPU_USER];
++	cpustats_p->states[CPUSTATE_KERNEL] =
++		(uint64_t)cpu_stat.cpu_sysinfo.cpu[CPU_KERNEL];
++	cpustats_p->states[CPUSTATE_STOLEN] = 0;
++	cpustats_p->states[CPUSTATE_SWAP] =
++		(uint64_t)cpu_stat.cpu_sysinfo.wait[W_SWAP];
++	cpustats_p->pswitch = (uint64_t)cpu_stat.cpu_sysinfo.pswitch;
++	cpustats_p->trap = (uint64_t)cpu_stat.cpu_sysinfo.trap;
++	cpustats_p->intr = (uint64_t)cpu_stat.cpu_sysinfo.intr;
++	cpustats_p->syscall = (uint64_t)cpu_stat.cpu_sysinfo.syscall;
++	cpustats_p->sysfork = (uint64_t)cpu_stat.cpu_sysinfo.sysfork;
++	cpustats_p->sysvfork = (uint64_t)cpu_stat.cpu_sysinfo.sysvfork;
++	cpustats_p->pfault = (uint64_t)cpu_stat.cpu_vminfo.hat_fault +
++		(uint64_t)cpu_stat.cpu_vminfo.as_fault;
++	cpustats_p->pgin = (uint64_t)cpu_stat.cpu_vminfo.pgin;
++	cpustats_p->pgout = (uint64_t)cpu_stat.cpu_vminfo.pgout;
++#endif
+ 	cpustats_p++;
+-	cpu_stat_p++;
+     }
+ 
+     cpucount = cpu_num;
+@@ -1035,11 +1187,10 @@
+ 	    /* get struct cpu for this processor */
+ 	    (void) getkval (cpu_offset[i], (int *)(&cpu), sizeof (struct cpu), "cpu");
+ 
+-	    (*cp_stats_p)[CPU_IDLE] = cpu.cpu_stat.cpu_sysinfo.cpu[CPU_IDLE];
+-	    (*cp_stats_p)[CPU_USER] = cpu.cpu_stat.cpu_sysinfo.cpu[CPU_USER];
+-	    (*cp_stats_p)[CPU_KERNEL] = cpu.cpu_stat.cpu_sysinfo.cpu[CPU_KERNEL];
+-	    (*cp_stats_p)[CPUSTATE_IOWAIT] = cpu.cpu_stat.cpu_sysinfo.wait[W_IO] +
+-		cpu.cpu_stat.cpu_sysinfo.wait[W_PIO];
++	    (*cp_stats_p)[CPUSTATE_IDLE] = cpu.cpu_stat.cpu_sysinfo.cpu[CPU_IDLE];
++	    (*cp_stats_p)[CPUSTATE_USER] = cpu.cpu_stat.cpu_sysinfo.cpu[CPU_USER];
++	    (*cp_stats_p)[CPUSTATE_KERNEL] = cpu.cpu_stat.cpu_sysinfo.cpu[CPU_KERNEL];
++	    (*cp_stats_p)[CPUSTATE_STOLEN] = 0;
+ 	    (*cp_stats_p)[CPUSTATE_SWAP] = cpu.cpu_stat.cpu_sysinfo.wait[W_SWAP];
+ 	    cp_stats_p++;
+ 	}
+@@ -1394,14 +1545,55 @@
+     return (0);
+ }
+ 
++static void
++percentages64(int cnt, int *out, uint64_t *new, uint64_t *old, uint64_t *diffs)
++{
++	int i;
++	uint64_t change;
++	uint64_t total_change;
++	uint64_t *dp;
++	uint64_t half_total;
++
++	/* initialization */
++	total_change = 0;
++	dp = diffs;
++
++	/* calculate changes for each state and the overall change */
++	for (i = 0; i < cnt; i++) {
++		/*
++		 * Don't worry about wrapping - even at hz=1GHz, a
++		 * u_int64_t will last at least 544 years.
++		 */
++		change = *new - *old;
++		total_change += (*dp++ = change);
++		*old++ = *new++;
++	}
++
++	/* avoid divide by zero potential */
++	if (total_change == 0)
++		total_change = 1;
++
++	/* calculate percentages based on overall change, rounding up */
++	half_total = total_change / 2;
++	for (i = 0; i < cnt; i++)
++		*out++ = (int)((*diffs++ * 1000 + half_total) / total_change);
++}
++
++static uint_t
++diff_per_second64(uint64_t x, uint64_t y)
++{
++	uint64_t diff = y > x ? UINT64_MAX - y + x + 1 : x - y;
++	return ((uint_t)(diff * 1000 / time_elapsed()));
++}
++
+ void
+ get_system_info (struct system_info *si)
+ {
+     int avenrun[3];
+ 
+-    static long cp_time[CPUSTATES];
+-    static long cp_old[CPUSTATES];
+-    static long cp_diff[CPUSTATES];
++    static uint64_t cp_time[CPUSTATES];
++    static uint64_t cp_old[CPUSTATES];
++    static uint64_t cp_diff[CPUSTATES];
+     static struct cpustats *cpustats = NULL;
+     static struct cpustats sum_current;
+     static struct cpustats sum_old;
+@@ -1440,7 +1632,7 @@
+     }
+ 
+     /* convert cp_time counts to percentages */
+-    (void) percentages (CPUSTATES, cpu_states, cp_time, cp_old, cp_diff);
++    (void) percentages64 (CPUSTATES, cpu_states, cp_time, cp_old, cp_diff);
+ 
+     /* get mpid -- process id of last process */
+     if (kd)
+@@ -1467,15 +1659,15 @@
+     }
+ 
+     /* get kernel data */
+-    kernel_stats[KERNEL_CSWITCH] = diff_per_second(sum_current.pswitch, sum_old.pswitch);
+-    kernel_stats[KERNEL_TRAP] = diff_per_second(sum_current.trap, sum_old.trap);
+-    kernel_stats[KERNEL_INTR] = diff_per_second(sum_current.intr, sum_old.intr);
+-    kernel_stats[KERNEL_SYSCALL] = diff_per_second(sum_current.syscall, sum_old.syscall);
+-    kernel_stats[KERNEL_FORK] = diff_per_second(sum_current.sysfork + sum_current.sysvfork,
++    kernel_stats[KERNEL_CSWITCH] = diff_per_second64(sum_current.pswitch, sum_old.pswitch);
++    kernel_stats[KERNEL_TRAP] = diff_per_second64(sum_current.trap, sum_old.trap);
++    kernel_stats[KERNEL_INTR] = diff_per_second64(sum_current.intr, sum_old.intr);
++    kernel_stats[KERNEL_SYSCALL] = diff_per_second64(sum_current.syscall, sum_old.syscall);
++    kernel_stats[KERNEL_FORK] = diff_per_second64(sum_current.sysfork + sum_current.sysvfork,
+ 						sum_old.sysfork + sum_old.sysvfork);
+-    kernel_stats[KERNEL_PFAULT] = diff_per_second(sum_current.pfault, sum_old.pfault);
+-    kernel_stats[KERNEL_PGIN] = pagetok(diff_per_second(sum_current.pgin, sum_old.pgin));
+-    kernel_stats[KERNEL_PGOUT] = pagetok(diff_per_second(sum_current.pgout, sum_old.pgout));
++    kernel_stats[KERNEL_PFAULT] = diff_per_second64(sum_current.pfault, sum_old.pfault);
++    kernel_stats[KERNEL_PGIN] = pagetok(diff_per_second64(sum_current.pgin, sum_old.pgin));
++    kernel_stats[KERNEL_PGOUT] = pagetok(diff_per_second64(sum_current.pgout, sum_old.pgout));
+ 
+ 
+     /* set arrays and strings */
