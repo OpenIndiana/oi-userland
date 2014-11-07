@@ -38,6 +38,17 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
+# Because the Studio compiler generates thousands of lines of warnings.
+COMPILER =			gcc
+
+# Always show the build and link lines for easier debugging.
+COMPONENT_BUILD_ARGS +=		V=1
+
+# Fixup warnings about -Bdirect and -zignore being incompatible options when
+# building a relocatable object.
+LD_B_DIRECT=
+LD_Z_IGNORE=
+
 CONFIGURE_OPTIONS  +=		--enable-bittorrent
 CONFIGURE_OPTIONS  +=		--enable-html-highlight
 CONFIGURE_OPTIONS  +=		--enable-256-colors
@@ -50,7 +61,7 @@ build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
 
-test:		$(TEST_64)
+test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
