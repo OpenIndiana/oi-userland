@@ -39,11 +39,12 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
+# Because the Studio compiler generates thousands of lines of warnings.
+COMPILER =		gcc
+
 # Configure in links does not understand CC, CXX, etc.  Need to generate a
 # new configure for it to configure and build properly.
 COMPONENT_PREP_ACTION=	(cd $(@D) ; autoconf) 
-
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS) -xstrconst -Dinline"
 
 ASLR_MODE = $(ASLR_ENABLE)
 
