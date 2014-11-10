@@ -56,7 +56,6 @@ CFLAGS += -DDISABLE_BANNER
 CFLAGS += -DPAM_ENHANCEMENT
 CFLAGS += -DPAM_BUGFIX
 CFLAGS += -DOPTION_DEFAULT_VALUE
-CFLAGS += -DNO_UID_RESTORATION_TEST
 
 CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)" 
 
@@ -64,7 +63,12 @@ CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 # pre-authentication phase, sshd will chroot to /var/empty which doesn't
 # contain any files. If we use lazyloading, sshd will fail to find any
 # libraries that it needs.
-CONFIGURE_OPTIONS += LDFLAGS="$(LDFLAGS) -B direct -z nolazyload"
+LDFLAGS += -B direct -z nolazyload
+
+# Just $(BUILD_64) option was not propogating the 64 bit flags to all the
+# necessary places. Hence the -m64 option is added to LDFLAGS for
+# CONFIGURE_OPTIONS.64.
+CONFIGURE_OPTIONS.64 += LDFLAGS="$(LDFLAGS) -m64"
 
 # Build with BSM audit. Do not check if getaudit and getaudit_addr are in
 # libbsm, because they are no longer in libbsm and not needed any way.
@@ -95,9 +99,9 @@ COMPONENT_PRE_BUILD_ACTION = \
     )
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
 # Because of certain set up requirement, the regress test suite is ported to
 # the STC gate.
