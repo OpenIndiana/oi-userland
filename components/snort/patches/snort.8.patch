@@ -1,7 +1,10 @@
-Adjust snort man page to be in section 1M.
+Adjust snort man page to be in section 1M and fix the comments w.r.t.
+configuration file usage with the -T option.
 
---- snort-2.9.2/snort.8.orig	2013-03-18 12:26:58.589074327 -0700
-+++ snort-2.9.2/snort.8	2013-03-18 12:28:26.378646691 -0700
+The second part of this patch (the -T changes) has been submitted upstream.
+
+--- snort.8.orig	2014-09-25 07:44:55.175565999 -0700
++++ snort.8	2014-09-26 11:19:43.998692220 -0700
 @@ -1,8 +1,8 @@
  .\" Process this file with
 -.\" groff -man -Tascii snort.8
@@ -13,7 +16,17 @@ Adjust snort man page to be in section 1M.
  .SH NAME
  Snort \- open source network intrusion detection system
  .SH SYNOPSIS
-@@ -913,15 +913,15 @@
+@@ -339,8 +339,7 @@
+ indicating that everything is ready to proceed.  This is a good
+ switch to use if daemon mode is going to be used, it verifies that
+ the Snort configuration that is about to be used is valid and won't fail at
+-run time. Note, Snort looks for either /etc/snort.conf or ./snort.conf.
+-If your config lives elsewhere, use the -c option to specify a valid
++run time. Note that you will need to use the -c option to specify a valid
+ .I config-file.
+ .IP "-u user"
+ Change the user/UID Snort runs under to
+@@ -930,15 +929,15 @@
  Causes the daemon to close all opened files and restart.
  Please \fBnote\fR that this will only work if the \fBfull\fR pathname is
  used to invoke snort in daemon mode, otherwise snort will just exit with an

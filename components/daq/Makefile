@@ -23,16 +23,16 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		daq
-COMPONENT_VERSION=	0.6.2
+COMPONENT_VERSION=	2.0.2
 COMPONENT_PROJECT_URL=	http://www.snort.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:0159865b5dc127ed2faf8d6732d781939f27e38b7c7deabcd369a22ea9e42f26
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)downloads/1525
+    sha256:d65d1e67c4994e02c3142c49a648642e780b7e3d942b4a51f605309beac269a8
+COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/snort/files/snort/$(COMPONENT_ARCHIVE)/download
 COMPONENT_BUGDB=	library/daq
 
-TPNO=			11060
+TPNO=			19384
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
@@ -46,6 +46,7 @@ CFLAGS +=	-Du_int32_t=uint32_t
 # Set -m32 or -m64 correctly for 32 and 64 bit versions.
 CC +=		$(CC_BITS)
 
+CONFIGURE_OPTIONS +=	--disable-ipfw-module
 CONFIGURE_OPTIONS +=    --enable-static=no
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 

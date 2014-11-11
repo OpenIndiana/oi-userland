@@ -6,7 +6,7 @@ of libdaq is different from the way that Linux systems do this.
 On Linux systems, DAQ installs two static libraries:
 
   /usr/lib/libdaq_static.a
-  /usr/lib/libdaq_static_modules.a 
+  /usr/lib/libdaq_static_modules.a
 
 When snort is being configured, you see:
 
@@ -43,16 +43,15 @@ been adjusted to specify a single default DAQ module directory:
 
   /usr/lib/64/daq
 
-
---- snort-2.9.2/src/snort.c.orig	2013-05-15 11:52:06.640833897 -0700
-+++ snort-2.9.2/src/snort.c	2013-05-15 11:58:03.040482526 -0700
-@@ -3677,6 +3677,9 @@
+--- src/snort.c.orig	2014-09-25 07:53:43.356728058 -0700
++++ src/snort.c	2014-09-25 07:55:05.650780347 -0700
+@@ -4039,6 +4039,9 @@
  {
      SnortConfig *sc = (SnortConfig *)SnortAlloc(sizeof(SnortConfig));
  
 +    /* Define where to look for DAQ modules. */
 +    ConfigDaqDir(sc, "/usr/lib/64/daq");
 +
-     sc->pkt_cnt = -1;
-     sc->pkt_snaplen = -1;
-     /*user_id and group_id should be initialized to -1 by default, because
+     sc->pkt_cnt = 0;
+ #ifdef REG_TEST
+     sc->pkt_skip = 0;

@@ -32,29 +32,55 @@ set name=info.classification \
     value=org.opensolaris.category.2008:Applications/Internet
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid value=PSARC/2009/256 value=PSARC/2013/113
+set name=org.opensolaris.arc-caseid value=PSARC/2009/256 \
+    value=PSARC/2013/113 value=PSARC/2014/347
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-file path=etc/attribute_table.dtd
-file path=etc/classification.config mode=0644 \
-    original_name=SUNWsnort:etc/classification.config overlay=allow \
-    preserve=renamenew
-file path=etc/gen-msg.map
-file path=etc/reference.config mode=0644 \
-    original_name=SUNWsnort:etc/reference.config overlay=allow \
-    preserve=renamenew
+file etc/attribute_table.dtd path=etc/snort/attribute_table.dtd
+file etc/classification.config path=etc/snort/classification.config mode=0644 \
+    original_name=SUNWsnort:etc/classification.config \
+    overlay=allow preserve=renamenew
+file etc/gen-msg.map path=etc/snort/gen-msg.map
+file etc/reference.config path=etc/snort/reference.config mode=0644 \
+    original_name=SUNWsnort:etc/reference.config \
+    overlay=allow preserve=renamenew
 file Solaris/auth_attr path=etc/security/auth_attr.d/snort
 file Solaris/exec_attr path=etc/security/exec_attr.d/snort
-file path=etc/snort.conf mode=0644 original_name=SUNWsnort:etc/snort.conf \
+file etc/snort.conf path=etc/snort/snort.conf mode=0644 \
+    original_name=SUNWsnort:etc/snort.conf \
     overlay=allow preserve=renamenew
-file path=etc/threshold.conf mode=0644 \
-    original_name=SUNWsnort:etc/threshold.conf overlay=allow preserve=renamenew
-file path=etc/unicode.map
+file etc/threshold.conf path=etc/snort/threshold.conf mode=0644 \
+    original_name=SUNWsnort:etc/threshold.conf \
+    overlay=allow preserve=renamenew
+# Directories for snort rules.
+dir  path=etc/snort/rules
+dir  path=etc/snort/so_rules
+dir  path=etc/snort/preproc_rules
+#
+file etc/file_magic.conf path=etc/snort/file_magic.conf
+file etc/unicode.map path=etc/snort/unicode.map
 file Solaris/snort.xml path=lib/svc/manifest/network/snort.xml
 file Solaris/snortd path=lib/svc/method/snortd
-file usr/bin/$(MACH64)/snort path=usr/bin/snort
-file path=usr/include/snort/dynamic_preproc/attribute_table_api.h
+file path=usr/bin/snort
+file path=usr/include/snort/dynamic_output/bitop.h
+file path=usr/include/snort/dynamic_output/ipv6_port.h
+file path=usr/include/snort/dynamic_output/obfuscation.h
+file path=usr/include/snort/dynamic_output/output_api.h
+file path=usr/include/snort/dynamic_output/output_common.h
+file path=usr/include/snort/dynamic_output/output_lib.h
+file path=usr/include/snort/dynamic_output/preprocids.h
+file path=usr/include/snort/dynamic_output/sf_dynamic_common.h
+file path=usr/include/snort/dynamic_output/sf_ip.h
+file path=usr/include/snort/dynamic_output/sf_protocols.h
+file path=usr/include/snort/dynamic_output/sf_snort_packet.h
+file path=usr/include/snort/dynamic_output/sfPolicy.h
+file path=usr/include/snort/dynamic_output/sfrt_dir.h
+file path=usr/include/snort/dynamic_output/sfrt_trie.h
+file path=usr/include/snort/dynamic_output/sfrt.h
+file path=usr/include/snort/dynamic_output/snort_debug.h
+file path=usr/include/snort/dynamic_output/stream_api.h
 file path=usr/include/snort/dynamic_preproc/bitop.h
 file path=usr/include/snort/dynamic_preproc/cpuclock.h
+file path=usr/include/snort/dynamic_preproc/file_api.h
 file path=usr/include/snort/dynamic_preproc/idle_processing.h
 file path=usr/include/snort/dynamic_preproc/ipv6_port.h
 file path=usr/include/snort/dynamic_preproc/mempool.h
@@ -75,6 +101,7 @@ file path=usr/include/snort/dynamic_preproc/sf_ip.h
 file path=usr/include/snort/dynamic_preproc/sf_preproc_info.h
 file path=usr/include/snort/dynamic_preproc/sf_protocols.h
 file path=usr/include/snort/dynamic_preproc/sf_sdlist_types.h
+file path=usr/include/snort/dynamic_preproc/sf_seqnums.h
 file path=usr/include/snort/dynamic_preproc/sf_snort_packet.h
 file path=usr/include/snort/dynamic_preproc/sf_snort_plugin_api.h
 file path=usr/include/snort/dynamic_preproc/sfcommon.h
@@ -89,8 +116,9 @@ file path=usr/include/snort/dynamic_preproc/snort_debug.h
 file path=usr/include/snort/dynamic_preproc/ssl.h
 file path=usr/include/snort/dynamic_preproc/str_search.h
 file path=usr/include/snort/dynamic_preproc/stream_api.h
-file Solaris/snort.pc path=usr/lib/$(MACH64)/pkgconfig/snort.pc
-file Solaris/snort_preproc.pc path=usr/lib/$(MACH64)/pkgconfig/snort_preproc.pc
+file path=usr/lib/$(MACH64)/pkgconfig/snort_output.pc
+file path=usr/lib/$(MACH64)/pkgconfig/snort_preproc.pc
+file path=usr/lib/$(MACH64)/pkgconfig/snort.pc
 #
 link path=usr/lib/$(MACH64)/snort_dynamicengine/libsf_engine.so \
     target=libsf_engine.so.0.0.0
@@ -197,7 +225,6 @@ file path=usr/share/doc/snort/INSTALL
 file path=usr/share/doc/snort/NEWS
 file path=usr/share/doc/snort/PROBLEMS
 file path=usr/share/doc/snort/README
-file path=usr/share/doc/snort/README.ARUBA
 file path=usr/share/doc/snort/README.GTP
 file path=usr/share/doc/snort/README.PLUGINS
 file path=usr/share/doc/snort/README.PerfProfiling
@@ -210,18 +237,20 @@ file path=usr/share/doc/snort/README.asn1
 file path=usr/share/doc/snort/README.counts
 file path=usr/share/doc/snort/README.csv
 file path=usr/share/doc/snort/README.daq
-file path=usr/share/doc/snort/README.database
 file path=usr/share/doc/snort/README.dcerpc2
 file path=usr/share/doc/snort/README.decode
 file path=usr/share/doc/snort/README.decoder_preproc_rules
 file path=usr/share/doc/snort/README.dnp3
 file path=usr/share/doc/snort/README.dns
 file path=usr/share/doc/snort/README.event_queue
+file path=usr/share/doc/snort/README.file
+file path=usr/share/doc/snort/README.file_ips
 file path=usr/share/doc/snort/README.filters
 file path=usr/share/doc/snort/README.flowbits
 file path=usr/share/doc/snort/README.frag3
 file path=usr/share/doc/snort/README.ftptelnet
 file path=usr/share/doc/snort/README.gre
+file path=usr/share/doc/snort/README.ha
 file path=usr/share/doc/snort/README.http_inspect
 file path=usr/share/doc/snort/README.imap
 file path=usr/share/doc/snort/README.ipip
@@ -244,6 +273,7 @@ file path=usr/share/doc/snort/README.stream5
 file path=usr/share/doc/snort/README.tag
 file path=usr/share/doc/snort/README.thresholding
 file path=usr/share/doc/snort/README.u2boat
+file path=usr/share/doc/snort/README.unified2
 file path=usr/share/doc/snort/README.variables
 file path=usr/share/doc/snort/TODO
 file path=usr/share/doc/snort/USAGE

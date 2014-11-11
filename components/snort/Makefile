@@ -26,20 +26,22 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		snort
-COMPONENT_VERSION=	2.9.2
+COMPONENT_VERSION=	2.9.6.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:04d375b627dd256d6257f2cbe5a770e4552e3f35d5e2100b97f75426b600d8cb
+    sha256:8e1d7fc5e1523a786d845ca0102cc474abfcebfcc7e964a1653680034b5b5d77
 COMPONENT_PROJECT_URL=	http://www.snort.org/
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)dl/snort-current/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/snort.mirror/files/Snort%202.9.6.2/$(COMPONENT_ARCHIVE)/download
 COMPONENT_BUGDB=	utility/snort
 
-TPNO=			9027
+TPNO=			19385
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
+
+PATCH_LEVEL =		0
 
 # without this we bus error on sparc. sadly I don't see any patches
 # that might relate from the upstream (though maybe that's really
@@ -48,6 +50,11 @@ studio_ALIGN.sparc.64=  -xmemalign=1i
 
 # Need to recreate the configure script for gethrtime checks.
 COMPONENT_PREP_ACTION +=	(cd $(@D); autoconf);
+
+# This option has the side-effect of getting the bindir lines correct in
+# snort_output.pc, snort_preproc.pc and snort.pc under
+# /usr/lib/$(MACH64)/pkgconfig/
+CONFIGURE_OPTIONS +=	--bindir=/usr/bin
 
 CONFIGURE_OPTIONS +=	--with-libpcre-libraries="/usr/lib/$(MACH64)"
 CONFIGURE_OPTIONS +=	--with-dnet-libraries="/usr/lib/$(MACH64)"
