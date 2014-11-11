@@ -41,14 +41,15 @@ include ../../make-rules/ips.mk
 CONFIGURE_ENV	+=	MAILMAN_USER=mailman
 CONFIGURE_ENV	+=	MAILMAN_GROUP=mailman
 
-CONFIGURE_OPTIONS +=    --prefix=/usr/lib/mailman
-CONFIGURE_OPTIONS +=    --with-var-prefix=/var/mailman
-CONFIGURE_OPTIONS +=    --with-mail-gid=other
-CONFIGURE_OPTIONS +=    --with-cgi-gid=webservd
-CONFIGURE_OPTIONS +=    --with-python=/usr/bin/python2.7
-CONFIGURE_OPTIONS +=    --without-permcheck
-CONFIGURE_OPTIONS +=    --with-mailhost=localhost
-CONFIGURE_OPTIONS +=    --with-urlhost=localhost
+CONFIGURE_OPTIONS +=	--prefix=/usr/lib/mailman
+CONFIGURE_OPTIONS +=	--with-var-prefix=/var/mailman
+CONFIGURE_OPTIONS +=	--with-mail-gid=other
+CONFIGURE_OPTIONS +=	--with-cgi-gid=webservd
+CONFIGURE_OPTIONS +=	--with-python=/usr/bin/python2.7
+CONFIGURE_OPTIONS +=	--without-permcheck
+CONFIGURE_OPTIONS +=	--with-mailhost=localhost
+CONFIGURE_OPTIONS +=	--with-urlhost=localhost
+CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 
 ASLR_MODE = $(ASLR_ENABLE)
 
