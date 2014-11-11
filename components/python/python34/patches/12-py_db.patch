@@ -12,7 +12,7 @@ some point, but the suitability (or lack thereof) has not yet been determined.
  
  # Compile a binary with gcc profile guided optimization.
  profile-opt:
-@@ -673,6 +673,19 @@
+@@ -673,6 +673,15 @@
  	@mv config.c Modules
  	@echo "The Makefile was updated, you may need to re-run make."
  
@@ -21,18 +21,14 @@ some point, but the suitability (or lack thereof) has not yet been determined.
 +libpython$(LDVERSION)_db.so.1.0:        $(srcdir)/py_db/libpython34_db.c
 +	$(CC) -o $@ $(CFLAGS) $(PY_CPPFLAGS) $(CPPFLAGS) $(SHLIB_FLAGS) $<
 +
-+check_offset:  $(srcdir)/py_db/check_offsets.c
-+	$(CC) -o $@ $(CFLAGS) $(PY_CPPFLAGS) $(CPPFLAGS) $<
++build-py_db:   libpython$(LDVERSION)_db.so.1.0
 +
-+build-py_db:   libpython$(LDVERSION)_db.so.1.0 check_offset
-+
-+install-py_db: libpython$(LDVERSION)_db.so.1.0 check_offset
++install-py_db: libpython$(LDVERSION)_db.so.1.0
 +	$(INSTALL_SHARED) libpython$(LDVERSION)_db.so.1.0 $(DESTDIR)$(LIBDIR)
-+	$(INSTALL_PROGRAM) check_offset $(DESTDIR)$(BINDIR)
  
  Modules/Setup: $(srcdir)/Modules/Setup.dist
  	@if test -f Modules/Setup; then \
-@@ -1042,7 +1055,7 @@
+@@ -1042,7 +1051,7 @@
  		$(TESTRUNNER) $(QUICKTESTOPTS)
  
  
@@ -41,96 +37,6 @@ some point, but the suitability (or lack thereof) has not yet been determined.
  	if test "x$(ENSUREPIP)" != "xno"  ; then \
  		case $(ENSUREPIP) in \
  			upgrade) ensurepip="--upgrade" ;; \
---- /dev/null
-+++ Python-3.4.0/py_db/check_offsets.c
-@@ -0,0 +1,87 @@
-+/*
-+ * CDDL HEADER START
-+ *
-+ * The contents of this file are subject to the terms of the
-+ * Common Development and Distribution License (the "License").
-+ * You may not use this file except in compliance with the License.
-+ *
-+ * You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-+ * or http://www.opensolaris.org/os/licensing.
-+ * See the License for the specific language governing permissions
-+ * and limitations under the License.
-+ *
-+ * When distributing Covered Code, include this CDDL HEADER in each
-+ * file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-+ * If applicable, add the following below this CDDL HEADER, with the
-+ * fields enclosed by brackets "[]" replaced with your own identifying
-+ * information: Portions Copyright [yyyy] [name of copyright owner]
-+ *
-+ * CDDL HEADER END
-+ */
-+/*
-+ * Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
-+ */
-+
-+#include <stdio.h>
-+
-+#include <Python.h>
-+#include <frameobject.h>
-+
-+#include "libpython34_db_32.h"
-+
-+#if 0
-+#define	offsetof(s, m)	((size_t)(&(((s *)0)->m)))
-+#endif
-+
-+int
-+main(void)
-+{
-+/*
-+ * PyCodeObject co_name
-+ * PyCodeObject co_filename
-+ * PyCodeObject co_lnotab
-+ * PyFrameObject f_back
-+ * PyFrameObject f_code
-+ * PyFrameObject f_lasti
-+ * PyInterpreterState next
-+ * PyInterpreterState tstate_head
-+ * PyBytesObject ob_sval
-+ * PyBytesObject ob_size
-+ * PyThreadState frame
-+ * PyThreadState next
-+ */
-+
-+	printf("struct member: native 32\n");
-+	printf("PyCodeObject co_name: %d %d\n", offsetof(PyCodeObject, co_name),
-+	    offsetof(PyCodeObject32, co_name));
-+	printf("PyCodeObject co_filename: %d %d\n", offsetof(PyCodeObject,
-+	    co_filename), offsetof(PyCodeObject32, co_filename));
-+	printf("PyCodeObject co_lnotab: %d %d\n", offsetof(PyCodeObject,
-+	    co_lnotab), offsetof(PyCodeObject32, co_lnotab));
-+	printf("PyFrameObject f_back: %d %d\n", offsetof(PyFrameObject, f_back),
-+	    offsetof(PyFrameObject32, f_back));
-+	printf("PyFrameObject f_code: %d %d\n", offsetof(PyFrameObject, f_code),
-+	    offsetof(PyFrameObject32, f_code));
-+	printf("PyFrameObject f_lasti: %d %d\n", offsetof(PyFrameObject,
-+	    f_lasti), offsetof(PyFrameObject32, f_lasti));
-+	printf("PyInterpreterState next: %d %d\n", offsetof(PyInterpreterState,
-+	    next), offsetof(PyInterpreterState32, next));
-+	printf("PyInterpreterState tstate_head: %d %d\n",
-+	    offsetof(PyInterpreterState, tstate_head),
-+	    offsetof(PyInterpreterState32, tstate_head));
-+	printf("PyBytesObject ob_sval: %d %d\n", offsetof(PyBytesObject,
-+	    ob_sval), offsetof(PyBytesObject32, ob_sval));
-+	printf("PyBytesObject ob_size: %d %d\n", offsetof(PyBytesObject,
-+	    ob_base.ob_size), offsetof(PyBytesObject32, ob_size));
-+	printf("PyThreadState frame: %d %d\n", offsetof(PyThreadState, frame),
-+	    offsetof(PyThreadState32, frame));
-+	printf("PyThreadState next: %d %d\n", offsetof(PyThreadState, next),
-+	    offsetof(PyThreadState32, next));
-+
-+	printf("\nObject sizes\n");
-+	printf("PyObject: %d %d\n", sizeof (PyObject), sizeof (PyObject32));
-+	printf("PyVarObject: %d %d\n", sizeof (PyVarObject),
-+	    sizeof (PyVarObject32));
-+
-+	return (0);
-+}
 --- /dev/null
 +++ Python-3.4.0/py_db/libpython34_db.c
 @@ -0,0 +1,654 @@
