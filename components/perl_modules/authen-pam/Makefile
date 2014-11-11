@@ -63,7 +63,10 @@ COMPONENT_POST_TEST_ACTION= \
 #
 # Must have xml-parser installed for these tests to pass.
 #
-test:		$(TEST_32_and_64)
+test:		
+		if tty -s; then  $(MAKE) realtest; else echo 'Skipping tests'; fi
+
+realtest:	$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
