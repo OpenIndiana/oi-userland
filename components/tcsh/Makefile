@@ -60,6 +60,8 @@ CFLAGS += -DHAVE_ICONV -DICONV_CONST=
 CONFIGURE_OPTIONS  +=		--localedir=$(CONFIGURE_LOCALEDIR)
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 
+COMPONENT_TEST_ENV += PATH=/usr/gnu/bin:/usr/bin
+
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
@@ -69,6 +71,6 @@ install:	$(INSTALL_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-test: 		$(NO_TESTS)
+test: 		$(TEST_64)
 
 include ../../make-rules/depend.mk
