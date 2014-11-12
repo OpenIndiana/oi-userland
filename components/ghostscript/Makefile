@@ -22,7 +22,7 @@
 # Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
-# parfait seems to spin when looking at the .bc files (18376682), so
+# parfait seems to spin when looking at the .bc files (13704877), so
 # for now disable it.
 PARFAIT_BUILD=no
 

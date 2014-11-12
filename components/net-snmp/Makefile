@@ -21,9 +21,6 @@
 # Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
-# parfait is upset about some inline assembly
-export PARFAIT_BUILD=no
-
 include ../../make-rules/shared-macros.mk
 
 PATH=$(SPRO_VROOT)/bin:/usr/gnu/bin:/usr/bin

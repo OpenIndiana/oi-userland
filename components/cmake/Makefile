@@ -22,10 +22,6 @@
 # Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
-# parfait seems to hang on libcmsysTestDynload.so.bc, so for
-# now we have to disable it.
-export PARFAIT_BUILD=no
-
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cmake
@@ -55,9 +51,6 @@ LDFLAGS +=	$($(COMPILER)_NORUNPATH)
 # as CONFIGURE_OPTIONS; otherwise the correct compilers are not used
 CONFIGURE_ENV +=	CC="$(CC)"	
 CONFIGURE_ENV +=	CXX="$(CXX)"	
-ifeq   ($(strip $(PARFAIT_BUILD)),yes)
-CONFIGURE_ENV +=	CXXFLAGS="-library=stdcxx4"	
-endif
 CONFIGURE_ENV +=	LDFLAGS="$(LDFLAGS)"	
 CONFIGURE_ENV +=	MAKE="$(GMAKE)"	
 

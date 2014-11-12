@@ -25,6 +25,9 @@ export PARFAIT_BUILD=no
 include ../../../make-rules/shared-macros.mk
 
 PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin:/usr/perl5/bin
+ifeq   ($(strip $(PARFAIT_BUILD)),yes)
+PATH=$(PARFAIT_TOOLS):$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin:/usr/perl5/bin
+endif
 
 COMPONENT_NAME =	openssl-fips-140
 # Note that this is the OpenSSL version that is used to build FIPS-140 certified
