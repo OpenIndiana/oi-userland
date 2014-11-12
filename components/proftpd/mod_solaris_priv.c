@@ -2,7 +2,7 @@
  * ProFTPD - FTP server daemon
  * Copyright (c) 1997, 1998 Public Flood Software
  * Copyright (c) 2003-2010 The ProFTPD Project team
- * Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -242,59 +242,50 @@ out:
   return PR_DECLINED(cmd);
 }
 
-static void log_err_permitted(const char* fn) {
-  pr_log_pri(PR_LOG_ERR, MOD_SOLARIS_PRIV_VERSION ": %s(%s): %s",
-    fn, "permitted", strerror(errno));
-}
-
 static void log_err_effective(const char* fn) {
   pr_log_pri(PR_LOG_ERR, MOD_SOLARIS_PRIV_VERSION ": %s(%s): %s",
     fn, "effective", strerror(errno));
 }
 
 MODRET solaris_priv_post_fail(cmd_rec *cmd) {
-  priv_set_t* permitted_set = NULL;
   priv_set_t* effective_set = NULL;
 
-  if ((permitted_set = priv_allocset()) == NULL) {
-    log_err_permitted("priv_allocset");
-    goto out;
-  }
   if ((effective_set = priv_allocset()) == NULL) {
     log_err_effective("priv_allocset");
     goto out;
   }
 
-  if (getppriv(PRIV_PERMITTED, permitted_set) != 0) {
-    log_err_permitted("getppriv");
-    goto out;
-  }
   if (getppriv(PRIV_EFFECTIVE, effective_set) != 0) {
     log_err_effective("getppriv");
     goto out;
   }
 
-  if (priv_addset(permitted_set, PRIV_PROC_AUDIT) != 0) {
-    log_err_permitted("priv_addset");
-    goto out;
-  }
   if (priv_addset(effective_set, PRIV_PROC_AUDIT) != 0) {
     log_err_effective("priv_addset");
     goto out;
   }
 
-  if (setppriv(PRIV_SET, PRIV_PERMITTED, permitted_set) != 0) {
-    log_err_permitted("setppriv");
+  if (priv_addset(effective_set, PRIV_SYS_AUDIT) != 0) {
+    log_err_effective("priv_addset");
     goto out;
   }
+
+  if (priv_addset(effective_set, PRIV_PROC_SETID) != 0) {
+    log_err_effective("priv_addset");
+    goto out;
+  }
+
+  if (priv_addset(effective_set, PRIV_PROC_TASKID) != 0) {
+    log_err_effective("priv_addset");
+    goto out;
+  }
+
   if (setppriv(PRIV_SET, PRIV_EFFECTIVE, effective_set) != 0) {
     log_err_effective("setppriv");
     goto out;
   }
 
 out:
-  if (permitted_set != NULL)
-    priv_freeset(permitted_set);
   if (effective_set != NULL)
     priv_freeset(effective_set);
 
