@@ -21,6 +21,7 @@
 
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2014 Josef 'Jeff' Sipek <jeffpc@josefsipek.net>
 #
 
 include ../../make-rules/shared-macros.mk
@@ -42,6 +43,7 @@ include ../../make-rules/ips.mk
 PATCH_LEVEL =   0
 
 CONFIGURE_OPTIONS  +=		--localedir=$(CONFIGURE_LOCALEDIR)
+CONFIGURE_OPTIONS  +=		--with-openssl
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=		CXXFLAGS="$(CXXFLAGS)"
 
