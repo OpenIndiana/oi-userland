@@ -4,8 +4,8 @@
 # 2009, but it was not accepted by the upstream.  For more information, see
 # https://bugzilla.mindrot.org/show_bug.cgi?id=1681.
 #
---- orig/auth-pam.c	Fri Jun 20 14:55:27 2014
-+++ new/auth-pam.c	Fri Jun 20 14:54:39 2014
+--- orig/auth-pam.c	Mon Oct 27 14:40:01 2014
++++ new/auth-pam.c	Tue Oct 28 12:40:59 2014
 @@ -1111,11 +1111,13 @@
  	free(env);
  }
@@ -46,7 +46,17 @@
  		case PAM_ERROR_MSG:
  		case PAM_TEXT_INFO:
  			len = strlen(PAM_MSG_MEMBER(msg, i, msg));
-@@ -1197,6 +1211,15 @@
+@@ -1178,6 +1192,9 @@
+ int
+ sshpam_auth_passwd(Authctxt *authctxt, const char *password)
+ {
++#ifdef PAM_BUGFIX
++        int set_item_rtn;
++#endif
+ 	int flags = (options.permit_empty_passwd == 0 ?
+ 	    PAM_DISALLOW_NULL_AUTHTOK : 0);
+ 
+@@ -1197,6 +1214,15 @@
  	    options.permit_root_login != PERMIT_YES))
  		sshpam_password = badpw;
  
@@ -62,3 +72,20 @@
  	sshpam_err = pam_set_item(sshpam_handle, PAM_CONV,
  	    (const void *)&passwd_conv);
  	if (sshpam_err != PAM_SUCCESS)
+@@ -1205,6 +1231,16 @@
+ 
+ 	sshpam_err = pam_authenticate(sshpam_handle, flags);
+ 	sshpam_password = NULL;
++
++#ifdef PAM_BUGFIX
++        set_item_rtn = pam_set_item(sshpam_handle, PAM_AUTHTOK, NULL);
++	if (set_item_rtn != PAM_SUCCESS) {
++		debug("PAM: %s: failed to set PAM_AUTHTOK: %s", __func__,
++		    pam_strerror(sshpam_handle, set_item_rtn));
++		return 0;
++	}
++#endif
++
+ 	if (sshpam_err == PAM_SUCCESS && authctxt->valid) {
+ 		debug("PAM: password authentication accepted for %.100s",
+ 		    authctxt->user);
