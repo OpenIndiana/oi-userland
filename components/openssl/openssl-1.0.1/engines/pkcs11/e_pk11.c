@@ -1076,6 +1076,9 @@ static void pk11_fork_child(void)
 	if (!pk11_library_initialized)
 		return;
 
+	/* invalidate the global session */
+	global_session = CK_INVALID_HANDLE;
+
 	for (i = OP_MAX - 1; i >= 0; i--)
 		{
 		(void) pthread_mutex_unlock(session_cache[i].lock);
