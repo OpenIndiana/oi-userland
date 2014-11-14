@@ -228,6 +228,13 @@ $(BUILD_DIR)/mkgeneric-python: $(WS_TOP)/make-rules/shared-macros.mk
 
 # Build Python version-wrapping manifests from the generic version.
 # Creates build/manifest-*-modulename.p5m file.
+# Note that the mkgeneric transform uses the literal string "###PYV###"
+# as the place-holder for the Python version (for mkgeneric-python) and
+# the Perl version (for mkgeneric-perl below) and the Ruby version (for
+# mkgeneric-ruby further below).  The authors did not anticipate that this
+# mechanism would be extended beyond Python when they wrote it; something
+# more generic like LANGVER might make more sense, but for now we are
+# sticking with something known to work.
 $(MANIFEST_BASE)-%.p5m: %-PYVER.p5m $(BUILD_DIR)/mkgeneric-python
 	$(PKGMOGRIFY) -D PYV=###PYV### $(BUILD_DIR)/mkgeneric-python \
 		$(WS_TOP)/transforms/mkgeneric $< > $@
@@ -252,8 +259,10 @@ $(BUILD_DIR)/mkgeneric-perl: $(WS_TOP)/make-rules/shared-macros.mk
 		$(call mkgeneric,runtime/perl,$(ver)))
 
 # Build Perl version-wrapping manifests from the generic version.
+# See the block comment above about why "###PYV###" is used here even
+# though this is for Perl rather than Python.
 $(MANIFEST_BASE)-%.p5m: %-PERLVER.p5m $(BUILD_DIR)/mkgeneric-perl
-	$(PKGMOGRIFY) -D PLV=### $(BUILD_DIR)/mkgeneric-perl \
+	$(PKGMOGRIFY) -D PLV=###PYV### $(BUILD_DIR)/mkgeneric-perl \
 		$(WS_TOP)/transforms/mkgeneric $< > $@
 	if [ -f $*-GENFRAG.p5m ]; then cat $*-GENFRAG.p5m >> $@; fi
 
@@ -290,10 +299,8 @@ $(BUILD_DIR)/mkgeneric-ruby: $(WS_TOP)/make-rules/shared-macros.mk
 # Build Ruby version-wrapping manifests from the generic version.
 # Creates build/manifest-*-modulename.p5m file.
 #
-# ###PYV### is used here as the mkgeneric() call used to create 
-# mkgeneric-ruby uses this value version subsitute key.  We also
-# use the same key, ###PYV###, to pick up the required entry
-# in mkgeneric when pkgmogrify is invoked
+# See the block comment above about why "###PYV###" is used here even
+# though this is for Ruby rather than Python.
 $(MANIFEST_BASE)-%.p5m: %-RUBYVER.p5m $(BUILD_DIR)/mkgeneric-ruby
 	$(PKGMOGRIFY) -D RUBYV=###PYV### $(BUILD_DIR)/mkgeneric-ruby \
 		$(WS_TOP)/transforms/mkgeneric $< > $@
