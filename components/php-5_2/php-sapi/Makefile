@@ -85,6 +85,7 @@ CONFIGURE_OPTIONS  += \
 CONFIGURE_ENV += $(CONF_ENVLINE)
 
 COMPONENT_POST_BUILD_ACTION = ( \
+	set -e; \
 	cat $(BUILD_DIR_32)/scripts/phpize | \
 	 sed -e "s,^\#!/bin/sh,\#!$(CONFIG_SHELL)," | \
 	 sed -e "s%^prefix=.*%prefix=$(BUILD_DIR_32)%" | \
@@ -97,13 +98,15 @@ COMPONENT_POST_BUILD_ACTION = ( \
 	 sed -e "s%^builddir=.*%builddir=$(BUILD_DIR_32)%" \
 	 > phpize-proto ; \
 	chmod 755 phpize-proto ) ; \
-	( cat $(BUILD_DIR_32)/scripts/php-config | \
+	( set -e; \
+	 cat $(BUILD_DIR_32)/scripts/php-config | \
 	 sed -e "s,^\#! /bin/sh,\#!$(CONFIG_SHELL)," | \
 	 sed -e "s%^prefix=.*%prefix=$(BUILD_DIR_32)%" | \
 	 sed -e "s%^include_dir=.*%include_dir=$(BUILD_DIR_32)%" \
 	 > php-config-proto ; \
 	chmod 755 php-config-proto ) ; \
-	( cat $(BUILD_DIR_32)/scripts/php-config | \
+	( set -e; \
+	 cat $(BUILD_DIR_32)/scripts/php-config | \
 	 sed -e "s,^\#! /bin/sh,\#!$(CONFIG_SHELL)," | \
 	 sed -e "s%^prefix=.*%prefix=$(COMPONENT_DIR)/../php-nsapi/$(COMPONENT_SRC)%" | \
 	 sed -e "s%^include_dir=.*%include_dir=$(COMPONENT_DIR)/../php-nsapi/$(COMPONENT_SRC)%" | \
@@ -112,6 +115,7 @@ COMPONENT_POST_BUILD_ACTION = ( \
 	chmod 755 php-config-proto.zts )
 
 ADD_APACHE2_MODULE_SUPPORT = ( \
+	set -e; \
 	$(MKDIR) $(PROTO_DIR)/$(APACHE2_PHP); \
 	$(CP) $(COMPONENT_DIR)/../Solaris/php$(PHP_REL).conf \
 		$(PROTO_DIR)/$(APACHE2_PHP)/php$(PHP_REL).conf; \
@@ -126,6 +130,7 @@ ADD_APACHE2_MODULE_SUPPORT = ( \
 
 # Ship a default php.ini to simplify ease of use.
 FIX_CONFIG_FILES = ( \
+	set -e; \
 	cd $(SOURCE_DIR); \
 	$(GPATCH) -p1 -o php.ini-patched -i ../patches-other/php_ini.patch; \
 	$(GSED) -e "s@<<VERSION>>@$(PHP_REL)@g" < php.ini-patched > php.ini; \
@@ -133,11 +138,13 @@ FIX_CONFIG_FILES = ( \
 	)
 
 INSTALL_DOCS = ( \
+	set -e; \
 	$(MKDIR) $(PROTO_DIR)/$(DOCDIR); \
 	$(UNPACK) -r $(PROTO_DIR)/$(DOCDIR) $(COMPONENT_ARCHIVE_1); \
 	)
 
 INSTALL_SAMPLES = ( \
+	set -e; \
 	$(MKDIR) $(PROTO_DIR)/$(SCRIPTS_DIR); \
 	$(MKDIR) $(COMPONENT_DIR)/tmp; \
 	cd $(COMPONENT_DIR); \
@@ -158,6 +165,7 @@ INSTALL_SAMPLES = ( \
 
 # patch installation to support pear installation.
 PATCH_PEAR = ( \
+	set -e; \
 	cd $(PROTO_DIR)/$(PHP_BIN); \
 	$(GPATCH) -N -i $(COMPONENT_DIR)/patches-other/pear_pecl.patch; \
 	$(GPATCH) -N -i $(COMPONENT_DIR)/patches-other/pear_php_config.patch; \
@@ -172,6 +180,7 @@ PATCH_PEAR = ( \
 # Create symbolic links
 # Not strictly necessary but makes the proto area more correct.
 CREATE_SYMLINKS = ( \
+	set -e; \
 	cd $(PROTO_DIR)/usr/php; \
 	$(RM) bin lib include modules doc man; \
 	$(SYMLINK) $(PHP_REL)/bin . ; \
@@ -189,6 +198,7 @@ CREATE_SYMLINKS = ( \
 	)
 
 COMPONENT_POST_INSTALL_ACTION = ( \
+	set -e; \
 	$(ADD_APACHE2_MODULE_SUPPORT); \
 	$(FIX_CONFIG_FILES); \
 	$(FIX_CONFIG_FILES_2); \

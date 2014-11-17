@@ -22,12 +22,14 @@
 #
 
 COMPONENT_PRE_INSTALL_ACTION += ( \
+	set -e; \
 	$(MKDIR) $(INSTALL_ROOT)/$(PHP_PEAR_CACHE_DIR) )
 
 #
 # Removing Zend/*parser.[ch] forces regeneration by native bison
 #
 COMPONENT_POST_UNPACK_ACTION += ( \
+	set -e; \
 	echo $(PATH); \
 	$(RM) $(COMPONENT_SRC)/Zend/zend_ini_parser.c \
 	      $(COMPONENT_SRC)/Zend/zend_ini_parser.h \
@@ -39,6 +41,7 @@ COMPONENT_POST_UNPACK_ACTION += ( \
 PATCHES = $(shell cd $(PATCH_DIR); echo [0-9]* $$(MACH)* )
 
 COMPONENT_PRE_CONFIGURE_ACTION = ( \
+	set -e; \
 	cd $(COMPONENT_SRC); $(ENV) -i PATH=/usr/gnu/bin:$(PATH) \
 		MAKE="$(GMAKE)" \
 		$(CONFIG_SHELL) ./buildconf --force ; \

@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include $(WS_TOP)/make-rules/prep.mk
@@ -33,6 +33,7 @@ include ../common.mk
 # Patching PHP_EXECUTABLE will enable extensions to run the test target
 #
 COMPONENT_PRE_CONFIGURE_ACTION = ( \
+	set -e; \
 	($(CLONEY) $(SOURCE_DIR) $(@D)); \
 	$(GSED) -e "s@^builddir=.*@builddir=$(BUILD_DIR_32)@" \
 		< $(COMPONENT_DIR)/../php-sapi/phpize-proto \
@@ -70,7 +71,9 @@ $(BUILD_DIR_32)/.configured:	../php-sapi/build/$(MACH32)/.installed
 # Manual dependency
 # Need $(COMPONENT_NAME)-zts installed before $(COMPONENT_NAME) publish
 ../$(COMPONENT_NAME)-zts/build/$(MACH32)/.installed:
-	(cd ../$(COMPONENT_NAME)-zts ; $(MAKE) install)
+	( set -e; \
+	cd ../$(COMPONENT_NAME)-zts; \
+	$(MAKE) install )
 
 $(INSTALL_32):	../$(COMPONENT_NAME)-zts/build/$(MACH32)/.installed
 

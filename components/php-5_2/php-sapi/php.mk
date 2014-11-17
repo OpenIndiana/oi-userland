@@ -22,12 +22,15 @@
 #
 
 COMPONENT_PRE_INSTALL_ACTION += ( \
+	set -e; \
 	$(MKDIR) $(INSTALL_ROOT)/$(PHP_PEAR_CACHE_DIR) )
 
 COMPONENT_POST_UNPACK_ACTION += ( \
+	set -e; \
 	echo $(PATH); )
 
 COMPONENT_PRE_CONFIGURE_ACTION = ( \
+	set -e; \
 	cd $(COMPONENT_SRC); $(ENV) -i PATH=/usr/gnu/bin:$(PATH) \
 		MAKE="$(GMAKE)" \
 		$(CONFIG_SHELL) ./buildconf --force ; \

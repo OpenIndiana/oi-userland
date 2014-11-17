@@ -40,6 +40,7 @@ COMPONENT_PREP_ACTION += $(call cleancr,$(SOURCE_DIR)/Optimizer/zend_optimizer.c
 COMPONENT_PREP_ACTION += $(call cleancr,$(SOURCE_DIR)/Optimizer/zend_optimizer.h)
 
 COMPONENT_POST_INSTALL_ACTION = ( \
+	set -e; \
 	$(FIX_CONFIG_FILES) \
 	)
 

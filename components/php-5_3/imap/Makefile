@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -42,6 +42,7 @@ CFLAGS += -D__USE_LEGACY_PROTOTYPES__
 
 COMPONENT_BUILD_TARGETS = soc c-client
 COMPONENT_POST_BUILD_ACTION = ( \
+	set -e; \
 	$(MV) $(BUILD_DIR_32)/c-client/c-client.a \
 		$(BUILD_DIR_32)/c-client/libc-client.a )
 ENV += MAKE="$(GMAKE)"

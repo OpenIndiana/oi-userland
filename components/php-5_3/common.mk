@@ -203,6 +203,7 @@ COMPONENT_TEST_ENV += NO_INTERACTION=1
 # We provide an .ini file for some extensions.
 # Extensions without .ini's get handled below.
 FIX_CONFIG_FILES = ( \
+	set -e; \
 	$(MKDIR) $(COMPONENT_DIR)/tmp; \
 	cd $(COMPONENT_DIR)/tmp; \
 	$(MKDIR) $(PROTO_DIR)/$(MODULES_CONFDIR); \
@@ -221,6 +222,7 @@ FIX_CONFIG_FILES = ( \
 
 # Create configuration files for those without.
 FIX_CONFIG_FILES_2 = ( \
+	set -e; \
 	$(MKDIR) $(COMPONENT_DIR)/tmp; \
 	cd $(COMPONENT_DIR)/tmp; \
 	$(MKDIR) $(PROTO_DIR)/$(MODULES_CONFDIR); \

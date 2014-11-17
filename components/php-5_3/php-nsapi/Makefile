@@ -57,6 +57,7 @@ include $(WS_TOP)/make-rules/ips.mk
 include ../common.mk
 
 COMPONENT_POST_UNPACK_ACTION += && ( \
+	set -e; \
 	$(RM) -r $(COMPONENT_DIR)/$(COMPONENT_SRC_1); \
 	cd $(COMPONENT_DIR); \
 	$(UNPACK) $(UNPACK_ARGS) ./$(COMPONENT_ARCHIVE_1); \
@@ -96,6 +97,7 @@ CONFIGURE_OPTIONS  += \
 CONFIGURE_ENV += $(ZTS_CONF_ENVLINE)
 
 COMPONENT_POST_BUILD_ACTION = ( \
+	set -e; \
 	cat $(BUILD_DIR_32)/scripts/phpize | \
 	 sed -e "s,^\#!/bin/sh,\#!$(CONFIG_SHELL)," | \
 	 sed -e "s%^prefix=.*%prefix=$(BUILD_DIR_32)%" | \
@@ -107,12 +109,14 @@ COMPONENT_POST_BUILD_ACTION = ( \
 	chmod 755 phpize-proto.zts )
 
 ADD_NSAPI_MODULE_SUPPORT = ( \
+	set -e; \
 	$(MKDIR) $(PROTO_DIR)/$(TOP_DIR)/nsapi/; \
 	$(CP) $(BUILD_DIR_32)/libs/libphp5.so \
 		$(PROTO_DIR)/$(TOP_DIR)/nsapi/libphp5.so; \
 	)
 
 FIX_CONFIG_FILES = ( \
+	set -e; \
 	cd $(COMPONENT_DIR); \
 	$(GSED) -e "s@extension_dir = \(.*\)@extension_dir=$(PHP_ROOT_ZTS_EXT)@"< ../php-sapi/build/prototype/$(MACH)/$(CONFDIR)/php.ini > php.ini; \
 	$(MKDIR) $(PROTO_DIR)/$(NSAPI_CONFDIR); \
@@ -122,6 +126,7 @@ FIX_CONFIG_FILES = ( \
 COMPONENT_INSTALL_TARGETS = libphp5.la install-modules
 
 COMPONENT_POST_INSTALL_ACTION = ( \
+	set -e; \
 	$(ADD_NSAPI_MODULE_SUPPORT); \
 	$(FIX_CONFIG_FILES); \
 	)

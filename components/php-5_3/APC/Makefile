@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -38,6 +38,7 @@ CONFIGURE_OPTIONS += \
 	--enable-apc-mmap
 
 COMPONENT_POST_INSTALL_ACTION = ( \
+	set -e; \
 	$(MKDIR) $(PROTO_DIR)/$(APACHE2_SAMPLES_CONFDIR); \
 	$(INSTALL) -m 0644 $(COMPONENT_DIR)/../Solaris/php-apc-stats.conf \
 		$(PROTO_DIR)/$(APACHE2_SAMPLES_CONFDIR)/php$(PHP_REL)-apc-stats.conf; \
