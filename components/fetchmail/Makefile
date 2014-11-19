@@ -42,19 +42,19 @@ include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS  +=		am_cv_python_pythondir="$(PYTHON_VENDOR_PACKAGES)"
+CONFIGURE_OPTIONS  +=		PYTHON="$(PYTHON.2.7.32)"
 CONFIGURE_OPTIONS  +=		--with-kerberos5
 CONFIGURE_OPTIONS  +=		--with-ssl
 CONFIGURE_OPTIONS  +=		--enable-NTLM
 
-# We don't have any .so files, so we want to ship the .py and .pyc files in
-# the same place as we would for 32-bit.
-PYTHON_VENDOR_PACKAGES.64 =	$(PYTHON_VENDOR_PACKAGES.32)
-
 ASLR_MODE = $(ASLR_ENABLE)
 
+# Change the shebang line to use Python 2.7 explicitly, and drop the
+# fixed file into /usr/bin, where our package manifest expects it.
 COMPONENT_POST_INSTALL_ACTION = \
-    $(PYTHON) -m compileall $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES)
+    $(GSED) -e "s|/usr/bin/env python|$(PYTHON.2.7.32)|" \
+	$(PROTO_DIR)/usr/lib/python2.7/site-packages/fetchmailconf.py > \
+	$(PROTO_DIR)$(USRBIN.32)/fetchmailconf
 
 # common targets
 build:		$(BUILD_64)
