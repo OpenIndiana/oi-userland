@@ -41,19 +41,32 @@ CFLAGS+=		-std=c99
 CFLAGS+=		-DNDEBUG
 CFLAGS+=		-DOSCAP_THREAD_SAFE
 
+PYTHON_VERSIONS=	2.7 2.6
+
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
 CPPFLAGS +=	-I/usr/include/openldap
 
-#Need to do cloney, so that the schema files
-#can get packaged.
-COMPONENT_PRE_CONFIGURE_ACTION = \
-        ($(CLONEY) $(SOURCE_DIR) $(@D))
-
 # Perl related patch needs configure script recreation.
 COMPONENT_PREP_ACTION +=(cd $(@D); autoreconf);
+
+# Need to do cloney, so that the schema files can get packaged.
+COMPONENT_PRE_CONFIGURE_ACTION = \
+    ($(CLONEY) $(SOURCE_DIR) $(@D))
+
+# We could use a single regular expression to cover all of the following,
+# but we want to be as specific as possible to avoid accidentally catching
+# workspace paths in our substitution.
+COMPONENT_POST_CONFIGURE_ACTION = \
+    (cd $(@D) ; cp -rp swig swig2.7 ; \
+    $(GSED) -i -e 's|usr/include/python2.6|usr/include/python2.7|' \
+     -e 's|$(PYTHON.2.6.VENDOR_PACKAGES.32)|$(PYTHON.2.7.VENDOR_PACKAGES.32)|' \
+     -e 's|PYTHON_VERSION = 2.6|PYTHON_VERSION = 2.7|' swig2.7/Makefile)
+
+COMPONENT_POST_INSTALL_ACTION =	\
+	(cd $(@D)/swig2.7 ; $(GMAKE) $(COMPONENT_INSTALL_ARGS) install)
 
 # Needed to make "gmake test" work.
 CPPFLAGS +=	-I$(SOURCE_DIR)/src/OVAL
@@ -74,6 +87,8 @@ CONFIGURE_OPTIONS +=	--with-report-branding="/usr/share/lib/xml/style/os-logo.xs
 DOCS_DIR = $(PROTO_DIR)/usr/share/docs/openscap/html/
 
 # common targets
+configure:	$(CONFIGURE_32)
+
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
