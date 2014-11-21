@@ -1,0 +1,63 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
+#
+set name=pkg.fmri \
+    value=pkg:/library/python/pyyaml-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="a YAML parser and emitter for the Python language"
+set name=pkg.description \
+    value="PyYAML is a complete YAML 1.1 parser. In particular, PyYAML can parse all examples from the specification. The parsing algorithm is simple enough to be a reference for YAML parser implementors. Features include Unicode support including UTF-8/UTF-16 input/output and \u escape sequences, low-level event-based parser and emitter API (like SAX), high-level API for serializing and deserializing native Python objects (like DOM or pickle), support for all types from the  YAML types repository (a simple extension API is provided), both pure-Python and fast LibYAML-based parsers and emitters, relatively sensible error messages."
+set name=com.oracle.info.description \
+    value="A YAML parser and emitter for the Python language"
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value=org.opensolaris.category.2008:Development/Python
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2008/676
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+#
+file path=usr/lib/python$(PYVER)/vendor-packages/PyYAML-$(COMPONENT_VERSION)-py$(PYVER).egg-info
+file path=usr/lib/python$(PYVER)/vendor-packages/yaml/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/yaml/composer.py
+file path=usr/lib/python$(PYVER)/vendor-packages/yaml/constructor.py
+file path=usr/lib/python$(PYVER)/vendor-packages/yaml/cyaml.py
+file path=usr/lib/python$(PYVER)/vendor-packages/yaml/dumper.py
+file path=usr/lib/python$(PYVER)/vendor-packages/yaml/emitter.py
+file path=usr/lib/python$(PYVER)/vendor-packages/yaml/error.py
+file path=usr/lib/python$(PYVER)/vendor-packages/yaml/events.py
+file path=usr/lib/python$(PYVER)/vendor-packages/yaml/loader.py
+file path=usr/lib/python$(PYVER)/vendor-packages/yaml/nodes.py
+file path=usr/lib/python$(PYVER)/vendor-packages/yaml/parser.py
+file path=usr/lib/python$(PYVER)/vendor-packages/yaml/reader.py
+file path=usr/lib/python$(PYVER)/vendor-packages/yaml/representer.py
+file path=usr/lib/python$(PYVER)/vendor-packages/yaml/resolver.py
+file path=usr/lib/python$(PYVER)/vendor-packages/yaml/scanner.py
+file path=usr/lib/python$(PYVER)/vendor-packages/yaml/serializer.py
+file path=usr/lib/python$(PYVER)/vendor-packages/yaml/tokens.py
+#
+license LICENSE license=MIT
+#
+# force the rename with an optional dependency on the old name
+$(PYTHON_2.6_ONLY)depend type=optional \
+    fmri=library/python-2/pyyaml-$(PYV)@3.9,5.12-5.12.0.0.0.63.0

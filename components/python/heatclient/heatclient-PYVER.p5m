@@ -23,8 +23,6 @@
 # Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
-# pyyaml is only delivered for python 2.6
-<transform depend type=require fmri=library/python-2/pyyaml-27 -> drop>
 set name=pkg.fmri \
     value=pkg:/library/python/heatclient-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary \
@@ -92,9 +90,6 @@ license LICENSE license="Apache v2.0"
 # flush this out.
 depend type=group fmri=library/python/anyjson-$(PYV)
 
-# force a dependency on pyyaml; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python-2/pyyaml-$(PYV)
-
 # force a dependency on argparse; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/argparse-$(PYV)
 
@@ -116,6 +111,9 @@ depend type=require fmri=library/python/pbr-$(PYV)
 
 # force a dependency on prettytable; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/prettytable-$(PYV)
+
+# force a dependency on pyyaml; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/pyyaml-$(PYV)
 
 # force a dependency on requests; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/requests-$(PYV)
