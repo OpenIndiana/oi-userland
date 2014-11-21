@@ -1,0 +1,19 @@
+See: http://www.cups.org/str.php?L3809 for details.
+
+Index: backend/snmp-supplies.c
+===================================================================
+--- backend/snmp-supplies.c
++++ backend/snmp-supplies.c
+@@ -373,9 +373,9 @@
+   * See if we should be getting supply levels via SNMP...
+   */
+ 
+-  if ((ppd = ppdOpenFile(getenv("PPD"))) != NULL &&
+-      (ppdattr = ppdFindAttr(ppd, "cupsSNMPSupplies", NULL)) != NULL &&
+-      ppdattr->value && strcasecmp(ppdattr->value, "true"))
++  if ((ppd = ppdOpenFile(getenv("PPD"))) == NULL ||
++      ((ppdattr = ppdFindAttr(ppd, "cupsSNMPSupplies", NULL)) != NULL &&
++       ppdattr->value && strcasecmp(ppdattr->value, "true")))
+   {
+     ppdClose(ppd);
+     return;
