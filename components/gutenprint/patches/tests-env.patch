@@ -1,3 +1,7 @@
+# Adds settings to setup test environment
+# Disables escp2-weavetest for the time being since this takes days to run
+# Patch source internal, not passing upstream.  This is just for Userland testing.
+
 diff -Naur gutenprint-5.2.7-orig/src/cups/Makefile.am gutenprint-5.2.7/src/cups/Makefile.am
 --- gutenprint-5.2.7-orig/src/cups/Makefile.am	2011-01-18 00:20:51.000000000 +0100
 +++ gutenprint-5.2.7/src/cups/Makefile.am	2012-02-09 09:21:22.493187000 +0100
@@ -72,7 +76,17 @@ diff -Naur gutenprint-5.2.7-orig/test/Makefile.in gutenprint-5.2.7/test/Makefile
  host_triplet = @host@
  DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
  	$(top_srcdir)/scripts/global.mk
+-TESTS = curve$(EXEEXT) run-testdither run-weavetest
 +TESTS_ENVIRONMENT= STP_MODULE_PATH=$(top_builddir)/src/main/.libs:$(top_builddir)/src/main STP_DATA_PATH=$(top_srcdir)/src/xml
- TESTS = curve$(EXEEXT) run-testdither run-weavetest
++TESTS = curve$(EXEEXT) run-testdither
  @BUILD_TEST_TRUE@noinst_PROGRAMS = testdither$(EXEEXT) \
  @BUILD_TEST_TRUE@	escp2-weavetest$(EXEEXT) unprint$(EXEEXT) \
+@@ -346,7 +347,7 @@
+ #run-weavetest: escp2-weavetest
+ CLEANFILES = mixed-color-1bit.ppm
+ MAINTAINERCLEANFILES = Makefile.in
+-EXTRA_DIST = cyan-sweep.tif parse-escp2 run-weavetest run-testdither
++EXTRA_DIST = cyan-sweep.tif parse-escp2 run-testdither
+ all: all-am
+ 
+ .SUFFIXES:
