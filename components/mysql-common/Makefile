@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -34,7 +34,7 @@ include $(WS_TOP)/make-rules/ips.mk
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # nothing to download or build; just package
-download prep build install test:
+download prep configure build install test:
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

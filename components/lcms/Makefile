@@ -89,6 +89,8 @@ COMPONENT_POST_INSTALL_ACTION = \
 
 LINT_FLAGS += -I$(COMPONENT_DIR)/$(COMPONENT_SRC)/include
 
+configure:	$(CONFIGURE_32_and_64)
+
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)

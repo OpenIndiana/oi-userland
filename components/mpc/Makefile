@@ -57,6 +57,8 @@ COMPONENT_TEST_DIR =		$(BUILD_DIR)/$(MACH$(BITS))/tests
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # common targets
+configure:	$(CONFIGURE_32_and_64)
+
 build:	$(BUILD_32_and_64)
 
 

@@ -53,6 +53,8 @@ ASLR_MODE = $(ASLR_ENABLE)
 $(INSTALL_32):	$(INSTALL_64)
 
 # common targets
+configure:	$(CONFIGURE_32_and_64)
+
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)

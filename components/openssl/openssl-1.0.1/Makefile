@@ -192,6 +192,8 @@ ifeq ($(MACH), sparc)
 BUILD_64 +=	$(BUILD_DIR_WANBOOT)/.built
 endif
 
+configure:	$(CONFIGURE_32_and_64)
+
 build:		$(BUILD_32_and_64)
 
 # Object files for wanboot-openssl.o have to be listed explicitly.

@@ -54,6 +54,8 @@ CXX += $(studio_NORUNPATH)
 COMPONENT_PREP_ACTION = (cd $(@D) ; touch NEWS AUTHORS ChangeLog ; autoreconf -if)
 
 # common targets
+configure:	$(CONFIGURE_32_and_64)
+
 build:     $(BUILD_32_and_64)
 
 install:        $(INSTALL_32_and_64)

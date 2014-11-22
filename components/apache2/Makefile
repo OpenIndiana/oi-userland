@@ -111,6 +111,8 @@ ifeq   ($(strip $(PARFAIT_BUILD)),yes)
 PATH=$(PARFAIT_TOOLS):$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
 endif
 
+configure:	$(CONFIGURE_32_and_64)
+
 build: $(BUILD_32_and_64)
 
 AP_CONFIG_LAYOUT_H=include/ap_config_layout.h

@@ -106,6 +106,8 @@ $(BUILD_32_and_64): $(FAKE_APPS)
 # You should not use this target with this component unless testing or
 # debugging. The OpenSSL FIPS-140 policy is strict and full U2 command set
 # should be run. See above for more information.
+configure:	$(CONFIGURE_32_and_64)
+
 build:		$(BUILD_32_and_64)
 
 # We must make the "install" target a no-op (but must run it to be compliant).

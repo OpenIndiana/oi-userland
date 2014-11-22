@@ -42,6 +42,8 @@ CONFIGURE_OPTIONS +=	--disable-locking
 CONFIGURE_OPTIONS +=	--sysconfdir=/etc
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)" 
 
+configure:	$(CONFIGURE_32)
+
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)

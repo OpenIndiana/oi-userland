@@ -78,6 +78,8 @@ COMPONENT_TEST_TARGETS =	test
 
 # common targets
 
+configure:	$(CONFIGURE_32)
+
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)

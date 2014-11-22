@@ -57,6 +57,8 @@ PKG_PROTO_DIRS += $(COMPONENT_SRC)/doc/man
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # common targets
+configure:	$(CONFIGURE_32_and_64)
+
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)

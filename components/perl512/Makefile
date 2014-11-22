@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -134,6 +134,8 @@ $(MT_VARIANT)/.configured:	CONFIGURE_OPTIONS += $(CONFIGURE_THREAD_OPTIONS)
 BUILD_32 =	$(VARIANTS:%=%/.built)
 INSTALL_32 =	$(VARIANTS:%=%/.installed)
 TEST_32 =	$(VARIANTS:%=%/.tested)
+
+configure:	$(CONFIGURE_32)
 
 build:		$(BUILD_32)
 

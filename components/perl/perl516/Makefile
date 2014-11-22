@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -129,6 +129,8 @@ PKG_MACROS		+=	P_ARCH=$(shell arch)
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
+
+configure:	$(CONFIGURE_64)
 
 build:		$(BUILD_64)
 

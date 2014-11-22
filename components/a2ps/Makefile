@@ -67,6 +67,8 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
+configure:	$(CONFIGURE_32)
+
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)

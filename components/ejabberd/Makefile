@@ -61,6 +61,8 @@ COMPONENT_BUILD_TARGETS = all
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
+configure:	$(CONFIGURE_64)
+
 build:	$(BUILD_64)
 
 install:	$(INSTALL_64)

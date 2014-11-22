@@ -106,6 +106,8 @@ $(BUILD_DIR)/sparc%/.built: COMPONENT_PRE_BUILD_ACTION = ( \
 
 COMPONENT_TEST_TARGETS = test
 
+configure:	$(CONFIGURE_32_and_64)
+
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)

@@ -49,6 +49,8 @@ CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
+configure:	$(CONFIGURE_32_and_64)
+
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)

@@ -76,6 +76,8 @@ CONFIGURE_OPTIONS +=	CC="$(CC)"
 ASLR_MODE = $(ASLR_ENABLE)
 
 .PHONY: build
+configure:	$(CONFIGURE_32)
+
 build:		$(BUILD_32)
 
 include ../../make-rules/shared-targets.mk

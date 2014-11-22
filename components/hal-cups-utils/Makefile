@@ -58,6 +58,8 @@ COMPONENT_PREP_ACTION = ( \
 	$(PERL) -pi -e 's,^\#!.*?python,\#!$(USED_PYTHON), if $$.==1' systemv/hal_lpadmin ; \
 ) 
 
+configure:	$(CONFIGURE_32)
+
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)

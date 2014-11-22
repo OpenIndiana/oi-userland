@@ -154,6 +154,8 @@ ASLR_MODE = $(ASLR_DISABLE)
 PKG_PROTO_DIRS +=       $(BUILD_DIR_$(BITS))
 
 # common targets
+configure:	$(CONFIGURE_32)
+
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)

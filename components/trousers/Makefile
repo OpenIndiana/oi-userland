@@ -88,6 +88,8 @@ COMPONENT_TEST_TARGETS =
 COMPONENT_BUILD_TARGETS = all
 
 # common targets
+configure:	$(CONFIGURE_32_and_64)
+
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)

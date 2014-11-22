@@ -137,6 +137,8 @@ $(BUILD_DIR)/license: $(SOURCE_DIR)/runtime/doc/uganda.txt
 	nawk '/begin of license/ {p=1; getline; next} /end of license/ {p=0} p == 1 {print}' $< > $@
 
 # common targets
+configure:	$(CONFIGURE_64)
+
 build:		$(BUILD_64)
 
 install:	$(INSTALL_64) $(X_VARIANT)/.built $(BUILD_DIR)/license

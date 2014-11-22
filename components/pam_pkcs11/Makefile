@@ -45,6 +45,8 @@ CONFIGURE_OPTIONS += --localstatedir=/var
 CONFIGURE_OPTIONS += OPENSSL_LIBS="-lssl -lcrypto -lsocket -lnsl"
 
 # common targets
+configure:	$(CONFIGURE_32_and_64)
+
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)

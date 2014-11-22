@@ -174,6 +174,8 @@ COMPONENT_PRE_INSTALL_ACTION = ( $(MKDIR) $(PROTO_DIR)/usr/lib/$(MACH64); )
 $(SOURCE_DIR)/.prep: $(COMPONENT_DIR)/../openssl-fips/build/$(MACH32)/.installed \
 		     $(COMPONENT_DIR)/../openssl-fips/build/$(MACH64)/.installed
 
+configure:	$(CONFIGURE_32_and_64)
+
 build:			$(BUILD_32_and_64)
 
 # We follow what we do for install in openssl/openssl-1.0.0 component. Please

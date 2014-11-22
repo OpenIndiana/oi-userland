@@ -93,6 +93,8 @@ CONFIGURE_OPTIONS.64+= --without-perl
 
 # common targets
 #
+configure:	$(CONFIGURE_32_and_64)
+
 build:		$(BUILD_32_and_64)
 
 # Remove build machine runpath from libMagick++-6.Q16.so.1.0.0 and

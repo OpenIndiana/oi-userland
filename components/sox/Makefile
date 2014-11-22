@@ -46,6 +46,8 @@ CONFIGURE_OPTIONS  +=	--disable-gomp
 CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
 
 # common targets
+configure:	$(CONFIGURE_32_and_64)
+
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)

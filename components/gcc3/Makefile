@@ -77,6 +77,8 @@ COMPONENT_BUILD_ENV += SHELL=$(CONFIG_SHELL)
 COMPONENT_BUILD_TARGETS = bootstrap
 
 # common targets
+configure:	$(CONFIGURE_32)
+
 build:		$(BUILD_32)
 
 $(PROTO_DIR)/.sedded:	$(INSTALL_32)

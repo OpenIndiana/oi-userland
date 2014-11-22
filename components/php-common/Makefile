@@ -37,7 +37,7 @@ LICENSE_TRANSFORMS=
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # nothing to download or build; just package
-download prep build install test:
+download prep configure build install test:
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

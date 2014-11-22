@@ -160,6 +160,8 @@ PKG_MACROS += PERL_ARCH_16="$(PERL_ARCH_16)"
 
 ASLR_MODE=$(ASLR_ENABLE)
 
+configure:	$(CONFIGURE_32_and_64)
+
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)

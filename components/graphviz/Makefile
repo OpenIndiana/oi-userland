@@ -91,6 +91,8 @@ ASLR_MODE = $(ASLR_ENABLE)
 
 # We build 32 and 64 bit because we build libraries, and we build modules for
 # runtimes which provide 64 or 32 (or both) bit environments.
+configure:	$(CONFIGURE_32_and_64)
+
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)

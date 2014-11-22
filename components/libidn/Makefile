@@ -117,6 +117,8 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 
 ASLR_MODE = $(ASLR_ENABLE)
 
+configure:	$(CONFIGURE_32_and_64)
+
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)

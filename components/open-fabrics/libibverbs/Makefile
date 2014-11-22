@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -77,6 +77,8 @@ COMPONENT_POST_INSTALL_ACTION = \
 	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man3/ibv_modify_xrc_rcv_qp.3
 	
 # common targets
+configure:	$(CONFIGURE_32_and_64)
+
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64) $(PROTOMAN3FILES)

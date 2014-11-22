@@ -222,6 +222,8 @@ $(INSTALL_32): COMPONENT_INSTALL_TARGETS = showlayout install-everything
 $(INSTALL_64): COMPONENT_INSTALL_TARGETS = showlayout installpammodules
 
 # common targets
+configure:	$(CONFIGURE_32_and_64)
+
 build:		$(BUILD_32_and_64)
 
 include ../../../make-rules/shared-targets.mk

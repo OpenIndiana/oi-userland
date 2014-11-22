@@ -53,6 +53,8 @@ CONFIGURE_OPTIONS +=    --disable-static
 
 COMPONENT_BUILD_TARGETS = all
 
+configure:	$(CONFIGURE_32)
+
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)

@@ -58,6 +58,8 @@ CONFIGURE_OPTIONS += ac_cv_dnet_linux_pf_packet=no
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
+configure:	$(CONFIGURE_32_and_64)
+
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)

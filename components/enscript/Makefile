@@ -76,6 +76,8 @@ COMPONENT_POST_INSTALL_ACTION = \
 		$(PROTOUSRBINDIR)/$(MACH64)/nenscript
 
 # common targets
+configure:	$(CONFIGURE_64)
+
 build:          $(BUILD_64)
 
 install:        $(INSTALL_64)

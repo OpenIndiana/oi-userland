@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -69,6 +69,8 @@ PKG_PROTO_DIRS +=	$(COMPONENT_DIR)/files
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
+configure:	$(CONFIGURE_32_and_64)
+
 build:          $(BUILD_32_and_64)
 
 install:        $(INSTALL_32_and_64)

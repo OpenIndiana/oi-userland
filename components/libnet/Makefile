@@ -54,6 +54,8 @@ CONFIGURE_OPTIONS.64 += --srcdir=$(BUILD_DIR_64)
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # common targets
+configure:	$(CONFIGURE_32_and_64)
+
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)

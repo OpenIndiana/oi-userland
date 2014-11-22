@@ -53,6 +53,8 @@ COMPONENT_POST_BUILD_ACTION = \
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
+configure:	$(CONFIGURE_32_and_64)
+
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)

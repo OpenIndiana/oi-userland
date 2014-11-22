@@ -76,6 +76,8 @@ COMPONENT_INSTALL_ARGS +=	BUILD_ROOT=$(PROTO_DIR)
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # common targets
+configure:	$(CONFIGURE_64)
+
 build:		$(BUILD_64)
 
 install:	$(INSTALL_64)

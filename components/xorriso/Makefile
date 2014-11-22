@@ -50,6 +50,8 @@ CONFIGURE_OPTIONS  +=		CPPFLAGS="$(CPPFLAGS)"
 COMPONENT_PREP_ACTION = \
 	 (cd $(@D) ; test -f config.status && rm config.status)
 
+configure:	$(CONFIGURE_32)
+
 build:          $(BUILD_32)
 
 install:        $(INSTALL_32)

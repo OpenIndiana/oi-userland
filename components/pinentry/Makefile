@@ -83,6 +83,8 @@ CONFIGURE_BINDIR.64 =   $(CONFIGURE_PREFIX)/bin
 
 ASLR_MODE = $(ASLR_ENABLE)
 
+configure:	$(CONFIGURE_64)
+
 build: $(BUILD_64)
 
 install: $(INSTALL_64)

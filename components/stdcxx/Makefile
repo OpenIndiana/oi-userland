@@ -248,7 +248,9 @@ COMPONENT_TEST_TARGETS =
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-build: $(BUILD_32) $(BUILD_64)
+configure:	$(CONFIGURE_32_and_64)
+
+build: $(BUILD_32_and_64)
 
 install: $(BUILD_DIR_32)/.built $(BUILD_DIR_64)/.built
 	$(CP) $(COMPONENT_DIR)/Solaris/install.sh $(COMPONENT_DIR)/

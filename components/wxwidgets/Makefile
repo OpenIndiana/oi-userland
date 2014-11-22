@@ -79,6 +79,8 @@ $(BUILD_DIR_64)/contrib/.configured:
 	$(TOUCH) $@
 
 # common targets
+configure:	$(CONFIGURE_32_and_64)
+
 build:		$(BUILD_32_and_64) \
 		$(BUILD_DIR_32)/contrib/.built \
 		$(BUILD_DIR_64)/contrib/.built

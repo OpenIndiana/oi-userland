@@ -110,6 +110,8 @@ COMPONENT_POST_INSTALL_ACTION += ; \
 # Disable ASLR for now.
 ASLR_MODE=$(ASLR_DISABLE)
 
+configure:	$(CONFIGURE_32)
+
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)

@@ -98,6 +98,8 @@ BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
 # build it twice.  Once for the HPIJS support used by LP and once for the rest
 # of the support used for CUPS and SANE.
 #
+configure: $(VARIANTS:%=%/.configured)
+
 build: $(VARIANTS:%=%/.built)
 
 install: $(VARIANTS:%=%/.installed)

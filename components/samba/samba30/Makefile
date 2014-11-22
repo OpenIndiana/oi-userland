@@ -141,6 +141,8 @@ LICENSE_TRANSFORMS =
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # common targets
+configure:	$(CONFIGURE_32)
+
 build:		$(BUILD_32)
 
 include ../../../make-rules/shared-targets.mk

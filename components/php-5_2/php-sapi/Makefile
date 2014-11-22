@@ -217,6 +217,8 @@ CLEAN_PATHS += phpize-proto php-config-proto php-config-proto.zts tmp
 CLEAN_PATHS += php.ini-patched
 
 # common targets
+configure:	$(CONFIGURE_32)
+
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32) PHP-NSAPI_INSTALL PHP-CGI_INSTALL

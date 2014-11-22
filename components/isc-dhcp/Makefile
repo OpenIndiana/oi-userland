@@ -57,6 +57,8 @@ CONFIGURE_OPTIONS  +=   CPPFLAGS="$(CPPFLAGS)"
 
 COMPONENT_TEST_DIR =	$(@D)
 
+configure:	$(CONFIGURE_32)
+
 build:		$(BUILD_32)
 
 install:	build $(INSTALL_32) $(PROTO_DIR)/dhcpd.leases

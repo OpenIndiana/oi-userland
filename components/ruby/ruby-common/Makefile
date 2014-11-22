@@ -36,7 +36,7 @@ EXTDEPFILES = $(NULLDEPFILE)
 LICENSE_TRANSFORMS=
 
 # nothing to download or build; just publish the package
-download prep build install test:
+download prep configure build install test:
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

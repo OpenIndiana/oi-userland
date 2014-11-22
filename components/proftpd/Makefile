@@ -100,6 +100,8 @@ CONFIGURE_SCRIPT =	$(@D)/configure
 # attributes.
 LICENSE_TRANSFORMS =
 
+configure:	$(CONFIGURE_32)
+
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)

@@ -87,6 +87,8 @@ COMPONENT_POST_INSTALL_ACTION = \
 	$(MV) $(PROTOUSRLIBDIR)/64 $(PROTOUSRLIBDIR)/$(MACH64)
 
 # common targets
+configure:	$(CONFIGURE_32)
+
 build:		$(BUILD_32)
 
 include ../../make-rules/shared-targets.mk

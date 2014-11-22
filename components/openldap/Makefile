@@ -98,6 +98,8 @@ COMPONENT_TEST_ARGS += -e
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
+configure:	$(CONFIGURE_32_and_64)
+
 build:	$(BUILD_32_and_64)
 	(cd $(BUILD_DIR_32)/doc/guide/admin; \
 	$(PERL) -I$(SDFBLIB)/lib $(SDFBLIB)/script/sdf -2html guide.sdf; \

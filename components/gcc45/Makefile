@@ -98,6 +98,8 @@ COMPONENT_TEST_DIR =	$(BUILD_DIR_32)/gcc
 COMPONENT_TEST_CMD =	ulimit -Ss 16384 ; $(GMAKE)
 COMPONENT_TEST_ARGS =	-k -i
 
+configure:	$(CONFIGURE_32)
+
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32) 

@@ -102,6 +102,9 @@ $(IJS_VARIANT_64)/.configured: COMPONENT_PRE_CONFIGURE_ACTION = \
 
 CONFIGURE_SCRIPT = ./configure
 
+# configure gs and ijs
+configure: $(VARIANTS:%=%/.configured)
+
 # build gs and ijs
 build: $(VARIANTS:%=%/.built)
 

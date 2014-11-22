@@ -62,6 +62,8 @@ COMPONENT_POST_INSTALL_ACTION = \
 PKG_PROTO_DIRS +=	$(COMPONENT_DIR)/files
 
 # common targets
+configure:	$(CONFIGURE_32)
+
 build:          $(BUILD_32)
 
 install:        $(INSTALL_32)

@@ -126,6 +126,8 @@ $(INSTALL_64): COMPONENT_POST_INSTALL_ACTION= \
 	 cd $(BUILD_DIR)/$(MACH64)/sun ; ls agent; $(CCSMAKE) -e $(CCSMAKE_ARGS) install)
 
 # common targets
+configure:	$(CONFIGURE_32_and_64)
+
 build:	$(BUILD_32_and_64) $(BUILD_DIR_32)/.docs
 
 $(INSTALL_64): COMPONENT_INSTALL_ARGS += DESTDIR=$(BUILD_DIR)/prototype/$(MACH64)

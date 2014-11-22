@@ -123,6 +123,8 @@ COMPONENT_INSTALL_ARGS.64 += DESTSHARED=$(CONFIGURE_PREFIX)/lib/python3.4/lib-dy
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
+configure:	$(CONFIGURE_64)
+
 build:		$(BUILD_64)
 install:	$(INSTALL_64)
 

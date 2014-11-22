@@ -131,6 +131,8 @@ COMPONENT_POST_INSTALL_ACTION = ( \
 CLEAN_PATHS += webserver7-spi phpize-proto.zts php.ini
 
 # common targets
+configure:	$(CONFIGURE_32)
+
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)

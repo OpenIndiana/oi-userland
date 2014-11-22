@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -71,6 +71,8 @@ COMPONENT_PREP_ACTION = \
  ( cd $(SOURCE_DIR)/$(SRC_OFFSET) ; autoconf -f )
 
 # common targets
+configure:	$(CONFIGURE_32_and_64)
+
 build:		$(BUILD_32_and_64)
 
 include ../../../make-rules/shared-targets.mk

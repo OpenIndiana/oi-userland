@@ -175,6 +175,8 @@ COMPONENT_POST_INSTALL_ACTION += $(RM) $(PROTO_DIR)/usr/share/info/dir ;
 
 
 # common targets
+configure:	$(CONFIGURE_64)
+
 build:          $(BUILD_64)
 
 install:	$(BUILD_64) $(BUILD_DIR)/$(MACH64)-x/.installed 

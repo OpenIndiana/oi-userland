@@ -77,6 +77,8 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 	chmod 755 config.status; \
 	./config.status)
 
+configure:	$(CONFIGURE_64)
+
 build:		$(BUILD_64)
 
 install:	$(INSTALL_64)

@@ -69,6 +69,8 @@ CONFIGURE_OPTIONS +=	PATH="$(PATH):/usr/perl5/bin"
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
 
+configure:	$(CONFIGURE_64)
+
 build:		$(BUILD_64)
 
 install:	$(INSTALL_64)

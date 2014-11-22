@@ -51,6 +51,8 @@ CONFIGURE_OPTIONS +=	A2PS=$(USRBINDIR)/a2ps
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 # common targets
+configure:	$(CONFIGURE_32)
+
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)

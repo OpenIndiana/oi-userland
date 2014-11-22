@@ -71,6 +71,8 @@ endif
 
 COMPONENT_POST_INSTALL_ACTION += ($(KSH93) Solaris/customization.sh $(PROTO_DIR))
 
+configure:	$(CONFIGURE_64)
+
 build: $(BUILD_64)
 
 install: $(INSTALL_64)

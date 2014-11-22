@@ -105,6 +105,8 @@ COMPONENT_POST_INSTALL_ACTION = \
 COMPONENT_TEST_ENV +=  PATH="$(GNUBIN):$(PATH)"
 
 # common targets
+configure:	$(CONFIGURE_32)
+
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
