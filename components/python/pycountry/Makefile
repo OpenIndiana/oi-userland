@@ -40,6 +40,10 @@ include $(WS_TOP)/make-rules/ips.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
+COMPONENT_TEST_DIR =     $(COMPONENT_SRC)/src/pycountry/tests
+COMPONENT_TEST_ARGS =    test_general.py
+COMPONENT_TEST_CMD =     /usr/bin/nosetests
+
 # Regenerate the message object (mo) files for the patched 
 # iso3166 (country) and iso3166-2 (country subdivisions) translations.
 COMPONENT_PRE_BUILD_ACTION = \
@@ -57,8 +61,7 @@ build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
-#  Tests require the tox package
-test:		$(NO_TESTS)
+test:		$(TEST_NO_ARCH)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
