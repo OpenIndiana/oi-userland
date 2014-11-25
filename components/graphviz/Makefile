@@ -27,7 +27,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		graphviz
 COMPONENT_VERSION=	2.28.0
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_PROJECT_URL=	http://www.graphviz.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -55,9 +55,9 @@ CPPFLAGS +=	$(shell /usr/php/5.4/bin/php-config --includes)
 
 CONFIGURE_ENV +=	CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_ENV +=	PERL=$(PERL)
-# Explicitly use Ruby 1.8.  Allows switching Ruby default without
+# Explicitly use Ruby 1.9.  Allows switching Ruby default without
 # affecting graphviz build.
-CONFIGURE_ENV +=	RUBY=$(RUBY.1.8)
+CONFIGURE_ENV +=	RUBY=$(RUBY.1.9)
 CONFIGURE_OPTIONS +=	--without-included-ltdl
 CONFIGURE_OPTIONS +=	--enable-python=no
 CONFIGURE_OPTIONS +=	--enable-python26=yes
