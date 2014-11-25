@@ -42,6 +42,9 @@
     default facet.doc.html all>
 <transform dir file link hardlink path=usr/lib/help/.*\.html$ -> \
     default facet.doc.html all>
+# Ruby API html docs
+<transform file path=usr/ruby/.*/lib/ruby/vendor_ruby/.*/doc/.*/rdoc/* -> \
+    default facet.doc.html all>
 
 # pdf docs
 <transform dir file link hardlink path=usr/.*/doc/.*\.pdf$ -> \
@@ -50,6 +53,11 @@
 # ps docs
 <transform dir file link hardlink path=usr/.*/doc/.*\.ps$ -> \
     default facet.doc.ps all>
+
+# Ruby API ri Docs
+<transform file path=usr/ruby/.*/lib/ruby/vendor_ruby/.*/doc/.*/ri/* -> \
+    default facet.doc.ri all>
+<transform file path=usr/ruby/.*/share/ri/.*/* -> default facet.doc.ri all>
 
 # general documentation
 <transform dir file link hardlink path=usr/.*/doc(/.+){0,1}$ -> \
@@ -60,3 +68,4 @@
 <transform dir file link hardlink facet.doc.info=all -> delete facet.doc all>
 <transform dir file link hardlink facet.doc.pdf=all -> delete facet.doc all>
 <transform dir file link hardlink facet.doc.man=all -> delete facet.doc all>
+<transform dir file link hardlink facet.doc.ri=all -> delete facet.doc all>

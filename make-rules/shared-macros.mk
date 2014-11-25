@@ -304,9 +304,14 @@ CXX =		$(CXX.$(COMPILER).$(BITS))
 F77 =		$(F77.$(COMPILER).$(BITS))
 FC =		$(FC.$(COMPILER).$(BITS))
 
-RUBY_VERSION =	1.8
-RUBY.1.8 =	/usr/bin/ruby18
-VENDOR_RUBY =	/usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_VERSION)
+RUBY_VERSION =  1.9
+RUBY_LIB_VERSION =      1.9.1
+RUBY.1.9 =      /usr/ruby/1.9/bin/ruby
+RUBY =          $(RUBY.$(RUBY_VERSION))
+# Use the ruby lib versions to represent the RUBY_VERSIONS that
+# need to get built.  This is done because during package transformations
+# both the ruby version and the ruby library version are needed. 
+RUBY_VERSIONS = $(RUBY_LIB_VERSION)
 
 PYTHON_VENDOR_PACKAGES.32 = /usr/lib/python$(PYTHON_VERSION)/vendor-packages
 PYTHON_VENDOR_PACKAGES.64 = /usr/lib/python$(PYTHON_VERSION)/vendor-packages/64
