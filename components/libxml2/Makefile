@@ -48,6 +48,8 @@ include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 include ../../make-rules/lint-libraries.mk
 
+ASLR_MODE = $(ASLR_ENABLE)
+
 CFLAGS +=	$(CPP_LARGEFILES)
 LDFLAGS +=	$(LD_Z_DEFS) $(LD_Z_TEXT) -lpthread
 
