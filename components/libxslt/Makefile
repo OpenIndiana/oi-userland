@@ -42,6 +42,8 @@ include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 include ../../make-rules/lint-libraries.mk
 
+ASLR_MODE = $(ASLR_ENABLE)
+
 LINT_FLAGS +=	-I/usr/include/libxml2 
 
 CFLAGS +=	$(CPP_LARGEFILES)
