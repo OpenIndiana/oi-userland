@@ -45,16 +45,6 @@ ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 COMPONENT_BUILD_ENV += CC_BITS="$(CC_BITS)"
 
-# Needed to get around a broken /usr/lib/python2.7/config/Makefile
-# See CR #16837431.
-LD=$(CC)
-LDSHARED=$(CC) -G
-PYTHON_ENV += CC="$(CC)"
-PYTHON_ENV += LDSHARED="$(LDSHARED)"
-PYTHON_ENV += LD="$(LD)"
-PYTHON_ENV += CFLAGS="$(CFLAGS)"
-COMPONENT_INSTALL_ENV += $(PYTHON_ENV)
-
 # common targets
 build:		$(BUILD_32_and_64)
 

@@ -110,22 +110,48 @@ COMPONENT_BUILD_ENV  +=		XPROFILE_DIR="$(XPROFILE_DIR)"
 # 64 bit shared objects need to go in a 64-bit directory
 COMPONENT_INSTALL_ARGS.64 += DESTSHARED=$(CONFIGURE_PREFIX)/lib/python2.7/lib-dynload
 
-# Setup pyconfig.h file to support 32 & 64 bit.
-# If the /usr/lib/python2.7/lib2to3/*.pickle files are older than the related
-# *.txt files in the same directory, it will rebuild them anytime you try to
-# build a Python module.  So here we also touch the pickle files to avoid this.
-#
+# Simplify the definitions of CC, CXX, CFLAGS and LDFLAGS so they hard-code
+# neither paths from our build systems nor Studio-specific options.
+COMPONENT_PRE_INSTALL_ACTION= \
+            (cd $(@D) ; $(GSED) -i -e 's/^CC=.*/CC=\t\tcc/' \
+		-e 's/^CXX=.*/CXX=\t\tCC/' \
+		-e 's/^CFLAGS=.*/CFLAGS=\t\t\$$\(BASECFLAGS) \$$\(OPT) \$$\(EXTRA_CFLAGS)/' \
+		-e 's|^LDFLAGS=.*|LDFLAGS=|' \
+		Makefile)
+
+# Because we stripped the Makefile above, we need to pass several things in the
+# environment, and use -e to tell gmake to pay attention to the environment.
+COMPONENT_INSTALL_ENV +=	CC="$(CC)"
+COMPONENT_INSTALL_ENV +=	CXX="$(CXX)"
+COMPONENT_INSTALL_ENV +=	CFLAGS="$(CFLAGS)"
+COMPONENT_INSTALL_ENV +=	LDFLAGS="$(LDFLAGS)"
+COMPONENT_INSTALL_ARGS +=	-e
+
+# 1. Setup pyconfig.h file to support 32 & 64 bit.
+# 2. If the /usr/lib/python2.7/lib2to3/*.pickle files are older than the
+#    related *.txt files in the same directory, it will rebuild them any time
+#    you try to build a Python module.  So here we also touch the pickle files
+#    to avoid this.
+# 3. Strip build machine paths from _sysconfigdata.py & config/Makefile.
+#    Note that although the 64-bit version is not used (and thus commented
+#    out in the manifest), we still need to specify the 32-/64-bit paths,
+#    otherwise the 64-bit build will fail to find the 32-bit path.
+CONFIG_MAKEFILE.32=	lib/python2.7/config/Makefile
+CONFIG_MAKEFILE.64=	lib/$(MACH64)/python2.7/config/Makefile
+CONFIG_MAKEFILE=	$(CONFIG_MAKEFILE.$(BITS))
 COMPONENT_POST_INSTALL_ACTION= \
             (cd $(PROTOUSRDIR) ;  \
              $(MV) include/python2.7/pyconfig.h include/python2.7/pyconfig-$(BITS).h ; \
-             $(TOUCH) lib/python2.7/lib2to3/*.pickle)
+             $(TOUCH) lib/python2.7/lib2to3/*.pickle ; \
+	     $(GSED) -i -e 's|$(SOURCE_DIR)|.|g' -e 's|$(COMPONENT_DIR)|..|g' \
+		-e 's|$(SPRO_VROOT)/bin/||g' lib/python2.7/_sysconfigdata.py \
+		$(CONFIG_MAKEFILE))
 
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
 $(INSTALL_32):  $(INSTALL_64)
 configure:	$(CONFIGURE_32_and_64)
-
 build:		$(BUILD_32_and_64)
 install:	$(INSTALL_32_and_64)
 

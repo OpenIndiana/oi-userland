@@ -25,11 +25,6 @@
 
 include ../../../make-rules/shared-macros.mk
 
-PATH_32=/usr/mysql/5.5/bin/$(MACH32):/usr/bin
-PATH_64=/usr/mysql/5.5/bin:/usr/bin
-COMPONENT_BUILD_ENV   += PATH=$(PATH_$(BITS))
-COMPONENT_INSTALL_ENV += PATH=$(PATH_$(BITS))
-
 COMPONENT_NAME=		MySQL-python
 COMPONENT_VERSION=	1.2.2
 COMPONENT_PROJECT_URL=	http://sourceforge.net/projects/mysql-python
@@ -49,19 +44,14 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk
 
+PATH_32=/usr/mysql/5.5/bin/$(MACH32):/usr/bin:$(SPRO_VROOT)/bin
+PATH_64=/usr/mysql/5.5/bin:/usr/bin:$(SPRO_VROOT)/bin
+COMPONENT_BUILD_ENV   += PATH=$(PATH_$(BITS)):$(PATH)
+COMPONENT_INSTALL_ENV += PATH=$(PATH_$(BITS)):$(PATH)
+
 CFLAGS_32=	-L/usr/mysql/5.5/lib -R/usr/mysql/5.5/lib
 CFLAGS_64=	-L/usr/mysql/5.5/lib/$(MACH64) -R/usr/mysql/5.5/lib/$(MACH64)
 CFLAGS +=	$(CFLAGS_$(BITS))
-
-# Needed to get around a broken /usr/lib/python2.7/config/Makefile
-# See CR #16837431.
-LD=$(CC)
-LDSHARED=$(CC) -G
-PYTHON_ENV += CC="$(CC)"
-PYTHON_ENV += LDSHARED="$(LDSHARED)"
-PYTHON_ENV += LD="$(LD)"
-PYTHON_ENV += CFLAGS="$(CFLAGS)"
-COMPONENT_INSTALL_ENV += $(PYTHON_ENV)
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 

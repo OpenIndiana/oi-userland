@@ -122,9 +122,31 @@ COMPONENT_INSTALL_ARGS.64 += DESTSHARED=$(CONFIGURE_PREFIX)/lib/python3.4/lib-dy
 
 ASLR_MODE = $(ASLR_ENABLE)
 
+# Simplify the definitions of CC, CXX, CFLAGS and LDFLAGS so they hard-code
+# neither paths from our build systems nor Studio-specific options.
+COMPONENT_PRE_INSTALL_ACTION= \
+    (cd $(@D) ; \
+     $(GSED) -i -e 's/^CC=.*/CC=\t\tcc/' -e 's/^CXX=.*/CXX=\t\tCC/' \
+	-e 's/^CFLAGS=.*/CFLAGS=\t\t\$$\(BASECFLAGS) \$$\(OPT) \$$\(EXTRA_CFLAGS)/' \
+	-e 's|^LDFLAGS=.*|LDFLAGS=|' Makefile)
+
+# Because we stripped the Makefile above, we need to pass several things in the
+# environment, and use -e to tell gmake to pay attention to the environment.
+COMPONENT_INSTALL_ENV +=	CC="$(CC)"
+COMPONENT_INSTALL_ENV +=	CXX="$(CXX)"
+COMPONENT_INSTALL_ENV +=	CFLAGS="$(CFLAGS)"
+COMPONENT_INSTALL_ENV +=	LDFLAGS="$(LDFLAGS)"
+COMPONENT_INSTALL_ARGS +=	-e
+
+# Strip build machine paths from _sysconfigdata.py & config/Makefile.
+COMPONENT_POST_INSTALL_ACTION= \
+    (cd $(PROTOUSRLIBDIR)/python3.4 ; \
+     $(GSED) -i -e 's|$(SOURCE_DIR)|.|g' -e 's|$(COMPONENT_DIR)|..|g' \
+	-e 's|$(SPRO_VROOT)/bin/||g' lib-dynload/64/_sysconfigdata.py \
+	config-3.4m/Makefile)
+
 # common targets
 configure:	$(CONFIGURE_64)
-
 build:		$(BUILD_64)
 install:	$(INSTALL_64)
 

@@ -50,15 +50,8 @@ CC =		$(COMPONENT_DIR)/CC.sh
 COMPONENT_PRE_BUILD_ACTION = \
 	$(MKDIR) $(SOURCE_DIR)/64
 
-# Needed to get around a broken /usr/lib/python2.7/config/Makefile
-# See CR #16837431.
-LD=$(CC)
-LDSHARED=$(CC) -shared
-PYTHON_ENV += CC="$(CC)"
-PYTHON_ENV += LDSHARED="$(LDSHARED)"
-PYTHON_ENV += LD="$(LD)"
-PYTHON_ENV += CFLAGS="$(CFLAGS)"
-COMPONENT_INSTALL_ENV += $(PYTHON_ENV)
+LDSHARED=	$(CC) -shared
+PYTHON_ENV +=	LDSHARED="$(LDSHARED)"
 
 # One of the tests, test_exception_switch (tests.test_cpp.CPPTests), 
 # failed in 64-bit. Skip it for now.
