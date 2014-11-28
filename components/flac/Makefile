@@ -14,14 +14,14 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		flac
-COMPONENT_VERSION=	1.3.0
+COMPONENT_VERSION=	1.3.1
 COMPONENT_FMRI=		codec/flac
-COMPONENT_CLASSIFICATION=Libraries/Multimedia
+COMPONENT_CLASSIFICATION=System/Multimedia Libraries
 COMPONENT_PROJECT_URL=	http://flac.sourceforge.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:fa2d64aac1f77e31dfbb270aeb08f5b32e27036a52ad15e69a77e309528010dc
+    sha256:4773c0099dba767d963fd92143263be338c48702172e8754b9bc5103efe1c56c
 COMPONENT_ARCHIVE_URL=	http://downloads.us.xiph.org/releases/flac/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	$(COMPONENT_FMRI)
 COMPONENT_LICENSE=	Xiph.org BSD-style, binaries & media player plugins also use GPL v2, LGPL v2.1, documentation uses FDL v1.2
