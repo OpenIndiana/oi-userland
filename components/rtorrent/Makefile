@@ -30,12 +30,12 @@ PARFAIT_BUILD=no
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rtorrent
-COMPONENT_VERSION=	0.8.2
+COMPONENT_VERSION=	0.9.4
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://libtorrent.rakshasa.no/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:76135a63869e43fa0392829bb45d94c0aa55e94350dddc272685ccfac1bbb2ed
+    sha256:bc0a2c1ee613b68f37021beaf4e64a9252f91ed06f998c1e897897c354ce7e84
 COMPONENT_ARCHIVE_URL=	http://libtorrent.rakshasa.no/downloads/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/rtorrent
 
@@ -46,36 +46,30 @@ include ../../make-rules/ips.mk
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
-COMPONENT_PREP_ACTION = \
-        (cd $(@D) ; \
-	    aclocal -I./scripts -I. ; \
-	    autoheader; \
-	    libtoolize --automake --copy --force; \
-	    automake; \
-	    autoconf )
+LDFLAGS    += -lnsl -lsocket
 
-# this is needed or we can't compile the rak headers
-CC=$(CXX)
+PKG_CONFIG_PATH.32   = /usr/g++/lib/pkgconfig:/usr/lib/pkgconfig
+PKG_CONFIG_PATH.64   = /usr/g++/lib/$(MACH64)/pkgconfig:/usr/lib/$(MACH64)/pkgconfig
 
-LDFLAGS += -L/usr/gnu/lib -R/usr/gnu/lib -lnsl -lsocket
-
-CXXFLAGS +=	-i
-CXXFLAGS +=	-xspace
-CXXFLAGS +=	$(studio_XREGS)
+CXXFLAGS +=     $(gcc_OPT)
+LDFLAGS.32  +=  -L/usr/g++/lib -R/usr/g++/lib
+LDFLAGS.64  +=  -L/usr/g++/lib/$(MACH64) -R/usr/g++/lib/$(MACH64)
+LDFLAGS.32 += -L/usr/gnu/lib -R/usr/gnu/lib
+LDFLAGS.64 += -L/usr/gnu/lib/$(MACH64) -R/usr/gnu/lib/$(MACH64)
+LDFLAGS += $(LDFLAGS.$(BITS))
 CXXFLAGS +=	-I/usr/include/ncurses
 CONFIGURE_OPTIONS.32 +=		--srcdir=$(BUILD_DIR_32)
+CONFIGURE_OPTIONS.64 +=		--srcdir=$(BUILD_DIR_64)
 CONFIGURE_OPTIONS +=		--disable-debug
-CONFIGURE_OPTIONS +=		CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS +=		LDFLAGS="$(LDFLAGS)"
-CONFIGURE_OPTIONS +=		CXXFLAGS="$(CXXFLAGS)"
 
+PKG_PROTO_DIRS += $(BUILD_DIR)/$(MACH32)/doc
 
 # common targets
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
 
-test:		$(NO_TESTS)
+test:		$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
