@@ -1,0 +1,98 @@
+From 2cd70f4342ebfb6ed56d36c8f163de36bfe17073 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jorge=20Israel=20Pe=C3=B1a?= <jorgepblank@gmail.com>
+Date: Sun, 31 Mar 2013 15:18:28 -0700
+Subject: [PATCH 1/2] replace signal() call with sigaction() for better
+ portability
+
+signal() is known to have portability problems. Some systems such as
+old Unix systems and System V employ a behavior in which the signal
+disposition is reset to SIG_DFL (default) upon invocation of a signal
+handler by the delivery of a signal.
+
+See issue #51 in which Solaris users experience signal-based issues.
+
+Solaris is a system which employs the SIG_DFL reset behavior even in
+version 11.1.
+
+See http://docs.oracle.com/cd/E26502_01/html/E29034/signal-3c.html
+
+> If signal() is used, disp is the address of a signal handler, and sig is not SIGILL,
+> SIGTRAP, or SIGPWR, the system first sets the signal's disposition to SIG_DFL before
+> executing the signal handler.
+
+On Solaris the default signal disposition for SIGUSR1 is to exit the application.
+
+See http://docs.oracle.com/cd/E26502_01/html/E29033/signal.h-3head.html
+
+If I'm correct in assuming this is the problem Solaris users are encountering,
+the solution to this (and likely any other portability issues that may arise)
+is to use sigaction() which has explicitly defined behavior as per the POSIX standards.
+
+As you can see, it's a pretty drop-in solution. In fact, on some systems such as Linux,
+glibc defines signal() as a wrapper around sigaction() to use BSD semantics (i.e. not the
+behavior detailed above), which is likely why few others have experienced these problems.
+
+See http://man7.org/linux/man-pages/man2/signal.2.html
+---
+ src/signal_handler.cc | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/src/signal_handler.cc b/src/signal_handler.cc
+index f7fd7cc..d1e3d1a 100644
+--- a/src/signal_handler.cc
++++ b/src/signal_handler.cc
+@@ -74,7 +74,13 @@
+   if (slot.empty())
+     throw std::logic_error("SignalHandler::set_handler(...) received an empty slot.");
+ 
+-  signal(signum, &SignalHandler::caught);
++  struct sigaction sa;
++  sigemptyset(&sa.sa_mask);
++  sa.sa_flags = 0;
++  sa.sa_handler = &SignalHandler::caught;
++
++  sigaction(signum, &sa, NULL);
++
+   m_handlers[signum] = slot;
+ }
+ 
+-- 
+1.8.1.6
+
+
+From 49d00285c800179072d6b576c3965fe795f821bf Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jorge=20Israel=20Pe=C3=B1a?= <jorgepblank@gmail.com>
+Date: Sun, 7 Apr 2013 21:21:27 -0700
+Subject: [PATCH 2/2] added SA_RESTART to automatically restart system calls
+ interrupted by signals (as was already done by signal()) as well as error
+ checking on sigaction()
+
+---
+ src/signal_handler.cc | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/src/signal_handler.cc b/src/signal_handler.cc
+index d1e3d1a..a40e43c 100644
+--- a/src/signal_handler.cc
++++ b/src/signal_handler.cc
+@@ -76,12 +76,13 @@
+ 
+   struct sigaction sa;
+   sigemptyset(&sa.sa_mask);
+-  sa.sa_flags = 0;
++  sa.sa_flags = SA_RESTART;
+   sa.sa_handler = &SignalHandler::caught;
+ 
+-  sigaction(signum, &sa, NULL);
+-
+-  m_handlers[signum] = slot;
++  if (sigaction(signum, &sa, NULL) == -1)
++    throw std::logic_error("Could not set sigaction: " + std::string(rak::error_number::current().c_str()));
++  else
++    m_handlers[signum] = slot;
+ }
+ 
+ void
+-- 
+1.8.1.6
+

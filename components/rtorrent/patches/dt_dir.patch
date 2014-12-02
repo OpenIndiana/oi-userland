@@ -1,0 +1,11 @@
+--- rtorrent-0.9.4/src/input/path_input.cc.~1~	2014-11-27 13:56:13.345274607 +0300
++++ rtorrent-0.9.4/src/input/path_input.cc	2014-11-27 13:57:03.712881624 +0300
+@@ -75,7 +75,7 @@
+ 
+ struct _transform_filename {
+   void operator () (utils::directory_entry& entry) {
+-    if (entry.d_type == DT_DIR)
++    if (entry.d_type & S_IFDIR)
+       entry.d_name += '/';
+   }
+ };
