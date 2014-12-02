@@ -1,4 +1,4 @@
-#! /usr/bin/sh
+#!/sbin/sh
 #
 # CDDL HEADER START
 #
@@ -19,7 +19,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2008, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2008, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 . /lib/svc/share/smf_include.sh
@@ -29,26 +29,32 @@
 
 if [ -z "$SMF_FMRI" ]; then
 	echo "SMF framework variables are not initialized."
-	exit $SMF_EXIT_ERR_NOSMF
+	exit $SMF_EXIT_ERR
 fi
+
+tcsd_start() 	{
+	echo /usr/lib/64/tcsd 
+	/usr/lib/64/tcsd >/dev/null 2>&1 &
+}
+	
+tcsd_stop()	{
+	/usr/bin/pkill -x tcsd >/dev/null 2>&1
+}
 
 case "$1" in
 'start')
-	if [ ! -r "/dev/tpm" ]; then
-		smf_method_exit $SMF_EXIT_TEMP_DISABLE no_supported_hardware \
-			"No TPM device /dev/tpm found"
-	fi
-
-	echo /usr/lib/tcsd 
-	/usr/lib/tcsd >/dev/null 2>&1 &
+	tcsd_start 
 	;;
 
-# Attribute exec=':kill' in manifest tcsd.xml stops the tcsd daemon.
+'stop')
+	tcsd_stop
+	;;
+
 
 *)
-	echo "Usage: $0 start"
+	echo "Usage: $0 {start|stop}"
 	exit 1
 	;;
-esac
 
+esac
 exit $SMF_EXIT_OK
