@@ -1,0 +1,76 @@
+# developed in house, fed back, already fixed in development version.
+# reported to http://www.info-zip.org/zip-bug.html
+# patch fixes usage of S_IF* using macros instead of incorrect access as if
+# it was bitmask.
+
+
+--- zip30/unix/unix.c.old       2008-06-18 21:26:18.000000000 -0700
++++ zip30/unix/unix.c   2014-11-19 10:02:32.388243582 -0800
+@@ -140,7 +140,7 @@
+   }
+ 
+   /* Live name--use if file, recurse if directory */
+-#ifdef OS390
++#if defined(S_ISREG) && defined(S_ISLINK)
+   if (S_ISREG(s.st_mode) || S_ISLNK(s.st_mode))
+ #else
+ #  ifdef S_IFLNK
+@@ -154,7 +154,7 @@
+     if ((m = newname(n, 0, caseflag)) != ZE_OK)
+       return m;
+   }
+-#ifdef OS390
++#ifdef S_ISDIR
+   else if (S_ISDIR(s.st_mode))
+ #else
+   else if ((s.st_mode & S_IFDIR) == S_IFDIR)
+@@ -202,7 +202,7 @@
+     }
+     free((zvoid *)p);
+   } /* (s.st_mode & S_IFDIR) */
+-#ifdef OS390
++#ifdef S_ISFIFO
+   else if (S_ISFIFO(s.st_mode))
+ #else
+   else if ((s.st_mode & S_IFIFO) == S_IFIFO)
+@@ -418,12 +418,20 @@
+     *a = ((ulg)legacy_modes << 16) | !(s.st_mode & S_IWRITE);
+     }
+ #endif
++#ifdef S_ISDIR
++    if (S_ISDIR(s.st_mode)) {
++#else
+     if ((s.st_mode & S_IFMT) == S_IFDIR) {
++#endif
+       *a |= MSDOS_DIR_ATTR;
+     }
+   }
+   if (n != NULL)
++#ifdef S_ISDIR
++    *n = S_ISDIR(s.st_mode) ? s.st_size : -1L;
++#else
+     *n = (s.st_mode & S_IFMT) == S_IFREG ? s.st_size : -1L;
++#endif
+   if (t != NULL) {
+     t->atime = s.st_atime;
+     t->mtime = s.st_mtime;
+--- zip30/fileio.c.old  2008-05-28 17:13:24.000000000 -0700
++++ zip30/fileio.c      2014-11-19 10:36:59.461855532 -0800
+@@ -1114,6 +1114,9 @@
+ /* Return true if the attributes are those of a symbolic link */
+ {
+ #ifndef QDOS
++#ifdef S_ISLNK
++  return S_ISLNK(a >> 16);
++#else
+ #ifdef S_IFLNK
+ #ifdef __human68k__
+   int *_dos_importlnenv(void);
+@@ -1125,6 +1128,7 @@
+ #else /* !S_IFLNK */
+   return (int)a & 0;    /* avoid warning on unused parameter */
+ #endif /* ?S_IFLNK */
++#endif /* ?S_ISLNK */
+ #else
+   return 0;
+ #endif
