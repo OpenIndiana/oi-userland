@@ -1,0 +1,11 @@
+--- brltty-3.8.orig/Programs/Makefile.in	2005-08-27 05:33:11.000000000 +0100
++++ brltty-3.8/Programs/Makefile.in	2005-10-28 08:17:12.412662000 +0100
+@@ -551,7 +551,7 @@
+ install-api-key:
+ 	file=$(sysconfdir)/$(API_AUTHFILE) && \
+ 	if test ! -f $$file -a -w $(sysconfdir) -a -z "$(INSTALL_ROOT)"; \
+-	then umask 077 && $(SRC_DIR)/brltty-genkey $$file; fi
++	then umask 077 && (dd if=/dev/urandom bs=16 count=1 2>/dev/null | perl -e 'while(<>){print unpack( "H*", $$_),"\n";}') >$$file; fi
+ 
+ ###############################################################################
+ 
