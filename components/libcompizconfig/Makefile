@@ -38,11 +38,8 @@ COMPONENT_PREP_ACTION =        ( cd $(@D) && \
 					automake -a -f -c &&\
 					autoconf )
 
-#LDFLAGS += -L/usr/X11/lib -L/usr/openwin/lib -R/usr/X11/lib -R/usr/openwin/lib -lX11 -lXext
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-
-CONFIGURE_PREFIX= /usr/g++
 
 CONFIGURE_ENV+= INTLTOOL_PERL=$(PERL)
 
