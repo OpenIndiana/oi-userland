@@ -23,12 +23,11 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rsyslog
-COMPONENT_VERSION=	6.2.0
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	7.4.4
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://rsyslog.com/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:f8869a1c25d0dd9ff04468743969ffc9ff89c6f7afa3046f77f91c3982543cc1
+COMPONENT_ARCHIVE_HASH=	sha256:276d094d1e4c62c770ec8a72723667f119eee038912b79cf3337d439bc2f9087
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)files/download/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	service/rsyslog
 
@@ -36,12 +35,11 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-# A normal 64-bit build would result in /usr/lib/$(MACH64)/rsyslog but since we
-# have a self-contained eco-system, simplify things for customers and just use
-# /usr/lib/rsyslog .
-CONFIGURE_LIBDIR.64 =	$(CONFIGURE_LIBDIR.32)
+COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
+                                        autoreconf)
 
 CONFIGURE_OPTIONS +=    --enable-imsolaris
+CONFIGURE_OPTIONS +=    --enable-cached-man-pages
 CONFIGURE_OPTIONS +=    --enable-mail
 #CONFIGURE_OPTIONS +=    --enable-gssapi_krb5
 CONFIGURE_OPTIONS +=    --enable-gnutls
