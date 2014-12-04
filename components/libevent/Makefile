@@ -27,6 +27,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libevent
 COMPONENT_VERSION=	1.4.14b
+COMPONENT_REVISION=	1
 IPS_COMPONENT_VERSION=	1.4.14.2
 COMPONENT_PROJECT_URL=	http://monkey.org/~provos/libevent/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-stable
@@ -51,6 +52,11 @@ COMPONENT_PRE_CONFIGURE_ACTION =  \
 #/usr/bin/event_rpcgen.py
 
 CONFIGURE_OPTIONS	+= --disable-static
+
+# Setup event-config.h file to support 32 & 64 bit.
+#
+COMPONENT_POST_INSTALL_ACTION= \
+            ($(MV) $(PROTO_DIR)/usr/include/event-config.h $(PROTO_DIR)/usr/include/event-config-$(BITS).h )
 
 build:		$(BUILD_32_and_64)
 
