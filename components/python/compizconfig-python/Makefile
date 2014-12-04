@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		compizconfig-python
 COMPONENT_VERSION=	0.8.4
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.compiz.org
 COMPONENT_SUMMARY=	compizconfig libraries - is an alternative configuration system for compiz
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -29,13 +30,6 @@ include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
-
-PKG_CONFIG_PATH.32   = /usr/g++/lib/pkgconfig:/usr/lib/pkgconfig
-PKG_CONFIG_PATH.64   = /usr/g++/lib/$(MACH64)/pkgconfig:/usr/lib/$(MACH64)/pkgconfig
-
-LDFLAGS.32  +=  -L/usr/g++/lib -R/usr/g++/lib
-LDFLAGS.64  +=  -L/usr/g++/lib/$(MACH64) -R/usr/g++/lib/$(MACH64)
-LDFLAGS += $(LDFLAGS.$(BITS))
 
 COMPONENT_PREP_ACTION = \
 	( cd $(@D) ; \
