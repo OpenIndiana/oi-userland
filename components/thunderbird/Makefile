@@ -17,6 +17,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	thunderbird
 COMPONENT_VERSION= 	24.8.1
+COMPONENT_REVISION=	1
 IPS_COMPONENT_VERSION=	24.8.1
 COMPONENT_SUMMARY= 	Mozilla Thunderbird Email/Newsgroup Client
 COMPONENT_SRC= 		comm-esr24
