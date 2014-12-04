@@ -17,6 +17,7 @@ include ../../make-rules/shared-macros.mk
 COMPONENT_NAME=		tmux
 COMPONENT_FMRI=		terminal/tmux
 COMPONENT_VERSION=	1.8
+COMPONENT_REVISION=	1
 COMPONENT_LICENSE=	BSD
 COMPONENT_LICENSE_FILE=	tmux.license
 COMPONENT_PROJECT_URL=	http://$(COMPONENT_NAME).sourceforge.net
