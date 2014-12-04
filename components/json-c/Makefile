@@ -28,7 +28,7 @@ include $(WS_TOP)/make-rules/ips.mk
 
 CONFIGURE_OPTIONS += --disable-static
 
-COMPONENT_PRE_CONFIGURE_ACTION=($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION=(cp -r $(SOURCE_DIR)/* $(@D))
 
 build:		$(BUILD_32_and_64)
 
