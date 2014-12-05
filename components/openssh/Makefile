@@ -50,7 +50,6 @@ ASLR_MODE = $(ASLR_ENABLE)
 CFLAGS += -DSET_USE_PAM
 CFLAGS += -DDEPRECATE_SUNSSH_OPT
 CFLAGS += -DKRB5_BUILD_FIX
-CFLAGS += -DAUE_openssh=6172
 CFLAGS += -DDTRACE_SFTP
 CFLAGS += -DDISABLE_BANNER
 CFLAGS += -DPAM_ENHANCEMENT
@@ -70,13 +69,7 @@ LDFLAGS += -B direct -z nolazyload
 # CONFIGURE_OPTIONS.64.
 CONFIGURE_OPTIONS.64 += LDFLAGS="$(LDFLAGS) -m64"
 
-# Build with BSM audit. Do not check if getaudit and getaudit_addr are in
-# libbsm, because they are no longer in libbsm and not needed any way.
-CONFIGURE_OPTIONS += --with-audit=bsm
-CONFIGURE_OPTIONS += "ac_cv_lib_bsm_getaudit=yes"       
-CONFIGURE_OPTIONS += "ac_cv_func_getaudit=yes"
-CONFIGURE_OPTIONS += "ac_cv_func_getaudit_addr=yes"
-     
+CONFIGURE_OPTIONS += --with-audit=solaris
 CONFIGURE_OPTIONS += --with-libedit
 CONFIGURE_OPTIONS += --with-kerberos5
 CONFIGURE_OPTIONS += --with-pam
@@ -97,6 +90,9 @@ COMPONENT_PRE_BUILD_ACTION = \
     ( echo "Copying dtrace sftp files..."; \
       $(LN) -fs $(COMPONENT_DIR)/dtrace_sftp/*.[dh] $(SOURCE_DIR); \
     )
+
+# Copy source files that are not yet part of a patch
+COMPONENT_PREP_ACTION += ($(CP) sources/*.c $(@D)/)
 
 # common targets
 configure:	$(CONFIGURE_64)

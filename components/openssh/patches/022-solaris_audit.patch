@@ -1,0 +1,175 @@
+#
+# Add Solaris Auditing configuration (--with-audit=solaris) to openssh-6.5p1.
+#
+# Add phase 1 Solaris Auditing of sshd login/logout to openssh-6.5p1.
+#
+# Additional Solaris Auditing should include audit of password
+#  change.
+# Presuming it is appropriate, this patch should/will be updated
+#  with additional files and updates to sources/audit-solaris.c 
+#
+# Code is developed by the Solaris Audit team.
+# It should/will likely be contributed up stream when done.
+# This patch relies on sources/audit-solaris.c being copied into
+#  the openssh source directory by the Makefile that configures
+#  using --with-audit=solaris.
+#
+# The up stream community has been contacted about the plans.
+#  No reply has yet been received.
+#
+# An additional patch relying on the --with-audit=solaris configuration
+#  should/will be created for sftp Solaris Audit and password change.
+#
+--- orig/config.h.in	2014-11-05 13:11:59.968745838 -0800
++++ new/config.h.in	2014-10-13 14:00:31.117475979 -0700
+@@ -1628,6 +1628,9 @@
+ /* Use Linux audit module */
+ #undef USE_LINUX_AUDIT
+ 
++/* Use Solaris audit module */
++#undef USE_SOLARIS_AUDIT
++
+ /* Enable OpenSSL engine support */
+ #undef USE_OPENSSL_ENGINE
+ 
+--- orig/configure	2014-11-05 13:11:59.971959419 -0800
++++ new/configure	2014-12-04 08:43:59.945675841 -0800
+@@ -1420,7 +1420,7 @@
+   --with-tcp-wrappers[=PATH] Enable tcpwrappers support (optionally in PATH)
+   --with-ldns[=PATH]      Use ldns for DNSSEC support (optionally in PATH)
+   --with-libedit[=PATH]   Enable libedit support for sftp
+-  --with-audit=module     Enable audit support (modules=debug,bsm,linux)
++  --with-audit=module     Enable audit support (modules=debug,bsm,linux,solaris)
+   --with-pie           Build Position Independent Executables if possible
+   --with-ssl-dir=PATH     Specify path to OpenSSL installation
+   --without-openssl-header-check Disable OpenSSL version consistency check
+@@ -10185,6 +10185,27 @@
+ $as_echo "#define USE_LINUX_AUDIT 1" >>confdefs.h
+ 
+ 		;;
++	  solaris)
++		{ $as_echo "$as_me:${as_lineno-$LINENO}: result: solaris" >&5
++$as_echo "solaris" >&6; }
++		AUDIT_MODULE=solaris
++				for ac_header in bsm/adt.h
++do :
++  ac_fn_c_check_header_compile "$LINENO" "bsm/adt.h" "ac_cv_header_bsm_adt_h" ""
++if test "x$ac_cv_header_bsm_adt_h" = xyes; then :
++  cat >>confdefs.h <<_ACEOF
++#define HAVE_ADT_H 1
++_ACEOF
++
++else
++  as_fn_error $? "Solaris Audit enabled and bsm/adt.h not found" "$LINENO" 5
++fi
++
++done
++
++		SSHDLIBS="$SSHDLIBS -lbsm"
++$as_echo "#define USE_SOLARIS_AUDIT 1" >>confdefs.h
++	  	;;
+ 	  debug)
+ 		AUDIT_MODULE=debug
+ 		{ $as_echo "$as_me:${as_lineno-$LINENO}: result: debug" >&5
+--- orig/defines.h	2014-01-17 05:12:38.000000000 -0800
++++ new/defines.h	2014-09-12 10:09:27.000000000 -0700
+@@ -622,6 +622,11 @@
+ # define CUSTOM_SSH_AUDIT_EVENTS
+ #endif
+ 
++#ifdef USE_SOLARIS_AUDIT
++# define SSH_AUDIT_EVENTS
++# define CUSTOM_SSH_AUDIT_EVENTS
++#endif
++
+ #if !defined(HAVE___func__) && defined(HAVE___FUNCTION__)
+ #  define __func__ __FUNCTION__
+ #elif !defined(HAVE___func__)
+--- orig/INSTALL	2013-03-06 17:33:35.000000000 -0800
++++ new/INSTALL	2014-12-04 08:41:24.369920230 -0800
+@@ -97,9 +97,13 @@
+ 
+ Basic Security Module (BSM):
+ 
+-Native BSM support is know to exist in Solaris from at least 2.5.1,
+-FreeBSD 6.1 and OS X.  Alternatively, you may use the OpenBSM
+-implementation (http://www.openbsm.org).
++Native BSM support is known to exist in Solaris from at least 2.5.1
++to Solaris 10.  From Solaris 11 the previously documented BSM (libbsm)
++interfaces are no longer public and are unsupported.  While not public
++interfaces, audit-solaris.c implements Solaris Audit from Solaris 11.
++Native BSM support is known to exist in FreeBSD 6.1 and OS X.
++Alternatively, you may use the OpenBSM implementation
++(http://www.openbsm.org).
+ 
+ 
+ 2. Building / Installation
+@@ -152,8 +156,9 @@
+ There are a few other options to the configure script:
+ 
+ --with-audit=[module] enable additional auditing via the specified module.
+-Currently, drivers for "debug" (additional info via syslog) and "bsm"
+-(Sun's Basic Security Module) are supported.
++Currently, drivers for "debug" (additional info via syslog), and "bsm"
++(Sun's Legacy Basic Security Module prior to Solaris 11), and "solaris"
++(Sun's Audit infrastructure from Solaris 11) are supported.
+ 
+ --with-pam enables PAM support. If PAM support is compiled in, it must
+ also be enabled in sshd_config (refer to the UsePAM directive).
+--- orig/Makefile.in	2014-11-12 15:18:05.366726810 -0800
++++ new/Makefile.in	2014-11-12 15:22:36.825227512 -0800
+@@ -84,7 +84,7 @@
+ 	roaming_common.o roaming_client.o
+ 
+ SSHDOBJS=sshd.o auth-rhosts.o auth-passwd.o auth-rsa.o auth-rh-rsa.o \
+-	audit.o audit-bsm.o audit-linux.o platform.o \
++	audit.o audit-bsm.o audit-linux.o audit-solaris.o platform.o \
+ 	sshpty.o sshlogin.o servconf.o serverloop.o \
+ 	auth.o auth1.o auth2.o auth-options.o session.o \
+ 	auth-chall.o auth2-chall.o groupaccess.o \
+--- orig/README.platform	2009-08-28 16:14:48.000000000 -0700
++++ new/README.platform	2014-09-12 09:45:50.000000000 -0700
+@@ -68,8 +68,8 @@
+ libssl-dev, libz-dev and libpam-dev.
+ 
+ 
+-Solaris
+--------
++Prior to Solaris 11
++-------------------
+ If you enable BSM auditing on Solaris, you need to update audit_event(4)
+ for praudit(1m) to give sensible output.  The following line needs to be
+ added to /etc/security/audit_event:
+@@ -82,6 +82,9 @@
+ number is already in use on your system, you may change it at build time
+ by configure'ing --with-cflags=-DAUE_openssh=32801 then rebuilding.
+ 
++From Solaris 11
++---------------
++Solaris Audit is supported by configuring --with-audit=solaris.
+ 
+ Platforms using PAM
+ -------------------
+--- orig/sshd.c	2014-11-05 13:11:59.974945893 -0800
++++ new/sshd.c	2014-11-10 13:33:12.279354856 -0800
+@@ -2139,7 +2139,9 @@
+ #endif 
+ 
+ #ifdef SSH_AUDIT_EVENTS
++#ifndef	USE_SOLARIS_AUDIT
+ 	audit_event(SSH_AUTH_SUCCESS);
++#endif	/* !USE_SOLARIS_AUDIT */
+ #endif
+ 
+ #ifdef GSSAPI
+@@ -2169,6 +2171,10 @@
+ 		do_pam_session();
+ 	}
+ #endif
++#ifdef	USE_SOLARIS_AUDIT
++	/* Audit should take place after all successful pam */
++	audit_event(SSH_AUTH_SUCCESS);
++#endif	/* USE_SOLARIS_AUDIT */
+ 
+ 	/*
+ 	 * In privilege separation, we fork another child and prepare
