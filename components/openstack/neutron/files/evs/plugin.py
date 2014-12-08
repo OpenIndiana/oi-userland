@@ -527,7 +527,7 @@ class EVSNeutronPluginV2(db_base_plugin_v2.NeutronDbPluginV2,
                     continue
                 key = SUBNET_IPNET_ATTRIBUTE_MAP.get(key, key)
                 if isinstance(value, list):
-                    value = ",".join([str(val) for val in value])
+                    value = ",".join(map(str, set(value)))
                     if not value:
                         continue
                 filterlist.append("%s=%s" % (key, value))
@@ -715,7 +715,7 @@ class EVSNeutronPluginV2(db_base_plugin_v2.NeutronDbPluginV2,
                     continue
                 key = NETWORK_EVS_ATTRIBUTE_MAP.get(key, key)
                 if isinstance(value, list):
-                    value = ",".join([str(val) for val in value])
+                    value = ",".join(map(str, set(value)))
                     if not value:
                         continue
                 filterlist.append("%s=%s" % (key, value))
@@ -929,7 +929,7 @@ class EVSNeutronPluginV2(db_base_plugin_v2.NeutronDbPluginV2,
                     continue
                 key = PORT_VPORT_ATTRIBUTE_MAP.get(key, key)
                 if isinstance(value, list):
-                    value = ",".join([str(val) for val in value])
+                    value = ",".join(map(str, set(value)))
                     if not value:
                         continue
                 filterlist.append("%s=%s" % (key, value))
@@ -978,13 +978,29 @@ class EVSNeutronPluginV2(db_base_plugin_v2.NeutronDbPluginV2,
                                                 topic=topics.L3_AGENT)
 
     @lockutils.synchronized('evs-plugin', 'neutron-')
-    def evs_controller_removeVPort(self, tenantname, evsname, vportuuid):
+    def evs_controller_removeVPort(self, tenantname, evsname, vportuuid,
+                                   vportname):
+        pat = radcli.ADRGlobPattern({'name': evsname,
+                                     'tenant': tenantname})
         try:
-            pat = radcli.ADRGlobPattern({'name': evsname,
-                                         'tenant': tenantname})
             evs = self._rc.get_object(evsbind.EVS(), pat)
             evs.removeVPort(vportuuid)
         except radcli.ObjectError as oe:
+            # '7' corresponds to EVS' EVS_EBUSY_VPORT error code
+            if oe.get_payload().err == 7:
+                # It is possible that the VM is destroyed, but EVS is unaware
+                # of it. So, try to reset the vport. If it succeeds, then call
+                # removeVPort() again.
+                try:
+                    evs.resetVPort(vportname)
+                    evs.removeVPort(vportuuid)
+                except:
+                    # we failed one of the above operations, just return
+                    # the original exception.
+                    pass
+                else:
+                    # the reset and remove succeeded, just return.
+                    return
             raise EVSControllerError(oe.get_payload().errmsg)
 
     def delete_port(self, context, id, l3_port_check=True):
@@ -997,7 +1013,7 @@ class EVSNeutronPluginV2(db_base_plugin_v2.NeutronDbPluginV2,
         if not l3_port_check:
             self._release_l3agent_internal_port(context, port)
         self.evs_controller_removeVPort(port['tenant_id'], port['network_id'],
-                                        id)
+                                        id, port['name'])
 
         # notify dhcp agent of port deletion
         payload = {

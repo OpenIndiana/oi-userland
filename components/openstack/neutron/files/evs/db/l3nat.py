@@ -254,6 +254,8 @@ class EVS_L3_NAT_db_mixin(l3_db.L3_NAT_db_mixin):
         proper deletion checks.
         """
         port = self.get_port(context, port_id)
+        if not port:
+            return
         if port['device_owner'] in [DEVICE_OWNER_ROUTER_INTF,
                                     DEVICE_OWNER_ROUTER_GW,
                                     DEVICE_OWNER_FLOATINGIP]:

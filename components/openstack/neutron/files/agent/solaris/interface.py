@@ -88,6 +88,20 @@ class SolarisVNICDriver(object):
 
         evs_vport = ('%s/%s') % (network_id, port_id)
         dl = net_lib.Datalink(datalink_name)
+
+        # This is to handle HA when the 1st DHCP/L3 agent is down and
+        # the second DHCP/L3 agent tries to connect its VNIC to EVS, we will
+        # end up in "vport in use" error. So, we need to reset the vport
+        # before we connect the VNIC to EVS.
+        cmd = ['/usr/sbin/evsadm', 'show-vport', '-f',
+               'vport=%s' % port_id, '-co', 'evs,vport,status']
+        stdout = utils.execute(cmd)
+        evsname, vportname, status = stdout.strip().split(':')
+        if status == 'used':
+            cmd = ['/usr/sbin/evsadm', 'reset-vport', '-T', tenant_id,
+                   '%s/%s' % (evsname, vportname)]
+            utils.execute(cmd)
+
         dl.connect_vnic(evs_vport, tenant_id)
 
         if not protection:

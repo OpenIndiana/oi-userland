@@ -62,9 +62,22 @@ def stop():
             # first remove the IP
             check_call(["/usr/bin/pfexec", "/usr/sbin/ipadm", "delete-ip",
                         ifname])
+            # get the tenant, evs, and vport name for the VNIC
+            cmd = ["/usr/sbin/dladm", "show-vnic", "-po",
+                   "tenant,evs,vport", ifname]
+            p = Popen(cmd, stdout=PIPE, stderr=PIPE)
+            output, error = p.communicate()
+            if p.returncode != 0:
+                print "failed to retrieve Tenant, EVS," \
+                      " and VPort info for a VNIC"
+                return smf_include.SMF_EXIT_ERR_FATAL
+            tenant, evs, vport = output.strip().split(':')
             # next remove the VNIC
             check_call(["/usr/bin/pfexec", "/usr/sbin/dladm", "delete-vnic",
                         ifname])
+            # remove the EVS VPort
+            check_call(["/usr/sbin/evsadm", "remove-vport", "-T", tenant,
+                        "%s/%s" % (evs, vport)])
         except CalledProcessError as err:
             print "failed to remove datalinks used by DHCP agent: %s" % err
             return smf_include.SMF_EXIT_ERR_FATAL

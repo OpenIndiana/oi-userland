@@ -33,6 +33,7 @@ from oslo.config import cfg
 
 from neutron.agent.linux import utils
 from neutron.agent.solaris import net_lib
+from neutron.common import constants
 from neutron.common import exceptions
 from neutron.openstack.common import importutils
 from neutron.openstack.common import jsonutils
@@ -573,7 +574,14 @@ class DeviceManager(object):
         dhcp_port = None
         for port in network.ports:
             port_device_id = getattr(port, 'device_id', None)
-            if port_device_id == device_id:
+            port_device_owner = getattr(port, 'device_owner', None)
+
+            # if the agent is started on a different node, then the
+            # device_ids will be different since they are based off
+            # hostname.
+            if (port_device_id == device_id or
+                    (port_device_owner == constants.DEVICE_OWNER_DHCP and
+                     port_device_id.startswith('dhcp'))):
                 port_fixed_ips = []
                 for fixed_ip in port.fixed_ips:
                     port_fixed_ips.append({'subnet_id': fixed_ip.subnet_id,
