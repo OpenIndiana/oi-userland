@@ -1234,68 +1234,12 @@ class SolarisZonesDriver(driver.ComputeDriver):
                                                     extra_specs)
         name = instance['name']
 
-        def _ai_health_check(zone):
-            # TODO(npower) A hung kernel zone installation will not always
-            # be detected by zoneadm in the host global zone, which locks
-            # out other zoneadm commands.
-            # Workaround:
-            # Check the state of the auto-installer:default SMF service in
-            # the kernel zone. If installation failed, it should be in the
-            # 'maintenance' state. Unclog zoneadm by executing a shutdown
-            # inside the kernel zone if that's the case.
-            # Eventually we'll be able to pass a boot option to the zone
-            # to have it automatically shutdown if the installation fails.
-            if instance['vm_state'] == vm_states.BUILDING:
-                if self._get_zone_auto_install_state(name) == 'maintenance':
-                    # Poweroff the zone. This will cause the current call to
-                    # self._install() to catch an exception and tear down
-                    # the kernel zone.
-                    LOG.error(_("Automated installation of instance '%s' "
-                              "failed. Powering off the kernel zone '%s'.")
-                              % (instance['display_name'], name))
-                    try:
-                        utils.execute('/usr/sbin/zlogin', '-S', name,
-                                      '/usr/sbin/poweroff')
-                    except processutils.ProcessExecutionError as err:
-                        # poweroff pulls the rug from under zlogin, so ignore
-                        # the anticipated error.
-                        pass
-                    finally:
-                        raise loopingcall.LoopingCallDone()
-                else:
-                    # Looks like it installed OK
-                    if zone.state == ZONE_STATE_INSTALLED:
-                        LOG.debug(_("Kernel zone '%s' (%s) state: %s.")
-                                  % (name, instance['display_name'],
-                                     zone.state))
-                        raise loopingcall.LoopingCallDone()
-                    else:
-                        return
-            else:
-                # Can't imagine why we'd get here under normal circumstances
-                LOG.warning(_("Unexpected vm_state during installation of "
-                            "'%s' (%s): %s. Zone state: %s")
-                            % (name, instance['display_name'],
-                               instance['vm_state'], zone.state))
-                raise loopingcall.LoopingCallDone()
-
         LOG.debug(_("creating zone configuration for '%s' (%s)") %
                   (name, instance['display_name']))
         self._create_config(context, instance, network_info,
                             connection_info, extra_specs, sc_dir)
         try:
-            zone = self._get_zone_by_name(name)
-            is_kz = lookup_resource_property_value(zone, "global", "brand",
-                                                   ZONE_BRAND_SOLARIS_KZ)
-            # Monitor kernel zone installation explicitly
-            if is_kz:
-                monitor = loopingcall.FixedIntervalLoopingCall(
-                    _ai_health_check, zone)
-                monitor.start(interval=15, initial_delay=60)
-                self._install(instance, image, extra_specs, sc_dir)
-                monitor.wait()
-            else:
-                self._install(instance, image, extra_specs, sc_dir)
+            self._install(instance, image, extra_specs, sc_dir)
             self._power_on(instance)
         except Exception as reason:
             LOG.error(_("Unable to spawn instance '%s' via zonemgr(3RAD): %s")
@@ -1316,24 +1260,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
                 zone.shutdown()
             else:
                 # 'HARD'
-                # TODO(npower) See comments for _ai_health_check() for why
-                # it is sometimes necessary to poweroff from within the zone,
-                # until zoneadm and auto-install can perform this internally.
-                zprop = lookup_resource_property_value(zone, "global", "brand",
-                                                       ZONE_BRAND_SOLARIS_KZ)
-                if zprop and self._get_zone_auto_install_state(name):
-                    # Don't really care what state the install service is in.
-                    # Just shut it down ASAP.
-                    try:
-                        utils.execute('/usr/sbin/zlogin', '-S', name,
-                                      '/usr/sbin/poweroff')
-                    except processutils.ProcessExecutionError as err:
-                        # Poweroff pulls the rug from under zlogin, so ignore
-                        # the anticipated error.
-                        return
-                else:
-                    zone.halt()
-            return
+                zone.halt()
         except rad.client.ObjectError as reason:
             result = reason.get_payload()
             if result.code == zonemgr.ErrorCode.COMMAND_ERROR:
