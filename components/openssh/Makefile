@@ -83,6 +83,7 @@ CONFIGURE_OPTIONS += --without-rpath
 CONFIGURE_OPTIONS += --libexecdir=/usr/lib/ssh
 CONFIGURE_OPTIONS += --sbindir=/usr/lib/ssh
 CONFIGURE_OPTIONS += --sysconfdir=/etc/ssh
+CONFIGURE_OPTIONS += --bindir=/usr/bin
 CONFIGURE_OPTIONS += --disable-lastlog
 
 # Copy the sftp dtrace provider file and the header file to source directory
