@@ -33,12 +33,6 @@ include ../../make-rules/ips.mk
 
 CXXFLAGS+= -std=gnu++0x
 
-LDFLAGS.32  +=  -L/usr/g++/lib -R/usr/g++/lib
-LDFLAGS.64  +=  -L/usr/g++/lib/$(MACH64) -R/usr/g++/lib/$(MACH64)
-LDFLAGS += $(LDFLAGS.$(BITS))
-
-PKG_CONFIG_PATH.32   = /usr/g++/lib/pkgconfig:/usr/lib/pkgconfig
-
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --localstatedir=/var/lib
 CONFIGURE_ENV    += XGETTEXT=/usr/gnu/bin/xgettext
