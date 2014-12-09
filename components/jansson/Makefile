@@ -37,6 +37,9 @@ TPNO=	19403
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
+include ../../make-rules/lint-libraries.mk
+
+LINT_FLAGS += -I$(PROTOUSRINCDIR)
 
 CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS += --includedir=$(USRINCDIR)/jansson
