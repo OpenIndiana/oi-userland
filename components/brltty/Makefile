@@ -17,6 +17,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= brltty
 COMPONENT_VERSION= 4.4
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Braille support
 COMPONENT_FMRI= library/accessibility/brltty
 COMPONENT_CLASSIFICATION= Applications/Universal Access
@@ -40,17 +41,9 @@ COMPONENT_PREP_ACTION =        ( cd $(@D) && \
 # Missing files on install without this
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-LDFLAGS.32 += -L/usr/g++/lib -R/usr/g++/lib
-LDFLAGS.64 += -L/usr/g++/lib/$(MACH64) -R/usr/g++/lib/$(MACH64)
-LDFLAGS += $(LDFLAGS.$(BITS))
 
-CPPFLAGS += -I/usr/g++/include
-
-PKG_CONFIG_PATH.32   = /usr/g++/lib/pkgconfig:/usr/lib/pkgconfig
-PKG_CONFIG_PATH.64   = /usr/g++/lib/$(MACH64)/pkgconfig:/usr/lib/$(MACH64)/pkgconfig
-
-ICU_CONFIG.32=/usr/g++/bin/icu-config
-ICU_CONFIG.64=/usr/g++/bin/$(MACH64)/icu-config
+ICU_CONFIG.32=/usr/bin/icu-config
+ICU_CONFIG.64=/usr/bin/$(MACH64)/icu-config
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --disable-tcl-bindings
