@@ -23,22 +23,26 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		apr
-COMPONENT_VERSION=	1.5.0
+COMPONENT_VERSION=	1.5.1
 COMPONENT_PROJECT_URL=	http://apr.apache.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:9879f02054cb22e99f605f6fdbf47f4c028af4cd4f351cf64186a7ee447f35d7
+    sha256:94b1c9d9835cc9e902838b95d62ecc9a39b698f23e3e706812ec65a78ba41af7
 COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/apr/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/apache
 
-TPNO=			16531
+TPNO=			20711
 
 CONFIGURE_DEFAULT_DIRS=no
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
+
+# Micro version for easy libraries packaging
+MICRO_VERSION:= $(shell echo $(COMPONENT_VERSION) | awk -F. '{ print $$3 }')
+PKG_MACROS+= MICRO_VERSION=$(MICRO_VERSION)
 
 PATCH_LEVEL=0
 
