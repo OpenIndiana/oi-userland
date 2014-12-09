@@ -33,19 +33,16 @@ PKG_PROTO_DIRS += $(SOURCE_DIR)/doc/html
 
 CLEAN_PATHS += $(BUILD_DIR)
 
-LDFLAGS.32=-L/usr/g++/lib -R/usr/g++/lib
-LDFLAGS+=$(LDFLAGS.$(BITS))
-
 $(BUILD_32):    $(SOURCE_DIR)/.prep
 	$(MKDIR) $(@D) 
 	cp -a $(SOURCE_DIR)/* $(@D)
-	cd $(@D) && ./bootstrap.sh --prefix=/usr/g++ --with-toolset=gcc --with-icu=/usr/g++
+	cd $(@D) && ./bootstrap.sh --prefix=/usr --with-toolset=gcc --with-icu=/usr
 	cd $(@D) && ./bjam -sGCC_ROOT_DIRECTORY=$(GCC_ROOT) -sGCC=gcc -sGXX=g++  --v2 -d+2 -q \
 		-sBUILD="release <threading>single/multi" linkflags="$(LDFLAGS)" release stage
 	$(TOUCH) $@
 
 $(INSTALL_32):  $(BUILD_32)	
-	cd $(@D) && ./bjam install --prefix=$(PROTO_DIR)/usr/g++
+	cd $(@D) && ./bjam install --prefix=$(PROTO_DIR)/usr
 	$(TOUCH) $@
 
 build: $(BUILD_32)
