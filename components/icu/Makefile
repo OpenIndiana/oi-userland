@@ -18,6 +18,7 @@ include ../../make-rules/shared-macros.mk
 COMPONENT_NAME= icu
 
 COMPONENT_VERSION= 4.6
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= International Components for Unicode
 COMPONENT_SRC= $(COMPONENT_NAME)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC)-$(COMPONENT_VERSION)-svn.tar.gz
@@ -41,11 +42,6 @@ COMPONENT_POST_UNPACK_ACTION += ( chmod +x $(@D)/source/configure  $(@D)/source/
 
 # Missing files in build dir for configure without this.
 #COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D) && cd $(@D) && autoconf ) 
-
-CONFIGURE_PREFIX = /usr/g++
-LDFLAGS.32  +=  -L/usr/g++/lib -R/usr/g++/lib
-LDFLAGS.64  +=  -L/usr/g++/lib/$(MACH64) -R/usr/g++/lib/$(MACH64)
-LDFLAGS += $(LDFLAGS.$(BITS))
 
 CONFIGURE_SCRIPT = $(SOURCE_DIR)/source/runConfigureICU
 CONFIGURE_OPTIONS = Solaris/GCC
