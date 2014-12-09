@@ -17,6 +17,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= devhelp
 COMPONENT_VERSION= 2.32.0
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= API documentation browser for GNOME 2
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -31,12 +32,6 @@ include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
 CXXFLAGS+= -std=gnu++0x
-
-LDFLAGS.32  +=  -L/usr/g++/lib -R/usr/g++/lib
-LDFLAGS.64  +=  -L/usr/g++/lib/$(MACH64) -R/usr/g++/lib/$(MACH64)
-LDFLAGS += $(LDFLAGS.$(BITS))
-
-PKG_CONFIG_PATH.32   = /usr/g++/lib/pkgconfig:/usr/lib/pkgconfig
 
 COMPONENT_PREP_ACTION =        (cd $(@D); autoreconf --install --force) 
 
