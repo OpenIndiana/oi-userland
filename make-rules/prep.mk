@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 # One must do all unpack and patch in sequence.
@@ -67,7 +67,8 @@ CLOBBER_PATHS += $$(COMPONENT_ARCHIVE$(1))
 $$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1)):	Makefile
 	$$(FETCH) --file $$@ \
 		$$(COMPONENT_ARCHIVE_URL$(1):%=--url %) \
-		$$(COMPONENT_ARCHIVE_HASH$(1):%=--hash %)
+		$$(COMPONENT_ARCHIVE_HASH$(1):%=--hash %) \
+		$$(COMPONENT_SIG_URL$(1):%=--sigurl %)
 	$$(TOUCH) $$@
 endef
 

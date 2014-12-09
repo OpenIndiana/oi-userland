@@ -14,6 +14,16 @@ The following are the basics that just about every Makefile should have.
   field of `sha256sum $(COMPONENT_ARCHIVE)`.
 * COMPONENT_ARCHIVE_URL is where the archive can be downloaded from.  This is
   typically constructed from $(COMPONENT_PROJECT_URL) and $(COMPONENT_ARCHIVE).
+* COMPONENT_SIG_URL is the URL where the PGP signature for $(COMPONENT_ARCHIVE)
+  can be found.  This can be used in addition to the hash in
+  $(COMPONENT_ARCHIVE_HASH) to verify the correctness of the archive.  If
+  COMPONENT_SIG_URL is present, then COMPONENT_ARCHIVE_HASH needn't be, but its
+  presence is strongly encouraged to ensure that the archive contents don't
+  change silently.  If the signature results in a new key being added to
+  tools/.gnupg/pubring.pgp, then as part of your code review, please show the
+  diffs of the text version of the file by running
+      gpg2 --homedir $WS/tools/.gnupg --fingerprint
+  both before and after the change.
 * COMPONENT_BUGDB is the lower-case rendering of the BugDB cat/subcat.
 
 These two are both initialized in make-rules/shared-macros.mk rather than any
