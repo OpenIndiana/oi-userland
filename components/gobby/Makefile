@@ -17,6 +17,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gobby
 COMPONENT_VERSION= 0.4.94
+COMPONENT_REVISION= 1
 COMPONENT_CLASSIFICATION=System/Text Tools
 COMPONENT_FMRI=editor/gobby
 COMPONENT_SUMMARY= A collaborative text editor
@@ -36,10 +37,7 @@ include ../../make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-LDFLAGS.32 += -L/usr/g++/lib -R/usr/g++/lib
-LDFLAGS += $(LDFLAGS.$(BITS)) -lnsl -lsocket
-
-PKG_CONFIG_PATH.32   = /usr/g++/lib/pkgconfig:/usr/lib/pkgconfig
+LDFLAGS += -lnsl -lsocket
 
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
