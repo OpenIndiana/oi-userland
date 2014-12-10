@@ -18,7 +18,8 @@ include ../../make-rules/shared-macros.mk
 COMPONENT_NAME= gtkmm
 
 COMPONENT_VERSION= 2.20.3
-COMPONENT_SUMMARY= gtkmm - C++ Wrapper for the Gtk+ Library (g++ - compiled)
+COMPONENT_REVISION= 1
+COMPONENT_SUMMARY= gtkmm - C++ Wrapper for the Gtk+ Library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
@@ -32,15 +33,6 @@ include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
-
-CONFIGURE_PREFIX= /usr/g++
-
-LDFLAGS.32 += -L/usr/g++/lib -R/usr/g++/lib
-LDFLAGS.64 += -L/usr/g++/lib/$(MACH64) -R/usr/g++/lib/$(MACH64)
-LDFLAGS += $(LDFLAGS.$(BITS))
-
-PKG_CONFIG_PATH.32   = /usr/g++/lib/pkgconfig:/usr/lib/pkgconfig
-PKG_CONFIG_PATH.64   = /usr/g++/lib/$(MACH64)/pkgconfig:/usr/lib/$(MACH64)/pkgconfig
 
 build: $(BUILD_32_and_64)
 
