@@ -16,6 +16,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnome-system-monitor
 COMPONENT_VERSION=	2.28.2
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	GNOME system monitor
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -50,14 +51,7 @@ CONFIGURE_OPTIONS+=	--disable-scrollkeeper
 CONFIGURE_ENV+= PYTHON="$(PYTHON)"
 CONFIGURE_ENV+= PERL="$(PERL)"
 
-LDFLAGS.32 += -L/usr/g++/lib -R/usr/g++/lib
-LDFLAGS.64 += -L/usr/g++/lib/$(MACH64) -R/usr/g++/lib/$(MACH64)
-LDFLAGS += $(LDFLAGS.$(BITS))
-
 LDFLAGS += -lgmodule-2.0 -lsocket
-
-PKG_CONFIG_PATH.32   = /usr/g++/lib/pkgconfig:/usr/lib/pkgconfig
-PKG_CONFIG_PATH.64   = /usr/g++/lib/$(MACH64)/pkgconfig:/usr/lib/$(MACH64)/pkgconfig
 
 # common targets
 build:		$(BUILD_32)

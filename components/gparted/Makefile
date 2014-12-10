@@ -17,6 +17,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gparted
 COMPONENT_VERSION= 0.4.5
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= GNOME Partition Editor
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -31,11 +32,6 @@ PATH=/usr/gnu/bin:/usr/bin
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
-
-LDFLAGS.32 += -L/usr/g++/lib -R/usr/g++/lib
-LDFLAGS += $(LDFLAGS.$(BITS))
-
-PKG_CONFIG_PATH.32   = /usr/g++/lib/pkgconfig:/usr/lib/pkgconfig
 
 build: $(BUILD_32)
 

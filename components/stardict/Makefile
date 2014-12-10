@@ -16,6 +16,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		stardict
 COMPONENT_VERSION=	3.0.3
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.stardict.org/
 COMPONENT_SUMMARY=	A powerful dictionary platform written in GTK+2
 COMPONENT_FMRI=		system/desktop/stardict
@@ -42,13 +43,10 @@ CONFIGURE_OPTIONS+=	--disable-advertisement
 CONFIGURE_OPTIONS+=	--disable-gucharmap
 
 CPPFLAGS += -I/usr/mariadb/5.5/include
-LDFLAGS.32 += -L/usr/g++/lib -R/usr/g++/lib
-LDFLAGS.32 += -L/usr/mariadb/5.5/lib -R/usr/mariadb/5.5/lib/
+LDFLAGS.32 += -L/usr/mariadb/5.5/lib -R/usr/mariadb/5.5/lib
 LDFLAGS += $(LDFLAGS.$(BITS))
 
 LDFLAGS += -lnsl -lsocket
-
-PKG_CONFIG_PATH.32   = /usr/g++/lib/pkgconfig:/usr/lib/pkgconfig
 
 CONFIGURE_ENV += CPPFLAGS=$(CPPFLAGS)
 
