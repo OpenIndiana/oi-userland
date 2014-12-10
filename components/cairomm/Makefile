@@ -18,7 +18,8 @@ include ../../make-rules/shared-macros.mk
 COMPONENT_NAME= cairomm
 
 COMPONENT_VERSION= 1.10.0
-COMPONENT_SUMMARY= cairomm - C++ Wrapper for the cairo Library (g++ - compiled)
+COMPONENT_REVISION= 1
+COMPONENT_SUMMARY= cairomm - C++ Wrapper for the cairo Library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
@@ -33,16 +34,7 @@ include ../../make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-CONFIGURE_PREFIX= /usr/g++
-
 CONFIGURE_OPTIONS += --sysconfdir=/etc
-
-LDFLAGS.32 += -L/usr/g++/lib -R/usr/g++/lib
-LDFLAGS.64 += -L/usr/g++/lib/$(MACH64) -R/usr/g++/lib/$(MACH64)
-LDFLAGS += $(LDFLAGS.$(BITS))
-
-PKG_CONFIG_PATH.32   = /usr/g++/lib/pkgconfig:/usr/lib/pkgconfig
-PKG_CONFIG_PATH.64   = /usr/g++/lib/$(MACH64)/pkgconfig:/usr/lib/$(MACH64)/pkgconfig
 
 build: $(BUILD_32_and_64)
 
