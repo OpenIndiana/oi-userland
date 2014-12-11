@@ -50,6 +50,10 @@ PATCH_LEVEL = 0
 CFLAGS += $(CPP_LARGEFILES)
 CPPFLAGS += $(CPP_LARGEFILES)
 
+# Needed for "gmake test" to work.
+COMPONENT_PRE_CONFIGURE_ACTION = \
+	($(CLONEY) $(SOURCE_DIR) $(@D))
+
 CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_ENV += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH_$(BITS))"
@@ -62,6 +66,12 @@ CONFIGURE_OPTIONS  +=           --with-pic
 
 COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -if)
 
+COMPONENT_TEST_CMD = \
+	cmake -DBUILD_TEST=1 .; \
+	(cd $(@D)/tests; gmake); \
+	ctest .
+COMPONENT_TEST_TARGETS =
+
 ASLR_MODE = $(ASLR_ENABLE)
 
 configure:	$(CONFIGURE_32_and_64)
@@ -70,10 +80,7 @@ build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
 
-test: 	$(NO_TESTS)
-	@echo "There is no test harness for libgd2."
-	@echo "Test programs must be run manually and their output"
-	@echo "should be visually inspected."
+test:	$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
