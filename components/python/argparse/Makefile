@@ -42,6 +42,9 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk
 
+COMPONENT_TEST_DIR =	$(COMPONENT_SRC)/test
+COMPONENT_TEST_ARGS =	test_argparse.py
+
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # common targets
@@ -49,7 +52,7 @@ build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
-test:		$(NO_TESTS)
+test:		$(TEST_NO_ARCH)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
