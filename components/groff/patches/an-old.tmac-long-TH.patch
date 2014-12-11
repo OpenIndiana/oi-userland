@@ -1,0 +1,123 @@
+Fix for handling long .TH as overlaping in header and foot (CD #19873798)
+
+Fix has been submitted upstream:
+http://savannah.gnu.org/bugs/?43532
+
+--- groff-1.22.2/tmac/an-old.tmac.orig	2013-02-07 21:06:08.000000000 +0900
++++ groff-1.22.2/tmac/an-old.tmac	2014-12-01 13:32:30.713605080 +0900
+@@ -253,19 +253,111 @@
+ .
+ .\" Redefine these to customize the header & footer
+ .
++.de1 TLPT
++.  ds str1 "\\$1\"
++.  ds str2 "\\$2\"
++.\"
++.\" Based on .lt, the following 3 formats are used.
++.\"
++.\"     (str1 < 1/3) and (str2 < 1/3)
++.\"             str1, str2, str1
++.\"     ((str1 < 2/3) and (str2 < 1/3)) or ((str1 < 1/3) and (str2 < 2/3))
++.\"             str1,       str2,
++.\"     else
++.\"             str1,
++.\"                         str2
++.\"
++.  nr lt_13 (\\n[.lt] / 3)
++.  nr lt_23 (\\n[.lt] * 2 / 3)
++.  ie ((\\w'\\*[str1]'u < \\n[lt_13]u) & (\\w'\\*[str2]'u < \\n[lt_13]u)) \{\
++.    tl '\\*[str1]'\\*[str2]'\\*[str1]'
++.  \}
++.  el \{\
++.    ie (((\\w'\\*[str1]'u < \\n[lt_23]u) & (\\w'\\*[str2]'u < \\n[lt_13]u)) : ((\\w'\\*[str1]'u < \\n[lt_13]u) & (\\w'\\*[str2]'u < \\n[lt_23]u))) \{\
++.      tl '\\*[str2]''\\*[str1]'
++.    \}
++.    el \{\
++.      tl '\\*[str2]'''
++.      tl '''\\*[str1]'
++.    \}
++.  \}
++..
++.
++.de1 TLBT
++.  ds str1 "\\$1\"
++.  ds str2 "\\$2\"
++.  ds str3 "\\$3\"
++.\"
++.\" Based on .lt, the following 6 formats are used.
++.\"
++.\"     (str1 < 1/3) and (str2 < 1/3), str3 < 1/3)
++.\"             str1, str2, str3
++.\"     (str1 < 1/3) and (str2 < 1/3)
++.\"             str1, str2,
++.\"                         str3
++.\"     (str2 < 1/3) and (str3 < 1/3)
++.\"             str1, 
++.\"                   str2, str3
++.\"     ((str1 < 2/3) and (str2 < 1/3)) or ((str1 < 1/3) and (str2 < 2/3))
++.\"             str1,       str2,
++.\"                         str3
++.\"     ((str2 < 2/3) and (str3 < 1/3)) or ((str2 < 1/3) and (str3 < 2/3))
++.\"             str1,
++.\"             str2,       str3
++.\"     else
++.\"             str1,
++.\"                   str2,
++.\"                         str3
++.\"
++.  nr lt_13 (\\n[.lt] / 3)
++.  nr lt_23 (\\n[.lt] * 2 / 3)
++.  ie ((\\w'\\*[str1]'u < \\n[lt_13]u) & (\\w'\\*[str2]'u < \\n[lt_13]u) & (\\w'\\*[str3]'u < \\n[lt_13]u)) \{\
++.    tl '\\*[str1]'\\*[str2]'\\*[str3]'
++.  \}
++.  el \{\
++.    ie ((\\w'\\*[str1]'u < \\n[lt_13]u) & (\\w'\\*[str2]'u < \\n[lt_13]u)) \{\
++.      tl '\\*[str1]'\\*[str2]''
++.      tl '''\\*[str3]'
++.    \}
++.    el \{\
++.      ie ((\\w'\\*[str2]'u < \\n[lt_13]u) & (\\w'\\*[str3]'u < \\n[lt_13]u)) \{\
++.        tl '\\*[str1]'''
++.        tl ''\\*[str2]'\\*[str3]'
++.      \}
++.      el \{\
++.        ie (((\\w'\\*[str1]'u < \\n[lt_23]u) & (\\w'\\*[str2]'u < \\n[lt_13]u)) : ((\\w'\\*[str1]'u < \\n[lt_13]u) & (\\w'\\*[str2]'u < \\n[lt_23]u))) \{\
++.          tl '\\*[str1]''\\*[str2]'
++.          tl '''\\*[str3]'
++.        \}
++.        el \{\
++.          ie (((\\w'\\*[str2]'u < \\n[lt_23]u) & (\\w'\\*[str3]'u < \\n[lt_13]u)) : ((\\w'\\*[str2]'u < \\n[lt_13]u) & (\\w'\\*[str3]'u < \\n[lt_23]u))) \{\
++.            tl '\\*[str1]'''
++.            tl '\\*[str2]''\\*[str3]'
++.          \}
++.          el \{\
++.            tl '\\*[str1]'''
++.            tl ''\\*[str2]''
++.            tl '''\\*[str3]'
++.          \}
++.        \}
++.      \}
++.    \}
++.  \}
++..
++.
+ .de1 PT
+-.  tl '\\*[an-title](\\*[an-section])'\\*[an-extra3]'\\*[an-title](\\*[an-section])'
++.  TLPT "\\*[an-title](\\*[an-section])" "\\*[an-extra3]"
+ ..
+ .
+ .de1 BT
+ .  if r ps4html \
+ .    return
+ .  ie \\n[D] \{\
+-.    if o .tl '\\*[an-extra2]'\\*[an-extra1]'\\*[an-page-string]'
+-.    if e .tl '\\*[an-page-string]'\\*[an-extra1]'\\*[an-extra2]'
++.    if o .TLBT "\\*[an-extra2]" "\\*[an-extra1]" "\\*[an-page-string]"
++.    if e .TLBT "\\*[an-page-string]" "\\*[an-extra1]" "\\*[an-extra2]"
+ .  \}
+ .  el \
+-.    tl '\\*[an-extra2]'\\*[an-extra1]'\\*[an-page-string]'
++.    TLBT "\\*[an-extra2]" "\\*[an-extra1]" "\\*[an-page-string]"
+ ..
+ .
+ .de1 an-header
