@@ -18,6 +18,7 @@ include ../../make-rules/shared-macros.mk
 COMPONENT_NAME= zeromq
 
 COMPONENT_VERSION= 3.2.4
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Open source message queue optimised for performance
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -30,8 +31,6 @@ COMPONENT_PROJECT_URL = http://zeromq.org/
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
-
-CONFIGURE_PREFIX= /usr/g++
 
 build: $(BUILD_32_and_64)
 
