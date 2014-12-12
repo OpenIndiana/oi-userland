@@ -23,10 +23,6 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
-# we really need to use studio, mostly because that's what
-# sigc++ uses, so we don't like that parfait is g++ in disguise
-PARFAIT_BUILD=no
-
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rtorrent
@@ -48,12 +44,7 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 
 LDFLAGS    += -lnsl -lsocket
 
-PKG_CONFIG_PATH.32   = /usr/g++/lib/pkgconfig:/usr/lib/pkgconfig
-PKG_CONFIG_PATH.64   = /usr/g++/lib/$(MACH64)/pkgconfig:/usr/lib/$(MACH64)/pkgconfig
-
 CXXFLAGS +=     $(gcc_OPT)
-LDFLAGS.32  +=  -L/usr/g++/lib -R/usr/g++/lib
-LDFLAGS.64  +=  -L/usr/g++/lib/$(MACH64) -R/usr/g++/lib/$(MACH64)
 LDFLAGS.32 += -L/usr/gnu/lib -R/usr/gnu/lib
 LDFLAGS.64 += -L/usr/gnu/lib/$(MACH64) -R/usr/gnu/lib/$(MACH64)
 LDFLAGS += $(LDFLAGS.$(BITS))

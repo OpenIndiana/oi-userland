@@ -46,7 +46,6 @@ CONFIGURE_OPTIONS += --with-liblzo2
 CONFIGURE_OPTIONS += --with-png
 CONFIGURE_OPTIONS += --with-freetype
 CONFIGURE_OPTIONS += --with-fontconfig
-#CONFIGURE_OPTIONS += --with-icu=/usr/g++/bin/icu-config
 CONFIGURE_OPTIONS += --without-icu
 CONFIGURE_OPTIONS += --without-iconv
 CONFIGURE_OPTIONS += --without-menu-entry
