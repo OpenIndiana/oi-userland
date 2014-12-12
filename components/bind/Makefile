@@ -24,7 +24,8 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bind
 COMPONENT_VERSION=	9.6-ESV-R11
-IPS_COMPONENT_VERSION=	9.6.3.11.0
+HUMAN_VERSION=	$(COMPONENT_VERSION)-P1
+IPS_COMPONENT_VERSION=	9.6.3.11.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	http://www.isc.org/software/bind/
@@ -36,7 +37,7 @@ COMPONENT_ARCHIVE_URL=	\
 	http://ftp.isc.org/isc/bind9/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	service/dns-server
 
-TPNO=			16931
+TPNO=			20537
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
