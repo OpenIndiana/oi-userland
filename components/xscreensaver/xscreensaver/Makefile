@@ -16,14 +16,13 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xscreensaver
 # Don't change - compatibility issues
-COMPONENT_VERSION=	5.11
-HUMAN_VERSION= 		5.22
+COMPONENT_VERSION=	5.26
 COMPONENT_PROJECT_URL=	http://www.jwz.org/xscreensaver/
 
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:47b703ed22dce46a08f11ddd7d67d52e4f7ad8df844bdf956431069a0db36797
+    sha256:2ca4dc66e11947396124d1f87dd2787e0d8dd8dd1ada8871b3d8df40fb4f1b55
 #COMPONENT_ARCHIVE_URL=	http://www.jwz.org/xscreensaver/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_URL=	http://ftp.lfs-matrix.net/pub/blfs/conglomeration/xscreensaver/$(COMPONENT_ARCHIVE)
 
@@ -47,8 +46,8 @@ PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
 
 CONFIGURE_SCRIPT=	$(@D)/configure
 
-CFLAGS+=	-funsafe-math-optimizations -Wall -I$(SOURCE_DIR)/mesa/GL  -std=gnu99
-CXXFLAGS+=	-funsafe-math-optimizations -Wall -I$(SOURCE_DIR)/mesa/GL
+CFLAGS+=	-funsafe-math-optimizations -Wall -I$(SOURCE_DIR)/mesa/GL  -std=gnu99 -D_FILE_OFFSET_BITS=64
+CXXFLAGS+=	-funsafe-math-optimizations -Wall -I$(SOURCE_DIR)/mesa/GL -D_FILE_OFFSET_BITS=64
 LDFLAGS+=	-I$(@D)/mesa/GL 
 
 CONFIGURE_ENV+=	"XGETTEXT=/usr/gnu/bin/xgettext"

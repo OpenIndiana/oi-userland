@@ -244,13 +244,13 @@ diff --git driver/Makefile.in driver/Makefile.in
  
  # How we build object files in this directory.
  .c.o:
--	$(CC) -c $(INCLUDES) $(DEFS) $(CFLAGS) $(X_CFLAGS) $<
-+	$(CC) -c $(INCLUDES) $(DEFS) $(INTL_DEFS) $(CFLAGS) $(X_CFLAGS) $<
+-	$(CC) -c $(INCLUDES) $(DEFS) $(CPPFLAGS) $(CFLAGS) $(X_CFLAGS) $<
++	$(CC) -c $(INCLUDES) $(DEFS) $(INTL_DEFS) $(CPPFLAGS) $(CFLAGS) $(X_CFLAGS) $<
  
  .m.o:
- 	$(OBJCC) -c $(INCLUDES) $(DEFS) $(CFLAGS) $(X_CFLAGS) $<
+ 	$(OBJCC) -c $(INCLUDES) $(DEFS) $(CPPFLAGS) $(CFLAGS) $(X_CFLAGS) $<
 @@ -764,6 +777,16 @@ demo-Gtk-conf.o: demo-Gtk-conf.c
- 	$(CC) -c $(INCLUDES) $(CONF_DEFS) $(GTK_DEFS) $(CFLAGS) $(X_CFLAGS) \
+ 	$(CC) -c $(INCLUDES) $(CONF_DEFS) $(GTK_DEFS) $(CPPFLAGS) $(CFLAGS) $(X_CFLAGS) \
  	  $(srcdir)/demo-Gtk-conf.c
  
 +# lock takes an extra -D option.
