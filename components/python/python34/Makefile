@@ -26,13 +26,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Python
-COMPONENT_VERSION=	3.4.0
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	3.4.2
 COMPONENT_PROJECT_URL=	http://python.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:f13686c0a2d45e7146759e9d5d1cbd8097a0606483c0cf7730e1e13f58b14cbe
+    sha256:1c6d9682d145c056537e477bbfa060ce727f9edd38df1827e0f970dcf04b2def
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)ftp/python/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/python
 
@@ -75,6 +74,18 @@ LDFLAGS =	$(CC_BITS) $(CC_PIC)
 # build pic
 CFLAGS +=	$(CC_PIC)
 
+# The python build is profile-guided for studio; to see the benefits of that,
+# Python must be compiled with -xO5 and a different build target must be used.
+# Use of xprofile requires that the same options be used during compilation and
+# linking.  The targets chosen are based on Solaris 11 minimum supported system
+# requirements.
+#COMPONENT_BUILD_TARGETS = profile-opt
+#XPROFILE_DIR = $(BUILD_DIR_$(BITS))/.profile
+#PYFLAGS.i386 = -xtarget=opteron -xarch=sse2 -xcache=generic
+#PYFLAGS.sparc =
+#CFLAGS += -xO5 $(PYFLAGS.$(MACH))
+#LDFLAGS += -xO5 $(PYFLAGS.$(MACH))
+
 # add /usr/gnu/lib to the library search/run path
 LDFLAGS.32 = -R/usr/gnu/lib -L/usr/gnu/lib
 LDFLAGS.64 = -R/usr/gnu/lib/$(MACH64) -L/usr/gnu/lib/$(MACH64)
@@ -89,9 +100,6 @@ CONFIGURE_OPTIONS  +=		--with-dtrace
 CONFIGURE_OPTIONS  +=		--with-system-expat
 CONFIGURE_OPTIONS  +=		--with-system-ffi
 CONFIGURE_OPTIONS  +=		--without-gcc
-# Building with pymalloc is the default, but that causes core dumps;
-# see http://bugs.python.org/issue21412 for details.
-CONFIGURE_OPTIONS  +=		--without-pymalloc
 CONFIGURE_OPTIONS  +=		--without-ensurepip
 CONFIGURE_OPTIONS  +=		--enable-ipv6
 CONFIGURE_OPTIONS  +=		CPPFLAGS="$(CPPFLAGS)"
@@ -104,6 +112,9 @@ COMPONENT_BUILD_ENV  +=		DFLAGS="-$(BITS)"
 # Some tests have non-ASCII characters encoded for international domain names;
 # the publish step will fail in 'pkgdepend generate' without this:
 COMPONENT_PUBLISH_ENV  +=	LC_ALL=en_US.UTF-8
+
+# parallel building of dtrace probes is not safe
+COMPONENT_BUILD_ARGS =
 
 # 64 bit shared objects need to go in a 64-bit directory
 COMPONENT_INSTALL_ARGS += DESTSHARED=$(CONFIGURE_PREFIX)/lib/python3.4/lib-dynload

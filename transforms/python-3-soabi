@@ -1,0 +1,8 @@
+# Python 2's ABI for .so files is to simply append ".so".  But for Python
+# 3, it appends ".cpython-3#[d][m][u].so", where # is the minor version,
+# "d" is added if built --with-pydebug (we don't), "m" is added if built
+# --with-pymalloc (we do) and "u" is added if built --with-wide-unicode
+# (we don't).  See http://legacy.python.org/dev/peps/pep-3149/ for details.
+<transform file -> edit path \
+    (usr/lib/python3.)([0-9])(/vendor-packages/.*)\.so \
+    \\1\\2\\3.cpython-3\\2m.so >
