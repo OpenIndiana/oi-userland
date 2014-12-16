@@ -28,6 +28,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ncurses
 COMPONENT_VERSION=	5.9
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/ncurses/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -49,12 +50,16 @@ CONFIGURE_PREFIX =	/usr/gnu
 # force XPG6 standard
 CXXFLAGS += -D_XPG6
 LDFLAGS += -D_XPG6
+CPPFLAGS += -D_XPG6
+CFLAGS += -std=c99 -D_POSIX_C_SOURCE=200112L
 
 CONFIGURE_OPTIONS +=	--with-shared
 CONFIGURE_OPTIONS +=	--with-normal
 CONFIGURE_OPTIONS +=	--enable-rpath
 CONFIGURE_OPTIONS +=	--enable-widec
 CONFIGURE_OPTIONS +=	--includedir=$(USRINCDIR)/ncurses
+
+CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
 # XXX: Ugly hack copied directly from the desktop SUNWncurses.spec file:
 # The sun-color terminfo included in ncurses does not work;
