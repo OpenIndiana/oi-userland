@@ -1,0 +1,13 @@
+--- file-roller-2.30.2/src/dlg-add-files.c-orig	2010-10-05 16:38:24.582913183 -0500
++++ file-roller-2.30.2/src/dlg-add-files.c	2010-10-05 16:41:12.600492441 -0500
+@@ -64,7 +64,9 @@ file_sel_response_cb (GtkWidget      *wi
+ 	current_folder = gtk_file_chooser_get_current_folder_uri (file_sel);
+ 	uri = gtk_file_chooser_get_uri (file_sel);
+ 	eel_gconf_set_string (PREF_ADD_CURRENT_FOLDER, current_folder);
+-	eel_gconf_set_string (PREF_ADD_FILENAME, uri);
++	if (uri != NULL) {
++		eel_gconf_set_string (PREF_ADD_FILENAME, uri);
++	}
+ 	fr_window_set_add_default_dir (window, current_folder);
+ 	g_free (uri);
+ 
