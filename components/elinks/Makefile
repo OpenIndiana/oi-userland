@@ -63,6 +63,9 @@ build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
 
+# There is a "test" sub-directory. The README file in there says that this
+# is a directory containing "weird documents", but that there is no automatic
+# test suite yet.
 test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
