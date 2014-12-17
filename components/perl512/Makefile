@@ -38,6 +38,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:10749417fd3010aae320a34181ad4cd6a4855c1fc63403b87fa4d630b18e966c
 COMPONENT_ARCHIVE_URL=	http://www.cpan.org/src/5.0/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/perl
+TPNO=			9223
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
