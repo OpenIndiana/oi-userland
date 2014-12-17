@@ -229,6 +229,7 @@ file path=usr/lib/python2.7/base64.py
 file path=usr/lib/python2.7/bdb.py
 file path=usr/lib/python2.7/binhex.py
 file path=usr/lib/python2.7/bisect.py
+# See 20206698 for why this bypass is needed.
 file path=usr/lib/python2.7/cProfile.py pkg.depend.bypass-generate=.*
 file path=usr/lib/python2.7/calendar.py
 file path=usr/lib/python2.7/cgi.py
@@ -494,6 +495,11 @@ file path=usr/lib/python2.7/encodings/utf_8.py
 file path=usr/lib/python2.7/encodings/utf_8_sig.py
 file path=usr/lib/python2.7/encodings/uu_codec.py
 file path=usr/lib/python2.7/encodings/zlib_codec.py
+file path=usr/lib/python2.7/ensurepip/__init__.py
+file path=usr/lib/python2.7/ensurepip/__main__.py
+file path=usr/lib/python2.7/ensurepip/_bundled/pip-1.5.6-py2.py3-none-any.whl
+file path=usr/lib/python2.7/ensurepip/_bundled/setuptools-7.0-py2.py3-none-any.whl
+file path=usr/lib/python2.7/ensurepip/_uninstall.py
 file path=usr/lib/python2.7/filecmp.py
 file path=usr/lib/python2.7/fileinput.py
 file path=usr/lib/python2.7/fnmatch.py
@@ -869,6 +875,7 @@ file path=usr/lib/python2.7/optparse.py
 file path=usr/lib/python2.7/os.py
 file path=usr/lib/python2.7/os2emxpath.py
 file path=usr/lib/python2.7/pdb.doc
+# See 20206698 for why this bypass is needed.
 file path=usr/lib/python2.7/pdb.py pkg.depend.bypass-generate=.*
 file path=usr/lib/python2.7/pickle.py
 file path=usr/lib/python2.7/pickletools.py
@@ -881,6 +888,9 @@ file path=usr/lib/python2.7/plat-sunos5/STROPTS.py
 file path=usr/lib/python2.7/plat-sunos5/SUNAUDIODEV.py
 file path=usr/lib/python2.7/plat-sunos5/TYPES.py
 file path=usr/lib/python2.7/plat-sunos5/regen mode=0555
+# platform.py and profile.py attempt to import a bunch of things that only
+# exist on other platforms (e.g., Windows, MacOS): a long bypass list could
+# work around this, but ".*" is simpler in this case.
 file path=usr/lib/python2.7/platform.py pkg.depend.bypass-generate=.*
 file path=usr/lib/python2.7/plistlib.py
 file path=usr/lib/python2.7/popen2.py
@@ -888,6 +898,7 @@ file path=usr/lib/python2.7/poplib.py
 file path=usr/lib/python2.7/posixfile.py
 file path=usr/lib/python2.7/posixpath.py
 file path=usr/lib/python2.7/pprint.py
+# See comment just above about platform.py and profile.py.
 file path=usr/lib/python2.7/profile.py pkg.depend.bypass-generate=.*
 file path=usr/lib/python2.7/pstats.py
 file path=usr/lib/python2.7/pty.py
@@ -915,6 +926,7 @@ file path=usr/lib/python2.7/shutil.py
 file path=usr/lib/python2.7/site-packages/README
 file path=usr/lib/python2.7/site-packages/vendor-packages.pth
 file path=usr/lib/python2.7/site.py
+# See 20206698 for why this bypass is needed.
 file path=usr/lib/python2.7/smtpd.py pkg.depend.bypass-generate=.*
 file path=usr/lib/python2.7/smtplib.py
 file path=usr/lib/python2.7/sndhdr.py
@@ -950,6 +962,7 @@ file path=usr/lib/python2.7/timeit.py
 file path=usr/lib/python2.7/toaiff.py
 file path=usr/lib/python2.7/token.py
 file path=usr/lib/python2.7/tokenize.py
+# See 20206698 for why this bypass is needed.
 file path=usr/lib/python2.7/trace.py pkg.depend.bypass-generate=.*
 file path=usr/lib/python2.7/traceback.py
 file path=usr/lib/python2.7/tty.py

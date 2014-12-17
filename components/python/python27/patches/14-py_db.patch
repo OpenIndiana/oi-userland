@@ -1,9 +1,9 @@
 This patch adds Python debugger support.  It may be contributed upstream at
 some point, but the suitability (or lack thereof) has not yet been determined.
 
---- Python-2.7.7/Makefile.pre.in.~3~	2014-06-02 10:54:32.421086337 -0700
-+++ Python-2.7.7/Makefile.pre.in	2014-06-02 10:54:32.438134113 -0700
-@@ -407,7 +407,7 @@
+--- Python-2.7.9/Makefile.pre.in.~3~	2014-12-11 09:28:46.856724815 -0800
++++ Python-2.7.9/Makefile.pre.in	2014-12-11 09:30:15.502371832 -0800
+@@ -410,7 +410,7 @@
  
  # Default target
  all:		build_all
@@ -12,7 +12,7 @@ some point, but the suitability (or lack thereof) has not yet been determined.
  
  # Compile a binary with gcc profile guided optimization.
  profile-opt:
-@@ -778,6 +778,15 @@
+@@ -791,6 +791,15 @@
  
  $(LIBRARY_OBJS) $(MODOBJS) Modules/python.o: $(PYTHON_HEADERS)
  
@@ -28,15 +28,15 @@ some point, but the suitability (or lack thereof) has not yet been determined.
  
  ######################################################################
  
-@@ -842,7 +851,7 @@
+@@ -855,7 +864,7 @@
  		$(TESTPYTHON) $(TESTPROG) $(MEMTESTOPTS)
  
  # Install everything
--install:	@FRAMEWORKINSTALLFIRST@ altinstall bininstall maninstall @FRAMEWORKINSTALLLAST@
-+install:	@FRAMEWORKINSTALLFIRST@ altinstall bininstall maninstall @FRAMEWORKINSTALLLAST@ install-py_db
- 
- # Install almost everything without disturbing previous versions
- altinstall:	@FRAMEWORKALTINSTALLFIRST@ altbininstall libinstall inclinstall \
+-install:	@FRAMEWORKINSTALLFIRST@ commoninstall bininstall maninstall @FRAMEWORKINSTALLLAST@
++install:	@FRAMEWORKINSTALLFIRST@ commoninstall bininstall maninstall @FRAMEWORKINSTALLLAST@ install-py_db
+ 	if test "x$(ENSUREPIP)" != "xno"  ; then \
+ 		case $(ENSUREPIP) in \
+ 			upgrade) ensurepip="--upgrade" ;; \
 --- /dev/null
 +++ Python-2.7.1/py_db/libpython27_db.c
 @@ -0,0 +1,654 @@

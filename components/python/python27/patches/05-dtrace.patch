@@ -7,9 +7,9 @@ http://www.jcea.es/artic/python_dtrace.htm
 Follow http://bugs.python.org/issue13405 for plans to get it
 integrated into the main tree.
 
---- Python-2.7.6/Makefile.pre.in.~1~	2013-11-09 23:36:41.000000000 -0800
-+++ Python-2.7.6/Makefile.pre.in	2014-05-14 12:54:43.824219677 -0700
-@@ -218,6 +218,7 @@
+--- Python-2.7.9/Makefile.pre.in.~1~	2014-12-10 07:59:50.000000000 -0800
++++ Python-2.7.9/Makefile.pre.in	2014-12-11 09:17:26.137440092 -0800
+@@ -221,6 +221,7 @@
  # Used of signalmodule.o is not available
  SIGNAL_OBJS=	@SIGNAL_OBJS@
  
@@ -17,7 +17,7 @@ integrated into the main tree.
  
  ##########################################################################
  # Grammar
-@@ -341,6 +342,7 @@
+@@ -344,6 +345,7 @@
  		Python/formatter_unicode.o \
  		Python/formatter_string.o \
  		Python/$(DYNLOADFILE) \
@@ -25,7 +25,7 @@ integrated into the main tree.
  		$(LIBOBJS) \
  		$(MACHDEP_OBJS) \
  		$(THREADOBJ)
-@@ -664,6 +666,18 @@
+@@ -677,6 +679,18 @@
  Python/formatter_string.o: $(srcdir)/Python/formatter_string.c \
  				$(STRINGLIB_HEADERS)
  
@@ -64,8 +64,8 @@ integrated into the main tree.
      f->f_lineno = code->co_firstlineno;
      f->f_iblock = 0;
  
---- Python-2.7.8/Python/ceval.c.~1~	2014-06-29 19:05:46.000000000 -0700
-+++ Python-2.7.8/Python/ceval.c	2014-07-17 20:39:49.843868592 -0700
+--- Python-2.7.9/Python/ceval.c.~1~	2014-12-10 07:59:58.000000000 -0800
++++ Python-2.7.9/Python/ceval.c	2014-12-11 09:19:01.398584575 -0800
 @@ -19,6 +19,11 @@
  
  #include <ctype.h>
@@ -78,7 +78,7 @@ integrated into the main tree.
  #ifndef WITH_TSC
  
  #define READ_TIMESTAMP(var)
-@@ -678,6 +683,55 @@
+@@ -672,6 +677,55 @@
                        NULL);
  }
  
@@ -134,7 +134,7 @@ integrated into the main tree.
  
  /* Interpreter main loop */
  
-@@ -689,9 +743,84 @@
+@@ -683,9 +737,84 @@
      return PyEval_EvalFrameEx(f, 0);
  }
  
@@ -219,7 +219,7 @@ integrated into the main tree.
  #ifdef DXPAIRS
      int lastopcode = 0;
  #endif
-@@ -916,6 +1045,11 @@
+@@ -910,6 +1039,11 @@
          }
      }
  
@@ -419,9 +419,9 @@ new file mode 100644
 +#pragma D attributes Private/Private/Common provider python function
 +#pragma D attributes Evolving/Evolving/Common provider python name
 +#pragma D attributes Evolving/Evolving/Common provider python args
---- Python-2.7.7/Lib/test/test_sys.py.~1~	2014-05-31 11:58:39.000000000 -0700
-+++ Python-2.7.7/Lib/test/test_sys.py	2014-06-02 10:44:39.318709539 -0700
-@@ -594,7 +594,7 @@
+--- Python-2.7.9/Lib/test/test_sys.py.~1~	2014-12-10 07:59:47.000000000 -0800
++++ Python-2.7.9/Lib/test/test_sys.py	2014-12-11 09:20:26.361157717 -0800
+@@ -619,7 +619,7 @@
          nfrees = len(x.f_code.co_freevars)
          extras = x.f_code.co_stacksize + x.f_code.co_nlocals +\
                   ncells + nfrees - 1
