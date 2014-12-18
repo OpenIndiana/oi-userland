@@ -1,12 +1,25 @@
---- mod_perl-2.0.4/Apache-Test/lib/Apache/TestConfigParse.pm	Sun Nov 11 21:34:46 2007
-+++ mod_perl-2.0.4/Apache-Test/lib/Apache/TestConfigParse.pm	Thu May 19 05:35:01 2011
-@@ -211,6 +211,11 @@
+Patch origin: in-house
+Patch status: Solaris-specific; not suitable for upstream
+
+This change makes sure that 64 bit modules and mod_fcgid module are not
+used for testing. Mod_fcgid is disabled because it by default creates
+shared memory and socket in paths which are not suitable for ordinary
+user (or there can be interaction with running Apache).
+
+--- mod_perl-2.0.4/Apache-Test/lib/Apache/TestConfigParse.pm
++++ mod_perl-2.0.4/Apache-Test/lib/Apache/TestConfigParse.pm
+@@ -211,6 +211,16 @@
      for my $args (@{ $c->{$directive} }) {
          my $modname = $args->[0];
          my $file = $self->server_file_rel2abs($args->[1]);
 +	
-+       unless ($file !~ m/\/64\//) {
++        unless ($file !~ m/\/64\//) {
 +            debug "$file is 64 bit module (we don't want it)";
++            next;
++        }
++
++        unless ($file !~ m/mod_fcgid.so/) {
++            debug "$file creates shared memory and sockets on wrong place (skipping)";
 +            next;
 +        }
  

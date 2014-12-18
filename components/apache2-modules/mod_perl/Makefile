@@ -72,9 +72,7 @@ build: $(BUILD_32)
 
 install: $(INSTALL_32)
 
-# Won't start (maybe because of mod_dtrace.so on system).
-#test: $(TEST_32)
-test: $(NO_TESTS)
+test: $(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
