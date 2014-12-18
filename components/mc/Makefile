@@ -26,16 +26,16 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mc
-COMPONENT_VERSION=	4.8.8
+COMPONENT_VERSION=	4.8.13
 COMPONENT_PROJECT_URL=	http://www.midnight-commander.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:7b5e6f90e6709d1c1bcb4a2bf6d2a62b9494adef3ff4325ffdb3551c29e42a1c
+    sha256:22e1b809edba957eb9a392138bf87fea3877f7ca0b7463b7cc2eb94afa6f3e49
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)downloads/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/mc
 
-TPNO=			13150
+TPNO=			20604
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
