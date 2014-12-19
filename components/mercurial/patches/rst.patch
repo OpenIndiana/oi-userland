@@ -36,8 +36,8 @@ Solaris, or remove sections that are of no relevance to Solaris.
  Some commands (e.g. revert) produce backup files ending in ``.orig``,
  if the ``.orig`` file already exists and is not tracked by Mercurial,
  it will be overwritten.
---- mercurial-3.0.1/mercurial/help/config.txt	Sun Jun  1 14:15:14 2014
-+++ mercurial-3.0.1/mercurial/help/config.txt	Fri Jun  6 10:46:07 2014
+--- mercurial-3.2.3/mercurial/help/config.txt	Thu Dec 18 12:59:22 2014
++++ mercurial-3.2.3/mercurial/help/config.txt	Thu Dec 18 18:19:37 2014
 @@ -18,8 +18,7 @@
  Mercurial reads configuration data from several files, if they exist.
  These files do not exist by default and you will have to create the
@@ -48,81 +48,77 @@ Solaris, or remove sections that are of no relevance to Solaris.
  configuration is put into the per-repository ``<repo>/.hg/hgrc`` file.
  
  The names of these files depend on the system on which Mercurial is
-@@ -28,33 +27,25 @@
- paths are given below, settings from earlier paths override later
- ones.
+@@ -30,7 +29,7 @@
  
--| (All) ``<repo>/.hg/hgrc``
-+| ``<repo>/.hg/hgrc``
+ .. container:: verbose.unix
  
-     Per-repository configuration options that only apply in a
-     particular repository. This file is not version-controlled, and
-     will not get transferred during a "clone" operation. Options in
--    this file override options in all other configuration files. On
--    Plan 9 and Unix, most of this file will be ignored if it doesn't
-+    this file override options in all other configuration files.
-+    Most of this file will be ignored if it doesn't
-     belong to a trusted user or to a trusted group. See the documentation
-     for the ``[trusted]`` section below for more details.
+-  On Unix, the following files are consulted:
++  The following files are consulted:
  
--| (Plan 9) ``$home/lib/hgrc``
--| (Unix) ``$HOME/.hgrc``
--| (Windows) ``%USERPROFILE%\.hgrc``
--| (Windows) ``%USERPROFILE%\Mercurial.ini``
--| (Windows) ``%HOME%\.hgrc``
--| (Windows) ``%HOME%\Mercurial.ini``
-+| ``$HOME/.hgrc``
+   - ``<repo>/.hg/hgrc`` (per-repository)
+   - ``$HOME/.hgrc`` (per-user)
+@@ -39,49 +38,19 @@
+   - ``/etc/mercurial/hgrc`` (per-system)
+   - ``/etc/mercurial/hgrc.d/*.rc`` (per-system)
  
--    Per-user configuration file(s), for the user running Mercurial. On
--    Windows 9x, ``%HOME%`` is replaced by ``%APPDATA%``. Options in these
--    files apply to all Mercurial commands executed by this user in any
--    directory. Options in these files override per-system and per-installation
-+    Per-user configuration file, for the user running Mercurial. Options in this
-+    file apply to all Mercurial commands executed by this user in any
-+    directory. Options in this file override per-system and per-installation
-     options.
+-.. container:: verbose.windows
++Per-repository configuration options only apply in a particular
++repository.  This file is not version-controlled, and will not get
++transferred during a "clone" operation. Options in this file override
++options in all other configuration files.  Most of this file will be
++ignored if it doesn't belong to a trusted user or to a trusted group.
++See the documentation for the ``[trusted]`` section below for more
++details.
  
--| (Plan 9) ``/lib/mercurial/hgrc``
--| (Plan 9) ``/lib/mercurial/hgrc.d/*.rc``
--| (Unix) ``/etc/mercurial/hgrc``
--| (Unix) ``/etc/mercurial/hgrc.d/*.rc``
-+| ``/etc/mercurial/hgrc``
-+| ``/etc/mercurial/hgrc.d/*.rc``
+-  On Windows, the following files are consulted:
++Per-user configuration file(s) are for the user running Mercurial.
++Options in these files apply to all Mercurial commands executed by
++this user in any directory. Options in these files override per-system
++and per-installation options.
  
-     Per-system configuration files, for the system on which Mercurial
-     is running. Options in these files apply to all Mercurial commands
-@@ -61,30 +52,6 @@
-     executed by any user in any directory. Options in these files
-     override per-installation options.
- 
--| (Plan 9) ``<install-root>/lib/mercurial/hgrc``
--| (Plan 9) ``<install-root>/lib/mercurial/hgrc.d/*.rc``
--| (Unix) ``<install-root>/etc/mercurial/hgrc``
--| (Unix) ``<install-root>/etc/mercurial/hgrc.d/*.rc``
+-  - ``<repo>/.hg/hgrc`` (per-repository)
+-  - ``%USERPROFILE%\.hgrc`` (per-user)
+-  - ``%USERPROFILE%\Mercurial.ini`` (per-user)
+-  - ``%HOME%\.hgrc`` (per-user)
+-  - ``%HOME%\Mercurial.ini`` (per-user)
+-  - ``<install-dir>\Mercurial.ini`` (per-installation)
+-  - ``<install-dir>\hgrc.d\*.rc`` (per-installation)
+-  - ``HKEY_LOCAL_MACHINE\SOFTWARE\Mercurial`` (per-installation)
 -
--    Per-installation configuration files, searched for in the
--    directory where Mercurial is installed. ``<install-root>`` is the
--    parent directory of the **hg** executable (or symlink) being run. For
--    example, if installed in ``/shared/tools/bin/hg``, Mercurial will look
--    in ``/shared/tools/etc/mercurial/hgrc``. Options in these files apply
--    to all Mercurial commands executed by any user in any directory.
+-  .. note::
 -
--| (Windows) ``<install-dir>\Mercurial.ini`` **or**
--| (Windows) ``<install-dir>\hgrc.d\*.rc`` **or**
--| (Windows) ``HKEY_LOCAL_MACHINE\SOFTWARE\Mercurial``
+-   The registry key ``HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Mercurial``
+-   is used when running 32-bit Python on 64-bit Windows.
 -
--    Per-installation/system configuration files, for the system on
--    which Mercurial is running. Options in these files apply to all
--    Mercurial commands executed by any user in any directory. Registry
--    keys contain PATH-like strings, every part of which must reference
--    a ``Mercurial.ini`` file or be a directory where ``*.rc`` files will
--    be read.  Mercurial checks each of these locations in the specified
--    order until one or more configuration files are detected.
+-.. container:: verbose.plan9
 -
- .. note::
- 
-    The registry key ``HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Mercurial``
-@@ -368,12 +335,6 @@
+-  On Plan9, the following files are consulted:
+-
+-  - ``<repo>/.hg/hgrc`` (per-repository)
+-  - ``$home/lib/hgrc`` (per-user)
+-  - ``<install-root>/lib/mercurial/hgrc`` (per-installation)
+-  - ``<install-root>/lib/mercurial/hgrc.d/*.rc`` (per-installation)
+-  - ``/lib/mercurial/hgrc`` (per-system)
+-  - ``/lib/mercurial/hgrc.d/*.rc`` (per-system)
+-
+-Per-repository configuration options only apply in a
+-particular repository. This file is not version-controlled, and
+-will not get transferred during a "clone" operation. Options in
+-this file override options in all other configuration files. On
+-Plan 9 and Unix, most of this file will be ignored if it doesn't
+-belong to a trusted user or to a trusted group. See the documentation
+-for the ``[trusted]`` section below for more details.
+-
+-Per-user configuration file(s) are for the user running Mercurial. On
+-Windows 9x, ``%HOME%`` is replaced by ``%APPDATA%``. Options in these
+-files apply to all Mercurial commands executed by this user in any
+-directory. Options in these files override per-system and per-installation
+-options.
+-
+ Per-installation configuration files are searched for in the
+ directory where Mercurial is installed. ``<install-root>`` is the
+ parent directory of the **hg** executable (or symlink) being run. For
+@@ -490,12 +459,6 @@
  of an empty temporary file, where the filtered data must be written by
  the command.
  
@@ -135,7 +131,7 @@ Solaris, or remove sections that are of no relevance to Solaris.
  This filter mechanism is used internally by the ``eol`` extension to
  translate line ending characters between Windows (CRLF) and Unix (LF)
  format. We suggest you use the ``eol`` extension for convenience.
-@@ -724,13 +685,6 @@
+@@ -849,13 +812,6 @@
     Also, hooks like "commit" will be called in all contexts that
     generate a commit (e.g. tag) and not just the commit command.
  
@@ -149,7 +145,7 @@ Solaris, or remove sections that are of no relevance to Solaris.
  The syntax for Python hooks is as follows::
  
    hookname = python:modulename.submodule.callable
-@@ -821,7 +775,6 @@
+@@ -951,7 +907,6 @@
  
    # Define new tool
    myHtmlTool.args = -m $local $other $base $output
@@ -157,7 +153,7 @@ Solaris, or remove sections that are of no relevance to Solaris.
    myHtmlTool.priority = 1
  
  Supported arguments:
-@@ -831,9 +784,7 @@
+@@ -961,9 +916,7 @@
    Default: 0.
  
  ``executable``
@@ -168,7 +164,7 @@ Solaris, or remove sections that are of no relevance to Solaris.
  
  ``args``
    The arguments to pass to the tool executable. You can refer to the
-@@ -872,29 +823,6 @@
+@@ -1011,29 +964,6 @@
  ``gui``
    This tool requires a graphical interface to run. Default: False
  

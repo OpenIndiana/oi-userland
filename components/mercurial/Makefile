@@ -25,12 +25,12 @@ include ../../make-rules/shared-macros.mk
 PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
 
 COMPONENT_NAME=		mercurial
-COMPONENT_VERSION=	3.0.2
+COMPONENT_VERSION=	3.2.3
 COMPONENT_PROJECT_URL=	http://mercurial.selenic.com/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:ed387cc0e9754ec59bd4a390639b5a4ea11698ae4413243f8b4a2d6d48b3b7d6
+    sha256:c4369320e276d78aada1b5936e96c7bbbbb8154cfba725ef4e8757dcedeaf1ef
 COMPONENT_ARCHIVE_URL=	http://www.selenic.com/mercurial/release/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_BUGDB=	utility/hg
@@ -48,10 +48,6 @@ COMPONENT_POST_INSTALL_ACTION = \
 PKG_PROTO_DIRS +=	$(COMPONENT_SRC)/contrib
 PKG_PROTO_DIRS +=	$(COMPONENT_SRC)/doc
 
-# Set mod time of patched file from patch.  Use this to ensure that the .py
-# file consistently gets the same timestamp.
-$(SOURCE_DIR)/.https_proxy.patched: GPATCH_FLAGS += -Z
-
 # Use bash in sh mode for the tests; using /bin/sh on Solaris hasn't always
 # worked, and using /bin/bash doesn't always work, either.  Also skip the
 # tests which try to check all the code in the userland gate.  And finally,
@@ -60,7 +56,7 @@ $(SOURCE_DIR)/.https_proxy.patched: GPATCH_FLAGS += -Z
 COMPONENT_PRE_TEST_ACTION = \
 	(cd $(BUILD_DIR); rm -f sh; ln -s /bin/bash sh; \
 	echo "test-check-code-hg.t\ntest-module-imports.t" > blacklist); \
-	(cd $(PROTOUSRBINDIR); ln -s hg-$(PYTHON_VERSION) hg)
+	(cd $(PROTOUSRBINDIR); rm -f hg; ln -s hg-$(PYTHON_VERSION) hg)
 
 COMPONENT_TEST_DIR =	$(COMPONENT_SRC)/tests
 COMPONENT_TEST_ENV =	PYTHONPATH=$(PROTO_DIR)/$(PYTHON_LIB) TERM=dumb
