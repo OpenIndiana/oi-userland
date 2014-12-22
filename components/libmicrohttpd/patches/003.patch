@@ -1,0 +1,248 @@
+Tomas Heran <tomas.heran@oracle.com>
+Allow MHD to work with connections not represented by file descriptors but
+rather an object that has recv and send "methods".
+NOTE: This RFE hasn't been shared with upstream yet.
+
+diff -r efe4a6fcacd1 -r 6d80d5999249 src/include/microhttpd.h
+--- a/src/include/microhttpd.h	Thu Dec 18 21:49:28 2014 +0100
++++ b/src/include/microhttpd.h	Thu Dec 18 21:49:28 2014 +0100
+@@ -285,7 +285,7 @@
+  * with the SHOUTcast "ICY" line instad of "HTTP".
+  * @ingroup specialized
+  */
+-#define MHD_ICY_FLAG ((uint32_t)(1 << 31))
++#define MHD_ICY_FLAG ((uint32_t)((uint32_t)1 << 31))
+ 
+ /**
+  * @defgroup headers HTTP headers
+@@ -562,7 +562,9 @@
+    * kernel >= 3.6.  On other systems, using this option cases #MHD_start_daemon
+    * to fail.
+    */
+-  MHD_USE_TCP_FASTOPEN = 16384
++  MHD_USE_TCP_FASTOPEN = 16384,
++
++  MHD_USE_STREAM_CONNS = 32768
+ 
+ };
+ 
+@@ -1445,6 +1447,16 @@
+ 		    const struct sockaddr *addr,
+ 		    socklen_t addrlen);
+ 
++_MHD_EXTERN int
++MHD_add_stream_connection (struct MHD_Daemon *daemon,
++    void *stream,
++    ssize_t (*recv_cls_u) (struct MHD_Connection * conn,
++	    void *write_to, size_t max_bytes),
++    ssize_t (*send_cls_u) (struct MHD_Connection * conn,
++	    const void *write_to, size_t max_bytes));
++
++void * MHD_get_stream_connection_data(struct MHD_Connection *conn);
++
+ 
+ /**
+  * Obtain the `select()` sets for this daemon.
+diff -r efe4a6fcacd1 -r 6d80d5999249 src/microhttpd/connection.c
+--- a/src/microhttpd/connection.c	Thu Dec 18 21:49:28 2014 +0100
++++ b/src/microhttpd/connection.c	Thu Dec 18 21:49:28 2014 +0100
+@@ -2565,7 +2565,7 @@
+ 				      connection,
+ 				      &connection->client_context,
+ 						  MHD_REQUEST_TERMINATED_COMPLETED_OK);
+-            connection->client_aware = MHD_NO;
++            //connection->client_aware = MHD_NO;
+           }
+           end =
+             MHD_lookup_connection_value (connection, MHD_HEADER_KIND,
+@@ -2599,7 +2599,13 @@
+                                   connection->read_buffer,
+                                   connection->read_buffer_size);
+             }
+-	  connection->client_aware = MHD_NO;
++	  /*
++	   * This member, if set to MHD_NO, causes completion notification *NOT*
++	   * to be fired if client closes a connection. So, in this case, if
++	   * client closed a connection after a request/response exchange was
++	   * finished, the completion handler wouldn't be called.
++	   */
++	  /* connection->client_aware = MHD_NO; */
+           connection->client_context = NULL;
+           connection->continue_message_write_offset = 0;
+           connection->responseCode = 0;
+diff -r efe4a6fcacd1 -r 6d80d5999249 src/microhttpd/daemon.c
+--- a/src/microhttpd/daemon.c	Thu Dec 18 21:49:28 2014 +0100
++++ b/src/microhttpd/daemon.c	Thu Dec 18 21:49:28 2014 +0100
+@@ -1131,7 +1131,10 @@
+ 			 MHD_socket client_socket,
+ 			 const struct sockaddr *addr,
+ 			 socklen_t addrlen,
+-			 int external_add)
++			 int external_add,
++			 ReceiveCallback recv_cls_u,
++			 TransmitCallback send_cls_u,
++			 void *callback_data)
+ {
+   struct MHD_Connection *connection;
+   int res_thread_create;
+@@ -1150,7 +1153,10 @@
+ 	  return internal_add_connection (&daemon->worker_pool[(i + client_socket) % daemon->worker_pool_size],
+ 					  client_socket,
+ 					  addr, addrlen,
+-					  external_add);
++					  external_add,
++					  recv_cls_u,
++					  send_cls_u,
++					  callback_data);
+       /* all pools are at their connection limit, must refuse */
+       if (0 != MHD_socket_close_ (client_socket))
+ 	MHD_PANIC ("close failed\n");
+@@ -1288,10 +1294,21 @@
+ 
+   /* set default connection handlers  */
+   MHD_set_http_callbacks_ (connection);
+-  connection->recv_cls = &recv_param_adapter;
+-  connection->send_cls = &send_param_adapter;
+-
+-  if (0 == (connection->daemon->options & MHD_USE_EPOLL_TURBO))
++
++  if (recv_cls_u == NULL)
++    connection->recv_cls = &recv_param_adapter;
++  else
++    connection->recv_cls = recv_cls_u;
++
++  if (send_cls_u == NULL)
++    connection->send_cls = &send_param_adapter;
++  else
++    connection->send_cls = send_cls_u;
++
++  connection->callback_data = callback_data;
++
++  if (0 == (connection->daemon->options & MHD_USE_EPOLL_TURBO) &&
++      0 == (connection->daemon->options & MHD_USE_STREAM_CONNS))
+     {
+       /* non-blocking sockets are required on most systems and for GNUtls;
+ 	 however, they somehow cause serious problems on CYGWIN (#1824);
+@@ -1746,11 +1763,29 @@
+ 		    socklen_t addrlen)
+ {
+   make_nonblocking_noninheritable (daemon,
+-				   client_socket);
++   client_socket);
+   return internal_add_connection (daemon,
+ 				  client_socket,
+ 				  addr, addrlen,
+-				  MHD_YES);
++				  MHD_YES, NULL, NULL, NULL);
++}
++
++int
++MHD_add_stream_connection (struct MHD_Daemon *daemon,
++    void *stream,
++    ssize_t (*recv_cls_u) (struct MHD_Connection * conn,
++	    void *write_to, size_t max_bytes),
++    ssize_t (*send_cls_u) (struct MHD_Connection * conn,
++	    const void *write_to, size_t max_bytes))
++{
++  return internal_add_connection (daemon, -1, NULL, 0, MHD_YES, recv_cls_u,
++                                  send_cls_u, stream);
++}
++
++void *
++MHD_get_stream_connection_data(struct MHD_Connection *conn)
++{
++  return (conn->callback_data);
+ }
+ 
+ 
+@@ -1826,7 +1861,7 @@
+ #endif
+   (void) internal_add_connection (daemon, s,
+ 				  addr, addrlen,
+-				  MHD_NO);
++				  MHD_NO, NULL, NULL, NULL);
+   return MHD_YES;
+ }
+ 
+@@ -2097,6 +2132,45 @@
+   return MHD_YES;
+ }
+ 
++/**
++ */
++static int
++MHD_poll_stream_conns (struct MHD_Daemon *daemon,
++	    int may_block)
++{
++  int num_ready;
++  struct MHD_Connection *pos;
++  struct MHD_Connection *next;
++
++  if (MHD_YES == daemon->shutdown)
++    return MHD_NO;
++
++  next = daemon->connections_head;
++  while (NULL != (pos = next))
++  {
++    next = pos->next;
++
++    /* Is there any I/O event there? */
++      switch (pos->event_loop_info)
++      {
++      case MHD_EVENT_LOOP_INFO_READ:
++				pos->read_handler (pos);
++        break;
++      case MHD_EVENT_LOOP_INFO_WRITE:
++				pos->write_handler (pos);
++        break;
++      case MHD_EVENT_LOOP_INFO_BLOCK:
++        break;
++      case MHD_EVENT_LOOP_INFO_CLEANUP:
++        /* should never happen */
++        break;
++      }
++
++    pos->idle_handler (pos);
++  }
++
++  return MHD_YES;
++}
+ 
+ /**
+  * Main internal select() call.  Will compute select sets, call select()
+@@ -2675,6 +2749,11 @@
+     MHD_cleanup_connections (daemon);
+   }
+ #endif
++  else if (0 != (daemon->options & MHD_USE_STREAM_CONNS))
++  {
++    MHD_poll_stream_conns (daemon, MHD_NO);
++    MHD_cleanup_connections (daemon);
++  }
+   else
+   {
+     MHD_select (daemon, MHD_NO);
+diff -r efe4a6fcacd1 -r 6d80d5999249 src/microhttpd/internal.h
+--- a/src/microhttpd/internal.h	Thu Dec 18 21:49:28 2014 +0100
++++ b/src/microhttpd/internal.h	Thu Dec 18 21:49:28 2014 +0100
+@@ -803,6 +803,11 @@
+    */
+   TransmitCallback send_cls;
+ 
++  /**
++   * User specified data that's associated with a connection.
++   */
++  void *callback_data;
++
+ #if HTTPS_SUPPORT
+   /**
+    * State required for HTTPS/SSL/TLS support.
+@@ -1050,7 +1055,7 @@
+   /**
+    * Number of worker daemons
+    */
+-  unsigned int worker_pool_size;
++  unsigned long long worker_pool_size;
+ 
+   /**
+    * The select thread handle (if we have internal select)

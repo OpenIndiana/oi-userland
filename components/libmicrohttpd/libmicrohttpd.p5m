@@ -1,0 +1,56 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
+set name=pkg.fmri \
+    value=pkg:/library/libmicrohttpd@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary \
+    value="GNU Libmicrohttpd - C library to make it easy to run an HTTP server inside a process"
+set name=pkg.description \
+    value="GNU Libmicrohttpd is a small C library that is supposed to make it easy to run an HTTP server as part of another application."
+set name=com.oracle.info.description value="the GNU Libmicrohttpd C library"
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value=org.opensolaris.category.2008:System/Libraries
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2014/289
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+file path=usr/include/microhttpd/microhttpd.h
+link path=usr/lib/$(MACH64)/libmicrohttpd.so target=libmicrohttpd.so.10.27.0
+link path=usr/lib/$(MACH64)/libmicrohttpd.so.10 target=libmicrohttpd.so.10.27.0
+file path=usr/lib/$(MACH64)/libmicrohttpd.so.10.27.0
+file path=usr/lib/$(MACH64)/llib-lmicrohttpd.ln
+file path=usr/lib/$(MACH64)/pkgconfig/libmicrohttpd.pc
+link path=usr/lib/libmicrohttpd.so target=libmicrohttpd.so.10.27.0
+link path=usr/lib/libmicrohttpd.so.10 target=libmicrohttpd.so.10.27.0
+file path=usr/lib/libmicrohttpd.so.10.27.0
+file path=usr/lib/llib-lmicrohttpd
+file path=usr/lib/llib-lmicrohttpd.ln
+file path=usr/lib/pkgconfig/libmicrohttpd.pc
+file path=usr/share/info/libmicrohttpd-tutorial.info
+file path=usr/share/info/libmicrohttpd.info
+file usr/share/man/man3/libmicrohttpd.3 \
+    path=usr/share/man/man3lib/libmicrohttpd.3lib
+license fdl-1.3.txt license=FDLv1.3
+license COPYING license=LGPLv2.1
