@@ -18,7 +18,7 @@
 .\"
 .\" CDDL HEADER END
 .\"
-.\" Copyright (c) 2009, 2011, Oracle and/or its affiliates. All rights reserved.
+.\" Copyright (c) 2009, 2014, Oracle and/or its affiliates. All rights reserved.
 .\"
 .TH "ntpd" "1M" "" "" "System Administration Commands"
 .SH NAME
@@ -37,7 +37,7 @@ The \fBntpd\fR program is an operating system daemon that synchronises the syste
 .SS How \fBNTP\fR Operates
 The \fBntpd\fR program operates by exchanging messages with one or more configured servers at designated intervals ranging from about one minute to about 17 minutes. When started, the program requires several exchanges while the algorithms accumulate and groom the data before setting the clock. The initial delay to set the clock can be reduced using options as described in the server options page  at file:///usr/share/doc/ntp/confopt.html.
 .LP
-When the machine is booted, the hardware time of day (TOD) chip is used to initialize the operating system time. After the machine has synchronized to a \fBNTP\fR server, the operating system corrects the chip from time to time. During the course of operation if for some reason the system time is more than 1000s offset from the server time, \fBntpd\fR assumes something must be terribly wrong and exits with a panic message to the system log. If it was started via SMF, the ntp service is placed into maintainance mode and must be cleared manually. The -g option overrides this check at startup and allows \fBntpd\fR to set the clock to the server time regardless of the chip time, but only once.
+When the machine is booted, the hardware time of day (TOD) chip is used to initialize the operating system time. After the machine has synchronized to a \fBNTP\fR server, the operating system corrects the chip from time to time. During the course of operation if for some reason the system time is more than 1000s offset from the server time, \fBntpd\fR assumes something must be terribly wrong and exits with a panic message to the system log. If it was started via SMF, the ntp service is placed into maintenance mode and must be cleared manually. The -g option overrides this check at startup and allows \fBntpd\fR to set the clock to the server time regardless of the chip time, but only once.
 .LP
 Under ordinary conditions, \fBntpd\fR slews the clock so that the time is effectively continuous and never runs backwards. If due to extreme network congestion an error spike exceeds the \fIstep threshold\fR (128ms by default), the spike is discarded. However, if the error persists for more than the \fIstepout threshold\fR (900s by default) the system clock is stepped to the correct value. In practice the need for a step is extremely rare and almost always the result of a hardware failure. With the -x option the step threshold is increased to 600s. Other options are available using the \fItinker\fR command as described in the miscellaneous options page at file:///usr/share/doc/ntp/miscopt.html.
 .LP
@@ -249,7 +249,7 @@ For example, to set the --quit option, you would set the NTPD_QUIT environment
 variable.
 .SH AUTOMATIC SERVICE MANAGEMENT (SMF)
 \fBNTP\fR on Solaris is managed via the service management facility described in 
- \fBsmf\fR(5). There are several options controlled by services properties which 
+\fBsmf\fR(5). There are several options controlled by services properties which 
 can be set by the system administrator. The available options can be listed by
 executing the following command:
 .nf
