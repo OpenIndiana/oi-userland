@@ -26,6 +26,9 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
+# Heals libgstvideoscale core dump
+CFLAGS += -O2
+
 CONFIGURE_OPTIONS  +=	--with-pic
 CONFIGURE_OPTIONS  +=	--enable-shared
 CONFIGURE_OPTIONS  +=	--disable-static
