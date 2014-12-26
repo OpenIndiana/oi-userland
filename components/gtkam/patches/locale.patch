@@ -1,0 +1,17 @@
+diff -ur gtkam-0.1.11.after-patch-2/src/gtkam-tree.c gtkam-0.1.11/src/gtkam-tree.c
+--- gtkam-0.1.11.after-patch-2/src/gtkam-tree.c	2004-06-17 12:11:03.000000000 -0700
++++ gtkam-0.1.11/src/gtkam-tree.c	2004-06-17 12:11:18.000000000 -0700
+@@ -1143,9 +1143,10 @@
+ 		    strcmp (model, "Directory Browse")) {
+ 	                p = gp_port_info_list_lookup_path (il, port);
+         	        if (p < 0) {
+-                	        g_warning ("Could not find '%s' in port "
+-					"info list (%s)!", port,
+-					gp_result_as_string (p));
++                	        g_warning (_("Could not find '%s' in port "
++					"info list (%s)!"),
++					g_locale_to_utf8 (port, -1, NULL, NULL, NULL),
++					g_locale_to_utf8 (gp_result_as_string (p), -1, NULL, NULL, NULL));
+ 				gp_camera_unref (camera);
+ 				continue;
+ 			}
