@@ -1,0 +1,125 @@
+diff --git a/src/xsane-text.h b/src/xsane-text.h
+index 6cf74d8..7320581 100644
+--- a/src/xsane-text.h
++++ b/src/xsane-text.h
+@@ -86,15 +86,15 @@
+ #define WINDOW_WORKING_COLOR_SPACE_ICM_PROFILE		_("select working color space ICM-profile")
+ #define WINDOW_PRINTER_ICM_PROFILE			_("select printer ICM-profile")
+ 
+-#define MENU_FILE					_("File")
+-#define MENU_PREFERENCES				_("Preferences")
+-#define MENU_VIEW					_("View")
+-#define MENU_WINDOW					_("Window")
+-#define MENU_HELP					_("Help")
+-#define MENU_EDIT					_("Edit")
+-#define MENU_FILTERS					_("Filters")
+-#define MENU_GEOMETRY					_("Geometry")
+-#define MENU_COLOR_MANAGEMENT				_("Color management")
++#define MENU_FILE					_("_File")
++#define MENU_PREFERENCES				_("_Preferences")
++#define MENU_VIEW					_("_View")
++#define MENU_WINDOW					_("_Window")
++#define MENU_HELP					_("_Help")
++#define MENU_EDIT					_("_Edit")
++#define MENU_FILTERS					_("F_ilters")
++#define MENU_GEOMETRY					_("_Geometry")
++#define MENU_COLOR_MANAGEMENT				_("_Color management")
+ 
+ #define MENU_ITEM_ABOUT_XSANE				_("About XSane")
+ #define MENU_ITEM_ABOUT_TRANSLATION			_("About translation")
+diff --git a/src/xsane-viewer.c b/src/xsane-viewer.c
+index 3ca14f6..1175bb6 100644
+--- a/src/xsane-viewer.c
++++ b/src/xsane-viewer.c
+@@ -2885,7 +2885,7 @@ Viewer *xsane_viewer_new(char *filename, char *selection_filetype, int allow_red
+   gtk_box_pack_start(GTK_BOX(vbox), menubar, FALSE, FALSE, 0);
+ 
+   /* "File" submenu: */
+-  menubar_item = gtk_menu_item_new_with_label(MENU_FILE);
++  menubar_item = gtk_menu_item_new_with_mnemonic(MENU_FILE);
+   gtk_container_add(GTK_CONTAINER(menubar), menubar_item);
+   gtk_menu_item_set_submenu(GTK_MENU_ITEM(menubar_item), xsane_viewer_file_build_menu(v));
+ /*  gtk_widget_add_accelerator(menubar_item, "select", xsane.accelerator_group, GDK_F, 0, GTK_ACCEL_VISIBLE | DEF_GTK_ACCEL_LOCKED); */
+@@ -2893,7 +2893,7 @@ Viewer *xsane_viewer_new(char *filename, char *selection_filetype, int allow_red
+   v->file_menu = menubar_item;
+ 
+   /* "Edit" submenu: */
+-  menubar_item = gtk_menu_item_new_with_label(MENU_EDIT);
++  menubar_item = gtk_menu_item_new_with_mnemonic(MENU_EDIT);
+   gtk_container_add(GTK_CONTAINER(menubar), menubar_item);
+   gtk_menu_item_set_submenu(GTK_MENU_ITEM(menubar_item), xsane_viewer_edit_build_menu(v));
+ /*  gtk_widget_add_accelerator(menubar_item, "select", xsane.accelerator_group, GDK_F, 0, GTK_ACCEL_VISIBLE | DEF_GTK_ACCEL_LOCKED); */
+@@ -2901,7 +2901,7 @@ Viewer *xsane_viewer_new(char *filename, char *selection_filetype, int allow_red
+   v->edit_menu = menubar_item;
+ 
+   /* "Filters" submenu: */
+-  menubar_item = gtk_menu_item_new_with_label(MENU_FILTERS);
++  menubar_item = gtk_menu_item_new_with_mnemonic(MENU_FILTERS);
+   gtk_container_add(GTK_CONTAINER(menubar), menubar_item);
+   gtk_menu_item_set_submenu(GTK_MENU_ITEM(menubar_item), xsane_viewer_filters_build_menu(v));
+ /*  gtk_widget_add_accelerator(menubar_item, "select", xsane.accelerator_group, GDK_F, 0, GTK_ACCEL_VISIBLE | DEF_GTK_ACCEL_LOCKED); */
+@@ -2909,7 +2909,7 @@ Viewer *xsane_viewer_new(char *filename, char *selection_filetype, int allow_red
+   v->filters_menu = menubar_item;
+ 
+   /* "Geometry" submenu: */
+-  menubar_item = gtk_menu_item_new_with_label(MENU_GEOMETRY);
++  menubar_item = gtk_menu_item_new_with_mnemonic(MENU_GEOMETRY);
+   gtk_container_add(GTK_CONTAINER(menubar), menubar_item);
+   gtk_menu_item_set_submenu(GTK_MENU_ITEM(menubar_item), xsane_viewer_geometry_build_menu(v));
+ /*  gtk_widget_add_accelerator(menubar_item, "select", xsane.accelerator_group, GDK_F, 0, GTK_ACCEL_VISIBLE | DEF_GTK_ACCEL_LOCKED); */
+@@ -2918,7 +2918,7 @@ Viewer *xsane_viewer_new(char *filename, char *selection_filetype, int allow_red
+ 
+ #ifdef HAVE_LIBLCMS
+   /* "Color management" submenu: */
+-  menubar_item = gtk_menu_item_new_with_label(MENU_COLOR_MANAGEMENT);
++  menubar_item = gtk_menu_item_new_with_mnemonic(MENU_COLOR_MANAGEMENT);
+   gtk_container_add(GTK_CONTAINER(menubar), menubar_item);
+   gtk_menu_item_set_submenu(GTK_MENU_ITEM(menubar_item), xsane_viewer_color_management_build_menu(v));
+ /*  gtk_widget_add_accelerator(menubar_item, "select", xsane.accelerator_group, GDK_F, 0, GTK_ACCEL_VISIBLE | DEF_GTK_ACCEL_LOCKED); */
+diff --git a/src/xsane.c b/src/xsane.c
+index c2f6176..f9dadcc 100644
+--- a/src/xsane.c
++++ b/src/xsane.c
+@@ -5035,21 +5035,21 @@ static void xsane_device_dialog(void)
+   gtk_box_pack_start(GTK_BOX(xsane_window), menubar, FALSE, FALSE, 0);
+ 
+   /* "Files" submenu: */
+-  menubar_item = gtk_menu_item_new_with_label(MENU_FILE);
++  menubar_item = gtk_menu_item_new_with_mnemonic(MENU_FILE);
+   gtk_container_add(GTK_CONTAINER(menubar), menubar_item);
+   gtk_menu_item_set_submenu(GTK_MENU_ITEM(menubar_item), xsane_files_build_menu());
+ /*  gtk_widget_add_accelerator(menubar_item, "select", xsane.accelerator_group, GDK_F, 0, GTK_ACCEL_VISIBLE | DEF_GTK_ACCEL_LOCKED); */
+   gtk_widget_show(menubar_item);
+ 
+   /* "Preferences" submenu: */
+-  menubar_item = gtk_menu_item_new_with_label(MENU_PREFERENCES);
++  menubar_item = gtk_menu_item_new_with_mnemonic(MENU_PREFERENCES);
+   gtk_container_add(GTK_CONTAINER(menubar), menubar_item);
+   gtk_menu_item_set_submenu(GTK_MENU_ITEM(menubar_item), xsane_preferences_build_menu());
+ /*  gtk_widget_add_accelerator(menubar_item, "select", xsane.accelerator_group, GDK_P, 0, GTK_ACCEL_VISIBLE | DEF_GTK_ACCEL_LOCKED); */
+   gtk_widget_show(menubar_item);
+ 
+   /* "View" submenu: */
+-  menubar_item = gtk_menu_item_new_with_label(MENU_VIEW);
++  menubar_item = gtk_menu_item_new_with_mnemonic(MENU_VIEW);
+   gtk_container_add(GTK_CONTAINER(menubar), menubar_item);
+   gtk_menu_item_set_submenu(GTK_MENU_ITEM(menubar_item), xsane_view_build_menu());
+ /*  gtk_widget_add_accelerator(menubar_item, "select", xsane.accelerator_group, GDK_V, 0, GTK_ACCEL_VISIBLE | DEF_GTK_ACCEL_LOCKED); */
+@@ -5057,7 +5057,7 @@ static void xsane_device_dialog(void)
+ 
+ 
+   /* "Window" submenu: */
+-  menubar_item = gtk_menu_item_new_with_label(MENU_WINDOW);
++  menubar_item = gtk_menu_item_new_with_mnemonic(MENU_WINDOW);
+   gtk_container_add(GTK_CONTAINER(menubar), menubar_item);
+   gtk_menu_item_set_submenu(GTK_MENU_ITEM(menubar_item), xsane_window_build_menu());
+ /*  gtk_widget_add_accelerator(menubar_item, "select", xsane.accelerator_group, GDK_V, 0, GTK_ACCEL_VISIBLE | DEF_GTK_ACCEL_LOCKED); */
+@@ -5065,7 +5065,7 @@ static void xsane_device_dialog(void)
+ 
+ 
+   /* "Help" submenu: */
+-  menubar_item = gtk_menu_item_new_with_label(MENU_HELP);
++  menubar_item = gtk_menu_item_new_with_mnemonic(MENU_HELP);
+   gtk_container_add(GTK_CONTAINER(menubar), menubar_item);
+  /*  gtk_menu_item_right_justify((GtkMenuItem *) menubar_item); */
+   gtk_menu_item_set_submenu(GTK_MENU_ITEM(menubar_item), xsane_help_build_menu());
