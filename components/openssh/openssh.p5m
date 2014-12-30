@@ -27,9 +27,6 @@ set name=pkg.summary value=OpenSSH
 set name=pkg.description \
     value="OpenSSH provides end-to-end encrypted replacement of applications such as telnet, rlogin, and ftp. Unlike these legacy applications, OpenSSH never passes anything (including user name and password) over the wire in unencrypted form. OpenSSH provides the SSH known host mechanism which verifies that the system you connect to is really the one you intended to. OpenSSH provides secure tunneling capabilities and several authentication methods. It also supports forwarding X11 connections and arbitrary TCP ports over the secure channel."
 set name=pkg.human-version value=$(HUMAN_VERSION)
-set name=com.oracle.info.description \
-    value="OpenSSH, a suite of tools that help secure network connections"
-set name=com.oracle.info.tpno value=$(TPNO)
 set name=info.classification \
     value=org.opensolaris.category.2008:Applications/Internet \
     value=org.opensolaris.category.2008:System/Security
@@ -128,5 +125,14 @@ dir  path=var/empty owner=root group=sys mode=0755 sysattr=readonly
 group groupname=sshd gid=22
 user username=sshd ftpuser=false gcos-field="sshd privsep" group=sshd \
     home-dir=/var/empty login-shell=/bin/false uid=22
-license openssh.license license="BSD, BSD-like"
+license openssh.license license="BSD, BSD-like (OpenSSH)" \
+	com.oracle.info.description="OpenSSH, a suite of tools that help secure network connections" \
+	com.oracle.info.name=openssh \
+	com.oracle.info.tpno=$(TPNO_OPENSSH) \
+	com.oracle.info.version=$(COMPONENT_VERSION)
+license openssh.license license="BSD, BSD-like (gsskex)" \
+	com.oracle.info.description="GSS-API authenticated key exchange" \
+	com.oracle.info.name=gsskex \
+	com.oracle.info.tpno=$(TPNO_GSSKEX) \
+	com.oracle.info.version=5.7p1
 depend type=require fmri=service/network/ssh-common

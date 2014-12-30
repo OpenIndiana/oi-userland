@@ -38,7 +38,8 @@ COMPONENT_ARCHIVE_HASH=	sha256:a1195ed55db945252d5a1730d4a2a2a5c1c9a6aa01ef2e5af
 COMPONENT_ARCHIVE_URL=	http://mirror.team-cymru.org/pub/OpenBSD/OpenSSH/portable/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=utility/openssh
 
-TPNO=			16633
+TPNO_OPENSSH=		16633
+TPNO_GSSKEX=		20377
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
