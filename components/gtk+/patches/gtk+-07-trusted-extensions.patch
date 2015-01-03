@@ -1,7 +1,7 @@
 diff -urN -x '*.orig' -x '*.rej' ../amd64/gtk+-2.19.6/configure.in gtk+-2.19.6/configure.in
---- ../amd64/gtk+-2.19.6/configure.in	2010-02-23 05:39:16.000000000 +0100
-+++ gtk+-2.19.6/configure.in	2010-03-02 16:57:31.541365910 +0100
-@@ -1771,7 +1771,15 @@
+--- ../amd64/gtk+-2.19.6/configure.ac	2010-02-23 05:39:16.000000000 +0100
++++ gtk+-2.19.6/configure.ac	2010-03-02 16:57:31.541365910 +0100
+@@ -1366,7 +1366,15 @@ GTK_PACKAGES="atk cairo gdk-pixbuf-2.0 g
  if test "x$gdktarget" = "xx11"; then
    GTK_PACKAGES="$GTK_PACKAGES pangoft2"
  fi
@@ -16,8 +16,8 @@ diff -urN -x '*.orig' -x '*.rej' ../amd64/gtk+-2.19.6/configure.in gtk+-2.19.6/c
 +            ;;
 +      esac
  GTK_EXTRA_CFLAGS= 
- GTK_DEP_LIBS="$GDK_EXTRA_LIBS $GTK_DEP_LIBS_FOR_X `$PKG_CONFIG --libs $GDK_PIXBUF_PACKAGES $PANGO_PACKAGES $GTK_PACKAGES_FOR_X $GTK_PACKAGES` $GTK_EXTRA_LIBS $GDK_PIXBUF_EXTRA_LIBS"
- GTK_DEP_CFLAGS="`$PKG_CONFIG --cflags  gthread-2.0 $GDK_PIXBUF_PACKAGES $GDK_PACKAGES $GTK_PACKAGES` $GDK_PIXBUF_EXTRA_CFLAGS $GDK_EXTRA_CFLAGS $GTK_EXTRA_CFLAGS"
+ GTK_DEP_LIBS="$GDK_EXTRA_LIBS $GTK_DEP_LIBS_FOR_X `$PKG_CONFIG --libs $PANGO_PACKAGES $GTK_PACKAGES_FOR_X $GTK_PACKAGES` $GTK_EXTRA_LIBS $MATH_LIB"
+ GTK_DEP_CFLAGS="`$PKG_CONFIG --cflags  gthread-2.0 $GDK_PACKAGES $GTK_PACKAGES` $GDK_EXTRA_CFLAGS $GTK_EXTRA_CFLAGS"
 diff -urN -x '*.orig' -x '*.rej' ../amd64/gtk+-2.19.6/gdk/x11/gdkmain-x11.c gtk+-2.19.6/gdk/x11/gdkmain-x11.c
 --- ../amd64/gtk+-2.19.6/gdk/x11/gdkmain-x11.c	2009-11-26 10:05:07.000000000 +0100
 +++ gtk+-2.19.6/gdk/x11/gdkmain-x11.c	2010-03-02 16:57:31.541731616 +0100
@@ -117,7 +117,7 @@ diff -urN -x '*.orig' -x '*.rej' ../amd64/gtk+-2.19.6/gtk/gtkaboutdialog.c gtk+-
 diff -urN -x '*.orig' -x '*.rej' ../amd64/gtk+-2.19.6/gtk/gtkfilechooserdefault.c gtk+-2.19.6/gtk/gtkfilechooserdefault.c
 --- ../amd64/gtk+-2.19.6/gtk/gtkfilechooserdefault.c	2010-02-23 05:39:18.000000000 +0100
 +++ gtk+-2.19.6/gtk/gtkfilechooserdefault.c	2010-03-02 16:57:31.546257922 +0100
-@@ -72,6 +72,10 @@
+@@ -75,6 +75,10 @@
  
  #include "gtkalias.h"
  
@@ -128,9 +128,9 @@ diff -urN -x '*.orig' -x '*.rej' ../amd64/gtk+-2.19.6/gtk/gtkfilechooserdefault.
  #include <errno.h>
  #include <string.h>
  #include <time.h>
-@@ -5201,6 +5205,13 @@
-   impl->browse_widgets = browse_widgets_create (impl);
-   gtk_box_pack_start (GTK_BOX (impl), impl->browse_widgets, TRUE, TRUE, 0);
+@@ -4898,6 +4902,13 @@ gtk_file_chooser_default_constructor (GT
+   /* The browse widgets */
+   browse_widgets_create (impl);
  
 +#ifdef sun
 +  /* trusted path restriction label */
@@ -142,7 +142,7 @@ diff -urN -x '*.orig' -x '*.rej' ../amd64/gtk+-2.19.6/gtk/gtkfilechooserdefault.
    /* Alignment to hold extra widget */
    impl->extra_align = gtk_alignment_new (0.0, 0.5, 1.0, 1.0);
    gtk_box_pack_start (GTK_BOX (impl), impl->extra_align, FALSE, FALSE, 0);
-@@ -5235,7 +5246,13 @@
+@@ -4932,7 +4943,13 @@ set_extra_widget (GtkFileChooserDefault 
    if (impl->extra_widget)
      {
        gtk_container_add (GTK_CONTAINER (impl->extra_align), impl->extra_widget);
@@ -156,7 +156,7 @@ diff -urN -x '*.orig' -x '*.rej' ../amd64/gtk+-2.19.6/gtk/gtkfilechooserdefault.
      }
    else
      gtk_widget_hide (impl->extra_align);
-@@ -5351,6 +5368,10 @@
+@@ -5292,6 +5309,10 @@ operation_mode_set (GtkFileChooserDefaul
  static void
  update_appearance (GtkFileChooserDefault *impl)
  {
@@ -164,18 +164,18 @@ diff -urN -x '*.orig' -x '*.rej' ../amd64/gtk+-2.19.6/gtk/gtkfilechooserdefault.
 +  gtk_widget_hide (impl->trustedpathlabel);
 +#endif
 +
+   save_path_bar (impl);
+ 
    if (impl->action == GTK_FILE_CHOOSER_ACTION_SAVE ||
-       impl->action == GTK_FILE_CHOOSER_ACTION_CREATE_FOLDER)
-     {
-@@ -5405,6 +5426,16 @@
-   else
-     gtk_widget_show (impl->browse_new_folder_button);
+@@ -5330,6 +5351,16 @@ update_appearance (GtkFileChooserDefault
+   restore_path_bar (impl);
+   path_bar_update (impl);
  
 +#ifdef sun
 +  if (gtk_trusted_path_is_restricted ())
 +    {
 +      gtk_widget_hide (impl->location_button);
-+      gtk_widget_hide (impl->browse_widgets);
++      gtk_widget_hide (impl->browse_widgets_box);
 +      if (impl->save_widgets) gtk_widget_hide (impl->save_widgets);
 +      gtk_widget_show (impl->trustedpathlabel);
 +    }
@@ -184,19 +184,15 @@ diff -urN -x '*.orig' -x '*.rej' ../amd64/gtk+-2.19.6/gtk/gtkfilechooserdefault.
    /* This *is* needed; we need to redraw the file list because the "sensitivity"
     * of files may change depending whether we are in a file or folder-only mode.
     */
-@@ -8008,9 +8039,10 @@
+@@ -7996,7 +8027,7 @@ gtk_file_chooser_default_get_default_siz
+   _gtk_file_chooser_settings_get_geometry (settings, &x, &y, &width, &height);
+   g_object_unref (settings);
  
-   impl = GTK_FILE_CHOOSER_DEFAULT (chooser_embed);
- 
--  if (impl->action == GTK_FILE_CHOOSER_ACTION_OPEN
-+  if ( !gtk_trusted_path_is_restricted () && 
-+      (  impl->action == GTK_FILE_CHOOSER_ACTION_OPEN
-       || impl->action == GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER
--      || impl->expand_folders)
-+      || impl->expand_folders)) 
+-  if (x >= 0 && y >= 0 && width > 0 && height > 0)
++  if (gtk_trusted_path_is_restricted || (x >= 0 && y >= 0 && width > 0 && height > 0))
      {
-       GtkFileChooserSettings *settings;
-       int x, y, width, height;
+       *default_width = width;
+       *default_height = height;
 diff -urN -x '*.orig' -x '*.rej' ../amd64/gtk+-2.19.6/gtk/gtkfilechooserdialog.c gtk+-2.19.6/gtk/gtkfilechooserdialog.c
 --- ../amd64/gtk+-2.19.6/gtk/gtkfilechooserdialog.c	2010-02-23 05:39:18.000000000 +0100
 +++ gtk+-2.19.6/gtk/gtkfilechooserdialog.c	2010-03-02 16:57:31.546665214 +0100
