@@ -11,19 +11,20 @@
 
 #
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright 2015 Ken Mays.  All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= nautilus
-COMPONENT_VERSION= 2.30.1
+COMPONENT_VERSION= 2.32.2.1
 COMPONENT_SUMMARY= GNOME file manager
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:83df19591c4d0d359fe67d16b3f73f71e6a2aa5ba7d477739276c7562f221144
+  sha256:802dacc98c697afea2e6201dab1c8c800809f235fff39857983efb4340ecc303
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.30/$(COMPONENT_ARCHIVE)
+  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.32/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gnome.org
 
 include ../../make-rules/prep.mk
