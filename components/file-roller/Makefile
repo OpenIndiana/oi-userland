@@ -11,19 +11,20 @@
 
 #
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright 2015 Ken Mays.  All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= file-roller
-COMPONENT_VERSION= 2.30.2
+COMPONENT_VERSION= 2.32.2
 COMPONENT_SUMMARY= GNOME archive manager
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:34e809ee4e11d85d314b9060a5641a68e55046d429bf8a435a24b777eec8b2f5
+  sha256:3ddbe4e4134eab4ff8e97789a1626aec6cbc588190f2f520850d0697037e5755
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.30/$(COMPONENT_ARCHIVE)
+  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.32/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gnome.org
 COMPONENT_FMRI= desktop/archive-manager/file-roller
 COMPONENT_LICENSE= GPLv2
