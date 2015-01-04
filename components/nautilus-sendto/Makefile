@@ -16,14 +16,14 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= nautilus-sendto
-COMPONENT_VERSION= 2.28.5
+COMPONENT_VERSION= 2.32.0
 COMPONENT_SUMMARY= Nautilus context menu for sending files
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:9265b89ecf8cb4e7ff7fd4ae140661b24b800c4b14fccda367a6a3f7151e3455
+  sha256:890090b24381d91f079610d5454cb786a3ecefc91fa06649b2222be9bb02269a
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.28/$(COMPONENT_ARCHIVE)
+  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.32/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gnome.org
 
 include ../../make-rules/prep.mk
