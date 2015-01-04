@@ -1,0 +1,23 @@
+--- babl-0.1.10/tests/Makefile.am	2012-03-17 13:16:40.000000000 +0100
++++ babl-0.1.10/tests/Makefile.am	2014-03-15 10:21:07.343360636 +0100
+@@ -21,7 +21,6 @@
+ 
+ AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/babl
+ if OS_UNIX
+-AM_LDFLAGS  = -pthread
+ endif
+ 
+ LDADD = $(top_builddir)/babl/libbabl-@BABL_API_VERSION@.la \
+--- babl-0.1.10/configure.ac	2012-04-02 23:34:47.000000000 +0200
++++ babl-0.1.10/configure.ac	2014-03-15 10:31:50.271450254 +0100
+@@ -117,9 +117,7 @@
+ # Check for programs
+ AC_PROG_CC
+ 
+-# Initialize libtool
+-LT_PREREQ([2.2])
+-LT_INIT([disable-static win32-dll])
++AC_PROG_LIBTOOL
+ 
+ dnl Initialize maintainer mode
+ AM_MAINTAINER_MODE([enable])
