@@ -1,0 +1,19 @@
+--- gimp-2.6.10/plug-ins/file-fits/fits-io.c.orig	2012-07-10 10:08:49.253833502 +0800
++++ gimp-2.6.10/plug-ins/file-fits/fits-io.c	2012-07-10 10:12:09.330797369 +0800
+@@ -1057,7 +1057,15 @@
+  if (hdulist->used.xtension)
+  {
+    fdat = fits_decode_card (fits_search_card (hdr, "XTENSION"), typ_fstring);
+-   strcpy (hdulist->xtension, fdat->fstring);
++   if (fdat != NULL)
++     {
++       strcpy (hdulist->xtension, fdat->fstring);
++     }
++   else
++     {
++       strcpy (errmsg, "No valid XTENSION header found.");
++       goto err_return;
++     }
+  }
+ 
+  FITS_DECODE_CARD (hdr, "NAXIS", fdat, typ_flong);
