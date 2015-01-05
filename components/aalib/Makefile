@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -62,6 +62,15 @@ CONFIGURE_OPTIONS	+= $(CONFIGURE_OPTIONS.$(BITS))
 CONFIGURE_ENV += CC="$(CC)"
 CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
 
+COMPONENT_TEST_DIR =	$(@D)/src
+COMPONENT_TEST_CMD =	perl -E 'say "\n" x 40' | ./aatest
+COMPONENT_TEST_ARGS =	-kbddriver stdin -driver stdout
+COMPONENT_TEST_TARGETS =
+
+# Master test results are the same for both 32-bit and 64-bit, so override
+# here, rather than create multiple identical master files.
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
@@ -71,9 +80,7 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-# actually there is a test we put in the demos,
-# but it's 32-bit only and not a target
-test:		$(NO_TESTS)
+test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

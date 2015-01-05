@@ -1,0 +1,988 @@
+Fast rendering routine 1===============;    /                                   
+        ........::::::::==============;    /     ...............................
+        ........::::::::=============;    /     ::::::::::::::::::::::::::::::::
+        ........::::::::============;    /    .=================================
+        ........::::::::===========;    /    .==================================
+        ........::::::::==========;    /    .|||||||||||||||||||||||||||||||||||
+        ........::::::::=========;    /    .iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii
+        ........::::::::========;    /    _vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+        ........::::::::=======:    /    _vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+        ........::::::::======:    /    _ooooooooooooooooooooooooooooooooooooooo
+        ........::::::::=====:    /    _XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+        ........::::::::====:    /    _XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+        ........::::::::===:    /    _##########################################
+        ........::::::::==:    /    _mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+        ........::::::::=:    /    _QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+        ........:::::::::    /    _QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+        ........:::::::-    /                                                   
+        ........::::::-    /     ...............................................
+        ........:::::-    /     ::::::::::::::::::::::::::::::::::::::::::::::::
+        ........::::-    /    .=================================================
+        ........:::-    /    .==================================================
+        ........::-    /    .|||||||||||||||||||||||||||||||||||||||||||||||||||
+        ........:-    /    .iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii
+        ........-    /    _vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+        .......     /    _vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+
+Fast rendering routine 1===============;    /                                   
+line editor.        ::::==============;    /     ...............................
+        ........::::::::=============;    /     ::::::::::::::::::::::::::::::::
+        ........::::::::============;    /    .=================================
+        ........::::::::===========;    /    .==================================
+        ........::::::::==========;    /    .|||||||||||||||||||||||||||||||||||
+        ........::::::::=========;    /    .iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii
+        ........::::::::========;    /    _vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+        ........::::::::=======:    /    _vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+        ........::::::::======:    /    _ooooooooooooooooooooooooooooooooooooooo
+        ........::::::::=====:    /    _XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+        ........::::::::====:    /    _XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+        ........::::::::===:    /    _##########################################
+        ........::::::::==:    /    _mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+        ........::::::::=:    /    _QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+        ........:::::::::    /    _QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+        ........:::::::-    /                                                   
+        ........::::::-    /     ...............................................
+        ........:::::-    /     ::::::::::::::::::::::::::::::::::::::::::::::::
+        ........::::-    /    .=================================================
+        ........:::-    /    .==================================================
+        ........::-    /    .|||||||||||||||||||||||||||||||||||||||||||||||||||
+        ........:-    /    .iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii
+        ........-    /    _vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+        .......     /    _vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+
+Key lookup test        1===============;    /                                   
+line editor.        ::::==============;    /     ...............................
+        ........::::::::=============;    /     ::::::::::::::::::::::::::::::::
+        ........::::::::============;    /    .=================================
+        ........::::::::===========;    /    .==================================
+        ........::::::::==========;    /    .|||||||||||||||||||||||||||||||||||
+        ........::::::::=========;    /    .iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii
+        ........::::::::========;    /    _vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+        ........::::::::=======:    /    _vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+        ........::::::::======:    /    _ooooooooooooooooooooooooooooooooooooooo
+        ........::::::::=====:    /    _XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+        ........::::::::====:    /    _XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+        ........::::::::===:    /    _##########################################
+        ........::::::::==:    /    _mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+        ........::::::::=:    /    _QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+        ........:::::::::    /    _QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+        ........:::::::-    /                                                   
+        ........::::::-    /     ...............................................
+        ........:::::-    /     ::::::::::::::::::::::::::::::::::::::::::::::::
+        ........::::-    /    .=================================================
+        ........:::-    /    .==================================================
+        ........::-    /    .|||||||||||||||||||||||||||||||||||||||||||||||||||
+        ........:-    /    .iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii
+        ........-    /    _vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+        .......     /    _vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+
+no dithering..-::::::::;;;;========++++;    /                                   
+      ........-::::::::;;;;========+++;    /     ...............................
+      ........-::::::::;;;;========++;    /     ::::::::::::::::::::::::::::::::
+      ........-::::::::;;;;========+;    /    .;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+      ........-::::::::;;;;========;    /    .==================================
+      ........-::::::::;;;;=======;    /    .|||||||||||||||||||||||||||||||||||
+      ........-::::::::;;;;======;    /    .iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii
+      ........-::::::::;;;;=====;    /    _lllllllllllllllllllllllllllllllllllll
+      ........-::::::::;;;;====:    /    _vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+      ........-::::::::;;;;===:    /    _ooooooooooooooooooooooooooooooooooooooo
+      ........-::::::::;;;;==:    /    _SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
+      ........-::::::::;;;;=:    /    _XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+      ........-::::::::;;;;:    /    _##########################################
+      ........-::::::::;;;:    /    _mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+      ........-::::::::;;:    /    _WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+      ........-::::::::;:    /    _QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+      ........-::::::::-    /                                                   
+      ........-:::::::-    /     ...............................................
+      ........-::::::-    /     ::::::::::::::::::::::::::::::::::::::::::::::::
+      ........-:::::-    /    .;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+      ........-::::-    /    .==================================================
+      ........-:::-    /    .|||||||||||||||||||||||||||||||||||||||||||||||||||
+      ........-::-    /    .iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii
+      ........-:-    /    _lllllllllllllllllllllllllllllllllllllllllllllllllllll
+      ........-     /    _vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+
+error-distribution.::;:;:=;;======+++|=+    /       .    .    .    .    .    .  
+   . . .......:.::.::;:;:=;;======+++|:    /.    ...............................
+   . . .......:.::.::;:;:=;;======+++;    /.    :::-::.:::.:::.:::-:-::.:::.:::.
+   . . .......:.::.::;:;:=;;======++;    /.    ==;;;;;;;=:=;;;;;;;=:=;;;;;;;=:=;
+   . . .......:.::.::;:;:=;;======+;    /    .+++=++=+++=++=++=+++=++=++=+++=++=
+   . . .......:.::.::;:;:=;;======;    /.   .|+||+||+|+||+||+|+||+|+||+||+|+||+|
+   . . .......:.::.::;:;:=;;=====;    /    .l|i|i|ii|i|i|i|i|i|i|ii|i|i|i|i|i|i|
+   . . .......:.::.::;:;:=;;====:    /    _lllllliIllliIllliIllliIllliIllliIllli
+   . . .......:.::.::;:;:=;;===:    /    _vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+   . . .......:.::.::;:;:=;;==:    /    _onnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
+   . . .......:.::.::;:;:=;;=:    /    _Xo2So222So222So222So222So222So222So222So
+   . . .......:.::.::;:;:=;;:    /    _ZXXXXSXSSXSXSSXSXSSXSXSSXSXSSXSXSSXSXSSXS
+   . . .......:.::.::;:;:=;:    /    _#ZZ#XZZ#XZUXUXUXUXUXUXUXUXUXUXUXUXUXUXUXUX
+   . . .......:.::.::;:;:=-    /    _W###U##Zm######Zm######Zm######Zm######Zm##
+   . . .......:.::.::;:;::    /    _QW#BmWmBmWmBmWmBmWmBmWmBmWmBmWmBmWmBmWmBmWmB
+   . . .......:.::.::;:;-    /    _QQWWWWWWWWWWWBWWWWWWWWWWWWWWWBWWWWWWWWWWWWWWW
+   . . .......:.::.::;:-    /    .    .    .    .    .    .    .    .    .    . 
+   . . .......:.::.::;-    /     : : -..........................................
+   . . .......:.::.::-    /    .::.:::.:::-:-::.:::.:::.:::-:-::.:::.:::.:::-:-:
+   . . .......:.::.:-    /    .=;;;;;;;=:=;;;;;;;=:=;;;;;;;=:=;;;;;;;=:=;;;;;;;=
+   . . .......:.::.-    /    .+++=++=++=+++=++=++=+++=++=++=+++=++=++=+++=++=++=
+   . . .......:.:: .   /    .||+||+||+|+||+|+||+||+|+||+||+|+||+|+||+||+|+||+||+
+   . . .......:.:.    /    .li|i|i|i|i|i|i|ii|i|i|i|i|i|i|ii|i|i|i|i|i|i|ii|i|i|
+   . . .......:.-    /    _iIllliIllliIllliIllliIllliIllliIllliIllliIllliIllliIl
+   . . .......: .   /    _vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+
+floyd-steelberg dithering;;=======++++|;    /                                   
+   . . . ....----:.::::;:;;;;====+++++;    /     ...............................
+    . .......-.:.::::::;;;;=======+=+;    /     ::::::::::::::::::::::::::::::::
+   . . . ....---:-:::::;:;;;=;===+=+;    /    .;=;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    . .......-.:.:-:::::;;;=;=====+;    /    .====+====+==+==+==+==+==+==+==+==+
+   . . . ....--.:-:::::;;;;=;====+;    /    .|||||||||||||||||||||||||||||||||||
+    . .......-.:-:-:::::;;;;=====;    /    .i||i||||||i|||||||||||||||||||||||||
+   . . . ....:.:.:-:::::;;;=;===:    /    _lllllllllIllllllllIlllIlllIlllIlllIll
+    . ........:.:-:::::;;;;;=;=:    /    _vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+   . . . ....:.--:-:::::;;;;==:    /    _nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
+    . ........--:.::::::;;;=;:    /    _So22222222222222222222222222222222222222
+   . . . ....:.:.::::::;;;;;:    /    _XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+    . ........:.:-:-::::;:;:    /    _#ZZZZZZZZXZZZZZZZZZZXZZZZZZZZZZZZZZZZZZZZZ
+   . . . ....:.--:-::::;:=:    /    _m##########################################
+    . ........:.:.::::::;:    /    _QBBBmBmBmBmBmBmBmmBmmBmBmBmmBmmBmmBmmBmmBmmB
+   . . . ....:.:.::::::;-    /    _QQWWWWWWWWWWWWWWWWQWWQWWWWWWQWWQWWQWWQWWQWWQW
+    . ........-.::-::::-    /     .                                             
+   . . . ....:.:--::::-    /     ...............................................
+    . ........:.:-:-:-    /     ::::::-::-::::::-:::::-:-:-:-::-:-:-:-:-:.:-:-:-
+   . . . ....:.:.:-:-    /    .;=;;:;:;;:;;:;:;:;;;:;:;;;;;;;;:;;;;;;;;;;;;;;;;;
+    . ........-.:-:-    /    .====+=+=+=+=+=+=+=+==+=+=+===+==+=+===+====+=+===+
+   . . . ....:.:-:     /    .|||||||||||||||||||||||||||||||||||||||||||||||||||
+    . ........:.:     /    .i||i||||||||||||||||||||||||||||||||||||||||i|||||||
+   . . . ....:.:     /    _llllllllIllllIlllIlllIllIllllllIllIlllIllIllllllllllI
+    . ........-     /    _vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+
+Normal rendering - bright changes=++++|;    /                                   
+   . . . ....----:.::::;:;;;;====+++++;    /     ...............................
+    . .......-.:.::::::;;;;=======+=+;    /     ::::::::::::::::::::::::::::::::
+   . . . ....---:-:::::;:;;;=;===+=+;    /    .;=;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    . .......-.:.:-:::::;;;=;=====+;    /    .====+====+==+==+==+==+==+==+==+==+
+   . . . ....--.:-:::::;;;;=;====+;    /    .|||||||||||||||||||||||||||||||||||
+    . .......-.:-:-:::::;;;;=====;    /    .i||i||||||i|||||||||||||||||||||||||
+   . . . ....:.:.:-:::::;;;=;===:    /    _lllllllllIllllllllIlllIlllIlllIlllIll
+    . ........:.:-:::::;;;;;=;=:    /    _vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+   . . . ....:.--:-:::::;;;;==:    /    _nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
+    . ........--:.::::::;;;=;:    /    _So22222222222222222222222222222222222222
+   . . . ....:.:.::::::;;;;;:    /    _XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+    . ........:.:-:-::::;:;:    /    _#ZZZZZZZZXZZZZZZZZZZXZZZZZZZZZZZZZZZZZZZZZ
+   . . . ....:.--:-::::;:=:    /    _m##########################################
+    . ........:.:.::::::;:    /    _QBBBmBmBmBmBmBmBmmBmmBmBmBmmBmmBmmBmmBmmBmmB
+   . . . ....:.:.::::::;-    /    _QQWWWWWWWWWWWWWWWWQWWQWWWWWWQWWQWWQWWQWWQWWQW
+    . ........-.::-::::-    /     .                                             
+   . . . ....:.:--::::-    /     ...............................................
+    . ........:.:-:-:-    /     ::::::-::-::::::-:::::-:-:-:-::-:-:-:-:-:.:-:-:-
+   . . . ....:.:.:-:-    /    .;=;;:;:;;:;;:;:;:;;;:;:;;;;;;;;:;;;;;;;;;;;;;;;;;
+    . ........-.:-:-    /    .====+=+=+=+=+=+=+=+==+=+=+===+==+=+===+====+=+===+
+   . . . ....:.:-:     /    .|||||||||||||||||||||||||||||||||||||||||||||||||||
+    . ........:.:     /    .i||i||||||||||||||||||||||||||||||||||||||||i|||||||
+   . . . ....:.:     /    _llllllllIllllIlllIlllIllIllllllIllIlllIllIllllllllllI
+    . ........-     /    _vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+
+Normal rendering - bright changes|iiiii>:.:-%-:.::::::::::::::::::::::::::::::::
+--:-:::;:;;;;====+++++++|=|+|||||i|iii>.:-:/::.:.;;:;:;:;:;:;:;:;:;:;:;:;:;:;:;;
+:-:::::;;;;=======+=+|+|+||||||||i|ii>.:.:/;:.:.|==+=+=+=+=+=+=+=+=+=+=+=+=+=+==
+-:.::::;:;;;=;===+=+++++|+|+|||||i|i+.:.:/=:.::|||||||||||||||||||||||||||||||||
+:.:::::;;;;=;=====+++|+|+|+||||||i|>-:.:/=:.:_ii|||||||||||||||||||||||||||||||i
+-:::::::;;;;=====+++++++|+|||+||||>.:.:/=:.:_IllllllllIllIllIllIllIllIllIllIllll
+:.:::::;;;;=;=====+=++|+|+|+||||i+:.:.%::.:_nvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+-::-::::;;;;=;====+++|=|+|+|||||+:.:-%-:.:_2nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
+:.:::::;;;;;=====+=+++++|+|||||+:.:-/::.:_X2222222o22222222222222222222222222222
+-:::::::;;;=;=====++++|+|+|+||+--:.%::.:_#XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+:.:-:::;;;;;=;===+=++|=|+|+||+.:.:/::.:_mZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
+-:::::::;;;;======++++++|+||=:.:.%::-:_Wm#######################################
+:.:::::;;;;=;====+=+++|+|+|=:.:.%:.:.<WWmBmBmBmBmmBmBmBmBmBmBmBmBmBmBmBmBmBmBmBm
+-::-::::;;;;======+++|=|+|=:.:.%:.:.<WWWWWWWWWWWWQWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+:.:::::;;;;;=;====++++++|=---:/::.:<QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+-:::::::;;;=;====+++++|+=:.:.%::.:<QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+:.:-:::;;;;;======+=+++=:.:.%:.:-:.:-:.:.:.:.:.:-------:.:.:-:.:-:.:-:.:-:.:-:.:
+-:::::::;;;;=;====+++|=:-:.%:.:..=;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+:.:::::;;;;=;====++++=--.:/::.:.|==+==+=+=+=+=+=+=+=+=+==+=+==+=+==+==+=+==+==+=
+-::-::::;;;;======+==:.::/=:.::|||||||||||||||||||||||||||||||||||||||||||||||||
+:.:::::;;;;;=;====+=:.:.%::.:_i|i|||||||||||||||||||||||||||||||||||||||||||||||
+-:::::::;;;;=====+=:.:-%--.:_IllllllllllllllllllllllllllllllllIlllllllIlllllllIl
+:.:-:::;;:;=;=====--:.%.:.:_nvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+-:::::::;;;=;===::--.%:.:-=onnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
+:.:::::;;;;;===:::.:/;.:.=S22222222o22222222222222222222222222222222222222222222
+
+Normal rendering - bright changesvvvnvn}====J=====+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
+=+++++++|=|+|||||i|iiiiiillllIIIvvvvvv}===+J=====|||||||||||||||||||||||||||||||
+==+=+|+|+||||||||i|iiiiilllllIvIvIvvv}==+=J====<ii||||||||||||||||||||||||||||||
+=+++++++|+|+|||||i|i|iiilillIIIIvvvv}==+=J=====IillllIlllllllllllllllllllllllllI
+=+=+++|+|+|||||||i|iiiiililllIvIvIv}====J====<vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+==+++++|+|+|+|||||iiiiiillllIIIIvv}====J====<nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
+=++++|++|+|||||||i|i|iiilillIIIvI}====J====<222222222222222222222222222222222222
+=+=++++|+|+|+||||i|iiiiilllllIIv}====J====<XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+==++++|=|+|||||||i|iiiiilillIIv};===J====<#ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
+=++++++|+|+||||||i|iiiiilillII};===J;===s#######################################
+=+=+++|++||+|||||i|iiiiiilllI};===J====<W#mBmBmBmBmmBmBmBmBmBmBmBmBmBmBmBmBmBmBm
+==+++++|+|+|||||||ii|iiillll};===J====sWWWWWWWWWWWWQWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+=++++|++|+|||||||i|iiiiilil};===J====<QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+=+=++++|+|+|+|||||ii|iiill>====J====sQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+==++++|=|+|||||||i|iiiiil>====J====<QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+=++++++|+|+||||||i|iiiii>==+=J====sQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+=+=+++|++|||+|||||ii|ii>=+==J=======+==+========================================
+==+++++|+|+||||||i|iii>====J=====|||||||||||||||||||||||||||||||||||||||||||||||
+=++++|++|+||+||||i|ii>==+=J====<|i||||||||||||||||||||||||||||||||||||||||||||||
+=+=++++|+|+||||||i|i>====J=====IllllIllIlllIllllllllllllllllllllllllllllllllllll
+==++++|=|+|||||||i|>====J====<vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+=++++++|+|+|+||||i>====J====<nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
+=+=+++|++||||||||>====J====<2222222222222222222222222222222222222222222222222222
+==+++++|+|+|+|||>====J====<XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+=++++|++|+|||||>====J====<#ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
+
+Normal rendering - bright changes2S2SSSei||id||i|i|ii|ii|ii|ii|ii|ii|ii|ii|ii|ii
+|i|iiiiiillllIIIvvvvvvnvnnnnoo2o22oSoSe|||i2||||<lllllllllllllllllllllllllllllll
+i|i|iiiilllllIvIvIvvvnvnnnnnooo22222Se|||i2||i|ivvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+||iiiiiilillIIIIvvvvvvnnvnnnooo2o22Se|||i2|i||ionnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
+i|i|iiiilllllIIvIvvvvnvnnnnnooo2222e|||i2|i||voSoSoSo2222o2222o2222o2222o2222o22
+|i|iiiiiillllIvIvvvvvvnvnnnnooo2o2e||||d||||sXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+i|i|iiiillilIIIIvIvvvnvnnnnnooo22e||i|d|||isZZXZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
+||iiiiiiilllIIIvIvvvvvnnvnnnnoo2e||i|d||||v#####################################
+i|i|iiiilllllIvIvvvvvnvnnnnnoo2e||||d||||nmBmmBmBmmBmmBmmBmBmBmBmBmBmBmBmBmBmBmB
+|i|iiiiiilllIIIIvIvvvnvnvnnnooe|||id||||nWWWWQWWWWQWWWWWQWWWWWWWWWWWWWWWWWWWWWWW
+i|ii|iiillillIIvIvvvvvnvnnnnoe|||i2||||aQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+||i|iiiililIIIIvIvvvvnvnnnnne||||d||||nQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+i|iiiiiilllllIIvIvvvvnvnnnne||||d|||ivQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+|i|i|iiilillIIIvIvvvvvnvnnI||||d||||vQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+i|i|iiiilllllIvIvvvvvnvnnI|i||d|||ivQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+||iiiiiilillIIIIvIvvvnvnIi|||d||||vQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+i|i|iiiilllllIIvIvvvvvnI|||id||||ii|i|i|i|||||||||||||||||||||||||||||||||||||||
+|i|iiiiilillIIIvIvvvvnI|i|i2||||illllllllllllIlllllllllllllllllllllllllllllllllI
+i|ii|iiilllllIvIvvvvvIi|||d||||ivvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+||i|iiiilillIIIIvIvvIi||id|||iinnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
+i|iiiiiilllllIIvIvvI||||d||||iSoSo22222o2222222222222222222222222222222222222222
+|i|i|iiilillIIvIvv%|i|id||||vXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+i|i|iiilillllIIIv%|i||d||||sZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
+||iiiiiillllIIIv%|i||d||||v#####################################################
+i|i|iiiililllIv%|i||d||||vBmBmBmmBmmBmmBmBmBmmmBmmBmmBmBmBmBmBmBmBmBmBmBmBmBmBmB
+
+Normal rendering - bright changesZ#Z#U#Zvvvvdvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+vvvvvnvnvnnnoo2o22oSoS2S2XXXXXXZZZZZZZZlIIvdvvvIvnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
+vvvvvvnvnnnoooo22222S2SSSSSXXXZXZZZUZZIIvvdvvIIv22222222222222222222222222222222
+vvvvvnvnnnnnooo2o22SoS2SSSSXXXXZZZZZZlvvIdvvIvnXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+vvvvvnvnnnnnooo22222S2SS2XSXXXXZZZZZlvIvdvvIvnXZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
+vvvvvvnvnnnnooo2o2222S2SSSSXXXXZZZXIvIvdvvIvn###################################
+vvvvvnvnnnnnooo2222S2S2XSSSXXXXZZXIvIvdvvIvnBmBmBmBmBmBmBmBmBmBmBmBmBmBmBmBmBmBm
+vvvvvvnvnnnnnoo2o2222S2SSSSXXXXZXlvIvdvvIvnQWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+vvIvvnvnnnnnooo2222S2S2X2XSXXXXXIvIvdvvIInQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+vvvvvvnvnnnnnoo2o2222S2XSSSXXXXIIvIdvvIvnQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+vvvvvnvnnnnnno2o222S2S2SSSSXX2IvvIdvvIvnQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+vvvvvvnvnnnnooo222222S2X2XSX2vvIIdvvIvnQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+vvvvvnvnnnnnnoo2o22S2S2XSSS2IvIvdvvvInQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+vvvvvvnvnnnnooo222222S2SSS2IvIvdvvIvnQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+vvIvvnvnnnnnno2o222S2S2X22IvvIdvvIvnQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+vvvvvvnvnnnnooo2o2222S2X2vIvIdvvIvnQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+vvvvvnvnnnnnnoo2222S2S22IIvIdvvIvvvvvvvvvvvvvvvvvvvvIvvIvvIvvIvvIvvIvvIvvIvvIvvv
+vvvvvvnvnnnnno2o22222S2IvvIdvvvIvnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
+vvvvvnvnnnnnooo2o22S22lvIvdvvvIv22222222222222222o2o222o222o222o222o222o222o22o2
+vvvvvvnvnnnnnoo222222IvIvdvvIvvXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+vvIvvnvnnnnnooo2o222IvIvdvvIvnZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
+vvvvvvnvnnnnnoo2222IvIvdvvIvn###################################################
+vvvvvnvnnnnnoo2o2nvIvIdvvIvnmBmBmBmBmBmBmBmBmBmBmmBmBmBmBmBmBmBmBmBmBmBmBmBmBmBm
+vvvvvvnvnnnnnoo2nvvIvdvvIvnQWWWWWWQWWWWWWWWWWWWWWQWWWWWWWWWWWWWWWWWWWWWWWWWWWWWQ
+vvvvvnvnnnnnnoonvvIvdvvIvnQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+
+Normal rendering - bright changesBWBWWWBo222ZSo2222S22S22S22S22S22S22S22S22S22S2
+222222S2SSXXXXXZZZZZZZ#Z#####mmmmBmBBB#no2oZSo2ooXXXXXSXXSXXSXXSXXSXXSXXSXXSXXSX
+2222SS2SSSSXXXZXZZZUZ#Z##Z###mmmBmWmW#oo22ZSo2oXZ#ZZZXZZZZZZZZZZZZZZZZZZZZZZZZZZ
+222222SSSSSXXXXZZZZZUZ#Z#####mmmBBmW#no22ZSo2oq#################################
+222S2SS2SSSXXXXZZZZUZ#Z##U###mmmBmW#no22ZSo2oqmmmmmBmBmBmBmmmBmmmBmmmBmmmBmmmBmm
+22222S2SSSSXXXXZZZZZZ#Z#Z#####mmBm#no22ZSoo2qWWWQWQWWWWWWWWQWWWQWWWQWWWQWWWQWWWQ
+2222S2SSSSSXXXXZZZZ#ZUZ#######mmB#oo22ZSoo2qQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+2222S2S2SSSXXXXZZZZZZ#Z#Z#####mm#o222ZSoo2qQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+22222S2XSSSXXXXZZZZUZ#Z#######m#o2o2ZSoo2qQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+2222S2SS2XSXXXXZZZZZUZ#Z##U####oo22ZSoo2qQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+2222S2S2XSSXXXXZZZZUZ#Z##Z####no22ZSoo2qQQQQQQQQQQQQWQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+22222S2XSSSXXXXZZZZZZ#Z#Z###Zoo22ZSoo2qQQQQQQQQQQWQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+222S2S2SSSSXXXXZZZZ#ZUZ####Zo22o#2o22qQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+22222S2X2XSXXXXZZZZZZ#Z#Z#Zo22o#o22oqQQQQQQQQQQQWQQQQQQQQQWQQQQQQQQQQQQQQQQQQQQQ
+2222S2SSSSSXXXXZZZZUZ#Z##Zo2o2ZSo2oqQQQQQQQQQQQQQQQQQQQQQQQQQQQQWQQQWQQQWQQQWQQQ
+22222S2SSSSXXXXZZZZZUZ#ZZo2o2ZSoo2qQQQQQQQQQQQWQQQQQQQQQQWQQQQQQQQQQQQQQQQQQQQQQ
+2222S2SS2XSXXXXZZZZUZ#ZZo222ZSo222o2o2o2oo2oo2o2o2o2oo2oo22o2oo2o2oo2o2o2o2o2o2o
+2222S2S2XSSXXXXZZZZZZ#Zo22oZSo2ooXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+22222S2XSSSXXXXZZZZ#ZZn2o2ZSo2oXZ#ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
+222S2S2SSSSXXXXZZZZZZo2o2ZSo2oq#################################################
+22222S2X2XSXXXXZZZZZoo22ZSo2oqmmmmmBmBmBmWmBmBmWmmBmBmBmWmmBmBmBmBmBmBmBmBmBmBmB
+2222S2SSSSSXXXXZZZXo222ZSo2oqWWWQWQWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWQWWWWWWWWWWW
+22222S2SSSSXXXXZZXo22oZSoo2qQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+2222S2SS2XSXXXXZXo22o#2o22qQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+2222S2S2XSSXXXXXo22o#o22oqQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+
+Normal rendering - bright changesQQQQQQWZZZZWXZZZZUZZ#ZZ#ZZ#ZZ#ZZ#ZZ#ZZ#ZZ#ZZ#ZZ
+ZZZZZZZ#Z####mmmmBmBBBBWWWWWWWQQQQQQQQWZZZZWXXZZm###############################
+ZZZ#Z##Z#####mmmWmBBWmWWBWWWWQQQQQQQQWXZXZWSXZZm#mmmBmmBmmBmmBmmBmmBmmBmmBmmBmmB
+ZZZZUZZ######mmmmmWmWBWBWWWWWQWQQQQQWXZZZWSXZXmWWWWQWWQWWWWWQWWWWWQWWWWWQWWWWWQW
+ZZUZZ##Z#Z####mmBBmWmWmWWWWWWWQQQQQWXZZZWSXZXmQWQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+ZZZZ#ZZ######mmmBmWmWmWWBWWWWQQQQQWXZZZWSXXZmQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+ZZZ#ZU#Z######mmBmBmWmWWWWWWWWQQQWXXZXWSXXZmQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+ZZZZZUZ##Z###mmmBBBWmWWmWWWWWQWQWXXZZWXXXZmQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+ZZUZ#Z#Z######mmBmBmWmWWWBWWWWQWXXZZWSXXZmQQQQWQQQQQWQQQWQQQQQQQQQQQQQQQQQQQQQQQ
+ZZZZZ#Z##U###mmmBmWmWBWmWWWWWQWXXZZWSXZZmQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+ZZZ#Z#Z#Z#####mmBBmWmWBWWWWWWWXXZZWSXXZmWQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+ZZZZUZ#Z######mmBmWmWmWBWWWWWXXZZWSXXZmQQQQQQWQQQQQQWQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+ZZUZZ#Z#######mmBmBBBWBWWBWWSXZZWSXXZmQQQQQQQQQQQQQQQQQQQQQQQQWQQQWQQQWQQQWQQQWQ
+ZZZZ#Z#Z#U####mBmWmWmWBWBWWSXZXWSXXZmQQQQQQQQQQQQQQQQQQQQQQWQQQQQQQQQQQQQQQQQQQQ
+ZZZ#ZUZ##U####mmmmBmWmWWWWSXXZWXXXZmQQQQQWQQQQQQQQQWQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+ZZZZZ#Z#Z#####mmWmWmWBWmWSXXZWXXXZmQQQQQQQQQQQWQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+ZZUZ#Z#U######mmmmBBBWmWXXXZWXXXZZZZXZZXZZZZXZZZZXZZZZZXZZXZZXZZXZZXZZXZZXZZXZZZ
+ZZZZZ#Z#Z#####mmWmWmWmWXXZZWXXXZm###############################################
+ZZZ#Z#Z#######mmmmBBBWXXXZWSXXZm#mmBmBmBmBmBmBmBmBmBmBmBmBmBmBmBmBmBmBmBmBmBmBmB
+ZZZZUZ#Z#Z####mmWmWmWSXXZWXXXZmWWWWWWWQWWWWWWWWWWWWWWWWWWWWWWWWWQWWWWWWWWWWWWWWW
+ZZUZZ#Z#######mmmmB#XXZZWXXXZmQWQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+ZZZZ#Z#Z#U####mmWmWXZZZWSXXZmQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+ZZZ#ZZ#U#Z####mmm#XXZXWSXXZmQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+ZZZZUZ#Z#####mmmWXZZZWXXXZmQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+ZZUZZ#Z##Z####m#XXZZWSXXZmQQQQQWQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+
+Normal rendering - bright changesQQQQQQQmWmBWmWmBBWmWmWmWBWmWmWmWBWmWmWmWBWmWmWm
+mmBmWmWBWWWWWWQQQQQQQQQQQQQQQQQQQQQQQQWBmmmWmmmmQWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+WmWmWmWWWWWWWQQQQQQQQQQQQQQQQQQQQQQQQWBmmBWmmBmQWWQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+mmBBBWBWmWWWWQWQQQQQQQQQQQQQQQQQQQQQWBmBmWmmBmQWQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+WmWmWmWWWWWWWWQQQQQQQQQQQQQQQQQQQQQWBmmBWmmBmQWQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+mmBmWBWmWWWWWQQQQQQQQQQQQQQQQQQQQQWmmBmWmmBmQWQQQQQQQWQQQQQQQWQQQQQQQWQQQQQQQWQQ
+WmWmWmWWWWWWWWQQQQQQQQQQQQQQQQQQQWmBBmWmmBmQWQQWQQQWQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+mmBBBWBWBWWWWQQQQQQQQQQQQQQQQQQQWmBmmWmBmBQWQQQQQQQQQQQQQQQQWQQQQQQQWQQQQQQQWQQQ
+WmWmWmWBWWWWWWQWQQQQQQQQQQQQQQQWmBmBWmmBmQWWQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+mmBmWBWWWBWWWQWQQQQQQQQQQQQQQQWmmBmWmmBmQWWQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+WmWmWmWmWWWWWWQQQQQQQQQQQQQQQWmmWmWmmBmQWQQQQQQQWQQQQQQQQQQWQQQQQQQQWQQQQQQQWQQQ
+mmBBBWBWWWWWWQQQQQQQQQWQQQQQWmmBmWmmBmQWWQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+WmBBWmWWBWWWWQWQQQQQQQQQQQQWmmBmWmmmBQWWQQQQQQQQQQQQQQQWQQQQQQQQQQQWQQQQQQQQQQQQ
+mmWmBWBWWWWWWWQQQQQQQQQQQQWmmmBWmmmBQWWQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQWQQQQ
+WmmWmWBWBWWWWQQQQQQQQQWQQWmmmBWmmBmQWWQQQQQQQQQQQQQQQQWQQQQQQQQQWQQQQQQQQQQQQQQQ
+mmWmWmWBWWWWWWQQQQQQQQQQWmmBmWmmmBQWWQQQQQQQQQQQQQWQQQQQQQQQQWQQQQQQQQQQQQQQQQQQ
+WmBBBWBWWWWWWQWQQQQQWQQWmmBmWmmBBmmmBmBmBmBmmBmmmmBmmmBmmBmmmBmmBmmmmmBmmmmmmBmm
+mmWmWmWWBWWWWWQQQQQQQQWmmBmWmmBmQWWWWWWWWWWWQWWWQWWWQWWWQWWWQWWQWWQWQWWWQWQWQWWQ
+WmmWmWBWWWWWWQQQQQQQQWmmmBWmmBmQWWQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+mmWmWmWBWBWWWWQQQQQWWmmBmWmmBmQWQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+WmBBBWBWWWWWWQQWQQQWmmBmWmmBmQWQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+mmWmWmWWBWWWWWQQQQWmmBmWmBmBQWWQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+WmmWmWBWWWWWWQQQQWmmBmWmmBmQWWQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+mmWmWmWBWBWWWWQQWmmmBWmmBmQWWQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQWQ
+WmBBBWBWWWWWWQQWmmmBWmmBmQWQQQQQQQQQQQWQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+
+Normal rendering - contrast changes+++|;    /                                   
+   . . . ....----:.::::;:;;;;====+++++;    /     ...............................
+    . .......-.:.::::::;;;;=======+=+;    /     ::::::::::::::::::::::::::::::::
+   . . . ....---:-:::::;:;;;=;===+=+;    /    .;=;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    . .......-.:.:-:::::;;;=;=====+;    /    .====+====+==+==+==+==+==+==+==+==+
+   . . . ....--.:-:::::;;;;=;====+;    /    .|||||||||||||||||||||||||||||||||||
+    . .......-.:-:-:::::;;;;=====;    /    .i||i||||||i|||||||||||||||||||||||||
+   . . . ....:.:.:-:::::;;;=;===:    /    _lllllllllIllllllllIlllIlllIlllIlllIll
+    . ........:.:-:::::;;;;;=;=:    /    _vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+   . . . ....:.--:-:::::;;;;==:    /    _nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
+    . ........--:.::::::;;;=;:    /    _So22222222222222222222222222222222222222
+   . . . ....:.:.::::::;;;;;:    /    _XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+    . ........:.:-:-::::;:;:    /    _#ZZZZZZZZXZZZZZZZZZZXZZZZZZZZZZZZZZZZZZZZZ
+   . . . ....:.--:-::::;:=:    /    _m##########################################
+    . ........:.:.::::::;:    /    _QBBBmBmBmBmBmBmBmmBmmBmBmBmmBmmBmmBmmBmmBmmB
+   . . . ....:.:.::::::;-    /    _QQWWWWWWWWWWWWWWWWQWWQWWWWWWQWWQWWQWWQWWQWWQW
+    . ........-.::-::::-    /     .                                             
+   . . . ....:.:--::::-    /     ...............................................
+    . ........:.:-:-:-    /     ::::::-::-::::::-:::::-:-:-:-::-:-:-:-:-:.:-:-:-
+   . . . ....:.:.:-:-    /    .;=;;:;:;;:;;:;:;:;;;:;:;;;;;;;;:;;;;;;;;;;;;;;;;;
+    . ........-.:-:-    /    .====+=+=+=+=+=+=+=+==+=+=+===+==+=+===+====+=+===+
+   . . . ....:.:-:     /    .|||||||||||||||||||||||||||||||||||||||||||||||||||
+    . ........:.:     /    .i||i||||||||||||||||||||||||||||||||||||||||i|||||||
+   . . . ....:.:     /    _llllllllIllllIlllIlllIllIllllllIllIlllIllIllllllllllI
+    . ........-     /    _vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+
+Normal rendering - contrast changes===+;    /                                   
+           . . .....-.:.:::::;;;;====+;    /                                    
+            . ......:.:::-::;:;;=;===;    /     ..-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.
+           . .. ....-.:.:::::;;;=;==:    /     ;::::::::::::::::::::::::::::::::
+           . . .....:.:::-::;;;;;==:    /    .==================================
+            . .....-.:.:.::::;;;=;:    /    .+|++|++|=|+++|+++|+++|+++|+++|+++|+
+           . . .....-.::::::;:;;;:    /    .i|||||||||||i|||i|||i|||i|||i|||i|||
+           . .......:.:.:::::;;;:    /    _lilllllllllllilllilllilllilllilllilll
+            . . .....:.::::::;;:    /    _vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+           . . .....:.::.::::;:    /    _nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
+           . .......----::::::    /    _S2S2S2S2S2S2S2S2S2S2S2S2S2S2S2S2S2S2S2S2
+            . . ....:.:-::::-    /    _ZXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+           . . .....-.:-:::-    /    _m#########################################
+           . ......-.:.:-:-    /    _Wmmmm#m#m#m#m#m#m#m#m#m#m#m#m#m#m#m#m#m#m#m
+            . . ....:.:::.    /    _QQWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+           . . ......:.:     /    _QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+           . ......--.:     /                                                   
+            . . ....--     /       .                                            
+           . . .....:     /     ..-.............................................
+           . .......     /     ;::::::::::::::::::::::::::::::::::::::::::::::::
+            . . ...     /    .==================================================
+           . . ...     /    .+|++|+++|++++++++++++++++++++++++++++++++++++++++++
+           . ....     /    .i||||||i|||i|i|i|i|i|i|i|i|i|i|i|i|i|i|i|i|i|i|i|i|i
+            . .      /    _lillllllilllilillillilililililililililililililililili
+           . . .    /    _vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+
+Normal rendering - contrast changes;===:    /                                   
+                    . ....-.:.:::;;;;;:    /                                    
+                  . ......---:::::;;;:    /                                     
+                   . . ....:.:-:::;;:    /     :.:.:.:--:.:.:--:.:.:--:.:.:--:.:
+                    . ....:.::::::;-    /    .;:;:;:;:;::;:;:;::;:;:;::;:;:;::;:
+                  . .......:.:.::::    /    .==+=++=++=+++=++=+++=++=+++=++=+++=
+                   . . ...:.:-:::-    /    .||||||||||||||||||||||||||||||||||||
+                    . .....:.:::-    /    _ilillilililililililililililililililil
+                  . ......:.:-:-    /    _vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+                   . . ....:.:-    /    _ooooooooooooooooooooooooooooooooooooooo
+                    . ....:.:.    /    _XXSXSXSXSXSXXXXXXXSXSXSXSXSXSXXXSXSXSXXS
+                  . ......-.-    /    _#ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
+                   . . ...:     /    _W#mmmmm#mmmm#mm#m#m#mmmmmmmmmmmm#m#mmmmm#m
+                    . ....     /    _QWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+                  . .....     /    _QQQQQWQWQQWQWQQWQQWQQWQQWQWQWQWQWQWQQWQWQWQQ
+                   . . .     /    _QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+                    . .     /                                                   
+                  . ...    /                                                    
+                   .      /       .                                             
+                    .    /     :.:.-:.:.-..-....-.................-...-....-...-
+                  .     /    .;:;:;::;:;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                       /    .==+=+=+++=+=+=+==+=+=+=+=++=++=++=++=+=+=+==+=+=+=+
+                      /    .||||||||||||||||||||||||||||||||||||||||||||||||||||
+                     /    _ilillillilililililillililililililililililililillilili
+                    /    _vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+
+Normal rendering - contrast changes:::::    /                                   
+                          . ....-.:-::-    /                                    
+                           . ....:.::-    /                                     
+                          . .....:.:-    /                                      
+                           . ....-:     /     ::::::::::::::::::::::::::::::::::
+                          . .....:     /    .==;;=;;=;;=;;=;;=;;=;;=;;=;;=;;=;;=
+                           . ....     /    .|+||+|+|+||+||+||+||+||+||+||+||+||+
+                          . ....     /    _iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii
+                           . ..     /    _vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+                          . ..     /    _2o2o22o22o2222o2o2o2o2o2o2o2o2o2o2o2o2o
+                           . .    /    _ZXXXXXXXXXXZXXXXXZXXZXXZXXXZXXXZXXZXXZXX
+                          . .    /    _m########################################
+                                /    _QWWWWBWWWWWWWBWWBWWBWWBWWBWWBWWBWWBWWBWBWW
+                               /    _QQQQQWQQQWWQWQQQWQQQQQWQQWQQWQQQQQWQQWQQQQW
+                              /    _QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+                             /    _QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+                            /                                                   
+                           /                                                    
+                          /                                                     
+                         /        . .                                           
+                        /     ::::.:-:-::-:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.
+                       /    .==;;===;=;=;=;===========;===;===========;=========
+                      /    .|+|+|+|+|+|+|+|+|+|+|+|+|+|+|+|+|+|+|+|+|+|+|+|+|+|+
+                     /    _iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii
+                    /    _vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+
+Normal rendering - contrast changes ....    /                                   
+                                   ...     /                                    
+                                  ...     /                                     
+                                  .      /                                      
+                                  .     /      .  .  .  .  .  .  .  .  .  .  .  
+                                       /    .:::::::::::::::::::::::::::::::::::
+                                      /    .+=++++++++++++++++++++++++++++++++++
+                                     /    _iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii
+                                    /    _vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+                                   /    _S2S2S2SS2S2SS2S2SS2S2SS2S2SS2S2SS2S2SS2
+                                  /    _#ZUZZZ#ZZZUZZZUZZUZZUZZZUZZUZZUZZZUZZUZZ
+                                 /    _QWmWmWWmWmWBWBWmWBWmWmWBWmWBWmWmWBWmWBWmW
+                                /    _QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+                               /    _QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+                              /    _QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+                             /    _QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+                            /                                                   
+                           /                                                    
+                          /                                                     
+                         /                                                      
+                        /      . .. .   .                                       
+                       /    .:::::::::::::::::::::::::::::::::::::::::::::::::::
+                      /    .+=++++=++++++++++++++++++++=+++=++++++++++++++++++++
+                     /    _iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii
+                    /    _vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+
+Normal rendering - contrast changes         /                                   
+                                           /                                    
+                                          /                                     
+                                         /                                      
+                                        /                                       
+                                       /     . . . . . . . . . . . . . . . . . .
+                                      /    .;;=;;;=;;=;;=;;=;;=;;=;;=;;=;;=;;=;;
+                                     /    .i||||i|||i||i|||||i|||||i|||||i|||||i
+                                    /    _nvnvnnvnvnvnvvnvnnvnvnvnnvvnnvnvnvnnvn
+                                   /    _XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+                                  /    _WBmBmmmmmmmmmBmmBmmmmmmmmBmmmBmmmBmmmmmm
+                                 /    _QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+                                /    _QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+                               /    _QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+                              /    _QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+                             /    _QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+                            /                                                   
+                           /                                                    
+                          /                                                     
+                         /                                                      
+                        /                                                       
+                       /     . . . .. . . .  .  .  .  .  .  .  .  .  .   .   .  
+                      /    .;;=;;=;=;=;;;=;;=;;=;;=;==;;=;=;=;=;;=;=;;===;;==;;=
+                     /    .i||||i||||||i|||||i|||i|||||i|||||||i||||i|||||||||i|
+                    /    _nvnvnnvvnvnnvnvnnvnvnvnvnvnvnvvnnvnnvnvnnvnvnvnnvnnvnv
+
+Normal rendering - contrast changes         7                                   
+                                           7                                    
+                                          7                                     
+                                         7                                      
+                                        7                                       
+                                       7                                        
+                                      7     .. .. .. .. .. .. .. .. .. .. .. .. 
+                                     7    .|=||=||=||=||=||=||=||=||=||=||=||=||
+                                    7    _ononnonnonnonnonnonnonnonnonnonnonnonn
+                                   7    _mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+                                  7    _QQQQWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWQ
+                                 7    _QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+                                7    _QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+                               7    _QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+                              7    _QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+                             7    _QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+                            7                                                   
+                           7                                                    
+                          7                                                     
+                         7                                                      
+                        7                                                       
+                       7                                                        
+                      7     .. ...... .. . . . . . . . . . . . . . . . . . . . .
+                     7    .|=||=|=|=||=||=|||=||=||=||=||=||=||=||=||=||=||=||=|
+                    7    _ononnouooonnonnoonnounoonounounounounounounounounounou
+
+Normal rendering - contrast changes         J                                   
+                                           J                                    
+                                          J                                     
+                                         J                                      
+                                        J                                       
+                                       J                                        
+                                      J                                         
+                                     J    ._.__.__.__.__.__.__.__.__.__.__.__.__
+                                    J    _wowowowowowowowowowowowowowowowowowowo
+                                   J    _QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+                                  J    _QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+                                 J    _QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+                                J    _QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+                               J    _QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+                              J    _QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+                             J    _QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+                            J                                                   
+                           J                                                    
+                          J                                                     
+                         J                                                      
+                        J                                                       
+                       J                                                        
+                      J                                                         
+                     J    ._.__.__.___._._._._._.._............................_
+                    J    _wowowowowwowowowwowowowwowwwwwwwwwwwwwwwwwwwwwwwwwwwow
+
+Normal rendering - gamma changes==++++|;    /                                   
+   . . . ....----:.::::;:;;;;====+++++;    /     ...............................
+    . .......-.:.::::::;;;;=======+=+;    /     ::::::::::::::::::::::::::::::::
+   . . . ....---:-:::::;:;;;=;===+=+;    /    .;=;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    . .......-.:.:-:::::;;;=;=====+;    /    .====+====+==+==+==+==+==+==+==+==+
+   . . . ....--.:-:::::;;;;=;====+;    /    .|||||||||||||||||||||||||||||||||||
+    . .......-.:-:-:::::;;;;=====;    /    .i||i||||||i|||||||||||||||||||||||||
+   . . . ....:.:.:-:::::;;;=;===:    /    _lllllllllIllllllllIlllIlllIlllIlllIll
+    . ........:.:-:::::;;;;;=;=:    /    _vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+   . . . ....:.--:-:::::;;;;==:    /    _nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
+    . ........--:.::::::;;;=;:    /    _So22222222222222222222222222222222222222
+   . . . ....:.:.::::::;;;;;:    /    _XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+    . ........:.:-:-::::;:;:    /    _#ZZZZZZZZXZZZZZZZZZZXZZZZZZZZZZZZZZZZZZZZZ
+   . . . ....:.--:-::::;:=:    /    _m##########################################
+    . ........:.:.::::::;:    /    _QBBBmBmBmBmBmBmBmmBmmBmBmBmmBmmBmmBmmBmmBmmB
+   . . . ....:.:.::::::;-    /    _QQWWWWWWWWWWWWWWWWQWWQWWWWWWQWWQWWQWWQWWQWWQW
+    . ........-.::-::::-    /     .                                             
+   . . . ....:.:--::::-    /     ...............................................
+    . ........:.:-:-:-    /     ::::::-::-::::::-:::::-:-:-:-::-:-:-:-:-:.:-:-:-
+   . . . ....:.:.:-:-    /    .;=;;:;:;;:;;:;:;:;;;:;:;;;;;;;;:;;;;;;;;;;;;;;;;;
+    . ........-.:-:-    /    .====+=+=+=+=+=+=+=+==+=+=+===+==+=+===+====+=+===+
+   . . . ....:.:-:     /    .|||||||||||||||||||||||||||||||||||||||||||||||||||
+    . ........:.:     /    .i||i||||||||||||||||||||||||||||||||||||||||i|||||||
+   . . . ....:.:     /    _llllllllIllllIlllIlllIllIllllllIllIlllIllIllllllllllI
+    . ........-     /    _vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+
+Normal rendering - gamma changes.......     ;                                   
+                . . .  . . . .........     ;                                    
+              .       . . . .. . ....     ;                                     
+                 . . . . . . .. ...      ;     . ...............................
+             .        .  . .. .....     ;     ..... .. .. .. .. .. .. .. .. .. .
+                . . .  . . . .. ..     ;     :..-..:..:..:..:..:..:..:..:..:..:.
+               .     . . . . . ..     ;     ::::::::::::::::::::::::::::::::::::
+             .    . .  .  . ....     ;    .=;=;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                 .    . . . . .     ;    .==+==+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+             .  .   . .  . ...     ;    .|||||||||||||||||||||||||||||||||||||||
+                   .   . . .      ;    .liiii|iiiiiii|ii|ii|ii|ii|ii|ii|ii|ii|ii
+               .  .  . . . .     ;    _vvIIIIvvIIIIIIvvIvvIvIvIvIvIvIvIvIvIvIvIv
+             .      .  .  .     ;    _nnnnononnnnononnnnnnnnnnnnnnnnnnnnnnnnnnnn
+                 . .  .  .     ;    _XXXXSXSXSXSXXSXSXXSXSXSXXXXXXXXXXXXXXXXXXXX
+             .  .    .  .     ;    _##Z#ZZ#ZUZ#ZUZUZUZUZUZ#ZUZZUZZUZZUZZUZZUZZUZ
+                   .  .      ;    _QWBWmWBWmWBBWmWBWmWBWmWmWmWWmWWmWWmWWmWWmWWmW
+               .  .  .      ;                                                   
+             .      .      ;                                                    
+                 . .      ;        .                                            
+             .  .        ;     . .. . . . . . . . . . . . . . . . .. .. .. .. ..
+                   .    ;     ..................................................
+               .  .    ;     :..-......-.-..-..-..-..-..-..-..-..-..............
+             .        ;     ::::::::::::::::::::::::::::::::::::::::::::::::::::
+                     ;    .=;=;;;;;;=;;=;;;;;;;;;;;;;;;;;;;;;;;;;;;=;;=;;=;;=;;=
+             .      ;    .==+==+=+=+==+==+=+=+=++=+=+=+=+=+=+=+=++==+==+=+=+==+=
+
+Normal rendering - gamma changes      .     .                                   
+                                . . .      .                                    
+                             .            .                                     
+                            .   .  .     .                                      
+                                  .     .        .  .  .  .  .  .  .  .  .  .  .
+                          .    .       .      .. . .  . .  . . .  . .  . . .  . 
+                             .        .     ... ... .... ..... ..... ..... .....
+                                     .     -........-....-...........-..........
+                         .  .       .     ::::::::::::::::::::::::::::::::::::::
+                                   .    .;;;:;:;:;;:;:;:;:;:;:;:;:;:;:;:;:;:;:;:
+                                  .    .==+=+=+=+==+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+                           .     .    .|||||||||||||||||||||||||||||||||||||||||
+                         .      .    _llllllllllllllllllllllllllllllllllllllllll
+                               .    _nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
+                              .    _XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+                             .    _WmBmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+                            .                                                   
+                           .                                                    
+                          .                                                     
+                         .                                                      
+                        .        .  .               .   .                       
+                       .      .. . . . .. .... .... . . . .. ... ... ... ... ...
+                      .     ... ..... .. .. . .. . ....... ... ... ... ... ... .
+                     .     -..........-..-..-...-..-............................
+                    .     :::::::::::::::::::::::::::::-::::::::::::::::::::::::
+
+Normal rendering - gamma changes                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                       .                                        
+                                      .       . . . . . . . . . . . . . . . . . 
+                                     .     . . . . . . . . . . . . . . . . . . .
+                                    .     ......................................
+                                   .     :.:.-.:..-..-..-..-..-..-..-..-..-..-..
+                                  .    .::::::;::;:;:;:;::;:;:;:;::;:;:;:;::;:;:
+                                 .    .=========================================
+                                .    .||||||||||||||||||||||||||||||||||||||||||
+                               .    _IIIIlIIIvlvlIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+                              .    _2222oSoSooSo222oSo2oXo2222oSo2oXo222oSo2oSoo
+                             .    _mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                              . . . . .  .  .   .  .  .  .  .  .  .  .  .  .  . 
+                           . . . . . . .. .. .. . . .. .. .. . . . .. . . . .. .
+                          ......................................................
+
+Normal rendering - gamma changes                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                              .  .  .  .  .  .  .  .  .  .  .  .
+                                          . .. . . . . . . . . . . . . . . . . .
+                                         .... ..................................
+                                        :...---.................................
+                                      .::;;;::;:;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                                     .=++==+=++=+=+==+===+===+===+===+===+===+==
+                                    .iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii
+                                   _onnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
+                                  _mmmqmqmqmqmqmqmqmqmqmqmqmqmqmqmqmqmqmqmqmqmqm
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                              .  .                                              
+                          . .. . . ... .. . . . . . . . . . . . . . . . . . . . 
+
+Normal rendering - gamma changes                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                             .  .  .  .  .  .  .  .  .  .  .  . 
+                                         . .. . . . . . . . . . . . . . . . . . 
+                                        ........................................
+                                       ::.:.:.-.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.
+                                     .;;;;;;;;;=;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                                    .||||||||||+||||||||||||||||||||||||||||||||
+                                   _nvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+                                  _mqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                             .  .  .                                            
+
+Normal rendering - gamma changes                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                           .  .  .  .  .  .  .  .  .  .  .  .  .
+                                        ... .. .. .. .. .. .. .. .. .. .. .. .. 
+                                       .........................................
+                                      ;:::::::::::::::::::::::::::::::::::::::::
+                                    .++++++=++++++++++++++++++++++++++++++++++++
+                                   _vivivivviviviviviviviviviviviviviviviviviviv
+                                  _mXwqqwqwwqwqwqwqwqwqwqqwqqwqqwqqwqqwqqwqqwqqw
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+
+Normal rendering - gamma changes                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                         . . . . . . . . . . . . . . . . . . . .
+                                       .........................................
+                                      :--.:..:..:.-.-.:.-.-.:.-.-.:.-.-.:.-.-.:.
+                                    .===========================================
+                                   _iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii
+                                  _wwwwwwwwwwwwwwwXwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+                                                                                
+
+Normal rendering - randomval changes++|;    /                                   
+   . . . ....----:.::::;:;;;;====+++++;    /     ...............................
+    . .......-.:.::::::;;;;=======+=+;    /     ::::::::::::::::::::::::::::::::
+   . . . ....---:-:::::;:;;;=;===+=+;    /    .;=;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    . .......-.:.:-:::::;;;=;=====+;    /    .====+====+==+==+==+==+==+==+==+==+
+   . . . ....--.:-:::::;;;;=;====+;    /    .|||||||||||||||||||||||||||||||||||
+    . .......-.:-:-:::::;;;;=====;    /    .i||i||||||i|||||||||||||||||||||||||
+   . . . ....:.:.:-:::::;;;=;===:    /    _lllllllllIllllllllIlllIlllIlllIlllIll
+    . ........:.:-:::::;;;;;=;=:    /    _vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+   . . . ....:.--:-:::::;;;;==:    /    _nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
+    . ........--:.::::::;;;=;:    /    _So22222222222222222222222222222222222222
+   . . . ....:.:.::::::;;;;;:    /    _XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+    . ........:.:-:-::::;:;:    /    _#ZZZZZZZZXZZZZZZZZZZXZZZZZZZZZZZZZZZZZZZZZ
+   . . . ....:.--:-::::;:=:    /    _m##########################################
+    . ........:.:.::::::;:    /    _QBBBmBmBmBmBmBmBmmBmmBmBmBmmBmmBmmBmmBmmBmmB
+   . . . ....:.:.::::::;-    /    _QQWWWWWWWWWWWWWWWWQWWQWWWWWWQWWQWWQWWQWWQWWQW
+    . ........-.::-::::-    /     .                                             
+   . . . ....:.:--::::-    /     ...............................................
+    . ........:.:-:-:-    /     ::::::-::-::::::-:::::-:-:-:-::-:-:-:-:-:.:-:-:-
+   . . . ....:.:.:-:-    /    .;=;;:;:;;:;;:;:;:;;;:;:;;;;;;;;:;;;;;;;;;;;;;;;;;
+    . ........-.:-:-    /    .====+=+=+=+=+=+=+=+==+=+=+===+==+=+===+====+=+===+
+   . . . ....:.:-:     /    .|||||||||||||||||||||||||||||||||||||||||||||||||||
+    . ........:.:     /    .i||i||||||||||||||||||||||||||||||||||||||||i|||||||
+   . . . ....:.:     /    _llllllllIllllIlllIlllIllIllllllIllIlllIllIllllllllllI
+    . ........-     /    _vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+
+Normal rendering - randomval changes::=+    /                   . .             
+     .    .. :  : :. ::=::=....:=::+:;;    /.     .. .. . . ....  . .  -  .     
+      -..  . .:.. :: ;;. .:.=..:=::=+-    /.    :: . :  ..  ..:.:. ..::.:-  .:  
+         .   : .  ..-. : ;= :.:.=:=:;    /     ==;: -:.==::.= =.=:;... ;: =.=;.:
+       . . ...- :  : . ::...=;===::=    /    .=::.+;:::=.==:====.;|==-:=+=|;+.:=
+    .    ..  :..: .:::=. ==::.::==;    /    .|<||=:|;:||=|||;=||:|+===;<;;;;==:|
+   ...  .  .- :   : :; :. .: =.;==    /    .|==||i|==|||;==i====ii+==|i+=ii===i=
+      .  ... .    : :;.=:-=::..=.    /    _||vi|vl<|l+|llv|=>|s=|i=v>v>i|viv|v|%
+    .  ... . . .     .::. ;.-:=-    /    _v|v|vnI|vvivvIvvvii|vivni<vIs|IIv|ivvl
+     . .        : ..:.;...=;.;.    /    _ooIIninllovinllnnlnnvInnlnllnoi%ilnIinn
+        .   ..  .  ; =:   =:::.   /    _nvSvvnnvXo2vvovvovXvonooSonovXvvvoSovXoX
+  .    .   .-.   ;; ..  ::::.    /    _ZS2nnnnvnXXoXXXXXSonnnXnnXXSnvoXvXnXXXSXn
+  .    . --.. :. : : ;.: :.-    /    _XXmooomnmno2oSXXXomXXZ2XXoXXoZSXZ#XmXo2Z2Z
+     . . .  -....:;: : .;;     /    _#S#mmS##Som#ZmXmS#mSZXZXd##m#XXm#XmZS#X#XSX
+     .  . .. .: .: .:: :::    /    _WBmXmXXXXWX#mmmXmmmXZWXWZmQXmWXWXmWmQmXXXmmm
+      .  ... ...: .-::-.;    /    _QmWQWQmmQm#QWmmQmBmmWQ##QQ#BQmU#mQ#mQmZQWQ#mW
+             .::     :;     /     .                                             
+   . .   .. : ..:   ..     /    .   ...  .   .    .    ..     . .  .  .      .  
+  .  .   ..    .  .:;-    /     : =:::::  : : ;  .:: ::      : . . .   :: :: . .
+     .     . :  .::      /    ..;=;=;:=:..;..=......; : ;;.;=..=. =.;:; := .=. =
+      .. ..  ..:   :    /    .::=::==+;:=:=::.+:::=|;+::::=:.:=:::++::;:=::=+::+
+          ..  .  :     /    .:=|+=||=||:;|=:>;|=:|;:|=|;|+:;;:|||;|=||;|:|;===:|
+        . - -   :     /    .i=i=i|i|i==ii|iii|=+i=|l=+i==ii=|===i+i==||+i|i|i===
+     .   ... . ..    /    _|=|+|l%v=|li>=v=ii=|illlilv+l|I|iiiI|l|i<||+|i=|=|<%>
+ .    .   ..        /    .ivvvvvivv|i%vvnvivi|vvi|ivv|iv|<i|vv|vvvi|v|v|vinnv|v|
+
+Normal rendering - randomval changes=|=.    /.     .    .                  .    
+     . ..-    ..    ::    : =    -=< =- .  :     : .:  .  .- ...  : .: :   :  . 
+       ... . .     ;: ;; = == = ..=. =    ;    ..  .   ::  -..   .:::  ; ;  :;. 
+ -      -..   :   :      = ;;;=  ==;  .  /     ;=: + =  : : =   :.   ::  = : ;= 
+    .     .... .:-`   : : = ;    . > .  ;    .= . .>. .|= . .=<=..==..  <===. = 
+   .  .          :  .       = .=> +    ;     .-| i>|+<.=|=:<=.....i=|<=i <=. .|=
+  .  ..    .  .. =: ;: : =   = ;=     /.   .<.iii_|%.>:i%-i: .i:%>-:<>|>.:|;s-||
+ .  .    : .- ;    . ::: ;; = = . .  /.   _v%|v-:;=;:%%=;:;;I=,=vs:=iv%:=;;%:;s;
+ ...   .:     .     .   ;:+   ;/    / .  .|=|=%<=>v=i=|=:z=a<<v<v==n=o|;===1=:vI
+     .    :  .  ._:   :     ==;  . ; .. .d=>o|1i||<n><o=on|>|v|v|=X;|Xno||>n=uo=
+   -...  .  `:.  =  ._ :    .= .  /   ..i>no||Xin<inio<S|X|i|<doiniS|oosvii|Z>>o
+   .      : :.-- :  :. =:  =     / .  _#>lnovivdi%XXXS%ivXSdvI|olX%SivX%I2ii{XZX
+     .. - . . .  := :::=.==-    /  . _mvvmXv1nddmnvXsvnvImXw#XmvUXmXZ#ZumoXzlpZX
+     .        . .-:: :  : :.   ;    _m1o1vmZ##2mBm#noSmX#vZnvmnvn##Xm#m1Inonummv
+  .    .    .      =:  =:  .  /    _XSmmQnd11nmSmBXooWmSnXnWummoQomZmQnWu2mWXWvX
+   .   :  .. .:  :.: -::-.   /  . _XQWdQWm2QQoQoQXZQmQnZWXXQWQQZZQQWXdQoS2QoWXXQ
+     -  .   .. ..::::  :    ;     .           .     .                           
+       - .  :  ..  `      ./     : ::       :     ..       : . ..   .: . : .  . 
+        .-     . :-:=     :    - -;.. .   .; :   .:. : :.  :  . :    : :   . ;: 
+.  .  - .  .   : - ::    /    .=: ; :;   : =  =_: =    =  :: :;_== :+_.  = ::  =
+       . .. .    : . .  /     =  | | =;<:== .._|>= . ;==|;.....=|. =  .== =. . .
+          -       -    ;    .- :.| .> i=: :.|= i. ..-<...= ><<.+ +|: i| | i=i  =
+  .   .  . .-..       /    .=i::.i.%|i><|.::i:{:.:;:%<:::=-:<<s.%.i|+:|:|vi:;s:=
+   ..        .   . . ;     v:i=vIv=%Ivi=:v={::v;iv{ss%_s;=I;1l.i==:::v:==i;.=;l;
+      .    ...: .   ..   .|=v==|Ivv|=a=v%;v=nn_<=s=vn=n==:zin=n==o=c||=v=vvnu===
+
+Normal rendering - randomval changes   ;           . -              . ...   .  :
+ .   -  -;      :_= :   ; : /;; ; +        -  .        . -.   :.  :       : .   
+      .-..         ;  .:   .|~ / +   +    7  .-    ; .-   ; .:._ -;     `  :: - 
+   .       ..:. . =: .= ;:- =- ,,=       /     :_:+   ;->:=.  ; .  =  =     =  :
+ - . .   .   :.   :;  ;  ;    =.. :+    /     : :==.=;/==  i+> => =  :  =i:  :==
+  - . ..   -`:. ; .-      =  =|=       ; ..  |+ .s   >>+ . | =|= .i; > ==+={ |  
+    .:.  -..-     .= + :. -  =  = ..  . .  _. <.%%.i..i<)..%:   :.>|<.|s >| .>|.
+ . .  :   .     -  -.:- +;  ;  :+  . :. . .eI.c|:.::s.a .{sv n%:%l.% .s%c.{:vv%-
+     .  . .  :  :. .  .=  =: =-     ,    ..:1Iez<%s%=v.;=v.=I;vl`:vu:_:`%.:l_zvu
+. .  ..   ;;`  -.; :;::  ` =;=     :    __ov+;u:2n2lX_vn1.nn;v=o1z.<v==X_eo1=1I+
+   .   .   :;. : . = :; =-=: -.   :    _+<X>12;=:|=+XId.=2ZS=<==h<C3=ddX=S`o>X;<
+     --    :   .:;: ;  . ;;=:    ;.   _Sol===i=|>Xm:<oh|Xlo:d2=|<S2<dX_Z=ZdS2ZZd
+      :- :.:. -;  ;+.+ = =:     /-   _1p%Gm$vs<Dmd=Wp%v#=iimE>)giiiZ=d&|{s<=im#o
+ .   .:   .-   .:   +; = :     , -  _ml|%%v%{m|mX<BWGmvvs|%W%iums{ZI$mhWSms#m&pc
+  `   .  . .   .=. ` =.       /    <e1n2vQQ#imiWs%#mv%QsBXQ#W#WmsQQnIWBm<si{n|Ws
+         .   . -  . =-:  . ../   ._XW#Qi%3W#oWBonmnm2o2v2WWumWvmWmWWWQmaQWsQWmvW
+      .   ..:  _   .-;      /                 .:.     .      .      .           
+    .    -.    ;. :   :    /    :   :-    .  -    _:   .    .      .:       .. .
+  .  .   .  : -:-    ` .  /  .    ; - -:    .=      : .,= ;_  .  . .  . : -.... 
+  . -    .. :     -:     ,-   .. =_    -=. .   := =..  `=     =   - = :== -=;+: 
+ -    . .-.- -  : _     /    ._= i        = ==   + .:=| =  =+    ;:|   .   .=<| 
+   ..  .   -...-  `    :     >  > += = | | . .=   >| ==.=| | i   .>i=> >_<  -  |
+ -    .  :     .      :     |i.> .< . .: n %{.l.><>i.% : %= . :...`|i %% ...>|.=
+.  .-     .       -...    _Iv|.{..zc%-%.u.|:%cv.|%: : `(zze%) : .:{.i>v % .s:  .
+    .     : -=:.    /.    .*.`Inn-c =;=1.v`o.%-_ : 1 =ie .nvv=Xn.v.:nlisocvn,: +
+
+Normal rendering - randomval changes+=      /    - .    .      .    .     .  : .
+  .-   -.  .=.. ;-  ==.   .  = =  +|_:    -     .. ` : : _:_ .  . `   ` :-.... _
+    ..    .:._  -  - ==  -=  =   ;   /    /   ..=- :  - :-- =     . -   : ;:.   
+        .` :_  ;.-``    :/ =  ./ '  >:       . _  : =   =    / :   ; ; ` =.|= = 
+   .    . .       .|/  =: ;  :  <`:    ...  - ;;   <;=:  = >< =<=< <,  ~=  <-|  
+   .-.`_ -.  ; .   ;; `= ::=: i>: + .       _< %<) = =%    | (=      <+ >:%:.=i=
+ :   `.    - - .  +-.   : >>   |:-     `  -  )   - un l%cv<s+ .  +  .% .})<r<v l
+ -  -. ` .- =  .   :;    =; +==  . .     . vssv1 z)v 1     i  { l   .    11<o) o
+   :- .  .   ...: ::`:= =:  >= .     :   _a >i.n.. .w -1s.n u (:vv  . .uzX zSnoI
+ . :. .  .. :  +:`::   - :=-`   .  /.   =XZ1oa.,lwS:.;.X.2 2nnz:a-.2`.S.:1Sd o= 
+  _ .     :~ - . ;  -~:<. :       /   . nSn:5=;-k..C2-Xe:u2vq.o~=Z dvh3d   .C13,
+ -   .   `  _.   := :   -:= +  ..% .`. dm==|dSSo mqC6-5Z5_2`:;W#.|Sum+-$1Xm.:m=m
+   .  :    ;  :  .:=  ; .;=    -/    <;qdSg#U-==#:=m=_d=om$Q=w,2S;G$zX==%.#-m>dd
+.     `.- =  :    : +    .: .       _=#Q#;>m.m=;=m<i<W=mQ>X<iDWm$#/>+mW=i>|/QqXl
+:: .   .  ,   :.: +..    +    /:   </{;&miQ/#;>\WWi%{m(#$&W#%<c)=%uQi/}%Q=>Wm,c$
+ ...: -:..    -..- ..-:_=    /  . _liQW{<mZ<Qm|}&W#>isW%v$=vWsQmB|Q|<Qv%a1WQvQ=#
+ .-:  . .  :  . . : + =   . - .   .    ..  -       ... .      ..            ... 
+   - .. .    _ =  :_ +     . : .   ;. .    :    -  ;       ._.. .  .: `-  :    .
+  .-  .  . :    ==.  = -. ;  .   .: =  ,;  ; +  +.  , :   .:` -  `.  =,. . - -  
+   :    . :  - .=  =-    .  . .;->  `= .; :=/  -:   ::; -.-  _>; :-   ; =:  _   
+    ... .         .;      .    <+<  =s, >:;    =`:i < _<=   = _   <<.<_ /: -   =
+ `-.` :   :. .= _ : ..-:. .  = v <%:i<|   %= <  _    = := << .=>(       /   < = 
+.:   -  :  .-    ::  :/   `_{ %<v  (=>   <} {|)   .)n  %(v < s{    >< {    s %  
+ - ..-    .  :--   . /    .n( c  . s.>    %si % 1s%% .|) {   ..v.as  i v) .*i   
+   ::: ..-=- .-.  -  .: -_n ..1..In n.:n-. 1.v- ).n -3n(.  s lX< .u v.v 2nv.:2z.
+
+Normal rendering - randomval changes = "-   %   `      - .   -    ..`  .  :  - .
+ =.  ...    :  `` .+  `  ;,=> -;=. />    --/. -.--;.+ .  :  , . `-;. :.   .     
+    .-  `-`.`.`   ` + =;     -   +    . -  - ;          : -.;      :  -=,  .  :.
+ .        - .`;  ` ;.  .  - |~  /`> .    /- . _  ~:-;+/  +_ _;,./.=-;> ;;    |  
+ .-    --  - .  . ~-.  . ; ;   %+     -:7  .: i< <=  = =::  = =;   >~: +% i   + 
+  .    :    `;~:~: :-         " |>+    /  -   ,<     c <*=  r>: =  = ,* + > ,+  
+ .  `   -``,   `    .`. `,: | :;  . . / . -- .v   =* <   >{> ( )<=   %v   u  =s/
+         . .`    : - ,  ~ .;%  > -          ( + !% %.   7(e!+ s >(% cs)} { )( |%
+       ..  -`   - +:   :+ =  =  - - /    =   s1va. o) 2} e I2   .v e  .s       J
+ `  .      ` ,...     `  ==:    .  7    = .. C..zho..1. 2<?  s)n  :Yci1.vzu5  .l
+` . -  :`    ; ` .   =  ,>    .  ./  ..  =uC.:5`sd._.d2 wA.-` pdn:zI. :..36.` -.
+-    ;    `-.+. `-~   .     /.  .: `    d_d3SmU_..E ;:p;;SX3 m 3zTw22 . q-5G# 5.
+      . :    -. . `= +    ;-  .   . -<_=nm3DZE;EZ-AWZd2Q#.,n:yXa#..2md=:d5d p =Z
+  .   .` -`. ,     :`/;  %     /    _W;;:::X=$=d:-WzSq:~$DEm_Q_>Qp;|Bm<;m:m=>m#y
+      -_.`   `   `;=;  / ,  ` /..  sm:$Q=QQww+Q$;:_=$m|Z:"m+_pm#=/)<Z{>=Q|<_:;:H
+ . ;.    `  .,.:   ;.:: ;    r .. .i=%</Q|U,Q_=+iQ@Q,/~W=W=WQQ$<QQQQ+c&m%<=W(W=W
+`:- . ---  `      ~.   ;        :     ..   .. ,  - -  .-   .    ..-. -   .      
+ `  : .   .`      =   :.`  )-  ..  .   ;= .      ` : =      ,   .       :     :;
+  ..       .  = -=`:  . . /    . =_ : : .   :  ::-     /   |.` :-,  .     ;  `  
+  ..     . ;:~--   .-    /   -  ;,   ;/ >, =+, . ~^ >` ;_  . /.  ;: -  _:~      
+    -   ~  . ;;  ,-   :    ` -- | ). -,;  =,   >,-   _v ; =%       /%.  ,    ` `
+   .  `-;   `    ;-   -/;..     |>|:   .i; =<  ;(;=>/   < ;   +<<c=+: n)--= ;) -
+ .  -  -      `   .-     -  s  < vi * >s + <{   +    >=  (= =(   }=< )      / ><
+   .     -  ~ , `    . `.  s(>z=/   c }<   s s />i  11 a>  ae%  ( o Jv  J%sc    
+    : >   :    :   `%.   : nni % v. sa|Y  {. c)o2%c% 1 1  ao1e%s 2  sY  ic-  l*v
+
+Normal rendering - randomval changes  =- ..    .-  .  `        ,/` :  : `   -   
+.        ; . . - :`',    ,  "  :^.  ^      / -  -: ``  ,`.         -.-: ` `   -:
+ -   .   - -  : +    :+ '-+    , `   (. -  .:  ;.   =+. `  -  ..  -   %,; / .   
+`       .  :-~  -/=.   ~+ +==;= .=`    ` . -   +=   ;      - ",-  >  = . .>     
+ `  `       ``    +; :` :< .: >      -   ;    ;>    =>  :=  >    . |%' :+=) >-  
+       - -   - =  ; `- -     --.>|  ;.       ( - /     +%,_e(=  = ; % ";   ;+/)=
+..   ,  -`  :     -: -         ;      /- . _      ;"<)    (:   ; !"  )+ %  ([  :
+``- -  -   /     .      ' ,    };:~;        2{         {  ) 6(%" )||  J | <cr> s
+   .   -  .+  `,       '+-:    --.-`   :   a  }7    I=!  .(  s> |}u>  6 e ]  %  
+ .  . ; :.=; /       ./>:- ,     ` /-. : o2{vd7.<   2..   a e    |. 1o          
+-  `  .`- `;- ; :     -| :  +          _V<a1 J: k;S).ms3   . .w2(. w   z CXCp2.2
+  - ;      -.   +    ;-:.)=,/.`  ; .  . W-#1mZhv.2p5_h   :Vd=.@  qa.-i 3.zS 3.we
+  :-`.   : +  -`_~ ,/  :~  ~ .  /      $d = DZ:2oG.`5@`$.#@.S.``:: ;.hn, 3_pvwz`
+        -~`;.     =   : ~ ---        ,(md q_W$BpS-#G;m=:@:Z::E=A=.@@:`X;:XX ..V#
+  .    -- -      ::    , - :  /  `-.Q#.m.U: _d;._+',nV :/,@d+#|W:m`#y@.`+:m=Q_Qm
+   :.   - -..;  ~``:      ..    . _mW:p>:==QWmm,%mQ.B::/Q/m=Q<m m_m#:_@,i.Q:<W-m
+  .   ` . -         .  -- ~ 7:  .       .-  ;      -~. .   . ;; :   -      .   .
+    ;-    .-  >`+/- +     `/   --     -       ,` .-   , -  .  .-   :~;_  . `    
+.        .   .  =+>        .    + `/,   :  :`- + ~ /     ~ ~  .   .  ..  ~  +   
+ -  -.  - .    =  :` ;  ;    .;"   .    = == :   : } :=>        -+  , .  ,    ' 
+. .-  ,  =  .    . . . ./   - ;:  "= ,:> `    ;  >(".    ,  i>,  /,;/}   +  =>  
+    ;   `.  : .  ---   .    `  c/>r)   /= =; ("r  /:|     }   c+: <+ >=" ;/ /=c 
+   ; - ` : `   =~     r    _Y    <c< 1* ;   )}% %/ ))       .  --r  * c    |+ _c
+;.       = - .`-   .,         v a) ;. +L  =  -<+<}=  }+Y%!    v %\/u  3(n    () 
+  - ;    -.,;  `; `   ,-   (  ]  2?k    2  pn) >  t2  t ) z)2zeS> c ) ( z  a  1 
+
+Normal rendering - randomval changes/>   -  r     -` -  ;  - .;    -  :  `      
+  .    `- =   `   ' /  /-     `/+ ` )(     /      - ^  : --. +   /   ;  ~-~`  . 
+.  .   -     ,,  -  +>+-   ; ^  (r^ -'  -      ;-~  ,   ".      -~ -' -/ :;     
+     ^  -   ,` ;  :/      r  ;  :/ ^"    /   `:+    =     ./+,,;      />;/,  ,  
+ ` ; + .,' -,>       :  , " ,-/   " :  ..-  -  >  //   /   "/::"|'   ;   '  `-  
+    ;   -  .  .  '`> ~   ^' -  "'+" .- /  . . , '  + :    =e   = ,% :{ /) )-)//=
+:   -.-  -  ..;      > +  -  '.` ; -` +    . +} /))  " ! ,2)  %; 2>> ,  } )   r 
+ - `     -  -  ;   ''/. :"     -  -     .  [[ 2Y+ 1  ce,u) %  % ; { )  [ c(Y>%=,
+   ,  --,~. ,      `-  ;+`  ^=+~   -//  ; ( r% / }     z     a(  \\=?Y %  % + Y 
+ ;   ;  --/   ;- :` '(`   . ///   :     .c    t.+ k  vV   Y s(vc(i  J7k   % { + 
+;     -    `  `  `-``- + .- }( -  )`.  = V....)7.o%      E v   5  Yv>1  ue Zpz7 
+      ..   ~  . -; ,> ;`- ., :  , -   :    @5.Z   Sv  9W5  kZ#  .6  -:Epp s  Z. 
+    .         /`   `.-..,'  :     .--  qp#5Sh..3H:k.ok. .n:@d 3D3  .. Wd A5  VuE
+      -. .,;^-  .} ~-+/   "  ;      .W-3 h-6.V:==h.  $D.A w nd6d#.::  V:Z; Ed.mk
+        -~'    /~    '- / - -  -. `_@Z,=Z=m-$dd..d;_d#.=d=:.W|- . $kW5Sk--_m=_Bd
+:.         `    -   /  ^-- .      .m@_W.mQm=Bp,h.@=WHWQ`<m= =hHX_g_W;:B:=q|+=:_$
+-;  - .   -     -",  "    -`/--  `  .    `    -. +   ;.  ``  ~           -    ; 
+  - > /  ` +`-+  -'"  ;-    -      ~    /-,;- -       :    , .  --=  -/:-     - 
+  ;  -          /    -   -7    `     ;-- /  =     . -,;+    '  - / -  (;'; -.,  
+   .   `    '    ;    :--; ` `    " ;- .-    :/   %-. -    >     .   +:"" ,-    
+  ;~  ,: - ~.  ;`-. -      .    _/> >   :~) :/`  /:| (->     +`  .  ;.~;  c / :'
+  :  ., . .-  ::    ~    `   ;  "    I  , =+i' ,//=/"; ,('/. %<_:   ><%   [:e>+(
+       ;.-.  ~. , `   / :   ( ^ /   }e/2 ;  i !?  ,  (=  e  = :  J     "  ,  =| 
+ .-  - ` -~; ~-/`    7   `.|/ 2 %= + }7 Z   (7~  <+v  :)l! c,%= e-c  k   >: )2 %
+ ~- -` ;;;-  +` `     -   = 17   <  vZk {    / S | zz    (   C[%  2   ( 2/L cc  
+
