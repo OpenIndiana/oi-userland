@@ -1,14 +1,6 @@
---- GConf-2.32.4/gconf/gconf-internals.c.~1~	2010-10-22 00:19:11.000000000 +0400
-+++ GConf-2.32.4/gconf/gconf-internals.c	2015-01-05 21:58:06.188007436 +0300
-@@ -37,6 +37,7 @@
- #include <math.h>
- 
- #include <gio/gio.h>
-+#include <dbus/dbus.h>
- 
- #ifdef G_OS_WIN32
- #include <windows.h>
-@@ -2428,17 +2429,47 @@
+--- GConf-2.32.4/gconf/gconf-internals.c	2010-10-21 22:19:11.000000000 +0200
++++ GConf-2.32.4/gconf/gconf-internals.c	2013-08-20 21:56:54.069423375 +0200
+@@ -2428,11 +2428,12 @@
          GVariant *value;
          char *ior;
          GError *error = NULL;
@@ -22,52 +14,35 @@
             (!start_if_not_found || g_getenv ("DISPLAY") == NULL)) {
                  if (failure_log)
                      g_string_append_printf (failure_log,
-                                             _("Not running within active session"));
+@@ -2440,6 +2441,31 @@
                  return NULL;
          }
-+	
-+        if ( dbus_address != NULL ) {
-+            DBusAddressEntry    **address_entries;
-+            int                   address_entries_len = 0;
-+            const char          *method = NULL;
-+
-+            if ( dbus_parse_address( dbus_address, &address_entries, &address_entries_len, NULL ) ) {
-+                int i;
-+
-+                for (i = 0; i < address_entries_len; i++ ) {
-+                    method = dbus_address_entry_get_method( address_entries[i] );
-+
-+                    if ( method != NULL && strcmp( method, "unix" ) == 0 ) {
+ 
++	if ( dbus_address != NULL ) {
++            if (strncmp(dbus_address, "unix:path=", sizeof ("unix:path="))) {
++                const char *start_addr = dbus_address + sizeof ("unix:path=") - 1;
++                const char *end_addr;
++                if ((end_addr = strchr(dbus_address, ',')) != NULL ) {
++                    char *path;
++                    if ((path = g_strdup(start_addr)) != NULL) {
 +                        struct stat s;
-+
-+                        const char *path =  dbus_address_entry_get_value(address_entries[i], "path");
++                        path[end_addr - start_addr] = '\0';
 +                        if ( path != NULL && stat( path, &s ) == 0 &&
-+                             s.st_uid != geteuid() ) {
-+                            /* The session bus isn't the same as the effective uid so
-+                             * it's highly likely to fail to connect to the server so
-+                             * don't use it, unset the environment variable.
++                            s.st_uid != geteuid() ) {
++                            /* The session bus isn't the same as the effective
++                             * uid so it's highly likely to fail to connect to
++                             * the server so don't use it, unset the
++                             * environment variable.
 +                             */
++
 +                            g_unsetenv("DBUS_SESSION_BUS_ADDRESS");
 +                        }
++                        g_free(path);
 +                    }
 +                }
 +            }
 +        }
 +
- 
          g_type_init ();
  
---- GConf-2.32.4/gconf/Makefile.am.~1~	2011-03-29 16:30:45.000000000 +0400
-+++ GConf-2.32.4/gconf/Makefile.am	2015-01-05 22:03:40.281721636 +0300
-@@ -118,9 +118,10 @@
- 	$(CORBA_SOURCECODE)	\
- 	$(WIN32_SOURCECODE)
- 
-+libgconf_2_la_CFLAGS = $(DEPENDENT_DBUS_CFLAGS)
- libgconf_2_la_LDFLAGS = -version-info $(GCONF_CURRENT):$(GCONF_REVISION):$(GCONF_AGE) -no-undefined
- 
--libgconf_2_la_LIBADD = $(INTLLIBS) $(DEPENDENT_LIBS)
-+libgconf_2_la_LIBADD = $(INTLLIBS) $(DEPENDENT_LIBS) $(DEPENDENT_DBUS_LIBS)
- 
- -include $(INTROSPECTION_MAKEFILE)
- INTROSPECTION_GIRS =
+         connection = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, &error);
