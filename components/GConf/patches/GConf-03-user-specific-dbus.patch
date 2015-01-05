@@ -1,9 +1,17 @@
---- GConf-2.31.7/gconf/gconf-internals.c.~1~	2010-02-09 15:14:05.000000000 +0300
-+++ GConf-2.31.7/gconf/gconf-internals.c	2014-04-23 12:06:25.238657513 +0400
-@@ -2428,11 +2428,12 @@
-         DBusConnection *connection;
-         DBusError bus_error;
+--- GConf-2.32.4/gconf/gconf-internals.c.~1~	2010-10-22 00:19:11.000000000 +0400
++++ GConf-2.32.4/gconf/gconf-internals.c	2015-01-05 21:58:06.188007436 +0300
+@@ -37,6 +37,7 @@
+ #include <math.h>
+ 
+ #include <gio/gio.h>
++#include <dbus/dbus.h>
+ 
+ #ifdef G_OS_WIN32
+ #include <windows.h>
+@@ -2428,17 +2429,47 @@
+         GVariant *value;
          char *ior;
+         GError *error = NULL;
 +        const char *dbus_address = NULL;
  
          /* if the bus isn't running and we don't want to start gconfd then
@@ -14,10 +22,10 @@
             (!start_if_not_found || g_getenv ("DISPLAY") == NULL)) {
                  if (failure_log)
                      g_string_append_printf (failure_log,
-@@ -2440,6 +2441,34 @@
+                                             _("Not running within active session"));
                  return NULL;
          }
- 
++	
 +        if ( dbus_address != NULL ) {
 +            DBusAddressEntry    **address_entries;
 +            int                   address_entries_len = 0;
@@ -33,7 +41,7 @@
 +                        struct stat s;
 +
 +                        const char *path =  dbus_address_entry_get_value(address_entries[i], "path");
-+                        if ( path != NULL && stat( path, &s ) == 0 && 
++                        if ( path != NULL && stat( path, &s ) == 0 &&
 +                             s.st_uid != geteuid() ) {
 +                            /* The session bus isn't the same as the effective uid so
 +                             * it's highly likely to fail to connect to the server so
@@ -46,6 +54,20 @@
 +            }
 +        }
 +
-         dbus_error_init (&bus_error);
-         connection = dbus_bus_get (DBUS_BUS_SESSION, &bus_error);
  
+         g_type_init ();
+ 
+--- GConf-2.32.4/gconf/Makefile.am.~1~	2011-03-29 16:30:45.000000000 +0400
++++ GConf-2.32.4/gconf/Makefile.am	2015-01-05 22:03:40.281721636 +0300
+@@ -118,9 +118,10 @@
+ 	$(CORBA_SOURCECODE)	\
+ 	$(WIN32_SOURCECODE)
+ 
++libgconf_2_la_CFLAGS = $(DEPENDENT_DBUS_CFLAGS)
+ libgconf_2_la_LDFLAGS = -version-info $(GCONF_CURRENT):$(GCONF_REVISION):$(GCONF_AGE) -no-undefined
+ 
+-libgconf_2_la_LIBADD = $(INTLLIBS) $(DEPENDENT_LIBS)
++libgconf_2_la_LIBADD = $(INTLLIBS) $(DEPENDENT_LIBS) $(DEPENDENT_DBUS_LIBS)
+ 
+ -include $(INTROSPECTION_MAKEFILE)
+ INTROSPECTION_GIRS =
