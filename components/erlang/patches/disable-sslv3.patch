@@ -1,0 +1,16 @@
+Disable SSLv3 as a default SSL/TLS version in erlang per the email thread at:
+http://erlang.org/pipermail/erlang-questions/2014-October/081394.html
+
+This change is already known upstream.
+
+--- otp_src_R15B03/lib/ssl/src/ssl_internal.hrl.orig	2014-12-17 17:17:44.775898708 -0800
++++ otp_src_R15B03/lib/ssl/src/ssl_internal.hrl	2014-12-18 04:46:24.785282064 -0800
+@@ -69,7 +69,7 @@
+ -define(TRUE, 0).
+ -define(FALSE, 1).
+ 
+--define(DEFAULT_SUPPORTED_VERSIONS, [tlsv1, sslv3]). %% Add 'tlsv1.1' in R16
++-define(DEFAULT_SUPPORTED_VERSIONS, [tlsv1]). %% Add 'tlsv1.1' in R16
+ -define(ALL_SUPPORTED_VERSIONS, ['tlsv1.2', 'tlsv1.1', tlsv1, sslv3]).
+ 
+ -record(ssl_options, {
