@@ -15,19 +15,17 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gucharmap
-# Last GPLv2 release is 2.30.3
-# Updating requires updating dependent components to GPLv3 versions
-COMPONENT_VERSION=	2.30.3
+COMPONENT_VERSION=	2.32.1
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Apps/Gucharmap
 COMPONENT_SUMMARY=	GNOME character map utility
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:b59459f2609936baf97c2108a3b08ee19a47cf98cf9675eb11b08c8caf5dff03
-COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.30/$(COMPONENT_ARCHIVE)
+    sha256:fdef066f35f4301bc128b91f15a30d64a2459721cb50daa53f923789df315c28
+COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.32/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI= desktop/character-map/gucharmap
 COMPONENT_CLASSIFICATION= Applications/System Utilities
-COMPONENT_LICENSE= GPLv2
+COMPONENT_LICENSE= GPLv3
 COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_TOP)/make-rules/prep.mk
