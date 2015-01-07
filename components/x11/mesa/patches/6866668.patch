@@ -1,0 +1,70 @@
+--- src/mesa/drivers/dri/intel/intel_batchbuffer.h	Mon Jul  6 09:16:30 2009
++++ src/mesa/drivers/dri/intel/intel_batchbuffer.h	Mon Jul  6 09:17:54 2009
+@@ -8,7 +8,8 @@
+ #include "intel_reg.h"
+ 
+ #define BATCH_SZ 16384
+-#define BATCH_RESERVED 16
++#define BATCH_RESERVED16 16
++#define BATCH_RESERVED4k 4096
+ 
+ enum cliprect_mode {
+    /**
+@@ -104,7 +105,10 @@
+ static INLINE GLint
+ intel_batchbuffer_space(struct intel_batchbuffer *batch)
+ {
+-   return (batch->size - BATCH_RESERVED) - (batch->ptr - batch->map);
++    if (batch->intel->intelScreen->deviceID == PCI_CHIP_I865_G)
++	return (batch->size - BATCH_RESERVED16) - (batch->ptr - batch->map);
++    else
++	return (batch->size - BATCH_RESERVED4k) - (batch->ptr - batch->map);
+ }
+ 
+ 
+--- src/glx/x11/glxcurrent.c	Tue Jul 28 12:58:24 2009
++++ src/glx/x11/glxcurrent.c	Tue Jul 28 13:01:07 2009
+@@ -412,7 +412,8 @@
+ 
+ #ifdef GLX_DIRECT_RENDERING
+    if ((dpy != oldGC->currentDpy || (gc && gc->driContext)) &&
+-       !oldGC->isDirect && oldGC != &dummyContext) {
++      !oldGC->isDirect && oldGC != &dummyContext &&
++      oldGC->xid != None) {
+ #else
+    if ((dpy != oldGC->currentDpy) && oldGC != &dummyContext) {
+ #endif
+
+--- include/GL/internal/dri_interface.h	Wed Jul 29 10:00:29 2009
++++ include/GL/internal/dri_interface.h	Wed Jul 29 10:01:03 2009
+@@ -657,6 +657,30 @@
+      *                       into __DRIdri2ExtensionRec::createNewDrawable
+      */
+     void (*flushFrontBuffer)(__DRIdrawable *driDrawable, void *loaderPrivate);
++
++    /**
++     * Get list of buffers from the server
++     *
++     * Gets a list of buffer for the specified set of attachments.  Unlike
++     * \c ::getBuffers, this function takes a list of attachments paired with
++     * opaque \c unsigned \c int value describing the format of the buffer.
++     * It is the responsibility of the caller to know what the service that
++     * allocates the buffers will expect to receive for the format.
++     *
++     * \param driDrawable    Drawable whose buffers are being queried.
++     * \param width          Output where the width of the buffers is stored.
++     * \param height         Output where the height of the buffers is stored.
++     * \param attachments    List of pairs of attachment ID and opaque format
++     *                       requested for the drawable.
++     * \param count          Number of attachment / format pairs stored in
++     *                       \c attachments.
++     * \param loaderPrivate  Loader's private data that was previously passed
++     *                       into __DRIdri2ExtensionRec::createNewDrawable.
++     */
++    __DRIbuffer *(*getBuffersWithFormat)(__DRIdrawable *driDrawable,
++                                         int *width, int *height,
++                                         unsigned int *attachments, int count,
++                                         int *out_count, void *loaderPrivate);
+ };
+ 
+ /**
