@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -91,6 +91,13 @@ COMPONENT_TEST_CMD =	\
 	python$(PYTHON_VERSION) ./testasciidoc.py update; \
 	python$(PYTHON_VERSION) ./testasciidoc.py run
 COMPONENT_TEST_TARGETS =
+COMPONENT_POST_TEST_ACTION = \
+	(cd $(@D); rm asciidoc)
+
+# The additional asciidoc specific set of transforms to be applied to the
+# test results to try to normalize them.
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s|/tmp......|/tmpxxxxxx|g" '
 
 test:           $(TEST_64)
 
