@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -61,7 +61,10 @@ COMPONENT_POST_UNPACK_ACTION = \
 	$(GSED) -i -e 's| tr | /usr/gnu/bin/tr |' \
 		$(SOURCE_DIR)/autoopts/test/vendor.test
 
-# Enable ASLR for this component
+# Master test results are the same for both 32-bit and 64-bit, so override
+# here, rather than create multiple identical master files.
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
