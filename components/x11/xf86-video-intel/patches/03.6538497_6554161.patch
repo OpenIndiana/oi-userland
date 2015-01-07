@@ -1,0 +1,51 @@
+diff -urp -x '*~' -x '*.orig' src/i830_common.h src/i830_common.h
+--- src/i830_common.h	2009-01-21 14:02:00.000000000 -0800
++++ src/i830_common.h	2009-05-08 20:47:59.370445000 -0700
+@@ -94,6 +94,7 @@ typedef struct {
+         int pf_current_page;	/* which buffer is being displayed? */
+         int perf_boxes;	        /* performance boxes to be displayed */   
+ 	int width, height;      /* screen size in pixels */
++	int pad0;
+ 
+ 	drm_handle_t front_handle;
+ 	int front_offset;
+diff -urp -x '*~' -x '*.orig' src/i830_dri.h src/i830_dri.h
+--- src/i830_dri.h	2009-01-21 14:02:00.000000000 -0800
++++ src/i830_dri.h	2009-05-08 20:47:59.375897000 -0700
+@@ -22,16 +22,20 @@ typedef struct _I830DRIRec {
+    drm_handle_t unused2; /* backbuffer */
+ 
+    drmSize unused3; /* depthbufferSize */
++   drmSize pad0;
+    drm_handle_t unused4; /* depthbuffer */
+ 
+-   drmSize unused5; /* rotatedSize /*/
++   drmSize unused5; /* rotatedSize */
++   drmSize pad1;
+    drm_handle_t unused6; /* rotatedbuffer */
+ 
+    drm_handle_t unused7; /* textures */
+    int unused8; /* textureSize */
++   drmSize pad2;
+ 
+    drm_handle_t unused9; /* agp_buffers */
+    drmSize unused10; /* agp_buf_size */
++   drmSize pad3;
+ 
+    int deviceID;
+    int width;
+diff -urp -x '*~' -x '*.orig' src/modes/xf86RandR12.c src/modes/xf86RandR12.c
+--- src/modes/xf86RandR12.c	2009-01-09 17:21:53.000000000 -0800
++++ src/modes/xf86RandR12.c	2009-05-08 20:47:59.383378000 -0700
+@@ -341,6 +341,11 @@ xf86RandR12SetMode (ScreenPtr	    pScree
+         /* Reset, just so we ensure the drivers SwitchMode is called */
+         scrp->currentMode = NULL;
+     }
++#if defined (__sun)
++    else {
++	currentMode = scrp->currentMode;
++    }
++#endif
+     /*
+      * We know that if the driver failed to SwitchMode to the rotated
+      * version, then it should revert back to it's prior mode.

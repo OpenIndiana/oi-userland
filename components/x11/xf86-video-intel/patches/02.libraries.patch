@@ -1,0 +1,26 @@
+diff -urp -x '*~' -x '*.orig' configure.ac configure.ac
+--- configure.ac	2010-04-20 16:51:58.116747548 -0700
++++ configure.ac	2010-04-20 16:51:58.619268104 -0700
+@@ -244,8 +244,7 @@ if test "$XVMC" = yes && test "$DRI" = n
+ 	AC_MSG_ERROR([XvMC can't be enabled without DRI])
+ fi
+ if test "$XVMC" = yes; then
+-	PKG_CHECK_MODULES(XVMCLIB, [xvmc], [XVMC=yes], [XVMC=no])
+-	PKG_CHECK_MODULES(XEXT, [xext])
++	PKG_CHECK_MODULES(XVMCLIB, [xvmc xext x11 xfixes dri2proto], [XVMC=yes], [XVMC=no])
+ fi
+ AC_MSG_CHECKING([whether to include XvMC support])
+ AC_MSG_RESULT([$XVMC])
+diff -urp -x '*~' -x '*.orig' src/Makefile.am src/Makefile.am
+--- src/Makefile.am	2009-02-28 12:28:53.000000000 -0800
++++ src/Makefile.am	2010-04-20 16:51:58.619438335 -0700
+@@ -38,6 +38,9 @@
+ intel_drv_la_LDFLAGS = -module -avoid-version
+ intel_drv_ladir = @moduledir@/drivers
+ intel_drv_la_LIBADD = -lm @DRM_LIBS@ -ldrm_intel
++intel_drv_la_LDFLAGS += -R $(moduledir) -R $(moduledir)/extensions
++intel_drv_la_LIBADD += -lfb -lextmod -lshadowfb -lXfont \
++	-lvbe -lvgahw -lxaa -lexa -ldri -ldri2 -lglx
+ if BUILD_UXA
+ intel_drv_la_LIBADD += ../uxa/libuxa.la
+ endif

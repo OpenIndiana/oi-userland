@@ -1,0 +1,91 @@
+--- src/i830_video.c	Fri Dec 11 11:28:27 2009
++++ src/i830_video.c	Fri Dec 11 11:29:15 2009
+@@ -2415,6 +2415,7 @@
+ 	    return BadAlloc;
+ 	if (!pPriv->textured && drm_intel_bo_pin(pPriv->buf, 4096) != 0) {
+ 	    drm_intel_bo_unreference(pPriv->buf);
++	    pPriv->buf = NULL;
+ 	    xf86DrvMsg(pScrn->scrnIndex, X_ERROR,
+ 		       "Failed to pin xv buffer\n");
+ 	    return BadAlloc;
+--- src/i965_video.c	Tue Dec 15 08:58:01 2009
++++ src/i965_video.c	Tue Dec 15 09:01:37 2009
+@@ -452,11 +452,15 @@
+     src_surf_state->ss2.render_target_rotation = 0;
+     src_surf_state->ss3.pitch = src_pitch - 1;
+ 
+-    src_surf_state->ss1.base_addr =
+-	intel_emit_reloc(surface_bo,
++    if (src_bo) {
++    	src_surf_state->ss1.base_addr =
++		intel_emit_reloc(surface_bo,
+ 			 offsetof(struct brw_surface_state, ss1),
+ 			 src_bo, src_offset,
+ 			 I915_GEM_DOMAIN_SAMPLER, 0);
++    } else {
++	src_surf_state->ss1.base_addr = src_offset;
++    }
+ 
+     drm_intel_bo_unmap(surface_bo);
+     return surface_bo;
+--- src/i965_render.c	Tue Dec 15 09:05:11 2009
++++ src/i965_render.c	Tue Dec 15 09:19:26 2009
+@@ -1933,7 +1933,7 @@
+ {
+     I830Ptr pI830 = I830PTR(pScrn);
+     struct gen4_render_state *render_state= pI830->gen4_render_state;
+-    int i;
++    int i, j, k, l, m;
+ 
+     if (render_state->vertex_buffer_bo) {
+ 	dri_bo_unreference (render_state->vertex_buffer_bo);
+@@ -1946,12 +1946,23 @@
+     render_state->sf_state_bo = NULL;
+     drm_intel_bo_unreference(render_state->sf_mask_state_bo);
+     render_state->sf_mask_state_bo = NULL;
+-    drm_intel_bo_unreference(render_state->cc_state_bo);
+-    render_state->cc_state_bo = NULL;
++
+     for (i = 0; i < WM_KERNEL_COUNT; i++) {
+-	drm_intel_bo_unreference(render_state->wm_kernel_bo[i]);
+-	render_state->wm_kernel_bo[i] = NULL;
++        drm_intel_bo_unreference(render_state->wm_kernel_bo[i]);
++        render_state->wm_kernel_bo[i] = NULL;
+     }
++
++    for (i = 0; i < SAMPLER_STATE_FILTER_COUNT; i++)
++	for (j = 0; j < SAMPLER_STATE_EXTEND_COUNT; j++)
++	    for (k = 0; k < SAMPLER_STATE_FILTER_COUNT; k++)
++		for (l = 0; l < SAMPLER_STATE_EXTEND_COUNT; l++)
++		    for (m = 0; m < WM_KERNEL_COUNT; m++) {
++			drm_intel_bo_unreference(render_state->wm_state_bo[m][i][j][k][l]);
++			render_state->wm_state_bo[m][i][j][k][l] = NULL;
++		    }
++
++    drm_intel_bo_unreference(render_state->cc_state_bo);
++    render_state->cc_state_bo = NULL;
+     drm_intel_bo_unreference(render_state->sip_kernel_bo);
+     render_state->sip_kernel_bo = NULL;
+ }
+--- src/i830_video.c	Mon Dec 14 12:02:03 2009
++++ src/i830_video.c	Mon Dec 14 12:13:05 2009
+@@ -1077,11 +1077,14 @@
+ 	    if (pI830->entityPrivate)
+ 		pI830->entityPrivate->XvInUse = -1;
+ 	}
+-	if (!pPriv->textured)
+-	    drm_intel_bo_unpin(pPriv->buf);
+-	drm_intel_bo_unreference(pPriv->buf);
+-	pPriv->buf = NULL;
+-	pPriv->videoStatus = 0;
++ 
++        if (pPriv->buf) {
++	    if (!pPriv->textured)
++		drm_intel_bo_unpin(pPriv->buf);
++	    drm_intel_bo_unreference(pPriv->buf);
++	    pPriv->buf = NULL;
++	    pPriv->videoStatus = 0;
++	}
+     } else {
+ 	if (pPriv->videoStatus & CLIENT_VIDEO_ON) {
+ 	    pPriv->videoStatus |= OFF_TIMER;

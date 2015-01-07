@@ -1,0 +1,45 @@
+--- src/i830_batchbuffer.h	Mon Jul  6 09:09:26 2009
++++ src/i830_batchbuffer.h	Mon Jul  6 09:11:32 2009
+@@ -30,7 +30,8 @@
+ #ifndef _INTEL_BATCHBUFFER_H
+ #define _INTEL_BATCHBUFFER_H
+ 
+-#define BATCH_RESERVED		16
++#define BATCH_RESERVED4k	4096
++#define BATCH_RESERVED16	16
+ 
+ void intel_batch_init(ScrnInfoPtr pScrn);
+ void intel_batch_teardown(ScrnInfoPtr pScrn);
+@@ -39,7 +40,10 @@
+ static inline int
+ intel_batch_space(I830Ptr pI830)
+ {
+-    return (pI830->batch_bo->size - BATCH_RESERVED) - (pI830->batch_used);
++    if (IS_I865G(pI830))
++	return (pI830->batch_bo->size - BATCH_RESERVED16) - (pI830->batch_used);
++    else
++	return (pI830->batch_bo->size - BATCH_RESERVED4k) - (pI830->batch_used);
+ }
+ 
+ static inline void
+
+--- src/i830_driver.c	Mon Jul  6 09:18:50 2009
++++ src/i830_driver.c	Mon Jul  6 09:21:12 2009
+@@ -3571,6 +3571,8 @@
+    if (I830IsPrimary(pScrn))
+       i830_unbind_all_memory(pScrn);
+ 
++   pScrn->vtSema = FALSE;
++
+ #ifdef XF86DRI
+    if (pI830->memory_manager && !pI830->use_drm_mode) {
+       int ret;
+@@ -3631,6 +3633,8 @@
+       if (!i830_bind_all_memory(pScrn))
+          return FALSE;
+ 
++   pScrn->vtSema = TRUE;
++
+    i830_describe_allocations(pScrn, 1, "");
+ 
+    /* Update the screen pixmap in case the buffer moved */
