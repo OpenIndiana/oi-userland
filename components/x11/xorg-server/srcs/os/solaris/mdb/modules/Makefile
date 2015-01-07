@@ -23,8 +23,8 @@
 MODULES=Xserver.so
 MDB_MODULE_DIR=/usr/lib/mdb/proc/$(ARCHLIBSUBDIR)
 
-CFLAGS += -K pic -g
-CPPFLAGS += -I ../../../../include -I ../../../.. -I ../../../../Xext
+CFLAGS += -fPIC -DPIC -g
+CPPFLAGS += -I ../../../../include -I ../../../.. -I ../../../../Xext -I/usr/include/pixman-1
 LDFLAGS += -Wl,-z,text
 
 HEADERS = Xserver_mdb.h
@@ -40,10 +40,11 @@ all: $(MODULES)
 .PARALLEL: $(OBJECTS) $(LINTFILES)
 
 Xserver.so: $(OBJECTS)
-	$(CC) $(CFLAGS) -G -o Xserver.so $(OBJECTS) $(LDFLAGS) $(LIBS)
+	$(CC) $(CFLAGS) -shared -o Xserver.so $(OBJECTS) $(LDFLAGS) $(LIBS)
 
-install:
-	mkdir $(DESTDIR)$(MDB_MODULE_DIR)
+install: Xserver.so
+	mkdir -p $(DESTDIR)$(MDB_MODULE_DIR)$(SERVERMOD_SUBDIR)
+	cp Xserver.so $(DESTDIR)$(MDB_MODULE_DIR)$(SERVERMOD_SUBDIR)
 
 clean:
 	rm -f $(OBJECTS)

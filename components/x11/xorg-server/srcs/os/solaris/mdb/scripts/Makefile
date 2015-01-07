@@ -29,6 +29,10 @@ SCRIPTS= \
 
 all: $(SCRIPTS)
 
+install:
+	mkdir -p $(DESTDIR)/usr/demo/Xserver/mdb/
+	cp $(SCRIPTS) $(DESTDIR)/usr/demo/Xserver/mdb/
+
 .KEEP_STATE:
 
 .NO_PARALLEL:
