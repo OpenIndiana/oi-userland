@@ -1,0 +1,85 @@
+#!/bin/ksh
+#
+# Copyright (c) 2004, 2009, Oracle and/or its affiliates. All rights reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice (including the next
+# paragraph) shall be included in all copies or substantial portions of the
+# Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+# DEALINGS IN THE SOFTWARE.
+#
+
+USAGE="Usage: $0 [-d <display>] [-c <class>] <method> [-- <X server arguments>]"
+
+PATH=/usr/bin:/usr/sbin:/usr/openwin/bin:/usr/X11/bin
+
+#########
+#
+# Default values
+# 
+# Users must not modify this script to change them - change via SMF properties
+#
+
+DISPLAY="0"
+CLASSES=""
+
+while getopts c:d: opt; do
+    case $opt in
+	c)	if [ "$OPTARG" != "default" ] ; then
+		    CLASSES="$CLASSES -c $OPTARG"
+		fi ;;
+	d)	DISPLAY="$OPTARG";;
+	?)	echo $USAGE ; exit 2;;
+    esac
+done
+
+shift `expr $OPTIND - 1`
+
+METHOD=$1
+if [ $# -lt 1 ] ; then
+    echo $USAGE
+    exit 2
+fi
+shift
+
+case $METHOD in
+    start)
+	# Continue with rest of script
+	;;
+    *)
+	echo "Invalid method $METHOD"
+	exit 2
+	;;
+esac
+
+if [ "$1" = "--" ] ; then
+    shift
+else
+    if [ "$1" != "" ] ; then
+	echo $USAGE
+	exit 2
+    fi
+fi
+
+# If the X server is started with SIGUSR1 set to ignore, then it
+# sends SIGUSR1 to its parent process when it is ready to run
+Xserver_ready() {
+    exit 0
+}
+
+trap Xserver_ready USR1
+(trap '' USR1 ; exec /usr/bin/Xserver $CLASSES :$DISPLAY $* &)
+

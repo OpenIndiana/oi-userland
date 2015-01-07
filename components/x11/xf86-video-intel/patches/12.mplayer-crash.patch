@@ -1,0 +1,21 @@
+--- src/i965_video.c	Thu Dec 10 15:02:53 2009
++++ src/i965_video.c	Thu Dec 10 15:03:08 2009
+@@ -856,7 +856,6 @@
+     OUT_BATCH(0); /* sf */
+     /* Only the PS uses the binding table */
+     OUT_RELOC(bind_bo, I915_GEM_DOMAIN_INSTRUCTION, 0, 0);
+-    drm_intel_bo_unreference(bind_bo);
+ 
+     /* Blend constant color (magenta is fun) */
+     OUT_BATCH(BRW_3DSTATE_CONSTANT_COLOR | 3);
+@@ -1252,6 +1251,10 @@
+     }
+ 
+     i830MarkSync(pScrn);
++
++   /* release reference once we're finished */
++   drm_intel_bo_unreference(bind_bo);
++
+ #if WATCH_STATS
+     i830_dump_error_state(pScrn);
+ #endif

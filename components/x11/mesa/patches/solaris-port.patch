@@ -1,0 +1,291 @@
+###############################################################################
+#
+# Copyright (c) 2009, Oracle and/or its affiliates. All rights reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice (including the next
+# paragraph) shall be included in all copies or substantial portions of the
+# Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+# DEALINGS IN THE SOFTWARE.
+#
+
+diff -urp -x '*~' -x '*.orig' src/glx/x11/Makefile src/glx/x11/Makefile
+--- src/glx/x11/Makefile	2009-03-12 20:28:49.000000000 -0700
++++ src/glx/x11/Makefile	2009-03-31 09:12:45.627261000 -0700
+@@ -69,6 +69,10 @@ INCLUDES = -I. \
+ 
+ default: depend $(TOP)/$(LIB_DIR)/$(GL_LIB_NAME)
+ 
++# Needed to truly hide symbols gcc treats as HIDDEN/INTERNAL but doesn't mark
++# as hidden in the ELF files properly.
++GL_LIB_DEPS += -Wl,-M,mapfile.scope
++
+ # Make libGL
+ $(TOP)/$(LIB_DIR)/$(GL_LIB_NAME):  $(OBJECTS) Makefile
+ 	$(MKLIB) -o $(GL_LIB) -linker '$(CC)' -ldflags '$(LDFLAGS)' \
+diff -urp -x '*~' -x '*.orig' src/mesa/drivers/dri/Makefile.template src/mesa/drivers/dri/Makefile.template
+--- src/mesa/drivers/dri/Makefile.template	2009-03-12 20:28:49.000000000 -0700
++++ src/mesa/drivers/dri/Makefile.template	2009-03-31 09:12:45.628778000 -0700
+@@ -1,5 +1,10 @@
+ # -*-makefile-*-
+ 
++# Needed to specify symbols which are allowed to be undefined when
++# linking DRI modules with -z defs
++DRI_LIB_DEPS += -Wl,-M,$(TOP)/src/mesa/drivers/dri/mapfile.externs
++
++
+ MESA_MODULES = $(TOP)/src/mesa/libmesa.a
+ 
+ COMMON_SOURCES = \
+diff -urp -x '*~' -x '*.orig' src/mesa/drivers/dri/common/dri_util.h src/mesa/drivers/dri/common/dri_util.h
+--- src/mesa/drivers/dri/common/dri_util.h	2009-03-12 20:28:49.000000000 -0700
++++ src/mesa/drivers/dri/common/dri_util.h	2009-03-31 09:12:45.637799000 -0700
+@@ -59,6 +59,10 @@
+ 
+ #define GLX_BAD_CONTEXT                    5
+ 
++#define u_int64_t uint64_t
++#define u_int32_t uint32_t
++#define u_int8_t uint8_t
++
+ typedef struct __DRIswapInfoRec        __DRIswapInfo;
+ 
+ /* Typedefs to avoid rewriting the world. */
+diff -urp -x '*~' -x '*.orig' src/mesa/drivers/dri/common/mmio.h src/mesa/drivers/dri/common/mmio.h
+--- src/mesa/drivers/dri/common/mmio.h	2009-01-22 09:38:33.000000000 -0800
++++ src/mesa/drivers/dri/common/mmio.h	2009-03-31 09:12:45.639560000 -0700
+@@ -34,6 +34,7 @@
+ #define MMIO_H
+ 
+ #include "main/glheader.h"
++#include "dri_util.h"
+ 
+ #if defined( __powerpc__ )
+ 
+diff -urp -x '*~' -x '*.orig' src/mesa/drivers/dri/i915/intel_tris.c src/mesa/drivers/dri/i915/intel_tris.c
+--- src/mesa/drivers/dri/i915/intel_tris.c	2009-03-17 07:48:46.000000000 -0700
++++ src/mesa/drivers/dri/i915/intel_tris.c	2009-03-31 09:12:45.639052000 -0700
+@@ -329,7 +329,7 @@ void intel_finish_vb(struct intel_contex
+  *                    Emit primitives as inline vertices               *
+  ***********************************************************************/
+ 
+-#ifdef __i386__
++#if (defined(i386) || defined(__i386__)) && !(defined(__SOLARIS__) || defined(sun))
+ #define COPY_DWORDS( j, vb, vertsize, v )			\
+ do {								\
+    int __tmp;							\
+diff -urp -x '*~' -x '*.orig' src/mesa/drivers/dri/i965/brw_draw_upload.c src/mesa/drivers/dri/i965/brw_draw_upload.c
+--- src/mesa/drivers/dri/i965/brw_draw_upload.c	2009-03-12 20:28:49.000000000 -0700
++++ src/mesa/drivers/dri/i965/brw_draw_upload.c	2009-03-31 09:12:45.643357000 -0700
+@@ -26,6 +26,7 @@
+  **************************************************************************/
+ 
+ #include <stdlib.h>
++#include <string.h>
+ 
+ #include "main/glheader.h"
+ #include "main/context.h"
+@@ -155,6 +156,23 @@ static GLuint byte_types_scale[5] = {
+    BRW_SURFACEFORMAT_R8G8B8A8_SSCALED
+ };
+ 
++#if defined (sun)
++/* Solaris does not have ffsll in libc */
++#define        NBITS_INT       (CHAR_BIT * sizeof (int))
++static int ffsll(long long i)
++{
++	int i1;
++	int ret;
++
++	i1 = i & UINT_MAX;
++	ret = ffs(i1);
++	if (ret == 0) {
++		i1 = (i & 0xffffffff00000000) >> NBITS_INT;
++		ret = ffs(i1) + NBITS_INT;
++	}
++	return ret;
++}
++#endif
+ 
+ static GLuint get_surface_type( GLenum type, GLuint size, GLboolean normalized )
+ {
+diff -urp -x '*~' -x '*.orig' src/mesa/drivers/dri/intel/intel_context.c src/mesa/drivers/dri/intel/intel_context.c
+--- src/mesa/drivers/dri/intel/intel_context.c	2009-03-27 17:56:14.000000000 -0700
++++ src/mesa/drivers/dri/intel/intel_context.c	2009-03-31 09:12:45.630903000 -0700
+@@ -70,6 +70,11 @@
+ int INTEL_DEBUG = (0);
+ #endif
+ 
++#if defined(sun)
++extern void _sigoff(void);
++extern void _sigon(void);
++#endif
++
+ #define need_GL_ARB_multisample
+ #define need_GL_ARB_occlusion_query
+ #define need_GL_ARB_point_parameters
+@@ -993,6 +998,9 @@ void LOCK_HARDWARE( struct intel_context
+ 				    intel_fb->Base._ColorDrawBufferIndexes[0]);
+     }
+ 
++#if defined(sun)
++    _sigoff();
++#else
+     if (intel_rb && dPriv->vblFlags &&
+ 	!(dPriv->vblFlags & VBLANK_FLAG_NO_IRQ) &&
+ 	(intel_fb->vbl_waited - intel_rb->vbl_pending) > (1<<23)) {
+@@ -1008,6 +1016,7 @@ void LOCK_HARDWARE( struct intel_context
+ 	drmWaitVBlank(intel->driFd, &vbl);
+ 	intel_fb->vbl_waited = vbl.reply.sequence;
+     }
++#endif
+ 
+     if (!sPriv->dri2.enabled) {
+ 	DRM_CAS(intel->driHwLock, intel->hHWContext,
+@@ -1046,5 +1055,9 @@ void UNLOCK_HARDWARE( struct intel_conte
+     */
+    if (intel->batch->cliprect_mode == REFERENCES_CLIPRECTS)
+       intel_batchbuffer_flush(intel->batch);
++
++#if defined(sun)
++   _sigon();
++#endif
+ }
+ 
+diff -urp -x '*~' -x '*.orig' src/mesa/drivers/dri/intel/intel_context.h src/mesa/drivers/dri/intel/intel_context.h
+--- src/mesa/drivers/dri/intel/intel_context.h	2009-03-27 17:56:14.000000000 -0700
++++ src/mesa/drivers/dri/intel/intel_context.h	2009-03-31 09:12:45.655815000 -0700
+@@ -309,8 +309,12 @@
+ void LOCK_HARDWARE( struct intel_context *intel );
+ void UNLOCK_HARDWARE( struct intel_context *intel );
+ 
++#if defined(__sun)
++#    include <stdlib.h>
++#    define __progname getexecname()
++#else
+ extern char *__progname;
+-
++#endif
+ 
+ #define SUBPIXEL_X 0.125
+ #define SUBPIXEL_Y 0.125
+@@ -352,7 +352,7 @@ do {						\
+  * than COPY_DWORDS would:
+  * XXX Put this in src/mesa/main/imports.h ???
+  */
+-#if defined(i386) || defined(__i386__)
++#if (defined(i386) || defined(__i386__)) && !(defined(__SOLARIS__) || defined(sun))
+ static INLINE void * __memcpy(void * to, const void * from, size_t n)
+ {
+    int d0, d1, d2;
+diff -urp -x '*~' -x '*.orig' src/mesa/drivers/dri/intel/intel_screen.c src/mesa/drivers/dri/intel/intel_screen.c
+--- src/mesa/drivers/dri/intel/intel_screen.c	2009-03-17 07:48:46.000000000 -0700
++++ src/mesa/drivers/dri/intel/intel_screen.c	2009-03-31 09:12:45.636871000 -0700
+@@ -25,6 +25,8 @@
+  * 
+  **************************************************************************/
+ 
++#include <unistd.h>
++#include <signal.h>
+ #include "main/glheader.h"
+ #include "main/context.h"
+ #include "main/framebuffer.h"
+@@ -51,6 +53,15 @@
+ #include "intel_batchbuffer.h"
+ #include "intel_bufmgr.h"
+ 
++static void stop_handler(int sig)
++{
++       kill(getpid(), SIGSTOP);
++}
++static void exit_handler(int sig)
++{
++       _exit(1);
++}
++
+ PUBLIC const char __driConfigOptions[] =
+    DRI_CONF_BEGIN
+    DRI_CONF_SECTION_PERFORMANCE
+@@ -292,6 +303,12 @@ static GLboolean intelInitDriver(__DRIsc
+ 
+    sPriv->extensions = intelScreenExtensions;
+ 
++   (void) sigset(SIGTSTP, stop_handler);
++   (void) sigset(SIGTTIN, stop_handler);
++   (void) sigset(SIGTTOU, stop_handler);
++
++
++
+    return GL_TRUE;
+ }
+ 
+diff -urp -x '*~' -x '*.orig' src/mesa/drivers/dri/intel/server/i830_dri.h src/mesa/drivers/dri/intel/server/i830_dri.h
+--- src/mesa/drivers/dri/intel/server/i830_dri.h	2008-08-25 07:46:43.000000000 -0700
++++ src/mesa/drivers/dri/intel/server/i830_dri.h	2009-03-31 09:12:45.654900000 -0700
+@@ -21,16 +21,20 @@ typedef struct _I830DRIRec {
+    drm_handle_t unused2; /* backbuffer */
+ 
+    drmSize unused3; /* depthbufferSize */
++   drmSize pad0;
+    drm_handle_t unused4; /* depthbuffer */
+ 
+    drmSize unused5; /* rotatedSize */
++   drmSize pad1;
+    drm_handle_t unused6; /* rotatedbuffer */
+ 
+    drm_handle_t unused7; /* textures */
+    int unused8; /* textureSize */
++   drmSize pad2;
+ 
+    drm_handle_t unused9; /* agp_buffers */
+    drmSize unused10; /* agp_buf_size */
++   drmSize pad3;
+ 
+    int deviceID;
+    int width;
+diff -urp -x '*~' -x '*.orig' src/mesa/drivers/dri/radeon/server/radeon_dri.h src/mesa/drivers/dri/radeon/server/radeon_dri.h
+--- src/mesa/drivers/dri/radeon/server/radeon_dri.h	2009-01-22 09:38:33.000000000 -0800
++++ src/mesa/drivers/dri/radeon/server/radeon_dri.h	2009-03-31 09:12:45.642139000 -0700
+@@ -89,6 +89,7 @@ typedef struct {
+     /*@{*/
+     drm_handle_t     registerHandle; /**< \brief MMIO register map size */
+     drmSize       registerSize;   /**< \brief MMIO register map handle */
++    int      	  padding0;
+     /*@}*/
+ 
+     /**
+@@ -97,6 +98,7 @@ typedef struct {
+     /*@{*/
+     drm_handle_t     statusHandle;   /**< \brief status map handle */
+     drmSize       statusSize;     /**< \brief status map size */
++    int		  padding1;
+     /*@}*/
+ 
+     /**
+@@ -105,11 +107,13 @@ typedef struct {
+     /*@{*/
+     drm_handle_t     gartTexHandle;   /**< \brief AGP texture area map handle */
+     drmSize       gartTexMapSize;  /**< \brief AGP texture area map size */
++    int 	  padding2;
+     int           log2GARTTexGran; /**< \brief AGP texture granularity in log base 2 */
+     int           gartTexOffset;   /**< \brief AGP texture area offset in AGP space */
+     /*@}*/
+ 
+     unsigned int  sarea_priv_offset; /**< \brief offset of the private SAREA data*/
++    int		  padding3;
+ } RADEONDRIRec, *RADEONDRIPtr;
+ 
+ #endif

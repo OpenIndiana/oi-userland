@@ -1,0 +1,14 @@
+--- src/Makefile.am.~1~	2015-01-07 15:35:40.206830264 +0300
++++ src/Makefile.am	2015-01-07 15:37:15.333415471 +0300
+@@ -36,7 +36,10 @@
+ 
+ intel_drv_la_LTLIBRARIES = intel_drv.la
+ intel_drv_la_LDFLAGS = -module -avoid-version
+-intel_drv_ladir = @moduledir@/drivers
++
++tmp = @moduledir@/drivers
++drvdir = $(tmp:amd64/xorg/modules/drivers=xorg/modules/drivers/amd64)
++intel_drv_ladir = $(drvdir)
+ intel_drv_la_LIBADD = -lm @DRM_LIBS@ -ldrm_intel
+ intel_drv_la_LDFLAGS += -R $(moduledir) -R $(moduledir)/extensions
+ intel_drv_la_LIBADD += -lfb -lextmod -lshadowfb -lXfont \

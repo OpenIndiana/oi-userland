@@ -1,0 +1,32 @@
+# -*-makefile-*-
+# Configuration for Solaris SPARC 32-bit with Sun Studio  cc, dynamic libs
+
+include $(TOP)/configs/default
+
+CONFIG_NAME = solaris-sparcv8-cc
+
+# Compiler and flags
+CC = cc
+CXX = CC
+
+PIC_FLAGS = -KPIC
+
+X11_INCLUDES = -I /usr/X11/include
+
+DEFINES = -DUSE_XSHM -DPTHREADS -DUSE_EXTERNAL_DXTN_LIB=1 \
+        -DGLX_DIRECT_RENDERING -DNO_FAST_MATH -DSVR4
+
+CFLAGS = $(PASSED_CFLAGS) $(X11_INCLUDES) \
+        $(OPT_FLAGS) $(PIC_FLAGS) $(ARCH_FLAGS) $(DEFINES) $(ASM_FLAGS)
+
+CXXFLAGS = $(PASSED_CFLAGS) $(X11_INCLUDES) \
+	-Wall $(OPT_FLAGS) $(PIC_FLAGS) $(ARCH_FLAGS) $(DEFINES)
+
+
+EXTRA_LIB_PATH = -L/usr/X11/lib -R/usr/X11/lib
+
+APP_LIB_DEPS =  $(EXTRA_LIB_PATH) -lGLU -lGL -lX11 -lm
+
+INSTALL = /usr/ucb/install
+COPY_LIBS = cp -f
+

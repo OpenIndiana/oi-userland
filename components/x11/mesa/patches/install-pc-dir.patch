@@ -1,0 +1,109 @@
+[Modified to apply to 7.4.1 tarballs]
+
+From 854cf5fedb3c0dd5879083dd08d0389e419e312d Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@sun.com>
+Date: Sun, 10 May 2009 18:57:27 -0700
+Subject: [PATCH] Define INSTALL_PC_DIR for pkgconfig file installation path
+
+Give builders/packagers a single variable to override if needed
+
+Signed-off-by: Alan Coopersmith <alan.coopersmith@sun.com>
+---
+ configs/default               |    1 +
+ src/glu/Makefile              |    4 ++--
+ src/glut/glx/Makefile         |    4 ++--
+ src/glut/mini/Makefile        |    4 ++--
+ src/glw/Makefile              |    4 ++--
+ src/mesa/Makefile             |    8 ++++----
+ src/mesa/drivers/dri/Makefile |    4 ++--
+ 7 files changed, 15 insertions(+), 14 deletions(-)
+
+diff --git a/configs/default b/configs/default
+index 9c479fc..474abd6 100644
+--- configs/default
++++ configs/default
+@@ -117,6 +117,7 @@ APP_LIB_DEPS = -lm
+ INSTALL_DIR = /usr/local
+ INSTALL_LIB_DIR = $(INSTALL_DIR)/$(LIB_DIR)
+ INSTALL_INC_DIR = $(INSTALL_DIR)/include
++INSTALL_PC_DIR = $(INSTALL_LIB_DIR)/pkgconfig
+ DRI_DRIVER_INSTALL_DIR = $(INSTALL_LIB_DIR)/dri
+ 
+ # Where libGL will look for DRI hardware drivers
+diff --git a/src/glu/Makefile b/src/glu/Makefile
+index 5c26ead..15bb467 100644
+--- src/glu/Makefile
++++ src/glu/Makefile
+@@ -29,9 +29,9 @@ glu.pc: glu.pc.in
+ 
+ install: glu.pc
+ 	$(INSTALL) -d $(DESTDIR)$(INSTALL_LIB_DIR)
+-	$(INSTALL) -d $(DESTDIR)$(INSTALL_LIB_DIR)/pkgconfig
++	$(INSTALL) -d $(DESTDIR)$(INSTALL_PC_DIR)
+ 	$(INSTALL) $(TOP)/$(LIB_DIR)/$(GLU_LIB_GLOB) $(DESTDIR)$(INSTALL_LIB_DIR)
+-	$(INSTALL) -m 644 glu.pc $(DESTDIR)$(INSTALL_LIB_DIR)/pkgconfig
++	$(INSTALL) -m 644 glu.pc $(DESTDIR)$(INSTALL_PC_DIR)
+ 
+ clean:
+ 	-@for dir in $(SUBDIRS) ; do \
+diff --git a/src/glw/Makefile b/src/glw/Makefile
+index d88d773..34517f1 100644
+--- src/glw/Makefile
++++ src/glw/Makefile
+@@ -41,10 +41,10 @@ glw.pc: glw.pc.in
+ install: glw.pc
+ 	$(INSTALL) -d $(DESTDIR)$(INSTALL_INC_DIR)/GL
+ 	$(INSTALL) -d $(DESTDIR)$(INSTALL_LIB_DIR)
+-	$(INSTALL) -d $(DESTDIR)$(INSTALL_LIB_DIR)/pkgconfig
++	$(INSTALL) -d $(DESTDIR)$(INSTALL_PC_DIR)
+ 	$(INSTALL) -m 644 *.h $(DESTDIR)$(INSTALL_INC_DIR)/GL
+ 	$(INSTALL) $(TOP)/$(LIB_DIR)/$(GLW_LIB_GLOB) $(DESTDIR)$(INSTALL_LIB_DIR)
+-	$(INSTALL) -m 644 glw.pc $(DESTDIR)$(INSTALL_LIB_DIR)/pkgconfig
++	$(INSTALL) -m 644 glw.pc $(DESTDIR)$(INSTALL_PC_DIR)
+ 
+ clean:
+ 	-rm -f depend depend.bak
+diff --git a/src/mesa/Makefile b/src/mesa/Makefile
+index bb18bee..49b1504 100644
+--- src/mesa/Makefile
++++ src/mesa/Makefile
+@@ -128,17 +128,17 @@ install-headers:
+ 
+ install-libgl: default gl.pc install-headers
+ 	$(INSTALL) -d $(DESTDIR)$(INSTALL_LIB_DIR)
+-	$(INSTALL) -d $(DESTDIR)$(INSTALL_LIB_DIR)/pkgconfig
++	$(INSTALL) -d $(DESTDIR)$(INSTALL_PC_DIR)
+ 	$(INSTALL) $(TOP)/$(LIB_DIR)/$(GL_LIB_GLOB) \
+ 		$(DESTDIR)$(INSTALL_LIB_DIR)
+-	$(INSTALL) -m 644 gl.pc $(DESTDIR)$(INSTALL_LIB_DIR)/pkgconfig
++	$(INSTALL) -m 644 gl.pc $(DESTDIR)$(INSTALL_PC_DIR)
+ 
+ install-osmesa: default osmesa.pc
+ 	$(INSTALL) -d $(DESTDIR)$(INSTALL_LIB_DIR)
+-	$(INSTALL) -d $(DESTDIR)$(INSTALL_LIB_DIR)/pkgconfig
++	$(INSTALL) -d $(DESTDIR)$(INSTALL_PC_DIR)
+ 	$(INSTALL) $(TOP)/$(LIB_DIR)/$(OSMESA_LIB_GLOB) \
+ 		$(DESTDIR)$(INSTALL_LIB_DIR)
+-	$(INSTALL) -m 644 osmesa.pc $(DESTDIR)$(INSTALL_LIB_DIR)/pkgconfig
++	$(INSTALL) -m 644 osmesa.pc $(DESTDIR)$(INSTALL_PC_DIR)
+ 
+ install-dri: default
+ 	cd drivers/dri && $(MAKE) install
+diff --git a/src/mesa/drivers/dri/Makefile b/src/mesa/drivers/dri/Makefile
+index 32db097..e38c59a 100644
+--- src/mesa/drivers/dri/Makefile
++++ src/mesa/drivers/dri/Makefile
+@@ -41,8 +41,8 @@ install: dri.pc
+ 	$(INSTALL) -d $(DESTDIR)$(INSTALL_INC_DIR)/GL/internal
+ 	$(INSTALL) -m 0644 $(TOP)/include/GL/internal/dri_interface.h \
+ 	  $(DESTDIR)$(INSTALL_INC_DIR)/GL/internal
+-	$(INSTALL) -d $(DESTDIR)$(INSTALL_LIB_DIR)/pkgconfig
+-	$(INSTALL) -m 0644 dri.pc $(DESTDIR)$(INSTALL_LIB_DIR)/pkgconfig
++	$(INSTALL) -d $(DESTDIR)$(INSTALL_PC_DIR)
++	$(INSTALL) -m 0644 dri.pc $(DESTDIR)$(INSTALL_PC_DIR)
+ 
+ 
+ clean:
+-- 
+1.5.6.5
+

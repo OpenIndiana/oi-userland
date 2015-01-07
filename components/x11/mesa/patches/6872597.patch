@@ -1,0 +1,2280 @@
+--- src/mesa/drivers/dri/i965/brw_clip.c	2009-09-01 14:49:51.029003304 +0800
++++ src/mesa/drivers/dri/i965/brw_clip.c	2009-09-01 15:42:30.765873138 +0800
+@@ -65,21 +65,31 @@ static void compile_clip_prog( struct br
+    c.func.single_program_flow = 1;
+ 
+    c.key = *key;
+-
++   c.need_ff_sync = BRW_IS_IGDNG(brw);
+ 
+    /* Need to locate the two positions present in vertex + header.
+     * These are currently hardcoded:
+     */
+    c.header_position_offset = ATTR_SIZE;
+ 
+-   for (i = 0, delta = REG_SIZE; i < VERT_RESULT_MAX; i++)
++   if (BRW_IS_IGDNG(brw))
++       delta = 3 * REG_SIZE;
++   else
++       delta = REG_SIZE;
++
++   for (i = 0; i < VERT_RESULT_MAX; i++)
+       if (c.key.attrs & (1<<i)) {
+ 	 c.offset[i] = delta;
+ 	 delta += ATTR_SIZE;
+       }
+ 
+    c.nr_attrs = brw_count_bits(c.key.attrs);
+-   c.nr_regs = (c.nr_attrs + 1) / 2 + 1;  /* are vertices packed, or reg-aligned? */
++   
++   if (BRW_IS_IGDNG(brw))
++       c.nr_regs = (c.nr_attrs + 1) / 2 + 3;  /* are vertices packed, or reg-aligned? */
++   else
++       c.nr_regs = (c.nr_attrs + 1) / 2 + 1;  /* are vertices packed, or reg-aligned? */
++
+    c.nr_bytes = c.nr_regs * REG_SIZE;
+ 
+    c.prog_data.clip_mode = c.key.clip_mode; /* XXX */
+@@ -148,7 +158,11 @@ static void upload_clip_prog(struct brw_
+    key.do_flat_shading = (ctx->Light.ShadeModel == GL_FLAT);
+    /* _NEW_TRANSFORM */
+    key.nr_userclip = brw_count_bits(ctx->Transform.ClipPlanesEnabled);
+-   key.clip_mode = BRW_CLIPMODE_NORMAL;
++
++   if (BRW_IS_IGDNG(brw))
++       key.clip_mode = BRW_CLIPMODE_KERNEL_CLIP;
++   else
++       key.clip_mode = BRW_CLIPMODE_NORMAL;
+ 
+    /* _NEW_POLYGON */
+    if (key.primitive == GL_TRIANGLES) {
+--- src/mesa/drivers/dri/i965/brw_clip.h	2009-09-01 14:49:51.029823476 +0800
++++ src/mesa/drivers/dri/i965/brw_clip.h	2009-09-01 15:42:30.766418766 +0800
+@@ -117,6 +117,7 @@ struct brw_clip_compile {
+ 
+    GLuint header_position_offset;
+    GLuint offset[VERT_ATTRIB_MAX];
++   GLboolean need_ff_sync;
+ };
+ 
+ #define ATTR_SIZE  (4*4)
+@@ -171,5 +172,5 @@ struct brw_reg get_tmp( struct brw_clip_
+ 
+ void brw_clip_project_position(struct brw_clip_compile *c,
+              struct brw_reg pos );
+-
++void brw_clip_ff_sync(struct brw_clip_compile *c);
+ #endif
+--- src/mesa/drivers/dri/i965/brw_clip_line.c	2009-09-01 14:49:51.030931767 +0800
++++ src/mesa/drivers/dri/i965/brw_clip_line.c	2009-09-01 15:42:30.767254247 +0800
+@@ -130,7 +130,7 @@ static void clip_and_emit_line( struct b
+    struct brw_instruction *plane_loop;
+    struct brw_instruction *plane_active;
+    struct brw_instruction *is_negative;
+-   struct brw_instruction *is_neg2;
++   struct brw_instruction *is_neg2 = NULL;
+    struct brw_instruction *not_culled;
+    struct brw_reg v1_null_ud = retype(vec1(brw_null_reg()), BRW_REGISTER_TYPE_UD);
+ 
+@@ -148,7 +148,7 @@ static void clip_and_emit_line( struct b
+    brw_clip_init_clipmask(c);
+ 
+    /* -ve rhw workaround */
+-   if (!BRW_IS_G4X(p->brw)) {
++   if (BRW_IS_965(p->brw)) {
+       brw_set_conditionalmod(p, BRW_CONDITIONAL_NZ);
+       brw_AND(p, brw_null_reg(), get_element_ud(c->reg.R0, 2),
+               brw_imm_ud(1<<20));
+@@ -185,7 +185,7 @@ static void clip_and_emit_line( struct b
+               * Both can be negative on GM965/G965 due to RHW workaround
+               * if so, this object should be rejected.
+               */
+-             if (!BRW_IS_G4X(p->brw)) {
++             if (BRW_IS_965(p->brw)) {
+                  brw_CMP(p, vec1(brw_null_reg()), BRW_CONDITIONAL_LE, c->reg.dp0, brw_imm_f(0.0));
+                  is_neg2 = brw_IF(p, BRW_EXECUTE_1);
+                  {
+@@ -210,7 +210,7 @@ static void clip_and_emit_line( struct b
+ 
+              /* If both are positive, do nothing */
+              /* Only on GM965/G965 */
+-             if (!BRW_IS_G4X(p->brw)) {
++             if (BRW_IS_965(p->brw)) {
+                  brw_CMP(p, vec1(brw_null_reg()), BRW_CONDITIONAL_L, c->reg.dp0, brw_imm_f(0.0));
+                  is_neg2 = brw_IF(p, BRW_EXECUTE_1);
+              }
+@@ -225,7 +225,7 @@ static void clip_and_emit_line( struct b
+                  brw_set_predicate_control(p, BRW_PREDICATE_NONE);
+              }
+ 
+-             if (!BRW_IS_G4X(p->brw)) {
++             if (BRW_IS_965(p->brw)) {
+                  brw_ENDIF(p, is_neg2);
+              }
+          }
+@@ -246,6 +246,8 @@ static void clip_and_emit_line( struct b
+ 
+    brw_ADD(p, c->reg.t, c->reg.t0, c->reg.t1);
+    brw_CMP(p, vec1(brw_null_reg()), BRW_CONDITIONAL_L, c->reg.t, brw_imm_f(1.0));
++   if (c->need_ff_sync)
++	   brw_clip_ff_sync(c);      
+    not_culled = brw_IF(p, BRW_EXECUTE_1);
+    {
+       brw_clip_interp_vertex(c, newvtx0, vtx0, vtx1, c->reg.t0, GL_FALSE);
+--- src/mesa/drivers/dri/i965/brw_clip_point.c	2009-09-01 14:49:51.034187520 +0800
++++ src/mesa/drivers/dri/i965/brw_clip_point.c	2009-09-01 15:42:30.767692593 +0800
+@@ -50,5 +50,7 @@ void brw_emit_point_clip( struct brw_cli
+    /* Send an empty message to kill the thread:
+     */
+    brw_clip_tri_alloc_regs(c, 0);
++   if (c->need_ff_sync)
++	   brw_clip_ff_sync(c);      
+    brw_clip_kill_thread(c);
+ }
+--- src/mesa/drivers/dri/i965/brw_clip_state.c	2009-09-01 14:49:51.034887251 +0800
++++ src/mesa/drivers/dri/i965/brw_clip_state.c	2009-09-01 15:42:30.768155611 +0800
+@@ -95,7 +95,14 @@ clip_unit_create_from_key(struct brw_con
+        * even number.
+        */
+       assert(key->nr_urb_entries % 2 == 0);
+-      clip.thread4.max_threads = 2 - 1;
++      
++      /* Although up to 16 concurrent Clip threads are allowed on IGDNG, 
++       * only 2 threads can output VUEs at a time.
++       */
++      if (BRW_IS_IGDNG(brw))
++         clip.thread4.max_threads = 16 - 1;        
++      else
++         clip.thread4.max_threads = 2 - 1;
+    } else {
+       assert(key->nr_urb_entries >= 5);
+       clip.thread4.max_threads = 1 - 1;
+--- src/mesa/drivers/dri/i965/brw_clip_tri.c	2009-09-01 14:49:51.041443020 +0800
++++ src/mesa/drivers/dri/i965/brw_clip_tri.c	2009-09-01 15:42:30.769713572 +0800
+@@ -77,6 +77,10 @@ void brw_clip_tri_alloc_regs( struct brw
+    if (c->nr_attrs & 1) {
+       for (j = 0; j < 3; j++) {
+ 	 GLuint delta = c->nr_attrs*16 + 32;
++
++         if (BRW_IS_IGDNG(c->func.brw))
++             delta = c->nr_attrs * 16 + 32 * 3;
++
+ 	 brw_MOV(&c->func, byte_offset(c->reg.vertex[j], delta), brw_imm_f(0));
+       }
+    }
+@@ -562,7 +566,7 @@ void brw_emit_tri_clip( struct brw_clip_
+ 
+    /* if -ve rhw workaround bit is set, 
+       do cliptest */
+-   if (!BRW_IS_G4X(p->brw)) {
++   if (BRW_IS_965(p->brw)) {
+       brw_set_conditionalmod(p, BRW_CONDITIONAL_NZ);
+       brw_AND(p, brw_null_reg(), get_element_ud(c->reg.R0, 2), 
+               brw_imm_ud(1<<20));
+@@ -579,11 +583,14 @@ void brw_emit_tri_clip( struct brw_clip_
+    if (c->key.do_flat_shading) 
+       brw_clip_tri_flat_shade(c); 
+       
+-   if (c->key.clip_mode == BRW_CLIPMODE_NORMAL)
++   if ((c->key.clip_mode == BRW_CLIPMODE_NORMAL) ||
++       (c->key.clip_mode == BRW_CLIPMODE_KERNEL_CLIP))
+       do_clip_tri(c);
+    else 
+       maybe_do_clip_tri(c);
+-      
++
++   if (c->need_ff_sync)
++	   brw_clip_ff_sync(c);      
+    brw_clip_tri_emit_polygon(c);
+ 
+    /* Send an empty message to kill the thread:
+--- src/mesa/drivers/dri/i965/brw_clip_unfilled.c	2009-09-01 14:49:51.042586623 +0800
++++ src/mesa/drivers/dri/i965/brw_clip_unfilled.c	2009-09-01 15:42:30.770657542 +0800
+@@ -496,6 +496,8 @@ void brw_emit_unfilled_clip( struct brw_
+    }
+    brw_ENDIF(p, do_clip);
+    
++   if (c->need_ff_sync)
++	   brw_clip_ff_sync(c);      
+    emit_unfilled_primitives(c);
+    brw_clip_kill_thread(c);
+ }
+--- src/mesa/drivers/dri/i965/brw_clip_util.c	2009-09-01 14:49:51.044036587 +0800
++++ src/mesa/drivers/dri/i965/brw_clip_util.c	2009-09-01 15:42:30.771483207 +0800
+@@ -140,6 +140,10 @@ void brw_clip_interp_vertex( struct brw_
+ 
+    /* Just copy the vertex header:
+     */
++   /*
++    * After CLIP stage, only first 256 bits of the VUE are read
++    * back on IGDNG, so needn't change it
++    */
+    brw_copy_indirect_to_indirect(p, dest_ptr, v0_ptr, 1);
+       
+    /* Iterate over each attribute (could be done in pairs?)
+@@ -147,6 +151,9 @@ void brw_clip_interp_vertex( struct brw_
+    for (i = 0; i < c->nr_attrs; i++) {
+       GLuint delta = i*16 + 32;
+ 
++      if (BRW_IS_IGDNG(p->brw))
++          delta = i * 16 + 32 * 3;
++
+       if (delta == c->offset[VERT_RESULT_EDGE]) {
+ 	 if (force_edgeflag) 
+ 	    brw_MOV(p, deref_4f(dest_ptr, delta), brw_imm_f(1));
+@@ -177,6 +184,10 @@ void brw_clip_interp_vertex( struct brw_
+ 
+    if (i & 1) {
+       GLuint delta = i*16 + 32;
++
++      if (BRW_IS_IGDNG(p->brw))
++          delta = i * 16 + 32 * 3;
++
+       brw_MOV(p, deref_4f(dest_ptr, delta), brw_imm_f(0));
+    }
+ 
+@@ -343,3 +354,19 @@ void brw_clip_init_clipmask( struct brw_
+    }
+ }
+ 
++void brw_clip_ff_sync(struct brw_clip_compile *c)
++{
++	struct brw_compile *p = &c->func;
++	brw_ff_sync(p, 
++				c->reg.R0,
++				0,
++				c->reg.R0,
++				1,	
++				1,		/* used */
++				1,  	/* msg length */
++				1,		/* response length */
++				0,		/* eot */
++				1,		/* write compelete */
++				0,		/* urb offset */
++				BRW_URB_SWIZZLE_NONE);
++}
+--- src/mesa/drivers/dri/i965/brw_defines.h	2009-09-01 14:49:51.053292209 +0800
++++ src/mesa/drivers/dri/i965/brw_defines.h	2009-09-01 15:42:30.772512151 +0800
+@@ -139,6 +139,7 @@
+ #define BRW_CLIPMODE_CLIP_NON_REJECTED   2
+ #define BRW_CLIPMODE_REJECT_ALL          3
+ #define BRW_CLIPMODE_ACCEPT_ALL          4
++#define BRW_CLIPMODE_KERNEL_CLIP         5
+ 
+ #define BRW_CLIP_NDCSPACE     0
+ #define BRW_CLIP_SCREENSPACE  1
+@@ -650,6 +651,25 @@
+ #define BRW_SAMPLER_MESSAGE_SIMD8_LD                  3
+ #define BRW_SAMPLER_MESSAGE_SIMD16_LD                 3
+ 
++#define BRW_SAMPLER_MESSAGE_SIMD8_SAMPLE_IGDNG            0
++#define BRW_SAMPLER_MESSAGE_SIMD4X2_SAMPLE_IGDNG          0
++#define BRW_SAMPLER_MESSAGE_SIMD16_SAMPLE_IGDNG           0
++#define BRW_SAMPLER_MESSAGE_SIMD8_SAMPLE_BIAS_IGDNG       1
++#define BRW_SAMPLER_MESSAGE_SIMD4X2_SAMPLE_BIAS_IGDNG     1
++#define BRW_SAMPLER_MESSAGE_SIMD16_SAMPLE_BIAS_IGDNG      1
++#define BRW_SAMPLER_MESSAGE_SIMD8_SAMPLE_LOD_IGDNG        2
++#define BRW_SAMPLER_MESSAGE_SIMD4X2_SAMPLE_LOD_IGDNG      2
++#define BRW_SAMPLER_MESSAGE_SIMD16_SAMPLE_LOD_IGDNG       2
++#define BRW_SAMPLER_MESSAGE_SIMD8_SAMPLE_COMPARE_IGDNG    3
++#define BRW_SAMPLER_MESSAGE_SIMD4X2_SAMPLE_COMPARE_IGDNG  3
++#define BRW_SAMPLER_MESSAGE_SIMD16_SAMPLE_COMPARE_IGDNG   3
++
++/* for IGDNG only */
++#define BRW_SAMPLER_SIMD_MODE_SIMD4X2                   0
++#define BRW_SAMPLER_SIMD_MODE_SIMD8                     1
++#define BRW_SAMPLER_SIMD_MODE_SIMD16                    2
++#define BRW_SAMPLER_SIMD_MODE_SIMD32_64                 3
++
+ #define BRW_DATAPORT_OWORD_BLOCK_1_OWORDLOW   0
+ #define BRW_DATAPORT_OWORD_BLOCK_1_OWORDHIGH  1
+ #define BRW_DATAPORT_OWORD_BLOCK_2_OWORDS     2
+@@ -799,8 +819,11 @@
+ #include "intel_chipset.h"
+ 
+ #define BRW_IS_G4X(brw)         (IS_G4X((brw)->intel.intelScreen->deviceID))
+-#define CMD_PIPELINE_SELECT(brw)        (BRW_IS_G4X(brw) ? CMD_PIPELINE_SELECT_GM45 : CMD_PIPELINE_SELECT_965)
+-#define CMD_VF_STATISTICS(brw)          (BRW_IS_G4X(brw) ? CMD_VF_STATISTICS_GM45 : CMD_VF_STATISTICS_965)
+-#define URB_SIZES(brw)                  (BRW_IS_G4X(brw) ? 384 : 256)  /* 512 bit units */
++#define BRW_IS_IGDNG(brw)         (IS_IGDNG((brw)->intel.intelScreen->deviceID))
++#define BRW_IS_965(brw)         (!(BRW_IS_G4X(brw) || BRW_IS_IGDNG(brw)))
++#define CMD_PIPELINE_SELECT(brw)        ((BRW_IS_G4X(brw) || BRW_IS_IGDNG(brw)) ? CMD_PIPELINE_SELECT_GM45 : CMD_PIPELINE_SELECT_965)
++#define CMD_VF_STATISTICS(brw)          ((BRW_IS_G4X(brw) || BRW_IS_IGDNG(brw)) ? CMD_VF_STATISTICS_GM45 : CMD_VF_STATISTICS_965)
++#define URB_SIZES(brw)                  (BRW_IS_IGDNG(brw) ? 1024 : \
++                                         (BRW_IS_G4X(brw) ? 384 : 256))  /* 512 bit units */
+ 
+ #endif
+--- src/mesa/drivers/dri/i965/brw_draw_upload.c	2009-09-01 14:49:51.054326255 +0800
++++ src/mesa/drivers/dri/i965/brw_draw_upload.c	2009-09-01 15:42:30.773291722 +0800
+@@ -491,7 +491,19 @@ static void brw_emit_vertices(struct brw
+       OUT_RELOC(input->bo,
+ 		I915_GEM_DOMAIN_VERTEX, 0,
+ 		input->offset);
+-      OUT_BATCH(brw->vb.max_index);
++      if (BRW_IS_IGDNG(brw)) {
++          if (input->stride) {
++              OUT_RELOC(input->bo,
++                        I915_GEM_DOMAIN_VERTEX, 0,
++                        input->offset + input->stride * input->count);
++          } else {
++              assert(input->count == 1);
++              OUT_RELOC(input->bo,
++                        I915_GEM_DOMAIN_VERTEX, 0,
++                        input->offset + input->element_size);
++          }
++      } else
++          OUT_BATCH(brw->vb.max_index);
+       OUT_BATCH(0); /* Instance data step rate */
+    }
+    ADVANCE_BATCH();
+@@ -520,11 +532,18 @@ static void brw_emit_vertices(struct brw
+ 		BRW_VE0_VALID |
+ 		(format << BRW_VE0_FORMAT_SHIFT) |
+ 		(0 << BRW_VE0_SRC_OFFSET_SHIFT));
+-      OUT_BATCH((comp0 << BRW_VE1_COMPONENT_0_SHIFT) |
+-		(comp1 << BRW_VE1_COMPONENT_1_SHIFT) |
+-		(comp2 << BRW_VE1_COMPONENT_2_SHIFT) |
+-		(comp3 << BRW_VE1_COMPONENT_3_SHIFT) |
+-		((i * 4) << BRW_VE1_DST_OFFSET_SHIFT));
++
++      if (BRW_IS_IGDNG(brw))
++          OUT_BATCH((comp0 << BRW_VE1_COMPONENT_0_SHIFT) |
++                    (comp1 << BRW_VE1_COMPONENT_1_SHIFT) |
++                    (comp2 << BRW_VE1_COMPONENT_2_SHIFT) |
++                    (comp3 << BRW_VE1_COMPONENT_3_SHIFT));
++      else
++          OUT_BATCH((comp0 << BRW_VE1_COMPONENT_0_SHIFT) |
++                    (comp1 << BRW_VE1_COMPONENT_1_SHIFT) |
++                    (comp2 << BRW_VE1_COMPONENT_2_SHIFT) |
++                    (comp3 << BRW_VE1_COMPONENT_3_SHIFT) |
++                    ((i * 4) << BRW_VE1_DST_OFFSET_SHIFT));
+    }
+    ADVANCE_BATCH();
+ }
+--- src/mesa/drivers/dri/i965/brw_eu.h	2009-09-01 14:49:51.063253137 +0800
++++ src/mesa/drivers/dri/i965/brw_eu.h	2009-09-01 15:42:30.774060916 +0800
+@@ -801,6 +801,19 @@ void brw_urb_WRITE(struct brw_compile *p
+ 		   GLuint offset,
+ 		   GLuint swizzle);
+ 
++void brw_ff_sync(struct brw_compile *p,
++		   struct brw_reg dest,
++		   GLuint msg_reg_nr,
++		   struct brw_reg src0,
++		   GLboolean allocate,
++		   GLboolean used,
++		   GLuint msg_length,
++		   GLuint response_length,
++		   GLboolean eot,
++		   GLboolean writes_complete,
++		   GLuint offset,
++		   GLuint swizzle);
++
+ void brw_fb_WRITE(struct brw_compile *p,
+ 		   struct brw_reg dest,
+ 		   GLuint msg_reg_nr,
+@@ -820,7 +833,9 @@ void brw_SAMPLE(struct brw_compile *p,
+ 		GLuint msg_type,
+ 		GLuint response_length,
+ 		GLuint msg_length,
+-		GLboolean eot);
++		GLboolean eot,
++		GLuint header_present,
++		GLuint simd_mode);
+ 
+ void brw_math_16( struct brw_compile *p,
+ 		  struct brw_reg dest,
+--- src/mesa/drivers/dri/i965/brw_eu_emit.c	2009-09-01 14:49:55.007896861 +0800
++++ src/mesa/drivers/dri/i965/brw_eu_emit.c	2009-09-01 16:09:13.529977045 +0800
+@@ -233,7 +233,8 @@ void brw_set_src1( struct brw_instructio
+ 
+ 
+ 
+-static void brw_set_math_message( struct brw_instruction *insn,
++static void brw_set_math_message( struct brw_context *brw,
++				  struct brw_instruction *insn,
+ 				  GLuint msg_length,
+ 				  GLuint response_length,
+ 				  GLuint function,
+@@ -244,18 +245,35 @@ static void brw_set_math_message( struct
+ {
+    brw_set_src1(insn, brw_imm_d(0));
+ 
+-   insn->bits3.math.function = function;
+-   insn->bits3.math.int_type = integer_type;
+-   insn->bits3.math.precision = low_precision;
+-   insn->bits3.math.saturate = saturate;
+-   insn->bits3.math.data_type = dataType;
+-   insn->bits3.math.response_length = response_length;
+-   insn->bits3.math.msg_length = msg_length;
+-   insn->bits3.math.msg_target = BRW_MESSAGE_TARGET_MATH;
+-   insn->bits3.math.end_of_thread = 0;
++   if (BRW_IS_IGDNG(brw)) {
++       insn->bits3.math_igdng.function = function;
++       insn->bits3.math_igdng.int_type = integer_type;
++       insn->bits3.math_igdng.precision = low_precision;
++       insn->bits3.math_igdng.saturate = saturate;
++       insn->bits3.math_igdng.data_type = dataType;
++       insn->bits3.math_igdng.snapshot = 0;
++       insn->bits3.math_igdng.header_present = 0;
++       insn->bits3.math_igdng.response_length = response_length;
++       insn->bits3.math_igdng.msg_length = msg_length;
++       insn->bits3.math_igdng.end_of_thread = 0;
++       insn->bits2.send_igdng.sfid = BRW_MESSAGE_TARGET_MATH;
++       insn->bits2.send_igdng.end_of_thread = 0;
++   } else {
++       insn->bits3.math.function = function;
++       insn->bits3.math.int_type = integer_type;
++       insn->bits3.math.precision = low_precision;
++       insn->bits3.math.saturate = saturate;
++       insn->bits3.math.data_type = dataType;
++       insn->bits3.math.response_length = response_length;
++       insn->bits3.math.msg_length = msg_length;
++       insn->bits3.math.msg_target = BRW_MESSAGE_TARGET_MATH;
++       insn->bits3.math.end_of_thread = 0;
++   }
+ }
+ 
+-static void brw_set_urb_message( struct brw_instruction *insn,
++
++static void brw_set_ff_sync_message( struct brw_context *brw,
++				 struct brw_instruction *insn,
+ 				 GLboolean allocate,
+ 				 GLboolean used,
+ 				 GLuint msg_length,
+@@ -265,21 +283,64 @@ static void brw_set_urb_message( struct 
+ 				 GLuint offset,
+ 				 GLuint swizzle_control )
+ {
+-   brw_set_src1(insn, brw_imm_d(0));
++	brw_set_src1(insn, brw_imm_d(0));
++
++	insn->bits3.urb_igdng.opcode = 1;
++	insn->bits3.urb_igdng.offset = offset;
++	insn->bits3.urb_igdng.swizzle_control = swizzle_control;
++	insn->bits3.urb_igdng.allocate = allocate;
++	insn->bits3.urb_igdng.used = used;
++	insn->bits3.urb_igdng.complete = complete;
++	insn->bits3.urb_igdng.header_present = 1;
++	insn->bits3.urb_igdng.response_length = response_length;
++	insn->bits3.urb_igdng.msg_length = msg_length;
++	insn->bits3.urb_igdng.end_of_thread = end_of_thread;
++	insn->bits2.send_igdng.sfid = BRW_MESSAGE_TARGET_URB;
++	insn->bits2.send_igdng.end_of_thread = end_of_thread;
++}
++
++static void brw_set_urb_message( struct brw_context *brw,
++				 struct brw_instruction *insn,
++				 GLboolean allocate,
++				 GLboolean used,
++				 GLuint msg_length,
++				 GLuint response_length,
++				 GLboolean end_of_thread,
++				 GLboolean complete,
++				 GLuint offset,
++				 GLuint swizzle_control )
++{
++    brw_set_src1(insn, brw_imm_d(0));
+ 
+-   insn->bits3.urb.opcode = 0;	/* ? */
+-   insn->bits3.urb.offset = offset;
+-   insn->bits3.urb.swizzle_control = swizzle_control;
+-   insn->bits3.urb.allocate = allocate;
+-   insn->bits3.urb.used = used;	/* ? */
+-   insn->bits3.urb.complete = complete;
+-   insn->bits3.urb.response_length = response_length;
+-   insn->bits3.urb.msg_length = msg_length;
+-   insn->bits3.urb.msg_target = BRW_MESSAGE_TARGET_URB;
+-   insn->bits3.urb.end_of_thread = end_of_thread;
++    if (BRW_IS_IGDNG(brw)) {
++        insn->bits3.urb_igdng.opcode = 0;	/* ? */
++        insn->bits3.urb_igdng.offset = offset;
++        insn->bits3.urb_igdng.swizzle_control = swizzle_control;
++        insn->bits3.urb_igdng.allocate = allocate;
++        insn->bits3.urb_igdng.used = used;	/* ? */
++        insn->bits3.urb_igdng.complete = complete;
++        insn->bits3.urb_igdng.header_present = 1;
++        insn->bits3.urb_igdng.response_length = response_length;
++        insn->bits3.urb_igdng.msg_length = msg_length;
++        insn->bits3.urb_igdng.end_of_thread = end_of_thread;
++        insn->bits2.send_igdng.sfid = BRW_MESSAGE_TARGET_URB;
++        insn->bits2.send_igdng.end_of_thread = end_of_thread;
++    } else {
++        insn->bits3.urb.opcode = 0;	/* ? */
++        insn->bits3.urb.offset = offset;
++        insn->bits3.urb.swizzle_control = swizzle_control;
++        insn->bits3.urb.allocate = allocate;
++        insn->bits3.urb.used = used;	/* ? */
++        insn->bits3.urb.complete = complete;
++        insn->bits3.urb.response_length = response_length;
++        insn->bits3.urb.msg_length = msg_length;
++        insn->bits3.urb.msg_target = BRW_MESSAGE_TARGET_URB;
++        insn->bits3.urb.end_of_thread = end_of_thread;
++    }
+ }
+ 
+-static void brw_set_dp_write_message( struct brw_instruction *insn,
++static void brw_set_dp_write_message( struct brw_context *brw,
++				      struct brw_instruction *insn,
+ 				      GLuint binding_table_index,
+ 				      GLuint msg_control,
+ 				      GLuint msg_type,
+@@ -290,18 +351,33 @@ static void brw_set_dp_write_message( st
+ {
+    brw_set_src1(insn, brw_imm_d(0));
+ 
+-   insn->bits3.dp_write.binding_table_index = binding_table_index;
+-   insn->bits3.dp_write.msg_control = msg_control;
+-   insn->bits3.dp_write.pixel_scoreboard_clear = pixel_scoreboard_clear;
+-   insn->bits3.dp_write.msg_type = msg_type;
+-   insn->bits3.dp_write.send_commit_msg = 0;
+-   insn->bits3.dp_write.response_length = response_length;
+-   insn->bits3.dp_write.msg_length = msg_length;
+-   insn->bits3.dp_write.msg_target = BRW_MESSAGE_TARGET_DATAPORT_WRITE;
+-   insn->bits3.urb.end_of_thread = end_of_thread;
++   if (BRW_IS_IGDNG(brw)) {
++       insn->bits3.dp_write_igdng.binding_table_index = binding_table_index;
++       insn->bits3.dp_write_igdng.msg_control = msg_control;
++       insn->bits3.dp_write_igdng.pixel_scoreboard_clear = pixel_scoreboard_clear;
++       insn->bits3.dp_write_igdng.msg_type = msg_type;
++       insn->bits3.dp_write_igdng.send_commit_msg = 0;
++       insn->bits3.dp_write_igdng.header_present = 1;
++       insn->bits3.dp_write_igdng.response_length = response_length;
++       insn->bits3.dp_write_igdng.msg_length = msg_length;
++       insn->bits3.dp_write_igdng.end_of_thread = end_of_thread;
++       insn->bits2.send_igdng.sfid = BRW_MESSAGE_TARGET_DATAPORT_WRITE;
++       insn->bits2.send_igdng.end_of_thread = end_of_thread;
++   } else {
++       insn->bits3.dp_write.binding_table_index = binding_table_index;
++       insn->bits3.dp_write.msg_control = msg_control;
++       insn->bits3.dp_write.pixel_scoreboard_clear = pixel_scoreboard_clear;
++       insn->bits3.dp_write.msg_type = msg_type;
++       insn->bits3.dp_write.send_commit_msg = 0;
++       insn->bits3.dp_write.response_length = response_length;
++       insn->bits3.dp_write.msg_length = msg_length;
++       insn->bits3.dp_write.msg_target = BRW_MESSAGE_TARGET_DATAPORT_WRITE;
++       insn->bits3.dp_write.end_of_thread = end_of_thread;
++   }
+ }
+ 
+-static void brw_set_dp_read_message( struct brw_instruction *insn,
++static void brw_set_dp_read_message( struct brw_context *brw,
++				      struct brw_instruction *insn,
+ 				      GLuint binding_table_index,
+ 				      GLuint msg_control,
+ 				      GLuint msg_type,
+@@ -312,14 +388,28 @@ static void brw_set_dp_read_message( str
+ {
+    brw_set_src1(insn, brw_imm_d(0));
+ 
+-   insn->bits3.dp_read.binding_table_index = binding_table_index;
+-   insn->bits3.dp_read.msg_control = msg_control;
+-   insn->bits3.dp_read.msg_type = msg_type;
+-   insn->bits3.dp_read.target_cache = target_cache;
+-   insn->bits3.dp_read.response_length = response_length;
+-   insn->bits3.dp_read.msg_length = msg_length;
+-   insn->bits3.dp_read.msg_target = BRW_MESSAGE_TARGET_DATAPORT_READ;
+-   insn->bits3.dp_read.end_of_thread = end_of_thread;
++   if (BRW_IS_IGDNG(brw)) {
++       insn->bits3.dp_read_igdng.binding_table_index = binding_table_index;
++       insn->bits3.dp_read_igdng.msg_control = msg_control;
++       insn->bits3.dp_read_igdng.msg_type = msg_type;
++       insn->bits3.dp_read_igdng.target_cache = target_cache;
++       insn->bits3.dp_read_igdng.header_present = 1;
++       insn->bits3.dp_read_igdng.response_length = response_length;
++       insn->bits3.dp_read_igdng.msg_length = msg_length;
++       insn->bits3.dp_read_igdng.pad1 = 0;
++       insn->bits3.dp_read_igdng.end_of_thread = end_of_thread;
++       insn->bits2.send_igdng.sfid = BRW_MESSAGE_TARGET_DATAPORT_READ;
++       insn->bits2.send_igdng.end_of_thread = end_of_thread;
++   } else {
++       insn->bits3.dp_read.binding_table_index = binding_table_index;
++       insn->bits3.dp_read.msg_control = msg_control;
++       insn->bits3.dp_read.msg_type = msg_type;
++       insn->bits3.dp_read.target_cache = target_cache;
++       insn->bits3.dp_read.response_length = response_length;
++       insn->bits3.dp_read.msg_length = msg_length;
++       insn->bits3.dp_read.msg_target = BRW_MESSAGE_TARGET_DATAPORT_READ;
++       insn->bits3.dp_read.end_of_thread = end_of_thread;
++   }
+ }
+ 
+ static void brw_set_sampler_message(struct brw_context *brw,
+@@ -329,11 +419,25 @@ static void brw_set_sampler_message(stru
+ 				     GLuint msg_type,
+ 				     GLuint response_length,
+ 				     GLuint msg_length,
+-				     GLboolean eot)
++                                     GLboolean eot,
++                                     GLuint header_present,
++                                     GLuint simd_mode)
+ {
++   assert(eot == 0);
+    brw_set_src1(insn, brw_imm_d(0));
+ 
+-   if (BRW_IS_G4X(brw)) {
++   if (BRW_IS_IGDNG(brw)) {
++      insn->bits3.sampler_igdng.binding_table_index = binding_table_index;
++      insn->bits3.sampler_igdng.sampler = sampler;
++      insn->bits3.sampler_igdng.msg_type = msg_type;
++      insn->bits3.sampler_igdng.simd_mode = simd_mode;
++      insn->bits3.sampler_igdng.header_present = header_present;
++      insn->bits3.sampler_igdng.response_length = response_length;
++      insn->bits3.sampler_igdng.msg_length = msg_length;
++      insn->bits3.sampler_igdng.end_of_thread = eot;
++      insn->bits2.send_igdng.sfid = BRW_MESSAGE_TARGET_SAMPLER;
++      insn->bits2.send_igdng.end_of_thread = eot;
++   } else if (BRW_IS_G4X(brw)) {
+       insn->bits3.sampler_g4x.binding_table_index = binding_table_index;
+       insn->bits3.sampler_g4x.sampler = sampler;
+       insn->bits3.sampler_g4x.msg_type = msg_type;
+@@ -531,6 +635,10 @@ struct brw_instruction *brw_ELSE(struct 
+ 				 struct brw_instruction *if_insn)
+ {
+    struct brw_instruction *insn;
++   GLuint br = 1;
++
++   if (BRW_IS_IGDNG(p->brw))
++      br = 2;
+ 
+    if (p->single_program_flow) {
+       insn = next_insn(p, BRW_OPCODE_ADD);
+@@ -557,7 +665,7 @@ struct brw_instruction *brw_ELSE(struct 
+    } else {
+       assert(if_insn->header.opcode == BRW_OPCODE_IF);
+ 
+-      if_insn->bits3.if_else.jump_count = insn - if_insn;
++      if_insn->bits3.if_else.jump_count = br * (insn - if_insn);
+       if_insn->bits3.if_else.pop_count = 1;
+       if_insn->bits3.if_else.pad0 = 0;
+    }
+@@ -568,6 +676,11 @@ struct brw_instruction *brw_ELSE(struct 
+ void brw_ENDIF(struct brw_compile *p, 
+ 	       struct brw_instruction *patch_insn)
+ {
++   GLuint br = 1;
++
++   if (BRW_IS_IGDNG(p->brw))
++      br = 2; 
++
+    if (p->single_program_flow) {
+       /* In single program flow mode, there's no need to execute an ENDIF,
+        * since we don't need to do any stack operations, and if we're executing
+@@ -599,11 +712,11 @@ void brw_ENDIF(struct brw_compile *p, 
+ 	 /* Automagically turn it into an IFF:
+ 	  */
+ 	 patch_insn->header.opcode = BRW_OPCODE_IFF;
+-	 patch_insn->bits3.if_else.jump_count = insn - patch_insn + 1;
++         patch_insn->bits3.if_else.jump_count = br * (insn - patch_insn + 1);
+ 	 patch_insn->bits3.if_else.pop_count = 0;
+ 	 patch_insn->bits3.if_else.pad0 = 0;
+       } else if (patch_insn->header.opcode == BRW_OPCODE_ELSE) {
+-	 patch_insn->bits3.if_else.jump_count = insn - patch_insn + 1;
++         patch_insn->bits3.if_else.jump_count = br * (insn - patch_insn + 1);
+ 	 patch_insn->bits3.if_else.pop_count = 1;
+ 	 patch_insn->bits3.if_else.pad0 = 0;
+       } else {
+@@ -677,6 +790,10 @@ struct brw_instruction *brw_WHILE(struct
+ 	       struct brw_instruction *do_insn)
+ {
+    struct brw_instruction *insn;
++   GLuint br = 1;
++
++   if (BRW_IS_IGDNG(p->brw))
++      br = 2;
+ 
+    if (p->single_program_flow)
+       insn = next_insn(p, BRW_OPCODE_ADD);
+@@ -697,7 +814,7 @@ struct brw_instruction *brw_WHILE(struct
+       insn->header.execution_size = do_insn->header.execution_size;
+ 
+       assert(do_insn->header.opcode == BRW_OPCODE_DO);
+-      insn->bits3.if_else.jump_count = do_insn - insn + 1;
++      insn->bits3.if_else.jump_count = br * (do_insn - insn + 1);
+       insn->bits3.if_else.pop_count = 0;
+       insn->bits3.if_else.pad0 = 0;
+    }
+@@ -716,11 +833,15 @@ void brw_land_fwd_jump(struct brw_compil
+ 		       struct brw_instruction *jmp_insn)
+ {
+    struct brw_instruction *landing = &p->store[p->nr_insn];
++   GLuint jmpi = 1;
++
++   if (BRW_IS_IGDNG(p->brw))
++       jmpi = 2;
+ 
+    assert(jmp_insn->header.opcode == BRW_OPCODE_JMPI);
+    assert(jmp_insn->bits1.da1.src1_reg_file = BRW_IMMEDIATE_VALUE);
+ 
+-   jmp_insn->bits3.ud = (landing - jmp_insn) - 1; 
++   jmp_insn->bits3.ud = jmpi * ((landing - jmp_insn) - 1);
+ }
+ 
+ 
+@@ -785,7 +906,8 @@ void brw_math( struct brw_compile *p,
+ 
+    brw_set_dest(insn, dest);
+    brw_set_src0(insn, src);
+-   brw_set_math_message(insn, 
++   brw_set_math_message(p->brw,
++			insn, 
+ 			msg_length, response_length, 
+ 			function,
+ 			BRW_MATH_INTEGER_UNSIGNED,
+@@ -819,7 +941,8 @@ void brw_math_16( struct brw_compile *p,
+ 
+    brw_set_dest(insn, dest);
+    brw_set_src0(insn, src);
+-   brw_set_math_message(insn, 
++   brw_set_math_message(p->brw,
++			insn, 
+ 			msg_length, response_length, 
+ 			function,
+ 			BRW_MATH_INTEGER_UNSIGNED,
+@@ -835,7 +958,8 @@ void brw_math_16( struct brw_compile *p,
+ 
+    brw_set_dest(insn, offset(dest,1));
+    brw_set_src0(insn, src);
+-   brw_set_math_message(insn, 
++   brw_set_math_message(p->brw, 
++			insn, 
+ 			msg_length, response_length, 
+ 			function,
+ 			BRW_MATH_INTEGER_UNSIGNED,
+@@ -878,7 +1002,8 @@ void brw_dp_WRITE_16( struct brw_compile
+       brw_set_dest(insn, dest);
+       brw_set_src0(insn, src);
+ 
+-      brw_set_dp_write_message(insn,
++      brw_set_dp_write_message(p->brw,
++			       insn,
+ 			       255, /* bti */
+ 			       BRW_DATAPORT_OWORD_BLOCK_4_OWORDS, /* msg_control */
+ 			       BRW_DATAPORT_WRITE_MESSAGE_OWORD_BLOCK_WRITE, /* msg_type */
+@@ -918,7 +1043,8 @@ void brw_dp_READ_16( struct brw_compile 
+       brw_set_dest(insn, dest);	/* UW? */
+       brw_set_src0(insn, retype(brw_vec8_grf(0, 0), BRW_REGISTER_TYPE_UW));
+ 
+-      brw_set_dp_read_message(insn,
++      brw_set_dp_read_message(p->brw,
++			      insn,
+ 			      255, /* bti */
+ 			      3,  /* msg_control */
+ 			      BRW_DATAPORT_READ_MESSAGE_OWORD_BLOCK_READ, /* msg_type */
+@@ -947,7 +1073,8 @@ void brw_fb_WRITE(struct brw_compile *p,
+   
+    brw_set_dest(insn, dest);
+    brw_set_src0(insn, src0);
+-   brw_set_dp_write_message(insn,
++   brw_set_dp_write_message(p->brw,
++			    insn,
+ 			    binding_table_index,
+ 			    BRW_DATAPORT_RENDER_TARGET_WRITE_SIMD16_SINGLE_SOURCE, /* msg_control */
+ 			    BRW_DATAPORT_WRITE_MESSAGE_RENDER_TARGET_WRITE, /* msg_type */
+@@ -969,7 +1096,9 @@ void brw_SAMPLE(struct brw_compile *p,
+ 		GLuint msg_type,
+ 		GLuint response_length,
+ 		GLuint msg_length,
+-		GLboolean eot)
++		GLboolean eot,
++		GLuint header_present,
++		GLuint simd_mode)
+ {
+    GLboolean need_stall = 0;
+    
+@@ -1044,7 +1173,9 @@ void brw_SAMPLE(struct brw_compile *p,
+ 			      msg_type,
+ 			      response_length, 
+ 			      msg_length,
+-			      eot);
++			      eot,
++			      header_present,
++			      simd_mode);
+    }
+ 
+    if (need_stall)
+@@ -1088,7 +1219,8 @@ void brw_urb_WRITE(struct brw_compile *p
+ 
+    insn->header.destreg__conditonalmod = msg_reg_nr;
+ 
+-   brw_set_urb_message(insn,
++   brw_set_urb_message(p->brw,
++		       insn,
+ 		       allocate,
+ 		       used,
+ 		       msg_length,
+@@ -1099,3 +1231,37 @@ void brw_urb_WRITE(struct brw_compile *p
+ 		       swizzle);
+ }
+ 
++void brw_ff_sync(struct brw_compile *p,
++		   struct brw_reg dest,
++		   GLuint msg_reg_nr,
++		   struct brw_reg src0,
++		   GLboolean allocate,
++		   GLboolean used,
++		   GLuint msg_length,
++		   GLuint response_length,
++		   GLboolean eot,
++		   GLboolean writes_complete,
++		   GLuint offset,
++		   GLuint swizzle)
++{
++   struct brw_instruction *insn = next_insn(p, BRW_OPCODE_SEND);
++
++   assert(msg_length < 16);
++
++   brw_set_dest(insn, dest);
++   brw_set_src0(insn, src0);
++   brw_set_src1(insn, brw_imm_d(0));
++
++   insn->header.destreg__conditonalmod = msg_reg_nr;
++
++   brw_set_ff_sync_message(p->brw,
++		       insn,
++		       allocate,
++		       used,
++		       msg_length,
++		       response_length, 
++		       eot, 
++		       writes_complete, 
++		       offset,
++		       swizzle);
++}
+--- src/mesa/drivers/dri/i965/brw_gs.c	2009-09-01 14:49:51.065847835 +0800
++++ src/mesa/drivers/dri/i965/brw_gs.c	2009-09-01 15:42:30.776677415 +0800
+@@ -54,12 +54,17 @@ static void compile_gs_prog( struct brw_
+    memset(&c, 0, sizeof(c));
+    
+    c.key = *key;
+-
++   c.need_ff_sync = BRW_IS_IGDNG(brw);
+    /* Need to locate the two positions present in vertex + header.
+     * These are currently hardcoded:
+     */
+    c.nr_attrs = brw_count_bits(c.key.attrs);
+-   c.nr_regs = (c.nr_attrs + 1) / 2 + 1;  /* are vertices packed, or reg-aligned? */
++
++   if (BRW_IS_IGDNG(brw))
++       c.nr_regs = (c.nr_attrs + 1) / 2 + 3;  /* are vertices packed, or reg-aligned? */
++   else
++       c.nr_regs = (c.nr_attrs + 1) / 2 + 1;  /* are vertices packed, or reg-aligned? */
++
+    c.nr_bytes = c.nr_regs * REG_SIZE;
+ 
+    
+--- src/mesa/drivers/dri/i965/brw_gs.h	2009-09-01 14:49:51.066548852 +0800
++++ src/mesa/drivers/dri/i965/brw_gs.h	2009-09-01 15:42:30.777095934 +0800
+@@ -62,6 +62,7 @@ struct brw_gs_compile {
+    GLuint nr_attrs;
+    GLuint nr_regs;
+    GLuint nr_bytes;
++   GLboolean need_ff_sync;
+ };
+ 
+ #define ATTR_SIZE  (4*4)
+--- src/mesa/drivers/dri/i965/brw_gs_emit.c	2009-09-01 14:49:51.067540026 +0800
++++ src/mesa/drivers/dri/i965/brw_gs_emit.c	2009-09-01 15:42:30.777846075 +0800
+@@ -101,6 +101,23 @@ static void brw_gs_emit_vue(struct brw_g
+ 		 BRW_URB_SWIZZLE_NONE);
+ }
+ 
++void brw_gs_ff_sync(struct brw_gs_compile *c, int num_prim)
++{
++	struct brw_compile *p = &c->func;
++	brw_MOV(p, get_element_ud(c->reg.R0, 1), brw_imm_ud(num_prim));
++	brw_ff_sync(p, 
++				c->reg.R0,
++				0,
++				c->reg.R0,
++				1,	
++				1,		/* used */
++				1,  	/* msg length */
++				1,		/* response length */
++				0,		/* eot */
++				1,		/* write compelete */
++				0,		/* urb offset */
++				BRW_URB_SWIZZLE_NONE);
++}
+ 
+ 
+ void brw_gs_quads( struct brw_gs_compile *c )
+@@ -110,6 +127,8 @@ void brw_gs_quads( struct brw_gs_compile
+    /* Use polygons for correct edgeflag behaviour. Note that vertex 3
+     * is the PV for quads, but vertex 0 for polygons:
+     */
++   if (c->need_ff_sync)
++	   brw_gs_ff_sync(c, 1);    
+    brw_gs_emit_vue(c, c->reg.vertex[3], 0, ((_3DPRIM_POLYGON << 2) | R02_PRIM_START));
+    brw_gs_emit_vue(c, c->reg.vertex[0], 0, (_3DPRIM_POLYGON << 2));
+    brw_gs_emit_vue(c, c->reg.vertex[1], 0, (_3DPRIM_POLYGON << 2)); 
+@@ -120,6 +139,8 @@ void brw_gs_quad_strip( struct brw_gs_co
+ {
+    brw_gs_alloc_regs(c, 4);
+    
++   if (c->need_ff_sync)
++	   brw_gs_ff_sync(c, 1);      
+    brw_gs_emit_vue(c, c->reg.vertex[2], 0, ((_3DPRIM_POLYGON << 2) | R02_PRIM_START));
+    brw_gs_emit_vue(c, c->reg.vertex[3], 0, (_3DPRIM_POLYGON << 2));
+    brw_gs_emit_vue(c, c->reg.vertex[0], 0, (_3DPRIM_POLYGON << 2)); 
+@@ -129,6 +150,9 @@ void brw_gs_quad_strip( struct brw_gs_co
+ void brw_gs_tris( struct brw_gs_compile *c )
+ {
+    brw_gs_alloc_regs(c, 3);
++
++   if (c->need_ff_sync)
++	   brw_gs_ff_sync(c, 1);      
+    brw_gs_emit_vue(c, c->reg.vertex[0], 0, ((_3DPRIM_TRILIST << 2) | R02_PRIM_START));
+    brw_gs_emit_vue(c, c->reg.vertex[1], 0, (_3DPRIM_TRILIST << 2));
+    brw_gs_emit_vue(c, c->reg.vertex[2], 1, ((_3DPRIM_TRILIST << 2) | R02_PRIM_END));
+@@ -137,6 +161,9 @@ void brw_gs_tris( struct brw_gs_compile 
+ void brw_gs_lines( struct brw_gs_compile *c )
+ {
+    brw_gs_alloc_regs(c, 2);
++
++   if (c->need_ff_sync)
++	   brw_gs_ff_sync(c, 1);      
+    brw_gs_emit_vue(c, c->reg.vertex[0], 0, ((_3DPRIM_LINESTRIP << 2) | R02_PRIM_START));
+    brw_gs_emit_vue(c, c->reg.vertex[1], 1, ((_3DPRIM_LINESTRIP << 2) | R02_PRIM_END));
+ }
+@@ -144,6 +171,9 @@ void brw_gs_lines( struct brw_gs_compile
+ void brw_gs_points( struct brw_gs_compile *c )
+ {
+    brw_gs_alloc_regs(c, 1);
++
++   if (c->need_ff_sync)
++	   brw_gs_ff_sync(c, 1);      
+    brw_gs_emit_vue(c, c->reg.vertex[0], 1, ((_3DPRIM_POINTLIST << 2) | R02_PRIM_START | R02_PRIM_END));
+ }
+ 
+--- src/mesa/drivers/dri/i965/brw_gs_state.c	2009-09-01 14:49:51.068404762 +0800
++++ src/mesa/drivers/dri/i965/brw_gs_state.c	2009-09-01 15:42:30.778282955 +0800
+@@ -95,6 +95,9 @@ gs_unit_create_from_key(struct brw_conte
+ 
+    gs.thread4.max_threads = 0; /* Hardware requirement */
+ 
++   if (BRW_IS_IGDNG(brw))
++      gs.thread4.rendering_enable = 1;
++
+    if (INTEL_DEBUG & DEBUG_STATS)
+       gs.thread4.stats_enable = 1;
+ 
+--- src/mesa/drivers/dri/i965/brw_misc_state.c	2009-09-01 14:49:51.069407222 +0800
++++ src/mesa/drivers/dri/i965/brw_misc_state.c	2009-09-01 15:42:30.779026931 +0800
+@@ -209,7 +209,7 @@ static void emit_depthbuffer(struct brw_
+ {
+    struct intel_context *intel = &brw->intel;
+    struct intel_region *region = brw->state.depth_region;
+-   unsigned int len = BRW_IS_G4X(brw) ? 6 : 5;
++   unsigned int len = (BRW_IS_G4X(brw) || BRW_IS_IGDNG(brw)) ? 6 : 5;
+ 
+    if (region == NULL) {
+       BEGIN_BATCH(len, IGNORE_CLIPRECTS);
+@@ -220,7 +220,7 @@ static void emit_depthbuffer(struct brw_
+       OUT_BATCH(0);
+       OUT_BATCH(0);
+ 
+-      if (BRW_IS_G4X(brw))
++      if (BRW_IS_G4X(brw) || BRW_IS_IGDNG(brw))
+          OUT_BATCH(0);
+ 
+       ADVANCE_BATCH();
+@@ -257,7 +257,7 @@ static void emit_depthbuffer(struct brw_
+ 		((region->height - 1) << 19));
+       OUT_BATCH(0);
+ 
+-      if (BRW_IS_G4X(brw))
++      if (BRW_IS_G4X(brw) || BRW_IS_IGDNG(brw))
+          OUT_BATCH(0);
+ 
+       ADVANCE_BATCH();
+@@ -370,7 +370,7 @@ static void upload_aa_line_parameters(st
+ {
+    struct brw_aa_line_parameters balp;
+    
+-   if (!BRW_IS_G4X(brw))
++   if (BRW_IS_965(brw))
+       return;
+ 
+    /* use legacy aa line coverage computation */
+@@ -507,14 +507,27 @@ static void upload_state_base_address( s
+    /* Output the structure (brw_state_base_address) directly to the
+     * batchbuffer, so we can emit relocations inline.
+     */
+-   BEGIN_BATCH(6, IGNORE_CLIPRECTS);
+-   OUT_BATCH(CMD_STATE_BASE_ADDRESS << 16 | (6 - 2));
+-   OUT_BATCH(1); /* General state base address */
+-   OUT_BATCH(1); /* Surface state base address */
+-   OUT_BATCH(1); /* Indirect object base address */
+-   OUT_BATCH(1); /* General state upper bound */
+-   OUT_BATCH(1); /* Indirect object upper bound */
+-   ADVANCE_BATCH();
++   if (BRW_IS_IGDNG(brw)) {
++       BEGIN_BATCH(8, IGNORE_CLIPRECTS);
++       OUT_BATCH(CMD_STATE_BASE_ADDRESS << 16 | (8 - 2));
++       OUT_BATCH(1); /* General state base address */
++       OUT_BATCH(1); /* Surface state base address */
++       OUT_BATCH(1); /* Indirect object base address */
++       OUT_BATCH(1); /* Instruction base address */
++       OUT_BATCH(1); /* General state upper bound */
++       OUT_BATCH(1); /* Indirect object upper bound */
++       OUT_BATCH(1); /* Instruction access upper bound */
++       ADVANCE_BATCH();
++   } else {
++       BEGIN_BATCH(6, IGNORE_CLIPRECTS);
++       OUT_BATCH(CMD_STATE_BASE_ADDRESS << 16 | (6 - 2));
++       OUT_BATCH(1); /* General state base address */
++       OUT_BATCH(1); /* Surface state base address */
++       OUT_BATCH(1); /* Indirect object base address */
++       OUT_BATCH(1); /* General state upper bound */
++       OUT_BATCH(1); /* Indirect object upper bound */
++       ADVANCE_BATCH();
++   }
+ }
+ 
+ const struct brw_tracked_state brw_state_base_address = {
+--- src/mesa/drivers/dri/i965/brw_sf_emit.c	2009-09-01 14:49:55.147418312 +0800
++++ src/mesa/drivers/dri/i965/brw_sf_emit.c	2009-09-01 15:47:18.000772762 +0800
+@@ -151,6 +151,8 @@ static void do_flatshade_triangle( struc
+    struct brw_compile *p = &c->func;
+    struct brw_reg ip = brw_ip_reg();
+    GLuint nr = brw_count_bits(c->key.attrs & VERT_RESULT_COLOR_BITS);
++   GLuint jmpi = 1;
++
+    if (!nr)
+       return;
+ 
+@@ -159,18 +161,21 @@ static void do_flatshade_triangle( struc
+    if (c->key.primitive == SF_UNFILLED_TRIS)
+       return;
+ 
++   if (BRW_IS_IGDNG(p->brw))
++	jmpi = 2;
++
+    brw_push_insn_state(p);
+    
+-   brw_MUL(p, c->pv, c->pv, brw_imm_ud(nr*2+1));
++   brw_MUL(p, c->pv, c->pv, brw_imm_d(jmpi*(nr*2+1)));
+    brw_JMPI(p, ip, ip, c->pv);
+ 
+    copy_colors(c, c->vert[1], c->vert[0]);
+    copy_colors(c, c->vert[2], c->vert[0]);
+-   brw_JMPI(p, ip, ip, brw_imm_ud(nr*4+1));
++   brw_JMPI(p, ip, ip, brw_imm_d(jmpi*(nr*4+1)));
+ 
+    copy_colors(c, c->vert[0], c->vert[1]);
+    copy_colors(c, c->vert[2], c->vert[1]);
+-   brw_JMPI(p, ip, ip, brw_imm_ud(nr*2));
++   brw_JMPI(p, ip, ip, brw_imm_d(jmpi*nr*2));
+ 
+    copy_colors(c, c->vert[0], c->vert[2]);
+    copy_colors(c, c->vert[1], c->vert[2]);
+@@ -184,7 +189,8 @@ static void do_flatshade_line( struct br
+    struct brw_compile *p = &c->func;
+    struct brw_reg ip = brw_ip_reg();
+    GLuint nr = brw_count_bits(c->key.attrs & VERT_RESULT_COLOR_BITS);
+-   
++   GLuint jmpi = 1;
++
+    if (!nr)
+       return;
+ 
+@@ -193,13 +199,16 @@ static void do_flatshade_line( struct br
+    if (c->key.primitive == SF_UNFILLED_TRIS)
+       return;
+ 
++   if (BRW_IS_IGDNG(p->brw))
++	jmpi = 2;
++
+    brw_push_insn_state(p);
+    
+-   brw_MUL(p, c->pv, c->pv, brw_imm_ud(nr+1));
++   brw_MUL(p, c->pv, c->pv, brw_imm_d(jmpi*(nr+1)));
+    brw_JMPI(p, ip, ip, c->pv);
+    copy_colors(c, c->vert[1], c->vert[0]);
+ 
+-   brw_JMPI(p, ip, ip, brw_imm_ud(nr));
++   brw_JMPI(p, ip, ip, brw_imm_ud(jmpi*nr));
+    copy_colors(c, c->vert[0], c->vert[1]);
+ 
+    brw_pop_insn_state(p);
+--- src/mesa/drivers/dri/i965/brw_sf_state.c	2009-09-01 14:49:51.071499705 +0800
++++ src/mesa/drivers/dri/i965/brw_sf_state.c	2009-09-01 15:42:30.781125057 +0800
+@@ -157,7 +157,7 @@ sf_unit_create_from_key(struct brw_conte
+ {
+    struct brw_sf_unit_state sf;
+    dri_bo *bo;
+-
++   int chipset_max_threads;
+    memset(&sf, 0, sizeof(sf));
+ 
+    sf.thread0.grf_reg_count = ALIGN(key->total_grf, 16) / 16 - 1;
+@@ -166,13 +166,26 @@ sf_unit_create_from_key(struct brw_conte
+    sf.thread1.floating_point_mode = BRW_FLOATING_POINT_NON_IEEE_754;
+ 
+    sf.thread3.dispatch_grf_start_reg = 3;
+-   sf.thread3.urb_entry_read_offset = 1;
++
++   if (BRW_IS_IGDNG(brw))
++       sf.thread3.urb_entry_read_offset = 3;
++   else
++       sf.thread3.urb_entry_read_offset = 1;
++
+    sf.thread3.urb_entry_read_length = key->urb_entry_read_length;
+ 
+    sf.thread4.nr_urb_entries = key->nr_urb_entries;
+    sf.thread4.urb_entry_allocation_size = key->sfsize - 1;
+-   /* Each SF thread produces 1 PUE, and there can be up to 24 threads */
+-   sf.thread4.max_threads = MIN2(24, key->nr_urb_entries) - 1;
++
++   /* Each SF thread produces 1 PUE, and there can be up to 24(Pre-IGDNG) or 
++    * 48(IGDNG) threads 
++    */
++   if (BRW_IS_IGDNG(brw))
++      chipset_max_threads = 48;
++   else
++      chipset_max_threads = 24;
++
++   sf.thread4.max_threads = MIN2(chipset_max_threads, key->nr_urb_entries) - 1;
+ 
+    if (INTEL_DEBUG & DEBUG_SINGLE_THREAD)
+       sf.thread4.max_threads = 0;
+--- src/mesa/drivers/dri/i965/brw_structs.h	2009-09-01 14:50:00.155743705 +0800
++++ src/mesa/drivers/dri/i965/brw_structs.h	2009-09-01 16:12:07.455754914 +0800
+@@ -33,6 +33,11 @@
+ #ifndef BRW_STRUCTS_H
+ #define BRW_STRUCTS_H
+ 
++/** Number of general purpose registers (VS, WM, etc) */
++#define BRW_MAX_GRF 128
++/** Number of message register file registers */
++#define BRW_MAX_MRF 16 
++
+ /* Command packets:
+  */
+ struct header 
+@@ -815,7 +820,9 @@ struct brw_gs_unit_state
+ 
+    struct
+    {
+-      GLuint pad0:10;
++      GLuint pad0:8;
++      GLuint rendering_enable:1; /* for IGDNG */
++      GLuint pad4:1;
+       GLuint stats_enable:1; 
+       GLuint nr_urb_entries:7; 
+       GLuint pad1:1;
+@@ -923,6 +930,28 @@ struct brw_wm_unit_state
+    
+    GLfloat global_depth_offset_constant;  
+    GLfloat global_depth_offset_scale;   
++   
++   /* for IGDNG only */
++   struct {
++      GLuint pad0:1;
++      GLuint grf_reg_count_1:3; 
++      GLuint pad1:2;
++      GLuint kernel_start_pointer_1:26;
++   } wm8;       
++
++   struct {
++      GLuint pad0:1;
++      GLuint grf_reg_count_2:3; 
++      GLuint pad1:2;
++      GLuint kernel_start_pointer_2:26;
++   } wm9;       
++
++   struct {
++      GLuint pad0:1;
++      GLuint grf_reg_count_3:3; 
++      GLuint pad1:2;
++      GLuint kernel_start_pointer_3:26;
++   } wm10;       
+ };
+ 
+ struct brw_sampler_default_color {
+@@ -1298,6 +1327,14 @@ struct brw_instruction
+ 	 GLuint pad1:6;
+       } ia16;
+ 
++       struct 
++       {
++           GLuint pad:26;
++           GLuint end_of_thread:1;
++           GLuint pad1:1;
++           GLuint sfid:4;
++       } send_igdng;  /* for IGDNG only */
++
+    } bits2;
+ 
+    union
+@@ -1385,6 +1422,21 @@ struct brw_instruction
+       } math;
+ 
+       struct {
++	 GLuint function:4;
++	 GLuint int_type:1;
++	 GLuint precision:1;
++	 GLuint saturate:1;
++	 GLuint data_type:1;
++	 GLuint snapshot:1;
++	 GLuint pad0:10;
++	 GLuint header_present:1;
++	 GLuint response_length:5;
++	 GLuint msg_length:4;
++	 GLuint pad1:2;
++	 GLuint end_of_thread:1;
++      } math_igdng;
++
++      struct {
+ 	 GLuint binding_table_index:8;
+ 	 GLuint sampler:4;
+ 	 GLuint return_format:2; 
+@@ -1407,9 +1459,38 @@ struct brw_instruction
+          GLuint end_of_thread:1;
+       } sampler_g4x;
+ 
++      struct {
++	 GLuint binding_table_index:8;
++	 GLuint sampler:4;
++	 GLuint msg_type:4;
++	 GLuint simd_mode:2;
++	 GLuint pad0:1;
++	 GLuint header_present:1;
++	 GLuint response_length:5;
++	 GLuint msg_length:4;
++	 GLuint pad1:2;
++	 GLuint end_of_thread:1;
++      } sampler_igdng;
++
+       struct brw_urb_immediate urb;
+ 
+       struct {
++	 GLuint opcode:4;
++	 GLuint offset:6;
++	 GLuint swizzle_control:2; 
++	 GLuint pad:1;
++	 GLuint allocate:1;
++	 GLuint used:1;
++	 GLuint complete:1;
++	 GLuint pad0:3;
++	 GLuint header_present:1;
++	 GLuint response_length:5;
++	 GLuint msg_length:4;
++	 GLuint pad1:2;
++	 GLuint end_of_thread:1;
++      } urb_igdng;
++
++      struct {
+ 	 GLuint binding_table_index:8;
+ 	 GLuint msg_control:4;  
+ 	 GLuint msg_type:2;  
+@@ -1423,6 +1504,19 @@ struct brw_instruction
+ 
+       struct {
+ 	 GLuint binding_table_index:8;
++	 GLuint msg_control:3;  
++	 GLuint msg_type:3;  
++	 GLuint target_cache:2;    
++	 GLuint pad0:3;
++	 GLuint header_present:1;
++	 GLuint response_length:5;
++	 GLuint msg_length:4;
++	 GLuint pad1:2;
++	 GLuint end_of_thread:1;
++      } dp_read_igdng;
++
++      struct {
++	 GLuint binding_table_index:8;
+ 	 GLuint msg_control:3;
+ 	 GLuint pixel_scoreboard_clear:1;
+ 	 GLuint msg_type:3;    
+@@ -1435,6 +1529,20 @@ struct brw_instruction
+       } dp_write;
+ 
+       struct {
++	 GLuint binding_table_index:8;
++	 GLuint msg_control:3;
++	 GLuint pixel_scoreboard_clear:1;
++	 GLuint msg_type:3;    
++	 GLuint send_commit_msg:1;
++	 GLuint pad0:3;
++	 GLuint header_present:1;
++	 GLuint response_length:5;
++	 GLuint msg_length:4;
++	 GLuint pad1:2;
++	 GLuint end_of_thread:1;
++      } dp_write_igdng;
++
++      struct {
+ 	 GLuint pad:16;
+ 	 GLuint response_length:4;
+ 	 GLuint msg_length:4;
+@@ -1443,6 +1551,15 @@ struct brw_instruction
+ 	 GLuint end_of_thread:1;
+       } generic;
+ 
++      struct {
++	 GLuint pad:19;
++	 GLuint header_present:1;
++	 GLuint response_length:5;
++	 GLuint msg_length:4;
++	 GLuint pad1:2;
++	 GLuint end_of_thread:1;
++      } generic_igdng;
++
+       GLint d;
+       GLuint ud;
+    } bits3;
+--- src/mesa/drivers/dri/i965/brw_tex_layout.c	2009-09-01 14:50:28.748709607 +0800
++++ src/mesa/drivers/dri/i965/brw_tex_layout.c	2009-09-01 16:12:58.560886250 +0800
+@@ -37,6 +37,7 @@
+ #include "intel_tex_layout.h"
+ #include "intel_context.h"
+ #include "main/macros.h"
++#include "intel_chipset.h"
+ 
+ #define FILE_DEBUG_FLAG DEBUG_MIPTREE
+ 
+@@ -48,6 +49,77 @@ GLboolean brw_miptree_layout( struct int
+ 
+    switch (mt->target) {
+    case GL_TEXTURE_CUBE_MAP: 
++      if (IS_IGDNG(intel->intelScreen->deviceID)) {
++	   GLuint align_h = 2, align_w = 4;
++	   GLuint level;
++	   GLuint x = 0;
++	   GLuint y = 0;
++	   GLuint width = mt->width0;
++	   GLuint height = mt->height0;
++	   GLuint qpitch = 0;
++	   GLuint y_pitch = 0;
++
++	   mt->pitch = mt->width0;
++	   intel_get_texture_alignment_unit(mt->internal_format, &align_w, &align_h);
++	   y_pitch = ALIGN(height, align_h);
++
++	   if (mt->compressed) {
++	       mt->pitch = ALIGN(mt->width0, align_w);
++	       qpitch = (y_pitch + ALIGN(minify(y_pitch), align_h) + 11 * align_h) / 4 * mt->pitch * mt->cpp;
++	       mt->total_height = (y_pitch + ALIGN(minify(y_pitch), align_h) + 11 * align_h) / 4 * 6;
++	   } else {
++	       qpitch = (y_pitch + ALIGN(minify(y_pitch), align_h) + 11 * align_h) * mt->pitch * mt->cpp;
++	       mt->total_height = (y_pitch + ALIGN(minify(y_pitch), align_h) + 11 * align_h) * 6;
++	   }
++
++	   if (mt->first_level != mt->last_level) {
++	       GLuint mip1_width;
++
++	       if (mt->compressed) {
++		   mip1_width = ALIGN(minify(mt->width0), align_w)
++		       + ALIGN(minify(minify(mt->width0)), align_w);
++	       } else {
++		   mip1_width = ALIGN(minify(mt->width0), align_w)
++		       + minify(minify(mt->width0));
++	       }
++
++	       if (mip1_width > mt->pitch) {
++		   mt->pitch = mip1_width;
++	       }
++	   }
++
++	   mt->pitch = intel_miptree_pitch_align(intel, mt, mt->pitch);
++
++	   for (level = mt->first_level; level <= mt->last_level; level++) {
++	       GLuint img_height;
++	       GLuint nr_images = 6;
++	       GLuint q = 0;
++
++	       intel_miptree_set_level_info(mt, level, nr_images, x, y, width,
++                                           height, 1);
++
++	       for (q = 0; q < nr_images; q++)
++		   intel_miptree_set_image_offset_ex(mt, level, q, x, y, q * qpitch);
++
++	       if (mt->compressed)
++		   img_height = MAX2(1, height/4);
++	       else
++		   img_height = ALIGN(height, align_h);
++
++	       if (level == mt->first_level + 1) {
++		   x += ALIGN(width, align_w);
++	       }
++	       else {
++		   y += img_height;
++	       }
++
++	       width  = minify(width);
++	       height = minify(height);
++	   }
++
++	   break;
++      }
++
+    case GL_TEXTURE_3D: {
+       GLuint width  = mt->width0;
+       GLuint height = mt->height0;
+@@ -59,9 +131,9 @@ GLboolean brw_miptree_layout( struct int
+       GLuint align_w = 4;
+ 
+       mt->total_height = 0;
++      intel_get_texture_alignment_unit(mt->internal_format, &align_w, &align_h);
+       
+       if (mt->compressed) {
+-          align_w = intel_compressed_alignment(mt->internal_format);
+           mt->pitch = ALIGN(width, align_w);
+           pack_y_pitch = (height + 3) / 4;
+       } else {
+--- src/mesa/drivers/dri/i965/brw_urb.c	2009-09-01 14:50:05.302182823 +0800
++++ src/mesa/drivers/dri/i965/brw_urb.c	2009-09-01 15:55:33.734662769 +0800
+@@ -143,6 +143,27 @@ static void recalculate_urb_fence( struc
+       brw->urb.nr_clip_entries = limits[CLP].preferred_nr_entries;
+       brw->urb.nr_sf_entries = limits[SF].preferred_nr_entries;	
+       brw->urb.nr_cs_entries = limits[CS].preferred_nr_entries;	
++
++      brw->urb.constrained = 0;
++      if (BRW_IS_IGDNG(brw)) {
++         brw->urb.nr_vs_entries = 128;
++         brw->urb.nr_sf_entries = 48;
++         if (check_urb_layout(brw)) {
++            goto done;
++         } else {
++            brw->urb.constrained = 1;
++            brw->urb.nr_vs_entries = limits[VS].preferred_nr_entries;
++            brw->urb.nr_sf_entries = limits[SF].preferred_nr_entries;
++         }
++      } else if (BRW_IS_G4X(brw)) {
++         brw->urb.nr_vs_entries = 64;
++         if (check_urb_layout(brw)) {
++            goto done;
++         } else {
++            brw->urb.constrained = 1;
++            brw->urb.nr_vs_entries = limits[VS].preferred_nr_entries;
++         }
++      }
+       
+       if (!check_urb_layout(brw)) {
+ 	 brw->urb.nr_vs_entries = limits[VS].min_nr_entries;	
+@@ -169,9 +190,8 @@ static void recalculate_urb_fence( struc
+ 	 if (INTEL_DEBUG & (DEBUG_URB|DEBUG_FALLBACKS))
+ 	    _mesa_printf("URB CONSTRAINED\n");
+       }
+-      else 
+-	 brw->urb.constrained = 0;
+ 
++done:
+       if (INTEL_DEBUG & DEBUG_URB)
+ 	 _mesa_printf("URB fence: %d ..VS.. %d ..GS.. %d ..CLP.. %d ..SF.. %d ..CS.. %d\n",
+ 		      brw->urb.vs_start,
+--- src/mesa/drivers/dri/i965/brw_vs_emit.c	2009-09-01 14:50:00.175453470 +0800
++++ src/mesa/drivers/dri/i965/brw_vs_emit.c	2009-09-01 16:25:49.315973365 +0800
+@@ -89,7 +89,12 @@ static void brw_vs_alloc_regs( struct br
+     */
+    c->nr_outputs = 0;
+    c->first_output = reg;
+-   mrf = 4;
++
++   if (BRW_IS_IGDNG(c->func.brw))
++	mrf = 8;
++   else
++	mrf = 4;
++
+    for (i = 0; i < VERT_RESULT_MAX; i++) {
+       if (c->prog_data.outputs_written & (1<<i)) {
+ 	 c->nr_outputs++;
+@@ -154,7 +159,12 @@ static void brw_vs_alloc_regs( struct br
+     */
+    c->prog_data.urb_read_length = (c->nr_inputs+1)/2;
+ 
+-   c->prog_data.urb_entry_size = (c->nr_outputs+2+3)/4;
++   if (BRW_IS_IGDNG(c->func.brw))
++       c->prog_data.urb_entry_size = (c->nr_outputs + 6 + 3) / 4;
++   else
++       c->prog_data.urb_entry_size = (c->nr_outputs + 2 + 3) / 4;
++
++
+    c->prog_data.total_grf = reg;
+ }
+ 
+@@ -863,6 +873,7 @@ static void emit_vertex_write( struct br
+    struct brw_reg m0 = brw_message_reg(0);
+    struct brw_reg pos = c->regs[PROGRAM_OUTPUT][VERT_RESULT_HPOS];
+    struct brw_reg ndc;
++   GLuint len_vertext_header = 2;
+ 
+    if (c->key.copy_edgeflag) {
+       brw_MOV(p, 
+@@ -879,7 +890,7 @@ static void emit_vertex_write( struct br
+     * workaround.
+     */
+    if ((c->prog_data.outputs_written & (1<<VERT_RESULT_PSIZ)) ||
+-       c->key.nr_userclip || !BRW_IS_G4X(p->brw))
++	c->key.nr_userclip || BRW_IS_965(p->brw))
+    {
+       struct brw_reg header1 = retype(get_tmp(c), BRW_REGISTER_TYPE_UD);
+       GLuint i;
+@@ -888,7 +899,8 @@ static void emit_vertex_write( struct br
+ 
+       brw_set_access_mode(p, BRW_ALIGN_16);	
+ 
+-      if (c->prog_data.outputs_written & (1<<VERT_RESULT_PSIZ)) {
++      if (c->prog_data.outputs_written & (1<<VERT_RESULT_PSIZ) ||
++	   c->key.nr_userclip || BRW_IS_965(p->brw)) {
+ 	 struct brw_reg psiz = c->regs[PROGRAM_OUTPUT][VERT_RESULT_PSIZ];
+ 	 brw_MUL(p, brw_writemask(header1, WRITEMASK_W), brw_swizzle1(psiz, 0), brw_imm_f(1<<11));
+ 	 brw_AND(p, brw_writemask(header1, WRITEMASK_W), header1, brw_imm_ud(0x7ff<<8));
+@@ -910,7 +922,7 @@ static void emit_vertex_write( struct br
+        * Later, clipping will detect ucp[6] and ensure the primitive is
+        * clipped against all fixed planes.
+        */
+-      if (!BRW_IS_G4X(p->brw)) {
++      if (BRW_IS_965(p->brw)) {
+ 	 brw_CMP(p,
+ 		 vec8(brw_null_reg()),
+ 		 BRW_CONDITIONAL_L,
+@@ -937,7 +949,21 @@ static void emit_vertex_write( struct br
+     */
+    brw_set_access_mode(p, BRW_ALIGN_1);
+    brw_MOV(p, offset(m0, 2), ndc);
+-   brw_MOV(p, offset(m0, 3), pos);
++
++   if (BRW_IS_IGDNG(p->brw)) {
++       /* There are 20 DWs (D0-D19) in VUE vertex header on IGDNG */
++       brw_MOV(p, offset(m0, 3), pos); /* a portion of vertex header */
++       /* m4, m5 contain the distances from vertex to the user clip planeXXX. 
++        * Seems it is useless for us.
++        * m6 is used for aligning, so that the remainder of vertex element is 
++        * reg-aligned.
++        */
++       brw_MOV(p, offset(m0, 7), pos); /* the remainder of vertex element */
++       len_vertext_header = 6;
++   } else {
++       brw_MOV(p, offset(m0, 3), pos);
++       len_vertext_header = 2;
++   }
+ 
+    brw_urb_WRITE(p, 
+ 		 brw_null_reg(), /* dest */
+@@ -945,7 +971,7 @@ static void emit_vertex_write( struct br
+ 		 c->r0,		/* src */
+ 		 0,		/* allocate */
+ 		 1,		/* used */
+-		 c->nr_outputs + 3, /* msg len */
++		 MIN2(c->nr_outputs + 1 + len_vertext_header, (BRW_MAX_MRF-1)), /* msg len */
+ 		 0,		/* response len */
+ 		 1, 		/* eot */
+ 		 1, 		/* writes complete */
+--- src/mesa/drivers/dri/i965/brw_vs_state.c	2009-09-01 14:49:51.077637689 +0800
++++ src/mesa/drivers/dri/i965/brw_vs_state.c	2009-09-01 15:42:30.787973828 +0800
+@@ -92,16 +92,25 @@ vs_unit_create_from_key(struct brw_conte
+     * brw_urb_WRITE() results.
+     */
+    vs.thread1.single_program_flow = 0;
++//   if (BRW_IS_IGDNG(brw))
++//      vs.thread1.binding_table_entry_count = 0; /* hardware requirement */
++
+    vs.thread3.urb_entry_read_length = key->urb_entry_read_length;
+    vs.thread3.const_urb_entry_read_length = key->curb_entry_read_length;
+    vs.thread3.dispatch_grf_start_reg = 1;
+    vs.thread3.urb_entry_read_offset = 0;
+    vs.thread3.const_urb_entry_read_offset = key->curbe_offset * 2;
+ 
+-   vs.thread4.nr_urb_entries = key->nr_urb_entries;
++   if (BRW_IS_IGDNG(brw))
++       vs.thread4.nr_urb_entries = key->nr_urb_entries >> 2;
++   else
++       vs.thread4.nr_urb_entries = key->nr_urb_entries;
++
+    vs.thread4.urb_entry_allocation_size = key->urb_size - 1;
+ 
+-   if (BRW_IS_G4X(brw))
++   if (BRW_IS_IGDNG(brw))
++      chipset_max_threads = 72;
++   else if (BRW_IS_G4X(brw))
+       chipset_max_threads = 32;
+    else
+       chipset_max_threads = 16;
+@@ -113,6 +122,8 @@ vs_unit_create_from_key(struct brw_conte
+ 
+    /* No samplers for ARB_vp programs:
+     */
++   /* It has to be set to 0 for IGDNG
++    */
+    vs.vs5.sampler_count = 0;
+ 
+    if (INTEL_DEBUG & DEBUG_STATS)
+--- src/mesa/drivers/dri/i965/brw_wm_emit.c	2009-09-01 14:49:55.168259184 +0800
++++ src/mesa/drivers/dri/i965/brw_wm_emit.c	2009-09-01 15:42:30.788924197 +0800
+@@ -702,6 +702,7 @@ static void emit_tex( struct brw_wm_comp
+    GLboolean shadow = (c->key.shadowtex_mask & (1<<inst->tex_unit)) ? 1 : 0;
+    GLuint i, nr;
+    GLuint emit;
++   GLuint msg_type;
+ 
+    /* How many input regs are there?
+     */
+@@ -739,6 +740,18 @@ static void emit_tex( struct brw_wm_comp
+ 
+    responseLength = 8;		/* always */
+ 
++   if (BRW_IS_IGDNG(p->brw)) {
++       if (shadow)
++           msg_type = BRW_SAMPLER_MESSAGE_SIMD16_SAMPLE_COMPARE_IGDNG;
++       else
++           msg_type = BRW_SAMPLER_MESSAGE_SIMD16_SAMPLE_IGDNG;
++   } else {
++       if (shadow)
++           msg_type = BRW_SAMPLER_MESSAGE_SIMD16_SAMPLE_COMPARE;
++       else
++           msg_type = BRW_SAMPLER_MESSAGE_SIMD16_SAMPLE;
++   }
++
+    brw_SAMPLE(p, 
+ 	      retype(vec16(dst[0]), BRW_REGISTER_TYPE_UW),
+ 	      1,
+@@ -746,12 +759,12 @@ static void emit_tex( struct brw_wm_comp
+ 	      inst->tex_unit + MAX_DRAW_BUFFERS, /* surface */
+ 	      inst->tex_unit,	  /* sampler */
+ 	      inst->writemask,
+-	      (shadow ? 
+-	       BRW_SAMPLER_MESSAGE_SIMD16_SAMPLE_COMPARE : 
+-	       BRW_SAMPLER_MESSAGE_SIMD16_SAMPLE),
++	      msg_type,
+ 	      responseLength,
+ 	      msgLength,
+-	      0);	
++	      0,	
++	      1,
++	      BRW_SAMPLER_SIMD_MODE_SIMD16);
+ }
+ 
+ 
+@@ -763,7 +776,7 @@ static void emit_txb( struct brw_wm_comp
+ {
+    struct brw_compile *p = &c->func;
+    GLuint msgLength;
+-
++   GLuint msg_type;
+    /* Shadow ignored for txb.
+     */
+    switch (inst->tex_idx) {
+@@ -788,6 +801,11 @@ static void emit_txb( struct brw_wm_comp
+    brw_MOV(p, brw_message_reg(8), arg[3]);
+    msgLength = 9;
+ 
++   if (BRW_IS_IGDNG(p->brw))
++       msg_type = BRW_SAMPLER_MESSAGE_SIMD16_SAMPLE_BIAS_IGDNG;
++   else
++       msg_type = BRW_SAMPLER_MESSAGE_SIMD16_SAMPLE_BIAS;
++
+    brw_SAMPLE(p, 
+ 	      retype(vec16(dst[0]), BRW_REGISTER_TYPE_UW),
+ 	      1,
+@@ -795,10 +813,12 @@ static void emit_txb( struct brw_wm_comp
+ 	      inst->tex_unit + MAX_DRAW_BUFFERS, /* surface */
+ 	      inst->tex_unit,	  /* sampler */
+ 	      inst->writemask,
+-	      BRW_SAMPLER_MESSAGE_SIMD16_SAMPLE_BIAS,
++	      msg_type,
+ 	      8,		/* responseLength */
+ 	      msgLength,
+-	      0);	
++	      0,	
++	      1,
++	      BRW_SAMPLER_SIMD_MODE_SIMD16);	
+ }
+ 
+ 
+--- src/mesa/drivers/dri/i965/brw_wm_glsl.c	2009-09-01 14:50:10.957625931 +0800
++++ src/mesa/drivers/dri/i965/brw_wm_glsl.c	2009-09-01 16:11:30.759412112 +0800
+@@ -2208,8 +2208,9 @@ static void emit_txb(struct brw_wm_compi
+     struct brw_compile *p = &c->func;
+     struct brw_reg dst[4], src[4], payload_reg;
+     GLuint unit = c->fp->program.Base.SamplerUnits[inst->TexSrcUnit];
+-
+     GLuint i;
++    GLuint msg_type;
++
+     payload_reg = get_reg(c, PROGRAM_PAYLOAD, PAYLOAD_DEPTH, 0, 1, 0, 0);
+     for (i = 0; i < 4; i++) 
+ 	dst[i] = get_dst_reg(c, inst, i, 1);
+@@ -2236,6 +2237,14 @@ static void emit_txb(struct brw_wm_compi
+     }
+     brw_MOV(p, brw_message_reg(5), src[3]);
+     brw_MOV(p, brw_message_reg(6), brw_imm_f(0));
++
++    if (BRW_IS_IGDNG(p->brw)) {
++        msg_type = BRW_SAMPLER_MESSAGE_SIMD8_SAMPLE_BIAS_IGDNG;
++    } else {
++        /* Does it work well on SIMD8? */
++        msg_type = BRW_SAMPLER_MESSAGE_SIMD16_SAMPLE_BIAS;
++    }
++
+     brw_SAMPLE(p,
+ 	    retype(vec8(dst[0]), BRW_REGISTER_TYPE_UW),
+ 	    1,
+@@ -2243,10 +2252,12 @@ static void emit_txb(struct brw_wm_compi
+ 	    unit + MAX_DRAW_BUFFERS, /* surface */
+ 	    unit,     /* sampler */
+ 	    inst->DstReg.WriteMask,
+-	    BRW_SAMPLER_MESSAGE_SIMD16_SAMPLE_BIAS,
++	    msg_type,
+ 	    4,
+ 	    4,
+-	    0);
++            0,                                           /* eot */
++            1,
++            BRW_SAMPLER_SIMD_MODE_SIMD8);
+ }
+ 
+ static void emit_tex(struct brw_wm_compile *c,
+@@ -2260,6 +2271,7 @@ static void emit_tex(struct brw_wm_compi
+     GLuint i, nr;
+     GLuint emit;
+     GLboolean shadow = (c->key.shadowtex_mask & (1<<unit)) ? 1 : 0;
++    GLuint msg_type;
+ 
+     payload_reg = get_reg(c, PROGRAM_PAYLOAD, PAYLOAD_DEPTH, 0, 1, 0, 0);
+ 
+@@ -2300,6 +2312,16 @@ static void emit_tex(struct brw_wm_compi
+ 	brw_MOV(p, brw_message_reg(6), src[2]);
+     }
+ 
++    if (BRW_IS_IGDNG(p->brw)) {
++        if (shadow)
++            msg_type = BRW_SAMPLER_MESSAGE_SIMD8_SAMPLE_COMPARE_IGDNG;
++        else
++            msg_type = BRW_SAMPLER_MESSAGE_SIMD8_SAMPLE_IGDNG;
++    } else {
++        /* Does it work for shadow on SIMD8 ? */
++        msg_type = BRW_SAMPLER_MESSAGE_SIMD8_SAMPLE;
++    }
++    
+     brw_SAMPLE(p,
+ 	    retype(vec8(dst[0]), BRW_REGISTER_TYPE_UW),
+ 	    1,
+@@ -2307,10 +2329,12 @@ static void emit_tex(struct brw_wm_compi
+ 	    unit + MAX_DRAW_BUFFERS, /* surface */
+ 	    unit,     /* sampler */
+ 	    inst->DstReg.WriteMask,
+-	    BRW_SAMPLER_MESSAGE_SIMD8_SAMPLE,
++	    msg_type,
+ 	    4,
+ 	    shadow ? 6 : 4,
+-	    0);
++            0,                                          /* eot */
++            1,
++            BRW_SAMPLER_SIMD_MODE_SIMD8);
+ 
+     if (shadow)
+ 	brw_MOV(p, dst[3], brw_imm_f(1.0));
+@@ -2333,6 +2357,7 @@ static void brw_wm_emit_glsl(struct brw_
+     int i, if_insn = 0, loop_insn = 0;
+     struct brw_compile *p = &c->func;
+     struct brw_indirect stack_index = brw_indirect(0, 0);
++    GLuint br = 1;
+ 
+     c->reg_index = 0;
+     prealloc_reg(c);
+@@ -2542,6 +2567,9 @@ static void brw_wm_emit_glsl(struct brw_
+ 		brw_set_predicate_control(p, BRW_PREDICATE_NONE);
+ 		break;
+ 	    case OPCODE_ENDLOOP: 
++                if (BRW_IS_IGDNG(brw))
++                   br = 2;
++
+ 		loop_insn--;
+ 		inst0 = inst1 = brw_WHILE(p, loop_inst[loop_insn]);
+ 		/* patch all the BREAK instructions from
+@@ -2549,10 +2577,10 @@ static void brw_wm_emit_glsl(struct brw_
+ 		while (inst0 > loop_inst[loop_insn]) {
+ 		    inst0--;
+ 		    if (inst0->header.opcode == BRW_OPCODE_BREAK) {
+-			inst0->bits3.if_else.jump_count = inst1 - inst0 + 1;
++			inst0->bits3.if_else.jump_count = br * (inst1 - inst0 + 1);
+ 			inst0->bits3.if_else.pop_count = 0;
+ 		    } else if (inst0->header.opcode == BRW_OPCODE_CONTINUE) {
+-                        inst0->bits3.if_else.jump_count = inst1 - inst0;
++			inst0->bits3.if_else.jump_count = br * (inst1 - inst0);
+                         inst0->bits3.if_else.pop_count = 0;
+                     }
+ 		}
+--- src/mesa/drivers/dri/i965/brw_wm_state.c	2009-09-01 14:49:51.092857033 +0800
++++ src/mesa/drivers/dri/i965/brw_wm_state.c	2009-09-01 15:42:30.791233754 +0800
+@@ -70,7 +70,9 @@ wm_unit_populate_key(struct brw_context 
+       key->max_threads = 1;
+    else {
+       /* WM maximum threads is number of EUs times number of threads per EU. */
+-      if (BRW_IS_G4X(brw))
++      if (BRW_IS_IGDNG(brw))
++         key->max_threads = 12 * 6;
++      else if (BRW_IS_G4X(brw))
+ 	 key->max_threads = 10 * 5;
+       else
+ 	 key->max_threads = 8 * 4;
+@@ -134,7 +136,11 @@ wm_unit_create_from_key(struct brw_conte
+    wm.thread0.kernel_start_pointer = brw->wm.prog_bo->offset >> 6; /* reloc */
+    wm.thread1.depth_coef_urb_read_offset = 1;
+    wm.thread1.floating_point_mode = BRW_FLOATING_POINT_NON_IEEE_754;
+-   wm.thread1.binding_table_entry_count = key->nr_surfaces;
++
++   if (BRW_IS_IGDNG(brw))
++      wm.thread1.binding_table_entry_count = 0; /* hardware requirement */
++   else
++      wm.thread1.binding_table_entry_count = key->nr_surfaces;
+ 
+    if (key->total_scratch != 0) {
+       wm.thread2.scratch_space_base_pointer =
+@@ -151,7 +157,11 @@ wm_unit_create_from_key(struct brw_conte
+    wm.thread3.const_urb_entry_read_offset = key->curbe_offset * 2;
+    wm.thread3.urb_entry_read_offset = 0;
+ 
+-   wm.wm4.sampler_count = (key->sampler_count + 1) / 4;
++   if (BRW_IS_IGDNG(brw)) 
++      wm.wm4.sampler_count = 0; /* hardware requirement */
++   else
++      wm.wm4.sampler_count = (key->sampler_count + 1) / 4;
++
+    if (brw->wm.sampler_bo != NULL) {
+       /* reloc */
+       wm.wm4.sampler_state_pointer = brw->wm.sampler_bo->offset >> 5;
+--- src/mesa/drivers/dri/intel/intel_chipset.h	2009-09-01 14:49:51.095087890 +0800
++++ src/mesa/drivers/dri/intel/intel_chipset.h	2009-09-01 15:42:30.791705814 +0800
+@@ -67,13 +67,18 @@
+ #define PCI_CHIP_G45_G                  0x2E22
+ #define PCI_CHIP_G41_G                  0x2E32
+ 
++#define PCI_CHIP_ILD_G                  0x0042
++#define PCI_CHIP_ILM_G                  0x0046
++
+ #define IS_MOBILE(devid)	(devid == PCI_CHIP_I855_GM || \
+ 				 devid == PCI_CHIP_I915_GM || \
+ 				 devid == PCI_CHIP_I945_GM || \
+ 				 devid == PCI_CHIP_I945_GME || \
+ 				 devid == PCI_CHIP_I965_GM || \
+ 				 devid == PCI_CHIP_I965_GME || \
+-				 devid == PCI_CHIP_GM45_GM || IS_IGD(devid))
++				 devid == PCI_CHIP_GM45_GM || \
++				 IS_IGD(devid) || \
++				 devid == PCI_CHIP_ILM_G)
+ 
+ #define IS_G45(devid)           (devid == PCI_CHIP_IGD_E_G || \
+                                  devid == PCI_CHIP_Q45_G || \
+@@ -82,6 +87,10 @@
+ #define IS_GM45(devid)          (devid == PCI_CHIP_GM45_GM)
+ #define IS_G4X(devid)		(IS_G45(devid) || IS_GM45(devid))
+ 
++#define IS_ILD(devid)           (devid == PCI_CHIP_ILD_G)
++#define IS_ILM(devid)           (devid == PCI_CHIP_ILM_G)
++#define IS_IGDNG(devid)           (IS_ILD(devid) || IS_ILM(devid))
++
+ #define IS_915(devid)		(devid == PCI_CHIP_I915_G || \
+ 				 devid == PCI_CHIP_E7221_G || \
+ 				 devid == PCI_CHIP_I915_GM)
+@@ -99,7 +108,8 @@
+ 				 devid == PCI_CHIP_I965_GM || \
+ 				 devid == PCI_CHIP_I965_GME || \
+ 				 devid == PCI_CHIP_I946_GZ || \
+-				 IS_G4X(devid))
++				 IS_G4X(devid) || \
++				 IS_IGDNG(devid))
+ 
+ #define IS_9XX(devid)		(IS_915(devid) || \
+ 				 IS_945(devid) || \
+--- src/mesa/drivers/dri/intel/intel_context.c	2009-09-01 14:50:24.095371898 +0800
++++ src/mesa/drivers/dri/intel/intel_context.c	2009-09-01 15:42:30.792386215 +0800
+@@ -193,6 +193,12 @@ intelGetString(GLcontext * ctx, GLenum n
+       case PCI_CHIP_G41_G:
+          chipset = "Intel(R) G41";
+          break;
++      case PCI_CHIP_ILD_G:
++         chipset = "Intel(R) IGDNG_D";
++         break;
++      case PCI_CHIP_ILM_G:
++         chipset = "Intel(R) IGDNG_M";
++         break;
+       default:
+          chipset = "Unknown Intel Chipset";
+          break;
+--- src/mesa/drivers/dri/intel/intel_mipmap_tree.c	2009-09-01 14:50:15.674596991 +0800
++++ src/mesa/drivers/dri/intel/intel_mipmap_tree.c	2009-09-01 15:42:30.793204680 +0800
+@@ -328,23 +328,31 @@ intel_miptree_set_level_info(struct inte
+ }
+ 
+ 
+-
+ void
+-intel_miptree_set_image_offset(struct intel_mipmap_tree *mt,
+-			       GLuint level, GLuint img,
+-			       GLuint x, GLuint y)
++intel_miptree_set_image_offset_ex(struct intel_mipmap_tree *mt,
++                                  GLuint level, GLuint img,
++                                  GLuint x, GLuint y, 
++                                  GLuint offset)
+ {
+    if (img == 0 && level == 0)
+       assert(x == 0 && y == 0);
+ 
+    assert(img < mt->level[level].nr_images);
+ 
+-   mt->level[level].image_offset[img] = (x + y * mt->pitch) * mt->cpp;
++   mt->level[level].image_offset[img] = (x + y * mt->pitch) * mt->cpp + offset;
+ 
+    DBG("%s level %d img %d pos %d,%d image_offset %x\n",
+        __FUNCTION__, level, img, x, y, mt->level[level].image_offset[img]);
+ }
+ 
++void
++intel_miptree_set_image_offset(struct intel_mipmap_tree *mt,
++			       GLuint level, GLuint img,
++			       GLuint x, GLuint y)
++{
++    intel_miptree_set_image_offset_ex(mt, level, img, x, y, 0);
++}
++
+ 
+ /* Although we use the image_offset[] array to store relative offsets
+  * to cube faces, Mesa doesn't know anything about this and expects
+@@ -458,7 +466,7 @@ intel_miptree_image_data(struct intel_co
+    }
+ }
+ 
+-extern GLuint intel_compressed_alignment(GLenum);
++extern void intel_get_texture_alignment_unit(GLenum, GLuint *, GLuint *);
+ /* Copy mipmap image between trees
+  */
+ void
+@@ -477,9 +485,11 @@ intel_miptree_image_copy(struct intel_co
+    GLuint i;
+ 
+    if (dst->compressed) {
+-       GLuint alignment = intel_compressed_alignment(dst->internal_format);
++       GLuint align_w, align_h;
++
++       intel_get_texture_alignment_unit(dst->internal_format, &align_w, &align_h);
+        height = (height + 3) / 4;
+-       width = ((width + alignment - 1) & ~(alignment - 1));
++       width = ALIGN(width, align_w);
+    }
+ 
+    for (i = 0; i < depth; i++) {
+--- src/mesa/drivers/dri/intel/intel_mipmap_tree.h	2009-09-01 14:50:15.675041675 +0800
++++ src/mesa/drivers/dri/intel/intel_mipmap_tree.h	2009-09-01 15:42:30.793901896 +0800
+@@ -194,6 +194,11 @@ void intel_miptree_set_level_info(struct
+                                   GLuint x, GLuint y,
+                                   GLuint w, GLuint h, GLuint d);
+ 
++void intel_miptree_set_image_offset_ex(struct intel_mipmap_tree *mt,
++                                       GLuint level,
++                                       GLuint img, GLuint x, GLuint y,
++                                       GLuint offset);
++
+ void intel_miptree_set_image_offset(struct intel_mipmap_tree *mt,
+                                     GLuint level,
+                                     GLuint img, GLuint x, GLuint y);
+--- src/mesa/drivers/dri/intel/intel_tex_layout.c	2009-09-01 14:50:15.683272116 +0800
++++ src/mesa/drivers/dri/intel/intel_tex_layout.c	2009-09-01 16:02:57.514568233 +0800
+@@ -35,26 +35,37 @@
+ #include "intel_context.h"
+ #include "main/macros.h"
+ 
+-GLuint intel_compressed_alignment(GLenum internalFormat)
++void intel_get_texture_alignment_unit(GLenum internalFormat, GLuint *w, GLuint *h)
+ {
+-    GLuint alignment = 4;
+-
+     switch (internalFormat) {
+     case GL_COMPRESSED_RGB_FXT1_3DFX:
+     case GL_COMPRESSED_RGBA_FXT1_3DFX:
+-        alignment = 8;
++	 *w = 8;
++	 *h = 4;
++	 break;
++
++    case GL_RGB_S3TC:
++    case GL_RGB4_S3TC:
++    case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
++    case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
++    case GL_RGBA_S3TC:
++    case GL_RGBA4_S3TC:
++    case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
++    case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
++	 *w = 4;
++	 *h = 4;
+         break;
+ 
+     default:
++	 *w = 4;
++	 *h = 2;
+         break;
+     }
+-
+-    return alignment;
+ }
+ 
+ void i945_miptree_layout_2d( struct intel_context *intel, struct intel_mipmap_tree *mt )
+ {
+-   GLint align_h = 2, align_w = 4;
++   GLuint align_h = 2, align_w = 4;
+    GLuint level;
+    GLuint x = 0;
+    GLuint y = 0;
+@@ -62,9 +73,9 @@ void i945_miptree_layout_2d( struct inte
+    GLuint height = mt->height0;
+ 
+    mt->pitch = mt->width0;
++   intel_get_texture_alignment_unit(mt->internal_format, &align_w, &align_h);
+ 
+    if (mt->compressed) {
+-       align_w = intel_compressed_alignment(mt->internal_format);
+        mt->pitch = ALIGN(mt->width0, align_w);
+    }
+ 
+--- src/mesa/drivers/dri/intel/intel_tex_layout.h	2009-09-01 14:50:15.683629138 +0800
++++ src/mesa/drivers/dri/intel/intel_tex_layout.h	2009-09-01 16:03:57.845988073 +0800
+@@ -39,4 +39,4 @@ static GLuint minify( GLuint d )
+ }
+ 
+ extern void i945_miptree_layout_2d( struct intel_context *intel, struct intel_mipmap_tree *mt );
+-extern GLuint intel_compressed_alignment(GLenum);
++extern void intel_get_texture_alignment_unit(GLenum, GLuint *, GLuint *);
+
+--- src/mesa/drivers/dri/i965/brw_clip.h	2009-09-21 13:14:55.884775291 +0800
++++ src/mesa/drivers/dri/i965/brw_clip.h	2009-09-21 13:17:43.709734794 +0800
+@@ -100,6 +100,8 @@ struct brw_clip_compile {
+       
+       struct brw_reg fixed_planes;
+       struct brw_reg plane_equation;
++
++      struct brw_reg ff_sync;
+    } reg;
+ 
+    /* 3 different ways of expressing vertex size:
+@@ -173,4 +175,5 @@ struct brw_reg get_tmp( struct brw_clip_
+ void brw_clip_project_position(struct brw_clip_compile *c,
+              struct brw_reg pos );
+ void brw_clip_ff_sync(struct brw_clip_compile *c);
++void brw_clip_init_ff_sync(struct brw_clip_compile *c);
+ #endif
+--- src/mesa/drivers/dri/i965/brw_clip_line.c	2009-09-21 13:14:55.922810659 +0800
++++ src/mesa/drivers/dri/i965/brw_clip_line.c	2009-09-21 13:19:08.612749205 +0800
+@@ -85,6 +85,11 @@ static void brw_clip_line_alloc_regs( st
+       i++;
+    }
+ 
++   if (c->need_ff_sync) {
++       c->reg.ff_sync = retype(brw_vec1_grf(i, 0), BRW_REGISTER_TYPE_UD);
++       i++;
++   }
++
+ 
+    c->first_tmp = i;
+    c->last_tmp = i;
+@@ -246,8 +251,6 @@ static void clip_and_emit_line( struct b
+ 
+    brw_ADD(p, c->reg.t, c->reg.t0, c->reg.t1);
+    brw_CMP(p, vec1(brw_null_reg()), BRW_CONDITIONAL_L, c->reg.t, brw_imm_f(1.0));
+-   if (c->need_ff_sync)
+-	   brw_clip_ff_sync(c);      
+    not_culled = brw_IF(p, BRW_EXECUTE_1);
+    {
+       brw_clip_interp_vertex(c, newvtx0, vtx0, vtx1, c->reg.t0, GL_FALSE);
+@@ -265,6 +268,7 @@ static void clip_and_emit_line( struct b
+ void brw_emit_line_clip( struct brw_clip_compile *c )
+ {
+    brw_clip_line_alloc_regs(c);
++   brw_clip_init_ff_sync(c);
+ 
+    if (c->key.do_flat_shading)
+       brw_clip_copy_colors(c, 0, 1);
+--- src/mesa/drivers/dri/i965/brw_clip_point.c	2009-09-21 13:14:55.902331247 +0800
++++ src/mesa/drivers/dri/i965/brw_clip_point.c	2009-09-21 13:19:38.931669855 +0800
+@@ -50,7 +50,6 @@ void brw_emit_point_clip( struct brw_cli
+    /* Send an empty message to kill the thread:
+     */
+    brw_clip_tri_alloc_regs(c, 0);
+-   if (c->need_ff_sync)
+-	   brw_clip_ff_sync(c);      
++   brw_clip_init_ff_sync(c);
+    brw_clip_kill_thread(c);
+ }
+--- src/mesa/drivers/dri/i965/brw_clip_tri.c	2009-09-21 13:14:55.862015389 +0800
++++ src/mesa/drivers/dri/i965/brw_clip_tri.c	2009-09-21 13:20:58.554768097 +0800
+@@ -119,6 +119,11 @@ void brw_clip_tri_alloc_regs( struct brw
+       i++;
+    }
+ 
++   if (c->need_ff_sync) {
++      c->reg.ff_sync = retype(brw_vec1_grf(i, 0), BRW_REGISTER_TYPE_UD);
++      i++;
++   }
++
+    c->first_tmp = i;
+    c->last_tmp = i;
+ 
+@@ -563,6 +568,7 @@ void brw_emit_tri_clip( struct brw_clip_
+    brw_clip_tri_alloc_regs(c, 3 + c->key.nr_userclip + 6);
+    brw_clip_tri_init_vertices(c);
+    brw_clip_init_clipmask(c);
++   brw_clip_init_ff_sync(c);
+ 
+    /* if -ve rhw workaround bit is set, 
+       do cliptest */
+@@ -589,8 +595,6 @@ void brw_emit_tri_clip( struct brw_clip_
+    else 
+       maybe_do_clip_tri(c);
+ 
+-   if (c->need_ff_sync)
+-	   brw_clip_ff_sync(c);      
+    brw_clip_tri_emit_polygon(c);
+ 
+    /* Send an empty message to kill the thread:
+--- src/mesa/drivers/dri/i965/brw_clip_unfilled.c	2009-09-21 13:14:55.907891517 +0800
++++ src/mesa/drivers/dri/i965/brw_clip_unfilled.c	2009-09-21 13:21:47.012502732 +0800
+@@ -453,6 +453,7 @@ void brw_emit_unfilled_clip( struct brw_
+ 
+    brw_clip_tri_alloc_regs(c, 3 + c->key.nr_userclip + 6);
+    brw_clip_tri_init_vertices(c);
++   brw_clip_init_ff_sync(c);
+ 
+    assert(c->offset[VERT_RESULT_EDGE]);
+ 
+@@ -496,8 +497,6 @@ void brw_emit_unfilled_clip( struct brw_
+    }
+    brw_ENDIF(p, do_clip);
+    
+-   if (c->need_ff_sync)
+-	   brw_clip_ff_sync(c);      
+    emit_unfilled_primitives(c);
+    brw_clip_kill_thread(c);
+ }
+--- src/mesa/drivers/dri/i965/brw_clip_util.c	2009-09-21 13:14:55.903414187 +0800
++++ src/mesa/drivers/dri/i965/brw_clip_util.c	2009-09-21 13:26:00.383481523 +0800
+@@ -213,6 +213,8 @@ void brw_clip_emit_vue(struct brw_clip_c
+    struct brw_compile *p = &c->func;
+    GLuint start = c->last_mrf;
+ 
++   brw_clip_ff_sync(c);
++
+    assert(!(allocate && eot));
+    
+    /* Cycle through mrf regs - probably futile as we have to wait for
+@@ -263,6 +265,7 @@ void brw_clip_kill_thread(struct brw_cli
+ {
+    struct brw_compile *p = &c->func;
+ 
++   brw_clip_ff_sync(c);
+    /* Send an empty message to kill the thread and release any
+     * allocated urb entry:
+     */
+@@ -356,17 +359,37 @@ void brw_clip_init_clipmask( struct brw_
+ 
+ void brw_clip_ff_sync(struct brw_clip_compile *c)
+ {
++   if (c->need_ff_sync) {
++       struct brw_compile *p = &c->func;
++       struct brw_instruction *need_ff_sync;
++
++       brw_set_conditionalmod(p, BRW_CONDITIONAL_Z);
++       brw_AND(p, brw_null_reg(), c->reg.ff_sync, brw_imm_ud(0x1));
++       need_ff_sync = brw_IF(p, BRW_EXECUTE_1);
++       {
++           brw_OR(p, c->reg.ff_sync, c->reg.ff_sync, brw_imm_ud(0x1));
++           brw_ff_sync(p,
++                   c->reg.R0,
++                   0,
++                   c->reg.R0,
++                   1,
++                   1, /* used */
++                   1, /* msg length */
++                   1, /* response length */
++                   0, /* eot */
++                   1, /* write compelete */
++                   0, /* urb offset */
++                   BRW_URB_SWIZZLE_NONE);
++        }
++        brw_ENDIF(p, need_ff_sync);
++        brw_set_predicate_control(p, BRW_PREDICATE_NONE);
++    }
++}
++
++void brw_clip_init_ff_sync(struct brw_clip_compile *c)
++{
++    if (c->need_ff_sync) {
+ 	struct brw_compile *p = &c->func;
+-	brw_ff_sync(p, 
+-				c->reg.R0,
+-				0,
+-				c->reg.R0,
+-				1,	
+-				1,		/* used */
+-				1,  	/* msg length */
+-				1,		/* response length */
+-				0,		/* eot */
+-				1,		/* write compelete */
+-				0,		/* urb offset */
+-				BRW_URB_SWIZZLE_NONE);
++        brw_MOV(p, c->reg.ff_sync, brw_imm_ud(0));
++    }
+ }
+--- src/mesa/drivers/dri/i965/brw_tex_layout.c	2009-09-21 13:14:55.921718283 +0800
++++ src/mesa/drivers/dri/i965/brw_tex_layout.c	2009-09-21 13:28:04.982370951 +0800
+@@ -65,11 +65,6 @@ GLboolean brw_miptree_layout( struct int
+ 
+ 	   if (mt->compressed) {
+ 	       mt->pitch = ALIGN(mt->width0, align_w);
+-	       qpitch = (y_pitch + ALIGN(minify(y_pitch), align_h) + 11 * align_h) / 4 * mt->pitch * mt->cpp;
+-	       mt->total_height = (y_pitch + ALIGN(minify(y_pitch), align_h) + 11 * align_h) / 4 * 6;
+-	   } else {
+-	       qpitch = (y_pitch + ALIGN(minify(y_pitch), align_h) + 11 * align_h) * mt->pitch * mt->cpp;
+-	       mt->total_height = (y_pitch + ALIGN(minify(y_pitch), align_h) + 11 * align_h) * 6;
+ 	   }
+ 
+ 	   if (mt->first_level != mt->last_level) {
+@@ -90,6 +85,14 @@ GLboolean brw_miptree_layout( struct int
+ 
+ 	   mt->pitch = intel_miptree_pitch_align(intel, mt, mt->pitch);
+ 
++	   if (mt->compressed) {
++	       qpitch = (y_pitch + ALIGN(minify(y_pitch), align_h) + 11 * align_h) / 4 * mt->pitch * mt->cpp;
++	       mt->total_height = (y_pitch + ALIGN(minify(y_pitch), align_h) + 11 * align_h) / 4 * 6;
++	   } else {
++               qpitch = (y_pitch + ALIGN(minify(y_pitch), align_h) + 11 * align_h) * mt->pitch * mt->cpp;
++	       mt->total_height = (y_pitch + ALIGN(minify(y_pitch), align_h) + 11 * align_h) * 6;
++	   }
++
+ 	   for (level = mt->first_level; level <= mt->last_level; level++) {
+ 	       GLuint img_height;
+ 	       GLuint nr_images = 6;
+--- src/mesa/drivers/dri/intel/intel_chipset.h	Mon Oct 12 12:38:31 2009
++++ src/mesa/drivers/dri/intel/intel_chipset.h	Mon Oct 12 12:41:44 2009
+@@ -66,6 +66,7 @@
+ #define PCI_CHIP_Q45_G                  0x2E12
+ #define PCI_CHIP_G45_G                  0x2E22
+ #define PCI_CHIP_G41_G                  0x2E32
++#define PCI_CHIP_B43_G 			0x2E42
+ 
+ #define PCI_CHIP_ILD_G                  0x0042
+ #define PCI_CHIP_ILM_G                  0x0046
+@@ -83,7 +84,8 @@
+ #define IS_G45(devid)           (devid == PCI_CHIP_IGD_E_G || \
+                                  devid == PCI_CHIP_Q45_G || \
+                                  devid == PCI_CHIP_G45_G || \
+-                                 devid == PCI_CHIP_G41_G)
++                                 devid == PCI_CHIP_G41_G || \
++				 devid == PCI_CHIP_B43_G)
+ #define IS_GM45(devid)          (devid == PCI_CHIP_GM45_GM)
+ #define IS_G4X(devid)		(IS_G45(devid) || IS_GM45(devid))
+ 
+--- src/mesa/drivers/dri/intel/intel_context.c	Mon Oct 12 12:39:38 2009
++++ src/mesa/drivers/dri/intel/intel_context.c	Mon Oct 12 12:42:23 2009
+@@ -193,6 +193,9 @@
+       case PCI_CHIP_G41_G:
+          chipset = "Intel(R) G41";
+          break;
++      case PCI_CHIP_B43_G:
++	 chipset = "Intel(R) B43";
++	 break;
+       case PCI_CHIP_ILD_G:
+          chipset = "Intel(R) IGDNG_D";
+          break;
