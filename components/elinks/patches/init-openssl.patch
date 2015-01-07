@@ -1,0 +1,14 @@
+Disable SSLv2 and SSLv3 in elinks to "mitigate POODLE vulnerability".
+
+This change will be passed upstream.
+
+--- elinks-0.11.7/src/network/ssl/ssl.c.orig	2014-12-17 12:23:16.239844159 -0800
++++ elinks-0.11.7/src/network/ssl/ssl.c	2015-01-06 05:41:07.668610655 -0800
+@@ -58,6 +58,7 @@
+ 	SSLeay_add_ssl_algorithms();
+ 	context = SSL_CTX_new(SSLv23_client_method());
+ 	SSL_CTX_set_options(context, SSL_OP_ALL);
++	SSL_CTX_set_options(context, SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3);
+ 	SSL_CTX_set_default_verify_paths(context);
+ }
+ 
