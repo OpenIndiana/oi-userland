@@ -19,22 +19,22 @@
 # CDDL HEADER END
 
 #
-# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openscap
-COMPONENT_VERSION=	1.0.0
+COMPONENT_VERSION=	1.2.0
 COMPONENT_PROJECT_URL=  http://www.open-scap.org
 COMPONENT_DOWNLOAD_URL= https://fedorahosted.org/releases/o/p/openscap
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:47105500b8b3d80cdf07b277bfab59091de5eadb16d97d27ee663bfbee58cb76
+COMPONENT_ARCHIVE_HASH= sha256:88329ebf23e7c7d063cdb5615fe1f68b18fb436a0df81307c5acc3b5963d7cec
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_DOWNLOAD_URL)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=        utility/openscap
 
-TPNO=			16560
+TPNO =			20626
 
 COMPILER =		gcc
 CFLAGS+=		-std=c99
@@ -63,7 +63,7 @@ COMPONENT_POST_CONFIGURE_ACTION = \
     (cd $(@D) ; cp -rp swig swig2.7 ; \
     $(GSED) -i -e 's|usr/include/python2.6|usr/include/python2.7|' \
      -e 's|$(PYTHON.2.6.VENDOR_PACKAGES.32)|$(PYTHON.2.7.VENDOR_PACKAGES.32)|' \
-     -e 's|PYTHON_VERSION = 2.6|PYTHON_VERSION = 2.7|' swig2.7/Makefile)
+     -e 's|PYTHON_VERSION = 2.6|PYTHON_VERSION = 2.7|' swig2.7/Makefile swig2.7/python2/Makefile)
 
 COMPONENT_POST_INSTALL_ACTION =	\
 	(cd $(@D)/swig2.7 ; $(GMAKE) $(COMPONENT_INSTALL_ARGS) install)
@@ -82,7 +82,6 @@ CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS +=	am_cv_python_pythondir=$(PYTHON_VENDOR_PACKAGES)
 CONFIGURE_OPTIONS +=	am_cv_python_pyexecdir=$(PYTHON_VENDOR_PACKAGES)
 CONFIGURE_OPTIONS +=	LIBS="-lldap_r -lscf -ldlpi -lsec -lzonecfg"
-CONFIGURE_OPTIONS +=	--with-report-branding="/usr/share/lib/xml/style/os-logo.xsl"
 
 DOCS_DIR = $(PROTO_DIR)/usr/share/docs/openscap/html/
 
