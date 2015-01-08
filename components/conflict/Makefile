@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -60,6 +60,11 @@ CONFIGURE_OPTIONS += --mandir=$(CONFIGURE_MANDIR)
 COMPONENT_TEST_DIR =	$(BUILD_DIR_64)
 COMPONENT_TEST_CMD =	./run_test.sh
 COMPONENT_TEST_TARGETS =
+
+# The additional conflict specific set of transforms to be applied to the
+# test results to try to normalize them.
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s|/tmp/conflict\.......|/tmp/conflict\.xxxxxx|g" '
 
 ASLR_MODE = $(ASLR_ENABLE)
 
