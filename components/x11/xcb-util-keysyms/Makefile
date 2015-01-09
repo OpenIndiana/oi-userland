@@ -18,17 +18,18 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Aurelien Larcher. All rights reserved.
+# Copyright (c) 2013-2015, Aurelien Larcher. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xcb-util-keysyms
-COMPONENT_VERSION=	0.3.9
+COMPONENT_VERSION=	0.4.0
 COMPONENT_FMRI=     	x11/library/xcb-util-keysyms
+COMPONENT_CLASSIFICATION= Development/X11
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://xcb.freedesktop.org/XcbUtil
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:7be1acf053bd68a1910fc861b2cbcbad7637b5618590dd5484d43a96f7995c6e
+COMPONENT_ARCHIVE_HASH=	sha256:0ef8490ff1dede52b7de533158547f8b454b241aa3e4dcca369507f66f216dd9
 COMPONENT_ARCHIVE_URL=	http://xcb.freedesktop.org/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      MIT
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
