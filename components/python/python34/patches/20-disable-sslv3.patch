@@ -1,0 +1,57 @@
+This patch comes from in-house.  It has not yet been submitted upstream,
+but submission is planned.
+
+--- Python-3.4.2/Modules/_ssl.c.~1~	2014-10-08 01:18:15.000000000 -0700
++++ Python-3.4.2/Modules/_ssl.c	2015-01-08 12:47:54.633548859 -0800
+@@ -2059,6 +2059,8 @@
+     options = SSL_OP_ALL & ~SSL_OP_DONT_INSERT_EMPTY_FRAGMENTS;
+     if (proto_version != PY_SSL_VERSION_SSL2)
+         options |= SSL_OP_NO_SSLv2;
++    if (proto_version != PY_SSL_VERSION_SSL3)
++        options |= SSL_OP_NO_SSLv3;
+     SSL_CTX_set_options(self->ctx, options);
+ 
+ #ifndef OPENSSL_NO_ECDH
+--- Python-3.4.2/Lib/test/test_ssl.py.~1~	2014-10-08 01:18:14.000000000 -0700
++++ Python-3.4.2/Lib/test/test_ssl.py	2015-01-08 18:09:09.276695442 -0800
+@@ -674,10 +674,7 @@
+     @skip_if_broken_ubuntu_ssl
+     def test_options(self):
+         ctx = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
+-        # OP_ALL | OP_NO_SSLv2 is the default value
+-        self.assertEqual(ssl.OP_ALL | ssl.OP_NO_SSLv2,
+-                         ctx.options)
+-        ctx.options |= ssl.OP_NO_SSLv3
++        # OP_ALL | OP_NO_SSLv2 | OP_NO_SSLv3 is the default value
+         self.assertEqual(ssl.OP_ALL | ssl.OP_NO_SSLv2 | ssl.OP_NO_SSLv3,
+                          ctx.options)
+         if can_clear_options():
+@@ -2149,15 +2146,15 @@
+                         sys.stdout.write(
+                             " SSL2 client to SSL23 server test unexpectedly failed:\n %s\n"
+                             % str(x))
+-            try_protocol_combo(ssl.PROTOCOL_SSLv23, ssl.PROTOCOL_SSLv3, True)
++            try_protocol_combo(ssl.PROTOCOL_SSLv23, ssl.PROTOCOL_SSLv3, False)
+             try_protocol_combo(ssl.PROTOCOL_SSLv23, ssl.PROTOCOL_SSLv23, True)
+             try_protocol_combo(ssl.PROTOCOL_SSLv23, ssl.PROTOCOL_TLSv1, True)
+ 
+-            try_protocol_combo(ssl.PROTOCOL_SSLv23, ssl.PROTOCOL_SSLv3, True, ssl.CERT_OPTIONAL)
++            try_protocol_combo(ssl.PROTOCOL_SSLv23, ssl.PROTOCOL_SSLv3, False, ssl.CERT_OPTIONAL)
+             try_protocol_combo(ssl.PROTOCOL_SSLv23, ssl.PROTOCOL_SSLv23, True, ssl.CERT_OPTIONAL)
+             try_protocol_combo(ssl.PROTOCOL_SSLv23, ssl.PROTOCOL_TLSv1, True, ssl.CERT_OPTIONAL)
+ 
+-            try_protocol_combo(ssl.PROTOCOL_SSLv23, ssl.PROTOCOL_SSLv3, True, ssl.CERT_REQUIRED)
++            try_protocol_combo(ssl.PROTOCOL_SSLv23, ssl.PROTOCOL_SSLv3, False, ssl.CERT_REQUIRED)
+             try_protocol_combo(ssl.PROTOCOL_SSLv23, ssl.PROTOCOL_SSLv23, True, ssl.CERT_REQUIRED)
+             try_protocol_combo(ssl.PROTOCOL_SSLv23, ssl.PROTOCOL_TLSv1, True, ssl.CERT_REQUIRED)
+ 
+@@ -2186,7 +2183,8 @@
+             try_protocol_combo(ssl.PROTOCOL_SSLv3, ssl.PROTOCOL_TLSv1, False)
+             if no_sslv2_implies_sslv3_hello():
+                 # No SSLv2 => client will use an SSLv3 hello on recent OpenSSLs
+-                try_protocol_combo(ssl.PROTOCOL_SSLv3, ssl.PROTOCOL_SSLv23, True,
++                # until we disabled SSLv3 for Poodle
++                try_protocol_combo(ssl.PROTOCOL_SSLv3, ssl.PROTOCOL_SSLv23, False,
+                                    client_options=ssl.OP_NO_SSLv2)
+ 
+         @skip_if_broken_ubuntu_ssl
