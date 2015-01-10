@@ -24,6 +24,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =        curl
 COMPONENT_VERSION=      7.39.0
+COMPONENT_REVISION=	1
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  http://curl.haxx.se/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
@@ -74,6 +75,9 @@ CONFIGURE_OPTIONS += "curl_disallow_getifaddrs=yes"
 LINT_FLAGS += -I$(SOURCE_DIR)/include
 
 ASLR_MODE = $(ASLR_ENABLE)
+
+ENV = /usr/bin/env -i
+COMPONENT_TEST_ENV += USER=`id -un`
 
 build: $(BUILD_32_and_64)
 
