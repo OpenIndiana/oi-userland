@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -75,6 +75,9 @@ LDFLAGS =	$(CC_BITS) $(CC_PIC)
 
 # build pic
 CFLAGS +=	$(CC_PIC)
+
+# 16-byte memory alignment + interpretation of non-alignment prevents SIGBUS.
+studio_ALIGN.sparc.64 = -xmemalign=16i
 
 # The python build is profile-guided for studio; to see the benefits of that,
 # Python must be compiled with -xO5 and a different build target must be used.
