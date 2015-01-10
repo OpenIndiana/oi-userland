@@ -1,0 +1,38 @@
+Curl incorrectly defines 
+#ifndef GETHOSTNAME_TYPE_ARG2
+#  ifdef USE_WINSOCK
+#    define GETHOSTNAME_TYPE_ARG2 int
+#  else
+#    define GETHOSTNAME_TYPE_ARG2 size_t
+#  endif
+#endif
+Fixing this is likely to cause ABI incompatiblities, 
+so we just fix this usage, so that curl testsuite could
+overwrite gethostname(char*,int) from unistd.h
+
+--- tests/libtest/sethostname.h.~1~	2015-01-10 02:26:18.633049476 +0300
++++ tests/libtest/sethostname.h	2015-01-10 02:27:03.481546638 +0300
+@@ -41,5 +41,9 @@
+ #endif
+ 
+ LIBHOSTNAME_EXTERN int FUNCALLCONV
++#ifdef __sun
++  gethostname(char *name, int namelen);
++#else
+   gethostname(char *name, GETHOSTNAME_TYPE_ARG2 namelen);
++#endif
+ 
+--- tests/libtest/sethostname.c.~1~	2015-01-10 02:24:55.256879968 +0300
++++ tests/libtest/sethostname.c	2015-01-10 02:26:08.492685662 +0300
+@@ -27,7 +27,11 @@
+  * we force our own host name, in order to make some tests machine independent
+  */
+ 
++#ifdef __sun
++int gethostname(char *name, int namelen)
++#else
+ int gethostname(char *name, GETHOSTNAME_TYPE_ARG2 namelen)
++#endif
+ {
+   const char *force_hostname = getenv("CURL_GETHOSTNAME");
+   if(force_hostname) {

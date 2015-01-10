@@ -18,18 +18,17 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =        curl
-COMPONENT_VERSION=      7.26.0
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=      7.39.0
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  http://curl.haxx.se/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:79ccce9edb8aee17d20ad4d75e1f83a789f8c2e71e68f468e1bf8abf8933193f
+    sha256:a3a7c2b9e7416c728469eb4cb5b61e9161335df4278329e1d9cc3c194e25d795
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/curl
 
@@ -46,7 +45,7 @@ CFLAGS += $(CPP_LARGEFILES)
 CFLAGS += `pkg-config --cflags libidn`
 CPPFLAGS += `pkg-config --cflags libidn`
 
-CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
+CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS) -I/usr/include/openldap"
 
 CONFIGURE_OPTIONS += --localstatedir=/var --enable-shared --disable-static
 CONFIGURE_OPTIONS += --enable-http --enable-ftp
@@ -61,15 +60,15 @@ CONFIGURE_OPTIONS += --disable-sspi --enable-crypto-auth
 CONFIGURE_OPTIONS += --enable-cookies --disable-hidden-symbols
 CONFIGURE_OPTIONS += --disable-soname-bump
 CONFIGURE_OPTIONS += --enable-ldap --with-random=/dev/urandom
-CONFIGURE_OPTIONS += --with-ssl --with-ldap-lib=ldap
-CONFIGURE_OPTIONS += --with-lber-lib=sldap
+CONFIGURE_OPTIONS += --with-ssl --with-ldap-lib=ldap_r-2.4
+CONFIGURE_OPTIONS += --with-lber-lib=lber-2.4
 CONFIGURE_OPTIONS += --with-gssapi-includes=/usr/include/gssapi
 CONFIGURE_OPTIONS += --with-gssapi-libs=$(GSSAPI_LIBDIR_$(BITS))
 CONFIGURE_OPTIONS += --with-gssapi=/usr --without-ca-bundle
 CONFIGURE_OPTIONS += --with-ca-path=/etc/openssl/certs
 CONFIGURE_OPTIONS += --with-zlib=/usr --with-libidn=/usr
 CONFIGURE_OPTIONS += --with-pic
-CONFIGURE_OPTIONS += --without-libssh2
+CONFIGURE_OPTIONS += --with-libssh2
 CONFIGURE_OPTIONS += "curl_disallow_getifaddrs=yes"
 
 LINT_FLAGS += -I$(SOURCE_DIR)/include
