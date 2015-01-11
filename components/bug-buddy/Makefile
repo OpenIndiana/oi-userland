@@ -17,7 +17,8 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= bug-buddy
 COMPONENT_VERSION= 2.32.0
-COMPONENT_SUMMARY= desktop-cache is a set of SMF services used to update the various GNOME desktop caches.
+COMPONENT_REVISION= 1
+COMPONENT_SUMMARY= GNOME crash report generator
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \

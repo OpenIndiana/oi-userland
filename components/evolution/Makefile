@@ -15,15 +15,14 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		evolution
-COMPONENT_VERSION=	2.30.3
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	2.32.3
 COMPONENT_PROJECT_URL=	https://projects.gnome.org/evolution/
 COMPONENT_SUMMARY=	Evolution Email and Calendar
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:8c47e93ff5aedfad39d4224ae0751a938ccb7d2a2bcd407513cf1331c51b9cab
-COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.30/$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.bz2
+    sha256:33ab38780e9abb71506230e331e9c3534444b5ed3f17046f0b6371a00df686fb
+COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.32/$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.bz2
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk

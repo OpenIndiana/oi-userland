@@ -10,22 +10,25 @@
 #
 
 #
-# Copyright 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright 2015 Alexander Pyhalov
 #
 
 include ../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= nautilus-sendto
-COMPONENT_VERSION= 2.32.0
-COMPONENT_REVISION= 1
-COMPONENT_SUMMARY= Nautilus context menu for sending files
+COMPONENT_NAME= contact-lookup-applet
+COMPONENT_VERSION= 0.17
+COMPONENT_SUMMARY= Contact lookup applet
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:890090b24381d91f079610d5454cb786a3ecefc91fa06649b2222be9bb02269a
+  sha256:0a5ba1eb36f291c4ad19aac89e785f255fcf929e50ca877f191166df6b6a1a58
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.32/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.gnome.org
+  https://launchpad.net/contact-lookup-applet/main/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL = https://launchpad.net/contact-lookup-applet/main
+COMPONENT_CLASSIFICATION = Applications/Panels and Applets
+COMPONENT_FMRI = gnome/applet/contact-lookup-applet
+COMPONENT_LICENSE = GPLv2
+COMPONENT_LICENSE_FILE = COPYING
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
@@ -33,14 +36,8 @@ include ../../make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
-					libtoolize --copy --force &&\
-					aclocal -I . &&\
-                                        automake -c -f -a &&\
-                                        autoconf )
-
-
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
+CONFIGURE_OPTIONS+= --libexecdir=/usr/lib
 
 build: $(BUILD_32)
 
