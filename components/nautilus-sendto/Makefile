@@ -17,6 +17,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= nautilus-sendto
 COMPONENT_VERSION= 2.32.0
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Nautilus context menu for sending files
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2

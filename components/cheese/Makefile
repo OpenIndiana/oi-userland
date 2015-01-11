@@ -17,6 +17,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cheese
 COMPONENT_VERSION=	2.28.1
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	Cheese - GNOME application for taking photos and videos from a webcam
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)

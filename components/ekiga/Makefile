@@ -16,7 +16,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ekiga
 COMPONENT_VERSION=	3.2.7
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_PROJECT_URL=	http://www.ekiga.org
 COMPONENT_SUMMARY=	A GNOME based H.323/SIP video conferencing application
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
