@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -40,6 +40,7 @@ TPNO=			7904
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
+include ../../make-rules/lint-libraries.mk
 
 COMPONENT_PREP_ACTION = \
         (cd $(@D) ; \
