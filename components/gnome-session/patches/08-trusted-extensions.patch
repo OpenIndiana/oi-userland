@@ -1,0 +1,222 @@
+--- gnome-session-2.32.1/gnome-session/Makefile.am.~3~	2015-01-13 11:37:46.364727918 +0300
++++ gnome-session-2.32.1/gnome-session/Makefile.am	2015-01-13 11:40:15.810716055 +0300
+@@ -53,7 +53,9 @@
+ 	gsm-session-save.c			\
+ 	gsm-session-save.h			\
+ 	gsm-xsmp-server.c			\
+-	gsm-xsmp-server.h
++	gsm-xsmp-server.h			\
++	trusted.h				\
++	trusted.c
+ 
+ gnome_session_CPPFLAGS =			\
+ 	$(AM_CPPFLAGS)				\
+diff -urN -x'*.orig' -x'*.rej' gnome-session-2.25.92/gnome-session/trusted.c ../SUNWgnome-session-2.25.91.p10/gnome-session-2.25.92/gnome-session/trusted.c
+--- gnome-session-2.25.92/gnome-session/trusted.c	1970-01-01 01:00:00.000000000 +0100
++++ ../SUNWgnome-session-2.25.91.p10/gnome-session-2.25.92/gnome-session/trusted.c	2009-03-09 15:41:33.527439000 +0000
+@@ -0,0 +1,116 @@
++/* trusted.c
++ * Copyright (C) 2008 SUN Microsystems, Inc.
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 2 of the
++ * License, or (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
++ * 02111-1307, USA.
++ */
++
++#include <priv.h>
++#include <user_attr.h>
++#include <secdb.h>
++#include <gtk/gtk.h>
++#include <X11/Xlib.h>
++#include <sys/types.h>
++#include <unistd.h>
++#include <glib/gi18n.h>
++#include "trusted.h"
++
++void
++escalate_privs (void)
++{
++	priv_set_t *pset;
++	
++	pset = priv_allocset ();
++	getppriv (PRIV_PERMITTED, pset);
++	setppriv (PRIV_SET, PRIV_INHERITABLE, pset);
++}
++
++void
++drop_privs (void)
++{
++	priv_set_t *pset;
++	userattr_t *uattr = NULL;
++	char *value = NULL;
++
++	pset = priv_allocset ();
++	if ((uattr = getuseruid (getuid())) && 
++	    (value = kva_match (uattr->attr, USERATTR_DFLTPRIV_KW))) {
++		pset = priv_str_to_set (value, ",", NULL);
++	} else {
++		pset = priv_str_to_set ("basic", ",", NULL);
++	}
++
++	setppriv (PRIV_SET, PRIV_INHERITABLE, pset);
++	priv_freeset (pset);
++}
++
++void
++gsm_trusted_session_start (void)
++{
++	char **app_path = NULL;
++	static char *setup_apps[] = {"/usr/lib/gnome-settings-daemon",
++	        "/usr/lib/gnome-session/helpers/gnome-settings-daemon-helper", 
++		"/usr/lib/gnome-session/helpers/gnome-keyring-daemon-wrapper",
++		"/usr/lib/nwam-manager",
++		NULL};
++	static char *trusted_apps[] = {"/usr/bin/tsoljds-setssheight",
++				       "/usr/bin/metacity",
++                                       "/usr/bin/tsoljdsselmgr",
++                                       "/usr/bin/tsoljds-tstripe",
++                                       "/usr/lib/wnck_applet",
++                                       "/usr/bin/gnome-panel",
++                                       NULL};
++
++	static char *untrusted_apps[] = {"/usr/X11/bin/xscreensaver", NULL};
++
++  	for (app_path = setup_apps; *app_path != NULL; app_path++) {
++		g_spawn_command_line_async (*app_path, NULL);
++	}
++	escalate_privs ();
++
++  	for (app_path = trusted_apps; *app_path != NULL; app_path++) {
++		g_spawn_command_line_async (*app_path, NULL);
++	}
++
++	drop_privs ();
++
++  	for (app_path = untrusted_apps; *app_path != NULL; app_path++) {
++		g_spawn_command_line_async (*app_path, NULL);
++	}
++}
++
++gboolean
++trusted_session_init (Display *display) 
++{
++	int major_code, first_event, first_error;
++	GtkWidget *dialog;
++
++	if (XQueryExtension (display, "SUN_TSOL", &major_code, &first_event, 
++			     &first_error)) {
++		g_setenv ("TRUSTED_SESSION", "TRUE", TRUE);
++		drop_privs ();
++		return TRUE;
++	} else {
++		dialog = gtk_message_dialog_new (NULL, 0, GTK_MESSAGE_ERROR,
++						 /* SUN_BRANDING */
++						 GTK_BUTTONS_OK, _("Unable to login to Trusted Session. Required X server security extension not loaded."));
++		gtk_widget_show (dialog);
++		gtk_dialog_run (GTK_DIALOG (dialog));
++		gtk_widget_destroy (dialog);
++
++		return FALSE;
++	}
++}
++
+diff -urN -x'*.orig' -x'*.rej' gnome-session-2.25.92/gnome-session/trusted.h ../SUNWgnome-session-2.25.91.p10/gnome-session-2.25.92/gnome-session/trusted.h
+--- gnome-session-2.25.92/gnome-session/trusted.h	1970-01-01 01:00:00.000000000 +0100
++++ ../SUNWgnome-session-2.25.91.p10/gnome-session-2.25.92/gnome-session/trusted.h	2009-03-09 15:41:33.527708000 +0000
+@@ -0,0 +1,28 @@
++/* trusted.h
++ * Copyright (C) 2008 SUN Microsystems, Inc.
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 2 of the
++ * License, or (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
++ * 02111-1307, USA.
++ */
++
++#ifndef __TRUSTED_H__
++#define __TRUSTED_H__
++
++#include <glib.h>
++
++gboolean trusted_session_init ();
++void gsm_trusted_session_start (void);
++
++#endif
+--- gnome-session-2.26.0/gnome-session/main.c.ori	2009-03-17 14:52:41.087991974 +0000
++++ gnome-session-2.26.0/gnome-session/main.c	2009-03-17 14:53:49.364619311 +0000
+@@ -62,6 +62,7 @@
+ static gboolean failsafe = FALSE;
+ static gboolean show_version = FALSE;
+ static gboolean debug = FALSE;
++static gboolean trusted_session = FALSE;
+ 
+ static void
+ on_bus_name_lost (DBusGProxy *bus_proxy,
+@@ -506,6 +507,8 @@
+                 { "default-session-key", 0, 0, G_OPTION_ARG_STRING, &default_session_key, N_("GConf key used to lookup default session"), NULL },
+                 { "debug", 0, 0, G_OPTION_ARG_NONE, &debug, N_("Enable debugging code"), NULL },
+                 { "failsafe", 'f', 0, G_OPTION_ARG_NONE, &failsafe, N_("Do not load user-specified applications"), NULL },
++        /* SUN_BRANDING */
++                { "trusted-session", '\0', 0, G_OPTION_ARG_NONE, &trusted_session, N_("Used for Trusted Multi-Label Session"), NULL },
+                 { "version", 0, 0, G_OPTION_ARG_NONE, &show_version, N_("Version of this application"), NULL },
+                 { NULL, 0, 0, 0, NULL, NULL, NULL }
+         };
+@@ -561,6 +564,12 @@
+ 	xdisp = gdk_x11_display_get_xdisplay (gdisp);
+ 	XInternAtom (xdisp, "GNOME_SM_DESKTOP", FALSE);
+ 
++    if (trusted_session) {
++        if (!trusted_session_init (xdisp)) {
++            exit (1);
++        }
++    }
++
+ 	gsm_wait_for_unfinished_postrun ();
+ 
+         /* Some third-party programs rely on GNOME_DESKTOP_SESSION_ID to
+@@ -597,7 +606,13 @@
+         }
+ 
+         gsm_xsmp_server_start (xsmp_server);
+-        gsm_manager_start (manager);
++
++        if (trusted_session) {
++            gsm_trusted_session_start ();
++            gsm_manager_set_phase (manager, GSM_MANAGER_PHASE_RUNNING);
++        } else {
++            gsm_manager_start (manager);
++        }
+ 
+         gtk_main ();
+ 
+--- gnome-session-2.32.1/gnome-session/Makefile.am.~3~	2015-01-13 11:40:54.505535118 +0300
++++ gnome-session-2.32.1/gnome-session/Makefile.am	2015-01-13 11:41:39.791197437 +0300
+@@ -77,6 +77,7 @@
+ 	$(top_builddir)/egg/libeggdesktopfile.la \
+ 	$(SM_LIBS)				\
+ 	$(ICE_LIBS)				\
++	-lsecdb					\
+ 	$(XRENDER_LIBS)				\
+ 	$(XTEST_LIBS)				\
+ 	$(XEXT_LIBS)				\

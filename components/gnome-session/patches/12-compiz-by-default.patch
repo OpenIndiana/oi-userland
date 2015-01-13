@@ -1,0 +1,43 @@
+diff -urN -x'*.orig' gnome-session-2.27.5/data/gnome-session.schemas.in.in ../SUNWgnome-session-2.26.1.p12/gnome-session-2.27.5/data/gnome-session.schemas.in.in
+--- gnome-session-2.27.5/data/gnome-session.schemas.in.in	2009-08-06 18:08:43.102694513 +0100
++++ ../SUNWgnome-session-2.26.1.p12/gnome-session-2.27.5/data/gnome-session.schemas.in.in	2009-08-06 18:23:14.799823821 +0100
+@@ -90,7 +90,7 @@
+          <applyto>/desktop/gnome/session/required_components/windowmanager</applyto>
+          <owner>gnome</owner>
+          <type>string</type>
+-         <default>@DEFAULT_WM@</default>
++         <default>compiz-by-default</default>
+          <locale name="C">
+             <short>Window Manager</short>
+             <long>The window manager is the program that draws the title bar and borders around windows, and allows you to move and resize windows.</long>
+diff -urN -x'*.orig' gnome-session-2.27.5/data/gnome-wm ../SUNWgnome-session-2.26.1.p12/gnome-session-2.27.5/data/gnome-wm
+--- gnome-session-2.27.5/data/gnome-wm	2009-07-29 01:36:07.000000000 +0100
++++ ../SUNWgnome-session-2.26.1.p12/gnome-session-2.27.5/data/gnome-wm	2009-08-06 18:26:01.253531521 +0100
+@@ -73,7 +73,7 @@
+ 
+   KNOWN_WM="sawfish sawmill enlightenment icewm wmaker fvwm2 qvwm fvwm twm kwm"
+   if [ $IS_X_COMPOSITED -eq 0 ] ; then
+-    KNOWN_WM="mutter compiz-manager compiz beryl $KNOWN_WM"
++    KNOWN_WM="compiz-by-default mutter compiz-manager compiz beryl $KNOWN_WM"
+   fi
+   # metacity is still the default wm in GNOME
+   KNOWN_WM="metacity $KNOWN_WM"
+@@ -131,6 +131,8 @@
+       OPT1=-i
+       OPT2=$SMID
+       ;;
++    compiz-by-default)
++      ;;
+     compiz|compiz-manager)
+       OPT1=--sm-client-id
+       OPT2=$SMID
+@@ -144,6 +146,9 @@
+ fi
+ 
+ case `basename $WINDOW_MANAGER` in
++  compiz-by-default)
++    export LIBGL_ALWAYS_INDIRECT=1
++    ;;
+   compiz)
+     export LIBGL_ALWAYS_INDIRECT=1
+     gtk-window-decorator &

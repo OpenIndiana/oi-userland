@@ -1,0 +1,84 @@
+diff -urN gnome-session-2.30.2/gnome-session/gsm-autostart-app.c ../SUNWgnome-session-2.30.2.hacked/gnome-session-2.30.2/gnome-session/gsm-autostart-app.c
+--- gnome-session-2.30.2/gnome-session/gsm-autostart-app.c	2012-06-22 15:37:28.738137057 +0100
++++ ../SUNWgnome-session-2.30.2.hacked/gnome-session-2.30.2/gnome-session/gsm-autostart-app.c	2012-07-16 11:36:18.354382496 +0100
+@@ -25,6 +25,7 @@
+ #include <string.h>
+ #include <sys/wait.h>
+ #include <errno.h>
++#include <time.h>
+ 
+ #include <glib.h>
+ #include <gio/gio.h>
+@@ -66,6 +67,9 @@
+         char                 *condition_string;
+         gboolean              condition;
+         gboolean              autorestart;
++	/* Counter for to keep track of app launched in short burst of time */
++        int                   launch_counter;
++        time_t                launch_time; 
+ 
+         GFileMonitor         *condition_monitor;
+         guint                 condition_notify_id;
+@@ -100,6 +104,8 @@
+         app->priv = GSM_AUTOSTART_APP_GET_PRIVATE (app);
+ 
+         app->priv->pid = -1;
++        app->priv->launch_counter = 0;
++        app->priv->launch_time = time(NULL);
+         app->priv->condition_monitor = NULL;
+         app->priv->condition = FALSE;
+ }
+@@ -1174,6 +1180,12 @@
+                 break;
+         }
+ 
++	if (ret) {
++            aapp->priv->launch_time = time(NULL);
++ 	    g_debug ("success gsm_autostart_app_start(): desktop_id=%s number of launch (%d) launched at %d", aapp->priv->desktop_id, aapp->priv->launch_counter, aapp->priv->launch_time);
++	}
++
++
+         return ret;
+ }
+ 
+@@ -1183,6 +1195,11 @@
+ {
+         GError  *local_error;
+         gboolean res;
++        GsmAutostartApp *aapp;
++	time_t now;
++
++	aapp = GSM_AUTOSTART_APP (app);
++ 	g_debug ("gsm_autostart_app_restart(): desktop_id=%s launched %d times", aapp->priv->desktop_id, aapp->priv->launch_counter);
+ 
+         /* ignore stop errors - it is fine if it is already stopped */
+         local_error = NULL;
+@@ -1192,7 +1209,27 @@
+                 g_error_free (local_error);
+         }
+ 
+-        res = gsm_app_start (app, &local_error);
++	if (aapp->priv->launch_counter > 15) {
++		g_warning ("The app *%s* has restarted in such a short time span, there must be some abnormalities.", aapp->priv->desktop_id);
++		aapp->priv->launch_counter = 0;
++		return FALSE;
++	}
++
++	/* Check for potentially badly behaved app. One keeps restarting in
++	 * less than 4 seconds 
++	 */
++	now = time(NULL);
++        if ((now - aapp->priv->launch_time) < 4) {
++		res = gsm_app_start (app, &local_error);
++		aapp->priv->launch_time = time(NULL);
++		/* Only increment the counter if it is a suspect */
++            	aapp->priv->launch_counter++;
++	}
++	else  {
++        	res = gsm_app_start (app, &local_error);
++            	aapp->priv->launch_counter = 0;
++	}
++
+         if (! res) {
+                 g_propagate_error (error, local_error);
+                 return FALSE;
