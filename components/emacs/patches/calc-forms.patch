@@ -1,0 +1,18 @@
+# Prevent uninterruptible infinite loop. This is the fix for
+#    20270656 calc: sign change of hh.mm value puts Emacs into tight loop
+# See components/emacs/README.
+#
+--- emacs-24.3.orig/lisp/calc/calc-forms.el	2013-01-01 13:37:17.000000000 -0700
++++ emacs-24.3/lisp/calc/calc-forms.el	2015-01-02 14:57:36.824358166 -0700
+@@ -271,7 +271,10 @@
+ 	(m (math-normalize (nth 2 a)))
+ 	(s (let ((calc-internal-prec (max (- calc-internal-prec 4) 3)))
+ 	     (math-normalize (nth 3 a)))))
+-    (if (math-negp h)
++    (if (or 
++         (math-negp h)
++         (and (= h 0) (math-negp m))
++         (and (= h 0) (= m 0) (math-negp s)))
+ 	(progn
+ 	  (if (math-posp s)
+ 	      (setq s (math-add s -60)
