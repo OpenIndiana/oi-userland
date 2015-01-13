@@ -10,20 +10,20 @@
 
 #
 # Copyright (c) 2014 Alexander Pyhalov
+# Copyright (c) 2014 Ken Mays
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnome-control-center
-COMPONENT_VERSION=	2.30.1
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	2.32.1
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	GNOME desktop wide preference configuration tools
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:db050803a4bf3a2297255b8fff4810f2125a5b001d3fd785ee1ecd7f2c6f593b
-COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.30/$(COMPONENT_ARCHIVE)
+    sha256:7c568b57358e5c08f4d8dd76dbac7df2539135ad081872b60514b7a8ac797e66 
+COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.32/$(COMPONENT_ARCHIVE)
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
