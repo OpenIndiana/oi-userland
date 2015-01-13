@@ -1,0 +1,446 @@
+diff -uprN gnome-session-2.28.0/gnome-session/gsm-consolekit.c gnome-session-2.28.0-new/gnome-session/gsm-consolekit.c
+--- gnome-session-2.28.0/gnome-session/gsm-consolekit.c	2009-09-09 19:16:53.000000000 +0800
++++ gnome-session-2.28.0-new/gnome-session/gsm-consolekit.c	2009-11-10 16:58:17.029348387 +0800
+@@ -479,6 +479,70 @@ gsm_consolekit_attempt_stop (GsmConsolek
+         }
+ }
+ 
++void
++gsm_consolekit_get_available_systems (GsmConsolekit *manager, GPtrArray **array)
++{
++        gboolean res;
++        GError  *error;
++
++        error = NULL;
++
++        if (!gsm_consolekit_ensure_ck_connection (manager, &error)) {
++                g_warning ("Could not connect to ConsoleKit: %s",
++                           error->message);
++                emit_stop_complete (manager, error);
++                g_error_free (error);
++                return;
++        }
++
++        res = dbus_g_proxy_call_with_timeout (manager->priv->ck_proxy,
++                                              "GetAvailableOperatingSystems",
++                                              INT_MAX,
++                                              &error,
++                                              G_TYPE_INVALID,
++					      dbus_g_type_get_collection ("GPtrArray", OS_STRUCT_TYPE),
++					      array,
++                                              G_TYPE_INVALID);
++
++        if (!res) {
++                g_warning ("Unable to get available operating system: %s", error->message);
++                g_error_free (error);
++        }
++}
++
++void
++gsm_consolekit_restart_with_parameters (GsmConsolekit *manager,
++		const gchar *parameters)
++{
++        gboolean res;
++        GError  *error;
++
++        error = NULL;
++
++        if (!gsm_consolekit_ensure_ck_connection (manager, &error)) {
++                g_warning ("Could not connect to ConsoleKit: %s",
++                           error->message);
++                emit_stop_complete (manager, error);
++                g_error_free (error);
++                return;
++        }
++
++        res = dbus_g_proxy_call_with_timeout (manager->priv->ck_proxy,
++                                              "RestartWithParameters",
++                                              INT_MAX,
++                                              &error,
++					      G_TYPE_STRING,
++					      parameters,
++                                              G_TYPE_INVALID,
++                                              G_TYPE_INVALID);
++
++        if (!res) {
++                g_warning ("Unable to restart system: %s", error->message);
++                emit_restart_complete (manager, error);
++                g_error_free (error);
++        }
++}
++
+ static gboolean
+ get_current_session_id (DBusConnection *connection,
+                         char          **session_id)
+diff -uprN gnome-session-2.28.0/gnome-session/gsm-consolekit.h gnome-session-2.28.0-new/gnome-session/gsm-consolekit.h
+--- gnome-session-2.28.0/gnome-session/gsm-consolekit.h	2009-04-20 02:26:52.000000000 +0800
++++ gnome-session-2.28.0-new/gnome-session/gsm-consolekit.h	2009-11-10 16:58:17.029557135 +0800
+@@ -94,6 +94,18 @@ void             gsm_consolekit_set_sess
+ 
+ gchar           *gsm_consolekit_get_current_session_type (GsmConsolekit *manager);
+ 
++#define OS_STRUCT_TYPE (dbus_g_type_get_struct ("GValueArray",   \
++			G_TYPE_INT, \
++			G_TYPE_STRING, \
++			G_TYPE_STRING, \
++			G_TYPE_STRING, \
++			G_TYPE_BOOLEAN, \
++			G_TYPE_INVALID))
++
++
++void gsm_consolekit_get_available_systems (GsmConsolekit *manager, GPtrArray **array);
++void gsm_consolekit_with_with_parameters (GsmConsolekit *manager, const gchar *parameters);
++
+ GsmConsolekit   *gsm_get_consolekit             (void);
+ 
+ G_END_DECLS
+diff -uprN gnome-session-2.28.0/gnome-session/gsm-logout-dialog.c gnome-session-2.28.0-new/gnome-session/gsm-logout-dialog.c
+--- gnome-session-2.28.0/gnome-session/gsm-logout-dialog.c	2009-11-10 17:44:49.039510013 +0800
++++ gnome-session-2.28.0-new/gnome-session/gsm-logout-dialog.c	2009-11-10 17:43:21.340885644 +0800
+@@ -59,6 +59,9 @@ struct _GsmLogoutDialogPrivate
+         unsigned int         timeout_id;
+ 
+         unsigned int         default_response;
++
++	unsigned int fast;
++	int id;
+ };
+ 
+ static GsmLogoutDialog *current_dialog = NULL;
+@@ -140,6 +143,9 @@ gsm_logout_dialog_init (GsmLogoutDialog 
+         logout_dialog->priv->timeout = 0;
+         logout_dialog->priv->default_response = GTK_RESPONSE_CANCEL;
+ 
++        logout_dialog->priv->fast = 1;
++        logout_dialog->priv->id = -1;
++
+         gtk_window_set_skip_taskbar_hint (GTK_WINDOW (logout_dialog), TRUE);
+         gtk_window_set_keep_above (GTK_WINDOW (logout_dialog), TRUE);
+         gtk_window_stick (GTK_WINDOW (logout_dialog));
+@@ -352,6 +358,237 @@ gsm_logout_dialog_set_timeout (GsmLogout
+                                                          logout_dialog);
+ }
+ 
++#if defined(__x86) || defined(__x86__)
++static void
++fast_reboot_cb (GtkWidget *button, gpointer data)
++{
++	GsmLogoutDialog *logout_dialog = (GsmLogoutDialog *)data;
++
++	if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button))) {
++		logout_dialog->priv->fast = 1;
++	} else {
++		logout_dialog->priv->fast = 0;
++	}
++}
++
++/* Option to skip boot menu on restart. */
++static GtkWidget *
++get_fast_reboot_option (GsmLogoutDialog *logout_dialog)
++{
++	GtkWidget *check;
++	char *obuf = NULL;
++
++	/* SUN_BRANDING */
++	check = gtk_check_button_new_with_mnemonic (_("S_kip boot menu on restart"));
++	gtk_widget_show (check);
++	g_signal_connect (GTK_WIDGET (check),
++			"toggled",
++			G_CALLBACK (fast_reboot_cb),
++			logout_dialog);
++	gtk_toggle_button_set_mode (GTK_TOGGLE_BUTTON (check), TRUE);
++	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (check), TRUE);
++
++	return check;
++}
++
++static void
++boot_environment_cb (GtkWidget *button, gpointer data)
++{
++	GsmLogoutDialog *logout_dialog = (GsmLogoutDialog *)data;
++
++	if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button))) {
++		gint id;
++
++		id = (gint)g_object_get_data (G_OBJECT (button), "id");
++		logout_dialog->priv->id = id;
++	}
++}
++
++static GtkWidget *
++get_warning ()
++{
++	GtkBox *hbox;
++	GtkImage *image;
++	GtkWidget *label;
++
++	hbox = gtk_hbox_new (FALSE, 0);
++
++	image = gtk_image_new_from_stock (GTK_STOCK_DIALOG_WARNING,
++			GTK_ICON_SIZE_SMALL_TOOLBAR);
++	gtk_widget_show (image);
++	gtk_box_pack_start (GTK_BOX (hbox), image, FALSE, FALSE, 0);
++	label = gtk_label_new (NULL);
++	gtk_widget_show (label);
++	gtk_label_set_markup (GTK_LABEL (label),
++	/* SUN_BRANDING */
++		_("<span style=\"italic\" size=\"smaller\">Options apply only after Restart, not after Shut Down</span>"));
++	gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
++
++	return hbox;
++}
++
++/* Options to choose BE. */
++static GtkWidget *
++get_be_option (GsmLogoutDialog *logout_dialog)
++{
++	GtkWidget *warning;
++	GtkWidget *label;
++	GtkWidget *radio;
++	GtkWidget *scroll;
++	GtkWidget *vbox;
++	GSList *group;
++	GPtrArray *array = NULL;
++	int i=0;
++	warning = get_warning ();
++	gtk_widget_show (warning);
++
++	/* SUN_BRANDING */
++	label = gtk_label_new_with_mnemonic (_("_Default boot environment at next restart:"));
++	gtk_widget_show (label);
++
++	vbox = gtk_vbox_new (FALSE, 2);
++	gtk_widget_show (vbox);
++
++	gsm_consolekit_get_available_systems (logout_dialog->priv->consolekit,
++			&array);
++	group = NULL;
++	for (i = 0; i < array->len; i++) {
++		GValue elem = {0};
++		gint id;
++		gchar *name;
++		gboolean is_default = FALSE;
++
++		g_value_init (&elem, OS_STRUCT_TYPE);
++		g_value_set_static_boxed (&elem, g_ptr_array_index (array, i));
++		dbus_g_type_struct_get (&elem,
++				0, &id,
++				3, &name,
++				4, &is_default,
++				G_MAXUINT);
++
++		radio = gtk_radio_button_new_with_label (group, name);
++		gtk_widget_show (radio);
++		g_object_set_data (G_OBJECT (radio), "id", (gpointer)id);
++		if (is_default) {
++			gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (radio),
++					TRUE);
++			logout_dialog->priv->id = id;
++		}
++		gtk_box_pack_start (GTK_BOX (vbox), radio, FALSE, FALSE, 0);
++		group = gtk_radio_button_get_group (GTK_RADIO_BUTTON (radio));
++		g_signal_connect (GTK_WIDGET (radio),
++				"toggled",
++				G_CALLBACK (boot_environment_cb),
++				logout_dialog);
++	}
++	scroll = gtk_scrolled_window_new (NULL, NULL);
++	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scroll),
++			GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
++	gtk_widget_show (scroll);
++	gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (scroll),
++			vbox);
++
++	/* a new vbox to put label, scrolled window and warning in */
++	vbox = gtk_vbox_new (FALSE, 2);
++	gtk_box_pack_start (GTK_BOX (vbox), label, FALSE, FALSE, 0);
++	gtk_box_pack_start (GTK_BOX (vbox), scroll, FALSE, FALSE, 0);
++	gtk_box_pack_start (GTK_BOX (vbox), warning, FALSE, FALSE, 0);
++
++	if (array->len > 1)
++		gtk_widget_show (vbox);
++	g_ptr_array_free (array, TRUE);
++
++	return vbox;
++}
++
++static void
++create_fastreboot_options (GsmLogoutDialog *logout_dialog)
++{
++	GtkWidget *expander;
++	GtkWidget *align;
++	GtkWidget *check;
++	GtkWidget *be;
++	GtkWidget *hbox;
++	GtkWidget *vbox;
++	GList *list,*l;
++	gint spacing;
++	gint size;
++
++	/* SUN_BRANDING */
++	expander = gtk_expander_new_with_mnemonic (_("_More Options"));
++	gtk_widget_show (expander);
++	gtk_widget_style_get (expander, "expander-size", &size,
++			"expander-spacing", &spacing, NULL);
++
++	vbox = gtk_vbox_new (FALSE, 0);
++	gtk_widget_show (vbox);
++
++	check = get_fast_reboot_option (logout_dialog);
++	align = gtk_alignment_new (0.0, 0.0, 0.0, 0.0);
++	gtk_widget_show (align);
++	gtk_alignment_set_padding (GTK_ALIGNMENT (align), 0, 0,
++			(size + 2 * spacing), 0);
++	gtk_container_add (GTK_CONTAINER (align), check);
++	gtk_box_pack_start (GTK_BOX (vbox), align, FALSE, FALSE, 10);
++
++	be = get_be_option (logout_dialog);
++	align = gtk_alignment_new (0.0, 0.0, 0.0, 0.0);
++	gtk_widget_show (align);
++	gtk_alignment_set_padding (GTK_ALIGNMENT (align), 0, 0,
++			(size + 2 * spacing), 0);
++	gtk_container_add (GTK_CONTAINER (align), be);
++	gtk_box_pack_start (GTK_BOX (vbox), align, FALSE, FALSE, 0);
++
++	gtk_container_add (GTK_CONTAINER (expander), vbox);
++
++	/*
++	 * Find the right container to put the expander in.
++	 * This is gtk dialog imeplementation specific.
++	 * So if there is something wrong with the layout
++	 * the code need to be udpated
++	 */
++	hbox = NULL;
++	vbox = gtk_dialog_get_content_area (GTK_DIALOG
++			(logout_dialog)); 
++	list = gtk_container_get_children (GTK_CONTAINER (vbox));
++	for (l = list; l != NULL; l = g_list_next (l)) {
++		GtkWidget *widget;
++
++		widget = l->data;
++		if (GTK_IS_HBOX(widget)) {
++			hbox = widget;
++			break;
++		}
++	}
++	g_list_free (list);
++	g_assert (hbox != NULL);
++
++	vbox = NULL;
++	list = gtk_container_get_children (GTK_CONTAINER (hbox));
++	for (l = list; l != NULL; l = g_list_next (l)) {
++		GtkWidget *widget;
++
++		widget = l->data;
++		if (GTK_IS_VBOX(widget)) {
++			vbox = widget;
++			break;
++		}
++	}
++	g_list_free (list);
++	g_assert (vbox != NULL);
++
++	if (vbox) {
++		gtk_box_pack_start (GTK_BOX (vbox), expander, FALSE,
++				FALSE, 10);
++	} else {
++		gtk_widget_destroy (expander);
++	}
++
++	return;
++}
++#endif
++
++
+ static GtkWidget *
+ gsm_get_dialog (GsmDialogLogoutType type,
+                 GdkScreen          *screen,
+@@ -418,6 +653,10 @@ gsm_get_dialog (GsmDialogLogoutType type
+                 }
+ 
+                 if (gsm_logout_supports_reboot (logout_dialog)) {
++#if defined(__x86) || defined(__x86__)
++			/* fast reboot support */
++			create_fastreboot_options(logout_dialog);
++#endif
+                         gtk_dialog_add_button (GTK_DIALOG (logout_dialog),
+                                                _("_Restart"),
+                                                GSM_LOGOUT_RESPONSE_REBOOT);
+@@ -454,6 +691,21 @@ gsm_get_dialog (GsmDialogLogoutType type
+         return GTK_WIDGET (logout_dialog);
+ }
+ 
++gchar *
++gsm_logout_dialog_get_restart_parameters (GsmLogoutDialog *logout_dialog)
++{
++	gchar *param = NULL;
++
++	if (logout_dialog->priv->id < 0)
++		return NULL;
++
++	param = g_strdup_printf("id:%d fast:%d",
++			logout_dialog->priv->id,
++			logout_dialog->priv->fast);
++
++	return param;
++}
++
+ GtkWidget *
+ gsm_get_shutdown_dialog (GdkScreen *screen,
+                          guint32    activate_time)
+diff -uprN gnome-session-2.28.0/gnome-session/gsm-logout-dialog.h gnome-session-2.28.0-new/gnome-session/gsm-logout-dialog.h
+--- gnome-session-2.28.0/gnome-session/gsm-logout-dialog.h	2009-04-20 02:26:52.000000000 +0800
++++ gnome-session-2.28.0-new/gnome-session/gsm-logout-dialog.h	2009-11-10 16:58:17.030235487 +0800
+@@ -68,6 +68,8 @@ GtkWidget   *gsm_get_logout_dialog      
+ GtkWidget   *gsm_get_shutdown_dialog      (GdkScreen           *screen,
+                                            guint32              activate_time);
+ 
++gchar *gsm_logout_dialog_get_restart_parameters (GsmLogoutDialog *logout_dialog);
++
+ G_END_DECLS
+ 
+ #endif /* __GSM_LOGOUT_DIALOG_H__ */
+diff -uprN gnome-session-2.28.0/gnome-session/gsm-manager.c gnome-session-2.28.0-new/gnome-session/gsm-manager.c
+diff -uprN gnome-session-2.28.0/gnome-session/gsm-manager.c.orig gnome-session-2.28.0-new/gnome-session/gsm-manager.c.orig
+--- gnome-session-2.28.0/gnome-session/gsm-manager.c	2009-11-10 17:44:49.055937229 +0800
++++ gnome-session-2.28.0/gnome-session/gsm-manager.c	2009-11-10 16:58:17.031615520 +0800
+@@ -132,6 +132,8 @@ struct GsmManagerPrivate
+ 
+         DBusGProxy             *bus_proxy;
+         DBusGConnection        *connection;
++
++	gchar *parameters;
+ };
+ 
+ enum {
+@@ -416,7 +418,8 @@ gsm_manager_quit (GsmManager *manager)
+                                   "request-completed",
+                                   G_CALLBACK (quit_request_completed),
+                                   GINT_TO_POINTER (GDM_LOGOUT_ACTION_REBOOT));
+-                gsm_consolekit_attempt_restart (consolekit);
++                gsm_consolekit_restart_with_parameters (consolekit,
++				manager->priv->parameters);
+                 break;
+         case GSM_MANAGER_LOGOUT_REBOOT_GDM:
+                 gdm_set_logout_action (GDM_LOGOUT_ACTION_REBOOT);
+@@ -2176,6 +2179,11 @@ gsm_manager_dispose (GObject *object)
+                 manager->priv->gconf_client = NULL;
+         }
+ 
++	if (manager->priv->parameters) {
++		g_free (manager->priv->parameters);
++		manager->priv->parameters = NULL;
++	}
++
+         G_OBJECT_CLASS (gsm_manager_parent_class)->dispose (object);
+ }
+ 
+@@ -2800,6 +2808,8 @@ logout_dialog_response (GsmLogoutDialog 
+                 request_shutdown (manager);
+                 break;
+         case GSM_LOGOUT_RESPONSE_REBOOT:
++		manager->priv->parameters =
++			gsm_logout_dialog_get_restart_parameters (logout_dialog);
+                 request_reboot (manager);
+                 break;
+         case GSM_LOGOUT_RESPONSE_LOGOUT:
