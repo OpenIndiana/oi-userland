@@ -41,6 +41,11 @@ include ../../make-rules/ips.mk
 # Because the Studio compiler generates thousands of lines of warnings.
 COMPILER =		gcc
 
+# Needed to generate a 64-bit executable.
+CC +=			$(CC_BITS)
+
+PATCH_LEVEL =		0
+
 # Configure in links does not understand CC, CXX, etc.  Need to generate a
 # new configure for it to configure and build properly.
 COMPONENT_PREP_ACTION=	(cd $(@D) ; autoconf)
