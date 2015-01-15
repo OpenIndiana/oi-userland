@@ -3094,7 +3094,7 @@ new file mode 100644
 index 0000000..3a38660
 --- /dev/null
 +++ isisd/isis_trill.c
-@@ -0,0 +1,2348 @@
+@@ -0,0 +1,2352 @@
 +/*
 + * IS-IS Rout(e)ing protocol - isis_trill.c
 + *
@@ -5312,7 +5312,11 @@ index 0000000..3a38660
 +  dladm_status_t status;
 +  char errmsg[DLADM_STRSIZE];
 +
++#ifdef NETADM_ACTIVE_PROFILE
 +  if ((status = dladm_open (&dlhandle, NETADM_ACTIVE_PROFILE))
++#else
++  if ((status = dladm_open (&dlhandle))
++#endif
 +      != DLADM_STATUS_OK)
 +    {
 +      zlog_err ("%s: unable to open datalink control: %s",
