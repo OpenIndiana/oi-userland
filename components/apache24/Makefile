@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -44,6 +44,9 @@ include ../../make-rules/ips.mk
 ASLR_MODE = $(ASLR_ENABLE)
 
 PATCH_LEVEL=0
+
+# We will build two separate mod_ssl versions.
+COMPONENT_POST_UNPACK_ACTION = (cd $(SOURCE_DIR)/modules; $(CP) -r ssl ssl-fips-140)
 
 # Some patches need configure script re-creation.
 COMPONENT_PREP_ACTION +=($(CP) mod_auth_gss/mod_auth_gss.c $(@D)/modules/aaa);

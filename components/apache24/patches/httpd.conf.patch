@@ -16,7 +16,7 @@ Patch status: Solaris-specific; not suitable for upstream
  # Do NOT simply read the instructions in here without understanding
  # what they do.  They're here only as hints or reminders.  If you are unsure
  # consult the online docs. You have been warned.  
-@@ -63,6 +69,12 @@
+@@ -63,6 +69,15 @@
  # Example:
  # LoadModule foo_module modules/mod_foo.so
  #
@@ -24,12 +24,15 @@ Patch status: Solaris-specific; not suitable for upstream
 +# mod_session_dbd.so are bundled in separate package "apache-dbd".
 +# Similarly mod_authnz_ldap.so and mod_ldap.so are bundled in
 +# separate package "apache-ldap".
++# Also mediated symbolic link mod_ssl.so pointing to mod_ssl-default.so
++# or mod_ssl-fips-140.so is bundled in separate package "apache-ssl"
++# respectively "apache-ssl-fips-140" package.
 +# And finally mod_lua.so is bundled in separate package "apache-lua".
 +#
  @@LoadModule@@
  
  <IfModule unixd_module>
-@@ -74,8 +86,8 @@
+@@ -74,8 +89,8 @@
  # It is usually good practice to create a dedicated user and group for
  # running httpd, as with most system services.
  #
@@ -40,7 +43,7 @@ Patch status: Solaris-specific; not suitable for upstream
  
  </IfModule>
  
-@@ -96,7 +108,7 @@
+@@ -96,7 +111,7 @@
  # e-mailed.  This address appears on some server-generated pages, such
  # as error documents.  e.g. admin@your-domain.com
  #
@@ -49,7 +52,7 @@ Patch status: Solaris-specific; not suitable for upstream
  
  #
  # ServerName gives the name and port that the server uses to identify itself.
-@@ -105,7 +117,7 @@
+@@ -105,7 +120,7 @@
  #
  # If your host doesn't have a registered DNS name, enter its IP address here.
  #
@@ -58,7 +61,7 @@ Patch status: Solaris-specific; not suitable for upstream
  
  #
  # Deny access to the entirety of your server's filesystem. You must
-@@ -314,6 +326,10 @@
+@@ -314,6 +329,10 @@
      #
      #AddType text/html .shtml
      #AddOutputFilter INCLUDES .shtml
@@ -69,7 +72,7 @@ Patch status: Solaris-specific; not suitable for upstream
  </IfModule>
  
  #
-@@ -355,48 +371,22 @@
+@@ -355,48 +374,22 @@
  
  # Supplemental configuration
  #

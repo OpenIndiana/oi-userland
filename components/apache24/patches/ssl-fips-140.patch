@@ -1,0 +1,69 @@
+Patch origin: in-house
+Patch status: Solaris-specific; not suitable for upstream
+
+Will build SSL FIPS version of mod_ssl. Note that modules/ssl-fips-140
+need to be copied from modules/ssl before it can be applied.
+It also makes sure that both mod_ssl versions contains right RPATH.
+
+--- modules/ssl/config.m4
++++ modules/ssl/config.m4
+@@ -44,6 +44,7 @@
+            # structure, so ask libtool to hide everything else:
+            APR_ADDTO(MOD_SSL_LDADD, [-export-symbols-regex ssl_module])
+         fi
++        APR_ADDTO(MOD_LDFLAGS, [-R/lib/openssl/default/64])
+     else
+         enable_ssl=no
+     fi
+--- modules/ssl-fips-140/config.m4
++++ modules/ssl-fips-140/config.m4
+@@ -14,7 +14,7 @@
+ dnl limitations under the License.
+ 
+ dnl #  start of module specific part
+-APACHE_MODPATH_INIT(ssl)
++APACHE_MODPATH_INIT(ssl-fips-140)
+ 
+ dnl #  list of module object files
+ ssl_objs="dnl
+@@ -36,7 +36,7 @@
+ ssl_util_ocsp.lo dnl
+ "
+ dnl #  hook module into the Autoconf mechanism (--enable-ssl option)
+-APACHE_MODULE(ssl, [SSL/TLS support (mod_ssl)], $ssl_objs, , most, [
++APACHE_MODULE(ssl_fips, [SSL/TLS support (mod_ssl)], $ssl_objs, , most, [
+     APACHE_CHECK_OPENSSL
+     if test "$ac_cv_openssl" = "yes" ; then
+         if test "x$enable_ssl" = "xshared"; then
+@@ -44,14 +44,13 @@
+            # structure, so ask libtool to hide everything else:
+            APR_ADDTO(MOD_SSL_LDADD, [-export-symbols-regex ssl_module])
+         fi
++        APR_ADDTO(MOD_CFLAGS, [-I/usr/include/openssl/fips-140])
++        APR_ADDTO(MOD_LDFLAGS, [-R/lib/openssl/fips-140/64])
+     else
+         enable_ssl=no
+     fi
+ ])
+ 
+-# Ensure that other modules can pick up mod_ssl.h
+-APR_ADDTO(INCLUDES, [-I\$(top_srcdir)/$modpath_current])
+-
+ dnl #  end of module specific part
+ APACHE_MODPATH_FINISH
+ 
+--- acinclude.m4
++++ acinclude.m4
+@@ -591,6 +591,12 @@
+   ])
+   if test "x$ac_cv_openssl" = "xyes"; then
+     AC_DEFINE(HAVE_OPENSSL, 1, [Define if OpenSSL is available])
++
++    APR_ADDTO(MOD_LDFLAGS, [$ap_openssl_libs])
++    APR_ADDTO(LIBS, [$ap_openssl_libs])
++    APR_SETVAR(ab_LDFLAGS, [$MOD_LDFLAGS])
++    APACHE_SUBST(ab_CFLAGS)
++    APACHE_SUBST(ab_LDFLAGS)
+   fi
+ ])
+ 

@@ -20,9 +20,10 @@
 #
 
 #
-# Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 /LoadModule auth_gss_module/d
+/LoadModule ssl_fips_module/d
 /LoadModule mpm_event_module /i\
 <IfDefine prefork>\
 LoadModule mpm_prefork_module libexec/mod_mpm_prefork.so\
