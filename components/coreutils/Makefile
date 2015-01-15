@@ -63,9 +63,12 @@ unexport SHELLOPTS
 # Get the binaries to test from the component proto area.
 COMPONENT_TEST_ENV +=   PATH=$(PROTOUSRSBINDIR):/usr/bin
 
-#test:		install $(TEST_32)
-# Currently 3 tests fail (2 rm-interactive, 1 df-local)
-test:		$(NO_TESTS)
+# Currently 2 tests fail
+#   test-localename uses internal gl_locale_name_thread_unsafe, which doesn't
+#      support illumos
+#   test-getlogin is a bit tricky when run under su, as it compares
+#      $USER or $LOGIN and getlogin()
+test:		install $(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
