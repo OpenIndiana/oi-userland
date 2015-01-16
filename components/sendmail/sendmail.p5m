@@ -1,0 +1,285 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2010, 2015, Oracle and/or its affiliates. All rights reserved.
+#
+
+# The man pages are all at the top of a "files" directory; setting the hash to
+# point to the files therein.
+<transform file path=usr/share/man/man.+/(.+)$ -> set action.hash %<\1> >
+# Bypassing the mangler for these files because they are pre-Solarified.
+<transform file path=usr/share/man/.+$ -> add mangler.bypass true >
+set name=pkg.fmri \
+    value=pkg:/service/network/smtp/sendmail@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Sendmail utilities"
+set name=pkg.description \
+    value="SMTP-based mail transfer agent sendmail(1M), its configuration hierarchy sendmail(4), and various other mail-related utilities."
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification value=org.opensolaris.category.2008:System/Core
+set name=info.upstream value="Sendmail community"
+set name=info.upstream-url value=http://www.sendmail.org/
+set name=org.opensolaris.arc-caseid value=PSARC/2007/068
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+set name=org.opensolaris.version-unlockable value=true
+link path=etc/aliases target=./mail/aliases
+file init.d-sendmail path=etc/init.d/sendmail group=sys mode=0744 \
+    original_name=SUNWsndm:etc/init.d/sendmail \
+    pkg.linted.userland.action003.0=true preserve=true
+file aliases path=etc/mail/aliases original_name=SUNWsndm:etc/mail/aliases \
+    preserve=true
+file cf/README path=etc/mail/cf/README group=mail mode=0444
+file cf/cf/Makefile path=etc/mail/cf/cf/Makefile group=mail mode=0444
+link path=etc/mail/cf/cf/main.cf target=sendmail.cf
+link path=etc/mail/cf/cf/main.mc target=sendmail.mc
+file cf/cf/sendmail.cf path=etc/mail/cf/cf/sendmail.cf group=mail mode=0444
+file cf/cf/sendmail.mc path=etc/mail/cf/cf/sendmail.mc group=mail mode=0444
+file cf/cf/submit.cf path=etc/mail/cf/cf/submit.cf group=mail mode=0444
+file cf/cf/submit.mc path=etc/mail/cf/cf/submit.mc group=mail mode=0444
+link path=etc/mail/cf/cf/subsidiary.cf target=sendmail.cf
+link path=etc/mail/cf/cf/subsidiary.mc target=sendmail.mc
+file cf/domain/generic.m4 path=etc/mail/cf/domain/generic.m4 group=mail \
+    mode=0444
+file cf/domain/solaris-antispam.m4 path=etc/mail/cf/domain/solaris-antispam.m4 \
+    group=mail mode=0444
+file cf/domain/solaris-generic.m4 path=etc/mail/cf/domain/solaris-generic.m4 \
+    group=mail mode=0444
+file cf/feature/accept_unqualified_senders.m4 \
+    path=etc/mail/cf/feature/accept_unqualified_senders.m4 group=mail mode=0444
+file cf/feature/accept_unresolvable_domains.m4 \
+    path=etc/mail/cf/feature/accept_unresolvable_domains.m4 group=mail \
+    mode=0444
+file cf/feature/access_db.m4 path=etc/mail/cf/feature/access_db.m4 group=mail \
+    mode=0444
+file cf/feature/allmasquerade.m4 path=etc/mail/cf/feature/allmasquerade.m4 \
+    group=mail mode=0444
+file cf/feature/always_add_domain.m4 \
+    path=etc/mail/cf/feature/always_add_domain.m4 group=mail mode=0444
+file cf/feature/badmx.m4 path=etc/mail/cf/feature/badmx.m4 group=mail mode=0444
+file cf/feature/bestmx_is_local.m4 path=etc/mail/cf/feature/bestmx_is_local.m4 \
+    group=mail mode=0444
+file cf/feature/bitdomain.m4 path=etc/mail/cf/feature/bitdomain.m4 group=mail \
+    mode=0444
+file cf/feature/blacklist_recipients.m4 \
+    path=etc/mail/cf/feature/blacklist_recipients.m4 group=mail mode=0444
+file cf/feature/block_bad_helo.m4 path=etc/mail/cf/feature/block_bad_helo.m4 \
+    group=mail mode=0444
+file cf/feature/compat_check.m4 path=etc/mail/cf/feature/compat_check.m4 \
+    group=mail mode=0444
+file cf/feature/conncontrol.m4 path=etc/mail/cf/feature/conncontrol.m4 \
+    group=mail mode=0444
+file cf/feature/delay_checks.m4 path=etc/mail/cf/feature/delay_checks.m4 \
+    group=mail mode=0444
+file cf/feature/dnsbl.m4 path=etc/mail/cf/feature/dnsbl.m4 group=mail mode=0444
+file cf/feature/domaintable.m4 path=etc/mail/cf/feature/domaintable.m4 \
+    group=mail mode=0444
+file cf/feature/enhdnsbl.m4 path=etc/mail/cf/feature/enhdnsbl.m4 group=mail \
+    mode=0444
+file cf/feature/generics_entire_domain.m4 \
+    path=etc/mail/cf/feature/generics_entire_domain.m4 group=mail mode=0444
+file cf/feature/genericstable.m4 path=etc/mail/cf/feature/genericstable.m4 \
+    group=mail mode=0444
+file cf/feature/greet_pause.m4 path=etc/mail/cf/feature/greet_pause.m4 \
+    group=mail mode=0444
+file cf/feature/ldap_routing.m4 path=etc/mail/cf/feature/ldap_routing.m4 \
+    group=mail mode=0444
+file cf/feature/limited_masquerade.m4 \
+    path=etc/mail/cf/feature/limited_masquerade.m4 group=mail mode=0444
+file cf/feature/local_lmtp.m4 path=etc/mail/cf/feature/local_lmtp.m4 \
+    group=mail mode=0444
+file cf/feature/local_no_masquerade.m4 \
+    path=etc/mail/cf/feature/local_no_masquerade.m4 group=mail mode=0444
+file cf/feature/local_procmail.m4 path=etc/mail/cf/feature/local_procmail.m4 \
+    group=mail mode=0444
+file cf/feature/lookupdotdomain.m4 path=etc/mail/cf/feature/lookupdotdomain.m4 \
+    group=mail mode=0444
+file cf/feature/loose_relay_check.m4 \
+    path=etc/mail/cf/feature/loose_relay_check.m4 group=mail mode=0444
+file cf/feature/mailertable.m4 path=etc/mail/cf/feature/mailertable.m4 \
+    group=mail mode=0444
+file cf/feature/masquerade_entire_domain.m4 \
+    path=etc/mail/cf/feature/masquerade_entire_domain.m4 group=mail mode=0444
+file cf/feature/masquerade_envelope.m4 \
+    path=etc/mail/cf/feature/masquerade_envelope.m4 group=mail mode=0444
+file cf/feature/msp.m4 path=etc/mail/cf/feature/msp.m4 group=mail mode=0444
+file cf/feature/mtamark.m4 path=etc/mail/cf/feature/mtamark.m4 group=mail \
+    mode=0444
+file cf/feature/no_default_msa.m4 path=etc/mail/cf/feature/no_default_msa.m4 \
+    group=mail mode=0444
+file cf/feature/nocanonify.m4 path=etc/mail/cf/feature/nocanonify.m4 \
+    group=mail mode=0444
+file cf/feature/notsticky.m4 path=etc/mail/cf/feature/notsticky.m4 group=mail \
+    mode=0444
+file cf/feature/nouucp.m4 path=etc/mail/cf/feature/nouucp.m4 group=mail \
+    mode=0444
+file cf/feature/nullclient.m4 path=etc/mail/cf/feature/nullclient.m4 \
+    group=mail mode=0444
+file cf/feature/preserve_local_plus_detail.m4 \
+    path=etc/mail/cf/feature/preserve_local_plus_detail.m4 group=mail mode=0444
+file cf/feature/preserve_luser_host.m4 \
+    path=etc/mail/cf/feature/preserve_luser_host.m4 group=mail mode=0444
+file cf/feature/promiscuous_relay.m4 \
+    path=etc/mail/cf/feature/promiscuous_relay.m4 group=mail mode=0444
+file cf/feature/queuegroup.m4 path=etc/mail/cf/feature/queuegroup.m4 \
+    group=mail mode=0444
+file cf/feature/ratecontrol.m4 path=etc/mail/cf/feature/ratecontrol.m4 \
+    group=mail mode=0444
+file cf/feature/redirect.m4 path=etc/mail/cf/feature/redirect.m4 group=mail \
+    mode=0444
+file cf/feature/relay_based_on_MX.m4 \
+    path=etc/mail/cf/feature/relay_based_on_MX.m4 group=mail mode=0444
+file cf/feature/relay_entire_domain.m4 \
+    path=etc/mail/cf/feature/relay_entire_domain.m4 group=mail mode=0444
+file cf/feature/relay_hosts_only.m4 \
+    path=etc/mail/cf/feature/relay_hosts_only.m4 group=mail mode=0444
+file cf/feature/relay_local_from.m4 \
+    path=etc/mail/cf/feature/relay_local_from.m4 group=mail mode=0444
+file cf/feature/relay_mail_from.m4 path=etc/mail/cf/feature/relay_mail_from.m4 \
+    group=mail mode=0444
+file cf/feature/require_rdns.m4 path=etc/mail/cf/feature/require_rdns.m4 \
+    group=mail mode=0444
+file cf/feature/smrsh.m4 path=etc/mail/cf/feature/smrsh.m4 group=mail mode=0444
+file cf/feature/stickyhost.m4 path=etc/mail/cf/feature/stickyhost.m4 \
+    group=mail mode=0444
+file cf/feature/use_client_ptr.m4 path=etc/mail/cf/feature/use_client_ptr.m4 \
+    group=mail mode=0444
+file cf/feature/use_ct_file.m4 path=etc/mail/cf/feature/use_ct_file.m4 \
+    group=mail mode=0444
+file cf/feature/use_cw_file.m4 path=etc/mail/cf/feature/use_cw_file.m4 \
+    group=mail mode=0444
+file cf/feature/uucpdomain.m4 path=etc/mail/cf/feature/uucpdomain.m4 \
+    group=mail mode=0444
+file cf/feature/virtuser_entire_domain.m4 \
+    path=etc/mail/cf/feature/virtuser_entire_domain.m4 group=mail mode=0444
+file cf/feature/virtusertable.m4 path=etc/mail/cf/feature/virtusertable.m4 \
+    group=mail mode=0444
+file cf/m4/cf.m4 path=etc/mail/cf/m4/cf.m4 group=mail mode=0444
+file cf/m4/cfhead.m4 path=etc/mail/cf/m4/cfhead.m4 group=mail mode=0444
+file cf/m4/proto.m4 path=etc/mail/cf/m4/proto.m4 group=mail mode=0444
+file cf/m4/version.m4 path=etc/mail/cf/m4/version.m4 group=mail mode=0444
+file cf/mailer/local.m4 path=etc/mail/cf/mailer/local.m4 group=mail mode=0444
+file cf/mailer/procmail.m4 path=etc/mail/cf/mailer/procmail.m4 group=mail \
+    mode=0444
+file cf/mailer/smtp.m4 path=etc/mail/cf/mailer/smtp.m4 group=mail mode=0444
+file cf/mailer/uucp.m4 path=etc/mail/cf/mailer/uucp.m4 group=mail mode=0444
+file cf/ostype/solaris11.m4 path=etc/mail/cf/ostype/solaris11.m4 group=mail \
+    mode=0444
+file cf/ostype/solaris2.m4 path=etc/mail/cf/ostype/solaris2.m4 group=mail \
+    mode=0444
+file cf/ostype/solaris2.ml.m4 path=etc/mail/cf/ostype/solaris2.ml.m4 \
+    group=mail mode=0444
+file cf/ostype/solaris2.pre5.m4 path=etc/mail/cf/ostype/solaris2.pre5.m4 \
+    group=mail mode=0444
+file cf/ostype/solaris8.m4 path=etc/mail/cf/ostype/solaris8.m4 group=mail \
+    mode=0444
+link path=etc/mail/cf/sh/check-hostname \
+    target=../../../../usr/sbin/check-hostname
+link path=etc/mail/cf/sh/check-permissions \
+    target=../../../../usr/sbin/check-permissions
+file cf/sh/makeinfo.sh path=etc/mail/cf/sh/makeinfo.sh group=mail mode=0444
+file path=etc/mail/helpfile
+file local-host-names path=etc/mail/local-host-names \
+    original_name=SUNWsndm:etc/mail/local-host-names preserve=true
+link path=etc/mail/main.cf target=sendmail.cf
+file cf/cf/sendmail.cf path=etc/mail/sendmail.cf mode=0444 \
+    original_name=SUNWsndm:etc/mail/sendmail.cf preserve=renameold \
+    restart_fmri=svc:/network/smtp:sendmail
+link path=etc/mail/sendmail.hf target=helpfile
+file path=etc/mail/submit.cf mode=0444 \
+    original_name=SUNWsndm:etc/mail/submit.cf preserve=renameold \
+    restart_fmri=svc:/network/sendmail-client:default
+link path=etc/mail/subsidiary.cf target=sendmail.cf
+file trusted-users path=etc/mail/trusted-users \
+    original_name=SUNWsndm:etc/mail/trusted-users preserve=true
+file sendmail.auth_attr path=etc/security/auth_attr.d/sendmail group=sys
+file sendmail.exec_attr path=etc/security/exec_attr.d/sendmail group=sys
+file sendmail.prof_attr path=etc/security/prof_attr.d/sendmail group=sys
+file sendmail-client.xml path=lib/svc/manifest/network/sendmail-client.xml \
+    group=sys mode=0444
+file smtp-sendmail.xml path=lib/svc/manifest/network/smtp-sendmail.xml \
+    group=sys mode=0444
+file sendmail-client path=lib/svc/method/sendmail-client mode=0555
+file smtp-sendmail path=lib/svc/method/smtp-sendmail mode=0555
+file sendmail_include.sh path=lib/svc/share/sendmail_include.sh mode=0444
+link path=usr/bin/mailq target=../lib/inet/mailq mediator=sendmail \
+    mediator-implementation=sendmail mediator-priority=vendor
+file usr/sbin/mailstats path=usr/bin/mailstats mode=0555
+file usr/sbin/praliases path=usr/bin/praliases mode=0555
+file MailHeader.html path=usr/lib/help/auths/locale/C/MailHeader.html
+file MailQueue.html path=usr/lib/help/auths/locale/C/MailQueue.html
+file SmfSendmailStates.html \
+     path=usr/lib/help/auths/locale/C/SmfSendmailStates.html
+file RtMailMngmnt.html path=usr/lib/help/profiles/locale/C/RtMailMngmnt.html
+file usr/bin/mailq path=usr/lib/inet/mailq mode=4555
+file usr/lib/sendmail path=usr/lib/inet/sendmail group=smmsp mode=2555
+link path=usr/lib/mail target=../../etc/mail/cf
+link path=usr/lib/sendmail target=../lib/inet/sendmail mediator=sendmail \
+    mediator-implementation=sendmail mediator-priority=vendor
+file path=usr/lib/smrsh mode=0555
+file check-hostname.sh path=usr/sbin/check-hostname group=mail mode=0555
+file check-permissions.sh path=usr/sbin/check-permissions group=mail mode=0555
+file path=usr/sbin/editmap mode=0555
+file contrib/etrn.pl path=usr/sbin/etrn mode=0555
+file path=usr/sbin/makemap mode=0555
+link path=usr/sbin/newaliases target=../lib/inet/sendmail mediator=sendmail \
+    mediator-implementation=sendmail mediator-priority=vendor
+link path=usr/sbin/sendmail target=../lib/inet/sendmail mediator=sendmail \
+    mediator-implementation=sendmail mediator-priority=vendor
+link path=usr/share/man/man1/mailq.1 target=sendmail-mailq.1 mediator=sendmail \
+    mediator-implementation=sendmail mediator-priority=vendor
+file path=usr/share/man/man1/mailstats.1
+file path=usr/share/man/man1/praliases.1
+file path=usr/share/man/man1/sendmail-mailq.1
+file path=usr/share/man/man1m/check-hostname.1m
+file path=usr/share/man/man1m/check-permissions.1m
+file path=usr/share/man/man1m/editmap.1m
+file path=usr/share/man/man1m/etrn.1m
+file path=usr/share/man/man1m/makemap.1m
+file path=usr/share/man/man1m/newaliases.1m
+file path=usr/share/man/man1m/sendmail.1m
+file path=usr/share/man/man1m/smrsh.1m
+file path=usr/share/man/man4/addresses.4
+file path=usr/share/man/man4/aliases.4
+file path=usr/share/man/man4/forward.4
+file path=usr/share/man/man4/sendmail.4
+file path=usr/share/man/man4/sendmail.cf.4
+file path=usr/share/man/man4/submit.cf.4
+dir  path=var/adm/sm.bin group=sys
+dir  path=var/spool/clientmqueue owner=smmsp group=smmsp mode=0770
+dir  path=var/spool/mqueue mode=0750
+group groupname=smmsp gid=25
+user username=smmsp ftpuser=false \
+    gcos-field="SendMail Message Submission Program" group=smmsp home-dir=/ \
+    password=NP uid=25
+legacy pkg=SUNWsndmr desc="Sendmail Configuration Files" name="Sendmail (root)"
+legacy pkg=SUNWsndmu desc="Sendmail Utilities" name="Sendmail (/usr)"
+license LICENSE license=sendmail
+# sendmail's default LDA is mail.local, so specify a dependency on its
+# package, but not at any particular version.
+depend type=group fmri=pkg:/mail/mail.local
+# One of the RBAC help files came from core-os, so set an optional dependency
+# on that package at a version greater than when it left that package, but
+# less than when it moved here.  999 is an arbitrary number larger than the
+# maximum number of respins that ON might have in Solaris 12 build 66; this
+# move happened in S12 build 67.
+depend type=optional fmri=system/core-os@5.12-5.12.0.0.0.66.999
+depend type=require \
+    fmri=pkg:/library/libmilter@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)

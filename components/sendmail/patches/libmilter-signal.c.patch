@@ -1,0 +1,20 @@
+This patch comes from in-house, was submitted upstream, and has been
+accepted.  When version 8.15 comes out, it will no longer be needed.
+
+--- sendmail-8.14.9/libmilter/signal.c~	2014-05-16 13:40:15.000000000 -0700
++++ sendmail-8.14.9/libmilter/signal.c	2014-12-04 12:51:02.970365415 -0800
+@@ -104,11 +104,11 @@
+ 	for (;;)
+ 	{
+ 		sigerr = sig = 0;
+-#if defined(SOLARIS) || defined(__svr5__)
++#if defined(__svr5__)
+ 		if ((sig = sigwait(&set)) < 0)
+-#else /* defined(SOLARIS) || defined(__svr5__) */
++#else /* defined(__svr5__) */
+ 		if ((sigerr = sigwait(&set, &sig)) != 0)
+-#endif /* defined(SOLARIS) || defined(__svr5__) */
++#endif /* defined(__svr5__) */
+ 		{
+ 			/* some OS return -1 and set errno: copy it */
+ 			if (sigerr <= 0)
