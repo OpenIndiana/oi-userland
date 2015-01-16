@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= mesa
 COMPONENT_VERSION= 7.4.4
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= The Mesa 3-D Graphics Library
 COMPONENT_SRC= Mesa-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= MesaLib-$(COMPONENT_VERSION).tar.bz2
