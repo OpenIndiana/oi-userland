@@ -1,0 +1,150 @@
+Summary.
+--------
+
+Testing of a userland component that provides tests is performed by hooking
+those tests up to the 'test' target and running 'gmake test'. This should
+generally pass, as failing tests may indicate things you have to fix, or
+upstream tests that aren't applicable or need modifications on Solaris.
+
+'gmake test' is often run when a component is upgraded or otherwise
+intentionally changed, but sometimes it would be useful to rerun the tests
+after something else has changed (such as the system being upgraded, or a
+change in compilers) and see if that has affected the tests.
+
+We do this by having a 'master test file' that contains the expected results,
+and having a compare target that runs the tests and compares them with the
+results.
+
+Note: because the initial test run and the current test run may have a
+different environment (different users, different locales, different machines,
+different compilers...) the results need to have all such output dependencies
+removed or abstracted.
+
+
+Setting up a master test file for a Userland component.
+-------------------------------------------------------
+
+When setting up a test-and-compare run for a new component,
+you should be able to do something like the following.
+
+When you run "gmake test", a check is made to see if there is a master
+file of test results. If there is, then a test-then-compare run is performed.
+If there isn't, then just a "normal" run of the test suite is performed.
+
+The name of the master test file (or files to be exact), will depend upon
+whether you have 32-bit, 64-bit, 32-and-64-bit and whether this is for a
+Python or Perl component.
+
+The default master file name is defined in
+make-rules/shared-macros.mk and is:
+
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(BITS).master
+
+where COMPONENT_TEST_RESULTS_DIR is:
+
+COMPONENT_TEST_RESULTS_DIR =    $(COMPONENT_DIR)/test
+
+so that means it will default to looking for the following test file
+master names:
+
+32-bit: components/<component-name>/test/results-32.master
+
+64-bit: components/<component-name>/test/results-64.master
+
+both:   components/<component-name>/test/results-32.master
+        components/<component-name>/test/results-64.master
+
+For Python, COMPONENT_TEST_MASTER is overridden in
+make-rules/setup.py.mk to be:
+
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(PYTHON_VERSION)-$(BITS).master
+
+so that means it's looking for one or more of:
+
+2.6:   components/python/<component-name>/test/results-2.6-32.master
+2.6:   components/python/<component-name>/test/results-2.6-64.master
+2.7:   components/python/<component-name>/test/results-2.7-32.master
+2.7:   components/python/<component-name>/test/results-3.4-64.master
+3.4:   components/python/<component-name>/test/results-3.4-64.master
+
+depending upon which versions of Python this component supports.
+
+Perl is similar, with COMPONENT_TEST_MASTER being overridden in:
+make-rules/makemaker.mk to be:
+
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(PERL_VERSION)-$(BITS).master
+
+so that means it's looking for one or more of:
+
+5.12:    components/perl_modules/<component>/test/results-5.12-32.master
+5.12-mt: components/perl_modules/<component>/test/results-5.12-mt-32.master
+5.16:    components/perl_modules/<component>/test/results-5.16-64.master
+
+depending upon which versions of Perl this component supports.
+
+Note that if the test results are the same for both 32-bit and 64-bit or
+for all versions of Python or Perl, you can override the
+COMPONENT_TEST_MASTER definition in your component Makefile and just supply
+a single master files file. For example, in components/python/pep8 Makefile
+we have:
+
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
+In order to do a test-then-compare run rather than just run the component
+test suite, initially just create an empty master test file (or files).
+
+For example, for elinks, which just has 64-bit tests, do:
+
+   $ cd components/elinks
+   $ mkdir test
+   $ touch test/results-64.master
+   $ gmake test
+
+At this point, you have a set of test results in
+components/elinks/test/test-64-results.
+
+Even better, there are a set of "global" regular expressions that are
+run on those test results to try to normalize them. The output from that
+is placed in components/elinks/test/results-64.snapshot
+
+You can now use the contents of that file as a first cut at the master results.
+
+   $ cp test/results-64.snapshot test/results-64.master
+
+Now run the tests again. Note that you have to get back to a clean start
+just in case the test process tries to compile any code.
+
+   $ gmake clean
+   $ gmake test
+
+At this point, it will again compare the test results against the master(s),
+and if there are still differences, they will be placed in
+components/elinks/test/test-64-diffs
+
+Typically these differences will be for things like usernames, temporary
+filenames, timings etc. If you have some differences, then you are going
+to have to write special regexp expressions in your component Makefile to
+"normalize" them, and adjust the master test results file so that it
+matches what the normalized version looks like.
+
+For example, see the transform in the asciidoc Makefile:
+
+COMPONENT_TEST_TRANSFORMS += \
+        '-e "s|/tmp......|/tmpxxxxxx|g" '
+
+to "normalize" any temporary filenames that appear in the test results.
+
+There will be other examples as more components are adjusted to test
+against master results files.
+
+If a lot of people start generating the very same ones, then we can
+consider adding them to the "global" set of regexps in
+make-rules/shared-macros.mk which currently looks like:
+
+COMPONENT_TEST_TRANSFORMS = \
+        '-e "s|$(@D)|\\$$(@D)|g" ' \
+        '-e "s|$(PERL)|\\$$(PERL)|g" ' \
+        '-e "s|$(SOURCE_DIR)|\\$$(SOURCE_DIR)|g" '
+
+When your master test file(s) are in good shape, then you should "hg add"
+them to your workspace.
