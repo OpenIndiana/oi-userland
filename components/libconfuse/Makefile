@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -44,7 +44,19 @@ CONFIGURE_OPTIONS +=	--enable-shared
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 
 # This is really only needed to get the test target to pass.
-COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D)) 
+COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
+
+# Master test results are the same for all versions of Python, so override
+# here, rather than create multiple identical master files.
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
+# The additional libconfuse specific set of transforms to be applied to the
+# test results to try to normalize them.
+# The cc and libtool lines need to be deleted because x86 and SPARC have
+# different line arguments.
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "/^\/ws\/on12-tools\/SUNWspro\/solarisstudio12.3\/bin\/cc/d" ' \
+	'-e "/^\/bin\/bash ..\/libtool/d" '
 
 ASLR_MODE = $(ASLR_ENABLE)
 
@@ -55,7 +67,7 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-test:	$(TEST_32_and_64)
+test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

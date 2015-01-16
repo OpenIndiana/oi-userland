@@ -1,0 +1,60 @@
+make[1]: Entering directory `$(@D)'
+Making check in lib
+make[2]: Entering directory `$(@D)/lib'
+/usr/gnu/bin/make  check-recursive
+make[3]: Entering directory `$(@D)/lib'
+Making check in po
+make[4]: Entering directory `$(@D)/lib/po'
+make[4]: Nothing to be done for `check'.
+make[4]: Leaving directory `$(@D)/lib/po'
+make[4]: Entering directory `$(@D)/lib'
+make[4]: Nothing to be done for `check-am'.
+make[4]: Leaving directory `$(@D)/lib'
+make[3]: Leaving directory `$(@D)/lib'
+make[2]: Leaving directory `$(@D)/lib'
+Making check in po
+make[2]: Entering directory `$(@D)/po'
+make[2]: Leaving directory `$(@D)/po'
+Making check in src
+make[2]: Entering directory `$(@D)/src'
+make[2]: Nothing to be done for `check'.
+make[2]: Leaving directory `$(@D)/src'
+Making check in doc
+make[2]: Entering directory `$(@D)/doc'
+make[2]: Nothing to be done for `check'.
+make[2]: Leaving directory `$(@D)/doc'
+Making check in man
+make[2]: Entering directory `$(@D)/man'
+make[2]: Nothing to be done for `check'.
+make[2]: Leaving directory `$(@D)/man'
+make[2]: Entering directory `$(@D)'
+/usr/gnu/bin/make  check-local
+make[3]: Entering directory `$(@D)'
+abs_srcdir=`CDPATH="${ZSH_VERSION+.}:" && cd $(SOURCE_DIR) && pwd`; cd tests; \
+CONFIG_SHELL="/bin/bash" /bin/bash $abs_srcdir/tests/testsuite \
+   AUTOTEST_PATH="src"
+## ---------------------------------- ##
+## GNU wdiff 1.1.2 test suite: wdiff. ##
+## ---------------------------------- ##
+  1: wdiff output formats                            ok
+  2: report bad diff binary                          ok
+  3: use pager                                       ok
+  4: diff as input                                   ok
+
+## ------------- ##
+## Test results. ##
+## ------------- ##
+
+All 4 tests were successful.
+make[3]: Leaving directory `$(@D)'
+make[2]: Leaving directory `$(@D)'
+if test -d $(SOURCE_DIR)/.git; then			\
+  cd $(SOURCE_DIR) &&						\
+  git submodule --quiet foreach test '$(git rev-parse $sha1)'	\
+      = '$(git merge-base origin $sha1)'			\
+    || { echo 'maint.mk: found non-public submodule commit' >&2;	\
+	 exit 1; };						\
+else								\
+  : ;								\
+fi
+make[1]: Leaving directory `$(@D)'

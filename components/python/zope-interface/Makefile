@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -50,6 +50,16 @@ COMPONENT_TEST_ARGS=	../runtests.sh
 COMPONENT_TEST_CMD=	/bin/sh
 COMPONENT_TEST_DIR=	$(SOURCE_DIR)
 COMPONENT_TEST_ENV+=	PYTHON=$(PYTHON)
+
+# Master test results are the same for all supported versions of Python, so
+# override here, rather than create multiple identical master files.
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
+# The additional zope.interface specific set of transforms to be applied
+# to the test results to try to normalize them.
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s|\(Ran 1 test in\).*|\1|" ' \
+	'-e "s|\(Ran .* tests in\).*|\1|" '
 
 # common targets
 build:		$(BUILD_32_and_64)

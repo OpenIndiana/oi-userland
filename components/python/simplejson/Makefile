@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -46,8 +46,18 @@ include $(WS_TOP)/make-rules/ips.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-COMPONENT_TEST_DIR= $(COMPONENT_SRC) 
+COMPONENT_TEST_DIR= $(COMPONENT_SRC)
 COMPONENT_TEST_ARGS= ./setup.py test
+
+# The additional simplejson specific set of transforms to be applied
+# to the test results to try to normalize them.
+# The cc lines need to be deleted because x86 and SPARC have different
+# compile line arguments.
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "/^\/ws\/on12-tools\/SUNWspro\/solarisstudio12.3\/bin\/cc/d" ' \
+	'-e "/^cc -G /d" ' \
+	'-e "s|\(creating build/temp.solaris\).*|\1|" ' \
+	'-e "s|\(Ran 132 tests in\).*|\1|" '
 
 # common targets
 build:		$(BUILD_32_and_64)

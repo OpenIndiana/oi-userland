@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -44,6 +44,11 @@ include $(WS_TOP)/make-rules/ips.mk
 
 COMPONENT_TEST_DIR =	$(COMPONENT_SRC)/test
 COMPONENT_TEST_ARGS =	test_argparse.py
+
+# The additional argparse specific set of transforms to be applied to the test
+# results to try to normalize them.
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s|\(Ran 1524 tests in\).*|\1|" '
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 

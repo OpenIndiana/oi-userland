@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -39,6 +39,21 @@ include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
+
+COMPONENT_TEST_DIR =		$(@D)/tests
+
+# Master test results are the same for 32-bit and 64-bit, so override
+# here, rather than create multiple identical master files.
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
+# The additional xz specific set of transforms to be applied to the
+# test results to try to normalize them.
+# The cc and libtool lines need to be deleted because x86 and SPARC have
+# different line arguments.
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "/^\/ws\/on12-tools\/SUNWspro\/solarisstudio12.3\/bin\/cc/d" ' \
+	'-e "/^\/bin\/bash ..\/libtool/d" ' \
+	'-e "/^libtool: link:/d" '
 
 ASLR_MODE = $(ASLR_ENABLE)
 
