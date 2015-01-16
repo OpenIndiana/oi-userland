@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -69,6 +69,13 @@ CONFIGURE_OPTIONS +=	--enable-langs am,ar,br,ca,cn,cz,de,dk,en,eo,es,fa,fi,fr,gr
 COMPONENT_TEST_ENV =		PATH="$(GNUBIN):$(PROTO_DIR)/usr/bin:$(PATH)"
 COMPONENT_TEST_DIR =		$(BUILD_DIR_64)/testing
 COMPONENT_TEST_TARGETS =	tests
+
+# The additional doxygen specific set of transforms to be applied to the
+# test results to try to normalize them.
+COMPONENT_TEST_TRANSFORMS += \
+        '-e "s|\(error opening bib\).*|\1|" ' \
+        '-e "s|\(test_output_012/indexpage.xml\).*|\1|" ' \
+        '-e "s|\(012/indexpage.xml\).*|\1|" '
 
 ASLR_MODE = $(ASLR_ENABLE)
 

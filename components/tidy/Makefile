@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -62,6 +62,14 @@ PROTODOCDIR=$(PROTOUSRSHAREDIR)/doc/tidy
 
 $(PROTODOCDIR):
 	$(MKDIR) $@
+
+COMPONENT_TEST_DIR =    $(@D)/test
+COMPONENT_TEST_CMD =	./testall.sh
+COMPONENT_TEST_TARGETS =
+
+# Master test results are the same for both 32-bit and 64-bit, so override
+# here, rather than create multiple identical master files.
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
 ASLR_MODE = $(ASLR_ENABLE)
 

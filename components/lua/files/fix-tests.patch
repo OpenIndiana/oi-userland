@@ -33,3 +33,20 @@ This patch will not be sent upstream.
    assert(f:close())
  end
  
+
+In order to generate consistent output from the lua tests, we need to
+remove the writing of a '.' to stderr (to show progress).
+
+This change will not be passed upstream.
+
+--- all.lua.orig	2015-01-16 07:15:53.098166988 -0800
++++ all.lua	2015-01-16 07:16:48.982837677 -0800
+@@ -140,7 +140,7 @@
+   -- each time a table is collected, create a new one to be
+   -- collected next cycle
+   mt.__gc = function (o)
+-    stderr:write'.'    -- mark progress
++    -- stderr:write'.'    -- mark progress
+     -- assert(eph[o]() == o and next(eph) == o and next(eph, o) == nil)
+     local n = setmetatable({}, mt)   -- replicate object
+     eph[n] = function () return n end

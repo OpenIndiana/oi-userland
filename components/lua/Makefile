@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -82,6 +82,18 @@ COMPONENT_TEST_DIR =		$(LUA_TESTS)
 COMPONENT_TEST_CMD =		$(LUA_EXE)
 COMPONENT_TEST_ARGS =		-e"_U=true"
 COMPONENT_TEST_TARGETS =	all.lua
+
+# Master test results are the same for both 32-bit and 64-bit, so override
+# here, rather than create multiple identical master files.
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
+# The additional lua specific set of transforms to be applied to the
+# test results to try to normalize them.
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "/---- total memory:/d" ' \
+	'-e "s|elements in .\... sec|elements in x.xx sec|g" ' \
+	'-e "s|\(total time:\).*|\1|" ' \
+	'-e "s|\(test done on\).*|\1|" '
 
 # common targets
 build:		$(BUILD_32_and_64)
