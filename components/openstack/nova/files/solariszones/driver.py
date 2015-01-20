@@ -119,6 +119,10 @@ ZONE_BRAND_TEMPLATE = {
 }
 
 MAX_CONSOLE_BYTES = 102400
+VNC_CONSOLE_BASE_FMRI = 'svc:/application/openstack/nova/zone-vnc-console'
+# Required in order to create a zone VNC console SMF service instance
+VNC_SERVER_PATH = '/usr/bin/vncserver'
+XTERM_PATH = '/usr/bin/xterm'
 
 
 def lookup_resource_property(zone, resource, prop, filter=None):
@@ -831,9 +835,9 @@ class SolarisZonesDriver(driver.ComputeDriver):
                 driver_type = connection_info['driver_volume_type']
                 if driver_type == 'local':
                     LOG.warning(_("Detected 'local' zvol driver volume type "
-                                "from volume service, which should not be "
-                                "used as a boot device for 'solaris' branded "
-                                "zones."))
+                                  "from volume service, which should not be "
+                                  "used as a boot device for 'solaris' "
+                                  "branded zones."))
                     delete_boot_volume = True
                 elif driver_type == 'iscsi':
                     # Check for a potential loopback iSCSI situation
@@ -850,18 +854,18 @@ class SolarisZonesDriver(driver.ComputeDriver):
                     # iSCSI LUN is on the same host as the instance.
                     if target_host in [connector['ip'], connector['host']]:
                         LOG.warning(_("iSCSI connection info from volume "
-                                    "service indicates that the target is a "
-                                    "local volume, which should not be used "
-                                    "as a boot device for 'solaris' branded "
-                                    "zones."))
+                                      "service indicates that the target is a "
+                                      "local volume, which should not be used "
+                                      "as a boot device for 'solaris' branded "
+                                      "zones."))
                         delete_boot_volume = True
                 # Assuming that fibre_channel is non-local
                 elif driver_type != 'fibre_channel':
                     # Some other connection type that we don't understand
                     # Let zone use some local fallback instead.
                     LOG.warning(_("Unsupported volume driver type '%s' "
-                                "can not be used as a boot device for "
-                                "'solaris' branded zones."))
+                                  "can not be used as a boot device for "
+                                  "'solaris' branded zones."))
                     delete_boot_volume = True
 
             if delete_boot_volume:
@@ -1114,6 +1118,154 @@ class SolarisZonesDriver(driver.ComputeDriver):
                         "zonemgr(3RAD): %s") % (name, reason))
             raise
 
+    def _create_vnc_console_service(self, instance):
+        """Create a VNC console SMF service for a Solaris Zone"""
+        # Basic environment checks first: vncserver and xterm
+        if not os.path.exists(VNC_SERVER_PATH):
+            LOG.warning(_("Zone VNC console SMF service not available on this "
+                          "compute node. %s is missing. Run 'pkg install "
+                          "x11/server/xvnc'") % VNC_SERVER_PATH)
+            raise exception.ConsoleTypeUnavailable(console_type='vnc')
+
+        if not os.path.exists(XTERM_PATH):
+            LOG.warning(_("Zone VNC console SMF service not available on this "
+                          "compute node. %s is missing. Run 'pkg install "
+                          "terminal/xterm'") % XTERM_PATH)
+            raise exception.ConsoleTypeUnavailable(console_type='vnc')
+
+        name = instance['name']
+        # TODO(npower): investigate using RAD instead of CLI invocation
+        try:
+            out, err = utils.execute('/usr/sbin/svccfg', '-s',
+                                     VNC_CONSOLE_BASE_FMRI, 'add', name)
+        except processutils.ProcessExecutionError as err:
+            if self._has_vnc_console_service(instance):
+                LOG.debug(_("Ignoring attempt to create existing zone VNC "
+                            "console SMF service for instance '%s'") % name)
+                return
+            else:
+                LOG.error(_("Unable to create zone VNC console SMF service "
+                            "'{0}': {1}").format(
+                                VNC_CONSOLE_BASE_FMRI + ':' + name, err))
+                raise
+
+    def _delete_vnc_console_service(self, instance):
+        """Delete a VNC console SMF service for a Solaris Zone"""
+        name = instance['name']
+        self._disable_vnc_console_service(instance)
+        # TODO(npower): investigate using RAD instead of CLI invocation
+        try:
+            out, err = utils.execute('/usr/sbin/svccfg', '-s',
+                                     VNC_CONSOLE_BASE_FMRI, 'delete', name)
+        except processutils.ProcessExecutionError as err:
+            if not self._has_vnc_console_service(instance):
+                LOG.debug(_("Ignoring attempt to delete a non-existent zone "
+                            "VNC console SMF service for instance '%s'")
+                          % name)
+                return
+            else:
+                LOG.error(_("Unable to delete zone VNC console SMF service "
+                            "'%s': %s")
+                          % (VNC_CONSOLE_BASE_FMRI + ':' + name, err))
+                raise
+
+    def _enable_vnc_console_service(self, instance):
+        """Enable a zone VNC console SMF service"""
+        name = instance['name']
+
+        console_fmri = VNC_CONSOLE_BASE_FMRI + ':' + name
+        # TODO(npower): investigate using RAD instead of CLI invocation
+        try:
+            out, err = utils.execute('/usr/sbin/svcadm', 'enable',
+                                     console_fmri)
+        except processutils.ProcessExecutionError as err:
+            if not self._has_vnc_console_service(instance):
+                LOG.error(_("Ignoring attempt to enable a non-existent zone "
+                            "VNC console SMF service for instance '%s'")
+                          % name)
+            LOG.error(_("Unable to start zone VNC console SMF service "
+                        "'%s': %s") % (console_fmri, err))
+            raise
+
+        # Allow some time for the console service to come online.
+        greenthread.sleep(2)
+        while True:
+            try:
+                out, err = utils.execute('/usr/bin/svcs', '-H', '-o', 'state',
+                                         console_fmri)
+                state = out.strip()
+                if state == 'online':
+                    break
+                elif state in ['maintenance', 'offline']:
+                    LOG.error(_("Zone VNC console SMF service '%s' is in the "
+                                "'%s' state. Run 'svcs -x %s' for details.")
+                              % (console_fmri, state, console_fmri))
+                    raise exception.ConsoleNotFoundForInstance(
+                        instance_uuid=instance['uuid'])
+                # Wait for service state to transition to (hopefully) online
+                # state or offline/maintenance states.
+                greenthread.sleep(2)
+            except processutils.ProcessExecutionError as err:
+                LOG.error(_("Error querying state of zone VNC console SMF "
+                            "service '%s': %s") % (console_fmri, err))
+                raise
+
+    def _disable_vnc_console_service(self, instance):
+        """Disable a zone VNC console SMF service"""
+        name = instance['name']
+        if not self._has_vnc_console_service(instance):
+            LOG.debug(_("Ignoring attempt to disable a non-existent zone VNC "
+                        "console SMF service for instance '%s'") % name)
+            return
+        console_fmri = VNC_CONSOLE_BASE_FMRI + ':' + name
+        # TODO(npower): investigate using RAD instead of CLI invocation
+        try:
+            out, err = utils.execute('/usr/sbin/svcadm', 'disable',
+                                     console_fmri)
+        except processutils.ProcessExecutionError as err:
+            LOG.error(_("Unable to disable zone VNC console SMF service "
+                        "'%s': %s") % (console_fmri, err))
+        # The console service sets a SMF instance property for the port
+        # on which the VNC service is listening. The service needs to be
+        # refreshed to reset the property value
+        try:
+            out, err = utils.execute('/usr/sbin/svccfg', '-s', console_fmri,
+                                     'refresh')
+        except processutils.ProcessExecutionError as err:
+            LOG.error(_("Unable to refresh zone VNC console SMF service "
+                        "'%s': %s") % (console_fmri, err))
+
+    def _get_vnc_console_service_state(self, instance):
+        """Returns state of the instance zone VNC console SMF service"""
+        name = instance['name']
+        if not self._has_vnc_console_service(instance):
+            LOG.warning(_("Console state requested for a non-existent zone "
+                          "VNC console SMF service for instance '%s'")
+                        % name)
+            return None
+        console_fmri = VNC_CONSOLE_BASE_FMRI + ':' + name
+        # TODO(npower): investigate using RAD instead of CLI invocation
+        try:
+            state, err = utils.execute('/usr/sbin/svcs', '-H', '-o', 'state',
+                                       console_fmri)
+            return state.strip()
+        except processutils.ProcessExecutionError as err:
+            LOG.error(_("Console state request failed for zone VNC console "
+                        "SMF service for instance '%s': %s") % (name, err))
+            raise
+
+    def _has_vnc_console_service(self, instance):
+        """Returns True if the instance has a zone VNC console SMF service"""
+        name = instance['name']
+        console_fmri = VNC_CONSOLE_BASE_FMRI + ':' + name
+        # TODO(npower): investigate using RAD instead of CLI invocation
+        try:
+            utils.execute('/usr/bin/svcs', '-H', '-o', 'state',
+                          console_fmri)
+            return True
+        except processutils.ProcessExecutionError as err:
+            return False
+
     def _install(self, instance, image, extra_specs, sc_dir):
         """Install a new Solaris Zone root file system."""
         name = instance['name']
@@ -1290,6 +1442,16 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
         """
         # TODO(Vek): Need to pass context in for access to auth_token
+        try:
+            # These methods log if problems occur so no need to double log
+            # here. Just catch any stray exceptions and allow destroy to
+            # proceed.
+            if self._has_vnc_console_service(instance):
+                self._disable_vnc_console_service(instance)
+                self._delete_vnc_console_service(instance)
+        except Exception:
+            pass
+
         name = instance['name']
         zone = self._get_zone_by_name(name)
         # If instance cannot be found, just return.
@@ -1395,7 +1557,46 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
     def get_vnc_console(self, instance):
         # TODO(Vek): Need to pass context in for access to auth_token
-        raise NotImplementedError()
+
+        # Do not provide console access prematurely. Zone console access is
+        # exclusive and zones that are still installing require their console.
+        # Grabbing the zone console will break installation.
+        name = instance['name']
+        if instance['vm_state'] == vm_states.BUILDING:
+            LOG.info(_("VNC console not available until zone '%s' has "
+                     "completed installation. Try again later.") % name)
+            raise exception.InstanceNotReady(instance_id=instance['uuid'])
+
+        if not self._has_vnc_console_service(instance):
+            LOG.debug(_("Creating zone VNC console SMF service for "
+                      "instance '%s'") % name)
+            self._create_vnc_console_service(instance)
+
+        self._enable_vnc_console_service(instance)
+        console_fmri = VNC_CONSOLE_BASE_FMRI + ':' + name
+
+        # The console service sets an SMF instance property for the port
+        # on which the VNC service is listening. The service needs to be
+        # refreshed to reflect the current property value
+        # TODO(npower): investigate using RAD instead of CLI invocation
+        try:
+            out, err = utils.execute('/usr/sbin/svccfg', '-s', console_fmri,
+                                     'refresh')
+        except processutils.ProcessExecutionError as err:
+            LOG.error(_("Unable to refresh zone VNC console SMF service "
+                        "'%s': %s" % (console_fmri, err)))
+            raise
+
+        try:
+            out, err = utils.execute('/usr/bin/svcprop', '-p', 'vnc/port',
+                                     console_fmri)
+            port = out.strip()
+            return {'host': '127.0.0.1', 'port': port,
+                    'internal_access_path': None}
+        except processutils.ProcessExecutionError as err:
+            LOG.error(_("Unable to read VNC console port from zone VNC "
+                        "console SMF service '%s': %s"
+                      % (console_fmri, err)))
 
     def get_spice_console(self, instance):
         # TODO(Vek): Need to pass context in for access to auth_token
@@ -2294,7 +2495,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
     def add_to_aggregate(self, context, aggregate, host, **kwargs):
         """Add a compute host to an aggregate."""
-        #NOTE(jogo) Currently only used for XenAPI-Pool
+        # NOTE(jogo) Currently only used for XenAPI-Pool
         raise NotImplementedError()
 
     def remove_from_aggregate(self, context, aggregate, host, **kwargs):

@@ -74,13 +74,12 @@ update_instance.UpdateInstance.default_steps = (
 # Remove 'SecurityGroupsTab' tab from Project/Access & Security
 AccessAndSecurityTabs.tabs = (KeypairsTab, FloatingIPsTab, APIAccessTab)
 
-# Remove 'ConsoleTab' tab from Project/Instances/Instance Name
-InstanceDetailTabs.tabs = (OverviewTab, LogTab)
 
-# Remove 'ConfirmResize', 'RevertResize', 'ConsoleLink', 'TogglePause',
+# Remove 'ConfirmResize', 'RevertResize', 'TogglePause',
 # 'ToggleSuspend', 'MigrateInstance' actions from Admin/Instances/Actions
 admin_tables.AdminInstancesTable._meta.row_actions = (
     admin_tables.AdminEditInstance,
+    project_tables.ConsoleLink,
     project_tables.LogLink,
     project_tables.CreateSnapshot,
     project_tables.SoftRebootInstance,
@@ -89,8 +88,8 @@ admin_tables.AdminInstancesTable._meta.row_actions = (
 )
 
 # Remove 'ConfirmResize', 'RevertResize', 'EditInstanceSecurityGroups',
-# 'ConsoleLink', 'TogglePause', 'ToggleSuspend', 'ResizeLink',
-# 'RebuildInstance' actions from Project/Instances/Actions
+# 'TogglePause', 'ToggleSuspend', 'ResizeLink', 'RebuildInstance' actions
+# from Project/Instances/Actions
 project_tables.InstancesTable._meta.row_actions = (
     project_tables.StartInstance,
     project_tables.CreateSnapshot,
@@ -98,6 +97,7 @@ project_tables.InstancesTable._meta.row_actions = (
     project_tables.AssociateIP,
     project_tables.SimpleDisassociateIP,
     project_tables.EditInstance,
+    project_tables.ConsoleLink,
     project_tables.LogLink,
     project_tables.SoftRebootInstance,
     project_tables.RebootInstance,

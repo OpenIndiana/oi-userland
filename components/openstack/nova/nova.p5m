@@ -71,16 +71,25 @@ file files/nova-compute.xml \
     path=lib/svc/manifest/application/openstack/nova-compute.xml
 file files/nova-conductor.xml \
     path=lib/svc/manifest/application/openstack/nova-conductor.xml
+file files/nova-consoleauth.xml \
+    path=lib/svc/manifest/application/openstack/nova-consoleauth.xml
+file files/nova-novncproxy.xml \
+    path=lib/svc/manifest/application/openstack/nova-novncproxy.xml
 file files/nova-objectstore.xml \
     path=lib/svc/manifest/application/openstack/nova-objectstore.xml
 file files/nova-scheduler.xml \
     path=lib/svc/manifest/application/openstack/nova-scheduler.xml
+file files/zone-vnc-console.xml \
+    path=lib/svc/manifest/application/openstack/zone-vnc-console.xml
 file files/nova-api path=lib/svc/method/nova-api
 file files/nova-cert path=lib/svc/method/nova-cert
 file files/nova-compute path=lib/svc/method/nova-compute
 file files/nova-conductor path=lib/svc/method/nova-conductor
+file files/nova-consoleauth path=lib/svc/method/nova-consoleauth
+file files/nova-novncproxy path=lib/svc/method/nova-novncproxy
 file files/nova-objectstore path=lib/svc/method/nova-objectstore
 file files/nova-scheduler path=lib/svc/method/nova-scheduler
+file files/zone-vnc-console path=lib/svc/method/zone-vnc-console
 file path=usr/bin/nova-manage
 file usr/bin/nova-api-ec2 path=usr/lib/nova/nova-api-ec2 mode=0555
 file usr/bin/nova-api-metadata path=usr/lib/nova/nova-api-metadata mode=0555
@@ -781,6 +790,12 @@ user username=nova ftpuser=false gcos-field="OpenStack Nova" group=nova \
     home-dir=/var/lib/nova uid=85
 license nova.license license="Apache v2.0"
 
+# force a group dependency on package delivering the optional vncserver(1)
+depend type=group fmri=__TBD pkg.debug.depend.file=usr/bin/vncserver
+
+# force a group dependency on package delivering the optional xterm(1)
+depend type=group fmri=__TBD pkg.debug.depend.file=usr/bin/xterm
+
 # force a group dependency on the optional anyjson; pkgdepend work is needed to
 # flush this out.
 depend type=group fmri=library/python/anyjson-26
@@ -891,3 +906,7 @@ depend type=require fmri=system/management/rad/module/rad-kstat
 
 # force a dependency on rad-zonemgr
 depend type=require fmri=system/management/rad/module/rad-zonemgr
+
+# force a dependency on novnc; It's not a Python module so pkgdepend can't
+# catch it automatically.
+depend type=require fmri=web/novnc
