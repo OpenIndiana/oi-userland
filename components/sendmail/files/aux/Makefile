@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../../make-rules/shared-macros.mk
@@ -32,7 +32,7 @@ PROTOUSRBINDIR=	../../build/prototype/$(MACH)/usr/bin
 INSTALLPROG=	$(PROG:%=$(PROTOUSRBINDIR)/%)
 
 %:		%.c
-		$(CC) -o $@ $(ASLR_ENABLE) $<
+		$(CC) $(CFLAGS) -o $@ $(ASLR_ENABLE) $<
 
 install:	$(INSTALLPROG) build
 

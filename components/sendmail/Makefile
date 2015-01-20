@@ -40,8 +40,11 @@ include ../../make-rules/justmake.mk
 include ../../make-rules/ips.mk
 include ../../make-rules/lint-libraries.mk
 
-PKG_PROTO_DIRS += $(BUILD_DIR_32)
-PKG_PROTO_DIRS += $(BUILD_DIR_32)/obj.SunOS.$(OS_VERSION).$(ARCH)
+# Although we build 32_and_64, everything except libmilter just wants 64,
+# which is why the macros just below only have values for 64.  libmilter
+# is dealt with further below.
+PKG_PROTO_DIRS += $(BUILD_DIR_64)
+PKG_PROTO_DIRS += $(BUILD_DIR_64)/obj.SunOS.$(OS_VERSION).$(ARCH)
 PKG_PROTO_DIRS += $(COMPONENT_DIR)/files
 PKG_PROTO_DIRS += $(COMPONENT_DIR)/files/man
 
@@ -58,6 +61,11 @@ FILE_DIR=$(COMPONENT_DIR)/files
 M4_ARG=-DSUN_HIDE_INTERNAL_DETAILS
 SM_BUILD_SUB_DIR=obj.SunOS.$(OS_VERSION).$(ARCH)
 SM_BUILD_DIR=$(@D)/$(SM_BUILD_SUB_DIR)
+
+# libmilter is built 32- and 64-bit, but its Makefile installs into a common
+# location, so we use the macro below in its manifest to distinguish between
+# the different built objects.
+PKG_MACROS += LIBMILTER_BUILD_DIR=$(SM_BUILD_SUB_DIR)
 
 CLEAN_PATHS += $(FILE_DIR)/aux/mailq
 
@@ -77,10 +85,15 @@ CCOPTS =	-erroff=E_STATEMENT_NOT_REACHED $(CC_BITS)
 
 COMPONENT_BUILD_ARGS += CC="$(CC)"
 COMPONENT_BUILD_ARGS += CCOPTS="$(CCOPTS)"
-COMPONENT_BUILD_ARGS += CCLINK="$(LD)"
+COMPONENT_BUILD_ARGS += CCLINK="$(CC)"
+COMPONENT_BUILD_ARGS += CC_PIC="$(CC_PIC)"
 COMPONENT_BUILD_ARGS += LDOPTS="$(CC_BITS)"
 
-COMPONENT_POST_BUILD_ACTION = cd $(FILE_DIR)/aux ; $(GMAKE) build
+# mailq's Makefile doesn't grok the 32- and 64-bit build. We just want 64.
+# So we clean before we build, and the last build (64) wins, which is what
+# we want.
+COMPONENT_POST_BUILD_ACTION = cd $(FILE_DIR)/aux ; \
+    $(GMAKE) BITS=$(BITS) clean build
 
 COMPONENT_POST_INSTALL_ACTION += cd $(FILE_DIR)/aux ; $(GMAKE) install ;
 COMPONENT_POST_INSTALL_ACTION += \
@@ -95,27 +108,33 @@ COMPONENT_POST_INSTALL_ACTION += \
 
 COMPONENT_TEST_ARGS += CC="$(CC)"
 COMPONENT_TEST_ARGS += CCOPTS="$(CCOPTS)"
-COMPONENT_TEST_ARGS += CCLINK="$(LD)"
+COMPONENT_TEST_ARGS += CCLINK="$(CC)"
+COMPONENT_TEST_ARGS += CC_PIC="$(CC_PIC)"
 COMPONENT_TEST_ARGS += LDOPTS="$(CC_BITS)"
 
 COMPONENT_TEST_ENV +=	PATH=/usr/gnu/bin:/usr/bin
+
+# The transforms below abstract out the 32- or 64-bit specific parts of
+# the results, so we can use a common "all" master file.
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
 COMPONENT_TEST_TRANSFORMS += \
     '-e "s|$(SM_BUILD_SUB_DIR)|\\$$(SM_BUILD_SUB_DIR)|g" ' \
     '-e "s|$(OS_VERSION)|\\$$(OS_VERSION)|g" ' \
     '-e "s|$(ARCH)|\\$$(ARCH)|g" ' \
-    '-e "s|$(CC)|\\$$(CC)|g" '
+    '-e "s|$(CC)|\\$$(CC)|g" ' \
+    '-e "s|$(CC_BITS)|\\$$(CC_BITS)|g" '
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-INSTALL_32=
+INSTALL_64=
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_32_and_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_32_and_64)
 
-test:		$(TEST_32)
+test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

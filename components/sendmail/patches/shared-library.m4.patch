@@ -1,7 +1,7 @@
 # This patch has been fed upstream.
 --- /dev/null						2013-06-18 19:31:00.000000000 -0700
 +++ sendmail-8.14.7/devtools/M4/UNIX/shared-library.m4	2013-06-18 20:02:40.335623219 -0700
-@@ -0,0 +1,36 @@
+@@ -0,0 +1,35 @@
 +divert(-1)
 +#
 +# Copyright (c) 1999-2001, 2006 Sendmail, Inc. and its suppliers.
@@ -26,8 +26,7 @@
 +include(confBUILDTOOLSDIR`/M4/'bldM4_TYPE_DIR`/defines.m4')
 +divert(bldTARGETS_SECTION)
 +bldCURRENT_PRODUCT.so: ${BEFORE} ${bldCURRENT_PRODUCT`OBJS'}
-+	${AR} ${AROPTS} bldCURRENT_PRODUCT.so ${bldCURRENT_PRODUCT`OBJS'}
-+	${RANLIB} ${RANLIBOPTS} bldCURRENT_PRODUCT.so
++	${CCLINK} ${LDOPTS} -G -o bldCURRENT_PRODUCT.so ${bldCURRENT_PRODUCT`OBJS'} -lc
 +ifdef(`bldLINK_SOURCES', `bldMAKE_SOURCE_LINKS(bldLINK_SOURCES)')
 +
 +install-`'bldCURRENT_PRODUCT: bldCURRENT_PRODUCT.so
