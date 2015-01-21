@@ -1,3 +1,5 @@
+This is in-house developed Solaris-specific patch and will not be submitted to upstream.
+
 --- tls1.6/tls.tcl	Thu Mar 20 03:52:12 2008
 +++ tls1.6/tls.tcl	Mon Apr 21 16:36:08 2008
 @@ -26,6 +26,9 @@
@@ -62,3 +64,26 @@
      fi
      echo "$as_me:$LINENO: result: ${TCLSH_PROG}" >&5
  echo "${ECHO_T}${TCLSH_PROG}" >&6
+--- tls1.6/tls.c       Wed Mar 19 16:06:13 2008
++++ tls1.6/tls.c       Mon Jan 12 22:51:46 2015
+@@ -676,17 +676,17 @@
+ #if defined(NO_SSL2)
+     int ssl2 = 0;
+ #else
+-    int ssl2 = 1;
++    int ssl2 = 0;
+ #endif
+ #if defined(NO_SSL3)
+     int ssl3 = 0;
+ #else
+-    int ssl3 = 1;
++    int ssl3 = 0;
+ #endif
+ #if defined(NO_SSL2) && defined(NO_SSL3)
+     int tls1 = 1;
+ #else
+-    int tls1 = 0;
++    int tls1 = 1;
+ #endif
+     int proto = 0;
+     int verify = 0, require = 0, request = 1;
