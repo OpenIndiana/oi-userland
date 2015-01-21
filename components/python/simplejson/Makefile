@@ -51,11 +51,9 @@ COMPONENT_TEST_ARGS= ./setup.py test
 
 # The additional simplejson specific set of transforms to be applied
 # to the test results to try to normalize them.
-# The cc lines need to be deleted because x86 and SPARC have different
-# compile line arguments.
 COMPONENT_TEST_TRANSFORMS += \
-	'-e "/^\/ws\/on12-tools\/SUNWspro\/solarisstudio12.3\/bin\/cc/d" ' \
-	'-e "/^cc -G /d" ' \
+	'-e "s|\(^$(CC)\).*|\\$$(CC)|" ' \
+	'-e "s|\(^cc -G \).*|\1|" ' \
 	'-e "s|\(creating build/temp.solaris\).*|\1|" ' \
 	'-e "s|\(Ran 132 tests in\).*|\1|" '
 

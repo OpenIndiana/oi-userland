@@ -55,12 +55,10 @@ COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
 # The additional libssh2 specific set of transforms to be applied to the
 # test results to try to normalize them.
-# The cc and libtool lines need to be deleted because x86 and SPARC have
-# different command line arguments.
 COMPONENT_TEST_TRANSFORMS += \
-	'-e "/^\/ws\/on12-tools\/SUNWspro\/solarisstudio12.3\/bin\/cc/d" ' \
-	'-e "/^\/bin\/bash ..\/libtool/d" ' \
-	'-e "/^libtool: link:/d" '
+	'-e "s|\(^$(CC)\).*|\\$$(CC)|" ' \
+	'-e "s|\(^/bin/bash ../libtool\).*|\1|" ' \
+	'-e "s|\(^libtool: link:\).*|\1|" '
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 

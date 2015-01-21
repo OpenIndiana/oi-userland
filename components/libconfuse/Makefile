@@ -52,11 +52,9 @@ COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
 # The additional libconfuse specific set of transforms to be applied to the
 # test results to try to normalize them.
-# The cc and libtool lines need to be deleted because x86 and SPARC have
-# different line arguments.
 COMPONENT_TEST_TRANSFORMS += \
-	'-e "/^\/ws\/on12-tools\/SUNWspro\/solarisstudio12.3\/bin\/cc/d" ' \
-	'-e "/^\/bin\/bash ..\/libtool/d" '
+	'-e "s|\(^$(CC)\).*|\\$$(CC)|" ' \
+	'-e "s|\(^/bin/bash ../libtool\).*|\1|" '
 
 ASLR_MODE = $(ASLR_ENABLE)
 
