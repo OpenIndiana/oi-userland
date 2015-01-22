@@ -1,28 +1,19 @@
-diff --git Python-2.6.4/Lib/ctypes/util.py Python-2.6.4/Lib/ctypes/util.py
---- Python-2.6.4/Lib/ctypes/util.py
-+++ Python-2.6.4/Lib/ctypes/util.py
-@@ -164,6 +164,35 @@
+This patch was developed in-house, but not contributed upstream because
+Python 2.6 has been abandoned by the community.
+
+--- Python-2.6.8/Lib/ctypes/util.py.~1~	2012-04-10 08:32:04.000000000 -0700
++++ Python-2.6.8/Lib/ctypes/util.py	2015-01-20 15:17:51.156728249 -0800
+@@ -164,6 +164,24 @@
              res.sort(cmp= lambda x,y: cmp(_num_version(x), _num_version(y)))
              return res[-1]
  
 +    elif sys.platform == "sunos5":
 +
-+        def _findLib_crle(name, is64):
-+            if not os.path.exists('/usr/bin/crle'):
-+                return None
-+
++        def _findLib_path(name, is64):
 +            if is64:
-+                cmd = 'env LC_ALL=C /usr/bin/crle -64 2>/dev/null'
++                paths = "/lib/64:/usr/lib/64"
 +            else:
-+                cmd = 'env LC_ALL=C /usr/bin/crle 2>/dev/null'
-+
-+            for line in os.popen(cmd).readlines():
-+                line = line.strip()
-+                if (line.startswith('Default Library Path (ELF):')):
-+                    paths = line.split()[4]
-+
-+            if not paths:
-+                return None
++                paths = "/lib:/usr/lib"
 +
 +            for dir in paths.split(":"):
 +                libfile = os.path.join(dir, "lib%s.so" % name)
@@ -32,7 +23,7 @@ diff --git Python-2.6.4/Lib/ctypes/util.py Python-2.6.4/Lib/ctypes/util.py
 +            return None
 +        
 +        def find_library(name, is64 = False):
-+            return _get_soname(_findLib_crle(name, is64) or _findLib_gcc(name))
++            return _get_soname(_findLib_path(name, is64) or _findLib_gcc(name))
 +
      else:
  

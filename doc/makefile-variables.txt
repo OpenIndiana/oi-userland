@@ -23,7 +23,14 @@ The following are the basics that just about every Makefile should have.
   tools/.gnupg/pubring.pgp, then as part of your code review, please show the
   diffs of the text version of the file by running
       gpg2 --homedir $WS/tools/.gnupg --fingerprint
-  both before and after the change.
+  both before and after the change.  Note that when merging, because
+  $WS/tools/.gnupg/pubring.gpg is a binary file, you will have to choose
+  the parent or child version.  Pick one, then run:
+	for cset in $(hg log -r 'parents()' -T '{node} '); do
+		hg cat -r $cset $WS/tools/.gnupg/pubring.gpg | \
+			gpg2 --homedir=$WS/tools/.gnupg --import;
+	done
+  before you 'hg commit' your merge.
 * COMPONENT_BUGDB is the lower-case rendering of the BugDB cat/subcat.
 
 These two are both initialized in make-rules/shared-macros.mk rather than any
