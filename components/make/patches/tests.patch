@@ -1,0 +1,20 @@
+This is taken from upstream:
+
+http://cvs.savannah.gnu.org/viewvc/make/make/tests/scripts/targets/SECONDARY?r1=1.6&r2=1.7
+
+--- make-3.82/tests/scripts/targets/SECONDARY.orig	Tue Jan 20 08:36:09 2015
++++ make-3.82/tests/scripts/targets/SECONDARY	Tue Jan 20 08:37:29 2015
+@@ -129,10 +129,11 @@
+ run_make_test('
+ %.c : %.b ; cp $< $@
+ %.b : %.a ; cp $< $@
+-all : 1.c 2.c', '-rR -j',
++all : 1.c 2.c
++2.a: 1.c', '-rR -j',
+ 'cp 1.a 1.b
+-cp 2.a 2.b
+ cp 1.b 1.c
++cp 2.a 2.b
+ cp 2.b 2.c
+ rm 1.b 2.b');
+ 
