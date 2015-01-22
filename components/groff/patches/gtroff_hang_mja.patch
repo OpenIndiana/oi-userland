@@ -1,0 +1,15 @@
+This patch comes from in-house and has been submitted upstream:
+http://savannah.gnu.org/bugs/?44018
+
+--- groff-1.22.2/src/roff/troff/env.cpp.org	2013-02-07 21:06:06.000000000 +0900
++++ groff-1.22.2/src/roff/troff/env.cpp	2015-01-14 10:23:07.817142586 +0900
+@@ -2110,6 +2110,9 @@
+     }
+     distribute_space(pre, bp->nspaces, extra_space_width);
+     hunits output_width = bp->width + extra_space_width;
++    if (output_width <= 0)
++      return;
++
+     input_line_start -= output_width;
+     if (bp->hyphenated)
+       hyphen_line_count++;
