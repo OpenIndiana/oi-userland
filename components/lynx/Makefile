@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -51,6 +51,16 @@ CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)/lynx
 CONFIGURE_OPTIONS +=	--with-ssl
 CONFIGURE_OPTIONS +=	--with-screen=ncurses
 
+# Use the HTML and CSS styling external test suite as referenced at
+# http://www.w3.org/2005/MWI/Tests/
+COMPONENT_TEST_CMD = $(@D)/src/lynx
+COMPONENT_TEST_ARGS = -dump \
+	http://www.cameronmoll.com/mobile/mkp/pg1.html \
+	http://www.cameronmoll.com/mobile/mkp/pg2.html \
+	http://www.cameronmoll.com/mobile/mkp/pg3.html \
+	http://www.cameronmoll.com/mobile/mkp/pg4.html
+COMPONENT_TEST_TARGETS =
+
 ASLR_MODE = $(ASLR_ENABLE)
 
 configure:	$(CONFIGURE_64)
@@ -59,7 +69,7 @@ build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
 
-test:		$(NO_TESTS)
+test:		$(TEST_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
