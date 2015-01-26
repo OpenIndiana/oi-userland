@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -39,6 +39,12 @@ include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
 CC += $(CC_BITS)
+
+COMPONENT_TEST_DIR =	$(SOURCE_DIR)
+COMPONENT_TEST_ENV =	PATH=$(@D):$(SOURCE_DIR):$(PATH)
+COMPONENT_TEST_CMD =	./testing/run_test.sh
+COMPONENT_TEST_ARGS =	./testing/case*.pat
+COMPONENT_TEST_TARGETS =
 
 ASLR_MODE = $(ASLR_ENABLE)
 
