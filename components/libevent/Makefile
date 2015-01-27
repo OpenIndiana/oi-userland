@@ -27,7 +27,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libevent
 COMPONENT_VERSION=	1.4.14b
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 IPS_COMPONENT_VERSION=	1.4.14.2
 COMPONENT_PROJECT_URL=	http://monkey.org/~provos/libevent/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-stable
