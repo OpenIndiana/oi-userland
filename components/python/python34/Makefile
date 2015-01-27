@@ -98,6 +98,13 @@ LDFLAGS += $(LDFLAGS.$(BITS))
 # Python puts its header files in a special place.
 LINT_FLAGS +=	-I$(SOURCE_DIR)/Include
 
+# PYTHONPATH in the environment can be harmful, but setting it to empty via
+# _INSTALL_ENV causes problems too, so just ignore the entire environment.
+# Because of this, we need to specify PATH in multiple places below.
+ENV +=				-i
+
+CONFIGURE_ENV +=		PATH="$(PATH)"
+
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		--enable-shared
 CONFIGURE_OPTIONS  +=		--with-dtrace
@@ -115,6 +122,7 @@ CONFIGURE_OPTIONS  +=		XPROFILE_DIR="$(XPROFILE_DIR)"
 
 COMPONENT_BUILD_ENV  +=		DFLAGS="-$(BITS)"
 COMPONENT_BUILD_ENV  +=		XPROFILE_DIR="$(XPROFILE_DIR)"
+COMPONENT_BUILD_ENV  +=		PATH="$(PATH)"
 
 # Some tests have non-ASCII characters encoded for international domain names;
 # the publish step will fail in 'pkgdepend generate' without this:
@@ -139,6 +147,7 @@ COMPONENT_INSTALL_ENV +=	CC="$(CC)"
 COMPONENT_INSTALL_ENV +=	CXX="$(CXX)"
 COMPONENT_INSTALL_ENV +=	CFLAGS="$(CFLAGS)"
 COMPONENT_INSTALL_ENV +=	LDFLAGS="$(LDFLAGS)"
+COMPONENT_INSTALL_ENV +=	PATH="$(PATH)"
 COMPONENT_INSTALL_ARGS +=	-e
 
 # Strip build machine paths from _sysconfigdata.py & config/Makefile.
@@ -163,6 +172,7 @@ install:	$(INSTALL_64)
 # between tests.
 #
 COMPONENT_TEST_ENV = EXTRATESTOPTS="-v -uall,-network $(TESTOPTS_PYTHON_TEST)"
+COMPONENT_TEST_ENV += PATH="$(PATH)"
 # Prevent the tests from getting stuck waiting for input.
 COMPONENT_TEST_TARGETS = test < /dev/null
 
