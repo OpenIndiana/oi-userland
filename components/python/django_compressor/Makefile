@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -30,7 +30,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:66ff1a845a6c1b16c4cf552ee3d746033979e46cd9bd5d999d4b5dae93327a52
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://django-compressor.readthedocs.org
-COMPONENT_BUGDB=	python-mod/django_compressor
+COMPONENT_BUGDB=	python-mod/django-cmpress 
 
 TPNO=			14503
 

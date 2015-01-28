@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -30,7 +30,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:eb75844bd56bd33f7c461246cdf99e6fa50b6a8dde2c56c967db54cd47b51af4
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://github.com/wichert/setuptools-git
-COMPONENT_BUGDB=	python-mod/setuptools-git
+COMPONENT_BUGDB=	python-mod/setuptools
 
 TPNO=			14503
 

@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -30,7 +30,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:c2c09d0310009efd9b19fc12efff7a085b789b841341a533451b85750be6518d
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://github.com/celery/py-amqp/
-COMPONENT_BUGDB=	python-mod/amqp
+COMPONENT_BUGDB=	python-mod/py-amqp 
 
 TPNO=			14503
 

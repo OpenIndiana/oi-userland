@@ -19,7 +19,7 @@
 # CDDL HEADER END
 
 #
-# Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -32,7 +32,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:1128755ea9455615188212bb04319cf103114fb78f687aa887ce29ef184ffb8d
 COMPONENT_PROJECT_URL=	http://mama.indstate.edu/users/ice/tree/
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)src/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	file/tree
+COMPONENT_BUGDB=	utility/tree
 
 TPNO=			9095
 

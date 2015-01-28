@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2015 Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -33,7 +33,7 @@ COMPONENT_ARCHIVE 	= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH	= \
 	sha256:b1d27f6da4cb15776cee0121c9511ed0e998d47564d785a2bb41a44c654e3e3f
 COMPONENT_ARCHIVE_URL	= http://sourceforge.net/projects/lemur/files/lemur/$(COMPONENT_SRC)/$(COMPONENT_SRC).tar.gz/download
-COMPONENT_BUGDB		= library/indri
+COMPONENT_BUGDB		= library/libindri
 
 TPNO=			13668
 

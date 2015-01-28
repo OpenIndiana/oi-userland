@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -30,7 +30,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:565a4b322e1eb2d0cf8df59ae58b49b2e324c414a6dd0ba4a6aa3459600314da
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://www.openstack.org/
-COMPONENT_BUGDB=	python-mod/django_openstack_auth
+COMPONENT_BUGDB=	python-mod/openstack-auth 
 
 TPNO=			16306
 

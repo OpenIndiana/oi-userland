@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -33,7 +33,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:f2266a22db84318d8b9ce266ea83772c03438c31f4993fa9643fa675a07c26b4
 COMPONENT_ARCHIVE_URL= \
 	http://downloads.sourceforge.net/project/ptpd/ptpd/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	service/ptpd
+COMPONENT_BUGDB=	service/ptp
 
 TPNO_PTP=		12665
 TPNO_SOLARFLARE=	15817
