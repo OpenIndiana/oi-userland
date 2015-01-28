@@ -71,7 +71,7 @@ LIBS =	-lc -lsocket -lgen
 LDFLAGS =	$(LD_Z_REDLOCSYM)
 
 # The bash test harness needs the GNU userland utilities
-TEST_PATH = "PATH=$(BUILD_DIR_64):$(GNUBIN):$(USRBINDIR)"
+TEST_PATH = "PATH=$(BUILD_DIR_32):$(GNUBIN):$(USRBINDIR)"
 TEST_OUTPUT = $(COMPONENT_DIR)/bash_test_results_$(MACH).out
 
 CONFIGURE_ENV +=	LIBS="$(LIBS)"
@@ -119,9 +119,9 @@ CONFIGURE_OPTIONS  += 		--with-curses
 CONFIGURE_OPTIONS  += 		--with-installed-readline=no	
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 
-TEST_ENV +=	-i
-TEST_ENV +=	$(TEST_PATH)
-TEST_ENV +=	$(TARGET_ENV)
+COMPONENT_TEST_DIR =	$(BUILD_DIR_32)
+COMPONENT_TEST_ENV =	- $(TEST_PATH)
+COMPONENT_TEST_TARGETS = check > $(TEST_OUTPUT) 2>&1
 
 ASLR_MODE=$(ASLR_ENABLE)
 
@@ -133,9 +133,7 @@ install: $(INSTALL_32_and_64)
 	    cp -Rp "en@boldquot" en_CA ; \
 	    cp -Rp "en@boldquot" en_GB )
 
-test:
-	( cd $(BUILD_DIR_64) ; \
-	    env - $(TEST_PATH) && $(GMAKE) check > $(TEST_OUTPUT) 2>&1 )
+test:	$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 

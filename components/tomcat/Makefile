@@ -71,15 +71,18 @@ COMPONENT_POST_BUILD_ACTION= \
 	(cd $(PROTO_DIR) ; $(RM) conf/CONF.tar.gz ; \
 	    gtar cfz conf/CONF.tar.gz conf/* )
 
+COMPONENT_TEST_DIR =		$(@D)/test
+COMPONENT_TEST_ARGS =		$(COMPONENT_BUILD_ARGS) \
+				-Djunit.home=/usr/share/lib/java
+COMPONENT_TEST_TARGETS =
+
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 build:	$(BUILD_32)
 
 install: build
 
-test:  build
-	@cd $(BUILD_DIR_32)/test; $(ENV) $(COMPONENT_BUILD_ENV) \
-	    $(ANT) $(COMPONENT_BUILD_ARGS) -Djunit.home=/usr/share/lib/java
+test:  $(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

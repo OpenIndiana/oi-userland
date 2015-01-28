@@ -49,15 +49,15 @@ CONFIGURE_OPTIONS  +=		--disable-static
 
 include ../../make-rules/shared-targets.mk
 
+COMPONENT_TEST_DIR =		$(BUILD_DIR)/$(MACH$(BITS))/tests
+
 # common targets
 build:	$(BUILD_32_and_64)
 
 
 install:	$(INSTALL_32_and_64)	
 
-test: install
-		@cd $(BUILD_DIR_32)/tests; $(MAKE) check
-		@cd $(BUILD_DIR_64)/tests; $(MAKE) check
+test: install	$(TEST_32_and_64)
  
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

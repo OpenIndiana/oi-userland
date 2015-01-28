@@ -41,6 +41,11 @@ include ../../make-rules/prep.mk
 include ../../make-rules/justmake.mk
 include ../../make-rules/ips.mk
 
+
+COMPONENT_TEST_DIR =           $(@D)
+COMPONENT_TEST_ENV =           P7ZIP_HOME_DIR=$(BUILD_DIR)/$(MACH$(BITS))/bin
+COMPONENT_TEST_TARGETS =       test test_7z test_7zr
+
 COMPONENT_PREP_ACTION = (cd $(@D); cp makefile.solaris_x86 makefile.machine)
 COMPONENT_BUILD_TARGETS = all3
 COMPONENT_INSTALL_ARGS += DEST_HOME=/usr DEST_DIR=$(PROTO_DIR)
@@ -66,11 +71,7 @@ install:	build $(INSTALL_32) $(EXTRATARGETS)
 COMPONENT_POST_INSTALL_ACTION += $(CHMOD) -R u+w $(PROTO_DIR)
 
 # build does this always
-test:	$(BUILD_32)
-	cd $(BUILD_DIR_32) && $(MAKE) -e test P7ZIP_HOME_DIR=$(BUILD_DIR_32)/bin
-	cd $(BUILD_DIR_32) && $(MAKE) -e test_7z P7ZIP_HOME_DIR=$(BUILD_DIR_32)/bin
-	cd $(BUILD_DIR_32) && $(MAKE) -e test_7zr P7ZIP_HOME_DIR=$(BUILD_DIR_32)/bin
-
+test:	$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

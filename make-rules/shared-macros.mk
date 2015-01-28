@@ -224,17 +224,99 @@ $(BUILD_DIR_64)/.installed:       BITS=64
 # set the default target for installation of the component
 COMPONENT_INSTALL_TARGETS =	install
 
-TEST_32 =		$(BUILD_DIR_32)/.tested
-TEST_64 =		$(BUILD_DIR_64)/.tested
-TEST_32_and_64 =	$(TEST_32) $(TEST_64)
-$(BUILD_DIR_32)/.tested:       BITS=32
-$(BUILD_DIR_64)/.tested:       BITS=64
+# set the default test results directory
+COMPONENT_TEST_RESULTS_DIR =	$(COMPONENT_DIR)/test
+
+# set the default master test results file
+COMPONENT_TEST_MASTER =		$(COMPONENT_TEST_RESULTS_DIR)/results-$(BITS).master
+
+# set the default test results output file
+COMPONENT_TEST_OUTPUT =		$(COMPONENT_TEST_RESULTS_DIR)/test-$(BITS)-results
+
+# set the default test results comparison diffs file
+COMPONENT_TEST_DIFFS =		$(COMPONENT_TEST_RESULTS_DIR)/test-$(BITS)-diffs
+
+# set the default test snapshot file
+COMPONENT_TEST_SNAPSHOT =	$(COMPONENT_TEST_RESULTS_DIR)/results-$(BITS).snapshot
+
+# The set of default transforms to be applied to the test results to try
+# to normalize them.
+COMPONENT_TEST_TRANSFORMS = \
+	'-e "s|$(@D)|\\$$(@D)|g" ' \
+	'-e "s|$(PERL)|\\$$(PERL)|g" ' \
+	'-e "s|$(SOURCE_DIR)|\\$$(SOURCE_DIR)|g" '
+
+# set the default commands used to generate the file containing the set
+# of transforms to be applied to the test results to try to normalize them.
+COMPONENT_TEST_CREATE_TRANSFORMS = \
+	if [ -e $(COMPONENT_TEST_MASTER) ]; \
+	then \
+		print "\#!/bin/sh" > $(COMPONENT_TEST_TRANSFORM_CMD); \
+        	print '$(GSED) ' \
+			$(COMPONENT_TEST_TRANSFORMS) \
+                	' \\' >> $(COMPONENT_TEST_TRANSFORM_CMD); \
+        	print '$(COMPONENT_TEST_OUTPUT) \\' \
+                	>> $(COMPONENT_TEST_TRANSFORM_CMD); \
+        	print '> $(COMPONENT_TEST_SNAPSHOT)' \
+                	>> $(COMPONENT_TEST_TRANSFORM_CMD); \
+	fi
+
+# set the default command for performing any test result munging
+COMPONENT_TEST_TRANSFORM_CMD =	$(COMPONENT_TEST_RESULTS_DIR)/transform-$(BITS)-results
+
+# set the default operation to run to perform test result normalization
+COMPONENT_TEST_PERFORM_TRANSFORM = \
+	if [ -e $(COMPONENT_TEST_MASTER) ]; \
+	then \
+		$(SHELL) $(COMPONENT_TEST_TRANSFORM_CMD); \
+	fi
+
+# set the default command used to compare the master results with the snapshot
+COMPONENT_TEST_COMPARE_CMD =	$(GDIFF) -uN
+
+# set the default way that master and snapshot test results are compared
+COMPONENT_TEST_COMPARE = \
+	if [ -e $(COMPONENT_TEST_MASTER) ]; \
+	then \
+		$(COMPONENT_TEST_COMPARE_CMD) \
+			$(COMPONENT_TEST_MASTER) $(COMPONENT_TEST_SNAPSHOT) \
+			> $(COMPONENT_TEST_DIFFS); \
+		print "Test results in $(COMPONENT_TEST_OUTPUT)"; \
+		if [ -s $(COMPONENT_TEST_DIFFS) ]; \
+		then \
+			print "Differences found."; \
+			$(CAT) $(COMPONENT_TEST_DIFFS); \
+			exit 2; \
+		else \
+			print "No differences found."; \
+		fi \
+	fi
+
+# set the default env command to use for test of the component
+COMPONENT_TEST_ENV_CMD =	$(ENV)
+
+# set the default command to use for test of the component
+COMPONENT_TEST_CMD =	$(GMAKE)
 
 # set the default target for test of the component
 COMPONENT_TEST_TARGETS =	check
 
 # set the default directory for test of the component
 COMPONENT_TEST_DIR =	$(@D)
+
+# determine the type of tests we want to run.
+ifeq ($(strip $(wildcard $(COMPONENT_TEST_RESULTS_DIR)/results-*.master)),)
+TEST_32 =		$(BUILD_DIR_32)/.tested
+TEST_64 =		$(BUILD_DIR_64)/.tested
+else
+TEST_32 =		$(BUILD_DIR_32)/.tested-and-compared
+TEST_64 =		$(BUILD_DIR_64)/.tested-and-compared
+endif
+TEST_32_and_64 =	$(TEST_32) $(TEST_64)
+$(BUILD_DIR_32)/.tested:		BITS=32
+$(BUILD_DIR_64)/.tested:		BITS=64
+$(BUILD_DIR_32)/.tested-and-compared:	BITS=32
+$(BUILD_DIR_64)/.tested-and-compared:	BITS=64
 
 # BUILD_TOOLS is the root of all tools not normally installed on the system.
 BUILD_TOOLS ?=	/opt
@@ -395,6 +477,8 @@ PATCH_LEVEL =	1
 GPATCH_BACKUP =	--backup --version-control=numbered
 GPATCH_FLAGS =	-p$(PATCH_LEVEL) $(GPATCH_BACKUP)
 GSED =		/usr/gnu/bin/sed
+GDIFF =		/usr/gnu/bin/diff
+GSORT =		/usr/gnu/bin/sort
 
 PKGREPO =	/usr/bin/pkgrepo
 PKGSEND =	/usr/bin/pkgsend
@@ -415,6 +499,7 @@ RM =		/bin/rm -f
 CP =		/bin/cp -f
 MV =		/bin/mv -f
 LN =		/bin/ln
+CAT =		/bin/cat
 SYMLINK =	/bin/ln -s
 ENV =		/usr/bin/env
 INSTALL =	/usr/bin/ginstall

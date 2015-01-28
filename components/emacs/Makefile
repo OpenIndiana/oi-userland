@@ -176,8 +176,7 @@ build:          $(BUILD_32)
 
 install:	$(BUILD_32) $(BUILD_DIR)/$(MACH32)-x/.installed 
 
-test:
-	@echo "no tests available"
+test:	$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

@@ -51,6 +51,24 @@ PKG_PROTO_DIRS +=	$(COMPONENT_SRC)/doc
 # file consistently gets the same timestamp.
 $(SOURCE_DIR)/.https_proxy.patched: GPATCH_FLAGS += -Z
 
+# Use bash in sh mode for the tests; using /bin/sh on Solaris hasn't always
+# worked, and using /bin/bash doesn't always work, either.  Also skip the
+# tests which try to check all the code in the userland gate.  And finally,
+# test the bits from the proto area, rather than rebuilding.  Given the way the
+# test suite works, the hg executable must be named "hg".
+COMPONENT_PRE_TEST_ACTION = \
+	(cd $(BUILD_DIR); rm -f sh; ln -s /bin/bash sh; \
+	echo "test-check-code-hg.t\ntest-module-imports.t" > blacklist); \
+	(cd $(PROTOUSRBINDIR); ln -s hg-$(PYTHON_VERSION) hg)
+
+COMPONENT_TEST_DIR =	$(COMPONENT_SRC)/tests
+COMPONENT_TEST_ENV =	PYTHONPATH=$(PROTO_DIR)/$(PYTHON_LIB) TERM=dumb
+COMPONENT_TEST_ARGS =	./run-tests.py \
+			--shell $(BUILD_DIR)/sh \
+			--with-hg $(PROTOUSRBINDIR)/hg \
+			--blacklist $(BUILD_DIR)/blacklist
+
+
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # Assuming you have docutils installed, update the manpages patch for a new
@@ -80,19 +98,7 @@ build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
 
-# Use bash in sh mode for the tests; using /bin/sh on Solaris hasn't always
-# worked, and using /bin/bash doesn't always work, either.  Also skip the
-# tests which try to check all the code in the userland gate.  And finally,
-# test the bits from the proto area, rather than rebuilding.  Given the way the
-# test suite works, the hg executable must be named "hg".
-test:	$(INSTALL_32)
-	(cd $(BUILD_DIR); rm -f sh; ln -s /bin/bash sh; \
-	 echo "test-check-code-hg.t\ntest-module-imports.t" > blacklist)
-	(cd $(PROTOUSRBINDIR); ln -s hg-$(PYTHON_VERSION) hg)
-	(cd $(COMPONENT_SRC)/tests ; \
-	 PYTHONPATH=$(PROTO_DIR)/$(PYTHON_LIB) TERM=dumb \
-	 $(PYTHON) ./run-tests.py --shell $(BUILD_DIR)/sh \
-	 --with-hg $(PROTOUSRBINDIR)/hg --blacklist $(BUILD_DIR)/blacklist)
+test:	install $(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
