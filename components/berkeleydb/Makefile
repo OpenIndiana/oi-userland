@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -92,6 +92,8 @@ CONFIGURE_OPTIONS += --enable-dbm
 CONFIGURE_OPTIONS += $(configure_test)
 
 COMPONENT_TEST_TARGETS = test
+
+$(SKIP_TEST_AT_TOP_LEVEL)
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)

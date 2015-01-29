@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../make-rules/shared-macros.mk
@@ -72,6 +72,8 @@ endif
 # they have published all of their packages.
 publish:		MAKEFLAGS += DISABLE_IPS_CATALOG_AND_INDEX_UPDATES=yes
 
+# For cases in which a component test should be skipped at at the top level
+test:			MAKEFLAGS += TOP_LEVEL_TEST=yes
 
 .DEFAULT:	publish
 

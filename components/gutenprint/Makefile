@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -52,6 +52,8 @@ CONFIGURE_OPTIONS +=    --without-readline
 CONFIGURE_OPTIONS +=    --disable-static
 
 COMPONENT_BUILD_TARGETS = all
+
+$(SKIP_TEST_AT_TOP_LEVEL)
 
 configure:	$(CONFIGURE_32)
 

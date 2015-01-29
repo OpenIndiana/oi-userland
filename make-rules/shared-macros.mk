@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 PATH=/usr/bin:/usr/gnu/bin
@@ -313,6 +313,16 @@ TEST_32 =		$(BUILD_DIR_32)/.tested-and-compared
 TEST_64 =		$(BUILD_DIR_64)/.tested-and-compared
 endif
 TEST_32_and_64 =	$(TEST_32) $(TEST_64)
+
+# When running tests at the top level, skip those tests,
+# by redefining the above TEST_* targets,
+# when a component Makefile includes $(SKIP_TEST_AT_TOP_LEVEL).
+# It's done in separate skip-test.mk file, to allow inclusion of 
+# a multi-line ifdef statement which is evaluated at the component
+# Makefile level
+
+SKIP_TEST_AT_TOP_LEVEL = $(eval include $(WS_MAKE_RULES)/skip-test.mk)
+
 $(BUILD_DIR_32)/.tested:		BITS=32
 $(BUILD_DIR_64)/.tested:		BITS=64
 $(BUILD_DIR_32)/.tested-and-compared:	BITS=32
@@ -834,6 +844,11 @@ COMPONENT_INSTALL_ARGS += $(COMPONENT_INSTALL_ARGS.$(BITS))
 NO_TESTS =	test-nothing
 test-nothing:
 	@echo "There are no tests available at this time."
+
+# There are tests, but we're skipping them.
+SKIP_TEST =	skip-test
+skip-test:
+	@echo "Skipping tests"
 
 # default behaviour for 'component-hook' target is to echo the component
 # name and version information, but more complex behaviour can be implemented
