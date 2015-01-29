@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -56,10 +56,8 @@ COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -f && automake)
 # Always show the build and link lines for easier debugging.
 COMPONENT_BUILD_ARGS +=		V=1
 
-# Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
 
-# common targets
 configure:	$(CONFIGURE_32_and_64)
 
 build:		$(BUILD_32_and_64)
@@ -77,25 +75,22 @@ unexport SHELLOPTS
 # Get the binaries to test from the component proto area.
 COMPONENT_TEST_ENV +=   PATH=$(PROTOUSRSBINDIR):/usr/bin
 
-# With coreutils version 8.23, there are currently six tests that are failing:
-# 1/ test-getlogin   - this is a known problem. See:
-#    http://www.linuxfromscratch.org/pipermail/lfs-dev/2012-April/066264.html
-#
-#    After GNU coreutils has been built, it's possible to successfully run
-#    the test manually from a terminal with:
-#
-#    $ cd build/amd64/gnulib-tests && \
-#          gmake NON_ROOT_USERNAME=nobody -k check-TESTS && \
-#          gmake check TESTS=test-get-login
+# Always show the build and link lines for easier debugging.
+COMPONENT_TEST_ARGS +=	V=1
 
-# 2/ test-mbrtowc3
-# 3/ test-mbrtowc4
-# 4/ test-mbsalign
-# 5/ test-mbsrtowcs4 - these four multi-byte problems have been reported to
-#                      the G11N team. CR #19368946 & #19370120 have been filed.
-#
-# 6/ test-posixtm    - this is due to a problem with the Solaris mktime
-#                      utility. CR #19344177 has been filed.
+# The additional coreutils specific set of transforms to be applied to the
+# test results to try to normalize them.
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s|\(^$(CC)\).*|\\$$(CC)|" ' \
+	'-e "s|\(/gnulib-tests/test-getlogin.c:\).*|\1|" ' \
+	'-e "s|\(^/bin/bash: line 1:\).*|\1|" ' \
+	'-e "s|\(^df-symlink.sh: skipped test:\).*|\1|" ' \
+	'-e "s|\(^tail-n0f.sh: skipped test:\).*|\1|" '
+
+# There are currently two tests that are failing, for which the following
+# bugs are filed; see the bug reports for more details:
+# test-mbsalign - 20432332
+# test-posixtm  - 19344177
 
 test:		install $(TEST_64)
 
