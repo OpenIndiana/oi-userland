@@ -47,6 +47,11 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
+PERL_VERSION.32 = 5.12
+PERL_VERSION.64 = 5.16
+PERL_VERSION = $(PERL_VERSION.$(BITS))
+PERL = $(PERL.$(PERL_VERSION))
+CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/bin
 CPPFLAGS +=	-I/usr/include/openldap
 
 # Perl related patch needs configure script recreation.
@@ -73,7 +78,10 @@ CPPFLAGS +=	-I$(SOURCE_DIR)/src/OVAL
 CPPFLAGS +=	-I$(SOURCE_DIR)/src/OVAL/probes
 CPPFLAGS +=	-I/usr/include/pcre
 
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
+CONFIGURE_ENV +=        PERL="$(PERL)"
+CONFIGURE_ENV +=        PYTHON="$(PYTHON.$(BITS))"
+CONFIGURE_OPTIONS.32 +=	CFLAGS="$(CFLAGS)"
+CONFIGURE_OPTIONS.64 +=	CFLAGS="$(CFLAGS) -D_FILE_OFFSET_BITS=64"
 CONFIGURE_OPTIONS +=	CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_OPTIONS +=	--enable-debug=no
 CONFIGURE_OPTIONS +=	--enable-sce=yes
@@ -85,16 +93,19 @@ CONFIGURE_OPTIONS +=	LIBS="-lldap_r -lscf -ldlpi -lsec -lzonecfg"
 
 DOCS_DIR = $(PROTO_DIR)/usr/share/docs/openscap/html/
 
+# Enable ASLR for this component
+ASLR_MODE = $(ASLR_ENABLE)
+
 # common targets
-configure:	$(CONFIGURE_32)
+configure:	$(CONFIGURE_32_and_64)
 
-build:		$(BUILD_32)
+build:		$(BUILD_32_and_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_32_and_64)
 		$(MKDIR) $(DOCS_DIR)
 		$(CP) $(SOURCE_DIR)/docs/html/* $(DOCS_DIR)
 
-test:		$(TEST_32)
+test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

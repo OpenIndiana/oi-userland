@@ -1,0 +1,49 @@
+This patch is required to build 64-bit versions of openscap on solaris.
+It has not been submitted to upstream, but will be  2015-Feb-15.
+
+--- openscap-1.2.0/configure.ac.~3~	2014-08-08 10:58:39.160398757 -0700
++++ openscap-1.2.0/configure.ac	2014-08-08 10:58:15.703200526 -0700
+@@ -877,7 +877,7 @@
+ #check for atomic functions
+ case $host_cpu in
+ 	i386 | i486 | i586 | i686)
+-		CFLAGS="$CFLAGS  -march=i686"
++#		CFLAGS="$CFLAGS  -march=i686"
+ 		;;
+ esac
+ 
+--- openscap-1.2.0/src/SCE/sce_engine.c.~1~	2014-12-12 10:59:03.676427726 -0800
++++ openscap-1.2.0/src/SCE/sce_engine.c	2014-12-12 11:01:28.358061794 -0800
+@@ -48,6 +48,9 @@
+ #include <sys/prctl.h>
+ #include <limits.h>
+ #include <unistd.h>
++#if defined(__SVR4) && defined(__sun)
++#include <libgen.h>
++#endif
+ 
+ struct sce_check_result
+ {
+--- openscap-1.2.0/src/OVAL/probes/SEAP/_sexp-value.h.~1~	2014-12-19 09:53:15.178129356 -0800
++++ openscap-1.2.0/src/OVAL/probes/SEAP/_sexp-value.h	2014-12-19 09:55:26.268851025 -0800
+@@ -95,6 +95,9 @@
+         uintptr_t nxsz;
+         uint16_t  real;
+         uint16_t  refs;
++#if defined(__sparc) && defined(_LP64)
++	 uint32_t pad_gcc_align_hack;
++#endif
+         SEXP_t    memb[];
+ } __attribute__ ((packed));
+ 
+--- openscap-1.2.0/src/OVAL/probes/independent/system_info.c.~5~	2014-12-19 11:20:58.972279544 -0800
++++ openscap-1.2.0/src/OVAL/probes/independent/system_info.c	2014-12-19 11:23:46.471735971 -0800
+@@ -114,7 +114,7 @@
+ static char *get_mac(const struct ifaddrs *ifa)
+ {
+        struct lifreq lifr;
+-	uint_t physaddrlen = DLPI_PHYSADDR_MAX;
++	size_t physaddrlen = DLPI_PHYSADDR_MAX;
+ 	uchar_t physaddr[DLPI_PHYSADDR_MAX];
+ 	static char mac_buf[DLPI_PHYSADDR_MAX];
+ 	char *str;
