@@ -1,0 +1,15 @@
+Disable SSLv2 and SSLv3 in lynx to "mitigate POODLE vulnerability".
+
+This change will be passed upstream.
+
+--- lynx2-8-7/WWW/Library/Implementation/HTTP.c.orig	2015-01-29 08:30:29.185065523 -0800
++++ lynx2-8-7/WWW/Library/Implementation/HTTP.c	2015-01-29 08:48:49.143858796 -0800
+@@ -123,6 +123,8 @@
+ 	SSLeay_add_ssl_algorithms();
+ 	ssl_ctx = SSL_CTX_new(SSLv23_client_method());
+ 	SSL_CTX_set_options(ssl_ctx, SSL_OP_ALL);
++	/* Always disable SSLv2 & SSLv3 to "mitigate POODLE vulnerability". */
++	SSL_CTX_set_options(ssl_ctx, SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3);
+ 	SSL_CTX_set_default_verify_paths(ssl_ctx);
+ 	SSL_CTX_set_verify(ssl_ctx, SSL_VERIFY_PEER, HTSSLCallback);
+ #endif /* SSLEAY_VERSION_NUMBER < 0x0800 */
