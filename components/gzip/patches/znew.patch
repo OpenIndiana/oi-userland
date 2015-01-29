@@ -90,7 +90,7 @@ index dcdf84f..2a7e5e1 100644
  
  for arg
  do
-@@ -116,26 +92,32 @@ if test -n "$opt"; then
+@@ -116,26 +92,33 @@ if test -n "$opt"; then
  fi
  
  for i do
@@ -107,12 +107,13 @@ index dcdf84f..2a7e5e1 100644
        # Copy file attributes from old file to new one, if possible.
 -      test -n "$cpmod" && $cpmod $cpmodarg "$n.Z" "$n$ext" 2> /dev/null
 +      touch -r"$n.Z" -- "$n$ext" 2>/dev/null
-+      python -c '
-+	      import os
-+	      import sys
-+	      mode = os.stat(sys.argv[1]).st_mode & 07777
-+	      os.chmod(sys.argv[2], mode)
-+      ' "$n.Z" "$n$ext"
++      python - "$n.Z" "$n$ext" <<-EOF
++		import os
++		import sys
++		import stat
++		mode = stat.S_IMODE(os.stat(sys.argv[1]).st_mode)
++		os.chmod(sys.argv[2], mode)
++		EOF
      else
 -      echo error while recompressing $n.Z
 +      echo "error while recompressing $n.Z"
