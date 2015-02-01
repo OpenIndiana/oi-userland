@@ -15,13 +15,13 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		seahorse-plugins
-COMPONENT_VERSION=	2.30.0
+COMPONENT_VERSION=	2.30.1
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/action/show/Apps/Seahorse
 COMPONENT_SUMMARY=	Plugins for gedit and nautilus
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:24ed5c821a5d6575b7d7406fa043ef70c676db89b023a78e9ed7956703ab48e9
+    sha256:1fdfed1aef2c22a29a9abc00eae67752854e466a66cee2a8c1c278277e832d66
 COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.30/$(COMPONENT_ARCHIVE)
 
 include $(WS_TOP)/make-rules/prep.mk
@@ -31,11 +31,12 @@ include $(WS_TOP)/make-rules/ips.mk
 PATH=/usr/gnu/bin:/usr/bin
 
 COMPONENT_PREP_ACTION =        ( cd $(@D) && \
-                                        aclocal -Im4 && \
-                                        autoheader && \
-                                        libtoolize --automake --copy --force && \
-                                        automake -a -f -c &&\
-                                        autoconf )
+					libtoolize --automake --copy --force && \
+					gnome-doc-prepare --force && \
+					aclocal -Im4 && \
+					autoheader && \
+					automake -a -f -c &&\
+					autoconf )
 
 CPPFLAGS = -DMOZ_DEFAULT_TOOLKIT=\"cairo-gtk2\" -I/usr/include/firefox -I/usr/include/firefox/nspr
 
