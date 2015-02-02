@@ -20,22 +20,24 @@
 #
 
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tmux
-COMPONENT_VERSION=	1.8
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_VERSION=	1.9
+COMPONENT_MICRO_VERSION=	a
+IPS_COMPONENT_VERSION=	1.9.1
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)$(COMPONENT_MICRO_VERSION)
 COMPONENT_PROJECT_URL=	http://tmux.sourceforge.net
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:2565b65f80bf1d683032c75704a9619e6734fd21586c72768ef27427ba9e23e5
-COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/tmux/files/tmux/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
+    sha256:c5e3b22b901cf109b20dab54a4a651f0471abd1f79f6039d79b250d21c2733f5
+COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/tmux/files/tmux/$(COMPONENT_NAME)-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/tmux
 
-TPNO=			14287
+TPNO=			20510
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
