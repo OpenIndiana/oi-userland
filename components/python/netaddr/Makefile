@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -59,6 +59,15 @@ COMPONENT_PRE_TEST_ACTION= \
 	( cd $(COMPONENT_TEST_DIR)/tests ; \
 	  ln -s $(SOURCE_DIR)/netaddr/tests/2.x ; \
 	  ln -s $(SOURCE_DIR)/netaddr/tests/3.x )
+
+# Master test results are the same for all Python versions, so override
+# here, rather than create multiple identical master files.
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
+# The additional netaddr specific set of transforms to be applied to the test
+# results to try to normalize them.
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s|\(Ran 28 tests in\).*|\1|" '
 
 test:		$(TEST_NO_ARCH)
 

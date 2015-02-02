@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -44,6 +44,11 @@ include ../../make-rules/ips.mk
 CONFIGURE_PREFIX =	/usr/gnu
 CONFIGURE_OPTIONS  +=	--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
+
+# The additional m4 specific set of transforms to be applied to the
+# test results to try to normalize them.
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s|\(^$(CC)\).*|\\$$(CC)|" '
 
 ASLR_MODE = $(ASLR_ENABLE)
 

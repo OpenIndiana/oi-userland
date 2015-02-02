@@ -64,6 +64,10 @@ CONFIGURE_OPTIONS += LDFLAGS="$(LDFLAGS)"
 
 PKG_PROTO_DIRS +=	$(COMPONENT_DIR)/files
 
+# Master test results are the same for 32-bit and 64-bit, so override
+# here, rather than create multiple identical master files.
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # common targets

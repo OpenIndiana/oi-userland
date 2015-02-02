@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -47,6 +47,11 @@ CONFIGURE_LIBDIR.64 =   $(CONFIGURE_PREFIX)/lib
 CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)" 
 COMPONENT_TEST_ENV += PATH=/usr/gnu/bin:/usr/bin
 ASLR_MODE = $(ASLR_ENABLE)
+
+# The additional pkg-config specific set of transforms to be applied to the
+# test results to try to normalize them.
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "/^+ sed -e /d" '
 
 # common targets
 configure:	$(CONFIGURE_64)
