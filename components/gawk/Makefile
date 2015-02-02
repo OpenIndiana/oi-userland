@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -31,6 +31,11 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:5dbc7b2c4c328711337c2aacd09a122c7313122262e3ff034590f014067412b4
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/gawk/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gawk
+
+# The additional gawk specific set of transforms to be applied to the
+# test results to try to normalize them.
+COMPONENT_TEST_TRANSFORMS += \
+        '-e "s|\(^/usr/gnu/bin/make\).*|\1|" ' 
 
 TPNO=			6808
 
