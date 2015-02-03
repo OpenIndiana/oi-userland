@@ -172,7 +172,8 @@ install:	$(INSTALL_64)
 # between tests.
 #
 COMPONENT_TEST_ENV = EXTRATESTOPTS="-v -uall,-network $(TESTOPTS_PYTHON_TEST)"
-COMPONENT_TEST_ENV += PATH="$(PATH)"
+# The distutils tests need $CC in $PATH.
+COMPONENT_TEST_ENV += PATH="$(SPRO_VROOT)/bin:$(PATH)"
 # Prevent the tests from getting stuck waiting for input.
 COMPONENT_TEST_TARGETS = test < /dev/null
 
