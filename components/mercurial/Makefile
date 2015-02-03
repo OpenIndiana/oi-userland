@@ -25,12 +25,12 @@ include ../../make-rules/shared-macros.mk
 PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
 
 COMPONENT_NAME=		mercurial
-COMPONENT_VERSION=	3.2.3
+COMPONENT_VERSION=	3.3
 COMPONENT_PROJECT_URL=	http://mercurial.selenic.com/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:c4369320e276d78aada1b5936e96c7bbbbb8154cfba725ef4e8757dcedeaf1ef
+    sha256:306a084b166ab3d01a0d8a2e1b80208fd7c7f71dc46d485d47a9c5c021e9dc77
 COMPONENT_ARCHIVE_URL=	http://www.selenic.com/mercurial/release/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/hg
 
