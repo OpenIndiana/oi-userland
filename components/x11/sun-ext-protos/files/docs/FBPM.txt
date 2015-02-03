@@ -1,0 +1,271 @@
+# Copyright (c) 1999, 2010, Oracle and/or its affiliates. All rights reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice (including the next
+# paragraph) shall be included in all copies or substantial portions of the
+# Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+# DEALINGS IN THE SOFTWARE.
+#
+# Originally submitted as PSARC/1999/188
+# Server side has only been implemented in Xsun, not Xorg
+
+1.0 Introduction
+
+1.1 Project/Component Working Name:
+
+FBPM (Frame Buffer Power Management) Extension to the Xserver.
+
+1.2 Purpose
+
+The purpose of this fast track page is to request approval for the 
+addition of the FBPM extension to the Xserver.
+
+2.0 Description
+
+2.1 Background
+
+2.1.1 Power Management
+
+The EPA through the E-Star program has mandated that computers use less 
+power when not in use.  This can be done by slowing down the CPU clock
+and selectively removing power from parts of the system that are in an 
+idle state.  There are timers that control when power states change
+and a sequence of ever more aggressive power reductions, until the
+system is in its lowest possible power mode.  Any activity at the keyboard
+or some external command, can bring the system back up to a higher power
+state.
+
+The FBPM extension is an implementation that allows the Xserver to control
+the power level of the frame buffer.  It is a requirement that the Xserver
+have this control, in order to maintain an orderly shutdown and powerup 
+of the display system.
+
+2.1.2 DPMS 
+
+DPMS was created as part of the X Consortium X11R6.4 standard. Display
+Power Management Signaling (DPMS) is an implementation of the 
+E-Star requirements.   DPMS controls only the monitor portion of the system
+and not the frame buffer.  It does however provide the timing functions 
+that FBPM will use while controlling the frame buffer power.
+
+Excalibur is the first system that will support the latest E-Star standard.
+It will have the ability to control the power consumption of various parts
+of the system, including the Frame Buffer.
+
+In the future Sun will have frame buffers that implement up to 4 power states.
+Some frame buffer vendors already have this capability in their hardware.
+
+2.2 The problem
+
+By default Excalibur will "turn off" the framebuffer (ie reduce power by >90%)
+after the system is idle for 30 minutes (as per E-Star standard).
+It's required that the user be able to modify this time interval or disable
+FBPM using the new dtpower application (see PSARC/1999/251).
+
+2.3 Proposed Solution
+
+2.3.1 FBPM control
+
+Add an extension to the Xserver that allows the user to control FBPM functions.
+
+2.3.2 Why not just DPMS
+
+Although DPMS is the cornerstone of FBPM, DPMS is a standard X Consortium
+extension.  DPMS was not designed to control frame buffer power, and
+Sun would violate the standard if we modified our DPMS extension to do so.
+
+2.3.3 xset, command line control
+
+The xset program is modified to support user command line control over the
+FBPM functionality, as follows:
+xset +fbpm		  /* Enable FBPM */
+xset -fbpm		  /* Disable FBPM */
+xset fbpm force on	  /* Set FBPM to on */
+xset fbpm force standby	  /* Set FBPM to standby */
+xset fbpm force suspend	  /* Set FBPM to suspend */
+xset fbpm force off	  /* Set FBPM to off */
+
+
+2.3.4 exported library functions
+
+The following public functions will be added to libXext.so.0 (this is
+the standard location for X Extensions).
+
+* FBPMQueryExtension
+Find out if the extension is available.
+
+* FBPMGetVersion
+Get the version of the extension.
+
+* FBPMCapable
+Find out if the hardware can do FBPM.
+
+* FBPMEnable
+Enable FBPM.
+
+* FBPMDisable
+Disable FBPM.
+
+* FBPMInfo
+Read back info about FBPM.
+
+* FBPMForce
+Force the frame buffer into the specified power state.
+
+2.3.5 exported Xsun DDX interface functions
+
+* FBPMPMInit
+Initialize interface between FBPM and DDX.
+
+
+3.0 Motivation
+
+The proposed FBPM extension is required to support E-Star
+frame buffer power management on Excalibur.
+
+4.0 Interfaces
+
+4.1 Exported Interfaces
+
+xset CLI			Stable
+	[Additions to the xset command line interface (see 2.3.3)]
+
+FBPMQueryExtension		Stable
+FBPMGetVersion			Stable
+FBPMCapable			Stable
+FBPMEnable			Stable
+FBPMDisable			Stable
+FBPMInfo			Stable
+FBPMForce			Stable	
+FBPMPMInit			Stable
+
+=======================================================================
+
+Detailed spec on each new interface:
+-----------------------------------------------------------------------
+ 
+Bool FBPMEnable(Display* display)
+ 
+ display is the X Display.
+ 
+ 
+ FBPMEnable() returns true if the DDX/framebuffer was able to perform
+ the request, false otherwise.
+ 
+ Since the FBPM state changes are synched with the DPMS state changes,
+ whenever DPMS(state) == FBPM(state), then FBPM state changes will
+ follow all further DPMS state changes.
+ 
+ Note: It is not possible to turn the frame buffer off if the monitor
+ is on.
+ 
+-----------------------------------------------------------------------
+ 
+void FBPMDisable(Display* display)
+ 
+ display is the X Display.
+ 
+ This call disables FBPM, and the frame buffer will always be ON
+ regardless of DPMS or any other power management. This is the way
+ that all current Sun systems behave (i.e. if the system has power,
+ the frame buffer is ON).
+ 
+ NOTE: If FBPMDisable() is called when the frame buffer is in any
+ state other than ON, the frame buffer state is changed to ON.
+ 
+
+------------------------------------------------------------------------
+ 
+Bool FBPMInfo(Display* display, int* level)
+ 
+ display is the X Display.
+ 
+ level returns the frame buffer's current power level (FBPMModeOn,
+ FBPMModeStandby, FBPMModeSuspend, FBPMModeOff).
+ 
+ FBPMInfo() returns TRUE if FBPM is enabled, FALSE if FBPM is
+ disabled.
+ 
+------------------------------------------------------------------------
+ 
+Bool FBPMQueryExtension(Display* display, int* event_base,
+                        int* error_base)
+ 
+ This is the standard X Windows extension function which the X client
+ uses to determine whether the Xserver supports the FBPM extension.
+
+------------------------------------------------------------------------
+
+Status FBPMForceLevel(Display *display, int level)
+
+ display is the X Display.
+
+ level is the power level (or state) that the user want.  They can be
+ FBPMModeOn, FBPMModeStandby, FBPMModeSuspend, and FBPMModeOff.
+
+ FBPMForceLevel returns BadValue if a requested state is not one of
+ the legal states.  TRUE is returned otherwise.
+
+ FBPMForceLevel is provided primarily for debugging DDX code.  It is
+ desirable to force the DDX to a certain state and then observe the
+ code and hardware functions.
+
+------------------------------------------------------------------------
+ 
+void FBPMPMInit(int screen, void* Procs)
+ 
+ NOTE: Only a frame buffer DDX is allowed to call FBPMPMInit().
+ FBPMPMInit() will not be in the FBPM man page. It will be documented
+ in the Solaris DDX OpenGraphics interface docs.
+ 
+ screen is the Display's screen number.
+ 
+ Procs is the standard DDX function vector interface. If the
+ DDX/framebuffer does not support frame buffer power management, then
+ the DDX will not call FBPMPMInit(), the function vector will be NULL,
+ and the FBPM extension is disabled.
+
+-------------------------------------------------------------------------
+
+Bool FBPMDDXStateChange(int current, int new, int FBPMswitch, int pm_fd,
+                        char* fb_name, Screen pScreen)
+ 
+ This is the DDX function vector for frame buffer power management (it
+ will be documented in the Solaris DDX OpenGraphics interface
+ docs). FBPM sends all extension requests to the DDX by calling this
+ DDX function. The DDX passes those requests to the appropriate
+ drivers.
+ 
+ current is the current DPMS power level.
+ 
+ new is the requested frame buffer power level. Default behavior is
+ for new to be the same as current (i.e. by default the frame buffer
+ power level changes in sync with the DPMS power level).
+ 
+ FBPMswitch is a control that signals DDX that FBPM is on.  Since DDX
+ will manage the DPMS monitor levels, it needs to know if the user has
+ unlinked FBPM.
+
+ pm_fd is the file descriptor for /dev/pm.  The Xserver opens the
+ device and passes the fd to the DDX.
+
+ fb_name is the name string for the frame buffer.  Xserver knows this
+ name, however it is hidden from the DDX layer.
+
+ pScreen is the pointer to the Screen struct. 
+
+ DPMSDDXStateChange() returns true if the DDX was able to complete the
+ request, false otherwise.
