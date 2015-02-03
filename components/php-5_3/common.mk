@@ -161,8 +161,8 @@ CONFIGURE_OPTIONS  +=	PATH="$(PATH):/usr/sbin"
 CONF_ENVLINE += \
 	LIBS="$(LIBS)" \
 	EXTENSION_DIR=$(MODULES_DIR) \
-	PHP_PEAR_CACHE_DIR=/var/tmp/pear/cache \
-	PHP_PEAR_DOWNLOAD_DIR=/var/tmp/pear/cache \
+	PHP_PEAR_CACHE_DIR=/var/cache/php-pear \
+	PHP_PEAR_DOWNLOAD_DIR=/tmp/pear/download \
 	PHP_PEAR_EXTENSION_DIR=/var/php/$(PHP_REL)/modules \
 	PHP_PEAR_INSTALL_DIR=/var/php/$(PHP_REL)/pear \
 	PHP_PEAR_SIG_BIN=/usr/gnu/bin/gpg \

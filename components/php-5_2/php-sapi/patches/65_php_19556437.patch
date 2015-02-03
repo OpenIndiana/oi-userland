@@ -1,0 +1,18 @@
+Fix for CVE-2014-5120
+Based on code in php 5.3.29 from comments in:
+https://bugs.php.net/bug.php?id=67730
+
+
+--- php-5.2.17/ext/gd/gd_ctx.c_orig	2010-01-03 01:23:27.000000000 -0800
++++ php-5.2.17/ext/gd/gd_ctx.c	2014-11-04 15:12:01.612256878 -0800
+@@ -90,7 +90,9 @@
+ 	}
+ 
+ 	if (argc > 1 && (Z_TYPE_PP(file) != IS_NULL && ((argc == 2) || (argc > 2 && Z_STRLEN_PP(file))))) {
+-
++		if (strlen(Z_STRVAL_PP(file)) != Z_STRLEN_PP(file)) {
++			RETURN_FALSE;
++		}
+ 		PHP_GD_CHECK_OPEN_BASEDIR(fn, "Invalid filename");
+ 
+ 		fp = VCWD_FOPEN(fn, "wb");

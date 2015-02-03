@@ -18,11 +18,11 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
-TPNO_PHP_5_3=		17137
+TPNO_PHP_5_3=		21389
 TPNO_PHP_APC=		17127
 TPNO_PHP_IDN=		17128
 TPNO_PHP_MEMCACHE=	17130
@@ -125,7 +125,7 @@ include ../../make-rules/ips.mk
 #               looks like i DO NEED the pear patches
 
 COMPONENT_NAME=		php
-COMPONENT_VERSION=	5.3.28
+COMPONENT_VERSION=	5.3.29
 COMPONENT_PROJECT_URL=	http://www.php.net/
 COMPONENT_BUGDB=	utility/php
 

@@ -1,0 +1,47 @@
+Fix for CVE-2014-4698
+Patch:
+http://git.php.net/?p=php-src.git;a=commitdiff;h=22882a9d89712ff2b6ebc20a689a89452bba4dcd
+
+Hand crafted patch for php 5.3 from above due to context differences.
+
+--- php-5.3.29/ext/spl/spl_array.c_orig	2014-08-13 12:22:50.000000000 -0700
++++ php-5.3.29/ext/spl/spl_array.c	2014-11-04 14:31:14.198629945 -0800
+@@ -1843,6 +1843,7 @@
+ 	int buf_len;
+ 	spl_array_object *intern = (spl_array_object*)zend_object_store_get_object(getThis() TSRMLS_CC);
+ 	int was_in_unserialize = intern->unserialize_data != NULL;
++	HashTable *aht;
+ 
+ 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &buf, &buf_len) == FAILURE) {
+ 		return;
+@@ -1853,6 +1854,12 @@
+ 		return;
+ 	}
+ 
++    aht = spl_array_get_hash_table(intern, 0 TSRMLS_CC);
++	if (aht->nApplyCount > 0) {
++		zend_error(E_WARNING, "Modification of ArrayObject during sorting is prohibited");
++		return;
++	}
++
+ 	if (!was_in_unserialize) {
+ 		intern->unserialize_data = emalloc(sizeof(php_unserialize_data_t));
+ 		PHP_VAR_UNSERIALIZE_INIT(*intern->unserialize_data);
+--- php-5.3.29/ext/spl/tests/bug67539.phpt_orig	2014-11-04 14:32:52.307769425 -0800
++++ php-5.3.29/ext/spl/tests/bug67539.phpt	2014-11-04 14:33:24.460710922 -0800
+@@ -0,0 +1,15 @@
++--TEST--
++Bug #67539 (ArrayIterator use-after-free due to object change during sorting)
++--FILE--
++<?php
++
++$it = new ArrayIterator(array_fill(0,2,'X'), 1 );
++
++function badsort($a, $b) {
++        $GLOBALS['it']->unserialize($GLOBALS['it']->serialize());
++        return TRUE;
++}
++
++$it->uksort('badsort');
++--EXPECTF--
++Warning: Modification of ArrayObject during sorting is prohibited in %sbug67539.php on line %d

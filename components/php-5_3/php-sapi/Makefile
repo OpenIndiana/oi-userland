@@ -29,11 +29,11 @@ include ../../../make-rules/shared-macros.mk
 #    published from.
 
 COMPONENT_NAME=		php
-COMPONENT_VERSION=	5.3.28
+COMPONENT_VERSION=	5.3.29
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-    sha256:0cac960c651c4fbb3d21cf2f2b279a06e21948fb35a0d1439b97296cac1d8513
+    sha256:c4e1cf6972b2a9c7f2777a18497d83bf713cdbecabb65d3ff62ba441aebb0091
 COMPONENT_ARCHIVE_URL=	http://us.php.net/get/$(COMPONENT_ARCHIVE)/from/this/mirror
 COMPONENT_PROJECT_URL=	http://www.php.net/
 

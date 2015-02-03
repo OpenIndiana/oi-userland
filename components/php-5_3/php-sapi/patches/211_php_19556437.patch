@@ -1,0 +1,18 @@
+Fix for CVE-2014-3587
+Patch from PHP community:
+http://git.php.net/?p=php-src.git;a=blobdiff;f=ext/fileinfo/libmagic/cdf.c;h=2c0a2d9dfcd803e21fb40cd04c48a679aa09a6df;hp=429f3b952f68d1ef7f2ebb4925ef5b16c54b7833;hb=35f32637b08ca6397829138ed45a0768f592f262;hpb=eab42649ab9c6d949dc8e1ba9e31124e9cfb3b1b
+
+
+diff --git a/ext/fileinfo/libmagic/cdf.c b/ext/fileinfo/libmagic/cdf.c
+index 429f3b9..2c0a2d9 100644
+--- a/ext/fileinfo/libmagic/cdf.c
++++ b/ext/fileinfo/libmagic/cdf.c
+@@ -820,7 +820,7 @@ cdf_read_property_info(const cdf_stream_t *sst, const cdf_header_t *h,
+ 		q = (const uint8_t *)(const void *)
+ 		    ((const char *)(const void *)p + ofs
+ 		    - 2 * sizeof(uint32_t));
+-		if (q > e) {
++		if (q < p || q > e) {
+ 			DPRINTF(("Ran of the end %p > %p\n", q, e));
+ 			goto out;
+ 		}

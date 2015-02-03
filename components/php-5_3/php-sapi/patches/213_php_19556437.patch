@@ -1,0 +1,60 @@
+Fix for CVE-2014-4670
+Patch:
+http://git.php.net/?p=php-src.git;a=commitdiff;h=df78c48354f376cf419d7a97f88ca07d572f00fb
+
+
+Fixed Bug #67538 (SPL Iterators use-after-free)
+---
+
+diff --git a/ext/spl/spl_dllist.c b/ext/spl/spl_dllist.c
+index 39a0733..0b44d41 100644
+--- a/ext/spl/spl_dllist.c
++++ b/ext/spl/spl_dllist.c
+@@ -43,12 +43,10 @@ PHPAPI zend_class_entry  *spl_ce_SplStack;
+ 
+ #define SPL_LLIST_DELREF(elem) if(!--(elem)->rc) { \
+ 	efree(elem); \
+-	elem = NULL; \
+ }
+ 
+ #define SPL_LLIST_CHECK_DELREF(elem) if((elem) && !--(elem)->rc) { \
+ 	efree(elem); \
+-	elem = NULL; \
+ }
+ 
+ #define SPL_LLIST_ADDREF(elem) (elem)->rc++
+@@ -916,6 +914,11 @@ SPL_METHOD(SplDoublyLinkedList, offsetUnset)
+ 			llist->dtor(element TSRMLS_CC);
+ 		}
+ 
++		if (intern->traverse_pointer == element) {
++			SPL_LLIST_DELREF(element);
++			intern->traverse_pointer = NULL;
++		}
++
+ 		zval_ptr_dtor((zval **)&element->data);
+ 		element->data = NULL;
+ 
+diff --git a/ext/spl/tests/bug67538.phpt b/ext/spl/tests/bug67538.phpt
+new file mode 100644
+index 0000000..b6f3848
+--- /dev/null
++++ b/ext/spl/tests/bug67538.phpt
+@@ -0,0 +1,17 @@
++--TEST--
++Bug #67538 (SPL Iterators use-after-free)
++--FILE--
++<?php
++$list = new SplDoublyLinkedList();
++$list->push('a');
++$list->push('b');
++
++$list->rewind();
++$list->offsetUnset(0);
++$list->push('b');
++$list->offsetUnset(0);
++$list->next();
++echo "okey";
++?>
++--EXPECTF--
++okey

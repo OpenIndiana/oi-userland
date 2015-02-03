@@ -1,0 +1,21 @@
+Fix for CVE-2014-4049
+Community bug:
+https://bugs.php.net/bug.php?id=67432
+Patch based on:
+https://github.com/php/php-src/commit/b34d7849ed90ced9345f8ea1c59bc8d101c18468
+Slightly modified from the above source as the context is slightly different.
+
+
+--- php-5.2.17/ext/standard/dns.c_orig	2010-01-03 01:23:27.000000000 -0800
++++ php-5.2.17/ext/standard/dns.c	2014-10-17 11:12:46.117985578 -0700
+@@ -484,6 +484,10 @@
+ 				
+ 				while (ll < dlen) {
+ 					n = cp[ll];
++					if ((ll + n) >= dlen) {
++						    // Invalid chunk length, truncate
++							n = dlen - (ll + 1);
++				    }
+ 					memcpy(tp + ll , cp + ll + 1, n);
+ 					ll = ll + n + 1;
+ 				}

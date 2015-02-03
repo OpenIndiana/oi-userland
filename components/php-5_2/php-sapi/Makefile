@@ -120,12 +120,12 @@ ADD_APACHE2_MODULE_SUPPORT = ( \
 	$(CP) $(COMPONENT_DIR)/../Solaris/php$(PHP_REL).conf \
 		$(PROTO_DIR)/$(APACHE2_PHP)/php$(PHP_REL).conf; \
 	$(CHMOD) 644 $(PROTO_DIR)/$(APACHE2_PHP)/php$(PHP_REL).conf; \
-	$(SYMLINK) php$(PHP_REL).conf \
-		$(PROTO_DIR)/$(APACHE2_PHP)/php.conf; \
+	cd $(PROTO_DIR)/$(APACHE2_PHP); \
+	$(SYMLINK) php$(PHP_REL).conf php.conf; \
 	$(CP) $(PROTO_DIR)/$(APACHE2_EXTDIR)/libphp5.so \
 		$(PROTO_DIR)/$(APACHE2_EXTDIR)/mod_php$(PHP_REL).so; \
-	$(SYMLINK) $(PROTO_DIR)/$(APACHE2_EXTDIR)/mod_php$(PHP_REL).so \
-		$(PROTO_DIR)/$(APACHE2_EXTDIR)/mod_php5.so; \
+	cd $(PROTO_DIR)/$(APACHE2_EXTDIR); \
+	$(SYMLINK) mod_php$(PHP_REL).so mod_php5.so; \
 	)
 
 # Ship a default php.ini to simplify ease of use.
