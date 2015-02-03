@@ -59,6 +59,7 @@ CONFIGURE_OPTIONS.64 += --bindir=/usr/bin/$(MACH64)
 
 CONFIGURE_OPTIONS = $(CONFIGURE_OPTIONS.$(BITS))
 CONFIGURE_OPTIONS += --disable-install-setuid
+CONFIGURE_OPTIONS += --disable-dmx
 CONFIGURE_OPTIONS += --disable-shave
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --disable-unit-tests
