@@ -1,0 +1,20 @@
+From: https://www.mail-archive.com/curl-library@cool.haxx.se/msg21757.html
+Quanah Gibson-Mount Thu, 15 Jan 2015 12:27:13 -0800
+Unfortunately, it appears that curl is still not tested against Heimdal
+Kerberos.
+
+This problem has been reported upstream.
+
+--- lib/curl_sasl_gssapi.c.orig	2015-01-26 08:22:32.369117065 -0800
++++ lib/curl_sasl_gssapi.c	2015-01-26 08:36:35.452740440 -0800
+@@ -31,6 +31,10 @@
+ #define NCOMPAT 1
+ #endif
+ 
++#ifdef HAVE_GSSHEIMDAL
++#define gss_nt_service_name GSS_C_NT_HOSTBASED_SERVICE
++#endif
++
+ #define GSSAUTH_P_NONE      1
+ #define GSSAUTH_P_INTEGRITY 2
+ #define GSSAUTH_P_PRIVACY   4

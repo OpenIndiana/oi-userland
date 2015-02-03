@@ -18,21 +18,21 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =        curl
-COMPONENT_VERSION=      7.39.0
+COMPONENT_VERSION=      7.40.0
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  http://curl.haxx.se/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:a3a7c2b9e7416c728469eb4cb5b61e9161335df4278329e1d9cc3c194e25d795
+    sha256:c2e0705a13e53f8f924d1eaeb2ab94f59a9e162007c489b9ab0c96238bddf84b
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/curl
 
-TPNO=			20040
+TPNO=			21343
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
@@ -77,6 +77,25 @@ CONFIGURE_OPTIONS += --with-libssh2
 CONFIGURE_OPTIONS += "curl_disallow_getifaddrs=yes"
 
 LINT_FLAGS += -I$(SOURCE_DIR)/include
+
+# The additional curl specific set of transforms to be applied to the
+# test results to try to normalize them.
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s|\(^$(CC)\).*|\\$$(CC)|" ' \
+	'-e "s|\(^/bin/bash ../../libtool\).*|\1|" ' \
+	'-e "s|\(^libtool: compile:\).*|\1|" ' \
+	'-e "s|\(^libtool: link:\).*|\1|" ' \
+	'-e "s|remaining: ..:..|remaining: xx:xx|" ' \
+	'-e "s|\(^TESTDONE: 964 tests were considered during\).*|\1|" ' \
+	'-e "s|\(^\* curl $(COMPONENT_VERSION)\).*|\1|" ' \
+	'-e "s|\(^\* Host:\).*|\1|" ' \
+	'-e "s|\(^\* System: SunOS\).*|\1|" ' \
+	'-e "s|\(^Connection from 127.0.0.1 port\).*|\1|" ' \
+	'-e "s|\(^Failed none for\).*|\1|" ' \
+	'-e "s|\(^Found matching DSA key:\).*|\1|" ' \
+	'-e "s|\(^Failed publickey for\).*|\1|" ' \
+	'-e "/^debug.:/d" ' \
+	'-e "/^monitor debug.:/d" '
 
 ASLR_MODE = $(ASLR_ENABLE)
 
