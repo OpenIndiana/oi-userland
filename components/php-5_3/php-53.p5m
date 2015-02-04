@@ -18,33 +18,23 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 <transform file path=etc/php/.* -> default group bin>
 <transform file path=etc/php/.* -> default mode 0644>
 <transform file path=etc/php/.* -> default preserve renamenew>
-
 set name=pkg.fmri value=pkg:/web/php-53@$(COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="PHP Server"
 set name=pkg.description \
     value="A general-purpose scripting language originally designed for web development to produce dynamic web pages."
-set name=pkg.summary value="PHP Server"
-set name=info.classification \
-    value="org.opensolaris.category.2008:Development/PHP"
-set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.classification value=org.opensolaris.category.2008:Development/PHP
 set name=info.source-url \
     value=http://us.php.net/get/php-$(COMPONENT_VERSION).tar.bz2/from/this/mirror
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2012/067
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-
-license php-53.license license='PHP, GPLv2, LGPLv2, Apache v2.0' \
-    com.oracle.info.description="the PHP scripting language" \
-    com.oracle.info.name=php-53 \
-    com.oracle.info.version=$(COMPONENT_VERSION) \
-    com.oracle.info.tpno=$(TPNO_PHP_5_3)
-
-dir path=var/php/5.3/sessions owner=webservd mode=0750
 file path=etc/php/5.3/conf.d/bz2.ini
 file path=etc/php/5.3/conf.d/curl.ini
 file path=etc/php/5.3/conf.d/ftp.ini
@@ -77,8 +67,18 @@ file path=etc/php/5.3/zts-conf.d/pdo_sqlite.ini
 file path=etc/php/5.3/zts-conf.d/snmp.ini
 file path=etc/php/5.3/zts-conf.d/sqlite.ini
 file path=etc/php/5.3/zts-conf.d/tidy.ini
-file path=usr/php/5.3/bin/phar.phar
+link path=usr/bin/phar target=../php/5.3/bin/phar mediator=php \
+    mediator-version=5.3
+link path=usr/bin/php target=../php/5.3/bin/php mediator=php \
+    mediator-version=5.3
+link path=usr/bin/php-config target=../php/5.3/bin/php-config mediator=php \
+    mediator-version=5.3
+link path=usr/bin/phpize target=../php/5.3/bin/phpize mediator=php \
+    mediator-version=5.3
+link path=usr/php/5.3/bin/configure-webserver7 \
+    target=../samples/scripts/configure-sun-webserver
 link path=usr/php/5.3/bin/phar target=phar.phar
+file path=usr/php/5.3/bin/phar.phar
 file path=usr/php/5.3/bin/php
 file path=usr/php/5.3/bin/php-cgi
 file path=usr/php/5.3/bin/php-config
@@ -215,12 +215,10 @@ file path=usr/php/5.3/include/php/ext/mbstring/libmbfl/mbfl/mbfl_consts.h
 file path=usr/php/5.3/include/php/ext/mbstring/libmbfl/mbfl/mbfl_convert.h
 file path=usr/php/5.3/include/php/ext/mbstring/libmbfl/mbfl/mbfl_defs.h
 file path=usr/php/5.3/include/php/ext/mbstring/libmbfl/mbfl/mbfl_encoding.h
-file \
-    path=usr/php/5.3/include/php/ext/mbstring/libmbfl/mbfl/mbfl_filter_output.h
+file path=usr/php/5.3/include/php/ext/mbstring/libmbfl/mbfl/mbfl_filter_output.h
 file path=usr/php/5.3/include/php/ext/mbstring/libmbfl/mbfl/mbfl_ident.h
 file path=usr/php/5.3/include/php/ext/mbstring/libmbfl/mbfl/mbfl_language.h
-file \
-    path=usr/php/5.3/include/php/ext/mbstring/libmbfl/mbfl/mbfl_memory_device.h
+file path=usr/php/5.3/include/php/ext/mbstring/libmbfl/mbfl/mbfl_memory_device.h
 file path=usr/php/5.3/include/php/ext/mbstring/libmbfl/mbfl/mbfl_string.h
 file path=usr/php/5.3/include/php/ext/mbstring/mbstring.h
 file path=usr/php/5.3/include/php/ext/mbstring/oniguruma/oniguruma.h
@@ -417,41 +415,35 @@ file path=usr/php/5.3/zts-modules/pdo_sqlite.so
 file path=usr/php/5.3/zts-modules/snmp.so
 file path=usr/php/5.3/zts-modules/sqlite3.so
 file path=usr/php/5.3/zts-modules/tidy.so
-link path=usr/php/5.3/bin/configure-webserver7 \
-    target=../samples/scripts/configure-sun-webserver
 link path=usr/php/bin target=5.3/bin mediator=php mediator-version=5.3
 link path=usr/php/include target=5.3/include mediator=php mediator-version=5.3
 link path=usr/php/lib target=5.3/lib mediator=php mediator-version=5.3
 link path=usr/php/man target=5.3/man mediator=php mediator-version=5.3
 link path=usr/php/modules target=5.3/modules mediator=php mediator-version=5.3
-link path=usr/bin/php target=../php/5.3/bin/php \
-    mediator=php mediator-version=5.3
-link path=usr/bin/php-config target=../php/5.3/bin/php-config \
-    mediator=php mediator-version=5.3
-link path=usr/bin/phpize target=../php/5.3/bin/phpize \
-    mediator=php mediator-version=5.3
-link path=usr/bin/phar target=../php/5.3/bin/phar \
-    mediator=php mediator-version=5.3
-
-# force other php parts onto the disk
-depend fmri=pkg:/web/php-53/documentation type=optional
-depend fmri=pkg:/web/php-53/extension/php-apc type=require
-depend fmri=pkg:/web/php-53/extension/php-idn type=require
-depend fmri=pkg:/web/php-53/extension/php-memcache type=require
-depend fmri=pkg:/web/php-53/extension/php-mysql type=require
-depend fmri=pkg:/web/php-53/extension/php-pear type=require
-depend fmri=pkg:/web/php-53/extension/php-suhosin type=require
-depend fmri=pkg:/web/php-53/extension/php-tcpwrap type=require
-depend fmri=pkg:/web/php-53/extension/php-xdebug type=require
-
-# php common files package
-depend fmri=pkg:/web/php-common type=require
-
-# if php5.2 is present drag forward because of /usr/php/* mediated links
-depend fmri=pkg:/web/php-52@5.2.17 type=optional
+dir  path=var/php/5.3/sessions owner=webservd mode=0750
+license php-53.license license="PHP, GPLv2, LGPLv2, Apache v2.0" \
+    com.oracle.info.description="the PHP scripting language" \
+    com.oracle.info.name=php-53 com.oracle.info.tpno=$(TPNO_PHP_5_3) \
+    com.oracle.info.version=$(COMPONENT_VERSION)
 
 # if php5.2's apache module is present then make sure
 # php5.3's apache module is installed
-depend type=conditional \
-    predicate=web/server/apache-22/module/apache-php52 \
-         fmri=web/server/apache-22/module/apache-php53
+depend type=conditional fmri=web/server/apache-22/module/apache-php53 \
+    predicate=web/server/apache-22/module/apache-php52
+
+# if php5.2 is present drag forward because of /usr/php/* mediated links
+depend type=optional fmri=pkg:/web/php-52@5.2.17
+
+# force other php parts onto the disk
+depend type=optional fmri=pkg:/web/php-53/documentation
+depend type=require fmri=pkg:/web/php-53/extension/php-apc
+depend type=require fmri=pkg:/web/php-53/extension/php-idn
+depend type=require fmri=pkg:/web/php-53/extension/php-memcache
+depend type=require fmri=pkg:/web/php-53/extension/php-mysql
+depend type=require fmri=pkg:/web/php-53/extension/php-pear
+depend type=require fmri=pkg:/web/php-53/extension/php-suhosin
+depend type=require fmri=pkg:/web/php-53/extension/php-tcpwrap
+depend type=require fmri=pkg:/web/php-53/extension/php-xdebug
+
+# php common files package
+depend type=require fmri=pkg:/web/php-common

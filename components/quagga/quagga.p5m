@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=(.+)/man/man1m/(.+).1m$ -> set action.hash %<\1>/man/man8/%<\2>.8 >
@@ -26,17 +26,16 @@
 <transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
 set name=pkg.fmri \
     value=pkg:/system/network/routing/quagga@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Quagga - Quagga Routing Software"
 set name=pkg.description \
     value="Quagga is a routing software suite, providing implementations of OSPFv2, OSPFv3, RIP v1 and v2, RIPng, ISIS and BGP-4"
-set name=pkg.summary value="Quagga - Quagga Routing Software"
 set name=com.oracle.info.description value="the Quagga routing software"
 set name=com.oracle.info.tpno value=$(TPNO)
 set name=info.classification \
     value="org.opensolaris.category.2008:System/Administration and Configuration"
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid \
-    value=PSARC/2005/571
+set name=org.opensolaris.arc-caseid value=PSARC/2005/571
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 file Solaris/README.Solaris path=etc/quagga/README.Solaris
 file path=etc/quagga/bgpd.conf.sample
@@ -51,8 +50,7 @@ file path=etc/quagga/zebra.conf.sample
 file Solaris/exec_attr path=etc/security/exec_attr.d/quagga
 file $(MACH32)/solaris/quagga.xml \
     path=lib/svc/manifest/network/routing/quagga.xml
-file $(MACH32)/solaris/trill.xml \
-    path=lib/svc/manifest/network/routing/trill.xml
+file $(MACH32)/solaris/trill.xml path=lib/svc/manifest/network/routing/trill.xml
 file $(MACH32)/solaris/quagga.init path=lib/svc/method/quagga
 file path=usr/include/quagga/buffer.h
 file path=usr/include/quagga/checksum.h
@@ -102,8 +100,14 @@ file path=usr/include/quagga/workqueue.h
 file path=usr/include/quagga/zassert.h
 file path=usr/include/quagga/zclient.h
 file path=usr/include/quagga/zebra.h
+link path=usr/lib/libospf.so target=libospf.so.0.0.0
+link path=usr/lib/libospf.so.0 target=libospf.so.0.0.0
 file path=usr/lib/libospf.so.0.0.0
+link path=usr/lib/libospfapiclient.so target=libospfapiclient.so.0.0.0
+link path=usr/lib/libospfapiclient.so.0 target=libospfapiclient.so.0.0.0
 file path=usr/lib/libospfapiclient.so.0.0.0
+link path=usr/lib/libzebra.so target=libzebra.so.0.0.0
+link path=usr/lib/libzebra.so.0 target=libzebra.so.0.0.0
 file path=usr/lib/libzebra.so.0.0.0
 file path=usr/sbin/bgpd
 file path=usr/sbin/isisd
@@ -114,6 +118,7 @@ file path=usr/sbin/ripd
 file path=usr/sbin/ripngd
 file path=usr/sbin/trilld
 file path=usr/sbin/zebra
+link path=usr/sbin/zebraadm target=quaggaadm
 file path=usr/share/info/quagga.info
 file path=usr/share/info/quagga.info-1
 file path=usr/share/man/man1m/bgpd.1m
@@ -126,10 +131,3 @@ file path=usr/share/man/man1m/zebra.1m
 file Solaris/quagga.1m path=usr/share/man/man8/quagga.1m
 file Solaris/quaggaadm.1m path=usr/share/man/man8/quaggaadm.1m
 license quagga.license license=GPLv2
-link path=usr/lib/libospf.so target=libospf.so.0.0.0
-link path=usr/lib/libospf.so.0 target=libospf.so.0.0.0
-link path=usr/lib/libospfapiclient.so target=libospfapiclient.so.0.0.0
-link path=usr/lib/libospfapiclient.so.0 target=libospfapiclient.so.0.0.0
-link path=usr/lib/libzebra.so target=libzebra.so.0.0.0
-link path=usr/lib/libzebra.so.0 target=libzebra.so.0.0.0
-link path=usr/sbin/zebraadm target=quaggaadm

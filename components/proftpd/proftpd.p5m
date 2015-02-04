@@ -18,29 +18,30 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 # PSARC/2011/088
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 set name=pkg.fmri \
     value=pkg:/service/network/ftp@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="FTP Server and Utilities"
-set name=info.classification value="org.opensolaris.category.2008:System/Core"
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
-set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid \
-    value=PSARC/2011/088
-set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 
 # This package name has known conflicts with other packages in the WOS
-set pkg.linted.pkglint.manifest004=true
+set name=pkg.linted.pkglint.manifest004 value=true
+set name=info.classification value=org.opensolaris.category.2008:System/Core
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2011/088
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 
-file proftpd.conf path=etc/proftpd.conf mode=0644 preserve=true overlay=allow
-file auth_service-network-ftpd path=etc/security/auth_attr.d/service-network-ftpd
-file prof_service-network-ftpd path=etc/security/prof_attr.d/service-network-ftpd
+file proftpd.conf path=etc/proftpd.conf mode=0644 overlay=allow preserve=true
+file auth_service-network-ftpd \
+    path=etc/security/auth_attr.d/service-network-ftpd
+file prof_service-network-ftpd \
+    path=etc/security/prof_attr.d/service-network-ftpd
 file ftp.xml path=lib/svc/manifest/network/ftp.xml
 file svc-ftp path=lib/svc/method/svc-ftp
 file path=usr/bin/ftpcount
@@ -116,27 +117,38 @@ file path=usr/lib/proftpd/mod_wrap.so
 file ftprestart.sh path=usr/sbin/ftprestart
 file path=usr/sbin/ftpscrub
 file path=usr/sbin/ftpshut
-file proftpd_migration.txt path=usr/share/doc/proftpd/proftpd_migration.txt
 file doc/Configuration.html path=usr/share/doc/proftpd/Configuration.html
-file doc/modules/mod_auth_file.html path=usr/share/doc/proftpd/modules/mod_auth_file.html
-file doc/modules/mod_auth_pam.html path=usr/share/doc/proftpd/modules/mod_auth_pam.html
-file doc/modules/mod_ctrls.html path=usr/share/doc/proftpd/modules/mod_ctrls.html
-file doc/modules/mod_delay.html path=usr/share/doc/proftpd/modules/mod_delay.html
+file doc/modules/mod_auth_file.html \
+    path=usr/share/doc/proftpd/modules/mod_auth_file.html
+file doc/modules/mod_auth_pam.html \
+    path=usr/share/doc/proftpd/modules/mod_auth_pam.html
+file doc/modules/mod_ctrls.html \
+    path=usr/share/doc/proftpd/modules/mod_ctrls.html
+file doc/modules/mod_delay.html \
+    path=usr/share/doc/proftpd/modules/mod_delay.html
 file doc/modules/mod_dso.html path=usr/share/doc/proftpd/modules/mod_dso.html
 file doc/modules/mod_facl.html path=usr/share/doc/proftpd/modules/mod_facl.html
-file doc/modules/mod_facts.html path=usr/share/doc/proftpd/modules/mod_facts.html
-file doc/modules/mod_ident.html path=usr/share/doc/proftpd/modules/mod_ident.html
-file doc/modules/mod_lang.html path=usr/share/doc/proftpd/modules/mod_lang.html
+file doc/modules/mod_facts.html \
+    path=usr/share/doc/proftpd/modules/mod_facts.html
 file doc/contrib/mod_gss.html path=usr/share/doc/proftpd/modules/mod_gss.html
+file doc/modules/mod_ident.html \
+    path=usr/share/doc/proftpd/modules/mod_ident.html
+file doc/modules/mod_lang.html path=usr/share/doc/proftpd/modules/mod_lang.html
 file doc/contrib/mod_tls.html path=usr/share/doc/proftpd/modules/mod_tls.html
 file doc/contrib/mod_wrap.html path=usr/share/doc/proftpd/modules/mod_wrap.html
+file proftpd_migration.txt path=usr/share/doc/proftpd/proftpd_migration.txt
 file path=usr/share/locale/bg_BG/LC_MESSAGES/proftpd.mo
 file path=usr/share/locale/en_US/LC_MESSAGES/proftpd.mo
-file usr/share/locale/fr_FR/LC_MESSAGES/proftpd.mo path=usr/share/locale/fr/LC_MESSAGES/proftpd.mo
-file usr/share/locale/it_IT/LC_MESSAGES/proftpd.mo path=usr/share/locale/it/LC_MESSAGES/proftpd.mo
-file usr/share/locale/ja_JP/LC_MESSAGES/proftpd.mo path=usr/share/locale/ja/LC_MESSAGES/proftpd.mo
-file usr/share/locale/ko_KR/LC_MESSAGES/proftpd.mo path=usr/share/locale/ko/LC_MESSAGES/proftpd.mo
-file usr/share/locale/ru_RU/LC_MESSAGES/proftpd.mo path=usr/share/locale/ru/LC_MESSAGES/proftpd.mo
+file usr/share/locale/fr_FR/LC_MESSAGES/proftpd.mo \
+    path=usr/share/locale/fr/LC_MESSAGES/proftpd.mo
+file usr/share/locale/it_IT/LC_MESSAGES/proftpd.mo \
+    path=usr/share/locale/it/LC_MESSAGES/proftpd.mo
+file usr/share/locale/ja_JP/LC_MESSAGES/proftpd.mo \
+    path=usr/share/locale/ja/LC_MESSAGES/proftpd.mo
+file usr/share/locale/ko_KR/LC_MESSAGES/proftpd.mo \
+    path=usr/share/locale/ko/LC_MESSAGES/proftpd.mo
+file usr/share/locale/ru_RU/LC_MESSAGES/proftpd.mo \
+    path=usr/share/locale/ru/LC_MESSAGES/proftpd.mo
 file path=usr/share/locale/zh_CN/LC_MESSAGES/proftpd.mo
 file path=usr/share/locale/zh_TW/LC_MESSAGES/proftpd.mo
 file path=usr/share/man/man1/ftpcount.1
@@ -148,22 +160,14 @@ file path=usr/share/man/man8/ftpdctl.8
 file path=usr/share/man/man8/ftpscrub.8
 file path=usr/share/man/man8/ftpshut.8
 file path=usr/share/man/man8/proftpd.8
-
-group groupname="ftp" gid=21
-
-legacy	pkg=SUNWftpu \
-    name="FTP Server, (Usr)" \
-    desc="FTP Server and Utilities"
-
+group groupname=ftp gid=21
+user username=ftp ftpuser=false gcos-field="FTPD Reserved UID" group=ftp uid=21
+legacy pkg=SUNWftpu desc="FTP Server and Utilities" name="FTP Server, (Usr)"
 license proftpd.license license="GPLv2 (mod_gss)" \
     com.oracle.info.description="the ProFPTD GSS Engine" \
-    com.oracle.info.name=mod_gss \
-    com.oracle.info.tpno=$(TPNO_MOD_GSS) \
+    com.oracle.info.name=mod_gss com.oracle.info.tpno=$(TPNO_MOD_GSS) \
     com.oracle.info.version=$(COMPONENT_VERSION_1)
 license proftpd.license license="GPLv2 (proftpd)" \
     com.oracle.info.description="the ProFTPD server and utilities" \
-    com.oracle.info.name=proftpd \
-    com.oracle.info.tpno=$(TPNO_PROFTPD) \
+    com.oracle.info.name=proftpd com.oracle.info.tpno=$(TPNO_PROFTPD) \
     com.oracle.info.version=$(COMPONENT_VERSION)
-
-user ftpuser=false gcos-field="FTPD Reserved UID" username="ftp" uid=21 group="ftp"

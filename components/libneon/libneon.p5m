@@ -18,23 +18,22 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
 set name=pkg.fmri \
     value=pkg:/library/neon@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="The Neon WebDAV library"
 set name=pkg.description \
     value="An HTTP and WebDAV client library, with a C interface"
-set name=pkg.summary value="The Neon WebDAV library"
 set name=com.oracle.info.description value="the libneon WebDAV library"
 set name=com.oracle.info.tpno value=$(TPNO)
 set name=info.classification \
     value=org.opensolaris.category.2008:System/Libraries
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid \
-    value=PSARC/2006/563
+set name=org.opensolaris.arc-caseid value=PSARC/2006/563
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 #
 #
@@ -63,8 +62,12 @@ file path=usr/include/neon/ne_uri.h
 file path=usr/include/neon/ne_utils.h
 file path=usr/include/neon/ne_xml.h
 file path=usr/include/neon/ne_xmlreq.h
+link path=usr/lib/$(MACH64)/libneon.so target=libneon.so.27.2.6
+link path=usr/lib/$(MACH64)/libneon.so.27 target=libneon.so.27.2.6
 file path=usr/lib/$(MACH64)/libneon.so.27.2.6
 file path=usr/lib/$(MACH64)/pkgconfig/neon.pc
+link path=usr/lib/libneon.so target=libneon.so.27.2.6
+link path=usr/lib/libneon.so.27 target=libneon.so.27.2.6
 file path=usr/lib/libneon.so.27.2.6
 file path=usr/lib/pkgconfig/neon.pc
 file path=usr/share/doc/neon-$(COMPONENT_VERSION)/html/api.html
@@ -216,8 +219,4 @@ file path=usr/share/man/man3/ne_xml_destroy.3
 file path=usr/share/man/man3/neon.3
 #
 license libneon.license license="LGPLv2, GPLv2"
-link path=usr/lib/$(MACH64)/libneon.so target=libneon.so.27.2.6
-link path=usr/lib/$(MACH64)/libneon.so.27 target=libneon.so.27.2.6
-link path=usr/lib/libneon.so target=libneon.so.27.2.6
-link path=usr/lib/libneon.so.27 target=libneon.so.27.2.6
 

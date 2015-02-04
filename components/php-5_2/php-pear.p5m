@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 # All the files under /var/php are mode=0644
@@ -26,40 +26,27 @@
 <transform file path=var/php/.* -> default group bin>
 <transform file path=(var/php/.*) -> default original_name SUNWphp52-pear:%<1>>
 <transform file path=var/php/.* -> default preserve renamenew>
-
-set name=pkg.fmri value=pkg:/web/php-52/extension/php-pear@5.2.17,$(BUILD_VERSION)
+set name=pkg.fmri \
+    value=pkg:/web/php-52/extension/php-pear@5.2.17,$(BUILD_VERSION)
+set name=pkg.summary value="PHP Extension and Application Repository"
 set name=pkg.description \
     value="Framework and reusable PHP components from PEAR repository for PHP"
-set name=pkg.summary value="PHP Extension and Application Repository"
-set name=info.classification \
-    value="org.opensolaris.category.2008:Development/PHP"
-set name=info.source-url value=http://us.php.net/get/php-5.2.17.tar.gz/from/this/mirror
-set name=info.upstream-url value=http://pear.php.net/
-set name=org.opensolaris.arc-caseid \
-    value=LSARC/2008/538
-set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 # This package name has known conflicts with other packages in the WOS
-set pkg.linted.pkglint.manifest004=true
-
-
-license php-pear.license license='PHP, LGPLv2.1' \
-    com.oracle.info.description="the PEAR extension module for PHP" \
-    com.oracle.info.name=php-pear \
-    com.oracle.info.version=5.2.17 \
-    com.oracle.info.tpno=$(TPNO_PHP_5_2)
-
-dir path=var/php/5.2/include/php
-dir path=var/php/5.2/modules
-dir path=var/php/5.2/pear/.registry/.channel.__uri
-dir path=var/php/5.2/pear/.registry/.channel.doc.php.net
-dir path=var/php/5.2/pear/.registry/.channel.pecl.php.net
-
+set name=pkg.linted.pkglint.manifest004 value=true
+set name=info.classification value=org.opensolaris.category.2008:Development/PHP
+set name=info.source-url \
+    value=http://us.php.net/get/php-5.2.17.tar.gz/from/this/mirror
+set name=info.upstream-url value=http://pear.php.net/
+set name=org.opensolaris.arc-caseid value=LSARC/2008/538
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 file path=etc/php/5.2/pear.conf mode=0644 \
     original_name=SUNWphp52-pear:etc/php/5.2/pear.conf preserve=renamenew
 file path=usr/php/5.2/bin/pear mode=0555
 file path=usr/php/5.2/bin/peardev mode=0555
 file path=usr/php/5.2/bin/pecl mode=0555
+dir  path=var/php/5.2/include/php
+dir  path=var/php/5.2/modules
 file path=var/php/5.2/pear/.channels/.alias/pear.txt
 file path=var/php/5.2/pear/.channels/.alias/pecl.txt
 file path=var/php/5.2/pear/.channels/.alias/phpdocs.txt
@@ -71,6 +58,9 @@ file path=var/php/5.2/pear/.depdb
 file path=var/php/5.2/pear/.depdblock
 file path=var/php/5.2/pear/.filemap
 file path=var/php/5.2/pear/.lock
+dir  path=var/php/5.2/pear/.registry/.channel.__uri
+dir  path=var/php/5.2/pear/.registry/.channel.doc.php.net
+dir  path=var/php/5.2/pear/.registry/.channel.pecl.php.net
 file path=var/php/5.2/pear/.registry/archive_tar.reg
 file path=var/php/5.2/pear/.registry/console_getopt.reg
 file path=var/php/5.2/pear/.registry/pear.reg
@@ -183,39 +173,26 @@ file path=var/php/5.2/pear/doc/PEAR/INSTALL
 file path=var/php/5.2/pear/doc/PEAR/LICENSE
 file path=var/php/5.2/pear/doc/PEAR/README
 file path=var/php/5.2/pear/doc/Structures_Graph/docs/generate.sh
-file \
-    path=var/php/5.2/pear/doc/Structures_Graph/docs/html/Structures_Graph/Structures_Graph.html
-file \
-    path=var/php/5.2/pear/doc/Structures_Graph/docs/html/Structures_Graph/Structures_Graph_Manipulator_AcyclicTest.html
-file \
-    path=var/php/5.2/pear/doc/Structures_Graph/docs/html/Structures_Graph/Structures_Graph_Manipulator_TopologicalSorter.html
-file \
-    path=var/php/5.2/pear/doc/Structures_Graph/docs/html/Structures_Graph/Structures_Graph_Node.html
-file \
-    path=var/php/5.2/pear/doc/Structures_Graph/docs/html/Structures_Graph/_Structures_Graph_Manipulator_AcyclicTest_php.html
-file \
-    path=var/php/5.2/pear/doc/Structures_Graph/docs/html/Structures_Graph/_Structures_Graph_Manipulator_TopologicalSorter_php.html
-file \
-    path=var/php/5.2/pear/doc/Structures_Graph/docs/html/Structures_Graph/_Structures_Graph_Node_php.html
-file \
-    path=var/php/5.2/pear/doc/Structures_Graph/docs/html/Structures_Graph/_Structures_Graph_php.html
-file \
-    path=var/php/5.2/pear/doc/Structures_Graph/docs/html/Structures_Graph/tutorial_Structures_Graph.pkg.html
-file \
-    path=var/php/5.2/pear/doc/Structures_Graph/docs/html/classtrees_Structures_Graph.html
+file path=var/php/5.2/pear/doc/Structures_Graph/docs/html/Structures_Graph/Structures_Graph.html
+file path=var/php/5.2/pear/doc/Structures_Graph/docs/html/Structures_Graph/Structures_Graph_Manipulator_AcyclicTest.html
+file path=var/php/5.2/pear/doc/Structures_Graph/docs/html/Structures_Graph/Structures_Graph_Manipulator_TopologicalSorter.html
+file path=var/php/5.2/pear/doc/Structures_Graph/docs/html/Structures_Graph/Structures_Graph_Node.html
+file path=var/php/5.2/pear/doc/Structures_Graph/docs/html/Structures_Graph/_Structures_Graph_Manipulator_AcyclicTest_php.html
+file path=var/php/5.2/pear/doc/Structures_Graph/docs/html/Structures_Graph/_Structures_Graph_Manipulator_TopologicalSorter_php.html
+file path=var/php/5.2/pear/doc/Structures_Graph/docs/html/Structures_Graph/_Structures_Graph_Node_php.html
+file path=var/php/5.2/pear/doc/Structures_Graph/docs/html/Structures_Graph/_Structures_Graph_php.html
+file path=var/php/5.2/pear/doc/Structures_Graph/docs/html/Structures_Graph/tutorial_Structures_Graph.pkg.html
+file path=var/php/5.2/pear/doc/Structures_Graph/docs/html/classtrees_Structures_Graph.html
 file path=var/php/5.2/pear/doc/Structures_Graph/docs/html/elementindex.html
-file \
-    path=var/php/5.2/pear/doc/Structures_Graph/docs/html/elementindex_Structures_Graph.html
+file path=var/php/5.2/pear/doc/Structures_Graph/docs/html/elementindex_Structures_Graph.html
 file path=var/php/5.2/pear/doc/Structures_Graph/docs/html/errors.html
 file path=var/php/5.2/pear/doc/Structures_Graph/docs/html/index.html
-file \
-    path=var/php/5.2/pear/doc/Structures_Graph/docs/html/li_Structures_Graph.html
+file path=var/php/5.2/pear/doc/Structures_Graph/docs/html/li_Structures_Graph.html
 file path=var/php/5.2/pear/doc/Structures_Graph/docs/html/media/banner.css
 file path=var/php/5.2/pear/doc/Structures_Graph/docs/html/media/stylesheet.css
 file path=var/php/5.2/pear/doc/Structures_Graph/docs/html/packages.html
 file path=var/php/5.2/pear/doc/Structures_Graph/docs/html/todolist.html
-file \
-    path=var/php/5.2/pear/doc/Structures_Graph/docs/tutorials/Structures_Graph/Structures_Graph.pkg
+file path=var/php/5.2/pear/doc/Structures_Graph/docs/tutorials/Structures_Graph/Structures_Graph.pkg
 file path=var/php/5.2/pear/doc/XML_Util/examples/example.php
 file path=var/php/5.2/pear/doc/XML_Util/examples/example2.php
 file path=var/php/5.2/pear/pearcmd.php
@@ -224,31 +201,29 @@ file path=var/php/5.2/pear/test/Structures_Graph/tests/AllTests.php
 file path=var/php/5.2/pear/test/Structures_Graph/tests/testCase/BasicGraph.php
 file path=var/php/5.2/pear/test/XML_Util/tests/AllTests.php
 file path=var/php/5.2/pear/test/XML_Util/tests/testBasic_apiVersion.phpt
-file \
-    path=var/php/5.2/pear/test/XML_Util/tests/testBasic_attributesToString.phpt
-file \
-    path=var/php/5.2/pear/test/XML_Util/tests/testBasic_collapseEmptyTags.phpt
-file \
-    path=var/php/5.2/pear/test/XML_Util/tests/testBasic_createCDataSection.phpt
+file path=var/php/5.2/pear/test/XML_Util/tests/testBasic_attributesToString.phpt
+file path=var/php/5.2/pear/test/XML_Util/tests/testBasic_collapseEmptyTags.phpt
+file path=var/php/5.2/pear/test/XML_Util/tests/testBasic_createCDataSection.phpt
 file path=var/php/5.2/pear/test/XML_Util/tests/testBasic_createComment.phpt
 file path=var/php/5.2/pear/test/XML_Util/tests/testBasic_createEndElement.phpt
-file \
-    path=var/php/5.2/pear/test/XML_Util/tests/testBasic_createStartElement.phpt
+file path=var/php/5.2/pear/test/XML_Util/tests/testBasic_createStartElement.phpt
 file path=var/php/5.2/pear/test/XML_Util/tests/testBasic_createTag.phpt
-file \
-    path=var/php/5.2/pear/test/XML_Util/tests/testBasic_createTagFromArray.phpt
-file \
-    path=var/php/5.2/pear/test/XML_Util/tests/testBasic_getDocTypeDeclaration.phpt
-file \
-    path=var/php/5.2/pear/test/XML_Util/tests/testBasic_getXmlDeclaration.phpt
+file path=var/php/5.2/pear/test/XML_Util/tests/testBasic_createTagFromArray.phpt
+file path=var/php/5.2/pear/test/XML_Util/tests/testBasic_getDocTypeDeclaration.phpt
+file path=var/php/5.2/pear/test/XML_Util/tests/testBasic_getXmlDeclaration.phpt
 file path=var/php/5.2/pear/test/XML_Util/tests/testBasic_isValidName.phpt
 file path=var/php/5.2/pear/test/XML_Util/tests/testBasic_raiseError.phpt
 file path=var/php/5.2/pear/test/XML_Util/tests/testBasic_replaceEntities.phpt
 file path=var/php/5.2/pear/test/XML_Util/tests/testBasic_reverseEntities.phpt
-file \
-    path=var/php/5.2/pear/test/XML_Util/tests/testBasic_splitQualifiedName.phpt
+file path=var/php/5.2/pear/test/XML_Util/tests/testBasic_splitQualifiedName.phpt
 file path=var/php/5.2/pear/test/XML_Util/tests/testBug_4950.phpt
 file path=var/php/5.2/pear/test/XML_Util/tests/testBug_5392.phpt
 
+
+license php-pear.license license="PHP, LGPLv2.1" \
+    com.oracle.info.description="the PEAR extension module for PHP" \
+    com.oracle.info.name=php-pear com.oracle.info.tpno=$(TPNO_PHP_5_2) \
+    com.oracle.info.version=5.2.17
+
 # need generic dependency on PHP itself
-depend fmri=web/php-52@5.2.17 type=require
+depend type=require fmri=web/php-52@5.2.17

@@ -18,30 +18,22 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
-set name=pkg.fmri value=pkg:/web/php-52/extension/php-memcache@2.2.5,$(BUILD_VERSION)
-set name=pkg.description value="PHP-Memcache extension to store PHP sessions in Memcached server"
+set name=pkg.fmri \
+    value=pkg:/web/php-52/extension/php-memcache@2.2.5,$(BUILD_VERSION)
 set name=pkg.summary value="Memcache extension module for PHP"
-set name=info.classification \
-    value="org.opensolaris.category.2008:Development/PHP"
-set name=info.source-url value=http://pecl.php.net/get/memcache-2.2.5.tgz
-set name=info.upstream-url value=http://pecl.php.net/package/memcache
-set name=org.opensolaris.arc-caseid \
-    value=LSARC/2008/538
-set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+set name=pkg.description \
+    value="PHP-Memcache extension to store PHP sessions in Memcached server"
 
 # This package name has known conflicts with other packages in the WOS
-set pkg.linted.pkglint.manifest004=true
-
-
-license php-memcache.license license='PHP, GPLv2, LGPLv2, Apache v2.0' \
-    com.oracle.info.description="the Memcache extension module for PHP" \
-    com.oracle.info.name=php-memcache \
-    com.oracle.info.version=2.2.5 \
-    com.oracle.info.tpno=$(TPNO_PHP_MEMCACHE)
-
+set name=pkg.linted.pkglint.manifest004 value=true
+set name=info.classification value=org.opensolaris.category.2008:Development/PHP
+set name=info.source-url value=http://pecl.php.net/get/memcache-2.2.5.tgz
+set name=info.upstream-url value=http://pecl.php.net/package/memcache
+set name=org.opensolaris.arc-caseid value=LSARC/2008/538
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 file path=etc/apache2/2.2/samples-conf.d/php-memcache-stats.conf mode=0644 \
     original_name=SUNWphp52-memcache:etc/apache2/2.2/samples-conf.d/php-memcache-stats.conf \
     preserve=renamenew
@@ -55,5 +47,11 @@ file path=usr/php/5.2/modules/memcache.so
 file path=usr/php/5.2/samples/memcache/memcache.php mode=0555
 file path=usr/php/5.2/zts-modules/memcache.so
 
+
+license php-memcache.license license="PHP, GPLv2, LGPLv2, Apache v2.0" \
+    com.oracle.info.description="the Memcache extension module for PHP" \
+    com.oracle.info.name=php-memcache \
+    com.oracle.info.tpno=$(TPNO_PHP_MEMCACHE) com.oracle.info.version=2.2.5
+
 # need generic dependency on PHP itself
-depend fmri=web/php-52@5.2.17 type=require
+depend type=require fmri=web/php-52@5.2.17

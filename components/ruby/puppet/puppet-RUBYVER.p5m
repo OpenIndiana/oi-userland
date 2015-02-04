@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 # do not look for .pyc files as the install.rb script does not compile
@@ -45,7 +45,6 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 file ext/PuppetAudit.so \
     path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/$(MACH64)-solaris$(SOLARIS_VERSION)/PuppetAudit.so
-
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/hiera/backend/puppet_backend.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/hiera/scope.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/hiera_puppet.rb
@@ -1089,14 +1088,14 @@ file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/pupp
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppetx/puppet/syntax_checker.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppetx/puppetlabs/syntax_checkers/json.rb
 file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/semver.rb
-file path=usr/sbin/extlookup2hiera mediator=ruby mediator-version=$(RUBY_VERSION)
+file path=usr/sbin/extlookup2hiera mediator=ruby \
+    mediator-version=$(RUBY_VERSION)
 file path=usr/sbin/puppet mediator=ruby mediator-version=$(RUBY_VERSION)
-
 license puppet.license license="Apache v2.0"
+depend type=require fmri=pkg:/library/ruby/hiera-$(RUBYV)
 
 # Puppet Dependencies
 depend type=require fmri=pkg:/system/management/facter-$(RUBYV)
-depend type=require fmri=pkg:/library/ruby/hiera-$(RUBYV)
 
 # force a dependency on the puppet package
 depend type=require \

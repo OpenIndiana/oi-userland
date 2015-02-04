@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
@@ -34,11 +34,6 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2013/232
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-
-# usr/lib/indri directory does not get applied usr/bin defaults, so we have to
-# name them here
-file usr/bin/$(MACH64)/IndriBuildIndex path=usr/lib/indri/IndriBuildIndex group=bin owner=root mode=0555
-file usr/bin/$(MACH64)/IndriRunQuery path=usr/lib/indri/IndriRunQuery group=bin owner=root mode=0555
 
 # Clashes with userland antlr
 # dir  path=usr/include/antlr
@@ -306,6 +301,13 @@ file usr/lib/$(MACH64)/libindri.so.1 path=usr/lib/$(MACH64)/libindri.so.1
 link path=usr/lib/$(MACH64)/libpia_wrapper.so target=libpia_wrapper.so.1
 file usr/lib/$(MACH64)/libpia_wrapper.so.1 \
     path=usr/lib/$(MACH64)/libpia_wrapper.so.1
+
+# usr/lib/indri directory does not get applied usr/bin defaults, so we have to
+# name them here
+file usr/bin/$(MACH64)/IndriBuildIndex path=usr/lib/indri/IndriBuildIndex \
+    owner=root group=bin mode=0555
+file usr/bin/$(MACH64)/IndriRunQuery path=usr/lib/indri/IndriRunQuery \
+    owner=root group=bin mode=0555
 link path=usr/lib/libindri.so target=libindri.so.1
 file usr/lib/libindri.so.1 path=usr/lib/libindri.so.1
 link path=usr/lib/libpia_wrapper.so target=libpia_wrapper.so.1

@@ -20,10 +20,28 @@
 #
 
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+#
+<transform file path=.*/(.*_attr)\.d -> set action.hash files/swift.%<1>>
+<transform file path=.*/(.*_attr)\.d -> default group sys>
+<transform file path=etc/swift/(.*) -> set action.hash etc/%<1>-sample>
+<transform file path=etc/swift/rsyncd.conf -> set action.hash files/rsyncd.conf>
+<transform file path=etc/swift/proxy-server.conf -> set action.hash files/proxy-server.conf>
+<transform dir file path=etc/swift/? -> default owner swift>
+<transform dir file path=etc/swift/? -> default group swift>
+<transform file path=etc/swift/ -> default mode 0644>
+<transform file path=etc/swift/ -> default overlay allow>
+<transform file path=etc/swift/ -> default preserve renamenew>
+<transform file path=lib/svc/.*/([^/]*) -> set action.hash files/%<1>>
+<transform hardlink path=lib/svc/method -> default target swift-proxy-server>
+<transform file path=lib/svc/method/swift-proxy-server -> set action.hash files/swift-smf-method>
+<transform file path=usr/lib/swift/(.*) -> set action.hash usr/bin/%<1>>
+<transform file path=usr/lib/swift/(.*) -> default mode 0555>
+<transform file path=usr/share/man/man1/(.+) -> set action.hash doc/manpages/%<1>>
+<transform file path=usr/share/man/man4/(.+)\.4 -> set action.hash doc/manpages/%<1>.5>
 set name=pkg.fmri \
     value=pkg:/cloud/openstack/swift@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="OpenStack Swift (Object Storage Service)"
@@ -43,20 +61,9 @@ set name=info.upstream value="OpenStack <openstack-dev@lists.openstack.org>"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2013/350 value=PSARC/2014/050
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-#
-<transform file path=.*/(.*_attr)\.d -> set action.hash files/swift.%<1>>
-<transform file path=.*/(.*_attr)\.d -> default group sys>
 file path=etc/security/auth_attr.d/cloud:openstack:swift
 file path=etc/security/exec_attr.d/cloud:openstack:swift
 file path=etc/security/prof_attr.d/cloud:openstack:swift
-<transform file path=etc/swift/(.*) -> set action.hash etc/%<1>-sample>
-<transform file path=etc/swift/rsyncd.conf -> set action.hash files/rsyncd.conf>
-<transform file path=etc/swift/proxy-server.conf -> set action.hash files/proxy-server.conf>
-<transform dir file path=etc/swift/? -> default owner swift>
-<transform dir file path=etc/swift/? -> default group swift>
-<transform file path=etc/swift/ -> default mode 0644>
-<transform file path=etc/swift/ -> default overlay allow>
-<transform file path=etc/swift/ -> default preserve renamenew>
 dir  path=etc/swift mode=0700
 file path=etc/swift/account-server.conf
 file path=etc/swift/container-server.conf
@@ -69,7 +76,6 @@ file path=etc/swift/proxy-server.conf
 file path=etc/swift/rsyncd.conf
 file path=etc/swift/swift-bench.conf
 file path=etc/swift/swift.conf
-<transform file path=lib/svc/.*/([^/]*) -> set action.hash files/%<1>>
 file path=lib/svc/manifest/application/openstack/swift-account-auditor.xml
 file path=lib/svc/manifest/application/openstack/swift-account-reaper.xml
 file path=lib/svc/manifest/application/openstack/swift-account-replicator.xml
@@ -86,8 +92,6 @@ file path=lib/svc/manifest/application/openstack/swift-object-server.xml
 file path=lib/svc/manifest/application/openstack/swift-object-updater.xml
 file path=lib/svc/manifest/application/openstack/swift-proxy-server.xml
 file path=lib/svc/manifest/application/openstack/swift-replicator-rsync.xml
-<transform hardlink path=lib/svc/method -> default target swift-proxy-server>
-<transform file path=lib/svc/method/swift-proxy-server -> set action.hash files/swift-smf-method>
 hardlink path=lib/svc/method/swift-account-auditor
 hardlink path=lib/svc/method/swift-account-reaper
 hardlink path=lib/svc/method/swift-account-replicator
@@ -195,8 +199,6 @@ file path=usr/lib/python$(PYVER)/vendor-packages/swift/proxy/controllers/base.py
 file path=usr/lib/python$(PYVER)/vendor-packages/swift/proxy/controllers/container.py
 file path=usr/lib/python$(PYVER)/vendor-packages/swift/proxy/controllers/obj.py
 file path=usr/lib/python$(PYVER)/vendor-packages/swift/proxy/server.py
-<transform file path=usr/lib/swift/(.*) -> set action.hash usr/bin/%<1>>
-<transform file path=usr/lib/swift/(.*) -> default mode 0555>
 file path=usr/lib/swift/swift-account-auditor
 file path=usr/lib/swift/swift-account-reaper
 file path=usr/lib/swift/swift-account-replicator
@@ -214,8 +216,6 @@ file path=usr/lib/swift/swift-object-server
 file path=usr/lib/swift/swift-object-updater
 file path=usr/lib/swift/swift-proxy-server
 file path=usr/lib/swift/swift-recon-cron
-<transform file path=usr/share/man/man1/(.+) -> set action.hash doc/manpages/%<1>>
-<transform file path=usr/share/man/man4/(.+)\.4 -> set action.hash doc/manpages/%<1>.5>
 file path=usr/share/man/man1/swift-account-auditor.1
 file path=usr/share/man/man1/swift-account-reaper.1
 file path=usr/share/man/man1/swift-account-replicator.1

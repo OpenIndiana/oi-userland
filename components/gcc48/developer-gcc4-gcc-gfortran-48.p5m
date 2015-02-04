@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
@@ -35,8 +35,6 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2012/373
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-link path=usr/bin/gfortran target=../gcc/$(GCC_VERSION)/bin/gfortran mediator=gcc \
-    mediator-version=$(GCC_VERSION)
 hardlink path=$(GCC_BASEDIR)/bin/$(GNU_ARCH)-gfortran target=gfortran
 file path=$(GCC_BASEDIR)/bin/gfortran
 file path=$(GCC_BASEDIR)/lib/$(MACH64)/libgfortran.a
@@ -45,6 +43,8 @@ file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/libgfortranbeg
 file path=$(GCC_BASEDIR)/lib/libgfortran.a
 file path=$(GCC_BASEDIR)/share/info/gfortran.info
 file path=$(GCC_BASEDIR)/share/man/man1/gfortran.1
+link path=usr/bin/gfortran target=../gcc/$(GCC_VERSION)/bin/gfortran \
+    mediator=gcc mediator-version=$(GCC_VERSION)
 link path=usr/share/man/man1/gfortran.1 \
     target=../../../gcc/$(GCC_VERSION)/share/man/man1/gfortran.1 mediator=gcc \
     mediator-version=$(GCC_VERSION)
@@ -52,6 +52,6 @@ license gcc$(GCC_V).license license="GPLv3 with Runtime Exception"
 depend type=require fmri=pkg:/developer/gcc-4/gcc-c-$(GCC_V)
 depend type=require fmri=pkg:/developer/gcc-4/gcc-common-$(GCC_V)
 depend type=require fmri=pkg:/system/library/gcc/gcc-c-runtime
-depend type=require fmri=pkg:/system/library/gcc/gcc-gfortran-runtime
 depend type=require fmri=pkg:/system/library/gcc/gcc-c-runtime-$(GCC_V)
+depend type=require fmri=pkg:/system/library/gcc/gcc-gfortran-runtime
 depend type=require fmri=pkg:/system/library/gcc/gcc-gfortran-runtime-$(GCC_V)

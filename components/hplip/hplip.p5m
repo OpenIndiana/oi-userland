@@ -18,25 +18,21 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
 set name=pkg.fmri \
     value=pkg:/print/filter/hplip@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="hpijs - HP InkJet Server"
-set name=com.oracle.info.tpno value=$(TPNO)
 set name=com.oracle.info.description value="the hpijs HP InkJet Server"
+set name=com.oracle.info.tpno value=$(TPNO)
 set name=info.classification \
     value="org.opensolaris.category.2008:System/Printing "
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid \
-    value=LSARC/2004/262
+set name=org.opensolaris.arc-caseid value=LSARC/2004/262
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-
-# Component Logging
-dir group=lp path=var/log/hp
 
 # HPLIP support for CUPS
 file path=usr/bin/hp-mkuri
@@ -55,12 +51,19 @@ file path=usr/lib/cups/filter/pstotiff mode=0555 \
     pkg.depend.bypass-generate=.*/os/path/__init__.py \
     pkg.depend.bypass-generate=.*/os/pathmodule.so \
     pkg.depend.bypass-generate=.*/osmodule.so
+link path=usr/lib/libhpip.so target=libhpip.so.0.0.1
+link path=usr/lib/libhpip.so.0 target=libhpip.so.0.0.1
 file path=usr/lib/libhpip.so.0.0.1
+link path=usr/lib/libhpmud.so target=libhpmud.so.0.0.6
+link path=usr/lib/libhpmud.so.0 target=libhpmud.so.0.0.6
 file path=usr/lib/libhpmud.so.0.0.6
 file path=usr/lib/lp/caches/SUNWhpijs.cache group=lp
+link path=usr/lib/sane/libsane-hpaio.so target=libsane-hpaio.so.1.0.0
+link path=usr/lib/sane/libsane-hpaio.so.1 target=libsane-hpaio.so.1.0.0
 
 # HPLIP support for SANE
 file path=usr/lib/sane/libsane-hpaio.so.1.0.0
+link path=usr/sfw/bin/hpijs target=../../bin/hpijs
 file path=usr/share/cups/drv/hp/hpcups.drv
 file path=usr/share/cups/model/SUNWhplip/hp-business_inkjet_2250-ps.ppd.gz
 file path=usr/share/cups/model/SUNWhplip/hp-business_inkjet_2280-ps.ppd.gz
@@ -72,10 +75,8 @@ file path=usr/share/cups/model/SUNWhplip/hp-cm8050_mfp_with_edgeline-ps.ppd.gz
 file path=usr/share/cups/model/SUNWhplip/hp-cm8060_mfp_with_edgeline-ps.ppd.gz
 file path=usr/share/cups/model/SUNWhplip/hp-color_laserjet-ps.ppd.gz
 file path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_2500-ps.ppd.gz
-file \
-    path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_2500_series-ps.ppd.gz
-file \
-    path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_2550_series-ps.ppd.gz
+file path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_2500_series-ps.ppd.gz
+file path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_2550_series-ps.ppd.gz
 file path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_2605-ps.ppd.gz
 file path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_2605dn-ps.ppd.gz
 file path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_2605dtn-ps.ppd.gz
@@ -92,8 +93,7 @@ file path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_3800-ps.ppd.gz
 file path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_4500-ps.ppd.gz
 file path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_4550-ps.ppd.gz
 file path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_4600-ps.ppd.gz
-file \
-    path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_4600_series-ps.ppd.gz
+file path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_4600_series-ps.ppd.gz
 file path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_4610-ps.ppd.gz
 file path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_4650-ps.ppd.gz
 file path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_4700-ps.ppd.gz
@@ -107,29 +107,18 @@ file path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_9500-ps.ppd.gz
 file path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_9500_mfp-ps.ppd.gz
 file path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_cm1015-ps.ppd.gz
 file path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_cm1017-ps.ppd.gz
+file path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_cm1312_mfp-ps.ppd.gz
+file path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_cm1312nfi_mfp-ps.ppd.gz
+file path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_cm2320_mfp-ps.ppd.gz
+file path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_cm2320fxi_mfp-ps.ppd.gz
+file path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_cm2320n_mfp-ps.ppd.gz
+file path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_cm2320nf_mfp-ps.ppd.gz
+file path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_cm3530_mfp-ps.ppd.gz
 file path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_cm4540_mfp-ps.ppd.gz
-file \
-    path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_cm1312_mfp-ps.ppd.gz
-file \
-    path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_cm1312nfi_mfp-ps.ppd.gz
-file \
-    path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_cm2320_mfp-ps.ppd.gz
-file \
-    path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_cm2320fxi_mfp-ps.ppd.gz
-file \
-    path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_cm2320n_mfp-ps.ppd.gz
-file \
-    path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_cm2320nf_mfp-ps.ppd.gz
-file \
-    path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_cm3530_mfp-ps.ppd.gz
-file \
-    path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_cm4730_mfp-ps.ppd.gz
-file \
-    path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_cm6030_mfp-ps.ppd.gz
-file \
-    path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_cm6040_mfp-ps.ppd.gz
-file \
-    path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_cm6049_mfp-ps.ppd.gz
+file path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_cm4730_mfp-ps.ppd.gz
+file path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_cm6030_mfp-ps.ppd.gz
+file path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_cm6040_mfp-ps.ppd.gz
+file path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_cm6049_mfp-ps.ppd.gz
 file path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_cp1514n-ps.ppd.gz
 file path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_cp1515n-ps.ppd.gz
 file path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_cp1518ni-ps.ppd.gz
@@ -140,10 +129,8 @@ file path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_cp2025x-ps.ppd.gz
 file path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_cp3505-ps.ppd.gz
 file path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_cp3525-ps.ppd.gz
 file path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_cp4005-ps.ppd.gz
-file \
-    path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_cp4020_series-ps.ppd.gz
-file \
-    path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_cp4520_series-ps.ppd.gz
+file path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_cp4020_series-ps.ppd.gz
+file path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_cp4520_series-ps.ppd.gz
 file path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_cp5225-ps.ppd.gz
 file path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_cp5225dn-ps.ppd.gz
 file path=usr/share/cups/model/SUNWhplip/hp-color_laserjet_cp5225n-ps.ppd.gz
@@ -159,15 +146,13 @@ file path=usr/share/cups/model/SUNWhplip/hp-designjet_t1100ps_24in-ps.ppd.gz
 file path=usr/share/cups/model/SUNWhplip/hp-designjet_t1100ps_44in-ps.ppd.gz
 file path=usr/share/cups/model/SUNWhplip/hp-designjet_t1120ps_24in-ps.ppd.gz
 file path=usr/share/cups/model/SUNWhplip/hp-designjet_t1120ps_44in-ps.ppd.gz
+file path=usr/share/cups/model/SUNWhplip/hp-designjet_t1200_postscript-ps.ppd.gz
 file path=usr/share/cups/model/SUNWhplip/hp-designjet_t1300_postscript-ps.ppd.gz
 file path=usr/share/cups/model/SUNWhplip/hp-designjet_t2300_postscript-ps.ppd.gz
 file path=usr/share/cups/model/SUNWhplip/hp-designjet_t7100ps-ps.ppd.gz
-file \ 
-    path=usr/share/cups/model/SUNWhplip/hp-designjet_t7100ps_monochrome-ps.ppd.gz
-file \
-    path=usr/share/cups/model/SUNWhplip/hp-designjet_t1200_postscript-ps.ppd.gz
-file \
-    path=usr/share/cups/model/SUNWhplip/hp-designjet_t770_postscript-ps.ppd.gz
+file path=usr/share/cups/model/SUNWhplip/hp-designjet_t7100ps_monochrome-ps.ppd.gz
+file path=usr/share/cups/model/SUNWhplip/hp-designjet_t770_postscript-ps.ppd.gz
+file path=usr/share/cups/model/SUNWhplip/hp-designjet_t770ps_24in-ps.ppd.gz
 file path=usr/share/cups/model/SUNWhplip/hp-designjet_t790ps_24in-ps.ppd.gz
 file path=usr/share/cups/model/SUNWhplip/hp-designjet_t790ps_44in-ps.ppd.gz
 file path=usr/share/cups/model/SUNWhplip/hp-designjet_z6100ps_42in_photo-ps.ppd.gz
@@ -175,7 +160,6 @@ file path=usr/share/cups/model/SUNWhplip/hp-designjet_z6100ps_60in_photo-ps.ppd.
 file path=usr/share/cups/model/SUNWhplip/hp-designjet_z6200_42in_photo-ps.ppd.gz
 file path=usr/share/cups/model/SUNWhplip/hp-designjet_z6200_60in_photo-ps.ppd.gz
 file path=usr/share/cups/model/SUNWhplip/hp-laserjet_100_color_mfp_m175-ps.ppd.gz
-file path=usr/share/cups/model/SUNWhplip/hp-designjet_t770ps_24in-ps.ppd.gz
 file path=usr/share/cups/model/SUNWhplip/hp-laserjet_1200-ps.ppd.gz
 file path=usr/share/cups/model/SUNWhplip/hp-laserjet_1200n-ps.ppd.gz
 file path=usr/share/cups/model/SUNWhplip/hp-laserjet_1220-ps.ppd.gz
@@ -277,8 +261,7 @@ file path=usr/share/cups/model/SUNWhplip/hp-lj_300_400_color_m351_m451-ps.ppd.gz
 file path=usr/share/cups/model/SUNWhplip/hp-lj_300_400_color_mfp_m375_m475-ps.ppd.gz
 file path=usr/share/cups/model/SUNWhplip/hp-mopier_240-ps.ppd.gz
 file path=usr/share/cups/model/SUNWhplip/hp-mopier_320-ps.ppd.gz
-file \
-    path=usr/share/cups/model/SUNWhplip/hp-officejet_pro_8000_enterprise_a811a-ps.ppd.gz
+file path=usr/share/cups/model/SUNWhplip/hp-officejet_pro_8000_enterprise_a811a-ps.ppd.gz
 
 # Common files
 file path=usr/share/doc/hplip-$(IPS_COMPONENT_VERSION)/COPYING
@@ -339,14 +322,12 @@ file path=usr/share/ppd/SUNWhpijs/HP/hp-business_inkjet_3000-ps.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-cm8050_mfp_with_edgeline-ps.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-cm8060_mfp_with_edgeline-ps.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_inkjet_cp1700-hpijs.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-color_inkjet_printer_cp1700-hpijs.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-color_inkjet_printer_cp1700-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet-ps.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_1600-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_2500-hpijs-pcl3.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_2500-ps.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_2500_series-hpijs.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_2500_series-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_2500_series-ps.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_2550_series-ps.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_2600n-hpijs.ppd.gz
@@ -378,8 +359,7 @@ file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_4550-hpijs-pcl3.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_4550-ps.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_4600-hpijs-pcl3.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_4600-ps.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_4600_series-hpijs.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_4600_series-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_4600_series-ps.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_4610-hpijs-pcl3.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_4610-ps.ppd.gz
@@ -387,8 +367,7 @@ file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_4650-hpijs-pcl3.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_4650-ps.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_4700-hpijs-pcl3.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_4700-ps.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_4730mfp-hpijs-pcl3.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_4730mfp-hpijs-pcl3.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_4730mfp-ps.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_5-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_5500-hpijs-pcl3.ppd.gz
@@ -403,39 +382,29 @@ file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_8550-hpijs-pcl3.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_8550-ps.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_9500-hpijs-pcl3.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_9500-ps.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_9500_mfp-hpijs-pcl3.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_9500_mfp-hpijs-pcl3.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_9500_mfp-ps.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cm1015-ps.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cm1017-ps.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cm1312_mfp-hpijs-pcl3.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cm1312_mfp-hpijs-pcl3.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cm1312_mfp-ps.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cm1312nfi_mfp-hpijs-pcl3.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cm1312nfi_mfp-hpijs-pcl3.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cm1312nfi_mfp-ps.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cm2320_mfp-hpijs-pcl3.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cm2320_mfp-hpijs-pcl3.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cm2320_mfp-ps.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cm2320fxi_mfp-hpijs-pcl3.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cm2320fxi_mfp-hpijs-pcl3.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cm2320fxi_mfp-ps.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cm2320n_mfp-hpijs-pcl3.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cm2320n_mfp-hpijs-pcl3.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cm2320n_mfp-ps.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cm2320nf_mfp-hpijs-pcl3.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cm2320nf_mfp-hpijs-pcl3.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cm2320nf_mfp-ps.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cm3530_mfp-hpijs-pcl3.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cm3530_mfp-hpijs-pcl3.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cm3530_mfp-ps.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cm4540_mfp-hpijs-pcl3.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cm4540_mfp-ps.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cm4730_mfp-hpijs-pcl3.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cm4730_mfp-hpijs-pcl3.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cm4730_mfp-ps.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cm6030_mfp-hpijs-pcl3.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cm6030_mfp-hpijs-pcl3.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cm6030_mfp-ps.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cm6040_mfp-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cm6040_mfp-ps.ppd.gz
@@ -443,55 +412,39 @@ file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cm6049_mfp-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cm6049_mfp-ps.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp1215-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp1217-hpijs.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp1514n-hpijs-pcl3.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp1514n-hpijs-pcl3.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp1514n-ps.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp1515n-hpijs-pcl3.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp1515n-hpijs-pcl3.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp1515n-ps.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp1518ni-hpijs-pcl3.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp1518ni-hpijs-pcl3.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp1518ni-ps.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp2025-hpijs-pcl3.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp2025-hpijs-pcl3.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp2025-ps.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp2025dn-hpijs-pcl3.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp2025dn-hpijs-pcl3.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp2025dn-ps.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp2025n-hpijs-pcl3.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp2025n-hpijs-pcl3.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp2025n-ps.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp2025x-hpijs-pcl3.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp2025x-hpijs-pcl3.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp2025x-ps.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp3505-hpijs-pcl3.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp3505-hpijs-pcl3.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp3505-ps.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp3525-hpijs-pcl3.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp3525-hpijs-pcl3.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp3525-ps.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp4005-hpijs-pcl3.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp4005-hpijs-pcl3.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp4005-ps.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp4020_series-hpijs-pcl3.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp4020_series-hpijs-pcl3.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp4020_series-ps.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp4520_series-hpijs-pcl3.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp4520_series-hpijs-pcl3.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp4520_series-ps.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp5225-hpijs-pcl3.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp5225-hpijs-pcl3.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp5225-ps.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp5225dn-hpijs-pcl3.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp5225dn-hpijs-pcl3.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp5225dn-ps.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp5225n-hpijs-pcl3.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp5225n-hpijs-pcl3.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp5225n-ps.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp5520_series-hpijs-pcl3.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp5520_series-ps.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp6015-hpijs-pcl3.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp6015-hpijs-pcl3.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-color_laserjet_cp6015-ps.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-cp1160-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-designjet_4000ps.ppd.gz
@@ -676,10 +629,8 @@ file path=usr/share/ppd/SUNWhpijs/HP/hp-deskjet_f4500_series-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-deskjet_f735-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-deskjet_ink_adv_2010_k010-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-deskjet_ink_adv_2060_k110-hpijs.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-deskjet_ink_advant_k109a-z-hpijs.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-deskjet_ink_advant_k209a-z-hpijs.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-deskjet_ink_advant_k109a-z-hpijs.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-deskjet_ink_advant_k209a-z-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-dj350-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-dj450-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-envy_100_d410_series-hpijs.ppd.gz
@@ -764,8 +715,7 @@ file path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_3200-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_3200m-hpijs-pcl3.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_3200m-ps.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_3200se-hpijs.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_3300_3310_3320-hpijs-pcl3.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_3300_3310_3320-hpijs-pcl3.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_3300_3310_3320-ps.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_3330-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_3380-hpijs-pcl3.ppd.gz
@@ -922,8 +872,7 @@ file path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_p2014-hpijs-pcl3.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_p2014-hpijs-zxs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_p2014n-hpijs-pcl3.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_p2014n-hpijs-zxs.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_p2015_series-hpijs-pcl3.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_p2015_series-hpijs-pcl3.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_p2015_series-ps.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_p2015d_series-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_p2015dn_series-hpijs.ppd.gz
@@ -942,8 +891,7 @@ file path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_p3004-hpijs-pcl3.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_p3004-ps.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_p3005-hpijs-pcl3.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_p3005-ps.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_p3010_series-hpijs-pcl3.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_p3010_series-hpijs-pcl3.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_p3010_series-ps.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_p4010_series-ps.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_p4014-hpijs.ppd.gz
@@ -959,36 +907,23 @@ file path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_p4515n-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_p4515tn-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_p4515x-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_p4515xm-hpijs.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_professional_m1132_mfp-hpijs.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_professional_m1136_mfp-hpijs.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_professional_m1212nf_mfp-hpijs.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_professional_m1213nf_mfp-hpijs.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_professional_m1214nfh_mfp-hpijs.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_professional_m1216nfh_mfp-hpijs.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_professional_m1217nfw_mfp-hpijs.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_professional_m1219nf_mfp-hpijs.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_professional_p1102-hpijs.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_professional_p1102w-hpijs.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_professional_p1566-hpijs.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_professional_p1606dn-hpijs.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_professional_p_1102w-hpijs.ppd.gz
-file path=usr/share/ppd/SUNWhpijs/HP/hp-lj_300_400_color_m351_m451-ps.ppd.gz
-file path=usr/share/ppd/SUNWhpijs/HP/hp-lj_300_400_color_mfp_m375_m475-ps.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_professional_m1132_mfp-hpijs.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_professional_m1136_mfp-hpijs.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_professional_m1212nf_mfp-hpijs.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_professional_m1213nf_mfp-hpijs.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_professional_m1214nfh_mfp-hpijs.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_professional_m1216nfh_mfp-hpijs.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_professional_m1217nfw_mfp-hpijs.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_professional_m1219nf_mfp-hpijs.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_professional_p1102-hpijs.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_professional_p1102w-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_professional_p1106-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_professional_p1108-hpijs.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_professional_p1566-hpijs.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_professional_p1606dn-hpijs.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-laserjet_professional_p_1102w-hpijs.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-lj_300_400_color_m351_m451-ps.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-lj_300_400_color_mfp_m375_m475-ps.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-mopier_240-hpijs-pcl3.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-mopier_240-ps.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-mopier_320-hpijs-pcl3.ppd.gz
@@ -1027,15 +962,13 @@ file path=usr/share/ppd/SUNWhpijs/HP/hp-officejet_6500_e710n-z-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-officejet_6600-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-officejet_6700-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-officejet_7000_e809a-hpijs.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-officejet_7000_e809a_series-hpijs.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-officejet_7000_e809a_series-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-officejet_7100_series-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-officejet_7200_series-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-officejet_7300_series-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-officejet_7400_series-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-officejet_7500_e910-hpijs.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-officejet_9100_series-hpijs-pcl3.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-officejet_9100_series-hpijs-pcl3.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-officejet_d_series-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-officejet_g55-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-officejet_g55xi-hpijs.ppd.gz
@@ -1058,11 +991,9 @@ file path=usr/share/ppd/SUNWhpijs/HP/hp-officejet_k80-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-officejet_k80xi-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-officejet_lx-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-officejet_pro_1150c-hpijs.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-officejet_pro_1170c_series-hpijs.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-officejet_pro_1170c_series-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-officejet_pro_8000_a809-hpijs.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-officejet_pro_8000_enterprise_a811a-ps.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-officejet_pro_8000_enterprise_a811a-ps.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-officejet_pro_8100-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-officejet_pro_8500_a909a-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-officejet_pro_8500_a909g-hpijs.ppd.gz
@@ -1196,30 +1127,20 @@ file path=usr/share/ppd/SUNWhpijs/HP/hp-photosmart_d7200_series-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-photosmart_d7300_series-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-photosmart_d7400_series-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-photosmart_d7500_series-hpijs.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-photosmart_estn_c510_series-hpijs.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-photosmart_estn_c510_series-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-photosmart_ink_adv_k510-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-photosmart_p1000-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-photosmart_p1100-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-photosmart_plus_b209a-m-hpijs.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-photosmart_plus_b210_series-hpijs.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-photosmart_prem-web_c309n-s-hpijs.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-photosmart_prem_c310_series-hpijs.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-photosmart_prem_c410_series-hpijs.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-photosmart_premium_c309g-m-hpijs.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-photosmart_pro_b8300_series-hpijs.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-photosmart_pro_b8800_series-hpijs.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-photosmart_wireless_b109n-z-hpijs.ppd.gz
-file \
-    path=usr/share/ppd/SUNWhpijs/HP/hp-printer_scanner_copier_300-hpijs.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-photosmart_plus_b210_series-hpijs.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-photosmart_prem-web_c309n-s-hpijs.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-photosmart_prem_c310_series-hpijs.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-photosmart_prem_c410_series-hpijs.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-photosmart_premium_c309g-m-hpijs.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-photosmart_pro_b8300_series-hpijs.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-photosmart_pro_b8800_series-hpijs.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-photosmart_wireless_b109n-z-hpijs.ppd.gz
+file path=usr/share/ppd/SUNWhpijs/HP/hp-printer_scanner_copier_300-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-psc_1000_series-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-psc_1100_series-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-psc_1200_series-hpijs.ppd.gz
@@ -1251,15 +1172,10 @@ file path=usr/share/ppd/SUNWhpijs/HP/hp-psc_920-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-psc_950-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-psc_950vr-hpijs.ppd.gz
 file path=usr/share/ppd/SUNWhpijs/HP/hp-psc_950xi-hpijs.ppd.gz
-legacy pkg=SUNWhpijs \
-    desc="hpijs - HP InkJet Server" \
+
+# Component Logging
+dir  path=var/log/hp group=lp
+legacy pkg=SUNWhpijs desc="hpijs - HP InkJet Server" \
     name="hpijs - HP InkJet Server"
 license hplip.license license=GPLv2
-link path=usr/lib/libhpip.so target=libhpip.so.0.0.1
-link path=usr/lib/libhpip.so.0 target=libhpip.so.0.0.1
-link path=usr/lib/libhpmud.so target=libhpmud.so.0.0.6
-link path=usr/lib/libhpmud.so.0 target=libhpmud.so.0.0.6
-link path=usr/lib/sane/libsane-hpaio.so target=libsane-hpaio.so.1.0.0
-link path=usr/lib/sane/libsane-hpaio.so.1 target=libsane-hpaio.so.1.0.0
-link path=usr/sfw/bin/hpijs target=../../bin/hpijs
 

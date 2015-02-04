@@ -18,27 +18,26 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 set name=pkg.fmri \
     value=pkg:/web/server/apache-24/module/apache-jk@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary \
-    value="Tomcat Connector plugin for Apache Web Server V2.4"
+set name=pkg.summary value="Tomcat Connector plugin for Apache Web Server V2.4"
 set name=pkg.description \
     value="Tomcat Connector plugin for Apache Web Server Version 2.4"
-set name=com.oracle.info.description value="the Tomcat Connector plugin for Apache Web Server V2.4"
+set name=com.oracle.info.description \
+    value="the Tomcat Connector plugin for Apache Web Server V2.4"
 set name=com.oracle.info.tpno value=$(TPNO)
 set name=info.classification \
     value="org.opensolaris.category.2008:Web Services/Application and Web Servers"
-set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
-set name=org.opensolaris.arc-caseid \
-    value=PSARC/2014/253
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2014/253
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+file jk-24.conf path=etc/apache2/2.4/samples-conf.d/jk.conf
+file workers.properties path=etc/apache2/2.4/samples-conf.d/workers.properties
+file build/apache24/$(MACH64)/apache-2.0/mod_jk.so \
+    path=usr/apache2/2.4/libexec/mod_jk.so pkg.linted.userland.action001.2=true
 
 
 license apache.license license="Apache v2.0"
-
-file jk-24.conf path=etc/apache2/2.4/samples-conf.d/jk.conf
-file workers.properties path=etc/apache2/2.4/samples-conf.d/workers.properties
-file build/apache24/$(MACH64)/apache-2.0/mod_jk.so path=usr/apache2/2.4/libexec/mod_jk.so pkg.linted.userland.action001.2=true

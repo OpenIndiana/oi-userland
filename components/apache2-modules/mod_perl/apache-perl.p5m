@@ -18,30 +18,26 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 set name=pkg.fmri \
     value=pkg:/web/server/apache-22/module/apache-perl@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary \
-    value="Perl plugin for Apache Web Server V2.2"
-set name=pkg.description \
-    value="Perl plugin for Apache Web Server Version 2.2"
-set name=com.oracle.info.description value="the Perl plugin for Apache Web Server V2.2"
+set name=pkg.summary value="Perl plugin for Apache Web Server V2.2"
+set name=pkg.description value="Perl plugin for Apache Web Server Version 2.2"
+set name=com.oracle.info.description \
+    value="the Perl plugin for Apache Web Server V2.2"
 set name=com.oracle.info.tpno value=$(TPNO)
 set name=info.classification \
     value="org.opensolaris.category.2008:Web Services/Application and Web Servers"
-set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
-set name=org.opensolaris.arc-caseid \
-    value=PSARC/2007/586
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2007/586
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 
-license LICENSE license="Apache v2.0"
-
-
-file perl.conf path=etc/apache2/2.2/conf.d/perl.conf mode=0644 preserve=renamenew
+file perl.conf path=etc/apache2/2.2/conf.d/perl.conf mode=0644 \
+    preserve=renamenew
 file path=usr/apache2/2.2/bin/mp2bug
 file path=usr/apache2/2.2/include/mod_perl.h
 file path=usr/apache2/2.2/include/modperl_apache_compat.h
@@ -273,10 +269,8 @@ file path=usr/apache2/2.2/lib/perl/auto/Apache2/Command/Command.bs
 file path=usr/apache2/2.2/lib/perl/auto/Apache2/Command/Command.so
 file path=usr/apache2/2.2/lib/perl/auto/Apache2/Connection/Connection.bs
 file path=usr/apache2/2.2/lib/perl/auto/Apache2/Connection/Connection.so
-file \
-    path=usr/apache2/2.2/lib/perl/auto/Apache2/ConnectionUtil/ConnectionUtil.bs
-file \
-    path=usr/apache2/2.2/lib/perl/auto/Apache2/ConnectionUtil/ConnectionUtil.so
+file path=usr/apache2/2.2/lib/perl/auto/Apache2/ConnectionUtil/ConnectionUtil.bs
+file path=usr/apache2/2.2/lib/perl/auto/Apache2/ConnectionUtil/ConnectionUtil.so
 file path=usr/apache2/2.2/lib/perl/auto/Apache2/Const/Const.bs
 file path=usr/apache2/2.2/lib/perl/auto/Apache2/Const/Const.so
 file path=usr/apache2/2.2/lib/perl/auto/Apache2/Directive/Directive.bs
@@ -415,4 +409,6 @@ file path=usr/apache2/2.2/man/man3/ModPerl::Util.3
 file path=usr/apache2/2.2/man/man3/mod_perl2.3
 link path=usr/bin/mp2bug target=../apache2/2.2/bin/mp2bug
 
-depend fmri=__TBD pkg.debug.depend.file=usr/apache2/2.2/bin/httpd type=require
+
+license LICENSE license="Apache v2.0"
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/apache2/2.2/bin/httpd

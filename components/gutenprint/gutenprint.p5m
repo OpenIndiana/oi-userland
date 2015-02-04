@@ -18,24 +18,22 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
 <transform file path=usr/lib/cups/.+ ->default mode 0555>
-
 set name=pkg.fmri \
     value=pkg:/print/filter/gutenprint@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary \
     value="Gutenprint - Drivers for Canon, Epson, Lexmark & PCL printers"
-set name=com.oracle.info.description value="the Gutenprint drivers for Canon, Epson, Lexmark & PCL printers"
+set name=com.oracle.info.description \
+    value="the Gutenprint drivers for Canon, Epson, Lexmark & PCL printers"
 set name=com.oracle.info.tpno value=$(TPNO)
-set name=info.classification \
-    value=org.opensolaris.category.2008:System/Printing
+set name=info.classification value=org.opensolaris.category.2008:System/Printing
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid \
-    value=LSARC/2009/469
+set name=org.opensolaris.arc-caseid value=LSARC/2009/469
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 file path=usr/bin/cups-calibrate
 file path=usr/bin/escputil
@@ -73,7 +71,7 @@ file path=usr/lib/cups/filter/commandtocanon
 file path=usr/lib/cups/filter/commandtoepson
 file path=usr/lib/cups/filter/rastertogutenprint.5.2
 file gutenprint.startup path=usr/lib/cups/startup/gutenprint \
-     restart_fmri=svc:/application/cups/scheduler:default
+    restart_fmri=svc:/application/cups/scheduler:default
 file path=usr/lib/gutenprint/5.2/modules/color-traditional.so
 file path=usr/lib/gutenprint/5.2/modules/print-canon.so
 file path=usr/lib/gutenprint/5.2/modules/print-dyesub.so
@@ -82,7 +80,11 @@ file path=usr/lib/gutenprint/5.2/modules/print-lexmark.so
 file path=usr/lib/gutenprint/5.2/modules/print-pcl.so
 file path=usr/lib/gutenprint/5.2/modules/print-ps.so
 file path=usr/lib/gutenprint/5.2/modules/print-raw.so
+link path=usr/lib/libgutenprint.so target=libgutenprint.so.2.0.8
+link path=usr/lib/libgutenprint.so.2 target=libgutenprint.so.2.0.8
 file path=usr/lib/libgutenprint.so.2.0.8
+link path=usr/lib/libgutenprintui2.so target=libgutenprintui2.so.1.0.0
+link path=usr/lib/libgutenprintui2.so.1 target=libgutenprintui2.so.1.0.0
 file path=usr/lib/libgutenprintui2.so.1.0.0
 file path=usr/lib/pkgconfig/gutenprint.pc
 file path=usr/lib/pkgconfig/gutenprintui2.pc
@@ -138,8 +140,7 @@ file path=usr/share/gutenprint/5.2/xml/escp2/inks/x80.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/inputslots/artisan.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/inputslots/b500.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/inputslots/cd.xml
-file \
-    path=usr/share/gutenprint/5.2/xml/escp2/inputslots/cd_cutter_roll_feed.xml
+file path=usr/share/gutenprint/5.2/xml/escp2/inputslots/cd_cutter_roll_feed.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/inputslots/cd_roll_feed.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/inputslots/cutter_roll_feed.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/inputslots/default.xml
@@ -384,7 +385,3 @@ legacy pkg=SUNWgimpprint \
     desc="gutenprint - Drivers for Canon, Epson, Lexmark & PCL printers" \
     name="gutenprint - Drivers for Canon, Epson, Lexmark & PCL printers"
 license gutenprint.license license="GPLv2, FDLv1.2"
-link path=usr/lib/libgutenprint.so target=libgutenprint.so.2.0.8
-link path=usr/lib/libgutenprint.so.2 target=libgutenprint.so.2.0.8
-link path=usr/lib/libgutenprintui2.so target=libgutenprintui2.so.1.0.0
-link path=usr/lib/libgutenprintui2.so.1 target=libgutenprintui2.so.1.0.0

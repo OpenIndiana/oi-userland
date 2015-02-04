@@ -18,29 +18,21 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
-set name=pkg.fmri value=pkg:/web/php-53/documentation@$(COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri \
+    value=pkg:/web/php-53/documentation@$(COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="PHP Server Documentation"
-set name=info.classification \
-    value="org.opensolaris.category.2008:Development/PHP"
-set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=info.source-url value=$(EXTERNAL_ARCHIVE_MIRROR)/php_manual_en_20090130.tar.gz
-set name=org.opensolaris.arc-caseid value=PSARC/2012/067
-set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 # This package name has known conflicts with other packages in the WOS
-set pkg.linted.pkglint.manifest004=true
-
-
-license php-doc.license license='PHP' \
-    com.oracle.info.description="the PHP documentation" \
-    com.oracle.info.name=php-doc \
-    com.oracle.info.version=$(COMPONENT_VERSION) \
-    com.oracle.info.tpno=$(TPNO_PHP_5_3)
-
-link path=usr/php/doc target=5.3/doc mediator=php mediator-version=5.3
+set name=pkg.linted.pkglint.manifest004 value=true
+set name=info.classification value=org.opensolaris.category.2008:Development/PHP
+set name=info.source-url \
+    value=$(EXTERNAL_ARCHIVE_MIRROR)/php_manual_en_20090130.tar.gz
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2012/067
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 file path=usr/php/5.3/doc/php-chunked-xhtml/about.formats.html
 file path=usr/php/5.3/doc/php-chunked-xhtml/about.generate.html
 file path=usr/php/5.3/doc/php-chunked-xhtml/about.howtohelp.html
@@ -7047,8 +7039,8 @@ file path=usr/php/5.3/doc/php-chunked-xhtml/images/21009b70229598c6a80eef8b45bf2
 file path=usr/php/5.3/doc/php-chunked-xhtml/images/21009b70229598c6a80eef8b45bf282b-imageconvolution_emboss.png
 file path=usr/php/5.3/doc/php-chunked-xhtml/images/21009b70229598c6a80eef8b45bf282b-imageconvolution_gaussian.png
 file path=usr/php/5.3/doc/php-chunked-xhtml/images/21009b70229598c6a80eef8b45bf282b-imagecopy.gif
-file path=usr/php/5.3/doc/php-chunked-xhtml/images/21009b70229598c6a80eef8b45bf282b-imagecopyresampled_2.jpg
 file path=usr/php/5.3/doc/php-chunked-xhtml/images/21009b70229598c6a80eef8b45bf282b-imagecopyresampled.jpg
+file path=usr/php/5.3/doc/php-chunked-xhtml/images/21009b70229598c6a80eef8b45bf282b-imagecopyresampled_2.jpg
 file path=usr/php/5.3/doc/php-chunked-xhtml/images/21009b70229598c6a80eef8b45bf282b-imagecopyresized.jpg
 file path=usr/php/5.3/doc/php-chunked-xhtml/images/21009b70229598c6a80eef8b45bf282b-imagecreate.png
 file path=usr/php/5.3/doc/php-chunked-xhtml/images/21009b70229598c6a80eef8b45bf282b-imagecreatefromgif.gif
@@ -7097,8 +7089,8 @@ file path=usr/php/5.3/doc/php-chunked-xhtml/images/c0d23d2d6769e53e24a1b3136c064
 file path=usr/php/5.3/doc/php-chunked-xhtml/images/c0d23d2d6769e53e24a1b3136c064577-distortImage.png
 file path=usr/php/5.3/doc/php-chunked-xhtml/images/c0d23d2d6769e53e24a1b3136c064577-floodfillpaint_intermediate.png
 file path=usr/php/5.3/doc/php-chunked-xhtml/images/c0d23d2d6769e53e24a1b3136c064577-floodfillpaint_result.png
-file path=usr/php/5.3/doc/php-chunked-xhtml/images/c0d23d2d6769e53e24a1b3136c064577-hello_world_reflection.png
 file path=usr/php/5.3/doc/php-chunked-xhtml/images/c0d23d2d6769e53e24a1b3136c064577-hello_world.png
+file path=usr/php/5.3/doc/php-chunked-xhtml/images/c0d23d2d6769e53e24a1b3136c064577-hello_world_reflection.png
 file path=usr/php/5.3/doc/php-chunked-xhtml/images/c0d23d2d6769e53e24a1b3136c064577-importimagepixels.jpg
 file path=usr/php/5.3/doc/php-chunked-xhtml/images/e88cefb5c3fca5060e2490b9763c4433-readfile.png
 file path=usr/php/5.3/doc/php-chunked-xhtml/images/fa7c5b5f326e3c4a6cc9db19e7edbaf0-xkcd-bobby-tables.png
@@ -12168,7 +12160,14 @@ file path=usr/php/5.3/doc/php-chunked-xhtml/zlib.installation.html
 file path=usr/php/5.3/doc/php-chunked-xhtml/zlib.requirements.html
 file path=usr/php/5.3/doc/php-chunked-xhtml/zlib.resources.html
 file path=usr/php/5.3/doc/php-chunked-xhtml/zlib.setup.html
+link path=usr/php/doc target=5.3/doc mediator=php mediator-version=5.3
+
+
+license php-doc.license license=PHP \
+    com.oracle.info.description="the PHP documentation" \
+    com.oracle.info.name=php-doc com.oracle.info.tpno=$(TPNO_PHP_5_3) \
+    com.oracle.info.version=$(COMPONENT_VERSION)
 
 # if php5.2 doc is present drag forward because of /usr/php/doc
 # mediated link
-depend fmri=pkg:/web/php-52/documentation@5.2.17 type=optional
+depend type=optional fmri=pkg:/web/php-52/documentation@5.2.17

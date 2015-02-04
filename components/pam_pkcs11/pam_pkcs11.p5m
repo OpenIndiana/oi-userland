@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
@@ -26,45 +26,41 @@ set name=pkg.fmri \
 set name=pkg.summary value="The OpenSC PKCS#11 PAM Login Tools"
 set name=com.oracle.info.description value="the OpenSC PKCS#11 PAM login tools"
 set name=com.oracle.info.tpno value=$(TPNO)
-set name=info.classification \
-    value="org.opensolaris.category.2008:System/Security"
+set name=info.classification value=org.opensolaris.category.2008:System/Security
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid \
-    value=PSARC/2006/283
+set name=org.opensolaris.arc-caseid value=PSARC/2006/283
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-
-dir path=etc/security/pam_pkcs11/cacerts
-dir path=etc/security/pam_pkcs11/crls
-
-file pam_pkcs11.conf path=etc/security/pam_pkcs11/pam_pkcs11.conf mode=0644 \
-    preserve=renamenew \
-    original_name=SUNWpampkcs11:etc/security/pam_pkcs11/pam_pkcs11.conf
-file usr/bin/make_hash_link.sh \
-    path=etc/security/pam_pkcs11/make_hash_link.sh mode=0555
+dir  path=etc/security/pam_pkcs11/cacerts
+dir  path=etc/security/pam_pkcs11/crls
 file usr/share/pam_pkcs11/digest_mapping.example \
-    path=etc/security/pam_pkcs11/digest_mapping.example 
+    path=etc/security/pam_pkcs11/digest_mapping.example
 file usr/share/pam_pkcs11/mail_mapping.example \
     path=etc/security/pam_pkcs11/mail_mapping.example
+file usr/bin/make_hash_link.sh path=etc/security/pam_pkcs11/make_hash_link.sh \
+    mode=0555
+file pam_pkcs11.conf path=etc/security/pam_pkcs11/pam_pkcs11.conf mode=0644 \
+    original_name=SUNWpampkcs11:etc/security/pam_pkcs11/pam_pkcs11.conf \
+    preserve=renamenew
 file usr/share/pam_pkcs11/subject_mapping.example \
     path=etc/security/pam_pkcs11/subject_mapping.example
-file usr/bin/pkcs11_inspect path=usr/lib/pam_pkcs11/pkcs11_inspect mode=0555
-file usr/bin/pklogin_finder path=usr/lib/pam_pkcs11/pklogin_finder mode=0555
-file usr/lib/security/pam_pkcs11.so path=usr/lib/security/pam_pkcs11.so 
-file usr/lib/$(MACH64)/security/pam_pkcs11.so \
-    path=usr/lib/security/$(MACH64)/pam_pkcs11.so
-file path=usr/lib/pam_pkcs11/ldap_mapper.so
-file path=usr/lib/pam_pkcs11/opensc_mapper.so
-file path=usr/lib/pam_pkcs11/openssh_mapper.so
 file usr/lib/$(MACH64)/pam_pkcs11/ldap_mapper.so \
     path=usr/lib/pam_pkcs11/$(MACH64)/ldap_mapper.so
 file usr/lib/$(MACH64)/pam_pkcs11/opensc_mapper.so \
     path=usr/lib/pam_pkcs11/$(MACH64)/opensc_mapper.so
 file usr/lib/$(MACH64)/pam_pkcs11/openssh_mapper.so \
-    path=usr/lib/pam_pkcs11/$(MACH64)/openssh_mapper.so 
-file path=usr/share/locale/fr/LC_MESSAGES/pam_pkcs11.mo
-file doc/pam_pkcs11.html path=usr/share/doc/pam_pkcs11/pam_pkcs11.html
+    path=usr/lib/pam_pkcs11/$(MACH64)/openssh_mapper.so
+file path=usr/lib/pam_pkcs11/ldap_mapper.so
+file path=usr/lib/pam_pkcs11/opensc_mapper.so
+file path=usr/lib/pam_pkcs11/openssh_mapper.so
+file usr/bin/pkcs11_inspect path=usr/lib/pam_pkcs11/pkcs11_inspect mode=0555
+file usr/bin/pklogin_finder path=usr/lib/pam_pkcs11/pklogin_finder mode=0555
+file usr/lib/$(MACH64)/security/pam_pkcs11.so \
+    path=usr/lib/security/$(MACH64)/pam_pkcs11.so
+file usr/lib/security/pam_pkcs11.so path=usr/lib/security/pam_pkcs11.so
 file doc/mappers_api.html path=usr/share/doc/pam_pkcs11/mappers_api.html
+file doc/pam_pkcs11.html path=usr/share/doc/pam_pkcs11/pam_pkcs11.html
+file path=usr/share/locale/fr/LC_MESSAGES/pam_pkcs11.mo
 # pam_pkcs11.5 is pre-Solarified, so bypass the mangler.
 file files/pam_pkcs11.5 path=usr/share/man/man5/pam_pkcs11.5 mangler.bypass=true
 #

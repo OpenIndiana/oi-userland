@@ -33,16 +33,16 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2012/152
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-
-
-file path=usr/lib/python$(PYVER)/vendor-packages/_openscap_py.so
+#
 file path=usr/lib/python$(PYVER)/vendor-packages/64/_openscap_py.so
+file path=usr/lib/python$(PYVER)/vendor-packages/_openscap_py.so
 file path=usr/lib/python$(PYVER)/vendor-packages/openscap.py
 file path=usr/lib/python$(PYVER)/vendor-packages/openscap_api.py
 license openscap.license license="LGPLv2.1, LGPLv3, OVAL"
 
 # force the rename with an optional dependency on the old name
-$(PYTHON_2.6_ONLY)depend type=optional fmri=library/python-2/openscap-26@0.9.7,5.12-5.12.0.0.0.41.0
+$(PYTHON_2.6_ONLY)depend type=optional \
+    fmri=library/python-2/openscap-26@0.9.7,5.12-5.12.0.0.0.41.0
 
 # force a dependency on the Python $(PYVER) runtime
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \

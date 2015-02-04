@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
@@ -26,14 +26,16 @@ set name=pkg.fmri \
 set name=pkg.summary value="A Makefile generator"
 set name=com.oracle.info.description value="GNU automake"
 set name=com.oracle.info.tpno value=$(TPNO)
-set name=info.classification \
-    value=org.opensolaris.category.2008:Development/GNU
+set name=info.classification value=org.opensolaris.category.2008:Development/GNU
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid \
-    value=PSARC/2007/293
+set name=org.opensolaris.arc-caseid value=PSARC/2007/293
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+link path=usr/bin/aclocal target=aclocal-1.10 mediator=automake \
+    mediator-version=1.10
 file path=usr/bin/aclocal-$(COMPONENT_VERSION)
+link path=usr/bin/automake target=automake-1.10 mediator=automake \
+    mediator-version=1.10
 file path=usr/bin/automake-$(COMPONENT_VERSION)
 file path=usr/share/aclocal-$(COMPONENT_VERSION)/amversion.m4
 file path=usr/share/aclocal-$(COMPONENT_VERSION)/as.m4
@@ -147,10 +149,4 @@ file path=usr/share/automake-$(COMPONENT_VERSION)/py-compile mode=0555
 file path=usr/share/automake-$(COMPONENT_VERSION)/symlink-tree mode=0555
 file path=usr/share/automake-$(COMPONENT_VERSION)/texinfo.tex
 file path=usr/share/automake-$(COMPONENT_VERSION)/ylwrap mode=0555
-
-link path=usr/bin/aclocal target=aclocal-1.10 \
-    mediator=automake mediator-version=1.10
-link path=usr/bin/automake target=automake-1.10 \
-    mediator=automake mediator-version=1.10
-
 license automake.license license="GPLv2 FDLv1.2"

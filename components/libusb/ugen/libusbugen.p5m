@@ -18,29 +18,25 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
     value=pkg:/system/library/usb/libusbugen@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.human-version value=$(COMPONENT_VERSION)
 set name=pkg.summary value="libusb ugen plugin"
+set name=pkg.human-version value=$(COMPONENT_VERSION)
 set name=info.classification \
-    value="org.opensolaris.category.2008:System/Libraries"
+    value=org.opensolaris.category.2008:System/Libraries
 set name=info.source-url value=http://opensolaris.org/
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid \
-    value=PSARC/2003/721
+set name=org.opensolaris.arc-caseid value=PSARC/2003/721
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-
-file $(MACH64)/libusbugen.so.1 path=usr/lib/libusb_plugins/$(MACH64)/libusbugen.so.1
-file $(MACH32)/libusbugen.so.1 path=usr/lib/libusb_plugins/libusbugen.so.1
-link path=usr/lib/libusb_plugins/libusbugen.so target=libusbugen.so.1
-link path=usr/lib/libusb_plugins/64 target=$(MACH64)
 link path=usr/lib/libusb_plugins/$(MACH64)/libusbugen.so target=libusbugen.so.1
-
-license libusbugen.license license="CDDL"
-
-legacy pkg=SUNWlibusbugen \
-	name="SUN libusb ugen plugin" \
-	desc="libusb - User level usb ugen library"
+file $(MACH64)/libusbugen.so.1 \
+    path=usr/lib/libusb_plugins/$(MACH64)/libusbugen.so.1
+link path=usr/lib/libusb_plugins/64 target=$(MACH64)
+link path=usr/lib/libusb_plugins/libusbugen.so target=libusbugen.so.1
+file $(MACH32)/libusbugen.so.1 path=usr/lib/libusb_plugins/libusbugen.so.1
+legacy pkg=SUNWlibusbugen desc="libusb - User level usb ugen library" \
+    name="SUN libusb ugen plugin"
+license libusbugen.license license=CDDL

@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
@@ -34,10 +34,6 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2012/373
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-link path=usr/bin/gcov target=../gcc/$(GCC_VERSION)/bin/gcov mediator=gcc \
-    mediator-version=$(GCC_VERSION)
-link path=usr/bin/gcpp target=../gcc/$(GCC_VERSION)/bin/cpp mediator=gcc \
-    mediator-version=$(GCC_VERSION)
 hardlink path=$(GCC_BASEDIR)/bin/$(GNU_ARCH)-gcc-ar target=gcc-ar
 hardlink path=$(GCC_BASEDIR)/bin/$(GNU_ARCH)-gcc-nm target=gcc-nm
 hardlink path=$(GCC_BASEDIR)/bin/$(GNU_ARCH)-gcc-ranlib target=gcc-ranlib
@@ -78,8 +74,10 @@ file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/$(MACH64)/libg
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/$(MACH64)/libgcc_eh.a
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/$(MACH64)/libgcov.a
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/cc1 mode=0555
-file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/cc1obj mode=0555
-file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/cc1plus mode=0555
+file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/cc1obj \
+    mode=0555
+file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/cc1plus \
+    mode=0555
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/collect2 \
     mode=0555
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/crt1.o \
@@ -121,7 +119,8 @@ file \
 file \
     path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/bmmintrin.h \
     variant.arch=i386
-file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/cpuid.h \
+file \
+    path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/cpuid.h \
     variant.arch=i386
 file \
     path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/cross-stdarg.h \
@@ -233,12 +232,12 @@ link \
 link \
     path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/liblto_plugin.so.0 \
     target=liblto_plugin.so.0.0.0
-file \
-    path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/liblto_plugin.so.0.0.0
+file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/liblto_plugin.so.0.0.0
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/lto-wrapper \
     mode=0555
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/lto1 mode=0555
-file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/gengtype \
+file \
+    path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/gengtype \
     mode=0555
 file \
     path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/gtype.state \
@@ -434,11 +433,12 @@ file path=$(GCC_BASEDIR)/lib/libssp.a
 file path=$(GCC_BASEDIR)/lib/libssp_nonshared.a
 file path=$(GCC_BASEDIR)/share/info/cpp.info
 file path=$(GCC_BASEDIR)/share/info/cppinternals.info
+link path=$(GCC_BASEDIR)/share/info/dir \
+    target=../../../../../var/info/usr_gcc_$(GCC_VERSION)_share_info_dir
 file path=$(GCC_BASEDIR)/share/info/gccinstall.info
 file path=$(GCC_BASEDIR)/share/info/libgomp.info
 file path=$(GCC_BASEDIR)/share/info/libitm.info
 file path=$(GCC_BASEDIR)/share/info/libquadmath.info
-link path=$(GCC_BASEDIR)/share/info/dir target=../../../../../var/info/usr_gcc_$(GCC_VERSION)_share_info_dir
 file path=$(GCC_BASEDIR)/share/locale/be/LC_MESSAGES/cpplib.mo
 file path=$(GCC_BASEDIR)/share/locale/ca/LC_MESSAGES/cpplib.mo
 file path=$(GCC_BASEDIR)/share/locale/da/LC_MESSAGES/cpplib.mo
@@ -464,6 +464,10 @@ file path=$(GCC_BASEDIR)/share/man/man1/gcov.1
 file path=$(GCC_BASEDIR)/share/man/man7/fsf-funding.7
 file path=$(GCC_BASEDIR)/share/man/man7/gfdl.7
 file path=$(GCC_BASEDIR)/share/man/man7/gpl.7
+link path=usr/bin/gcov target=../gcc/$(GCC_VERSION)/bin/gcov mediator=gcc \
+    mediator-version=$(GCC_VERSION)
+link path=usr/bin/gcpp target=../gcc/$(GCC_VERSION)/bin/cpp mediator=gcc \
+    mediator-version=$(GCC_VERSION)
 link path=usr/share/man/man1/gcov.1 \
     target=../../../gcc/$(GCC_VERSION)/share/man/man1/gcov.1 mediator=gcc \
     mediator-version=$(GCC_VERSION)
@@ -471,17 +475,16 @@ link path=usr/share/man/man1/gcpp.1 \
     target=../../../gcc/$(GCC_VERSION)/share/man/man1/cpp.1 mediator=gcc \
     mediator-version=$(GCC_VERSION)
 link path=usr/share/man/man7/fsf-funding.7 \
-    target=../../../gcc/$(GCC_VERSION)/share/man/man7/fsf-funding.7 mediator=gcc \
-    mediator-version=$(GCC_VERSION)
+    target=../../../gcc/$(GCC_VERSION)/share/man/man7/fsf-funding.7 \
+    mediator=gcc mediator-version=$(GCC_VERSION)
 link path=usr/share/man/man7/gfdl.7 \
     target=../../../gcc/$(GCC_VERSION)/share/man/man7/gfdl.7 mediator=gcc \
     mediator-version=$(GCC_VERSION)
 link path=usr/share/man/man7/gpl.7 \
     target=../../../gcc/$(GCC_VERSION)/share/man/man7/gpl.7 mediator=gcc \
     mediator-version=$(GCC_VERSION)
-
-file $(GCC_BASEDIR)/share/info/dir path=var/info/usr_gcc_$(GCC_VERSION)_share_info_dir mode=0644 preserve=true
-
+file $(GCC_BASEDIR)/share/info/dir \
+    path=var/info/usr_gcc_$(GCC_VERSION)_share_info_dir mode=0644 preserve=true
 license gcc$(GCC_V).license license="GPLv3 with Runtime Exception"
 depend type=group fmri=pkg:/system/library/gcc/gcc-c-runtime
 depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/$(MACH64)/crt1.o \

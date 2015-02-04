@@ -20,46 +20,47 @@
 #
 
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 
 # libconfuse doesn't install many files we choose to deliver so we use transforms:
 # Files delivered to usr/share/doc/confuse/doc will be found
-# under build/$(MACH32)/doc. 
+# under build/$(MACH32)/doc.
 <transform file path=usr/share/doc/confuse/doc/(.+)$ -> \
     set action.hash build/$(MACH32)/doc/%<1> >
 # Files delivered to usr/share/man/man3 will be found under
 # doc/man/man3 in the expanded source archive.
 <transform file path=usr/share/man/man3/(.+)$ -> \
     set action.hash doc/man/man3/%<1> >
-
 set name=pkg.fmri \
     value=pkg:/library/libconfuse@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary \
-    value="Configuration file parser library"
+set name=pkg.summary value="Configuration file parser library"
 set name=pkg.description \
     value="libConfuse is a configuration file parser library written in C. It supports sections and lists of values. It makes it very easy to add configuration file capability to a program using a simple API."
-set name=com.oracle.info.description value="the libconfuse configuration file parser library"
+set name=com.oracle.info.description \
+    value="the libconfuse configuration file parser library"
 set name=com.oracle.info.tpno value=$(TPNO)
-set name=info.classification value="org.opensolaris.category.2008:System/Libraries"
+set name=info.classification \
+    value=org.opensolaris.category.2008:System/Libraries
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid \
-    value=LSARC/2009/151
+set name=org.opensolaris.arc-caseid value=LSARC/2009/151
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-
-license libconfuse.copyright license='ISC'
 
 
 file path=usr/include/confuse.h
+link path=usr/lib/$(MACH64)/libconfuse.so target=./libconfuse.so.0.0.0
+link path=usr/lib/$(MACH64)/libconfuse.so.0 target=./libconfuse.so.0.0.0
 file path=usr/lib/$(MACH64)/libconfuse.so.0.0.0
+link path=usr/lib/libconfuse.so target=./libconfuse.so.0.0.0
+link path=usr/lib/libconfuse.so.0 target=./libconfuse.so.0.0.0
 file path=usr/lib/libconfuse.so.0.0.0
 file path=usr/lib/pkgconfig/libconfuse.pc
-file path=usr/share/doc/confuse/doc/css.xsl
 file path=usr/share/doc/confuse/doc/Doxyfile
 file path=usr/share/doc/confuse/doc/Doxyfile.in
+file path=usr/share/doc/confuse/doc/css.xsl
 file path=usr/share/doc/confuse/doc/doxygen-footer.html
 file path=usr/share/doc/confuse/doc/doxygen-header.html
 file path=usr/share/doc/confuse/doc/doxygen.css
@@ -70,12 +71,12 @@ file path=usr/share/doc/confuse/doc/html/doxygen.png
 file path=usr/share/doc/confuse/doc/html/examples.html
 file path=usr/share/doc/confuse/doc/html/files.html
 file path=usr/share/doc/confuse/doc/html/ftpconf_8c-example.html
-file path=usr/share/doc/confuse/doc/html/functions_vars.html
 file path=usr/share/doc/confuse/doc/html/functions.html
+file path=usr/share/doc/confuse/doc/html/functions_vars.html
+file path=usr/share/doc/confuse/doc/html/globals.html
 file path=usr/share/doc/confuse/doc/html/globals_eval.html
 file path=usr/share/doc/confuse/doc/html/globals_func.html
 file path=usr/share/doc/confuse/doc/html/globals_type.html
-file path=usr/share/doc/confuse/doc/html/globals.html
 file path=usr/share/doc/confuse/doc/html/index.html
 file path=usr/share/doc/confuse/doc/html/reread_8c-example.html
 file path=usr/share/doc/confuse/doc/html/simple_8c-example.html
@@ -122,8 +123,4 @@ file path=usr/share/man/man3/cfg_opt_t.3
 file path=usr/share/man/man3/cfg_t.3
 file path=usr/share/man/man3/cfg_value_t.3
 file path=usr/share/man/man3/confuse.h.3
-
-link path=usr/lib/$(MACH64)/libconfuse.so target=./libconfuse.so.0.0.0
-link path=usr/lib/$(MACH64)/libconfuse.so.0 target=./libconfuse.so.0.0.0
-link path=usr/lib/libconfuse.so target=./libconfuse.so.0.0.0
-link path=usr/lib/libconfuse.so.0 target=./libconfuse.so.0.0.0
+license libconfuse.copyright license=ISC

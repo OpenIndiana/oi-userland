@@ -18,28 +18,27 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
-
-set name=pkg.fmri value=pkg:/security/sudo@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="sudo - tool to allow certain tasks to be run as root by ordinary users"
+set name=pkg.fmri \
+    value=pkg:/security/sudo@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary \
+    value="sudo - tool to allow certain tasks to be run as root by ordinary users"
 set name=com.oracle.info.description value="the sudo utility"
 set name=com.oracle.info.tpno value=$(TPNO)
 set name=info.classification \
-	value="org.opensolaris.category.2008:Applications/System Utilities"
-set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+    value="org.opensolaris.category.2008:Applications/System Utilities"
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2011/252
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-set name=org.opensolaris.arc-caseid \
-    value=PSARC/2011/252
-
-dir path=etc/sudoers.d mode=0750 group=root
-
-file path=etc/sudoers original_name=SUNWsudo:etc/sudoers overlay=allow \
-	preserve=true mode=0440 group=root
+file path=etc/sudoers group=root mode=0440 original_name=SUNWsudo:etc/sudoers \
+    overlay=allow preserve=true
+dir  path=etc/sudoers.d group=root mode=0750
 file path=usr/bin/sudo mode=4511
+link path=usr/bin/sudoedit target=sudo
 file path=usr/bin/sudoreplay mode=0511
 file path=usr/include/sudo_plugin.h
 # pkglint complains about sudoers.so since it thinks that it is 64bit library
@@ -96,12 +95,9 @@ file path=usr/share/locale/zh_CN/LC_MESSAGES/sudo.mo
 file path=usr/share/locale/zh_CN/LC_MESSAGES/sudoers.mo
 file path=usr/share/man/man1m/sudo.1m
 file path=usr/share/man/man1m/sudo_plugin.1m
+link path=usr/share/man/man1m/sudoedit.1m target=sudo.1m
 file path=usr/share/man/man1m/sudoreplay.1m
 file path=usr/share/man/man1m/visudo.1m
 file path=usr/share/man/man4/sudoers.4
 file path=usr/share/man/man4/sudoers.ldap.4
-
-link path=usr/bin/sudoedit target=sudo
-link path=usr/share/man/man1m/sudoedit.1m target=sudo.1m
-
-license sudo.license license="ISC-like, BSD, zlib license" 
+license sudo.license license="ISC-like, BSD, zlib license"

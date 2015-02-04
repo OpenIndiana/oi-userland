@@ -18,32 +18,31 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
-set name=pkg.fmri value=pkg:/web/php-53/extension/php-suhosin@0.9.33,$(BUILD_VERSION)
-set name=pkg.description value="PHP-Suhosin extension to secure PHP"
+set name=pkg.fmri \
+    value=pkg:/web/php-53/extension/php-suhosin@0.9.33,$(BUILD_VERSION)
 set name=pkg.summary value="Suhosin extension module for PHP"
-set name=info.classification value="org.opensolaris.category.2008:Development/PHP"
+set name=pkg.description value="PHP-Suhosin extension to secure PHP"
+
+# This package name has known conflicts with other packages in the WOS
+set name=pkg.linted.pkglint.manifest004 value=true
+set name=info.classification value=org.opensolaris.category.2008:Development/PHP
 set name=info.source-url value=http://download.suhosin.org/suhosin-0.9.33.tgz
 set name=info.upstream-url value=http://www.hardened-php.net/suhosin/index.html
 set name=org.opensolaris.arc-caseid value=PSARC/2012/067
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-
-# This package name has known conflicts with other packages in the WOS
-set pkg.linted.pkglint.manifest004=true
-
-
-license php-suhosin.license license='PHP, Apache v2.0' \
-    com.oracle.info.description="the Suhosin extension module for PHP" \
-    com.oracle.info.name=php-suhosin \
-    com.oracle.info.version=0.9.33 \
-    com.oracle.info.tpno=$(TPNO_PHP_SUHOSIN)
-
 file path=etc/php/5.3/conf.d/suhosin.ini mode=0644 preserve=renamenew
 file path=etc/php/5.3/zts-conf.d/suhosin.ini mode=0644 preserve=renamenew
 file path=usr/php/5.3/modules/suhosin.so
 file path=usr/php/5.3/zts-modules/suhosin.so
 
+
+license php-suhosin.license license="PHP, Apache v2.0" \
+    com.oracle.info.description="the Suhosin extension module for PHP" \
+    com.oracle.info.name=php-suhosin com.oracle.info.tpno=$(TPNO_PHP_SUHOSIN) \
+    com.oracle.info.version=0.9.33
+
 # need generic dependency on PHP itself
-depend fmri=web/php-53@$(COMPONENT_VERSION) type=require
+depend type=require fmri=web/php-53@$(COMPONENT_VERSION)

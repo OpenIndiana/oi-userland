@@ -20,22 +20,21 @@
 #
 
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr/tomcat6/(.+)$ -> \
-        set action.hash %<\1> >
+    set action.hash %<\1> >
 <transform file path=usr/tomcat6/docs/(.+)$ -> \
-        set action.hash webapps/docs/%<\1> >
+    set action.hash webapps/docs/%<\1> >
 <transform file path=var/tomcat6/(.+)$ -> \
-        set action.hash %<\1> >
+    set action.hash %<\1> >
 <transform file path=var/tomcat6/webapps/ROOT/index.jsp -> \
-        set action.hash Solaris/index.jsp >
+    set action.hash Solaris/index.jsp >
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 <transform file link hardlink path=usr/tomcat6/docs/.* -> \
     default facet.doc.html true>
-
 set name=pkg.fmri \
     value=pkg:/web/java-servlet/tomcat@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="Tomcat Servlet/JSP Container"
@@ -45,14 +44,9 @@ set name=info.classification \
     value="org.opensolaris.category.2008:Web Services/Application and Web Servers"
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid \
-    value=PSARC/2008/711
+set name=org.opensolaris.arc-caseid value=PSARC/2008/711
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-dir path=var/tomcat6/conf group=webservd owner=webservd
-dir path=var/tomcat6/logs group=webservd owner=webservd mode=0700
-dir path=var/tomcat6/temp group=webservd owner=webservd
-dir path=var/tomcat6/webapps group=webservd owner=webservd
-dir path=var/tomcat6/work group=webservd owner=webservd
+link path=etc/tomcat6 target=../var/tomcat6/conf
 file Solaris/http-tomcat6.xml path=lib/svc/manifest/network/http-tomcat6.xml
 file Solaris/http-tomcat6 path=lib/svc/method/http-tomcat6
 file Solaris/tomcat.1m path=usr/share/man/man1m/tomcat.1m
@@ -201,28 +195,35 @@ file path=usr/tomcat6/lib/tomcat-dbcp.jar
 file path=usr/tomcat6/lib/tomcat-i18n-es.jar
 file path=usr/tomcat6/lib/tomcat-i18n-fr.jar
 file path=usr/tomcat6/lib/tomcat-i18n-ja.jar
+dir  path=var/tomcat6/conf owner=webservd group=webservd
 file path=var/tomcat6/conf/CONF.tar.gz
-file path=var/tomcat6/conf/catalina.policy mode=0644 preserve=renamenew \
-    original_name=SUNWtcat:var/tomcat6/conf/catalina.policy
-file path=var/tomcat6/conf/catalina.properties mode=0644 preserve=renamenew \
-    original_name=SUNWtcat:var/tomcat6/conf/catalina.properties
-file path=var/tomcat6/conf/context.xml mode=0644 preserve=renamenew \
-    original_name=SUNWtcat:var/tomcat6/conf/context.xml
-file path=var/tomcat6/conf/logging.properties mode=0644 preserve=renamenew \
-    original_name=SUNWtcat:var/tomcat6/conf/logging.properties
-file path=var/tomcat6/conf/server.xml mode=0644 preserve=renamenew \
-    original_name=SUNWtcat:var/tomcat6/conf/server.xml
-file path=var/tomcat6/conf/tomcat-users.xml group=webservd mode=0600 \
-    owner=webservd preserve=renamenew \
-    original_name=SUNWtcat:var/tomcat6/conf/tomcat-users.xml
-file path=var/tomcat6/conf/web.xml mode=0644 preserve=renamenew \
-    original_name=SUNWtcat:var/tomcat6/conf/web.xml
-file path=var/tomcat6/webapps/ROOT/index.jsp mode=0644 preserve=renamenew \
-    original_name=SUNWtcat:var/tomcat6/webapps/ROOT/index.jsp
+file path=var/tomcat6/conf/catalina.policy mode=0644 \
+    original_name=SUNWtcat:var/tomcat6/conf/catalina.policy preserve=renamenew
+file path=var/tomcat6/conf/catalina.properties mode=0644 \
+    original_name=SUNWtcat:var/tomcat6/conf/catalina.properties \
+    preserve=renamenew
+file path=var/tomcat6/conf/context.xml mode=0644 \
+    original_name=SUNWtcat:var/tomcat6/conf/context.xml preserve=renamenew
+file path=var/tomcat6/conf/logging.properties mode=0644 \
+    original_name=SUNWtcat:var/tomcat6/conf/logging.properties \
+    preserve=renamenew
+file path=var/tomcat6/conf/server.xml mode=0644 \
+    original_name=SUNWtcat:var/tomcat6/conf/server.xml preserve=renamenew
+file path=var/tomcat6/conf/tomcat-users.xml owner=webservd group=webservd \
+    mode=0600 original_name=SUNWtcat:var/tomcat6/conf/tomcat-users.xml \
+    preserve=renamenew
+file path=var/tomcat6/conf/web.xml mode=0644 \
+    original_name=SUNWtcat:var/tomcat6/conf/web.xml preserve=renamenew
+dir  path=var/tomcat6/logs owner=webservd group=webservd mode=0700
+dir  path=var/tomcat6/temp owner=webservd group=webservd
+dir  path=var/tomcat6/webapps owner=webservd group=webservd
+file path=var/tomcat6/webapps/ROOT/index.jsp mode=0644 \
+    original_name=SUNWtcat:var/tomcat6/webapps/ROOT/index.jsp \
+    preserve=renamenew
 file path=var/tomcat6/webapps/host-manager/META-INF/context.xml
-file path=var/tomcat6/webapps/host-manager/WEB-INF/web.xml
 file path=var/tomcat6/webapps/host-manager/WEB-INF/jsp/401.jsp
 file path=var/tomcat6/webapps/host-manager/WEB-INF/jsp/403.jsp
+file path=var/tomcat6/webapps/host-manager/WEB-INF/web.xml
 file path=var/tomcat6/webapps/host-manager/images/add.gif
 file path=var/tomcat6/webapps/host-manager/images/asf-logo.gif
 file path=var/tomcat6/webapps/host-manager/images/code.gif
@@ -250,9 +251,7 @@ file path=var/tomcat6/webapps/manager/images/update.gif
 file path=var/tomcat6/webapps/manager/images/void.gif
 file path=var/tomcat6/webapps/manager/status.xsd
 file path=var/tomcat6/webapps/manager/xform.xsl
-
-depend fmri=__TBD pkg.debug.depend.file=usr/jdk/instances/jdk1.7.0/bin/java \
-    type=require
-
+dir  path=var/tomcat6/work owner=webservd group=webservd
 license tomcat.license license="Apache v2.0"
-link path=etc/tomcat6 target=../var/tomcat6/conf
+depend type=require fmri=__TBD \
+    pkg.debug.depend.file=usr/jdk/instances/jdk1.7.0/bin/java

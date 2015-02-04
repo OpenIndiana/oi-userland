@@ -18,35 +18,27 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 <transform dir file link hardlink path=usr/apache2/2.2/manual(/.+){0,1}$ -> \
     default facet.doc.html true>
 set name=pkg.fmri \
     value=pkg:/web/server/apache-22/documentation@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary \
-    value="Apache Web Server V2.2 Documentation"
+set name=pkg.summary value="Apache Web Server V2.2 Documentation"
 set name=pkg.description \
     value="The Apache HTTP Server Version 2.2 (documentation)"
-set name=com.oracle.info.description value="the Apache Web Server V2.2 Documentation"
+
+# This package name has known conflicts with other packages in the WOS
+set name=pkg.linted.pkglint.manifest004 value=true
+set name=com.oracle.info.description \
+    value="the Apache Web Server V2.2 Documentation"
 set name=com.oracle.info.tpno value=$(TPNO_APACHE)
 set name=info.classification \
     value="org.opensolaris.category.2008:Web Services/Application and Web Servers"
-set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
-set name=org.opensolaris.arc-caseid \
-    value=LSARC/2009/565
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=LSARC/2009/565
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-
-# This package name has known conflicts with other packages in the WOS
-set pkg.linted.pkglint.manifest004=true
-
-
-license apache.license license="Apache v2.0"
-
-dir path=usr/apache2/2.2/manual/style/lang
-dir path=usr/apache2/2.2/manual/style/xsl/util
-
 file path=usr/apache2/2.2/manual/LICENSE
 file path=usr/apache2/2.2/manual/bind.html
 file path=usr/apache2/2.2/manual/bind.html.de
@@ -793,12 +785,14 @@ file path=usr/apache2/2.2/manual/style/css/manual-zip-100pc.css
 file path=usr/apache2/2.2/manual/style/css/manual-zip.css
 file path=usr/apache2/2.2/manual/style/css/manual.css
 file path=usr/apache2/2.2/manual/style/faq.dtd
+dir  path=usr/apache2/2.2/manual/style/lang
 file path=usr/apache2/2.2/manual/style/lang.dtd
 file path=usr/apache2/2.2/manual/style/latex/atbeginend.sty
 file path=usr/apache2/2.2/manual/style/manualpage.dtd
 file path=usr/apache2/2.2/manual/style/modulesynopsis.dtd
 file path=usr/apache2/2.2/manual/style/sitemap.dtd
 file path=usr/apache2/2.2/manual/style/version.ent
+dir  path=usr/apache2/2.2/manual/style/xsl/util
 file path=usr/apache2/2.2/manual/suexec.html
 file path=usr/apache2/2.2/manual/suexec.html.en
 file path=usr/apache2/2.2/manual/suexec.html.fr
@@ -858,3 +852,6 @@ file path=usr/apache2/2.2/manual/vhosts/name-based.html.fr
 file path=usr/apache2/2.2/manual/vhosts/name-based.html.ja.utf8
 file path=usr/apache2/2.2/manual/vhosts/name-based.html.ko.euc-kr
 file path=usr/apache2/2.2/manual/vhosts/name-based.html.tr.utf8
+
+
+license apache.license license="Apache v2.0"

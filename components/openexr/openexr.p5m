@@ -18,25 +18,25 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr/share/man/man./(.+$) -> set action.hash Solaris/%<\1> >
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 set name=pkg.fmri \
     value=pkg:/library/openexr@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.description \
-    value="Libraries support for high dynamic-range image (HDR) format"
 set name=pkg.summary \
     value="OpenEXR header files and libraries used to read and write OpenEXR images"
-set name=com.oracle.info.description value="the OpenEXR header files and libraries"
+set name=pkg.description \
+    value="Libraries support for high dynamic-range image (HDR) format"
+set name=com.oracle.info.description \
+    value="the OpenEXR header files and libraries"
 set name=com.oracle.info.tpno value=$(TPNO)
 set name=info.classification \
     value=org.opensolaris.category.2008:System/Libraries
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid \
-    value=LSARC/2008/209
+set name=org.opensolaris.arc-caseid value=LSARC/2008/209
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 #
 file usr/bin/$(MACH64)/exrenvmap path=usr/bin/exrenvmap
@@ -102,41 +102,33 @@ file path=usr/include/OpenEXR/ImfVersion.h
 file path=usr/include/OpenEXR/ImfWav.h
 file path=usr/include/OpenEXR/ImfXdr.h
 file path=usr/include/OpenEXR/OpenEXRConfig.h
+link path=usr/lib/$(MACH64)/libIlmImf.so target=libIlmImf.so.6.0.0
+link path=usr/lib/$(MACH64)/libIlmImf.so.6 target=libIlmImf.so.6.0.0
 file path=usr/lib/$(MACH64)/libIlmImf.so.6.0.0
 file path=usr/lib/$(MACH64)/pkgconfig/OpenEXR.pc
+link path=usr/lib/libIlmImf.so target=libIlmImf.so.6.0.0
+#
+link path=usr/lib/libIlmImf.so.6 target=libIlmImf.so.6.0.0
 file path=usr/lib/libIlmImf.so.6.0.0
 file path=usr/lib/pkgconfig/OpenEXR.pc
 file path=usr/share/doc/OpenEXR-$(COMPONENT_VERSION)/OpenEXRFileLayout.pdf
-file \
-    path=usr/share/doc/OpenEXR-$(COMPONENT_VERSION)/ReadingAndWritingImageFiles.pdf
+file path=usr/share/doc/OpenEXR-$(COMPONENT_VERSION)/ReadingAndWritingImageFiles.pdf
 file path=usr/share/doc/OpenEXR-$(COMPONENT_VERSION)/TechnicalIntroduction.pdf
 file path=usr/share/doc/OpenEXR-$(COMPONENT_VERSION)/examples/drawImage.cpp
 file path=usr/share/doc/OpenEXR-$(COMPONENT_VERSION)/examples/drawImage.h
-file \
-    path=usr/share/doc/OpenEXR-$(COMPONENT_VERSION)/examples/generalInterfaceExamples.cpp
-file \
-    path=usr/share/doc/OpenEXR-$(COMPONENT_VERSION)/examples/generalInterfaceExamples.h
-file \
-    path=usr/share/doc/OpenEXR-$(COMPONENT_VERSION)/examples/generalInterfaceTiledExamples.cpp
-file \
-    path=usr/share/doc/OpenEXR-$(COMPONENT_VERSION)/examples/generalInterfaceTiledExamples.h
-file \
-    path=usr/share/doc/OpenEXR-$(COMPONENT_VERSION)/examples/lowLevelIoExamples.cpp
-file \
-    path=usr/share/doc/OpenEXR-$(COMPONENT_VERSION)/examples/lowLevelIoExamples.h
+file path=usr/share/doc/OpenEXR-$(COMPONENT_VERSION)/examples/generalInterfaceExamples.cpp
+file path=usr/share/doc/OpenEXR-$(COMPONENT_VERSION)/examples/generalInterfaceExamples.h
+file path=usr/share/doc/OpenEXR-$(COMPONENT_VERSION)/examples/generalInterfaceTiledExamples.cpp
+file path=usr/share/doc/OpenEXR-$(COMPONENT_VERSION)/examples/generalInterfaceTiledExamples.h
+file path=usr/share/doc/OpenEXR-$(COMPONENT_VERSION)/examples/lowLevelIoExamples.cpp
+file path=usr/share/doc/OpenEXR-$(COMPONENT_VERSION)/examples/lowLevelIoExamples.h
 file path=usr/share/doc/OpenEXR-$(COMPONENT_VERSION)/examples/main.cpp
-file \
-    path=usr/share/doc/OpenEXR-$(COMPONENT_VERSION)/examples/previewImageExamples.cpp
-file \
-    path=usr/share/doc/OpenEXR-$(COMPONENT_VERSION)/examples/previewImageExamples.h
-file \
-    path=usr/share/doc/OpenEXR-$(COMPONENT_VERSION)/examples/rgbaInterfaceExamples.cpp
-file \
-    path=usr/share/doc/OpenEXR-$(COMPONENT_VERSION)/examples/rgbaInterfaceExamples.h
-file \
-    path=usr/share/doc/OpenEXR-$(COMPONENT_VERSION)/examples/rgbaInterfaceTiledExamples.cpp
-file \
-    path=usr/share/doc/OpenEXR-$(COMPONENT_VERSION)/examples/rgbaInterfaceTiledExamples.h
+file path=usr/share/doc/OpenEXR-$(COMPONENT_VERSION)/examples/previewImageExamples.cpp
+file path=usr/share/doc/OpenEXR-$(COMPONENT_VERSION)/examples/previewImageExamples.h
+file path=usr/share/doc/OpenEXR-$(COMPONENT_VERSION)/examples/rgbaInterfaceExamples.cpp
+file path=usr/share/doc/OpenEXR-$(COMPONENT_VERSION)/examples/rgbaInterfaceExamples.h
+file path=usr/share/doc/OpenEXR-$(COMPONENT_VERSION)/examples/rgbaInterfaceTiledExamples.cpp
+file path=usr/share/doc/OpenEXR-$(COMPONENT_VERSION)/examples/rgbaInterfaceTiledExamples.h
 file path=usr/share/man/man1/exrenvmap.1
 file path=usr/share/man/man1/exrheader.1
 file path=usr/share/man/man1/exrmakepreview.1
@@ -145,9 +137,4 @@ file path=usr/share/man/man1/exrstdattr.1
 file path=usr/share/man/man3/libopenexr.3lib
 #
 license openexr.license license=BSD
-link path=usr/lib/$(MACH64)/libIlmImf.so target=libIlmImf.so.6.0.0
-link path=usr/lib/$(MACH64)/libIlmImf.so.6 target=libIlmImf.so.6.0.0
-link path=usr/lib/libIlmImf.so target=libIlmImf.so.6.0.0
-#
-link path=usr/lib/libIlmImf.so.6 target=libIlmImf.so.6.0.0
 

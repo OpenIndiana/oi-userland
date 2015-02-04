@@ -18,22 +18,22 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
-set name=pkg.fmri value=pkg:/editor/gnu-emacs/gnu-emacs-lisp@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri \
+    value=pkg:/editor/gnu-emacs/gnu-emacs-lisp@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="GNU emacs LISP (.el) files"
-set name=pkg.description value="GNU emacs LISP (.el) files not accessed in normal use but necessary for emacs development"
+set name=pkg.description \
+    value="GNU emacs LISP (.el) files not accessed in normal use but necessary for emacs development"
 set name=com.oracle.info.description value="GNU emacs LISP (.el) files"
 set name=com.oracle.info.tpno value=$(TPNO)
-set name=info.classification value="org.opensolaris.category.2008:Development/Editors"
+set name=info.classification \
+    value=org.opensolaris.category.2008:Development/Editors
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid \
-    value=PSARC/2008/494
+set name=org.opensolaris.arc-caseid value=PSARC/2008/494
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-
-license emacs.license license="GPLv3"
 
 
 file path=usr/share/emacs/$(COMPONENT_VERSION)/leim/ja-dic/ja-dic.el.gz
@@ -1462,12 +1462,12 @@ file path=usr/share/emacs/$(COMPONENT_VERSION)/lisp/woman.el.gz
 file path=usr/share/emacs/$(COMPONENT_VERSION)/lisp/x-dnd.el.gz
 file path=usr/share/emacs/$(COMPONENT_VERSION)/lisp/xml.el.gz
 file path=usr/share/emacs/$(COMPONENT_VERSION)/lisp/xt-mouse.el.gz
+license emacs.license license=GPLv3
 
 
 # This package requires the emacs core package to be installed. To help
 # pkgdepend find that relationship without hardwiring an fmri, specify
 # a dependency on a file known to always be present in the core package,
 # and allow pkgdepend to generate the fmri.
-depend fmri=__TBD pkg.debug.depend.file=usr/bin/emacs \
-    pkg.debug.reason=usr/share/emacs/$(COMPONENT_VERSION)/lisp/abbrev.el.gz \
-    type=require 
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/emacs \
+    pkg.debug.reason=usr/share/emacs/$(COMPONENT_VERSION)/lisp/abbrev.el.gz

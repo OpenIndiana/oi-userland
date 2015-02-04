@@ -18,24 +18,26 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
-
-set name=pkg.fmri value=pkg:/library/graphics/wxwidgets@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri \
+    value=pkg:/library/graphics/wxwidgets@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="wxWidgets A cross-platform GUI toolkit"
-set name=com.oracle.info.description value="wxWidgets, cross-platform GUI toolkit"
+set name=com.oracle.info.description \
+    value="wxWidgets, cross-platform GUI toolkit"
 set name=com.oracle.info.tpno value=$(TPNO)
-set name=info.classification value="org.opensolaris.category.2008:Desktop (GNOME)/Libraries"
-set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.classification \
+    value="org.opensolaris.category.2008:Desktop (GNOME)/Libraries"
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
-set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=LSARC/2008/476
-
-license wxwidgets.license license='wxWindows Library license'
-
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+link path=usr/bin/$(MACH64)/wx-config \
+    target=../../lib/$(MACH64)/wx/config/gtk2-unicode-release-2.8
 file path=usr/bin/$(MACH64)/wxrc
+link path=usr/bin/wx-config target=../lib/wx/config/gtk2-unicode-release-2.8
 file path=usr/bin/wxrc
 file path=usr/include/wx-2.8/wx/aboutdlg.h
 file path=usr/include/wx-2.8/wx/accel.h
@@ -69,6 +71,12 @@ file path=usr/include/wx-2.8/wx/busyinfo.h
 file path=usr/include/wx-2.8/wx/button.h
 file path=usr/include/wx-2.8/wx/calctrl.h
 file path=usr/include/wx-2.8/wx/caret.h
+file path=usr/include/wx-2.8/wx/checkbox.h
+file path=usr/include/wx-2.8/wx/checklst.h
+file path=usr/include/wx-2.8/wx/chkconf.h
+file path=usr/include/wx-2.8/wx/choicdlg.h
+file path=usr/include/wx-2.8/wx/choice.h
+file path=usr/include/wx-2.8/wx/choicebk.h
 file path=usr/include/wx-2.8/wx/clipbrd.h
 file path=usr/include/wx-2.8/wx/clntdata.h
 file path=usr/include/wx-2.8/wx/clrpicker.h
@@ -117,8 +125,8 @@ file path=usr/include/wx-2.8/wx/dialup.h
 file path=usr/include/wx-2.8/wx/dir.h
 file path=usr/include/wx-2.8/wx/dirctrl.h
 file path=usr/include/wx-2.8/wx/dirdlg.h
-file path=usr/include/wx-2.8/wx/display_impl.h
 file path=usr/include/wx-2.8/wx/display.h
+file path=usr/include/wx-2.8/wx/display_impl.h
 file path=usr/include/wx-2.8/wx/dlimpexp.h
 file path=usr/include/wx-2.8/wx/dnd.h
 file path=usr/include/wx-2.8/wx/docmdi.h
@@ -188,6 +196,7 @@ file path=usr/include/wx-2.8/wx/generic/busyinfo.h
 file path=usr/include/wx-2.8/wx/generic/buttonbar.h
 file path=usr/include/wx-2.8/wx/generic/calctrl.h
 file path=usr/include/wx-2.8/wx/generic/caret.h
+file path=usr/include/wx-2.8/wx/generic/choicdgg.h
 file path=usr/include/wx-2.8/wx/generic/clrpickerg.h
 file path=usr/include/wx-2.8/wx/generic/collpaneg.h
 file path=usr/include/wx-2.8/wx/generic/colrdlgg.h
@@ -207,7 +216,6 @@ file path=usr/include/wx-2.8/wx/generic/grid.h
 file path=usr/include/wx-2.8/wx/generic/gridctrl.h
 file path=usr/include/wx-2.8/wx/generic/gridsel.h
 file path=usr/include/wx-2.8/wx/generic/helpext.h
-file path=usr/include/wx-2.8/wx/generic/choicdgg.h
 file path=usr/include/wx-2.8/wx/generic/icon.h
 file path=usr/include/wx-2.8/wx/generic/imaglist.h
 file path=usr/include/wx-2.8/wx/generic/laywin.h
@@ -256,6 +264,9 @@ file path=usr/include/wx-2.8/wx/gtk/bitmap.h
 file path=usr/include/wx-2.8/wx/gtk/bmpbuttn.h
 file path=usr/include/wx-2.8/wx/gtk/brush.h
 file path=usr/include/wx-2.8/wx/gtk/button.h
+file path=usr/include/wx-2.8/wx/gtk/checkbox.h
+file path=usr/include/wx-2.8/wx/gtk/checklst.h
+file path=usr/include/wx-2.8/wx/gtk/choice.h
 file path=usr/include/wx-2.8/wx/gtk/clipbrd.h
 file path=usr/include/wx-2.8/wx/gtk/clrpicker.h
 file path=usr/include/wx-2.8/wx/gtk/collpane.h
@@ -284,9 +295,6 @@ file path=usr/include/wx-2.8/wx/gtk/gauge.h
 file path=usr/include/wx-2.8/wx/gtk/glcanvas.h
 file path=usr/include/wx-2.8/wx/gtk/gnome/gprint.h
 file path=usr/include/wx-2.8/wx/gtk/gnome/gvfs.h
-file path=usr/include/wx-2.8/wx/gtk/checkbox.h
-file path=usr/include/wx-2.8/wx/gtk/checklst.h
-file path=usr/include/wx-2.8/wx/gtk/choice.h
 file path=usr/include/wx-2.8/wx/gtk/listbox.h
 file path=usr/include/wx-2.8/wx/gtk/mdi.h
 file path=usr/include/wx-2.8/wx/gtk/menu.h
@@ -343,12 +351,6 @@ file path=usr/include/wx-2.8/wx/html/m_templ.h
 file path=usr/include/wx-2.8/wx/html/winpars.h
 file path=usr/include/wx-2.8/wx/htmllbox.h
 file path=usr/include/wx-2.8/wx/hyperlink.h
-file path=usr/include/wx-2.8/wx/checkbox.h
-file path=usr/include/wx-2.8/wx/checklst.h
-file path=usr/include/wx-2.8/wx/chkconf.h
-file path=usr/include/wx-2.8/wx/choicdlg.h
-file path=usr/include/wx-2.8/wx/choice.h
-file path=usr/include/wx-2.8/wx/choicebk.h
 file path=usr/include/wx-2.8/wx/icon.h
 file path=usr/include/wx-2.8/wx/iconbndl.h
 file path=usr/include/wx-2.8/wx/iconloc.h
@@ -428,13 +430,13 @@ file path=usr/include/wx-2.8/wx/pen.h
 file path=usr/include/wx-2.8/wx/pickerbase.h
 file path=usr/include/wx-2.8/wx/platform.h
 file path=usr/include/wx-2.8/wx/platinfo.h
+file path=usr/include/wx-2.8/wx/plot/plot.h
 file path=usr/include/wx-2.8/wx/plot/plot_dwn.bmp
 file path=usr/include/wx-2.8/wx/plot/plot_enl.bmp
 file path=usr/include/wx-2.8/wx/plot/plot_shr.bmp
 file path=usr/include/wx-2.8/wx/plot/plot_up.bmp
 file path=usr/include/wx-2.8/wx/plot/plot_zin.bmp
 file path=usr/include/wx-2.8/wx/plot/plot_zot.bmp
-file path=usr/include/wx-2.8/wx/plot/plot.h
 file path=usr/include/wx-2.8/wx/plot/wxplot.rc
 file path=usr/include/wx-2.8/wx/popupwin.h
 file path=usr/include/wx-2.8/wx/power.h
@@ -561,8 +563,8 @@ file path=usr/include/wx-2.8/wx/window.h
 file path=usr/include/wx-2.8/wx/wizard.h
 file path=usr/include/wx-2.8/wx/wupdlock.h
 file path=usr/include/wx-2.8/wx/wx.h
-file path=usr/include/wx-2.8/wx/wxhtml.h
 file path=usr/include/wx-2.8/wx/wxchar.h
+file path=usr/include/wx-2.8/wx/wxhtml.h
 file path=usr/include/wx-2.8/wx/wxprec.h
 file path=usr/include/wx-2.8/wx/xml/xml.h
 file path=usr/include/wx-2.8/wx/xpmdecod.h
@@ -574,6 +576,10 @@ file path=usr/include/wx-2.8/wx/xrc/xh_bmpbt.h
 file path=usr/include/wx-2.8/wx/xrc/xh_bmpcbox.h
 file path=usr/include/wx-2.8/wx/xrc/xh_bttn.h
 file path=usr/include/wx-2.8/wx/xrc/xh_cald.h
+file path=usr/include/wx-2.8/wx/xrc/xh_chckb.h
+file path=usr/include/wx-2.8/wx/xrc/xh_chckl.h
+file path=usr/include/wx-2.8/wx/xrc/xh_choic.h
+file path=usr/include/wx-2.8/wx/xrc/xh_choicbk.h
 file path=usr/include/wx-2.8/wx/xrc/xh_clrpicker.h
 file path=usr/include/wx-2.8/wx/xrc/xh_collpane.h
 file path=usr/include/wx-2.8/wx/xrc/xh_combo.h
@@ -589,10 +595,6 @@ file path=usr/include/wx-2.8/wx/xrc/xh_grid.h
 file path=usr/include/wx-2.8/wx/xrc/xh_html.h
 file path=usr/include/wx-2.8/wx/xrc/xh_htmllbox.h
 file path=usr/include/wx-2.8/wx/xrc/xh_hyperlink.h
-file path=usr/include/wx-2.8/wx/xrc/xh_chckb.h
-file path=usr/include/wx-2.8/wx/xrc/xh_chckl.h
-file path=usr/include/wx-2.8/wx/xrc/xh_choic.h
-file path=usr/include/wx-2.8/wx/xrc/xh_choicbk.h
 file path=usr/include/wx-2.8/wx/xrc/xh_listb.h
 file path=usr/include/wx-2.8/wx/xrc/xh_listbk.h
 file path=usr/include/wx-2.8/wx/xrc/xh_listc.h
@@ -628,86 +630,101 @@ file path=usr/include/wx-2.8/wx/xtistrm.h
 file path=usr/include/wx-2.8/wx/xtixml.h
 file path=usr/include/wx-2.8/wx/zipstrm.h
 file path=usr/include/wx-2.8/wx/zstream.h
-file path=usr/lib/$(MACH64)/libwx_baseu_net-2.8.so.0
-file path=usr/lib/$(MACH64)/libwx_baseu_xml-2.8.so.0
+link path=usr/lib/$(MACH64)/libwx_baseu-2.8.so target=libwx_baseu-2.8.so.0
 file path=usr/lib/$(MACH64)/libwx_baseu-2.8.so.0
+link path=usr/lib/$(MACH64)/libwx_baseu_net-2.8.so \
+    target=libwx_baseu_net-2.8.so.0
+file path=usr/lib/$(MACH64)/libwx_baseu_net-2.8.so.0
+link path=usr/lib/$(MACH64)/libwx_baseu_xml-2.8.so \
+    target=libwx_baseu_xml-2.8.so.0
+file path=usr/lib/$(MACH64)/libwx_baseu_xml-2.8.so.0
+link path=usr/lib/$(MACH64)/libwx_gtk2u_adv-2.8.so \
+    target=libwx_gtk2u_adv-2.8.so.0
 file path=usr/lib/$(MACH64)/libwx_gtk2u_adv-2.8.so.0
+link path=usr/lib/$(MACH64)/libwx_gtk2u_aui-2.8.so \
+    target=libwx_gtk2u_aui-2.8.so.0
 file path=usr/lib/$(MACH64)/libwx_gtk2u_aui-2.8.so.0
+link path=usr/lib/$(MACH64)/libwx_gtk2u_core-2.8.so \
+    target=libwx_gtk2u_core-2.8.so.0
 file path=usr/lib/$(MACH64)/libwx_gtk2u_core-2.8.so.0
+link path=usr/lib/$(MACH64)/libwx_gtk2u_fl-2.8.so target=libwx_gtk2u_fl-2.8.so.0
 file path=usr/lib/$(MACH64)/libwx_gtk2u_fl-2.8.so.0
-file path=usr/lib/$(MACH64)/libwx_gtk2u_gizmos_xrc-2.8.so.0
+link path=usr/lib/$(MACH64)/libwx_gtk2u_gizmos-2.8.so \
+    target=libwx_gtk2u_gizmos-2.8.so.0
 file path=usr/lib/$(MACH64)/libwx_gtk2u_gizmos-2.8.so.0
-file path=usr/lib/$(MACH64)/libwx_gtk2u_gl-2.8.so.0 pkg.depend.bypass-generate=.*
+link path=usr/lib/$(MACH64)/libwx_gtk2u_gizmos_xrc-2.8.so \
+    target=libwx_gtk2u_gizmos_xrc-2.8.so.0
+file path=usr/lib/$(MACH64)/libwx_gtk2u_gizmos_xrc-2.8.so.0
+link path=usr/lib/$(MACH64)/libwx_gtk2u_gl-2.8.so target=libwx_gtk2u_gl-2.8.so.0
+file path=usr/lib/$(MACH64)/libwx_gtk2u_gl-2.8.so.0 \
+    pkg.depend.bypass-generate=.*
+link path=usr/lib/$(MACH64)/libwx_gtk2u_html-2.8.so \
+    target=libwx_gtk2u_html-2.8.so.0
 file path=usr/lib/$(MACH64)/libwx_gtk2u_html-2.8.so.0
+link path=usr/lib/$(MACH64)/libwx_gtk2u_ogl-2.8.so \
+    target=libwx_gtk2u_ogl-2.8.so.0
 file path=usr/lib/$(MACH64)/libwx_gtk2u_ogl-2.8.so.0
+link path=usr/lib/$(MACH64)/libwx_gtk2u_plot-2.8.so \
+    target=libwx_gtk2u_plot-2.8.so.0
 file path=usr/lib/$(MACH64)/libwx_gtk2u_plot-2.8.so.0
+link path=usr/lib/$(MACH64)/libwx_gtk2u_qa-2.8.so target=libwx_gtk2u_qa-2.8.so.0
 file path=usr/lib/$(MACH64)/libwx_gtk2u_qa-2.8.so.0
+link path=usr/lib/$(MACH64)/libwx_gtk2u_richtext-2.8.so \
+    target=libwx_gtk2u_richtext-2.8.so.0
 file path=usr/lib/$(MACH64)/libwx_gtk2u_richtext-2.8.so.0
+link path=usr/lib/$(MACH64)/libwx_gtk2u_stc-2.8.so \
+    target=libwx_gtk2u_stc-2.8.so.0
 file path=usr/lib/$(MACH64)/libwx_gtk2u_stc-2.8.so.0
+link path=usr/lib/$(MACH64)/libwx_gtk2u_svg-2.8.so \
+    target=libwx_gtk2u_svg-2.8.so.0
 file path=usr/lib/$(MACH64)/libwx_gtk2u_svg-2.8.so.0
+link path=usr/lib/$(MACH64)/libwx_gtk2u_xrc-2.8.so \
+    target=libwx_gtk2u_xrc-2.8.so.0
 file path=usr/lib/$(MACH64)/libwx_gtk2u_xrc-2.8.so.0
-file mode=0555 path=usr/lib/$(MACH64)/wx/config/gtk2-unicode-release-2.8
+file path=usr/lib/$(MACH64)/wx/config/gtk2-unicode-release-2.8 mode=0555
 file path=usr/lib/$(MACH64)/wx/include/gtk2-unicode-release-2.8/wx/setup.h
-file path=usr/lib/libwx_baseu_net-2.8.so.0
-file path=usr/lib/libwx_baseu_xml-2.8.so.0
+link path=usr/lib/libwx_baseu-2.8.so target=libwx_baseu-2.8.so.0
 file path=usr/lib/libwx_baseu-2.8.so.0
+link path=usr/lib/libwx_baseu_net-2.8.so target=libwx_baseu_net-2.8.so.0
+file path=usr/lib/libwx_baseu_net-2.8.so.0
+link path=usr/lib/libwx_baseu_xml-2.8.so target=libwx_baseu_xml-2.8.so.0
+file path=usr/lib/libwx_baseu_xml-2.8.so.0
+link path=usr/lib/libwx_gtk2u_adv-2.8.so target=libwx_gtk2u_adv-2.8.so.0
 file path=usr/lib/libwx_gtk2u_adv-2.8.so.0
+link path=usr/lib/libwx_gtk2u_aui-2.8.so target=libwx_gtk2u_aui-2.8.so.0
 file path=usr/lib/libwx_gtk2u_aui-2.8.so.0
+link path=usr/lib/libwx_gtk2u_core-2.8.so target=libwx_gtk2u_core-2.8.so.0
 file path=usr/lib/libwx_gtk2u_core-2.8.so.0
+link path=usr/lib/libwx_gtk2u_fl-2.8.so target=libwx_gtk2u_fl-2.8.so.0
 file path=usr/lib/libwx_gtk2u_fl-2.8.so.0
-file path=usr/lib/libwx_gtk2u_gizmos_xrc-2.8.so.0
+link path=usr/lib/libwx_gtk2u_gizmos-2.8.so target=libwx_gtk2u_gizmos-2.8.so.0
 file path=usr/lib/libwx_gtk2u_gizmos-2.8.so.0
+link path=usr/lib/libwx_gtk2u_gizmos_xrc-2.8.so \
+    target=libwx_gtk2u_gizmos_xrc-2.8.so.0
+file path=usr/lib/libwx_gtk2u_gizmos_xrc-2.8.so.0
+link path=usr/lib/libwx_gtk2u_gl-2.8.so target=libwx_gtk2u_gl-2.8.so.0
 file path=usr/lib/libwx_gtk2u_gl-2.8.so.0 pkg.depend.bypass-generate=.*
+link path=usr/lib/libwx_gtk2u_html-2.8.so target=libwx_gtk2u_html-2.8.so.0
 file path=usr/lib/libwx_gtk2u_html-2.8.so.0
+link path=usr/lib/libwx_gtk2u_ogl-2.8.so target=libwx_gtk2u_ogl-2.8.so.0
 file path=usr/lib/libwx_gtk2u_ogl-2.8.so.0
+link path=usr/lib/libwx_gtk2u_plot-2.8.so target=libwx_gtk2u_plot-2.8.so.0
 file path=usr/lib/libwx_gtk2u_plot-2.8.so.0
+link path=usr/lib/libwx_gtk2u_qa-2.8.so target=libwx_gtk2u_qa-2.8.so.0
 file path=usr/lib/libwx_gtk2u_qa-2.8.so.0
+link path=usr/lib/libwx_gtk2u_richtext-2.8.so \
+    target=libwx_gtk2u_richtext-2.8.so.0
 file path=usr/lib/libwx_gtk2u_richtext-2.8.so.0
+link path=usr/lib/libwx_gtk2u_stc-2.8.so target=libwx_gtk2u_stc-2.8.so.0
 file path=usr/lib/libwx_gtk2u_stc-2.8.so.0
+link path=usr/lib/libwx_gtk2u_svg-2.8.so target=libwx_gtk2u_svg-2.8.so.0
 file path=usr/lib/libwx_gtk2u_svg-2.8.so.0
+link path=usr/lib/libwx_gtk2u_xrc-2.8.so target=libwx_gtk2u_xrc-2.8.so.0
 file path=usr/lib/libwx_gtk2u_xrc-2.8.so.0
-file mode=0555 path=usr/lib/wx/config/gtk2-unicode-release-2.8
+file path=usr/lib/wx/config/gtk2-unicode-release-2.8 mode=0555
 file path=usr/lib/wx/include/gtk2-unicode-release-2.8/wx/setup.h
 file path=usr/share/aclocal/wxwin.m4
 file wx-config.1 path=usr/share/man/man1/wx-config.1
 file wxrc.1 path=usr/share/man/man1/wxrc.1
-link path=usr/bin/$(MACH64)/wx-config target=../../lib/$(MACH64)/wx/config/gtk2-unicode-release-2.8
-link path=usr/bin/wx-config target=../lib/wx/config/gtk2-unicode-release-2.8
-link path=usr/lib/$(MACH64)/libwx_baseu_net-2.8.so target=libwx_baseu_net-2.8.so.0
-link path=usr/lib/$(MACH64)/libwx_baseu_xml-2.8.so target=libwx_baseu_xml-2.8.so.0
-link path=usr/lib/$(MACH64)/libwx_baseu-2.8.so target=libwx_baseu-2.8.so.0
-link path=usr/lib/$(MACH64)/libwx_gtk2u_adv-2.8.so target=libwx_gtk2u_adv-2.8.so.0
-link path=usr/lib/$(MACH64)/libwx_gtk2u_aui-2.8.so target=libwx_gtk2u_aui-2.8.so.0
-link path=usr/lib/$(MACH64)/libwx_gtk2u_core-2.8.so target=libwx_gtk2u_core-2.8.so.0
-link path=usr/lib/$(MACH64)/libwx_gtk2u_fl-2.8.so target=libwx_gtk2u_fl-2.8.so.0
-link path=usr/lib/$(MACH64)/libwx_gtk2u_gizmos_xrc-2.8.so target=libwx_gtk2u_gizmos_xrc-2.8.so.0
-link path=usr/lib/$(MACH64)/libwx_gtk2u_gizmos-2.8.so target=libwx_gtk2u_gizmos-2.8.so.0
-link path=usr/lib/$(MACH64)/libwx_gtk2u_gl-2.8.so target=libwx_gtk2u_gl-2.8.so.0
-link path=usr/lib/$(MACH64)/libwx_gtk2u_html-2.8.so target=libwx_gtk2u_html-2.8.so.0
-link path=usr/lib/$(MACH64)/libwx_gtk2u_ogl-2.8.so target=libwx_gtk2u_ogl-2.8.so.0
-link path=usr/lib/$(MACH64)/libwx_gtk2u_plot-2.8.so target=libwx_gtk2u_plot-2.8.so.0
-link path=usr/lib/$(MACH64)/libwx_gtk2u_qa-2.8.so target=libwx_gtk2u_qa-2.8.so.0
-link path=usr/lib/$(MACH64)/libwx_gtk2u_richtext-2.8.so target=libwx_gtk2u_richtext-2.8.so.0
-link path=usr/lib/$(MACH64)/libwx_gtk2u_stc-2.8.so target=libwx_gtk2u_stc-2.8.so.0
-link path=usr/lib/$(MACH64)/libwx_gtk2u_svg-2.8.so target=libwx_gtk2u_svg-2.8.so.0
-link path=usr/lib/$(MACH64)/libwx_gtk2u_xrc-2.8.so target=libwx_gtk2u_xrc-2.8.so.0
-link path=usr/lib/libwx_baseu_net-2.8.so target=libwx_baseu_net-2.8.so.0
-link path=usr/lib/libwx_baseu_xml-2.8.so target=libwx_baseu_xml-2.8.so.0
-link path=usr/lib/libwx_baseu-2.8.so target=libwx_baseu-2.8.so.0
-link path=usr/lib/libwx_gtk2u_adv-2.8.so target=libwx_gtk2u_adv-2.8.so.0
-link path=usr/lib/libwx_gtk2u_aui-2.8.so target=libwx_gtk2u_aui-2.8.so.0
-link path=usr/lib/libwx_gtk2u_core-2.8.so target=libwx_gtk2u_core-2.8.so.0
-link path=usr/lib/libwx_gtk2u_fl-2.8.so target=libwx_gtk2u_fl-2.8.so.0
-link path=usr/lib/libwx_gtk2u_gizmos_xrc-2.8.so target=libwx_gtk2u_gizmos_xrc-2.8.so.0
-link path=usr/lib/libwx_gtk2u_gizmos-2.8.so target=libwx_gtk2u_gizmos-2.8.so.0
-link path=usr/lib/libwx_gtk2u_gl-2.8.so target=libwx_gtk2u_gl-2.8.so.0
-link path=usr/lib/libwx_gtk2u_html-2.8.so target=libwx_gtk2u_html-2.8.so.0
-link path=usr/lib/libwx_gtk2u_ogl-2.8.so target=libwx_gtk2u_ogl-2.8.so.0
-link path=usr/lib/libwx_gtk2u_plot-2.8.so target=libwx_gtk2u_plot-2.8.so.0
-link path=usr/lib/libwx_gtk2u_qa-2.8.so target=libwx_gtk2u_qa-2.8.so.0
-link path=usr/lib/libwx_gtk2u_richtext-2.8.so target=libwx_gtk2u_richtext-2.8.so.0
-link path=usr/lib/libwx_gtk2u_stc-2.8.so target=libwx_gtk2u_stc-2.8.so.0
-link path=usr/lib/libwx_gtk2u_svg-2.8.so target=libwx_gtk2u_svg-2.8.so.0
-link path=usr/lib/libwx_gtk2u_xrc-2.8.so target=libwx_gtk2u_xrc-2.8.so.0
-
-depend fmri=service/opengl/ogl-select type=require
+license wxwidgets.license license="wxWindows Library license"
+depend type=require fmri=service/opengl/ogl-select

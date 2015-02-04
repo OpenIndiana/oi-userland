@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
@@ -27,32 +27,24 @@ set name=pkg.fmri \
 set name=pkg.summary value="MySQL 5.5 Client Executables"
 set name=com.oracle.info.description value="MySQL 5.5 Client Executables"
 set name=info.classification \
-    value="org.opensolaris.category.2008:Development/Databases"
+    value=org.opensolaris.category.2008:Development/Databases
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2013/333
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-
-license mysql-55.license license=GPLv2
-
-link path=usr/bin/mysql \
-     target=../mysql/5.5/bin/mysql mediator=mysql mediator-version=5.5 pkg.linted.pkglint.dupaction010.2=true
-link path=usr/bin/mysqldump \
-     target=../mysql/5.5/bin/mysqldump mediator=mysql mediator-version=5.5
-link path=usr/bin/mysqladmin \
-     target=../mysql/5.5/bin/mysqladmin mediator=mysql mediator-version=5.5
-
-link path=usr/share/man/man1/mysql.1 \
-     target=../../../mysql/5.5/man/man1/mysql.1 mediator=mysql mediator-version=5.5 pkg.linted.pkglint.dupaction010.2=true
-link path=usr/share/man/man1/mysqldump.1 \
-     target=../../../mysql/5.5/man/man1/mysqldump.1 mediator=mysql mediator-version=5.5
-link path=usr/share/man/man1/mysqladmin.1 \
-     target=../../../mysql/5.5/man/man1/mysqladmin.1 mediator=mysql mediator-version=5.5
-
+link path=usr/bin/mysql target=../mysql/5.5/bin/mysql mediator=mysql \
+    mediator-version=5.5 pkg.linted.pkglint.dupaction010.2=true
+link path=usr/bin/mysqladmin target=../mysql/5.5/bin/mysqladmin mediator=mysql \
+    mediator-version=5.5
+link path=usr/bin/mysqldump target=../mysql/5.5/bin/mysqldump mediator=mysql \
+    mediator-version=5.5
 file path=usr/mysql/5.5/bin/msql2mysql
+file path=usr/mysql/5.5/bin/mysql
 file path=usr/mysql/5.5/bin/mysql_client_test
 file path=usr/mysql/5.5/bin/mysql_client_test_embedded
-file path=usr/mysql/5.5/bin/mysql
+file path=usr/mysql/5.5/bin/mysql_find_rows
+file path=usr/mysql/5.5/bin/mysql_fix_extensions
+file path=usr/mysql/5.5/bin/mysql_waitpid
 file path=usr/mysql/5.5/bin/mysqlaccess
 file path=usr/mysql/5.5/bin/mysqlaccess.conf
 file path=usr/mysql/5.5/bin/mysqladmin
@@ -61,25 +53,32 @@ file path=usr/mysql/5.5/bin/mysqlbug
 file path=usr/mysql/5.5/bin/mysqlcheck
 file path=usr/mysql/5.5/bin/mysqldump
 file path=usr/mysql/5.5/bin/mysqldumpslow
-file path=usr/mysql/5.5/bin/mysql_find_rows
-file path=usr/mysql/5.5/bin/mysql_fix_extensions
 file path=usr/mysql/5.5/bin/mysqlimport
 file path=usr/mysql/5.5/bin/mysqlshow
 file path=usr/mysql/5.5/bin/mysqlslap
-file path=usr/mysql/5.5/bin/mysql_waitpid
 file path=usr/mysql/5.5/man/man1/msql2mysql.1
+file path=usr/mysql/5.5/man/man1/mysql.1
 file path=usr/mysql/5.5/man/man1/mysql_client_test.1
 file path=usr/mysql/5.5/man/man1/mysql_client_test_embedded.1
-file path=usr/mysql/5.5/man/man1/mysql.1
+file path=usr/mysql/5.5/man/man1/mysql_find_rows.1
+file path=usr/mysql/5.5/man/man1/mysql_fix_extensions.1
+file path=usr/mysql/5.5/man/man1/mysql_waitpid.1
 file path=usr/mysql/5.5/man/man1/mysqlaccess.1
 file path=usr/mysql/5.5/man/man1/mysqladmin.1
 file path=usr/mysql/5.5/man/man1/mysqlbinlog.1
 file path=usr/mysql/5.5/man/man1/mysqlcheck.1
 file path=usr/mysql/5.5/man/man1/mysqldump.1
 file path=usr/mysql/5.5/man/man1/mysqldumpslow.1
-file path=usr/mysql/5.5/man/man1/mysql_find_rows.1
-file path=usr/mysql/5.5/man/man1/mysql_fix_extensions.1
 file path=usr/mysql/5.5/man/man1/mysqlimport.1
 file path=usr/mysql/5.5/man/man1/mysqlshow.1
 file path=usr/mysql/5.5/man/man1/mysqlslap.1
-file path=usr/mysql/5.5/man/man1/mysql_waitpid.1
+link path=usr/share/man/man1/mysql.1 \
+    target=../../../mysql/5.5/man/man1/mysql.1 mediator=mysql \
+    mediator-version=5.5 pkg.linted.pkglint.dupaction010.2=true
+link path=usr/share/man/man1/mysqladmin.1 \
+    target=../../../mysql/5.5/man/man1/mysqladmin.1 mediator=mysql \
+    mediator-version=5.5
+link path=usr/share/man/man1/mysqldump.1 \
+    target=../../../mysql/5.5/man/man1/mysqldump.1 mediator=mysql \
+    mediator-version=5.5
+license mysql-55.license license=GPLv2

@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 # Note for the next texinfo maintainer:
 # if "file path=usr/lib/$(MACH64)/charset.alias" is in your texinfo.p5m file,
@@ -26,40 +26,30 @@
 #
 
 <transform file path=usr.*/man/.+$ -> default mangler.man.stability volatile>
-
-set name=pkg.fmri value=pkg:/text/texinfo@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="Documentation system for on-line information and printed output"
-set name=pkg.description value="Texinfo is a documentation system that uses a single source file to produce both on-line information and printed output."
-set name=com.oracle.info.description value="Texinfo, the GNU documentation system"
-set name=info.classification value="org.opensolaris.category.2008:Development/GNU"
-set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=pkg.fmri \
+    value=pkg:/text/texinfo@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary \
+    value="Documentation system for on-line information and printed output"
+set name=pkg.description \
+    value="Texinfo is a documentation system that uses a single source file to produce both on-line information and printed output."
+set name=com.oracle.info.description \
+    value="Texinfo, the GNU documentation system"
+set name=info.classification value=org.opensolaris.category.2008:Development/GNU
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
-set name=org.opensolaris.arc-caseid \
-    value=PSARC/2000/488
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2000/488
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-
-depend fmri=__TBD pkg.debug.depend.file=usr/bin/python type=require
-
-license texinfo.copyright license="GPLv3, FDLv1.3" \
-	com.oracle.info.description="texinfo" \
-	com.oracle.info.name=texinfo com.oracle.info.tpno=$(TPNO_TEXINFO)
-license texi2html.copyright license="texi2html" \
-	com.oracle.info.description="texi2html" \
-	com.oracle.info.name=texi2html com.oracle.info.tpno=$(TPNO_TEXI2HTML)
-
-legacy	pkg=SUNWtexi \
-	name="GNU texinfo - Texinfo utilities (texinfo)" \
-	desc="GNU texinfo (texinfo)"
-
 file texinfo-update.xml path=lib/svc/manifest/application/texinfo-update.xml
-file svc-texinfo-update path=lib/svc/method/svc-texinfo-update disable_fmri=svc:/application/texinfo-update:default
-file texi2html.pl path=usr/bin/texi2html
+file svc-texinfo-update path=lib/svc/method/svc-texinfo-update \
+    disable_fmri=svc:/application/texinfo-update:default
 file usr/bin/$(MACH64)/info path=usr/bin/info
 file usr/bin/$(MACH64)/infokey path=usr/bin/infokey
 file usr/bin/$(MACH64)/install-info path=usr/bin/install-info
 file usr/bin/$(MACH64)/makeinfo path=usr/bin/makeinfo
 file usr/bin/$(MACH64)/texi2dvi path=usr/bin/texi2dvi
+file texi2html.pl path=usr/bin/texi2html
 file usr/bin/$(MACH64)/texindex path=usr/bin/texindex
+link path=usr/share/info/dir target=../../../var/info/usr_share_info_dir
 file path=usr/share/info/info-stnd.info
 file path=usr/share/info/info.info
 file path=usr/share/info/texinfo
@@ -69,6 +59,7 @@ file path=usr/share/info/texinfo-3
 file path=usr/share/locale/cs/LC_MESSAGES/texinfo.mo
 file path=usr/share/locale/da/LC_MESSAGES/texinfo.mo
 file path=usr/share/locale/de/LC_MESSAGES/texinfo.mo
+link path=usr/share/locale/de_AT target=de
 #We don't ship locale/de_AT since it links to locale/de
 #file path=usr/share/locale/de_AT/LC_MESSAGES/texinfo.mo
 file path=usr/share/locale/eo/LC_MESSAGES/texinfo.mo
@@ -101,5 +92,12 @@ file path=usr/share/texinfo/texinfo.cat
 file path=usr/share/texinfo/texinfo.dtd
 file path=usr/share/texinfo/texinfo.xsl
 file usr/share/info/dir path=var/info/usr_share_info_dir mode=0644 preserve=true
-link path=usr/share/info/dir target=../../../var/info/usr_share_info_dir
-link path=usr/share/locale/de_AT target=de 
+legacy pkg=SUNWtexi desc="GNU texinfo (texinfo)" \
+    name="GNU texinfo - Texinfo utilities (texinfo)"
+license texinfo.copyright license="GPLv3, FDLv1.3" \
+    com.oracle.info.description=texinfo com.oracle.info.name=texinfo \
+    com.oracle.info.tpno=$(TPNO_TEXINFO)
+license texi2html.copyright license=texi2html \
+    com.oracle.info.description=texi2html com.oracle.info.name=texi2html \
+    com.oracle.info.tpno=$(TPNO_TEXI2HTML)
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/python

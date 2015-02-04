@@ -18,30 +18,29 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 set name=pkg.fmri \
     value=pkg:/web/server/apache-22/module/apache-fcgid@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary \
-    value="FastCGI plugin for Apache Web Server V2.2"
+set name=pkg.summary value="FastCGI plugin for Apache Web Server V2.2"
 set name=pkg.description \
     value="FastCGI plugin for Apache Web Server Version 2.2"
-set name=com.oracle.info.description value="the FastCGI plugin for Apache Web Server V2.2"
+set name=com.oracle.info.description \
+    value="the FastCGI plugin for Apache Web Server V2.2"
 set name=com.oracle.info.tpno value=$(TPNO)
 set name=info.classification \
     value="org.opensolaris.category.2008:Web Services/Application and Web Servers"
-set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
-set name=org.opensolaris.arc-caseid \
-    value=LSARC/2009/600
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=LSARC/2009/600
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+file fcgid.conf path=etc/apache2/2.2/conf.d/fcgid.conf mode=0644 \
+    original_name=SUNWapch22m-fcgid:etc/apache2/2.2/conf.d/fcgid.conf \
+    preserve=renamenew
+file path=usr/apache2/2.2/libexec/$(MACH64)/mod_fcgid.so
+file path=usr/apache2/2.2/libexec/mod_fcgid.so
+file path=usr/apache2/2.2/manual/mod/mod_fcgid.html
+file path=usr/apache2/2.2/manual/mod/mod_fcgid.html.en
 
 
 license apache.license license="Apache v2.0"
-
-file fcgid.conf path=etc/apache2/2.2/conf.d/fcgid.conf mode=0644 preserve=renamenew \
-    original_name=SUNWapch22m-fcgid:etc/apache2/2.2/conf.d/fcgid.conf
-file path=usr/apache2/2.2/libexec/mod_fcgid.so
-file path=usr/apache2/2.2/libexec/$(MACH64)/mod_fcgid.so
-file path=usr/apache2/2.2/manual/mod/mod_fcgid.html.en
-file path=usr/apache2/2.2/manual/mod/mod_fcgid.html

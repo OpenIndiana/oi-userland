@@ -18,40 +18,46 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr/share/doc/bind/html/(.+)$ -> \
-	set action.hash doc/arm/%<\1> >
-
+    set action.hash doc/arm/%<\1> >
 set name=pkg.fmri \
     value=pkg:/service/network/dns/bind@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="BIND DNS name server and configuration tools."
 set name=pkg.description \
     value="BIND is open source software that implements the Domain Name System (DNS) protocols for the Internet.  This package contains the DNS server 'named' and tools used to setup and validate configuration."
-set name=pkg.summary \
-    value="BIND DNS name server and configuration tools."
-set name=com.oracle.info.description value="the BIND DNS name server and configuration tools"
-set name=com.oracle.info.tpno value=$(TPNO)
-set name=info.classification \
-    value="org.opensolaris.category.2008:System/Services"
-set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
-set name=org.opensolaris.arc-caseid \
-	value=PSARC/2009/308
-set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 
 # This package name has known conflicts with other packages in the WOS
-set pkg.linted.pkglint.manifest004=true
+set name=pkg.linted.pkglint.manifest004 value=true
+set name=com.oracle.info.description \
+    value="the BIND DNS name server and configuration tools"
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification value=org.opensolaris.category.2008:System/Services
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2009/308
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 
 # Solaris additions
 file Solaris/server.xml path=lib/svc/manifest/network/dns/server.xml
 file Solaris/dns-server.sh path=lib/svc/method/dns-server mode=0555
 
+# Tools
+file path=usr/sbin/dnssec-dsfromkey
+file path=usr/sbin/dnssec-keyfromlabel
+file path=usr/sbin/dnssec-keygen
+file path=usr/sbin/dnssec-signzone
+file path=usr/sbin/named
+file path=usr/sbin/named-checkconf
+file path=usr/sbin/named-checkzone
+link path=usr/sbin/named-compilezone target=named-checkzone
+
 # Documentation
 file doc/arm/Bv9ARM.pdf path=usr/share/doc/bind/Bv9ARM.pdf
-file path=usr/share/doc/bind/html/Bv9ARM.html
 file path=usr/share/doc/bind/html/Bv9ARM.ch01.html
 file path=usr/share/doc/bind/html/Bv9ARM.ch02.html
 file path=usr/share/doc/bind/html/Bv9ARM.ch03.html
@@ -62,6 +68,7 @@ file path=usr/share/doc/bind/html/Bv9ARM.ch07.html
 file path=usr/share/doc/bind/html/Bv9ARM.ch08.html
 file path=usr/share/doc/bind/html/Bv9ARM.ch09.html
 file path=usr/share/doc/bind/html/Bv9ARM.ch10.html
+file path=usr/share/doc/bind/html/Bv9ARM.html
 file path=usr/share/doc/bind/html/man.dig.html
 file path=usr/share/doc/bind/html/man.dnssec-dsfromkey.html
 file path=usr/share/doc/bind/html/man.dnssec-keyfromlabel.html
@@ -75,23 +82,7 @@ file path=usr/share/doc/bind/html/man.nsupdate.html
 file path=usr/share/doc/bind/html/man.rndc-confgen.html
 file path=usr/share/doc/bind/html/man.rndc.conf.html
 file path=usr/share/doc/bind/html/man.rndc.html
-
-# Tools
-file path=usr/sbin/dnssec-dsfromkey
-file path=usr/sbin/dnssec-keyfromlabel
-file path=usr/sbin/dnssec-keygen
-file path=usr/sbin/dnssec-signzone
-file path=usr/sbin/named
-file path=usr/sbin/named-checkconf
-file path=usr/sbin/named-checkzone
-link path=usr/sbin/named-compilezone target=named-checkzone
-
-legacy pkg=SUNWbind \
-       name="BIND DNS Name server" \
-       desc="BIND DNS Name server"
-
-legacy pkg=SUNWbindr \
-       name="BIND Name server Manifest" \
-       desc="BIND Name server Manifest"
-
+legacy pkg=SUNWbind desc="BIND DNS Name server" name="BIND DNS Name server"
+legacy pkg=SUNWbindr desc="BIND Name server Manifest" \
+    name="BIND Name server Manifest"
 license bind.license license="ISC license"

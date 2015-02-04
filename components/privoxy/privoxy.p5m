@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability committed>
@@ -32,24 +32,19 @@
 <transform file path=etc/privoxy/.* -> default mode 0644>
 <transform file path=(etc/privoxy/.*) -> default original_name SUNWprivoxy:%<1>>
 <transform file path=etc/privoxy/.* -> default preserve renamenew>
-
 set name=pkg.fmri \
     value=pkg:/web/proxy/privoxy@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.description value="Privoxy is a non-caching web proxy with advanced filtering capabilities for enhancing privacy, modifying web page data and HTTP headers, controlling access, and removing ads and other obnoxious Internet junk"
 set name=pkg.summary value="Privacy-enhancing, ad-removing web proxy"
+set name=pkg.description \
+    value="Privoxy is a non-caching web proxy with advanced filtering capabilities for enhancing privacy, modifying web page data and HTTP headers, controlling access, and removing ads and other obnoxious Internet junk"
 set name=com.oracle.info.description value="the privoxy web proxy"
 set name=com.oracle.info.tpno value=$(TPNO)
-set name=info.classification value="org.opensolaris.category.2008:Web Services/Application and Web Servers"
+set name=info.classification \
+    value="org.opensolaris.category.2008:Web Services/Application and Web Servers"
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid \
-    value=LSARC/2008/433
+set name=org.opensolaris.arc-caseid value=LSARC/2008/433
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-
-license privoxy.copyright license='GPLv2'
-
-dir path=var/log/privoxy group=webservd owner=webservd
-
 file path=etc/privoxy/config
 file path=etc/privoxy/default.action
 file path=etc/privoxy/default.filter
@@ -80,8 +75,8 @@ file path=etc/privoxy/templates/mod-local-help
 file path=etc/privoxy/templates/mod-support-and-service
 file path=etc/privoxy/templates/mod-title
 file path=etc/privoxy/templates/mod-unstable-warning
-file path=etc/privoxy/templates/no-such-domain
 file path=etc/privoxy/templates/no-server-data
+file path=etc/privoxy/templates/no-such-domain
 file path=etc/privoxy/templates/show-request
 file path=etc/privoxy/templates/show-status
 file path=etc/privoxy/templates/show-status-file
@@ -94,12 +89,13 @@ file path=etc/privoxy/templates/url-info-osd.xml
 file path=etc/privoxy/trust
 file path=etc/privoxy/user.action
 file path=etc/privoxy/user.filter
-
+file files/http-privoxy.xml path=lib/svc/manifest/network/http-privoxy.xml
 file files/http-privoxy path=lib/svc/method/http-privoxy
-file files/http-privoxy.xml path=lib/svc/manifest/network/http-privoxy.xml 
-
+file path=usr/lib/privoxy mode=0555
 file path=usr/share/doc/privoxy/AUTHORS
 file path=usr/share/doc/privoxy/ChangeLog
+file path=usr/share/doc/privoxy/LICENSE
+file path=usr/share/doc/privoxy/README
 file path=usr/share/doc/privoxy/developer-manual/coding.html
 file path=usr/share/doc/privoxy/developer-manual/contact.html
 file path=usr/share/doc/privoxy/developer-manual/copyright.html
@@ -120,10 +116,8 @@ file path=usr/share/doc/privoxy/faq/installation.html
 file path=usr/share/doc/privoxy/faq/misc.html
 file path=usr/share/doc/privoxy/faq/trouble.html
 file path=usr/share/doc/privoxy/index.html
-file path=usr/share/doc/privoxy/p_doc.css
-file path=usr/share/doc/privoxy/LICENSE
-file path=usr/share/doc/privoxy/README
 file path=usr/share/doc/privoxy/man-page/privoxy-man-page.html
+file path=usr/share/doc/privoxy/p_doc.css
 file path=usr/share/doc/privoxy/user-manual/actions-file.html
 file path=usr/share/doc/privoxy/user-manual/appendix.html
 file path=usr/share/doc/privoxy/user-manual/config.html
@@ -136,13 +130,13 @@ file path=usr/share/doc/privoxy/user-manual/index.html
 file path=usr/share/doc/privoxy/user-manual/installation.html
 file path=usr/share/doc/privoxy/user-manual/introduction.html
 file path=usr/share/doc/privoxy/user-manual/p_doc.css
-file path=usr/share/doc/privoxy/user-manual/proxy_setup.jpg
 file path=usr/share/doc/privoxy/user-manual/proxy2.jpg
+file path=usr/share/doc/privoxy/user-manual/proxy_setup.jpg
 file path=usr/share/doc/privoxy/user-manual/quickstart.html
 file path=usr/share/doc/privoxy/user-manual/seealso.html
 file path=usr/share/doc/privoxy/user-manual/startup.html
 file path=usr/share/doc/privoxy/user-manual/templates.html
 file path=usr/share/doc/privoxy/user-manual/whatsnew.html
 file path=usr/share/man/man1/privoxy.1
-
-file path=usr/lib/privoxy mode=0555
+dir  path=var/log/privoxy owner=webservd group=webservd
+license privoxy.copyright license=GPLv2

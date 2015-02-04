@@ -18,16 +18,16 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 <transform file path=usr/squid/libexec/.+ ->default mode 0555>
 set name=pkg.fmri \
     value=pkg:/web/proxy/squid@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Squid Web Proxy Cache"
 set name=pkg.description \
     value="Squid is a caching proxy for the Web supporting HTTP, HTTPS, FTP, and more."
-set name=pkg.summary value="Squid Web Proxy Cache"
 set name=com.oracle.info.description value="the Squid Web Proxy Cache"
 set name=com.oracle.info.tpno value=$(TPNO)
 set name=info.classification \
@@ -37,34 +37,29 @@ set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=LSARC/2009/130
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license squid.license license=GPLv2
-
-# smf stuff to control start/stop of squid
-file files/http-squid path=lib/svc/method/http-squid \
-     restart_fmri=svc:/network/http:squid
-file files/http-squid.xml path=lib/svc/manifest/network/http-squid.xml
-
 # special attributes
 file path=etc/squid/cachemgr.conf group=webservd mode=0644 \
     original_name=SUNWsquid:etc/squid/cachemgr.conf preserve=renamenew
-file path=etc/squid/mime.conf group=webservd mode=0644 \
-    original_name=SUNWsquid:etc/squid/mime.conf preserve=renamenew
-file path=etc/squid/msntauth.conf group=webservd mode=0644 \
-    original_name=SUNWsquid:etc/squid/msntauth.conf preserve=renamenew
-file path=etc/squid/squid.conf group=webservd mode=0644 \
-    original_name=SUNWsquid:etc/squid/squid.conf preserve=renamenew
-dir path=var/squid/cache group=webservd owner=webservd mode=0755
-dir path=var/squid/logs group=webservd owner=webservd mode=0755
-dir path=var/squid/run group=webservd owner=webservd mode=0755
 
 # from here on files have no modified attributes
 file path=etc/squid/cachemgr.conf.default
 file path=etc/squid/errorpage.css
 file path=etc/squid/errorpage.css.default
+file path=etc/squid/mime.conf group=webservd mode=0644 \
+    original_name=SUNWsquid:etc/squid/mime.conf preserve=renamenew
 file path=etc/squid/mime.conf.default
+file path=etc/squid/msntauth.conf group=webservd mode=0644 \
+    original_name=SUNWsquid:etc/squid/msntauth.conf preserve=renamenew
 file path=etc/squid/msntauth.conf.default
+file path=etc/squid/squid.conf group=webservd mode=0644 \
+    original_name=SUNWsquid:etc/squid/squid.conf preserve=renamenew
 file path=etc/squid/squid.conf.default
 file path=etc/squid/squid.conf.documented
+file files/http-squid.xml path=lib/svc/manifest/network/http-squid.xml
+
+# smf stuff to control start/stop of squid
+file files/http-squid path=lib/svc/method/http-squid \
+    restart_fmri=svc:/network/http:squid
 file path=usr/squid/bin/squidclient
 file path=usr/squid/libexec/cachemgr.cgi
 file path=usr/squid/libexec/digest_ldap_auth
@@ -2083,3 +2078,7 @@ file path=usr/squid/share/icons/anthony-unknown.gif
 file path=usr/squid/share/icons/anthony-xbm.gif
 file path=usr/squid/share/icons/anthony-xpm.gif
 file path=usr/squid/share/mib.txt
+dir  path=var/squid/cache owner=webservd group=webservd mode=0755
+dir  path=var/squid/logs owner=webservd group=webservd mode=0755
+dir  path=var/squid/run owner=webservd group=webservd mode=0755
+license squid.license license=GPLv2

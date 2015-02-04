@@ -18,12 +18,11 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr/lib/git-core/.* -> default mode 0555>
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
-
 set name=pkg.fmri \
     value=pkg:/developer/versioning/git@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="git - Fast Version Control System"
@@ -37,9 +36,6 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=LSARC/2008/360
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-
-license git.license license=GPLv2
-
 hardlink path=usr/bin/git target=../lib/git-core/git-cherry-pick
 hardlink path=usr/bin/git-cvsserver target=../lib/git-core/git-cvsserver
 hardlink path=usr/bin/git-receive-pack target=../lib/git-core/git-cherry-pick
@@ -486,3 +482,4 @@ file path=usr/share/man/man5/gitrevisions.5
 file path=usr/share/man/man5/gittutorial-2.5
 file path=usr/share/man/man5/gittutorial.5
 file path=usr/share/man/man5/gitworkflows.5
+license git.license license=GPLv2

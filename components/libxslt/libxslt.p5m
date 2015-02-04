@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
@@ -31,8 +31,7 @@ set name=info.classification \
     value=org.opensolaris.category.2008:System/Libraries
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid \
-    value=PSARC/2002/244
+set name=org.opensolaris.arc-caseid value=PSARC/2002/244
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 file path=usr/bin/xslt-config facet.devel=true
 file usr/bin/$(MACH64)/xsltproc path=usr/bin/xsltproc
@@ -60,13 +59,17 @@ file path=usr/include/libxslt/xsltconfig.h
 file path=usr/include/libxslt/xsltexports.h
 file path=usr/include/libxslt/xsltlocale.h
 file path=usr/include/libxslt/xsltutils.h
+link path=usr/lib/$(MACH64)/libexslt.so target=libexslt.so.0
 file path=usr/lib/$(MACH64)/libexslt.so.0
+link path=usr/lib/$(MACH64)/libxslt.so target=libxslt.so.1
 file path=usr/lib/$(MACH64)/libxslt.so.1
 file path=usr/lib/$(MACH64)/llib-lexslt.ln
 file path=usr/lib/$(MACH64)/llib-lxslt.ln
 file path=usr/lib/$(MACH64)/pkgconfig/libexslt.pc
 file path=usr/lib/$(MACH64)/pkgconfig/libxslt.pc
+link path=usr/lib/libexslt.so target=./libexslt.so.0
 file path=usr/lib/libexslt.so.0
+link path=usr/lib/libxslt.so target=./libxslt.so.1
 file path=usr/lib/libxslt.so.1
 file llib-lexslt path=usr/lib/llib-lexslt
 file path=usr/lib/llib-lexslt.ln
@@ -170,15 +173,9 @@ file path=usr/share/man/man3/libexslt.3
 file path=usr/share/man/man3/libxslt.3
 legacy pkg=SUNWlxsl desc="The XSLT library" name="The XSLT library"
 license xsl.license license=SUNWlxsl.copyright
-link path=usr/lib/$(MACH64)/libexslt.so target=libexslt.so.0
-link path=usr/lib/$(MACH64)/libxslt.so target=libxslt.so.1
-link path=usr/lib/libexslt.so target=./libexslt.so.0
-link path=usr/lib/libxslt.so target=./libxslt.so.1
-
-depend fmri=library/python/libxsl-26@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
-    predicate=runtime/python-26 \
-    type=conditional
-
-depend fmri=library/python/libxsl-27@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
-    predicate=runtime/python-27 \
-    type=conditional
+depend type=conditional \
+    fmri=library/python/libxsl-26@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
+    predicate=runtime/python-26
+depend type=conditional \
+    fmri=library/python/libxsl-27@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
+    predicate=runtime/python-27

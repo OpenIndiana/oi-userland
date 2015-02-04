@@ -20,14 +20,12 @@
 #
 
 #
-# Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 <transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
 set name=org.opensolaris.smf.fmri value=svc:/application/puppet:agent \
     value=svc:/application/puppet:master
 dir  path=etc/puppet owner=puppet group=puppet mode=0755
-dir  path=var/lib/puppet owner=puppet group=puppet mode=0755
-dir  path=var/log/puppet owner=puppet group=puppet mode=0755
 file path=etc/puppet/auth.conf owner=puppet group=bin mode=0444
 file files/solaris/lib/puppet/provider/address_object/solaris.rb \
     path=etc/puppet/modules/solaris/lib/puppet/provider/address_object/solaris.rb \
@@ -192,6 +190,8 @@ file path=usr/share/man/man8/puppet-resource_type.8
 file path=usr/share/man/man8/puppet-secret_agent.8
 file path=usr/share/man/man8/puppet-status.8
 file path=usr/share/man/man8/puppet.8
+dir  path=var/lib/puppet owner=puppet group=puppet mode=0755
+dir  path=var/log/puppet owner=puppet group=puppet mode=0755
 group groupname=puppet gid=40
 user username=puppet ftpuser=false gcos-field="Puppet Admin" group=puppet \
     home-dir=/etc/puppet login-shell=/bin/false uid=40

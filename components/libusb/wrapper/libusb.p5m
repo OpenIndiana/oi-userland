@@ -18,39 +18,33 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
     value=pkg:/system/library/usb/libusb@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.human-version value=$(COMPONENT_VERSION)
 set name=pkg.summary value="Sun wrapper library for libusb"
+set name=pkg.human-version value=$(COMPONENT_VERSION)
 set name=com.oracle.info.description value="the wrapper library for libusb"
 set name=com.oracle.info.tpno value=$(TPNO)
 set name=info.classification \
-    value="org.opensolaris.category.2008:System/Libraries"
+    value=org.opensolaris.category.2008:System/Libraries
 set name=info.source-url value=http://opensolaris.org/
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid \
-    value=PSARC/2003/721
+set name=org.opensolaris.arc-caseid value=PSARC/2003/721
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 
 file $(MACH32)/libusb-config path=usr/bin/libusb-config
 file $(MACH32)/usb.h path=usr/include/usb.h
-file $(MACH32)/libusb.txt path=usr/share/doc/libusb/libusb.txt
-file $(MACH32)/libusb.so.1 path=usr/lib/libusb.so.1
-file $(MACH64)/libusb.so.1 path=usr/lib/$(MACH64)/libusb.so.1
-file $(MACH32)/libusb.pc path=usr/lib/pkgconfig/libusb.pc
-file libusb-64.pc path=usr/lib/$(MACH64)/pkgconfig/libusb.pc
-
 link path=usr/lib/$(MACH64)/libusb.so target=libusb.so.1
+file $(MACH64)/libusb.so.1 path=usr/lib/$(MACH64)/libusb.so.1
+file libusb-64.pc path=usr/lib/$(MACH64)/pkgconfig/libusb.pc
 link path=usr/lib/libusb.so target=libusb.so.1
-
-license libusb.license license="BSD"
-
-legacy pkg=SUNWlibusb \
-	name="Sun wrapper library for libusb" \
-	desc="Sun wrapper library for libusb"
-
-depend fmri=system/library/usb/libusbugen type=require
+file $(MACH32)/libusb.so.1 path=usr/lib/libusb.so.1
+file $(MACH32)/libusb.pc path=usr/lib/pkgconfig/libusb.pc
+file $(MACH32)/libusb.txt path=usr/share/doc/libusb/libusb.txt
+legacy pkg=SUNWlibusb desc="Sun wrapper library for libusb" \
+    name="Sun wrapper library for libusb"
+license libusb.license license=BSD
+depend type=require fmri=system/library/usb/libusbugen

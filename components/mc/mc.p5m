@@ -18,24 +18,27 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 set name=pkg.fmri value=pkg:/file/mc@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="The GNU Midnight Commander file manager"
 set name=pkg.description \
     value="GNU Midnight Commander is a full-screen text mode application that allows user to copy, move and delete files and whole directory trees, search for files and run commands in the subshell"
-set name=pkg.summary value="The GNU Midnight Commander file manager"
-set name=com.oracle.info.description value="The GNU Midnight Commander file manager"
+set name=com.oracle.info.description \
+    value="The GNU Midnight Commander file manager"
 set name=com.oracle.info.tpno value=$(TPNO)
 set name=info.classification \
     value="org.opensolaris.category.2008:Desktop (GNOME)/File Managers"
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid \
-    value=LSARC/2008/202
+set name=org.opensolaris.arc-caseid value=LSARC/2008/202
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 file usr/bin/$(MACH64)/mc path=usr/bin/mc
+link path=usr/bin/mcdiff target=mc
+link path=usr/bin/mcedit target=mc
+link path=usr/bin/mcview target=mc
 file ABOUT-NLS path=usr/share/doc/mc/ABOUT-NLS
 file AUTHORS path=usr/share/doc/mc/AUTHORS
 file COPYING path=usr/share/doc/mc/COPYING
@@ -151,9 +154,13 @@ file path=usr/share/mc/fish/mv
 file path=usr/share/mc/fish/rmdir
 file path=usr/share/mc/fish/send
 file path=usr/share/mc/fish/unlink
-file path=usr/share/mc/mc.charsets
-file path=usr/share/mc/mc.ext
-file path=usr/share/mc/mcedit.menu
+file path=usr/share/mc/help/mc.hlp
+file path=usr/share/mc/help/mc.hlp.es
+file path=usr/share/mc/help/mc.hlp.hu
+file path=usr/share/mc/help/mc.hlp.it
+file path=usr/share/mc/help/mc.hlp.pl
+file path=usr/share/mc/help/mc.hlp.ru
+file path=usr/share/mc/help/mc.hlp.sr
 file path=usr/share/mc/hints/mc.hint
 file path=usr/share/mc/hints/mc.hint.cs
 file path=usr/share/mc/hints/mc.hint.es
@@ -165,19 +172,15 @@ file path=usr/share/mc/hints/mc.hint.ru
 file path=usr/share/mc/hints/mc.hint.sr
 file path=usr/share/mc/hints/mc.hint.uk
 file path=usr/share/mc/hints/mc.hint.zh
-file path=usr/share/mc/help/mc.hlp
-file path=usr/share/mc/help/mc.hlp.es
-file path=usr/share/mc/help/mc.hlp.hu
-file path=usr/share/mc/help/mc.hlp.it
-file path=usr/share/mc/help/mc.hlp.pl
-file path=usr/share/mc/help/mc.hlp.ru
-file path=usr/share/mc/help/mc.hlp.sr
-file path=usr/share/mc/mc.keymap
+file path=usr/share/mc/mc.charsets
 file path=usr/share/mc/mc.default.keymap
 file path=usr/share/mc/mc.emacs.keymap
+file path=usr/share/mc/mc.ext
+file path=usr/share/mc/mc.keymap
 file path=usr/share/mc/mc.lib
 file path=usr/share/mc/mc.menu
 file path=usr/share/mc/mc.menu.sr
+file path=usr/share/mc/mcedit.menu
 file path=usr/share/mc/sfs.ini
 file path=usr/share/mc/skins/dark.ini
 file path=usr/share/mc/skins/darkfar.ini
@@ -259,6 +262,3 @@ file path=usr/share/mc/syntax/xml.syntax
 file path=usr/share/mc/syntax/yum-repo.syntax
 file path=usr/share/mc/syntax/yxx.syntax
 license mc.license license=GPLv3
-link path=usr/bin/mcdiff target=mc
-link path=usr/bin/mcedit target=mc
-link path=usr/bin/mcview target=mc

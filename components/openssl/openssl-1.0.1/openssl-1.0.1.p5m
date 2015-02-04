@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
@@ -36,109 +36,22 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2011/025
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+dir  path=etc/openssl/certs group=sys
 
 # Basic directories, links, and a configuration file.
 file etc/openssl/openssl.cnf path=etc/openssl/default/openssl.cnf group=sys \
     mode=0644 preserve=true
 file path=etc/openssl/openssl.cnf group=sys mode=0644 \
     original_name=SUNWopenssl:etc/sfw/openssl/openssl.cnf preserve=true
-dir  path=etc/openssl/certs group=sys
-dir  path=lib/openssl/engines group=sys mode=0755
-dir  path=lib/openssl/engines/$(MACH64) group=sys mode=0755
 dir  path=etc/openssl/private group=sys mode=0700
 link path=etc/sfw/openssl target=../openssl
-link path=lib/openssl/default/64 target=$(MACH64)
-link path=lib/openssl/engines/64 target=$(MACH64)
-
-# Commands.
-file $(MACH32)/apps/openssl path=lib/openssl/default/$(MACH32)/openssl \
-    owner=root group=bin mode=0555
-file $(MACH64)/apps/openssl path=lib/openssl/default/openssl owner=root \
-    group=bin mode=0555
-file etc/openssl/misc/CA.pl path=lib/openssl/default/CA.pl
-link path=usr/sfw/bin/$(MACH64)/openssl target=../../../bin/openssl
-link path=usr/sfw/bin/openssl target=../../bin/openssl
-
-# Mediator links for the commands
-link path=usr/bin/openssl target=../../lib/openssl/default/openssl \
-    mediator=openssl mediator-implementation=default mediator-priority=vendor
-link path=usr/bin/$(MACH32)/openssl \
-    target=../../../lib/openssl/default/$(MACH32)/openssl mediator=openssl \
-    mediator-implementation=default mediator-priority=vendor
-link path=usr/bin/CA.pl target=../../lib/openssl/default/CA.pl \
-    mediator=openssl mediator-implementation=default mediator-priority=vendor
-
-# 32 bit libraries, lint libraries, and engines.
-file $(MACH32)/engines/libpk11.so \
-    path=lib/openssl/default/engines/libpk11.so.1 owner=root group=bin
-file $(MACH32)/libcrypto.so.1.0.0 path=lib/openssl/default/libcrypto.so.1.0.0
-file $(MACH32)/libssl.so.1.0.0 path=lib/openssl/default/libssl.so.1.0.0 \
-    owner=root group=bin mode=0555
-file llib-lcrypto path=lib/openssl/default/llib-lcrypto
-file llib-lssl path=lib/openssl/default/llib-lssl
-file $(MACH32)/llib-lcrypto.ln path=lib/openssl/default/llib-lcrypto.ln
-file $(MACH32)/llib-lssl.ln path=lib/openssl/default/llib-lssl.ln
-link path=lib/libcrypto.so target=libcrypto.so.1.0.0
-link path=lib/libssl.so target=libssl.so.1.0.0
-link path=lib/openssl/default/engines/libpk11.so target=libpk11.so.1
-link path=lib/openssl/default/libcrypto.so target=libcrypto.so.1.0.0
-link path=lib/openssl/engines/libpk11.so target=libpk11.so.1
-link path=lib/openssl/default/libssl.so target=libssl.so.1.0.0
-link path=usr/lib/libcrypto.so target=../../lib/libcrypto.so
-link path=usr/lib/libcrypto.so.1.0.0 target=../../lib/libcrypto.so.1.0.0
-link path=usr/lib/libssl.so target=../../lib/libssl.so
-link path=usr/lib/libssl.so.1.0.0 target=../../lib/libssl.so.1.0.0
-
-# Mediator links for 32-bit libraries
-link path=lib/libcrypto.so.1.0.0 \
-    target=openssl/default/libcrypto.so.1.0.0 mediator=openssl \
-    mediator-implementation=default mediator-priority=vendor
-link path=lib/libssl.so.1.0.0 target=openssl/default/libssl.so.1.0.0 \
-    mediator=openssl mediator-implementation=default mediator-priority=vendor
-link path=lib/llib-lcrypto target=openssl/default/llib-lcrypto \
-    mediator=openssl mediator-implementation=default mediator-priority=vendor
-link path=lib/llib-lcrypto.ln target=openssl/default/llib-lcrypto.ln \
-    mediator=openssl mediator-implementation=default mediator-priority=vendor
-link path=lib/llib-lssl target=openssl/default/llib-lssl \
-    mediator=openssl mediator-implementation=default mediator-priority=vendor
-link path=lib/llib-lssl.ln target=openssl/default/llib-lssl.ln \
-    mediator=openssl mediator-implementation=default mediator-priority=vendor
-link path=lib/openssl/engines/libpk11.so.1 \
-    target=../default/engines/libpk11.so.1 mediator=openssl \
-    mediator-implementation=default mediator-priority=vendor
-
-# 64 bit libraries, lint libraries, and engines.
-file $(MACH64)/engines/libpk11.so \
-    path=lib/openssl/default/engines/$(MACH64)/libpk11.so.1 owner=root \
-    group=bin mode=0555
-file $(MACH64)/libcrypto.so.1.0.0 \
-    path=lib/openssl/default/$(MACH64)/libcrypto.so.1.0.0
-file $(MACH64)/libssl.so.1.0.0 \
-    path=lib/openssl/default/$(MACH64)/libssl.so.1.0.0 owner=root group=bin \
-    mode=0555
-file llib-lcrypto path=lib/openssl/default/$(MACH64)/llib-lcrypto
-file llib-lssl path=lib/openssl/default/$(MACH64)/llib-lssl
-file $(MACH64)/llib-lcrypto.ln \
-    path=lib/openssl/default/$(MACH64)/llib-lcrypto.ln
-file $(MACH64)/llib-lssl.ln path=lib/openssl/default/$(MACH64)/llib-lssl.ln
 link path=lib/$(MACH64)/libcrypto.so target=libcrypto.so.1.0.0
-link path=lib/$(MACH64)/libssl.so target=libssl.so.1.0.0
-link path=lib/openssl/default/$(MACH64)/libcrypto.so target=libcrypto.so.1.0.0
-link path=lib/openssl/default/$(MACH64)/libssl.so target=libssl.so.1.0.0
-link path=lib/openssl/default/engines/$(MACH64)/libpk11.so target=libpk11.so.1
-link path=lib/openssl/engines/$(MACH64)/libpk11.so target=libpk11.so.1
-link path=usr/lib/$(MACH64)/libcrypto.so \
-    target=../../../lib/$(MACH64)/libcrypto.so
-link path=usr/lib/$(MACH64)/libcrypto.so.1.0.0 \
-    target=../../../lib/$(MACH64)/libcrypto.so.1.0.0
-link path=usr/lib/$(MACH64)/libssl.so target=../../../lib/$(MACH64)/libssl.so
-link path=usr/lib/$(MACH64)/libssl.so.1.0.0 \
-    target=../../../lib/$(MACH64)/libssl.so.1.0.0
 
 # Mediator links for 64-bit libraries
 link path=lib/$(MACH64)/libcrypto.so.1.0.0 \
     target=../openssl/default/$(MACH64)/libcrypto.so.1.0.0 mediator=openssl \
     mediator-implementation=default mediator-priority=vendor
+link path=lib/$(MACH64)/libssl.so target=libssl.so.1.0.0
 link path=lib/$(MACH64)/libssl.so.1.0.0 \
     target=../openssl/default/$(MACH64)/libssl.so.1.0.0 mediator=openssl \
     mediator-implementation=default mediator-priority=vendor
@@ -154,9 +67,87 @@ link path=lib/$(MACH64)/llib-lssl \
 link path=lib/$(MACH64)/llib-lssl.ln \
     target=../openssl/default/$(MACH64)/llib-lssl.ln mediator=openssl \
     mediator-implementation=default mediator-priority=vendor
+link path=lib/libcrypto.so target=libcrypto.so.1.0.0
+
+# Mediator links for 32-bit libraries
+link path=lib/libcrypto.so.1.0.0 target=openssl/default/libcrypto.so.1.0.0 \
+    mediator=openssl mediator-implementation=default mediator-priority=vendor
+link path=lib/libssl.so target=libssl.so.1.0.0
+link path=lib/libssl.so.1.0.0 target=openssl/default/libssl.so.1.0.0 \
+    mediator=openssl mediator-implementation=default mediator-priority=vendor
+link path=lib/llib-lcrypto target=openssl/default/llib-lcrypto \
+    mediator=openssl mediator-implementation=default mediator-priority=vendor
+link path=lib/llib-lcrypto.ln target=openssl/default/llib-lcrypto.ln \
+    mediator=openssl mediator-implementation=default mediator-priority=vendor
+link path=lib/llib-lssl target=openssl/default/llib-lssl mediator=openssl \
+    mediator-implementation=default mediator-priority=vendor
+link path=lib/llib-lssl.ln target=openssl/default/llib-lssl.ln \
+    mediator=openssl mediator-implementation=default mediator-priority=vendor
+
+# Commands.
+file $(MACH32)/apps/openssl path=lib/openssl/default/$(MACH32)/openssl \
+    owner=root group=bin mode=0555
+link path=lib/openssl/default/$(MACH64)/libcrypto.so target=libcrypto.so.1.0.0
+file $(MACH64)/libcrypto.so.1.0.0 \
+    path=lib/openssl/default/$(MACH64)/libcrypto.so.1.0.0
+link path=lib/openssl/default/$(MACH64)/libssl.so target=libssl.so.1.0.0
+file $(MACH64)/libssl.so.1.0.0 \
+    path=lib/openssl/default/$(MACH64)/libssl.so.1.0.0 owner=root group=bin \
+    mode=0555
+file llib-lcrypto path=lib/openssl/default/$(MACH64)/llib-lcrypto
+file $(MACH64)/llib-lcrypto.ln \
+    path=lib/openssl/default/$(MACH64)/llib-lcrypto.ln
+file llib-lssl path=lib/openssl/default/$(MACH64)/llib-lssl
+file $(MACH64)/llib-lssl.ln path=lib/openssl/default/$(MACH64)/llib-lssl.ln
+link path=lib/openssl/default/64 target=$(MACH64)
+file etc/openssl/misc/CA.pl path=lib/openssl/default/CA.pl
+link path=lib/openssl/default/engines/$(MACH64)/libpk11.so target=libpk11.so.1
+
+# 64 bit libraries, lint libraries, and engines.
+file $(MACH64)/engines/libpk11.so \
+    path=lib/openssl/default/engines/$(MACH64)/libpk11.so.1 owner=root \
+    group=bin mode=0555
+link path=lib/openssl/default/engines/libpk11.so target=libpk11.so.1
+
+# 32 bit libraries, lint libraries, and engines.
+file $(MACH32)/engines/libpk11.so \
+    path=lib/openssl/default/engines/libpk11.so.1 owner=root group=bin
+link path=lib/openssl/default/libcrypto.so target=libcrypto.so.1.0.0
+file $(MACH32)/libcrypto.so.1.0.0 path=lib/openssl/default/libcrypto.so.1.0.0
+link path=lib/openssl/default/libssl.so target=libssl.so.1.0.0
+file $(MACH32)/libssl.so.1.0.0 path=lib/openssl/default/libssl.so.1.0.0 \
+    owner=root group=bin mode=0555
+file llib-lcrypto path=lib/openssl/default/llib-lcrypto
+file $(MACH32)/llib-lcrypto.ln path=lib/openssl/default/llib-lcrypto.ln
+file llib-lssl path=lib/openssl/default/llib-lssl
+file $(MACH32)/llib-lssl.ln path=lib/openssl/default/llib-lssl.ln
+file $(MACH64)/apps/openssl path=lib/openssl/default/openssl owner=root \
+    group=bin mode=0555
+dir  path=lib/openssl/engines group=sys mode=0755
+dir  path=lib/openssl/engines/$(MACH64) group=sys mode=0755
+link path=lib/openssl/engines/$(MACH64)/libpk11.so target=libpk11.so.1
 link path=lib/openssl/engines/$(MACH64)/libpk11.so.1 \
     target=../../default/engines/$(MACH64)/libpk11.so.1 mediator=openssl \
     mediator-implementation=default mediator-priority=vendor
+link path=lib/openssl/engines/64 target=$(MACH64)
+link path=lib/openssl/engines/libpk11.so target=libpk11.so.1
+link path=lib/openssl/engines/libpk11.so.1 \
+    target=../default/engines/libpk11.so.1 mediator=openssl \
+    mediator-implementation=default mediator-priority=vendor
+
+# Wanboot static standalone openssl binaries
+file path=lib/openssl/wanboot/$(MACH64)/wanboot-openssl.o \
+    pkg.depend.bypass-generate=.* pkg.linted.userland.action001=true \
+    variant.arch=sparc
+link path=usr/bin/$(MACH32)/openssl \
+    target=../../../lib/openssl/default/$(MACH32)/openssl mediator=openssl \
+    mediator-implementation=default mediator-priority=vendor
+link path=usr/bin/CA.pl target=../../lib/openssl/default/CA.pl \
+    mediator=openssl mediator-implementation=default mediator-priority=vendor
+
+# Mediator links for the commands
+link path=usr/bin/openssl target=../../lib/openssl/default/openssl \
+    mediator=openssl mediator-implementation=default mediator-priority=vendor
 
 # Header and pkg files.
 file path=usr/include/openssl/aes.h
@@ -232,15 +223,23 @@ file path=usr/include/openssl/ui_compat.h
 file path=usr/include/openssl/x509.h
 file path=usr/include/openssl/x509_vfy.h
 file path=usr/include/openssl/x509v3.h
-
-# Wanboot static standalone openssl binaries
-file path=lib/openssl/wanboot/$(MACH64)/wanboot-openssl.o \
-    pkg.depend.bypass-generate=.* pkg.linted.userland.action001=true \
-    variant.arch=sparc
+link path=usr/lib/$(MACH64)/libcrypto.so \
+    target=../../../lib/$(MACH64)/libcrypto.so
+link path=usr/lib/$(MACH64)/libcrypto.so.1.0.0 \
+    target=../../../lib/$(MACH64)/libcrypto.so.1.0.0
+link path=usr/lib/$(MACH64)/libssl.so target=../../../lib/$(MACH64)/libssl.so
+link path=usr/lib/$(MACH64)/libssl.so.1.0.0 \
+    target=../../../lib/$(MACH64)/libssl.so.1.0.0
+file $(MACH64)/openssl.pc path=usr/lib/$(MACH64)/pkgconfig/openssl.pc
+link path=usr/lib/libcrypto.so target=../../lib/libcrypto.so
+link path=usr/lib/libcrypto.so.1.0.0 target=../../lib/libcrypto.so.1.0.0
+link path=usr/lib/libssl.so target=../../lib/libssl.so
+link path=usr/lib/libssl.so.1.0.0 target=../../lib/libssl.so.1.0.0
 
 # Manual pages.
 file $(MACH32)/openssl.pc path=usr/lib/pkgconfig/openssl.pc
-file $(MACH64)/openssl.pc path=usr/lib/$(MACH64)/pkgconfig/openssl.pc
+link path=usr/sfw/bin/$(MACH64)/openssl target=../../../bin/openssl
+link path=usr/sfw/bin/openssl target=../../bin/openssl
 file path=usr/share/man/man1openssl/CA.pl.1openssl
 file path=usr/share/man/man1openssl/asn1parse.1openssl
 file path=usr/share/man/man1openssl/ca.1openssl

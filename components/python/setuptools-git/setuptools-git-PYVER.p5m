@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
@@ -47,6 +47,10 @@ file path=usr/lib/python$(PYVER)/vendor-packages/setuptools_git/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/setuptools_git/utils.py
 license LICENSE.txt license=BSD
 
+# force the rename with an optional dependency on the old name
+depend type=optional \
+    fmri=library/python-2/setuptools-git-$(PYV)@1.0,5.12-5.12.0.0.0.41.0
+
 # force a dependency on the Python runtime
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
     pkg.debug.depend.path=usr/bin
@@ -54,7 +58,3 @@ depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
 # force a dependency on the setuptools-git package
 depend type=require \
     fmri=library/python/setuptools-git@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-
-# force the rename with an optional dependency on the old name
-depend type=optional \
-    fmri=library/python-2/setuptools-git-$(PYV)@1.0,5.12-5.12.0.0.0.41.0

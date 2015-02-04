@@ -18,23 +18,23 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
-set name=pkg.fmri value=pkg:/developer/lexer/flex@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri \
+    value=pkg:/developer/lexer/flex@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="Flex Lexer"
 set name=com.oracle.info.description value="the flex lexer utility"
 set name=com.oracle.info.tpno value=$(TPNO)
-set name=info.classification value="org.opensolaris.category.2008:Development/Other Languages"
-set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.classification \
+    value="org.opensolaris.category.2008:Development/Other Languages"
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
-set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2007/289
-
-license flex.license license='BSD'
-
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 file usr/bin/$(MACH64)/flex path=usr/bin/flex
 file path=usr/include/FlexLexer.h
+link path=usr/sfw/bin/flex target=../../bin/flex
 file path=usr/share/info/flex.info
 file path=usr/share/info/flex.info-1
 file path=usr/share/info/flex.info-2
@@ -55,10 +55,7 @@ file path=usr/share/locale/tr/LC_MESSAGES/flex.mo
 file path=usr/share/locale/vi/LC_MESSAGES/flex.mo
 file path=usr/share/locale/zh_CN/LC_MESSAGES/flex.mo
 file path=usr/share/man/man1/flex.1 mangler.man.stability=volatile
-link path=usr/sfw/bin/flex target=../../bin/flex
-
-depend fmri=__TBD pkg.debug.depend.file=usr/gnu/bin/m4 type=require
-
-legacy pkg=SUNWflexlex \
-	name="Flex Lexer" \
-	desc="The Flex Lexer - A lex replacement/substitute"
+legacy pkg=SUNWflexlex desc="The Flex Lexer - A lex replacement/substitute" \
+    name="Flex Lexer"
+license flex.license license=BSD
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/gnu/bin/m4

@@ -18,50 +18,59 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
 <transform file path=usr/bin/(.+) -> set action.hash usr/bin/$(MACH64)/%<1>>
-
 set name=pkg.fmri \
     value=pkg:/image/graphviz@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.description value="The Graphviz layout programs take descriptions of graphs in a simple text language, and make diagrams in useful formats, such as images and SVG for web pages, PDF or PostScript for inclusion in other documents; or display in an interactive graph browser.  Graphviz has many useful features for concrete diagrams, such as options for colors, fonts, tabular node layouts, line styles, hyperlinks, and custom shapes."
 set name=pkg.summary value="Graph visualization software"
-set name=com.oracle.info.description value="Graphviz graph visualization software"
+set name=pkg.description \
+    value="The Graphviz layout programs take descriptions of graphs in a simple text language, and make diagrams in useful formats, such as images and SVG for web pages, PDF or PostScript for inclusion in other documents; or display in an interactive graph browser.  Graphviz has many useful features for concrete diagrams, such as options for colors, fonts, tabular node layouts, line styles, hyperlinks, and custom shapes."
+set name=com.oracle.info.description \
+    value="Graphviz graph visualization software"
 set name=com.oracle.info.tpno value=$(TPNO)
 set name=info.classification \
     value="org.opensolaris.category.2008:Applications/System Utilities"
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2011/269
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-set name=org.opensolaris.arc-caseid \
-    value=PSARC/2011/269
-
 file path=usr/bin/acyclic
 file path=usr/bin/bcomps
 file path=usr/bin/ccomps
+link path=usr/bin/circo target=dot
 file path=usr/bin/cluster
 file path=usr/bin/diffimg
 file path=usr/bin/dijkstra
 file path=usr/bin/dot
+link path=usr/bin/dot2gxl target=gxl2gv
 file path=usr/bin/dotty
+link path=usr/bin/fdp target=dot
 file path=usr/bin/gc
 file path=usr/bin/gml2gv
+link path=usr/bin/gv2gxl target=gxl2gv
 file path=usr/bin/gvcolor
 file path=usr/bin/gvgen
 file path=usr/bin/gvmap
 file path=usr/bin/gvmap.sh
 file path=usr/bin/gvpack
 file path=usr/bin/gvpr
+link path=usr/bin/gxl2dot target=gxl2gv
 file path=usr/bin/gxl2gv
 file path=usr/bin/lefty
 file path=usr/bin/lneato
 file path=usr/bin/mm2gv
+link path=usr/bin/neato target=dot
 file path=usr/bin/nop
+link path=usr/bin/osage target=dot
+link path=usr/bin/patchwork target=dot
 file path=usr/bin/prune
 file path=usr/bin/sccmap
+link path=usr/bin/sfdp target=dot
 file path=usr/bin/tred
+link path=usr/bin/twopi target=dot
 file path=usr/bin/unflatten
 file path=usr/bin/vimdot
 file path=usr/include/graphviz/arith.h
@@ -93,22 +102,76 @@ file path=usr/include/graphviz/types.h
 file path=usr/include/graphviz/usershape.h
 file path=usr/include/graphviz/xdot.h
 link path=usr/lib/$(MACH64)/graphviz/config6 target=../../graphviz/config6
+link path=usr/lib/$(MACH64)/graphviz/libgvplugin_core.so \
+    target=libgvplugin_core.so.6.0.0
+link path=usr/lib/$(MACH64)/graphviz/libgvplugin_core.so.6 \
+    target=libgvplugin_core.so.6.0.0
 file path=usr/lib/$(MACH64)/graphviz/libgvplugin_core.so.6.0.0
+link path=usr/lib/$(MACH64)/graphviz/libgvplugin_dot_layout.so \
+    target=libgvplugin_dot_layout.so.6.0.0
+link path=usr/lib/$(MACH64)/graphviz/libgvplugin_dot_layout.so.6 \
+    target=libgvplugin_dot_layout.so.6.0.0
 file path=usr/lib/$(MACH64)/graphviz/libgvplugin_dot_layout.so.6.0.0
+link path=usr/lib/$(MACH64)/graphviz/libgvplugin_gd.so \
+    target=libgvplugin_gd.so.6.0.0
+link path=usr/lib/$(MACH64)/graphviz/libgvplugin_gd.so.6 \
+    target=libgvplugin_gd.so.6.0.0
 file path=usr/lib/$(MACH64)/graphviz/libgvplugin_gd.so.6.0.0
+link path=usr/lib/$(MACH64)/graphviz/libgvplugin_gdk_pixbuf.so \
+    target=libgvplugin_gdk_pixbuf.so.6.0.0
+link path=usr/lib/$(MACH64)/graphviz/libgvplugin_gdk_pixbuf.so.6 \
+    target=libgvplugin_gdk_pixbuf.so.6.0.0
 file path=usr/lib/$(MACH64)/graphviz/libgvplugin_gdk_pixbuf.so.6.0.0
+link path=usr/lib/$(MACH64)/graphviz/libgvplugin_gs.so \
+    target=libgvplugin_gs.so.6.0.0
+link path=usr/lib/$(MACH64)/graphviz/libgvplugin_gs.so.6 \
+    target=libgvplugin_gs.so.6.0.0
 file path=usr/lib/$(MACH64)/graphviz/libgvplugin_gs.so.6.0.0
+link path=usr/lib/$(MACH64)/graphviz/libgvplugin_gtk.so \
+    target=libgvplugin_gtk.so.6.0.0
+link path=usr/lib/$(MACH64)/graphviz/libgvplugin_gtk.so.6 \
+    target=libgvplugin_gtk.so.6.0.0
 file path=usr/lib/$(MACH64)/graphviz/libgvplugin_gtk.so.6.0.0
+link path=usr/lib/$(MACH64)/graphviz/libgvplugin_neato_layout.so \
+    target=libgvplugin_neato_layout.so.6.0.0
+link path=usr/lib/$(MACH64)/graphviz/libgvplugin_neato_layout.so.6 \
+    target=libgvplugin_neato_layout.so.6.0.0
 file path=usr/lib/$(MACH64)/graphviz/libgvplugin_neato_layout.so.6.0.0
+link path=usr/lib/$(MACH64)/graphviz/libgvplugin_pango.so \
+    target=libgvplugin_pango.so.6.0.0
+link path=usr/lib/$(MACH64)/graphviz/libgvplugin_pango.so.6 \
+    target=libgvplugin_pango.so.6.0.0
 file path=usr/lib/$(MACH64)/graphviz/libgvplugin_pango.so.6.0.0
+link path=usr/lib/$(MACH64)/graphviz/libgvplugin_rsvg.so \
+    target=libgvplugin_rsvg.so.6.0.0
+link path=usr/lib/$(MACH64)/graphviz/libgvplugin_rsvg.so.6 \
+    target=libgvplugin_rsvg.so.6.0.0
 file path=usr/lib/$(MACH64)/graphviz/libgvplugin_rsvg.so.6.0.0
+link path=usr/lib/$(MACH64)/graphviz/libgvplugin_xlib.so \
+    target=libgvplugin_xlib.so.6.0.0
+link path=usr/lib/$(MACH64)/graphviz/libgvplugin_xlib.so.6 \
+    target=libgvplugin_xlib.so.6.0.0
 file path=usr/lib/$(MACH64)/graphviz/libgvplugin_xlib.so.6.0.0
+link path=usr/lib/$(MACH64)/libcdt.so target=libcdt.so.5.0.0
+link path=usr/lib/$(MACH64)/libcdt.so.5 target=libcdt.so.5.0.0
 file path=usr/lib/$(MACH64)/libcdt.so.5.0.0
+link path=usr/lib/$(MACH64)/libcgraph.so target=libcgraph.so.6.0.0
+link path=usr/lib/$(MACH64)/libcgraph.so.6 target=libcgraph.so.6.0.0
 file path=usr/lib/$(MACH64)/libcgraph.so.6.0.0
+link path=usr/lib/$(MACH64)/libgraph.so target=libgraph.so.5.0.0
+link path=usr/lib/$(MACH64)/libgraph.so.5 target=libgraph.so.5.0.0
 file path=usr/lib/$(MACH64)/libgraph.so.5.0.0
+link path=usr/lib/$(MACH64)/libgvc.so target=libgvc.so.6.0.0
+link path=usr/lib/$(MACH64)/libgvc.so.6 target=libgvc.so.6.0.0
 file path=usr/lib/$(MACH64)/libgvc.so.6.0.0
+link path=usr/lib/$(MACH64)/libgvpr.so target=libgvpr.so.2.0.0
+link path=usr/lib/$(MACH64)/libgvpr.so.2 target=libgvpr.so.2.0.0
 file path=usr/lib/$(MACH64)/libgvpr.so.2.0.0
+link path=usr/lib/$(MACH64)/libpathplan.so target=libpathplan.so.4.0.0
+link path=usr/lib/$(MACH64)/libpathplan.so.4 target=libpathplan.so.4.0.0
 file path=usr/lib/$(MACH64)/libpathplan.so.4.0.0
+link path=usr/lib/$(MACH64)/libxdot.so target=libxdot.so.4.0.0
+link path=usr/lib/$(MACH64)/libxdot.so.4 target=libxdot.so.4.0.0
 file path=usr/lib/$(MACH64)/libxdot.so.4.0.0
 file path=usr/lib/$(MACH64)/pkgconfig/libcdt.pc
 file path=usr/lib/$(MACH64)/pkgconfig/libcgraph.pc
@@ -118,22 +181,67 @@ file path=usr/lib/$(MACH64)/pkgconfig/libgvpr.pc
 file path=usr/lib/$(MACH64)/pkgconfig/libpathplan.pc
 file path=usr/lib/$(MACH64)/pkgconfig/libxdot.pc
 file path=usr/lib/graphviz/config6
+link path=usr/lib/graphviz/libgvplugin_core.so target=libgvplugin_core.so.6.0.0
+link path=usr/lib/graphviz/libgvplugin_core.so.6 \
+    target=libgvplugin_core.so.6.0.0
 file path=usr/lib/graphviz/libgvplugin_core.so.6.0.0
+link path=usr/lib/graphviz/libgvplugin_dot_layout.so \
+    target=libgvplugin_dot_layout.so.6.0.0
+link path=usr/lib/graphviz/libgvplugin_dot_layout.so.6 \
+    target=libgvplugin_dot_layout.so.6.0.0
 file path=usr/lib/graphviz/libgvplugin_dot_layout.so.6.0.0
+link path=usr/lib/graphviz/libgvplugin_gd.so target=libgvplugin_gd.so.6.0.0
+link path=usr/lib/graphviz/libgvplugin_gd.so.6 target=libgvplugin_gd.so.6.0.0
 file path=usr/lib/graphviz/libgvplugin_gd.so.6.0.0
+link path=usr/lib/graphviz/libgvplugin_gdk_pixbuf.so \
+    target=libgvplugin_gdk_pixbuf.so.6.0.0
+link path=usr/lib/graphviz/libgvplugin_gdk_pixbuf.so.6 \
+    target=libgvplugin_gdk_pixbuf.so.6.0.0
 file path=usr/lib/graphviz/libgvplugin_gdk_pixbuf.so.6.0.0
+link path=usr/lib/graphviz/libgvplugin_gs.so target=libgvplugin_gs.so.6.0.0
+link path=usr/lib/graphviz/libgvplugin_gs.so.6 target=libgvplugin_gs.so.6.0.0
 file path=usr/lib/graphviz/libgvplugin_gs.so.6.0.0
+link path=usr/lib/graphviz/libgvplugin_gtk.so target=libgvplugin_gtk.so.6.0.0
+link path=usr/lib/graphviz/libgvplugin_gtk.so.6 target=libgvplugin_gtk.so.6.0.0
 file path=usr/lib/graphviz/libgvplugin_gtk.so.6.0.0
+link path=usr/lib/graphviz/libgvplugin_neato_layout.so \
+    target=libgvplugin_neato_layout.so.6.0.0
+link path=usr/lib/graphviz/libgvplugin_neato_layout.so.6 \
+    target=libgvplugin_neato_layout.so.6.0.0
 file path=usr/lib/graphviz/libgvplugin_neato_layout.so.6.0.0
+link path=usr/lib/graphviz/libgvplugin_pango.so \
+    target=libgvplugin_pango.so.6.0.0
+link path=usr/lib/graphviz/libgvplugin_pango.so.6 \
+    target=libgvplugin_pango.so.6.0.0
 file path=usr/lib/graphviz/libgvplugin_pango.so.6.0.0
+link path=usr/lib/graphviz/libgvplugin_rsvg.so target=libgvplugin_rsvg.so.6.0.0
+link path=usr/lib/graphviz/libgvplugin_rsvg.so.6 \
+    target=libgvplugin_rsvg.so.6.0.0
 file path=usr/lib/graphviz/libgvplugin_rsvg.so.6.0.0
+link path=usr/lib/graphviz/libgvplugin_xlib.so target=libgvplugin_xlib.so.6.0.0
+link path=usr/lib/graphviz/libgvplugin_xlib.so.6 \
+    target=libgvplugin_xlib.so.6.0.0
 file path=usr/lib/graphviz/libgvplugin_xlib.so.6.0.0
+link path=usr/lib/libcdt.so target=libcdt.so.5.0.0
+link path=usr/lib/libcdt.so.5 target=libcdt.so.5.0.0
 file path=usr/lib/libcdt.so.5.0.0
+link path=usr/lib/libcgraph.so target=libcgraph.so.6.0.0
+link path=usr/lib/libcgraph.so.6 target=libcgraph.so.6.0.0
 file path=usr/lib/libcgraph.so.6.0.0
+link path=usr/lib/libgraph.so target=libgraph.so.5.0.0
+link path=usr/lib/libgraph.so.5 target=libgraph.so.5.0.0
 file path=usr/lib/libgraph.so.5.0.0
+link path=usr/lib/libgvc.so target=libgvc.so.6.0.0
+link path=usr/lib/libgvc.so.6 target=libgvc.so.6.0.0
 file path=usr/lib/libgvc.so.6.0.0
+link path=usr/lib/libgvpr.so target=libgvpr.so.2.0.0
+link path=usr/lib/libgvpr.so.2 target=libgvpr.so.2.0.0
 file path=usr/lib/libgvpr.so.2.0.0
+link path=usr/lib/libpathplan.so target=libpathplan.so.4.0.0
+link path=usr/lib/libpathplan.so.4 target=libpathplan.so.4.0.0
 file path=usr/lib/libpathplan.so.4.0.0
+link path=usr/lib/libxdot.so target=libxdot.so.4.0.0
+link path=usr/lib/libxdot.so.4 target=libxdot.so.4.0.0
 file path=usr/lib/libxdot.so.4.0.0
 file path=usr/lib/pkgconfig/libcdt.pc
 file path=usr/lib/pkgconfig/libcgraph.pc
@@ -357,13 +465,16 @@ file path=usr/share/graphviz/lefty/tree.lefty
 file path=usr/share/man/man1/acyclic.1
 file path=usr/share/man/man1/bcomps.1
 file path=usr/share/man/man1/ccomps.1
+link path=usr/share/man/man1/circo.1 target=dot.1
 file path=usr/share/man/man1/cluster.1
 file path=usr/share/man/man1/diffimg.1
 file path=usr/share/man/man1/dijkstra.1
 file path=usr/share/man/man1/dot.1
 file path=usr/share/man/man1/dotty.1
+link path=usr/share/man/man1/fdp.1 target=dot.1
 file path=usr/share/man/man1/gc.1
 file path=usr/share/man/man1/gml2gv.1
+link path=usr/share/man/man1/gv2gxl.1 target=gxl2gv.1
 file path=usr/share/man/man1/gvcolor.1
 file path=usr/share/man/man1/gvedit.1
 file path=usr/share/man/man1/gvgen.1
@@ -375,13 +486,16 @@ file path=usr/share/man/man1/gxl2gv.1
 file path=usr/share/man/man1/lefty.1
 file path=usr/share/man/man1/lneato.1
 file path=usr/share/man/man1/mm2gv.1
+link path=usr/share/man/man1/neato.1 target=dot.1
 file path=usr/share/man/man1/nop.1
 file path=usr/share/man/man1/osage.1
 file path=usr/share/man/man1/patchwork.1
 file path=usr/share/man/man1/prune.1
 file path=usr/share/man/man1/sccmap.1
+link path=usr/share/man/man1/sfdp.1 target=dot.1
 file path=usr/share/man/man1/smyrna.1
 file path=usr/share/man/man1/tred.1
+link path=usr/share/man/man1/twopi.1 target=dot.1
 file path=usr/share/man/man1/unflatten.1
 file path=usr/share/man/man1/vimdot.1
 file path=usr/share/man/man3/cdt.3
@@ -393,142 +507,36 @@ file path=usr/share/man/man3/pack.3
 file path=usr/share/man/man3/pathplan.3
 file path=usr/share/man/man3/xdot.3
 file usr/share/man/man7/graphviz.7 path=usr/share/man/man5/graphviz.5
-link path=usr/bin/circo target=dot
-link path=usr/bin/dot2gxl target=gxl2gv
-link path=usr/bin/fdp target=dot
-link path=usr/bin/gv2gxl target=gxl2gv
-link path=usr/bin/gxl2dot target=gxl2gv
-link path=usr/bin/neato target=dot
-link path=usr/bin/osage target=dot
-link path=usr/bin/patchwork target=dot
-link path=usr/bin/sfdp target=dot
-link path=usr/bin/twopi target=dot
-link path=usr/lib/$(MACH64)/graphviz/libgvplugin_core.so \
-    target=libgvplugin_core.so.6.0.0
-link path=usr/lib/$(MACH64)/graphviz/libgvplugin_core.so.6 \
-    target=libgvplugin_core.so.6.0.0
-link path=usr/lib/$(MACH64)/graphviz/libgvplugin_dot_layout.so \
-    target=libgvplugin_dot_layout.so.6.0.0
-link path=usr/lib/$(MACH64)/graphviz/libgvplugin_dot_layout.so.6 \
-    target=libgvplugin_dot_layout.so.6.0.0
-link path=usr/lib/$(MACH64)/graphviz/libgvplugin_gd.so target=libgvplugin_gd.so.6.0.0
-link path=usr/lib/$(MACH64)/graphviz/libgvplugin_gd.so.6 target=libgvplugin_gd.so.6.0.0
-link path=usr/lib/$(MACH64)/graphviz/libgvplugin_gdk_pixbuf.so \
-    target=libgvplugin_gdk_pixbuf.so.6.0.0
-link path=usr/lib/$(MACH64)/graphviz/libgvplugin_gdk_pixbuf.so.6 \
-    target=libgvplugin_gdk_pixbuf.so.6.0.0
-link path=usr/lib/$(MACH64)/graphviz/libgvplugin_gs.so target=libgvplugin_gs.so.6.0.0
-link path=usr/lib/$(MACH64)/graphviz/libgvplugin_gs.so.6 target=libgvplugin_gs.so.6.0.0
-link path=usr/lib/$(MACH64)/graphviz/libgvplugin_gtk.so target=libgvplugin_gtk.so.6.0.0
-link path=usr/lib/$(MACH64)/graphviz/libgvplugin_gtk.so.6 \
-    target=libgvplugin_gtk.so.6.0.0
-link path=usr/lib/$(MACH64)/graphviz/libgvplugin_neato_layout.so \
-    target=libgvplugin_neato_layout.so.6.0.0
-link path=usr/lib/$(MACH64)/graphviz/libgvplugin_neato_layout.so.6 \
-    target=libgvplugin_neato_layout.so.6.0.0
-link path=usr/lib/$(MACH64)/graphviz/libgvplugin_pango.so \
-    target=libgvplugin_pango.so.6.0.0
-link path=usr/lib/$(MACH64)/graphviz/libgvplugin_pango.so.6 \
-    target=libgvplugin_pango.so.6.0.0
-link path=usr/lib/$(MACH64)/graphviz/libgvplugin_rsvg.so \
-    target=libgvplugin_rsvg.so.6.0.0
-link path=usr/lib/$(MACH64)/graphviz/libgvplugin_rsvg.so.6 \
-    target=libgvplugin_rsvg.so.6.0.0
-link path=usr/lib/$(MACH64)/graphviz/libgvplugin_xlib.so \
-    target=libgvplugin_xlib.so.6.0.0
-link path=usr/lib/$(MACH64)/graphviz/libgvplugin_xlib.so.6 \
-    target=libgvplugin_xlib.so.6.0.0
-link path=usr/lib/$(MACH64)/libcdt.so target=libcdt.so.5.0.0
-link path=usr/lib/$(MACH64)/libcdt.so.5 target=libcdt.so.5.0.0
-link path=usr/lib/$(MACH64)/libcgraph.so target=libcgraph.so.6.0.0
-link path=usr/lib/$(MACH64)/libcgraph.so.6 target=libcgraph.so.6.0.0
-link path=usr/lib/$(MACH64)/libgraph.so target=libgraph.so.5.0.0
-link path=usr/lib/$(MACH64)/libgraph.so.5 target=libgraph.so.5.0.0
-link path=usr/lib/$(MACH64)/libgvc.so target=libgvc.so.6.0.0
-link path=usr/lib/$(MACH64)/libgvc.so.6 target=libgvc.so.6.0.0
-link path=usr/lib/$(MACH64)/libgvpr.so target=libgvpr.so.2.0.0
-link path=usr/lib/$(MACH64)/libgvpr.so.2 target=libgvpr.so.2.0.0
-link path=usr/lib/$(MACH64)/libpathplan.so target=libpathplan.so.4.0.0
-link path=usr/lib/$(MACH64)/libpathplan.so.4 target=libpathplan.so.4.0.0
-link path=usr/lib/$(MACH64)/libxdot.so target=libxdot.so.4.0.0
-link path=usr/lib/$(MACH64)/libxdot.so.4 target=libxdot.so.4.0.0
-link path=usr/lib/graphviz/libgvplugin_core.so \
-    target=libgvplugin_core.so.6.0.0
-link path=usr/lib/graphviz/libgvplugin_core.so.6 \
-    target=libgvplugin_core.so.6.0.0
-link path=usr/lib/graphviz/libgvplugin_dot_layout.so \
-    target=libgvplugin_dot_layout.so.6.0.0
-link path=usr/lib/graphviz/libgvplugin_dot_layout.so.6 \
-    target=libgvplugin_dot_layout.so.6.0.0
-link path=usr/lib/graphviz/libgvplugin_gd.so target=libgvplugin_gd.so.6.0.0
-link path=usr/lib/graphviz/libgvplugin_gd.so.6 target=libgvplugin_gd.so.6.0.0
-link path=usr/lib/graphviz/libgvplugin_gdk_pixbuf.so \
-    target=libgvplugin_gdk_pixbuf.so.6.0.0
-link path=usr/lib/graphviz/libgvplugin_gdk_pixbuf.so.6 \
-    target=libgvplugin_gdk_pixbuf.so.6.0.0
-link path=usr/lib/graphviz/libgvplugin_gs.so target=libgvplugin_gs.so.6.0.0
-link path=usr/lib/graphviz/libgvplugin_gs.so.6 target=libgvplugin_gs.so.6.0.0
-link path=usr/lib/graphviz/libgvplugin_gtk.so target=libgvplugin_gtk.so.6.0.0
-link path=usr/lib/graphviz/libgvplugin_gtk.so.6 \
-    target=libgvplugin_gtk.so.6.0.0
-link path=usr/lib/graphviz/libgvplugin_neato_layout.so \
-    target=libgvplugin_neato_layout.so.6.0.0
-link path=usr/lib/graphviz/libgvplugin_neato_layout.so.6 \
-    target=libgvplugin_neato_layout.so.6.0.0
-link path=usr/lib/graphviz/libgvplugin_pango.so \
-    target=libgvplugin_pango.so.6.0.0
-link path=usr/lib/graphviz/libgvplugin_pango.so.6 \
-    target=libgvplugin_pango.so.6.0.0
-link path=usr/lib/graphviz/libgvplugin_rsvg.so \
-    target=libgvplugin_rsvg.so.6.0.0
-link path=usr/lib/graphviz/libgvplugin_rsvg.so.6 \
-    target=libgvplugin_rsvg.so.6.0.0
-link path=usr/lib/graphviz/libgvplugin_xlib.so \
-    target=libgvplugin_xlib.so.6.0.0
-link path=usr/lib/graphviz/libgvplugin_xlib.so.6 \
-    target=libgvplugin_xlib.so.6.0.0
-link path=usr/lib/libcdt.so target=libcdt.so.5.0.0
-link path=usr/lib/libcdt.so.5 target=libcdt.so.5.0.0
-link path=usr/lib/libcgraph.so target=libcgraph.so.6.0.0
-link path=usr/lib/libcgraph.so.6 target=libcgraph.so.6.0.0
-link path=usr/lib/libgraph.so target=libgraph.so.5.0.0
-link path=usr/lib/libgraph.so.5 target=libgraph.so.5.0.0
-link path=usr/lib/libgvc.so target=libgvc.so.6.0.0
-link path=usr/lib/libgvc.so.6 target=libgvc.so.6.0.0
-link path=usr/lib/libgvpr.so target=libgvpr.so.2.0.0
-link path=usr/lib/libgvpr.so.2 target=libgvpr.so.2.0.0
-link path=usr/lib/libpathplan.so target=libpathplan.so.4.0.0
-link path=usr/lib/libpathplan.so.4 target=libpathplan.so.4.0.0
-link path=usr/lib/libxdot.so target=libxdot.so.4.0.0
-link path=usr/lib/libxdot.so.4 target=libxdot.so.4.0.0
-link path=usr/share/man/man1/circo.1 target=dot.1
-link path=usr/share/man/man1/fdp.1 target=dot.1
-link path=usr/share/man/man1/gv2gxl.1 target=gxl2gv.1
-link path=usr/share/man/man1/neato.1 target=dot.1
-link path=usr/share/man/man1/sfdp.1 target=dot.1
-link path=usr/share/man/man1/twopi.1 target=dot.1
-
 license COPYING license=EPL1.0
 license graphviz.license.extra license="Other Notices"
 
 # Bring in the language bindings if the language platforms are installed.
 # The C# bindings are never brought in automatically, since we don't
 # deliver a C# platform.
-depend fmri=image/graphviz/graphviz-java@$(IPS_COMPONENT_VERSION) \
-    type=conditional predicate=runtime/java/jre-7
-depend fmri=image/graphviz/graphviz-lua@$(IPS_COMPONENT_VERSION) \
-    type=conditional predicate=runtime/lua
-depend fmri=image/graphviz/graphviz-ocaml@$(IPS_COMPONENT_VERSION) \
-    type=conditional predicate=runtime/ocaml
-depend fmri=image/graphviz/graphviz-perl-516@$(IPS_COMPONENT_VERSION) \
-    type=conditional predicate=runtime/perl-516
-depend fmri=image/graphviz/graphviz-php@$(IPS_COMPONENT_VERSION) \
-    type=conditional predicate=web/php-53
-depend fmri=image/graphviz/graphviz-python-26@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
-    type=conditional predicate=runtime/python-26
-depend fmri=image/graphviz/graphviz-python-27@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
-    type=conditional predicate=runtime/python-27
-depend fmri=image/graphviz/graphviz-ruby@$(IPS_COMPONENT_VERSION) \
-    type=conditional predicate=runtime/ruby-19
-depend fmri=image/graphviz/graphviz-tcl@$(IPS_COMPONENT_VERSION) \
-    type=conditional predicate=runtime/tcl-8
+depend type=conditional \
+    fmri=image/graphviz/graphviz-java@$(IPS_COMPONENT_VERSION) \
+    predicate=runtime/java/jre-7
+depend type=conditional \
+    fmri=image/graphviz/graphviz-lua@$(IPS_COMPONENT_VERSION) \
+    predicate=runtime/lua
+depend type=conditional \
+    fmri=image/graphviz/graphviz-ocaml@$(IPS_COMPONENT_VERSION) \
+    predicate=runtime/ocaml
+depend type=conditional \
+    fmri=image/graphviz/graphviz-perl-516@$(IPS_COMPONENT_VERSION) \
+    predicate=runtime/perl-516
+depend type=conditional \
+    fmri=image/graphviz/graphviz-php@$(IPS_COMPONENT_VERSION) \
+    predicate=web/php-53
+depend type=conditional \
+    fmri=image/graphviz/graphviz-python-26@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
+    predicate=runtime/python-26
+depend type=conditional \
+    fmri=image/graphviz/graphviz-python-27@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
+    predicate=runtime/python-27
+depend type=conditional \
+    fmri=image/graphviz/graphviz-ruby@$(IPS_COMPONENT_VERSION) \
+    predicate=runtime/ruby-19
+depend type=conditional \
+    fmri=image/graphviz/graphviz-tcl@$(IPS_COMPONENT_VERSION) \
+    predicate=runtime/tcl-8
