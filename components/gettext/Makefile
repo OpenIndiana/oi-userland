@@ -61,6 +61,13 @@ CONFIGURE_LIBDIR.64 =	$(CONFIGURE_PREFIX)/lib
 COMPONENT_TEST_ENV =	-i
 COMPONENT_TEST_ENV +=	PATH=${PATH}:$(SPRO_VROOT)/bin
 
+# Strip compilation lines from test output
+COMPONENT_TEST_TRANSFORMS += \
+    '-e "s|^.*$(CC).*$$|XXX_CC_XXX|g" ' \
+    '-e "s|^.*source=.*libtool=no.*$$|XXX_CC_XXX|g" ' \
+    '-e "s|^.*DEPDIR=.deps.*$$|XXX_CC_XXX|g" ' \
+    '-e "/^XXX_CC_XXX$$/d" '
+
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
