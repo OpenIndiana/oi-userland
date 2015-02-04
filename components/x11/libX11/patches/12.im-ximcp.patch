@@ -1,0 +1,228 @@
+###############################################################################
+# Copyright (c) 2009, 2011, Oracle and/or its affiliates. All rights reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice (including the next
+# paragraph) shall be included in all copies or substantial portions of the
+# Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+# DEALINGS IN THE SOFTWARE.
+#
+
+diff --git a/modules/im/ximcp/imImSw.c b/modules/im/ximcp/imImSw.c
+index 28b1725..327736e 100644
+--- a/modules/im/ximcp/imImSw.c
++++ b/modules/im/ximcp/imImSw.c
+@@ -48,7 +48,9 @@ _XimCheckIfDefault(
+ }
+ 
+ XimImsportSW _XimImSportRec[] = {
++#ifdef USE_R6_LOCALIM
+     { _XimCheckIfLocalProcessing, _XimLocalOpenIM, _XimLocalIMFree },
++#endif
+     { _XimCheckIfThaiProcessing,	_XimThaiOpenIM,	 _XimThaiIMFree },
+     { _XimCheckIfDefault,         _XimProtoOpenIM, _XimProtoIMFree },
+     { NULL,                       NULL,		 NULL },
+diff --git a/modules/im/ximcp/imThaiFlt.c b/modules/im/ximcp/imThaiFlt.c
+index f134e84..898fc1f 100644
+--- libX11-1.6.2/modules/im/ximcp/imThaiFlt.c.~1~	2013-09-09 05:37:20.000000000 +0400
++++ libX11-1.6.2/modules/im/ximcp/imThaiFlt.c	2015-02-04 12:03:13.672449821 +0300
+@@ -76,6 +76,12 @@
+ #include "XimThai.h"
+ #include "XlcPubI.h"
+ 
++#ifdef sun
++# include "XlcGeneric.h"
++# if !defined(X_LOCALE)
++#  define STDCVT
++# endif
++#endif
+ 
+ #define SPACE   32
+ 
+@@ -516,6 +522,48 @@
+      (wchar_t)(c) : \
+      ((0x0A1<=(c)) ? ((wchar_t)(c)-0xA0+0x0E00) : 0))
+ 
++#ifdef sun
++static int
++wc2tis(XLCd lcd, unsigned char* ch, wchar_t wc)
++{
++#ifdef STDCVT
++    if (XLC_GENERIC(lcd, use_stdc_env) == True)
++        return wctomb((char*)ch, wc);
++    else
++#endif
++    {
++        wchar_t wc_mask = (1<<XLC_GENERIC(lcd, wc_shift_bits))-1;
++        ( 0<=wc && wc<=0x7F ) ? (*ch=(unsigned char)wc) : (*ch= (unsigned char)(wc&wc_mask|0x80));//GR 0x80
++    }
++    return 1;
++}
++
++
++static int
++tis2wc(XLCd lcd, wchar_t *pwc,  unsigned char* ch)
++{
++#ifdef STDCVT
++    if (XLC_GENERIC(lcd, use_stdc_env) == True)
++        return mbtowc(pwc, (char*)ch, 1);
++    else
++#endif
++    {
++        wchar_t wc_mask = (1<<XLC_GENERIC(lcd, wc_shift_bits))-1;
++        CodeSet GR_codeset = XLC_GENERIC(lcd, initial_state_GR);
++        if ( 0<=*ch && *ch<=0x7F ) {
++            *pwc=(wchar_t)*ch;
++            return 0;
++        } else {
++            if (0xA1<=*ch) {
++                *pwc = (wchar_t)*ch&wc_mask|GR_codeset->wc_encoding;
++                return 1;
++            } else
++                return 0;
++        }
++    }
++}
++#endif
++
+ /*
+  * Macros to save and recall last input character in XIC
+  */
+@@ -1210,6 +1258,42 @@
+     return;
+ }
+ 
++#ifdef sun
++static Bool
++is_utf8_locale(void)
++{
++    const char* locale;
++    locale = getenv("LC_ALL");
++    if (!locale || !*locale) {
++        locale = getenv("LC_CTYPE");
++        if (!locale || !*locale) {
++            locale = getenv("LANG");
++        }
++    }
++    if (locale && *locale) {
++        /* The most general syntax of a locale:
++        language[_territory][.codeset][@modifier]
++        To retrieve the codeset, search the first dot. Stop searching when
++        a '@' is encountered. */
++        const char* cp = locale;
++        for (; *cp != '\0' && *cp != '@'; cp++) {
++            if (*cp == '.') {
++                const char* encoding = ++cp;
++                for (; *cp != '\0' && *cp != '@'; cp++);
++                /* Check it for "UTF-8", which is the only official IANA name of
++                UTF-8. Also check for the lowercase-no-dashes version, which is
++                what some SystemV systems use. */
++                if ((cp-encoding == 5 && !strncmp(encoding, "UTF-8", 5))
++                    || (cp-encoding == 4 && !strncmp(encoding, "utf8", 4)))
++                    return True; /* it's UTF-8 */
++                break; /* not UTF-8 */
++            }
++        }
++    }
++    return False;
++}
++#endif
++
+ /*
+  * Helper functions for _XimThaiFilter()
+  */
+@@ -1217,8 +1301,20 @@
+ ThaiFltAcceptInput(Xic ic, unsigned char new_char, KeySym symbol)
+ {
+     DefTreeBase *b = &ic->private.local.base;
++#ifdef sun
++    if (is_utf8_locale()) {
++        b->wc[b->tree[ic->private.local.composed].wc+0] = tis2ucs(new_char);
++        b->wc[b->tree[ic->private.local.composed].wc+1] = '\0';
++    } else {
++        wchar_t *wcTmp = NULL;
++        wcTmp = &(b->wc[b->tree[ic->private.local.composed].wc+0]);
++        tis2wc(ic->core.im->core.lcd, wcTmp, &new_char);
++        *(wcTmp+1) = '\0';
++    }
++#else
+     b->wc[b->tree[ic->private.local.composed].wc+0] = tis2ucs(new_char);
+     b->wc[b->tree[ic->private.local.composed].wc+1] = '\0';
++#endif
+ 
+     if ((new_char <= 0x1f) || (new_char == 0x7f))
+         b->tree[ic->private.local.composed].keysym = symbol;
+@@ -1233,9 +1329,23 @@
+ {
+     DefTreeBase *b = &ic->private.local.base;
+     if (!IC_DeletePreviousChar(ic)) return False;
++#ifdef sun
++    if (is_utf8_locale()) {
++        b->wc[b->tree[ic->private.local.composed].wc+0] = tis2ucs(new_char);
++        b->wc[b->tree[ic->private.local.composed].wc+1] = tis2ucs(previous_char);
++        b->wc[b->tree[ic->private.local.composed].wc+2] = '\0';
++    } else {
++        wchar_t *wcTmp = NULL;
++        wcTmp = &(b->wc[b->tree[ic->private.local.composed].wc+0]);
++        tis2wc(ic->core.im->core.lcd, wcTmp, &new_char);
++        tis2wc(ic->core.im->core.lcd, (wcTmp+1), &previous_char);
++        *(wcTmp+2) = '\0';
++    }
++#else
+     b->wc[b->tree[ic->private.local.composed].wc+0] = tis2ucs(new_char);
+     b->wc[b->tree[ic->private.local.composed].wc+1] = tis2ucs(previous_char);
+     b->wc[b->tree[ic->private.local.composed].wc+2] = '\0';
++#endif
+ 
+     b->tree[ic->private.local.composed].keysym = NoSymbol;
+ 
+@@ -1247,8 +1357,20 @@
+ {
+     DefTreeBase *b = &ic->private.local.base;
+     if (!IC_DeletePreviousChar(ic)) return False;
++#ifdef sun
++    if (is_utf8_locale()) {
++        b->wc[b->tree[ic->private.local.composed].wc+0] = tis2ucs(new_char);
++        b->wc[b->tree[ic->private.local.composed].wc+1] = '\0';
++    } else {
++        wchar_t *wcTmp = NULL;
++        wcTmp = &(b->wc[b->tree[ic->private.local.composed].wc+0]);
++        tis2wc(ic->core.im->core.lcd, wcTmp, &new_char);
++        *(wcTmp+1) = '\0';
++    }
++#else
+     b->wc[b->tree[ic->private.local.composed].wc+0] = tis2ucs(new_char);
+     b->wc[b->tree[ic->private.local.composed].wc+1] = '\0';
++#endif
+ 
+     if ((new_char <= 0x1f) || (new_char == 0x7f))
+         b->tree[ic->private.local.composed].keysym = symbol;
+@@ -1374,7 +1496,15 @@
+      */
+     isc_mode = IC_IscMode(ic);
+     if (!(previous_char = IC_GetPreviousChar(ic))) previous_char = ' ';
++#ifdef sun
++    if (is_utf8_locale()) {
++        new_char = ucs2tis(wbuf[0]);
++    } else {
++        wc2tis(ic->core.im->core.lcd, &new_char, wbuf[0]);
++    }
++#else
+     new_char = ucs2tis(wbuf[0]);
++#endif
+     isReject = True;
+     if (THAI_isaccepted(new_char, previous_char, isc_mode)) {
+         ThaiFltAcceptInput(ic, new_char, symbol);

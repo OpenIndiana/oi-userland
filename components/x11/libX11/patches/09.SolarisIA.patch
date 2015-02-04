@@ -1,0 +1,76 @@
+###############################################################################
+# Copyright (c) 2008, 2012, Oracle and/or its affiliates. All rights reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice (including the next
+# paragraph) shall be included in all copies or substantial portions of the
+# Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+# DEALINGS IN THE SOFTWARE.
+#
+
+diff --git a/src/Makefile.am b/src/Makefile.am
+index ddad93c..677b0ee 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -348,6 +348,9 @@ libX11_xcb_la_SOURCES = x11_xcb.c Xxcbint.h
+ libX11_xcb_la_LDFLAGS = -version-number 1:0:0 -no-undefined
+ libX11_xcb_la_LIBADD = libX11.la
+ 
++# SolarisIA extension
++libX11_la_SOURCES += XInteractive.c
++
+ #
+ # Figure out which sub-libraries to link into Xlib
+ #
+diff --git a/src/OpenDis.c b/src/OpenDis.c
+index a14d13b..ead8703 100644
+--- a/src/OpenDis.c
++++ b/src/OpenDis.c
+@@ -38,6 +38,12 @@ in this Software without prior written authorization from The Open Group.
+ #include "XKBlib.h"
+ #endif /* XKB */
+ 
++/* begin SUNSOFT_INTERACTIVE */
++#include <unistd.h>
++#include <X11/extensions/interactive.h>
++#include <X11/extensions/XInteractive.h>
++/* end SUNSOFT_INTERACTIVE */
++
+ #if defined(XTHREADS) && defined(SUNSOFT)
+ struct _DisplayPtrLink {
+     Display *dpy;
+@@ -581,6 +587,21 @@ XOpenDisplay (
+ #ifdef XKB
+ 	XkbUseExtension(dpy,NULL,NULL);
+ #endif
++/* begin SUNSOFT_INTERACTIVE */
++	{
++
++	   long  pid    = (long) getpid();
++	   int majorop, first_event, first_error;
++	   int majorv, minorv;
++
++	   if ( (XQueryExtension(dpy, "SolarisIA",
++		&majorop, &first_event, &first_error)==True)) {
++		  XSolarisIASetProcessInfo(dpy, (unsigned char *)&pid,
++					   INTERACTIVE_INFO, 1);
++	   }
++	}
++/* end SUNSOFT_INTERACTIVE */
++
+ /*
+  * and return successfully
+  */
