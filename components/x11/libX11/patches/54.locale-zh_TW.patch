@@ -1,0 +1,91 @@
+###############################################################################
+# Copyright (c) 2009, 2011, Oracle and/or its affiliates. All rights reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice (including the next
+# paragraph) shall be included in all copies or substantial portions of the
+# Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+# DEALINGS IN THE SOFTWARE.
+#
+
+diff --git a/nls/zh_TW/XI18N_OBJS b/nls/zh_TW/XI18N_OBJS
+index 0f471dd..b88ad49 100644
+--- a/nls/zh_TW/XI18N_OBJS
++++ b/nls/zh_TW/XI18N_OBJS
+@@ -3,5 +3,5 @@
+ #	XI18N objects table for zh_TW locale
+ #
+ XLC	common/xlibi18n	_XlcGenericLoader	# XLC_open
+-XIM	common/ximp40		_Ximp_OpenIM		# XIM_open
++XIM	common/ximcp	_XimOpenIM _XimRegisterIMInstantiateCallback  _XimUnRegisterIMInstantiateCallback # XIM_open	XIM_register XIM_unregister
+ XOM	common/xomGeneric	_XomGenericOpenOM # XOM_open
+diff --git a/nls/zh_TW/XLC_LOCALE.pre b/nls/zh_TW/XLC_LOCALE.pre
+index d75ece8..be84511 100644
+--- a/nls/zh_TW/XLC_LOCALE.pre
++++ b/nls/zh_TW/XLC_LOCALE.pre
+@@ -20,14 +20,14 @@ fs0	{
+ 		name	ISO8859-1:GL
+ 	}
+ 	font	{
+-		primary		ISO8859-1:GL
++		primary  CNS11643.1986-0:GL;ISO8859-1:GL
+ 		vertical_rotate	all
+ 	}
+ }
+ XCOMM 	fs1 class
+ fs1	{
+ 	charset	{
+-		name	CNS11643.1986-1:GL
++		name	CNS11643.1986-1:GR
+ 	}
+ 	font	{
+ 		primary	CNS11643.1986-1:GL
+@@ -36,7 +36,7 @@ fs1	{
+ XCOMM 	fs2 class
+ fs2	{
+ 	charset	{
+-		name	CNS11643.1986-2:GL
++		name	CNS11643.1986-2:GR
+ 	}
+ 	font	{
+ 		primary	CNS11643.1986-2:GL
+@@ -45,7 +45,7 @@ fs2	{
+ XCOMM 	fs3 class 
+ fs3	{
+ 	charset	{
+-		name	CNS11643.1986-14:GL
++		name	CNS11643.1986-14:GR
+ 	}
+ 	font	{
+ 		primary	CNS11643.1986-14:GL
+@@ -54,7 +54,7 @@ fs3	{
+ XCOMM 	fs4 class 
+ fs4	{
+ 	charset	{
+-		name	CNS11643.1986-15:GL
++		name	CNS11643.1986-15:GR
+ 	}
+ 	font	{
+ 		primary	CNS11643.1986-15:GL
+@@ -63,7 +63,7 @@ fs4	{
+ XCOMM 	fs5 class 
+ fs5	{
+ 	charset	{
+-		name	CNS11643.1986-16:GL
++		name	CNS11643.1986-16:GR
+ 	}
+ 	font	{
+ 		primary	CNS11643.1986-16:GL
