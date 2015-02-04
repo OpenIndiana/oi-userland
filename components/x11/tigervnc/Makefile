@@ -122,6 +122,7 @@ XVNC_CONFIGURE_OPTIONS += --with-vendor-web="http://openindiana.org"
 XVNC_CONFIGURE_OPTIONS += --with-xkb-bin-directory=/usr/bin
 XVNC_CONFIGURE_OPTIONS += --with-xkb-output=/var/run/xkb
 XVNC_CONFIGURE_OPTIONS += --without-int10
+XVNC_CONFIGURE_OPTIONS += --disable-selective-werror
 
 $(BUILD_DIR)/.built_jar: $(BULD_32)
 	$(ENV) $(COMPONENT_BUILD_ENV) \

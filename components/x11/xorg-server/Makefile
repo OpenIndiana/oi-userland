@@ -87,6 +87,7 @@ CONFIGURE_OPTIONS += --with-vendor-name="Project OpenIndiana"
 CONFIGURE_OPTIONS += --with-vendor-web="http://openindiana.org"
 CONFIGURE_OPTIONS += --with-xkb-output=/var/run/xkb
 CONFIGURE_OPTIONS += --with-xkb-bin-directory=/usr/bin
+CONFIGURE_OPTIONS += --disable-selective-werror
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
