@@ -20,23 +20,23 @@
 #
 
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gettext
-COMPONENT_VERSION=	0.16.1
+COMPONENT_VERSION=	0.19.3
 IPS_PKG_NAME=		text/gnu-gettext
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/gettext/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:0bf850d1a079fb5a61f0a47b1a9efd35eb44032255375e1cedb0253bc27b376d
+    sha256:f6fdb29c9ee8ce85c7e574f60ff64fa91cf0f4f018437dfe800227d15595db46
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/gettext/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gnu-gettext
 
-TPNO=			8435
+TPNO=			20141
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
@@ -50,14 +50,27 @@ CONFIGURE_OPTIONS  +=		--disable-static
 CONFIGURE_OPTIONS  +=		--disable-shared
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 
+# Fixes coredump in gnulib-test/test-localename test
+CONFIGURE_OPTIONS  +=		ac_cv_func_newlocale=no
+
+# Everything is under /usr/bin and /usr/lib so set bindir and libdir correctly.
+CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/bin
+CONFIGURE_LIBDIR.64 =	$(CONFIGURE_PREFIX)/lib
+
+# Tests should run in a clean environment
+COMPONENT_TEST_ENV =	-i
+COMPONENT_TEST_ENV +=	PATH=${PATH}:$(SPRO_VROOT)/bin
+
+ASLR_MODE = $(ASLR_ENABLE)
+
 # common targets
-configure:	$(CONFIGURE_32)
+configure:	$(CONFIGURE_64)
 
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
-test:		$(TEST_32)
+test:		$(TEST_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
