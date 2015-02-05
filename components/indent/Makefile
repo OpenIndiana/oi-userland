@@ -41,18 +41,16 @@ include $(WS_TOP)/make-rules/ips.mk
 # Needed to get "gmake test" working.
 COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
-
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:		$(BUILD_64)
+build:		$(BUILD_32)
 
-install:	$(INSTALL_64)
+install:	$(INSTALL_32)
 
 # Need to put /usr/gnu/bin at the front of $PATH for GNU diff.
 test:		install
-	@cd $(BUILD_DIR_64)/regression; PATH=/usr/gnu/bin:/usr/bin $(MAKE) test
+	@cd $(BUILD_DIR_32)/regression; PATH=/usr/gnu/bin:/usr/bin $(MAKE) test
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
