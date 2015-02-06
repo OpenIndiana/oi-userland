@@ -1,0 +1,559 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2015 Alexander Pyhalov
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+<transform file path=usr/share/applications/.* ->  default restart_fmri svc:/application/desktop-cache/desktop-mime-cache:default>
+<transform file path=usr/share/applications/.* ->  default restart_fmri svc:/application/desktop-cache/mime-types-cache:default>
+<transform file path=usr/share/locale/([^/]+)(\..+){0,1}(/.+){0,1} -> default facet.locale.%<\1> true>
+
+file path=usr/bin/gcmd-block
+file path=usr/bin/gnome-commander
+link path=usr/lib/gnome-commander/libgcmd.so target=libgcmd.so.0.0.0
+link path=usr/lib/gnome-commander/libgcmd.so.0 target=libgcmd.so.0.0.0
+file path=usr/lib/gnome-commander/libgcmd.so.0.0.0
+file path=usr/lib/gnome-commander/plugins/apply_patch.py
+file path=usr/lib/gnome-commander/plugins/apply_patch.pyc
+file path=usr/lib/gnome-commander/plugins/libfileroller.so
+file path=usr/lib/gnome-commander/plugins/md5sum.py
+file path=usr/lib/gnome-commander/plugins/md5sum.pyc
+file path=usr/lib/gnome-commander/plugins/sha1sum.py
+file path=usr/lib/gnome-commander/plugins/sha1sum.pyc
+file path=usr/share/appdata/gnome-commander.appdata.xml
+file path=usr/share/applications/gnome-commander.desktop
+file path=usr/share/gnome/help/gnome-commander/C/figures/create_archive.png
+file path=usr/share/gnome/help/gnome-commander/C/figures/dev_cd.png
+file path=usr/share/gnome/help/gnome-commander/C/figures/extract_archive.png
+file path=usr/share/gnome/help/gnome-commander/C/figures/gnome-commander_dialog_adv_rename.png
+file path=usr/share/gnome/help/gnome-commander/C/figures/gnome-commander_dialog_application.png
+file path=usr/share/gnome/help/gnome-commander/C/figures/gnome-commander_dialog_bookmark.png
+file path=usr/share/gnome/help/gnome-commander/C/figures/gnome-commander_dialog_file_metadata.png
+file path=usr/share/gnome/help/gnome-commander/C/figures/gnome-commander_dialog_file_permissions.png
+file path=usr/share/gnome/help/gnome-commander/C/figures/gnome-commander_dialog_file_properties.png
+file path=usr/share/gnome/help/gnome-commander/C/figures/gnome-commander_dialog_keyboard_shortcuts.png
+file path=usr/share/gnome/help/gnome-commander/C/figures/gnome-commander_dialog_remote_connections.png
+file path=usr/share/gnome/help/gnome-commander/C/figures/gnome-commander_dialog_remote_server.png
+file path=usr/share/gnome/help/gnome-commander/C/figures/gnome-commander_dialog_search.png
+file path=usr/share/gnome/help/gnome-commander/C/figures/gnome-commander_options_confirmation.png
+file path=usr/share/gnome/help/gnome-commander/C/figures/gnome-commander_options_devices.png
+file path=usr/share/gnome/help/gnome-commander/C/figures/gnome-commander_options_filters.png
+file path=usr/share/gnome/help/gnome-commander/C/figures/gnome-commander_options_format.png
+file path=usr/share/gnome/help/gnome-commander/C/figures/gnome-commander_options_general.png
+file path=usr/share/gnome/help/gnome-commander/C/figures/gnome-commander_options_layout.png
+file path=usr/share/gnome/help/gnome-commander/C/figures/gnome-commander_options_layout_colors.png
+file path=usr/share/gnome/help/gnome-commander/C/figures/gnome-commander_options_programs.png
+file path=usr/share/gnome/help/gnome-commander/C/figures/gnome-commander_options_tabs.png
+file path=usr/share/gnome/help/gnome-commander/C/figures/gnome-commander_window.png
+file path=usr/share/gnome/help/gnome-commander/C/figures/mounting.png
+file path=usr/share/gnome/help/gnome-commander/C/gnome-commander.xml
+file path=usr/share/gnome/help/gnome-commander/C/legal.xml
+file path=usr/share/gnome/help/gnome-commander/C/releases.xml
+link path=usr/share/gnome/help/gnome-commander/cs/figures/create_archive.png \
+    target=../../C/figures/create_archive.png
+link path=usr/share/gnome/help/gnome-commander/cs/figures/dev_cd.png \
+    target=../../C/figures/dev_cd.png
+link path=usr/share/gnome/help/gnome-commander/cs/figures/extract_archive.png \
+    target=../../C/figures/extract_archive.png
+file path=usr/share/gnome/help/gnome-commander/cs/figures/gnome-commander_dialog_adv_rename.png
+file path=usr/share/gnome/help/gnome-commander/cs/figures/gnome-commander_dialog_application.png
+file path=usr/share/gnome/help/gnome-commander/cs/figures/gnome-commander_dialog_bookmark.png
+link \
+    path=usr/share/gnome/help/gnome-commander/cs/figures/gnome-commander_dialog_file_metadata.png \
+    target=../../C/figures/gnome-commander_dialog_file_metadata.png
+file path=usr/share/gnome/help/gnome-commander/cs/figures/gnome-commander_dialog_file_permissions.png
+file path=usr/share/gnome/help/gnome-commander/cs/figures/gnome-commander_dialog_file_properties.png
+link \
+    path=usr/share/gnome/help/gnome-commander/cs/figures/gnome-commander_dialog_keyboard_shortcuts.png \
+    target=../../C/figures/gnome-commander_dialog_keyboard_shortcuts.png
+link \
+    path=usr/share/gnome/help/gnome-commander/cs/figures/gnome-commander_dialog_remote_connections.png \
+    target=../../C/figures/gnome-commander_dialog_remote_connections.png
+link \
+    path=usr/share/gnome/help/gnome-commander/cs/figures/gnome-commander_dialog_remote_server.png \
+    target=../../C/figures/gnome-commander_dialog_remote_server.png
+file path=usr/share/gnome/help/gnome-commander/cs/figures/gnome-commander_dialog_search.png
+file path=usr/share/gnome/help/gnome-commander/cs/figures/gnome-commander_options_confirmation.png
+file path=usr/share/gnome/help/gnome-commander/cs/figures/gnome-commander_options_devices.png
+file path=usr/share/gnome/help/gnome-commander/cs/figures/gnome-commander_options_filters.png
+file path=usr/share/gnome/help/gnome-commander/cs/figures/gnome-commander_options_format.png
+file path=usr/share/gnome/help/gnome-commander/cs/figures/gnome-commander_options_general.png
+file path=usr/share/gnome/help/gnome-commander/cs/figures/gnome-commander_options_layout.png
+link \
+    path=usr/share/gnome/help/gnome-commander/cs/figures/gnome-commander_options_layout_colors.png \
+    target=../../C/figures/gnome-commander_options_layout_colors.png
+file path=usr/share/gnome/help/gnome-commander/cs/figures/gnome-commander_options_programs.png
+file path=usr/share/gnome/help/gnome-commander/cs/figures/gnome-commander_options_tabs.png
+file path=usr/share/gnome/help/gnome-commander/cs/figures/gnome-commander_window.png
+link path=usr/share/gnome/help/gnome-commander/cs/figures/mounting.png \
+    target=../../C/figures/mounting.png
+file path=usr/share/gnome/help/gnome-commander/cs/gnome-commander.xml
+file path=usr/share/gnome/help/gnome-commander/cs/legal.xml
+file path=usr/share/gnome/help/gnome-commander/cs/releases.xml
+file path=usr/share/gnome/help/gnome-commander/de/figures/create_archive.png
+link path=usr/share/gnome/help/gnome-commander/de/figures/dev_cd.png \
+    target=../../C/figures/dev_cd.png
+link path=usr/share/gnome/help/gnome-commander/de/figures/extract_archive.png \
+    target=../../C/figures/extract_archive.png
+file path=usr/share/gnome/help/gnome-commander/de/figures/gnome-commander_dialog_adv_rename.png
+file path=usr/share/gnome/help/gnome-commander/de/figures/gnome-commander_dialog_application.png
+file path=usr/share/gnome/help/gnome-commander/de/figures/gnome-commander_dialog_bookmark.png
+link \
+    path=usr/share/gnome/help/gnome-commander/de/figures/gnome-commander_dialog_file_metadata.png \
+    target=../../C/figures/gnome-commander_dialog_file_metadata.png
+file path=usr/share/gnome/help/gnome-commander/de/figures/gnome-commander_dialog_file_permissions.png
+file path=usr/share/gnome/help/gnome-commander/de/figures/gnome-commander_dialog_file_properties.png
+link \
+    path=usr/share/gnome/help/gnome-commander/de/figures/gnome-commander_dialog_keyboard_shortcuts.png \
+    target=../../C/figures/gnome-commander_dialog_keyboard_shortcuts.png
+link \
+    path=usr/share/gnome/help/gnome-commander/de/figures/gnome-commander_dialog_remote_connections.png \
+    target=../../C/figures/gnome-commander_dialog_remote_connections.png
+link \
+    path=usr/share/gnome/help/gnome-commander/de/figures/gnome-commander_dialog_remote_server.png \
+    target=../../C/figures/gnome-commander_dialog_remote_server.png
+file path=usr/share/gnome/help/gnome-commander/de/figures/gnome-commander_dialog_search.png
+file path=usr/share/gnome/help/gnome-commander/de/figures/gnome-commander_options_confirmation.png
+file path=usr/share/gnome/help/gnome-commander/de/figures/gnome-commander_options_devices.png
+file path=usr/share/gnome/help/gnome-commander/de/figures/gnome-commander_options_filters.png
+file path=usr/share/gnome/help/gnome-commander/de/figures/gnome-commander_options_format.png
+file path=usr/share/gnome/help/gnome-commander/de/figures/gnome-commander_options_general.png
+file path=usr/share/gnome/help/gnome-commander/de/figures/gnome-commander_options_layout.png
+link \
+    path=usr/share/gnome/help/gnome-commander/de/figures/gnome-commander_options_layout_colors.png \
+    target=../../C/figures/gnome-commander_options_layout_colors.png
+file path=usr/share/gnome/help/gnome-commander/de/figures/gnome-commander_options_programs.png
+link \
+    path=usr/share/gnome/help/gnome-commander/de/figures/gnome-commander_options_tabs.png \
+    target=../../C/figures/gnome-commander_options_tabs.png
+file path=usr/share/gnome/help/gnome-commander/de/figures/gnome-commander_window.png
+link path=usr/share/gnome/help/gnome-commander/de/figures/mounting.png \
+    target=../../C/figures/mounting.png
+file path=usr/share/gnome/help/gnome-commander/de/gnome-commander.xml
+file path=usr/share/gnome/help/gnome-commander/de/legal.xml
+file path=usr/share/gnome/help/gnome-commander/de/releases.xml
+link path=usr/share/gnome/help/gnome-commander/el/figures/create_archive.png \
+    target=../../C/figures/create_archive.png
+link path=usr/share/gnome/help/gnome-commander/el/figures/dev_cd.png \
+    target=../../C/figures/dev_cd.png
+link path=usr/share/gnome/help/gnome-commander/el/figures/extract_archive.png \
+    target=../../C/figures/extract_archive.png
+link \
+    path=usr/share/gnome/help/gnome-commander/el/figures/gnome-commander_dialog_adv_rename.png \
+    target=../../C/figures/gnome-commander_dialog_adv_rename.png
+link \
+    path=usr/share/gnome/help/gnome-commander/el/figures/gnome-commander_dialog_application.png \
+    target=../../C/figures/gnome-commander_dialog_application.png
+link \
+    path=usr/share/gnome/help/gnome-commander/el/figures/gnome-commander_dialog_bookmark.png \
+    target=../../C/figures/gnome-commander_dialog_bookmark.png
+link \
+    path=usr/share/gnome/help/gnome-commander/el/figures/gnome-commander_dialog_file_metadata.png \
+    target=../../C/figures/gnome-commander_dialog_file_metadata.png
+link \
+    path=usr/share/gnome/help/gnome-commander/el/figures/gnome-commander_dialog_file_permissions.png \
+    target=../../C/figures/gnome-commander_dialog_file_permissions.png
+link \
+    path=usr/share/gnome/help/gnome-commander/el/figures/gnome-commander_dialog_file_properties.png \
+    target=../../C/figures/gnome-commander_dialog_file_properties.png
+link \
+    path=usr/share/gnome/help/gnome-commander/el/figures/gnome-commander_dialog_keyboard_shortcuts.png \
+    target=../../C/figures/gnome-commander_dialog_keyboard_shortcuts.png
+link \
+    path=usr/share/gnome/help/gnome-commander/el/figures/gnome-commander_dialog_remote_connections.png \
+    target=../../C/figures/gnome-commander_dialog_remote_connections.png
+link \
+    path=usr/share/gnome/help/gnome-commander/el/figures/gnome-commander_dialog_remote_server.png \
+    target=../../C/figures/gnome-commander_dialog_remote_server.png
+link \
+    path=usr/share/gnome/help/gnome-commander/el/figures/gnome-commander_dialog_search.png \
+    target=../../C/figures/gnome-commander_dialog_search.png
+link \
+    path=usr/share/gnome/help/gnome-commander/el/figures/gnome-commander_options_confirmation.png \
+    target=../../C/figures/gnome-commander_options_confirmation.png
+link \
+    path=usr/share/gnome/help/gnome-commander/el/figures/gnome-commander_options_devices.png \
+    target=../../C/figures/gnome-commander_options_devices.png
+link \
+    path=usr/share/gnome/help/gnome-commander/el/figures/gnome-commander_options_filters.png \
+    target=../../C/figures/gnome-commander_options_filters.png
+link \
+    path=usr/share/gnome/help/gnome-commander/el/figures/gnome-commander_options_format.png \
+    target=../../C/figures/gnome-commander_options_format.png
+link \
+    path=usr/share/gnome/help/gnome-commander/el/figures/gnome-commander_options_general.png \
+    target=../../C/figures/gnome-commander_options_general.png
+link \
+    path=usr/share/gnome/help/gnome-commander/el/figures/gnome-commander_options_layout.png \
+    target=../../C/figures/gnome-commander_options_layout.png
+link \
+    path=usr/share/gnome/help/gnome-commander/el/figures/gnome-commander_options_layout_colors.png \
+    target=../../C/figures/gnome-commander_options_layout_colors.png
+link \
+    path=usr/share/gnome/help/gnome-commander/el/figures/gnome-commander_options_programs.png \
+    target=../../C/figures/gnome-commander_options_programs.png
+link \
+    path=usr/share/gnome/help/gnome-commander/el/figures/gnome-commander_options_tabs.png \
+    target=../../C/figures/gnome-commander_options_tabs.png
+link \
+    path=usr/share/gnome/help/gnome-commander/el/figures/gnome-commander_window.png \
+    target=../../C/figures/gnome-commander_window.png
+link path=usr/share/gnome/help/gnome-commander/el/figures/mounting.png \
+    target=../../C/figures/mounting.png
+file path=usr/share/gnome/help/gnome-commander/el/gnome-commander.xml
+file path=usr/share/gnome/help/gnome-commander/el/legal.xml
+file path=usr/share/gnome/help/gnome-commander/el/releases.xml
+link path=usr/share/gnome/help/gnome-commander/es/figures/create_archive.png \
+    target=../../C/figures/create_archive.png
+link path=usr/share/gnome/help/gnome-commander/es/figures/dev_cd.png \
+    target=../../C/figures/dev_cd.png
+link path=usr/share/gnome/help/gnome-commander/es/figures/extract_archive.png \
+    target=../../C/figures/extract_archive.png
+file path=usr/share/gnome/help/gnome-commander/es/figures/gnome-commander_dialog_adv_rename.png
+link \
+    path=usr/share/gnome/help/gnome-commander/es/figures/gnome-commander_dialog_application.png \
+    target=../../C/figures/gnome-commander_dialog_application.png
+link \
+    path=usr/share/gnome/help/gnome-commander/es/figures/gnome-commander_dialog_bookmark.png \
+    target=../../C/figures/gnome-commander_dialog_bookmark.png
+link \
+    path=usr/share/gnome/help/gnome-commander/es/figures/gnome-commander_dialog_file_metadata.png \
+    target=../../C/figures/gnome-commander_dialog_file_metadata.png
+link \
+    path=usr/share/gnome/help/gnome-commander/es/figures/gnome-commander_dialog_file_permissions.png \
+    target=../../C/figures/gnome-commander_dialog_file_permissions.png
+link \
+    path=usr/share/gnome/help/gnome-commander/es/figures/gnome-commander_dialog_file_properties.png \
+    target=../../C/figures/gnome-commander_dialog_file_properties.png
+link \
+    path=usr/share/gnome/help/gnome-commander/es/figures/gnome-commander_dialog_keyboard_shortcuts.png \
+    target=../../C/figures/gnome-commander_dialog_keyboard_shortcuts.png
+link \
+    path=usr/share/gnome/help/gnome-commander/es/figures/gnome-commander_dialog_remote_connections.png \
+    target=../../C/figures/gnome-commander_dialog_remote_connections.png
+link \
+    path=usr/share/gnome/help/gnome-commander/es/figures/gnome-commander_dialog_remote_server.png \
+    target=../../C/figures/gnome-commander_dialog_remote_server.png
+file path=usr/share/gnome/help/gnome-commander/es/figures/gnome-commander_dialog_search.png
+file path=usr/share/gnome/help/gnome-commander/es/figures/gnome-commander_options_confirmation.png
+file path=usr/share/gnome/help/gnome-commander/es/figures/gnome-commander_options_devices.png
+file path=usr/share/gnome/help/gnome-commander/es/figures/gnome-commander_options_filters.png
+file path=usr/share/gnome/help/gnome-commander/es/figures/gnome-commander_options_format.png
+file path=usr/share/gnome/help/gnome-commander/es/figures/gnome-commander_options_general.png
+file path=usr/share/gnome/help/gnome-commander/es/figures/gnome-commander_options_layout.png
+link \
+    path=usr/share/gnome/help/gnome-commander/es/figures/gnome-commander_options_layout_colors.png \
+    target=../../C/figures/gnome-commander_options_layout_colors.png
+file path=usr/share/gnome/help/gnome-commander/es/figures/gnome-commander_options_programs.png
+link \
+    path=usr/share/gnome/help/gnome-commander/es/figures/gnome-commander_options_tabs.png \
+    target=../../C/figures/gnome-commander_options_tabs.png
+link \
+    path=usr/share/gnome/help/gnome-commander/es/figures/gnome-commander_window.png \
+    target=../../C/figures/gnome-commander_window.png
+link path=usr/share/gnome/help/gnome-commander/es/figures/mounting.png \
+    target=../../C/figures/mounting.png
+file path=usr/share/gnome/help/gnome-commander/es/gnome-commander.xml
+file path=usr/share/gnome/help/gnome-commander/es/legal.xml
+file path=usr/share/gnome/help/gnome-commander/es/releases.xml
+link path=usr/share/gnome/help/gnome-commander/fr/figures/create_archive.png \
+    target=../../C/figures/create_archive.png
+link path=usr/share/gnome/help/gnome-commander/fr/figures/dev_cd.png \
+    target=../../C/figures/dev_cd.png
+link path=usr/share/gnome/help/gnome-commander/fr/figures/extract_archive.png \
+    target=../../C/figures/extract_archive.png
+file path=usr/share/gnome/help/gnome-commander/fr/figures/gnome-commander_dialog_adv_rename.png
+file path=usr/share/gnome/help/gnome-commander/fr/figures/gnome-commander_dialog_application.png
+file path=usr/share/gnome/help/gnome-commander/fr/figures/gnome-commander_dialog_bookmark.png
+link \
+    path=usr/share/gnome/help/gnome-commander/fr/figures/gnome-commander_dialog_file_metadata.png \
+    target=../../C/figures/gnome-commander_dialog_file_metadata.png
+file path=usr/share/gnome/help/gnome-commander/fr/figures/gnome-commander_dialog_file_permissions.png
+file path=usr/share/gnome/help/gnome-commander/fr/figures/gnome-commander_dialog_file_properties.png
+link \
+    path=usr/share/gnome/help/gnome-commander/fr/figures/gnome-commander_dialog_keyboard_shortcuts.png \
+    target=../../C/figures/gnome-commander_dialog_keyboard_shortcuts.png
+link \
+    path=usr/share/gnome/help/gnome-commander/fr/figures/gnome-commander_dialog_remote_connections.png \
+    target=../../C/figures/gnome-commander_dialog_remote_connections.png
+link \
+    path=usr/share/gnome/help/gnome-commander/fr/figures/gnome-commander_dialog_remote_server.png \
+    target=../../C/figures/gnome-commander_dialog_remote_server.png
+file path=usr/share/gnome/help/gnome-commander/fr/figures/gnome-commander_dialog_search.png
+file path=usr/share/gnome/help/gnome-commander/fr/figures/gnome-commander_options_confirmation.png
+file path=usr/share/gnome/help/gnome-commander/fr/figures/gnome-commander_options_devices.png
+file path=usr/share/gnome/help/gnome-commander/fr/figures/gnome-commander_options_filters.png
+file path=usr/share/gnome/help/gnome-commander/fr/figures/gnome-commander_options_format.png
+file path=usr/share/gnome/help/gnome-commander/fr/figures/gnome-commander_options_general.png
+file path=usr/share/gnome/help/gnome-commander/fr/figures/gnome-commander_options_layout.png
+link \
+    path=usr/share/gnome/help/gnome-commander/fr/figures/gnome-commander_options_layout_colors.png \
+    target=../../C/figures/gnome-commander_options_layout_colors.png
+file path=usr/share/gnome/help/gnome-commander/fr/figures/gnome-commander_options_programs.png
+link \
+    path=usr/share/gnome/help/gnome-commander/fr/figures/gnome-commander_options_tabs.png \
+    target=../../C/figures/gnome-commander_options_tabs.png
+file path=usr/share/gnome/help/gnome-commander/fr/figures/gnome-commander_window.png
+link path=usr/share/gnome/help/gnome-commander/fr/figures/mounting.png \
+    target=../../C/figures/mounting.png
+file path=usr/share/gnome/help/gnome-commander/fr/gnome-commander.xml
+file path=usr/share/gnome/help/gnome-commander/fr/legal.xml
+file path=usr/share/gnome/help/gnome-commander/fr/releases.xml
+link path=usr/share/gnome/help/gnome-commander/ru/figures/create_archive.png \
+    target=../../C/figures/create_archive.png
+link path=usr/share/gnome/help/gnome-commander/ru/figures/dev_cd.png \
+    target=../../C/figures/dev_cd.png
+link path=usr/share/gnome/help/gnome-commander/ru/figures/extract_archive.png \
+    target=../../C/figures/extract_archive.png
+link \
+    path=usr/share/gnome/help/gnome-commander/ru/figures/gnome-commander_dialog_adv_rename.png \
+    target=../../C/figures/gnome-commander_dialog_adv_rename.png
+file path=usr/share/gnome/help/gnome-commander/ru/figures/gnome-commander_dialog_application.png
+link \
+    path=usr/share/gnome/help/gnome-commander/ru/figures/gnome-commander_dialog_bookmark.png \
+    target=../../C/figures/gnome-commander_dialog_bookmark.png
+file path=usr/share/gnome/help/gnome-commander/ru/figures/gnome-commander_dialog_file_metadata.png
+file path=usr/share/gnome/help/gnome-commander/ru/figures/gnome-commander_dialog_file_permissions.png
+file path=usr/share/gnome/help/gnome-commander/ru/figures/gnome-commander_dialog_file_properties.png
+link \
+    path=usr/share/gnome/help/gnome-commander/ru/figures/gnome-commander_dialog_keyboard_shortcuts.png \
+    target=../../C/figures/gnome-commander_dialog_keyboard_shortcuts.png
+link \
+    path=usr/share/gnome/help/gnome-commander/ru/figures/gnome-commander_dialog_remote_connections.png \
+    target=../../C/figures/gnome-commander_dialog_remote_connections.png
+link \
+    path=usr/share/gnome/help/gnome-commander/ru/figures/gnome-commander_dialog_remote_server.png \
+    target=../../C/figures/gnome-commander_dialog_remote_server.png
+file path=usr/share/gnome/help/gnome-commander/ru/figures/gnome-commander_dialog_search.png
+file path=usr/share/gnome/help/gnome-commander/ru/figures/gnome-commander_options_confirmation.png
+file path=usr/share/gnome/help/gnome-commander/ru/figures/gnome-commander_options_devices.png
+file path=usr/share/gnome/help/gnome-commander/ru/figures/gnome-commander_options_filters.png
+file path=usr/share/gnome/help/gnome-commander/ru/figures/gnome-commander_options_format.png
+file path=usr/share/gnome/help/gnome-commander/ru/figures/gnome-commander_options_general.png
+file path=usr/share/gnome/help/gnome-commander/ru/figures/gnome-commander_options_layout.png
+link \
+    path=usr/share/gnome/help/gnome-commander/ru/figures/gnome-commander_options_layout_colors.png \
+    target=../../C/figures/gnome-commander_options_layout_colors.png
+file path=usr/share/gnome/help/gnome-commander/ru/figures/gnome-commander_options_programs.png
+file path=usr/share/gnome/help/gnome-commander/ru/figures/gnome-commander_options_tabs.png
+link \
+    path=usr/share/gnome/help/gnome-commander/ru/figures/gnome-commander_window.png \
+    target=../../C/figures/gnome-commander_window.png
+link path=usr/share/gnome/help/gnome-commander/ru/figures/mounting.png \
+    target=../../C/figures/mounting.png
+file path=usr/share/gnome/help/gnome-commander/ru/gnome-commander.xml
+file path=usr/share/gnome/help/gnome-commander/ru/legal.xml
+file path=usr/share/gnome/help/gnome-commander/ru/releases.xml
+link path=usr/share/gnome/help/gnome-commander/sl/figures/create_archive.png \
+    target=../../C/figures/create_archive.png
+link path=usr/share/gnome/help/gnome-commander/sl/figures/dev_cd.png \
+    target=../../C/figures/dev_cd.png
+link path=usr/share/gnome/help/gnome-commander/sl/figures/extract_archive.png \
+    target=../../C/figures/extract_archive.png
+file path=usr/share/gnome/help/gnome-commander/sl/figures/gnome-commander_dialog_adv_rename.png
+link \
+    path=usr/share/gnome/help/gnome-commander/sl/figures/gnome-commander_dialog_application.png \
+    target=../../C/figures/gnome-commander_dialog_application.png
+link \
+    path=usr/share/gnome/help/gnome-commander/sl/figures/gnome-commander_dialog_bookmark.png \
+    target=../../C/figures/gnome-commander_dialog_bookmark.png
+link \
+    path=usr/share/gnome/help/gnome-commander/sl/figures/gnome-commander_dialog_file_metadata.png \
+    target=../../C/figures/gnome-commander_dialog_file_metadata.png
+link \
+    path=usr/share/gnome/help/gnome-commander/sl/figures/gnome-commander_dialog_file_permissions.png \
+    target=../../C/figures/gnome-commander_dialog_file_permissions.png
+link \
+    path=usr/share/gnome/help/gnome-commander/sl/figures/gnome-commander_dialog_file_properties.png \
+    target=../../C/figures/gnome-commander_dialog_file_properties.png
+link \
+    path=usr/share/gnome/help/gnome-commander/sl/figures/gnome-commander_dialog_keyboard_shortcuts.png \
+    target=../../C/figures/gnome-commander_dialog_keyboard_shortcuts.png
+link \
+    path=usr/share/gnome/help/gnome-commander/sl/figures/gnome-commander_dialog_remote_connections.png \
+    target=../../C/figures/gnome-commander_dialog_remote_connections.png
+link \
+    path=usr/share/gnome/help/gnome-commander/sl/figures/gnome-commander_dialog_remote_server.png \
+    target=../../C/figures/gnome-commander_dialog_remote_server.png
+file path=usr/share/gnome/help/gnome-commander/sl/figures/gnome-commander_dialog_search.png
+file path=usr/share/gnome/help/gnome-commander/sl/figures/gnome-commander_options_confirmation.png
+file path=usr/share/gnome/help/gnome-commander/sl/figures/gnome-commander_options_devices.png
+file path=usr/share/gnome/help/gnome-commander/sl/figures/gnome-commander_options_filters.png
+file path=usr/share/gnome/help/gnome-commander/sl/figures/gnome-commander_options_format.png
+file path=usr/share/gnome/help/gnome-commander/sl/figures/gnome-commander_options_general.png
+file path=usr/share/gnome/help/gnome-commander/sl/figures/gnome-commander_options_layout.png
+link \
+    path=usr/share/gnome/help/gnome-commander/sl/figures/gnome-commander_options_layout_colors.png \
+    target=../../C/figures/gnome-commander_options_layout_colors.png
+file path=usr/share/gnome/help/gnome-commander/sl/figures/gnome-commander_options_programs.png
+link \
+    path=usr/share/gnome/help/gnome-commander/sl/figures/gnome-commander_options_tabs.png \
+    target=../../C/figures/gnome-commander_options_tabs.png
+file path=usr/share/gnome/help/gnome-commander/sl/figures/gnome-commander_window.png
+link path=usr/share/gnome/help/gnome-commander/sl/figures/mounting.png \
+    target=../../C/figures/mounting.png
+file path=usr/share/gnome/help/gnome-commander/sl/gnome-commander.xml
+file path=usr/share/gnome/help/gnome-commander/sl/legal.xml
+file path=usr/share/gnome/help/gnome-commander/sl/releases.xml
+file path=usr/share/locale/ar/LC_MESSAGES/gnome-commander.mo
+file path=usr/share/locale/bg/LC_MESSAGES/gnome-commander.mo
+file path=usr/share/locale/ca/LC_MESSAGES/gnome-commander.mo
+file path=usr/share/locale/cs/LC_MESSAGES/gnome-commander.mo
+file path=usr/share/locale/da/LC_MESSAGES/gnome-commander.mo
+file path=usr/share/locale/de/LC_MESSAGES/gnome-commander.mo
+file path=usr/share/locale/dz/LC_MESSAGES/gnome-commander.mo
+file path=usr/share/locale/el/LC_MESSAGES/gnome-commander.mo
+file path=usr/share/locale/en_CA/LC_MESSAGES/gnome-commander.mo
+file path=usr/share/locale/en_GB/LC_MESSAGES/gnome-commander.mo
+file path=usr/share/locale/eo/LC_MESSAGES/gnome-commander.mo
+file path=usr/share/locale/es/LC_MESSAGES/gnome-commander.mo
+file path=usr/share/locale/eu/LC_MESSAGES/gnome-commander.mo
+file path=usr/share/locale/fi/LC_MESSAGES/gnome-commander.mo
+file path=usr/share/locale/fr/LC_MESSAGES/gnome-commander.mo
+file path=usr/share/locale/ga/LC_MESSAGES/gnome-commander.mo
+file path=usr/share/locale/hr/LC_MESSAGES/gnome-commander.mo
+file path=usr/share/locale/hu/LC_MESSAGES/gnome-commander.mo
+file path=usr/share/locale/id/LC_MESSAGES/gnome-commander.mo
+file path=usr/share/locale/it/LC_MESSAGES/gnome-commander.mo
+file path=usr/share/locale/ja/LC_MESSAGES/gnome-commander.mo
+file path=usr/share/locale/ko/LC_MESSAGES/gnome-commander.mo
+file path=usr/share/locale/nb/LC_MESSAGES/gnome-commander.mo
+file path=usr/share/locale/ne/LC_MESSAGES/gnome-commander.mo
+file path=usr/share/locale/nl/LC_MESSAGES/gnome-commander.mo
+file path=usr/share/locale/oc/LC_MESSAGES/gnome-commander.mo
+file path=usr/share/locale/pa/LC_MESSAGES/gnome-commander.mo
+file path=usr/share/locale/pl/LC_MESSAGES/gnome-commander.mo
+file path=usr/share/locale/pt/LC_MESSAGES/gnome-commander.mo
+file path=usr/share/locale/pt_BR/LC_MESSAGES/gnome-commander.mo
+file path=usr/share/locale/ro/LC_MESSAGES/gnome-commander.mo
+file path=usr/share/locale/ru/LC_MESSAGES/gnome-commander.mo
+file path=usr/share/locale/rw/LC_MESSAGES/gnome-commander.mo
+file path=usr/share/locale/sk/LC_MESSAGES/gnome-commander.mo
+file path=usr/share/locale/sl/LC_MESSAGES/gnome-commander.mo
+file path=usr/share/locale/sq/LC_MESSAGES/gnome-commander.mo
+file path=usr/share/locale/sr/LC_MESSAGES/gnome-commander.mo
+file path=usr/share/locale/sr@Latn/LC_MESSAGES/gnome-commander.mo
+file path=usr/share/locale/sr@latin/LC_MESSAGES/gnome-commander.mo
+file path=usr/share/locale/sv/LC_MESSAGES/gnome-commander.mo
+file path=usr/share/locale/th/LC_MESSAGES/gnome-commander.mo
+file path=usr/share/locale/uk/LC_MESSAGES/gnome-commander.mo
+file path=usr/share/locale/vi/LC_MESSAGES/gnome-commander.mo
+file path=usr/share/locale/zh_CN/LC_MESSAGES/gnome-commander.mo
+file path=usr/share/locale/zh_TW/LC_MESSAGES/gnome-commander.mo
+file path=usr/share/man/man1/gnome-commander.1
+file path=usr/share/omf/gnome-commander/gnome-commander-C.omf
+file path=usr/share/omf/gnome-commander/gnome-commander-cs.omf
+file path=usr/share/omf/gnome-commander/gnome-commander-de.omf
+file path=usr/share/omf/gnome-commander/gnome-commander-el.omf
+file path=usr/share/omf/gnome-commander/gnome-commander-es.omf
+file path=usr/share/omf/gnome-commander/gnome-commander-fr.omf
+file path=usr/share/omf/gnome-commander/gnome-commander-ru.omf
+file path=usr/share/omf/gnome-commander/gnome-commander-sl.omf
+file path=usr/share/pixmaps/gnome-commander.png
+file path=usr/share/pixmaps/gnome-commander/copy_file_names.xpm
+file path=usr/share/pixmaps/gnome-commander/device-icons/bluetooth.xpm
+file path=usr/share/pixmaps/gnome-commander/device-icons/burner.xpm
+file path=usr/share/pixmaps/gnome-commander/device-icons/camera.xpm
+file path=usr/share/pixmaps/gnome-commander/device-icons/cdrom.xpm
+file path=usr/share/pixmaps/gnome-commander/device-icons/floppy.xpm
+file path=usr/share/pixmaps/gnome-commander/device-icons/harddisk.xpm
+file path=usr/share/pixmaps/gnome-commander/device-icons/ipod.xpm
+file path=usr/share/pixmaps/gnome-commander/device-icons/pci.xpm
+file path=usr/share/pixmaps/gnome-commander/device-icons/removable-1394.xpm
+file path=usr/share/pixmaps/gnome-commander/device-icons/removable-usb.xpm
+file path=usr/share/pixmaps/gnome-commander/device-icons/removable.xpm
+file path=usr/share/pixmaps/gnome-commander/device-icons/usb.xpm
+file path=usr/share/pixmaps/gnome-commander/device-icons/wavelan-encrypted.xpm
+file path=usr/share/pixmaps/gnome-commander/device-icons/wavelan.xpm
+file path=usr/share/pixmaps/gnome-commander/device-icons/zip.xpm
+file path=usr/share/pixmaps/gnome-commander/exec_wheel.xpm
+file path=usr/share/pixmaps/gnome-commander/file-type-icons/file_type_block_device.xpm
+file path=usr/share/pixmaps/gnome-commander/file-type-icons/file_type_char_device.xpm
+file path=usr/share/pixmaps/gnome-commander/file-type-icons/file_type_dir.xpm
+file path=usr/share/pixmaps/gnome-commander/file-type-icons/file_type_fifo.xpm
+file path=usr/share/pixmaps/gnome-commander/file-type-icons/file_type_regular.xpm
+file path=usr/share/pixmaps/gnome-commander/file-type-icons/file_type_socket.xpm
+file path=usr/share/pixmaps/gnome-commander/file-type-icons/file_type_symlink.xpm
+file path=usr/share/pixmaps/gnome-commander/flip-horizontal-16.xpm
+file path=usr/share/pixmaps/gnome-commander/flip-vertical-16.xpm
+file path=usr/share/pixmaps/gnome-commander/gnome-commander.xpm
+file path=usr/share/pixmaps/gnome-commander/gnome_cmd_arrow_blank.xpm
+file path=usr/share/pixmaps/gnome-commander/gnome_cmd_arrow_down.xpm
+file path=usr/share/pixmaps/gnome-commander/gnome_cmd_arrow_up.xpm
+file path=usr/share/pixmaps/gnome-commander/internal-viewer.xpm
+file path=usr/share/pixmaps/gnome-commander/menu_bookmark.xpm
+file path=usr/share/pixmaps/gnome-commander/mime-icons/gnome-application-msword.png
+file path=usr/share/pixmaps/gnome-commander/mime-icons/gnome-application-pdf.png
+file path=usr/share/pixmaps/gnome-commander/mime-icons/gnome-application-postscript.png
+file path=usr/share/pixmaps/gnome-commander/mime-icons/gnome-application-vnd.ms-excel.png
+file path=usr/share/pixmaps/gnome-commander/mime-icons/gnome-application-vnd.ms-powerpoint.png
+file path=usr/share/pixmaps/gnome-commander/mime-icons/gnome-application-vnd.sun.xml.calc.png
+file path=usr/share/pixmaps/gnome-commander/mime-icons/gnome-application-vnd.sun.xml.draw.png
+file path=usr/share/pixmaps/gnome-commander/mime-icons/gnome-application-vnd.sun.xml.impress.png
+file path=usr/share/pixmaps/gnome-commander/mime-icons/gnome-application-vnd.sun.xml.writer.math.png
+file path=usr/share/pixmaps/gnome-commander/mime-icons/gnome-application-vnd.sun.xml.writer.png
+file path=usr/share/pixmaps/gnome-commander/mime-icons/gnome-application-x-anjuta-project.png
+file path=usr/share/pixmaps/gnome-commander/mime-icons/gnome-application-x-arj.png
+file path=usr/share/pixmaps/gnome-commander/mime-icons/gnome-application-x-bzip-compressed-tar.png
+file path=usr/share/pixmaps/gnome-commander/mime-icons/gnome-application-x-bzip.png
+file path=usr/share/pixmaps/gnome-commander/mime-icons/gnome-application-x-compressed-tar.png
+file path=usr/share/pixmaps/gnome-commander/mime-icons/gnome-application-x-compressed.png
+file path=usr/share/pixmaps/gnome-commander/mime-icons/gnome-application-x-dia-diagram.png
+file path=usr/share/pixmaps/gnome-commander/mime-icons/gnome-application-x-executable-binary.png
+file path=usr/share/pixmaps/gnome-commander/mime-icons/gnome-application-x-glade.png
+file path=usr/share/pixmaps/gnome-commander/mime-icons/gnome-application-x-gnumeric.png
+file path=usr/share/pixmaps/gnome-commander/mime-icons/gnome-application-x-gzip.png
+file path=usr/share/pixmaps/gnome-commander/mime-icons/gnome-application-x-mrproject.png
+file path=usr/share/pixmaps/gnome-commander/mime-icons/gnome-application-x-ogg.png
+file path=usr/share/pixmaps/gnome-commander/mime-icons/gnome-application-x-rpm.png
+file path=usr/share/pixmaps/gnome-commander/mime-icons/gnome-application-zip.png
+file path=usr/share/pixmaps/gnome-commander/mime-icons/gnome-audio-plain.png
+file path=usr/share/pixmaps/gnome-commander/mime-icons/gnome-audio-x-mp3.png
+file path=usr/share/pixmaps/gnome-commander/mime-icons/gnome-compressed.png
+file path=usr/share/pixmaps/gnome-commander/mime-icons/gnome-image-plain.png
+file path=usr/share/pixmaps/gnome-commander/mime-icons/gnome-text-html.png
+file path=usr/share/pixmaps/gnome-commander/mime-icons/gnome-text-plain.png
+file path=usr/share/pixmaps/gnome-commander/mime-icons/gnome-text-x-c-header.png
+file path=usr/share/pixmaps/gnome-commander/mime-icons/gnome-text-x-c.png
+file path=usr/share/pixmaps/gnome-commander/mime-icons/gnome-text-x-sh.png
+file path=usr/share/pixmaps/gnome-commander/mime-icons/gnome-video-plain.png
+file path=usr/share/pixmaps/gnome-commander/mime-icons/gnome-x-directory-smb-server.png
+file path=usr/share/pixmaps/gnome-commander/mime-icons/gnome-x-directory-smb-workgroup.png
+file path=usr/share/pixmaps/gnome-commander/mime-icons/i-blockdev.png
+file path=usr/share/pixmaps/gnome-commander/mime-icons/i-chardev.png
+file path=usr/share/pixmaps/gnome-commander/mime-icons/i-directory.png
+file path=usr/share/pixmaps/gnome-commander/mime-icons/i-fifo.png
+file path=usr/share/pixmaps/gnome-commander/mime-icons/i-music.png
+file path=usr/share/pixmaps/gnome-commander/mime-icons/i-regular.png
+file path=usr/share/pixmaps/gnome-commander/mime-icons/i-socket.png
+file path=usr/share/pixmaps/gnome-commander/mime-icons/i-symlink.png
+file path=usr/share/pixmaps/gnome-commander/nautilus.svg
+file path=usr/share/pixmaps/gnome-commander/overlay_symlink.xpm
+file path=usr/share/pixmaps/gnome-commander/overlay_umount.xpm
+file path=usr/share/pixmaps/gnome-commander/pin.png
+file path=usr/share/pixmaps/gnome-commander/python.svg
+file path=usr/share/pixmaps/gnome-commander/rotate-180-16.xpm
+file path=usr/share/pixmaps/gnome-commander/rotate-270-16.xpm
+file path=usr/share/pixmaps/gnome-commander/rotate-90-16.xpm
+file path=usr/share/pixmaps/gnome-commander/terminal.svg
+file path=usr/share/pixmaps/gnome-commander/toggle_horizontal.xpm
+file path=usr/share/pixmaps/gnome-commander/toggle_vertical.xpm
+file path=usr/share/pixmaps/gnome-commander/unpin.png
