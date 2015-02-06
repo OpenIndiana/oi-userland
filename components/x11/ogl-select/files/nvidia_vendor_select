@@ -1,0 +1,95 @@
+#!/bin/ksh
+#
+# Copyright (c) 2006, 2010, Oracle and/or its affiliates. All rights reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice (including the next
+# paragraph) shall be included in all copies or substantial portions of the
+# Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+# DEALINGS IN THE SOFTWARE.
+#
+#
+
+LINKDIR=/var/run/opengl
+
+PATH=/usr/bin:/usr/sbin:/usr/openwin/bin:/usr/X11/bin
+
+#
+# No support for SPARC, yet
+#
+if [ `uname -p` = "sparc" ]; then
+	return 0
+fi
+
+MYIDENTITY="NVDAnvda nvidia"
+
+# If this is just a probe, identify ourself and leave.
+if [ $# -eq 1 ]; then
+	if [ $1 = "identify" ]; then
+		echo $MYIDENTITY
+		return 0
+	fi
+fi
+
+# Make a directory link. $1 is the pathname.
+make_dir_link() {
+	if [ $# != 1 ]; then
+		return
+	fi
+	if [ ! -d $1 ]; then
+		mkdir -p $1
+	fi	
+	chmod 755 $1
+}
+
+dir_init() {
+	make_dir_link $LINKDIR
+	make_dir_link $LINKDIR/lib
+	make_dir_link $LINKDIR/lib/amd64
+	make_dir_link $LINKDIR/include
+	make_dir_link $LINKDIR/server
+	make_dir_link $LINKDIR/server/amd64
+}
+
+# Make a file link. $1 is the source path, $2 is the target path
+make_file_link() {
+	if [ $# != 2 ]; then
+		return
+	fi
+	if [ -h $2 ]; then
+		rm -f $2
+	fi
+	ln -sf $1 $2
+}
+
+dir_init
+
+# User libraries
+make_file_link /usr/X11/lib/NVIDIA/libGL.so.1 $LINKDIR/lib/libGL.so.1
+make_file_link /usr/X11/lib/NVIDIA/amd64/libGL.so.1 $LINKDIR/lib/amd64/libGL.so.1
+make_file_link amd64 $LINKDIR/lib/64
+
+# Server libraries
+make_file_link /usr/X11/lib/modules/extensions/NVIDIA/libglx.so $LINKDIR/server/libglx.so
+make_file_link /usr/X11/lib/modules/extensions/NVIDIA/amd64/libglx.so $LINKDIR/server/amd64/libglx.so
+
+# Includes
+make_file_link /usr/X11/include/NVIDIA/GL/gl.h $LINKDIR/include/gl.h
+make_file_link /usr/X11/include/NVIDIA/GL/glext.h $LINKDIR/include/glext.h
+make_file_link /usr/X11/include/NVIDIA/GL/glx.h $LINKDIR/include/glx.h
+make_file_link /usr/X11/include/NVIDIA/GL/glxext.h $LINKDIR/include/glxext.h
+
+return 0

@@ -1,0 +1,24 @@
+--- configure.ac Thu Aug  1 09:21:32 2013
++++ configure.ac Mon Aug 12 15:50:47 2013
+@@ -1064,7 +1064,7 @@
+         DEFINES="$DEFINES -DHAVE_ALIAS"
+        ;;
+     solaris*)
+-        DEFINES="$DEFINES -DUSE_EXTERNAL_DXTN_LIB=1 -DIN_DRI_DRIVER"
++        DEFINES="$DEFINES -DUSE_EXTERNAL_DXTN_LIB=0 -DIN_DRI_DRIVER"
+         ;;
+     cygwin*)
+         DEFINES="$DEFINES -DUSE_EXTERNAL_DXTN_LIB=1 -DIN_DRI_DRIVER"
+
+--- src/mesa/libdricore/Makefile.am	Fri Dec  6 13:14:32 2013
++++ src/mesa/libdricore/Makefile.am	Fri Dec  6 13:16:01 2013
+@@ -46,7 +46,7 @@
+ 	$(BUILTIN_COMPILER_GENERATED_CXX_FILES) \
+ 	$(top_builddir)/src/glsl/builtin_function.cpp
+ libdricore@VERSION@_la_LDFLAGS = -version-number 1:0
+-libdricore@VERSION@_la_LIBADD = libdricore-asm.la
++#libdricore@VERSION@_la_LIBADD =
+ 
+ # This is separated from libdricore to avoid conflics in object
+ # outputs between main/clip.c and sparc/clip.c.  The documented way to
+
