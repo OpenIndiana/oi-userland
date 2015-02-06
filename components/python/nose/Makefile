@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -69,6 +69,12 @@ COMPONENT_PRE_TEST_ACTION = \
 build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
+
+# Note that it is currently not feasible to add master test file(s) for this
+# component because "chances are you will experience odd, intermittent and
+# unexplainable failures and errors" when using the multiprocess plug. See:
+# http://nose.readthedocs.org/en/latest/plugins/multiprocess.html
+# CR #20470423 has been filed to investigate these failures.
 
 test:		$(TEST_NO_ARCH)
 
