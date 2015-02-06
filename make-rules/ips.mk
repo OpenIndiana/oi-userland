@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 #
@@ -47,6 +47,14 @@ else
 PKGLINT =	${WS_TOOLS}/pkglint
 endif
 PKGMANGLE =	$(WS_TOOLS)/userland-mangler
+
+# pkgfmt has an odd behavior at present where -c means "check validity
+# against any format" whereas -d means "diffs against latest format" and
+# no arguments means "update to latest format".  Thus, 'pkgfmt -c' can
+# run clean on a v1 manifest that actually needs to be updated.  So we
+# use the explicit format version argument below.  If this behavior is
+# changed, then the -f argument below can be dropped.
+PKGFMT_CHECK_ARGS =	-c -fv2
 
 # Package headers should all pretty much follow the same format
 METADATA_TEMPLATE =		$(WS_TOP)/transforms/manifest-metadata-template
@@ -213,6 +221,7 @@ $(MANIFEST_BASE)-%-$(shell echo $(1) | tr -d .).mogrified: PKG_MACROS += PYTHON_
 
 $(MANIFEST_BASE)-%-$(shell echo $(1) | tr -d .).p5m: %-PYVER.p5m
 	if [ -f $$*-$(shell echo $(1) | tr -d .)GENFRAG.p5m ]; then cat $$*-$(shell echo $(1) | tr -d .)GENFRAG.p5m >> $$@; fi
+	$(PKGFMT) $(PKGFMT_CHECK_ARGS) $(CANONICAL_MANIFESTS)
 	$(PKGMOGRIFY) -D PYVER=$(1) -D PYV=$(shell echo $(1) | tr -d .) $$< > $$@
 endef
 $(foreach ver,$(PYTHON_VERSIONS),$(eval $(call python-manifest-rule,$(ver))))
@@ -236,6 +245,7 @@ $(BUILD_DIR)/mkgeneric-python: $(WS_TOP)/make-rules/shared-macros.mk
 # more generic like LANGVER might make more sense, but for now we are
 # sticking with something known to work.
 $(MANIFEST_BASE)-%.p5m: %-PYVER.p5m $(BUILD_DIR)/mkgeneric-python
+	$(PKGFMT) $(PKGFMT_CHECK_ARGS) $(CANONICAL_MANIFESTS)
 	$(PKGMOGRIFY) -D PYV=###PYV### $(BUILD_DIR)/mkgeneric-python \
 		$(WS_TOP)/transforms/mkgeneric $< > $@
 	if [ -f $*-GENFRAG.p5m ]; then cat $*-GENFRAG.p5m >> $@; fi
@@ -244,6 +254,7 @@ $(MANIFEST_BASE)-%.p5m: %-PYVER.p5m $(BUILD_DIR)/mkgeneric-python
 # perl module specific to a particular version of the perl runtime.
 define perl-manifest-rule
 $(MANIFEST_BASE)-%-$(shell echo $(1) | tr -d .).p5m: %-PERLVER.p5m
+	$(PKGFMT) $(PKGFMT_CHECK_ARGS) $$<
 	$(PKGMOGRIFY) -D PERLVER=$(1) -D PLV=$(shell echo $(1) | tr -d .) \
 		-D PERL_ARCH=$(call PERL_ARCH_FUNC,$(PERL.$(1))) $$< > $$@
 endef
@@ -262,6 +273,7 @@ $(BUILD_DIR)/mkgeneric-perl: $(WS_TOP)/make-rules/shared-macros.mk
 # See the block comment above about why "###PYV###" is used here even
 # though this is for Perl rather than Python.
 $(MANIFEST_BASE)-%.p5m: %-PERLVER.p5m $(BUILD_DIR)/mkgeneric-perl
+	$(PKGFMT) $(PKGFMT_CHECK_ARGS) $(CANONICAL_MANIFESTS)
 	$(PKGMOGRIFY) -D PLV=###PYV### $(BUILD_DIR)/mkgeneric-perl \
 		$(WS_TOP)/transforms/mkgeneric $< > $@
 	if [ -f $*-GENFRAG.p5m ]; then cat $*-GENFRAG.p5m >> $@; fi
@@ -279,6 +291,7 @@ $(MANIFEST_BASE)-%-$(shell echo $(1) | tr -d .).p5m: %-RUBYVER.p5m
 	if [ -f $$*-$(shell echo $(1) | tr -d .)GENFRAG.p5m ]; then \
 		cat $$*-$(shell echo $(1) | tr -d .)GENFRAG.p5m >> $$@; \
 	fi
+	$(PKGFMT) $(PKGFMT_CHECK_ARGS) $(CANONICAL_MANIFESTS)
 	$(PKGMOGRIFY) -D RUBY_VERSION=$(1) -D RUBY_LIB_VERSION=$(2) \
 	    -D RUBYV=$(shell echo $(1) | tr -d .) $$< > $$@
 endef
@@ -302,12 +315,14 @@ $(BUILD_DIR)/mkgeneric-ruby: $(WS_TOP)/make-rules/shared-macros.mk
 # See the block comment above about why "###PYV###" is used here even
 # though this is for Ruby rather than Python.
 $(MANIFEST_BASE)-%.p5m: %-RUBYVER.p5m $(BUILD_DIR)/mkgeneric-ruby
+	$(PKGFMT) $(PKGFMT_CHECK_ARGS) $(CANONICAL_MANIFESTS)
 	$(PKGMOGRIFY) -D RUBYV=###PYV### $(BUILD_DIR)/mkgeneric-ruby \
 		$(WS_TOP)/transforms/mkgeneric $< > $@
 	if [ -f $*-GENFRAG.p5m ]; then cat $*-GENFRAG.p5m >> $@; fi
 
 # mogrify non-parameterized manifests
 $(MANIFEST_BASE)-%.mogrified:	%.p5m $(BUILD_DIR)
+	$(PKGFMT) $(PKGFMT_CHECK_ARGS) $<
 	$(PKGMOGRIFY) $(PKG_OPTIONS) $< \
 		$(PUBLISH_TRANSFORMS) | \
 		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
