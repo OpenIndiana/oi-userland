@@ -16,6 +16,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gftp
 COMPONENT_VERSION=	2.0.19
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://gftp.seul.org/
 COMPONENT_SUMMARY=	Multithreaded FTP client for *NIX based machines
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
