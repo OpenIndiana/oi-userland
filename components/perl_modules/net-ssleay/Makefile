@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -46,6 +46,8 @@ ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 # to run external tests, to which we want to answer with "n".
 COMPONENT_CONFIGURE_ENV += ; echo "n" |
 COMPONENT_TEST_TARGETS = test
+COMPONENT_TEST_TRANSFORMS += \
+        '-e "s|\(^Files=\).*|\1|" '
 
 build:		$(BUILD_32_and_64)
 

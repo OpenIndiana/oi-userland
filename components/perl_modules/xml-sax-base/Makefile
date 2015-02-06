@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -49,6 +49,9 @@ ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 COMPONENT_INSTALL_ENV += INSTALLVENDORMAN3DIR=$(USRSHAREMAN3DIR)
 
 COMPONENT_TEST_TARGETS = test
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+COMPONENT_TEST_TRANSFORMS += \
+        '-e "s|\(^Files=\).*|\1|" '
 
 build:		$(BUILD_32_and_64)
 
