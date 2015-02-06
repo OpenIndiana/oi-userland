@@ -1,0 +1,70 @@
+--- gftp-2.0.19/lib/charset-conv.c.orig	2008-12-09 16:23:18.656150736 +0900
++++ gftp-2.0.19/lib/charset-conv.c	2008-12-09 16:32:03.088367844 +0900
+@@ -35,7 +35,7 @@ _gftp_get_next_charset (char **curpos)
+   for (; **curpos == ' ' || **curpos == '\t'; (*curpos)++);
+ 
+   if ((endpos = strchr (*curpos, ',')) == NULL)
+-    len = strlen (*curpos) - 1; /* the trailing ',' should be omitted */
++    len = strlen (*curpos);
+   else
+     len = endpos - *curpos;
+ 
+@@ -46,6 +46,7 @@ _gftp_get_next_charset (char **curpos)
+   retlen++; /* Needed due to the len - 1 above... */
+   ret = g_malloc0 (retlen + 1);
+   memcpy (ret, *curpos, retlen);
++  ret[retlen] = '\0';
+ 
+   for (*curpos += len; **curpos == ','; (*curpos)++);
+ 
+@@ -70,7 +71,7 @@ _do_show_iconv_error (const char *str, c
+       toset = "UTF-8";
+     }
+ 
+-  printf (_("Error converting string '%s' from character set %s to character set %s: %s\n"),
++  g_print (_("Error converting string '%s' from character set %s to character set %s: %s\n"),
+           str, fromset, toset, error->message);
+ }
+ 
+@@ -80,13 +81,15 @@ _do_convert_string (gftp_request * reque
+                     const char *str, size_t *dest_len, int from_utf8)
+ {
+   char *remote_charsets, *ret, *fromset, *toset, *stpos, *cur_charset;
++  static const char *local_charset = NULL;
+   GError * error;
+   gsize bread;
+ 
+   if (request == NULL)
+     return (NULL);
+ 
+-  if (g_utf8_validate (str, -1, NULL) != from_utf8)
++  if (g_utf8_validate (str, -1, NULL) != from_utf8 &&
++      request->use_local_encoding == 0)
+     return (NULL);
+ 
+   error = NULL;
+@@ -110,7 +113,11 @@ _do_convert_string (gftp_request * reque
+         }
+ 
+       if (ret == NULL)
+-        _do_show_iconv_error (str, request->iconv_charset, from_utf8, error);
++        {
++          if (local_charset == NULL)
++            g_get_charset (&local_charset);
++          _do_show_iconv_error (str, (char*)local_charset, from_utf8, error);
++        }
+ 
+       return (ret);
+     }
+--- gftp-2.0.19/src/gtk/misc-gtk.c.orig	2008-12-09 16:23:18.675261644 +0900
++++ gftp-2.0.19/src/gtk/misc-gtk.c	2008-12-09 16:30:16.958142944 +0900
+@@ -71,7 +71,8 @@ ftp_log (gftp_logging_level level, gftp_
+   va_end (argp);
+ 
+ #if GTK_MAJOR_VERSION > 1
+-  if ((utf8_str = gftp_string_to_utf8 (request, logstr, &destlen)) != NULL)
++  if (g_utf8_validate (logstr, -1, NULL) != TRUE &&
++      (utf8_str = gftp_string_to_utf8 (request, logstr, &destlen)) != NULL)
+     {
+       if (free_logstr)
+         g_free (logstr);

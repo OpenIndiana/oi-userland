@@ -1,0 +1,93 @@
+--- gftp-2.0.19/lib/sshv2.c.orig	2008-01-25 08:28:32.000000000 +0900
++++ gftp-2.0.19/lib/sshv2.c	2008-12-09 14:32:52.172140155 +0900
+@@ -379,6 +379,7 @@ sshv2_start_login_sequence (gftp_request
+                            N_("Enter passphrase for key '"),
+                            N_("Password"),
+                            N_("password"),
++                           N_("Password: "),
+                            NULL};
+   char *tempstr, *temp1str, *pwstr, *yesstr = "yes\n", *securid_pass;
+   int wrotepw, ok, maxfd, ret, clear_tempstr, pwidx;
+@@ -463,15 +464,26 @@ sshv2_start_login_sequence (gftp_request
+         continue;
+ 
+       tempstr[diff + rd] = '\0'; 
+-      request->logging_function (gftp_logging_recv, request, "%s", tempstr + diff);
++      temp1str = g_locale_to_utf8 (tempstr + diff, -1, NULL, NULL, NULL);
++      if (temp1str == NULL)
++        temp1str = g_strdup (tempstr);
++      request->logging_function (gftp_logging_recv, request, "%s", temp1str);
++      g_free (temp1str);
+       rem -= rd;
+       diff += rd;
+ 
++      temp1str = g_locale_to_utf8 (tempstr, -1, NULL, NULL, NULL);
++      if (temp1str == NULL)
++        temp1str = g_strdup (tempstr);
++
+       /* See if we are at the enter password prompt... */
+       for (pwidx = 0; pwstrs[pwidx] != NULL; pwidx++)
+         {
+-          if (strstr (tempstr, pwstrs[pwidx]) != NULL ||
+-              strstr (tempstr, _(pwstrs[pwidx])) != NULL)
++          if (strstr (temp1str, pwstrs[pwidx]) != NULL ||
++#ifdef __sun
++              strstr (tempstr, dgettext ("SUNW_OST_SYSOSPAM", pwstrs[pwidx])) != NULL ||
++#endif
++              strstr (temp1str, _(pwstrs[pwidx])) != NULL)
+             break;
+         }
+ 
+@@ -482,6 +494,7 @@ sshv2_start_login_sequence (gftp_request
+           if (wrotepw)
+             {
+               ok = SSH_ERROR_BADPASS;
++              g_free (temp1str);
+               break;
+             }
+ 
+@@ -489,6 +502,7 @@ sshv2_start_login_sequence (gftp_request
+           if (gftp_fd_write (request, pwstr, strlen (pwstr), ptymfd) < 0)
+             {
+               ok = 0;
++              g_free (temp1str);
+               break;
+             }
+         }
+@@ -496,13 +510,15 @@ sshv2_start_login_sequence (gftp_request
+                strstr (tempstr, _("(yes/no)?")) != NULL)
+         {
+           clear_tempstr = 1;
+-          if (!gftpui_protocol_ask_yes_no (request, request->hostname, tempstr))
++          if (!gftpui_protocol_ask_yes_no (request, request->hostname, temp1str))
+             {
+               ok = SSH_ERROR_QUESTION;
++              g_free (temp1str);
+               break;
+             }
+           else
+             {
++              g_free (temp1str);
+               if (gftp_fd_write (request, yesstr, strlen (yesstr), ptymfd) < 0)
+                 {
+                   ok = 0;
+@@ -521,9 +537,11 @@ sshv2_start_login_sequence (gftp_request
+           if (securid_pass == NULL || *securid_pass == '\0')
+             {
+               ok = SSH_ERROR_BADPASS;
++              g_free (temp1str);
+               break;
+             }
+ 
++          g_free (temp1str);
+           temp1str = g_strconcat (securid_pass, "\n", NULL);
+ 
+           ret = gftp_fd_write (request, temp1str, strlen (temp1str), ptymfd);
+@@ -543,6 +561,7 @@ sshv2_start_login_sequence (gftp_request
+         {
+           len += SSH_LOGIN_BUFSIZE;
+           rem += SSH_LOGIN_BUFSIZE;
++          g_free (temp1str);
+           tempstr = g_realloc (tempstr, len);
+           continue;
+         }
