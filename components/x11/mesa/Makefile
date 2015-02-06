@@ -16,15 +16,14 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= mesa
-COMPONENT_VERSION= 7.4.4
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 9.0.3
 COMPONENT_SUMMARY= The Mesa 3-D Graphics Library
 COMPONENT_SRC= Mesa-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= MesaLib-$(COMPONENT_VERSION).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:eaf73d7a3a2dc959ddc0753abaa18160c64bec00b35bf4a0c96040b2072918ec
+  sha256:ea940005b2c379f83527b5ba6d7fb69c533c2c17b561dc3b8469237ac75606a5
 COMPONENT_ARCHIVE_URL= \
-  http://sourceforge.net/projects/mesa3d/files/MesaLib/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
+  ftp://ftp.freedesktop.org/pub/mesa/older-versions/9.x/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.mesa3d.org/
 
 include $(WS_TOP)/make-rules/prep.mk
@@ -41,21 +40,41 @@ SERVERMOD_SUBDIR=$(SERVERMOD_SUBDIR.$(BITS))
 X11_SERVERMODS_DIR=/usr/lib/xorg/modules
 X11_SERVERLIBS_DIR=/usr/lib/xorg
 
+COMPONENT_POST_UNPACK_ACTION +=  ( cp -r $(COMPONENT_DIR)/srcs/* $(SOURCE_DIR) )
+COMPONENT_PREP_ACTION +=  (cd $(SOURCE_DIR) && \
+                                        libtoolize --copy --force &&\
+                                        aclocal -I m4 &&\
+                                        automake -c -f -a &&\
+                                        autoconf)
+
+CONFIGURE_SCRIPT = $(@D)/configure
+
+
 # Missing files in build dir for configure without this.
-COMPONENT_PRE_CONFIGURE_ACTION =        (cp -a $(SOURCE_DIR)/* $(@D) && cp -r $(COMPONENT_DIR)/srcs/* $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION =        (cp -a $(SOURCE_DIR)/* $(@D) )
 
 # Add include paths and linker paths needed for DRM modules
-CPPFLAGS = -I/usr/X11/include/drm
+CPPFLAGS = -I/usr/X11/include/drm -D__EXTENSIONS__
 
 LDFLAGS= -L$(PROTODIR)$(X11_SERVERLIBS_DIR)$(ARCHLIBSUBDIR) \
                 -R$(X11_SERVERLIBS_DIR)$(ARCHLIBSUBDIR) 
 
-DRI_DRIVER_LIST=i915 i965 r200 r300 radeon swrast
+LD_OPTIONS += -M $(COMPONENT_DIR)/mapfile.externs
+
+DRI_DRIVER_LIST=i915 i965 r200 radeon swrast
 
 # Command line options to GNU autoconf configure script
 CONFIGURE_OPTIONS += --with-dri-driverdir='$(X11_SERVERMODS_DIR)/dri$(SERVERMOD_SUBDIR)'
 CONFIGURE_OPTIONS += --with-driver=dri
 CONFIGURE_OPTIONS += --with-dri-drivers='$(DRI_DRIVER_LIST)'
+CONFIGURE_OPTIONS += --disable-gallium-llvm
+CONFIGURE_OPTIONS += --disable-egl 
+CONFIGURE_OPTIONS += --disable-gallium
+CONFIGURE_OPTIONS += --with-gallium-drivers=
+CONFIGURE_OPTIONS += --sysconfdir=/etc
+
+CONFIGURE_ENV+=PYTHON=$(PYTHON)
+CONFIGURE_ENV+=CPPFLAGS="$(CPPFLAGS)"
 
 build: $(BUILD_32_and_64)
 
