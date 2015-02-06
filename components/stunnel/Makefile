@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -36,6 +36,7 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://pkgs.fedoraproject.org/repo/pkgs/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)/ac4c4a30bd7a55b6687cbd62d864054c/$(COMPONENT_ARCHIVE)
 
 COMPONENT_BUGDB=	utility/stunnel
+TPNO=                   21367
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
