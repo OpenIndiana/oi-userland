@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -37,6 +37,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:a80d1c72e435da31758261cb0c04fe750ac71fc3e33a3b606123efd3b3abc86d
 COMPONENT_ARCHIVE_URL=	http://www.process-one.net/downloads/ejabberd/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	service/ejabberd
+TPNO=                   21408
 
 include ../../make-rules/prep.mk
 
