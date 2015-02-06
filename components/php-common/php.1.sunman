@@ -1,6 +1,6 @@
 '\" te
-.\" Copyright (c) 2008, 2012, Oracle and/or its affiliates. All rights reserved.
-.TH php 1 "10 May 2012" "SunOS 5.11" "User Commands"
+.\" Copyright (c) 2008, 2015, Oracle and/or its affiliates. All rights reserved.
+.TH php 1 "29 Jan 2015" "SunOS 5.11" "User Commands"
 
 .SH "NAME"
 php \- PHP Command Line Interface
@@ -88,48 +88,82 @@ http://pear.php.net/        PEAR Repository
 http://pecl.php.net/        PECL Repository
 .fi
 .SH NOTES
-.PP
+.LP
+PHP 5.2 may be removed in a future update.
+Newer versions of PHP will appear in a future Solaris.
+.LP
+Please migrate to a newer version.
+Migration documentation is available on the PHP website:
+.LP
+.nf
+http://php.net/manual/en/appendices.php
+.fi
+.LP
+If it is desired to keep the obsolete version of PHP
+then it should be frozen to prevent its removal by a future update.
+.LP
+.nf
+pkg freeze 'web/php-52*' web/server/apache-22/module/apache-php52
+pkg change-facet --no-backup-be 'version-lock\&.web/php-52*=False' \e
+    version-lock\&.web/server/apache-22/module/apache-php52=False
+.fi
+.LP
+Please note that the freezing of packages may yield
+an unsupportable system so use with caution.
+.LP
 PHP has been built to be largefile-aware and to use
 64-bit integers, although the interpreter and the library
 themselves are 32-bit applications (LP32).
-.PP
+.LP
 If you wish to build and install PHP add-on modules from PECL,
 you can do so using the phpize script  -  see phpize(1) for
 details.
-.PP
-Solaris ships with PHP 5.2.17 and 5.3.14.
-To install PHP 5.2.17 use the pkg(1) command:
-.PP
+.LP
+Solaris ships with PHP 5.2 and 5.3.
+To install PHP 5.2 use the pkg(1) command:
+.LP
+.nf
 pkg install web/php-52 web/server/apache-22/module/apache-php52
-.PP
-To install PHP 5.3.14:
-.PP
+.fi
+.LP
+To install PHP 5.3:
+.LP
+.nf
 pkg install web/php-53 web/server/apache-22/module/apache-php53
-.PP
+.fi
+.LP
 Documentation is separate:
-.PP
+.LP
+.nf
 pkg install web/php-53/documentation
-.PP
+.fi
+.LP
 Before and after installing check or set the value of PHP's pkg
 mediator to the default version desired:
-.PP
+.LP
+.nf
 pkg mediator
-.PP
+.fi
+.LP
 To set the default version of PHP change the pkg mediator value:
-.PP
+.LP
+.nf
 pkg set-mediator -V 5.3 php
-.PP
+.fi
+.LP
 where php mediator values are 5.2 or 5.3.
-.PP
+.LP
 The configuration of php is controlled by editing the php
 configuration file for that specific version:
-.PP
+.LP
+.nf
 /etc/apache2/2.2/conf.d/php/php5.2.conf
 .br
 or
 .br
 /etc/apache2/2.2/conf.d/php/php5.3.conf
-.PP
+.fi
+.LP
 The pkg mediator will select the proper file to use.
-.PP
+.LP
 PHP is a recursive acronym which stands for PHP Hypertext Pages.
