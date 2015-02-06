@@ -18,7 +18,7 @@ include ../../make-rules/shared-macros.mk
 COMPONENT_NAME= gdesklets
 COMPONENT_VERSION= 0.36.3
 # Version was bumped in JDS
-IPS_COMPONENT_VERSION= 2.30
+IPS_COMPONENT_VERSION= 2.30.0
 COMPONENT_SUMMARY= Applications/Panels and Applets
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
