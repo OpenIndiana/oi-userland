@@ -177,6 +177,13 @@ COMPONENT_TEST_ENV += PATH="$(SPRO_VROOT)/bin:$(PATH)"
 # Prevent the tests from getting stuck waiting for input.
 COMPONENT_TEST_TARGETS = test < /dev/null
 
+# The test output contains details from each test, in whatever order they
+# complete.  The default _TRANSFORMER is not powerful enough to deal with
+# this; we need heavier artillery.  Extract just the sections that start
+# with "tests OK." and end with "Re-running failed tests..." for comparison.
+COMPONENT_TEST_TRANSFORMER =	$(NAWK)
+COMPONENT_TEST_TRANSFORMS =	"'/tests OK./ {results = 1}; /Re-running failed tests in verbose mode/ {results = 0} {if (results) print $0 } '"
+
 test:				$(TEST_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)

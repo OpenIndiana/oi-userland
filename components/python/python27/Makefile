@@ -181,6 +181,13 @@ COMPONENT_TEST_ENV = EXTRATESTOPTS="-v -uall,-network $(TESTOPTS_PYTHON_TEST)"
 COMPONENT_TEST_ENV += PATH="$(SPRO_VROOT)/bin:$(PATH)"
 COMPONENT_TEST_TARGETS = test
 
+# The test output contains details from each test, in whatever order they
+# complete.  The default _TRANSFORMER is not powerful enough to deal with
+# this; we need heavier artillery.  Extract just the sections that start
+# with "tests OK." and end with "make: " for comparison.
+COMPONENT_TEST_TRANSFORMER =	$(NAWK)
+COMPONENT_TEST_TRANSFORMS =	"'/tests OK./ {results = 1}; /make: / {results = 0} {if (results) print $0 } '"
+
 test:				$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)

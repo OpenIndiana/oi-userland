@@ -198,5 +198,13 @@ COMPONENT_TEST_TRANSFORMS = \
         '-e "s|$(PERL)|\\$$(PERL)|g" ' \
         '-e "s|$(SOURCE_DIR)|\\$$(SOURCE_DIR)|g" '
 
+Note that in some cases, gsed is not powerful enough.  E.g., if you need to
+do more than massage or remove certain lines, but only compare certain sections
+of the file, then you may need to set COMPONENT_TEST_TRANSFORMER to something
+other than $(GSED) such as $(NAWK).  In this case, you will want to set
+COMPONENT_TEST_TRANSFORMS using "=" instead of "+=", as the default sed
+transforms will likely need to be tossed aside in favor of whatever arguments
+your favorite transformer might need.
+
 When your master test file(s) are in good shape, then you should "hg add"
 them to your workspace.

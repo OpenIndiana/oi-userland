@@ -239,6 +239,9 @@ COMPONENT_TEST_DIFFS =		$(COMPONENT_TEST_RESULTS_DIR)/test-$(BITS)-diffs
 # set the default test snapshot file
 COMPONENT_TEST_SNAPSHOT =	$(COMPONENT_TEST_RESULTS_DIR)/results-$(BITS).snapshot
 
+# Normally $(GSED) is simplest, but some results files need more power.
+COMPONENT_TEST_TRANSFORMER =	$(GSED)
+
 # The set of default transforms to be applied to the test results to try
 # to normalize them.
 COMPONENT_TEST_TRANSFORMS = \
@@ -252,7 +255,7 @@ COMPONENT_TEST_CREATE_TRANSFORMS = \
 	if [ -e $(COMPONENT_TEST_MASTER) ]; \
 	then \
 		print "\#!/bin/sh" > $(COMPONENT_TEST_TRANSFORM_CMD); \
-        	print '$(GSED) ' \
+        	print '$(COMPONENT_TEST_TRANSFORMER) ' \
 			$(COMPONENT_TEST_TRANSFORMS) \
                 	' \\' >> $(COMPONENT_TEST_TRANSFORM_CMD); \
         	print '$(COMPONENT_TEST_OUTPUT) \\' \
