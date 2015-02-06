@@ -130,12 +130,61 @@ to have to write special regexp expressions in your component Makefile to
 "normalize" them, and adjust the master test results file so that it
 matches what the normalized version looks like.
 
-For example, see the transform in the asciidoc Makefile:
+Transform examples.
+-------------------
+
+1/ Handling temporary filenames.
+
+See the transform in the asciidoc Makefile:
 
 COMPONENT_TEST_TRANSFORMS += \
         '-e "s|/tmp......|/tmpxxxxxx|g" '
 
-to "normalize" any temporary filenames that appear in the test results.
+for how to "normalize" any temporary filenames that appear in the test results.
+
+2/ Build related output.
+
+Items (such as paths to compilers) should be removed from master test files.
+For example, in testing the xz component, we get the following different
+output for compiling a .c file for 32-bit and 64-bit on x86 and SPARC:
+
+x86 32-bit:
+
+/ws/on12-tools/SUNWspro/solarisstudio12.3/bin/cc -DHAVE_CONFIG_H -I. -I/builds/richb/twisted-tests/components/xz/xz-5.0.1/tests -I..  -I/builds/richb/twisted-tests/components/xz/xz-5.0.1/src/common -I/builds/richb/twisted-tests/components/xz/xz-5.0.1/src/liblzma/api -I../lib  -D_REENTRANT  -m32 -xO4 -xchip=pentium -xregs=no%frameptr    -mt -c /builds/richb/twisted-tests/components/xz/xz-5.0.1/tests/test_check.c
+
+x86 64-bit:
+
+/ws/on12-tools/SUNWspro/solarisstudio12.3/bin/cc -DHAVE_CONFIG_H -I. -I/builds/richb/twisted-tests/components/xz/xz-5.0.1/tests -I..  -I/builds/richb/twisted-tests/components/xz/xz-5.0.1/src/common -I/builds/richb/twisted-tests/components/xz/xz-5.0.1/src/liblzma/api -I../lib  -D_REENTRANT  -m64 -xO4 -xchip=generic -Ui386 -U__i386 -xregs=no%frameptr    -mt -c /builds/richb/twisted-tests/components/xz/xz-5.0.1/tests/test_check.c
+
+SPARC 32-bit:
+
+/ws/on12-tools/SUNWspro/solarisstudio12.3/bin/cc -DHAVE_CONFIG_H -I. -I/builds/richb/twisted-tests/components/xz/xz-5.0.1/tests -I..  -I/builds/richb/twisted-tests/components/xz/xz-5.0.1/src/common -I/builds/richb/twisted-tests/components/xz/xz-5.0.1/src/liblzma/api -I../lib  -D_REENTRANT  -m32 -xO4 -xtarget=ultra2 -xarch=sparcvis -xchip=ultra2 -Qoption cg -xregs=no%appl -W2,-xwrap_int  -xmemalign=8s -mt -c /builds/richb/twisted-tests/components/xz/xz-5.0.1/tests/test_check.c
+
+SPARC 64-bit:
+
+/ws/on12-tools/SUNWspro/solarisstudio12.3/bin/cc -DHAVE_CONFIG_H -I. -I/builds/richb/twisted-tests/components/xz/xz-5.0.1/tests -I..  -I/builds/richb/twisted-tests/components/xz/xz-5.0.1/src/common -I/builds/richb/twisted-tests/components/xz/xz-5.0.1/src/liblzma/api -I../lib  -D_REENTRANT  -m64 -xO4  -xtarget=ultra2 -xarch=sparcvis -xchip=ultra2 -Qoption cg -xregs=no%appl -W2,-xwrap_int  -xmemalign=16s -mt -c /builds/richb/twisted-tests/components/xz/xz-5.0.1/tests/test_check.c
+
+These can all be normalized (so that a single master test file can be used),
+by adding the following line to COMPONENT_TEST_TRANSFORMS in the xz component
+Makefile:
+
+	'-e "s|\(^$(CC)\).*|\\$$(CC)|" '
+
+The equivalent compile line in the master test file is now set to just:
+
+$(CC)
+
+Note that we are using $(CC) here which will pick up the current C compiler.
+Should the C compiler or build options change in the future, then there will
+be no need to adjust the master test results file to match. It's all done
+automatically.
+
+It is recognized that an alternate approach to solving this problem is to
+create a transform to just remove lines like this from the master test files,
+but there is currently no automatic way to pick up the default compiler
+(see CR #20367119 for more details).
+
+----
 
 There will be other examples as more components are adjusted to test
 against master results files.

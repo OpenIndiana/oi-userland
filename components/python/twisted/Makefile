@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -48,20 +48,33 @@ COMPONENT_TEST_DIR= $(COMPONENT_SRC)
 COMPONENT_TEST_CMD= $(@D)/scripts-$(PYTHON_VERSION)/trial twisted
 COMPONENT_TEST_ARGS=""
 
+# Unfortunately the master test results files are not only different for
+# each version of Python, they can also be different for 32-bit and 64-bit
+# versions and different for x86 and SPARC platforms.
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(PYTHON_VERSION)-$(BITS).$(MACH).master
+
+# The additional twisted specific set of transforms to be applied to the test
+# results to try to normalize them. Several of these lines are deleted (as
+# opposed to being normalized) because they appear in a non-deterministic
+# order. The "\x27" is a way of including the single quote character and not
+# fall foul of the special GNU sed escapes:
+# https://gnu.org/software/sed/manual/html_node/Escapes.html
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "/(process:/d" ' \
+	'-e "/class \x27twisted.internet.tcp.Client/d" ' \
+	'-e "/class \x27twisted.internet.tcp.Port/d" ' \
+	'-e "/ThrottlingProtocol \#. on /d" ' \
+	'-e "/twisted.test.test_udp.Server on/d" ' \
+	'-e "/twisted.test.test_udp.Client on/d" ' \
+	'-e "/Bus Error/d" ' \
+	'-e "s|\(Ran 5919 tests in\).*|\1|" '
+
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-# common targets
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-# There are no automated tests yet, but the built-in unit tests can be run
-# manually with:
-#
-# $ cd .../components/python/twisted/Twisted-10.1.0
-# $ ../build/i86-2.6/scripts-2.6/trial twisted
-# $ ../build/i86-2.7/scripts-2.7/trial twisted
-#
 test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
