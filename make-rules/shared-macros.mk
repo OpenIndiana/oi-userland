@@ -262,6 +262,9 @@ COMPONENT_TEST_CREATE_TRANSFORMS = \
                 	>> $(COMPONENT_TEST_TRANSFORM_CMD); \
         	print '> $(COMPONENT_TEST_SNAPSHOT)' \
                 	>> $(COMPONENT_TEST_TRANSFORM_CMD); \
+	else \
+		print 'Cannot find $(COMPONENT_TEST_MASTER)'; \
+		exit 2; \
 	fi
 
 # set the default command for performing any test result munging
@@ -272,6 +275,9 @@ COMPONENT_TEST_PERFORM_TRANSFORM = \
 	if [ -e $(COMPONENT_TEST_MASTER) ]; \
 	then \
 		$(SHELL) $(COMPONENT_TEST_TRANSFORM_CMD); \
+	else \
+		print 'Cannot find $(COMPONENT_TEST_MASTER)'; \
+		exit 2; \
 	fi
 
 # set the default command used to compare the master results with the snapshot
@@ -293,6 +299,9 @@ COMPONENT_TEST_COMPARE = \
 		else \
 			print "No differences found."; \
 		fi \
+	else \
+		print 'Cannot find $(COMPONENT_TEST_MASTER)'; \
+		exit 2; \
 	fi
 
 # set the default env command to use for test of the component
