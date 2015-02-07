@@ -16,13 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-video-ati
-COMPONENT_VERSION= 6.13.1
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 6.14.6
 COMPONENT_SUMMARY= xf86-video-ati - ATI Radeon video driver for the Xorg X server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:f9b12482165d99acf58c3b0ada925f7939cc0553f645db9f483e41db66a08b59
+  sha256:aa5286b3e4f0187d7df14785c06dd800255d9405205dbf061da5d77df86bec36
 COMPONENT_ARCHIVE_URL= \
   http://xorg.freedesktop.org/archive/individual/driver/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
@@ -55,11 +54,11 @@ LD_OPTIONS+= \
         -L$(MESA_XSERVERMODS_DIR)/extensions$(SERVERMOD_SUBDIR) \
         -L$(X11_SERVERMODS_DIR)/extensions$(SERVERMOD_SUBDIR) \
         -L$(X11_SERVERLIBS_DIR)$(ARCHLIBSUBDIR) \
-        -M mapfile-bt829_drv-external \
-        -M mapfile-fi1236_drv-external \
-        -M mapfile-msp3430_drv-external \
-        -M mapfile-tda9885_drv-external \
-        -M mapfile-uda1380_drv-external \
+        -M $(COMPONENT_DIR)/mapfile-bt829_drv-external \
+        -M $(COMPONENT_DIR)/mapfile-fi1236_drv-external \
+        -M $(COMPONENT_DIR)/mapfile-msp3430_drv-external \
+        -M $(COMPONENT_DIR)/mapfile-tda9885_drv-external \
+        -M $(COMPONENT_DIR)/mapfile-uda1380_drv-external \
         -R$(X11_SERVERMODS_DIR)$(SERVERMOD_SUBDIR) \
         -R$(MESA_XSERVERMODS_DIR)/extensions$(SERVERMOD_SUBDIR) \
         -R$(X11_SERVERMODS_DIR)/extensions$(SERVERMOD_SUBDIR) \
@@ -75,6 +74,7 @@ COMPONENT_COMMON_ARGS = ati_drv_ladir='$(DRIVER_DIR)' \
         theatre200_drv_ladir='$(MULTIMEDIA_MODDIR)'
 
 CONFIGURE_OPTIONS += --enable-dri
+CONFIGURE_OPTIONS += --disable-kms
 
 COMPONENT_BUILD_ARGS += $(COMPONENT_COMMON_ARGS)
 COMPONENT_INSTALL_ARGS += $(COMPONENT_COMMON_ARGS)
