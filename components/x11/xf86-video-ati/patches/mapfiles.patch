@@ -1,7 +1,8 @@
-diff -urp -x '*~' -x '*.orig' src/Makefile.am src/Makefile.am
---- xf86-video-ati-6.13.1/src/Makefile.am	2010-01-04 16:32:29.000000000 -0800
-+++ xf86-video-ati-6.13.1/src/Makefile.am	2010-04-26 20:36:36.232188492 -0700
-@@ -184,3 +184,39 @@ EXTRA_DIST = \
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 26ceda7..3fe220b 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -175,3 +175,40 @@ EXTRA_DIST = \
  	radeon_atombios.h \
  	radeon_dri2.h \
  	drmmode_display.h
@@ -19,8 +20,9 @@ diff -urp -x '*~' -x '*.orig' src/Makefile.am src/Makefile.am
 +	mapfile-bt829_drv-external
 +
 +radeon_drv_la_LDFLAGS += $(radeon_MAPFILES:%=-Wl,-M,%) \
-+	-lexa -lfb -lint10 -lvbe -lvgahw -lxaa -lshadow \
-+	-lpixman-1 -ldrm -ldri -lglx -lm
++	$(radeon_drv_la_LDFLAGS_add) \
++	-lexa -lfb -lint10 -lvbe -lvgahw -lshadow \
++	-lpixman-1 -ldrm -lglx -lm
 +
 +radeon_drv_la_DEPENDENCIES = $(radeon_MAPFILES)
 +
