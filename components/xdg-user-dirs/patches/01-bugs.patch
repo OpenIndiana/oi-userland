@@ -1,0 +1,31 @@
+diff -up xdg-user-dirs-0.9/xdg-user-dirs-update.c.orig xdg-user-dirs-0.9/xdg-user-dirs-update.c
+--- xdg-user-dirs-0.9/xdg-user-dirs-update.c.orig	2007-08-20 09:00:59.000000000 +0100
++++ xdg-user-dirs-0.9/xdg-user-dirs-update.c	2008-02-12 14:16:30.169279000 +0000
+@@ -168,7 +168,7 @@ mkdir_all (char *path)
+ 	}
+ 
+       if ((mkdir (path, 0755) == -1) &&
+-	  (errno != EEXIST))
++	  (errno != EEXIST && errno != ENOSYS ))
+ 	{
+ 	  result = 0;
+ 	  break;
+@@ -360,7 +360,7 @@ parse_colon_separated_dirs (const char *
+ 	}
+ 
+       paths = realloc (paths, sizeof (char *) * (numfiles + 2));
+-      paths[numfiles++] = strndup (path, len);
++      paths[numfiles++] = g_strndup (path, len);
+       paths[numfiles] = NULL;
+     }
+ 
+
+diff -up xdg-user-dirs-0.9/xdg-user-dir.orig xdg-user-dirs-0.9/xdg-user-dir
+--- xdg-user-dirs-0.9/xdg-user-dir.orig	2008-02-12 21:30:39.975679000 +0000
++++ xdg-user-dirs-0.9/xdg-user-dir	2008-02-12 21:32:16.530976000 +0000
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ 
+ test -f ${XDG_CONFIG_HOME:-~/.config}/user-dirs.dirs && . ${XDG_CONFIG_HOME:-~/.config}/user-dirs.dirs
+ if [ "x$1" = "xDESKTOP" ]; then
