@@ -16,13 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-video-intel
-COMPONENT_VERSION= 2.6.3
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 2.9.1
 COMPONENT_SUMMARY= xf86-video-intel - Intel integrated graphics chipset driver for the Xorg X server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:b35a142aeba034ad06b8d9b477c243f82ce9f82ad65a0ee4408630f228e90258
+  sha256:95347c88854c2b41c07ab3bcdfadd1b8d27fb181a20520f185892877eb8d9d76
 COMPONENT_ARCHIVE_URL= \
   http://xorg.freedesktop.org/archive/individual/driver/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
@@ -37,9 +36,9 @@ include $(WS_TOP)/make-rules/ips.mk
 PATCH_LEVEL=0
 
 COMPONENT_PREP_ACTION =        ( cd $(@D) && \
-                                        aclocal -I. && \
-                                        autoheader && \
                                         libtoolize --automake --copy --force && \
+                                        aclocal -Im4 && \
+                                        autoheader && \
                                         automake -a -f -c &&\
                                         autoconf )
 
@@ -70,6 +69,7 @@ COMPONENT_COMMON_ARGS = ch7017_ladir='$(DRIVER_DIR)' \
         tfp410_ladir='$(DRIVER_DIR)'
 
 CONFIGURE_OPTIONS += --enable-dri
+CONFIGURE_OPTIONS += --enable-xvmc
 CONFIGURE_OPTIONS += --libdir=$(X11_SERVERLIBS_DIR)$(SERVERMOD_SUBDIR)
 
 COMPONENT_BUILD_ARGS += $(COMPONENT_COMMON_ARGS)
