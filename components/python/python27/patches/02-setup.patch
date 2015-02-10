@@ -2,21 +2,33 @@ This patch modifies the setup script to support Solaris.
 As it is Solaris-specific, it is not suitable for upstream.
 
 --- Python-2.7.9/setup.py.~1~	2014-12-10 08:00:01.000000000 -0800
-+++ Python-2.7.9/setup.py	2014-12-11 09:16:17.426317139 -0800
-@@ -439,9 +439,9 @@
++++ Python-2.7.9/setup.py	2015-02-09 18:26:09.100336009 -0800
+@@ -6,6 +6,7 @@
+ import sys, os, imp, re, optparse
+ from glob import glob
+ from platform import machine as platform_machine
++from platform import processor as platform_processor
+ import sysconfig
+ 
+ from distutils import log
+@@ -438,10 +439,13 @@
+             os.unlink(tmpfile)
  
      def detect_modules(self):
-         # Ensure that /usr/local is always used
--        if not cross_compiling:
+-        # Ensure that /usr/local is always used
+         if not cross_compiling:
 -            add_dir_to_list(self.compiler.library_dirs, '/usr/local/lib')
 -            add_dir_to_list(self.compiler.include_dirs, '/usr/local/include')
-+        # if not cross_compiling:
-+        #   add_dir_to_list(self.compiler.library_dirs, '/usr/local/lib')
-+        #   add_dir_to_list(self.compiler.include_dirs, '/usr/local/include')
++            if host_platform != 'sunos5':
++                # Upstream notes the following for source builds:
++                #     Ensure that /usr/local is always used
++                # But we skip that for Solaris system builds.
++                add_dir_to_list(self.compiler.library_dirs, '/usr/local/lib')
++                add_dir_to_list(self.compiler.include_dirs, '/usr/local/include')
          if cross_compiling:
              self.add_gcc_paths()
          self.add_multiarch_paths()
-@@ -765,6 +765,13 @@
+@@ -765,6 +769,13 @@
                                                       ['/usr/lib/termcap'],
                                                       'termcap'):
                  readline_libs.append('termcap')
@@ -30,7 +42,44 @@ As it is Solaris-specific, it is not suitable for upstream.
              exts.append( Extension('readline', ['readline.c'],
                                     library_dirs=['/usr/lib/termcap'],
                                     extra_link_args=readline_extra_link_args,
-@@ -2083,7 +2090,8 @@
+@@ -1350,8 +1361,11 @@
+                 # _curses_panel.so must link with panelw.
+                 panel_library = 'panelw'
+             curses_libs = [curses_library]
+-            curses_incs = find_file('curses.h', inc_dirs,
+-                                    [os.path.join(d, 'ncursesw') for d in inc_dirs])
++            if host_platform == 'sunos5':
++                curses_incs = ['/usr/include/ncurses']
++            else:
++                curses_incs = find_file('curses.h', inc_dirs,
++                                        [os.path.join(d, 'ncursesw') for d in inc_dirs])
+             exts.append( Extension('_curses', ['_cursesmodule.c'],
+                                    include_dirs = curses_incs,
+                                    libraries = curses_libs) )
+@@ -1373,9 +1387,21 @@
+         # If the curses module is enabled, check for the panel module
+         if (module_enabled(exts, '_curses') and
+             self.compiler.find_library_file(lib_dirs, panel_library)):
++            panel_lib_dirs = []
++            if host_platform == 'sunos5' and "DFLAGS" in os.environ:
++                # Look for libpanel under /usr/gnu/lib on Solaris.
++                if os.environ["DFLAGS"] == '-32':
++                    panel_lib_dirs.append('/usr/gnu/lib')
++                else:
++                    if platform_processor() == 'sparc':
++                        panel_lib_dirs.append('/usr/gnu/lib/sparcv9')
++                    else:
++                        panel_lib_dirs.append('/usr/gnu/lib/amd64')
+             exts.append( Extension('_curses_panel', ['_curses_panel.c'],
+                                    include_dirs = curses_incs,
+-                                   libraries = [panel_library] + curses_libs) )
++                                   libraries = [panel_library] + curses_libs,
++                                   library_dirs = panel_lib_dirs,
++                                   runtime_library_dirs = panel_lib_dirs) )
+         else:
+             missing.append('_curses_panel')
+ 
+@@ -2083,7 +2109,8 @@
              # this option. If you want to compile ctypes with the Sun
              # compiler, please research a proper solution, instead of
              # finding some -z option for the Sun compiler.

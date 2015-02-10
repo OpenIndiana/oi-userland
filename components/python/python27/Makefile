@@ -85,11 +85,6 @@ PYFLAGS.sparc =
 CFLAGS += -xO5 $(PYFLAGS.$(MACH))
 LDFLAGS += -xO5 $(PYFLAGS.$(MACH))
 
-# add /usr/gnu/lib to the library search/run path
-LDFLAGS.32 = -R/usr/gnu/lib -L/usr/gnu/lib
-LDFLAGS.64 = -R/usr/gnu/lib/$(MACH64) -L/usr/gnu/lib/$(MACH64)
-LDFLAGS += $(LDFLAGS.$(BITS))
-
 # Python puts its header files in a special place.
 LINT_FLAGS +=	-I$(SOURCE_DIR)/Include
 
