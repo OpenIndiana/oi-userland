@@ -65,16 +65,24 @@ COMPONENT_PRE_TEST_ACTION = \
 	$(GSED) -e "s|'build', 'lib\*'|'..', 'build', 'prototype', '$(MACH)', 'usr', 'lib', 'python$(PYTHON_VERSION)', 'vendor-packages\*'|" \
 		$(SOURCE_DIR)/selftest.py.orig > $(SOURCE_DIR)/selftest.py
 
-# common targets
+# The test output can contain non-deterministic results because "chances are
+# you will experience odd, intermittent and unexplainable failures and errors"
+# when using the multiprocess plug. See:
+# http://nose.readthedocs.org/en/latest/plugins/multiprocess.html
+# CR #20470423 has been filed to investigate these failures.
+#
+# Because of this we use nawk to just extract lines starting with:
+# ERROR: ...
+# Ran 3XX tests in ...
+# FAILED ...
+# OK
+# stripping out the random portions (like time to complete the tests).
+COMPONENT_TEST_TRANSFORMER =	$(NAWK)
+COMPONENT_TEST_TRANSFORMS = "'/^ERROR: / { print }; /^Ran / { sub(\" tests in .+s\", \" tests in\"); print }; /^FAILED / { print }; /^OK / { print };'"
+
 build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
-
-# Note that it is currently not feasible to add master test file(s) for this
-# component because "chances are you will experience odd, intermittent and
-# unexplainable failures and errors" when using the multiprocess plug. See:
-# http://nose.readthedocs.org/en/latest/plugins/multiprocess.html
-# CR #20470423 has been filed to investigate these failures.
 
 test:		$(TEST_NO_ARCH)
 
