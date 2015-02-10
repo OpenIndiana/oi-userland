@@ -23,8 +23,8 @@ COMPONENT_FMRI=		system/pciutils/pci.ids
 COMPONENT_SUMMARY=	Repository of all known IDs used in PCI devices
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	pci.ids.license
-COMPONENT_ARCHIVE_URL=	http://pciids.sourceforge.net/v$(FORMAT)/$(COMPONENT_NAME)
-COMPONENT_PROJECT_URL=	http://pciids.sourceforge.net/
+COMPONENT_ARCHIVE_URL=	https://pci-ids.ucw.cz/v$(FORMAT)/$(COMPONENT_NAME)
+COMPONENT_PROJECT_URL=	https://pci-ids.ucw.cz/
 
 include $(WS_TOP)/make-rules/ips.mk
 
