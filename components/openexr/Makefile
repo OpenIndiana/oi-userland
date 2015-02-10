@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -42,13 +42,22 @@ PATCH_LEVEL = 0
 
 # there seems to be no other way to enable large files support
 CXXFLAGS += $(CPP_LARGEFILES)
+
 # it seems that --with-pic doesn't get PIC flags to the C++ compiler
 CXXFLAGS += $(CC_PIC)
+
+ifneq (, $(findstring 12.4,$(CXX)))
+  CXXFLAGS += -template=extdef
+endif
+
 # libtools seems to be forcing -nolibs, so we have to add back libc, libm,
 # libCstd and libCrun. The last two are needed because with Studio 12.2
 # (and beyond), there is a bug in the CC driver that is not correctly using
 # the '-library=Cstd,Crun' we are passing to it.
 LIBS += -lc -lm -lCstd -lCrun
+
+COMPONENT_TEST_TRANSFORMS += \
+     '-e "s^-L$(CONFIGURE_LIBDIR.$(BITS))^^g"'
 
 CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
 CONFIGURE_ENV += CXXFLAGS="$(CXXFLAGS)"
@@ -59,6 +68,13 @@ CONFIGURE_OPTIONS  +=           --disable-static
 CONFIGURE_OPTIONS  +=           --enable-threading
 CONFIGURE_OPTIONS  +=           --enable-posix-sem
 CONFIGURE_OPTIONS  +=           --with-pic
+
+PROTOPKGCONFIGDIR.32 = $(PROTOUSRLIBDIR)/pkgconfig
+PROTOPKGCONFIGDIR.64 = $(PROTOUSRLIBDIR64)/pkgconfig
+
+COMPONENT_POST_INSTALL_ACTION = \
+	( cd $(PROTOPKGCONFIGDIR.$(BITS)) ; \
+	$(GSED) -i "s^-L$(CONFIGURE_LIBDIR.$(BITS))^^g" OpenEXR.pc )
 
 ASLR_MODE = $(ASLR_ENABLE)
 
