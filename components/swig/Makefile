@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -47,6 +47,12 @@ CONFIGURE_ENV += JAVA_HOME="$(JAVA_HOME)"
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	CXXFLAGS="$(CXXFLAGS)"
 CONFIGURE_OPTIONS +=	--with-javaincl="$(JAVA_HOME)/include"
+
+# The additional swig specific set of transforms to be applied to the
+# test results to try to normalize them.
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s|\(Compiled with $(CXX)\).*|Compiled with \\$$(CXX)|" ' \
+	'-e "s|$(CC)|\\$$(CC)|g" '
 
 ASLR_MODE = $(ASLR_ENABLE)
 

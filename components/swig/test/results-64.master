@@ -1,0 +1,1342 @@
+make[1]: Entering directory `$(@D)'
+test -x ./swig
+./swig -version
+
+SWIG Version 2.0.8
+
+Compiled with $(CXX)
+
+Configured options: +pcre
+
+Please see http://www.swig.org for reporting bugs and further information
+./swig -help
+Target Language Options
+     -allegrocl      - Generate ALLEGROCL wrappers
+     -chicken        - Generate CHICKEN wrappers
+     -clisp          - Generate CLISP wrappers
+     -cffi           - Generate CFFI wrappers
+     -csharp         - Generate C# wrappers
+     -d              - Generate D wrappers
+     -go             - Generate Go wrappers
+     -guile          - Generate Guile wrappers
+     -java           - Generate Java wrappers
+     -lua            - Generate Lua wrappers
+     -modula3        - Generate Modula 3 wrappers
+     -mzscheme       - Generate Mzscheme wrappers
+     -ocaml          - Generate Ocaml wrappers
+     -octave         - Generate Octave wrappers
+     -perl           - Generate Perl wrappers
+     -php            - Generate PHP wrappers
+     -pike           - Generate Pike wrappers
+     -python         - Generate Python wrappers
+     -r              - Generate R (aka GNU S) wrappers
+     -ruby           - Generate Ruby wrappers
+     -sexp           - Generate Lisp S-Expressions wrappers
+     -tcl            - Generate Tcl wrappers
+     -uffi           - Generate Common Lisp / UFFI wrappers
+     -xml            - Generate XML wrappers
+
+General Options
+     -addextern      - Add extra extern declarations
+     -c++            - Enable C++ processing
+     -co <file>      - Check <file> out of the SWIG library
+     -copyctor       - Automatically generate copy constructors wherever possible
+     -cpperraswarn   - Treat the preprocessor #error statement as #warning (default)
+     -copyright      - Display copyright notices
+     -debug-classes  - Display information about the classes found in the interface
+     -debug-module <n>- Display module parse tree at stages 1-4, <n> is a csv list of stages
+     -debug-symtabs  - Display symbol tables information
+     -debug-symbols  - Display target language symbols in the symbol tables
+     -debug-csymbols - Display C symbols in the symbol tables
+     -debug-lsymbols - Display target language layer symbols
+     -debug-tags     - Display information about the tags found in the interface
+     -debug-template - Display information for debugging templates
+     -debug-top <n>  - Display entire parse tree at stages 1-4, <n> is a csv list of stages
+     -debug-typedef  - Display information about the types and typedefs in the interface
+     -debug-typemap  - Display typemap debugging information
+     -debug-tmsearch - Display typemap search debugging information
+     -debug-tmused   - Display typemaps used debugging information
+     -directors      - Turn on director mode for all the classes, mainly for testing
+     -dirprot        - Turn on wrapping of protected members for director classes (default)
+     -D<symbol>      - Define a symbol <symbol> (for conditional compilation)
+     -E              - Preprocess only, does not generate wrapper code
+     -external-runtime [file] - Export the SWIG runtime stack
+     -fakeversion <v>- Make SWIG fake the program version number to <v>
+     -fcompact       - Compile in compact mode
+     -features <list>- Set global features, where <list> is a comma separated list of
+                       features, eg -features directors,autodoc=1
+                       If no explicit value is given to the feature, a default of 1 is used
+     -fastdispatch   - Enable fast dispatch mode to produce faster overload dispatcher code
+     -Fmicrosoft     - Display error/warning messages in Microsoft format
+     -Fstandard      - Display error/warning messages in commonly used format
+     -fvirtual       - Compile in virtual elimination mode
+     -help           - This output
+     -I-             - Don't search the current directory
+     -I<dir>         - Look for SWIG files in directory <dir>
+     -ignoremissing  - Ignore missing include files
+     -importall      - Follow all #include statements as imports
+     -includeall     - Follow all #include statements
+     -l<ifile>       - Include SWIG library file <ifile>
+     -macroerrors    - Report errors inside macros
+     -makedefault    - Create default constructors/destructors (the default)
+     -M              - List all dependencies
+     -MD             - Is equivalent to `-M -MF <file>', except `-E' is not implied
+     -MF <file>      - Generate dependencies into <file> and continue generating wrappers
+     -MM             - List dependencies, but omit files in SWIG library
+     -MMD            - Like `-MD', but omit files in SWIG library
+     -module <name>  - Set module name to <name>
+     -MT <target>    - Set the target of the rule emitted by dependency generation
+     -nocontract     - Turn off contract checking
+     -nocpperraswarn - Do not treat the preprocessor #error statement as #warning
+     -nodefault      - Do not generate default constructors nor default destructors
+     -nodefaultctor  - Do not generate implicit default constructors
+     -nodefaultdtor  - Do not generate implicit default destructors
+     -nodirprot      - Do not wrap director protected members
+     -noexcept       - Do not wrap exception specifiers
+     -nofastdispatch - Disable fast dispatch mode (default)
+     -nopreprocess   - Skip the preprocessor step
+     -notemplatereduce - Disable reduction of the typedefs in templates
+     -O              - Enable the optimization options: 
+                        -fastdispatch -fvirtual 
+     -o <outfile>    - Set name of the output file to <outfile>
+     -oh <headfile>  - Set name of the output header file to <headfile>
+     -outcurrentdir  - Set default output dir to current dir instead of input file's path
+     -outdir <dir>   - Set language specific files output directory to <dir>
+     -pcreversion    - Display PCRE version information
+     -small          - Compile in virtual elimination & compact mode
+     -swiglib        - Report location of SWIG library and exit
+     -templatereduce - Reduce all the typedefs in templates
+     -v              - Run in verbose mode
+     -version        - Display SWIG version number
+     -Wall           - Remove all warning suppression, also implies -Wextra
+     -Wallkw         - Enable keyword warnings for all the supported languages
+     -Werror         - Treat warnings as errors
+     -Wextra         - Adds the following additional warnings: 202,309,403,512,321,322
+     -w<list>        - Suppress/add warning messages, eg -w401,+321 - see Warnings.html
+     -xmlout <file>  - Write XML version of the parse tree to <file> after normal processing
+
+Options can also be defined using the SWIG_FEATURES environment variable, for example:
+
+  $ SWIG_FEATURES="-Wall"
+  $ export SWIG_FEATURES
+  $ swig -python interface.i
+
+is equivalent to: 
+
+  $ swig -Wall -python interface.i 
+
+
+Tcl 8 Options (available with -tcl)
+     -itcl           - Enable ITcl support
+     -nosafe         - Leave out SafeInit module function.
+     -prefix <name>  - Set a prefix <name> to be prepended to all names
+     -namespace      - Build module into a Tcl 8 namespace
+     -pkgversion     - Set package version
+
+
+Note: 'swig -<lang> -help' displays options for a specific target language.
+
+Target Language Options
+     -allegrocl      - Generate ALLEGROCL wrappers
+     -chicken        - Generate CHICKEN wrappers
+     -clisp          - Generate CLISP wrappers
+     -cffi           - Generate CFFI wrappers
+     -csharp         - Generate C# wrappers
+     -d              - Generate D wrappers
+     -go             - Generate Go wrappers
+     -guile          - Generate Guile wrappers
+     -java           - Generate Java wrappers
+     -lua            - Generate Lua wrappers
+     -modula3        - Generate Modula 3 wrappers
+     -mzscheme       - Generate Mzscheme wrappers
+     -ocaml          - Generate Ocaml wrappers
+     -octave         - Generate Octave wrappers
+     -perl           - Generate Perl wrappers
+     -php            - Generate PHP wrappers
+     -pike           - Generate Pike wrappers
+     -python         - Generate Python wrappers
+     -r              - Generate R (aka GNU S) wrappers
+     -ruby           - Generate Ruby wrappers
+     -sexp           - Generate Lisp S-Expressions wrappers
+     -tcl            - Generate Tcl wrappers
+     -uffi           - Generate Common Lisp / UFFI wrappers
+     -xml            - Generate XML wrappers
+
+General Options
+     -addextern      - Add extra extern declarations
+     -c++            - Enable C++ processing
+     -co <file>      - Check <file> out of the SWIG library
+     -copyctor       - Automatically generate copy constructors wherever possible
+     -cpperraswarn   - Treat the preprocessor #error statement as #warning (default)
+     -copyright      - Display copyright notices
+     -debug-classes  - Display information about the classes found in the interface
+     -debug-module <n>- Display module parse tree at stages 1-4, <n> is a csv list of stages
+     -debug-symtabs  - Display symbol tables information
+     -debug-symbols  - Display target language symbols in the symbol tables
+     -debug-csymbols - Display C symbols in the symbol tables
+     -debug-lsymbols - Display target language layer symbols
+     -debug-tags     - Display information about the tags found in the interface
+     -debug-template - Display information for debugging templates
+     -debug-top <n>  - Display entire parse tree at stages 1-4, <n> is a csv list of stages
+     -debug-typedef  - Display information about the types and typedefs in the interface
+     -debug-typemap  - Display typemap debugging information
+     -debug-tmsearch - Display typemap search debugging information
+     -debug-tmused   - Display typemaps used debugging information
+     -directors      - Turn on director mode for all the classes, mainly for testing
+     -dirprot        - Turn on wrapping of protected members for director classes (default)
+     -D<symbol>      - Define a symbol <symbol> (for conditional compilation)
+     -E              - Preprocess only, does not generate wrapper code
+     -external-runtime [file] - Export the SWIG runtime stack
+     -fakeversion <v>- Make SWIG fake the program version number to <v>
+     -fcompact       - Compile in compact mode
+     -features <list>- Set global features, where <list> is a comma separated list of
+                       features, eg -features directors,autodoc=1
+                       If no explicit value is given to the feature, a default of 1 is used
+     -fastdispatch   - Enable fast dispatch mode to produce faster overload dispatcher code
+     -Fmicrosoft     - Display error/warning messages in Microsoft format
+     -Fstandard      - Display error/warning messages in commonly used format
+     -fvirtual       - Compile in virtual elimination mode
+     -help           - This output
+     -I-             - Don't search the current directory
+     -I<dir>         - Look for SWIG files in directory <dir>
+     -ignoremissing  - Ignore missing include files
+     -importall      - Follow all #include statements as imports
+     -includeall     - Follow all #include statements
+     -l<ifile>       - Include SWIG library file <ifile>
+     -macroerrors    - Report errors inside macros
+     -makedefault    - Create default constructors/destructors (the default)
+     -M              - List all dependencies
+     -MD             - Is equivalent to `-M -MF <file>', except `-E' is not implied
+     -MF <file>      - Generate dependencies into <file> and continue generating wrappers
+     -MM             - List dependencies, but omit files in SWIG library
+     -MMD            - Like `-MD', but omit files in SWIG library
+     -module <name>  - Set module name to <name>
+     -MT <target>    - Set the target of the rule emitted by dependency generation
+     -nocontract     - Turn off contract checking
+     -nocpperraswarn - Do not treat the preprocessor #error statement as #warning
+     -nodefault      - Do not generate default constructors nor default destructors
+     -nodefaultctor  - Do not generate implicit default constructors
+     -nodefaultdtor  - Do not generate implicit default destructors
+     -nodirprot      - Do not wrap director protected members
+     -noexcept       - Do not wrap exception specifiers
+     -nofastdispatch - Disable fast dispatch mode (default)
+     -nopreprocess   - Skip the preprocessor step
+     -notemplatereduce - Disable reduction of the typedefs in templates
+     -O              - Enable the optimization options: 
+                        -fastdispatch -fvirtual 
+     -o <outfile>    - Set name of the output file to <outfile>
+     -oh <headfile>  - Set name of the output header file to <headfile>
+     -outcurrentdir  - Set default output dir to current dir instead of input file's path
+     -outdir <dir>   - Set language specific files output directory to <dir>
+     -pcreversion    - Display PCRE version information
+     -small          - Compile in virtual elimination & compact mode
+     -swiglib        - Report location of SWIG library and exit
+     -templatereduce - Reduce all the typedefs in templates
+     -v              - Run in verbose mode
+     -version        - Display SWIG version number
+     -Wall           - Remove all warning suppression, also implies -Wextra
+     -Wallkw         - Enable keyword warnings for all the supported languages
+     -Werror         - Treat warnings as errors
+     -Wextra         - Adds the following additional warnings: 202,309,403,512,321,322
+     -w<list>        - Suppress/add warning messages, eg -w401,+321 - see Warnings.html
+     -xmlout <file>  - Write XML version of the parse tree to <file> after normal processing
+
+Options can also be defined using the SWIG_FEATURES environment variable, for example:
+
+  $ SWIG_FEATURES="-Wall"
+  $ export SWIG_FEATURES
+  $ swig -python interface.i
+
+is equivalent to: 
+
+  $ swig -Wall -python interface.i 
+
+
+Tcl 8 Options (available with -tcl)
+     -itcl           - Enable ITcl support
+     -nosafe         - Leave out SafeInit module function.
+     -prefix <name>  - Set a prefix <name> to be prepended to all names
+     -namespace      - Build module into a Tcl 8 namespace
+     -pkgversion     - Set package version
+
+
+Note: 'swig -<lang> -help' displays options for a specific target language.
+
+Target Language Options
+     -allegrocl      - Generate ALLEGROCL wrappers
+     -chicken        - Generate CHICKEN wrappers
+     -clisp          - Generate CLISP wrappers
+     -cffi           - Generate CFFI wrappers
+     -csharp         - Generate C# wrappers
+     -d              - Generate D wrappers
+     -go             - Generate Go wrappers
+     -guile          - Generate Guile wrappers
+     -java           - Generate Java wrappers
+     -lua            - Generate Lua wrappers
+     -modula3        - Generate Modula 3 wrappers
+     -mzscheme       - Generate Mzscheme wrappers
+     -ocaml          - Generate Ocaml wrappers
+     -octave         - Generate Octave wrappers
+     -perl           - Generate Perl wrappers
+     -php            - Generate PHP wrappers
+     -pike           - Generate Pike wrappers
+     -python         - Generate Python wrappers
+     -r              - Generate R (aka GNU S) wrappers
+     -ruby           - Generate Ruby wrappers
+     -sexp           - Generate Lisp S-Expressions wrappers
+     -tcl            - Generate Tcl wrappers
+     -uffi           - Generate Common Lisp / UFFI wrappers
+     -xml            - Generate XML wrappers
+
+General Options
+     -addextern      - Add extra extern declarations
+     -c++            - Enable C++ processing
+     -co <file>      - Check <file> out of the SWIG library
+     -copyctor       - Automatically generate copy constructors wherever possible
+     -cpperraswarn   - Treat the preprocessor #error statement as #warning (default)
+     -copyright      - Display copyright notices
+     -debug-classes  - Display information about the classes found in the interface
+     -debug-module <n>- Display module parse tree at stages 1-4, <n> is a csv list of stages
+     -debug-symtabs  - Display symbol tables information
+     -debug-symbols  - Display target language symbols in the symbol tables
+     -debug-csymbols - Display C symbols in the symbol tables
+     -debug-lsymbols - Display target language layer symbols
+     -debug-tags     - Display information about the tags found in the interface
+     -debug-template - Display information for debugging templates
+     -debug-top <n>  - Display entire parse tree at stages 1-4, <n> is a csv list of stages
+     -debug-typedef  - Display information about the types and typedefs in the interface
+     -debug-typemap  - Display typemap debugging information
+     -debug-tmsearch - Display typemap search debugging information
+     -debug-tmused   - Display typemaps used debugging information
+     -directors      - Turn on director mode for all the classes, mainly for testing
+     -dirprot        - Turn on wrapping of protected members for director classes (default)
+     -D<symbol>      - Define a symbol <symbol> (for conditional compilation)
+     -E              - Preprocess only, does not generate wrapper code
+     -external-runtime [file] - Export the SWIG runtime stack
+     -fakeversion <v>- Make SWIG fake the program version number to <v>
+     -fcompact       - Compile in compact mode
+     -features <list>- Set global features, where <list> is a comma separated list of
+                       features, eg -features directors,autodoc=1
+                       If no explicit value is given to the feature, a default of 1 is used
+     -fastdispatch   - Enable fast dispatch mode to produce faster overload dispatcher code
+     -Fmicrosoft     - Display error/warning messages in Microsoft format
+     -Fstandard      - Display error/warning messages in commonly used format
+     -fvirtual       - Compile in virtual elimination mode
+     -help           - This output
+     -I-             - Don't search the current directory
+     -I<dir>         - Look for SWIG files in directory <dir>
+     -ignoremissing  - Ignore missing include files
+     -importall      - Follow all #include statements as imports
+     -includeall     - Follow all #include statements
+     -l<ifile>       - Include SWIG library file <ifile>
+     -macroerrors    - Report errors inside macros
+     -makedefault    - Create default constructors/destructors (the default)
+     -M              - List all dependencies
+     -MD             - Is equivalent to `-M -MF <file>', except `-E' is not implied
+     -MF <file>      - Generate dependencies into <file> and continue generating wrappers
+     -MM             - List dependencies, but omit files in SWIG library
+     -MMD            - Like `-MD', but omit files in SWIG library
+     -module <name>  - Set module name to <name>
+     -MT <target>    - Set the target of the rule emitted by dependency generation
+     -nocontract     - Turn off contract checking
+     -nocpperraswarn - Do not treat the preprocessor #error statement as #warning
+     -nodefault      - Do not generate default constructors nor default destructors
+     -nodefaultctor  - Do not generate implicit default constructors
+     -nodefaultdtor  - Do not generate implicit default destructors
+     -nodirprot      - Do not wrap director protected members
+     -noexcept       - Do not wrap exception specifiers
+     -nofastdispatch - Disable fast dispatch mode (default)
+     -nopreprocess   - Skip the preprocessor step
+     -notemplatereduce - Disable reduction of the typedefs in templates
+     -O              - Enable the optimization options: 
+                        -fastdispatch -fvirtual 
+     -o <outfile>    - Set name of the output file to <outfile>
+     -oh <headfile>  - Set name of the output header file to <headfile>
+     -outcurrentdir  - Set default output dir to current dir instead of input file's path
+     -outdir <dir>   - Set language specific files output directory to <dir>
+     -pcreversion    - Display PCRE version information
+     -small          - Compile in virtual elimination & compact mode
+     -swiglib        - Report location of SWIG library and exit
+     -templatereduce - Reduce all the typedefs in templates
+     -v              - Run in verbose mode
+     -version        - Display SWIG version number
+     -Wall           - Remove all warning suppression, also implies -Wextra
+     -Wallkw         - Enable keyword warnings for all the supported languages
+     -Werror         - Treat warnings as errors
+     -Wextra         - Adds the following additional warnings: 202,309,403,512,321,322
+     -w<list>        - Suppress/add warning messages, eg -w401,+321 - see Warnings.html
+     -xmlout <file>  - Write XML version of the parse tree to <file> after normal processing
+
+Options can also be defined using the SWIG_FEATURES environment variable, for example:
+
+  $ SWIG_FEATURES="-Wall"
+  $ export SWIG_FEATURES
+  $ swig -python interface.i
+
+is equivalent to: 
+
+  $ swig -Wall -python interface.i 
+
+
+Perl5 Options (available with -perl5)
+     -compat         - Compatibility mode
+     -const          - Wrap constants as constants and not variables (implies -proxy)
+     -cppcast        - Enable C++ casting operators
+     -nocppcast      - Disable C++ casting operators, useful for generating bugs
+     -nopm           - Do not generate the .pm file
+     -noproxy        - Don't create proxy classes
+     -proxy          - Create proxy classes
+     -static         - Omit code related to dynamic loading
+
+
+Note: 'swig -<lang> -help' displays options for a specific target language.
+
+Target Language Options
+     -allegrocl      - Generate ALLEGROCL wrappers
+     -chicken        - Generate CHICKEN wrappers
+     -clisp          - Generate CLISP wrappers
+     -cffi           - Generate CFFI wrappers
+     -csharp         - Generate C# wrappers
+     -d              - Generate D wrappers
+     -go             - Generate Go wrappers
+     -guile          - Generate Guile wrappers
+     -java           - Generate Java wrappers
+     -lua            - Generate Lua wrappers
+     -modula3        - Generate Modula 3 wrappers
+     -mzscheme       - Generate Mzscheme wrappers
+     -ocaml          - Generate Ocaml wrappers
+     -octave         - Generate Octave wrappers
+     -perl           - Generate Perl wrappers
+     -php            - Generate PHP wrappers
+     -pike           - Generate Pike wrappers
+     -python         - Generate Python wrappers
+     -r              - Generate R (aka GNU S) wrappers
+     -ruby           - Generate Ruby wrappers
+     -sexp           - Generate Lisp S-Expressions wrappers
+     -tcl            - Generate Tcl wrappers
+     -uffi           - Generate Common Lisp / UFFI wrappers
+     -xml            - Generate XML wrappers
+
+General Options
+     -addextern      - Add extra extern declarations
+     -c++            - Enable C++ processing
+     -co <file>      - Check <file> out of the SWIG library
+     -copyctor       - Automatically generate copy constructors wherever possible
+     -cpperraswarn   - Treat the preprocessor #error statement as #warning (default)
+     -copyright      - Display copyright notices
+     -debug-classes  - Display information about the classes found in the interface
+     -debug-module <n>- Display module parse tree at stages 1-4, <n> is a csv list of stages
+     -debug-symtabs  - Display symbol tables information
+     -debug-symbols  - Display target language symbols in the symbol tables
+     -debug-csymbols - Display C symbols in the symbol tables
+     -debug-lsymbols - Display target language layer symbols
+     -debug-tags     - Display information about the tags found in the interface
+     -debug-template - Display information for debugging templates
+     -debug-top <n>  - Display entire parse tree at stages 1-4, <n> is a csv list of stages
+     -debug-typedef  - Display information about the types and typedefs in the interface
+     -debug-typemap  - Display typemap debugging information
+     -debug-tmsearch - Display typemap search debugging information
+     -debug-tmused   - Display typemaps used debugging information
+     -directors      - Turn on director mode for all the classes, mainly for testing
+     -dirprot        - Turn on wrapping of protected members for director classes (default)
+     -D<symbol>      - Define a symbol <symbol> (for conditional compilation)
+     -E              - Preprocess only, does not generate wrapper code
+     -external-runtime [file] - Export the SWIG runtime stack
+     -fakeversion <v>- Make SWIG fake the program version number to <v>
+     -fcompact       - Compile in compact mode
+     -features <list>- Set global features, where <list> is a comma separated list of
+                       features, eg -features directors,autodoc=1
+                       If no explicit value is given to the feature, a default of 1 is used
+     -fastdispatch   - Enable fast dispatch mode to produce faster overload dispatcher code
+     -Fmicrosoft     - Display error/warning messages in Microsoft format
+     -Fstandard      - Display error/warning messages in commonly used format
+     -fvirtual       - Compile in virtual elimination mode
+     -help           - This output
+     -I-             - Don't search the current directory
+     -I<dir>         - Look for SWIG files in directory <dir>
+     -ignoremissing  - Ignore missing include files
+     -importall      - Follow all #include statements as imports
+     -includeall     - Follow all #include statements
+     -l<ifile>       - Include SWIG library file <ifile>
+     -macroerrors    - Report errors inside macros
+     -makedefault    - Create default constructors/destructors (the default)
+     -M              - List all dependencies
+     -MD             - Is equivalent to `-M -MF <file>', except `-E' is not implied
+     -MF <file>      - Generate dependencies into <file> and continue generating wrappers
+     -MM             - List dependencies, but omit files in SWIG library
+     -MMD            - Like `-MD', but omit files in SWIG library
+     -module <name>  - Set module name to <name>
+     -MT <target>    - Set the target of the rule emitted by dependency generation
+     -nocontract     - Turn off contract checking
+     -nocpperraswarn - Do not treat the preprocessor #error statement as #warning
+     -nodefault      - Do not generate default constructors nor default destructors
+     -nodefaultctor  - Do not generate implicit default constructors
+     -nodefaultdtor  - Do not generate implicit default destructors
+     -nodirprot      - Do not wrap director protected members
+     -noexcept       - Do not wrap exception specifiers
+     -nofastdispatch - Disable fast dispatch mode (default)
+     -nopreprocess   - Skip the preprocessor step
+     -notemplatereduce - Disable reduction of the typedefs in templates
+     -O              - Enable the optimization options: 
+                        -fastdispatch -fvirtual 
+     -o <outfile>    - Set name of the output file to <outfile>
+     -oh <headfile>  - Set name of the output header file to <headfile>
+     -outcurrentdir  - Set default output dir to current dir instead of input file's path
+     -outdir <dir>   - Set language specific files output directory to <dir>
+     -pcreversion    - Display PCRE version information
+     -small          - Compile in virtual elimination & compact mode
+     -swiglib        - Report location of SWIG library and exit
+     -templatereduce - Reduce all the typedefs in templates
+     -v              - Run in verbose mode
+     -version        - Display SWIG version number
+     -Wall           - Remove all warning suppression, also implies -Wextra
+     -Wallkw         - Enable keyword warnings for all the supported languages
+     -Werror         - Treat warnings as errors
+     -Wextra         - Adds the following additional warnings: 202,309,403,512,321,322
+     -w<list>        - Suppress/add warning messages, eg -w401,+321 - see Warnings.html
+     -xmlout <file>  - Write XML version of the parse tree to <file> after normal processing
+
+Options can also be defined using the SWIG_FEATURES environment variable, for example:
+
+  $ SWIG_FEATURES="-Wall"
+  $ export SWIG_FEATURES
+  $ swig -python interface.i
+
+is equivalent to: 
+
+  $ swig -Wall -python interface.i 
+
+
+Python Options (available with -python)
+     -aliasobj0      - Alias obj0 when using fastunpack, needed for some old typemaps 
+     -buildnone      - Use Py_BuildValue() to obtain Py_None (default in Windows)
+     -builtin        - Create new python built-in types, rather than proxy classes, for better performance
+     -castmode       - Enable the casting mode, which allows implicit cast between types in python
+     -classic        - Use classic classes only
+     -classptr       - Generate shadow 'ClassPtr' as in older swig versions
+     -cppcast        - Enable C++ casting operators (default) 
+     -dirvtable      - Generate a pseudo virtual table for directors for faster dispatch 
+     -extranative    - Return extra native C++ wraps for std containers when possible 
+     -fastinit       - Use fast init mechanism for classes (default)
+     -fastunpack     - Use fast unpack mechanism to parse the argument functions 
+     -fastproxy      - Use fast proxy mechanism for member methods 
+     -fastquery      - Use fast query mechanism for types 
+     -globals <name> - Set <name> used to access C global variable [default: 'cvar']
+     -interface <lib>- Set the lib name to <lib>
+     -keyword        - Use keyword arguments
+     -modern         - Use modern python features only, without compatibility code
+     -modernargs     - Use "modern" args mechanism to pack/unpack the function arguments
+     -newrepr        - Use more informative version of __repr__ in proxy classes (default) 
+     -newvwm         - New value wrapper mode, use only when everything else fails 
+     -noaliasobj0    - Don't generate an obj0 alias when using fastunpack (default) 
+     -nobuildnone    - Access Py_None directly (default in non-Windows systems)
+     -nocastmode     - Disable the casting mode (default)
+     -nocppcast      - Disable C++ casting operators, useful for generating bugs
+     -nodirvtable    - Don't use the virtual table feature, resolve the python method each time (default)
+     -noexcept       - No automatic exception handling
+     -noextranative  - Don't use extra native C++ wraps for std containers when possible (default) 
+     -nofastinit     - Use traditional init mechanism for classes 
+     -nofastunpack   - Use traditional UnpackTuple method to parse the argument functions (default) 
+     -nofastproxy    - Use traditional proxy mechanism for member methods (default) 
+     -nofastquery    - Use traditional query mechanism for types (default) 
+     -noh            - Don't generate the output header file
+     -nomodern       - Don't use modern python features which are not backwards compatible 
+     -nomodernargs   - Use classic ParseTuple/CallFunction methods to pack/unpack the function arguments (default) 
+     -noolddefs      - Don't emit the old method definitions even when using fastproxy (default) 
+     -nooutputtuple  - Use a PyList for appending output values (default) 
+     -noproxy        - Don't generate proxy classes 
+     -noproxydel     - Don't generate the redundant __del__ method 
+     -noproxyimport  - Don't insert proxy import statements derived from the %import directive 
+     -nortti         - Disable the use of the native C++ RTTI with directors
+     -nosafecstrings - Avoid extra strings copies when possible (default)
+     -nothreads      - Disable thread support for the entire interface
+     -olddefs        - Keep the old method definitions even when using fastproxy
+     -oldrepr        - Use shorter and old version of __repr__ in proxy classes
+     -outputtuple    - Use a PyTuple for outputs instead of a PyList (use carefully with legacy interfaces) 
+     -proxydel       - Generate a __del__ method even though it is now redundant (default) 
+     -safecstrings   - Use safer (but slower) C string mapping, generating copies from Python -> C/C++
+     -threads        - Add thread support for all the interface
+     -O              - Enable the following optimization options: 
+                         -modern -fastdispatch -nosafecstrings -fvirtual -noproxydel 
+                         -fastproxy -fastinit -fastunpack -fastquery -modernargs -nobuildnone 
+     -py3            - Generate code with Python 3 specific features:
+                         Function annotation 
+
+
+Note: 'swig -<lang> -help' displays options for a specific target language.
+
+Target Language Options
+     -allegrocl      - Generate ALLEGROCL wrappers
+     -chicken        - Generate CHICKEN wrappers
+     -clisp          - Generate CLISP wrappers
+     -cffi           - Generate CFFI wrappers
+     -csharp         - Generate C# wrappers
+     -d              - Generate D wrappers
+     -go             - Generate Go wrappers
+     -guile          - Generate Guile wrappers
+     -java           - Generate Java wrappers
+     -lua            - Generate Lua wrappers
+     -modula3        - Generate Modula 3 wrappers
+     -mzscheme       - Generate Mzscheme wrappers
+     -ocaml          - Generate Ocaml wrappers
+     -octave         - Generate Octave wrappers
+     -perl           - Generate Perl wrappers
+     -php            - Generate PHP wrappers
+     -pike           - Generate Pike wrappers
+     -python         - Generate Python wrappers
+     -r              - Generate R (aka GNU S) wrappers
+     -ruby           - Generate Ruby wrappers
+     -sexp           - Generate Lisp S-Expressions wrappers
+     -tcl            - Generate Tcl wrappers
+     -uffi           - Generate Common Lisp / UFFI wrappers
+     -xml            - Generate XML wrappers
+
+General Options
+     -addextern      - Add extra extern declarations
+     -c++            - Enable C++ processing
+     -co <file>      - Check <file> out of the SWIG library
+     -copyctor       - Automatically generate copy constructors wherever possible
+     -cpperraswarn   - Treat the preprocessor #error statement as #warning (default)
+     -copyright      - Display copyright notices
+     -debug-classes  - Display information about the classes found in the interface
+     -debug-module <n>- Display module parse tree at stages 1-4, <n> is a csv list of stages
+     -debug-symtabs  - Display symbol tables information
+     -debug-symbols  - Display target language symbols in the symbol tables
+     -debug-csymbols - Display C symbols in the symbol tables
+     -debug-lsymbols - Display target language layer symbols
+     -debug-tags     - Display information about the tags found in the interface
+     -debug-template - Display information for debugging templates
+     -debug-top <n>  - Display entire parse tree at stages 1-4, <n> is a csv list of stages
+     -debug-typedef  - Display information about the types and typedefs in the interface
+     -debug-typemap  - Display typemap debugging information
+     -debug-tmsearch - Display typemap search debugging information
+     -debug-tmused   - Display typemaps used debugging information
+     -directors      - Turn on director mode for all the classes, mainly for testing
+     -dirprot        - Turn on wrapping of protected members for director classes (default)
+     -D<symbol>      - Define a symbol <symbol> (for conditional compilation)
+     -E              - Preprocess only, does not generate wrapper code
+     -external-runtime [file] - Export the SWIG runtime stack
+     -fakeversion <v>- Make SWIG fake the program version number to <v>
+     -fcompact       - Compile in compact mode
+     -features <list>- Set global features, where <list> is a comma separated list of
+                       features, eg -features directors,autodoc=1
+                       If no explicit value is given to the feature, a default of 1 is used
+     -fastdispatch   - Enable fast dispatch mode to produce faster overload dispatcher code
+     -Fmicrosoft     - Display error/warning messages in Microsoft format
+     -Fstandard      - Display error/warning messages in commonly used format
+     -fvirtual       - Compile in virtual elimination mode
+     -help           - This output
+     -I-             - Don't search the current directory
+     -I<dir>         - Look for SWIG files in directory <dir>
+     -ignoremissing  - Ignore missing include files
+     -importall      - Follow all #include statements as imports
+     -includeall     - Follow all #include statements
+     -l<ifile>       - Include SWIG library file <ifile>
+     -macroerrors    - Report errors inside macros
+     -makedefault    - Create default constructors/destructors (the default)
+     -M              - List all dependencies
+     -MD             - Is equivalent to `-M -MF <file>', except `-E' is not implied
+     -MF <file>      - Generate dependencies into <file> and continue generating wrappers
+     -MM             - List dependencies, but omit files in SWIG library
+     -MMD            - Like `-MD', but omit files in SWIG library
+     -module <name>  - Set module name to <name>
+     -MT <target>    - Set the target of the rule emitted by dependency generation
+     -nocontract     - Turn off contract checking
+     -nocpperraswarn - Do not treat the preprocessor #error statement as #warning
+     -nodefault      - Do not generate default constructors nor default destructors
+     -nodefaultctor  - Do not generate implicit default constructors
+     -nodefaultdtor  - Do not generate implicit default destructors
+     -nodirprot      - Do not wrap director protected members
+     -noexcept       - Do not wrap exception specifiers
+     -nofastdispatch - Disable fast dispatch mode (default)
+     -nopreprocess   - Skip the preprocessor step
+     -notemplatereduce - Disable reduction of the typedefs in templates
+     -O              - Enable the optimization options: 
+                        -fastdispatch -fvirtual 
+     -o <outfile>    - Set name of the output file to <outfile>
+     -oh <headfile>  - Set name of the output header file to <headfile>
+     -outcurrentdir  - Set default output dir to current dir instead of input file's path
+     -outdir <dir>   - Set language specific files output directory to <dir>
+     -pcreversion    - Display PCRE version information
+     -small          - Compile in virtual elimination & compact mode
+     -swiglib        - Report location of SWIG library and exit
+     -templatereduce - Reduce all the typedefs in templates
+     -v              - Run in verbose mode
+     -version        - Display SWIG version number
+     -Wall           - Remove all warning suppression, also implies -Wextra
+     -Wallkw         - Enable keyword warnings for all the supported languages
+     -Werror         - Treat warnings as errors
+     -Wextra         - Adds the following additional warnings: 202,309,403,512,321,322
+     -w<list>        - Suppress/add warning messages, eg -w401,+321 - see Warnings.html
+     -xmlout <file>  - Write XML version of the parse tree to <file> after normal processing
+
+Options can also be defined using the SWIG_FEATURES environment variable, for example:
+
+  $ SWIG_FEATURES="-Wall"
+  $ export SWIG_FEATURES
+  $ swig -python interface.i
+
+is equivalent to: 
+
+  $ swig -Wall -python interface.i 
+
+
+Java Options (available with -java)
+     -nopgcpp        - Suppress premature garbage collection prevention parameter
+     -noproxy        - Generate the low-level functional interface instead
+                       of proxy classes
+     -oldvarnames    - Old intermediary method names for variable wrappers
+     -package <name> - Set name of the Java package to <name>
+
+
+
+Note: 'swig -<lang> -help' displays options for a specific target language.
+
+Target Language Options
+     -allegrocl      - Generate ALLEGROCL wrappers
+     -chicken        - Generate CHICKEN wrappers
+     -clisp          - Generate CLISP wrappers
+     -cffi           - Generate CFFI wrappers
+     -csharp         - Generate C# wrappers
+     -d              - Generate D wrappers
+     -go             - Generate Go wrappers
+     -guile          - Generate Guile wrappers
+     -java           - Generate Java wrappers
+     -lua            - Generate Lua wrappers
+     -modula3        - Generate Modula 3 wrappers
+     -mzscheme       - Generate Mzscheme wrappers
+     -ocaml          - Generate Ocaml wrappers
+     -octave         - Generate Octave wrappers
+     -perl           - Generate Perl wrappers
+     -php            - Generate PHP wrappers
+     -pike           - Generate Pike wrappers
+     -python         - Generate Python wrappers
+     -r              - Generate R (aka GNU S) wrappers
+     -ruby           - Generate Ruby wrappers
+     -sexp           - Generate Lisp S-Expressions wrappers
+     -tcl            - Generate Tcl wrappers
+     -uffi           - Generate Common Lisp / UFFI wrappers
+     -xml            - Generate XML wrappers
+
+General Options
+     -addextern      - Add extra extern declarations
+     -c++            - Enable C++ processing
+     -co <file>      - Check <file> out of the SWIG library
+     -copyctor       - Automatically generate copy constructors wherever possible
+     -cpperraswarn   - Treat the preprocessor #error statement as #warning (default)
+     -copyright      - Display copyright notices
+     -debug-classes  - Display information about the classes found in the interface
+     -debug-module <n>- Display module parse tree at stages 1-4, <n> is a csv list of stages
+     -debug-symtabs  - Display symbol tables information
+     -debug-symbols  - Display target language symbols in the symbol tables
+     -debug-csymbols - Display C symbols in the symbol tables
+     -debug-lsymbols - Display target language layer symbols
+     -debug-tags     - Display information about the tags found in the interface
+     -debug-template - Display information for debugging templates
+     -debug-top <n>  - Display entire parse tree at stages 1-4, <n> is a csv list of stages
+     -debug-typedef  - Display information about the types and typedefs in the interface
+     -debug-typemap  - Display typemap debugging information
+     -debug-tmsearch - Display typemap search debugging information
+     -debug-tmused   - Display typemaps used debugging information
+     -directors      - Turn on director mode for all the classes, mainly for testing
+     -dirprot        - Turn on wrapping of protected members for director classes (default)
+     -D<symbol>      - Define a symbol <symbol> (for conditional compilation)
+     -E              - Preprocess only, does not generate wrapper code
+     -external-runtime [file] - Export the SWIG runtime stack
+     -fakeversion <v>- Make SWIG fake the program version number to <v>
+     -fcompact       - Compile in compact mode
+     -features <list>- Set global features, where <list> is a comma separated list of
+                       features, eg -features directors,autodoc=1
+                       If no explicit value is given to the feature, a default of 1 is used
+     -fastdispatch   - Enable fast dispatch mode to produce faster overload dispatcher code
+     -Fmicrosoft     - Display error/warning messages in Microsoft format
+     -Fstandard      - Display error/warning messages in commonly used format
+     -fvirtual       - Compile in virtual elimination mode
+     -help           - This output
+     -I-             - Don't search the current directory
+     -I<dir>         - Look for SWIG files in directory <dir>
+     -ignoremissing  - Ignore missing include files
+     -importall      - Follow all #include statements as imports
+     -includeall     - Follow all #include statements
+     -l<ifile>       - Include SWIG library file <ifile>
+     -macroerrors    - Report errors inside macros
+     -makedefault    - Create default constructors/destructors (the default)
+     -M              - List all dependencies
+     -MD             - Is equivalent to `-M -MF <file>', except `-E' is not implied
+     -MF <file>      - Generate dependencies into <file> and continue generating wrappers
+     -MM             - List dependencies, but omit files in SWIG library
+     -MMD            - Like `-MD', but omit files in SWIG library
+     -module <name>  - Set module name to <name>
+     -MT <target>    - Set the target of the rule emitted by dependency generation
+     -nocontract     - Turn off contract checking
+     -nocpperraswarn - Do not treat the preprocessor #error statement as #warning
+     -nodefault      - Do not generate default constructors nor default destructors
+     -nodefaultctor  - Do not generate implicit default constructors
+     -nodefaultdtor  - Do not generate implicit default destructors
+     -nodirprot      - Do not wrap director protected members
+     -noexcept       - Do not wrap exception specifiers
+     -nofastdispatch - Disable fast dispatch mode (default)
+     -nopreprocess   - Skip the preprocessor step
+     -notemplatereduce - Disable reduction of the typedefs in templates
+     -O              - Enable the optimization options: 
+                        -fastdispatch -fvirtual 
+     -o <outfile>    - Set name of the output file to <outfile>
+     -oh <headfile>  - Set name of the output header file to <headfile>
+     -outcurrentdir  - Set default output dir to current dir instead of input file's path
+     -outdir <dir>   - Set language specific files output directory to <dir>
+     -pcreversion    - Display PCRE version information
+     -small          - Compile in virtual elimination & compact mode
+     -swiglib        - Report location of SWIG library and exit
+     -templatereduce - Reduce all the typedefs in templates
+     -v              - Run in verbose mode
+     -version        - Display SWIG version number
+     -Wall           - Remove all warning suppression, also implies -Wextra
+     -Wallkw         - Enable keyword warnings for all the supported languages
+     -Werror         - Treat warnings as errors
+     -Wextra         - Adds the following additional warnings: 202,309,403,512,321,322
+     -w<list>        - Suppress/add warning messages, eg -w401,+321 - see Warnings.html
+     -xmlout <file>  - Write XML version of the parse tree to <file> after normal processing
+
+Options can also be defined using the SWIG_FEATURES environment variable, for example:
+
+  $ SWIG_FEATURES="-Wall"
+  $ export SWIG_FEATURES
+  $ swig -python interface.i
+
+is equivalent to: 
+
+  $ swig -Wall -python interface.i 
+
+
+Ruby Options (available with -ruby)
+     -autorename     - Enable renaming of classes and methods to follow Ruby coding standards
+     -cppcast        - Enable C++ casting operators (default)
+     -globalmodule   - Wrap everything into the global module
+     -initname <name>- Set entry function to Init_<name> (used by `require')
+     -minherit       - Attempt to support multiple inheritance
+     -noautorename   - Disable renaming of classes and methods (default)
+     -nocppcast      - Disable C++ casting operators, useful for generating bugs
+     -prefix <name>  - Set a prefix <name> to be prepended to all names
+
+
+Note: 'swig -<lang> -help' displays options for a specific target language.
+
+Target Language Options
+     -allegrocl      - Generate ALLEGROCL wrappers
+     -chicken        - Generate CHICKEN wrappers
+     -clisp          - Generate CLISP wrappers
+     -cffi           - Generate CFFI wrappers
+     -csharp         - Generate C# wrappers
+     -d              - Generate D wrappers
+     -go             - Generate Go wrappers
+     -guile          - Generate Guile wrappers
+     -java           - Generate Java wrappers
+     -lua            - Generate Lua wrappers
+     -modula3        - Generate Modula 3 wrappers
+     -mzscheme       - Generate Mzscheme wrappers
+     -ocaml          - Generate Ocaml wrappers
+     -octave         - Generate Octave wrappers
+     -perl           - Generate Perl wrappers
+     -php            - Generate PHP wrappers
+     -pike           - Generate Pike wrappers
+     -python         - Generate Python wrappers
+     -r              - Generate R (aka GNU S) wrappers
+     -ruby           - Generate Ruby wrappers
+     -sexp           - Generate Lisp S-Expressions wrappers
+     -tcl            - Generate Tcl wrappers
+     -uffi           - Generate Common Lisp / UFFI wrappers
+     -xml            - Generate XML wrappers
+
+General Options
+     -addextern      - Add extra extern declarations
+     -c++            - Enable C++ processing
+     -co <file>      - Check <file> out of the SWIG library
+     -copyctor       - Automatically generate copy constructors wherever possible
+     -cpperraswarn   - Treat the preprocessor #error statement as #warning (default)
+     -copyright      - Display copyright notices
+     -debug-classes  - Display information about the classes found in the interface
+     -debug-module <n>- Display module parse tree at stages 1-4, <n> is a csv list of stages
+     -debug-symtabs  - Display symbol tables information
+     -debug-symbols  - Display target language symbols in the symbol tables
+     -debug-csymbols - Display C symbols in the symbol tables
+     -debug-lsymbols - Display target language layer symbols
+     -debug-tags     - Display information about the tags found in the interface
+     -debug-template - Display information for debugging templates
+     -debug-top <n>  - Display entire parse tree at stages 1-4, <n> is a csv list of stages
+     -debug-typedef  - Display information about the types and typedefs in the interface
+     -debug-typemap  - Display typemap debugging information
+     -debug-tmsearch - Display typemap search debugging information
+     -debug-tmused   - Display typemaps used debugging information
+     -directors      - Turn on director mode for all the classes, mainly for testing
+     -dirprot        - Turn on wrapping of protected members for director classes (default)
+     -D<symbol>      - Define a symbol <symbol> (for conditional compilation)
+     -E              - Preprocess only, does not generate wrapper code
+     -external-runtime [file] - Export the SWIG runtime stack
+     -fakeversion <v>- Make SWIG fake the program version number to <v>
+     -fcompact       - Compile in compact mode
+     -features <list>- Set global features, where <list> is a comma separated list of
+                       features, eg -features directors,autodoc=1
+                       If no explicit value is given to the feature, a default of 1 is used
+     -fastdispatch   - Enable fast dispatch mode to produce faster overload dispatcher code
+     -Fmicrosoft     - Display error/warning messages in Microsoft format
+     -Fstandard      - Display error/warning messages in commonly used format
+     -fvirtual       - Compile in virtual elimination mode
+     -help           - This output
+     -I-             - Don't search the current directory
+     -I<dir>         - Look for SWIG files in directory <dir>
+     -ignoremissing  - Ignore missing include files
+     -importall      - Follow all #include statements as imports
+     -includeall     - Follow all #include statements
+     -l<ifile>       - Include SWIG library file <ifile>
+     -macroerrors    - Report errors inside macros
+     -makedefault    - Create default constructors/destructors (the default)
+     -M              - List all dependencies
+     -MD             - Is equivalent to `-M -MF <file>', except `-E' is not implied
+     -MF <file>      - Generate dependencies into <file> and continue generating wrappers
+     -MM             - List dependencies, but omit files in SWIG library
+     -MMD            - Like `-MD', but omit files in SWIG library
+     -module <name>  - Set module name to <name>
+     -MT <target>    - Set the target of the rule emitted by dependency generation
+     -nocontract     - Turn off contract checking
+     -nocpperraswarn - Do not treat the preprocessor #error statement as #warning
+     -nodefault      - Do not generate default constructors nor default destructors
+     -nodefaultctor  - Do not generate implicit default constructors
+     -nodefaultdtor  - Do not generate implicit default destructors
+     -nodirprot      - Do not wrap director protected members
+     -noexcept       - Do not wrap exception specifiers
+     -nofastdispatch - Disable fast dispatch mode (default)
+     -nopreprocess   - Skip the preprocessor step
+     -notemplatereduce - Disable reduction of the typedefs in templates
+     -O              - Enable the optimization options: 
+                        -fastdispatch -fvirtual 
+     -o <outfile>    - Set name of the output file to <outfile>
+     -oh <headfile>  - Set name of the output header file to <headfile>
+     -outcurrentdir  - Set default output dir to current dir instead of input file's path
+     -outdir <dir>   - Set language specific files output directory to <dir>
+     -pcreversion    - Display PCRE version information
+     -small          - Compile in virtual elimination & compact mode
+     -swiglib        - Report location of SWIG library and exit
+     -templatereduce - Reduce all the typedefs in templates
+     -v              - Run in verbose mode
+     -version        - Display SWIG version number
+     -Wall           - Remove all warning suppression, also implies -Wextra
+     -Wallkw         - Enable keyword warnings for all the supported languages
+     -Werror         - Treat warnings as errors
+     -Wextra         - Adds the following additional warnings: 202,309,403,512,321,322
+     -w<list>        - Suppress/add warning messages, eg -w401,+321 - see Warnings.html
+     -xmlout <file>  - Write XML version of the parse tree to <file> after normal processing
+
+Options can also be defined using the SWIG_FEATURES environment variable, for example:
+
+  $ SWIG_FEATURES="-Wall"
+  $ export SWIG_FEATURES
+  $ swig -python interface.i
+
+is equivalent to: 
+
+  $ swig -Wall -python interface.i 
+
+
+Ocaml Options (available with -ocaml)
+     -oldvarnames    - Old intermediary method names for variable wrappers
+     -prefix <name>  - Set a prefix <name> to be prepended to all names
+     -suffix <name>  - Change .cxx to something else
+     -where          - Emit library location
+
+Target Language Options
+     -allegrocl      - Generate ALLEGROCL wrappers
+     -chicken        - Generate CHICKEN wrappers
+     -clisp          - Generate CLISP wrappers
+     -cffi           - Generate CFFI wrappers
+     -csharp         - Generate C# wrappers
+     -d              - Generate D wrappers
+     -go             - Generate Go wrappers
+     -guile          - Generate Guile wrappers
+     -java           - Generate Java wrappers
+     -lua            - Generate Lua wrappers
+     -modula3        - Generate Modula 3 wrappers
+     -mzscheme       - Generate Mzscheme wrappers
+     -ocaml          - Generate Ocaml wrappers
+     -octave         - Generate Octave wrappers
+     -perl           - Generate Perl wrappers
+     -php            - Generate PHP wrappers
+     -pike           - Generate Pike wrappers
+     -python         - Generate Python wrappers
+     -r              - Generate R (aka GNU S) wrappers
+     -ruby           - Generate Ruby wrappers
+     -sexp           - Generate Lisp S-Expressions wrappers
+     -tcl            - Generate Tcl wrappers
+     -uffi           - Generate Common Lisp / UFFI wrappers
+     -xml            - Generate XML wrappers
+
+General Options
+     -addextern      - Add extra extern declarations
+     -c++            - Enable C++ processing
+     -co <file>      - Check <file> out of the SWIG library
+     -copyctor       - Automatically generate copy constructors wherever possible
+     -cpperraswarn   - Treat the preprocessor #error statement as #warning (default)
+     -copyright      - Display copyright notices
+     -debug-classes  - Display information about the classes found in the interface
+     -debug-module <n>- Display module parse tree at stages 1-4, <n> is a csv list of stages
+     -debug-symtabs  - Display symbol tables information
+     -debug-symbols  - Display target language symbols in the symbol tables
+     -debug-csymbols - Display C symbols in the symbol tables
+     -debug-lsymbols - Display target language layer symbols
+     -debug-tags     - Display information about the tags found in the interface
+     -debug-template - Display information for debugging templates
+     -debug-top <n>  - Display entire parse tree at stages 1-4, <n> is a csv list of stages
+     -debug-typedef  - Display information about the types and typedefs in the interface
+     -debug-typemap  - Display typemap debugging information
+     -debug-tmsearch - Display typemap search debugging information
+     -debug-tmused   - Display typemaps used debugging information
+     -directors      - Turn on director mode for all the classes, mainly for testing
+     -dirprot        - Turn on wrapping of protected members for director classes (default)
+     -D<symbol>      - Define a symbol <symbol> (for conditional compilation)
+     -E              - Preprocess only, does not generate wrapper code
+     -external-runtime [file] - Export the SWIG runtime stack
+     -fakeversion <v>- Make SWIG fake the program version number to <v>
+     -fcompact       - Compile in compact mode
+     -features <list>- Set global features, where <list> is a comma separated list of
+                       features, eg -features directors,autodoc=1
+                       If no explicit value is given to the feature, a default of 1 is used
+     -fastdispatch   - Enable fast dispatch mode to produce faster overload dispatcher code
+     -Fmicrosoft     - Display error/warning messages in Microsoft format
+     -Fstandard      - Display error/warning messages in commonly used format
+     -fvirtual       - Compile in virtual elimination mode
+     -help           - This output
+     -I-             - Don't search the current directory
+     -I<dir>         - Look for SWIG files in directory <dir>
+     -ignoremissing  - Ignore missing include files
+     -importall      - Follow all #include statements as imports
+     -includeall     - Follow all #include statements
+     -l<ifile>       - Include SWIG library file <ifile>
+     -macroerrors    - Report errors inside macros
+     -makedefault    - Create default constructors/destructors (the default)
+     -M              - List all dependencies
+     -MD             - Is equivalent to `-M -MF <file>', except `-E' is not implied
+     -MF <file>      - Generate dependencies into <file> and continue generating wrappers
+     -MM             - List dependencies, but omit files in SWIG library
+     -MMD            - Like `-MD', but omit files in SWIG library
+     -module <name>  - Set module name to <name>
+     -MT <target>    - Set the target of the rule emitted by dependency generation
+     -nocontract     - Turn off contract checking
+     -nocpperraswarn - Do not treat the preprocessor #error statement as #warning
+     -nodefault      - Do not generate default constructors nor default destructors
+     -nodefaultctor  - Do not generate implicit default constructors
+     -nodefaultdtor  - Do not generate implicit default destructors
+     -nodirprot      - Do not wrap director protected members
+     -noexcept       - Do not wrap exception specifiers
+     -nofastdispatch - Disable fast dispatch mode (default)
+     -nopreprocess   - Skip the preprocessor step
+     -notemplatereduce - Disable reduction of the typedefs in templates
+     -O              - Enable the optimization options: 
+                        -fastdispatch -fvirtual 
+     -o <outfile>    - Set name of the output file to <outfile>
+     -oh <headfile>  - Set name of the output header file to <headfile>
+     -outcurrentdir  - Set default output dir to current dir instead of input file's path
+     -outdir <dir>   - Set language specific files output directory to <dir>
+     -pcreversion    - Display PCRE version information
+     -small          - Compile in virtual elimination & compact mode
+     -swiglib        - Report location of SWIG library and exit
+     -templatereduce - Reduce all the typedefs in templates
+     -v              - Run in verbose mode
+     -version        - Display SWIG version number
+     -Wall           - Remove all warning suppression, also implies -Wextra
+     -Wallkw         - Enable keyword warnings for all the supported languages
+     -Werror         - Treat warnings as errors
+     -Wextra         - Adds the following additional warnings: 202,309,403,512,321,322
+     -w<list>        - Suppress/add warning messages, eg -w401,+321 - see Warnings.html
+     -xmlout <file>  - Write XML version of the parse tree to <file> after normal processing
+
+Options can also be defined using the SWIG_FEATURES environment variable, for example:
+
+  $ SWIG_FEATURES="-Wall"
+  $ export SWIG_FEATURES
+  $ swig -python interface.i
+
+is equivalent to: 
+
+  $ swig -Wall -python interface.i 
+
+
+PHP Options (available with -php)
+     -cppext <ext>    - Change C++ file extension to <ext> (default is cpp)
+     -noproxy         - Don't generate proxy classes.
+     -prefix <prefix> - Prepend <prefix> to all class names in PHP wrappers
+
+
+Note: 'swig -<lang> -help' displays options for a specific target language.
+
+Target Language Options
+     -allegrocl      - Generate ALLEGROCL wrappers
+     -chicken        - Generate CHICKEN wrappers
+     -clisp          - Generate CLISP wrappers
+     -cffi           - Generate CFFI wrappers
+     -csharp         - Generate C# wrappers
+     -d              - Generate D wrappers
+     -go             - Generate Go wrappers
+     -guile          - Generate Guile wrappers
+     -java           - Generate Java wrappers
+     -lua            - Generate Lua wrappers
+     -modula3        - Generate Modula 3 wrappers
+     -mzscheme       - Generate Mzscheme wrappers
+     -ocaml          - Generate Ocaml wrappers
+     -octave         - Generate Octave wrappers
+     -perl           - Generate Perl wrappers
+     -php            - Generate PHP wrappers
+     -pike           - Generate Pike wrappers
+     -python         - Generate Python wrappers
+     -r              - Generate R (aka GNU S) wrappers
+     -ruby           - Generate Ruby wrappers
+     -sexp           - Generate Lisp S-Expressions wrappers
+     -tcl            - Generate Tcl wrappers
+     -uffi           - Generate Common Lisp / UFFI wrappers
+     -xml            - Generate XML wrappers
+
+General Options
+     -addextern      - Add extra extern declarations
+     -c++            - Enable C++ processing
+     -co <file>      - Check <file> out of the SWIG library
+     -copyctor       - Automatically generate copy constructors wherever possible
+     -cpperraswarn   - Treat the preprocessor #error statement as #warning (default)
+     -copyright      - Display copyright notices
+     -debug-classes  - Display information about the classes found in the interface
+     -debug-module <n>- Display module parse tree at stages 1-4, <n> is a csv list of stages
+     -debug-symtabs  - Display symbol tables information
+     -debug-symbols  - Display target language symbols in the symbol tables
+     -debug-csymbols - Display C symbols in the symbol tables
+     -debug-lsymbols - Display target language layer symbols
+     -debug-tags     - Display information about the tags found in the interface
+     -debug-template - Display information for debugging templates
+     -debug-top <n>  - Display entire parse tree at stages 1-4, <n> is a csv list of stages
+     -debug-typedef  - Display information about the types and typedefs in the interface
+     -debug-typemap  - Display typemap debugging information
+     -debug-tmsearch - Display typemap search debugging information
+     -debug-tmused   - Display typemaps used debugging information
+     -directors      - Turn on director mode for all the classes, mainly for testing
+     -dirprot        - Turn on wrapping of protected members for director classes (default)
+     -D<symbol>      - Define a symbol <symbol> (for conditional compilation)
+     -E              - Preprocess only, does not generate wrapper code
+     -external-runtime [file] - Export the SWIG runtime stack
+     -fakeversion <v>- Make SWIG fake the program version number to <v>
+     -fcompact       - Compile in compact mode
+     -features <list>- Set global features, where <list> is a comma separated list of
+                       features, eg -features directors,autodoc=1
+                       If no explicit value is given to the feature, a default of 1 is used
+     -fastdispatch   - Enable fast dispatch mode to produce faster overload dispatcher code
+     -Fmicrosoft     - Display error/warning messages in Microsoft format
+     -Fstandard      - Display error/warning messages in commonly used format
+     -fvirtual       - Compile in virtual elimination mode
+     -help           - This output
+     -I-             - Don't search the current directory
+     -I<dir>         - Look for SWIG files in directory <dir>
+     -ignoremissing  - Ignore missing include files
+     -importall      - Follow all #include statements as imports
+     -includeall     - Follow all #include statements
+     -l<ifile>       - Include SWIG library file <ifile>
+     -macroerrors    - Report errors inside macros
+     -makedefault    - Create default constructors/destructors (the default)
+     -M              - List all dependencies
+     -MD             - Is equivalent to `-M -MF <file>', except `-E' is not implied
+     -MF <file>      - Generate dependencies into <file> and continue generating wrappers
+     -MM             - List dependencies, but omit files in SWIG library
+     -MMD            - Like `-MD', but omit files in SWIG library
+     -module <name>  - Set module name to <name>
+     -MT <target>    - Set the target of the rule emitted by dependency generation
+     -nocontract     - Turn off contract checking
+     -nocpperraswarn - Do not treat the preprocessor #error statement as #warning
+     -nodefault      - Do not generate default constructors nor default destructors
+     -nodefaultctor  - Do not generate implicit default constructors
+     -nodefaultdtor  - Do not generate implicit default destructors
+     -nodirprot      - Do not wrap director protected members
+     -noexcept       - Do not wrap exception specifiers
+     -nofastdispatch - Disable fast dispatch mode (default)
+     -nopreprocess   - Skip the preprocessor step
+     -notemplatereduce - Disable reduction of the typedefs in templates
+     -O              - Enable the optimization options: 
+                        -fastdispatch -fvirtual 
+     -o <outfile>    - Set name of the output file to <outfile>
+     -oh <headfile>  - Set name of the output header file to <headfile>
+     -outcurrentdir  - Set default output dir to current dir instead of input file's path
+     -outdir <dir>   - Set language specific files output directory to <dir>
+     -pcreversion    - Display PCRE version information
+     -small          - Compile in virtual elimination & compact mode
+     -swiglib        - Report location of SWIG library and exit
+     -templatereduce - Reduce all the typedefs in templates
+     -v              - Run in verbose mode
+     -version        - Display SWIG version number
+     -Wall           - Remove all warning suppression, also implies -Wextra
+     -Wallkw         - Enable keyword warnings for all the supported languages
+     -Werror         - Treat warnings as errors
+     -Wextra         - Adds the following additional warnings: 202,309,403,512,321,322
+     -w<list>        - Suppress/add warning messages, eg -w401,+321 - see Warnings.html
+     -xmlout <file>  - Write XML version of the parse tree to <file> after normal processing
+
+Options can also be defined using the SWIG_FEATURES environment variable, for example:
+
+  $ SWIG_FEATURES="-Wall"
+  $ export SWIG_FEATURES
+  $ swig -python interface.i
+
+is equivalent to: 
+
+  $ swig -Wall -python interface.i 
+
+
+CLISP Options (available with -clisp)
+     -extern-all       - Create clisp definitions for all the functions and
+                         global variables otherwise only definitions for
+                         externed functions and variables are created.
+     -generate-typedef - Use def-c-type to generate shortcuts according to the
+                         typedefs in the input.
+
+
+Note: 'swig -<lang> -help' displays options for a specific target language.
+
+Target Language Options
+     -allegrocl      - Generate ALLEGROCL wrappers
+     -chicken        - Generate CHICKEN wrappers
+     -clisp          - Generate CLISP wrappers
+     -cffi           - Generate CFFI wrappers
+     -csharp         - Generate C# wrappers
+     -d              - Generate D wrappers
+     -go             - Generate Go wrappers
+     -guile          - Generate Guile wrappers
+     -java           - Generate Java wrappers
+     -lua            - Generate Lua wrappers
+     -modula3        - Generate Modula 3 wrappers
+     -mzscheme       - Generate Mzscheme wrappers
+     -ocaml          - Generate Ocaml wrappers
+     -octave         - Generate Octave wrappers
+     -perl           - Generate Perl wrappers
+     -php            - Generate PHP wrappers
+     -pike           - Generate Pike wrappers
+     -python         - Generate Python wrappers
+     -r              - Generate R (aka GNU S) wrappers
+     -ruby           - Generate Ruby wrappers
+     -sexp           - Generate Lisp S-Expressions wrappers
+     -tcl            - Generate Tcl wrappers
+     -uffi           - Generate Common Lisp / UFFI wrappers
+     -xml            - Generate XML wrappers
+
+General Options
+     -addextern      - Add extra extern declarations
+     -c++            - Enable C++ processing
+     -co <file>      - Check <file> out of the SWIG library
+     -copyctor       - Automatically generate copy constructors wherever possible
+     -cpperraswarn   - Treat the preprocessor #error statement as #warning (default)
+     -copyright      - Display copyright notices
+     -debug-classes  - Display information about the classes found in the interface
+     -debug-module <n>- Display module parse tree at stages 1-4, <n> is a csv list of stages
+     -debug-symtabs  - Display symbol tables information
+     -debug-symbols  - Display target language symbols in the symbol tables
+     -debug-csymbols - Display C symbols in the symbol tables
+     -debug-lsymbols - Display target language layer symbols
+     -debug-tags     - Display information about the tags found in the interface
+     -debug-template - Display information for debugging templates
+     -debug-top <n>  - Display entire parse tree at stages 1-4, <n> is a csv list of stages
+     -debug-typedef  - Display information about the types and typedefs in the interface
+     -debug-typemap  - Display typemap debugging information
+     -debug-tmsearch - Display typemap search debugging information
+     -debug-tmused   - Display typemaps used debugging information
+     -directors      - Turn on director mode for all the classes, mainly for testing
+     -dirprot        - Turn on wrapping of protected members for director classes (default)
+     -D<symbol>      - Define a symbol <symbol> (for conditional compilation)
+     -E              - Preprocess only, does not generate wrapper code
+     -external-runtime [file] - Export the SWIG runtime stack
+     -fakeversion <v>- Make SWIG fake the program version number to <v>
+     -fcompact       - Compile in compact mode
+     -features <list>- Set global features, where <list> is a comma separated list of
+                       features, eg -features directors,autodoc=1
+                       If no explicit value is given to the feature, a default of 1 is used
+     -fastdispatch   - Enable fast dispatch mode to produce faster overload dispatcher code
+     -Fmicrosoft     - Display error/warning messages in Microsoft format
+     -Fstandard      - Display error/warning messages in commonly used format
+     -fvirtual       - Compile in virtual elimination mode
+     -help           - This output
+     -I-             - Don't search the current directory
+     -I<dir>         - Look for SWIG files in directory <dir>
+     -ignoremissing  - Ignore missing include files
+     -importall      - Follow all #include statements as imports
+     -includeall     - Follow all #include statements
+     -l<ifile>       - Include SWIG library file <ifile>
+     -macroerrors    - Report errors inside macros
+     -makedefault    - Create default constructors/destructors (the default)
+     -M              - List all dependencies
+     -MD             - Is equivalent to `-M -MF <file>', except `-E' is not implied
+     -MF <file>      - Generate dependencies into <file> and continue generating wrappers
+     -MM             - List dependencies, but omit files in SWIG library
+     -MMD            - Like `-MD', but omit files in SWIG library
+     -module <name>  - Set module name to <name>
+     -MT <target>    - Set the target of the rule emitted by dependency generation
+     -nocontract     - Turn off contract checking
+     -nocpperraswarn - Do not treat the preprocessor #error statement as #warning
+     -nodefault      - Do not generate default constructors nor default destructors
+     -nodefaultctor  - Do not generate implicit default constructors
+     -nodefaultdtor  - Do not generate implicit default destructors
+     -nodirprot      - Do not wrap director protected members
+     -noexcept       - Do not wrap exception specifiers
+     -nofastdispatch - Disable fast dispatch mode (default)
+     -nopreprocess   - Skip the preprocessor step
+     -notemplatereduce - Disable reduction of the typedefs in templates
+     -O              - Enable the optimization options: 
+                        -fastdispatch -fvirtual 
+     -o <outfile>    - Set name of the output file to <outfile>
+     -oh <headfile>  - Set name of the output header file to <headfile>
+     -outcurrentdir  - Set default output dir to current dir instead of input file's path
+     -outdir <dir>   - Set language specific files output directory to <dir>
+     -pcreversion    - Display PCRE version information
+     -small          - Compile in virtual elimination & compact mode
+     -swiglib        - Report location of SWIG library and exit
+     -templatereduce - Reduce all the typedefs in templates
+     -v              - Run in verbose mode
+     -version        - Display SWIG version number
+     -Wall           - Remove all warning suppression, also implies -Wextra
+     -Wallkw         - Enable keyword warnings for all the supported languages
+     -Werror         - Treat warnings as errors
+     -Wextra         - Adds the following additional warnings: 202,309,403,512,321,322
+     -w<list>        - Suppress/add warning messages, eg -w401,+321 - see Warnings.html
+     -xmlout <file>  - Write XML version of the parse tree to <file> after normal processing
+
+Options can also be defined using the SWIG_FEATURES environment variable, for example:
+
+  $ SWIG_FEATURES="-Wall"
+  $ export SWIG_FEATURES
+  $ swig -python interface.i
+
+is equivalent to: 
+
+  $ swig -Wall -python interface.i 
+
+
+Lua Options (available with -lua)
+     -elua           - Generates LTR compatible wrappers for smaller devices running elua
+     -eluac          - LTR compatible wrappers in "crass compress" mode for elua
+     -nomoduleglobal - Do not register the module name as a global variable 
+                       but return the module table from calls to require.
+
+
+Note: 'swig -<lang> -help' displays options for a specific target language.
+
+test -z "1" || (cd CCache && /usr/gnu/bin/make check)
+make[2]: Entering directory `$(@D)/CCache'
+SWIG_LIB='../../Lib' PATH=../..:$PATH SWIG='swig' CC='$(CC)' NOSOFTLINKSTEST='' ./test.sh
+starting testsuite base
+test1.c:
+test2.c:
+starting swig testsuite base
+ln: cannot create $(CC): Read-only file system
+starting testsuite link
+./test.sh[89]: ./$(CC): not found [No such file or directory]
+SUITE: link TEST: BASIC - Expected cache miss to be 1 got 0
+cache directory                     ccache dir
+cache hit                              0
+cache miss                             0
+files in cache                         0
+cache size                             0 Kbytes
+max cache size                     976.6 Mbytes
+TEST FAILED
+make[2]: *** [test] Error 1
+make[2]: Leaving directory `$(@D)/CCache'
+make[1]: *** [check-ccache] Error 2
+make[1]: Leaving directory `$(@D)'
