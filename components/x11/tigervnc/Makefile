@@ -45,6 +45,7 @@ COMPONENT_POST_UNPACK_ACTION +=  ( cp -r $(COMPONENT_DIR)/files/java $(SOURCE_DI
 
 $(SOURCE_DIR)/.prep: $(ARCHIVE_STAMPS) $(COMPONENT_DIR)/../xorg-server/xorg-server-$(XORG_SERVER_VERSION)/.prep
 	$(COMPONENT_PREP_ACTION)
+	chmod -R u+w $(COMPONENT_SRC)/unix/xserver
 	cp -r $(COMPONENT_DIR)/../xorg-server/xorg-server-$(XORG_SERVER_VERSION)/* $(COMPONENT_SRC)/unix/xserver
 	$(GPATCH) -d $(@D) $(GPATCH_FLAGS) <  $(XORG_ADDITIONAL_PATCH) 
 	( cd $(@D)/unix/xserver && \
