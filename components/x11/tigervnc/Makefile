@@ -125,7 +125,7 @@ XVNC_CONFIGURE_OPTIONS += --with-xkb-output=/var/run/xkb
 XVNC_CONFIGURE_OPTIONS += --without-int10
 XVNC_CONFIGURE_OPTIONS += --disable-selective-werror
 
-$(BUILD_DIR)/.built_jar: $(BULD_32)
+$(BUILD_DIR)/.built_jar: $(BUILD_32)
 	$(ENV) $(COMPONENT_BUILD_ENV) \
                 $(GMAKE) -C $(BUILD_DIR_32)/java/src/com/tigervnc/vncviewer  $(COMPONENT_BUILD_GMAKE_ARGS)
 	$(TOUCH) $(@)
