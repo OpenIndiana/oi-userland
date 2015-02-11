@@ -45,15 +45,20 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
+# In a virtualized environment getarch cannot detect the architecture.
+# It falls back to INTEL_UKNOWN which causes failure of the build.
+# The option TARGET=GENERIC has to be passed to force detection.
 # Do not define NO_STATIC nor NO_SHARED to build both libraries
 COMPONENT_BUILD_GMAKE_ARGS= PREFIX=$(USRDIR) \
                             DYNAMIC_ARCH=1 \
+                            TARGET=PRESCOTT \
                             BINARY=$(BITS) \
                             FC=$(FC) CC=$(CC) \
                             COMMON_OPT="$(CFLAGS) -Wa,--divide" \
+                            NO_LAPACKE=1 \
                             USE_OPENMP=0 \
                             USE_THREAD=1 \
-                            NUM_THREADS=32
+                            NUM_THREADS=64
 
 MACHDIR.32=
 MACHDIR.64=$(MACH64)
