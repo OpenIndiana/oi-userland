@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libdrm
 COMPONENT_VERSION=      2.4.59
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=  http://dri.freedesktop.org
 COMPONENT_SUMMARY=      Userspace interface to kernel Direct Rendering Module services
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -44,6 +45,8 @@ CONFIGURE_OPTIONS+=      --enable-radeon
 CONFIGURE_OPTIONS+=      --disable-nouveau
 CONFIGURE_OPTIONS+=      --enable-omap-experimental-api
 CONFIGURE_OPTIONS+=      --enable-exynos-experimental-api
+CONFIGURE_OPTIONS+=      --enable-freedreno
+CONFIGURE_OPTIONS+=      --enable-tegra-experimental-api
 
 # common targets
 build:          $(BUILD_32_and_64)
