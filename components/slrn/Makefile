@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -34,6 +34,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:06b4a060939ec3077e5a060c7a2556747c96061a24eec2c09e1feacd5dbeaae6
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/slrn/files/slrn/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/slrn
+TPNO=                   21410
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
