@@ -25,6 +25,8 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 <transform file path=usr/lib(.*)/pkgconfig/(.+).pc$ -> set action.hash usr/lib/xorg%<\1>/pkgconfig/%<\2>.pc >
 
 file path=usr/include/exynos/exynos_drm.h
+file path=usr/include/freedreno/freedreno_drmif.h
+file path=usr/include/freedreno/freedreno_ringbuffer.h
 file path=usr/include/libdrm/drm.h
 file path=usr/include/libdrm/drm_fourcc.h
 file path=usr/include/libdrm/drm_mode.h
@@ -51,6 +53,7 @@ file path=usr/include/libdrm/radeon_drm.h
 file path=usr/include/libdrm/radeon_surface.h
 file path=usr/include/libdrm/savage_drm.h
 file path=usr/include/libdrm/sis_drm.h
+file path=usr/include/libdrm/tegra.h
 file path=usr/include/libdrm/tegra_drm.h
 file path=usr/include/libdrm/via_drm.h
 file path=usr/include/libdrm/vmwgfx_drm.h
@@ -60,15 +63,19 @@ file path=usr/include/xf86drm.h
 file path=usr/include/xf86drmMode.h
 file path=usr/lib/$(MACH64)/pkgconfig/libdrm.pc
 file path=usr/lib/$(MACH64)/pkgconfig/libdrm_exynos.pc
+file path=usr/lib/$(MACH64)/pkgconfig/libdrm_freedreno.pc
 file path=usr/lib/$(MACH64)/pkgconfig/libdrm_intel.pc
 file path=usr/lib/$(MACH64)/pkgconfig/libdrm_omap.pc
 file path=usr/lib/$(MACH64)/pkgconfig/libdrm_radeon.pc
+file path=usr/lib/$(MACH64)/pkgconfig/libdrm_tegra.pc
 file path=usr/lib/$(MACH64)/pkgconfig/libkms.pc
 file path=usr/lib/pkgconfig/libdrm.pc
 file path=usr/lib/pkgconfig/libdrm_exynos.pc
+file path=usr/lib/pkgconfig/libdrm_freedreno.pc
 file path=usr/lib/pkgconfig/libdrm_intel.pc
 file path=usr/lib/pkgconfig/libdrm_omap.pc
 file path=usr/lib/pkgconfig/libdrm_radeon.pc
+file path=usr/lib/pkgconfig/libdrm_tegra.pc
 file path=usr/lib/pkgconfig/libkms.pc
 link path=usr/lib/xorg/$(MACH64)/libdrm.so target=libdrm.so.2.4.0
 link path=usr/lib/xorg/$(MACH64)/libdrm.so.2 target=libdrm.so.2.4.0
@@ -77,6 +84,11 @@ link path=usr/lib/xorg/$(MACH64)/libdrm_exynos.so target=libdrm_exynos.so.1.0.0
 link path=usr/lib/xorg/$(MACH64)/libdrm_exynos.so.1 \
     target=libdrm_exynos.so.1.0.0
 file path=usr/lib/xorg/$(MACH64)/libdrm_exynos.so.1.0.0
+link path=usr/lib/xorg/$(MACH64)/libdrm_freedreno.so \
+    target=libdrm_freedreno.so.1.0.0
+link path=usr/lib/xorg/$(MACH64)/libdrm_freedreno.so.1 \
+    target=libdrm_freedreno.so.1.0.0
+file path=usr/lib/xorg/$(MACH64)/libdrm_freedreno.so.1.0.0
 link path=usr/lib/xorg/$(MACH64)/libdrm_intel.so target=libdrm_intel.so.1.0.0
 link path=usr/lib/xorg/$(MACH64)/libdrm_intel.so.1 target=libdrm_intel.so.1.0.0
 file path=usr/lib/xorg/$(MACH64)/libdrm_intel.so.1.0.0
@@ -87,6 +99,9 @@ link path=usr/lib/xorg/$(MACH64)/libdrm_radeon.so target=libdrm_radeon.so.1.0.1
 link path=usr/lib/xorg/$(MACH64)/libdrm_radeon.so.1 \
     target=libdrm_radeon.so.1.0.1
 file path=usr/lib/xorg/$(MACH64)/libdrm_radeon.so.1.0.1
+link path=usr/lib/xorg/$(MACH64)/libdrm_tegra.so target=libdrm_tegra.so.0.0.0
+link path=usr/lib/xorg/$(MACH64)/libdrm_tegra.so.0 target=libdrm_tegra.so.0.0.0
+file path=usr/lib/xorg/$(MACH64)/libdrm_tegra.so.0.0.0
 link path=usr/lib/xorg/$(MACH64)/libkms.so target=libkms.so.1.0.0
 link path=usr/lib/xorg/$(MACH64)/libkms.so.1 target=libkms.so.1.0.0
 file path=usr/lib/xorg/$(MACH64)/libkms.so.1.0.0
@@ -96,6 +111,9 @@ file path=usr/lib/xorg/libdrm.so.2.4.0
 link path=usr/lib/xorg/libdrm_exynos.so target=libdrm_exynos.so.1.0.0
 link path=usr/lib/xorg/libdrm_exynos.so.1 target=libdrm_exynos.so.1.0.0
 file path=usr/lib/xorg/libdrm_exynos.so.1.0.0
+link path=usr/lib/xorg/libdrm_freedreno.so target=libdrm_freedreno.so.1.0.0
+link path=usr/lib/xorg/libdrm_freedreno.so.1 target=libdrm_freedreno.so.1.0.0
+file path=usr/lib/xorg/libdrm_freedreno.so.1.0.0
 link path=usr/lib/xorg/libdrm_intel.so target=libdrm_intel.so.1.0.0
 link path=usr/lib/xorg/libdrm_intel.so.1 target=libdrm_intel.so.1.0.0
 file path=usr/lib/xorg/libdrm_intel.so.1.0.0
@@ -105,6 +123,9 @@ file path=usr/lib/xorg/libdrm_omap.so.1.0.0
 link path=usr/lib/xorg/libdrm_radeon.so target=libdrm_radeon.so.1.0.1
 link path=usr/lib/xorg/libdrm_radeon.so.1 target=libdrm_radeon.so.1.0.1
 file path=usr/lib/xorg/libdrm_radeon.so.1.0.1
+link path=usr/lib/xorg/libdrm_tegra.so target=libdrm_tegra.so.0.0.0
+link path=usr/lib/xorg/libdrm_tegra.so.0 target=libdrm_tegra.so.0.0.0
+file path=usr/lib/xorg/libdrm_tegra.so.0.0.0
 link path=usr/lib/xorg/libkms.so target=libkms.so.1.0.0
 link path=usr/lib/xorg/libkms.so.1 target=libkms.so.1.0.0
 file path=usr/lib/xorg/libkms.so.1.0.0
