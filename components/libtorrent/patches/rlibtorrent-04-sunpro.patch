@@ -1,3 +1,5 @@
+# Remove Studio C++ 12.3 specific patch for
+# src/protocol/peer_connection_leech.cc.
 --- rtorrent-0.8.2.orig/rak/string_manip.h	2008-05-07 08:19:12.000000000 -0400
 +++ rtorrent-0.8.2/rak/string_manip.h	2008-06-25 02:14:10.028329996 -0400
 @@ -62,7 +62,7 @@
@@ -390,28 +392,6 @@
  
    int length = result.second - buffer;
    char* copy = new char[length];
---- libtorrent-0.12.2.orig/src/protocol/peer_connection_leech.cc	2008-05-07 08:19:12.000000000 -0400
-+++ libtorrent-0.12.2/src/protocol/peer_connection_leech.cc	2008-06-24 15:19:28.492038823 -0400
-@@ -697,7 +697,9 @@
-   }
- }
- 
-+#ifndef __SUNPRO_CC
- template<>
-+#endif
- void
- PeerConnection<Download::CONNECTION_INITIAL_SEED>::offer_chunk() {
-   // If bytes left to send in this chunk minus bytes about to be sent is zero,
-@@ -718,7 +720,9 @@
-   m_data.bytesLeft = m_download->file_list()->chunk_index_size(index);
- }
- 
-+#ifndef __SUNPRO_CC
- template<>
-+#endif
- bool
- PeerConnection<Download::CONNECTION_INITIAL_SEED>::should_upload() {
-   // For initial seeding, check if chunk is well seeded now, and if so
 --- libtorrent-0.12.2.orig/src/protocol/handshake_manager.cc	2008-05-07 08:19:12.000000000 -0400
 +++ libtorrent-0.12.2/src/protocol/handshake_manager.cc	2008-06-24 15:11:50.179786185 -0400
 @@ -37,6 +37,7 @@

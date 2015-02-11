@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 # we really need to use studio, mostly because that's what
@@ -62,7 +62,7 @@ CC=$(CXX)
 LDFLAGS += -L/usr/gnu/lib/$(MACH64) -R/usr/gnu/lib/$(MACH64)
 
 CXXFLAGS +=	-i
-CXXFLAGS +=	-xspace
+CXXFLAGS +=	-template=no%extdef
 CXXFLAGS +=	$(studio_XREGS)
 CXXFLAGS +=	-I/usr/include/ncurses
 CONFIGURE_OPTIONS.64 +=         --srcdir=$(BUILD_DIR_64)

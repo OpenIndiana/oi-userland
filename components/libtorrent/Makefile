@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 # we really need to use studio, mostly because that's what
@@ -66,7 +66,6 @@ CC=$(CXX)
 
 CXXFLAGS +=	$(studio_OPT)
 CXXFLAGS +=	-i
-CXXFLAGS +=	-xspace
 CXXFLAGS +=	$(studio_XREGS)
 
 CONFIGURE_OPTIONS  +=	--enable-shared

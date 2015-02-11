@@ -1,3 +1,4 @@
+# Removed Studio C++-specific patch for src/input/path_input.cc.
 --- rtorrent-0.8.2/src/input/input_event.cc.orig	2008-05-10 18:44:08.970350312 +1200
 +++ rtorrent-0.8.2/src/input/input_event.cc	2008-05-10 18:44:41.438283333 +1200
 @@ -37,6 +37,7 @@
@@ -17,8 +18,8 @@
      m_slotPressed(c);
  }
  
---- rtorrent-0.8.2/src/input/path_input.cc.orig	2008-05-08 00:19:11.000000000 +1200
-+++ rtorrent-0.8.2/src/input/path_input.cc	2008-05-10 18:46:38.159258850 +1200
+--- rtorrent-0.8.2/src/input/path_input.cc.orig	2008-05-07 05:19:11.000000000 -0700
++++ rtorrent-0.8.2/src/input/path_input.cc	2015-02-01 12:12:30.800473449 -0800
 @@ -42,7 +42,8 @@
  #include <rak/path.h>
  
@@ -29,7 +30,7 @@
  
  #include "path_input.h"
  
-@@ -71,9 +72,12 @@
+@@ -71,10 +72,13 @@
  }
  
  struct _transform_filename {
@@ -39,9 +40,22 @@
 +    stat(entry.d_name.c_str(), &s);
 +    if (s.st_mode & S_IFDIR) {
        entry.d_name += '/';
-+    }
    }
++  }
  };
+ 
+ void
+@@ -109,7 +113,9 @@
+   mark_dirty();
+ 
+   // Only emit if there are more than one option.
+-  m_showNext = ++utils::Directory::iterator(r.first) != r.second;
++  utils::Directory::iterator itr(r.first);
++  ++itr;
++  m_showNext = itr != r.second;
+ 
+   if (m_showNext)
+     m_signalShowRange.emit(r.first, r.second);
  
 --- rtorrent-0.8.2/src/utils/directory.h.orig	2008-05-08 00:19:11.000000000 +1200
 +++ rtorrent-0.8.2/src/utils/directory.h	2008-05-10 18:40:49.485871875 +1200

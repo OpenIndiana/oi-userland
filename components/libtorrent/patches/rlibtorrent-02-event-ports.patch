@@ -1,3 +1,4 @@
+# replaced -fvisibility=hidden with -template=no%extdef in CXXFLAGS.
 diff -x configure -x aclocal.m4 -ru libtorrent-0.11.9/configure.ac libtorrent-0.11.9-new/configure.ac
 --- libtorrent-0.11.9/configure.ac	2007-10-25 09:48:32.000000000 +0000
 +++ libtorrent-0.11.9-new/configure.ac	2008-01-13 17:13:30.892756466 +0000
@@ -498,3 +499,23 @@ diff -urN libtorrent.orig/src/torrent/poll_ports.cc libtorrent/src/torrent/poll_
 +#endif // USE_PORTS
 +
 +}
+--- libtorrent-0.12.2/scripts/attributes.m4	2008-05-07 05:19:12.000000000 -0700
++++ libtorrent-0.12.2/scripts/attributes.m4	2015-01-29 08:45:29.333056494 -0800
+@@ -62,7 +62,7 @@
+         AC_LANG_PUSH(C++)
+ 
+         tmp_CXXFLAGS=$CXXFLAGS
+-        CXXFLAGS="$CXXFLAGS -fvisibility=hidden"
++        CXXFLAGS="$CXXFLAGS -template=no%extdef"
+ 
+ 	AC_CACHE_CHECK([if compiler supports __attribute__((visibility("default")))],
+ 		[cc_cv_attribute_visibility],
+@@ -78,7 +78,7 @@
+ 
+ 	if test "x$cc_cv_attribute_visibility" = "xyes"; then
+ 		AC_DEFINE([SUPPORT_ATTRIBUTE_VISIBILITY], 1, [Define this if the compiler supports the visibility attributes.])
+-                CXXFLAGS="$CXXFLAGS -fvisibility=hidden"
++                CXXFLAGS="$CXXFLAGS -template=no%extdef"
+ 		$1
+ 	else
+                 true
