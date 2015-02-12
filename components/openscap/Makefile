@@ -71,7 +71,10 @@ COMPONENT_POST_CONFIGURE_ACTION = \
      -e 's|PYTHON_VERSION = 2.6|PYTHON_VERSION = 2.7|' swig2.7/Makefile swig2.7/python2/Makefile)
 
 COMPONENT_POST_INSTALL_ACTION =	\
-	(cd $(@D)/swig2.7 ; $(GMAKE) $(COMPONENT_INSTALL_ARGS) install)
+	(cd $(@D)/swig2.7 ; $(GMAKE) $(COMPONENT_INSTALL_ARGS) install) ; \
+	$(RM) $(PROTO_DIR)/usr/share/openscap/cpe/* && \
+	$(CP) files/cpe/* $(PROTO_DIR)/usr/share/openscap/cpe
+
 
 # Needed to make "gmake test" work.
 CPPFLAGS +=	-I$(SOURCE_DIR)/src/OVAL
