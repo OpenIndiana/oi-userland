@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -44,14 +44,29 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk
 
+# Master test results are the same for all versions of Python, so override
+# here, rather than create multiple identical master files.
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
+# Use nawk to just extract lines:
+# containing "[OK]" or "[ERROR]"
+# starting with "Ran . tests in"
+# starting with "FAILED" or "PASSED"
+# and stripping out the random portions (like time to complete the tests).
+COMPONENT_TEST_TRANSFORMER =    $(NAWK)
+COMPONENT_TEST_TRANSFORMS = "'/\[ERROR\]/ { print }; /\[OK\]/ { print }; /^Ran / { sub(\" tests in .+s\", \" tests in\"); print }; /^FAILED / { print }; /^PASSED / { print };'"
+
+COMPONENT_TEST_DIR =	$(COMPONENT_SRC)
+COMPONENT_TEST_CMD =	/usr/demo/twisted-python$(PYTHON_VERSION)/trial
+COMPONENT_TEST_ARGS =	twisted/web2/test/test_xmlrpc.py
+
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-# common targets
 build:          $(BUILD_NO_ARCH)
 
 install:        $(INSTALL_NO_ARCH)
 
-test:           $(NO_TESTS)
+test:           $(TEST_NO_ARCH)
 
 BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
 
