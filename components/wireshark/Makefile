@@ -23,16 +23,16 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		wireshark
-COMPONENT_VERSION=	1.10.12
+COMPONENT_VERSION=	1.12.3
 COMPONENT_PROJECT_URL=	http://www.wireshark.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e8fe3993b60a93106fad3b186ab8adb7a88ef06549a4b2bc2755db84725720ae
+    sha256:69950b9dcb1a630982b5f680554d73d27ee0dc856fc6aeef88c8d04eb5ac33ea
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/src/all-versions/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/wireshark
 
-TPNO=			21136
+TPNO=			21482
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -55,14 +55,16 @@ CONFIGURE_OPTIONS +=	--disable-usr-local
 CONFIGURE_OPTIONS +=	--disable-randpkt
 CONFIGURE_OPTIONS +=	--disable-dftest
 CONFIGURE_OPTIONS +=	--with-krb5
+CONFIGURE_OPTIONS +=	--with-qt=no
+CONFIGURE_OPTIONS +=	--with-gtk2=yes
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)" 
 CONFIGURE_OPTIONS +=	PATH="/usr/perl5/bin:/usr/gnu/bin:$(PATH)"
 
 # Use the 64-bit versions of pkg-config files
 CONFIGURE_ENV +=	PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
 
-# Version 1.10 (libwireshark.so) doesn't play nicely with -Bdirect.
-LD_B_DIRECT=
+# Workaround for Bug 19143303
+studio_OPT =	-xO3
 
 # We need to avoid RPATH=/usr/lib in Wireshark libraries so that we can
 # create successfully IPS package of different Wireshark branch than is
@@ -76,6 +78,16 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 	mv config.status.new config.status; \
 	chmod 755 config.status; \
 	./config.status)
+
+# During install libtool will relink libwireshark library so that it
+# requires libwiretap version from system and not from proto area.
+# This shall be removed once CBE is updated to contain Wireshark 1.12
+# (see Bug 20627618).
+COMPONENT_POST_INSTALL_ACTION = \
+	(/usr/bin/elfdump -d $(PROTO_DIR)/usr/lib/$(MACH64)/libwireshark.so.5.0.3 | \
+	    grep 'libwiretap.so.3' && /usr/bin/elfedit \
+	    -e 'dyn:value -s -with-valstr libwiretap.so.3 libwiretap.so.4' \
+	    $(PROTO_DIR)/usr/lib/$(MACH64)/libwireshark.so.5.0.3)
 
 configure:	$(CONFIGURE_64)
 
