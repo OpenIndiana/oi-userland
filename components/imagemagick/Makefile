@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -47,7 +47,6 @@ PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
 
 # IPS_COMPONENT_VERSION is by default set to $(COMPONENT_VERSION) but in
 # this case we need to replace the '-' by '.'.
-#
 IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).$(COMPONENT_SUBVERSION)
 
 COMPONENT_POST_UNPACK_ACTION= ( $(MV) $(COMPONENT_SRC)-$(COMPONENT_SUBVERSION) \
@@ -55,16 +54,11 @@ COMPONENT_POST_UNPACK_ACTION= ( $(MV) $(COMPONENT_SRC)-$(COMPONENT_SUBVERSION) \
 
 # To get the Perl modules built it is necessary to copy the PerlMagick directory
 # to the build directory
-#
 COMPONENT_PRE_CONFIGURE_ACTION= ($(CP) -R $(SOURCE_DIR)/PerlMagick $(@D))
 
-LIBS += -lsocket -lnsl
-CONFIGURE_ENV += LIBS="$(LIBS)"
-
 # Show name of "error tag" as part of the warning
-#
 CFLAGS += -errtags=yes
-# To remove the complier complaints about __restrict keyword,
+# To remove the compiler complaints about __restrict keyword,
 # -D_magickcore_restrict should be used.
 CFLAGS += -xc99=%all -D_magickcore_restrict=
 
@@ -83,16 +77,26 @@ CONFIGURE_OPTIONS+= --disable-openmp
 # Using option 'with-fontconfig=no' so that the fonts/fonts path specified in
 # configuration file 'type-ghostscript.xml' is being used.
 CONFIGURE_OPTIONS+= --with-fontconfig=no
-# Configure option 'with-gs-font-dir' is required because some build systems might 
-# not have ghostscript fonts installed.
+# Configure option 'with-gs-font-dir' is required because some build systems
+# might not have ghostscript fonts installed.
 CONFIGURE_OPTIONS+= --with-gs-font-dir="/usr/share/ghostscript/fonts"
 CONFIGURE_OPTIONS+= --x-libraries=$(CONFIGURE_LIBDIR.$(BITS)) 
 CONFIGURE_OPTIONS.32+= --with-perl=$(PERL)
 CONFIGURE_OPTIONS.32+= --with-perl-options="INSTALLDIRS=vendor"
 CONFIGURE_OPTIONS.64+= --without-perl
 
-# common targets
-#
+# Needed for "gmake test" to work successfully.  If SHELLOPTS is exported (as
+# it is by the Userland Makefiles), then all shell options get exported to
+# child invocations of bash, which results in test failures due to nounset and
+# xtrace being set unexpectedly, and errors such as "$1: unbound variable" and
+# diffs failing due to script tracing in output files.
+unexport SHELLOPTS
+
+# Tests hang waiting for input unless stdin is redirected.
+COMPONENT_TEST_TARGETS = check < /dev/null
+
+ASLR_MODE = $(ASLR_ENABLE)
+
 configure:	$(CONFIGURE_32_and_64)
 
 build:		$(BUILD_32_and_64)
@@ -117,12 +121,7 @@ install:	$(INSTALL_32_and_64)
 	/usr/bin/elfedit -e 'dyn:delete RPATH' \
 	    $(PROTO_DIR)/usr/lib/$(MACH64)/libMagickCore-6.Q16.so.1.0.0
 
-# ImageMagick tests have hard-coded absolute paths inside, so essentially they
-# can be run only after ImageMagick is actually installed and this is not 
-# possible, so the tests are not invoked.
-#
-test:		$(NO_TESTS)
-	@echo "Tests can be run only after ImageMagick is installed."
+test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES= $(BUILD_TOOLS)
 

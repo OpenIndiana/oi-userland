@@ -1,9 +1,11 @@
 ImageMagick uses many unsupported attributes by Oracle Solaris Studio.
 Supported attributes are here:
 http://docs.oracle.com/cd/E24457_01/html/E21991/gljol.html
-================================================================================
---- ImageMagick-6.7.8/magick/method-attribute.h.orig	Sun Feb 19 10:15:53 2012
-+++ ImageMagick-6.7.8/magick/method-attribute.h	Tue Oct 16 06:58:12 2012
+This patch comes from in-house; as it is Solaris-specific, it will not
+be contributed upstream.
+
+--- ImageMagick-6.8.3/magick/method-attribute.h.~1~	2013-01-16 14:17:00.000000000 -0800
++++ ImageMagick-6.8.3/magick/method-attribute.h	2015-02-10 20:34:01.057456551 -0800
 @@ -110,7 +110,7 @@
  
  #if defined(MAGICKCORE_HAVE___ATTRIBUTE__)
@@ -11,5 +13,5 @@ http://docs.oracle.com/cd/E24457_01/html/E21991/gljol.html
 -#  define magick_attribute  __attribute__
 +#  define magick_attribute(x)
  #  define magick_unused(x)  magick_unused_ ## x __attribute__((unused))
- #else
- #  define magick_aligned(x)  /* nothing */
+ #elif defined(MAGICKCORE_WINDOWS_SUPPORT) && !defined(__CYGWIN__)
+ #  define magick_aligned(x)  __declspec(align(x))
