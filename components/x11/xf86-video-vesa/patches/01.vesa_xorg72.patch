@@ -1,0 +1,58 @@
+Fixes Sun bug 6526933: Matrox MGA chip (embedded in ServerEngines "Pilot" BSC)
+does not work with vesa driver
+
+diff --git a/src/vesa.c b/src/vesa.c
+index 23d9e14..709d791 100644
+--- a/src/vesa.c
++++ b/src/vesa.c
+@@ -1488,19 +1488,19 @@ SaveFonts(ScrnInfoPtr pScrn)
+     WriteGr(0x06, 0x05);	/* set graphics */
+     slowbcopy_frombus(pVesa->VGAbase, pVesa->fonts + 8192, 8192);
+ 
+-    scrn = ReadSeq(pVesa, 0x01) & ~0x20;
+-    SeqReset(pVesa, TRUE);
+-    WriteSeq(0x01, scrn);
+-    SeqReset(pVesa, FALSE);
+-
+     /* Restore clobbered registers */
+     WriteAttr(pVesa, 0x10, attr10);
+-    WriteSeq(0x02, seq2);
+-    WriteSeq(0x04, seq4);
+     WriteGr(0x04, gr4);
+     WriteGr(0x05, gr5);
+     WriteGr(0x06, gr6);
++    WriteSeq(0x02, seq2);
++    WriteSeq(0x04, seq4);
+     WriteMiscOut(miscOut);
++
++    scrn = ReadSeq(pVesa, 0x01) & ~0x20;
++    SeqReset(pVesa, TRUE);
++    WriteSeq(0x01, scrn);
++    SeqReset(pVesa, FALSE);
+ }
+ 
+ static void
+@@ -1557,11 +1557,6 @@ RestoreFonts(ScrnInfoPtr pScrn)
+     WriteGr(0x06, 0x05);    /* set graphics */
+     slowbcopy_tobus(pVesa->fonts + 8192, pVesa->VGAbase, 8192);
+ 
+-    scrn = ReadSeq(pVesa, 0x01) & ~0x20;
+-    SeqReset(pVesa, TRUE);
+-    WriteSeq(0x01, scrn);
+-    SeqReset(pVesa, FALSE);
+-
+     /* restore the registers that were changed */
+     WriteMiscOut(miscOut);
+     WriteAttr(pVesa, 0x10, attr10);
+@@ -1573,6 +1568,11 @@ RestoreFonts(ScrnInfoPtr pScrn)
+     WriteGr(0x08, gr8);
+     WriteSeq(0x02, seq2);
+     WriteSeq(0x04, seq4);
++
++    scrn = ReadSeq(pVesa, 0x01) & ~0x20;
++    SeqReset(pVesa, TRUE);
++    WriteSeq(0x01, scrn);
++    SeqReset(pVesa, FALSE);
+ }
+ 
+ static Bool
