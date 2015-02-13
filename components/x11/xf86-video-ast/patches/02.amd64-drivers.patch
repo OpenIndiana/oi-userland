@@ -1,0 +1,14 @@
+--- xf86-video-ast-1.0.1/src/Makefile.am.~1~	2015-02-13 12:57:23.073697738 +0300
++++ xf86-video-ast-1.0.1/src/Makefile.am	2015-02-13 12:58:06.620984502 +0300
+@@ -27,7 +27,10 @@
+ 
+ ast_drv_la_LTLIBRARIES = ast_drv.la
+ ast_drv_la_LDFLAGS = -module -avoid-version
+-ast_drv_ladir = @moduledir@/drivers
++
++tmp = @moduledir@/drivers
++driversdir = $(tmp:amd64/xorg/modules/drivers=xorg/modules/drivers/amd64)
++ast_drv_ladir = $(driversdir)
+ 
+ ast_drv_la_SOURCES =	\
+ 	ast.h 		\
