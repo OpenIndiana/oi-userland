@@ -24,16 +24,15 @@ diff --git a/src/Makefile.am b/src/Makefile.am
 index d46b493..ddad93c 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -364,7 +364,11 @@ if XKB
+@@ -364,7 +364,10 @@ if XKB
  USE_XKB_LIBS = $(XKB_LIBS)
  endif
  
 -libX11_la_LDFLAGS = -version-number 6:3:0 -no-undefined
 +libX11_la_LDFLAGS = -version-number 4 -no-undefined \
 +	$(ADD_libX11_LDFLAGS) \
-+	-M $(top_srcdir)/../mapfile-vers \
-+	-M $(top_srcdir)/../mapfile-order \
-+	-N libXext.so.0
++	-Wl,-M$(top_srcdir)/../mapfile-vers \
++	-Wl,-NlibXext.so.0
  
  libX11_la_LIBADD = \
  	$(USE_I18N_LIBS) \

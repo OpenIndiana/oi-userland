@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME= libX11
 
 COMPONENT_VERSION= 1.6.2
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= libX11 - X11 core protocol client library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -36,9 +37,6 @@ include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
 CPPFLAGS += -I/usr/include/freetype2  -I/usr/include/X11  -I/usr/include/xcb  -DSUNSOFT -DMOTIFBC -DSUNSOFT_KBD
-
-LD_OPTIONS.32 += -M $(COMPONENT_DIR)/mapfile-vers
-LD_OPTIONS.64 += -M $(COMPONENT_DIR)/mapfile-vers-64
 
 COMPONENT_PREP_ACTION =        ( cp -r $(COMPONENT_DIR)/srcs/* $(SOURCE_DIR) && \
 					cd $(@D) &&  libtoolize --copy --force &&\
@@ -77,7 +75,7 @@ CONFIGURE_OPTIONS +=  --enable-xlocaledir
 CONFIGURE_OPTIONS +=  --enable-xkb  
 CONFIGURE_OPTIONS +=  --with-locale-lib-dir="$(LOCALE_LIB_DIR.$(BITS))"
 
-COMPONENT_BUILD_ARGS.64=ADD_libX11_LDFLAGS="-M $(COMPONENT_DIR)/mapfile-vers-64"
+COMPONENT_BUILD_ARGS.64=ADD_libX11_LDFLAGS="-Wl,-M$(COMPONENT_DIR)/mapfile-vers-64"
 COMPONENT_BUILD_ARGS += $(COMPONENT_BUILD_ARGS.$(BITS))
 
 build: $(BUILD_32_and_64)
