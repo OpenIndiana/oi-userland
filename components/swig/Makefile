@@ -51,19 +51,30 @@ CONFIGURE_OPTIONS +=	--with-javaincl="$(JAVA_HOME)/include"
 # The additional swig specific set of transforms to be applied to the
 # test results to try to normalize them.
 COMPONENT_TEST_TRANSFORMS += \
-	'-e "s|\(Compiled with $(CXX)\).*|Compiled with \\$$(CXX)|" ' \
-	'-e "s|$(CC)|\\$$(CC)|g" '
+	'-e "/Entering directory/d" ' \
+	'-e "/Leaving directory/d" '
+
+# The test-suite can be run in a partialcheck mode where just SWIG is
+# executed, that is, the compile, link and running of the testcases is
+# not performed. Note that the partialcheck does not require the target
+# language to be correctly configured and detected. Just execute the
+# languages that we care about and that are known to work.
+COMPONENT_TEST_TARGETS = \
+	partialcheck-guile-test-suite \
+	partialcheck-guilescm-test-suite \
+	partialcheck-lua-test-suite \
+	partialcheck-php-test-suite \
+	partialcheck-python-test-suite \
+	partialcheck-ruby-test-suite
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-# common targets
 configure:	$(CONFIGURE_64)
 
 build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
 
-# Fails due to deprecated OCAML example and boost library problems
 test:		$(TEST_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
