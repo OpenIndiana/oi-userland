@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -48,9 +48,18 @@ CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=		LDFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=		--sysconfdir=$(ETCDIR)/slsh
 
+# Master test results are the same for 32-bit and 64-bit, so override
+# here, rather than create multiple identical master files.
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
+# The additional slang specific set of transforms to be applied to the
+# test results to try to normalize them.
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s|^.*$(CC).*$$|XXX_CC_XXX|g" ' \
+	'-e "/^XXX_CC_XXX$$/d" '
+
 ASLR_MODE = $(ASLR_ENABLE)
 
-# common targets
 configure:	$(CONFIGURE_32_and_64)
 
 build:		$(BUILD_32_and_64)
