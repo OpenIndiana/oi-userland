@@ -38,6 +38,27 @@
 /* Support SHM */
 #define HAS_SHM 1
 
+/* Define to 1 if you have the `ffs' function. */
+#define HAVE_FFS 1
+
+/* Define to 1 if you have the `strcasecmp' function. */
+#define HAVE_STRCASECMP 1
+
+/* Define to 1 if you have the `strcasestr' function. */
+#define HAVE_STRCASESTR 1
+
+/* Define to 1 if you have the `strlcat' function. */
+#define HAVE_STRLCAT 1
+
+/* Define to 1 if you have the `strlcpy' function. */
+#define HAVE_STRLCPY 1
+
+/* Define to 1 if you have the `strncasecmp' function. */
+#define HAVE_STRNCASECMP 1
+
+/* Define to 1 if you have the `strndup' function. */
+#define HAVE_STRNDUP 1
+
 /* Support IPv6 for TCP connections */
 #define IPv6 1
 
@@ -120,7 +141,7 @@
 /* #undef XORG_RELEASE */
 
 /* Current Xorg version */
-#define XORG_VERSION_CURRENT (((1) * 10000000) + ((7) * 100000) + ((7) * 1000) + 0)
+#define XORG_VERSION_CURRENT (((1) * 10000000) + ((12) * 100000) + ((4) * 1000) + 0)
 
 /* Build Xv Extension */
 #define XvExtension 1
@@ -158,12 +179,6 @@
 /* Name of X server */
 #define __XSERVERNAME__ "Xorg"
 
-/* Define to 1 if unsigned long is 64 bits. */
-#include <sys/isa_defs.h>
-#ifdef _LP64
-#define _XSERVER64 1
-#endif
-
 /* Building vgahw module */
 #define WITH_VGAHW 1
 
@@ -190,5 +205,10 @@
 
 /* X Access Control Extension */
 #define XACE 1
+
+#include <sys/isa_defs.h> /* Ensure _LP64 is defined when needed on Solaris */
+#ifdef _LP64
+#define _XSERVER64 1
+#endif
 
 #endif /* _XORG_SERVER_H_ */

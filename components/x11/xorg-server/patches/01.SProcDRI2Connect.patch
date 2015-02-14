@@ -1,0 +1,44 @@
+From 9bc53d8cb04af2be3feeebb1b10774c2d599a76b Mon Sep 17 00:00:00 2001
+From: Michal Srb <msrb@suse.com>
+Date: Tue, 22 May 2012 21:19:40 -0700
+Subject: [PATCH] dri2: SProcDRI2Connect - send the response.
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The swapped implementation of DRI2Connect is always responding with empty
+device and driver values. However the response was only prepared and never
+sent (also had undefined .type member), causing e.g. glxinfo get stuck waiting
+for response when started remotely from machine with different endianity.
+
+Signed-off-by: Michal Srb <msrb@suse.com>
+Reviewed-by: Jeremy Huddleston <jeremyhu@apple.com>
+Tested-by: Michel Dänzer <michel@daenzer.net>
+Signed-off-by: Keith Packard <keithp@keithp.com>
+---
+ hw/xfree86/dri2/dri2ext.c |    3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/hw/xfree86/dri2/dri2ext.c b/hw/xfree86/dri2/dri2ext.c
+index 2579a5c..61578f3 100644
+--- a/hw/xfree86/dri2/dri2ext.c
++++ b/hw/xfree86/dri2/dri2ext.c
+@@ -589,12 +589,15 @@ SProcDRI2Connect(ClientPtr client)
+     if (sizeof(*stuff) / 4 != client->req_len)
+         return BadLength;
+ 
++    rep.type = X_Reply;
+     rep.sequenceNumber = client->sequence;
+     swaps(&rep.sequenceNumber);
+     rep.length = 0;
+     rep.driverNameLength = 0;
+     rep.deviceNameLength = 0;
+ 
++    WriteToClient(client, sizeof(xDRI2ConnectReply), &rep);
++
+     return Success;
+ }
+ 
+-- 
+1.7.9.2
+

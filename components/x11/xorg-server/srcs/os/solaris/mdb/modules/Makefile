@@ -25,7 +25,7 @@ MDB_MODULE_DIR=/usr/lib/mdb/proc/$(ARCHLIBSUBDIR)
 
 CFLAGS += -fPIC -DPIC -g
 CPPFLAGS += -I ../../../../include -I ../../../.. -I ../../../../Xext -I/usr/include/pixman-1
-LDFLAGS += -Wl,-z,text
+LDFLAGS += -Wl,-z,text -Wl,-Mmapfile
 
 HEADERS = Xserver_mdb.h
 SOURCES = Xserver_clients.c Xserver_device_grabs.c mdb_module.c

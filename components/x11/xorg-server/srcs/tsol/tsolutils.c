@@ -1,4 +1,5 @@
-/* Copyright (c) 2004, 2009, Oracle and/or its affiliates. All rights reserved.
+/*
+ * Copyright (c) 2004, 2011, Oracle and/or its affiliates. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -25,7 +26,6 @@
 #include <dix-config.h>
 #endif
 
-#define NEED_EVENTS
 #include <stdio.h>
 #include <X11/X.h>
 #include <X11/Xproto.h>
@@ -83,13 +83,6 @@ TsolPolyInstInfoRec tsolpolyinstinfo;
  */
 static TsolPolyAtomRec tsolpolyprop = {FALSE, 0, 0, NULL};
 static TsolPolyAtomRec tsolpolyseln = {TRUE, 0, 0, NULL};
-
-
-/*
- * Key to lookup devPrivate data in various structures
- */
-static int tsolPrivateKeyIndex;
-DevPrivateKey tsolPrivateKey = &tsolPrivateKeyIndex;
 
 bclear_t SessionHI;	   /* HI Clearance */
 bclear_t SessionLO;	   /* LO Clearance */
@@ -581,7 +574,7 @@ UpdateTsolConfig(char *keyword, char *value)
 	}
 
 	count = tsolconfig[i].count;
-	newlist = (char **)Xrealloc(tsolconfig[i].list, (count + 1) * sizeof(char **));
+	newlist = realloc(tsolconfig[i].list, (count + 1) * sizeof(char **));
 	if (newlist == NULL) {
 		ErrorF("Not enough memory for %s %s\n", keyword, value);
 		return;
@@ -877,11 +870,11 @@ AnyWindowOverlapsJustMe(
     register WindowPtr pSib;
     BoxRec sboxrec;
     register BoxPtr sbox;
-    TsolResPtr win_res = TsolResourcePrivate(pWin);
+    TsolResPtr win_res = TsolWindowPrivate(pWin);
 
     for (pSib = pWin->prevSib; (pSib != NULL && pSib != pHead); pSib = pSib->prevSib)
     {
-        TsolResPtr sib_res = TsolResourcePrivate(pSib);
+        TsolResPtr sib_res = TsolWindowPrivate(pSib);
 
         if (pSib->mapped && !bldominates(win_res->sl, sib_res->sl))
         {

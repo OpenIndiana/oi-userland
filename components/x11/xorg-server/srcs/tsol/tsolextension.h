@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2011, Oracle and/or its affiliates. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -21,40 +21,24 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-
-#include <sys/mdb_modapi.h>
-#include "Xserver_mdb.h"
+#ifndef _XORG_TSOL_EXTENSION_H
+#define	_XORG_TSOL_EXTENSION_H
 
 /*
- * MDB module linkage information:
- *
- * We declare a list of structures describing our dcmds, a list of structures
- * describing our walkers, and a function named _mdb_init to return a pointer
- * to our module information.
+ * tsol extension interfaces exposed to the core X server
  */
 
-static const mdb_dcmd_t dcmds[] = {
-	{ "client_pids", "?[-w]", "client process list",
-	  client_pids, client_pids_help },
-	{ "inputdev_grabs", "?", "inputdev grab list",
-	  inputdev_grabs, inputdev_grabs_help },
-	{ NULL }
-};
+#ifdef HAVE_DIX_CONFIG_H
+#include <dix-config.h>
+#endif
 
-static const mdb_walker_t walkers[] = {
-	{ "client_walk", "walk list of clients connected to X server",
-	  client_walk_init, client_walk_step, client_walk_fini, NULL },
-	{ "inputdev_walk", "walk list of input devices connected to X server",
-	  inputdev_walk_init, inputdev_walk_step, inputdev_walk_fini, NULL },
-	{ NULL }
-};
+#include <X11/X.h>
+#include <X11/Xproto.h>
 
-static const mdb_modinfo_t modinfo = {
-	MDB_API_VERSION, dcmds, walkers
-};
+#define	_XTSOL_SERVER
+#include <X11/extensions/Xtsol.h>
+#include <X11/extensions/Xtsolproto.h>
 
-_X_EXPORT const mdb_modinfo_t *
-_mdb_init(void)
-{
-	return (&modinfo);
-}
+/* tsolextension.c */
+extern void TsolExtensionInit(void);
+#endif /* _XORG_TSOL_EXTENSION_H */

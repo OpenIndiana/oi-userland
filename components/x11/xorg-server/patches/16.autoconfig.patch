@@ -1,6 +1,4 @@
-#########################################################################
-#
-# Copyright (c) 2005, 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2006, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -20,23 +18,18 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 # DEALINGS IN THE SOFTWARE.
-# 
-#########################################################################
-# 
-#
+6385111: Xorg auto-configuration Improvement
 
-noinst_LTLIBRARIES = libxtsol.la
-
-libxtsol_la_SOURCES= tsolpolicy.c tsolutils.c tsolextension.c tsolprotocol.c \
-			auditwrite.c
-
-INCLUDES = -I.. -I$(top_srcdir)/include -I$(top_srcdir)/os
-
-SERVERCONFIGdir = @SERVER_MISC_CONFIG_PATH@
-SERVERCONFIG_DATA = TrustedExtensionsPolicy
-
-TSOLPOLICYFILEDEF = -DTSOLPOLICYFILE=\"$(SERVERCONFIGdir)/TrustedExtensionsPolicy\"
-
-AM_CFLAGS = $(DIX_CFLAGS) $(TSOLPOLICYFILEDEF)
-
-libxtsol_la_LIBADD = -ltsol -ltsnet -lbsm
+diff --git a/hw/xfree86/common/xf86Config.c b/hw/xfree86/common/xf86Config.c
+index ef65490..93ade52 100644
+--- a/hw/xfree86/common/xf86Config.c
++++ b/hw/xfree86/common/xf86Config.c
+@@ -1988,7 +1988,7 @@ configMonitor(MonPtr monitorp, XF86ConfMonitorPtr conf_monitor)
+     cmodep = conf_monitor->mon_modeline_lst;
+     while (cmodep) {
+         mode = xnfcalloc(1, sizeof(DisplayModeRec));
+-        mode->type = 0;
++        mode->type = M_T_USERDEF;
+         mode->Clock = cmodep->ml_clock;
+         mode->HDisplay = cmodep->ml_hdisplay;
+         mode->HSyncStart = cmodep->ml_hsyncstart;

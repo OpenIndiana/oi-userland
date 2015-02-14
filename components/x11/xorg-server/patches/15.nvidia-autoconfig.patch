@@ -1,6 +1,4 @@
-#########################################################################
-#
-# Copyright (c) 2005, 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2006, 2009, Oracle and/or its affiliates. All rights reserved.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -20,23 +18,33 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 # DEALINGS IN THE SOFTWARE.
-# 
-#########################################################################
-# 
-#
-
-noinst_LTLIBRARIES = libxtsol.la
-
-libxtsol_la_SOURCES= tsolpolicy.c tsolutils.c tsolextension.c tsolprotocol.c \
-			auditwrite.c
-
-INCLUDES = -I.. -I$(top_srcdir)/include -I$(top_srcdir)/os
-
-SERVERCONFIGdir = @SERVER_MISC_CONFIG_PATH@
-SERVERCONFIG_DATA = TrustedExtensionsPolicy
-
-TSOLPOLICYFILEDEF = -DTSOLPOLICYFILE=\"$(SERVERCONFIGdir)/TrustedExtensionsPolicy\"
-
-AM_CFLAGS = $(DIX_CFLAGS) $(TSOLPOLICYFILEDEF)
-
-libxtsol_la_LIBADD = -ltsol -ltsnet -lbsm
+diff --git a/hw/xfree86/common/xf86Config.c b/hw/xfree86/common/xf86Config.c
+index e86e564..ef65490 100644
+--- a/hw/xfree86/common/xf86Config.c
++++ b/hw/xfree86/common/xf86Config.c
+@@ -541,6 +541,25 @@ fixup_video_driver_list(char **drivers)
+             }
+         }
+     }
++    /*
++     * Since the nvidia kernel driver interferes with the nv Xorg driver,
++     * make sure to prefer nvidia if it's installed
++     */
++    for (drv = drivers; drv != end; drv++) {
++	char **nv, **nvidia;
++        if (!strcmp(*drv, "nv")) {
++            nv = drv;
++            for (drv = nv; drv != end; drv++) {
++                if (!strcmp(*drv, "nvidia")) {
++                    nvidia = drv;
++                    x = *nvidia; *nvidia = *nv; *nv = x;
++		    break;
++                }
++            }
++            /* if we get here, nvidia was already ahead of nv */
++            break;
++        }
++    }
+ }
+ 
+ static char **
