@@ -15,29 +15,28 @@
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= xf86-video-intel
-COMPONENT_VERSION= 2.18.0
-COMPONENT_SUMMARY= xf86-video-intel - Intel integrated graphics chipset driver for the Xorg X server
+COMPONENT_NAME= xf86-video-cirrus
+COMPONENT_VERSION= 1.5.2
+COMPONENT_SUMMARY= xf86-video-cirrus - Cirrus Logic video driver for the Xorg X server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:dce63e33ccfada39ef1e1e6768dfd8edd4c525670dfe56d1c42b2f9570039ffc
+  sha256:3361e1a65d9b84c464752fd612bdf6087622c6dd204121715366a170e5c3ccd7
 COMPONENT_ARCHIVE_URL= \
   http://xorg.freedesktop.org/archive/individual/driver/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
+COMPONENT_CLASSIFICATION= Drivers/Display
+COMPONENT_LICENSE = MIT
+COMPONENT_LICENSE_FILE = COPYING
+COMPONENT_FMRI = x11/server/xorg/driver/xorg-video-cirrus
 
 include $(WS_TOP)/make-rules/prep.mk
-
-CONFIGURE_DEFAULT_DIRS = no
-
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-PATCH_LEVEL=0
-
 COMPONENT_PREP_ACTION =        ( cd $(@D) && \
                                         libtoolize --automake --copy --force && \
-                                        aclocal -I. && \
+                                        aclocal && \
                                         autoheader && \
                                         automake -a -f -c &&\
                                         autoconf )
@@ -47,36 +46,13 @@ COMPONENT_PREP_ACTION =        ( cd $(@D) && \
 SERVERMOD_SUBDIR.64=/$(MACH64)
 SERVERMOD_SUBDIR=$(SERVERMOD_SUBDIR.$(BITS))
 X11_SERVERMODS_DIR=/usr/lib/xorg/modules
-MESA_XSERVERMODS_DIR=/usr/lib/mesa/modules
-X11_SERVERLIBS_DIR=/usr/lib
+X11_SERVERLIBS_DIR=/usr/lib/xorg
 
-LD_OPTIONS+= \
+LD_OPTIONS= \
         -L$(X11_SERVERMODS_DIR)$(SERVERMOD_SUBDIR) \
-        -L$(MESA_XSERVERMODS_DIR)/extensions$(SERVERMOD_SUBDIR) \
-        -L$(X11_SERVERMODS_DIR)/extensions$(SERVERMOD_SUBDIR) \
-        -L$(X11_SERVERLIBS_DIR)$(ARCHLIBSUBDIR) \
+        -L$(X11_SERVERLIBS_DIR)$(SERVERMOD_SUBDIR) \
         -R$(X11_SERVERMODS_DIR)$(SERVERMOD_SUBDIR) \
-        -R$(MESA_XSERVERMODS_DIR)/extensions$(SERVERMOD_SUBDIR) \
-        -R$(X11_SERVERMODS_DIR)/extensions$(SERVERMOD_SUBDIR) \
-        -R$(X11_SERVERLIBS_DIR)$(SERVERMOD_SUBDIR) \
-	-Wl,-M$(COMPONENT_DIR)/mapfile.externs
-
-# Need to override install path for all the modules
-DRIVER_DIR=$(X11_SERVERMODS_DIR)/drivers$(SERVERMOD_SUBDIR)
-COMPONENT_COMMON_ARGS = ch7017_ladir='$(DRIVER_DIR)' \
-        ch7xxx_ladir='$(DRIVER_DIR)' \
-        ivch_ladir='$(DRIVER_DIR)' \
-        sil164_ladir='$(DRIVER_DIR)' \
-        tfp410_ladir='$(DRIVER_DIR)'
-
-CONFIGURE_OPTIONS += --enable-dri
-CONFIGURE_OPTIONS += --enable-xvmc
-CONFIGURE_OPTIONS += --libdir=$(X11_SERVERLIBS_DIR)$(SERVERMOD_SUBDIR)
-CONFIGURE_OPTIONS += --disable-sna 
-CONFIGURE_OPTIONS += --enable-uxa
-
-COMPONENT_BUILD_ARGS += $(COMPONENT_COMMON_ARGS)
-COMPONENT_INSTALL_ARGS += $(COMPONENT_COMMON_ARGS)
+        -R$(X11_SERVERLIBS_DIR)$(SERVERMOD_SUBDIR)
 
 build: $(BUILD_32_and_64)
 
