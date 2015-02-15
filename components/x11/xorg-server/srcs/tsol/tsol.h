@@ -1,4 +1,5 @@
-/* Copyright (c) 2004, 2009, Oracle and/or its affiliates. All rights reserved.
+/*
+ * Copyright (c) 2004, 2011, Oracle and/or its affiliates. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -18,15 +19,14 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
- */ 
+ */
 
+#ifndef _XTSOL_SERVER_H
+#define _XTSOL_SERVER_H
 
 /*
  * tsol.h server side extension
  */
-
-#define NEED_REPLIES
-#define NEED_EVENTS
 #define _XTSOL_SERVER
 
 #ifdef HAVE_DIX_CONFIG_H
@@ -49,6 +49,7 @@
 #include <X11/extensions/Xtsol.h>
 #include <X11/extensions/Xtsolproto.h>
 
+#include "tsolextension.h"
 #include "tsolinfo.h"
 
 #ifndef CALLBACK
@@ -90,7 +91,6 @@ extern TsolNodePtr tsol_node;
 
 
 /* tsolextension.c */
-extern void TsolExtensionInit(void);
 extern int tsolMultiLevel;
 extern int (*TsolSavedProcVector[PROCVECTORSIZE])(ClientPtr /*client*/);
 extern int (*TsolSavedSwappedProcVector[PROCVECTORSIZE])(ClientPtr /*client*/);
@@ -156,3 +156,4 @@ extern int TsolPanoramiXGetGeometry(ClientPtr client);
 
 extern CALLBACK(TsolAuditStart);
 extern CALLBACK(TsolAuditEnd);
+#endif /* _XTSOL_SERVER_H */

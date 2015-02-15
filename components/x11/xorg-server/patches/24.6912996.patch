@@ -1,0 +1,17 @@
+diff --git a/exa/exa.c b/exa/exa.c
+index 754c830..714b6b7 100644
+--- a/exa/exa.c
++++ b/exa/exa.c
+@@ -61,7 +61,11 @@ exaGetPixmapOffset(PixmapPtr pPix)
+     ExaScreenPriv(pPix->drawable.pScreen);
+     ExaPixmapPriv(pPix);
+ 
+-    return (CARD8 *) pExaPixmap->fb_ptr - pExaScr->info->memoryBase;
++    /* added in as a fix for 6912996 */
++    if (exaPixmapHasGpuCopy(pExaPixmap) && pExaPixmap->fb_ptr)
++        return (CARD8 *) pExaPixmap->fb_ptr - pExaScr->info->memoryBase;
++    else
++        return (CARD8 *) pExaPixmap->sys_ptr - pExaScr->info->memoryBase;
+ }
+ 
+ void *

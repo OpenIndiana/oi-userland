@@ -1,4 +1,5 @@
-/* Copyright (c) 1996, 2009, Oracle and/or its affiliates. All rights reserved.
+/*
+ * Copyright (c) 1996, 2011, Oracle and/or its affiliates. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -39,6 +40,10 @@
  *
  * For the original definition, see Sun ASARC case 1995/390
  */
+
+#ifdef HAVE_DIX_CONFIG_H
+#include <dix-config.h>
+#endif
 
 #include <X11/Xos.h>
 #include <sys/param.h>
@@ -99,8 +104,8 @@ struct dmdata {
 struct dmScreenPriv {
     CloseScreenProcPtr	CloseScreen;
 };
-static int dmScreenKeyIndex;
-static DevPrivateKey dmScreenKey = &dmScreenKeyIndex;
+static DevPrivateKeyRec dmScreenKeyRec;
+#define dmScreenKey (&dmScreenKeyRec)
 static struct dmdata *dmHandlerData;
 static struct dmuser originalUser; /* user to switch back to in CloseDown */
 
@@ -138,7 +143,7 @@ DtloginInit(void)
 
     if (getuid() != 0)  return;
 
-    dmd = Xcalloc(sizeof(struct dmdata));
+    dmd = calloc(1, sizeof(struct dmdata));
     if (dmd == NULL) {
 	DtloginError("Failed to allocate %d bytes for display manager pipe",
 		     sizeof(struct dmdata));
@@ -154,7 +159,7 @@ DtloginInit(void)
     dmd->pipeFD = dtlogin_create_pipe(displayNumber, dmd);
 
     if (dmd->pipeFD == -1) {
-	xfree(dmd);
+	free(dmd);
 	return;
     }
 
@@ -197,7 +202,7 @@ DtloginCloseScreen (int i, ScreenPtr pScreen)
 	dixLookupPrivate(&pScreen->devPrivates, dmScreenKey);
 
     pScreen->CloseScreen = pScreenPriv->CloseScreen;
-    xfree ((pointer) pScreenPriv);
+    free (pScreenPriv);
 
     return (*pScreen->CloseScreen) (i, pScreen);
 }
@@ -279,10 +284,10 @@ static void dtlogin_close_pipe(struct dmdata *dmd)
 
     close(dmd->pipeFD);
     remove(dmd->pipename);
-    xfree(dmd->pipename);
-    xfree(dmd->buf);
-    xfree(dmd->user.homedir);
-    xfree(dmd);
+    free(dmd->pipename);
+    free(dmd->buf);
+    free(dmd->user.homedir);
+    free(dmd);
 
     if (dmHandlerData == dmd) {
 	dmHandlerData = NULL;
@@ -298,7 +303,7 @@ dtlogin_receive_packet(struct dmdata *dmd)
 
     if (dmd->buf == NULL) {
 	dmd->bufsize = BUFLEN;
-	dmd->buf = xalloc(dmd->bufsize);
+	dmd->buf = malloc(dmd->bufsize);
 	dmd->buf[0] = '\0';
     }
 
@@ -312,7 +317,7 @@ dtlogin_receive_packet(struct dmdata *dmd)
 	 */
 	if (bufLen > (dmd->bufsize/2)) {
 	    dmd->bufsize += BUFLEN;
-	    dmd->buf = xrealloc(dmd->buf, dmd->bufsize);
+	    dmd->buf = realloc(dmd->buf, dmd->bufsize);
 	}
 
 	nbRead = read(dmd->pipeFD, dmd->buf + bufLen,
@@ -425,7 +430,7 @@ dtlogin_parse_packet(struct dmdata *dmd, char *s)
 	else if ( (strcmp(k, "UID") == 0) || (strcmp(k, "GID") == 0)
 		  || (strcmp(k, "G_LIST_ID") == 0) ) {
 	    /* Value is numeric, convert to int */
-	    int val;
+	    long val;
 
 	    errno = 0;
 	    val = strtol(v, NULL, 10);
@@ -444,14 +449,14 @@ dtlogin_parse_packet(struct dmdata *dmd, char *s)
 	    }
 
 	    if (strcmp(k, "UID") == 0) {
-		dmd->user.uid = val;
+		dmd->user.uid = (uid_t) val;
 	    }
 	    else if (strcmp(k, "GID") == 0) {
-		dmd->user.gid = val;
+		dmd->user.gid = (gid_t) val;
 	    }
 	    else if (strcmp(k, "G_LIST_ID") == 0) {
 		if (dmd->user.groupid_cnt < NGROUPS_UMAX) {
-		    dmd->user.groupids[dmd->user.groupid_cnt++] = val;
+		    dmd->user.groupids[dmd->user.groupid_cnt++] = (gid_t) val;
 		}
 	    }
 	}
@@ -548,19 +553,28 @@ dtlogin_process(struct dmuser *user, int user_logged_in)
 	if ((user->uid != 0) && (user != &originalUser)) {
 	    int i;
 
-	    for (i = 0; i < screenInfo.numScreens; i++)
-	    {
-		ScreenPtr pScreen = screenInfo.screens[i];
-		struct dmScreenPriv *pScreenPriv;
+	    if (dixRegisterPrivateKey(dmScreenKey, PRIVATE_SCREEN, 0)) {
+		for (i = 0; i < screenInfo.numScreens; i++)
+		{
+		    ScreenPtr pScreen = screenInfo.screens[i];
+		    struct dmScreenPriv *pScreenPriv
+			= calloc(1, sizeof(struct dmScreenPriv));
 
-		pScreenPriv = (struct dmScreenPriv *)
-		    Xcalloc(sizeof(struct dmScreenPriv));
-		dixSetPrivate(&pScreen->devPrivates, dmScreenKey, pScreenPriv);
+		    dixSetPrivate(&pScreen->devPrivates, dmScreenKey,
+				  pScreenPriv);
 
-		if (pScreenPriv != NULL) {
-		    pScreenPriv->CloseScreen = pScreen->CloseScreen;
-		    pScreen->CloseScreen = DtloginCloseScreen;
+		    if (pScreenPriv != NULL) {
+			pScreenPriv->CloseScreen = pScreen->CloseScreen;
+			pScreen->CloseScreen = DtloginCloseScreen;
+		    } else {
+			DtloginError("Failed to allocate %d bytes"
+				     " for uid reset info",
+				     sizeof(struct dmScreenPriv));
+		    }
 		}
+	    } else {
+		DtloginError("Failed to register screen private %s",
+			     "for uid reset info");
 	    }
 	}
     }

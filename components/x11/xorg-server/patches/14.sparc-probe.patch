@@ -1,0 +1,90 @@
+# Copyright (c) 2006, 2009, Oracle and/or its affiliates. All rights reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice (including the next
+# paragraph) shall be included in all copies or substantial portions of the
+# Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+# DEALINGS IN THE SOFTWARE.
+# 
+
+Allow probing for /dev/fb cards other than the traditional sbus devices.
+
+diff --git a/hw/xfree86/common/xf86sbusBus.c b/hw/xfree86/common/xf86sbusBus.c
+index c993b60..05c4def 100644
+--- a/hw/xfree86/common/xf86sbusBus.c
++++ b/hw/xfree86/common/xf86sbusBus.c
+@@ -40,6 +40,10 @@
+ #include "xf86sbusBus.h"
+ #include "xf86Sbus.h"
+ 
++#ifdef sun
++# include <sys/visual_io.h>
++#endif
++
+ Bool sbusSlotClaimed = FALSE;
+ 
+ static int xf86nSbusInfo;
+@@ -231,8 +235,25 @@ xf86SbusProbe(void)
+                 free(promPath);
+             }
+         }
+-        else
++        else {
++#ifdef sun
++            if (psdp->devId == SBUS_DEVICE_UNK) {
++                int fbfd;
++
++                fbfd = open(psdp->device, O_RDONLY, 0);
++                if (fbfd >= 0) {
++                    struct vis_identifier   visid;
++                    if (ioctl(fbfd, VIS_GETIDENTIFIER, &visid) >= 0) {
++                        psdp->descr = strdup(visid.name);
++                    }
++                    close(fbfd);
++                }
++            }
++            xf86Msg(X_PROBED, "%s: %s", psdp->device, psdp->descr);
++#else
+             xf86Msg(X_PROBED, "SBUS: %s", psdp->descr);
++#endif
++        }
+         xf86ErrorF("\n");
+     }
+     if (useProm)
+diff --git a/hw/xfree86/common/xf86sbusBus.h b/hw/xfree86/common/xf86sbusBus.h
+index a4d9c6c..cd8d4a7 100644
+--- a/hw/xfree86/common/xf86sbusBus.h
++++ b/hw/xfree86/common/xf86sbusBus.h
+@@ -39,6 +39,7 @@
+ #define SBUS_DEVICE_FFB		0x000b
+ #define SBUS_DEVICE_GT		0x000c
+ #define SBUS_DEVICE_MGX		0x000d
++#define SBUS_DEVICE_UNK		0x000e
+ 
+ typedef struct sbus_prom_node {
+     int node;
+diff --git a/hw/xfree86/os-support/bus/Sbus.c b/hw/xfree86/os-support/bus/Sbus.c
+index b75308a..2bf7e1b 100644
+--- a/hw/xfree86/os-support/bus/Sbus.c
++++ b/hw/xfree86/os-support/bus/Sbus.c
+@@ -71,6 +71,7 @@ struct sbus_devtable sbusDeviceTable[] = {
+     {SBUS_DEVICE_TCX, FBTYPE_TCXCOLOR, "tcx", "suntcx", "Sun TCX"},
+     {SBUS_DEVICE_FFB, FBTYPE_CREATOR, "ffb", "sunffb", "Sun FFB"},
+     {SBUS_DEVICE_FFB, FBTYPE_CREATOR, "afb", "sunffb", "Sun Elite3D"},
++    {SBUS_DEVICE_UNK, FBTYPE_LASTPLUSONE + 1, "unknown", "unknown", "Unknown FB"},
+     {0, 0, NULL}
+ };
+ 

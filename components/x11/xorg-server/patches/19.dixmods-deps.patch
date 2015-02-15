@@ -1,0 +1,127 @@
+diff --git a/hw/xfree86/Makefile.am b/hw/xfree86/Makefile.am
+index 72be889..38afb02 100644
+--- a/hw/xfree86/Makefile.am
++++ b/hw/xfree86/Makefile.am
+@@ -27,8 +27,8 @@ endif
+ 
+ SUBDIRS = common ddc i2c x86emu $(INT10_SUBDIR) fbdevhw os-support parser \
+ 	  ramdac shadowfb $(VBE_SUBDIR) $(VGAHW_SUBDIR) $(XAA_SUBDIR) \
+-	  loader dixmods exa modes \
+-	  $(DRI_SUBDIR) $(DRI2_SUBDIR) $(XF86UTILS_SUBDIR) doc man
++	  loader $(DRI_SUBDIR) $(DRI2_SUBDIR) dixmods exa modes \
++	  $(XF86UTILS_SUBDIR) doc man
+ 
+ DIST_SUBDIRS = common ddc i2c x86emu int10 fbdevhw os-support \
+                parser ramdac shadowfb vbe vgahw xaa \
+@@ -38,7 +38,7 @@ DIST_SUBDIRS = common ddc i2c x86emu int10 fbdevhw os-support \
+ bin_PROGRAMS = Xorg
+ nodist_Xorg_SOURCES = sdksyms.c
+ 
+-AM_CFLAGS = $(DIX_CFLAGS) @XORG_CFLAGS@
++AM_CFLAGS = $(DIX_CFLAGS) $(PIXMAN_CFLAGS) @XORG_CFLAGS@
+ INCLUDES = $(XORG_INCS) -I$(srcdir)/parser -I$(top_srcdir)/miext/cw \
+ 	-I$(srcdir)/ddc -I$(srcdir)/i2c -I$(srcdir)/modes -I$(srcdir)/ramdac
+ 
+diff --git a/hw/xfree86/dixmods/Makefile.am b/hw/xfree86/dixmods/Makefile.am
+index 00f8021..4ba404a 100644
+--- a/hw/xfree86/dixmods/Makefile.am
++++ b/hw/xfree86/dixmods/Makefile.am
+@@ -35,7 +35,9 @@ libdbe_la_LIBADD = $(top_builddir)/dbe/libdbe.la
+ libdbe_la_SOURCES = dbemodule.c
+ 
+ libfb_la_LDFLAGS = -module -avoid-version
++libfb_la_LDFLAGS += $(XORG_EXTERNS_FLAG)
+ libfb_la_LIBADD = $(top_builddir)/fb/libfb.la
++libfb_la_LIBADD += -lpixman-1
+ libfb_la_SOURCES = $(top_builddir)/fb/fbcmap_mi.c fbmodule.c
+ libfb_la_CFLAGS = $(AM_CFLAGS)
+ 
+@@ -45,8 +47,11 @@ libwfb_la_SOURCES = $(top_builddir)/fb/fbcmap_mi.c fbmodule.c
+ libwfb_la_CFLAGS = $(AM_CFLAGS) -DFB_ACCESS_WRAPPER
+ 
+ libglx_la_LDFLAGS = -module -avoid-version
++libglx_la_LDFLAGS += $(XORG_EXTERNS_FLAG)
+ if AIGLX_DRI_LOADER
+ GLXDRI_LIBRARY = $(top_builddir)/glx/libglxdri.la
++libglx_la_LDFLAGS += -R$(extsmoduledir:amd64/extensions=extensions/amd64) -Wl,../dri/.libs/libdri.so
++libglx_la_LDFLAGS += -Wl,../dri2/.libs/libdri2.so $(LIBDRM_LIBS)
+ endif
+ libglx_la_LIBADD = \
+ 	$(top_builddir)/glx/libglx.la \
+@@ -59,6 +64,9 @@ librecord_la_SOURCES = recordmod.c
+ 
+ libshadow_la_LDFLAGS = -module -avoid-version
+ libshadow_la_LIBADD = $(top_builddir)/miext/shadow/libshadow.la
++libshadow_la_DEPENDENCIES = libfb.la
++libshadow_la_LDFLAGS += -R$(moduledir) -Wl,.libs/libfb.so
++libshadow_la_LDFLAGS += $(XORG_EXTERNS_FLAG)
+ libshadow_la_SOURCES = shmodule.c
+ 
+ libdixmods_la_SOURCES = $(top_srcdir)/mi/miinitext.c
+diff --git a/hw/xfree86/dixmods/extmod/Makefile.am b/hw/xfree86/dixmods/extmod/Makefile.am
+index 87c28a4..81e8345 100644
+--- a/hw/xfree86/dixmods/extmod/Makefile.am
++++ b/hw/xfree86/dixmods/extmod/Makefile.am
+@@ -28,3 +28,5 @@ libextmod_la_SOURCES = modinit.c \
+                        $(XF86VMODE_SRCS) \
+                        $(XV_SRCS)
+ libextmod_la_LIBADD = $(top_builddir)/Xext/libXextmodule.la
++
++libextmod_la_LDFLAGS += $(XORG_EXTERNS_FLAG)
+diff --git a/hw/xfree86/i2c/Makefile.am b/hw/xfree86/i2c/Makefile.am
+index 0b80cc8..1d7e6e4 100644
+--- a/hw/xfree86/i2c/Makefile.am
++++ b/hw/xfree86/i2c/Makefile.am
+@@ -22,22 +22,30 @@ sdk_HEADERS = xf86i2c.h bt829.h fi1236.h msp3430.h tda8425.h tda9850.h tda9885.h
+ # i2c drivers
+ #
+ bt829_drv_la_LDFLAGS = -module -avoid-version
++bt829_drv_la_LDFLAGS += $(XORG_EXTERNS_FLAG)
+ bt829_drv_la_SOURCES = bt829.c bt829.h bt829_module.c
+ 
+ fi1236_drv_la_LDFLAGS = -module -avoid-version
++fi1236_drv_la_LDFLAGS += $(XORG_EXTERNS_FLAG)
++fi1236_drv_la_LDFLAGS += -Wl,-R,$(multimediadir) -Wl,-N,tda9885_drv.so
+ fi1236_drv_la_SOURCES = fi1236.c fi1236.h fi1236_module.c
+ 
+ msp3430_drv_la_LDFLAGS = -module -avoid-version
++msp3430_drv_la_LDFLAGS += $(XORG_EXTERNS_FLAG)
+ msp3430_drv_la_SOURCES = msp3430.c msp3430.h msp3430_module.c
+ 
+ tda8425_drv_la_LDFLAGS = -module -avoid-version
++tda8425_drv_la_LDFLAGS += $(XORG_EXTERNS_FLAG)
+ tda8425_drv_la_SOURCES = tda8425.c tda8425.h tda8425_module.c
+ 
+ tda9850_drv_la_LDFLAGS = -module -avoid-version
++tda9850_drv_la_LDFLAGS += $(XORG_EXTERNS_FLAG)
+ tda9850_drv_la_SOURCES = tda9850.c tda9850.h tda9850_module.c
+ 
+ tda9885_drv_la_LDFLAGS = -module -avoid-version
++tda9885_drv_la_LDFLAGS += $(XORG_EXTERNS_FLAG)
+ tda9885_drv_la_SOURCES = tda9885.c tda9885.h tda9885_module.c
+ 
+ uda1380_drv_la_LDFLAGS = -module -avoid-version
++uda1380_drv_la_LDFLAGS += $(XORG_EXTERNS_FLAG)
+ uda1380_drv_la_SOURCES = uda1380.c uda1380.h uda1380_module.c
+diff --git a/hw/xfree86/shadowfb/Makefile.am b/hw/xfree86/shadowfb/Makefile.am
+index 39c6610..a45ad24 100644
+--- a/hw/xfree86/shadowfb/Makefile.am
++++ b/hw/xfree86/shadowfb/Makefile.am
+@@ -7,3 +7,6 @@ sdk_HEADERS = shadowfb.h
+ INCLUDES = $(XORG_INCS)
+ 
+ AM_CFLAGS = $(DIX_CFLAGS) $(XORG_CFLAGS)
++
++libshadowfb_la_LDFLAGS += -L/usr/lib/xorg$(SERVERMOD_SUBDIR) -R/usr/lib/xorg$(SERVERMOD_SUBDIR) -z ignore $(XORG_EXTERNS_FLAG)
++libshadowfb_la_LIBADD = $(XSERVER_SYS_LIBS) -lXfont
+diff --git a/hw/xfree86/vbe/Makefile.am b/hw/xfree86/vbe/Makefile.am
+index 4b794e6..4c2a47a 100644
+--- a/hw/xfree86/vbe/Makefile.am
++++ b/hw/xfree86/vbe/Makefile.am
+@@ -8,3 +8,6 @@ AM_CFLAGS = $(DIX_CFLAGS) $(XORG_CFLAGS)
+ 
+ INCLUDES = $(XORG_INCS) -I$(srcdir)/../ddc -I$(srcdir)/../i2c \
+            -I$(srcdir)/../int10
++
++libvbe_la_LDFLAGS += $(XORG_EXTERNS_FLAG)
++libvbe_la_LIBADD = ../int10/libint10.la

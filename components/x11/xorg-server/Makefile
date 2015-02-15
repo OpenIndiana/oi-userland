@@ -16,13 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xorg-server
-COMPONENT_VERSION= 1.7.7
-COMPONENT_REVISION= 3
+COMPONENT_VERSION= 1.12.4
 COMPONENT_SUMMARY= Xorg - X11R7 X server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:54c4d32bfeb8852adbea3ddae6981f3bc2eadb330124d9b35226c617c01926ff
+  sha256:8ac07c35306ba3fb3c0972722dd4e919303039eca1d40ac7862560e0b2c94cf7
 COMPONENT_ARCHIVE_URL= \
   http://ftp.x.org/pub/individual/xserver/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.x.org/wiki/
@@ -43,8 +42,6 @@ COMPONENT_PRE_CONFIGURE_ACTION =        (cp -a $(SOURCE_DIR)/* $(@D) &&\
 # Enabling gcc optimization leads to crashes
 gcc_OPT = 
 
-PATCH_LEVEL=0
-
 SERVERMOD_SUBDIR.64=/$(MACH64)
 SERVERMOD_SUBDIR=$(SERVERMOD_SUBDIR.$(BITS))
 X11_SERVERMODS_DIR=/usr/lib/xorg/modules
@@ -59,7 +56,7 @@ CONFIGURE_OPTIONS.64 += --bindir=/usr/bin/$(MACH64)
 
 CONFIGURE_OPTIONS = $(CONFIGURE_OPTIONS.$(BITS))
 CONFIGURE_OPTIONS += --disable-install-setuid
-CONFIGURE_OPTIONS += --disable-dmx
+#CONFIGURE_OPTIONS += --disable-dmx
 CONFIGURE_OPTIONS += --disable-shave
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --disable-unit-tests
@@ -87,7 +84,7 @@ CONFIGURE_OPTIONS += --with-vendor-name="Project OpenIndiana"
 CONFIGURE_OPTIONS += --with-vendor-web="http://openindiana.org"
 CONFIGURE_OPTIONS += --with-xkb-output=/var/run/xkb
 CONFIGURE_OPTIONS += --with-xkb-bin-directory=/usr/bin
-CONFIGURE_OPTIONS += --disable-selective-werror
+#CONFIGURE_OPTIONS += --disable-selective-werror
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 

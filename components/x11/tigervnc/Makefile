@@ -33,9 +33,10 @@ PATCH_LEVEL=0
 # Note that the xorg additional patch (tigervnc-xserver) does not fit this pattern. That is intentional
 PATCH_PATTERN = [0-9][0-9]*.patch
 
-XORG_ADDITIONAL_PATCH = $(PATCH_DIR)/tigervnc-xserver17.patch
+XORG_ADDITIONAL_PATCH_1 = $(PATCH_DIR)/tigervnc11-xorg111.patch
+XORG_ADDITIONAL_PATCH_2 = $(PATCH_DIR)/tigervnc11-xorg112.patch
 
-XORG_SERVER_VERSION= 1.7.7
+XORG_SERVER_VERSION= 1.12.4
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
@@ -47,7 +48,9 @@ $(SOURCE_DIR)/.prep: $(ARCHIVE_STAMPS) $(COMPONENT_DIR)/../xorg-server/xorg-serv
 	$(COMPONENT_PREP_ACTION)
 	chmod -R u+w $(COMPONENT_SRC)/unix/xserver
 	cp -r $(COMPONENT_DIR)/../xorg-server/xorg-server-$(XORG_SERVER_VERSION)/* $(COMPONENT_SRC)/unix/xserver
-	$(GPATCH) -d $(@D) $(GPATCH_FLAGS) <  $(XORG_ADDITIONAL_PATCH) 
+	$(GPATCH) -d $(@D)/unix $(GPATCH_FLAGS) < $(SOURCE_DIR)/unix/xserver110.patch
+	$(GPATCH) -d $(@D) $(GPATCH_FLAGS) <  $(XORG_ADDITIONAL_PATCH_1) 
+	$(GPATCH) -d $(@D) $(GPATCH_FLAGS) <  $(XORG_ADDITIONAL_PATCH_2) 
 	( cd $(@D)/unix/xserver && \
 		aclocal -I m4 && \
 		autoheader && \
@@ -125,7 +128,7 @@ XVNC_CONFIGURE_OPTIONS += --with-xkb-output=/var/run/xkb
 XVNC_CONFIGURE_OPTIONS += --without-int10
 XVNC_CONFIGURE_OPTIONS += --disable-selective-werror
 
-$(BUILD_DIR)/.built_jar: $(BUILD_32)
+$(BUILD_DIR)/.built_jar: $(BULD_32)
 	$(ENV) $(COMPONENT_BUILD_ENV) \
                 $(GMAKE) -C $(BUILD_DIR_32)/java/src/com/tigervnc/vncviewer  $(COMPONENT_BUILD_GMAKE_ARGS)
 	$(TOUCH) $(@)

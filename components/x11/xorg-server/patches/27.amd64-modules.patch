@@ -1,0 +1,71 @@
+--- a/hw/xfree86/dri/Makefile.am.~1~	Tue Jan  6 17:21:53 2015
++++ b/hw/xfree86/dri/Makefile.am	Tue Jan  6 17:23:10 2015
+@@ -1,3 +1,6 @@
++tmp = $(moduledir)/extensions
++extsmoduledir = $(tmp:amd64/extensions=extensions/amd64)
++
+ libdri_la_LTLIBRARIES = libdri.la
+ libdri_la_CFLAGS = -I$(top_srcdir)/hw/xfree86/common \
+                    -I$(top_srcdir)/hw/xfree86/os-support \
+@@ -13,7 +16,7 @@
+                    @LIBDRM_CFLAGS@ \
+                    @DRI_CFLAGS@
+ libdri_la_LDFLAGS = -module -avoid-version @LIBDRM_LIBS@
+-libdri_ladir = $(moduledir)/extensions
++libdri_ladir = $(extsmoduledir)
+ libdri_la_SOURCES = \
+ 	dri.c \
+ 	dri.h \
+--- a/hw/xfree86/dri2/Makefile.am.~1~	Tue Jan  6 18:12:32 2015
++++ b/hw/xfree86/dri2/Makefile.am	Tue Jan  6 18:13:09 2015
+@@ -1,3 +1,6 @@
++tmp = $(moduledir)/extensions
++extsmoduledir = $(tmp:amd64/extensions=extensions/amd64)
++
+ libdri2_la_LTLIBRARIES = libdri2.la
+ libdri2_la_CFLAGS = \
+ 	-DHAVE_XORG_CONFIG_H \
+@@ -7,7 +10,7 @@
+ 	-I$(top_srcdir)/hw/xfree86/os-support/bus
+ 
+ libdri2_la_LDFLAGS = -module -avoid-version @LIBDRM_LIBS@
+-libdri2_ladir = $(moduledir)/extensions
++libdri2_ladir = $(extsmoduledir)
+ libdri2_la_SOURCES = \
+ 	dri2.c \
+ 	dri2.h \
+--- a/hw/xfree86/dixmods/extmod/Makefile.am.~1~	2015-01-06 14:53:39.074104827 +0300
++++ b/hw/xfree86/dixmods/extmod/Makefile.am	2015-01-06 14:53:58.439108743 +0300
+@@ -1,6 +1,7 @@
+ sdk_HEADERS = dgaproc.h
+ 
+-extsmoduledir = $(moduledir)/extensions
++tmp = $(moduledir)/extensions
++extsmoduledir = $(tmp:amd64/extensions=extensions/amd64)
+ extsmodule_LTLIBRARIES = libextmod.la
+ 
+ if DGA
+diff -urp -x '*~' -x '*.orig' hw/xfree86/dixmods/Makefile.am hw/xfree86/dixmods/Makefile.am
+--- a/hw/xfree86/dixmods/Makefile.am	2009-05-08 17:45:57.848078000 -0700
++++ b/hw/xfree86/dixmods/Makefile.am	2009-05-08 17:46:07.162324000 -0700
+@@ -18,7 +18,8 @@
+                      libwfb.la \
+                      libshadow.la
+ 
+-extsmoduledir = $(moduledir)/extensions
++tmp = $(moduledir)/extensions
++extsmoduledir = $(tmp:amd64/extensions=extensions/amd64)
+ extsmodule_LTLIBRARIES = $(RECORDMOD) \
+ 			 $(DBEMOD) \
+                          $(GLXMODS)
+--- a/hw/xfree86/i2c/Makefile.am.~1~	Tue Jan  6 17:26:48 2015
++++ b/hw/xfree86/i2c/Makefile.am	Tue Jan  6 17:27:49 2015
+@@ -1,6 +1,7 @@
+ noinst_LTLIBRARIES = libi2c.la
+ 
+-multimediadir = $(moduledir)/multimedia
++tmp = $(moduledir)/multimedia
++multimediadir = $(tmp:amd64/multimedia=multimedia/amd64)
+ multimedia_LTLIBRARIES =	\
+ 	bt829_drv.la		\
+ 	fi1236_drv.la		\
