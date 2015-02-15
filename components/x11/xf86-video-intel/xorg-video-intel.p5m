@@ -20,7 +20,9 @@ set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license xorg-video-intel.license license='MIT'
+<transform file path=usr/lib/xorg/modules/drivers/$(MACH64)/(.+)$ -> set action.hash usr/lib/$(MACH64)/xorg/modules/drivers/%<\1> >
+
+license COPYING license='MIT'
 
 link path=usr/lib/$(MACH64)/libI810XvMC.so target=libI810XvMC.so.1.0.0
 link path=usr/lib/$(MACH64)/libI810XvMC.so.1 target=libI810XvMC.so.1.0.0
@@ -34,16 +36,6 @@ file path=usr/lib/libI810XvMC.so.1.0.0
 link path=usr/lib/libIntelXvMC.so target=libIntelXvMC.so.1.0.0
 link path=usr/lib/libIntelXvMC.so.1 target=libIntelXvMC.so.1.0.0
 file path=usr/lib/libIntelXvMC.so.1.0.0
-file path=usr/lib/xorg/modules/drivers/$(MACH64)/ch7017.so
-file path=usr/lib/xorg/modules/drivers/$(MACH64)/ch7xxx.so
 file path=usr/lib/xorg/modules/drivers/$(MACH64)/intel_drv.so
-file path=usr/lib/xorg/modules/drivers/$(MACH64)/ivch.so
-file path=usr/lib/xorg/modules/drivers/$(MACH64)/sil164.so
-file path=usr/lib/xorg/modules/drivers/$(MACH64)/tfp410.so
-file path=usr/lib/xorg/modules/drivers/ch7017.so
-file path=usr/lib/xorg/modules/drivers/ch7xxx.so
 file path=usr/lib/xorg/modules/drivers/intel_drv.so
-file path=usr/lib/xorg/modules/drivers/ivch.so
-file path=usr/lib/xorg/modules/drivers/sil164.so
-file path=usr/lib/xorg/modules/drivers/tfp410.so
 file path=usr/share/man/man7/intel.7

@@ -1,0 +1,26 @@
+--- src/intel_batchbuffer.h	Wed Apr  6 06:11:55 2011
++++ src/intel_batchbuffer.h	Fri Nov  4 08:28:39 2011
+@@ -30,9 +30,9 @@
+ #ifndef _INTEL_BATCHBUFFER_H
+ #define _INTEL_BATCHBUFFER_H
+ 
+-#define BATCH_RESERVED		16
++#define BATCH_RESERVED4k       4096
++#define BATCH_RESERVED16       16
+ 
+-
+ void intel_batch_init(ScrnInfoPtr scrn);
+ void intel_batch_teardown(ScrnInfoPtr scrn);
+ void intel_batch_emit_flush(ScrnInfoPtr scrn);
+@@ -41,7 +41,10 @@
+ 
+ static inline int intel_batch_space(intel_screen_private *intel)
+ {
+-	return (intel->batch_bo->size - BATCH_RESERVED) - (4*intel->batch_used);
++	if (IS_I865G(intel))
++	    return (intel->batch_bo->size - BATCH_RESERVED16) - (4*intel->batch_used);
++        else
++	    return (intel->batch_bo->size - BATCH_RESERVED4k) - (4*intel->batch_used);
+ }
+ 
+ static inline int intel_vertex_space(intel_screen_private *intel)

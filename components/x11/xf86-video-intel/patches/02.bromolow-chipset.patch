@@ -1,0 +1,32 @@
+Based on upstream commit 	ea36f2c4a3fa9afa8184eeaf944af9924c080368
+
+Add support for Ivy Bridge GT2 Server chipset
+Sometimes known as Bromlow. Signed-off-by: Eugeni Dodonov <eugeni.dodonov@intel.com> Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk> 
+--- src/intel_driver.h	Thu Apr  5 14:24:08 2012
++++ src/intel_driver.h	Thu Apr  5 14:24:58 2012
+@@ -190,6 +190,7 @@
+ #define PCI_CHIP_IVYBRIDGE_D_GT1	0x0152
+ #define PCI_CHIP_IVYBRIDGE_D_GT2	0x0162
+ #define PCI_CHIP_IVYBRIDGE_S_GT1	0x015a
++#define PCI_CHIP_IVYBRIDGE_S_GT2 	0x016a
+ 
+ #endif
+ 
+--- src/intel_module.c	Thu Apr  5 14:25:01 2012
++++ src/intel_module.c	Thu Apr  5 14:25:52 2012
+@@ -142,6 +142,7 @@
+ 	{PCI_CHIP_IVYBRIDGE_D_GT1,		"Ivybridge Desktop (GT1)" },
+ 	{PCI_CHIP_IVYBRIDGE_D_GT2,		"Ivybridge Desktop (GT2)" },
+ 	{PCI_CHIP_IVYBRIDGE_S_GT1,		"Ivybridge Server" },
++	{PCI_CHIP_IVYBRIDGE_S_GT2,              "Ivybridge Server (GT2)" },
+ 	{-1,					NULL}
+ };
+ #define NUM_CHIPSETS (sizeof(_intel_chipsets) / sizeof(_intel_chipsets[0]))
+@@ -210,6 +211,7 @@
+ 	INTEL_DEVICE_MATCH (PCI_CHIP_IVYBRIDGE_D_GT1, &intel_ivybridge_info ),
+ 	INTEL_DEVICE_MATCH (PCI_CHIP_IVYBRIDGE_D_GT2, &intel_ivybridge_info ),
+ 	INTEL_DEVICE_MATCH (PCI_CHIP_IVYBRIDGE_S_GT1, &intel_ivybridge_info ),
++	INTEL_DEVICE_MATCH (PCI_CHIP_IVYBRIDGE_S_GT2, &intel_ivybridge_info ),
+ 
+ 	{ 0, 0, 0 },
+ };
