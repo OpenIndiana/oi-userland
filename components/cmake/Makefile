@@ -19,7 +19,7 @@
 # CDDL HEADER END
 
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -53,6 +53,8 @@ CONFIGURE_ENV +=	CC="$(CC)"
 CONFIGURE_ENV +=	CXX="$(CXX)"	
 CONFIGURE_ENV +=	LDFLAGS="$(LDFLAGS)"	
 CONFIGURE_ENV +=	MAKE="$(GMAKE)"	
+CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
+CONFIGURE_ENV +=	CXXFLAGS="$(CXXFLAGS)"
 
 # Use system-installed third-party libraries, rather than the private
 # copies in the cmake source.  Only libarchive will come from the cmake
@@ -66,6 +68,8 @@ COMPONENT_BUILD_ENV +=	CC="$(CC)"
 COMPONENT_BUILD_ENV +=	CXX="$(CXX)"	
 COMPONENT_BUILD_ENV +=	LDFLAGS="$(LDFLAGS)"	
 COMPONENT_BUILD_ENV +=	MAKE="$(GMAKE)"	
+COMPONENT_BUILD_ENV +=	CFLAGS="$(CFLAGS)"
+COMPONENT_BUILD_ENV +=	CXXFLAGS="$(CXXFLAGS)"
 COMPONENT_BUILD_TARGETS =	all
 
 ASLR_MODE = $(ASLR_ENABLE)
@@ -76,16 +80,20 @@ COMPONENT_TEST_ENV += CXX="$(CXX)"
 
 COMPONENT_TEST_TARGETS =	test
 
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s/\s\s*[0-9][0-9]*\.[0-9][0-9]* sec/ SEC sec/"' \
+	'-e "s/\][0-9][0-9]*\.[0-9][0-9]* sec/\]SEC sec/"'
+
 # common targets
 
-configure:	$(CONFIGURE_32)
+configure:	$(CONFIGURE_64)
 
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
 # expected failure: CTestTestUpload
-test:		$(TEST_32)
+test:		$(TEST_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
