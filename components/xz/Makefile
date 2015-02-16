@@ -34,9 +34,9 @@ COMPONENT_BUGDB=	utility/xz
 
 TPNO=			4463
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 
@@ -60,12 +60,11 @@ configure:	$(CONFIGURE_32_and_64)
 
 build:		$(BUILD_32_and_64)
 
-include ../../make-rules/shared-targets.mk
+include $(WS_MAKE_RULES)/shared-targets.mk
 
 install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += shell/bash
+REQUIRED_PACKAGES += system/library

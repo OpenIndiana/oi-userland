@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -37,10 +37,10 @@ COMPONENT_BUGDB=	library/gd2
 
 TPNO=			8786
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
-include ../../make-rules/lint-libraries.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/lint-libraries.mk
 
 PKG_CONFIG_PATH_32 = /usr/lib/pkgconfig
 PKG_CONFIG_PATH_64 = /usr/lib/$(MACH64)/pkgconfig
@@ -82,7 +82,15 @@ install: $(INSTALL_32_and_64)
 
 test:	$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
 
+REQUIRED_PACKAGES += image/library/libjpeg
+REQUIRED_PACKAGES += image/library/libpng
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/fontconfig
+REQUIRED_PACKAGES += system/library/freetype-2
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxpm

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -58,10 +58,10 @@ COMPONENT_BUGDB=	library/libmng
 
 TPNO=			5583
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
-include ../../make-rules/lint-libraries.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/lint-libraries.mk
 
 # because Solaris installed the lcms headers elsewhere
 CFLAGS += `pkg-config --cflags lcms`
@@ -108,6 +108,9 @@ install:	$(INSTALL_32_and_64) $(BUILD_DIR)/libmng-64.pc
 
 test:	$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += image/library/libjpeg
+REQUIRED_PACKAGES += library/lcms
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math

@@ -37,9 +37,9 @@ COMPONENT_BUGDB=	utility/pkg-config
 
 TPNO=			9421
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # otherwise our default PKG_CONFIG_PATH will change to the 64-bit libdir
 CONFIGURE_LIBDIR.64 =   $(CONFIGURE_PREFIX)/lib
@@ -62,6 +62,5 @@ install:	$(INSTALL_64)
 
 test:		$(TEST_64)
 
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += system/library

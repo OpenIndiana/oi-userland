@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -39,9 +39,9 @@ COMPONENT_BUGDB=	utility/svn
 
 TPNO=			9086
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATCH_LEVEL = 0
 PYMODS = client core delta fs ra repos wc
@@ -168,6 +168,14 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += database/sqlite-3
+REQUIRED_PACKAGES += developer/versioning/subversion
+REQUIRED_PACKAGES += library/apr-15
+REQUIRED_PACKAGES += library/apr-util-15
+REQUIRED_PACKAGES += library/expat
+REQUIRED_PACKAGES += library/neon
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/c++-runtime
+REQUIRED_PACKAGES += system/library/security/gss

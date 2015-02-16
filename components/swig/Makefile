@@ -34,9 +34,9 @@ COMPONENT_BUGDB=	utility/swig
 
 TPNO=			10991
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=$(SPRO_VROOT)/bin:$(JAVA_HOME)/bin:/usr/bin
 
@@ -77,6 +77,9 @@ install:	$(INSTALL_64)
 
 test:		$(TEST_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += library/pcre
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/c++-runtime
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/linker

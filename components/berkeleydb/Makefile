@@ -38,9 +38,9 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://download.oracle.com/berkeley-db/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	database/berkeley
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
@@ -116,6 +116,8 @@ test:		$(TEST_32_and_64)
 # By default "gmake test" runs standard tests, takes ~2 days per $(BITS).
 RUN=run_std
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS) $(TCLSH)
 
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += system/core-os
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/c++-runtime
+REQUIRED_PACKAGES += system/linker

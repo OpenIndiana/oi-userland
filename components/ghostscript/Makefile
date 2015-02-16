@@ -19,7 +19,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 # parfait seems to spin when looking at the .bc files (13704877), so
@@ -41,9 +41,9 @@ COMPONENT_BUGDB=	utility/ghostscript
 
 TPNO=			3796
 
-include ../../make-rules/prep.mk
-include ../../make-rules/ips.mk
-include ../../make-rules/configure.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/configure.mk
 
 PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
 
@@ -113,4 +113,20 @@ install: $(VARIANTS:%=%/.installed)
 
 test:	$(NO_TESTS)
 
-include ../../make-rules/depend.mk
+
+REQUIRED_PACKAGES += image/library/libjpeg
+REQUIRED_PACKAGES += image/library/libpng
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/print/cups-libs
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += print/cups
+REQUIRED_PACKAGES += runtime/perl-512
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/fontconfig
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/linker
+REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxcursor
+REQUIRED_PACKAGES += x11/library/toolkit/libxt

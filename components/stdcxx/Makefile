@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 # we really need to use studio so we don't like that
@@ -44,9 +44,9 @@ TPNO=			9048
 
 CLOBBER_PATHS += install.sh
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 ISA_PATCH_DIR_32 = $(WS_TOP)/components/stdcxx/isa_patches/$(MACH)
 ISA_PATCH_DIR_64 = $(WS_TOP)/components/stdcxx/isa_patches/$(MACH64)
@@ -277,6 +277,7 @@ clean::
 	$(RM) -r $(COMPONENT_SRC) $(COMPONENT_SRC)-32 $(COMPONENT_SRC)-64
 	$(RM) -f *.sed *.out
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/c++-runtime
+REQUIRED_PACKAGES += system/library/math

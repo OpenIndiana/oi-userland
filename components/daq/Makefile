@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -34,9 +34,9 @@ COMPONENT_BUGDB=	library/daq
 
 TPNO=			19384
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Solaris should really define these. See CR #15431883 and 15537286.
 CFLAGS +=	-Du_int8_t=uint8_t
@@ -61,6 +61,10 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += developer/lexer/flex
+REQUIRED_PACKAGES += developer/parser/bison
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/libpcap
+REQUIRED_PACKAGES += system/linker

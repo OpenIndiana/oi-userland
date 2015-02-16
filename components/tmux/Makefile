@@ -39,9 +39,9 @@ COMPONENT_BUGDB=	utility/tmux
 
 TPNO=			20510
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=	CXXFLAGS="$(CXXFLAGS)"
@@ -65,6 +65,7 @@ install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += library/libevent
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/library

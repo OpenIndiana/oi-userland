@@ -36,9 +36,9 @@ COMPONENT_BUGDB=	utility/tree
 
 TPNO=			9095
 
-include ../../make-rules/prep.mk
-include ../../make-rules/justmake.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
@@ -61,6 +61,4 @@ install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += system/library

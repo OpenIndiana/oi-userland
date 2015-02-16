@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -29,8 +29,8 @@ COMPONENT_PROJECT_URL=	http://libusb.sf.net/
 COMPONENT_SRC=		src
 COMPONENT_BUGDB=	library/libusb
 
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 $(BUILD_DIR_32)/.built:	BITS=32
 $(BUILD_DIR_64)/.built:	BITS=64
@@ -45,7 +45,7 @@ LICENSE_TRANSFORMS =
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-download:
+download::
 
 clobber:	clean
 	$(RM) $(SOURCE_DIR)/.prep
@@ -63,6 +63,7 @@ install:	$(INSTALL_32_and_64)
 # enumerates USB devices plugged into your system
 test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += system/io/usb
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/linker

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -30,13 +30,13 @@ COMPONENT_NAME=		gnu-common
 COMPONENT_VERSION=	0.5.11
 COMPONENT_BUGDB=	gate-stuff/userland
 
-include ../../make-rules/prep.mk
+include $(WS_MAKE_RULES)/prep.mk
 
 # Do not clean the sources (set in prep.mk)
 #
 CLEAN_PATHS=
 
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CLEAN_PATHS+= $(BUILD_DIR)
 
@@ -53,7 +53,3 @@ install:
 	@echo "Nothing to install."
 
 test:		$(NO_TESTS)
-
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk

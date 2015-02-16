@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -39,9 +39,9 @@ TPNO=			17006
 
 LIGHTTPD_INSTALLDIR=/usr/lighttpd/1.4
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATCH_LEVEL=0
 
@@ -80,6 +80,17 @@ install:	$(INSTALL_64)
 
 test:		$(TEST_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += compress/bzip2
+REQUIRED_PACKAGES += database/mysql-55
+REQUIRED_PACKAGES += database/mysql-55/library
+REQUIRED_PACKAGES += library/openldap
+REQUIRED_PACKAGES += library/pcre
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl/openssl-fips-140
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += runtime/lua
+REQUIRED_PACKAGES += system/core-os
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/network
+REQUIRED_PACKAGES += web/fastcgi/spawn-fcgi

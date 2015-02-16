@@ -38,9 +38,9 @@ COMPONENT_ARCHIVE_URL=	http://pkgs.fedoraproject.org/repo/pkgs/$(COMPONENT_NAME)
 COMPONENT_BUGDB=	utility/stunnel
 TPNO=                   21367
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # need /usr/perl5/bin on path to access pod2man perl script, used by 
 # the build to create docs
@@ -78,6 +78,8 @@ install:        $(INSTALL_32_and_64)
 
 test:           $(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += system/core-os
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/linker
+REQUIRED_PACKAGES += system/network

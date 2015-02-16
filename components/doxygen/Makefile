@@ -40,9 +40,9 @@ COMPONENT_ARCHIVE_URL_1 =	ftp://ftp.stack.nl/pub/users/dimitri/$(COMPONENT_ARCHI
 
 TPNO=			17646
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Necessary to find CC during build
 PATH=$(SPRO_VROOT)/bin:/usr/bin
@@ -89,6 +89,9 @@ install:	$(INSTALL_64)
 
 test:		$(TEST_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += developer/lexer/flex
+REQUIRED_PACKAGES += developer/parser/bison
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/c++-runtime
+REQUIRED_PACKAGES += system/library/math

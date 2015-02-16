@@ -20,8 +20,12 @@
 #
 
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
+# Can't use the Studio compilers as they don't support the GNU 
+# __attribute__ extension
+COMPILER =	gcc
 
 include ../../make-rules/shared-macros.mk
 
@@ -37,13 +41,9 @@ COMPONENT_BUGDB=	utility/nmap
 
 TPNO=			9217
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
-
-# Can't use the Studio compilers as they don't support the GNU 
-# __attribute__ extension
-COMPILER =	gcc
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -83,6 +83,15 @@ install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += library/pcre
+REQUIRED_PACKAGES += library/python-2/pygobject-26
+REQUIRED_PACKAGES += library/python-2/pygtk2-26
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += runtime/lua
+REQUIRED_PACKAGES += runtime/python-26
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
+REQUIRED_PACKAGES += system/library/gcc/gcc-c++-runtime
+REQUIRED_PACKAGES += system/library/libpcap
+REQUIRED_PACKAGES += system/library/math

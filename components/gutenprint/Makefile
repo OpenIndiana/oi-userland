@@ -34,9 +34,9 @@ COMPONENT_BUGDB=	utility/gutenprint
 
 TPNO=			8943
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	 --infodir=$(CONFIGURE_INFODIR)
@@ -64,7 +64,18 @@ install:	$(INSTALL_32)
 # the tests mostly pass, but it can't find several drivers for ppd files
 test:		$(TEST_32)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/print/cups-libs
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += print/cups
+REQUIRED_PACKAGES += runtime/perl-512
+REQUIRED_PACKAGES += runtime/perl-516
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/linker
+REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxcursor

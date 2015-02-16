@@ -20,8 +20,11 @@
 #
 
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
+# Built in SFW with gcc and builds cleanly now only with gcc
+COMPILER =	gcc
 
 include ../../make-rules/shared-macros.mk
 
@@ -60,9 +63,9 @@ COMPONENT_ARCHIVE_URL_2=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE_2)
 
 TPNO=			18548
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # IPS_COMPONENT_VERSION is by default set to $(COMPONENT_VERSION) but it is not
 # enough for us. We need to include the $(COMPONENT_SUBVERSION) somehow.
@@ -70,9 +73,6 @@ include ../../make-rules/ips.mk
 # we use mapping:
 # R(major)(minor)(micro) - (major).(minor as number).(micro)
 IPS_COMPONENT_VERSION=  $(COMPONENT_VERSION_MAJOR).2.3
-
-# Built in SFW with gcc and builds cleanly now only with gcc
-COMPILER =	gcc
 
 CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS += CPPFLAGS="$(CPPFLAGS) -I/usr/include/gd2"
@@ -136,6 +136,11 @@ clean::
 
 test:	$(TEST_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/core-os
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/linker

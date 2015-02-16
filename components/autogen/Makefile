@@ -20,6 +20,10 @@
 #
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
+# built in SFW with gcc and builds cleanly now only with gcc
+COMPILER =	gcc
+
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		autogen
@@ -34,15 +38,13 @@ COMPONENT_BUGDB=	utility/autogen
 
 TPNO=			11805
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # build target is incorrect without this 
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-# built in SFW with gcc and builds cleanly now only with gcc
-COMPILER =	gcc
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 
 # strip the environment or install target fails
@@ -76,6 +78,14 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += library/gmp
+REQUIRED_PACKAGES += library/guile
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += shell/bash
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/gcc-3-runtime
+REQUIRED_PACKAGES += system/library/gcc-45-runtime
+REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/linker

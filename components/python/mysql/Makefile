@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -40,9 +40,9 @@ TPNO=			9533
 # Syntax issues: not Python 3 ready.
 PYTHON_VERSIONS=	2.7 2.6
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/setup.py.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH_32=/usr/mysql/5.5/bin/$(MACH32):/usr/bin:$(SPRO_VROOT)/bin
 PATH_64=/usr/mysql/5.5/bin:/usr/bin:$(SPRO_VROOT)/bin
@@ -62,6 +62,9 @@ install:        $(INSTALL_32_and_64)
 
 test:           $(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += database/mysql-55
+REQUIRED_PACKAGES += database/mysql-55/library
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math

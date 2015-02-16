@@ -18,8 +18,12 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
+# OFED only builds with GCC
+COMPILER=gcc3
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libsdp
@@ -30,14 +34,12 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:b72d4d84c7a02207c261082d1837757f8c131942193ceaf017daf684d61e8be1
 COMPONENT_ARCHIVE_URL=	http://www.openfabrics.org/downloads/libsdp/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
 include ../ofed.mk
 
 MAN3FILES = libsdp.3lib
 MAN4FILES = libsdp.conf.4
-
-include $(WS_TOP)/make-rules/shared-targets.mk
 
 SUFFIX.64 = $(MACH64)
 
@@ -68,8 +70,4 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
 test:		$(NO_TESTS)
-
-include $(WS_TOP)/make-rules/depend.mk

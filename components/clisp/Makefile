@@ -20,8 +20,10 @@
 #
 
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
+COMPILER=	gcc
 
 include ../../make-rules/shared-macros.mk
 
@@ -37,9 +39,9 @@ COMPONENT_BUGDB=	utility/clisp
 
 TPNO=			8347
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # To include correct locale header file in .../modules/regexp/gllib/regex.c
 CPPFLAGS += -I/usr/share/gettext/intl
@@ -59,8 +61,6 @@ COMPONENT_POST_CONFIGURE_ACTION.sparc = \
 
 COMPONENT_POST_CONFIGURE_ACTION = \
 	$(COMPONENT_POST_CONFIGURE_ACTION.$(MACH))
-
-COMPILER=	gcc
 
 PATCH_LEVEL=	0
 
@@ -113,6 +113,10 @@ install:	$(INSTALL_32)
 
 test:		$(TEST_32)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += library/libsigsegv
+REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += library/readline
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math

@@ -18,9 +18,12 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
+
+# Build gcc with gcc
+COMPILER =	gcc
 
 COMPONENT_NAME=		gcc
 COMPONENT_VERSION=	3.4.3
@@ -35,17 +38,14 @@ COMPONENT_BUGDB=	utility/gnu-compiler
 
 TPNO=			17028
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PARCH =		$(MACH:i386=i386-pc)
 GNU_ARCH =	$(PARCH:sparc=sparc-sun)-solaris$(SOLARIS_VERSION)
 
 PKG_MACROS +=	GNU_ARCH="$(GNU_ARCH)"
-
-# we build gcc with gcc
-COMPILER =	gcc3
 
 # CC_BITS may get in the way
 CC_BITS=
@@ -92,8 +92,15 @@ $(PROTO_DIR)/.sedded:	$(INSTALL_32)
 
 install:	$(PROTO_DIR)/.sedded
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
 test: $(TEST_32)
 
-include ../../make-rules/depend.mk
+
+REQUIRED_PACKAGES += developer/assembler
+REQUIRED_PACKAGES += developer/gnu-binutils
+REQUIRED_PACKAGES += developer/lexer/flex
+REQUIRED_PACKAGES += developer/parser/bison
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/gcc-3-runtime
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/linker

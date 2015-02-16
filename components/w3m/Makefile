@@ -20,6 +20,9 @@
 #
 # Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
+COMPILER = gcc
+
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		w3m
@@ -34,11 +37,9 @@ COMPONENT_BUGDB=	utility/w3m
 
 TPNO=			9364
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
-
-COMPILER = gcc
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION = (cd $(@D) ; aclocal-1.11 ; autoconf)
 
@@ -71,6 +72,13 @@ install:	$(INSTALL_64)
 
 test:		$(TEST_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/gc
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/security/openssl/openssl-fips-140
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += runtime/perl-512
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libx11

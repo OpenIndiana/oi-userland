@@ -20,6 +20,10 @@
 #
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
+# Because the Studio compiler generates thousands of lines of warnings.
+COMPILER =		gcc
+
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		links
@@ -34,12 +38,9 @@ COMPONENT_BUGDB=	utility/links
 
 TPNO=			21157
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
-
-# Because the Studio compiler generates thousands of lines of warnings.
-COMPILER =		gcc
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Needed to generate a 64-bit executable.
 CC +=			$(CC_BITS)
@@ -61,6 +62,11 @@ install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += compress/bzip2
+REQUIRED_PACKAGES += compress/xz
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/linker
+

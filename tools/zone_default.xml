@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+ Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+
+-->
+<!DOCTYPE auto_install SYSTEM "file:///usr/share/install/ai.dtd.1" [
+<!ENTITY REQUIRED_PACKAGES SYSTEM "packages.xml">
+]>
+
+<auto_install>
+    <ai_instance name="zone_default">
+        <target>
+            <logical>
+                <zpool name="rpool">
+                    <!--
+                      Subsequent <filesystem> entries instruct an installer
+                      to create the following ZFS datasets:
+
+                          <root_pool>/export         (mounted on /export)
+                          <root_pool>/export/home    (mounted on /export/home)
+
+                      Those datasets are part of standard environment
+                      and should always be created.
+
+                      In rare cases, if there is a need to deploy a zone
+                      without these datasets, either comment out or remove
+                      <filesystem> entries. In such scenario, it has to be also
+                      assured that in case of non-interactive post-install
+                      configuration, creation of initial user account is
+                      disabled in related system configuration profile.
+                      Otherwise the installed zone would fail to boot.
+                    -->
+                    <filesystem name="export" mountpoint="/export"/>
+                    <filesystem name="export/home"/>
+                    <be name="solaris">
+                        <options>
+                            <option name="compression" value="on"/>
+                        </options>
+                    </be>
+                </zpool>
+            </logical>
+        </target>
+
+        <software type="IPS">
+            <destination>
+                <image>
+                    <!-- Specify locales to install -->
+                    <facet set="false">facet.locale.*</facet>
+                    <facet set="true">facet.locale.de</facet>
+                    <facet set="true">facet.locale.de_DE</facet>
+                    <facet set="true">facet.locale.en</facet>
+                    <facet set="true">facet.locale.en_US</facet>
+                    <facet set="true">facet.locale.es</facet>
+                    <facet set="true">facet.locale.es_ES</facet>
+                    <facet set="true">facet.locale.fr</facet>
+                    <facet set="true">facet.locale.fr_FR</facet>
+                    <facet set="true">facet.locale.it</facet>
+                    <facet set="true">facet.locale.it_IT</facet>
+                    <facet set="true">facet.locale.ja</facet>
+                    <facet set="true">facet.locale.ja_*</facet>
+                    <facet set="true">facet.locale.ko</facet>
+                    <facet set="true">facet.locale.ko_*</facet>
+                    <facet set="true">facet.locale.pt</facet>
+                    <facet set="true">facet.locale.pt_BR</facet>
+                    <facet set="true">facet.locale.zh</facet>
+                    <facet set="true">facet.locale.zh_CN</facet>
+                    <facet set="true">facet.locale.zh_TW</facet>
+                </image>
+            </destination>
+            <software_data action="install">
+                <name>pkg:/group/system/solaris-small-server</name>
+                &REQUIRED_PACKAGES;
+            </software_data>
+        </software>
+    </ai_instance>
+</auto_install>

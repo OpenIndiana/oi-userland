@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -34,9 +34,9 @@ COMPONENT_BUGDB=	utility/gzip
 
 TPNO=			17904
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # To get correct @bindir@ substitution in the various gz<whatever> scripts.
 CONFIGURE_BINDIR.64 =   $(CONFIGURE_PREFIX)/bin
@@ -96,6 +96,9 @@ install:	$(INSTALL_64) $(GZGREP_MAN_VARIANTS)
 
 test:		$(TEST_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += runtime/python-26
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += shell/bash
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/xopen/xcu4

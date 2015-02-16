@@ -18,8 +18,14 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
+# Preferred compiler set to gcc and not Studio as on Sparc architecture
+# some assembler code is required for locking which fails to compile on
+# solaris, when using gcc this is inlined (see jslock.c)
+COMPILER =	gcc
+
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		jsl
@@ -34,14 +40,9 @@ COMPONENT_BUGDB=	utility/jsl
 
 TPNO=			10774
 
-include ../../make-rules/prep.mk
-include ../../make-rules/justmake.mk
-include ../../make-rules/ips.mk
-
-# Preferred compiler set to gcc and not Studio as on Sparc architecture
-# some assembler code is required for locking which fails to compile on
-# solaris, when using gcc this is inlined (see jslock.c)
-COMPILER =	gcc
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_BUILD_ARGS += -f src/Makefile
 COMPONENT_BUILD_ARGS += CC="$(CC)"
@@ -67,6 +68,6 @@ install:	$(INSTALL_64)
 
 test:		install $(TEST_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math

@@ -18,8 +18,12 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
+# OFED only builds with GCC
+COMPILER=gcc3
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmlx4
@@ -30,8 +34,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:ac3aa335d5749a8edc471630b1f5049122c8b7b66bab88c299e255122028e19c
 COMPONENT_ARCHIVE_URL=	http://www.openfabrics.org/downloads/libmlx4/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
 include ../ofed.mk
 
 # --disable-libcheck is not a supported option for this component
@@ -66,8 +70,5 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
 test:		$(NO_TESTS)
 
-include $(WS_TOP)/make-rules/depend.mk

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -37,10 +37,10 @@ COMPONENT_BUGDB=	utility/bzip
 
 TPNO=			5547
 
-include ../../make-rules/prep.mk
-include ../../make-rules/justmake.mk
-include ../../make-rules/ips.mk
-include ../../make-rules/lint-libraries.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/lint-libraries.mk
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
@@ -63,9 +63,7 @@ COMPONENT_PRE_BUILD_ACTION= \
 build:		$(BUILD_32_and_64)
 
 # override the 64 bit install and have it make a directory for the lint lib
-$(INSTALL_64):
-	$(MKDIR) $(PROTOUSRLIBDIR64)
-	touch $@
+COMPONENT_POST_INSTALL_ACTION = $(MKDIR) $(PROTOUSRLIBDIR64)
 
 install:	build $(INSTALL_32_and_64)
 	$(INSTALL) $(BUILD_DIR_32)/libbz2.so.1 $(PROTOUSRLIBDIR)
@@ -77,6 +75,6 @@ install:	build $(INSTALL_32_and_64)
 # build does this always
 test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/library

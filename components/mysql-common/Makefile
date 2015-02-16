@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -27,15 +27,18 @@ COMPONENT_VERSION=	5.11
 COMPONENT_PROJECT_URL=	http://dev.mysql.com/
 COMPONENT_BUGDB=	database/mysql
 
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # ASLR Mode should be set as not applicable
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # nothing to download or build; just package
-download prep configure build install test:
-
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
+download::
+prep configure build install test:
 
 clobber:	clean
+
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/core-os
+REQUIRED_PACKAGES += system/network

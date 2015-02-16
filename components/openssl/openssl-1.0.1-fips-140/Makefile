@@ -53,10 +53,10 @@ OPENSSL_FIPS_DIR = $(COMPONENT_DIR)/../openssl-fips
 # only on SPARC.
 PATCH_PATTERN = [0-9][0-9]*.patch
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
-include $(WS_TOP)/make-rules/lint-libraries.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/lint-libraries.mk
 
 # OpenSSL does not use autoconf but its own configure system.
 CONFIGURE_SCRIPT = $(SOURCE_DIR)/Configure
@@ -196,6 +196,6 @@ $(BUILD_DIR_64)/llib-lssl.ln: LINT_FLAGS=$(LFLAGS_64)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += developer/build/makedepend
+REQUIRED_PACKAGES += system/library

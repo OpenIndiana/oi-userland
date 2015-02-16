@@ -18,8 +18,12 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
+# OFED only builds with GCC
+COMPILER=gcc3
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		opensm
@@ -30,8 +34,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:b8f333815e9d145cbb29310a38d2f2e39f9727b30eb6b15cb0d81fb9db39a2e1
 COMPONENT_ARCHIVE_URL=	http://www.openfabrics.org/downloads/management/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
 include ../ofed.mk
 
 CFLAGS += -std=gnu99
@@ -77,8 +81,5 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
 test:		$(NO_TESTS)
 
-include $(WS_TOP)/make-rules/depend.mk

@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -34,9 +34,9 @@ COMPONENT_BUGDB=	utility/gnupg
 
 TPNO=			17706
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Enable C99 mode + -Xc for its additional warnings.
 studio_C99MODE = -Xc $(studio_C99_ENABLE)
@@ -124,6 +124,20 @@ install: $(INSTALL_64)
 
 test: $(TEST_64)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += compress/bzip2
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/pth
+REQUIRED_PACKAGES += library/readline
+REQUIRED_PACKAGES += library/security/libassuan
+REQUIRED_PACKAGES += library/security/libgpg-error
+REQUIRED_PACKAGES += library/security/libksba
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += security/pinentry
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/security/libgcrypt
+REQUIRED_PACKAGES += system/library/usb/libusb
+REQUIRED_PACKAGES += web/curl

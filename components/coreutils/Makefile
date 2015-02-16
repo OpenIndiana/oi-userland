@@ -34,9 +34,9 @@ COMPONENT_BUGDB=	utility/gnu-coreutils
 
 TPNO=			18521
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # We need the GNU grep command to configure/build.
 PATH=/usr/gnu/bin:/usr/bin
@@ -56,8 +56,10 @@ COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -f && automake)
 # Always show the build and link lines for easier debugging.
 COMPONENT_BUILD_ARGS +=		V=1
 
+# Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
 
+# common targets
 configure:	$(CONFIGURE_32_and_64)
 
 build:		$(BUILD_32_and_64)
@@ -94,6 +96,6 @@ COMPONENT_TEST_TRANSFORMS += \
 
 test:		install $(TEST_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += library/gmp
+REQUIRED_PACKAGES += system/library

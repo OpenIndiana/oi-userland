@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -49,9 +49,9 @@ COMPONENT_ARCHIVE_URL_1= http://downloads.sourceforge.net/gssmod/$(COMPONENT_ARC
 TPNO_PROFTPD=		17783
 TPNO_MOD_GSS=		13480
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # IPS_COMPONENT_VERSION is by default set to $(COMPONENT_VERSION) but it is not
 # enough for us. We need to include the $(COMPONENT_SUBVERSION) somehow.
@@ -109,6 +109,12 @@ install:	$(INSTALL_32)
 test:		$(NO_TESTS)
 # libcheck and specific Perl Test::Unit version is required for full test
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += service/security/kerberos-5
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/core-os
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/security/gss
+REQUIRED_PACKAGES += system/linker
+REQUIRED_PACKAGES += system/network

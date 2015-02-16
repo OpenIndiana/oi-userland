@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 VENDOR_RUBY = /usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)
@@ -48,3 +48,5 @@ $(BUILD_DIR)/%/.installed:      $(BUILD_DIR)/%/.built
 
 clean::
 	$(RM) -r $(SOURCE_DIR) $(BUILD_DIR)
+
+REQUIRED_PACKAGES += runtime/ruby

@@ -18,8 +18,12 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
+# OFED only builds with GCC
+COMPILER=gcc3
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		qperf
@@ -30,8 +34,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:304b89d1b006c959cad3b132346a6d061526fe626953ef99c764df396e43f959
 COMPONENT_ARCHIVE_URL=	http://www.openfabrics.org/downloads/qperf/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
 include ../ofed.mk
 
 LIBS +=         -lsocket -lnsl -lkstat -lrdmacm -libverbs
@@ -49,8 +53,5 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
 test:		$(NO_TESTS)
 
-include $(WS_TOP)/make-rules/depend.mk

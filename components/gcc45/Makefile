@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -39,9 +39,9 @@ COMPONENT_BUGDB=	utility/gnu-compiler
 
 TPNO=			4456
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/bin:/usr/gnu/bin:/usr/perl5/bin
 
@@ -106,6 +106,15 @@ install:	$(INSTALL_32)
 
 test:		$(TEST_32)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += developer/assembler
+REQUIRED_PACKAGES += developer/gnu-binutils
+REQUIRED_PACKAGES += library/gmp
+REQUIRED_PACKAGES += library/mpc
+REQUIRED_PACKAGES += library/mpfr
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/gcc-45-runtime
+REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/linker

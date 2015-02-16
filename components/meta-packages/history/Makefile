@@ -18,12 +18,12 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
-# $(WS_TOP)/make-rules/ips.mk really isn't set up to allow you to bypass all
+# $(WS_MAKE_RULES)/ips.mk really isn't set up to allow you to bypass all
 # the automatic (and lengthy) manifest manipulation that it does, which we
 # really don't need to do for these static, uninteresting packages.  So we just
 # write a simple set of publication rules to get the packages into the repo.
@@ -46,7 +46,8 @@ PUBLISHED =		$(CANONICAL_MANIFESTS:%.p5m=$(MANIFEST_BASE)-%.published)
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-download prep build install:
+download::
+prep build install:
 	@echo "nothing to be done for $@"
 
 $(BUILD_DIR):

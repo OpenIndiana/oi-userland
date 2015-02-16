@@ -40,9 +40,9 @@ TPNO=			9693
 # Depends on twisted, which is not Python 3 ready.
 PYTHON_VERSIONS=	2.7 2.6
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/setup.py.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Master test results are the same for all versions of Python, so override
 # here, rather than create multiple identical master files.
@@ -67,7 +67,3 @@ build:          $(BUILD_NO_ARCH)
 install:        $(INSTALL_NO_ARCH)
 
 test:           $(TEST_NO_ARCH)
-
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk

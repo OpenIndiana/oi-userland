@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 PERL_VERSION =		5.16
@@ -38,9 +38,9 @@ COMPONENT_BUGDB=	utility/graphviz
 
 TPNO=			17707
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH =		/usr/php/5.3/bin:/usr/bin:/usr/gnu/bin
 
@@ -109,4 +109,37 @@ COMPONENT_PRE_TEST_ACTION = \
 # http://graphviz.org/bugs/b2063.html
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
+REQUIRED_PACKAGES += image/graphviz
+REQUIRED_PACKAGES += image/library/libjpeg
+REQUIRED_PACKAGES += image/library/libpng
+REQUIRED_PACKAGES += image/library/librsvg
+REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += library/desktop/cairo
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/expat
+REQUIRED_PACKAGES += library/gd
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/libtool/libltdl
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += print/filter/ghostscript
+REQUIRED_PACKAGES += runtime/lua
+REQUIRED_PACKAGES += runtime/ocaml
+REQUIRED_PACKAGES += runtime/perl-516
+REQUIRED_PACKAGES += runtime/ruby-19
+REQUIRED_PACKAGES += runtime/tk-8
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/c++-runtime
+REQUIRED_PACKAGES += system/library/fontconfig
+REQUIRED_PACKAGES += system/library/freetype-2
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/linker
+REQUIRED_PACKAGES += web/php-53
+REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxcursor
+REQUIRED_PACKAGES += x11/library/libxmu
+REQUIRED_PACKAGES += x11/library/libxrender
+REQUIRED_PACKAGES += x11/library/toolkit/libxaw7
+REQUIRED_PACKAGES += x11/library/toolkit/libxt

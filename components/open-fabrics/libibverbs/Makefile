@@ -18,8 +18,12 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
+# OFED only builds with GCC
+COMPILER=gcc3
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libibverbs
@@ -30,8 +34,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:1e04aa9d518e3dc372fdda6bd25bf072caae4c85c38d0ae095a614104aa583d4
 COMPONENT_ARCHIVE_URL=	http://www.openfabrics.org/downloads/libibverbs/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
 include ../ofed.mk
 
 MAN3FILES =	ibv_alloc_shpd.3 \
@@ -40,7 +44,7 @@ MAN3FILES =	ibv_alloc_shpd.3 \
 		ibv_gid_reachable.3 \
 		ibv_register_sm_events.3
 
-include $(WS_TOP)/make-rules/shared-targets.mk
+include $(WS_MAKE_RULES)/shared-targets.mk
 
 # add flags to get at extra bits from other components' source trees
 CPPFLAGS +=	-I$(PWD)/../libmlx4/libmlx4-1.0.1/src
@@ -83,8 +87,4 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64) $(PROTOMAN3FILES)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
 test:		$(NO_TESTS)
-
-include $(WS_TOP)/make-rules/depend.mk

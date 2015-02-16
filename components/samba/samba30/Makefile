@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -45,13 +45,13 @@ COMPONENT_BUGDB=	utility/samba
 TPNO_LIBSMBCLIENT=	17765
 TPNO_MOZLDAP=		4457
 
-include ../../../make-rules/prep.mk
+include $(WS_MAKE_RULES)/prep.mk
 
 SRC_OFFSET =	source
 BUILD_DIR_32 = $(BUILD_DIR)/$(MACH32)/$(SRC_OFFSET)
 
-include ../../../make-rules/configure.mk
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_SCRIPT = $(BUILD_DIR_32)/configure
 
@@ -145,8 +145,6 @@ configure:	$(CONFIGURE_32)
 
 build:		$(BUILD_32)
 
-include ../../../make-rules/shared-targets.mk
-
 install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
@@ -154,6 +152,8 @@ test:		$(NO_TESTS)
 clean::
 	$(GMAKE) -C $(COMPONENT_DIR)/../mozldap clean
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../../make-rules/depend.mk
+REQUIRED_PACKAGES += library/nspr
+REQUIRED_PACKAGES += library/openldap
+REQUIRED_PACKAGES += library/security/nss
+REQUIRED_PACKAGES += service/security/kerberos-5
+REQUIRED_PACKAGES += system/library

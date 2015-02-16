@@ -37,9 +37,9 @@ COMPONENT_BUGDB=	utility/asciidoc
 
 TPNO=			14505
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATCH_LEVEL = 0
 
@@ -101,6 +101,9 @@ COMPONENT_TEST_TRANSFORMS += \
 
 test:           $(TEST_64)
 
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/libxslt
+REQUIRED_PACKAGES += runtime/python-26
+REQUIRED_PACKAGES += web/browser/lynx
+REQUIRED_PACKAGES += web/browser/w3m

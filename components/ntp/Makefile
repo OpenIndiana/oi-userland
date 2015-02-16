@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -44,9 +44,9 @@ PATCH_LEVEL = 0
 
 ASLR_MODE= $(ASLR_ENABLE)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CFLAGS +=	$(studio_C99_ENABLE) -D_XOPEN_SOURCE=600 -D__EXTENSIONS__
 
@@ -64,12 +64,20 @@ CONFIGURE_OPTIONS +=	--enable-ignore-dns-errors
 CONFIGURE_OPTIONS +=	--without-ntpsnmpd
 CONFIGURE_OPTIONS +=	--with-openssl-libdir=/lib
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
 configure:	$(CONFIGURE_32)
 
 build:		$(BUILD_32)
 install:	$(INSTALL_32)
 test:		$(NO_TESTS)
 
-include ../../make-rules/depend.mk
+
+REQUIRED_PACKAGES += library/libedit
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += runtime/perl-512
+REQUIRED_PACKAGES += runtime/perl-516
+REQUIRED_PACKAGES += service/network/dns/mdns
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/core-os
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/library/security/crypto

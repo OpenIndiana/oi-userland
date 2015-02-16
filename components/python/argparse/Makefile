@@ -38,9 +38,9 @@ TPNO=			13152
 # a 2.6 module.
 PYTHON_VERSIONS = 2.6
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/setup.py.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_TEST_DIR =	$(COMPONENT_SRC)/test
 COMPONENT_TEST_ARGS =	test_argparse.py
@@ -59,6 +59,3 @@ install:	$(INSTALL_NO_ARCH)
 
 test:		$(TEST_NO_ARCH)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk

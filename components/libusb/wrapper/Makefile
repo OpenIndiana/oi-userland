@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -31,8 +31,8 @@ COMPONENT_BUGDB=	library/libusb
 
 TPNO=			9184
 
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 $(BUILD_DIR_32)/.built: BITS=32
 $(BUILD_DIR_64)/.built: BITS=64
@@ -51,7 +51,7 @@ $(SOURCE_DIR)/.prep:
 $(BUILD_DIR)/libusb-64.pc:	src/libusb-64.pc
 	/bin/sed -e "s#MACH64#$(MACH64)#g" <$< >$@
 
-download:
+download::
 
 clobber:	clean
 	$(RM) $(SOURCE_DIR)/.prep
@@ -65,6 +65,7 @@ install:	$(INSTALL_32_and_64)
 # enumerates USB devices plugged into your system
 test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/linker

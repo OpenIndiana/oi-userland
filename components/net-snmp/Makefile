@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -39,9 +39,9 @@ COMPONENT_BUGDB=	service/net-snmp utility/net-snmp library/net-snmp
 
 TPNO=			5702
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CFLAGS += $(studio_C99_ENABLE)
 CPPFLAGS += "-DFALSE_SHARING_ALIGN=64"
@@ -141,3 +141,16 @@ $(BUILD_DIR_32)/.docs:
 	(cd $(@D) ; $(ENV) srcdir=$(@D) $(DOXYGEN) -u $(@D)/doxygen.conf ; \
 	    $(ENV) srcdir=$(@D) $(DOXYGEN) $(@D)/doxygen.conf)
 	$(TOUCH) $@
+
+REQUIRED_PACKAGES += developer/documentation-tool/doxygen
+REQUIRED_PACKAGES += runtime/perl-512
+REQUIRED_PACKAGES += runtime/python-26
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += shell/bash
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/core-os
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/security/pkcs11
+REQUIRED_PACKAGES += system/linker
+REQUIRED_PACKAGES += system/management/snmp/net-snmp
+REQUIRED_PACKAGES += system/network

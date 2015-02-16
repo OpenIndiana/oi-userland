@@ -42,10 +42,10 @@ COMPONENT_BUGDB=	library/openssl
 
 TPNO=			21111
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
-include $(WS_TOP)/make-rules/lint-libraries.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/lint-libraries.mk
 
 PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin:/usr/perl5/bin
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)
@@ -402,6 +402,6 @@ $(BUILD_DIR_64)/llib-lssl.ln: LINT_FLAGS=$(LFLAGS_64)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += developer/build/makedepend
+REQUIRED_PACKAGES += system/library

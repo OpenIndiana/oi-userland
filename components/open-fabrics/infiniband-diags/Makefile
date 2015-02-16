@@ -18,8 +18,12 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
+# OFED only builds with GCC
+COMPILER=gcc3
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		infiniband-diags
@@ -30,13 +34,11 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:0baf6694d54602a66dfc2b82a765c933b24534fd8e2bda7e9b89abf503b29c02
 COMPONENT_ARCHIVE_URL=	http://www.openfabrics.org/downloads/management/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
 include ../ofed.mk
 
 MAN1MFILES = set_nodedesc.sh.1m
-
-include $(WS_TOP)/make-rules/shared-targets.mk
 
 CFLAGS += -I$(PROTO_DIR)/usr/include/infiniband
 LIBS +=	-lsocket -lnsl -lopensm -losmvendor -losmcomp -libumad -libmad -libverbs -ldevinfo
@@ -83,10 +85,6 @@ configure:	$(CONFIGURE_32)
 
 build:		$(BUILD_32)
 
-install:	$(INSTALL_32) $(PROTOMAN1MFILES)
-
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
+install:	$(INSTALL_32) #$(PROTOMAN1MFILES)
 
 test:		$(NO_TESTS)
-
-include $(WS_TOP)/make-rules/depend.mk

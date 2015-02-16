@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -36,9 +36,9 @@ COMPONENT_BUGDB=	library/wxwidgets
 
 TPNO=			9216
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PKG_PROTO_DIRS += $(COMPONENT_DIR)/man
 
@@ -70,8 +70,6 @@ CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS += CXXFLAGS="$(CXXFLAGS)"
 CONFIGURE_OPTIONS += LDFLAGS="$(LDFLAGS)"
 
-include ../../make-rules/shared-targets.mk
-
 # I want to use userland's "build" target in contrib subdirectory, but I need
 # to skip the configure phase
 $(BUILD_DIR_32)/contrib/.configured \
@@ -91,6 +89,23 @@ install:	$(INSTALL_32_and_64) \
 
 test: 		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += image/library/libjpeg
+REQUIRED_PACKAGES += image/library/libpng
+REQUIRED_PACKAGES += image/library/libtiff
+REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/expat
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/sdl
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/c++-runtime
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += x11/library/libsm
+REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxcursor
+REQUIRED_PACKAGES += x11/library/libxinerama
+REQUIRED_PACKAGES += x11/library/libxxf86vm

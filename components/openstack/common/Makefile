@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -29,7 +29,7 @@ COMPONENT_VERSION=	2013.2.3
 COMPONENT_PROJECT_URL=	http://www.openstack.org/
 IPS_COMPONENT_VERSION=  0.$(COMPONENT_VERSION)
 
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
@@ -55,7 +55,3 @@ clean::
 	$(RM) -r $(SOURCE_DIR)/build
 
 test:		$(NO_TESTS)
-
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk

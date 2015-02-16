@@ -20,8 +20,16 @@
 #
 
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
+# There are a large number of macros in the GCB code written
+# specifically for GCC's preprocessor. Studio does not expand
+# these macros the same way GCC does, and the resulting gdb is
+# not usable. Building gdb with a GCC >= 4.7.2 produces very
+# good results, even on SPARC.
+COMPILER=gcc
+GCCHOME=/usr/gcc/4.7
 
 include ../../make-rules/shared-macros.mk
 
@@ -37,17 +45,10 @@ COMPONENT_BUGDB=	utility/gdb
 
 TPNO=			17258
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-# There are a large number of macros in the GCB code written
-# specifically for GCC's preprocessor. Studio does not expand
-# these macros the same way GCC does, and the resulting gdb is
-# not usable. Building gdb with a GCC >= 4.7.2 produces very
-# good results, even on SPARC.
-COMPILER=gcc
-GCCHOME=/usr/gcc/4.7
 
 # GDB wants the GNU utilities
 PATH=/usr/gnu/bin:$(GCCHOME)/bin:/usr/bin:/usr/perl5/bin
@@ -139,6 +140,15 @@ install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += compress/xz
+REQUIRED_PACKAGES += library/expat
+REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += library/readline
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += runtime/python-26
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/linker
+REQUIRED_PACKAGES += text/texinfo

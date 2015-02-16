@@ -27,7 +27,7 @@
 # Rules and Macros for generating an IPS package manifest and publishing an
 # IPS package to a pkg depot.
 #
-# To use these rules, include ../make-rules/ips.mk in your Makefile
+# To use these rules, include $(WS_MAKE_RULES)/ips.mk in your Makefile
 # and define an "install" target appropriate to building your component.
 # Ex:
 #
@@ -55,6 +55,8 @@ PKGMANGLE =	$(WS_TOOLS)/userland-mangler
 # use the explicit format version argument below.  If this behavior is
 # changed, then the -f argument below can be dropped.
 PKGFMT_CHECK_ARGS =	-c -fv2
+
+WS_TRANSFORMS =	$(WS_TOP)/transforms
 
 # Package headers should all pretty much follow the same format
 METADATA_TEMPLATE =		$(WS_TOP)/transforms/manifest-metadata-template
@@ -230,7 +232,7 @@ $(foreach ver,$(PYTHON_VERSIONS),$(eval $(call python-manifest-rule,$(ver))))
 # appropriate conditional dependencies into a python library's
 # runtime-version-generic package to pull in the version-specific bits when the
 # corresponding version of python is on the system.
-$(BUILD_DIR)/mkgeneric-python: $(WS_TOP)/make-rules/shared-macros.mk
+$(BUILD_DIR)/mkgeneric-python: $(WS_MAKE_RULES)/shared-macros.mk
 	$(RM) $@
 	$(foreach ver,$(shell echo $(PYTHON_VERSIONS) | tr -d .), \
 		$(call mkgeneric,runtime/python,$(ver)))
@@ -264,7 +266,7 @@ $(foreach ver,$(PERL_VERSIONS),$(eval $(call perl-manifest-rule,$(ver))))
 # appropriate conditional dependencies into a perl library's
 # runtime-version-generic package to pull in the version-specific bits when the
 # corresponding version of perl is on the system.
-$(BUILD_DIR)/mkgeneric-perl: $(WS_TOP)/make-rules/shared-macros.mk
+$(BUILD_DIR)/mkgeneric-perl: $(WS_MAKE_RULES)/shared-macros.mk
 	$(RM) $@
 	$(foreach ver,$(shell echo $(PERL_VERSIONS) | tr -d .), \
 		$(call mkgeneric,runtime/perl,$(ver)))
@@ -303,7 +305,7 @@ $(foreach ver,$(RUBY_VERSIONS),\
 # appropriate conditional dependencies into a ruby library's
 # runtime-version-generic package to pull in the version-specific bits when the
 # corresponding version of ruby is on the system.
-$(BUILD_DIR)/mkgeneric-ruby: $(WS_TOP)/make-rules/shared-macros.mk
+$(BUILD_DIR)/mkgeneric-ruby: $(WS_MAKE_RULES)/shared-macros.mk
 	$(RM) $@
 	$(foreach ver,$(RUBY_VERSIONS),\
 		$(call mkgeneric,runtime/ruby,$(shell echo $(ver) | \
@@ -347,41 +349,38 @@ $(MANIFEST_BASE)-%.depend:	$(MANIFEST_BASE)-%.mangled
 	$(ENV) $(COMPONENT_PUBLISH_ENV) $(PKGDEPEND) generate \
 	    $(PKGDEPEND_GENERATE_OPTIONS) $< >$@
 
-# These files should contain a list of packages that the component is known to
-# depend on.  Using resolve.deps is not required, but significantly speeds up
-# the "pkg resolve" step.
-EXTDEPFILES ?= $(wildcard $(sort $(addsuffix ../resolve.deps, $(dir $(DEPENDED)))))
+# pkgdepend resolve builds a map of all installed packages by default.  This
+# makes dependency resolution particularly slow.  We can dramatically improve
+# performance here by creating a file with a list of packages that we know
+# are needed, dramatically reducing the overhead involved in creating and
+# searching this map.
+#
+# Generate a resolve.deps file from the dependencies in the Makefile and
+# fragments that it uses.
+RESOLVE_DEPS=$(BUILD_DIR)/resolve.deps
 
-# If the package contains no automatically discoverable dependencies, then
-# we can speed up resolution by providing a dummy resolve.deps to skip loading
-# all the possible packages for resolution.  Unfortunately, pkgdepend does not
-# accept a completely empty resolve.deps, so we pass the userland-incorporation
-# as a quick, content-free placeholder.
-NULLDEPFILE = $(BUILD_DIR)/null-resolve.deps
-
-# This is a target that should only be run by hand, and not something that
-# .resolved-$(MACH) should depend on.
-sample-resolve.deps:
-	echo "<transform depend type=(require|require-any) -> print %(fmri)>" > rd-trans
-	for i in build/*.depend; do \
-		$(PKGMOGRIFY) -O /dev/null $$i rd-trans | tr " " "\n" | sort -u > m1; \
-		$(PKGMOGRIFY) -O /dev/null $$i.res rd-trans | tr " " "\n" | sort -u > m2; \
-		comm -13 m1 m2; \
-	done | sed -e 's/@[^ ]*//g' -e 's,pkg:/,,g' | sort -u > resolve.deps
-	$(RM) rd-trans m1 m2
-	if [[ ! -s resolve.deps ]]; then \
-		echo "No computed dependencies found; removing empty resolve.deps."; \
-		$(RM) resolve.deps; \
-	fi
-
+$(RESOLVE_DEPS):	$(MAKEFILE_PREREQ) $(BUILD_DIR)
+	@for pkg in $(REQUIRED_PACKAGES:%=/%) ; do \
+	    echo $${pkg} ; \
+	done | sort -u >$@
 
 # resolve the dependencies all at once
-$(BUILD_DIR)/.resolved-$(MACH):	$(DEPENDED)
-	if [[ "$(EXTDEPFILES)" == "$(NULLDEPFILE)" ]] ; then \
-	  echo 'consolidation/userland/userland-incorporation' > $(NULLDEPFILE) ; \
-	fi
-	$(PKGDEPEND) resolve $(EXTDEPFILES:%=-e %) -m $(DEPENDED)
+$(BUILD_DIR)/.resolved-$(MACH):	$(DEPENDED) $(RESOLVE_DEPS)
+	$(PKGDEPEND) resolve $(RESOLVE_DEPS:%=-e %) -m $(DEPENDED)
 	$(TOUCH) $@
+
+#
+# Generate a set of REQUIRED_PACKAGES based on what is needed to for pkgdepend
+# to resolve properly.  Automatically append this to your Makefile for the truly
+# lazy among us.  This is only a piece of the REQUIRED_PACKAGES puzzle.
+# You must still include packages for tools you build and test with.
+#
+REQUIRED_PACKAGES::	$(RESOLVED)
+	$(GMAKE) RESOLVE_DEPS= $(BUILD_DIR)/.resolved-$(MACH)
+	@echo "# Auto-generated contents below.  Please manually verify and remove this comment" >>Makefile
+	@$(PKGMOGRIFY) $(WS_TRANSFORMS)/$@ $(RESOLVED) | \
+		$(GSED) -e '/^[\t ]*$$/d' -e '/^#/d' | sort -u >>Makefile
+	@echo "*** Please edit your Makefile and verify the new content at the end ***"
 
 # lint the manifests all at once
 $(BUILD_DIR)/.linted-$(MACH):	$(BUILD_DIR)/.resolved-$(MACH)
@@ -440,7 +439,7 @@ install-packages:	publish
 
 $(RESOLVED):	install
 
-canonical-manifests:	$(CANONICAL_MANIFESTS) Makefile $(PATCHES)
+canonical-manifests:	$(CANONICAL_MANIFESTS) $(MAKEFILE_PREREQ) $(PATCHES)
 ifeq	($(strip $(CANONICAL_MANIFESTS)),)
 	# If there were no canonical manifests in the workspace, nothing will
 	# be published and we should fail.  A sample manifest can be generated
@@ -453,7 +452,7 @@ endif
 
 # This converts required paths to containing package names for be able to
 # properly setup the build environment for a component.
-required-pkgs.mk:	Makefile
+required-pkgs.mk:	$(MAKEFILE_PREREQ)
 	@echo "generating $@ from Makefile REQUIRED_* data"
 	@pkg search -H -l '<$(DEPENDS:%=% OR) /bin/true>' \
 		| sed -e 's/pkg:\/\(.*\)@.*/REQUIRED_PKGS += \1/g' >$@

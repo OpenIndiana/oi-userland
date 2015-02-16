@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2006, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2006, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -60,9 +60,9 @@ CFLAGS += -erroff=E_TRAILING_COMMA_IN_ENUM
 CFLAGS += -erroff=E_STATEMENT_NOT_REACHED
 CFLAGS += -erroff=E_EMPTY_TRANSLATION_UNIT
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS +=	--with-cflags="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	--enable-opaque-lsa
@@ -79,12 +79,15 @@ CONFIGURE_OPTIONS +=	--enable-user=root
 CONFIGURE_OPTIONS +=	--enable-group=root
 CONFIGURE_OPTIONS +=	--enable-solaris
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
 configure:	$(CONFIGURE_32)
 
 build:		$(BUILD_32)
 install:	$(INSTALL_32)
 test:	$(NO_TESTS)
 
-include ../../make-rules/depend.mk
+
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/core-os
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/network

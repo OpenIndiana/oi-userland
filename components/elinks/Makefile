@@ -20,6 +20,10 @@
 #
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
+# Because the Studio compiler generates thousands of lines of warnings.
+COMPILER=gcc
+
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		elinks
@@ -34,12 +38,9 @@ COMPONENT_BUGDB=	utility/elinks
 
 TPNO=			8340
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
-
-# Because the Studio compiler generates thousands of lines of warnings.
-COMPILER =			gcc
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Always show the build and link lines for easier debugging.
 COMPONENT_BUILD_ARGS +=		V=1
@@ -75,6 +76,11 @@ install:	$(INSTALL_64)
 
 test:		$(TEST_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += compress/bzip2
+REQUIRED_PACKAGES += library/expat
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/linker
+REQUIRED_PACKAGES += x11/library/libx11

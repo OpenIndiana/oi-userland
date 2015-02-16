@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -44,9 +44,9 @@ COMPONENT_ARCHIVE_HASH_1= \
 # internal servers.
 COMPONENT_ARCHIVE_URL_1= $(EXTERNAL_ARCHIVE_MIRROR)/$(COMPONENT_ARCHIVE_1)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 include ../common.mk
 include ./php.mk
@@ -237,7 +237,3 @@ test:		$(TEST_32)
 $(BUILD_DIR_32)/.configured:	../imap/build/$(MACH32)/.built
 PHP-NSAPI_INSTALL:		../php-nsapi/build/$(MACH32)/.installed
 PHP-CGI_INSTALL:		../php-cgi/build/$(MACH32)/.installed
-
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk

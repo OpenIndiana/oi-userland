@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -34,11 +34,8 @@ COMPONENT_BUGDB=	utility/foomatic
 
 TPNO=			6400
 
-include ../../../make-rules/prep.mk
-include ../../../make-rules/ips.mk
-
-# This package delivers only data files and has no dependencies.
-EXTDEPFILES = $(NULLDEPFILE)
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CACHE_FILE=$(PROTOUSRLIBDIR)/lp/caches/SUNWfoomatic.cache
 
@@ -67,4 +64,3 @@ test:	$(NO_TESTS)
 clean::
 	$(RM) -r $(BUILD_DIR)
 
-include ../../../make-rules/depend.mk

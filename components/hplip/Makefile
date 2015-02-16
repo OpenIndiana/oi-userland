@@ -19,7 +19,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -34,9 +34,9 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL=  http://sourceforge.net/projects/hplip/files/hplip/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/hplip
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
@@ -90,8 +90,6 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 $(HPLIP_VARIANT)/.built: COMPONENT_PREP_ACTION = \
 		(cd $(@D) ; autoconf )
 
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
-
 #
 # Since it looks like you can't build HPLIP with both HPIJS and CUPS support
 # and seperate the HPIJS and CUPS PPD data, we need to replicate the code and
@@ -115,4 +113,17 @@ install: $(VARIANTS:%=%/.installed)
 # empty test target
 test:	$(NO_TESTS)
 
-include ../../make-rules/depend.mk
+
+REQUIRED_PACKAGES += image/library/libjpeg
+REQUIRED_PACKAGES += library/print/cups-libs
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += print/cups
+REQUIRED_PACKAGES += runtime/perl-512
+REQUIRED_PACKAGES += runtime/python-26
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/c++-runtime
+REQUIRED_PACKAGES += system/library/libdbus
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/library/usb/libusb
+REQUIRED_PACKAGES += system/linker
+REQUIRED_PACKAGES += system/management/snmp/net-snmp

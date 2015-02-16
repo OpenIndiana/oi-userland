@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -28,16 +28,11 @@ COMPONENT_VERSION=	1.9
 COMPONENT_PROJECT_URL=	http://www.ruby-lang.org/
 COMPONENT_BUGDB=	utility/ruby
 
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
-
-# This package delivers no files and has no dependencies.
-EXTDEPFILES = $(NULLDEPFILE)
-LICENSE_TRANSFORMS=
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # nothing to download or build; just publish the package
-download prep configure build install test:
-
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
+download::
+prep configure build install test:
 
 clobber:	clean

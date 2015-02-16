@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -40,9 +40,9 @@ TPNO=			7909
 # Syntax issues: not Python 3 ready.
 PYTHON_VERSIONS = 2.7 2.6
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/setup.py.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 TEST_PYTHONPATH.32 = $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/PIL
 TEST_PYTHONPATH.64 = $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/PIL:$(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/PIL/64
@@ -60,6 +60,10 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += image/library/libjpeg
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += runtime/tcl-8
+REQUIRED_PACKAGES += runtime/tk-8
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/freetype-2

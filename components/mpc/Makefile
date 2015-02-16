@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -37,9 +37,9 @@ COMPONENT_BUGDB=	utility/mpc
 
 TPNO=			4706
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 export SHELL
 SHELL=/bin/sh
@@ -49,8 +49,6 @@ CFLAGS +=		`pkg-config --cflags libmpfr`
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=		--disable-static
-
-include ../../make-rules/shared-targets.mk
 
 COMPONENT_TEST_DIR =		$(BUILD_DIR)/$(MACH$(BITS))/tests
 
@@ -66,6 +64,7 @@ install:	$(INSTALL_32_and_64)
 
 test:		install $(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += library/gmp
+REQUIRED_PACKAGES += library/mpfr
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math

@@ -37,16 +37,13 @@ TZFILES= africa antarctica asia australasia etcetera europe \
 	 factory northamerica pacificnew \
 	 southamerica backward
 
-include ../../make-rules/ips.mk
-
-# This package delivers only data files and has no dependencies.
-EXTDEPFILES = $(NULLDEPFILE)
+include $(WS_MAKE_RULES)/ips.mk
 
 POFILE=zoneinfo.po
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-download:
+download::
 	@echo "Nothing to download."
 
 prep:
@@ -65,5 +62,3 @@ clean:
 	$(RM) -r $(BUILD_DIR) $(POFILE)
 
 clobber: clean
-
-include ../../make-rules/depend.mk

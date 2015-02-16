@@ -34,9 +34,9 @@ COMPONENT_BUGDB=	utility/gnu-which
 
 TPNO=	9202
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/bin
 
@@ -55,8 +55,15 @@ build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
 
-test:		$(NO_TESTS)
+test:		$(TEST_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
+REQUIRED_PACKAGES += system/library
+# Auto-generated contents below.  Please manually verify and remove this comment
 
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += system/library
+# Auto-generated contents below.  Please manually verify and remove this comment
+
+REQUIRED_PACKAGES += system/library
+# Auto-generated contents below.  Please manually verify and remove this comment
+
+REQUIRED_PACKAGES += system/library

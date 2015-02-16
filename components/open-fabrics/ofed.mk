@@ -18,16 +18,13 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 # Since we are building these as a set and not packaging them individually at
 # this time, each OFED component should install in a common prototype directory
 # so we override PROTO_DIR
 PROTO_DIR = $(WS_COMPONENTS)/open-fabrics/prototype/$(MACH)
-
-# OFED only builds with GCC
-COMPILER=gcc3
 
 PATH=$(GCC3_ROOT)/bin:/usr/bin:/usr/gnu/bin
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)

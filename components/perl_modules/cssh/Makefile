@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -36,9 +36,9 @@ COMPONENT_BUGDB=	utility/cssh
 
 TPNO=			13257
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/ips.mk
-include $(WS_TOP)/make-rules/makemaker.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/makemaker.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
@@ -48,6 +48,12 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += library/perl-5/perl-x11-protocol
+REQUIRED_PACKAGES += library/perl-5/perl-x11-protocol-512
+REQUIRED_PACKAGES += library/perl-5/perl-x11-protocol-516
+REQUIRED_PACKAGES += library/perl5/perl-tk
+REQUIRED_PACKAGES += library/perl5/perl-tk-512
+REQUIRED_PACKAGES += library/perl5/perl-tk-516
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/library

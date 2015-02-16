@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -30,7 +30,7 @@ TPNO_PHP_SUHOSIN=	17131
 TPNO_PHP_TCPWRAP=	17132
 TPNO_PHP_XDEBUG=	17133
 
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 ##
 ## This Makefile for local usage only.
@@ -166,7 +166,8 @@ build:		install
 
 .DEFAULT:	publish
 
-download prep install test publish: $(SUBDIRS)
+download::	$(SUBDIRS)
+prep install test publish: $(SUBDIRS)
 
 clean:		$(SUBDIRS)
 	$(RM) -r $(BUILD_DIR)
@@ -194,3 +195,28 @@ xdebug:		php-sapi
 xdebug-zts:	php-sapi php-nsapi
 
 FORCE:
+
+REQUIRED_PACKAGES += compress/bzip2
+REQUIRED_PACKAGES += developer/lexer/flex
+REQUIRED_PACKAGES += developer/parser/bison
+REQUIRED_PACKAGES += database/mysql-55/library
+REQUIRED_PACKAGES += image/library/libjpeg
+REQUIRED_PACKAGES += image/library/libpng
+REQUIRED_PACKAGES += library/libidn
+REQUIRED_PACKAGES += library/libtool/libltdl
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/libxslt
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += shell/bash
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/freetype-2
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/library/security/libmcrypt
+REQUIRED_PACKAGES += system/linker
+REQUIRED_PACKAGES += system/management/snmp/net-snmp
+REQUIRED_PACKAGES += text/tidy
+REQUIRED_PACKAGES += web/curl
+REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxpm

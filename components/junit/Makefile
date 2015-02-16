@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -34,9 +34,9 @@ COMPONENT_BUGDB=	utility/junit
 
 TPNO=                   9070
 
-include ../../make-rules/prep.mk
-include ../../make-rules/ant.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ant.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # These ARGS override what is set in build.xml
 COMPONENT_BUILD_ARGS 	+= -Ddist=${PROTO_DIR}
@@ -61,6 +61,5 @@ install:	build
 # OK (22 tests)
 test:		$(NO_TESTS)
 		
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += runtime/java/jre-7

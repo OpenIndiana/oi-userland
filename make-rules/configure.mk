@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 #
@@ -27,7 +27,7 @@
 # uses GNU Make to build the components to take advantage of the viewpath
 # support and build multiple version (32/64 bit) from a shared source.
 #
-# To use these rules, include ../make-rules/configure.mk in your Makefile
+# To use these rules, include $(WS_MAKE_RULES)/configure.mk in your Makefile
 # and define "build", "install", and "test" targets appropriate to building
 # your component.
 # Ex:
@@ -168,3 +168,12 @@ endif
 
 clean::
 	$(RM) -r $(BUILD_DIR) $(PROTO_DIR)
+
+REQUIRED_PACKAGES += developer/build/autoconf
+REQUIRED_PACKAGES += developer/build/automake
+REQUIRED_PACKAGES += developer/build/gnu-make
+REQUIRED_PACKAGES += developer/build/libtool
+REQUIRED_PACKAGES += developer/build/pkg-config
+REQUIRED_PACKAGES += developer/macro/gnu-m4
+REQUIRED_PACKAGES += file/gnu-coreutils
+REQUIRED_PACKAGES += library/libtool/libltdl

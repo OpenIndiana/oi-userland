@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -37,9 +37,9 @@ COMPONENT_BUGDB=	utility/expect
 
 TPNO=			5552
 
-include ../../../make-rules/prep.mk
-include ../../../make-rules/configure.mk
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 SCRIPTS = timed-run timed-read ftp-rfc autopasswd lpunlock weather \
           passmass rftp kibitz rlogin-cwd xpstat tkpasswd dislocate xkibitz \
@@ -78,6 +78,9 @@ $(CONFIGURE_32):	../tcl/build/$(MACH32)/.built
 
 $(CONFIGURE_64):	../tcl/build/$(MACH64)/.built
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../../make-rules/depend.mk
+REQUIRED_PACKAGES += runtime/tcl-8
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/linker

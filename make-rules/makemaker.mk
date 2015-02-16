@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 # Perl 5.12 and older are 32-bit only.
@@ -153,3 +153,13 @@ endif
 
 clean:: 
 	$(RM) -r $(BUILD_DIR) $(PROTO_DIR)
+
+ifneq ($(findstring 5.12, $(PERL_VERSIONS)),)
+REQUIRED_PACKAGES += runtime/perl-512
+endif
+ifneq ($(findstring 5.12-mt, $(PERL_VERSIONS)),)
+REQUIRED_PACKAGES += runtime/perl-threaded-512
+endif
+ifneq ($(findstring 5.16, $(PERL_VERSIONS)),)
+REQUIRED_PACKAGES += runtime/perl-516
+endif

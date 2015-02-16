@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 ANT=/usr/bin/ant
@@ -84,3 +84,5 @@ endif
 
 clean::
 	$(RM) -r $(SOURCE_DIR) $(BUILD_DIR)
+
+REQUIRED_PACKAGES += developer/build/ant

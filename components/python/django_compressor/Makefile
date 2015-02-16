@@ -37,9 +37,9 @@ TPNO=			14503
 # Depends on django, which is not Python 3 ready.
 PYTHON_VERSIONS=	2.7 2.6
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/setup.py.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
@@ -50,7 +50,3 @@ install:	$(INSTALL_NO_ARCH)
 
 # unittests require django-discover-runner which is not integrated
 test:		$(NO_TESTS)
-
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk

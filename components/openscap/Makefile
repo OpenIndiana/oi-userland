@@ -22,6 +22,8 @@
 # Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
+COMPILER =	gcc
+
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openscap
@@ -36,16 +38,15 @@ COMPONENT_BUGDB=        utility/openscap
 
 TPNO =			20626
 
-COMPILER =		gcc
 CFLAGS+=		-std=c99
 CFLAGS+=		-DNDEBUG
 CFLAGS+=		-DOSCAP_THREAD_SAFE
 
 PYTHON_VERSIONS=	2.7 2.6
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PERL_VERSION.32 = 5.12
 PERL_VERSION.64 = 5.16
@@ -110,6 +111,24 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += compress/bzip2
+REQUIRED_PACKAGES += developer/swig
+REQUIRED_PACKAGES += gnome/config/gconf
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/libxslt
+REQUIRED_PACKAGES += library/openldap
+REQUIRED_PACKAGES += library/pcre
+REQUIRED_PACKAGES += runtime/perl-512
+REQUIRED_PACKAGES += runtime/perl-516
+REQUIRED_PACKAGES += runtime/python-26
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += security/compliance/openscap
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/gcc-3-runtime
+REQUIRED_PACKAGES += system/library/gcc-45-runtime
+REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/library/security/libgcrypt
+REQUIRED_PACKAGES += system/zones
+REQUIRED_PACKAGES += web/curl

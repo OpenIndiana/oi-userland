@@ -18,8 +18,12 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
+# OFED only builds with GCC
+COMPILER=gcc3
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ibutils
@@ -30,8 +34,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:8db2fcb20102c37e7037826c58b899092df034aac870d3d50a13263746f17f18
 COMPONENT_ARCHIVE_URL=	http://www.openfabrics.org/downloads/ibutils/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
 include ../ofed.mk
 
 LIBS +=	-lsocket -lnsl -lopensm -losmvendor -losmcomp -libumad -libmad
@@ -100,8 +104,5 @@ build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
 test:		$(NO_TESTS)
 
-include $(WS_TOP)/make-rules/depend.mk

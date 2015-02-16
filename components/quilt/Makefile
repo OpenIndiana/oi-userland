@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -39,9 +39,9 @@ COMPONENT_BUGDB=	utility/quilt
 
 TPNO=			9108
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
     ($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -84,6 +84,15 @@ install:	$(INSTALL_64)
 
 test:		$(TEST_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += archiver/gnu-tar
+REQUIRED_PACKAGES += file/gnu-coreutils
+REQUIRED_PACKAGES += file/gnu-findutils
+REQUIRED_PACKAGES += runtime/perl-512
+REQUIRED_PACKAGES += service/network/smtp/sendmail
+REQUIRED_PACKAGES += shell/bash
+REQUIRED_PACKAGES += text/gawk
+REQUIRED_PACKAGES += text/gnu-diffutils
+REQUIRED_PACKAGES += text/gnu-grep
+REQUIRED_PACKAGES += text/gnu-patch
+REQUIRED_PACKAGES += text/gnu-sed

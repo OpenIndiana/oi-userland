@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -40,9 +40,9 @@ COMPONENT_BUGDB=	utility/parallel
 
 TPNO=			8651
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Set PATH to find /usr/perl5/bin/pod2man, so that the man pages can be
 # automatically generated
@@ -59,4 +59,7 @@ install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
-include ../../make-rules/depend.mk
+
+REQUIRED_PACKAGES += runtime/perl-512
+REQUIRED_PACKAGES += runtime/perl-516
+REQUIRED_PACKAGES += shell/which

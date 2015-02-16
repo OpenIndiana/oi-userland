@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -38,9 +38,9 @@ TPNO_MOD_SED=		8897
 
 CONFIGURE_DEFAULT_DIRS=no
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 ASLR_MODE = $(ASLR_ENABLE)
 
@@ -128,6 +128,21 @@ install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += library/apr-15
+REQUIRED_PACKAGES += library/apr-util-15
+REQUIRED_PACKAGES += library/apr-util-15/apr-ldap
+REQUIRED_PACKAGES += library/apr-util-15/dbd-mysql
+REQUIRED_PACKAGES += library/apr-util-15/dbd-sqlite
+REQUIRED_PACKAGES += library/openldap
+REQUIRED_PACKAGES += library/pcre
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += runtime/perl-512
+REQUIRED_PACKAGES += runtime/perl-516
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/core-os
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/library/security/gss
+REQUIRED_PACKAGES += system/network

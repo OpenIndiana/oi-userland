@@ -37,10 +37,10 @@ COMPONENT_BUGDB=	library/tidy
 
 TPNO=			9098
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
-include ../../make-rules/lint-libraries.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/lint-libraries.mk
 
 #tree.js, treeview.js, tidyenum_8h.html are installed 
 #from files directory manually as doxygen didn't generate them.
@@ -83,6 +83,5 @@ install:	$(INSTALL_32_and_64) $(PROTODOCDIR)
 
 test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += developer/documentation-tool/doxygen
+REQUIRED_PACKAGES += system/library

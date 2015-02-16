@@ -20,8 +20,10 @@
 #
 
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
+COMPILER =	gcc
 
 include ../../make-rules/shared-macros.mk
 
@@ -38,9 +40,9 @@ COMPONENT_BUGDB=	utility/webalizer
 
 TPNO=			9201
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -49,8 +51,6 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 COMPONENT_PRE_BUILD_ACTION += \
 	$(GSED) -i -e 's?lib/httpd/logs/?apache2/2.2/logs/?' \
 		$(SOURCE_DIR)/sample.conf
-
-COMPILER =	gcc
 
 CONFIGURE_OPTIONS +=	--enable-dns
 CONFIGURE_OPTIONS +=	--with-gd=/usr/include/gd2
@@ -76,6 +76,9 @@ install:        $(INSTALL_64)
 
 test:           $(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += database/berkeleydb-5
+REQUIRED_PACKAGES += library/gd
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math

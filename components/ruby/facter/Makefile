@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -38,9 +38,9 @@ TPNO=                   18642
 COMPONENT_POST_UNPACK_ACTION= \
     $(GEM) spec $(COMPONENT_ARCHIVE) > $(SOURCE_DIR)/$(GEMSPEC)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/ips.mk
-include $(WS_TOP)/make-rules/gem.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/gem.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
@@ -54,6 +54,6 @@ install:	$(INSTALL_64)
 # Disable the tests until these rubygems are available.
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += runtime/ruby-19
+REQUIRED_PACKAGES += system/core-os

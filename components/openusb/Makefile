@@ -18,8 +18,11 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
+COMPILER =	gcc
+
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openusb
@@ -35,16 +38,14 @@ COMPONENT_BUGDB=	library/libopenusb
 
 TPNO=			8843
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
         ($(CLONEY) $(SOURCE_DIR) $(@D))
-
-COMPILER =	gcc
 
 PATCH_LEVEL = 1
 
@@ -61,6 +62,12 @@ install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += system/hal
+REQUIRED_PACKAGES += system/io/usb
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
+REQUIRED_PACKAGES += system/library/libdbus
+REQUIRED_PACKAGES += system/library/libdbus-glib
+REQUIRED_PACKAGES += system/linker

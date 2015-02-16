@@ -20,6 +20,10 @@
 #
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
+# Built in SFW with gcc and builds cleanly now only with gcc
+COMPILER =	gcc
+
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		guile
@@ -34,12 +38,10 @@ COMPONENT_BUGDB=	utility/guile
 
 TPNO=			8939
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-# Built in SFW with gcc and builds cleanly now only with gcc
-COMPILER =	gcc
 CONFIGURE_OPTIONS +=	CPPFLAGS="-I/usr/include/gmp -D__USE_LEGACY_PROTOTYPES__"
 CONFIGURE_OPTIONS +=	--disable-static 
 CONFIGURE_OPTIONS +=	--disable-error-on-warning
@@ -69,6 +71,13 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += library/gmp
+REQUIRED_PACKAGES += library/libtool/libltdl
+REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += library/readline
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/gcc-3-runtime
+REQUIRED_PACKAGES += system/library/gcc-45-runtime
+REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
+REQUIRED_PACKAGES += system/library/math

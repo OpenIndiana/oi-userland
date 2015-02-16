@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 APACHE_22_USR_PREFIX=/usr/apache2/2.2
@@ -76,3 +76,6 @@ PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)
 PATH=$(PARFAIT_TOOLS):$(SPRO_VROOT)/bin:/usr/bin
 endif
+
+REQUIRED_PACKAGES += web/server/apache-22
+REQUIRED_PACKAGES += web/server/apache-24

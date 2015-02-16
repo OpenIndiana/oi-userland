@@ -35,10 +35,10 @@ COMPONENT_BUGDB=	utility/sendmail
 
 TPNO=			7435
 
-include ../../make-rules/prep.mk
-include ../../make-rules/justmake.mk
-include ../../make-rules/ips.mk
-include ../../make-rules/lint-libraries.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/lint-libraries.mk
 
 # Although we build 32_and_64, everything except libmilter just wants 64,
 # which is why the macros just below only have values for 64.  libmilter
@@ -136,6 +136,12 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += database/berkeleydb-5
+REQUIRED_PACKAGES += library/libmilter
+REQUIRED_PACKAGES += library/openldap
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += runtime/perl-512
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/core-os
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/network

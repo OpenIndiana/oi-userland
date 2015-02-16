@@ -18,8 +18,11 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
+COMPILER =	gcc
+
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rsyslog
@@ -33,11 +36,9 @@ COMPONENT_BUGDB=	service/rsyslog
 
 TPNO=			7585
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
-
-COMPILER =	gcc
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # This is needed for things to be built correctly.
 CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
@@ -65,9 +66,17 @@ install:	$(INSTALL_64)
 
 test:		$(TEST_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
 PKG_PROTO_DIRS +=	$(COMPONENT_DIR)/files
 PKG_PROTO_DIRS +=	$(COMPONENT_SRC)
 
-include ../../make-rules/depend.mk
+
+REQUIRED_PACKAGES += file/gnu-coreutils
+REQUIRED_PACKAGES += library/gnutls
+REQUIRED_PACKAGES += library/libee
+REQUIRED_PACKAGES += library/libestr
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/gcc-3-runtime
+REQUIRED_PACKAGES += system/library/gcc-45-runtime
+REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime

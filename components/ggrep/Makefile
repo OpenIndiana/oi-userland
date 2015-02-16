@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -36,9 +36,9 @@ COMPONENT_BUGDB=	utility/ggrep
 
 TPNO=			18300
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # We need to be able to return from void functions
 CFLAGS	+=			$(studio_FEATURES_EXTENSIONS)
@@ -69,6 +69,7 @@ install:	$(INSTALL_64)
 # test-mbrtowc3.sh, test-mbrtowc4.sh, test-mbsrtowcs4.sh
 test:		$(TEST_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += library/pcre
+REQUIRED_PACKAGES += shell/bash
+REQUIRED_PACKAGES += system/library

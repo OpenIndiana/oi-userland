@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -41,9 +41,9 @@ COMPONENT_BUGDB=	utility/ruby
 
 TPNO=			15969
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/ips.mk
-include $(WS_TOP)/make-rules/configure.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/configure.mk
 
 # COMPONENT_VERSION <major>.<minor>.<teeny>
 # is transformed into <major>.<minor> for RUBY_VER.
@@ -147,8 +147,6 @@ ASLR_MODE =		$(ASLR_DISABLE)
 CLEAN_PATHS +=		Solaris/gem.1 Solaris/rbconfig.sedscript.mod \
 			Solaris/ruby.1.sedscript.mod
 
-include $(WS_TOP)/make-rules/shared-targets.mk
-
 # common targets
 
 configure:	$(CONFIGURE_64)
@@ -159,6 +157,16 @@ install:	build $(INSTALL_64)
 
 test:	$(TEST_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += library/database/gdbm
+REQUIRED_PACKAGES += library/libffi
+REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += library/readline
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += runtime/tcl-8
+REQUIRED_PACKAGES += runtime/tk-8
+REQUIRED_PACKAGES += system/core-os
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/linker
+REQUIRED_PACKAGES += x11/library/libx11

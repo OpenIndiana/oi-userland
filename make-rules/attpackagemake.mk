@@ -18,13 +18,13 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 #
 # Rules and Macros for building opens source software that uses AT&T's package
 # tool.
 #
-# To use these rules, include ../make-rules/attpackagemake.mk in your Makefile
+# To use these rules, include $(WS_MAKE_RULES)/attpackagemake.mk in your Makefile
 # and define "build", "install" targets appropriate to building your component.
 # Ex:
 #

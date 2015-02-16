@@ -34,9 +34,9 @@ COMPONENT_BUGDB=	utility/wireshark
 
 TPNO=			21136
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Micro version for easy libraries packaging
 MICRO_VERSION:= $(shell echo $(COMPONENT_VERSION) | awk -F. '{ print $$3 }')
@@ -85,6 +85,22 @@ install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += developer/lexer/flex
+REQUIRED_PACKAGES += developer/parser/bison
+REQUIRED_PACKAGES += diagnostic/wireshark/wireshark-common
+REQUIRED_PACKAGES += library/desktop/cairo
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/gnutls
+REQUIRED_PACKAGES += library/security/libgpg-error
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += runtime/lua
+REQUIRED_PACKAGES += service/security/kerberos-5
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/libpcap
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/library/security/libgcrypt
+REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxcursor

@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 # One must do all unpack and patch in sequence.
@@ -64,7 +64,7 @@ endif
 define download-rule
 ARCHIVES += $$(COMPONENT_ARCHIVE$(1))
 CLOBBER_PATHS += $$(COMPONENT_ARCHIVE$(1))
-$$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1)):	Makefile
+$$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1)):	$(MAKEFILE_PREREQ)
 	$$(FETCH) --file $$@ \
 		$$(COMPONENT_ARCHIVE_URL$(1):%=--url %) \
 		$$(COMPONENT_ARCHIVE_HASH$(1):%=--hash %) \
@@ -97,7 +97,7 @@ endef
 
 # Template for unpacking rules.
 define unpack-rule
-$$(SOURCE_DIR)/.unpacked$(1): download Makefile $$(PATCHDIR_PATCHES$(1)) 
+$$(SOURCE_DIR)/.unpacked$(1): download $(MAKEFILE_PREREQ) $$(PATCHDIR_PATCHES$(1)) 
 	$$(RM) -r $$(COMPONENT_SRC$(1))
 	$$(UNPACK) $$(UNPACK_ARGS$(1)) \
 		$$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1))
@@ -142,3 +142,13 @@ clean::
 
 clobber::	clean
 	$(RM) -r $(CLOBBER_PATHS)
+
+REQUIRED_PACKAGES += archiver/gnu-tar
+REQUIRED_PACKAGES += compress/bzip2
+REQUIRED_PACKAGES += compress/gzip
+REQUIRED_PACKAGES += compress/p7zip
+REQUIRED_PACKAGES += compress/unzip
+REQUIRED_PACKAGES += compress/xz
+REQUIRED_PACKAGES += developer/java/jdk
+REQUIRED_PACKAGES += runtime/ruby
+REQUIRED_PACKAGES += text/gnu-patch

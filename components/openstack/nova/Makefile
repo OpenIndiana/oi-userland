@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -39,9 +39,9 @@ IPS_COMPONENT_VERSION=	0.$(COMPONENT_VERSION)
 
 TPNO=			17715
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/setup.py.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
@@ -67,6 +67,18 @@ install:	$(INSTALL_NO_ARCH)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += install/archive
+REQUIRED_PACKAGES += library/python/eventlet-26
+REQUIRED_PACKAGES += library/python/oslo.config-26
+REQUIRED_PACKAGES += library/python/sqlalchemy-migrate-26
+REQUIRED_PACKAGES += library/python/webob-26
+REQUIRED_PACKAGES += runtime/python-26
+REQUIRED_PACKAGES += service/network/evs
+REQUIRED_PACKAGES += system/core-os
+REQUIRED_PACKAGES += system/file-system/zfs
+REQUIRED_PACKAGES += system/library/storage/suri
+REQUIRED_PACKAGES += system/storage/fc-utilities
+REQUIRED_PACKAGES += system/storage/iscsi/iscsi-initiator
+REQUIRED_PACKAGES += terminal/xterm
+REQUIRED_PACKAGES += x11/server/xvnc

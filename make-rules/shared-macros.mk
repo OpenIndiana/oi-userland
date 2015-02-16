@@ -47,13 +47,14 @@ ifeq ($(origin WS_TOP), undefined)
 export WS_TOP :=		$(shell hg root)
 endif
 
-WS_LOGS =	$(WS_TOP)/$(MACH)/logs
-WS_REPO =	$(WS_TOP)/$(MACH)/repo
+WS_MACH =	$(WS_TOP)/$(MACH)
+WS_LOGS =	$(WS_MACH)/logs
+WS_REPO =	$(WS_MACH)/repo
 WS_TOOLS =	$(WS_TOP)/tools
 WS_MAKE_RULES =	$(WS_TOP)/make-rules
 WS_COMPONENTS =	$(WS_TOP)/components
 WS_INCORPORATIONS =	$(WS_TOP)/incorporations
-WS_LINT_CACHE =	$(WS_TOP)/$(MACH)/pkglint-cache
+WS_LINT_CACHE =	$(WS_MACH)/pkglint-cache
 
 # we want our pkg piplines to fail if there is an error
 # (like if pkgdepend fails in the middle of a pipe), but
@@ -66,6 +67,9 @@ build:		SHELLOPTS=
 test:		SHELLOPTS=
 install:	SHELLOPTS=
 publish:	SHELLOPTS=pipefail
+
+# This can be overridden to avoid rebuilding when you touch a Makefile
+MAKEFILE_PREREQ =	Makefile
 
 # some things don't build properly in non-C locales,
 # so lets stay there
@@ -87,7 +91,7 @@ PKG_SOLARIS_VERSION ?= 5.12
 
 include $(WS_MAKE_RULES)/ips-buildinfo.mk
 
-COMPILER =		studio
+COMPILER ?=		studio
 BITS =			32
 
 # If we are building multiple versions of python, make sure that python 2.6
@@ -529,6 +533,7 @@ CAT =		/bin/cat
 SYMLINK =	/bin/ln -s
 ENV =		/usr/bin/env
 INSTALL =	/usr/bin/ginstall
+GNU_GREP =	/usr/gnu/bin/grep
 CHMOD =		/usr/bin/chmod
 NAWK =		/usr/bin/nawk
 TEE =		/usr/bin/tee
@@ -870,3 +875,35 @@ COMPONENT_HOOK ?=	echo $(COMPONENT_NAME) $(COMPONENT_VERSION)
 component-hook:
 	@$(COMPONENT_HOOK)
 
+#
+# Packages with tools that are required to build Userland components
+#
+REQUIRED_PACKAGES += developer/build/gnu-make
+REQUIRED_PACKAGES += developer/build/make
+ifeq ($(COMPILER),gcc3)
+REQUIRED_PACKAGES += developer/gcc-3
+endif
+ifeq ($(COMPILER),gcc)
+REQUIRED_PACKAGES += developer/gcc-47
+endif
+ifeq ($(COMPILER),studio)
+# uncomment this line if you need to install Studio
+#REQUIRED_PACKAGES += developer/solarisstudio-123
+endif
+ifeq ($(PARFAIT_BUILD),yes)
+# uncomment this line if you need to install Parfait
+#REQUIRED_PACKAGES += developer/parfait/parfait-tools-151
+endif
+REQUIRED_PACKAGES += developer/versioning/mercurial
+REQUIRED_PACKAGES += file/gnu-findutils
+REQUIRED_PACKAGES += package/pkg
+REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += shell/bash
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += text/gawk
+REQUIRED_PACKAGES += text/gnu-grep
+REQUIRED_PACKAGES += text/gnu-sed
+REQUIRED_PACKAGES += developer/java/jdk-7
+REQUIRED_PACKAGES += security/sudo
+
+include $(WS_MAKE_RULES)/environment.mk

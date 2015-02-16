@@ -21,6 +21,8 @@
 # Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
+COMPILER =      gcc
+
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ptpd
@@ -38,15 +40,13 @@ COMPONENT_BUGDB=	service/ptp
 TPNO_PTP=		12665
 TPNO_SOLARFLARE=	15817
 
-include ../../make-rules/prep.mk
-include ../../make-rules/justmake.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATCH_LEVEL =	1
 
 PKG_PROTO_DIRS += $(BUILD_DIR_64)
-
-COMPILER =      gcc
 
 COMPONENT_BUILD_ENV  +=         CC=$(CC)
 
@@ -59,8 +59,9 @@ install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
-
-
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/core-os
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/libv12n
+REQUIRED_PACKAGES += system/library/math

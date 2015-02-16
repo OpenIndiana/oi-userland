@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 LD_Z_IGNORE =
@@ -44,7 +44,7 @@ TPNO_QPERF=		5083
 TPNO_RDS_TOOLS=		5092
 
 include ../../make-rules/shared-macros.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 include ofed.mk
 
 # for now, everything with a Makefile should be built
@@ -69,7 +69,8 @@ build:		install
 
 .DEFAULT:	publish
 
-download prep install test: $(SUBDIRS)
+download::
+prep install test: $(SUBDIRS)
 
 parfait:
 	$(MAKE) PARFAIT_BUILD=yes install
@@ -95,3 +96,14 @@ ibutils:		opensm
 infiniband-diags:	libibverbs opensm
 
 FORCE:
+
+REQUIRED_PACKAGES += runtime/perl-512
+REQUIRED_PACKAGES += runtime/perl-516
+REQUIRED_PACKAGES += runtime/tcl-8
+REQUIRED_PACKAGES += shell/bash
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
+REQUIRED_PACKAGES += system/library/gcc/gcc-c++-runtime
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/linker

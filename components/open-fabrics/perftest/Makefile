@@ -18,8 +18,12 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
+# OFED only builds with GCC
+COMPILER=gcc3
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		perftest
@@ -35,8 +39,8 @@ $(BUILD_64):	BITS=64
 $(INSTALL_32):	BITS=32
 $(INSTALL_64):	BITS=64
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
 include ../ofed.mk
 
 MAN1FILES =	ib_clock_test.1 \
@@ -45,7 +49,7 @@ MAN1FILES =	ib_clock_test.1 \
 		ib_send_bw.1 \
 		rdma_bw.1
 
-include $(WS_TOP)/make-rules/shared-targets.mk
+include $(WS_MAKE_RULES)/shared-targets.mk
 
 LIBS +=         -lsocket -lnsl -lkstat -lrdmacm -libverbs -libumad -libmad
 
@@ -78,8 +82,4 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64) $(PROTOMAN1FILES)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
 test:		$(NO_TESTS)
-
-include $(WS_TOP)/make-rules/depend.mk

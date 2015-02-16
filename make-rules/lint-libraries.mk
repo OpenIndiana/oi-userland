@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 #
@@ -26,12 +26,12 @@
 # libraries in the component directory and adds targets to build and install
 # them for 32/64 bit.
 #
-# To use these rules, include $(WS_TOP)/make-rules/lint-libraries.mk in your
+# To use these rules, include $(WS_MAKE_RULES)/lint-libraries.mk in your
 # Makefile and add your lint library source in your component directory as
 # llib-l{lib}.
 #
 # Makefile
-#    include $(WS_TOP)/make-rules/lint-libraries.mk
+#    include $(WS_MAKE_RULES)/lint-libraries.mk
 #
 # llib-l{libname}
 #

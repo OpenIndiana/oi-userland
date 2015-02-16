@@ -20,8 +20,16 @@
 #
 
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
+# Samba does not work properly on i86 when built by studio.
+# Samba on SPARC has serious performance drop when built by gcc.
+ifeq ($(uname -p),sparc)
+COMPILER =	studio
+else
+COMPILER =	gcc
+endif
 
 include ../../../make-rules/shared-macros.mk
 
@@ -48,23 +56,15 @@ COMPONENT_ARCHIVE_HASH_2=	\
     sha256:4324f2c4a9ba94f1165c5922f166636621681b09d635257d921f6df654e7191e
 COMPONENT_ARCHIVE_URL_2=	http://hub.opensolaris.org/bin/download/Project+samqfs/files/libsam%2DLGPL.tar
 
-# Samba does not work properly on i86 when built by studio.
-# Samba on SPARC has serious performance drop when built by gcc.
-ifeq ($(MACH), sparc)
-COMPILER = studio
-else
-COMPILER =	gcc
-endif
-
-include ../../../make-rules/prep.mk
+include $(WS_MAKE_RULES)/prep.mk
 
 SRC_OFFSET =	source3
 # Now we override paths to .built
 BUILD_DIR_32 = $(BUILD_DIR)/$(MACH32)/$(SRC_OFFSET)
 BUILD_DIR_64 = $(BUILD_DIR)/$(MACH64)/$(SRC_OFFSET)
 
-include ../../../make-rules/configure.mk
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_SCRIPT = $(BUILD_DIR_$(BITS))/configure
 
@@ -109,6 +109,8 @@ COMPONENT_PRE_CONFIGURE_ACTION += \
 # finish preparation
 COMPONENT_PRE_CONFIGURE_ACTION += \
 	( cd $(@D) ; $(CONFIG_SHELL) autogen.sh )
+
+COMPONENT_PRE_BUILD_ACTION = $(ENV) ; echo $(COMPONENT_BUILD_ENV)
 
 # Depend on $(PROTO_DIR)/.mozldap because this target creates $(PROTO_DIR).
 $(PROTO_DIR)/opt/SUNWsamfs/lib/libsam.so: Solaris/libsam.c \
@@ -226,8 +228,6 @@ configure:	$(CONFIGURE_32_and_64)
 
 build:		$(BUILD_32_and_64)
 
-include ../../../make-rules/shared-targets.mk
-
 install:	$(PROTO_DIR)/etc/samba/smb.conf-example $(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
@@ -235,6 +235,23 @@ test:		$(NO_TESTS)
 clean::
 	$(GMAKE) -C $(COMPONENT_DIR)/../mozldap clean
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../../make-rules/depend.mk
+REQUIRED_PACKAGES += library/file-monitor/gamin
+REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += library/popt
+REQUIRED_PACKAGES += library/print/cups-libs
+REQUIRED_PACKAGES += library/readline
+REQUIRED_PACKAGES += library/samba/libsmbclient
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += runtime/perl-512
+REQUIRED_PACKAGES += runtime/perl-516
+REQUIRED_PACKAGES += service/security/kerberos-5
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/core-os
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/gcc-3-runtime
+REQUIRED_PACKAGES += system/library/gcc-45-runtime
+REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
+REQUIRED_PACKAGES += system/library/security/crypto
+REQUIRED_PACKAGES += system/library/security/gss
+REQUIRED_PACKAGES += system/network
+REQUIRED_PACKAGES += system/network/avahi

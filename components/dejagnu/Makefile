@@ -37,9 +37,9 @@ COMPONENT_BUGDB=	utility/dejagnu
 
 TPNO=			12292
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_TEST_ENV +=	PATH="$(GNUBIN):$(PATH)"
 
@@ -61,6 +61,6 @@ install:	$(INSTALL_64)
 
 test:		$(TEST_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
+REQUIRED_PACKAGES += shell/expect
+REQUIRED_PACKAGES += shell/ksh93
 
-include ../../make-rules/depend.mk

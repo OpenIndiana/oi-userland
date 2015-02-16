@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 GEM=/usr/ruby/$(RUBY_VERSION)/bin/gem
 
@@ -59,3 +59,5 @@ $(BUILD_DIR)/%/.installed:      $(BUILD_DIR)/%/.built
 
 clean::
 	$(RM) -r $(SOURCE_DIR) $(BUILD_DIR)
+
+REQUIRED_PACKAGES += runtime/ruby

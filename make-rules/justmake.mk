@@ -18,13 +18,13 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 #
 # Rules and Macros for building opens source software that just uses their
 # own make and no autoconf-style tools.
 #
-# To use these rules, include ../make-rules/justmake.mk in your Makefile
+# To use these rules, include $(WS_MAKE_RULES)/justmake.mk in your Makefile
 # and define "build", "install" targets appropriate to building your component.
 # Ex:
 #

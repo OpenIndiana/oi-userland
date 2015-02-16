@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -40,9 +40,9 @@ TPNO=			14883
 SONAME=libfl.so.1
 LDFLAGS = $(CC_BITS)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
@@ -58,8 +58,6 @@ COMPONENT_TEST_ENV +=		PATH=/usr/gnu/bin:/usr/bin
 COMPONENT_BUILD_TARGETS += $(SONAME)
 COMPONENT_INSTALL_TARGETS += $(SONAME)
 
-include ../../make-rules/shared-targets.mk
-
 ASLR_MODE=$(ASLR_ENABLE)
 
 # common targets
@@ -71,6 +69,6 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += developer/macro/gnu-m4
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math

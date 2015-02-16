@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -42,9 +42,9 @@ COMPONENT_ARCHIVE_HASH_1 = \
     sha256:c653a3678bb5668c280a0d5ba584fdfb0e4272acbbd00901dc2363ea3f58eede
 COMPONENT_ARCHIVE_URL_1 = http://git-core.googlecode.com/files/$(COMPONENT_ARCHIVE_1)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/bin
 CONFIGURE_LIBDIR.64 =	$(CONFIGURE_PREFIX)/lib
@@ -111,6 +111,12 @@ $(BUILD_DIR)/.manpages:
 	$(TOUCH) $@
 
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += library/expat
+REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += runtime/perl-512
+REQUIRED_PACKAGES += runtime/python-26
+REQUIRED_PACKAGES += shell/bash
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += web/curl

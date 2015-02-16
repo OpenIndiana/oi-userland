@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 #
@@ -41,8 +41,8 @@ COMPONENT_BUGDB=	library/slib
 
 TPNO=			5839
 
-include ../../make-rules/prep.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Lie to IPS packaging about the version because it doesn't like
 # COMPONENT_VERSION's with letters.
@@ -64,6 +64,5 @@ test:	$(NO_TESTS)
 clean::
 	$(RM) -r $(BUILD_DIR)
 
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += shell/bash

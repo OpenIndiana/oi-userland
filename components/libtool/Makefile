@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -48,9 +48,9 @@ COMPONENT_ARCHIVE_HASH_1 = \
 COMPONENT_ARCHIVE_URL_1 = http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE_1)
 SOURCE_DIR_1 =		$(COMPONENT_DIR)/$(COMPONENT_SRC_1)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		--disable-static
@@ -89,7 +89,7 @@ $(BUILD_DIR_32)/.installed:	$(BUILD_OLD_DIR_32)/.installed
 $(BUILD_DIR_64)/.installed:	$(BUILD_OLD_DIR_64)/.installed
 
 # we need to prep the old version too (this should be handled in prep.mk)
-$(SOURCE_DIR_1)/.unpacked:        download Makefile $(PATCHES)
+$(SOURCE_DIR_1)/.unpacked:        download $(MAKEFILE_PREREQ) $(PATCHES)
 	$(RM) -r $(SOURCE_DIR_1)
 	$(UNPACK) $(UNPACK_ARGS) $(COMPONENT_ARCHIVE_1)
 	$(TOUCH) $@
@@ -115,6 +115,12 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += developer/base-developer-utilities
+REQUIRED_PACKAGES += file/gnu-coreutils
+REQUIRED_PACKAGES += shell/bash
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/linker
+REQUIRED_PACKAGES += text/gnu-grep
+REQUIRED_PACKAGES += text/gnu-sed

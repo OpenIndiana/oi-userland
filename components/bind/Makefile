@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -39,9 +39,9 @@ COMPONENT_BUGDB=	service/dns-server
 
 TPNO=			20537
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Build.
 #
@@ -80,8 +80,6 @@ ASLR_MODE = $(ASLR_ENABLE)
 configure:	$(CONFIGURE_32)
 
 build:		$(BUILD_32)
-
-include ../../make-rules/shared-targets.mk
 
 # Install.
 #
@@ -168,6 +166,9 @@ test-version:
 test-clean:
 	$(RM) $(TEST_32) $(FULL_TEST_32)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += network/dns/bind
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/core-os
+REQUIRED_PACKAGES += system/library

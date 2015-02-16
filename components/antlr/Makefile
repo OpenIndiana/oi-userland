@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -40,9 +40,9 @@ TPNO=			5546
 # Use version of Java defined in ../../make-rules/shared-macros.mk
 PATH=$(SPRO_VROOT)/bin:$(JAVA_HOME)/bin:/usr/bin
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATCH_LEVEL =		0
 
@@ -75,6 +75,6 @@ install:        $(INSTALL_32)
 
 test:           $(TEST_32)
 
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += runtime/python-26
+REQUIRED_PACKAGES += shell/ksh93

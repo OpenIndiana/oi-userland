@@ -36,9 +36,9 @@ COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/slrn/files/slrn/$(COMPONE
 COMPONENT_BUGDB=	utility/slrn
 TPNO=                   21410
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = $(CLONEY) $(SOURCE_DIR) $(@D)
 CONFIGURE_SCRIPT = $(@D)/configure
@@ -68,6 +68,6 @@ install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/slang
+REQUIRED_PACKAGES += system/library

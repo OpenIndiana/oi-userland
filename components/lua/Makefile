@@ -40,9 +40,9 @@ COMPONENT_ARCHIVE_URL_1= $(COMPONENT_PROJECT_URL)/tests/5.2/$(COMPONENT_ARCHIVE_
 
 TPNO=			5814
 
-include ../../make-rules/prep.mk
-include ../../make-rules/justmake.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATCH_LEVEL= 0
 
@@ -102,6 +102,5 @@ install:	$(INSTALL_32_and_64) $(BUILD_DIR)/lua-64.pc
 
 test: 		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math

@@ -18,8 +18,11 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
+# $ (foreach suffix,$(VERSIONS),$(eval include $(WS_MAKE_RULES)/python-$(suffix).mk))
+
 
 $(BUILD_DIR)/%-2.6/.built:		PYTHON_VERSION=2.6
 $(BUILD_DIR)/%-2.7/.built:		PYTHON_VERSION=2.7
@@ -180,3 +183,14 @@ clean::
 # Make it easy to construct a URL for a pypi source download.
 PYPI_BASE = http://pypi.python.org/packages/source
 pypi_url = $(PYPI_BASE)/$(shell echo $(COMPONENT_NAME) | cut -c1)/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+
+ifneq ($(findstring 2.6, $(PYTHON_VERSIONS)),)
+REQUIRED_PACKAGES += runtime/python-26
+endif
+ifneq ($(findstring 2.7, $(PYTHON_VERSIONS)),)
+REQUIRED_PACKAGES += runtime/python-27
+endif
+ifneq ($(findstring 3.4, $(PYTHON_VERSIONS)),)
+REQUIRED_PACKAGES += runtime/python-34
+endif
+REQUIRED_PACKAGES += library/python/setuptools

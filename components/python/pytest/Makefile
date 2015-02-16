@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -34,9 +34,9 @@ COMPONENT_BUGDB=	python-mod/pytest
 
 TPNO=			14503
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/setup.py.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_TEST_DIR =	$(COMPONENT_SRC)/testing
 COMPONENT_TEST_CMD =	$(PROTOUSRBINDIR)/py.test
@@ -52,6 +52,7 @@ install:	$(INSTALL_NO_ARCH)
 # Tests require the py package to be installed.
 test:		$(TEST_NO_ARCH)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+REQUIRED_PACKAGES += library/python/setuptools-26
+REQUIRED_PACKAGES += library/python/setuptools-27
+REQUIRED_PACKAGES += library/python/setuptools-34

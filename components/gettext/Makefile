@@ -38,9 +38,9 @@ COMPONENT_BUGDB=	utility/gnu-gettext
 
 TPNO=			20141
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS  +=		--disable-java
 CONFIGURE_OPTIONS  +=		--disable-libasprintf
@@ -79,6 +79,13 @@ install:	$(INSTALL_64)
 
 test:		$(TEST_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+REQUIRED_PACKAGES += developer/icu
+REQUIRED_PACKAGES += developer/vala
+REQUIRED_PACKAGES += library/expat
+REQUIRED_PACKAGES += library/icu
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += source/locale/localedef
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/locale/extra
