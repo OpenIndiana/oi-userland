@@ -1,9 +1,9 @@
---- src/Makefile.am	Mon Dec  5 14:30:20 2011
-+++ src/Makefile.am	Mon Dec  5 14:55:55 2011
-@@ -33,6 +33,9 @@
+--- src/Makefile.am.~1~	2015-02-16 12:16:08.613309401 +0300
++++ src/Makefile.am	2015-02-16 12:17:50.260433367 +0300
+@@ -42,6 +42,9 @@
  intel_drv_la_LDFLAGS = -module -avoid-version
- intel_drv_ladir = @moduledir@/drivers
- intel_drv_la_LIBADD = legacy/liblegacy.la @PCIACCESS_LIBS@
+ intel_drv_ladir = $(moduledir)/drivers
+ intel_drv_la_LIBADD = legacy/liblegacy.la $(PCIACCESS_LIBS) $(XORG_LIBS)
 +intel_drv_la_LDFLAGS += -R $(moduledir) -R $(moduledir)/extensions
 +intel_drv_la_LIBADD += -lfb -lextmod -lshadowfb -lXfont -lm \
 +	-lvbe -lvgahw -lxaa -lexa -ldri -ldri2 -lglx $(XORG_LIBS)
