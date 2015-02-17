@@ -248,8 +248,8 @@ diff --git driver/subprocs.c driver/subprocs.c
  
    if (pipe (fds))
 diff --git driver/xscreensaver-demo.glade2 driver/xscreensaver-demo.glade2
---- driver/xscreensaver-demo.glade2
-+++ driver/xscreensaver-demo.glade2
+--- driver/xscreensaver-demo.glade2.in
++++ driver/xscreensaver-demo.glade2.in
 @@ -927,10 +927,12 @@ Installed</property>
  			      <property name="visible">True</property>
  			      <property name="label" translatable="yes">Very few (or no) screen savers appear to be available.
@@ -267,9 +267,9 @@ diff --git driver/xscreensaver-demo.glade2 driver/xscreensaver-demo.glade2
  			      <property name="wrap">False</property>
  			      <property name="selectable">False</property>
 diff --git driver/xscreensaver-text driver/xscreensaver-text
---- driver/xscreensaver-text
-+++ driver/xscreensaver-text
-@@ -698,12 +698,15 @@ sub reformat_rss($) {
+--- driver/xscreensaver-text.~1~	2014-11-02 07:48:03.000000000 +0300
++++ driver/xscreensaver-text	2015-02-17 23:25:56.513099412 +0300
+@@ -566,12 +566,15 @@
      $i++;
  
      my ($title, $body1, $body2, $body3);
@@ -285,20 +285,15 @@ diff --git driver/xscreensaver-text driver/xscreensaver-text
      # If there are both <description> and <content> or <content:encoded>,
      # use whichever one contains more text.
      #
-@@ -727,10 +730,11 @@ sub reformat_rss($) {
- 
-     $title = rss_field_to_html ($title || '');
-     $body1 = rss_field_to_html ($body1 || '');
-+    $author = rss_field_to_html ($author || '');
+@@ -598,7 +601,7 @@
  
      $title = '' if ($body1 eq $title);  # Identical in Twitter's atom feed.
  
--    reformat_html ("$title<P>$body1", $wiki_p ? 'wiki' : 'rss');
-+    reformat_html ("$title<BR>$author<P>$body1", $wiki_p ? 'wiki' : 'rss');
-     print "\n";
+-    $out .= reformat_html ("$title<P>$body1", $wiki_p ? 'wiki' : 'rss');
++    $out .= reformat_html ("$title<BR>$author<P>$body1", $wiki_p ? 'wiki' : 'rss');
+     $out .= "\n";
    }
- }
-diff --git driver/xscreensaver.man driver/xscreensaver.man
+ 
 --- driver/xscreensaver.man
 +++ driver/xscreensaver.man
 @@ -97,9 +97,8 @@ xscreensaver-command -restart
