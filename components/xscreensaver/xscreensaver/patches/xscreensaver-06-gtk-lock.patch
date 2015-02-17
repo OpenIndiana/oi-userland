@@ -270,8 +270,8 @@ diff --git driver/Makefile.in driver/Makefile.in
  # The executables linked in this directory.
  #
  xscreensaver: $(SAVER_OBJS)
--	$(CC) $(LDFLAGS) -o $@ $(SAVER_OBJS) $(SAVER_LIBS)
-+	$(CC) $(LDFLAGS) -o $@ $(SAVER_OBJS) $(SAVER_LIBS) \
+-	$(CC) $(LDFLAGS) -o $@ $(SAVER_OBJS) $(SAVER_LIBS) $(INTL_LIBS)
++	$(CC) $(LDFLAGS) -o $@ $(SAVER_OBJS) $(SAVER_LIBS) $(INTL_LIBS) \
 +	-lgconf-2 -lgobject-2.0
  
  xscreensaver-command: $(CMD_OBJS)
@@ -3605,15 +3605,15 @@ diff --git driver/timers.c driver/timers.c
 diff --git driver/types.h driver/types.h
 --- driver/types.h
 +++ driver/types.h
-@@ -250,12 +250,30 @@ struct saver_info {
- 
+@@ -275,12 +275,29 @@
    int unlock_failures;		/* Counts failed login attempts while the
  				   screen is locked. */
+   time_t unlock_failure_time;	/* Time of first failed login attempt. */
 +#ifdef HAVE_XSCREENSAVER_LOCK
-+  Window *raise_wins;		/* List of windows to raise above the	*/
-+  int num_raise_wins;		/*  virtual root/hack display, such as	*/
-+  int max_raise_wins;		/*  accessibility helpers		*/
-+
++  Window *raise_wins;          /* List of windows to raise above the   */
++  int num_raise_wins;          /*  virtual root/hack display, such as  */
++  int max_raise_wins;          /*  accessibility helpers               */
+ 
 +  Window *override_wins;        /* Windows we had to unset the          */
 +  int num_override_wins;        /*  override_redirect attribute on and  */
 +  int max_override_wins;        /*  need to restore it on after unlock. */
@@ -3623,10 +3623,9 @@ diff --git driver/types.h driver/types.h
 +                                   are running an external process for it. */
 +  Bool external_passwd;
 +
-+  XKeyEvent *typeahead_events;	/* Like unlock_typeahead, but as raw events */
++  XKeyEvent *typeahead_events; /* Like unlock_typeahead, but as raw events */
 +  int num_typeahead_events;
 +#else
- 
    char *unlock_typeahead;	/* If the screen is locked, and the user types
                                     a character, we assume that it is the first
                                     character of the password.  It's stored here

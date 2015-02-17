@@ -15,15 +15,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xscreensaver
-# Don't change - compatibility issues
-COMPONENT_VERSION=	5.26
+COMPONENT_VERSION=	5.32
 COMPONENT_PROJECT_URL=	http://www.jwz.org/xscreensaver/
 
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:2ca4dc66e11947396124d1f87dd2787e0d8dd8dd1ada8871b3d8df40fb4f1b55
-#COMPONENT_ARCHIVE_URL=	http://www.jwz.org/xscreensaver/$(COMPONENT_ARCHIVE)
+    sha256:4252a6079d2d2f5b342e8bdd172cbad5f0af73daf4e412b61a68344d91ca93bd
 COMPONENT_ARCHIVE_URL=	http://ftp.lfs-matrix.net/pub/blfs/conglomeration/xscreensaver/$(COMPONENT_ARCHIVE)
 
 PATCH_LEVEL=		0
