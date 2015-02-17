@@ -6,6 +6,14 @@
 #
 --- orig/Makefile.in	Wed Apr 16 17:10:03 2014
 +++ new/Makefile.in	Wed Apr 23 11:00:05 2014
+@@ -26,6 +26,7 @@
+ SFTP_SERVER=$(libexecdir)/sftp-server
+ SSH_KEYSIGN=$(libexecdir)/ssh-keysign
+ SSH_PKCS11_HELPER=$(libexecdir)/ssh-pkcs11-helper
++ROOTDLIBDIR64=$(DESTDIR)/usr/lib/dtrace/64
+ PRIVSEP_PATH=@PRIVSEP_PATH@
+ SSH_PRIVSEP_USER=@SSH_PRIVSEP_USER@
+ STRIP_OPT=@STRIP_OPT@
 @@ -76,7 +76,8 @@
  	jpake.o schnorr.o ssh-pkcs11.o krl.o smult_curve25519_ref.o \
  	kexc25519.o kexc25519c.o poly1305.o chacha.o cipher-chachapoly.o \
@@ -56,6 +64,14 @@
  	(cd openbsd-compat && $(MAKE) clean)
  
  distclean:	regressclean
+@@ -313,6 +314,7 @@
+ 	ln -s ./ssh$(EXEEXT) $(DESTDIR)$(bindir)/slogin
+ 	-rm -f $(DESTDIR)$(mandir)/$(mansubdir)1/slogin.1
+ 	ln -s ./ssh.1 $(DESTDIR)$(mandir)/$(mansubdir)1/slogin.1
++	mkdir -p $(ROOTDLIBDIR64) && cp $(srcdir)/sftp64.d $(ROOTDLIBDIR64)/sftp64.d
+ 
+ install-sysconf:
+ 	if [ ! -d $(DESTDIR)$(sysconfdir) ]; then \
 --- orig/sftp-server.c	Wed Apr 16 18:44:37 2014
 +++ new/sftp-server.c	Thu Apr 17 11:53:54 2014
 @@ -51,6 +51,9 @@
