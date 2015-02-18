@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr/lib/mailman/tests/.* -> \
@@ -286,6 +286,7 @@ file path=usr/lib/mailman/cron/bumpdigests mode=0555
 # so bypass to avoid confusion.
 file path=usr/lib/mailman/cron/checkdbs mode=0555 \
     pkg.depend.bypass-generate=.*/Charset.*
+file path=usr/lib/mailman/cron/crontab.in
 file path=usr/lib/mailman/cron/cull_bad_shunt mode=0555
 file path=usr/lib/mailman/cron/disabled mode=0555
 file path=usr/lib/mailman/cron/gate_news mode=0555 \
@@ -2397,9 +2398,6 @@ link path=var/mailman/locks target=../../var/share/mailman/locks
 link path=var/mailman/logs target=../../var/share/mailman/logs
 link path=var/mailman/qfiles target=../../var/share/mailman/qfiles
 link path=var/mailman/spam target=../../var/share/mailman/spam
-#
-file usr/lib/mailman/cron/crontab.in path=var/spool/cron/crontabs/mailman \
-    mode=0600 overlay=allow preserve=true
 #
 group groupname=mailman gid=98
 user username=mailman ftpuser=false gcos-field=Mailman group=mailman \

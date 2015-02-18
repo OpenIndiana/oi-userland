@@ -1,8 +1,8 @@
 This patch is Solaris-specific and thus will not be contributed upstream.
 
 --- mailman-2.1.18-1/misc/mailman.in.~1~	2014-05-06 09:43:56.000000000 -0700
-+++ mailman-2.1.18-1/misc/mailman.in	2014-09-12 11:27:53.659779385 -0700
-@@ -33,13 +33,53 @@
++++ mailman-2.1.18-1/misc/mailman.in	2015-02-17 16:16:08.321600825 -0800
+@@ -33,13 +33,59 @@
  # config: @prefix@/Mailman/mm_cfg.py
  # pidfile: @prefix@/data/master-qrunner.pid
  
@@ -52,6 +52,12 @@ This patch is Solaris-specific and thus will not be contributed upstream.
 +    $MAILMANHOME/bin/list_lists -b | grep -q "^mailman$"
 +    if [[ $? -ne 0 ]]; then
 +	$MAILMANHOME/bin/newlist -q -e 127.0.0.1 mailman postmaster@127.0.0.1 mailman
++    fi
++    # Check to see if a crontab entry exists; if not, copy the input file
++    # into place.
++    crontab -l mailman > /dev/null 2>&1
++    if [[ $? -ne 0 ]]; then
++	VISUAL="/usr/bin/cp $MAILMANHOME/cron/crontab.in" crontab -e mailman
 +    fi
      $PYTHON $MAILMANCTL -s -q start
      ;;
