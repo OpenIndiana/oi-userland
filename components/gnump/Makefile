@@ -56,7 +56,7 @@ CFLAGS += -xthreadvar=%all $(CPP_C99_EXTENDED_MATH)
 CFLAGS += $(studio_C99_ENABLE) $(CPP_XPG6MODE)
 CFLAGS += $(studio_PIC)
 CXXFLAGS = -mt -features=anachronisms,except,rtti,export,extensions,nestedaccess,tmplife,tmplrefstatic
-CXXFLAGS += -instances=global -template=geninlinefuncs -verbose=template
+CXXFLAGS += -instances=global -template=geninlinefuncs
 CXXFLAGS += -xbuiltin=%none -xinline=%auto -xlibmil
 CXXFLAGS += -xustr=ascii_utf16_ushort -xlibmopt
 CXXFLAGS += $(studio_cplusplus_C99_ENABLE) $(studio_PIC)
@@ -66,6 +66,16 @@ CXXFLAGS += -Qoption ccfe -features=zla
 CXXFLAGS += -xF=%none -xthreadvar=%all
 CPPFLAGS += $(CPP_POSIX) $(CPP_LARGEFILES)
 LDFLAGS += $(LD_Z_REDLOCSYM) $(LD_Z_RESCAN_NOW)
+
+COMPONENT_TEST_TRANSFORMS += \
+     '-e "/libtool/d"' \
+     '-e "/-m32/d"' \
+     '-e "/-m64/d"' \
+     '-e "/DEPDIR=/d"' \
+     '-e "/ld: warning/d"' \
+     '-e "/creating /d"' \
+     '-e "/gm4 /d"' \
+     '-e "s/^make\[[0-9]\{1,\}\]/make/g"'
 
 # assembler detection for GNU MP and GNU MPFR is done via MPN_PATH
 # at ./configure time. GNU MPFR wants to know GNU MP's MPN_PATH.
@@ -160,7 +170,6 @@ build: $(BUILD_32_and_64)
 install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
-
 
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/c++-runtime

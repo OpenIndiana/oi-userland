@@ -69,6 +69,13 @@ MPFRMULHIGH = 2048
 
 GSED = /usr/bin/gsed
 
+COMPONENT_TEST_TRANSFORMS += \
+     '-e "/libtool/d"' \
+     '-e "/-m32/d"' \
+     '-e "/-m64/d"' \
+     '-e "/DEPDIR=/d"' \
+     '-e "s/^make\[[0-9]\{1,\}\]/make/g"'
+
 CONFIGURE_ENV += CC="$(CC)"
 CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
@@ -133,7 +140,6 @@ build: $(BUILD_32_and_64)
 install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
-
 
 REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += system/library

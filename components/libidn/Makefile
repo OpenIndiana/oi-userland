@@ -64,6 +64,17 @@ CFLAGS += $(CPP_POSIX)
 CFLAGS += $(CPP_C99_EXTENDED_MATH)
 CFLAGS += $(studio_PIC)
 
+COMPONENT_TEST_TRANSFORMS += \
+     '-e "/libtool/d"' \
+     '-e "/warning:/d"' \
+     '-e "/-m32/d"' \
+     '-e "/-m64/d"' \
+     '-e "/DEPDIR/d"' \
+     '-e "/ar cru/d"' \
+     '-e "/ranlib/d"' \
+     '-e "/wrapped in unpack at/d"' \
+     '-e "s/^make\[[0-9]\{1,\}\]/make/g"'
+
 GUNZIP = /usr/bin/gunzip
 TAR = /usr/bin/tar
 FIND = /usr/bin/find
@@ -139,6 +150,5 @@ install: $(INSTALL_32_and_64)
 	    $(PROTOUSRSHAREDIR)/locale/en
 
 test: $(TEST_32_and_64)
-
 
 REQUIRED_PACKAGES += system/library

@@ -47,6 +47,16 @@ CXX +=	$(studio_NORUNPATH)
 # It seems that we have no other way to designate that we want large file support
 CFLAGS += $(CPP_LARGEFILES)
 CXXFLAGS += $(CPP_LARGEFILES)
+
+COMPONENT_TEST_TRANSFORMS += \
+     '-e "/libtool/d"' \
+     '-e "/-m32/d"' \
+     '-e "/-m64/d"' \
+     '-e "/little cms testbed/d"' \
+     '-e "s/[0-9]\{1,\} tics//g"' \
+     '-e "s/[0-9]\{1,\} tics\,//g"' \
+     '-e "s/\, [0-9]\{1,\}\.[0-9]\{1,\} sec\.//g"'
+
 # non-default C++ flags
 CXXFLAGS += -features=extensions,nestedaccess,tmplrefstatic
 CXXFLAGS += -template=geninlinefuncs
@@ -99,7 +109,6 @@ install: $(INSTALL_32_and_64)
 
 
 test: $(TEST_32_and_64)
-
 
 REQUIRED_PACKAGES += image/library/libjpeg
 REQUIRED_PACKAGES += image/library/libtiff

@@ -20,9 +20,6 @@
 #
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
-
-COMPILER =	gcc
-
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openusb
@@ -47,6 +44,8 @@ CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_PRE_CONFIGURE_ACTION = \
         ($(CLONEY) $(SOURCE_DIR) $(@D))
 
+COMPILER =	gcc
+
 PATCH_LEVEL = 1
 
 COMPONENT_POST_BUILD_ACTION = \
@@ -60,8 +59,7 @@ build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
 
-test: $(TEST_32_and_64)
-
+test: $(NO_TESTS)
 
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/hal

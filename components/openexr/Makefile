@@ -57,7 +57,11 @@ endif
 LIBS += -lc -lm -lCstd -lCrun
 
 COMPONENT_TEST_TRANSFORMS += \
-     '-e "s^-L$(CONFIGURE_LIBDIR.$(BITS))^^g"'
+     '-e "s^-L$(CONFIGURE_LIBDIR.$(BITS))^^g"' \
+     '-e "/libtool/d"' \
+     '-e "/-m32/d"' \
+     '-e "/-m64/d"' \
+     '-e "/DEPDIR=/d"'
 
 CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
 CONFIGURE_ENV += CXXFLAGS="$(CXXFLAGS)"
@@ -91,3 +95,4 @@ REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/c++-runtime
 REQUIRED_PACKAGES += system/library/math
+

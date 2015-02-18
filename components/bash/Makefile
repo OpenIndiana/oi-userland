@@ -72,9 +72,22 @@ LIBS =	-lc -lsocket -lgen
 # -z redlocsym -- let's shrink the SHT_SYMTAB as much as we can
 LDFLAGS =	$(LD_Z_REDLOCSYM)
 
+# Do not change the order of these regexp transforms.
+COMPONENT_TEST_TRANSFORMS += \
+     '-e "/^</d"' \
+     '-e "/^>/d"' \
+     '-e "/^---/d"' \
+     '-e "s/^[0-9]\{1,\}[a-z]\{1,\}[0-9]\{1,\}//g"' \
+     '-e "s/^[0-9]\{1,\},[0-9]\{1,\}[a-z]\{1,\}[0-9]\{1,\},[0-9]\{1,\}//g"' \
+     '-e "/^$$/d"' \
+     '-e "s/i386-pc-//g"' \
+     '-e "s/i386//g"' \
+     '-e "s/sparc-sun-//g"' \
+     '-e "s/sparc//g"'
+
 # The bash test harness needs the GNU userland utilities
 TEST_PATH = "PATH=$(BUILD_DIR_64):$(GNUBIN):$(USRBINDIR)"
-TEST_OUTPUT = $(COMPONENT_DIR)/bash_test_results_$(MACH).out
+TEST_RESULTS_FILE = $(COMPONENT_TEST_RESULTS_DIR)/test-$(BITS)-results
 
 CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_ENV +=	LDFLAGS="$(LDFLAGS)"
@@ -125,7 +138,7 @@ CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 
 COMPONENT_TEST_DIR =		$(BUILD_DIR_64)
 COMPONENT_TEST_ENV =		- $(TEST_PATH)
-COMPONENT_TEST_TARGETS =	check > $(TEST_OUTPUT) 2>&1
+COMPONENT_TEST_TARGETS =	check > $(TEST_RESULTS_FILE) 2>&1
 
 ASLR_MODE=$(ASLR_ENABLE)
 
@@ -140,7 +153,6 @@ install: $(INSTALL_64)
 	    cp -Rp "en@boldquot" en_GB )
 
 test:	$(TEST_64)
-
 
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library

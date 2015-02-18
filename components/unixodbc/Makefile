@@ -122,9 +122,7 @@ install: $(INSTALL_32_and_64)
 	    $(PROTOPKGCONFIGDIR64)/unixODBC.pc
 	$(RM) -f $(COMPONENT_DIR)/unixODBC.pc.1
 
-test: $(TEST_32_and_64)
-
-
+test: $(NO_TESTS)
 
 REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/readline
