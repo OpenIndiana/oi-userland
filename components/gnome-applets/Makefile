@@ -16,15 +16,14 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gnome-applets
-COMPONENT_VERSION= 2.30.0
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 2.32.1.1
 COMPONENT_SUMMARY= GNOME panel applets
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:41489fbb1f8352a306cde6676dfaf1e497bfbca960454f7251c4fd92920bba5d
+  sha256:2b92fe4b3062dfbe264f45472b4db3a27d1e69e13260d37da9fb36b2cbd40327
 COMPONENT_ARCHIVE_URL= \
-  http://download.gnome.org/sources/$(COMPONENT_NAME)/2.30/$(COMPONENT_ARCHIVE)
+  ftp://ftp.gnome.org/pub/gnome/sources/$(COMPONENT_NAME)/2.32/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gnome.org
 
 include ../../make-rules/prep.mk
