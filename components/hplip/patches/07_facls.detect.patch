@@ -1,0 +1,13 @@
+Home brewed patch
+
+--- a/check.py	2014-06-02 23:33:10.000000000 -0700
++++ hplip-3.14.6/check.py	2014-07-01 15:06:22.376141177 -0700
+@@ -196,7 +197,7 @@
+         self.hplip_dependencies ={ EXTERNALDEP:
+              {
+ #            <packageName>: (<Is Req/Opt Pack>, <Module>, <Package description>, <Installed check>, <min vrsion>, <cmd for installed version>),
+-            'dbus':             (True,  ['fax'], "DBus", self.check_dbus,'-','dbus-daemon --version'),
++            'dbus':             (True,  ['fax'], "DBus", self.check_dbus,'-','/usr/lib/dbus-daemon --version'),
+             'cups' :            (True,  ['base'], 'CUPS', self.check_cups,'1.1','cups-config --version'),
+             'gs':               (True,  ['base'], "Ghostscript", self.check_gs,'7.05','gs --version'),
+             'policykit':        (False, ['gui_qt4'], "Admin-Policy-framework", self.check_policykit,'-','pkexec --version'), # optional for non-sudo behavior of plugins (only optional for Qt4 option)

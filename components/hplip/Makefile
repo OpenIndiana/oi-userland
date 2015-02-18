@@ -24,19 +24,20 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         hplip
-COMPONENT_VERSION=      3.12.4
-TPNO=			17920
+COMPONENT_VERSION=      3.14.6
+TPNO=			18296
 COMPONENT_PROJECT_URL=	http://hplipopensource.com/hplip-web/index.html
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-    sha256:350375c78d79adf635a59a448b27b3fe9ab7ac622637c47125fe5f7d8a537fff
+COMPONENT_ARCHIVE_HASH= sha256:a57233cd0e2db1dcf1d34d8b90c6a9d3e027e522695aada6c3c411a839868b8e
 COMPONENT_ARCHIVE_URL=  http://sourceforge.net/projects/hplip/files/hplip/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/hplip
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
+
+PKG_OPTIONS += -I $(COMPONENT_DIR)
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
@@ -47,10 +48,13 @@ CXX += $(studio_FEATURES_EXTENSIONS) $(studio_NORUNPATH) $(studio_CXXLIB_CSTD)
 
 ROOTPPDCACHE =  $(PROTO_DIR)/usr/lib/lp/caches/SUNWhpijs.cache
 
-# configure(1) options to use
+# common configure options
 CONFIGURE_OPTIONS +=	--localedir=$(CONFIGURE_LOCALEDIR)
 CONFIGURE_OPTIONS +=	--disable-pp-build
 CONFIGURE_OPTIONS +=	--disable-gui-build
+CONFIGURE_OPTIONS +=	--disable-qt4
+CONFIGURE_OPTIONS +=	am_cv_python_pythondir="$(PYTHON_VENDOR_PACKAGES)"
+CONFIGURE_OPTIONS +=	am_cv_python_pyexecdir="$(PYTHON_VENDOR_PACKAGES)"
 
 CONFIGURE_ENV +=	LDFLAGS=" -lnsl"
 
@@ -64,8 +68,8 @@ VARIANTS = $(HPLIP_VARIANT) $(HPIJS_VARIANT)
 
 # use these options for the CUPS/SANE support
 $(HPLIP_VARIANT)/.built: CONFIGURE_OPTIONS += --with-hpppddir=/usr/share/cups/model/SUNWhplip
+$(HPLIP_VARIANT)/.built: CONFIGURE_OPTIONS += --enable-libusb01_build
 $(HPLIP_VARIANT)/.built: CONFIGURE_OPTIONS += --enable-fax-build
-$(HPLIP_VARIANT)/.built: CONFIGURE_OPTIONS += --disable-udev-acl-rules
 $(HPLIP_VARIANT)/.built: CONFIGURE_OPTIONS += --enable-hpcups-install
 $(HPLIP_VARIANT)/.built: CONFIGURE_OPTIONS += --disable-new-hpcups
 $(HPLIP_VARIANT)/.built: CONFIGURE_OPTIONS += --enable-cups-drv-install
@@ -90,6 +94,31 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 $(HPLIP_VARIANT)/.built: COMPONENT_PREP_ACTION = \
 		(cd $(@D) ; autoconf )
 
+BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
+
+$(BUILD_DIR)/.allvariantsinstalled: $(VARIANTS:%=%/.installed)
+	$(RM) $(ROOTPPDCACHE)
+	$(MKDIR) $(PROTO_DIR)/usr/lib/lp/caches
+	($(ENV) VER="$(BUILD_DIR)/$(MACH32)-hpijs" \
+		PPDSRC="$(PROTO_DIR)/usr/share/ppd/SUNWhpijs" \
+		DONOTINSTALL="/dev/null" \
+		CACHE="$(ROOTPPDCACHE)" \
+		IPATH="/usr/share/ppd/$(BUILD_DIR)/" \
+		$(KSH93) cache.ksh)
+	# set version of python interpreter to calm the pkglint
+	find $(PROTO_DIR) -name \*.py -print0 | \
+	   while IFS= read -r -d $$'\0' file; do \
+		/usr/bin/sed -e '1,1s&^#!.*python[:blank:]\{0,\}$$&#!$(PYTHON)&' \
+		   $$file > $$file.pyverset ; \
+	   done
+	find $(PROTO_DIR) -name \*.py.pyverset -print0 | \
+	   while IFS= read -r -d $$'\0' file; do \
+		$(MV) $$file `echo $$file | sed -e 's/[.]pyverset$$//'` ; \
+	   done
+	$(PYTHON) -m compileall $(PROTO_DIR)/usr/share/hplip/
+	$(TOUCH) $@
+
+PKG_MACROS +=	PYVER=$(PYTHON_VERSION)
 #
 # Since it looks like you can't build HPLIP with both HPIJS and CUPS support
 # and seperate the HPIJS and CUPS PPD data, we need to replicate the code and
@@ -100,15 +129,7 @@ configure: $(VARIANTS:%=%/.configured)
 
 build: $(VARIANTS:%=%/.built)
 
-install: $(VARIANTS:%=%/.installed)
-	$(RM) $(ROOTPPDCACHE)
-	$(MKDIR) $(PROTO_DIR)/usr/lib/lp/caches
-	($(ENV) VER="$(BUILD_DIR)/$(MACH32)-hpijs" \
-		PPDSRC="$(PROTO_DIR)/usr/share/ppd/SUNWhpijs" \
-		DONOTINSTALL="/dev/null" \
-		CACHE="$(ROOTPPDCACHE)" \
-		IPATH="/usr/share/ppd/$(BUILD_DIR)/" \
-		$(KSH93) cache.ksh)
+install: $(BUILD_DIR)/.allvariantsinstalled
 
 # empty test target
 test:	$(NO_TESTS)
@@ -118,6 +139,7 @@ REQUIRED_PACKAGES += image/library/libjpeg
 REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += print/cups
+REQUIRED_PACKAGES += image/scanner/xsane/sane-backends
 REQUIRED_PACKAGES += runtime/perl-512
 REQUIRED_PACKAGES += runtime/python-26
 REQUIRED_PACKAGES += system/library

@@ -1,0 +1,13 @@
+Home brewed patch
+
+--- a/base/utils.py	2014-06-02 23:33:10.000000000 -0700
++++ hplip-3.14.6/base/utils.py	2014-07-01 13:44:00.526366599 -0700
+@@ -2214,7 +2214,7 @@
+ 
+     try:
+         process = {}
+-        p1 = Popen(["ps", "-w", "-w", "aux"], stdout=PIPE)
++        p1 = Popen(["ps", "-ef"], stdout=PIPE)
+         p2 = Popen(["grep", process_name], stdin=p1.stdout, stdout=PIPE)
+         p3 = Popen(["grep", "-v", "grep"], stdin=p2.stdout, stdout=PIPE)
+         output = p3.communicate()[0]
