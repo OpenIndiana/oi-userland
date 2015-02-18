@@ -48,6 +48,13 @@ ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 COMPONENT_INSTALL_ENV += INSTALLVENDORMAN3DIR=$(USRSHAREMAN3DIR)
 
 COMPONENT_TEST_TARGETS = test
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
+# Transform to remove machine-specific lines in test results
+COMPONENT_TEST_TRANSFORMS += \
+        '-e "s|\(^Files=59,\sTests=2415\).*|\1|" ' \
+        '-e "/\(90threads\).*/d" ' \
+        '-e "/\(^Hexadecimal\).*/d" '
 
 build:		$(BUILD_32_and_64)
 
