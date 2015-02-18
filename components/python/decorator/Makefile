@@ -42,8 +42,11 @@ include $(WS_MAKE_RULES)/ips.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-COMPONENT_TEST_ARGS=	documentation.py -v
-COMPONENT_TEST_DIR=	$(SOURCE_DIR)
+COMPONENT_TEST_ARGS.2.6=	documentation.py -v
+COMPONENT_TEST_ARGS.2.7=	documentation.py -v
+COMPONENT_TEST_ARGS.3.4=	documentation3.py -v
+COMPONENT_TEST_ARGS=		$(COMPONENT_TEST_ARGS.$(PYTHON_VERSION))
+COMPONENT_TEST_DIR=		$(SOURCE_DIR)
 
 # common targets
 build:		$(BUILD_NO_ARCH)
