@@ -1,0 +1,238 @@
+make[1]: Entering directory `$(@D)'
+	-DTCL_BUILDTIME_LIBRARY="\"$(SOURCE_DIR)/library\"" \
+	-DTCL_TEST $(SOURCE_DIR)/unix/../unix/tclAppInit.c
+rm -f tclTestInit.o
+mv tclAppInit.o tclTestInit.o
+"$(SOURCE_DIR)/unix/../generic/tclTest.c", line 69: warning: syntax error:  empty declaration
+cd dltest ; /usr/gnu/bin/make
+make[2]: Entering directory `$(@D)/dltest'
+make[2]: Leaving directory `$(@D)/dltest'
+/usr/gnu/bin/make tcltest-real LIB_RUNTIME_DIR="`pwd`"
+make[2]: Entering directory `$(@D)'
+	-Wl,-R,$(@D) -o tcltest
+make[2]: Leaving directory `$(@D)'
+LD_LIBRARY_PATH="`pwd`:${LD_LIBRARY_PATH}"; export LD_LIBRARY_PATH; \
+TCL_LIBRARY="$(SOURCE_DIR)/library"; export TCL_LIBRARY; \
+./tcltest $(SOURCE_DIR)/unix/../tests/all.tcl 
+Tests running in interp:  $(@D)/tcltest
+Tests located in:  $(SOURCE_DIR)/tests
+Tests running in:  $(@D)
+Temporary files stored in $(@D)
+Test files run in separate interpreters
+Running tests that match:  *
+Skipping test files that match:  l.*.test
+Only running test files that match:  *.test
+append.test
+appendComp.test
+apply.test
+assocd.test
+async.test
+autoMkindex.test
+basic.test
+binary.test
+case.test
+chan.test
+chanio.test
+clock.test
+
+
+==== clock-38.1 regression - convertUTCToLocalViaC - east of Greenwich FAILED
+==== Contents of test case:
+
+	clock format 0 -format %H:%M:%S -timezone :localtime
+    
+---- Result was:
+16:00:00
+---- Result should have been (exact matching):
+01:00:00
+==== clock-38.1 FAILED
+
+
+
+==== clock-40.1 regression - bad month with -timezone :localtime FAILED
+==== Contents of test case:
+
+	clock scan 2000-01-01T00:00:00 -timezone :localtime  -format %Y-%m-%dT%H:%M:%S
+    
+---- Result was:
+946713600
+---- Result should have been (exact matching):
+946684800
+==== clock-40.1 FAILED
+
+
+
+==== clock-42.1 regression test - %z in :localtime when west of Greenwich FAILED
+==== Contents of test case:
+
+	clock format 0 -format %z -timezone :localtime
+    
+---- Result was:
+-0800
+---- Result should have been (exact matching):
+-0500
+==== clock-42.1 FAILED
+
+cmdAH.test
+cmdIL.test
+cmdInfo.test
+cmdMZ.test
+compExpr-old.test
+compExpr.test
+compile.test
+concat.test
+config.test
+dcall.test
+dict.test
+dstring.test
+encoding.test
+env.test
+error.test
+eval.test
+event.test
+exec.test
+execute.test
+expr-old.test
+expr.test
+fCmd.test
+fileName.test
+fileSystem.test
+for-old.test
+for.test
+foreach.test
+format.test
+get.test
+history.test
+http.test
+Running httpd in thread 3
+httpold.test
+if-old.test
+if.test
+incr-old.test
+incr.test
+indexObj.test
+info.test
+init.test
+interp.test
+io.test
+ioCmd.test
+ioUtil.test
+iogt.test
+join.test
+lindex.test
+link.test
+linsert.test
+list.test
+listObj.test
+llength.test
+load.test
+lrange.test
+lrepeat.test
+lreplace.test
+lsearch.test
+lset.test
+lsetComp.test
+macOSXFCmd.test
+macOSXLoad.test
+main.test
+mathop.test
+misc.test
+msgcat.test
+namespace-old.test
+namespace.test
+notify.test
+obj.test
+opt.test
+package.test
+parse.test
+parseExpr.test
+parseOld.test
+pid.test
+pkg.test
+pkgMkIndex.test
+platform.test
+proc-old.test
+proc.test
+pwd.test
+reg.test
+regexp.test
+regexpComp.test
+registry.test
+rename.test
+result.test
+safe.test
+scan.test
+security.test
+set-old.test
+set.test
+socket.test
+source.test
+split.test
+stack.test
+string.test
+stringComp.test
+stringObj.test
+subst.test
+switch.test
+tcltest.test
+thread.test
+timer.test
+tm.test
+trace.test
+unixFCmd.test
+unixFile.test
+unixInit.test
+unixNotfy.test
+unknown.test
+unload.test
+uplevel.test
+upvar.test
+utf.test
+util.test
+var.test
+while-old.test
+while.test
+winConsole.test
+winDde.test
+winFCmd.test
+winFile.test
+winNotify.test
+winPipe.test
+winTime.test
+
+all.tcl:	Total	27048	Passed	26019	Skipped	1026	Failed	3
+Sourced 137 Test Files.
+Files with failing tests: clock.test
+Number of tests skipped for each constraint:
+	9	!ieeeFloatingPoint
+	3	asyncPipeChan
+	76	bigEndian
+	5	bug-3057639
+	4	dontCopyLinks
+	61	emptyTest
+	2	hasIsoLocale
+	1	impossible
+	1	knownBadTest
+	38	knownBug
+	2	largefileSupport
+	100	localeRegexp
+	50	longIs32bit
+	14	macosxFileAttr
+	17	memory
+	42	nonPortable
+	5	notNetworkFilesystem
+	8	nt
+	1	pcOnly
+	4	readonlyAttr
+	7	testaccessproc
+	1	testexprparser && !ieeeFloatingPoint
+	8	testopenfilechannelproc
+	7	teststatproc
+	1	testwinclock
+	21	testwordend
+	3	unknownFailure
+	2	unthreaded
+	2	wideBiggerThanInt
+	518	win
+	2	win2000orXP
+make[1]: Leaving directory `$(@D)'

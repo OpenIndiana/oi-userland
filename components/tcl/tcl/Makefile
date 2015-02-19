@@ -62,7 +62,14 @@ CONFIGURE_OPTIONS	+= --enable-man-symlinks
 CONFIGURE_OPTIONS	+= --enable-threads
 CONFIGURE_OPTIONS.64	+= --enable-64bit
 
+# Results differ slightly between ISAs and bitnesses.
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(BITS).$(MACH).master
 COMPONENT_TEST_TARGETS = test
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s|^.*$(CC).*$$|XXX_CC_XXX|"' \
+	'-e "/^XXX_CC_XXX$$/d"' \
+	'-e "/^Tests began at .*$$/d"' \
+	'-e "/^Tests ended at .*$$/d"'
 
 ASLR_MODE = $(ASLR_ENABLE)
 
