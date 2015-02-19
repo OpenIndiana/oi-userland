@@ -2,10 +2,9 @@ This patch implements the smf probe on solaris, which gathers service_name,
 service_state, exec_as_user from the smf repository for the fmri that is
 provided.
 This patch has not been contributed upstream, but is planned to be done by
- 2013-Jul-12.
-
---- openscap-0.9.7/src/OVAL/probes/unix/solaris/smf.c.~1~	2013-04-23 06:21:51.479000001 -0700
-+++ openscap-0.9.7/src/OVAL/probes/unix/solaris/smf.c	2013-06-18 13:13:20.112012008 -0700
+ 2015-Mar-01.
+--- openscap-1.2.0/src/OVAL/probes/unix/solaris/smf.c.~1~	2013-03-21 08:27:20.051583517 -0700
++++ openscap-1.2.0/src/OVAL/probes/unix/solaris/smf.c	2015-02-18 10:06:03.709601923 -0800
 @@ -33,9 +33,240 @@
  #endif
  
@@ -145,8 +144,7 @@ This patch has not been contributed upstream, but is planned to be done by
 +collect_smf_info(char *fmri, probe_ctx *ctx)
 +{
 +	struct result_info r;
-+	int rc = 0, type;
-+	const char *service, *instance, *scope, *propgrp, *prop;
++	int rc = 0;
 +	char *tmp;
 +	scf_handle_t *scf_hdl = NULL;
 +	scf_instance_t *inst = NULL;
@@ -155,27 +153,11 @@ This patch has not been contributed upstream, but is planned to be done by
 +
 +	oscap_dlprintf(DBG_I, "In collect_smf_info.\n");
 +	memset(&r, 0, sizeof (r));
-+	r.service_name = strdup_check(fmri);
-+	tmp = r.service_name;
-+	scf_parse_fmri(r.service_name, &type, &scope, &service,
-+	    &instance, &propgrp, &prop);
-+	if (scf_error() == SCF_ERROR_INVALID_ARGUMENT) {
-+		rc = PROBE_EINVAL;
-+		goto cleanup;
-+	}
-+	if (instance == NULL)
-+		r.service_name = strdup(service);
-+	else /* service name is service:instance */
-+		asprintf(&r.service_name, "%s:%s", service, instance);
-+	if (r.service_name == NULL)
-+		exit(PROBE_ENOMEM);
-+	free(tmp);
 +	r.fmri = fmri;
 +	if ((scf_hdl = scf_handle_create(SCF_VERSION)) == NULL ||
 +	    scf_handle_bind(scf_hdl) != 0 ||
 +	    (svc = scf_service_create(scf_hdl)) == NULL ||
-+	    (instance != NULL &&
-+	    (inst = scf_instance_create(scf_hdl)) == NULL)) {
++	    (inst = scf_instance_create(scf_hdl)) == NULL) {
 +		rc = PROBE_EFATAL;
 +		goto cleanup;
 +	}
@@ -184,9 +166,8 @@ This patch has not been contributed upstream, but is planned to be done by
 +	    SCF_PROPERTY_STATE, &(r.service_state));
 +	if (scf_error() == SCF_ERROR_NOT_FOUND) {
 +		if (scf_handle_decode_fmri(scf_hdl, fmri, NULL, svc,
-+		    (instance == NULL ? NULL : inst),
-+		    NULL, NULL, SCF_DECODE_FMRI_EXACT) != 0 ||
-+			scf_error() == SCF_ERROR_NOT_FOUND) {
++		    inst, NULL, NULL, SCF_DECODE_FMRI_EXACT) != 0 || 
++		    scf_error() == SCF_ERROR_NOT_FOUND) {
 +			oscap_dlprintf(DBG_I,"decode_fmri failed.\n");
 +			goto cleanup;
 +		}
@@ -198,6 +179,24 @@ This patch has not been contributed upstream, but is planned to be done by
 +	    SCF_PROPERTY_EXEC, &(r.server_executable));
 +	get_smf_prop_val(scf_hdl, r.fmri, SCF_PG_START,
 +	    SCF_PROPERTY_USER, &(r.exec_as_user));
++	/*
++	 * At this point the fmri we have is valid because
++	 * we were able to locate it and get info on the
++	 * above listed properties. Now trying to parse
++	 * the fmri to only get the service:instance name.
++	 * So skipping the scope and service prefix. If we
++	 * did not find the scope and service prefix, we
++	 * return the full fmri that was passed in.
++	 */
++	if ((tmp = strstr(fmri, SCF_FMRI_SCOPE_PREFIX)) != NULL) 
++		tmp += sizeof(SCF_FMRI_SCOPE_PREFIX) - 1;
++	else
++		tmp = fmri;
++	if ((tmp = strstr(tmp, SCF_FMRI_SERVICE_PREFIX)) != NULL)
++		tmp += sizeof(SCF_FMRI_SERVICE_PREFIX) - 1;
++	else
++		tmp = fmri;
++	asprintf(&r.service_name, "%s", tmp);
 +	report_finding(&r, ctx);
 +	free(r.protocol);
 +	free(r.service_state);
