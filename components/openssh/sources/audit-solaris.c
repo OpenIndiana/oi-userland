@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
  */
 
 #include "includes.h"
@@ -490,9 +490,13 @@ audit_fail(int pamerr)
 	    getpid(), getuid(), geteuid(), pam_strerror(NULL, pamerr),
 	    (void *)the_authctxt);
 	if (the_authctxt != NULL) {
+		uid_t 	pwuid = ADT_NO_ATTRIB;
+
+		if (the_authctxt->pw != NULL) {
+			pwuid = the_authctxt->pw->pw_uid;
+		}
 		__auditd_debug("valid=%d, user=%s, uid=%d\n",
-		    the_authctxt->valid, the_authctxt->user,
-		    the_authctxt->pw->pw_uid);
+		    the_authctxt->valid, audit_username(), pwuid);
 	} else {
 		__auditd_debug("\tNo autxctxt\n");
 	}
@@ -500,10 +504,10 @@ audit_fail(int pamerr)
 	if (pamerr == PAM_IGNORE) {
 		return;
 	}
-	if ((the_authctxt != NULL) || (the_authctxt->valid != 0)) {
+	if ((the_authctxt != NULL) && (the_authctxt->valid != 0)) {
 		uid = the_authctxt->pw->pw_uid;
 		gid = the_authctxt->pw->pw_gid;
-	} else if ((the_authctxt != NULL) || (the_authctxt->user != NULL)) {
+	} else if ((the_authctxt != NULL) && (the_authctxt->user != NULL)) {
 		struct passwd *pw;
 
 		if ((pw = getpwnam(the_authctxt->user)) != NULL) {
