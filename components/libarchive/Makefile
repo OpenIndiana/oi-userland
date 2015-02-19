@@ -56,15 +56,19 @@ PKG_PROTO_DIRS += $(COMPONENT_SRC)/doc/man
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-# common targets
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s|/tmp/.*_test.*|\\$$(TESTDIR)|g"' \
+	'-e "s|^.*$(CC).*$$|XXX_CC_XXX|"' \
+	'-e "s/ld: warning: symbol .* has differing sizes:$$/XXX_CC_XXX/"' \
+	'-e "s/.*value=0x[0-9a-f]\+.*$$/XXX_CC_XXX/"' \
+	'-e "s/.* definition taken$$/XXX_CC_XXX/"' \
+	'-e "/^XXX_CC_XXX$$/d"'
+
 configure:	$(CONFIGURE_32_and_64)
-
 build:		$(BUILD_32_and_64)
-
 install:	$(INSTALL_32_and_64)
-
 test:		$(TEST_32_and_64)
-
 
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/xz
