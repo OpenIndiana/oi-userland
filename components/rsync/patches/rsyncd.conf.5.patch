@@ -2,8 +2,8 @@ Remove groffisms from the man page.  This changes "\(dq" to a double-quote
 character ("), "\(cq" to a single-quote character ('), and eliminates the
 use of "\&" except where it's needed at the beginning of the line.
 
---- rsync-3.1.0/rsyncd.conf.5.orig	Sat Sep 28 19:57:23 2013
-+++ rsync-3.1.0/rsyncd.conf.5	Mon Mar 17 15:52:51 2014
+--- rsync-3.1.1/rsyncd.conf.5.orig	2014-06-22 10:07:36.000000000 -0700
++++ rsync-3.1.1/rsyncd.conf.5	2014-08-27 11:32:28.266744772 -0700
 @@ -20,7 +20,7 @@
  .PP 
  The file consists of modules and parameters. A module begins with the
@@ -70,7 +70,7 @@ use of "\&" except where it's needed at the beginning of the line.
  .IP 
  .nf 
      path = /home/%RSYNC_USER_NAME% 
-@@ -178,14 +178,14 @@
+@@ -178,40 +178,40 @@
  
  .IP 
  It is fine if the path includes internal spaces \-\- they will be retained
@@ -88,7 +88,6 @@ use of "\&" except where it's needed at the beginning of the line.
  the advantage of extra protection against possible implementation security
  holes, but it has the disadvantages of requiring super\-user privileges,
  of not being able to follow symbolic links that are either absolute or outside
-@@ -192,26 +192,26 @@
  of the new root path, and of complicating the preservation of users and groups
  by name (see below).
  .IP 
@@ -255,7 +254,7 @@ use of "\&" except where it's needed at the beginning of the line.
  modules, which still allows modules to override the default setting.
  .IP 
  .IP "\fBsyslog facility\fP"
-@@ -347,19 +347,19 @@
+@@ -347,43 +347,43 @@
  defined on your system. Common names are auth, authpriv, cron, daemon,
  ftp, kern, lpr, mail, news, security, syslog, user, uucp, local0,
  local1, local2, local3, local4, local5, local6 and local7. The default
@@ -271,6 +270,15 @@ use of "\&" except where it's needed at the beginning of the line.
  generate (since the information goes into the log file). The default is 1,
  which allows the client to request one level of verbosity.
  .IP 
+-This also affects the user\(cq\&s ability to request higher levels of \fB\-\-info\fP and
++This also affects the user's ability to request higher levels of \fB\-\-info\fP and
+ \fB\-\-debug\fP logging.  If the max value is 2, then no info and/or debug value
+ that is higher than what would be set by \fB\-vv\fP will be honored by the daemon
+ in its logging.  To see how high of a verbosity level you need to accept for a
+-particular info/debug level, refer to \(dq\&rsync \-\-info=help\(dq\& and \(dq\&rsync \-\-debug=help\(dq\&.
++particular info/debug level, refer to "rsync \-\-info=help" and "rsync \-\-debug=help".
+ For instance, it takes max\-verbosity 4 to be able to output debug TIME2 and FLIST3.
+ .IP 
  .IP "\fBlock file\fP"
  This parameter specifies the file to use to
 -support the \(dq\&max connections\(dq\& parameter. The rsync daemon uses record
@@ -278,7 +286,6 @@ use of "\&" except where it's needed at the beginning of the line.
  locking on this file to ensure that the max connections limit is not
  exceeded for the modules sharing the lock file.
  The default is \f(CW/var/run/rsyncd.lock\fP.
-@@ -366,17 +366,17 @@
  .IP 
  .IP "\fBread only\fP"
  This parameter determines whether clients
@@ -301,7 +308,7 @@ use of "\&" except where it's needed at the beginning of the line.
  will be possible if file permissions on the daemon side allow them.  The
  default is for this parameter to be disabled.
  .IP 
-@@ -384,8 +384,8 @@
+@@ -391,8 +391,8 @@
  This parameter determines whether this module is
  listed when the client asks for a listing of available modules.  In addition,
  if this is false, the daemon will pretend the module does not exist
@@ -312,7 +319,7 @@ use of "\&" except where it's needed at the beginning of the line.
  module, the resulting reverse lookup to a potentially client\-controlled DNS
  server may still reveal to the client that it hit an existing module.
  The default is for modules to be listable.
-@@ -393,10 +393,10 @@
+@@ -400,10 +400,10 @@
  .IP "\fBuid\fP"
  This parameter specifies the user name or user ID that
  file transfers to and from that module should take place as when the daemon
@@ -326,7 +333,7 @@ use of "\&" except where it's needed at the beginning of the line.
  .IP 
  The RSYNC_USER_NAME environment variable may be used to request that rsync run
  as the authorizing user.  For example, if you want a rsync to run as the same
-@@ -411,16 +411,16 @@
+@@ -418,16 +418,16 @@
  .IP "\fBgid\fP"
  This parameter specifies one or more group names/IDs that will be
  used when accessing the module.  The first one will be the default group, and
@@ -347,7 +354,7 @@ use of "\&" except where it's needed at the beginning of the line.
  daemon side to behave as if the \fB\-\-fake\-super\fP command\-line option had
  been specified.  This allows the full attributes of a file to be stored
  without having to have the daemon actually running as root.
-@@ -436,17 +436,17 @@
+@@ -443,17 +443,17 @@
  tampering with private administrative files, such as files you may add to
  support uid/gid name translations.
  .IP 
@@ -372,7 +379,7 @@ use of "\&" except where it's needed at the beginning of the line.
  apply to a given module in the config file, so put all the rules you want in a
  single parameter.  Note that per\-directory merge\-file rules do not provide as
  much protection as global rules, but they can be used to make \fB\-\-delete\fP work
-@@ -456,27 +456,27 @@
+@@ -463,27 +463,27 @@
  .IP "\fBexclude\fP"
  This parameter takes a space\-separated list of daemon
  exclude patterns.  As with the client \fB\-\-exclude\fP option, patterns can be
@@ -411,7 +418,7 @@ use of "\&" except where it's needed at the beginning of the line.
  daemon.
  .IP 
  .IP "\fBincoming chmod\fP"
-@@ -507,23 +507,23 @@
+@@ -514,23 +514,23 @@
  this module. The usernames do not need to exist on the local
  system. The rules may contain shell wildcard characters that will be matched
  against the username provided by the client for authentication. If
@@ -443,7 +450,7 @@ use of "\&" except where it's needed at the beginning of the line.
  .IP 
  Be sure to put the rules in the order you want them to be matched, because the
  checking stops at the first matching user or group, and that is the only auth
-@@ -535,12 +535,12 @@
+@@ -542,54 +542,54 @@
  
  .IP 
  In the above rule, user joe will be denied access no matter what.  Any user
@@ -460,7 +467,6 @@ use of "\&" except where it's needed at the beginning of the line.
  .IP 
  See the description of the secrets file for how you can have per\-user passwords
  as well as per\-group passwords.  It also explains how a user can authenticate
-@@ -547,8 +547,8 @@
  using their user password or (when applicable) a group password, depending on
  what rule is being authenticated.
  .IP 
@@ -471,7 +477,6 @@ use of "\&" except where it's needed at the beginning of the line.
  rsyncd.conf\-level username that differs from the remote\-shell\-level
  username when using a remote shell to connect to an rsync daemon.
  .IP 
-@@ -555,34 +555,34 @@
  .IP "\fBsecrets file\fP"
  This parameter specifies the name of a file that contains
  the username:password and/or @groupname:password pairs used for authenticating
@@ -517,7 +522,7 @@ use of "\&" except where it's needed at the beginning of the line.
  false, the check is not performed.  The default is true.  This parameter
  was added to accommodate rsync running on the Windows operating system.
  .IP 
-@@ -597,7 +597,7 @@
+@@ -604,7 +604,7 @@
  .RS 
  .IP o 
  a dotted decimal IPv4 address of the form a.b.c.d, or an IPv6 address
@@ -526,7 +531,7 @@ use of "\&" except where it's needed at the beginning of the line.
  must match exactly.
  .IP o 
  an address/mask in the form ipaddr/n where ipaddr is the IP address
-@@ -612,11 +612,11 @@
+@@ -619,11 +619,11 @@
  a hostname pattern using wildcards. If the hostname of the connecting IP
  (as determined by a reverse lookup) matches the wildcarded name (using the
  same rules as normal unix filename matching), the client is allowed in.  This
@@ -541,7 +546,7 @@ use of "\&" except where it's needed at the beginning of the line.
  enabled, as it is by default).  Any match will be allowed in.
  .RE
  
-@@ -633,31 +633,31 @@
+@@ -640,31 +640,31 @@
  .RE
  
  .IP 
@@ -583,7 +588,7 @@ use of "\&" except where it's needed at the beginning of the line.
  .IP 
  If this parameter is enabled globally (even by default), rsync performs the
  lookup as soon as a client connects, so disabling it for a module will not
-@@ -683,7 +683,7 @@
+@@ -690,7 +690,7 @@
  This tells the rsync daemon to completely
  ignore files that are not readable by the user. This is useful for
  public archives that may have some non\-readable files among the
@@ -592,7 +597,7 @@ use of "\&" except where it's needed at the beginning of the line.
  .IP 
  .IP "\fBtransfer logging\fP"
  This parameter enables per\-file
-@@ -691,7 +691,7 @@
+@@ -698,7 +698,7 @@
  used by ftp daemons.  The daemon always logs the transfer at the end, so
  if a transfer is aborted, no mention will be made in the log file.
  .IP 
@@ -601,7 +606,7 @@ use of "\&" except where it's needed at the beginning of the line.
  .IP 
  .IP "\fBlog format\fP"
  This parameter allows you to specify the
-@@ -699,17 +699,17 @@
+@@ -706,17 +706,17 @@
  The format is a text string containing embedded single\-character escape
  sequences prefixed with a percent (%) character.  An optional numeric
  field width may also be specified between the percent and the escape
@@ -624,7 +629,7 @@ use of "\&" except where it's needed at the beginning of the line.
  rsyncstats.)
  .IP 
  The single\-character escapes that are understood are as follows:
-@@ -726,9 +726,9 @@
+@@ -733,9 +733,9 @@
  .IP o 
  %C the full\-file MD5 checksum if \fB\-\-checksum\fP is enabled or a file was transferred (only for protocol 30 or above).
  .IP o 
@@ -636,7 +641,7 @@ use of "\&" except where it's needed at the beginning of the line.
  .IP o 
  %h the remote host name (only available for a daemon)
  .IP o 
-@@ -736,15 +736,15 @@
+@@ -743,15 +743,15 @@
  .IP o 
  %l the length of the file in bytes
  .IP o 
@@ -655,7 +660,7 @@ use of "\&" except where it's needed at the beginning of the line.
  .IP o 
  %p the process ID of this rsync session
  .IP o 
-@@ -758,7 +758,7 @@
+@@ -765,7 +765,7 @@
  .RE
  
  .IP 
@@ -664,7 +669,7 @@ use of "\&" except where it's needed at the beginning of the line.
  \fB\-\-itemize\-changes\fP option in the rsync manpage.
  .IP 
  Note that some of the logged output changes when talking with older
-@@ -768,7 +768,7 @@
+@@ -775,7 +775,7 @@
  .IP "\fBtimeout\fP"
  This parameter allows you to override the
  clients choice for I/O timeout for this module. Using this parameter you
@@ -673,7 +678,7 @@ use of "\&" except where it's needed at the beginning of the line.
  is specified in seconds. A value of zero means no timeout and is the
  default. A good choice for anonymous rsync daemons may be 600 (giving
  a 10 minute timeout).
-@@ -789,15 +789,15 @@
+@@ -796,15 +796,15 @@
  .IP 
  The reason the above refuses all delete options is that the options imply
  \fB\-\-delete\fP, and implied options are refused just like explicit options.
@@ -693,7 +698,7 @@ use of "\&" except where it's needed at the beginning of the line.
  client that requests compression.
  .IP 
  .IP "\fBdont compress\fP"
-@@ -806,16 +806,16 @@
+@@ -813,16 +813,16 @@
  when pulling files from the daemon (no analogous parameter exists to
  govern the pushing of files to a daemon).
  Compression is expensive in terms of CPU usage, so it
@@ -713,7 +718,7 @@ use of "\&" except where it's needed at the beginning of the line.
  the sender.
  .IP 
  .IP "\fBpre\-xfer exec\fP, \fBpost\-xfer exec\fP"
-@@ -824,7 +824,7 @@
+@@ -831,7 +831,7 @@
  transfer is aborted before it begins.  Any output from the script on stdout (up
  to several KB) will be displayed to the user when aborting, but is NOT
  displayed if the script returns success.  Any output from the script on stderr
@@ -722,7 +727,7 @@ use of "\&" except where it's needed at the beginning of the line.
  \-\-no\-detatch option for a way to see the stderr output, which can assist with
  debugging).
  .IP 
-@@ -837,26 +837,26 @@
+@@ -844,26 +844,26 @@
  .IP o 
  \fBRSYNC_MODULE_PATH\fP: The path configured for the module.
  .IP o 
@@ -756,7 +761,7 @@ use of "\&" except where it's needed at the beginning of the line.
  This will be 0 for a successful run, a positive value for an error that the
  server generated, or a \-1 if rsync failed to exit properly.  Note that an
  error that occurs on the client side does not currently get sent to the
-@@ -870,7 +870,7 @@
+@@ -877,7 +877,7 @@
  .IP 
  Even though the commands can be associated with a particular module, they
  are run using the permissions of the user that started the daemon (not the
@@ -765,7 +770,7 @@ use of "\&" except where it's needed at the beginning of the line.
  .IP 
  .SH "CONFIG DIRECTIVES"
  
-@@ -878,7 +878,7 @@
+@@ -885,14 +885,14 @@
  There are currently two config directives available that allow a config file to
  incorporate the contents of other files:  \fB&include\fP and \fB&merge\fP.  Both
  allow a reference to either a file or a directory.  They differ in how
@@ -774,7 +779,6 @@ use of "\&" except where it's needed at the beginning of the line.
  .PP 
  The \fB&include\fP directive treats each file as more distinct, with each one
  inheriting the defaults of the parent file, starting the parameter parsing
-@@ -885,7 +885,7 @@
  as globals/defaults, and leaving the defaults unchanged for the parsing of
  the rest of the parent file.
  .PP 
@@ -783,7 +787,7 @@ use of "\&" except where it's needed at the beginning of the line.
  if it were simply inserted in place of the directive, and thus it can set
  parameters in a module started in another file, can affect the defaults for
  other files, etc.
-@@ -894,8 +894,8 @@
+@@ -901,8 +901,8 @@
  in all the \fB*.conf\fP or \fB*.inc\fP files (respectively) that are contained inside
  that directory (without any
  recursive scanning), with the files sorted into alpha order.  So, if you have a
