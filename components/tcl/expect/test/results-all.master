@@ -1,0 +1,55 @@
+make[1]: Entering directory `$(@D)'
+(echo 'if {![package vsatisfies [package provide Tcl] 8.5]} {return}' ; \
+ echo 'package ifneeded Expect 5.45 \
+    [list load [file join $dir libexpect5.45.so]]'\
+) > pkgIndex.tcl
+TCL_LIBRARY=`echo $(WS_TOP)/components/tcl/tcl/tcl8.5.12/library` LD_LIBRARY_PATH=".:$(WS_TOP)/components/tcl/$(TCLBUILD):" PATH=".:$(WS_TOP)/components/tcl/$(TCLBUILD):/usr/bin:/usr/gnu/bin" TCLLIBPATH="." $(WS_TOP)/components/tcl/$(TCLBUILD)/tclsh `echo $(SOURCE_DIR)/tests/all.tcl` 
+cat.test
+expect.test
+logfile.test
+via sendvia send_uservia send_stdoutpid.test
+send.test
+
+
+==== send-1.1 basic send operation FAILED
+==== Contents of test case:
+
+    spawn cat
+    after 1000
+    send "foo\r"
+    expect foo
+    after 1000
+    send "\u0004"
+    expect eof
+    regexp "\r\nfoo\r\n" $expect_out(buffer)
+
+---- Result was:
+0
+---- Result should have been (exact matching):
+1
+==== send-1.1 FAILED
+
+
+
+==== send-1.2 send null FAILED
+==== Contents of test case:
+
+    spawn od -c
+    send "a\u0000b\r"
+    after 1000
+    send \u0004
+    expect eof
+    regexp "a  \\\\0   b" $expect_out(buffer)
+
+---- Result was:
+0
+---- Result should have been (exact matching):
+1
+==== send-1.2 FAILED
+
+spawn.test
+stty.test
+all.tcl:	Total	29	Passed	27	Skipped	0	Failed	2
+Sourced 0 Test Files.
+Files with failing tests: send.test
+make[1]: Leaving directory `$(@D)'

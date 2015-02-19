@@ -57,7 +57,11 @@ CONFIGURE_OPTIONS 	+= --with-tclinclude="$(COMPONENT_DIR)/../tcl/build/$(MACH$(B
 
 CONFIGURE_OPTIONS.64	+= LDFLAGS="$(LDFLAGS) -m64"
 
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_TARGETS = test
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s|$(WS_TOP)|\\$$(WS_TOP)|g"' \
+	'-e "s|tcl/build/$(MACH$(BITS))|\\$$(TCLBUILD)|g"'
 
 ASLR_MODE = $(ASLR_ENABLE)
 
