@@ -61,7 +61,15 @@ CONFIGURE_OPTIONS.32	+= --with-tcl="$(COMPONENT_DIR)/../tcl/build/$(MACH32)"
 CONFIGURE_OPTIONS.64	+= --with-tcl="$(COMPONENT_DIR)/../tcl/build/$(MACH64)"
 CONFIGURE_OPTIONS.64	+= --enable-64bit
 
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_TARGETS = test
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s|^.*$(CC).*$$|XXX_CC_XXX|"' \
+	'-e "s|^.*tcl/build/$(MACH$(BITS)).*$$|XXX_CC_XXX|g"' \
+	'-e "s|^cc: Warning: -xarch=v9 is deprecated.*$$|XXX_CC_XXX|g"' \
+	'-e "/^XXX_CC_XXX$$/d"' \
+	'-e "/^Tests began at .*$$/d"' \
+	'-e "/^Tests ended at .*$$/d"'
 
 ASLR_MODE = $(ASLR_ENABLE)
 
@@ -86,7 +94,6 @@ test: 		$(TEST_32_and_64)
 
 $(CONFIGURE_32):	../tcl/build/$(MACH32)/.built
 $(CONFIGURE_64):	../tcl/build/$(MACH64)/.built
-
 
 REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += system/library
