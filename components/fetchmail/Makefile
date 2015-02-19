@@ -56,7 +56,10 @@ COMPONENT_POST_INSTALL_ACTION = \
 	$(PROTO_DIR)/usr/lib/python2.7/site-packages/fetchmailconf.py > \
 	$(PROTO_DIR)$(USRBIN.32)/fetchmailconf
 
-# common targets
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s|^.*$(CC).*$$|XXX_CC_XXX|"' \
+	'-e "/^XXX_CC_XXX$$/d"'
+
 configure:	$(CONFIGURE_64)
 
 build:		$(BUILD_64)
@@ -64,7 +67,6 @@ build:		$(BUILD_64)
 install:	$(INSTALL_64)
 
 test:		$(TEST_64)
-
 
 REQUIRED_PACKAGES += library/python/tkinter-27
 REQUIRED_PACKAGES += library/security/openssl
