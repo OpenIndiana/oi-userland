@@ -50,16 +50,11 @@ CONFIGURE_OPTIONS +=	--without-man-pages
 
 ASLR_MODE =	$(ASLR_ENABLE)
 
-# common targets
 configure:	$(CONFIGURE_32_and_64)
-
 build:		$(BUILD_32_and_64)
-
 install:	$(INSTALL_32_and_64)
-
-test:	$(TEST_32_and_64)
+test:		$(NO_TESTS)
 
 PKG_PROTO_DIRS +=	$(COMPONENT_DIR)/files
-
 
 REQUIRED_PACKAGES += system/library
