@@ -85,7 +85,7 @@ CONFIGURE_OPTIONS = \
 			    -Duse64bitint \
 			    -Dcc="cc" \
 			    -Doptimize="$(CFLAGS.studio)" \
-			    -Dcf_email="userland-discuss@opensolaris.org" \
+			    -Dcf_email="perl@solaris-userland.java.net" \
 			    -Dcf_by="perl-bugs" \
 			    -Dmyhostname="localhost" \
 			    -Dmksymlinks \
