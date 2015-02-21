@@ -122,8 +122,8 @@ COMPONENT_TEST_TRANSFORMS += \
     '-e "s|$(SM_BUILD_SUB_DIR)|\\$$(SM_BUILD_SUB_DIR)|g" ' \
     '-e "s|$(OS_VERSION)|\\$$(OS_VERSION)|g" ' \
     '-e "s|$(ARCH)|\\$$(ARCH)|g" ' \
-    '-e "s|$(CC)|\\$$(CC)|g" ' \
-    '-e "s|$(CC_BITS)|\\$$(CC_BITS)|g" '
+    '-e "s|^$(CC).*$$|XXX_CC_XXX|g" ' \
+    '-e "/^XXX_CC_XXX\\$$/d" '
 
 ASLR_MODE = $(ASLR_ENABLE)
 
