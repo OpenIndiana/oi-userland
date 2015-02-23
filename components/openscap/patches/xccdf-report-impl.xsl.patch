@@ -1,0 +1,33 @@
+This patch fixes the report to show the benchmark title, description
+and version. This patch will be submitted upstream by 2015-Mar-01.
+
+--- openscap-1.2.1/xsl/xccdf-report-impl.xsl.~1~	2015-02-19 13:30:29.206052042 -0800
++++ openscap-1.2.1/xsl/xccdf-report-impl.xsl	2015-02-19 13:30:47.352544165 -0800
+@@ -60,15 +60,21 @@
+                             <xsl:value-of select="$testresult/cdf:target/text()"/>
+                         </td>
+                     </tr>
+-                    <xsl:if test="$testresult/cdf:benchmark">
++                    <xsl:if test="$benchmark/cdf:title">
+                         <tr>
+-                            <th>Benchmark URL</th>
+-                            <td><xsl:value-of select="$testresult/cdf:benchmark/@href"/></td>
++                            <th>Benchmark Title</th>
++                            <td><xsl:value-of select="$benchmark/cdf:title"/></td>
+                         </tr>
+-                        <xsl:if test="$testresult/cdf:benchmark/@id">
++                        <xsl:if test="$benchmark/cdf:version">
+                             <tr>
+-                                <th>Benchmark ID</th>
+-                                <td><xsl:value-of select="$testresult/cdf:benchmark/@id"/></td>
++                                <th>Benchmark Version</th>
++                                <td><xsl:value-of select="$benchmark/cdf:version"/></td>
++                            </tr>
++                        </xsl:if>
++                        <xsl:if test="$benchmark/cdf:description">
++                            <tr>
++                                <th>Benchmark Description</th>
++                                <td><xsl:value-of select="$benchmark/cdf:description"/></td>
+                             </tr>
+                         </xsl:if>
+                     </xsl:if>
