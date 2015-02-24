@@ -15,14 +15,14 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=                brasero
-COMPONENT_VERSION=        2.30.3
+COMPONENT_VERSION=        2.32.1
 COMPONENT_PROJECT_URL=        https://projects.gnome.org/brasero/
 COMPONENT_SUMMARY=        Gnome CD/DVD burner
 COMPONENT_SRC=                $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=        \
-    sha256:343b393a23a1215514ab096fe512160eef6c0ae24ae705d5d952d663f6cebbd3
-COMPONENT_ARCHIVE_URL=        http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.30/$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.bz2
+    sha256:a0422cea30dbe470c06963f3c716a948442aed88f28701ea246752b5a73da5b9
+COMPONENT_ARCHIVE_URL=        http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.32/$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.bz2
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
@@ -52,6 +52,9 @@ CONFIGURE_OPTIONS+=        --disable-gtk-doc
 CONFIGURE_OPTIONS+=        --disable-inotify
 
 COMPONENT_INSTALL_ENV+=        GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
+
+COMPONENT_BUILD_ENV += CC="$(CC)"
+COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 # common targets
 build:                $(BUILD_32)
