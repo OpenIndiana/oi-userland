@@ -61,6 +61,9 @@ studio_C99MODE=
 studio_ALIGN=
 studio_MT=
 
+# Sparc optimization -xO4 makes perl dtrace probes broken
+studio_OPT.sparc.64=-xO3
+
 CONFIGURE_SCRIPT = $(SOURCE_DIR)/Configure
 CONFIGURE_ENV += MAKE=$(GMAKE)
 CONFIGURE_ENV += PATH=$(dir $(CC)):$(PATH)

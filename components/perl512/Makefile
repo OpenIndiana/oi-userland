@@ -59,6 +59,9 @@ studio_C99MODE=
 studio_ALIGN=
 studio_MT=
 
+# Sparc optimization -xO4 makes perl dtrace probes broken
+studio_OPT.sparc.32=-xO3
+
 #
 # The extra Configure parameters (cf_email, cf_by, myhostname) and
 # the gawk and sed that follow are attempting to sanatize the
