@@ -81,9 +81,11 @@ LINT_FLAGS += -I$(SOURCE_DIR)/include
 # The additional curl specific set of transforms to be applied to the
 # test results to try to normalize them.
 COMPONENT_TEST_TRANSFORMS += \
-	'-e "s|\(^$(CC)\).*|\\$$(CC)|" ' \
+	'-e "s|^.*$(CC).*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^.*source=.*libtool=no.*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^.*DEPDIR=.deps.*$$|XXX_CC_XXX|g" ' \
+	'-e "/^XXX_CC_XXX$$/d" ' \
 	'-e "s|\(^/bin/bash ../../libtool\).*|\1|" ' \
-	'-e "s|\(^libtool: compile:\).*|\1|" ' \
 	'-e "s|\(^libtool: link:\).*|\1|" ' \
 	'-e "s|remaining: ..:..|remaining: xx:xx|" ' \
 	'-e "s|\(^TESTDONE: 964 tests were considered during\).*|\1|" ' \

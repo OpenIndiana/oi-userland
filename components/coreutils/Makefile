@@ -83,7 +83,11 @@ COMPONENT_TEST_ARGS +=	V=1
 # The additional coreutils specific set of transforms to be applied to the
 # test results to try to normalize them.
 COMPONENT_TEST_TRANSFORMS += \
-	'-e "s|\(^$(CC)\).*|\\$$(CC)|" ' \
+	'-e "s|^.*$(CC).*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^.*source=.*libtool=no.*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^.*DEPDIR=.deps.*$$|XXX_CC_XXX|g" ' \
+	'-e "/^XXX_CC_XXX$$/d" ' \
+	'-e "/^separator.sh:/d" ' \
 	'-e "s|\(/gnulib-tests/test-getlogin.c:\).*|\1|" ' \
 	'-e "s|\(^/bin/bash: line 1:\).*|\1|" ' \
 	'-e "s|\(^df-symlink.sh: skipped test:\).*|\1|" ' \

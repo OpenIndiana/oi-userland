@@ -46,7 +46,8 @@ COMPONENT_TEST_ENV +=	PATH="$(GNUBIN):$(PATH)"
 # The additional dejagnu specific set of transforms to be applied to the
 # test results to try to normalize them.
 COMPONENT_TEST_TRANSFORMS += \
-	'-e "s|\(^$(CXX)\).*|\\$$(CXX)|" ' \
+	'-e "s|^.*$(CXX).*$$|XXX_CXX_XXX|g" ' \
+	'-e "/^XXX_CXX_XXX$$/d" ' \
 	'-e "s|\(Test Run By\).*|\1|" ' \
 	'-e "s|\(Native configuration is\).*|\1|" '
 

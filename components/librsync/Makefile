@@ -75,8 +75,9 @@ COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 # The additional librsync specific set of transforms to be applied to the
 # test results to try to normalize them.
 COMPONENT_TEST_TRANSFORMS += \
-	'-e "s|\(^$(CC)\).*|\\$$(CC)|" ' \
-	'-e "s|\(^/bin/bash ../libtool\).*|\1|" '
+	'-e "s|^.*$(CC).*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^.*source=.*libtool=no.*$$|XXX_CC_XXX|g" ' \
+	'-e "/^XXX_CC_XXX$$/d" '
 
 configure:	$(CONFIGURE_32_and_64)
 

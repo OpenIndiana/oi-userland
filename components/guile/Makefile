@@ -55,9 +55,8 @@ COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 # The additional guile specific set of transforms to be applied to the
 # test results to try to normalize them.
 COMPONENT_TEST_TRANSFORMS += \
-	'-e "s|\(^$(GCC_ROOT)/bin/gcc\).*|\\$$(GCC_ROOT)/bin/gcc|" ' \
-	'-e "s|\(^/bin/bash ../../libtool\).*|\1|" ' \
-	'-e "s|\(^libtool: link:\).*|\1|" ' \
+	'-e "s|^.*$(GCC_ROOT).*$$|XXX_GCC_ROOT_XXX|g" ' \
+	'-e "/^XXX_GCC_ROOT_XXX$$/d" ' \
 	'-e "/^WARNING:/d" '
 
 ASLR_MODE = $(ASLR_ENABLE)

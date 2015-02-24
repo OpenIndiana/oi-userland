@@ -105,7 +105,7 @@ $(BUILD_DIR)/%/.tested-and-compared:    $(BUILD_DIR)/%/.built
 
 $(BUILD_DIR)/%/.tested:    $(BUILD_DIR)/%/.built
 	$(COMPONENT_PRE_TEST_ACTION)
-	(cd $(COMPONENT_TEST_DIR) ; \
+	cd $(COMPONENT_TEST_DIR) ; \
 		$(COMPONENT_TEST_ENV_CMD) $(COMPONENT_TEST_ENV) \
 		bin/package test $(COMPONENT_TEST_TARGETS) \
 		$(COMPONENT_TEST_ARGS)

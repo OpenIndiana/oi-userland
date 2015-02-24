@@ -48,7 +48,10 @@ CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
 # The additional m4 specific set of transforms to be applied to the
 # test results to try to normalize them.
 COMPONENT_TEST_TRANSFORMS += \
-	'-e "s|\(^$(CC)\).*|\\$$(CC)|" '
+	'-e "s|^.*$(CC).*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^.*source=.*libtool=no.*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^.*DEPDIR=.deps.*$$|XXX_CC_XXX|g" ' \
+	'-e "/^XXX_CC_XXX$$/d" '
 
 ASLR_MODE = $(ASLR_ENABLE)
 
