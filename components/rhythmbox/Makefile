@@ -33,6 +33,7 @@ include ../../make-rules/ips.mk
 
 CXXFLAGS+= -DMOZ_DEFAULT_TOOLKIT=\"cairo-gtk2\"
 CXXFLAGS+= -std=gnu++0x
+CFLAGS += -I/usr/include/check
 
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D) && cd $(@D) &&\
 		intltoolize --copy --force --automake &&\
