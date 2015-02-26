@@ -28,16 +28,16 @@ include ../../make-rules/shared-macros.mk
 PATH=$(dir $(CC)):$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
 
 COMPONENT_NAME=		subversion
-COMPONENT_VERSION=	1.7.5
+COMPONENT_VERSION=	1.7.19
 COMPONENT_PROJECT_URL=	http://subversion.apache.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:cb102a437335a8921f00cef9bf730d84527713f1a5091e3e1eb2f16402f85dc1
+	sha256:184246bf5ccd0cb31f296b87fdae72617e445901b468529e638b919ca4012d4f
 COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/subversion/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/svn
 
-TPNO=			9086
+TPNO=			21233
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -57,16 +57,22 @@ GNUCP = /usr/gnu/bin/cp
 # other way.
 CXX += $(studio_NORUNPATH)
 CFLAGS += -features=extensions
-CFLAGS += -xustr=ascii_utf16_ushort -xcsi
 CXXFLAGS += -features=nestedaccess,tmplife,tmplrefstatic
 CXXFLAGS += -template=geninlinefuncs
-CXXFLAGS += -verbose=template
-CXXFLAGS += -xustr=ascii_utf16_ushort
 CXXFLAGS += $(CC_PIC)
 CXXFLAGS += -mt -D_REENTRANT -DNDEBUG -DSOLARIS
 CXXFLAGS += $(CPP_LARGEFILES)
 CFLAGS += `pkg-config --cflags neon`
 CFLAGS += $(CPP_LARGEFILES)
+
+COMPONENT_TEST_TRANSFORMS += \
+     '-e "/libtool/d"' \
+     '-e "/-m32/d"' \
+     '-e "/-m64/d"' \
+     '-e "s^lib/$(MACH64)^lib/MACH64^g"'  \
+     '-e "s/^make\[[0-9]\{1,\}\]/make/g"' \
+     '-e "/ld: warning/d"' \
+     '-e "/warning/d"'
 
 PERL_VERSION_12 = 5.12
 PERL_VERSION_16 = 5.16
@@ -76,6 +82,13 @@ PERL_ARCH_12_sparc = sun4-solaris-64int
 PERL_ARCH_16_sparc = sun4-solaris-64
 PERL_ARCH_12 = $(PERL_ARCH_12_$(MACH))
 PERL_ARCH_16 = $(PERL_ARCH_16_$(MACH))
+APR_VERSION = 1.5
+APR_UTIL_VERSION = 1.5
+SS_VERSION := 12.3
+
+ifneq (, $(findstring 12.4,$(CXX)))
+  SS_VERSION := 12.4
+endif
 
 # Let's write some post-configure hacks
 COMPONENT_POST_CONFIGURE_ACTION = \
@@ -106,12 +119,24 @@ CONFIGURE_ENV += LD_OPTIONS="$(LD_OPTIONS)"
 LIBSVNDIR.32 = $(CONFIGURE_PREFIX)/lib/svn
 LIBSVNDIR.64 = $(CONFIGURE_PREFIX)/lib/svn/$(MACH64)
 
-APR-CONFIG.32 = /usr/apr/1.5/bin/apr-1-config
-APR-CONFIG.64 = /usr/apr/1.5/bin/$(MACH64)/apr-1-config
-APU-CONFIG.32 = /usr/apr-util/1.5/bin/apu-1-config
-APU-CONFIG.64 = /usr/apr-util/1.5/bin/$(MACH64)/apu-1-config
+APR-CONFIG.32 = /usr/apr/$(APR_VERSION)/bin/apr-1-config
+APR-CONFIG.64 = /usr/apr/$(APR_VERSION)/bin/$(MACH64)/apr-1-config
+APU-CONFIG.32 = /usr/apr-util/$(APR_UTIL_VERSION)/bin/apu-1-config
+APU-CONFIG.64 = /usr/apr-util/$(APR_UTIL_VERSION)/bin/$(MACH64)/apu-1-config
 APXS.32 = /usr/apache2/2.2/bin/apxs
-APXS.64 = /usr/apache2/2.2/bin/$(MACH64)/apxs
+APXS.64 = /usr/apache2/2.4/bin/apxs
+APR-CONFIG-RPATH.32 = /usr/apr/$(APR_VERSION)/lib
+APR-CONFIG-RPATH.64 = /usr/apr/$(APR_VERSION)/lib/$(MACH64)
+APU-CONFIG-RPATH.32 = /usr/apr-util/$(APR_VERSION)/lib
+APU-CONFIG-RPATH.64 = /usr/apr-util/$(APR_VERSION)/lib/$(MACH64)
+APACHE_LIBEXECDIR.32 = `$(APXS.32) -q libexecdir`
+APACHE_LIBEXECDIR.64 = `$(APXS.64) -q libexecdir`
+
+LDFLAGS += -R$(LIBSVNDIR.$(BITS)) -R$(APR-CONFIG-RPATH.$(BITS)) \
+	   -R$(APU-CONFIG-RPATH.$(BITS))
+
+CONFIGURE_ENV += LDFLAGS="$(LDFLAGS)"
+CONFIGURE_ENV += RUBY="$(RUBY.1.9)"
 
 # Let's make noise just because we have to override --libdir
 CONFIGURE_OPTIONS = --prefix=$(CONFIGURE_PREFIX)
@@ -125,12 +150,12 @@ CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --disable-libtool-lock 
 CONFIGURE_OPTIONS += --disable-neon-version-check
 CONFIGURE_OPTIONS += --disable-experimental-libtool
-CONFIGURE_OPTIONS += --with-apxs=/usr/apache2/2.2/bin/apxs
+CONFIGURE_OPTIONS += --with-apxs=$(APXS.$(BITS))
 CONFIGURE_OPTIONS += --with-ssl 
 CONFIGURE_OPTIONS += --with-zlib=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --with-jdk=$(JAVA_ROOT)
-CONFIGURE_OPTIONS += --with-apr=/usr/apr/1.5
-CONFIGURE_OPTIONS += --with-apr-util=/usr/apr-util/1.5
+CONFIGURE_OPTIONS += --with-apr=/usr/apr/$(APR_VERSION)
+CONFIGURE_OPTIONS += --with-apr-util=/usr/apr-util/$(APR_UTIL_VERSION)
 CONFIGURE_OPTIONS += --enable-nls
 CONFIGURE_OPTIONS += --disable-mod-activation
 CONFIGURE_OPTIONS += --enable-javahl
@@ -138,7 +163,6 @@ CONFIGURE_OPTIONS += --with-swig
 CONFIGURE_OPTIONS += --with-neon=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --with-apr=$(APR-CONFIG.$(BITS))
 CONFIGURE_OPTIONS += --with-apr-util=$(APU-CONFIG.$(BITS))
-CONFIGURE_OPTIONS += --with-apxs=$(APXS.$(BITS))
 CONFIGURE_OPTIONS += --with-gssapi=$(CONFIGURE_PREFIX)
 
 # Swig overwrites the 32-bit directory with 64-bit objects.
@@ -167,7 +191,6 @@ build:		$(BUILD_32_and_64)
 install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
-
 
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += developer/versioning/subversion
