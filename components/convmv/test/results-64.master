@@ -1,0 +1,250 @@
+make[1]: Entering directory `$(@D)'
+test -d suite || tar xf testsuite.tar
+sed -e 's/\($CONVMV.*\)$/& 2>\&1 | LC_ALL='C' $SORT/' < suite/dotests.sh > suite/dotests-deterministic.sh
+chmod +x suite/dotests-deterministic.sh
+cd suite ; ./dotests-deterministic.sh
+smartness_test
+Ready!
+Skipping, already UTF-8: test.tmp/.hidden Straße
+Skipping, already UTF-8: test.tmp/.hidden Straße
+Skipping, already UTF-8: test.tmp/2/süb
+Skipping, already UTF-8: test.tmp/2/süb/güte
+Skipping, already UTF-8: test.tmp/2/Äpfel
+Skipping, already UTF-8: test.tmp/3/Äpfel
+Skipping, already UTF-8: test.tmp/a directory/../füße
+Skipping, already UTF-8: test.tmp/a directory/link-nach-außerhalb
+Skipping, already UTF-8: test.tmp/a directory/link-nach-außerhalb2
+Skipping, already UTF-8: test.tmp/a directory/link-zu den füßen
+Skipping, already UTF-8: test.tmp/a directory/linkzufüßen
+Skipping, already UTF-8: test.tmp/a directory/subdir/björn
+Skipping, already UTF-8: test.tmp/euro€
+Skipping, already UTF-8: test.tmp/füße
+Skipping, already UTF-8: test.tmp/schön und gut
+Skipping, already UTF-8: test.tmp/schön und gut/subdir/schön
+Skipping, already UTF-8: test.tmp/schön und gut/äpfel
+Skipping, already UTF-8: test.tmp/Äpfel
+double-utf8-test
+../fÃŒÃe"
+.hidden StraÃe"
+mv "test.tmp/.hidden Straße"	"test.tmp/.hidden StraÃe"
+mv "test.tmp/2/süb"	"test.tmp/2/sÃŒb"
+mv "test.tmp/2/süb/güte"	"test.tmp/2/süb/gÃŒte"
+mv "test.tmp/2/Äpfel"	"test.tmp/2/Ãpfel"
+mv "test.tmp/3/Äpfel"	"test.tmp/3/Ãpfel"
+mv "test.tmp/a directory/link-nach-außerhalb"	"test.tmp/a directory/link-nach-auÃerhalb"
+mv "test.tmp/a directory/link-nach-außerhalb2"	"test.tmp/a directory/link-nach-auÃerhalb2"
+mv "test.tmp/a directory/link-zu den füßen"	"test.tmp/a directory/link-zu den fÃŒÃen"
+mv "test.tmp/a directory/linkzufüßen"	"test.tmp/a directory/linkzufÃŒÃen"
+mv "test.tmp/a directory/subdir/björn"	"test.tmp/a directory/subdir/bjÃ¶rn"
+mv "test.tmp/euro€"	"test.tmp/euroâ¬"
+mv "test.tmp/füße"	"test.tmp/fÃŒÃe"
+mv "test.tmp/schön und gut"	"test.tmp/schÃ¶n und gut"
+mv "test.tmp/schön und gut/subdir/schön"	"test.tmp/schön und gut/subdir/schÃ¶n"
+mv "test.tmp/schön und gut/äpfel"	"test.tmp/schön und gut/Ã€pfel"
+mv "test.tmp/Äpfel"	"test.tmp/Ãpfel"
+symlink "test.tmp/bla": ".hidden Straße" >> "symlink "test.tmp/a directory/linkzufüßen": "../füße" >> "Ready!
+double-utf8-test-undo-with-double-utf8-results-test
+Ready!
+mv "test.tmp/euroâ¬"	"test.tmp/euro€"
+mv "test.tmp/schÃ¶n und gut"	"test.tmp/schön und gut"
+Ready!
+mv "test.tmp/euro€"	"test.tmp/euro�"
+../füße"
+.hidden Straße"
+mv "test.tmp/.hidden StraÃe"	"test.tmp/.hidden Straße"
+mv "test.tmp/2/sÃŒb"	"test.tmp/2/süb"
+mv "test.tmp/2/sÃŒb/gÃŒte"	"test.tmp/2/sÃŒb/güte"
+mv "test.tmp/2/Ãpfel"	"test.tmp/2/Äpfel"
+mv "test.tmp/3/Ãpfel"	"test.tmp/3/Äpfel"
+mv "test.tmp/a directory/link-nach-auÃerhalb"	"test.tmp/a directory/link-nach-außerhalb"
+mv "test.tmp/a directory/link-nach-auÃerhalb2"	"test.tmp/a directory/link-nach-außerhalb2"
+mv "test.tmp/a directory/link-zu den fÃŒÃen"	"test.tmp/a directory/link-zu den füßen"
+mv "test.tmp/a directory/linkzufÃŒÃen"	"test.tmp/a directory/linkzufüßen"
+mv "test.tmp/a directory/subdir/bjÃ¶rn"	"test.tmp/a directory/subdir/björn"
+mv "test.tmp/fÃŒÃe"	"test.tmp/füße"
+mv "test.tmp/schön und gut/subdir/schÃ¶n"	"test.tmp/schön und gut/subdir/schön"
+mv "test.tmp/schön und gut/Ã€pfel"	"test.tmp/schön und gut/äpfel"
+mv "test.tmp/Ãpfel"	"test.tmp/Äpfel"
+symlink "test.tmp/bla": ".hidden StraÃe" >> "symlink "test.tmp/a directory/linkzufÃŒÃen": "../fÃŒÃe" >> "Ready!
+utf8-to-iso8859-15-test
+../f��e"
+.hidden Stra�e"
+mv "test.tmp/.hidden Straße"	"test.tmp/.hidden Stra�e"
+mv "test.tmp/2/süb"	"test.tmp/2/s�b"
+mv "test.tmp/2/süb/güte"	"test.tmp/2/süb/g�te"
+mv "test.tmp/2/Äpfel"	"test.tmp/2/�pfel"
+mv "test.tmp/3/Äpfel"	"test.tmp/3/�pfel"
+mv "test.tmp/a directory/link-nach-außerhalb"	"test.tmp/a directory/link-nach-au�erhalb"
+mv "test.tmp/a directory/link-nach-außerhalb2"	"test.tmp/a directory/link-nach-au�erhalb2"
+mv "test.tmp/a directory/link-zu den füßen"	"test.tmp/a directory/link-zu den f��en"
+mv "test.tmp/a directory/linkzufüßen"	"test.tmp/a directory/linkzuf��en"
+mv "test.tmp/a directory/subdir/björn"	"test.tmp/a directory/subdir/bj�rn"
+mv "test.tmp/euro€"	"test.tmp/euro�"
+mv "test.tmp/füße"	"test.tmp/f��e"
+mv "test.tmp/schön und gut"	"test.tmp/sch�n und gut"
+mv "test.tmp/schön und gut/subdir/schön"	"test.tmp/schön und gut/subdir/sch�n"
+mv "test.tmp/schön und gut/äpfel"	"test.tmp/schön und gut/�pfel"
+mv "test.tmp/Äpfel"	"test.tmp/�pfel"
+symlink "test.tmp/bla": ".hidden Straße" >> "symlink "test.tmp/a directory/linkzufüßen": "../füße" >> "Ready!
+iso8859-15-to-utf8-test
+../füße"
+.hidden Straße"
+mv "test.tmp/.hidden Stra�e"	"test.tmp/.hidden Straße"
+mv "test.tmp/2/s�b"	"test.tmp/2/süb"
+mv "test.tmp/2/s�b/g�te"	"test.tmp/2/s�b/güte"
+mv "test.tmp/2/�pfel"	"test.tmp/2/Äpfel"
+mv "test.tmp/3/�pfel"	"test.tmp/3/Äpfel"
+mv "test.tmp/a directory/link-nach-au�erhalb"	"test.tmp/a directory/link-nach-außerhalb"
+mv "test.tmp/a directory/link-nach-au�erhalb2"	"test.tmp/a directory/link-nach-außerhalb2"
+mv "test.tmp/a directory/link-zu den f��en"	"test.tmp/a directory/link-zu den füßen"
+mv "test.tmp/a directory/linkzuf��en"	"test.tmp/a directory/linkzufüßen"
+mv "test.tmp/a directory/subdir/bj�rn"	"test.tmp/a directory/subdir/björn"
+mv "test.tmp/euro�"	"test.tmp/euro€"
+mv "test.tmp/f��e"	"test.tmp/füße"
+mv "test.tmp/sch�n und gut"	"test.tmp/schön und gut"
+mv "test.tmp/sch�n und gut/subdir/sch�n"	"test.tmp/sch�n und gut/subdir/schön"
+mv "test.tmp/sch�n und gut/�pfel"	"test.tmp/sch�n und gut/äpfel"
+mv "test.tmp/�pfel"	"test.tmp/Äpfel"
+symlink "test.tmp/bla": ".hidden Stra�e" >> "symlink "test.tmp/a directory/linkzuf��en": "../f��e" >> "Ready!
+nfd-test
+../füße"
+mv "test.tmp/2/süb"	"test.tmp/2/süb"
+mv "test.tmp/2/süb/güte"	"test.tmp/2/süb/güte"
+mv "test.tmp/2/Äpfel"	"test.tmp/2/Äpfel"
+mv "test.tmp/3/Äpfel"	"test.tmp/3/Äpfel"
+mv "test.tmp/a directory/link-zu den füßen"	"test.tmp/a directory/link-zu den füßen"
+mv "test.tmp/a directory/linkzufüßen"	"test.tmp/a directory/linkzufüßen"
+mv "test.tmp/a directory/subdir/björn"	"test.tmp/a directory/subdir/björn"
+mv "test.tmp/füße"	"test.tmp/füße"
+mv "test.tmp/schön und gut"	"test.tmp/schön und gut"
+mv "test.tmp/schön und gut/subdir/schön"	"test.tmp/schön und gut/subdir/schön"
+mv "test.tmp/schön und gut/äpfel"	"test.tmp/schön und gut/äpfel"
+mv "test.tmp/Äpfel"	"test.tmp/Äpfel"
+symlink "test.tmp/a directory/linkzufüßen": "../füße" >> "Ready!
+nfd-test-with-nfc-results-test
+../füße"
+mv "test.tmp/2/Äpfel"	"test.tmp/2/Äpfel"
+mv "test.tmp/2/süb"	"test.tmp/2/süb"
+mv "test.tmp/2/süb/güte"	"test.tmp/2/süb/güte"
+mv "test.tmp/3/Äpfel"	"test.tmp/3/Äpfel"
+mv "test.tmp/Äpfel"	"test.tmp/Äpfel"
+mv "test.tmp/a directory/link-zu den füßen"	"test.tmp/a directory/link-zu den füßen"
+mv "test.tmp/a directory/linkzufüßen"	"test.tmp/a directory/linkzufüßen"
+mv "test.tmp/a directory/subdir/björn"	"test.tmp/a directory/subdir/björn"
+mv "test.tmp/füße"	"test.tmp/füße"
+mv "test.tmp/schön und gut"	"test.tmp/schön und gut"
+mv "test.tmp/schön und gut/äpfel"	"test.tmp/schön und gut/äpfel"
+mv "test.tmp/schön und gut/subdir/schön"	"test.tmp/schön und gut/subdir/schön"
+symlink "test.tmp/a directory/linkzufüßen": "../füße" >> "Ready!
+escaped-test
+../füße"
+.hidden Straße"
+mv "test.tmp/%C3%84pfel"	"test.tmp/Äpfel"
+mv "test.tmp/.hidden%20Stra%C3%9Fe"	"test.tmp/.hidden Straße"
+mv "test.tmp/2/%C3%84pfel"	"test.tmp/2/Äpfel"
+mv "test.tmp/2/s%C3%BCb"	"test.tmp/2/süb"
+mv "test.tmp/2/s%C3%BCb/g%C3%BCte"	"test.tmp/2/s%C3%BCb/güte"
+mv "test.tmp/3/%C3%84pfel"	"test.tmp/3/Äpfel"
+mv "test.tmp/a%20directory"	"test.tmp/a directory"
+mv "test.tmp/a%20directory/link-nach-au%C3%9Ferhalb"	"test.tmp/a%20directory/link-nach-außerhalb"
+mv "test.tmp/a%20directory/link-nach-au%C3%9Ferhalb2"	"test.tmp/a%20directory/link-nach-außerhalb2"
+mv "test.tmp/a%20directory/link-zu%20den%20f%C3%BC%C3%9Fen"	"test.tmp/a%20directory/link-zu den füßen"
+mv "test.tmp/a%20directory/linkzuf%C3%BC%C3%9Fen"	"test.tmp/a%20directory/linkzufüßen"
+mv "test.tmp/a%20directory/subdir/bj%C3%B6rn"	"test.tmp/a%20directory/subdir/björn"
+mv "test.tmp/euro%E2%82%AC"	"test.tmp/euro€"
+mv "test.tmp/f%C3%BC%C3%9Fe"	"test.tmp/füße"
+mv "test.tmp/sch%C3%B6n%20und%20gut"	"test.tmp/schön und gut"
+mv "test.tmp/sch%C3%B6n%20und%20gut/%C3%A4pfel"	"test.tmp/sch%C3%B6n%20und%20gut/äpfel"
+mv "test.tmp/sch%C3%B6n%20und%20gut/subdir/sch%C3%B6n"	"test.tmp/sch%C3%B6n%20und%20gut/subdir/schön"
+symlink "test.tmp/bla": ".hidden%20Stra%C3%9Fe" >> "symlink "test.tmp/a%20directory/linkzuf%C3%BC%C3%9Fen": "../f%C3%BC%C3%9Fe" >> "Ready!
+parsable-test
+ln -s "../füße" "test.tmp/a%20directory/linkzuf%C3%BC%C3%9Fen"
+ln -s ".hidden Straße" "test.tmp/bla"
+mv "test.tmp/%C3%84pfel" "test.tmp/Äpfel"
+mv "test.tmp/.hidden%20Stra%C3%9Fe" "test.tmp/.hidden Straße"
+mv "test.tmp/2/%C3%84pfel" "test.tmp/2/Äpfel"
+mv "test.tmp/2/s%C3%BCb" "test.tmp/2/süb"
+mv "test.tmp/2/s%C3%BCb/g%C3%BCte" "test.tmp/2/s%C3%BCb/güte"
+mv "test.tmp/3/%C3%84pfel" "test.tmp/3/Äpfel"
+mv "test.tmp/a%20directory" "test.tmp/a directory"
+mv "test.tmp/a%20directory/link-nach-au%C3%9Ferhalb" "test.tmp/a%20directory/link-nach-außerhalb"
+mv "test.tmp/a%20directory/link-nach-au%C3%9Ferhalb2" "test.tmp/a%20directory/link-nach-außerhalb2"
+mv "test.tmp/a%20directory/link-zu%20den%20f%C3%BC%C3%9Fen" "test.tmp/a%20directory/link-zu den füßen"
+mv "test.tmp/a%20directory/linkzuf%C3%BC%C3%9Fen" "test.tmp/a%20directory/linkzufüßen"
+mv "test.tmp/a%20directory/subdir/bj%C3%B6rn" "test.tmp/a%20directory/subdir/björn"
+mv "test.tmp/euro%E2%82%AC" "test.tmp/euro€"
+mv "test.tmp/f%C3%BC%C3%9Fe" "test.tmp/füße"
+mv "test.tmp/sch%C3%B6n%20und%20gut" "test.tmp/schön und gut"
+mv "test.tmp/sch%C3%B6n%20und%20gut/%C3%A4pfel" "test.tmp/sch%C3%B6n%20und%20gut/äpfel"
+mv "test.tmp/sch%C3%B6n%20und%20gut/subdir/sch%C3%B6n" "test.tmp/sch%C3%B6n%20und%20gut/subdir/schön"
+rm "test.tmp/a%20directory/linkzuf%C3%BC%C3%9Fen"
+rm "test.tmp/bla"
+upper-test
+../FÜßE"
+.HIDDEN STRAßE"
+mv "./test.tmp"	"./TEST.TMP"
+mv "test.tmp/.hidden Straße"	"test.tmp/.HIDDEN STRAßE"
+mv "test.tmp/.versteckt"	"test.tmp/.VERSTECKT"
+mv "test.tmp/2/süb"	"test.tmp/2/SÜB"
+mv "test.tmp/2/süb/güte"	"test.tmp/2/süb/GÜTE"
+mv "test.tmp/2/Äpfel"	"test.tmp/2/ÄPFEL"
+mv "test.tmp/3/Äpfel"	"test.tmp/3/ÄPFEL"
+mv "test.tmp/a directory"	"test.tmp/A DIRECTORY"
+mv "test.tmp/a directory/finger"	"test.tmp/a directory/FINGER"
+mv "test.tmp/a directory/link-nach-außerhalb"	"test.tmp/a directory/LINK-NACH-AUßERHALB"
+mv "test.tmp/a directory/link-nach-außerhalb2"	"test.tmp/a directory/LINK-NACH-AUßERHALB2"
+mv "test.tmp/a directory/link-zu den füßen"	"test.tmp/a directory/LINK-ZU DEN FÜßEN"
+mv "test.tmp/a directory/linkzufüßen"	"test.tmp/a directory/LINKZUFÜßEN"
+mv "test.tmp/a directory/subdir"	"test.tmp/a directory/SUBDIR"
+mv "test.tmp/a directory/subdir/björn"	"test.tmp/a directory/subdir/BJÖRN"
+mv "test.tmp/bla"	"test.tmp/BLA"
+mv "test.tmp/euro€"	"test.tmp/EURO€"
+mv "test.tmp/füße"	"test.tmp/FÜßE"
+mv "test.tmp/schön und gut"	"test.tmp/SCHÖN UND GUT"
+mv "test.tmp/schön und gut/birnen"	"test.tmp/schön und gut/BIRNEN"
+mv "test.tmp/schön und gut/subdir"	"test.tmp/schön und gut/SUBDIR"
+mv "test.tmp/schön und gut/subdir/schön"	"test.tmp/schön und gut/subdir/SCHÖN"
+mv "test.tmp/schön und gut/äpfel"	"test.tmp/schön und gut/ÄPFEL"
+mv "test.tmp/Äpfel"	"test.tmp/ÄPFEL"
+symlink "test.tmp/bla": ".hidden Straße" >> "symlink "test.tmp/a directory/linkzufüßen": "../füße" >> "Ready!
+preserve-mtimes-test
+../f��e"
+.hidden Stra�e"
+mv "test.tmp/.hidden Straße"	"test.tmp/.hidden Stra�e"
+mv "test.tmp/2/süb"	"test.tmp/2/s�b"
+mv "test.tmp/2/süb/güte"	"test.tmp/2/süb/g�te"
+mv "test.tmp/2/Äpfel"	"test.tmp/2/�pfel"
+mv "test.tmp/3/Äpfel"	"test.tmp/3/�pfel"
+mv "test.tmp/a directory/link-nach-außerhalb"	"test.tmp/a directory/link-nach-au�erhalb"
+mv "test.tmp/a directory/link-nach-außerhalb2"	"test.tmp/a directory/link-nach-au�erhalb2"
+mv "test.tmp/a directory/link-zu den füßen"	"test.tmp/a directory/link-zu den f��en"
+mv "test.tmp/a directory/linkzufüßen"	"test.tmp/a directory/linkzuf��en"
+mv "test.tmp/a directory/subdir/björn"	"test.tmp/a directory/subdir/bj�rn"
+mv "test.tmp/euro€"	"test.tmp/euro�"
+mv "test.tmp/füße"	"test.tmp/f��e"
+mv "test.tmp/schön und gut"	"test.tmp/sch�n und gut"
+mv "test.tmp/schön und gut/subdir/schön"	"test.tmp/schön und gut/subdir/sch�n"
+mv "test.tmp/schön und gut/äpfel"	"test.tmp/schön und gut/�pfel"
+mv "test.tmp/Äpfel"	"test.tmp/�pfel"
+symlink "test.tmp/bla": ".hidden Straße" >> "symlink "test.tmp/a directory/linkzufüßen": "../füße" >> "Ready!
+../füße"
+.hidden Straße"
+mv "test.tmp/.hidden Stra�e"	"test.tmp/.hidden Straße"
+mv "test.tmp/2/s�b"	"test.tmp/2/süb"
+mv "test.tmp/2/s�b/g�te"	"test.tmp/2/s�b/güte"
+mv "test.tmp/2/�pfel"	"test.tmp/2/Äpfel"
+mv "test.tmp/3/�pfel"	"test.tmp/3/Äpfel"
+mv "test.tmp/a directory/link-nach-au�erhalb"	"test.tmp/a directory/link-nach-außerhalb"
+mv "test.tmp/a directory/link-nach-au�erhalb2"	"test.tmp/a directory/link-nach-außerhalb2"
+mv "test.tmp/a directory/link-zu den f��en"	"test.tmp/a directory/link-zu den füßen"
+mv "test.tmp/a directory/linkzuf��en"	"test.tmp/a directory/linkzufüßen"
+mv "test.tmp/a directory/subdir/bj�rn"	"test.tmp/a directory/subdir/björn"
+mv "test.tmp/euro�"	"test.tmp/euro€"
+mv "test.tmp/f��e"	"test.tmp/füße"
+mv "test.tmp/sch�n und gut"	"test.tmp/schön und gut"
+mv "test.tmp/sch�n und gut/subdir/sch�n"	"test.tmp/sch�n und gut/subdir/schön"
+mv "test.tmp/sch�n und gut/�pfel"	"test.tmp/sch�n und gut/äpfel"
+mv "test.tmp/�pfel"	"test.tmp/Äpfel"
+symlink "test.tmp/bla": ".hidden Stra�e" >> "symlink "test.tmp/a directory/linkzuf��en": "../f��e" >> "Ready!
+All tests successful, cleaning up now ...
+make[1]: Leaving directory `$(@D)'

@@ -1,0 +1,28 @@
+# Patch origin: internal.
+# Causes test results to be uniform. Will not be submitted upstream.
+
+# sed is used rather than a patch to dotests.sh because sorting the output of
+# every invocation of $CONVMV is a repetitive change, and using a patch would
+# require that patch to change if the test script ever changed, e.g. to add
+# additional test cases, whereas this sed line can remain the same.
+
+# Also, if a patch were used, it would either have to be applied when the test
+# target is run, or testsuite.tar would have to be unpacked during prep.
+
+# In-place sed (gsed -i) is not used because we want to use a new file name,
+# so that running the test target repeatedly does not sed an already sed'ed
+# file.
+
+--- Makefile	Mon Feb 23 14:51:24 2015
++++ Makefile	Mon Feb 23 14:50:47 2015
+@@ -22,7 +22,9 @@
+ 
+ test:
+ 	test -d suite || $(TAR) xf testsuite.tar
+-	cd suite ; ./dotests.sh
++	$(SED) -e 's/\($$CONVMV.*\)$$/& 2>\&1 | LC_ALL='C' $$SORT/' < suite/dotests.sh > suite/dotests-deterministic.sh
++	chmod +x suite/dotests-deterministic.sh
++	cd suite ; ./dotests-deterministic.sh
+ 
+ dist: clean
+ 	$(SED) -n "2,2p" convmv |$(SED) "s/.*convmv \([^ ]*\).*/\1/" > VERSION
