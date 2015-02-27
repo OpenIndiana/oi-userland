@@ -1,0 +1,20 @@
+Source: Home brewed
+...so called MS Extensions do not support "host" (service name) as a wildcard also for "cifs".
+Drop-in will fix this issue.
+
+--- a/source3/libads/kerberos_keytab.c	2014-12-01 12:48:32.000000000 +0000
++++ samba-4.1.14/source3/libads/kerberos_keytab.c	2015-01-16 08:25:27.237534267 +0000
+@@ -559,11 +559,11 @@
+ 		}
+ 	}
+ 
+-#if 0	/* don't create the CIFS/... keytab entries since no one except smbd
++#if 1	/* don't create the CIFS/... keytab entries since no one except smbd
+ 	   really needs them and we will fall back to verifying against
+ 	   secrets.tdb */
+ 
+-	ret = ads_keytab_add_entry(ads, "cifs"));
++	ret = ads_keytab_add_entry(ads, "cifs");
+ 	if (ret != 0 ) {
+ 		DEBUG(1, (__location__ ": ads_keytab_add_entry failed while "
+ 			  "adding 'cifs'.\n"));

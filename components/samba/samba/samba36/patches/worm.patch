@@ -125,3 +125,34 @@ index 0000000..77a18ca
 
    Makefile.in and configure.in adds
 
+--- a/source3/configure.in	2013-01-17 15:54:47.194376100 -0800
++++ b/source3/configure.in	2013-01-17 15:58:39.854303900 -0800
+@@ -6994,6 +6994,7 @@
+ SMB_MODULE(vfs_preopen, \$(VFS_PREOPEN_OBJ), "bin/preopen.$SHLIBEXT", VFS)
+ SMB_MODULE(vfs_syncops, \$(VFS_SYNCOPS_OBJ), "bin/syncops.$SHLIBEXT", VFS)
+ SMB_MODULE(vfs_zfsacl, \$(VFS_ZFSACL_OBJ), "bin/zfsacl.$SHLIBEXT", VFS)
++SMB_MODULE(vfs_worm, \$(VFS_WORM_OBJ), "bin/worm.$SHLIBEXT", VFS)
+ AC_SUBST(SAMFS_LIBS)
+ SMB_MODULE(vfs_samfs, \$(VFS_SAMFS_OBJ), "bin/samfs.$SHLIBEXT", VFS)
+ SMB_MODULE(vfs_notify_fam, \$(VFS_NOTIFY_FAM_OBJ), "bin/notify_fam.$SHLIBEXT", VFS)
+--- a/source3/Makefile.in	2013-01-17 15:55:00.777531900 -0800
++++ b/source3/Makefile.in	2013-01-17 16:02:06.513093500 -0800
+@@ -813,6 +813,7 @@
+ VFS_AIXACL2_OBJ = modules/vfs_aixacl2.o modules/vfs_aixacl_util.o modules/nfs4_acls.o
+ VFS_SOLARISACL_OBJ = modules/vfs_solarisacl.o
+ VFS_ZFSACL_OBJ = modules/vfs_zfsacl.o modules/nfs4_acls.o
++VFS_WORM_OBJ = modules/vfs_worm.o
+ VFS_SAMFS_OBJ = modules/vfs_samfs.o
+ VFS_HPUXACL_OBJ = modules/vfs_hpuxacl.o
+ VFS_IRIXACL_OBJ = modules/vfs_irixacl.o
+@@ -2967,6 +2968,10 @@
+ 	@echo "Building plugin $@"
+ 	@$(SHLD_MODULE) $(VFS_ZFSACL_OBJ) @ZFSACL_LIBS@
+ 
++bin/worm.@SHLIBEXT@: $(BINARY_PREREQS) $(VFS_WORM_OBJ)
++	@echo "Building plugin $@"
++	@$(SHLD_MODULE) $(VFS_WORM_OBJ)
++
+ bin/samfs.@SHLIBEXT@: $(BINARY_PREREQS) $(VFS_SAMFS_OBJ)
+ 	@echo "Building plugin $@"
+ 	@$(SHLD_MODULE) $(VFS_SAMFS_OBJ) @SAMFS_LIBS@
