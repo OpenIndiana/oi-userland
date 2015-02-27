@@ -141,6 +141,7 @@ COMPONENT_INSTALL_ARGS +=	-e
 #    Note that although the 64-bit version is not used (and thus commented
 #    out in the manifest), we still need to specify the 32-/64-bit paths,
 #    otherwise the 64-bit build will fail to find the 32-bit path.
+# 4. (Re)compile _sysconfigdata.py since we just updated it.
 CONFIG_MAKEFILE.32=	lib/python2.7/config/Makefile
 CONFIG_MAKEFILE.64=	lib/$(MACH64)/python2.7/config/Makefile
 CONFIG_MAKEFILE=	$(CONFIG_MAKEFILE.$(BITS))
@@ -150,7 +151,8 @@ COMPONENT_POST_INSTALL_ACTION= \
              $(TOUCH) lib/python2.7/lib2to3/*.pickle ; \
 	     $(GSED) -i -e 's|$(SOURCE_DIR)|.|g' -e 's|$(COMPONENT_DIR)|..|g' \
 		-e 's|$(SPRO_VROOT)/bin/||g' lib/python2.7/_sysconfigdata.py \
-		$(CONFIG_MAKEFILE))
+		$(CONFIG_MAKEFILE); \
+	     $(PYTHON.2.7) -m py_compile lib/python2.7/_sysconfigdata.py)
 
 ASLR_MODE = $(ASLR_ENABLE)
 
