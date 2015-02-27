@@ -53,9 +53,8 @@ CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 # Fixes coredump in gnulib-test/test-localename test
 CONFIGURE_OPTIONS  +=		ac_cv_func_newlocale=no
 
-# Everything is under /usr/bin and /usr/lib so set bindir and libdir correctly.
+# Commands go under /usr/bin so set bindir correctly.
 CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/bin
-CONFIGURE_LIBDIR.64 =	$(CONFIGURE_PREFIX)/lib
 
 # Tests should run in a clean environment
 COMPONENT_TEST_ENV =	-i
@@ -84,6 +83,9 @@ REQUIRED_PACKAGES += developer/icu
 REQUIRED_PACKAGES += developer/vala
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/icu
+REQUIRED_PACKAGES += library/libcroco
+REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += source/locale/localedef
 REQUIRED_PACKAGES += system/library
