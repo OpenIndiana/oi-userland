@@ -26,17 +26,17 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		conflict
-COMPONENT_VERSION=	20100627
-IPS_COMPONENT_VERSION=	0.2010.6.27
+COMPONENT_VERSION=	20140723
+IPS_COMPONENT_VERSION=	0.2014.7.23
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_PROJECT_URL=	http://invisible-island.net/conflict/conflict.html
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e795d7d580d2a2bb5081bcf9b0efe6d86567fd29770c60de90da7c07105bfeb9
+    sha256:2ef48ef4c3e2b26eb2de7748ff07e296de3ab7a4437540d60e1fdf321fc5c943
 COMPONENT_ARCHIVE_URL=	ftp://invisible-island.net/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/conflict
 
-TPNO=			8338
+TPNO=			21547
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -68,7 +68,6 @@ COMPONENT_TEST_TRANSFORMS += \
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-# common targets
 configure:	$(CONFIGURE_64)
 
 build:		$(BUILD_64)
