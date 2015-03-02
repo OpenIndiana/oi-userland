@@ -40,6 +40,8 @@ COMPONENT_HG_REV=	v7-4
 
 COMPONENT_BUGDB=	utility/vim
 
+TPNO=			21780
+
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
