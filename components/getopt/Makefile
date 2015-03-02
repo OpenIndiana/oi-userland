@@ -26,16 +26,16 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		getopt
-COMPONENT_VERSION=	1.1.5
-COMPONENT_PROJECT_URL=	http://software.frodo.looijaard.name/getopt/
+COMPONENT_VERSION=	1.1.6
+COMPONENT_PROJECT_URL=	http://frodo.looijaard.name/project/getopt/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:11893276b94b1629606ab75772143918a5713259950fbf4216288e246f19fbb6
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)files/$(COMPONENT_ARCHIVE)
+    sha256:d0bf1dc642a993e7388a1cddfb9409bed375c21d5278056ccca3a0acd09dc5fe
+COMPONENT_ARCHIVE_URL=	http://frodo.looijaard.name/system/files/software/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gnu-getopt
 
-TPNO=			11356
+TPNO=			21550
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
@@ -56,18 +56,11 @@ COMPONENT_INSTALL_ARGS+=	CFLAGS="$(CFLAGS)"
 COMPONENT_POST_UNPACK_ACTION= \
 	$(RM) $(COMPONENT_SRC)/gnu/*.o
 
-# The getopt source directory contains bash and tcsh getopt example scripts.
-TEST_ARGS = -a par1 'another arg' --c-long 'wow\!*\?' -cmore -b " very long "
 COMPONENT_TEST_ENV +=		PATH=$(BUILD_DIR_$(BITS)):$(PATH)
-COMPONENT_TEST_DIR =		$(SOURCE_DIR)
-COMPONENT_TEST_CMD =		getopt-parse.bash $(TEST_ARGS); \
-				$(ENV) $(COMPONENT_TEST_ENV) \
-				getopt-parse.tcsh $(TEST_ARGS)
-COMPONENT_TEST_TARGETS =
+COMPONENT_TEST_TARGETS =	test
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-# common targets
 build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
