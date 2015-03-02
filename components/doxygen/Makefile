@@ -23,22 +23,22 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		doxygen
-COMPONENT_VERSION=	1.8.7
+COMPONENT_VERSION=	1.8.9
 COMPONENT_PROJECT_URL=	http://www.stack.nl/~dimitri/doxygen/index.html
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).src.tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:c6eac6b6e82148ae15ec5aecee4631547359f284af1ce94474d046ebca6ee3d9
+    sha256:f0dd662fb98c394c20deed5b00b29d73d9bee8ea1a52f7a687dd9b70f5444fc6
 COMPONENT_ARCHIVE_URL=	http://ftp.stack.nl/pub/users/dimitri/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/doxygen
 
 # Download the manual so that we don't have to keep updating it in the gate.
 COMPONENT_ARCHIVE_1 =	$(COMPONENT_NAME)_manual-$(COMPONENT_VERSION).pdf.zip
 COMPONENT_ARCHIVE_HASH_1 =	\
-    sha256:6796de1e77f723dcb52f36395161fdfbeaeebf769a297eb78b73e19b9542aa59
+    sha256:33b12961db131c5cfea1b3d045a38b8f222bdd07bb04d1cd60f791ee86949b70
 COMPONENT_ARCHIVE_URL_1 =	ftp://ftp.stack.nl/pub/users/dimitri/$(COMPONENT_ARCHIVE_1)
 
-TPNO=			17646
+TPNO=			21549
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -79,13 +79,12 @@ COMPONENT_TEST_TRANSFORMS += \
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-# common targets
 configure:	$(CONFIGURE_64)
 
 build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
-	cd $(PROTO_DIR) ; $(UNPACK) ../../../$(COMPONENT_ARCHIVE_1) 
+	cd $(PROTO_DIR) ; $(UNPACK) ../../../$(COMPONENT_ARCHIVE_1)
 
 test:		$(TEST_64)
 

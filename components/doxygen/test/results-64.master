@@ -1,5 +1,5 @@
 make[1]: Entering directory `$(@D)/testing'
-1..56
+1..65
 ok 1 - [001_a.dox]: test the \a and \mainpage commands
 ok 2 - [002_addindex.dox]: test \addindex command
 ok 3 - [003_anchor.dox]: test \anchor command
@@ -13,6 +13,8 @@ ok 10 - [010_c.dox]: test the \c and \p commands
 ok 11 - [011_category.m]: test the \interface and \category command
 error opening bib
 bibtex command failed: No such file or directory
+error: Problems running bibtex. Verify that the command 'perl --version' works from the command line. Exit code: 2
+$(@D)/testing/012_cite.dox:6: warning: \cite command to 'knuth79' does not have an associated number
 not ok 12 - [012_cite.dox]: test the \cite command
 #   Failed test '[012_cite.dox]: test the \cite command'
 #   at runtests.pl line 249.
@@ -23,7 +25,7 @@ not ok 12 - [012_cite.dox]: test the \cite command
 #      <compoundname>index</compoundname>
 #      <title>My Project</title>
 #      <detaileddescription>
-# -      <para>See <ref refid="citelist_1CITEREF_knuth79" kindref="member">knuth79</ref> for more info. </para>
+# -      <para>See knuth79 for more info. </para>
 # +      <para>See <ref refid="citelist_1CITEREF_knuth79" kindref="member">[1]</ref> for more info. </para>
 #      </detaileddescription>
 #    </compounddef>
@@ -68,11 +70,19 @@ ok 49 - [049_snippet.cpp]: test the \snippet command
 ok 50 - [050_verbatim.dox]: test \verbatim and \verbinclude commands
 ok 51 - [051_escape.dox]: test various characters that should be escaped
 ok 52 - [052_tilde.dox]: test \~ command
-warning: Output language Dutch not supported! Using English instead.
 ok 53 - [053_tilde.dox]: test \~ command with non default OUTPUT_LANGUAGE
 ok 54 - [054_parblock.cpp]: test the \parblock command
 ok 55 - [055_markdown.md]: test markdown parsing
 ok 56 - [056_latexinclude.dox]: test the \latexinclude command
-# Looks like you failed 1 test of 56.
+ok 57 - [057_caller_graphs.tcl]: test for completeness and correctness of references/referencedby relations 
+ok 58 - [058_bracket_recursion.tcl]: tests processing of commands inside brackets [], only references/referencedby relations are relevant
+ok 59 - [059_command_catch.tcl]: tests processing of catch/eval, only references/referencedby relations are relevant
+ok 60 - [060_command_switch.tcl]: tests processing of switch, only references/referencedby relations are relevant
+ok 61 - [061_bug_705503.tcl]: test for bug 705503 - TCL: Documentation of oo::define is not working
+ok 62 - [062_namespace_resolution.tcl]: tests correct namespace resolution, only references/referencedby relations are relevant
+ok 63 - [063_bug_729092.tcl]: test for bug 729092 - TCL: Full documentation not shown for procs in namespaces.
+ok 64 - [064_castoperator.cpp]: test linking to the cast operator with and without const
+ok 65 - [065_tilde.dox]: test \~ command with non default OUTPUT_LANGUAGE which contains '-' letter
+# Looks like you failed 1 test of 65.
 make[1]: *** [tests] Error 1
 make[1]: Leaving directory `$(@D)/testing'
