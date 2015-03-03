@@ -28,16 +28,16 @@ include ../../make-rules/shared-macros.mk
 PATH = /usr/gnu/bin:/usr/bin
 
 COMPONENT_NAME=		quilt
-COMPONENT_VERSION=	0.60
+COMPONENT_VERSION=	0.64
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://savannah.nongnu.org/projects/quilt/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:3d72a292e432beb9a73f9d0acfe3a77c9b4d7e42209919bb244e9958c7cfe64b
+    sha256:c4bfd3282214a288e8d3e921ae4d52e73e24c4fead72b5446752adee99a7affd
 COMPONENT_ARCHIVE_URL=	http://download.savannah.gnu.org/releases/quilt/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/quilt
 
-TPNO=			9108
+TPNO=			21555
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -75,7 +75,6 @@ COMPONENT_INSTALL_ARGS +=	BUILD_ROOT=$(PROTO_DIR)
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-# common targets
 configure:	$(CONFIGURE_64)
 
 build:		$(BUILD_64)
