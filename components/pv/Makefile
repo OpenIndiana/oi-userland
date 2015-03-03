@@ -26,35 +26,29 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pv
-COMPONENT_VERSION=	1.2.0
+COMPONENT_VERSION=	1.5.7
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.ivarch.com/programs/pv.shtml
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:f93a5eda47d4607e35020622717ade5bc0e5ee82123a97331090f19e0b907c5f
-COMPONENT_ARCHIVE_URL=	http://pipeviewer.googlecode.com/files/$(COMPONENT_ARCHIVE)
+    sha256:7379ae42dbb6b111989d223e8e45a0d37376e49687e1727214f61306b48253aa
+COMPONENT_ARCHIVE_URL=	http://www.ivarch.com/programs/sources/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/pv
 
-TPNO=			19386
+TPNO=			21554
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-COMPONENT_PRE_CONFIGURE_ACTION = \
-    ($(CLONEY) $(SOURCE_DIR) $(@D))
-
-PATCH_LEVEL=	0
-
 PKG_PROTO_DIRS += $(BUILD_DIR_64)
 
-CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
+COMPILER =	gcc
 
-COMPONENT_TEST_ENV +=  PATH="$(GNUBIN):$(PATH)" 
+COMPONENT_TEST_ENV +=  PATH="$(GNUBIN):$(PATH)"
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-# common targets
 configure:	$(CONFIGURE_64)
 
 build:		$(BUILD_64)
