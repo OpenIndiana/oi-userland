@@ -18,11 +18,16 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 # Don't bother specifying each .pyc file.  Allow individual actions to
 # override this by setting pkg.tmp.autopyc to false.
+# Note that prior to Python 3, the following covered all .py files.  But since
+# then only files under usr/lib/python[23].* are covered, and any components
+# shipping .py files elsewhere need to specify pkg.tmp.pyversion directly to
+# generate .pyc files.  But that variable really should be private to this
+# file. 20632788 has been filed to fix this.
 <transform file path=.*\.py$ -> default pkg.tmp.autopyc true>
 <transform file hardlink pkg.tmp.autopyc=true path=usr/lib/python2\.(.*)\.py$ -> default pkg.tmp.pyversion 2.X>
 <transform file hardlink pkg.tmp.autopyc=true path=usr/lib/python3\.(.*)/.*\.py$ -> default pkg.tmp.pyversion 3.%<1>>

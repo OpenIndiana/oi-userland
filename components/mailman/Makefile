@@ -53,7 +53,14 @@ CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-# common targets
+# Copy generated file to proto area.  Then py-compile several files that are
+# used as modules in a devious way.
+COMPONENT_POST_INSTALL_ACTION=	\
+	($(CP) $(BUILD_DIR_64)/Mailman/Defaults.py \
+		$(PROTOUSRLIBDIR)/mailman/Mailman/ ; \
+	 $(PYTHON.2.7) -m py_compile $(PROTOUSRLIBDIR)/mailman/*/paths.py \
+		$(PROTOUSRLIBDIR)/mailman/Mailman/Defaults.py)
+
 configure:	$(CONFIGURE_64)
 
 build:		$(BUILD_64)
@@ -63,7 +70,6 @@ install:	$(INSTALL_64)
 test:		$(NO_TESTS)
 
 PKG_PROTO_DIRS +=	$(COMPONENT_DIR)/files
-
 
 REQUIRED_PACKAGES += library/python/dnspython-27
 REQUIRED_PACKAGES += runtime/python-27

@@ -25,6 +25,19 @@
 
 <transform file path=usr/lib/mailman/tests/.* -> \
     default facet.optional.test true>
+# Exception to the exception below: paths.py instances.  These are modules
+# despite not looking like them.
+<transform file path=usr/lib/mailman/.*/paths\.py$ -> default \
+    pkg.tmp.pyversion 2.X>
+# Exception to the "Generate ..." rule below: certain sub-directories.
+<transform file path=usr/lib/mailman/(bin|cron|scripts|tests)/.*\.py$ -> \
+    default pkg.tmp.pyversion none>
+# Generate Python 2.x style .pyc files for all .py files.  Note that here
+# (and above) we set pkg.tmp.pyversion to "2.x" or "none" instead of the usual
+# setting of pkg.tmp.autopyc to "true" or "false" because the autopyc transform
+# file only deals with stuff under usr/lib/python[23].*; 20632788 has been
+# filed to clean this up.
+<transform file path=usr/lib/mailman/.*\.py$ -> default pkg.tmp.pyversion 2.X>
 <transform file \
     path=usr/lib/mailman/(messages|templates)/([^/]+)(\..+){0,1}(/.+){0,1}/.* \
     -> default facet.locale.%<\2> true>
@@ -58,6 +71,8 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 file mailman.conf path=etc/apache2/2.2/samples-conf.d/mailman.conf
 file mailman.conf path=etc/apache2/2.4/samples-conf.d/mailman.conf
 file usr/lib/mailman/Mailman/mm_cfg.py path=etc/mailman/mm_cfg.py \
+    owner=mailman group=mailman mode=0644 overlay=allow preserve=true
+file usr/lib/mailman/Mailman/mm_cfg.pyc path=etc/mailman/mm_cfg.pyc \
     owner=mailman group=mailman mode=0644 overlay=allow preserve=true
 file files/mailman.auth_attr path=etc/security/auth_attr.d/mailman group=sys
 file files/mailman.exec_attr path=etc/security/exec_attr.d/mailman group=sys
@@ -123,7 +138,7 @@ file path=usr/lib/mailman/Mailman/Commands/cmd_stop.py
 file path=usr/lib/mailman/Mailman/Commands/cmd_subscribe.py
 file path=usr/lib/mailman/Mailman/Commands/cmd_unsubscribe.py
 file path=usr/lib/mailman/Mailman/Commands/cmd_who.py
-file $(MACH64)/Mailman/Defaults.py path=usr/lib/mailman/Mailman/Defaults.py
+file path=usr/lib/mailman/Mailman/Defaults.py
 file path=usr/lib/mailman/Mailman/Deliverer.py
 file path=usr/lib/mailman/Mailman/Digester.py
 file path=usr/lib/mailman/Mailman/Errors.py
@@ -216,6 +231,8 @@ file path=usr/lib/mailman/Mailman/i18n.py
 link path=usr/lib/mailman/Mailman/mm_cfg.py \
     target=../../../../etc/mailman/mm_cfg.py
 file path=usr/lib/mailman/Mailman/mm_cfg.py.dist
+link path=usr/lib/mailman/Mailman/mm_cfg.pyc \
+    target=../../../../etc/mailman/mm_cfg.pyc
 file path=usr/lib/mailman/Mailman/versions.py
 link path=usr/lib/mailman/archives/private \
     target=../../../../var/mailman/archives/private
