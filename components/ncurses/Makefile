@@ -69,10 +69,14 @@ COMPONENT_POST_INSTALL_ACTION += \
 	$(CP) /usr/share/lib/terminfo/s/sun-color \
 	$(PROTO_DIR)$(GNUSHARE)/terminfo/s/
 
+# There is no master test file because tests are interactive and not
+# tied to the build.
 COMPONENT_TEST_DIR =		$(BUILD_DIR)/$(MACH$(BITS))/test
 COMPONENT_TEST_TARGETS =
 
 ASLR_MODE = $(ASLR_ENABLE)
+
+$(SKIP_TEST_AT_TOP_LEVEL)
 
 # common targets
 configure:	$(CONFIGURE_32_and_64)

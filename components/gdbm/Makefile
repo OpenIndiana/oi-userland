@@ -46,6 +46,8 @@ COMPONENT_INSTALL_ENV +=	INSTALL_ROOT="$(PROTO_DIR)"
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
+$(SKIP_TEST_AT_TOP_LEVEL)
+
 # common targets
 configure:	$(CONFIGURE_32_and_64)
 
@@ -55,7 +57,7 @@ install:	$(INSTALL_32_and_64)
 
 # The tests build but they are not run automatically.  You have to
 # manually run the tests (testdbm, testgdbm, etc) by hand and verify
-# the DB operations.
+# the DB operations. (No master test files).
 COMPONENT_TEST_TARGETS =	progs
 test:	$(TEST_32_and_64)
 
