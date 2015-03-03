@@ -1,0 +1,176 @@
+
+-------------------- util-linux regression tests --------------------
+
+                    For development purpose only.                    
+                 Don't execute on production system!                 
+
+
+     script: $(SOURCE_DIR)/tests/ts/colrm/rm2-2
+    sub dir: $(SOURCE_DIR)/tests/ts/colrm
+    top dir: $(SOURCE_DIR)/tests
+       self: $(SOURCE_DIR)/tests/ts/colrm
+  test name: rm2-2
+  test desc: basic check
+  component: colrm
+  namespace: colrm/rm2-2
+    verbose: yes
+     output: $(SOURCE_DIR)/tests/output/colrm/rm2-2
+   valgrind: $(SOURCE_DIR)/tests/output/colrm/rm2-2.vgdump
+   expected: $(SOURCE_DIR)/tests/expected/colrm/rm2-2
+ mountpoint: $(SOURCE_DIR)/tests/output/colrm/rm2-2-mnt
+
+        colrm: basic check                    ... OK
+
+     script: $(SOURCE_DIR)/tests/ts/column/fillrow
+    sub dir: $(SOURCE_DIR)/tests/ts/column
+    top dir: $(SOURCE_DIR)/tests
+       self: $(SOURCE_DIR)/tests/ts/column
+  test name: fillrow
+  test desc: fill row
+  component: column
+  namespace: column/fillrow
+    verbose: yes
+     output: $(SOURCE_DIR)/tests/output/column/fillrow
+   valgrind: $(SOURCE_DIR)/tests/output/column/fillrow.vgdump
+   expected: $(SOURCE_DIR)/tests/expected/column/fillrow
+ mountpoint: $(SOURCE_DIR)/tests/output/column/fillrow-mnt
+
+       column: fill row                       ... OK
+
+     script: $(SOURCE_DIR)/tests/ts/column/invalid-multibyte
+    sub dir: $(SOURCE_DIR)/tests/ts/column
+    top dir: $(SOURCE_DIR)/tests
+       self: $(SOURCE_DIR)/tests/ts/column
+  test name: invalid-multibyte
+  test desc: invalid multibyte
+  component: column
+  namespace: column/invalid-multibyte
+    verbose: yes
+     output: $(SOURCE_DIR)/tests/output/column/invalid-multibyte
+   valgrind: $(SOURCE_DIR)/tests/output/column/invalid-multibyte.vgdump
+   expected: $(SOURCE_DIR)/tests/expected/column/invalid-multibyte
+ mountpoint: $(SOURCE_DIR)/tests/output/column/invalid-multibyte-mnt
+
+       column: invalid multibyte              ... FAILED (column/invalid-multibyte)
+
+     script: $(SOURCE_DIR)/tests/ts/column/multi-file
+    sub dir: $(SOURCE_DIR)/tests/ts/column
+    top dir: $(SOURCE_DIR)/tests
+       self: $(SOURCE_DIR)/tests/ts/column
+  test name: multi-file
+  test desc: multiple files
+  component: column
+  namespace: column/multi-file
+    verbose: yes
+     output: $(SOURCE_DIR)/tests/output/column/multi-file
+   valgrind: $(SOURCE_DIR)/tests/output/column/multi-file.vgdump
+   expected: $(SOURCE_DIR)/tests/expected/column/multi-file
+ mountpoint: $(SOURCE_DIR)/tests/output/column/multi-file-mnt
+
+       column: multiple files                 ... OK
+
+     script: $(SOURCE_DIR)/tests/ts/column/separator_table
+    sub dir: $(SOURCE_DIR)/tests/ts/column
+    top dir: $(SOURCE_DIR)/tests
+       self: $(SOURCE_DIR)/tests/ts/column
+  test name: separator_table
+  test desc: separator & table
+  component: column
+  namespace: column/separator_table
+    verbose: yes
+     output: $(SOURCE_DIR)/tests/output/column/separator_table
+   valgrind: $(SOURCE_DIR)/tests/output/column/separator_table.vgdump
+   expected: $(SOURCE_DIR)/tests/expected/column/separator_table
+ mountpoint: $(SOURCE_DIR)/tests/output/column/separator_table-mnt
+
+       column: separator & table              ... OK
+
+     script: $(SOURCE_DIR)/tests/ts/hexdump/format-strings
+    sub dir: $(SOURCE_DIR)/tests/ts/hexdump
+    top dir: $(SOURCE_DIR)/tests
+       self: $(SOURCE_DIR)/tests/ts/hexdump
+  test name: format-strings
+  test desc: format-strings
+  component: hexdump
+  namespace: hexdump/format-strings
+    verbose: yes
+     output: $(SOURCE_DIR)/tests/output/hexdump/format-strings
+   valgrind: $(SOURCE_DIR)/tests/output/hexdump/format-strings.vgdump
+   expected: $(SOURCE_DIR)/tests/expected/hexdump/format-strings
+ mountpoint: $(SOURCE_DIR)/tests/output/hexdump/format-strings-mnt
+
+      hexdump: format-strings                 ...
+                : empty-format                ... FAILED (hexdump/format-strings-empty-format)
+                : 1b_octal                    ... OK
+                : 1b_char                     ... OK
+                : canon                       ... OK
+                : 2b_dec                      ... FAILED (hexdump/format-strings-2b_dec)
+                : 2b_octal                    ... FAILED (hexdump/format-strings-2b_octal)
+                : 2b_hex                      ... FAILED (hexdump/format-strings-2b_hex)
+           ... FAILED (4 from 7 sub-tests)
+
+     script: $(SOURCE_DIR)/tests/ts/hexdump/highlighting
+    sub dir: $(SOURCE_DIR)/tests/ts/hexdump
+    top dir: $(SOURCE_DIR)/tests
+       self: $(SOURCE_DIR)/tests/ts/hexdump
+  test name: highlighting
+  test desc: highlighting
+  component: hexdump
+  namespace: hexdump/highlighting
+    verbose: yes
+     output: $(SOURCE_DIR)/tests/output/hexdump/highlighting
+   valgrind: $(SOURCE_DIR)/tests/output/hexdump/highlighting.vgdump
+   expected: $(SOURCE_DIR)/tests/expected/hexdump/highlighting
+ mountpoint: $(SOURCE_DIR)/tests/output/hexdump/highlighting-mnt
+
+      hexdump: highlighting                   ...
+                : 1b_octal-1                  ... OK
+                : 1b_octal-2                  ... FAILED (hexdump/highlighting-1b_octal-2)
+                : 1b_octal-3                  ... OK
+                : 1b_octal-4                  ... FAILED (hexdump/highlighting-1b_octal-4)
+                : 1b_octal-5                  ... FAILED (hexdump/highlighting-1b_octal-5)
+                : 1b_octal-6                  ... OK
+                : 1b_octal-7                  ... FAILED (hexdump/highlighting-1b_octal-7)
+                : 1b_octal-8                  ... FAILED (hexdump/highlighting-1b_octal-8)
+                : 1b_octal-9                  ... FAILED (hexdump/highlighting-1b_octal-9)
+                : 1b_char-1                   ... OK
+                : 1b_char-2                   ... OK
+                : 1b_char-3                   ... OK
+                : canon-1                     ... FAILED (hexdump/highlighting-canon-1)
+                : canon-2                     ... OK
+                : 2b_dec-1                    ... FAILED (hexdump/highlighting-2b_dec-1)
+                : 2b_dec-2                    ... FAILED (hexdump/highlighting-2b_dec-2)
+                : 2b_dec-3                    ... FAILED (hexdump/highlighting-2b_dec-3)
+                : 2b_dec-4                    ... FAILED (hexdump/highlighting-2b_dec-4)
+                : 2b_dec-5                    ... FAILED (hexdump/highlighting-2b_dec-5)
+                : 2b_dec-6                    ... OK
+                : 2b_dec-7                    ... OK
+                : 2b_dec-8                    ... FAILED (hexdump/highlighting-2b_dec-8)
+                : 4b_dec-1                    ... FAILED (hexdump/highlighting-4b_dec-1)
+                : 4b_dec-2                    ... FAILED (hexdump/highlighting-4b_dec-2)
+                : 4b_dec-3                    ... FAILED (hexdump/highlighting-4b_dec-3)
+                : 4b_dec-4                    ... FAILED (hexdump/highlighting-4b_dec-4)
+                : 4b_dec-5                    ... OK
+                : 4b_dec-6                    ... FAILED (hexdump/highlighting-4b_dec-6)
+                : 4b_dec-7                    ... FAILED (hexdump/highlighting-4b_dec-7)
+           ... FAILED (19 from 29 sub-tests)
+
+     script: $(SOURCE_DIR)/tests/ts/tailf/simple
+    sub dir: $(SOURCE_DIR)/tests/ts/tailf
+    top dir: $(SOURCE_DIR)/tests
+       self: $(SOURCE_DIR)/tests/ts/tailf
+  test name: simple
+  test desc: simple
+  component: tailf
+  namespace: tailf/simple
+    verbose: yes
+     output: $(SOURCE_DIR)/tests/output/tailf/simple
+   valgrind: $(SOURCE_DIR)/tests/output/tailf/simple.vgdump
+   expected: $(SOURCE_DIR)/tests/expected/tailf/simple
+ mountpoint: $(SOURCE_DIR)/tests/output/tailf/simple-mnt
+
+        tailf: simple                         ... OK
+
+---------------------------------------------------------------------
+  3 tests of 8 FAILED
+---------------------------------------------------------------------

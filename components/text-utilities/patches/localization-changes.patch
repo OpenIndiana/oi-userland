@@ -3,15 +3,19 @@ Set the message domain to text-utilities.
 
 These changes will not be submitted upstream.
 
---- util-linux-2.24.2/po/POTFILES.in.orig	2014-05-23 07:41:42.724934785 -0700
-+++ util-linux-2.24.2/po/POTFILES.in	2014-05-27 11:29:30.593217166 -0700
-@@ -1,32 +1,3 @@
+--- util-linux-2.25.2/po/POTFILES.in.orig	2015-02-16 17:58:51.277504520 -0800
++++ util-linux-2.25.2/po/POTFILES.in	2015-02-16 18:01:33.075068561 -0800
+@@ -1,29 +1,3 @@
 -disk-utils/addpart.c
 -disk-utils/blockdev.c
+-disk-utils/cfdisk.c
 -disk-utils/cramfs_common.c
 -disk-utils/cramfs.h
 -disk-utils/delpart.c
 -disk-utils/fdformat.c
+-disk-utils/fdisk.c
+-disk-utils/fdisk.h
+-disk-utils/fdisk-menu.c
 -disk-utils/fsck.c
 -disk-utils/fsck.cramfs.c
 -disk-utils/fsck.minix.c
@@ -26,19 +30,12 @@ These changes will not be submitted upstream.
 -disk-utils/partx.h
 -disk-utils/raw.c
 -disk-utils/resizepart.c
+-disk-utils/sfdisk.c
 -disk-utils/swaplabel.c
--fdisks/cfdisk.c
--fdisks/fdisk-ask.c
--fdisks/fdisk.c
--fdisks/fdisk.h
--fdisks/fdisk-menu.c
--fdisks/partname.c
--fdisks/partname.h
--fdisks/sfdisk.c
  include/all-io.h
  include/at.h
  include/bitops.h
-@@ -82,96 +53,6 @@
+@@ -81,96 +55,6 @@
  include/xgetpass.h
  lib/at.c
  lib/blkdev.c
@@ -132,10 +129,10 @@ These changes will not be submitted upstream.
 -libblkid/src/topology/topology.h
 -libblkid/src/verify.c
 -libblkid/src/version.c
+ lib/boottime.c
  lib/canonicalize.c
  lib/colors.c
- lib/cpuset.c
-@@ -179,21 +60,6 @@
+@@ -179,24 +63,6 @@
  lib/crc64.c
  lib/env.c
  lib/exec_shell.c
@@ -147,17 +144,20 @@ These changes will not be submitted upstream.
 -libfdisk/src/fdiskP.h
 -libfdisk/src/gpt.c
 -libfdisk/src/init.c
+-libfdisk/src/iter.c
 -libfdisk/src/label.c
 -libfdisk/src/libfdisk.h
+-libfdisk/src/partition.c
 -libfdisk/src/parttype.c
 -libfdisk/src/sgi.c
 -libfdisk/src/sun.c
+-libfdisk/src/table.c
 -libfdisk/src/test.c
 -libfdisk/src/utils.c
  lib/fileutils.c
  lib/ismounted.c
  lib/langinfo.c
-@@ -203,30 +69,6 @@
+@@ -206,30 +72,6 @@
  lib/match.c
  lib/mbsalign.c
  lib/md5.c
@@ -188,9 +188,9 @@ These changes will not be submitted upstream.
  lib/pager.c
  lib/path.c
  lib/procutils.c
-@@ -237,143 +79,8 @@
+@@ -251,115 +93,7 @@
+ lib/sysfs.c
  lib/timeutils.c
- lib/tt.c
  lib/ttyutils.c
 -libuuid/src/clear.c
 -libuuid/src/compare.c
@@ -206,7 +206,6 @@ These changes will not be submitted upstream.
 -libuuid/src/uuid.h
 -libuuid/src/uuidP.h
 -libuuid/src/uuid_time.c
- lib/wholedisk.c
  lib/xgetpass.c
 -login-utils/auth.c
 -login-utils/auth.h
@@ -221,6 +220,7 @@ These changes will not be submitted upstream.
 -login-utils/login.c
 -login-utils/logindefs.c
 -login-utils/logindefs.h
+-login-utils/lslogins.c
 -login-utils/newgrp.c
 -login-utils/nologin.c
 -login-utils/runuser.c
@@ -249,35 +249,16 @@ These changes will not be submitted upstream.
 -misc-utils/mcookie.c
 -misc-utils/namei.c
 -misc-utils/rename.c
--misc-utils/sd-daemon.c
--misc-utils/sd-daemon.h
 -misc-utils/uuidd.c
 -misc-utils/uuidgen.c
 -misc-utils/whereis.c
 -misc-utils/wipefs.c
--mount-deprecated/devname.c
--mount-deprecated/devname.h
--mount-deprecated/fsprobe.c
--mount-deprecated/fsprobe.h
--mount-deprecated/fstab.c
--mount-deprecated/fstab.h
--mount-deprecated/getusername.c
--mount-deprecated/getusername.h
--mount-deprecated/mount.c
--mount-deprecated/mount_constants.h
--mount-deprecated/mount_mntent.c
--mount-deprecated/mount_mntent.h
--mount-deprecated/sundries.c
--mount-deprecated/sundries.h
--mount-deprecated/umount.c
 -schedutils/chrt.c
 -schedutils/ionice.c
 -schedutils/taskset.c
 -sys-utils/blkdiscard.c
 -sys-utils/chcpu.c
 -sys-utils/ctrlaltdel.c
--sys-utils/cyclades.h
--sys-utils/cytune.c
 -sys-utils/dmesg.c
 -sys-utils/eject.c
 -sys-utils/fallocate.c
@@ -320,26 +301,17 @@ These changes will not be submitted upstream.
 -sys-utils/umount.c
 -sys-utils/unshare.c
 -sys-utils/wdctl.c
--term-utils/agetty.c
--term-utils/mesg.c
--term-utils/script.c
--term-utils/scriptreplay.c
--term-utils/setterm.c
--term-utils/ttymsg.c
--term-utils/ttymsg.h
--term-utils/wall.c
--term-utils/write.c
- text-utils/col.c
- text-utils/colcrt.c
- text-utils/colrm.c
---- util-linux-2.24.2/configure.orig	2014-05-28 13:48:57.232230984 -0700
-+++ util-linux-2.24.2/configure	2014-05-28 13:49:47.706174376 -0700
-@@ -4730,7 +4730,7 @@
+ term-utils/agetty.c
+ term-utils/mesg.c
+ term-utils/script.c
+--- util-linux-2.25.2/configure.orig	2015-02-16 18:03:52.241717421 -0800
++++ util-linux-2.25.2/configure	2015-02-16 18:04:23.594933195 -0800
+@@ -4851,7 +4851,7 @@
  
  
  # Define the identity of the package.
 - PACKAGE='util-linux'
 + PACKAGE='text-utilities'
-  VERSION='2.24.2'
+  VERSION='2.25.2'
  
  

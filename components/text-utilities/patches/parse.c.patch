@@ -7,20 +7,20 @@ http://man7.org/linux/man-pages/man3/printf.3.html says:
 
 This change will be sent upstream.
 
---- util-linux-2.24.2/text-utils/parse.c.orig	2014-06-04 13:04:47.338346633 -0700
-+++ util-linux-2.24.2/text-utils/parse.c	2014-06-04 14:15:15.476415780 -0700
-@@ -208,7 +208,7 @@
- 	PR *pr, **nextpr;
- 	FU *fu;
- 	char *p1, *p2;
--	char savech, *fmtp, cs[3];
-+	char savech, *fmtp, cs[4];
- 	int nconv, prec;
+--- util-linux-2.25.2/text-utils/hexdump-parse.c.orig	2015-02-16 18:06:45.921790582 -0800
++++ util-linux-2.25.2/text-utils/hexdump-parse.c	2015-02-16 18:09:59.879541819 -0800
+@@ -226,7 +226,7 @@
+ 	struct hexdump_fu *fu;
+ 	struct list_head *p, *q;
+ 	char *p1, *p2, *fmtp;
+-	char savech, cs[3];
++	char savech, cs[4];
+ 	int nconv, prec = 0;
  
- 	nextpr = NULL;
-@@ -282,9 +282,10 @@
+ 	list_for_each (p, &fs->fulist) {
+@@ -301,9 +301,10 @@
  				goto isint;
- 			case 'o': case 'u': case 'x': case 'X':
+ 			} else if (first_letter(cs, "ouxX")) {
  				pr->flags = F_UINT;
 -isint:				cs[2] = '\0';
 -				cs[1] = cs[0];
@@ -30,19 +30,19 @@ This change will be sent upstream.
 +				cs[1] = 'l';
 +				cs[0] = 'l';
  				switch(fu->bcnt) {
- 				case 0: case 4:
- 					pr->bcnt = 4;
-@@ -342,9 +343,10 @@
- 					++p2;
- 					switch(p1[2]) {
- 					case 'd': case 'o': case'x':
--						cs[0] = 'q';
--						cs[1] = p1[2];
--						cs[2] = '\0';
-+						cs[0] = 'l';
-+						cs[1] = 'l';
-+						cs[2] = p1[2];
-+						cs[3] = '\0';
- 						break;
- 					default:
- 						p1[3] = '\0';
+ 					case 0:
+ 						pr->bcnt = 4;
+@@ -355,9 +356,10 @@
+ 						pr->flags = F_ADDRESS;
+ 						++p2;
+ 						if (first_letter(p1 + 2, "dox")) {
+-							cs[0] = 'q';
+-							cs[1] = p1[2];
+-							cs[2] = '\0';
++							cs[0] = 'l';
++							cs[1] = 'l';
++							cs[2] = p1[2];
++							cs[3] = '\0';
+ 						} else {
+ 							p1[3] = '\0';
+ 							badconv(p1);

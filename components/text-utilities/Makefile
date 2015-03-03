@@ -24,16 +24,16 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		text-utilities
-COMPONENT_VERSION=	2.24.2
+COMPONENT_VERSION=	2.25.2
 COMPONENT_PROJECT_URL=	https://www.kernel.org/pub/linux/utils/util-linux
 COMPONENT_SRC=		util-linux-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:1243d6c07f1c5b38aa4c3814c81a71c24cba7dafe08942916bf216a90a460ff0
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/v2.24/$(COMPONENT_ARCHIVE)
+    sha256:e0457f715b73f4a349e1acb08cb410bf0edc9a74a3f75c357070f31f70e33cd6
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/v2.25/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/text-utilities
 
-TPNO=			17825
+TPNO=			21750
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -44,12 +44,18 @@ include $(WS_MAKE_RULES)/ips.mk
 # Anything else that we want should be added to this macro in the future.
 PROGRAMS =	colcrt colrm column hexdump rev tailf
 
+# Build a utility program used by one of the hexdump tests.
+PROGRAMS +=	test_sysinfo
+
 # Limit translations to the text utilities (and lib/* and include/* ) only.
 COMPONENT_PRE_INSTALL_ACTION = \
 	(cd $(@D)/po ; $(GMAKE) text-utilities.pot-update)
 
 CONFIGURE_OPTIONS +=		CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=		--bindir=$(CONFIGURE_BINDIR.32)
+
+# We don't need the Python bindings built.
+CONFIGURE_OPTIONS +=		--without-python
 
 # Makefile incorrectly includes gcc(1) '-fsigned-char' in AM_CFLAGS, so we
 # override it.
@@ -79,20 +85,16 @@ COMPONENT_TEST_ENV +=	TS_CMD_TAILF=$(PROTO_DIR)/usr/bin/tailf
 COMPONENT_TEST_ENV +=	PATH="$(GNUBIN):$(PATH)"
 COMPONENT_TEST_DIR =	$(COMPONENT_SRC)/tests
 
-# The given hexdump tests are little-endian specific, so the test script
-# has been adjusted to do some endian-neutral ones. Copy the input and
-# the expected results to where they are needed.
-COMPONENT_PRE_TEST_ACTION = ( \
-	$(CP) $(COMPONENT_DIR)/files/hexdump-input \
-		$(COMPONENT_SRC)/tests/ts/hexdump/; \
-	$(CP) $(COMPONENT_DIR)/files/hexdump-expected \
-		$(COMPONENT_SRC)/tests/expected/hexdump/empty-format; )
+# The hexdump tests expect the test_sysinfo program in a different location
+# than where it's built.
+COMPONENT_PRE_TEST_ACTION = $(CP) $(@D)/test_sysinfo $(COMPONENT_SRC)/
 
 COMPONENT_TEST_CMD =		./run.sh
 COMPONENT_TEST_ARGS =		--verbose
 COMPONENT_TEST_TARGETS =	colrm column hexdump tailf
 
-# common targets
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH)-64.master
+
 configure:	$(CONFIGURE_64)
 
 build:		$(BUILD_64)
