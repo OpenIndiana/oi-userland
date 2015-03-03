@@ -34,7 +34,7 @@ abs_srcdir=`CDPATH="${ZSH_VERSION+.}:" && cd $(SOURCE_DIR) && pwd`; cd tests; \
 CONFIG_SHELL="/bin/bash" /bin/bash $abs_srcdir/tests/testsuite \
    AUTOTEST_PATH="src"
 ## ---------------------------------- ##
-## GNU wdiff 1.1.2 test suite: wdiff. ##
+## GNU wdiff 1.2.2 test suite: wdiff. ##
 ## ---------------------------------- ##
   1: wdiff output formats                            ok
   2: report bad diff binary                          ok
@@ -48,10 +48,12 @@ CONFIG_SHELL="/bin/bash" /bin/bash $abs_srcdir/tests/testsuite \
 All 4 tests were successful.
 make[3]: Leaving directory `$(@D)'
 make[2]: Leaving directory `$(@D)'
-if test -d $(SOURCE_DIR)/.git; then			\
+if test -d $(SOURCE_DIR)/.git				\
+	&& git --version >/dev/null 2>&1; then			\
   cd $(SOURCE_DIR) &&						\
-  git submodule --quiet foreach test '$(git rev-parse $sha1)'	\
-      = '$(git merge-base origin $sha1)'			\
+  git submodule --quiet foreach					\
+      'test "$(git rev-parse "$sha1")"			\
+	  = "$(git merge-base origin "$sha1")"'		\
     || { echo 'maint.mk: found non-public submodule commit' >&2;	\
 	 exit 1; };						\
 else								\
