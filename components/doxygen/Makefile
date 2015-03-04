@@ -44,10 +44,10 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-# Necessary to find CC during build
-PATH=$(SPRO_VROOT)/bin:/usr/bin
+COMPILER =		gcc
+
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)
-PATH=$(PARFAIT_TOOLS):$(SPRO_VROOT)/bin:/usr/bin
+PATH=$(PARFAIT_TOOLS):$(GCC_ROOT)/bin:/usr/bin
 endif
 
 
@@ -56,7 +56,7 @@ COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
 
 # Need to override default options since configure doesn't
 # understand CC, CXX, etc.
-CONFIGURE_OPTIONS =	--platform solaris-cc-64
+CONFIGURE_OPTIONS =	--platform solaris-g++
 CONFIGURE_OPTIONS +=	--prefix /usr
 CONFIGURE_OPTIONS +=	--enable-langs am,ar,br,ca,cn,cz,de,dk,en,eo,es,fa,fi,fr,gr,hr,hu,id,it,je,jp,ke,kr,lt,lv,mk,nl,no,pl,pt,ro,ru,sc,si,sk,sr,sv,tr,tw,ua,vi,za
 
@@ -92,5 +92,6 @@ test:		$(TEST_64)
 REQUIRED_PACKAGES += developer/lexer/flex
 REQUIRED_PACKAGES += developer/parser/bison
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/c++-runtime
+REQUIRED_PACKAGES += system/library/gcc/gcc-c++-runtime
+REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
 REQUIRED_PACKAGES += system/library/math
