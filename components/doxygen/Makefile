@@ -44,6 +44,9 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+# Necessary to find the right gcc during build
+PATH=$(GCC_ROOT)/bin:/usr/bin
+
 COMPILER =		gcc
 
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)
