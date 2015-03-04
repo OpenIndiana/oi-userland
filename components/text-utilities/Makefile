@@ -93,8 +93,6 @@ COMPONENT_TEST_CMD =		./run.sh
 COMPONENT_TEST_ARGS =		--verbose
 COMPONENT_TEST_TARGETS =	colrm column hexdump tailf
 
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH)-64.master
-
 configure:	$(CONFIGURE_64)
 
 build:		$(BUILD_64)
