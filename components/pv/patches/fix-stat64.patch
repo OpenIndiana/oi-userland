@@ -1,0 +1,17 @@
+The test to detect stat64 in the configure script for pv version 1.5.7
+is incorrect. Googling around found the following patch at:
+
+  http://www.ivarch.com/programs/pv.shtml
+
+This is the home page for pv, so they are already aware of the problem.
+
+--- pv-1.5.7/autoconf/header.in.orig	2015-03-03 14:45:21.433192939 -0800
++++ pv-1.5.7/autoconf/header.in	2015-03-03 14:46:02.429291023 -0800
+@@ -70,6 +70,7 @@
+ #   define stat64 stat
+ #   define fstat64 fstat
+ #  endif
++# elif defined(__sun) && defined(__SVR4)
+ # else
+ #  define stat64 stat
+ #  define fstat64 fstat
