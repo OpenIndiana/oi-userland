@@ -23,17 +23,17 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sendmail
-COMPONENT_VERSION=	8.14.9
+COMPONENT_VERSION=	8.15.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	ftp://ftp.sendmail.org/pub/sendmail/
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME).$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:f5a497151abd8f341cca0736c3f9bd703d574d93146b2989689dff6d7a445d75
+    sha256:ed1f9e0f2a1a58c9ff94950264a2fc186d6fd237bac66b175d79a2b89a950746
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sig
 COMPONENT_BUGDB=	utility/sendmail
 
-TPNO=			7435
+TPNO=			21799
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
@@ -100,10 +100,21 @@ COMPONENT_POST_INSTALL_ACTION += \
     $(CP) $(FILE_DIR)/cf/domain/solaris-generic.m4 $(@D)/cf/domain/ ;
 COMPONENT_POST_INSTALL_ACTION += \
     $(CP) $(FILE_DIR)/cf/cf/sendmail.mc $(@D)/cf/cf/ ;
+# Without the two $(CP)s below we would pick up the version of submit.cf
+# from under $(COMPONENT_SRC), which is not what we want because it contains
+# information (user, hostname, date, build path) from the upstream machine
+# where the distro was created.  So we build our own version here, using
+# $(M4_ARG), which suppresses the inclusion of all that information.
+# Then we copy it to $(PROTO_DIR)/cf/cf instead of the more intuitive
+# $(PROTOETCDIR)/mail/cf/cf to match the transform in the manifest that
+# picks up everything under etc/mail/cf/ from cf/ instead.
 COMPONENT_POST_INSTALL_ACTION += \
     cd $(@D)/cf/cf ; \
     $(RM) submit.cf ; \
     m4 $(M4_ARG) ../m4/cf.m4 submit.mc > submit.cf ; \
+    $(CP) submit.cf $(PROTOETCDIR)/mail ; \
+    $(MKDIR) $(PROTO_DIR)/cf/cf ; \
+    $(CP) submit.cf $(PROTO_DIR)/cf/cf ; \
     m4 $(M4_ARG) ../m4/cf.m4 sendmail.mc > sendmail.cf
 
 COMPONENT_TEST_ARGS += CC="$(CC)"
