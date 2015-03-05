@@ -23,16 +23,16 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		wireshark
-COMPONENT_VERSION=	1.12.3
+COMPONENT_VERSION=	1.12.4
 COMPONENT_PROJECT_URL=	http://www.wireshark.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:69950b9dcb1a630982b5f680554d73d27ee0dc856fc6aeef88c8d04eb5ac33ea
+    sha256:de804e98e252e4b795d28d6ac2d48d7f5aacd9b046ee44d44266983795ebc312
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/src/all-versions/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/wireshark
 
-TPNO=			21482
+TPNO=			21830
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -84,10 +84,10 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 # This shall be removed once CBE is updated to contain Wireshark 1.12
 # (see Bug 20627618).
 COMPONENT_POST_INSTALL_ACTION = \
-	(/usr/bin/elfdump -d $(PROTO_DIR)/usr/lib/$(MACH64)/libwireshark.so.5.0.3 | \
+	(/usr/bin/elfdump -d $(PROTO_DIR)/usr/lib/$(MACH64)/libwireshark.so.5.0.4 | \
 	    grep 'libwiretap.so.3' && /usr/bin/elfedit \
 	    -e 'dyn:value -s -with-valstr libwiretap.so.3 libwiretap.so.4' \
-	    $(PROTO_DIR)/usr/lib/$(MACH64)/libwireshark.so.5.0.3)
+	    $(PROTO_DIR)/usr/lib/$(MACH64)/libwireshark.so.5.0.4)
 
 configure:	$(CONFIGURE_64)
 
