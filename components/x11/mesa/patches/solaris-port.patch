@@ -1,6 +1,6 @@
---- src/mesa/drivers/dri/intel/intel_context.h	Thu Sep  6 08:31:50 2012
-+++ src/mesa/drivers/dri/intel/intel_context.h	Thu Sep  6 08:33:19 2012
-@@ -358,9 +358,13 @@
+--- src/mesa/drivers/dri/i915/intel_context.h.~1~	2015-02-28 02:29:19.000000000 +0300
++++ src/mesa/drivers/dri/i915/intel_context.h	2015-03-04 21:24:22.841808220 +0300
+@@ -284,8 +284,12 @@
     driOptionCache optionCache;
  };
  
@@ -9,13 +9,12 @@
 +#define __progname getexecname()
 +#else
  extern char *__progname;
+-
 +#endif
  
--
  #define SUBPIXEL_X 0.125
  #define SUBPIXEL_Y 0.125
- 
-@@ -418,7 +422,7 @@
+@@ -301,7 +305,7 @@
   * than COPY_DWORDS would:
   * XXX Put this in src/mesa/main/imports.h ???
   */
@@ -38,16 +37,6 @@
  /**
   * Extensions.
   /
---- src/mesa/drivers/dri/common/mmio.h	Thu Sep  6 08:38:14 2012
-+++ src/mesa/drivers/dri/common/mmio.h	Thu Sep  6 08:38:27 2012
-@@ -34,6 +34,7 @@
- #define MMIO_H
- 
- #include "main/glheader.h"
-+#include "dri_util.h"
- 
- #if defined( __powerpc__ )
- 
 --- src/mesa/drivers/dri/i965/brw_draw_upload.c	Thu Sep  6 08:39:01 2012
 +++ src/mesa/drivers/dri/i965/brw_draw_upload.c	Thu Sep  6 08:39:32 2012
 @@ -209,7 +209,27 @@
@@ -129,37 +118,25 @@
      CXXFLAGS="$CXXFLAGS $VISIBILITY_CXXFLAGS"
      ac_ext=cpp
  ac_cpp='$CXXCPP $CPPFLAGS'
---- src/mesa/drivers/dri/intel/intel_context.c	Thu Sep  6 08:54:15 2012
-+++ src/mesa/drivers/dri/intel/intel_context.c	Thu Sep  6 08:54:55 2012
-@@ -638,7 +638,7 @@
-    driParseConfigFiles(&intel->optionCache, &intelScreen->optionCache,
-                        sPriv->myNum, (intel->gen >= 4) ? "i965" : "i915");
-    if (intel->gen < 4)
--      intel->maxBatchSize = 4096;
-+      intel->maxBatchSize = 2*4096;
-    else
-       intel->maxBatchSize = sizeof(intel->batch.map);
- 
---- src/mesa/drivers/dri/intel/intel_batchbuffer.c	Thu Sep  6 08:55:15 2012
-+++ src/mesa/drivers/dri/intel/intel_batchbuffer.c	Thu Sep  6 08:55:35 2012
-@@ -82,7 +82,7 @@
+--- src/mesa/drivers/dri/i915/intel_batchbuffer.c.~1~	2015-02-19 13:51:13.665829618 +0300
++++ src/mesa/drivers/dri/i915/intel_batchbuffer.c	2015-02-19 13:51:34.230820294 +0300
+@@ -56,7 +56,7 @@
     intel->batch.bo = drm_intel_bo_alloc(intel->bufmgr, "batchbuffer",
  					intel->maxBatchSize, 4096);
  
 -   intel->batch.reserved_space = BATCH_RESERVED;
 +   intel->batch.reserved_space = 4096;
-    intel->batch.state_batch_offset = intel->batch.bo->size;
     intel->batch.used = 0;
-    intel->batch.needs_sol_reset = false;
-
---- src/mesa/main/imports.c.~1~	2015-02-04 15:24:19.569614412 +0300
-+++ src/mesa/main/imports.c	2015-02-04 15:25:10.255132034 +0300
-@@ -542,7 +542,7 @@
- _mesa_strtof( const char *s, char **end )
+ }
+ 
+--- src/util/strtod.cpp.1	2015-02-19 13:54:25.905750416 +0300
++++ src/util/strtod.cpp	2015-02-19 13:55:48.189629681 +0300
+@@ -65,7 +65,7 @@
+ float
+ _mesa_strtof(const char *s, char **end)
  {
- #if defined(_GNU_SOURCE) && !defined(__CYGWIN__) && !defined(__FreeBSD__) && \
--   !defined(ANDROID) && !defined(__HAIKU__) && !defined(__UCLIBC__)
-+   !defined(ANDROID) && !defined(__HAIKU__) && !defined(__UCLIBC__) && !defined(__sun)
-    static locale_t loc = NULL;
-    if (!loc) {
-       loc = newlocale(LC_CTYPE_MASK, "C", NULL);
+-#if defined(_GNU_SOURCE) && defined(HAVE_XLOCALE_H)
++#if defined(_GNU_SOURCE) && defined(HAVE_XLOCALE_H) && !defined(__sun__)
+    return strtof_l(s, end, loc_init.loc);
+ #elif defined(HAVE_STRTOF)
+    return strtof(s, end);

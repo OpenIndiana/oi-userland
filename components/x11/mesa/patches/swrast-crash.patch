@@ -19,14 +19,3 @@ https://bugs.freedesktop.org/show_bug.cgi?id=64791
      sPriv->swrast_loader->getImage(dPriv, x, y, w, h, (char *)swImage->Buffer,
  				   dPriv->loaderPrivate);
  
-@@ -406,8 +413,8 @@
- 				     (char *) xrb->Base.Buffer,
- 				     dPriv->loaderPrivate);
- 
--      *out_map = xrb->Base.Buffer;
--      *out_stride = stride;
-+      *out_map = xrb->Base.Buffer + (h - 1) * stride;
-+      *out_stride = -stride;
-       return;
-    }
- 
