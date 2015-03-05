@@ -48,6 +48,8 @@ CXX += $(studio_FEATURES_EXTENSIONS) $(studio_NORUNPATH) $(studio_CXXLIB_CSTD)
 
 ROOTPPDCACHE =  $(PROTO_DIR)/usr/lib/lp/caches/SUNWhpijs.cache
 
+PYTHON_VERSION = 2.7
+
 # common configure options
 CONFIGURE_OPTIONS +=	--localedir=$(CONFIGURE_LOCALEDIR)
 CONFIGURE_OPTIONS +=	--disable-pp-build
@@ -108,14 +110,14 @@ $(BUILD_DIR)/.allvariantsinstalled: $(VARIANTS:%=%/.installed)
 	# set version of python interpreter to calm the pkglint
 	find $(PROTO_DIR) -name \*.py -print0 | \
 	   while IFS= read -r -d $$'\0' file; do \
-		/usr/bin/sed -e '1,1s&^#!.*python[:blank:]\{0,\}$$&#!$(PYTHON)&' \
+		/usr/bin/sed -e '1,1s&^#!.*python[:blank:]\{0,\}$$&#!$(PYTHON.$(PYTHON_VERSION))&' \
 		   $$file > $$file.pyverset ; \
 	   done
 	find $(PROTO_DIR) -name \*.py.pyverset -print0 | \
 	   while IFS= read -r -d $$'\0' file; do \
 		$(MV) $$file `echo $$file | sed -e 's/[.]pyverset$$//'` ; \
 	   done
-	$(PYTHON) -m compileall $(PROTO_DIR)/usr/share/hplip/
+	$(PYTHON.$(PYTHON_VERSION)) -m compileall $(PROTO_DIR)/usr/share/hplip/
 	$(TOUCH) $@
 
 PKG_MACROS +=	PYVER=$(PYTHON_VERSION)
@@ -141,7 +143,7 @@ REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += print/cups
 REQUIRED_PACKAGES += image/scanner/xsane/sane-backends
 REQUIRED_PACKAGES += runtime/perl-512
-REQUIRED_PACKAGES += runtime/python-26
+REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/c++-runtime
 REQUIRED_PACKAGES += system/library/libdbus
