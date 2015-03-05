@@ -48,13 +48,17 @@ include $(WS_MAKE_RULES)/ips.mk
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
+PYTHON_VERSION =	2.7
+
+PKG_MACROS +=		PYVER=$(PYTHON_VERSION)
+
 CONFIGURE_OPTIONS  +=   CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=   CXX="$(CXX)"
 CONFIGURE_OPTIONS  +=   CXXFLAGS="$(CXXFLAGS)"
 CONFIGURE_OPTIONS  +=   CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_OPTIONS  +=   LDFLAGS="$(LDFLAGS) -m64"
 CONFIGURE_OPTIONS  +=   LIBS="-lsocket -lnsl"
-CONFIGURE_OPTIONS  +=   PYTHON="$(PYTHON)"
+CONFIGURE_OPTIONS  +=   PYTHON="$(PYTHON.$(PYTHON_VERSION))"
 CONFIGURE_OPTIONS  +=   --srcdir=$(BUILD_DIR_64)
 CONFIGURE_OPTIONS  +=   --localstatedir=/var 
 CONFIGURE_OPTIONS  +=   --without-localdirs 
@@ -67,9 +71,9 @@ CONFIGURE_OPTIONS  +=   --with-ncat
 CONFIGURE_OPTIONS  +=   --with-ndiff
 
 # pkgdepend doesn't like the first line of a Python script to be:
-# '#!/usr/bin/env python' so turn it into '#!/usr/bin/python2.6'
+# '#!/usr/bin/env python' so turn it into '#!/usr/bin/python$(PYTHON_VERSION)'
 COMPONENT_POST_INSTALL_ACTION += \
-        $(GSED) -i -e 's?env python?python2.6?' \
+        $(GSED) -i -e "s?env python?python$(PYTHON_VERSION)?" \
                 $(PROTOUSRBINDIR)/uninstall_zenmap
 
 ASLR_MODE = $(ASLR_ENABLE)
@@ -83,13 +87,12 @@ install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
-
 REQUIRED_PACKAGES += library/pcre
-REQUIRED_PACKAGES += library/python-2/pygobject-26
-REQUIRED_PACKAGES += library/python-2/pygtk2-26
+REQUIRED_PACKAGES += library/python/pygobject-27
+REQUIRED_PACKAGES += library/python/pygtk2-27
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += runtime/lua
-REQUIRED_PACKAGES += runtime/python-26
+REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
 REQUIRED_PACKAGES += system/library/gcc/gcc-c++-runtime
