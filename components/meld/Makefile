@@ -39,6 +39,10 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+PYTHON_VERSION =	2.7
+
+PKG_MACROS +=		PYVER=$(PYTHON_VERSION)
+
 # Meld has no configure however it honors DESTDIR which is necessary so
 # we don't try to install into roots /usr but rather our proto areas usr
 COMPONENT_INSTALL_ARGS +=	DESTDIR=$(PROTO_DIR)
@@ -52,8 +56,7 @@ install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
-
 REQUIRED_PACKAGES += developer/gnome/gettext
-REQUIRED_PACKAGES += library/python-2/pygtk2-26
-REQUIRED_PACKAGES += runtime/python-26
+REQUIRED_PACKAGES += library/python/pygtk2-27
+REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += text/gnu-gettext
