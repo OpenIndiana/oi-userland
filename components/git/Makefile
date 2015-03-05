@@ -46,6 +46,10 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+PYTHON_VERSION =	2.7
+
+PKG_MACROS +=		PYVER=$(PYTHON_VERSION)
+
 CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/bin
 CONFIGURE_LIBDIR.64 =	$(CONFIGURE_PREFIX)/lib
 
@@ -53,7 +57,7 @@ CONFIGURE_PREFIX    =	/usr
 CONFIGURE_OPTIONS  +=	--without-openssl
 CONFIGURE_OPTIONS  +=	--libexecdir=/usr/lib
 CONFIGURE_OPTIONS  +=	--with-perl=$(PERL)
-CONFIGURE_OPTIONS  +=	--with-python=$(PYTHON)
+CONFIGURE_OPTIONS  +=	--with-python=$(PYTHON.$(PYTHON_VERSION))
 CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
 
 # Build fails if environment variable PROFILE is set.
@@ -110,12 +114,10 @@ $(BUILD_DIR)/.manpages:
 	done
 	$(TOUCH) $@
 
-
-
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/perl-512
-REQUIRED_PACKAGES += runtime/python-26
+REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
