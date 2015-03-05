@@ -51,6 +51,7 @@ PERL_VERSION.32 = 5.12
 PERL_VERSION.64 = 5.16
 PERL_VERSION = $(PERL_VERSION.$(BITS))
 PERL = $(PERL.$(PERL_VERSION))
+PYTHON_VERSION = 2.7
 GNUCP = /usr/gnu/bin/cp
 
 # because we can't seem to get -norunpath to the java bindings build any
@@ -181,6 +182,7 @@ COMPONENT_POST_INSTALL_ACTION += \
 	fi ; )
 
 PKG_MACROS += PERL_ARCH_16="$(PERL_ARCH_16)"
+PKG_MACROS += PYVER=$(PYTHON_VERSION)
 
 ASLR_MODE=$(ASLR_ENABLE)
 
