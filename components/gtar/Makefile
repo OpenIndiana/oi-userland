@@ -67,5 +67,6 @@ test:		$(TEST_64)
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/gzip
 REQUIRED_PACKAGES += network/ssh
+REQUIRED_PACKAGES += network/openssh
 REQUIRED_PACKAGES += system/core-os
 REQUIRED_PACKAGES += system/library
