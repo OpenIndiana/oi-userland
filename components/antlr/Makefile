@@ -49,15 +49,18 @@ PATCH_LEVEL =		0
 CONFIGURE_OPTIONS +=	--without-examples
 
 # pkgdepend doesn't like the first line of a Python script to be:
-# '#!/usr/bin/env python' so turn it into '#!/usr/bin/python2.6'
+# '#!/usr/bin/env python' so turn it into '#!/usr/bin/python2.7'
 COMPONENT_POST_CONFIGURE_ACTION = \
-	$(GSED) -i -e 's/env python/python2.6/' \
+	$(GSED) -i -e 's/env python/python2.7/' \
 		$(BUILD_DIR_32)/scripts/pyantlr.sh
 
 COMPONENT_INSTALL_ARGS += prefix=$(PROTOUSRDIR)
 COMPONENT_INSTALL_ARGS += libdir=$(PROTOUSRLIBDIR)
 COMPONENT_INSTALL_ARGS += bindir=$(PROTOUSRBINDIR)
 COMPONENT_INSTALL_ARGS += sbindir=$(PROTOUSRSBINDIR)
+
+# This expression contains a build date, so delete it.
+COMPONENT_TEST_TRANSFORMS += '-e "/^ANTLR Parser Generator.*$$/d"'
 
 # Needed to find the antlr man page.
 PKG_PROTO_DIRS +=	$(COMPONENT_DIR)/files
@@ -76,5 +79,5 @@ install:        $(INSTALL_32)
 test:           $(TEST_32)
 
 
-REQUIRED_PACKAGES += runtime/python-26
+REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += shell/ksh93

@@ -73,6 +73,11 @@ test: PYTHON_VERSION=2.7
 
 COMPONENT_TEST_CMD = $(PROTOUSRBINDIR)/pytest-2.7
 COMPONENT_TEST_ARGS =
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+COMPONENT_TEST_TRANSFORMS += \
+    '-e "s|$(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES)|\\$$(PYTHONPATH)|g"' \
+    '-e "s|\(Exception: Unable to acquire /tmp/tmp\).*/LOCK|\1XXXXXX/LOCK|"' \
+    '-e "s|\(Ran .* test cases in\) .*s (.*s CPU)\(.*\)|\1 TIME (CPUTIME)\2|"'
 
 # Expected failures for test target:
 # 413 test cases, 1 error, 1 failures, 22 skipped
@@ -81,5 +86,5 @@ COMPONENT_TEST_ARGS =
 
 test:	$(TEST_NO_ARCH)
 
-
 REQUIRED_PACKAGES += library/python-2/pyorbit-26
+REQUIRED_PACKAGES += library/python/pyorbit-27

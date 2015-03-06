@@ -101,17 +101,14 @@ license logilab-common.license license=LGPLv2.1,GPLv2
 depend type=optional \
     fmri=library/python-2/logilab-common-27@0.58.2,5.12-5.12.0.0.0.41.0
 
-# This is commented out until there is a 2.7 version available.
-# pkgdepend should have picked up the dependency on
-# /library/python/pyorbit-27
-#depend fmri=__TBD
-#    pkg.debug.depend.file=usr/lib/python2.7/vendor-packages/CORBA.py
-#    pkg.debug.reason=usr/lib/python2.7/vendor-packages/logilab/common/corbautils.py
-#    type=require
-
 # force a dependency on the Python 2.7 runtime
 depend type=require fmri=__TBD pkg.debug.depend.file=python2.7 \
     pkg.debug.depend.path=usr/bin
+
+# pkgdepend should have picked up the dependency on /library/python/pyorbit-27
+depend type=require fmri=__TBD \
+    pkg.debug.depend.file=usr/lib/python2.7/vendor-packages/CORBA.py \
+    pkg.debug.reason=usr/lib/python2.7/vendor-packages/logilab/common/corbautils.py
 
 # force a dependency on the logilab-common package
 depend type=require \
