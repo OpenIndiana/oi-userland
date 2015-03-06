@@ -46,13 +46,6 @@ include $(WS_MAKE_RULES)/ips.mk
 CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=	CXXFLAGS="$(CXXFLAGS)"
 
-# nroff does not work with -mandoc using groff
-MANDIR_PREFORMATED= $(PROTO_DIR)/usr/share/man/cat1
-COMPONENT_POST_INSTALL_ACTION += \
-        /usr/bin/gnroff -c -Tascii -mandoc $(SOURCE_DIR)/tmux.1>tmux.1.mod ; \
-        mkdir -p $(MANDIR_PREFORMATED) ; \
-        $(MV) tmux.1.mod $(MANDIR_PREFORMATED)/tmux.1
-
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
 
