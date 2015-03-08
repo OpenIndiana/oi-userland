@@ -28,13 +28,12 @@ include ../../make-rules/shared-macros.mk
 PATH=$(dir $(CC)):$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
 
 COMPONENT_NAME=		subversion
-COMPONENT_VERSION=	1.7.5
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	1.7.19
 COMPONENT_PROJECT_URL=	http://subversion.apache.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:cb102a437335a8921f00cef9bf730d84527713f1a5091e3e1eb2f16402f85dc1
+	sha256:184246bf5ccd0cb31f296b87fdae72617e445901b468529e638b919ca4012d4f
 COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/subversion/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/svn
 
@@ -115,6 +114,17 @@ APU-CONFIG.32 = /usr/apr-util/bin/apu-1-config
 APU-CONFIG.64 = /usr/apr-util/bin/$(MACH64)/apu-1-config
 APXS.32 = /usr/apache2/2.2/bin/apxs
 APXS.64 = /usr/apache2/2.2/bin/$(MACH64)/apxs
+APR-CONFIG-RPATH.32 = /usr/apr/$(APR_VERSION)/lib
+APR-CONFIG-RPATH.64 = /usr/apr/$(APR_VERSION)/lib/$(MACH64)
+APU-CONFIG-RPATH.32 = /usr/apr-util/$(APR_VERSION)/lib
+APU-CONFIG-RPATH.64 = /usr/apr-util/$(APR_VERSION)/lib/$(MACH64)
+APACHE_LIBEXECDIR.32 = `$(APXS.32) -q libexecdir`
+APACHE_LIBEXECDIR.64 = `$(APXS.64) -q libexecdir`
+
+LDFLAGS += -R$(LIBSVNDIR.$(BITS)) -R$(APR-CONFIG-RPATH.$(BITS)) \
+           -R$(APU-CONFIG-RPATH.$(BITS))
+
+CONFIGURE_ENV += RUBY="$(RUBY.1.9)"
 
 # Let's make noise just because we have to override --libdir
 CONFIGURE_OPTIONS = --prefix=$(CONFIGURE_PREFIX)
@@ -128,7 +138,7 @@ CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-libtool-lock 
 CONFIGURE_OPTIONS += --disable-neon-version-check
 CONFIGURE_OPTIONS += --disable-experimental-libtool
-CONFIGURE_OPTIONS += --with-apxs=/usr/apache2/2.2/bin/apxs
+CONFIGURE_OPTIONS += --with-apxs=$(APXS.$(BITS))
 CONFIGURE_OPTIONS += --with-ssl 
 CONFIGURE_OPTIONS += --with-zlib=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --with-jdk=$(JAVA_ROOT)
