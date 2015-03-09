@@ -14,16 +14,19 @@
 
 include ../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		libwnck
-COMPONENT_VERSION=	2.30.7
-COMPONENT_REVISION=	2
+COMPONENT_NAME=		goffice
+COMPONENT_VERSION=	0.8.17
 COMPONENT_PROJECT_URL=	http://www.gnome.org
-COMPONENT_SUMMARY=	Window Navigator Construction Kit Library
+COMPONENT_SUMMARY=	goffice - Document centric set of APIs
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:8be84d5333f0ade0e61af9f4cbf7685cb7cce2aa0ee32f53bac32107a81fe194
-COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.30/$(COMPONENT_ARCHIVE)
+    sha256:dd8caef5fefffbc53938fa619de9f58e7c4dc71a1803de134065d42138a68c06
+COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/0.8/$(COMPONENT_ARCHIVE)
+COMPONENT_CLASSIFICATION=	Development/System
+COMPONENT_LICENSE=	GPLv2
+COMPONENT_LICENSE_FILE=	COPYING
+COMPONENT_FMRI=		library/desktop/goffice
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
@@ -33,25 +36,21 @@ PATH=/usr/gnu/bin:/usr/bin
 
 COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 					libtoolize --copy --force &&\
-					glib-gettextize -f &&\
-					intltoolize --force --copy &&\
-					gtkdocize &&\
-					aclocal &&\
-					automake -c -f && \
-                                        autoconf  )
-
-COMPONENT_PRE_CONFIGURE_ACTION =        (chmod -R u+r $(SOURCE_DIR) && cp -rp $(SOURCE_DIR)/* $(@D) && \
-                                        cp -r $(COMPONENT_DIR)/files/po-sun $(@D) && \
-                                        cd $(@D)/po-sun && $(MAKE) all )
+					aclocal -I . &&\
+					automake -c -f -a &&\
+					autoconf )
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--disable-static
-CONFIGURE_OPTIONS+=	--enable-introspection=no
+CONFIGURE_OPTIONS+=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
+
+CONFIGURE_ENV+= PYTHON=$(PYTHON)
+
+COMPONENT_INSTALL_ENV+= GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 
 # common targets
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_32)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
