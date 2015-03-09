@@ -35,6 +35,8 @@ COMPONENT_ARCHIVE_HASH=	\
 
 COMPONENT_ARCHIVE_URL=	http://pkgs.fedoraproject.org/repo/pkgs/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)/ac4c4a30bd7a55b6687cbd62d864054c/$(COMPONENT_ARCHIVE)
 
+COMPONENT_PREP_ACTION += (cd $(@D) ; autoreconf -f)
+
 COMPONENT_BUGDB=	utility/stunnel
 TPNO=                   21367
 
