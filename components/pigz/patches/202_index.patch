@@ -1,18 +1,7 @@
-parallel uncompress - developed by Oracle
-Offered to upstream at https://github.com/mgerdts/pigz
- - Branch mt-uncompress-2.2 forked from https://github.com/madler/pigz v. 2.2.6
- - Branch mt-uncompress forked from https://github.com/madler/pigz branch master
-
-The following generated with:
-
-  git diff -W 8041c56eca89c427aa0a67f40e92675f3584b4bd \
-	be138d877c14c5a3f58c67939bf822d83e342947
-
-diff --git a/Makefile b/Makefile
-index 822902c..0c904a6 100644
+diff -r 27ff4e7aa5f1 Makefile
 --- a/Makefile
 +++ b/Makefile
-@@ -44,6 +44,15 @@ test: pigz
+@@ -44,6 +44,15 @@
  	  compress -f < pigz.c | ./unpigz | cmp - pigz.c ;\
  	fi
  	@rm -f pigz.c.gz pigz.c.zz pigz.c.zip
@@ -28,11 +17,10 @@ index 822902c..0c904a6 100644
  
  tests: dev test
  	./pigzn -kf pigz.c ; ./pigz -t pigz.c.gz
-diff --git a/pigz.1 b/pigz.1
-index 8d75ca2..f47414f 100644
+diff -r 27ff4e7aa5f1 pigz.1
 --- a/pigz.1
 +++ b/pigz.1
-@@ -180,6 +180,14 @@ Provide more verbose output.
+@@ -180,6 +180,14 @@
  .B -V --version
  Show the version of pigz.
  .TP
@@ -47,11 +35,10 @@ index 8d75ca2..f47414f 100644
  .B -z --zlib
  Compress to zlib (.zz) instead of gzip format.
  .TP
-diff --git a/pigz.c b/pigz.c
-index ebef63e..5a61315 100644
+diff -r 27ff4e7aa5f1 pigz.c
 --- a/pigz.c
 +++ b/pigz.c
-@@ -192,13 +192,27 @@
+@@ -191,13 +191,27 @@
     effectiveness of deflating in a single thread.  This can be turned off using
     the --independent or -i option, so that the blocks can be decompressed
     independently for partial error recovery or for random access.
@@ -86,7 +73,7 @@ index ebef63e..5a61315 100644
  
     pigz requires zlib 1.2.1 or later to allow setting the dictionary when doing
     raw deflate.  Since zlib 1.2.3 corrects security vulnerabilities in zlib
-@@ -260,13 +274,14 @@
+@@ -259,13 +273,14 @@
     can't get way ahead of the write thread and build up a large backlog of
     unwritten compressed data.  The write thread will write the compressed data,
     drop the output buffer, and then wait for the check value to be unlocked
@@ -108,7 +95,7 @@ index ebef63e..5a61315 100644
  
     The input and output buffers are reused through their collection in pools.
     Each buffer has a use count, which when decremented to zero returns the
-@@ -314,6 +329,9 @@
+@@ -313,6 +328,9 @@
  #if __STDC_VERSION__-0 >= 199901L || __GNUC__-0 >= 3
  #  include <inttypes.h> /* intmax_t */
  #endif
@@ -118,7 +105,7 @@ index ebef63e..5a61315 100644
  
  #ifdef __hpux
  #  include <sys/param.h>
-@@ -421,8 +439,10 @@
+@@ -420,8 +438,10 @@
  local char *prog;           /* name by which pigz was invoked */
  local int ind;              /* input file descriptor */
  local int outd;             /* output file descriptor */
@@ -129,7 +116,7 @@ index ebef63e..5a61315 100644
  local int verbosity;        /* 0 = quiet, 1 = normal, 2 = verbose, 3 = trace */
  local int headis;           /* 1 to store name, 2 to store date, 3 both */
  local int pipeout;          /* write output to stdout even if file */
-@@ -468,9 +488,12 @@ local int complain(char *fmt, ...)
+@@ -467,9 +487,12 @@
      return 0;
  }
  
@@ -142,7 +129,7 @@ index ebef63e..5a61315 100644
      if (outd != -1 && out != NULL)
          unlink(out);
      complain("abort: %s%s", why, what);
-@@ -685,11 +708,23 @@ local unsigned long time2dos(time_t t)
+@@ -684,11 +707,23 @@
      return dos;
  }
  
@@ -167,7 +154,7 @@ index ebef63e..5a61315 100644
  /* write a gzip, zlib, or zip header using the information in the globals */
  local unsigned long put_header(void)
  {
-@@ -983,7 +1018,7 @@ local void new_pool(struct pool *pool, size_t size, int limit)
+@@ -982,7 +1017,7 @@
  
  /* get a space from a pool -- the use count is initially set to one, so there
     is no need to call use_space() for the first use */
@@ -176,7 +163,7 @@ index ebef63e..5a61315 100644
  {
      struct space *space;
  
-@@ -996,6 +1031,15 @@ local struct space *get_space(struct pool *pool)
+@@ -995,6 +1030,15 @@
      if (pool->head != NULL) {
          space = pool->head;
          possess(space->use);
@@ -192,7 +179,7 @@ index ebef63e..5a61315 100644
          pool->head = space->next;
          twist(pool->have, BY, -1);      /* one less in pool */
          twist(space->use, TO, 1);       /* initially one user */
-@@ -1013,15 +1057,20 @@ local struct space *get_space(struct pool *pool)
+@@ -1012,15 +1056,20 @@
      if (space == NULL)
          bail("not enough memory", "");
      space->use = new_lock(1);           /* initially one user */
@@ -215,7 +202,7 @@ index ebef63e..5a61315 100644
  /* compute next size up by multiplying by about 2**(1/3) and round to the next
     power of 2 if we're close (so three applications results in doubling) -- if
     small, go up to at least 16, if overflow, go to max size_t value */
-@@ -1110,17 +1159,35 @@ local int free_pool(struct pool *pool)
+@@ -1109,17 +1158,35 @@
      return count;
  }
  
@@ -252,7 +239,7 @@ index ebef63e..5a61315 100644
  struct job {
      long seq;                   /* sequence number */
      int more;                   /* true if this is not the last chunk */
-@@ -1167,6 +1234,7 @@ local void setup_jobs(void)
+@@ -1166,6 +1233,7 @@
      new_pool(&out_pool, OUTPOOL(size), -1);
      new_pool(&dict_pool, DICT, -1);
      new_pool(&lens_pool, size >> (RSYNCBITS - 1), -1);
@@ -260,7 +247,7 @@ index ebef63e..5a61315 100644
  }
  
  /* command the compress threads to all return, then join them all (call from
-@@ -1203,6 +1271,8 @@ local void finish_jobs(void)
+@@ -1202,6 +1270,8 @@
      Trace(("-- freed %d output buffers", caught));
      caught = free_pool(&in_pool);
      Trace(("-- freed %d input buffers", caught));
@@ -269,7 +256,7 @@ index ebef63e..5a61315 100644
      free_lock(write_first);
      free_lock(compress_have);
      compress_have = NULL;
-@@ -1396,18 +1466,483 @@ local void compress_thread(void *dummy)
+@@ -1395,18 +1465,483 @@
      (void)deflateEnd(&strm);
  }
  
@@ -755,7 +742,7 @@ index ebef63e..5a61315 100644
      unsigned long check;            /* check value of uncompressed data */
  
      (void)dummy;
-@@ -1431,23 +1966,27 @@ local void write_thread(void *dummy)
+@@ -1430,23 +1965,27 @@
          /* update lengths, save uncompressed length for COMB */
          more = job->more;
          len = job->in->len;
@@ -787,7 +774,7 @@ index ebef63e..5a61315 100644
          /* free the job */
          free_lock(job->calc);
          free(job);
-@@ -1518,7 +2057,7 @@ local void parallel_compress(void)
+@@ -1517,7 +2056,7 @@
      setup_jobs();
  
      /* start write thread */
@@ -796,7 +783,7 @@ index ebef63e..5a61315 100644
  
      /* read from input and start compress threads (write thread will pick up
       the output of the compress threads) */
-@@ -1914,7 +2453,7 @@ local size_t load(void)
+@@ -1913,7 +2452,7 @@
  #ifndef NOTHREAD
      /* if first time in or procs == 1, read a buffer to have something to
         return, otherwise wait for the previous read job to complete */
@@ -805,7 +792,7 @@ index ebef63e..5a61315 100644
          /* if first time, fire up the read thread, ask for a read */
          if (in_which == -1) {
              in_which = 1;
-@@ -1996,12 +2535,6 @@ local void in_init(void)
+@@ -1995,12 +2534,6 @@
          in_next += togo; \
      } while (0)
  
@@ -818,7 +805,7 @@ index ebef63e..5a61315 100644
  /* convert MS-DOS date and time to a Unix time, assuming current timezone
     (you got a better idea?) */
  local time_t dos2time(unsigned long dos)
-@@ -2614,6 +3147,73 @@ local int outb(void *desc, unsigned char *buf, unsigned len)
+@@ -2613,6 +3146,73 @@
      return 0;
  }
  
@@ -892,7 +879,7 @@ index ebef63e..5a61315 100644
  /* inflate for decompression or testing -- decompress from ind to outd unless
     decode != 1, in which case just test ind, and then also list if list != 0;
     look for and decode multiple, concatenated gzip and/or zlib streams;
-@@ -2621,10 +3221,8 @@ local int outb(void *desc, unsigned char *buf, unsigned len)
+@@ -2620,10 +3220,8 @@
  local void infchk(void)
  {
      int ret, cont;
@@ -904,7 +891,7 @@ index ebef63e..5a61315 100644
      off_t clen;
  
      cont = 0;
-@@ -2654,65 +3252,7 @@ local void infchk(void)
+@@ -2653,65 +3251,7 @@
          /* compute compressed data length */
          clen = in_tot - in_left;
  
@@ -971,7 +958,7 @@ index ebef63e..5a61315 100644
  
          /* show file information if requested */
          if (list) {
-@@ -2732,6 +3272,231 @@ local void infchk(void)
+@@ -2731,6 +3271,231 @@
          complain("%s OK, has trailing junk which was ignored", in);
  }
  
@@ -1203,7 +1190,7 @@ index ebef63e..5a61315 100644
  /* --- decompress Unix compress (LZW) input --- */
  
  /* memory for unlzw() --
-@@ -3160,7 +3925,7 @@ local void process(char *path)
+@@ -3159,7 +3924,7 @@
          /* if requested, test input file (possibly a special list) */
          if (decode == 2) {
              if (method == 8)
@@ -1212,7 +1199,7 @@ index ebef63e..5a61315 100644
              else {
                  unlzw();
                  if (list) {
-@@ -3220,19 +3985,8 @@ local void process(char *path)
+@@ -3219,19 +3984,8 @@
  
          /* if exists and not -f, give user a chance to overwrite */
          if (outd < 0 && errno == EEXIST && isatty(0) && verbosity) {
@@ -1234,7 +1221,7 @@ index ebef63e..5a61315 100644
          }
  
          /* if exists and no overwrite, report and go on to next */
-@@ -3255,17 +4009,21 @@ local void process(char *path)
+@@ -3254,17 +4008,24 @@
      /* process ind to outd */
      if (verbosity > 1)
          fprintf(stderr, "%s to %s ", in, out);
@@ -1255,10 +1242,13 @@ index ebef63e..5a61315 100644
 +            bail("invalid index file", "");
          parallel_compress();
 +    }
++    else if (procs > 1) {
++        parallel_compress();
++    }
  #endif
      else
          single_compress(0);
-@@ -3274,6 +4032,10 @@ local void process(char *path)
+@@ -3273,6 +4034,10 @@
          fflush(stderr);
      }
  
@@ -1269,7 +1259,7 @@ index ebef63e..5a61315 100644
      /* finish up, copy attributes, set times, delete original */
      if (ind != 0)
          close(ind);
-@@ -3332,6 +4094,9 @@ local char *helptext[] = {
+@@ -3331,6 +4096,9 @@
  "  -v, --verbose        Provide more verbose output",
  #endif
  "  -V  --version        Show the version of pigz",
@@ -1279,7 +1269,7 @@ index ebef63e..5a61315 100644
  "  -z, --zlib           Compress to zlib (.zz) instead of gzip format",
  "  --                   All arguments after \"--\" are treated as files"
  };
-@@ -3401,11 +4166,11 @@ local void defaults(void)
+@@ -3400,11 +4168,11 @@
  local char *longopts[][2] = {
      {"LZW", "Z"}, {"ascii", "a"}, {"best", "9"}, {"bits", "Z"},
      {"blocksize", "b"}, {"decompress", "d"}, {"fast", "1"}, {"force", "f"},
@@ -1296,7 +1286,7 @@ index ebef63e..5a61315 100644
      {"version", "V"}, {"zip", "K"}, {"zlib", "z"}};
  #define NLOPTS (sizeof(longopts) / (sizeof(char *) << 1))
  
-@@ -3445,7 +4210,7 @@ local int option(char *arg)
+@@ -3444,7 +4212,7 @@
  
      /* if no argument or dash option, check status of get */
      if (get && (arg == NULL || *arg == '-')) {
@@ -1305,7 +1295,7 @@ index ebef63e..5a61315 100644
          bail("missing parameter after ", bad);
      }
      if (arg == NULL)
-@@ -3504,6 +4269,7 @@ local int option(char *arg)
+@@ -3503,6 +4271,7 @@
              case 'R':  rsync = 1;  break;
              case 'S':  get = 3;  break;
              case 'V':  fputs(VERSION, stderr);  exit(0);
@@ -1313,7 +1303,7 @@ index ebef63e..5a61315 100644
              case 'Z':
                  bail("invalid option: LZW output not supported: ", bad);
              case 'a':
-@@ -3531,7 +4297,7 @@ local int option(char *arg)
+@@ -3530,7 +4299,7 @@
              return 0;
      }
  
@@ -1322,7 +1312,7 @@ index ebef63e..5a61315 100644
      if (get) {
          size_t n;
  
-@@ -3544,7 +4310,7 @@ local int option(char *arg)
+@@ -3543,7 +4312,7 @@
                  OUTPOOL(size) < size ||
                  (ssize_t)OUTPOOL(size) < 0 ||
                  size > (1UL << 22))
@@ -1331,7 +1321,7 @@ index ebef63e..5a61315 100644
              new_opts();
          }
          else if (get == 2) {
-@@ -3562,6 +4328,9 @@ local int option(char *arg)
+@@ -3561,6 +4330,9 @@
          }
          else if (get == 3)
              sufx = arg;                         /* gz suffix */
