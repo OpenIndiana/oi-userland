@@ -1,0 +1,116 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2015 Alexander Pyhalov
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+<transform file path=usr/share/applications/.* ->  default restart_fmri svc:/application/desktop-cache/desktop-mime-cache:default>
+<transform file path=usr/share/locale/([^/]+)(\..+){0,1}(/.+){0,1} -> default facet.locale.%<\1> true>
+<transform file path=usr/share/doc/.* ->  default facet.doc true>
+<transform file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/html/.* ->  default facet.doc.html true>
+
+file path=usr/bin/gqview
+file path=usr/share/applications/gqview.desktop
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/COPYING
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/ChangeLog
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/README
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/TODO
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/html/10_1_general.html
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/html/10_2_image.html
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/html/10_3_window.html
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/html/10_4_filtering.html
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/html/10_5_editor_commands.html
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/html/10_6_advanced.html
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/html/10_7_hidden.html
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/html/10_options.html
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/html/11_1_command_line.html
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/html/11_2_keyboard_shortcuts.html
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/html/11_3_thumbnails.html
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/html/11_4_management.html
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/html/11_reference.html
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/html/12_credits.html
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/html/1_introduction.html
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/html/2_1_navigation.html
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/html/2_2_menus.html
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/html/2_3_layout.html
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/html/2_4_file_pane.html
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/html/2_5_folder_pane.html
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/html/2_6_image_pane.html
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/html/2_7_status_bar.html
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/html/2_main_window.html
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/html/3_1_image_window.html
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/html/3_2_image_properties.html
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/html/3_other_windows.html
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/html/4_1_copy_move.html
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/html/4_2_rename.html
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/html/4_3_delete.html
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/html/4_4_external_editing.html
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/html/4_image_management.html
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/html/5_1_search.html
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/html/5_2_finding_duplicates.html
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/html/5_image_search.html
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/html/6_collections.html
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/html/7_1_exif.html
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/html/7_2_sort_manager.html
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/html/7_3_keywords.html
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/html/7_sidebars.html
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/html/8_1_slideshow.html
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/html/8_2_fullscreen.html
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/html/8_image_presentation.html
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/html/9_printing.html
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/html/gnu_fdl.txt
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/html/gqview_faq.html
+file path=usr/share/doc/gqview-$(COMPONENT_VERSION)/html/index.html
+file path=usr/share/locale/ar/LC_MESSAGES/gqview.mo
+file path=usr/share/locale/be/LC_MESSAGES/gqview.mo
+file path=usr/share/locale/bg/LC_MESSAGES/gqview.mo
+file path=usr/share/locale/ca/LC_MESSAGES/gqview.mo
+file path=usr/share/locale/cs/LC_MESSAGES/gqview.mo
+file path=usr/share/locale/da/LC_MESSAGES/gqview.mo
+file path=usr/share/locale/de/LC_MESSAGES/gqview.mo
+file path=usr/share/locale/eo/LC_MESSAGES/gqview.mo
+file path=usr/share/locale/es/LC_MESSAGES/gqview.mo
+file path=usr/share/locale/et/LC_MESSAGES/gqview.mo
+file path=usr/share/locale/eu/LC_MESSAGES/gqview.mo
+file path=usr/share/locale/fi/LC_MESSAGES/gqview.mo
+file path=usr/share/locale/fr/LC_MESSAGES/gqview.mo
+file path=usr/share/locale/hu/LC_MESSAGES/gqview.mo
+file path=usr/share/locale/id/LC_MESSAGES/gqview.mo
+file path=usr/share/locale/it/LC_MESSAGES/gqview.mo
+file path=usr/share/locale/ja/LC_MESSAGES/gqview.mo
+file path=usr/share/locale/ko/LC_MESSAGES/gqview.mo
+file path=usr/share/locale/nl/LC_MESSAGES/gqview.mo
+file path=usr/share/locale/no/LC_MESSAGES/gqview.mo
+file path=usr/share/locale/pl/LC_MESSAGES/gqview.mo
+file path=usr/share/locale/pt_BR/LC_MESSAGES/gqview.mo
+file path=usr/share/locale/ro/LC_MESSAGES/gqview.mo
+file path=usr/share/locale/ru/LC_MESSAGES/gqview.mo
+file path=usr/share/locale/sk/LC_MESSAGES/gqview.mo
+file path=usr/share/locale/sl/LC_MESSAGES/gqview.mo
+file path=usr/share/locale/sv/LC_MESSAGES/gqview.mo
+file path=usr/share/locale/th/LC_MESSAGES/gqview.mo
+file path=usr/share/locale/tr/LC_MESSAGES/gqview.mo
+file path=usr/share/locale/uk/LC_MESSAGES/gqview.mo
+file path=usr/share/locale/vi/LC_MESSAGES/gqview.mo
+file path=usr/share/locale/zh_CN.GB2312/LC_MESSAGES/gqview.mo
+file path=usr/share/locale/zh_TW/LC_MESSAGES/gqview.mo
+file path=usr/share/man/man1/gqview.1
+file path=usr/share/pixmaps/gqview.png
