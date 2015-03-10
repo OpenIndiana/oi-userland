@@ -1,5 +1,5 @@
 --- gnome-panel-2.32.1/gnome-panel/Makefile.am.~1~	2010-09-29 20:51:03.000000000 +0400
-+++ gnome-panel-2.32.1/gnome-panel/Makefile.am	2015-01-05 19:32:42.508082859 +0300
++++ gnome-panel-2.32.1/gnome-panel/Makefile.am	2015-03-10 12:38:51.894270716 +0300
 @@ -15,6 +15,7 @@
  	-DGNOMELOCALEDIR=\""$(prefix)/$(DATADIRNAME)/locale"\"	\
  	-DBUILDERDIR=\""$(uidir)"\"				\
@@ -8,7 +8,17 @@
  	$(DISABLE_DEPRECATED_CFLAGS)
  
  AM_CFLAGS = $(WARN_CFLAGS)
-@@ -143,6 +144,8 @@
+@@ -134,7 +135,8 @@
+ 	$(top_builddir)/gnome-panel/libpanel-util/libpanel-util.la			\
+ 	$(PANEL_LIBS)									\
+ 	$(XRANDR_LIBS)									\
+-	$(X_LIBS)
++	$(X_LIBS)									\
++	-lsecdb
+ 
+ gnome_panel_LDFLAGS = -export-dynamic
+ 
+@@ -143,12 +145,15 @@
  	panel-ditem-editor.c		\
  	panel-marshal.c			\
  	panel-util.c			\
@@ -17,6 +27,14 @@
  	xstuff.c
  
  gnome_desktop_item_edit_LDADD = 	\
+ 	$(top_builddir)/gnome-panel/libpanel-util/libpanel-util.la	\
+ 	$(PANEL_LIBS)							\
+-	$(X_LIBS)
++	$(X_LIBS)							\
++	-lsecdb
+ 
+ panel_test_applets_SOURCES =		\
+ 	panel-modules.c			\
 --- gnome-panel-2.30.2.orig/gnome-panel/gnome-desktop-item-edit.c	2010-12-27 13:01:19.485602424 +0100
 +++ gnome-panel-2.30.2/gnome-panel/gnome-desktop-item-edit.c	2010-12-27 12:47:44.055057740 +0100
 @@ -18,7 +18,6 @@
