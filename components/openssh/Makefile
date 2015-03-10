@@ -48,6 +48,8 @@ include $(WS_MAKE_RULES)/ips.mk
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
 
+COMPILER=	gcc
+
 CFLAGS += -DSET_USE_PAM
 CFLAGS += -DDEPRECATE_SUNSSH_OPT
 CFLAGS += -DKRB5_BUILD_FIX
@@ -113,5 +115,7 @@ REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/gcc-45-runtime
+REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
 REQUIRED_PACKAGES += system/library/security/gss
 REQUIRED_PACKAGES += system/linker
