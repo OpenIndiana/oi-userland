@@ -60,7 +60,7 @@ include $(WS_MAKE_RULES)/ips.mk
 IPS_COMPONENT_VERSION=  $(COMPONENT_VERSION)
 
 # Remove -D_POSIX_PTHREAD_SEMANTICS and this comment after move to S12_45.
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS) -I/usr/include/kerberosv5 -DHAVE_KRB5_H=1 -DKRB5_DLLIMP= -DHAVE__GETGRPSBYMEMBER -D_POSIX_PTHREAD_SEMANTICS"
+CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS) -I/usr/include/kerberosv5 -DHAVE_KRB5_H=1 -DKRB5_DLLIMP= -DHAVE__GETGRPSBYMEMBER -D_POSIX_PTHREAD_SEMANTICS -D_SOLARIS_DTRACE"
 # Force immediate binding because of chroot().
 CONFIGURE_OPTIONS +=	LDFLAGS="-z guidance=nolazyload -z nolazyload -lbsm"
 CONFIGURE_OPTIONS +=	install_user=`id -nu`
@@ -79,7 +79,7 @@ CONFIGURE_OPTIONS +=	--with-modules=mod_solaris_audit:mod_solaris_priv
 CONFIGURE_OPTIONS +=	--with-shared=mod_facl:mod_wrap:mod_tls:mod_auth_gss:mod_gss
 CONFIGURE_OPTIONS +=	--enable-buffer-size=16384
 
-# Copy Solaris modules and GSSAPI modules to proftpd source tree
+# Copy Solaris modules and GSSAPI modules to proftpd source tree.
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CP) mod_solaris_audit.c $(SOURCE_DIR)/contrib ; \
 	$(CP) mod_solaris_priv.c $(SOURCE_DIR)/contrib ; \
@@ -91,6 +91,10 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 	$(CP) mod_gss.h $(SOURCE_DIR)/include ; \
 	$(CP) mod_gss.html $(SOURCE_DIR)/doc/contrib ; \
 	$(CLONEY) $(SOURCE_DIR) $(@D))
+
+# Build Solaris dtrace object files and copy to proftpd build tree.
+COMPONENT_PRE_BUILD_ACTION = \
+	(cd dtrace && make CP="$(CP)" CC="$(CC)" BD="$(BUILD_DIR)/$(MACH32)")
 
 # proftpd configure and build is not ready for run out of the source tree
 CONFIGURE_SCRIPT =	$(@D)/configure
