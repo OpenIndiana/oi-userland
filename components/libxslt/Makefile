@@ -49,6 +49,10 @@ LINT_FLAGS +=	-I/usr/include/libxml2
 CFLAGS +=	$(CPP_LARGEFILES)
 LDFLAGS +=	$(LD_Z_DEFS) $(LD_Z_TEXT) -lpthread
 
+# When 2.6 goes away, we can remove the version line below, as well as the
+# COMPONENT_POST_{CONFIGURE,INSTALL_ACTION} lines below.
+PYTHON_VERSION=2.6
+
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --with-pic
 CONFIGURE_OPTIONS += --with-python=$(PYTHON.$(BITS))

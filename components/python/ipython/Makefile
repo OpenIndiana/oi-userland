@@ -38,30 +38,28 @@ COMPONENT_BUGDB=	python-mod/ipython
 TPNO=			9640
 
 # Syntax issues: not Python 3 ready.
-PYTHON_VERSIONS = 2.7 2.6
+PYTHON_VERSIONS = $(PYTHON2_VERSIONS)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-# Replace "#!/usr/bin/env ..." shebang lines with properly versioned ones.
-COMPONENT_PRE_BUILD_ACTION = \
-	/usr/bin/find $(SOURCE_DIR) -name *.py \
-		-exec $(GSED) -i -e 's/env python/python$(PYTHON_VERSION)/' "{}" \; ;
-
 # Unpack the ipython man pages.
 COMPONENT_POST_UNPACK_ACTION = \
 	(cd $(SOURCE_DIR)/docs/man; /usr/bin/gunzip * )
 
+# Replace "#!/usr/bin/env ..." shebang lines with properly versioned ones.
+COMPONENT_POST_INSTALL_ACTION = \
+	/usr/bin/find $(PROTOUSRLIBDIR)/python$(PYTHON_VERSION) -name *.py \
+		-exec $(GSED) -i -e 's|env python|python$(PYTHON_VERSION)|' "{}" \; ;
+
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-# common targets
 build:          $(BUILD_32)
 
 install:        $(INSTALL_32)
 
 test:           $(NO_TESTS)
-
 
 REQUIRED_PACKAGES += library/python/python-twisted-26
 REQUIRED_PACKAGES += library/python/python-twisted-27

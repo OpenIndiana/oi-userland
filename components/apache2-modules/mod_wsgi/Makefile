@@ -46,7 +46,7 @@ APACHE_USR_PREFIX = /usr/apache2/
 VARIANT_AP_22_PY26 = $(BUILD_DIR)/apache22-python26
 VARIANT_AP_22_PY27 = $(BUILD_DIR)/apache22-python27
 VARIANT_AP_22_PY34 = $(BUILD_DIR)/apache22-python34
-VARIANT_AP_24_PY26 = $(BUILD_DIR)/apache24-pytohn26
+VARIANT_AP_24_PY26 = $(BUILD_DIR)/apache24-python26
 VARIANT_AP_24_PY27 = $(BUILD_DIR)/apache24-python27
 VARIANT_AP_24_PY34 = $(BUILD_DIR)/apache24-python34
 

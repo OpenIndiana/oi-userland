@@ -42,7 +42,10 @@ CFLAGS+=		-std=c99
 CFLAGS+=		-DNDEBUG
 CFLAGS+=		-DOSCAP_THREAD_SAFE
 
-PYTHON_VERSIONS=	2.7 2.6
+# When Python 2.6 goes away, the _VERSION (singular) line below can go as well,
+# as can the COMPONENT_POST_CONFIGURE_ACTION and possibly more.
+PYTHON_VERSION=		2.6
+PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk

@@ -94,12 +94,9 @@ include $(WS_MAKE_RULES)/ips-buildinfo.mk
 COMPILER ?=		studio
 BITS =			32
 
-# If we are building multiple versions of python, make sure that python 2.6
-# is installed last and is the canonical version.  When we change defaults,
-# the new default should go last.  For now, this is most easily done by
-# listing version in descending order.
-PYTHON_VERSION =	2.6
-PYTHON2_VERSIONS =	2.7 2.6
+# The default version should go last.
+PYTHON_VERSION =	2.7
+PYTHON2_VERSIONS =	2.6 2.7
 PYTHON3_VERSIONS =	3.4
 PYTHON_VERSIONS =	$(PYTHON3_VERSIONS) $(PYTHON2_VERSIONS)
 

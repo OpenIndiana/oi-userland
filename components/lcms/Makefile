@@ -61,6 +61,10 @@ COMPONENT_TEST_TRANSFORMS += \
 CXXFLAGS += -features=extensions,nestedaccess,tmplrefstatic
 CXXFLAGS += -template=geninlinefuncs
 
+# When 2.6 goes away, we can remove the version line below, as well as the
+# COMPONENT_POST_{CONFIGURE,INSTALL_ACTION} lines below.
+PYTHON_VERSION=2.6
+
 CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
 CONFIGURE_ENV += CXXFLAGS="$(CXXFLAGS)"
 CONFIGURE_ENV += PYTHON="$(PYTHON)"

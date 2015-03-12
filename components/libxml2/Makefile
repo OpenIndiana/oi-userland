@@ -53,6 +53,9 @@ ASLR_MODE = $(ASLR_ENABLE)
 CFLAGS +=	$(CPP_LARGEFILES)
 LDFLAGS +=	$(LD_Z_DEFS) $(LD_Z_TEXT) -lpthread
 
+# Once Python 2.6 goes away, the various POST_*_ACTIONs below can be simplified.
+PYTHON_VERSION=2.6
+
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --with-pic
 CONFIGURE_OPTIONS += --with-threads
