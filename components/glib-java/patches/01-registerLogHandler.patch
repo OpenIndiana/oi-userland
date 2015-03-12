@@ -1,0 +1,20 @@
+diff -uNr glib-java-0.4.2.orig/src/jni/org_gnu_glib_GObject.c glib-java-0.4.2/src/jni/org_gnu_glib_GObject.c
+--- glib-java-0.4.2.orig/src/jni/org_gnu_glib_GObject.c	2008-09-04 15:54:32.666613782 +0100
++++ glib-java-0.4.2/src/jni/org_gnu_glib_GObject.c	2008-09-04 15:54:45.516326561 +0100
+@@ -794,6 +794,8 @@
+ JNIEXPORT void JNICALL Java_org_gnu_glib_GObject_registerLogHandler
+     (JNIEnv *env, jclass cls)
+ {
++/* #6728675: glib-java's JNI abuse causes jvm crashes when glib logs - Workaround, just stub out logging
++
+ 	g_log_set_handler(NULL, G_LOG_LEVEL_WARNING | G_LOG_LEVEL_CRITICAL |
+ 			G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION, logFunc, (gpointer)env);
+ 	g_log_set_handler ("GLib", G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL
+@@ -806,6 +808,7 @@
+                      | G_LOG_FLAG_RECURSION, logFunc, (gpointer) env);
+ 	g_log_set_handler ("Glade", G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL
+                      | G_LOG_FLAG_RECURSION, logFunc, (gpointer) env);
++*/
+ }
+ 
+ JNIEXPORT jobject JNICALL Java_org_gnu_glib_GObject_g_1object_1new
