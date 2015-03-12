@@ -1,0 +1,32 @@
+--- ospm-1.4.11/pm/ospm-queue-model.h.~1~	2015-03-12 21:44:39.124481960 +0300
++++ ospm-1.4.11/pm/ospm-queue-model.h	2015-03-12 21:44:57.135191496 +0300
+@@ -69,7 +69,8 @@
+         LPD_LOCAL,
+         LPD_REMOTE,
+         SMB,
+-        SEPARATOR
++        SEPARATOR,
++	END_OF_LIST
+ } QueueConnType; 
+ 
+ 
+--- ospm-1.4.11/pm/ospm-manual-add-queue.c.~1~	2015-03-12 21:37:54.415506493 +0300
++++ ospm-1.4.11/pm/ospm-manual-add-queue.c	2015-03-12 21:43:41.044640436 +0300
+@@ -87,7 +87,7 @@
+         {SEPARATOR, NULL},
+         {IPP_REMOTE, N_("Remote IPP (Internet Printing Protocol)")},
+         {LPD_REMOTE, N_("Remote LPD (BSD, RFC1179)")},
+-        { NULL, NULL},
++        { END_OF_LIST, NULL},
+ };
+ 
+ static void ospm_manual_add_queue_destroy              (GtkObject *object);
+@@ -812,7 +812,7 @@
+         int i;
+ 
+         store = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_INT);
+-        for (i=0; type_list[i].type != NULL; i++) {
++        for (i=0; type_list[i].type != END_OF_LIST; i++) {
+                 if (is_properties) {
+                         if (type_list[i].type == SEPARATOR)
+                                 continue;
