@@ -25,6 +25,8 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	timezone
 
+COMPONENT_VERSION=    	2015.1 
+
 COMPONENT_BUGDB=	utility/timezone
 
 HUMAN_VERSION=		2015a
