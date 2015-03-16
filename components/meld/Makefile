@@ -24,20 +24,23 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		meld
-COMPONENT_VERSION=	1.4.0
+COMPONENT_VERSION=	1.8.6
 COMPONENT_PROJECT_URL=	http://meld.sourceforge.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:429a0d0408464f623d25e351adc387ff4ed92813b8760d1c16700cb3180f9303
-COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/gnome/sources/meld/1.4/$(COMPONENT_ARCHIVE)
+    sha256:af96682b8f4bf3ad4221c853b1516218d62a17ff43c38f4a83e7e8ac6736e8a5
+COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/gnome/sources/meld/1.8/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/meld
 
-TPNO=			16990
+TPNO=			21932
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
+
+# Needed to find the GNU version of install.
+PATH =			/usr/gnu/bin:/usr/bin
 
 PYTHON_VERSION =	2.7
 
