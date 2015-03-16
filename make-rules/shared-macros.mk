@@ -77,8 +77,11 @@ export LC_ALL=C
 
 SHELL=	/bin/bash
 
+# We want "nightly" as our publisher, to match other consolidations and
+# facilitate migrations.  G11N wants $(CONSOLIDATION)-localizable for
+# the localizable publisher.
 CONSOLIDATION =	userland
-PUBLISHER ?=	$(CONSOLIDATION)
+PUBLISHER ?=	nightly
 PUBLISHER_LOCALIZABLE ?=	$(CONSOLIDATION)-localizable
 
 ROOT =			/
