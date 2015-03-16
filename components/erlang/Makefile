@@ -107,6 +107,11 @@ COMPONENT_INSTALL_ARGS += INSTALL_PREFIX=$(PROTO_DIR)
 COMPONENT_TEST_ENV +=		ERL_TOP=$(BUILD_DIR_64)
 COMPONENT_TEST_TARGETS =	tests
 
+# Remove the two lines which contains the tester's username.
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s|/ldisk/tests|XXX_UID_XXX|g" ' \
+	'-e "/XXX_UID_XXX/d" '
+
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
