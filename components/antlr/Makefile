@@ -59,8 +59,11 @@ COMPONENT_INSTALL_ARGS += libdir=$(PROTOUSRLIBDIR)
 COMPONENT_INSTALL_ARGS += bindir=$(PROTOUSRBINDIR)
 COMPONENT_INSTALL_ARGS += sbindir=$(PROTOUSRSBINDIR)
 
-# This expression contains a build date, so delete it.
-COMPONENT_TEST_TRANSFORMS += '-e "/^ANTLR Parser Generator.*$$/d"'
+# Delete references to the version of java been used and a build date.
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s|^.*$(JAVA_HOME).*$$|XXX_JAVA_XXX|g" ' \
+	'-e "/^ANTLR Parser Generator.*$$/d"' \
+	'-e "/^XXX_JAVA_XXX$$/d" '
 
 # Needed to find the antlr man page.
 PKG_PROTO_DIRS +=	$(COMPONENT_DIR)/files
