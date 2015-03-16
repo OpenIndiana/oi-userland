@@ -1,5 +1,5 @@
---- stdcxx-4.2.1/etc/config/sunpro.config	2008-04-24 20:25:50.000000000 -0400
-+++ stdcxx-4.2.1/etc/config/sunpro.config	2009-03-29 18:32:16.095641000 -0400
+--- stdcxx-4.2.1/etc/config/sunpro.config	2008-04-24 17:25:50.000000000 -0700
++++ stdcxx-4.2.1/etc/config/sunpro.config	2015-03-12 15:40:09.742450740 -0700
 @@ -26,7 +26,7 @@
  #
  ########################################################################
@@ -9,12 +9,18 @@
  
  # extract the "C++ m.n" substring from version string (whcih changes
  # from one release of the compiler to another)
-@@ -59,10 +59,10 @@
+@@ -59,10 +59,16 @@
  
  PICFLAGS        = -KPIC
  LDSOFLAGS       = 
 -CXXFLAGS        = -library=%none
-+CXXFLAGS        = -library=no%Cstd -library=Crun -features=except,rtti,export,extensions,nestedaccess,tmplife,tmplrefstatic -instances=global -template=geninlinefuncs -verbose=template -xlang=c99 $(XREGS) -xvis=yes $(XMEMALIGN) -xlibmieee -xbuiltin=%none -xinline= -norunpath -Qoption ccfe +d2,-xgeninl=system -Qoption ccfe -expand=10000 -Qoption ccfe ++boolflag:sunwcch=false -Qoption iropt -xwrap_int -mt -D_REENTRANT -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_POSIX_PTHREAD_SEMANTICS -D__EXTENSIONS__ -D_XOPEN_SOURCE=500 -D_XPG5 -D_RWSTD_NO_REPLACEABLE_NEW_DELETE -D_RWSTD_NO_EXT_OPERATOR_NEW -D_IN_BUILD_STDCXX -m64 -xtarget=ultra2 -xarch=sparcvis -xchip=ultra2 -xO4 -s +w2 -errtags -erroff=hidef
++
++ifeq ($(shell expr $(CCMAJOR) = 5 \& $(CCMINOR) \> 12),1)
++  CXXFLAGS        = -library=no%Cstd -library=Crun -features=except,rtti,export,extensions,nestedaccess,tmplife,tmplrefstatic -instances=global -template=geninlinefuncs,extdef -xlang=c99 $(XREGS) -xvis=yes $(XMEMALIGN) -xlibmieee -xbuiltin=%none -xinline= -norunpath -Qoption ccfe +d2,-xgeninl=system -Qoption ccfe -expand=10000 -Qoption ccfe ++boolflag:sunwcch=false -Qoption iropt -xwrap_int -mt -D_REENTRANT -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_POSIX_PTHREAD_SEMANTICS -D__EXTENSIONS__ -D_XOPEN_SOURCE=500 -D_XPG5 -D_RWSTD_NO_REPLACEABLE_NEW_DELETE -D_RWSTD_NO_EXT_OPERATOR_NEW -D_IN_BUILD_STDCXX -m64 -xtarget=ultra2 -xarch=sparcvis -xchip=ultra2 -xO4 -s +w2 -errtags -erroff=hidef
++else
++  CXXFLAGS        = -library=no%Cstd -library=Crun -features=except,rtti,export,extensions,nestedaccess,tmplife,tmplrefstatic -instances=global -template=geninlinefuncs -xlang=c99 $(XREGS) -xvis=yes $(XMEMALIGN) -xlibmieee -xbuiltin=%none -xinline= -norunpath -Qoption ccfe +d2,-xgeninl=system -Qoption ccfe -expand=10000 -Qoption ccfe ++boolflag:sunwcch=false -Qoption iropt -xwrap_int -mt -D_REENTRANT -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_POSIX_PTHREAD_SEMANTICS -D__EXTENSIONS__ -D_XOPEN_SOURCE=500 -D_XPG5 -D_RWSTD_NO_REPLACEABLE_NEW_DELETE -D_RWSTD_NO_EXT_OPERATOR_NEW -D_IN_BUILD_STDCXX -m64 -xtarget=ultra2 -xarch=sparcvis -xchip=ultra2 -xO4 -s +w2 -errtags -erroff=hidef
++endif
++
  CXXPRELINK      = 
 -CPPFLAGS        =
 -LDFLAGS         = -library=%none
@@ -23,7 +29,7 @@
  LDSOFLAGS       = -G
  
  # use CC to invoke the compiler (needed to pick up template
-@@ -77,7 +77,7 @@
+@@ -77,7 +83,7 @@
  DEBUG_CXXFLAGS  = -g
  DEBUG_CPPFLAGS  =
  
@@ -32,12 +38,3 @@
  OPTMZ_CPPFLAGS  =
  
  # shared/static library options
-@@ -124,7 +124,7 @@
- ifeq ($(shell expr $(CCMAJOR) \>= 5 \& $(CCMINOR) \>= 9),1)
- 
-     # starting with Sun C++ 5.9, the compiler prefers the generic
--    # -m32 and -m64 options to the architecture specific -xarch
-+    # -m32 and -m64 options to the architecture specific -xarch
-     # options some of which have been deprecated
-     wide_flags   = -m64
-     narrow_flags = -m32

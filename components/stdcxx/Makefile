@@ -48,6 +48,20 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+SUNPRO_VERSION	:= $(shell $(CXX) -V 2>&1 | head -n1 \
+  | sed 's/.*C++ *\([^ ]*\).*/\1/')
+SUNPRO_MAJOR_VERSION := $(shell echo $(SUNPRO_VERSION) | cut -f1 -d'.')
+SUNPRO_MINOR_VERSION := $(shell echo $(SUNPRO_VERSION) | cut -f2 -d'.')
+
+TEMPLATE_FLAGS := -template=geninlinefuncs
+
+ifeq ($(shell expr $(SUNPRO_MAJOR_VERSION) = 5 \& \
+      $(SUNPRO_MINOR_VERSION) \> 12),1)
+  TEMPLATE_FLAGS := -template=geninlinefuncs,extdef
+  COMPONENT_TEST_MASTER = \
+    $(COMPONENT_TEST_RESULTS_DIR)/results-$(BITS).master.SS12.4
+endif
+
 ISA_PATCH_DIR_32 = $(WS_TOP)/components/stdcxx/isa_patches/$(MACH)
 ISA_PATCH_DIR_64 = $(WS_TOP)/components/stdcxx/isa_patches/$(MACH64)
 ISA_PATCH_DIR = $(ISA_PATCH_DIR_$(BITS))
@@ -116,14 +130,12 @@ CXXFLAGS_GENERIC += -Qoption ccfe +d2,-xgeninl=system
 CXXFLAGS_GENERIC += -Qoption ccfe -expand=10000
 CXXFLAGS_GENERIC += -features=except,rtti,export,extensions,nestedaccess,tmplife,tmplrefstatic
 CXXFLAGS_GENERIC += -instances=global
-CXXFLAGS_GENERIC += -template=geninlinefuncs
-CXXFLAGS_GENERIC += -verbose=template
+CXXFLAGS_GENERIC += $(TEMPLATE_FLAGS)
 CXXFLAGS_GENERIC += $(CXXFLAGS_$(MACH))
 CXXFLAGS_GENERIC += -xlang=c99
 CXXFLAGS_GENERIC += -xbuiltin=%none
 CXXFLAGS_GENERIC += -xinline=
 CXXFLAGS_GENERIC += -xlibmieee
-CXXFLAGS_GENERIC += -xustr=ascii_utf16_ushort
 CXXFLAGS_GENERIC += -z ignore $(PICFLAG)
 CXXFLAGS_GENERIC += -mt -D_REENTRANT -DNDEBUG
 CXXFLAGS_GENERIC += -D_IN_BUILD_STDCXX
@@ -242,8 +254,8 @@ COMPONENT_TEST_DIR = $(BUILD_DIR)/$(MACH$(BITS))/build/tests
 COMPONENT_TEST_CMD = \
 	$(CP) -p $(COMPONENT_DIR)/Solaris/run_tests.sh . ; \
 	$(CHMOD) 0755 run_tests.sh ; \
-	$(SHELL) ./run_tests.sh > \
-		$(COMPONENT_DIR)/runtests-$(MACH).out 2>&1
+	$(SHELL) ./run_tests.sh
+
 COMPONENT_TEST_TARGETS =
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)

@@ -44,6 +44,26 @@ PATCH_LEVEL = 0
 CC += $(CC_BITS)
 CPPFLAGS += $(CPP_LARGEFILES)
 
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-neon.master
+
+COMPONENT_TEST_TRANSFORMS += \
+     '-e "/libtool/d"' \
+     '-e "/-m32/d"' \
+     '-e "/-m64/d"' \
+     '-e "/ld: warning/d"' \
+     '-e "/warning/d"' \
+     '-e "s/[0-9]\{1,\}\.[0-9]\{1,\} s, //g"' \
+     '-e "s^[0-9]\{1,\} kB/s^^g"'  \
+     '-e "s^[0-9]\{1,\}  kB/s^^g"'  \
+     '-e "s^[0-9]\{1,\}\.[0-9]\{1,\}  MB/s^^g"' \
+     '-e "s^[0-9]\{1,\}\.[0-9]\{1,\} MB/s^^g"' \
+     '-e "s/([0-9]\{1,\} B)//g"' \
+     '-e "s/([0-9]\{1,\}  B)//g"' \
+     '-e "s/copied,/copied/g"'  \
+     '-e "s/ \{1,\}copied/ copied/g"'  \
+     '-e "s/copied $$/copied/g"'  \
+     '-e "s/copied [0-9]\{1,\}\./copied/g"' 
+
 CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
@@ -73,8 +93,6 @@ build:		$(BUILD_32_and_64)
 install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
-
-
 
 REQUIRED_PACKAGES += library/libproxy
 REQUIRED_PACKAGES += library/libxml2

@@ -160,7 +160,7 @@ build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
 
-test:		$(TEST_32)
+test:		$(NO_TESTS)
 
 
 REQUIRED_PACKAGES += runtime/tcl-8
