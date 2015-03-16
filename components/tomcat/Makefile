@@ -78,7 +78,7 @@ install: build
 test:	$(TEST_32)
 
 
-REQUIRED_PACKAGES += runtime/java/jre-7
+REQUIRED_PACKAGES += runtime/java/jre-8
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
 REQUIRED_PACKAGES += system/network

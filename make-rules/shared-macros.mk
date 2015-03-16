@@ -466,9 +466,9 @@ PYTHON =	$(PYTHON.$(PYTHON_VERSION).$(BITS))
 PYTHON_LIB= /usr/lib/python$(PYTHON_VERSION)/vendor-packages
 PYTHON_DATA= $(PYTHON_LIB)
 
+JAVA8_HOME =	/usr/jdk/instances/jdk1.8.0
 JAVA7_HOME =	/usr/jdk/instances/jdk1.7.0
-JAVA6_HOME =	/usr/jdk/instances/jdk1.6.0
-JAVA_HOME = $(JAVA7_HOME)
+JAVA_HOME = $(JAVA8_HOME)
 
 # This is the default BUILD version of perl
 # Not necessarily the system's default version, i.e. /usr/bin/perl

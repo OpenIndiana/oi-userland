@@ -47,6 +47,8 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ant.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+JAVA_HOME = $(JAVA7_HOME)
+
 COMPONENT_BUILD_TARGETS += install -buildfile build.xml
 COMPONENT_BUILD_ENV += ANT_OPTS="-Dfile.encoding=iso-8859-1"
 
