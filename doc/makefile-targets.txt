@@ -93,7 +93,10 @@ clobber::
   to act across all components, or on an individual component basis.  It is
   often automatically defined by including one of the $(WS_MAKE_RULES)
   Makefile fragments.  It depends on the previously described 'clean' target
-  and additionally cleans up any downloaded source archives.
+  and additionally cleans up any downloaded source archives.  In addition,
+  when done from the top level or component sub-directory, it will do a find
+  of 'manifest-*.published' and clean those up; these can be left over from
+  components that were published but then 'hg rm'd before the next clobber.
 
 REQUIRED_PACKAGES::
   This target is present in all component Makefiles.  It is automatically
