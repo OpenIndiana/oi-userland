@@ -1,0 +1,26 @@
+diff -ur at-spi-1.30.1-old/atk-bridge/bridge.c at-spi-1.30.1-new/atk-bridge/bridge.c
+--- at-spi-1.30.1-old/atk-bridge/bridge.c	2010-03-12 18:34:17.000000000 +0800
++++ at-spi-1.30.1-new/atk-bridge/bridge.c	2010-05-28 17:05:24.084309793 +0800
+@@ -213,11 +213,22 @@
+   if (debug_env_string) 
+       _dbg = (int) g_ascii_strtod (debug_env_string, NULL);
+ 
++  GMainContext* orb_context = g_main_context_get_thread_default();
++  ORBit_set_giop_main_context (orb_context);
++
+   if (!bonobo_init (argc, argv ? *argv : NULL))
+     {
+       g_error ("Could not initialize Bonobo");
+     }
+ 
++  if ( orb_context != NULL ) {
++	  CORBA_ORB orb = bonobo_activation_orb_get();
++	  PortableServer_POA poa = (PortableServer_POA)
++		  CORBA_ORB_resolve_initial_references (orb, "RootPOA", &ev);
++	  ORBit_ObjectAdaptor_set_thread_hint((ORBit_ObjectAdaptor)poa,
++			  ORBIT_THREAD_HINT_ON_CONTEXT, orb_context);
++  }
++
+   bonobo_activate ();
+ 
+   /* Create the accessible application server object */
