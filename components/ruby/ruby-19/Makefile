@@ -27,19 +27,19 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ruby
 COMPONENT_VERSION=	1.9.3
-COMPONENT_PATCH_VERSION=	484
+COMPONENT_PATCH_VERSION=	551
 COMPONENT_PROJECT_URL=	http://www.ruby-lang.org/
 COMPONENT_SRC=	\
 	$(COMPONENT_NAME)-$(COMPONENT_VERSION)-p$(COMPONENT_PATCH_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:d684bc3a5ba72cda9ef30039f783c0f8cdc325bae5c8738c7bf05577cbe8f31d
+    sha256:bb5be55cd1f49c95bb05b6f587701376b53d310eb1bb7c76fbd445a1c75b51e8
 COMPONENT_ARCHIVE_URL=	\
 	http://ftp.ruby-lang.org/pub/ruby/1.9/$(COMPONENT_ARCHIVE)
 IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).$(COMPONENT_PATCH_VERSION)
 COMPONENT_BUGDB=	utility/ruby
 
-TPNO=			15969
+TPNO=			20807
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
@@ -130,6 +130,10 @@ CONFIGURE_OPTIONS +=	--enable-rpath
 CONFIGURE_OPTIONS +=	--disable-install-capi
 CONFIGURE_OPTIONS +=	--disable-option-checking
 CONFIGURE_OPTIONS +=	--with-openssl
+# If Ruby is configured with __builtin_setjmp, may cause
+# problems with gems compiled with gcc.  Studio compiler doesn't 
+# report an error for __builtin_setjmp, but gcc would.
+CONFIGURE_OPTIONS +=	--with-setjmp-type=_setjmp
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 
 # fiddle.so (ext/fiddle) links to libffi, which does not define
