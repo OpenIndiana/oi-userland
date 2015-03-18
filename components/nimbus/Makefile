@@ -22,7 +22,7 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:6f26e3539f99ee172b6b768fb0f07bfc15ebb3ab91f687435ddbba7d36fb903b
-COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/schwer-q.u/files/nimbus/$(COMPONENT_ARCHIVE)/download
+COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/schwer-q.u/files/nimbus/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		gnome/theme/nimbus
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Theming
 COMPONENT_LICENSE = LGPLv2
