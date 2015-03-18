@@ -34,6 +34,8 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://ftp.unixodbc.org/pub/unixODBC/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/unixodbc
 
+TPNO=			9099
+
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
