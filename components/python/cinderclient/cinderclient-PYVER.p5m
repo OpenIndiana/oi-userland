@@ -32,7 +32,7 @@
 set name=pkg.fmri \
     value=pkg:/library/python/cinderclient-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary \
-    value="Python and command-line clients for the OpenStack Cinder API"
+    value="Python and command-line clients for the OpenStack Block Storage API"
 set name=pkg.description \
     value="A client for the OpenStack Block Storage API. There's a Python API (the 'cinderclient' module), and a command-line script ('cinder'). Each implements 100% of the OpenStack Block Storage API."
 set name=com.oracle.info.description \
@@ -47,6 +47,7 @@ set name=info.upstream value="OpenStack <openstack-dev@lists.openstack.org>"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2014/007
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+#
 link path=usr/bin/cinder target=cinder-$(PYVER) mediator=python \
     mediator-version=$(PYVER)
 file path=usr/bin/cinder-$(PYVER)
@@ -66,8 +67,6 @@ file path=usr/lib/python$(PYVER)/vendor-packages/cinderclient/openstack/common/a
 file path=usr/lib/python$(PYVER)/vendor-packages/cinderclient/openstack/common/apiclient/fake_client.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinderclient/openstack/common/gettextutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinderclient/openstack/common/importutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinderclient/openstack/common/py3kcompat/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/cinderclient/openstack/common/py3kcompat/urlutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinderclient/openstack/common/strutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinderclient/service_catalog.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinderclient/shell.py
@@ -92,7 +91,9 @@ file path=usr/lib/python$(PYVER)/vendor-packages/cinderclient/v1/volume_types.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinderclient/v1/volumes.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinderclient/v2/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinderclient/v2/availability_zones.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinderclient/v2/cgsnapshots.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinderclient/v2/client.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinderclient/v2/consistencygroups.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinderclient/v2/contrib/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinderclient/v2/contrib/list_extensions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinderclient/v2/limits.py
@@ -115,6 +116,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/python_cinderclient-$(COMPONENT
 file path=usr/lib/python$(PYVER)/vendor-packages/python_cinderclient-$(COMPONENT_VERSION)-py$(PYVER).egg-info/not-zip-safe
 file path=usr/lib/python$(PYVER)/vendor-packages/python_cinderclient-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/python_cinderclient-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
+#
 license cinderclient.license license="Apache v2.0"
 
 # force a group dependency on the optional eventlet; pkgdepend work is needed to
@@ -147,6 +149,9 @@ depend type=require fmri=library/python/prettytable-$(PYV)
 
 # force a dependency on requests; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/requests-$(PYV)
+
+# force a dependency on setuptools; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/setuptools-$(PYV)
 
 # force a dependency on six; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/six-$(PYV)

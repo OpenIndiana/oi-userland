@@ -1,20 +1,23 @@
 In-house patch to add 'uar' and 'zfs' container and disk formats to
 registered image types.  Patch has not yet been submitted upstream.
 
---- glance-2013.2.3/glance/domain/__init__.py.orig	2014-04-03 11:43:55.000000000 -0700
-+++ glance-2013.2.3/glance/domain/__init__.py	2014-04-10 00:27:51.161800689 -0700
-@@ -23,12 +23,12 @@
- 
+--- glance-2014.2.2/glance/common/config.py.orig        2014-06-16 14:14:21.107758750 -0600
++++ glance-2014.2.2/glance/common/config.py   2014-06-16 14:14:34.374672756 -0600
+@@ -41,14 +41,14 @@
+ ]
  image_format_opts = [
      cfg.ListOpt('container_formats',
--                default=['ami', 'ari', 'aki', 'bare', 'ovf'],
-+                default=['ami', 'ari', 'aki', 'bare', 'ovf', 'uar'],
+-                default=['ami', 'ari', 'aki', 'bare', 'ovf', 'ova'],
++                default=['ami', 'ari', 'aki', 'bare', 'ovf', 'ova', 'uar'],
                  help=_("Supported values for the 'container_format' "
-                        "image attribute")),
+                        "image attribute"),
+                 deprecated_opts=[cfg.DeprecatedOpt('container_formats',
+                                                    group='DEFAULT')]),
      cfg.ListOpt('disk_formats',
                  default=['ami', 'ari', 'aki', 'vhd', 'vmdk', 'raw', 'qcow2',
 -                         'vdi', 'iso'],
 +                         'vdi', 'iso', 'zfs'],
                  help=_("Supported values for the 'disk_format' "
-                        "image attribute")),
- ]
+                        "image attribute"),
+                 deprecated_opts=[cfg.DeprecatedOpt('disk_formats',
+

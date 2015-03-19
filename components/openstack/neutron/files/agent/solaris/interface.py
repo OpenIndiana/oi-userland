@@ -1,4 +1,4 @@
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -37,7 +37,7 @@ class SolarisVNICDriver(object):
     # length including the NUL character. If we change it to use new style
     # `lifreq', then we will be able to extend the length to 32 characters.
     VNIC_NAME_MAXLEN = 15
-    VNIC_NAME_PREFIX = 'evs'
+    VNIC_NAME_PREFIX = 'dh'
     VNIC_NAME_SUFFIX = '_0'
     VNIC_NAME_LEN_WO_SUFFIX = VNIC_NAME_MAXLEN - \
         len(VNIC_NAME_SUFFIX)

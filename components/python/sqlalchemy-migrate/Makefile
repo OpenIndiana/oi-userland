@@ -23,16 +23,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sqlalchemy-migrate
-COMPONENT_VERSION=	0.7.2
+COMPONENT_VERSION=	0.9.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:7f55c768ee26f143fedb11b365a4c57c3bbdb5211e049c7f04b8ae8107c28333
+    sha256:16e327c9642ca4c99a70dcac3b39aeb821edaf5214834b47fb0a89bac44af23b
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://code.google.com/p/sqlalchemy-migrate/
 COMPONENT_BUGDB=	python-mod/sqlalchemy-mig
 
-TPNO=			14503
+TPNO=			21740
 
 # Syntax issues: not Python 3 ready.
 PYTHON_VERSIONS=	2.7 2.6
@@ -65,5 +65,7 @@ REQUIRED_PACKAGES += library/python/decorator-26
 REQUIRED_PACKAGES += library/python/decorator-27
 REQUIRED_PACKAGES += library/python/setuptools-26
 REQUIRED_PACKAGES += library/python/setuptools-27
+REQUIRED_PACKAGES += library/python/six-26
+REQUIRED_PACKAGES += library/python/six-27
 REQUIRED_PACKAGES += library/python/sqlalchemy-26
 REQUIRED_PACKAGES += library/python/sqlalchemy-27

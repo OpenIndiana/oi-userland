@@ -18,21 +18,24 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pytest
-COMPONENT_VERSION=	2.3.5
+COMPONENT_VERSION=	2.6.4
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:804c28bef415fc6a54de7934f05b2d67a9cc8a230de98685fca274d9fcbe8b1c
+    sha256:550883b98184cef6cbb980d4d90051330aeae41075092f98ef0215719af8ef33
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	https://pypi.python.org/pypi/pytest
+COMPONENT_PROJECT_URL=	http://pytest.org/latest/
 COMPONENT_BUGDB=	python-mod/pytest
 
-TPNO=			14503
+TPNO=			21730
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk

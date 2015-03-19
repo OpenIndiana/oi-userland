@@ -43,18 +43,8 @@ include $(WS_MAKE_RULES)/ips.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-# Look over into the pycparser and cffi proto areas until they're available in
-# the build environment.  Make sure that cffi is built.
-PYCPARSER =		$(WS_COMPONENTS)/python/pycparser/build/prototype/$(MACH)/$(PYTHON_LIB)
-CFFI =			$(WS_COMPONENTS)/python/cffi/build/prototype/$(MACH)/$(PYTHON_LIB)
-
-$(CFFI):
-	(cd ../cffi; $(MAKE) install)
-
-PYTHONPATH_DEP =	$(PYCPARSER):$(CFFI)
-COMPONENT_BUILD_ENV +=	PYTHONPATH=$(PYTHONPATH_DEP)
-COMPONENT_INSTALL_ENV +=	PYTHONPATH=$(PYTHONPATH_DEP):$(PROTO_DIR)/$(PYTHON_LIB)
-COMPONENT_TEST_ENV +=	PYTHONPATH=$(PYTHONPATH_DEP):$(PROTO_DIR)/$(PYTHON_LIB)
+COMPONENT_INSTALL_ENV +=	PYTHONPATH=$(PROTO_DIR)/$(PYTHON_LIB)
+COMPONENT_TEST_ENV +=		PYTHONPATH=$(PROTO_DIR)/$(PYTHON_LIB)
 # The test suite wants to use some unicode filenames, which don't work in the C
 # locale.
 COMPONENT_TEST_ENV +=	LC_CTYPE=en_US.UTF-8
@@ -72,8 +62,6 @@ COMPONENT_POST_INSTALL_ACTION += \
 # rebuild the package, since it doesn't want to use what it should already be
 # finding in PYTHONPATH.
 COMPONENT_PRE_TEST_ACTION = $(CP) -r $(SOURCE_DIR) $(@D)/tests
-
-$(BUILD_32_and_64): $(CFFI)
 
 # common targets
 build:		$(BUILD_32_and_64)

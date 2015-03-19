@@ -2,7 +2,7 @@
 # Copyright (c) 2012 OpenStack LLC.
 # All Rights Reserved.
 #
-# Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -20,13 +20,13 @@ Drivers for Solaris ZFS operations in local and iSCSI modes
 """
 
 import abc
-import os
 import time
 
 from oslo.config import cfg
 
 from cinder import exception
 from cinder.image import image_utils
+from cinder.i18n import _
 from cinder.openstack.common import log as logging
 from cinder.openstack.common import processutils
 from cinder.volume import driver
@@ -117,7 +117,9 @@ class ZFSVolumeDriver(driver.VolumeDriver):
         well after it is removed.
         """
         zvol = self._get_zvol_path(volume)
-        if not os.path.exists(zvol):
+        try:
+            (out, _err) = self._execute('/usr/bin/ls', zvol)
+        except processutils.ProcessExecutionError:
             LOG.debug(_("The volume path '%s' doesn't exist") % zvol)
             return
 
@@ -171,10 +173,13 @@ class ZFSVolumeDriver(driver.VolumeDriver):
         """Initialize the connection and returns connection info."""
         volume_path = '%s/volume-%s' % (self.configuration.zfs_volume_base,
                                         volume['id'])
+        properties = {}
+        properties['device_path'] = self._get_zvol_path(volume)
+
         return {
             'driver_volume_type': 'local',
             'volume_path': volume_path,
-            'data': {}
+            'data': properties
         }
 
     def terminate_connection(self, volume, connector, **kwargs):
@@ -378,9 +383,9 @@ class STMFDriver(ZFSVolumeDriver):
                 view_and_lun['lun'] = int(line.split()[2])
 
         if view_and_lun['view'] is None or view_and_lun['lun'] is None:
-            LOG.error(_("Failed to get the view_entry or LUN of the LU '%s'.")
-                      % lu)
-            raise
+            err_msg = (_("Failed to get the view_entry or LUN of the LU '%s'.")
+                       % lu)
+            raise exception.VolumeBackendAPIException(data=err_msg)
         else:
             LOG.debug(_("The view_entry and LUN of LU '%s' are '%s' and '%d'.")
                       % (lu, view_and_lun['view'], view_and_lun['lun']))
@@ -422,7 +427,7 @@ class ZFSISCSIDriver(STMFDriver, driver.ISCSIDriver):
 
         # Add a view entry to the logical unit with the specified LUN, 8776
         if luid is not None:
-            self._stmf_execute('/usr/sbin/stmfadm', 'add-view', '-n', 8776,
+            self._stmf_execute('/usr/sbin/stmfadm', 'add-view', '-n', '8776',
                                '-t', target_group, luid)
 
     def remove_export(self, context, volume):
@@ -486,6 +491,7 @@ class ZFSISCSIDriver(STMFDriver, driver.ISCSIDriver):
 
         properties['target_discovered'] = True
         properties['target_iqn'] = target_name
+
         properties['target_portal'] = ('%s:%d' %
                                        (self.configuration.iscsi_ip_address,
                                         self.configuration.iscsi_port))

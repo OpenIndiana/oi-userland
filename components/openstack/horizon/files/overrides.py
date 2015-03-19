@@ -1,4 +1,4 @@
-# Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -30,7 +30,7 @@ from openstack_dashboard.dashboards.admin.networks.tables import \
 from openstack_dashboard.dashboards.project.access_and_security.tabs import \
     AccessAndSecurityTabs, APIAccessTab, FloatingIPsTab, KeypairsTab
 from \
-    openstack_dashboard.dashboards.project.images_and_snapshots.images.tables \
+    openstack_dashboard.dashboards.project.images.images.tables \
     import EditImage, DeleteImage, ImagesTable, LaunchImage
 from openstack_dashboard.dashboards.project.instances import tables \
     as project_tables
@@ -74,7 +74,6 @@ update_instance.UpdateInstance.default_steps = (
 # Remove 'SecurityGroupsTab' tab from Project/Access & Security
 AccessAndSecurityTabs.tabs = (KeypairsTab, FloatingIPsTab, APIAccessTab)
 
-
 # Remove 'ConfirmResize', 'RevertResize', 'TogglePause',
 # 'ToggleSuspend', 'MigrateInstance' actions from Admin/Instances/Actions
 admin_tables.AdminInstancesTable._meta.row_actions = (
@@ -105,14 +104,19 @@ project_tables.InstancesTable._meta.row_actions = (
     project_tables.TerminateInstance
 )
 
-# Disable 'admin_state' and 'shared' checkboxes in
-# Admin/Networks/Create Network
-CreateNetwork.base_fields['admin_state'].widget.attrs['disabled'] = True
+# Disable 'admin_state' in Admin/Networks/Create Network
+admin_state = CreateNetwork.base_fields['admin_state']
+admin_state.widget.attrs['disabled'] = True
+admin_state.widget.value_from_datadict = lambda *args: True
+
+# Disable 'shared' in Admin/Networks/Create Network. Note that this
+# is unchecked by default.
 CreateNetwork.base_fields['shared'].widget.attrs['disabled'] = True
 
-# Disable 'admin_state' checkbox in
-# Admin/Networks/Network Name/Create Port
-CreatePort.base_fields['admin_state'].widget.attrs['disabled'] = True
+# Disable 'admin_state' in Admin/Networks/Network Name/Create Port
+admin_state = CreatePort.base_fields['admin_state']
+admin_state.widget.attrs['disabled'] = True
+admin_state.widget.value_from_datadict = lambda *args: True
 
 # Remove 'UpdatePort' action from Admin/Networks/Network Name/Actions
 PortsTable._meta.row_actions = (DeletePort,)
@@ -134,11 +138,13 @@ projectSubnetsTable._meta.row_actions = (projectDeleteSubnet,)
 projectNetworksTable._meta.row_actions = (projectCreateSubnet,
                                           projectDeleteNetwork)
 
-# Disable 'admin_state' checkboxes in Project/Networks/Create Network/Network
-CreateNetworkInfoAction.base_fields['admin_state'].widget.attrs['disabled'] = \
-    True
+# Disable 'admin_state' in Project/Networks/Create Network/Network
+admin_state = CreateNetworkInfoAction.base_fields['admin_state']
+admin_state.widget.attrs['disabled'] = True
+admin_state.widget.value_from_datadict = lambda *args: True
 
-# Disable 'no_gateway' checkboxes in Project/Networks/Create Network/Subnet
+# Disable 'no_gateway' in Project/Networks/Create Network/Network. Note that
+# this is unchecked by default.
 CreateSubnetInfoAction.base_fields['no_gateway'].widget.attrs['disabled'] = \
     True
 
@@ -150,6 +156,3 @@ ImagesTable._meta.row_actions = (LaunchImage, EditImage, DeleteImage,)
 # Project/Networks/Create Network/Subnet Detail
 base_fields = CreateSubnetDetailAction.base_fields
 base_fields['host_routes'].widget.attrs['readonly'] = 'readonly'
-
-# Remove 'StackTopologyTab' from Project/Stacks/StackDetailTabs
-StackDetailTabs.tabs = (StackOverviewTab, StackResourcesTab, StackEventsTab)

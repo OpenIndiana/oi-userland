@@ -25,16 +25,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		python-cinderclient
-COMPONENT_VERSION=	1.0.9
+COMPONENT_VERSION=	1.1.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e146e370c9a6e4aa44e8f0662fd33aec532f3965bae9fd564360c279bee03f97
+    sha256:107ff53c9bb9403c4e751b9a949cb84eff483d3378007415066d0c7727a6e37e
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://launchpad.net/python-cinderclient
 COMPONENT_BUGDB=	service/cinder
 
-TPNO=			17869
+TPNO=			21728
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -57,4 +57,3 @@ install:	$(INSTALL_NO_ARCH)
 # which haven't been integrated yet.
 #
 test:		$(NO_TESTS)
-

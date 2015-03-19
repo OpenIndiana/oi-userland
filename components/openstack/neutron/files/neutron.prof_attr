@@ -1,12 +1,9 @@
 OpenStack Network Management:RO::\
 Manage OpenStack Neutron:\
-auths=solaris.admin.edit/etc/neutron/api-paste.ini,\
-solaris.admin.edit/etc/neutron/dhcp_agent.ini,\
-solaris.admin.edit/etc/neutron/l3_agent.ini,\
-solaris.admin.edit/etc/neutron/logging.conf,\
-solaris.admin.edit/etc/neutron/neutron.conf,\
-solaris.admin.edit/etc/neutron/plugins/evs/evs_plugin.ini,\
-solaris.admin.edit/etc/neutron/policy.json,\
+auths=solaris.admin.edit/etc/neutron/*.conf,\
+solaris.admin.edit/etc/neutron/*.ini,\
+solaris.admin.edit/etc/neutron/*.json,\
+solaris.admin.edit/etc/neutron/plugins/*/*.ini,\
 solaris.smf.manage.neutron,\
 solaris.smf.value.neutron;\
 defaultpriv={file_dac_read}\:/var/svc/log/application-openstack-*
@@ -16,5 +13,7 @@ OpenStack Management:RO:::profiles=OpenStack Network Management
 neutron-agent:RO::\
 Do not assign to users. \
 Commands required for application/openstack/neutron agents:\
-auths=solaris.network.interface.config;\
+auths=solaris.network.interface.config,\
+solaris.smf.manage.routing,\
+solaris.smf.value.routing;\
 profiles=Elastic Virtual Switch Administration,IP Filter Management

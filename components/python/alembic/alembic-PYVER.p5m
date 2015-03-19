@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
@@ -31,12 +31,14 @@ set name=pkg.description \
 set name=com.oracle.info.description value="the Python alembic module"
 set name=com.oracle.info.tpno value=$(TPNO)
 set name=info.classification \
-    value=org.opensolaris.category.2008:Development/Python
+    value=org.opensolaris.category.2008:Development/Python \
+    value=org.opensolaris.category.2008:System/Databases
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream value="Mike Bayer <mike@zzzcomputing.com>"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2013/254
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+#
 link path=usr/bin/alembic target=alembic-$(PYVER) mediator=python \
     mediator-version=$(PYVER)
 file path=usr/bin/alembic-$(PYVER)
@@ -45,10 +47,15 @@ file path=usr/lib/python$(PYVER)/vendor-packages/alembic-$(COMPONENT_VERSION)-py
 file path=usr/lib/python$(PYVER)/vendor-packages/alembic-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/alembic-$(COMPONENT_VERSION)-py$(PYVER).egg-info/entry_points.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/alembic-$(COMPONENT_VERSION)-py$(PYVER).egg-info/not-zip-safe
+file path=usr/lib/python$(PYVER)/vendor-packages/alembic-$(COMPONENT_VERSION)-py$(PYVER).egg-info/pbr.json
 file path=usr/lib/python$(PYVER)/vendor-packages/alembic-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/alembic-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/alembic/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/alembic/autogenerate.py
+file path=usr/lib/python$(PYVER)/vendor-packages/alembic/autogenerate/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/alembic/autogenerate/api.py
+file path=usr/lib/python$(PYVER)/vendor-packages/alembic/autogenerate/compare.py
+file path=usr/lib/python$(PYVER)/vendor-packages/alembic/autogenerate/render.py
+file path=usr/lib/python$(PYVER)/vendor-packages/alembic/batch.py
 file path=usr/lib/python$(PYVER)/vendor-packages/alembic/command.py
 file path=usr/lib/python$(PYVER)/vendor-packages/alembic/compat.py
 file path=usr/lib/python$(PYVER)/vendor-packages/alembic/config.py
@@ -65,6 +72,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/alembic/environment.py
 file path=usr/lib/python$(PYVER)/vendor-packages/alembic/migration.py
 file path=usr/lib/python$(PYVER)/vendor-packages/alembic/op.py
 file path=usr/lib/python$(PYVER)/vendor-packages/alembic/operations.py
+file path=usr/lib/python$(PYVER)/vendor-packages/alembic/revision.py
 file path=usr/lib/python$(PYVER)/vendor-packages/alembic/script.py
 file path=usr/lib/python$(PYVER)/vendor-packages/alembic/templates/generic/README
 file path=usr/lib/python$(PYVER)/vendor-packages/alembic/templates/generic/alembic.ini.mako
@@ -79,15 +87,12 @@ file path=usr/lib/python$(PYVER)/vendor-packages/alembic/templates/pylons/alembi
 file path=usr/lib/python$(PYVER)/vendor-packages/alembic/templates/pylons/env.py
 file path=usr/lib/python$(PYVER)/vendor-packages/alembic/templates/pylons/script.py.mako
 file path=usr/lib/python$(PYVER)/vendor-packages/alembic/util.py
+#
 license alembic.license license=MIT
 
 # force the rename with an optional dependency on the old name
 depend type=optional \
     fmri=library/python-2/alembic-$(PYV)@0.6.0,5.12-5.12.0.0.0.41.0
-
-# force a dependency on the Python runtime
-depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
-    pkg.debug.depend.path=usr/bin
 
 # force a dependency on the alembic package
 depend type=require \

@@ -22,21 +22,22 @@
 #
 # Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		python-ceilometerclient
-COMPONENT_VERSION=	1.0.10
+COMPONENT_VERSION=	1.0.12
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:bbe29a6c85af3ec0bcbb7df1863bb3c3c620fa0423c67f25bd089e0ab7b33059
+    sha256:6a90d1f057ab35584c319f19ef31f49ea8c1bb25278dafdf4b6d64aa37604a8e
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://launchpad.net/python-cinderclient
 COMPONENT_BUGDB=	service/ceilometer
 
-TPNO=			17306
+TPNO=			21727
 
-# Depends on keystoneclient which is not Python 3 ready. 
+# Depends on keystoneclient which is not Python 3 ready.
 PYTHON_VERSIONS=	2.7 2.6
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -58,4 +59,3 @@ install:	$(INSTALL_NO_ARCH)
 # hacking, discover, fixtures, python-subunit, sphinx, testrepository
 # and testtools, some of which have not been integrated.
 test:		$(NO_TESTS)
-

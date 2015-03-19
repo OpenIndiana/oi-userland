@@ -22,21 +22,23 @@
 #
 # Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		swift
-COMPONENT_CODENAME=	havana
-COMPONENT_VERSION=	1.10.0
+COMPONENT_CODENAME=	kilo
+COMPONENT_VERSION=	2.2.2
+COMPONENT_BE_VERSION=	2014.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:9a841225c3a00a93a15a160102d3f7116f2f1ba98ebffedfe641747844e14889
+    sha256:d97ff8e3c1381611ca2f9cd3eb13000e3339166e06d67ec079ce9ec958d1a088
 COMPONENT_ARCHIVE_URL=	http://launchpad.net/$(COMPONENT_NAME)/$(COMPONENT_CODENAME)/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_PROJECT_URL=	http://www.openstack.org/
 COMPONENT_BUG_DB=	service/swift
 
-TPNO=			17868
+TPNO=			21826
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -48,12 +50,25 @@ ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 # only need to deliver one version.  The manifest is parameterized, though.
 PYTHON_VERSIONS=	2.6
 
+PKG_MACROS +=		COMPONENT_BE_VERSION=$(COMPONENT_BE_VERSION)
 PKG_MACROS +=		PYVER=$(PYTHON_VERSIONS)
+PKG_MACROS +=		PYV=$(shell echo $(PYTHON_VERSIONS) | tr -d .)
+
+#
+# All of the swift SMF manifests depend on swift-upgrade so copy it
+# into the proto directory for pkgdepend(1) to find.
+#
+COMPONENT_POST_INSTALL_ACTION += \
+        ($(MKDIR) $(PROTO_DIR)/lib/svc/manifest/application/openstack; \
+         $(CP) \
+             files/swift-*.xml \
+             $(PROTO_DIR)/lib/svc/manifest/application/openstack;)
 
 COMPONENT_TEST_DIR =	$(SOURCE_DIR)
 COMPONENT_TEST_CMD =	nosetests
 COMPONENT_TEST_ENV +=	SWIFT_TEST_CONFIG_FILE=$(SWIFT_TEST_CONFIG_FILE)
-COMPONENT_TEST_ARGS =	--with-xunit --xunit-file=$(BUILD_DIR)/nosetests-$(MACH).xml
+COMPONENT_TEST_ARGS =	--with-xunit \
+			--xunit-file=$(BUILD_DIR)/nosetests-$(MACH).xml
 COMPONENT_TEST_ARGS +=	test/unit
 
 # common targets
@@ -65,8 +80,8 @@ test:		$(TEST_NO_ARCH)
 
 
 REQUIRED_PACKAGES += library/python/eventlet-26
+REQUIRED_PACKAGES += library/python/iniparse-26
 REQUIRED_PACKAGES += library/python/simplejson-26
 REQUIRED_PACKAGES += library/python/swiftclient-26
-REQUIRED_PACKAGES += runtime/python-26
 REQUIRED_PACKAGES += service/memcached
 REQUIRED_PACKAGES += system/core-os

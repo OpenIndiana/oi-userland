@@ -22,22 +22,24 @@
 #
 # Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		glance
-COMPONENT_CODENAME=	havana
-COMPONENT_VERSION=	2013.2.3
+COMPONENT_CODENAME=	juno
+COMPONENT_VERSION=	2014.2.2
+COMPONENT_BE_VERSION=	2014.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:8766f8d198ec513c46519f1c44f99a4845ba3c04e7b7c41893cb3d5a7c2a9a28
+    sha256:bf7273ff9e89e9a7edda76e7a2235989a25109fb728edc4afa956e74ef54a08c
 COMPONENT_ARCHIVE_URL=	http://launchpad.net/$(COMPONENT_NAME)/$(COMPONENT_CODENAME)/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_PROJECT_URL=	http://www.openstack.org/
 COMPONENT_BUGDB=	service/glance
-IPS_COMPONENT_VERSION=	0.$(COMPONENT_VERSION) 
+IPS_COMPONENT_VERSION=	0.$(COMPONENT_VERSION)
 
-TPNO=			17717
+TPNO=			21820
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -49,15 +51,24 @@ ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 # only need to deliver one version.  The manifest is parameterized, though.
 PYTHON_VERSIONS=	2.6
 
+PKG_MACROS +=		COMPONENT_BE_VERSION=$(COMPONENT_BE_VERSION)
 PKG_MACROS +=		PYVER=$(PYTHON_VERSIONS)
+PKG_MACROS +=		PYV=$(shell echo $(PYTHON_VERSIONS) | tr -d .)
 
-# glance-api and glance-registry depend on the glance-db svc so copy
-# the manifests into the proto directory for pkgdepend to find
+#
+# glance-api, glance-registry, and glance-scrubber depend on glance-db
+# and glance-upgrade so copy all of the service manifests into the
+# proto directory for pkgdepend(1) to find.
+#
 COMPONENT_POST_INSTALL_ACTION += \
 	($(MKDIR) $(PROTO_DIR)/lib/svc/manifest/application/openstack; \
- 	 $(CP) files/glance-db.xml $(PROTO_DIR)/lib/svc/manifest/application/openstack; \
- 	 $(CP) files/glance-api.xml $(PROTO_DIR)/lib/svc/manifest/application/openstack; \
- 	 $(CP) files/glance-registry.xml $(PROTO_DIR)/lib/svc/manifest/application/openstack)
+	 $(CP) \
+	     files/glance-db.xml \
+	     files/glance-api.xml \
+	     files/glance-registry.xml \
+	     files/glance-scrubber.xml \
+	     files/glance-upgrade.xml \
+	     $(PROTO_DIR)/lib/svc/manifest/application/openstack)
 
 # common targets
 build:		$(BUILD_NO_ARCH)
@@ -68,8 +79,10 @@ test:		$(NO_TESTS)
 
 
 REQUIRED_PACKAGES += library/python/eventlet-26
+REQUIRED_PACKAGES += library/python/iniparse-26
 REQUIRED_PACKAGES += library/python/m2crypto-26
 REQUIRED_PACKAGES += library/python/oslo.config-26
+REQUIRED_PACKAGES += library/python/python-mysql-26
+REQUIRED_PACKAGES += library/python/sqlalchemy-26
 REQUIRED_PACKAGES += library/python/sqlalchemy-migrate-26
-REQUIRED_PACKAGES += runtime/python-26
 REQUIRED_PACKAGES += system/core-os

@@ -1,6 +1,6 @@
 #!/usr/bin/python2.6
 
-# Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -23,12 +23,36 @@ import smf_include
 from subprocess import CalledProcessError, Popen, PIPE, check_call
 
 
+def set_hostmodel(value):
+    cmd = ["/usr/sbin/ipadm", "show-prop", "-p", "hostmodel",
+           "-co", "current", "ipv4"]
+    p = Popen(cmd, stdout=PIPE, stderr=PIPE)
+    output, error = p.communicate()
+    if p.returncode != 0:
+        print "failed to retrieve hostmodel ipadm property"
+        return False
+    if output.strip() == value:
+        return True
+    cmd = ["/usr/sbin/ipadm", "set-prop", "-t", "-p", "hostmodel=%s" % value,
+           "ipv4"]
+    p = Popen(cmd, stdout=PIPE, stderr=PIPE)
+    output, error = p.communicate()
+    if p.returncode != 0:
+        print "failed to set ipadm hostmodel property to %s" % value
+        return False
+    return True
+
+
 def start():
     # verify paths are valid
     for f in sys.argv[2:4]:
         if not os.path.exists(f) or not os.access(f, os.R_OK):
             print '%s does not exist or is not readable' % f
             return smf_include.SMF_EXIT_ERR_CONFIG
+
+    # set the hostmodel property if necessary
+    if not set_hostmodel("src-priority"):
+        return smf_include.SMF_EXIT_ERR_FATAL
 
     cmd = "/usr/lib/neutron/neutron-dhcp-agent --config-file %s " \
         "--config-file %s" % tuple(sys.argv[2:4])
@@ -52,8 +76,8 @@ def stop():
 
     ifnames = output.splitlines()
     # DHCP agent datalinks are always 15 characters in length. They start with
-    # 'evs', end with '_0', and in between they are hexadecimal digits.
-    prog = re.compile('evs[0-9A-Fa-f\_]{10}_0')
+    # 'dh', end with '_0', and in between they are hexadecimal digits.
+    prog = re.compile('dh[0-9A-Fa-f\_]{11}_0')
     for ifname in ifnames:
         if not prog.search(ifname):
             continue
@@ -62,25 +86,16 @@ def stop():
             # first remove the IP
             check_call(["/usr/bin/pfexec", "/usr/sbin/ipadm", "delete-ip",
                         ifname])
-            # get the tenant, evs, and vport name for the VNIC
-            cmd = ["/usr/sbin/dladm", "show-vnic", "-po",
-                   "tenant,evs,vport", ifname]
-            p = Popen(cmd, stdout=PIPE, stderr=PIPE)
-            output, error = p.communicate()
-            if p.returncode != 0:
-                print "failed to retrieve Tenant, EVS," \
-                      " and VPort info for a VNIC"
-                return smf_include.SMF_EXIT_ERR_FATAL
-            tenant, evs, vport = output.strip().split(':')
             # next remove the VNIC
             check_call(["/usr/bin/pfexec", "/usr/sbin/dladm", "delete-vnic",
                         ifname])
-            # remove the EVS VPort
-            check_call(["/usr/sbin/evsadm", "remove-vport", "-T", tenant,
-                        "%s/%s" % (evs, vport)])
         except CalledProcessError as err:
             print "failed to remove datalinks used by DHCP agent: %s" % err
             return smf_include.SMF_EXIT_ERR_FATAL
+
+    # finally reset the hostmodel property
+    if not set_hostmodel("weak"):
+        return smf_include.SMF_EXIT_ERR_FATAL
     return smf_include.SMF_EXIT_OK
 
 if __name__ == "__main__":

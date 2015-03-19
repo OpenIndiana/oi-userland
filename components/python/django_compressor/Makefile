@@ -18,21 +18,24 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		django_compressor
-COMPONENT_VERSION=	1.3
+COMPONENT_VERSION=	1.4
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:66ff1a845a6c1b16c4cf552ee3d746033979e46cd9bd5d999d4b5dae93327a52
+    sha256:b26034230efcef7d60e5267890eda656dfc49c567f27125d907eee4fe7f9a6ec
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://django-compressor.readthedocs.org
-COMPONENT_BUGDB=	python-mod/django-cmpress 
+COMPONENT_BUGDB=	python-mod/django-cmpress
 
-TPNO=			14503
+TPNO=			21719
 
 # Depends on django, which is not Python 3 ready.
 PYTHON_VERSIONS=	2.7 2.6

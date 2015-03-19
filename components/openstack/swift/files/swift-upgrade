@@ -1,0 +1,149 @@
+#!/usr/bin/python2.6
+
+# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+#
+#    Licensed under the Apache License, Version 2.0 (the "License"); you may
+#    not use this file except in compliance with the License. You may obtain
+#    a copy of the License at
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+#    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+#    License for the specific language governing permissions and limitations
+#    under the License.
+
+from ConfigParser import NoOptionError
+from datetime import datetime
+import errno
+import glob
+import os
+import shutil
+from subprocess import check_call, Popen, PIPE
+import sys
+import traceback
+
+import iniparse
+import smf_include
+
+
+def modify_conf(old_file):
+    """ Copy over all uncommented options from the old configuration file.
+    """
+
+    new_file = old_file + '.new'
+
+    # open the previous version
+    old = iniparse.ConfigParser()
+    old.readfp(open(old_file))
+
+    # open the new version
+    new = iniparse.ConfigParser()
+    try:
+        new.readfp(open(new_file))
+    except IOError as err:
+        if err.errno == errno.ENOENT:
+            # The upgrade did not deliver a .new file so, return
+            print "%s not found - continuing with %s" % (new_file, old_file)
+            return
+        else:
+            raise
+    print "\nupdating %s" % old_file
+
+    # walk every single section for uncommented options
+    default_items = set(old.items('DEFAULT'))
+    for section in old.sections() + ['DEFAULT']:
+
+        # DEFAULT items show up in every section so remove them
+        if section != 'DEFAULT':
+            section_items = set(old.items(section)) - default_items
+        else:
+            section_items = default_items
+
+        for key, value in section_items:
+            # keep a copy of the old value
+            oldvalue = value
+
+            if not new.has_section(section):
+                if section != 'DEFAULT':
+                    new.add_section(section)
+
+            # print to the log when a value for the same section.key is
+            # changing to a new value
+            try:
+                new_value = new.get(section, key)
+                if new_value != value and '%SERVICE' not in new_value:
+                    print "Changing [%s] %s:\n- %s\n+ %s" % \
+                        (section, key, oldvalue, new_value)
+                    print
+            except NoOptionError:
+                # the new configuration file does not have this option set so
+                # just continue
+                pass
+
+            # Only copy the old value to the new conf file if the entry doesn't
+            # exist or if it contains '%SERVICE'
+            if not new.has_option(section, key) or \
+               '%SERVICE' in new.get(section, key):
+                new.set(section, key, value)
+
+    # copy the old conf file to a backup
+    today = datetime.now().strftime("%Y%m%d%H%M%S")
+    shutil.copy2(old_file, old_file + '.' + today)
+
+    # copy the new conf file in place
+    with open(old_file, 'wb+') as fh:
+        new.write(fh)
+
+
+def start():
+    # pull out the current version of config/upgrade-id
+    p = Popen(['/usr/bin/svcprop', '-p', 'config/upgrade-id',
+               os.environ['SMF_FMRI']], stdout=PIPE, stderr=PIPE)
+    curr_ver, _err = p.communicate()
+    curr_ver = curr_ver.strip()
+
+    # extract the openstack-upgrade-id from the pkg
+    p = Popen(['/usr/bin/pkg', 'contents', '-H', '-t', 'set', '-o', 'value',
+               '-a', 'name=openstack.upgrade-id',
+               'pkg:/cloud/openstack/swift'], stdout=PIPE, stderr=PIPE)
+    pkg_ver, _err = p.communicate()
+    pkg_ver = pkg_ver.strip()
+
+    if curr_ver == pkg_ver:
+        # No need to upgrade
+        sys.exit(smf_include.SMF_EXIT_OK)
+
+    # look for any .new files
+    if glob.glob('/etc/swift/*.new'):
+        # the versions are different, so perform an upgrade
+        # modify the configuration files
+        modify_conf('/etc/swift/account-server.conf')
+        modify_conf('/etc/swift/container-reconciler.conf')
+        modify_conf('/etc/swift/container-server.conf')
+        modify_conf('/etc/swift/container-sync-realms.conf')
+        modify_conf('/etc/swift/dispersion.conf')
+        modify_conf('/etc/swift/memcache.conf')
+        modify_conf('/etc/swift/object-expirer.conf')
+        modify_conf('/etc/swift/object-server.conf')
+        modify_conf('/etc/swift/proxy-server.conf')
+        modify_conf('/etc/swift/swift.conf')
+
+    # update the current version
+    check_call(['/usr/sbin/svccfg', '-s', os.environ['SMF_FMRI'], 'setprop',
+               'config/upgrade-id', '=', pkg_ver])
+    check_call(['/usr/sbin/svccfg', '-s', os.environ['SMF_FMRI'], 'refresh'])
+
+    sys.exit(smf_include.SMF_EXIT_OK)
+
+
+if __name__ == '__main__':
+    os.putenv('LC_ALL', 'C')
+    try:
+        smf_include.smf_main()
+    except Exception as err:
+        print 'Unknown error:  %s' % err
+        print
+        traceback.print_exc(file=sys.stdout)
+        sys.exit(smf_include.SMF_EXIT_ERR_FATAL)

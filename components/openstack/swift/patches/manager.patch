@@ -5,10 +5,9 @@ mocked out during testing).
 
 This patch is not suitable for pushing upstream.
 
-diff --git a/swift/common/manager.py b/swift/common/manager.py
---- a/swift/common/manager.py
-+++ b/swift/common/manager.py
-@@ -534,7 +534,8 @@ class Server():
+--- swift-2.2.0/swift/common/manager.py.~1~	2014-10-16 05:05:21.000000000 -0700
++++ swift-2.2.0/swift/common/manager.py	2014-12-13 21:29:46.790264480 -0800
+@@ -576,7 +576,8 @@ class Server(object):
                  re_out = subprocess.PIPE
              else:
                  re_out = open(os.devnull, 'w+b')
@@ -18,11 +17,10 @@ diff --git a/swift/common/manager.py b/swift/common/manager.py
          pid_file = self.get_pid_file_name(conf_file)
          write_file(pid_file, proc.pid)
          self.procs.append(proc)
-diff --git a/test/unit/common/test_manager.py b/test/unit/common/test_manager.py
---- a/test/unit/common/test_manager.py
-+++ b/test/unit/common/test_manager.py
-@@ -858,7 +858,7 @@ class TestServer(unittest.TestCase):
-         class MockProc():
+--- swift-2.2.0/test/unit/common/test_manager.py.~1~	2014-10-16 05:05:21.000000000 -0700
++++ swift-2.2.0/test/unit/common/test_manager.py	2014-12-13 21:30:06.746265266 -0800
+@@ -955,7 +955,7 @@ class TestServer(unittest.TestCase):
+         class MockProc(object):
  
              def __init__(self, pid, args, stdout=MockProcess.NOTHING,
 -                         stderr=MockProcess.NOTHING):

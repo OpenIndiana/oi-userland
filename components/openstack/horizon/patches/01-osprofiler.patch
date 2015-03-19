@@ -1,0 +1,19 @@
+In-house patch to address
+https://bugs.launchpad.net/osprofiler/+bug/1361235 in Horizon.
+
+--- horizon-2014.2.1/openstack_dashboard/wsgi/django.wsgi.orig	2014-11-13 15:02:19.599694847 -0700
++++ horizon-2014.2.1/openstack_dashboard/wsgi/django.wsgi	2014-11-13 15:03:31.633159017 -0700
+@@ -5,7 +5,12 @@ import django.core.handlers.wsgi
+ from django.conf import settings
+ 
+ # Add this file path to sys.path in order to import settings
+-sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), '../..'))
++
++# XXX workaround until
++# https://bugs.launchpad.net/osprofiler/+bug/1361235 in osprofiler is
++# fixed
++# sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), '../..'))
++sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), os.path.realpath('../..')))
+ os.environ['DJANGO_SETTINGS_MODULE'] = 'openstack_dashboard.settings'
+ sys.stdout = sys.stderr
+ 

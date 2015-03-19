@@ -18,29 +18,32 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		py
-COMPONENT_VERSION=	1.4.15
+COMPONENT_VERSION=	1.4.26
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:656634e1846d568ed22c872b5e158a4d5eef174dd5b245186e78b94a0258c042
+    sha256:28dd0b90d29b386afb552efc4e355c889f4639ce93658a7872a2150ece28bb89
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	https://pypi.python.org/pypi/py/1.4.15
+COMPONENT_PROJECT_URL=	https://bitbucket.org/hpk42/py
 COMPONENT_BUGDB=	python-mod/py
 
-TPNO=			15677
+TPNO=			21729
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-COMPONENT_TEST_DIR =    $(COMPONENT_SRC)/testing
-COMPONENT_TEST_CMD =    /usr/bin/py.test
-COMPONENT_TEST_ARGS =   test_iniconfig.py
+COMPONENT_TEST_DIR =	$(COMPONENT_SRC)/testing
+COMPONENT_TEST_CMD =	/usr/bin/py.test
+COMPONENT_TEST_ARGS =	test_iniconfig.py
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
@@ -51,4 +54,3 @@ install:	$(INSTALL_NO_ARCH)
 
 # Tests require the pytest package to be installed.
 test:		$(TEST_NO_ARCH)
-

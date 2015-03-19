@@ -18,25 +18,24 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		SQLAlchemy
-COMPONENT_VERSION=	0.7.9
+COMPONENT_VERSION=	0.9.8
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:4a89556cb55275d1af694dc4d5700d8bf0f83690bac16ab30340092ff25bb4d7
+    sha256:de3ac04ecab0a7e0af64eee30a71e723ba5886b958205f7354dd62439da60389
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://www.sqlalchemy.org/
 COMPONENT_BUGDB=	python-mod/sqlalchemy
 
-TPNO=			14503
-
-# This module appears to be Python 3 ready, but work is needed before we can
-# enable it.  See the README.py3k in the distro for details.
-PYTHON_VERSIONS=	2.7 2.6
+TPNO=			21741
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk

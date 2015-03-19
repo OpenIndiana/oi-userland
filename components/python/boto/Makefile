@@ -18,21 +18,24 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		boto
-COMPONENT_VERSION=	2.9.9
+COMPONENT_VERSION=	2.34.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:6ce016eed6605381d67f39bc62763ee3b862aed3d403ea70b16b9d63738c002a
+    sha256:33baab022ecb803414ad0d6cf4041d010cfc2755ff8acc3bea7b32e77ba98be0
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://github.com/boto/boto/
 COMPONENT_BUGDB=	python-mod/boto
 
-TPNO=			14503
+TPNO=			21716
 
 # Syntax issues: not Python 3 ready.
 PYTHON_VERSIONS=	2.7 2.6
@@ -43,17 +46,38 @@ include $(WS_MAKE_RULES)/ips.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-COMPONENT_TEST_DIR =    $(SOURCE_DIR)/tests
-COMPONENT_TEST_ARGS =   test.py
+COMPONENT_POST_INSTALL_ACTION= \
+	(cd $(PROTO_DIR)/usr/demo/$(COMPONENT_NAME) ; \
+	 $(MV) -f asadmin asadmin-$(PYTHON_VERSION) ; \
+	 $(MV) -f bundle_image bundle_image-$(PYTHON_VERSION) ; \
+	 $(MV) -f cfadmin cfadmin-$(PYTHON_VERSION) ; \
+	 $(MV) -f cq cq-$(PYTHON_VERSION) ; \
+	 $(MV) -f cwutil cwutil-$(PYTHON_VERSION) ; \
+	 $(MV) -f dynamodb_dump dynamodb_dump-$(PYTHON_VERSION) ; \
+	 $(MV) -f dynamodb_load dynamodb_load-$(PYTHON_VERSION) ; \
+	 $(MV) -f elbadmin elbadmin-$(PYTHON_VERSION) ; \
+	 $(MV) -f fetch_file fetch_file-$(PYTHON_VERSION) ; \
+	 $(MV) -f glacier glacier-$(PYTHON_VERSION) ; \
+	 $(MV) -f instance_events instance_events-$(PYTHON_VERSION) ; \
+	 $(MV) -f kill_instance kill_instance-$(PYTHON_VERSION) ; \
+	 $(MV) -f launch_instance launch_instance-$(PYTHON_VERSION) ; \
+	 $(MV) -f list_instances list_instances-$(PYTHON_VERSION) ; \
+	 $(MV) -f lss3 lss3-$(PYTHON_VERSION) ; \
+	 $(MV) -f mturk mturk-$(PYTHON_VERSION) ; \
+	 $(MV) -f pyami_sendmail pyami_sendmail-$(PYTHON_VERSION) ; \
+	 $(MV) -f route53 route53-$(PYTHON_VERSION) ; \
+	 $(MV) -f s3put s3put-$(PYTHON_VERSION) ; \
+	 $(MV) -f sdbadmin sdbadmin-$(PYTHON_VERSION) ; \
+	 $(MV) -f taskadmin taskadmin-$(PYTHON_VERSION))
+
+COMPONENT_INSTALL_ARGS +=	--install-script=/usr/demo/$(COMPONENT_NAME)
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_NO_ARCH)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_NO_ARCH)
 
-# Tests require:
-# mock, OrderedDict, unittest2
-# which haven't been integrated yet.
+# Tests require access to AWS/OpenStack metadata service & the Internet
 test:		$(NO_TESTS)
 
 

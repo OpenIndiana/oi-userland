@@ -18,21 +18,24 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		stevedore
-COMPONENT_VERSION=	0.10
+COMPONENT_VERSION=	1.2.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:71a6ffb669c6d84ef0f43f44816257101775f955590986c29a95ce07293fd6e8
+    sha256:3f70db9052c26e66dac61cb73d8c6f5211373983d39872addab617c759db4b45
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	http://pypi.python.org/pypi/stevedore/
+COMPONENT_PROJECT_URL=	https://github.com/dreamhost/stevedore
 COMPONENT_BUGDB=	python-mod/stevedore
 
-TPNO=			14503
+TPNO=			21742
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -40,8 +43,8 @@ include $(WS_MAKE_RULES)/ips.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-COMPONENT_TEST_DIR =    $(SOURCE_DIR)
-COMPONENT_TEST_ARGS =   setup.py test
+COMPONENT_TEST_DIR =	$(SOURCE_DIR)
+COMPONENT_TEST_ARGS =	setup.py test
 
 # common targets
 build:		$(BUILD_NO_ARCH)
@@ -49,4 +52,3 @@ build:		$(BUILD_NO_ARCH)
 install:	$(INSTALL_NO_ARCH)
 
 test:		$(TEST_NO_ARCH)
-

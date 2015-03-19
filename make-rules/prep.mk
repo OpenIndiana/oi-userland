@@ -18,6 +18,8 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2010, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
@@ -33,7 +35,7 @@ CLEAN_PATHS += $(SOURCE_DIR)
 # In order to override PATCH_DIR and PATCH_PATTERN in component makefiles, they
 # need to be conditionally set here.  This means that the override needs to
 # happen prior to including prep.mk.  Otherwise other variables set here which
-# are based on those will be expanded too early for the override to take 
+# are based on those will be expanded too early for the override to take
 # effect.
 # You also can't override PATCHES after including prep.mk; if you want to
 # append filenames to PATCHES, you'll have to set $(EXTRA_PATCHES) prior to
@@ -72,7 +74,7 @@ $$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1)):	$(MAKEFILE_PREREQ)
 	$$(TOUCH) $$@
 endef
 
-# Template for patching rules, note that patching is actually done by the 
+# Template for patching rules, note that patching is actually done by the
 # %.ed pattern rule above.
 # To maintain backwards compatibility, the flag PATCH_EACH_ARCHIVE must
 # be non-empty in order to activate individual archive patching.
@@ -97,7 +99,7 @@ endef
 
 # Template for unpacking rules.
 define unpack-rule
-$$(SOURCE_DIR)/.unpacked$(1): download $(MAKEFILE_PREREQ) $$(PATCHDIR_PATCHES$(1)) 
+$$(SOURCE_DIR)/.unpacked$(1): download $(MAKEFILE_PREREQ) $$(PATCHDIR_PATCHES$(1))
 	$$(RM) -r $$(COMPONENT_SRC$(1))
 	$$(UNPACK) $$(UNPACK_ARGS$(1)) \
 		$$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1))
@@ -118,7 +120,7 @@ endef
 # Calculate the number of defined archives.
 # Always generate at least the basic prep rules.
 # Work out if there are any other archives to be downloaded and patched.
-NUM_EXTRA_ARCHIVES= 1 2 3 4 5 6 7 8 9
+NUM_EXTRA_ARCHIVES ?= 1 2 3 4 5 6 7 8 9
 $(eval $(call archive-rule,))
 ifneq ($(strip $(PATCH_EACH_ARCHIVE)),)
 $(foreach suffix,$(NUM_EXTRA_ARCHIVES), \

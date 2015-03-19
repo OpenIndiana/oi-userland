@@ -43,9 +43,9 @@ link path=usr/bin/netaddr target=netaddr-$(PYVER) mediator=python \
 #
 # since we have IPython < 0.11, skip dependencies for
 # IPython.frontend.terminal.embed
-file path=usr/bin/netaddr-$(PYVER) \
-    pkg.depend.bypass-generate=.*(frontend|terminal|embed).*
-file path=usr/lib/python$(PYVER)/vendor-packages/netaddr-$(IPS_COMPONENT_VERSION)-py$(PYVER).egg-info
+#
+file path=usr/bin/netaddr-$(PYVER) pkg.depend.bypass-generate=.*/terminal.*
+file path=usr/lib/python$(PYVER)/vendor-packages/netaddr-$(COMPONENT_VERSION)-py$(PYVER).egg-info
 file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/compat.py
 file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/core.py
@@ -58,10 +58,9 @@ file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/eui/oui.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/fbsocket.py
 file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/ip/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/ip/glob.py
-# urllib.request is not available in python 2.X
+# urllib.request is not available in Python 2.X
 file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/ip/iana.py \
-    pkg.depend.bypass-generate=.*(urllib|request).*
-file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/ip/intset.py
+    pkg.depend.bypass-generate=.*/urllib.*
 file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/ip/ipv4-address-space.xml
 file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/ip/ipv6-address-space.xml
 file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/ip/multicast-addresses.xml

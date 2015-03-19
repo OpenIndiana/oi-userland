@@ -22,21 +22,22 @@
 #
 # Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		python-neutronclient
-COMPONENT_VERSION=	2.3.4
+COMPONENT_VERSION=	2.3.10
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:41c8fc9dcd947fcd0250175ace419228fc9ac3820442826ba9858ab6f99066c5
+    sha256:f2e0abd6511f0372849f132c74e839fcbfd88d508ccd69459e388ee0d6059ed0
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://launchpad.net/python-neutronclient
 COMPONENT_BUGDB=	service/neutron
 
-TPNO=			17871
+TPNO=			21734
 
-# Syntax issues: not Python 3 ready.
+# Depends on netaddr which is not Python 3 ready.
 PYTHON_VERSIONS=	2.7 2.6
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -60,4 +61,3 @@ install:	$(INSTALL_NO_ARCH)
 # which haven't been integrated yet.
 #
 test:		$(NO_TESTS)
-

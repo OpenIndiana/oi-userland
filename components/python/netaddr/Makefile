@@ -18,25 +18,26 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		netaddr
-COMPONENT_VERSION=	0.7.10
+COMPONENT_VERSION=	0.7.13
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:9b79763141a855079b0589717696a4ccb5c56c0b807b6e584bfe12333399e0b7
-COMPONENT_PROJECT_URL=  http://github.com/drkjam/netaddr/
-COMPONENT_ARCHIVE_URL=	http://github.com/downloads/drkjam/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+    sha256:ca42c260b49e5fd74ba9104efa6a4fca6b55316ca42714d20d2b9b8e751e0412
+COMPONENT_ARCHIVE_URL=	$(call pypi_url)
+COMPONENT_PROJECT_URL=	http://github.com/drkjam/netaddr/
 COMPONENT_BUGDB=	python-mod/netaddr
 
-TPNO=			13141
+TPNO=			21724
 
-# This module depends on iPython and cannot support Python 3 until iPython
-# is also migrated.
-#
+# Depends on iPython which is not Python 3 ready.
 PYTHON_VERSIONS=	2.7 2.6
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -44,7 +45,7 @@ include $(WS_MAKE_RULES)/setup.py.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_POST_INSTALL_ACTION = \
-	(cd $(PROTOUSRBINDIR) ; $(MV) netaddr netaddr-$(PYTHON_VERSION))
+	(cd $(PROTO_DIR)/usr/bin ; $(MV) netaddr netaddr-$(PYTHON_VERSION))
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
@@ -56,9 +57,9 @@ install:	$(INSTALL_NO_ARCH)
 COMPONENT_TEST_DIR=	$(@D)/lib/netaddr
 COMPONENT_TEST_ARGS=	tests/__init__.py
 COMPONENT_PRE_TEST_ACTION= \
-	( cd $(COMPONENT_TEST_DIR)/tests ; \
-	  ln -s $(SOURCE_DIR)/netaddr/tests/2.x ; \
-	  ln -s $(SOURCE_DIR)/netaddr/tests/3.x )
+	(cd $(COMPONENT_TEST_DIR)/tests ; \
+	 ln -s $(SOURCE_DIR)/netaddr/tests/2.x ; \
+	 ln -s $(SOURCE_DIR)/netaddr/tests/3.x )
 
 # Master test results are the same for all Python versions, so override
 # here, rather than create multiple identical master files.

@@ -1,0 +1,23 @@
+In-house removal of PyCrypto dependency in Cinder. This patch is
+Solaris-specific and not suitable for upstream.
+
+--- cinder-2014.2.2/cinder/volume/utils.py.orig	2014-10-16 06:26:26.000000000 -0700
++++ cinder-2014.2.2/cinder/volume/utils.py	2014-11-23 15:13:26.412114890 -0800
+@@ -16,8 +16,8 @@
+ 
+ 
+ import math
++from random import SystemRandom
+ 
+-from Crypto.Random import random
+ from oslo.config import cfg
+ 
+ from cinder.brick.local_dev import lvm as brick_lvm
+@@ -429,6 +429,7 @@ def generate_password(length=20, symbolg
+     # NOTE(jerdfelt): Some password policies require at least one character
+     # from each group of symbols, so start off with one random character
+     # from each symbol group
++    random = SystemRandom()
+     password = [random.choice(s) for s in symbolgroups]
+     # If length < len(symbolgroups), the leading characters will only
+     # be from the first length groups. Try our best to not be predictable

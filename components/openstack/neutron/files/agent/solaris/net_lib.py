@@ -196,6 +196,13 @@ class Datalink(CommandBase):
         cmd = ['/usr/sbin/dladm', 'delete-vnic', self._dlname]
         self.execute_with_pfexec(cmd)
 
+    @classmethod
+    def show_vnic(cls):
+        cmd = ['/usr/sbin/dladm', 'show-vnic', '-po', 'link']
+        stdout = utils.execute(cmd)
+
+        return stdout.splitlines()
+
 
 class IPpoolCommand(CommandBase):
     '''Wrapper around Solaris ippool(1m) command'''

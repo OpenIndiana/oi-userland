@@ -1,0 +1,93 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+#
+
+set name=pkg.fmri \
+    value=pkg:/library/python/pyscss-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="pyScss, a Scss compiler for Python"
+set name=pkg.description \
+    value="pyScss is a Python implementation of Sass, a CSS preprocessing language that adds variables, expressions, nested rules, mixins, inheritance, and other features that help ease the maintenance of large stylesheets.  pyScss also includes support for Compass, and has an extension mechanism for adding custom behavior."
+set name=com.oracle.info.description value="the Python pyscss module"
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value=org.opensolaris.category.2008:Development/Python \
+    value="org.opensolaris.category.2008:Web Services/Application and Web Servers"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream value="German M. Bravo (Kronuz) <german.mb@gmail.com>"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2015/068
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+#
+link path=usr/bin/pyscss target=pyscss-$(PYVER) mediator=python \
+    mediator-version=$(PYVER)
+file path=usr/bin/pyscss-$(PYVER)
+file path=usr/lib/python$(PYVER)/vendor-packages/pyScss-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
+file path=usr/lib/python$(PYVER)/vendor-packages/pyScss-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/pyScss-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/pyScss-$(COMPONENT_VERSION)-py$(PYVER).egg-info/entry_points.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/pyScss-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/pyScss-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/64/_speedups.so \
+    pkg.depend.runpath=/lib:/usr/lib
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/__main__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/_native.py
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/_speedups.so
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/config.py
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/cssdefs.py
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/errors.py
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/expression.py
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/functions/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/functions/compass/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/functions/compass/gradients.py
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/functions/compass/helpers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/functions/compass/images.py
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/functions/compass/layouts.py
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/functions/compass/sprites.py
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/functions/core.py
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/functions/extra.py
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/functions/library.py
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/rule.py
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/scss_meta.py
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/selector.py
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/setup.py
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/sourcemap.py
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/tool.py \
+    pkg.depend.bypass-generate=.*/watchdog.*
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/types.py
+file path=usr/lib/python$(PYVER)/vendor-packages/scss/util.py
+#
+license LICENSE license=MIT
+
+# force a dependency on the Python runtime
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# force a dependency on the pyscss package
+depend type=require \
+    fmri=library/python/pyscss@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+
+# force a dependency on python-imaging; pkgdepend work is needed to flush this
+# out.
+depend type=require fmri=library/python/python-imaging-$(PYV)

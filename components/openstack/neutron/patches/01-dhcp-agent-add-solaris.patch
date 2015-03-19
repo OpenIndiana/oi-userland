@@ -1,32 +1,27 @@
---- neutron-2013.2.3/neutron/agent/dhcp_agent.py.orig	2014-04-03 11:49:01.000000000 -0700
-+++ neutron-2013.2.3/neutron/agent/dhcp_agent.py	2014-05-29 14:07:12.811163548 -0700
-@@ -3,6 +3,8 @@
- # Copyright 2012 OpenStack Foundation
- # All Rights Reserved.
- #
-+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
-+#
- #    Licensed under the Apache License, Version 2.0 (the "License"); you may
- #    not use this file except in compliance with the License. You may obtain
- #    a copy of the License at
-@@ -16,15 +18,14 @@
+Changes to the Neutron DHCP agent to port it to Solaris. These changes
+will eventually be proposed upstream.
+
+--- neutron-2014.2.2/neutron/agent/dhcp_agent.py.~1~	2015-02-05 07:45:33.000000000 -0800
++++ neutron-2014.2.2/neutron/agent/dhcp_agent.py	2015-02-25 00:44:00.464466509 -0800
+@@ -14,6 +14,7 @@
  #    under the License.
  
  import os
 +import platform
+ import sys
  
  import eventlet
- import netaddr
+@@ -22,9 +23,7 @@ eventlet.monkey_patch()
  from oslo.config import cfg
  
  from neutron.agent.common import config
 -from neutron.agent.linux import dhcp
  from neutron.agent.linux import external_process
 -from neutron.agent.linux import interface
+ from neutron.agent.linux import ovs_lib  # noqa
  from neutron.agent import rpc as agent_rpc
- from neutron.common import constants
- from neutron.common import exceptions
-@@ -42,6 +43,9 @@
+ from neutron.common import config as common_config
+@@ -42,6 +41,9 @@ from neutron.openstack.common import ser
  from neutron import service as neutron_service
  
  LOG = logging.getLogger(__name__)
@@ -36,8 +31,8 @@
  
  
  class DhcpAgent(manager.Manager):
-@@ -602,6 +606,16 @@
-     cfg.CONF.register_opts(DhcpAgent.OPTS)
+@@ -609,6 +611,16 @@ def register_options():
+     config.register_use_namespaces_opts_helper(cfg.CONF)
      config.register_agent_state_opts_helper(cfg.CONF)
      config.register_root_helper(cfg.CONF)
 +    global dhcp
@@ -53,9 +48,9 @@
      cfg.CONF.register_opts(dhcp.OPTS)
      cfg.CONF.register_opts(interface.OPTS)
  
---- neutron-2013.2.3/neutron/db/dhcp_rpc_base.py.orig	2014-04-03 11:49:01.000000000 -0700
-+++ neutron-2013.2.3/neutron/db/dhcp_rpc_base.py	2014-05-29 14:07:45.666828914 -0700
-@@ -131,11 +131,13 @@
+--- neutron-2014.2.2/neutron/api/rpc/handlers/dhcp_rpc.py.~1~	2015-02-05 07:45:33.000000000 -0800
++++ neutron-2014.2.2/neutron/api/rpc/handlers/dhcp_rpc.py	2015-02-25 00:44:00.464738154 -0800
+@@ -168,11 +168,13 @@ class DhcpRpcCallback(n_rpc.RpcCallback)
                  for fixed_ip in port['fixed_ips']:
                      if fixed_ip['subnet_id'] in dhcp_enabled_subnet_ids:
                          dhcp_enabled_subnet_ids.remove(fixed_ip['subnet_id'])

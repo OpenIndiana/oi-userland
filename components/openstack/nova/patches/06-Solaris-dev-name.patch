@@ -1,0 +1,29 @@
+The patch is to fix the issue of linuxy devices names on Solaris instance recorded
+in the bugs (19987962 and 19277019).
+
+--- nova-2014.2.2/nova/compute/utils.py.~1~	2015-02-05 06:26:50.000000000 -0800
++++ nova-2014.2.2/nova/compute/utils.py	2015-02-09 10:13:15.882810433 -0800
+@@ -148,6 +148,23 @@
+     /dev/vdc is specified but the backend uses /dev/xvdc), the device
+     name will be converted to the appropriate format.
+     """
++    if driver.compute_driver_matches('solariszones.SolarisZonesDriver'):
++        prefix = 'c1d'
++        if device_name_list == []:
++            # Return the root device (c1d0)
++            return 'c1d0'
++
++        # Remove non-Solaris devices names (like, /dev/sda, sdb, ...)
++        # if they exist in the instance.
++        device_name_list = \
++            [dev for dev in device_name_list if prefix in dev]
++        device_name_list.sort()
++
++        # find the least unused number from '0' (root device)
++        used_nums = [int(dev.rsplit('d')[-1]) for dev in device_name_list]
++        diff = [i for i in range(len(used_nums) + 1) if i not in used_nums]
++        return prefix + str(min(diff))
++
+     req_prefix = None
+     req_letter = None
+ 

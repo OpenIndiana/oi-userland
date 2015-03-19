@@ -22,22 +22,24 @@
 #
 # Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nova
-COMPONENT_CODENAME=	havana
-COMPONENT_VERSION=	2013.2.3
+COMPONENT_CODENAME=	juno
+COMPONENT_VERSION=	2014.2.2
+COMPONENT_BE_VERSION=	2014.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:02902cb65b5adb0419c69cdb03ea2a0cfdfe8f7df342be44f3760d66cdecb61e
+    sha256:18dfd433aa043389318f28890578dcbe3c0606a38360f39ec8df8670150f89d7
 COMPONENT_ARCHIVE_URL=	http://launchpad.net/$(COMPONENT_NAME)/$(COMPONENT_CODENAME)/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_PROJECT_URL=	http://www.openstack.org/
 COMPONENT_BUGDB=	service/nova
-IPS_COMPONENT_VERSION=	0.$(COMPONENT_VERSION) 
+IPS_COMPONENT_VERSION=	0.$(COMPONENT_VERSION)
 
-TPNO=			17715
+TPNO=			21825
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -49,16 +51,43 @@ ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 # only need to deliver one version.  The manifest is parameterized, though.
 PYTHON_VERSIONS=	2.6
 
+PKG_MACROS +=		COMPONENT_BE_VERSION=$(COMPONENT_BE_VERSION)
 PKG_MACROS +=		PYVER=$(PYTHON_VERSIONS)
+PKG_MACROS +=		PYV=$(shell echo $(PYTHON_VERSIONS) | tr -d .)
 
+#
 # Replace the standard nova/virt/libvirt/__init__.py with an empty file.
+#
+# All of the nova SMF manifests depend on nova-upgrade so copy it into
+# the proto directory for pkgdepend(1) to find.
+#
 COMPONENT_POST_INSTALL_ACTION += \
 	($(CP) /dev/null $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/nova/virt/libvirt/__init__.py; \
+         $(MKDIR) $(PROTO_DIR)/lib/svc/manifest/application/openstack; \
+         $(CP) \
+             files/nova-api-ec2.xml \
+             files/nova-api-metadata.xml \
+             files/nova-api-osapi-compute.xml \
+             files/nova-cert.xml \
+             files/nova-compute.xml \
+             files/nova-conductor.xml \
+             files/nova-consoleauth.xml \
+             files/nova-novncproxy.xml \
+             files/nova-objectstore.xml \
+             files/nova-scheduler.xml \
+             files/nova-upgrade.xml \
+             files/zone-vnc-console.xml \
+             $(PROTO_DIR)/lib/svc/manifest/application/openstack; \
+	 $(CP) \
+	     files/network/solaris_net.py \
+	     $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/nova/network; \
 	 $(MKDIR) $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/nova/virt/solariszones; \
-	 $(CP) files/solariszones/__init__.py $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/nova/virt/solariszones; \
-	 $(CP) files/solariszones/driver.py $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/nova/virt/solariszones; \
-	 $(CP) files/solariszones/sysconfig.py $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/nova/virt/solariszones); \
-        $(PYTHON) -m compileall $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES)
+	 $(CP) \
+	     files/solariszones/__init__.py \
+	     files/solariszones/driver.py \
+	     files/solariszones/sysconfig.py \
+	     $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/nova/virt/solariszones); \
+	$(PYTHON) -m compileall $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES)
 
 # common targets
 build:		$(BUILD_NO_ARCH)
@@ -70,10 +99,12 @@ test:		$(NO_TESTS)
 
 REQUIRED_PACKAGES += install/archive
 REQUIRED_PACKAGES += library/python/eventlet-26
+REQUIRED_PACKAGES += library/python/iniparse-26
 REQUIRED_PACKAGES += library/python/oslo.config-26
+REQUIRED_PACKAGES += library/python/python-mysql-26
+REQUIRED_PACKAGES += library/python/sqlalchemy-26
 REQUIRED_PACKAGES += library/python/sqlalchemy-migrate-26
 REQUIRED_PACKAGES += library/python/webob-26
-REQUIRED_PACKAGES += runtime/python-26
 REQUIRED_PACKAGES += service/network/evs
 REQUIRED_PACKAGES += system/core-os
 REQUIRED_PACKAGES += system/file-system/zfs
@@ -81,4 +112,8 @@ REQUIRED_PACKAGES += system/library/storage/suri
 REQUIRED_PACKAGES += system/storage/fc-utilities
 REQUIRED_PACKAGES += system/storage/iscsi/iscsi-initiator
 REQUIRED_PACKAGES += terminal/xterm
+REQUIRED_PACKAGES += web/novnc
+REQUIRED_PACKAGES += x11/diagnostic/x11-info-clients
+REQUIRED_PACKAGES += x11/server/xorg
 REQUIRED_PACKAGES += x11/server/xvnc
+REQUIRED_PACKAGES += x11/x11-server-utilities

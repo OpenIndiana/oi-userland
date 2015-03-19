@@ -22,22 +22,24 @@
 #
 # Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		keystone
-COMPONENT_CODENAME=	havana
-COMPONENT_VERSION=	2013.2.3
+COMPONENT_CODENAME=	juno
+COMPONENT_VERSION=	2014.2.2
+COMPONENT_BE_VERSION=	2014.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:0d27a32c6c211706f8b13aafe2fd51c7ddbea97897be90663fd8c2527ef56032
+    sha256:5674c1ae0aa7203cca0aba634e939bcfb7e1e0f60f62a6d6fceeb05efb84980e
 COMPONENT_ARCHIVE_URL=	http://launchpad.net/$(COMPONENT_NAME)/$(COMPONENT_CODENAME)/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_PROJECT_URL=	http://www.openstack.org/
 COMPONENT_BUGDB=	service/keystone
-IPS_COMPONENT_VERSION=	0.$(COMPONENT_VERSION) 
+IPS_COMPONENT_VERSION=	0.$(COMPONENT_VERSION)
 
-TPNO=			17866
+TPNO=			21823
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -49,7 +51,20 @@ ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 # only need to deliver one version.  The manifest is parameterized, though.
 PYTHON_VERSIONS=	2.6
 
+PKG_MACROS +=		COMPONENT_BE_VERSION=$(COMPONENT_BE_VERSION)
 PKG_MACROS +=		PYVER=$(PYTHON_VERSIONS)
+PKG_MACROS +=		PYV=$(shell echo $(PYTHON_VERSIONS) | tr -d .)
+
+#
+# keystone depends on keystone-upgrade so copy all of the service
+# manifests into the proto directory for pkgdepend(1) to find.
+#
+COMPONENT_POST_INSTALL_ACTION += \
+	($(MKDIR) $(PROTO_DIR)/lib/svc/manifest/application/openstack; \
+	 $(CP) \
+	     files/keystone.xml \
+	     files/keystone-upgrade.xml \
+	     $(PROTO_DIR)/lib/svc/manifest/application/openstack;)
 
 # common targets
 build:		$(BUILD_NO_ARCH)
@@ -59,10 +74,11 @@ install:	$(INSTALL_NO_ARCH)
 test:		$(NO_TESTS)
 
 
-REQUIRED_PACKAGES += library/python/eventlet-26
+REQUIRED_PACKAGES += library/python/iniparse-26
 REQUIRED_PACKAGES += library/python/oslo.config-26
 REQUIRED_PACKAGES += library/python/pbr-26
+REQUIRED_PACKAGES += library/python/python-mysql-26
 REQUIRED_PACKAGES += library/python/sqlalchemy-26
 REQUIRED_PACKAGES += library/python/sqlalchemy-migrate-26
-REQUIRED_PACKAGES += runtime/python-26
+REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += system/core-os

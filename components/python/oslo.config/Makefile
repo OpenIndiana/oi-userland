@@ -22,27 +22,30 @@
 #
 # Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		oslo.config
-COMPONENT_VERSION=	1.3.0
+COMPONENT_VERSION=	1.6.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:1fa44f663f7109ccc3ddd393fbc5a7a077208e116f94e41ada7fbd977f27cbab
-COMPONENT_ARCHIVE_URL=	http://tarballs.openstack.org/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	http://www.openstack.org/
+    sha256:a88cf1af696b4d9cae783a4c8c6898e6fb4abd176f9c9906ba388e7eac5eab17
+COMPONENT_ARCHIVE_URL=	$(call pypi_url)
+COMPONENT_PROJECT_URL=	https://launchpad.net/oslo.config
 COMPONENT_BUGDB=	python-mod/oslo.config
 
-TPNO=			17861
+TPNO=			21726
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_POST_INSTALL_ACTION += \
-        ($(TOUCH) $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/oslo/__init__.py; \
-         $(PYTHON) -m compileall $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES))
+	($(TOUCH) $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/oslo/__init__.py; \
+	 $(PYTHON) -m compileall $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES); \
+	 cd $(PROTO_DIR)/usr/bin ; \
+	 $(MV) -f oslo-config-generator oslo-config-generator-$(PYTHON_VERSION))
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
@@ -51,8 +54,6 @@ build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
-# Tests require:
-# fixtures, mox, nose, nose-exclude, testtools, coverage, sphinx
-# some of which haven't been integrated yet
+# see $(COMPONENT_SRC)/test-requirements.txt for the python modules
+# required to execute unittests.
 test:		$(NO_TESTS)
-

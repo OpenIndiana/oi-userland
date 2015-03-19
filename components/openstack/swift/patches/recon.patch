@@ -2,10 +2,9 @@ Move recon's locks to /var/run/swift and caches to /var/lib/swift/recon-cache.
 Change some of the ways we gather information, since those are normally
 Linux-specific.  Make the tests acknowledge these changes.
 
-diff --git a/bin/swift-recon-cron b/bin/swift-recon-cron
---- a/bin/swift-recon-cron
-+++ b/bin/swift-recon-cron
-@@ -49,8 +49,8 @@ def main():
+--- swift-2.2.2/bin/swift-recon-cron.~1~	2015-02-01 23:44:11.000000000 -0800
++++ swift-2.2.2/bin/swift-recon-cron	2015-02-26 16:49:51.937806748 -0800
+@@ -57,8 +57,8 @@ def main():
          sys.exit(1)
      conf = dict(c.items('filter:recon'))
      device_dir = conf.get('devices', '/srv/node')
@@ -16,10 +15,9 @@ diff --git a/bin/swift-recon-cron b/bin/swift-recon-cron
      cache_file = os.path.join(recon_cache_path, "object.recon")
      lock_dir = os.path.join(recon_lock_path, "swift-recon-object-cron")
      conf['log_name'] = conf.get('log_name', 'recon-cron')
-diff --git a/etc/account-server.conf-sample b/etc/account-server.conf-sample
---- a/etc/account-server.conf-sample
-+++ b/etc/account-server.conf-sample
-@@ -78,7 +78,7 @@ use = egg:swift#healthcheck
+--- swift-2.2.2/etc/account-server.conf-sample.~1~	2015-02-01 23:44:11.000000000 -0800
++++ swift-2.2.2/etc/account-server.conf-sample	2015-02-26 16:49:51.938107313 -0800
+@@ -81,7 +81,7 @@ use = egg:swift#healthcheck
  
  [filter:recon]
  use = egg:swift#recon
@@ -28,8 +26,8 @@ diff --git a/etc/account-server.conf-sample b/etc/account-server.conf-sample
  
  [account-replicator]
  # You can override the default log routing for this app here (don't use set!):
-@@ -109,7 +109,7 @@ use = egg:swift#recon
- # Time in seconds to wait between replication passes
+@@ -114,7 +114,7 @@ use = egg:swift#recon
+ # of run_pause.
  # run_pause = 30
  #
 -# recon_cache_path = /var/cache/swift
@@ -37,7 +35,7 @@ diff --git a/etc/account-server.conf-sample b/etc/account-server.conf-sample
  
  [account-auditor]
  # You can override the default log routing for this app here (don't use set!):
-@@ -124,7 +124,7 @@ use = egg:swift#recon
+@@ -129,7 +129,7 @@ use = egg:swift#recon
  # log_facility = LOG_LOCAL0
  # log_level = INFO
  # accounts_per_second = 200
@@ -46,10 +44,9 @@ diff --git a/etc/account-server.conf-sample b/etc/account-server.conf-sample
  
  [account-reaper]
  # You can override the default log routing for this app here (don't use set!):
-diff --git a/etc/container-server.conf-sample b/etc/container-server.conf-sample
---- a/etc/container-server.conf-sample
-+++ b/etc/container-server.conf-sample
-@@ -85,7 +85,7 @@ use = egg:swift#healthcheck
+--- swift-2.2.2/etc/container-server.conf-sample.~1~	2015-02-01 23:44:11.000000000 -0800
++++ swift-2.2.2/etc/container-server.conf-sample	2015-02-26 16:49:51.938374963 -0800
+@@ -90,7 +90,7 @@ use = egg:swift#healthcheck
  
  [filter:recon]
  use = egg:swift#recon
@@ -58,8 +55,8 @@ diff --git a/etc/container-server.conf-sample b/etc/container-server.conf-sample
  
  [container-replicator]
  # You can override the default log routing for this app here (don't use set!):
-@@ -108,7 +108,7 @@ use = egg:swift#recon
- # Time in seconds to wait between replication passes
+@@ -115,7 +115,7 @@ use = egg:swift#recon
+ # of run_pause.
  # run_pause = 30
  #
 -# recon_cache_path = /var/cache/swift
@@ -67,7 +64,7 @@ diff --git a/etc/container-server.conf-sample b/etc/container-server.conf-sample
  
  [container-updater]
  # You can override the default log routing for this app here (don't use set!):
-@@ -128,7 +128,7 @@ use = egg:swift#recon
+@@ -135,7 +135,7 @@ use = egg:swift#recon
  # Seconds to suppress updating an account that has generated an error
  # account_suppression_time = 60
  #
@@ -76,7 +73,7 @@ diff --git a/etc/container-server.conf-sample b/etc/container-server.conf-sample
  
  [container-auditor]
  # You can override the default log routing for this app here (don't use set!):
-@@ -141,7 +141,7 @@ use = egg:swift#recon
+@@ -148,7 +148,7 @@ use = egg:swift#recon
  # interval = 1800
  #
  # containers_per_second = 200
@@ -85,10 +82,31 @@ diff --git a/etc/container-server.conf-sample b/etc/container-server.conf-sample
  
  [container-sync]
  # You can override the default log routing for this app here (don't use set!):
-diff --git a/etc/object-server.conf-sample b/etc/object-server.conf-sample
---- a/etc/object-server.conf-sample
-+++ b/etc/object-server.conf-sample
-@@ -99,8 +99,8 @@ use = egg:swift#healthcheck
+--- swift-2.2.2/etc/drive-audit.conf-sample.~1~	2015-02-01 23:44:11.000000000 -0800
++++ swift-2.2.2/etc/drive-audit.conf-sample	2015-02-26 17:03:18.476812691 -0800
+@@ -8,7 +8,7 @@
+ # log_max_line_length = 0
+ # minutes = 60
+ # error_limit = 1
+-# recon_cache_path = /var/cache/swift
++# recon_cache_path = /var/lib/swift/recon-cache
+ # unmount_failed_device = True
+ #
+ # By default, drive-audit logs only to syslog. Setting this option True
+--- swift-2.2.2/etc/object-expirer.conf-sample.~1~	2015-02-01 23:44:11.000000000 -0800
++++ swift-2.2.2/etc/object-expirer.conf-sample	2015-02-26 17:03:28.102759740 -0800
+@@ -50,7 +50,7 @@
+ # up to reclaim_age seconds before it gives up and deletes the entry in the
+ # queue.
+ # reclaim_age = 604800
+-# recon_cache_path = /var/cache/swift
++# recon_cache_path = /var/lib/swift/recon-cache
+ 
+ [pipeline:main]
+ pipeline = catch_errors proxy-logging cache proxy-server
+--- swift-2.2.2/etc/object-server.conf-sample.~1~	2015-02-01 23:44:11.000000000 -0800
++++ swift-2.2.2/etc/object-server.conf-sample	2015-02-26 16:49:51.938657130 -0800
+@@ -143,8 +143,8 @@ use = egg:swift#healthcheck
  
  [filter:recon]
  use = egg:swift#recon
@@ -99,7 +117,7 @@ diff --git a/etc/object-server.conf-sample b/etc/object-server.conf-sample
  
  [object-replicator]
  # You can override the default log routing for this app here (don't use set!):
-@@ -134,7 +134,7 @@ use = egg:swift#recon
+@@ -186,7 +186,7 @@ use = egg:swift#recon
  # reclaim_age = 604800
  #
  # ring_check_interval = 15
@@ -108,7 +126,7 @@ diff --git a/etc/object-server.conf-sample b/etc/object-server.conf-sample
  #
  # limits how long rsync error log lines are
  # 0 means to log the entire line
-@@ -155,7 +155,7 @@ use = egg:swift#recon
+@@ -224,7 +224,7 @@ use = egg:swift#recon
  # slowdown will sleep that amount between objects
  # slowdown = 0.01
  #
@@ -117,7 +135,7 @@ diff --git a/etc/object-server.conf-sample b/etc/object-server.conf-sample
  
  [object-auditor]
  # You can override the default log routing for this app here (don't use set!):
-@@ -168,7 +168,7 @@ use = egg:swift#recon
+@@ -241,7 +241,7 @@ use = egg:swift#recon
  # bytes_per_second = 10000000
  # log_time = 3600
  # zero_byte_files_per_second = 50
@@ -126,10 +144,9 @@ diff --git a/etc/object-server.conf-sample b/etc/object-server.conf-sample
  
  # Takes a comma separated list of ints. If set, the object auditor will
  # increment a counter for every object whose size is <= to the given break
-diff --git a/swift/account/auditor.py b/swift/account/auditor.py
---- a/swift/account/auditor.py
-+++ b/swift/account/auditor.py
-@@ -45,7 +45,7 @@ class AccountAuditor(Daemon):
+--- swift-2.2.2/swift/account/auditor.py.~1~	2015-02-01 23:44:11.000000000 -0800
++++ swift-2.2.2/swift/account/auditor.py	2015-02-26 16:49:51.938879416 -0800
+@@ -46,7 +46,7 @@ class AccountAuditor(Daemon):
          swift.common.db.DB_PREALLOCATION = \
              config_true_value(conf.get('db_preallocation', 'f'))
          self.recon_cache_path = conf.get('recon_cache_path',
@@ -138,10 +155,9 @@ diff --git a/swift/account/auditor.py b/swift/account/auditor.py
          self.rcache = os.path.join(self.recon_cache_path, "account.recon")
  
      def _one_audit_pass(self, reported):
-diff --git a/swift/common/db_replicator.py b/swift/common/db_replicator.py
---- a/swift/common/db_replicator.py
-+++ b/swift/common/db_replicator.py
-@@ -169,7 +169,7 @@ class Replicator(Daemon):
+--- swift-2.2.2/swift/common/db_replicator.py.~1~	2015-02-01 23:44:11.000000000 -0800
++++ swift-2.2.2/swift/common/db_replicator.py	2015-02-26 16:49:51.939223420 -0800
+@@ -171,7 +171,7 @@ class Replicator(Daemon):
              config_true_value(conf.get('db_preallocation', 'f'))
          self._zero_stats()
          self.recon_cache_path = conf.get('recon_cache_path',
@@ -150,9 +166,8 @@ diff --git a/swift/common/db_replicator.py b/swift/common/db_replicator.py
          self.recon_replicator = '%s.recon' % self.server_type
          self.rcache = os.path.join(self.recon_cache_path,
                                     self.recon_replicator)
-diff --git a/swift/common/middleware/recon.py b/swift/common/middleware/recon.py
---- a/swift/common/middleware/recon.py
-+++ b/swift/common/middleware/recon.py
+--- swift-2.2.2/swift/common/middleware/recon.py.~1~	2015-02-01 23:44:11.000000000 -0800
++++ swift-2.2.2/swift/common/middleware/recon.py	2015-02-26 16:49:51.939514933 -0800
 @@ -15,6 +15,7 @@
  
  import errno
@@ -161,7 +176,7 @@ diff --git a/swift/common/middleware/recon.py b/swift/common/middleware/recon.py
  from swift import gettext_ as _
  
  from swift import __version__ as swiftver
-@@ -45,7 +46,7 @@ class ReconMiddleware(object):
+@@ -46,7 +47,7 @@ class ReconMiddleware(object):
          swift_dir = conf.get('swift_dir', '/etc/swift')
          self.logger = get_logger(conf, log_route='recon')
          self.recon_cache_path = conf.get('recon_cache_path',
@@ -170,7 +185,7 @@ diff --git a/swift/common/middleware/recon.py b/swift/common/middleware/recon.py
          self.object_recon_cache = os.path.join(self.recon_cache_path,
                                                 'object.recon')
          self.container_recon_cache = os.path.join(self.recon_cache_path,
-@@ -87,28 +88,43 @@ class ReconMiddleware(object):
+@@ -90,28 +91,43 @@ class ReconMiddleware(object):
      def get_mounted(self, openr=open):
          """get ALL mounted fs from /proc/mounts"""
          mounts = []
@@ -221,10 +236,9 @@ diff --git a/swift/common/middleware/recon.py b/swift/common/middleware/recon.py
          meminfo = {}
          with openr('/proc/meminfo', 'r') as memlines:
              for i in memlines:
-diff --git a/swift/container/auditor.py b/swift/container/auditor.py
---- a/swift/container/auditor.py
-+++ b/swift/container/auditor.py
-@@ -45,7 +45,7 @@ class ContainerAuditor(Daemon):
+--- swift-2.2.2/swift/container/auditor.py.~1~	2015-02-01 23:44:11.000000000 -0800
++++ swift-2.2.2/swift/container/auditor.py	2015-02-26 16:49:51.939751504 -0800
+@@ -44,7 +44,7 @@ class ContainerAuditor(Daemon):
          swift.common.db.DB_PREALLOCATION = \
              config_true_value(conf.get('db_preallocation', 'f'))
          self.recon_cache_path = conf.get('recon_cache_path',
@@ -233,9 +247,8 @@ diff --git a/swift/container/auditor.py b/swift/container/auditor.py
          self.rcache = os.path.join(self.recon_cache_path, "container.recon")
  
      def _one_audit_pass(self, reported):
-diff --git a/swift/container/updater.py b/swift/container/updater.py
---- a/swift/container/updater.py
-+++ b/swift/container/updater.py
+--- swift-2.2.2/swift/container/updater.py.~1~	2015-02-01 23:44:11.000000000 -0800
++++ swift-2.2.2/swift/container/updater.py	2015-02-26 16:49:51.939968905 -0800
 @@ -60,7 +60,7 @@ class ContainerUpdater(Daemon):
          swift.common.db.DB_PREALLOCATION = \
              config_true_value(conf.get('db_preallocation', 'f'))
@@ -245,22 +258,20 @@ diff --git a/swift/container/updater.py b/swift/container/updater.py
          self.rcache = os.path.join(self.recon_cache_path, "container.recon")
          self.user_agent = 'container-updater %s' % os.getpid()
  
-diff --git a/swift/obj/auditor.py b/swift/obj/auditor.py
---- a/swift/obj/auditor.py
-+++ b/swift/obj/auditor.py
-@@ -56,7 +56,7 @@ class AuditorWorker(object):
-         self.quarantines = 0
-         self.errors = 0
+--- swift-2.2.2/swift/obj/auditor.py.~1~	2015-02-01 23:44:11.000000000 -0800
++++ swift-2.2.2/swift/obj/auditor.py	2015-02-26 16:49:51.940188415 -0800
+@@ -227,7 +227,7 @@ class ObjectAuditor(Daemon):
+         self.conf_zero_byte_fps = int(
+             conf.get('zero_byte_files_per_second', 50))
          self.recon_cache_path = conf.get('recon_cache_path',
 -                                         '/var/cache/swift')
 +                                         '/var/lib/swift/recon-cache')
          self.rcache = os.path.join(self.recon_cache_path, "object.recon")
-         self.stats_sizes = sorted(
-             [int(s) for s in list_from_csv(conf.get('object_size_stats'))])
-diff --git a/swift/obj/expirer.py b/swift/obj/expirer.py
---- a/swift/obj/expirer.py
-+++ b/swift/obj/expirer.py
-@@ -54,7 +54,7 @@ class ObjectExpirer(Daemon):
+ 
+     def _sleep(self):
+--- swift-2.2.2/swift/obj/expirer.py.~1~	2015-02-01 23:44:11.000000000 -0800
++++ swift-2.2.2/swift/obj/expirer.py	2015-02-26 16:49:51.940400670 -0800
+@@ -57,7 +57,7 @@ class ObjectExpirer(Daemon):
          self.report_first_time = self.report_last_time = time()
          self.report_objects = 0
          self.recon_cache_path = conf.get('recon_cache_path',
@@ -269,21 +280,19 @@ diff --git a/swift/obj/expirer.py b/swift/obj/expirer.py
          self.rcache = join(self.recon_cache_path, 'object.recon')
          self.concurrency = int(conf.get('concurrency', 1))
          if self.concurrency < 1:
-diff --git a/swift/obj/replicator.py b/swift/obj/replicator.py
---- a/swift/obj/replicator.py
-+++ b/swift/obj/replicator.py
-@@ -76,7 +76,7 @@ class ObjectReplicator(Daemon):
+--- swift-2.2.2/swift/obj/replicator.py.~1~	2015-02-01 23:44:11.000000000 -0800
++++ swift-2.2.2/swift/obj/replicator.py	2015-02-26 16:49:51.940644907 -0800
+@@ -77,7 +77,7 @@ class ObjectReplicator(Daemon):
          self.http_timeout = int(conf.get('http_timeout', 60))
          self.lockup_timeout = int(conf.get('lockup_timeout', 1800))
          self.recon_cache_path = conf.get('recon_cache_path',
 -                                         '/var/cache/swift')
 +                                         '/var/lib/swift/recon-cache')
          self.rcache = os.path.join(self.recon_cache_path, "object.recon")
-         self.headers = {
-             'Content-Length': '0',
-diff --git a/swift/obj/updater.py b/swift/obj/updater.py
---- a/swift/obj/updater.py
-+++ b/swift/obj/updater.py
+         self.conn_timeout = float(conf.get('conn_timeout', 0.5))
+         self.node_timeout = float(conf.get('node_timeout', 10))
+--- swift-2.2.2/swift/obj/updater.py.~1~	2015-02-01 23:44:11.000000000 -0800
++++ swift-2.2.2/swift/obj/updater.py	2015-02-26 16:49:51.940853387 -0800
 @@ -52,7 +52,7 @@ class ObjectUpdater(Daemon):
          self.successes = 0
          self.failures = 0
@@ -292,21 +301,20 @@ diff --git a/swift/obj/updater.py b/swift/obj/updater.py
 +                                         '/var/lib/swift/recon-cache')
          self.rcache = os.path.join(self.recon_cache_path, 'object.recon')
  
-     def get_container_ring(self):
-diff --git a/test/unit/common/middleware/test_recon.py b/test/unit/common/middleware/test_recon.py
---- a/test/unit/common/middleware/test_recon.py
-+++ b/test/unit/common/middleware/test_recon.py
-@@ -18,7 +18,9 @@ from unittest import TestCase
- from contextlib import contextmanager
- from posix import stat_result, statvfs_result
+     def _listdir(self, path):
+--- swift-2.2.2/test/unit/common/middleware/test_recon.py.~1~	2015-02-01 23:44:11.000000000 -0800
++++ swift-2.2.2/test/unit/common/middleware/test_recon.py	2015-02-26 16:49:51.941363136 -0800
+@@ -21,7 +21,9 @@ import array
+ from swift.common import ring, utils
+ from shutil import rmtree
  import os
 +import sys
  import mock
 +from nose import SkipTest
  
- import swift.common.constraints
  from swift import __version__ as swiftver
-@@ -277,10 +279,12 @@ class TestReconSuccess(TestCase):
+ from swift.common.swob import Request
+@@ -384,10 +386,12 @@ class TestReconSuccess(TestCase):
              {'device': 'none', 'path': '/proc/fs/vmblock/mountPoint'}]
          oart = OpenAndReadTester(mounts_content)
          rv = self.app.get_mounted(openr=oart.open)
@@ -320,7 +328,7 @@ diff --git a/test/unit/common/middleware/test_recon.py b/test/unit/common/middle
          oart = OpenAndReadTester(['0.03 0.03 0.00 1/220 16306'])
          rv = self.app.get_load(openr=oart.open)
          self.assertEquals(oart.read_calls, [((), {})])
-@@ -290,6 +294,8 @@ class TestReconSuccess(TestCase):
+@@ -397,6 +401,8 @@ class TestReconSuccess(TestCase):
                                 '1m': 0.029999999999999999})
  
      def test_get_mem(self):
@@ -329,7 +337,7 @@ diff --git a/test/unit/common/middleware/test_recon.py b/test/unit/common/middle
          meminfo_content = ['MemTotal:         505840 kB',
                             'MemFree:           26588 kB',
                             'Buffers:           44948 kB',
-@@ -401,7 +407,7 @@ class TestReconSuccess(TestCase):
+@@ -508,7 +514,7 @@ class TestReconSuccess(TestCase):
          self.assertEquals(self.fakecache.fakeout_calls,
                            [((['replication_time', 'replication_stats',
                                'replication_last'],
@@ -338,7 +346,7 @@ diff --git a/test/unit/common/middleware/test_recon.py b/test/unit/common/middle
          self.assertEquals(rv, {
              "replication_stats": {
                  "attempted": 1, "diff": 0,
-@@ -432,7 +438,7 @@ class TestReconSuccess(TestCase):
+@@ -539,7 +545,7 @@ class TestReconSuccess(TestCase):
          self.assertEquals(self.fakecache.fakeout_calls,
                            [((['replication_time', 'replication_stats',
                                'replication_last'],
@@ -347,7 +355,7 @@ diff --git a/test/unit/common/middleware/test_recon.py b/test/unit/common/middle
          self.assertEquals(rv, {
              "replication_time": 200.0,
              "replication_stats": {
-@@ -454,7 +460,7 @@ class TestReconSuccess(TestCase):
+@@ -561,7 +567,7 @@ class TestReconSuccess(TestCase):
          self.assertEquals(self.fakecache.fakeout_calls,
                            [((['object_replication_time',
                                'object_replication_last'],
@@ -356,7 +364,7 @@ diff --git a/test/unit/common/middleware/test_recon.py b/test/unit/common/middle
          self.assertEquals(rv, {'object_replication_time': 200.0,
                                 'object_replication_last': 1357962809.15})
  
-@@ -465,7 +471,7 @@ class TestReconSuccess(TestCase):
+@@ -572,7 +578,7 @@ class TestReconSuccess(TestCase):
          rv = self.app.get_updater_info('container')
          self.assertEquals(self.fakecache.fakeout_calls,
                            [((['container_updater_sweep'],
@@ -365,7 +373,7 @@ diff --git a/test/unit/common/middleware/test_recon.py b/test/unit/common/middle
          self.assertEquals(rv, {"container_updater_sweep": 18.476239919662476})
  
      def test_get_updater_info_object(self):
-@@ -475,7 +481,7 @@ class TestReconSuccess(TestCase):
+@@ -582,7 +588,7 @@ class TestReconSuccess(TestCase):
          rv = self.app.get_updater_info('object')
          self.assertEquals(self.fakecache.fakeout_calls,
                            [((['object_updater_sweep'],
@@ -374,7 +382,7 @@ diff --git a/test/unit/common/middleware/test_recon.py b/test/unit/common/middle
          self.assertEquals(rv, {"object_updater_sweep": 0.79848217964172363})
  
      def test_get_auditor_info_account(self):
-@@ -491,7 +497,7 @@ class TestReconSuccess(TestCase):
+@@ -598,7 +604,7 @@ class TestReconSuccess(TestCase):
                                'account_auditor_pass_completed',
                                'account_audits_since',
                                'account_audits_failed'],
@@ -383,7 +391,7 @@ diff --git a/test/unit/common/middleware/test_recon.py b/test/unit/common/middle
          self.assertEquals(rv, {"account_auditor_pass_completed": 0.24,
                                 "account_audits_failed": 0,
                                 "account_audits_passed": 6,
-@@ -510,7 +516,7 @@ class TestReconSuccess(TestCase):
+@@ -617,7 +623,7 @@ class TestReconSuccess(TestCase):
                                'container_auditor_pass_completed',
                                'container_audits_since',
                                'container_audits_failed'],
@@ -392,7 +400,7 @@ diff --git a/test/unit/common/middleware/test_recon.py b/test/unit/common/middle
          self.assertEquals(rv, {"container_auditor_pass_completed": 0.24,
                                 "container_audits_failed": 0,
                                 "container_audits_passed": 6,
-@@ -538,7 +544,7 @@ class TestReconSuccess(TestCase):
+@@ -645,7 +651,7 @@ class TestReconSuccess(TestCase):
          self.assertEquals(self.fakecache.fakeout_calls,
                            [((['object_auditor_stats_ALL',
                                'object_auditor_stats_ZBF'],
@@ -401,3 +409,12 @@ diff --git a/test/unit/common/middleware/test_recon.py b/test/unit/common/middle
          self.assertEquals(rv, {
              "object_auditor_stats_ALL": {
                  "audit_time": 115.14418768882751,
+@@ -692,7 +698,7 @@ class TestReconSuccess(TestCase):
+         self.assertEquals(self.fakecache.fakeout_calls,
+                           [((['object_auditor_stats_ALL',
+                               'object_auditor_stats_ZBF'],
+-                              '/var/cache/swift/object.recon'), {})])
++                              '/var/lib/swift/recon-cache/object.recon'), {})])
+         self.assertEquals(rv, {
+             "object_auditor_stats_ALL": {
+                 'disk1': {

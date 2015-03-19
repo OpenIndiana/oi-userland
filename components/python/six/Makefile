@@ -18,21 +18,24 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		six
-COMPONENT_VERSION=	1.6.1
+COMPONENT_VERSION=	1.9.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:d4392a7c8d91b005c002568a85faf617c67241c8cd8399cc395e8f1005aff80d
+    sha256:e24052411fc4fbd1f672635537c3fc2330d9481b18c0317695b46259512c91d5
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://pypi.python.org/pypi/six/
 COMPONENT_BUGDB=	python-mod/six
 
-TPNO=			17859
+TPNO=			21739
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -40,8 +43,8 @@ include $(WS_MAKE_RULES)/ips.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-COMPONENT_TEST_DIR =    $(SOURCE_DIR)
-COMPONENT_TEST_ARGS =   test_six.py
+COMPONENT_TEST_DIR =	$(SOURCE_DIR)
+COMPONENT_TEST_ARGS =	test_six.py
 COMPONENT_TEST_CMD =	py.test-$(PYTHON_VERSION)
 
 # common targets
@@ -50,4 +53,3 @@ build:		$(BUILD_NO_ARCH)
 install:	$(INSTALL_NO_ARCH)
 
 test:		$(TEST_NO_ARCH)
-

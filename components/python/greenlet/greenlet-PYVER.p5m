@@ -18,14 +18,16 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
+
+#
+# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
     value=pkg:/library/python/greenlet-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="Coroutine module for Python"
+set name=pkg.summary value="Lightweight in-process concurrent programming"
 set name=pkg.description \
-    value="Greenlet is a Python module providing lightweight coroutines for in-process concurrent programming."
+    value="The greenlet package supports micro-threads called 'tasklets'. Tasklets run pseudo-concurrently (typically in a single or a few OS-level threads) and are synchronized with data exchanges on 'channels'. A 'greenlet', on the other hand, is a still more primitive notion of micro-thread with no implicit scheduling; coroutines, in other words. This is useful when one want to control exactly when one's code runs. One can build custom scheduled micro-threads on top of greenlet; However, greenlets are useful on their own as a way to make advanced control flow structures. For example, one can recreate generators; the difference with Python's own generators is that greenlet's generators can call nested functions and the nested functions can yield values too."
 set name=com.oracle.info.description \
     value="the Python greenlet coroutine module"
 set name=com.oracle.info.tpno value=$(TPNO)
@@ -36,10 +38,14 @@ set name=info.upstream value="Ralf Schmitt <ralf@systemexit.de>"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2013/140
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-file path=usr/include/python$(PYVER)/greenlet/greenlet.h
+#
+$(PYTHON_2.6_ONLY)file path=usr/include/python$(PYVER)/greenlet/greenlet.h
+$(PYTHON_2.7_ONLY)file path=usr/include/python$(PYVER)/greenlet/greenlet.h
+$(PYTHON_3.4_ONLY)file path=usr/include/python$(PYVER)m/greenlet/greenlet.h
 file path=usr/lib/python$(PYVER)/vendor-packages/64/greenlet.so
 file path=usr/lib/python$(PYVER)/vendor-packages/greenlet-$(COMPONENT_VERSION)-py$(PYVER).egg-info
 file path=usr/lib/python$(PYVER)/vendor-packages/greenlet.so
+#
 license greenlet.license license="MIT, PSFv2"
 
 # force the rename with an optional dependency on the old name

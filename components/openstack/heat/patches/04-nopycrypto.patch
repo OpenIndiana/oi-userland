@@ -1,38 +1,18 @@
 In-house removal of PyCrypto dependency in Heat. This patch is
 Solaris-specific and not suitable for upstream.
 
-Convert encrypt() and decrypt() to use M2Crypto instead of PyCrypto.
-
---- heat-2013.2.3/heat/common/crypt.py.~1~	2014-04-03 11:44:49.000000000 -0700
-+++ heat-2013.2.3/heat/common/crypt.py	2014-07-07 03:26:19.115102209 -0700
-@@ -14,9 +14,9 @@
- #    under the License.
+--- heat-2014.2.2/heat/common/crypt.py.~1~	2014-12-04 21:02:27.000000000 -0800
++++ heat-2014.2.2/heat/common/crypt.py	2015-01-31 16:56:20.917251751 -0800
+@@ -13,7 +13,7 @@
  
  import base64
--from Crypto.Cipher import AES
- from os import urandom
  
+-from Crypto.Cipher import AES
 +from M2Crypto.EVP import Cipher
  from oslo.config import cfg
  
- from heat.openstack.common import log as logging
-@@ -36,9 +36,12 @@
- def encrypt(auth_info):
-     if auth_info is None:
-         return None
--    iv = urandom(AES.block_size)
--    cipher = AES.new(cfg.CONF.auth_encryption_key[:32], AES.MODE_CFB, iv)
--    res = base64.b64encode(iv + cipher.encrypt(auth_info))
-+    iv = urandom(16)
-+    cipher = Cipher(alg='aes_256_cfb', key=cfg.CONF.auth_encryption_key[:32],
-+                    iv=iv, op=1)
-+    padded = cipher.update(auth_info)
-+    padded = padded + cipher.final()
-+    res = base64.b64encode(iv + padded)
-     return res
- 
- 
-@@ -46,7 +49,9 @@
+ from heat.openstack.common.crypto import utils
+@@ -57,7 +57,9 @@ def heat_decrypt(auth_info):
      if auth_info is None:
          return None
      auth = base64.b64decode(auth_info)
@@ -45,3 +25,193 @@ Convert encrypt() and decrypt() to use M2Crypto instead of PyCrypto.
 +    padded = cipher.update(auth[16:])
 +    res = padded + cipher.final()
      return res
+--- heat-2014.2.2/heat/openstack/common/crypto/utils.py.~1~	2014-12-04 21:02:30.000000000 -0800
++++ heat-2014.2.2/heat/openstack/common/crypto/utils.py	2015-01-31 16:56:20.917680985 -0800
+@@ -14,8 +14,8 @@
+ 
+ import base64
+ 
+-from Crypto.Hash import HMAC
+-from Crypto import Random
++from M2Crypto import EVP
++from M2Crypto import Rand
+ import six
+ 
+ from heat.openstack.common.gettextutils import _
+@@ -23,6 +23,24 @@ from heat.openstack.common import import
+ 
+ bchr = six.int2byte
+ 
++# Provide a mapping between the names of hash types used by PyCrypto to
++# their digest sizes and the corresponding algorithm name used by
++# M2Crypto/OpenSSL.
++hashmap = {
++    'SHA224':   (28, 'sha224'),
++    'SHA256':   (32, 'sha256'),
++    'SHA384':   (48, 'sha384'),
++    'SHA512':   (64, 'sha512')
++}
++
++# Provide a mapping between the length of a key and the algorithm name
++# used by M2Crypto/OpenSSL.
++algomap = {
++    16:         'aes_128_cbc',
++    24:         'aes_192_cbc',
++    32:         'aes_256_cbc'
++}
++
+ 
+ class CryptoutilsException(Exception):
+     """Generic Exception for Crypto utilities."""
+@@ -39,6 +57,33 @@ class CipherBlockLengthTooBig(Cryptoutil
+         super(CryptoutilsException, self).__init__(message)
+ 
+ 
++class CipherKeyLengthInvalid(CryptoutilsException):
++    """The encryption key length is invalid for AES-CBC."""
++
++    def __init__(self, keylen):
++        msg = _("Encryption key length of %d is invalid for AES-CBC.")
++        message = msg % keylen
++        super(CryptoutilsException, self).__init__(message)
++
++
++class CipherTypeNotSupported(CryptoutilsException):
++    """The encryption cipher type is not supported."""
++
++    def __init__(self, enctype):
++        msg = _("Encryption cipher type %s is not supported")
++        message = msg % enctype
++        super(CryptoutilsException, self).__init__(message)
++
++
++class HashTypeNotSupported(CryptoutilsException):
++    """The message authentication hash function is not supported."""
++
++    def __init__(self, hashtype):
++        msg = _("Message authentication hash function %s is not supported")
++        message = msg % hashtype
++        super(CryptoutilsException, self).__init__(message)
++
++
+ class HKDFOutputLengthTooLong(CryptoutilsException):
+     """The amount of Key Material asked is too much."""
+ 
+@@ -55,8 +100,10 @@ class HKDF(object):
+     """
+ 
+     def __init__(self, hashtype='SHA256'):
+-        self.hashfn = importutils.import_module('Crypto.Hash.' + hashtype)
+-        self.max_okm_length = 255 * self.hashfn.digest_size
++        if hashtype not in hashmap:
++            raise HashTypeNotSupported(hashtype)
++        (self.digest_size, self.algo) = hashmap[hashtype]
++        self.max_okm_length = 255 * self.digest_size
+ 
+     def extract(self, ikm, salt=None):
+         """An extract function that can be used to derive a robust key given
+@@ -67,9 +114,9 @@ class HKDF(object):
+         :param salt: optional salt value (a non-secret random value)
+         """
+         if salt is None:
+-            salt = b'\x00' * self.hashfn.digest_size
++            salt = b'\x00' * self.digest_size
+ 
+-        return HMAC.new(salt, ikm, self.hashfn).digest()
++        return EVP.hmac(salt, ikm, self.algo)
+ 
+     def expand(self, prk, info, length):
+         """An expand function that will return arbitrary length output that can
+@@ -83,12 +130,12 @@ class HKDF(object):
+         if length > self.max_okm_length:
+             raise HKDFOutputLengthTooLong(length, self.max_okm_length)
+ 
+-        N = (length + self.hashfn.digest_size - 1) // self.hashfn.digest_size
++        N = (length + self.digest_size - 1) // self.digest_size
+ 
+         okm = b""
+         tmp = b""
+         for block in range(1, N + 1):
+-            tmp = HMAC.new(prk, tmp + info + bchr(block), self.hashfn).digest()
++            tmp = EVP.hmac(prk, tmp + info + bchr(block), self.algo)
+             okm += tmp
+ 
+         return okm[:length]
+@@ -108,11 +155,15 @@ class SymmetricCrypto(object):
+     """
+ 
+     def __init__(self, enctype='AES', hashtype='SHA256'):
+-        self.cipher = importutils.import_module('Crypto.Cipher.' + enctype)
+-        self.hashfn = importutils.import_module('Crypto.Hash.' + hashtype)
++        if enctype != 'AES':
++            raise CipherTypeNotSupported(enctype)
++        if hashtype not in hashmap:
++            raise HashTypeNotSupported(hashtype)
++        self.algo = hashmap[hashtype][1]
++        self.block_size = 16
+ 
+     def new_key(self, size):
+-        return Random.new().read(size)
++        return Rand.rand_bytes(size)
+ 
+     def encrypt(self, key, msg, b64encode=True):
+         """Encrypt the provided msg and returns the cyphertext optionally
+@@ -129,19 +180,14 @@ class SymmetricCrypto(object):
+ 
+         :returns enc: a block of encrypted data.
+         """
+-        iv = Random.new().read(self.cipher.block_size)
+-        cipher = self.cipher.new(key, self.cipher.MODE_CBC, iv)
+-
+-        # CBC mode requires a fixed block size. Append padding and length of
+-        # padding.
+-        if self.cipher.block_size > MAX_CB_SIZE:
+-            raise CipherBlockLengthTooBig(self.cipher.block_size, MAX_CB_SIZE)
+-        r = len(msg) % self.cipher.block_size
+-        padlen = self.cipher.block_size - r - 1
+-        msg += b'\x00' * padlen
+-        msg += bchr(padlen)
++        keylen = len(key)
++        if keylen not in algomap:
++            raise CipherKeyLengthInvalid(keylen)
++        iv = Rand.rand_bytes(self.block_size)
++        cipher = EVP.Cipher(algomap[keylen], key, iv, 1)
+ 
+-        enc = iv + cipher.encrypt(msg)
++        enc = iv + cipher.update(msg)
++        enc += cipher.final()
+         if b64encode:
+             enc = base64.b64encode(enc)
+         return enc
+@@ -157,14 +203,16 @@ class SymmetricCrypto(object):
+ 
+         :returns plain: the plaintext message.
+         """
++        keylen = len(key)
++        if keylen not in algomap:
++            raise CipherKeyLengthInvalid(keylen)
+         if b64decode:
+             msg = base64.b64decode(msg)
+-        iv = msg[:self.cipher.block_size]
+-        cipher = self.cipher.new(key, self.cipher.MODE_CBC, iv)
++        iv = msg[:self.block_size]
++        cipher = EVP.Cipher(algomap[keylen], key, iv, 0)
+ 
+-        padded = cipher.decrypt(msg[self.cipher.block_size:])
+-        l = ord(padded[-1:]) + 1
+-        plain = padded[:-l]
++        padded = cipher.update(msg[self.block_size:])
++        plain = padded + cipher.final()
+         return plain
+ 
+     def sign(self, key, msg, b64encode=True):
+@@ -177,8 +225,7 @@ class SymmetricCrypto(object):
+ 
+         :returns out: a base64 encoded signature.
+         """
+-        h = HMAC.new(key, msg, self.hashfn)
+-        out = h.digest()
++        out = EVP.hmac(key, msg, self.algo)
+         if b64encode:
+             out = base64.b64encode(out)
+         return out

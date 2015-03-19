@@ -18,21 +18,24 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tox
-COMPONENT_VERSION=	1.4.3
+COMPONENT_VERSION=	1.8.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:b998d809d954fd9c30476a56bbbbf20a1a5adaa3e4cc5eb052c7051a682b2021
+    sha256:44ca1e038cb57fe40ac0dff8b67b258efe05517bf9b4b4b07035f8be830aac01
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	https://pypi.python.org/pypi/tox
+COMPONENT_PROJECT_URL=	http://tox.testrun.org/
 COMPONENT_BUGDB=	python-mod/tox
 
-TPNO=			14503
+TPNO=			21743
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -44,9 +47,13 @@ COMPONENT_POST_INSTALL_ACTION += (cd $(PROTO_DIR)/usr/bin ; \
 
 COMPONENT_TEST_ENV +=	HOME=$(HOME)
 COMPONENT_TEST_ENV +=	PATH=/usr/bin
-COMPONENT_TEST_DIR =    $(COMPONENT_SRC)/tests
-COMPONENT_TEST_CMD =    $(PROTOUSRBINDIR)/tox-$(PYTHON_VERSION)
-COMPONENT_TEST_ARGS =   test_config.py
+COMPONENT_TEST_DIR =	$(COMPONENT_SRC)/tests
+COMPONENT_TEST_CMD =	$(PROTOUSRBINDIR)/tox-$(PYTHON_VERSION)
+# Tox normally runs all test environments at once, which means that with one
+# test target per Python version, we run all environments for each.  So we
+# restrict the Python versions to the one corresponding to the test target.
+PYV = $(shell echo $(PYTHON_VERSION) | tr -d .)
+COMPONENT_TEST_ARGS =	-e $(PYV:%=py%)
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
@@ -55,9 +62,7 @@ build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
-# Tests require py, pytest and virtualenv packages to be installed.
 test:		$(TEST_NO_ARCH)
-
 
 REQUIRED_PACKAGES += library/python/setuptools-26
 REQUIRED_PACKAGES += library/python/setuptools-27

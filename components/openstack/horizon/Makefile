@@ -22,23 +22,183 @@
 #
 # Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-targets.mk
+
+PATCH_EACH_ARCHIVE = 1
 
 COMPONENT_NAME=		horizon
-COMPONENT_CODENAME=	havana
-COMPONENT_VERSION=	2013.2.3
+COMPONENT_CODENAME=	juno
+COMPONENT_VERSION=	2014.2.2
+COMPONENT_BE_VERSION=	2014.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:de9b87ee62d8b28792399be0fc867ba99618eaaad289cf9842b5c7084e12620f
+    sha256:f639cdb8fc7fd26725d689d42c426f09bbd5a77554910800b1315f182879558e
 COMPONENT_ARCHIVE_URL=	http://launchpad.net/$(COMPONENT_NAME)/$(COMPONENT_CODENAME)/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_PROJECT_URL=	http://www.openstack.org/
-COMPONENT_BUGDB=	service/horizon 
-IPS_COMPONENT_VERSION=  0.$(COMPONENT_VERSION)
+COMPONENT_BUGDB=	service/horizon
+IPS_COMPONENT_VERSION=	0.$(COMPONENT_VERSION)
+COMPONENT_PATCHES=	\
+	01-osprofiler.patch \
+	02-change-angular-imports.patch \
+	03-remove-qunit.patch \
+	04-remove-jasmine.patch \
+	05-disable-unsupported-bootsource.patch \
+	06-remove-security-groups.patch \
+	11-requirements.patch
 
-TPNO_HORIZON=		17862
-TPNO_CSS=		16775
+TPNO_HORIZON=		21822
+TPNO_ANGULAR=		21640
+TPNO_BOOTSTRAP_DP=	20670
+TPNO_BOOTSTRAP_SCSS=	20671
+TPNO_D3=		20822
+TPNO_FONT_AWESOME=	21641
+TPNO_HOGAN=		21827
+TPNO_JQUERY=		21642
+TPNO_JQUERY_MIGRATE=	13315
+TPNO_JQUERY_UI=		18416
+TPNO_JQUERY_QUICKSEARCH=20396
+TPNO_JQUERY_TABLESORTER=20824
+TPNO_JSENCRYPT=		20397
+TPNO_RICKSHAW=		20673
+TPNO_SPIN=		20674
+
+NUM_EXTRA_ARCHIVES=	1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+
+#
+# Starting with Juno, Horizon depends on a number of XStatic modules
+# to deliver the required JavaScript modules.  This delivery method
+# may be changing in future releases, so the XStatic modules for now
+# are built as part of Horizon rather than being stand alone
+# components/packages.  The NUM_EXTRA_ARCHIVES parameter should
+# enumerate the numbers of all the extra XStatic archives to be
+# included in the Horizon build.
+#
+# XStatic itself is only used during the build process and so while it
+# is downloaded and installed in the proto area, none of its
+# components are delivered in the Horizon package itself.
+#
+COMPONENT_NAME_1 =	XStatic
+VERSION_XSTATIC =	1.0.1
+COMPONENT_ARCHIVE_1 =	XStatic-$(VERSION_XSTATIC).tar.gz
+COMPONENT_ARCHIVE_HASH_1 = \
+	sha256:0ec93d7c66ebb9e0d31b664753437dc8634cb66e13310cb47c9eb1e0bc66d726
+COMPONENT_ARCHIVE_URL_1 = $(call pypi_url,1)
+
+COMPONENT_NAME_2 =	XStatic-Angular
+VERSION_ANGULAR =	1.3.7.0
+COMPONENT_ARCHIVE_2 =	XStatic-Angular-$(VERSION_ANGULAR).tar.gz
+COMPONENT_ARCHIVE_HASH_2 = \
+	sha256:7cad216b226399cbe8d2909ed5b9f28d724907b9c9e1e078e6e25d320a3d5dd7
+COMPONENT_ARCHIVE_URL_2 = $(call pypi_url,2)
+PKG_MACROS +=		VERSION_ANGULAR=$(VERSION_ANGULAR)
+
+COMPONENT_NAME_3 =	XStatic-Bootstrap-Datepicker
+VERSION_BOOTSTRAP_DP=	1.3.1.0
+COMPONENT_ARCHIVE_3 =	XStatic-Bootstrap-Datepicker-$(VERSION_BOOTSTRAP_DP).tar.gz
+COMPONENT_ARCHIVE_HASH_3 = \
+	sha256:9edc9b77501001fcee9fbf4bf0a722c263efd928ef928b40081a8269fdd9a944
+COMPONENT_ARCHIVE_URL_3 = $(call pypi_url,3)
+PKG_MACROS +=		VERSION_BOOTSTRAP_DP=$(VERSION_BOOTSTRAP_DP)
+
+COMPONENT_NAME_4 =	XStatic-Bootstrap-SCSS
+VERSION_BOOTSTRAP_SCSS=	3.2.0.0
+COMPONENT_ARCHIVE_4 =	XStatic-Bootstrap-SCSS-$(VERSION_BOOTSTRAP_SCSS).tar.gz
+COMPONENT_ARCHIVE_HASH_4 = \
+	sha256:7e9858737e2e6aac921ec7a3fca627e522901c3061611e154ebc0b8a892c7018
+COMPONENT_ARCHIVE_URL_4 = $(call pypi_url,4)
+PKG_MACROS +=		VERSION_BOOTSTRAP_SCSS=$(VERSION_BOOTSTRAP_SCSS)
+
+COMPONENT_NAME_5 =	XStatic-D3
+VERSION_D3 =		3.1.6.2
+COMPONENT_ARCHIVE_5 =	XStatic-D3-$(VERSION_D3).tar.gz
+COMPONENT_ARCHIVE_HASH_5 = \
+	sha256:46fe521f8dad99f5e20f6702180510c37b81d11f1d78119d308fcec31381f90e
+COMPONENT_ARCHIVE_URL_5 = $(call pypi_url,5)
+PKG_MACROS +=		VERSION_D3=$(VERSION_D3)
+
+COMPONENT_NAME_6 =	XStatic-Font-Awesome
+VERSION_FONT_AWESOME =	4.2.0.0
+COMPONENT_ARCHIVE_6 =	XStatic-Font-Awesome-$(VERSION_FONT_AWESOME).tar.gz
+COMPONENT_ARCHIVE_HASH_6 = \
+	sha256:b7fdbf1ed316f3a207eeb9ee1c052820e55b4e31d247d81c8ea059e21f555a73
+COMPONENT_ARCHIVE_URL_6 = $(call pypi_url,6)
+PKG_MACROS +=		VERSION_FONT_AWESOME=$(VERSION_FONT_AWESOME)
+
+COMPONENT_NAME_7 =	XStatic-Hogan
+VERSION_HOGAN =		2.0.0.2
+COMPONENT_ARCHIVE_7 =	XStatic-Hogan-$(VERSION_HOGAN).tar.gz
+COMPONENT_ARCHIVE_HASH_7 = \
+	sha256:5941bc7fb2a09916b8837848e6fc2a13b2dfc271811e9b522c61e1337d5fc2bd
+COMPONENT_ARCHIVE_URL_7 = $(call pypi_url,7)
+PKG_MACROS +=		VERSION_HOGAN=$(VERSION_HOGAN)
+
+COMPONENT_NAME_8 =	XStatic-jQuery
+VERSION_JQUERY =	1.10.2.1
+COMPONENT_ARCHIVE_8 =	XStatic-jQuery-$(VERSION_JQUERY).tar.gz
+COMPONENT_ARCHIVE_HASH_8 = \
+	sha256:83416a6bb86e8534858c4d1ddca45e881c87639da6f78000c28c3a193fe91305
+COMPONENT_ARCHIVE_URL_8 = $(call pypi_url,8)
+PKG_MACROS +=		VERSION_JQUERY=$(VERSION_JQUERY)
+
+COMPONENT_NAME_9 =	XStatic-JQuery-Migrate
+VERSION_JQUERY_MIGRATE=	1.2.1.1
+COMPONENT_ARCHIVE_9 =	XStatic-JQuery-Migrate-$(VERSION_JQUERY_MIGRATE).tar.gz
+COMPONENT_ARCHIVE_HASH_9 = \
+	sha256:e2959b3df49afdddb00d36b74cca727a91b994b9f4edb993d7264731a750900e
+COMPONENT_ARCHIVE_URL_9 = $(call pypi_url,9)
+PKG_MACROS +=		VERSION_JQUERY_MIGRATE=$(VERSION_JQUERY_MIGRATE)
+
+COMPONENT_NAME_10 =	XStatic-jquery-ui
+VERSION_JQUERY_UI =	1.11.0.1
+COMPONENT_ARCHIVE_10 =	XStatic-jquery-ui-$(VERSION_JQUERY_UI).tar.gz
+COMPONENT_ARCHIVE_HASH_10 = \
+	sha256:099b1836eb0d91b8dc98f5b8a6b856a2631d43af0d47f33ef90ee72ed37bda58
+COMPONENT_ARCHIVE_URL_10 = $(call pypi_url,10)
+PKG_MACROS +=		VERSION_JQUERY_UI=$(VERSION_JQUERY_UI)
+
+COMPONENT_NAME_11 =	XStatic-JQuery.quicksearch
+VERSION_JQUERY_QS =	2.0.3.1
+COMPONENT_ARCHIVE_11 =	XStatic-JQuery.quicksearch-$(VERSION_JQUERY_QS).tar.gz
+COMPONENT_ARCHIVE_HASH_11 = \
+	sha256:1271571b420417add56c274fd935e81bfc79e0d54a03559d6ba5ef369f358477
+COMPONENT_ARCHIVE_URL_11 = $(call pypi_url,11)
+PKG_MACROS +=		VERSION_JQUERY_QS=$(VERSION_JQUERY_QS)
+
+COMPONENT_NAME_12 =	XStatic-JQuery.TableSorter
+VERSION_JQUERY_TS =	2.14.5.1
+COMPONENT_ARCHIVE_12 =	XStatic-JQuery.TableSorter-$(VERSION_JQUERY_TS).tar.gz
+COMPONENT_ARCHIVE_HASH_12 = \
+	sha256:3ba24aecd9a3dc71a79dd4096fa5a8a041c3a7b892c61d05e6e46de0605070f0
+COMPONENT_ARCHIVE_URL_12 = $(call pypi_url,12)
+PKG_MACROS +=		VERSION_JQUERY_TS=$(VERSION_JQUERY_TS)
+
+COMPONENT_NAME_13 =	XStatic-JSEncrypt
+VERSION_JSENCRYPT =	2.0.0.2
+COMPONENT_ARCHIVE_13 =	XStatic-JSEncrypt-$(VERSION_JSENCRYPT).tar.gz
+COMPONENT_ARCHIVE_HASH_13 = \
+	sha256:5852892afc6f80c7848f4110b6dad190a54aeb908271d67aaeae9d966f4a26b5
+COMPONENT_ARCHIVE_URL_13 = $(call pypi_url,13)
+PKG_MACROS +=		VERSION_JSENCRYPT=$(VERSION_JSENCRYPT)
+
+COMPONENT_NAME_14 =	XStatic-Rickshaw
+VERSION_RICKSHAW =	1.5.0.0
+COMPONENT_ARCHIVE_14 =	XStatic-Rickshaw-$(VERSION_RICKSHAW).tar.gz
+COMPONENT_ARCHIVE_HASH_14 = \
+	sha256:147574228757254442700a9eea5150f14acb1224ef0612f896b663ab58406de8
+COMPONENT_ARCHIVE_URL_14 = $(call pypi_url,14)
+PKG_MACROS +=		VERSION_RICKSHAW=$(VERSION_RICKSHAW)
+
+COMPONENT_NAME_15 =	XStatic-Spin
+VERSION_SPIN =		1.2.5.2
+COMPONENT_ARCHIVE_15 =	XStatic-Spin-$(VERSION_SPIN).tar.gz
+COMPONENT_ARCHIVE_HASH_15 = \
+	sha256:7f46ef0e45e047019ba6eda22c432fb96f681b97bbe7f1749aa9209e07727192
+COMPONENT_ARCHIVE_URL_15 = $(call pypi_url,15)
+PKG_MACROS +=		VERSION_SPIN=$(VERSION_SPIN)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -50,26 +210,117 @@ ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 # only need to deliver one version.  The manifest is parameterized, though.
 PYTHON_VERSIONS=	2.6
 
-PKG_MACROS +=		PYVER=$(PYTHON_VERSIONS)
+# Django's manage.py needs to be run with Python 2.6, since that's what this
+# ecosystem runs under right now.
+PYTHON_VERSION=		2.6
 
+PKG_MACROS +=           COMPONENT_BE_VERSION=$(COMPONENT_BE_VERSION)
+PKG_MACROS +=		PYVER=$(PYTHON_VERSIONS)
+PKG_MACROS +=		PYV=$(shell echo $(PYTHON_VERSIONS) | tr -d .)
+
+PROTO_PYTHON_LIB =	$(PROTO_DIR)$(PYTHON_LIB)
+
+# Copy the Oracle branding files and Django app customizations into place
 COMPONENT_POST_INSTALL_ACTION += \
-	($(MKDIR) $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/openstack_dashboard/static/solaris/css; \
-	 $(CP) files/branding/css/solaris.css $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/openstack_dashboard/static/solaris/css; \
-	 $(MKDIR) $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/openstack_dashboard/static/solaris/img; \
-	 $(CP) files/branding/img/* $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/openstack_dashboard/static/solaris/img; \
-	 $(MKDIR) $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/openstack_dashboard/static/solaris/theme; \
-	 $(CP) files/branding/theme/_stylesheets.html $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/openstack_dashboard/static/solaris/theme; \
-	 $(CP) files/overrides.py $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/openstack_dashboard); \
-	 $(PYTHON) -m compileall $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES)
-	
+	($(MKDIR) $(PROTO_PYTHON_LIB)/openstack_dashboard/templates/solaris; \
+	 $(CP) files/branding/css/solaris.css \
+	     $(PROTO_PYTHON_LIB)/openstack_dashboard/static/dashboard/css; \
+	 $(CP) files/branding/img/* \
+	     $(PROTO_PYTHON_LIB)/openstack_dashboard/static/dashboard/img; \
+	 $(CP) files/branding/theme/_stylesheets.html \
+	     $(PROTO_PYTHON_LIB)/openstack_dashboard/templates/solaris; \
+	 $(CP) files/overrides.py $(PROTO_PYTHON_LIB)/openstack_dashboard);
+
+# Generate .pyc files for the files in the proto directory
+COMPONENT_POST_INSTALL_ACTION += \
+	$(PYTHON) -m compileall $(PROTO_PYTHON_LIB);
+
+# Collect the JavaScript files and compress the static assets
+COMPONENT_POST_INSTALL_ACTION += \
+	(set -e; $(CP) $(SOURCE_DIR)/manage.py \
+	     $(PROTO_PYTHON_LIB)/openstack_dashboard; \
+	 $(TOUCH) $(PROTO_PYTHON_LIB)/xstatic/__init__.py; \
+	 $(TOUCH) $(PROTO_PYTHON_LIB)/xstatic/pkg/__init__.py; \
+	 cd $(PROTO_PYTHON_LIB)/openstack_dashboard; \
+	 $(ENV) PYTHONPATH=$(PROTO_PYTHON_LIB) ./manage.py \
+	     collectstatic --noinput; \
+	 $(ENV) PYTHONPATH=$(PROTO_PYTHON_LIB) ./manage.py compress --force; \
+	 $(CP) -R $(PROTO_PYTHON_LIB)/static \
+	     $(PROTO_PYTHON_LIB)/openstack_dashboard; \
+	 $(RM) -r \
+	     $(PROTO_PYTHON_LIB)/XStatic* \
+	     $(PROTO_PYTHON_LIB)/openstack_dashboard/local/.secret_key_store \
+	     $(PROTO_PYTHON_LIB)/openstack_dashboard/manage.py \
+	     $(PROTO_PYTHON_LIB)/static \
+	     $(PROTO_PYTHON_LIB)/xstatic); (( $$? )) && exit 1;
+
+# Patch openstack_dashboard/settings.py to remove the xstatic imports
+# and use.  This is done after 'gmake prep' because we need the
+# xstatic imports for static asset collection.
+COMPONENT_POST_INSTALL_ACTION += \
+	 $(GPATCH) -d $(PROTO_DIR) $(GPATCH_FLAGS) \
+	     < patches/99-remove.xstatic.patch
+
+#
+# The xstatic target builds each XStatic component alongside Horizon.
+# This is done because the Django script which collects
+# the JavaScript libraries and compresses the static assets
+# (manage.py) requires the packages be "installed".  Rather than
+# forcing a CBE update for any revision of any XStatic module, we use
+# what's specified above.
+#
+# This extra work is done at package build time rather than when the
+# application runs because a) compressing the assets ahead of time
+# makes things faster and b) this allows the package to be entirely
+# contained in /usr rather than having a separate spot in /var for the
+# webservd user to write compressed assets to as they get used.
+#
+.PHONY:	xstatic
+xstatic:	$(PROTO_DIR) build
+	for xs_archive in $$(ls -d XStatic-* | grep -v .tar.gz); do \
+		cd $$xs_archive; \
+		$(ENV) $(PYTHON.$(BITS)) ./setup.py build; \
+		$(ENV) $(PYTHON.$(BITS)) ./setup.py install \
+		    --force \
+		    --install-data=$(PYTHON_DATA) \
+		    --install-lib=$(PYTHON_LIB) \
+		    --install-platlib=$(PYTHON_LIB) \
+		    --install-purelib=$(PYTHON_LIB) \
+		    --root $(PROTO_DIR); \
+		cd ../; \
+	done
+
 # common targets
 build:		$(BUILD_NO_ARCH)
 
-install:	$(INSTALL_NO_ARCH)
+# make sure all of the xstatic modules are built
+install:	$(INSTALL_NO_ARCH) xstatic
 
 test:		$(NO_TESTS)
 
+clean::
+	gfind $(COMPONENT_DIR) -maxdepth 1 -type d -name "XStatic*" \
+	    -exec rm -r {} \;
 
-REQUIRED_PACKAGES += library/python/eventlet-26
+
+# Packages required by Django's manage.py during the Horizon build
+REQUIRED_PACKAGES += library/python/babel-26
+REQUIRED_PACKAGES += library/python/ceilometerclient-26
+REQUIRED_PACKAGES += library/python/cinderclient-26
+REQUIRED_PACKAGES += library/python/django-26
+REQUIRED_PACKAGES += library/python/django-pyscss-26
+REQUIRED_PACKAGES += library/python/django_compressor-26
+REQUIRED_PACKAGES += library/python/django_openstack_auth-26
+REQUIRED_PACKAGES += library/python/glanceclient-26
+REQUIRED_PACKAGES += library/python/heatclient-26
+REQUIRED_PACKAGES += library/python/iso8601-26
+REQUIRED_PACKAGES += library/python/keystoneclient-26
+REQUIRED_PACKAGES += library/python/lockfile-26
+REQUIRED_PACKAGES += library/python/neutronclient-26
+REQUIRED_PACKAGES += library/python/novaclient-26
 REQUIRED_PACKAGES += library/python/oslo.config-26
-REQUIRED_PACKAGES += runtime/python-26
+REQUIRED_PACKAGES += library/python/requests-26
+REQUIRED_PACKAGES += library/python/saharaclient-26
+REQUIRED_PACKAGES += library/python/six-26
+REQUIRED_PACKAGES += library/python/swiftclient-26
+REQUIRED_PACKAGES += library/python/troveclient-26

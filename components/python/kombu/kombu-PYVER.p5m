@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
@@ -37,6 +37,7 @@ set name=info.upstream value="Ask Solem <ask@celeryproject.org>"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2013/187
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+#
 file path=usr/lib/python$(PYVER)/vendor-packages/kombu-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
 file path=usr/lib/python$(PYVER)/vendor-packages/kombu-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/kombu-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
@@ -45,6 +46,10 @@ file path=usr/lib/python$(PYVER)/vendor-packages/kombu-$(COMPONENT_VERSION)-py$(
 file path=usr/lib/python$(PYVER)/vendor-packages/kombu-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/kombu/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/kombu/abstract.py
+file path=usr/lib/python$(PYVER)/vendor-packages/kombu/async/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/kombu/async/hub.py
+file path=usr/lib/python$(PYVER)/vendor-packages/kombu/async/semaphore.py
+file path=usr/lib/python$(PYVER)/vendor-packages/kombu/async/timer.py
 file path=usr/lib/python$(PYVER)/vendor-packages/kombu/clocks.py
 file path=usr/lib/python$(PYVER)/vendor-packages/kombu/common.py
 file path=usr/lib/python$(PYVER)/vendor-packages/kombu/compat.py
@@ -52,7 +57,9 @@ file path=usr/lib/python$(PYVER)/vendor-packages/kombu/compression.py
 file path=usr/lib/python$(PYVER)/vendor-packages/kombu/connection.py
 file path=usr/lib/python$(PYVER)/vendor-packages/kombu/entity.py
 file path=usr/lib/python$(PYVER)/vendor-packages/kombu/exceptions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/kombu/five.py
 file path=usr/lib/python$(PYVER)/vendor-packages/kombu/log.py
+file path=usr/lib/python$(PYVER)/vendor-packages/kombu/message.py
 file path=usr/lib/python$(PYVER)/vendor-packages/kombu/messaging.py
 file path=usr/lib/python$(PYVER)/vendor-packages/kombu/mixins.py
 file path=usr/lib/python$(PYVER)/vendor-packages/kombu/pidbox.py
@@ -60,6 +67,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/kombu/pools.py
 file path=usr/lib/python$(PYVER)/vendor-packages/kombu/serialization.py
 file path=usr/lib/python$(PYVER)/vendor-packages/kombu/simple.py
 file path=usr/lib/python$(PYVER)/vendor-packages/kombu/syn.py
+file path=usr/lib/python$(PYVER)/vendor-packages/kombu/transport/SLMQ.py
 file path=usr/lib/python$(PYVER)/vendor-packages/kombu/transport/SQS.py
 file path=usr/lib/python$(PYVER)/vendor-packages/kombu/transport/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/kombu/transport/amqplib.py
@@ -79,6 +87,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/kombu/transport/librabbitmq.py
 file path=usr/lib/python$(PYVER)/vendor-packages/kombu/transport/memory.py
 file path=usr/lib/python$(PYVER)/vendor-packages/kombu/transport/mongodb.py
 file path=usr/lib/python$(PYVER)/vendor-packages/kombu/transport/pyamqp.py
+file path=usr/lib/python$(PYVER)/vendor-packages/kombu/transport/pyro.py
 file path=usr/lib/python$(PYVER)/vendor-packages/kombu/transport/redis.py
 file path=usr/lib/python$(PYVER)/vendor-packages/kombu/transport/sqlalchemy/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/kombu/transport/sqlalchemy/models.py
@@ -93,16 +102,16 @@ file path=usr/lib/python$(PYVER)/vendor-packages/kombu/utils/compat.py
 file path=usr/lib/python$(PYVER)/vendor-packages/kombu/utils/debug.py
 file path=usr/lib/python$(PYVER)/vendor-packages/kombu/utils/encoding.py
 file path=usr/lib/python$(PYVER)/vendor-packages/kombu/utils/eventio.py
-file path=usr/lib/python$(PYVER)/vendor-packages/kombu/utils/finalize.py
 file path=usr/lib/python$(PYVER)/vendor-packages/kombu/utils/functional.py
 file path=usr/lib/python$(PYVER)/vendor-packages/kombu/utils/limits.py
 file path=usr/lib/python$(PYVER)/vendor-packages/kombu/utils/text.py
 file path=usr/lib/python$(PYVER)/vendor-packages/kombu/utils/url.py
+#
 license kombu.license license=BSD
 
-# force a group dependency on the optional amqp; pkgdepend work is needed to
+# force a group dependency on the optional anyjson; pkgdepend work is needed to
 # flush this out.
-depend type=group fmri=library/python/amqp-$(PYV)
+depend type=group fmri=library/python/anyjson-$(PYV)
 
 # force a group dependency on the optional boto; pkgdepend work is needed to
 # flush this out.
@@ -115,6 +124,14 @@ depend type=group fmri=library/python/django-$(PYV)
 # force a group dependency on the optional librabbitmq; pkgdepend work is needed
 # to flush this out.
 depend type=group fmri=library/python/librabbitmq-$(PYV)
+
+# force a group dependency on the optional pytz; pkgdepend work is needed to
+# flush this out.
+depend type=group fmri=library/python/pytz-$(PYV)
+
+# force a group dependency on the optional pyyaml; pkgdepend work is needed to
+# flush this out.
+depend type=group fmri=library/python/pyyaml-$(PYV)
 
 # force a group dependency on the optional setuptools; pkgdepend work is needed
 # to flush this out.
@@ -132,8 +149,8 @@ depend type=optional \
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
     pkg.debug.depend.path=usr/bin
 
-# force a dependency on anyjson; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/anyjson-$(PYV)
+# force a dependency on amqp; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/amqp-$(PYV)
 
 # force a dependency on importlib; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/importlib-$(PYV)

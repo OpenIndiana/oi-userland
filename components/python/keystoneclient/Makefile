@@ -22,21 +22,22 @@
 #
 # Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		python-keystoneclient
-COMPONENT_VERSION=	0.8.0
+COMPONENT_VERSION=	1.0.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:6a34e10e67f375c82fefbb787072767da976520b302021b5d7237bd78e93f8cf
+    sha256:6d960d2196efc7a181519a77f757a27ceeeac71f41f624318ae7f1088d2e6db4
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://launchpad.net/python-keystoneclient
 COMPONENT_BUGDB=	service/keystone
 
-TPNO=			17870
+TPNO=			21732
 
-# Depends on netaddr, which depends on ipython, which is not Python 3 ready.
+# Depends on netaddr & python-memcached which are not Python 3 ready.
 PYTHON_VERSIONS=	2.7 2.6
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -60,4 +61,3 @@ install:	$(INSTALL_NO_ARCH)
 # which haven't been integrated yet.
 #
 test:		$(NO_TESTS)
-

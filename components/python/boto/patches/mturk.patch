@@ -1,8 +1,8 @@
 Adjust the Python code to work with Python 2.6 as well as Python 2.7.
 
---- boto-2.9.2/bin/mturk.orig	2013-05-02 11:07:33.957693616 -0700
-+++ boto-2.9.2/bin/mturk	2013-05-02 12:27:47.929525927 -0700
-@@ -56,11 +56,11 @@
+--- boto-2.29.1/bin/mturk.~1~	2014-05-08 13:21:32.000000000 -0700
++++ boto-2.29.1/bin/mturk	2014-12-13 13:41:08.785528992 -0800
+@@ -58,11 +58,11 @@ qual_requirements = dict(
      PercentAssignmentsApproved = '000000000000000000L0',
      PercentAssignmentsRejected = '000000000000000000S0')
  
@@ -16,7 +16,7 @@ Adjust the Python code to work with Python 2.6 as well as Python 2.7.
  
  example_config_file = '''Example configuration file:
  
-@@ -212,11 +212,11 @@
+@@ -214,11 +214,11 @@ def display_hit(hit, verbose = False):
  
  def digest_assignment(a):
      return dict(
@@ -31,7 +31,7 @@ Adjust the Python code to work with Python 2.6 as well as Python 2.7.
  
  # --------------------------------------------------
  # Commands
-@@ -278,7 +278,7 @@
+@@ -280,7 +280,7 @@ The API docs say DisableHIT doesn't work
  but apparently, it does.'''
      con.disable_hit(hit)
      global nicknames
@@ -39,4 +39,4 @@ Adjust the Python code to work with Python 2.6 as well as Python 2.7.
 +    nicknames = dict((k, v) for k, v in nicknames.items() if v != hit)
  
  def list_assignments(hit, only_reviewable = False):
-     assignments = map(digest_assignment, con.get_assignments(
+     # Accumulate all relevant assignments, one page of results at

@@ -18,21 +18,24 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		amqp
-COMPONENT_VERSION=	1.0.12
+COMPONENT_VERSION=	1.4.6
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:c2c09d0310009efd9b19fc12efff7a085b789b841341a533451b85750be6518d
+    sha256:ebcfc867de5a68f9f5ba14d11dbad88e6aff8435a8d39339d5ceb0e5b06de640
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://github.com/celery/py-amqp/
-COMPONENT_BUGDB=	python-mod/py-amqp 
+COMPONENT_BUGDB=	python-mod/py-amqp
 
-TPNO=			14503
+TPNO=			21715
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -40,12 +43,13 @@ include $(WS_MAKE_RULES)/ips.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
+COMPONENT_TEST_ARGS=	funtests/run_all.py --host=localhost
+COMPONENT_TEST_DIR=	$(SOURCE_DIR)
+
 # common targets
 build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
-# Tests require:
-# unittest2>=0.4.0, nose, nose-cover3, coverage>=3.0, mock
-# some of which haven't been integrated yet.
-test:		$(NO_TESTS)
+# svc:/application/rabbitmq:default needs to be online for tests to run
+test:		$(TEST_NO_ARCH)

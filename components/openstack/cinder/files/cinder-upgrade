@@ -1,0 +1,261 @@
+#!/usr/bin/python2.6
+
+# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+#
+#    Licensed under the Apache License, Version 2.0 (the "License"); you may
+#    not use this file except in compliance with the License. You may obtain
+#    a copy of the License at
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+#    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+#    License for the specific language governing permissions and limitations
+#    under the License.
+
+from ConfigParser import NoOptionError
+from datetime import datetime
+import errno
+import glob
+import os
+import shutil
+from subprocess import check_call, Popen, PIPE
+import sys
+import time
+import traceback
+
+import iniparse
+import smf_include
+import sqlalchemy
+
+
+CINDER_CONF_MAPPINGS = {
+    # Deprecated group/name
+    ('DEFAULT', 'rabbit_durable_queues'): ('DEFAULT', 'amqp_durable_queues'),
+    ('rpc_notifier2', 'topics'): ('DEFAULT', 'notification_topics'),
+    ('DEFAULT', 'osapi_compute_link_prefix'):
+        ('DEFAULT', 'osapi_volume_base_URL'),
+    ('DEFAULT', 'backup_service'): ('DEFAULT', 'backup_driver'),
+    ('DEFAULT', 'pybasedir'): ('DEFAULT', 'state_path'),
+    ('DEFAULT', 'log_config'): ('DEFAULT', 'log_config_append'),
+    ('DEFAULT', 'logfile'): ('DEFAULT', 'log_file'),
+    ('DEFAULT', 'logdir'): ('DEFAULT', 'log_dir'),
+    ('DEFAULT', 'num_iscsi_scan_tries'):
+        ('DEFAULT', 'num_volume_device_scan_tries'),
+    ('DEFAULT', 'db_backend'): ('database', 'backend'),
+    ('DEFAULT', 'sql_connection'): ('database', 'connection'),
+    ('DATABASE', 'sql_connection'): ('database', 'connection'),
+    ('sql', 'connection'): ('database', 'connection'),
+    ('DEFAULT', 'sql_idle_timeout'): ('database', 'idle_timeout'),
+    ('DATABASE', 'sql_idle_timeout'): ('database', 'idle_timeout'),
+    ('sql', 'idle_timeout'): ('database', 'idle_timeout'),
+    ('DEFAULT', 'sql_min_pool_size'): ('database', 'min_pool_size'),
+    ('DATABASE', 'sql_min_pool_size'): ('database', 'min_pool_size'),
+    ('DEFAULT', 'sql_max_pool_size'): ('database', 'max_pool_size'),
+    ('DATABASE', 'sql_max_pool_size'): ('database', 'max_pool_size'),
+    ('DEFAULT', 'sql_max_retries'): ('database', 'max_retries'),
+    ('DATABASE', 'sql_max_retries'): ('database', 'max_retries'),
+    ('DEFAULT', 'sql_retry_interval'): ('database', 'retry_interval'),
+    ('DATABASE', 'reconnect_interval'): ('database', 'retry_interval'),
+    ('DEFAULT', 'sql_max_overflow'): ('database', 'max_overflow'),
+    ('DATABASE', 'sqlalchemy_max_overflow'): ('database', 'max_overflow'),
+    ('DEFAULT', 'sql_connection_debug'): ('database', 'connection_debug'),
+    ('DEFAULT', 'sql_connection_trace'): ('database', 'connection_trace'),
+    ('DATABASE', 'sqlalchemy_pool_timeout'): ('database', 'pool_timeout'),
+    ('DEFAULT', 'dbapi_use_tpool'): ('database', 'use_tpool'),
+    ('DEFAULT', 'memcache_servers'):
+        ('keystone_authtoken', 'memcached_servers'),
+    ('DEFAULT', 'matchmaker_ringfile'): ('matchmaker_ring', 'ringfile'),
+}
+
+
+def update_mapping(section, key, mapping):
+    """ look for deprecated variables and, if found, convert it to the new
+    section/key.
+    """
+
+    if (section, key) in mapping:
+        print "Deprecated value found: [%s] %s" % (section, key)
+        section, key = mapping[(section, key)]
+        if section is None and key is None:
+            print "Removing from configuration"
+        else:
+            print "Updating to: [%s] %s" % (section, key)
+    return section, key
+
+
+def alter_mysql_tables(engine):
+    """ Convert MySQL tables to use utf8
+    """
+
+    import MySQLdb
+
+    for _none in range(5):
+        try:
+            db = MySQLdb.connect(host=engine.url.host,
+                                 user=engine.url.username,
+                                 passwd=engine.url.password,
+                                 db=engine.url.database)
+            break
+        except MySQLdb.OperationalError as err:
+            # mysql is not ready. sleep for 2 more seconds
+            time.sleep(2)
+    else:
+        print "Unable to connect to MySQL:  %s" % err
+        print ("Please verify MySQL is properly configured and online "
+               "before using svcadm(1M) to clear this service.")
+        sys.exit(smf_include.SMF_EXIT_ERR_FATAL)
+
+    cursor = db.cursor()
+    cursor.execute("ALTER DATABASE %s CHARACTER SET = 'utf8'" %
+                   engine.url.database)
+    cursor.execute("ALTER DATABASE %s COLLATE = 'utf8_general_ci'" %
+                   engine.url.database)
+    cursor.execute("SHOW tables")
+    res = cursor.fetchall()
+    if res:
+        cursor.execute("SET foreign_key_checks = 0")
+        for item in res:
+            cursor.execute("ALTER TABLE %s.%s CONVERT TO "
+                           "CHARACTER SET 'utf8', COLLATE 'utf8_general_ci'"
+                           % (engine.url.database, item[0]))
+        cursor.execute("SET foreign_key_checks = 1")
+        db.commit()
+        db.close()
+
+
+def modify_conf(old_file, mapping=None):
+    """ Copy over all uncommented options from the old configuration file.  In
+    addition, look for deprecated section/keys and convert them to the new
+    section/key.
+    """
+
+    new_file = old_file + '.new'
+
+    # open the previous version
+    old = iniparse.ConfigParser()
+    old.readfp(open(old_file))
+
+    # open the new version
+    new = iniparse.ConfigParser()
+    try:
+        new.readfp(open(new_file))
+    except IOError as err:
+        if err.errno == errno.ENOENT:
+            # The upgrade did not deliver a .new file so, return
+            print "%s not found - continuing with %s" % (new_file, old_file)
+            return
+        else:
+            raise
+    print "\nupdating %s" % old_file
+
+    # walk every single section for uncommented options
+    default_items = set(old.items('DEFAULT'))
+    for section in old.sections() + ['DEFAULT']:
+
+        # DEFAULT items show up in every section so remove them
+        if section != 'DEFAULT':
+            section_items = set(old.items(section)) - default_items
+        else:
+            section_items = default_items
+
+        for key, value in section_items:
+            # keep a copy of the old value
+            oldvalue = value
+
+            if mapping is not None:
+                section, key = update_mapping(section, key, mapping)
+
+                if section is None and key is None:
+                    # option is deprecated so continue
+                    continue
+
+            if not new.has_section(section):
+                if section != 'DEFAULT':
+                    new.add_section(section)
+
+            # print to the log when a value for the same section.key is
+            # changing to a new value
+            try:
+                new_value = new.get(section, key)
+                if new_value != value and '%SERVICE' not in new_value:
+                    print "Changing [%s] %s:\n- %s\n+ %s" % \
+                        (section, key, oldvalue, new_value)
+                    print
+            except NoOptionError:
+                # the new configuration file does not have this option set so
+                # just continue
+                pass
+
+            # Only copy the old value to the new conf file if the entry doesn't
+            # exist or if it contains '%SERVICE'
+            if not new.has_option(section, key) or \
+               '%SERVICE' in new.get(section, key):
+                new.set(section, key, value)
+
+    # copy the old conf file to a backup
+    today = datetime.now().strftime("%Y%m%d%H%M%S")
+    shutil.copy2(old_file, old_file + '.' + today)
+
+    # copy the new conf file in place
+    with open(old_file, 'wb+') as fh:
+        new.write(fh)
+
+
+def start():
+    # pull out the current version of config/upgrade-id
+    p = Popen(['/usr/bin/svcprop', '-p', 'config/upgrade-id',
+               os.environ['SMF_FMRI']], stdout=PIPE, stderr=PIPE)
+    curr_ver, _err = p.communicate()
+    curr_ver = curr_ver.strip()
+
+    # extract the openstack-upgrade-id from the pkg
+    p = Popen(['/usr/bin/pkg', 'contents', '-H', '-t', 'set', '-o', 'value',
+               '-a', 'name=openstack.upgrade-id',
+               'pkg:/cloud/openstack/cinder'], stdout=PIPE, stderr=PIPE)
+    pkg_ver, _err = p.communicate()
+    pkg_ver = pkg_ver.strip()
+
+    if curr_ver == pkg_ver:
+        # No need to upgrade
+        sys.exit(smf_include.SMF_EXIT_OK)
+
+    # look for any .new files
+    if glob.glob('/etc/cinder/*.new'):
+        # the versions are different, so perform an upgrade
+        # modify the configuration files
+        modify_conf('/etc/cinder/api-paste.ini')
+        modify_conf('/etc/cinder/cinder.conf', CINDER_CONF_MAPPINGS)
+        modify_conf('/etc/cinder/logging.conf')
+
+    config = iniparse.RawConfigParser()
+    config.read('/etc/cinder/cinder.conf')
+    # In certain cases the database section does not exist and the
+    # default database chosen is sqlite.
+    if config.has_section('database'):
+        db_connection = config.get('database', 'connection')
+
+        if db_connection.startswith('mysql'):
+            engine = sqlalchemy.create_engine(db_connection)
+            if engine.url.username != '%SERVICE_USER%':
+                alter_mysql_tables(engine)
+                print "altered character set to utf8 in cinder tables"
+
+    # update the current version
+    check_call(['/usr/sbin/svccfg', '-s', os.environ['SMF_FMRI'], 'setprop',
+               'config/upgrade-id', '=', pkg_ver])
+    check_call(['/usr/sbin/svccfg', '-s', os.environ['SMF_FMRI'], 'refresh'])
+
+    sys.exit(smf_include.SMF_EXIT_OK)
+
+
+if __name__ == '__main__':
+    os.putenv('LC_ALL', 'C')
+    try:
+        smf_include.smf_main()
+    except Exception as err:
+        print 'Unknown error:  %s' % err
+        print
+        traceback.print_exc(file=sys.stdout)
+        sys.exit(smf_include.SMF_EXIT_ERR_FATAL)

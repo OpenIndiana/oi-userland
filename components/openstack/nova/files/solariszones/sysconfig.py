@@ -206,6 +206,8 @@ def create_hostname(name):
                           name="config")
     etree.SubElement(pg, "propval", type="astring", name="nodename",
                      value=name)
+    etree.SubElement(pg, "propval", type="boolean",
+                     name="ignore_dhcp_hostname", value="true")
 
     return svcbundle
 

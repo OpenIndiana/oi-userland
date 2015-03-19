@@ -22,22 +22,23 @@
 #
 # Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		python-troveclient
-COMPONENT_VERSION=	0.1.4
+COMPONENT_VERSION=	1.0.8
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:745057a1a1dd2a58f3e638cf506f5b21a6bf8a42bf678adb17a58d6799a10141
+    sha256:613adcd3aac54b57f3347b21d36bf22e4092170e434535e91aadb2e46a67536d
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://launchpad.net/python-troveclient
 COMPONENT_BUGDB=	service/trove
 
-TPNO=			17305
+TPNO=			21737
 
-# Syntax errors: not Python 3 ready
-PYTHON_VERSIONS=        2.7 2.6
+# Depends on keystoneclient which is not Python 3 ready.
+PYTHON_VERSIONS=	2.7 2.6
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -46,9 +47,7 @@ include $(WS_MAKE_RULES)/ips.mk
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 COMPONENT_POST_INSTALL_ACTION = \
-	(cd $(PROTO_DIR)/usr/bin ; \
-	 $(MV) -f trove-cli trove-cli-$(PYTHON_VERSION) ; \
-	 $(MV) -f trove-mgmt-cli trove-mgmt-cli-$(PYTHON_VERSION))
+	(cd $(PROTO_DIR)/usr/bin ; $(MV) -f trove trove-$(PYTHON_VERSION))
 
 # common targets
 build:		$(BUILD_NO_ARCH)
@@ -56,7 +55,6 @@ build:		$(BUILD_NO_ARCH)
 install:	$(INSTALL_NO_ARCH)
 
 # tests require:
-# hacking, discover, sphinx, testrepository and testtools, 
+# hacking, discover, sphinx, testrepository and testtools,
 # some of which have not been integrated.
 test:		$(NO_TESTS)
-

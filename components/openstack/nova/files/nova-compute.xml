@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <!DOCTYPE service_bundle SYSTEM '/usr/share/lib/xml/dtd/service_bundle.dtd.1'>
 <!--
- Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+ Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 
  Licensed under the Apache License, Version 2.0 (the "License"); you may
  not use this file except in compliance with the License. You may obtain
@@ -30,6 +30,12 @@
       <service_fmri value='svc:/milestone/multi-user:default' />
     </dependency>
 
+    <dependency name='upgrade' grouping='require_all' restart_on='none'
+      type='service'>
+      <service_fmri
+        value='svc:/application/openstack/nova/nova-upgrade' />
+    </dependency>
+
     <dependency name='evs' grouping='require_all' restart_on='error'
       type='service'>
       <service_fmri value='svc:/network/evs:default' />
@@ -43,6 +49,11 @@
     <dependency name='ntp' grouping='optional_all' restart_on='none'
       type='service'>
       <service_fmri value='svc:/network/ntp'/>
+    </dependency>
+
+    <dependency name='rabbitmq' grouping='optional_all' restart_on='none'
+      type='service'>
+      <service_fmri value='svc:/network/amqp/rabbitmq'/>
     </dependency>
 
     <logfile_attributes permissions='600'/>

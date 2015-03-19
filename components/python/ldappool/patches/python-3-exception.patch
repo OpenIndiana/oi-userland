@@ -1,0 +1,14 @@
+This in-house patch addresses a Python 3 compatibility issue. An
+upstream bug will be raised and the patch submitted there.
+
+--- ldappool-1.0/ldappool/__init__.py.orig	2012-02-27 13:58:47.000000000 -0800
++++ ldappool-1.0/ldappool/__init__.py	2015-02-23 20:49:04.353136753 -0800
+@@ -211,7 +211,7 @@ class ConnectionManager(object):
+                 conn.timeout = self.timeout
+                 self._bind(conn, bind, passwd)
+                 connected = True
+-            except ldap.LDAPError, exc:
++            except ldap.LDAPError as exc:
+                 time.sleep(self.retry_delay)
+                 tries += 1
+ 

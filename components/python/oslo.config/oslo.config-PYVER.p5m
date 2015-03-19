@@ -20,53 +20,78 @@
 #
 
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
+# As an earlier Python 3 version of oslo.config was published, we
+# continue to do so for now by dropping the dependency on the
+# corresponding netaddr as the latter is not Python 3 ready.
+<transform depend fmri=library/python/netaddr-34 type=require -> drop>
 set name=pkg.fmri \
     value=pkg:/library/python/oslo.config-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="Oslo Configuration Library"
+set name=pkg.summary value="Oslo configuration library"
 set name=pkg.description \
     value="The Oslo configuration API supports parsing command line arguments and .ini style configuration files."
-set name=com.oracle.info.description value="the Oslo Configuration Library"
+set name=com.oracle.info.description value="the Oslo configuration library"
 set name=com.oracle.info.tpno value=$(TPNO)
 set name=info.classification \
-    value=org.opensolaris.category.2008:Development/Python \
-    value="org.opensolaris.category.2008:Web Services/Application and Web Servers"
+    value=org.opensolaris.category.2008:Development/Python
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
-set name=info.upstream value="OpenStack <nova@lists.launchpad.net>"
+set name=info.upstream value="OpenStack <openstack-dev@lists.openstack.org>"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2013/403
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+#
+link path=usr/bin/oslo-config-generator target=oslo-config-generator-$(PYVER) \
+    mediator=python mediator-version=$(PYVER)
+file path=usr/bin/oslo-config-generator-$(PYVER)
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.config-$(COMPONENT_VERSION)-py$(PYVER)-nspkg.pth
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.config-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.config-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.config-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/oslo.config-$(COMPONENT_VERSION)-py$(PYVER).egg-info/entry_points.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.config-$(COMPONENT_VERSION)-py$(PYVER).egg-info/namespace_packages.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.config-$(COMPONENT_VERSION)-py$(PYVER).egg-info/not-zip-safe
+file path=usr/lib/python$(PYVER)/vendor-packages/oslo.config-$(COMPONENT_VERSION)-py$(PYVER).egg-info/pbr.json
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.config-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo.config-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo/config/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo/config/cfg.py
+file path=usr/lib/python$(PYVER)/vendor-packages/oslo/config/cfgfilter.py
+file path=usr/lib/python$(PYVER)/vendor-packages/oslo/config/fixture.py
+file path=usr/lib/python$(PYVER)/vendor-packages/oslo/config/generator.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo/config/iniparser.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo/config/types.py
+file path=usr/lib/python$(PYVER)/vendor-packages/oslo_config/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/oslo_config/cfg.py
+file path=usr/lib/python$(PYVER)/vendor-packages/oslo_config/cfgfilter.py
+file path=usr/lib/python$(PYVER)/vendor-packages/oslo_config/fixture.py
+file path=usr/lib/python$(PYVER)/vendor-packages/oslo_config/generator.py
+file path=usr/lib/python$(PYVER)/vendor-packages/oslo_config/iniparser.py
+file path=usr/lib/python$(PYVER)/vendor-packages/oslo_config/types.py
+#
 license LICENSE license="Apache v2.0"
 
 # force the rename with an optional dependency on the old name
 depend type=optional \
     fmri=library/python-2/oslo.config-$(PYV)@1.2.1,5.12-5.12.0.0.0.44.0
 
-# force a dependency on the correct Python runtime package
-depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
-    pkg.debug.depend.path=usr/bin
-
 # force a dependency on argparse; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/argparse-$(PYV)
 
-# force a dependency on oslo.config
+# force a dependency on netaddr; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/netaddr-$(PYV)
+
+# force a dependency on the oslo.config package
 depend type=require \
     fmri=library/python/oslo.config@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 
+# force a dependency on setuptools; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/setuptools-$(PYV)
+
 # force a dependency on six; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/six-$(PYV)
+
+# force a dependency on stevedore; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/stevedore-$(PYV)

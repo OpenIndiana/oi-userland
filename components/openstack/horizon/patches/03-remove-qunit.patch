@@ -1,0 +1,34 @@
+In-house patch to remove qunit from Horizon.  This JavaScript library
+is only used for testing and not used by Horizon during normal
+operation.
+
+--- horizon-2014.2.1/horizon/site_urls.py.orig      2015-02-02 14:37:19.045936926 -0700
++++ horizon-2014.2.1/horizon/site_urls.py        2015-02-02 14:37:41.486751441 -0700
+@@ -41,7 +41,4 @@ urlpatterns += patterns('',
+
+ if settings.DEBUG:
+     urlpatterns += patterns('',
+-        url(r'^qunit/$',
+-            TemplateView.as_view(template_name="horizon/qunit.html"),
+-            name='qunit_tests'),
+         url(r'^jasmine/(.*?)$', jasmine.dispatcher))
+
+--- horizon-2014.2.1/openstack_dashboard/settings.py.orig 2015-02-02 14:40:40.569743749 -0700
++++ horizon-2014.2.1/openstack_dashboard/settings.py 2015-02-02 14:40:49.741507297 -0700
+@@ -36,7 +36,6 @@ import xstatic.pkg.jquery_quicksearch
+ import xstatic.pkg.jquery_tablesorter
+ import xstatic.pkg.jquery_ui
+ import xstatic.pkg.jsencrypt
+-import xstatic.pkg.qunit
+ import xstatic.pkg.rickshaw
+ import xstatic.pkg.spin
+
+@@ -175,8 +174,6 @@ STATICFILES_DIRS = [
+         xstatic.main.XStatic(xstatic.pkg.jquery_tablesorter).base_dir),
+     ('horizon/lib/jsencrypt',
+         xstatic.main.XStatic(xstatic.pkg.jsencrypt).base_dir),
+-    ('horizon/lib/qunit',
+-        xstatic.main.XStatic(xstatic.pkg.qunit).base_dir),
+     ('horizon/lib',
+         xstatic.main.XStatic(xstatic.pkg.rickshaw).base_dir),
+     ('horizon/lib',

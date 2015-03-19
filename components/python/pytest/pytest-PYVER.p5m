@@ -38,8 +38,10 @@ set name=org.opensolaris.arc-caseid value=PSARC/2013/352
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 link path=usr/bin/py.test target=py.test-$(PYVER) mediator=python \
     mediator-version=$(PYVER)
+#
 file path=usr/bin/py.test-$(PYVER)
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/_argcomplete.py
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/assertion/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/assertion/newinterpret.py
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/assertion/oldinterpret.py
@@ -71,7 +73,8 @@ file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/skipping.py
 # The bypass for zlib is temporary until pkgdepend learns about PEP 3149,
 # new in Python 3.x; see 19510349.
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/standalonetemplate.py \
-    pkg.depend.bypass-generate=.*cPickle.* pkg.depend.bypass-generate=.*zlib.*
+    pkg.depend.bypass-generate=.*/cPickle.* \
+    pkg.depend.bypass-generate=.*/zlib.*
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/terminal.py
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/tmpdir.py
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/unittest.py
@@ -83,11 +86,15 @@ file path=usr/lib/python$(PYVER)/vendor-packages/pytest-$(COMPONENT_VERSION)-py$
 file path=usr/lib/python$(PYVER)/vendor-packages/pytest-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/pytest-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/pytest.py
+#
 license pytest.license license=MIT
 
 # force the rename with an optional dependency on the old name
 depend type=optional \
     fmri=library/python-2/pytest-$(PYV)@2.3.5,5.12-5.12.0.0.0.41.0
+
+# force a dependency on argparse; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/argparse-$(PYV)
 
 # force a dependency on py; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/py-$(PYV)

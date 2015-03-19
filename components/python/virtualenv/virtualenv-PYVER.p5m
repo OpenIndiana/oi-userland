@@ -18,7 +18,9 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+
+#
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
@@ -31,6 +33,7 @@ set name=com.oracle.info.tpno value=$(TPNO)
 set name=info.classification \
     value=org.opensolaris.category.2008:Development/Python
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream value=python-virtualenv@groups.google.com
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2013/362
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
@@ -42,13 +45,17 @@ file path=usr/lib/python$(PYVER)/vendor-packages/virtualenv-$(COMPONENT_VERSION)
 file path=usr/lib/python$(PYVER)/vendor-packages/virtualenv-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/virtualenv-$(COMPONENT_VERSION)-py$(PYVER).egg-info/entry_points.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/virtualenv-$(COMPONENT_VERSION)-py$(PYVER).egg-info/not-zip-safe
+file path=usr/lib/python$(PYVER)/vendor-packages/virtualenv-$(COMPONENT_VERSION)-py$(PYVER).egg-info/pbr.json
 file path=usr/lib/python$(PYVER)/vendor-packages/virtualenv-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/virtualenv.py \
-    pkg.depend.bypass-generate=.*/(configparser|sysconfig).*
+    pkg.depend.bypass-generate=.*/[Cc]onfig[Pp]arser.* \
+    pkg.depend.bypass-generate=.*/_winreg.* \
+    pkg.depend.bypass-generate=.*/sysconfig.* \
+    pkg.depend.bypass-generate=.*/winreg.* pkg.depend.bypass-generate=.*/zlib.*
 file path=usr/lib/python$(PYVER)/vendor-packages/virtualenv_support/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/virtualenv_support/distribute-0.6.34.tar.gz
-file path=usr/lib/python$(PYVER)/vendor-packages/virtualenv_support/pip-1.3.1.tar.gz
-file path=usr/lib/python$(PYVER)/vendor-packages/virtualenv_support/setuptools-0.6c11-py$(PYVER).egg
+file path=usr/lib/python$(PYVER)/vendor-packages/virtualenv_support/pip-6.0.8-py2.py3-none-any.whl
+file path=usr/lib/python$(PYVER)/vendor-packages/virtualenv_support/setuptools-12.0.5-py2.py3-none-any.whl
+#
 license virtualenv.license license="MIT, LGPLv2.1, PSF, ZPL"
 
 # force the rename with an optional dependency on the old name

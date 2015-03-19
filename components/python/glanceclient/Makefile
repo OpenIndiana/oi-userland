@@ -22,21 +22,22 @@
 #
 # Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		python-glanceclient
-COMPONENT_VERSION=	0.12.0
+COMPONENT_VERSION=	0.15.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:d7de76f8ccdd889c9c0cd7d035fc20247fcafb8405295bc6aa1505d5692b2fa3
+    sha256:491805e7ef2f35aaafd124af6f49347a440c4e8fa5f4fb0dd61f0666eee360d0
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://launchpad.net/python-glanceclient
 COMPONENT_BUGDB=	service/glance
 
-TPNO=			16348
+TPNO=			21731
 
-# Depends on netaddr, which depends on ipython, which is not Python 3 ready.
+# Depends on keystoneclient & oslo.utils which are not Python 3 ready.
 PYTHON_VERSIONS=	2.7 2.6
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -59,4 +60,3 @@ install:	$(INSTALL_NO_ARCH)
 # which haven't been integrated yet.
 #
 test:		$(NO_TESTS)
-

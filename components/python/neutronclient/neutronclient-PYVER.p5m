@@ -26,7 +26,7 @@
 set name=pkg.fmri \
     value=pkg:/library/python/neutronclient-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary \
-    value="Python and command-line clients for the OpenStack Neutron API"
+    value="Python and command-line clients for the OpenStack Virtual Network API"
 set name=pkg.description \
     value="A client library for Neutron built on the OpenStack Virtual Network API. It provides a Python API (the 'neutronclient' module) and a command-line tool ('neutron')."
 set name=com.oracle.info.description \
@@ -41,6 +41,7 @@ set name=info.upstream value="OpenStack <openstack-dev@lists.openstack.org>"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2014/007
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+#
 link path=usr/bin/neutron target=neutron-$(PYVER) mediator=python \
     mediator-version=$(PYVER)
 file path=usr/bin/neutron-$(PYVER)
@@ -53,6 +54,8 @@ file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/common/constants.
 file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/common/exceptions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/common/serializer.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/common/utils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/common/validators.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/i18n.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/neutron/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/neutron/client.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/neutron/v2_0/__init__.py
@@ -71,6 +74,9 @@ file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/neutron/v2_0/lb/m
 file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/neutron/v2_0/lb/pool.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/neutron/v2_0/lb/vip.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/neutron/v2_0/metering.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/neutron/v2_0/nec/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/neutron/v2_0/nec/packetfilter.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/neutron/v2_0/netpartition.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/neutron/v2_0/network.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/neutron/v2_0/networkprofile.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/neutron/v2_0/nsx/__init__.py
@@ -89,13 +95,6 @@ file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/neutron/v2_0/vpn/
 file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/neutron/v2_0/vpn/ipsecpolicy.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/neutron/v2_0/vpn/utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/neutron/v2_0/vpn/vpnservice.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/openstack/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/openstack/common/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/openstack/common/gettextutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/openstack/common/importutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/openstack/common/jsonutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/openstack/common/strutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/openstack/common/timeutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/shell.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/v2_0/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/v2_0/client.py
@@ -107,33 +106,41 @@ file path=usr/lib/python$(PYVER)/vendor-packages/python_neutronclient-$(COMPONEN
 file path=usr/lib/python$(PYVER)/vendor-packages/python_neutronclient-$(COMPONENT_VERSION)-py$(PYVER).egg-info/not-zip-safe
 file path=usr/lib/python$(PYVER)/vendor-packages/python_neutronclient-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/python_neutronclient-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
+#
 license neutronclient.license license="Apache v2.0"
-
-# force a group dependency on the optional anyjson; pkgdepend work is needed to
-# flush this out.
-depend type=group fmri=library/python/anyjson-$(PYV)
 
 # force a dependency on argparse; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/argparse-$(PYV)
 
-# force a dependency on babel; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/babel-$(PYV)
-
 # force a dependency on cliff; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/cliff-$(PYV)
 
-# force a dependency on httplib2; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/httplib2-$(PYV)
+# force a dependency on keystoneclient; pkgdepend work is needed to flush this
+# out.
+depend type=require fmri=library/python/keystoneclient-$(PYV)
 
-# force a dependency on iso8601; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/iso8601-$(PYV)
+# force a dependency on netaddr; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/netaddr-$(PYV)
 
 # force a dependency on the neutronclient package
 depend type=require \
     fmri=library/python/neutronclient@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 
+# force a dependency on oslo.i18n; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/oslo.i18n-$(PYV)
+
+# force a dependency on oslo.serialization; pkgdepend work is needed to flush
+# this out.
+depend type=require fmri=library/python/oslo.serialization-$(PYV)
+
+# force a dependency on oslo.utils; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/oslo.utils-$(PYV)
+
 # force a dependency on pbr; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/pbr-$(PYV)
+
+# force a dependency on requests; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/requests-$(PYV)
 
 # force a dependency on six; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/six-$(PYV)

@@ -1,0 +1,319 @@
+#!/usr/bin/python2.6
+
+# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+#
+#    Licensed under the Apache License, Version 2.0 (the "License"); you may
+#    not use this file except in compliance with the License. You may obtain
+#    a copy of the License at
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+#    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+#    License for the specific language governing permissions and limitations
+#    under the License.
+
+from ConfigParser import NoOptionError
+from datetime import datetime
+import errno
+import glob
+import os
+import shutil
+from subprocess import check_call, Popen, PIPE
+import sys
+import time
+import traceback
+
+import iniparse
+import smf_include
+import sqlalchemy
+
+
+NOVA_CONF_MAPPINGS = {
+    # Deprecated group/name
+    ('DEFAULT', 'rabbit_durable_queues'): ('DEFAULT', 'amqp_durable_queues'),
+    ('rpc_notifier2', 'topics'): ('DEFAULT', 'notification_topics'),
+    ('DEFAULT', 'quota_injected_file_path_bytes'):
+        ('DEFAULT', 'quota_injected_file_path_length'),
+    ('DEFAULT', 'log_config'): ('DEFAULT', 'log_config_append'),
+    ('DEFAULT', 'logfile'): ('DEFAULT', 'log_file'),
+    ('DEFAULT', 'logdir'): ('DEFAULT', 'log_dir'),
+    ('DEFAULT', 'cinder_catalog_info'): ('cinder', 'catalog_info'),
+    ('DEFAULT', 'cinder_endpoint_template'): ('cinder', 'endpoint_template'),
+    ('DEFAULT', 'os_region_name'): ('cinder', 'os_region_name'),
+    ('DEFAULT', 'cinder_ca_certificates_file'):
+        ('cinder', 'ca_certificates_file'),
+    ('DEFAULT', 'cinder_http_retries'): ('cinder', 'http_retries'),
+    ('DEFAULT', 'cinder_http_timeout'): ('cinder', 'http_timeout'),
+    ('DEFAULT', 'cinder_api_insecure'): ('cinder', 'api_insecure'),
+    ('DEFAULT', 'cinder_cross_az_attach'): ('cinder', 'cross_az_attach'),
+    ('DEFAULT', 'db_backend'): ('database', 'backend'),
+    ('DEFAULT', 'sql_connection'): ('database', 'connection'),
+    ('DEFAULT', 'sql_connection'): ('database', 'connection'),
+    ('sql', 'connection'): ('database', 'connection'),
+    ('DEFAULT', 'sql_idle_timeout'): ('database', 'idle_timeout'),
+    ('DATABASE', 'sql_idle_timeout'): ('database', 'idle_timeout'),
+    ('sql', 'idle_timeout'): ('database', 'idle_timeout'),
+    ('DEFAULT', 'sql_min_pool_size'): ('database', 'min_pool_size'),
+    ('DATABASE', 'sql_min_pool_size'): ('database', 'min_pool_size'),
+    ('DEFAULT', 'sql_max_pool_size'): ('database', 'max_pool_size'),
+    ('DATABASE', 'sql_max_pool_size'): ('database', 'max_pool_size'),
+    ('DEFAULT', 'sql_max_retries'): ('database', 'max_retries'),
+    ('DATABASE', 'sql_max_retries'): ('database', 'max_retries'),
+    ('DEFAULT', 'sql_retry_interval'): ('database', 'retry_interval'),
+    ('DATABASE', 'reconnect_interval'): ('database', 'retry_interval'),
+    ('DEFAULT', 'sql_max_overflow'): ('database', 'max_overflow'),
+    ('DATABASE', 'sqlalchemy_max_overflow'): ('database', 'max_overflow'),
+    ('DEFAULT', 'sql_connection_debug'): ('database', 'connection_debug'),
+    ('DEFAULT', 'sql_connection_trace'): ('database', 'connection_trace'),
+    ('DATABASE', 'sqlalchemy_pool_timeout'): ('database', 'pool_timeout'),
+    ('DEFAULT', 'glance_host'): ('glance', 'host'),
+    ('DEFAULT', 'glance_port'): ('glance', 'port'),
+    ('DEFAULT', 'glance_protocol'): ('glance', 'protocol'),
+    ('DEFAULT', 'glance_api_servers'): ('glance', 'api_servers'),
+    ('DEFAULT', 'glance_api_insecure'): ('glance', 'api_insecure'),
+    ('DEFAULT', 'glance_num_retries'): ('glance', 'num_retries'),
+    ('DEFAULT', 'memcache_servers'):
+        ('keystone_authtoken', 'memcached_servers'),
+    ('DEFAULT', 'matchmaker_ringfile'): ('matchmaker_ring', 'ringfile'),
+    ('DEFAULT', 'service_neutron_metadata_proxy'):
+        ('neutron', 'service_metadata_proxy'),
+    ('DEFAULT', 'neutron_metadata_proxy_shared_secret'):
+        ('neutron', 'metadata_proxy_shared_secret'),
+    ('DEFAULT', 'neutron_url'): ('neutron', 'url'),
+    ('DEFAULT', 'neutron_url_timeout'): ('neutron', 'url_timeout'),
+    ('DEFAULT', 'neutron_admin_username'): ('neutron', 'admin_username'),
+    ('DEFAULT', 'neutron_admin_password'): ('neutron', 'admin_password'),
+    ('DEFAULT', 'neutron_admin_tenant_id'): ('neutron', 'admin_tenant_id'),
+    ('DEFAULT', 'neutron_admin_tenant_name'): ('neutron', 'admin_tenant_name'),
+    ('DEFAULT', 'neutron_region_name'): ('neutron', 'region_name'),
+    ('DEFAULT', 'neutron_admin_auth_url'): ('neutron', 'admin_auth_url'),
+    ('DEFAULT', 'neutron_api_insecure'): ('neutron', 'api_insecure'),
+    ('DEFAULT', 'neutron_auth_strategy'): ('neutron', 'auth_strategy'),
+    ('DEFAULT', 'neutron_ovs_bridge'): ('neutron', 'ovs_bridge'),
+    ('DEFAULT', 'neutron_extension_sync_interval'):
+        ('neutron', 'extension_sync_interval'),
+    ('DEFAULT', 'neutron_ca_certificates_file'):
+        ('neutron', 'ca_certificates_file'),
+    ('DEFAULT', 'spicehtml5proxy_host'): ('spice', 'html5proxy_host'),
+    ('DEFAULT', 'spicehtml5proxy_port'): ('spice', 'html5proxy_port'),
+    # No longer referenced by the service
+    ('DEFAULT', 'sql_connection'): (None, None),
+}
+
+
+def update_mapping(section, key, mapping):
+    """ look for deprecated variables and, if found, convert it to the new
+    section/key.
+    """
+
+    if (section, key) in mapping:
+        print "Deprecated value found: [%s] %s" % (section, key)
+        section, key = mapping[(section, key)]
+        if section is None and key is None:
+            print "Removing from configuration"
+        else:
+            print "Updating to: [%s] %s" % (section, key)
+    return section, key
+
+
+def alter_mysql_tables(engine):
+    """ Convert MySQL tables to use utf8
+    """
+
+    import MySQLdb
+
+    for _none in range(5):
+        try:
+            db = MySQLdb.connect(host=engine.url.host,
+                                 user=engine.url.username,
+                                 passwd=engine.url.password,
+                                 db=engine.url.database)
+            break
+        except MySQLdb.OperationalError as err:
+            # mysql is not ready. sleep for 2 more seconds
+            time.sleep(2)
+    else:
+        print "Unable to connect to MySQL:  %s" % err
+        print ("Please verify MySQL is properly configured and online "
+               "before using svcadm(1M) to clear this service.")
+        sys.exit(smf_include.SMF_EXIT_ERR_FATAL)
+
+    cursor = db.cursor()
+    cursor.execute("ALTER DATABASE %s CHARACTER SET = 'utf8'" %
+                   engine.url.database)
+    cursor.execute("ALTER DATABASE %s COLLATE = 'utf8_general_ci'" %
+                   engine.url.database)
+    cursor.execute("SHOW tables")
+    res = cursor.fetchall()
+    if res:
+        cursor.execute("SET foreign_key_checks = 0")
+        for item in res:
+            cursor.execute("ALTER TABLE %s.%s CONVERT TO "
+                           "CHARACTER SET 'utf8', COLLATE 'utf8_general_ci'"
+                           % (engine.url.database, item[0]))
+        cursor.execute("SET foreign_key_checks = 1")
+        db.commit()
+        db.close()
+
+
+def modify_conf(old_file, mapping=None):
+    """ Copy over all uncommented options from the old configuration file.  In
+    addition, look for deprecated section/keys and convert them to the new
+    section/key.
+    """
+
+    new_file = old_file + '.new'
+
+    # open the previous version
+    old = iniparse.ConfigParser()
+    old.readfp(open(old_file))
+
+    # open the new version
+    new = iniparse.ConfigParser()
+    try:
+        new.readfp(open(new_file))
+    except IOError as err:
+        if err.errno == errno.ENOENT:
+            # The upgrade did not deliver a .new file so, return
+            print "%s not found - continuing with %s" % (new_file, old_file)
+            return
+        else:
+            raise
+    print "\nupdating %s" % old_file
+
+    # It's possible that nova.conf has database.connection commented out (to
+    # use the default value).  If it is, and none of other deprecated values
+    # are set, manually set database.connection in the new conf file.
+    if 'nova.conf' in old_file:
+        options = [
+            ('database', 'sql_connection'),
+            ('sql', 'connection'),
+            ('database', 'connection'),
+            ('DEFAULT', 'sql_connection')
+        ]
+        test = lambda x: old.has_section(x[0]) and old.has_option(x[0], x[1])
+        if not any(map(test, options)):
+            if old.has_option('DEFAULT', 'state_path'):
+                state_path = old.get('DEFAULT', 'state_path')
+            else:
+                state_path = '/var/lib/nova'
+
+            if old.has_option('DEFAULT', 'sqlite_db'):
+                sqlite_db = old.get('DEFAULT', 'sqlite_db')
+            else:
+                sqlite_db = 'nova.sqlite'
+
+            new.set('database', 'connection',
+                    'sqlite:///%s/%s' % (state_path, sqlite_db))
+
+    # walk every single section for uncommented options
+    default_items = set(old.items('DEFAULT'))
+    for section in old.sections() + ['DEFAULT']:
+
+        # DEFAULT items show up in every section so remove them
+        if section != 'DEFAULT':
+            section_items = set(old.items(section)) - default_items
+        else:
+            section_items = default_items
+
+        for key, value in section_items:
+            # keep a copy of the old value
+            oldvalue = value
+
+            if mapping is not None:
+                section, key = update_mapping(section, key, mapping)
+
+                if section is None and key is None:
+                    # option is deprecated so continue
+                    continue
+
+            if not new.has_section(section):
+                if section != 'DEFAULT':
+                    new.add_section(section)
+
+            # print to the log when a value for the same section.key is
+            # changing to a new value
+            try:
+                new_value = new.get(section, key)
+                if new_value != value and '%SERVICE' not in new_value:
+                    print "Changing [%s] %s:\n- %s\n+ %s" % \
+                        (section, key, oldvalue, new_value)
+                    print
+            except NoOptionError:
+                # the new configuration file does not have this option set so
+                # just continue
+                pass
+
+            # Only copy the old value to the new conf file if the entry doesn't
+            # exist or if it contains '%SERVICE'
+            if not new.has_option(section, key) or \
+               '%SERVICE' in new.get(section, key):
+                new.set(section, key, value)
+
+    # copy the old conf file to a backup
+    today = datetime.now().strftime("%Y%m%d%H%M%S")
+    shutil.copy2(old_file, old_file + '.' + today)
+
+    # copy the new conf file in place
+    with open(old_file, 'wb+') as fh:
+        new.write(fh)
+
+
+def start():
+    # pull out the current version of config/upgrade-id
+    p = Popen(['/usr/bin/svcprop', '-p', 'config/upgrade-id',
+               os.environ['SMF_FMRI']], stdout=PIPE, stderr=PIPE)
+    curr_ver, _err = p.communicate()
+    curr_ver = curr_ver.strip()
+
+    # extract the openstack-upgrade-id from the pkg
+    p = Popen(['/usr/bin/pkg', 'contents', '-H', '-t', 'set', '-o', 'value',
+               '-a', 'name=openstack.upgrade-id',
+               'pkg:/cloud/openstack/nova'], stdout=PIPE, stderr=PIPE)
+    pkg_ver, _err = p.communicate()
+    pkg_ver = pkg_ver.strip()
+
+    if curr_ver == pkg_ver:
+        # No need to upgrade
+        sys.exit(smf_include.SMF_EXIT_OK)
+
+    # look for any .new files
+    if glob.glob('/etc/nova/*.new'):
+        # the versions are different, so perform an upgrade
+        # modify the configuration files
+        modify_conf('/etc/nova/api-paste.ini')
+        modify_conf('/etc/nova/logging.conf')
+        modify_conf('/etc/nova/nova.conf', NOVA_CONF_MAPPINGS)
+
+    config = iniparse.RawConfigParser()
+    config.read('/etc/nova/nova.conf')
+    # In certain cases the database section does not exist and the
+    # default database chosen is sqlite.
+    if config.has_section('database'):
+        db_connection = config.get('database', 'connection')
+
+        if db_connection.startswith('mysql'):
+            engine = sqlalchemy.create_engine(db_connection)
+            if engine.url.username != '%SERVICE_USER%':
+                alter_mysql_tables(engine)
+                print "altered character set to utf8 in nova tables"
+
+    # update the current version
+    check_call(['/usr/sbin/svccfg', '-s', os.environ['SMF_FMRI'], 'setprop',
+               'config/upgrade-id', '=', pkg_ver])
+    check_call(['/usr/sbin/svccfg', '-s', os.environ['SMF_FMRI'], 'refresh'])
+
+    sys.exit(smf_include.SMF_EXIT_OK)
+
+
+if __name__ == '__main__':
+    os.putenv('LC_ALL', 'C')
+    try:
+        smf_include.smf_main()
+    except Exception as err:
+        print 'Unknown error:  %s' % err
+        print
+        traceback.print_exc(file=sys.stdout)
+        sys.exit(smf_include.SMF_EXIT_ERR_FATAL)

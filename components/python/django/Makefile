@@ -18,21 +18,24 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Django
-COMPONENT_VERSION=	1.4.11
+COMPONENT_VERSION=	1.4.19
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:4819d8b37405b33f4f0d156f60918094d566249f52137c5e6e0dbaa12995c201
+    sha256:d75d605e574305e1c2864c392e1454963ead4552477ce14e67e64b9ef9faa1a6
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://www.djangoproject.com/
 COMPONENT_BUGDB=	python-mod/django
 
-TPNO=			17445
+TPNO=			21718
 
 # Syntax issues: not Python 3 ready.
 PYTHON_VERSIONS=	2.7 2.6
@@ -75,3 +78,5 @@ install:	$(INSTALL_NO_ARCH)
 #
 test:		$(TEST_NO_ARCH)
 
+
+REQUIRED_PACKAGES += text/gnu-gettext

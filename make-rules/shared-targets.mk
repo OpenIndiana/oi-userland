@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 #
@@ -55,6 +55,7 @@ $(PROTOGNUMAN1LINKS):   $(PROTOGNUSHAREMAN1)
 	$(RM) $@ ; $(SYMLINK) ../../../../share/man/man1/g$(@F) $@
 
 
+$(PROTO_DIR) \
 $(PROTOETCDIR) \
 $(PROTOETCSECDIR) \
 $(PROTOLIBDIR) \

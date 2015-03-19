@@ -1,0 +1,28 @@
+This patch removes a deprecation about using auto_delete with exchanges
+as RabbitMQ intends to support it going forward as an extension to AMQP
+0-9-1. It is not suitable for the upstream.
+
+--- amqp-1.4.6/amqp/channel.py.orig	2014-08-11 09:56:50.000000000 -0700
++++ amqp-1.4.6/amqp/channel.py	2015-02-03 17:28:07.424050361 -0800
+@@ -31,11 +31,6 @@ __all__ = ['Channel']
+ 
+ AMQP_LOGGER = logging.getLogger('amqp')
+ 
+-EXCHANGE_AUTODELETE_DEPRECATED = """\
+-The auto_delete flag for exchanges has been deprecated and will be removed
+-from py-amqp v1.5.0.\
+-"""
+-
+ 
+ class VDeprecationWarning(DeprecationWarning):
+     pass
+@@ -612,9 +607,6 @@ class Channel(AbstractChannel):
+         args.write_table(arguments)
+         self._send_method((40, 10), args)
+ 
+-        if auto_delete:
+-            warn(VDeprecationWarning(EXCHANGE_AUTODELETE_DEPRECATED))
+-
+         if not nowait:
+             return self.wait(allowed_methods=[
+                 (40, 11),  # Channel.exchange_declare_ok

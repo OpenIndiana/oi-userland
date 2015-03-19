@@ -1,0 +1,14 @@
+Patch to address 20638369.  This patch is Solaris specific and not
+suitable for upstream contribution.
+
+--- Django-1.4.19/django/core/management/commands/compilemessages.py.orig	2015-03-03 12:41:29.911259727 -0700
++++ Django-1.4.19/django/core/management/commands/compilemessages.py	2015-03-03 12:42:00.821142374 -0700
+@@ -44,7 +44,7 @@ def compile_messages(stderr, locale=None
+                     if sys.platform == 'win32': # Different shell-variable syntax
+                         cmd = 'msgfmt --check-format -o "%djangocompilemo%" "%djangocompilepo%"'
+                     else:
+-                        cmd = 'msgfmt --check-format -o "$djangocompilemo" "$djangocompilepo"'
++                        cmd = '/usr/gnu/bin/msgfmt --check-format -o "$djangocompilemo" "$djangocompilepo"'
+                     os.system(cmd)
+ 
+ 

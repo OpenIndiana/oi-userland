@@ -18,6 +18,8 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2010, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
@@ -104,7 +106,7 @@ endif
 	$(TOUCH) $@
 
 
-COMPONENT_INSTALL_ARGS +=	--root $(PROTO_DIR) 
+COMPONENT_INSTALL_ARGS +=	--root $(PROTO_DIR)
 COMPONENT_INSTALL_ARGS +=	--install-lib=$(PYTHON_LIB)
 COMPONENT_INSTALL_ARGS +=	--install-purelib=$(PYTHON_LIB)
 COMPONENT_INSTALL_ARGS +=	--install-platlib=$(PYTHON_LIB)
@@ -182,9 +184,13 @@ endif
 clean::
 	$(RM) -r $(SOURCE_DIR) $(BUILD_DIR)
 
-# Make it easy to construct a URL for a pypi source download.
+# Make it easy to construct a URL for a pypi source download.  This
+# construct supports an optional call to a number from
+# NUM_EXTRA_ARCHIVES for multiple archive downloads.
 PYPI_BASE = http://pypi.python.org/packages/source
-pypi_url = $(PYPI_BASE)/$(shell echo $(COMPONENT_NAME) | cut -c1)/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+pypi_url_multi = $(shell echo $(COMPONENT_NAME_$(1)) | cut -c1)/$(COMPONENT_NAME_$(1))/$(COMPONENT_ARCHIVE_$(1))
+pypi_url_single = $(shell echo $(COMPONENT_NAME) | cut -c1)/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+pypi_url = $(PYPI_BASE)/$(if $(COMPONENT_NAME_$(1)),$(pypi_url_multi),$(pypi_url_single))
 
 ifneq ($(findstring 2.6, $(PYTHON_VERSIONS)),)
 REQUIRED_PACKAGES += runtime/python-26

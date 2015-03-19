@@ -61,7 +61,11 @@ file path=usr/lib/python$(PYVER)/vendor-packages/websockify/websocket.py \
     pkg.depend.bypass-generate=.*/select.* \
     pkg.depend.bypass-generate=.*/sha.* pkg.depend.bypass-generate=.*/time.*
 file path=usr/lib/python$(PYVER)/vendor-packages/websockify/websocketproxy.py \
+    pkg.depend.bypass-generate=.*/BaseHTTPServer.* \
+    pkg.depend.bypass-generate=.*/SocketServer.* \
+    pkg.depend.bypass-generate=.*/http.* \
     pkg.depend.bypass-generate=.*/select.* \
+    pkg.depend.bypass-generate=.*/socketserver.* \
     pkg.depend.bypass-generate=.*/time.* \
     pkg.depend.bypass-generate=.*/urllib.* \
     pkg.depend.bypass-generate=.*/urlparse.*
@@ -70,7 +74,8 @@ license websockify.license license="LGPL3, BSD, MIT"
 
 # force a group dependency on the optional python-extra; pkgdepend work is
 # needed to flush this out.
-depend type=group fmri=library/python-2/python-extra-$(PYV)
+$(PYTHON_2.6_ONLY)depend type=group fmri=library/python-2/python-extra-$(PYV)
+$(PYTHON_2.7_ONLY)depend type=group fmri=library/python/python-extra-$(PYV)
 
 # force the rename with an optional dependency on the old name
 depend type=optional \

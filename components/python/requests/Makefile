@@ -18,21 +18,24 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		requests
-COMPONENT_VERSION=	1.2.3
+COMPONENT_VERSION=	2.6.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:156bf3ec27ba9ec7e0cf8fbe02808718099d218de403eb64a714d73ba1a29ab1
+    sha256:1cdbed1f0e236f35ef54e919982c7a338e4fea3786310933d3a7887a04b74d75
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	https://pypi.python.org/pypi/requests/
+COMPONENT_PROJECT_URL=	http://python-requests.org/
 COMPONENT_BUGDB=	python-mod/requests
 
-TPNO=			14503
+TPNO=			21947
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -45,7 +48,8 @@ build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
-# Tests require the py, pytest and invoke Python modules which haven't
-# been integrated yet.
+# Tests require access to AWS services & the Internet
 test:		$(NO_TESTS)
 
+
+REQUIRED_PACKAGES += library/python/argparse-26

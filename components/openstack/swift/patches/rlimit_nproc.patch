@@ -1,0 +1,35 @@
+RLIMIT_NPROC isn't implemented on Solaris, and it's not even clear what it
+would mean, given the differences between the Solaris and Linux thread
+models.  Solaris has some resource controls that are similar: per-task and
+per-project max-lwps and max-processes.
+
+For the time being, just ignore the use of RLIMIT_NPROC.  This might be
+appropriate for upstream (but has not been submitted), depending on whether
+RLIMIT_NPROC is unavailable on any platforms other than Solaris.
+
+--- swift-2.2.0/swift/common/manager.py
++++ swift-2.2.0/swift/common/manager.py
+@@ -75,6 +75,8 @@
+     except ValueError:
+         print _("WARNING: Unable to modify max process limit.  "
+                 "Running as non-root?")
++    except AttributeError:
++        pass
+ 
+     # Set PYTHON_EGG_CACHE if it isn't already set
+     os.environ.setdefault('PYTHON_EGG_CACHE', '/tmp')
+--- swift-2.2.0/test/unit/common/test_manager.py
++++ swift-2.2.0/test/unit/common/test_manager.py
+@@ -105,9 +105,10 @@
+                                           manager.MAX_DESCRIPTORS)),
+                 (resource.RLIMIT_DATA, (manager.MAX_MEMORY,
+                                         manager.MAX_MEMORY)),
+-                (resource.RLIMIT_NPROC, (manager.MAX_PROCS,
+-                                         manager.MAX_PROCS)),
+             ]
++            if getattr(resource, "RLIMIT_NPROC", None):
++                expected.append((resource.RLIMIT_NPROC, (manager.MAX_PROCS,
++                                         manager.MAX_PROCS)))
+             self.assertEquals(manager.resource.called_with_args, expected)
+             self.assertTrue(
+                 manager.os.environ['PYTHON_EGG_CACHE'].startswith('/tmp'))

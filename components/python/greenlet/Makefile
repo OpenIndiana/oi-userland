@@ -18,6 +18,8 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
@@ -26,20 +28,16 @@ COMPILER =	gcc
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		greenlet
-COMPONENT_VERSION=	0.4.1
+COMPONENT_VERSION=	0.4.5
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).zip
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:ea671592f8460541286b133ed46a6cf5311a6b75051cc31b53e2bc38992b775a
+    sha256:b990f00f120c4cfb6672eec2acd32210990a2c7b70b815c034d1d8cbf08e2dbe
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://github.com/python-greenlet/greenlet
 COMPONENT_BUGDB=	python-mod/greenlet
 
-TPNO=			14503
-
-# This module is not Python 3 ready: strange build failures that need more
-# investigation.
-PYTHON_VERSIONS = 2.7 2.6
+TPNO=			21721
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -55,7 +53,7 @@ COMPONENT_PRE_BUILD_ACTION = \
 LDSHARED=	$(CC) -shared
 PYTHON_ENV +=	LDSHARED="$(LDSHARED)"
 
-# One of the tests, test_exception_switch (tests.test_cpp.CPPTests), 
+# One of the tests, test_exception_switch (tests.test_cpp.CPPTests),
 # failed in 64-bit. Skip it for now.
 COMPONENT_TEST_ENV +=	GREENLET_TEST_CPP=no
 COMPONENT_TEST_ENV +=	PYTHONPATH=$(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES.32)
@@ -68,5 +66,6 @@ build:		$(BUILD_32_and_64)
 install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
+
 
 REQUIRED_PACKAGES += system/library

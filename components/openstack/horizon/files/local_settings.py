@@ -32,18 +32,25 @@ LOGIN_URL = '/horizon/auth/login/'
 LOGOUT_URL = '/horizon/auth/logout/'
 LOGIN_REDIRECT_URL = '/horizon'
 
-STATIC_ROOT = '/var/lib/openstack_dashboard/static'
+STATIC_ROOT = '/usr/lib/python2.6/vendor-packages/openstack_dashboard/static'
 
 # Enable Solaris theme
-TEMPLATE_DIRS = ('/var/lib/openstack_dashboard/static/solaris/theme', )
+TEMPLATE_DIRS = (
+    '/usr/lib/python2.6/vendor-packages/openstack_dashboard/templates/solaris',
+)
+
+# Application files are compressed during packaging
+COMPRESS_OFFLINE = True
 
 # Overrides for OpenStack API versions. Use this setting to force the
-# OpenStack dashboard to use a specfic API version for a given service API.
+# OpenStack dashboard to use a specific API version for a given service API.
 # NOTE: The version should be formatted as it appears in the URL for the
 # service API. For example, The identity service APIs have inconsistent
 # use of the decimal point, so valid options would be "2.0" or "3".
 # OPENSTACK_API_VERSIONS = {
-#     "identity": 3
+#     "data_processing": 1.1,
+#     "identity": 3,
+#     "volume": 2
 # }
 
 # Set this to True if running on multi-domain model. When this is enabled, it
@@ -55,7 +62,8 @@ TEMPLATE_DIRS = ('/var/lib/openstack_dashboard/static/solaris/theme', )
 # OPENSTACK_KEYSTONE_DEFAULT_DOMAIN = 'Default'
 
 # Set Console type:
-# valid options would be "AUTO", "VNC" or "SPICE"
+# valid options would be "AUTO"(default), "VNC", "SPICE", "RDP" or None
+# Set to None explicitly if you want to deactivate the console.
 # CONSOLE_TYPE = "AUTO"
 
 # Default OpenStack Dashboard configuration.
@@ -73,6 +81,8 @@ HORIZON_CONFIG = {
     'exceptions': {'recoverable': exceptions.RECOVERABLE,
                    'not_found': exceptions.NOT_FOUND,
                    'unauthorized': exceptions.UNAUTHORIZED},
+    'angular_modules': [],
+    'js_files': [],
     'customization_module': 'openstack_dashboard.overrides',
 }
 
@@ -86,13 +96,14 @@ HORIZON_CONFIG = {
 # multiple floating IP pools or complex network requirements.
 # HORIZON_CONFIG["simple_ip_management"] = False
 
-# Turn off browser autocompletion for the login form if so desired.
+# Turn off browser autocompletion for forms including the login form and
+# the database creation workflow if so desired.
 # HORIZON_CONFIG["password_autocomplete"] = "off"
 
 LOCAL_PATH = '/var/lib/openstack_dashboard'
 
 # Set custom secret key:
-# You can either set it to a specific value or you can let horizion generate a
+# You can either set it to a specific value or you can let horizon generate a
 # default secret key that is unique on this machine, e.i. regardless of the
 # amount of Python WSGI workers (if used behind Apache+mod_wsgi): However, there
 # may be situations where you would want to set this explicitly, e.g. when
@@ -101,21 +112,22 @@ LOCAL_PATH = '/var/lib/openstack_dashboard'
 # requests routed to the same dashboard instance or you set the same SECRET_KEY
 # for all of them.
 from horizon.utils import secret_key
-SECRET_KEY = secret_key.generate_or_read_from_file(os.path.join(LOCAL_PATH, '.secret_key_store'))
+SECRET_KEY = secret_key.generate_or_read_from_file(
+    os.path.join(LOCAL_PATH, '.secret_key_store'))
 
 # We recommend you use memcached for development; otherwise after every reload
 # of the django development server, you will have to login again. To use
 # memcached set CACHES to something like
 # CACHES = {
 #    'default': {
-#        'BACKEND' : 'django.core.cache.backends.memcached.MemcachedCache',
-#        'LOCATION' : '127.0.0.1:11211',
+#        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+#        'LOCATION': '127.0.0.1:11211',
 #    }
 #}
 
 CACHES = {
     'default': {
-        'BACKEND' : 'django.core.cache.backends.locmem.LocMemCache'
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'
     }
 }
 
@@ -161,27 +173,46 @@ OPENSTACK_KEYSTONE_BACKEND = {
     'can_edit_role': True
 }
 
+#Setting this to True, will add a new "Retrieve Password" action on instance,
+#allowing Admin session password retrieval/decryption.
+#OPENSTACK_ENABLE_PASSWORD_RETRIEVE = False
+
 # The Xen Hypervisor has the ability to set the mount point for volumes
 # attached to instances (other Hypervisors currently do not). Setting
 # can_set_mount_point to True will add the option to set the mount point
 # from the UI.
 OPENSTACK_HYPERVISOR_FEATURES = {
     'can_set_mount_point': False,
+    'can_set_password': False,
+}
+
+# The OPENSTACK_CINDER_FEATURES settings can be used to enable optional
+# services provided by cinder that is not exposed by its extension API.
+OPENSTACK_CINDER_FEATURES = {
+    'enable_backup': False,
 }
 
 # The OPENSTACK_NEUTRON_NETWORK settings can be used to enable optional
-# services provided by neutron. Options currenly available are load
+# services provided by neutron. Options currently available are load
 # balancer service, security groups, quotas, VPN service.
 OPENSTACK_NEUTRON_NETWORK = {
+    'enable_router': True,
+    'enable_quotas': True,
+    'enable_ipv6': True,
+    'enable_distributed_router': False,
+    'enable_ha_router': False,
     'enable_lb': False,
     'enable_firewall': False,
-    'enable_quotas': True,
     'enable_vpn': False,
     # The profile_support option is used to detect if an external router can be
     # configured via the dashboard. When using specific plugins the
     # profile_support can be turned on if needed.
     'profile_support': None,
     #'profile_support': 'cisco',
+    # Set which provider network types are supported. Only the network types
+    # in this list will be available to choose from when creating a network.
+    # Network types include local, flat, vlan, gre, and vxlan.
+    'supported_provider_types': ['*'],
 }
 
 # The OPENSTACK_IMAGE_BACKEND settings can be used to customize features
@@ -189,7 +220,7 @@ OPENSTACK_NEUTRON_NETWORK = {
 # of supported image formats.
 # OPENSTACK_IMAGE_BACKEND = {
 #     'image_formats': [
-#         ('', ''),
+#         ('', _('Select format')),
 #         ('aki', _('AKI - Amazon Kernel Image')),
 #         ('ami', _('AMI - Amazon Machine Image')),
 #         ('ari', _('ARI - Amazon Ramdisk Image')),
@@ -201,6 +232,22 @@ OPENSTACK_NEUTRON_NETWORK = {
 #         ('vmdk', _('VMDK'))
 #     ]
 # }
+
+# The IMAGE_CUSTOM_PROPERTY_TITLES settings is used to customize the titles for
+# image custom property attributes that appear on image detail pages.
+IMAGE_CUSTOM_PROPERTY_TITLES = {
+    "architecture": _("Architecture"),
+    "kernel_id": _("Kernel ID"),
+    "ramdisk_id": _("Ramdisk ID"),
+    "image_state": _("Euca2ools state"),
+    "project_id": _("Project ID"),
+    "image_type": _("Image Type")
+}
+
+# The IMAGE_RESERVED_CUSTOM_PROPERTIES setting is used to specify which image
+# custom properties should not be displayed in the Image Custom Properties
+# table.
+IMAGE_RESERVED_CUSTOM_PROPERTIES = []
 
 # OPENSTACK_ENDPOINT_TYPE specifies the endpoint type to use for the endpoints
 # in the Keystone service catalog. Use this setting when Horizon is running
@@ -225,11 +272,14 @@ API_RESULT_PAGE_SIZE = 20
 TIME_ZONE = "UTC"
 
 # When launching an instance, the menu of available flavors is
-# sorted by RAM usage, ascending.  Provide a callback method here
-# (and/or a flag for reverse sort) for the sorted() method if you'd
-# like a different behaviour.  For more info, see
+# sorted by RAM usage, ascending. If you would like a different sort order,
+# you can provide another flavor attribute as sorting key. Alternatively, you
+# can provide a custom callback method to use for sorting. You can also provide
+# a flag for reverse sort. For more info, see
 # http://docs.python.org/2/library/functions.html#sorted
 # CREATE_INSTANCE_FLAVOR_SORT = {
+#     'key': 'name',
+#      # or
 #     'key': my_awesome_callback_method,
 #     'reverse': False,
 # }
@@ -244,7 +294,11 @@ TIME_ZONE = "UTC"
 # Map of local copy of service policy files
 #POLICY_FILES = {
 #    'identity': 'keystone_policy.json',
-#    'compute': 'nova_policy.json'
+#    'compute': 'nova_policy.json',
+#    'volume': 'cinder_policy.json',
+#    'image': 'glance_policy.json',
+#    'orchestration': 'heat_policy.json',
+#    'network': 'neutron_policy.json',
 #}
 
 # Trove user and database extension support. By default support for
@@ -357,24 +411,30 @@ LOGGING = {
             'handlers': ['null'],
             'propagate': False,
         },
+        'scss': {
+            'handlers': ['null'],
+            'propagate': False,
+        },
     }
 }
 
+# 'direction' should not be specified for all_tcp/udp/icmp.
+# It is specified in the form.
 SECURITY_GROUP_RULES = {
     'all_tcp': {
-        'name': 'ALL TCP',
+        'name': _('All TCP'),
         'ip_protocol': 'tcp',
         'from_port': '1',
         'to_port': '65535',
     },
     'all_udp': {
-        'name': 'ALL UDP',
+        'name': _('All UDP'),
         'ip_protocol': 'udp',
         'from_port': '1',
         'to_port': '65535',
     },
     'all_icmp': {
-        'name': 'ALL ICMP',
+        'name': _('All ICMP'),
         'ip_protocol': 'icmp',
         'from_port': '-1',
         'to_port': '-1',
@@ -464,3 +524,32 @@ SECURITY_GROUP_RULES = {
         'to_port': '3389',
     },
 }
+
+# Deprecation Notice:
+#
+# The setting FLAVOR_EXTRA_KEYS has been deprecated.
+# Please load extra spec metadata into the Glance Metadata Definition Catalog.
+#
+# The sample quota definitions can be found in:
+# <glance_source>/etc/metadefs/compute-quota.json
+#
+# The metadata definition catalog supports CLI and API:
+#  $glance --os-image-api-version 2 help md-namespace-import
+#  $glance-manage db_load_metadefs <directory_with_definition_files>
+#
+# See Metadata Definitions on: http://docs.openstack.org/developer/glance/
+
+# Indicate to the Sahara data processing service whether or not
+# automatic floating IP allocation is in effect.  If it is not
+# in effect, the user will be prompted to choose a floating IP
+# pool for use in their cluster.  False by default.  You would want
+# to set this to True if you were running Nova Networking with
+# auto_assign_floating_ip = True.
+# SAHARA_AUTO_IP_ALLOCATION_ENABLED = False
+
+# The hash algorithm to use for authentication tokens. This must
+# match the hash algorithm that the identity server and the
+# auth_token middleware are using. Allowed values are the
+# algorithms supported by Python's hashlib library.
+# OPENSTACK_TOKEN_HASH_ALGORITHM = 'md5'
+

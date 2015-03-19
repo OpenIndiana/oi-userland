@@ -26,16 +26,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		MySQL-python
-COMPONENT_VERSION=	1.2.2
-COMPONENT_PROJECT_URL=	http://sourceforge.net/projects/mysql-python
+COMPONENT_VERSION=	1.2.5
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).zip
 COMPONENT_ARCHIVE_HASH= \
-    sha256:f4133b81e65c7b94a5921ff6a0e7bdbfb622f2a70473673103cb17d5a5be807a
-COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/mysql-python/$(COMPONENT_ARCHIVE)
+    sha256:811040b647e5d5686f84db415efd697e6250008b112b6909ba77ac059e140c74
+COMPONENT_ARCHIVE_URL=	$(call pypi_url)
+COMPONENT_PROJECT_URL=	https://github.com/farcepest/MySQLdb1
 COMPONENT_BUGDB=	python-mod/mysql
 
-TPNO=			9533
+TPNO=			21723
 
 # Syntax issues: not Python 3 ready.
 PYTHON_VERSIONS=	2.7 2.6
@@ -44,10 +44,14 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH_32=/usr/mysql/5.5/bin/$(MACH32):/usr/bin:$(SPRO_VROOT)/bin
-PATH_64=/usr/mysql/5.5/bin:/usr/bin:$(SPRO_VROOT)/bin
-COMPONENT_BUILD_ENV   += PATH=$(PATH_$(BITS)):$(PATH)
-COMPONENT_INSTALL_ENV += PATH=$(PATH_$(BITS)):$(PATH)
+# Remove trailing carriage returns, if present, in the files.
+COMPONENT_POST_UNPACK_ACTION = \
+    /usr/bin/find $(SOURCE_DIR) -type f -exec $(GSED) -i 's/\r//' '{}' \; ;
+
+PATH_32=		/usr/mysql/5.5/bin/$(MACH32):/usr/bin:$(SPRO_VROOT)/bin
+PATH_64=		/usr/mysql/5.5/bin:/usr/bin:$(SPRO_VROOT)/bin
+COMPONENT_BUILD_ENV +=		PATH=$(PATH_$(BITS)):$(PATH)
+COMPONENT_INSTALL_ENV +=	PATH=$(PATH_$(BITS)):$(PATH)
 
 CFLAGS_32=	-L/usr/mysql/5.5/lib -R/usr/mysql/5.5/lib
 CFLAGS_64=	-L/usr/mysql/5.5/lib/$(MACH64) -R/usr/mysql/5.5/lib/$(MACH64)
@@ -56,15 +60,12 @@ CFLAGS +=	$(CFLAGS_$(BITS))
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # common targets
-build:          $(BUILD_32_and_64)
+build:		$(BUILD_32_and_64)
 
-install:        $(INSTALL_32_and_64)
+install:	$(INSTALL_32_and_64)
 
-test:           $(NO_TESTS)
+test:		$(NO_TESTS)
 
 
-REQUIRED_PACKAGES += database/mysql-55
 REQUIRED_PACKAGES += database/mysql-55/library
-REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/math

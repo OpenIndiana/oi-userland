@@ -1,0 +1,18 @@
+The following patch address the following upstream issue
+
+	http://code.google.com/p/sqlalchemy-migrate/issues/detail?id=170
+
+It has not yet been submitted upstream.
+
+--- sqlalchemy-migrate-0.9.1/migrate/changeset/__init__.py.~1~	2014-05-06 07:39:34.000000000 -0700
++++ sqlalchemy-migrate-0.9.1/migrate/changeset/__init__.py	2014-09-01 23:26:29.864218808 -0700
+@@ -10,7 +10,8 @@ import warnings
+ import sqlalchemy
+ from sqlalchemy import __version__ as _sa_version
+ 
+-warnings.simplefilter('always', DeprecationWarning)
++warnings.filterwarnings('always', message='.*', category=DeprecationWarning,
++    module='migrate.changeset')
+ 
+ _sa_version = tuple(int(re.match("\d+", x).group(0)) for x in _sa_version.split("."))
+ SQLA_07 = _sa_version >= (0, 7)

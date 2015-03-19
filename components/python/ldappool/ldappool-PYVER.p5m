@@ -1,0 +1,55 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+#
+
+set name=pkg.fmri \
+    value=pkg:/library/python/ldappool-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="A connection pool for python-ldap"
+set name=pkg.description \
+    value="A simple connector pool for python-ldap. The pool keeps LDAP connectors alive and allows the reuse of them, drastically reducing the time spent to initiate a ldap connection. The pool has useful features like: transparent reconnection on failures or server restarts; configurable pool size and connectors timeouts; configurable max lifetime for connectors; a context manager to simplify acquiring and releasing a connector."
+set name=com.oracle.info.description value="the Python ldappool module"
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value=org.opensolaris.category.2008:Development/Python
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream value="Mozilla Services <services-dev@mozilla.org>"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2015/097
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+#
+file path=usr/lib/python$(PYVER)/vendor-packages/ldappool-$(COMPONENT_VERSION)-py$(PYVER).egg-info
+file path=usr/lib/python$(PYVER)/vendor-packages/ldappool/__init__.py
+#
+license ldappool.license license=MPL
+
+# force a dependency on the Python runtime
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# force a dependency on the ldappool package
+depend type=require \
+    fmri=library/python/ldappool@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+
+# force a dependency on python-ldap; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/python-ldap-$(PYV)

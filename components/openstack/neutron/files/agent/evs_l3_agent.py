@@ -1,8 +1,8 @@
 # vim: tabstop=4 shiftwidth=4 softtabstop=4
 
-# Copyright 2012 Nicira Networks, Inc.  All rights reserved.
+# Copyright 2012 VMware, Inc.  All rights reserved.
 #
-# Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -16,24 +16,24 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 #
-# @author: Dan Wendlandt, Nicira, Inc
-# @author: Girish Moodalbail, Oracle, Inc.
-#
 
 """
 Based off generic l3_agent (neutron/agent/l3_agent) code
 """
 
+import errno
 import netaddr
 
 from oslo.config import cfg
 
+from neutron.agent.common import config
 from neutron.agent import l3_agent
 from neutron.agent.linux import utils
 from neutron.agent.solaris import interface
-from neutron.agent.solaris import ipfilters_manager
 from neutron.agent.solaris import net_lib
+from neutron.agent.solaris import ra
 from neutron.common import constants as l3_constants
+from neutron.common import utils as common_utils
 from neutron.openstack.common import log as logging
 
 
@@ -43,56 +43,7 @@ EXTERNAL_DEV_PREFIX = 'l3e'
 FLOATING_IP_CIDR_SUFFIX = '/32'
 
 
-class RouterInfo(object):
-
-    def __init__(self, router_id, root_helper, use_namespaces, router):
-        self.router_id = router_id
-        self.ex_gw_port = None
-        self._snat_enabled = None
-        self._snat_action = None
-        self.internal_ports = []
-        # We do not need either root_helper or namespace, so set them to None
-        self.root_helper = None
-        self.use_namespaces = None
-        # Invoke the setter for establishing initial SNAT action
-        self.router = router
-        self.ipfilters_manager = ipfilters_manager.IPfiltersManager()
-        self.routes = []
-
-    @property
-    def router(self):
-        return self._router
-
-    @router.setter
-    def router(self, value):
-        self._router = value
-        if not self._router:
-            return
-        # enable_snat by default if it wasn't specified by plugin
-        self._snat_enabled = self._router.get('enable_snat', True)
-        # Set a SNAT action for the router
-        if self._router.get('gw_port'):
-            self._snat_action = ('add_rules' if self._snat_enabled
-                                 else 'remove_rules')
-        elif self.ex_gw_port:
-            # Gateway port was removed, remove rules
-            self._snat_action = 'remove_rules'
-
-    def ns_name(self):
-        pass
-
-    def perform_snat_action(self, snat_callback, *args):
-        # Process SNAT rules for attached subnets
-        if self._snat_action:
-            snat_callback(self, self._router.get('gw_port'),
-                          *args, action=self._snat_action)
-        self._snat_action = None
-
-
-class EVSL3NATAgent(l3_agent.L3NATAgent):
-
-    RouterInfo = RouterInfo
-
+class EVSL3NATAgent(l3_agent.L3NATAgentWithStateReport):
     OPTS = [
         cfg.StrOpt('external_network_datalink', default='net0',
                    help=_("Name of the datalink that connects to "
@@ -108,19 +59,86 @@ class EVSL3NATAgent(l3_agent.L3NATAgent):
         super(EVSL3NATAgent, self).__init__(host=host, conf=conf)
 
     def _router_added(self, router_id, router):
-        ri = RouterInfo(router_id, self.root_helper,
-                        self.conf.use_namespaces, router)
+        ri = l3_agent.RouterInfo(router_id, None,
+                                 self.conf.use_namespaces, router)
         self.router_info[router_id] = ri
 
+        if self.conf.enable_metadata_proxy:
+            self._spawn_metadata_proxy(ri.router_id, ri.ns_name)
+
     def _router_removed(self, router_id):
-        ri = self.router_info[router_id]
+        ri = self.router_info.get(router_id)
+        if ri is None:
+            LOG.warn(_("Info for router %s were not found. "
+                       "Skipping router removal"), router_id)
+            return
         ri.router['gw_port'] = None
         ri.router[l3_constants.INTERFACE_KEY] = []
         ri.router[l3_constants.FLOATINGIP_KEY] = []
         self.process_router(ri)
+        if self.conf.enable_metadata_proxy:
+            self._destroy_metadata_proxy(ri.router_id, ri.ns_name)
+
         del self.router_info[router_id]
 
+    def _get_metadata_proxy_callback(self, router_id):
+        """Need to override this since we need to pass the absolute
+        path to neutron-ns-metadata-proxy binary.
+        """
+        def callback(pid_file):
+            metadata_proxy_socket = cfg.CONF.metadata_proxy_socket
+            proxy_cmd = ['/usr/lib/neutron/neutron-ns-metadata-proxy',
+                         '--pid_file=%s' % pid_file,
+                         '--metadata_proxy_socket=%s' % metadata_proxy_socket,
+                         '--router_id=%s' % router_id,
+                         '--state_path=%s' % self.conf.state_path,
+                         '--metadata_port=%s' % self.conf.metadata_port]
+            proxy_cmd.extend(config.get_log_args(
+                cfg.CONF, 'neutron-ns-metadata-proxy-%s.log' %
+                router_id))
+            return proxy_cmd
+
+        return callback
+
+    def external_gateway_snat_rules(self, ex_gw_ip, internal_cidrs,
+                                    interface_name):
+        rules = []
+        for cidr in internal_cidrs:
+            rules.append('map %s %s -> %s/32' %
+                         (interface_name, cidr, ex_gw_ip))
+        return rules
+
+    def _handle_router_snat_rules(self, ri, ex_gw_port, internal_cidrs,
+                                  interface_name, action):
+        assert not ri.router['distributed']
+
+        # Remove all the old SNAT rules
+        # This is safe because if use_namespaces is set as False
+        # then the agent can only configure one router, otherwise
+        # each router's SNAT rules will be in their own namespace
+
+        # get only the SNAT rules
+        old_snat_rules = [rule for rule in ri.ipfilters_manager.ipv4['nat']
+                          if rule.startswith('map')]
+        ri.ipfilters_manager.remove_nat_rules(old_snat_rules)
+
+        # And add them back if the action is add_rules
+        if action == 'add_rules' and ex_gw_port:
+            # NAT rules are added only if ex_gw_port has an IPv4 address
+            for ip_addr in ex_gw_port['fixed_ips']:
+                ex_gw_ip = ip_addr['ip_address']
+                if netaddr.IPAddress(ex_gw_ip).version == 4:
+                    rules = self.external_gateway_snat_rules(ex_gw_ip,
+                                                             internal_cidrs,
+                                                             interface_name)
+                    ri.ipfilters_manager.add_nat_rules(rules)
+                    break
+
+    @common_utils.exception_logger()
     def process_router(self, ri):
+        # TODO(mrsmith) - we shouldn't need to check here
+        if 'distributed' not in ri.router:
+            ri.router['distributed'] = False
         ex_gw_port = self._get_ex_gw_port(ri)
         internal_ports = ri.router.get(l3_constants.INTERFACE_KEY, [])
         existing_port_ids = set([p['id'] for p in ri.internal_ports])
@@ -131,16 +149,43 @@ class EVSL3NATAgent(l3_agent.L3NATAgent):
                      p['id'] not in existing_port_ids]
         old_ports = [p for p in ri.internal_ports if
                      p['id'] not in current_port_ids]
+        new_ipv6_port = False
+        old_ipv6_port = False
         for p in new_ports:
             self._set_subnet_info(p)
-            ri.internal_ports.append(p)
             self.internal_network_added(ri, p)
+            ri.internal_ports.append(p)
+            if (not new_ipv6_port and
+                    netaddr.IPNetwork(p['subnet']['cidr']).version == 6):
+                new_ipv6_port = True
 
         for p in old_ports:
-            ri.internal_ports.remove(p)
             self.internal_network_removed(ri, p)
+            ri.internal_ports.remove(p)
+            if (not old_ipv6_port and
+                    netaddr.IPNetwork(p['subnet']['cidr']).version == 6):
+                old_ipv6_port = True
 
-        internal_cidrs = [p['ip_cidr'] for p in ri.internal_ports]
+        if new_ipv6_port or old_ipv6_port:
+            # refresh ndpd daemon after filling in ndpd.conf
+            # with the right entries
+            ra.enable_ipv6_ra(ri.router_id,
+                              internal_ports,
+                              self.get_internal_device_name)
+
+        # remove any internal stale router interfaces (i.e., l3i.. VNICs)
+        existing_devices = net_lib.Datalink.show_vnic()
+        current_internal_devs = set([n for n in existing_devices
+                                     if n.startswith(INTERNAL_DEV_PREFIX)])
+        current_port_devs = set([self.get_internal_device_name(id) for
+                                 id in current_port_ids])
+        stale_devs = current_internal_devs - current_port_devs
+        for stale_dev in stale_devs:
+            LOG.debug(_('Deleting stale internal router device: %s'),
+                      stale_dev)
+            self.driver.fini_l3(stale_dev)
+            self.driver.unplug(stale_dev)
+
         # TODO(salv-orlando): RouterInfo would be a better place for
         # this logic too
         ex_gw_port_id = (ex_gw_port and ex_gw_port['id'] or
@@ -149,26 +194,63 @@ class EVSL3NATAgent(l3_agent.L3NATAgent):
         interface_name = None
         if ex_gw_port_id:
             interface_name = self.get_external_device_name(ex_gw_port_id)
-        if ex_gw_port and not ri.ex_gw_port:
-            self._set_subnet_info(ex_gw_port)
-            self.external_gateway_added(ri, ex_gw_port,
-                                        interface_name, internal_cidrs)
-        elif not ex_gw_port and ri.ex_gw_port:
-            self.external_gateway_removed(ri, ri.ex_gw_port,
-                                          interface_name, internal_cidrs)
-
-        # We don't need this since our IPnat rules are bi-directional
-        # Process SNAT rules for external gateway
-        # ri.perform_snat_action(self._handle_router_snat_rules,
-        #                       internal_cidrs, interface_name)
-
-        # Process DNAT rules for floating IPs
         if ex_gw_port:
-            self.process_router_floating_ips(ri, ex_gw_port)
+            def _gateway_ports_equal(port1, port2):
+                def _get_filtered_dict(d, ignore):
+                    return dict((k, v) for k, v in d.iteritems()
+                                if k not in ignore)
 
+                keys_to_ignore = set(['binding:host_id'])
+                port1_filtered = _get_filtered_dict(port1, keys_to_ignore)
+                port2_filtered = _get_filtered_dict(port2, keys_to_ignore)
+                return port1_filtered == port2_filtered
+
+            self._set_subnet_info(ex_gw_port)
+            if not ri.ex_gw_port:
+                self.external_gateway_added(ri, ex_gw_port, interface_name)
+            elif not _gateway_ports_equal(ex_gw_port, ri.ex_gw_port):
+                self.external_gateway_updated(ri, ex_gw_port, interface_name)
+        elif not ex_gw_port and ri.ex_gw_port:
+            self.external_gateway_removed(ri, ri.ex_gw_port, interface_name)
+
+        # Remove any external stale router interfaces (i.e., l3e.. VNICs)
+        stale_devs = [dev for dev in existing_devices
+                      if dev.startswith(EXTERNAL_DEV_PREFIX)
+                      and dev != interface_name]
+        for stale_dev in stale_devs:
+            LOG.debug(_('Deleting stale external router device: %s'),
+                      stale_dev)
+            self.driver.fini_l3(stale_dev)
+            self.driver.unplug(stale_dev)
+
+        # Process static routes for router
+        self.routes_updated(ri)
+
+        # Process SNAT rules for external gateway
+        if (not ri.router['distributed'] or
+                ex_gw_port and self.get_gw_port_host(ri.router) == self.host):
+            # Get IPv4 only internal CIDRs
+            internal_cidrs = [p['ip_cidr'] for p in ri.internal_ports
+                              if netaddr.IPNetwork(p['ip_cidr']).version == 4]
+            ri.perform_snat_action(self._handle_router_snat_rules,
+                                   internal_cidrs, interface_name)
+
+        # Process SNAT/DNAT rules for floating IPs
+        fip_statuses = {}
+        if ex_gw_port:
+            existing_floating_ips = ri.floating_ips
+            fip_statuses = self.process_router_floating_ips(ri, ex_gw_port)
+            # Identify floating IPs which were disabled
+            ri.floating_ips = set(fip_statuses.keys())
+            for fip_id in existing_floating_ips - ri.floating_ips:
+                fip_statuses[fip_id] = l3_constants.FLOATINGIP_STATUS_DOWN
+            # Update floating IP status on the neutron server
+            self.plugin_rpc.update_floatingip_statuses(
+                self.context, ri.router_id, fip_statuses)
+
+        # Update ex_gw_port and enable_snat on the router info cache
         ri.ex_gw_port = ex_gw_port
         ri.enable_snat = ri.router.get('enable_snat')
-        self.routes_updated(ri)
 
     def process_router_floating_ips(self, ri, ex_gw_port):
         """Configure the router's floating IPs
@@ -180,7 +262,7 @@ class EVSL3NATAgent(l3_agent.L3NATAgent):
         ipintf = net_lib.IPInterface(ifname)
         ipaddr_list = ipintf.ipaddr_list()['static']
 
-        existing_cidrs = set([addr for addr in ipaddr_list])
+        existing_cidrs = set(ipaddr_list)
         new_cidrs = set()
 
         existing_nat_rules = [nat_rule for nat_rule in
@@ -188,6 +270,7 @@ class EVSL3NATAgent(l3_agent.L3NATAgent):
         new_nat_rules = []
 
         # Loop once to ensure that floating ips are configured.
+        fip_statuses = {}
         for fip in ri.router.get(l3_constants.FLOATINGIP_KEY, []):
             fip_ip = fip['floating_ip_address']
             fip_cidr = str(fip_ip) + FLOATING_IP_CIDR_SUFFIX
@@ -196,18 +279,36 @@ class EVSL3NATAgent(l3_agent.L3NATAgent):
             nat_rule = 'bimap %s %s -> %s' % (ifname, fixed_cidr, fip_cidr)
 
             if fip_cidr not in existing_cidrs:
-                ipintf.create_address(fip_cidr)
-                ri.ipfilters_manager.add_nat_rules([nat_rule])
+                try:
+                    ipintf.create_address(fip_cidr)
+                    ri.ipfilters_manager.add_nat_rules([nat_rule])
+                except Exception as err:
+                    # TODO(gmoodalb): If we fail in add_nat_rules(), then
+                    # we need to remove the fip_cidr address
+
+                    # any exception occurred here should cause the floating IP
+                    # to be set in error state
+                    fip_statuses[fip['id']] = (
+                        l3_constants.FLOATINGIP_STATUS_ERROR)
+                    LOG.warn(_("Unable to configure IP address for "
+                               "floating IP: %s: %s") % (fip['id'], err))
+                    continue
+            fip_statuses[fip['id']] = (
+                l3_constants.FLOATINGIP_STATUS_ACTIVE)
             new_nat_rules.append(nat_rule)
 
         # remove all the old NAT rules
-        ri.ipfilters_manager.remove_nat_rules(list(set(existing_nat_rules) -
-                                              set(new_nat_rules)))
+        old_nat_rules = list(set(existing_nat_rules) - set(new_nat_rules))
+        # Filter out 'bimap' NAT rules as we don't want to remove NAT rules
+        # that were added for Metadata server
+        old_nat_rules = [rule for rule in old_nat_rules if "bimap" in rule]
+        ri.ipfilters_manager.remove_nat_rules(old_nat_rules)
 
         # Clean up addresses that no longer belong on the gateway interface.
         for ip_cidr in existing_cidrs - new_cidrs:
             if ip_cidr.endswith(FLOATING_IP_CIDR_SUFFIX):
                 ipintf.delete_address(ip_cidr)
+        return fip_statuses
 
     def get_internal_device_name(self, port_id):
         # Because of the way how dnsmasq works on Solaris, the length
@@ -225,28 +326,26 @@ class EVSL3NATAgent(l3_agent.L3NATAgent):
         dname += '_0'
         return dname.replace('-', '_')
 
-    def external_gateway_added(self, ri, ex_gw_port,
-                               external_dlname, internal_cidrs):
+    def external_gateway_added(self, ri, ex_gw_port, external_dlname):
 
         if not net_lib.Datalink.datalink_exists(external_dlname):
             dl = net_lib.Datalink(external_dlname)
             # need to determine the VLAN ID for the VNIC
             evsname = ex_gw_port['network_id']
-            tenantname = ex_gw_port['tenant_id']
             cmd = ['/usr/sbin/evsadm', 'show-evs', '-co', 'vid',
-                   '-f', 'tenant=%s' % tenantname, evsname]
+                   '-f', 'evs=%s' % evsname]
             try:
                 stdout = utils.execute(cmd)
             except Exception as err:
                 LOG.error(_("Failed to retrieve the VLAN ID associated "
                             "with the external network, and it is required "
-                            "to create external gateway port: %s") % err)
+                            "to create an external gateway port: %s") % err)
                 return
             vid = stdout.splitlines()[0].strip()
             if vid == "":
-                LOG.error(_("External Network does not have a VLAN ID "
+                LOG.error(_("External network does not have a VLAN ID "
                             "associated with it, and it is required to "
-                            "create external gateway port"))
+                            "create an external gateway port"))
                 return
             mac_address = ex_gw_port['mac_address']
             dl.create_vnic(self.conf.external_network_datalink,
@@ -258,7 +357,10 @@ class EVSL3NATAgent(l3_agent.L3NATAgent):
         if gw_ip:
             cmd = ['/usr/bin/pfexec', '/usr/sbin/route', 'add', 'default',
                    gw_ip]
-            utils.execute(cmd, check_exit_code=False)
+            stdout = utils.execute(cmd, extra_ok_codes=[errno.EEXIST])
+            ri.remove_route = True
+            if 'entry exists' in stdout:
+                ri.remove_route = False
 
             # for each of the internal ports, add Policy Based
             # Routing (PBR) rule
@@ -270,9 +372,11 @@ class EVSL3NATAgent(l3_agent.L3NATAgent):
                 ipversion = netaddr.IPNetwork(port['subnet']['cidr']).version
                 ri.ipfilters_manager.add_ipf_rules(rules, ipversion)
 
-    def external_gateway_removed(self, ri, ex_gw_port,
-                                 external_dlname, internal_cidrs):
+    def external_gateway_updated(self, ri, ex_gw_port, external_dlname):
+        # There is nothing to do on Solaris
+        pass
 
+    def external_gateway_removed(self, ri, ex_gw_port, external_dlname):
         gw_ip = ex_gw_port['subnet']['gateway_ip']
         if gw_ip:
             # remove PBR rules
@@ -284,13 +388,24 @@ class EVSL3NATAgent(l3_agent.L3NATAgent):
                 ipversion = netaddr.IPNetwork(port['subnet']['cidr']).version
                 ri.ipfilters_manager.remove_ipf_rules(rules, ipversion)
 
-            cmd = ['/usr/bin/pfexec', '/usr/sbin/route', 'delete', 'default',
-                   gw_ip]
-            utils.execute(cmd, check_exit_code=False)
+            if ri.remove_route:
+                cmd = ['/usr/bin/pfexec', '/usr/sbin/route', 'delete',
+                       'default', gw_ip]
+                utils.execute(cmd, check_exit_code=False)
 
         if net_lib.Datalink.datalink_exists(external_dlname):
             self.driver.fini_l3(external_dlname)
             self.driver.unplug(external_dlname)
+
+        # remove the EVS VPort associated with external network
+        cmd = ['/usr/sbin/evsadm', 'remove-vport',
+               '-T', ex_gw_port['tenant_id'],
+               '%s/%s' % (ex_gw_port['network_id'], ex_gw_port['id'])]
+        try:
+            utils.execute(cmd)
+        except Exception as err:
+            LOG.error(_("Failed to delete the EVS VPort associated with "
+                        "external network: %s") % err)
 
     def _get_ippool_name(self, mac_address, suffix=None):
         # Generate a unique-name for ippool(1m) from that last 3
@@ -368,6 +483,19 @@ class EVSL3NATAgent(l3_agent.L3NATAgent):
         ipversion = netaddr.IPNetwork(port_subnet).version
         ri.ipfilters_manager.add_ipf_rules(rules, ipversion)
 
+        # if metadata proxy is enabled, then add the necessary
+        # IP NAT rules to forward the metadata requests to the
+        # metadata proxy server
+        if self.conf.enable_metadata_proxy and ipversion == 4:
+            # TODO(gmoodalb): when IP Filter allows redirection of packets
+            # to loopback IP address, then we need to add an IPF rule allowing
+            # only packets destined to 127.0.0.1:9697 to
+            # neutron-ns-metadata-proxy server
+            rules = ['rdr %s 169.254.169.254/32 port 80 -> %s port %d tcp' %
+                     (internal_dlname, port['fixed_ips'][0]['ip_address'],
+                      self.conf.metadata_port)]
+            ri.ipfilters_manager.add_nat_rules(rules)
+
     def internal_network_removed(self, ri, port):
         internal_dlname = self.get_internal_device_name(port['id'])
         port_subnet = port['subnet']['cidr']
@@ -411,18 +539,26 @@ class EVSL3NATAgent(l3_agent.L3NATAgent):
                 ri.ipfilters_manager.remove_ippool(iport_block_pname,
                                                    [port_subnet])
 
+        # if metadata proxy is enabled, then remove the IP NAT rules that
+        # were added while adding the internal network
+        if self.conf.enable_metadata_proxy and ipversion == 4:
+            rules = ['rdr %s 169.254.169.254/32 port 80 -> %s port %d tcp' %
+                     (internal_dlname, port['fixed_ips'][0]['ip_address'],
+                      self.conf.metadata_port)]
+            ri.ipfilters_manager.remove_nat_rules(rules)
+
         if net_lib.Datalink.datalink_exists(internal_dlname):
             self.driver.fini_l3(internal_dlname)
             self.driver.unplug(internal_dlname)
 
-    def routers_updated(self, context, routers):
-        super(EVSL3NATAgent, self).routers_updated(context, routers)
-        if routers:
-            # If router's interface was removed, then the VNIC associated
-            # with that interface must be deleted immediately. The EVS
-            # plugin can delete the virtual port iff the VNIC associated
-            # with that virtual port is deleted first.
-            self._rpc_loop()
+        # remove the EVS VPort associated with internal network
+        cmd = ['/usr/sbin/evsadm', 'remove-vport', '-T', port['tenant_id'],
+               '%s/%s' % (port['network_id'], port['id'])]
+        try:
+            utils.execute(cmd)
+        except Exception as err:
+            LOG.error(_("Failed to delete the EVS VPort associated with "
+                        "internal network: %s") % err)
 
     def routes_updated(self, ri):
         pass

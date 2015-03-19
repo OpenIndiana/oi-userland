@@ -18,21 +18,24 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pyflakes
-COMPONENT_VERSION=	0.7.2
+COMPONENT_VERSION=	0.8.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e971804569e26a120ded70ca94882cbbf360390538fc3b5861f8ccecaf291178
+    sha256:3fa80a10b36d51686bf7744f5dc99622cd5c98ce8ed64022e629868aafc17769
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	https://pypi.python.org/pypi/pyflakes
+COMPONENT_PROJECT_URL=	https://launchpad.net/pyflakes
 COMPONENT_BUGDB=	python-mod/pyflakes
 
-TPNO=			14503
+TPNO=			21747
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -43,12 +46,16 @@ COMPONENT_POST_INSTALL_ACTION += (cd $(PROTO_DIR)/usr/bin ; \
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
+COMPONENT_TEST_CMD=	$(PYTHON)
+COMPONENT_TEST_ARGS=	setup.py test
+COMPONENT_TEST_DIR=	$(SOURCE_DIR)
+
 # common targets
 build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
-test:		$(NO_TESTS)
+test:		$(TEST_NO_ARCH)
 
 
 REQUIRED_PACKAGES += library/python/setuptools-26

@@ -18,21 +18,24 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		django_openstack_auth
-COMPONENT_VERSION=	1.1.3
+COMPONENT_VERSION=	1.1.9
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:565a4b322e1eb2d0cf8df59ae58b49b2e324c414a6dd0ba4a6aa3459600314da
+    sha256:650b3fd528d179a36cf629aa7dad53e03aed6cf9300ea4a337260887e71e9b53
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://www.openstack.org/
-COMPONENT_BUGDB=	python-mod/openstack-auth 
+COMPONENT_BUGDB=	python-mod/openstack-auth
 
-TPNO=			16306
+TPNO=			21746
 
 # Depends on django, which is not Python 3 ready.
 PYTHON_VERSIONS=	2.7 2.6

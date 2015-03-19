@@ -1,384 +1,70 @@
---- neutron-2013.2.3/neutron/agent/l3_agent.py.orig	2014-04-03 11:49:01.000000000 -0700
-+++ neutron-2013.2.3/neutron/agent/l3_agent.py	2014-06-02 02:31:42.660207857 -0700
-@@ -2,6 +2,8 @@
- #
- # Copyright 2012 Nicira Networks, Inc.  All rights reserved.
- #
-+# Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
-+#
- #    Licensed under the Apache License, Version 2.0 (the "License"); you may
- #    not use this file except in compliance with the License. You may obtain
- #    a copy of the License at
-@@ -15,8 +17,11 @@
- #    under the License.
- #
- # @author: Dan Wendlandt, Nicira, Inc
-+# @author: Girish Moodalbail, Oracle, Inc
- #
- 
-+import platform
-+
- import eventlet
- import netaddr
- from oslo.config import cfg
-@@ -28,6 +33,8 @@
- from neutron.agent.linux import iptables_manager
- from neutron.agent.linux import utils
- from neutron.agent import rpc as agent_rpc
-+from neutron.agent.solaris import ipfilters_manager
-+from neutron.agent.solaris import net_lib
- from neutron.common import constants as l3_constants
- from neutron.common import legacy
- from neutron.common import topics
-@@ -150,6 +157,7 @@
-             Per rpc versioning rules,  it is backwards compatible.
-     """
-     RPC_API_VERSION = '1.1'
-+    RouterInfo = RouterInfo
- 
-     OPTS = [
-         cfg.StrOpt('external_network_bridge', default='br-ex',
-@@ -292,8 +300,8 @@
-                 raise
- 
-     def _router_added(self, router_id, router):
--        ri = RouterInfo(router_id, self.root_helper,
--                        self.conf.use_namespaces, router)
-+        ri = self.RouterInfo(router_id, self.root_helper,
-+                             self.conf.use_namespaces, router)
-         self.router_info[router_id] = ri
-         if self.conf.use_namespaces:
-             self._create_router_namespace(ri)
-@@ -380,12 +388,11 @@
-         for p in new_ports:
-             self._set_subnet_info(p)
-             ri.internal_ports.append(p)
--            self.internal_network_added(ri, p['network_id'], p['id'],
--                                        p['ip_cidr'], p['mac_address'])
-+            self.internal_network_added(ri, p)
- 
-         for p in old_ports:
-             ri.internal_ports.remove(p)
--            self.internal_network_removed(ri, p['id'], p['ip_cidr'])
-+            self.internal_network_removed(ri, p)
- 
-         internal_cidrs = [p['ip_cidr'] for p in ri.internal_ports]
-         # TODO(salv-orlando): RouterInfo would be a better place for
-@@ -572,23 +579,24 @@
-             rules.extend(self.internal_network_nat_rules(ex_gw_ip, cidr))
-         return rules
- 
--    def internal_network_added(self, ri, network_id, port_id,
--                               internal_cidr, mac_address):
--        interface_name = self.get_internal_device_name(port_id)
-+    def internal_network_added(self, ri, port):
-+        interface_name = self.get_internal_device_name(port['id'])
-         if not ip_lib.device_exists(interface_name,
-                                     root_helper=self.root_helper,
-                                     namespace=ri.ns_name()):
--            self.driver.plug(network_id, port_id, interface_name, mac_address,
-+            self.driver.plug(port['network_id'], port['id'], interface_name,
-+                             port['mac_address'],
-                              namespace=ri.ns_name(),
-                              prefix=INTERNAL_DEV_PREFIX)
-+        internal_cidr = port['ip_cidr']
- 
-         self.driver.init_l3(interface_name, [internal_cidr],
-                             namespace=ri.ns_name())
-         ip_address = internal_cidr.split('/')[0]
-         self._send_gratuitous_arp_packet(ri, interface_name, ip_address)
- 
--    def internal_network_removed(self, ri, port_id, internal_cidr):
--        interface_name = self.get_internal_device_name(port_id)
-+    def internal_network_removed(self, ri, port):
-+        interface_name = self.get_internal_device_name(port['id'])
-         if ip_lib.device_exists(interface_name,
-                                 root_helper=self.root_helper,
-                                 namespace=ri.ns_name()):
-@@ -839,6 +847,8 @@
-     config.register_root_helper(conf)
-     conf.register_opts(interface.OPTS)
-     conf.register_opts(external_process.OPTS)
-+    if platform.system() == "SunOS":
-+        manager = 'neutron.agent.evs_l3_agent.EVSL3NATAgent'
-     conf(project='neutron')
-     config.setup_logging(conf)
-     legacy.modernize_quantum_config(conf)
---- neutron-2013.2.3/neutron/db/l3_db.py.~1~	2014-04-03 11:49:01.000000000 -0700
-+++ neutron-2013.2.3/neutron/db/l3_db.py	2014-06-02 23:20:58.933635798 -0700
-@@ -2,6 +2,8 @@
- 
- # Copyright 2012 Nicira Networks, Inc.  All rights reserved.
- #
-+# Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
-+#
- #    Licensed under the Apache License, Version 2.0 (the "License"); you may
- #    not use this file except in compliance with the License. You may obtain
- #    a copy of the License at
-@@ -15,6 +17,7 @@
- #    under the License.
- #
- # @author: Dan Wendlandt, Nicira, Inc
-+# @author: Girish Moodalbail, Oracle, Inc
- #
- 
- import netaddr
-@@ -56,7 +59,7 @@
-     status = sa.Column(sa.String(16))
-     admin_state_up = sa.Column(sa.Boolean)
-     gw_port_id = sa.Column(sa.String(36), sa.ForeignKey('ports.id'))
--    gw_port = orm.relationship(models_v2.Port)
-+    gw_port = orm.relationship(models_v2.Port, lazy='joined')
- 
- 
- class FloatingIP(model_base.BASEV2, models_v2.HasId, models_v2.HasTenant):
-@@ -79,6 +82,8 @@
-     """Mixin class to add L3/NAT router methods to db_plugin_base_v2."""
- 
-     l3_rpc_notifier = l3_rpc_agent_api.L3AgentNotify
-+    Router = Router
-+    FloatingIP = FloatingIP
- 
-     @property
-     def _core_plugin(self):
-@@ -86,7 +91,7 @@
- 
-     def _get_router(self, context, id):
-         try:
--            router = self._get_by_id(context, Router, id)
-+            router = self._get_by_id(context, self.Router, id)
-         except exc.NoResultFound:
-             raise l3.RouterNotFound(router_id=id)
-         return router
-@@ -122,11 +127,11 @@
-         with context.session.begin(subtransactions=True):
-             # pre-generate id so it will be available when
-             # configuring external gw port
--            router_db = Router(id=uuidutils.generate_uuid(),
--                               tenant_id=tenant_id,
--                               name=r['name'],
--                               admin_state_up=r['admin_state_up'],
--                               status="ACTIVE")
-+            router_db = self.Router(id=uuidutils.generate_uuid(),
-+                                    tenant_id=tenant_id,
-+                                    name=r['name'],
-+                                    admin_state_up=r['admin_state_up'],
-+                                    status="ACTIVE")
-             context.session.add(router_db)
-             if has_gw_info:
-                 self._update_router_gw_info(context, router_db['id'], gw_info)
-@@ -237,7 +242,10 @@
-             if vpnservice:
-                 vpnservice.check_router_in_use(context, id)
- 
--            # delete any gw port
-+            context.session.delete(router)
-+
-+            # Delete the gw port after the router has been removed to
-+            # avoid a constraint violation.
-             device_filter = {'device_id': [id],
-                              'device_owner': [DEVICE_OWNER_ROUTER_GW]}
-             ports = self._core_plugin.get_ports(context.elevated(),
-@@ -246,7 +254,6 @@
-                 self._core_plugin._delete_port(context.elevated(),
-                                                ports[0]['id'])
- 
--            context.session.delete(router)
-         self.l3_rpc_notifier.router_deleted(context, id)
- 
-     def get_router(self, context, id, fields=None):
-@@ -257,7 +264,7 @@
-                     sorts=None, limit=None, marker=None,
-                     page_reverse=False):
-         marker_obj = self._get_marker_obj(context, 'router', limit, marker)
--        return self._get_collection(context, Router,
-+        return self._get_collection(context, self.Router,
-                                     self._make_router_dict,
-                                     filters=filters, fields=fields,
-                                     sorts=sorts,
-@@ -266,14 +273,14 @@
-                                     page_reverse=page_reverse)
- 
-     def get_routers_count(self, context, filters=None):
--        return self._get_collection_count(context, Router,
-+        return self._get_collection_count(context, self.Router,
-                                           filters=filters)
- 
-     def _check_for_dup_router_subnet(self, context, router_id,
-                                      network_id, subnet_id, subnet_cidr):
-         try:
--            rport_qry = context.session.query(models_v2.Port)
--            rports = rport_qry.filter_by(device_id=router_id)
-+            filters = {'device_id': [router_id]}
-+            rports = self._core_plugin.get_ports(context, filters)
-             # It's possible these ports are on the same network, but
-             # different subnets.
-             new_ipnet = netaddr.IPNetwork(subnet_cidr)
-@@ -329,8 +336,11 @@
-                                                   port['network_id'],
-                                                   subnet['id'],
-                                                   subnet['cidr'])
--                port.update({'device_id': router_id,
--                             'device_owner': DEVICE_OWNER_ROUTER_INTF})
-+                self._core_plugin.update_port(context,
-+                                              interface_info['port_id'],
-+                                              {'device_id': router_id,
-+                                               'device_owner':
-+                                               DEVICE_OWNER_ROUTER_INTF})
-         elif 'subnet_id' in interface_info:
-             subnet_id = interface_info['subnet_id']
-             subnet = self._core_plugin._get_subnet(context, subnet_id)
-@@ -372,7 +382,7 @@
-                                              subnet_id):
-         subnet_db = self._core_plugin._get_subnet(context, subnet_id)
-         subnet_cidr = netaddr.IPNetwork(subnet_db['cidr'])
--        fip_qry = context.session.query(FloatingIP)
-+        fip_qry = context.session.query(self.FloatingIP)
-         for fip_db in fip_qry.filter_by(router_id=router_id):
-             if netaddr.IPAddress(fip_db['fixed_ip_address']) in subnet_cidr:
-                 raise l3.RouterInterfaceInUseByFloatingIP(
-@@ -409,22 +419,21 @@
-             subnet = self._core_plugin._get_subnet(context, subnet_id)
-             found = False
- 
--            try:
--                rport_qry = context.session.query(models_v2.Port)
--                ports = rport_qry.filter_by(
--                    device_id=router_id,
--                    device_owner=DEVICE_OWNER_ROUTER_INTF,
--                    network_id=subnet['network_id'])
--
--                for p in ports:
--                    if p['fixed_ips'][0]['subnet_id'] == subnet_id:
--                        port_id = p['id']
--                        self._core_plugin.delete_port(context, p['id'],
--                                                      l3_port_check=False)
--                        found = True
--                        break
--            except exc.NoResultFound:
-+            filters = {
-+                'device_id': router_id,
-+                'device_owner': DEVICE_OWNER_ROUTER_INTF,
-+                'network_id': subnet['network_id']
-+            }
-+            ports = self._core_plugin.get_ports(context, filters)
-+            if not ports:
-                 pass
-+            for p in ports:
-+                if p['fixed_ips'][0]['subnet_id'] == subnet_id:
-+                    port_id = p['id']
-+                    self._core_plugin.delete_port(context, p['id'],
-+                                                  l3_port_check=False)
-+                    found = True
-+                    break
- 
-             if not found:
-                 raise l3.RouterInterfaceNotFoundForSubnet(router_id=router_id,
-@@ -444,7 +453,7 @@
- 
-     def _get_floatingip(self, context, id):
-         try:
--            floatingip = self._get_by_id(context, FloatingIP, id)
-+            floatingip = self._get_by_id(context, self.FloatingIP, id)
-         except exc.NoResultFound:
-             raise l3.FloatingIPNotFound(floatingip_id=id)
-         return floatingip
-@@ -470,19 +479,22 @@
-             raise q_exc.BadRequest(resource='floatingip', msg=msg)
- 
-         # find router interface ports on this network
--        router_intf_qry = context.session.query(models_v2.Port)
--        router_intf_ports = router_intf_qry.filter_by(
--            network_id=internal_port['network_id'],
--            device_owner=DEVICE_OWNER_ROUTER_INTF)
--
-+        router_intf_filter = {
-+            'network_id': internal_port['network_id'],
-+            'device_owner': DEVICE_OWNER_ROUTER_INTF
-+        }
-+        router_intf_ports = self._core_plugin.get_ports(
-+            context, filters=router_intf_filter)
-         for intf_p in router_intf_ports:
-             if intf_p['fixed_ips'][0]['subnet_id'] == internal_subnet_id:
-                 router_id = intf_p['device_id']
--                router_gw_qry = context.session.query(models_v2.Port)
--                has_gw_port = router_gw_qry.filter_by(
--                    network_id=external_network_id,
--                    device_id=router_id,
--                    device_owner=DEVICE_OWNER_ROUTER_GW).count()
-+                filters = {
-+                    'network_id': external_network_id,
-+                    'device_id': router_id,
-+                    'device_owner': DEVICE_OWNER_ROUTER_GW
-+                }
-+                has_gw_port = self._core_plugin.get_ports_count(
-+                    context, filters)
-                 if has_gw_port:
-                     return router_id
- 
-@@ -556,13 +568,13 @@
-                                                     floating_network_id)
-         # confirm that this router has a floating
-         # ip enabled gateway with support for this floating IP network
--        try:
--            port_qry = context.elevated().session.query(models_v2.Port)
--            port_qry.filter_by(
--                network_id=floating_network_id,
--                device_id=router_id,
--                device_owner=DEVICE_OWNER_ROUTER_GW).one()
--        except exc.NoResultFound:
-+        filters = {
-+            'network_id': floating_network_id,
-+            'device_id': router_id,
-+            'device_owner': DEVICE_OWNER_ROUTER_GW
-+        }
-+        ports = self._core_plugin.get_ports(context.elevated(), filters)
-+        if not ports:
-             raise l3.ExternalGatewayForFloatingIPNotFound(
-                 subnet_id=internal_subnet_id,
-                 port_id=internal_port['id'])
-@@ -580,7 +592,7 @@
-                 context,
-                 fip,
-                 floatingip_db['floating_network_id'])
--            fip_qry = context.session.query(FloatingIP)
-+            fip_qry = context.session.query(self.FloatingIP)
-             try:
-                 fip_qry.filter_by(
-                     fixed_port_id=fip['port_id'],
-@@ -628,7 +640,7 @@
- 
-             floating_fixed_ip = external_port['fixed_ips'][0]
-             floating_ip_address = floating_fixed_ip['ip_address']
--            floatingip_db = FloatingIP(
-+            floatingip_db = self.FloatingIP(
-                 id=fip_id,
-                 tenant_id=tenant_id,
-                 floating_network_id=fip['floating_network_id'],
-@@ -697,7 +709,7 @@
-                 if key in filters:
-                     filters[val] = filters.pop(key)
- 
--        return self._get_collection(context, FloatingIP,
-+        return self._get_collection(context, self.FloatingIP,
-                                     self._make_floatingip_dict,
-                                     filters=filters, fields=fields,
-                                     sorts=sorts,
-@@ -706,7 +718,7 @@
-                                     page_reverse=page_reverse)
- 
-     def get_floatingips_count(self, context, filters=None):
--        return self._get_collection_count(context, FloatingIP,
-+        return self._get_collection_count(context, self.FloatingIP,
-                                           filters=filters)
- 
-     def prevent_l3_port_deletion(self, context, port_id):
-@@ -737,7 +749,7 @@
-     def disassociate_floatingips(self, context, port_id):
-         with context.session.begin(subtransactions=True):
-             try:
--                fip_qry = context.session.query(FloatingIP)
-+                fip_qry = context.session.query(self.FloatingIP)
-                 floating_ip = fip_qry.filter_by(fixed_port_id=port_id).one()
-                 router_id = floating_ip['router_id']
-                 floating_ip.update({'fixed_port_id': None,
+*** neutron-2014.2.2/neutron/agent/l3_agent.py	2015-02-05 07:45:33.000000000 -0800
+--- NEW/neutron/agent/l3_agent.py	2015-02-06 11:10:53.164349168 -0800
+***************
+*** 1,5 ****
+--- 1,7 ----
+  # Copyright 2012 VMware, Inc.  All rights reserved.
+  #
++ # Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
++ #
+  #    Licensed under the Apache License, Version 2.0 (the "License"); you may
+  #    not use this file except in compliance with the License. You may obtain
+  #    a copy of the License at
+***************
+*** 13,18 ****
+--- 15,21 ----
+  #    under the License.
+  #
+  
++ import platform
+  import sys
+  
+  import datetime
+***************
+*** 33,38 ****
+--- 36,42 ----
+  from neutron.agent.linux import iptables_manager
+  from neutron.agent.linux import ra
+  from neutron.agent import rpc as agent_rpc
++ from neutron.agent.solaris import ipfilters_manager
+  from neutron.common import config as common_config
+  from neutron.common import constants as l3_constants
+  from neutron.common import ipv6_utils
+***************
+*** 257,266 ****
+          # Invoke the setter for establishing initial SNAT action
+          self.router = router
+          self.ns_name = NS_PREFIX + router_id if use_namespaces else None
+!         self.iptables_manager = iptables_manager.IptablesManager(
+!             root_helper=root_helper,
+!             use_ipv6=use_ipv6,
+!             namespace=self.ns_name)
+          self.snat_iptables_manager = None
+          self.routes = []
+          # DVR Data
+--- 261,274 ----
+          # Invoke the setter for establishing initial SNAT action
+          self.router = router
+          self.ns_name = NS_PREFIX + router_id if use_namespaces else None
+!         if platform.system() == "SunOS":
+!             self.ipfilters_manager = ipfilters_manager.IPfiltersManager()
+!             self.iptables_manager = None
+!         else:
+!             self.iptables_manager = iptables_manager.IptablesManager(
+!                 root_helper=root_helper,
+!                 use_ipv6=use_ipv6,
+!                 namespace=self.ns_name)
+          self.snat_iptables_manager = None
+          self.routes = []
+          # DVR Data
+***************
+*** 2049,2054 ****
+--- 2057,2064 ----
+      _register_opts(cfg.CONF)
+      common_config.init(sys.argv[1:])
+      config.setup_logging()
++     if platform.system() == "SunOS":
++         manager = 'neutron.agent.evs_l3_agent.EVSL3NATAgent'
+      server = neutron_service.Service.create(
+          binary='neutron-l3-agent',
+          topic=topics.L3_AGENT,

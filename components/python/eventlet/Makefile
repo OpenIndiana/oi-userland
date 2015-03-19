@@ -18,24 +18,24 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		eventlet
-COMPONENT_VERSION=	0.13.0
+COMPONENT_VERSION=	0.15.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:d98118f01c064a6d256a264d4b939b2c6ad0814875c3b37859306c6ed1b4982c
+    sha256:eaec368ce7b819f8615dcb51f63dcb5c910538cdedc99e4bba4c90ed0bf70fdc
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://eventlet.net/
 COMPONENT_BUGDB=	python-mod/eventlet
 
-TPNO=			14503
-
-# Depends on greenlet, which is not Python 3 ready.
-PYTHON_VERSIONS=	2.7 2.6
+TPNO=			21720
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -52,4 +52,3 @@ build:		$(BUILD_NO_ARCH)
 install:	$(INSTALL_NO_ARCH)
 
 test:		$(TEST_NO_ARCH)
-

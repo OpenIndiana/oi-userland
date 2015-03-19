@@ -25,16 +25,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		python-swiftclient
-COMPONENT_VERSION=	2.1.0
+COMPONENT_VERSION=	2.3.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e5304cc2fc58e5f9fec87c0910109b524b3634f49a6dd82a35a28cbdf1515de8
+    sha256:20a9d81dc0d948740a188a0c42e7f7fcc9c81a185bfbdf180f68580ea49309a6
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://launchpad.net/python-swiftclient
 COMPONENT_BUGDB=	service/swift
 
-TPNO=			17873
+TPNO=			21736
 
 # depends on keystoneclient which is not Python 3 ready
 PYTHON_VERSIONS=	2.7 2.6
@@ -59,7 +59,3 @@ install:	$(INSTALL_NO_ARCH)
 # which haven't been integrated yet.
 #
 test:		$(NO_TESTS)
-
-
-REQUIRED_PACKAGES += library/python/simplejson-26
-REQUIRED_PACKAGES += library/python/simplejson-27

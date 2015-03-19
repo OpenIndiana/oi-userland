@@ -18,23 +18,24 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pytz
-COMPONENT_VERSION=	2013d
-HUMAN_VERSION=		$(COMPONENT_VERSION)
-IPS_COMPONENT_VERSION=	2013.4
+COMPONENT_VERSION=	2014.10
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:4eee447b2102141dfc7d92b0536608616f152811a8adee2f120460f368ecc4c6
+    sha256:a94138b638907491f473c875e8c95203a6a02efef52b6562be302e435016f4f3
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://pytz.sourceforge.net/
 COMPONENT_BUGDB=	python-mod/pytz
 
-TPNO=			15417
+TPNO=			21748
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -53,4 +54,3 @@ build:		$(BUILD_NO_ARCH)
 install:	$(INSTALL_NO_ARCH)
 
 test:		$(TEST_NO_ARCH)
-

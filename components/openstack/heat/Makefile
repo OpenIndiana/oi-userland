@@ -22,22 +22,24 @@
 #
 # Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		heat
-COMPONENT_CODENAME=	havana
-COMPONENT_VERSION=	2013.2.3
+COMPONENT_CODENAME=	juno
+COMPONENT_VERSION=	2014.2.2
+COMPONENT_BE_VERSION=	2014.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:5e1f437f75fd831bc6cbd23986d8e60a4008cf7a0a775e7a7405d56b335b1800
+    sha256:ac9ad74d9571ec2441d2eec22dbe3ef9f39f7378f62238ad70911e26435d516f
 COMPONENT_ARCHIVE_URL=	http://launchpad.net/$(COMPONENT_NAME)/$(COMPONENT_CODENAME)/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_PROJECT_URL=	http://www.openstack.org/
 COMPONENT_BUGDB=	service/heat
-IPS_COMPONENT_VERSION=	0.$(COMPONENT_VERSION) 
+IPS_COMPONENT_VERSION=	0.$(COMPONENT_VERSION)
 
-TPNO=			18176
+TPNO=			21821
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -49,8 +51,25 @@ ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 # only need to deliver one version.  The manifest is parameterized, though.
 PYTHON_VERSIONS=	2.6
 
+PKG_MACROS +=		COMPONENT_BE_VERSION=$(COMPONENT_BE_VERSION)
 PKG_MACROS +=		PYVER=$(PYTHON_VERSIONS)
 PKG_MACROS +=		PYV=$(shell echo $(PYTHON_VERSIONS) | tr -d .)
+
+#
+# heat-api-cfn, heat-api-cloudwatch, heat-api, and heat-engine depend
+# on heat-db and heat-upgrade so copy all of the service manifests
+# into the proto directory for pkgdepend(1) to find.
+#
+COMPONENT_POST_INSTALL_ACTION += \
+        ($(MKDIR) $(PROTO_DIR)/lib/svc/manifest/application/openstack; \
+         $(CP) \
+             files/heat-api-cfn.xml \
+             files/heat-api-cloudwatch.xml \
+             files/heat-api.xml \
+             files/heat-db.xml \
+             files/heat-engine.xml \
+             files/heat-upgrade.xml \
+             $(PROTO_DIR)/lib/svc/manifest/application/openstack)
 
 # common targets
 build:		$(BUILD_NO_ARCH)
@@ -64,9 +83,12 @@ test:		$(NO_TESTS)
 
 
 REQUIRED_PACKAGES += library/python/eventlet-26
+REQUIRED_PACKAGES += library/python/iniparse-26
 REQUIRED_PACKAGES += library/python/oslo.config-26
+REQUIRED_PACKAGES += library/python/python-mysql-26
 REQUIRED_PACKAGES += library/python/setuptools-26
+REQUIRED_PACKAGES += library/python/six-26
+REQUIRED_PACKAGES += library/python/sqlalchemy-26
 REQUIRED_PACKAGES += library/python/sqlalchemy-migrate-26
-REQUIRED_PACKAGES += runtime/python-26
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += system/core-os

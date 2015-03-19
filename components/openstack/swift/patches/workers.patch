@@ -1,0 +1,62 @@
+This patch sets the default value of the number of "workers" in the
+Swift configuration files for a single CPU system. The default based on
+the number of CPUs (cores) found may not be efficient on a system with
+a large number of cores. This patch is not suitable for the upstream.
+
+--- swift-2.2.2/etc/account-server.conf-sample.~2~	2015-03-03 13:32:49.269716798 -0800
++++ swift-2.2.2/etc/account-server.conf-sample	2015-03-03 13:32:49.300905746 -0800
+@@ -10,8 +10,9 @@ bind_port = 6002
+ # disable_fallocate = false
+ #
+ # Use an integer to override the number of pre-forked processes that will
+-# accept connections.
+-# workers = auto
++# accept connections.  Use "auto" or default for the number of effective cpu
++# cores in the system.
++workers = 1
+ #
+ # Maximum concurrent requests per worker
+ # max_clients = 1024
+--- swift-2.2.2/etc/container-server.conf-sample.~2~	2015-03-03 13:32:49.269950594 -0800
++++ swift-2.2.2/etc/container-server.conf-sample	2015-03-03 13:32:49.301151407 -0800
+@@ -10,8 +10,9 @@ bind_port = 6001
+ # disable_fallocate = false
+ #
+ # Use an integer to override the number of pre-forked processes that will
+-# accept connections.
+-# workers = auto
++# accept connections.  Use "auto" or default for the number of effective cpu
++# cores in the system.
++workers = 1
+ #
+ # Maximum concurrent requests per worker
+ # max_clients = 1024
+--- swift-2.2.2/etc/object-server.conf-sample.~2~	2015-03-03 13:32:49.270540923 -0800
++++ swift-2.2.2/etc/object-server.conf-sample	2015-03-03 13:32:49.301367390 -0800
+@@ -12,8 +12,9 @@ bind_port = 6000
+ # expiring_objects_account_name = expiring_objects
+ #
+ # Use an integer to override the number of pre-forked processes that will
+-# accept connections.
+-# workers = auto
++# accept connections.  Use "auto" or default for the number of effective cpu
++# cores in the system.
++workers = 1
+ #
+ # Maximum concurrent requests per worker
+ # max_clients = 1024
+--- swift-2.2.2/etc/proxy-server.conf-sample.~1~	2015-02-01 23:44:14.000000000 -0800
++++ swift-2.2.2/etc/proxy-server.conf-sample	2015-03-03 13:32:49.301633168 -0800
+@@ -22,10 +22,10 @@ bind_port = 8080
+ # disallowed_sections = container_quotas, tempurl, bulk_delete.max_failed_deletes
+ 
+ # Use an integer to override the number of pre-forked processes that will
+-# accept connections.  Should default to the number of effective cpu
++# accept connections.  Use "auto" or default for the number of effective cpu
+ # cores in the system.  It's worth noting that individual workers will
+ # use many eventlet co-routines to service multiple concurrent requests.
+-# workers = auto
++workers = 1
+ #
+ # Maximum concurrent requests per worker
+ # max_clients = 1024

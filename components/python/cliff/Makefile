@@ -18,21 +18,24 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cliff
-COMPONENT_VERSION=	1.4.5
+COMPONENT_VERSION=	1.9.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:0ec2c40e899cbb4d478aa946e1430600bf596ca2a3f12162a9514e9d580935ec
+    sha256:38f731fd585975f4a3aa8025d3be564bb8439fc1e0f96b6b1e442a9e0dc4d1ce
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://pypi.python.org/pypi/cliff
 COMPONENT_BUGDB=	python-mod/cliff
 
-TPNO=			15998
+TPNO=			21717
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -46,7 +49,6 @@ build:		$(BUILD_NO_ARCH)
 install:	$(INSTALL_NO_ARCH)
 
 # Tests require:
-# nose, mock, coverage, pep8, cmd2, distribute and PrettyTable
+# coverage >= 3.6, sphinx, oslosphinx
 # some of which haven't been integrated yet.
 test:		$(NO_TESTS)
-

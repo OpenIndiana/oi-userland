@@ -43,16 +43,9 @@ include $(WS_MAKE_RULES)/ips.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-# We need to go look at pycparser in the workspace until it's available in the
-# build environment.
-PYCPARSER = $(WS_COMPONENTS)/python/pycparser/build/prototype/$(MACH)/$(PYTHON_LIB)
-
-$(PYCPARSER):
-	(cd ../pycparser; $(MAKE) install)
-
 COMPONENT_TEST_DIR =	$(@D)/tests
 COMPONENT_TEST_ENV =	$(PYTHON_ENV)
-COMPONENT_TEST_ENV +=	PYTHONPATH=$(PROTO_DIR)/$(PYTHON_LIB):$(PYCPARSER)
+COMPONENT_TEST_ENV +=	PYTHONPATH=$(PROTO_DIR)/$(PYTHON_LIB)
 COMPONENT_TEST_ENV +=	TESTOWNLIB_CC="$(CC) %s $(CC_BITS) -G -KPIC -o %s"
 COMPONENT_TEST_CMD =	$(PYTHON.$(BITS)) /usr/bin/py.test-$(PYTHON_VERSION)
 COMPONENT_TEST_ARGS =	--resultlog $(@D)/testresults
@@ -72,9 +65,10 @@ COMPONENT_PRE_TEST_ACTION = \
 	$(MKDIR) $(@D)/tests/doc/source; \
 	$(CP) -r $(SOURCE_DIR)/c $(SOURCE_DIR)/testing $(@D)/tests; \
 	$(CP) $(SOURCE_DIR)/setup.py $(@D)/tests; \
-	$(CP) $(SOURCE_DIR)/doc/source/conf.py $(SOURCE_DIR)/doc/source/index.rst $(@D)/tests/doc/source
-
-$(BUILD_32_and_64): $(PYCPARSER)
+	$(CP) \
+	    $(SOURCE_DIR)/doc/source/conf.py \
+	    $(SOURCE_DIR)/doc/source/index.rst \
+	    $(@D)/tests/doc/source
 
 # common targets
 build:		$(BUILD_32_and_64)

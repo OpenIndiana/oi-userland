@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
@@ -38,6 +38,7 @@ set name=info.upstream value="Django <django-developers@googlegroups.com>"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2014/002
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+#
 link path=usr/bin/django-admin target=django-admin-$(PYVER) mediator=python \
     mediator-version=$(PYVER)
 file path=usr/bin/django-admin-$(PYVER)
@@ -267,6 +268,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/django/conf/urls/static.py
 file path=usr/lib/python$(PYVER)/vendor-packages/django/contrib/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/django/contrib/admin/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/django/contrib/admin/actions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/django/contrib/admin/exceptions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/django/contrib/admin/filters.py
 file path=usr/lib/python$(PYVER)/vendor-packages/django/contrib/admin/forms.py
 file path=usr/lib/python$(PYVER)/vendor-packages/django/contrib/admin/helpers.py
@@ -2382,15 +2384,24 @@ file path=usr/lib/python$(PYVER)/vendor-packages/django/views/generic/list_detai
 file path=usr/lib/python$(PYVER)/vendor-packages/django/views/generic/simple.py
 file path=usr/lib/python$(PYVER)/vendor-packages/django/views/i18n.py
 file path=usr/lib/python$(PYVER)/vendor-packages/django/views/static.py
+#
 license django.license license="BSD, Apache 2.0, MIT, PSFv2"
 
-# force a group dependency on the optional markdown; pkgdepend work is needed to
-# flush this out.
-depend type=group fmri=library/python/markdown-$(PYV)
+# force a group dependency on the optional python-imaging; pkgdepend work is
+# needed to flush this out.
+depend type=group fmri=library/python/python-imaging-$(PYV)
+
+# force a group dependency on the optional python-memcached; pkgdepend work is
+# needed to flush this out.
+depend type=group fmri=library/python/python-memcached-$(PYV)
 
 # force a group dependency on the optional pytz; pkgdepend work is needed to
 # flush this out.
 depend type=group fmri=library/python/pytz-$(PYV)
+
+# force a group dependency on the optional pyyaml; pkgdepend work is needed to
+# flush this out.
+depend type=group fmri=library/python/pyyaml-$(PYV)
 
 # force a group dependency on the optional setuptools; pkgdepend work is needed
 # to flush this out.
@@ -2407,6 +2418,9 @@ depend type=group fmri=library/python/unittest2-$(PYV)
 # force the rename with an optional dependency on the old name
 depend type=optional \
     fmri=library/python-2/django-$(PYV)@1.4.10,5.12-5.12.0.0.0.44.0
+
+# force a dependency on package delivering GNU msgfmt(1)
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/gnu/bin/msgfmt
 
 # force a dependency on the django package
 depend type=require \

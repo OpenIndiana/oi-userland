@@ -4,8 +4,8 @@ commands rather than the GNU ones. It also includes a corrected fix for
 Launchpad bug 1260556. This is a Solaris-specific patch and is not
 suitable for the upstream.
 
---- heat-2013.2.3/bin/heat-keystone-setup.~1~	2014-04-03 11:44:49.000000000 -0700
-+++ heat-2013.2.3/bin/heat-keystone-setup	2014-07-16 20:28:16.316132723 -0700
+--- heat-2014.2.2/bin/heat-keystone-setup.orig	2014-08-07 15:08:53.000000000 -0700
++++ heat-2014.2.2/bin/heat-keystone-setup	2014-09-20 21:44:41.866870651 -0700
 @@ -2,12 +2,14 @@
  
  set +e
@@ -22,26 +22,26 @@ suitable for the upstream.
 +    CONFIG_ADMIN_PORT=$(tr -d '[\t ]' < $KEYSTONE_CONF | grep ^admin_port= | cut -d'=' -f2)
  fi
  
- SERVICE_TOKEN=${SERVICE_TOKEN:-$CONFIG_SERVICE_TOKEN}
-@@ -35,7 +37,7 @@
+ SERVICE_TOKEN=${OS_SERVICE_TOKEN:-$CONFIG_SERVICE_TOKEN}
+@@ -102,7 +104,7 @@ get_data() {
      shift 3
  
-     echo $("$@" | \
+     output=$("$@" | \
 -           awk -F'|' \
 +           nawk -F'|' \
                 "! /^\+/ && \$${match_column} ~ \"^ *${regex} *\$\" \
                  { print \$${output_column} }")
- }
-@@ -47,7 +49,7 @@
+ 
+@@ -116,7 +118,7 @@ get_id () {
  get_column_num() {
      local name=$1
      shift
--    $@ | awk -F'|' "NR == 2 { for (i=2; i<NF; i++) if (\$i ~ \"^ *${name} *\$\") print (i - 1) }"
-+    $@ | nawk -F'|' "/^\|/ { for (i=2; i<NF; i++) if (\$i ~ \"^ *${name} *\$\") print (i - 1); exit }"
+-    $@ | awk -F'|' "NR == 2 && /^|/ { for (i=2; i<NF; i++) if (\$i ~ \"^ *${name} *\$\") print (i - 1) }"
++    $@ | nawk -F'|' "NR == 2 && /^\|/ { for (i=2; i<NF; i++) if (\$i ~ \"^ *${name} *\$\") print (i - 1) }"
  }
  
  get_user() {
-@@ -137,7 +139,7 @@
+@@ -208,7 +210,7 @@ delete_endpoint() {
  
      local url=$(get_data 1 "${service_type}[.]publicURL" 2 \
                  get_endpoint $service_type 2>/dev/null | \
@@ -50,10 +50,10 @@ suitable for the upstream.
  
      if [ -n "$url" ]; then
          local endpoints=$(get_data 3 $url 1 keystone endpoint-list)
-@@ -199,7 +201,7 @@
- 
-     ADMIN_ROLE=$(get_data 2 admin 1 keystone role-list)
+@@ -280,7 +282,7 @@ keystone_setup() {
+     die_if_not_set $LINENO ADMIN_ROLE "Fail to get ADMIN_ROLE by 'keystone role-list' "
      SERVICE_TENANT=$(get_data 2 service 1 keystone tenant-list)
+     die_if_not_set $LINENO SERVICE_TENANT "Fail to get service tenant 'keystone tenant-list' "
 -    SERVICE_PASSWORD=${SERVICE_PASSWORD:-$OS_PASSWORD}
 +    SERVICE_PASSWORD=${SERVICE_PASSWORD:-heat}
      SERVICE_HOST=${SERVICE_HOST:-localhost}

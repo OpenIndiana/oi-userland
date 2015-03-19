@@ -22,22 +22,24 @@
 #
 # Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cinder
-COMPONENT_CODENAME=	havana
-COMPONENT_VERSION=	2013.2.3
+COMPONENT_CODENAME=	juno
+COMPONENT_VERSION=	2014.2.2
+COMPONENT_BE_VERSION=	2014.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:a2740f0a0481139ae21cdb0868bebcce01b9f19832439b7f3056435e75791194
+    sha256:2c779bf9d208163af6c425da9043bbdcb345cebc5c118198482b94062862a117
 COMPONENT_ARCHIVE_URL=	http://launchpad.net/$(COMPONENT_NAME)/$(COMPONENT_CODENAME)/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_PROJECT_URL=	http://www.openstack.org/
 COMPONENT_BUGDB=	service/cinder
-IPS_COMPONENT_VERSION=	0.$(COMPONENT_VERSION) 
+IPS_COMPONENT_VERSION=	0.$(COMPONENT_VERSION)
 
-TPNO=			17714
+TPNO=			21819
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -49,27 +51,34 @@ ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 # only need to deliver one version.  The manifest is parameterized, though.
 PYTHON_VERSIONS=	2.6
 
+PKG_MACROS +=		COMPONENT_BE_VERSION=$(COMPONENT_BE_VERSION)
 PKG_MACROS +=		PYVER=$(PYTHON_VERSIONS)
+PKG_MACROS +=		PYV=$(shell echo $(PYTHON_VERSIONS) | tr -d .)
 
-# cinder-api, cinder-backup, cinder-scheduler, and cinder-volume
-# depend on the cinder-db svc so copy the manifest into the proto
-# directory for pkgdepend to find
+#
+# cinder-api, cinder-backup, cinder-scrubber, and cinder-volume depend
+# on cinder-db, and cinder-upgrade so copy all of the service
+# manifests into the proto directory for pkgdepend(1) to find.
+#
 COMPONENT_POST_INSTALL_ACTION += \
-        ($(MKDIR) $(PROTO_DIR)/lib/svc/manifest/application/openstack; \
-         $(CP) files/cinder-api.xml $(PROTO_DIR)/lib/svc/manifest/application/openstack/; \
-         $(CP) files/cinder-backup.xml $(PROTO_DIR)/lib/svc/manifest/application/openstack/; \
-         $(CP) files/cinder-db.xml $(PROTO_DIR)/lib/svc/manifest/application/openstack/; \
-         $(CP) files/cinder-scheduler.xml $(PROTO_DIR)/lib/svc/manifest/application/openstack/; \
-         $(CP) files/cinder-volume.xml $(PROTO_DIR)/lib/svc/manifest/application/openstack/; \
-         $(MKDIR) $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/cinder/volume/drivers/solaris; \
+	($(MKDIR) $(PROTO_DIR)/lib/svc/manifest/application/openstack; \
+	 $(CP) \
+	     files/cinder-api.xml \
+	     files/cinder-backup.xml \
+	     files/cinder-db.xml \
+	     files/cinder-scheduler.xml \
+	     files/cinder-upgrade.xml \
+	     files/cinder-volume.xml \
+	     $(PROTO_DIR)/lib/svc/manifest/application/openstack; \
+         $(CP) \
+	     files/solaris/solarisfc.py \
+             files/solaris/solarisiscsi.py \
+	     $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/cinder/brick/initiator; \
+	 $(MKDIR) $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/cinder/volume/drivers/solaris; \
 	 $(TOUCH) $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/cinder/volume/drivers/solaris/__init__.py; \
 	 $(CP) files/solaris/zfs.py $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/cinder/volume/drivers/solaris; \
-         $(MKDIR) $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/cinder/volume/drivers/zfssa; \
-         $(CP) files/zfssa/__init__.py $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/cinder/volume/drivers/zfssa; \
-         $(CP) files/zfssa/cinder.akwf $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/cinder/volume/drivers/zfssa; \
-         $(CP) files/zfssa/restclient.py $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/cinder/volume/drivers/zfssa; \
-         $(CP) files/zfssa/zfssaiscsi.py $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/cinder/volume/drivers/zfssa; \
-         $(CP) files/zfssa/zfssarest.py $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/cinder/volume/drivers/zfssa); \
+	 $(MKDIR) $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/cinder/volume/drivers/zfssa; \
+	 $(CP) files/zfssa/cinder.akwf $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/cinder/volume/drivers/zfssa); \
 	 $(PYTHON) -m compileall $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES)
 
 # common targets
@@ -81,10 +90,12 @@ test:		$(NO_TESTS)
 
 
 REQUIRED_PACKAGES += library/python/eventlet-26
+REQUIRED_PACKAGES += library/python/iniparse-26
 REQUIRED_PACKAGES += library/python/ipython-26
 REQUIRED_PACKAGES += library/python/oslo.config-26
+REQUIRED_PACKAGES += library/python/python-mysql-26
+REQUIRED_PACKAGES += library/python/sqlalchemy-26
 REQUIRED_PACKAGES += library/python/sqlalchemy-migrate-26
-REQUIRED_PACKAGES += runtime/python-26
 REQUIRED_PACKAGES += system/core-os
 REQUIRED_PACKAGES += system/file-system/zfs
 REQUIRED_PACKAGES += system/storage/fc-utilities
