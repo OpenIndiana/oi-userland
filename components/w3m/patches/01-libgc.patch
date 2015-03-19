@@ -3,30 +3,22 @@
 #
 # This patch needs to be evaluated to see if it needs to be passed upstream.
 
---- w3m-0.5.2.orig/acinclude.m4	Fri Apr  7 08:21:11 2006
-+++ w3m-0.5.2/acinclude.m4	Thu Dec  4 09:32:08 2014
-@@ -426,6 +426,7 @@
- # ----------------------------------------------------------------
- AC_DEFUN([AC_W3M_GC],
- [AC_MSG_CHECKING(GC library exists)
-+AC_SUBST(LIBGC)
- AC_ARG_WITH(gc,
-  [  --with-gc[=PREFIX]	  	libgc PREFIX],
-  [test x"$with_gc" = xno && AC_MSG_ERROR([You can not build w3m without gc])],
-@@ -456,7 +457,7 @@
+--- w3m-0.5.3/acinclude.m4.orig	2015-02-16 18:50:30.208808821 -0800
++++ w3m-0.5.3/acinclude.m4	2015-02-16 18:51:18.187408601 -0800
+@@ -445,7 +445,7 @@
     fi
   fi
   unset ac_cv_lib_gc_GC_init
-- AC_CHECK_LIB(gc, GC_init, [LIBS="$LIBS -lgc"])
+- AC_CHECK_LIB(gc, GC_init, [LIBGC="-lgc"])
 + AC_CHECK_LIB(gc, GC_init, [LIBS="$LIBS `pkg-config --libs bdw-gc`"])
   if test x"$ac_cv_lib_gc_GC_init" = xno; then
      AC_MSG_CHECKING(GC library location)
      AC_MSG_RESULT($with_gc)
-@@ -466,7 +467,7 @@
+@@ -455,7 +455,7 @@
        LDFLAGS="$LDFLAGS -L$dir/lib"
        AC_MSG_CHECKING($dir)
        unset ac_cv_lib_gc_GC_init
--      AC_CHECK_LIB(gc, GC_init, [gclibdir="$dir/lib"; LIBS="$LIBS -L$dir/lib -lgc"; break])
+-      AC_CHECK_LIB(gc, GC_init, [gclibdir="$dir/lib"; LIBGC="-L$dir/lib -lgc"; break])
 +      AC_CHECK_LIB(bgc, GC_init, [gclibdir="$dir/lib"; LIBS="$LIBS -L$dir/lib `pkg-config --libs bdw-gc`"; break])
        LDFLAGS="$ldflags"
      done

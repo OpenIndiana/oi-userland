@@ -26,22 +26,22 @@ COMPILER = gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		w3m
-COMPONENT_VERSION=	0.5.2
+COMPONENT_VERSION=	0.5.3
 COMPONENT_PROJECT_URL=	http://w3m.sourceforge.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:5ff3e5a1f50a4a8e6ddbfdeefbe13d3a7f63538595a8e29f5da504ea46eda646
+    sha256:e994d263f2fd2c22febfbe45103526e00145a7674a0fda79c822b97c2770a9e3
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/$(COMPONENT_NAME)/files/$(COMPONENT_NAME)/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_BUGDB=	utility/w3m
 
-TPNO=			9364
+TPNO=			21998
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-COMPONENT_PREP_ACTION = (cd $(@D) ; aclocal-1.11 ; autoconf)
+COMPONENT_PREP_ACTION = (cd $(@D) ; autoconf ; automake ; aclocal ; libtoolize )
 
 # install the bits in /usr/bin and /usr/lib
 CONFIGURE_BINDIR.64 = $(CONFIGURE_BINDIR.32)

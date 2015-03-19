@@ -1,22 +1,11 @@
-#
-# Use AC_W3M_SSL and AC_W3M_DIGEST_AUTH from acinclude.m4 instead of the
-# combined version in aclocal.m4, which gets overwritten when aclocal is run.
-#
 # Check for floor() instead of sqrt() to decide if we need libm
-#
-# use $(INSTALL) -d instead of @MKINSTALLDIR@ in po/Makefile...
 #
 # This patch needs to be evaluated to see if it needs to be passed upstream.
 
---- w3m-0.5.2.orig/configure.ac	Thu May 31 07:17:05 2007
-+++ w3m-0.5.2/configure.ac	Thu Dec  4 09:51:48 2014
-@@ -88,10 +88,11 @@
- done
- 
- AC_W3M_IPv6
--AC_W3M_SSL_DIGEST_AUTH
-+AC_W3M_SSL
-+AC_W3M_DIGEST_AUTH
+--- w3m-0.5.3/configure.ac.orig	2015-02-16 19:03:26.191283591 -0800
++++ w3m-0.5.3/configure.ac	2015-02-16 19:08:11.367778846 -0800
+@@ -91,7 +91,7 @@
+ AC_W3M_SSL_DIGEST_AUTH
  
  dnl Checks for libraries.
 -AC_CHECK_FUNC(sqrt,,[AC_CHECK_LIB(m, sqrt)])
@@ -24,17 +13,3 @@
  if test x"$enable_mouse" = xyes; then
   AC_SUBST(USE_W3M)
   AC_CHECK_LIB(gpm, Gpm_Open, [AC_DEFINE(USE_GPM)
-
-
---- w3m-0.5.2.orig/po/Makefile.in.in	Tue May 29 22:15:13 2007
-+++ w3m-0.5.2/po/Makefile.in.in	Thu Dec  4 09:57:40 2014
-@@ -27,8 +27,7 @@
- 
- INSTALL = @INSTALL@
- INSTALL_DATA = @INSTALL_DATA@
--MKINSTALLDIRS = @MKINSTALLDIRS@
--mkinstalldirs = $(SHELL) $(MKINSTALLDIRS)
-+mkinstalldirs = $(INSTALL) -d
- 
- GMSGFMT = @GMSGFMT@
- MSGFMT = @MSGFMT@
