@@ -47,6 +47,16 @@ CONFIGURE_LIBDIR.64 =   $(GNULIB)/$(MACH64)
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
+# Strip compilation lines from test output
+COMPONENT_TEST_TRANSFORMS += \
+    '-e "s|^.*$(CC).*$$|XXX_CC_XXX|g" ' \
+    '-e "s|^.*$(CXX).*$$|XXX_CC_XXX|g" ' \
+    '-e "s|^.*source=.*libtool=no.*$$|XXX_CC_XXX|g" ' \
+    '-e "s|^.*DEPDIR=.deps.*$$|XXX_CC_XXX|g" ' \
+    '-e "/^XXX_CC_XXX$$/d" '
+
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
 

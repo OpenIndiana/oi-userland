@@ -45,6 +45,10 @@ include $(WS_MAKE_RULES)/ips.mk
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
+# force re-runs to be the same
+COMPONENT_PRE_TEST_ACTION = \
+    ($(RM) $(SOURCE_DIR)/tests/package.m4)
+
 COMPONENT_PREP_ACTION = \
 	(cd $(@D) ; autoconf )
 

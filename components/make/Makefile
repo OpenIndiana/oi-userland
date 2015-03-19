@@ -47,6 +47,23 @@ CONFIGURE_OPTIONS  +=		--program-prefix=g
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 
+# force re-runs to be the same
+COMPONENT_PRE_TEST_ACTION = \
+    ($(TOUCH) $(SOURCE_DIR)/getloadavg.c)
+
+# Strip compilation lines from test output
+COMPONENT_TEST_TRANSFORMS += \
+    '-e "s|^.*$(CC).*$$|XXX_CC_XXX|g" ' \
+    '-e "s|^.*source=.*libtool=no.*$$|XXX_CC_XXX|g" ' \
+    '-e "s|^.*DEPDIR=.deps.*$$|XXX_CC_XXX|g" ' \
+    '-e "s|^1-minute.*$$|XXX_CC_XXX|g" ' \
+    '-e "s|^.*load average.*$$|XXX_CC_XXX|g" ' \
+    '-e "s|^.*Running tests for GNU make.*$$|XXX_CC_XXX|g" ' \
+    '-e "s|^.==========.*$$|XXX_CC_XXX|g" ' \
+    '-e "s|^Clearing work.*$$|XXX_CC_XXX|g" ' \
+    '-e "/^XXX_CC_XXX$$/d" '
+
+
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets

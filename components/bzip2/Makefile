@@ -59,6 +59,8 @@ COMPONENT_PRE_BUILD_ACTION= \
 	(cd $(@D) ; \
 	    cp ../../oldapi.c . )
 
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
 # common targets
 build:		$(BUILD_32_and_64)
 
