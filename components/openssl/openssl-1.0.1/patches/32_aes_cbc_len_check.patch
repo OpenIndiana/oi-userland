@@ -1,14 +1,14 @@
---- openssl-1.0.1e/crypto/evp/e_aes.c        Tue Jul  2 11:03:12 2013
-+++ openssl-1.0.1e/crypto/evp/e_aes.c.new    Tue Jul  2 11:04:56 2013
-@@ -574,8 +574,11 @@
- static int aes_cbc_cipher(EVP_CIPHER_CTX *ctx,unsigned char *out,
- 	const unsigned char *in, size_t len)
+--- openssl-1.0.1m/crypto/evp/e_aes.c.~1~	2015-03-20 00:44:01.127946744 +0300
++++ openssl-1.0.1m/crypto/evp/e_aes.c	2015-03-20 00:45:34.496093382 +0300
+@@ -536,8 +536,11 @@
+ static int aes_cbc_cipher(EVP_CIPHER_CTX *ctx, unsigned char *out,
+                           const unsigned char *in, size_t len)
  {
-+	size_t	bl = ctx->cipher->block_size;
- 	EVP_AES_KEY *dat = (EVP_AES_KEY *)ctx->cipher_data;
++    size_t  bl = ctx->cipher->block_size;
+     EVP_AES_KEY *dat = (EVP_AES_KEY *) ctx->cipher_data;
  
-+	if (len<bl)	return 1;
++    if (len<bl)	return 1;
 +
- 	if (dat->stream.cbc)
- 		(*dat->stream.cbc)(in,out,len,&dat->ks,ctx->iv,ctx->encrypt);
- 	else if (ctx->encrypt)
+     if (dat->stream.cbc)
+         (*dat->stream.cbc) (in, out, len, &dat->ks, ctx->iv, ctx->encrypt);
+     else if (ctx->encrypt)
