@@ -1,0 +1,149 @@
+Needed to get ircii to successfully build and run in 64-bit mode with Solaris
+libtermcap (really libcurses). Also need to have -DINCLUDE_CURSES_H
+defined in the component Makefile.
+
+On Linux systems you do not need to have -DINCLUDE_CURSES_H defined, in
+order to build ircii. The tgoto() routine has a prototype definition in
+/usr/include/termcap.h (supplied by the ncurses package), which is
+found by configure:
+
+...
+checking for termcap.h... yes
+...
+
+On Solaris, we do not have a /usr/include/termcap.h file. Therefore,
+according to the curs_termcap(3CURSES) man page, for C sources files
+that want to use the tgoto() routine, we need to include both
+"#include <curses.h" and "#include <term.h>". For that we need to define
+-DINCLUDE_CURSES_H and also patch it to include term.h
+
+But then we have another problem. /usr/include/term.h on Solaris has:
+
+#define lines                           CUR _c3
+
+which causes the pre-processor to screw up occurrences of variable "lines"
+in two source files.
+
+The patch needs to be reworked before it can be sent upstream. The Solaris
+integration of termcap diverges from the way that Linux systems do this.
+
+--- ircii-20141122/include/ircterm.h.orig	2015-03-18 09:31:15.080165469 -0700
++++ ircii-20141122/include/ircterm.h	2015-03-18 09:31:50.292380649 -0700
+@@ -39,6 +39,7 @@
+ 
+ #ifdef INCLUDE_CURSES_H
+ # include <curses.h>
++# include <term.h>
+ #endif /* INCLUDE_CURSES_H */
+ 
+ #ifdef NCURSES_VERSION
+--- ircii-20141122/source/lastlog.c.orig	2015-03-18 09:17:28.728033735 -0700
++++ ircii-20141122/source/lastlog.c	2015-03-18 09:36:08.526848734 -0700
+@@ -48,7 +48,7 @@
+ {
+ 	int	level;
+ 	u_char	*msg;
+-	u_char	**lines;
++	u_char	**log_lines;
+ 	int	cols;	/* If this doesn't match the current columns,
+ 			 * we have to recalculate the whole thing. */
+ 	struct	lastlog_stru	*next;
+@@ -209,11 +209,11 @@
+ static	void
+ free_lastlog_lines(Lastlog *log)
+ {
+-	u_char **lines;
++	u_char **log_lines;
+ 
+-	for (lines = log->lines; *lines; lines++)
+-		new_free(lines);
+-	new_free(&log->lines);
++	for (log_lines = log->log_lines; *log_lines; log_lines++)
++		new_free(log_lines);
++	new_free(&log->log_lines);
+ }
+ 
+ static	void
+@@ -499,7 +499,7 @@
+ 			malloc_strcpy(&new->msg, line);
+ 			copy_window_size(NULL, &new->cols);
+ 			Debug(DB_LASTLOG, "columns = %d", new->cols);
+-			new->lines = split_up_line_alloc(line);
++			new->log_lines = split_up_line_alloc(line);
+ 
+ 			if (info->lastlog_head)
+ 				info->lastlog_head->prev = new;
+@@ -513,7 +513,7 @@
+ 		}
+ 	}
+ 	if (new)
+-		return new->lines;
++		return new->log_lines;
+ 	return NULL;
+ }
+ 
+@@ -600,9 +600,9 @@
+ 			/* Must free and re-calculate */
+ 			free_lastlog_lines(LogLine);
+ 			LogLine->cols = cols;
+-			LogLine->lines = split_up_line_alloc(LogLine->msg);
++			LogLine->log_lines = split_up_line_alloc(LogLine->msg);
+ 		}
+-		TheirLines = LogLine->lines;
++		TheirLines = LogLine->log_lines;
+ 		for (row = 0; TheirLines[row]; row++)
+ 			/* count the rows */;
+ 		if (window)
+--- ircii-20141122/source/status.c.orig	2015-03-18 09:50:11.971051956 -0700
++++ ircii-20141122/source/status.c	2015-03-18 09:51:38.224735226 -0700
+@@ -1120,9 +1120,9 @@
+ 	u_char	*ptr = NULL;
+ 	int	num;
+ 	u_char	localbuf[40];
+-	int	lines = window_held_lines(window);
++	int	held_lines = window_held_lines(window);
+ 
+-	num = lines - lines % 10;
++	num = held_lines - held_lines % 10;
+ 	if (num)
+ 	{
+ 		u_char	lbuf[BIG_BUFFER_SIZE];
+@@ -1142,10 +1142,10 @@
+ {
+ 	u_char	*ptr = NULL,
+ 		*text;
+-	int	lines = window_get_all_scrolled_lines(window);
++	int	scrolled_lines = window_get_all_scrolled_lines(window);
+ 
+-	Debug(DB_STATUS, "status_scrolled: lines = %d", lines);
+-	if (lines && (text = get_string_var(STATUS_SCROLLED_VAR)))
++	Debug(DB_STATUS, "status_scrolled: lines = %d", scrolled_lines);
++	if (scrolled_lines && (text = get_string_var(STATUS_SCROLLED_VAR)))
+ 		malloc_strcpy(&ptr, text);
+ 	else
+ 		malloc_strcpy(&ptr, empty_string());
+@@ -1157,20 +1157,20 @@
+ {
+ 	u_char	*ptr = NULL;
+ 	u_char	localbuf[40];
+-	int	lines = window_get_all_scrolled_lines(window);
++	int	scrolled_lines = window_get_all_scrolled_lines(window);
+ 
+-	if (lines)
++	if (scrolled_lines)
+ 	{
+ 		u_char	lbuf[BIG_BUFFER_SIZE];
+ 
+-		snprintf(CP(localbuf), sizeof localbuf, "%d", lines);
++		snprintf(CP(localbuf), sizeof localbuf, "%d", scrolled_lines);
+ 		snprintf(CP(lbuf), sizeof lbuf, CP(hold_lines_format),
+ 			 localbuf);
+ 		malloc_strcpy(&ptr, lbuf);
+ 	}
+ 	else
+ 		malloc_strcpy(&ptr, empty_string());
+-	Debug(DB_STATUS, "status_scrolled_lines: lines = %d, str = '%s'", lines, ptr);
++	Debug(DB_STATUS, "status_scrolled_lines: lines = %d, str = '%s'", scrolled_lines, ptr);
+ 	return (ptr);
+ }
+ 

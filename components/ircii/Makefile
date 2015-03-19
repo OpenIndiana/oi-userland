@@ -26,17 +26,17 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ircii
-COMPONENT_VERSION=	20111115
-IPS_COMPONENT_VERSION=  0.2011.11.15
+COMPONENT_VERSION=	20141122
+IPS_COMPONENT_VERSION=  0.2014.11.22
 COMPONENT_PROJECT_URL=	http://www.eterna.com.au/ircii/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:629a0a335c790aa5fa9f327532d1d45fd37d2fcd1902e8b0ee28b51994dcf604
+    sha256:b5eefbd44d1eb987c324cde590ce649b45f96b1f0f562c6d2bb8fbe9af34762d
 COMPONENT_ARCHIVE_URL=	ftp://ircii.warped.com/pub/ircII/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/ircii
 
-TPNO=			12675
+TPNO=			21983
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -55,24 +55,16 @@ COMPONENT_BUILD_ARGS += CC="$(CC)"
 # We need to reset configure options here because ircii is confused with
 # CC and CFLAGS definitions as configure parameters.
 CONFIGURE_OPTIONS       = --prefix=/usr
-CONFIGURE_OPTIONS       += --mandir=$(CONFIGURE_MANDIR)
-CONFIGURE_OPTIONS       += --bindir=$(CONFIGURE_BINDIR.$(BITS))
+
+# The mandir definition in the top-level Makefile.in is broken. Work around it.
+CONFIGURE_OPTIONS	+= --mandir=$(PROTOUSRSHAREMANDIR)
+
+CONFIGURE_OPTIONS	+= --bindir=$(USRBINDIR)
+CONFIGURE_OPTIONS	+= --libexecdir=$(USRBINDIR)
 CONFIGURE_OPTIONS       += $(CONFIGURE_OPTIONS.$(BITS))
 
-# The ircio and wserv are now installed in the libexecdir, which by
-# default is /usr/libexec. We want to install them under /usr/bin.
-# One would think that you could just set --libexecdir=/usr/bin but no.
-# The configure script has some logic that just blindly resets it back
-# to /usr/libexec. This problem has been reported to the ircii maintainer.
-#
-# This action modifies the libexecdir setting in the Makefile to /usr/bin
-COMPONENT_POST_CONFIGURE_ACTION = \
-	$(GSED) -i -e 's|/usr/libexec|/usr/bin|' $(BUILD_DIR_64)/Makefile
-
-# Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
 
-# common targets
 configure:	$(CONFIGURE_64)
 
 build:		$(BUILD_64)
@@ -82,4 +74,5 @@ install:	$(INSTALL_64)
 test:           $(NO_TESTS)
 
 
+REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += system/library

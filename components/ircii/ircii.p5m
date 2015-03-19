@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
@@ -37,8 +37,8 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=LSARC/2008/373
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-file usr/bin/$(MACH64)/irc-$(COMPONENT_VERSION) path=usr/bin/irc
-file usr/bin/$(MACH64)/ircflush path=usr/bin/ircflush
+file usr/bin/irc-$(COMPONENT_VERSION) path=usr/bin/irc
+file path=usr/bin/ircflush
 file path=usr/bin/ircio
 file path=usr/bin/wserv
 file path=usr/share/irc/help/!
@@ -348,7 +348,6 @@ file path=usr/share/irc/help/rbind
 file path=usr/share/irc/help/redirect
 file path=usr/share/irc/help/rehash
 file path=usr/share/irc/help/restart
-file path=usr/share/irc/help/rules
 file path=usr/share/irc/help/save
 file path=usr/share/irc/help/say
 file path=usr/share/irc/help/send
@@ -383,6 +382,7 @@ file path=usr/share/irc/help/set/dccport
 file path=usr/share/irc/help/set/debug
 file path=usr/share/irc/help/set/decrypt_program
 file path=usr/share/irc/help/set/display
+file path=usr/share/irc/help/set/display_encoding
 file path=usr/share/irc/help/set/eight_bit_characters
 file path=usr/share/irc/help/set/encrypt_program
 file path=usr/share/irc/help/set/exec_protection
@@ -405,10 +405,12 @@ file path=usr/share/irc/help/set/hold_mode
 file path=usr/share/irc/help/set/hold_mode_max
 file path=usr/share/irc/help/set/indent
 file path=usr/share/irc/help/set/input_aliases
+file path=usr/share/irc/help/set/input_encoding
 file path=usr/share/irc/help/set/input_prompt
 file path=usr/share/irc/help/set/input_protection
 file path=usr/share/irc/help/set/insert_mode
 file path=usr/share/irc/help/set/inverse_video
+file path=usr/share/irc/help/set/irc_encoding
 file path=usr/share/irc/help/set/irchost
 file path=usr/share/irc/help/set/lastlog
 file path=usr/share/irc/help/set/lastlog_level
@@ -444,6 +446,10 @@ file path=usr/share/irc/help/set/show_numerics
 file path=usr/share/irc/help/set/show_stars
 file path=usr/share/irc/help/set/show_status_all
 file path=usr/share/irc/help/set/show_who_hopcount
+file path=usr/share/irc/help/set/ssl_ca_chain_file
+file path=usr/share/irc/help/set/ssl_ca_file
+file path=usr/share/irc/help/set/ssl_ca_path
+file path=usr/share/irc/help/set/ssl_ca_private_key_file
 file path=usr/share/irc/help/set/star_prefix
 file path=usr/share/irc/help/set/status_away
 file path=usr/share/irc/help/set/status_channel
@@ -469,7 +475,6 @@ file path=usr/share/irc/help/set/status_window
 file path=usr/share/irc/help/set/suppress_server_motd
 file path=usr/share/irc/help/set/tab
 file path=usr/share/irc/help/set/tab_max
-file path=usr/share/irc/help/set/translation
 file path=usr/share/irc/help/set/underline_video
 file path=usr/share/irc/help/set/user_information
 file path=usr/share/irc/help/set/user_wallops
@@ -629,39 +634,6 @@ file path=usr/share/irc/script/voice
 file path=usr/share/irc/script/wallopstat
 file path=usr/share/irc/script/whowas
 file path=usr/share/irc/script/window
-file path=usr/share/irc/translation/ASCII
-file path=usr/share/irc/translation/CP437
-file path=usr/share/irc/translation/CP850
-file path=usr/share/irc/translation/DANISH
-file path=usr/share/irc/translation/DEC_MCS
-file path=usr/share/irc/translation/DG_MCS
-file path=usr/share/irc/translation/DUTCH
-file path=usr/share/irc/translation/FINNISH
-file path=usr/share/irc/translation/FRENCH
-file path=usr/share/irc/translation/FRENCH_CANADIAN
-file path=usr/share/irc/translation/GERMAN
-file path=usr/share/irc/translation/HP_MCS
-file path=usr/share/irc/translation/IRV
-file path=usr/share/irc/translation/ITALIAN
-file path=usr/share/irc/translation/JIS
-file path=usr/share/irc/translation/MACINTOSH
-file path=usr/share/irc/translation/NEXT
-file path=usr/share/irc/translation/NORWEGIAN_1
-file path=usr/share/irc/translation/NORWEGIAN_2
-file path=usr/share/irc/translation/POLISH
-file path=usr/share/irc/translation/POLISH_NOPL
-file path=usr/share/irc/translation/PORTUGUESE
-file path=usr/share/irc/translation/PORTUGUESE_COM
-file path=usr/share/irc/translation/RUSSIAN
-file path=usr/share/irc/translation/RUSSIAN_ALT
-file path=usr/share/irc/translation/RUSSIAN_WIN
-file path=usr/share/irc/translation/SPANISH
-file path=usr/share/irc/translation/SWEDISH
-file path=usr/share/irc/translation/SWEDISH_NAMES
-file path=usr/share/irc/translation/SWEDISH_NAMES_COM
-file path=usr/share/irc/translation/SWISS
-file path=usr/share/irc/translation/UNITED_KINGDOM
-file path=usr/share/irc/translation/UNITED_KINGDOM_COM
 link path=usr/share/man/man1/irc.1 target=ircII.1
 file path=usr/share/man/man1/ircII.1
-license ircii.license license=BSD
+license doc/Copyright license=BSD
