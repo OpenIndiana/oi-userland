@@ -1,0 +1,175 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2015 Alexander Pyhalov
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+<transform file path=usr/share/gtk-doc/.* ->  default facet.doc true>
+<transform file path=usr/share/gtk-doc/html/.* ->  default facet.doc.html true>
+<transform file path=usr/share/locale/([^/]+)(\..+){0,1}(/.+){0,1} -> default facet.locale.%<\1> true>
+<transform file path=etc/gconf/.* ->  default restart_fmri svc:/application/desktop-cache/gconf-cache:default>
+
+file usr/lib/python2.6/vendor-packages/64/gsf/_gsfmodule.so path=usr/lib/python2.6/vendor-packages/gsf/64/_gsfmodule.so
+file usr/lib/python2.6/vendor-packages/64/gsf/gnomemodule.so path=usr/lib/python2.6/vendor-packages/gsf/64/gnomemodule.so
+
+file path=etc/gconf/schemas/gsf-office-thumbnailer.schemas
+file path=usr/bin/$(MACH64)/gsf
+file path=usr/bin/$(MACH64)/gsf-office-thumbnailer
+file path=usr/bin/$(MACH64)/gsf-vba-dump
+file path=usr/bin/gsf
+file path=usr/bin/gsf-office-thumbnailer
+file path=usr/bin/gsf-vba-dump
+file path=usr/include/libgsf-1/gsf-gnome/gsf-input-bonobo.h
+file path=usr/include/libgsf-1/gsf-gnome/gsf-input-gnomevfs.h
+file path=usr/include/libgsf-1/gsf-gnome/gsf-output-bonobo.h
+file path=usr/include/libgsf-1/gsf-gnome/gsf-output-gnomevfs.h
+file path=usr/include/libgsf-1/gsf-gnome/gsf-shared-bonobo-stream.h
+file path=usr/include/libgsf-1/gsf/gsf-blob.h
+file path=usr/include/libgsf-1/gsf/gsf-clip-data.h
+file path=usr/include/libgsf-1/gsf/gsf-doc-meta-data.h
+file path=usr/include/libgsf-1/gsf/gsf-docprop-vector.h
+file path=usr/include/libgsf-1/gsf/gsf-impl-utils.h
+file path=usr/include/libgsf-1/gsf/gsf-infile-impl.h
+file path=usr/include/libgsf-1/gsf/gsf-infile-msole.h
+file path=usr/include/libgsf-1/gsf/gsf-infile-msvba.h
+file path=usr/include/libgsf-1/gsf/gsf-infile-stdio.h
+file path=usr/include/libgsf-1/gsf/gsf-infile-tar.h
+file path=usr/include/libgsf-1/gsf/gsf-infile-zip.h
+file path=usr/include/libgsf-1/gsf/gsf-infile.h
+file path=usr/include/libgsf-1/gsf/gsf-input-bzip.h
+file path=usr/include/libgsf-1/gsf/gsf-input-gio.h
+file path=usr/include/libgsf-1/gsf/gsf-input-gzip.h
+file path=usr/include/libgsf-1/gsf/gsf-input-http.h
+file path=usr/include/libgsf-1/gsf/gsf-input-impl.h
+file path=usr/include/libgsf-1/gsf/gsf-input-iochannel.h
+file path=usr/include/libgsf-1/gsf/gsf-input-memory.h
+file path=usr/include/libgsf-1/gsf/gsf-input-proxy.h
+file path=usr/include/libgsf-1/gsf/gsf-input-stdio.h
+file path=usr/include/libgsf-1/gsf/gsf-input-textline.h
+file path=usr/include/libgsf-1/gsf/gsf-input.h
+file path=usr/include/libgsf-1/gsf/gsf-libxml.h
+file path=usr/include/libgsf-1/gsf/gsf-meta-names.h
+file path=usr/include/libgsf-1/gsf/gsf-msole-utils.h
+file path=usr/include/libgsf-1/gsf/gsf-open-pkg-utils.h
+file path=usr/include/libgsf-1/gsf/gsf-opendoc-utils.h
+file path=usr/include/libgsf-1/gsf/gsf-outfile-impl.h
+file path=usr/include/libgsf-1/gsf/gsf-outfile-msole.h
+file path=usr/include/libgsf-1/gsf/gsf-outfile-stdio.h
+file path=usr/include/libgsf-1/gsf/gsf-outfile-zip.h
+file path=usr/include/libgsf-1/gsf/gsf-outfile.h
+file path=usr/include/libgsf-1/gsf/gsf-output-bzip.h
+file path=usr/include/libgsf-1/gsf/gsf-output-csv.h
+file path=usr/include/libgsf-1/gsf/gsf-output-gio.h
+file path=usr/include/libgsf-1/gsf/gsf-output-gzip.h
+file path=usr/include/libgsf-1/gsf/gsf-output-iconv.h
+file path=usr/include/libgsf-1/gsf/gsf-output-impl.h
+file path=usr/include/libgsf-1/gsf/gsf-output-iochannel.h
+file path=usr/include/libgsf-1/gsf/gsf-output-memory.h
+file path=usr/include/libgsf-1/gsf/gsf-output-stdio.h
+file path=usr/include/libgsf-1/gsf/gsf-output.h
+file path=usr/include/libgsf-1/gsf/gsf-shared-memory.h
+file path=usr/include/libgsf-1/gsf/gsf-structured-blob.h
+file path=usr/include/libgsf-1/gsf/gsf-timestamp.h
+file path=usr/include/libgsf-1/gsf/gsf-utils.h
+file path=usr/include/libgsf-1/gsf/gsf.h
+link path=usr/lib/$(MACH64)/libgsf-1.so target=libgsf-1.so.114.0.21
+link path=usr/lib/$(MACH64)/libgsf-1.so.114 target=libgsf-1.so.114.0.21
+file path=usr/lib/$(MACH64)/libgsf-1.so.114.0.21
+link path=usr/lib/$(MACH64)/libgsf-gnome-1.so target=libgsf-gnome-1.so.114.0.21
+link path=usr/lib/$(MACH64)/libgsf-gnome-1.so.114 \
+    target=libgsf-gnome-1.so.114.0.21
+file path=usr/lib/$(MACH64)/libgsf-gnome-1.so.114.0.21
+file path=usr/lib/$(MACH64)/pkgconfig/libgsf-1.pc
+file path=usr/lib/$(MACH64)/pkgconfig/libgsf-gnome-1.pc
+link path=usr/lib/libgsf-1.so target=libgsf-1.so.114.0.21
+link path=usr/lib/libgsf-1.so.114 target=libgsf-1.so.114.0.21
+file path=usr/lib/libgsf-1.so.114.0.21
+link path=usr/lib/libgsf-gnome-1.so target=libgsf-gnome-1.so.114.0.21
+link path=usr/lib/libgsf-gnome-1.so.114 target=libgsf-gnome-1.so.114.0.21
+file path=usr/lib/libgsf-gnome-1.so.114.0.21
+file path=usr/lib/pkgconfig/libgsf-1.pc
+file path=usr/lib/pkgconfig/libgsf-gnome-1.pc
+file path=usr/lib/python2.6/vendor-packages/gsf/__init__.py
+file path=usr/lib/python2.6/vendor-packages/gsf/_gsfmodule.so
+file path=usr/lib/python2.6/vendor-packages/gsf/gnomemodule.so
+file path=usr/share/gtk-doc/html/gsf/api.html
+file path=usr/share/gtk-doc/html/gsf/dependencies.html
+file path=usr/share/gtk-doc/html/gsf/gsf-Bononbo.html
+file path=usr/share/gtk-doc/html/gsf/gsf-Compression.html
+file path=usr/share/gtk-doc/html/gsf/gsf-GIO.html
+file path=usr/share/gtk-doc/html/gsf/gsf-GIOChannel.html
+file path=usr/share/gtk-doc/html/gsf/gsf-GnomeVFS.html
+file path=usr/share/gtk-doc/html/gsf/gsf-Infile-reading-structed-files.html
+file path=usr/share/gtk-doc/html/gsf/gsf-Input-from-unstructured-files.html
+file path=usr/share/gtk-doc/html/gsf/gsf-MS-OLE2.html
+file path=usr/share/gtk-doc/html/gsf/gsf-OASIS-Open-Document.html
+file path=usr/share/gtk-doc/html/gsf/gsf-Outfile-writing-structed-files.html
+file path=usr/share/gtk-doc/html/gsf/gsf-Output-to-unstructured-files.html
+file path=usr/share/gtk-doc/html/gsf/gsf-Reading-and-Writing-from-local-files-and-directories.html
+file path=usr/share/gtk-doc/html/gsf/gsf-Text.html
+file path=usr/share/gtk-doc/html/gsf/gsf-XML-and-libxml.html
+file path=usr/share/gtk-doc/html/gsf/gsf-Zip.html
+file path=usr/share/gtk-doc/html/gsf/gsf-blobs.html
+file path=usr/share/gtk-doc/html/gsf/gsf-clip-data.html
+file path=usr/share/gtk-doc/html/gsf/gsf-index.html
+file path=usr/share/gtk-doc/html/gsf/gsf-memory.html
+file path=usr/share/gtk-doc/html/gsf/gsf-metadata.html
+file path=usr/share/gtk-doc/html/gsf/gsf-users.html
+file path=usr/share/gtk-doc/html/gsf/gsf-utils.html
+file path=usr/share/gtk-doc/html/gsf/gsf.devhelp
+file path=usr/share/gtk-doc/html/gsf/gsf.devhelp2
+file path=usr/share/gtk-doc/html/gsf/history.html
+file path=usr/share/gtk-doc/html/gsf/home.png
+file path=usr/share/gtk-doc/html/gsf/index.html
+file path=usr/share/gtk-doc/html/gsf/index.sgml
+file path=usr/share/gtk-doc/html/gsf/intro.html
+file path=usr/share/gtk-doc/html/gsf/io.html
+file path=usr/share/gtk-doc/html/gsf/left.png
+file path=usr/share/gtk-doc/html/gsf/misc.html
+file path=usr/share/gtk-doc/html/gsf/parsers.html
+file path=usr/share/gtk-doc/html/gsf/right.png
+file path=usr/share/gtk-doc/html/gsf/sources.html
+file path=usr/share/gtk-doc/html/gsf/style.css
+file path=usr/share/gtk-doc/html/gsf/up.png
+file path=usr/share/locale/ca/LC_MESSAGES/libgsf.mo
+file path=usr/share/locale/cs/LC_MESSAGES/libgsf.mo
+file path=usr/share/locale/da/LC_MESSAGES/libgsf.mo
+file path=usr/share/locale/de/LC_MESSAGES/libgsf.mo
+file path=usr/share/locale/en_GB/LC_MESSAGES/libgsf.mo
+file path=usr/share/locale/es/LC_MESSAGES/libgsf.mo
+file path=usr/share/locale/eu/LC_MESSAGES/libgsf.mo
+file path=usr/share/locale/fr/LC_MESSAGES/libgsf.mo
+file path=usr/share/locale/gl/LC_MESSAGES/libgsf.mo
+file path=usr/share/locale/it/LC_MESSAGES/libgsf.mo
+file path=usr/share/locale/nb/LC_MESSAGES/libgsf.mo
+file path=usr/share/locale/oc/LC_MESSAGES/libgsf.mo
+file path=usr/share/locale/pa/LC_MESSAGES/libgsf.mo
+file path=usr/share/locale/pl/LC_MESSAGES/libgsf.mo
+file path=usr/share/locale/pt/LC_MESSAGES/libgsf.mo
+file path=usr/share/locale/pt_BR/LC_MESSAGES/libgsf.mo
+file path=usr/share/locale/sl/LC_MESSAGES/libgsf.mo
+file path=usr/share/locale/sv/LC_MESSAGES/libgsf.mo
+file path=usr/share/locale/zh_CN/LC_MESSAGES/libgsf.mo
+file path=usr/share/locale/zh_HK/LC_MESSAGES/libgsf.mo
+file path=usr/share/locale/zh_TW/LC_MESSAGES/libgsf.mo
+file path=usr/share/man/man1/gsf-office-thumbnailer.1
+file path=usr/share/man/man1/gsf-vba-dump.1
+file path=usr/share/man/man1/gsf.1

@@ -1,0 +1,41 @@
+diff -urN libgsf-1.14.19/configure.in ../../SUNWlibgsf-1.14.19.hacked/amd64/libgsf-1.14.19/configure.in
+--- libgsf-1.14.19/configure.in	2010-04-08 01:59:27.000000000 +0100
++++ ../../SUNWlibgsf-1.14.19.hacked/amd64/libgsf-1.14.19/configure.in	2012-05-28 15:49:41.660842333 +0100
+@@ -291,6 +291,7 @@
+ if test "x$test_python" = xtrue ; then
+     pygobject_msg=test
+     AM_PATH_PYTHON
++    PYTHON_LIB="-lpython2.6"
+ 
+     AM_CHECK_PYTHON_HEADERS(,[pygobject_msg="NO.  Missing python headers"])
+ 
+@@ -316,6 +317,8 @@
+     pygobject_msg=no
+ fi
+ 
++AC_SUBST(PYTHON_LIB)
++
+ AM_CONDITIONAL(WITH_PYTHON, [test "$pygobject_msg" = yes])
+ 
+ dnl ***********************************************************************************
+diff -urN libgsf-1.14.19/python/Makefile.am ../../SUNWlibgsf-1.14.19.hacked/amd64/libgsf-1.14.19/python/Makefile.am
+--- libgsf-1.14.19/python/Makefile.am	2009-05-19 02:55:48.000000000 +0100
++++ ../../SUNWlibgsf-1.14.19.hacked/amd64/libgsf-1.14.19/python/Makefile.am	2012-05-28 15:50:36.533748264 +0100
+@@ -22,7 +22,7 @@
+ gnomemodule_la_LIBADD = \
+ 	$(top_builddir)/gsf-gnome/libgsf-gnome-1.la	\
+ 	$(top_builddir)/gsf/libgsf-1.la			\
+-	$(LIBGSF_LIBS) $(LIBGSF_GNOME_LIBS)
++	$(LIBGSF_LIBS) $(PYTHON_LIB) $(LIBGSF_GNOME_LIBS)
+ gnomemodule_la_SOURCES = gsfgnomemodule.c
+ nodist_gnomemodule_la_SOURCES = gsfgnome.c
+ CLEANFILES += gsfgnome.c
+@@ -33,7 +33,7 @@
+ 	-I$(top_srcdir)		\
+ 	$(LIBGSF_CFLAGS)
+ _gsfmodule_la_LDFLAGS = -module -avoid-version -export-symbols-regex init_gsf
+-_gsfmodule_la_LIBADD = $(top_builddir)/gsf/libgsf-1.la $(LIBGSF_LIBS)
++_gsfmodule_la_LIBADD = $(top_builddir)/gsf/libgsf-1.la $(LIBGSF_LIBS) $(PYTHON_LIB)
+ _gsfmodule_la_SOURCES = gsfmodule.c
+ nodist__gsfmodule_la_SOURCES = gsf.c
+ CLEANFILES += gsf.c
