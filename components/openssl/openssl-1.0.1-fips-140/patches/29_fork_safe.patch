@@ -13,18 +13,19 @@
 +#include <pthread.h>
  
  #if defined(OPENSSL_SYS_WIN32) || defined(OPENSSL_SYS_WIN16)
- static double SSLeay_MSVC5_hack=0.0; /* and for VC1.5 */
-@@ -181,6 +182,7 @@
-    numbers.  */
- static STACK_OF(CRYPTO_dynlock) *dyn_locks=NULL;
+ static double SSLeay_MSVC5_hack = 0.0; /* and for VC1.5 */
+@@ -184,6 +185,8 @@
+  */
+ static STACK_OF(CRYPTO_dynlock) *dyn_locks = NULL;
  
 +static pthread_mutex_t *solaris_openssl_locks;
- 
- static void (MS_FAR *locking_callback)(int mode,int type,
- 	const char *file,int line)=0;
-@@ -406,6 +409,79 @@
- 	return(add_lock_callback);
- 	}
++
+ static void (MS_FAR *locking_callback) (int mode, int type,
+                                         const char *file, int line) = 0;
+ static int (MS_FAR *add_lock_callback) (int *pointer, int amount,
+@@ -402,6 +405,79 @@
+     return (add_lock_callback);
+ }
 
 +/*
 + * This is the locking callback function which all applications will be
@@ -97,24 +98,24 @@
 +		}
 +	locking_callback = solaris_locking_callback;
 +
-+	}
++}
 +
- void CRYPTO_set_locking_callback(void (*func)(int mode,int type,
- 					      const char *file,int line))
- 	{
-@@ -413,7 +478,11 @@
- 	 * are started.
- 	 */
- 	OPENSSL_init();
--	locking_callback=func;
+ void CRYPTO_set_locking_callback(void (*func) (int mode, int type,
+                                                const char *file, int line))
+ {
+@@ -410,7 +486,11 @@
+      * started.
+      */
+     OPENSSL_init();
+-    locking_callback = func;
 +
 +	/*
 +	 * we now setup our own locking callback and mutexes, and disallow
 +	 * setting of another locking callback.
 +	 */
- 	}
+ }
  
- void CRYPTO_set_add_lock_callback(int (*func)(int *num,int mount,int type,
+ void CRYPTO_set_add_lock_callback(int (*func) (int *num, int mount, int type,
 --- openssl-1.0.1f/crypto/cryptlib.h.~1~	Fri Feb  7 10:41:42 2014
 +++ openssl-1.0.1f/crypto/cryptlib.h	Thu Feb  6 16:04:16 2014
 @@ -104,6 +104,8 @@
