@@ -1,0 +1,2399 @@
+--- gamin-0.1.10/configure.in.~1~	2008-11-24 18:23:06.000000000 +0300
++++ gamin-0.1.10/configure.in	2015-03-21 00:38:51.710928100 +0300
+@@ -42,6 +42,12 @@
+ 	CFLAGS=""
+ fi
+ 
++dnl If the user set no CFLAGS, then don't assume the autotools defaults of
++dnl "-g -O2". We set default CFLAGS later based on the --disable-debug flag.
++if test -z "$ENV_CFLAGS"; then
++	CFLAGS=""
++fi
++
+ dnl for the spec file
+ RELDATE=`date +'%a %b %e %Y'`
+ AC_SUBST(RELDATE)
+@@ -279,6 +285,43 @@
+ 	backends="${backends}, kqueue"
+ fi
+ 
++case "$os" in
++    solaris*)
++	AM_CONDITIONAL(ON_SOLARIS, true)
++	AC_COMPILE_IFELSE([
++		#include <port.h>
++		#ifndef PORT_SOURCE_FILE
++		#error "Please upgrade to Nevada 72 or above to suppoert FEN"
++		#endif
++		int main() { return 0; }
++		],[have_fen=1],)
++	if test x$have_fen = x1 ; then
++            AC_ARG_ENABLE(fen,
++		AC_HELP_STRING([--disable-fen], [Disable the FEN backend]),
++                       [fen="${enableval}"], [fen=true])
++
++		if test x$fen = xyes; then
++                       fen=true
++		elif test x$fen = xno; then
++                       fen=false
++		elif test x$fen != xtrue; then
++                       AC_MSG_ERROR(bad value ${enableval} for --disable-fen)
++		fi
++	fi
++	break;
++	;;
++    *)
++	fen=false
++	break;
++	;;
++esac
++
++AM_CONDITIONAL(ENABLE_FEN, test x$fen = xtrue)
++if test x$fen = xtrue; then
++	AC_DEFINE(ENABLE_FEN,1,[Use Solaris FEN as backend])
++	backends="${backends}, FEN"
++fi
++
+ dnl pthread support for reentrance of the client library.
+ AC_ARG_WITH(threads,
+ [  --with-threads          add multithread support(on)])
+@@ -385,6 +428,14 @@
+     AC_DEFINE(HAVE_CMSGCRED,1,[Have cmsgcred structure])
+ fi
+ 
++dnl Check for getpeerucred support - Solaris
++
++AC_CHECK_HEADER(ucred.h,
++    AC_CHECK_LIB(c, getpeerucred,[
++        AC_DEFINE([HAVE_GETPEERUCRED],[],[Define if has getpeerucred])
++        AC_DEFINE([HAVE_UCRED_H],[],[Define if <ucred.h> exists])]))
++
++
+ #### Abstract sockets
+ 
+ AC_MSG_CHECKING(abstract socket namespace)
+@@ -484,20 +535,20 @@
+     if test "$PYTHON_VERSION" != ""
+     then
+ 	if test -r $with_python/include/python$PYTHON_VERSION/Python.h -a \
+-	   -d $with_python/lib/python$PYTHON_VERSION/site-packages
++	   -d $with_python/lib/python$PYTHON_VERSION/vendor-packages
+ 	then
+ 	    PYTHON_INCLUDES=$with_python/include/python$PYTHON_VERSION
+-	    PYTHON_SITE_PACKAGES=$libdir/python$PYTHON_VERSION/site-packages
++	    PYTHON_SITE_PACKAGES=$libdir/python$PYTHON_VERSION/vendor-packages
+ 	else
+ 	    if test -r $prefix/include/python$PYTHON_VERSION/Python.h
+ 	    then
+ 	        PYTHON_INCLUDES=$prefix/include/python$PYTHON_VERSION
+-	        PYTHON_SITE_PACKAGES=$libdir/python$PYTHON_VERSION/site-packages
++	        PYTHON_SITE_PACKAGES=$libdir/python$PYTHON_VERSION/vendor-packages
+ 	    else
+ 		if test -r /usr/include/python$PYTHON_VERSION/Python.h
+ 		then
+ 		    PYTHON_INCLUDES=/usr/include/python$PYTHON_VERSION
+-	            PYTHON_SITE_PACKAGES=$libdir/python$PYTHON_VERSION/site-packages
++	            PYTHON_SITE_PACKAGES=$libdir/python$PYTHON_VERSION/vendor-packages
+ 		else
+ 		    echo could not find python$PYTHON_VERSION/Python.h
+ 		fi
+@@ -512,7 +563,7 @@
+     then
+         pythondir='$(PYTHON_SITE_PACKAGES)'
+     else
+-        pythondir='$(libdir)/python$(PYTHON_VERSION)/site-packages'
++        pythondir='$(libdir)/python$(PYTHON_VERSION)/vendor-packages'
+     fi
+ else
+     PYTHON=
+@@ -529,6 +580,16 @@
+ AC_SUBST(PYTHON_INCLUDES)
+ AC_SUBST(PYTHON_SITE_PACKAGES)
+ 
++dnl Check for -lsocket -lnsl
++
++AC_CHECK_FUNC(gethostent, , AC_CHECK_LIB(nsl, gethostent))
++AC_CHECK_FUNC(setsockopt, , AC_CHECK_LIB(socket, setsockopt))
++
++dnl Check for <sys/mnttab.h>
++
++AC_CHECK_HEADER(sys/mnttab.h,
++	AC_DEFINE([HAVE_SYS_MNTTAB_H], [], [Define if <sys/mnttab.h> is there]))
++
+ dnl After all config-related tweaking of CFLAGS, set it to its "build" value
+ 
+ AC_MSG_CHECKING(for more compiler warnings)
+diff --git a/libgamin/Makefile.am b/libgamin/Makefile.am
+index 35aa740..4f725a2 100644
+--- a/libgamin/Makefile.am
++++ b/libgamin/Makefile.am
+@@ -39,13 +39,24 @@ CLEANFILES=gam_error.c gam_event.c
+ 
+ libgamin_1_la_LIBADD =
+ 
++if ON_SOLARIS
++libgamin_1_la_LDFLAGS = -Wl,-M$(srcdir)/gamin_sym.version \
++                        -version-info @GAMIN_VERSION_INFO@ @THREAD_LIBS@
++else
+ libgamin_1_la_LDFLAGS = -Wl,--version-script=$(srcdir)/gamin_sym.version \
+                         -version-info @GAMIN_VERSION_INFO@ @THREAD_LIBS@
++endif
+ 
+ libfam_la_SOURCES = $(libgamin_1_la_SOURCES)
+ libfam_la_LIBADD = $(libgamin_1_la_LIBADD)
+-libfam_la_LDFLAGS = -Wl,--version-script=$(srcdir)/gamin_sym.version	\
++
++if ON_SOLARIS
++libfam_la_LDFLAGS = -Wl,-M$(srcdir)/gamin_sym.version	\
+                     -version-info @FAM_VERSION_INFO@ @THREAD_LIBS@
++else
++libfam_la_LDFLAGS = -Wl,--version-script=$(srcdir)/gamin_sym.version   \
++                    -version-info @FAM_VERSION_INFO@ @THREAD_LIBS@
++endif
+ 
+ #
+ # Compile a program locally to check
+diff --git a/libgamin/gam_api.c b/libgamin/gam_api.c
+index 4e87e63..3630213 100644
+--- a/libgamin/gam_api.c
++++ b/libgamin/gam_api.c
+@@ -14,6 +14,12 @@
+ #include <sys/socket.h>
+ #include <sys/un.h>
+ #include <sys/uio.h>
++#if defined(sun)
++#include <string.h>
++#endif
++#if defined(HAVE_UCRED_H)
++#include <ucred.h>
++#endif defined(HAVE_UCRED_H)
+ #include "fam.h"
+ #include "gam_protocol.h"
+ #include "gam_data.h"
+@@ -660,6 +666,10 @@ gamin_check_cred(GAMDataPtr conn, int fd)
+     } cmsg;
+ #endif
+ 
++#if defined(HAVE_GETPEERUCRED)
++    ucred_t *creds;
++#endif
++
+     s_uid = getuid();
+ 
+ #if defined(LOCAL_CREDS) && defined(HAVE_CMSGCRED)
+@@ -726,11 +736,25 @@ retry:
+                       fd, cr_len, (int) sizeof(cr));
+             goto failed;
+         }
++#elif defined(HAVE_GETPEERUCRED)
++        if ((creds = (ucred_t *)malloc(ucred_size()))==(ucred_t *)NULL){
++            GAM_DEBUG(DEBUG_INFO,"Malloc failed for ucreds");
++            goto failed;
++        }
++
++        if (getpeerucred(fd, &creds)!=0){
++            GAM_DEBUG(DEBUG_INFO,"getpeerucred call failed");
++            goto failed;
++        }
++        c_uid = ucred_getruid(creds);
++        c_gid = ucred_getrgid(creds);
++        c_pid = ucred_getpid(creds);
++        ucred_free(creds);
+ #elif defined(HAVE_CMSGCRED)
+         c_pid = cmsg.cred.cmcred_pid;
+         c_uid = cmsg.cred.cmcred_euid;
+         c_gid = cmsg.cred.cmcred_groups[0];
+-#else /* !SO_PEERCRED && !HAVE_CMSGCRED */
++#else /* !SO_PEERCRED && !HAVE_CMSGCRED && !HAVE_GETPEERUCRED */
+         GAM_DEBUG(DEBUG_INFO,
+                   "Socket credentials not supported on this OS\n");
+         goto failed;
+diff --git a/libgamin/gamin_sym.version b/libgamin/gamin_sym.version
+index dba5f20..5c6d661 100644
+--- a/libgamin/gamin_sym.version
++++ b/libgamin/gamin_sym.version
+@@ -2,8 +2,6 @@
+    global:
+        FAMCancelMonitor;
+        FAMClose;
+-       FAMDebugLevel;
+-       FAMDebug;
+        FamErrlist;
+        FAMErrno;
+        FAMMonitorCollection;
+diff --git a/server/Makefile.am b/server/Makefile.am
+index 37aed8b..7964d17 100644
+--- a/server/Makefile.am
++++ b/server/Makefile.am
+@@ -10,7 +10,7 @@ INCLUDES =						\
+ 	-DG_DISABLE_DEPRECATED				
+ 
+ if GAMIN_DEBUG
+-INCLUDES += -DGAM_DEBUG_ENABLED
++INCLUDES += -DGAM_DEBUG_ENABLED -g
+ endif
+ 
+ 
+@@ -68,6 +68,18 @@ if ENABLE_KQUEUE
+ gam_server_SOURCES += gam_kqueue.c gam_kqueue.h
+ endif
+ 
++if ENABLE_FEN
++gam_server_SOURCES += gam_fen.c gam_fen.h		\
++	fen-dump.c		\
++	fen-dump.h		\
++	fen-kernel.c 		\
++	fen-kernel.h 		\
++	fen-helper.c 		\
++	fen-helper.h		\
++	fen-node.c		\
++	fen-node.h
++endif
++
+ if ENABLE_HURD_MACH_NOTIFY
+ gam_server_SOURCES += gam_hurd_mach_notify.c gam_hurd_mach_notify.h
+ 
+diff --git a/server/fen-dump.c b/server/fen-dump.c
+new file mode 100644
+index 0000000..98d20eb
+--- /dev/null
++++ b/server/fen-dump.c
+@@ -0,0 +1,77 @@
++/* -*- Mode: C; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
++/* vim:set expandtab ts=4 shiftwidth=4: */
++/* 
++ * Copyright (c) 2008, 2010 Oracle and/or its affiliates, Inc. All rights
++ * reserved.
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General
++ * Public License along with this library; if not, write to the
++ * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
++ * Boston, MA 02111-1307, USA.
++ *
++ * Authors: Lin Ma <lin.ma@sun.com>
++ */
++
++#include "config.h"
++#include <glib.h>
++#include <glib/gprintf.h>
++#include "fen-node.h"
++#include "fen-dump.h"
++
++G_LOCK_EXTERN (fen_lock);
++
++/*-------------------- node ------------------*/
++static void
++dump_node (node_t* node, gpointer data)
++{
++    g_printf ("n:0x%p ds:0x%p s:0x%p %s\n", node, node->dir_subs, node->subs, NODE_NAME(node));
++}
++
++static void
++dump_tree (node_t* node)
++{
++    if (G_TRYLOCK (fen_lock)) {
++        node_traverse(NULL, dump_node, NULL);
++        G_UNLOCK (fen_lock);
++    }
++}
++
++/* ------------------ fdata port hash --------------------*/
++void
++dump_hash_cb (gpointer key,
++  gpointer value,
++  gpointer user_data)
++{
++    g_printf ("k:0x%p v:0x%p >\n", key, value);
++}
++
++gboolean
++dump_hash (GHashTable* hash, gpointer user_data)
++{
++    if (G_TRYLOCK (fen_lock)) {
++        if (g_hash_table_size (hash) > 0) {
++            g_hash_table_foreach (hash, dump_hash_cb, user_data);
++        }
++        G_UNLOCK (fen_lock);
++    }
++    return TRUE;
++}
++
++/* ------------------ event --------------------*/
++void
++dump_event (node_event_t* ev, gpointer user_data)
++{
++    node_t* node = ev->user_data;
++    g_printf ("ne:0x%p e:%p n:0x%p ds:0x%p s:0x%p s\n", ev, ev->e, node, node->dir_subs, node->subs, NODE_NAME(node));
++}
++
+diff --git a/server/fen-dump.h b/server/fen-dump.h
+new file mode 100644
+index 0000000..ffac822
+--- /dev/null
++++ b/server/fen-dump.h
+@@ -0,0 +1,29 @@
++/* -*- Mode: C; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
++/* vim:set expandtab ts=4 shiftwidth=4: */
++/* 
++ * Copyright (c) 2008, 2010 Oracle and/or its affiliates, Inc. All rights
++ * reserved.
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General
++ * Public License along with this library; if not, write to the
++ * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
++ * Boston, MA 02111-1307, USA.
++ *
++ * Authors: Lin Ma <lin.ma@sun.com>
++ */
++
++#ifndef _FEN_DUMP_H_
++#define _FEN_DUMP_H_
++
++
++#endif /* _FEN_DUMP_H_ */
+diff --git a/server/fen-helper.c b/server/fen-helper.c
+new file mode 100644
+index 0000000..e68e7c3
+--- /dev/null
++++ b/server/fen-helper.c
+@@ -0,0 +1,197 @@
++/* -*- Mode: C; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
++/* vim:set expandtab ts=4 shiftwidth=4: */
++/* 
++ * Copyright (c) 2008, 2010 Oracle and/or its affiliates, Inc. All rights
++ * reserved.
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General
++ * Public License along with this library; if not, write to the
++ * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
++ * Boston, MA 02111-1307, USA.
++ *
++ * Authors: Lin Ma <lin.ma@sun.com>
++ */
++
++#include "config.h"
++#include <glib.h>
++#include "fen-helper.h"
++#include "fen-kernel.h"
++#ifdef GIO_COMPILATION
++#include "gfilemonitor.h"
++#else
++#include "gam_event.h"
++#include "gam_server.h"
++#include "gam_protocol.h"
++#endif
++
++#ifdef GIO_COMPILATION
++#define FH_W if (fh_debug_enabled) g_debug
++static gboolean fh_debug_enabled = FALSE;
++#else
++#include "gam_error.h"
++#define FH_W(...) GAM_DEBUG(DEBUG_INFO, __VA_ARGS__)
++#endif
++
++G_LOCK_EXTERN (fen_lock);
++
++/* misc */
++static void
++scan_children_init(node_t *f, gpointer sub)
++{
++    gboolean emit;
++    gint event;
++
++    FH_W ("%s %s [0x%p]\n", __func__, NODE_NAME(f), f);
++
++#ifdef GIO_COMPILATION
++    emit = FALSE;
++    event = G_FILE_MONITOR_EVENT_CREATED;
++#else
++    emit = TRUE;
++    event = GAMIN_EVENT_EXISTS;
++#endif
++
++    if (!NODE_HAS_FLAG(f, NODE_FLAG_SNAPSHOT_UPDATED)) {
++        /* TODO snapshot should also compare to the sub created timestamp. */
++        /* GIO initially doesn't emit created/existed events. */
++        node_create_children_snapshot(f, event, emit);
++    } else {
++        GHashTableIter iter;
++        gpointer value;
++
++        g_hash_table_iter_init (&iter, f->children);
++        while (g_hash_table_iter_next (&iter, NULL, &value)) {
++            node_t *child = (node_t *)value;
++
++#ifdef GIO_COMPILATION
++            /* GIO initially doesn't emit created/existed events. */
++            /* g_file_monitor_emit_event(G_FILE_MONITOR(sub), child->gfile, NULL, event); */
++#else
++            gam_server_emit_one_event(NODE_NAME(child), gam_subscription_is_dir(sub), event, sub, 1);
++#endif
++        }
++    }
++}
++
++/**
++ * fen_add
++ * 
++ * Won't hold a ref, we have a timout callback to clean unused node_t.
++ * If there is no value for a key, add it and return it; else return the old
++ * one.
++ */
++void
++fen_add (const gchar *filename, gpointer sub, gboolean is_mondir)
++{
++	node_t* f;
++
++    g_assert (filename);
++    g_assert (sub);
++
++    G_LOCK (fen_lock);
++	f = node_find(NULL, filename, TRUE);
++    FH_W ("%s 0x%p sub[0x%p] %s\n", __func__, f, sub, filename);
++    g_assert (f);
++
++    /* Update timestamp, the events in global queue will compare itself to this
++     * timestamp to decide if be emitted. TODO, timestamp should be per sub.
++     */
++    if (!NODE_IS_ACTIVE(f)) {
++        g_get_current_time(&f->atv);
++    }
++
++    if (is_mondir) {
++        f->dir_subs = g_list_prepend(f->dir_subs, sub);
++    } else {
++        f->subs = g_list_prepend(f->subs, sub);
++    }
++    
++    if (NODE_HAS_STATE(f, NODE_STATE_ASSOCIATED) ||
++      (node_lstat(f) == 0 && port_add(f) == 0)) {
++#ifndef GIO_COMPILATION
++        gam_server_emit_one_event (NODE_NAME(f),
++          gam_subscription_is_dir (sub), GAMIN_EVENT_EXISTS, sub, 1);
++#endif
++        if (is_mondir) {
++            scan_children_init (f, sub);
++        }
++    } else {
++#ifndef GIO_COMPILATION
++        gam_server_emit_one_event (NODE_NAME(f),
++          gam_subscription_is_dir (sub), GAMIN_EVENT_DELETED, sub, 1);
++#endif
++        node_adjust_deleted (f);
++    }
++#ifndef GIO_COMPILATION
++    gam_server_emit_one_event (NODE_NAME(f),
++      gam_subscription_is_dir (sub), GAMIN_EVENT_ENDEXISTS, sub, 1);
++#endif
++    G_UNLOCK (fen_lock);
++}
++
++void
++fen_remove (const gchar *filename, gpointer sub, gboolean is_mondir)
++{
++    node_t* f;
++    
++    g_assert (filename);
++    g_assert (sub);
++
++    G_LOCK (fen_lock);
++	f = node_find(NULL, filename, FALSE);
++    FH_W ("%s 0x%p sub[0x%p] %s\n", __func__, f, sub, filename);
++
++    if (f) {
++        if (is_mondir) {
++            f->dir_subs = g_list_remove(f->dir_subs, sub);
++        } else {
++            f->subs = g_list_remove(f->subs, sub);
++        }
++
++        if (!NODE_IS_ACTIVE(f)) {
++            node_try_delete (f);
++        }
++    }
++    G_UNLOCK (fen_lock);
++}
++
++/**
++ * fen_init:
++ * 
++ * FEN subsystem initializing.
++ */
++gboolean
++fen_init ()
++{
++    static gboolean initialized = FALSE;
++    static gboolean result = FALSE;
++
++    G_LOCK (fen_lock);
++    if (initialized) {
++        G_UNLOCK (fen_lock);
++        return result;
++    }
++
++    result = node_class_init();
++
++    if (!result) {
++        G_UNLOCK (fen_lock);
++        return result;
++    }
++
++    initialized = TRUE;
++
++    G_UNLOCK (fen_lock);
++    return result;
++}
++
+diff --git a/server/fen-helper.h b/server/fen-helper.h
+new file mode 100644
+index 0000000..25df38f
+--- /dev/null
++++ b/server/fen-helper.h
+@@ -0,0 +1,33 @@
++/* -*- Mode: C; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
++/* vim:set expandtab ts=4 shiftwidth=4: */
++/* 
++ * Copyright (c) 2008, 2010 Oracle and/or its affiliates, Inc. All rights
++ * reserved.
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General
++ * Public License along with this library; if not, write to the
++ * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
++ * Boston, MA 02111-1307, USA.
++ *
++ * Authors: Lin Ma <lin.ma@sun.com>
++ */
++
++#ifndef _FEN_HELPER_H_
++#define _FEN_HELPER_H_
++
++void fen_add (const gchar *filename, gpointer sub, gboolean is_mondir);
++void fen_remove (const gchar *filename, gpointer sub, gboolean is_mondir);
++
++gboolean fen_init ();
++
++#endif /* _FEN_HELPER_H_ */
+diff --git a/server/fen-kernel.c b/server/fen-kernel.c
+new file mode 100644
+index 0000000..8b9c58b
+--- /dev/null
++++ b/server/fen-kernel.c
+@@ -0,0 +1,557 @@
++/* -*- Mode: C; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
++/* vim:set expandtab ts=4 shiftwidth=4: */
++/* 
++ * Copyright (c) 2008, 2010 Oracle and/or its affiliates, Inc. All rights
++ * reserved.
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General
++ * Public License along with this library; if not, write to the
++ * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
++ * Boston, MA 02111-1307, USA.
++ *
++ * Authors: Lin Ma <lin.ma@sun.com>
++ */
++
++#include "config.h"
++#include <rctl.h>
++#include <strings.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <unistd.h>
++#include <glib.h>
++#include "fen-kernel.h"
++#include "fen-dump.h"
++
++#ifdef GIO_COMPILATION
++#define FK_W if (fk_debug_enabled) g_debug
++static gboolean fk_debug_enabled = FALSE;
++#else
++#include "gam_error.h"
++#define FK_W(...) GAM_DEBUG(DEBUG_INFO, __VA_ARGS__)
++#endif
++
++G_GNUC_INTERNAL G_LOCK_DEFINE (fen_lock);
++
++static ulong max_port_events = 512;
++static GList *pn_visible_list;	/* the queue of ports which don't have the max objs */
++static GQueue *g_eventq = NULL;
++static timespec_t zero_wait;
++static void (*user_process_events_cb) (gpointer, node_event_t*);
++static port_event_t *pevents = NULL;
++static gint PE_ALLOC = 2048;
++static GHashTable *renamed_hash = NULL; /* <parent node, ev> */
++
++typedef struct _PSource {
++    GSource  source;            /* Inherit from GSource, must be the first. */
++    GPollFD  gfd;
++    gboolean pending;
++    uint_t   event_growing_factor;
++    uint_t   pending_events;
++} PSource;
++
++#define PGPFD(s)             (&((PSource *)(s))->gfd)
++#define SLEEP_BASE_TIME      10	/* in milliseconds */
++#define EXPECT_INC_EVENTS(pn)  (1 << (pn->event_growing_factor))
++
++#define RENAME_EVENTS_INTERVAL 500 /* in milliseconds */
++#define PROCESS_PORT_EVENTS_TIME 1000 /* in milliseconds */
++guint process_port_event_id = 0;
++
++static gchar* _event_strings(int event);
++static const gchar* _event_string (int event);
++static GSource *psource_new();
++
++static gboolean port_prepare(GSource *source, gint *timeout_);
++static gboolean port_check(GSource *source);
++static gboolean port_dispatch(GSource *source, GSourceFunc callback, gpointer user_data);
++static GSourceFuncs fen_source_func = {
++    port_prepare,
++    port_check,
++    port_dispatch,
++    NULL
++};
++
++static gboolean
++port_prepare(GSource *source, gint *timeout_)
++{
++    return FALSE;
++}
++
++static gboolean
++port_check(GSource *source)
++{
++	PSource *pn = (PSource *)source;
++    uint_t nget;
++    
++    if (pn->pending) {
++        pn->pending = FALSE;
++        g_source_add_poll(source, PGPFD(source));
++        g_source_unref(source);
++        return FALSE;
++    }
++
++    if (!(PGPFD(pn)->revents & G_IO_IN))
++        return FALSE;
++
++    if (port_getn(PGPFD(source)->fd, NULL, 0, &nget, 0) == 0) {
++        if (nget - pn->pending_events > EXPECT_INC_EVENTS(pn)) {
++            /* Sleep for a while. */
++            pn->pending_events = nget;
++            pn->event_growing_factor ++;
++
++            pn->pending = TRUE;
++            g_source_ref(source);
++            g_source_remove_poll(source, PGPFD(source));
++            g_timeout_add(SLEEP_BASE_TIME,
++              (GSourceFunc)port_check,
++              (gpointer)pn);
++            return FALSE;
++        }
++    }
++
++    pn->pending_events = 0;
++    pn->event_growing_factor = 0;
++
++    return TRUE;
++}
++
++static gboolean
++port_dispatch(GSource *source, GSourceFunc callback, gpointer user_data)
++{
++    node_t *f;
++	uint_t nget = 0;
++	uint_t total = 0;
++
++    FK_W ("%s 0x%p fd %d\n", __func__, source, PGPFD(source)->fd);
++
++    G_LOCK (fen_lock);
++    do {
++        nget = 1;
++        if (port_getn(PGPFD(source)->fd, pevents, PE_ALLOC, &nget, &zero_wait) == 0) {
++            int i;
++            for (i = 0; i < nget; i++) {
++                f = (node_t *)pevents[i].portev_user;
++
++                if (pevents[i].portev_source == PORT_SOURCE_FILE) {
++
++                    NODE_CLE_STATE(f, NODE_STATE_ASSOCIATED);
++                    NODE_SET_STATE(f, NODE_STATE_HAS_EVENTS);
++
++                    if (HAS_NO_EXCEPTION_EVENTS(pevents[i].portev_events)) {
++                        /* If the events do not show it's deleted, update
++                         * file timestamp to avoid missing events next time.
++                         */
++                        if (node_lstat(f) != 0 /* || port_add(f) != 0 */) {
++                            /* Included deleted event. */
++                            pevents[i].portev_events |= FILE_DELETE;
++                        }
++                    }
++
++                    /* Queue it and waiting for processing. */
++                    g_queue_push_tail(g_eventq,
++                      node_event_new(pevents[i].portev_events, (gpointer)f));
++
++                } else {
++                    FK_W ("[kernel] unknown portev_source %d\n", pevents[i].portev_source);
++                }
++            }
++
++            total += nget;
++
++        } else {
++            FK_W ("[kernel] port_getn %s\n", g_strerror (errno));
++            break;
++        }
++    } while (nget == PE_ALLOC);
++
++    G_UNLOCK (fen_lock);
++
++    if (total > 0 && callback) {
++        FK_W ("[kernel] get total %ld events\n", total);
++        return callback (user_data);
++    }
++    return TRUE;
++}
++
++static gboolean
++process_renamed_hash_cb(gpointer key, gpointer value, gpointer user_data)
++{
++    node_event_t *ev = value;
++
++#if 0
++    node_add_event(ev->user_data, ev);
++#else
++    user_process_events_cb(ev->user_data, ev);
++#endif
++    /* Always delete self from hash. */
++    return TRUE;
++}
++
++static gboolean
++port_events_process_cb(gpointer user_data)
++{
++    node_event_t *ev;
++    
++    G_LOCK (fen_lock);
++
++	/* Processing g_eventq */
++    while ((ev = (node_event_t*)g_queue_pop_head (g_eventq)) != NULL) {
++
++        /* FK_W ("[%s] 0x%p %s\n", __func__, ev, _event_string (ev->e)); */
++
++        {
++            gchar *log = _event_strings(ev->e);
++            FK_W ("%s %s %s\n", __func__, NODE_NAME(ev->user_data), log);
++            g_free(log);
++        }
++
++#ifdef GIO_COMPILATION
++        /* Use the parent node as a hash, because only the dir_subs in the
++         * parent node should receive MOVE event.
++         */
++        if (NODE_PARENT(ev->user_data)) {
++            if (ev->e == FILE_RENAME_TO) {
++                g_hash_table_insert(renamed_hash, NODE_PARENT(ev->user_data), ev);
++                g_time_val_add(&ev->rename_tv, RENAME_EVENTS_INTERVAL);
++                continue;
++            }
++            if (ev->e == FILE_RENAME_FROM) {
++                node_event_t *pair_ev;
++
++                pair_ev = g_hash_table_lookup(renamed_hash, NODE_PARENT(ev->user_data));
++                if (pair_ev && node_timeval_lt(&ev->ctv, &pair_ev->rename_tv)) {
++                    g_hash_table_remove(renamed_hash, NODE_PARENT(ev->user_data));
++                    pair_ev->pair_data = ev->user_data;
++                    /* Free ev, exchange pair_ev and ev. */
++                    node_event_delete(ev);
++                    ev = pair_ev;
++                }
++            }
++        }
++#endif
++    
++#if 0
++        node_add_event(ev->user_data, ev);
++#else
++        user_process_events_cb(ev->user_data, ev);
++#endif
++    }
++
++    /* Processing the events in renamed_hash. TODO we should delay it and wait
++     * for more possible pair.
++     */
++    g_hash_table_foreach_remove(renamed_hash, process_renamed_hash_cb, NULL);
++
++    G_UNLOCK (fen_lock);
++
++    process_port_event_id = 0;
++    return FALSE;
++}
++
++static gboolean
++port_events_read_cb(gpointer user_data)
++{
++
++    if (process_port_event_id == 0) {
++        process_port_event_id = g_timeout_add(PROCESS_PORT_EVENTS_TIME,
++          port_events_process_cb,
++          NULL);
++    }
++
++	return TRUE;
++}
++
++/*
++ * malloc PSource and port_create, start thread at pnode_ref.
++ * if psource_new succeeded, the PSource will never
++ * be freed. So PSource can be freed only in psource_new.
++ * Note pnode_monitor_remove_all can also free PSource, but currently no one
++ * invork it.
++ */
++static GSource*
++psource_new()
++{
++    GSource *source = NULL;
++    int fd;
++
++    if ((fd = port_create()) >= 0) {
++        source = g_source_new(&fen_source_func, sizeof(PSource));
++        PGPFD(source)->fd = fd;
++        PGPFD(source)->events = G_IO_IN | G_IO_HUP | G_IO_ERR;
++        g_source_set_callback(source, port_events_read_cb, NULL, NULL);
++        g_source_attach(source, NULL);
++        g_source_unref(source);
++        g_source_add_poll(source, PGPFD(source));
++
++        FK_W ("%s 0x%p fd %d\n", __func__, source, PGPFD(source)->fd);
++    } else {
++        FK_W ("PORT_CREATE %s\n", g_strerror(errno));
++        g_return_val_if_reached(NULL);
++    }
++
++	return source;
++}
++
++/**
++ * port_add:
++ * @f:
++ *
++ * Unsafe, need lock fen_lock.
++ * port_add will associate a GSource to @f->source
++ */
++gint
++port_add(node_t *f)
++{
++	GSource *source = f->source;
++
++    FK_W ("%s [0x%p] %s\n", __func__, f, NODE_NAME(f));
++
++    g_assert(f);
++    g_assert(NODE_HAS_FLAG(f, NODE_FLAG_STAT_UPDATED));
++
++    /* if (!NODE_HAS_FLAG(f, NODE_FLAG_STAT_DONE)) { */
++    /*     if (NODE_STAT(f) != 0) { */
++    /*         return errno; */
++    /*     } */
++    /* } */
++
++    /* Try re-use f->pn. f->pn may be used by other request, e.g. f is deleted
++     * for a long time. So if pn is full, we try to open a new one.
++     */
++    if (!source) {
++start_over:
++        /* Try the next visible source. */
++        if (pn_visible_list) {
++            source = (GSource *)pn_visible_list->data;
++        } else {
++            if ((source = psource_new()) != NULL) {
++                g_assert (g_list_find (pn_visible_list, source) == NULL);
++                pn_visible_list = g_list_prepend (pn_visible_list, source);
++            }
++        }
++    }
++
++    if (port_associate(PGPFD(source)->fd, PORT_SOURCE_FILE, (uintptr_t)FILE_OBJECT(f),
++        CONCERNED_EVENTS,
++        (void *)f) == 0) {
++        f->source = source;
++        NODE_SET_STATE(f, NODE_STATE_ASSOCIATED);
++        NODE_CLE_FLAG(f, NODE_FLAG_STAT_UPDATED);
++        FK_W ("PORT_ASSOCIATE 0x%p OK\n", f);
++        return 0;
++    } else if (errno == EAGAIN) {
++        /* Full, remove it. */
++        pn_visible_list = g_list_remove (pn_visible_list, source);
++        /* Re-add to port */
++        goto start_over;
++
++    } else if (errno == ENOENT) {
++        /* File is not exist */
++    } else if (errno == ENOTSUP) {
++        /* FS is not supported. Currently we think it no longer make sense to
++         * monitor it, so clean the stat info and return 0 to ignore this
++         * node. If there are requirement, we can consider to add polling
++         * method.
++         */
++        NODE_CLE_FLAG(f, NODE_FLAG_STAT_UPDATED);
++        return 0;
++    } else {
++        FK_W ("PORT_ASSOCIATE 0x%p %s\n", f, g_strerror (errno));
++    }
++
++    /* No matter if associated successfully, stat info is out-of-date, so clean it. */
++    NODE_CLE_FLAG(f, NODE_FLAG_STAT_UPDATED);
++    return errno;
++}
++
++/**
++ * port_remove
++ *
++ * < private >
++ * Unsafe, need lock fen_lock.
++ */
++void
++port_remove (node_t *f)
++{
++    /* g_assert(f->source); */
++
++    if (NODE_HAS_STATE(f, NODE_STATE_ASSOCIATED)) {
++        /* Mark unregisted. */
++        if (port_dissociate(PGPFD(f->source)->fd, PORT_SOURCE_FILE, (uintptr_t)FILE_OBJECT(f)) == 0) {
++            /*
++             * Note, we can run foode_delete if dissociating is failed,
++             * because there may be some pending events (mostly like
++             * FILE_DELETE) in the port_get. If we delete the foode
++             * the fnode may be deleted, then port_get will run on an invalid
++             * address.
++             */
++            NODE_CLE_STATE(f, NODE_STATE_ASSOCIATED);
++            FK_W ("PORT_DISSOCIATE 0x%p OK\n", f);
++        } else if (errno == ENOENT) {
++            /* The file has been removed from port, after port_get or before
++             * port_get but DELETED event has been generated.
++             * Ignored. */
++        } else {
++            FK_W ("PORT_DISSOCIATE 0x%p %s\n", f, g_strerror (errno));
++            g_return_if_reached();
++        }
++    }
++}
++
++/**
++ * Get Solaris resouce values.
++ *
++ */
++
++extern gboolean
++port_class_init (void (*user_process_events_callback) (gpointer, node_event_t*))
++{
++	rctlblk_t *rblk;
++
++	if ((rblk = malloc (rctlblk_size ())) == NULL) {
++        FK_W ("[kernel] rblk malloc %s\n", g_strerror (errno));
++		return FALSE;
++	}
++	if (getrctl ("process.max-port-events", NULL, rblk, RCTL_FIRST) == -1) {
++        FK_W ("[kernel] getrctl %s\n", g_strerror (errno));
++        free (rblk);
++        return FALSE;
++	} else {
++        max_port_events = rctlblk_get_value(rblk);
++		FK_W ("max_port_events = %u\n", max_port_events);
++        free (rblk);
++	}
++    renamed_hash = g_hash_table_new_full(g_direct_hash, g_direct_equal,
++      NULL, NULL);
++    if (renamed_hash == NULL) {
++		FK_W ("[kernel] FEN global renamed queue initializing faild\n");
++        return FALSE;
++    }
++    if ((g_eventq = g_queue_new ()) == NULL) {
++		FK_W ("[kernel] FEN global event queue initializing faild\n");
++        return FALSE;
++    }
++    if (user_process_events_callback == NULL) {
++		FK_W ("[kernel] FEN global no user_process_events_callback\n");
++        return FALSE;
++    }
++    user_process_events_cb = user_process_events_callback;
++    memset (&zero_wait, 0, sizeof (timespec_t));
++
++    pevents = g_malloc(PE_ALLOC * sizeof(port_event_t));
++    if (pevents == NULL) {
++		FK_W ("[kernel] FEN global alloc pevents failed\n");
++        return FALSE;
++    }
++
++	return TRUE;
++}
++
++static gchar*
++printevent (const char *pname, int event, const char *tag)
++{
++    static gchar	*event_string = NULL;
++    GString			*str;
++
++    if (event_string) {
++        g_free(event_string);
++    }
++
++    str = g_string_new ("");
++    g_string_printf (str, "[%s] [%-20s]", tag, pname);
++    if (event & FILE_ACCESS) {
++        str = g_string_append (str, " ACCESS");
++    }
++    if (event & FILE_MODIFIED) {
++        str = g_string_append (str, " MODIFIED");
++    }
++    if (event & FILE_ATTRIB) {
++        str = g_string_append (str, " ATTRIB");
++    }
++    if (event & FILE_DELETE) {
++        str = g_string_append (str, " DELETE");
++    }
++    if (event & FILE_RENAME_TO) {
++        str = g_string_append (str, " RENAME_TO");
++    }
++    if (event & FILE_RENAME_FROM) {
++        str = g_string_append (str, " RENAME_FROM");
++    }
++    if (event & UNMOUNTED) {
++        str = g_string_append (str, " UNMOUNTED");
++    }
++    if (event & MOUNTEDOVER) {
++        str = g_string_append (str, " MOUNTEDOVER");
++    }
++    event_string = str->str;
++    g_string_free (str, FALSE);
++    return event_string;
++}
++
++static gchar *
++_event_strings(int event)
++{
++    GString *str = g_string_sized_new(80);
++
++    if (event & FILE_DELETE)
++        g_string_append(str, " FILE_DELETE");
++
++    if (event & FILE_RENAME_FROM)
++        g_string_append(str, " FILE_RENAME_FROM");
++
++    if (event & FILE_MODIFIED)
++        g_string_append(str, " FILE_MODIFIED");
++
++    if (event & FILE_RENAME_TO)
++        g_string_append(str, " FILE_RENAME_TO");
++
++    if (event & MOUNTEDOVER)
++        g_string_append(str, " MOUNTEDOVER");
++
++    if (event & FILE_ATTRIB)
++        g_string_append(str, " FILE_ATTRIB");
++
++    if (event & UNMOUNTED)
++        g_string_append(str, " UNMOUNTED");
++
++    if (event & FILE_ACCESS)
++        g_string_append(str, " FILE_ACCESS");
++
++    return g_string_free(str, FALSE);
++}
++
++static const gchar *
++_event_string (int event)
++{
++    switch (event) {
++    case FILE_DELETE:
++        return "FILE_DELETE";
++    case FILE_RENAME_FROM:
++        return "FILE_RENAME_FROM";
++    case FILE_MODIFIED:
++        return "FILE_MODIFIED";
++    case FILE_RENAME_TO:
++        return "FILE_RENAME_TO";
++    case MOUNTEDOVER:
++        return "MOUNTEDOVER";
++    case FILE_ATTRIB:
++        return "FILE_ATTRIB";
++    case UNMOUNTED:
++        return "UNMOUNTED";
++    case FILE_ACCESS:
++        return "FILE_ACCESS";
++    default:
++        return "EVENT_UNKNOWN";
++    }
++}
++
+diff --git a/server/fen-kernel.h b/server/fen-kernel.h
+new file mode 100644
+index 0000000..6d2c49b
+--- /dev/null
++++ b/server/fen-kernel.h
+@@ -0,0 +1,43 @@
++/* -*- Mode: C; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
++/* vim:set expandtab ts=4 shiftwidth=4: */
++/* 
++ * Copyright (c) 2008, 2010 Oracle and/or its affiliates, Inc. All rights
++ * reserved.
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General
++ * Public License along with this library; if not, write to the
++ * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
++ * Boston, MA 02111-1307, USA.
++ *
++ * Authors: Lin Ma <lin.ma@sun.com>
++ */
++
++#include <sys/types.h>
++#include <errno.h>
++
++#include "fen-node.h"
++
++#ifndef _FEN_KERNEL_H_
++#define _FEN_KERNEL_H_
++
++#define CONCERNED_EVENTS (FILE_MODIFIED | FILE_ATTRIB | FILE_NOFOLLOW)
++#define EXCEPTION_EVENTS (FILE_DELETE | FILE_RENAME_FROM)
++#define HAS_EXCEPTION_EVENTS(e) ((e & EXCEPTION_EVENTS) != 0)
++#define HAS_NO_EXCEPTION_EVENTS(e) ((e & EXCEPTION_EVENTS) == 0)
++
++gint port_add (node_t* f);
++void port_remove (node_t *f);
++
++gboolean port_class_init ();
++
++#endif /* _FEN_KERNEL_H_ */
+diff --git a/server/fen-node.c b/server/fen-node.c
+new file mode 100644
+index 0000000..d4d7ddb
+--- /dev/null
++++ b/server/fen-node.c
+@@ -0,0 +1,642 @@
++/* -*- Mode: C; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
++/* vim:set expandtab ts=4 shiftwidth=4: */
++/* 
++ * Copyright (c) 2008, 2010 Oracle and/or its affiliates, Inc. All rights
++ * reserved.
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General
++ * Public License along with this library; if not, write to the
++ * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
++ * Boston, MA 02111-1307, USA.
++ *
++ * Authors: Lin Ma <lin.ma@sun.com>
++ */
++
++#include "config.h"
++#include <sys/stat.h>
++#include <errno.h>
++#include <strings.h>
++#include <glib.h>
++#include "fen-kernel.h"
++#include "fen-node.h"
++#include "fen-dump.h"
++
++#ifdef GIO_COMPILATION
++#include "gfilemonitor.h"
++#else
++#include "gam_event.h"
++#include "gam_server.h"
++#include "gam_protocol.h"
++#endif
++
++#ifdef GIO_COMPILATION
++#define FN_W if (fn_debug_enabled) g_debug
++static gboolean fn_debug_enabled = FALSE;
++#else
++#include "gam_error.h"
++#define FN_W(...) GAM_DEBUG(DEBUG_INFO, __VA_ARGS__)
++#endif
++
++G_LOCK_EXTERN (fen_lock);
++
++/* Must continue monitoring if:
++ * 1) I'm subscribed,
++ * 2) The subscribed children (one of the children has subs) are missing,
++ * 3) my parent is subscribed (monitoring directory).
++ */
++#define NODE_NEED_MONITOR(f)                                            \
++    (NODE_IS_ACTIVE(f) || node_children_num(f) > 0 || NODE_IS_REQUIRED_BY_PARENT(f))
++
++static int concern_events[] = {
++    FILE_DELETE,
++    FILE_RENAME_FROM,
++    UNMOUNTED,
++    MOUNTEDOVER,
++#ifdef GIO_COMPILATION
++    FILE_MODIFIED,
++    FILE_ATTRIB,
++#else
++    FILE_MODIFIED | FILE_ATTRIB,
++#endif
++    FILE_RENAME_TO,
++};
++
++node_t *ROOT = NULL;
++
++static void node_emit_one_event(node_t *f, GList *subs, node_t *other, int event);
++static void node_emit_events(node_t *f, const node_event_t *ne);
++static int node_event_translate(int event, gboolean pair);
++static void node_add_event (node_t *f, node_event_t *ev);
++static node_t* node_new (node_t* parent, const gchar* basename);
++static void node_delete (node_t* parent);
++static node_t* node_get_child (node_t *f, const gchar *basename);
++static void children_add (node_t *p, node_t *f);
++static void children_remove (node_t *p, node_t *f);
++static gboolean children_remove_cb (gpointer key, gpointer value, gpointer user_data);
++static guint node_children_num (node_t *f);
++
++gboolean
++node_timeval_lt(const GTimeVal *val1, const GTimeVal *val2)
++{
++    if (val1->tv_sec < val2->tv_sec)
++        return TRUE;
++  
++    if (val1->tv_sec > val2->tv_sec)
++        return FALSE;
++  
++    /* val1->tv_sec == val2->tv_sec */
++    if (val1->tv_usec < val2->tv_usec)
++        return TRUE;
++  
++    return FALSE;
++}
++
++void
++node_traverse (node_t* node, void(*traverse_cb)(node_t*, gpointer), gpointer user_data)
++{
++    GHashTableIter iter;
++    gpointer value;
++
++    g_assert(traverse_cb);
++    if (node == NULL) {
++        node = ROOT;
++    }
++
++    if (node) {
++        traverse_cb(node, user_data);
++    }
++
++    g_hash_table_iter_init (&iter, node->children);
++    while (g_hash_table_iter_next (&iter, NULL, &value)) {
++        node_traverse((node_t *)value, traverse_cb, user_data);
++    }
++}
++
++node_t*
++node_find(node_t* node, const gchar* filename, gboolean create_on_missing)
++{
++    gchar* str;
++    gchar* token;
++    gchar* lasts;
++    node_t* parent;
++    node_t* child;
++    
++    g_assert (filename && filename[0] == '/');
++
++    if (node == NULL) {
++        node = ROOT;
++    }
++    
++    FN_W ("%s %s\n", __func__, filename);
++
++    parent = child = node;
++    str = g_strdup (filename);
++    
++    for (token = strtok_r (str, G_DIR_SEPARATOR_S, &lasts);
++         token != NULL && child != NULL;
++         token = strtok_r (NULL, G_DIR_SEPARATOR_S, &lasts)) {
++        FN_W ("%s %s + %s\n", __func__, NODE_NAME(parent), token);
++        child = node_get_child(parent, token);
++        if (child) {
++            parent = child;
++        } else if (create_on_missing) {
++            child = node_new (parent, token);
++            if (child) {
++                children_add (parent, child);
++                parent = child;
++                continue;
++            } else {
++                FN_W ("%s create %s failed", __func__, token);
++            }
++        } else {
++            break;
++        }
++    }
++    
++    g_free (str);
++    return child;
++}
++
++gint
++node_lstat(node_t *f)
++{
++    struct stat buf;
++
++    g_assert(!NODE_HAS_STATE(f, NODE_STATE_ASSOCIATED));
++
++    if (lstat(NODE_NAME(f), &buf) == 0) {
++        FN_W ("%s %s\n", __func__, NODE_NAME(f));
++        FILE_OBJECT(f)->fo_atime = buf.st_atim;
++        FILE_OBJECT(f)->fo_mtime = buf.st_mtim;
++        FILE_OBJECT(f)->fo_ctime = buf.st_ctim;
++        NODE_SET_FLAG(f, NODE_FLAG_STAT_UPDATED |
++          (S_ISDIR (buf.st_mode) ? NODE_FLAG_DIR : NODE_FLAG_NONE));
++        return 0;
++    } else {
++        FN_W ("%s(lstat) %s %s\n", __func__, NODE_NAME(f), g_strerror (errno));
++    }
++    return errno;
++}
++
++void
++node_create_children_snapshot(node_t *f, gint created_event, gboolean emit)
++{
++	GDir *dir;
++	GError *err = NULL;
++    
++    FN_W ("%s %s [0x%p]\n", __func__, NODE_NAME(f), f);
++
++    dir = g_dir_open (NODE_NAME(f), 0, &err);
++    if (dir) {
++        const char *basename;
++        node_t *child = NULL;
++        
++        while ((basename = g_dir_read_name (dir))) {
++            node_t* data;
++            GList *idx;
++
++            child = node_get_child (f, basename);
++            if (child == NULL) {
++                gchar *filename;
++            
++                child = node_new (f, basename);
++                children_add (f, child);
++            }
++
++            if (f->dir_subs) {
++                /* We need monitor the new children, or the existed child which
++                 * is in the DELETED mode.
++                 */
++                if (!NODE_HAS_STATE(child, NODE_STATE_ASSOCIATED) &&
++                  node_lstat(child) == 0 && port_add(child) == 0) {
++                    if (emit) {
++                        /* Emit the whatever event for the new found file. */
++                        node_emit_one_event(child, child->dir_subs, NULL, created_event);
++                        node_emit_one_event(child, child->subs, NULL, created_event);
++                        node_emit_one_event(child, f->dir_subs, NULL, created_event);
++                        node_emit_one_event(child, f->subs, NULL, created_event);
++                    }
++                }
++                /* else ignore, because it may be deleted. */
++            }
++        }
++        g_dir_close (dir);
++
++        /* We have finished children snapshot. Any other new added subs should
++         * directory iterate the snapshot instead of scan directory again.
++         */
++        NODE_SET_FLAG(f, NODE_FLAG_SNAPSHOT_UPDATED);
++
++    } else {
++        FN_W (err->message);
++        g_error_free (err);
++    }
++}
++
++/**
++ * If all active children nodes are ported, then cancel monitor the parent
++ * node. If we know how many children are created, then we can stop accordingly.
++ *
++ * Unsafe, need lock. 
++ */
++static void
++foreach_known_children_scan(gpointer key, gpointer value, gpointer user_data)
++{
++    node_t* f = (node_t*)value;
++    
++    FN_W ("%s 0x%p %s\n", __func__, f, NODE_NAME(f));
++
++    if (!NODE_HAS_STATE(f, NODE_STATE_ASSOCIATED)) {
++        if (node_lstat(f) == 0 && port_add(f) == 0) {
++            node_emit_one_event(f, f->dir_subs, NULL, FN_EVENT_CREATED);
++            node_emit_one_event(f, f->subs, NULL, FN_EVENT_CREATED);
++            if (NODE_PARENT(f)) {
++                node_emit_one_event(f, NODE_PARENT(f)->dir_subs, NULL, FN_EVENT_CREATED);
++                node_emit_one_event(f, NODE_PARENT(f)->subs, NULL, FN_EVENT_CREATED);
++            }
++        }
++    }
++}
++
++gboolean
++node_try_delete(node_t* node)
++{
++    g_assert (node);
++
++    FN_W ("%s 0x%p %s\n", __func__, node, NODE_NAME(node));
++
++    /* Try clean children */
++    if (node_children_num (node) > 0) {
++        g_hash_table_foreach_remove(node->children, children_remove_cb, NULL);
++    }
++    if (!NODE_NEED_MONITOR(node)) {
++        /* Clean some flags. */
++        /* NODE_CLE_FLAG(node, NODE_FLAG_HAS_SNAPSHOT | NODE_FLAG_STAT_DONE); */
++        node->flag = 0;
++
++        /* Now we handle the state. */
++        if (NODE_HAS_STATE(node, NODE_STATE_ASSOCIATED)) {
++            port_remove(node);
++        }
++        /* Actually ignore the ROOT node. */
++        if (node->state == 0 && NODE_PARENT(node)) {
++            children_remove(NODE_PARENT(node), node);
++            /* Do clean instead of returning TRUE. */
++            node_delete (node);
++        }
++        /* else, we have events, clean event queue? */
++    }
++    return FALSE;
++}
++
++static node_t*
++node_new (node_t* parent, const gchar* basename)
++{
++	node_t *f = NULL;
++
++    g_assert (basename && basename[0]);
++
++    if ((f = g_new0(node_t, 1)) != NULL) {
++        if (parent) {
++            NODE_NAME(f) = g_build_filename(NODE_NAME(parent), basename, NULL);
++        } else {
++            NODE_NAME(f) = g_strdup(G_DIR_SEPARATOR_S);
++        }
++        f->basename = g_strdup (basename);
++        /* f->children = g_hash_table_new_full (g_str_hash, g_str_equal, */
++        /*   NULL, (GDestroyNotify)node_delete); */
++        f->children = g_hash_table_new_full (g_str_hash, g_str_equal,
++          NULL, NULL);
++#ifdef GIO_COMPILATION
++        f->gfile = g_file_new_for_path (NODE_NAME(f));
++#endif
++        FN_W ("%s 0x%p %s\n", __func__, f, NODE_NAME(f));
++    }
++	return f;
++}
++
++static void
++node_delete (node_t *f)
++{
++    FN_W ("%s 0x%p %s\n", __func__, f, NODE_NAME(f));
++    g_assert(f->state == 0);
++    g_assert(!NODE_IS_ACTIVE(f));
++    g_assert(g_hash_table_size (f->children) == 0);
++    g_assert(NODE_PARENT(f) == NULL);
++    g_hash_table_unref(f->children);
++#ifdef GIO_COMPILATION
++    g_object_unref (f->gfile);
++#endif
++    g_free(f->basename);
++    g_free(NODE_NAME(f));
++    g_free (f);
++}
++
++static void
++children_add (node_t *p, node_t *f)
++{
++    FN_W ("%s %s %s\n", __func__, NODE_NAME(p), f->basename);
++    g_hash_table_insert (p->children, f->basename, f);
++    NODE_PARENT(f) = p;
++}
++
++static void
++children_remove (node_t *p, node_t *f)
++{
++    FN_W ("%s %s %s\n", __func__, NODE_NAME(p), f->basename);
++    g_hash_table_steal (p->children, f->basename);
++    NODE_PARENT(f) = NULL;
++}
++
++static node_t *
++node_get_child (node_t *f, const gchar *basename)
++{
++    if (f->children) {
++        return (node_t *) g_hash_table_lookup (f->children, (gpointer)basename);
++    }
++    return NULL;
++}
++
++static guint
++node_children_num (node_t *f)
++{
++    return g_hash_table_size (f->children);
++}
++
++/**
++ * depth first delete recursively
++ */
++static gboolean
++children_remove_cb (gpointer key, gpointer value, gpointer user_data)
++{
++    return node_try_delete ((node_t*)value);
++}
++
++gboolean
++node_class_init()
++{
++    ROOT = node_new (NULL, G_DIR_SEPARATOR_S);
++    if (ROOT == NULL) {
++        FN_W ("[node] Create ROOT node failed.\n");
++        return FALSE;
++    }
++
++    return port_class_init (node_add_event);
++}
++
++/**
++ * Adjust self on failing to Port
++ */
++void
++node_adjust_deleted(node_t* f)
++{
++    node_t *ancestor;
++
++    FN_W ("%s %s\n", __func__, NODE_NAME(f));
++
++    for (ancestor = NODE_PARENT(f);
++         ancestor != NULL;
++         ancestor = NODE_PARENT(ancestor)) {
++        /* Stop if we find a node which been already associated or is existed
++         * and can be associated.
++         */
++        if (NODE_HAS_STATE(ancestor, NODE_STATE_ASSOCIATED) ||
++          (node_lstat(ancestor) == 0 && port_add(ancestor) == 0)) {
++            break;
++        }
++    }
++
++    /* We assume we shouldn't reach here, because Root is always existed and
++     * associated. But given bugster#6955199, if PORT FS has problems on root,
++     * we may reach here. So just return ROOT and the whole GIO fen backend will
++     * fail.
++     */
++    /* g_assert(ancestor != NULL); */
++}
++
++
++static void
++node_emit_events(node_t *f, const node_event_t *ne)
++{
++    gsize num = sizeof(concern_events)/sizeof(int);
++    gint i;
++    int translated_e;
++    node_t *p;
++
++    if (node_timeval_lt(&f->atv, &ne->ctv)) {
++        int event = ne->e;
++
++        /* Emit DELETED on the pair_data */
++        if (ne->pair_data) {
++            node_t *from = ne->pair_data;
++            node_emit_one_event(from, from->dir_subs, NULL, node_event_translate(FILE_DELETE, FALSE));
++            node_emit_one_event(from, from->subs, NULL, node_event_translate(FILE_DELETE, FALSE));
++        }
++
++        for (i = 0; i < num; i++) {
++            if (event & concern_events[i]) {
++                translated_e = node_event_translate(concern_events[i], FALSE);
++                /* Neither GIO or gamin cares about modified events on a
++                 * directory.
++                 */
++#ifdef GIO_COMPILATION
++                if ((concern_events[i] & FILE_MODIFIED) == 0) {
++                    node_emit_one_event(f, f->dir_subs, NULL, translated_e);
++                }
++#else
++                /* Gamin doesn't care about attrib changed events on a directory
++                 * either.
++                 */
++                if ((concern_events[i] & (FILE_MODIFIED | FILE_ATTRIB)) == 0) {
++                    node_emit_one_event(f, f->dir_subs, NULL, translated_e);
++                }
++#endif
++                node_emit_one_event(f, f->subs, NULL, translated_e);
++            }
++            event &= ~concern_events[i];
++        }
++    }
++
++    p = NODE_PARENT(f);
++    if (p != NULL && node_timeval_lt(&p->atv, &ne->ctv)) {
++        int event = ne->e;
++        for (i = 0; i < num; i++) {
++            if (event & concern_events[i]) {
++                translated_e = node_event_translate(concern_events[i], ne->pair_data != NULL);
++                node_emit_one_event(f, p->dir_subs, ne->pair_data, translated_e);
++                node_emit_one_event(f, p->subs, ne->pair_data, translated_e);
++            }
++            event &= ~concern_events[i];
++        }
++    }
++}
++
++/**
++ * node_add_event:
++ *
++ */
++static void
++node_add_event (node_t *f, node_event_t *ev)
++{
++    FN_W ("%s %d\n", __func__, ev->e);
++
++    /* Clean the events flag early, because all received events need be
++     * processed in this function.
++     */
++    NODE_CLE_STATE(f, NODE_STATE_HAS_EVENTS);
++
++    /*
++     * Node the node has been created, so we can delete create event in
++     * optimizing. To reduce the statings, we add it to Port on discoving
++     * it then emit CREATED event. So we don't need to do anything here.
++     */
++    if (NODE_NEED_MONITOR(f)) {
++        if (HAS_NO_EXCEPTION_EVENTS(ev->e)) {
++            if (NODE_HAS_STATE(f, NODE_STATE_ASSOCIATED) || port_add(f) == 0) {
++                if ((ev->e & FILE_MODIFIED) && NODE_HAS_FLAG(f, NODE_FLAG_DIR)) {
++                    if (f->dir_subs) {
++                        node_create_children_snapshot(f, FN_EVENT_CREATED, TRUE);
++                    } else {
++                        g_hash_table_foreach(f->children, foreach_known_children_scan, NULL);
++                    }
++                }
++            } else {
++                /* Emit delete event */
++                ev->e |= FILE_DELETE;
++
++                node_adjust_deleted(f);
++            }
++
++        } else {
++            node_adjust_deleted(f);
++        }
++
++        /* Send events to clients. */
++        node_emit_events (f, ev);
++        
++    } else {
++        /* Send events to clients. */
++        node_emit_events (f, ev);
++
++        node_try_delete(f);
++    }
++
++    if (ev->pair_data) {
++        node_t *from = ev->pair_data;
++        g_assert(ev->e == FILE_RENAME_TO);
++
++        if (NODE_NEED_MONITOR(from)) {
++            /* Clean the events flag, since it may block free this node. */
++            NODE_CLE_STATE(from, NODE_STATE_HAS_EVENTS);
++            node_adjust_deleted(from);
++        } else {
++            node_try_delete(from);
++        }
++    }
++
++    node_event_delete (ev);
++}
++
++static void
++node_emit_one_event(node_t *f, GList *subs, node_t *other, int event)
++{
++    GList* idx;
++    
++    FN_W ("%s %s %d\n", __func__, NODE_NAME(f), event);
++
++#ifdef GIO_COMPILATION
++    for (idx = subs; idx; idx = idx->next) {
++        g_file_monitor_emit_event(G_FILE_MONITOR(idx->data), f->gfile,
++          (other == NULL ? NULL : other->gfile), event);
++    }
++#else
++    for (idx = subs; idx; idx = idx->next) {
++        gam_server_emit_one_event(NODE_NAME(f), gam_subscription_is_dir(idx->data), event, idx->data, 1);
++    }
++#endif
++}
++
++static int
++node_event_translate(int event, gboolean pair)
++{
++#ifdef GIO_COMPILATION
++    switch (event) {
++    case FILE_DELETE:
++    case FILE_RENAME_FROM:
++        return G_FILE_MONITOR_EVENT_DELETED;
++    case UNMOUNTED:
++        return G_FILE_MONITOR_EVENT_UNMOUNTED;
++    case FILE_ATTRIB:
++        return G_FILE_MONITOR_EVENT_ATTRIBUTE_CHANGED;
++    case MOUNTEDOVER:
++    case FILE_MODIFIED:
++        return G_FILE_MONITOR_EVENT_CHANGED;
++    case FILE_RENAME_TO:
++        if (pair) {
++            return G_FILE_MONITOR_EVENT_MOVED;
++        } else {
++            return G_FILE_MONITOR_EVENT_CREATED;
++        }
++    default:
++        /* case FILE_ACCESS: */
++        g_assert_not_reached ();
++        return -1;
++    }
++#else
++    switch (event) {
++    case FILE_DELETE:
++    case FILE_RENAME_FROM:
++        return GAMIN_EVENT_DELETED;
++    case MOUNTEDOVER:
++    case UNMOUNTED:
++        return GAMIN_EVENT_CHANGED;
++    case FILE_RENAME_TO:
++        if (pair) {
++            return GAMIN_EVENT_MOVED;
++        } else {
++            return GAMIN_EVENT_CREATED;
++        }
++    default:
++        if (event & (FILE_ATTRIB | FILE_MODIFIED)) {
++            return GAMIN_EVENT_CHANGED;
++        }
++        /* case FILE_ACCESS: */
++        g_assert_not_reached ();
++        return -1;
++    }
++#endif
++}
++
++node_event_t*
++node_event_new (int event, gpointer user_data)
++{
++    node_event_t *ev;
++    
++    if ((ev = g_new (node_event_t, 1)) != NULL) {
++        g_assert (ev);
++        ev->e = event;
++        ev->user_data = user_data;
++        ev->pair_data = NULL;   /* For renamed file. */
++        /* Created timestamp */
++        g_get_current_time(&ev->ctv);
++        ev->rename_tv = ev->ctv;
++    }
++    return ev;
++}
++
++void
++node_event_delete (node_event_t* ev)
++{
++    g_free (ev);
++}
++
+diff --git a/server/fen-node.h b/server/fen-node.h
+new file mode 100644
+index 0000000..7e99032
+--- /dev/null
++++ b/server/fen-node.h
+@@ -0,0 +1,104 @@
++/* -*- Mode: C; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
++/* vim:set expandtab ts=4 shiftwidth=4: */
++/* 
++ * Copyright (c) 2008, 2010 Oracle and/or its affiliates, Inc. All rights
++ * reserved.
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General
++ * Public License along with this library; if not, write to the
++ * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
++ * Boston, MA 02111-1307, USA.
++ *
++ * Authors: Lin Ma <lin.ma@sun.com>
++ */
++
++#include <port.h>
++#include <gio/gio.h>
++
++#ifndef _FEN_NODE_H_
++#define _FEN_NODE_H_
++
++#ifdef GIO_COMPILATION
++#define FN_EVENT_CREATED G_FILE_MONITOR_EVENT_CREATED
++#else
++#define FN_EVENT_CREATED GAMIN_EVENT_CREATED
++#endif
++
++#define NODE_STATE_NONE       0x00000000
++#define NODE_STATE_ASSOCIATED 0x00000001 /* This is a confilct to NODE_FLAG_STAT_DONE */
++#define NODE_STATE_HAS_EVENTS 0x00000002
++
++#define NODE_FLAG_NONE             0x00000000
++#define NODE_FLAG_SNAPSHOT_UPDATED 0x00000001
++#define NODE_FLAG_DIR              0x00000002
++#define NODE_FLAG_STAT_UPDATED     0x00000004
++
++#define	NODE_CLE_STATE(f, st)  (f->state &= ~(st))
++#define	NODE_SET_STATE(f, st)  (f->state = ((f->state & ~(st)) | (st)))
++#define	NODE_HAS_STATE(f, st)  (f->state & (st))
++
++#define	NODE_CLE_FLAG(f, fl)  (f->flag &= ~(fl))
++#define	NODE_SET_FLAG(f, fl)  (f->flag = ((f->flag & ~(fl)) | (fl)))
++#define	NODE_HAS_FLAG(f, fl)  (f->flag & (fl))
++
++typedef struct node node_t;
++struct node
++{
++    file_obj_t  fobj;           /* Inherit from file_obj_t, must be the first. */
++    GSource    *source;
++    gchar      *basename;
++    guint32     state;
++	guint32     flag;
++    GTimeVal    atv;            /* Timestamp for the first added sub. */
++
++	/* the parent and children of node */
++    node_t *parent;
++    GHashTable *children; /* children in basename */
++
++	/* List of subscriptions monitoring this fdata/path */
++	GList *subs;
++	GList *dir_subs;
++
++#ifdef GIO_COMPILATION
++    GFile* gfile;
++#endif
++};
++
++#define FILE_OBJECT(f)                ((file_obj_t *)(f))
++#define NODE_NAME(f)                  (FILE_OBJECT(f)->fo_name)
++#define NODE_PARENT(f)                (((node_t *)f)->parent)
++#define	NODE_IS_ACTIVE(f)             (f->dir_subs || f->subs)
++#define	NODE_IS_REQUIRED_BY_PARENT(f) (NODE_PARENT(f) && NODE_PARENT(f)->dir_subs)
++
++gboolean node_timeval_lt(const GTimeVal *val1, const GTimeVal *val2);
++gboolean node_try_delete(node_t* node);
++void     node_traverse(node_t* node, void(*traverse_cb)(node_t*, gpointer), gpointer user_data);
++node_t*  node_find(node_t* node, const gchar* filename, gboolean create_on_missing);
++gint     node_lstat(node_t *f);
++void     node_create_children_snapshot(node_t *f, gint created_event, gboolean emit);
++void     node_adjust_deleted(node_t *f);
++gboolean node_class_init();
++
++typedef struct node_event
++{
++    int e;
++    gpointer user_data;
++    gpointer pair_data;
++    GTimeVal ctv;               /* Created timestamp */
++    GTimeVal rename_tv;         /* Possible rename timestamp */
++} node_event_t;
++
++node_event_t* node_event_new (int event, gpointer user_data);
++void node_event_delete (node_event_t* ev);
++
++#endif /* _FEN_NODE_H_ */
+diff --git a/server/gam_channel.c b/server/gam_channel.c
+index 56c3ea7..6db1692 100644
+--- a/server/gam_channel.c
++++ b/server/gam_channel.c
+@@ -7,6 +7,12 @@
+ #include <sys/stat.h>
+ #include <sys/un.h>
+ #include <sys/uio.h>
++#if defined(sun)
++#include <string.h>
++#endif 
++#if defined(HAVE_UCRED_H)
++#include <ucred.h>
++#endif defined(HAVE_UCRED_H)
+ #include "gam_error.h"
+ #include "gam_connection.h"
+ #include "gam_channel.h"
+@@ -101,6 +107,10 @@ gam_client_conn_check_cred(GIOChannel * source, int fd,
+     } cmsg;
+ #endif
+ 
++#if defined(HAVE_GETPEERUCRED)
++    ucred_t *creds;
++#endif
++
+     s_uid = getuid();
+ 
+ #if defined(LOCAL_CREDS) && defined(HAVE_CMSGCRED)
+@@ -167,11 +177,25 @@ gam_client_conn_check_cred(GIOChannel * source, int fd,
+                       fd, cr_len, (int) sizeof(cr));
+             goto failed;
+         }
++#elif defined(HAVE_GETPEERUCRED)
++	if ((creds = (ucred_t *)malloc(ucred_size()))==(ucred_t *)NULL){
++            GAM_DEBUG(DEBUG_INFO,"Malloc failed for ucreds");
++	    goto failed;  
++	}
++
++	if (getpeerucred(fd, &creds)!=0){
++            GAM_DEBUG(DEBUG_INFO,"getpeerucred call failed");
++	    goto failed;
++	}
++	c_uid = ucred_getruid(creds);
++	c_gid = ucred_getrgid(creds);
++	c_pid = ucred_getpid(creds);
++	ucred_free(creds);
+ #elif defined(HAVE_CMSGCRED)
+ 	c_pid = cmsg.cred.cmcred_pid;
+ 	c_uid = cmsg.cred.cmcred_euid;
+ 	c_gid = cmsg.cred.cmcred_groups[0];
+-#else /* !SO_PEERCRED && !HAVE_CMSGCRED */
++#else /* !SO_PEERCRED && !HAVE_CMSGCRED && !HAVE_GETPEERUCRED */
+         GAM_DEBUG(DEBUG_INFO,
+                   "Socket credentials not supported on this OS\n");
+         goto failed;
+diff --git a/server/gam_fen.c b/server/gam_fen.c
+new file mode 100644
+index 0000000..21476e1
+--- /dev/null
++++ b/server/gam_fen.c
+@@ -0,0 +1,140 @@
++/* -*- Mode: C; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
++/* vim:set expandtab ts=4 shiftwidth=4: */
++/* 
++ * Copyright (C) 2008 Sun Microsystems, Inc. All rights reserved.
++ * Use is subject to license terms.
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General
++ * Public License along with this library; if not, write to the
++ * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
++ * Boston, MA 02111-1307, USA.
++ *
++ * Authors: Lin Ma <lin.ma@sun.com>
++ */
++/*
++ * Design:
++ * A Solaris port has a resource limit of events (port_max_events) which 
++ * limits the number of objects (fds) that can be actively associated objects
++ * whith the port. The default is (65536), but can be changed.
++ *
++ * project.max-port-ids identify the max number of ports
++ * process.max-port-events identify the max objs of a port
++ * process.max-file-descriptor identify the max fds of a process
++ *
++ * For a user server process, process.max-file-descriptor seems a bottleneck.
++ * I will use a port list for monitor fds to avoid process.max-file-descriptor
++ * is greater than process.max-port-events.
++ */
++#include "config.h"
++#include "gam_error.h"
++#include "gam_fen.h"
++#include "gam_event.h"
++#include "gam_server.h"
++#include "gam_protocol.h"
++#include <glib.h>
++#include "fen-helper.h"
++
++/**
++ * Initializes the FEN system.  This must be called before
++ * any other functions in this module.
++ *
++ * @returns TRUE if initialization succeeded, FALSE otherwise
++ */
++
++gboolean
++gam_fen_init (void)
++{
++    if (!fen_init ())
++        return FALSE;
++	
++	gam_server_install_kernel_hooks (GAMIN_K_FEN,
++      gam_fen_add_subscription,
++      gam_fen_remove_subscription,
++      gam_fen_remove_all_for,
++      NULL, NULL);
++	return TRUE;
++}
++
++/**
++ * Adds a subscription to be monitored.
++ *
++ * @param sub a #GamSubscription to be polled
++ * @returns TRUE if adding the subscription succeeded, FALSE otherwise
++ */
++
++gboolean
++gam_fen_add_subscription (GamSubscription *sub)
++{
++    g_debug ("[ %s ] sub[0x%p]\n", __func__, sub);
++
++	gam_listener_add_subscription (gam_subscription_get_listener (sub), sub);
++    fen_add (gam_subscription_get_path(sub),
++      sub,
++      gam_subscription_is_dir (sub));
++	return TRUE;
++}
++
++/**
++ * Removes a subscription which was being monitored.
++ *
++ * @param sub a #GamSubscription to remove
++ * @returns TRUE if removing the subscription succeeded, FALSE otherwise
++ */
++
++gboolean
++gam_fen_remove_subscription (GamSubscription *sub)
++{
++    g_debug ("[ %s ] sub[0x%p]\n", __func__, sub);
++
++    fen_remove (gam_subscription_get_path(sub),
++      sub,
++      gam_subscription_is_dir (sub));
++	/* free subscription */
++    gam_subscription_cancel(sub);
++	gam_subscription_free(sub);
++	return TRUE;
++}
++
++/**
++ * Stop monitoring all subscriptions for a given listener.
++ *
++ * @param listener a #GamListener
++ * @returns TRUE if removing the subscriptions succeeded, FALSE otherwise
++ */
++
++gboolean
++gam_fen_remove_all_for (GamListener *listener)
++{
++	GList *subs;
++	GList *idx;
++	gboolean success = TRUE;
++	
++	subs = gam_listener_get_subscriptions (listener);
++	
++	if (subs == NULL)
++		return FALSE;
++
++	for (idx = subs; idx != NULL; idx = idx->next) {
++		GamSubscription *sub = (GamSubscription *)idx->data;
++		g_assert (sub);
++		if (!gam_fen_remove_subscription (sub))
++			success = FALSE;
++	}
++	
++	if (subs) {
++		g_list_free (subs);
++		return TRUE;
++	} else {
++		return FALSE;
++	}
++}
+diff --git a/server/gam_fen.h b/server/gam_fen.h
+new file mode 100644
+index 0000000..47e952d
+--- /dev/null
++++ b/server/gam_fen.h
+@@ -0,0 +1,40 @@
++/* -*- Mode: C; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
++/* vim:set expandtab ts=4 shiftwidth=4: */
++/* 
++ * Copyright (C) 2008 Sun Microsystems, Inc. All rights reserved.
++ * Use is subject to license terms.
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General
++ * Public License along with this library; if not, write to the
++ * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
++ * Boston, MA 02111-1307, USA.
++ *
++ * Authors: Lin Ma <lin.ma@sun.com>
++ */
++
++#ifndef __GAM_FEN_H__
++#define __GAM_FEN_H__
++
++#include <glib.h>
++#include "gam_subscription.h"
++
++G_BEGIN_DECLS
++
++gboolean gam_fen_init (void);
++gboolean gam_fen_add_subscription (GamSubscription *sub);
++gboolean gam_fen_remove_subscription (GamSubscription *sub);
++gboolean gam_fen_remove_all_for (GamListener *listener);
++
++G_END_DECLS
++
++#endif /* __GAM_FEN_H__ */
+diff --git a/server/gam_fs.c b/server/gam_fs.c
+index c8ca704..1d2f2c8 100644
+--- a/server/gam_fs.c
++++ b/server/gam_fs.c
+@@ -7,9 +7,20 @@
+ #include <string.h>
+ #include <errno.h>
+ #include <glib.h>
++#ifdef HAVE_SYS_MNTTAB_H
++#include <sys/mnttab.h>
++#endif
+ #include "gam_error.h"
+ #include "gam_fs.h"
+ 
++#ifdef HAVE_SYS_MNTTAB_H
++#define MTAB	MNTTAB
++#define MTABDEL	"\t"
++#else
++#define MTAB	"/etc/mtab"
++#define MTABDEL	"\t"
++#endif
++
+ #define DEFAULT_POLL_TIMEOUT 0
+ 
+ typedef struct _gam_fs_properties {
+@@ -119,7 +130,7 @@ gam_fs_scan_mtab (void)
+ 	gam_fs *fs = NULL;
+ 	int i;
+ 
+-	g_file_get_contents ("/etc/mtab", &contents, &len, NULL);
++	g_file_get_contents (MTAB, &contents, &len, NULL);
+ 	if (contents == NULL)
+ 		return;
+ 
+@@ -133,7 +144,7 @@ gam_fs_scan_mtab (void)
+ 			if (line[0] == '\0')
+ 				continue;
+ 
+-			words = g_strsplit (line, " ", 0);
++			words = g_strsplit (line, MTABDEL, 0);
+ 
+ 			if (words == NULL)
+ 				continue;
+@@ -176,19 +187,25 @@ gam_fs_init (void)
+ 		gam_fs_set ("ext2", GFS_MT_DEFAULT, 0);
+ 		gam_fs_set ("reiser4", GFS_MT_DEFAULT, 0);
+ 		gam_fs_set ("reiserfs", GFS_MT_DEFAULT, 0);
++		gam_fs_set ("zfs", GFS_MT_DEFAULT, 0);
++		gam_fs_set ("ufs", GFS_MT_DEFAULT, 0);
+ 		gam_fs_set ("novfs", GFS_MT_POLL, 30);
++#ifdef ENABLE_FEN
++		gam_fs_set ("nfs", GFS_MT_DEFAULT, 0);
++#else
+ 		gam_fs_set ("nfs", GFS_MT_POLL, 5);
+-		if (stat("/etc/mtab", &mtab_sbuf) != 0)
++#endif
++		if (stat(MTAB, &mtab_sbuf) != 0)
+ 		{
+-			GAM_DEBUG(DEBUG_INFO, "Could not stat /etc/mtab\n");
++			GAM_DEBUG(DEBUG_INFO, "Could not stat %s\n",MTAB);
+ 		}
+ 		gam_fs_scan_mtab ();
+ 	} else {
+ 		struct stat sbuf;
+ 
+-		if (stat("/etc/mtab", &sbuf) != 0)
++		if (stat(MTAB, &sbuf) != 0)
+ 		{
+-			GAM_DEBUG(DEBUG_INFO, "Could not stat /etc/mtab\n");
++			GAM_DEBUG(DEBUG_INFO, "Could not stat %s\n",MTAB);
+ 		}
+ 
+ 		/* /etc/mtab has changed */
+diff --git a/server/gam_fs.h b/server/gam_fs.h
+index bc2d538..94e70fd 100644
+--- a/server/gam_fs.h
++++ b/server/gam_fs.h
+@@ -8,6 +8,7 @@ typedef enum {
+ #if !defined(ENABLE_DNOTIFY) && \
+     !defined(ENABLE_INOTIFY) && \
+     !defined(ENABLE_KQUEUE) && \
++    !defined(ENABLE_FEN) && \
+     !defined(ENABLE_HURD_MACH_NOTIFY)
+ 	GFS_MT_DEFAULT = GFS_MT_POLL,
+ #else
+diff --git a/server/gam_server.c b/server/gam_server.c
+index f92a691..e5da29f 100644
+--- a/server/gam_server.c
++++ b/server/gam_server.c
+@@ -45,6 +45,9 @@
+ #ifdef ENABLE_HURD_MACH_NOTIFY
+ #include "gam_hurd_mach_notify.h"
+ #endif
++#ifdef ENABLE_FEN
++#include "gam_fen.h"
++#endif
+ #include "gam_excludes.h"
+ #include "gam_fs.h"
+ #include "gam_conf.h" 
+@@ -162,6 +165,12 @@ gam_init_subscriptions(void)
+ 			return(TRUE);
+ 		}
+ #endif	
++#ifdef ENABLE_FEN
++		if (gam_fen_init()) {
++			GAM_DEBUG(DEBUG_INFO, "Using fen as backend\n");
++			return(TRUE);
++		}
++#endif
+ 	}
+ 
+ 	if (gam_poll_basic_init()) {
+@@ -627,6 +636,10 @@ main(int argc, const char *argv[])
+     signal(SIGQUIT, gam_exit);
+     signal(SIGTERM, gam_exit);
+     signal(SIGPIPE, SIG_IGN);
++#ifdef ENABLE_FEN
++    signal(SIGUSR1, SIG_IGN);
++    signal(SIGUSR2, SIG_IGN);
++#endif
+ 
+     if (!gam_init_subscriptions()) {
+ 	GAM_DEBUG(DEBUG_INFO, "Could not initialize the subscription system.\n");
+diff --git a/server/gam_server.h b/server/gam_server.h
+index bc99e09..313dd84 100644
+--- a/server/gam_server.h
++++ b/server/gam_server.h
+@@ -16,7 +16,8 @@ typedef enum {
+ 	GAMIN_K_INOTIFY = 2,
+ 	GAMIN_K_KQUEUE = 3,
+ 	GAMIN_K_MACH = 4,
+-	GAMIN_K_INOTIFY2 = 5
++	GAMIN_K_INOTIFY2 = 5,
++	GAMIN_K_FEN = 6
+ } GamKernelHandler;
+ 
+ typedef enum {
+diff --git a/tests/testing.c b/tests/testing.c
+index 9926c0a..4c08740 100644
+--- a/tests/testing.c
++++ b/tests/testing.c
+@@ -1,3 +1,4 @@
++#include "config.h"
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <unistd.h>
+@@ -31,6 +32,11 @@ static struct testState {
+ 
+ #define IS_BLANK(p) ((*(p) == ' ') || (*(p) == '\t') ||		\
+                      (*(p) == '\n') || (*(p) == '\r'))
++#ifdef ENABLE_FEN
++#define KILLCMD	"pkill"
++#else
++#define KILLCMD	"killall"
++#endif
+ 
+ static int
+ scanCommand(char *line, char **command, char **arg, char **arg2)
+@@ -268,7 +274,7 @@ processCommand(char *line, int no)
+          * okay, it's heavy but that's the simplest way since we do not have
+          * the pid(s) of the servers running.
+          */
+-        ret = system("killall gam_server");
++        ret = system(KILLCMD" gam_server");
+         if (ret < 0) {
+             fprintf(stderr, "kill line %d: failed to killall gam_server\n",
+                     no);
