@@ -1,0 +1,184 @@
+#!/bin/sh
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License, Version 1.0 only
+# (the "License").  You may not use this file except in compliance
+# with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2010, Oracle and/or its affiliates. All rights reserved.
+#
+
+LING=${LC_CTYPE:-"$LC_ALL"}
+LING=${LING:-"$LANG"}
+LING=${LING:-"C"}
+
+XIM_SCRIPT_DIR=/etc/X11/xinit/imf.d
+XIM_USR_CONF=$HOME/.imf
+IM_SCRIPT=''
+IMFSELECTOR='/usr/bin/imf-selector'
+
+tolines(){
+    for imfile in $@
+    do
+        im_name=`sh $imfile -name`
+        /bin/echo "$im_name|$imfile"
+    done
+}
+
+list_ims(){
+
+    # list available IM on system
+    if [ ! -d $XIM_SCRIPT_DIR ]; then
+        return
+    fi
+    s="$1"
+    if [ X"$s" != X ]; then
+        im_file=`LC_ALL=C /bin/ls $XIM_SCRIPT_DIR \
+        | /bin/grep "[0-9][0-9]*\.$s\$"`
+        if [ X$im_file != X ]; then
+            im_name=`sh $XIM_SCRIPT_DIR/$im_file -name`
+            /bin/echo "$im_name|$XIM_SCRIPT_DIR/$im_file"
+        fi
+        return
+    fi
+
+    LC_ALL=C /bin/ls -F $XIM_SCRIPT_DIR/[0-9][0-9]* \
+    | /bin/egrep -v '@$|/$' | /bin/cut -d'*' -f 1
+
+}
+
+get_prior_im(){
+    # Check specified default engine in for language
+    # if this selection is done once and ignored, skip.
+    if [ -f $XIM_USR_CONF ]; then 
+        return
+    fi
+
+    list_ims | while read imfile
+    do 
+        prior_im=`sh $imfile -prior $LING` 
+        if [ X"$prior_im" != X ]; then  
+            echo "$prior_im"
+            return
+        fi
+    done
+}
+
+get_default_im(){
+
+    # As default, enable for only specified Asian locales
+    case $LING in 
+        ja* | zh* | ko* | th* | *_IN* )
+        tolines `list_ims | /usr/bin/head -1`; break;;
+        *) echo "None"
+    esac
+}
+
+get_current_im(){
+
+    # check IM scripts orderly.
+    if [ -f $XIM_USR_CONF ]; then
+
+        # 1. configuration in $HOME by tool
+        im_name=`/bin/sh $XIM_USR_CONF -name`
+        if [ X"$im_name" = X ]; then
+            im_data="None"
+
+            . "$XIM_USR_CONF" 
+            if [ X"$IGNORE" = 'X1' ]; then
+                im_data=""
+            fi
+        else
+            im_data="$im_name|$XIM_USR_CONF"
+        fi
+
+    elif [ X$GTK_IM_MODULE != X ]; then
+
+        # 2-1. user's GTK_IM_MODULE variable
+        suffix=$GTK_IM_MODULE
+        im_data=`list_ims $suffix`
+
+    elif [ X$XMODIFIERS != X ]; then
+
+        # 2-2. user's XMODIFIERS variable
+        suffix=`/bin/echo $XMODIFIERS | cut -d '=' -f 2`
+        im_data=`list_ims $suffix`
+
+    fi
+    if [ X"$im_data" != X ]; then
+        /bin/echo "$im_data"
+        return
+    fi
+
+    # 3. system default if nothing specified
+    get_default_im
+}
+
+set_im(){
+
+    # copy given script file to user config file.
+    im_script="$1"
+
+    if ! touch $XIM_USR_CONF > /dev/null 2>&1; then
+        echo "Can not access config file: $XIM_USR_CONF" 1>&2
+        return 1
+    fi
+
+    msg1="# This file is created by Input Method selector tool.\n"
+    msg2="# Please don't edit this file manually."
+    if [ X"$im_script" = X ]; then 
+        /bin/echo "${msg1}${msg2}" > $XIM_USR_CONF
+    elif [ X"$im_script" = XIGNORE ]; then 
+        /bin/echo "${msg1}${msg2}" > $XIM_USR_CONF
+        /bin/echo "IGNORE=1" >> $XIM_USR_CONF
+    else
+        /bin/cp $im_script $XIM_USR_CONF
+    fi
+    return $?
+}
+
+start_im(){
+
+    # start IM
+    if [ X$IM_SCRIPT != X -a -f $IM_SCRIPT ]; then
+        . $IM_SCRIPT
+
+        if [ -x $XIM_PRG -a X$XIM_ASDAEMON != X ]; then
+            $XIM_PRG $XIM_OPT &
+            DTSTARTIMS=False; export DTSTARTIMS
+        elif [ -x $XIM_PRG ]; then
+            $XIM_PRG $XIM_OPT
+            DTSTARTIMS=False; export DTSTARTIMS
+        fi
+    fi
+}
+
+# Main
+case $1 in
+    '-list')    tolines `list_ims`; exit $?;;
+    '-default') get_default_im;       exit $?;;
+    '-get')     get_current_im;       exit $?;;
+    '-set')     set_im $2;            exit $?;;
+esac
+
+PRIOR_IM=`get_prior_im`
+if [ X"$PRIOR_IM" != X ]; then
+    (sleep 10 && $IMFSELECTOR -p "$PRIOR_IM") &
+fi
+IM_SCRIPT=`get_current_im | cut -d '|' -f 2`
+start_im
