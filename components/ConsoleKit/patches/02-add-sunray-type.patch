@@ -1,0 +1,32 @@
+diff --git a/data/displays.d/Makefile.am b/data/displays.d/Makefile.am
+index 1fab1d2..853744e 100644
+--- a/data/displays.d/Makefile.am
++++ b/data/displays.d/Makefile.am
+@@ -5,6 +5,7 @@ display_in_files = \
+ 	Local.display.in \
+ 	RemoteMachine.display.in \
+ 	LocalVNC.display.in \
++	Sunray.display.in \
+ 	Headless.display.in
+ 
+ display_DATA = $(display_in_files:.display.in=.display)
+@@ -15,6 +16,8 @@ RemoteMachine.display: RemoteMachine.display.in Makefile
+ 	sed -e "s|\@X11_DIR\@|$(X11_DIR)|" $< > $@
+ LocalVNC.display: LocalVNC.display.in Makefile
+ 	sed -e "s|\@X11_DIR\@|$(X11_DIR)|" $< > $@
++Sunray.display: Sunray.display.in Makefile
++	sed -e "s|\@X11_DIR\@|$(X11_DIR)|" $< > $@
+ Headless.display: Headless.display.in Makefile
+ 	sed -e "s|\@X11_DIR\@|$(X11_DIR)|" $< > $@
+ 
+diff --git a/data/displays.d/Sunray.display.in b/data/displays.d/Sunray.display.in
+new file mode 100644
+index 0000000..2c0ed38
+--- /dev/null
++++ b/data/displays.d/Sunray.display.in
+@@ -0,0 +1,5 @@
++[Display]
++Type=X11
++
++[X11]
++Exec=/etc/opt/SUNWut/basedir/lib/utxsun $display -auth $auth

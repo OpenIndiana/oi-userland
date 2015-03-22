@@ -1,0 +1,63 @@
+--- ConsoleKit-0.4.1/src/ck-seat.c-orig	2012-06-01 23:28:22.322398818 -0500
++++ ConsoleKit-0.4.1/src/ck-seat.c	2012-06-01 23:37:52.032208906 -0500
+@@ -101,6 +101,8 @@ enum {
+ 
+ static guint signals [LAST_SIGNAL] = { 0, };
+ 
++static gboolean ck_seat_shutdown = FALSE;
++
+ static void     ck_seat_class_init  (CkSeatClass *klass);
+ static void     ck_seat_init        (CkSeat      *seat);
+ static void     ck_seat_finalize    (GObject     *object);
+@@ -120,6 +122,13 @@ ck_seat_error_quark (void)
+ 
+ #define ENUM_ENTRY(NAME, DESC) { NAME, "" #NAME "", DESC }
+ 
++void
++ck_seat_set_shutdown (void)
++{
++   g_debug ("CkSeat: setting shutdown, will stop restarting displays");
++   ck_seat_shutdown = TRUE;
++}
++
+ GType
+ ck_seat_kind_get_type (void)
+ {
+@@ -1157,7 +1166,7 @@ ck_seat_remove_session (CkSeat         *
+         }
+ 
+         /* Otherwise, look for an active session */
+-        if (found_login == FALSE) {
++        if (!ck_seat_shutdown && found_login == FALSE) {
+                 g_debug ("Login not found.  Maybe update active session");
+                 maybe_update_active_session (seat);
+         }
+--- ConsoleKit-0.4.1/src/ck-manager.c-orig	2012-06-01 23:27:14.221278799 -0500
++++ ConsoleKit-0.4.1/src/ck-manager.c	2012-06-01 23:36:43.104682051 -0500
+@@ -1133,6 +1133,7 @@ do_restart (CkManager             *manag
+ 
+                 g_error_free (error);
+         } else {
++                ck_seat_set_shutdown ();
+                 dbus_g_method_return (context);
+         }
+ }
+@@ -1220,6 +1221,7 @@ do_stop (CkManager             *manager,
+                 g_error_free (new_error);
+                 g_error_free (error);
+         } else {
++                ck_seat_set_shutdown ();
+                 dbus_g_method_return (context);
+         }
+ }
+--- ConsoleKit-0.4.1/src/ck-seat.h-orig	2012-06-01 23:34:08.023566142 -0500
++++ ConsoleKit-0.4.1/src/ck-seat.h	2012-06-01 23:34:42.825581256 -0500
+@@ -178,6 +178,8 @@ gboolean            ck_seat_no_respawn  
+                                                    CkSession             *session,
+                                                    GError               **error);
+ 
++void                ck_seat_set_shutdown          (void);
++
+ G_END_DECLS
+ 
+ #endif /* __CK_SEAT_H */

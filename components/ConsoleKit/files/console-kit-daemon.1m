@@ -1,0 +1,752 @@
+'\" te
+.TH console-kit-daemon 1m "24 Oct 2009" "SunOS 5.11" "Maintenance Commands"
+.SH "NAME"
+console-kit-daemon \- ConsoleKit daemon
+.SH "SYNOPSIS"
+.PP
+\fBconsole-kit-daemon\fR [-\fB-debug\fR] [-\fB-help\fR] [-\fB-no-daemon\fR] [-\fB-timed-exit\fR]
+.SH "DESCRIPTION"
+.PP
+\fBconsole-kit-daemon\fR is a service for defining and tracking users, login
+sessions and seats\&.  It provides interfaces for managing switching sessions
+and session migration when using mechanisms such as Virtual Terminals (VT)\&.
+ConsoleKit provides a number of interfaces to specify what displays are managed
+by the display manager, and how\&.
+.PP
+ConsoleKit maintains a database of which users are logged into the system and
+a history of all user logins\&.  ConsoleKit groups sessions by seats which
+represent a set of hardware (usually a keyboard and mouse)\&.  Other process
+communicate with ConsoleKit via D-Bus\&.
+.PP
+One session leader process is responsible for asking \fBconsole-kit-daemon\fR
+to open a new session\&.  In the typical case, the session leader would be a
+ConsoleKit enabled display manager, such as GDM\&.  This leader makes a
+connection to the D-Bus system bus and asks \fBconsole-kit-daemon\fR to open a
+session when needed\&.
+.PP
+If the operation succeeds, \fBconsole-kit-daemon\fR will return a cookie to the
+session leader\&. The session leader should store this variable in the
+environment as XDG_SESSION_COOKIE so that it may be shared with its child
+processes\&.  The environment variable contains the UUID used to tie processes to
+a session\&. 
+.PP
+At this point the session will be registered with ConsoleKit and a particular
+set of information about the session will be stored along with it\&. 
+.PP
+The Session will remain open until the Session Leader disconnects from the
+D-Bus system bus\&. The session will be removed from its seat, and deregistered\&.
+.PP
+Various other programs need to know information about running user sessions,
+such as the Fast User Switch Applet and other mechanisms for switching the
+console to use a different VT display\&.  Such programs make use of ConsoleKit
+interfaces to determine if user switching is supported and to manage the
+switching of different sessions on the same seat\&.
+.PP
+On Solaris, the ConsoleKit service is managed by the
+\fBsmf\fR(5)
+service management facility under the service identifier
+\fIsvc:/system/consolekit\fR\&.  On Solaris, it is
+recommended that you use the 
+\fBsvcadm\fR(1m) utility to start and stop the
+ConsoleKit service\&.
+.PP
+ConsoleKit provides a pam_ck_connector so that non-graphical logins (e\&.g\&.
+telnet, ssh, etc\&.) are registered with ConsoleKit\&.  This functionality works
+if this PAM module is enabled in the
+\fBpam\&.conf\fR(4) configuration\&.  Thus ConsoleKit can be
+used as a utmp/wtmp replacement since it stores a superset of the information
+as in the utmp/wtmp database\&.  
+.PP
+The ConsoleKit database is stored in the file
+\fB/var/run/ConsoleKit/database\fR\&.  It stores information about
+active Seats, Sessions, and the current SessionLeader\&.
+.SH "OPTIONS"
+.PP
+The following options are supported:
+.sp
+.ne 2
+.mk
+\fB-\fB-debug\fR\fR
+.in +24n
+.rt
+Enable debug output\&.
+.sp
+.sp 1
+.in -24n
+.sp
+.ne 2
+.mk
+\fB-\fBh\fR, -\fB-help\fR\fR
+.in +24n
+.rt
+Display detailed usage message\&.
+.sp
+.sp 1
+.in -24n
+.sp
+.ne 2
+.mk
+\fB-\fB-no-daemon\fR\fR
+.in +24n
+.rt
+Avoid starting \fBconsole-kit-daemon\fR as a daemon\&.  Useful for debugging\&.
+.sp
+.sp 1
+.in -24n
+.sp
+.ne 2
+.mk
+\fB-\fB-timed-exit\fR\fR
+.in +24n
+.rt
+Exit after 30 seconds\&.	Useful for debugging\&.
+.sp
+.sp 1
+.in -24n
+.SH "ENVIRONMENT VARIABLES"
+.PP
+See
+\fBenviron\fR(5)
+for descriptions of environment variables\&.
+.sp
+.ne 2
+.mk
+\fB\fBDISPLAY\fR\fR
+.sp .6
+.in +4
+This environment variable corresponds to the Xserver display value associated
+with the ConsoleKit session\&.
+.sp
+.sp 1
+.in -4
+.sp
+.ne 2
+.mk
+\fB\fBXDG_SESSION_COOKIE\fR\fR
+.sp .6
+.in +4
+ConsoleKit provides this environment variable to the session leader\&.  The
+session leader is expected to ensure this is set for the session process
+started\&.  It contains a UUID used to tie the processes to the session\&.  This is
+used to support user switching on displays that support it (currently only
+graphical VT displays on the console)\&.
+.sp
+.sp 1
+.in -4
+.PP
+The following environment variables are set when \fBconsole-kit-daemon\fR
+runs the \fBrun-session\&.d\fR and \fBrun-seat\&.d\fR
+scripts\&.  These values correspond to those values returned by the
+\fBck-list-session\fR(1) utility\&.
+.sp
+.ne 2
+.mk
+\fB\fBCK_SESSION_SEAT_ID\fR\fR
+.sp .6
+.in +4
+The seat ID associated with the session\&.
+.sp
+.sp 1
+.in -4
+.sp
+.ne 2
+.mk
+\fB\fBCK_SESSION_SEAT_UID\fR\fR
+.sp .6
+.in +4
+The user id associated with the session
+.sp
+.sp 1
+.in -4
+.sp
+.ne 2
+.mk
+\fB\fBCK_SESSION_DISPLAY_DEVICE\fR\fR
+.sp .6
+.in +4
+The display device associated with the session\&.
+.sp
+.sp 1
+.in -4
+.sp
+.ne 2
+.mk
+\fB\fBCK_SESSION_DISPLAY_TYPE\fR\fR
+.sp .6
+.in +4
+The display configuration file associated with the session\&.  This is a file
+located in the \fB/etc/ConsoleKit/displays\&.d\fR directory\&.
+.sp
+.sp 1
+.in -4
+.sp
+.ne 2
+.mk
+\fB\fBCK_SESSION_X11_DISPLAY_DEVICE\fR\fR
+.sp .6
+.in +4
+The value of the display device that the X11 display for the session is
+connected to\&.  If there is no x11-display set, then this value is undefined\&.
+.sp
+.sp 1
+.in -4
+.sp
+.ne 2
+.mk
+\fB\fBCK_SESSION_X11_DISPLAY\fR\fR
+.sp .6
+.in +4
+The value of the X11 DISPLAY environment variable for this session if one is
+present\&.
+.sp
+.sp 1
+.in -4
+.sp
+.ne 2
+.mk
+\fB\fBCK_SESSION_REMOTE_HOST_NAME\fR\fR
+.sp .6
+.in +4
+If the session is not local, the value is the host name associated with the
+session\&.  If the session is local, the value is empty\&.
+.sp
+.sp 1
+.in -4
+.sp
+.ne 2
+.mk
+\fB\fBCK_SESSION_IS_ACTIVE\fR\fR
+.sp .6
+.in +4
+The value is "TRUE" if the session is active on the seat to which it
+is attached, and "FALSE" otherwise\&.
+.sp
+.sp 1
+.in -4
+.sp
+.ne 2
+.mk
+\fB\fBCK_SESSION_IS_LOCAL\fR\fR
+.sp .6
+.in +4
+The value is "TRUE" if the session is local, and "FALSE"
+if remote\&.
+.sp
+.sp 1
+.in -4
+.SH "EXTENDED DESCRIPTION"
+.SS "ConsoleKit Seat Configuration"
+.PP
+ConsoleKit seat configuration files are located in the
+/etc/ConsoleKit/seats\&.d directory\&.  Each seat
+configuration file ends with the \fB\&.seat\fR suffix\&.  ConsoleKit
+provides a default seat file named \fB00-primary\&.seat\fR\&.
+Additional seat configuration files may be added\&.  These files are in standard
+INI format\&.
+.PP
+The settings below are in
+"group/key=\fIdefault_value\fR" format, and show
+the default values of the \fB00-primary\&.seat\fR file\&.  For
+example, to specify a different "Seat Entry/Name" value, you would
+modify the this file so it contains these lines:
+.PP
+.nf
+[Seat Entry]
+[\&.\&.\&.]
+Name=Customized seat name
+.fi
+.PP
+The following keys are supported for configuring ConsoleKit seats:
+.sp
+.ne 2
+.mk
+\fBSeat Entry/Version=1\&.0\fR
+.sp .6
+.in +4
+Version number of the seat file\&.  This specifies the version number of the
+configuration file format used\&.  Currently only the value "1\&.0" is
+supported\&.
+.sp
+.sp 1
+.in -4
+.sp
+.ne 2
+.mk
+\fBSeat Entry/Name=Primary seat\fR
+.sp .6
+.in +4
+Name of the seat\&.
+.sp
+.sp 1
+.in -4
+.sp
+.ne 2
+.mk
+\fBSeat Entry/ID=StaticSeat\fR
+.sp .6
+.in +4
+Specifies the unique ID of the seat\&.  If the value is NULL, then
+\fBconsole-kit-daemon\fR will provide a value\&.  The ID may only contain the
+ASCII characters [A-Z][a=z][0-9]_"\&.
+.sp
+.sp 1
+.in -4
+.sp
+.ne 2
+.mk
+\fBSeat Entry/Hidden=false\fR
+.sp .6
+.in +4
+If this value is set to "false", then ConsoleKit will create this
+seat\&.  Otherwise, the seat will not be created\&.
+.sp
+.sp 1
+.in -4
+.sp
+.ne 2
+.mk
+\fBSeat Entry/Devices\fR
+.sp .6
+.in +4
+This value is not currently supported\&.  In the future, it is planned that
+ConsoleKit will provide the ability to manage how device permissions are
+managed, and this key is a placeholder\&.
+.sp
+.sp 1
+.in -4
+.sp
+.ne 2
+.mk
+\fBSeat Entry/Sessions=Local\fR
+.sp .6
+.in +4
+List of sessions to start on the seat, separated by the ";"
+character\&.  Each session must be defined in a ConsoleKit session configuration
+file named
+\fB/etc/ConsoleKit/sessions\&.d/\fIsessions\fR\&.session\fR where \fIsessions\fR is the value of this key\&.
+.sp
+.sp 1
+.in -4
+.SS "ConsoleKit Display Configuration"
+.PP
+ConsoleKit display configuration files are located in the
+/etc/ConsoleKit/displays\&.d directory\&.  Each session
+configuration file ends with the \fB\&.display\fR suffix\&.
+Additional seat configuration files may be added\&.  These files are in standard
+INI format\&.
+.PP
+The settings below are in
+"group/key" format, so to specify the "X11/Display"
+value, the file should contain these lines:
+.PP
+.nf
+[X11]
+[\&.\&.\&.]
+Exec=/usr/X11/bin/Xserver $display -br -auth $auth $vt
+.fi
+.PP
+The following keys are supported for configuring ConsoleKit displays:
+.sp
+.ne 2
+.mk
+\fBDisplay/Type\fR
+.sp .6
+.in +4
+The type of the display\&.  Currently only the value "X11" is
+supported\&.  This indicates that the display will be managed by an Xserver
+that sends a SIGUSR1 signal to its parent pid when it is ready\&.  This is
+standard for all Xservers, such as the
+\fBXorg\fR(1) Xserver\&.
+.sp
+.sp 1
+.in -4
+.sp
+.ne 2
+.mk
+\fBX11/Exec\fR
+.sp .6
+.in +4
+The command to run to launch the session\&.  This command supports variables
+that start with the "$" character, like "$display"\&.
+The values to use for these variables can either be specified in the 
+ConsoleKit session configuration file in the "[Local]" section, or
+via the \fBck-seat-tool\fR(1) application\&.
+.sp
+Administrator can customize the X11/Exec command as required\&. For example, to enable xkb and accessibility extensions for Xserver, edit \fB/etc/ConsoleKit/displays\&.d/Local\&.display\fR
+.sp
+.nf
+.sp
+[X11]
+[\&.\&.\&.]
+Exec=/usr/X11/bin/Xserver $display -br -auth $auth $vt +kb +accessx
+.fi
+.sp
+.sp 1
+.in -4
+.SS "ConsoleKit Session Configuration"
+.PP
+ConsoleKit session configuration files are located in the
+/etc/ConsoleKit/sessions\&.d directory\&.  Each session
+configuration file ends with the \fB\&.session\fR suffix\&.
+Additional seat configuration files may be added\&.  These files are in standard
+INI format\&.
+.PP
+The settings below are in
+"group/key" format, so to specify the "Session Entry/Name"
+value, the file should contain these lines:
+.PP
+.nf
+[Session Entry]
+[\&.\&.\&.]
+Name=Customized Session
+.fi
+.PP
+The following keys are supported for configuring ConsoleKit sessions:
+.sp
+.ne 2
+.mk
+\fBSession Entry/Name\fR
+.sp .6
+.in +4
+Unique name of the session\&.
+.sp
+.sp 1
+.in -4
+.sp
+.ne 2
+.mk
+\fBSession Entry/Type\fR
+.sp .6
+.in +4
+Type of the session
+.sp
+.sp 1
+.in -4
+.sp
+.ne 2
+.mk
+\fBSession Entry/Description\fR
+.sp .6
+.in +4
+Description of the session\&.
+.sp
+.sp 1
+.in -4
+.sp
+.ne 2
+.mk
+\fBSession Entry/DisplayTemplate\fR
+.sp .6
+.in +4
+This specifies the display type to be used with the session\&.  This corresponds
+to the file
+\fB/etc/ConsoleKit/displays\&.d/\fIdisplay_template\fR\&.display\fR
+where \fIdisplay_template\fR is the value of this key\&.
+.sp
+.sp 1
+.in -4
+.sp
+.ne 2
+.mk
+\fBLocal/\fIvariable\fR\fR
+.sp .6
+.in +4
+The ConsoleKit display configuration file associated with the
+"Entry/DisplayTemplate" key specifies the command to run to launch
+the display\&.  This command is defined in the ConsoleKit display configuration
+file in the key "X11/Exec"\&.  This command can include variables that
+begin with the "$" character, such as "$display"\&.  The
+values to be used for these variables can be defined in this section\&.  So if
+the session configuration file contains the value
+"Local/display=:0", this will cause the variable used when launching
+the command to be replaced with the value ":0"\&.
+.sp
+.sp 1
+.in -4
+.SS "ConsoleKit Session Script Interfaces"
+.PP
+The following interfaces are provided so that system administrators can
+configure that certain actions happen when ConsoleKit responds to certain
+events\&.
+.PP
+When a ConsoleKit session is started or removed, then \fBconsole-kit-daemon\fR
+will first run any scripts found in the
+\fB/etc/ConsoleKit/run-session\&.d\fR directory and then run any
+scripts in the
+\fB/usr/lib/ConsoleKit/run-session\&.d\fR directory\&.
+.PP
+When certain seat events, such as "seat_added",
+"seat_removed" or "seat_active_session_changed" occur,
+then \fBconsole-kit-daemon\fR will first run any script in the
+\fB/etc/ConsoleKit/run-seat\&.d\fR directory and  then run any
+scripts in the
+\fB/usr/lib/ConsoleKit/run-seat\&.d\fR directory\&.
+.SS "ConsoleKit System Restart and Stop"
+.PP
+\fBconsole-kit-daemon\fR provides D-Bus interfaces that will restart or stop
+the system\&.  When \fBconsole-kit-daemon\fR receives a D-Bus request to restart
+the system, it will run the 
+\fB/usr/lib/ConsoleKit/scripts/ck-system-restart\fR script if
+the user has privilege to do this operation\&.  When \fBconsole-kit-daemon\fR
+receives a D-Bus request to stop the system, it will run the
+\fB/usr/lib/ConsoleKit/scripts/ck-system-stop\fR script if the
+user has privilege to do this operation\&.
+.SH "EXAMPLES"
+.PP
+\fBExample 1: To start the ConsoleKit daemon\fR
+.PP
+.PP
+.nf
+example% \fBconsole-kit-daemon\fR
+.fi
+.PP
+\fBExample 2: To configure ConsoleKit to not start a seat\fR
+.PP
+To disable a seat, the administrator can set Hidden=true in the \&.seat file\&. 
+Edit the \fB00-primary\&.seat\fR file as follows to disable
+the default primary seat which normally runs on the system console\&.
+
+For example, disabling the primary seat on the console is useful if the 
+administrator wishes to run GDM in headless mode\&. This can be
+useful if the administrator wants GDM to accept XDMCP remote displays
+but the server does not actually have a console\&.
+.PP
+.nf
+[Seat Entry]
+Version=1\&.0
+Name=Primary seat
+ID=StaticSeat1
+Description=start one static local display at :0
+Hidden=true
+Devices=
+Sessions=Local;
+.fi
+.PP
+\fBExample 3: To configure ConsoleKit to start multiple sessions on a single seat\fR
+.PP
+To start two local displays: DISPLAY ":0" on vt7 and DISPLAY
+":1" on "vt8",
+edit the \fB00-primary\&.seat\fR file as follows:
+.PP
+.nf
+[Seat Entry]
+Version=1\&.0
+Name=Primary seat
+Description=start static displays :0 on vt7 and :1 on vt8
+Hidden=false
+Devices=
+Sessions=Local;Local2;
+.fi
+.PP
+Then, in addition to the original
+\fB/etc/ConsoleKit/sessions\&.d/Local\&.session\fR file, add the
+following \fB/etc/ConsoleKit/sessions\&.d/Local2\&.session\fR file:
+.PP
+.nf
+[Session Entry]
+Name=Local
+Type=LoginWindow
+Description=Local Login Screen
+DisplayTemplate=Local
+
+[Local]
+display=:1
+vt=vt8
+.fi
+.PP
+\fBExample 4: To configure ConsoleKit to start multiple seat\fR
+.PP
+To start two seats: a local session on DISPLAY ":0" using
+"vt7" and another seat using a VNC session on DISPLAY ":64",
+add a file \fB/etc/ConsoleKit/seats\&.d/01-vnc\&.seat\fR as 
+follows:
+.PP
+.nf
+[Seat Entry]
+Version=1\&.0
+Name=VNC seat
+Description=start one VNC display on :64
+Hidden=false
+Devices=
+Sessions=LocalVNC;
+.fi
+.PP
+Add the 
+\fB/etc/ConsoleKit/sessions\&.d/LocalVNC\&.session\fR file as
+follows:
+.PP
+.nf
+[Session Entry]
+Name=LocalVNC
+Type=LoginWindow
+Description=Connect to local VNC server running on same machine
+DisplayTemplate=LocalVNC
+
+[LocalVNC]
+display=:64
+.fi
+.PP
+Finally, add the 
+\fB/etc/ConsoleKit/displays\&.d/LocalVNC\&.display\fR file as
+follows:
+.PP
+.nf
+[Display]
+Type=X11
+
+[X11]
+Exec=/usr/X11/bin/Xvnc $display -auth $auth -query localhost
+.fi
+.SH "FILES"
+.PP
+The following files are used by this application:
+.sp
+.ne 2
+.mk
+\fB\fB/usr/sbin/console-kit-daemon\fR\fR
+.sp .6
+.in +4
+Executable for the ConsoleKit daemon\&.
+.sp
+.sp 1
+.in -4
+.sp
+.ne 2
+.mk
+\fB\fB/usr/lib/ConsoleKit/run-seat\&.d\fR\fR
+.sp .6
+.in +4
+Any scripts in this directory are run when a ConsoleKit seat event happens\&.
+.sp
+.sp 1
+.in -4
+.sp
+.ne 2
+.mk
+\fB\fB/usr/lib/ConsoleKit/run-session\&.d\fR\fR
+.sp .6
+.in +4
+Any scripts in this directory are run when a ConsoleKit session event happens\&.
+.sp
+.sp 1
+.in -4
+.sp
+.ne 2
+.mk
+\fB\fB/usr/lib/ConsoleKit/scripts/ck-system-restart\fR\fR
+.sp .6
+.in +4
+Script to run when ConsoleKit receives a D-Bus request to restart the system\&.
+.sp
+.sp 1
+.in -4
+.sp
+.ne 2
+.mk
+\fB\fB/usr/lib/ConsoleKit/scripts/ck-system-stop\fR\fR
+.sp .6
+.in +4
+Script to run when ConsoleKit receives a D-Bus request to stop the system\&.
+.sp
+.sp 1
+.in -4
+.sp
+.ne 2
+.mk
+\fB\fB/etc/ConsoleKit/seats\&.d\fR\fR
+.sp .6
+.in +4
+ConsoleKit seat configuration files\&.
+.sp
+.sp 1
+.in -4
+.sp
+.ne 2
+.mk
+\fB\fB/etc/ConsoleKit/session\&.d\fR\fR
+.sp .6
+.in +4
+ConsoleKit session configuration files\&.
+.sp
+.sp 1
+.in -4
+.sp
+.ne 2
+.mk
+\fB\fB/etc/ConsoleKit/run-seat\&.d\fR\fR
+.sp .6
+.in +4
+Any scripts in this directory are run when a ConsoleKit seat event happens\&.
+.sp
+.sp 1
+.in -4
+.sp
+.ne 2
+.mk
+\fB\fB/etc/ConsoleKit/run-session\&.d\fR\fR
+.sp .6
+.in +4
+Any scripts in this directory are run when a ConsoleKit seat event happens\&.
+.sp
+.sp 1
+.in -4
+.sp
+.ne 2
+.mk
+\fB\fB/var/run/ConsoleKit/database\fR\fR
+.sp .6
+.in +4
+ConsoleKit database\&.
+.sp
+.sp 1
+.in -4
+.sp
+.ne 2
+.mk
+\fB\fB/var/log/ConsoleKit/history\fR\fR
+.sp .6
+.in +4
+ConsoleKit history database\&.
+.sp
+.sp 1
+.in -4
+.SH "ATTRIBUTES"
+.PP
+See
+\fBattributes\fR(5)
+for descriptions of the following attributes:
+.sp
+.TS
+tab() allbox;
+cw(2.750000i)| cw(2.750000i)
+lw(2.750000i)| lw(2.750000i).
+ATTRIBUTE TYPEATTRIBUTE VALUE
+Availabilitylibrary/xdg/consolekit
+Interface stabilityVolatile
+.TE
+.sp
+.SH "SEE ALSO"
+.PP
+More information can be found at:
+.PP
+\fBhttp://www\&.freedesktop\&.org/wiki/Software/ConsoleKit\fR
+.PP
+\fBck-history\fR(1),
+\fBck-launch-session\fR(1),
+\fBck-list-sessions\fR(1),
+\fBdbus-daemon\fR(1),
+\fBck-seat-tool\fR(1m),
+\fBgdm\fR(1m),
+\fBsvcadm\fR(1m),
+\fBattributes\fR(5),
+\fBenviron\fR(5),
+\fBsmf\fR(5)
+.SH "NOTES"
+.PP
+Brian Cameron, Sun Microsystems Inc\&., 2009\&.
+Copyright (c) 2009 by Sun Microsystems, Inc\&.
+.PP
+Some of the documentation in this manpage is from the ConsoleKit documentation
+written by William Jon McCann\&.
+...\" created by instant / solbook-to-man, Tue 27 Jan 2015, 17:22
+...\" LSARC 2009/432 ConsoleKit 

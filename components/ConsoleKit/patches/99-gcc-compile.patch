@@ -1,0 +1,33 @@
+--- ConsoleKit-0.4.1/src/ck-manager.c.1	2015-03-22 14:47:13.636486907 +0300
++++ ConsoleKit-0.4.1/src/ck-manager.c	2015-03-22 14:48:09.547798436 +0300
+@@ -1308,13 +1308,13 @@
+ parse_output (const gchar *output, GPtrArray **systems)
+ {
+         gchar **lines;
+-        gint id, default_id = -1;
++        gint id, i, default_id = -1;
+ 
+         if (output == NULL)
+                 return default_id;
+ 
+         lines = g_strsplit (output, "\n", 0);
+-        for (int i = 0; lines[i] != NULL; i++) {
++        for (i = 0; lines[i] != NULL; i++) {
+ 		gchar **tokens;
+ 
+ 		/* Split lines into 2 tokens maximum */
+@@ -1438,12 +1438,13 @@
+ {
+ #if (defined(sun) && defined(__SVR4))
+         gchar **param;
++	gint i;
+ 
+         if (parameters == NULL)
+                 return;
+ 
+         param = g_strsplit ((gchar*)parameters, " ", 0);
+-        for (int i = 0; param[i] != NULL; i++) {
++        for (i = 0; param[i] != NULL; i++) {
+                 if (strncmp (param[i], "id:", 3) == 0) {
+                         if (g_ascii_isdigit(param[i][3])) {
+                                 gint id;

@@ -1,0 +1,50 @@
+diff --git a/tools/list-sessions.c.orig b/tools/list-sessions.c
+index cc69d57..be35ecf 100644
+--- a/tools/list-sessions.c.orig
++++ b/tools/list-sessions.c
+@@ -56,8 +56,10 @@ typedef struct CkSessionOutput {
+ static gboolean do_all = FALSE;
+ static gboolean do_version = FALSE;
+ static char *do_format = NULL;
++static char *session_id = NULL;
+ static GOptionEntry entries [] = {
+         { "all", 'a', 0, G_OPTION_ARG_NONE, &do_all, N_("List all sessions. If not given, only list open sessions"), NULL },
++        { "sid", 's', 0, G_OPTION_ARG_STRING, &session_id, N_("List one sessions."), NULL },
+         { "format", 'f', 0, G_OPTION_ARG_STRING, &do_format, N_("Prints information according to the given format"), NULL },
+         { "version", 'V', 0, G_OPTION_ARG_NONE, &do_version, N_("Version of this application"), NULL },
+         { NULL }
+@@ -242,7 +244,7 @@ list_session (DBusGConnection *connection,
+         get_string (proxy, "GetCreationTime", &creation_time);
+         get_string (proxy, "GetIdleSinceHint", &idle_since_hint);
+ 
+-        if (!do_all && !is_open) {
++        if (!do_all && !is_open && !session_id) {
+                 return;
+         }
+ 
+@@ -352,11 +354,23 @@ list_sessions (DBusGConnection *connection,
+         }
+ 
+         for (i = 0; i < sessions->len; i++) {
+-                char *ssid;
++		char 		*ssid;
++		gboolean	do_it = TRUE;
+ 
+                 ssid = g_ptr_array_index (sessions, i);
+ 
+-                list_session (connection, ssid);
++		if (session_id) {
++			do_it = FALSE;
++
++			if (!g_strcmp0(session_id, ssid))
++				do_it = TRUE;
++
++			else if (!g_strcmp0(session_id, g_basename(ssid)))
++					do_it = TRUE;
++		}
++
++		if (do_it)
++                	list_session (connection, ssid);
+ 
+                 g_free (ssid);
+         }
