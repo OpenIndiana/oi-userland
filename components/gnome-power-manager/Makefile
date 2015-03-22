@@ -48,6 +48,8 @@ COMPONENT_PRE_CONFIGURE_ACTION =        (cp -rp $(SOURCE_DIR)/* $(@D) && \
                                         cp -r $(COMPONENT_DIR)/files/po-sun $(@D) && \
                                         cd $(@D)/po-sun && $(MAKE) all )
 
+LDFLAGS += -lsecdb
+
 CONFIGURE_OPTIONS+=	--enable-policykit
 CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
