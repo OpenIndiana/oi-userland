@@ -1,0 +1,40 @@
+diff --git a/ck-seat.c.old b/ck-seat.c
+index 9981e53..e9d954f 100644
+--- ConsoleKit-0.4.1/src/ck-seat.c.~6~	2015-03-22 14:28:54.595545396 +0300
++++ ConsoleKit-0.4.1/src/ck-seat.c	2015-03-22 14:32:35.313366034 +0300
+@@ -937,6 +937,7 @@
+         gboolean       is_open;
+         char          *session_type = NULL;
+         CkSession     *login_session = NULL;
++	gboolean       done = FALSE;
+ 
+         g_hash_table_iter_init (&iter, seat->priv->sessions);
+         while (g_hash_table_iter_next (&iter, &key, &value)) {
+@@ -949,7 +950,8 @@
+                         guint    num;
+                         gboolean ret;
+ 
+-                        login_session = NULL;
++			if (!done)
++				login_session = NULL;
+ 
+                         g_debug ("Found open session.");
+ 
+@@ -975,8 +977,15 @@
+                 ck_session_get_session_type (value, &session_type, NULL);
+                 if (IS_STR_SET (session_type) &&
+                     g_str_equal (session_type, "LoginWindow")) {
+-                        login_session = value;
+-                        g_free (session_type);
++			if (!done) {
++				login_session = value;
++				/* Give non-open session a precedence */
++				if (!is_open)
++					done = TRUE;
++				g_debug ("CkSeat: Setting login_session");
++			}
++			
++			g_free (session_type);
+                 }
+         }
+ 

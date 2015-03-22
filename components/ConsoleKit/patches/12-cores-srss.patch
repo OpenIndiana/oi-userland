@@ -1,0 +1,16 @@
+diff --git a/src/ck-seat.c b/src/ck-seat.c
+index dd2a387..72db11e 100644
+--- a/src/ck-seat.c
++++ b/src/ck-seat.c
+@@ -907,7 +907,10 @@ change_active_session (CkSeat    *seat,
+          * must be sent when the database dump is finished it is
+          * important that the '-full' signalled is emitted first. */
+ 
+-        g_signal_emit (seat, signals [ACTIVE_SESSION_CHANGED_FULL], 0, old_session, session);
++        if (CK_IS_SESSION (old_session)) {
++                g_signal_emit (seat, signals [ACTIVE_SESSION_CHANGED_FULL], 0, old_session, session);
++        }
++
+         g_signal_emit (seat, signals [ACTIVE_SESSION_CHANGED], 0, ssid);
+ 
+         if (old_session != NULL) {
