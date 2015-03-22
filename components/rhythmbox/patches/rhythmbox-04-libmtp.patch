@@ -1,0 +1,42 @@
+From 042534569086bcf1d060adf8073a380726e69149 Mon Sep 17 00:00:00 2001
+From: Emilio Pozuelo Monfort <pochu27@gmail.com>
+Date: Mon, 17 Jan 2011 22:00:18 +0000
+Subject: [PATCH] Fix build with HAL support
+
+---
+ plugins/mtpdevice/rb-mtp-plugin.c |    5 +++--
+ 1 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/plugins/mtpdevice/rb-mtp-plugin.c b/plugins/mtpdevice/rb-mtp-plugin.c
+index 1100007..f193906 100644
+--- a/plugins/mtpdevice/rb-mtp-plugin.c
++++ b/plugins/mtpdevice/rb-mtp-plugin.c
+@@ -49,6 +49,7 @@
+ #endif
+ 
+ #include "rb-source.h"
++#include "rb-display-page-group.h"
+ #include "rb-display-page-tree.h"
+ #include "rb-mtp-source.h"
+ #include "rb-plugin.h"
+@@ -421,7 +422,7 @@ rb_mtp_plugin_maybe_add_source (RBMtpPlugin *plugin, const char *udi, LIBMTP_raw
+ 			rb_debug ("device matched, creating a source");
+ 			source = RB_SOURCE (rb_mtp_source_new (plugin->shell, RB_PLUGIN (plugin), udi, &raw_devices[i]));
+ 
+-			rb_shell_append_source (plugin->shell, source, RB_DISPLAY_PAGE_GROUP_DEVICES);
++			rb_shell_append_display_page (plugin->shell, RB_DISPLAY_PAGE (source), RB_DISPLAY_PAGE_GROUP_DEVICES);
+ 			plugin->mtp_sources = g_list_prepend (plugin->mtp_sources, source);
+ 			g_signal_connect_object (source,
+ 						"deleted", G_CALLBACK (source_deleted_cb),
+@@ -459,7 +460,7 @@ rb_mtp_plugin_device_removed (LibHalContext *context, const char *udi)
+ 		if (strcmp (udi, source_udi) == 0) {
+ 			rb_debug ("removing device %s, %p", udi, source);
+ 			plugin->mtp_sources = g_list_remove (plugin->mtp_sources, source);
+-			rb_source_delete_thyself (source);
++			rb_display_page_delete_thyself (RB_DISPLAY_PAGE (source));
+ 		}
+ 		g_free (source_udi);
+ 	}
+-- 
+1.7.2.3
+
