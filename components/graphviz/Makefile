@@ -63,6 +63,7 @@ CONFIGURE_OPTIONS +=	--enable-python=no
 CONFIGURE_OPTIONS +=	--enable-python26=yes
 CONFIGURE_OPTIONS +=	--enable-python27=yes
 CONFIGURE_OPTIONS +=	--x-libraries=$(CONFIGURE_LIBDIR.$(BITS))
+CONFIGURE_OPTIONS +=	--with-qt=no
 
 COMPONENT_BUILD_ARGS += 	GREP=/usr/bin/ggrep
 
