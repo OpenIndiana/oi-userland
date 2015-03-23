@@ -16,14 +16,14 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= librsvg
-COMPONENT_VERSION= 2.34.2
+COMPONENT_VERSION= 2.36.4
 COMPONENT_SUMMARY= Library for SVG support for GNOME
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:f27aace8592ef43202cba240fe760ac1cdd3422ea16ce0fad9704d850bed9b76
+  sha256:1021935204798f4f0ad3004a09b583668ea94a48593461b147fdcff68a18e6c2
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.34/$(COMPONENT_ARCHIVE)
+  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.36/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://www.gnome.org/
 
 include ../../make-rules/prep.mk
@@ -32,7 +32,11 @@ include ../../make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-gcc_OPT = -O2
+# Cloning is required for gmake test to pass
+COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
+
+CONFIGURE_SCRIPT=       $(@D)/configure
+
 
 COMPONENT_PREP_ACTION =	( cd $(@D) && aclocal && \
 					libtoolize --force --copy&&\
@@ -44,9 +48,13 @@ COMPONENT_PREP_ACTION =	( cd $(@D) && aclocal && \
 CONFIGURE_OPTIONS.32 = --sysconfdir=/etc
 CONFIGURE_OPTIONS.64 = --sysconfdir=/etc/$(MACH64)
 CONFIGURE_OPTIONS += --with-html-dir=/usr/share/gtk-doc/html/librsvg
+CONFIGURE_OPTIONS += --disable-Bsymbolic
+
+COMPONENT_BUILD_ENV += CC="$(CC)"
+COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
 
-test: $(NO_TESTS)
+test: $(TEST_32_and_64)
