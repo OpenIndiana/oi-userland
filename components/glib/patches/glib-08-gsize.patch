@@ -1,27 +1,30 @@
---- glib-2.19.8/configure.ac.old	2009-02-23 17:25:08.856845000 +0800
-+++ glib-2.19.8/configure.ac	2009-02-23 17:28:58.819520000 +0800
-@@ -2780,11 +2780,19 @@
+--- glib-2.37.0/configure.ac.orig	Fri May  3 14:52:05 2013
++++ glib-2.37.0/configure.ac	Fri May  3 14:55:44 2013
+@@ -3056,12 +3056,21 @@
  _______EOF
  
          cat >>$outfile <<_______EOF
--typedef signed $glib_size_type_define gssize;
+-typedef signed $glib_ssize_type_define gssize;
 -typedef unsigned $glib_size_type_define gsize;
 -#define G_GSIZE_MODIFIER $gsize_modifier
--#define G_GSSIZE_FORMAT $gssize_format
+-#define G_GSSIZE_MODIFIER $gssize_modifier
 -#define G_GSIZE_FORMAT $gsize_format
+-#define G_GSSIZE_FORMAT $gssize_format
 +#if (defined (__amd64) || defined(__sparcv9))
 +typedef signed long gssize;
 +typedef unsigned long gsize;
 +#define G_GSIZE_MODIFIER "l"
 +#define G_GSSIZE_FORMAT "li"
 +#define G_GSIZE_FORMAT "lu"
++#define G_GSSIZE_MODIFIER "l"
 +#else
 +typedef signed int gssize;
 +typedef unsigned int gsize;
 +#define G_GSIZE_MODIFIER ""
 +#define G_GSSIZE_FORMAT "i"
 +#define G_GSIZE_FORMAT "u"
-+#endif 
++#define G_GSSIZE_MODIFIER ""
++#endif
  
  #define G_MAXSIZE	G_MAXU$glib_msize_type
- #define G_MINSSIZE	G_MIN$glib_msize_type
+ #define G_MINSSIZE	G_MIN$glib_mssize_type
