@@ -16,15 +16,14 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= glib
-COMPONENT_VERSION= 2.28.8
-COMPONENT_REVISION=3
+COMPONENT_VERSION= 2.43.4
 COMPONENT_SUMMARY= GNOME core libraries
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:222f3055d6c413417b50901008c654865e5a311c73f0ae918b0a9978d1f9466f
+  sha256:5f090530a950e2881b130703e598f6fdd45b0c6c130976e91531e10a24f4d3cd
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.28/$(COMPONENT_ARCHIVE)
+  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.43/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gtk.org/
 
 include ../../make-rules/prep.mk
@@ -37,14 +36,14 @@ gcc_OPT = -O2
 
 LDFLAGS += -lsocket -lsecdb -lnsl
 
-COMPONENT_PREP_ACTION =	( cd $(@D) && aclocal && \
+COMPONENT_PREP_ACTION =	( cd $(@D) && aclocal  -I m4macros && \
 					libtoolize --force --copy&&\
 					gtkdocize &&\
                                         autoheader &&\
                                         automake -a -f -c --gnu &&\
                                         autoconf )
 
-COMPONENT_PRE_CONFIGURE_ACTION = ( cp -r $(SOURCE_DIR)/* $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION = ( cp -a $(SOURCE_DIR)/* $(@D))
 
 CONFIGURE_SCRIPT = $(@D)/configure
 
@@ -58,8 +57,12 @@ CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_ENV    += PERL=$(PERL)
 CONFIGURE_ENV    += PYTHON=$(PYTHON)
 
+DFLAGS.64 = -64
+COMPONENT_BUILD_ENV += DFLAGS=$(DFLAGS.$(BITS))
+
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
 
-test: $(NO_TESTS)
+# Failed tests: gdatetime, mem-overflow, convert, strfuncs, string, timer
+test: $(TEST_32_and_64)
