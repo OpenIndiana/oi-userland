@@ -87,7 +87,7 @@ COMPONENT_POST_INSTALL_ACTION = \
 	(/usr/bin/elfdump -d $(PROTO_DIR)/usr/lib/$(MACH64)/libwireshark.so.5.0.4 | \
 	    grep 'libwiretap.so.3' && /usr/bin/elfedit \
 	    -e 'dyn:value -s -with-valstr libwiretap.so.3 libwiretap.so.4' \
-	    $(PROTO_DIR)/usr/lib/$(MACH64)/libwireshark.so.5.0.4)
+	    $(PROTO_DIR)/usr/lib/$(MACH64)/libwireshark.so.5.0.4; true)
 
 configure:	$(CONFIGURE_64)
 
