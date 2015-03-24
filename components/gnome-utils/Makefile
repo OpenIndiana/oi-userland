@@ -16,6 +16,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnome-utils
 COMPONENT_VERSION=	2.32.0
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	Basic GNOME utils
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
