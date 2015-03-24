@@ -33,7 +33,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:0daaa16673bd664c8deeb58b3885ed8ae43dec07464c08f4e886c724cbd5c075
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://launchpad.net/keystonemiddleware
-COMPONENT_BUGDB=	service/keystone
+COMPONENT_BUGDB=	python-mod/keystonemiddle
 
 TPNO=			21624
 

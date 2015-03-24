@@ -48,6 +48,8 @@ COMPONENT_PATCHES=	\
 	04-remove-jasmine.patch \
 	05-disable-unsupported-bootsource.patch \
 	06-remove-security-groups.patch \
+	07-remove-image-source.patch \
+	08-_get_reachable_subnets.patch \
 	11-requirements.patch
 
 TPNO_HORIZON=		21822
@@ -214,7 +216,7 @@ PYTHON_VERSIONS=	2.6
 # ecosystem runs under right now.
 PYTHON_VERSION=		2.6
 
-PKG_MACROS +=           COMPONENT_BE_VERSION=$(COMPONENT_BE_VERSION)
+PKG_MACROS +=		COMPONENT_BE_VERSION=$(COMPONENT_BE_VERSION)
 PKG_MACROS +=		PYVER=$(PYTHON_VERSIONS)
 PKG_MACROS +=		PYV=$(shell echo $(PYTHON_VERSIONS) | tr -d .)
 

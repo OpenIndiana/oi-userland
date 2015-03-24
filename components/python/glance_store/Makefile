@@ -33,7 +33,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:b390fea864f1398f79ab66ce99c3b868b86ac1bf97dbe89ba4498506e2af7d02
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://github.com/openstack/glance_store
-COMPONENT_BUGDB=	library/glancestore
+COMPONENT_BUGDB=	python-mod/glance_store
 
 TPNO=			21623
 

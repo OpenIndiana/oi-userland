@@ -1,0 +1,17 @@
+This internal patch addresses an apparent Juno regression related to
+Launchpad bug 1252403.  It's not suitable for the upstream but a bug
+report will be filed to cover the regression and eventually this patch
+should be replaced with something official.
+
+--- horizon-2014.2.2/openstack_dashboard/api/neutron.py.orig	2015-02-05 09:06:50.000000000 -0800
++++ horizon-2014.2.2/openstack_dashboard/api/neutron.py	2015-03-22 21:56:14.619688527 -0700
+@@ -411,8 +411,7 @@ class FloatingIpManager(network_base.Flo
+                           in ext_net_ids)]
+         reachable_subnets = set([p.fixed_ips[0]['subnet_id'] for p in ports
+                                  if ((p.device_owner ==
+-                                      'network:router_interface')
+-                                     and (p.device_id in gw_routers))])
++                                      'network:router_interface'))])
+         return reachable_subnets
+ 
+     def list_targets(self):
