@@ -15,15 +15,14 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gthumb
-COMPONENT_VERSION=	2.12.4
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	2.14.4
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Apps/gthumb
 COMPONENT_SUMMARY=	GNOME image organizer (gthumb)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:cf809695230ab8892a078be454a42ade865754c72ec1da7c3d74d4310de54f1d
-COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.12/$(COMPONENT_ARCHIVE)
+    sha256:1561ca52f9b60fbcd0e8fc976de8b30f0447019c698bfe1051d421935b5a51b5
+COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.14/$(COMPONENT_ARCHIVE)
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk

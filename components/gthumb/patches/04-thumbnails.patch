@@ -1,0 +1,114 @@
+--- gthumb-2.14.4/gthumb/gnome-desktop-thumbnail.c.orig	Fri Apr 11 14:00:40 2014
++++ gthumb-2.14.4/gthumb/gnome-desktop-thumbnail.c	Fri Apr 11 14:05:01 2014
+@@ -1074,8 +1074,13 @@
+ 	g_assert (digest_len == 16);
+ 
+ 	file = g_strconcat (g_checksum_get_string (checksum), ".png", NULL);
++#if GLIB_CHECK_VERSION (2, 34, 0)
++	path = g_build_filename (g_get_user_cache_dir (),
++				"thumbnails",
++#else
+ 	path = g_build_filename (g_get_home_dir (),
+ 				 ".thumbnails",
++#endif
+ 				 (factory->priv->size == GNOME_DESKTOP_THUMBNAIL_SIZE_NORMAL)?"normal":"large",
+ 				 file,
+ 				 NULL);
+@@ -1125,8 +1130,13 @@
+ 	g_assert (digest_len == 16);
+ 
+ 	file = g_strconcat (g_checksum_get_string (checksum), ".png", NULL);
++#if GLIB_CHECK_VERSION (2, 34, 0)
++	path = g_build_filename (g_get_user_cache_dir (),
++				"thumbnails/fail",
++#else
+ 	path = g_build_filename (g_get_home_dir (),
+ 				 ".thumbnails/fail",
++#endif
+ 				 appname,
+ 				 file,
+ 				 NULL);
+@@ -1402,8 +1412,13 @@
+ 
+   res = FALSE;
+ 
++#if GLIB_CHECK_VERSION (2, 34, 0)
++  thumbnail_dir = g_build_filename (g_get_user_cache_dir (),
++				    "thumbnails",
++#else
+   thumbnail_dir = g_build_filename (g_get_home_dir (),
+ 				    ".thumbnails",
++#endif
+ 				    NULL);
+   if (!g_file_test (thumbnail_dir, G_FILE_TEST_IS_DIR))
+     {
+@@ -1436,8 +1451,13 @@
+ 
+   res = FALSE;
+ 
++#if GLIB_CHECK_VERSION (2, 34, 0)
++  thumbnail_dir = g_build_filename (g_get_user_cache_dir (),
++				    "thumbnails",
++#else
+   thumbnail_dir = g_build_filename (g_get_home_dir (),
+ 				    ".thumbnails",
++#endif
+ 				    NULL);
+   if (!g_file_test (thumbnail_dir, G_FILE_TEST_IS_DIR))
+     {
+@@ -1510,8 +1530,13 @@
+ 
+   file = g_strconcat (g_checksum_get_string (checksum), ".png", NULL);
+ 
++#if GLIB_CHECK_VERSION (2, 34, 0)
++  path = g_build_filename (g_get_user_cache_dir (),
++			   "thumbnails",
++#else
+   path = g_build_filename (g_get_home_dir (),
+ 			   ".thumbnails",
++#endif
+ 			   (priv->size == GNOME_DESKTOP_THUMBNAIL_SIZE_NORMAL)?"normal":"large",
+ 			   file,
+ 			   NULL);
+@@ -1614,8 +1639,13 @@
+ 
+   file = g_strconcat (g_checksum_get_string (checksum), ".png", NULL);
+ 
++#if GLIB_CHECK_VERSION (2, 34, 0)
++  path = g_build_filename (g_get_user_cache_dir (),
++			   "thumbnails/fail",
++#else
+   path = g_build_filename (g_get_home_dir (),
+ 			   ".thumbnails/fail",
++#endif
+ 			   appname,
+ 			   file,
+ 			   NULL);
+@@ -1706,8 +1736,13 @@
+   file = g_strconcat (md5, ".png", NULL);
+   g_free (md5);
+ 
++#if GLIB_CHECK_VERSION (2, 34, 0)
++  path = g_build_filename (g_get_user_cache_dir (),
++			   "thumbnails",
++#else
+   path = g_build_filename (g_get_home_dir (),
+ 			   ".thumbnails",
++#endif
+ 			   (size == GNOME_DESKTOP_THUMBNAIL_SIZE_NORMAL)?"normal":"large",
+ 			   file,
+ 			   NULL);
+--- gthumb-2.14.4/gthumb/gth-thumb-loader.c	Sun Apr 29 12:24:18 2012
++++ gthumb-2.14.4/gthumb/gth-thumb-loader.c	Fri Apr 11 16:49:40 2014
+@@ -494,7 +494,11 @@
+ 	char     *cache_base_uri;
+ 	gboolean  result;
+ 
++#if GLIB_CHECK_VERSION (2, 34, 0)
++	cache_base_uri = g_strconcat (g_get_user_cache_dir (), "thumbnails", NULL);
++#else
+ 	cache_base_uri = g_strconcat (get_home_uri (), "/.thumbnails", NULL);
++#endif
+ 	result = _g_uri_parent_of_uri (cache_base_uri, uri);
+ 
+ 	g_free (cache_base_uri);
