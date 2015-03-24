@@ -1,0 +1,34 @@
+--- gvfs-1.6.7/daemon/gvfsbackend.c.orig	Fri Apr 11 18:15:41 2014
++++ gvfs-1.6.7/daemon/gvfsbackend.c	Fri Apr 11 18:17:49 2014
+@@ -457,8 +457,14 @@
+   basename = g_strconcat (g_checksum_get_string (checksum), ".png", NULL);
+   g_checksum_free (checksum);
+ 
++#if GLIB_CHECK_VERSION (2, 34, 0)
++  filename = g_build_filename (g_get_user_cache_dir (),
++				"thumbnails",
++#else
+   filename = g_build_filename (g_get_home_dir (),
+-                               ".thumbnails", "normal", basename,
++				".thumbnails",
++#endif
++				"normal", basename,
+                                NULL);
+ 
+   if (g_file_test (filename, G_FILE_TEST_IS_REGULAR))
+@@ -466,8 +472,14 @@
+   else
+     {
+       g_free (filename);
++#if GLIB_CHECK_VERSION (2, 34, 0)
++      filename = g_build_filename (g_get_user_cache_dir (),
++                                "thumbnails",
++#else
+       filename = g_build_filename (g_get_home_dir (),
+-                                   ".thumbnails", "fail",
++                                   ".thumbnails",
++#endif
++                                   "fail",
+                                    "gnome-thumbnail-factory",
+                                    basename,
+                                    NULL);
