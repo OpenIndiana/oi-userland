@@ -1,0 +1,147 @@
+--- id3lib-3.8.3.orig/configure.in	Fri Sep 25 17:57:49 2009
++++ id3lib-3.8.3/configure.in	Fri Sep 25 18:03:13 2009
+@@ -222,12 +222,11 @@
+ AC_LANG_CPLUSPLUS
+ AC_CHECK_HEADERS(libcw/sys.h)
+ AC_CHECK_HEADERS(cctype climits cstdio cstdlib bitset cstring)
+-AC_CHECK_HEADERS(fstream iostream iomanip vector \
++AC_CHECK_HEADERS(fstream iostream vector \
+ 	,,AC_MSG_ERROR([Missing a vital header file for id3lib - download them here: http://gcc.gnu.org/libstdc++/ or better - compile a newer compiler like gcc3.x])
+ )
+ AC_CHECK_HEADERS(               \
+   string                        \
+-  iomanip.h                     \
+   ,,AC_MSG_ERROR([Missing a vital header file for id3lib])
+ )
+
+--- id3lib3.8.3-3.8.3.orig/include/id3/writers.h
++++ id3lib3.8.3-3.8.3/include/id3/writers.h
+@@ -30,7 +30,7 @@
+ 
+ #include "id3/writer.h"
+ #include "id3/id3lib_streams.h"
+-//#include <string.h>
++#include <cstring>
+ 
+ class ID3_CPP_EXPORT ID3_OStreamWriter : public ID3_Writer
+ {
+--- id3lib3.8.3-3.8.3.orig/include/id3/id3lib_strings.h
++++ id3lib3.8.3-3.8.3/include/id3/id3lib_strings.h
+@@ -30,6 +30,7 @@
+ #define _ID3LIB_STRINGS_H_
+ 
+ #include <string>
++#include <cstring>
+ 
+ #if (defined(__GNUC__) && (__GNUC__ >= 3) || (defined(_MSC_VER) && _MSC_VER > 1000))
+ namespace std
+--- id3lib3.8.3-3.8.3.orig/src/io_helpers.cpp
++++ id3lib3.8.3-3.8.3/src/io_helpers.cpp
+@@ -363,11 +363,22 @@
+     // Write the BOM: 0xFEFF
+     unicode_t BOM = 0xFEFF;
+     writer.writeChars((const unsigned char*) &BOM, 2);
++    // Patch from Spoon : 2004-08-25 14:17
++    //   http://sourceforge.net/tracker/index.php?func=detail&aid=1016290&group_id=979&atid=300979
++    // Wrong code
++    //for (size_t i = 0; i < size; i += 2)
++    //{
++    //  unicode_t ch = (data[i] << 8) | data[i+1];
++    //  writer.writeChars((const unsigned char*) &ch, 2);
++    //}
++    // Right code
++    unsigned char *pdata = (unsigned char *) data.c_str();
+     for (size_t i = 0; i < size; i += 2)
+     {
+-      unicode_t ch = (data[i] << 8) | data[i+1];
++      unicode_t ch = (pdata[i] << 8) | pdata[i+1];
+       writer.writeChars((const unsigned char*) &ch, 2);
+     }
++    // End patch
+   }
+   return writer.getCur() - beg;
+ }
+--- id3lib3.8.3-3.8.3.orig/src/tag_file.cpp
++++ id3lib3.8.3-3.8.3/src/tag_file.cpp
+@@ -242,8 +242,8 @@
+     strcpy(sTempFile, filename.c_str());
+     strcat(sTempFile, sTmpSuffix.c_str());
+ 
+-#if ((defined(__GNUC__) && __GNUC__ >= 3  ) || !defined(HAVE_MKSTEMP))
+-    // This section is for Windows folk && gcc 3.x folk
++#if !defined(HAVE_MKSTEMP)
++    // This section is for Windows folk
+     fstream tmpOut;
+     createFile(sTempFile, tmpOut);
+ 
+@@ -257,7 +257,7 @@
+       tmpOut.write((char *)tmpBuffer, nBytes);
+     }
+ 
+-#else //((defined(__GNUC__) && __GNUC__ >= 3  ) || !defined(HAVE_MKSTEMP))
++#else //!defined(HAVE_MKSTEMP)
+ 
+     // else we gotta make a temp file, copy the tag into it, copy the
+     // rest of the old file after the tag, delete the old file, rename
+@@ -270,7 +270,7 @@
+       //ID3_THROW_DESC(ID3E_NoFile, "couldn't open temp file");
+     }
+ 
+-    ofstream tmpOut(fd);
++    ofstream tmpOut(sTempFile);
+     if (!tmpOut)
+     {
+       tmpOut.close();
+@@ -292,7 +292,7 @@
+ 
+     close(fd); //closes the file
+ 
+-#endif ////((defined(__GNUC__) && __GNUC__ >= 3  ) || !defined(HAVE_MKSTEMP))
++#endif ////!defined(HAVE_MKSTEMP)
+ 
+     tmpOut.close();
+     file.close();
+--- id3lib3.8.3-3.8.3.orig/examples/demo_convert.cpp
++++ id3lib3.8.3-3.8.3/examples/demo_convert.cpp
+@@ -84,7 +84,7 @@
+   }
+ }
+ 
+-int main( unsigned int argc, char * const argv[])
++int main(int argc, char * const argv[])
+ {
+   flags_t ulFlag = ID3TT_ALL;
+   gengetopt_args_info args;
+--- id3lib3.8.3-3.8.3.orig/examples/demo_copy.cpp
++++ id3lib3.8.3-3.8.3/examples/demo_copy.cpp
+@@ -81,7 +81,7 @@
+   }
+ }
+ 
+-int main( unsigned int argc, char * const argv[])
++int main(int argc, char * const argv[])
+ {
+   int ulFlag = ID3TT_ID3;
+   ID3D_INIT_DOUT();
+--- id3lib3.8.3-3.8.3.orig/examples/demo_info.cpp
++++ id3lib3.8.3-3.8.3/examples/demo_info.cpp
+@@ -309,7 +309,7 @@
+ 
+ #define DEBUG
+ 
+-int main( unsigned int argc, char * const argv[])
++int main(int argc, char * const argv[])
+ {
+   ID3D_INIT_DOUT();
+ 
+--- id3lib3.8.3-3.8.3.orig/examples/demo_tag.cpp
++++ id3lib3.8.3-3.8.3/examples/demo_tag.cpp
+@@ -46,7 +46,7 @@
+     os << "v2";
+ }
+ 
+-int main( unsigned int argc, char * const argv[])
++int main(int argc, char * const argv[])
+ {
+   int ulFlag = ID3TT_ID3;
+   ID3D_INIT_DOUT();
