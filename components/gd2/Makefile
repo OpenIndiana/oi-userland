@@ -27,12 +27,10 @@ COMPONENT_VERSION=      2.0.35
 COMPONENT_SRC_NAME=	gd
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  http://www.libgd.org/
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-# this is the hash of the payload because it appears to be re-compressed
-# periodically causing it to have a new hash value.
+COMPONENT_ARCHIVE=      gd-$(COMPONENT_VERSION).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-    sha256:44bd0819b64a2341fb800abbe99f23c7f6388327c71e1f5bd5ed7874a8cc0e49
-COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)releases/$(COMPONENT_ARCHIVE)
+    sha256:bf222490749d2a9a9ac3593b01eb55aed98461ff81202414707f61b42aa300f9
+COMPONENT_ARCHIVE_URL=  http://pkgs.fedoraproject.org/repo/pkgs/gd/$(COMPONENT_ARCHIVE)/6c6c3dbb7bf079e0bb5fbbfd3bb8a71c/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/gd2
 
 include ../../make-rules/prep.mk
@@ -40,17 +38,16 @@ include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 include ../../make-rules/lint-libraries.mk
 
-PKG_CONFIG_PATH_32 = /usr/lib/pkgconfig
-PKG_CONFIG_PATH_64 = /usr/lib/$(MACH64)/pkgconfig
-
 PATCH_LEVEL = 0
 
 CFLAGS += $(CPP_LARGEFILES)
 CPPFLAGS += $(CPP_LARGEFILES)
 
-CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
+# Needed for "gmake test" to work.
+COMPONENT_PRE_CONFIGURE_ACTION = \
+	($(CLONEY) $(SOURCE_DIR) $(@D))
+
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
-CONFIGURE_ENV += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH_$(BITS))"
 
 CONFIGURE_OPTIONS  +=           --includedir=$(CONFIGURE_INCLUDEDIR)/gd2
 CONFIGURE_OPTIONS  +=           --disable-static
@@ -60,14 +57,18 @@ CONFIGURE_OPTIONS  +=           --with-pic
 
 COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -if)
 
+COMPONENT_TEST_CMD = \
+	cmake -DBUILD_TEST=1 .; \
+	(cd $(@D)/tests; gmake); \
+	ctest .
+COMPONENT_TEST_TARGETS =
+
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
 
-test: 	$(NO_TESTS)
-	@echo "There is no test harness for libgd2."
-	@echo "Test programs must be run manually and their output"
-	@echo "should be visually inspected."
+# gdimageline_aa fails
+test: 	$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
