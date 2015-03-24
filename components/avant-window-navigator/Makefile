@@ -16,6 +16,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           avant-window-navigator
 COMPONENT_VERSION=        0.3.2.1
+COMPONENT_REVISION=       1
 COMPONENT_PROJECT_URL=    https://launchpad.net/awn
 COMPONENT_SUMMARY=        Avant Window Navigator - fully customizable dock-like navigator
 COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)

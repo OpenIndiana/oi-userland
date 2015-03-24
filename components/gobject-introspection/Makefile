@@ -17,14 +17,14 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gobject-introspection
 
-COMPONENT_VERSION= 0.10.8
+COMPONENT_VERSION= 1.34.2
 COMPONENT_SUMMARY= Introspection for GObject libraries
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:5b1387ff37f03db880a2b1cbd6c6b6dfb923a29468d4d8367c458abf7704c61e
+  sha256:bc7948a35ce2218922dfb0806679cad21060715cc0c340cf7823eb633cc03429
 COMPONENT_ARCHIVE_URL= \
-  ftp://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/0.10/$(COMPONENT_ARCHIVE)
+  ftp://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/1.34/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://live.gnome.org/GObjectIntrospection
 
 include ../../make-rules/prep.mk

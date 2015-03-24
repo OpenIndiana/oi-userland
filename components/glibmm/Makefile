@@ -18,7 +18,7 @@ include ../../make-rules/shared-macros.mk
 COMPONENT_NAME= glibmm
 
 COMPONENT_VERSION= 2.28.2
-COMPONENT_REVISION= 2
+COMPONENT_REVISION= 3
 COMPONENT_SUMMARY= glibmm - C++ Wrapper for the Glib2 Library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -31,6 +31,8 @@ COMPONENT_PROJECT_URL = http://www.gtkmm.org/
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
+
+COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f)
 
 PATH=/usr/gnu/bin:/usr/bin
 
