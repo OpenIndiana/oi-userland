@@ -24,7 +24,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		harfbuzz
 COMPONENT_VERSION=	0.9.38
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_FMRI=     	library/c++/harfbuzz
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -43,9 +43,11 @@ include $(WS_TOP)/make-rules/ips.mk
 CONFIGURE_OPTIONS+=	--enable-shared
 CONFIGURE_OPTIONS+=	--disable-static
 # OI's glib is too ancient, at least 2.36 is required.
-CONFIGURE_OPTIONS+=	--with-glib=no
+# CONFIGURE_OPTIONS+=	--with-glib=no
 CONFIGURE_OPTIONS+=	--with-graphite2=yes
 CONFIGURE_OPTIONS+=	--with-freetype=yes
+
+LDFLAGS += -lm
 
 build: $(BUILD_32_and_64)
 
