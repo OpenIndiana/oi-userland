@@ -24,6 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		evas_generic_loaders
 COMPONENT_VERSION=	1.12.0
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=     	library/e/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -38,6 +39,12 @@ COMPONENT_SUMMARY=      Enlightenment - Evas external binary executable loaders
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
+
+COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
+					libtoolize --copy --force &&\
+					aclocal -I m4 &&\
+					automake -c -f -a &&\
+					autoconf )
 
 
 CONFIGURE_OPTIONS+=	--enable-poppler
