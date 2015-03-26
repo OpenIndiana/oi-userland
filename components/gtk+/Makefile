@@ -17,13 +17,12 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gtk+
 
-COMPONENT_VERSION= 2.24.25
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 2.24.27
 COMPONENT_SUMMARY= GTK+ - GIMP Toolkit Library for creation of graphical user interfaces
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:38af1020cb8ff3d10dda2c8807f11e92af9d2fa4045de61c62eedb7fbc7ea5b3
+  sha256:20cb10cae43999732a9af2e9aac4d1adebf2a9c2e1ba147050976abca5cd24f4
 COMPONENT_ARCHIVE_URL= \
   http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.24/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gtk.org/
