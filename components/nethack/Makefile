@@ -54,15 +54,28 @@ COMPONENT_INSTALL_ARGS += CHOWN=true
 COMPONENT_INSTALL_ARGS += CHGRP=true
 COMPONENT_INSTALL_ARGS += ROOT=$(PROTO_DIR)
 
+# Nethack's build infrastructure doesn't let you easily override CFLAGS.
+# Luckily, all the source files live in the same location relative to the
+# include directory, so we can just stuff a -I into CFLAGS matching what's
+# there in the Makefiles.  And we have to force this to be overridden by
+# putting -e into MAKEFLAGS.
 COMPONENT_BUILD_ENV += CC=$(CC)
+COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS) -I../include"
+COMPONENT_BUILD_ENV += LFLAGS="$(CC_BITS)"
+COMPONENT_BUILD_ENV += MAKEFLAGS=-e
 COMPONENT_INSTALL_ENV += CC=$(CC)
+COMPONENT_INSTALL_ENV += CFLAGS="$(CFLAGS) -I../include"
+COMPONENT_INSTALL_ENV += LFLAGS="$(CC_BITS)"
+COMPONENT_INSTALL_ENV += MAKEFLAGS=-e
 
 PKG_PROTO_DIRS += $(COMPONENT_SRC)/doc
 
-# common targets
-build:		$(BUILD_32)
+ASLR_MODE = $(ASLR_ENABLE)
 
-install:	$(INSTALL_32)
+# common targets
+build:		$(BUILD_64)
+
+install:	$(INSTALL_64)
 	sed -e 's/^!\(NetHack.tomb\)/\1/' -e 's/^!\(NetHack.pet\)/\1/' \
 		-e 's/^!\(NetHack.tile_file\)/\1/' \
 		$(COMPONENT_SRC)/win/X11/NetHack.ad \
