@@ -17,7 +17,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= yelp-webkit
 COMPONENT_VERSION= 2.30.2
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= The GNOME Help Browser
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -32,6 +32,7 @@ include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
 CXXFLAGS+= -std=gnu++0x
+LDFLAGS+= -lgthread-2.0
 
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --localstatedir=/var/lib
