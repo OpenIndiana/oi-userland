@@ -15,13 +15,13 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		drivel
-COMPONENT_VERSION=	3.0.3
+COMPONENT_VERSION=	3.0.5
 COMPONENT_PROJECT_URL=	http://drivel.sourceforge.net/
 COMPONENT_SUMMARY=	Drivel is a GNOME client for editing blog
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:73f66b7fe20c077cde06e164169e795ab65b38362b82e89dae3207c0d18f6404
+    sha256:71b4af2552c22124a20e0b40958103f41beb3cb591b7b7e0c184e2817554a3fb
 COMPONENT_ARCHIVE_URL=	http://prdownloads.sourceforge.net/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 
 include $(WS_TOP)/make-rules/prep.mk
