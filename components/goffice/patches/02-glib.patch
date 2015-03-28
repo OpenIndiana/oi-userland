@@ -1,0 +1,13 @@
+Fixes configure test, which fails with #error "Only <glib.h> can be included directly."
+
+--- goffice-0.8.17/configure.in.~1~	2015-03-28 05:32:33.870902115 +0300
++++ goffice-0.8.17/configure.in	2015-03-28 05:41:11.042565220 +0300
+@@ -493,7 +493,7 @@
+ CFLAGS="$CFLAGS $GOFFICE_CFLAGS"
+ LIBS="$GOFFICE_LIBS $LIBS"
+ AC_MSG_CHECKING([for G_REGEX_ERROR_STRAY_BACKSLASH])
+-AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <glib/gregex.h>]], [[GRegexError error=G_REGEX_ERROR_STRAY_BACKSLASH;]])],
++AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <glib.h>]], [[GRegexError error=G_REGEX_ERROR_STRAY_BACKSLASH;]])],
+                [AC_DEFINE(HAVE_G_REGEX_ERROR_STRAY_BACKSLASH, 1, [Define if G_REGEX_ERROR_STRAY_BACKSLASH is defined])
+ 	        glib_has_G_REGEX_ERROR_STRAY_BACKSLASH=yes
+                 AC_MSG_RESULT(yes)],
