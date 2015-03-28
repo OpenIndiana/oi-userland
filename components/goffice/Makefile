@@ -16,6 +16,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		goffice
 COMPONENT_VERSION=	0.8.17
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	goffice - Document centric set of APIs
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
