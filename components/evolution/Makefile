@@ -16,6 +16,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		evolution
 COMPONENT_VERSION=	2.32.3
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://projects.gnome.org/evolution/
 COMPONENT_SUMMARY=	Evolution Email and Calendar
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -45,6 +46,7 @@ CONFIGURE_SCRIPT=       $(@D)/configure
 gcc_OPT		= -O2
 
 LDFLAGS+=       -L/usr/lib/mps -R/usr/lib/mps
+LDFLAGS+=	-lgmodule-2.0 -lgthread-2.0
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib
