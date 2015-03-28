@@ -50,8 +50,7 @@ COMPONENT_PREP_ACTION = \
 COMPONENT_PRE_CONFIGURE_ACTION = \
         ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-#This macro will help to look for the configure 
-#file at the pointed location 
+# Look for the configure file at the pointed location.
 CONFIGURE_SCRIPT = $(SOURCE_DIR)/unix/configure
 
 CFLAGS += $(studio_XREGS) -xstrconst $(XPG6MODE) $(studio_C99_ENABLE)
@@ -62,18 +61,16 @@ CONFIGURE_OPTIONS	+= --enable-man-symlinks
 CONFIGURE_OPTIONS	+= --enable-threads
 CONFIGURE_OPTIONS.64	+= --enable-64bit
 
-# Results differ slightly between ISAs and bitnesses.
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(BITS).$(MACH).master
+COMPONENT_TEST_ENV	+= "TZ=GMT"
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_TARGETS = test
-COMPONENT_TEST_TRANSFORMS += \
-	'-e "s|^.*$(CC).*$$|XXX_CC_XXX|"' \
-	'-e "/^XXX_CC_XXX$$/d"' \
-	'-e "/^Tests began at .*$$/d"' \
-	'-e "/^Tests ended at .*$$/d"'
+# We skip until the beginning (append.test), read until a flaky text
+# (httpold.test), resume with the next (if-old.test), then stop at end time.
+COMPONENT_TEST_TRANSFORMER =    $(NAWK)
+COMPONENT_TEST_TRANSFORMS =     "'/append.test/ {results = 1}; /httpold.test/ {results = 0}; /if-old.test/ {results = 1}; /Tests ended at/ {results = 0}; {if (results) print $0 } '"
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-# common targets
 configure:	$(CONFIGURE_32_and_64)
 
 build:		$(BUILD_32_and_64)
@@ -87,7 +84,6 @@ $(PROTOUSRLIBDIR)/tclConfig.sh:		$(INSTALL_32)
 					$(CHMOD) 555 $(PROTOUSRLIBDIR)/tclConfig.sh
 
 test: 		$(TEST_32_and_64)
-
 
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
