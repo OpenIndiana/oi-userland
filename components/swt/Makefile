@@ -16,6 +16,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		swt
 COMPONENT_VERSION=	3.8.2
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      Standard Widget Toolkit
 COMPONENT_PROJECT_URL=	http://www.eclipse.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-gtk-solaris-x86
