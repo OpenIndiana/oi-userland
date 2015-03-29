@@ -1,0 +1,61 @@
+--- cairo-1.12.2/test/Makefile.am-orig	2012-04-30 08:16:23.161101505 -0500
++++ cairo-1.12.2/test/Makefile.am	2012-04-30 08:22:07.331866211 -0500
+@@ -94,10 +94,6 @@ cairo_test_suite_DEPENDENCIES = \
+ 	$(top_builddir)/test/pdiff/libpdiff.la 			\
+         $(top_builddir)/boilerplate/libcairoboilerplate.la	\
+ 	$(top_builddir)/src/libcairo.la
+-if BUILD_ANY2PPM
+-cairo_test_suite_DEPENDENCIES += \
+-	any2ppm$(EXEEXT)
+-endif
+ 
+ if HAVE_SHM
+ EXTRA_PROGRAMS += cairo-test-trace
+@@ -306,21 +302,6 @@ png_flatten_SOURCES = png-flatten.c
+ png_flatten_LDADD = $(top_builddir)/src/libcairo.la \
+ 		    $(CAIRO_LDADD)
+ 
+-if BUILD_ANY2PPM
+-check_PROGRAMS += any2ppm
+-any2ppm_CFLAGS = $(AM_CFLAGS) $(POPPLER_CFLAGS) $(LIBRSVG_CFLAGS) $(LIBSPECTRE_CFLAGS)
+-# add LDADD, so poppler/librsvg uses "our" cairo
+-any2ppm_LDFLAGS = $(AM_LDFLAGS) $(CAIRO_TEST_UNDEFINED_LDFLAGS)
+-any2ppm_LDADD = \
+-		$(top_builddir)/util/cairo-script/libcairo-script-interpreter.la \
+-		$(top_builddir)/src/libcairo.la \
+-		$(CAIRO_LDADD) \
+-		$(CAIROBOILERPLATE_LIBS) \
+-		$(POPPLER_LIBS) \
+-		$(LIBRSVG_LIBS) \
+-		$(LIBSPECTRE_LIBS)
+-endif
+-
+ if CAIRO_CAN_TEST_PDF_SURFACE
+ check_PROGRAMS += pdf2png
+ pdf2png_CFLAGS = $(AM_CFLAGS) $(POPPLER_CFLAGS)
+@@ -341,16 +322,6 @@ svg2png_LDADD  = $(top_builddir)/src/lib
+ 		 $(LIBRSVG_LIBS)
+ endif
+ 
+-if CAIRO_HAS_SPECTRE
+-check_PROGRAMS += ps2png
+-ps2png_CFLAGS = $(AM_CFLAGS) $(LIBSPECTRE_CFLAGS)
+-# add LDADD, so ps2png uses "our" cairo
+-ps2png_LDFLAGS = $(AM_LDFLAGS) $(CAIRO_TEST_UNDEFINED_LDFLAGS)
+-ps2png_LDADD  = $(top_builddir)/src/libcairo.la \
+-		$(CAIRO_LDADD) \
+-		$(LIBSPECTRE_LIBS)
+-endif
+-
+ EXTRA_PROGRAMS += $(TESTS)
+ 
+ # Do a funny transition of CAIRO_TEST_TARGET through TARGETS such that
+--- cairo-1.12.2/util/cairo-missing/getline.c-orig	2012-05-01 01:40:57.578652077 -0500
++++ cairo-1.12.2/util/cairo-missing/getline.c	2012-05-01 01:41:31.649930767 -0500
+@@ -87,4 +87,6 @@ getline (char	**lineptr,
+     return ret;
+ }
+ #undef GETLINE_BUFFER_SIZE
++#else
++int cairo_missing_getline_dummy;
+ #endif
