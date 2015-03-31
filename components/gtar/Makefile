@@ -38,9 +38,6 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-# workaround for CR 6998994
-sparc_COPTFLAG = -xO2
-
 # Enforce tar binary to standard path
 CONFIGURE_BINDIR.64 = $(CONFIGURE_PREFIX)/bin
 
@@ -52,6 +49,10 @@ CONFIGURE_OPTIONS +=	--libexecdir=/usr/sbin
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)" 
 
 COMPONENT_BUILD_TARGETS = all
+
+# Remove differences between 'gmake test' and 'gmake build test'.
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "/make  genfile/,/Leaving directory/d"'
 
 ASLR_MODE = $(ASLR_ENABLE)
 
