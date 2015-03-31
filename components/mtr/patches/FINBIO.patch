@@ -1,0 +1,33 @@
+This fixes an upstream bug:
+
+    https://github.com/traviscross/mtr/issues/35
+
+The patch is from
+
+    https://bugs.launchpad.net/mtr/+bug/1273486/comments/5
+
+--- mtr-0.86/net.c	2014-12-09 03:20:57.000000000 -0800
++++ mtr-0.86/net.c	2015-03-20 09:43:55.576572132 -0700
+@@ -301,7 +301,7 @@ void net_send_tcp(int index)
+ void net_send_tcp(int index)
+ {
+   int ttl, s;
+-  int opt = 1;
++  int flags;
+   int port;
+   struct sockaddr_storage local;
+   struct sockaddr_storage remote;
+@@ -354,10 +354,10 @@ void net_send_tcp(int index)
+     exit(EXIT_FAILURE);
+   }
+ 
+-  opt = 1;
+-  if (ioctl(s, FIONBIO, &opt)) {
++  flags = fcntl(s, F_GETFL, 0);
++  if (fcntl(s, F_SETFL, flags | O_NONBLOCK) == -1) {
+     display_clear();
+-    perror("ioctl FIONBIO");
++    perror("fcntl F_SETFL(O_NONBLOCK)");
+     exit(EXIT_FAILURE);
+   }
+ 
