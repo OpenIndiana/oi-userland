@@ -34,7 +34,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:48ece32f8f1b4c20acedfcaefd5d66f0ab8818ae6f994ab7c02da7f42e6d77ba
 COMPONENT_ARCHIVE_URL=	http://search.cpan.org/CPAN/authors/id/M/MI/MIKEM/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	perl-mod/net-ssleay
-
+TPNO=			21963
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/makemaker.mk

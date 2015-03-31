@@ -34,6 +34,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:8662103905aba2debfe36e378fb3130e4b0367eb4d271ac851317dc2b8deea90
 COMPONENT_ARCHIVE_URL=	http://search.cpan.org/CPAN/authors/id/M/ML/MLFISHER/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/perl-pmtools
+TPNO=			21964
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/makemaker.mk
