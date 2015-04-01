@@ -1,8 +1,9 @@
 Patch origin: in-house
 Patch status: Solaris-specific; not suitable for upstream
+Patch status: SSLProtocol part will be submitted to upstream
 
---- docs/conf/extra/httpd-ssl.conf.in	Wed Jan  4 12:10:40 2012
-+++ docs/conf/extra/httpd-ssl.conf.in	Mon Feb 27 07:09:48 2012
+--- docs/conf/extra/httpd-ssl.conf.in
++++ docs/conf/extra/httpd-ssl.conf.in
 @@ -22,11 +22,16 @@
  # Manual for more details.
  #
@@ -31,3 +32,15 @@ Patch status: Solaris-specific; not suitable for upstream
  ServerAdmin you@example.com
  ErrorLog "@exp_logfiledir@/error_log"
  TransferLog "@exp_logfiledir@/access_log"
+@@ -86,8 +91,9 @@
+ 
+ #   SSL Protocol support:
+ #   List the protocol versions which clients are allowed to
+-#   connect with. Disable SSLv2 by default (cf. RFC 6176).
+-SSLProtocol all -SSLv2
++#   connect with. SSLv2 and SSLv3 are disabled by default and
++#   and must be enabled below if really needed.
++SSLProtocol all
+ 
+ #   SSL Cipher Suite:
+ #   List the ciphers that the client is permitted to negotiate.

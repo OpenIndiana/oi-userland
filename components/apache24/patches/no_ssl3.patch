@@ -1,0 +1,43 @@
+Patch origin: in-house
+Patch status: will be submitted to upstream
+
+--- modules/ssl/ssl_private.h
++++ modules/ssl/ssl_private.h
+@@ -298,10 +298,10 @@
+ #ifdef HAVE_TLSV1_X
+ #define SSL_PROTOCOL_TLSV1_1 (1<<3)
+ #define SSL_PROTOCOL_TLSV1_2 (1<<4)
+-#define SSL_PROTOCOL_ALL   (SSL_PROTOCOL_SSLV3|SSL_PROTOCOL_TLSV1| \
++#define SSL_PROTOCOL_ALL   (SSL_PROTOCOL_TLSV1| \
+                             SSL_PROTOCOL_TLSV1_1|SSL_PROTOCOL_TLSV1_2)
+ #else
+-#define SSL_PROTOCOL_ALL   (SSL_PROTOCOL_SSLV3|SSL_PROTOCOL_TLSV1)
++#define SSL_PROTOCOL_ALL   (SSL_PROTOCOL_TLSV1)
+ #endif
+ typedef int ssl_proto_t;
+ 
+--- docs/manual/mod/mod_ssl.html.en
++++ docs/manual/mod/mod_ssl.html.en
+@@ -1348,9 +1348,7 @@
+ 
+ <li><code>all</code>
+     <p>
+-    This is a shortcut for ``<code>+SSLv3 +TLSv1</code>'' or
+-    - when using OpenSSL 1.0.1 and later -
+-    ``<code>+SSLv3 +TLSv1 +TLSv1.1 +TLSv1.2</code>, respectively.</p></li>
++    This is a shortcut for ``<code>+TLSv1 +TLSv1.1 +TLSv1.2</code>''.</p></li>
+ </ul>
+ <div class="example"><h3>Example</h3><pre class="prettyprint lang-config">SSLProtocol TLSv1</pre>
+ </div>
+--- docs/manual/mod/mod_ssl.html.fr
++++ docs/manual/mod/mod_ssl.html.fr
+@@ -1518,8 +1518,7 @@
+ 
+ <li><code>all</code>
+     <p>
+-    C'est un raccourci pour ``<code>+SSLv3 +TLSv1</code>'' ou - à partir
+-    de la version 1.0.1 d'OpenSSL - ``<code>+SSLv3 +TLSv1 +TLSv1.1 +TLSv1.2</code>.</p></li>
++    C'est un raccourci pour ``<code>+TLSv1 +TLSv1.1 +TLSv1.2</code>''.</p></li>
+ </ul>
+ <div class="example"><h3>Exemple</h3><pre class="prettyprint lang-config">SSLProtocol TLSv1</pre>
+ </div>
