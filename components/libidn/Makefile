@@ -64,9 +64,25 @@ CFLAGS += $(CPP_POSIX)
 CFLAGS += $(CPP_C99_EXTENDED_MATH)
 CFLAGS += $(studio_PIC)
 
+COMPONENT_TEST_MASTER = \
+	$(COMPONENT_TEST_RESULTS_DIR)/results-libidn.master
+
 COMPONENT_TEST_TRANSFORMS += \
      '-e "/libtool/d"' \
      '-e "/warning:/d"' \
+     '-e "/Generat/d"' \
+     '-e "/Creat/d"' \
+     '-e "/Compos/d"' \
+     '-e "/Writ/d"' \
+     '-e "/Read/d"' \
+     '-e "/from/d"' \
+     '-e "/--run/d"' \
+     '-e "/rm -f/d"' \
+     '-e "/Nothing/d"' \
+     '-e "/Leaving/d"' \
+     '-e "/Entering/d"' \
+     '-e "/Making/d"' \
+     '-e "/make/d"' \
      '-e "/-m32/d"' \
      '-e "/-m64/d"' \
      '-e "/DEPDIR/d"' \
