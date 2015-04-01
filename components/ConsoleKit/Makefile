@@ -16,6 +16,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ConsoleKit
 COMPONENT_VERSION=	0.4.1
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.freedesktop.org/wiki/Software/ConsoleKit
 COMPONENT_SUMMARY=	Framework for tracking users, login sessions, and seats
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -46,6 +47,7 @@ COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib
+CONFIGURE_OPTIONS+=	--localstatedir=/var
 CONFIGURE_OPTIONS+=	--enable-pam-module
 CONFIGURE_OPTIONS+=	--with-pam-module-dir=/usr/lib/security
 CONFIGURE_OPTIONS+=	--with-pam-module-dir=/usr/lib/security
