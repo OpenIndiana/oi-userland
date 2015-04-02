@@ -33,6 +33,7 @@ from neutron.plugins.evs.migrate import havana_api
 
 import sqlalchemy as sa
 from sqlalchemy import MetaData
+from sqlalchemy.orm import sessionmaker
 from sqlalchemy.schema import DropConstraint
 from sqlalchemy import sql
 
@@ -41,14 +42,17 @@ from oslo.db import options as db_options
 from oslo.db import exception as excp
 
 
-def create_db_network(nw, engine):
+def create_db_network(nw, engine, ext_ro):
     ''' Method for creating networks table in the neutron-server DB
         Input params:
         @nw - Dictionary with values from EVS DB
+        @engine - SQL engine
+        @ext_ro - External router
     '''
-    # Importing locally because this module ends up importing neutron.wsgi
+    # Importing locally because these modules end up importing neutron.wsgi
     # which causes RAD to hang
     from neutron.db import db_base_plugin_v2
+    from neutron.db import external_net_db as ext_net
     model_base.BASEV2.metadata.bind = engine
     model_base.BASEV2.metadata.create_all(engine)
     ctxt = ctx.get_admin_context()
@@ -57,6 +61,13 @@ def create_db_network(nw, engine):
     try:
         db_base_plugin_v2.NeutronDbPluginV2.create_network(inst, ctxt, nw)
         print "\nnetwork=%s added" % nw['network']['name']
+        if ext_ro:
+            ext_nw = ext_net.ExternalNetwork(network_id=nw['network']['id'])
+            session = sessionmaker()
+            session.configure(bind=engine)
+            s = session()
+            s.add(ext_nw)
+            s.commit()
     except excp.DBDuplicateEntry:
         print "\nnetwork '%s' already exists" % nw['network']['name']
         dup = True
@@ -139,8 +150,13 @@ def main():
                             max_overflow=20, pool_timeout=10)
 
     neutron_engine = sa.create_engine(SQL_CONNECTION)
+    router_port_ids = {}
 
     for e in evsinfo:
+        ext_ro = False
+        for p in e.props:
+            if p.name == 'OpenStack:router:external' and p.value == 'True':
+                ext_ro = True
         # Populate networks table
         n = {
             'tenant_id': e.tenantname,
@@ -151,7 +167,7 @@ def main():
             'shared': False
             }
         nw = {'network': n}
-        dup = create_db_network(nw, neutron_engine)
+        dup = create_db_network(nw, neutron_engine, ext_ro)
         if dup:
             continue  # No need to iterate over subnets and ports
 
@@ -221,6 +237,9 @@ def main():
             for v in j.props:
                 if v.name == 'OpenStack:device_owner':
                     device_owner = v.value
+                    if v.value in ('network:router_interface',
+                                   'network:router_gateway'):
+                        router_port_ids[j.uuid] = v.value
                 elif v.name == 'OpenStack:device_id':
                     device_id = v.value
                 elif v.name == 'macaddr':
@@ -309,6 +328,7 @@ def main():
                 'id': r['id'],
                 'name': r['name'],
                 'admin_state_up': r['admin_state_up'],
+                'gw_port_id': r['gw_port_id'],
                 'status': 'ACTIVE'
                 }
 
@@ -365,9 +385,17 @@ def main():
                                      tenant_id=r['tenant_id'],
                                      name=rt['name'],
                                      admin_state_up=rt['admin_state_up'],
+                                     gw_port_id=rt['gw_port_id'],
                                      status="ACTIVE")
             ctxt.session.add(router_db)
             print "\nrouter=%s updated" % rt['name']
+        with ctxt.session.begin(subtransactions=True):
+            for i, j in router_port_ids.iteritems():
+                router_port = l3_db.RouterPort(
+                    port_id=i,
+                    router_id=router_id,
+                    port_type=j)
+                ctxt.session.add(router_port)
 
     if floatingips:
         ctxt = ctx.get_admin_context()
