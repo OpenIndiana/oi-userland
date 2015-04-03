@@ -194,7 +194,10 @@ $(BUILD_DIR_32)/llib-lssl.ln: LINT_FLAGS=$(LFLAGS_32)
 $(BUILD_DIR_64)/llib-lcrypto.ln: LINT_FLAGS=$(LFLAGS_64)
 $(BUILD_DIR_64)/llib-lssl.ln: LINT_FLAGS=$(LFLAGS_64)
 
-test:		$(NO_TESTS)
+# There are also separate STC test suites 'openssl' and 'openssl-engine'
+# for regression testing. These internal tests are unit tests only.
+COMPONENT_TEST_TARGETS = test
+test:		$(TEST_32_and_64)
 
 
 REQUIRED_PACKAGES += developer/build/makedepend
