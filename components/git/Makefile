@@ -69,6 +69,10 @@ COMPONENT_BUILD_ENV+=	NO_PERL_MAKEMAKER=1
 COMPONENT_INSTALL_ENV+=	PERL_LIB=$(shell $(PERL) -MConfig -e 'print "$$Config{installvendorarch}"')
 COMPONENT_INSTALL_ARGS+=	INSTALL="$(INSTALL)"
 
+# get rid of terminal escape codes in test output
+COMPONENT_TEST_ENV = TERM=dumb
+# many failures; keep going; later versions of git are much cleaner
+COMPONENT_TEST_ARGS += -k -i
 COMPONENT_TEST_TARGETS = test
 
 # This runs configure but configure doesn't generate a Makefile.
