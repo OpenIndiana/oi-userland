@@ -210,11 +210,7 @@ ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # Since this is an app, and doesn't provide any public library interfaces, we
 # only need to deliver one version.  The manifest is parameterized, though.
-PYTHON_VERSIONS=	2.6
-
-# Django's manage.py needs to be run with Python 2.6, since that's what this
-# ecosystem runs under right now.
-PYTHON_VERSION=		2.6
+PYTHON_VERSIONS=	2.7
 
 PKG_MACROS +=		COMPONENT_BE_VERSION=$(COMPONENT_BE_VERSION)
 PKG_MACROS +=		PYVER=$(PYTHON_VERSIONS)
@@ -306,23 +302,23 @@ clean::
 
 
 # Packages required by Django's manage.py during the Horizon build
-REQUIRED_PACKAGES += library/python/babel-26
-REQUIRED_PACKAGES += library/python/ceilometerclient-26
-REQUIRED_PACKAGES += library/python/cinderclient-26
-REQUIRED_PACKAGES += library/python/django-26
-REQUIRED_PACKAGES += library/python/django-pyscss-26
-REQUIRED_PACKAGES += library/python/django_compressor-26
-REQUIRED_PACKAGES += library/python/django_openstack_auth-26
-REQUIRED_PACKAGES += library/python/glanceclient-26
-REQUIRED_PACKAGES += library/python/heatclient-26
-REQUIRED_PACKAGES += library/python/iso8601-26
-REQUIRED_PACKAGES += library/python/keystoneclient-26
-REQUIRED_PACKAGES += library/python/lockfile-26
-REQUIRED_PACKAGES += library/python/neutronclient-26
-REQUIRED_PACKAGES += library/python/novaclient-26
-REQUIRED_PACKAGES += library/python/oslo.config-26
-REQUIRED_PACKAGES += library/python/requests-26
-REQUIRED_PACKAGES += library/python/saharaclient-26
-REQUIRED_PACKAGES += library/python/six-26
-REQUIRED_PACKAGES += library/python/swiftclient-26
-REQUIRED_PACKAGES += library/python/troveclient-26
+REQUIRED_PACKAGES += library/python/babel-27
+REQUIRED_PACKAGES += library/python/ceilometerclient-27
+REQUIRED_PACKAGES += library/python/cinderclient-27
+REQUIRED_PACKAGES += library/python/django-27
+REQUIRED_PACKAGES += library/python/django-pyscss-27
+REQUIRED_PACKAGES += library/python/django_compressor-27
+REQUIRED_PACKAGES += library/python/django_openstack_auth-27
+REQUIRED_PACKAGES += library/python/glanceclient-27
+REQUIRED_PACKAGES += library/python/heatclient-27
+REQUIRED_PACKAGES += library/python/iso8601-27
+REQUIRED_PACKAGES += library/python/keystoneclient-27
+REQUIRED_PACKAGES += library/python/lockfile-27
+REQUIRED_PACKAGES += library/python/neutronclient-27
+REQUIRED_PACKAGES += library/python/novaclient-27
+REQUIRED_PACKAGES += library/python/oslo.config-27
+REQUIRED_PACKAGES += library/python/requests-27
+REQUIRED_PACKAGES += library/python/saharaclient-27
+REQUIRED_PACKAGES += library/python/six-27
+REQUIRED_PACKAGES += library/python/swiftclient-27
+REQUIRED_PACKAGES += library/python/troveclient-27

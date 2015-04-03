@@ -48,7 +48,7 @@ ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # Since this is an app, and doesn't provide any public library interfaces, we
 # only need to deliver one version.  The manifest is parameterized, though.
-PYTHON_VERSIONS=	2.6
+PYTHON_VERSIONS=	2.7
 
 PKG_MACROS +=		COMPONENT_BE_VERSION=$(COMPONENT_BE_VERSION)
 PKG_MACROS +=		PYVER=$(PYTHON_VERSIONS)
@@ -79,9 +79,9 @@ install:	$(INSTALL_NO_ARCH)
 test:		$(TEST_NO_ARCH)
 
 
-REQUIRED_PACKAGES += library/python/eventlet-26
-REQUIRED_PACKAGES += library/python/iniparse-26
-REQUIRED_PACKAGES += library/python/simplejson-26
-REQUIRED_PACKAGES += library/python/swiftclient-26
+REQUIRED_PACKAGES += library/python/eventlet-27
+REQUIRED_PACKAGES += library/python/iniparse-27
+REQUIRED_PACKAGES += library/python/simplejson-27
+REQUIRED_PACKAGES += library/python/swiftclient-27
 REQUIRED_PACKAGES += service/memcached
 REQUIRED_PACKAGES += system/core-os

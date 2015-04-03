@@ -49,7 +49,7 @@ ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # Since this is an app, and doesn't provide any public library interfaces, we
 # only need to deliver one version.  The manifest is parameterized, though.
-PYTHON_VERSIONS=	2.6
+PYTHON_VERSIONS=	2.7
 
 PKG_MACROS +=		COMPONENT_BE_VERSION=$(COMPONENT_BE_VERSION)
 PKG_MACROS +=		PYVER=$(PYTHON_VERSIONS)
@@ -62,7 +62,7 @@ PKG_MACROS +=		PYV=$(shell echo $(PYTHON_VERSIONS) | tr -d .)
 # the proto directory for pkgdepend(1) to find.
 #
 COMPONENT_POST_INSTALL_ACTION += \
-	($(CP) /dev/null $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/nova/virt/libvirt/__init__.py; \
+	($(CP) /dev/null $(PROTO_DIR)$(PYTHON_LIB)/nova/virt/libvirt/__init__.py; \
          $(MKDIR) $(PROTO_DIR)/lib/svc/manifest/application/openstack; \
          $(CP) \
              files/nova-api-ec2.xml \
@@ -80,13 +80,13 @@ COMPONENT_POST_INSTALL_ACTION += \
              $(PROTO_DIR)/lib/svc/manifest/application/openstack; \
 	 $(CP) \
 	     files/network/solaris_net.py \
-	     $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/nova/network; \
-	 $(MKDIR) $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/nova/virt/solariszones; \
+	     $(PROTO_DIR)$(PYTHON_LIB)/nova/network; \
+	 $(MKDIR) $(PROTO_DIR)$(PYTHON_LIB)/nova/virt/solariszones; \
 	 $(CP) \
 	     files/solariszones/__init__.py \
 	     files/solariszones/driver.py \
 	     files/solariszones/sysconfig.py \
-	     $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/nova/virt/solariszones); \
+	     $(PROTO_DIR)$(PYTHON_LIB)/nova/virt/solariszones); \
 	$(PYTHON) -m compileall $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES)
 
 # common targets
@@ -98,13 +98,13 @@ test:		$(NO_TESTS)
 
 
 REQUIRED_PACKAGES += install/archive
-REQUIRED_PACKAGES += library/python/eventlet-26
-REQUIRED_PACKAGES += library/python/iniparse-26
-REQUIRED_PACKAGES += library/python/oslo.config-26
-REQUIRED_PACKAGES += library/python/python-mysql-26
-REQUIRED_PACKAGES += library/python/sqlalchemy-26
-REQUIRED_PACKAGES += library/python/sqlalchemy-migrate-26
-REQUIRED_PACKAGES += library/python/webob-26
+REQUIRED_PACKAGES += library/python/eventlet-27
+REQUIRED_PACKAGES += library/python/iniparse-27
+REQUIRED_PACKAGES += library/python/oslo.config-27
+REQUIRED_PACKAGES += library/python/python-mysql-27
+REQUIRED_PACKAGES += library/python/sqlalchemy-27
+REQUIRED_PACKAGES += library/python/sqlalchemy-migrate-27
+REQUIRED_PACKAGES += library/python/webob-27
 REQUIRED_PACKAGES += service/network/evs
 REQUIRED_PACKAGES += system/core-os
 REQUIRED_PACKAGES += system/file-system/zfs

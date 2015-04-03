@@ -32,11 +32,11 @@ LOGIN_URL = '/horizon/auth/login/'
 LOGOUT_URL = '/horizon/auth/logout/'
 LOGIN_REDIRECT_URL = '/horizon'
 
-STATIC_ROOT = '/usr/lib/python2.6/vendor-packages/openstack_dashboard/static'
+STATIC_ROOT = '/usr/lib/python2.7/vendor-packages/openstack_dashboard/static'
 
 # Enable Solaris theme
 TEMPLATE_DIRS = (
-    '/usr/lib/python2.6/vendor-packages/openstack_dashboard/templates/solaris',
+    '/usr/lib/python2.7/vendor-packages/openstack_dashboard/templates/solaris',
 )
 
 # Application files are compressed during packaging

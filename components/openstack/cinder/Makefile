@@ -49,7 +49,7 @@ ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # Since this is an app, and doesn't provide any public library interfaces, we
 # only need to deliver one version.  The manifest is parameterized, though.
-PYTHON_VERSIONS=	2.6
+PYTHON_VERSIONS=	2.7
 
 PKG_MACROS +=		COMPONENT_BE_VERSION=$(COMPONENT_BE_VERSION)
 PKG_MACROS +=		PYVER=$(PYTHON_VERSIONS)
@@ -73,12 +73,12 @@ COMPONENT_POST_INSTALL_ACTION += \
          $(CP) \
 	     files/solaris/solarisfc.py \
              files/solaris/solarisiscsi.py \
-	     $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/cinder/brick/initiator; \
-	 $(MKDIR) $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/cinder/volume/drivers/solaris; \
-	 $(TOUCH) $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/cinder/volume/drivers/solaris/__init__.py; \
-	 $(CP) files/solaris/zfs.py $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/cinder/volume/drivers/solaris; \
-	 $(MKDIR) $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/cinder/volume/drivers/zfssa; \
-	 $(CP) files/zfssa/cinder.akwf $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/cinder/volume/drivers/zfssa); \
+	     $(PROTO_DIR)$(PYTHON_LIB)/cinder/brick/initiator; \
+	 $(MKDIR) $(PROTO_DIR)$(PYTHON_LIB)/cinder/volume/drivers/solaris; \
+	 $(TOUCH) $(PROTO_DIR)$(PYTHON_LIB)/cinder/volume/drivers/solaris/__init__.py; \
+	 $(CP) files/solaris/zfs.py $(PROTO_DIR)$(PYTHON_LIB)/cinder/volume/drivers/solaris; \
+	 $(MKDIR) $(PROTO_DIR)$(PYTHON_LIB)/cinder/volume/drivers/zfssa; \
+	 $(CP) files/zfssa/cinder.akwf $(PROTO_DIR)$(PYTHON_LIB)/cinder/volume/drivers/zfssa); \
 	 $(PYTHON) -m compileall $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES)
 
 # common targets
@@ -89,13 +89,13 @@ install:	$(INSTALL_NO_ARCH)
 test:		$(NO_TESTS)
 
 
-REQUIRED_PACKAGES += library/python/eventlet-26
-REQUIRED_PACKAGES += library/python/iniparse-26
-REQUIRED_PACKAGES += library/python/ipython-26
-REQUIRED_PACKAGES += library/python/oslo.config-26
-REQUIRED_PACKAGES += library/python/python-mysql-26
-REQUIRED_PACKAGES += library/python/sqlalchemy-26
-REQUIRED_PACKAGES += library/python/sqlalchemy-migrate-26
+REQUIRED_PACKAGES += library/python/eventlet-27
+REQUIRED_PACKAGES += library/python/iniparse-27
+REQUIRED_PACKAGES += library/python/ipython-27
+REQUIRED_PACKAGES += library/python/oslo.config-27
+REQUIRED_PACKAGES += library/python/python-mysql-27
+REQUIRED_PACKAGES += library/python/sqlalchemy-27
+REQUIRED_PACKAGES += library/python/sqlalchemy-migrate-27
 REQUIRED_PACKAGES += system/core-os
 REQUIRED_PACKAGES += system/file-system/zfs
 REQUIRED_PACKAGES += system/storage/fc-utilities
