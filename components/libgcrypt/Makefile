@@ -25,6 +25,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libgcrypt
 COMPONENT_VERSION=	1.5.4
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/libgcrypt/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
