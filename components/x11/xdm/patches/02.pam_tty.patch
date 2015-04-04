@@ -1,0 +1,52 @@
+From 7d69ff7b9dfcd3e4410f181225f66f51089eef67 Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Fri, 27 May 2011 22:46:09 -0700
+Subject: [PATCH:xdm] On Solaris, make sure PAM_TTY is only ever set to an actual /dev path
+
+Solaris PAM & auditing insist this is a device file that can be found in
+the filesystem, so we can't use the display name (":0") like we've
+been doing (and continue to do on other OS'es).
+
+Fixes Solaris bug 6960231:
+xdm login fails with: pam_unix_cred: cannot load ttyname with c2audit loaded
+
+Signed-off-by: Alan Coopersmith <alan.coopersmith@oracle.com>
+---
+ greeter/greet.c |   21 +++++++++++++++++++--
+ 1 files changed, 19 insertions(+), 2 deletions(-)
+
+diff --git a/greeter/greet.c b/greeter/greet.c
+index 0639e76..8e32279 100644
+--- a/greeter/greet.c
++++ b/greeter/greet.c
+@@ -537,8 +537,25 @@ greet_user_rtn GreetUser(
+ 					(*pamhp, PAM_RHOST, hostname));
+ 		free(hostname);
+ 	    }
+-	} else
+-	    RUN_AND_CHECK_PAM_ERROR(pam_set_item, (*pamhp, PAM_TTY, d->name));
++	} else {			/* Displaying on local host */
++	    const char *ttyname = NULL;
++
++#ifdef __sun
++	    /* Solaris PAM & auditing insist this is a device file that can
++	       be found under /dev, so we can't use the display name */
++	    char vtpath[16];
++
++	    if ((d->windowPath) && !(strchr(d->windowPath, ':'))) {
++		/* if path is simply a VT, with no intermediaries, use it */
++		snprintf(vtpath, sizeof(vtpath), "/dev/vt/%s", d->windowPath);
++		ttyname = vtpath;
++	    }
++#else
++	    /* On all other OS'es we just pass the display name for PAM_TTY */
++	    ttyname = d->name;
++#endif
++	    RUN_AND_CHECK_PAM_ERROR(pam_set_item, (*pamhp, PAM_TTY, ttyname));
++	}
+ 
+ 	if (!greet->allow_null_passwd) {
+ 	    pam_flags |= PAM_DISALLOW_NULL_AUTHTOK;
+-- 
+1.7.3.2
+

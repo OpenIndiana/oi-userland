@@ -1,0 +1,42 @@
+diff --git a/xdmcp.c b/xdmcp.c
+index 7c91d1e..66a5e0f 100644
+--- a/xdmcp.c
++++ b/xdmcp.c
+@@ -791,8 +791,8 @@ forward_respond (
+ 		{
+ 		    struct sockaddr_in6	in6_addr;
+ 
+-		    if (clientAddress.length != 16 ||
+-		        clientPort.length != 2)
++		    if ((clientAddress.length != 16 && clientAddress.length != 4) ||
++		        (clientPort.length != 2))
+ 		    {
+ 			goto badAddress;
+ 		    }
+@@ -801,7 +801,24 @@ forward_respond (
+ 		    in6_addr.sin6_len = sizeof(in6_addr);
+ #  endif
+ 		    in6_addr.sin6_family = AF_INET6;
+-		    memmove(&in6_addr.sin6_addr,clientAddress.data,clientAddress.length);
++		    if (clientAddress.length == 16) {
++			memmove(in6_addr.sin6_addr.s6_addr, clientAddress.data, 16);
++		    } else {
++			/* If the client wants to forward the xdm server to an
++			   ipv4 hosts it sends an ipv4 address in the forward
++			   packet. On dual-stack hosts the packet arrives as a
++			   ipv6 packet. To respond to the ipv4 host one has
++			   to create an ipv4-mapped address of the form
++
++			   ::ffff::xxx.xxx.xxx.xxx
++
++			   One example where this is necessary is an ipv4-only
++			   thin client that connects to a dual-stacked xdm.
++			*/
++			in6_addr.sin6_addr.s6_addr[10] = 0xff;
++			in6_addr.sin6_addr.s6_addr[11] = 0xff;
++			memmove(in6_addr.sin6_addr.s6_addr + 12, clientAddress.data, 4);
++		    }
+ 		    memmove((char *) &in6_addr.sin6_port, clientPort.data, 2);
+ 		    client = (struct sockaddr *) &in6_addr;
+ 		    clientlen = sizeof (in6_addr);
+

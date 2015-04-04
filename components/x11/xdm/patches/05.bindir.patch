@@ -1,0 +1,131 @@
+###############################################################################
+#
+# Copyright (c) 2009, Oracle and/or its affiliates. All rights reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice (including the next
+# paragraph) shall be included in all copies or substantial portions of the
+# Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+# DEALINGS IN THE SOFTWARE.
+#
+###############################################################################
+
+Set paths used in config files for finding X utilities to look in /usr/bin
+even though --bindir is set to /usr/sbin
+
+diff --git a/config/Makefile.am b/config/Makefile.am
+index d13645f..4393667 100644
+--- a/config/Makefile.am
++++ b/config/Makefile.am
+@@ -49,7 +49,7 @@ XPMDEFINES = -DXPM -DBITMAPDIR=$(XDM_PIXMAPDIR) -DXDM_PIXMAP=$(XDM_PIXMAP) \
+ MKTEMP_DEFINES = -DMKTEMP_COMMAND=$(MKTEMP_COMMAND)
+ #endif
+ 
+-CPP_FILES_FLAGS = -DBINDIR="$(bindir)" -DDEFAULTVT="$(DEFAULTVT)" \
++CPP_FILES_FLAGS = -DBINDIR="/usr/bin" -DDEFAULTVT="$(DEFAULTVT)" \
+     -DUTMP_FILE="$(UTMP_FILE)" -DWTMP_FILE="$(WTMP_FILE)" \
+     -DXDMDIR="$(XDMLIBDIR)" -DXDMLOGDIR="$(XDMLOGDIR)" \
+     -DXDMXAUTHDIR="$(XDMXAUTHDIR)" \
+diff --git a/configure.ac b/configure.ac
+index b123a1f..4ebc4f5 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -547,7 +547,7 @@ AC_DEFINE_DIR(DEF_SYSTEM_SHELL, BOURNE_SHELL,
+ 
+ # -DDEF_FAILSAFE_CLIENT="$(BINDIR)/xterm"
+ 
+-AC_DEFINE_DIR(DEF_FAILSAFE_CLIENT, bindir/xterm,
++AC_DEFINE_DIR(DEF_FAILSAFE_CLIENT, /usr/bin/xterm,
+ 	[Define to default command to start failsafe X session])
+ 
+ # -DDEF_XDM_CONFIG="$(XDMDIR)/xdm-config"
+diff --git a/xdm.man.cpp b/xdm.man.cpp
+index b947e5a..1a25fa8 100644
+--- a/xdm.man.cpp
++++ b/xdm.man.cpp
+@@ -413,7 +413,7 @@ See the sections \fBXDMCP Access Control\fP and \fBChooser\fP.
+ .IP "\fBDisplayManager.\fP\fIDISPLAY\fP\fB.xrdb\fP"
+ Specifies the program used to load the resources.  By default,
+ .I xdm
+-uses \fI BINDIR/xrdb\fP.
++uses \fI /usr/bin/xrdb\fP.
+ .IP "\fBDisplayManager.\fP\fIDISPLAY\fP\fB.cpp\fP"
+ This specifies the name of the C preprocessor which is used by \fIxrdb\fP.
+ .IP "\fBDisplayManager.\fP\fIDISPLAY\fP\fB.setup\fP"
+@@ -431,7 +431,7 @@ file used here is \fIXstartup\fP.
+ See the section \fBStartup Program.\fP
+ .IP "\fBDisplayManager.\fP\fIDISPLAY\fP\fB.session\fP"
+ This specifies the session to be executed (not running as root).
+-By default, \fI BINDIR/xterm\fP is
++By default, \fI /usr/bin/xterm\fP is
+ run.  The conventional name is \fIXsession\fP.
+ See the section
+ .B "Session Program."
+@@ -512,7 +512,7 @@ If the default session fails to execute,
+ will fall back to this program.  This program is executed with no
+ arguments, but executes using the same environment variables as
+ the session would have had (see the section \fBSession Program\fP).
+-By default, \fI BINDIR/xterm\fP is used.
++By default, \fI /usr/bin/xterm\fP is used.
+ .IP "\fBDisplayManager.\fP\fIDISPLAY\fP\fB.grabServer\fP"
+ .IP "\fBDisplayManager.\fP\fIDISPLAY\fP\fB.grabTimeout\fP"
+ To improve security,
+@@ -816,7 +816,7 @@ line to start the server.  A typical entry for local display number 0 would
+ be:
+ .nf
+ 
+-  :0 Digital-QV local BINDIR/X :0
++  :0 Digital-QV local /usr/bin/X :0
+ 
+ .fi
+ The display types are:
+@@ -831,8 +831,8 @@ foreign		remote display: \fIxdm\fP opens an X connection to a running server
+ The display name must be something that can be passed in the \fB\-display\fP
+ option to an X program.  This string is used to generate the display-specific
+ resource names, so be careful to match the
+-names (e.g., use ``:0 Sun-CG3 local BINDIR/X :0'' instead of
+-``localhost:0 Sun-CG3 local BINDIR/X :0''
++names (e.g., use ``:0 Sun-CG3 local /usr/bin/X :0'' instead of
++``localhost:0 Sun-CG3 local /usr/bin/X :0''
+ if your other resources are specified as
+ ``DisplayManager._0.session'').  The display class portion is also used in the
+ display-specific resources, as the class of the resource.  This is
+@@ -1374,7 +1374,7 @@ line:
+ .nf
+ .ta .5i
+ 
+-	xdm \-server \(lq:0 SUN-3/60CG4 local BINDIR/X :0\(rq
++	xdm \-server \(lq:0 SUN-3/60CG4 local /usr/bin/X :0\(rq
+ 
+ .fi
+ .PP
+@@ -1414,13 +1414,13 @@ user authorization file where \fIxdm\fP stores keys for clients to read
+ .I CHOOSERPATH
+ the default chooser
+ .TP 20
+-.I BINDIR/xrdb
++.I /usr/bin/xrdb
+ the default resource database loader
+ .TP 20
+-.I BINDIR/X
++.I /usr/bin/X
+ the default server
+ .TP 20
+-.I BINDIR/xterm
++.I /usr/bin/xterm
+ the default session program and failsafe client
+ .TP 20
+ .I XDMXAUTHDIR/A<display>\-<suffix>

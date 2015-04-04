@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
+
+<service_bundle type='manifest' name='xdm'>
+
+<service
+    name='application/graphical-login/xdm'
+    type='service'
+    version='1'>
+
+	<dependency
+	    name='filesystem'
+	    grouping='require_all'
+	    restart_on='none'
+	    type='service'>
+		<service_fmri value='svc:/system/filesystem/local'/>
+	</dependency>
+
+	<dependency name='multi-user'
+	    grouping='require_all'
+	    restart_on='error'
+	    type='service'>
+		<service_fmri value='svc:/milestone/multi-user:default'/>
+	</dependency>
+
+	<dependency
+	    name='sysconfig'
+	    grouping='require_all'
+	    restart_on='none'
+	    type='service'>
+		<service_fmri value='svc:/milestone/sysconfig'/>
+	</dependency>
+
+	<dependency
+	    name='fc-cache'
+	    grouping='require_all'
+	    restart_on='none'
+	    type='service'>
+		<service_fmri value='svc:/application/font/fc-cache'/>
+	</dependency>
+
+	<dependency
+	    name='utmpx'
+	    grouping='require_all'
+	    restart_on='none'
+	    type='service'>
+		<service_fmri value='svc:/system/utmp'/>
+	</dependency>
+
+	<exec_method
+	    type='method'
+	    name='start'
+	    exec='/usr/sbin/xdm'
+	    timeout_seconds='60' />
+
+	<exec_method
+	    type='method'
+	    name='stop'
+	    exec=':kill'
+	    timeout_seconds='60' />
+
+	<instance name='default' enabled='false' />
+
+	<stability value='Unstable' />
+
+	<template>
+		<common_name>
+			<loctext xml:lang='C'>
+				X display manager
+			</loctext>
+		</common_name>
+		<documentation>
+			<manpage title='xdm' section='1'
+				manpath='/usr/share/man' />
+		</documentation>
+	</template>
+</service>
+
+</service_bundle>
