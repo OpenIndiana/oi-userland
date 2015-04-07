@@ -330,26 +330,63 @@ class EVSL3NATAgent(l3_agent.L3NATAgentWithStateReport):
 
         if not net_lib.Datalink.datalink_exists(external_dlname):
             dl = net_lib.Datalink(external_dlname)
-            # need to determine the VLAN ID for the VNIC
+            # determine the network type of the external network
             evsname = ex_gw_port['network_id']
-            cmd = ['/usr/sbin/evsadm', 'show-evs', '-co', 'vid',
+            cmd = ['/usr/sbin/evsadm', 'show-evs', '-co', 'l2type,vid',
                    '-f', 'evs=%s' % evsname]
             try:
                 stdout = utils.execute(cmd)
             except Exception as err:
-                LOG.error(_("Failed to retrieve the VLAN ID associated "
-                            "with the external network, and it is required "
+                LOG.error(_("Failed to retrieve the network type for "
+                            "the external network, and it is required "
                             "to create an external gateway port: %s") % err)
                 return
-            vid = stdout.splitlines()[0].strip()
-            if vid == "":
-                LOG.error(_("External network does not have a VLAN ID "
-                            "associated with it, and it is required to "
+            output = stdout.splitlines()[0].strip()
+            l2type, vid = output.split(':')
+            if l2type != 'flat' and l2type != 'vlan':
+                LOG.error(_("External network should be either Flat or "
+                            "VLAN based, and it is required to "
                             "create an external gateway port"))
                 return
-            mac_address = ex_gw_port['mac_address']
-            dl.create_vnic(self.conf.external_network_datalink,
-                           mac_address=mac_address, vid=vid)
+            elif (l2type == 'vlan' and
+                  self.conf.get("external_network_datalink", None)):
+                LOG.warning(_("external_network_datalink is deprecated in "
+                             "Juno and will be removed in the next release of "
+                             "Solaris OpenStack. Please use the evsadm "
+                             "set-controlprop subcommand to setup the "
+                             "uplink-port for an external network"))
+                # proceed with the old-style of doing things
+                mac_address = ex_gw_port['mac_address']
+                dl.create_vnic(self.conf.external_network_datalink,
+                               mac_address=mac_address, vid=vid)
+            else:
+                # This is to handle HA by Solaris Cluster and is similar to
+                # the code we already have for the DHCP Agent. So, when
+                # the 1st L3 agent is down and the second L3 agent tries to
+                # connect its VNIC to EVS, we will end up in "vport in use"
+                # error. So, we need to reset the vport before we connect
+                # the VNIC to EVS.
+                cmd = ['/usr/sbin/evsadm', 'show-vport', '-f',
+                       'vport=%s' % ex_gw_port['id'], '-co',
+                       'evs,vport,status']
+                stdout = utils.execute(cmd)
+                evsname, vportname, status = stdout.strip().split(':')
+                tenant_id = ex_gw_port['tenant_id']
+                if status == 'used':
+                    cmd = ['/usr/sbin/evsadm', 'reset-vport', '-T', tenant_id,
+                           '%s/%s' % (evsname, vportname)]
+                    utils.execute(cmd)
+
+                # next remove protection setting on the VPort to allow
+                # multiple floating IPs to be configured on the l3e*
+                # interface
+                evsvport = "%s/%s" % (ex_gw_port['network_id'],
+                                      ex_gw_port['id'])
+                cmd = ['/usr/sbin/evsadm', 'set-vportprop', '-T',
+                       tenant_id, '-p', 'protection=none', evsvport]
+                utils.execute(cmd)
+                dl.connect_vnic(evsvport, tenant_id)
+
         self.driver.init_l3(external_dlname, [ex_gw_port['ip_cidr']])
 
         # TODO(gmoodalb): wrap route(1m) command within a class in net_lib.py
