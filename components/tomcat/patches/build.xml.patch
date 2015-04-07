@@ -1,6 +1,13 @@
---- apache-tomcat-6.0.36-src/build.xml
-+++ apache-tomcat-6.0.36-src/build.xml
-@@ -487,13 +487,6 @@
+Patch origin: in-house
+Patch status: Solaris-specific; not suitable for upstream
+
+Download/use only archives we really need.
+Don't install unnecessary stuff.
+Allow to build it with desired JDK version.
+
+--- build.xml
++++ build.xml
+@@ -492,13 +492,6 @@
  
    <target name="deploy" depends="build-only,build-docs,warn.dbcp">
  
@@ -14,7 +21,7 @@
      <!-- Copy scripts -->
      <copy todir="${tomcat.build}/bin">
        <fileset dir="bin">
-@@ -777,41 +770,6 @@
+@@ -780,41 +773,6 @@
            description="Download (and build as necessary) dependent components"
            depends="build-manifests">
  
@@ -56,7 +63,7 @@
      <!-- Build Tomcat DBCP bundle -->
      <antcall target="downloadgz-2">
        <param name="sourcefile.1" value="${commons-pool-src.loc.1}"/>
-@@ -823,6 +781,11 @@
+@@ -826,6 +784,11 @@
        <param name="sourcefile.2" value="${commons-dbcp-src.loc.2}"/>
        <param name="destfile" value="${commons-dbcp.home}/build.xml" />
      </antcall>
@@ -66,9 +73,9 @@
 +      <arg value="cat ../../jdbc41.patch | gpatch -d ${commons-dbcp.home} -p0" />
 +    </exec>
      <mkdir dir="${tomcat-dbcp.home}"/>
-     <antcall target="build-tomcat-dbcp">
-       <param name="basedir" value="${tomcat-dbcp.home}" />
-@@ -836,15 +799,9 @@
+     <antcall target="build-tomcat-dbcp" />
+ 
+@@ -837,15 +800,9 @@
        <param name="destdir" value="${jdt.home}"/>
      </antcall>
  

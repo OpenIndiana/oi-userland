@@ -26,13 +26,13 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tomcat
-COMPONENT_VERSION=	6.0.41
+COMPONENT_VERSION=	6.0.43
 COMPONENT_PROJECT_URL=	http://tomcat.apache.org/
 COMPONENT_SRC_NAME=	apache-tomcat
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)-src
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:6def26d6eefb168a0968400d53dc08939284570ca850a0c4740398e9b645ff3c
+    sha256:ef32da195dc0f070c5f8d1c48b02a213cc69b680ec735f1297ef0d8ca62e75be
 COMPONENT_ARCHIVE_URL=	http://www.apache.org/dist/tomcat/tomcat-6/v$(COMPONENT_VERSION)/src/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/tomcat
 
@@ -50,11 +50,13 @@ COMPONENT_ARCHIVE_HASH_3= \
     sha256:5f86314f67dc57a0a9865265a48fd7831f16ab177c0c1349eea798c2c6297295
 COMPONENT_ARCHIVE_URL_3= http://download.eclipse.org/eclipse/downloads/drops4/R-4.3.1-201309111000/$(COMPONENT_ARCHIVE_3)
 
-TPNO=			17997
+TPNO=			20718
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ant.mk
 include $(WS_MAKE_RULES)/ips.mk
+
+PATCH_LEVEL=0
 
 COMPONENT_BUILD_ARGS=-Dbase.path=$(BUILD_DIR_32) -Dtomcat.build=$(PROTO_DIR)
 COMPONENT_BUILD_TARGETS=download deploy
@@ -68,6 +70,10 @@ COMPONENT_TEST_DIR =		$(@D)/test
 COMPONENT_TEST_ARGS =		$(COMPONENT_BUILD_ARGS) \
 				-Djunit.home=/usr/share/lib/java
 COMPONENT_TEST_TARGETS =
+
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "/\[java\] Time: .*/d"' \
+	'-e "/^Total time:/d"'
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
