@@ -426,14 +426,6 @@ license php-53.license license="PHP, GPLv2, LGPLv2, Apache v2.0" \
     com.oracle.info.name=php-53 com.oracle.info.tpno=$(TPNO_PHP_5_3) \
     com.oracle.info.version=$(COMPONENT_VERSION)
 
-# if php5.2's apache module is present then make sure
-# php5.3's apache module is installed
-depend type=conditional fmri=web/server/apache-22/module/apache-php53 \
-    predicate=web/server/apache-22/module/apache-php52
-
-# if php5.2 is present drag forward because of /usr/php/* mediated links
-depend type=optional fmri=pkg:/web/php-52@5.2.17
-
 # force other php parts onto the disk
 depend type=optional fmri=pkg:/web/php-53/documentation
 depend type=require fmri=pkg:/web/php-53/extension/php-apc
@@ -444,6 +436,5 @@ depend type=require fmri=pkg:/web/php-53/extension/php-pear
 depend type=require fmri=pkg:/web/php-53/extension/php-suhosin
 depend type=require fmri=pkg:/web/php-53/extension/php-tcpwrap
 depend type=require fmri=pkg:/web/php-53/extension/php-xdebug
-
-# php common files package
 depend type=require fmri=pkg:/web/php-common
+depend type=require fmri=pkg:/web/server/apache-22/module/apache-php53
