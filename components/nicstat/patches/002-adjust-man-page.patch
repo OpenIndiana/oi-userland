@@ -1,0 +1,80 @@
+Adjust the nicstat man page to just be Solaris specific.
+
+These changes will be passed back upstream, to see if there is a way for
+a Solaris or Linux man page can be obtained from a merged version
+
+--- nicstat.1.orig	2014-11-23 17:37:32.617985414 -0800
++++ nicstat.1	2014-11-23 17:47:12.637407628 -0800
+@@ -14,7 +14,7 @@
+ 
+ .SH NAME
+ 
+-nicstat, enicstat \- print network traffic statistics
++nicstat \- print network traffic statistics
+ .\" ========================================================================
+ .SH SYNOPSIS
+ .B nicstat
+@@ -23,9 +23,6 @@
+ .RI [-S int:mbps[fd|hd]]
+ .I [interval
+ .I [count]]
+-.PP
+-.B enicstat
+-\fI<same options & operands>
+ .\" ========================================================================
+ 
+ .SH DESCRIPTION
+@@ -106,17 +103,7 @@
+ Show statistics for only the interface(s) listed.  Multiple interfaces
+ can be listed, separated by commas (,).
+ .TP 1i
+-.BI \-S int:speed[fd|hd]
+-(Linux only).
+-Specify the speed (and optionally duplex mode) of one or more interfaces.
+-The given speed(s) are in megabits/second.
+-The duplex mode will default to "full" unless a suffix beginning with
+-"h" or "H" is specified.
+-Speed and duplex mode are obtained automatically on Solaris using the
+-"ifspeed" and "link_duplex" kstat values.
+-.TP 1i
+ .B \-k
+-(Solaris only).
+ Search for active network interfaces by looking for kstat "link_state"
+ statistics with a value of 1.  This is only of value on systems
+ running Solaris 10 (or early releases of Solaris 11 Express), with
+@@ -297,34 +284,15 @@
+ .BR netstat (1M)
+ .BR kstat (1M),
+ .BR kstat (3KSTAT),
+-.BR mibiisa (1M),
+-.BR ethtool (8)
++.BR mibiisa (1M)
+ 
+ "nicstat - the Solaris and Linux Network Monitoring Tool You Did Not Know You Needed"
+ .RI - http://blogs.oracle.com/timc/entry/nicstat_the_solaris_and_linux
+ .\" ========================================================================
+ .SH NOTES
+ .PP
+-On Linux, the NoCP, Defer, TCP InKB, and TCP OutKB statistics are
+-always reported as zero.
+-.PP
+ The way that saturation is reported is a best effort, as there is no
+ standardized naming to capture all errors related to an interface's
+ inability to receive or transmit a packet.  Monitoring %Util and
+ packet rates, along with an understanding of the specific NICs may be
+ more useful in judging whether you are nearing saturation.
+-.PP
+-The
+-.B \-S
+-option is provided for the Linux edition as nicstat requires
+-super-user privilege to obtain speed and duplex mode information for
+-interfaces.
+-If you are unable to set up nicstat as setuid-root, a script named
+-.B enicstat
+-is available, which uses the
+-.B ethtool
+-utility then calls nicstat with an
+-.B \-S
+-value.
+-.B ethtool
+-itself requires super-user privilege for this to work.
