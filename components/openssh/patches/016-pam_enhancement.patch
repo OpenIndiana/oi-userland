@@ -9,8 +9,8 @@
 # In the future, if these enhancements are accepted by the upsteam in a 
 # later release, we will remove this patch when we upgrade to that release.
 #
---- orig/auth-pam.c	Fri Jun 20 15:39:05 2014
-+++ new/auth-pam.c	Fri Jun 20 16:47:09 2014
+--- orig/auth-pam.c	Mon Jan 26 18:02:09 2015
++++ new/auth-pam.c	Mon Mar 30 15:24:11 2015
 @@ -617,6 +617,72 @@
  	sshpam_handle = NULL;
  }
@@ -84,7 +84,7 @@
  static int
  sshpam_init(Authctxt *authctxt)
  {
-@@ -624,18 +690,61 @@
+@@ -624,18 +690,71 @@
  	const char *pam_rhost, *pam_user, *user = authctxt->user;
  	const char **ptr_pam_user = &pam_user;
  
@@ -121,6 +121,16 @@
 +			return (0);
 +                }
 +
++		/*
++		 * Clean up previous PAM state.  No need to clean up session 
++		 * and creds.
++		 */
++                sshpam_authenticated = 0;
++                sshpam_account_status = -1;
++
++		sshpam_err = pam_set_item(sshpam_handle, PAM_CONV, NULL);
++         	if (sshpam_err != PAM_SUCCESS)
++		        debug3("Cannot remove PAM conv"); /* a warning only */
 +#else /* Original */
  		/* We already have a PAM context; check if the user matches */
  		sshpam_err = pam_get_item(sshpam_handle,
@@ -146,8 +156,8 @@
  	sshpam_authctxt = authctxt;
  
  	if (sshpam_err != PAM_SUCCESS) {
---- orig/auth.h	Fri Jun 20 15:39:05 2014
-+++ new/auth.h	Fri Jun 20 15:39:05 2014
+--- orig/auth.h	Mon Jan 26 18:02:11 2015
++++ new/auth.h	Mon Jan 26 18:02:11 2015
 @@ -76,6 +76,9 @@
  #endif
  	Buffer		*loginmsg;
@@ -158,15 +168,23 @@
  };
  /*
   * Every authentication method has to handle authentication requests for
---- orig/auth2.c	Fri Jun 20 15:39:05 2014
-+++ new/auth2.c	Fri Jun 20 15:39:05 2014
-@@ -249,10 +249,13 @@
+--- orig/auth2.c	Mon Jan 26 18:02:10 2015
++++ new/auth2.c	Tue Mar 31 15:19:10 2015
+@@ -249,10 +249,21 @@
  			PRIVSEP(audit_event(SSH_INVALID_USER));
  #endif
  		}
 +
-+#ifndef PAM_ENHANCEMENT
++
  #ifdef USE_PAM
++#ifdef PAM_ENHANCEMENT
++		/*
++		 * Start PAM here and once only, if each userauth does not
++		 * has its own PAM service.
++		 */
++	        if (options.use_pam && !options.pam_service_per_authmethod)
++			PRIVSEP(start_pam(authctxt));
++#else
  		if (options.use_pam)
  			PRIVSEP(start_pam(authctxt));
  #endif
@@ -174,22 +192,26 @@
  		setproctitle("%s%s", authctxt->valid ? user : "unknown",
  		    use_privsep ? " [net]" : "");
  		authctxt->service = xstrdup(service);
-@@ -286,6 +289,14 @@
+@@ -286,6 +297,18 @@
  	/* try to authenticate user */
  	m = authmethod_lookup(authctxt, method);
  	if (m != NULL && authctxt->failures < options.max_authtries) {
 +
-+#ifdef PAM_ENHANCEMENT
-+                authctxt->authmethod_name = xstrdup(method);
-+                if (use_privsep)
-+                       mm_inform_authmethod(method);
-+		if (options.use_pam)
-+		       PRIVSEP(start_pam(authctxt));
++#if defined(USE_PAM) && defined(PAM_ENHANCEMENT)
++		/* start PAM service for each userauth */
++                if (options.use_pam && options.pam_service_per_authmethod) {
++       		        if (authctxt->authmethod_name != NULL)
++		                free(authctxt->authmethod_name);
++                        authctxt->authmethod_name = xstrdup(method);
++                        if (use_privsep)
++                                mm_inform_authmethod(method);
++		        PRIVSEP(start_pam(authctxt));
++		}
 +#endif
  		debug2("input_userauth_request: try method %s", method);
  		authenticated =	m->userauth(authctxt);
  	}
-@@ -303,6 +314,10 @@
+@@ -303,6 +326,10 @@
  	char *methods;
  	int partial = 0;
  
@@ -200,14 +222,61 @@
  	if (!authctxt->valid && authenticated)
  		fatal("INTERNAL ERROR: authenticated invalid user %s",
  		    authctxt->user);
-@@ -623,5 +638,3 @@
+@@ -319,6 +346,25 @@
+ 	}
+ 
+ 	if (authenticated && options.num_auth_methods != 0) {
++
++#if defined(USE_PAM) && defined(PAM_ENHANCEMENT)
++                /*
++                 * If each userauth has its own PAM service, then PAM need to 
++                 * perform account check for this service.
++                 */
++                if (options.use_pam && options.pam_service_per_authmethod &&
++                    !PRIVSEP(do_pam_account())) {
++                        /* if PAM returned a message, send it to the user */
++                        if (buffer_len(&loginmsg) > 0) {
++                                buffer_append(&loginmsg, "\0", 1);
++                                userauth_send_banner(buffer_ptr(&loginmsg));
++                                packet_write_wait();
++                        }
++
++                        fatal("Access denied for user %s by PAM account "
++                            "configuration", authctxt->user);
++                }
++#endif
+ 		if (!auth2_update_methods_lists(authctxt, method, submethod)) {
+ 			authenticated = 0;
+ 			partial = 1;
+@@ -332,7 +378,20 @@
+ 		return;
+ 
+ #ifdef USE_PAM
++
++#ifdef PAM_ENHANCEMENT
++        /*
++         * PAM needs to perform account checks after auth. However, if each
++         * userauth has its own PAM service and options.num_auth_methods != 0,
++         * then no need to perform account checking, because it was done 
++         * already.
++         */
++        if (options.use_pam && authenticated && 
++            !(options.num_auth_methods != 0 &&
++            options.pam_service_per_authmethod)){
++#else
+ 	if (options.use_pam && authenticated) {
++#endif
+ 		if (!PRIVSEP(do_pam_account())) {
+ 			/* if PAM returned a message, send it to the user */
+ 			if (buffer_len(&loginmsg) > 0) {
+@@ -623,5 +682,3 @@
  		fatal("%s: method not in AuthenticationMethods", __func__);
  	return 0;
  }
 -
 -
---- orig/monitor_wrap.c	Fri Jun 20 15:39:05 2014
-+++ new/monitor_wrap.c	Fri Jun 20 15:39:05 2014
+--- orig/monitor_wrap.c	Mon Jan 26 18:02:09 2015
++++ new/monitor_wrap.c	Mon Jan 26 18:02:11 2015
 @@ -338,6 +338,24 @@
  	buffer_free(&m);
  }
@@ -233,8 +302,8 @@
  /* Do the password authentication */
  int
  mm_auth_password(Authctxt *authctxt, char *password)
---- orig/monitor.c	Fri Jun 20 15:39:05 2014
-+++ new/monitor.c	Fri Jun 20 15:39:05 2014
+--- orig/monitor.c	Mon Jan 26 18:02:10 2015
++++ new/monitor.c	Tue Mar 31 16:10:50 2015
 @@ -146,6 +146,9 @@
  int mm_answer_pwnamallow(int, Buffer *);
  int mm_answer_auth2_read_banner(int, Buffer *);
@@ -263,7 +332,54 @@
      {MONITOR_REQ_PAM_ACCOUNT, 0, mm_answer_pam_account},
      {MONITOR_REQ_PAM_INIT_CTX, MON_ISAUTH, mm_answer_pam_init_ctx},
      {MONITOR_REQ_PAM_QUERY, MON_ISAUTH, mm_answer_pam_query},
-@@ -828,6 +838,10 @@
+@@ -391,6 +401,24 @@
+ 			if (!compat20)
+ 				fatal("AuthenticationMethods is not supported"
+ 				    "with SSH protocol 1");
++
++#if defined(USE_PAM) && defined(PAM_ENHANCEMENT)
++                        /* 
++                         * If each userauth has its own PAM service, then PAM
++                         * need to perform account check for this service.
++                         */
++                        if (options.use_pam && authenticated &&
++                            options.pam_service_per_authmethod) {
++                                Buffer m;
++
++                                buffer_init(&m);
++                                mm_request_receive_expect(pmonitor->m_sendfd,
++                                    MONITOR_REQ_PAM_ACCOUNT, &m);
++                                authenticated = 
++                                    mm_answer_pam_account(pmonitor->m_sendfd, &m);
++                                buffer_free(&m);
++                         }
++#endif
+ 			if (authenticated &&
+ 			    !auth2_update_methods_lists(authctxt,
+ 			    auth_method, auth_submethod)) {
+@@ -409,8 +437,21 @@
+ 			    !auth_root_allowed(auth_method))
+ 				authenticated = 0;
+ #ifdef USE_PAM
++#ifdef PAM_ENHANCEMENT
++                        /*
++                         * PAM needs to perform account checks after auth.
++                         * However, if each userauth has its own PAM service
++                         * and options.num_auth_methods != 0, then no need to
++                         * perform account checking, because it was done 
++                         * already.
++                         */
++                        if (options.use_pam && authenticated &&
++                            !(options.num_auth_methods != 0 &&
++                            options.pam_service_per_authmethod)) {
++#else
+ 			/* PAM needs to perform account checks after auth */
+ 			if (options.use_pam && authenticated) {
++#endif
+ 				Buffer m;
+ 
+ 				buffer_init(&m);
+@@ -828,6 +869,10 @@
  		/* Allow service/style information on the auth context */
  		monitor_permit(mon_dispatch, MONITOR_REQ_AUTHSERV, 1);
  		monitor_permit(mon_dispatch, MONITOR_REQ_AUTH2_READ_BANNER, 1);
@@ -274,7 +390,7 @@
  	}
  #ifdef USE_PAM
  	if (options.use_pam)
-@@ -868,7 +882,25 @@
+@@ -868,7 +913,25 @@
  	return (0);
  }
  
@@ -300,8 +416,8 @@
  mm_answer_authpassword(int sock, Buffer *m)
  {
  	static int call_count;
---- orig/monitor.h	Fri Jun 20 15:39:05 2014
-+++ new/monitor.h	Fri Jun 20 15:39:05 2014
+--- orig/monitor.h	Mon Jan 26 18:02:10 2015
++++ new/monitor.h	Mon Jan 26 18:02:11 2015
 @@ -70,6 +70,9 @@
  	MONITOR_REQ_PAM_FREE_CTX = 110, MONITOR_ANS_PAM_FREE_CTX = 111,
  	MONITOR_REQ_AUDIT_EVENT = 112, MONITOR_REQ_AUDIT_COMMAND = 113,
@@ -312,20 +428,28 @@
  };
  
  struct mm_master;
---- orig/servconf.c	Fri Jun 20 15:39:05 2014
-+++ new/servconf.c	Fri Jun 20 15:39:05 2014
-@@ -154,6 +154,10 @@
+--- orig/servconf.c	Mon Jan 26 18:02:09 2015
++++ new/servconf.c	Tue Mar 31 16:24:59 2015
+@@ -154,6 +154,18 @@
  	options->ip_qos_interactive = -1;
  	options->ip_qos_bulk = -1;
  	options->version_addendum = NULL;
 +#ifdef PAM_ENHANCEMENT
 +	options->pam_service_name = NULL;
 +	options->pam_service_prefix = NULL;
++
++	/* 
++	 * Each user method will have its own PAM service by default.
++	 * However, if PAMServiceName is specified or the protocal version
++	 * is not compat20, then there will be only one PAM service for the
++	 * entire user authentication.
++	 */
++        options->pam_service_per_authmethod = 1;
 +#endif
  }
  
  void
-@@ -303,6 +307,12 @@
+@@ -303,6 +315,12 @@
  		options->ip_qos_bulk = IPTOS_THROUGHPUT;
  	if (options->version_addendum == NULL)
  		options->version_addendum = xstrdup("");
@@ -338,7 +462,7 @@
  	/* Turn privilege separation on by default */
  	if (use_privsep == -1)
  		use_privsep = PRIVSEP_NOSANDBOX;
-@@ -351,6 +361,9 @@
+@@ -351,6 +369,9 @@
  	sKexAlgorithms, sIPQoS, sVersionAddendum,
  	sAuthorizedKeysCommand, sAuthorizedKeysCommandUser,
  	sAuthenticationMethods, sHostKeyAgent,
@@ -348,7 +472,7 @@
  	sDeprecated, sUnsupported
  } ServerOpCodes;
  
-@@ -482,6 +495,10 @@
+@@ -482,6 +503,10 @@
  	{ "authorizedkeyscommanduser", sAuthorizedKeysCommandUser, SSHCFG_ALL },
  	{ "versionaddendum", sVersionAddendum, SSHCFG_GLOBAL },
  	{ "authenticationmethods", sAuthenticationMethods, SSHCFG_ALL },
@@ -359,7 +483,7 @@
  	{ NULL, sBadOption, 0 }
  };
  
-@@ -1632,6 +1649,30 @@
+@@ -1632,6 +1657,37 @@
  		}
  		return 0;
  
@@ -383,15 +507,22 @@
 +		if (options->pam_service_prefix != NULL)
 +			fatal("%s line %d: PAMServiceName and PAMServicePrefix"
 +			    " are mutually exclusive.", filename, linenum);
-+		if (options->pam_service_name == NULL)
++		if (options->pam_service_name == NULL) {
 +			options->pam_service_name = xstrdup(arg);
++
++			/*
++			 * When this option is specified, we will not have
++			 * PAM service for each auth method.
++                         */
++			options->pam_service_per_authmethod = 0;
++		}
 +		break;
 +
  	case sDeprecated:
  		logit("%s line %d: Deprecated option %s",
  		    filename, linenum, arg);
---- orig/servconf.h	Fri Jun 20 15:39:05 2014
-+++ new/servconf.h	Fri Jun 20 15:39:05 2014
+--- orig/servconf.h	Mon Jan 26 18:02:10 2015
++++ new/servconf.h	Tue Mar 31 15:07:14 2015
 @@ -54,6 +54,10 @@
  /* Magic name for internal sftp-server */
  #define INTERNAL_SFTP_NAME	"internal-sftp"
@@ -403,7 +534,7 @@
  typedef struct {
  	u_int	num_ports;
  	u_int	ports_from_cmdline;
-@@ -185,6 +189,12 @@
+@@ -185,6 +189,13 @@
  
  	u_int	num_auth_methods;
  	char   *auth_methods[MAX_AUTH_METHODS];
@@ -411,13 +542,14 @@
 +#ifdef PAM_ENHANCEMENT
 +	char   *pam_service_prefix;
 +	char   *pam_service_name;
++	int	pam_service_per_authmethod;
 +#endif
 +        
  }       ServerOptions;
  
  /* Information about the incoming connection as used by Match */
---- orig/sshd_config.5	Fri Jun 20 15:39:05 2014
-+++ new/sshd_config.5	Fri Jun 20 15:39:05 2014
+--- orig/sshd_config.5	Mon Jan 26 18:02:10 2015
++++ new/sshd_config.5	Mon Jan 26 18:03:45 2015
 @@ -868,6 +868,21 @@
  are refused if the number of unauthenticated connections reaches
  .Dq full
@@ -440,8 +572,18 @@
  .It Cm PasswordAuthentication
  Specifies whether password authentication is allowed.
  The default is
---- orig/sshd.8	Fri Jun 20 15:39:05 2014
-+++ new/sshd.8	Fri Jun 20 15:39:05 2014
+@@ -1203,8 +1218,7 @@
+ is enabled, you will not be able to run
+ .Xr sshd 8
+ as a non-root user.
+-The default is
+-.Dq no .
++On Solaris, the option is always enabled.
+ .It Cm UsePrivilegeSeparation
+ Specifies whether
+ .Xr sshd 8
+--- orig/sshd.8	Mon Jan 26 18:02:09 2015
++++ new/sshd.8	Mon Jan 26 18:02:11 2015
 @@ -951,6 +951,33 @@
  started last).
  The content of this file is not sensitive; it can be world-readable.
@@ -476,3 +618,17 @@
  .Sh SEE ALSO
  .Xr scp 1 ,
  .Xr sftp 1 ,
+--- orig/sshd.c	Tue Mar 31 18:12:33 2015
++++ new/sshd.c	Tue Mar 31 18:42:28 2015
+@@ -2065,6 +2065,11 @@
+ 
+ 	sshd_exchange_identification(sock_in, sock_out);
+ 
++#ifdef PAM_ENHANCEMENT
++	if (!compat20)
++	        options.pam_service_per_authmethod = 0;
++#endif
++
+ 	/* In inetd mode, generate ephemeral key only for proto 1 connections */
+ 	if (!compat20 && inetd_flag && sensitive_data.server_key == NULL)
+ 		generate_ephemeral_server_key();
