@@ -474,11 +474,10 @@ JAVA_HOME = $(JAVA8_HOME)
 # Not necessarily the system's default version, i.e. /usr/bin/perl
 PERL_VERSION ?=  5.12
 
-PERL_VERSIONS = 5.12 5.16 5.20
+PERL_VERSIONS = 5.12 5.16
 
 PERL.5.12 =     /usr/perl5/5.12/bin/perl
 PERL.5.16 =	/usr/perl5/5.16/bin/perl
-PERL.5.20 =     /usr/perl5/5.20/bin/perl
 PERL.5.12-mt =	/usr/perl5/5.12/bin/perl-threaded
 
 PERL =          $(PERL.$(PERL_VERSION))

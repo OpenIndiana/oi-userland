@@ -40,8 +40,6 @@ $(BUILD_DIR)/$(MACH32)-5.12-mt/.configured:	PERL_VERSION=5.12-mt
 $(BUILD_DIR)/$(MACH32)-5.12-mt/.configured:	BITS=32
 $(BUILD_DIR)/$(MACH64)-5.16/.configured:	PERL_VERSION=5.16
 $(BUILD_DIR)/$(MACH64)-5.16/.configured:	BITS=64
-$(BUILD_DIR)/$(MACH64)-5.20/.configured:        PERL_VERSION=5.20
-$(BUILD_DIR)/$(MACH64)-5.20/.configured:        BITS=64
 
 $(BUILD_DIR)/$(MACH32)-5.12/.tested:	PERL_VERSION=5.12
 $(BUILD_DIR)/$(MACH32)-5.12/.tested:	BITS=32
@@ -49,8 +47,6 @@ $(BUILD_DIR)/$(MACH32)-5.12-mt/.tested:	PERL_VERSION=5.12-mt
 $(BUILD_DIR)/$(MACH32)-5.12-mt/.tested:	BITS=32
 $(BUILD_DIR)/$(MACH64)-5.16/.tested:	PERL_VERSION=5.16
 $(BUILD_DIR)/$(MACH64)-5.16/.tested:	BITS=64
-$(BUILD_DIR)/$(MACH64)-5.20/.tested:    PERL_VERSION=5.20
-$(BUILD_DIR)/$(MACH64)-5.20/.tested:    BITS=64
 
 $(BUILD_DIR)/$(MACH32)-5.12/.tested-and-compared:	PERL_VERSION=5.12
 $(BUILD_DIR)/$(MACH32)-5.12/.tested-and-compared:	BITS=32
@@ -58,18 +54,14 @@ $(BUILD_DIR)/$(MACH32)-5.12-mt/.tested-and-compared:	PERL_VERSION=5.12-mt
 $(BUILD_DIR)/$(MACH32)-5.12-mt/.tested-and-compared:	BITS=32
 $(BUILD_DIR)/$(MACH64)-5.16/.tested-and-compared:	PERL_VERSION=5.16
 $(BUILD_DIR)/$(MACH64)-5.16/.tested-and-compared:	BITS=64
-$(BUILD_DIR)/$(MACH64)-5.20/.tested-and-compared:       PERL_VERSION=5.20
-$(BUILD_DIR)/$(MACH64)-5.20/.tested-and-compared:       BITS=64
 
 BUILD_32 =	$(BUILD_DIR)/$(MACH32)-5.12/.built
 BUILD_32 +=	$(BUILD_DIR)/$(MACH32)-5.12-mt/.built
 BUILD_64 =	$(BUILD_DIR)/$(MACH64)-5.16/.built
-BUILD_64 +=	$(BUILD_DIR)/$(MACH64)-5.20/.built
 
 INSTALL_32 =	$(BUILD_DIR)/$(MACH32)-5.12/.installed
 INSTALL_32 +=	$(BUILD_DIR)/$(MACH32)-5.12-mt/.installed
 INSTALL_64 =	$(BUILD_DIR)/$(MACH64)-5.16/.installed
-INSTALL_64 +=	$(BUILD_DIR)/$(MACH64)-5.20/.installed
 
 COMPONENT_CONFIGURE_ENV +=	$(COMMON_PERL_ENV)
 COMPONENT_CONFIGURE_ENV +=	PERL="$(PERL)"
@@ -121,12 +113,10 @@ ifeq ($(strip $(wildcard $(COMPONENT_TEST_RESULTS_DIR)/results-*.master)),)
 TEST_32 =	$(BUILD_DIR)/$(MACH32)-5.12/.tested
 TEST_32 +=	$(BUILD_DIR)/$(MACH32)-5.12-mt/.tested
 TEST_64 =	$(BUILD_DIR)/$(MACH64)-5.16/.tested
-TEST_64 +=	$(BUILD_DIR)/$(MACH64)-5.20/.tested
 else
 TEST_32 =	$(BUILD_DIR)/$(MACH32)-5.12/.tested-and-compared
 TEST_32 +=	$(BUILD_DIR)/$(MACH32)-5.12-mt/.tested-and-compared
 TEST_64 =	$(BUILD_DIR)/$(MACH64)-5.16/.tested-and-compared
-TEST_64 +=	$(BUILD_DIR)/$(MACH64)-5.20/.tested-and-compared
 endif
 
 # test the built source
