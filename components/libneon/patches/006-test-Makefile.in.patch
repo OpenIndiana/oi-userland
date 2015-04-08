@@ -1,0 +1,37 @@
+# Internal patch.
+# Make sure libneon's test use the newly built libneon when running
+# and not the system-installed one.
+# Not for upstream.
+--- test/Makefile.in	2010-05-05 01:25:17.000000000 -0700
++++ test/Makefile.in	2015-03-17 20:38:48.694451293 -0700
+@@ -6,6 +6,10 @@
+ LDFLAGS = @LDFLAGS@
+ DEFS = @DEFS@
+ 
++LIBRUNPATH = $(shell realpath -P $(top_builddir)/src/.libs)
++TESTRUNPATH = $(shell realpath -P $(top_builddir)/test/.libs)
++LD_LIBRARY_PATH = $(LIBRUNPATH):$(TESTRUNPATH)
++
+ top_builddir = ..
+ top_srcdir = @top_srcdir@
+ srcdir = @srcdir@
+@@ -71,13 +75,16 @@
+ 	   server.cert client.cert *.p12 *.cert sparse.bin
+ 
+ check: $(TESTS) $(HELPERS)
+-	@SRCDIR=$(srcdir) $(SHELL) $(srcdir)/run.sh $(TESTS)
++	@SRCDIR=$(srcdir)  LD_LIBRARY_PATH=$(LD_LIBRARY_PATH) \
++	  $(SHELL) $(srcdir)/run.sh $(TESTS)
+ 
+ grind: $(TESTS) $(HELPERS)
+-	@SRCDIR=$(srcdir) HARNESS="$(VALGRIND)" $(SHELL) $(srcdir)/run.sh $(TESTS)
++	@SRCDIR=$(srcdir) LD_LIBRARY_PATH=$(LD_LIBRARY_PATH) \
++	  HARNESS="$(VALGRIND)" $(SHELL) $(srcdir)/run.sh $(TESTS)
+ 
+ lfs-check: largefile $(LFS_HELPERS)
+-	@SRCDIR=$(srcdir) $(SHELL) $(srcdir)/run.sh largefile
++	@SRCDIR=$(srcdir) LD_LIBRARY_PATH=$(LD_LIBRARY_PATH) \
++	  $(SHELL) $(srcdir)/run.sh largefile
+ 
+ install: $(TESTS) $(HELPERS)
+ 	@$(INSTALL) -d $(DESTDIR)$(libdir)/neon-tests

@@ -23,17 +23,17 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME = libneon
-COMPONENT_VERSION = 0.29.6
+COMPONENT_VERSION = 0.30.1
 COMPONENT_PROJECT_URL=	http://www.webdav.org/neon/
 COMPONENT_SRC_NAME = neon
 COMPONENT_SRC = $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE = $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH = \
-    sha256:9c640b728d6dc80ef1e48f83181166ab6bc95309cece5537e01ffdd01b96eb43
+    sha256:00c626c0dc18d094ab374dbd9a354915bfe4776433289386ed489c2ec0845cdd
 COMPONENT_ARCHIVE_URL = $(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/neon
 
-TPNO=			18538
+TPNO=			21902
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -44,7 +44,8 @@ PATCH_LEVEL = 0
 CC += $(CC_BITS)
 CPPFLAGS += $(CPP_LARGEFILES)
 
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-neon.master
+COMPONENT_TEST_MASTER = \
+       $(COMPONENT_TEST_RESULTS_DIR)/results-libneon.master
 
 COMPONENT_TEST_TRANSFORMS += \
      '-e "/libtool/d"' \
@@ -52,6 +53,11 @@ COMPONENT_TEST_TRANSFORMS += \
      '-e "/-m64/d"' \
      '-e "/ld: warning/d"' \
      '-e "/warning/d"' \
+     '-e "/prototype:/d"' \
+     '-e "/argument/d"' \
+     '-e "/Entering/d"' \
+     '-e "/Leaving/d"' \
+     '-e "/Nothing to be done/d"' \
      '-e "s/[0-9]\{1,\}\.[0-9]\{1,\} s, //g"' \
      '-e "s^[0-9]\{1,\} kB/s^^g"'  \
      '-e "s^[0-9]\{1,\}  kB/s^^g"'  \
@@ -80,7 +86,9 @@ CONFIGURE_OPTIONS += --disable-ld-version-script
 CONFIGURE_OPTIONS += --with-zlib
 CONFIGURE_OPTIONS += --with-ssl=openssl
 CONFIGURE_OPTIONS += --with-libproxy
+CONFIGURE_OPTIONS += --with-gssapi
 CONFIGURE_OPTIONS += --with-libxml2
+CONFIGURE_OPTIONS += --with-pic
 
 COMPONENT_TEST_ENV +=	PATH="$(GNUBIN):$(PATH)"
 
@@ -101,3 +109,4 @@ REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/gss
+REQUIRED_PACKAGES += library/libproxy

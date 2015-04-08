@@ -1,0 +1,16 @@
+# Internal patch.
+# This script needs the GNU version of coreutils/fileutils and not
+# the Solaris SVR4 ones. Some options are GNU-specific.
+# Not for upstream.
+--- test/makekeys.sh	2012-07-04 01:41:44.000000000 -0700
++++ test/makekeys.sh	2015-03-17 19:29:29.859562018 -0700
+@@ -1,6 +1,8 @@
+-#!/bin/sh
++#!/bin/bash
+ # Helper script to create CA and server certificates.
+ 
++export PATH="/usr/gnu/bin:/usr/bin"
++
+ srcdir=${1-.}
+ 
+ OPENSSL=@OPENSSL@

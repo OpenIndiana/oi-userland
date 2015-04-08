@@ -1,6 +1,39 @@
---- configure	2011-05-03 05:25:31.000000000 -0700
-+++ configure	2012-10-08 15:14:24.436052062 -0700
-@@ -12018,7 +12018,7 @@
+# Solaris Kerberos is not really 100% compatible with
+# MIT Kerberos. This will change when MIT Kerberos integrates.
+# Patch to make libneon's ./configure understand Solaris Kerberos.
+# Not for upstream.
+--- configure	2014-09-23 06:26:33.000000000 -0700
++++ configure	2015-03-17 19:50:57.784317353 -0700
+@@ -7122,7 +7122,7 @@
+    ;;
+ esac
+ 
+-
++export KRB5_CONFIG="/usr/bin/krb5-config"
+ 
+ # Check whether --with-gssapi was given.
+ if test "${with_gssapi+set}" = set; then :
+@@ -7131,7 +7131,7 @@
+ 
+ if test "$with_gssapi" != "no"; then
+   # Extract the first word of "krb5-config", so it can be a program name with args.
+-set dummy krb5-config; ac_word=$2
++set dummy /usr/bin/krb5-config; ac_word=$2
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+ $as_echo_n "checking for $ac_word... " >&6; }
+ if ${ac_cv_path_KRB5_CONFIG+:} false; then :
+@@ -7178,8 +7178,8 @@
+ if test "x$KRB5_CONFIG" != "xnone"; then
+    ne_save_CPPFLAGS=$CPPFLAGS
+    ne_save_LIBS=$NEON_LIBS
+-   NEON_LIBS="$NEON_LIBS `${KRB5_CONFIG} --libs gssapi`"
+-   CPPFLAGS="$CPPFLAGS `${KRB5_CONFIG} --cflags gssapi`"
++   NEON_LIBS="$NEON_LIBS -lkrb5 -lgss"
++   CPPFLAGS="$CPPFLAGS -I/usr/include/kerberos5 -I/usr/include/gssapi"
+    # MIT and Heimdal put gssapi.h in different places
+    for ac_header in gssapi/gssapi.h gssapi.h
+ do :
+@@ -12718,7 +12718,7 @@
  	  ;;
  	esac
        fi
@@ -9,7 +42,7 @@
        hardcode_shlibpath_var=no
        case $host_os in
        solaris2.[0-5] | solaris2.[0-5].*) ;;
-@@ -14580,6 +14580,7 @@
+@@ -15333,6 +15333,7 @@
      # in the --cflags output.
      CPPFLAGS="$CPPFLAGS `$XML2_CONFIG --cflags | sed 's| -I/include||g'`"
      NEON_LIBS="$NEON_LIBS `$XML2_CONFIG --libs | sed 's|-L/usr/lib ||g'`"
