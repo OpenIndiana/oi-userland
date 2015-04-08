@@ -26,16 +26,16 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		findutils
-COMPONENT_VERSION=	4.4.2
+COMPONENT_VERSION=	4.5.14
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/findutils/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:434f32d171cbc0a5e72cfc5372c6fc4cb0e681f8dce566a0de5b6fccd702b62a
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+    sha256:0de3cf625a5c9f154eee3171e072515ffdde405244dd00502af617ac57b73ae2
+COMPONENT_ARCHIVE_URL=	http://alpha.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gnu-findutils
 
-TPNO=			15520
+TPNO=			19655
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -45,11 +45,22 @@ CONFIGURE_PREFIX =	/usr/gnu
 
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 
+# Fixes coredump in the tests/test-localename test.
+CONFIGURE_OPTIONS  +=	ac_cv_func_newlocale=no
+
 # Disable the leaf optimisation feature, because the st_nlinks directory
 # field is incorrect on ZFS file systems.
 CONFIGURE_OPTIONS +=	--disable-leaf-optimisation
 
 COMPONENT_TEST_ENV +=	PATH="$(GNUBIN):$(PATH)"
+
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s|^.*$(CC).*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^.*source=.*libtool=no.*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^.*DEPDIR=.deps.*$$|XXX_CC_XXX|g" ' \
+	'-e "/^XXX_CC_XXX$$/d" ' \
+	'-e "s|\(Test Run By\).*|\1|" ' \
+	'-e "s|\(Native configuration is\).*|\1|" '
 
 ASLR_MODE = $(ASLR_ENABLE)
 
@@ -59,6 +70,11 @@ configure:	$(CONFIGURE_64)
 build:          $(BUILD_64)
 
 install:        $(INSTALL_64)
+
+# Needed for "gmake test" to work successfully.
+# Otherwise we see errors such as:
+# FAIL: exec-nogaps.old-O3, sh: SHELLOPTS: readonly variable
+unexport SHELLOPTS
 
 test:           $(TEST_64)
 
