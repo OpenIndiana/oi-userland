@@ -1,0 +1,207 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
+<transform file path=usr/lib/postfix/.+ -> default mode 0555>
+<transform dir path=var/spool/postfix/.+ -> default mode 0700>
+<transform dir path=var/spool/postfix/.+ -> default owner postfix>
+#
+set name=pkg.fmri \
+    value=pkg:/service/network/smtp/postfix@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Postfix mail system"
+set name=com.oracle.info.description \
+    value="mail server alternative to the widely-used Sendmail program; it attempts to be fast, easy to administer, and secure. The outside has a definite Sendmail-ish flavor, but the inside is completely different."
+set name=com.oracle.info.tpno value=7492
+set name=info.classification \
+    value="org.opensolaris.category.2008:Applications/System Utilities"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2014/382
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+#
+file path=etc/postfix/LICENSE
+file path=etc/postfix/TLS_LICENSE
+file path=etc/postfix/access
+file path=etc/postfix/aliases
+file path=etc/postfix/bounce.cf.default
+file path=etc/postfix/canonical
+file path=etc/postfix/generic
+file path=etc/postfix/header_checks
+file path=etc/postfix/main.cf
+file path=etc/postfix/main.cf.default
+file path=etc/postfix/makedefs.out
+file path=etc/postfix/master.cf
+file path=etc/postfix/relocated
+file path=etc/postfix/transport
+file path=etc/postfix/virtual
+file postfix.auth_attr path=etc/security/auth_attr.d/postfix group=sys
+file postfix.exec_attr path=etc/security/exec_attr.d/postfix group=sys
+file postfix.prof_attr path=etc/security/prof_attr.d/postfix group=sys
+file postfix.xml path=lib/svc/manifest/network/postfix.xml
+file start-method path=lib/svc/method/postfix
+link path=usr/bin/mailq target=../../usr/lib/postfix/sendmail \
+    mediator=sendmail mediator-implementation=postfix
+dir  path=usr/lib/postfix
+file path=usr/lib/postfix/anvil
+file path=usr/lib/postfix/bounce
+file path=usr/lib/postfix/cleanup
+file path=usr/lib/postfix/discard
+file path=usr/lib/postfix/dnsblog
+file path=usr/lib/postfix/error
+file path=usr/lib/postfix/flush
+hardlink path=usr/lib/postfix/lmtp target=smtp
+file path=usr/lib/postfix/local
+file path=usr/lib/postfix/main.cf mode=0444
+file path=usr/lib/postfix/master
+file path=usr/lib/postfix/master.cf mode=0444
+file path=usr/lib/postfix/nqmgr
+file path=usr/lib/postfix/oqmgr
+file path=usr/lib/postfix/pickup
+file path=usr/lib/postfix/pipe
+file path=usr/lib/postfix/post-install
+file path=usr/lib/postfix/postfix-files
+file path=usr/lib/postfix/postfix-script
+file path=usr/lib/postfix/postfix-wrapper
+file path=usr/lib/postfix/postmulti-script
+file path=usr/lib/postfix/postscreen
+file path=usr/lib/postfix/proxymap
+hardlink path=usr/lib/postfix/qmgr target=nqmgr
+file path=usr/lib/postfix/qmqpd
+file path=usr/lib/postfix/scache
+file usr/lib/sendmail path=usr/lib/postfix/sendmail
+file path=usr/lib/postfix/showq
+file path=usr/lib/postfix/smtp
+file path=usr/lib/postfix/smtpd
+file path=usr/lib/postfix/spawn
+file path=usr/lib/postfix/tlsmgr
+file path=usr/lib/postfix/tlsproxy
+file path=usr/lib/postfix/trivial-rewrite
+file path=usr/lib/postfix/verify
+file path=usr/lib/postfix/virtual
+link path=usr/lib/sendmail target=postfix/sendmail mediator=sendmail \
+    mediator-implementation=postfix
+link path=usr/sbin/newaliases target=../../usr/lib/postfix/sendmail \
+    mediator=sendmail mediator-implementation=postfix
+file path=usr/sbin/postalias
+file path=usr/sbin/postcat
+file path=usr/sbin/postconf
+file path=usr/sbin/postdrop group=postdrop mode=02555
+file path=usr/sbin/postfix
+file path=usr/sbin/postkick
+file path=usr/sbin/postlock
+file path=usr/sbin/postlog
+file path=usr/sbin/postmap
+file path=usr/sbin/postmulti
+file path=usr/sbin/postqueue group=postdrop mode=02555
+file path=usr/sbin/postsuper
+link path=usr/share/man/man1/mailq.1 target=postfix-mailq.1 mediator=sendmail \
+    mediator-implementation=postfix
+file path=usr/share/man/man1/newaliases.1
+file path=usr/share/man/man1/postalias.1
+file path=usr/share/man/man1/postcat.1
+file path=usr/share/man/man1/postconf.1
+file path=usr/share/man/man1/postdrop.1
+file usr/share/man/man1/mailq.1 path=usr/share/man/man1/postfix-mailq.1
+file path=usr/share/man/man1/postfix.1
+file path=usr/share/man/man1/postkick.1
+file path=usr/share/man/man1/postlock.1
+file path=usr/share/man/man1/postlog.1
+file path=usr/share/man/man1/postmap.1
+file path=usr/share/man/man1/postmulti.1
+file path=usr/share/man/man1/postqueue.1
+file path=usr/share/man/man1/postsuper.1
+file path=usr/share/man/man1/sendmail.1
+file path=usr/share/man/man5/access.5
+file path=usr/share/man/man5/aliases.5
+file path=usr/share/man/man5/body_checks.5
+file path=usr/share/man/man5/bounce.5
+file path=usr/share/man/man5/canonical.5
+file path=usr/share/man/man5/cidr_table.5
+file path=usr/share/man/man5/generic.5
+file path=usr/share/man/man5/header_checks.5
+file path=usr/share/man/man5/ldap_table.5
+file path=usr/share/man/man5/master.5
+file path=usr/share/man/man5/memcache_table.5
+file path=usr/share/man/man5/pcre_table.5
+file path=usr/share/man/man5/postconf.5
+file path=usr/share/man/man5/postfix-wrapper.5
+file path=usr/share/man/man5/regexp_table.5
+file path=usr/share/man/man5/relocated.5
+file path=usr/share/man/man5/socketmap_table.5
+file path=usr/share/man/man5/sqlite_table.5
+file path=usr/share/man/man5/tcp_table.5
+file path=usr/share/man/man5/transport.5
+file path=usr/share/man/man5/virtual.5
+file path=usr/share/man/man8/anvil.8
+file path=usr/share/man/man8/bounce.8
+file path=usr/share/man/man8/cleanup.8
+file path=usr/share/man/man8/defer.8
+file path=usr/share/man/man8/discard.8
+file path=usr/share/man/man8/dnsblog.8
+file path=usr/share/man/man8/error.8
+file path=usr/share/man/man8/flush.8
+file path=usr/share/man/man8/lmtp.8
+file path=usr/share/man/man8/local.8
+file path=usr/share/man/man8/master.8
+file path=usr/share/man/man8/oqmgr.8
+file path=usr/share/man/man8/pickup.8
+file path=usr/share/man/man8/pipe.8
+file path=usr/share/man/man8/postscreen.8
+file path=usr/share/man/man8/proxymap.8
+file path=usr/share/man/man8/qmgr.8
+file path=usr/share/man/man8/qmqpd.8
+file path=usr/share/man/man8/scache.8
+file path=usr/share/man/man8/showq.8
+file path=usr/share/man/man8/smtp.8
+file path=usr/share/man/man8/smtpd.8
+file path=usr/share/man/man8/spawn.8
+file path=usr/share/man/man8/tlsmgr.8
+file path=usr/share/man/man8/tlsproxy.8
+file path=usr/share/man/man8/trace.8
+file path=usr/share/man/man8/trivial-rewrite.8
+file path=usr/share/man/man8/verify.8
+file path=usr/share/man/man8/virtual.8
+dir  path=var/lib/postfix owner=postfix mode=0700
+dir  path=var/spool/postfix/active
+dir  path=var/spool/postfix/bounce
+dir  path=var/spool/postfix/corrupt
+dir  path=var/spool/postfix/defer
+dir  path=var/spool/postfix/deferred
+dir  path=var/spool/postfix/flush
+dir  path=var/spool/postfix/hold
+dir  path=var/spool/postfix/incoming
+dir  path=var/spool/postfix/maildrop group=postdrop mode=0730
+dir  path=var/spool/postfix/pid owner=root mode=0755
+dir  path=var/spool/postfix/private
+dir  path=var/spool/postfix/public group=postdrop mode=0710
+dir  path=var/spool/postfix/saved
+dir  path=var/spool/postfix/trace
+#
+group groupname=postdrop gid=28
+group groupname=postfix gid=27
+user username=postfix ftpuser=false gcos-field=Postfix group=postfix \
+    home-dir=/ password=NP uid=27
+#
+license postfix.license license="IBM PUBLIC LICENSE VERSION 1.0"

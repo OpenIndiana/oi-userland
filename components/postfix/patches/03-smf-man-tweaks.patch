@@ -1,0 +1,37 @@
+--- postfix-2.11.3/man/man1/postfix.1.orig	2013-11-21 17:40:50.000000000 -0800
++++ postfix-2.11.3/man/man1/postfix.1	2015-04-08 14:41:28.034168740 -0700
+@@ -101,6 +101,34 @@
+ .IP \fB-v\fR
+ Enable verbose logging for debugging purposes. Multiple \fB-v\fR
+ options make the software increasingly verbose.
++.SS "Service Management"
++.sp
++.LP
++The \fBpostfix\fR service is managed by the service management facility,
++\fBsmf\fR(5), under the service identifier:
++.sp
++.in +2
++.nf
++svc:/network/smtp:postfix
++.fi
++.in -2
++.sp
++.LP
++Administrative actions on this service, such as enabling, disabling, or
++requesting restart, can be performed using \fBsvcadm\fR(1M). The service's
++status can be queried using the \fBsvcs\fR(1) command.
++.sp
++Postfix uses NIS but not LDAP in its default set of methods for aliases.
++If the service property \fIconfig/automatic\fR is set to \fItrue\fR (which
++is the default value), then upon service start, the \fIconfig/aliases\fR
++property of the \fIsvc:/system/name-service/switch:default\fR service will
++be consulted, and \fINIS\fR will be disabled if needed to match the value
++of that property; likewise, \fILDAP\fR will be enabled if needed to match
++the property value.  Note for LDAP this will create
++\fB/etc/postfix/ldap-aliases.cf\fR with
++\fIresult_attribute = mgrpRFC822MailMember\fR.  Adjust as needed to match
++your local schema.
++.sp
+ .SH "ENVIRONMENT"
+ .na
+ .nf

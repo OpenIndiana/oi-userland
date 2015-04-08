@@ -1,0 +1,183 @@
+<?xml version="1.0"?>
+<!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
+<!--
+   
+    Copyright (c) 2004, 2014, Oracle and/or its affiliates. All rights reserved.
+
+    NOTE:  This service manifest is not editable; its contents will
+    be overwritten by package or patch operations, including
+    operating system upgrade.  Make customizations in a different
+    file.
+-->
+
+<service_bundle type='manifest' name='service/network/smtp/postfix:postfix'>
+
+<service
+	name='network/smtp'
+	type='service'
+	version='1'>
+
+	<single_instance />
+
+	<dependency
+	    name='fs-local'
+	    grouping='require_all'
+	    restart_on='none'
+	    type='service'>
+		<service_fmri value='svc:/system/filesystem/local' />
+	</dependency>
+
+	<dependency
+	    name='network-service'
+	    grouping='require_all'
+	    restart_on='none'
+	    type='service'>
+		<service_fmri value='svc:/network/service' />
+	</dependency>
+
+	<dependency
+	    name='name-services'
+	    grouping='require_all'
+	    restart_on='refresh'
+	    type='service'>
+		<service_fmri value='svc:/milestone/name-services' />
+	</dependency>
+
+	<dependency
+	    name='identity'
+	    grouping='optional_all'
+	    restart_on='refresh'
+	    type='service'>
+		<service_fmri value='svc:/system/identity:domain' />
+	</dependency>
+
+	<dependency
+	    name='system-log'
+	    grouping='optional_all'
+	    restart_on='none'
+	    type='service'>
+		<service_fmri value='svc:/system/system-log' />
+	</dependency>
+
+	<property_group name='firewall_context' type='com.sun,fw_definition'>
+		<propval name='name' type='astring' value='smtp' />
+	</property_group>
+
+	<property_group name='firewall_config' type='com.sun,fw_configuration'>
+		<propval name='policy' type='astring' value='use_global' />
+		<propval name='apply_to' type='astring' value='' />
+		<propval name='exceptions' type='astring' value='' />
+		<propval name='value_authorization' type='astring'
+			value='solaris.smf.value.firewall.config' />
+	</property_group>
+
+	<instance name='postfix' enabled='false'>
+
+		<dependency
+		    name='config-file'
+		    grouping='require_all'
+		    restart_on='refresh'
+		    type='path'>
+			<service_fmri
+			    value='file://localhost/etc/postfix/main.cf' />
+		</dependency>
+
+		<dependency
+		    name='nsswitch'
+		    grouping='require_all'
+		    restart_on='refresh'
+		    type='path'>
+			<service_fmri
+			    value='file://localhost/etc/nsswitch.conf' />
+		</dependency>
+
+		<!--
+		If autofs is enabled, wait for it to get users' home
+		directories.
+		-->
+		<dependency
+		    name='autofs'
+		    grouping='optional_all'
+		    restart_on='none'
+		    type='service'>
+			<service_fmri value='svc:/system/filesystem/autofs' />
+		</dependency>
+
+		<dependent
+			name='smtp-postfix_multi-user'
+			grouping='optional_all'
+			restart_on='none'>
+				<service_fmri
+				    value='svc:/milestone/multi-user' />
+		</dependent>
+
+		<exec_method
+			type='method'
+			name='start'
+			exec='/lib/svc/method/postfix'
+			timeout_seconds='120'>
+			<method_context>
+			    <method_credential user='root' group='postfix'
+				privileges='basic,net_privaddr,proc_setid,file_dac_search'/>
+			</method_context>
+		</exec_method>
+
+		<exec_method
+			type='method'
+			name='stop'
+			exec='/usr/sbin/postfix stop'
+			timeout_seconds='60' />
+
+		<exec_method
+			type='method'
+			name='refresh'
+			exec='/usr/sbin/postfix reload'
+			timeout_seconds='60' />
+
+		<property_group name='startd' type='framework'>
+			<propval name='ignore_error' type='astring'
+			    value='core,signal' />
+		</property_group>
+
+		<property_group name='general' type='framework'>
+			<propval name='action_authorization' type='astring'
+				value='solaris.smf.manage.postfix' />
+		</property_group>
+
+		<property_group name='config' type='application'>
+			<propval name='automatic' type='boolean' value='true' />
+		</property_group>
+
+		<template>
+			<common_name>
+				<loctext xml:lang='C'>
+				postfix SMTP mail transfer agent
+				</loctext>
+			</common_name>
+			<documentation>
+				<manpage title='postfix' section='1'
+				    manpath='/usr/share/man' />
+			</documentation>
+			<pg_pattern name='config' type='application'>
+				<description>
+					<loctext xml:lang='C'>
+						Configuration properties
+					</loctext>
+				</description>
+				<prop_pattern name='value_authorization' type='astring'>
+					<description>
+						<loctext xml:lang='C'>
+Declares authorization needed to change values in the config property group.
+						</loctext>
+					</description>
+				</prop_pattern>
+			</pg_pattern>
+		</template>
+
+	</instance>
+
+	<stability value='Unstable' />
+
+</service>
+
+</service_bundle>

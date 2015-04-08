@@ -1,0 +1,15 @@
+This patch originated in-house, to update the Solaris native DB type for
+aliases from "dbm" (which was correct for 2.6 and earlier) to "hash" (which
+has we have used since Solaris 7).  Upstream contribution is planned.
+
+--- postfix-2.11.3/src/util/sys_defs.h.orig	2013-09-29 13:51:55.000000000 -0700
++++ postfix-2.11.3/src/util/sys_defs.h	2015-04-06 15:29:51.826173244 -0700
+@@ -429,7 +429,7 @@
+ #define DEF_MAILBOX_LOCK "fcntl, dotlock"
+ #define HAS_FSYNC
+ #define HAS_DBM
+-#define NATIVE_DB_TYPE	"dbm"
++#define NATIVE_DB_TYPE	"hash"
+ #define ALIAS_DB_MAP	DEF_DB_TYPE ":/etc/mail/aliases"
+ #ifndef NO_NIS
+ #define HAS_NIS
