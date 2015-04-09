@@ -26,16 +26,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nose
-COMPONENT_VERSION=	1.3.3
+COMPONENT_VERSION=	1.3.6
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://github.com/nose-devs/nose
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:b40c2ff268beb85356ada25f626ca0dabc89705f31051649772cf00fc9510326
-COMPONENT_ARCHIVE_URL=	http://pypi.python.org/packages/source/n/nose/$(COMPONENT_ARCHIVE)
+    sha256:f61e0909a743eed37b1207e38a8e7b4a2fe0a82185e36f2be252ef1b3f901758
+COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/source/n/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/nose
 
-TPNO=			18083
+TPNO=			22206
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -83,6 +83,8 @@ COMPONENT_TEST_TRANSFORMS = "'/^ERROR: / { print }; /^Ran / { sub(\" tests in .+
 build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
+
+test:		$(TEST_NO_ARCH)
 
 REQUIRED_PACKAGES += library/python/setuptools-26
 REQUIRED_PACKAGES += library/python/setuptools-27
