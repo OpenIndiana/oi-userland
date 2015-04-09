@@ -206,22 +206,29 @@ MACH32 =	$(MACH32_1:i386=i86)
 MACH64_1 =	$(MACH:sparc=sparcv9)
 MACH64 =	$(MACH64_1:i386=amd64)
 
+CONFIGURE_NO_ARCH =	$(BUILD_DIR_NO_ARCH)/.configured
 CONFIGURE_32 =		$(BUILD_DIR_32)/.configured
 CONFIGURE_64 =		$(BUILD_DIR_64)/.configured
 CONFIGURE_32_and_64 =	$(CONFIGURE_32) $(CONFIGURE_64)
 
+BUILD_DIR_NO_ARCH =	$(BUILD_DIR)/$(MACH)
 BUILD_DIR_32 =		$(BUILD_DIR)/$(MACH32)
 BUILD_DIR_64 =		$(BUILD_DIR)/$(MACH64)
 
+BUILD_NO_ARCH =		$(BUILD_DIR_NO_ARCH)/.built
 BUILD_32 =		$(BUILD_DIR_32)/.built
 BUILD_64 =		$(BUILD_DIR_64)/.built
 BUILD_32_and_64 =	$(BUILD_32) $(BUILD_64)
+# NO_ARCH uses BITS=32 because some path setting macros use $(BITS)
+$(BUILD_DIR_NO_ARCH)/.built:	BITS=32
 $(BUILD_DIR_32)/.built:		BITS=32
 $(BUILD_DIR_64)/.built:		BITS=64
 
+INSTALL_NO_ARCH =	$(BUILD_DIR_NO_ARCH)/.installed
 INSTALL_32 =		$(BUILD_DIR_32)/.installed
 INSTALL_64 =		$(BUILD_DIR_64)/.installed
 INSTALL_32_and_64 =	$(INSTALL_32) $(INSTALL_64)
+$(BUILD_DIR_NO_ARCH)/.installed:  BITS=32
 $(BUILD_DIR_32)/.installed:       BITS=32
 $(BUILD_DIR_64)/.installed:       BITS=64
 
@@ -325,9 +332,11 @@ COMPONENT_TEST_DIR =		$(@D)
 
 # determine the type of tests we want to run.
 ifeq ($(strip $(wildcard $(COMPONENT_TEST_RESULTS_DIR)/results-*.master)),)
+TEST_NO_ARCH =		$(BUILD_DIR_NO_ARCH)/.tested
 TEST_32 =		$(BUILD_DIR_32)/.tested
 TEST_64 =		$(BUILD_DIR_64)/.tested
 else
+TEST_NO_ARCH =		$(BUILD_DIR_NO_ARCH)/.tested-and-compared
 TEST_32 =		$(BUILD_DIR_32)/.tested-and-compared
 TEST_64 =		$(BUILD_DIR_64)/.tested-and-compared
 endif
@@ -342,8 +351,10 @@ TEST_32_and_64 =	$(TEST_32) $(TEST_64)
 
 SKIP_TEST_AT_TOP_LEVEL = $(eval include $(WS_MAKE_RULES)/skip-test.mk)
 
+$(BUILD_DIR_NO_ARCH)/.tested:		BITS=32
 $(BUILD_DIR_32)/.tested:		BITS=32
 $(BUILD_DIR_64)/.tested:		BITS=64
+$(BUILD_DIR_NO_ARCH)/.tested-and-compared:	BITS=32
 $(BUILD_DIR_32)/.tested-and-compared:	BITS=32
 $(BUILD_DIR_64)/.tested-and-compared:	BITS=64
 
