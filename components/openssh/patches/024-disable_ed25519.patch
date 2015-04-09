@@ -1,0 +1,2069 @@
+#
+# Per Solaris crypto team recommendation, we need to remove support for
+# Curve25519 from OpenSSH.
+#
+# Patch offered upstream:
+#     https://bugzilla.mindrot.org/show_bug.cgi?id=2376
+#
+diff -pur old/Makefile.in new/Makefile.in
+--- old/Makefile.in	2015-03-31 21:14:02.427499635 -0700
++++ new/Makefile.in	2015-04-02 02:30:04.830658823 -0700
+@@ -141,7 +141,7 @@ $(SSHDOBJS): Makefile.in config.h
+ 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $<
+ 
+ LIBCOMPAT=openbsd-compat/libopenbsd-compat.a
+-$(LIBCOMPAT): always
++$(LIBCOMPAT): always libssh.a
+ 	(cd openbsd-compat && $(MAKE))
+ always:
+ 
+diff -pur old/authfd.c new/authfd.c
+--- old/authfd.c	2013-12-28 22:49:56.000000000 -0800
++++ new/authfd.c	2015-04-01 01:53:06.534109950 -0700
+@@ -508,8 +508,10 @@ ssh_add_identity_constrained(Authenticat
+ 	case KEY_DSA_CERT_V00:
+ 	case KEY_ECDSA:
+ 	case KEY_ECDSA_CERT:
++#ifndef WITHOUT_ED25519
+ 	case KEY_ED25519:
+ 	case KEY_ED25519_CERT:
++#endif /* WITHOUT_ED25519 */
+ 		type = constrained ?
+ 		    SSH2_AGENTC_ADD_ID_CONSTRAINED :
+ 		    SSH2_AGENTC_ADD_IDENTITY;
+diff -pur old/authfile.c new/authfile.c
+--- old/authfile.c	2013-12-28 22:50:15.000000000 -0800
++++ new/authfile.c	2015-04-01 05:27:03.024708427 -0700
+@@ -597,9 +597,11 @@ key_private_to_blob(Key *key, Buffer *bl
+ 			    comment, new_format_cipher, new_format_rounds);
+ 		}
+ 		return key_private_pem_to_blob(key, blob, passphrase, comment);
++#ifndef WITHOUT_ED25519
+ 	case KEY_ED25519:
+ 		return key_private_to_blob2(key, blob, passphrase,
+ 		    comment, new_format_cipher, new_format_rounds);
++#endif /* WITHOUT_ED25519 */
+ 	default:
+ 		error("%s: cannot save key type %d", __func__, key->type);
+ 		return 0;
+@@ -1005,8 +1007,10 @@ key_parse_private_type(Buffer *blob, int
+ 	case KEY_ECDSA:
+ 	case KEY_RSA:
+ 		return key_parse_private_pem(blob, type, passphrase, commentp);
++#ifndef WITHOUT_ED25519
+ 	case KEY_ED25519:
+ 		return key_parse_private2(blob, type, passphrase, commentp);
++#endif /* WITHOUT_ED25519 */
+ 	case KEY_UNSPEC:
+ 		if ((k = key_parse_private2(blob, type, passphrase, commentp)))
+ 			return k;
+@@ -1213,7 +1217,9 @@ key_load_private_cert(int type, const ch
+ 	case KEY_RSA:
+ 	case KEY_DSA:
+ 	case KEY_ECDSA:
++#ifndef WITHOUT_ED25519
+ 	case KEY_ED25519:
++#endif /* WITHOUT_ED25519 */
+ 		break;
+ 	default:
+ 		error("%s: unsupported key type", __func__);
+diff -pur old/crypto_api.h new/crypto_api.h
+--- old/crypto_api.h	2014-01-16 17:31:34.000000000 -0800
++++ new/crypto_api.h	2015-04-02 00:35:29.952105991 -0700
+@@ -26,7 +26,7 @@ int	crypto_hashblocks_sha512(unsigned ch
+ 
+ #define crypto_hash_sha512_BYTES 64U
+ 
+-int	crypto_hash_sha512(unsigned char *, const unsigned char *,
++extern int	crypto_hash_sha512(unsigned char *, const unsigned char *,
+     unsigned long long);
+ 
+ int	crypto_verify_32(const unsigned char *, const unsigned char *);
+diff -pur old/ed25519.c new/ed25519.c
+--- old/ed25519.c	2013-12-17 22:48:11.000000000 -0800
++++ new/ed25519.c	2015-04-01 09:03:04.052497535 -0700
+@@ -6,6 +6,8 @@
+  * Copied from supercop-20130419/crypto_sign/ed25519/ref/ed25519.c
+  */
+ 
++#ifndef WITHOUT_ED25519
++
+ #include "includes.h"
+ #include "crypto_api.h"
+ 
+@@ -142,3 +144,4 @@ int crypto_sign_ed25519_open(
+   }
+   return ret;
+ }
++#endif /* WITHOUT_ED25519 */
+diff -pur old/fe25519.c new/fe25519.c
+--- old/fe25519.c	2014-01-16 17:43:44.000000000 -0800
++++ new/fe25519.c	2015-04-01 03:48:12.251955071 -0700
+@@ -6,6 +6,8 @@
+  * Copied from supercop-20130419/crypto_sign/ed25519/ref/fe25519.c
+  */
+ 
++#ifndef WITHOUT_ED25519
++
+ #include "includes.h"
+ 
+ #define WINDOWSIZE 1 /* Should be 1,2, or 4 */
+@@ -335,3 +337,5 @@ void fe25519_pow2523(fe25519 *r, const f
+ 	/* 2^252 - 2^2 */ fe25519_square(&t,&t);
+ 	/* 2^252 - 3 */ fe25519_mul(r,&t,x);
+ }
++
++#endif /* WITHOUT_ED25519 */
+diff -pur old/fe25519.h new/fe25519.h
+--- old/fe25519.h	2013-12-17 22:48:11.000000000 -0800
++++ new/fe25519.h	2015-04-01 03:47:56.992321351 -0700
+@@ -9,6 +9,8 @@
+ #ifndef FE25519_H
+ #define FE25519_H
+ 
++#ifndef WITHOUT_ED25519
++
+ #include "crypto_api.h"
+ 
+ #define fe25519              crypto_sign_ed25519_ref_fe25519
+@@ -67,4 +69,5 @@ void fe25519_invert(fe25519 *r, const fe
+ 
+ void fe25519_pow2523(fe25519 *r, const fe25519 *x);
+ 
++#endif /* WITHOUT_ED25519 */
+ #endif
+diff -pur old/ge25519.c new/ge25519.c
+--- old/ge25519.c	2014-01-16 17:43:44.000000000 -0800
++++ new/ge25519.c	2015-04-01 03:47:40.144323636 -0700
+@@ -6,6 +6,8 @@
+  * Copied from supercop-20130419/crypto_sign/ed25519/ref/ge25519.c
+  */
+ 
++#ifndef WITHOUT_ED25519
++
+ #include "includes.h"
+ 
+ #include "fe25519.h"
+@@ -319,3 +321,5 @@ void ge25519_scalarmult_base(ge25519_p3
+     ge25519_mixadd2(r, &t);
+   }
+ }
++
++#endif /* WITHOUT_ED25519 */
+diff -pur old/ge25519.h new/ge25519.h
+--- old/ge25519.h	2013-12-17 22:48:11.000000000 -0800
++++ new/ge25519.h	2015-04-01 03:47:22.801071311 -0700
+@@ -8,6 +8,7 @@
+ 
+ #ifndef GE25519_H
+ #define GE25519_H
++#ifndef WITHOUT_ED25519
+ 
+ #include "fe25519.h"
+ #include "sc25519.h"
+@@ -40,4 +41,5 @@ void ge25519_double_scalarmult_vartime(g
+ 
+ void ge25519_scalarmult_base(ge25519 *r, const sc25519 *s);
+ 
++#endif /* WITHOUT_ED25519 */
+ #endif
+diff -pur old/kex.c new/kex.c
+--- old/kex.c	2015-03-31 21:14:02.430475216 -0700
++++ new/kex.c	2015-04-01 04:49:49.142934463 -0700
+@@ -91,7 +91,7 @@ static const struct kexalg kexalgs[] = {
+ # endif
+ #endif
+ 	{ KEX_DH1, KEX_DH_GRP1_SHA1, 0, SSH_DIGEST_SHA1 },
+-#ifdef HAVE_EVP_SHA256
++#if defined(HAVE_EVP_SHA256) && !defined(WITHOUT_ED25519)
+ 	{ KEX_CURVE25519_SHA256, KEX_C25519_SHA256, 0, SSH_DIGEST_SHA256 },
+ #endif
+ #ifdef GSSAPI
+diff -pur old/kex.h new/kex.h
+--- old/kex.h	2015-03-31 21:14:02.430845488 -0700
++++ new/kex.h	2015-04-01 04:58:55.837357472 -0700
+@@ -43,7 +43,9 @@
+ #define	KEX_ECDH_SHA2_NISTP256	"ecdh-sha2-nistp256"
+ #define	KEX_ECDH_SHA2_NISTP384	"ecdh-sha2-nistp384"
+ #define	KEX_ECDH_SHA2_NISTP521	"ecdh-sha2-nistp521"
++#ifndef WITHOUT_ED25519
+ #define	KEX_CURVE25519_SHA256	"curve25519-sha256@libssh.org"
++#endif /* WITHOUT_ED25519 */
+ 
+ #define COMP_NONE	0
+ #define COMP_ZLIB	1
+@@ -75,7 +77,9 @@ enum kex_exchange {
+ 	KEX_DH_GEX_SHA1,
+ 	KEX_DH_GEX_SHA256,
+ 	KEX_ECDH_SHA2,
++#ifndef WITHOUT_ED25519
+ 	KEX_C25519_SHA256,
++#endif /* WITHOUT_ED25519 */
+ 	KEX_GSS_GRP1_SHA1,
+ 	KEX_GSS_GRP14_SHA1,
+ 	KEX_GSS_GEX_SHA1,
+@@ -172,8 +176,10 @@ void	 kexgex_client(Kex *);
+ void	 kexgex_server(Kex *);
+ void	 kexecdh_client(Kex *);
+ void	 kexecdh_server(Kex *);
++#ifndef WITHOUT_ED25519
+ void	 kexc25519_client(Kex *);
+ void	 kexc25519_server(Kex *);
++#endif /* WITHOUT_ED25519 */
+ 
+ #ifdef GSSAPI
+ void	kexgss_client(Kex *);
+@@ -193,6 +199,7 @@ kex_ecdh_hash(int, const EC_GROUP *, cha
+     char *, int, u_char *, int, const EC_POINT *, const EC_POINT *,
+     const BIGNUM *, u_char **, u_int *);
+ #endif
++#ifndef WITHOUT_ED25519
+ void
+ kex_c25519_hash(int, char *, char *, char *, int,
+     char *, int, u_char *, int, const u_char *, const u_char *,
+@@ -206,6 +213,7 @@ void kexc25519_shared_key(const u_char k
+     const u_char pub[CURVE25519_SIZE], Buffer *out)
+ 	__attribute__((__bounded__(__minbytes__, 1, CURVE25519_SIZE)))
+ 	__attribute__((__bounded__(__minbytes__, 2, CURVE25519_SIZE)));
++#endif /* WITHOUT_ED25519 */
+ 
+ void
+ derive_ssh1_session_id(BIGNUM *, BIGNUM *, u_int8_t[8], u_int8_t[16]);
+diff -pur old/kexc25519.c new/kexc25519.c
+--- old/kexc25519.c	2014-01-12 00:21:23.000000000 -0800
++++ new/kexc25519.c	2015-04-01 04:52:44.039054396 -0700
+@@ -25,6 +25,8 @@
+  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  */
+ 
++#ifndef WITHOUT_ED25519
++
+ #include "includes.h"
+ 
+ #include <sys/types.h>
+@@ -120,3 +122,5 @@ kex_c25519_hash(
+ 	*hash = digest;
+ 	*hashlen = ssh_digest_bytes(hash_alg);
+ }
++
++#endif /* WITHOUT_ED25519 */
+diff -pur old/kexc25519c.c new/kexc25519c.c
+--- old/kexc25519c.c	2014-01-12 00:21:23.000000000 -0800
++++ new/kexc25519c.c	2015-04-01 04:52:57.326754535 -0700
+@@ -25,6 +25,8 @@
+  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  */
+ 
++#ifndef WITHOUT_ED25519
++
+ #include "includes.h"
+ 
+ #include <sys/types.h>
+@@ -127,3 +129,5 @@ kexc25519_client(Kex *kex)
+ 	buffer_free(&shared_secret);
+ 	kex_finish(kex);
+ }
++
++#endif /* WITHOUT_ED25519 */
+diff -pur old/kexc25519s.c new/kexc25519s.c
+--- old/kexc25519s.c	2014-01-12 00:21:23.000000000 -0800
++++ new/kexc25519s.c	2015-04-01 04:53:14.320854854 -0700
+@@ -24,6 +24,8 @@
+  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  */
+ 
++#ifndef WITHOUT_ED25519
++
+ #include "includes.h"
+ 
+ #include <sys/types.h>
+@@ -124,3 +126,5 @@ kexc25519_server(Kex *kex)
+ 	buffer_free(&shared_secret);
+ 	kex_finish(kex);
+ }
++
++#endif /* WITHOUT_ED25519 */
+diff -pur old/key.c new/key.c
+--- old/key.c	2015-03-31 21:14:02.432016878 -0700
++++ new/key.c	2015-04-01 02:05:27.074044366 -0700
+@@ -89,8 +89,10 @@ key_new(int type)
+ 	k->dsa = NULL;
+ 	k->rsa = NULL;
+ 	k->cert = NULL;
++#ifndef WITHOUT_ED25519
+ 	k->ed25519_sk = NULL;
+ 	k->ed25519_pk = NULL;
++#endif /* WITHOUT_ED25519 */
+ 	switch (k->type) {
+ 	case KEY_RSA1:
+ 	case KEY_RSA:
+@@ -125,10 +127,12 @@ key_new(int type)
+ 		/* Cannot do anything until we know the group */
+ 		break;
+ #endif
++#ifndef WITHOUT_ED25519
+ 	case KEY_ED25519:
+ 	case KEY_ED25519_CERT:
+ 		/* no need to prealloc */
+ 		break;
++#endif /* WITHOUT_ED25519 */
+ 	case KEY_UNSPEC:
+ 		break;
+ 	default:
+@@ -173,10 +177,12 @@ key_add_private(Key *k)
+ 	case KEY_ECDSA_CERT:
+ 		/* Cannot do anything until we know the group */
+ 		break;
++#ifndef WITHOUT_ED25519
+ 	case KEY_ED25519:
+ 	case KEY_ED25519_CERT:
+ 		/* no need to prealloc */
+ 		break;
++#endif /* WITHOUT_ED25519 */
+ 	case KEY_UNSPEC:
+ 		break;
+ 	default:
+@@ -239,6 +245,7 @@ key_free(Key *k)
+ 		k->ecdsa = NULL;
+ 		break;
+ #endif
++#ifndef WITHOUT_ED25519
+ 	case KEY_ED25519:
+ 	case KEY_ED25519_CERT:
+ 		if (k->ed25519_pk) {
+@@ -252,6 +259,7 @@ key_free(Key *k)
+ 			k->ed25519_sk = NULL;
+ 		}
+ 		break;
++#endif /* WITHOUT_ED25519 */
+ 	case KEY_UNSPEC:
+ 		break;
+ 	default:
+@@ -333,10 +341,12 @@ key_equal_public(const Key *a, const Key
+ 		BN_CTX_free(bnctx);
+ 		return 1;
+ #endif /* OPENSSL_HAS_ECC */
++#ifndef WITHOUT_ED25519
+ 	case KEY_ED25519:
+ 	case KEY_ED25519_CERT:
+ 		return a->ed25519_pk != NULL && b->ed25519_pk != NULL &&
+ 		    memcmp(a->ed25519_pk, b->ed25519_pk, ED25519_PK_SZ) == 0;
++#endif /* WITHOUT_ED25519 */
+ 	default:
+ 		fatal("key_equal: bad key type %d", a->type);
+ 	}
+@@ -392,7 +402,9 @@ key_fingerprint_raw(const Key *k, enum f
+ 	case KEY_DSA:
+ 	case KEY_ECDSA:
+ 	case KEY_RSA:
++#ifndef WITHOUT_ED25519
+ 	case KEY_ED25519:
++#endif /* WITHOUT_ED25519 */
+ 		key_to_blob(k, &blob, &len);
+ 		break;
+ 	case KEY_DSA_CERT_V00:
+@@ -400,7 +412,9 @@ key_fingerprint_raw(const Key *k, enum f
+ 	case KEY_DSA_CERT:
+ 	case KEY_ECDSA_CERT:
+ 	case KEY_RSA_CERT:
++#ifndef WITHOUT_ED25519
+ 	case KEY_ED25519_CERT:
++#endif /* WITHOUT_ED25519 */
+ 		/* We want a fingerprint of the _key_ not of the cert */
+ 		to_blob(k, &blob, &len, 1);
+ 		break;
+@@ -728,13 +742,17 @@ key_read(Key *ret, char **cpp)
+ 	case KEY_RSA:
+ 	case KEY_DSA:
+ 	case KEY_ECDSA:
++#ifndef WITHOUT_ED25519
+ 	case KEY_ED25519:
++#endif /* WITHOUT_ED25519 */
+ 	case KEY_DSA_CERT_V00:
+ 	case KEY_RSA_CERT_V00:
+ 	case KEY_DSA_CERT:
+ 	case KEY_ECDSA_CERT:
+ 	case KEY_RSA_CERT:
++#ifndef WITHOUT_ED25519
+ 	case KEY_ED25519_CERT:
++#endif /* WITHOUT_ED25519 */
+ 		space = strchr(cp, ' ');
+ 		if (space == NULL) {
+ 			debug3("key_read: missing whitespace");
+@@ -836,6 +854,7 @@ key_read(Key *ret, char **cpp)
+ #endif
+ 		}
+ #endif
++#ifndef WITHOUT_ED25519
+ 		if (key_type_plain(ret->type) == KEY_ED25519) {
+ 			free(ret->ed25519_pk);
+ 			ret->ed25519_pk = k->ed25519_pk;
+@@ -844,6 +863,7 @@ key_read(Key *ret, char **cpp)
+ 			/* XXX */
+ #endif
+ 		}
++#endif /* WITHOUT_ED25519 */
+ 		success = 1;
+ /*XXXX*/
+ 		key_free(k);
+@@ -907,11 +927,13 @@ key_write(const Key *key, FILE *f)
+ 			return 0;
+ 		break;
+ #endif
++#ifndef WITHOUT_ED25519
+ 	case KEY_ED25519:
+ 	case KEY_ED25519_CERT:
+ 		if (key->ed25519_pk == NULL)
+ 			return 0;
+ 		break;
++#endif /* WITHOUT_ED25519 */
+ 	case KEY_RSA:
+ 	case KEY_RSA_CERT_V00:
+ 	case KEY_RSA_CERT:
+@@ -959,7 +981,9 @@ static const struct keytype keytypes[] =
+ 	{ NULL, "RSA1", KEY_RSA1, 0, 0 },
+ 	{ "ssh-rsa", "RSA", KEY_RSA, 0, 0 },
+ 	{ "ssh-dss", "DSA", KEY_DSA, 0, 0 },
++#ifndef WITHOUT_ED25519
+ 	{ "ssh-ed25519", "ED25519", KEY_ED25519, 0, 0 },
++#endif /* WITHOUT_ED25519 */
+ #ifdef OPENSSL_HAS_ECC
+ 	{ "ecdsa-sha2-nistp256", "ECDSA", KEY_ECDSA, NID_X9_62_prime256v1, 0 },
+ 	{ "ecdsa-sha2-nistp384", "ECDSA", KEY_ECDSA, NID_secp384r1, 0 },
+@@ -983,8 +1007,10 @@ static const struct keytype keytypes[] =
+ 	    KEY_RSA_CERT_V00, 0, 1 },
+ 	{ "ssh-dss-cert-v00@openssh.com", "DSA-CERT-V00",
+ 	    KEY_DSA_CERT_V00, 0, 1 },
++#ifndef WITHOUT_ED25519
+ 	{ "ssh-ed25519-cert-v01@openssh.com", "ED25519-CERT",
+ 	    KEY_ED25519_CERT, 0, 1 },
++#endif /* WITHOUT_ED25519 */
+ 	{ "null", "null", KEY_NULL, 0, 0 },
+ 	{ NULL, NULL, -1, -1, 0 }
+ };
+@@ -1097,7 +1123,9 @@ key_type_is_valid_ca(int type)
+ 	case KEY_RSA:
+ 	case KEY_DSA:
+ 	case KEY_ECDSA:
++#ifndef WITHOUT_ED25519
+ 	case KEY_ED25519:
++#endif /* WITHOUT_ED25519 */
+ 		return 1;
+ 	default:
+ 		return 0;
+@@ -1117,8 +1145,10 @@ key_size(const Key *k)
+ 	case KEY_DSA_CERT_V00:
+ 	case KEY_DSA_CERT:
+ 		return BN_num_bits(k->dsa->p);
++#ifndef WITHOUT_ED25519
+ 	case KEY_ED25519:
+ 		return 256;	/* XXX */
++#endif /* WITHOUT_ED25519 */
+ #ifdef OPENSSL_HAS_ECC
+ 	case KEY_ECDSA:
+ 	case KEY_ECDSA_CERT:
+@@ -1262,11 +1292,13 @@ key_generate(int type, u_int bits)
+ 	case KEY_RSA1:
+ 		k->rsa = rsa_generate_private_key(bits);
+ 		break;
++#ifndef WITHOUT_ED25519
+ 	case KEY_ED25519:
+ 		k->ed25519_pk = xmalloc(ED25519_PK_SZ);
+ 		k->ed25519_sk = xmalloc(ED25519_SK_SZ);
+ 		crypto_sign_ed25519_keypair(k->ed25519_pk, k->ed25519_sk);
+ 		break;
++#endif /* WITHOUT_ED25519 */
+ 	case KEY_RSA_CERT_V00:
+ 	case KEY_DSA_CERT_V00:
+ 	case KEY_RSA_CERT:
+@@ -1360,6 +1392,7 @@ key_from_private(const Key *k)
+ 		    (BN_copy(n->rsa->e, k->rsa->e) == NULL))
+ 			fatal("key_from_private: BN_copy failed");
+ 		break;
++#ifndef WITHOUT_ED25519
+ 	case KEY_ED25519:
+ 	case KEY_ED25519_CERT:
+ 		n = key_new(k->type);
+@@ -1368,6 +1401,7 @@ key_from_private(const Key *k)
+ 			memcpy(n->ed25519_pk, k->ed25519_pk, ED25519_PK_SZ);
+ 		}
+ 		break;
++#endif /* WITHOUT_ED25519 */
+ 	default:
+ 		fatal("key_from_private: unknown type %d", k->type);
+ 		break;
+@@ -1629,6 +1663,7 @@ key_from_blob2(const u_char *blob, u_int
+ #endif
+ 		break;
+ #endif /* OPENSSL_HAS_ECC */
++#ifndef WITHOUT_ED25519
+ 	case KEY_ED25519_CERT:
+ 		(void)buffer_get_string_ptr_ret(&b, NULL); /* Skip nonce */
+ 		/* FALLTHROUGH */
+@@ -1646,6 +1681,7 @@ key_from_blob2(const u_char *blob, u_int
+ 		key->ed25519_pk = pk;
+ 		pk = NULL;
+ 		break;
++#endif /* WITHOUT_ED25519 */
+ 	case KEY_UNSPEC:
+ 		key = key_new(type);
+ 		break;
+@@ -1700,7 +1736,9 @@ to_blob(const Key *key, u_char **blobp,
+ 	case KEY_DSA_CERT:
+ 	case KEY_ECDSA_CERT:
+ 	case KEY_RSA_CERT:
++#ifndef WITHOUT_ED25519
+ 	case KEY_ED25519_CERT:
++#endif /* WITHOUT_ED25519 */
+ 		/* Use the existing blob */
+ 		buffer_append(&b, buffer_ptr(&key->cert->certblob),
+ 		    buffer_len(&key->cert->certblob));
+@@ -1728,11 +1766,13 @@ to_blob(const Key *key, u_char **blobp,
+ 		buffer_put_bignum2(&b, key->rsa->e);
+ 		buffer_put_bignum2(&b, key->rsa->n);
+ 		break;
++#ifndef WITHOUT_ED25519
+ 	case KEY_ED25519:
+ 		buffer_put_cstring(&b,
+ 		    key_ssh_name_from_type_nid(type, key->ecdsa_nid));
+ 		buffer_put_string(&b, key->ed25519_pk, ED25519_PK_SZ);
+ 		break;
++#endif /* WITHOUT_ED25519 */
+ 	default:
+ 		error("key_to_blob: unsupported key type %d", key->type);
+ 		buffer_free(&b);
+@@ -1776,9 +1816,11 @@ key_sign(
+ 	case KEY_RSA_CERT:
+ 	case KEY_RSA:
+ 		return ssh_rsa_sign(key, sigp, lenp, data, datalen);
++#ifndef WITHOUT_ED25519
+ 	case KEY_ED25519:
+ 	case KEY_ED25519_CERT:
+ 		return ssh_ed25519_sign(key, sigp, lenp, data, datalen);
++#endif /* WITHOUT_ED25519 */
+ 	default:
+ 		error("key_sign: invalid key type %d", key->type);
+ 		return -1;
+@@ -1812,9 +1854,11 @@ key_verify(
+ 	case KEY_RSA_CERT:
+ 	case KEY_RSA:
+ 		return ssh_rsa_verify(key, signature, signaturelen, data, datalen);
++#ifndef WITHOUT_ED25519
+ 	case KEY_ED25519:
+ 	case KEY_ED25519_CERT:
+ 		return ssh_ed25519_verify(key, signature, signaturelen, data, datalen);
++#endif /* WITHOUT_ED25519 */
+ 	default:
+ 		error("key_verify: invalid key type %d", key->type);
+ 		return -1;
+@@ -1834,8 +1878,10 @@ key_demote(const Key *k)
+ 	pk->dsa = NULL;
+ 	pk->ecdsa = NULL;
+ 	pk->rsa = NULL;
++#ifndef WITHOUT_ED25519
+ 	pk->ed25519_pk = NULL;
+ 	pk->ed25519_sk = NULL;
++#endif /* WITHOUT_ED25519 */
+ 
+ 	switch (k->type) {
+ 	case KEY_RSA_CERT_V00:
+@@ -1879,6 +1925,7 @@ key_demote(const Key *k)
+ 			fatal("key_demote: EC_KEY_set_public_key failed");
+ 		break;
+ #endif
++#ifndef WITHOUT_ED25519
+ 	case KEY_ED25519_CERT:
+ 		key_cert_copy(k, pk);
+ 		/* FALLTHROUGH */
+@@ -1888,6 +1935,7 @@ key_demote(const Key *k)
+ 			memcpy(pk->ed25519_pk, k->ed25519_pk, ED25519_PK_SZ);
+ 		}
+ 		break;
++#endif /* WITHOUT_ED25519 */
+ 	default:
+ 		fatal("key_demote: bad key type %d", k->type);
+ 		break;
+@@ -1917,8 +1965,10 @@ key_type_plain(int type)
+ 		return KEY_DSA;
+ 	case KEY_ECDSA_CERT:
+ 		return KEY_ECDSA;
++#ifndef WITHOUT_ED25519
+ 	case KEY_ED25519_CERT:
+ 		return KEY_ED25519;
++#endif /* WITHOUT_ED25519 */
+ 	default:
+ 		return type;
+ 	}
+@@ -1944,6 +1994,7 @@ key_to_certified(Key *k, int legacy)
+ 		k->cert = cert_new();
+ 		k->type = KEY_ECDSA_CERT;
+ 		return 0;
++#ifndef WITHOUT_ED25519
+ 	case KEY_ED25519:
+ 		if (legacy)
+ 			fatal("%s: legacy ED25519 certificates are not "
+@@ -1951,6 +2002,7 @@ key_to_certified(Key *k, int legacy)
+ 		k->cert = cert_new();
+ 		k->type = KEY_ED25519_CERT;
+ 		return 0;
++#endif /* WITHOUT_ED25519 */
+ 	default:
+ 		error("%s: key has incorrect type %s", __func__, key_type(k));
+ 		return -1;
+@@ -2029,10 +2081,12 @@ key_certify(Key *k, Key *ca)
+ 		buffer_put_bignum2(&k->cert->certblob, k->rsa->e);
+ 		buffer_put_bignum2(&k->cert->certblob, k->rsa->n);
+ 		break;
++#ifndef WITHOUT_ED25519
+ 	case KEY_ED25519_CERT:
+ 		buffer_put_string(&k->cert->certblob,
+ 		    k->ed25519_pk, ED25519_PK_SZ);
+ 		break;
++#endif /* WITHOUT_ED25519 */
+ 	default:
+ 		error("%s: key has incorrect type %s", __func__, key_type(k));
+ 		buffer_clear(&k->cert->certblob);
+@@ -2450,6 +2504,7 @@ key_private_serialize(const Key *key, Bu
+ 		buffer_put_bignum2(b, EC_KEY_get0_private_key(key->ecdsa));
+ 		break;
+ #endif /* OPENSSL_HAS_ECC */
++#ifndef WITHOUT_ED25519
+ 	case KEY_ED25519:
+ 		buffer_put_string(b, key->ed25519_pk, ED25519_PK_SZ);
+ 		buffer_put_string(b, key->ed25519_sk, ED25519_SK_SZ);
+@@ -2462,6 +2517,7 @@ key_private_serialize(const Key *key, Bu
+ 		buffer_put_string(b, key->ed25519_pk, ED25519_PK_SZ);
+ 		buffer_put_string(b, key->ed25519_sk, ED25519_SK_SZ);
+ 		break;
++#endif /* WITHOUT_ED25519 */
+ 	}
+ }
+ 
+@@ -2576,6 +2632,7 @@ key_private_deserialize(Buffer *blob)
+ 		buffer_get_bignum2(blob, k->rsa->p);
+ 		buffer_get_bignum2(blob, k->rsa->q);
+ 		break;
++#ifndef WITHOUT_ED25519
+ 	case KEY_ED25519:
+ 		k = key_new_private(type);
+ 		k->ed25519_pk = buffer_get_string(blob, &pklen);
+@@ -2602,6 +2659,7 @@ key_private_deserialize(Buffer *blob)
+ 			fatal("%s: ed25519 sklen %d != %d",
+ 			    __func__, sklen, ED25519_SK_SZ);
+ 		break;
++#endif /* WITHOUT_ED25519 */
+ 	default:
+ 		free(type_name);
+ 		buffer_clear(blob);
+diff -pur old/key.h new/key.h
+--- old/key.h	2015-03-31 21:14:02.432362912 -0700
++++ new/key.h	2015-04-01 02:07:01.018270150 -0700
+@@ -39,11 +39,15 @@ enum types {
+ 	KEY_RSA,
+ 	KEY_DSA,
+ 	KEY_ECDSA,
++#ifndef WITHOUT_ED25519
+ 	KEY_ED25519,
++#endif /* WITHOUT_ED25519 */
+ 	KEY_RSA_CERT,
+ 	KEY_DSA_CERT,
+ 	KEY_ECDSA_CERT,
++#ifndef WITHOUT_ED25519
+ 	KEY_ED25519_CERT,
++#endif /* WITHOUT_ED25519 */
+ 	KEY_RSA_CERT_V00,
+ 	KEY_DSA_CERT_V00,
+ 	KEY_NULL,
+@@ -89,12 +93,16 @@ struct Key {
+ 	void	*ecdsa;
+ #endif
+ 	struct KeyCert *cert;
++#ifndef WITHOUT_ED25519
+ 	u_char	*ed25519_sk;
+ 	u_char	*ed25519_pk;
++#endif /* WITHOUT_ED25519 */
+ };
+ 
++#ifndef WITHOUT_ED25519
+ #define	ED25519_SK_SZ	crypto_sign_ed25519_SECRETKEYBYTES
+ #define	ED25519_PK_SZ	crypto_sign_ed25519_PUBLICKEYBYTES
++#endif /* WITHOUT_ED25519 */
+ 
+ Key		*key_new(int);
+ void		 key_add_private(Key *);
+@@ -153,8 +161,10 @@ int	 ssh_ecdsa_sign(const Key *, u_char
+ int	 ssh_ecdsa_verify(const Key *, const u_char *, u_int, const u_char *, u_int);
+ int	 ssh_rsa_sign(const Key *, u_char **, u_int *, const u_char *, u_int);
+ int	 ssh_rsa_verify(const Key *, const u_char *, u_int, const u_char *, u_int);
++#ifndef WITHOUT_ED25519
+ int	 ssh_ed25519_sign(const Key *, u_char **, u_int *, const u_char *, u_int);
+ int	 ssh_ed25519_verify(const Key *, const u_char *, u_int, const u_char *, u_int);
++#endif /* WITHOUT_ED25519 */
+ 
+ #if defined(OPENSSL_HAS_ECC) && (defined(DEBUG_KEXECDH) || defined(DEBUG_PK))
+ void	key_dump_ec_point(const EC_GROUP *, const EC_POINT *);
+diff -pur old/monitor.c new/monitor.c
+--- old/monitor.c	2015-03-31 21:14:02.433735148 -0700
++++ new/monitor.c	2015-04-01 04:54:56.314967559 -0700
+@@ -1902,7 +1902,9 @@ mm_get_kex(Buffer *m)
+ 	kex->kex[KEX_DH_GEX_SHA1] = kexgex_server;
+ 	kex->kex[KEX_DH_GEX_SHA256] = kexgex_server;
+ 	kex->kex[KEX_ECDH_SHA2] = kexecdh_server;
++#ifndef WITHOUT_ED25519
+ 	kex->kex[KEX_C25519_SHA256] = kexc25519_server;
++#endif /* WITHOUT_ED25519 */
+ #ifdef GSSAPI
+ 	if (options.gss_keyex) {
+ 		kex->kex[KEX_GSS_GRP1_SHA1] = kexgss_server;
+diff -pur old/myproposal.h new/myproposal.h
+--- old/myproposal.h	2013-12-06 16:24:02.000000000 -0800
++++ new/myproposal.h	2015-04-01 02:12:36.430101847 -0700
+@@ -80,6 +80,24 @@
+ # define SHA2_HMAC_MODES
+ #endif
+ 
++#ifdef WITHOUT_ED25519
++# define KEX_DEFAULT_KEX \
++	KEX_ECDH_METHODS \
++	KEX_SHA256_METHODS \
++	"diffie-hellman-group-exchange-sha1," \
++	"diffie-hellman-group14-sha1," \
++	"diffie-hellman-group1-sha1"
++
++#define	KEX_DEFAULT_PK_ALG	\
++	HOSTKEY_ECDSA_CERT_METHODS \
++	"ssh-rsa-cert-v01@openssh.com," \
++	"ssh-dss-cert-v01@openssh.com," \
++	"ssh-rsa-cert-v00@openssh.com," \
++	"ssh-dss-cert-v00@openssh.com," \
++	HOSTKEY_ECDSA_METHODS \
++	"ssh-rsa," \
++	"ssh-dss"
++#else /* WITHOUT_ED25519 */
+ # define KEX_DEFAULT_KEX \
+ 	KEX_CURVE25519_METHODS \
+ 	KEX_ECDH_METHODS \
+@@ -99,6 +117,7 @@
+ 	"ssh-ed25519," \
+ 	"ssh-rsa," \
+ 	"ssh-dss"
++#endif /* WITHOUT_ED25519 */
+ 
+ /* the actual algorithms */
+ 
+diff -pur old/openbsd-compat/Makefile.in new/openbsd-compat/Makefile.in
+--- old/openbsd-compat/Makefile.in	2013-12-06 17:37:54.000000000 -0800
++++ new/openbsd-compat/Makefile.in	2015-04-02 02:29:35.165103300 -0700
+@@ -18,7 +18,7 @@ LDFLAGS=-L. @LDFLAGS@
+ 
+ OPENBSD=base64.o basename.o bcrypt_pbkdf.o bindresvport.o blowfish.o daemon.o dirname.o fmt_scaled.o getcwd.o getgrouplist.o getopt_long.o getrrsetbyname.o glob.o inet_aton.o inet_ntoa.o inet_ntop.o mktemp.o pwcache.o readpassphrase.o realpath.o rresvport.o setenv.o setproctitle.o sha2.o sigact.o strlcat.o strlcpy.o strmode.o strnlen.o strptime.o strsep.o strtonum.o strtoll.o strtoul.o strtoull.o timingsafe_bcmp.o vis.o blowfish.o bcrypt_pbkdf.o
+ 
+-COMPAT=arc4random.o bsd-asprintf.o bsd-closefrom.o bsd-cray.o bsd-cygwin_util.o bsd-getpeereid.o getrrsetbyname-ldns.o bsd-misc.o bsd-nextstep.o bsd-openpty.o bsd-poll.o bsd-setres_id.o bsd-snprintf.o bsd-statvfs.o bsd-waitpid.o fake-rfc2553.o openssl-compat.o xmmap.o xcrypt.o
++COMPAT=arc4random.o bsd-asprintf.o bsd-closefrom.o bsd-cray.o bsd-cygwin_util.o bsd-getpeereid.o getrrsetbyname-ldns.o bsd-misc.o bsd-nextstep.o bsd-openpty.o bsd-poll.o bsd-setres_id.o bsd-snprintf.o bsd-statvfs.o bsd-waitpid.o fake-rfc2553.o openssl-compat.o xmmap.o xcrypt.o 
+ 
+ PORTS=port-aix.o port-irix.o port-linux.o port-solaris.o port-tun.o port-uw.o
+ 
+@@ -32,7 +32,7 @@ $(OPENBSD): ../config.h
+ $(PORTS): ../config.h
+ 
+ libopenbsd-compat.a:  $(COMPAT) $(OPENBSD) $(PORTS)
+-	$(AR) rv $@ $(COMPAT) $(OPENBSD) $(PORTS)
++	$(AR) rv $@ $(COMPAT) $(OPENBSD) $(PORTS) ../hash.o ../blocks.o
+ 	$(RANLIB) $@
+ 
+ clean:
+diff -pur old/pathnames.h new/pathnames.h
+--- old/pathnames.h	2013-12-06 16:24:02.000000000 -0800
++++ new/pathnames.h	2015-04-01 02:13:45.651827507 -0700
+@@ -39,7 +39,9 @@
+ #define _PATH_HOST_KEY_FILE		SSHDIR "/ssh_host_key"
+ #define _PATH_HOST_DSA_KEY_FILE		SSHDIR "/ssh_host_dsa_key"
+ #define _PATH_HOST_ECDSA_KEY_FILE	SSHDIR "/ssh_host_ecdsa_key"
++#ifndef WITHOUT_ED25519
+ #define _PATH_HOST_ED25519_KEY_FILE	SSHDIR "/ssh_host_ed25519_key"
++#endif /* WITHOUT_ED25519 */
+ #define _PATH_HOST_RSA_KEY_FILE		SSHDIR "/ssh_host_rsa_key"
+ #define _PATH_DH_MODULI			SSHDIR "/moduli"
+ /* Backwards compatibility */
+@@ -78,7 +80,9 @@
+ #define _PATH_SSH_CLIENT_ID_DSA		_PATH_SSH_USER_DIR "/id_dsa"
+ #define _PATH_SSH_CLIENT_ID_ECDSA	_PATH_SSH_USER_DIR "/id_ecdsa"
+ #define _PATH_SSH_CLIENT_ID_RSA		_PATH_SSH_USER_DIR "/id_rsa"
++#ifndef WITHOUT_ED25519
+ #define _PATH_SSH_CLIENT_ID_ED25519	_PATH_SSH_USER_DIR "/id_ed25519"
++#endif /* WITHOUT_ED25519 */
+ 
+ /*
+  * Configuration file in user's home directory.  This file need not be
+diff -pur old/readconf.c new/readconf.c
+--- old/readconf.c	2015-03-31 21:14:02.435957183 -0700
++++ new/readconf.c	2015-04-01 02:14:22.222135058 -0700
+@@ -1715,8 +1715,10 @@ fill_default_options(Options * options)
+ 			add_identity_file(options, "~/",
+ 			    _PATH_SSH_CLIENT_ID_ECDSA, 0);
+ #endif
++#ifndef WITHOUT_ED25519
+ 			add_identity_file(options, "~/",
+ 			    _PATH_SSH_CLIENT_ID_ED25519, 0);
++#endif /* WITHOUT_ED25519 */
+ 		}
+ 	}
+ 	if (options->escape_char == -1)
+diff -pur old/sc25519.c new/sc25519.c
+--- old/sc25519.c	2014-01-16 17:43:44.000000000 -0800
++++ new/sc25519.c	2015-04-01 03:46:19.162528358 -0700
+@@ -6,6 +6,8 @@
+  * Copied from supercop-20130419/crypto_sign/ed25519/ref/sc25519.c
+  */
+ 
++#ifndef WITHOUT_ED25519
++
+ #include "includes.h"
+ 
+ #include "sc25519.h"
+@@ -306,3 +308,5 @@ void sc25519_2interleave2(unsigned char
+   r[125] = ((s1->v[31] >> 2) & 3) ^ (((s2->v[31] >> 2) & 3) << 2);
+   r[126] = ((s1->v[31] >> 4) & 3) ^ (((s2->v[31] >> 4) & 3) << 2);
+ }
++
++#endif /* WITHOUT_ED25519 */
+diff -pur old/sc25519.h new/sc25519.h
+--- old/sc25519.h	2013-12-17 22:48:11.000000000 -0800
++++ new/sc25519.h	2015-04-01 03:45:37.633735864 -0700
+@@ -8,6 +8,7 @@
+ 
+ #ifndef SC25519_H
+ #define SC25519_H
++#ifndef WITHOUT_ED25519
+ 
+ #include "crypto_api.h"
+ 
+@@ -77,4 +78,5 @@ void sc25519_window5(signed char r[51],
+ 
+ void sc25519_2interleave2(unsigned char r[127], const sc25519 *s1, const sc25519 *s2);
+ 
++#endif /* WITHOUT_ED25519 */
+ #endif
+diff -pur old/servconf.c new/servconf.c
+--- old/servconf.c	2015-03-31 21:14:02.437668507 -0700
++++ new/servconf.c	2015-04-01 02:15:09.724697791 -0700
+@@ -190,8 +190,10 @@ fill_default_server_options(ServerOption
+ 			options->host_key_files[options->num_host_key_files++] =
+ 			    _PATH_HOST_ECDSA_KEY_FILE;
+ #endif
++#ifndef WITHOUT_ED25519
+ 			options->host_key_files[options->num_host_key_files++] =
+ 			    _PATH_HOST_ED25519_KEY_FILE;
++#endif /* WITHOUT_ED25519 */
+ 		}
+ 	}
+ 	/* No certificates by default */
+diff -pur old/smult_curve25519_ref.c new/smult_curve25519_ref.c
+--- old/smult_curve25519_ref.c	2013-11-03 13:26:53.000000000 -0800
++++ new/smult_curve25519_ref.c	2015-04-01 04:55:30.360761627 -0700
+@@ -6,6 +6,8 @@ Public domain.
+ Derived from public domain code by D. J. Bernstein.
+ */
+ 
++#ifndef WITHOUT_ED25519
++
+ int crypto_scalarmult_curve25519(unsigned char *, const unsigned char *, const unsigned char *);
+ 
+ static void add(unsigned int out[32],const unsigned int a[32],const unsigned int b[32])
+@@ -263,3 +265,5 @@ int crypto_scalarmult_curve25519(unsigne
+   for (i = 0;i < 32;++i) q[i] = work[64 + i];
+   return 0;
+ }
++
++#endif /* WITHOUT_ED25519 */
+diff -pur old/ssh-add.0 new/ssh-add.0
+--- old/ssh-add.0	2014-01-29 17:52:47.000000000 -0800
++++ new/ssh-add.0	2015-04-02 08:18:24.840811117 -0700
+@@ -11,7 +11,7 @@ SYNOPSIS
+ DESCRIPTION
+      ssh-add adds private key identities to the authentication agent,
+      ssh-agent(1).  When run without arguments, it adds the files
+-     ~/.ssh/id_rsa, ~/.ssh/id_dsa, ~/.ssh/id_ecdsa, ~/.ssh/id_ed25519 and
++     ~/.ssh/id_rsa, ~/.ssh/id_dsa and
+      ~/.ssh/identity.  After loading a private key, ssh-add will try to load
+      corresponding certificate information from the filename obtained by
+      appending -cert.pub to the name of the private key file.  Alternative
+@@ -91,14 +91,6 @@ FILES
+              Contains the protocol version 2 DSA authentication identity of
+              the user.
+ 
+-     ~/.ssh/id_ecdsa
+-             Contains the protocol version 2 ECDSA authentication identity of
+-             the user.
+-
+-     ~/.ssh/id_ed25519
+-             Contains the protocol version 2 ED25519 authentication identity
+-             of the user.
+-
+      ~/.ssh/id_rsa
+              Contains the protocol version 2 RSA authentication identity of
+              the user.
+diff -pur old/ssh-add.1 new/ssh-add.1
+--- old/ssh-add.1	2013-12-17 22:46:28.000000000 -0800
++++ new/ssh-add.1	2015-04-02 08:11:00.150982710 -0700
+@@ -57,8 +57,6 @@ adds private key identities to the authe
+ When run without arguments, it adds the files
+ .Pa ~/.ssh/id_rsa ,
+ .Pa ~/.ssh/id_dsa ,
+-.Pa ~/.ssh/id_ecdsa ,
+-.Pa ~/.ssh/id_ed25519
+ and
+ .Pa ~/.ssh/identity .
+ After loading a private key,
+@@ -168,10 +166,6 @@ socket used to communicate with the agen
+ Contains the protocol version 1 RSA authentication identity of the user.
+ .It Pa ~/.ssh/id_dsa
+ Contains the protocol version 2 DSA authentication identity of the user.
+-.It Pa ~/.ssh/id_ecdsa
+-Contains the protocol version 2 ECDSA authentication identity of the user.
+-.It Pa ~/.ssh/id_ed25519
+-Contains the protocol version 2 ED25519 authentication identity of the user.
+ .It Pa ~/.ssh/id_rsa
+ Contains the protocol version 2 RSA authentication identity of the user.
+ .El
+diff -pur old/ssh-add.c new/ssh-add.c
+--- old/ssh-add.c	2013-12-28 22:44:07.000000000 -0800
++++ new/ssh-add.c	2015-04-01 04:55:52.619415360 -0700
+@@ -73,7 +73,9 @@ static char *default_files[] = {
+ #ifdef OPENSSL_HAS_ECC
+ 	_PATH_SSH_CLIENT_ID_ECDSA,
+ #endif
++#ifndef WITHOUT_ED25519
+ 	_PATH_SSH_CLIENT_ID_ED25519,
++#endif /* WITHOUT_ED25519 */
+ 	_PATH_SSH_CLIENT_IDENTITY,
+ 	NULL
+ };
+diff -pur old/ssh-agent.0 new/ssh-agent.0
+--- old/ssh-agent.0	2014-01-29 17:52:47.000000000 -0800
++++ new/ssh-agent.0	2015-04-02 08:18:54.504859476 -0700
+@@ -9,7 +9,7 @@ SYNOPSIS
+ 
+ DESCRIPTION
+      ssh-agent is a program to hold private keys used for public key
+-     authentication (RSA, DSA, ECDSA, ED25519).  The idea is that ssh-agent is
++     authentication (RSA, DSA).  The idea is that ssh-agent is
+      started in the beginning of an X-session or a login session, and all
+      other windows or programs are started as clients to the ssh-agent
+      program.  Through use of environment variables the agent can be located
+@@ -46,8 +46,8 @@ DESCRIPTION
+ 
+      The agent initially does not have any private keys.  Keys are added using
+      ssh-add(1).  When executed without arguments, ssh-add(1) adds the files
+-     ~/.ssh/id_rsa, ~/.ssh/id_dsa, ~/.ssh/id_ecdsa, ~/.ssh/id_ed25519 and
+-     ~/.ssh/identity.  If the identity has a passphrase, ssh-add(1) asks for
++     ~/.ssh/id_rsa, ~/.ssh/id_dsa ~/.ssh/identity.  
++     If the identity has a passphrase, ssh-add(1) asks for
+      the passphrase on the terminal if it has one or from a small X11 program
+      if running under X11.  If neither of these is the case then the
+      authentication will fail.  It then sends the identity to the agent.
+@@ -97,14 +97,6 @@ FILES
+              Contains the protocol version 2 DSA authentication identity of
+              the user.
+ 
+-     ~/.ssh/id_ecdsa
+-             Contains the protocol version 2 ECDSA authentication identity of
+-             the user.
+-
+-     ~/.ssh/id_ed25519
+-             Contains the protocol version 2 ED25519 authentication identity
+-             of the user.
+-
+      ~/.ssh/id_rsa
+              Contains the protocol version 2 RSA authentication identity of
+              the user.
+diff -pur old/ssh-agent.1 new/ssh-agent.1
+--- old/ssh-agent.1	2013-12-17 22:46:28.000000000 -0800
++++ new/ssh-agent.1	2015-04-02 08:11:35.139725778 -0700
+@@ -53,7 +53,7 @@
+ .Sh DESCRIPTION
+ .Nm
+ is a program to hold private keys used for public key authentication
+-(RSA, DSA, ECDSA, ED25519).
++(RSA, DSA).
+ The idea is that
+ .Nm
+ is started in the beginning of an X-session or a login session, and
+@@ -114,9 +114,7 @@ When executed without arguments,
+ .Xr ssh-add 1
+ adds the files
+ .Pa ~/.ssh/id_rsa ,
+-.Pa ~/.ssh/id_dsa ,
+-.Pa ~/.ssh/id_ecdsa ,
+-.Pa ~/.ssh/id_ed25519
++.Pa ~/.ssh/id_dsa 
+ and
+ .Pa ~/.ssh/identity .
+ If the identity has a passphrase,
+@@ -189,10 +187,6 @@ line terminates.
+ Contains the protocol version 1 RSA authentication identity of the user.
+ .It Pa ~/.ssh/id_dsa
+ Contains the protocol version 2 DSA authentication identity of the user.
+-.It Pa ~/.ssh/id_ecdsa
+-Contains the protocol version 2 ECDSA authentication identity of the user.
+-.It Pa ~/.ssh/id_ed25519
+-Contains the protocol version 2 ED25519 authentication identity of the user.
+ .It Pa ~/.ssh/id_rsa
+ Contains the protocol version 2 RSA authentication identity of the user.
+ .It Pa $TMPDIR/ssh-XXXXXXXXXX/agent.\*(Ltppid\*(Gt
+diff -pur old/ssh-ed25519.c new/ssh-ed25519.c
+--- old/ssh-ed25519.c	2013-12-06 17:37:54.000000000 -0800
++++ new/ssh-ed25519.c	2015-04-01 03:45:52.747724716 -0700
+@@ -15,6 +15,8 @@
+  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+  */
+ 
++#ifndef WITHOUT_ED25519
++
+ #include "includes.h"
+ 
+ #include <sys/types.h>
+@@ -141,3 +143,5 @@ ssh_ed25519_verify(const Key *key, const
+ 	/* translate return code carefully */
+ 	return (ret == 0) ? 1 : -1;
+ }
++
++#endif /* WITHOUT_ED25519 */
+diff -pur old/ssh-keygen.0 new/ssh-keygen.0
+--- old/ssh-keygen.0	2014-01-29 17:52:47.000000000 -0800
++++ new/ssh-keygen.0	2015-04-02 08:01:54.866988427 -0700
+@@ -32,7 +32,7 @@ SYNOPSIS
+ DESCRIPTION
+      ssh-keygen generates, manages and converts authentication keys for
+      ssh(1).  ssh-keygen can create RSA keys for use by SSH protocol version 1
+-     and DSA, ECDSA, ED25519 or RSA keys for use by SSH protocol version 2.
++     and DSA or RSA keys for use by SSH protocol version 2.
+      The type of key to be generated is specified with the -t option.  If
+      invoked without any arguments, ssh-keygen will generate an RSA key for
+      use in SSH protocol 2 connections.
+@@ -46,7 +46,7 @@ DESCRIPTION
+ 
+      Normally each user wishing to use SSH with public key authentication runs
+      this once to create the authentication key in ~/.ssh/identity,
+-     ~/.ssh/id_dsa, ~/.ssh/id_ecdsa, ~/.ssh/id_ed25519 or ~/.ssh/id_rsa.
++     ~/.ssh/id_dsa or ~/.ssh/id_rsa.
+      Additionally, the system administrator may use this to generate host
+      keys, as seen in /etc/rc.
+ 
+@@ -79,14 +79,14 @@ DESCRIPTION
+ 
+      The options are as follows:
+ 
+-     -A      For each of the key types (rsa1, rsa, dsa, ecdsa and ed25519) for
++     -A      For each of the key types (rsa1, rsa, and dsa) for
+              which host keys do not exist, generate the host keys with the
+              default key file path, an empty passphrase, default bits for the
+              key type, and default comment.  This is used by /etc/rc to
+              generate new host keys.
+ 
+      -a rounds
+-             When saving a new-format private key (i.e. an ed25519 key or any
++             When saving a new-format private key (i.e. any
+              SSH protocol 2 key when the -o flag is set), this option
+              specifies the number of KDF (key derivation function) rounds
+              used.  Higher numbers result in slower passphrase verification
+@@ -103,12 +103,7 @@ DESCRIPTION
+              Specifies the number of bits in the key to create.  For RSA keys,
+              the minimum size is 768 bits and the default is 2048 bits.
+              Generally, 2048 bits is considered sufficient.  DSA keys must be
+-             exactly 1024 bits as specified by FIPS 186-2.  For ECDSA keys,
+-             the -b flag determines the key length by selecting from one of
+-             three elliptic curve sizes: 256, 384 or 521 bits.  Attempting to
+-             use bit lengths other than these three values for ECDSA keys will
+-             fail.  ED25519 keys have a fixed length and the -b flag will be
+-             ignored.
++             exactly 1024 bits as specified by FIPS 186-2.
+ 
+      -C comment
+              Provides a new comment.
+@@ -274,7 +269,7 @@ DESCRIPTION
+              new OpenSSH format rather than the more compatible PEM format.
+              The new format has increased resistance to brute-force password
+              cracking but is not supported by versions of OpenSSH prior to
+-             6.5.  Ed25519 keys always use the new private key format.
++             6.5.
+ 
+      -P passphrase
+              Provides the (old) passphrase.
+@@ -315,8 +310,8 @@ DESCRIPTION
+ 
+      -t type
+              Specifies the type of key to create.  The possible values are
+-             ``rsa1'' for protocol version 1 and ``dsa'', ``ecdsa'',
+-             ``ed25519'', or ``rsa'' for protocol version 2.
++             ``rsa1'' for protocol version 1 and ``dsa'' or ``rsa'' for 
++             protocol version 2.
+ 
+      -u      Update a KRL.  When specified with -k, keys listed via the
+              command line are added to the existing KRL rather than a new KRL
+@@ -521,10 +516,8 @@ FILES
+              contents of this file secret.
+ 
+      ~/.ssh/id_dsa
+-     ~/.ssh/id_ecdsa
+-     ~/.ssh/id_ed25519
+      ~/.ssh/id_rsa
+-             Contains the protocol version 2 DSA, ECDSA, ED25519 or RSA
++             Contains the protocol version 2 DSA or RSA
+              authentication identity of the user.  This file should not be
+              readable by anyone but the user.  It is possible to specify a
+              passphrase when generating the key; that passphrase will be used
+@@ -534,10 +527,8 @@ FILES
+              read this file when a login attempt is made.
+ 
+      ~/.ssh/id_dsa.pub
+-     ~/.ssh/id_ecdsa.pub
+-     ~/.ssh/id_ed25519.pub
+      ~/.ssh/id_rsa.pub
+-             Contains the protocol version 2 DSA, ECDSA, ED25519 or RSA public
++             Contains the protocol version 2 DSA or RSA public
+              key for authentication.  The contents of this file should be
+              added to ~/.ssh/authorized_keys on all machines where the user
+              wishes to log in using public key authentication.  There is no
+diff -pur old/ssh-keygen.1 new/ssh-keygen.1
+--- old/ssh-keygen.1	2013-12-28 22:47:14.000000000 -0800
++++ new/ssh-keygen.1	2015-04-02 08:13:41.714356008 -0700
+@@ -140,7 +140,7 @@ generates, manages and converts authenti
+ .Xr ssh 1 .
+ .Nm
+ can create RSA keys for use by SSH protocol version 1 and
+-DSA, ECDSA, ED25519 or RSA keys for use by SSH protocol version 2.
++DSA or RSA keys for use by SSH protocol version 2.
+ The type of key to be generated is specified with the
+ .Fl t
+ option.
+@@ -168,8 +168,6 @@ with public key authentication runs this
+ key in
+ .Pa ~/.ssh/identity ,
+ .Pa ~/.ssh/id_dsa ,
+-.Pa ~/.ssh/id_ecdsa ,
+-.Pa ~/.ssh/id_ed25519
+ or
+ .Pa ~/.ssh/id_rsa .
+ Additionally, the system administrator may use this to generate host keys,
+@@ -217,7 +215,7 @@ should be placed to be activated.
+ The options are as follows:
+ .Bl -tag -width Ds
+ .It Fl A
+-For each of the key types (rsa1, rsa, dsa, ecdsa and ed25519)
++For each of the key types (rsa1, rsa, dsa)
+ for which host keys
+ do not exist, generate the host keys with the default key file path,
+ an empty passphrase, default bits for the key type, and default comment.
+@@ -225,8 +223,7 @@ This is used by
+ .Pa /etc/rc
+ to generate new host keys.
+ .It Fl a Ar rounds
+-When saving a new-format private key (i.e. an ed25519 key or any SSH protocol
+-2 key when the
++When saving a new-format private key (i.e. any SSH protocol 2 key when the
+ .Fl o
+ flag is set), this option specifies the number of KDF (key derivation function)
+ rounds used.
+@@ -245,15 +242,6 @@ Specifies the number of bits in the key
+ For RSA keys, the minimum size is 768 bits and the default is 2048 bits.
+ Generally, 2048 bits is considered sufficient.
+ DSA keys must be exactly 1024 bits as specified by FIPS 186-2.
+-For ECDSA keys, the
+-.Fl b
+-flag determines the key length by selecting from one of three elliptic
+-curve sizes: 256, 384 or 521 bits.
+-Attempting to use bit lengths other than these three values for ECDSA keys
+-will fail.
+-ED25519 keys have a fixed length and the
+-.Fl b
+-flag will be ignored.
+ .It Fl C Ar comment
+ Provides a new comment.
+ .It Fl c
+@@ -468,7 +456,6 @@ to save SSH protocol 2 private keys usin
+ the more compatible PEM format.
+ The new format has increased resistance to brute-force password cracking
+ but is not supported by versions of OpenSSH prior to 6.5.
+-Ed25519 keys always use the new private key format.
+ .It Fl P Ar passphrase
+ Provides the (old) passphrase.
+ .It Fl p
+@@ -520,8 +507,6 @@ The possible values are
+ .Dq rsa1
+ for protocol version 1 and
+ .Dq dsa ,
+-.Dq ecdsa ,
+-.Dq ed25519 ,
+ or
+ .Dq rsa
+ for protocol version 2.
+@@ -800,10 +785,8 @@ where the user wishes to log in using RS
+ There is no need to keep the contents of this file secret.
+ .Pp
+ .It Pa ~/.ssh/id_dsa
+-.It Pa ~/.ssh/id_ecdsa
+-.It Pa ~/.ssh/id_ed25519
+ .It Pa ~/.ssh/id_rsa
+-Contains the protocol version 2 DSA, ECDSA, ED25519 or RSA
++Contains the protocol version 2 DSA or RSA
+ authentication identity of the user.
+ This file should not be readable by anyone but the user.
+ It is possible to
+@@ -816,10 +799,8 @@ but it is offered as the default file fo
+ will read this file when a login attempt is made.
+ .Pp
+ .It Pa ~/.ssh/id_dsa.pub
+-.It Pa ~/.ssh/id_ecdsa.pub
+-.It Pa ~/.ssh/id_ed25519.pub
+ .It Pa ~/.ssh/id_rsa.pub
+-Contains the protocol version 2 DSA, ECDSA, ED25519 or RSA
++Contains the protocol version 2 DSA or RSA
+ public key for authentication.
+ The contents of this file should be added to
+ .Pa ~/.ssh/authorized_keys
+diff -pur old/ssh-keygen.c new/ssh-keygen.c
+--- old/ssh-keygen.c	2013-12-06 16:24:02.000000000 -0800
++++ new/ssh-keygen.c	2015-04-01 02:26:11.265143754 -0700
+@@ -197,7 +197,11 @@ type_bits_valid(int type, u_int32_t *bit
+ 	}
+ 	if (type == KEY_DSA && *bitsp != 1024)
+ 		fatal("DSA keys must be 1024 bits");
++#ifdef WITHOUT_ED25519
++	else if (type != KEY_ECDSA && *bitsp < 768)
++#else /* WITHOUT_ED25519 */
+ 	else if (type != KEY_ECDSA && type != KEY_ED25519 && *bitsp < 768)
++#endif /* WITHOUT_ED25519 */
+ 		fatal("Key must at least be 768 bits");
+ 	else if (type == KEY_ECDSA && key_ecdsa_bits_to_nid(*bitsp) == -1)
+ 		fatal("Invalid ECDSA key length - valid lengths are "
+@@ -233,10 +237,12 @@ ask_filename(struct passwd *pw, const ch
+ 		case KEY_RSA:
+ 			name = _PATH_SSH_CLIENT_ID_RSA;
+ 			break;
++#ifndef WITHOUT_ED25519
+ 		case KEY_ED25519:
+ 		case KEY_ED25519_CERT:
+ 			name = _PATH_SSH_CLIENT_ID_ED25519;
+ 			break;
++#endif /* WITHOUT_ED25519 */
+ 		default:
+ 			fprintf(stderr, "bad key type\n");
+ 			exit(1);
+@@ -900,7 +906,9 @@ do_gen_all_hostkeys(struct passwd *pw)
+ #ifdef OPENSSL_HAS_ECC
+ 		{ "ecdsa", "ECDSA",_PATH_HOST_ECDSA_KEY_FILE },
+ #endif
++#ifndef WITHOUT_ED25519
+ 		{ "ed25519", "ED25519",_PATH_HOST_ED25519_KEY_FILE },
++#endif /* WITHOUT_ED25519 */
+ 		{ NULL, NULL, NULL }
+ 	};
+ 
+@@ -1616,7 +1624,10 @@ do_ca_sign(struct passwd *pw, int argc,
+ 		if ((public = key_load_public(tmp, &comment)) == NULL)
+ 			fatal("%s: unable to open \"%s\"", __func__, tmp);
+ 		if (public->type != KEY_RSA && public->type != KEY_DSA &&
+-		    public->type != KEY_ECDSA && public->type != KEY_ED25519)
++#ifndef WITHOUT_ED25519
++		    public->type != KEY_ED25519 &&
++#endif /* WITHOUT_ED25519 */
++		    public->type != KEY_ECDSA)
+ 			fatal("%s: key \"%s\" type %s cannot be certified",
+ 			    __func__, tmp, key_type(public));
+ 
+diff -pur old/ssh-keyscan.0 new/ssh-keyscan.0
+--- old/ssh-keyscan.0	2014-01-29 17:52:47.000000000 -0800
++++ new/ssh-keyscan.0	2015-04-02 08:03:08.223476077 -0700
+@@ -48,9 +48,9 @@ DESCRIPTION
+      -t type
+              Specifies the type of the key to fetch from the scanned hosts.
+              The possible values are ``rsa1'' for protocol version 1 and
+-             ``dsa'', ``ecdsa'', ``ed25519'', or ``rsa'' for protocol version
++             ``dsa'' or ``rsa'' for protocol version
+              2.  Multiple values may be specified by separating them with
+-             commas.  The default is to fetch ``rsa'' and ``ecdsa'' keys.
++             commas.  The default is to fetch ``rsa'' keys.
+ 
+      -v      Verbose mode.  Causes ssh-keyscan to print debugging messages
+              about its progress.
+@@ -72,12 +72,11 @@ FILES
+ 
+      host-or-namelist bits exponent modulus
+ 
+-     Output format for rsa, dsa and ecdsa keys:
++     Output format for rsa and dsa keys:
+ 
+      host-or-namelist keytype base64-encoded-key
+ 
+-     Where keytype is either ``ecdsa-sha2-nistp256'', ``ecdsa-sha2-nistp384'',
+-     ``ecdsa-sha2-nistp521'', ``ssh-ed25519'', ``ssh-dss'' or ``ssh-rsa''.
++     Where keytype is either ``ssh-dss'' or ``ssh-rsa''.
+ 
+      /etc/ssh/ssh_known_hosts
+ 
+@@ -89,7 +88,7 @@ EXAMPLES
+      Find all hosts from the file ssh_hosts which have new or different keys
+      from those in the sorted file ssh_known_hosts:
+ 
+-     $ ssh-keyscan -t rsa,dsa,ecdsa -f ssh_hosts | \
++     $ ssh-keyscan -t rsa,dsa -f ssh_hosts | \
+              sort -u - ssh_known_hosts | diff ssh_known_hosts -
+ 
+ SEE ALSO
+diff -pur old/ssh-keyscan.1 new/ssh-keyscan.1
+--- old/ssh-keyscan.1	2013-12-17 22:46:28.000000000 -0800
++++ new/ssh-keyscan.1	2015-04-02 08:14:50.877137257 -0700
+@@ -89,16 +89,12 @@ The possible values are
+ .Dq rsa1
+ for protocol version 1 and
+ .Dq dsa ,
+-.Dq ecdsa ,
+-.Dq ed25519 ,
+ or
+ .Dq rsa
+ for protocol version 2.
+ Multiple values may be specified by separating them with commas.
+ The default is to fetch
+ .Dq rsa
+-and
+-.Dq ecdsa
+ keys.
+ .It Fl v
+ Verbose mode.
+@@ -127,7 +123,7 @@ attacks which have begun after the ssh_k
+ host-or-namelist bits exponent modulus
+ .Ed
+ .Pp
+-.Pa Output format for rsa, dsa and ecdsa keys:
++.Pa Output format for rsa and dsa keys:
+ .Bd -literal
+ host-or-namelist keytype base64-encoded-key
+ .Ed
+@@ -135,10 +131,6 @@ host-or-namelist keytype base64-encoded-
+ Where
+ .Pa keytype
+ is either
+-.Dq ecdsa-sha2-nistp256 ,
+-.Dq ecdsa-sha2-nistp384 ,
+-.Dq ecdsa-sha2-nistp521 ,
+-.Dq ssh-ed25519 ,
+ .Dq ssh-dss
+ or
+ .Dq ssh-rsa .
+@@ -158,7 +150,7 @@ Find all hosts from the file
+ which have new or different keys from those in the sorted file
+ .Pa ssh_known_hosts :
+ .Bd -literal
+-$ ssh-keyscan -t rsa,dsa,ecdsa -f ssh_hosts | \e
++$ ssh-keyscan -t rsa,dsa -f ssh_hosts | \e
+ 	sort -u - ssh_known_hosts | diff ssh_known_hosts -
+ .Ed
+ .Sh SEE ALSO
+diff -pur old/ssh-keyscan.c new/ssh-keyscan.c
+--- old/ssh-keyscan.c	2013-12-06 16:24:02.000000000 -0800
++++ new/ssh-keyscan.c	2015-04-01 02:51:28.981556385 -0700
+@@ -56,7 +56,9 @@ int ssh_port = SSH_DEFAULT_PORT;
+ #define KT_DSA		2
+ #define KT_RSA		4
+ #define KT_ECDSA	8
++#ifndef WITHOUT_ED25519
+ #define KT_ED25519	16
++#endif /* WITHOUT_ED25519 */
+ 
+ int get_keytypes = KT_RSA|KT_ECDSA;/* Get RSA and ECDSA keys by default */
+ 
+@@ -247,9 +249,11 @@ keygrab_ssh2(con *c)
+ 	packet_set_connection(c->c_fd, c->c_fd);
+ 	enable_compat20();
+ 	myproposal[PROPOSAL_SERVER_HOST_KEY_ALGS] =
+-	    c->c_keytype == KT_DSA ?  "ssh-dss" :
++#ifndef WITHOUT_ED25519
++	    c->c_keytype == KT_ED25519 ?  "ssh-ed25519" :
++#endif /* WITHOUT_ED25519 */
+ 	    (c->c_keytype == KT_RSA ? "ssh-rsa" :
+-	    (c->c_keytype == KT_ED25519 ? "ssh-ed25519" :
++	    (c->c_keytype == KT_DSA ? "ssh-dss" :
+ 	    "ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521"));
+ 	c->c_kex = kex_setup(myproposal);
+ 	c->c_kex->kex[KEX_DH_GRP1_SHA1] = kexdh_client;
+@@ -257,7 +261,9 @@ keygrab_ssh2(con *c)
+ 	c->c_kex->kex[KEX_DH_GEX_SHA1] = kexgex_client;
+ 	c->c_kex->kex[KEX_DH_GEX_SHA256] = kexgex_client;
+ 	c->c_kex->kex[KEX_ECDH_SHA2] = kexecdh_client;
++#ifndef WITHOUT_ED25519
+ 	c->c_kex->kex[KEX_C25519_SHA256] = kexc25519_client;
++#endif /* WITHOUT_ED25519 */
+ 	c->c_kex->verify_host_key = hostjump;
+ 
+ 	if (!(j = setjmp(kexjmp))) {
+@@ -575,10 +581,15 @@ do_host(char *host)
+ {
+ 	char *name = strnnsep(&host, " \t\n");
+ 	int j;
++#ifdef WITHOUT_ED25519
++	int max_kt = KT_ECDSA;
++#else
++	int max_kt = KT_ED25519;
++#endif
+ 
+ 	if (name == NULL)
+ 		return;
+-	for (j = KT_RSA1; j <= KT_ED25519; j *= 2) {
++	for (j = KT_RSA1; j <= max_kt; j *= 2) {
+ 		if (get_keytypes & j) {
+ 			while (ncon >= MAXCON)
+ 				conloop();
+@@ -685,9 +696,11 @@ main(int argc, char **argv)
+ 				case KEY_RSA:
+ 					get_keytypes |= KT_RSA;
+ 					break;
++#ifndef WITHOUT_ED25519
+ 				case KEY_ED25519:
+ 					get_keytypes |= KT_ED25519;
+ 					break;
++#endif /* WITHOUT_ED25519 */
+ 				case KEY_UNSPEC:
+ 					fatal("unknown key type %s", tname);
+ 				}
+diff -pur old/ssh-keysign.0 new/ssh-keysign.0
+--- old/ssh-keysign.0	2014-01-29 17:52:48.000000000 -0800
++++ new/ssh-keysign.0	2015-04-02 08:03:28.313581826 -0700
+@@ -24,8 +24,6 @@ FILES
+              Controls whether ssh-keysign is enabled.
+ 
+      /etc/ssh/ssh_host_dsa_key
+-     /etc/ssh/ssh_host_ecdsa_key
+-     /etc/ssh/ssh_host_ed25519_key
+      /etc/ssh/ssh_host_rsa_key
+              These files contain the private parts of the host keys used to
+              generate the digital signature.  They should be owned by root,
+@@ -34,8 +32,6 @@ FILES
+              host-based authentication is used.
+ 
+      /etc/ssh/ssh_host_dsa_key-cert.pub
+-     /etc/ssh/ssh_host_ecdsa_key-cert.pub
+-     /etc/ssh/ssh_host_ed25519_key-cert.pub
+      /etc/ssh/ssh_host_rsa_key-cert.pub
+              If these files exist they are assumed to contain public
+              certificate information corresponding with the private keys
+diff -pur old/ssh-keysign.8 new/ssh-keysign.8
+--- old/ssh-keysign.8	2015-03-31 21:14:02.337922491 -0700
++++ new/ssh-keysign.8	2015-04-02 08:16:42.230595366 -0700
+@@ -62,8 +62,6 @@ Controls whether
+ is enabled.
+ .Pp
+ .It Pa /etc/ssh/ssh_host_dsa_key
+-.It Pa /etc/ssh/ssh_host_ecdsa_key
+-.It Pa /etc/ssh/ssh_host_ed25519_key
+ .It Pa /etc/ssh/ssh_host_rsa_key
+ These files contain the private parts of the host keys used to
+ generate the digital signature.
+@@ -74,8 +72,6 @@ Since they are readable only by root,
+ must be set-uid root if host-based authentication is used.
+ .Pp
+ .It Pa /etc/ssh/ssh_host_dsa_key-cert.pub
+-.It Pa /etc/ssh/ssh_host_ecdsa_key-cert.pub
+-.It Pa /etc/ssh/ssh_host_ed25519_key-cert.pub
+ .It Pa /etc/ssh/ssh_host_rsa_key-cert.pub
+ If these files exist they are assumed to contain public certificate
+ information corresponding with the private keys above.
+diff -pur old/ssh-keysign.c new/ssh-keysign.c
+--- old/ssh-keysign.c	2013-12-06 16:24:02.000000000 -0800
++++ new/ssh-keysign.c	2015-04-01 02:53:53.600004403 -0700
+@@ -150,7 +150,11 @@ main(int argc, char **argv)
+ {
+ 	Buffer b;
+ 	Options options;
++#ifdef WITHOUT_ED25519
++#define NUM_KEYTYPES 3
++#else
+ #define NUM_KEYTYPES 4
++#endif
+ 	Key *keys[NUM_KEYTYPES], *key = NULL;
+ 	struct passwd *pw;
+ 	int key_fd[NUM_KEYTYPES], i, found, version = 2, fd;
+@@ -169,7 +173,9 @@ main(int argc, char **argv)
+ 	i = 0;
+ 	key_fd[i++] = open(_PATH_HOST_DSA_KEY_FILE, O_RDONLY);
+ 	key_fd[i++] = open(_PATH_HOST_ECDSA_KEY_FILE, O_RDONLY);
++#ifndef WITHOUT_ED25519
+ 	key_fd[i++] = open(_PATH_HOST_ED25519_KEY_FILE, O_RDONLY);
++#endif /* WITHOUT_ED25519 */
+ 	key_fd[i++] = open(_PATH_HOST_RSA_KEY_FILE, O_RDONLY);
+ 
+ 	original_real_uid = getuid();	/* XXX readconf.c needs this */
+diff -pur old/ssh.0 new/ssh.0
+--- old/ssh.0	2014-01-29 17:52:47.000000000 -0800
++++ new/ssh.0	2015-04-02 08:05:51.667197938 -0700
+@@ -142,8 +142,8 @@ DESCRIPTION
+      -i identity_file
+              Selects a file from which the identity (private key) for public
+              key authentication is read.  The default is ~/.ssh/identity for
+-             protocol version 1, and ~/.ssh/id_dsa, ~/.ssh/id_ecdsa,
+-             ~/.ssh/id_ed25519 and ~/.ssh/id_rsa for protocol version 2.
++             protocol version 1, and ~/.ssh/id_dsa, and ~/.ssh/id_rsa for
++             protocol version 2.
+              Identity files may also be specified on a per-host basis in the
+              configuration file.  It is possible to have multiple -i options
+              (and multiple identities specified in configuration files).  ssh
+@@ -446,7 +446,7 @@ AUTHENTICATION
+      creates a public/private key pair for authentication purposes.  The
+      server knows the public key, and only the user knows the private key.
+      ssh implements public key authentication protocol automatically, using
+-     one of the DSA, ECDSA, ED25519 or RSA algorithms.  Protocol 1 is
++     one of the DSA or RSA algorithms.  Protocol 1 is
+      restricted to using only RSA keys, but protocol 2 may use any.  The
+      HISTORY section of ssl(8) contains a brief discussion of the DSA and RSA
+      algorithms.
+@@ -459,11 +459,9 @@ AUTHENTICATION
+ 
+      The user creates his/her key pair by running ssh-keygen(1).  This stores
+      the private key in ~/.ssh/identity (protocol 1), ~/.ssh/id_dsa (protocol
+-     2 DSA), ~/.ssh/id_ecdsa (protocol 2 ECDSA), ~/.ssh/id_ed25519 (protocol 2
+-     ED25519), or ~/.ssh/id_rsa (protocol 2 RSA) and stores the public key in
+-     ~/.ssh/identity.pub (protocol 1), ~/.ssh/id_dsa.pub (protocol 2 DSA),
+-     ~/.ssh/id_ecdsa.pub (protocol 2 ECDSA), ~/.ssh/id_ed25519.pub (protocol 2
+-     ED25519), or ~/.ssh/id_rsa.pub (protocol 2 RSA) in the user's home
++     2 DSA) or ~/.ssh/id_rsa (protocol 2 RSA) and stores the public key in
++     ~/.ssh/identity.pub (protocol 1), ~/.ssh/id_dsa.pub (protocol 2 DSA)
++     or ~/.ssh/id_rsa.pub (protocol 2 RSA) in the user's home
+      directory.  The user should then copy the public key to
+      ~/.ssh/authorized_keys in his/her home directory on the remote machine.
+      The authorized_keys file corresponds to the conventional ~/.rhosts file,
+@@ -799,7 +797,7 @@ FILES
+              for the user, and not accessible by others.
+ 
+      ~/.ssh/authorized_keys
+-             Lists the public keys (DSA, ECDSA, ED25519, RSA) that can be used
++             Lists the public keys (DSA, RSA) that can be used
+              for logging in as this user.  The format of this file is
+              described in the sshd(8) manual page.  This file is not highly
+              sensitive, but the recommended permissions are read/write for the
+@@ -817,8 +815,6 @@ FILES
+ 
+      ~/.ssh/identity
+      ~/.ssh/id_dsa
+-     ~/.ssh/id_ecdsa
+-     ~/.ssh/id_ed25519
+      ~/.ssh/id_rsa
+              Contains the private key for authentication.  These files contain
+              sensitive data and should be readable by the user but not
+@@ -830,8 +826,6 @@ FILES
+ 
+      ~/.ssh/identity.pub
+      ~/.ssh/id_dsa.pub
+-     ~/.ssh/id_ecdsa.pub
+-     ~/.ssh/id_ed25519.pub
+      ~/.ssh/id_rsa.pub
+              Contains the public key for authentication.  These files are not
+              sensitive and can (but need not) be readable by anyone.
+@@ -862,8 +856,6 @@ FILES
+ 
+      /etc/ssh/ssh_host_key
+      /etc/ssh/ssh_host_dsa_key
+-     /etc/ssh/ssh_host_ecdsa_key
+-     /etc/ssh/ssh_host_ed25519_key
+      /etc/ssh/ssh_host_rsa_key
+              These files contain the private parts of the host keys and are
+              used for host-based authentication.  If protocol version 1 is
+diff -pur old/ssh.1 new/ssh.1
+--- old/ssh.1	2013-12-17 22:46:28.000000000 -0800
++++ new/ssh.1	2015-04-02 08:15:39.041359535 -0700
+@@ -279,8 +279,6 @@ The default is
+ .Pa ~/.ssh/identity
+ for protocol version 1, and
+ .Pa ~/.ssh/id_dsa ,
+-.Pa ~/.ssh/id_ecdsa ,
+-.Pa ~/.ssh/id_ed25519
+ and
+ .Pa ~/.ssh/id_rsa
+ for protocol version 2.
+@@ -758,7 +756,7 @@ key pair for authentication purposes.
+ The server knows the public key, and only the user knows the private key.
+ .Nm
+ implements public key authentication protocol automatically,
+-using one of the DSA, ECDSA, ED25519 or RSA algorithms.
++using one of the DSA or RSA algorithms.
+ Protocol 1 is restricted to using only RSA keys,
+ but protocol 2 may use any.
+ The HISTORY section of
+@@ -783,10 +781,6 @@ This stores the private key in
+ (protocol 1),
+ .Pa ~/.ssh/id_dsa
+ (protocol 2 DSA),
+-.Pa ~/.ssh/id_ecdsa
+-(protocol 2 ECDSA),
+-.Pa ~/.ssh/id_ed25519
+-(protocol 2 ED25519),
+ or
+ .Pa ~/.ssh/id_rsa
+ (protocol 2 RSA)
+@@ -795,10 +789,6 @@ and stores the public key in
+ (protocol 1),
+ .Pa ~/.ssh/id_dsa.pub
+ (protocol 2 DSA),
+-.Pa ~/.ssh/id_ecdsa.pub
+-(protocol 2 ECDSA),
+-.Pa ~/.ssh/id_ed25519.pub
+-(protocol 2 ED25519),
+ or
+ .Pa ~/.ssh/id_rsa.pub
+ (protocol 2 RSA)
+@@ -1338,7 +1328,7 @@ secret, but the recommended permissions
+ and not accessible by others.
+ .Pp
+ .It Pa ~/.ssh/authorized_keys
+-Lists the public keys (DSA, ECDSA, ED25519, RSA)
++Lists the public keys (DSA, RSA)
+ that can be used for logging in as this user.
+ The format of this file is described in the
+ .Xr sshd 8
+@@ -1360,8 +1350,6 @@ above.
+ .Pp
+ .It Pa ~/.ssh/identity
+ .It Pa ~/.ssh/id_dsa
+-.It Pa ~/.ssh/id_ecdsa
+-.It Pa ~/.ssh/id_ed25519
+ .It Pa ~/.ssh/id_rsa
+ Contains the private key for authentication.
+ These files
+@@ -1375,8 +1363,6 @@ sensitive part of this file using 3DES.
+ .Pp
+ .It Pa ~/.ssh/identity.pub
+ .It Pa ~/.ssh/id_dsa.pub
+-.It Pa ~/.ssh/id_ecdsa.pub
+-.It Pa ~/.ssh/id_ed25519.pub
+ .It Pa ~/.ssh/id_rsa.pub
+ Contains the public key for authentication.
+ These files are not
+@@ -1415,8 +1401,6 @@ The file format and configuration option
+ .Pp
+ .It Pa /etc/ssh/ssh_host_key
+ .It Pa /etc/ssh/ssh_host_dsa_key
+-.It Pa /etc/ssh/ssh_host_ecdsa_key
+-.It Pa /etc/ssh/ssh_host_ed25519_key
+ .It Pa /etc/ssh/ssh_host_rsa_key
+ These files contain the private parts of the host keys
+ and are used for host-based authentication.
+diff -pur old/ssh.c new/ssh.c
+--- old/ssh.c	2013-12-28 22:53:40.000000000 -0800
++++ new/ssh.c	2015-04-01 03:33:55.003074053 -0700
+@@ -1010,8 +1010,10 @@ main(int ac, char **av)
+ #endif
+ 		sensitive_data.keys[3] = key_load_private_cert(KEY_RSA,
+ 		    _PATH_HOST_RSA_KEY_FILE, "", NULL);
++#ifndef WITHOUT_ED25519
+ 		sensitive_data.keys[4] = key_load_private_cert(KEY_ED25519,
+ 		    _PATH_HOST_ED25519_KEY_FILE, "", NULL);
++#endif /* WITHOUT_ED25519 */
+ 		sensitive_data.keys[5] = key_load_private_type(KEY_DSA,
+ 		    _PATH_HOST_DSA_KEY_FILE, "", NULL, NULL);
+ #ifdef OPENSSL_HAS_ECC
+@@ -1020,8 +1022,10 @@ main(int ac, char **av)
+ #endif
+ 		sensitive_data.keys[7] = key_load_private_type(KEY_RSA,
+ 		    _PATH_HOST_RSA_KEY_FILE, "", NULL, NULL);
++#ifndef WITHOUT_ED25519
+ 		sensitive_data.keys[8] = key_load_private_type(KEY_ED25519,
+ 		    _PATH_HOST_ED25519_KEY_FILE, "", NULL, NULL);
++#endif /* WITHOUT_ED25519 */
+ 		PRIV_END;
+ 
+ 		if (options.hostbased_authentication == 1 &&
+@@ -1038,8 +1042,10 @@ main(int ac, char **av)
+ #endif
+ 			sensitive_data.keys[3] = key_load_cert(
+ 			    _PATH_HOST_RSA_KEY_FILE);
++#ifndef WITHOUT_ED25519
+ 			sensitive_data.keys[4] = key_load_cert(
+ 			    _PATH_HOST_ED25519_KEY_FILE);
++#endif /* WITHOUT_ED25519 */
+ 			sensitive_data.keys[5] = key_load_public(
+ 			    _PATH_HOST_DSA_KEY_FILE, NULL);
+ #ifdef OPENSSL_HAS_ECC
+@@ -1048,8 +1054,10 @@ main(int ac, char **av)
+ #endif
+ 			sensitive_data.keys[7] = key_load_public(
+ 			    _PATH_HOST_RSA_KEY_FILE, NULL);
++#ifndef WITHOUT_ED25519
+ 			sensitive_data.keys[8] = key_load_public(
+ 			    _PATH_HOST_ED25519_KEY_FILE, NULL);
++#endif /* WITHOUT_ED25519 */
+ 			sensitive_data.external_keysign = 1;
+ 		}
+ 	}
+diff -pur old/ssh_config.0 new/ssh_config.0
+--- old/ssh_config.0	2014-01-29 17:52:48.000000000 -0800
++++ new/ssh_config.0	2015-04-02 08:07:55.171885768 -0700
+@@ -409,14 +409,9 @@ DESCRIPTION
+              client wants to use in order of preference.  The default for this
+              option is:
+ 
+-                ecdsa-sha2-nistp256-cert-v01@openssh.com,
+-                ecdsa-sha2-nistp384-cert-v01@openssh.com,
+-                ecdsa-sha2-nistp521-cert-v01@openssh.com,
+-                ssh-ed25519-cert-v01@openssh.com,
+                 ssh-rsa-cert-v01@openssh.com,ssh-dss-cert-v01@openssh.com,
+                 ssh-rsa-cert-v00@openssh.com,ssh-dss-cert-v00@openssh.com,
+-                ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,
+-                ssh-ed25519,ssh-rsa,ssh-dss
++                ssh-rsa,ssh-dss
+ 
+              If hostkeys are known for the destination host then this default
+              is modified to prefer their algorithms.
+@@ -446,10 +441,10 @@ DESCRIPTION
+              default is ``no''.
+ 
+      IdentityFile
+-             Specifies a file from which the user's DSA, ECDSA, ED25519 or RSA
++             Specifies a file from which the user's DSA or RSA
+              authentication identity is read.  The default is ~/.ssh/identity
+-             for protocol version 1, and ~/.ssh/id_dsa, ~/.ssh/id_ecdsa,
+-             ~/.ssh/id_ed25519 and ~/.ssh/id_rsa for protocol version 2.
++             for protocol version 1, and ~/.ssh/id_dsa and ~/.ssh/id_rsa for
++             protocol version 2.
+              Additionally, any identities represented by the authentication
+              agent will be used for authentication unless IdentitiesOnly is
+              set.  ssh(1) will try to load certificate information from the
+@@ -509,8 +504,6 @@ DESCRIPTION
+              Specifies the available KEX (Key Exchange) algorithms.  Multiple
+              algorithms must be comma-separated.  The default is:
+ 
+-                   curve25519-sha256@libssh.org,
+-                   ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,
+                    diffie-hellman-group-exchange-sha256,
+                    diffie-hellman-group-exchange-sha1,
+                    diffie-hellman-group14-sha1,
+diff -pur old/ssh_config.5 new/ssh_config.5
+--- old/ssh_config.5	2015-03-31 21:14:02.439364932 -0700
++++ new/ssh_config.5	2015-04-02 08:16:12.714886637 -0700
+@@ -729,14 +729,9 @@ Specifies the protocol version 2 host ke
+ that the client wants to use in order of preference.
+ The default for this option is:
+ .Bd -literal -offset 3n
+-ecdsa-sha2-nistp256-cert-v01@openssh.com,
+-ecdsa-sha2-nistp384-cert-v01@openssh.com,
+-ecdsa-sha2-nistp521-cert-v01@openssh.com,
+-ssh-ed25519-cert-v01@openssh.com,
+ ssh-rsa-cert-v01@openssh.com,ssh-dss-cert-v01@openssh.com,
+ ssh-rsa-cert-v00@openssh.com,ssh-dss-cert-v00@openssh.com,
+-ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,
+-ssh-ed25519,ssh-rsa,ssh-dss
++ssh-rsa,ssh-dss
+ .Ed
+ .Pp
+ If hostkeys are known for the destination host then this default is modified
+@@ -778,14 +773,12 @@ offers many different identities.
+ The default is
+ .Dq no .
+ .It Cm IdentityFile
+-Specifies a file from which the user's DSA, ECDSA, ED25519 or RSA authentication
++Specifies a file from which the user's DSA or RSA authentication
+ identity is read.
+ The default is
+ .Pa ~/.ssh/identity
+ for protocol version 1, and
+ .Pa ~/.ssh/id_dsa ,
+-.Pa ~/.ssh/id_ecdsa ,
+-.Pa ~/.ssh/id_ed25519
+ and
+ .Pa ~/.ssh/id_rsa
+ for protocol version 2.
+@@ -898,8 +891,6 @@ Specifies the available KEX (Key Exchang
+ Multiple algorithms must be comma-separated.
+ The default is:
+ .Bd -literal -offset indent
+-curve25519-sha256@libssh.org,
+-ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,
+ diffie-hellman-group-exchange-sha256,
+ diffie-hellman-group-exchange-sha1,
+ diffie-hellman-group14-sha1,
+diff -pur old/sshconnect.c new/sshconnect.c
+--- old/sshconnect.c	2015-03-31 21:14:02.413909705 -0700
++++ new/sshconnect.c	2015-04-01 04:56:41.997313652 -0700
+@@ -1325,7 +1325,9 @@ show_other_keys(struct hostkeys *hostkey
+ 		KEY_RSA,
+ 		KEY_DSA,
+ 		KEY_ECDSA,
++#ifndef WITHOUT_ED25519
+ 		KEY_ED25519,
++#endif /* WITHOUT_ED25519 */
+ 		-1
+ 	};
+ 	int i, ret = 0;
+diff -pur old/sshconnect2.c new/sshconnect2.c
+--- old/sshconnect2.c	2015-03-31 21:14:02.440456459 -0700
++++ new/sshconnect2.c	2015-04-01 04:56:58.805755301 -0700
+@@ -246,7 +246,9 @@ ssh_kex2(char *host, struct sockaddr *ho
+ 	kex->kex[KEX_DH_GEX_SHA1] = kexgex_client;
+ 	kex->kex[KEX_DH_GEX_SHA256] = kexgex_client;
+ 	kex->kex[KEX_ECDH_SHA2] = kexecdh_client;
++#ifndef WITHOUT_ED25519
+ 	kex->kex[KEX_C25519_SHA256] = kexc25519_client;
++#endif /* WITHOUT_ED25519 */
+ #ifdef GSSAPI
+ 	if (options.gss_keyex) {
+ 		kex->kex[KEX_GSS_GRP1_SHA1] = kexgss_client;
+diff -pur old/sshd.0 new/sshd.0
+--- old/sshd.0	2014-01-29 17:52:47.000000000 -0800
++++ new/sshd.0	2015-04-02 08:09:18.391442884 -0700
+@@ -82,8 +82,7 @@ DESCRIPTION
+              be given if sshd is not run as root (as the normal host key files
+              are normally not readable by anyone but root).  The default is
+              /etc/ssh/ssh_host_key for protocol version 1, and
+-             /etc/ssh/ssh_host_dsa_key, /etc/ssh/ssh_host_ecdsa_key.
+-             /etc/ssh/ssh_host_ed25519_key and /etc/ssh/ssh_host_rsa_key for
++             /etc/ssh/ssh_host_dsa_key and /etc/ssh/ssh_host_rsa_key for
+              protocol version 2.  It is possible to have multiple host key
+              files for the different protocol versions and host key
+              algorithms.
+@@ -148,7 +147,7 @@ DESCRIPTION
+ AUTHENTICATION
+      The OpenSSH SSH daemon supports SSH protocols 1 and 2.  The default is to
+      use protocol 2 only, though this can be changed via the Protocol option
+-     in sshd_config(5).  Protocol 2 supports DSA, ECDSA, ED25519 and RSA keys;
++     in sshd_config(5).  Protocol 2 supports DSA and RSA keys;
+      protocol 1 only supports RSA keys.  For both protocols, each host has a
+      host-specific key, normally 2048 bits, used to identify the host.
+ 
+@@ -278,15 +277,13 @@ AUTHORIZED_KEYS FILE FORMAT
+      starts with a number).  The bits, exponent, modulus, and comment fields
+      give the RSA key for protocol version 1; the comment field is not used
+      for anything (but may be convenient for the user to identify the key).
+-     For protocol version 2 the keytype is ``ecdsa-sha2-nistp256'',
+-     ``ecdsa-sha2-nistp384'', ``ecdsa-sha2-nistp521'', ``ssh-ed25519'',
+-     ``ssh-dss'' or ``ssh-rsa''.
++     For protocol version 2 the keytype is ``ssh-dss'' or ``ssh-rsa''.
+ 
+      Note that lines in this file are usually several hundred bytes long
+      (because of the size of the public key encoding) up to a limit of 8
+      kilobytes, which permits DSA keys up to 8 kilobits and RSA keys up to 16
+      kilobits.  You don't want to type them in; instead, copy the
+-     identity.pub, id_dsa.pub, id_ecdsa.pub, id_ed25519.pub, or the id_rsa.pub
++     identity.pub, id_dsa.pub or the id_rsa.pub
+      file and edit it.
+ 
+      sshd enforces a minimum RSA key modulus size for protocol 1 and protocol
+@@ -513,7 +510,7 @@ FILES
+              for the user, and not accessible by others.
+ 
+      ~/.ssh/authorized_keys
+-             Lists the public keys (DSA, ECDSA, ED25519, RSA) that can be used
++             Lists the public keys (DSA, RSA) that can be used
+              for logging in as this user.  The format of this file is
+              described above.  The content of the file is not highly
+              sensitive, but the recommended permissions are read/write for the
+@@ -574,8 +571,6 @@ FILES
+ 
+      /etc/ssh/ssh_host_key
+      /etc/ssh/ssh_host_dsa_key
+-     /etc/ssh/ssh_host_ecdsa_key
+-     /etc/ssh/ssh_host_ed25519_key
+      /etc/ssh/ssh_host_rsa_key
+              These files contain the private parts of the host keys.  These
+              files should only be owned by root, readable only by root, and
+@@ -584,8 +579,6 @@ FILES
+ 
+      /etc/ssh/ssh_host_key.pub
+      /etc/ssh/ssh_host_dsa_key.pub
+-     /etc/ssh/ssh_host_ecdsa_key.pub
+-     /etc/ssh/ssh_host_ed25519_key.pub
+      /etc/ssh/ssh_host_rsa_key.pub
+              These files contain the public parts of the host keys.  These
+              files should be world-readable but writable only by root.  Their
+diff -pur old/sshd.8 new/sshd.8
+--- old/sshd.8	2015-03-31 21:14:02.389944452 -0700
++++ new/sshd.8	2015-04-02 08:17:21.818430805 -0700
+@@ -175,8 +175,6 @@ The default is
+ .Pa /etc/ssh/ssh_host_key
+ for protocol version 1, and
+ .Pa /etc/ssh/ssh_host_dsa_key ,
+-.Pa /etc/ssh/ssh_host_ecdsa_key .
+-.Pa /etc/ssh/ssh_host_ed25519_key
+ and
+ .Pa /etc/ssh/ssh_host_rsa_key
+ for protocol version 2.
+@@ -281,7 +279,7 @@ though this can be changed via the
+ .Cm Protocol
+ option in
+ .Xr sshd_config 4 .
+-Protocol 2 supports DSA, ECDSA, ED25519 and RSA keys;
++Protocol 2 supports DSA and RSA keys;
+ protocol 1 only supports RSA keys.
+ For both protocols,
+ each host has a host-specific key,
+@@ -492,10 +490,6 @@ protocol version 1; the
+ comment field is not used for anything (but may be convenient for the
+ user to identify the key).
+ For protocol version 2 the keytype is
+-.Dq ecdsa-sha2-nistp256 ,
+-.Dq ecdsa-sha2-nistp384 ,
+-.Dq ecdsa-sha2-nistp521 ,
+-.Dq ssh-ed25519 ,
+ .Dq ssh-dss
+ or
+ .Dq ssh-rsa .
+@@ -507,8 +501,6 @@ keys up to 16 kilobits.
+ You don't want to type them in; instead, copy the
+ .Pa identity.pub ,
+ .Pa id_dsa.pub ,
+-.Pa id_ecdsa.pub ,
+-.Pa id_ed25519.pub ,
+ or the
+ .Pa id_rsa.pub
+ file and edit it.
+@@ -808,7 +800,7 @@ secret, but the recommended permissions
+ and not accessible by others.
+ .Pp
+ .It Pa ~/.ssh/authorized_keys
+-Lists the public keys (DSA, ECDSA, ED25519, RSA)
++Lists the public keys (DSA, RSA)
+ that can be used for logging in as this user.
+ The format of this file is described above.
+ The content of the file is not highly sensitive, but the recommended
+@@ -888,8 +880,6 @@ rlogin/rsh.
+ .Pp
+ .It Pa /etc/ssh/ssh_host_key
+ .It Pa /etc/ssh/ssh_host_dsa_key
+-.It Pa /etc/ssh/ssh_host_ecdsa_key
+-.It Pa /etc/ssh/ssh_host_ed25519_key
+ .It Pa /etc/ssh/ssh_host_rsa_key
+ These files contain the private parts of the host keys.
+ These files should only be owned by root, readable only by root, and not
+@@ -900,8 +890,6 @@ does not start if these files are group/
+ .Pp
+ .It Pa /etc/ssh/ssh_host_key.pub
+ .It Pa /etc/ssh/ssh_host_dsa_key.pub
+-.It Pa /etc/ssh/ssh_host_ecdsa_key.pub
+-.It Pa /etc/ssh/ssh_host_ed25519_key.pub
+ .It Pa /etc/ssh/ssh_host_rsa_key.pub
+ These files contain the public parts of the host keys.
+ These files should be world-readable but writable only by
+diff -pur old/sshd.c new/sshd.c
+--- old/sshd.c	2015-03-31 21:14:02.441576765 -0700
++++ new/sshd.c	2015-04-01 03:42:59.569147555 -0700
+@@ -797,7 +797,9 @@ list_hostkey_types(void)
+ 		case KEY_RSA:
+ 		case KEY_DSA:
+ 		case KEY_ECDSA:
++#ifndef WITHOUT_ED25519
+ 		case KEY_ED25519:
++#endif /* WITHOUT_ED25519 */
+ 			if (buffer_len(&b) > 0)
+ 				buffer_append(&b, ",", 1);
+ 			p = key_ssh_name(key);
+@@ -814,7 +816,9 @@ list_hostkey_types(void)
+ 		case KEY_RSA_CERT:
+ 		case KEY_DSA_CERT:
+ 		case KEY_ECDSA_CERT:
++#ifndef WITHOUT_ED25519
+ 		case KEY_ED25519_CERT:
++#endif /* WITHOUT_ED25519 */
+ 			if (buffer_len(&b) > 0)
+ 				buffer_append(&b, ",", 1);
+ 			p = key_ssh_name(key);
+@@ -842,7 +846,9 @@ get_hostkey_by_type(int type, int need_p
+ 		case KEY_RSA_CERT:
+ 		case KEY_DSA_CERT:
+ 		case KEY_ECDSA_CERT:
++#ifndef WITHOUT_ED25519
+ 		case KEY_ED25519_CERT:
++#endif /* WITHOUT_ED25519 */
+ 			key = sensitive_data.host_certificates[i];
+ 			break;
+ 		default:
+@@ -1719,7 +1725,9 @@ main(int ac, char **av)
+ 		case KEY_RSA:
+ 		case KEY_DSA:
+ 		case KEY_ECDSA:
++#ifndef WITHOUT_ED25519
+ 		case KEY_ED25519:
++#endif /* WITHOUT_ED25519 */
+ 			sensitive_data.have_ssh2_key = 1;
+ 			break;
+ 		}
+@@ -2546,7 +2554,9 @@ do_ssh2_kex(void)
+ 	kex->kex[KEX_DH_GEX_SHA1] = kexgex_server;
+ 	kex->kex[KEX_DH_GEX_SHA256] = kexgex_server;
+ 	kex->kex[KEX_ECDH_SHA2] = kexecdh_server;
++#ifndef WITHOUT_ED25519
+ 	kex->kex[KEX_C25519_SHA256] = kexc25519_server;
++#endif /* WITHOUT_ED25519 */
+ #ifdef GSSAPI
+ 	if (options.gss_keyex) {
+ 		kex->kex[KEX_GSS_GRP1_SHA1] = kexgss_server;
+diff -pur old/sshd_config.0 new/sshd_config.0
+--- old/sshd_config.0	2014-01-29 17:52:48.000000000 -0800
++++ new/sshd_config.0	2015-04-02 08:09:53.957389224 -0700
+@@ -332,12 +332,11 @@ DESCRIPTION
+      HostKey
+              Specifies a file containing a private host key used by SSH.  The
+              default is /etc/ssh/ssh_host_key for protocol version 1, and
+-             /etc/ssh/ssh_host_dsa_key, /etc/ssh/ssh_host_ecdsa_key,
+-             /etc/ssh/ssh_host_ed25519_key and /etc/ssh/ssh_host_rsa_key for
++             /etc/ssh/ssh_host_dsa_key and /etc/ssh/ssh_host_rsa_key for
+              protocol version 2.  Note that sshd(8) will refuse to use a file
+              if it is group/world-accessible.  It is possible to have multiple
+              host key files.  ``rsa1'' keys are used for version 1 and
+-             ``dsa'', ``ecdsa'', ``ed25519'' or ``rsa'' are used for version 2
++             ``dsa'' or ``rsa'' are used for version 2
+              of the SSH protocol.  It is also possible to specify public host
+              key files instead.  In this case operations on the private key
+              will be delegated to an ssh-agent(1).
+@@ -399,8 +398,6 @@ DESCRIPTION
+              Specifies the available KEX (Key Exchange) algorithms.  Multiple
+              algorithms must be comma-separated.  The default is
+ 
+-                   curve25519-sha256@libssh.org,
+-                   ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,
+                    diffie-hellman-group-exchange-sha256,
+                    diffie-hellman-group-exchange-sha1,
+                    diffie-hellman-group14-sha1,
+diff -pur old/sshd_config.5 new/sshd_config.5
+--- old/sshd_config.5	2015-03-31 21:14:02.442624133 -0700
++++ new/sshd_config.5	2015-04-02 08:16:29.655757790 -0700
+@@ -546,8 +546,6 @@ The default is
+ .Pa /etc/ssh/ssh_host_key
+ for protocol version 1, and
+ .Pa /etc/ssh/ssh_host_dsa_key ,
+-.Pa /etc/ssh/ssh_host_ecdsa_key ,
+-.Pa /etc/ssh/ssh_host_ed25519_key
+ and
+ .Pa /etc/ssh/ssh_host_rsa_key
+ for protocol version 2.
+@@ -558,8 +556,6 @@ It is possible to have multiple host key
+ .Dq rsa1
+ keys are used for version 1 and
+ .Dq dsa ,
+-.Dq ecdsa ,
+-.Dq ed25519
+ or
+ .Dq rsa
+ are used for version 2 of the SSH protocol.
+@@ -669,8 +665,6 @@ Specifies the available KEX (Key Exchang
+ Multiple algorithms must be comma-separated.
+ The default is
+ .Bd -literal -offset indent
+-curve25519-sha256@libssh.org,
+-ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,
+ diffie-hellman-group-exchange-sha256,
+ diffie-hellman-group-exchange-sha1,
+ diffie-hellman-group14-sha1,
+diff -pur old/verify.c new/verify.c
+--- old/verify.c	2014-01-16 17:43:44.000000000 -0800
++++ new/verify.c	2015-04-01 03:43:49.962792178 -0700
+@@ -9,6 +9,8 @@
+ 
+ #include "crypto_api.h"
+ 
++#ifndef WITHOUT_ED25519
++
+ int crypto_verify_32(const unsigned char *x,const unsigned char *y)
+ {
+   unsigned int differentbits = 0;
+@@ -47,3 +49,4 @@ int crypto_verify_32(const unsigned char
+   F(31)
+   return (1 & ((differentbits - 1) >> 8)) - 1;
+ }
++#endif /* WITHOUT_ED25519 */
