@@ -46,6 +46,13 @@ include $(WS_MAKE_RULES)/ips.mk
 CFLAGS += $(studio_C99_ENABLE)
 CPPFLAGS += "-DFALSE_SHARING_ALIGN=64"
 
+# After Python 2.6 goes away, the COMPONENT_POST_{CONFIGURE,INSTALL}_ACTIONs
+# below can go away as well (for INSTALL_ACTION, 32-bit goes away; 64-bit
+# remains).
+PYTHON_VERSION=2.6
+
+CONFIGURE_ENV +=	PYTHONPROG=$(PYTHON.$(BITS))
+
 CONFIGURE_OPTIONS  +=	--with-default-snmp-version=3
 CONFIGURE_OPTIONS  +=	--with-sys-contact="root@localhost"
 CONFIGURE_OPTIONS  +=	--with-sys-location=Unknown
@@ -89,11 +96,6 @@ PKG_MACROS +=	BUILD_DIR=$(BUILD_DIR)
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D); $(CLONEY) $(COMPONENT_DIR)/sun $(@D)/sun)
-
-# After Python 2.6 goes away, the COMPONENT_POST_{CONFIGURE,INSTALL}_ACTIONs
-# below can go away as well (for INSTALL_ACTION, 32-bit goes away; 64-bit
-# remains).
-PYTHON_VERSION=2.6
 
 # After we have configured, make a copy of the python bits so we
 # can build separate python 2.7 support.
