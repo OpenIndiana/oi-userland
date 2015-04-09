@@ -62,7 +62,10 @@ COMPONENT_PREP_ACTION = \
 	$(MV) php.st ruby.st $(SOURCE_DIR)/states/hl ;
 
 # There are patches that change a Makefile.am and configure.in
-COMPONENT_PREP_ACTION +=(cd $(@D); autoreconf -fiv);
+# This version of enscript needs an older automake to reconfigure.  When
+# we upgrade enscript, we can use the newer version.
+COMPONENT_PREP_ACTION +=(cd $(@D); ACLOCAL=aclocal-1.11 AUTOMAKE=automake-1.11 \
+				   autoreconf -fiv);
 
 # Needed so that enscript can find the enscript.cfg file.
 CONFIGURE_OPTIONS +=    --sysconfdir=/etc

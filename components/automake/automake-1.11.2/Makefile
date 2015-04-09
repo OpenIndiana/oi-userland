@@ -26,6 +26,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		automake
+COMPONENT_MAJMIN_VERS=	1.11
 COMPONENT_VERSION=	1.11.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -40,20 +41,20 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-CONFIGURE_OPTIONS  +=	--infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_OPTIONS  +=	--infodir=/usr/share/$(COMPONENT_NAME)-$(COMPONENT_MAJMIN_VERS)/info
 CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=	PERL="$(PERL)"
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # common targets
-configure:	$(CONFIGURE_32)
+configure:	$(CONFIGURE_NO_ARCH)
 
-build:		$(BUILD_32)
+build:		$(BUILD_NO_ARCH)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_NO_ARCH)
 
-test:		$(TEST_32)
+test:		$(TEST_NO_ARCH)
 
 
 REQUIRED_PACKAGES += runtime/perl-512

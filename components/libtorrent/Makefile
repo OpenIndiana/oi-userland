@@ -48,13 +48,9 @@ include $(WS_MAKE_RULES)/ips.mk
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
+# requires an older automake to reconfigure.
 COMPONENT_PREP_ACTION = \
-        (cd $(@D) ; \
-	    aclocal -I./scripts -I. ; \
-	    autoheader; \
-	    libtoolize --automake --copy --force; \
-	    automake; \
-	    autoconf )
+        (cd $(@D) ; ACLOCAL=aclocal-1.11 AUTOMAKE=automake-1.11 autoreconf -fiv)
 
 # Although -norunpath is set for CXXFLAGS, we need to put -norunpath 
 # here, otherwise -norunpath doesn't get set when creating the shared 

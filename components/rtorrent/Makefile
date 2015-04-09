@@ -48,12 +48,13 @@ include $(WS_MAKE_RULES)/ips.mk
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
+# requires an older automake to reconfigure
 COMPONENT_PREP_ACTION = \
         (cd $(@D) ; \
-	    aclocal -I./scripts -I. ; \
+	    aclocal-1.11 -I./scripts -I. ; \
 	    autoheader; \
 	    libtoolize --automake --copy --force; \
-	    automake; \
+	    automake-1.11; \
 	    autoconf )
 
 # this is needed or we can't compile the rak headers

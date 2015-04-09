@@ -48,13 +48,14 @@ CONFIGURE_ENV +=	CPPFLAGS="$(CPPFLAGS)"
 
 CONFIGURE_OPTIONS +=	LDFLAGS="$(LDFLAGS)"
 
+# requires an older automake to reconfigure
 COMPONENT_PREP_ACTION += (if [ x$(MACH) = "xi386" ]; then \
 		cp mlx4.driver.i386 $(@D)/mlx4.driver; \
 		else \
 		cp mlx4.driver.sparc $(@D)/mlx4.driver; \
 		fi; \
 		cd $(@D) ; \
-		aclocal --force ; \
+		aclocal-1.11 --force ; \
 		libtoolize --copy --force --ltdl ; \
 		autoconf --force ; \
 		autoheader --force)

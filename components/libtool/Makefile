@@ -57,7 +57,9 @@ CONFIGURE_OPTIONS  +=		--disable-static
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=		PERL="$(PERL)"
 
-COMPONENT_PREP_ACTION = (cd $(@D) ; ./bootstrap)
+# requires an older automake to reconfigure.
+COMPONENT_PREP_ACTION = \
+	(cd $(@D) ; ACLOCAL=aclocal-1.11 AUTOMAKE=automake-1.11 ./bootstrap)
 
 # Remove the hard-wired compiler locations in the LTCC and two CC lines
 # in the two versions of the libtool script.

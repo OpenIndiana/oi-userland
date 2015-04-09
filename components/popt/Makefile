@@ -43,12 +43,11 @@ include $(WS_MAKE_RULES)/ips.mk
 include $(WS_MAKE_RULES)/lint-libraries.mk
 
 COMPONENT_PREP_ACTION = \
-        (cd $(@D) ; \
-	$(TOUCH) config.rpath ; \
-	libtoolize -f ; \
-	aclocal -I . ; \
-	autoconf ; \
-	automake -a -c -f )
+        (cd $(@D) ; $(TOUCH) config.rpath) ;
+
+# requires an older automake to reconfigure
+COMPONENT_PREP_ACTION += \
+	(cd $(@D) ; ACLOCAL=aclocal-1.11 AUTOMAKE=automake-1.11 autoreconf -fiv)
 
 # Needed to get "gmake test" to work.
 COMPONENT_PRE_CONFIGURE_ACTION = \

@@ -88,11 +88,11 @@ CONFIGURE_OPTIONS += --with-lcms
 CONFIGURE_OPTIONS += --with-zlib
 CONFIGURE_OPTIONS += --with-jpeg
 
+# requires an older automake to reconfigure.
 COMPONENT_PREP_ACTION = \
 	( cd $(@D) ; \
 	    $(CP) makefiles/configure.in makefiles/Makefile.am . ; \
-		    libtoolize --force --copy ; aclocal ; \
-		    automake --add-missing --copy ; autoconf )
+	    ACLOCAL=aclocal-1.11 AUTOMAKE=automake-1.11 autoreconf -fiv)
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 

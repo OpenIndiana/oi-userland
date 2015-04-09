@@ -20,30 +20,31 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		automake
-COMPONENT_VERSION=	1.10
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/automake/
+COMPONENT_VERSION=	1.15
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:d92c77acdc3b132ff6b2de06a1321654a556defa21b7dd3e8d4829434ed64e8e
+    sha256:7946e945a96e28152ba5a6beb0625ca715c6e32ac55f2e353ef54def0c8ed924
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/automake/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/automake
 
-TPNO=			6149
+TPNO=			21310
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS  +=	--infodir=/usr/share/$(COMPONENT_NAME)-$(COMPONENT_VERSION)/info
-CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS  +=		PERL="$(PERL)"
+CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
+CONFIGURE_OPTIONS  +=	PERL="$(PERL)"
+
+COMPONENT_TEST_ENV +=	-i PATH=$(GCC_ROOT)/bin:/usr/gnu/bin:/usr/bin
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
@@ -56,6 +57,6 @@ install:	$(INSTALL_NO_ARCH)
 
 test:		$(TEST_NO_ARCH)
 
-
 REQUIRED_PACKAGES += runtime/perl-512
 REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/core-os

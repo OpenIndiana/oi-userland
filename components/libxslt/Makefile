@@ -65,9 +65,11 @@ CONFIGURE_OPTIONS += PYTHON_VENDOR_PACKAGES=$(PYTHON_VENDOR_PACKAGES)
 
 COMPONENT_PREP_ACTION = \
 	(cd $(@D) ; cp ../mapfile.xslt libxslt/libxslt.syms ; \
-		    $(RM) libxslt/xsltconfig.h libexslt/exsltconfig.h ; \
-		    libtoolize --force --copy ; aclocal ; \
-		    automake --addmissing --copy ; autoconf)
+		    $(RM) libxslt/xsltconfig.h libexslt/exsltconfig.h ) ;
+
+# requires an older automake to reconfigure.
+COMPONENT_PREP_ACTION += \
+	(cd $(@D) ; ACLOCAL=aclocal-1.11 AUTOMAKE=automake-1.11 autoreconf -fiv)
 
 # After we have configured, make a copy of the python bits so we
 # can build separate python 2.7 support.

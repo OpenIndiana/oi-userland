@@ -53,7 +53,9 @@ CONFIGURE_OPTIONS += --includedir=$(USRINCDIR)/microhttpd
 
 COMPONENT_TEST_ENV +=	PATH="$(GNUBIN):$(PATH)"
 
-COMPONENT_PREP_ACTION +=(cd $(@D); autoreconf -f);
+# requires an older automake to reconfigure. 
+COMPONENT_PREP_ACTION += \
+	(cd $(@D); ACLOCAL=aclocal-1.11 AUTOMAKE=automake-1.11 autoreconf -fiv);
 
 ASLR_MODE = $(ASLR_ENABLE)
 
