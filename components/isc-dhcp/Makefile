@@ -40,32 +40,43 @@ TPNO=			10383
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/lint-libraries.mk
+
+LINT_FLAGS +=   -I$(BUILD_DIR_32)/includes \
+	-I$(BUILD_DIR_64)/includes -I$(SOURCE_DIR)/includes -I.
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
+
+# Some patches need configure script re-creation.
+COMPONENT_PREP_ACTION +=(cd $(@D); autoreconf -vfi);
 
 CONFIGURE_OPTIONS  +=	--sysconfdir=$(ETCDIR)/inet
 CONFIGURE_OPTIONS  +=	--sbindir=$(USRLIBDIR)/inet
 CONFIGURE_OPTIONS  +=	--bindir=$(USRSBINDIR)
 CONFIGURE_OPTIONS  +=	--enable-use-sockets
 CONFIGURE_OPTIONS  +=	--enable-ipv4-pktinfo
+CONFIGURE_OPTIONS  +=	--with-pic
 
 
 # Disable message in omapip/errwarn.c.
 CPPFLAGS  +=	        -DNOMINUM
 CONFIGURE_OPTIONS  +=   CPPFLAGS="$(CPPFLAGS)"
 
+CFLAGS += -g -fPIC
+CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
+
 COMPONENT_TEST_DIR =	$(@D)
 
-configure:	$(CONFIGURE_32)
+configure:	$(CONFIGURE_32_and_64)
 
-build:		$(BUILD_32)
+build:		$(BUILD_32_and_64)
 
-install:	build $(INSTALL_32) $(PROTO_DIR)/dhcpd.leases
+install:	build $(INSTALL_32_and_64) $(PROTO_DIR)/dhcpd.leases
 
-test:		$(TEST_32)
+test:		$(TEST_32_and_64)
 
-$(PROTO_DIR)/dhcpd.leases:	$(INSTALL_32)
+$(PROTO_DIR)/dhcpd.leases:	$(INSTALL_32_and_64)
 	$(TOUCH) $@
 
 

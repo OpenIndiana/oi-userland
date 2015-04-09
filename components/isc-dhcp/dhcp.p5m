@@ -31,7 +31,7 @@ set name=com.oracle.info.tpno value=$(TPNO)
 set name=info.classification value=org.opensolaris.category.2008:System/Services
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid value=PSARC/2011/043
+set name=org.opensolaris.arc-caseid value=PSARC/2011/043 value=PSARC/2015/160
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 file server/dhcpd.conf path=etc/inet/dhcpd.conf.example group=sys
 file dhcp_auths path=etc/security/auth_attr.d/service%2Fnetwork%2Fisc-dhcp
@@ -40,12 +40,38 @@ file isc-dhcp-relay.xml path=lib/svc/manifest/network/dhcp/isc-dhcp-relay.xml \
 file isc-dhcp-server.xml \
     path=lib/svc/manifest/network/dhcp/isc-dhcp-server.xml group=sys mode=0444
 file isc-dhcp path=lib/svc/method/isc-dhcp mode=0555
+file dhcpctl/dhcpctl.h path=usr/include/isc-dhcp/dhcpctl.h
+file includes/isc-dhcp/dst.h path=usr/include/isc-dhcp/dst.h
+file includes/omapip/omapip.h path=usr/include/isc-dhcp/omapip.h
+file includes/omapip/trace.h path=usr/include/isc-dhcp/trace.h
+link path=usr/lib/$(MACH64)/libdhcpctl.so target=libdhcpctl.so.1
+file path=usr/lib/$(MACH64)/libdhcpctl.so.1
+link path=usr/lib/$(MACH64)/libdst.so target=libdst.so.1
+file path=usr/lib/$(MACH64)/libdst.so.1
+link path=usr/lib/$(MACH64)/libomapi.so target=libomapi.so.1
+file path=usr/lib/$(MACH64)/libomapi.so.1
+file path=usr/lib/$(MACH64)/llib-ldhcpctl.ln
+file path=usr/lib/$(MACH64)/llib-ldst.ln
+file path=usr/lib/$(MACH64)/llib-lomapi.ln
 file SmfDHCPStates.html path=usr/lib/help/auths/locale/SmfDHCPStates.html
 file SmfValueDHCP.html path=usr/lib/help/auths/locale/SmfValueDHCP.html
 file path=usr/lib/inet/dhcpd
 file path=usr/lib/inet/dhcrelay
+link path=usr/lib/libdhcpctl.so target=libdhcpctl.so.1
+file path=usr/lib/libdhcpctl.so.1
+link path=usr/lib/libdst.so target=libdst.so.1
+file path=usr/lib/libdst.so.1
+link path=usr/lib/libomapi.so target=libomapi.so.1
+file path=usr/lib/libomapi.so.1
+file path=usr/lib/llib-ldhcpctl
+file path=usr/lib/llib-ldhcpctl.ln
+file path=usr/lib/llib-ldst
+file path=usr/lib/llib-ldst.ln
+file path=usr/lib/llib-lomapi
+file path=usr/lib/llib-lomapi.ln
 file path=usr/sbin/omshell
 file path=usr/share/man/man1/omshell.1
+file path=usr/share/man/man3/omapi.3
 file path=usr/share/man/man5/dhcp-eval.5
 file path=usr/share/man/man5/dhcp-options.5
 file path=usr/share/man/man5/dhcpd.conf.5
