@@ -23,16 +23,16 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		swig
-COMPONENT_VERSION=	2.0.8
+COMPONENT_VERSION=	3.0.5
 COMPONENT_PROJECT_URL=	http://www.swig.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:aeeefa20bbe1c03bacf23f0af9e7d6193e8b807b7585470615b71b1ee0c8ca4f
-COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/swig/swig/swig-2.0.8/$(COMPONENT_ARCHIVE)
+    sha256:9f4cb9e8f213f041853646f58fe5e8428d63250d05f5c943b6fa759c77322a3c
+COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/swig/swig/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/swig
 
-TPNO=			10991
+TPNO=			22223
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -61,8 +61,8 @@ COMPONENT_TEST_TRANSFORMS += \
 # languages that we care about and that are known to work.
 COMPONENT_TEST_TARGETS = \
 	partialcheck-guile-test-suite \
-	partialcheck-guilescm-test-suite \
 	partialcheck-lua-test-suite \
+	partialcheck-perl5-test-suite \
 	partialcheck-php-test-suite \
 	partialcheck-python-test-suite \
 	partialcheck-ruby-test-suite
