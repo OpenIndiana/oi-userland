@@ -26,16 +26,16 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		dejagnu
-COMPONENT_VERSION=	1.5
+COMPONENT_VERSION=	1.5.3
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/dejagnu/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:c8b45808357a6f3e32cd56d8b56a4fdf8a1d5f3818818045c2022993e0e8a3db
+    sha256:099b8e364ca1d6248f8e1d32168c4b12677abff4253bbbb4a8ac8cdd321e3f19
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/dejagnu
 
-TPNO=			12292
+TPNO=			22219
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
