@@ -1,0 +1,64 @@
+From: Pádraig Brady <P@draigBrady.com>
+Date: Mon, 18 Aug 2014 16:59:26 +0000 (+0100)
+Subject: df: improve mount point selection with inaccurate mount list
+X-Git-Url: http://git.savannah.gnu.org/gitweb/?p=coreutils.git;a=commitdiff_plain;h=ed1a495b
+
+df: improve mount point selection with inaccurate mount list
+
+v8.23 has a test failure on Fedora rawhide build servers
+in tests/df/skip-duplicate.sh.  This was due to no '/'
+entry being output by df.  That was due to an inaccurate
+/proc/mounts on the build environment as stat(/mnt/point)
+identified all these /proc/mounts entries as having the
+same device id:
+
+  /                    rootfs
+  /                    /dev/md1
+  /dev                 devtmpfs
+  /run                 tmpfs
+  /boot                /dev/md0
+  /proc/filesystems    /dev/md1
+
+Since the device name on the right changes for a given id,
+that causes the entries to be continually replaced, thus
+resulting in no '/' entry.  I'm guessing this is due to
+the mock environment bind mounting unneeded or sensitive
+items to a dummy file on the host / (/dev/md1) though
+have not looked into those details.
+
+So rather than relying on an accurate /proc/mounts,
+the attached patch takes a more conservative replacement
+approach and only swaps a new device entry when the
+mount point matches.  That should handle all practical
+cases while also avoiding this situation.
+
+* src/df.c (filter_mount_list): Only replace entries with
+different device names when the mount point also matches.
+---
+
+diff --git a/src/df.c b/src/df.c
+index 3ef5d33..e907b94 100644
+--- src/df.c
++++ src/df.c
+@@ -640,13 +640,18 @@ filter_mount_list (bool devices_only)
+ 
+           if (devlist)
+             {
+-              /* ...let the shorter mountdir win.  */
++                  /* let "real" devices with '/' in the name win.  */
+               if ((strchr (me->me_devname, '/')
+                    && ! strchr (devlist->me->me_devname, '/'))
++                  /* let a shorter mountdir win.  */
+                   || (strlen (devlist->me->me_mountdir)
+                       > strlen (me->me_mountdir))
+-                  /* or one overmounted on a different device.  */
+-                  || ! STREQ (devlist->me->me_devname, me->me_devname))
++                  /* let an entry overmounted on a different device win...  */
++                  || (! STREQ (devlist->me->me_devname, me->me_devname)
++                      /* ... but only when matching an exsiting mount point, to
++                      avoid problematic replacement when given inaccurate mount
++                      lists, seen with some chroot environments for example.  */
++                      && STREQ (me->me_mountdir, devlist->me->me_mountdir)))
+                 {
+                   /* Discard mount entry for existing device.  */
+                   discard_me = devlist->me;
