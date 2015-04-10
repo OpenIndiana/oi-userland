@@ -51,6 +51,14 @@ COMPONENT_TEST_DIR= $(COMPONENT_SRC)
 COMPONENT_TEST_ARGS= ./selftest.py
 COMPONENT_TEST_ENV= PYTHONPATH=$(TEST_PYTHONPATH.$(BITS))
 
+# Master test results are the same for both 32-bit and 64-bit, 
+# for all versions of Python, so override
+# here, rather than create multiple identical master files.
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s|\(^Binary modules loaded from \).*|\1|" '
+
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # common targets
