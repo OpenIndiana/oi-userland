@@ -45,10 +45,7 @@ CXXFLAGS += $(CPP_LARGEFILES)
 
 # it seems that --with-pic doesn't get PIC flags to the C++ compiler
 CXXFLAGS += $(CC_PIC)
-
-ifneq (, $(findstring 12.4,$(CXX)))
-  CXXFLAGS += -template=extdef
-endif
+CXXFLAGS += -template=extdef
 
 # libtools seems to be forcing -nolibs, so we have to add back libc, libm,
 # libCstd and libCrun. The last two are needed because with Studio 12.2

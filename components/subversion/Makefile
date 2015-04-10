@@ -85,11 +85,6 @@ PERL_ARCH_12 = $(PERL_ARCH_12_$(MACH))
 PERL_ARCH_16 = $(PERL_ARCH_16_$(MACH))
 APR_VERSION = 1.5
 APR_UTIL_VERSION = 1.5
-SS_VERSION := 12.3
-
-ifneq (, $(findstring 12.4,$(CXX)))
-  SS_VERSION := 12.4
-endif
 
 # Let's write some post-configure hacks
 COMPONENT_POST_CONFIGURE_ACTION = \

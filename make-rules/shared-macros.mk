@@ -384,7 +384,7 @@ $(BUILD_DIR_64)/.tested-and-compared:			BITS=64
 BUILD_TOOLS ?=	/ws/on12-tools
 
 SPRO_ROOT =	$(BUILD_TOOLS)/SUNWspro
-SPRO_VROOT =	$(SPRO_ROOT)/solarisstudio12.3
+SPRO_VROOT =	$(SPRO_ROOT)/solarisstudio12.4
 
 PARFAIT_ROOT =	$(BUILD_TOOLS)/parfait/parfait-tools-1.5.1
 PARFAIT_TOOLS=	$(WS_TOOLS)/$(MACH)/parfait
@@ -927,7 +927,7 @@ REQUIRED_PACKAGES += developer/gcc-47
 endif
 ifeq ($(COMPILER),studio)
 # uncomment this line if you need to install Studio
-#REQUIRED_PACKAGES += developer/solarisstudio-123
+#REQUIRED_PACKAGES += developer/solarisstudio-124
 endif
 ifeq ($(PARFAIT_BUILD),yes)
 # uncomment this line if you need to install Parfait
