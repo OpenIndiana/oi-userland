@@ -240,6 +240,7 @@ COMPONENT_TEST_BUILD_DIR =	$(BUILD_DIR)/test/$(MACH$(BITS))
 
 # set the default master test results directory
 COMPONENT_TEST_RESULTS_DIR =	$(COMPONENT_DIR)/test
+COMPONENT_SYSTEM_TEST_RESULTS_DIR =	$(COMPONENT_DIR)/test
 
 # set the default master test results file
 COMPONENT_TEST_MASTER =		$(COMPONENT_TEST_RESULTS_DIR)/results-$(BITS).master
@@ -320,17 +321,31 @@ COMPONENT_TEST_COMPARE = \
 
 # set the default env command to use for test of the component
 COMPONENT_TEST_ENV_CMD =        $(ENV)
+COMPONENT_SYSTEM_TEST_ENV_CMD =	$(ENV)
 
 # set the default command to use for test of the component
 COMPONENT_TEST_CMD =		$(GMAKE)
+COMPONENT_SYSTEM_TEST_CMD =	$(GMAKE)
 
 # set the default target for test of the component
 COMPONENT_TEST_TARGETS =	check
+COMPONENT_SYSTEM_TEST_TARGETS =	check
 
 # set the default directory for test of the component
 COMPONENT_TEST_DIR =		$(@D)
+COMPONENT_SYSTEM_TEST_DIR =	$(@D)
 
 # determine the type of tests we want to run.
+ifeq ($(strip $(wildcard $(COMPONENT_SYSTEM_TEST_RESULTS_DIR)/results-*.master)),)
+SYSTEM_TEST_NO_ARCH =		$(BUILD_DIR_NO_ARCH)/.system-tested
+SYSTEM_TEST_32 =		$(BUILD_DIR_32)/.system-tested
+SYSTEM_TEST_64 =		$(BUILD_DIR_64)/.system-tested
+else
+SYSTEM_TEST_NO_ARCH =		$(BUILD_DIR_NO_ARCH)/.system-tested-and-compared
+SYSTEM_TEST_32 =		$(BUILD_DIR_32)/.system-tested-and-compared
+SYSTEM_TEST_64 =		$(BUILD_DIR_64)/.system-tested-and-compared
+endif
+SYSTEM_TEST_32_and_64 =	$(TEST_32) $(TEST_64)
 ifeq ($(strip $(wildcard $(COMPONENT_TEST_RESULTS_DIR)/results-*.master)),)
 TEST_NO_ARCH =		$(BUILD_DIR_NO_ARCH)/.tested
 TEST_32 =		$(BUILD_DIR_32)/.tested
@@ -351,12 +366,18 @@ TEST_32_and_64 =	$(TEST_32) $(TEST_64)
 
 SKIP_TEST_AT_TOP_LEVEL = $(eval include $(WS_MAKE_RULES)/skip-test.mk)
 
-$(BUILD_DIR_NO_ARCH)/.tested:		BITS=32
-$(BUILD_DIR_32)/.tested:		BITS=32
-$(BUILD_DIR_64)/.tested:		BITS=64
-$(BUILD_DIR_NO_ARCH)/.tested-and-compared:	BITS=32
-$(BUILD_DIR_32)/.tested-and-compared:	BITS=32
-$(BUILD_DIR_64)/.tested-and-compared:	BITS=64
+$(BUILD_DIR_NO_ARCH)/.system-tested:			BITS=32
+$(BUILD_DIR_32)/.system-tested:				BITS=32
+$(BUILD_DIR_64)/.system-tested:				BITS=64
+$(BUILD_DIR_NO_ARCH)/.system-tested-and-compared:	BITS=32
+$(BUILD_DIR_32)/.system-tested-and-compared:		BITS=32
+$(BUILD_DIR_64)/.system-tested-and-compared:		BITS=64
+$(BUILD_DIR_NO_ARCH)/.tested:				BITS=32
+$(BUILD_DIR_32)/.tested:				BITS=32
+$(BUILD_DIR_64)/.tested:				BITS=64
+$(BUILD_DIR_NO_ARCH)/.tested-and-compared:		BITS=32
+$(BUILD_DIR_32)/.tested-and-compared:			BITS=32
+$(BUILD_DIR_64)/.tested-and-compared:			BITS=64
 
 
 # BUILD_TOOLS is the root of all tools not normally installed on the system.
@@ -447,6 +468,10 @@ PYTHON_VENDOR_PACKAGES.32 = /usr/lib/python$(PYTHON_VERSION)/vendor-packages
 PYTHON_VENDOR_PACKAGES.64 = /usr/lib/python$(PYTHON_VERSION)/vendor-packages/64
 PYTHON_VENDOR_PACKAGES = $(PYTHON_VENDOR_PACKAGES.$(BITS))
 
+PYTHON.2.6.TEST = /usr/lib/python2.6/test
+PYTHON.2.7.TEST = /usr/lib/python2.7/test
+PYTHON.3.4.TEST = /usr/lib/python3.4/test
+
 USRBIN.32 =	/usr/bin
 USRBIN.64 =	/usr/bin/$(MACH64)
 USRBIN =	$(USRBIN.$(BITS))
@@ -465,7 +490,7 @@ PYTHON.2.7 =	$(USRBIN)/python2.7
 # than the 64-bit path.
 PYTHON.3.4.32 =	$(USRBIN.32)/python3.4
 PYTHON.3.4.64 =	$(USRBIN.32)/python3.4
-PYTHON.3.4 =	$(USRBIN)/python3.4
+PYTHON.3.4 =	$(USRBIN.32)/python3.4
 
 PYTHON.32 =	$(PYTHON.$(PYTHON_VERSION).32)
 PYTHON.64 =	$(PYTHON.$(PYTHON_VERSION).64)

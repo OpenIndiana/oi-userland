@@ -9,7 +9,8 @@ upstream tests that aren't applicable or need modifications on Solaris.
 'gmake test' is often run when a component is upgraded or otherwise
 intentionally changed, but sometimes it would be useful to rerun the tests
 after something else has changed (such as the system being upgraded, or a
-change in compilers) and see if that has affected the tests.
+change in compilers; see the 'System Test' section below) and see if that
+has affected the tests.
 
 We do this by having a 'master test file' that contains the expected results,
 and having a compare target that runs the tests and compares them with the
@@ -208,3 +209,53 @@ your favorite transformer might need.
 
 When your master test file(s) are in good shape, then you should "hg add"
 them to your workspace.
+
+
+System Test
+-----------
+All of the above discusses how 'gmake test' works.  This is all good, but
+has the limitation that objects under test are those that were just built
+and installed into the component's proto area.  We also want to be able
+to test whatever is installed on the actual system.  This has the benefits
+of not requiring anything to be built, and allowing non-Userland people
+to test our bits.  (Think of people in ON changing libc or the linker and
+wanting to make sure they don't break anything.)
+
+To this end, we have added 'gmake system-test'.  It works just like 'gmake
+test', reusing some of the same variables:
+* COMPONENT_TEST_BUILD_DIR
+* COMPONENT_TEST_COMPARE
+* COMPONENT_TEST_CREATE_TRANSFORMS
+* COMPONENT_TEST_OUTPUT
+* COMPONENT_TEST_PERFORM_TRANSFORM
+but with its own "_SYSTEM" instance of other variables:
+* COMPONENT_POST_SYSTEM_TEST_ACTION
+* COMPONENT_PRE_SYSTEM_TEST_ACTION
+* COMPONENT_SYSTEM_TEST_ARGS
+* COMPONENT_SYSTEM_TEST_CLEANUP
+* COMPONENT_SYSTEM_TEST_CMD
+* COMPONENT_SYSTEM_TEST_DIR
+* COMPONENT_SYSTEM_TEST_ENV
+* COMPONENT_SYSTEM_TEST_ENV_CMD
+* COMPONENT_SYSTEM_TEST_RESULTS_DIR
+* COMPONENT_SYSTEM_TEST_TARGETS
+
+In the ideal case, only Makefile variables would need to be modified to
+take a component where 'gmake test' works and extend it so that 'gmake
+system-test' works; see components/python34/Makefile for such an example.
+
+The next level up from that is the case where some simple patching is needed.
+In this case, simple means:
+* tweaking LD_LIBRARY_PATH
+* changing the path to a binary to run
+* modifying a Makefile so tests are compiled as part of 'gmake build'
+* modifying a Makefile so tests are installed as part of 'gmake install'
+* modifying a pkg(5) manifest so tests are published as part of 'gmake publish'
+  (preferably under the "optional.test" facet)
+
+If more extensive patching is needed, a judgement call needs to be made:
+Are these changes that upstream would welcome?  If not, then we would need
+to keep such changes around indefinitely, which would constitute a fork,
+which we try very hard to avoid.  When 'gmake system-test' was initially
+implemented, changes to both fetchmail and python/decorator were begun but
+ultimately abandoned for this reason; see 20808505 for details.

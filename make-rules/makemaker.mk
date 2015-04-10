@@ -55,6 +55,20 @@ $(BUILD_DIR)/$(MACH32)-5.12-mt/.tested-and-compared:	BITS=32
 $(BUILD_DIR)/$(MACH64)-5.16/.tested-and-compared:	PERL_VERSION=5.16
 $(BUILD_DIR)/$(MACH64)-5.16/.tested-and-compared:	BITS=64
 
+$(BUILD_DIR)/$(MACH32)-5.12/.system-tested:	PERL_VERSION=5.12
+$(BUILD_DIR)/$(MACH32)-5.12/.system-tested:	BITS=32
+$(BUILD_DIR)/$(MACH32)-5.12-mt/.system-tested:	PERL_VERSION=5.12-mt
+$(BUILD_DIR)/$(MACH32)-5.12-mt/.system-tested:	BITS=32
+$(BUILD_DIR)/$(MACH64)-5.16/.system-tested:	PERL_VERSION=5.16
+$(BUILD_DIR)/$(MACH64)-5.16/.system-tested:	BITS=64
+
+$(BUILD_DIR)/$(MACH32)-5.12/.system-tested-and-compared:	PERL_VERSION=5.12
+$(BUILD_DIR)/$(MACH32)-5.12/.system-tested-and-compared:	BITS=32
+$(BUILD_DIR)/$(MACH32)-5.12-mt/.system-tested-and-compared:	PERL_VERSION=5.12-mt
+$(BUILD_DIR)/$(MACH32)-5.12-mt/.system-tested-and-compared:	BITS=32
+$(BUILD_DIR)/$(MACH64)-5.16/.system-tested-and-compared:	PERL_VERSION=5.16
+$(BUILD_DIR)/$(MACH64)-5.16/.system-tested-and-compared:	BITS=64
+
 BUILD_32 =	$(BUILD_DIR)/$(MACH32)-5.12/.built
 BUILD_32 +=	$(BUILD_DIR)/$(MACH32)-5.12-mt/.built
 BUILD_64 =	$(BUILD_DIR)/$(MACH64)-5.16/.built
@@ -106,7 +120,9 @@ COMPONENT_TEST_SNAPSHOT = $(COMPONENT_TEST_BUILD_DIR)/results-$(PERL_VERSION)-$(
 COMPONENT_TEST_TRANSFORM_CMD = $(COMPONENT_TEST_BUILD_DIR)/transform-$(PERL_VERSION)-$(BITS)-results
 
 COMPONENT_TEST_TARGETS =	check
-COMPONENT_TEST_ENV +=	$(COMMON_PERL_ENV)
+COMPONENT_TEST_ENV +=		$(COMMON_PERL_ENV)
+COMPONENT_SYSTEM_TEST_TARGETS =	check
+COMPONENT_SYSTEM_TEST_ENV +=	$(COMMON_PERL_ENV)
 
 # determine the type of tests we want to run.
 ifeq ($(strip $(wildcard $(COMPONENT_TEST_RESULTS_DIR)/results-*.master)),)
@@ -117,6 +133,16 @@ else
 TEST_32 =	$(BUILD_DIR)/$(MACH32)-5.12/.tested-and-compared
 TEST_32 +=	$(BUILD_DIR)/$(MACH32)-5.12-mt/.tested-and-compared
 TEST_64 =	$(BUILD_DIR)/$(MACH64)-5.16/.tested-and-compared
+endif
+
+ifeq ($(strip $(wildcard $(COMPONENT_TEST_RESULTS_DIR)/results-*.master)),)
+SYSTEM_TEST_32 =	$(BUILD_DIR)/$(MACH32)-5.12/.system-tested
+SYSTEM_TEST_32 +=	$(BUILD_DIR)/$(MACH32)-5.12-mt/.system-tested
+SYSTEM_TEST_64 =	$(BUILD_DIR)/$(MACH64)-5.16/.system-tested
+else
+SYSTEM_TEST_32 =	$(BUILD_DIR)/$(MACH32)-5.12/.system-tested-and-compared
+SYSTEM_TEST_32 +=	$(BUILD_DIR)/$(MACH32)-5.12-mt/.system-tested-and-compared
+SYSTEM_TEST_64 =	$(BUILD_DIR)/$(MACH64)-5.16/.system-tested-and-compared
 endif
 
 # test the built source
@@ -144,6 +170,33 @@ $(BUILD_DIR)/%/.tested:    $(BUILD_DIR)/%/.built
 		$(COMPONENT_TEST_ARGS) $(COMPONENT_TEST_TARGETS))
 	$(COMPONENT_POST_TEST_ACTION)
 	$(COMPONENT_TEST_CLEANUP)
+	$(TOUCH) $@
+
+# test the installed packages
+$(BUILD_DIR)/%/.system-tested-and-compared:    $(SOURCE_DIR)/.prep
+	$(RM) -rf $(COMPONENT_TEST_BUILD_DIR)
+	$(MKDIR) $(COMPONENT_TEST_BUILD_DIR)
+	$(COMPONENT_PRE_SYSTEM_TEST_ACTION)
+	-(cd $(COMPONENT_SYSTEM_TEST_DIR) ; \
+		$(COMPONENT_SYSTEM_TEST_ENV_CMD) $(COMPONENT_SYSTEM_TEST_ENV) \
+		$(COMPONENT_SYSTEM_TEST_CMD) \
+		$(COMPONENT_SYSTEM_TEST_ARGS) $(COMPONENT_SYSTEM_TEST_TARGETS)) \
+		&> $(COMPONENT_TEST_OUTPUT)
+	$(COMPONENT_POST_SYSTEM_TEST_ACTION)
+	$(COMPONENT_TEST_CREATE_TRANSFORMS)
+	$(COMPONENT_TEST_PERFORM_TRANSFORM)
+	$(COMPONENT_TEST_COMPARE)
+	$(COMPONENT_SYSTEM_TEST_CLEANUP)
+	$(TOUCH) $@
+
+$(BUILD_DIR)/%/.system-tested:    $(SOURCE_DIR)/.prep
+	$(COMPONENT_PRE_SYSTEM_TEST_ACTION)
+	(cd $(COMPONENT_SYSTEM_TEST_DIR) ; \
+		$(COMPONENT_SYSTEM_TEST_ENV_CMD) $(COMPONENT_SYSTEM_TEST_ENV) \
+		$(COMPONENT_SYSTEM_TEST_CMD) \
+		$(COMPONENT_SYSTEM_TEST_ARGS) $(COMPONENT_SYSTEM_TEST_TARGETS))
+	$(COMPONENT_POST_SYSTEM_TEST_ACTION)
+	$(COMPONENT_SYSTEM_TEST_CLEANUP)
 	$(TOUCH) $@
 
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)
