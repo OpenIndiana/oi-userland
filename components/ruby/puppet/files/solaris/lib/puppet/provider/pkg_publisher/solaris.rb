@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 Puppet::Type.type(:pkg_publisher).provide(:pkg_publisher) do
@@ -40,7 +40,6 @@ Puppet::Type.type(:pkg_publisher).provide(:pkg_publisher) do
             if not publisher_order.include?("name")
                 publisher_order << name
             end
-
             # strip off any trailing "/" characters
             if origin.end_with?("/")
                 origin = origin[0..-2]
@@ -49,11 +48,24 @@ Puppet::Type.type(:pkg_publisher).provide(:pkg_publisher) do
             if publishers.has_key?(name)
                 # if we've seen this publisher before, simply update the origin
                 # array
-                publishers[name]["origin"] << origin
+	        if type.eql? "mirror"
+                    publishers[name]["mirror"] << origin
+		else
+                    publishers[name]["origin"] << origin
+		end
+
             else
                 # create a new hash entry for this publisher
                 publishers[name] = {'sticky' => sticky, 'enable' => enabled,
-                                    'origin' => Array[origin]}
+                                    'origin' => Array[],
+				    'mirror' => Array[]}
+					
+		if type.eql? "mirror"
+                    publishers[name]["mirror"] << origin
+		else
+                    publishers[name]["origin"] << origin
+		end
+
                 publishers[name]["proxy"] = proxy if proxy != "-"
 
                 index = publisher_order.index(name)
@@ -66,7 +78,6 @@ Puppet::Type.type(:pkg_publisher).provide(:pkg_publisher) do
                 end
             end
         end
-
         # create new entries for the system
         publishers.keys.collect do |publisher|
             new(:name => publisher,
@@ -74,6 +85,7 @@ Puppet::Type.type(:pkg_publisher).provide(:pkg_publisher) do
                 :sticky => publishers[publisher]["sticky"],
                 :enable => publishers[publisher]["enable"],
                 :origin => publishers[publisher]["origin"],
+                :mirror => publishers[publisher]["mirror"],
                 :proxy => publishers[publisher]["proxy"],
                 :searchfirst => publishers[publisher]["searchfirst"],
                 :searchafter => publishers[publisher]["searchafter"],
@@ -97,7 +109,7 @@ Puppet::Type.type(:pkg_publisher).provide(:pkg_publisher) do
 
     # property getters - each getter does exactly the same thing so create
     # dynamic methods to handle them
-    [:sticky, :enable, :origin, :proxy, :searchfirst, :searchafter,
+    [:sticky, :enable, :origin, :mirror, :proxy, :searchfirst, :searchafter,
      :searchbefore, :sslkey, :sslcert].each do |property|
         define_method(property) do
             begin
@@ -117,17 +129,32 @@ Puppet::Type.type(:pkg_publisher).provide(:pkg_publisher) do
 
     def build_origin
         origins = []
-        
-        # add all the origins from the manifest
-        for o in @resource[:origin] do
-            origins << "-g" << o
-        end
+	
+        # add all the origins from the manifest 
+        if !@resource[:origin].nil?
+	   for o in @resource[:origin] do
+               origins << "-g" << o
+           end
+	end
 
-        # remove all the existing origins
-        if @property_hash != {}
-            for o in @property_hash[:origin] do
-                origins << "-G" << o
+        # add all the mirrors from the manifest 
+	if !@resource[:mirror].nil?
+	    for o in @resource[:mirror] do
+                origins << "-m" << o
             end
+	end
+        # remove all the existing origins and mirrors
+        if @property_hash != {}
+           if !@property_hash[:origin].nil?
+              for o in @property_hash[:origin] do
+                  origins << "-G" << o
+              end
+	   end
+           if !@property_hash[:mirror].nil?
+              for o in @property_hash[:mirror] do
+                  origins << "-M" << o
+              end
+           end
         end
         origins
     end
@@ -236,6 +263,10 @@ Puppet::Type.type(:pkg_publisher).provide(:pkg_publisher) do
                 pkg("set-publisher", "--disable", @resource[:name])
             end
         end
+    end
+    
+    def mirror=(value)
+        create
     end
 
     def destroy

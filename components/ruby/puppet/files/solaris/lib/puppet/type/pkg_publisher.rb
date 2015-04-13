@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 require 'puppet/property/list'
@@ -61,7 +61,6 @@ Puppet::Type.newtype(:pkg_publisher) do
             end
         end
     end
-
     newproperty(:enable) do
         desc "Enable the publisher"
         newvalues(:true, :false)
@@ -98,5 +97,32 @@ Puppet::Type.newtype(:pkg_publisher) do
 
     newproperty(:sslcert) do
         desc "Specify the client SSL certificate"
+    end
+
+    newproperty(:mirror, :parent => Puppet::Property::List) do
+        desc "Which mirror URI(s) to set.  For multiple mirrors, specify them
+              as a list"
+	
+        # ensure should remains an array
+        def should
+            @should
+        end
+
+        def insync?(is)
+            is = [] if is == :absent or is.nil?
+            is.sort == self.should.sort
+        end
+
+        def retrieve
+            provider.mirror
+        end
+        
+        munge do |value|
+            if value.start_with? "file" and value.end_with? "/"
+                value = value.chomp("/")
+            else
+                value
+            end
+        end
     end
 end
