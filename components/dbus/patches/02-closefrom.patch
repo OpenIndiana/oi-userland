@@ -1,0 +1,13 @@
+--- dbus-1.6.0/dbus/dbus-sysdeps-unix.c-orig	2012-06-05 06:33:44.620328189 -0500
++++ dbus-1.6.0/dbus/dbus-sysdeps-unix.c	2012-06-05 06:34:40.948758620 -0500
+@@ -4030,6 +4030,10 @@ _dbus_close_all (void)
+ {
+   int maxfds, i;
+ 
++#if HAVE_CLOSEFROM
++      closefrom(3);
++#endif
++
+ #ifdef __linux__
+   DIR *d;
+ 
