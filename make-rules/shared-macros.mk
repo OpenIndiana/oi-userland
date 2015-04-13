@@ -946,3 +946,10 @@ REQUIRED_PACKAGES += developer/java/jdk-7
 REQUIRED_PACKAGES += security/sudo
 
 include $(WS_MAKE_RULES)/environment.mk
+
+# A simple rule to print the value of any macro.  Ex:
+#   $ gmake print-REQUIRED_PACKAGES
+# Note that some macros are set on a per target basis, so what you see
+# is not always what you get.
+print-%:
+	@echo '$(subst ','\'',$*=$($*)) (origin: $(origin $*), flavor: $(flavor $*))'
