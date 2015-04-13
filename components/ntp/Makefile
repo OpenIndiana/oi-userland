@@ -26,13 +26,13 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ntp
-COMPONENT_VERSION=	4.2.8p1
-IPS_COMPONENT_VERSION=	4.2.8.1
+COMPONENT_VERSION=	4.2.8p2
+IPS_COMPONENT_VERSION=	4.2.8.2
 COMPONENT_PROJECT_URL=	http://www.ntp.org/
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	 \
-	sha256:948274b88f1ed002d867ced6aaefdfd0999668b11285ac2b3a67ff2629d59d88
+	sha256:0d69bc0e95caad43ea04fdad410e756bae1a71e67b1c2bd799b76b55e04c9b31
 COMPONENT_ARCHIVE_URL=	http://archive.ntp.org/ntp4/ntp-4.2/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB= service/ntp
 
@@ -45,6 +45,8 @@ include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
 COMPONENT_BUILD_ARGS=
+
+COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf --force --install )
 
 CFLAGS +=	-std=c99 -D_XOPEN_SOURCE=600 -D__EXTENSIONS__
 
