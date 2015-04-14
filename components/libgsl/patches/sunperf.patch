@@ -1,0 +1,265 @@
+Changes needed to use Studio libsunperf on Solaris (if available).
+
+These changes will be sent upstream.
+
+--- gsl-1.16/configure.ac.orig	2014-05-16 05:57:01.088210548 -0700
++++ gsl-1.16/configure.ac	2015-04-10 11:57:45.589459045 -0700
+@@ -101,6 +101,20 @@
+ AC_C_INLINE
+ AC_C_CHAR_UNSIGNED
+ 
++dnl Check for existing BLAS
++dnl look for BLAS in some typical places
++AM_CONDITIONAL(SOLARIS_SUNPERF, false)
++case "$host" in
++*-*-solaris*) 
++    AC_CHECK_LIB(sunperf,dcopy,BLAS=-lsunperf)
++    if test "$BLAS"; then
++        dnl Solaris BLAS library has performance benefits
++        AM_CONDITIONAL(SOLARIS_SUNPERF, true)
++        CFLAGS="-xlibmopt -xbuiltin=%default -xlibmil"
++    fi
++    ;;
++esac
++
+ GSL_CFLAGS="-I$includedir"
+ GSL_LIBS="-L$libdir -lgsl"
+ dnl macro from libtool - can be replaced with LT_LIB_M when we require libtool 2
+--- gsl-1.16/Makefile.am.orig	2014-05-16 06:23:30.414886190 -0700
++++ gsl-1.16/Makefile.am	2014-05-16 06:59:46.408524913 -0700
+@@ -2,7 +2,14 @@
+ 
+ # AUTOMAKE_OPTIONS = readme-alpha
+ 
+-SUBDIRS = gsl utils sys test err const complex cheb block vector matrix permutation combination multiset sort ieee-utils cblas blas linalg eigen specfunc dht qrng rng randist fft poly fit multifit statistics siman sum integration interpolation histogram ode-initval ode-initval2 roots multiroots min multimin monte ntuple diff deriv cdf wavelet bspline doc
++SOLARIS_SUNPERF = @SOLARIS_SUNPERF@
++if SOLARIS_SUNPERF
++    CBLAS_DIRS=
++else
++    CBLAS_DIRS=cblas
++endif
++
++SUBDIRS = gsl utils sys test err const complex cheb block vector matrix permutation combination multiset sort ieee-utils $(CBLAS_DIRS) blas linalg eigen specfunc dht qrng rng randist fft poly fit multifit statistics siman sum integration interpolation histogram ode-initval ode-initval2 roots multiroots min multimin monte ntuple diff deriv cdf wavelet bspline doc
+ 
+ SUBLIBS = block/libgslblock.la blas/libgslblas.la bspline/libgslbspline.la complex/libgslcomplex.la cheb/libgslcheb.la dht/libgsldht.la diff/libgsldiff.la deriv/libgslderiv.la eigen/libgsleigen.la err/libgslerr.la fft/libgslfft.la fit/libgslfit.la histogram/libgslhistogram.la ieee-utils/libgslieeeutils.la integration/libgslintegration.la interpolation/libgslinterpolation.la linalg/libgsllinalg.la matrix/libgslmatrix.la min/libgslmin.la monte/libgslmonte.la multifit/libgslmultifit.la multimin/libgslmultimin.la multiroots/libgslmultiroots.la ntuple/libgslntuple.la ode-initval/libgslodeiv.la ode-initval2/libgslodeiv2.la permutation/libgslpermutation.la combination/libgslcombination.la multiset/libgslmultiset.la poly/libgslpoly.la qrng/libgslqrng.la randist/libgslrandist.la rng/libgslrng.la roots/libgslroots.la siman/libgslsiman.la sort/libgslsort.la specfunc/libgslspecfunc.la statistics/libgslstatistics.la sum/libgslsum.la sys/libgslsys.la test/libgsltest.la utils/libutils.la vector/libgslvector.la cdf/libgslcdf.la wavelet/libgslwavelet.la
+ 
+@@ -35,10 +42,16 @@
+ bin_PROGRAMS = gsl-randist gsl-histogram
+ 
+ gsl_randist_SOURCES = gsl-randist.c
+-gsl_randist_LDADD = libgsl.la cblas/libgslcblas.la
+ 
+ gsl_histogram_SOURCES = gsl-histogram.c
++
++if SOLARIS_SUNPERF
++gsl_randist_LDADD = libgsl.la
++gsl_histogram_LDADD = libgsl.la
++else
++gsl_randist_LDADD = libgsl.la cblas/libgslcblas.la
+ gsl_histogram_LDADD = libgsl.la cblas/libgslcblas.la
++endif
+ 
+ check_SCRIPTS = test_gsl_histogram.sh pkgconfig.test
+ TESTS = test_gsl_histogram.sh pkgconfig.test
+--- gsl-1.16/bspline/Makefile.am.orig	2015-04-10 12:09:28.348382068 -0700
++++ gsl-1.16/bspline/Makefile.am	2015-04-10 12:13:46.450748139 -0700
+@@ -12,6 +12,13 @@
+ 
+ TESTS = $(check_PROGRAMS)
+ 
+-test_LDADD = libgslbspline.la ../linalg/libgsllinalg.la ../permutation/libgslpermutation.la ../blas/libgslblas.la ../matrix/libgslmatrix.la ../vector/libgslvector.la ../block/libgslblock.la ../complex/libgslcomplex.la ../cblas/libgslcblas.la ../ieee-utils/libgslieeeutils.la  ../err/libgslerr.la ../test/libgsltest.la ../sys/libgslsys.la ../utils/libutils.la ../statistics/libgslstatistics.la
++SOLARIS_SUNPERF = @SOLARIS_SUNPERF@
++if SOLARIS_SUNPERF
++    CBLAS_LA=
++else
++    CBLAS_LA=../cblas/libgslcblas.la
++endif
++
++test_LDADD = libgslbspline.la ../linalg/libgsllinalg.la ../permutation/libgslpermutation.la ../blas/libgslblas.la ../matrix/libgslmatrix.la ../vector/libgslvector.la ../block/libgslblock.la ../complex/libgslcomplex.la $(CBLAS_LA) ../ieee-utils/libgslieeeutils.la  ../err/libgslerr.la ../test/libgsltest.la ../sys/libgslsys.la ../utils/libutils.la ../statistics/libgslstatistics.la
+ 
+ test_SOURCES = test.c
+--- gsl-1.16/eigen/Makefile.am.orig	2014-05-16 06:02:32.281281781 -0700
++++ gsl-1.16/eigen/Makefile.am	2014-05-16 06:03:23.423633285 -0700
+@@ -11,7 +11,14 @@
+ 
+ TESTS = $(check_PROGRAMS)
+ 
+-test_LDADD = libgsleigen.la  ../test/libgsltest.la ../linalg/libgsllinalg.la ../permutation/libgslpermutation.la ../blas/libgslblas.la ../cblas/libgslcblas.la ../matrix/libgslmatrix.la ../vector/libgslvector.la ../block/libgslblock.la  ../complex/libgslcomplex.la ../ieee-utils/libgslieeeutils.la ../sys/libgslsys.la ../err/libgslerr.la ../utils/libutils.la ../rng/libgslrng.la ../sort/libgslsort.la
++SOLARIS_SUNPERF = @SOLARIS_SUNPERF@
++if SOLARIS_SUNPERF
++    CBLAS_LA=
++else
++    CBLAS_LA=../cblas/libgslcblas.la
++endif
++
++test_LDADD = libgsleigen.la  ../test/libgsltest.la ../linalg/libgsllinalg.la ../permutation/libgslpermutation.la ../blas/libgslblas.la $(CBLAS_LA) ../matrix/libgslmatrix.la ../vector/libgslvector.la ../block/libgslblock.la  ../complex/libgslcomplex.la ../ieee-utils/libgslieeeutils.la ../sys/libgslsys.la ../err/libgslerr.la ../utils/libutils.la ../rng/libgslrng.la ../sort/libgslsort.la
+ 
+ test_SOURCES = test.c
+ 
+--- gsl-1.16/interpolation/Makefile.am.orig	2015-04-10 12:14:22.894424399 -0700
++++ gsl-1.16/interpolation/Makefile.am	2015-04-10 12:15:06.283908102 -0700
+@@ -10,7 +10,14 @@
+ 
+ TESTS = $(check_PROGRAMS)
+ 
+-test_LDADD = libgslinterpolation.la ../poly/libgslpoly.la ../linalg/libgsllinalg.la ../permutation/libgslpermutation.la ../blas/libgslblas.la ../matrix/libgslmatrix.la ../vector/libgslvector.la ../block/libgslblock.la ../complex/libgslcomplex.la ../cblas/libgslcblas.la ../ieee-utils/libgslieeeutils.la  ../err/libgslerr.la ../test/libgsltest.la ../sys/libgslsys.la ../utils/libutils.la
++SOLARIS_SUNPERF = @SOLARIS_SUNPERF@
++if SOLARIS_SUNPERF
++    CBLAS_LA=
++else
++    CBLAS_LA=../cblas/libgslcblas.la
++endif
++
++test_LDADD = libgslinterpolation.la ../poly/libgslpoly.la ../linalg/libgsllinalg.la ../permutation/libgslpermutation.la ../blas/libgslblas.la ../matrix/libgslmatrix.la ../vector/libgslvector.la ../block/libgslblock.la ../complex/libgslcomplex.la $(CBLAS_LA) ../ieee-utils/libgslieeeutils.la  ../err/libgslerr.la ../test/libgsltest.la ../sys/libgslsys.la ../utils/libutils.la
+ 
+ test_SOURCES = test.c
+ 
+--- gsl-1.16/linalg/Makefile.am.orig	2014-05-16 06:21:33.709604351 -0700
++++ gsl-1.16/linalg/Makefile.am	2014-05-16 06:22:16.369919847 -0700
+@@ -12,7 +12,14 @@
+ 
+ check_PROGRAMS = test
+ 
+-test_LDADD = libgsllinalg.la ../blas/libgslblas.la ../cblas/libgslcblas.la ../permutation/libgslpermutation.la ../matrix/libgslmatrix.la ../vector/libgslvector.la ../block/libgslblock.la ../complex/libgslcomplex.la ../ieee-utils/libgslieeeutils.la ../err/libgslerr.la ../test/libgsltest.la ../sys/libgslsys.la ../utils/libutils.la
++SOLARIS_SUNPERF = @SOLARIS_SUNPERF@
++if SOLARIS_SUNPERF
++    CBLAS_LA=
++else
++    CBLAS_LA=../cblas/libgslcblas.la
++endif
++
++test_LDADD = libgsllinalg.la ../blas/libgslblas.la $(CBLAS_LA) ../permutation/libgslpermutation.la ../matrix/libgslmatrix.la ../vector/libgslvector.la ../block/libgslblock.la ../complex/libgslcomplex.la ../ieee-utils/libgslieeeutils.la ../err/libgslerr.la ../test/libgsltest.la ../sys/libgslsys.la ../utils/libutils.la
+ 
+ test_SOURCES = test.c
+ 
+--- gsl-1.16/multifit/Makefile.am.orig	2014-05-16 06:29:58.802411472 -0700
++++ gsl-1.16/multifit/Makefile.am	2015-04-10 12:21:46.123451986 -0700
+@@ -13,8 +13,16 @@
+ TESTS = $(check_PROGRAMS)
+ 
+ test_SOURCES = test.c
+-test_LDADD = libgslmultifit.la ../linalg/libgsllinalg.la ../permutation/libgslpermutation.la ../blas/libgslblas.la ../cblas/libgslcblas.la ../matrix/libgslmatrix.la ../sort/libgslsort.la ../statistics/libgslstatistics.la ../vector/libgslvector.la ../block/libgslblock.la  ../complex/libgslcomplex.la ../ieee-utils/libgslieeeutils.la ../err/libgslerr.la ../test/libgsltest.la ../utils/libutils.la ../sys/libgslsys.la
++
++SOLARIS_SUNPERF = @SOLARIS_SUNPERF@
++if SOLARIS_SUNPERF
++    CBLAS_LA=
++else
++    CBLAS_LA=../cblas/libgslcblas.la
++endif
++
++test_LDADD = libgslmultifit.la ../linalg/libgsllinalg.la ../permutation/libgslpermutation.la ../blas/libgslblas.la $(CBLAS_LA) ../matrix/libgslmatrix.la ../sort/libgslsort.la ../statistics/libgslstatistics.la ../vector/libgslvector.la ../block/libgslblock.la  ../complex/libgslcomplex.la ../ieee-utils/libgslieeeutils.la ../err/libgslerr.la ../test/libgsltest.la ../utils/libutils.la ../sys/libgslsys.la ../rng/libgslrng.la
+ 
+ #demo_SOURCES = demo.c
+-#demo_LDADD = libgslmultifit.la ../linalg/libgsllinalg.la ../permutation/libgslpermutation.la ../blas/libgslblas.la ../cblas/libgslcblas.la ../matrix/libgslmatrix.la ../vector/libgslvector.la ../block/libgslblock.la ../randist/libgslrandist.la ../rng/libgslrng.la ../complex/libgslcomplex.la ../ieee-utils/libgslieeeutils.la ../err/libgslerr.la ../test/libgsltest.la ../utils/libutils.la ../sys/libgslsys.la
++#demo_LDADD = libgslmultifit.la ../linalg/libgsllinalg.la ../permutation/libgslpermutation.la ../blas/libgslblas.la $(CBLAS_LA) ../matrix/libgslmatrix.la ../vector/libgslvector.la ../block/libgslblock.la ../randist/libgslrandist.la ../rng/libgslrng.la ../complex/libgslcomplex.la ../ieee-utils/libgslieeeutils.la ../err/libgslerr.la ../test/libgsltest.la ../utils/libutils.la ../sys/libgslsys.la
+ 
+--- gsl-1.16/multimin/Makefile.am.orig	2015-04-10 12:18:41.646740592 -0700
++++ gsl-1.16/multimin/Makefile.am	2015-04-10 12:21:20.867481109 -0700
+@@ -12,9 +12,16 @@
+ 
+ TESTS = $(check_PROGRAMS) 
+ 
++SOLARIS_SUNPERF = @SOLARIS_SUNPERF@
++if SOLARIS_SUNPERF
++    CBLAS_LA=
++else
++    CBLAS_LA=../cblas/libgslcblas.la
++endif
++
+ test_SOURCES = test.c test_funcs.c test_funcs.h
+-test_LDADD = libgslmultimin.la ../min/libgslmin.la ../poly/libgslpoly.la ../blas/libgslblas.la ../cblas/libgslcblas.la ../linalg/libgsllinalg.la ../permutation/libgslpermutation.la ../matrix/libgslmatrix.la ../vector/libgslvector.la ../block/libgslblock.la ../complex/libgslcomplex.la ../ieee-utils/libgslieeeutils.la ../err/libgslerr.la ../test/libgsltest.la ../sys/libgslsys.la ../utils/libutils.la
++test_LDADD = libgslmultimin.la ../min/libgslmin.la ../poly/libgslpoly.la ../blas/libgslblas.la $(CBLAS_LA) ../linalg/libgsllinalg.la ../permutation/libgslpermutation.la ../matrix/libgslmatrix.la ../vector/libgslvector.la ../block/libgslblock.la ../complex/libgslcomplex.la ../ieee-utils/libgslieeeutils.la ../err/libgslerr.la ../test/libgsltest.la ../sys/libgslsys.la ../utils/libutils.la
+ 
+ #demo_SOURCES = demo.c 
+-#demo_LDADD = libgslmultimin.la ../min/libgslmin.la ../blas/libgslblas.la ../cblas/libgslcblas.la ../linalg/libgsllinalg.la ../matrix/libgslmatrix.la ../vector/libgslvector.la ../block/libgslblock.la ../complex/libgslcomplex.la ../ieee-utils/libgslieeeutils.la ../err/libgslerr.la ../test/libgsltest.la ../sys/libgslsys.la ../utils/libutils.la
++#demo_LDADD = libgslmultimin.la ../min/libgslmin.la ../blas/libgslblas.la $(CBLAS_LA) ../linalg/libgsllinalg.la ../matrix/libgslmatrix.la ../vector/libgslvector.la ../block/libgslblock.la ../complex/libgslcomplex.la ../ieee-utils/libgslieeeutils.la ../err/libgslerr.la ../test/libgsltest.la ../sys/libgslsys.la ../utils/libutils.la
+ 
+--- gsl-1.16/multiroots/Makefile.am.orig	2015-04-10 12:24:25.614883327 -0700
++++ gsl-1.16/multiroots/Makefile.am	2015-04-10 12:25:13.725634120 -0700
+@@ -14,6 +14,13 @@
+ 
+ TESTS = $(check_PROGRAMS)
+ 
++SOLARIS_SUNPERF = @SOLARIS_SUNPERF@
++if SOLARIS_SUNPERF
++    CBLAS_LA=
++else
++    CBLAS_LA=../cblas/libgslcblas.la
++endif
++
+ test_SOURCES = test.c test_funcs.c test_funcs.h
+-test_LDADD = libgslmultiroots.la ../linalg/libgsllinalg.la ../blas/libgslblas.la ../cblas/libgslcblas.la ../permutation/libgslpermutation.la ../matrix/libgslmatrix.la ../vector/libgslvector.la ../block/libgslblock.la ../complex/libgslcomplex.la ../ieee-utils/libgslieeeutils.la  ../err/libgslerr.la ../test/libgsltest.la ../sys/libgslsys.la ../utils/libutils.la
++test_LDADD = libgslmultiroots.la ../linalg/libgsllinalg.la ../blas/libgslblas.la $(CBLAS_LA) ../permutation/libgslpermutation.la ../matrix/libgslmatrix.la ../vector/libgslvector.la ../block/libgslblock.la ../complex/libgslcomplex.la ../ieee-utils/libgslieeeutils.la  ../err/libgslerr.la ../test/libgsltest.la ../sys/libgslsys.la ../utils/libutils.la
+ 
+--- gsl-1.16/ode-initval/Makefile.am.orig	2015-04-10 12:25:46.111219852 -0700
++++ gsl-1.16/ode-initval/Makefile.am	2015-04-10 12:26:29.162806734 -0700
+@@ -12,7 +12,14 @@
+ 
+ TESTS = $(check_PROGRAMS)
+ 
+-test_LDADD = libgslodeiv.la ../linalg/libgsllinalg.la ../blas/libgslblas.la ../cblas/libgslcblas.la ../matrix/libgslmatrix.la ../permutation/libgslpermutation.la ../vector/libgslvector.la ../block/libgslblock.la ../complex/libgslcomplex.la ../ieee-utils/libgslieeeutils.la  ../err/libgslerr.la ../test/libgsltest.la ../sys/libgslsys.la ../utils/libutils.la 
++SOLARIS_SUNPERF = @SOLARIS_SUNPERF@
++if SOLARIS_SUNPERF
++    CBLAS_LA=
++else
++    CBLAS_LA=../cblas/libgslcblas.la
++endif
++
++test_LDADD = libgslodeiv.la ../linalg/libgsllinalg.la ../blas/libgslblas.la $(CBLAS_LA) ../matrix/libgslmatrix.la ../permutation/libgslpermutation.la ../vector/libgslvector.la ../block/libgslblock.la ../complex/libgslcomplex.la ../ieee-utils/libgslieeeutils.la  ../err/libgslerr.la ../test/libgsltest.la ../sys/libgslsys.la ../utils/libutils.la
+ 
+ test_SOURCES = test.c
+ 
+--- gsl-1.16/ode-initval2/Makefile.am.orig	2015-04-10 12:27:02.478987380 -0700
++++ gsl-1.16/ode-initval2/Makefile.am	2015-04-10 12:27:46.778671312 -0700
+@@ -12,7 +12,14 @@
+ 
+ TESTS = $(check_PROGRAMS)
+ 
+-test_LDADD = libgslodeiv2.la ../linalg/libgsllinalg.la ../blas/libgslblas.la ../cblas/libgslcblas.la ../matrix/libgslmatrix.la ../permutation/libgslpermutation.la ../vector/libgslvector.la ../block/libgslblock.la ../complex/libgslcomplex.la ../ieee-utils/libgslieeeutils.la  ../err/libgslerr.la ../test/libgsltest.la ../sys/libgslsys.la ../utils/libutils.la 
++SOLARIS_SUNPERF = @SOLARIS_SUNPERF@
++if SOLARIS_SUNPERF
++    CBLAS_LA=
++else
++    CBLAS_LA=../cblas/libgslcblas.la
++endif
++
++test_LDADD = libgslodeiv2.la ../linalg/libgsllinalg.la ../blas/libgslblas.la $(CBLAS_LA) ../matrix/libgslmatrix.la ../permutation/libgslpermutation.la ../vector/libgslvector.la ../block/libgslblock.la ../complex/libgslcomplex.la ../ieee-utils/libgslieeeutils.la  ../err/libgslerr.la ../test/libgsltest.la ../sys/libgslsys.la ../utils/libutils.la
+ 
+ test_SOURCES = test.c
+ 
+--- gsl-1.16/specfunc/Makefile.am.orig	2014-05-16 06:33:36.100462812 -0700
++++ gsl-1.16/specfunc/Makefile.am	2014-05-16 06:34:32.016982108 -0700
+@@ -12,7 +12,14 @@
+ 
+ check_PROGRAMS = test
+ 
+-test_LDADD = libgslspecfunc.la ../eigen/libgsleigen.la ../linalg/libgsllinalg.la  ../sort/libgslsort.la ../matrix/libgslmatrix.la ../vector/libgslvector.la ../blas/libgslblas.la ../cblas/libgslcblas.la ../block/libgslblock.la ../complex/libgslcomplex.la ../ieee-utils/libgslieeeutils.la  ../err/libgslerr.la ../test/libgsltest.la ../sys/libgslsys.la ../utils/libutils.la
++SOLARIS_SUNPERF = @SOLARIS_SUNPERF@
++if SOLARIS_SUNPERF
++    CBLAS_LA=
++else
++    CBLAS_LA=../cblas/libgslcblas.la
++endif
++
++test_LDADD = libgslspecfunc.la ../eigen/libgsleigen.la ../linalg/libgsllinalg.la  ../sort/libgslsort.la ../matrix/libgslmatrix.la ../vector/libgslvector.la ../blas/libgslblas.la $(CBLAS_LA) ../block/libgslblock.la ../complex/libgslcomplex.la ../ieee-utils/libgslieeeutils.la  ../err/libgslerr.la ../test/libgsltest.la ../sys/libgslsys.la ../utils/libutils.la
+ 
+ test_SOURCES = test_sf.c test_sf.h test_airy.c test_bessel.c test_coulomb.c test_dilog.c test_gamma.c test_hyperg.c test_legendre.c test_mathieu.c
+   
+--- gsl-1.16/wavelet/Makefile.am.orig	2015-04-10 12:28:32.202690882 -0700
++++ gsl-1.16/wavelet/Makefile.am	2015-04-10 12:29:06.143569372 -0700
+@@ -10,7 +10,14 @@
+ 
+ TESTS = $(check_PROGRAMS)
+ 
+-test_LDADD = libgslwavelet.la ../blas/libgslblas.la ../cblas/libgslcblas.la ../matrix/libgslmatrix.la ../vector/libgslvector.la ../block/libgslblock.la ../ieee-utils/libgslieeeutils.la  ../err/libgslerr.la ../test/libgsltest.la ../sys/libgslsys.la ../utils/libutils.la
++SOLARIS_SUNPERF = @SOLARIS_SUNPERF@
++if SOLARIS_SUNPERF
++    CBLAS_LA=
++else
++    CBLAS_LA=../cblas/libgslcblas.la
++endif
++
++test_LDADD = libgslwavelet.la ../blas/libgslblas.la $(CBLAS_LA) ../matrix/libgslmatrix.la ../vector/libgslvector.la ../block/libgslblock.la ../ieee-utils/libgslieeeutils.la  ../err/libgslerr.la ../test/libgsltest.la ../sys/libgslsys.la ../utils/libutils.la
+ 
+ test_SOURCES = test.c
+ 
