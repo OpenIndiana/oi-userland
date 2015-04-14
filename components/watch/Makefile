@@ -1,0 +1,69 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+#
+
+include ../../make-rules/shared-macros.mk
+
+COMPONENT_NAME=		procps-ng
+COMPONENT_VERSION=	3.3.10
+COMPONENT_PROJECT_URL=	http://sourceforge.net/projects/procps-ng/
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:a02e6f98974dfceab79884df902ca3df30b0e9bad6d76aee0fb5dce17f267f04
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)files/Production/$(COMPONENT_ARCHIVE)/download
+COMPONENT_BUGDB=	utility/watch
+
+TPNO=			20559
+
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
+
+COMPILER =			gcc
+
+CFLAGS +=			-I/usr/include/ncurses
+
+CONFIGURE_ENV +=		"CFLAGS=$(CFLAGS)"
+
+# Always show the build and link lines for easier debugging.
+COMPONENT_BUILD_ARGS +=		V=1
+
+# Don't try to link watch with .../proc/libprocps.la as it's not needed.
+COMPONENT_BUILD_ARGS +=		AM_LDFLAGS=
+
+COMPONENT_BUILD_TARGETS =	watch
+
+PKG_PROTO_DIRS += $(BUILD_DIR_64)
+
+ASLR_MODE = $(ASLR_ENABLE)
+
+# common targets
+build:		$(BUILD_64)
+
+# Nothing to install.
+install:	$(BUILD_64)
+
+test:		$(NO_TESTS)
+
+REQUIRED_PACKAGES +=	library/ncurses
+REQUIRED_PACKAGES +=	system/library
