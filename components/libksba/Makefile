@@ -23,16 +23,16 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libksba
-COMPONENT_VERSION=	1.1.0
+COMPONENT_VERSION=	1.3.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.gnupg.org/related_software/libksba/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:d8eb845d7272d23a00d4da6dc65f108ded6a977f32abf4488a075335433769f7
+    sha256:eb95537955dfc2845690a4cc3836074fa6d0a2c2ca2cbf1759364d3bd9868406
 COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/libksba/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gnupg
 
-TPNO=			8768
+TPNO=			21897
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -53,6 +53,9 @@ CFLAGS += $(CPP_POSIX)
 CFLAGS += $(CPP_C99_EXTENDED_MATH)
 CFLAGS += $(studio_PIC)
 
+COMPONENT_TEST_MASTER = \
+	$(COMPONENT_TEST_RESULTS_DIR)/results-libksba.master
+
 CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_ENV +=	INSTALL="$(INSTALL)"
 
@@ -60,6 +63,7 @@ CONFIGURE_OPTIONS  +=		--localstatedir=/var
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		--enable-shared
 CONFIGURE_OPTIONS  +=		--disable-static
+CONFIGURE_OPTIONS  +=		--disable-silent-rules
 CONFIGURE_OPTIONS  +=		--with-gpg-error-prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS  +=		--with-pic
 
@@ -73,6 +77,7 @@ install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
 
+BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
 REQUIRED_PACKAGES += library/security/libgpg-error
 REQUIRED_PACKAGES += shell/ksh93

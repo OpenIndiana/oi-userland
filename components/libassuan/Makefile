@@ -23,16 +23,16 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libassuan
-COMPONENT_VERSION=	2.0.1
+COMPONENT_VERSION=	2.2.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.gnupg.org/related_software/libassuan/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:1117be532ac41b13790b4756df7fa747d3d04264f7b4544aa9d7ff468a24b457
+    sha256:7df58ed70be4b694f77efd1f3b3f103c6311b6b71e04a370382f9fe8204f6ec6
 COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/libassuan/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gnupg
 
-TPNO=			18558
+TPNO=			22290
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -53,6 +53,14 @@ CFLAGS += $(CPP_POSIX)
 CFLAGS += $(CPP_C99_EXTENDED_MATH)
 CFLAGS += $(studio_PIC)
 
+COMPONENT_TEST_MASTER = \
+	$(COMPONENT_TEST_RESULTS_DIR)/results-libassuan.master
+
+COMPONENT_TEST_TRANSFORMS += \
+     '-e "s/fdpassing\[[0-9]\{1,9\}\]\: //g"' \
+     '-e "s/ Pleased to meet you, process [0-9]\{1,9\}//g"' \
+     '-e "s/chan_[0-9]\{1,9\}/chan/g"'
+
 CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_ENV +=	INSTALL="$(INSTALL)"
 
@@ -60,6 +68,7 @@ CONFIGURE_OPTIONS  +=		--localstatedir=/var
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		--enable-shared
 CONFIGURE_OPTIONS  +=		--disable-static
+CONFIGURE_OPTIONS  +=		--disable-silent-rules
 CONFIGURE_OPTIONS  +=		--with-gpg-error-prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS  +=		--with-pic
 
@@ -73,7 +82,7 @@ install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
 
-
+BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
 REQUIRED_PACKAGES += library/security/libgpg-error
 REQUIRED_PACKAGES += shell/ksh93

@@ -1,0 +1,287 @@
+# Patch origin: GnuPG/GPGME Project (upstream).
+# URL: http://permalink.gmane.org/gmane.comp.encryption.gpg.cvs/10207
+- Log -----------------------------------------------------------------
+commit 1298b14f97efebdd88a9390af3848154dbe0d259
+Author: Joshua Rogers <git@internot.info>
+Date:   Tue Dec 23 00:47:50 2014 +1100
+
+    tools: Free variable before return
+
+    * tools/gpgconf-comp.c: Free 'dest_filename' before it is returned
+    upon error.
+    --
+
+    Signed-off-by: Joshua Rogers <git@internot.info>
+
+diff --git a/tools/gpgconf-comp.c b/tools/gpgconf-comp.c
+index c43e87a..83bc24e 100644
+--- a/tools/gpgconf-comp.c
++++ b/tools/gpgconf-comp.c
+@@ -2390,7 +2390,10 @@ change_options_file (gc_component_t component, gc_backend_t backend,
+   res = link (dest_filename, orig_filename);
+ #endif
+   if (res < 0 && errno != ENOENT)
+-    return -1;
++    {
++      xfree (dest_filename);
++      return -1;
++    }
+   if (res < 0)
+     {
+       xfree (orig_filename);
+
+commit ced689e12a5037c6aeca62e9eaebdc098bd9c14e
+Author: Daniel Kahn Gillmor <dkg@fifthhorseman.net>
+Date:   Fri Dec 19 18:53:34 2014 -0500
+
+    sm: Avoid double-free on iconv failure
+
+    * sm/minip12.c: (p12_build) if jnlib_iconv_open fails, avoid
+    double-free of pwbuf.
+
+    --
+
+    Observed by Joshua Rogers <honey@internot.info>, who proposed a
+    slightly different fix.
+
+    Debian-Bug-Id: 773472
+
+    Added fix at a second place - wk.
+
+diff --git a/agent/minip12.c b/agent/minip12.c
+index 2471717..0bcab5f 100644
+--- a/agent/minip12.c
++++ b/agent/minip12.c
+@@ -2182,6 +2182,7 @@ p12_build (gcry_mpi_t *kparms, unsigned char *cert, size_t certlen,
+                      " requested charset `%s': %s\n",
+                      charset, strerror (errno));
+           gcry_free (pwbuf);
++          pwbuf = NULL;
+           goto failure;
+         }
+
+@@ -2196,6 +2197,7 @@ p12_build (gcry_mpi_t *kparms, unsigned char *cert, size_t certlen,
+                      " requested charset `%s': %s\n",
+                      charset, strerror (errno));
+           gcry_free (pwbuf);
++          pwbuf = NULL;
+           jnlib_iconv_close (cd);
+           goto failure;
+         }
+
+commit 0fd4cd8503dfe9c3e6a362003bd647b4cd882363
+Author: Daniel Kahn Gillmor <dkg@fifthhorseman.net>
+Date:   Fri Dec 19 18:07:55 2014 -0500
+
+    scd: Avoid double-free on error condition in scd
+
+    * scd/command.c (cmd_readkey): avoid double-free of cert
+
+    --
+
+    When ksba_cert_new() fails, cert will be double-freed.
+
+    Debian-Bug-Id: 773471
+
+    Original patch changed by wk to do the free only at leave.
+
+diff --git a/scd/command.c b/scd/command.c
+index fc1f5a2..b26bd68 100644
+--- a/scd/command.c
++++ b/scd/command.c
+@@ -777,10 +777,8 @@ cmd_readkey (assuan_context_t ctx, char *line)
+
+   rc = ksba_cert_new (&kc);
+   if (rc)
+-    {
+-      xfree (cert);
+-      goto leave;
+-    }
++    goto leave;
++
+   rc = ksba_cert_init_from_mem (kc, cert, ncert);
+   if (rc)
+     {
+
+commit 1fc4dc541af7d4bf4dba6ef37d1d7841498a05c6
+Author: Daniel Kahn Gillmor <dkg@fifthhorseman.net>
+Date:   Fri Dec 19 17:53:36 2014 -0500
+
+    avoid future chance of using uninitialized memory
+
+    * common/iobuf.c: (iobuf_open): initialize len
+
+    --
+
+    In iobuf_open, IOBUFCTRL_DESC and IOBUFCTRL_INIT commands are invoked
+    (via file_filter()) on fcx, passing in a pointer to an uninitialized
+    len.
+
+    With these two commands, file_filter doesn't actually do anything with
+    the value of len, so there's no actual risk of use of uninitialized
+    memory in the code as it stands.
+
+    However, some static analysis tools might flag this situation with a
+    warning, and initializing the value doesn't hurt anything, so i think
+    this trivial cleanup is warranted.
+
+    Debian-Bug-Id: 773469
+
+diff --git a/common/iobuf.c b/common/iobuf.c
+index ae9bfa9..4c6d5b5 100644
+--- a/common/iobuf.c
++++ b/common/iobuf.c
+@@ -1303,7 +1303,7 @@ iobuf_open (const char *fname)
+   iobuf_t a;
+   fp_or_fd_t fp;
+   file_filter_ctx_t *fcx;
+-  size_t len;
++  size_t len = 0;
+   int print_only = 0;
+   int fd;
+
+commit f542826b04e35f13a30116564daaf6456440b1d4
+Author: Daniel Kahn Gillmor <dkg@fifthhorseman.net>
+Date:   Fri Dec 19 17:12:05 2014 -0500
+
+    gpgkey2ssh: clean up varargs
+
+    * tools/gpgkey2ssh.c (key_to_blob) : ensure that va_end is called.
+
+    --
+
+    stdarg(3) says:
+           Each invocation of va_start() must be matched by a
+           corresponding invocation of va_end() in the same function.
+
+    Observed by Joshua Rogers <honey@internot.info>
+
+    Debian-Bug-Id: 773415
+
+diff --git a/tools/gpgkey2ssh.c b/tools/gpgkey2ssh.c
+index 903fb5b..d22c5ac 100644
+--- a/tools/gpgkey2ssh.c
++++ b/tools/gpgkey2ssh.c
+@@ -224,6 +224,8 @@ key_to_blob (unsigned char **blob, size_t *blob_n, const char *identifier, ...)
+       assert (ret == 1);
+     }
+
++  va_end (ap);
++
+   blob_new_n = ftell (stream);
+   rewind (stream);
+
+commit 01b364b6da2fbb8850178674e1534d725cd760c8
+Author: Werner Koch <wk@gnupg.org>
+Date:   Mon Dec 22 12:44:13 2014 +0100
+
+    doc: Fix memory leak in yat2m.
+
+    * doc/yat2m.c (write_th): Free NAME.
+    --
+
+    Reported-by: Joshua Rogers <git@internot.info>
+
+diff --git a/doc/yat2m.c b/doc/yat2m.c
+index 2ac4390..fc932d9 100644
+--- a/doc/yat2m.c
++++ b/doc/yat2m.c
+@@ -609,6 +609,7 @@ write_th (FILE *fp)
+   *p++ = 0;
+   fprintf (fp, ".TH %s %s %s \"%s\" \"%s\"\n",
+            name, p, isodatestring (), opt_release, opt_source);
++  free (name);
+   return 0;
+ }
+
+commit 907a9a1e986b8c8266f4f01e8ed82acfc636a519
+Author: Werner Koch <wk@gnupg.org>
+Date:   Mon Dec 22 12:16:46 2014 +0100
+
+    gpgsm: Return NULL on fail
+
+    * sm/gpgsm.c (parse_keyserver_line): Set SERVER to NULL.
+
+    --
+
+    Cherry-pick of abd5f6752d693b7f313c19604f0723ecec4d39a6.
+
+    Reported-by: Joshua Rogers <git@internot.info>
+
+      "If something inside the ldapserver_parse_one function failed,
+       'server' would be freed, then returned, leading to a
+       use-after-free.  This code is likely copied from sm/gpgsm.c, which
+       was also susceptible to this bug."
+
+    Signed-off-by: Werner Koch <wk@gnupg.org>
+
+diff --git a/sm/gpgsm.c b/sm/gpgsm.c
+index 97ec4bb..855de83 100644
+--- a/sm/gpgsm.c
++++ b/sm/gpgsm.c
+@@ -840,6 +840,7 @@ parse_keyserver_line (char *line,
+     {
+       log_info (_("%s:%u: skipping this line\n"), filename, lineno);
+       keyserver_list_free (server);
++      server = NULL;
+     }
+
+   return server;
+
+-----------------------------------------------------------------------
+
+Summary of changes:
+ agent/minip12.c      |    2 ++
+ common/iobuf.c       |    2 +-
+ doc/yat2m.c          |    1 +
+ scd/command.c        |    6 ++----
+ sm/gpgsm.c           |    1 +
+ tools/gpgconf-comp.c |    5 ++++-
+ tools/gpgkey2ssh.c   |    2 ++
+ 7 files changed, 13 insertions(+), 6 deletions(-)
+
+hooks/post-receive
+-- <#>
+
+-- 
+The GNU Privacy Guard
+http://git.gnupg.org
+
+Permalink
+<http://permalink.gmane.org/gmane.comp.encryption.gpg.cvs/10207> | Reply
+<http://post.gmane.org/post.php?group=gmane.comp.encryption.gpg.cvs&followup=10207>
+|
+
+Navigate
+Go to gmane.comp.encryption.gpg.cvs
+<http://blog.gmane.org/gmane.comp.encryption.gpg.cvs>.
+Topic
+Go to the topic
+<http://news.gmane.org/find-root.php?group=gmane.comp.encryption.gpg.cvs&article=10207&type=blog>.
+
+Advertisement
+Search Archive
+
+Language
+Change language <http://gmane.org/language.php>
+Options
+Current view: Threads only / Showing whole messages / Not hiding cited text.
+Change to All messages,
+<http://permalink.gmane.org/gmane.comp.encryption.gpg.cvs?set_blog_all=yes>shortened
+messages
+<http://permalink.gmane.org/gmane.comp.encryption.gpg.cvs?set_lines=20>,
+or hide cited text
+<http://permalink.gmane.org/gmane.comp.encryption.gpg.cvs?set_cite=hide>.
+
+Post a message
+<http://post.gmane.org/post.php?group=gmane.comp.encryption.gpg.cvs>
+NNTP Newsgroup <nntp://news.gmane.org/gmane.comp.encryption.gpg.cvs>
+Classic Gmane web interface
+<http://news.gmane.org/find-root.php?message_id=E1YAqcu%2d00022P%2d1h%40lists.gnupg.org>
+XML RSS Feed <http://rss.gmane.org/gmane.comp.encryption.gpg.cvs>
+List Information <http://dir.gmane.org/gmane.comp.encryption.gpg.cvs>
+
+About Gmane <http://gmane.org/faq.php>
+
+Gmane <http://gmane.org/>
+

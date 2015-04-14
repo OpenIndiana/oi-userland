@@ -23,16 +23,16 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnupg
-COMPONENT_VERSION=	2.0.22
+COMPONENT_VERSION=	2.0.26
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.gnupg.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:437d0ab259854359fc48aa8795af80cff4975e559c111c92c03d0bc91408e251
+    sha256:7758e30dc382ae7a7167ed41b7f936aa50af5ea2d6fccdef663b5b750b65b8e0
 COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/gnupg/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gnupg
 
-TPNO=			17706
+TPNO=			21142
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -59,9 +59,46 @@ CFLAGS += $(studio_PIC)
 LDFLAGS += -lc -z defs
 LD_OPTIONS += -z defs
 
+COMPONENT_TEST_TRANSFORMS += \
+     '-e "/libtool/d"' \
+     '-e "/-m32/d"' \
+     '-e "/-m64/d"' \
+     '-e "/ld: warning/d"' \
+     '-e "/warning/d"' \
+     '-e "/Generat/d"' \
+     '-e "/Creat/d"' \
+     '-e "/Compos/d"' \
+     '-e "/Writ/d"' \
+     '-e "/Read/d"' \
+     '-e "/Home/d"' \
+     '-e "/from/d"' \
+     '-e "/--run/d"' \
+     '-e "/rm -f/d"' \
+     '-e "/Nothing/d"' \
+     '-e "/Leaving/d"' \
+     '-e "/Entering/d"' \
+     '-e "/Making/d"' \
+     '-e "/Known envvars/d"' \
+     '-e "/make/d"' \
+     '-e "s/[0-9]\{1,\}\.[0-9]\{1,\} s, //g"' \
+     '-e "s^[0-9]\{1,\} kB/s^^g"'  \
+     '-e "s^[0-9]\{1,\}  kB/s^^g"'  \
+     '-e "s^[0-9]\{1,\}\.[0-9]\{1,\}  MB/s^^g"' \
+     '-e "s^[0-9]\{1,\}\.[0-9]\{1,\} MB/s^^g"' \
+     '-e "s/([0-9]\{1,\} B)//g"' \
+     '-e "s/([0-9]\{1,\}  B)//g"' \
+     '-e "s/copied,/copied/g"'  \
+     '-e "s/ \{1,\}copied/ copied/g"'  \
+     '-e "s/copied $$/copied/g"'  \
+     '-e "s/copied [0-9]\{1,\}\./copied/g"'
+
 CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_ENV +=	LDFLAGS="$(LDFLAGS)"
 CONFIGURE_ENV +=	INSTALL="$(INSTALL)"
+
+# Without this GnuPG's ./configure will complain that we're not using
+# GNU make. But we are.
+CONFIGURE_ENV +=	MAKE="$(GMAKE)"
 
 CONFIGURE_OPTIONS  +=		--localstatedir=/var
 CONFIGURE_OPTIONS  +=		--libexecdir=$(USRBINDIR)
@@ -124,6 +161,7 @@ install: $(INSTALL_64)
 
 test: $(TEST_64)
 
+BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += library/desktop/gtk2
