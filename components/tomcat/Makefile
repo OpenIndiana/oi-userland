@@ -45,10 +45,10 @@ COMPONENT_ARCHIVE_2= commons-pool-1.5.7-src.tar.gz
 COMPONENT_ARCHIVE_HASH_2= \
     sha256:e9f414555c41e9584da1f6953af28208ece5cd4664ef2fea297e6a6aadc4377e
 COMPONENT_ARCHIVE_URL_2= http://archive.apache.org/dist/commons/pool/source/$(COMPONENT_ARCHIVE_2)
-COMPONENT_ARCHIVE_3= ecj-4.3.1.jar
+COMPONENT_ARCHIVE_3= ecjsrc-4.3.1.jar
 COMPONENT_ARCHIVE_HASH_3= \
-    sha256:5f86314f67dc57a0a9865265a48fd7831f16ab177c0c1349eea798c2c6297295
-COMPONENT_ARCHIVE_URL_3= http://download.eclipse.org/eclipse/downloads/drops4/R-4.3.1-201309111000/$(COMPONENT_ARCHIVE_3)
+    sha256:2f6e214af951ed247a5bbc018df29706e2365cc2e9f7866e536b4cce0da8b66a
+COMPONENT_ARCHIVE_URL_3= http://archive.eclipse.org/eclipse/downloads/drops4/R-4.3.1-201309111000/$(COMPONENT_ARCHIVE_3)
 
 TPNO=			20718
 
@@ -60,6 +60,13 @@ PATCH_LEVEL=0
 
 COMPONENT_BUILD_ARGS=-Dbase.path=$(BUILD_DIR_32) -Dtomcat.build=$(PROTO_DIR)
 COMPONENT_BUILD_TARGETS=download deploy
+
+# Build ECJ jar from sources.
+COMPONENT_PRE_BUILD_ACTION= \
+	($(MKDIR) $(@D)/ECJ/scripts/binary/META-INF; cd $(@D)/ECJ ; \
+	    $(JAVA_HOME)/bin/jar xf $(COMPONENT_DIR)/$(COMPONENT_ARCHIVE_3); \
+	    $(CP) META-INF/MANIFEST.MF scripts/binary/META-INF/; \
+	    $(ANT) )
 
 # Create configuration backup archive for custom user's deployments.
 COMPONENT_POST_BUILD_ACTION= \
