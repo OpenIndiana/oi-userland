@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
@@ -35,24 +35,34 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=LSARC/2008/425 value=PSARC/2013/394
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-link path=usr/bin/gdiffmk target=../gnu/bin/diffmk facet.compat.gnulinks=true
-link path=usr/bin/geqn target=../gnu/bin/eqn facet.compat.gnulinks=true
+link path=usr/bin/diffmk target=./gdiffmk
+file path=usr/bin/eqn
+file path=usr/bin/gdiffmk
+link path=usr/bin/geqn target=./eqn facet.compat.gnulinks=true
 link path=usr/bin/gneqn target=../gnu/bin/neqn facet.compat.gnulinks=true
 link path=usr/bin/gnroff target=../gnu/bin/nroff facet.compat.gnulinks=true
-link path=usr/bin/gpic target=../gnu/bin/pic facet.compat.gnulinks=true
+link path=usr/bin/gpic target=./pic facet.compat.gnulinks=true
+link path=usr/bin/grefer target=./refer facet.compat.gnulinks=true
 file path=usr/bin/groff
 file path=usr/bin/grops
 file path=usr/bin/grotty
-link path=usr/bin/gsoelim target=../gnu/bin/soelim facet.compat.gnulinks=true
-file path=usr/bin/gtbl
-file path=usr/bin/gtroff
+link path=usr/bin/gsoelim target=./soelim facet.compat.gnulinks=true
+link path=usr/bin/gtbl target=../gnu/bin/tbl facet.compat.gnulinks=true
+link path=usr/bin/gtroff target=./troff facet.compat.gnulinks=true
+file path=usr/bin/pic
 file path=usr/bin/preconv
-file usr/bin/gdiffmk path=usr/gnu/bin/diffmk
-file usr/bin/geqn path=usr/gnu/bin/eqn
-file usr/bin/gneqn path=usr/gnu/bin/neqn
-file usr/bin/gnroff path=usr/gnu/bin/nroff
-file usr/bin/gpic path=usr/gnu/bin/pic
-file usr/bin/gsoelim path=usr/gnu/bin/soelim
+file path=usr/bin/refer
+file path=usr/bin/soelim
+file path=usr/bin/troff
+link path=usr/gnu/bin/diffmk target=../../bin/gdiffmk
+link path=usr/gnu/bin/eqn target=../../bin/eqn
+file usr/bin/neqn path=usr/gnu/bin/neqn
+file usr/bin/nroff path=usr/gnu/bin/nroff
+link path=usr/gnu/bin/pic target=../../bin/pic
+link path=usr/gnu/bin/refer target=../../bin/refer
+link path=usr/gnu/bin/soelim target=../../bin/soelim
+file usr/bin/tbl path=usr/gnu/bin/tbl
+link path=usr/gnu/bin/troff target=../../bin/troff
 file path=usr/share/groff/$(COMPONENT_VERSION)/eign
 file path=usr/share/groff/$(COMPONENT_VERSION)/font/devascii/B
 file path=usr/share/groff/$(COMPONENT_VERSION)/font/devascii/BI
@@ -199,18 +209,28 @@ file path=usr/share/groff/$(COMPONENT_VERSION)/tmac/www.tmac
 link path=usr/share/groff/current target=$(COMPONENT_VERSION)
 file path=usr/share/groff/site-tmac/man.local
 file path=usr/share/groff/site-tmac/mdoc.local
+link path=usr/share/man/man1/diffmk.1 target=./gdiffmk.1
+file path=usr/share/man/man1/eqn.1
 file path=usr/share/man/man1/gdiffmk.1
-file path=usr/share/man/man1/geqn.1
-file path=usr/share/man/man1/gneqn.1
-file path=usr/share/man/man1/gnroff.1
-file path=usr/share/man/man1/gpic.1
+link path=usr/share/man/man1/geqn.1 target=./eqn.1 facet.compat.gnulinks=true
+file usr/share/man/man1/neqn.1 path=usr/share/man/man1/gneqn.1
+file usr/share/man/man1/nroff.1 path=usr/share/man/man1/gnroff.1
+link path=usr/share/man/man1/gpic.1 target=./pic.1 facet.compat.gnulinks=true
+link path=usr/share/man/man1/grefer.1 target=./refer.1 \
+    facet.compat.gnulinks=true
 file path=usr/share/man/man1/groff.1
 file path=usr/share/man/man1/grops.1
 file path=usr/share/man/man1/grotty.1
-file path=usr/share/man/man1/gsoelim.1
-file path=usr/share/man/man1/gtbl.1
-file path=usr/share/man/man1/gtroff.1
+link path=usr/share/man/man1/gsoelim.1 target=./soelim.1 \
+    facet.compat.gnulinks=true
+file usr/share/man/man1/tbl.1 path=usr/share/man/man1/gtbl.1
+link path=usr/share/man/man1/gtroff.1 target=./troff.1 \
+    facet.compat.gnulinks=true
+file path=usr/share/man/man1/pic.1
 file path=usr/share/man/man1/preconv.1
+file path=usr/share/man/man1/refer.1
+file path=usr/share/man/man1/soelim.1
+file path=usr/share/man/man1/troff.1
 license FDL license=FDLv1.3
 license COPYING license=GPLv3
 
@@ -219,3 +239,6 @@ license COPYING license=GPLv3
 # to the 'userland' consolidation.
 depend type=optional \
     fmri=consolidation/desktop/desktop-incorporation@5.12-5.12.0.0.0.14.0
+# Roff related files were moved into groff packages.
+# This optional dependency is to facilitate the safe transfer of the package.
+depend type=optional fmri=text/doctools@5.12,5.12-5.12.0.0.0.73

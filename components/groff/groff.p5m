@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 # Put the documentation in the correct location.
@@ -47,13 +47,14 @@ file path=usr/X11/lib/X11/app-defaults/GXditview
 file path=usr/X11/lib/X11/app-defaults/GXditview-color
 file path=usr/bin/addftinfo
 file path=usr/bin/afmtodit
+file path=usr/bin/chem
 file path=usr/bin/eqn2graph
-file path=usr/bin/gchem
-link path=usr/bin/ggrn target=../gnu/bin/grn facet.compat.gnulinks=true
-link path=usr/bin/gindxbib target=../gnu/bin/indxbib facet.compat.gnulinks=true
-file path=usr/bin/glookbib
+link path=usr/bin/gchem target=./chem facet.compat.gnulinks=true
+link path=usr/bin/ggrn target=./grn facet.compat.gnulinks=true
+link path=usr/bin/gindxbib target=./indxbib facet.compat.gnulinks=true
+link path=usr/bin/glookbib target=./lookbib facet.compat.gnulinks=true
 file path=usr/bin/grap2graph
-link path=usr/bin/grefer target=../gnu/bin/refer facet.compat.gnulinks=true
+file path=usr/bin/grn
 file path=usr/bin/grodvi
 file path=usr/bin/groffer
 file path=usr/bin/grog
@@ -62,7 +63,9 @@ file path=usr/bin/grolj4
 file path=usr/bin/gropdf
 file path=usr/bin/gxditview
 file path=usr/bin/hpftodit
+file path=usr/bin/indxbib
 file path=usr/bin/lkbib
+file path=usr/bin/lookbib
 file path=usr/bin/mmroff
 file path=usr/bin/pdfmom
 file path=usr/bin/pdfroff
@@ -78,9 +81,10 @@ file path=usr/bin/roff2text
 file path=usr/bin/roff2x
 file path=usr/bin/tfmtodit
 file path=usr/bin/xtotroff
-file usr/bin/ggrn path=usr/gnu/bin/grn
-file usr/bin/gindxbib path=usr/gnu/bin/indxbib
-file usr/bin/grefer path=usr/gnu/bin/refer
+link path=usr/gnu/bin/chem target=../../bin/chem
+link path=usr/gnu/bin/grn target=../../bin/grn
+link path=usr/gnu/bin/indxbib target=../../bin/indxbib
+link path=usr/gnu/bin/lookbib target=../../bin/lookbib
 file path=usr/lib/groff/groffer/func.pl
 file contrib/groffer/shell/groffer2.sh path=usr/lib/groff/groffer/groffer2.sh
 file path=usr/lib/groff/groffer/man.pl
@@ -491,11 +495,13 @@ file path=usr/share/man/man1/addftinfo.1
 file path=usr/share/man/man1/afmtodit.1
 file path=usr/share/man/man1/chem.1
 file path=usr/share/man/man1/eqn2graph.1
-file path=usr/share/man/man1/ggrn.1
-file path=usr/share/man/man1/gindxbib.1
-file path=usr/share/man/man1/glookbib.1
+link path=usr/share/man/man1/ggrn.1 target=./grn.1 facet.compat.gnulinks=true
+link path=usr/share/man/man1/gindxbib.1 target=./indxbib.1 \
+    facet.compat.gnulinks=true
+link path=usr/share/man/man1/glookbib.1 target=./lookbib.1 \
+    facet.compat.gnulinks=true
 file path=usr/share/man/man1/grap2graph.1
-file path=usr/share/man/man1/grefer.1
+file path=usr/share/man/man1/grn.1
 file path=usr/share/man/man1/grodvi.1
 file path=usr/share/man/man1/groffer.1
 file path=usr/share/man/man1/grog.1
@@ -505,7 +511,9 @@ file path=usr/share/man/man1/grolj4.1
 file path=usr/share/man/man1/gropdf.1
 file path=usr/share/man/man1/gxditview.1
 file path=usr/share/man/man1/hpftodit.1
+file path=usr/share/man/man1/indxbib.1
 file path=usr/share/man/man1/lkbib.1
+file path=usr/share/man/man1/lookbib.1
 file path=usr/share/man/man1/mmroff.1
 file path=usr/share/man/man1/pdfmom.1
 file path=usr/share/man/man1/pdfroff.1
@@ -537,6 +545,10 @@ file path=usr/share/man/man5/groff_mom.5
 file path=usr/share/man/man5/groff_ms.5
 file path=usr/share/man/man5/groff_trace.5
 file path=usr/share/man/man5/groff_www.5
+link path=usr/share/man/man5/man.5 target=./groff_man.5
+link path=usr/share/man/man5/me.5 target=./groff_me.5
+link path=usr/share/man/man5/mm.5 target=./groff_mm.5
+link path=usr/share/man/man5/ms.5 target=./groff_ms.5
 file path=usr/share/man/man5/roff.5
 license FDL license=FDLv1.3
 license COPYING license=GPLv3
@@ -546,6 +558,9 @@ license COPYING license=GPLv3
 # to the 'userland' consolidation.
 depend type=optional \
     fmri=consolidation/desktop/desktop-incorporation@5.12-5.12.0.0.0.14.0
+# Roff related files were moved into groff packages.
+# This optional dependency is to facilitate the safe transfer of the package.
+depend type=optional fmri=text/doctools@5.12,5.12-5.12.0.0.0.73
 depend type=require fmri=system/library/fontconfig
 depend type=require fmri=system/library/freetype-2
 depend type=require fmri=text/groff/groff-core

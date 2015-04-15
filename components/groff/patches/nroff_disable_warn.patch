@@ -1,0 +1,40 @@
+This patch comes from in-house and has been submitted upstream:
+https://savannah.gnu.org/bugs/?44289
+
+--- groff-1.22.2/src/roff/nroff/nroff.sh.org	2015-02-07 19:56:25.275467577 +0900
++++ groff-1.22.2/src/roff/nroff/nroff.sh	2015-02-07 20:11:22.308246071 +0900
+@@ -39,7 +39,7 @@
+   IBM-1047)
+     Tloc=cp1047 ;;
+   *)
+-    case "${LC_ALL-${LC_CTYPE-${LANG}}}" in
++    case "${LC_ALL:-${LC_CTYPE:-${LANG}}}" in
+       *.UTF-8)
+         Tloc=utf8 ;;
+       iso_8859_1 | *.ISO-8859-1 | *.ISO8859-1 | \
+@@ -65,6 +65,7 @@
+ 
+ Topt=
+ opts=
++disable_error=
+ for i
+   do
+   case $1 in
+@@ -72,6 +73,9 @@
+       opts="$opts -P-c" ;;
+     -h)
+       opts="$opts -P-h" ;;
++    -E)
++      opts="$opts -E"
++      disable_error="2> /dev/null" ;;
+     -[eq] | -s*)
+       # ignore these options
+       ;;
+@@ -133,6 +137,6 @@
+ 
+ # Load nroff-style character definitions too.
+ 
+-PATH="$GROFF_RUNTIME$PATH" groff -mtty-char $T $opts ${1+"$@"}
++PATH="$GROFF_RUNTIME$PATH" eval groff -mtty-char $T $opts ${1+"$@"} $disable_error
+ 
+ # eof
