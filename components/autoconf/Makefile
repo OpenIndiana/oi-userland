@@ -26,38 +26,38 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		autoconf
-COMPONENT_VERSION=	2.68
+COMPONENT_VERSION=	2.69
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/autoconf/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:eff70a2916f2e2b3ed7fe8a2d7e63d72cf3a23684b56456b319c3ebce0705d99
+    sha256:64ebcec9f8ac5b2487125a86a7760d2591ac9e1d3dbd59489633f9de62a57684
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/autoconf/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/autoconf
 
-TPNO=			7252
+TPNO=			22294
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
+# with ksh93 as the configure shell, all tests pass
+CONFIG_SHELL=/bin/ksh93
 
-CONFIGURE_OPTIONS  +=		--srcdir=.
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=		PERL="$(PERL)"
+CONFIGURE_OPTIONS  +=		M4=/usr/gnu/bin/m4
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # common targets
-configure:	$(CONFIGURE_32)
+configure:	$(CONFIGURE_NO_ARCH)
 
-build:		$(BUILD_32)
+build:		$(BUILD_NO_ARCH)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_NO_ARCH)
 
-test:		$(TEST_32)
+test:		$(TEST_NO_ARCH)
 
 
 REQUIRED_PACKAGES += developer/macro/gnu-m4
