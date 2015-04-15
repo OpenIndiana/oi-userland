@@ -1,0 +1,185 @@
+#
+# Enable login to a role for hostbased authentication if allowed by PAM.
+#
+# Sets PAM_AUSER item to user who is asserting a new identity before
+# calling do_pam_account(). Implemented using existing static variable
+# hostbased_cuser. The change is protected by new HAVE_PAM_AUSER ifdef-guard,
+# which is set to defined on Solaris.
+#
+# Patch offered upstream:
+#     https://bugzilla.mindrot.org/show_bug.cgi?id=2378
+#
+diff -pur old/auth-pam.c new/auth-pam.c
+--- old/auth-pam.c	2015-04-13 07:40:15.102801416 -0700
++++ new/auth-pam.c	2015-04-13 07:40:15.170507123 -0700
+@@ -1038,6 +1038,20 @@ do_pam_account(void)
+ 	return (sshpam_account_status);
+ }
+ 
++#ifdef HAVE_PAM_AUSER
++void
++do_pam_set_auser(const char* auser)
++{
++	if (auser != NULL) {
++		debug("PAM: setting PAM_AUSER to \"%s\"", auser);
++		sshpam_err = pam_set_item(sshpam_handle, PAM_AUSER, auser);
++		if (sshpam_err != PAM_SUCCESS)
++			error("PAM: failed to set PAM_AUSER: %s",
++			    pam_strerror(sshpam_handle, sshpam_err));
++	}
++}
++#endif
++
+ void
+ do_pam_set_tty(const char *tty)
+ {
+diff -pur old/auth-pam.h new/auth-pam.h
+--- old/auth-pam.h	2004-09-11 05:17:26.000000000 -0700
++++ new/auth-pam.h	2015-04-13 07:40:15.170675124 -0700
+@@ -35,6 +35,9 @@ void start_pam(Authctxt *);
+ void finish_pam(void);
+ u_int do_pam_account(void);
+ void do_pam_session(void);
++#ifdef HAVE_PAM_AUSER
++void do_pam_set_auser(const char *);
++#endif
+ void do_pam_set_tty(const char *);
+ void do_pam_setcred(int );
+ void do_pam_chauthtok(void);
+diff -pur old/auth.h new/auth.h
+--- old/auth.h	2015-04-13 07:40:15.102912510 -0700
++++ new/auth.h	2015-04-13 07:40:15.170773363 -0700
+@@ -79,6 +79,9 @@ struct Authctxt {
+ #ifdef PAM_ENHANCEMENT
+         char            *authmethod_name;
+ #endif 
++#ifdef HAVE_PAM_AUSER
++	char		*auser;
++#endif 
+ };
+ /*
+  * Every authentication method has to handle authentication requests for
+diff -pur old/auth2-hostbased.c new/auth2-hostbased.c
+--- old/auth2-hostbased.c	2013-12-30 17:25:41.000000000 -0800
++++ new/auth2-hostbased.c	2015-04-13 07:40:15.170883166 -0700
+@@ -83,6 +83,9 @@ userauth_hostbased(Authctxt *authctxt)
+ 	buffer_dump(&b);
+ 	buffer_free(&b);
+ #endif
++#ifdef HAVE_PAM_AUSER
++	authctxt->auser = NULL;
++#endif
+ 	pktype = key_type_from_name(pkalg);
+ 	if (pktype == KEY_UNSPEC) {
+ 		/* this is perfectly legal */
+@@ -133,6 +136,13 @@ userauth_hostbased(Authctxt *authctxt)
+ 			buffer_len(&b))) == 1)
+ 		authenticated = 1;
+ 
++#ifdef HAVE_PAM_AUSER
++	if (authenticated) {
++		authctxt->auser = cuser;
++		cuser = NULL;
++	}
++#endif
++
+ 	buffer_free(&b);
+ done:
+ 	debug2("userauth_hostbased: authenticated %d", authenticated);
+diff -pur old/auth2.c new/auth2.c
+--- old/auth2.c	2015-04-13 07:40:15.125748357 -0700
++++ new/auth2.c	2015-04-13 07:54:08.589929143 -0700
+@@ -347,6 +347,14 @@ userauth_finish(Authctxt *authctxt, int
+ #endif
+ 	}
+ 
++#ifdef HAVE_PAM_AUSER
++	if (!use_privsep) {
++		do_pam_set_auser(authctxt->auser);
++		free(authctxt->auser);
++		authctxt->auser = NULL;	
++	}
++#endif
++
+ 	if (authenticated && options.num_auth_methods != 0) {
+ 
+ #if defined(USE_PAM) && defined(PAM_ENHANCEMENT)
+diff -pur old/config.h.in new/config.h.in
+--- old/config.h.in	2015-04-13 07:40:15.118922540 -0700
++++ new/config.h.in	2015-04-13 07:40:15.171493102 -0700
+@@ -814,6 +814,9 @@
+ /* Define if you have Digital Unix Security Integration Architecture */
+ #undef HAVE_OSF_SIA
+ 
++/* Define if you have PAM_AUSER PAM item */
++#undef HAVE_PAM_AUSER
++
+ /* Define to 1 if you have the `pam_getenvlist' function. */
+ #undef HAVE_PAM_GETENVLIST
+ 
+diff -pur old/configure new/configure
+--- old/configure	2015-04-13 07:40:15.121667931 -0700
++++ new/configure	2015-04-13 07:40:15.174438856 -0700
+@@ -7799,6 +7799,7 @@ fi
+ 
+         $as_echo "#define USE_GSS_STORE_CRED 1" >>confdefs.h
+         $as_echo "#define GSSAPI_STORECREDS_NEEDS_RUID 1" >>confdefs.h
++        $as_echo "#define HAVE_PAM_AUSER 1" >>confdefs.h
+ 
+ 	TEST_SHELL=$SHELL	# let configure find us a capable shell
+ 	;;
+diff -pur old/configure.ac new/configure.ac
+--- old/configure.ac	2015-04-13 07:40:15.085660430 -0700
++++ new/configure.ac	2015-04-13 07:40:15.175130655 -0700
+@@ -868,6 +868,7 @@ mips-sony-bsd|mips-sony-newsos4)
+ 	TEST_SHELL=$SHELL	# let configure find us a capable shell
+         AC_DEFINE([USE_GSS_STORE_CRED])
+         AC_DEFINE([GSSAPI_STORECREDS_NEEDS_RUID])
++        AC_DEFINE([HAVE_PAM_AUSER])
+ 	;;
+ *-*-sunos4*)
+ 	CPPFLAGS="$CPPFLAGS -DSUNOS4"
+diff -pur old/monitor.c new/monitor.c
+--- old/monitor.c	2015-04-13 07:40:15.136922050 -0700
++++ new/monitor.c	2015-04-13 07:40:15.175533060 -0700
+@@ -490,6 +490,12 @@ monitor_child_preauth(Authctxt *_authctx
+ #endif
+ 	}
+ 
++#if defined(HAVE_PAM_AUSER) && defined(USE_PAM)
++	if (hostbased_cuser != NULL) {
++		free(hostbased_cuser);
++		hostbased_cuser = NULL;
++	}
++#endif
+ 	if (!authctxt->valid)
+ 		fatal("%s: authenticated invalid user", __func__);
+ 	if (strcmp(auth_method, "unknown") == 0)
+@@ -699,12 +705,14 @@ monitor_reset_key_state(void)
+ {
+ 	/* reset state */
+ 	free(key_blob);
++#if !defined(HAVE_PAM_AUSER) || !defined(USE_PAM)
+ 	free(hostbased_cuser);
++	hostbased_cuser = NULL;
++#endif
+ 	free(hostbased_chost);
+ 	key_blob = NULL;
+ 	key_bloblen = 0;
+ 	key_blobtype = MM_NOKEY;
+-	hostbased_cuser = NULL;
+ 	hostbased_chost = NULL;
+ }
+ 
+@@ -1111,6 +1119,11 @@ mm_answer_pam_account(int sock, Buffer *
+ 	if (!options.use_pam)
+ 		fatal("UsePAM not set, but ended up in %s anyway", __func__);
+ 
++#ifdef HAVE_PAM_AUSER
++	if (hostbased_cuser != NULL)
++		do_pam_set_auser(hostbased_cuser);
++#endif
++
+ 	ret = do_pam_account();
+ 
+ 	buffer_put_int(m, ret);
