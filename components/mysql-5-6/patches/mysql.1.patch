@@ -1,0 +1,42 @@
+Solaris-specific; not suitable for upstream.
+--- a/man/mysql.1	Wed Mar 25 04:48:00 2015
++++ b/man/mysql.1	Wed Mar 25 04:48:37 2015
+@@ -3596,6 +3596,38 @@
+ .PP
+ For more information about auto\-reconnect and its effect on state information when a reconnection occurs, see
+ Section\ \&23.8.16, \(lqControlling Automatic Reconnection Behavior\(rq\&.
++.RE
++.SH "AUTOMATIC SERVICE MANAGEMENT (SMF)"
++\fBMySQL 5\&.6  for Solaris includes files necessary to  register
++with the service management facility described in smf(5) by default after installation\&.
++.RE
++.PP
++\fBThe mysql:version_56 service is disabled by default\&. You can
++check  the  status  of  the service by issuing the following
++command:
++.RE
++.PP
++\fB example% svcs mysql\fR
++\fB STATE          STIME    FMRI
++\fB disabled 10:47:39 svc:/application/database/mysql:version_56
++.RE
++.PP
++\fBEnable the mysql:version_56 service by issuing the following\fR
++.RE
++command :
++.RE
++.PP
++\fBexample%svcadm  enable mysql:version_56\fR
++.RE
++.PP
++\fBThe state of the service instance should change to "online",
++and the database server should be started:
++.RE
++.PP
++\fB example% svcs mysql\fR
++\fB STATE          STIME    FMRI\fR
++\fB online 10:50:27 svc:/application/database/mysql:version_56\fR
++.fi
+ .SH "COPYRIGHT"
+ .br
+ .PP
