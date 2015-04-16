@@ -25,13 +25,13 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	timezone
 
-COMPONENT_VERSION=    	2015.2
+COMPONENT_VERSION=    	2015.3
 
 COMPONENT_BUGDB=	utility/timezone
 
-HUMAN_VERSION=		2015b
+HUMAN_VERSION=		2015c
 
-TPNO=			22064
+TPNO=			22309
 
 # "etcetera" must be listed before "backward" because it sets up links that
 # "backward" needs.
