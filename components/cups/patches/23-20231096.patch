@@ -1,0 +1,27 @@
+/*-------------------------------------------------------------------------------------------------
+This patch was developed in-house.
+It is submitted upstream at https://www.cups.org/str.php?L4476+P-1+S0+C0+I0+E0+Q4476
+---------------------------------------------------------------------------------------------------*/
+--- scheduler/client.c    2015-03-06 03:28:52.100318608 -0800
++++ scheduler/client.c    2015-03-06 03:35:41.539740276 -0800
+@@ -3258,7 +3258,7 @@
+ 
+   context = SSL_CTX_new(SSLv23_server_method());
+ 
+-  SSL_CTX_set_options(context, SSL_OP_NO_SSLv2); /* Only use SSLv3 or TLS */
++  SSL_CTX_set_options(context, SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3); /* Always disable SSLv2 & SSLv3 to "mitigate POODLE vulnerability". */
+   if (SSLOptions & CUPSD_SSL_NOEMPTY)
+     SSL_CTX_set_options(context, SSL_OP_DONT_INSERT_EMPTY_FRAGMENTS);
+   SSL_CTX_use_PrivateKey_file(context, ServerKey, SSL_FILETYPE_PEM);
+--- cups/http.c   2015-03-06 03:27:05.266068026 -0800
++++ cups/http.c   2015-03-06 03:34:22.981276422 -0800
+@@ -2972,7 +2972,7 @@
+ #  ifdef HAVE_LIBSSL
+   context = SSL_CTX_new(SSLv23_client_method());
+ 
+-  SSL_CTX_set_options(context, SSL_OP_NO_SSLv2); /* Only use SSLv3 or TLS */
++  SSL_CTX_set_options(context, SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3); /* Always disable SSLv2 & SSLv3 to "mitigate POODLE vulnerability". */
+ 
+   bio = BIO_new(_httpBIOMethods());
+   BIO_ctrl(bio, BIO_C_SET_FILE_PTR, 0, (char *)http);
+
