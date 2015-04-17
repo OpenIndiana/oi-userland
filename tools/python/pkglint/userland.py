@@ -21,7 +21,7 @@
 #
 
 #
-# Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 # Some userland consolidation specific lint checks
@@ -124,7 +124,12 @@ class UserlandActionChecker(base.ActionChecker):
 
                                 variants = action.get_variant_template()
                                 variants.merge_unknown(pkg_vars)
-                                action.attrs.update(variants)
+                                # Action attributes must be lists or strings.
+                                for k, v in variants.iteritems():
+                                        if isinstance(v, set):
+                                                action.attrs[k] = list(v)
+                                        else:
+                                                action.attrs[k] = v
 
                                 p = action.attrs[attr]
                                 dic.setdefault(p, []).append((mf.fmri, action))
