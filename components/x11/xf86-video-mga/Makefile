@@ -16,12 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-video-mga
-COMPONENT_VERSION= 1.6.3
+COMPONENT_VERSION= 1.6.4
 COMPONENT_SUMMARY= xf86-video-mga - Matrox MGA driver for the Xorg X server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:7704b1ea35098769787a9c93e903b827be97a99facfb1696aa5236a58ff1c7d7
+  sha256:48c6690b6751c76f53de64f8dbeaa9d6c62dbcfe890c768fd87167951247d44f
 COMPONENT_ARCHIVE_URL= \
   http://xorg.freedesktop.org/archive/individual/driver/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
