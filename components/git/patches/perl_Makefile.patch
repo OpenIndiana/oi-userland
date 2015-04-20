@@ -1,26 +1,38 @@
---- git-1.7.9.2/perl/Makefile.~1~	Wed Feb 22 18:04:18 2012
-+++ git-1.7.9.2/perl/Makefile	Fri Mar  2 14:51:25 2012
-@@ -21,20 +21,18 @@
- 	$(RM) $(makfile).old
+--- git-1.9.4/perl/Makefile.~1~	2015-04-18 01:05:23.731559748 +0300
++++ git-1.9.4/perl/Makefile	2015-04-18 01:13:09.453805718 +0300
+@@ -24,8 +24,8 @@
  
- ifdef NO_PERL_MAKEMAKER
+ $(makfile): PM.stamp
+ 
+-ifdef NO_PERL_MAKEMAKER
 -instdir_SQ = $(subst ','\'',$(prefix)/lib)
++ifdef NO_PERL_MAKEMAKER
 +instdir_SQ = $(subst ','\'',$$(PERL_LIB))
- $(makfile): ../GIT-CFLAGS Makefile
- 	echo all: private-Error.pm Git.pm > $@
- 	echo '	mkdir -p blib/lib' >> $@
- 	echo '	$(RM) blib/lib/Git.pm; cp Git.pm blib/lib/' >> $@
+ 
+ modules += Git
+ modules += Git/I18N
+@@ -57,7 +57,6 @@
+ 		echo '	cp '$$i'.pm blib/lib/'$$i'.pm' >> $@; \
+ 	done
  	echo '	$(RM) blib/lib/Error.pm' >> $@
 -	'$(PERL_PATH_SQ)' -MError -e 'exit($$Error::VERSION < 0.15009)' || \
  	echo '	cp private-Error.pm blib/lib/Error.pm' >> $@
  	echo install: >> $@
--	echo '	mkdir -p "$$(DESTDIR)$(instdir_SQ)"' >> $@
--	echo '	$(RM) "$$(DESTDIR)$(instdir_SQ)/Git.pm"; cp Git.pm "$$(DESTDIR)$(instdir_SQ)"' >> $@
+ 	set -e; \
+@@ -69,13 +68,12 @@
+ 		else \
+ 			subdir=/$${i%/*}; \
+ 		fi; \
+-		echo '	$(RM) "$$(DESTDIR)$(instdir_SQ)/'$$i'.pm"' >> $@; \
+-		echo '	mkdir -p "$$(DESTDIR)$(instdir_SQ)'$$subdir'"' >> $@; \
+-		echo '	cp '$$i'.pm "$$(DESTDIR)$(instdir_SQ)/'$$i'.pm"' >> $@; \
++		echo '	$(RM) "$$(DESTDIR)/$(instdir_SQ)/'$$i'.pm"' >> $@; \
++		echo '	mkdir -p "$$(DESTDIR)/$(instdir_SQ)'$$subdir'"' >> $@; \
++		echo '	cp '$$i'.pm "$$(DESTDIR)/$(instdir_SQ)/'$$i'.pm"' >> $@; \
+ 	done
 -	echo '	$(RM) "$$(DESTDIR)$(instdir_SQ)/Error.pm"' >> $@
 -	'$(PERL_PATH_SQ)' -MError -e 'exit($$Error::VERSION < 0.15009)' || \
 -	echo '	cp private-Error.pm "$$(DESTDIR)$(instdir_SQ)/Error.pm"' >> $@
-+	echo '	mkdir -p "$$(DESTDIR)/$(instdir_SQ)"' >> $@
-+	echo '	$(RM) "$$(DESTDIR)/$(instdir_SQ)/Git.pm"; cp Git.pm "$$(DESTDIR)/$(instdir_SQ)"' >> $@
 +	echo '	$(RM) "$$(DESTDIR)/$(instdir_SQ)/Error.pm"' >> $@
 +	echo '	cp private-Error.pm "$$(DESTDIR)/$(instdir_SQ)/Error.pm"' >> $@
  	echo instlibdir: >> $@

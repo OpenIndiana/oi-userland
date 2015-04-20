@@ -23,23 +23,22 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		git
-COMPONENT_VERSION=	1.7.9.2
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	1.9.4
 COMPONENT_PROJECT_URL=	http://git-scm.com/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:bd7725fb80f305bf27666e3d26a9b7b79596e2248f2ae2d27e06bc15a501ac75
-COMPONENT_ARCHIVE_URL=	http://git-core.googlecode.com/files/$(COMPONENT_ARCHIVE)
+    sha256:6bfb1f386a1fdbda3ec3206f499ffc24b262f3811c98e82e0ec8764d13511dea
+COMPONENT_ARCHIVE_URL=	https://www.kernel.org/pub/software/scm/git/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/git
 
 #
 # man pages are a separate archive
 #
-COMPONENT_ARCHIVE_1 =	$(COMPONENT_NAME)-manpages-$(COMPONENT_VERSION).tar.gz
+COMPONENT_ARCHIVE_1 =	$(COMPONENT_NAME)-manpages-$(COMPONENT_VERSION).tar.xz
 COMPONENT_ARCHIVE_HASH_1 = \
-    sha256:c653a3678bb5668c280a0d5ba584fdfb0e4272acbbd00901dc2363ea3f58eede
-COMPONENT_ARCHIVE_URL_1 = http://git-core.googlecode.com/files/$(COMPONENT_ARCHIVE_1)
+    sha256:23935b38ce36fe47f01499cc2eadae2b180244b3ab706bec1fc0ae84ed32908e
+COMPONENT_ARCHIVE_URL_1 = https://www.kernel.org/pub/software/scm/git/$(COMPONENT_ARCHIVE_1)
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
@@ -52,6 +51,7 @@ CONFIGURE_OPTIONS  +=	--with-perl=$(PERL)
 CONFIGURE_OPTIONS  +=	--with-python=$(PYTHON)
 
 COMPONENT_BUILD_ENV+=	NO_PERL_MAKEMAKER=1
+COMPONENT_INSTALL_ENV+=	NO_PERL_MAKEMAKER=1
 COMPONENT_INSTALL_ENV+=	PERL_LIB=$(shell $(PERL) -MConfig -e 'print "$$Config{installvendorarch}"')
 COMPONENT_INSTALL_ARGS+=	INSTALL="$(INSTALL)"
 
