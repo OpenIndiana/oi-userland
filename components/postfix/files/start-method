@@ -27,7 +27,7 @@ SWITCH_FMRI=svc:/system/name-service/switch:default
 
 tweak_aliases()
 {
-	aliasprop=$(/usr/bin/svcprop -p config/aliases $SWITCH_FMRI 2>/dev/null)
+	aliasprop=$(/usr/bin/svcprop -p config/alias $SWITCH_FMRI 2>/dev/null)
 
 	# Check the alias configuration. Per
 	# http://www.postfix.org/postconf.5.html
@@ -39,7 +39,7 @@ tweak_aliases()
 	alias_maps=$(/usr/sbin/postconf -h alias_maps)
 	if [[ $alias_maps == "hash:/etc/mail/aliases, nis:mail.aliases" ]]; then
 		# We have the default Postfix setting.
-		if [[ "$aliasprop" == "${aliasprop%nis}" ]]; then
+		if [[ "$aliasprop" == "${aliasprop/nis}" ]]; then
 			# NIS is not configured, so change the Postfix setting.
 			alias_maps="hash:/etc/mail/aliases"
 			/usr/sbin/postconf alias_maps=$alias_maps
@@ -49,7 +49,7 @@ tweak_aliases()
 	# Check for LDAP: if configured via the switch, then (if needed)
 	# create $LDAP_ALIASES and configure in alias_maps.
 	LDAP_ALIASES=/etc/postfix/ldap-aliases.cf
-	if [[ $aliasprop != ${aliasprop%ldap} ]]; then
+	if [[ $aliasprop != ${aliasprop/ldap} ]]; then
 		# LDAP is configured for aliases.
 		if [[ ! -f $LDAP_ALIASES ]]; then
 			# $LDAP_ALIASES does not exist yet, so create it.
@@ -65,7 +65,7 @@ tweak_aliases()
 			    $LDAP_ALIASES
 
 		fi
-		if [[ "$alias_maps" == "${alias_maps%ldap:}" ]]; then
+		if [[ "$alias_maps" == "${alias_maps/ldap:}" ]]; then
 			# No "ldap:" entry yet in alias_maps, so add one.
 			/usr/sbin/postconf \
 			    alias_maps="$alias_maps, ldap:$LDAP_ALIASES"
