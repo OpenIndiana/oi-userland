@@ -39,12 +39,20 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-# Recreate configure and various Makefiles to pickup libsunperf changes.
+# By default, tests in each GSL sub-directory are linked statically against
+# a set of .la files. We don't deliver those in the GSL package, so we
+# adjust all the tests to link against the dynamic GSL library instead.
+COMPONENT_POST_UNPACK_ACTION = \
+	(cd $(COMPONENT_SRC); \
+	for f in `ls */Makefile.am` ; do \
+	    $(GSED) -i -e \
+		's|^test_LDADD.*$$|test_LDFLAGS = -L`pwd`/../.libs/ -R`pwd`/../.libs/\ntest_LDADD = -lgsl|' \
+		$$f ; \
+	done)
+
+# Recreate configure and top-level Makefile to pickup libsunperf changes.
 COMPONENT_PREP_ACTION = \
 	(cd $(@D) ; ACLOCAL=aclocal-1.11 AUTOMAKE=automake-1.11 autoreconf -f)
-
-# Get rid of compiler path set in RUNPATH.
-LDFLAGS += $(studio_NORUNPATH)
 
 LDFLAGS += $(CC_BITS)
 LDFLAGS += $(studio_PIC)
@@ -66,9 +74,6 @@ COMPONENT_BUILD_ARGS += CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ARGS += LDFLAGS="$(LDFLAGS)"
 
 CC += $(CC_BITS)
-
-# Needed to pass -norunpath to the shared library link.
-CC += $(studio_NORUNPATH)
 
 COMPONENT_TEST_ARGS =	-k -i
 
@@ -99,6 +104,12 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
+# There are known problems in libsunperf that are causing GSL test failures
+# in Solaris 12 with Studio 12.4 just on the x86 platform:
+# linalg: FAIL:   LQ_update m(5,3) [88]                             (32-bit)
+# caused by 20914954 cblas_gemm differences between x86 and sparcv7
+# linalg: FAIL:   cholesky_invert hilbert(4)                        (64-bit)
+# caused by 20909151 cblas_dsymm differences between amd64 and sparcv9.
 test:		$(TEST_32_and_64)
 
 REQUIRED_PACKAGES += shell/ksh93
