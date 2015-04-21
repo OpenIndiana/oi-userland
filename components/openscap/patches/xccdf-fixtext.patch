@@ -1,0 +1,73 @@
+This patch fixes the issue where fixtext sections were not being shown
+in the report and guide.
+This fix is based on the upstream community fix.
+https://github.com/OpenSCAP/openscap/commit/21e64eed9530cdabbdaa46d6ca9e61c0b30d200a
+https://github.com/OpenSCAP/openscap/commit/93261aeef2a38e69030de1c4cc7a26759b4a1c7b
+
+--- openscap-1.2.1/xsl/xccdf-guide-impl.xsl.~1~	2015-04-16 08:17:04.104985115 -0700
++++ openscap-1.2.1/xsl/xccdf-guide-impl.xsl	2015-04-16 08:18:22.179921665 -0700
+@@ -230,16 +230,25 @@
+                 <xsl:call-template name="item-idents-refs">
+                     <xsl:with-param name="item" select="$item"/>
+                 </xsl:call-template>
++                <xsl:for-each select="$item/cdf:fixtext">
++                    <span class="label label-success">Remediation description:</span>
++                    <div class="panel panel-default"><div class="panel-body">
++                        <xsl:apply-templates mode="sub-testresult" select=".">
++                            <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
++                            <xsl:with-param name="profile" select="$profile"/>
++                        </xsl:apply-templates>
++			</div></div>
++                </xsl:for-each>
+ 
+-                <xsl:if test="$item/cdf:fix">
++                <xsl:for-each select="$item/cdf:fix">
+                     <span class="label label-success">Remediation script:</span>
+                     <pre><code>
+-                        <xsl:apply-templates mode="sub-testresult" select="$item/cdf:fix">
++                        <xsl:apply-templates mode="sub-testresult" select=".">
+                             <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
+                             <xsl:with-param name="profile" select="$profile"/>
+                         </xsl:apply-templates>
+                     </code></pre>
+-                </xsl:if>
++                </xsl:for-each>
+             </td>
+         </tr>
+     </xsl:if>
+--- openscap-1.2.1/xsl/xccdf-report-impl.xsl.~2~	2015-04-16 08:50:56.877364049 -0700
++++ openscap-1.2.1/xsl/xccdf-report-impl.xsl	2015-04-16 08:51:17.871879194 -0700
+@@ -680,18 +680,30 @@
+                                 <xsl:copy-of select="$check_system_details_ret"/>
+                             </div></td></tr>
+                         </xsl:if>
+-                        <xsl:if test="$item/cdf:fix">
++			<xsl:for-each select="$item/cdf:fixtext">
++                            <tr><td colspan="2"><div class="remediation-description">
++			    <span class="label label-success">Remediation description:</span>
++			    <div class="panel panel-default"><div class="panel-body">
++				<xsl:apply-templates mode="sub-testresult" select=".">
++				   <xsl:with-param name="testresult" select="$testresult"/>
++				    <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
++				    <xsl:with-param name="profile" select="$profile"/>
++				</xsl:apply-templates>
++				</div></div>
++				</div></td></tr>
++			</xsl:for-each>
++                        <xsl:for-each select="$item/cdf:fix">
+                             <tr><td colspan="2"><div class="remediation">
+                                 <span class="label label-success">Remediation script:</span>
+                                 <pre><code>
+-                                    <xsl:apply-templates mode="sub-testresult" select="$item/cdf:fix">
++                                    <xsl:apply-templates mode="sub-testresult" select=".">
+                                         <xsl:with-param name="testresult" select="$testresult"/>
+                                         <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
+                                         <xsl:with-param name="profile" select="$profile"/>
+                                     </xsl:apply-templates>
+                                 </code></pre>
+                             </div></td></tr>
+-                        </xsl:if>
++                        </xsl:for-each>
+                     </xsl:if>
+                 </tbody>
+             </table>
