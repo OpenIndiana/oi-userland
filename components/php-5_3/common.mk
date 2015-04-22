@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 PHP_REL=		5.3
@@ -237,3 +237,27 @@ FIX_CONFIG_FILES_2 = ( \
 			$(PROTO_DIR)/$(ZTS_MODULES_CONFDIR)/$${ext}.ini; \
 	done; \
 	)
+
+# See php-cgi/Makefile, php-nsapi/Makefile, php-sapi/Makefile for further
+# notes about testing php.
+
+# Test transforms to delete references to:
+#	remove everything before the first '============'
+# ============================================================
+# 	machine names and version
+# PHP_OS      : SunOS - SunOS slitheen 5.12 s12_70 sun4v
+#	time
+# TIME START 2015-04-14 01:21:42
+# Time taken      : 2410 seconds
+#	path to php
+# PHP         : /builds/cmohrman/userland_defau...
+#	the last output line
+# make[2]: Leaving directory `$(@D)'
+
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "1,/^==========/d"' \
+	'-e "s/^PHP_OS.*$$//"' \
+	'-e "s/^TIME.*$$//"' \
+	'-e "s/^Time.*$$//"' \
+	'-e "s/^PHP   .*$$//"' \
+	'-e "\$$d"'

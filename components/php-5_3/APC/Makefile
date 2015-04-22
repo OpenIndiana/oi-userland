@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -51,3 +51,9 @@ COMPONENT_POST_INSTALL_ACTION = ( \
 	$(FIX_CONFIG_FILES)
 
 PKG_PROTO_DIRS += $(COMPONENT_DIR)/../APC-zts/build/prototype/$(MACH)
+
+# test failures; keep going
+COMPONENT_TEST_ARGS += -k -i
+
+# different results for different architectures
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH$(BITS)).master

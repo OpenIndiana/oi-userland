@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -38,3 +38,9 @@ include ../extensions-zts.mk
 CONFIGURE_OPTIONS += \
 	--enable-apc \
 	--enable-apc-mmap
+
+# test failures; keep going
+COMPONENT_TEST_ARGS += -k -i
+
+# different results for different architectures
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH$(BITS)).master

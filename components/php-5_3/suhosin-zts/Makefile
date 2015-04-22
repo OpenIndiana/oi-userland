@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -34,3 +34,6 @@ COMPONENT_PROJECT_URL=	http://www.hardened-php.net/suhosin/index.html
 include ../extensions-zts.mk
 
 CONFIGURE_OPTIONS  += --enable-suhosin
+
+# test failures; keep going
+COMPONENT_TEST_ARGS += -k -i

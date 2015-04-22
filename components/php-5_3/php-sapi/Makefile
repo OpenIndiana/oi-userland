@@ -235,17 +235,37 @@ PKG_PROTO_DIRS += $(COMPONENT_DIR)/../php-cgi/build/prototype/$(MACH)
 CLEAN_PATHS += phpize-proto php-config-proto php-config-proto.zts tmp
 CLEAN_PATHS += php.ini-patched
 
-# common targets
+# Test results not quite stable but good enough for human eyes
+$(SKIP_TEST_AT_TOP_LEVEL)
+
 configure:	$(CONFIGURE_32)
 
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32) PHP-NSAPI_INSTALL PHP-CGI_INSTALL
 
-# Besides running this test target it is also strong advised to download
+# Besides running this test target it is also strongly advised to download
 # and test with:
 # Joomla!	http://www.joomla.org/
 # WordPress	http://wordpress.org/
+
+# These test and compare results are not quite stable enough
+# to use in automated testing but good enough to eye 
+# ball and get a sense that php is working correctly.
+# Individual tests can be run afterwards.
+# Several random tests may PASS/FAIL on each run thus invalidating
+# test and compare results.
+# To use the master test result file do:
+# $ gmake build
+# $ gmake -i -k test
+# because very likely the comparison phase will fail.
+
+# test failures; keep going
+COMPONENT_TEST_ARGS += -k -i
+
+# different results for different architectures
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH$(BITS)).master
+
 test:		$(TEST_32)
 
 ../imap/build/$(MACH32)/.built:

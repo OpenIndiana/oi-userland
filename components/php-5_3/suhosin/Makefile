@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -41,3 +41,6 @@ COMPONENT_POST_INSTALL_ACTION = ( \
 	)
 
 PKG_PROTO_DIRS += $(COMPONENT_DIR)/../suhosin-zts/build/prototype/$(MACH)
+
+# test failures; keep going
+COMPONENT_TEST_ARGS += -k -i
