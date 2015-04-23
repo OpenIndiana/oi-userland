@@ -114,6 +114,7 @@ REQUIRED_PACKAGES += system/storage/iscsi/iscsi-initiator
 REQUIRED_PACKAGES += terminal/xterm
 REQUIRED_PACKAGES += web/novnc
 REQUIRED_PACKAGES += x11/diagnostic/x11-info-clients
+REQUIRED_PACKAGES += x11/modeline-utilities
 REQUIRED_PACKAGES += x11/server/xorg
 REQUIRED_PACKAGES += x11/server/xvnc
 REQUIRED_PACKAGES += x11/x11-server-utilities
