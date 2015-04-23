@@ -143,6 +143,7 @@ def modify_conf(old_file, mapping=None):
         for key, value in section_items:
             # keep a copy of the old value
             oldvalue = value
+            oldsection = section
 
             if mapping is not None:
                 section, key = update_mapping(section, key, mapping)
@@ -173,6 +174,7 @@ def modify_conf(old_file, mapping=None):
             if not new.has_option(section, key) or \
                '%SERVICE' in new.get(section, key):
                 new.set(section, key, value)
+            section = oldsection
 
     # copy the old conf file to a backup
     today = datetime.now().strftime("%Y%m%d%H%M%S")

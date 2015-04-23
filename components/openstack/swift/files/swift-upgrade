@@ -64,6 +64,7 @@ def modify_conf(old_file):
         for key, value in section_items:
             # keep a copy of the old value
             oldvalue = value
+            oldsection = section
 
             if not new.has_section(section):
                 if section != 'DEFAULT':
@@ -87,6 +88,7 @@ def modify_conf(old_file):
             if not new.has_option(section, key) or \
                '%SERVICE' in new.get(section, key):
                 new.set(section, key, value)
+            section = oldsection
 
     # copy the old conf file to a backup
     today = datetime.now().strftime("%Y%m%d%H%M%S")
