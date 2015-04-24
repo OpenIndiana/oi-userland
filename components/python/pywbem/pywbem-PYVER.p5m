@@ -20,8 +20,9 @@
 #
 
 #
-# Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
 set name=pkg.fmri \
     value=pkg:/library/python/pywbem-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="Python WBEM Client and Provider Interface"
@@ -60,3 +61,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/pywbem/wbemcli.py
 file path=usr/lib/python$(PYVER)/vendor-packages/pywbem/yacc.py
 #
 license pywbem.license license=LGPLv2
+
+# force a dependency on the pywbem package
+depend type=require \
+    fmri=library/python/pywbem@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
