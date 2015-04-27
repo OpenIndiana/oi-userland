@@ -18,17 +18,17 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tcpdump
-COMPONENT_VERSION=	4.3.0
+COMPONENT_VERSION=	4.5.1
 COMPONENT_PROJECT_URL=	http://www.tcpdump.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:efd08b610210d39977ec3175fa82dad9fbd33587930081be2a905a712dba4286
+    sha256:14ab39657128f3a650aed4cf455f76c7590601087b6101c253d698f6e73f0b96
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)release/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/tcpdump
 
@@ -38,6 +38,10 @@ include ../../make-rules/ips.mk
 
 # fix my alignment issues instead of falling over on sparc
 studio_ALIGN.sparc.64=-xmemalign=16i
+
+# lazyloading (indirectly enabled by -Bdirect) seems to cause problems with
+# libpcap device enumeration.
+LD_B_DIRECT=
 
 CONFIGURE_OPTIONS += --enable-ipv6=yes
 CONFIGURE_OPTIONS += --with-user=nobody
