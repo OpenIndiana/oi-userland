@@ -926,8 +926,10 @@ ifeq ($(COMPILER),gcc)
 REQUIRED_PACKAGES += developer/gcc-47
 endif
 ifeq ($(COMPILER),studio)
+ifeq ($(findstring /opt/solarisstudio12.4,$(CC)),)
 # uncomment this line if you need to install Studio
-#REQUIRED_PACKAGES += developer/solarisstudio-124
+REQUIRED_PACKAGES += developer/solarisstudio-124
+endif
 endif
 ifeq ($(PARFAIT_BUILD),yes)
 # uncomment this line if you need to install Parfait

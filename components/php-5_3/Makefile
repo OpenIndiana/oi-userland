@@ -153,6 +153,8 @@ SUBDIRS =	$(shell echo */Makefile | sed -e 's;/Makefile;;g')
 .PHONY:	$(SUBDIRS)
 
 download:		TARGET = download
+unpack:			TARGET = unpack
+patch:			TARGET = patch
 prep:			TARGET = prep
 install:		TARGET = install
 clean:			TARGET = clean
@@ -164,13 +166,13 @@ build:		install
 
 .DEFAULT:	publish
 
-download::	$(SUBDIRS)
-prep install test publish: $(SUBDIRS)
+download unpack patch prep::	$(SUBDIRS)
+install test publish: $(SUBDIRS)
 
-clean:		$(SUBDIRS)
+clean::		$(SUBDIRS)
 	$(RM) -r $(BUILD_DIR)
 
-clobber:	$(SUBDIRS) clean
+clobber::	$(SUBDIRS) clean
 
 $(SUBDIRS):	FORCE
 	@cd $@ && echo "$(TARGET) $@" && $(MAKE) $(TARGET)

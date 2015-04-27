@@ -35,6 +35,31 @@ The following are the basics that just about every Makefile should have.
 * REQUIRED_PACKAGES is a list of packages required to build or run the
   component and its tests.
 
+* GIT_REPO can be used in place of COMPONENT_ARCHIVE_URL to pull the component
+  source from the GIT repository referenced in the value.
+* GIT_REV is the tag or changeset that you wish to pull from GIT.
+
+* HG_REPO can be used in place of COMPONENT_ARCHIVE_URL to pull the component
+  source from the Mercurial repository referenced in the value.
+* HG_REV is the tag or changeset that you wish to pull from Mercurial.
+
+* SVN_REPO can be used in place of COMPONENT_ARCHIVE_URL to pull the component
+  source from the Subversion repository referenced in the value.
+* SVN_REV is the tag or changeset that you wish to pull from Subversion.
+
+When using a source code management system as the canonical source for a
+component, the build automatically generates a source archive for the
+component by pulling the source from the SCM and creating a tarball from
+the pulled source.  This allows us to automatically store a copy of the
+canonical source that we build from in our source archive cache and not
+continually hammer on the component's SCM repo.  The source archive name
+is automatically generated from the COMPONENT_NAME, COMPONENT_VERSION,
+and {GIT|HG|SVN}_REV values.  Also, the source is archived and unpacked
+in a directory using these values.   You should also define a hash for
+this tarball in your Makefile similar to what you do with downloaded
+source archives.
+
+
 These two are both initialized in make-rules/shared-macros.mk rather than any
 component-level Makefile, but are frequently referenced from the latter.
 * COMPONENT_DIR is the top-level directory of the given component in question.

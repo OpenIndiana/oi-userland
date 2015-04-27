@@ -45,6 +45,7 @@ COMPONENT_SRC_1=        $(COMPONENT_NAME_1)_$(COMPONENT_VERSION_1)
 COMPONENT_ARCHIVE_1=    $(COMPONENT_SRC_1).tar.gz
 COMPONENT_ARCHIVE_HASH_1= \
     sha256:4c5d45e5f49bb164d40154fdef57b3193e7b77e306055559e60615c8ca9a3c30
+COMPONENT_POST_UNPACK_ACTION_1= $(MV) php-chunked-xhtml $(@D)
 #
 # This next download URL is completely hocus pocus.
 # php.net does not freeze their documentation to match the software versions.

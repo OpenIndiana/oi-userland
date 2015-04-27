@@ -27,17 +27,14 @@ COMPONENT_VERSION=	5.11
 COMPONENT_PROJECT_URL=	http://dev.mysql.com/
 COMPONENT_BUGDB=	database/mysql
 
-include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 # ASLR Mode should be set as not applicable
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # nothing to download or build; just package
-download::
-prep configure build install test:
-
-clobber:	clean
+build install test:
 
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os

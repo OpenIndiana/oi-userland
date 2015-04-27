@@ -31,6 +31,7 @@ COMPONENT_BUGDB=	library/libusb
 
 TPNO=			9184
 
+include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
 
@@ -44,19 +45,8 @@ COMPONENT_INSTALL_ARGS += BITS=$(BITS)
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-# common targets
-$(SOURCE_DIR)/.prep:
-	$(TOUCH) $@
-
 $(BUILD_DIR)/libusb-64.pc:	src/libusb-64.pc
 	/bin/sed -e "s#MACH64#$(MACH64)#g" <$< >$@
-
-download::
-
-clobber:	clean
-	$(RM) $(SOURCE_DIR)/.prep
-
-prep:	$(SOURCE_DIR)/.prep
 
 build:		$(BUILD_32_and_64)
 

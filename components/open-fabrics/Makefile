@@ -57,8 +57,10 @@ LICENSE_TRANSFORMS =
 
 .PHONY:	$(SUBDIRS)
 
-download:		TARGET = download
-prep:			TARGET = prep
+download::		TARGET = download
+unpack::		TARGET = unpack
+patch::			TARGET = patch
+prep::			TARGET = prep
 install:		TARGET = install
 clean:			TARGET = clean
 clobber:		TARGET = clobber
@@ -69,16 +71,16 @@ build:		install
 
 .DEFAULT:	publish
 
-download::
-prep install test: $(SUBDIRS)
+download unpack patch prep::	$(SUBDIRS)
+install test: $(SUBDIRS)
 
 parfait:
 	$(MAKE) PARFAIT_BUILD=yes install
 
-clean:	$(SUBDIRS)
+clean::	$(SUBDIRS)
 	$(RM) -r prototype build
 
-clobber:	$(SUBDIRS) clean
+clobber::	$(SUBDIRS) clean
 
 $(SUBDIRS):	FORCE
 	@cd $@ && echo "$(TARGET) $@" && $(MAKE) $(TARGET)

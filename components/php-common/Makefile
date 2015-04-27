@@ -27,7 +27,7 @@ COMPONENT_NAME=		php-common
 COMPONENT_VERSION=	11.1
 COMPONENT_PROJECT_URL=	http://www.php.net/
 COMPONENT_BUGDB=	utility/php
-include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 # Do not apply the standard license transforms for this component. The
@@ -36,10 +36,6 @@ LICENSE_TRANSFORMS=
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-# nothing to download or build; just package
-download::
-prep configure build install test:
-
-clobber:	clean
+configure build install test:
 
 REQUIRED_PACKAGES += system/linker

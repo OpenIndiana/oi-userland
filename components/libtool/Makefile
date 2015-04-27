@@ -90,22 +90,6 @@ INSTALL_64 += $(BUILD_OLD_DIR_64)/.installed
 $(BUILD_DIR_32)/.installed:	$(BUILD_OLD_DIR_32)/.installed
 $(BUILD_DIR_64)/.installed:	$(BUILD_OLD_DIR_64)/.installed
 
-# we need to prep the old version too (this should be handled in prep.mk)
-$(SOURCE_DIR_1)/.unpacked:        download $(MAKEFILE_PREREQ) $(PATCHES)
-	$(RM) -r $(SOURCE_DIR_1)
-	$(UNPACK) $(UNPACK_ARGS) $(COMPONENT_ARCHIVE_1)
-	$(TOUCH) $@
-
-# prep the old version first
-$(SOURCE_DIR)/.prep:	$(SOURCE_DIR_1)/.prep
-
-$(SOURCE_DIR_1)/.prep:        $(SOURCE_DIR_1)/.unpacked
-	$(TOUCH) $@
-
-prep::	$(SOURCE_DIR_1)/.prep
-
-CLEAN_PATHS += $(SOURCE_DIR_1)
-
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # common targets

@@ -28,6 +28,7 @@ COMPONENT_VERSION=      0.5.11
 TPNO_PCI=	21782
 TPNO_USB=	21783
 
+include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 # Since upstream only offers the latest snapshot for download, without

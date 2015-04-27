@@ -39,17 +39,12 @@ TZFILES= africa antarctica asia australasia etcetera europe \
 	 factory northamerica pacificnew \
 	 southamerica backward
 
+include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 POFILE=zoneinfo.po
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
-download::
-	@echo "Nothing to download."
-
-prep:
-	@echo "Nothing to prep."
 
 build:
 	@/bin/sh ./do_pofile.sh > $(POFILE)
@@ -60,7 +55,5 @@ install: build
 # empty test target
 test:	$(NO_TESTS)
 
-clean:
+clean::
 	$(RM) -r $(BUILD_DIR) $(POFILE)
-
-clobber: clean

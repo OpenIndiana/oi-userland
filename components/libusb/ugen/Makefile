@@ -29,6 +29,7 @@ COMPONENT_PROJECT_URL=	http://libusb.sf.net/
 COMPONENT_SRC=		src
 COMPONENT_BUGDB=	library/libusb
 
+include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
 
@@ -45,16 +46,8 @@ LICENSE_TRANSFORMS =
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-download::
-
-clobber:	clean
+clobber::
 	$(RM) $(SOURCE_DIR)/.prep
-
-# common targets
-$(SOURCE_DIR)/.prep:
-	$(TOUCH) $@
-
-prep:	$(SOURCE_DIR)/.prep
 
 build:		$(BUILD_32_and_64)
 

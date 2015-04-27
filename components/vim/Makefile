@@ -29,14 +29,12 @@ PATH=/usr/bin:/usr/gnu/bin
 
 COMPONENT_NAME=		vim
 COMPONENT_VERSION=	7.4
-IPS_COMPONENT_VERSION=	$(shell echo $(COMPONENT_HG_REV) | sed -e 's/-/./g' -e 's/v//')
-COMPONENT_SRC=		vim-$(COMPONENT_HG_REV)
+IPS_COMPONENT_VERSION=	$(shell echo $(HG_REV) | sed -e 's/-/./g' -e 's/v//')
+# COMPONENT_SRC* is autodefined by the prep-{SCM} Makefile fragment
 COMPONENT_PROJECT_URL=	http://www.vim.org/
-COMPONENT_ARCHIVE=	vim-$(COMPONENT_HG_REV).tar.bz2
-COMPONENT_ARCHIVE_URL=	$(EXTERNAL_ARCHIVE_MIRROR)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha256:e7f4f411d9ff4c9dbf0ec57cc5da2e9d5e586e69fe3d69f31cbce9118e443507
-COMPONENT_HG_URL=	https://vim.googlecode.com/hg
-COMPONENT_HG_REV=	v7-4
+
+HG_REPO=	https://vim.googlecode.com/hg
+HG_REV=		v7-4
 
 COMPONENT_BUGDB=	utility/vim
 
@@ -46,32 +44,11 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-HGREPODIR=		$(COMPONENT_NAME).hg
-TARBALLDIR=		$(COMPONENT_NAME)-$(COMPONENT_HG_REV)
-
-$(HGREPODIR)/.hg:
-	hg clone -U $(COMPONENT_HG_URL) $(@D)
-
-# Create the tarball.
-hgball: $(HGREPODIR)/.hg
-	cd $(HGREPODIR); \
-	hg pull; \
-	if [[ -n "$(COMPONENT_HG_NEWREV)" ]]; then \
-		newrev=$(COMPONENT_HG_NEWREV); \
-	else \
-		newrev=$$(hg tags | awk '$$1 ~ /^v7-/ {print $$1; exit}'); \
-	fi; \
-	hg archive -p vim-$$newrev -r $$newrev ../vim-$$newrev.tar.bz2; \
-	hg stat -ar --rev $(COMPONENT_HG_REV):$$newrev runtime src/po; \
-	digest=$$(digest -a sha256 ../vim-$$newrev.tar.bz2); \
-	$(GSED) -i \
-		-e "s/^COMPONENT_ARCHIVE_HASH=.*/COMPONENT_ARCHIVE_HASH=	sha256:$$digest/" \
-		-e "s/^COMPONENT_HG_REV=.*/COMPONENT_HG_REV=	$$newrev/" \
-		../Makefile
-
 PATCH_LEVEL =	0
 
 PKG_MACROS +=	VIMVER=vim74
+PKG_MACROS +=	HG_REPO=$(HG_REPO)
+PKG_MACROS +=	HG_REV=$(HG_REV)
 
 ASLR_MODE =	$(ASLR_ENABLE)
 

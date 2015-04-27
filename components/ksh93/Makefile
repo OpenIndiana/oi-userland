@@ -42,7 +42,6 @@ COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH = \
     sha256:d692d476fe4bb933e7b6459c0cc99a2e9f428bfd81a495ed4201ec197e070f57
 COMPONENT_ARCHIVE_URL = http://www2.research.att.com/~gsf/download/tgz/$(COMPONENT_ARCHIVE) 
-COMPONENT_PATCHES = 
 
 TPNO=		9000
 
@@ -60,29 +59,6 @@ COMPONENT_ARCHIVE_1= $(COMPONENT_NAME_1).$(COMPONENT_VERSION_1).tgz
 COMPONENT_ARCHIVE_HASH_1= \
     sha256:44ae3913e6c0c8992c6c3cba16864fd4c4a18c6da8e7d87c85a23060cea7cd1a
 COMPONENT_ARCHIVE_URL_1= http://www2.research.att.com/~gsf/download/tgz/$(COMPONENT_ARCHIVE_1)
-COMPONENT_PATCHES_1= compiler.patch path_utmp.patch\
-					 solaris_alias.patch \
-					 CR6919590.patch CR7033181.patch \
-					 CR7071431.patch CR7036535.patch \
-					 CRXXX_Error_Catalog.patch CR7025778.patch \
-					 CR7065478.patch CR7026179.patch \
-					 CR7065900.patch CR7110983.patch \
-					 CR7105086.patch multi_lang_arith.patch \
-					 CR7057565.patch CR7046434.patch \
-					 CR7032821.patch CR7009897.patch \
-					 CR6964621.patch CR7032068.patch \
-					 CR7061011.patch CR6934836.patch \
-					 CR7089799.patch CR6917338.patch \
-					 CR7019368.patch CR6729252.patch \
-					 MAP_TYPE_64_Bits.patch CR7167466.patch \
-					 CR7168611.patch CR7178717.patch \
-					 CR7175995.patch \
-					 CR7186440_ksh93_disable_predictive_editing.patch \
-					 CR7128313.patch  Bug15794787,15819673.patch \
-					 Bug15808407.patch Bug17714341.patch \
-					 17432413.patch 17824699.patch \
-					 17435456.patch 17851169.patch \
-					 Bug15993811.patch
 
 # Fixup HOSTTYPE to match uname output and bits
 HOSTTYPE32=sol11.$(shell uname -p)

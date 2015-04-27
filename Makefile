@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include make-rules/shared-macros.mk
@@ -26,6 +26,8 @@ include make-rules/shared-macros.mk
 SUBDIRS += components
 
 download:	TARGET = download
+unpack:		TARGET = unpack
+patch:		TARGET = patch
 prep:		TARGET = prep
 build:		TARGET = build
 install:	TARGET = install
@@ -39,7 +41,7 @@ component-hook:		TARGET = component-hook
 
 .DEFAULT:	publish
 
-download setup prep build install publish validate clean clobber \
+download setup unpack patch prep build install publish validate clean clobber \
 test component-hook: $(SUBDIRS)
 
 $(SUBDIRS):	FORCE

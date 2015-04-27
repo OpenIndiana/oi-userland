@@ -48,6 +48,8 @@ COMPONENT_ARCHIVE_1=	$(COMPONENT_SRC_1).tar.gz
 COMPONENT_ARCHIVE_HASH_1=	\
     sha256:85b1b2a1011fc01af550f1fe9e5a599a4c5f2a35d264d2804af1d05590a857c3
 COMPONENT_ARCHIVE_URL_1=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE_1)
+UNPACK_ARGS_1=	-r $(COMPONENT_SRC_1)
+PKG_PROTO_DIRS +=	$(COMPONENT_SRC_1)
 
 # HTML documentation
 COMPONENT_NAME_2=	otp_doc_html
@@ -56,6 +58,8 @@ COMPONENT_ARCHIVE_2=	$(COMPONENT_SRC_2).tar.gz
 COMPONENT_ARCHIVE_HASH_2=	\
     sha256:baba1d373c1faacf4a1a6ec1220d57d0cb2b977edb74f32cd58dc786361c6cf5
 COMPONENT_ARCHIVE_URL_2=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE_2)
+UNPACK_ARGS_2=	-r $(COMPONENT_SRC_2)
+PKG_PROTO_DIRS +=	$(COMPONENT_SRC_2)
 
 TPNO=			18548
 
@@ -111,24 +115,10 @@ configure:	$(CONFIGURE_64)
 build:	$(BUILD_64)
 
 install:	$(INSTALL_64)
-	# Undelivered useless files:
-	#    erlang/lib/crypto-*/priv/obj
-	#    erlang/lib/ssl-*/priv/obj
-	#    erlang/Install
-	#    erlang/misc
-	#    erlang/*/*.bat
-	#    manpages: start.1 werl.1
-	$(RM) -r documentation
-	$(MKDIR) documentation && cd documentation && \
-	$(UNPACK) $(UNPACK_ARGS) ../$(COMPONENT_ARCHIVE_1) && \
-	$(UNPACK) $(UNPACK_ARGS) ../$(COMPONENT_ARCHIVE_2)
 	# remove INSTALL_PREFIX from path
 	$(PERL) -pi -e "s|$(PROTO_DIR)||g" \
 		$(PROTO_DIR)/usr/lib/$(MACH64)/erlang/bin/erl \
 		$(PROTO_DIR)/usr/lib/$(MACH64)/erlang/releases/RELEASES
-
-clean::
-	$(RM) -r documentation
 
 test:	$(TEST_64)
 

@@ -450,15 +450,3 @@ ifeq	($(strip $(CANONICAL_MANIFESTS)),)
 	# workspace.
 	$(error Missing canonical manifest(s))
 endif
-
-# This converts required paths to containing package names for be able to
-# properly setup the build environment for a component.
-required-pkgs.mk:	$(MAKEFILE_PREREQ)
-	@echo "generating $@ from Makefile REQUIRED_* data"
-	@pkg search -H -l '<$(DEPENDS:%=% OR) /bin/true>' \
-		| sed -e 's/pkg:\/\(.*\)@.*/REQUIRED_PKGS += \1/g' >$@
-
-pre-prep:	required-pkgs.mk
-
-
-CLEAN_PATHS +=	required-pkgs.mk

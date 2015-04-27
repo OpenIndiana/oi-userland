@@ -70,6 +70,8 @@ system-prep::	$(WS_MACH)/requires.mk
 	@$(GMAKE) -f $(WS_MAKE_RULES)/environment.mk -f $< component-environment-prep
 
 download:		TARGET = download
+unpack:			TARGET = unpack
+patch:			TARGET = patch
 prep:			TARGET = prep
 build:			TARGET = build
 install:		TARGET = install
@@ -101,7 +103,7 @@ zone-build build install publish test: $(COMPONENT_DIRS)
 
 COMPONENT_DIRS.nosetup =	$(COMPONENT_DIRS:%=%.nosetup)
 
-download::	$(COMPONENT_DIRS.nosetup)
+download unpack patch::	$(COMPONENT_DIRS.nosetup)
 prep:		$(COMPONENT_DIRS.nosetup)
 component-environment-check::	$(COMPONENT_DIRS.nosetup)
 component-hook:	$(COMPONENT_DIRS.nosetup)

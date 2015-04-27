@@ -28,11 +28,9 @@ COMPONENT_VERSION=	1.9
 COMPONENT_PROJECT_URL=	http://www.ruby-lang.org/
 COMPONENT_BUGDB=	utility/ruby
 
-include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 # nothing to download or build; just publish the package
-download::
-prep configure build install test:
+build install test:
 
-clobber:	clean

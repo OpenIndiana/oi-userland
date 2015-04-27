@@ -30,16 +30,13 @@ COMPONENT_VERSION=	2014.2.2
 COMPONENT_PROJECT_URL=	http://www.openstack.org/
 IPS_COMPONENT_VERSION=	0.$(COMPONENT_VERSION)
 
+include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # Do not apply the standard license transforms for this component.
 LICENSE_TRANSFORMS =
-
-# common targets
-prep:
-	$(TOUCH) $@
 
 build:		FRC
 	@/bin/true

@@ -28,6 +28,8 @@ include ../../../make-rules/shared-macros.mk
 # really don't need to do for these static, uninteresting packages.  So we just
 # write a simple set of publication rules to get the packages into the repo.
 
+include $(WS_MAKE_RULES)/prep.mk
+
 PKGSEND =	/usr/bin/pkgsend
 PKGLINT =	/usr/bin/pkglint
 PKGMOGRIFY =	/usr/bin/pkgmogrify
@@ -46,8 +48,7 @@ PUBLISHED =		$(CANONICAL_MANIFESTS:%.p5m=$(MANIFEST_BASE)-%.published)
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-download::
-prep build install:
+build install:
 	@echo "nothing to be done for $@"
 
 $(BUILD_DIR):
@@ -79,5 +80,5 @@ publish: $(BUILD_DIR)/.published-$(MACH)
 %.p5m: 	%.p5m.$(MACH)
 	$(CP) $< $@
 	
-clobber clean:
+clobber clean::
 	$(RM) -r $(BUILD_DIR) $(GENERATED_ARCH_MANIFESTS)

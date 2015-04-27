@@ -19,7 +19,7 @@ component-environment-prep::
   build machines as those are managed by dedicated staff.
 
 download::
-  This target must be present in all Makefiles.  It can be used at the top level
+  This target is present in all Makefiles.  It can be used at the top level
   to act across all components, or on an individual component basis.  It is
   typically defined by including $(WS_MAKE_RULES)/prep.mk in your component
   Makefile.  This target depends on your component Makefile, so changes to your
@@ -29,12 +29,28 @@ download::
   macro should only be used in the calling environment via something like:
     $ gmake MAKEFILE_PREREQ= install
 
+unpack::
+  This target is present in all Makefiles.  It can be used at the top level
+  to act across all components, or on an individual component basis.  It is
+  typically defined by including $(WS_MAKE_RULES)/prep.mk in your component
+  Makefile.  This target depends on the previously described "download" target,
+  This target will unpack any downloaded source archives.  It is an interim
+  step in the source code preparation phase of the build.
+
+patch::
+  This target is present in all Makefiles.  It can be used at the top level
+  to act across all components, or on an individual component basis.  It is
+  typically defined by including $(WS_MAKE_RULES)/prep.mk in your component
+  Makefile.  This target depends on the previously described "unpack" target,
+  This target will patch any unpacked source.  It is an interim step in the
+  source code preparation phase of the build.
+
 prep::
-  This target must be present in all Makefiles.  It can be used at the top level
+  This target is present in all Makefiles.  It can be used at the top level
   to act across all components, or on an individual component basis.  It is 
   typically defined by including $(WS_MAKE_RULES)/prep.mk in your component
   Makefile.  It depends on the previously described "download" target, as well
-  as internal interum targets to unpack source archives and apply patches to
+  as internal interim targets to unpack source archives and apply patches to
   the unpacked source.
 
 configure:
@@ -74,22 +90,22 @@ pkglint::
   necessary to pkglint the manifests for a component.
 
 publish::
-  This target must be present in all Makefiles.  It can be used at the top level
+  This target is present in all Makefiles.  It can be used at the top level
   to act across all components, or on an individual component basis.  It is
-  often automatically defined by including $(WS_MAKE_RULES)/prep.mk.  It depends
+  automatically defined by including $(WS_MAKE_RULES)/ips.mk.  It depends
   on the previously described 'install' target and will perform a series of
   internal, intermediate steps to use the component package manifests to
   generate and publish packages for that component.
 
 clean::
-  This target must be present in all Makefiles.  It can be used at the top level
+  This target is present in all Makefiles.  It can be used at the top level
   to act across all components, or on an individual component basis.  It is
   often automatically defined by including one of the $(WS_MAKE_RULES)
   Makefile fragments.  It cleans up any files created by building the component
   with the exception of any downloaded files.
 
 clobber::
-  This target must be present in all Makefiles.  It can be used at the top level
+  This target is present in all Makefiles.  It can be used at the top level
   to act across all components, or on an individual component basis.  It is
   often automatically defined by including one of the $(WS_MAKE_RULES)
   Makefile fragments.  It depends on the previously described 'clean' target

@@ -31,6 +31,7 @@ COMPONENT_PROJECT_URL=	http://solaris-userland.java.net/
 COMPONENT_ARCHIVE_URL=	http://hg.java.net/solaris-userland-gate/
 COMPONENT_BUGDB=	gate-stuff/userland
 
+include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 $(WS_MACH)/requires.mk:
@@ -44,10 +45,6 @@ PKG_OPTIONS += -I $(BUILD_DIR)
 
 $(BUILD_DIR)/package.list:	$(BUILD_DIR) $(WS_MACH)/requires.mk
 	@echo $(REQUIRED_PACKAGES:%="depend type=require fmri=pkg:/%\\n") >$@
-
-download::
-
-prep:
 
 build install: $(BUILD_DIR)/package.list
 

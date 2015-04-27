@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 COMPONENT_PRE_INSTALL_ACTION += ( \
@@ -37,8 +37,6 @@ COMPONENT_POST_UNPACK_ACTION += ( \
 	      $(COMPONENT_SRC)/Zend/zend_language_parser.c \
 	      $(COMPONENT_SRC)/Zend/zend_language_parser.h \
 	      $(COMPONENT_SRC)/Zend/zend_language_parser.output )
-
-PATCHES = $(shell cd $(PATCH_DIR); echo [0-9]* $$(MACH)* )
 
 COMPONENT_PRE_CONFIGURE_ACTION = ( \
 	set -e; \
