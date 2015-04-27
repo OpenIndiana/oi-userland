@@ -18,17 +18,17 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libpcap
-COMPONENT_VERSION=	1.1.1
+COMPONENT_VERSION=	1.5.1
 COMPONENT_PROJECT_URL=	http://www.tcpdump.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:508cca15547e55d1318498b838456a21770c450beb2dc7d7d4a96d90816e5a85
+    sha256:259db4fe1e9f0b6b9c43a057ec5916dec7d0a821b00d6d6c4dff7db2445fa7e4
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)release/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libpcap
 
@@ -43,6 +43,8 @@ include ../../make-rules/ips.mk
 CC += $(CC_BITS)
 
 CFLAGS += "-DHAVE_CONFIG_H"
+
+CONFIGURE_OPTIONS  +=  --disable-dbus
 
 # common targets
 build:		$(BUILD_32_and_64)
