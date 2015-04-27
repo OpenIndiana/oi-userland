@@ -124,6 +124,23 @@ not suitable for upstream.
          self.assertEqual(global_sysconfig.get_config_var('CC'),
                           sysconfig.get_config_var('CC'))
  
+--- Python-3.4.3/Lib/imp.py.~1~	2015-02-25 03:27:44.000000000 -0800
++++ Python-3.4.3/Lib/imp.py	2015-04-27 11:24:24.814046529 -0700
+@@ -287,7 +287,13 @@
+                 return None, package_directory, ('', '', PKG_DIRECTORY)
+         for suffix, mode, type_ in get_suffixes():
+             file_name = name + suffix
+-            file_path = os.path.join(entry, file_name)
++            # If in 64-bit mode, append /64 to the path for .so files
++            # (if not already there).
++            if type_ == C_EXTENSION and sys.maxsize != 2**31 - 1 and \
++               entry[-3:] != '/64':
++                file_path = os.path.join(entry, "64", file_name)
++            else:
++                file_path = os.path.join(entry, file_name)
+             if os.path.isfile(file_path):
+                 break
+         else:
 --- Python-3.4.1/Lib/importlib/_bootstrap.py.~1~	2014-05-18 22:19:38.000000000 -0700
 +++ Python-3.4.1/Lib/importlib/_bootstrap.py	2014-08-27 08:46:00.145242823 -0700
 @@ -2046,6 +2046,14 @@
