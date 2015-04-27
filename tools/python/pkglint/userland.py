@@ -69,6 +69,8 @@ class UserlandActionChecker(base.ActionChecker):
 			"64",
 			"i86pc-solaris-64",     # perl path
 			"sun4-solaris-64",      # perl path
+                        "i86pc-solaris-thread-multi-64", # perl path
+                        "sun4-solaris-thread-multi-64", # perl path
 			"amd64-solaris" + solaris_ver,	# ruby path
 			"sparcv9-solaris" + solaris_ver	# ruby path
 		]
@@ -83,6 +85,10 @@ class UserlandActionChecker(base.ActionChecker):
 			re.compile('^.*/sparcv9(/.*)?$'),
 			re.compile('^.*/i86pc-solaris-64(/.*)?$'), # perl path
 			re.compile('^.*/sun4-solaris-64(/.*)?$'),  # perl path
+                        re.compile('^.*/i86pc-solaris-thread-multi-64(/.*)?$'),
+                                # perl path
+                        re.compile('^.*/sun4-solaris-thread-multi-64(/.*)?$'),
+                                # perl path
 			re.compile('^.*/amd64-solaris2\.[0-9]+(/.*)?$'),
 				# ruby path
 			re.compile('^.*/sparcv9-solaris2\.[0-9]+(/.*)?$')
