@@ -35,6 +35,8 @@ COMPONENT_PROJECT_URL=	http://www.vim.org/
 
 HG_REPO=	https://vim.googlecode.com/hg
 HG_REV=		v7-4
+HG_HASH= sha256:0c823290aebf4ea341be2f8280cc5906cdbbf772c54fa675afb0845983f23b60
+
 
 COMPONENT_BUGDB=	utility/vim
 

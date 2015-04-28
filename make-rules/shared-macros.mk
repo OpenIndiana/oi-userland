@@ -384,6 +384,7 @@ $(BUILD_DIR_64)/.tested-and-compared:			BITS=64
 BUILD_TOOLS ?=	/ws/on12-tools
 
 SPRO_ROOT =	$(BUILD_TOOLS)/SUNWspro
+SPRO_ROOT =	/opt
 SPRO_VROOT =	$(SPRO_ROOT)/solarisstudio12.4
 
 PARFAIT_ROOT =	$(BUILD_TOOLS)/parfait/parfait-tools-1.5.1
@@ -926,9 +927,10 @@ ifeq ($(COMPILER),gcc)
 REQUIRED_PACKAGES += developer/gcc-47
 endif
 ifeq ($(COMPILER),studio)
-ifeq ($(findstring /opt/solarisstudio12.4,$(CC)),)
-# uncomment this line if you need to install Studio
-REQUIRED_PACKAGES += developer/solarisstudio-124
+ifneq ($(findstring /opt/solarisstudio12.4,$(CC)),)
+# If we are setup to build with an installed compiler, require the package
+# we can uncomment this when we know that pkglint can find it.
+#REQUIRED_PACKAGES += /solarisstudio/developer/solarisstudio-124
 endif
 endif
 ifeq ($(PARFAIT_BUILD),yes)
