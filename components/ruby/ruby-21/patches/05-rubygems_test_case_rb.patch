@@ -1,0 +1,16 @@
+# Fix to test bug from upstream
+# https://github.com/ruby/ruby/commit/cc02a4ab7b71215de89c6bcfddc2fb2ef6f587be
+# which has not been applied to this version of Ruby
+
+diff -rup ruby-2.1.5-orig/lib/rubygems/test_case.rb ruby-2.1.5/lib/rubygems/test_case.rb
+--- ruby-2.1.5-orig/lib/rubygems/test_case.rb	2014-02-05 18:59:36.000000000 -0800
++++ ruby-2.1.5/lib/rubygems/test_case.rb	2015-04-03 16:45:09.901221000 -0700
+@@ -2,7 +2,7 @@
+ 
+ begin
+   gem 'minitest', '~> 4.0'
+-rescue NoMethodError
++rescue NoMethodError, Gem::LoadError
+   # for ruby tests
+ end
+ 

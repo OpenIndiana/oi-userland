@@ -1,0 +1,20 @@
+# Fix to test bug from upstream
+# https://github.com/ruby/ruby/commit/05eb6111d9f7f6485d8d264cbb24e6e9836322b8
+#
+--- ruby-2.1.5-orig/test/rubygems/test_gem_commands_contents_command.rb	2014-02-05 18:59:36.000000000 -0800
++++ ruby-2.1.5/test/rubygems/test_gem_commands_contents_command.rb	2015-04-07 14:26:02.000000000 -0700
+@@ -169,10 +169,10 @@
+     end
+ 
+     expected = [
+-      File.join(RbConfig::CONFIG['bindir'], 'default_command'),
+-      File.join(RbConfig::CONFIG['rubylibdir'], 'default/gem.rb'),
+-      File.join(RbConfig::CONFIG['archdir'], 'default_gem.so')
+-    ].sort.join "\n"
++      [RbConfig::CONFIG['bindir'], 'default_command'],
++      [RbConfig::CONFIG['rubylibdir'], 'default/gem.rb'],
++      [RbConfig::CONFIG['archdir'], 'default_gem.so']
++    ].sort.map{|a|File.join a}.join "\n"
+ 
+     assert_equal expected, @ui.output.chomp
+     assert_equal "", @ui.error

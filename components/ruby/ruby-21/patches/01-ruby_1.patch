@@ -1,0 +1,27 @@
+# Replace /usr/local/bin/ruby references in ruby(1) manpage.
+# Changes were developed in-house, are Solaris specific,
+# and not suitable for upstream.
+
+--- ruby-2.1.4-orig/man/ruby.1	Thu Jul  3 08:43:12 2014
++++ ruby-2.1.4/man/ruby.1	Wed Nov  5 15:31:32 2014
+@@ -203,9 +203,9 @@
+ .Li #!
+ on machines that don't support it, in the following manner:
+ .Bd -literal -offset indent
+-#! /usr/local/bin/ruby
++#! /usr/ruby/2.1/bin/ruby
+ # This line makes the next one a comment in Ruby \e
+-  exec /usr/local/bin/ruby -S $0 $*
++  exec /usr/ruby/2.1/bin/ruby -S $0 $*
+ .Ed
+ .Pp
+ .It Fl T Ns Op Ar level=1
+@@ -328,7 +328,7 @@
+ .Li ARGV
+ and set the corresponding variable in the script.  For example:
+ .Bd -literal -offset indent
+-#! /usr/local/bin/ruby -s
++#! /usr/ruby/2.1/bin/ruby -s
+ # prints "true" if invoked with `-xyz' switch.
+ print "true\en" if $xyz
+ .Ed

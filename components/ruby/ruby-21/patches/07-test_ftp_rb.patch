@@ -1,0 +1,49 @@
+# Fix to test bug from upstream:
+# https://github.com/ruby/ruby/commit/ba536e41549f694d5c7434edb967ee571b2161c2
+# 
+--- ruby-2.1.5-orig/test/net/ftp/test_ftp.rb	2012-05-22 05:35:18.000000000 -0700
++++ ruby-2.1.5/test/net/ftp/test_ftp.rb	2015-04-07 15:04:11.376937000 -0700
+@@ -727,7 +727,7 @@
+       sock.print("230 Login successful.\r\n")
+       commands.push(sock.gets)
+       sock.print("200 Switching to Binary mode.\r\n")
+-      commands.push(sock.recv(1024))
++      commands.push(sock.gets)
+       sock.print("225 No transfer to ABOR.\r\n")
+     }
+     begin
+@@ -740,7 +740,7 @@
+         assert_match(/\APASS /, commands.shift)
+         assert_equal("TYPE I\r\n", commands.shift)
+         ftp.abort
+-        assert_equal("ABOR\r", commands.shift)
++        assert_equal("ABOR\r\n", commands.shift)
+         assert_equal(nil, commands.shift)
+       ensure
+         ftp.close if ftp
+@@ -760,7 +760,7 @@
+       sock.print("230 Login successful.\r\n")
+       commands.push(sock.gets)
+       sock.print("200 Switching to Binary mode.\r\n")
+-      commands.push(sock.recv(1024))
++      commands.push(sock.gets)
+       sock.print("211 End of status\r\n")
+     }
+     begin
+@@ -773,7 +773,7 @@
+         assert_match(/\APASS /, commands.shift)
+         assert_equal("TYPE I\r\n", commands.shift)
+         ftp.status
+-        assert_equal("STAT\r", commands.shift)
++        assert_equal("STAT\r\n", commands.shift)
+         assert_equal(nil, commands.shift)
+       ensure
+         ftp.close if ftp
+@@ -795,6 +795,7 @@
+         end
+         sock = server.accept
+         begin
++          sock.setsockopt(Socket::SOL_SOCKET, Socket::SO_OOBINLINE, 1)
+           yield(sock)
+           sock.shutdown(Socket::SHUT_WR)
+           sock.read_timeout = 1
