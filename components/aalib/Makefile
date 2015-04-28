@@ -69,6 +69,11 @@ COMPONENT_TEST_CMD =	perl -E 'say "\n" x 40' | ./aatest
 COMPONENT_TEST_ARGS =	-kbddriver stdin -driver stdout
 COMPONENT_TEST_TARGETS =
 
+COMPONENT_SYSTEM_TEST_DIR =	$(SOURCE_DIR)/src
+COMPONENT_SYSTEM_TEST_CMD =	perl -E 'say "\n" x 40' | /usr/demo/aalib/aatest
+COMPONENT_SYSTEM_TEST_ARGS =	-kbddriver stdin -driver stdout
+COMPONENT_SYSTEM_TEST_TARGETS =
+
 # Master test results are the same for both 32-bit and 64-bit, so override
 # here, rather than create multiple identical master files.
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
@@ -83,6 +88,7 @@ build:		$(BUILD_32_and_64)
 install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
+system-test:	$(SYSTEM_TEST_32_and_64)
 
 
 REQUIRED_PACKAGES += library/slang

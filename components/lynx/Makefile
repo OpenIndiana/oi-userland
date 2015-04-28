@@ -61,6 +61,15 @@ COMPONENT_TEST_ARGS = -dump \
 	http://www.cameronmoll.com/mobile/mkp/pg4.html
 COMPONENT_TEST_TARGETS =
 
+COMPONENT_SYSTEM_TEST_DIR =
+COMPONENT_SYSTEM_TEST_CMD =		/usr/bin/lynx
+COMPONENT_SYSTEM_TEST_ARGS =		-dump \
+	http://www.cameronmoll.com/mobile/mkp/pg1.html \
+	http://www.cameronmoll.com/mobile/mkp/pg2.html \
+	http://www.cameronmoll.com/mobile/mkp/pg3.html \
+	http://www.cameronmoll.com/mobile/mkp/pg4.html
+COMPONENT_SYSTEM_TEST_TARGETS =
+
 ASLR_MODE = $(ASLR_ENABLE)
 
 configure:	$(CONFIGURE_64)
@@ -70,6 +79,7 @@ build:		$(BUILD_64)
 install:	$(INSTALL_64)
 
 test:		$(TEST_64)
+system-test:	$(SYSTEM_TEST_64)
 
 REQUIRED_PACKAGES += library/libidn
 REQUIRED_PACKAGES += library/ncurses

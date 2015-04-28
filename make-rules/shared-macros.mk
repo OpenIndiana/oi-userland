@@ -345,7 +345,7 @@ SYSTEM_TEST_NO_ARCH =		$(BUILD_DIR_NO_ARCH)/.system-tested-and-compared
 SYSTEM_TEST_32 =		$(BUILD_DIR_32)/.system-tested-and-compared
 SYSTEM_TEST_64 =		$(BUILD_DIR_64)/.system-tested-and-compared
 endif
-SYSTEM_TEST_32_and_64 =	$(TEST_32) $(TEST_64)
+SYSTEM_TEST_32_and_64 =	$(SYSTEM_TEST_32) $(SYSTEM_TEST_64)
 ifeq ($(strip $(wildcard $(COMPONENT_TEST_RESULTS_DIR)/results-*.master)),)
 TEST_NO_ARCH =		$(BUILD_DIR_NO_ARCH)/.tested
 TEST_32 =		$(BUILD_DIR_32)/.tested
@@ -379,6 +379,15 @@ $(BUILD_DIR_NO_ARCH)/.tested-and-compared:		BITS=32
 $(BUILD_DIR_32)/.tested-and-compared:			BITS=32
 $(BUILD_DIR_64)/.tested-and-compared:			BITS=64
 
+$(BUILD_DIR_NO_ARCH)/.system-tested:			$(BUILD_DIR_32)
+$(BUILD_DIR_32)/.system-tested:				$(BUILD_DIR_32)
+$(BUILD_DIR_64)/.system-tested:				$(BUILD_DIR_64)
+$(BUILD_DIR_NO_ARCH)/.system-tested-and-compared:	$(BUILD_DIR_32)
+$(BUILD_DIR_32)/.system-tested-and-compared:		$(BUILD_DIR_32)
+$(BUILD_DIR_64)/.system-tested-and-compared:		$(BUILD_DIR_64)
+
+$(BUILD_DIR_32) $(BUILD_DIR_64):
+	$(MKDIR) $(@)
 
 # BUILD_TOOLS is the root of all tools not normally installed on the system.
 BUILD_TOOLS ?=	/ws/on12-tools
