@@ -1,0 +1,22 @@
+Home brewed patch
+
+--- hplip-3.15.4/installer/dcheck.py.~1~	2015-04-28 08:40:16.682064943 +0300
++++ hplip-3.15.4/installer/dcheck.py	2015-04-28 08:42:39.544791293 +0300
+@@ -364,10 +364,13 @@
+     except ImportError:
+         return '-'
+     else:
+-#        LIBC = ctypes.CDLL(ctypes.util.find_library('c'), use_errno=True)
+-        LIBC = ctypes.CDLL(ctypes.util.find_library('c'),ctypes.DEFAULT_MODE,None, True)
+-        LIBC.gnu_get_libc_version.restype = ctypes.c_char_p
+-        return LIBC.gnu_get_libc_version()
++        try:
++#           LIBC = ctypes.CDLL(ctypes.util.find_library('c'), use_errno=True)
++            LIBC = ctypes.CDLL(ctypes.util.find_library('c'),ctypes.DEFAULT_MODE,None, True)
++            LIBC.gnu_get_libc_version.restype = ctypes.c_char_p
++            return LIBC.gnu_get_libc_version()
++        except:
++            return '-'
+ 
+ def get_python_xml_version():
+     try:
