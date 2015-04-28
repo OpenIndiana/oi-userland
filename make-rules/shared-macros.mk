@@ -384,7 +384,6 @@ $(BUILD_DIR_64)/.tested-and-compared:			BITS=64
 BUILD_TOOLS ?=	/ws/on12-tools
 
 SPRO_ROOT =	$(BUILD_TOOLS)/SUNWspro
-SPRO_ROOT =	/opt
 SPRO_VROOT =	$(SPRO_ROOT)/solarisstudio12.4
 
 PARFAIT_ROOT =	$(BUILD_TOOLS)/parfait/parfait-tools-1.5.1
