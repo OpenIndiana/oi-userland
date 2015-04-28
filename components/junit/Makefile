@@ -38,17 +38,15 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ant.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-JAVA_HOME = $(JAVA7_HOME)
-
 # These ARGS override what is set in build.xml
 COMPONENT_BUILD_ARGS 	+= -Ddist=${PROTO_DIR}
 COMPONENT_BUILD_ARGS    += -Djavadocdir=${PROTO_DIR}
 COMPONENT_BUILD_ARGS    += -Dversion-status=""
+COMPONENT_BUILD_ARGS    += -Dadditionalparam="-Xdoclint:none"
 COMPONENT_BUILD_TARGETS += dist
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-# common targets
 build:		$(BUILD_32)
 	
 install:	build	
@@ -63,5 +61,4 @@ install:	build
 # OK (22 tests)
 test:		$(NO_TESTS)
 		
-
-REQUIRED_PACKAGES += runtime/java/jre-7
+REQUIRED_PACKAGES += runtime/java/jre-8

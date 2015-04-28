@@ -1,0 +1,40 @@
+This is the community's fix for using Java 8.
+Community bug:
+https://github.com/junit-team/junit/issues/749
+Community code:
+https://github.com/stefanbirkner/junit/commit/69de4c23996fe320e8345f273e2e35e529f0fdf3
+
+
+--- junit-r4.11/src/main/java/org/junit/internal/MethodSorter.java.orig	Thu Oct  9 11:09:18 2014
++++ junit-r4.11/src/main/java/org/junit/internal/MethodSorter.java	Thu Oct  9 11:14:09 2014
+@@ -1,8 +1,10 @@
+ package org.junit.internal;
+ 
+ import java.lang.reflect.Method;
+-import java.util.Arrays;
++import java.util.ArrayList;
++import java.util.Collections;
+ import java.util.Comparator;
++import java.util.List;
+ 
+ import org.junit.FixMethodOrder;
+ 
+@@ -52,11 +54,16 @@
+         Comparator<Method> comparator = getSorter(clazz.getAnnotation(FixMethodOrder.class));
+ 
+         Method[] methods = clazz.getDeclaredMethods();
++        List<Method> x = new ArrayList<Method>();
++        for (Method method : methods)
++            if (!method.isBridge() && !method.isSynthetic())
++                x.add(method);
++
+         if (comparator != null) {
+-            Arrays.sort(methods, comparator);
++            Collections.sort(x, comparator);
+         }
+ 
+-        return methods;
++        return x.toArray(new Method[x.size()]);
+     }
+ 
+     private MethodSorter() {
