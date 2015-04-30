@@ -19,10 +19,10 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2009, 2015, Oracle and/or its affiliates. All rights reserved.
 
 DEFAULT_FILE="/etc/default/sendmail"
-SENDMAIL="/usr/lib/sendmail"
+SENDMAIL="/usr/lib/inet/sendmail"
 PATH="/usr/bin:/usr/sbin"
 export PATH
 
