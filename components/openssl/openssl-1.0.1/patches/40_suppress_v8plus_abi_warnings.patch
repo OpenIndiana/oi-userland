@@ -1,0 +1,46 @@
+#
+# Patch developed in-house. Solaris-specific; not suitable for upstream.
+#
+# Suppress warnings about sparcv8+ ABI violation
+# when building T4-specific modules as 32-bit:
+#    v8+ ABI violation: illegal use of %i or %l register as rs1 in "brnz,a" instruction
+# This has been confirmed as a valid usecase and is thus intentional.
+#
+--- a/crypto/aes/Makefile.orig	čt dub 30 03:15:03 2015
++++ b/crypto/aes/Makefile	čt dub 30 03:19:32 2015
+@@ -72,6 +72,9 @@
+ aest4-sparcv9.s: asm/aest4-sparcv9.pl
+ 	$(PERL) asm/aest4-sparcv9.pl $(CFLAGS) > $@
+ 
++aest4-sparcv9.o: aest4-sparcv9.s
++	$(AS) $(ASFLAGS) -Wa,-n -o $@ $^
++
+ aes-ppc.s:	asm/aes-ppc.pl
+ 	$(PERL) asm/aes-ppc.pl $(PERLASM_SCHEME) $@
+ 
+--- a/crypto/sha/Makefile.orig	čt dub 30 14:37:32 2015
++++ b/crypto/sha/Makefile	čt dub 30 14:40:49 2015
+@@ -71,6 +71,8 @@
+ sha1-sparcv9.S:	asm/sha1-sparcv9.pl;	$(PERL) asm/sha1-sparcv9.pl $@ $(CFLAGS)
+ sha256-sparcv9.S:asm/sha512-sparcv9.pl;	$(PERL) asm/sha512-sparcv9.pl $@ $(CFLAGS)
+ sha512-sparcv9.S:asm/sha512-sparcv9.pl;	$(PERL) asm/sha512-sparcv9.pl $@ $(CFLAGS)
++sha512-sparcv9.o: sha512-sparcv9.S
++	$(CC) $(CFLAGS) -Wa,-n -c -o $@ $^
+ 
+ sha1-ppc.s:	asm/sha1-ppc.pl;	$(PERL) asm/sha1-ppc.pl $(PERLASM_SCHEME) $@
+ sha256-ppc.s:	asm/sha512-ppc.pl;	$(PERL) asm/sha512-ppc.pl $(PERLASM_SCHEME) $@
+--- a/crypto/bn/Makefile.orig	čt dub 30 14:43:20 2015
++++ b/crypto/bn/Makefile	čt dub 30 14:45:11 2015
+@@ -79,8 +79,12 @@
+ 	$(PERL) asm/sparcv9-mont.pl $(CFLAGS) > $@
+ vis3-mont.s:		asm/vis3-mont.pl
+ 	$(PERL) asm/vis3-mont.pl $(CFLAGS) > $@
++vis3-mont.o:	vis3-mont.s
++	$(AS) $(ASFLAGS) -Wa,-n -o $@ $^
+ sparct4-mont.S:	asm/sparct4-mont.pl
+ 	$(PERL) asm/sparct4-mont.pl $(CFLAGS) > $@
++sparct4-mont.o:	sparct4-mont.S
++	$(CC) $(CFLAGS) -Wa,-n -c -o $@ $^
+ sparcv9-gf2m.S:	asm/sparcv9-gf2m.pl
+ 	$(PERL) asm/sparcv9-gf2m.pl $(CFLAGS) > $@
+ 
