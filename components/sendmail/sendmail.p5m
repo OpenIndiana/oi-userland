@@ -168,11 +168,6 @@ link path=usr/bin/mailq target=../lib/inet/mailq mediator=sendmail \
     mediator-implementation=sendmail mediator-priority=vendor
 file usr/sbin/mailstats path=usr/bin/mailstats mode=0555
 file usr/sbin/praliases path=usr/bin/praliases mode=0555
-file MailHeader.html path=usr/lib/help/auths/locale/C/MailHeader.html
-file MailQueue.html path=usr/lib/help/auths/locale/C/MailQueue.html
-file SmfSendmailStates.html \
-    path=usr/lib/help/auths/locale/C/SmfSendmailStates.html
-file RtMailMngmnt.html path=usr/lib/help/profiles/locale/C/RtMailMngmnt.html
 file usr/bin/mailq path=usr/lib/inet/mailq mode=4555
 file usr/lib/sendmail path=usr/lib/inet/sendmail group=smmsp mode=2555 \
     restart_fmri=*sendmail*
@@ -221,11 +216,5 @@ license LICENSE license=sendmail
 # sendmail's default LDA is mail.local, so specify a dependency on its
 # package, but not at any particular version.
 depend type=group fmri=pkg:/mail/mail.local
-# One of the RBAC help files came from core-os, so set an optional dependency
-# on that package at a version greater than when it left that package, but
-# less than when it moved here.  999 is an arbitrary number larger than the
-# maximum number of respins that ON might have in Solaris 12 build 66; this
-# move happened in S12 build 67.
-depend type=optional fmri=system/core-os@5.12-5.12.0.0.0.66.999
 depend type=require \
     fmri=pkg:/library/libmilter@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
