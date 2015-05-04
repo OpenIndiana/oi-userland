@@ -28,7 +28,7 @@ GIT =		/usr/bin/git
 # GIT_COMMIT_ID{_[0-9]+} to match.
 #
 
-TMP_SUFFIXES = $(subst GIT_REPO_,, $(filter GIT_REPO_%, $(.VARIABLES)))
+GIT_SUFFIXES = $(subst GIT_REPO_,, $(filter GIT_REPO_%, $(.VARIABLES)))
 
 define git-rules
 ifdef GIT_REPO$(1)
@@ -74,4 +74,4 @@ endef
 # cleanup macros.
 #
 $(eval $(call git-rules,))
-$(foreach suffix, $(TMP_SUFFIXES), $(eval $(call git-rules,_$(suffix))))
+$(foreach suffix, $(GIT_SUFFIXES), $(eval $(call git-rules,_$(suffix))))

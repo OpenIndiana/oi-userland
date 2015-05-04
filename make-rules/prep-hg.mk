@@ -28,7 +28,7 @@ HG =		/usr/bin/hg
 # HG_REV{_[0-9]+} to match.
 #
 
-TMP_SUFFIXES = $(subst HG_REPO_,, $(filter HG_REPO_%, $(.VARIABLES)))
+HG_SUFFIXES = $(subst HG_REPO_,, $(filter HG_REPO_%, $(.VARIABLES)))
 
 define mercurial-rules
 ifdef HG_REPO$(1)
@@ -72,4 +72,4 @@ endef
 # cleanup macros.
 #
 $(eval $(call mercurial-rules,))
-$(foreach suffix, $(TMP_SUFFIXES), $(eval $(call mercurial-rules,_$(suffix))))
+$(foreach suffix, $(HG_SUFFIXES), $(eval $(call mercurial-rules,_$(suffix))))

@@ -27,7 +27,7 @@ UNPACK =		$(WS_TOOLS)/userland-unpack
 # Anything that we downloaded and want to unpack must have a
 # COMPONENT_ARCHIVE{_[0-9]+} macro.
 #
-TMP_SUFFIXES = $(subst COMPONENT_ARCHIVE_,, \
+PCK_SUFFIXES = $(subst COMPONENT_ARCHIVE_,, \
                 $(filter COMPONENT_ARCHIVE_%, $(.VARIABLES)))
 
 # Template for unpacking rules.
@@ -66,4 +66,4 @@ endef
 # cleanup macros.
 #
 $(eval $(call unpack-rules,))
-$(foreach suffix, $(TMP_SUFFIXES), $(eval $(call unpack-rules,_$(suffix))))
+$(foreach suffix, $(PCK_SUFFIXES), $(eval $(call unpack-rules,_$(suffix))))

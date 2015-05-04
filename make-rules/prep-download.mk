@@ -35,7 +35,7 @@ FETCH =		$(WS_TOOLS)/userland-fetch
 # the file and signature for verification of its contents.
 #
 
-TMP_SUFFIXES = $(subst COMPONENT_ARCHIVE_URL_,, \
+URL_SUFFIXES = $(subst COMPONENT_ARCHIVE_URL_,, \
 		$(filter COMPONENT_ARCHIVE_URL_%, $(.VARIABLES)))
 
 # Template for download rules.
@@ -64,4 +64,4 @@ endef
 # cleanup macros.
 #
 $(eval $(call download-rules,))
-$(foreach suffix, $(TMP_SUFFIXES), $(eval $(call download-rules,_$(suffix))))
+$(foreach suffix, $(URL_SUFFIXES), $(eval $(call download-rules,_$(suffix))))

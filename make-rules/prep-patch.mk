@@ -54,7 +54,7 @@ PATCHES =	$(shell find $(PATCH_DIR) $(PARFAIT_PATCH_DIR) -type f \
 				LC_COLLATE=C sort)
 PATHCES +=	$(EXTRA_PATCHES)
 
-TMP_SUFFIXES = $(patsubst .patch_%,%, $(filter-out .patch,$(suffix $(PATCHES))))
+PCH_SUFFIXES = $(patsubst .patch_%,%, $(filter-out .patch,$(suffix $(PATCHES))))
 
 define patch-rule
 
@@ -87,5 +87,5 @@ endef
 # Define the rules required to download any source archives and augment any
 # cleanup macros.
 #
-$(foreach suffix, $(TMP_SUFFIXES), $(eval $(call patch-rule,_$(suffix))))
+$(foreach suffix, $(PCH_SUFFIXES), $(eval $(call patch-rule,_$(suffix))))
 $(eval $(call patch-rule,))	# this must be last so we don't drop *.patch_%.

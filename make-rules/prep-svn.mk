@@ -28,7 +28,7 @@ SVN =		/usr/bin/svn
 # SVN_REV{_[0-9]+} to match.
 #
 
-TMP_SUFFIXES = $(subst SVN_REPO_,, $(filter SVN_REPO_%, $(.VARIABLES)))
+SVN_SUFFIXES = $(subst SVN_REPO_,, $(filter SVN_REPO_%, $(.VARIABLES)))
 
 define subversion-rules
 ifdef SVN_REPO$(1)
@@ -71,4 +71,4 @@ endef
 # cleanup macros.
 #
 $(eval $(call subversion-rules,))
-$(foreach suffix, $(TMP_SUFFIXES), $(eval $(call subversion-rules,_$(suffix))))
+$(foreach suffix, $(SVN_SUFFIXES), $(eval $(call subversion-rules,_$(suffix))))
