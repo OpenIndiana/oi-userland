@@ -206,9 +206,6 @@ parfait:
 	$(MAKE) PARFAIT_BUILD=yes parfait
 endif
 
-clean:: 
-	$(RM) -r $(BUILD_DIR) $(PROTO_DIR)
-
 ifneq ($(findstring 5.12, $(PERL_VERSIONS)),)
 REQUIRED_PACKAGES += runtime/perl-512
 endif

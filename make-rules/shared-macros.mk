@@ -923,6 +923,9 @@ COMPONENT_HOOK ?=	echo $(COMPONENT_NAME) $(COMPONENT_VERSION)
 component-hook:
 	@$(COMPONENT_HOOK)
 
+CLEAN_PATHS +=	$(BUILD_DIR)
+CLOBBER_PATHS +=	$(PROTO_DIR)
+
 #
 # Packages with tools that are required to build Userland components
 #

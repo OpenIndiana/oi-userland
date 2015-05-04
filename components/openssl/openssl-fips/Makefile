@@ -55,7 +55,7 @@ FAKE_MAKE = fips-gmake
 FAKE_CC = cc
 FAKE_APPS = $(FAKE_ISALIST) $(FAKE_MAKE) $(FAKE_CC)
 
-CLOBBER_PATHS += $(FAKE_APPS)
+CLEAN_PATHS += $(FAKE_APPS)
 
 # Do not use $(PWD), it would not work if run from a different directory with
 # "gmake -C" as we do from openssl-1.0.1

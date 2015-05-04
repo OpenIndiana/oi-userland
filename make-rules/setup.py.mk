@@ -226,9 +226,6 @@ parfait:
 	$(MAKE) PARFAIT_BUILD=yes parfait
 endif
 
-clean::
-	$(RM) -r $(SOURCE_DIR) $(BUILD_DIR)
-
 # Make it easy to construct a URL for a pypi source download.  This
 # construct supports an optional call to a number from
 # NUM_EXTRA_ARCHIVES for multiple archive downloads.

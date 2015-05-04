@@ -52,7 +52,6 @@ PARFAIT_PATCH_DIR =	parfait
 PATCHES =	$(shell find $(PATCH_DIR) $(PARFAIT_PATCH_DIR) -type f \
 			 -name '$(PATCH_PATTERN)' 2>/dev/null | \
 				LC_COLLATE=C sort)
-PATHCES +=	$(EXTRA_PATCHES)
 
 PCH_SUFFIXES = $(patsubst .patch_%,%, $(filter-out .patch,$(suffix $(PATCHES))))
 

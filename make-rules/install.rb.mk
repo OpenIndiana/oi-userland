@@ -46,7 +46,4 @@ $(BUILD_DIR)/%/.installed:      $(BUILD_DIR)/%/.built
 	$(COMPONENT_POST_INSTALL_ACTION)
 	$(TOUCH) $@
 
-clean::
-	$(RM) -r $(SOURCE_DIR) $(BUILD_DIR)
-
 REQUIRED_PACKAGES += runtime/ruby

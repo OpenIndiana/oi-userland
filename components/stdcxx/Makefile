@@ -42,7 +42,7 @@ COMPONENT_BUGDB=	library/libstdcxx
 
 TPNO=			9048
 
-CLOBBER_PATHS += install.sh
+CLEAN_PATHS += install.sh
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk

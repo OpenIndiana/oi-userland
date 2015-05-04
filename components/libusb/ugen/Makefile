@@ -46,8 +46,7 @@ LICENSE_TRANSFORMS =
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-clobber::
-	$(RM) $(SOURCE_DIR)/.prep
+CLEAN_PATHS +=	$(SOURCE_DIR)/.prep
 
 build:		$(BUILD_32_and_64)
 

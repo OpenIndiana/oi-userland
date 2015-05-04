@@ -46,7 +46,7 @@ include $(WS_MAKE_RULES)/lint-libraries.mk
 
 PATCH_LEVEL = 0
 
-CLOBBER_PATHS += libgmp.pc libgmpxx.pc
+CLEAN_PATHS += libgmp.pc libgmpxx.pc
 
 CFLAGS += -features=extinl,extensions
 CFLAGS += -xustr=ascii_utf16_ushort -xcsi

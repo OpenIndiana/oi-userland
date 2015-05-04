@@ -43,7 +43,7 @@ include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 include $(WS_MAKE_RULES)/lint-libraries.mk
 
-CLOBBER_PATHS += libmpfr.pc
+CLEAN_PATHS += libmpfr.pc
 PATCH_LEVEL = 0
 
 CFLAGS += -features=extinl,extensions

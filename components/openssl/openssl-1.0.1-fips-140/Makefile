@@ -48,11 +48,6 @@ TPNO=			21965
 # OpenSSL FIPS directory
 OPENSSL_FIPS_DIR = $(COMPONENT_DIR)/../openssl-fips
 
-# Note that the SPARC patch above does not fit this pattern. That is intentional
-# and a reason why we can add it to the EXTRA_PATCHES variable so that we use it
-# only on SPARC.
-PATCH_PATTERN = [0-9][0-9]*.patch
-
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk

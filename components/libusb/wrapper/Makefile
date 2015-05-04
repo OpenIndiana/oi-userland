@@ -45,6 +45,8 @@ COMPONENT_INSTALL_ARGS += BITS=$(BITS)
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
+CLEAN_PATHS +=	$(SOURCE_DIR)/.prep
+
 $(BUILD_DIR)/libusb-64.pc:	src/libusb-64.pc
 	/bin/sed -e "s#MACH64#$(MACH64)#g" <$< >$@
 
