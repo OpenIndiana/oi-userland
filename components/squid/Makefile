@@ -28,14 +28,13 @@ include ../../make-rules/shared-macros.mk
 PATH=/usr/bin:/usr/gnu/bin:/usr/sbin:/usr/perl5/bin
 
 COMPONENT_NAME=         squid
-COMPONENT_VERSION=      3.1.23
-COMPONENT_REVISION=	3
+COMPONENT_VERSION=      3.5.4
 COMPONENT_PROJECT_URL=  http://www.squid-cache.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:ba5f6a7000a032f2315923c1b8d0b37458d33a7f59d603facecf9e8c12470b34
-COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)Versions/v3/3.1/$(COMPONENT_ARCHIVE)
+    sha256:dce615d08e349caf3975fc5d51ce4c3c69b9995fb83f51dc5d55ae873d8bf6a4
+COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)Versions/v3/3.5/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/squid
 
 include ../../make-rules/prep.mk
@@ -43,6 +42,12 @@ include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
 COMPILER = gcc
+
+COMPONENT_PREP_ACTION =        ( cd $(@D) &&\
+					libtoolize --copy --force &&\
+					aclocal -I acinclude &&\
+					automake -c -f -a &&\
+					autoconf)
 
 CFLAGS += -I/usr/include/kerberosv5
 CFLAGS += $(CPP_LARGEFILES)
@@ -56,14 +61,18 @@ CONFIGURE_OPTIONS += --sharedstatedir=/var/squid
 CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)/squid
 CONFIGURE_OPTIONS += --mandir=$(CONFIGURE_PREFIX)/man
 CONFIGURE_OPTIONS += --enable-arp-acl
-CONFIGURE_OPTIONS += --enable-auth='basic,digest,negotiate,ntlm'
+CONFIGURE_OPTIONS += --enable-auth
+CONFIGURE_OPTIONS += --enable-auth-basic
+CONFIGURE_OPTIONS += --enable-auth-digest
+CONFIGURE_OPTIONS += --enable-auth-negotiate
+CONFIGURE_OPTIONS += --enable-auth-ntlm
 CONFIGURE_OPTIONS += --enable-basic-auth-helpers='DB,NCSA,YP,LDAP,PAM,getpwnam,MSNT,POP3,multi-domain-NTLM,SMB,SASL'
 CONFIGURE_OPTIONS += --enable-cache-digests
 CONFIGURE_OPTIONS += --enable-carp
 CONFIGURE_OPTIONS += --enable-coss-aio-ops
 CONFIGURE_OPTIONS += --enable-delay-pools
 CONFIGURE_OPTIONS += --enable-digest-auth-helpers='ldap,password'
-CONFIGURE_OPTIONS += --enable-external-acl-helpers='ip_user,unix_group,ldap_group,wbinfo_group'
+CONFIGURE_OPTIONS += --enable-external-acl-helpers='delayer,file_userip,session,unix_group,wbinfo_group,LDAP_group'
 CONFIGURE_OPTIONS += --enable-follow-x-forwarded-for
 CONFIGURE_OPTIONS += --enable-forward-log
 CONFIGURE_OPTIONS += --enable-forw-via-db
