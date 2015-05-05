@@ -49,7 +49,7 @@ COMPONENT_TEST_ARGS =	--resultlog $(@D)/testresults
 COMPONENT_TEST_ARGS +=	-p no:codechecker
 COMPONENT_TEST_ENV +=	PATH=$$PATH:$(BUILD_DIR)/bin
 
-$(SOURCE_DIR)/pycparser/ply/lex.py: $(SOURCE_DIR)/.patched
+$(SOURCE_DIR)/pycparser/ply/lex.py: $(SOURCE_DIR)/.prep
 
 $(BUILD_DIR)/license.ply: $(SOURCE_DIR)/pycparser/ply/lex.py
 	nawk '/^# Copyright / {p=1} /^# ---/ {p=0} p == 1 {print substr($$0, 3)}' $< > $@
