@@ -26,14 +26,14 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         rrdtool
-COMPONENT_VERSION=      1.4.3
+COMPONENT_VERSION=      1.4.9
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:1aecfba0cb255aef6ae27534825022b83996abec0b7b94576e3b9d061ddf6d73
+COMPONENT_ARCHIVE_HASH= sha256:3e2826e0d60aaf85313da35b3c0d3a926748fe482b4ada766a325a83b60125cc
 COMPONENT_ARCHIVE_URL=  http://oss.oetiker.ch/rrdtool/pub/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://oss.oetiker.ch/rrdtool/
 COMPONENT_BUGDB=        utility/rrdtool
-TPNO=                   9344
+TPNO=                   21430 
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

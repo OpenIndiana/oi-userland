@@ -3,9 +3,9 @@
 # The last two changes are copied from Desktop consolidation,
 # not for upstream
 
---- rrdtool-1.4.3/configure.ac     2014-02-03 15:33:25.524125781 +0530
-+++ rrdtool-1.4.3/configure.ac     2015-02-06 15:34:40.410120677 +0530
-@@ -544,8 +544,6 @@ PERL_VERSION
+--- rrdtool-1.4.9/configure.ac 	Wed Apr 15 15:32:19 2015
++++ rrdtool-1.4.9/configure.ac 	Wed Apr 15 16:32:20 2015
+@@ -555,8 +555,6 @@ PERL_VERSION
  CONFIGURE_PART(Prep for Building Language Bindings)
    
  dnl Check for Perl and friends
@@ -14,16 +14,16 @@
  AC_PATH_PROG(PERL, perl, no)
  AC_PATH_PROG(POD2MAN, pod2man, no)
  AC_PATH_PROG(POD2HTML, pod2html, no)
-@@ -596,7 +594,7 @@ PERL_SETUP
+@@ -607,7 +605,7 @@ PERL_SETUP
  test "$langpref" = '$(DESTDIR)NONE' && langpref='$(DESTDIR)'$ac_default_prefix
  test "$langpref" = "NONE" && langpref=$ac_default_prefix
  
--PERL_MAKE_OPTIONS="PREFIX=$langpref LIB=$langpref/lib/perl/$PERL_VERSION"
+-PERL_MAKE_OPTIONS="PREFIX=$langpref INSTALL_BASE= LIB=$langpref/lib/perl/$PERL_VERSION"
 +PERL_MAKE_OPTIONS="PREFIX=$langpref"
  
  dnl pass additional perl options when generating Makefile from Makefile.PL
  AC_ARG_ENABLE(perl-site-install,
-@@ -618,6 +616,22 @@ PERL_SETUP
+@@ -629,6 +627,22 @@ PERL_SETUP
     if test ! -z "$PERLLDFLAGS"; then
         PERL_MAKE_OPTIONS="$PERL_MAKE_OPTIONS LDFLAGS=$PERLLDFLAGS"
     fi
@@ -46,7 +46,7 @@
  fi
          
  AC_ARG_WITH(perl-options,
-@@ -725,8 +739,15 @@ LUA_EOF
+@@ -736,8 +750,15 @@ LUA_EOF
        LIBS=
        lua_havelib=no
        LUA_HAVE_COMPAT51=DONT_HAVE_COMPAT51
@@ -64,7 +64,7 @@
            [lua_havelib=LUA$lua_vndot],
            [AC_SEARCH_LIBS(luaL_module, lualib$lua_vndot lualib$lua_vdot lualib,
              [lua_havelib=$lua_vndot; $LUA -l compat-5.1 2>/dev/null;
-@@ -763,7 +784,12 @@ LUA_SETUP
+@@ -774,7 +795,12 @@ LUA_SETUP
            done
          fi
  
