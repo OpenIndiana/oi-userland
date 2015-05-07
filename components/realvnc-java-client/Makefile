@@ -30,7 +30,7 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/justmake.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-PATH=/usr/jdk/instances/openjdk1.7.0/bin:/usr/gnu/bin:/usr/bin
+PATH=$(JAVA_HOME)/bin:/usr/gnu/bin:/usr/bin
 
 COMPONENT_BUILD_ARGS += -C $(BUILD_DIR_32)/java
 COMPONENT_INSTALL_ARGS += -C $(BUILD_DIR_32)/java

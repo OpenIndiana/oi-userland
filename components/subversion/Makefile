@@ -29,6 +29,7 @@ PATH=$(dir $(CC)):$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
 
 COMPONENT_NAME=		subversion
 COMPONENT_VERSION=	1.7.19
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://subversion.apache.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -44,7 +45,7 @@ include ../../make-rules/ips.mk
 PATCH_LEVEL = 0
 PYMODS = client core delta fs ra repos wc
 PLMODS= Fs Core Wc Client Repos Ra Delta
-JAVA_ROOT = $(JAVA6_HOME)
+JAVA_ROOT = $(JAVA_HOME)
 #PERL_VERSION.32 = 5.12
 #PERL_VERSION.64 = 5.16
 #PERL_VERSION = $(PERL_VERSION.$(BITS))

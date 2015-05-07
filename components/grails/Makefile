@@ -56,8 +56,6 @@ PKG_PROTO_DIRS = $(BUILD_DIR_32) $(MANGLED_DIR) $(PROTO_DIR) $(@D) \
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-JAVA_HOME=/usr/jdk/openjdk1.7.0
-
 # common targets
 build:		$(BUILD_32)
 

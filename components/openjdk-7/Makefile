@@ -70,7 +70,7 @@ endif
 
 
 COMPONENT_ENV+=      LANG=C
-COMPONENT_ENV+=      ALT_BOOTDIR=/usr/jdk/openjdk1.7.0
+COMPONENT_ENV+=      ALT_BOOTDIR=$(JAVA_HOME)
 COMPONENT_ENV+=      ALT_OBJCOPY=/usr/gnu/bin/objcopy
 COMPONENT_ENV+=      ALT_COMPILER_PATH=$(GCC_ROOT)/bin
 COMPONENT_ENV+=      ALT_CUPS_HEADERS_PATH=/usr/include
@@ -111,3 +111,5 @@ $(BUILD_DIR)/%/.installed: $(BUILD_DIR)/%/.built cacerts.out
 build: $(BUILD_32_and_64) cacerts.out
 
 install: $(INSTALL_32_and_64)
+
+.NOTPARALLEL:

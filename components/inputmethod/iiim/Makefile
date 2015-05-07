@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= iiim
 COMPONENT_VERSION= 0.5.11
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Internet/Intranet Input Method Framework Package
 COMPONENT_SRC= im-sdk
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -399,7 +400,7 @@ $(BUILD_vkb_native_32):	$(BUILD_iiim_panel_32)
 	$(TOUCH) $@
 
 $(BUILD_iiim_keyboard_32): $(BUILD_vkb_native_32)
-	cd $(BUILD_DIR_32)/program/iiim-keyboard; /usr/bin/env JAVA_HOME=/usr/jdk/openjdk1.7.0 /usr/bin/ant jar
+	cd $(BUILD_DIR_32)/program/iiim-keyboard; /usr/bin/env JAVA_HOME=$(JAVA_HOME) /usr/bin/ant jar
 	$(TOUCH) $@
 
 # Install targets
