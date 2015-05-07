@@ -53,8 +53,6 @@ include ../../make-rules/prep.mk
 include ../../make-rules/ant.mk
 include ../../make-rules/ips.mk
 
-JAVA_HOME=/usr/jdk/openjdk1.7.0
-
 ifeq ($(strip $(USERLAND_ARCHIVES)),)
   DISTFILES_LOCATION=\$${base.path}/../../
 else 

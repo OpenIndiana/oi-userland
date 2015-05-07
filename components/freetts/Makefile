@@ -27,8 +27,6 @@ include ../../make-rules/prep.mk
 include ../../make-rules/ant.mk
 include ../../make-rules/ips.mk
 
-JAVA_HOME=/usr/jdk/instances/openjdk1.7.0
-
 # userland-unpack can't overwrite META-INF directory
 UNPACK= /usr/bin/unzip -o
 

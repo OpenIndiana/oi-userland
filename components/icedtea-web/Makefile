@@ -33,8 +33,8 @@ include $(WS_TOP)/make-rules/ips.mk
 COMPONENT_POST_UNPACK_ACTION += ($(GSED) -i -e 's/mozilla-plugin/firefox-plugin/' $(SOURCE_DIR)/acinclude.m4)
 COMPONENT_PREP_ACTION += (cd $(@D) && autoreconf -if)
 
-CONFIGURE_OPTIONS+=        --with-jdk-home=/usr/jdk/instances/openjdk1.7.0
-CONFIGURE_OPTIONS+=        --with-rhino=/usr/jdk/instances/openjdk1.7.0/jre/lib/rhino.jar
+CONFIGURE_OPTIONS+=        --with-jdk-home=$(JAVA_HOME)
+CONFIGURE_OPTIONS+=        --with-rhino=$(JAVA_HOME)/jre/lib/rhino.jar
 CONFIGURE_OPTIONS+=        --disable-docs
 
 build: $(BUILD_32)

@@ -31,8 +31,6 @@ COMPONENT_PROJECT_URL = http://jruby.org
 include ../../make-rules/prep.mk
 include ../../make-rules/ips.mk
 
-JAVA_HOME=/usr/jdk/instances/openjdk1.7.0
-
 COMPONENT_BUILD_ENV += JAVA_HOME="$(JAVA_HOME)"
 # build the configured source
 $(BUILD_DIR)/%/.built:  $(SOURCE_DIR)/.prep

@@ -36,7 +36,6 @@ include ../../make-rules/prep.mk
 include ../../make-rules/ant.mk
 include ../../make-rules/ips.mk
 
-JAVA_HOME=/usr/jdk/instances/openjdk1.7.0
 COMPONENT_BUILD_ARGS=
 
 # These ARGS override what is set in build.xml

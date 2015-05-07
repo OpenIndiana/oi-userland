@@ -36,8 +36,6 @@ include ../../make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-JAVA_HOME = /usr/jdk/openjdk1.7.0
-
 CPPFLAGS += -I$(JAVA_HOME)/include
 CPPFLAGS += -I$(JAVA_HOME)/include/solaris
 

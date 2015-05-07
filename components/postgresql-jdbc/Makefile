@@ -18,6 +18,7 @@ include ../../make-rules/shared-macros.mk
 COMPONENT_NAME= postgresql-jdbc
 
 COMPONENT_VERSION= 9.2-1003
+COMPONENT_REVISION= 1
 IPS_COMPONENT_VERSION= 9.2.1003
 COMPONENT_SUMMARY=JDBC driver for PostgreSQL
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION).src
@@ -32,7 +33,6 @@ include ../../make-rules/prep.mk
 include ../../make-rules/ant.mk
 include ../../make-rules/ips.mk
 
-JAVA_HOME=	$(JAVA6_HOME)
 COMPONENT_BUILD_ARGS =
 
 build: $(BUILD_32)
