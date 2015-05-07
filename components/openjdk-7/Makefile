@@ -17,22 +17,19 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= oppenjdk-7
 
-OPENJDK_BUILD_NUMBER=60
+OPENJDK_BUILD_NUMBER=76
 COMPONENT_VERSION=1.7.$(OPENJDK_BUILD_NUMBER)
 COMPONENT_SUMMARY= Open-source implementation of the Java Platform, Standard Edition
 COMPONENT_SRC= openjdk
-COMPONENT_ARCHIVE= openjdk-$(COMPONENT_VERSION)-20140614.tar.bz2
+COMPONENT_ARCHIVE= openjdk-$(COMPONENT_VERSION)-20150127.tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:6b2a05e609b0772490e7d68e20efcd76f13881132b0234905bb2b09da680fb82
+  sha256:fdcca581176135b716e86f6fd9dae8321c59134f799b5376174c2b106d51935f
 COMPONENT_ARCHIVE_URL= \
   http://ftp.netbsd.org/pub/pkgsrc/distfiles/LOCAL_PORTS/openjdk7/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://openjdk.java.net/
 
 CLEAN_PATHS += $(BUILD_DIR)
 
-ICEDTEA7=icedtea7-02bbff3d71ff
-#ICEDTEA_WEB=icedtea-web-9e1f7dc48c20
-ICEDTEA_WEB=icedtea-web-6ec72d653144
 RHINO=rhino1_7R3
 
 COMPONENT_ARCHIVE_1=cacerts-20091013.tar.bz2
@@ -40,20 +37,10 @@ COMPONENT_ARCHIVE_URL_1=http://ftp.netbsd.org/pub/pkgsrc/distfiles/LOCAL_PORTS/o
 COMPONENT_ARCHIVE_HASH_1=sha256:c726fce803cbfba199f3d0787493ca42690658603402be9bb53bb0909a10b191
 CLEAN_PATHS += cacerts
 CLEAN_PATHS += cacerts.out
-
-COMPONENT_ARCHIVE_2=$(ICEDTEA7).tar.bz2
-COMPONENT_ARCHIVE_URL_2=http://icedtea.classpath.org/hg/icedtea7/archive/02bbff3d71ff.tar.bz2
-CLEAN_PATHS += $(ICEDTEA7)
-# Source is mercurial, hash is changing
-
-COMPONENT_ARCHIVE_3=$(ICEDTEA_WEB).tar.bz2
-COMPONENT_ARCHIVE_URL_3=http://icedtea.classpath.org/hg/icedtea-web/archive/6ec72d653144.tar.bz2
-CLEAN_PATHS += $(ICEDTEA_WEB)
-# Source is mercurial, hash is changing
-
-COMPONENT_ARCHIVE_4=$(RHINO).zip
-COMPONENT_ARCHIVE_URL_4=http://ftp.mozilla.org/pub/mozilla.org/js/$(COMPONENT_ARCHIVE_4)
-COMPONENT_ARCHIVE_HASH_4=sha256:885b46e24fe5af23ad3712c5e08e8d97d6d92a4b89e1be860e8fe88e4a3dacd1
+ 
+COMPONENT_ARCHIVE_2=$(RHINO).zip
+COMPONENT_ARCHIVE_URL_2=http://ftp.mozilla.org/pub/mozilla.org/js/$(COMPONENT_ARCHIVE_4)
+COMPONENT_ARCHIVE_HASH_2=sha256:885b46e24fe5af23ad3712c5e08e8d97d6d92a4b89e1be860e8fe88e4a3dacd1
 CLEAN_PATHS += $(RHINO)
 
 include ../../make-rules/prep.mk
@@ -61,14 +48,9 @@ include ../../make-rules/ips.mk
 
 PATCH_LEVEL=0
 
-COMPONENT_POST_UNPACK_ACTION += rm -fr $(ICEDTEA7) $(RHINO) $(ICEDTEA_WEB) cacerts cacerts.out;
+COMPONENT_POST_UNPACK_ACTION += rm -fr $(RHINO) cacerts cacerts.out;
 COMPONENT_POST_UNPACK_ACTION += $(UNPACK) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1) ;
 COMPONENT_POST_UNPACK_ACTION += $(UNPACK) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_2) ;
-COMPONENT_POST_UNPACK_ACTION += $(UNPACK) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_3) ;
-COMPONENT_POST_UNPACK_ACTION += $(UNPACK) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_4) ;
-
-COMPONENT_PREP_ACTION += cp -a $(ICEDTEA_WEB)/plugin/icedteanp/java/* $(COMPONENT_SRC)/jdk/src/share/classes ;
-COMPONENT_PREP_ACTION += cp -a $(ICEDTEA_WEB)/netx/* $(COMPONENT_SRC)/jdk/src/share/classes ;
 
 # build the configured source
 # We need to copy, not use CLONEY, so this part of Makefile is rewritten
@@ -88,7 +70,7 @@ endif
 
 
 COMPONENT_ENV+=      LANG=C
-COMPONENT_ENV+=      ALT_BOOTDIR=$(JAVA6_HOME)
+COMPONENT_ENV+=      ALT_BOOTDIR=/usr/jdk/openjdk1.7.0
 COMPONENT_ENV+=      ALT_OBJCOPY=/usr/gnu/bin/objcopy
 COMPONENT_ENV+=      ALT_COMPILER_PATH=$(GCC_ROOT)/bin
 COMPONENT_ENV+=      ALT_CUPS_HEADERS_PATH=/usr/include
@@ -99,7 +81,7 @@ COMPONENT_ENV+=      SKIP_COMPARE_IMAGES=true
 COMPONENT_ENV+=      SKIP_FASTDEBUG_BUILD=yes
 COMPONENT_ENV+=      SKIP_DEBUG_BUILD=yes
 COMPONENT_ENV+=      USE_GCC=yes
-COMPONENT_ENV+=      RHINO_JAR=$(COMPONENT_DIR)/rhino1_7R3/js.jar
+COMPONENT_ENV+=      RHINO_JAR=$(COMPONENT_DIR)/$(RHINO)/js.jar
 COMPONENT_ENV+=      ARCH_DATA_MODEL=$(BITS)
 COMPONENT_ENV+=      PREFIX=/usr
 COMPONENT_ENV+=      JDK_MICRO_VERSION="0_0$(OPENJDK_BUILD_NUMBER)"
@@ -129,5 +111,3 @@ $(BUILD_DIR)/%/.installed: $(BUILD_DIR)/%/.built cacerts.out
 build: $(BUILD_32_and_64) cacerts.out
 
 install: $(INSTALL_32_and_64)
-
-.NOTPARALLEL:
