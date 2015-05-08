@@ -1,0 +1,46 @@
+Patch origin: in-house
+Patch status: will be submitted to upstream
+
+--- modules/ssl/ssl_private.h
++++ modules/ssl/ssl_private.h
+@@ -246,9 +246,9 @@
+ #define SSL_PROTOCOL_SSLV3 (1<<1)
+ #define SSL_PROTOCOL_TLSV1 (1<<2)
+ #ifdef OPENSSL_NO_SSL2
+-#define SSL_MOST_ALL SSL_PROTOCOL_SSLV3|SSL_PROTOCOL_TLSV1
++#define SSL_MOST_ALL SSL_PROTOCOL_TLSV1
+ #else
+-#define SSL_MOST_ALL SSL_PROTOCOL_SSLV2|SSL_PROTOCOL_SSLV3|SSL_PROTOCOL_TLSV1
++#define SSL_MOST_ALL SSL_PROTOCOL_TLSV1
+ #endif
+ #ifdef HAVE_TLSV1_X
+ #define SSL_PROTOCOL_TLSV1_1 (1<<3)
+--- docs/manual/mod/mod_ssl.html.en
++++ docs/manual/mod/mod_ssl.html.en
+@@ -1029,8 +1029,8 @@
+     <p>
+     This is the Secure Sockets Layer (SSL) protocol, version 3.0, from
+     the Netscape Corporation. 
+-    It is the successor to SSLv2 and the predecessor to TLSv1. It's supported by
+-    almost all popular browsers.</p></li>
++    It is the successor to SSLv2 and the predecessor to TLSv1. Though its
++    use has been deprecated, because of weaknesses in the security of the protocol.</p></li>
+ 
+ <li><code>TLSv1</code>
+     <p>
+@@ -1050,13 +1050,11 @@
+ 
+ <li><code>All</code>
+     <p>
+-    This is a shortcut for ``<code>+SSLv2 +SSLv3 +TLSv1</code>'' or
+-    - when using OpenSSL 1.0.1 and later -
+-    ``<code>+SSLv2 +SSLv3 +TLSv1 +TLSv1.1 +TLSv1.2</code>'', respectively.</p></li>
++    This is a shortcut for ``<code>+TLSv1 +TLSv1.1 +TLSv1.2</code>''.</p></li>
+ </ul>
+ <div class="example"><h3>Example</h3><p><code>
+ # enable SSLv3 and all available TLSv1 flavors, but not SSLv2<br />
+-SSLProtocol All -SSLv2
++SSLProtocol All +SSLv3
+ </code></p></div>
+ 
+ </div>
