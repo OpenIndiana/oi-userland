@@ -1,3 +1,5 @@
+# This patch has been developed inhouse. This is needed for some Solaris specific build 
+# tasks and has not been submitted to the community.
 diff -rupN INIT.2011-02-08/src/cmd/INIT/cc.sol11.i386-64 INIT.2011-02-08.patched/src/cmd/INIT/cc.sol11.i386-64
 diff -rupN INIT.2011-02-08/src/cmd/INIT/cc.sol11.i386-64 INIT.2011-02-08.patched/src/cmd/INIT/cc.sol11.i386-64
 --- INIT.2011-02-08/src/cmd/INIT/cc.sol11.i386-64	1970-01-01 01:00:00.000000000 +0100
@@ -24,26 +26,26 @@ diff -rupN INIT.2011-02-08/src/cmd/INIT/cc.sol11.i386-64 INIT.2011-02-08.patched
 +esac
 +
 +$CC_EXPLICIT -m32 -xc99 -D_XPG6 "$@"
-diff -rupN INIT.2011-02-08/src/cmd/INIT/cc.sol11.sun4-64 INIT.2011-02-08.patched/src/cmd/INIT/cc.sol11.sun4-64
---- INIT.2011-02-08/src/cmd/INIT/cc.sol11.sun4-64	1970-01-01 01:00:00.000000000 +0100
-+++ INIT.2011-02-08.patched/src/cmd/INIT/cc.sol11.sun4-64	2012-05-18 10:49:20.339537677 +0100
+diff -rupN INIT.2011-02-08/src/cmd/INIT/cc.sol11.sparc-64 INIT.2011-02-08.patched/src/cmd/INIT/cc.sol11.sparc-64
+--- INIT.2011-02-08/src/cmd/INIT/cc.sol11.sparc-64	1970-01-01 01:00:00.000000000 +0100
++++ INIT.2011-02-08.patched/src/cmd/INIT/cc.sol11.sparc-64	2012-05-18 10:49:20.339537677 +0100
 @@ -0,0 +1,9 @@
-+: solaris.sun4-64 cc wrapper for reasonable ansi C defaults and 64 bit : 2012-05-18 :
++: solaris.sparc-64 cc wrapper for reasonable ansi C defaults and 64 bit : 2012-05-18 :
 +
-+HOSTTYPE=sol11.sun4-64
++HOSTTYPE=sol11.sparc-64
 +
 +case " $* " in
 +*" -dumpmachine "*) echo $HOSTTYPE; exit ;;
 +esac
 +
 +$CC_EXPLICIT -m64 -xc99 -D_XPG6 "$@"
-diff -rupN INIT.2011-02-08/src/cmd/INIT/cc.sol11.sun4 INIT.2011-02-08.patched/src/cmd/INIT/cc.sol11.sun4-64
---- INIT.2011-02-08/src/cmd/INIT/cc.sol11.sun4	1970-01-01 01:00:00.000000000 +0100
-+++ INIT.2011-02-08.patched/src/cmd/INIT/cc.sol11.sun4	2012-05-18 10:49:20.339537677 +0100
+diff -rupN INIT.2011-02-08/src/cmd/INIT/cc.sol11.sparc INIT.2011-02-08.patched/src/cmd/INIT/cc.sol11.sparc-64
+--- INIT.2011-02-08/src/cmd/INIT/cc.sol11.sparc	1970-01-01 01:00:00.000000000 +0100
++++ INIT.2011-02-08.patched/src/cmd/INIT/cc.sol11.sparc	2012-05-18 10:49:20.339537677 +0100
 @@ -0,0 +1,9 @@
-+: solaris.sun4 cc wrapper for reasonable ansi C defaults and 32 bit : 2012-05-18 :
++: solaris.sparc cc wrapper for reasonable ansi C defaults and 32 bit : 2012-05-18 :
 +
-+HOSTTYPE=sol11.sun4
++HOSTTYPE=sol11.sparc
 +
 +case " $* " in
 +*" -dumpmachine "*) echo $HOSTTYPE; exit ;;

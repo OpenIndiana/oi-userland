@@ -1,0 +1,28 @@
+This fix is from the community, details in the following location.
+http://lists.research.att.com/pipermail/ast-developers/2014q1/003846.html
+---
+--- a/src/cmd/ksh93/bltins/alarm.c_org	Tue Mar 25 13:42:56 2014
++++ b/src/cmd/ksh93/bltins/alarm.c	Tue Mar 25 13:43:07 2014
+@@ -122,7 +122,7 @@
+ 		tp->timeout = 0;
+ 	tp->flags |= L_FLAG;
+ 	tp->sh->sigflag[SIGALRM] |= SH_SIGALRM;
+-	if(sh_isstate(SH_TTYWAIT))
++	if(sh_isstate(SH_TTYWAIT) && !tp->sh->bltinfun)
+ 		sh_timetraps(tp->sh);
+ }
+ 
+--- a/src/cmd/ksh93/sh/xec.c_org	Tue Mar 25 13:46:48 2014
++++ b/src/cmd/ksh93/sh/xec.c	Tue Mar 25 13:48:18 2014
+@@ -2720,6 +2720,11 @@
+ 			break;
+ 		    }
+ 		}
++		if(shp->trapnote&SH_SIGALRM)
++		{
++			shp->trapnote &= ~SH_SIGALRM;
++			sh_timetraps(shp);
++		}
+ 		if(shp->trapnote || (shp->exitval && sh_isstate(SH_ERREXIT)) &&
+ 			t && echeck) 
+ 			sh_chktrap(shp);

@@ -1,8 +1,9 @@
-http://lists.research.att.com/pipermail/ast-developers/2014q1/003809.html
----
---- a/src/cmd/ksh93/sh/subshell.c
-+++ b/src/cmd/ksh93/sh/subshell.c
-@@ -234,15 +234,22 @@ Namval_t *sh_assignok(register Namval_t *np,int add)
+#	This has been submitted to the community but has not been accepted yet.
+#	The details can be found at the following location.
+#	http://lists.research.att.com/pipermail/ast-developers/2014q1/003809.html
+--- INIT.2012-08-01.old/src/cmd/ksh93/sh/subshell.c	2015-02-24 13:25:19.363479570 -0800
++++ INIT.2012-08-01/src/cmd/ksh93/sh/subshell.c	2015-03-05 13:02:10.389323525 -0800
+@@ -242,15 +244,22 @@ Namval_t *sh_assignok(register Namval_t
  {
  	register Namval_t	*mp;
  	register struct Link	*lp;
@@ -16,7 +17,7 @@ http://lists.research.att.com/pipermail/ast-developers/2014q1/003809.html
  	Namarr_t		*ap;
  	int			save;
 +
-+        sp = (struct subshell*)subshell_data;
++	sp = (struct subshell*)subshell_data;
 +
  	/* don't bother with this */
 -	if(!sp->shpwd || np==SH_LEVELNOD || np==L_ARGNOD || np==SH_SUBSCRNOD || np==SH_NAMENOD)
@@ -26,7 +27,6 @@ http://lists.research.att.com/pipermail/ast-developers/2014q1/003809.html
 +	shp = sp->shp;
 +	dp = shp->var_tree;
 +
- 	if((ap=nv_arrayptr(np)) && (mp=nv_opensub(np)))
- 	{
- 		shp->last_root = ap->table;
-
+ 	/* don't bother to save if in newer scope */
+ 	if(sp->var!=shp->var_tree && sp->var!=shp->var_base && shp->last_root==shp->var_tree)
+ 		return(np);
