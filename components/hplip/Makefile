@@ -69,21 +69,21 @@ VARIANTS = $(HPLIP_VARIANT) $(HPIJS_VARIANT)
 # and for the HPIJS only support
 
 # use these options for the CUPS/SANE support
-$(HPLIP_VARIANT)/.built: CONFIGURE_OPTIONS += --with-hpppddir=/usr/share/cups/model/SUNWhplip
-$(HPLIP_VARIANT)/.built: CONFIGURE_OPTIONS += --enable-libusb01_build
-$(HPLIP_VARIANT)/.built: CONFIGURE_OPTIONS += --enable-fax-build
-$(HPLIP_VARIANT)/.built: CONFIGURE_OPTIONS += --enable-hpcups-install
-$(HPLIP_VARIANT)/.built: CONFIGURE_OPTIONS += --disable-new-hpcups
-$(HPLIP_VARIANT)/.built: CONFIGURE_OPTIONS += --enable-cups-drv-install
+$(HPLIP_VARIANT)/.configured: CONFIGURE_OPTIONS += --with-hpppddir=/usr/share/cups/model/SUNWhplip
+$(HPLIP_VARIANT)/.configured: CONFIGURE_OPTIONS += --enable-libusb01_build
+$(HPLIP_VARIANT)/.configured: CONFIGURE_OPTIONS += --enable-fax-build
+$(HPLIP_VARIANT)/.configured: CONFIGURE_OPTIONS += --enable-hpcups-install
+$(HPLIP_VARIANT)/.configured: CONFIGURE_OPTIONS += --disable-new-hpcups
+$(HPLIP_VARIANT)/.configured: CONFIGURE_OPTIONS += --enable-cups-drv-install
 
 # use these options for the HPIJS only support
-$(HPIJS_VARIANT)/.built: CONFIGURE_OPTIONS += --enable-foomatic-ppd-install
-$(HPIJS_VARIANT)/.built: CONFIGURE_OPTIONS += --with-hpppddir=/usr/share/ppd/SUNWhpijs/HP
-$(HPIJS_VARIANT)/.built: CONFIGURE_OPTIONS += --disable-cups-drv-install
-$(HPIJS_VARIANT)/.built: CONFIGURE_OPTIONS += --disable-hpcups-install
-$(HPIJS_VARIANT)/.built: CONFIGURE_OPTIONS += --disable-doc-build
-$(HPIJS_VARIANT)/.built: CONFIGURE_OPTIONS += --enable-hpijs-only-build
-$(HPIJS_VARIANT)/.built: CONFIGURE_OPTIONS += --enable-hpijs-install
+$(HPIJS_VARIANT)/.configured: CONFIGURE_OPTIONS += --enable-foomatic-ppd-install
+$(HPIJS_VARIANT)/.configured: CONFIGURE_OPTIONS += --with-hpppddir=/usr/share/ppd/SUNWhpijs/HP
+$(HPIJS_VARIANT)/.configured: CONFIGURE_OPTIONS += --disable-cups-drv-install
+$(HPIJS_VARIANT)/.configured: CONFIGURE_OPTIONS += --disable-hpcups-install
+$(HPIJS_VARIANT)/.configured: CONFIGURE_OPTIONS += --disable-doc-build
+$(HPIJS_VARIANT)/.configured: CONFIGURE_OPTIONS += --enable-hpijs-only-build
+$(HPIJS_VARIANT)/.configured: CONFIGURE_OPTIONS += --enable-hpijs-install
 
 install: COMPONENT_INSTALL_ENV += halpredir=/etc/hal/fdi/preprobe/10osvendor
 
