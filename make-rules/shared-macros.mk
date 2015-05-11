@@ -395,7 +395,7 @@ BUILD_TOOLS ?=	/ws/on12-tools
 SPRO_ROOT =	$(BUILD_TOOLS)/SUNWspro
 SPRO_VROOT =	$(SPRO_ROOT)/solarisstudio12.4
 
-PARFAIT_ROOT =	$(BUILD_TOOLS)/parfait/parfait-tools-1.5.1
+PARFAIT_ROOT =	$(BUILD_TOOLS)/parfait/parfait-tools-1.6.1
 PARFAIT_TOOLS=	$(WS_TOOLS)/$(MACH)/parfait
 PARFAIT_TOOLS_GCC3=	$(PARFAIT_TOOLS)/gcc3
 PARFAIT= $(PARFAIT_ROOT)/bin/parfait
@@ -946,7 +946,7 @@ endif
 endif
 ifeq ($(PARFAIT_BUILD),yes)
 # uncomment this line if you need to install Parfait
-#REQUIRED_PACKAGES += developer/parfait/parfait-tools-151
+#REQUIRED_PACKAGES += developer/parfait/parfait-tools-161
 endif
 REQUIRED_PACKAGES += developer/versioning/mercurial
 REQUIRED_PACKAGES += file/gnu-findutils
