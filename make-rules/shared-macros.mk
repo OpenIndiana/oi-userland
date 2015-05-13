@@ -267,7 +267,7 @@ COMPONENT_TEST_TRANSFORMS = \
 # set the default commands used to generate the file containing the set
 # of transforms to be applied to the test results to try to normalize them.
 COMPONENT_TEST_CREATE_TRANSFORMS = \
-	if [ -e $(COMPONENT_TEST_MASTER) ]; \
+	@if [ -e $(COMPONENT_TEST_MASTER) ]; \
 	then \
 		print "\#!/bin/sh" > $(COMPONENT_TEST_TRANSFORM_CMD); \
         	print '$(COMPONENT_TEST_TRANSFORMER) ' \
@@ -287,7 +287,7 @@ COMPONENT_TEST_TRANSFORM_CMD =	$(COMPONENT_TEST_BUILD_DIR)/transform-$(BITS)-res
 
 # set the default operation to run to perform test result normalization
 COMPONENT_TEST_PERFORM_TRANSFORM = \
-	if [ -e $(COMPONENT_TEST_MASTER) ]; \
+	@if [ -e $(COMPONENT_TEST_MASTER) ]; \
 	then \
 		$(SHELL) $(COMPONENT_TEST_TRANSFORM_CMD); \
 	else \
@@ -300,7 +300,7 @@ COMPONENT_TEST_COMPARE_CMD =	$(GDIFF) -uN
 
 # set the default way that master and snapshot test results are compared
 COMPONENT_TEST_COMPARE = \
-	if [ -e $(COMPONENT_TEST_MASTER) ]; \
+	@if [ -e $(COMPONENT_TEST_MASTER) ]; \
 	then \
 		$(COMPONENT_TEST_COMPARE_CMD) \
 			$(COMPONENT_TEST_MASTER) $(COMPONENT_TEST_SNAPSHOT) \
