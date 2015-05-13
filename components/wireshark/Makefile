@@ -23,16 +23,16 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		wireshark
-COMPONENT_VERSION=	1.12.4
+COMPONENT_VERSION=	1.12.5
 COMPONENT_PROJECT_URL=	http://www.wireshark.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:de804e98e252e4b795d28d6ac2d48d7f5aacd9b046ee44d44266983795ebc312
+    sha256:d0f177b2ef49e4deae4ff7d3299bdd295ba558a3934ce8ae489b2f13927cbd82
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/src/all-versions/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/wireshark
 
-TPNO=			21830
+TPNO=			22659
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -63,9 +63,6 @@ CONFIGURE_OPTIONS +=	PATH="/usr/perl5/bin:/usr/gnu/bin:$(PATH)"
 # Use the 64-bit versions of pkg-config files
 CONFIGURE_ENV +=	PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
 
-# Workaround for Bug 19143303
-studio_OPT =	-xO3
-
 # We need to avoid RPATH=/usr/lib in Wireshark libraries so that we can
 # create successfully IPS package of different Wireshark branch than is
 # installed on build system without dependency errors.
@@ -78,16 +75,6 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 	mv config.status.new config.status; \
 	chmod 755 config.status; \
 	./config.status)
-
-# During install libtool will relink libwireshark library so that it
-# requires libwiretap version from system and not from proto area.
-# This shall be removed once CBE is updated to contain Wireshark 1.12
-# (see Bug 20627618).
-COMPONENT_POST_INSTALL_ACTION = \
-	(/usr/bin/elfdump -d $(PROTO_DIR)/usr/lib/$(MACH64)/libwireshark.so.5.0.4 | \
-	    grep 'libwiretap.so.3' && /usr/bin/elfedit \
-	    -e 'dyn:value -s -with-valstr libwiretap.so.3 libwiretap.so.4' \
-	    $(PROTO_DIR)/usr/lib/$(MACH64)/libwireshark.so.5.0.4; true)
 
 configure:	$(CONFIGURE_64)
 
