@@ -35,14 +35,17 @@ include $(WS_MAKE_RULES)/ips.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-# Do not apply the standard license transforms for this component.
-LICENSE_TRANSFORMS =
+# Used for placement of openstack_common.py
+PYTHON_VERSIONS=        2.7
+PKG_MACROS +=           PYVER=$(PYTHON_VERSIONS)
 
 build:		FRC
 	@/bin/true
 
 install:	FRC
-	@/bin/true
+	($(MKDIR) $(PROTO_DIR)$(PYTHON_LIB); \
+	    $(CP) files/openstack_common.py $(PROTO_DIR)$(PYTHON_LIB); \
+	 $(PYTHON) -m compileall $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES))
 
 download::
 	@echo 'No downloads for this component'

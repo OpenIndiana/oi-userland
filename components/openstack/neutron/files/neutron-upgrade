@@ -14,20 +14,17 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from ConfigParser import NoOptionError
-from datetime import datetime
-import errno
 import glob
 import os
-import shutil
 from subprocess import check_call, Popen, PIPE
 import sys
-import time
 import traceback
 
 import iniparse
 import smf_include
 import sqlalchemy
+
+from openstack_common import alter_mysql_tables, create_backups, modify_conf
 
 
 NEUTRON_CONF_MAPPINGS = {
@@ -36,8 +33,20 @@ NEUTRON_CONF_MAPPINGS = {
     ('rpc_notifier2', 'topics'): ('DEFAULT', 'notification_topics'),
     ('DEFAULT', 'matchmaker_ringfile'): ('matchmaker_ring', 'ringfile'),
     # As of Juno, EVS now uses the standard quota driver
-    ('quotas', 'quota_driver'): (None, None)
+    ('quotas', 'quota_driver'): (None, None),
 }
+
+NEUTRON_CONF_EXCEPTIONS = [
+    ('DEFAULT', 'lockpath'),
+    ('keystone_authtoken', 'auth_uri'),
+    ('keystone_authtoken', 'identity_uri'),
+    ('keystone_authtoken', 'admin_tenant_name'),
+    ('keystone_authtoken', 'admin_user'),
+    ('keystone_authtoken', 'admin_password'),
+    ('keystone_authtoken', 'signing_dir'),
+    ('database', 'connection'),
+]
+
 
 DHCP_AGENT_MAPPINGS = {
     # Deprecated group/name
@@ -49,140 +58,18 @@ EVS_PLUGIN_MAPPINGS = {
     ('DATABASE', 'sql_connection'): (None, None),
 }
 
+L3_AGENT_EXCEPTIONS = [
+    ('DEFAULT', 'enable_metadata_proxy'),
+]
 
-def update_mapping(section, key, mapping):
-    """ look for deprecated variables and, if found, convert it to the new
-    section/key.
-    """
-
-    if (section, key) in mapping:
-        print "Deprecated value found: [%s] %s" % (section, key)
-        section, key = mapping[(section, key)]
-        if section is None and key is None:
-            print "Removing from configuration"
-        else:
-            print "Updating to: [%s] %s" % (section, key)
-    return section, key
-
-
-def alter_mysql_tables(engine):
-    """ Convert MySQL tables to use utf8
-    """
-
-    import MySQLdb
-
-    for _none in range(5):
-        try:
-            db = MySQLdb.connect(host=engine.url.host,
-                                 user=engine.url.username,
-                                 passwd=engine.url.password,
-                                 db=engine.url.database)
-            break
-        except MySQLdb.OperationalError as err:
-            # mysql is not ready. sleep for 2 more seconds
-            time.sleep(2)
-    else:
-        print "Unable to connect to MySQL:  %s" % err
-        print ("Please verify MySQL is properly configured and online "
-               "before using svcadm(1M) to clear this service.")
-        sys.exit(smf_include.SMF_EXIT_ERR_FATAL)
-
-    cursor = db.cursor()
-    cursor.execute("ALTER DATABASE %s CHARACTER SET = 'utf8'" %
-                   engine.url.database)
-    cursor.execute("ALTER DATABASE %s COLLATE = 'utf8_general_ci'" %
-                   engine.url.database)
-    cursor.execute("SHOW tables")
-    res = cursor.fetchall()
-    if res:
-        cursor.execute("SET foreign_key_checks = 0")
-        for item in res:
-            cursor.execute("ALTER TABLE %s.%s CONVERT TO "
-                           "CHARACTER SET 'utf8', COLLATE 'utf8_general_ci'"
-                           % (engine.url.database, item[0]))
-        cursor.execute("SET foreign_key_checks = 1")
-        db.commit()
-        db.close()
-
-
-def modify_conf(old_file, mapping=None):
-    """ Copy over all uncommented options from the old configuration file.  In
-    addition, look for deprecated section/keys and convert them to the new
-    section/key.
-    """
-
-    new_file = old_file + '.new'
-
-    # open the previous version
-    old = iniparse.ConfigParser()
-    old.readfp(open(old_file))
-
-    # open the new version
-    new = iniparse.ConfigParser()
-    try:
-        new.readfp(open(new_file))
-    except IOError as err:
-        if err.errno == errno.ENOENT:
-            # The upgrade did not deliver a .new file so, return
-            print "%s not found - continuing with %s" % (new_file, old_file)
-            return
-        else:
-            raise
-    print "\nupdating %s" % old_file
-
-    # walk every single section for uncommented options
-    default_items = set(old.items('DEFAULT'))
-    for section in old.sections() + ['DEFAULT']:
-
-        # DEFAULT items show up in every section so remove them
-        if section != 'DEFAULT':
-            section_items = set(old.items(section)) - default_items
-        else:
-            section_items = default_items
-
-        for key, value in section_items:
-            # keep a copy of the old value
-            oldvalue = value
-            oldsection = section
-
-            if mapping is not None:
-                section, key = update_mapping(section, key, mapping)
-
-                if section is None and key is None:
-                    # option is deprecated so continue
-                    continue
-
-            if not new.has_section(section):
-                if section != 'DEFAULT':
-                    new.add_section(section)
-
-            # print to the log when a value for the same section.key is
-            # changing to a new value
-            try:
-                new_value = new.get(section, key)
-                if new_value != value and '%SERVICE' not in new_value:
-                    print "Changing [%s] %s:\n- %s\n+ %s" % \
-                        (section, key, oldvalue, new_value)
-                    print
-            except NoOptionError:
-                # the new configuration file does not have this option set so
-                # just continue
-                pass
-
-            # Only copy the old value to the new conf file if the entry doesn't
-            # exist or if it contains '%SERVICE'
-            if not new.has_option(section, key) or \
-               '%SERVICE' in new.get(section, key):
-                new.set(section, key, value)
-            section = oldsection
-
-    # copy the old conf file to a backup
-    today = datetime.now().strftime("%Y%m%d%H%M%S")
-    shutil.copy2(old_file, old_file + '.' + today)
-
-    # copy the new conf file in place
-    with open(old_file, 'wb+') as fh:
-        new.write(fh)
+METADATA_AGENT_EXCEPTIONS = [
+    ('DEFAULT', 'auth_url'),
+    ('DEFAULT', 'auth_region'),
+    ('DEFAULT', 'admin_tenant_name'),
+    ('DEFAULT', 'admin_user'),
+    ('DEFAULT', 'admin_password'),
+    ('DEFAULT', 'metadata_workers'),
+]
 
 
 def start():
@@ -207,12 +94,19 @@ def start():
     if glob.glob('/etc/neutron/*.new'):
         # the versions are different, so perform an upgrade
         # modify the configuration files
+
+        # backup all the old configuration files
+        create_backups('/etc/neutron')
+
         modify_conf('/etc/neutron/api-paste.ini')
         modify_conf('/etc/neutron/dhcp_agent.ini', DHCP_AGENT_MAPPINGS)
-        modify_conf('/etc/neutron/l3_agent.ini')
-        modify_conf('/etc/neutron/neutron.conf', NEUTRON_CONF_MAPPINGS)
+        modify_conf('/etc/neutron/l3_agent.ini', None, L3_AGENT_EXCEPTIONS)
+        modify_conf('/etc/neutron/neutron.conf', NEUTRON_CONF_MAPPINGS,
+                    NEUTRON_CONF_EXCEPTIONS)
         modify_conf('/etc/neutron/plugins/evs/evs_plugin.ini',
                     EVS_PLUGIN_MAPPINGS)
+        modify_conf('/etc/neutron/metadata_agent.ini', None,
+                    METADATA_AGENT_EXCEPTIONS)
 
     config = iniparse.RawConfigParser()
     config.read('/etc/neutron/neutron.conf')
@@ -248,6 +142,8 @@ if __name__ == '__main__':
     os.putenv('LC_ALL', 'C')
     try:
         smf_include.smf_main()
+    except RuntimeError:
+        sys.exit(smf_include.SMF_EXIT_ERR_FATAL)
     except Exception as err:
         print 'Unknown error:  %s' % err
         print

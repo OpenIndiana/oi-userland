@@ -79,6 +79,7 @@ install:	$(INSTALL_NO_ARCH)
 test:		$(TEST_NO_ARCH)
 
 
+REQUIRED_PACKAGES += cloud/openstack/openstack-common
 REQUIRED_PACKAGES += library/python/eventlet-27
 REQUIRED_PACKAGES += library/python/iniparse-27
 REQUIRED_PACKAGES += library/python/simplejson-27

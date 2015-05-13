@@ -14,89 +14,57 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from ConfigParser import NoOptionError
-from datetime import datetime
-import errno
 import glob
 import os
-import shutil
 from subprocess import check_call, Popen, PIPE
 import sys
 import traceback
 
-import iniparse
 import smf_include
 
+from openstack_common import create_backups, modify_conf
 
-def modify_conf(old_file):
-    """ Copy over all uncommented options from the old configuration file.
-    """
 
-    new_file = old_file + '.new'
+ACCOUNT_SERVER_EXCEPTIONS = [
+    ('DEFAULT', 'bind_port'),
+    ('DEFAULT', 'workers'),
+]
 
-    # open the previous version
-    old = iniparse.ConfigParser()
-    old.readfp(open(old_file))
+CONTAINER_SERVER_EXCEPTIONS = [
+    ('DEFAULT', 'bind_port'),
+    ('DEFAULT', 'workers'),
+]
 
-    # open the new version
-    new = iniparse.ConfigParser()
-    try:
-        new.readfp(open(new_file))
-    except IOError as err:
-        if err.errno == errno.ENOENT:
-            # The upgrade did not deliver a .new file so, return
-            print "%s not found - continuing with %s" % (new_file, old_file)
-            return
-        else:
-            raise
-    print "\nupdating %s" % old_file
+DISPERSION_CONF_EXCEPTIONS = [
+    ('dispersion', 'auth_url'),
+    ('dispersion', 'auth_user'),
+    ('dispersion', 'auth_key'),
+]
 
-    # walk every single section for uncommented options
-    default_items = set(old.items('DEFAULT'))
-    for section in old.sections() + ['DEFAULT']:
+OBJECT_SERVER_EXCEPTIONS = [
+    ('DEFAULT', 'bind_port'),
+    ('DEFAULT', 'workers'),
+]
 
-        # DEFAULT items show up in every section so remove them
-        if section != 'DEFAULT':
-            section_items = set(old.items(section)) - default_items
-        else:
-            section_items = default_items
+PROXY_SERVER_EXCEPTIONS = [
+    ('DEFAULT', 'bind_port'),
+    ('filter:authtoken', 'auth_uri'),
+    ('filter:authtoken', 'identity_uri'),
+    ('filter:authtoken', 'admin_tenant_name'),
+    ('filter:authtoken', 'admin_user'),
+    ('filter:authtoken', 'admin_password'),
+    ('filter:authtoken', 'delay_auth_decision'),
+    ('filter:authtoken', 'cache'),
+    ('filter:authtoken', 'include_service_catalog'),
+    ('filter:authtoken', 'signing_dir'),
+]
 
-        for key, value in section_items:
-            # keep a copy of the old value
-            oldvalue = value
-            oldsection = section
-
-            if not new.has_section(section):
-                if section != 'DEFAULT':
-                    new.add_section(section)
-
-            # print to the log when a value for the same section.key is
-            # changing to a new value
-            try:
-                new_value = new.get(section, key)
-                if new_value != value and '%SERVICE' not in new_value:
-                    print "Changing [%s] %s:\n- %s\n+ %s" % \
-                        (section, key, oldvalue, new_value)
-                    print
-            except NoOptionError:
-                # the new configuration file does not have this option set so
-                # just continue
-                pass
-
-            # Only copy the old value to the new conf file if the entry doesn't
-            # exist or if it contains '%SERVICE'
-            if not new.has_option(section, key) or \
-               '%SERVICE' in new.get(section, key):
-                new.set(section, key, value)
-            section = oldsection
-
-    # copy the old conf file to a backup
-    today = datetime.now().strftime("%Y%m%d%H%M%S")
-    shutil.copy2(old_file, old_file + '.' + today)
-
-    # copy the new conf file in place
-    with open(old_file, 'wb+') as fh:
-        new.write(fh)
+SWIFT_CONF_EXCEPTIONS = [
+    ('swift-hash', 'swift_hash_path_suffix'),
+    ('swift-hash', 'swift_hash_path_prefix'),
+    ('storage-policy:0', 'name'),
+    ('storage-policy:0', 'default'),
+]
 
 
 def start():
@@ -121,16 +89,25 @@ def start():
     if glob.glob('/etc/swift/*.new'):
         # the versions are different, so perform an upgrade
         # modify the configuration files
-        modify_conf('/etc/swift/account-server.conf')
+
+        # backup all the old configuration files
+        create_backups('/etc/swift')
+
+        modify_conf('/etc/swift/account-server.conf', None,
+                    ACCOUNT_SERVER_EXCEPTIONS)
         modify_conf('/etc/swift/container-reconciler.conf')
-        modify_conf('/etc/swift/container-server.conf')
+        modify_conf('/etc/swift/container-server.conf', None,
+                    CONTAINER_SERVER_EXCEPTIONS)
         modify_conf('/etc/swift/container-sync-realms.conf')
-        modify_conf('/etc/swift/dispersion.conf')
+        modify_conf('/etc/swift/dispersion.conf', None,
+                    DISPERSION_CONF_EXCEPTIONS)
         modify_conf('/etc/swift/memcache.conf')
         modify_conf('/etc/swift/object-expirer.conf')
-        modify_conf('/etc/swift/object-server.conf')
-        modify_conf('/etc/swift/proxy-server.conf')
-        modify_conf('/etc/swift/swift.conf')
+        modify_conf('/etc/swift/object-server.conf', None,
+                    OBJECT_SERVER_EXCEPTIONS)
+        modify_conf('/etc/swift/proxy-server.conf', None,
+                    PROXY_SERVER_EXCEPTIONS)
+        modify_conf('/etc/swift/swift.conf', None, SWIFT_CONF_EXCEPTIONS)
 
     # update the current version
     check_call(['/usr/sbin/svccfg', '-s', os.environ['SMF_FMRI'], 'setprop',
@@ -144,6 +121,8 @@ if __name__ == '__main__':
     os.putenv('LC_ALL', 'C')
     try:
         smf_include.smf_main()
+    except RuntimeError:
+        sys.exit(smf_include.SMF_EXIT_ERR_FATAL)
     except Exception as err:
         print 'Unknown error:  %s' % err
         print
