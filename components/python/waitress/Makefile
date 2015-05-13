@@ -46,6 +46,9 @@ COMPONENT_TEST_ARGS=    setup.py test
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
+#Skipping this during automated tests since it hangs sometimes
+$(SKIP_TEST_AT_TOP_LEVEL)
+
 # common targets
 build:		$(BUILD_NO_ARCH)
 

@@ -162,6 +162,9 @@ COMPONENT_POST_INSTALL_ACTION = \
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
+#Skipping this during automated tests since it hangs sometimes
+$(SKIP_TEST_AT_TOP_LEVEL)
+
 # common targets
 configure:	$(CONFIGURE_32_and_64)
 
