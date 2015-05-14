@@ -52,25 +52,30 @@ CC +=	$(CC_BITS)
 # Remove Linux specific functionality.
 CONFIGURE_OPTIONS += ac_cv_dnet_linux_pf_packet=no
 
-# Uncomment if you have the Check unit testing framework installed.
-#CONFIGURE_OPTIONS +=	--with-check=/usr
+CONFIGURE_OPTIONS +=	--with-check=/usr
+
+# Needed for "gmake test" to work successfully.
+# If SHELLOPTS is exported (as it is by the userland makefiles),
+# then all shell options get exported to child invocations of bash,
+# which results in test failures due to nounset and xtrace being
+# set unexpectedly, and errors such as "$1: unbound variable" and
+# diffs failing due to script tracing in output files.
+unexport SHELLOPTS
+
+COMPONENT_TEST_DIR =	$(@D)/test/check
+
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-# common targets
 configure:	$(CONFIGURE_32_and_64)
 
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-# Tests for libdnet are not enabled by default as they use the Check unit
-# testing framework which is currently not present on Solaris. See:
-# http://check.sourceforge.net/ for more details.
-# If you do have Check on your system, then uncomment the TEST_32 line.
-test:		$(NO_TESTS)
-#test:		$(TEST_32_and_64)
+test:		$(TEST_32_and_64)
 
-
+REQUIRED_PACKAGES += developer/test/check
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library

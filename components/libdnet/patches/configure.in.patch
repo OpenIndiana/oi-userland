@@ -1,0 +1,34 @@
+Adjust the check for the check test framework to look for libcheck.so
+instead of libcheck.a.
+
+This change will be sent upstream.
+
+--- libdnet-1.12/configure.in.orig	2015-05-07 08:14:49.583718066 -0700
++++ libdnet-1.12/configure.in	2015-05-07 08:17:24.526491068 -0700
+@@ -131,22 +131,22 @@
+      ;;
+   *)
+      AC_MSG_RESULT($withval)
+-     if test -f $withval/include/check.h -a -f $withval/lib/libcheck.a; then
++     if test -f $withval/include/check.h -a -f $withval/lib/libcheck.so; then
+         owd=`pwd`
+         if cd $withval; then withval=`pwd`; cd $owd; fi
+         CHECKINC="-I$withval/include"
+         CHECKLIB="-L$withval/lib -lcheck"
+-     elif test -f $withval/src/check.h -a -f $withval/src/libcheck.a; then
++     elif test -f $withval/src/check.h -a -f $withval/src/libcheck.so; then
+         owd=`pwd`
+         if cd $withval; then withval=`pwd`; cd $owd; fi
+         CHECKINC="-I$withval/src"
+         CHECKLIB="-L$withval/src -lcheck"
+      else
+-        AC_ERROR(check.h or libcheck.a not found in $withval)
++        AC_ERROR(check.h or libcheck.so not found in $withval)
+      fi
+      ;;
+   esac ],
+-[ if test -f ${prefix}/include/check.h -a -f ${prefix}/lib/libcheck.a; then
++[ if test -f ${prefix}/include/check.h -a -f ${prefix}/lib/libcheck.so; then
+      CHECKINC="-I${prefix}/include"
+      CHECKLIB="-L${prefix}/lib -lcheck"
+      AC_MSG_RESULT(yes)
