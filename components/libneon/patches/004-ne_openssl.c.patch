@@ -1,31 +1,51 @@
-# Disable SSLv2, SSLv3 and TLSv1.0.
+# Disable SSLv2 and SSLv3.
 # Internal patch. Not a chance it will be accepted upstream.
---- src/ne_openssl.c	2014-09-20 11:59:52.000000000 -0700
-+++ src/ne_openssl.c	2015-04-03 13:40:17.212657899 -0700
-@@ -560,7 +560,7 @@
- {
-     ne_ssl_context *ctx = ne_calloc(sizeof *ctx);
-     if (mode == NE_SSL_CTX_CLIENT) {
--        ctx->ctx = SSL_CTX_new(SSLv23_client_method());
-+        ctx->ctx = SSL_CTX_new(TLSv1_1_client_method());
-         ctx->sess = NULL;
+--- src/ne_openssl.c	2015-05-13 12:22:57.460825869 -0700
++++ src/ne_openssl.c	2015-05-13 12:31:36.644453270 -0700
+@@ -565,7 +565,7 @@
          /* set client cert callback. */
          SSL_CTX_set_client_cert_cb(ctx->ctx, provide_client_cert);
-@@ -568,7 +568,7 @@
-         SSL_CTX_set_options(ctx->ctx, SSL_OP_ALL);
+         /* enable workarounds for buggy SSL server implementations */
+-        SSL_CTX_set_options(ctx->ctx, SSL_OP_ALL);
++        SSL_CTX_set_options(ctx->ctx, SSL_OP_NO_SSLv2|SSL_OP_NO_SSLv3);
          SSL_CTX_set_verify(ctx->ctx, SSL_VERIFY_PEER, verify_callback);
      } else if (mode == NE_SSL_CTX_SERVER) {
--        ctx->ctx = SSL_CTX_new(SSLv23_server_method());
-+        ctx->ctx = SSL_CTX_new(TLSv1_1_server_method());
-         SSL_CTX_set_session_cache_mode(ctx->ctx, SSL_SESS_CACHE_CLIENT);
+         ctx->ctx = SSL_CTX_new(SSLv23_server_method());
+@@ -573,7 +573,8 @@
  #ifdef SSL_OP_NO_TICKET
          /* disable ticket support since it inhibits testing of session
-@@ -590,6 +590,8 @@
+          * caching. */
+-        SSL_CTX_set_options(ctx->ctx, SSL_OP_NO_TICKET);
++        SSL_CTX_set_options(ctx->ctx,
++                            SSL_OP_NO_TICKET|SSL_OP_NO_SSLv2|SSL_OP_NO_SSLv3);
+ #endif
+     } else {
+ #ifdef OPENSSL_NO_SSL2
+@@ -581,6 +582,7 @@
+         return NULL;
+ #else
+         ctx->ctx = SSL_CTX_new(SSLv2_server_method());
++        SSL_CTX_set_options(ctx->ctx, SSL_OP_NO_SSLv2|SSL_OP_NO_SSLv3);
+         SSL_CTX_set_session_cache_mode(ctx->ctx, SSL_SESS_CACHE_CLIENT);
+ #endif
+     }
+@@ -590,18 +592,8 @@
  void ne_ssl_context_set_flag(ne_ssl_context *ctx, int flag, int value)
  {
      long opts = SSL_CTX_get_options(ctx->ctx);
-+    opts |= SSL_OP_NO_SSLv2;
+-
+-    switch (flag) {
+-    case NE_SSL_CTX_SSLv2:
+-        if (value) { 
+-            /* Enable SSLv2 support; clear the "no SSLv2" flag. */
+-            opts &= ~SSL_OP_NO_SSLv2;
+-        } else {
+-            /* Disable it: set the flag. */
+             opts |= SSL_OP_NO_SSLv2;
+-        }
+-        break;
+-    }
 +    opts |= SSL_OP_NO_SSLv3;
  
-     switch (flag) {
-     case NE_SSL_CTX_SSLv2:
+     SSL_CTX_set_options(ctx->ctx, opts);
+ }
