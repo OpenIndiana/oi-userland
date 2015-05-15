@@ -1,0 +1,52 @@
+# 
+# This patch contains bug fixes to the PAM credential and session operations.
+# In the original OpenSSH, the server only gives warnings and still allows 
+# users to log in when pam_setcred() or pam_open_session() fail, if user auth
+# method is not keyboard-interactive or password.  This is not a correct
+# behavior. The server should just fatal out, when these functions fail.
+#
+# We have contributed back these bug fixes to the OpenSSH upstream community. 
+# For more information, see https://bugzilla.mindrot.org/show_bug.cgi?id=2399
+# In the future, if these bug fixes are accepted by the upsteam in a later
+# release, we will remove this patch when we upgrade to that release.
+#
+--- orig/auth-pam.c	Tue May 12 12:57:25 2015
++++ new/auth-pam.c	Thu May 14 15:21:54 2015
+@@ -950,6 +950,12 @@
+ 		sshpam_cred_established = 1;
+ 		return;
+ 	}
++
++#ifdef PAM_BUGFIX
++	/* Server will fatal out when pam_setcred() failed. */
++	fatal("PAM: pam_setcred(): %s", pam_strerror(sshpam_handle,
++	    sshpam_err));
++#else /* orig */
+ 	if (sshpam_authenticated)
+ 		fatal("PAM: pam_setcred(): %s",
+ 		    pam_strerror(sshpam_handle, sshpam_err));
+@@ -956,6 +962,7 @@
+ 	else
+ 		debug("PAM: pam_setcred(): %s",
+ 		    pam_strerror(sshpam_handle, sshpam_err));
++#endif /* PAM_BUGFIX */
+ }
+ 
+ static int
+@@ -1048,10 +1055,16 @@
+ 	if (sshpam_err == PAM_SUCCESS)
+ 		sshpam_session_open = 1;
+ 	else {
++#ifdef PAM_BUGFIX
++		/* Server will fatal out when pam_open_session() failed */
++		fatal("PAM: pam_open_session(): %s",
++		    pam_strerror(sshpam_handle, sshpam_err));
++#else /* orig */
+ 		sshpam_session_open = 0;
+ 		disable_forwarding();
+ 		error("PAM: pam_open_session(): %s",
+ 		    pam_strerror(sshpam_handle, sshpam_err));
++#endif /* PAM_BUGFIX */
+ 	}
+ 
+ }
