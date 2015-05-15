@@ -1,0 +1,20 @@
+# Internal patch.
+# GpgME can't find /usr/bin/gpg2 and /usr/bin/gpgsm,
+# which are needed by gpgme-config. So, we have to find
+# them instead.
+# Not for upstream because they should fix this.
+--- src/gpgme-config.in	2013-03-15 12:27:33.000000000 -0700
++++ src/gpgme-config.in	2015-05-14 12:28:27.296390126 -0700
+@@ -179,10 +179,10 @@
+ 	    fi
+ 	    ;;
+         --get-gpg)
+-            output="$output @GPG@"
++            output="$output /usr/bin/gpg2"
+             ;;
+         --get-gpgsm)
+-            output="$output @GPGSM@"
++            output="$output /usr/bin/gpgsm"
+             ;;
+ 	*)
+             usage 1 1>&2

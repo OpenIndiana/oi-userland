@@ -25,16 +25,16 @@ include ../../make-rules/shared-macros.mk
 PATH = /usr/gnu/bin:/usr/bin
 
 COMPONENT_NAME=		gpgme
-COMPONENT_VERSION=	1.1.8
+COMPONENT_VERSION=	1.5.3
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.gnupg.org/related_software/gpgme/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:0f73a219e0b389f25c8d9b563eb8e0a9ffd9dd038d91b572eaf0ea33beff05e2
+    sha256:0db040c5b07e69cfe9a0b4566c8e90151ebacfe122c97c452f11386654aefcc9
 COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/gpgme/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gnupg
 
-TPNO=			8637
+TPNO=			21167
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -64,18 +64,17 @@ CONFIGURE_OPTIONS  +=		--localstatedir=/var
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		--enable-shared
 CONFIGURE_OPTIONS  +=		--disable-static
+CONFIGURE_OPTIONS  +=		--disable-silent-rules
 CONFIGURE_OPTIONS  +=		--with-gpg-error-prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS  +=		--enable-largefile
-CONFIGURE_OPTIONS  +=		--with-pth=$(CONFIGURE_PREFIX)
-CONFIGURE_OPTIONS  +=		--disable-gpg-test
-CONFIGURE_OPTIONS  +=		--disable-gpgsm-test
-CONFIGURE_OPTIONS  +=		--disable-gpgconf-test
-CONFIGURE_OPTIONS  +=		--with-gpg=$(USRBINDIR)/gpg2
-CONFIGURE_OPTIONS  +=		--with-gpgsm=$(USRBINDIR)/gpgsm
-CONFIGURE_OPTIONS  +=		--with-gpgconf=$(USRBINDIR)/gpgconf
+CONFIGURE_OPTIONS  +=		--enable-gpg-test
+CONFIGURE_OPTIONS  +=		--enable-gpgsm-test
+CONFIGURE_OPTIONS  +=		--enable-gpgconf-test
+CONFIGURE_OPTIONS  +=		--with-libgpg-error-prefix=$(CONFIGURE_PREFIX)
+CONFIGURE_OPTIONS  +=		--with-libassuan-prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS  +=		--with-pic
 
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+ASLR_MODE = $(ASLR_ENABLE)
 
 configure:	$(CONFIGURE_32_and_64)
 
@@ -83,11 +82,16 @@ build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
 
-test: $(TEST_32_and_64)
+# Although building and running the GpgME tests is enabled, GpgME's
+# Test Harness is not suitable for running in an automated test
+# environment. The GpgME tests require interactive, manual input
+# from the tty as well as system configuration changes.
+# The GpgME Test Harness can only be run manually, and interactively
+# from a terminal.
+test: $(NO_TESTS)
 
-
-REQUIRED_PACKAGES += library/pth
 REQUIRED_PACKAGES += library/security/libgpg-error
+REQUIRED_PACKAGES += library/security/libassuan
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/linker
