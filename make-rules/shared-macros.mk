@@ -404,7 +404,7 @@ export PARFAIT_NATIVESUNCXX=$(SPRO_VROOT)/bin/CC
 export PARFAIT_NATIVEGCC=$(GCC_ROOT)/bin/gcc
 export PARFAIT_NATIVEGXX=$(GCC_ROOT)/bin/g++
 
-GCC_ROOT =	/usr/gcc/4.7
+GCC_ROOT =	/usr/gcc/4.8
 GCC3_ROOT =	/usr/gcc/3.4
 
 CC.studio.32 =	$(SPRO_VROOT)/bin/cc
@@ -935,7 +935,7 @@ ifeq ($(COMPILER),gcc3)
 REQUIRED_PACKAGES += developer/gcc-3
 endif
 ifeq ($(COMPILER),gcc)
-REQUIRED_PACKAGES += developer/gcc-47
+REQUIRED_PACKAGES += developer/gcc-48
 endif
 ifeq ($(COMPILER),studio)
 ifneq ($(findstring /opt/solarisstudio12.4,$(CC)),)

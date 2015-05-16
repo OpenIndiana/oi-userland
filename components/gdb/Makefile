@@ -29,7 +29,6 @@
 # not usable. Building gdb with a GCC >= 4.7.2 produces very
 # good results, even on SPARC.
 COMPILER=gcc
-GCCHOME=/usr/gcc/4.7
 
 include ../../make-rules/shared-macros.mk
 
@@ -51,7 +50,7 @@ include $(WS_MAKE_RULES)/ips.mk
 
 
 # GDB wants the GNU utilities
-PATH=/usr/gnu/bin:$(GCCHOME)/bin:/usr/bin:/usr/perl5/bin
+PATH=/usr/gnu/bin:$(GCC_ROOT)/bin:/usr/bin:/usr/perl5/bin
 
 CFLAGS_sparc =	-g -O2 -mcpu=ultrasparc -mtune=ultrasparc
 CFLAGS_sparc +=	-mno-unaligned-doubles
