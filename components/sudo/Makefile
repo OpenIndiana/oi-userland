@@ -48,8 +48,7 @@ CONFIGURE_ENV +=	"CC=$(CC)"
 CONFIGURE_ENV +=	"CFLAGS=$(CFLAGS)"
 CONFIGURE_ENV +=	"CXX=$(CXX)"
 CONFIGURE_ENV +=	"MAKE=$(GMAKE)"
-CONFIGURE_ENV +=	"CPPFLAGS=$(CPPFLAGS) -I/usr/include/openldap"
-CONFIGURE_ENV +=	"LDFLAGS=$(LDFLAGS) -m64 -lldap_r-2.4"
+CONFIGURE_ENV +=	"LDFLAGS=$(LDFLAGS) -m64"
 
 CONFIGURE_OPTIONS +=	--with-ldap
 CONFIGURE_OPTIONS +=	--with-project
@@ -106,6 +105,5 @@ test:		$(TEST_64)
 
 
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/crypto
