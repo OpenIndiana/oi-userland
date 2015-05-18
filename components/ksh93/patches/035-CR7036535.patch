@@ -1,16 +1,15 @@
-# Solaris specific issue. Not submitted to the community.
---- a/src/cmd/ksh93/sh/path.c	2015-02-24 13:25:19.360898415 -0800
-+++ b/src/cmd/ksh93/sh/path.c	2015-02-25 00:54:42.168155178 -0800
-@@ -1463,7 +1463,7 @@
+--- a/src/cmd/ksh93/sh/path.c	Mon Nov 22 20:55:38 2010
++++ b/src/cmd/ksh93/sh/path.c	Tue Sep 27 10:48:45 2011
+@@ -1430,7 +1435,7 @@
  		len = strlen(name);
  	for(pp=first; pp; pp=pp->next)
  	{
--		if(len == pp->len && memcmp(name,pp->name,len)==0)
-+		if(len == pp->len && strncmp(name,pp->name,len)==0)
+-		if(memcmp(name,pp->name,len)==0 && (pp->name[len]==':' || pp->name[len]==0))
++		if(strncmp(name,pp->name,len)==0 && (pp->name[len]==':' || pp->name[len]==0))
  		{
  			pp->flags |= flag;
  			return(first);
-@@ -1751,7 +1751,7 @@
+@@ -1740,7 +1745,7 @@
  	register Pathcomp_t *pp=first;
  	while(pp)
  	{
@@ -67,4 +66,3 @@
  			{
  				int	k=1;
  				Namarr_t *ap=0;
-

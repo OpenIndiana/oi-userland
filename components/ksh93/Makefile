@@ -28,42 +28,22 @@ COMPONENT_BUGDB=    utility/ksh93
 COMPONENT_PROJECT_URL= http://www2.research.att.com/sw/download/
 
 # These are required if retrieving packages from the AT&T website.
-ATT_USERNAME= "I accept www.opensource.org/licenses/eclipse"
+ATT_USERNAME= "I accept www.opensource.org/licenses/cpl"
 ATT_PASSWD= "."
-
-COMPONENT_TEST_MASTER = \
-	$(COMPONENT_TEST_RESULTS_DIR)/results-$(BITS).$(MACH).master 
-
-COMPONENT_TEST_TRANSFORMS += \
-	'-e "s|\(^$(CC)\).*|\\$$(CC)|"' \
-	'-e "s|\(temporary directory\).*|\1|"' \
-	'-e "1,/package: test start/d"' \
-	'-e "s|\(begins\).*|\1|"' \
-	'-e "s|\(passed\).*\(\[\)|\1 \2|"' \
-	'-e "s|\(failed\).*\(with exit code\)|\1 \2|"' \
-	'-e "s|\(package: test done\).*|\1|"'\
-	'-e "/usage: sleep/d"' \
-	'-e "/invalid interval/d"' \
-	'-e "s|\(took\).*\(expected\)|\1 x secs \2|"' \
-	'-e "s|\(expected .* sec\).*\(got\).*|\1 \2 x secs|"' \
-	'-e "s|^.*\(shcomp-.*\).*|\1|"'
-
-# Enable ASLR for this component
-ASLR_MODE = $(ASLR_ENABLE)
 
 # This flag controls the prep.mk behaviour to patch each archive individually
 PATCH_EACH_ARCHIVE = 1
 
 COMPONENT_NAME = ksh93
 COMPONENT_SRC_NAME = INIT
-COMPONENT_VERSION = 2012-08-01
+COMPONENT_VERSION = 2011-02-08
 COMPONENT_SRC = $(COMPONENT_SRC_NAME).$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH = \
-    sha256:c40cf57e9b2186271a9c362a560aa4a6e25ba911a8258ab931d2bbdbce44cfe5
-COMPONENT_ARCHIVE_URL = http://www2.research.att.com/~astopen/download/tgz/$(COMPONENT_ARCHIVE)
+    sha256:d692d476fe4bb933e7b6459c0cc99a2e9f428bfd81a495ed4201ec197e070f57
+COMPONENT_ARCHIVE_URL = http://www2.research.att.com/~gsf/download/tgz/$(COMPONENT_ARCHIVE) 
 
-TPNO=		16530
+TPNO=		9000
 
 # Patch only required if building ksh93 only and not ast-base
 # package-pax-suid.patch
@@ -73,12 +53,12 @@ UNPACK_ARGS= -r $(COMPONENT_SRC)
 
 NUM_EXTRA_ARCHIVES= 1
 COMPONENT_NAME_1= ast-base
-COMPONENT_VERSION_1= 2012-08-01
+COMPONENT_VERSION_1= 2011-02-08
 COMPONENT_SRC_1= $(COMPONENT_NAME_1).$(COMPONENT_VERSION_1)
 COMPONENT_ARCHIVE_1= $(COMPONENT_NAME_1).$(COMPONENT_VERSION_1).tgz
 COMPONENT_ARCHIVE_HASH_1= \
-    sha256:3bd668dbd922790f1d24c78e3522ef4816501e9cf80abf3c480f554c74f4dbac
-COMPONENT_ARCHIVE_URL_1= http://www2.research.att.com/~astopen/download/tgz/$(COMPONENT_ARCHIVE_1)
+    sha256:44ae3913e6c0c8992c6c3cba16864fd4c4a18c6da8e7d87c85a23060cea7cd1a
+COMPONENT_ARCHIVE_URL_1= http://www2.research.att.com/~gsf/download/tgz/$(COMPONENT_ARCHIVE_1)
 
 # Fixup HOSTTYPE to match uname output and bits
 HOSTTYPE32=sol11.$(shell uname -p)
@@ -142,18 +122,14 @@ COMPONENT_POST_INSTALL_ACTION= \
 # IPS Version number: 93.21.1.20110208
 #
 IPS_PKG_NAME= ksh93
-IPS_COMPONENT_VERSION= 93.21.1.20120801
-IPS_HUMAN_VERSION= "93u+ 2012-08-01"
+IPS_COMPONENT_VERSION= 93.21.0.20110208
+IPS_HUMAN_VERSION= "93u 2011-02-08"
 
 # common targets
 build:		$(BUILD_32_and_64)
 	
 install:	$(INSTALL_32_and_64)	
-	(for binary in msgcvt msgcpp msgget msggen ksh shcomp alias; do \
-		/usr/bin/elfedit -e 'dyn:delete RPATH' -e 'dyn:delete RUNPATH' \
-		    "$(PROTO_DIR)/$(MACH64)/bin/$$binary" ; \
-	done )
-
+		
 test:		$(TEST_32_and_64)
 
 PKG_PROTO_DIRS +=   $(COMPONENT_DIR)/files

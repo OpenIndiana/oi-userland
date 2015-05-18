@@ -1,0 +1,46 @@
+diff -r bb8978c251cb -r 6fbea5c30b60 usr/src/cmd/ast/lib/libshell/common/sh/jobs.c
+--- a/src/cmd/ksh93/sh/jobs.c	Sun Mar 25 23:19:46 2012 -0700
++++ b/src/cmd/ksh93/sh/jobs.c	Mon Mar 26 05:09:19 2012 -0700
+@@ -28,6 +28,9 @@
+  *  Rewritten April, 1988
+  *  Revised January, 1992
+  */
++/*
++ * Copyright (c) 2007, 2012, Oracle and/or its affiliates. All rights reserved.
++ */
+ 
+ #include	"defs.h"
+ #include	<wait.h>
+@@ -57,6 +60,7 @@
+ {
+ 	struct jobsave	*next;
+ 	pid_t		pid;
++	short		curenv;
+ 	unsigned short	exitval;
+ };
+ 
+@@ -232,6 +236,7 @@
+ 		jp->pid = pid;
+ 		jp->next = bck.list;
+ 		bck.list = jp;
++		jp->curenv = 0;
+ 		jp->exitval = 0;
+ 	}
+ 	return(jp);
+@@ -1790,6 +1795,7 @@
+ 			/* save status for future wait */
+ 			if(jp = jobsave_create(pw->p_pid))
+ 			{
++				jp->curenv = pw->p_env;
+ 				jp->exitval = pw->p_exit;
+ 				if(pw->p_flag&P_SIGNALLED)
+ 					jp->exitval |= SH_EXITSIG;
+@@ -1967,7 +1973,7 @@
+ 	for(jp=bck.list; jp; jp=jpnext)
+ 	{
+ 		jpnext = jp->next;
+-		if(jp->pid==sh.spid)
++		if(jp->curenv != sh.curenv || jp->pid==sh.spid)
+ 		{
+ 			jp->next = bp->list;
+ 			bp->list = jp;

@@ -1,0 +1,21 @@
+diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/edit/edit.c INIT.2011-02-08/src/cmd/ksh93/edit/edit.c
+--- INIT.2011-02-08.clean/src/cmd/ksh93/edit/edit.c	2012-05-10 12:44:32.651317787 +0100
++++ INIT.2011-02-08/src/cmd/ksh93/edit/edit.c	2012-05-10 12:49:00.804744460 +0100
+@@ -1652,7 +1652,7 @@ int ed_histgen(Edit_t *ep,const char *pa
+ 	History_t	*hp;
+ 	off_t		offset;
+ 	int 		ac=0,l,m,n,index1,index2;
+-	char		*cp, **argv, **av, **ar;
++	char		*cp, **argv=NULL, **av, **ar;
+ 	if(!(hp=ep->sh->gd->hist_ptr))
+ 		return(0);
+ 	if(*pattern=='#')
+@@ -1731,7 +1731,7 @@ int ed_histgen(Edit_t *ep,const char *pa
+ 		mplast->next = 0;
+ 	}
+ 	ep->hlist = (Histmatch_t**)argv;
+-	ep->hfirst = ep->hlist[0];
++	ep->hfirst = ep->hlist ? ep->hlist[0] : NULL;
+ 	return(ep->hmax=ac);
+ }
+ 
