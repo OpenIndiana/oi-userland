@@ -77,6 +77,10 @@ LDFLAGS =	$(CC_BITS) $(CC_PIC)
 # build pic
 CFLAGS +=	$(CC_PIC)
 
+# for DWARF
+CFLAGS.i386 =	-preserve_argvalues=complete
+CFLAGS +=	$(CFLAGS.$(MACH))
+
 # 16-byte memory alignment + interpretation of non-alignment prevents SIGBUS.
 studio_ALIGN.sparc.64 = -xmemalign=16i
 

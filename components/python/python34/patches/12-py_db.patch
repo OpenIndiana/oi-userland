@@ -37,9 +37,9 @@ some point, but the suitability (or lack thereof) has not yet been determined.
  	if test "x$(ENSUREPIP)" != "xno"  ; then \
  		case $(ENSUREPIP) in \
  			upgrade) ensurepip="--upgrade" ;; \
---- /dev/null
-+++ Python-3.4.0/py_db/libpython34_db.c
-@@ -0,0 +1,654 @@
+--- /dev/null	2015-05-14 14:46:26.000000000 -0700
++++ Python-3.4.3/py_db/libpython34_db.c	2015-05-14 14:45:15.723529281 -0700
+@@ -0,0 +1,583 @@
 +/*
 + * CDDL HEADER START
 + *
@@ -61,7 +61,7 @@ some point, but the suitability (or lack thereof) has not yet been determined.
 + * CDDL HEADER END
 + */
 +/*
-+ * Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
++ * Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
 + */
 +
 +#include <stdio.h>
@@ -74,28 +74,12 @@ some point, but the suitability (or lack thereof) has not yet been determined.
 +#include <frameobject.h>
 +
 +#include "libpython34_db.h"
-+#if defined(_LP64)
-+#include "libpython34_db_32.h"
-+#endif /* _LP64 */
-+
-+/*
-+ * Because MDB always runs the debugger in the same datamodel as the target,
-+ * only functions that are used by the procfs part of this interface (or shared
-+ * between the two) are written as 64->32 aware.
-+ */
-+typedef struct pydb_arch_ops {
-+	ssize_t	(*strobj_readdata)(pydb_agent_t *, uintptr_t, unsigned char *,
-+	    size_t);
-+	int	(*frameinfo)(pydb_agent_t *, uintptr_t, char *,
-+	    size_t, char *, size_t, int *);
-+} pydb_arch_ops_t;
 +
 +struct pydb_agent {
 +	struct ps_prochandle *pdb_ph;
 +	int pdb_vers;
 +	int pdb_is_64bit;
 +	int pdb_datamodel;
-+	const pydb_arch_ops_t *pdb_ops;
 +};
 +
 +typedef uintptr_t (*pdi_next_cb_t)(pydb_iter_t *);
@@ -106,7 +90,7 @@ some point, but the suitability (or lack thereof) has not yet been determined.
 +	pdi_next_cb_t pdi_nextf;
 +};
 +
-+#define	LIBPYTHON	"libpython3.4.so"
++#define	LIBPYTHON	"libpython3.4m.so"
 +
 +#define	MIN(x, y)	(((x) < (y)) ? (x) : (y))
 +
@@ -124,13 +108,6 @@ some point, but the suitability (or lack thereof) has not yet been determined.
 +static int pydb_frameinfo_native(pydb_agent_t *py, uintptr_t addr, char *funcnm,
 +    size_t funcnm_sz, char *filenm, size_t filenm_sz, int *lineno);
 +
-+#if defined (_LP64)
-+static ssize_t pydb_strobj_readdata_32(pydb_agent_t *py, uintptr_t addr,
-+    unsigned char *buf, size_t buf_len);
-+static int pydb_frameinfo_32(pydb_agent_t *py, uintptr_t addr, char *funcnm,
-+    size_t funcnm_sz, char *filenm, size_t filenm_sz, int *lineno);
-+#endif /* _LP64 */
-+
 +static ssize_t pydb_strobj_readstr(pydb_agent_t *py, uintptr_t addr, char *buf,
 +    size_t len);
 +
@@ -140,18 +117,6 @@ some point, but the suitability (or lack thereof) has not yet been determined.
 +static uintptr_t pydb_thread_iter_next(pydb_iter_t *iter);
 +
 +static const char *strbasename(const char *s);
-+
-+static const pydb_arch_ops_t arch_ops_native = {
-+	.frameinfo = pydb_frameinfo_native,
-+	.strobj_readdata = pydb_strobj_readdata_native,
-+};
-+
-+#if defined (_LP64)
-+static const pydb_arch_ops_t arch_ops_32 = {
-+	.frameinfo = pydb_frameinfo_32,
-+	.strobj_readdata = pydb_strobj_readdata_32,
-+};
-+#endif /* _LP64 */
 +
 +static const char *
 +strbasename(const char *s)
@@ -190,14 +155,6 @@ some point, but the suitability (or lack thereof) has not yet been determined.
 +	py->pdb_vers = vers;
 +	py->pdb_datamodel = datamodel;
 +	py->pdb_is_64bit = 0;
-+	py->pdb_ops = &arch_ops_native;
-+
-+#if defined (_LP64)
-+	py->pdb_is_64bit = (datamodel == PR_MODEL_LP64);
-+	if (!py->pdb_is_64bit) {
-+		py->pdb_ops = &arch_ops_32;
-+	}
-+#endif /* _LP64 */
 +
 +	return (py);
 +}
@@ -246,14 +203,67 @@ some point, but the suitability (or lack thereof) has not yet been determined.
 +}
 +
 +static ssize_t
-+pydb_strobj_readdata(pydb_agent_t *py, uintptr_t addr, unsigned char *buf,
-+    size_t buf_len)
++pydb_asciiobj_readdata(pydb_agent_t *py, uintptr_t addr,
++    unsigned char *buf, size_t buf_len)
 +{
-+	return (py->pdb_ops->strobj_readdata(py, addr, buf, buf_len));
++	PyASCIIObject sobj;
++	ssize_t obj_sz;
++	ssize_t read_sz;
++	psaddr_t asciiaddr;
++
++	/*
++	 * PyASCIIObjects are a type of Unicode string.  They are identified
++	 * as follows:
++	 * - sobj.state.compact == 1
++	 * - sobj.state.ascii == 1
++	 * - sobj.state.ready == 1
++	 * The length of the string is stored in sobj.length.  The string
++	 * itself follows the PyASCIIObject.
++	 */
++
++	if (ps_pread(py->pdb_ph, addr, &sobj, sizeof (PyASCIIObject))
++	    != PS_OK) {
++		return (-1);
++	}
++
++	if (!sobj.state.compact || !sobj.state.ascii || !sobj.state.ready) {
++		return (-1);
++	}
++
++	obj_sz = (ssize_t)sobj.length;
++
++	read_sz = MIN(obj_sz, (ssize_t)buf_len);
++	asciiaddr = (psaddr_t)(addr + sizeof (PyASCIIObject));
++
++	if (ps_pread(py->pdb_ph, asciiaddr, buf, (size_t)read_sz) != PS_OK) {
++		return (-1);
++	}
++
++	return (read_sz);
 +}
 +
 +static ssize_t
-+pydb_strobj_readdata_native(pydb_agent_t *py, uintptr_t addr,
++pydb_asciiobj_readstr(pydb_agent_t *py, uintptr_t addr, char *buf,
++    size_t buf_len)
++{
++	ssize_t read_sz;
++
++	read_sz = pydb_asciiobj_readdata(py, addr, (unsigned char *)buf,
++	    buf_len);
++
++	if (read_sz >= 0) {
++		if (read_sz >= buf_len) {
++			read_sz = buf_len - 1;
++		}
++
++		buf[read_sz] = '\0';
++	}
++
++	return (read_sz);
++}
++
++static ssize_t
++pydb_strobj_readdata(pydb_agent_t *py, uintptr_t addr,
 +    unsigned char *buf, size_t buf_len)
 +{
 +	PyBytesObject sobj;
@@ -277,7 +287,13 @@ some point, but the suitability (or lack thereof) has not yet been determined.
 +		return (-1);
 +	}
 +
-+	obj_sz = (ssize_t)PyString_GET_SIZE(&sobj);
++	/*
++	 * If we want to emulate PyBytes_GET_SIZE() instead of just calling
++	 * Py_SIZE() directly, we need to do a ps_pread() of Py_TYPE(&sobj).
++	 * PyBytes_Check() will try to access the type structure, but the 
++	 * address is not in the debugger's address space.
++	 */
++	obj_sz = (ssize_t)Py_SIZE(&sobj);
 +
 +	read_sz = MIN(obj_sz, (ssize_t)buf_len);
 +	straddr = (psaddr_t)(addr + offsetof(PyBytesObject, ob_sval));
@@ -288,45 +304,6 @@ some point, but the suitability (or lack thereof) has not yet been determined.
 +
 +	return (read_sz);
 +}
-+
-+#if defined(_LP64)
-+static ssize_t
-+pydb_strobj_readdata_32(pydb_agent_t *py, uintptr_t addr,
-+    unsigned char *buf, size_t buf_len)
-+{
-+	PyBytesObject32 sobj;
-+	ssize_t obj_sz;
-+	ssize_t read_sz;
-+	psaddr_t straddr;
-+
-+	/*
-+	 * PyBytesObject are variable size.  The size of the PyBytesObject
-+	 * struct is fixed, and known at compile time; however, the size of the
-+	 * associated buffer is variable.  The char[1] element at the end of the
-+	 * structure contains the string, and the ob_size of the PyBytesObject
-+	 * indicates how much extra space was allocated to contain the string
-+	 * buffer at the object's tail.  Read in the fixed size portion of the
-+	 * object first, and then read the contents of the data buffer into the
-+	 * buffer passed by the caller.
-+	 */
-+
-+	if (ps_pread(py->pdb_ph, addr, &sobj, sizeof (PyBytesObject32))
-+	    != PS_OK) {
-+		return (-1);
-+	}
-+
-+	obj_sz = (ssize_t)PyString_GET_SIZE32(&sobj);
-+
-+	read_sz = MIN(obj_sz, (ssize_t)buf_len);
-+	straddr = (psaddr_t)(addr + offsetof(PyBytesObject32, ob_sval));
-+
-+	if (ps_pread(py->pdb_ph, straddr, buf, (size_t)read_sz) != PS_OK) {
-+		return (-1);
-+	}
-+
-+	return (read_sz);
-+}
-+#endif /* _LP64 */
 +
 +/*
 + * Most Python PyBytesObject contain strings, as one would expect.  However,
@@ -360,14 +337,6 @@ some point, but the suitability (or lack thereof) has not yet been determined.
 +pydb_frameinfo(pydb_agent_t *py, uintptr_t addr, char *funcnm,
 +    size_t funcnm_sz, char *filenm, size_t filenm_sz, int *lineno)
 +{
-+	return (py->pdb_ops->frameinfo(py, addr, funcnm, funcnm_sz,
-+	    filenm, filenm_sz, lineno));
-+}
-+
-+static int
-+pydb_frameinfo_native(pydb_agent_t *py, uintptr_t addr, char *funcnm,
-+    size_t funcnm_sz, char *filenm, size_t filenm_sz, int *lineno)
-+{
 +	PyFrameObject fo;
 +	PyCodeObject co;
 +	ssize_t rc;
@@ -382,12 +351,13 @@ some point, but the suitability (or lack thereof) has not yet been determined.
 +		return (-1);
 +	}
 +
-+	rc = pydb_strobj_readstr(py, (uintptr_t)co.co_name, funcnm, funcnm_sz);
++	rc = pydb_asciiobj_readstr(py, (uintptr_t)co.co_name, funcnm,
++	    funcnm_sz);
 +	if (rc < 0) {
 +		return (-1);
 +	}
 +
-+	rc = pydb_strobj_readstr(py, (uintptr_t)co.co_filename, filenm,
++	rc = pydb_asciiobj_readstr(py, (uintptr_t)co.co_filename, filenm,
 +	    filenm_sz);
 +	if (rc < 0) {
 +		return (-1);
@@ -401,47 +371,6 @@ some point, but the suitability (or lack thereof) has not yet been determined.
 +
 +	return (0);
 +}
-+
-+#if defined (_LP64)
-+static int
-+pydb_frameinfo_32(pydb_agent_t *py, uintptr_t addr, char *funcnm,
-+    size_t funcnm_sz, char *filenm, size_t filenm_sz, int *lineno)
-+{
-+	PyFrameObject32 fo;
-+	PyCodeObject32 co;
-+	ssize_t rc;
-+
-+	if (ps_pread(py->pdb_ph, addr, &fo, sizeof (PyFrameObject32))
-+	    != PS_OK) {
-+		return (-1);
-+	}
-+
-+	if (ps_pread(py->pdb_ph, (uintptr_t)fo.f_code, &co,
-+	    sizeof (PyCodeObject32)) != PS_OK) {
-+		return (-1);
-+	}
-+
-+	rc = pydb_strobj_readstr(py, (uintptr_t)co.co_name, funcnm, funcnm_sz);
-+	if (rc < 0) {
-+		return (-1);
-+	}
-+
-+	rc = pydb_strobj_readstr(py, (uintptr_t)co.co_filename, filenm,
-+	    filenm_sz);
-+	if (rc < 0) {
-+		return (-1);
-+	}
-+
-+	*lineno = pydb_getlno(py, (uintptr_t)co.co_lnotab, co.co_firstlineno,
-+	    fo.f_lasti);
-+	if (*lineno < 0) {
-+		return (-1);
-+	}
-+
-+	return (0);
-+}
-+
-+#endif /* _LP64 */
 +
 +/* Functions that are part of the library's interface */
 +
