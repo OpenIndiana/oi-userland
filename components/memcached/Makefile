@@ -64,6 +64,13 @@ CONFIGURE_OPTIONS +=	--enable-dtrace --disable-docs --disable-coverage
 CONFIGURE_OPTIONS +=	--localstatedir=/var
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 
+# Transforms remove unnecessary text from results
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s|\(failed to listen on TCP port \).*|\1|" ' \
+	'-e "s|\(Tests=6851\).*|\1|" '\
+	'-e "/\(slab class\).*/d" ' \
+	'-e "/\(<\).*/d" ' 
+
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
