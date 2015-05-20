@@ -42,11 +42,16 @@ CONFIGURE_OPTIONS +=	--disable-locking
 CONFIGURE_OPTIONS +=	--sysconfdir=/etc
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)" 
 
-configure:	$(CONFIGURE_32)
+configure:	$(CONFIGURE_32_and_64)
 
-build:		$(BUILD_32)
+# Enable ASLR for this component
+ASLR_MODE = $(ASLR_ENABLE)
 
-install:	$(INSTALL_32)
+COMPONENT_BUILD_ARGS += LDFLAGS="$(CC_BITS)"
+
+build:          $(BUILD_32_and_64)
+
+install:        $(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 

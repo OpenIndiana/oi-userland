@@ -47,6 +47,9 @@ CONFIGURE_OPTIONS +=	LDFLAGS="-lsane"
 
 configure:	$(CONFIGURE_32)
 
+# Enable ASLR for this component
+ASLR_MODE = $(ASLR_ENABLE)
+
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
