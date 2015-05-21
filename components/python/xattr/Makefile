@@ -76,4 +76,7 @@ system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 REQUIRED_PACKAGES += library/python/setuptools-26
 REQUIRED_PACKAGES += library/python/setuptools-27
 REQUIRED_PACKAGES += library/python/setuptools-34
+REQUIRED_PACKAGES += library/python/cffi-26
+REQUIRED_PACKAGES += library/python/cffi-27
+REQUIRED_PACKAGES += library/python/cffi-34
 REQUIRED_PACKAGES += system/library
