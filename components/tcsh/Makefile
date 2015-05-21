@@ -49,6 +49,7 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 COMPONENT_PRE_TEST_ACTION = \
     ($(RM) $(SOURCE_DIR)/tests/package.m4)
 
+
 COMPONENT_PREP_ACTION = \
 	(cd $(@D) ; autoconf )
 
@@ -65,6 +66,7 @@ CONFIGURE_OPTIONS  +=		--localedir=$(CONFIGURE_LOCALEDIR)
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 
 COMPONENT_TEST_ENV += PATH=/usr/gnu/bin:/usr/bin
+COMPONENT_SYSTEM_TEST_TARGETS= system-test
 
 ASLR_MODE = $(ASLR_ENABLE)
 
@@ -77,7 +79,8 @@ install:	$(INSTALL_64)
 
 test: 		$(TEST_64)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+# the testsuite needs to be configured first
+system-test:    configure $(SYSTEM_TEST_64)
 
 
 REQUIRED_PACKAGES += system/library

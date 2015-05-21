@@ -1,0 +1,19 @@
+--- tcsh-6.18.01/Makefile.in.orig	Tue Apr 14 13:38:25 2015
++++ tcsh-6.18.01/Makefile.in	Tue Apr 14 13:39:03 2015
+@@ -761,6 +761,16 @@
+ check: atconfig $(srcdir)/tests/testsuite
+ 	$(SHELL) $(srcdir)/tests/testsuite
+ 
++sys-atconfig: atconfig
++	@gsed -e "s,AUTOTEST_PATH='.'",AUTOTEST_PATH='/usr/gnu/bin:/usr/bin', < \
++	    atconfig > sys-atconfig
++
++system-test: sys-atconfig $(srcdir)/tests/testsuite
++	@mv atconfig atconfig.orig
++	@cp sys-atconfig atconfig
++	$(SHELL) $(srcdir)/tests/testsuite
++	@mv atconfig.orig atconfig
++
+ #
+ # Dependencies
+ #

@@ -1,0 +1,29 @@
+--- make-3.82/Makefile.in.orig	Tue Apr 14 12:59:38 2015
++++ make-3.82/Makefile.in	Tue Apr 14 13:00:41 2015
+@@ -1116,6 +1116,26 @@
+ 	  echo "Can't find the GNU Make test suite ($(srcdir)/tests)."; \
+ 	 fi
+ 
++system-test:
++	@if test -f "$(srcdir)/tests/run_make_tests"; then \
++	  if $(PERL) -v >/dev/null 2>&1; then \
++	    case `cd $(srcdir); pwd` in `pwd`) : ;; \
++	      *) test -d tests || mkdir tests; \
++		 rm -f srctests; \
++		 if ln -s "$(srcdir)/tests" srctests; then \
++		   for f in run_make_tests run_make_tests.pl test_driver.pl scripts; do \
++		     rm -f tests/$$f; ln -s ../srctests/$$f tests; \
++		   done; fi ;; \
++	    esac; \
++	    echo "cd tests && $(PERL) ./run_make_tests.pl -make /usr/bin/gmake $(MAKETESTFLAGS)"; \
++	    cd tests && $(PERL) ./run_make_tests.pl -make /usr/bin/gmake $(MAKETESTFLAGS); \
++	  else \
++	    echo "Can't find a working Perl ($(PERL)); the test suite requires Perl."; \
++	  fi; \
++	 else \
++	  echo "Can't find the GNU Make test suite ($(srcdir)/tests)."; \
++	 fi
++
+ # --------------- Maintainer's Section
+ 
+ # Tell automake that I haven't forgotten about this file and it will be

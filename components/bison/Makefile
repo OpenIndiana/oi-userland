@@ -49,12 +49,30 @@ CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
+# the test suite actually generates a script
+# that runs the just-built bison against the
+# just-built files. to make it run the system
+# one, we can just replace that script with
+# a simpler one
+COMPONENT_PRE_SYSTEM_TEST_ACTION= \
+    (cd $(@D)/tests; mv bison bison.orig; \
+        echo "\#!/bin/bash" > bison; \
+        echo "exec /usr/bin/bison \$$@" >> bison; \
+        chmod +x bison; \
+    )
+
+COMPONENT_POST_SYSTEM_TEST_ACTION= \
+    (cd $(@D)/tests; rm -f bison; mv bison.orig bison)
+
 # Strip compilation lines from test output
 COMPONENT_TEST_TRANSFORMS += \
     '-e "s|^.*$(CC).*$$|XXX_CC_XXX|g" ' \
     '-e "s|^.*$(CXX).*$$|XXX_CC_XXX|g" ' \
     '-e "s|^.*source=.*libtool=no.*$$|XXX_CC_XXX|g" ' \
     '-e "s|^.*DEPDIR=.deps.*$$|XXX_CC_XXX|g" ' \
+    '-e "s|^config.status: .*$$|XXX_CC_XXX|g" ' \
+    '-e "s|^make.*: Leaving directory.*$$|XXX_CC_XXX|g" ' \
+    '-e "s|^make.*: Entering directory.*$$|XXX_CC_XXX|g" ' \
     '-e "/^XXX_CC_XXX$$/d" '
 
 # Enable ASLR for this component
@@ -71,7 +89,8 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_64)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+# we need to first generate the test suite,
+system-test:    build $(SYSTEM_TEST_64)
 
 
 REQUIRED_PACKAGES += developer/macro/gnu-m4

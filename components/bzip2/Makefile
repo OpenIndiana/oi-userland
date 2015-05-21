@@ -60,6 +60,17 @@ COMPONENT_PRE_BUILD_ACTION= \
 	    cp ../../oldapi.c . )
 
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+COMPONENT_TEST_TARGETS = test
+system-test: \
+    COMPONENT_TEST_MASTER = \
+         $(COMPONENT_TEST_RESULTS_DIR)/system-results-all.master
+COMPONENT_SYSTEM_TEST_TARGETS= system-test
+COMPONENT_SYSTEM_TEST_DIR = $(SOURCE_DIR)
+
+COMPONENT_TEST_TRANSFORMS += \
+    '-e "s|^make.*: Leaving directory.*$$|XXX_CC_XXX|g" ' \
+    '-e "s|^make.*: Entering directory.*$$|XXX_CC_XXX|g" ' \
+    '-e "/^XXX_CC_XXX$$/d" '
 
 # common targets
 build:		$(BUILD_32_and_64)
@@ -77,7 +88,7 @@ install:	build $(INSTALL_32_and_64)
 # build does this always
 test:		$(TEST_32_and_64)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+system-test:	$(SYSTEM_TEST_32_and_64)
 
 
 REQUIRED_PACKAGES += shell/ksh93

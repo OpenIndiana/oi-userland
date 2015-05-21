@@ -51,6 +51,11 @@ CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 COMPONENT_PRE_TEST_ACTION = \
     ($(TOUCH) $(SOURCE_DIR)/getloadavg.c)
 
+COMPONENT_SYSTEM_TEST_TARGETS= system-test
+system-test: \
+    COMPONENT_TEST_MASTER = \
+         $(COMPONENT_TEST_RESULTS_DIR)/system-results-64.master
+
 # Strip compilation lines from test output
 COMPONENT_TEST_TRANSFORMS += \
     '-e "s|^.*$(CC).*$$|XXX_CC_XXX|g" ' \
@@ -61,6 +66,9 @@ COMPONENT_TEST_TRANSFORMS += \
     '-e "s|^.*Running tests for GNU make.*$$|XXX_CC_XXX|g" ' \
     '-e "s|^.==========.*$$|XXX_CC_XXX|g" ' \
     '-e "s|^Clearing work.*$$|XXX_CC_XXX|g" ' \
+    '-e "s|^config.status: .*$$|XXX_CC_XXX|g" ' \
+    '-e "s|^make.*: Leaving directory.*$$|XXX_CC_XXX|g" ' \
+    '-e "s|^make.*: Entering directory.*$$|XXX_CC_XXX|g" ' \
     '-e "/^XXX_CC_XXX$$/d" '
 
 
@@ -75,7 +83,8 @@ install:	$(INSTALL_64)
 
 test:		$(TEST_64)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+# the test suite needs to be configured first
+system-test:	configure $(SYSTEM_TEST_64)
 
 
 REQUIRED_PACKAGES += system/library

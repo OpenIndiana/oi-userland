@@ -1,5 +1,5 @@
---- bzip2-1.0.6/Makefile.orig	Wed Jan 12 13:53:06 2011
-+++ bzip2-1.0.6/Makefile	Thu Jan 13 13:01:30 2011
+--- bzip2-1.0.6/Makefile.orig	Fri Sep 10 15:46:02 2010
++++ bzip2-1.0.6/Makefile	Tue Apr 14 12:32:30 2015
 @@ -33,34 +33,33 @@
        randtable.o  \
        compress.o   \
@@ -51,7 +51,26 @@
  	cmp sample1.bz2 sample1.rb2 
  	cmp sample2.bz2 sample2.rb2
  	cmp sample3.bz2 sample3.rb2
-@@ -72,8 +71,8 @@
+@@ -69,11 +68,27 @@
+ 	cmp sample3.tst sample3.ref
+ 	@cat words3
+ 
++system-test: 
++	@cat words1
++	/usr/bin/bzip2 -1  < sample1.ref > sample1.rb2
++	/usr/bin/bzip2 -2  < sample2.ref > sample2.rb2
++	/usr/bin/bzip2 -3  < sample3.ref > sample3.rb2
++	/usr/bin/bzip2 -d  < sample1.bz2 > sample1.tst
++	/usr/bin/bzip2 -d  < sample2.bz2 > sample2.tst
++	/usr/bin/bzip2 -ds < sample3.bz2 > sample3.tst
++	cmp sample1.bz2 sample1.rb2 
++	cmp sample2.bz2 sample2.rb2
++	cmp sample3.bz2 sample3.rb2
++	cmp sample1.tst sample1.ref
++	cmp sample2.tst sample2.ref
++	cmp sample3.tst sample3.ref
++	@cat words3
++
  install: bzip2 bzip2recover
  	if ( test ! -d $(PREFIX)/bin ) ; then mkdir -p $(PREFIX)/bin ; fi
  	if ( test ! -d $(PREFIX)/lib ) ; then mkdir -p $(PREFIX)/lib ; fi
@@ -62,7 +81,7 @@
  	if ( test ! -d $(PREFIX)/include ) ; then mkdir -p $(PREFIX)/include ; fi
  	cp -f bzip2 $(PREFIX)/bin/bzip2
  	cp -f bzip2 $(PREFIX)/bin/bunzip2
-@@ -83,30 +82,28 @@
+@@ -83,30 +98,28 @@
  	chmod a+x $(PREFIX)/bin/bunzip2
  	chmod a+x $(PREFIX)/bin/bzcat
  	chmod a+x $(PREFIX)/bin/bzip2recover
@@ -107,7 +126,7 @@
  
  clean: 
  	rm -f *.o libbz2.a bzip2 bzip2recover \
-@@ -132,6 +129,8 @@
+@@ -132,6 +145,8 @@
  	$(CC) $(CFLAGS) -c bzip2.c
  bzip2recover.o: bzip2recover.c
  	$(CC) $(CFLAGS) -c bzip2recover.c
