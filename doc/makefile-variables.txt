@@ -19,11 +19,7 @@ The following are the basics that just about every Makefile should have.
   $(COMPONENT_ARCHIVE_HASH) to verify the correctness of the archive.  If
   COMPONENT_SIG_URL is present, then COMPONENT_ARCHIVE_HASH needn't be, but its
   presence is strongly encouraged to ensure that the archive contents don't
-  change silently.  If the signature results in a new key being added to
-  tools/.gnupg/pubring.pgp, then as part of your code review, please show the
-  diffs of the text version of the file by running
-      gpg2 --homedir $WS/tools/.gnupg --fingerprint
-  both before and after the change.  Note that when merging, because
+  change silently.  Note that when merging, because
   $WS/tools/.gnupg/pubring.gpg is a binary file, you will have to choose
   the parent or child version.  Pick one, then run:
 	for cset in $(hg log -r 'parents()' -T '{node} '); do

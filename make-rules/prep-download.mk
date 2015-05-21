@@ -65,3 +65,6 @@ endef
 #
 $(eval $(call download-rules,))
 $(foreach suffix, $(URL_SUFFIXES), $(eval $(call download-rules,_$(suffix))))
+
+# Needed for signature validation of downloads
+REQUIRED_PACKAGES += crypto/gnupg
