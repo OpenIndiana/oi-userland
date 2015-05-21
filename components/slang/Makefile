@@ -68,6 +68,8 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+
 REQUIRED_PACKAGES += image/library/libpng
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += library/zlib

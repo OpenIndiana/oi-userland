@@ -64,3 +64,5 @@ install:	$(INSTALL_NO_ARCH)
 # tests require local, online svc:/application/database/memcached:default
 test:		$(TEST_NO_ARCH)
 
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+

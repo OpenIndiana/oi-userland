@@ -58,6 +58,8 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+
 
 REQUIRED_PACKAGES += library/python/setuptools-26
 REQUIRED_PACKAGES += library/python/setuptools-27

@@ -60,6 +60,8 @@ install:	$(INSTALL_NO_ARCH)
 # required to execute unittests.
 test:		$(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+
 
 REQUIRED_PACKAGES += library/python/eventlet-26
 REQUIRED_PACKAGES += library/python/eventlet-27

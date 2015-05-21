@@ -88,6 +88,8 @@ $(PROTOUSRLIBDIR)/tkConfig.sh:  $(INSTALL_32)
 
 test: 		$(TEST_32_and_64)
 
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+
 # special targets due to tcl internals dependencies
 ../tcl/build/%/.built:
 	(cd ../tcl ; $(GMAKE) build)

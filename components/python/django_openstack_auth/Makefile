@@ -53,3 +53,5 @@ install:	$(INSTALL_NO_ARCH)
 
 # tests require mox which hasn't been integrated yet
 test:		$(NO_TESTS)
+
+system-test:    $(NO_TESTS)

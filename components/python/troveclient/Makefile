@@ -58,3 +58,5 @@ install:	$(INSTALL_NO_ARCH)
 # hacking, discover, sphinx, testrepository and testtools,
 # some of which have not been integrated.
 test:		$(NO_TESTS)
+
+system-test:    $(NO_TESTS)

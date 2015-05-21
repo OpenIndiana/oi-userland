@@ -161,6 +161,8 @@ install: $(INSTALL_64)
 
 test: $(TEST_64)
 
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+
 BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
 REQUIRED_PACKAGES += compress/bzip2

@@ -126,6 +126,9 @@ isc_ifconfig=	./bin/tests/system/ifconfig.sh
 
 .PHONY: test
 test: build $(TEST_32)
+# Add the build dependency as for the test target above once the system-test
+# target is implemented.
+system-test: $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
 # fulltest requires sufficient privileges to configures IP addresses
 # 10.53.0.1 through 10.53.0.5 as aliases on the loopback interface.

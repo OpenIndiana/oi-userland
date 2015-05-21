@@ -146,6 +146,8 @@ build:		$(BUILD_32)
 install:	$(INSTALL_32)
 
 test:		$(TEST_32)
+
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 	#
 	#
 	# All tests should pass.

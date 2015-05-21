@@ -88,3 +88,5 @@ build:		$(BUILD_32)
 install:	$(INSTALL_32) #$(PROTOMAN1MFILES)
 
 test:		$(NO_TESTS)
+
+system-test:    $(NO_TESTS)

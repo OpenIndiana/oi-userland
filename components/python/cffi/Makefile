@@ -77,6 +77,8 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+
 
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += system/library

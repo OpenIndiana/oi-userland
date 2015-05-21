@@ -53,6 +53,8 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+
 
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += shell/bash

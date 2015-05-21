@@ -57,4 +57,6 @@ install:	$(INSTALL_NO_ARCH)
 
 test:		$(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+
 REQUIRED_PACKAGES += system/core-os

@@ -147,6 +147,8 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+
 REQUIRED_PACKAGES += database/berkeleydb-5
 REQUIRED_PACKAGES += library/libmilter
 REQUIRED_PACKAGES += library/openldap

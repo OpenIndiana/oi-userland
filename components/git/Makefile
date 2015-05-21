@@ -94,6 +94,8 @@ install:	$(INSTALL_64) $(BUILD_DIR)/.manpages
 # There are some known issues around I18N.
 test:		$(TEST_64)
 
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+
 # These man pages come in a separate archive with no Makefile
 # and Solaris likes some of them moved around hence we'll just
 # do it manually here.

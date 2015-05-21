@@ -56,3 +56,5 @@ clean::
 	$(RM) -r $(SOURCE_DIR)/build
 
 test:		$(NO_TESTS)
+
+system-test:    $(NO_TESTS)

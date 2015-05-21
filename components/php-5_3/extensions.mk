@@ -61,6 +61,8 @@ install:	$(INSTALL_32)
 
 test:		$(TEST_32)
 
+system-test:	$(SYSTEM_TESTS_NOT_IMPLEMENTED)
+
 # Manual dependency - to build any extension requires php-sapi to be installed
 ../php-sapi/build/$(MACH32)/.installed:
 	(cd ../php-sapi ; $(MAKE) install)

@@ -66,6 +66,8 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+
 
 REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += print/cups

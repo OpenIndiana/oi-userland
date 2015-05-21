@@ -86,5 +86,7 @@ COMPONENT_TEST_TRANSFORMS += \
 
 test:	$(TEST_NO_ARCH)
 
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+
 REQUIRED_PACKAGES += library/python-2/pyorbit-26
 REQUIRED_PACKAGES += library/python/pyorbit-27

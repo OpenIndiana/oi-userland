@@ -64,6 +64,8 @@ install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+
 TPNO=			9060
 
 REQUIRED_PACKAGES += library/ncurses

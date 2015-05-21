@@ -50,6 +50,8 @@ install:	$(INSTALL_NO_ARCH)
 # Virtualenv has tests, but only in the source repo; not in the tarballs.
 test:		$(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+
 REQUIRED_PACKAGES += library/python/setuptools-26
 REQUIRED_PACKAGES += library/python/setuptools-27
 REQUIRED_PACKAGES += library/python/setuptools-34

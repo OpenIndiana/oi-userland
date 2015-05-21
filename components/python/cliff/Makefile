@@ -52,3 +52,5 @@ install:	$(INSTALL_NO_ARCH)
 # coverage >= 3.6, sphinx, oslosphinx
 # some of which haven't been integrated yet.
 test:		$(NO_TESTS)
+
+system-test:    $(NO_TESTS)

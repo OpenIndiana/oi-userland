@@ -55,5 +55,7 @@ install: build
 # empty test target
 test:	$(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+
 clean::
 	$(RM) -r $(BUILD_DIR) $(POFILE)

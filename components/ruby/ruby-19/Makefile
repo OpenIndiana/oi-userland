@@ -161,6 +161,8 @@ install:	build $(INSTALL_64)
 
 test:	$(TEST_64)
 
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+
 REQUIRED_PACKAGES += library/database/gdbm
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += library/ncurses

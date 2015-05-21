@@ -54,3 +54,5 @@ install:	$(INSTALL_NO_ARCH)
 # tests exit with a TypeError but they seem to complete ok
 test:		$(TEST_NO_ARCH)
 
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+

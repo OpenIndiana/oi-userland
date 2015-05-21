@@ -194,6 +194,8 @@ $(BUILD_DIR_64)/llib-lssl.ln: LINT_FLAGS=$(LFLAGS_64)
 COMPONENT_TEST_TARGETS = test
 test:		$(TEST_32_and_64)
 
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+
 
 REQUIRED_PACKAGES += developer/build/makedepend
 REQUIRED_PACKAGES += system/library

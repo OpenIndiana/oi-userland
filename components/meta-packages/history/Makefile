@@ -48,7 +48,7 @@ PUBLISHED =		$(CANONICAL_MANIFESTS:%.p5m=$(MANIFEST_BASE)-%.published)
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-build install:
+build install system-test:
 	@echo "nothing to be done for $@"
 
 $(BUILD_DIR):
@@ -82,3 +82,4 @@ publish: $(BUILD_DIR)/.published-$(MACH)
 	
 clobber clean::
 	$(RM) -r $(BUILD_DIR) $(GENERATED_ARCH_MANIFESTS)
+

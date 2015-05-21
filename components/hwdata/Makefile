@@ -101,6 +101,8 @@ test: $(BUILD_DIR)
 		fi \
 	done
 
+system-test: $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+
 clobber clean::
 	$(RM) -r $(BUILD_DIR)
 

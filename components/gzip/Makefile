@@ -96,6 +96,8 @@ install:	$(INSTALL_64) $(GZGREP_MAN_VARIANTS)
 
 test:		$(TEST_64)
 
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+
 
 REQUIRED_PACKAGES += runtime/python-26
 REQUIRED_PACKAGES += runtime/python-27

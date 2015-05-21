@@ -64,5 +64,7 @@ install:
 
 test: $(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+
 
 REQUIRED_PACKAGES += runtime/perl-512

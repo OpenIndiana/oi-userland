@@ -78,6 +78,8 @@ install:	$(INSTALL_NO_ARCH)
 
 test:		$(TEST_NO_ARCH)
 
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+
 
 REQUIRED_PACKAGES += cloud/openstack/openstack-common
 REQUIRED_PACKAGES += library/python/eventlet-27

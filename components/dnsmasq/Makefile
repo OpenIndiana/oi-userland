@@ -64,6 +64,8 @@ install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+
 
 REQUIRED_PACKAGES += library/libidn
 REQUIRED_PACKAGES += system/core-os

@@ -61,6 +61,8 @@ install:        $(INSTALL_32)
 
 test:           $(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+
 REQUIRED_PACKAGES += library/python/python-twisted-26
 REQUIRED_PACKAGES += library/python/python-twisted-27
 REQUIRED_PACKAGES += library/python/setuptools-26

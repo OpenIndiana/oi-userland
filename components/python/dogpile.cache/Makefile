@@ -51,3 +51,5 @@ install:	$(INSTALL_NO_ARCH)
 # of the CBE
 test:		$(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+

@@ -229,6 +229,8 @@ install:	$(PROTO_DIR)/etc/samba/smb.conf-example $(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+
 clean::
 	$(GMAKE) -C $(COMPONENT_DIR)/../mozldap clean
 

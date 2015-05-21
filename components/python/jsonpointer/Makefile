@@ -52,3 +52,5 @@ install:	$(INSTALL_NO_ARCH)
 # jsonpointer has no tests.
 test:		$(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+

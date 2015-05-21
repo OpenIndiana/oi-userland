@@ -114,6 +114,8 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+
 clean::
 	$(RM) -r $(BUILD_DIR) $(PROTO_DIR) capabilities/*/*/*.o capabilities/*/$(MACH32)/*.s
 

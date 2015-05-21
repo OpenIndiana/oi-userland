@@ -112,6 +112,8 @@ install:	$(INSTALL_32_and_64)
 # caused by 20909151 cblas_dsymm differences between amd64 and sparcv9.
 test:		$(TEST_32_and_64)
 
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

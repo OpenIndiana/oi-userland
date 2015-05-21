@@ -77,6 +77,8 @@ install: build
 
 test:	$(SKIP_TEST)
 
+system-test:	$(SKIP_TEST)
+
 REQUIRED_PACKAGES += developer/java/junit
 REQUIRED_PACKAGES += runtime/java/jre-8
 REQUIRED_PACKAGES += shell/ksh93

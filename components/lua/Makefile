@@ -102,5 +102,7 @@ install:	$(INSTALL_32_and_64) $(BUILD_DIR)/lua-64.pc
 
 test: 		$(TEST_32_and_64)
 
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

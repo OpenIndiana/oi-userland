@@ -66,6 +66,8 @@ install:	$(INSTALL_64)
 
 test:		$(TEST_64)
 
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+
 PKG_PROTO_DIRS +=	$(COMPONENT_DIR)/files
 PKG_PROTO_DIRS +=	$(COMPONENT_SRC)
 

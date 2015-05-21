@@ -55,3 +55,5 @@ install:	$(INSTALL_NO_ARCH)
 # see $(COMPONENT_SRC)/tox-tmpl.ini for the python modules required
 # to execute unittests.
 test:		$(NO_TESTS)
+
+system-test:    $(NO_TESTS)

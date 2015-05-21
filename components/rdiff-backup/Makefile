@@ -53,6 +53,8 @@ install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+
 
 REQUIRED_PACKAGES += library/librsync
 REQUIRED_PACKAGES += system/library

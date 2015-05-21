@@ -128,6 +128,8 @@ install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+
 
 REQUIRED_PACKAGES += library/apr-15
 REQUIRED_PACKAGES += library/apr-util-15

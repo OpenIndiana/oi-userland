@@ -82,6 +82,8 @@ install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
 
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+
 BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
 REQUIRED_PACKAGES += library/security/libgpg-error

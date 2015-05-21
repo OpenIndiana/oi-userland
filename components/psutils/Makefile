@@ -79,6 +79,8 @@ $(INSTALL_32):	$(PROTOUSRSHAREMAN1DIR) $(PROTOUSRBIN)
 
 test:		$(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+
 REQUIRED_PACKAGES += runtime/perl-512
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library

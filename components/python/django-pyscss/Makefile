@@ -55,3 +55,5 @@ install:	$(INSTALL_NO_ARCH)
 # https://github.com/fusionbox/django-pyscss/issues/30 for more
 # information.
 test:		$(NO_TESTS)
+
+system-test:    $(NO_TESTS)

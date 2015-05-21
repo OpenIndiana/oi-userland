@@ -74,6 +74,8 @@ clean::
 # Disable the tests until these rubygems are available.
 test:		$(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+
 
 REQUIRED_PACKAGES += runtime/ruby-19
 REQUIRED_PACKAGES += shell/ksh93

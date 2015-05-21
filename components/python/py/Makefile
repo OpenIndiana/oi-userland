@@ -54,3 +54,5 @@ install:	$(INSTALL_NO_ARCH)
 
 # Tests require the pytest package to be installed.
 test:		$(TEST_NO_ARCH)
+
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)

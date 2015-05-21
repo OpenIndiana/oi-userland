@@ -106,6 +106,8 @@ install:	$(INSTALL_32)
 
 test:		$(TEST_32)
 
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+
 
 REQUIRED_PACKAGES += developer/assembler
 REQUIRED_PACKAGES += developer/gnu-binutils

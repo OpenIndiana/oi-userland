@@ -50,3 +50,5 @@ install:	$(INSTALL_NO_ARCH)
 
 # The tarball for this version does not ship unittests.
 test:		$(NO_TESTS)
+
+system-test:    $(NO_TESTS)

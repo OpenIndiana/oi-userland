@@ -79,9 +79,10 @@ publish:		TARGET = publish
 clean:			TARGET = clean
 clobber:		TARGET = clobber
 test:			TARGET = test
+system-test:		TARGET = system-test
 zone-build:		TARGET = component-zone-build
 component-hook:		TARGET = component-hook
-zone-build prep build install publish test:	LOG = >$(WS_LOGS)/$(@F).$(TARGET).log 2>&1
+zone-build prep build install publish test system-test:	LOG = >$(WS_LOGS)/$(@F).$(TARGET).log 2>&1
 
 # turn off pkglint for the individual component builds.
 ifeq   ($(strip $(PKGLINT_COMPONENT)),)
@@ -96,10 +97,11 @@ publish:		MAKEFLAGS += DISABLE_IPS_CATALOG_AND_INDEX_UPDATES=yes
 
 # For cases in which a component test should be skipped at at the top level
 test:			MAKEFLAGS += TOP_LEVEL_TEST=yes
+system-test:		MAKEFLAGS += TOP_LEVEL_TEST=yes
 
 .DEFAULT:	publish
 
-zone-build build install publish test: $(COMPONENT_DIRS)
+zone-build build install publish test system-test: $(COMPONENT_DIRS)
 
 COMPONENT_DIRS.nosetup =	$(COMPONENT_DIRS:%=%.nosetup)
 

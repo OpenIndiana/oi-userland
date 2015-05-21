@@ -53,3 +53,5 @@ install:	$(INSTALL_NO_ARCH)
 
 # unittests require django-discover-runner which is not integrated
 test:		$(NO_TESTS)
+
+system-test:    $(NO_TESTS)

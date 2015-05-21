@@ -65,6 +65,7 @@ install:		TARGET = install
 clean:			TARGET = clean
 clobber:		TARGET = clobber
 test:			TARGET = test
+system-test:		TARGET = system-test
 parfait:		TARGET = parfait
 
 build:		install
@@ -72,7 +73,7 @@ build:		install
 .DEFAULT:	publish
 
 download unpack patch prep::	$(SUBDIRS)
-install test: $(SUBDIRS)
+install test system-test: $(SUBDIRS)
 
 parfait:
 	$(MAKE) PARFAIT_BUILD=yes install

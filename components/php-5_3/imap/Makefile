@@ -57,5 +57,7 @@ install:	build
 
 test:		$(NO_TESTS)
 
+system-test: 	$(NO_TESTS)
+
 publish:	build
 

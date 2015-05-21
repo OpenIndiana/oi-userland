@@ -136,6 +136,8 @@ install: $(BUILD_DIR)/.allvariantsinstalled
 # empty test target
 test:	$(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+
 
 REQUIRED_PACKAGES += image/library/libjpeg
 REQUIRED_PACKAGES += library/print/cups-libs

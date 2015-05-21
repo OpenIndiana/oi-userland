@@ -134,6 +134,8 @@ COMPONENT_TEST_TARGETS = check check-target
 
 test:	$(TEST_32)
 
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+
 
 REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += library/mpc

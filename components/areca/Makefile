@@ -61,6 +61,8 @@ install:	build
 
 test:		$(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+
 
 REQUIRED_PACKAGES += library/java/swt
 REQUIRED_PACKAGES += shell/bash

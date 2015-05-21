@@ -97,6 +97,8 @@ install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+
 REQUIRED_PACKAGES += developer/build/cmake
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += runtime/perl-512

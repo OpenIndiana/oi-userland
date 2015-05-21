@@ -48,3 +48,5 @@ publish: download prep
 # $ npm install mocha
 # $ ./node_modules/mocha/bin/mocha
 test:		$(NO_TESTS)
+
+system-test:    $(NO_TESTS)

@@ -910,6 +910,11 @@ NO_TESTS =	test-nothing
 test-nothing:
 	@echo "There are no tests available at this time."
 
+# If the system tests are not implemented yet
+SYSTEM_TESTS_NOT_IMPLEMENTED = no-sys-tests
+no-sys-tests:
+	@echo "The system test target is not yet implemented."
+
 # There are tests, but we're skipping them.
 SKIP_TEST =	skip-test
 skip-test:

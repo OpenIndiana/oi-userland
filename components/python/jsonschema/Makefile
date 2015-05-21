@@ -48,3 +48,5 @@ install:	$(INSTALL_NO_ARCH)
 # Needs unittest2; enable when that becomes available.
 test:		$(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+

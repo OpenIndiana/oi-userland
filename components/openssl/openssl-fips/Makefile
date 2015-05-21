@@ -128,3 +128,5 @@ $(BUILD_DIR)/%/.verified:	$(BUILD_DIR)/%/.installed
 
 test:		$(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+

@@ -69,6 +69,8 @@ install:	$(INSTALL_64)
 # test-mbrtowc3.sh, test-mbrtowc4.sh, test-mbsrtowcs4.sh
 test:		$(TEST_64)
 
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+
 
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += shell/bash

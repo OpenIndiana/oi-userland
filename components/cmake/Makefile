@@ -95,6 +95,8 @@ install:	$(INSTALL_64)
 # expected failure: CTestTestUpload
 test:		$(TEST_64)
 
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/zlib

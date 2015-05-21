@@ -90,6 +90,8 @@ install: $(INSTALL_32_and_64)
 # from a terminal.
 test: $(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+
 REQUIRED_PACKAGES += library/security/libgpg-error
 REQUIRED_PACKAGES += library/security/libassuan
 REQUIRED_PACKAGES += shell/ksh93

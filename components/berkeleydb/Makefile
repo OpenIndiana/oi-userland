@@ -115,6 +115,8 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64) 
 
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+
 # By default "gmake test" runs standard tests, takes ~2 days per $(BITS).
 RUN=run_std
 

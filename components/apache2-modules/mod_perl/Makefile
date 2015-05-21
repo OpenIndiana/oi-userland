@@ -74,6 +74,8 @@ install: $(INSTALL_32)
 
 test: $(TEST_32)
 
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+
 
 REQUIRED_PACKAGES += library/apr-15
 REQUIRED_PACKAGES += library/apr-util-15

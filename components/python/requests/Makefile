@@ -51,5 +51,7 @@ install:	$(INSTALL_NO_ARCH)
 # Tests require access to AWS services & the Internet
 test:		$(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+
 
 REQUIRED_PACKAGES += library/python/argparse-26

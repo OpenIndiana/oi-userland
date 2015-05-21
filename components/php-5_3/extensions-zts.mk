@@ -65,6 +65,8 @@ install:	$(INSTALL_32)
 
 test:		$(TEST_32)
 
+system-test: 	$(SYSTEM_TESTS_NOT_IMPLEMENTED)
+
 publish:	install
 
 # Manual dependency - need both php-sapi and php-nsapi installed

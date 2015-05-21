@@ -183,6 +183,8 @@ install:	$(BUILD_64) $(BUILD_DIR)/$(MACH64)-x/.installed
 
 test:		$(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+
 
 REQUIRED_PACKAGES += editor/gnu-emacs
 REQUIRED_PACKAGES += file/gnu-findutils

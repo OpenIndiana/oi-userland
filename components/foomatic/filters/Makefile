@@ -59,6 +59,8 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+
 
 REQUIRED_PACKAGES += print/filter/a2ps
 REQUIRED_PACKAGES += system/library

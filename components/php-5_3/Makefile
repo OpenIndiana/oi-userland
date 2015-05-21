@@ -160,6 +160,7 @@ install:		TARGET = install
 clean:			TARGET = clean
 clobber:		TARGET = clobber
 test:			TARGET = test
+system-test:		TARGET = system-test
 publish:		TARGET = publish
 
 build:		install
@@ -167,7 +168,7 @@ build:		install
 .DEFAULT:	publish
 
 download unpack patch prep::	$(SUBDIRS)
-install test publish: $(SUBDIRS)
+install test system-test publish: $(SUBDIRS)
 
 clean::		$(SUBDIRS)
 	$(RM) -r $(BUILD_DIR)

@@ -187,6 +187,8 @@ COMPONENT_TEST_TRANSFORMS =	"'/tests OK./ {results = 1}; /make: / {results = 0} 
 
 test:				$(TEST_32_and_64)
 
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += developer/library/xprofile

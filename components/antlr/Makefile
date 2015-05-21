@@ -81,6 +81,8 @@ install:        $(INSTALL_32)
 
 test:           $(TEST_32)
 
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+
 
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += shell/ksh93

@@ -37,12 +37,13 @@ clean:		TARGET = clean
 clobber:	TARGET = clobber
 setup:		TARGET = setup
 test:		TARGET = test
+system-test:	TARGET = system-test
 component-hook:		TARGET = component-hook
 
 .DEFAULT:	publish
 
 download setup unpack patch prep build install publish validate clean clobber \
-test component-hook: $(SUBDIRS)
+test system-test component-hook: $(SUBDIRS)
 
 $(SUBDIRS):	FORCE
 	@+echo "$(TARGET) $@" ; $(GMAKE) -C $@ $(TARGET)

@@ -57,6 +57,8 @@ install:	$(INSTALL_32_and_64)
 # The tarball for this version does not ship unittests.
 test:		$(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+
 
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += library/python/pytest-26

@@ -100,6 +100,8 @@ COMPONENT_TEST_TRANSFORMS += \
 
 test:		install $(TEST_64)
 
+# Add install as above when system-test target is implemented
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
 REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += system/library

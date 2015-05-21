@@ -55,6 +55,8 @@ install:	$(INSTALL_32_and_64)
 # enumerates USB devices plugged into your system
 test:		$(TEST_32_and_64)
 
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+
 
 REQUIRED_PACKAGES += system/io/usb
 REQUIRED_PACKAGES += system/library

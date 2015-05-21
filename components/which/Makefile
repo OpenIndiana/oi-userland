@@ -57,6 +57,8 @@ install:	$(INSTALL_64)
 
 test:		$(TEST_64)
 
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+
 REQUIRED_PACKAGES += system/library
 # Auto-generated contents below.  Please manually verify and remove this comment
 

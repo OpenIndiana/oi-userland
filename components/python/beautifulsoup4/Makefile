@@ -51,3 +51,5 @@ install:	$(INSTALL_NO_ARCH)
 # Tests require the discover, html5lib and unittest2 packages.
 test:		$(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+

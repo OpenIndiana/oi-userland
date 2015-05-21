@@ -161,5 +161,7 @@ COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH$(BITS)).mas
 
 test:		$(TEST_32)
 
+system-test:	$(SYSTEM_TESTS_NOT_IMPLEMENTED)
+
 # php-sapi does the publish
 publish:	install

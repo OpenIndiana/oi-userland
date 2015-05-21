@@ -53,3 +53,5 @@ install:
 	@echo "Nothing to install."
 
 test:		$(NO_TESTS)
+
+system-test:    $(NO_TESTS)

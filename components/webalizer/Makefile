@@ -76,6 +76,8 @@ install:        $(INSTALL_64)
 
 test:           $(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+
 
 REQUIRED_PACKAGES += database/berkeleydb-5
 REQUIRED_PACKAGES += library/gd

@@ -109,6 +109,8 @@ COMPONENT_PRE_TEST_ACTION = \
 # http://graphviz.org/bugs/b2063.html
 test:		$(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+
 REQUIRED_PACKAGES += image/graphviz
 REQUIRED_PACKAGES += image/library/libjpeg
 REQUIRED_PACKAGES += image/library/libpng

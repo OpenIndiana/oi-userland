@@ -57,3 +57,5 @@ install:	$(INSTALL_NO_ARCH)
 # ordereddict, importlib, amqp, anyjson, unittest2, nose-cover3
 # which haven't been integrated yet.
 test:		$(NO_TESTS)
+
+system-test:    $(NO_TESTS)

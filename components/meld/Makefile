@@ -59,6 +59,8 @@ install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+
 REQUIRED_PACKAGES += developer/gnome/gettext
 REQUIRED_PACKAGES += library/python/pygtk2-27
 REQUIRED_PACKAGES += runtime/python-27

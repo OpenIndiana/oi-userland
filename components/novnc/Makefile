@@ -46,5 +46,7 @@ install:	build
 
 test:		$(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+
 clean::
 	$(RM) -r $(BUILD_DIR)

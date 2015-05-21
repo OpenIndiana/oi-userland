@@ -101,6 +101,8 @@ COMPONENT_TEST_TRANSFORMS += \
 
 test:           $(TEST_64)
 
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+
 
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt

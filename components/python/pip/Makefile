@@ -54,6 +54,8 @@ install:        $(INSTALL_NO_ARCH)
 # When these are available, update this directive to test pip.
 test:           $(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+
 
 REQUIRED_PACKAGES += library/python/setuptools-26
 REQUIRED_PACKAGES += library/python/setuptools-27

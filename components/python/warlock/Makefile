@@ -51,3 +51,5 @@ install:	$(INSTALL_NO_ARCH)
 # warlock tests require json{patch,schema,pointer}
 test:		$(TEST_NO_ARCH)
 
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+

@@ -110,6 +110,8 @@ install:	$(INSTALL_64)
 # the STC gate.
 test:		$(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+
 
 REQUIRED_PACKAGES += library/libedit
 REQUIRED_PACKAGES += library/security/openssl

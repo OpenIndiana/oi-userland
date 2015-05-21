@@ -58,3 +58,5 @@ install:	$(INSTALL_NO_ARCH)
 # hacking, discover, fixtures, sphinx, testrepository, testtools,
 # testscenarios, and mox3 some of which have not been integrated.
 test:		$(NO_TESTS)
+
+system-test:    $(NO_TESTS)

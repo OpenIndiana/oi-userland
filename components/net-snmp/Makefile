@@ -143,6 +143,8 @@ install:	build $(INSTALL_32_and_64)
 
 test:	$(TEST_32_and_64)
 
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+
 # build the docs
 $(BUILD_DIR_32)/.docs:
 	(cd $(@D) ; $(ENV) srcdir=$(@D) $(DOXYGEN) -u $(@D)/doxygen.conf ; \

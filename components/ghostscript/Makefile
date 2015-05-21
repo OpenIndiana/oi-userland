@@ -113,6 +113,8 @@ install: $(VARIANTS:%=%/.installed)
 
 test:	$(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+
 
 REQUIRED_PACKAGES += image/library/libjpeg
 REQUIRED_PACKAGES += image/library/libpng

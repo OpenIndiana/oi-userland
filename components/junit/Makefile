@@ -60,5 +60,7 @@ install:	build
 #
 # OK (22 tests)
 test:		$(NO_TESTS)
+
+system-test:    $(NO_TESTS)
 		
 REQUIRED_PACKAGES += runtime/java/jre-8

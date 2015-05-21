@@ -108,6 +108,8 @@ install:	$(INSTALL_32_and_64) $(BUILD_DIR)/libmng-64.pc
 
 test:	$(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+
 
 REQUIRED_PACKAGES += image/library/libjpeg
 REQUIRED_PACKAGES += library/lcms

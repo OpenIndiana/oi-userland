@@ -111,6 +111,8 @@ build:		$(BUILD_32)
 install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
+
+system-test:    $(NO_TESTS)
 # libcheck and specific Perl Test::Unit version is required for full test
 
 

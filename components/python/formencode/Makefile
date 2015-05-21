@@ -58,3 +58,5 @@ install:	$(INSTALL_NO_ARCH)
 # which haven't been integrated yet.
 test:		$(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+

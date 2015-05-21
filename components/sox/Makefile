@@ -54,6 +54,8 @@ install:	$(INSTALL_32_and_64)
 
 test:           $(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+
 
 REQUIRED_PACKAGES += codec/flac
 REQUIRED_PACKAGES += codec/ogg-vorbis

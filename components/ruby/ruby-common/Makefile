@@ -32,5 +32,5 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 # nothing to download or build; just publish the package
-build install test:
+build install test system-test:
 

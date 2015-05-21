@@ -95,6 +95,8 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+
 
 REQUIRED_PACKAGES += driver/parallel/ecpp
 REQUIRED_PACKAGES += image/library/libjpeg

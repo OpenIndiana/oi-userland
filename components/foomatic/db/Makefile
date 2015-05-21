@@ -56,3 +56,5 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+

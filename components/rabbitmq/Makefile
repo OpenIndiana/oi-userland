@@ -62,6 +62,8 @@ install:
 
 test:		$(TEST_32)
 
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+
 PKG_PROTO_DIRS +=	$(COMPONENT_DIR)/files
 
 

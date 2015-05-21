@@ -285,6 +285,8 @@ install: $(BUILD_DIR_32)/.built $(BUILD_DIR_64)/.built
 
 test:	$(TEST_32_and_64)
 
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+
 clean::
 	$(RM) -r $(COMPONENT_SRC) $(COMPONENT_SRC)-32 $(COMPONENT_SRC)-64
 	$(RM) -f *.sed *.out

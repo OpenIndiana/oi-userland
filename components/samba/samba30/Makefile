@@ -149,6 +149,8 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+
 clean::
 	$(GMAKE) -C $(COMPONENT_DIR)/../mozldap clean
 

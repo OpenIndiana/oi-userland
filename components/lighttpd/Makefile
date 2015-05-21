@@ -80,6 +80,8 @@ install:	$(INSTALL_64)
 
 test:		$(TEST_64)
 
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+
 
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += database/mysql-55

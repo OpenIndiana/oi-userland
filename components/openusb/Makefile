@@ -61,6 +61,8 @@ install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/hal
 REQUIRED_PACKAGES += system/io/usb

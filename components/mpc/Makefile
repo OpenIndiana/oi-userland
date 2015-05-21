@@ -64,6 +64,9 @@ install:	$(INSTALL_32_and_64)
 
 test:		install $(TEST_32_and_64)
 
+# Add install dependency as above when system-test targets are implemented.
+system-test: 	$(SYSTEM_TESTS_NOT_IMPLEMENTED)
+
 REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += library/mpfr
 REQUIRED_PACKAGES += system/library

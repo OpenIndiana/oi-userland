@@ -69,6 +69,8 @@ install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+
 PKG_PROTO_DIRS +=	$(COMPONENT_DIR)/files
 
 REQUIRED_PACKAGES += library/python/dnspython-27

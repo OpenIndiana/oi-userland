@@ -88,3 +88,5 @@ build:		$(BUILD_32_and_64)
 install:	$(INSTALL_32_and_64) $(PROTOMAN3FILES)
 
 test:		$(NO_TESTS)
+
+system-test:    $(NO_TESTS)

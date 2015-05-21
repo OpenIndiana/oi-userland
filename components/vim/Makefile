@@ -126,6 +126,8 @@ install:	$(INSTALL_64) $(X_VARIANT)/.built $(BUILD_DIR)/license
 
 test:		$(TEST_64)
 
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+
 
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2

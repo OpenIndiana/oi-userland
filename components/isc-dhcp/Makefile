@@ -76,6 +76,8 @@ install:	build $(INSTALL_32_and_64) $(PROTO_DIR)/dhcpd.leases
 
 test:		$(TEST_32_and_64)
 
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+
 $(PROTO_DIR)/dhcpd.leases:	$(INSTALL_32_and_64)
 	$(TOUCH) $@
 

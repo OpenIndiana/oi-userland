@@ -51,3 +51,5 @@ install:	$(INSTALL_NO_ARCH)
 # tests require pycrypto, pyjwt, and blinker.  If/When these modules
 # become available, tests can be enabled.
 test:		$(NO_TESTS)
+
+system-test:    $(NO_TESTS)

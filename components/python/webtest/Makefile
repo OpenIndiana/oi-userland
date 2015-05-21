@@ -55,3 +55,5 @@ install:	$(INSTALL_NO_ARCH)
 # and cssselect.
 test:		$(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+

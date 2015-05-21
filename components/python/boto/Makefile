@@ -80,6 +80,8 @@ install:	$(INSTALL_NO_ARCH)
 # Tests require access to AWS/OpenStack metadata service & the Internet
 test:		$(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+
 
 REQUIRED_PACKAGES += library/python/argparse-26
 REQUIRED_PACKAGES += library/python/filechunkio-26

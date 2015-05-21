@@ -307,6 +307,8 @@ install:	$(INSTALL_NO_ARCH) xstatic
 
 test:		$(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+
 clean::
 	gfind $(COMPONENT_DIR) -maxdepth 1 -type d -name "XStatic*" \
 	    -exec rm -r {} \;

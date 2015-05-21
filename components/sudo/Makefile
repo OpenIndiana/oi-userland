@@ -104,6 +104,8 @@ install:	$(INSTALL_64)
 VISUDO=$(BUILD_DIR_64)/plugins/sudoers/visudo
 test:		$(TEST_64)
 
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+
 
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += library/openldap

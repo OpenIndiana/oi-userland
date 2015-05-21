@@ -110,6 +110,8 @@ install:	build $(INSTALL_64) $(PROTOETCDIR)/zprofile $(PROTOETCDIR)/zshrc licens
 # build does this always
 test:		$(TEST_64)
 
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += system/library

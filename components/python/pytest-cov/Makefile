@@ -56,3 +56,5 @@ install:	$(INSTALL_NO_ARCH)
 # Tests require the pytest, coverage and cov-core packages.
 test:		$(TEST_NO_ARCH)
 
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+

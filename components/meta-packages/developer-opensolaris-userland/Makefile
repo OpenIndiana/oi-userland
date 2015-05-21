@@ -50,5 +50,7 @@ build install: $(BUILD_DIR)/package.list
 
 test:	$(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+
 clean clobber::
 	$(RM) -r $(BUILD_DIR)

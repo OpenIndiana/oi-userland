@@ -57,6 +57,8 @@ install:	$(INSTALL_NO_ARCH)
 # Tests requires the coverage, nose and unittest2 packages.
 test:		$(TEST_NO_ARCH)
 
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+
 
 REQUIRED_PACKAGES += library/python/setuptools-26
 REQUIRED_PACKAGES += library/python/setuptools-27

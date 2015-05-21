@@ -72,6 +72,8 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+
 
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += runtime/perl-512

@@ -132,6 +132,8 @@ install:	$(INSTALL_32_and_64)
 		
 test:		$(TEST_32_and_64)
 
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+
 PKG_PROTO_DIRS +=   $(COMPONENT_DIR)/files
 
 include $(WS_MAKE_RULES)/prep.mk

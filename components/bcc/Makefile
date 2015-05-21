@@ -62,5 +62,7 @@ install build:		$(BUILD_32)
 
 test:		$(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+
 
 REQUIRED_PACKAGES += system/library

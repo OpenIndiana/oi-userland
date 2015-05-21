@@ -84,6 +84,8 @@ COMPONENT_POST_INSTALL_ACTION += $(GSED) -i -e 's/\r//' $(PROTO_DIR)/usr/man/man
 # build does this always
 test:	$(TEST_64)
 
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+
 
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library

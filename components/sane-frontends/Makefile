@@ -56,6 +56,8 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+
 
 REQUIRED_PACKAGES += image/editor/gimp
 REQUIRED_PACKAGES += image/scanner/xsane/sane-backends

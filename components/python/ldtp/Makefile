@@ -57,3 +57,5 @@ install:	$(INSTALL_NO_ARCH)
 
 test:		$(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+

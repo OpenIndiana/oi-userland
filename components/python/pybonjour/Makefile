@@ -54,3 +54,5 @@ install:	$(INSTALL_NO_ARCH)
 # svc:/network/dns/multicast:default needs to be online for tests to run
 test:		$(TEST_NO_ARCH)
 
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+

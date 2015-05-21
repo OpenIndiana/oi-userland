@@ -64,6 +64,8 @@ install:	$(INSTALL_32)
 # the tests mostly pass, but it can't find several drivers for ppd files
 test:		$(TEST_32)
 
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+
 
 
 REQUIRED_PACKAGES += library/desktop/gtk2

@@ -54,3 +54,5 @@ install:	$(INSTALL_NO_ARCH)
 # Tests require tox and testr which haven't been integrated yet.
 test:		$(NO_TESTS)
 
+system-test:    $(NO_TESTS)
+
