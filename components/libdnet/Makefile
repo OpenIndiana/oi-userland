@@ -22,6 +22,8 @@
 #
 include ../../make-rules/shared-macros.mk
 
+PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
+
 COMPONENT_NAME=		libdnet
 COMPONENT_VERSION=	1.12
 COMPONENT_PROJECT_URL=	http://code.google.com/p/libdnet/
@@ -48,11 +50,20 @@ COMPONENT_PREP_ACTION = \
 
 # Set -m32 or -m64 correctly for 32 and 64 bit versions.
 CC +=	$(CC_BITS)
+LDFLAGS += $(CC_BITS)
 
 # Remove Linux specific functionality.
 CONFIGURE_OPTIONS += ac_cv_dnet_linux_pf_packet=no
 
 CONFIGURE_OPTIONS +=	--with-check=/usr
+
+# Currently only support for Python 2.7.
+CONFIGURE_OPTIONS +=	--with-python
+
+COMPONENT_BUILD_ARGS +=	CC="$(CC)"
+COMPONENT_BUILD_ARGS +=	LDFLAGS="$(LDFLAGS)"
+
+PKG_MACROS +=		MACHINE=$(shell uname -m)
 
 # Needed for "gmake test" to work successfully.
 # If SHELLOPTS is exported (as it is by the userland makefiles),
@@ -79,5 +90,6 @@ test:		$(TEST_32_and_64)
 system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
 REQUIRED_PACKAGES += developer/test/check
+REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
