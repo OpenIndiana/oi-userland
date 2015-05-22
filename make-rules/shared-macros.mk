@@ -42,9 +42,11 @@ ifneq   ($(strip $(EXTERNAL_ARCHIVE_MIRROR)),)
 export DOWNLOAD_SEARCH_PATH +=	$(EXTERNAL_ARCHIVE_MIRROR)
 endif
 
-# The workspace starts at the mercurial root
+# The workspace starts at the parent of the make-rules directory,
+# unless someone already supplied the top.
 ifeq ($(origin WS_TOP), undefined)
-export WS_TOP :=		$(shell hg root)
+export WS_TOP := $(realpath $(dir $(realpath $(dir $(filter \
+			%/make-rules/shared-macros.mk,$(MAKEFILE_LIST))))))
 endif
 
 WS_MACH =	$(WS_TOP)/$(MACH)
