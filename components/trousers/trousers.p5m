@@ -175,8 +175,8 @@ file dist/system.data.noauth path=var/tpm/system/system.data.noauth owner=root \
 dir  path=var/tpm/userps owner=root group=sys mode=1777
 license trousers.license license=CPL
 #
-# libtspi requires 646%UTF-16LE.so and UTF-16LE%646.so, which are in
-# package utf-8. This is for function Trspi_Native_To_UNICODE() which calls
-# iconv_open() to dynamically load these libraries
+# libtspi needs to convert between codesets 646 and UTF-16LE, which are covered
+# by package iconv-core. This is for function Trspi_Native_To_UNICODE() which
+# calls iconv_open()
 #
-depend type=require fmri=pkg:/system/library/iconv/utf-8
+depend type=require fmri=pkg:/system/library/iconv/iconv-core
