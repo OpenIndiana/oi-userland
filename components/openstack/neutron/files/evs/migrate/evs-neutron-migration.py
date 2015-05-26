@@ -22,24 +22,21 @@
 #
 
 import ConfigParser
-import rad.connect as radcon
-import rad.bindings.com.oracle.solaris.rad.evscntl as evsc
-
-from neutron import context as ctx
-from neutron.db import common_db_mixin
-from neutron.db import api as db
-from neutron.db import model_base
-from neutron.plugins.evs.migrate import havana_api
-
-import sqlalchemy as sa
-from sqlalchemy import MetaData
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.schema import DropConstraint
-from sqlalchemy import sql
+import time
 
 from oslo.config import cfg
-from oslo.db import options as db_options
 from oslo.db import exception as excp
+from oslo.db import options as db_options
+import rad.bindings.com.oracle.solaris.rad.evscntl as evsc
+import rad.connect as radcon
+import sqlalchemy as sa
+from sqlalchemy import MetaData, sql
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.schema import DropConstraint
+
+from neutron import context as ctx
+from neutron.db import common_db_mixin, model_base
+from neutron.plugins.evs.migrate import havana_api 
 
 
 def create_db_network(nw, engine, ext_ro):
@@ -54,7 +51,18 @@ def create_db_network(nw, engine, ext_ro):
     from neutron.db import db_base_plugin_v2
     from neutron.db import external_net_db as ext_net
     model_base.BASEV2.metadata.bind = engine
-    model_base.BASEV2.metadata.create_all(engine)
+    for _none in range(60):
+        try:
+            model_base.BASEV2.metadata.create_all(engine)
+            break
+        except sa.exc.OperationalError as err:
+            # mysql is not ready. sleep for 2 more seconds
+            time.sleep(2)
+    else:
+        print "Unable to connect to MySQL:  %s" % err
+        print ("Please verify MySQL is properly configured and online "
+               "before using svcadm(1M) to clear this service.")
+        raise RuntimeError
     ctxt = ctx.get_admin_context()
     inst = db_base_plugin_v2.NeutronDbPluginV2()
     dup = False

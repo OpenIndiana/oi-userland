@@ -69,7 +69,7 @@ def alter_mysql_tables(engine):
 
     import MySQLdb
 
-    for _none in range(5):
+    for _none in range(60):
         try:
             db = MySQLdb.connect(host=engine.url.host,
                                  user=engine.url.username,
