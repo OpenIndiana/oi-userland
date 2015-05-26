@@ -39,6 +39,14 @@ TPNO=			8709
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ant.mk
+
+# Need to package the .jar files we've built, not the ones included in
+# the source tarball.  So we need $(BUILD_DIR_32) added to $(PKG_PROTO_DIRS)
+# but it has to come at the beginning not the end, so we set it before we
+# include ips.mk.
+
+PKG_PROTO_DIRS = $(BUILD_DIR_32)
+
 include $(WS_MAKE_RULES)/ips.mk
 
 # Make sure we use the specially modified versions of grails and grails-debug
@@ -48,11 +56,6 @@ COMPONENT_POST_UNPACK_ACTION = \
 
 COMPONENT_PRE_BUILD_ACTION = $(MKDIR) $(@D)/tmp 
 COMPONENT_BUILD_ENV += "ANT_OPTS=-Djava.io.tmpdir=$(BUILD_DIR_32)/tmp"
-
-# Need to package the .jar files we've built, not the ones included in
-# the source tarball.
-PKG_PROTO_DIRS = $(BUILD_DIR_32) $(MANGLED_DIR) $(PROTO_DIR) $(@D) \
-	$(COMPONENT_DIR) $(COMPONENT_SRC)
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
@@ -76,7 +79,6 @@ install:	$(INSTALL_32)
 test:		$(NO_TESTS)
 
 system-test:    $(NO_TESTS)
-
 
 REQUIRED_PACKAGES += runtime/perl-512
 REQUIRED_PACKAGES += runtime/perl-516

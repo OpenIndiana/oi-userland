@@ -41,11 +41,12 @@ TPNO=			18537
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
 
-PKG_PROTO_DIRS = $(MANGLED_DIR)
-PKG_PROTO_DIRS += $(BUILD_DIR_64)
-PKG_PROTO_DIRS += $(COMPONENT_DIR)
+# We need this before the default PKG_PROTO_DIRS, so set it before we include
+# ips.mk, which will append the default set.
+PKG_PROTO_DIRS = $(BUILD_DIR_64)
+
+include $(WS_MAKE_RULES)/ips.mk
 
 PATCH_LEVEL =	0
 
@@ -73,7 +74,6 @@ install:	$(BUILD_64)
 test:		$(NO_TESTS)
 
 system-test:    $(NO_TESTS)
-
 
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/c++-runtime

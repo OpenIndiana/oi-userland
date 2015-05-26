@@ -123,6 +123,9 @@ PKG_OPTIONS +=		$(PKG_MACROS:%=-D %)
 
 MANGLED_DIR =	$(PROTO_DIR)/mangled
 
+# We use += below so anyone wishing to put other directories at the beginning
+# of the list can do so, by setting PKG_PROTO_DIRS before including this file.
+# So don't change += to = here or components that use this will break.
 PKG_PROTO_DIRS += $(MANGLED_DIR) $(PROTO_DIR) $(@D) $(COMPONENT_DIR) $(COMPONENT_SRC)
 
 MANIFEST_BASE =		$(BUILD_DIR)/manifest-$(MACH)
