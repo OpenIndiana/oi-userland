@@ -81,5 +81,9 @@ test:           $(TEST_64)
 system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
 
+# test dependencies:
+REQUIRED_PACKAGES += developer/versioning/cvs
+REQUIRED_PACKAGES += developer/versioning/git
+
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
