@@ -76,15 +76,23 @@ endif
 # We should unpack the source that we patch before we patch it.
 $$(PATCH_STAMPS$(1)::	$$(UNPACK_STAMP$(1)) unpack
 
-$$(SOURCE_DIR$(1))/.patched-%:	$(PATCH_DIR)/%
+# Adding MAKEFILE_PREREQ because gmake seems to evaluate the need to patch
+# before re-unpacking if the Makefile changed.  The various stamps are
+# removed as part of the unpacking process, and it doesn't appear to
+# re-evaluate the need for patching.  If we ever move the stamps to the build
+# directory, we may not need the dependency any more.
+$$(SOURCE_DIR$(1))/.patched-%:	$(PATCH_DIR)/% $(MAKEFILE_PREREQ)
 	$(GPATCH) -d $$(@D) $$(GPATCH_FLAGS) < $$<
 	$(TOUCH) $$(@)
 
-$$(SOURCE_DIR$(1))/.patched-%:	$(PARFAIT_PATCH_DIR)/%
+$$(SOURCE_DIR$(1))/.patched-%:	$(PARFAIT_PATCH_DIR)/% $(MAKEFILE_PREREQ)
 	$(GPATCH) -d $$(@D) $$(GPATCH_FLAGS) < $$<
 	$(TOUCH) $$(@)
 
-patch::	$$(PATCH_STAMPS$(1))
+$$(SOURCE_DIR$(1))/.patched:	$$(PATCH_STAMPS$(1))
+	$(TOUCH) $$(@)
+
+patch::	$$(SOURCE_DIR$(1))/.patched
 
 REQUIRED_PACKAGES += text/gnu-patch
 
