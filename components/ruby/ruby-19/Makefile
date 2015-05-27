@@ -151,6 +151,15 @@ ASLR_MODE =		$(ASLR_DISABLE)
 CLEAN_PATHS +=		Solaris/gem.1 Solaris/rbconfig.sedscript.mod \
 			Solaris/ruby.1.sedscript.mod
 
+# This set of tests goes through thousands of entries in the passwd
+# and group table, taking hours to run; move it aside so we skip it.
+# There may also be spurious errors if group memberships are modified
+# during testing.
+COMPONENT_PRE_TEST_ACTION += \
+        ( if test -e $(SOURCE_DIR)/test/etc/test_etc.rb ; then \
+            $(MV) $(SOURCE_DIR)/test/etc/test_etc.rb \
+            $(SOURCE_DIR)/test/etc/test_etc.rb-save ; fi )
+
 # common targets
 
 configure:	$(CONFIGURE_64)
