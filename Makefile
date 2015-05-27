@@ -21,9 +21,7 @@
 # Copyright (c) 2010, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
-include make-rules/shared-macros.mk
-
-SUBDIRS += components
+SUBDIRS = components
 
 download:	TARGET = download
 unpack:		TARGET = unpack
@@ -46,6 +44,6 @@ download setup unpack patch prep build install publish validate clean clobber \
 test system-test component-hook: $(SUBDIRS)
 
 $(SUBDIRS):	FORCE
-	@+echo "$(TARGET) $@" ; $(GMAKE) -C $@ $(TARGET)
+	@+echo "$(TARGET) $@" ; $(MAKE) -C $@ $(TARGET)
 
 FORCE:
