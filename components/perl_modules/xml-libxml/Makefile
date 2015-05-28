@@ -23,17 +23,17 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		XML-LibXML
-COMPONENT_VERSION=	2.14
-HUMAN_VERSION=		2.0014
+COMPONENT_VERSION=	2.121
+HUMAN_VERSION=		2.0121
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:c6c1e854b8be7abcedd243fb43e4845c45629d2c98b8f4ec5d423e6fafe15564
+    sha256:ec431011cb37a04640fd2316f64d0405a274eece2c6f3847f7fbd336eb1c0dc9
 COMPONENT_ARCHIVE_URL=	http://search.cpan.org/CPAN/authors/id/S/SH/SHLOMIF/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://search.cpan.org/~shlomif/XML-LibXML/
 COMPONENT_BUGDB=	perl-mod/xml-libxml
 
-TPNO=			12995
+TPNO=			22635
 
 # build threaded 5.12 support too
 PERL_VERSIONS += 5.12-mt
@@ -52,9 +52,9 @@ COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
 # Transform to remove machine-specific lines in test results
 COMPONENT_TEST_TRANSFORMS += \
-        '-e "s|\(^Files=59,\sTests=2415\).*|\1|" ' \
-        '-e "/\(90threads\).*/d" ' \
-        '-e "/\(^Hexadecimal\).*/d" '
+        '-e "/\(^Files=\).*/d" ' \
+        '-e "/\(^t\/90\).*/d" ' \
+	'-e "/\(^Hexadecimal\).*/d" '
 
 build:		$(BUILD_32_and_64)
 
