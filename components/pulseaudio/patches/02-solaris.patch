@@ -1,0 +1,123 @@
+--- pulseaudio-0.9.22/src/utils/padsp.c-orig	2011-06-09 16:36:04.541707885 -0500
++++ pulseaudio-0.9.22/src/utils/padsp.c	2011-06-09 16:36:39.028227979 -0500
+@@ -2224,6 +2224,7 @@ static int dsp_ioctl(fd_info *i, unsigne
+             break;
+         }
+ 
++#if 0
+         case SOUND_PCM_READ_RATE:
+             debug(DEBUG_LEVEL_NORMAL, __FILE__": SOUND_PCM_READ_RATE\n");
+ 
+@@ -2247,6 +2248,7 @@ static int dsp_ioctl(fd_info *i, unsigne
+             *(int*) argp = pa_sample_size(&i->sample_spec)*8;
+             pa_threaded_mainloop_unlock(i->mainloop);
+             break;
++#endif
+ 
+         case SNDCTL_DSP_GETOPTR: {
+             count_info *info;
+@@ -2317,7 +2319,7 @@ fail:
+     return ret;
+ }
+ 
+-#ifdef sun
++#ifdef __sun
+ int ioctl(int fd, int request, ...) {
+ #else
+ int ioctl(int fd, unsigned long request, ...) {
+--- pulseaudio-0.9.22/src/modules/module-augment-properties.c-orig	2011-06-09 17:01:15.762102168 -0500
++++ pulseaudio-0.9.22/src/modules/module-augment-properties.c	2011-06-09 17:02:40.207502312 -0500
+@@ -183,8 +183,8 @@ static void update_rule(struct rule *r) 
+         /* Let's try a more aggressive search, but only one level */
+         if ((desktopfiles_dir = opendir(DESKTOPFILEDIR))) {
+             while ((dir = readdir(desktopfiles_dir))) {
+-                if (dir->d_type != DT_DIR
+-                    || strcmp(dir->d_name, ".") == 0
++                if (/* dir->d_type != DT_DIR 
++                    || */ strcmp(dir->d_name, ".") == 0
+                     || strcmp(dir->d_name, "..") == 0)
+                     continue;
+ 
+--- pulseaudio-0.99.2/m4/ax_tls.m4-orig	2011-09-15 17:31:43.061828358 -0500
++++ pulseaudio-0.99.2/m4/ax_tls.m4	2011-09-15 17:31:46.884504041 -0500
+@@ -70,7 +70,7 @@ AC_DEFUN([AX_TLS], [
+ 
+   AS_IF([test "$ac_cv_tls" != "none"],
+     AC_DEFINE_UNQUOTED([TLS], $ac_cv_tls, [If the compiler supports a TLS storage class define it to that here])
+-      m4_ifnblank([$1], [$1]),
+-    m4_ifnblank([$2], [$2])
++      m4_ifval( m4_normalize([$1], [$1]))
++    m4_ifval( m4_normalize([$2], [$2]))
+   )
+ ])
+--- pulseaudio-0.99.2/configure.ac-orig	2011-09-19 11:46:56.537031090 -0500
++++ pulseaudio-0.99.2/configure.ac	2011-09-19 11:45:16.405113983 -0500
+@@ -26,7 +26,7 @@ AC_INIT([pulseaudio],[m4_esyscmd(./git-v
+ AC_CONFIG_SRCDIR([src/daemon/main.c])
+ AC_CONFIG_MACRO_DIR([m4])
+ AC_CONFIG_HEADERS([config.h])
+-AM_INIT_AUTOMAKE([foreign 1.11 -Wall -Wno-portability silent-rules dist-xz tar-ustar])
++AM_INIT_AUTOMAKE([foreign 1.10 -Wall -Wno-portability tar-ustar])
+ 
+ m4_define(pa_major, `echo $VERSION | cut -d. -f1 | cut -d- -f1`)
+ m4_define(pa_minor, `echo $VERSION | cut -d. -f2 | cut -d- -f1`)
+@@ -64,7 +64,7 @@ AS_IF([test "x$STOW" = "xyes" && test -d
+     ac_default_prefix="/usr/local/stow/${PACKAGE_NAME}-${PACKAGE_VERSION}"
+ ])
+ 
+-AM_SILENT_RULES([yes])
++#AM_SILENT_RULES([yes])
+ 
+ 
+ #### Checks for programs. ####
+@@ -147,14 +147,6 @@ case "$host_os" in
+     ;;
+ esac
+ 
+-
+-#### Compiler flags ####
+-
+-AX_APPEND_COMPILE_FLAGS(
+-    [-Wall -W -Wextra -pipe -Wno-long-long -Wvla -Wno-overlength-strings -Wunsafe-loop-optimizations -Wundef -Wformat=2 -Wlogical-op -Wsign-compare -Wformat-security -Wmissing-include-dirs -Wformat-nonliteral -Wold-style-definition -Wpointer-arith -Winit-self -Wdeclaration-after-statement -Wfloat-equal -Wmissing-prototypes -Wstrict-prototypes -Wredundant-decls -Wmissing-declarations -Wmissing-noreturn -Wshadow -Wendif-labels -Wcast-align -Wstrict-aliasing -Wwrite-strings -Wno-unused-parameter -ffast-math -Wp,-D_FORTIFY_SOURCE=2 -fno-common -fdiagnostics-show-option],
+-    [], [-pedantic -Werror])
+-
+-
+ #### Linker flags ####
+ 
+ # Check whether the linker supports the -version-script option.
+@@ -166,13 +158,13 @@ AC_SUBST([VERSIONING_LDFLAGS])
+ 
+ # Use immediate (now) bindings; avoids the funky re-call in itself.
+ # The -z now syntax is lifted from Sun's linker and works with GNU's too, other linkers might be added later.
+-AX_APPEND_LINK_FLAGS([-Wl,-z,now], [IMMEDIATE_LDFLAGS])
++#AX_APPEND_LINK_FLAGS([-Wl,-z,now], [IMMEDIATE_LDFLAGS])
+ AC_SUBST([IMMEDIATE_LDFLAGS])
+ 
+ # On ELF systems we don't want the libraries to be unloaded since we don't clean them up properly,
+ # so we request the nodelete flag to be enabled.
+ # On other systems, we don't really know how to do that, but it's welcome if somebody can tell.
+-AX_APPEND_LINK_FLAGS([-Wl,-z,nodelete], [NODELETE_LDFLAGS])
++#AX_APPEND_LINK_FLAGS([-Wl,-z,nodelete], [NODELETE_LDFLAGS])
+ AC_SUBST([NODELETE_LDFLAGS])
+ 
+ # Check for the proper way to build libraries that have no undefined symbols
+@@ -593,7 +585,7 @@ if test "x$need_libatomic_ops" = "xyes";
+         [AC_MSG_ERROR([*** libatomic-ops headers not found])])
+ 
+     # Win32 does not need the lib and breaks horribly if we try to include it
+-    AS_IF([test "x$os_is_win32" != "x1"], [LIBS="$LIBS -latomic_ops"])
++    AS_IF([test "x$os_is_win32" != "x1"], [LIBS="$LIBS -lbgc"])
+ else
+     AC_MSG_RESULT([no])
+ fi
+--- pulseaudio-0.99.4/src/pulsecore/ffmpeg/resample2.c-orig	2011-09-28 14:50:52.637441815 -0500
++++ pulseaudio-0.99.4/src/pulsecore/ffmpeg/resample2.c	2011-09-28 15:02:26.272959989 -0500
+@@ -246,7 +246,7 @@ int av_resample(AVResampleContext *c, sh
+                 val += src[sample_index + i] * (FELEM2)filter[i];
+                 v2  += src[sample_index + i] * (FELEM2)filter[i + c->filter_length];
+             }
+-            val+=(v2-val)*(FELEML)frac / c->src_incr;
++            val+=(v2-val)*(frac / c->src_incr);
+         }else{
+             for(i=0; i<c->filter_length; i++){
+                 val += src[sample_index + i] * (FELEM2)filter[i];

@@ -1,0 +1,277 @@
+'\" te
+.TH pulse-client\&.conf 5 "11 Oct 2011" "SunOS 5.11" "Headers, Tables, and Macros"
+.SH "NAME"
+pulse-client\&.conf \- PulseAudio client configuration file
+.SH "SYNOPSIS"
+.PP
+~/\&.pulse/client\&.conf
+.PP
+~/etc/pulse/client\&.conf
+.SH "DESCRIPTION"
+.PP
+The PulseAudio client library reads configuration directives from a file
+\fB~/\&.pulse/client\&.conf\fR on startup and when that file does
+not exist from \fB/etc/pulse/client\&.conf\fR\&.
+.PP
+The configuration file is a simple collection of variable declarations\&.  If the
+configuration file parser encounters either ; or # it ignores the rest of the
+line until its end\&.
+.PP
+For the settings that take a boolean argument the values true, yes, on and 1
+are equivalent, resp\&. false, no, off, 0\&.
+.SH "PARAMETERS"
+.PP
+The following configuration options are supported:
+.sp
+.ne 2
+.mk
+\fBdefault_sink=\fR
+.sp .6
+.in +4
+The default sink to connect to\&.  If specified overwrites the setting in the
+daemon\&. The environment variable $PULSE_SINK however takes precedence\&.
+.sp
+.sp 1
+.in -4
+.sp
+.ne 2
+.mk
+\fBdefault-source=\fR
+.sp .6
+.in +4
+The default source to connect to\&.  If specified overwrites the setting in the
+daemon\&. The environment variable $PULSE_SOURCE however takes precedence\&.
+.sp
+.sp 1
+.in -4
+.sp
+.ne 2
+.mk
+\fBdefault-server=\fR
+.sp .6
+.in +4
+The default sever to connect to\&. The environment variable $PULSE_SERVER takes
+precedence\&.
+.sp
+.sp 1
+.in -4
+.sp
+.ne 2
+.mk
+\fBautospawn=\fR
+.sp .6
+.in +4
+Autospawn a PulseAudio daemon when needed\&.  Takes a boolean value, defaults to
+yes\&.
+.sp
+.sp 1
+.in -4
+.sp
+.ne 2
+.mk
+\fBdaemon-binary=\fR
+.sp .6
+.in +4
+Path to the PulseAudio daemon to run when autospawning\&.  Defaults to a path
+configured at compile time\&.
+.sp
+.sp 1
+.in -4
+.sp
+.ne 2
+.mk
+\fBextra-arguments=\fR
+.sp .6
+.in +4
+Extra arguments to pass to the PulseAudio daemon when autospawning\&. Defaults to
+-\fB-log-target=syslog\fR
+.sp
+.sp 1
+.in -4
+.sp
+.ne 2
+.mk
+\fBcookie-file=\fR
+.sp .6
+.in +4
+Specify the path to the PulseAudio authentication cookie\&. Defaults to
+\fB~/\&.pulse-cookie\fR
+.sp
+.sp 1
+.in -4
+.sp
+.ne 2
+.mk
+\fBenable-shm=\fR
+.sp .6
+.in +4
+Enable data transfer via POSIX shared memory\&. Takes a boolean argument,
+defaults to yes\&.
+.sp
+.sp 1
+.in -4
+.sp
+.ne 2
+.mk
+\fBshm-size-bytes=\fR
+.sp .6
+.in +4
+Sets the shared memory segment size for clients, in bytes\&.  If left unspecified
+or is set to 0 it will default to some system-specific default, usually 64 MiB\&.
+Please note that usually there is no need to change this value, unless you are
+running an OS kernel that does not do memory overcommit\&.
+.sp
+.sp 1
+.in -4
+.sp
+.ne 2
+.mk
+\fBauto-connect-localhost=\fR
+.sp .6
+.in +4
+Automatically try to connect to localhost via IP\&.  Enabling this is a potential
+security hole since connections are only authenticated one-way and a rogue
+server might hence fool a client into sending it its private (e\&.g\&. VoIP call)
+data\&. This was enabled by default on PulseAudio version 0\&.9\&.21 and older\&.
+Defaults to no\&.
+.sp
+.sp 1
+.in -4
+.sp
+.ne 2
+.mk
+\fBauto-connect-display=\fR
+.sp .6
+.in +4
+Automatically try to connect to the host X11\&'s $DISPLAY variable is set to\&. The
+same security issues apply as to auto-connect-localhost=\&. Defaults to no\&.
+.sp
+.sp 1
+.in -4
+.SH "ENVIRONMENT VARIABLES"
+.PP
+See \fBenviron\fR(5) for descriptions of the following environment
+variables:
+.sp
+.ne 2
+.mk
+\fBPULSE_CLIENTCONFIG\fR
+.in +24n
+.rt
+Specify the file that will be read instead of \fBclient\&.conf\fR
+for client configuration\&.
+.sp
+.sp 1
+.in -24n
+.sp
+.ne 2
+.mk
+\fBPULSE_SINK\fR
+.in +24n
+.rt
+Specify the default sink to use\&.  This takes precedence over the configuration
+settings specified in configuration files\&.
+.sp
+.sp 1
+.in -24n
+.sp
+.ne 2
+.mk
+\fBPULSE_SOURCE\fR
+.in +24n
+.rt
+Specify the default source to use\&.  This takes precedence over the
+configuration settings specified in configuration files\&.
+.sp
+.sp 1
+.in -24n
+.sp
+.ne 2
+.mk
+\fBPULSE_SERVER\fR
+.in +24n
+.rt
+Specify the default PulseAudio server to connect to\&.  This takes precedence
+over the configuration settings specified in configuration files\&.
+.sp
+.sp 1
+.in -24n
+.sp
+.ne 2
+.mk
+\fBPULSE_BINARY\fR
+.in +24n
+.rt
+Specify the default PulseAudio daemon binary to run when autospawning\&.  This
+takes precedence over the configuration settings specified in configuration
+files\&.
+.sp
+.sp 1
+.in -24n
+.sp
+.ne 2
+.mk
+\fBPULSE_PROP\fR
+.in +24n
+.rt
+A space separated list of properties of the form \&'media\&.role=event\&' to be set
+for all streams\&.
+.sp
+.sp 1
+.in -24n
+.sp
+.ne 2
+.mk
+\fBPULSE_PROP_\fIxxxx\fR\fR
+.in +24n
+.rt
+Set property \fIxxxx\fR for all streams\&.
+.sp
+.sp 1
+.in -24n
+.SH "FILES"
+.PP
+The following files are used by this application:
+.sp
+.ne 2
+.mk
+\fB\fB/etc/pulse/client\&.conf\fR\fR
+.in +24n
+.rt
+System configuration file\&.
+.sp
+.sp 1
+.in -24n
+.sp
+.ne 2
+.mk
+\fB\fB~/\&.pulse/client\&.conf\fR\fR
+.in +24n
+.rt
+User configuration file\&.
+.sp
+.sp 1
+.in -24n
+.SH "ATTRIBUTES"
+.PP
+See \fBattributes\fR(5)
+for descriptions of the following attributes:
+.sp
+.TS
+tab() allbox;
+cw(2.750000i)| cw(2.750000i)
+lw(2.750000i)| lw(2.750000i).
+ATTRIBUTE TYPEATTRIBUTE VALUE
+AvailabilitySUNWpulseaudio
+Interface stabilityVolatile
+.TE
+.sp
+.SH "SEE ALSO"
+.PP
+\fBpulseaudio\fR(1),
+\fBpulse-daemon\&.conf\fR(5)
+.SH "NOTES"
+.PP
+Written by the PulseAudio Developers at) 0pointer (dot) net>;
+PulseAudio is available from http://www\&.pulseaudio\&.org/\&.
+...\" created by instant / solbook-to-man, Tue 27 Jan 2015, 17:23
