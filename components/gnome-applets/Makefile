@@ -17,6 +17,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gnome-applets
 COMPONENT_VERSION= 2.32.1.1
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= GNOME panel applets
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -48,7 +49,7 @@ CONFIGURE_OPTIONS+= --libexecdir=/usr/lib
 CONFIGURE_OPTIONS+= --with-gstreamer=0.10
 CONFIGURE_OPTIONS+= --enable-stickynotes
 CONFIGURE_OPTIONS+= --disable-scrollkeeper
-CONFIGURE_OPTIONS+= --enable-mixer-applet
+CONFIGURE_OPTIONS+= --disable-mixer-applet
 CONFIGURE_OPTIONS+= --disable-networkmanager
 
 COMPONENT_INSTALL_ENV += GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
