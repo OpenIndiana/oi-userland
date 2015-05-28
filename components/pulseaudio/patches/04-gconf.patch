@@ -1,0 +1,73 @@
+--- pulseaudio-1.0/src/modules/gconf/module-gconf.c-orig	2011-10-14 22:41:51.543432298 -0500
++++ pulseaudio-1.0/src/modules/gconf/module-gconf.c	2011-10-14 22:42:44.571594133 -0500
+@@ -56,7 +56,7 @@ struct module_item {
+     uint32_t index;
+ };
+ 
+-struct module_info {
++struct pa_module_info {
+     char *name;
+ 
+     struct module_item items[MAX_MODULES];
+@@ -128,7 +128,7 @@ static char *read_string(struct userdata
+     }
+ }
+ 
+-static void unload_one_module(struct userdata *u, struct module_info*m, unsigned i) {
++static void unload_one_module(struct userdata *u, struct pa_module_info*m, unsigned i) {
+     pa_assert(u);
+     pa_assert(m);
+     pa_assert(i < m->n_items);
+@@ -144,7 +144,7 @@ static void unload_one_module(struct use
+     m->items[i].name = m->items[i].args = NULL;
+ }
+ 
+-static void unload_all_modules(struct userdata *u, struct module_info*m) {
++static void unload_all_modules(struct userdata *u, struct pa_module_info*m) {
+     unsigned i;
+ 
+     pa_assert(u);
+@@ -158,7 +158,7 @@ static void unload_all_modules(struct us
+ 
+ static void load_module(
+         struct userdata *u,
+-        struct module_info *m,
++        struct pa_module_info *m,
+         unsigned i,
+         const char *name,
+         const char *args,
+@@ -195,7 +195,7 @@ static void load_module(
+ }
+ 
+ static void module_info_free(void *p, void *userdata) {
+-    struct module_info *m = p;
++    struct pa_module_info *m = p;
+     struct userdata *u = userdata;
+ 
+     pa_assert(m);
+@@ -225,14 +225,14 @@ static int handle_event(struct userdata 
+ 
+             case '+': {
+                 char *name;
+-                struct module_info *m;
++                struct pa_module_info *m;
+                 unsigned i, j;
+ 
+                 if (!(name = read_string(u)))
+                     goto fail;
+ 
+                 if (!(m = pa_hashmap_get(u->module_infos, name))) {
+-                    m = pa_xnew(struct module_info, 1);
++                    m = pa_xnew(struct pa_module_info, 1);
+                     m->name = name;
+                     m->n_items = 0;
+                     pa_hashmap_put(u->module_infos, m->name, m);
+@@ -279,7 +279,7 @@ static int handle_event(struct userdata 
+ 
+             case '-': {
+                 char *name;
+-                struct module_info *m;
++                struct pa_module_info *m;
+ 
+                 if (!(name = read_string(u)))
+                     goto fail;
