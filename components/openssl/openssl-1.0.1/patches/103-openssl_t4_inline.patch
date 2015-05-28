@@ -13,9 +13,9 @@ diff -ru openssl-1.0.1e/Configure openssl-1.0.1e/Configure
  my $ia64_asm="ia64cpuid.o:bn-ia64.o ia64-mont.o::aes_core.o aes_cbc.o aes-ia64.o::md5-ia64.o:sha1-ia64.o sha256-ia64.o sha512-ia64.o::rc4-ia64.o rc4_skey.o:::::ghash-ia64.o::void";
 -my $sparcv9_asm="sparcv9cap.o sparccpuid.o:bn-sparcv9.o sparcv9-mont.o sparcv9a-mont.o:des_enc-sparc.o fcrypt_b.o:aes_core.o aes_cbc.o aes-sparcv9.o:::sha1-sparcv9.o sha256-sparcv9.o sha512-sparcv9.o:::::::ghash-sparcv9.o::void";
 +my $sparcv9_asm="sparcv9cap.o sparccpuid.o:bn-sparcv9.o sparcv9-mont.o sparcv9a-mont.o vis3-mont.o sparct4-mont.o sparcv9-gf2m.o:des_enc-sparc.o fcrypt_b.o dest4-sparcv9.o:aes_core.o aes_cbc.o aes-sparcv9.o aest4-sparcv9.o::md5-sparcv9.o:sha1-sparcv9.o sha256-sparcv9.o sha512-sparcv9.o:::::::ghash-sparcv9.o::void";
+ my $fips_sparcv9_asm="sparcv9cap.o sparccpuid.o:bn-sparcv9.o sparcv9-mont.o:des_enc-sparc.o fcrypt_b.o:aes_core.o aes_cbc.o aes-sparcv9.o:::sha1-sparcv9.o sha256-sparcv9.o sha512-sparcv9.o:::::::ghash-sparcv9.o::void";
  my $sparcv8_asm=":sparcv8.o:des_enc-sparc.o fcrypt_b.o:::::::::::::void";
  my $alpha_asm="alphacpuid.o:bn_asm.o alpha-mont.o:::::sha1-alpha.o:::::::ghash-alpha.o::void";
- my $mips32_asm=":bn-mips.o::aes_cbc.o aes-mips.o:::sha1-mips.o sha256-mips.o::::::::";
 Index: crypto/sparccpuid.S
 ===================================================================
 diff -ru openssl-1.0.1e/crypto/sparccpuid.S openssl-1.0.1e/crypto/sparccpuid.S
@@ -29,20 +29,7 @@ diff -ru openssl-1.0.1e/crypto/sparccpuid.S openssl-1.0.1e/crypto/sparccpuid.S
  #if defined(__SUNPRO_C) && defined(__sparcv9)
  # define ABI64  /* They've said -xarch=v9 at command line */
  #elif defined(__GNUC__) && defined(__arch64__)
-@@ -235,10 +239,10 @@
- .global	_sparcv9_vis1_probe
- .align	8
- _sparcv9_vis1_probe:
-+	.word	0x81b00d80	!fxor	%f0,%f0,%f0
- 	add	%sp,BIAS+2,%o1
--	.word	0xc19a5a40	!ldda	[%o1]ASI_FP16_P,%f0
- 	retl
--	.word	0x81b00d80	!fxor	%f0,%f0,%f0
-+	.word	0xc19a5a40	!ldda	[%o1]ASI_FP16_P,%f0
- .type	_sparcv9_vis1_probe,#function
- .size	_sparcv9_vis1_probe,.-_sparcv9_vis1_probe
- 
-@@ -251,7 +255,12 @@
+@@ -241,7 +245,12 @@
  !	UltraSPARC IIe		7
  !	UltraSPARC III		7
  !	UltraSPARC T1		24
@@ -55,7 +42,7 @@ diff -ru openssl-1.0.1e/crypto/sparccpuid.S openssl-1.0.1e/crypto/sparccpuid.S
  ! Numbers for T2 and SPARC64 V-VII are more than welcomed.
  !
  ! It would be possible to detect specifically US-T1 by instrumenting
-@@ -260,6 +269,8 @@
+@@ -250,6 +259,8 @@
  .global	_sparcv9_vis1_instrument
  .align	8
  _sparcv9_vis1_instrument:
@@ -64,9 +51,9 @@ diff -ru openssl-1.0.1e/crypto/sparccpuid.S openssl-1.0.1e/crypto/sparccpuid.S
  	.word	0x91410000	!rd	%tick,%o0
  	.word	0x81b00d80	!fxor	%f0,%f0,%f0
  	.word	0x85b08d82	!fxor	%f2,%f2,%f2
-@@ -314,6 +325,30 @@
- .type	_sparcv9_fmadd_probe,#function
- .size	_sparcv9_fmadd_probe,.-_sparcv9_fmadd_probe
+@@ -286,6 +297,30 @@
+ .type	_sparcv9_vis1_instrument,#function
+ .size	_sparcv9_vis1_instrument,.-_sparcv9_vis1_instrument
  
 +.global	_sparcv9_rdcfr
 +.align	8
@@ -95,7 +82,7 @@ diff -ru openssl-1.0.1e/crypto/sparccpuid.S openssl-1.0.1e/crypto/sparccpuid.S
  .global	OPENSSL_cleanse
  .align	32
  OPENSSL_cleanse:
-@@ -398,6 +433,102 @@
+@@ -370,6 +405,102 @@
  .size	OPENSSL_cleanse,.-OPENSSL_cleanse
  
  #ifndef _BOOT
@@ -203,18 +190,20 @@ Index: crypto/sparcv9cap.c
 diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
 --- openssl-1.0.1e/crypto/sparcv9cap.c 2011-05-24 17:02:24.000000000 -0700
 +++ openssl-1.0.1e/crypto/sparcv9cap.c 2011-07-27 10:48:17.817470000 -0700
-@@ -4,34 +4,58 @@
+@@ -3,36 +3,59 @@
+ #include <string.h>
  #include <setjmp.h>
- #include <signal.h>
  #include <sys/time.h>
 +#include <unistd.h>
  #include <openssl/bn.h>
+ #include <sys/auxv.h>
  
 -#define SPARCV9_TICK_PRIVILEGED (1<<0)
 -#define SPARCV9_PREFER_FPU      (1<<1)
 -#define SPARCV9_VIS1            (1<<2)
 -#define SPARCV9_VIS2            (1<<3) /* reserved */
 -#define SPARCV9_FMADD           (1<<4) /* reserved for SPARC64 V */
+-#define SPARCV9_BLK             (1<<5)
 +#include "sparc_arch.h"
  
 +#if defined(__GNUC__) && defined(__linux)
@@ -275,13 +264,11 @@ diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
  }
  
  unsigned long _sparcv9_rdtick(void);
-@@ -39,11 +63,18 @@
+@@ -37,11 +60,16 @@
+ 
+ unsigned long _sparcv9_rdtick(void);
  unsigned long _sparcv9_vis1_instrument(void);
- void _sparcv9_vis2_probe(void);
- void _sparcv9_fmadd_probe(void);
 +unsigned long _sparcv9_rdcfr(void);
-+void _sparcv9_vis3_probe(void);
-+unsigned long _sparcv9_random(void);
 +#ifndef _BOOT
 +size_t _sparcv9_vis1_instrument_bus(unsigned int *,size_t);
 +size_t _sparcv9_vis1_instrument_bus2(unsigned int *,size_t,size_t);
@@ -295,7 +282,7 @@ diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
  #if defined(__sun) && defined(__SVR4)
          return gethrtime();
  #else
-@@ -52,6 +83,24 @@
+@@ -50,6 +80,24 @@
      else
          return _sparcv9_rdtick();
  }
@@ -320,7 +307,7 @@ diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
  #endif
 
  #if defined(_BOOT)
-@@ -61,7 +110,7 @@
+@@ -59,7 +107,7 @@
   */
  void OPENSSL_cpuid_setup(void)
         {
@@ -329,7 +316,7 @@ diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
         }
  
  #elif 0 && defined(__sun) && defined(__SVR4)
-@@ -90,11 +139,11 @@
+@@ -88,11 +136,11 @@
      if (!strcmp(name, "SUNW,UltraSPARC") ||
          /* covers II,III,IV */
          !strncmp(name, "SUNW,UltraSPARC-I", 17)) {
@@ -343,7 +330,7 @@ diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
  
          return DI_WALK_TERMINATE;
      }
-@@ -100,7 +149,7 @@
+@@ -98,7 +146,7 @@
      }
      /* This is expected to catch remaining UltraSPARCs, such as T1 */
      else if (!strncmp(name, "SUNW,UltraSPARC", 15)) {
@@ -352,7 +339,7 @@ diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
  
          return DI_WALK_TERMINATE;
      }
-@@ -119,7 +168,7 @@
+@@ -117,7 +165,7 @@
      trigger = 1;
  
      if ((e = getenv("OPENSSL_sparcv9cap"))) {
@@ -361,7 +348,7 @@ diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
          return;
      }
  
-@@ -126,15 +175,15 @@
+@@ -124,15 +172,15 @@
      if (sysinfo(SI_MACHINE, si, sizeof(si)) > 0) {
          if (strcmp(si, "sun4v"))
              /* FPU is preferred for all CPUs, but US-T1/2 */
@@ -381,7 +368,7 @@ diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
              return;
          }
      }
-@@ -204,12 +253,14 @@
+@@ -195,7 +241,9 @@
      trigger = 1;
  
      if ((e = getenv("OPENSSL_sparcv9cap"))) {
@@ -392,72 +379,47 @@ diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
          return;
      }
  
+@@ -202,21 +250,48 @@
+     (void) getisax(&ui, 1);
+ 
      /* Initial value, fits UltraSPARC-I&II... */
--    OPENSSL_sparcv9cap_P = SPARCV9_PREFER_FPU | SPARCV9_TICK_PRIVILEGED;
-+    OPENSSL_sparcv9cap_P[0] = SPARCV9_PREFER_FPU | SPARCV9_TICK_PRIVILEGED;
+-    OPENSSL_sparcv9cap_P = SPARCV9_BLK;
++    OPENSSL_sparcv9cap_P[0] = SPARCV9_BLK;
  
-     sigfillset(&all_masked);
-     sigdelset(&all_masked, SIGILL);
-@@ -232,18 +283,18 @@
- 
-     if (sigsetjmp(common_jmp, 1) == 0) {
-         _sparcv9_rdtick();
--        OPENSSL_sparcv9cap_P &= ~SPARCV9_TICK_PRIVILEGED;
-+        OPENSSL_sparcv9cap_P[0] &= ~SPARCV9_TICK_PRIVILEGED;
+     if (ui & AV_SPARC_VIS) {
+-        /* detect UltraSPARC-Tx, see sparccpuid.S for details... */
++        /* detect UltraSPARC-Tx, see sparccpud.S for details... */
+         if (_sparcv9_vis1_instrument() < 7)
+-            OPENSSL_sparcv9cap_P |= SPARCV9_TICK_PRIVILEGED;
++            OPENSSL_sparcv9cap_P[0] |= SPARCV9_TICK_PRIVILEGED;
+         if (_sparcv9_vis1_instrument() < 12) {
+-            OPENSSL_sparcv9cap_P |= SPARCV9_VIS1|SPARCV9_PREFER_FPU;
++            OPENSSL_sparcv9cap_P[0] |= (SPARCV9_VIS1 | SPARCV9_PREFER_FPU);
+             if (ui & AV_SPARC_VIS2)
+-                OPENSSL_sparcv9cap_P |= SPARCV9_VIS2;
+-        }
++                OPENSSL_sparcv9cap_P[0] |= SPARCV9_VIS2;
++         }
      }
  
-     if (sigsetjmp(common_jmp, 1) == 0) {
-         _sparcv9_vis1_probe();
--        OPENSSL_sparcv9cap_P |= SPARCV9_VIS1;
-+        OPENSSL_sparcv9cap_P[0] |= SPARCV9_VIS1 | SPARCV9_BLK;
-         /* detect UltraSPARC-Tx, see sparccpud.S for details... */
-         if (_sparcv9_vis1_instrument() >= 12)
--            OPENSSL_sparcv9cap_P &= ~(SPARCV9_VIS1 | SPARCV9_PREFER_FPU);
-+            OPENSSL_sparcv9cap_P[0] &= ~(SPARCV9_VIS1 | SPARCV9_PREFER_FPU);
-         else {
-             _sparcv9_vis2_probe();
--            OPENSSL_sparcv9cap_P |= SPARCV9_VIS2;
-+            OPENSSL_sparcv9cap_P[0] |= SPARCV9_VIS2;
-         }
-     }
- 
-@@ -249,13 +300,50 @@
- 
-     if (sigsetjmp(common_jmp, 1) == 0) {
-         _sparcv9_fmadd_probe();
+     if (ui & AV_SPARC_FMAF)
 -        OPENSSL_sparcv9cap_P |= SPARCV9_FMADD;
 +        OPENSSL_sparcv9cap_P[0] |= SPARCV9_FMADD;
-     }
- 
++
 +    /*
 +     * VIS3 flag is tested independently from VIS1, unlike VIS2 that is,
 +     * because VIS3 defines even integer instructions.
 +     */
-+    if (sigsetjmp(common_jmp,1) == 0) {
-+        _sparcv9_vis3_probe();
-+        OPENSSL_sparcv9cap_P[0] |= SPARCV9_VIS3;
-+    }
++    if (ui & AV_SPARC_VIS3)
++            OPENSSL_sparcv9cap_P[0] |= SPARCV9_VIS3;
 +
-+    if (sigsetjmp(common_jmp,1) == 0) {
-+        (void)_sparcv9_random();
-+        OPENSSL_sparcv9cap_P[0] |= SPARCV9_RANDOM;
-+    }
++#define AV_T4_MECHS     (AV_SPARC_AES | AV_SPARC_DES | AV_SPARC_KASUMI | \
++                         AV_SPARC_CAMELLIA | AV_SPARC_MD5 | AV_SPARC_SHA1 | \
++                         AV_SPARC_SHA256 | AV_SPARC_SHA512 | AV_SPARC_MPMUL | \
++                         AV_SPARC_CRC32C)
 +
-+    /*
-+     * In wait for better solution _sparcv9_rdcfr is masked by
-+     * VIS3 flag, because it goes to uninterruptable endless
-+     * loop on UltraSPARC II running Solaris. Things might be
-+     * different on Linux...
-+     */
-+    if ((OPENSSL_sparcv9cap_P[0]&SPARCV9_VIS3) &&
-+        sigsetjmp(common_jmp, 1) == 0) {
++    if ((OPENSSL_sparcv9cap_P[0]&SPARCV9_VIS3) && (ui & AV_T4_MECHS))
 +        OPENSSL_sparcv9cap_P[1] = (unsigned int)_sparcv9_rdcfr();
-+    }
-+
-     sigaction(SIGBUS, &bus_oact, NULL);
-     sigaction(SIGILL, &ill_oact, NULL);
- 
-     sigprocmask(SIG_SETMASK, &oset, NULL);
 +
 +    if (sizeof(size_t) == 8)
 +        OPENSSL_sparcv9cap_P[0] |= SPARCV9_64BIT_STACK;

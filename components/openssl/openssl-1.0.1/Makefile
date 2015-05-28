@@ -42,6 +42,13 @@ COMPONENT_BUGDB=	library/openssl
 
 TPNO=			21965
 
+# Clone the patch files to the patches-all dir.
+# COPY_COMMON_FILES is there so that rsync is called as soon as
+# the Makefile is parsed.
+PATCH_DIR=patches-all
+CLEAN_PATHS += $(PATCH_DIR)
+COPY_COMMON_FILES:= $(shell rsync -ac ../common/patches/ patches/ $(PATCH_DIR))
+
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk

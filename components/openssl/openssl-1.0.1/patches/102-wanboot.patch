@@ -383,11 +383,11 @@
  
  # ifdef WIN16                   /* never the case */
  #  define MS_CALLBACK   _far _loadds
---- openssl-1.0.0e/crypto/sparcv9cap.c    2010-09-05 12:48:01.000000000 -0700
-+++ openssl-1.0.0e_patched/crypto/sparcv9cap.c    2011-12-23 05:24:02.011607700 -0800
-@@ -12,7 +12,11 @@
- #define SPARCV9_VIS2            (1<<3) /* reserved */
+--- openssl-1.0.0e/crypto/sparcv9cap.c	2010-09-05 12:48:01.000000000 -0700
++++ openssl-1.0.0e_patched/crypto/sparcv9cap.c	2011-12-23 05:24:02.011607700 -0800
+@@ -13,7 +13,11 @@
  #define SPARCV9_FMADD           (1<<4) /* reserved for SPARC64 V */
+ #define SPARCV9_BLK             (1<<5)
 
 +#ifndef        _BOOT
  static int OPENSSL_sparcv9cap_P = SPARCV9_TICK_PRIVILEGED;
@@ -397,15 +397,15 @@
  
  int bn_mul_mont(BN_ULONG *rp, const BN_ULONG *ap, const BN_ULONG *bp,
                  const BN_ULONG *np, const BN_ULONG *n0, int num)
-@@ -36,6 +40,7 @@
- void _sparcv9_vis2_probe(void);
- void _sparcv9_fmadd_probe(void);
+@@ -34,6 +38,7 @@
+ unsigned long _sparcv9_rdtick(void);
+ unsigned long _sparcv9_vis1_instrument(void);
  
 +#ifndef _BOOT
  unsigned long OPENSSL_rdtsc(void)
  {
      if (OPENSSL_sparcv9cap_P & SPARCV9_TICK_PRIVILEGED)
-@@ -47,8 +52,19 @@
+@@ -45,8 +50,19 @@
      else
          return _sparcv9_rdtick();
  }
@@ -426,9 +426,9 @@
  /*
   * This code path is disabled, because of incompatibility of libdevinfo.so.1
   * and libmalloc.so.1 (see below for details)
---- openssl-1.0.0e/crypto/sparccpuid.S    2010-09-05 12:48:01.000000000 -0700
-+++ openssl-1.0.0e_patched/crypto/sparccpuid.S    2012-02-13 07:42:58.259478325 -0800
-@@ -397,8 +397,13 @@
+--- openssl-1.0.0e/crypto/sparccpuid.S	2010-09-05 12:48:01.000000000 -0700
++++ openssl-1.0.0e_patched/crypto/sparccpuid.S	2012-02-13 07:42:58.259478325 -0800
+@@ -369,8 +369,13 @@
  .type	OPENSSL_cleanse,#function
  .size	OPENSSL_cleanse,.-OPENSSL_cleanse
  

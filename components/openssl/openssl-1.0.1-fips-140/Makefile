@@ -45,6 +45,13 @@ COMPONENT_BUGDB=	library/openssl
 
 TPNO=			21965
 
+# Clone the patch files to the patches-all dir.
+# COPY_COMMON_FILES is there so that rsync is called as soon as
+# the Makefile is parsed.
+PATCH_DIR=patches-all
+CLEAN_PATHS += $(PATCH_DIR)
+COPY_COMMON_FILES:= $(shell rsync -ac ../common/patches/ patches/ $(PATCH_DIR))
+
 # OpenSSL FIPS directory
 OPENSSL_FIPS_DIR = $(COMPONENT_DIR)/../openssl-fips
 
@@ -104,9 +111,9 @@ CONFIGURE_OPTIONS += no-seed
 # We define our own compiler and linker option sets for Solaris. See Configure
 # for more information.
 CONFIGURE_OPTIONS32_i386 =	solaris-x86-cc-sunw
-CONFIGURE_OPTIONS32_sparc =	solaris-sparcv8-cc-sunw
+CONFIGURE_OPTIONS32_sparc =	solaris-fips-sparcv9-cc-sunw
 CONFIGURE_OPTIONS64_i386 =	solaris64-x86_64-cc-sunw
-CONFIGURE_OPTIONS64_sparc =	solaris64-sparcv9-cc-sunw
+CONFIGURE_OPTIONS64_sparc =	solaris64-fips-sparcv9-cc-sunw
 
 # Some additional options needed for our engines.
 CONFIGURE_OPTIONS += --pk11-libname=$(PKCS11_LIB$(BITS))
