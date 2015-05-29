@@ -39,7 +39,7 @@ CLEAN_PATHS += cacerts
 CLEAN_PATHS += cacerts.out
  
 COMPONENT_ARCHIVE_2=$(RHINO).zip
-COMPONENT_ARCHIVE_URL_2=http://ftp.mozilla.org/pub/mozilla.org/js/$(COMPONENT_ARCHIVE_4)
+COMPONENT_ARCHIVE_URL_2=http://ftp.mozilla.org/pub/mozilla.org/js/$(COMPONENT_ARCHIVE_2)
 COMPONENT_ARCHIVE_HASH_2=sha256:885b46e24fe5af23ad3712c5e08e8d97d6d92a4b89e1be860e8fe88e4a3dacd1
 CLEAN_PATHS += $(RHINO)
 
