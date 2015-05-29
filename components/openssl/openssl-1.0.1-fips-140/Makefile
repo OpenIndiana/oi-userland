@@ -108,6 +108,10 @@ CONFIGURE_OPTIONS += --with-fipsdir="$(BUILD_DIR_$(BITS))"
 CONFIGURE_OPTIONS += enable-md2
 CONFIGURE_OPTIONS += no-seed
 
+# Disable SSLv2 and SSLv3 protocols
+CONFIGURE_OPTIONS += no-ssl2
+CONFIGURE_OPTIONS += no-ssl3
+
 # We define our own compiler and linker option sets for Solaris. See Configure
 # for more information.
 CONFIGURE_OPTIONS32_i386 =	solaris-x86-cc-sunw

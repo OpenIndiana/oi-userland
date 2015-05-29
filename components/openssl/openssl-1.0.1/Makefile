@@ -107,6 +107,10 @@ CONFIGURE_OPTIONS += no-hw_cswift
 CONFIGURE_OPTIONS += enable-md2
 CONFIGURE_OPTIONS += no-seed
 
+# Disable SSLv2 and SSLv3 protocols
+CONFIGURE_OPTIONS += no-ssl2
+CONFIGURE_OPTIONS += no-ssl3
+
 # We use both no-whirlpool and no-whrlpool since there is an inconsistency in
 # the OpenSSL code and one needs both to build OpenSSL successfully with
 # Whirlpool implementation removed.
