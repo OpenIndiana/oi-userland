@@ -41,14 +41,18 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+CC += $(CC_BITS)
+
 CPPFLAGS += -I$(COMPONENT_DIR)/$(COMPONENT_SRC)/include
 
 CONFIGURE_OPTIONS +=	--disable-static
 CONFIGURE_OPTIONS += CPPFLAGS="$(CPPFLAGS)"
 
+COMPONENT_INSTALL_ARGS += bindir=$(USRBINDIR)
+
 # Don't use rpath!
 COMPONENT_POST_CONFIGURE_ACTION = \
-	(cd $(BUILD_DIR_32) ; \
+	(cd $(@D) ; \
 	$(GSED) -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool ; \
 	$(GSED) -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool)
 
@@ -61,16 +65,14 @@ COMPONENT_POST_INSTALL_ACTION = \
 
 PKG_PROTO_DIRS +=	$(COMPONENT_DIR)/files
 
+ASLR_MODE = $(ASLR_ENABLE)
+
 # common targets
-configure:	$(CONFIGURE_32)
-
-build:          $(BUILD_32)
-
-install:        $(INSTALL_32)
-
-test:           $(TEST_32)
-
+configure:	$(CONFIGURE_32_and_64)
+build:          $(BUILD_32_and_64)
+install:        $(INSTALL_32_and_64)
+# Even though "gmake check" goes to completion, it doesn't really do anything.
+test:           $(NO_TESTS)
 system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
 
 REQUIRED_PACKAGES += system/library
