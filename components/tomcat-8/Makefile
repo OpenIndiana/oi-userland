@@ -33,7 +33,7 @@ COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)-src
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:9fe0d4f0f86593a78eec952b257c7282765604926c30fe13c9dbe6f9f35674d8
-COMPONENT_ARCHIVE_URL=	http://www.apache.org/dist/tomcat/tomcat-8/v$(COMPONENT_VERSION)/src/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/tomcat/tomcat-8/v$(COMPONENT_VERSION)/src/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/tomcat
 
 # Tomcat subcomponents
@@ -50,7 +50,13 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATCH_LEVEL=0
 
-COMPONENT_BUILD_ARGS=-Dbase.path=$(BUILD_DIR_NO_ARCH) -Dtomcat.build=$(PROTO_DIR)
+COMPONENT_BUILD_ARGS=-Dbase.path=$(BUILD_DIR_32) -Dtomcat.build=$(PROTO_DIR)
+
+ifeq ($(strip $(USERLAND_ARCHIVES)),)
+  ARCHIVES_LOCATION=$(COMPONENT_DIR)
+else 
+  ARCHIVES_LOCATION=$(USERLAND_ARCHIVES)
+endif
 
 # Tomcat tests doesn't like cloning.
 CLONEY=echo
@@ -60,7 +66,7 @@ COMPONENT_PRE_BUILD_ACTION= \
 # Build ECJ jar from sources.
 COMPONENT_PRE_BUILD_ACTION+= \
 	($(MKDIR) $(@D)/ECJ/scripts/binary/META-INF; cd $(@D)/ECJ ; \
-	    $(JAVA_HOME)/bin/jar xf $(COMPONENT_DIR)/$(COMPONENT_ARCHIVE_1); \
+	    $(JAVA_HOME)/bin/jar xf $(ARCHIVES_LOCATION)/$(COMPONENT_ARCHIVE_1); \
 	    $(CP) META-INF/MANIFEST.MF scripts/binary/META-INF/; \
 	    JAVA_HOME="$(JAVA_HOME)" LC_ALL="en_US.UTF-8" $(ANT) )
 
@@ -71,14 +77,8 @@ COMPONENT_POST_BUILD_ACTION= \
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-build:	$(BUILD_NO_ARCH)
+build:	$(BUILD_32)
 
 install: build
 
-test:	$(SKIP_TEST)
-
-REQUIRED_PACKAGES += developer/java/junit
-REQUIRED_PACKAGES += runtime/java/jre-8
-REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/core-os
-REQUIRED_PACKAGES += system/network
+test:	$(NO_TESTS)
