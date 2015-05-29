@@ -1,0 +1,127 @@
+#
+# 
+#
+#
+# Copyright (c) 1996, 2011, Oracle and/or its affiliates. All rights reserved.
+#
+# PAM configuration
+#
+# Unless explicitly defined, all services use the modules
+# defined in the "other" section.
+#
+# Modules are defined with relative pathnames, i.e., they are
+# relative to /usr/lib/security/$ISA. Absolute path names, as
+# present in this file in previous releases are still acceptable.
+#
+# Authentication management
+#
+# login service (explicit because of pam_dial_auth)
+#
+login	auth requisite		pam_authtok_get.so.1
+login	auth required		pam_dhkeys.so.1
+login	auth required		pam_unix_cred.so.1
+login	auth sufficient		pam_winbind.so.1	try_first_pass
+login	auth binding		pam_unix_auth.so.1	server_policy
+login	auth required		pam_dial_auth.so.1
+#
+# rlogin service (explicit because of pam_rhost_auth)
+#
+rlogin	auth sufficient		pam_rhosts_auth.so.1
+rlogin	auth requisite		pam_authtok_get.so.1
+rlogin	auth required		pam_dhkeys.so.1
+rlogin	auth required		pam_unix_cred.so.1
+rlogin	auth sufficient		pam_winbind.so.1	try_first_pass
+rlogin	auth required		pam_unix_auth.so.1
+#
+# Kerberized rlogin service
+#
+krlogin	auth required		pam_unix_cred.so.1
+krlogin	auth required		pam_krb5.so.1
+#
+# rsh service (explicit because of pam_rhost_auth,
+# and pam_unix_auth for meaningful pam_setcred)
+#
+rsh	auth sufficient		pam_rhosts_auth.so.1
+rsh	auth required		pam_unix_cred.so.1
+#
+# Kerberized rsh service
+#
+krsh	auth required		pam_unix_cred.so.1
+krsh	auth required		pam_krb5.so.1
+#
+# Kerberized telnet service
+#
+ktelnet	auth required		pam_unix_cred.so.1
+ktelnet	auth required		pam_krb5.so.1
+#
+# PPP service (explicit because of pam_dial_auth)
+#
+ppp	auth requisite		pam_authtok_get.so.1
+ppp	auth required		pam_dhkeys.so.1
+ppp	auth required		pam_unix_cred.so.1
+ppp	auth required		pam_unix_auth.so.1
+ppp	auth required		pam_dial_auth.so.1
+#
+# GDM Autologin (explicit because of pam_allow).  These need to be
+# here as there is no mechanism for packages to amend pam.conf as
+# they are installed.
+#
+gdm-autologin auth  required    pam_unix_cred.so.1
+gdm-autologin auth  sufficient  pam_allow.so.1
+#
+# Default definitions for Authentication management
+# Used when service name is not explicitly mentioned for authentication
+#
+other	auth requisite		pam_authtok_get.so.1
+other	auth required		pam_dhkeys.so.1
+other	auth required		pam_unix_cred.so.1
+other	auth sufficient		pam_winbind.so.1	try_first_pass
+other	auth required		pam_unix_auth.so.1
+#
+# passwd command (explicit because of a different authentication module)
+#
+passwd	auth binding		pam_passwd_auth.so.1	server_policy
+passwd	auth required		pam_winbind.so.1
+#
+# cron service (explicit because of non-usage of pam_roles.so.1)
+#
+cron	account required	pam_unix_account.so.1
+#
+# cups service (explicit because of non-usage of pam_roles.so.1)
+#
+cups	account	required	pam_unix_account.so.1
+#
+# GDM Autologin (explicit because of pam_allow) This needs to be here
+# as there is no mechanism for packages to amend pam.conf as they are
+# installed.
+#
+gdm-autologin account  sufficient  pam_allow.so.1
+#
+# Default definition for Account management
+# Used when service name is not explicitly mentioned for account management
+#
+other	account requisite	pam_roles.so.1
+other	account sufficient	pam_winbind.so.1
+other	account binding		pam_unix_account.so.1	server_policy
+#
+# Default definition for Session management
+# Used when service name is not explicitly mentioned for session management
+#
+other	session required	pam_unix_session.so.1
+other	session required	pam_winbind.so.1	try_first_pass
+#
+# Default definition for Password management
+# Used when service name is not explicitly mentioned for password management
+#
+other	password required	pam_dhkeys.so.1
+other	password requisite	pam_authtok_get.so.1
+# Password construction requirements apply to all users.
+# Remove force_check to have the traditional authorized administrator
+# bypass of construction requirements.
+other	password requisite	pam_authtok_check.so.1	force_check
+other	password sufficient	pam_winbind.so.1	try_first_pass
+other	password required	pam_authtok_store.so.1
+#
+# Support for Kerberos V5 authentication and example configurations can
+# be found in the pam_krb5(5) man page under the "EXAMPLES" section.
+#
