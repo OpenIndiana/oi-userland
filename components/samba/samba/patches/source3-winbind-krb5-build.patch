@@ -1,0 +1,32 @@
+Source: Home brewed
+Fixes issues with differences of Solaris krb5 and MIT krb5
+
+--- a/source3/winbindd/wscript_build	2013-12-05 09:16:48.000000000 +0000
++++ samba-4.1.7/source3/winbindd/wscript_build	2014-06-11 17:27:43.899094852 +0000
+@@ -19,7 +19,7 @@
+ 
+ bld.SAMBA3_LIBRARY('idmap',
+                    source=IDMAP_SRC,
+-                   deps='samba-util',
++                   deps='samba-util krb5',
+                    vars=locals(),
+                    allow_undefined_symbols=True,
+                    private_library=True)
+@@ -81,7 +81,7 @@
+ bld.SAMBA3_MODULE('idmap_nss',
+                  subsystem='idmap',
+                  source=IDMAP_NSS_SRC,
+-                 deps='samba-util',
++                 deps='samba-util krb5',
+                  init_function='',
+                  internal_module=bld.SAMBA3_IS_STATIC_MODULE('idmap_nss'),
+                  enabled=bld.SAMBA3_IS_ENABLED_MODULE('idmap_nss'))
+@@ -89,7 +89,7 @@
+ bld.SAMBA3_MODULE('idmap_tdb',
+                  subsystem='idmap',
+                  source=IDMAP_TDB_SRC,
+-                 deps='samba-util tdb',
++                 deps='samba-util tdb krb5',
+                  init_function='',
+                  internal_module=bld.SAMBA3_IS_STATIC_MODULE('idmap_tdb'),
+                  enabled=bld.SAMBA3_IS_ENABLED_MODULE('idmap_tdb'))
