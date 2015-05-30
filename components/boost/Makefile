@@ -17,7 +17,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= boost
 COMPONENT_VERSION= 1.55.0
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= boost - free peer-reviewed portable C++ source libraries
 COMPONENT_SRC= $(COMPONENT_NAME)_1_55_0
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
