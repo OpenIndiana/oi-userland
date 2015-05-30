@@ -104,8 +104,8 @@ cacerts.out: $(BUILD_32)
         done
 
 $(BUILD_DIR)/%/.installed: $(BUILD_DIR)/%/.built cacerts.out
-	$(RM) -r $(PROTO_DIR)/usr/jdk/instances/openjdk1.7.0
-	$(MKDIR) $(PROTO_DIR)/usr/jdk/instances/openjdk1.7.0
+	[ -d $(PROTO_DIR)/usr/jdk/instances/openjdk1.7.0 ] || $(MKDIR) $(PROTO_DIR)/usr/jdk/instances/openjdk1.7.0
+	chmod -R u+rw $(PROTO_DIR)/usr/jdk/instances/openjdk1.7.0
 	cp -a $(@D)/build/solaris-*/j2sdk-image/* $(PROTO_DIR)/usr/jdk/instances/openjdk1.7.0
 	$(TOUCH) $@
 
