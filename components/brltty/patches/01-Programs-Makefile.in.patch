@@ -1,6 +1,15 @@
---- brltty-3.8.orig/Programs/Makefile.in	2005-08-27 05:33:11.000000000 +0100
-+++ brltty-3.8/Programs/Makefile.in	2005-10-28 08:17:12.412662000 +0100
-@@ -551,7 +551,7 @@
+--- brltty-4.4/Programs/Makefile.in.~1~	2012-06-03 08:57:27.000000000 +0400
++++ brltty-4.4/Programs/Makefile.in	2015-04-28 12:04:16.861024822 +0300
+@@ -699,7 +699,7 @@
+ TBL2HEX_OBJECTS = tbl2hex.$B $(PROGRAM_OBJECTS_FOR_BUILD) charset.$B charset_none.$B dataarea.$B datafile.$B hostcmd.$B hostcmd_none.$B lock.$B queue.$B ttb_compile.$B ttb_native.$B atb_compile.$B ctb_compile.$B
+ 
+ tbl2hex$(X_FOR_BUILD): $(TBL2HEX_OBJECTS)
+-	$(CC_FOR_BUILD) -o $@ $(TBL2HEX_OBJECTS) $(ICU_LIBRARIES_FOR_BUILD) $(LDLIBS_FOR_BUILD)
++	$(CC_FOR_BUILD) $(CFLAGS_FOR_BUILD) -o $@ $(TBL2HEX_OBJECTS) $(ICU_LIBRARIES_FOR_BUILD) $(LDLIBS_FOR_BUILD)
+ 
+ ###############################################################################
+ 
+@@ -789,7 +789,7 @@
  install-api-key:
  	file=$(sysconfdir)/$(API_AUTHFILE) && \
  	if test ! -f $$file -a -w $(sysconfdir) -a -z "$(INSTALL_ROOT)"; \
