@@ -16,14 +16,13 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	thunderbird
-COMPONENT_VERSION= 	24.8.1
-COMPONENT_REVISION=	1
-IPS_COMPONENT_VERSION=	24.8.1
+COMPONENT_VERSION= 	31.7.0
+IPS_COMPONENT_VERSION=	31.7.0
 COMPONENT_SUMMARY= 	Mozilla Thunderbird Email/Newsgroup Client
-COMPONENT_SRC= 		comm-esr24
+COMPONENT_SRC= 		comm-esr31
 COMPONENT_ARCHIVE= 	$(COMPONENT_NAME)-$(COMPONENT_VERSION).source.tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:96fd7afbd4825b1e29e16085fd72bf6f752eb10c119ec554e7d4eed9af6fa2a4
+  sha256:dc3a6afaab486ba09745898f55986f98cc9bf7647cd992849f9c7ead563479b7
 COMPONENT_ARCHIVE_URL= \
   ftp://ftp.mozilla.org/pub/thunderbird/releases/$(COMPONENT_VERSION)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.mozilla.com/en-US/thunderbird/
@@ -40,7 +39,12 @@ include $(WS_TOP)/make-rules/ips.mk
 
 PATCH_LEVEL=0
 
-COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D) )
+# Missing files in build dir for configure without this.
+COMPONENT_PREP_ACTION =  ( cd $(@D)  && autoconf-2.13 && \
+				cd $(@D)/mozilla && autoconf-2.13 &&\
+				cd $(@D)/mozilla/js/src && autoconf-2.13 && \
+				$(TOUCH) $(@D)/.mozconfig )
+COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
 
@@ -50,6 +54,7 @@ CONFIGURE_OPTIONS +=	--enable-dbus
 CONFIGURE_OPTIONS +=	--enable-gnomeui
 CONFIGURE_OPTIONS +=	--enable-libxul
 CONFIGURE_OPTIONS +=	--disable-jemalloc
+CONFIGURE_OPTIONS +=	--without-intl-api
 CONFIGURE_OPTIONS +=	--disable-debug
 #CONFIGURE_OPTIONS +=	--enable-debug
 CONFIGURE_OPTIONS +=	--disable-debug-symbols
@@ -61,7 +66,9 @@ CONFIGURE_OPTIONS +=	--disable-webrtc
 CONFIGURE_OPTIONS +=	--enable-official-branding
 CONFIGURE_OPTIONS +=	--disable-updater
 CONFIGURE_OPTIONS +=	--enable-ipc
+CONFIGURE_OPTIONS +=	--enable-pulseaudio
 CONFIGURE_OPTIONS +=	--enable-system-ffi
+CONFIGURE_OPTIONS +=	--with-system-icu
 CONFIGURE_OPTIONS +=	--enable-system-sqlite
 CONFIGURE_OPTIONS +=	--with-system-libevent
 CONFIGURE_OPTIONS +=	--with-system-zlib
@@ -88,6 +95,8 @@ LANG_FILES=$(addsuffix .xpi,$(LANG_LIST))
 
 CLEAN_PATHS += $(LANG_FILES)
 
+COMPONENT_BUILD_ARGS =
+
 $(LANG_FILES): 
 	$(FETCH) --file $@  --url $(LANG_FILES_LOCATION)/$@
 
@@ -101,13 +110,9 @@ COMPONENT_POST_INSTALL_ACTION  = ( \
      $(MKDIR) $(GDATA_PROVIDER_DIR) ; \
      unzip -u -d $(GDATA_PROVIDER_DIR) $(BUILD_DIR_32)/mozilla/dist/xpi-stage/gdata-provider.xpi ; \
      for file in $(PROTO_DIR)/usr/lib/thunderbird/libprldap60.so \
-          $(PROTO_DIR)/usr/lib/thunderbird/sdk/bin/xpcshell \
           $(LIGHTNING_DIR)/components/libcalbasecomps.so ; do \
         /usr/bin/elfedit -e 'dyn:value -s  RPATH "/usr/lib:/usr/lib/thunderbird"'  \
         $$file ;\
-     done ; \
-     for file in $(PROTO_DIR)/usr/lib/thunderbird/sdk/bin/*.py; do \
-        $(GSED) -i -e 's:/usr/bin/env python:$(PYTHON):' $$file; \
      done )
 
 install: $(INSTALL_32)
