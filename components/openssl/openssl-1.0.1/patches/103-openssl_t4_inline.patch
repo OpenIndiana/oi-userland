@@ -2096,6 +2096,15 @@ Index: openssl/crypto/evp/e_aes.c
              dat->block = (block128_f) AES_decrypt;
              dat->stream.cbc = mode == EVP_CIPH_CBC_MODE ?
                  (cbc128_f) AES_cbc_encrypt : NULL;
+@@ -501,7 +858,7 @@
+     } else
+ #  ifdef BSAES_CAPABLE
+     if (BSAES_CAPABLE && mode == EVP_CIPH_CTR_MODE) {
+-        ret = AES_set_encrypt_key(key, ctx->key_len * 8, &dat->ks);
++        ret = AES_set_encrypt_key(key, ctx->key_len * 8, &dat->ks.ks);
+         dat->block = (block128_f) AES_encrypt;
+         dat->stream.ctr = (ctr128_f) bsaes_ctr32_encrypt_blocks;
+     } else
 @@ -508,7 +865,7 @@
  #  endif
  #  ifdef VPAES_CAPABLE
