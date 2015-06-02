@@ -1,0 +1,15 @@
+    This is an in-house patch that disables SSLv2 and SSLv3 protocol for 
+    slrn. This change was sent upstream and will be incorporated into the 
+    future release of version 1.0.3. 
+
+--- slrn-1.0.1-orig/src/sltcp.c	2015-05-29 10:44:11.635417452 -0700
++++ slrn-1.0.1/src/sltcp.c	2015-05-29 10:44:58.038984691 -0700
+@@ -573,7 +573,7 @@ static SSL *alloc_ssl (void)
+ 	     print_error (_("SSL_CTX_new failed.\n"));
+ 	     return NULL;
+ 	  }
+-	/* SSL_CTX_set_options (c, SSL_OP_NO_TLSv1); */
++	SSL_CTX_set_options (c, SSL_OP_NO_SSLv2|SSL_OP_NO_SSLv3);
+ 	This_SSL_Ctx = c;
+ 	atexit (deinit_ssl);
+ 
