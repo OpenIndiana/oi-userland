@@ -1,0 +1,68 @@
+Developed internally, for system-test; not suitable for upstream.
+
+--- pigz-2.2.5/Makefile.~4~	2015-06-01 08:32:01.403004646 -0700
++++ pigz-2.2.5/Makefile	2015-06-01 08:34:05.581419748 -0700
+@@ -1,5 +1,6 @@
+ CC=cc
+ CFLAGS=-O3 -Wall -Wextra
++TARGETDIR ?= $(shell pwd)
+ 
+ pigz: pigz.o yarn.o
+ 	$(CC) -o pigz pigz.o yarn.o -lz
+@@ -26,36 +27,36 @@
+ pigzn.o: pigz.c
+ 	$(CC) -Wall -O3 -DDEBUG -DNOTHREAD -g -c -o pigzn.o pigz.c
+ 
+-test: pigz
+-	./pigz -kf pigz.c ; ./pigz -t pigz.c.gz
+-	./pigz -kfb 32 pigz.c ; ./pigz -t pigz.c.gz
+-	./pigz -kfp 1 pigz.c ; ./pigz -t pigz.c.gz
+-	./pigz -kfz pigz.c ; ./pigz -t pigz.c.zz
+-	./pigz -kfK pigz.c ; ./pigz -t pigz.c.zip
+-	printf "" | ./pigz -cdf | wc -c | test `cat` -eq 0
+-	printf "x" | ./pigz -cdf | wc -c | test `cat` -eq 1
+-	printf "xy" | ./pigz -cdf | wc -c | test `cat` -eq 2
+-	printf "xyz" | ./pigz -cdf | wc -c | test `cat` -eq 3
+-	(printf "w" | gzip ; printf "x") | ./pigz -cdf | wc -c | test `cat` -eq 2
+-	(printf "w" | gzip ; printf "xy") | ./pigz -cdf | wc -c | test `cat` -eq 3
+-	(printf "w" | gzip ; printf "xyz") | ./pigz -cdf | wc -c | test `cat` -eq 4
++test: $(TARGETDIR)/pigz
++	$(TARGETDIR)/pigz -kf pigz.c ; $(TARGETDIR)/pigz -t pigz.c.gz
++	$(TARGETDIR)/pigz -kfb 32 pigz.c ; $(TARGETDIR)/pigz -t pigz.c.gz
++	$(TARGETDIR)/pigz -kfp 1 pigz.c ; $(TARGETDIR)/pigz -t pigz.c.gz
++	$(TARGETDIR)/pigz -kfz pigz.c ; $(TARGETDIR)/pigz -t pigz.c.zz
++	$(TARGETDIR)/pigz -kfK pigz.c ; $(TARGETDIR)/pigz -t pigz.c.zip
++	printf "" | $(TARGETDIR)/pigz -cdf | wc -c | test `cat` -eq 0
++	printf "x" | $(TARGETDIR)/pigz -cdf | wc -c | test `cat` -eq 1
++	printf "xy" | $(TARGETDIR)/pigz -cdf | wc -c | test `cat` -eq 2
++	printf "xyz" | $(TARGETDIR)/pigz -cdf | wc -c | test `cat` -eq 3
++	(printf "w" | gzip ; printf "x") | $(TARGETDIR)/pigz -cdf | wc -c | test `cat` -eq 2
++	(printf "w" | gzip ; printf "xy") | $(TARGETDIR)/pigz -cdf | wc -c | test `cat` -eq 3
++	(printf "w" | gzip ; printf "xyz") | $(TARGETDIR)/pigz -cdf | wc -c | test `cat` -eq 4
+ 	-@if test "`type -f compress | grep /`" != ""; then \
+-	  echo 'compress -f < pigz.c | ./unpigz | cmp - pigz.c' ;\
+-	  compress -f < pigz.c | ./unpigz | cmp - pigz.c ;\
++	  echo 'compress -f < pigz.c | $(TARGETDIR)/unpigz | cmp - pigz.c' ;\
++	  compress -f < pigz.c | $(TARGETDIR)/unpigz | cmp - pigz.c ;\
+ 	fi
+ 	@rm -f pigz.c.gz pigz.c.zz pigz.c.zip
+ 	@rm -rf d/1 d/2
+ 	(mkdir -p d/1; cd d/1; tar xzf ../../../../pigz-2.2.5.tar.gz; \
+-	  cd ..; cp -pr 1 2; ../pigz -rp 4 --index %z 1; \
+-	  ../pigz -drp 4 --index %z 1; diff -r 1 2)
++	  cd ..; cp -pr 1 2; $(TARGETDIR)/pigz -rp 4 --index %z 1; \
++	  $(TARGETDIR)/pigz -drp 4 --index %z 1; diff -r 1 2)
+ 	@rm -rf d/1 d/2
+ 	(mkdir -p d/1; cd d/1; tar xzf ../../../../pigz-2.2.5.tar.gz; \
+-	  cd ..; cp -pr 1 2; ../pigz -zrp 4 -X %f.idx 1; \
+-	  ../pigz -dzrp 4 -X %f.idx 1; diff -r 1 2)
++	  cd ..; cp -pr 1 2; $(TARGETDIR)/pigz -zrp 4 -X %f.idx 1; \
++	  $(TARGETDIR)/pigz -dzrp 4 -X %f.idx 1; diff -r 1 2)
+ 	@rm -rf d/1 d/2
+ 
+ tests: dev test
+-	./pigzn -kf pigz.c ; ./pigz -t pigz.c.gz
++	$(TARGETDIR)/pigzn -kf pigz.c ; $(TARGETDIR)/pigz -t pigz.c.gz
+ 	@rm -f pigz.c.gz
+ 
+ docs: pigz.pdf

@@ -117,10 +117,14 @@ $(BUILD_DIR)/%/.tested:    $(BUILD_DIR)/%/.built
 	$(COMPONENT_TEST_CLEANUP)
 	$(TOUCH) $@
 
-# test the installed packages
+# Test the installed packages.  The targets above depend on .built which
+# means $(CLONEY) has already run.  System-test needs cloning but not
+# building; thus ideally, we would want to depend on .cloned here and below,
+# but since we don't have that, we depend on .prep and run $(CLONEY) here.
 $(BUILD_DIR)/%/.system-tested-and-compared:    $(SOURCE_DIR)/.prep
 	$(RM) -rf $(COMPONENT_TEST_BUILD_DIR)
 	$(MKDIR) $(COMPONENT_TEST_BUILD_DIR)
+	$(CLONEY) $(SOURCE_DIR) $(@D)
 	$(COMPONENT_PRE_SYSTEM_TEST_ACTION)
 	-(cd $(COMPONENT_SYSTEM_TEST_DIR) ; \
 		$(COMPONENT_SYSTEM_TEST_ENV_CMD) $(COMPONENT_SYSTEM_TEST_ENV) \
@@ -135,6 +139,7 @@ $(BUILD_DIR)/%/.system-tested-and-compared:    $(SOURCE_DIR)/.prep
 	$(TOUCH) $@
 
 $(BUILD_DIR)/%/.system-tested:    $(SOURCE_DIR)/.prep
+	$(CLONEY) $(SOURCE_DIR) $(@D)
 	$(COMPONENT_PRE_SYSTEM_TEST_ACTION)
 	cd $(COMPONENT_SYSTEM_TEST_DIR) ; \
 		$(COMPONENT_SYSTEM_TEST_ENV_CMD) $(COMPONENT_SYSTEM_TEST_ENV) \

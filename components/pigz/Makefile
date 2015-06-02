@@ -31,7 +31,6 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:e37498cbf3a475d7ebe2519751188c29564bf8dd27ba68bd3c7fe1ac08792759
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/pigz
-COMPONENT_TEST_TARGETS=	test
 
 TPNO=			11152
 
@@ -46,18 +45,20 @@ studio_C99MODE=	$(studio_C99_ENABLE)
 CC += $(CC_BITS)
 COMPONENT_BUILD_ARGS += CC="$(CC)"
 COMPONENT_BUILD_ARGS += CFLAGS="$(CFLAGS) -DHAVE_PTHREAD_SETNAME_NP"
+COMPONENT_SYSTEM_TEST_TARGETS=	test
+COMPONENT_SYSTEM_TEST_ENV=	TARGETDIR=/usr/bin
+COMPONENT_TEST_TARGETS=	test
+# Ignore these warnings that can come in random order.
+COMPONENT_TEST_TRANSFORMS += \
+    '-e "/^.*does not .* -- skipping/d" ' \
+    '-e "s|/usr/bin|\\$$(@D)|g" '
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-# common targets
 build:		$(BUILD_64)
-
 install:	$(BUILD_64)
-
 test:		$(TEST_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
+system-test:    $(SYSTEM_TEST_64)
 
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
