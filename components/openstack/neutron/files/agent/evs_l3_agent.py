@@ -351,10 +351,10 @@ class EVSL3NATAgent(l3_agent.L3NATAgentWithStateReport):
             elif (l2type == 'vlan' and
                   self.conf.get("external_network_datalink", None)):
                 LOG.warning(_("external_network_datalink is deprecated in "
-                             "Juno and will be removed in the next release of "
-                             "Solaris OpenStack. Please use the evsadm "
-                             "set-controlprop subcommand to setup the "
-                             "uplink-port for an external network"))
+                              "Juno and will be removed in the next release "
+                              "of Solaris OpenStack. Please use the evsadm "
+                              "set-controlprop subcommand to setup the "
+                              "uplink-port for an external network"))
                 # proceed with the old-style of doing things
                 mac_address = ex_gw_port['mac_address']
                 dl.create_vnic(self.conf.external_network_datalink,

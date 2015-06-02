@@ -102,12 +102,12 @@ class SolarisVNICDriver(object):
                    '%s/%s' % (evsname, vportname)]
             utils.execute(cmd)
 
-        dl.connect_vnic(evs_vport, tenant_id)
-
         if not protection:
             cmd = ['/usr/sbin/evsadm', 'set-vportprop', '-T', tenant_id,
                    '-p', 'protection=none', evs_vport]
             utils.execute(cmd)
+
+        dl.connect_vnic(evs_vport, tenant_id)
 
     def unplug(self, device_name, namespace=None, prefix=None):
         """Unplug the interface."""
