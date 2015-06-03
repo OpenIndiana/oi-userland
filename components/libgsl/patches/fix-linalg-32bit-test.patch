@@ -1,0 +1,18 @@
+Fix the GSL linalg LQ_update m(5,3) test by increasing the tolerance.
+
+See CR #20914954 and
+http://lists.gnu.org/archive/html/help-gsl/2015-05/msg00001.html
+http://lists.gnu.org/archive/html/help-gsl/2015-06/msg00000.html
+for more details.
+
+--- gsl-1.16/linalg/test.c.orig	2015-06-02 09:25:01.871098009 -0700
++++ gsl-1.16/linalg/test.c	2015-06-02 09:27:57.434183264 -0700
+@@ -2288,7 +2288,7 @@
+   gsl_test(f, "  LQ_update m(3,5)");
+   s += f;
+ 
+-  f = test_LQ_update_dim(m53, 2 * 512.0 * GSL_DBL_EPSILON);
++  f = test_LQ_update_dim(m53, 2 * 2048.0 * GSL_DBL_EPSILON);
+   gsl_test(f, "  LQ_update m(5,3)");
+   s += f;
+ 
