@@ -1,6 +1,6 @@
 #
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL"). You may
+# Common Development and Distribution License ("CDDL)". You may
 # only use this file in accordance with the terms of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
@@ -12,11 +12,10 @@
 # Copyright 2012, Andrzej Szeszo
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		sunstudio12u1
-COMPONENT_VERSION=	12.1.1
-COMPONENT_REVISION=	2
+COMPONENT_NAME=		as
+COMPONENT_VERSION=	0.5.11
 COMPONENT_SRC=		$(COMPONENT_NAME)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 # below is required for userland-fetch to bahave
@@ -24,20 +23,16 @@ COMPONENT_ARCHIVE_URL=blah
 
 download::
 	$(IPS2TGZ) $(COMPONENT_SRC) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE) http://pkg.openindiana.org/legacy \
-	pkg://opensolaris.org/developer/sunstudio12u1@12.1.1,5.11-0.111:20100306T002245Z
+	pkg:/developer/build/make@0.5.11,5.11-0.134:20100302T014001Z
 
-include ../../make-rules/prep.mk
-include ../../make-rules/ips.mk
-
-$(SOURCE_DIR)/build/$(MACH)/.installed:
-	@$(MKDIR) $(PROTO_DIR)
-	@$(CP) -RP $(COMPONENT_SRC)/$(MACH)/* $(PROTO_DIR)
-	@$(MKDIR) $(@D)
-	@$(TOUCH) $@
+include ../../../make-rules/prep.mk
+include ../../../make-rules/ips.mk
 
 build:	prep
 
-install:	build	$(SOURCE_DIR)/build/$(MACH)/.installed
+install:	build
+	@$(MKDIR) $(PROTO_DIR)
+	@$(CP) -RP $(COMPONENT_SRC)/$(MACH)/* $(PROTO_DIR) || true
 
 clean::
 	$(RM) -r $(SOURCE_DIR) $(BUILD_DIR)
