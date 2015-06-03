@@ -58,6 +58,12 @@ ASLR_MODE = $(ASLR_ENABLE)
 # other than "test." 
 unexport SHELLOPTS
 
+# Test transforms to cut out compile lines
+COMPONENT_TEST_TRANSFORMS += '-e "/^  CC .*/d" ' \
+			     '-e "/^  CCLD .*/d" ' \
+			     '-e "/^  GEN .*/d" ' \
+                             '-e "/^  AR .*/d" '
+
 # common targets
 configure:	$(CONFIGURE_64)
 
@@ -65,8 +71,6 @@ build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
 
-# 3 expected failures in gnulib-tests:
-# test-mbrtowc3.sh, test-mbrtowc4.sh, test-mbsrtowcs4.sh
 test:		$(TEST_64)
 
 system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
