@@ -1,0 +1,21 @@
+# Allow building with no SAPI's.
+# This is useful for, e.g., building modules separately.
+# Based on patch at https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=188386
+# Will not send upstream as this is port/build specific.
+# Requires running autoconf to regenerate configure script.
+
+diff -ru a/configure.in b/configure.in
+--- a/configure.in	2014-11-12 05:52:21.000000000 -0800
++++ b/configure.in	2015-01-29 13:31:45.101366346 -0800
+@@ -401,11 +401,6 @@
+   AC_MSG_RESULT([none])
+ fi
+ 
+-dnl Exit early
+-if test -z "$PHP_INSTALLED_SAPIS"; then
+-  AC_MSG_ERROR([Nothing to build.])
+-fi
+-
+ dnl force ZTS
+ if test "$enable_maintainer_zts" = "yes"; then
+   PTHREADS_ASSIGN_VARS

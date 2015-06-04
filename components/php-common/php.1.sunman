@@ -1,65 +1,34 @@
 '\" te
 .\" Copyright (c) 2008, 2015, Oracle and/or its affiliates. All rights reserved.
-.TH php 1 "29 Jan 2015" "SunOS 5.11" "User Commands"
-
+.TH php 1 "4 Apr 2015" "SunOS 5.12" "User Commands"
 .SH "NAME"
-php \- PHP Command Line Interface
-
-.SH "SYNOPSIS"
-.PP
-.nf
-php [options] [ -f ] file [[--] args...]
-php [options] -r code [[--] args...]
-php [options] [-B code] -R code [-E code] [[--] args...]
-php [options] [-B code] -F file [-E code] [[--] args...]
-php [options] -- [ args...]
-php [options] -a
-.fi
-.PP
-.nf
-php-config [options] --prefix
-php-config [options] --includes
-php-config [options] --ldflags
-php-config [options] --libs
-php-config [options] --extension-dir
-php-config [options] --include-dir
-php-config [options] --php-binary
-php-config [options] --version
-php-config [options] --vernum
-.fi
-.PP
-.nf
-phpize [options] --clean
-phpize [options] --help
-phpize [options] --version
-phpize -v
-.fi
+php \- PHP: Hypertext Preprocessor
 .SH "DESCRIPTION"
+PHP is a programming language frequently used for web applications.
 .PP
-For ease of access, the PHP manual  has  been  split  up into its 
-three main components.
-.SH "OVERVIEW"
-.PP
-.nf
-php
-php-config
-phpize
-.fi
+If you are new to PHP, you should start with the PHP manual located on the PHP
+website at http://php.net/manual/ .
 .SH "PLATFORM-SPECIFIC"
+The manual pages provided by the PHP distribution are installed in the directory
+along with the PHP installation, which is dependent on the version of PHP
+installed, for example, /usr/php/5.6/share/man .  You can view them with
+man(1) by including this directory in the MANPATH environment variable.
 .PP
-If you are new to PHP, you should start with the PHP documentation,
-which is located in /usr/php/doc.
+The PHP packages included in Solaris contain many PHP extensions. In order to
+use these extensions, you must enable them in a PHP configuration file. Starting
+with PHP 5.6, Solaris provides a file "conf.d/extensions.ini" under the
+appropriate /etc/php subdirectory. You may uncomment lines in this file to
+enable the desired extensions.
 .PP
-The man pages listed above are installed in the /usr/php/man
-directory.
+To use PHP as an Apache web server module, you must configure Apache
+appropriately. Starting with PHP 5.6, Solaris provides a sample supplemental
+configuration file at /etc/apache2/2.4/samples-conf.d/php5.6.conf . To use it
+without modification, copy it into /etc/apache2/2.4/conf.d/ .
 .PP
-Extensive additional documentation for PHP Extensions is available.
-This additional documentation is  in  the  /usr/php/doc directory.
-.PP
-You can view PHP's documentation with man(1)  by including
-/usr/php/man  in the MANPATH environment variable. Please note that
-running catman(1M) on the PHP manual pages is not supported.  For
-other Solaris-specific details, see the NOTES section below.
+The web/server/apache-22/module/apache-php53 package provides PHP 5.3 as a
+server module for Apache 2.2. For PHP 5.6, an additional package is not
+required; an Apache 2.4 server module is included in the web/php-56 package.
+Apache 2.2 support is not provided with PHP 5.6 in Solaris.
 .SH ATTRIBUTES
 See attributes(5) for descriptions of the  following  attributes:
 .sp
@@ -70,27 +39,28 @@ l | l .
 ATTRIBUTE TYPE	            ATTRIBUTE VALUE            
 =
 Availability	T{
-web/php-52, web/server/apache-22/module/apache-php52
-T}
-=
-	T{
 web/php-53, web/server/apache-22/module/apache-php53
 T}
 =
 Stability	Uncommitted
 .TE
 .sp
-.SH "SEE ALSO"
-.nf
-http://www.php.net/         PHP Home Page
-http://www.php.net/docs.php PHP Documentation Page
-http://pear.php.net/        PEAR Repository
-http://pecl.php.net/        PECL Repository
-.fi
+.TS
+box;
+cdp-1 | cdp-1
+l | l .
+ATTRIBUTE TYPE	            ATTRIBUTE VALUE            
+=
+Availability	T{
+web/php-56
+T}
+=
+Stability	Uncommitted Pass-through
+.TE
+.sp
 .SH NOTES
 .LP
 PHP 5.2 may be removed in a future update.
-Newer versions of PHP will appear in a future Solaris.
 .LP
 Please migrate to a newer version.
 Migration documentation is available on the PHP website:
@@ -111,33 +81,6 @@ pkg change-facet --no-backup-be 'version-lock\&.web/php-52*=False' \e
 Please note that the freezing of packages may yield
 an unsupportable system so use with caution.
 .LP
-PHP has been built to be largefile-aware and to use
-64-bit integers, although the interpreter and the library
-themselves are 32-bit applications (LP32).
-.LP
-If you wish to build and install PHP add-on modules from PECL,
-you can do so using the phpize script  -  see phpize(1) for
-details.
-.LP
-Solaris ships with PHP 5.2 and 5.3.
-To install PHP 5.2 use the pkg(1) command:
-.LP
-.nf
-pkg install web/php-52 web/server/apache-22/module/apache-php52
-.fi
-.LP
-To install PHP 5.3:
-.LP
-.nf
-pkg install web/php-53 web/server/apache-22/module/apache-php53
-.fi
-.LP
-Documentation is separate:
-.LP
-.nf
-pkg install web/php-53/documentation
-.fi
-.LP
 Before and after installing check or set the value of PHP's pkg
 mediator to the default version desired:
 .LP
@@ -150,20 +93,4 @@ To set the default version of PHP change the pkg mediator value:
 .nf
 pkg set-mediator -V 5.3 php
 .fi
-.LP
-where php mediator values are 5.2 or 5.3.
-.LP
-The configuration of php is controlled by editing the php
-configuration file for that specific version:
-.LP
-.nf
-/etc/apache2/2.2/conf.d/php/php5.2.conf
-.br
-or
-.br
-/etc/apache2/2.2/conf.d/php/php5.3.conf
-.fi
-.LP
-The pkg mediator will select the proper file to use.
-.LP
-PHP is a recursive acronym which stands for PHP Hypertext Pages.
+
