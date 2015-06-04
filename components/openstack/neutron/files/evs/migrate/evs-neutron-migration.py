@@ -180,6 +180,8 @@ def main():
             continue  # No need to iterate over subnets and ports
 
         # Populate subnets table
+        if not e.ipnets:
+            continue
         for i in e.ipnets:
             cidr = None
             gateway_ip = None
@@ -237,6 +239,8 @@ def main():
             create_db_subnet(sub)
 
         # Populate ports table
+        if not e.vports:
+            continue
         for j in e.vports:
             device_owner = ''
             device_id = ''
