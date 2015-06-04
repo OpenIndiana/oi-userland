@@ -24,16 +24,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         pip
-COMPONENT_VERSION=      1.4.1
+COMPONENT_VERSION=      6.0.8
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:4e7a06554711a624c35d0c646f63674b7f6bfc7f80221bf1eb1f631bd890d04e
+    sha256:0d58487a1b7f5be2e5e965c11afbea1dc44ecec8069de03491a4d0d6c85f4551
 COMPONENT_ARCHIVE_URL=  $(call pypi_url)
 COMPONENT_PROJECT_URL=  https://github.com/pypa/pip
 COMPONENT_BUGDB=	utility/pip
 
-TPNO=			15181
+TPNO=			21944
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -43,20 +43,22 @@ ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # allow pkg to create the mediated link
 COMPONENT_POST_INSTALL_ACTION = \
-	(cd $(PROTO_DIR)/usr/bin ; $(RM) -f pip)
+	(cd $(PROTO_DIR)/usr/bin ; $(MV) -f pip pip-$(PYTHON_VERSION))
 
 # common targets
 build:          $(BUILD_NO_ARCH)
 
 install:        $(INSTALL_NO_ARCH)
 
-# pip requires virtualenv 1.10 and scripttest 1.1.1 to execute tests.
-# When these are available, update this directive to test pip.
+# pip requires scripttest >= 1.3 to execute tests.
+# When this module is available, update this directive to test pip.
 test:           $(NO_TESTS)
 
 system-test:    $(NO_TESTS)
 
-
+REQUIRED_PACKAGES += library/python/requests-26
+REQUIRED_PACKAGES += library/python/requests-27
+REQUIRED_PACKAGES += library/python/requests-34
 REQUIRED_PACKAGES += library/python/setuptools-26
 REQUIRED_PACKAGES += library/python/setuptools-27
 REQUIRED_PACKAGES += library/python/setuptools-34
