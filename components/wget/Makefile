@@ -23,20 +23,29 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		wget
-COMPONENT_VERSION=	1.16
+COMPONENT_VERSION=	1.16.3
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/wget/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:9261dd090a17687b6dc0682a257e90a926def15624b650e8f799af57e5c8b0e7
+    sha256:67f7b7b0f5c14db633e3b18f53172786c001e153d545cfc85d82759c5c2ffb37	
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/wget/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/wget
 
-TPNO=			19782
+TPNO=			22235	
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
+
+# Keep just the final test report
+COMPONENT_TEST_TRANSFORMS += '-ne "/^PASS/p" '
+COMPONENT_TEST_TRANSFORMS += '-ne "/^FAIL/p" '
+COMPONENT_TEST_TRANSFORMS += '-ne "/^===/p" '
+COMPONENT_TEST_TRANSFORMS += '-ne "/^\# /p" '
+COMPONENT_TEST_TRANSFORMS += '-ne "/^Testsuite/p" '
+COMPONENT_TEST_TRANSFORMS += '-ne "/^See/p" '
+COMPONENT_TEST_TRANSFORMS += '-ne "/^Please/p" '
 
 # Enforce wget binary to standard path
 CONFIGURE_BINDIR.64 = $(CONFIGURE_PREFIX)/bin
@@ -89,6 +98,7 @@ system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
 
 REQUIRED_PACKAGES += library/libidn
+REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
