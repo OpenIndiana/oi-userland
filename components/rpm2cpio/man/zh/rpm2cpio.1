@@ -1,0 +1,71 @@
+'\" te
+.\" Copyright (c) 2001, Sun Microsystems, Inc., All Rights Reserved.
+.TH rpm2cpio 1 "2001 年 8 月 20 日" "SunOS 5.12" "用户命令"
+.SH 名称
+rpm2cpio \- 将 Red Hat 软件包 (Red Hat Package, RPM) 转换成 cpio 归档
+.SH 用法概要
+.LP
+.nf
+\fBrpm2cpio\fR [\fIfile\fR.rpm]
+.fi
+
+.SH 描述
+.sp
+.LP
+\fBrpm2cpio\fR 实用程序将指定为其唯一参数的 \fB\&.rpm\fR 文件在标准输出上转换为 \fBcpio\fR 归档。（请参见“附注”部分。）如果未给定参数，则从标准输入读取 rpm 流。在上述两种情况下，如果标准输出是一个终端，则 \fBrpm2cpio\fR 都将失败并输出一条用法消息。因此，输出通常重定向到某个文件或通过 \fBcpio\fR(1) 实用程序进行管道传输。
+.SH 示例
+.LP
+\fB示例 1 \fR转换 rpm 文件
+.sp
+.in +2
+.nf
+example% \fBrpm2cpio Device3Dfx-1.1-2.src.rpm | cpio -itv\fR
+CPIO archive found!
+-rw-r--r--  1 root  root  2635 Sep 13 16:39 1998, 3dfx.gif
+-rw-r--r--  1 root  root 11339 Sep 27 16:03 1998, Dev3Dfx.tar.gz
+-rw-r--r--  1 root  root  1387 Sep 27 16:04 1998, Device3Dfx-1.1-2.spec
+31 blocks
+.fi
+.in -2
+.sp
+
+.LP
+\fB示例 2 \fR从标准输入进行转换
+.sp
+.in +2
+.nf
+example% \fBrpm2cpio < Device3Dfx-1.1-2.src.rpm | cpio -itv\fR
+CPIO archive found!
+-rw-r--r--  1 root  root  2635 Sep 13 16:39 1998, 3dfx.gif
+-rw-r--r--  1 root  root 11339 Sep 27 16:03 1998, Dev3Dfx.tar.gz
+-rw-r--r--  1 root  root  1387 Sep 27 16:04 1998, Device3Dfx-1.1-2.spec
+31 blocks
+.fi
+.in -2
+.sp
+
+.SH 属性
+.sp
+.LP
+有关下列属性的说明，请参见 \fBattributes\fR(5)：
+.sp
+
+.sp
+.TS
+tab() box;
+cw(2.75i) |cw(2.75i) 
+lw(2.75i) |lw(2.75i) 
+.
+属性类型属性值
+_
+可用性package/rpm
+.TE
+
+.SH 另请参见
+.sp
+.LP
+\fBcpio\fR(1)、\fBattributes\fR(5)
+.SH 附注
+.sp
+.LP
+\fBrpm2cpio\fR 处理版本 3 和 4 的 \fBRPM\fR。
