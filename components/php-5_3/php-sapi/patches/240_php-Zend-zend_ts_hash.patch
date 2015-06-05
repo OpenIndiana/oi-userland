@@ -1,0 +1,17 @@
+From php community:
+BUG: https://bugs.php.net/bug.php?id=68676
+CODE: http://git.php.net/?p=php-src.git;a=commit;h=24125f0f26f3787c006e4a51611ba33ee3b841cb
+Created for php 5.3 based on code from the community bug.
+
+
+--- php-5.3.29/Zend/zend_ts_hash.c_orig	2014-08-13 12:22:50.000000000 -0700
++++ php-5.3.29/Zend/zend_ts_hash.c	2015-05-20 16:03:20.370320770 -0700
+@@ -151,7 +151,7 @@
+ 
+ #ifdef ZTS
+ 	tsrm_mutex_free(ht->mx_reader);
+-	tsrm_mutex_free(ht->mx_reader);
++	tsrm_mutex_free(ht->mx_writer);
+ #endif
+ }
+ 
