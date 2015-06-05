@@ -1,0 +1,166 @@
+'\" te
+.\" Portions Copyright (c) 2008, 2012, Oracle and/or its affiliates. All rights reserved.
+.\" This manual page is derived from documentation obtained from the OpenSC organization (www.opensc-project.org). This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation; either version 2.1 of the License, or (at your option) any later version. This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details. You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+.TH pklogin_finder 1 "2012 年 1 月 18 日" "SunOS 5.12" "用户命令"
+.SH 名称
+pklogin_finder \- 将证书映射到用户
+.SH 用法概要
+.LP
+.nf
+\fB/usr/lib/pam_pkcs11/pklogin_finder\fR [debug] [config_file=\fIfilename\fR]
+.fi
+
+.SH 描述
+.sp
+.LP
+\fBpklogin_finder\fR 使用 \fBpam_pkcs11\fR 库基础结构以交互方式将所提供的 PKCS#11 证书映射到用户。
+.sp
+.LP
+\fBpklogin_finder\fR 使用与 \fBpam_pkcs11\fR(5) PAM 模块相同的配置文件和参数。它装入所定义的映射器模块，并尝试查找所发现的证书与用户登录之间的映射。 
+.SH 选项
+.sp
+.LP
+支持以下选项：
+.sp
+.ne 2
+.mk
+.na
+\fB\fBconfig_file=\fR\fIfileame\fR\fR
+.ad
+.RS 23n
+.rt  
+设置配置文件。 
+.sp
+缺省值是 \fB/etc/security/pam_pkcs11/pam_pkcs11.conf\fR。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBdebug\fR\fR
+.ad
+.RS 23n
+.rt  
+启用调试输出。
+.sp
+缺省值是不调试。
+.RE
+
+.sp
+.LP
+因为它使用与 \fBpam_pkcs11\fR(5) 相同的配置文件，所以所有 \fBpam_pkcs11\fR 选项均可用。其中某些选项在非 PAM 环境中没有意义，因此被忽略。某些映射器选项（\fBmapfile\fR、\fBignorecase\fR）对证书内容不起作用，因此也被忽略。
+.SH 退出状态
+.sp
+.LP
+将返回以下退出值：
+.sp
+.ne 2
+.mk
+.na
+\fB\fB0\fR\fR
+.ad
+.RS 5n
+.rt  
+成功完成。 
+.sp
+\fBpkcs11_inspect\fR 在 \fBstdout\fR 上输出登录名，然后退出。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB1\fR\fR
+.ad
+.RS 5n
+.rt  
+出现错误。
+.sp
+发现用户映射错误。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB2\fR\fR
+.ad
+.RS 5n
+.rt  
+出现错误。
+.sp
+找不到用户匹配。
+.RE
+
+.SH 示例
+.LP
+\fB示例 1 \fR使用 \fBpklogin_finder\fR
+.sp
+.LP
+以下示例在不使用任何选项的情况下运行 \fBpklogin_finder\fR 命令：
+
+.sp
+.in +2
+.nf
+% pkcs11_inspect
+.fi
+.in -2
+.sp
+
+.LP
+\fB示例 2 \fR带选项使用 \fBpklogin_finder\fR
+.sp
+.LP
+以下示例带选项使用 \fBpkcs_finder\fR 命令：
+
+.sp
+.in +2
+.nf
+% pklogin_finder debug config_file=${HOME}/.pam_pkcs11.conf
+.fi
+.in -2
+.sp
+
+.SH 文件
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/etc/security/pam_pkcs11/pam_pkcs11.conf\fR\fR
+.ad
+.sp .6
+.RS 4n
+
+.RE
+
+.SH 作者
+.sp
+.LP
+Juan Antonio Martinez，\fBjonsito@teleline.es\fR
+.SH 属性
+.sp
+.LP
+有关下列属性的说明，请参见 \fBattributes\fR(5)：
+.sp
+
+.sp
+.TS
+tab() box;
+cw(2.75i) |cw(2.75i) 
+lw(2.75i) |lw(2.75i) 
+.
+属性类型属性值
+_
+可用性library/security/pam/module/pam-pkcs11
+_
+接口稳定性Uncommitted（未确定）
+.TE
+
+.SH 另请参见
+.sp
+.LP
+\fBpkcs11_inspect\fR(1)、\fBattributes\fR(5)、\fBpam_pkcs11\fR(5)
+.sp
+.LP
+\fIPAM-PKCS11 用户手册\fR，http://www.opensc-project.org/pam_pkcs11

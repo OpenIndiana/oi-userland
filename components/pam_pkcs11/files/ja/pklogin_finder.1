@@ -1,0 +1,166 @@
+'\" te
+.\" Portions Copyright (c) 2008, 2012, Oracle and/or its affiliates. All rights reserved.
+.\" This manual page is derived from documentation obtained from the OpenSC organization (www.opensc-project.org). This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation; either version 2.1 of the License, or (at your option) any later version. This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details. You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+.TH pklogin_finder 1 "2012 年 1 月 18 日" "SunOS 5.12" "ユーザーコマンド"
+.SH 名前
+pklogin_finder \- 証明書のユーザーへのマッピング
+.SH 形式
+.LP
+.nf
+\fB/usr/lib/pam_pkcs11/pklogin_finder\fR [debug] [config_file=\fIfilename\fR]
+.fi
+
+.SH 機能説明
+.sp
+.LP
+\fBpklogin_finder\fR は、\fBpam_pkcs11\fR ライブラリインフラストラクチャーを使用して、PKCS#11 で規定された証明書を対話形式でユーザーにマップします。
+.sp
+.LP
+\fBpklogin_finder\fR は、\fBpam_pkcs11\fR(5) PAM モジュールと同じ構成ファイルと引数を使用します。また、定義済みのマッパーモジュールを読み込み、見つかった証明書とユーザーログイン間のマップを探し出します。 
+.SH オプション
+.sp
+.LP
+サポートしているオプションは、次のとおりです。
+.sp
+.ne 2
+.mk
+.na
+\fB\fBconfig_file=\fR\fIfileame\fR\fR
+.ad
+.RS 23n
+.rt  
+構成ファイルを設定します。 
+.sp
+デフォルト値は \fB/etc/security/pam_pkcs11/pam_pkcs11.conf\fR です。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBdebug\fR\fR
+.ad
+.RS 23n
+.rt  
+デバッグ出力を有効にします。
+.sp
+デフォルトはデバッグなしです。
+.RE
+
+.sp
+.LP
+\fBpam_pkcs11\fR(5) と同じ構成ファイルが使用されるため、\fBpam_pkcs11\fR のすべてのオプションを使用できます。一部のオプションは PAM 以外の環境では意味がないため、無視されます。一部のマッパーオプション (\fBmapfile\fR、\fBignorecase\fR) も証明書の内容に影響しないため、無視されます。
+.SH 終了ステータス
+.sp
+.LP
+次の終了ステータスが返されます。
+.sp
+.ne 2
+.mk
+.na
+\fB\fB0\fR\fR
+.ad
+.RS 5n
+.rt  
+正常終了。 
+.sp
+\fBpkcs11_inspect\fR は、ログイン名を \fBstdout\fR に出力して終了します。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB1\fR\fR
+.ad
+.RS 5n
+.rt  
+エラーが発生した。
+.sp
+ユーザーマッピングエラーが見つかった。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB2\fR\fR
+.ad
+.RS 5n
+.rt  
+エラーが発生した。
+.sp
+一致するユーザーが見つからなかった。
+.RE
+
+.SH 使用例
+.LP
+\fB例 1 \fR\fBpklogin_finder\fR を使用する
+.sp
+.LP
+次の例では、オプションを指定せずに \fBpklogin_finder\fR コマンドを実行しています。
+
+.sp
+.in +2
+.nf
+% pkcs11_inspect
+.fi
+.in -2
+.sp
+
+.LP
+\fB例 2 \fRオプションを指定して \fBpklogin_finder\fR を使用する
+.sp
+.LP
+次の例では、オプション指定して \fBpkcs_finder\fR コマンドを実行しています。
+
+.sp
+.in +2
+.nf
+% pklogin_finder debug config_file=${HOME}/.pam_pkcs11.conf
+.fi
+.in -2
+.sp
+
+.SH ファイル
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/etc/security/pam_pkcs11/pam_pkcs11.conf\fR\fR
+.ad
+.sp .6
+.RS 4n
+
+.RE
+
+.SH 著者
+.sp
+.LP
+Juan Antonio Martinez (\fBjonsito@teleline.es\fR)
+.SH 属性
+.sp
+.LP
+属性についての詳細は、マニュアルページの \fBattributes\fR(5) を参照してください。
+.sp
+
+.sp
+.TS
+tab() box;
+cw(2.75i) |cw(2.75i) 
+lw(2.75i) |lw(2.75i) 
+.
+属性タイプ属性値
+_
+使用条件library/security/pam/module/pam-pkcs11
+_
+インタフェースの安定性不確実
+.TE
+
+.SH 関連項目
+.sp
+.LP
+\fBpkcs11_inspect\fR(1), \fBattributes\fR(5), \fBpam_pkcs11\fR(5)
+.sp
+.LP
+\fIPAM-PKCS11 User Manual\fR, http://www.opensc-project.org/pam_pkcs11
