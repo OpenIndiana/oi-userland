@@ -1,0 +1,1236 @@
+'\" te
+.TH mrxvt 1 mrxvt\-0.5.3 
+.SH NAME
+\fBmrxvt\fP
+\- A tabbed VT102 terminal emulator for X Window System
+.SH SYNOPSIS
+.br
+\fBmrxvt\fP
+[options]
+[\fB\-e\fP \fIcmd\fP]
+.SH DESCRIPTION
+
+The
+\fBmrxvt\fP
+program is a terminal emulator for X Window System. It provides
+Tn DEC VT102
+compatible terminals for programs that cannot use the window system directly.
+
+\fBmrxvt\fP
+is based on
+\fBrxvt\fP(1)
+version 2.7.11 CVS, and features most of functionality
+of rxvt, with a few major enhancements (namely multiple tabs, and transparency). Like rxvt,
+\fBmrxvt\fP
+aims to be light, fast, flexible and desktop independent, thus KDE or GNOME are not required.
+
+The primary features of
+\fBmrxvt\fP
+include (but are not limited to) multiple tabs, dynamically changeable tab titles, customisable command for each tab, input broadcasting, true translucent window, fast pseudo transparency with tinting, user supplied background images (XPM, JPEG, PNG), off-focus fading, text shadow, multiple style (NeXT, Rxvt, Xterm, SGI, Plain) scrollbars, XIM, multi-language support (Chinese, Korean, Japanese), freetype font and logging.
+
+The default
+\fBmrxvt\fP
+behaviour can be set using the resource configuration file
+\fI~/.mrxvtrc\fP.
+For backward compatibility, if
+\fI~/.mrxvtrc\fP
+is not found,
+\fBmrxvt\fP
+tries to load configuration settings from the files
+\fI~/.Xdefaults\fP
+or
+\fI~/.Xresources\fP.
+Alternately, you can specify which config file to load using the
+\fB\-cf\fP
+command line option.
+.SH OPTIONS
+
+This section describes the commandline options
+\fBmrxvt\fP
+accepts. To disable an option, prefix it with an
+`\fI+\fP'
+instead of a
+`\fI-\fP'
+Most options can be set from your
+\fI~/.mrxvtrc\fP
+file using the option name listed in brackets as
+[\fBoption_name\fP.]
+The option name can also be used as a "long option" from the command line (i.e. by prefixing it with 
+`\fI--\fP'
+or
+`\fI++\fP'
+as appropriate. For example
+mrxvt -tr -shade 85 +trt
+is the same as
+mrxvt --transparent --shading 85 ++transparentTabbar
+which is the same as putting the lines
+Mrxvt.transparent:		True
+Mrxvt.shading:			85
+Mrxvt.transparentTabbar:	False
+in your
+\fI~/.mrxvtrc\fP.
+
+All options are case sensitive. Some options are similar to those of other terminals, so if you find the explanation given here insufficient, we strongly recommend you look in the
+\fBrxvt\fP(1)
+and
+\fBxterm\fP(1)
+manpages.
+.SS Terminal name and display options
+
+.TP
+\fB\-display\fP|\fB\-d\fP \fIdisplayname\fP
+X display name, the X server to contact
+.TP
+\fB\-geometry\fP|\fB\-g\fP \fIgeometry\fP
+geometry at startup
+[\fBgeometry\fP]
+.TP
+\fB\-ic\fP \fIfile\fP[;\fIgeometry\fP]
+application icon file.
+[appIcon]
+start iconic
+[\fBiconic\fP]
+.TP
+\fB\-in\fP \fIname\fP
+Icon name for window
+[\fBiconName\fP]
+.TP
+\fB\-into\fP \fIWinID\fP
+If given an X window identifier,
+\fBmrxvt\fP
+will reparent its top-level shell widget to that window.
+This is used to embed
+\fBmrxvt\fP
+within other applications.
+.TP
+\fB\-name\fP \fIname\fP
+Client instance, icon, and title strings
+[\fBclientName\fP.]
+.TP
+\fB\-title\fP \fIstring\fP
+title name of the window
+[\fBtitle\fP]
+.TP
+\fB\-tn\fP \fItermname\fP
+The type of terminal
+\fBmrxvt\fP
+should emulate. The value of the TERM environment variable is set to this value for all child processes launched by
+\fB.\fP
+Note that rxvt and most rxvt clones including 
+\fBNs\fP,
+have slightly different terminal capabilities than those of xterm(1). Thus
+\fBNs\fP
+will not always work properly with the terminal set to
+\fIxterm\fP,
+and we recommend setting this value to
+\fIrxvt\fP
+instead. However some systems have incorrect (or even missing) terminfo(1) or termcap(1) entries for the terminal
+\fIrxvt\fP.
+If you experience problems with this, the ideal solution would be to correct your systems termcap and terminfo entries. If you are unable to do that, then you can try setting your terminal to
+\fIxterm\fP
+and hope everything works properly.
+[\fBtermName\fP]
+.SS Transparency related options
+
+.TP
+\fB\-o\fP \fI%d\fP
+Translucent window (true transparent) background opacity degree.
+\fI%d\fP
+is an integer between 0 and 100. This option needs translucent support by the X server, e.g., Xorg 6.8, and overrides the pseudo-transparency.
+[\fBopacity\fP]
+.TP
+\fB\-od\fP %d
+Translucent window opacity degree increase/decrease interval.
+\fI%d\fP
+is an integer between 0 and 100
+[\fBopacityDegree\fP]
+Enable / disable background pseudo-transparency. To use this feature you must set your desktop wallpaper using an Esetroot compatible program ( i.e. a program that publishes the wallpaper using the
+Tn _XROOTPMAP_ID
+atom). Some programs that will do this are
+\fBEsetroot\fP(1),
+\fBfeh\fP(1),
+\fBfvwm-root\fP(1)
+with the
+`\fB--retain-pixmap\fP'
+option, or KDE. Note: To use your precious
+\fBbackgroundFade\fP, tinting
+or
+\fBshading\fP
+options, you MUST set the desktop wallpaper in an Esetroot way.
+[\fBtransparent\fP]
+If you choose NOT to set the background in an Esetroot compatible way, then you can still have transparency using this option. (You must also enable the
+\fBtransparent\fP
+option). Background changes made by FvwmBacker, xsetbg (xli) or Esetroot compatible programs, will be automatically detected. However changes made by
+\fBxv\fP(1),
+\fBxsetroot\fP(1)
+or other non-Esetroot compatible programs will not be detected. If you're hell bent on non-Esetroot compatible programs to set your background, then do something like
+xsetroot -solid "#202040" && fvwm-root -d
+Note: To use your precious
+\fBbackgroundFade\fP, tinting
+or
+\fBshading\fP
+options, you MUST set the desktop wallpaper in an Esetroot way.
+[\fBtransparentForce\fP]
+Enable / disable pseudo-transparent menubar. Pseudo-transparency must be turned on.
+[\fBtransparentMenubar\fP]
+Enable / disable pseudo-transparent scrollbar. Pseudo-transparency must be turned on.
+[\fBtransparentScrollbar\fP]
+Enable / disable pseudo-transparent tabbar. Pseudo-transparency must be turned on.
+[\fBtransparentTabbar\fP]
+.SS Background image related options
+
+.TP
+\fB\-mbpixmap\fP \fIfile\fP[;\fIgeometry\fP]
+Menubar background image. Pseudo-transparency must be turned off.
+[\fBmenubarPixmap\fP]
+.TP
+\fB\-pixmap\fP \fIfile\fP[;\fIgeometry\fP]
+Background image for all terminals if not set individually. Pseudo-transparency must be turned off.
+[\fBPixmap\fP]
+.TP
+\fB\-sbpixmap\fP \fIfile\fP[;\fIgeometry\fP]
+Scrollbar background image. Pseudo transparency must be turned off.
+[\fBscrollbarPixmap\fP]
+.TP
+\fB\-tbpixmap\fP \fIfile\fP[;\fIgeometry\fP]
+Tabbar background image. Pseudo transparency must be turned off.
+[\fBtabbarPixmap\fP]
+Apply tabbar background image to tabs.
+[\fBtabUsePixmap\fP]
+.SS Scrolling related options
+
+scroll one page when press mouse wheel button
+[\fBmouseWheelScrollPage\fP]
+.TP
+\fB\-sa\fP \fImode\fP
+Scrollbar alignment (
+\fItop\fP | \fIbottom\fP )
+[\fBscrollbarAlign\fP]
+Hide / show scrollbar
+[\fBscrollBar\fP]
+.TP
+\fB\-sbt\fP \fIwidth\fP
+Scrollbar thickness/width
+[\fBscrollbarThickness\fP]
+Inhibit scrolling on tty output.
+[\fBscrollTtyOutputInhibit\fP]
+scroll-on-keypress
+[\fBscrollTtyKeypress\fP]
+.TP
+\fB\-sl\fP \fIn\fP
+The number of scrolled lines to save (for all tabs) if not set individually. The maximal number of saved lines is 65535.
+[\fBsaveLines\fP]
+Scrollbar on right
+[\fBscrollbarRight\fP]
+.TP
+\fB\-ss\fP \fImode\fP
+Scrollbar style.
+\fImode\fP
+should be one of
+\fIplain\fP, xterm , rxvt , next
+or
+\fIsgi\fP.
+[\fBscrollbarStyle\fP]
+Draw floating scrollbar (i.e. without a trough).
+[\fBscrollbarFloating\fP]
+Scroll synchronusly with buffer. Normally
+\fBNs\fP
+does not keep the screen completely up to date while scrolling. This allows
+\fBNs\fP
+to run faster when network latencies are very high and is typically useful when running across a very large internet or many gateways.
+[\fBscrollWithBuffer\fP]
+.SS Color related options
+
+.TP
+\fB\-bg\fP \fIcolor\fP
+Background color
+[\fBbackground\fP]
+.TP
+\fB\-bd\fP \fIcolor\fP
+enable X session management
+[\fBsessionMgt\fP]
+.SS Long options
+
+The following options do not have a
+``short''
+form. If these options are to be used on the command line, they must be prefixed with a
+`Em' --
+(or
+`Em' ++
+for boolean options). They can of course be used in the
+\fBNs\fP
+configuration file.
+.TP
+\fBanswerBackString\fP \fIstring\fP
+Specify the reply
+\fBNs\fP
+sends to the shell when an ENQ (control-E) character is passed through. It may contain escape values as described in the entry on
+\fBkeysym\fP
+following.
+.TP
+\fBbackspaceKey\fP \fIstring\fP
+The string to send when the backspace key is pressed. If set to DEC or unset it will send Delete (code 127) or, if shifted, Backspace (code 8) - which can be reversed with the appropriate DEC private mode escape sequence.
+.TP
+\fBbgRefreshInterval\fP \fIdelay\fP
+Specify the delay (ms) to wait before refreshing the background in pseudo-transparency. Generally tinting and refreshing the background is slow (especially with XRender), and causes lags while dragging the window. This delay causes enables the window to be dragged smoothly. If you have a fast system, you can reduce or disable this (by setting it to 0). The default value is 100ms.
+.TP
+\fBboldFont\fP\fIN\fP \fIfont\fP
+Specifies bold font to use along with fontset
+\fIN\fP.
+.TP
+\fBboldColors\fP \fITrue\fP|\fIFalse\fP
+If false, the bold primary colors (0 -- 7) will be rendered using the brighter analogues (8--15) in a regular font. If true a bold font will be used. See also
+\fBveryBright\fP.
+.TP
+\fBcolor\fP\fIN\fP \fIcolor\fP
+Use the specified colour for the colour value
+\fIN\fP,
+where 0-7 corresponds to low-intensity (normal) colours and 8-15 corresponds to high-intensity colours.
+.TP
+\fBcolorBD\fP \fIcolor\fP
+Color to use to display bold text. If unspecified, the text will be displayed using a bold font / overstrike.
+.TP
+\fBcolorRV\fP \fIcolor\fP
+Color to use to display reverse video text. If unspecified, the text will be displayed as reverse video.
+.TP
+\fBcolorUL\fP \fIcolor\fP
+Color to use to display underlined text. If unspecified, the text will be displayed as underlined.
+.TP
+\fBcursorColor2\fP \fIcolor\fP
+Second color of cursor.
+.TP
+\fBcutChars\fP \fIstring\fP
+String containing all characters to be treated as one word for double click selection. If you want double clicks to select URL's, then set this to a string containing all letters (both upper and lower case), digits and punctuation you find in urls.
+.TP
+\fBdeleteKey\fP \fIstring\fP
+The string to send when the delete key (not the keypad delete key) is pressed. If unset it will send the sequence traditionally associated with the
+.B Execute
+key.
+.TP
+\fBfocusDelay\fP \fImsec\fP
+The time interval (in mili-seconds) to wait after getting / losing focus, before fading the colors and changing the background color as specified by the
+\fB\-fade\fP
+and
+\fB\-ufbg\fP
+options. Set it to 0 if you want your colors faded immediately on focus change events.
+
+This option is there mainly to work around a bug in some window managers which send focus in immediately followed by focus out events when moving windows, or pressing Alt+Tab (e.g. fvwm-2.5.16).
+.TP
+\fBfont\fP\fIN\fP \fIfont\fP
+Specify the alternative font
+\fIn\fP. ncan be 1, 2, 3, 4 or 5.
+.TP
+\fBgreektoggle_key\fP \fIkeysym\fP
+Key to toggle into greek keyboard mapping. See
+\fIREADME.greek\fP
+for details.
+.TP
+\fBhighlightColor\fP \fIcolor\fP
+Color to use for selection. If not specified, reverse video is used. (Note blinking text is also displayed with this color).
+.TP
+\fBmapAlert\fP \fITrue\fP|\fIFalse\fP
+If true, de-iconifies the window when a bell is received.
+.TP
+\fBmfont\fP\fIn\fP font
+Specify alternative multiple character font
+\fIn\fP.
+.TP
+\fBpointerBlankDelay\fP \fIdelay\fP
+Delay (ms) to blank pointer after.
+.TP
+\fBprintPipe\fP \fIcmd\fP
+Specify a command pipe for vt100 printer.
+.TP
+\fBrefreshLimit\fP \fIN\fP
+This option and
+\fBskipPages\fP
+are to be used to replace the
+`jump' scroll
+behaviour of other terminal emulators (and previous version of
+\fB)\fP.
+Generally when data is available from a tab,
+\fB)\fP
+reads as much of it as is available (up to our buffer size), and process it. After we are done processing it (generally takes a fraction of a mili-second), we look for more data from the tab. If we obtain not more than
+\fIN\fP
+characters, then we request a screen refresh (which takes a while, especially if you use Xft with anti aliasing). If we obtain more than
+\fIN\fP
+characters from the tab, then we delay the screen refresh until the tab eventually has either
+\fIN\fP
+or fewer characters of output, or the tab has (cumulatively) produced at least
+\fBskipPages\fP
+of data.
+
+The default value is 0. On new fast machines, this is probably the best. If you find screen refreshes laggy on on slow older machines, then increase this value a little (say to 10). Setting it to something enormous (say BUFSIZ) will cause
+\fB)\fP
+to request screen refreshes every time the active tab has data, and effectively disable the so called
+`jump' scrolling .
+.TP
+\fBscrollColor\fP \fIcolor\fP
+Color of scrollbar (see also
+\fBtroughColor\fP).
+.TP
+\fBselectStyle\fP \fImode\fP
+Set mouse selection style to
+\fBold\fP
+which is 2.20,
+\fBoldword\fP
+which is xterm style with 2.20 old word selection, or anything else which gives xterm style selection.
+.TP
+\fBskipPages\fP \fIN\fP
+This option and
+\fBrefreshLimit\fP
+are to be used to replace the
+`jump' scroll
+behaviour of other terminal emulators (and previous version of
+\fB)\fP.
+If the screen refresh is delayed because of the
+\fBrefreshLimit\fP
+option, then
+\fB)\fP
+will refresh the screen every
+\fIN\fP
+pages of output. The default is 25. If you set it to a very large value (say INT_MAX), then
+\fB)\fP
+will refresh the screen only after the tab has stopped
+`flat' out
+scrolling.
+.TP
+\fBsmartResize\fP \fITrue\fP|\fIFalse\fP
+Enable / disable smart resize. When the tabbar is shown, or font size is increased, the resize terminal window could be partially off screen. If
+\fBsmartResize\fPis enabled, then \fBNo\fP tries to move the terminal window to stay on screen.
+.TP
+\fBsmoothResize\fP \fITrue\fP|\fIFalse\fP
+Enable / disable smooth resize. If enabled, then the \fBNo\fP window is resized in pixel increments (instead of character increments). This is useful if you want a full screen / maximized \fBNo\fP window that covers the entire screen (without leaving an annoying few pixel wide strip uncovered).
+.TP
+\fBtroughColor\fP
+Color of scrollbar trough (see also
+\fBscrollColor\fP).
+.TP
+\fBuseFifo\fP \fITrue\fP|\fIFalse\fP
+If enabled, then mrxvt will create a
+\fBfifo\fP(7)Pa
+and listen for macros on it. To execute macros, just write them to this fifo. For example
+/bin/echo -e "NewTab\enRaise" >> /tmp/.mrxvt-%pid
+creates a new tab and raises the
+\fBNo\fP
+window with process ID
+.IR %pid .
+.B NOTE:
+The meaning and syntax of this option might change in future versions.
+.TP
+\fBveryBright\fP \fITrue\fP|\fIFalse\fP
+If true, and if
+\fBboldColors\fP
+is false, then bold primary colors are rendered as bright colors with a bold font (this was the default behaviour in 0.5.2 and earlier versions).
+.SH CONFIGURATION FILE SYNTAX
+
+A line in the config file generally looks like this
+ClassName.OptionName:	Value
+Blank lines, and lines beginning with
+`Em' #
+are ignored (comments).
+
+The ClassName is the name specified via the
+\fB\-name\fP
+option (by default
+`Em' mrxvt ) .
+When
+\fBNo\fP
+starts up, it ONLY reads options with ClassName
+`Em' Mrxvt ,
+`Em' XTerm ,
+or the class specified via the
+\fB\-name\fP
+option. See
+\fI/etc/mrxvt/mrxvtrc.sample\fP
+for how this feature can be used.
+
+The OptionName is the long name of the option you want to set. It can be any long option (listed under the
+.B "Long Options"
+sub section), or is specified in brackets as
+[\fBoption_name\fP]
+alongside regular options in this man page. Finally Value is the value of this option.
+
+.SS Example
+
+The following is an example
+\fI~/.mrxvtrc\fP
+file, or in a configuration file you will load with 
+\fB\-cf\fP
+option at startup. You can consult the
+\fIdoc/mrxvtrc.sample\fP
+in the directory for more details.
+Mrxvt.profile0.tabTitle:        term1
+Mrxvt.profile1.tabTitle:        term2
+Mrxvt.profile2.tabTitle:        term3
+Mrxvt.profile0.saveLines:       600
+Mrxvt.profile1.saveLines:       600
+Mrxvt.profile2.saveLines:       600
+# Mrxvt.profile0.Pixmap:        /home/images/vt0bg.xpm
+# Mrxvt.profile1.Pixmap:        /home/images/vt1bg.xpm
+# Mrxvt.profile2.Pixmap:        /home/images/vt2bg.xpm
+Mrxvt.scrollbarStyle:           next
+Mrxvt.initTermNumber:           3
+Mrxvt.transparent:              True
+Mrxvt.transparentScrollbar:     True
+Mrxvt.transparentTabbar:        False
+Mrxvt.transparentMenubar:       False
+Mrxvt.tintColor:                #ffffff
+Mrxvt.shading:                  85
+Mrxvt.foreground:               white
+Mrxvt.background:               black
+.SH MENUS
+
+The menu system is similar to rxvt's menus (see the included file
+\fIrxvtRef.txt\fP)
+with a few enhancements, and a few notable exceptions:
+The menus can use a proportionally spaced font under Xft (
+\fB\-xftpfn\fP )
+which is significantly less ugly than a mono-spaced font.
+\fBNo\fP
+supports pop-up menus. If you create a menu named
+\fBPopupButton Ns \fIN\fP No (where \fIN\fP No is 1, 2, or 3) then that menu is popped up when you control click (with the appropriate mouse button) on the terminal window. Additionally if you right click on the Tab bar, then the menu Ic PopupButton1 No is popped up.\fP
+To create a menu containing a list of all open tabs, create an empty menu called
+\fBPopupButton Ns \fIN\fP\fP
+(which will be popped on control click's as described above). To include a list of all open tabs as a sub menu, create a sub-menu called
+`Switch' to tab .
+Menu actions are completely different in
+\fBNo\fP
+than the original implementation in
+\fBrxvt\fP(1).
+The menu actions are exactly the same as macro actions, and are described in the section
+.B "Defining custom shortcuts" .
+On startup
+\fBNo\fP
+reads the file
+\fIdefault.menu\fP
+which contains the default menu definitions. The file is searched for in your search path (specified by option
+\fB\-path\fP ) .
+.SH KEYBOARD AND MOUSE SHORTCUTS
+
+You have several default keyboard shortcuts to ease the use of mrxvt. The default gnome-terminal, Konsole, rxvt shortcuts are predefined for you. You can also define your own shortcuts as described in
+.B "Defining custom shortcuts" .
+
+The following key combinations are defined by default. These are defined in the system configuration file
+\fI/etc/mrxvt/mrxvtrc\fP,
+and can be disabled using the option
+\fB\-nsc\fP.
+See the next section for instructions on defining your own custom keyboard shortcuts.
+
+.IR Gnome-terminal style shortcuts:
+.TP
+Ctrl+Shift+t
+create a new tab
+.TP
+Ctrl+Shift+q
+Close all tabs and exit
+.TP
+Ctrl+Shift+w
+Close active tab, and do not hold it open if it exits abnormally.
+.TP
+Ctrl+PgUp
+activate left tab
+.TP
+Ctrl+PgDn
+activate right tab
+.TP
+Meta+1
+activate 1st tab
+.TP
+...
+.TP
+Meta+0
+activate 10th tab
+.TP
+Ctrl+equal
+increase font size (next font)
+.TP
+Ctrl+Shift+plus
+increase font size by 2
+.TP
+Ctrl+minus
+decrease font size (previous font)
+.TP
+Ctrl+Shift+underscore
+decrease font size by 2
+
+.IR Konsole style default shortcuts:
+.TP
+Ctrl+Shift+Left
+move active tab to left
+.TP
+Ctrl+Shift+Right:
+active tab to right
+.TP
+Shift+Left
+Activate left tab (Primary only)
+.TP
+Shift+Right
+Activate right tab (Primary only)
+.TP
+Ctrl+Shift+n
+Create a new tab with the same profile as the current tab.
+
+.IR Vi style default shortcuts:
+.TP
+Ctrl+Shift+h
+activate left tab
+.TP
+Ctrl+Shift+l
+activate right tab
+
+.IR Screen style default shortcuts:
+.TP
+Ctrl+Shift+p
+activate previous active tab
+
+.IR Mrxvt default shortcuts:
+.TP
+Ctrl+Shift+1
+Move tab to 1st position
+.TP
+...
+.TP
+Ctrl+Shift+0
+Move tab to 10th position
+.TP
+Ctrl+Tab
+activate previous active tab
+.TP
+Ctrl+Shift+less_than
+Move active tab left
+.TP
+Ctrl+Shift+greater_than
+Move active tab right
+.TP
+Ctrl+Shift+o
+Change opacity of terminal to make it more transparent.
+.TP
+Ctrl+Shift+u
+Change opacity of terminal to make it less transparent.
+.TP
+Ctrl+Shift+j
+Change shading of terminal to make it more transparent.
+.TP
+Ctrl+Shift+k
+Change shading of terminal to make it less transparent.
+.TP
+Ctrl+Shift+r
+Toggle psdudo-transparency
+.TP
+Ctrl+Shift+i
+Hide/show tabbar
+.TP
+Ctrl+Shift+s
+Hide/show scrollbar
+.TP
+Ctrl+Shift+m
+Hide/show menubar
+.TP
+Ctrl+Shift+a
+Hide/show tabbar buttons
+.TP
+Ctrl+Shift+b
+Toggle very bold font
+.TP
+Ctrl+Shift+c
+Open a
+\fBNo\fP
+console in a new tab, and enable the
+\fBuseFifo\fP
+option if necessary. Anything typed in this console will be executed as a macro. On clean exit the
+\fBuseFifo\fP
+option will be disabled.
+.TP
+Ctrl+Shift+d
+Toggle input broadcasting (unbound by default)
+.TP
+Ctrl+Shift+e
+Toggle holding exited tab
+.TP
+Ctrl+Shift+f
+Toggle full screen mode
+.TP
+Ctrl+Shift+x
+Save current configuration
+.TP
+Shift+Del
+Set title of active tab to selection.
+.TP
+Shift+Insert
+Paste X selection into active tab.
+.TP
+Ctrl+Shift+v
+Paste X selection into active tab.
+.TP
+Shift+Up
+Scroll up one line (Primary screen only)
+.TP
+Shift+Dn
+scroll down one line (Primary screen only)
+.TP
+Shift+PgUp
+scroll up one page (Primary screen only)
+.TP
+Shift+PgDn
+scroll down one page (Primary screen only)
+.TP
+Shift+Home
+Scroll to beginning of scroll-back buffer (Primary screen only)
+.TP
+Shift+End
+Scroll to end of scroll-back buffer (Primary screen only)
+.TP
+Shift+KeypadPlus
+Increase font size
+.TP
+Shift+KeypadMinus
+Decrease font size
+.TP
+Ctrl+Shift+F1
+Open
+\fBNo\fP
+man page in a new tab.
+.TP
+Ctrl+Shift+F12
+Enable / disable all keyboard macros (except this one of course).
+
+NOTE: The 
+`hotkey'
+mechanism used in versions 0.4.2 and earlier is now obsolete. It has been replaced by the
+`macro'
+functionality (described below) as of version 0.5.0.
+
+You can define your own keyboard shortcuts in your configuration file by using the following syntax:
+Mrxvt.macro.[modifiers+]keyname:         action
+Here
+`modifiers'
+is a
+`+'
+separated list of modifiers
+`Em' Ctrl ,
+`Em' Alt ,
+`Em' Meta ,
+`Em' Shift .
+`Em' Primary .
+and
+`Em' Add .
+The first four refer to the respective modifier keys.
+`Em' Primary
+tells
+\fBNo\fP
+to make the macro available ONLY when the primary screen is displayed (e.g.
+`Em' Primary
+macros will not be effective when you are running
+\fBvim\fP(1),
+but will be effective when you are at the shell prompt). Finally
+`Em' Add
+tells
+\fBNo\fP
+to add the macro action to any previous action associated to that particular key. For instance
+Mrxvt.macro.Primary+Shift+Return:	Esc \eec
+Mrxvt.macro.Primary+Add+Shift+Return:	Str ^M
+will define the macro
+`Shift+Return'
+to first send the escape sequence
+`\eec'
+to
+\fBNo\fP
+(which has the effect of clearing the scroll back buffer) and then send
+`Ctrl-M'
+to the child process, but ONLY in the primary screen. If you're running a shell, then this effectively clears the scroll back buffer and executes the command.
+
+If the
+`Em' Add
+modifier is not specified, then the macro action replaces any previous action (if any) associated to the specified key. It is an error to add a macro to a non-existing macro. Currently one key can have at most 16 actions associated to it (this might be reduced to 8 in future).
+
+`keyname'
+is the name of the key you want to bind to the specified macro. Non alpha numeric keys (e.g. punctuation, or cursor/keypad keys) are specified by using their keyname, which you can find by xev(1), or looking directly in the system header file
+\fI/usr/include/X11/keysymdef.h\fP.
+
+In case you want to unbind a default keyboard macro, just bind the appropriate key to the function
+`Ic' Dummy .
+For example
+Mrxvt.macro.Ctrl+Shift+t:	Dummy
+will disable the default keyboard shortcut
+`Ctrl+Shift+t'.
+If you want to disable all keyboard macros, use the option
+`Fl' dm
+(which can also be accessed via a pop-up menu). The default keyboard macros are defined in the system configuration file
+\fI/etc/mrxvt/mrxvtrc\fP
+so if you only want to disable all default shortcuts keys, don't read the system configuration file by using the 
+\fB\-nsc\fP
+option.
+
+Notice that keyboard shortcuts definitions are incompatible with X Windows own resource parsing API, i.e., XGetDefaults. So, to enable the keyboard shortcuts, you will need to enable resources but disable xgetdefault when you configure
+\fBNs\fP.
+
+Finally
+`action'
+is the action you want bound to the specified macro key. The available actions you can bind to macros are:
+.TP
+\fBDummy\fP
+Clear an existing keyboard shortcut
+.TP
+\fBEsc \fIstr\fP\fP
+Send the escape sequence
+\fIstr\fP
+to
+\fB.\fP
+.TP
+\fBStr \fIstr\fP\fP
+Send the string
+\fIstr\fP
+to the child process.
+.TP
+\fBExec \fIcommand\fP\fP
+Executes
+\fIcommand\fP
+asynchronously. The command run without any controlling shell or TTY. This is generally used to launch X11 programs (e.g. open the selected text in firefox). If you want a command run in a new tab, see the
+\fBNewTab\fP
+macro).
+
+The argument
+\fIcommand\fP
+is word split exactly as described in the
+\fB\-blc\fP
+option (thus for instance beginning it with 
+`\&!'
+will pass it to
+Cd /bin/sh -c
+for word splitting and execution). However keep in mind that like all macro arguments,
+\fIcommand\fP
+is first
+`Sy' \e
+interpolated. Thus if on the rare occasion you want
+`\e\'
+to be part of
+\fIcommand\fP,
+then you will have to do something like
+`\e\e\e\e\e\e\'
+and not
+`\e\e\e\'
+as you would with the argument of
+\fB\-blc\fP.
+.TP
+\fBNewTab Oo \fI-N\fP Oc Oo \fI\*qtitle\*q\fP Oc [Oo ! Oc Ns \fIcommand]\fP\fP
+Open a new tab.
+\fIN\fP
+specifies the profile number. If omitted, profile 0 is used. If only
+`-'
+(with no number) is specified, then the profile of the current active tab is used (i.e. this can be used to duplicate the current tab).
+\fItitle\fP
+is specified (needs to be double quoted), use that for the tab title. If
+\fIcommand\fP
+is specified, execute that command in the new tab (instead of the one specified by the resource file, or the shell).
+
+\fIcommand\fP
+is word split as described in the
+\fBExec\fP
+macro. However if command begins with an
+So ! Sc
+then run a shell first, and execute the command in the shell as if the user had typed
+\fIcommand\fP
+at the shell prompt. If instead you want
+\fIcommand\fP
+to be passed to
+Cd /bin/sh -c
+for word splitting and execution, then begin
+\fIcommand\fP
+with
+`\e!'.
+.TP
+\fBClose [\fIN]\fP\fP
+Close a tab. If no argument is specified, close all tabs and exit. If
+\fIN\fP
+is 0, close the active tab. Otherwise close the
+\fIN\fPth tab .
+.TP
+\fBGotoTab [\fIN]\fP\fP
+Goto tab. If
+\fIN\fP
+is ommited or 0, then goto the previous active tab. Otherwise goto the
+\fIN\fPth
+tab. If
+\fIN\fP
+begins with a
+`+'
+or
+`-'
+then
+\fIN\fP
+is relative to the current tab.
+.TP
+\fBMoveTab \fIN\fP\fP
+Move active tab to position
+\fIN\fP.
+If
+\fIN\fP
+begins with a
+`+'
+or
+`-'
+then
+\fIN\fP
+is relative to the current tab.
+.TP
+\fBScroll \fIamount\fP\fP
+Scroll the active tab by
+\fIamount\fP
+lines (negative values mean scroll backward). If
+\fIamount\fP
+ends with
+`p'
+then scroll
+\fIamount\fP
+pages instead of lines.
+.TP
+\fBCopy\fP
+Copy selection into clipboard (not implemented).
+.TP
+\fBPaste\fP
+Pasete selection into active tab.
+.TP
+\fBToggleSubwin [Oo \fI+\fP Ns | Ns \fI-\fP Oc Ns [\fIb\fP Ns | Ns \fIm\fP Ns | Ns \fIs\fP Ns | Ns \fIt]]\fP\fP
+Toggle visibility of sub-windows. If the argument begins with a
+`+'
+the subwindow is shown. If it begins with a
+`-'
+the subwindow is hidden. Otherwise it is toggled. The letters
+`Ar' b ,
+`Ar' m ,
+`Ar' s
+and
+`Ar' t
+represent the tabbar buttons, menubar, scrollbar and tabbar respectively. NOTE: Currently you can only toggle one subwindow at a time.
+.TP
+\fBResizeFont Oo \fI+\fP Ns | Ns \fI-\fP Oc Ns \fIN\fP\fP
+Resize the font. With Xft,
+\fIN\fP
+represents the size increment of the xft font. Without Xft,
+\fIN\fP
+represents the index of the X11 fonts specified by the
+\fBfont\fP\fIN\fP
+resources.
+.TP
+\fBToggleVeryBold\fP
+Toggle use of bold font for colored text.
+.TP
+\fBToggleTransparency\fP
+Toggle pseudo transparency.
+.TP
+\fBToggleBroadcast\fP
+Toggle broadcasting of input to all tabs.
+.TP
+\fBToggleHold [\fImask]\fP\fP
+If
+\fImask\fP
+is not specified, then just close all tabs who's child processes have exited. (This is almost compatible with the behaviour of
+\fB.\fP
+0.5.1 and earlier). If
+\fImask\fP
+is specified, then change the hold status of the current tab.
+\fImask\fP
+must begin with
+`Sy' + ,
+`Sy' - ,
+or
+`Sy' \&!
+and be followed by a bit mask (as in the
+\fBholdExit\fP
+option).
+`Sy' +
+will add bits to the
+\fBholdExit\fP
+option for this tab,
+`Sy' -
+will subtract, and
+`Sy' \&!
+will toggle. Remember that if the lowest bit of the current tabs
+\fBholdExit\fP
+option is set, then the tab will always be held open and everything else will be ignored.
+.TP
+\fBToggleFullscreen\fP
+Toggle between full screen and regular mode. Also enable
+\fB\-Fl\fP smoothResize
+to get true full screen. This will only work if you are running an EWMH compatible window manager (e.g. Fvwm / OpenBox / KDE / Gnome).
+.TP
+\fBRaise\fP
+Raise the
+\fB.\fP
+window.
+.TP
+\fBSetTitle\fP
+Set title of active tab to selection. (The selection must be owned by
+\fB)\fP
+.TP
+\fBUseFifo \fIstatus\fP\fP
+Enable or disable using a
+\fBfifo\fP(1)
+to listen for macros on (see the
+\fBuseFifo\fP
+option). The argument
+\fIstatus\fP
+should be
+.B 0 , 1 , -1
+to disable, enable or toggle respectively.
+.TP
+\fBPrintScreen Oo Fl psn Oc [\fIcommand]\fP\fP
+Dump screen to printer (or
+\fIcommand\fP ) .
+If
+\fB\-p\fP
+is specified, then the output is pretty printed (i.e. escape sequences are used to get the same color in the output as on your screen). If
+\fB\-s\fP
+is specified, then the entire scroll back is printed (instead of just the current screen). If
+\fB\-n\fP
+is specified, then every screen line is terminated with a newline char (by default screen lines that wrap to the next line are not terminated with a newline). Finally, if command is specified it is used as the printer pipe (if not the value of
+\fBprintPipe\fP
+or the compiled in default is used).
+.TP
+\fBSaveConfig [\fIfilename]\fP\fP
+Save config to file. If no filename is specified, save to
+\fI~/.mrxvtrc.save\fP.
+.TP
+\fBToggleMacros\fP
+Toggle the use of keyboard shortcuts. When macros are disabled (either by using this macro, or by the
+\fB\-dm\fP
+option), then this is the only keyboard shortcut that will work. Thus you can re-enable your keyboard shortcuts via the keyboard using this function.
+
+Additionally, the argument to any of the above macros are
+`Sy' \e
+and
+`Sy' %
+interpolated as follows:
+
+.TP
+.B \ea
+Bell
+.TP
+.B \eb
+Backspace
+.TP
+.B \eE , \ee
+Escape
+.TP
+.B \en
+Newline
+.TP
+.B \er
+Carriage return
+.TP
+.B \et
+Tab
+.TP
+.B \e Ns Ar ddd
+Char with octal ASCII code
+\fIddd\fP.
+.TP
+.B ^@ , ^A .. ^Z .. ^_ , ^?
+Control-@, Control-A ...
+
+.TP
+.B %G
+Global (static) tab number.
+.TP
+.B %p
+PID of child process in current tab.
+.TP
+.B \&%P
+PID of
+\fB)\fP
+.TP
+.B %n
+Tab number.
+.TP
+.B % Ns Sy N
+Expands to
+`normally'
+if the process exited normally (e.g. by calling
+\fBexit\fP(1))
+or
+`abnormally'
+otherwise. (Note this is independent of the exit status).
+.TP
+.B %s
+Text selected in the
+\fB)\fP
+window.
+.TP
+.B %S
+If the process in this tab is dead, then it expands to the exit status of the child process. Otherwise left unchanged.
+.TP
+.B %t
+Tab title.
+.TP
+.B \&%T
+Total number of tabs created in
+\fB)\fP
+lifetime.
+
+.TP
+Changing tab titles
+This mouse shortcut can be used to dynamically change the tab title as follows: Select text in the terminal window. Then middle click on a tab to change the tab's title. If you middle click on the tabbar background, then the title of the active tab is changed.
+.TP
+Tab list menu
+By default, if you right click on the tab bar, or control-left-click on the terminal window, a popup menu with a list of currently open tabs pops up. The actual menu popped up can be customized as described under the section
+.B MENUS .
+.TP
+Popup menus
+If you Control-click on the terminal window (with any mouse button), it pops up a menu. The actual menu popped up can be customized as described under the section
+.B MENUS .
+.TP
+Moving tabs
+Click and drag a tab to some other location on the tab-bar to move it.
+.SH ESCAPE SEQUENCES
+
+You have several escape sequences to control
+\fB.\fP
+All default
+\fBrxvt\fP(1)
+escape sequences are supported by
+\fB.\fP
+A few extra escape sequences have been added to improve DEC compatibility, and allow interaction with extra
+\fB.\fP
+features (e.g. tabs). The supported escape sequences are listed in the file
+\fImrxvt_seq.txt\fP
+included in the distribution.
+
+For omissions in the documentation, and a more complete reference to escape sequences you should look at the file
+\fIctlseqs.txt\fP
+that comes with the xterm package,
+\fBconsole_codes\fP(4)
+and the original rxvt documentation in the file
+\fIrxvtRef.txt\fP.
+
+For basic interaction with
+\fB.\fP
+(e.g. changing the tab title etc.) you should also look at the programs
+\fIshare/scripts/settitle.c\fP
+and
+\fIshare/scripts/mrxvtset.pl\fP
+that are supplied with the
+\fB.\fP
+distribution.
+.SH ENVIRONMENT
+
+.TP
+.B COLORFGBG
+Set to the terminal foreground and background colors.
+.TP
+.B COLORTERM
+Sets to the terminal sub-name that indicates its color.
+.TP
+.B DISPLAY
+Used (and set) to the X display bieng used.
+.TP
+.B PATH_ENV
+Path to look for menu / background files (see
+\fB\-path\fP
+option).
+.TP
+.B TERM
+Set to the terminal name in the window you have created.
+.TP
+.B MRXVT_TABTITLE
+Set to the initial tab title of each terminal. Notice that its value will not be altered if the user uses a shortcut or escape sequence to change the tab title. The user must modify it manually after doing that.
+.TP
+.B WINDOWID
+Set to the X window id number of the mrxvt window.
+.SH FILES
+
+The actual pathnames given may differ on your system.
+.TP
+.B default.menu
+The default menu file loaded at startup (searched for in your
+\fB\-path\fP ) .
+.TP
+.B ~/mrxvt
+Directory in which to look for user menu and image files.
+.TP
+.B ~/.mrxvtrc
+This is the default configuration file (since 0.3.9). If present, resources read from this file override existing resources.
+.TP
+.B ~/.Xdefaults
+(OBSOLETE) This was the default configuration file (before 0.3.9). If present, resources read from this file override existing resources.
+.TP
+.B ~/.Xresources
+(OBSOLETE) If both
+\fI\&.mrxvtrc\fP
+and
+\fI\&.Xdefaults\fP
+are not found, try this one.
+.TP
+.B /etc/mrxvt
+System wide directory in which to look for user menu and image files.
+.TP
+.B /etc/mrxvt/default.menu
+Default menu file read on startup.
+.TP
+.B /etc/mrxvt/mrxvtrc
+System wide configuration file. (By default this file only defines the default keyboard macros)
+.TP
+.B /etc/utmp
+System file for login records.
+.TP
+.B /usr/lib/X11/rgb.txt
+Color names.
+.TP
+.B /usr/X11R6/lib/X11/app-defaults/XTerm
+(OBSOLETE) If enable xgetdefaults at compiled time, this is the first configuration file read. 
+.SH BUGS
+.SS "Reporting bugs"
+
+Please report bugs using the sourceforge bug tracker system at
+
+
+http://sourceforge.net/projects/materm
+
+Alternately you can send your bug report to the mrxvt developer mailing list at
+
+
+materm-devel@lists.sourceforge.net
+
+Be sure you give us enough details to reproduce the bug ourselves, and check to see if your bug still exists in the current CVS version.
+.SS "Known bugs"
+
+ \- Tabs don't work properly when running under Xnest.
+ \- Transparency and tinting are global, not specific to a terminal.
+ \- The transparentForce option does not work well with all window managers (e.g. OpenBox).
+
+.\" Begin Sun update
+.SH "ATTRIBUTES"
+.PP
+See \fBattributes\fR(5)
+for descriptions of the following attributes:
+.sp
+.TS
+tab() allbox;
+cw(2.750000i)| cw(2.750000i)
+lw(2.750000i)| lw(2.750000i).
+ATTRIBUTE TYPEATTRIBUTE VALUE
+Availabilityterminal/mrxvt
+Interface stabilityUncommitted
+.TE
+.sp
+.\" End Sun update
+
+.SH SEE ALSO
+
+\fBrxvt\fP(1),
+\fBxterm\fP(1),
+\fBresize\fP(1),
+\fImrxvt_seq.txt\fP,
+\fIXterm\fP control sequences
+(this is the file
+\fIctlseqs.ms\fP
+or
+\fIctlseqs.txt\fP),
+\fBconsole_codes\fP(4)
+
+
+http://materm.sourceforge.net
+.SH AUTHORS
+ Terminator <jimmyzhou@users.sourceforge.net>
+ Gautam Iyer <gi1242@users.sourceforge.net>
+ Marc Schoechlin" <mschoechlin@users.sourceforge.net>
