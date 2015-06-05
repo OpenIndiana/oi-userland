@@ -1,0 +1,183 @@
+diff -Naur mrxvt-0.5.4.orig/src/menubar.c mrxvt-0.5.4/src/menubar.c
+--- mrxvt-0.5.4.orig/src/menubar.c	2008-05-16 13:23:32.000000000 -0400
++++ mrxvt-0.5.4/src/menubar.c	2008-09-17 10:57:54.895205000 -0400
+@@ -137,7 +137,7 @@
+ 
+ 	if (item->entry.itemType == MenuSubMenu)
+ 	{
+-	    if (!STRCMP(name, (item->entry.submenu.menu)->name))
++	    if (!STRCMP(name, (item->entry.eu.submenu.menu)->name))
+ 		break;
+ 	}
+ 	else if ((isSeparator(name) && isSeparator(item->name))
+@@ -178,13 +178,13 @@
+     switch (item->entry.itemType)
+     {
+ 	case MenuSubMenu:
+-	    rxvt_menu_delete(r, item->entry.submenu.menu);
+-	    SET_NULL(item->entry.submenu.menu);
++	    rxvt_menu_delete(r, item->entry.eu.submenu.menu);
++	    SET_NULL(item->entry.eu.submenu.menu);
+ 	    break;
+ 
+ 	case MenuItem:
+-	    rxvt_free(item->entry.action.str);
+-	    SET_NULL(item->entry.action.str);
++	    rxvt_free(item->entry.eu.action.str);
++	    SET_NULL(item->entry.eu.action.str);
+ 	    break;
+     }
+ 
+@@ -419,13 +419,13 @@
+ 	    switch (item->entry.itemType)
+ 	    {
+ 		case MenuSubMenu:
+-		    rxvt_menu_delete(r, item->entry.submenu.menu);
+-		    SET_NULL(item->entry.submenu.menu);
++		    rxvt_menu_delete(r, item->entry.eu.submenu.menu);
++		    SET_NULL(item->entry.eu.submenu.menu);
+ 		    break;
+ 		    
+ 		case MenuItem:
+-		    rxvt_free(item->entry.action.str);
+-		    SET_NULL(item->entry.action.str);
++		    rxvt_free(item->entry.eu.action.str);
++		    SET_NULL(item->entry.eu.action.str);
+ 		break;
+ 	    }
+ 	    goto Item_Found;
+@@ -435,7 +435,7 @@
+     /* allocate a new itemect */
+     item = (menuitem_t *) rxvt_malloc( sizeof( menuitem_t) );
+ 
+-    SET_NULL(item->entry.action.str); /* If not null will be freed by
++    SET_NULL(item->entry.eu.action.str); /* If not null will be freed by
+ 				     rxvt_action_set */
+ 
+     item->len2 = 0;
+@@ -496,9 +496,9 @@
+ 	/* str = rxvt_malloc(len + 1); */
+ 
+ 	STRCPY(str, action);
+-	SET_NULL(item->entry.action.str);
++	SET_NULL(item->entry.eu.action.str);
+ 
+-	if( rxvt_set_action( &(item->entry.action), str) )
++	if( rxvt_set_action( &(item->entry.eu.action), str) )
+ 	    item->entry.itemType = MenuItem;
+     }
+ 
+@@ -598,10 +598,10 @@
+ 	{
+ 	    if (
+ 		    item->entry.itemType == MenuSubMenu
+-		    && !STRCMP(path, (item->entry.submenu.menu)->name)
++		    && !STRCMP(path, (item->entry.eu.submenu.menu)->name)
+ 	       )
+ 	    {
+-		m = (item->entry.submenu.menu);
++		m = (item->entry.eu.submenu.menu);
+ 		break;
+ 	    }
+ 	}
+@@ -666,10 +666,10 @@
+ 	for (item = parent->tail; NOT_NULL(item); item = item->prev)
+ 	{
+ 	    if (item->entry.itemType == MenuSubMenu
+-		    && item->entry.submenu.menu == menu)
++		    && item->entry.eu.submenu.menu == menu)
+ 	    {
+ 		/* Unlink from the parent menu */
+-		SET_NULL(item->entry.submenu.menu);
++		SET_NULL(item->entry.eu.submenu.menu);
+ 		rxvt_menuitem_free(r, menu->parent, item);
+ 		break;
+ 	    }
+@@ -801,7 +801,7 @@
+ 	assert(item->entry.itemType == MenuLabel);
+ #endif
+ 	item->entry.itemType = MenuSubMenu;
+-	item->entry.submenu.menu = menu;
++	item->entry.eu.submenu.menu = menu;
+     }
+ 
+     return menu;
+@@ -936,7 +936,7 @@
+ 	for (item = menu->parent->head; NOT_NULL(item); item = item->next)
+ 	{
+ 	    if (item->entry.itemType == MenuSubMenu &&
+-		item->entry.submenu.menu == menu)
++		item->entry.eu.submenu.menu == menu)
+ 	    {
+ 		break;
+ 	    }
+@@ -977,10 +977,10 @@
+     {
+ 	if (item->entry.itemType == MenuSubMenu)
+ 	{
+-	    if (IS_NULL(item->entry.submenu.menu))
++	    if (IS_NULL(item->entry.eu.submenu.menu))
+ 		rxvt_dbgmsg ((DBG_DEBUG, DBG_MENUBAR, "> %s == NULL\n", item->name));
+ 	    else
+-		rxvt_print_menu_descendants(item->entry.submenu.menu);
++		rxvt_print_menu_descendants(item->entry.eu.submenu.menu);
+ 	}
+ 	else
+ 	{
+@@ -1195,7 +1195,7 @@
+ 	    {
+ 		int	     x1, y1;
+ 		menuitem_t   *it;
+-		menu_t	     *menu = item->entry.submenu.menu;
++		menu_t	     *menu = item->entry.eu.submenu.menu;
+ 
+ 		rxvt_menubar_draw_triangle(r, amenu_width, y, +1);
+ 
+@@ -1622,10 +1622,10 @@
+ 			    }
+ 			    /* remove menu before sending keys to the application */
+ 			    rxvt_menu_hide_all(r);
+-			    rxvt_dispatch_action(r, &(item->entry.action),
++			    rxvt_dispatch_action(r, &(item->entry.eu.action),
+ 				    (XEvent *) ev );
+ #ifdef DEBUG        /* DEBUG */
+-			    rxvt_dbgmsg ((DBG_VERBOSE, DBG_MENUBAR, "%s: %s\n", item->name, item->entry.action.str));
++			    rxvt_dbgmsg ((DBG_VERBOSE, DBG_MENUBAR, "%s: %s\n", item->name, item->entry.eu.action.str));
+ #endif		    /* DEBUG */
+ 			    break;
+ 		    }
+@@ -1656,9 +1656,9 @@
+ 
+ 	    x = ev->x + ActiveMenu->x;
+ 
+-	    if (x >= item->entry.submenu.menu->x)
++	    if (x >= item->entry.eu.submenu.menu->x)
+ 	    {
+-		r->h->ActiveMenu = item->entry.submenu.menu;
++		r->h->ActiveMenu = item->entry.eu.submenu.menu;
+ 		rxvt_menu_show(r);
+ 		return 1;
+ 	    }
+@@ -2729,8 +2729,8 @@
+ 	width = PTEXTWIDTH( r, item->name2, item->len2);
+ 	if( menu->rwidth < width ) menu->rwidth = width;
+ 
+-	if( item->entry.itemType == MenuSubMenu && item->entry.submenu.menu)
+-	    resizeSubMenus( r, item->entry.submenu.menu );
++	if( item->entry.itemType == MenuSubMenu && item->entry.eu.submenu.menu)
++	    resizeSubMenus( r, item->entry.eu.submenu.menu );
+     }
+ }
+ 
+diff -Naur mrxvt-0.5.4.orig/src/menubar.h mrxvt-0.5.4/src/menubar.h
+--- mrxvt-0.5.4.orig/src/menubar.h	2008-02-17 17:04:50.000000000 -0500
++++ mrxvt-0.5.4/src/menubar.h	2008-09-17 10:57:54.934688000 -0400
+@@ -41,7 +41,7 @@
+ 	union {
+ 	    action_t        action;
+ 	    submenu_t       submenu;
+-	};
++	} eu;
+     } entry;
+ } menuitem_t;
+ 
