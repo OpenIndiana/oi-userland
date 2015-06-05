@@ -1,0 +1,475 @@
+This patch provides the implementation of the smfproperty probe
+on solaris.
+This patch has not been contributed upstream and will be done
+by 2015-Jul-01.
+--- openscap-1.2.1/src/OVAL/oval_probe.c.~2~	2015-04-21 09:56:24.689455398 -0700
++++ openscap-1.2.1/src/OVAL/oval_probe.c	2015-04-21 09:56:58.950099871 -0700
+@@ -91,7 +91,8 @@
+         OVAL_PROBE_EXTERNAL(OVAL_UNIX_FILEEXTENDEDATTRIBUTE, "fileextendedattribute"),
+         OVAL_PROBE_EXTERNAL(OVAL_UNIX_GCONF, "gconf"),
+         OVAL_PROBE_EXTERNAL(OVAL_UNIX_ROUTINGTABLE, "routingtable"),
+-        OVAL_PROBE_EXTERNAL(OVAL_SOLARIS_SMF, "smf")
++        OVAL_PROBE_EXTERNAL(OVAL_SOLARIS_SMF, "smf"),
++        OVAL_PROBE_EXTERNAL(OVAL_SOLARIS_SMFPROPERTY, "smfproperty")
+ };
+ 
+ #define __PROBE_META_COUNT (sizeof OSCAP_GSYM(__probe_meta)/sizeof OSCAP_GSYM(__probe_meta)[0])
+--- openscap-1.2.1/src/OVAL/public/oval_types.h.~1~	2015-01-08 07:30:33.115663437 -0800
++++ openscap-1.2.1/src/OVAL/public/oval_types.h	2015-04-22 16:01:03.302332582 -0700
+@@ -238,7 +238,8 @@
+ 	OVAL_SOLARIS_SMF = OVAL_FAMILY_SOLARIS + 4,
+ 	OVAL_SOLARIS_PATCH54 = OVAL_FAMILY_SOLARIS + 5,
+ 	OVAL_SOLARIS_NDD = OVAL_FAMILY_SOLARIS + 6,
+-	OVAL_SOLARIS_PACKAGECHECK = OVAL_FAMILY_SOLARIS + 7
++	OVAL_SOLARIS_PACKAGECHECK = OVAL_FAMILY_SOLARIS + 7,
++	OVAL_SOLARIS_SMFPROPERTY = OVAL_FAMILY_SOLARIS + 8
+ } oval_solaris_subtype_t;
+ 
+ /// Unix subtypes
+--- openscap-1.2.1/configure.ac.~3~	2015-04-22 16:20:53.433875799 -0700
++++ openscap-1.2.1/configure.ac	2015-04-22 16:25:56.053053597 -0700
+@@ -257,6 +257,10 @@
+ probe_systemdunitdependency_req_deps_missing=
+ probe_systemdunitdependency_opt_deps_ok=yes
+ probe_systemdunitdependency_opt_deps_missing=
++probe_smfproperty_req_deps_ok=yes
++probe_smfproperty_req_deps_missing=
++probe_smfproperty_opt_deps_ok=yes
++probe_smfproperty_opt_deps_missing=
+ 
+ #
+ # env
+@@ -1325,6 +1329,8 @@
+ probe_systemdunitproperty_enabled=$probe_systemdunitproperty_req_deps_ok
+ AM_CONDITIONAL([probe_systemdunitdependency_enabled], test "$probe_systemdunitdependency_req_deps_ok" = yes)
+ probe_systemdunitdependency_enabled=$probe_systemdunitdependency_req_deps_ok
++AM_CONDITIONAL([probe_smfproperty_enabled], test "$probe_smfproperty_req_deps_ok" = yes)
++probe_smfproperty_enabled=$probe_smfproperty_req_deps_ok
+ 
+ AM_CONDITIONAL([WANT_CCE],  test "$cce"  = yes)
+ 
+@@ -1736,6 +1742,12 @@
+   probe_systemdunitdependency_table_result="NO (missing: $probe_systemdunitdependency_req_deps_missing)"
+ fi
+ printf "  %-28s %s\n" "systemdunitdependency:" "$probe_systemdunitdependency_table_result"
++if test "$probe_smfproperty_req_deps_ok" = "yes"; then
++  probe_smfproperty_table_result="yes"
++else
++  probe_smfproperty_table_result="NO (missing: $probe_smfproperty_req_deps_missing)"
++fi
++printf "  %-28s %s\n" "smfproperty:" "$probe_smfproperty_table_result"
+ echo
+ echo "  === configuration ==="
+ echo "  probe directory set to:      $probe_dir"
+--- openscap-1.2.1/src/OVAL/oval_enumerations.c.~1~	2015-04-22 16:40:36.569105567 -0700
++++ openscap-1.2.1/src/OVAL/oval_enumerations.c	2015-04-22 16:41:10.935676772 -0700
+@@ -512,6 +512,7 @@
+ 	{OVAL_SOLARIS_SMF, "smf"},
+ 	{OVAL_SOLARIS_NDD, "ndd"},
+ 	{OVAL_SOLARIS_PACKAGECHECK, "packagecheck"},
++	{OVAL_SOLARIS_SMFPROPERTY, "smfproperty"},
+ 	{OVAL_SUBTYPE_UNKNOWN, NULL}
+ };
+ 
+--- openscap-1.2.1/src/OVAL/probes/Makefile.am.~1~	2015-04-22 16:43:21.761989228 -0700
++++ openscap-1.2.1/src/OVAL/probes/Makefile.am	2015-04-22 16:44:11.722065041 -0700
+@@ -202,6 +202,11 @@
+ probe_smf_SOURCES= unix/solaris/smf.c
+ endif
+ 
++if probe_smfproperty_enabled
++pkglibexec_PROGRAMS += probe_smfproperty
++probe_smfproperty_SOURCES= unix/solaris/smfproperty.c
++endif
++
+ endif
+ 
+ #
+--- openscap-1.2.3/src/OVAL/probes/unix/solaris/smfproperty.c.~1~	2015-06-02 21:28:41.068464123 -0700
++++ openscap-1.2.3/src/OVAL/probes/unix/solaris/smfproperty.c	2015-06-03 09:48:55.973035835 -0700
+@@ -0,0 +1,385 @@
++/**
++ * @file smfproperty.c
++ * @brief smfproperty probe
++ * @author "Jacob Varughese" <jacob.varughese@oracle.com>
++ *
++ * This probe processes retrieves the properties of smf services.
++ */
++
++
++#include "probe-api.h"
++#ifdef HAVE_CONFIG_H
++#include <config.h>
++#endif
++
++#if	defined(__SVR4) && defined(__sun)
++#include <stdlib.h>
++#include <string.h>
++#include <stdio.h>
++#include <errno.h>
++#include <sys/stat.h>
++#include <ctype.h>
++#include <sys/types.h>
++#include <limits.h>
++#include <unistd.h>
++#include <libscf.h>
++#include <libscf_priv.h>
++#include "seap.h"
++#include "probe/entcmp.h"
++#include "alloc.h"
++#include "common/debug_priv.h"
++
++#ifndef	SCF_PG_START
++#define	SCF_PG_START	"start"
++#endif
++
++#ifndef	SCF_SNAPSHOT_RUNNING
++#define	SCF_SNAPSHOT_RUNNING	"running"
++#endif
++
++#define	MAX_SCF_VALUE_LENGTH	1024
++/* Convenience structure for the results being reported */
++
++/*
++ * smfproperty probe:
++ *
++ *
++ * fmri
++ * service
++ * instance
++ * property
++ * value
++ */
++
++
++/* Convenience structure for the results being reported */
++struct result_info {
++	char *fmri;
++	char *service;
++	char *instance;
++	char *property;
++	char *value;
++};
++
++
++static char *
++strdup_check(char *p)
++{
++	char *ret;
++
++	if ((ret = strdup(p)) == NULL) {
++		dE("Error: Out of Memory error.\n");
++		exit(PROBE_ENOMEM);
++	}
++	return ret;
++}
++
++
++
++static void
++report_smfproperty(struct result_info *res, probe_ctx *ctx)
++{
++	SEXP_t *item;
++
++	item = probe_item_create(OVAL_SOLARIS_SMFPROPERTY, NULL,
++	    "fmri", OVAL_DATATYPE_STRING, res->fmri,
++	    "service", OVAL_DATATYPE_STRING, res->service,
++	    "instance", OVAL_DATATYPE_STRING, res->instance,
++	    "property", OVAL_DATATYPE_STRING, res->property,
++	    "value", OVAL_DATATYPE_STRING,
++	    res->value,
++	    NULL);
++	probe_item_collect(ctx, item);
++}
++
++
++static int
++convert_prop(scf_handle_t *hdl, const scf_property_t *prop,
++    struct result_info *res, probe_ctx *ctx)
++{
++	char propname[256];
++	scf_iter_t *iter = NULL;
++	scf_value_t *value = NULL;
++	ssize_t size = 0, len = 0, i = 0;
++	char *buffer;
++	int cur_size;
++
++	if (prop == NULL)
++		return 0;
++
++	if (scf_property_get_name(prop, propname,
++	    sizeof(propname)) < 0) {
++		dE("Cannot get name of property\n");
++		dE("Error: %s\n", scf_strerror(scf_error()));
++		return 1;
++	}
++	if ((value = scf_value_create(hdl)) == NULL) {
++		dE("Cannot create value from handle for prop:%s\n",
++		    propname);
++		dE("Error: %s\n", scf_strerror(scf_error()));
++		return 1;
++	}
++	if ((iter = scf_iter_create(hdl)) == NULL) {
++		dE("Cannot create value iterator for prop:%s\n",
++		    propname);
++		dE("Error: %s\n", scf_strerror(scf_error()));
++		return 1;
++	}
++	if (scf_iter_property_values(iter, prop) != 0) {
++		dE("Cannot iterate values  for prop:%s\n",
++		    propname);
++		dE("Error: %s\n", scf_strerror(scf_error()));
++		return 1;
++	}
++	buffer = malloc(MAX_SCF_VALUE_LENGTH);
++	if (buffer == NULL) {
++		dE("Out of Memory Error.\n");
++		exit(PROBE_ENOMEM);
++	}
++	buffer[0] = '\0';
++	cur_size = MAX_SCF_VALUE_LENGTH;
++	while ((scf_iter_next_value(iter, value)) > 0) {
++		char *tmp;
++		i++;
++		size = scf_value_get_as_string(value, NULL, 0) + 1;
++		if (size < 0) {
++			dE("Cannot get value for prop:%s size is"
++			    " invalid\n", propname);
++			dE("Error: %s\n", scf_strerror(scf_error()));
++			return 1;
++		}
++		if ((size + len + 2) > cur_size) {
++			cur_size = cur_size * 2 + size;
++			buffer = realloc(buffer, cur_size);
++			if (buffer == NULL) {
++				dE("Out of Memory Error.\n");
++				exit(PROBE_ENOMEM);
++			}
++		}
++		if (i > 1) {
++			buffer[len -1] = ' ';
++			buffer[len] = '\0';
++			tmp = &buffer[len];
++		} else {
++			tmp = &buffer[0];
++		}
++		scf_value_get_as_string(value, tmp, size);
++		len += size;
++	}
++	res->value = buffer;
++	report_smfproperty(res, ctx);
++	dI("fmri=% service=%s instance=%s property=%s value=%s\n",
++	    res->fmri, res->service, res->instance, res->property, res->value);
++	free(buffer);
++	return 0;
++}
++
++static int
++get_smf_prop(scf_handle_t *h, const scf_service_t *service,
++    const scf_instance_t *instance, const char *prop_grp_name,
++    const char *prop_name, struct result_info *res, probe_ctx *ctx)
++{
++	scf_propertygroup_t *pg = scf_pg_create(h);
++	scf_property_t *prop = scf_property_create(h);
++	int rc;
++
++	if (pg == NULL) {
++		dE("Unable to create property group from handle.\n");
++		dE("prop_grp_name=%s prop_name=%s.\n",
++		    prop_grp_name, prop_name);
++		dE("Error: %s.\n", scf_strerror(scf_error()));
++		rc = 1;
++		goto cleanup;
++	}
++	if (prop == NULL) {
++		dE("Unable to create property from handle.\n");
++		dE("prop_grp_name=%s prop_name=%s.\n",
++		    prop_grp_name, prop_name);
++		dE("Error: %s.\n", scf_strerror(scf_error()));
++		rc = 1;
++		goto cleanup;
++	}
++
++	if (instance == NULL) {
++		if (scf_service_get_pg(service, prop_grp_name, pg) == -1 ||
++		    scf_pg_get_property(pg, prop_name, prop) == -1) {
++			dE("Error: Could not read %s/%s from service.\n",
++			    prop_grp_name, prop_name);
++			rc = 1;
++			goto cleanup;
++		}
++	} else {
++		scf_snapshot_t *snap;
++		if ((snap = scf_snapshot_create(h)) == NULL) {
++			dE("Unable to create snapshot from handle.\n");
++			dE("fmri=%s \n", res->fmri);
++			dE("Error: %s.\n", scf_strerror(scf_error()));
++			rc = 1;
++			goto cleanup;
++		}
++		if (scf_instance_get_snapshot(instance, SCF_SNAPSHOT_RUNNING,
++		    snap) == -1) {
++			dE("Unable to get running snapshot.\n");
++			dE("for fmri=%s \n", res->fmri);
++			dE("Error: %s.\n", scf_strerror(scf_error()));
++			rc = 1;
++			goto cleanup;
++		}
++		if (scf_instance_get_pg_composed(instance, snap,
++		    prop_grp_name, pg) == -1) {
++			dE("Error: Could not read "
++			    " %s/%s property from snapshot for %s\n",
++			    prop_grp_name, prop_name, res->fmri);
++			rc = 1;
++			scf_snapshot_destroy(snap);
++			goto cleanup;
++		}
++		scf_snapshot_destroy(snap);
++	}
++	if (scf_pg_get_property(pg, prop_name, prop) == -1) {
++		dE("Error: Could not read %s/%s property %s\n",
++		    prop_grp_name, prop_name, res->fmri);
++		rc = 1;
++		goto cleanup;
++	}
++	rc = convert_prop(h, prop, res, ctx);
++cleanup:
++	scf_property_destroy(prop);
++	scf_pg_destroy(pg);
++	return rc;
++}
++
++static int
++collect_smfprop_info(char *asvc, char *ainst, char *aprop,
++    probe_ctx *ctx)
++{
++	struct result_info r;
++	int rc = 0;
++	char *propgrp = NULL, *prop = NULL;
++	char *tmp = NULL;
++	scf_handle_t *scf_hdl;
++	scf_instance_t *inst = NULL;
++	scf_service_t *svc = NULL;
++	char *p = NULL;
++
++	memset(&r, 0, sizeof(r));
++	r.service = asvc;
++
++	if (ainst == NULL) {
++		r.fmri = strdup_check(asvc);
++	} else { /* service name is service:instance */
++		asprintf(&r.fmri, "%s:%s", asvc, ainst);
++	}
++	if (r.fmri == NULL)
++		_exit(1);
++	if ((scf_hdl = scf_handle_create(SCF_VERSION)) == NULL ||
++	    scf_handle_bind(scf_hdl) != 0 ||
++	    (svc = scf_service_create(scf_hdl)) == NULL ||
++	    (ainst != NULL &&
++	    (inst = scf_instance_create(scf_hdl)) == NULL)) {
++		rc = PROBE_EFATAL;
++		goto cleanup;
++	}
++	if (scf_handle_decode_fmri(scf_hdl, r.fmri, NULL, svc,
++	    (ainst == NULL ? NULL : inst), NULL, NULL,
++	    SCF_DECODE_FMRI_EXACT) != 0 ||
++	    scf_error() == SCF_ERROR_NOT_FOUND) {
++		dE("scf_handle_decode_fmri failed.\n");
++		goto cleanup;
++	}
++
++	tmp = strdup_check(aprop);
++	if ((p = strstr(tmp, SCF_FMRI_PROPERTY_PREFIX)) != NULL) {
++		*p = '\0';
++		p++;
++		prop = p;
++	}
++	propgrp = tmp;
++	dI("r.service_name=%s\n", r.service);
++	dI("service:%s instance:%s propgrp:%s prop:%s\n",
++	    STR(asvc), STR(ainst), STR(propgrp), STR(prop));
++	r.instance = ainst;
++	r.property = aprop;
++	if (get_smf_prop(scf_hdl, svc, inst, propgrp, prop, &r, ctx) > 0) {
++		r.fmri = NULL;
++		dE("get_smf_prop failed.\n");
++	}
++	dI("Service exists:%s\n", r.service);
++cleanup:
++	free(tmp);
++	free(r.fmri);
++	scf_handle_destroy(scf_hdl);
++	scf_handle_unbind(scf_hdl);
++	scf_service_destroy(svc);
++	scf_instance_destroy(inst);
++	return rc;
++}
++
++int
++probe_main(probe_ctx *ctx, void *arg)
++{
++	SEXP_t *probe_in, *service = NULL, *instance = NULL, *property = NULL;
++	SEXP_t *service_val = NULL, *instance_val = NULL, *property_val = NULL;
++	char *service_str = NULL, *instance_str = NULL, *property_str = NULL;
++	int rc;
++
++	probe_in = probe_ctx_getobject(ctx);
++	if (probe_in == NULL) {
++		return PROBE_ENOOBJ;
++	}
++	service = probe_obj_getent(probe_in, "service", 1);
++	if (service == NULL) {
++		dE("No service in context.\n");
++		return PROBE_ENOENT;
++	}
++	instance = probe_obj_getent(probe_in, "instance", 1);
++	property = probe_obj_getent(probe_in, "property", 1);
++	if (property == NULL) {
++		dE("No property in context.\n");
++		rc = PROBE_ENOENT;
++		goto error;
++	}
++	service_val = probe_ent_getval(service);
++	if (service_val == NULL) {
++		dE("Get service value failed.\n");
++		rc = PROBE_ENOVAL;
++		goto error;
++	}
++	service_str = SEXP_string_cstr(service_val);
++	dI("service in context: %s.\n", service_str);
++	if (instance != NULL) {
++		instance_val = probe_ent_getval(instance);
++		instance_str = SEXP_string_cstr(instance_val);
++	}
++	if (instance_str != NULL && strcmp(instance_str, "") == 0)
++		instance_str = NULL;
++	dI("instance in context: %s.\n", instance_str);
++	property_val = probe_ent_getval(property);
++	if (property_val == NULL) {
++		dE("Get property value failed.\n");
++		rc = PROBE_ENOVAL;
++		goto error;
++	}
++	property_str = SEXP_string_cstr(property_val);
++	dI("property in context: %s.\n", property_str);
++	rc = collect_smfprop_info(service_str, instance_str, property_str, ctx);
++error:
++	free(service_str);
++	free(instance_str);
++	free(property_str);
++	SEXP_free(service);
++	SEXP_free(instance);
++	SEXP_free(property);
++	SEXP_free(service_val);
++	SEXP_free(instance_val);
++	SEXP_free(property_val);
++	return rc;
++}
++#else
++
++int
++probe_main(probe_ctx *ctx, void *probe_arg)
++{
++	return PROBE_EOPNOTSUPP;
++}
++#endif
