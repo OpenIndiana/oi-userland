@@ -20,18 +20,18 @@
 #
 # Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libestr
-COMPONENT_VERSION=	0.1.2
+COMPONENT_VERSION=	0.1.9
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://libestr.adiscon.com/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:0e8b95374fa271dc2afdfadfc9afc0f5826252a1b698ddea1474d5600a7c66ca
+COMPONENT_ARCHIVE_HASH=	sha256:822c6e2d01eaca1e72201f403a2ca01f3e86410b880e508e5204e3c2694d751a
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)files/download/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	service/rsyslog
-
-TPNO=			7585
+TPNO=			20531
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -52,9 +52,9 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-test:		$(TEST_32_and_64)
+# No longer seems to have tests
+test:		$(NO_TESTS)
 
 system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
 
 REQUIRED_PACKAGES += system/library

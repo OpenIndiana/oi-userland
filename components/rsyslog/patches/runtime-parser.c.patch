@@ -1,0 +1,19 @@
+# This patch is a fix for proper uncompression 
+# source: written internally
+# Should be sent upstream, but hasn't been.
+# Bug has existed a long time (probably since rsyslog implemented compression),
+# last noticed in 8.4.0
+--- rsyslog/runtime/parser.c	2014-08-18 02:14:06.000000000 -0700
++++ rsyslog/runtime/parser.c	2014-09-18 14:46:49.068679264 -0700
+@@ -336,8 +336,10 @@
+ 
+ 	/* we first need to check if we have a compressed record. If so,
+ 	 * we must decompress it.
++	 * If NO_PRI_IN_RAW is set, this is a local Solaris message and
++	 * therefore not compressed (though it may well begin with 'z'!).
+ 	 */
+-	if(lenMsg > 0 && *pszMsg == 'z') { /* compressed data present? (do NOT change order if conditions!) */
++	if(lenMsg > 0 && *pszMsg == 'z' && pMsg->msgFlags & NO_PRI_IN_RAW == 0) { /* compressed data present? (do NOT change order if conditions!) */
+ 		/* we have compressed data, so let's deflate it. We support a maximum
+ 		 * message size of iMaxLine. If it is larger, an error message is logged
+ 		 * and the message is dropped. We do NOT try to decompress larger messages

@@ -18,44 +18,49 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+#
+
 include ../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		libee
-COMPONENT_VERSION=	0.4.1
+COMPONENT_NAME=		liblogging
+COMPONENT_VERSION=	1.0.4
+COMPONENT_PROJECT_URL=	http://www.liblogging.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://www.libee.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:c0dac01938593deee06c3d161e4eda4ecc0fd7317e1321bd96e301aceb7fb027
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)files/download/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:aceb5d2aa8bdc771ff66f407f9adf4176b654db63e34a8605795b68be537b81c
+COMPONENT_ARCHIVE_URL=	\
+    http://download.rsyslog.com/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	service/rsyslog
-TPNO=			20532
+TPNO=			20535
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-# Userland default includes -mt which links with libthread which we don't need.
-studio_MT =
+# Means build only stdlog
+CONFIGURE_OPTIONS +=    --disable-journal
 
-# This is needed for the 64-bit library to be built correctly.
-CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
+# There are built man pages in the tarball, which we shall patch. Making them
+# here would require python-docutils.
+CONFIGURE_OPTIONS +=	--disable-man-pages
+CONFIGURE_OPTIONS +=    --bindir=$(USRBINDIR)
 
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+# Set -m32 or -m64 correctly for 32 and 64 bit versions.
+CC +=	$(CC_BITS)
+
+ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-configure:	$(CONFIGURE_32_and_64)
-
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-# Tests are currently broken
 test:		$(NO_TESTS)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-REQUIRED_PACKAGES += library/libestr
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/math
