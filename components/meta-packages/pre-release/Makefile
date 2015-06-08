@@ -24,6 +24,7 @@
 #
 
 include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/prep.mk
 
 COMPONENT_NAME=		pre-release
 COMPONENT_VERSION=	1.0
