@@ -79,6 +79,12 @@ export LC_ALL=C
 
 SHELL=	/bin/bash
 
+# If we are building "pre-release" software for the Solaris release repository
+# we want the PUBLISHER to be "solaris".
+ifeq ($(BUILD_TYPE),pre-release)
+PUBLISHER = solaris
+endif
+
 # We want "nightly" as our publisher, to match other consolidations and
 # facilitate migrations.  G11N wants $(CONSOLIDATION)-localizable for
 # the localizable publisher.

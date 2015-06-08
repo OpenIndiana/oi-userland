@@ -90,6 +90,13 @@ PUBLISH_TRANSFORMS +=	$(PKGMOGRIFY_TRANSFORMS)
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/incorporate
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/publish-cleanup
 
+# If we are building "pre-release" packages, add the pre-release license
+# action so that the package(s) display the terms and require acceptance
+# to install.
+ifeq ($(BUILD_TYPE),pre-release)
+PUBLISH_TRANSFORMS += $(WS_TOP)/transforms/pre-release
+endif
+
 PKG_MACROS +=		MACH=$(MACH)
 PKG_MACROS +=		MACH32=$(MACH32)
 PKG_MACROS +=		MACH64=$(MACH64)
