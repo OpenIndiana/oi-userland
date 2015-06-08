@@ -1,0 +1,43 @@
+Developed in-house, fed back, awaiting accept.
+http://redmine.lighttpd.net/issues/2532
+Solaris-specific: in order to start Lighttpd as non-root
+user, initial user needs elevated privileges. Those
+privileges are unnecessary and should be dropped.
+
+--- src/network.c	2013-08-30 04:07:05.000000000 -0700
++++ src/network.c	2013-10-22 04:07:55.193853968 -0700
+@@ -21,6 +21,8 @@
+ #include <stdlib.h>
+ #include <assert.h>
+ 
++#include <priv.h>
++
+ #ifdef USE_OPENSSL
+ # include <openssl/ssl.h>
+ # include <openssl/err.h>
+@@ -497,6 +499,8 @@
+ 	size_t i;
+ 	network_backend_t backend;
+ 
++	priv_set_t *tset;
++
+ #if OPENSSL_VERSION_NUMBER >= 0x0090800fL
+ #ifndef OPENSSL_NO_ECDH
+ 	EC_KEY *ecdh;
+@@ -877,6 +881,16 @@
+ 		}
+ 	}
+ 
++	/* here we drop privileges we won't need any more */
++	tset = priv_allocset();
++	priv_emptyset(tset);
++	priv_addset(tset, PRIV_NET_PRIVADDR);
++	if (setppriv(PRIV_OFF, PRIV_PERMITTED, tset) != 0) {
++		perror("Unable to set privileges: ");
++		return -1;
++	}
++	
++
+ 	return 0;
+ }
+ 
