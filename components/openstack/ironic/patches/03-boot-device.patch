@@ -1,0 +1,34 @@
+Ironic is very "Linux" centric, so for all nodes regardless of architecture it
+reports the same list of supported boot devices.
+
+This is not correct for SPARC, e.g. PXE is not supported.
+
+This patch simply passes the task into the driver implemented method for 
+getting the boot device so that architecture specific information can be
+returned.
+
+Upstream bug logged against trunk:
+  https://bugs.launchpad.net/ironic/+bug/1391598
+
+--- ORIGINAL/ironic/conductor/manager.py	2015-02-20 18:03:18.051557776 +0000
++++ ironic-2014.2.1/ironic/conductor/manager.py	2015-02-20 18:08:33.001316709 +0000
+@@ -1380,4 +1380,4 @@
+             if not getattr(task.driver, 'management', None):
+                 raise exception.UnsupportedDriverExtension(
+                             driver=task.node.driver, extension='management')
+-            return task.driver.management.get_supported_boot_devices()
++            return task.driver.management.get_supported_boot_devices(task)
+--- ORIGINAL/ironic/drivers/base.py	2015-02-20 18:03:18.037072121 +0000
++++ ironic-2014.2.1/ironic/drivers/base.py	2015-02-20 18:09:58.769898691 +0000
+@@ -436,9 +436,10 @@
+         """
+ 
+     @abc.abstractmethod
+-    def get_supported_boot_devices(self):
++    def get_supported_boot_devices(self, task=None):
+         """Get a list of the supported boot devices.
+ 
++        :param task: a task from TaskManager.
+         :returns: A list with the supported boot devices defined
+                   in :mod:`ironic.common.boot_devices`.
+         """

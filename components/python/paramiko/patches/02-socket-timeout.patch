@@ -1,0 +1,43 @@
+#
+# This patch addresses an issue when creating a paramiko client
+# connection and a timeout is specified. When a Transport object is being
+# instantiated, it overrides this timeout value all the time and it
+# should not.
+#
+# This patch is suitable for the upstream and a bug has been filed:
+#
+#	https://github.com/paramiko/paramiko/issues/476
+#
+
+--- paramiko-1.15.2/paramiko/transport.py.~2~	2015-04-12 18:39:08.295798093 -0700
++++ paramiko-1.15.2/paramiko/transport.py	2015-04-12 18:39:49.250225381 -0700
+@@ -270,10 +270,13 @@ class Transport (threading.Thread, Closi
+         self.sock = sock
+         # Python < 2.3 doesn't have the settimeout method - RogerB
+         try:
+-            # we set the timeout so we can check self.active periodically to
+-            # see if we should bail.  socket.timeout exception is never
+-            # propagated.
+-            self.sock.settimeout(0.1)
++            # Only settimeout if not already set:
++            timeout = self.sock.gettimeout()
++            if timeout is None or timeout <= 0:
++                # we set the timeout so we can check self.active periodically
++                # to see if we should bail.  socket.timeout exception is never
++                # propagated.
++                self.sock.settimeout(0.1)
+         except AttributeError:
+             pass
+ 
+--- paramiko-1.15.2/tests/loop.py.~1~	2014-09-06 16:07:24.000000000 -0700
++++ paramiko-1.15.2/tests/loop.py	2015-04-12 17:36:15.218573915 -0700
+@@ -73,6 +73,9 @@ class LoopSocket (object):
+     def settimeout(self, n):
+         self.__timeout = n
+ 
++    def gettimeout(self):
++        return self.__timeout
++
+     def link(self, other):
+         self.__mate = other
+         self.__mate.__mate = self

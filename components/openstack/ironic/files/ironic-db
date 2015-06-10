@@ -1,0 +1,61 @@
+#!/usr/bin/python2.7
+
+# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+#
+#    Licensed under the Apache License, Version 2.0 (the "License"); you may
+#    not use this file except in compliance with the License. You may obtain
+#    a copy of the License at
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+#    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+#    License for the specific language governing permissions and limitations
+#    under the License.
+
+import os
+from subprocess import Popen, PIPE
+import sys
+
+import smf_include
+
+
+def start():
+    ironic_conf = sys.argv[2]
+
+    # verify config path is valid
+    if not os.path.exists(ironic_conf) or not os.access(ironic_conf, os.R_OK):
+        print >> sys.stderr, '%s does not exist or is not readable' % \
+            ironic_conf
+        return smf_include.SMF_EXIT_ERR_CONFIG
+
+    # Create/Sync Ironic database
+    cmd = ["/usr/bin/ironic-dbsync", "--config-file", ironic_conf,
+           "create_schema"]
+    proc = Popen(cmd, stderr=PIPE, stdout=PIPE)
+    _out, error = proc.communicate()
+
+    if proc.returncode != 0:
+        if "DbMigrationError" in error:
+            # Attempted to create already existing database
+            # Attempt to upgrade instead
+
+            cmd = ["/usr/bin/ironic-dbsync", "--config-file", ironic_conf,
+                   "upgrade"]
+            proc = Popen(cmd, stderr=PIPE, stdout=PIPE)
+            _out, error = proc.communicate()
+            if proc.returncode != 0:
+                print >> sys.stderr, \
+                    'Error executing ironic-dbsync upgrade: %s' % error
+                return smf_include.SMF_EXIT_ERR_FATAL
+        else:
+            print >> sys.stderr, \
+                'Error executing ironic-dbsync create_schema: %s' % error
+            return smf_include.SMF_EXIT_ERR_FATAL
+
+    return smf_include.SMF_EXIT_OK
+
+if __name__ == "__main__":
+    os.putenv("LC_ALL", "C")
+    smf_include.smf_main()
