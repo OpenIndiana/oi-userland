@@ -34,7 +34,7 @@ endif
 # parfait seems to spin on us
 export PARFAIT_BUILD=no
 
-include ../../../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		samba
 COMPONENT_VERSION=	3.6.25
@@ -58,7 +58,7 @@ include $(WS_MAKE_RULES)/ips.mk
 
 # dirs to search for "include" in samba.p5m
 PKG_OPTIONS += -I $(COMPONENT_DIR)
-PKG_OPTIONS += -I $(COMPONENT_DIR)/..
+PKG_OPTIONS += -I $(COMPONENT_DIR)/../samba
 # Set search path for pkg files
 PKG_PROTO_DIRS += $(COMPONENT_DIR)
 
@@ -91,10 +91,10 @@ COMPONENT_PRE_CONFIGURE_ACTION += \
 COMPONENT_PRE_BUILD_ACTION = $(ENV) ; echo $(COMPONENT_BUILD_ENV)
 
 # It should create $(PROTO_DIR).
-$(PROTO_DIR)/opt/SUNWsamfs/lib/libsam.so: ../Solaris/libsam.c
+$(PROTO_DIR)/opt/SUNWsamfs/lib/libsam.so: ../samba/Solaris/libsam.c
 	$(MKDIR) $(PROTO_DIR)/opt/SUNWsamfs/lib
-	$(CC.studio.32) -G $(studio_PIC) -hlibsam.so ../Solaris/libsam.c \
-		-I$(COMPONENT_DIR)/../Solaris/include \
+	$(CC.studio.32) -G $(studio_PIC) -hlibsam.so ../samba/Solaris/libsam.c \
+		-I$(COMPONENT_DIR)/../samba/Solaris/include \
 		-o $(PROTO_DIR)/opt/SUNWsamfs/lib/libsam.so
 
 CFLAGS.studio	+=	$(studio_C99_ENABLE)
@@ -157,7 +157,7 @@ CONFIGURE_OPTIONS +=	--with-winbind
 
 CONFIGURE_OPTIONS += 	LD="$(LD)"
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS.32 +=	CPPFLAGS="$(CPPFLAGS) -I$(COMPONENT_DIR)/../Solaris/include"
+CONFIGURE_OPTIONS.32 +=	CPPFLAGS="$(CPPFLAGS) -I$(COMPONENT_DIR)/../samba/Solaris/include"
 CONFIGURE_OPTIONS.64 +=	CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_OPTIONS +=	LDFLAGS="$(LDFLAGS)"
 CONFIGURE_OPTIONS.32 +=	LIBS="$(LIBS) $(LIBS32)"
