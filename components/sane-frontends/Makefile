@@ -43,23 +43,23 @@ CONFIGURE_OPTIONS +=	--disable-sanetest
 CONFIGURE_OPTIONS +=	--disable-gtktest
 CONFIGURE_OPTIONS +=	--disable-gimptest
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS +=	LDFLAGS="-lsane"
+CONFIGURE_OPTIONS +=	LDFLAGS="-lsane -m64"
+CONFIGURE_OPTIONS +=	--disable-gimp
 
-configure:	$(CONFIGURE_32)
+configure:	$(CONFIGURE_64)
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
 
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
 system-test:    $(NO_TESTS)
 
 
-REQUIRED_PACKAGES += image/editor/gimp
 REQUIRED_PACKAGES += image/scanner/xsane/sane-backends
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/glib2
