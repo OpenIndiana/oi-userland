@@ -23,16 +23,22 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tcpdump
-COMPONENT_VERSION=	4.5.1
+COMPONENT_VERSION=	4.7.4
 COMPONENT_PROJECT_URL=	http://www.tcpdump.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:14ab39657128f3a650aed4cf455f76c7590601087b6101c253d698f6e73f0b96
+    sha256:5a321f0fb959b928f26112c9f49f81d754c23c1d8ffb0feb69304fee06b77e0a
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)release/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/tcpdump
 
-TPNO=			16021
+TPNO=			22949
+
+# Some tcpdump tests require GCC compiler
+COMPILER=gcc
+
+# Prevent macro redefinition error 
+CFLAGS += -D _NETINET_IP_H
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk

@@ -1,32 +1,33 @@
-#
-# InfiniBand support
-#
-diff -N -u -r tcpdump-4.5.1.orig/interface.h tcpdump-4.5.1/interface.h
---- tcpdump-4.5.1.orig/interface.h	2013-03-24 16:49:18.000000000 -0500
-+++ tcpdump-4.5.1/interface.h	2013-12-02 11:48:13.394398375 -0600
-@@ -205,6 +205,7 @@
- extern u_int pflog_if_print(const struct pcap_pkthdr *, const u_char *);
- extern u_int arcnet_if_print(const struct pcap_pkthdr *, const u_char *);
- extern u_int arcnet_linux_if_print(const struct pcap_pkthdr *, const u_char *);
+InfiniBand support for tcpdump. 
+This is an in-house patch. Sent upstream for potential inclusion in future 
+versions of tcpdump.
+
+diff -rupN tcpdump-4.7.4-orig/interface.h tcpdump-4.7.4/interface.h
+--- tcpdump-4.7.4-orig/interface.h	2015-05-26 14:13:17.000000000 -0700
++++ tcpdump-4.7.4/interface.h	2015-03-09 12:07:00.000000000 -0700
+@@ -162,6 +162,7 @@ extern uint16_t create_osi_cksum(const u
+ 
+ extern char *smb_errstr(int, int);
+ extern const char *nt_errstr(uint32_t);
 +extern u_int ipoib_if_print(const struct pcap_pkthdr *, const u_char *);
- extern u_int token_print(const u_char *, u_int, u_int);
- extern u_int token_if_print(const struct pcap_pkthdr *, const u_char *);
- extern void fddi_print(const u_char *, u_int, u_int);
-diff -N -u -r tcpdump-4.5.1.orig/Makefile.in tcpdump-4.5.1/Makefile.in
---- tcpdump-4.5.1.orig/Makefile.in	2013-03-24 16:49:18.000000000 -0500
-+++ tcpdump-4.5.1/Makefile.in	2013-12-02 11:47:25.102106791 -0600
-@@ -83,6 +83,7 @@
- 	print-esp.c print-ether.c print-fddi.c print-forces.c print-fr.c \
- 	print-gre.c print-hsrp.c print-icmp.c print-igmp.c \
- 	print-igrp.c print-ip.c print-ipcomp.c print-ipfc.c print-ipnet.c \
+ 
+ #ifdef INET6
+ extern int mask62plen(const u_char *);
+diff -rupN tcpdump-4.7.4-orig/Makefile.in tcpdump-4.7.4/Makefile.in
+--- tcpdump-4.7.4-orig/Makefile.in	2015-05-26 14:13:17.000000000 -0700
++++ tcpdump-4.7.4/Makefile.in	2015-05-26 15:12:05.727800640 -0700
+@@ -138,6 +138,7 @@ LIBNETDISSECT_SRC=\
+ 	print-ipcomp.c \
+ 	print-ipfc.c \
+ 	print-ipnet.c \
 +	print-ipoib.c \
- 	print-ipx.c print-isoclns.c print-juniper.c print-krb.c \
- 	print-l2tp.c print-lane.c print-ldp.c print-lldp.c print-llc.c \
-         print-lmp.c print-lspping.c print-lwapp.c \
-diff -N -u -r tcpdump-4.5.1.orig/netdissect.h tcpdump-4.5.1/netdissect.h
---- tcpdump-4.5.1.orig/netdissect.h	2013-03-24 16:49:18.000000000 -0500
-+++ tcpdump-4.5.1/netdissect.h	2013-12-02 11:48:46.057536548 -0600
-@@ -319,6 +319,7 @@
+ 	print-ipx.c \
+ 	print-isakmp.c \
+ 	print-isoclns.c \
+diff -rupN tcpdump-4.7.4-orig/netdissect.h tcpdump-4.7.4/netdissect.h
+--- tcpdump-4.7.4-orig/netdissect.h	2015-05-26 14:13:17.000000000 -0700
++++ tcpdump-4.7.4/netdissect.h	2015-04-22 13:32:16.000000000 -0700
+@@ -395,6 +395,7 @@ extern void ether_print(netdissect_optio
  
  extern u_int ether_if_print(netdissect_options *,
                              const struct pcap_pkthdr *,const u_char *);
@@ -34,18 +35,18 @@ diff -N -u -r tcpdump-4.5.1.orig/netdissect.h tcpdump-4.5.1/netdissect.h
  extern u_int netanalyzer_if_print(netdissect_options *,
                                    const struct pcap_pkthdr *,const u_char *);
  extern u_int netanalyzer_transparent_if_print(netdissect_options *,
-diff -N -u -r tcpdump-4.5.1.orig/print-arp.c tcpdump-4.5.1/print-arp.c
---- tcpdump-4.5.1.orig/print-arp.c	2013-02-20 21:54:34.000000000 -0600
-+++ tcpdump-4.5.1/print-arp.c	2013-12-02 11:51:40.229231503 -0600
-@@ -58,6 +58,7 @@
+diff -rupN tcpdump-4.7.4-orig/print-arp.c tcpdump-4.7.4/print-arp.c
+--- tcpdump-4.7.4-orig/print-arp.c	2015-05-26 14:13:17.000000000 -0700
++++ tcpdump-4.7.4/print-arp.c	2015-03-09 12:07:00.000000000 -0700
+@@ -55,6 +55,7 @@ struct  arp_pkthdr {
  #define ARPHRD_ATM2225  19      /* ATM (RFC 2225) */
  #define ARPHRD_STRIP    23      /* Ricochet Starmode Radio hardware format */
  #define ARPHRD_IEEE1394 24      /* IEEE 1394 (FireWire) hardware format */
-+#define ARPHRD_INFINIBAND 32	/* InfiniBand RFC 4391 */
++#define ARPHRD_INFINIBAND 32   /* InfiniBand RFC 4391 */
          u_short ar_pro;         /* format of protocol address */
          u_char  ar_hln;         /* length of hardware address */
          u_char  ar_pln;         /* length of protocol address */
-@@ -118,6 +119,7 @@
+@@ -115,6 +115,7 @@ static const struct tok arphrd_values[]
      { ARPHRD_STRIP, "Strip" },
      { ARPHRD_IEEE1394, "IEEE 1394" },
      { ARPHRD_ATM2225, "ATM" },
@@ -53,10 +54,10 @@ diff -N -u -r tcpdump-4.5.1.orig/print-arp.c tcpdump-4.5.1/print-arp.c
      { 0, NULL }
  };
  
-diff -N -u -r tcpdump-4.5.1.orig/print-ipoib.c tcpdump-4.5.1/print-ipoib.c
---- tcpdump-4.5.1.orig/print-ipoib.c	1969-12-31 18:00:00.000000000 -0600
-+++ tcpdump-4.5.1/print-ipoib.c	2013-12-02 11:53:24.664773530 -0600
-@@ -0,0 +1,131 @@
+diff -rupN tcpdump-4.7.4-orig/print-ipoib.c tcpdump-4.7.4/print-ipoib.c
+--- tcpdump-4.7.4-orig/print-ipoib.c	1969-12-31 16:00:00.000000000 -0800
++++ tcpdump-4.7.4/print-ipoib.c	2015-05-26 14:13:17.000000000 -0700
+@@ -0,0 +1,132 @@
 +/*
 + * Copyright (c) 1988, 1989, 1990, 1991, 1992, 1993, 1994, 1995, 1996, 
 + *	1997, 2000, 2011, 2012
@@ -98,6 +99,7 @@ diff -N -u -r tcpdump-4.5.1.orig/print-ipoib.c tcpdump-4.5.1/print-ipoib.c
 +#include "interface.h"
 +#include "extract.h"
 +#include "addrtoname.h"
++
 +
 +extern const struct tok ethertype_values[];
 +extern int ethertype_print(netdissect_options *, u_short, const u_char *, u_int, u_int );
@@ -188,16 +190,16 @@ diff -N -u -r tcpdump-4.5.1.orig/print-ipoib.c tcpdump-4.5.1/print-ipoib.c
 + * c-basic-offset: 8
 + * End:
 + */
-diff -N -u -r tcpdump-4.5.1.orig/tcpdump.c tcpdump-4.5.1/tcpdump.c
---- tcpdump-4.5.1.orig/tcpdump.c	2013-03-24 16:49:18.000000000 -0500
-+++ tcpdump-4.5.1/tcpdump.c	2013-12-02 11:52:41.512481340 -0600
-@@ -311,6 +311,9 @@
+diff -rupN tcpdump-4.7.4-orig/tcpdump.c tcpdump-4.7.4/tcpdump.c
+--- tcpdump-4.7.4-orig/tcpdump.c	2015-05-26 14:13:17.000000000 -0700
++++ tcpdump-4.7.4/tcpdump.c	2015-05-26 15:17:43.298240116 -0700
+@@ -264,6 +264,9 @@ static const struct ndo_printer ndo_prin
  #ifdef DLT_IPV6
  	{ raw_if_print,		DLT_IPV6 },
  #endif
 +#ifdef DLT_IPOIB
-+	{ ipoib_if_print,	DLT_IPOIB },
++	{ ipoib_if_print, 	162 },
 +#endif
- 	{ NULL,			0 },
- };
- 
+ #ifdef HAVE_PCAP_USB_H
+ #ifdef DLT_USB_LINUX
+ 	{ usb_linux_48_byte_print, DLT_USB_LINUX},
