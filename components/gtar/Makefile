@@ -23,20 +23,25 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tar
-COMPONENT_VERSION=	1.27.1
+COMPONENT_VERSION=	1.28
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/tar/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:9b0fb3ce8512059337add0da5f8f0f7d7647f2201f5ece24581d620ea60337c6
+    sha256:60e4bfe0602fef34cd908d91cf638e17eeb09394d7b98c2487217dc4d3147562
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/tar/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gtar
 
-TPNO=			16886
+TPNO=			23088
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
+
+PATCH_LEVEL=0
+
+# tests (ttyemu.c) requires c99
+studio_C99MODE = $(studio_C99_ENABLE)
 
 # Enforce tar binary to standard path
 CONFIGURE_BINDIR.64 = $(CONFIGURE_PREFIX)/bin
@@ -48,11 +53,13 @@ CONFIGURE_OPTIONS +=	--with-rmt=/usr/sbin/rmt
 CONFIGURE_OPTIONS +=	--libexecdir=/usr/sbin
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)" 
 
-COMPONENT_BUILD_TARGETS = all
+COMPONENT_SYSTEM_TEST_DIR = $(BUILD_DIR_64)/tests
+COMPONENT_SYSTEM_TEST_TARGETS =  installcheck-local
 
-# Remove differences between 'gmake test' and 'gmake build test'.
-COMPONENT_TEST_TRANSFORMS += \
-	'-e "/make  genfile/,/Leaving directory/d"'
+# Remove everything except test output.
+COMPONENT_TEST_TRANSFORMS = \
+	'-e "/^\#\# ----/,/tests were skipped\./p" ' \
+	'-e "/.*/d" '
 
 ASLR_MODE = $(ASLR_ENABLE)
 
@@ -64,7 +71,7 @@ install:	$(INSTALL_64)
 
 test:		$(TEST_64)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+system-test:    $(BUILD_64) $(SYSTEM_TEST_64)
 
 
 REQUIRED_PACKAGES += compress/bzip2

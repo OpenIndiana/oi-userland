@@ -1,0 +1,16 @@
+Patch origin: in-house
+Patch status: Solaris-specific; not suitable for upstream
+
+--- tests/Makefile.in
++++ tests/Makefile.in
+@@ -1701,8 +1701,8 @@
+ #check_SCRIPTS = tar
+ 
+ # Run the test suite on the *installed* tree.
+-installcheck-local:
+-	$(SHELL) $(TESTSUITE) $(TESTSUITEFLAGS) AUTOTEST_PATH=$(exec_prefix)/bin
++installcheck-local: $(check_PROGRAMS)
++	$(SHELL) $(TESTSUITE) $(TESTSUITEFLAGS) AUTOTEST_PATH=/usr/gnu/bin
+ 
+ # Tell versions [3.59,3.63) of GNU make to not export all variables.
+ # Otherwise a system limit (for SysV at least) may be exceeded.
