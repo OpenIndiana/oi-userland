@@ -17,6 +17,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= totem-pl-parser
 COMPONENT_VERSION= 2.32.6
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= a library to parse playlist
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
