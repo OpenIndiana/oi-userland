@@ -16,6 +16,8 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gtkam
 COMPONENT_VERSION=	0.1.18
+# Version was bumped in JDS
+GIMP_GTKAM_VERSION=	2.30.0
 COMPONENT_PROJECT_URL=	http://libexif.sourceforge.net/
 COMPONENT_SUMMARY=	A GTK Digital Camera Viewing Tool
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -31,6 +33,8 @@ COMPONENT_LICENSE_FILE = COPYING
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
+
+PKG_MACROS += GIMP_GTKAM_VERSION=$(GIMP_GTKAM_VERSION)
 
 PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
 
