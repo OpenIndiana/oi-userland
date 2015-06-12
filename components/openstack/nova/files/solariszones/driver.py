@@ -421,19 +421,6 @@ class SolarisZonesDriver(driver.ComputeDriver):
         initiator_iqn = initiator_name_line.rsplit(' ', 1)[1]
         return initiator_iqn
 
-    def _get_zone_auto_install_state(self, zone_name):
-        """Returns the SMF state of the auto-installer service,
-           or None if auto-installer service is non-existent
-        """
-        try:
-            out, err = utils.execute('/usr/sbin/zlogin', '-S', zone_name,
-                                     '/usr/bin/svcs', '-H', '-o', 'state',
-                                     'auto-installer:default')
-            return out.strip()
-        except processutils.ProcessExecutionError as err:
-            # No auto-installer instance most likely.
-            return None
-
     def _get_zone_by_name(self, name):
         """Return a Solaris Zones object via RAD by name."""
         try:
