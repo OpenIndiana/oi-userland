@@ -108,16 +108,16 @@ diff -ruN ../a/openssl-0.9.8o/crypto/engine/Makefile openssl-0.9.8o/crypto/engin
 diff -ruN ../a/openssl-0.9.8o/crypto/engine/eng_all.c openssl-0.9.8o/crypto/engine/eng_all.c
 --- ../a/openssl-0.9.8o/crypto/engine/eng_all.c	2010-02-28 16:30:11.000000000 -0800
 +++ openssl-0.9.8o/crypto/engine/eng_all.c	2010-09-22 18:33:15.326949000 -0700
-@@ -72,6 +72,9 @@
- 	ENGINE_load_padlock();
+@@ -75,6 +75,9 @@
+     ENGINE_load_padlock();
  #endif
- 	ENGINE_load_dynamic();
+     ENGINE_load_dynamic();
 +#ifndef OPENSSL_NO_HW_PKCS11
-+	ENGINE_load_pk11();
++    ENGINE_load_pk11();
 +#endif
  #ifndef OPENSSL_NO_STATIC_ENGINE
- #ifndef OPENSSL_NO_HW
- #ifndef OPENSSL_NO_HW_4758_CCA
+ # ifndef OPENSSL_NO_HW
+ #  ifndef OPENSSL_NO_HW_4758_CCA
 diff -ruN ../a/openssl-0.9.8o/crypto/engine/engine.h openssl-0.9.8o/crypto/engine/engine.h
 --- ../a/openssl-0.9.8o/crypto/engine/engine.h	2010-02-09 06:18:15.000000000 -0800
 +++ openssl-0.9.8o/crypto/engine/engine.h	2010-09-22 18:32:19.063758100 -0700
