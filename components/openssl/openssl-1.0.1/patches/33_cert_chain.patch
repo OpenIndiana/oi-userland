@@ -63,19 +63,23 @@ $ cvs diff -u -r1.105.2.9.2.4.2.3 -r1.105.2.9.2.4.2.4 x509_vfy.c
  int X509_verify_cert(X509_STORE_CTX *ctx)
  {
      X509 *x, *xtmp, *chain_ss = NULL;
-@@ -303,9 +330,13 @@
-     }
- 
-     /* we now have our chain, lets check it... */
-+    i = check_trust(ctx);
+@@ -337,8 +364,17 @@
+         }
+     } while (retry);
  
 -    /* Is last certificate looked up self signed? */
 -    if (!ctx->check_issued(ctx, x, x)) {
++    i = check_trust(ctx);
++
 +    /* If explicitly rejected error */
 +    if (i == X509_TRUST_REJECTED)
-+              goto end;
-+    /* If not explicitly trusted then indicate error */
-+    if (i != X509_TRUST_TRUSTED) {
++        goto end;
++    /*
++     * If not explicitly trusted then indicate error unless it's a single
++     * self signed certificate in which case we've indicated an error already
++     * and set bad_chain == 1
++     */
++    if (i != X509_TRUST_TRUSTED && !bad_chain) {
          if ((chain_ss == NULL) || !ctx->check_issued(ctx, x, chain_ss)) {
              if (ctx->last_untrusted >= num)
                  ctx->error = X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT_LOCALLY;
@@ -195,12 +199,12 @@ $ cvs diff -u -r1.67.2.3.4.1 -r1.67.2.3.4.2 x509_vfy.h
 Index: openssl/apps/apps.c
 ============================================================================
 $ cvs diff -u -r1.133.2.11.2.6.2.3 -r1.133.2.11.2.6.2.4 apps.c
---- openssl-1.0.1m/apps/apps.c.~1~	2015-03-20 01:04:32.134975611 +0300
-+++ openssl-1.0.1m/apps/apps.c	2015-03-20 01:07:19.054555508 +0300
-@@ -2238,6 +2238,8 @@
-         flags |= X509_V_FLAG_NOTIFY_POLICY;
-     else if (!strcmp(arg, "-check_ss_sig"))
+--- openssl-1.0.1n/apps/apps.c.~1~	2015-06-12 11:07:06.887010159 +0300
++++ openssl-1.0.1n/apps/apps.c	2015-06-12 11:07:59.339344725 +0300
+@@ -2240,6 +2240,8 @@
          flags |= X509_V_FLAG_CHECK_SS_SIGNATURE;
+     else if (!strcmp(arg, "-no_alt_chains"))
+         flags |= X509_V_FLAG_NO_ALT_CHAINS;
 +    else if (!strcmp(arg, "-partial_chain"))
 +        flags |= X509_V_FLAG_PARTIAL_CHAIN;
      else
