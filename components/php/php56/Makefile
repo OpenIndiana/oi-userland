@@ -66,6 +66,10 @@ CONFIGURE_OPTIONS +=	--with-config-file-scan-dir=/etc/php/$(UL_PHP_MINOR_VERSION
 # Nor does PEAR (default: $PREFIX/lib/php)
 CONFIGURE_OPTIONS +=	--with-pear=/var/php/$(UL_PHP_MINOR_VERSION)/pear
 
+# Disable SSLv2 and SSLv3 for security reasons
+CFLAGS += -DOPENSSL_NO_SSL2
+CFLAGS += -DOPENSSL_NO_SSL3
+
 PROTOUSRPHPVERDIR = $(PROTO_DIR)/$(CONFIGURE_PREFIX)
 # Adapted from PHP 5.3 Makefile.
 # Creates alternate versions of the scripts needed for building extensions
