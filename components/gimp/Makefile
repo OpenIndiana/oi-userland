@@ -15,7 +15,7 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gimp
-COMPONENT_VERSION=	2.6.12
+COMPONENT_VERSION=	2.8.14
 COMPONENT_PROJECT_URL=	http://www.gimp.org/
 COMPONENT_SUMMARY=	The Gimp image editor
 COMPONENT_FMRI=		image/editor/gimp
@@ -23,8 +23,8 @@ COMPONENT_CLASSIFICATION=	Applications/Graphics and Imaging
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:d553c9f1c07f59fa7b7ce9cc5f84ce59bf4e9dfb5b6ee4bd8718b74b947aec62
-COMPONENT_ARCHIVE_URL=	http://download.gimp.org/pub/gimp/v2.6/$(COMPONENT_ARCHIVE)
+    sha256:d82a958641c9c752d68e35f65840925c08e314cea90222ad845892a40e05b22d
+COMPONENT_ARCHIVE_URL=	http://download.gimp.org/pub/gimp/v2.8/$(COMPONENT_ARCHIVE)
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
@@ -47,13 +47,14 @@ CONFIGURE_OPTIONS+=	--localstatedir=/var/lib
 CONFIGURE_OPTIONS+=	--enable-mp
 CONFIGURE_OPTIONS+=	--enable-default-binary
 CONFIGURE_OPTIONS+=	--enable-mmx=no
+#CONFIGURE_OPTIONS+=	--enable-glibtest=no
 
 # common targets
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
 
-test:		$(NO_TESTS)
+test:		$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
