@@ -26,11 +26,9 @@ install-xsl:
 	cp htmlhelp/*.xsl $(DESTDIR)/htmlhelp
 	cp javahelp/*.xsl $(DESTDIR)/javahelp
 	cp lib/lib.xsl $(DESTDIR)/lib
-	cp template/README $(DESTDIR)/template
 	cp template/*.xml $(DESTDIR)/template
 	cp template/*.xsl $(DESTDIR)/template
 	cp xhtml/*.xsl $(DESTDIR)/xhtml
-	cp manpages/README $(DESTDIR)/manpages
 	cp manpages/*.xsl $(DESTDIR)/manpages
 	cp profiling/*.xsl $(DESTDIR)/profiling
 
