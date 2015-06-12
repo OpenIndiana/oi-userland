@@ -34,9 +34,6 @@ COMPONENT_BUGDB=	utility/tcpdump
 
 TPNO=			22949
 
-# Some tcpdump tests require GCC compiler
-COMPILER=gcc
-
 # Prevent macro redefinition error 
 CFLAGS += -D _NETINET_IP_H
 
