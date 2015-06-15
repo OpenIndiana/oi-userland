@@ -32,18 +32,18 @@ endif
 COMPONENT_NAME =	openssl-fips-140
 # Note that this is the OpenSSL version that is used to build FIPS-140 certified
 # libraries. However, we use the FIPS canister version for the IPS package.
-COMPONENT_VERSION =	1.0.1m
+COMPONENT_VERSION =	1.0.1o
 IPS_COMPONENT_VERSION = 2.0.6
 COMPONENT_PROJECT_URL=	http://www.openssl.org/
 COMPONENT_SRC_NAME =	openssl
 COMPONENT_SRC =		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:095f0b7b09116c0c5526422088058dc7e6e000aa14d22acca6a4e2babcdfef74
+    sha256:16e678c6a05f2502811e075f2c4059ac01c878d091c9c585afc49ebc541f7b13
 COMPONENT_ARCHIVE_URL =	$(COMPONENT_PROJECT_URL)source/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/openssl
 
-TPNO=			21965
+TPNO=			23126
 
 # Clone the patch files to the patches-all dir.
 # COPY_COMMON_FILES is there so that rsync is called as soon as
