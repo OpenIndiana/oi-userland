@@ -23,14 +23,15 @@
 # Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
-set name=pkg.fmri \
-    value=pkg:/release/pre-release@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="pre-release license meta-package"
-set name=pkg.description value="This package contains the pre-release license."
-set name=pkg.linted.userland.manifest001.0 value=true
-set name=com.oracle.info.description value="pre-release license meta-package"
-set name=info.classification value=org.opensolaris.category.2008:System/Core
-set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-file pre-release.license path=etc/notices/pre-release
-license pre-release.license license=pre-release must-accept=true \
-    must-display=true
+include ../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/prep.mk
+
+COMPONENT_NAME=		evaluation
+COMPONENT_VERSION=	1.0
+COMPONENT_BUGDB=	gate-stuff/userland
+
+ifneq ($(BUILD_TYPE), evaluation)
+PUBLISH_STAMP=
+endif
+
+include $(WS_MAKE_RULES)/ips.mk

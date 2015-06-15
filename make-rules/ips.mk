@@ -90,11 +90,11 @@ PUBLISH_TRANSFORMS +=	$(PKGMOGRIFY_TRANSFORMS)
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/incorporate
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/publish-cleanup
 
-# If we are building "pre-release" packages, add the pre-release license
+# If we are building "evaluation" packages, add the evaluation license
 # action so that the package(s) display the terms and require acceptance
 # to install.
-ifeq ($(BUILD_TYPE),pre-release)
-PUBLISH_TRANSFORMS += $(WS_TOP)/transforms/pre-release
+ifeq ($(BUILD_TYPE),evaluation)
+PUBLISH_TRANSFORMS += $(WS_TOP)/transforms/evaluation
 endif
 
 PKG_MACROS +=		MACH=$(MACH)
@@ -133,7 +133,7 @@ MANGLED_DIR =	$(PROTO_DIR)/mangled
 # We use += below so anyone wishing to put other directories at the beginning
 # of the list can do so, by setting PKG_PROTO_DIRS before including this file.
 # So don't change += to = here or components that use this will break.
-PKG_PROTO_DIRS += $(MANGLED_DIR) $(PROTO_DIR) $(@D) $(COMPONENT_DIR) $(COMPONENT_SRC)
+PKG_PROTO_DIRS += $(MANGLED_DIR) $(PROTO_DIR) $(@D) $(COMPONENT_DIR) $(COMPONENT_SRC) $(WS_LICENSES)
 
 MANIFEST_BASE =		$(BUILD_DIR)/manifest-$(MACH)
 

@@ -55,6 +55,7 @@ WS_REPO =	$(WS_MACH)/repo
 WS_TOOLS =	$(WS_TOP)/tools
 WS_MAKE_RULES =	$(WS_TOP)/make-rules
 WS_COMPONENTS =	$(WS_TOP)/components
+WS_LICENSES =	$(WS_TOP)/licenses
 WS_INCORPORATIONS =	$(WS_TOP)/incorporations
 WS_LINT_CACHE =	$(WS_MACH)/pkglint-cache
 
@@ -79,9 +80,9 @@ export LC_ALL=C
 
 SHELL=	/bin/bash
 
-# If we are building "pre-release" software for the Solaris release repository
+# If we are building "evaluation" software for the Solaris release repository
 # we want the PUBLISHER to be "solaris".
-ifeq ($(BUILD_TYPE),pre-release)
+ifeq ($(BUILD_TYPE),evaluation)
 PUBLISHER = solaris
 endif
 
