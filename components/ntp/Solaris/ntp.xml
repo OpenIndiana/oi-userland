@@ -20,7 +20,7 @@
 
  CDDL HEADER END
 
- Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
+ Copyright (c) 2009, 2015, Oracle and/or its affiliates. All rights reserved.
 
  NOTE:  This service manifest is not editable; its contents will
  be overwritten by package or patch operations, including
@@ -35,7 +35,7 @@
 	type='service'
 	version='1'>
 	<single_instance />
-	<dependency 
+	<dependency
 		name='network'
 		grouping='require_any'
 		restart_on='error'
@@ -112,53 +112,58 @@
 	<instance name="default" enabled="false">
 		<property_group name='config' type='application' >
 			<!-- default property settings for ntpd(1M). -->
-		
+
 			<propval
 			    name='wait_for_sync'
 			    type='boolean'
 			    value='false' />
-		
+
 			<propval
 			    name='no_auth_required'
 			    type='boolean'
 			    value='false' />
-		
+
 			<propval
 			    name='verbose_logging'
 			    type='boolean'
 			    value='false' />
-	
+
 			<propval
 			    name='slew_always'
 			    type='boolean'
 			    value='false' />
-	
+
+			<propval
+			    name='allow_step_at_boot'
+			    type='boolean'
+			    value='true' />
+
 			<propval
 			    name='always_allow_large_step'
 			    type='boolean'
 			    value='true' />
-	
+
 			<propval
 			    name='logfile'
 			    type='astring'
 			    value='/var/ntp/ntp.log' />
-		
+
 			<propval
 			    name='debuglevel'
 			    type='integer'
 			    value='0' />
-	
+
 			<propval
 			    name='mdnsregister'
 			    type='boolean'
 			    value='false' />
-	
+
 			<!-- to change properties -->
 			<propval
 			    name='value_authorization'
 			    type='astring'
 			    value='solaris.smf.value.ntp' />
-		
+
 		</property_group>
 	</instance>
 	<stability value='Unstable' />

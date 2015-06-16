@@ -18,7 +18,7 @@
 .\"
 .\" CDDL HEADER END
 .\"
-.\" Copyright (c) 2009, 2014, Oracle and/or its affiliates. All rights reserved.
+.\" Copyright (c) 2009, 2015, Oracle and/or its affiliates. All rights reserved.
 .\"
 .TH "ntpd" "1M" "" "" "System Administration Commands"
 .SH NAME
@@ -282,6 +282,13 @@ the nework is secure and all the systems on it are trusted. The default is false
 A boolean which when true, instructs ntpd to slew the clock as much as possible, instead of stepping the clock. It 
 does not prevent all stepping, but increases the threshold above which stepping is used. It also disables the use
 of the kernel \fBNTP\fP facility, which is incompatible with long slew times. The default is false.
+.TP
+.BR config/allow_step_at_boot
+A boolean which when true, allows ntpd to step the clock once at boot, even if slew_always is true. Normally
+when slew_always is true ntpd will not step the clock except for very large offsets. Since the intial offset
+when the system is booted could be large and no applications will be running yet, this option allows one step
+as soon as the offset is determined. If slew_always is false or if the \fBNTP\fP service is being restarted, then
+this option has no effect. The default is true.
 .TP
 .BR config/wait_for_sync
 A boolean which when true, causes the \fBNTP\fP service to delay coming completely on-line until after the first 

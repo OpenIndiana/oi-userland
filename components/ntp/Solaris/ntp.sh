@@ -21,7 +21,7 @@
 #
 
 #
-# Copyright (c) 2009, 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2009, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 # Standard prolog
@@ -52,7 +52,7 @@ set -f
 shift $#
 set -- -p /var/run/ntp.pid
 # We allow a step larger than the panic value of 17 minutes only 
-# once when ntpd starts up. If always_all_large_step is true, 
+# once when ntpd starts up. If always_allow_large_step is true, 
 # then we allow this each time ntpd starts. Otherwise, we allow
 # it only the very first time ntpd starts after a boot. We 
 # check that by making ntpd write its pid to a file in /var/run.
@@ -86,17 +86,30 @@ mdns=`svcprop -c -p general/enabled svc:/network/dns/multicast:default`
 
 # We used to support the slewalways keyword, but that was a Sun thing
 # and not in V4. Look for "slewalways yes" and set the new slew option.
-val=`svcprop -c -p config/slew_always $SMF_FMRI`
-if [ ! "$val" = "true" ]; then
-	val=`/usr/bin/nawk '/^[ \t]*#/{next}
+slew_always=`svcprop -c -p config/slew_always $SMF_FMRI`
+if [ ! "$slew_always" = "true" ]; then
+	slew_always=`/usr/bin/nawk '/^[ \t]*#/{next}
 	    /^[ \t]*slewalways[ \t]+yes/ {
         	printf("true", $2)
         	next } ' /etc/inet/ntp.conf`
 fi
-[ "$val" = "true" ] && set -- "$@" --slew
+[ "$slew_always" = "true" ] && set -- "$@" --slew
 
 # Set up debugging.
 deb=`svcprop -c -p config/debuglevel $SMF_FMRI`
+
+# If slew_always is set to true, then the large offset after a reboot
+# might take a very long time to correct the clock. Optionally allow
+# a step once after a reboot if slew_always is set when allow_step_at_boot
+# is also set. Unfortunately ntpd in ntpdate mode is a little too 
+# chatty, so direct the log to /dev/null. And since the offset might be
+# more than 17 minutes, allow larger steps with the "-g".
+#
+val=`svcprop -c -p config/allow_step_at_boot $SMF_FMRI`
+if [ "$val" = "true" ] && [ "$slew_always" = "true" ] && \
+    [ ! -f /var/run/ntp.pid ]; then
+	/usr/lib/inet/ntpd -q -l /dev/null -g
+fi
 
 # Start the daemon. If debugging is requested, put it in the background, 
 # since it won't do it on it's own.

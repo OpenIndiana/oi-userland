@@ -51,6 +51,8 @@ include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 CFLAGS +=	$(studio_C99_ENABLE) -D_XOPEN_SOURCE=600 -D__EXTENSIONS__
+CFLAGS.i386 =	-preserve_argvalues=complete
+CFLAGS +=	$(CFLAGS.$(MACH))
 
 CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	--bindir=/usr/sbin
