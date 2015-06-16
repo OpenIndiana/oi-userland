@@ -1,0 +1,70 @@
+CVE-2014-3669
+Community BUG:
+https://bugs.php.net/bug.php?id=68044
+Community CODE:
+http://git.php.net/?p=php-src.git;a=commit;h=56754a7f9eba0e4f559b6ca081d9f2a447b3f159
+Below is the community patch.
+
+
+
+From 56754a7f9eba0e4f559b6ca081d9f2a447b3f159 Mon Sep 17 00:00:00 2001
+From: Stanislav Malyshev <stas@php.net>
+Date: Sun, 28 Sep 2014 14:19:31 -0700
+Subject: [PATCH] Fixed bug #68044: Integer overflow in unserialize() (32-bits
+ only)
+
+---
+ NEWS                                       |  5 ++++-
+ ext/standard/tests/serialize/bug68044.phpt | 12 ++++++++++++
+ ext/standard/var_unserializer.c            |  4 ++--
+ ext/standard/var_unserializer.re           |  2 +-
+ 4 files changed, 19 insertions(+), 4 deletions(-)
+ create mode 100644 ext/standard/tests/serialize/bug68044.phpt
+
+diff --git a/ext/standard/tests/serialize/bug68044.phpt b/ext/standard/tests/serialize/bug68044.phpt
+new file mode 100644
+index 0000000..031e44e
+--- /dev/null
++++ b/ext/standard/tests/serialize/bug68044.phpt
+@@ -0,0 +1,12 @@
++--TEST--
++Bug #68044 Integer overflow in unserialize() (32-bits only)
++--FILE--
++<?php
++	echo unserialize('C:3:"XYZ":18446744075857035259:{}');
++?>
++===DONE==
++--EXPECTF--
++Warning: Insufficient data for unserializing - %d required, 1 present in %s/bug68044.php on line 2
++
++Notice: unserialize(): Error at offset 32 of 33 bytes in %s/bug68044.php on line 2
++===DONE==
+diff --git a/ext/standard/var_unserializer.c b/ext/standard/var_unserializer.c
+index 657051f..8129da3 100644
+--- a/ext/standard/var_unserializer.c
++++ b/ext/standard/var_unserializer.c
+@@ -372,7 +372,7 @@ static inline int object_custom(UNSERIALIZE_PARAMETER, zend_class_entry *ce)
+ 
+ 	(*p) += 2;
+ 
+-	if (datalen < 0 || (*p) + datalen >= max) {
++	if (datalen < 0 || (max - (*p)) <= datalen) {
+ 		zend_error(E_WARNING, "Insufficient data for unserializing - %ld required, %ld present", datalen, (long)(max - (*p)));
+ 		return 0;
+ 	}
+diff --git a/ext/standard/var_unserializer.re b/ext/standard/var_unserializer.re
+index 1307508..6de1583 100644
+--- a/ext/standard/var_unserializer.re
++++ b/ext/standard/var_unserializer.re
+@@ -376,7 +376,7 @@ static inline int object_custom(UNSERIALIZE_PARAMETER, zend_class_entry *ce)
+ 
+ 	(*p) += 2;
+ 
+-	if (datalen < 0 || (*p) + datalen >= max) {
++	if (datalen < 0 || (max - (*p)) <= datalen) {
+ 		zend_error(E_WARNING, "Insufficient data for unserializing - %ld required, %ld present", datalen, (long)(max - (*p)));
+ 		return 0;
+ 	}
+-- 
+2.1.4
+

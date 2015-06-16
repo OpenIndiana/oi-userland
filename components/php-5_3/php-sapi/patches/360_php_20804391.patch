@@ -1,0 +1,34 @@
+CVE-2015-2348
+Community BUG:
+https://bugs.php.net/bug.php?id=69207
+Community CODE:
+http://git.php.net/?p=php-src.git;a=commit;h=1291d6bbee93b6109eb07e8f7916ff1b7fcc13e1
+Below is the community patch.
+
+
+From 1291d6bbee93b6109eb07e8f7916ff1b7fcc13e1 Mon Sep 17 00:00:00 2001
+From: Stanislav Malyshev <stas@php.net>
+Date: Tue, 17 Mar 2015 12:47:58 -0700
+Subject: [PATCH] Fix bug #69207 - move_uploaded_file allows nulls in path
+
+---
+ NEWS                           | 3 +++
+ ext/standard/basic_functions.c | 2 +-
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/ext/standard/basic_functions.c b/ext/standard/basic_functions.c
+index 9a9df30..c3e2230 100644
+--- a/ext/standard/basic_functions.c
++++ b/ext/standard/basic_functions.c
+@@ -5775,7 +5775,7 @@ PHP_FUNCTION(move_uploaded_file)
+ 		RETURN_FALSE;
+ 	}
+ 
+-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss", &path, &path_len, &new_path, &new_path_len) == FAILURE) {
++	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sp", &path, &path_len, &new_path, &new_path_len) == FAILURE) {
+ 		return;
+ 	}
+ 
+-- 
+2.1.4
+

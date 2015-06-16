@@ -1,0 +1,22 @@
+CVE-2015-1351
+Community BUG:
+https://bugs.php.net/bug.php?id=68677
+Community CODE:
+http://git.php.net/?p=php-src.git;a=commit;h=777c39f4042327eac4b63c7ee87dc1c7a09a3115
+This patch was created from the community reports above.
+
+
+--- zendopcache-7.0.2/zend_shared_alloc.c_orig	2015-06-10 13:25:02.003036264 -0700
++++ zendopcache-7.0.2/zend_shared_alloc.c	2015-06-10 13:25:50.714271495 -0700
+@@ -346,10 +346,10 @@
+ 	retval = ZCG(mem);;
+ 	ZCG(mem) = (void*)(((char*)ZCG(mem)) + ZEND_ALIGNED_SIZE(size));
+ 	memcpy(retval, source, size);
++	zend_shared_alloc_register_xlat_entry(source, retval);
+ 	if (free_source) {
+ 		interned_efree((char*)source);
+ 	}
+-	zend_shared_alloc_register_xlat_entry(source, retval);
+ 	return retval;
+ }
+ 
