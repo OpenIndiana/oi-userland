@@ -128,6 +128,7 @@ CXXFLAGS_GENERIC = -library=Cstd -library=Crun -norunpath
 CXXFLAGS_GENERIC += -Qoption ccfe ++boolflag:sunwcch=false
 CXXFLAGS_GENERIC += -Qoption ccfe +d2,-xgeninl=system
 CXXFLAGS_GENERIC += -Qoption ccfe -expand=10000
+CXXFLAGS_GENERIC += -Qoption ccfe -abiopt=mangle6
 CXXFLAGS_GENERIC += -features=except,rtti,export,extensions,nestedaccess,tmplife,tmplrefstatic
 CXXFLAGS_GENERIC += -instances=global
 CXXFLAGS_GENERIC += $(TEMPLATE_FLAGS)

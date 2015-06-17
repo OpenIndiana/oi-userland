@@ -1,0 +1,24 @@
+# Internal patch for Studio C++ 12.4.
+# The upstream project at the ASF is defunct.
+--- stdcxx-4.2.1/include/rw/_config-sunpro.h    Mon Apr  6 12:06:23 2015
++++ stdcxx-4.2.1/include/rw/_config-sunpro.h Tue Apr  7 14:35:34 2015
+@@ -63,3 +63,8 @@
+ #  define _RWSTD_STRICT_SPARCV8_MUTEX_ALIGNMENT 1
+ #endif
+
++#if defined(_TEMPLATE_NO_EXTDEF)
++#undef _RWSTD_NO_IMPLICIT_INCLUSION
++#define _RWSTD_NO_IMPLICIT_INCLUSION
++#endif
++
+--- stdcxx-4.2.1/include/loc/_numpunct.h	Mon Mar 30 23:03:58 2015
++++ stdcxx-4.2.1/include/loc/_numpunct.h	Wed Apr  1 23:04:38 2015
+@@ -84,7 +84,7 @@
+ 
+ protected:
+ 
+-    virtual ~numpunct () { }
++    virtual ~numpunct () ;
+ 
+     // 22.2.3.1.2, p1
+     virtual char_type do_decimal_point () const {
