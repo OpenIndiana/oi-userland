@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 1i\
 '\\" t\
@@ -56,4 +56,17 @@ may be linked from /usr/bin/ruby if the package mediator "ruby" is version \
 "RUBY_VER" (see pkg(1)). \
 Also contains executables for any installed gems that have them (i.e.: thin,\
 rails, etc). \
+.Sh NOTES\
+Ruby 1.9 may be removed in a future update.\
+Please migrate to a newer version.\
+.sp\
+If it is desired to keep the obsolete version of Ruby\
+then it should be frozen to prevent its removal by a future update.\
+.sp\
+.in +2\
+pkg freeze 'runtime/ruby-19*'\
+pkg change-facet --no-backup-be 'version-lock.runtime/ruby-19*=False'\
+.in -2\
+.sp\
+Please note that the freezing of packages may yield an unsupportable system so use with caution.\
 \.\\" End Oracle update
