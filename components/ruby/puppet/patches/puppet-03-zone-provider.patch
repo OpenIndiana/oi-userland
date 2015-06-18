@@ -1,8 +1,8 @@
 Enhance the zone provider to configure zones using a zonecfg export file format.
-Enhance the output of puppet resource zone, and fix zone clone functionality.
+Enhance the output of puppet resource zone, and fix zone clone functionality, which omitted '-c'.
 
---- puppet-3.6.2/lib/puppet/provider/zone/solaris.rb.orig	2014-06-18 09:28:43.538680821 -0600
-+++ puppet-3.6.2/lib/puppet/provider/zone/solaris.rb	2014-06-16 10:47:24.834849592 -0600
+--- puppet-3.6.2/lib/puppet/provider/zone/solaris.rb.~1~	2014-06-09 14:08:19.000000000 -0700
++++ puppet-3.6.2/lib/puppet/provider/zone/solaris.rb	2015-06-11 12:57:24.736534091 -0700
 @@ -1,5 +1,5 @@
  Puppet::Type.type(:zone).provide(:solaris) do
 -  desc "Provider for Solaris Zones."
@@ -153,7 +153,7 @@ Enhance the output of puppet resource zone, and fix zone clone functionality.
 +      end
      end
 -  end
- 
+-
 -  def my_properties
 -    [:path, :iptype, :autoboot, :pool, :shares, :ip, :dataset, :inherit]
 -  end
@@ -162,7 +162,7 @@ Enhance the output of puppet resource zone, and fix zone clone functionality.
 -  def configure
 -    self.fail "Path is required" unless @resource[:path]
 -    arr = ["create -b #{@resource[:create_args]}"]
--
+ 
 -    # Then perform all of our configuration steps.  It's annoying
 -    # that we need this much internal info on the resource.
 -    self.resource.properties.each do |property|
@@ -187,7 +187,7 @@ Enhance the output of puppet resource zone, and fix zone clone functionality.
    def exists?
      properties[:ensure] != :absent
    end
-@@ -138,31 +93,31 @@
+@@ -138,31 +93,35 @@
    # We cannot use the execpipe in util because the pipe is not opened in
    # read/write mode.
    def exec_cmd(var)
@@ -234,12 +234,16 @@ Enhance the output of puppet resource zone, and fix zone clone functionality.
      if @resource[:clone] # TODO: add support for "-s snapshot"
 -      zoneadm :clone, @resource[:clone]
 -    elsif @resource[:install_args]
-+      zoneadm :clone, @resource[:clone] 
++      if @resource[:config_profile]
++        zoneadm :clone, @resource[:install_args].split(" "), @resource[:clone]
++      else
++        zoneadm :clone, @resource[:clone]
++      end
 +    elsif @resource[:install_args] 
        zoneadm :install, @resource[:install_args].split(" ")
      else
        zoneadm :install
-@@ -182,11 +137,12 @@
+@@ -182,11 +141,12 @@
        end
      end
      @property_hash.dup
@@ -253,7 +257,7 @@ Enhance the output of puppet resource zone, and fix zone clone functionality.
      hash = status
      return false unless hash
      ["incomplete", "ready", "shutting_down"].include? hash[:ensure]
-@@ -214,7 +170,6 @@
+@@ -214,7 +174,6 @@
    #
    def getconfig
      output = zonecfg :info
@@ -261,7 +265,7 @@ Enhance the output of puppet resource zone, and fix zone clone functionality.
      name = nil
      current = nil
      hash = {}
-@@ -244,14 +199,9 @@
+@@ -244,14 +203,9 @@
      hash
    end
  
@@ -277,7 +281,7 @@ Enhance the output of puppet resource zone, and fix zone clone functionality.
      if cfg = @resource[:sysidcfg]
        self.fail "Path is required" unless @resource[:path]
        zoneetc = File.join(@resource[:path], "root", "etc")
-@@ -272,7 +222,9 @@
+@@ -272,7 +226,9 @@
          end
        end
      end
@@ -287,7 +291,7 @@ Enhance the output of puppet resource zone, and fix zone clone functionality.
      zoneadm :boot
    end
  
-@@ -285,64 +237,35 @@
+@@ -285,64 +241,35 @@
      end
  
      main = self.class.line2hash(output.chomp)
