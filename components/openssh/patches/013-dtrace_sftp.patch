@@ -4,9 +4,10 @@
 # Because this is Solaris-specific and not suitable for upstream, we will not
 # contribute the changes to the upstream community.
 #
---- orig/Makefile.in	Wed Apr 16 17:10:03 2014
-+++ new/Makefile.in	Wed Apr 23 11:00:05 2014
-@@ -26,6 +26,7 @@
+diff -pur old/Makefile.in new/Makefile.in
+--- old/Makefile.in	2015-03-28 14:10:39.426859283 +0100
++++ new/Makefile.in	2015-03-28 14:16:12.472203388 +0100
+@@ -26,6 +26,7 @@ ASKPASS_PROGRAM=$(libexecdir)/ssh-askpas
  SFTP_SERVER=$(libexecdir)/sftp-server
  SSH_KEYSIGN=$(libexecdir)/ssh-keysign
  SSH_PKCS11_HELPER=$(libexecdir)/ssh-pkcs11-helper
@@ -14,17 +15,15 @@
  PRIVSEP_PATH=@PRIVSEP_PATH@
  SSH_PRIVSEP_USER=@SSH_PRIVSEP_USER@
  STRIP_OPT=@STRIP_OPT@
-@@ -76,7 +76,8 @@
- 	jpake.o schnorr.o ssh-pkcs11.o krl.o smult_curve25519_ref.o \
- 	kexc25519.o kexc25519c.o poly1305.o chacha.o cipher-chachapoly.o \
- 	ssh-ed25519.o digest.o \
--	sc25519.o ge25519.o fe25519.o ed25519.o verify.o hash.o blocks.o
-+	sc25519.o ge25519.o fe25519.o ed25519.o verify.o hash.o blocks.o \
-+	sftp_provider.o
- 
- SSHOBJS= ssh.o readconf.o clientloop.o sshtty.o \
- 	sshconnect.o sshconnect1.o sshconnect2.o mux.o \
-@@ -96,7 +97,7 @@
+@@ -85,6 +86,7 @@ LIBSSH_OBJS=${LIBOPENSSH_OBJS} \
+ 	atomicio.o key.o dispatch.o mac.o uidswap.o uuencode.o misc.o \
+ 	monitor_fdpass.o rijndael.o ssh-dss.o ssh-ecdsa.o ssh-rsa.o dh.o \
+ 	msg.o progressmeter.o dns.o entropy.o gss-genr.o umac.o umac128.o \
++	sftp_provider.o \
+ 	ssh-pkcs11.o smult_curve25519_ref.o \
+ 	poly1305.o chacha.o cipher-chachapoly.o \
+ 	ssh-ed25519.o digest-openssl.o digest-libc.o hmac.o \
+@@ -110,7 +112,7 @@ SSHDOBJS=sshd.o auth-rhosts.o auth-passw
  	sftp-server.o sftp-common.o \
  	roaming_common.o roaming_serv.o \
  	sandbox-null.o sandbox-rlimit.o sandbox-systrace.o sandbox-darwin.o \
@@ -33,7 +32,7 @@
  
  MANPAGES	= moduli.5.out scp.1.out ssh-add.1.out ssh-agent.1.out ssh-keygen.1.out ssh-keyscan.1.out ssh.1.out sshd.8.out sftp-server.8.out sftp.1.out ssh-keysign.8.out ssh-pkcs11-helper.8.out sshd_config.5.out ssh_config.5.out
  MANPAGES_IN	= moduli.5 scp.1 ssh-add.1 ssh-agent.1 ssh-keygen.1 ssh-keyscan.1 ssh.1 sshd.8 sftp-server.8 sftp.1 ssh-keysign.8 ssh-pkcs11-helper.8 sshd_config.5 ssh_config.5
-@@ -173,8 +174,8 @@
+@@ -187,8 +189,8 @@ ssh-pkcs11-helper$(EXEEXT): $(LIBCOMPAT)
  ssh-keyscan$(EXEEXT): $(LIBCOMPAT) libssh.a ssh-keyscan.o roaming_dummy.o
  	$(LD) -o $@ ssh-keyscan.o roaming_dummy.o $(LDFLAGS) -lssh -lopenbsd-compat -lssh $(LIBS)
  
@@ -44,7 +43,7 @@
  
  sftp$(EXEEXT): $(LIBCOMPAT) libssh.a sftp.o sftp-client.o sftp-common.o sftp-glob.o progressmeter.o
  	$(LD) -o $@ progressmeter.o sftp.o sftp-client.o sftp-common.o sftp-glob.o $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS) $(LIBEDIT)
-@@ -211,9 +212,18 @@
+@@ -225,9 +227,18 @@ umac128.o:	umac.c
  	    -Dumac_update=umac128_update -Dumac_final=umac128_final \
  	    -Dumac_delete=umac128_delete
  
@@ -55,16 +54,16 @@
 +
 +sftp_provider.o: sftp_provider.d sftp_provider.h sftp-server.o
 +	/usr/sbin/dtrace -G -64 -xnolibs -s $(srcdir)/sftp_provider.d \
-+            sftp-server.o -o sftp_provider.o
++	    sftp-server.o -o sftp_provider.o
 +
  clean:	regressclean
  	rm -f *.o *.a $(TARGETS) logintest config.cache config.log
 -	rm -f *.out core survey
 +	rm -f *.out core survey sftp_provider.h
- 	(cd openbsd-compat && $(MAKE) clean)
- 
- distclean:	regressclean
-@@ -313,6 +314,7 @@
+ 	rm -f regress/unittests/test_helper/*.a
+ 	rm -f regress/unittests/test_helper/*.o
+ 	rm -f regress/unittests/sshbuf/*.o
+@@ -340,6 +351,7 @@ install-files:
  	ln -s ./ssh$(EXEEXT) $(DESTDIR)$(bindir)/slogin
  	-rm -f $(DESTDIR)$(mandir)/$(mansubdir)1/slogin.1
  	ln -s ./ssh.1 $(DESTDIR)$(mandir)/$(mansubdir)1/slogin.1
@@ -72,9 +71,10 @@
  
  install-sysconf:
  	if [ ! -d $(DESTDIR)$(sysconfdir) ]; then \
---- orig/sftp-server.c	Wed Apr 16 18:44:37 2014
-+++ new/sftp-server.c	Thu Apr 17 11:53:54 2014
-@@ -51,6 +51,9 @@
+diff -pur old/sftp-server.c new/sftp-server.c
+--- old/sftp-server.c	2015-03-17 06:49:20.000000000 +0100
++++ new/sftp-server.c	2015-03-28 14:27:55.661510029 +0100
+@@ -55,6 +55,9 @@
  
  #include "sftp.h"
  #include "sftp-common.h"
@@ -82,34 +82,29 @@
 +#include "sftp_provider_impl.h"
 +#endif
  
- /* helper */
- #define get_int64()			buffer_get_int64(&iqueue);
-@@ -721,13 +724,24 @@
+ /* Our verbosity */
+ static LogLevel log_level = SYSLOG_LEVEL_ERROR;
+@@ -741,14 +744,17 @@ process_read(u_int32_t id)
  	u_int32_t len;
- 	int handle, fd, ret, status = SSH2_FX_FAILURE;
+ 	int r, handle, fd, ret, status = SSH2_FX_FAILURE;
  	u_int64_t off;
-+#ifdef DTRACE_SFTP
 +	char *fpath;
-+#endif
  
- 	handle = get_handle();
- 	off = get_int64();
- 	len = get_int();
-+#ifdef DTRACE_SFTP
+ 	if ((r = get_handle(iqueue, &handle)) != 0 ||
+ 	    (r = sshbuf_get_u64(iqueue, &off)) != 0 ||
+ 	    (r = sshbuf_get_u32(iqueue, &len)) != 0)
+ 		fatal("%s: buffer error: %s", __func__, ssh_err(r));
+ 
+-	debug("request %u: read \"%s\" (handle %d) off %llu len %d",
+-	    id, handle_to_name(handle), handle, (unsigned long long)off, len);
 +	fpath = handle_to_name(handle);
-+#endif
- 
-+#ifdef DTRACE_SFTP
- 	debug("request %u: read \"%s\" (handle %d) off %llu len %d",
++ 
++ 	debug("request %u: read \"%s\" (handle %d) off %llu len %d",
 +	    id, fpath, handle, (unsigned long long)off, len);
-+#else
-+	debug("request %u: read \"%s\" (handle %d) off %llu len %d",
- 	    id, handle_to_name(handle), handle, (unsigned long long)off, len);
-+#endif
  	if (len > sizeof buf) {
  		len = sizeof buf;
  		debug2("read change len %d", len);
-@@ -738,7 +752,13 @@
+@@ -759,7 +765,13 @@ process_read(u_int32_t id)
  			error("process_read: seek failed");
  			status = errno_to_portable(errno);
  		} else {
@@ -123,31 +118,25 @@
  			if (ret < 0) {
  				status = errno_to_portable(errno);
  			} else if (ret == 0) {
-@@ -761,13 +781,22 @@
- 	u_int len;
- 	int handle, fd, ret, status;
- 	char *data;
-+#ifdef DTRACE_SFTP
+@@ -782,14 +794,16 @@ process_write(u_int32_t id)
+ 	size_t len;
+ 	int r, handle, fd, ret, status;
+ 	u_char *data;
 +	char *fpath;
-+#endif
  
- 	handle = get_handle();
- 	off = get_int64();
- 	data = get_string(&len);
--
-+#ifdef DTRACE_SFTP
+ 	if ((r = get_handle(iqueue, &handle)) != 0 ||
+ 	    (r = sshbuf_get_u64(iqueue, &off)) != 0 ||
+ 	    (r = sshbuf_get_string(iqueue, &data, &len)) != 0)
+ 		fatal("%s: buffer error: %s", __func__, ssh_err(r));
+ 
 +	fpath = handle_to_name(handle);
- 	debug("request %u: write \"%s\" (handle %d) off %llu len %d",
+ 	debug("request %u: write \"%s\" (handle %d) off %llu len %zu",
+-	    id, handle_to_name(handle), handle, (unsigned long long)off, len);
 +	    id, fpath, handle, (unsigned long long)off, len);
-+#else
-+	debug("request %u: write \"%s\" (handle %d) off %llu len %d",
- 	    id, handle_to_name(handle), handle, (unsigned long long)off, len);
-+#endif
-+
  	fd = handle_to_fd(handle);
- 	
+ 
  	if (fd < 0)
-@@ -779,7 +808,14 @@
+@@ -801,7 +815,14 @@ process_write(u_int32_t id)
  			error("process_write: seek failed");
  		} else {
  /* XXX ATOMICIO ? */

@@ -20,74 +20,10 @@
 # An additional patch relying on the --with-audit=solaris configuration
 #  should/will be created for sftp Solaris Audit and password change.
 #
---- orig/config.h.in	2014-11-05 13:11:59.968745838 -0800
-+++ new/config.h.in	2014-10-13 14:00:31.117475979 -0700
-@@ -1628,6 +1628,9 @@
- /* Use Linux audit module */
- #undef USE_LINUX_AUDIT
- 
-+/* Use Solaris audit module */
-+#undef USE_SOLARIS_AUDIT
-+
- /* Enable OpenSSL engine support */
- #undef USE_OPENSSL_ENGINE
- 
---- orig/configure	2014-11-05 13:11:59.971959419 -0800
-+++ new/configure	2014-12-04 08:43:59.945675841 -0800
-@@ -1420,7 +1420,7 @@
-   --with-tcp-wrappers[=PATH] Enable tcpwrappers support (optionally in PATH)
-   --with-ldns[=PATH]      Use ldns for DNSSEC support (optionally in PATH)
-   --with-libedit[=PATH]   Enable libedit support for sftp
--  --with-audit=module     Enable audit support (modules=debug,bsm,linux)
-+  --with-audit=module     Enable audit support (modules=debug,bsm,linux,solaris)
-   --with-pie           Build Position Independent Executables if possible
-   --with-ssl-dir=PATH     Specify path to OpenSSL installation
-   --without-openssl-header-check Disable OpenSSL version consistency check
-@@ -10185,6 +10185,27 @@
- $as_echo "#define USE_LINUX_AUDIT 1" >>confdefs.h
- 
- 		;;
-+	  solaris)
-+		{ $as_echo "$as_me:${as_lineno-$LINENO}: result: solaris" >&5
-+$as_echo "solaris" >&6; }
-+		AUDIT_MODULE=solaris
-+				for ac_header in bsm/adt.h
-+do :
-+  ac_fn_c_check_header_compile "$LINENO" "bsm/adt.h" "ac_cv_header_bsm_adt_h" ""
-+if test "x$ac_cv_header_bsm_adt_h" = xyes; then :
-+  cat >>confdefs.h <<_ACEOF
-+#define HAVE_ADT_H 1
-+_ACEOF
-+
-+else
-+  as_fn_error $? "Solaris Audit enabled and bsm/adt.h not found" "$LINENO" 5
-+fi
-+
-+done
-+
-+		SSHDLIBS="$SSHDLIBS -lbsm"
-+$as_echo "#define USE_SOLARIS_AUDIT 1" >>confdefs.h
-+	  	;;
- 	  debug)
- 		AUDIT_MODULE=debug
- 		{ $as_echo "$as_me:${as_lineno-$LINENO}: result: debug" >&5
---- orig/defines.h	2014-01-17 05:12:38.000000000 -0800
-+++ new/defines.h	2014-09-12 10:09:27.000000000 -0700
-@@ -622,6 +622,11 @@
- # define CUSTOM_SSH_AUDIT_EVENTS
- #endif
- 
-+#ifdef USE_SOLARIS_AUDIT
-+# define SSH_AUDIT_EVENTS
-+# define CUSTOM_SSH_AUDIT_EVENTS
-+#endif
-+
- #if !defined(HAVE___func__) && defined(HAVE___FUNCTION__)
- #  define __func__ __FUNCTION__
- #elif !defined(HAVE___func__)
---- orig/INSTALL	2013-03-06 17:33:35.000000000 -0800
-+++ new/INSTALL	2014-12-04 08:41:24.369920230 -0800
-@@ -97,9 +97,13 @@
+diff -pur old/INSTALL new/INSTALL
+--- old/INSTALL	2015-03-16 22:49:20.000000000 -0700
++++ new/INSTALL	2015-05-21 03:54:29.120932630 -0700
+@@ -92,9 +92,13 @@ http://www.gnu.org/software/autoconf/
  
  Basic Security Module (BSM):
  
@@ -104,7 +40,7 @@
  
  
  2. Building / Installation
-@@ -152,8 +156,9 @@
+@@ -147,8 +151,9 @@ name).
  There are a few other options to the configure script:
  
  --with-audit=[module] enable additional auditing via the specified module.
@@ -116,9 +52,10 @@
  
  --with-pam enables PAM support. If PAM support is compiled in, it must
  also be enabled in sshd_config (refer to the UsePAM directive).
---- orig/Makefile.in	2014-11-12 15:18:05.366726810 -0800
-+++ new/Makefile.in	2014-11-12 15:22:36.825227512 -0800
-@@ -84,7 +84,7 @@
+diff -pur old/Makefile.in new/Makefile.in
+--- old/Makefile.in	2015-05-21 03:54:29.058280375 -0700
++++ new/Makefile.in	2015-05-21 03:54:29.121196577 -0700
+@@ -100,7 +100,7 @@ SSHOBJS= ssh.o readconf.o clientloop.o s
  	roaming_common.o roaming_client.o
  
  SSHDOBJS=sshd.o auth-rhosts.o auth-passwd.o auth-rsa.o auth-rh-rsa.o \
@@ -127,9 +64,10 @@
  	sshpty.o sshlogin.o servconf.o serverloop.o \
  	auth.o auth1.o auth2.o auth-options.o session.o \
  	auth-chall.o auth2-chall.o groupaccess.o \
---- orig/README.platform	2009-08-28 16:14:48.000000000 -0700
-+++ new/README.platform	2014-09-12 09:45:50.000000000 -0700
-@@ -68,8 +68,8 @@
+diff -pur old/README.platform new/README.platform
+--- old/README.platform	2015-03-16 22:49:20.000000000 -0700
++++ new/README.platform	2015-05-21 03:54:29.121331205 -0700
+@@ -68,8 +68,8 @@ zlib-devel and pam-devel, on Debian base
  libssl-dev, libz-dev and libpam-dev.
  
  
@@ -140,7 +78,7 @@
  If you enable BSM auditing on Solaris, you need to update audit_event(4)
  for praudit(1m) to give sensible output.  The following line needs to be
  added to /etc/security/audit_event:
-@@ -82,6 +82,9 @@
+@@ -82,6 +82,9 @@ There is no official registry of 3rd par
  number is already in use on your system, you may change it at build time
  by configure'ing --with-cflags=-DAUE_openssh=32801 then rebuilding.
  
@@ -150,10 +88,212 @@
  
  Platforms using PAM
  -------------------
---- orig/sshd.c	2014-11-05 13:11:59.974945893 -0800
-+++ new/sshd.c	2014-11-10 13:33:12.279354856 -0800
-@@ -2139,7 +2139,9 @@
- #endif 
+diff -pur old/config.h.in new/config.h.in
+--- old/config.h.in	2015-05-21 03:54:29.047656051 -0700
++++ new/config.h.in	2015-05-21 03:54:29.121686621 -0700
+@@ -1635,6 +1635,9 @@
+ /* Use Linux audit module */
+ #undef USE_LINUX_AUDIT
+ 
++/* Use Solaris audit module */
++#undef USE_SOLARIS_AUDIT
++
+ /* Enable OpenSSL engine support */
+ #undef USE_OPENSSL_ENGINE
+ 
+diff -pur old/configure new/configure
+--- old/configure	2015-05-21 03:54:29.053171257 -0700
++++ new/configure	2015-05-21 06:53:04.579282150 -0700
+@@ -1336,7 +1336,7 @@ Optional Packages:
+   --with-skey[=PATH]      Enable S/Key support (optionally in PATH)
+   --with-ldns[=PATH]      Use ldns for DNSSEC support (optionally in PATH)
+   --with-libedit[=PATH]   Enable libedit support for sftp
+-  --with-audit=module     Enable audit support (modules=debug,bsm,linux)
++  --with-audit=module     Enable audit support (modules=debug,bsm,linux,solaris)
+   --with-pie              Build Position Independent Executables if possible
+   --with-ssl-dir=PATH     Specify path to OpenSSL installation
+   --without-openssl-header-check Disable OpenSSL version consistency check
+@@ -16106,6 +16106,160 @@ cat >>confdefs.h <<\_ACEOF
+ _ACEOF
+ 
+ 		;;
++	  solaris)
++		{ echo "$as_me:$LINENO: result: solaris" >&5
++echo "${ECHO_T}solaris" >&6; }
++		AUDIT_MODULE=solaris
++
++for ac_header in bsm/adt.h
++do
++as_ac_Header=`echo "ac_cv_header_$ac_header" | $as_tr_sh`
++if { as_var=$as_ac_Header; eval "test \"\${$as_var+set}\" = set"; }; then
++  { echo "$as_me:$LINENO: checking for $ac_header" >&5
++echo $ECHO_N "checking for $ac_header... $ECHO_C" >&6; }
++if { as_var=$as_ac_Header; eval "test \"\${$as_var+set}\" = set"; }; then
++  echo $ECHO_N "(cached) $ECHO_C" >&6
++fi
++ac_res=`eval echo '${'$as_ac_Header'}'`
++	       { echo "$as_me:$LINENO: result: $ac_res" >&5
++echo "${ECHO_T}$ac_res" >&6; }
++else
++  # Is the header compilable?
++{ echo "$as_me:$LINENO: checking $ac_header usability" >&5
++echo $ECHO_N "checking $ac_header usability... $ECHO_C" >&6; }
++cat >conftest.$ac_ext <<_ACEOF
++/* confdefs.h.  */
++_ACEOF
++cat confdefs.h >>conftest.$ac_ext
++cat >>conftest.$ac_ext <<_ACEOF
++/* end confdefs.h.  */
++$ac_includes_default
++#include <$ac_header>
++_ACEOF
++rm -f conftest.$ac_objext
++if { (ac_try="$ac_compile"
++case "(($ac_try" in
++  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
++  *) ac_try_echo=$ac_try;;
++esac
++eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
++  (eval "$ac_compile") 2>conftest.er1
++  ac_status=$?
++  grep -v '^ *+' conftest.er1 >conftest.err
++  rm -f conftest.er1
++  cat conftest.err >&5
++  echo "$as_me:$LINENO: \$? = $ac_status" >&5
++  (exit $ac_status); } && {
++	 test -z "$ac_c_werror_flag" ||
++	 test ! -s conftest.err
++       } && test -s conftest.$ac_objext; then
++  ac_header_compiler=yes
++else
++  echo "$as_me: failed program was:" >&5
++sed 's/^/| /' conftest.$ac_ext >&5
++
++	ac_header_compiler=no
++fi
++
++rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
++{ echo "$as_me:$LINENO: result: $ac_header_compiler" >&5
++echo "${ECHO_T}$ac_header_compiler" >&6; }
++
++# Is the header present?
++{ echo "$as_me:$LINENO: checking $ac_header presence" >&5
++echo $ECHO_N "checking $ac_header presence... $ECHO_C" >&6; }
++cat >conftest.$ac_ext <<_ACEOF
++/* confdefs.h.  */
++_ACEOF
++cat confdefs.h >>conftest.$ac_ext
++cat >>conftest.$ac_ext <<_ACEOF
++/* end confdefs.h.  */
++#include <$ac_header>
++_ACEOF
++if { (ac_try="$ac_cpp conftest.$ac_ext"
++case "(($ac_try" in
++  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
++  *) ac_try_echo=$ac_try;;
++esac
++eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
++  (eval "$ac_cpp conftest.$ac_ext") 2>conftest.er1
++  ac_status=$?
++  grep -v '^ *+' conftest.er1 >conftest.err
++  rm -f conftest.er1
++  cat conftest.err >&5
++  echo "$as_me:$LINENO: \$? = $ac_status" >&5
++  (exit $ac_status); } >/dev/null && {
++	 test -z "$ac_c_preproc_warn_flag$ac_c_werror_flag" ||
++	 test ! -s conftest.err
++       }; then
++  ac_header_preproc=yes
++else
++  echo "$as_me: failed program was:" >&5
++sed 's/^/| /' conftest.$ac_ext >&5
++
++  ac_header_preproc=no
++fi
++
++rm -f conftest.err conftest.$ac_ext
++{ echo "$as_me:$LINENO: result: $ac_header_preproc" >&5
++echo "${ECHO_T}$ac_header_preproc" >&6; }
++
++# So?  What about this header?
++case $ac_header_compiler:$ac_header_preproc:$ac_c_preproc_warn_flag in
++  yes:no: )
++    { echo "$as_me:$LINENO: WARNING: $ac_header: accepted by the compiler, rejected by the preprocessor!" >&5
++echo "$as_me: WARNING: $ac_header: accepted by the compiler, rejected by the preprocessor!" >&2;}
++    { echo "$as_me:$LINENO: WARNING: $ac_header: proceeding with the compiler's result" >&5
++echo "$as_me: WARNING: $ac_header: proceeding with the compiler's result" >&2;}
++    ac_header_preproc=yes
++    ;;
++  no:yes:* )
++    { echo "$as_me:$LINENO: WARNING: $ac_header: present but cannot be compiled" >&5
++echo "$as_me: WARNING: $ac_header: present but cannot be compiled" >&2;}
++    { echo "$as_me:$LINENO: WARNING: $ac_header:     check for missing prerequisite headers?" >&5
++echo "$as_me: WARNING: $ac_header:     check for missing prerequisite headers?" >&2;}
++    { echo "$as_me:$LINENO: WARNING: $ac_header: see the Autoconf documentation" >&5
++echo "$as_me: WARNING: $ac_header: see the Autoconf documentation" >&2;}
++    { echo "$as_me:$LINENO: WARNING: $ac_header:     section \"Present But Cannot Be Compiled\"" >&5
++echo "$as_me: WARNING: $ac_header:     section \"Present But Cannot Be Compiled\"" >&2;}
++    { echo "$as_me:$LINENO: WARNING: $ac_header: proceeding with the preprocessor's result" >&5
++echo "$as_me: WARNING: $ac_header: proceeding with the preprocessor's result" >&2;}
++    { echo "$as_me:$LINENO: WARNING: $ac_header: in the future, the compiler will take precedence" >&5
++echo "$as_me: WARNING: $ac_header: in the future, the compiler will take precedence" >&2;}
++    ( cat <<\_ASBOX
++## ------------------------------------------- ##
++## Report this to openssh-unix-dev@mindrot.org ##
++## ------------------------------------------- ##
++_ASBOX
++     ) | sed "s/^/$as_me: WARNING:     /" >&2
++    ;;
++esac
++{ echo "$as_me:$LINENO: checking for $ac_header" >&5
++echo $ECHO_N "checking for $ac_header... $ECHO_C" >&6; }
++if { as_var=$as_ac_Header; eval "test \"\${$as_var+set}\" = set"; }; then
++  echo $ECHO_N "(cached) $ECHO_C" >&6
++else
++  eval "$as_ac_Header=\$ac_header_preproc"
++fi
++ac_res=`eval echo '${'$as_ac_Header'}'`
++	       { echo "$as_me:$LINENO: result: $ac_res" >&5
++echo "${ECHO_T}$ac_res" >&6; }
++
++fi
++if test `eval echo '${'$as_ac_Header'}'` = yes; then
++  cat >>confdefs.h <<_ACEOF
++#define `echo "HAVE_$ac_header" | $as_tr_cpp` 1
++_ACEOF
++
++fi
++
++done
++
++		SSHDLIBS="$SSHDLIBS -lbsm"
++cat >>confdefs.h <<\_ACEOF
++#define USE_SOLARIS_AUDIT 1
++_ACEOF
++	  	;;
+ 	  debug)
+ 		AUDIT_MODULE=debug
+ 		{ echo "$as_me:$LINENO: result: debug" >&5
+diff -pur old/defines.h new/defines.h
+--- old/defines.h	2015-03-16 22:49:20.000000000 -0700
++++ new/defines.h	2015-05-21 03:54:29.127386034 -0700
+@@ -635,6 +635,11 @@ struct winsize {
+ # define CUSTOM_SSH_AUDIT_EVENTS
+ #endif
+ 
++#ifdef USE_SOLARIS_AUDIT
++# define SSH_AUDIT_EVENTS
++# define CUSTOM_SSH_AUDIT_EVENTS
++#endif
++
+ #if !defined(HAVE___func__) && defined(HAVE___FUNCTION__)
+ #  define __func__ __FUNCTION__
+ #elif !defined(HAVE___func__)
+diff -pur old/sshd.c new/sshd.c
+--- old/sshd.c	2015-05-21 03:54:29.070139157 -0700
++++ new/sshd.c	2015-05-21 03:54:29.127803176 -0700
+@@ -2215,7 +2215,9 @@ main(int ac, char **av)
+ 	}
  
  #ifdef SSH_AUDIT_EVENTS
 +#ifndef	USE_SOLARIS_AUDIT
@@ -162,7 +302,7 @@
  #endif
  
  #ifdef GSSAPI
-@@ -2169,6 +2171,10 @@
+@@ -2245,6 +2247,10 @@ main(int ac, char **av)
  		do_pam_session();
  	}
  #endif

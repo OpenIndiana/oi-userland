@@ -1,0 +1,23 @@
+#
+# Relax bits needed check to allow diffie-hellman-group1-sha1 key exchange to
+# complete when chacha20-poly1305 was selected as the cipher.
+# 
+# OpenSSH 6.8 regression causing test case failure.
+# 
+# Fixed in 6.9:
+# https://github.com/openssh/openssh-portable/commit/b8afbe2c1aaf573565e4da775261dfafc8b1ba9c
+# 
+# This patch will be removed when upgrading to 6.9 or higher.
+# 
+diff -pur old/dh.c new/dh.c
+--- old/dh.c	2015-03-16 22:49:20.000000000 -0700
++++ new/dh.c	2015-06-01 05:24:39.007860187 -0700
+@@ -261,7 +261,7 @@ dh_gen_key(DH *dh, int need)
+ 
+ 	if (need < 0 || dh->p == NULL ||
+ 	    (pbits = BN_num_bits(dh->p)) <= 0 ||
+-	    need > INT_MAX / 2 || 2 * need >= pbits)
++	    need > INT_MAX / 2 || 2 * need > pbits)
+ 		return SSH_ERR_INVALID_ARGUMENT;
+ 	dh->length = MIN(need * 2, pbits - 1);
+ 	if (DH_generate_key(dh) == 0 ||

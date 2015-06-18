@@ -7,8 +7,9 @@
 # pages, the section numbers of some OpenSSH man pages are changed to be the
 # same as their corresponding ones in SunSSH.
 #
---- orig/moduli.5	Thu Feb  6 10:00:17 2014
-+++ new/moduli.5	Thu Feb  6 10:08:07 2014
+diff -pur old/moduli.5 new/moduli.5
+--- old/moduli.5	2015-03-17 06:49:20.000000000 +0100
++++ new/moduli.5	2015-03-28 05:37:09.205577491 +0100
 @@ -14,7 +14,7 @@
  .\" ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  .\" OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
@@ -27,7 +28,7 @@
  in the Diffie-Hellman Group Exchange key exchange method.
  .Pp
  New moduli may be generated with
-@@ -40,7 +40,7 @@
+@@ -40,7 +40,7 @@ pass, using
  .Ic ssh-keygen -T ,
  provides a high degree of assurance that the numbers are prime and are
  safe for use in Diffie-Hellman operations by
@@ -36,7 +37,7 @@
  This
  .Nm
  format is used as the output from each pass.
-@@ -70,7 +70,7 @@
+@@ -70,7 +70,7 @@ are Sophie Germain primes (type 4).
  Further primality testing with
  .Xr ssh-keygen 1
  produces safe prime moduli (type 2) that are ready for use in
@@ -45,7 +46,7 @@
  Other types are not used by OpenSSH.
  .It tests
  Decimal number indicating the type of primality tests that the number
-@@ -105,16 +105,16 @@
+@@ -105,16 +105,16 @@ The modulus itself in hexadecimal.
  .El
  .Pp
  When performing Diffie-Hellman Group Exchange,
@@ -65,18 +66,19 @@
  .Sh STANDARDS
  .Rs
  .%A M. Friedl
---- orig/sftp-server.8	Thu Feb  6 10:01:20 2014
-+++ new/sftp-server.8	Thu Feb  6 10:09:59 2014
+diff -pur old/sftp-server.8 new/sftp-server.8
+--- old/sftp-server.8	2015-03-17 06:49:20.000000000 +0100
++++ new/sftp-server.8	2015-03-28 05:38:55.972453415 +0100
 @@ -23,7 +23,7 @@
  .\" THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  .\"
- .Dd $Mdocdate: October 14 2013 $
+ .Dd $Mdocdate: December 11 2014 $
 -.Dt SFTP-SERVER 8
 +.Dt SFTP-SERVER 1M
  .Os
  .Sh NAME
  .Nm sftp-server
-@@ -47,7 +47,7 @@
+@@ -47,7 +47,7 @@ is a program that speaks the server side
  to stdout and expects client requests from stdin.
  .Nm
  is not intended to be called directly, but from
@@ -85,7 +87,7 @@
  using the
  .Cm Subsystem
  option.
-@@ -58,7 +58,7 @@
+@@ -58,7 +58,7 @@ should be specified in the
  .Cm Subsystem
  declaration.
  See
@@ -94,7 +96,7 @@
  for more information.
  .Pp
  Valid options are:
-@@ -71,7 +71,7 @@
+@@ -71,7 +71,7 @@ The pathname may contain the following t
  and %u is replaced by the username of that user.
  The default is to use the user's home directory.
  This option is useful in conjunction with the
@@ -103,7 +105,7 @@
  .Cm ChrootDirectory
  option.
  .It Fl e
-@@ -152,8 +152,8 @@
+@@ -152,8 +152,8 @@ establish a logging socket inside the ch
  .Sh SEE ALSO
  .Xr sftp 1 ,
  .Xr ssh 1 ,
@@ -114,73 +116,9 @@
  .Rs
  .%A T. Ylonen
  .%A S. Lehtinen
---- orig/ssh_config.5	Thu Feb  6 10:01:20 2014
-+++ new/ssh_config.5	Thu Mar 27 16:37:50 2014
-@@ -35,7 +35,7 @@
- .\"
- .\" $OpenBSD: ssh_config.5,v 1.184 2014/01/19 04:48:08 djm Exp $
- .Dd $Mdocdate: January 19 2014 $
--.Dt SSH_CONFIG 5
-+.Dt SSH_CONFIG 4
- .Os
- .Sh NAME
- .Nm ssh_config
-@@ -503,7 +503,7 @@
- .Dq Fl O No exit
- option).
- If set to a time in seconds, or a time in any of the formats documented in
--.Xr sshd_config 5 ,
-+.Xr sshd_config 4 ,
- then the backgrounded master connection will automatically terminate
- after it has remained idle (with no client connections) for the
- specified time.
-@@ -622,7 +622,7 @@
- Specify a timeout for untrusted X11 forwarding
- using the format described in the
- TIME FORMATS section of
--.Xr sshd_config 5 .
-+.Xr sshd_config 4 .
- X11 connections received by
- .Xr ssh 1
- after this time will be refused.
-@@ -689,7 +689,7 @@
- These hashed names may be used normally by
- .Xr ssh 1
- and
--.Xr sshd 8 ,
-+.Xr sshd 1M ,
- but they do not reveal identifying information should the file's contents
- be disclosed.
- The default is
-@@ -1122,7 +1122,7 @@
- The optional second value is specified in seconds and may use any of the
- units documented in the
- TIME FORMATS section of
--.Xr sshd_config 5 .
-+.Xr sshd_config 4 .
- The default value for
- .Cm RekeyLimit
- is
-@@ -1166,7 +1166,7 @@
- will only succeed if the server's
- .Cm GatewayPorts
- option is enabled (see
--.Xr sshd_config 5 ) .
-+.Xr sshd_config 4 ) .
- .It Cm RequestTTY
- Specifies whether to request a pseudo-tty for the session.
- The argument may be one of:
-@@ -1218,7 +1218,7 @@
- Refer to
- .Cm AcceptEnv
- in
--.Xr sshd_config 5
-+.Xr sshd_config 4
- for how to configure the server.
- Variables are specified by name, which may contain wildcard characters.
- Multiple environment variables may be separated by whitespace or spread
---- orig/ssh-keysign.8	Thu Feb  6 10:01:20 2014
-+++ new/ssh-keysign.8	Thu Feb  6 10:13:05 2014
+diff -pur old/ssh-keysign.8 new/ssh-keysign.8
+--- old/ssh-keysign.8	2015-03-17 06:49:20.000000000 +0100
++++ new/ssh-keysign.8	2015-03-28 05:37:09.206625270 +0100
 @@ -23,7 +23,7 @@
  .\" THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  .\"
@@ -190,7 +128,7 @@
  .Os
  .Sh NAME
  .Nm ssh-keysign
-@@ -52,7 +52,7 @@
+@@ -52,7 +52,7 @@ is not intended to be invoked by the use
  See
  .Xr ssh 1
  and
@@ -199,7 +137,7 @@
  for more information about host-based authentication.
  .Sh FILES
  .Bl -tag -width Ds -compact
-@@ -83,8 +83,8 @@
+@@ -83,8 +83,8 @@ information corresponding with the priva
  .Sh SEE ALSO
  .Xr ssh 1 ,
  .Xr ssh-keygen 1 ,
@@ -210,8 +148,9 @@
  .Sh HISTORY
  .Nm
  first appeared in
---- orig/ssh-pkcs11-helper.8	Thu Feb  6 10:01:20 2014
-+++ new/ssh-pkcs11-helper.8	Thu Feb  6 10:14:40 2014
+diff -pur old/ssh-pkcs11-helper.8 new/ssh-pkcs11-helper.8
+--- old/ssh-pkcs11-helper.8	2015-03-17 06:49:20.000000000 +0100
++++ new/ssh-pkcs11-helper.8	2015-03-28 05:37:09.206699277 +0100
 @@ -15,7 +15,7 @@
  .\" OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  .\"
@@ -221,12 +160,178 @@
  .Os
  .Sh NAME
  .Nm ssh-pkcs11-helper
---- orig/sshd_config.5	Thu Feb  6 10:01:20 2014
-+++ new/sshd_config.5	Thu Feb  6 10:17:21 2014
+diff -pur old/ssh_config.5 new/ssh_config.5
+--- old/ssh_config.5	2015-03-17 06:49:20.000000000 +0100
++++ new/ssh_config.5	2015-03-28 05:39:45.895250783 +0100
 @@ -35,7 +35,7 @@
  .\"
- .\" $OpenBSD: sshd_config.5,v 1.170 2013/12/08 09:53:27 dtucker Exp $
- .Dd $Mdocdate: December 8 2013 $
+ .\" $OpenBSD: ssh_config.5,v 1.205 2015/02/20 22:17:21 djm Exp $
+ .Dd $Mdocdate: February 20 2015 $
+-.Dt SSH_CONFIG 5
++.Dt SSH_CONFIG 4
+ .Os
+ .Sh NAME
+ .Nm ssh_config
+@@ -562,7 +562,7 @@ then the master connection will remain i
+ .Dq Fl O No exit
+ option).
+ If set to a time in seconds, or a time in any of the formats documented in
+-.Xr sshd_config 5 ,
++.Xr sshd_config 4 ,
+ then the backgrounded master connection will automatically terminate
+ after it has remained idle (with no client connections) for the
+ specified time.
+@@ -689,7 +689,7 @@ option is also enabled.
+ Specify a timeout for untrusted X11 forwarding
+ using the format described in the
+ TIME FORMATS section of
+-.Xr sshd_config 5 .
++.Xr sshd_config 4 .
+ X11 connections received by
+ .Xr ssh 1
+ after this time will be refused.
+@@ -756,7 +756,7 @@ should hash host names and addresses whe
+ These hashed names may be used normally by
+ .Xr ssh 1
+ and
+-.Xr sshd 8 ,
++.Xr sshd 1M ,
+ but they do not reveal identifying information should the file's contents
+ be disclosed.
+ The default is
+@@ -1233,7 +1233,7 @@ depending on the cipher.
+ The optional second value is specified in seconds and may use any of the
+ units documented in the
+ TIME FORMATS section of
+-.Xr sshd_config 5 .
++.Xr sshd_config 4 .
+ The default value for
+ .Cm RekeyLimit
+ is
+@@ -1277,7 +1277,7 @@ Specifying a remote
+ will only succeed if the server's
+ .Cm GatewayPorts
+ option is enabled (see
+-.Xr sshd_config 5 ) .
++.Xr sshd_config 4 ) .
+ .It Cm RequestTTY
+ Specifies whether to request a pseudo-tty for the session.
+ The argument may be one of:
+@@ -1339,7 +1339,7 @@ accept these environment variables.
+ Refer to
+ .Cm AcceptEnv
+ in
+-.Xr sshd_config 5
++.Xr sshd_config 4
+ for how to configure the server.
+ Variables are specified by name, which may contain wildcard characters.
+ Multiple environment variables may be separated by whitespace or spread
+diff -pur old/sshd.8 new/sshd.8
+--- old/sshd.8	2015-03-17 06:49:20.000000000 +0100
++++ new/sshd.8	2015-03-28 05:41:50.762749417 +0100
+@@ -35,7 +35,7 @@
+ .\"
+ .\" $OpenBSD: sshd.8,v 1.278 2014/11/15 14:41:03 bentley Exp $
+ .Dd $Mdocdate: November 15 2014 $
+-.Dt SSHD 8
++.Dt SSHD 1M
+ .Os
+ .Sh NAME
+ .Nm sshd
+@@ -77,7 +77,7 @@ and data exchange.
+ .Nm
+ can be configured using command-line options or a configuration file
+ (by default
+-.Xr sshd_config 5 ) ;
++.Xr sshd_config 4 ) ;
+ command-line options override values specified in the
+ configuration file.
+ .Nm
+@@ -207,7 +207,7 @@ Can be used to give options in the forma
+ This is useful for specifying options for which there is no separate
+ command-line flag.
+ For full details of the options, and their values, see
+-.Xr sshd_config 5 .
++.Xr sshd_config 4 .
+ .It Fl p Ar port
+ Specifies the port on which the server listens for connections
+ (default 22).
+@@ -277,7 +277,7 @@ The default is to use protocol 2 only,
+ though this can be changed via the
+ .Cm Protocol
+ option in
+-.Xr sshd_config 5 .
++.Xr sshd_config 4 .
+ Protocol 2 supports DSA, ECDSA, Ed25519 and RSA keys;
+ protocol 1 only supports RSA keys.
+ For both protocols,
+@@ -402,7 +402,7 @@ if it exists, and users are allowed to c
+ See the
+ .Cm PermitUserEnvironment
+ option in
+-.Xr sshd_config 5 .
++.Xr sshd_config 4 .
+ .It
+ Changes to user's home directory.
+ .It
+@@ -550,7 +550,7 @@ The command originally supplied by the c
+ environment variable.
+ Note that this option applies to shell, command or subsystem execution.
+ Also note that this command may be superseded by either a
+-.Xr sshd_config 5
++.Xr sshd_config 4
+ .Cm ForceCommand
+ directive or a command embedded in a certificate.
+ .It Cm environment="NAME=value"
+@@ -571,7 +571,7 @@ Specifies that in addition to public key
+ name of the remote host or its IP address must be present in the
+ comma-separated list of patterns.
+ See PATTERNS in
+-.Xr ssh_config 5
++.Xr ssh_config 4
+ for more information on patterns.
+ .Pp
+ In addition to the wildcard matching that may be applied to hostnames or
+@@ -859,7 +859,7 @@ It should only be writable by root.
+ .It Pa /etc/moduli
+ Contains Diffie-Hellman groups used for the "Diffie-Hellman Group Exchange".
+ The file format is described in
+-.Xr moduli 5 .
++.Xr moduli 4 .
+ .Pp
+ .It Pa /etc/motd
+ See
+@@ -920,7 +920,7 @@ should be world-readable.
+ Contains configuration data for
+ .Nm sshd .
+ The file format and configuration options are described in
+-.Xr sshd_config 5 .
++.Xr sshd_config 4 .
+ .Pp
+ .It Pa /etc/ssh/sshrc
+ Similar to
+@@ -955,10 +955,10 @@ The content of this file is not sensitiv
+ .Xr ssh-keyscan 1 ,
+ .Xr chroot 2 ,
+ .Xr login.conf 5 ,
+-.Xr moduli 5 ,
+-.Xr sshd_config 5 ,
+-.Xr inetd 8 ,
+-.Xr sftp-server 8
++.Xr moduli 4 ,
++.Xr sshd_config 4 ,
++.Xr inetd 1M ,
++.Xr sftp-server 1M
+ .Sh AUTHORS
+ OpenSSH is a derivative of the original and free
+ ssh 1.2.12 release by Tatu Ylonen.
+diff -pur old/sshd_config.5 new/sshd_config.5
+--- old/sshd_config.5	2015-03-28 05:37:09.175994877 +0100
++++ new/sshd_config.5	2015-03-28 05:42:07.245709990 +0100
+@@ -35,7 +35,7 @@
+ .\"
+ .\" $OpenBSD: sshd_config.5,v 1.194 2015/02/20 23:46:01 djm Exp $
+ .Dd $Mdocdate: February 20 2015 $
 -.Dt SSHD_CONFIG 5
 +.Dt SSHD_CONFIG 4
  .Os
@@ -241,7 +346,7 @@
  reads configuration data from
  .Pa /etc/ssh/sshd_config
  (or the file specified with
-@@ -68,7 +68,7 @@
+@@ -68,7 +68,7 @@ the session's
  See
  .Cm SendEnv
  in
@@ -250,7 +355,7 @@
  for how to configure the client.
  Note that environment passing is only supported for protocol 2.
  Variables are specified by name, which may contain the wildcard characters
-@@ -85,7 +85,7 @@
+@@ -85,7 +85,7 @@ For this reason, care should be taken in
  The default is not to accept any environment variables.
  .It Cm AddressFamily
  Specifies which address family should be used by
@@ -259,7 +364,7 @@
  Valid arguments are
  .Dq any ,
  .Dq inet
-@@ -118,7 +118,7 @@
+@@ -118,7 +118,7 @@ and finally
  .Cm AllowGroups .
  .Pp
  See PATTERNS in
@@ -268,7 +373,7 @@
  for more information on patterns.
  .It Cm AllowTcpForwarding
  Specifies whether TCP forwarding is permitted.
-@@ -158,7 +158,7 @@
+@@ -178,7 +178,7 @@ and finally
  .Cm AllowGroups .
  .Pp
  See PATTERNS in
@@ -277,7 +382,7 @@
  for more information on patterns.
  .It Cm AuthenticationMethods
  Specifies the authentication methods that must be successfully completed
-@@ -202,7 +202,7 @@
+@@ -234,7 +234,7 @@ The program must be owned by root and no
  It will be invoked with a single argument of the username
  being authenticated, and should produce on standard output zero or
  more lines of authorized_keys output (see AUTHORIZED_KEYS in
@@ -286,7 +391,7 @@
  If a key supplied by AuthorizedKeysCommand does not successfully authenticate
  and authorize the user then public key authentication continues using the usual
  .Cm AuthorizedKeysFile
-@@ -218,7 +218,7 @@
+@@ -257,7 +257,7 @@ for user authentication.
  The format is described in the
  AUTHORIZED_KEYS FILE FORMAT
  section of
@@ -295,7 +400,7 @@
  .Cm AuthorizedKeysFile
  may contain tokens of the form %T which are substituted during connection
  setup.
-@@ -241,7 +241,7 @@
+@@ -280,7 +280,7 @@ this file lists names, one of which must
  to be accepted for authentication.
  Names are listed one per line preceded by key options (as described
  in AUTHORIZED_KEYS FILE FORMAT in
@@ -304,7 +409,7 @@
  Empty lines and comments starting with
  .Ql #
  are ignored.
-@@ -271,7 +271,7 @@
+@@ -310,7 +310,7 @@ and is not consulted for certification a
  though the
  .Cm principals=
  key option offers a similar facility (see
@@ -313,16 +418,16 @@
  for details).
  .It Cm Banner
  The contents of the specified file are sent to the remote user before
-@@ -294,7 +294,7 @@
- All components of the pathname must be root-owned directories that are
- not writable by any other user or group.
+@@ -335,7 +335,7 @@ At session startup
+ checks that all components of the pathname are root-owned directories
+ which are not writable by any other user or group.
  After the chroot,
 -.Xr sshd 8
 +.Xr sshd 1M
  changes the working directory to the user's home directory.
  .Pp
  The pathname may contain the following tokens that are expanded at runtime once
-@@ -370,7 +370,7 @@
+@@ -433,7 +433,7 @@ with an argument of
  .It Cm ClientAliveCountMax
  Sets the number of client alive messages (see below) which may be
  sent without
@@ -331,7 +436,7 @@
  receiving any messages back from the client.
  If this threshold is reached while client alive messages are being sent,
  sshd will disconnect the client, terminating the session.
-@@ -397,7 +397,7 @@
+@@ -460,7 +460,7 @@ This option applies to protocol version 
  .It Cm ClientAliveInterval
  Sets a timeout interval in seconds after which if no data has been received
  from the client,
@@ -340,7 +445,7 @@
  will send a message through the encrypted
  channel to request a response from the client.
  The default
-@@ -428,7 +428,7 @@
+@@ -491,7 +491,7 @@ and finally
  .Cm AllowGroups .
  .Pp
  See PATTERNS in
@@ -349,16 +454,16 @@
  for more information on patterns.
  .It Cm DenyUsers
  This keyword can be followed by a list of user name patterns, separated
-@@ -447,7 +447,7 @@
+@@ -510,7 +510,7 @@ and finally
  .Cm AllowGroups .
  .Pp
  See PATTERNS in
 -.Xr ssh_config 5
 +.Xr ssh_config 4
  for more information on patterns.
- .It Cm ForceCommand
- Forces the execution of the command specified by
-@@ -472,7 +472,7 @@
+ .It Cm FingerprintHash
+ Specifies the hash algorithm used when logging key fingerprints.
+@@ -543,7 +543,7 @@ files when used with
  Specifies whether remote hosts are allowed to connect to ports
  forwarded for the client.
  By default,
@@ -367,7 +472,7 @@
  binds remote port forwardings to the loopback address.
  This prevents other remote hosts from connecting to forwarded ports.
  .Cm GatewayPorts
-@@ -520,7 +520,7 @@
+@@ -602,7 +602,7 @@ files during
  A setting of
  .Dq yes
  means that
@@ -376,7 +481,7 @@
  uses the name supplied by the client rather than
  attempting to resolve the name from the TCP connection itself.
  The default is
-@@ -531,7 +531,7 @@
+@@ -613,7 +613,7 @@ The certificate's public key must match 
  by
  .Cm HostKey .
  The default behaviour of
@@ -385,7 +490,7 @@
  is not to load any certificates.
  .It Cm HostKey
  Specifies a file containing a private host key
-@@ -546,7 +546,7 @@
+@@ -628,7 +628,7 @@ and
  .Pa /etc/ssh/ssh_host_rsa_key
  for protocol version 2.
  Note that
@@ -394,7 +499,7 @@
  will refuse to use a file if it is group/world-accessible.
  It is possible to have multiple host key files.
  .Dq rsa1
-@@ -587,7 +587,7 @@
+@@ -669,7 +669,7 @@ The default is
  .Dq yes .
  .It Cm IgnoreUserKnownHosts
  Specifies whether
@@ -403,7 +508,7 @@
  should ignore the user's
  .Pa ~/.ssh/known_hosts
  during
-@@ -681,7 +681,7 @@
+@@ -800,7 +800,7 @@ If the value is 0, the key is never rege
  The default is 3600 (seconds).
  .It Cm ListenAddress
  Specifies the local addresses
@@ -412,7 +517,7 @@
  should listen on.
  The following forms may be used:
  .Pp
-@@ -724,7 +724,7 @@
+@@ -843,7 +843,7 @@ If the value is 0, there is no time limi
  The default is 120 seconds.
  .It Cm LogLevel
  Gives the verbosity level that is used when logging messages from
@@ -421,7 +526,7 @@
  The possible values are:
  QUIET, FATAL, ERROR, INFO, VERBOSE, DEBUG, DEBUG1, DEBUG2, and DEBUG3.
  The default is INFO.
-@@ -776,7 +776,7 @@
+@@ -943,7 +943,7 @@ and
  The match patterns may consist of single entries or comma-separated
  lists and may use the wildcard and negation operators described in the
  PATTERNS section of
@@ -430,7 +535,7 @@
  .Pp
  The patterns in an
  .Cm Address
-@@ -856,7 +856,7 @@
+@@ -1032,7 +1032,7 @@ Alternatively, random early drop can be 
  the three colon separated values
  .Dq start:rate:full
  (e.g. "10:30:60").
@@ -439,7 +544,7 @@
  will refuse connection attempts with a probability of
  .Dq rate/100
  (30%)
-@@ -969,7 +969,7 @@
+@@ -1149,7 +1149,7 @@ and
  options in
  .Pa ~/.ssh/authorized_keys
  are processed by
@@ -448,7 +553,7 @@
  The default is
  .Dq no .
  Enabling environment processing may enable users to bypass access
-@@ -982,7 +982,7 @@
+@@ -1168,7 +1168,7 @@ The default is
  .Pa /var/run/sshd.pid .
  .It Cm Port
  Specifies the port number that
@@ -457,7 +562,7 @@
  listens on.
  The default is 22.
  Multiple options of this type are permitted.
-@@ -990,7 +990,7 @@
+@@ -1176,14 +1176,14 @@ See also
  .Cm ListenAddress .
  .It Cm PrintLastLog
  Specifies whether
@@ -465,9 +570,8 @@
 +.Xr sshd 1M
  should print the date and time of the last user login when a user logs
  in interactively.
- The default is
-@@ -997,7 +997,7 @@
- .Dq yes .
+ On Solaris this option is always ignored since pam_unix_session(5)
+ reports the last login time.
  .It Cm PrintMotd
  Specifies whether
 -.Xr sshd 8
@@ -475,7 +579,7 @@
  should print
  .Pa /etc/motd
  when a user logs in interactively.
-@@ -1008,7 +1008,7 @@
+@@ -1194,7 +1194,7 @@ The default is
  .Dq yes .
  .It Cm Protocol
  Specifies the protocol versions
@@ -484,8 +588,8 @@
  supports.
  The possible values are
  .Sq 1
-@@ -1081,7 +1081,7 @@
- The minimum value is 512, and the default is 1024.
+@@ -1305,7 +1305,7 @@ The default is
+ .Dq no .
  .It Cm StrictModes
  Specifies whether
 -.Xr sshd 8
@@ -493,7 +597,7 @@
  should check file modes and ownership of the
  user's files and home directory before accepting login.
  This is normally desirable because novices sometimes accidentally leave their
-@@ -1115,7 +1115,7 @@
+@@ -1339,7 +1339,7 @@ By default no subsystems are defined.
  Note that this option applies to protocol version 2 only.
  .It Cm SyslogFacility
  Gives the facility code that is used when logging messages from
@@ -502,7 +606,7 @@
  The possible values are: DAEMON, USER, AUTH, LOCAL0, LOCAL1, LOCAL2,
  LOCAL3, LOCAL4, LOCAL5, LOCAL6, LOCAL7.
  The default is AUTH.
-@@ -1156,7 +1156,7 @@
+@@ -1380,7 +1380,7 @@ For more details on certificates, see th
  .Xr ssh-keygen 1 .
  .It Cm UseDNS
  Specifies whether
@@ -511,7 +615,7 @@
  should look up the remote host name and check that
  the resolved host name for the remote IP address maps back to the
  very same IP address.
-@@ -1201,13 +1201,13 @@
+@@ -1425,13 +1425,13 @@ or
  If
  .Cm UsePAM
  is enabled, you will not be able to run
@@ -527,7 +631,7 @@
  separates privileges by creating an unprivileged child process
  to deal with incoming network traffic.
  After successful authentication, another process will be created that has
-@@ -1229,7 +1229,7 @@
+@@ -1453,7 +1453,7 @@ The default is
  .Dq none .
  .It Cm X11DisplayOffset
  Specifies the first display number available for
@@ -536,7 +640,7 @@
  X11 forwarding.
  This prevents sshd from interfering with real X11 servers.
  The default is 10.
-@@ -1244,7 +1244,7 @@
+@@ -1468,7 +1468,7 @@ The default is
  .Pp
  When X11 forwarding is enabled, there may be additional exposure to
  the server and to client displays if the
@@ -545,7 +649,7 @@
  proxy display is configured to listen on the wildcard address (see
  .Cm X11UseLocalhost
  below), though this is not the default.
-@@ -1255,7 +1255,7 @@
+@@ -1479,7 +1479,7 @@ display server may be exposed to attack 
  forwarding (see the warnings for
  .Cm ForwardX11
  in
@@ -554,7 +658,7 @@
  A system administrator may have a stance in which they want to
  protect clients that may expose themselves to attack by unwittingly
  requesting X11 forwarding, which can warrant a
-@@ -1269,7 +1269,7 @@
+@@ -1493,7 +1493,7 @@ X11 forwarding is automatically disabled
  is enabled.
  .It Cm X11UseLocalhost
  Specifies whether
@@ -563,7 +667,7 @@
  should bind the X11 forwarding server to the loopback address or to
  the wildcard address.
  By default,
-@@ -1300,7 +1300,7 @@
+@@ -1524,7 +1524,7 @@ The default is
  .Pa /usr/X11R6/bin/xauth .
  .El
  .Sh TIME FORMATS
@@ -572,7 +676,7 @@
  command-line arguments and configuration file options that specify time
  may be expressed using a sequence of the form:
  .Sm off
-@@ -1344,12 +1344,12 @@
+@@ -1568,12 +1568,12 @@ Time format examples:
  .Bl -tag -width Ds
  .It Pa /etc/ssh/sshd_config
  Contains configuration data for
@@ -587,102 +691,3 @@
  .Xr pam_unix_session 5
  .Sh AUTHORS
  OpenSSH is a derivative of the original and free
- ssh 1.2.12 release by Tatu Ylonen.
---- orig/sshd.8	Thu Feb  6 10:01:20 2014
-+++ new/sshd.8	Thu Feb  6 10:22:35 2014
-@@ -35,7 +35,7 @@
- .\"
- .\" $OpenBSD: sshd.8,v 1.273 2013/12/07 11:58:46 naddy Exp $
- .Dd $Mdocdate: December 7 2013 $
--.Dt SSHD 8
-+.Dt SSHD 1M
- .Os
- .Sh NAME
- .Nm sshd
-@@ -80,7 +80,7 @@
- .Nm
- can be configured using command-line options or a configuration file
- (by default
--.Xr sshd_config 5 ) ;
-+.Xr sshd_config 4 ) ;
- command-line options override values specified in the
- configuration file.
- .Nm
-@@ -210,7 +210,7 @@
- This is useful for specifying options for which there is no separate
- command-line flag.
- For full details of the options, and their values, see
--.Xr sshd_config 5 .
-+.Xr sshd_config 4 .
- .It Fl p Ar port
- Specifies the port on which the server listens for connections
- (default 22).
-@@ -280,7 +280,7 @@
- though this can be changed via the
- .Cm Protocol
- option in
--.Xr sshd_config 5 .
-+.Xr sshd_config 4 .
- Protocol 2 supports DSA, ECDSA, ED25519 and RSA keys;
- protocol 1 only supports RSA keys.
- For both protocols,
-@@ -405,7 +405,7 @@
- See the
- .Cm PermitUserEnvironment
- option in
--.Xr sshd_config 5 .
-+.Xr sshd_config 4 .
- .It
- Changes to user's home directory.
- .It
-@@ -550,7 +550,7 @@
- environment variable.
- Note that this option applies to shell, command or subsystem execution.
- Also note that this command may be superseded by either a
--.Xr sshd_config 5
-+.Xr sshd_config 4
- .Cm ForceCommand
- directive or a command embedded in a certificate.
- .It Cm environment="NAME=value"
-@@ -571,7 +571,7 @@
- name of the remote host or its IP address must be present in the
- comma-separated list of patterns.
- See PATTERNS in
--.Xr ssh_config 5
-+.Xr ssh_config 4
- for more information on patterns.
- .Pp
- In addition to the wildcard matching that may be applied to hostnames or
-@@ -865,7 +865,7 @@
- .It Pa /etc/moduli
- Contains Diffie-Hellman groups used for the "Diffie-Hellman Group Exchange".
- The file format is described in
--.Xr moduli 5 .
-+.Xr moduli 4 .
- .Pp
- .It Pa /etc/motd
- See
-@@ -926,7 +926,7 @@
- Contains configuration data for
- .Nm sshd .
- The file format and configuration options are described in
--.Xr sshd_config 5 .
-+.Xr sshd_config 4 .
- .Pp
- .It Pa /etc/ssh/sshrc
- Similar to
-@@ -962,10 +962,10 @@
- .Xr chroot 2 ,
- .Xr hosts_access 5 ,
- .Xr login.conf 5 ,
--.Xr moduli 5 ,
--.Xr sshd_config 5 ,
--.Xr inetd 8 ,
--.Xr sftp-server 8
-+.Xr moduli 4 ,
-+.Xr sshd_config 4 ,
-+.Xr inetd 1M ,
-+.Xr sftp-server 1M
- .Sh AUTHORS
- OpenSSH is a derivative of the original and free
- ssh 1.2.12 release by Tatu Ylonen.

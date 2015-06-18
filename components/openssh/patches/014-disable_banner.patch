@@ -6,31 +6,30 @@
 # In the future, if this feature is accepted by the upsteam in a later release,
 # we will remove this patch when we upgrade to that release.  
 #
---- orig/readconf.c	Wed May 21 15:04:21 2014
-+++ new/readconf.c	Wed May 28 11:56:04 2014
-@@ -148,7 +148,11 @@
- 	oKexAlgorithms, oIPQoS, oRequestTTY, oIgnoreUnknown, oProxyUseFdpass,
- 	oCanonicalDomains, oCanonicalizeHostname, oCanonicalizeMaxDots,
- 	oCanonicalizeFallbackLocal, oCanonicalizePermittedCNAMEs,
-+#ifdef DISABLE_BANNER
-+	oDisableBanner, oIgnoredUnknownOption, oDeprecated, oUnsupported
-+#else
- 	oIgnoredUnknownOption, oDeprecated, oUnsupported
+diff -pur old/readconf.c new/readconf.c
+--- old/readconf.c	2015-03-28 21:57:35.551727235 +0100
++++ new/readconf.c	2015-03-28 22:06:01.694836272 +0100
+@@ -150,6 +150,9 @@ typedef enum {
+ 	oServerAliveInterval, oServerAliveCountMax, oIdentitiesOnly,
+ 	oSendEnv, oControlPath, oControlMaster, oControlPersist,
+ 	oHashKnownHosts,
++#ifdef DISABLE_BANNER 
++	oDisableBanner,
 +#endif
- } OpCodes;
- 
- /* Textual representations of the tokens. */
-@@ -266,6 +270,9 @@
- 	{ "canonicalizehostname", oCanonicalizeHostname },
- 	{ "canonicalizemaxdots", oCanonicalizeMaxDots },
- 	{ "canonicalizepermittedcnames", oCanonicalizePermittedCNAMEs },
+ 	oTunnel, oTunnelDevice, oLocalCommand, oPermitLocalCommand,
+ 	oVisualHostKey, oUseRoaming,
+ 	oKexAlgorithms, oIPQoS, oRequestTTY, oIgnoreUnknown, oProxyUseFdpass,
+@@ -254,6 +257,9 @@ static struct {
+ 	{ "controlmaster", oControlMaster },
+ 	{ "controlpersist", oControlPersist },
+ 	{ "hashknownhosts", oHashKnownHosts },
 +#ifdef DISABLE_BANNER
 +	{ "disablebanner", oDisableBanner },
 +#endif
- 	{ "ignoreunknown", oIgnoreUnknown },
- 
- 	{ NULL, oBadOption }
-@@ -682,6 +689,17 @@
+ 	{ "tunnel", oTunnel },
+ 	{ "tunneldevice", oTunnelDevice },
+ 	{ "localcommand", oLocalCommand },
+@@ -754,6 +760,17 @@ static const struct multistate multistat
  	{ NULL, -1 }
  };
  
@@ -48,9 +47,9 @@
  /*
   * Processes a single option line as used in the configuration files. This
   * only sets those values that have not already been set.
-@@ -1392,6 +1410,13 @@
- 		intptr = &options->canonicalize_fallback_local;
- 		goto parse_flag;
+@@ -1514,6 +1531,13 @@ parse_int:
+ 			*charptr = xstrdup(arg);
+ 		break;
  
 +#ifdef DISABLE_BANNER
 +	case oDisableBanner:
@@ -62,7 +61,7 @@
  	case oDeprecated:
  		debug("%s line %d: Deprecated option \"%s\"",
  		    filename, linenum, keyword);
-@@ -1554,6 +1579,9 @@
+@@ -1684,6 +1708,9 @@ initialize_options(Options * options)
  	options->ip_qos_bulk = -1;
  	options->request_tty = -1;
  	options->proxy_use_fdpass = -1;
@@ -72,23 +71,22 @@
  	options->ignored_unknown = NULL;
  	options->num_canonical_domains = 0;
  	options->num_permitted_cnames = 0;
-@@ -1721,6 +1749,12 @@
+@@ -1871,6 +1898,10 @@ fill_default_options(Options * options)
  		options->canonicalize_fallback_local = 1;
  	if (options->canonicalize_hostname == -1)
  		options->canonicalize_hostname = SSH_CANONICALISE_NO;
-+
 +#ifdef DISABLE_BANNER
 +	if (options->disable_banner == -1)
 +		options->disable_banner = 0;
 +#endif
-+
- #define CLEAR_ON_NONE(v) \
- 	do { \
- 		if (v != NULL && strcasecmp(v, "none") == 0) { \
---- orig/readconf.h	Wed May 21 15:04:35 2014
-+++ new/readconf.h	Wed May 28 11:08:53 2014
-@@ -155,6 +155,9 @@
- 	struct allowed_cname permitted_cnames[MAX_CANON_DOMAINS];
+ 	if (options->fingerprint_hash == -1)
+ 		options->fingerprint_hash = SSH_FP_HASH_DEFAULT;
+ 	if (options->update_hostkeys == -1)
+diff -pur old/readconf.h new/readconf.h
+--- old/readconf.h	2015-03-17 06:49:20.000000000 +0100
++++ new/readconf.h	2015-03-28 21:57:35.684348892 +0100
+@@ -153,6 +153,9 @@ typedef struct {
+ 	char	*hostbased_key_types;
  
  	char	*ignored_unknown; /* Pattern list of unknown tokens to ignore */
 +#ifdef DISABLE_BANNER
@@ -97,9 +95,9 @@
  }       Options;
  
  #define SSH_CANONICALISE_NO	0
-@@ -175,6 +178,12 @@
- #define SSHCONF_CHECKPERM	1  /* check permissions on config file */
- #define SSHCONF_USERCONF	2  /* user provided config file not system */
+@@ -178,6 +181,12 @@ typedef struct {
+ #define SSH_UPDATE_HOSTKEYS_YES	1
+ #define SSH_UPDATE_HOSTKEYS_ASK	2
  
 +#ifdef DISABLE_BANNER
 +#define SSH_DISABLEBANNER_NO		0
@@ -109,10 +107,11 @@
 +
  void     initialize_options(Options *);
  void     fill_default_options(Options *);
- int	 process_config_line(Options *, struct passwd *, const char *, char *,
---- orig/ssh_config.5	Thu May 22 15:05:04 2014
-+++ new/ssh_config.5	Fri May 23 09:36:52 2014
-@@ -507,6 +507,14 @@
+ void	 fill_default_options_for_canonicalization(Options *);
+diff -pur old/ssh_config.5 new/ssh_config.5
+--- old/ssh_config.5	2015-03-28 21:57:35.544033907 +0100
++++ new/ssh_config.5	2015-03-28 21:57:35.684635985 +0100
+@@ -566,6 +566,14 @@ If set to a time in seconds, or a time i
  then the backgrounded master connection will automatically terminate
  after it has remained idle (with no client connections) for the
  specified time.
@@ -127,9 +126,10 @@
  .It Cm DynamicForward
  Specifies that a TCP port on the local machine be forwarded
  over the secure channel, and the application
---- orig/sshconnect2.c	Wed May 21 15:05:27 2014
-+++ new/sshconnect2.c	Thu May 29 17:33:56 2014
-@@ -82,6 +82,10 @@
+diff -pur old/sshconnect2.c new/sshconnect2.c
+--- old/sshconnect2.c	2015-03-17 06:49:20.000000000 +0100
++++ new/sshconnect2.c	2015-03-28 21:57:35.684940995 +0100
+@@ -81,6 +81,10 @@ extern char *client_version_string;
  extern char *server_version_string;
  extern Options options;
  
@@ -140,7 +140,7 @@
  /*
   * SSH2 key exchange
   */
-@@ -480,7 +484,20 @@
+@@ -480,7 +484,20 @@ input_userauth_banner(int type, u_int32_
  	debug3("input_userauth_banner");
  	raw = packet_get_string(&len);
  	lang = packet_get_string(NULL);

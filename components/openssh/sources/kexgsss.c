@@ -22,10 +22,20 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/*
+ * May 22, 2015
+ * In version 6.8 a new packet interface has been introduced to OpenSSH,
+ * while the old packet API has been provided in opacket.c.
+ * At this moment we are not rewritting GSS-API key exchange code to the new
+ * API, just adjusting it to still work with new struct ssh.
+ * Rewritting to the new API can be considered in the future.
+ */
+
 #include "includes.h"
 
 #ifdef GSSAPI
 
+#include <signal.h>	/* for sig_atomic_t in kex.h */
 #include <string.h>
 
 #include <openssl/crypto.h>
@@ -36,6 +46,7 @@
 #include "ssh2.h"
 #include "key.h"
 #include "cipher.h"
+#include "digest.h"
 #include "kex.h"
 #include "log.h"
 #include "packet.h"
@@ -43,8 +54,8 @@
 #include "ssh-gss.h"
 #include "monitor_wrap.h"
 
-void
-kexgss_server(Kex *kex)
+int
+kexgss_server(struct ssh *ssh)
 {
 	OM_uint32 maj_status, min_status;
 
@@ -59,8 +70,8 @@ kexgss_server(Kex *kex)
 	gss_buffer_desc gssbuf, recv_tok, msg_tok;
 	gss_buffer_desc send_tok = GSS_C_EMPTY_BUFFER;
 	Gssctxt *ctxt = NULL;
-	uint_t slen, klen, kout, hashlen;
-	uchar_t *kbuf, *hash;
+	uint_t slen, klen, kout;
+	uchar_t *kbuf;
 	DH *dh;
 	int min = -1, max = -1, nbits = -1;
 	BIGNUM *shared_secret = NULL;
@@ -68,6 +79,10 @@ kexgss_server(Kex *kex)
 	int type = 0;
 	gss_OID oid;
 	char *mechs;
+	struct kex *kex = ssh->kex;
+	int r;
+	uchar_t hash[SSH_DIGEST_MAX_LENGTH];
+	size_t hashlen;
 
 	/* Initialise GSSAPI */
 
@@ -92,10 +107,10 @@ kexgss_server(Kex *kex)
 
 	switch (kex->kex_type) {
 	case KEX_GSS_GRP1_SHA1:
-		dh = dh_new_group1();
+		kex->dh = dh_new_group1();
 		break;
 	case KEX_GSS_GRP14_SHA1:
-		dh = dh_new_group14();
+		kex->dh = dh_new_group14();
 		break;
 	case KEX_GSS_GEX_SHA1:
 		debug("Doing group exchange");
@@ -109,14 +124,14 @@ kexgss_server(Kex *kex)
 		if (max < min || nbits < min || max < nbits)
 			fatal("GSS_GEX, bad parameters: %d !< %d !< %d",
 			    min, nbits, max);
-		dh = PRIVSEP(choose_dh(min, nbits, max));
-		if (dh == NULL)
+		kex->dh = PRIVSEP(choose_dh(min, nbits, max));
+		if (kex->dh == NULL)
 			packet_disconnect("Protocol error:"
 			    " no matching group found");
 
 		packet_start(SSH2_MSG_KEXGSS_GROUP);
-		packet_put_bignum2(dh->p);
-		packet_put_bignum2(dh->g);
+		packet_put_bignum2(kex->dh->p);
+		packet_put_bignum2(kex->dh->g);
 		packet_send();
 
 		packet_write_wait();
@@ -125,7 +140,7 @@ kexgss_server(Kex *kex)
 		fatal("%s: Unexpected KEX type %d", __func__, kex->kex_type);
 	}
 
-	dh_gen_key(dh, kex->we_need * 8);
+	dh_gen_key(kex->dh, kex->we_need * 8);
 
 	do {
 		debug("Wait SSH2_MSG_GSSAPI_INIT");
@@ -190,12 +205,12 @@ kexgss_server(Kex *kex)
 	if (!(ret_flags & GSS_C_INTEG_FLAG))
 		fatal("Integrity flag wasn't set");
 
-	if (!dh_pub_is_valid(dh, dh_client_pub))
+	if (!dh_pub_is_valid(kex->dh, dh_client_pub))
 		packet_disconnect("bad client public DH value");
 
-	klen = DH_size(dh);
+	klen = DH_size(kex->dh);
 	kbuf = xmalloc(klen);
-	kout = DH_compute_key(kbuf, dh_client_pub, dh);
+	kout = DH_compute_key(kbuf, dh_client_pub, kex->dh);
 	if (kout < 0)
 		fatal("DH_compute_key: failed");
 
@@ -209,30 +224,31 @@ kexgss_server(Kex *kex)
 	memset(kbuf, 0, klen);
 	free(kbuf);
 
+	hashlen = sizeof (hash);
 	switch (kex->kex_type) {
 	case KEX_GSS_GRP1_SHA1:
 	case KEX_GSS_GRP14_SHA1:
 		kex_dh_hash(
 		    kex->client_version_string, kex->server_version_string,
-		    buffer_ptr(&kex->peer), buffer_len(&kex->peer),
-		    buffer_ptr(&kex->my), buffer_len(&kex->my),
+		    buffer_ptr(kex->peer), buffer_len(kex->peer),
+		    buffer_ptr(kex->my), buffer_len(kex->my),
 		    NULL, 0, /* Change this if we start sending host keys */
-		    dh_client_pub, dh->pub_key, shared_secret,
-		    &hash, &hashlen);
+		    dh_client_pub, kex->dh->pub_key, shared_secret,
+		    hash, &hashlen);
 		break;
 	case KEX_GSS_GEX_SHA1:
 		kexgex_hash(
 		    kex->hash_alg,
 		    kex->client_version_string, kex->server_version_string,
-		    buffer_ptr(&kex->peer), buffer_len(&kex->peer),
-		    buffer_ptr(&kex->my), buffer_len(&kex->my),
+		    buffer_ptr(kex->peer), buffer_len(kex->peer),
+		    buffer_ptr(kex->my), buffer_len(kex->my),
 		    NULL, 0,
 		    min, nbits, max,
-		    dh->p, dh->g,
+		    kex->dh->p, kex->dh->g,
 		    dh_client_pub,
-		    dh->pub_key,
+		    kex->dh->pub_key,
 		    shared_secret,
-		    &hash, &hashlen);
+		    hash, &hashlen);
 		break;
 	default:
 		fatal("%s: Unexpected KEX type %d", __func__, kex->kex_type);
@@ -253,7 +269,7 @@ kexgss_server(Kex *kex)
 		fatal("Couldn't get MIC");
 
 	packet_start(SSH2_MSG_KEXGSS_COMPLETE);
-	packet_put_bignum2(dh->pub_key);
+	packet_put_bignum2(kex->dh->pub_key);
 	packet_put_string(msg_tok.value, msg_tok.length);
 
 	if (send_tok.length != 0) {
@@ -272,10 +288,10 @@ kexgss_server(Kex *kex)
 	else
 		ssh_gssapi_delete_ctx(&ctxt);
 
-	DH_free(dh);
+	DH_free(kex->dh);
 
-	kex_derive_keys_bn(kex, hash, hashlen, shared_secret);
-	BN_clear_free(shared_secret);
-	kex_finish(kex);
+	if ((r = kex_derive_keys_bn(ssh, hash, hashlen, shared_secret)) == 0)
+		r = kex_send_newkeys(ssh);
+	return (r);
 }
 #endif /* GSSAPI */
