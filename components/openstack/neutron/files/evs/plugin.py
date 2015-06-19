@@ -259,15 +259,6 @@ class EVSNeutronPluginV2(db_base_plugin_v2.NeutronDbPluginV2,
          IPnet associated with the EVS.
         """
 
-        # TODO(gmoodalb): Take care of this now that we have pool.
-        # Even though EVS does not support allocation pools, it is OK for an
-        # user to specify --allocation-pool because allocation pool management
-        # is done by neutron-server and is transparent to EVS framework.
-
-        # user specified --no-gateway, and we don't support it
-        if subnet['subnet']['gateway_ip'] is None:
-            raise EVSOpNotSupported(_("setting --no-gateway for a subnet "
-                                      "not supported"))
         if (subnet['subnet']['host_routes'] is not
                 attributes.ATTR_NOT_SPECIFIED):
             raise EVSOpNotSupported(_("setting --host-route for a subnet "
@@ -285,7 +276,10 @@ class EVSNeutronPluginV2(db_base_plugin_v2.NeutronDbPluginV2,
             evsname = db_subnet['network_id']
             tenantname = db_subnet['tenant_id']
             proplist = ['subnet=%s' % db_subnet['cidr']]
-            proplist.append('defrouter=%s' % db_subnet['gateway_ip'])
+            defrouter = db_subnet['gateway_ip']
+            if not defrouter:
+                defrouter = '0.0.0.0' if db_subnet['ip_version'] == 4 else '::'
+            proplist.append('defrouter=%s' % defrouter)
             proplist.append('uuid=%s' % db_subnet['id'])
             if poolstr:
                 proplist.append('pool=%s' % (poolstr))
