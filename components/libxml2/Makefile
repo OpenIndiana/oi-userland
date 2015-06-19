@@ -119,6 +119,17 @@ $(BUILD_DIR)/$(MACH64)/.tested: COMPONENT_PRE_TEST_ACTION = ( \
 COMPONENT_PRE_TEST_ACTION += \
     (cd $(@D) ; gtar xf $(COMPONENT_DIR)/$(COMPONENT_ARCHIVE_1));
 
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
+COMPONENT_TEST_TRANSFORMS = \
+	'-e "s/^make\[.*$$/[EnD]/" ' \
+	'-e "/^\#\# XML regression tests/,/^\[EnD\]/p" ' \
+	'-e "/^\#\# running Python regression tests/,/^\[EnD\]/p" ' \
+        '-e "/.*/d" '
+
+COMPONENT_SYSTEM_TEST_TARGETS = system-test 
+COMPONENT_PRE_SYSTEM_TEST_ACTION = $(COMPONENT_PRE_TEST_ACTION)
+
 # common targets
 configure:	$(CONFIGURE_32_and_64)
 
@@ -131,7 +142,7 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+system-test:    $(CONFIGURE_32_and_64) $(SYSTEM_TEST_32_and_64)
 
 
 REQUIRED_PACKAGES += library/libxml2
