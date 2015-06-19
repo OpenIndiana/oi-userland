@@ -26,11 +26,11 @@ export PARFAIT_BUILD=no
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME        = mysql
-COMPONENT_VERSION     = 5.5.31
+COMPONENT_VERSION     = 5.5.43
 COMPONENT_SRC         = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE     = $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:9cdd650b47e3ea864ab40d4ab23fa4a9fdfabc7fd018bf5c9cce30722c0abcea
+    sha256:43d3df79e5c839a2749deb6e056a4589e49c903e09034c18653ec56e6e4774cd
 COMPONENT_ARCHIVE_URL = http://downloads.mysql.com/archives/mysql-5.5/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://dev.mysql.com/ 
 COMPONENT_BUGDB       = database/mysql
