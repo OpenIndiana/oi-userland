@@ -95,6 +95,10 @@ PUBLISHER_LOCALIZABLE ?=	$(CONSOLIDATION)-localizable
 
 ROOT =			/
 
+# The changset and external source repo used in building the packages.
+CONSOLIDATION_CHANGESET=$(shell hg identify -i)
+CONSOLIDATION_REPOSITORY_URL=https://hg.java.net/hg/solaris-userland~gate
+
 # Native OS version
 OS_VERSION :=		$(shell uname -r)
 SOLARIS_VERSION =	$(OS_VERSION:5.%=2.%)
