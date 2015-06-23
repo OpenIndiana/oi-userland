@@ -195,6 +195,9 @@ class ZoneConfig(object):
                 LOG.error(_("Unable to commit the new configuration for "
                             "instance '%s' via zonemgr(3RAD): %s")
                           % (self.zone.name, err))
+
+                # Last ditch effort to cleanup.
+                self.zone.cancelConfig()
                 raise
 
     def setprop(self, resource, prop, value):
