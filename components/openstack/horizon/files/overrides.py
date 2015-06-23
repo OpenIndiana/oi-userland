@@ -143,11 +143,6 @@ admin_state = CreateNetworkInfoAction.base_fields['admin_state']
 admin_state.widget.attrs['disabled'] = True
 admin_state.widget.value_from_datadict = lambda *args: True
 
-# Disable 'no_gateway' in Project/Networks/Create Network/Network. Note that
-# this is unchecked by default.
-CreateSubnetInfoAction.base_fields['no_gateway'].widget.attrs['disabled'] = \
-    True
-
 # Remove 'CreateVolumeFromImage' checkbox from
 # Project/Images & Snapshots/Actions
 ImagesTable._meta.row_actions = (LaunchImage, EditImage, DeleteImage,)
