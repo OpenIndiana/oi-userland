@@ -30,21 +30,22 @@ include ../../make-rules/shared-macros.mk
 PATH=/usr/bin:/usr/gnu/bin:/usr/sbin:/usr/perl5/bin
 
 COMPONENT_NAME=         squid
-COMPONENT_VERSION=      3.1.23
+COMPONENT_VERSION=      3.5.5
 COMPONENT_PROJECT_URL=  http://www.squid-cache.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:ba5f6a7000a032f2315923c1b8d0b37458d33a7f59d603facecf9e8c12470b34
-COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)Versions/v3/3.1/$(COMPONENT_ARCHIVE)
+    sha256:23793da6b23871765188becae59a6f4b6c3672c256ba9be90743b46a3c7921cf
+COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)Versions/v3/3.5/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/squid
 
-TPNO=			13323
+TPNO=			23264
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+CC += $(CC_BITS)
 CXX += $(CC_BITS)
 
 CFLAGS += -I/usr/include/kerberosv5
@@ -66,14 +67,13 @@ CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)/squid
 CONFIGURE_OPTIONS += --mandir=$(CONFIGURE_PREFIX)/man
 CONFIGURE_OPTIONS += --sbindir=$(CONFIGURE_PREFIX)/sbin
 CONFIGURE_OPTIONS += --enable-arp-acl
-CONFIGURE_OPTIONS += --enable-auth='basic,digest,negotiate,ntlm'
-CONFIGURE_OPTIONS += --enable-basic-auth-helpers='DB,NCSA,YP,LDAP,PAM,getpwnam,MSNT,POP3,multi-domain-NTLM,SMB,SASL'
+CONFIGURE_OPTIONS += --enable-auth-basic='DB,NCSA,LDAP,PAM,getpwnam,MSNT-multi-domain,POP3,SMB,SASL'
 CONFIGURE_OPTIONS += --enable-cache-digests
 CONFIGURE_OPTIONS += --enable-carp
 CONFIGURE_OPTIONS += --enable-coss-aio-ops
 CONFIGURE_OPTIONS += --enable-delay-pools
-CONFIGURE_OPTIONS += --enable-digest-auth-helpers='ldap,password'
-CONFIGURE_OPTIONS += --enable-external-acl-helpers='ip_user,unix_group,ldap_group,wbinfo_group'
+CONFIGURE_OPTIONS += --enable-auth-digest='LDAP'
+CONFIGURE_OPTIONS += --enable-external-acl-helpers='file_userip,unix_group,LDAP_group,wbinfo_group'
 CONFIGURE_OPTIONS += --enable-follow-x-forwarded-for
 CONFIGURE_OPTIONS += --enable-forward-log
 CONFIGURE_OPTIONS += --enable-forw-via-db
@@ -81,25 +81,20 @@ CONFIGURE_OPTIONS += --enable-htcp
 CONFIGURE_OPTIONS += --enable-icmp
 CONFIGURE_OPTIONS += --enable-large-cache-files
 CONFIGURE_OPTIONS += --enable-multicast-miss
-CONFIGURE_OPTIONS += --enable-negotiate-auth-helpers='squid_kerb_auth'
-CONFIGURE_OPTIONS += --enable-ntlm-auth-helpers='smb_lm,fakeauth,no_check'
+CONFIGURE_OPTIONS += --enable-auth-negotiate='kerberos'
+CONFIGURE_OPTIONS += --enable-auth-ntlm='smb_lm,fake'
 CONFIGURE_OPTIONS += --enable-ntlm-fail-open
-CONFIGURE_OPTIONS += --enable-referer-log
 CONFIGURE_OPTIONS += --enable-removal-policies='heap,lru'
 CONFIGURE_OPTIONS += --enable-snmp
 CONFIGURE_OPTIONS += --enable-ssl
 CONFIGURE_OPTIONS += --enable-storeio='aufs,diskd,ufs'
-CONFIGURE_OPTIONS += --enable-useragent-log
 CONFIGURE_OPTIONS += --enable-x-accelerator-vary
 CONFIGURE_OPTIONS += --with-aio
 CONFIGURE_OPTIONS += --with-aufs-threads=8
-CONFIGURE_OPTIONS += --with-large-files
 CONFIGURE_OPTIONS += --with-build-environment=POSIX_V6_ILP32_OFFBIG
 CONFIGURE_OPTIONS += --with-pthreads
 
-COMPONENT_POST_BUILD_ACTION= \
-                (cd $(COMPONENT_DIR) ; \
-                 $(CP) files/squid.conf.default $(@D)/src)
+COMPONENT_BUILD_ARGS += CFLAGS="$(CFLAGS)"
 
 ASLR_MODE = $(ASLR_ENABLE)
 
@@ -122,6 +117,10 @@ install:	$(INSTALL_64)
 # cache_dir ufs /var/squid/cache/ 500 16 256
 # acl my_machine src 192.0.2.21 # Replace with your desktop's IP address
 # http_access allow my_machine
+#
+# You will probably need to remove or comment out the following lines or Squid
+# will fail to start:
+#	# acl manager proto cache_object
 #
 # Make sure apache is running.
 #	# svcs apache22
@@ -156,3 +155,4 @@ REQUIRED_PACKAGES += system/library/security/crypto
 REQUIRED_PACKAGES += system/library/security/gss
 REQUIRED_PACKAGES += system/library/security/libsasl
 REQUIRED_PACKAGES += system/network
+REQUIRED_PACKAGES += service/security/kerberos-5 

@@ -1,11 +1,14 @@
---- squid-3.1.8/helpers/basic_auth/SASL/Makefile.in.orig	Wed Mar 23 01:33:05 2011
-+++ squid-3.1.8/helpers/basic_auth/SASL/Makefile.in	Wed Mar 23 01:35:04 2011
-@@ -286,7 +286,7 @@
- LDADD = \
- 	$(top_builddir)/compat/libcompat.la \
- 	-L$(top_builddir)/lib -lmiscutil \
+Solaris-specific patch; not suitable for upstream. 
+
+diff -rupN squid-3.5.5-orig/helpers/basic_auth/SASL/Makefile.in squid-3.5.5/helpers/basic_auth/SASL/Makefile.in
+--- squid-3.5.5-orig/helpers/basic_auth/SASL/Makefile.in	2015-06-16 11:02:41.242508702 -0700
++++ squid-3.5.5/helpers/basic_auth/SASL/Makefile.in	2015-06-16 11:03:18.755629692 -0700
+@@ -673,7 +673,7 @@ basic_sasl_auth_SOURCES = basic_sasl_aut
+ basic_sasl_auth_LDADD = \
+ 	$(top_builddir)/lib/libmiscencoding.la \
+ 	$(COMPAT_LIB) \
 -	$(LIBSASL) \
 +	-lsasl \
  	$(XTRA_LIBS)
  
- EXTRA_DIST = squid_sasl_auth squid_sasl_auth.conf config.test
+ EXTRA_DIST = \
