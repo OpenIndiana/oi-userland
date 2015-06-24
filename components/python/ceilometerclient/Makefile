@@ -32,7 +32,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:6a90d1f057ab35584c319f19ef31f49ea8c1bb25278dafdf4b6d64aa37604a8e
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	http://launchpad.net/python-cinderclient
+COMPONENT_PROJECT_URL=	http://launchpad.net/python-ceilometerclient
 COMPONENT_BUGDB=	service/ceilometer
 
 TPNO=			21727
