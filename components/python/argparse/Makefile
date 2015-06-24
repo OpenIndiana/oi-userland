@@ -37,6 +37,7 @@ TPNO=			13152
 # The argparse module was integrated into Python 2.7, so we should only deliver
 # a 2.6 module.
 PYTHON_VERSIONS = 2.6
+PYTHON_VERSION = 2.6
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -45,6 +46,10 @@ include $(WS_MAKE_RULES)/ips.mk
 COMPONENT_TEST_DIR =	$(COMPONENT_SRC)/test
 COMPONENT_TEST_ARGS =	test_argparse.py
 
+COMPONENT_SYSTEM_TEST_ENV =
+COMPONENT_SYSTEM_TEST_CMD=	$(PYTHON.2.6)
+COMPONENT_SYSTEM_TEST_ARGS =	test_argparse.py
+
 # The additional argparse specific set of transforms to be applied to the test
 # results to try to normalize them.
 COMPONENT_TEST_TRANSFORMS += \
@@ -52,12 +57,10 @@ COMPONENT_TEST_TRANSFORMS += \
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-# common targets
 build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
 test:		$(TEST_NO_ARCH)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
+system-test:    $(SYSTEM_TEST_NO_ARCH)
