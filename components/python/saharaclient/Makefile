@@ -33,7 +33,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:9013b57a70c30c4ef6e799f11755495343106528ee42bbeb8a40b5e8fad825c2
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://launchpad.net/python-saharaclient
-COMPONENT_BUGDB=	service/saharaclient
+COMPONENT_BUGDB=	service/sahara
 
 TPNO=			21636
 
