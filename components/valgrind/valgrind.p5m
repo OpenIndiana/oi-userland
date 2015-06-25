@@ -1,0 +1,118 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2015 Aurelien Larcher
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+# 32-bit objects in 64-bit multiarch build are rejected by lint
+<transform file path=usr/lib/$(MACH64)/valgrind/.+-x86-solaris.* -> set pkg.linted.userland.action001.2 true>
+
+# ISAEXEC
+hardlink path=usr/bin/callgrind_annotate target=../../usr/lib/isaexec pkg.linted.userland.action002.0=true
+hardlink path=usr/bin/callgrind_control target=../../usr/lib/isaexec pkg.linted.userland.action002.0=true
+hardlink path=usr/bin/cg_annotate target=../../usr/lib/isaexec pkg.linted.userland.action002.0=true
+hardlink path=usr/bin/cg_diff target=../../usr/lib/isaexec pkg.linted.userland.action002.0=true
+hardlink path=usr/bin/cg_merge target=../../usr/lib/isaexec pkg.linted.userland.action002.0=true
+hardlink path=usr/bin/ms_print target=../../usr/lib/isaexec pkg.linted.userland.action002.0=true
+hardlink path=usr/bin/valgrind target=../../usr/lib/isaexec pkg.linted.userland.action002.0=true
+hardlink path=usr/bin/valgrind-di-server target=../../usr/lib/isaexec pkg.linted.userland.action002.0=true
+hardlink path=usr/bin/valgrind-listener target=../../usr/lib/isaexec pkg.linted.userland.action002.0=true
+hardlink path=usr/bin/vgdb target=../../usr/lib/isaexec pkg.linted.userland.action002.0=true
+
+# Generated
+file path=usr/bin/$(MACH64)/callgrind_annotate
+file path=usr/bin/$(MACH64)/callgrind_control
+file path=usr/bin/$(MACH64)/cg_annotate
+file path=usr/bin/$(MACH64)/cg_diff
+file path=usr/bin/$(MACH64)/cg_merge
+file path=usr/bin/$(MACH64)/ms_print
+file path=usr/bin/$(MACH64)/valgrind
+file path=usr/bin/$(MACH64)/valgrind-di-server
+file path=usr/bin/$(MACH64)/valgrind-listener
+file path=usr/bin/$(MACH64)/vgdb
+
+file path=usr/include/valgrind/callgrind.h
+file path=usr/include/valgrind/drd.h
+file path=usr/include/valgrind/helgrind.h
+file path=usr/include/valgrind/memcheck.h
+file path=usr/include/valgrind/valgrind.h
+
+file path=usr/lib/$(MACH64)/pkgconfig/valgrind.pc
+
+file path=usr/lib/$(MACH64)/valgrind/32bit-core-valgrind-s1.xml
+file path=usr/lib/$(MACH64)/valgrind/32bit-core-valgrind-s2.xml
+file path=usr/lib/$(MACH64)/valgrind/32bit-core.xml
+file path=usr/lib/$(MACH64)/valgrind/32bit-sse-valgrind-s1.xml
+file path=usr/lib/$(MACH64)/valgrind/32bit-sse-valgrind-s2.xml
+file path=usr/lib/$(MACH64)/valgrind/32bit-sse.xml
+file path=usr/lib/$(MACH64)/valgrind/64bit-avx-valgrind-s1.xml
+file path=usr/lib/$(MACH64)/valgrind/64bit-avx-valgrind-s2.xml
+file path=usr/lib/$(MACH64)/valgrind/64bit-avx.xml
+file path=usr/lib/$(MACH64)/valgrind/64bit-core-valgrind-s1.xml
+file path=usr/lib/$(MACH64)/valgrind/64bit-core-valgrind-s2.xml
+file path=usr/lib/$(MACH64)/valgrind/64bit-core.xml
+file path=usr/lib/$(MACH64)/valgrind/64bit-sse-valgrind-s1.xml
+file path=usr/lib/$(MACH64)/valgrind/64bit-sse-valgrind-s2.xml
+file path=usr/lib/$(MACH64)/valgrind/64bit-sse.xml
+file path=usr/lib/$(MACH64)/valgrind/amd64-avx-coresse-valgrind.xml
+file path=usr/lib/$(MACH64)/valgrind/amd64-avx-coresse.xml
+file path=usr/lib/$(MACH64)/valgrind/amd64-coresse-valgrind.xml
+file path=usr/lib/$(MACH64)/valgrind/cachegrind-amd64-solaris mode=0555
+file path=usr/lib/$(MACH64)/valgrind/cachegrind-x86-solaris mode=0555
+file path=usr/lib/$(MACH64)/valgrind/callgrind-amd64-solaris mode=0555
+file path=usr/lib/$(MACH64)/valgrind/callgrind-x86-solaris mode=0555
+file path=usr/lib/$(MACH64)/valgrind/default.supp
+file path=usr/lib/$(MACH64)/valgrind/drd-amd64-solaris mode=0555
+file path=usr/lib/$(MACH64)/valgrind/drd-x86-solaris mode=0555
+file path=usr/lib/$(MACH64)/valgrind/exp-bbv-amd64-solaris mode=0555
+file path=usr/lib/$(MACH64)/valgrind/exp-bbv-x86-solaris mode=0555
+file path=usr/lib/$(MACH64)/valgrind/exp-dhat-amd64-solaris mode=0555
+file path=usr/lib/$(MACH64)/valgrind/exp-dhat-x86-solaris mode=0555
+file path=usr/lib/$(MACH64)/valgrind/exp-sgcheck-amd64-solaris mode=0555
+file path=usr/lib/$(MACH64)/valgrind/exp-sgcheck-x86-solaris mode=0555
+file path=usr/lib/$(MACH64)/valgrind/getoff-amd64-solaris mode=0555
+file path=usr/lib/$(MACH64)/valgrind/getoff-x86-solaris mode=0555
+file path=usr/lib/$(MACH64)/valgrind/helgrind-amd64-solaris mode=0555
+file path=usr/lib/$(MACH64)/valgrind/helgrind-x86-solaris mode=0555
+file path=usr/lib/$(MACH64)/valgrind/i386-coresse-valgrind.xml
+file path=usr/lib/$(MACH64)/valgrind/lackey-amd64-solaris mode=0555
+file path=usr/lib/$(MACH64)/valgrind/lackey-x86-solaris mode=0555
+file path=usr/lib/$(MACH64)/valgrind/massif-amd64-solaris mode=0555
+file path=usr/lib/$(MACH64)/valgrind/massif-x86-solaris mode=0555
+file path=usr/lib/$(MACH64)/valgrind/memcheck-amd64-solaris mode=0555
+file path=usr/lib/$(MACH64)/valgrind/memcheck-x86-solaris mode=0555
+file path=usr/lib/$(MACH64)/valgrind/none-amd64-solaris mode=0555
+file path=usr/lib/$(MACH64)/valgrind/none-x86-solaris mode=0555
+
+file path=usr/lib/$(MACH64)/valgrind/vgpreload_core-amd64-solaris.so
+file path=usr/lib/$(MACH64)/valgrind/vgpreload_core-x86-solaris.so
+file path=usr/lib/$(MACH64)/valgrind/vgpreload_drd-amd64-solaris.so
+file path=usr/lib/$(MACH64)/valgrind/vgpreload_drd-x86-solaris.so
+file path=usr/lib/$(MACH64)/valgrind/vgpreload_exp-dhat-amd64-solaris.so
+file path=usr/lib/$(MACH64)/valgrind/vgpreload_exp-dhat-x86-solaris.so
+file path=usr/lib/$(MACH64)/valgrind/vgpreload_exp-sgcheck-amd64-solaris.so
+file path=usr/lib/$(MACH64)/valgrind/vgpreload_exp-sgcheck-x86-solaris.so
+file path=usr/lib/$(MACH64)/valgrind/vgpreload_helgrind-amd64-solaris.so
+file path=usr/lib/$(MACH64)/valgrind/vgpreload_helgrind-x86-solaris.so
+file path=usr/lib/$(MACH64)/valgrind/vgpreload_massif-amd64-solaris.so
+file path=usr/lib/$(MACH64)/valgrind/vgpreload_massif-x86-solaris.so
+file path=usr/lib/$(MACH64)/valgrind/vgpreload_memcheck-amd64-solaris.so
+file path=usr/lib/$(MACH64)/valgrind/vgpreload_memcheck-x86-solaris.so
