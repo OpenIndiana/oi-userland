@@ -1019,6 +1019,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
             evs_uuid = port['network_id']
             vport_uuid = port['id']
             ip = network['network']['subnets'][0]['ips'][0]['address']
+            ip_plen = network['network']['subnets'][0]['cidr'].split('/')[1]
+            ip = '/'.join([ip, ip_plen])
             ip_version = network['network']['subnets'][0]['version']
             route = network['network']['subnets'][0]['gateway']['address']
             dns_list = network['network']['subnets'][0]['dns']

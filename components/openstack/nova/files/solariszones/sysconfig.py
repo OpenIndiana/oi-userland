@@ -1,6 +1,6 @@
 # vim: tabstop=4 shiftwidth=4 softtabstop=4
 
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -49,6 +49,11 @@ def create_ncp_defaultfixed(addrtype, linkname, netid, ip_version, ip=None,
     instance = etree.SubElement(install, "instance", enabled="true",
                                 name="default")
 
+    if not route:
+        # network/install SMF method script checks for ::0 for IPv6
+        # for no-gateway case
+        route = '0.0.0.0' if ip_version == 4 else '::0'
+
     if ip_version == 4:
         pg4 = etree.SubElement(instance, "property_group",
                                type="ipv4_interface",
@@ -89,6 +94,8 @@ def create_ncp_defaultfixed(addrtype, linkname, netid, ip_version, ip=None,
                              name="static_address", value=ip)
             etree.SubElement(pg6, "propval", type="astring", name="name",
                              value="%s/v6" % linkname)
+            etree.SubElement(pg6, "propval", type="net_address_v6",
+                             name="default_route", value=route)
         else:
             pg6 = etree.SubElement(instance, "property_group",
                                    type="ipv6_interface",
