@@ -31,13 +31,6 @@ class SolarisiSCSI(object):
     def __init__(self, *args, **kwargs):
         self.execute = putils.execute
 
-    def disconnect_iscsi(self):
-        """Disable the iSCSI discovery method to detach the volume
-        from instance_name.
-        """
-        self.execute('/usr/sbin/iscsiadm', 'modify', 'discovery',
-                     '--sendtargets', 'disable')
-
     def _get_device_path(self, connection_properties):
         """Get the device path from the target info."""
         (out, _err) = self.execute('/usr/sbin/iscsiadm', 'list',

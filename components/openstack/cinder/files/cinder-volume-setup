@@ -36,6 +36,17 @@ def start():
     parser = ConfigParser.ConfigParser()
     parser.read(cinder_conf)
 
+    # check if the SAN storage is used.
+    try:
+        local = parser.get("DEFAULT", "san_is_local")
+    except ConfigParser.NoOptionError:
+        local = False
+
+    # The script only handles the setup for local access as it needs to
+    # run in the remote node in the SAN environment.
+    if not local:
+        return smf_include.SMF_EXIT_OK
+
     # retrieve the top-level dataset or just get the default (rpool/cinder)
     try:
         top_ds = parser.get("DEFAULT", "zfs_volume_base")

@@ -20,16 +20,21 @@ Drivers for Solaris ZFS operations in local and iSCSI modes
 """
 
 import abc
+import fcntl
+import os
+import socket
+import subprocess
 import time
 
 from oslo.config import cfg
 
 from cinder import exception
-from cinder.image import image_utils
 from cinder.i18n import _
+from cinder.image import image_utils
 from cinder.openstack.common import log as logging
 from cinder.openstack.common import processutils
 from cinder.volume import driver
+from cinder.volume.drivers.san.san import SanDriver
 
 from solaris_install.target.size import Size
 
@@ -44,13 +49,24 @@ solaris_zfs_opts = [
 FLAGS.register_opts(solaris_zfs_opts)
 
 
-class ZFSVolumeDriver(driver.VolumeDriver):
+class ZFSVolumeDriver(SanDriver):
     """Local ZFS volume operations."""
     protocol = 'local'
 
     def __init__(self, *args, **kwargs):
-        super(ZFSVolumeDriver, self).__init__(*args, **kwargs)
+        super(ZFSVolumeDriver, self).__init__(execute=self.solaris_execute,
+                                              *args, **kwargs)
         self.configuration.append_config_values(solaris_zfs_opts)
+        self.run_local = self.configuration.san_is_local
+        self.hostname = socket.gethostname()
+
+    def solaris_execute(self, *cmd, **kwargs):
+        """Execute the command locally or remotely."""
+        if self.run_local:
+            return processutils.execute(*cmd, **kwargs)
+        else:
+            return super(ZFSVolumeDriver, self)._run_ssh(cmd,
+                                                         check_exit_code=True)
 
     def check_for_setup_error(self):
         """Check the setup error."""
@@ -59,7 +75,7 @@ class ZFSVolumeDriver(driver.VolumeDriver):
     def create_volume(self, volume):
         """Create a volume."""
         size = '%sG' % volume['size']
-        zfs_volume = self._get_zfs_volume_name(volume)
+        zfs_volume = self._get_zfs_volume_name(volume['name'])
 
         # Create a ZFS volume
         cmd = ['/usr/sbin/zfs', 'create', '-V', size, zfs_volume]
@@ -78,7 +94,7 @@ class ZFSVolumeDriver(driver.VolumeDriver):
 
         # Create a ZFS clone
         zfs_snapshot = self._get_zfs_snap_name(snapshot)
-        zfs_volume = self._get_zfs_volume_name(volume)
+        zfs_volume = self._get_zfs_volume_name(volume['name'])
         cmd = ['/usr/sbin/zfs', 'clone', zfs_snapshot, zfs_volume]
         self._execute(*cmd)
 
@@ -102,7 +118,7 @@ class ZFSVolumeDriver(driver.VolumeDriver):
 
         # Create a ZFS clone
         zfs_snapshot = self._get_zfs_snap_name(tmp_snapshot)
-        zfs_volume = self._get_zfs_volume_name(volume)
+        zfs_volume = self._get_zfs_volume_name(volume['name'])
         cmd = ['/usr/sbin/zfs', 'clone', zfs_snapshot, zfs_volume]
         self._execute(*cmd)
 
@@ -123,7 +139,7 @@ class ZFSVolumeDriver(driver.VolumeDriver):
             LOG.debug(_("The volume path '%s' doesn't exist") % zvol)
             return
 
-        zfs_volume = self._get_zfs_volume_name(volume)
+        zfs_volume = self._get_zfs_volume_name(volume['name'])
         origin_snapshot = self._get_zfs_property('origin', zfs_volume)
         tmp_cloned_vol = False
 
@@ -205,37 +221,86 @@ class ZFSVolumeDriver(driver.VolumeDriver):
 
     def copy_image_to_volume(self, context, volume, image_service, image_id):
         """Fetch the image from image_service and write it to the volume."""
-        image_utils.fetch_to_raw(context,
-                                 image_service,
-                                 image_id,
-                                 self.local_path(volume))
+        raise NotImplementedError()
 
     def copy_volume_to_image(self, context, volume, image_service, image_meta):
         """Copy the volume to the specified image."""
-        image_utils.upload_volume(context,
-                                  image_service,
-                                  image_meta,
-                                  self.local_path(volume))
+        raise NotImplementedError()
 
     def _get_zfs_property(self, prop, dataset):
         """Get the value of property for the dataset."""
-        (out, _err) = self._execute('/usr/sbin/zfs', 'get', '-H', '-o',
-                                    'value', prop, dataset)
-        return out.rstrip()
+        try:
+            (out, _err) = self._execute('/usr/sbin/zfs', 'get', '-H', '-o',
+                                        'value', prop, dataset)
+            return out.rstrip()
+        except processutils.ProcessExecutionError:
+            LOG.info(_("Failed to get the property '%s' of the dataset '%s'") %
+                     (prop, dataset))
+            return None
 
     def _get_zfs_snap_name(self, snapshot):
         """Get the snapshot path."""
         return "%s/%s@%s" % (self.configuration.zfs_volume_base,
                              snapshot['volume_name'], snapshot['name'])
 
-    def _get_zfs_volume_name(self, volume):
+    def _get_zfs_volume_name(self, volume_name):
         """Add the pool name to get the ZFS volume."""
         return "%s/%s" % (self.configuration.zfs_volume_base,
-                          volume['name'])
+                          volume_name)
+
+    def _piped_execute(self, cmd1, cmd2):
+        """Pipe output of cmd1 into cmd2."""
+        LOG.debug(_("Piping cmd1='%s' into cmd2='%s'") %
+                  (' '.join(cmd1), ' '.join(cmd2)))
+
+        try:
+            p1 = subprocess.Popen(cmd1, stdout=subprocess.PIPE,
+                                  stderr=subprocess.PIPE)
+        except:
+            LOG.error(_("_piped_execute '%s' failed.") % (cmd1))
+            raise
+
+        # Set the pipe to be blocking because evenlet.green.subprocess uses
+        # the non-blocking pipe.
+        flags = fcntl.fcntl(p1.stdout, fcntl.F_GETFL) & (~os.O_NONBLOCK)
+        fcntl.fcntl(p1.stdout, fcntl.F_SETFL, flags)
+
+        p2 = subprocess.Popen(cmd2, stdin=p1.stdout,
+                              stdout=subprocess.PIPE,
+                              stderr=subprocess.PIPE)
+        p1.stdout.close()
+        stdout, stderr = p2.communicate()
+        if p2.returncode:
+            msg = (_("_piped_execute failed with the info '%s' and '%s'.") %
+                   (stdout, stderr))
+            raise exception.VolumeBackendAPIException(data=msg)
+
+    def _zfs_send_recv(self, src, dst, remote=False):
+        """Replicate the ZFS dataset by calling zfs send/recv cmd"""
+        src_snapshot = {'volume_name': src['name'],
+                        'name': 'tmp-snapshot-%s' % src['id']}
+        src_snapshot_name = self._get_zfs_snap_name(src_snapshot)
+        prop_type = self._get_zfs_property('type', src_snapshot_name)
+        # Delete the temporary snapshot if it already exists
+        if prop_type == 'snapshot':
+            self.delete_snapshot(src_snapshot)
+        # Create a temporary snapshot of volume
+        self.create_snapshot(src_snapshot)
+        src_snapshot_name = self._get_zfs_snap_name(src_snapshot)
+
+        cmd1 = ['/usr/sbin/zfs', 'send', src_snapshot_name]
+        cmd2 = ['/usr/sbin/zfs', 'receive', dst]
+        self._piped_execute(cmd1, cmd2)
+
+        # Delete the temporary src snapshot and dst snapshot
+        self.delete_snapshot(src_snapshot)
+        dst_snapshot_name = "%s@tmp-snapshot-%s" % (dst, src['id'])
+        cmd = ['/usr/sbin/zfs', 'destroy', dst_snapshot_name]
+        self._execute(*cmd)
 
     def _get_zvol_path(self, volume):
         """Get the ZFS volume path."""
-        return "/dev/zvol/rdsk/%s" % self._get_zfs_volume_name(volume)
+        return "/dev/zvol/rdsk/%s" % self._get_zfs_volume_name(volume['name'])
 
     def _update_volume_stats(self):
         """Retrieve volume status info."""
@@ -256,19 +321,73 @@ class ZFSVolumeDriver(driver.VolumeDriver):
             (Size(used_size) + Size(avail_size)).get(Size.gb_units)
         stats['free_capacity_gb'] = Size(avail_size).get(Size.gb_units)
         stats['reserved_percentage'] = self.configuration.reserved_percentage
+        stats['location_info'] =\
+            ('ZFSVolumeDriver:%(hostname)s:%(zfs_volume_base)s' %
+             {'hostname': self.hostname,
+              'zfs_volume_base': self.configuration.zfs_volume_base})
 
         self._stats = stats
 
     def extend_volume(self, volume, new_size):
         """Extend an existing volume's size."""
         volsize_str = 'volsize=%sg' % new_size
-        zfs_volume = self._get_zfs_volume_name(volume)
+        zfs_volume = self._get_zfs_volume_name(volume['name'])
         try:
             self._execute('/usr/sbin/zfs', 'set', volsize_str, zfs_volume)
         except Exception:
             msg = (_("Failed to extend volume size to %(new_size)s GB.")
                    % {'new_size': new_size})
             raise exception.VolumeBackendAPIException(data=msg)
+
+    def rename_volume(self, src, dst):
+        """Rename the volume from src to dst in the same zpool."""
+        cmd = ['/usr/sbin/zfs', 'rename', src, dst]
+        self._execute(*cmd)
+
+        LOG.debug(_("Rename the volume '%s' to '%s'") % (src, dst))
+
+    def migrate_volume(self, context, volume, host):
+        """Migrate the volume among different backends on the same server.
+
+        The volume migration can only run locally by calling zfs send/recv
+        cmds and the specified host needs to be on the same server with the
+        host. But, one exception is when the src and dst volume are located
+        under the same zpool locally or remotely, the migration will be done
+        by just renaming the volume.
+        :param context: context
+        :param volume: a dictionary describing the volume to migrate
+        :param host: a dictionary describing the host to migrate to
+        """
+        false_ret = (False, None)
+        if volume['status'] != 'available':
+            LOG.debug(_("Status of volume '%s' is '%s', not 'available'.") %
+                      (volume['name'], volume['status']))
+            return false_ret
+
+        if 'capabilities' not in host or \
+           'location_info' not in host['capabilities']:
+            LOG.debug(_("No location_info or capabilities are in host info"))
+            return false_ret
+
+        info = host['capabilities']['location_info']
+        if (self.hostname != info.split(':')[1]):
+            LOG.debug(_("Migration between two different servers '%s' and "
+                      "'%s' is not supported yet.") %
+                      (self.hostname, info.split(':')[1]))
+            return false_ret
+
+        dst_volume = "%s/%s" % (info.split(':')[-1], volume['name'])
+        src_volume = self._get_zfs_volume_name(volume['name'])
+        # check if the src and dst volume are under the same zpool
+        if (src_volume.split('/')[0] == dst_volume.split('/')[0]):
+            self.rename_volume(src_volume, dst_volume)
+        else:
+            self._zfs_send_recv(volume, dst_volume)
+            # delete the source volume
+            self.delete_volume(volume)
+
+        provider_location = {}
+        return (True, provider_location)
 
 
 class STMFDriver(ZFSVolumeDriver):
@@ -492,8 +611,14 @@ class ZFSISCSIDriver(STMFDriver, driver.ISCSIDriver):
         properties['target_discovered'] = True
         properties['target_iqn'] = target_name
 
+        # Here the san_is_local means that the cinder-volume runs in the
+        # iSCSI target with iscsi_ip_address.
+        if self.configuration.san_is_local:
+            target_ip = self.configuration.iscsi_ip_address
+        else:
+            target_ip = self.configuration.san_ip
         properties['target_portal'] = ('%s:%d' %
-                                       (self.configuration.iscsi_ip_address,
+                                       (target_ip,
                                         self.configuration.iscsi_port))
         view_lun = self._get_view_and_lun(luid)
         if view_lun['lun'] is not None:
