@@ -25,16 +25,16 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pcre
-COMPONENT_VERSION=	8.21
+COMPONENT_VERSION=	8.37
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:62e1116549ce5b1ad92901f04d8338d5f7b59f92abce8d15e9a17cafe0efb102
+    sha256:19d490a714274a8c4c9d131f651489b8647cdb40a159e9fb7ce17ba99ef992ab
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/pcre/files/pcre/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://pcre.org/
 COMPONENT_BUGDB=	library/pcre
 
-TPNO=			9271
+TPNO=			23018
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -107,6 +107,10 @@ COMPONENT_BUILD_ENV+=	"INSTALL=$(INSTALL)"
 COMPONENT_BUILD_ENV+=	"MAKE=$(GMAKE)"
 
 COMPONENT_BUILD_ARGS+=	-e
+
+# Master test results are the same for 32-bit and 64-bit, so override
+# here, rather than create multiple identical master files.
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
 ASLR_MODE = $(ASLR_ENABLE)
 
