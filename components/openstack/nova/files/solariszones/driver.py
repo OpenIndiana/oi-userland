@@ -38,7 +38,7 @@ from solaris_install.target.size import Size
 
 from eventlet import greenthread
 from lxml import etree
-from oslo.config import cfg
+from oslo_config import cfg
 
 from nova.compute import power_state
 from nova.compute import task_states
@@ -76,6 +76,7 @@ solariszones_opts = [
 
 CONF = cfg.CONF
 CONF.register_opts(solariszones_opts)
+CONF.import_opt('vncserver_proxyclient_address', 'nova.vnc')
 LOG = logging.getLogger(__name__)
 
 # These should match the strings returned by the zone_state_str()
@@ -1230,11 +1231,18 @@ class SolarisZonesDriver(driver.ComputeDriver):
         console_fmri = VNC_CONSOLE_BASE_FMRI + ':' + name
         # TODO(npower): investigate using RAD instead of CLI invocation
         try:
+            # The console SMF service exits with SMF_TEMP_DISABLE to prevent
+            # unnecessarily coming online at boot. Tell it to really bring
+            # it online.
+            out, err = utils.execute('/usr/sbin/svccfg', '-s', console_fmri,
+                                     'setprop', 'vnc/nova-enabled=true')
+            out, err = utils.execute('/usr/sbin/svccfg', '-s', console_fmri,
+                                     'refresh')
             out, err = utils.execute('/usr/sbin/svcadm', 'enable',
                                      console_fmri)
         except processutils.ProcessExecutionError as err:
             if not self._has_vnc_console_service(instance):
-                LOG.error(_("Ignoring attempt to enable a non-existent zone "
+                LOG.debug(_("Ignoring attempt to enable a non-existent zone "
                             "VNC console SMF service for instance '%s'")
                           % name)
             LOG.error(_("Unable to start zone VNC console SMF service "
@@ -1263,6 +1271,19 @@ class SolarisZonesDriver(driver.ComputeDriver):
                 LOG.error(_("Error querying state of zone VNC console SMF "
                             "service '%s': %s") % (console_fmri, err))
                 raise
+        # TODO(npower): investigate using RAD instead of CLI invocation
+        try:
+            # The console SMF service exits with SMF_TEMP_DISABLE to prevent
+            # unnecessarily coming online at boot. Make that happen.
+            out, err = utils.execute('/usr/sbin/svccfg', '-s', console_fmri,
+                                     'setprop', 'vnc/nova-enabled=false')
+            out, err = utils.execute('/usr/sbin/svccfg', '-s', console_fmri,
+                                     'refresh')
+        except processutils.ProcessExecutionError as err:
+            LOG.error(_("Unable to update 'vnc/nova-enabled' property for "
+                        "zone VNC console SMF service "
+                        "'%s': %s") % (console_fmri, err))
+            raise
 
     def _disable_vnc_console_service(self, instance):
         """Disable a zone VNC console SMF service"""
@@ -1667,11 +1688,12 @@ class SolarisZonesDriver(driver.ComputeDriver):
                         "'%s': %s" % (console_fmri, err)))
             raise
 
+        host = CONF.vncserver_proxyclient_address
         try:
             out, err = utils.execute('/usr/bin/svcprop', '-p', 'vnc/port',
                                      console_fmri)
             port = int(out.strip())
-            return ctype.ConsoleVNC(host='127.0.0.1',
+            return ctype.ConsoleVNC(host=host,
                                     port=port,
                                     internal_access_path=None)
         except processutils.ProcessExecutionError as err:
