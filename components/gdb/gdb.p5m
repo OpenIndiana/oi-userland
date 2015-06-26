@@ -34,7 +34,10 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 set name=org.opensolaris.arc-caseid \
     value=LSARC/2009/492
 
-file path=usr/bin/gdb
+# ISAEXEC
+hardlink path=usr/bin/gdb target=../../usr/lib/isaexec pkg.linted.userland.action002.0=true
+
+file path=usr/bin/$(MACH32)/gdb
 file path=usr/bin/$(MACH64)/gdb
 file path=usr/bin/gdbtui mode=0555
 file Solaris/jit-reader.h path=usr/include/gdb/jit-reader.h
