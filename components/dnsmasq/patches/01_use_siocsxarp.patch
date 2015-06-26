@@ -1,0 +1,46 @@
+If there are multiple datalinks configured with IP addresses from the same
+subnet, then the datalink to which an on-link device's ARP entry will be
+associated depends on the order in which these datalinks were plumbed with
+IP addresses. In that, the datalink that was plumbed for IP last will have
+the ARP entry associated against it. To avoid, this we need to use
+SIOCSXARP ioctl to specify the exact datalink.
+
+This patch was developed in-house. Since it is Solaris-specific it is not
+suitable for upstream.
+
+--- dnsmasq-2.68/src/dhcp.c	2013-12-08 07:58:29.000000000 -0800
++++ ORIGINAL/src/dhcp.c	2014-03-07 10:14:16.639192664 -0800
+@@ -418,17 +418,24 @@
+   else
+     {
+       /* unicast to unconfigured client. Inject mac address direct into ARP cache. 
+-	 Note that this only works for ethernet on solaris, because we use SIOCSARP
+-	 and not SIOCSXARP, which would be perfect, except that it returns ENXIO 
+-	 mysteriously. Bah. Fall back to broadcast for other net types. */
+-      struct arpreq req;
++	 Fall back to broadcast for other net types. */
++      struct xarpreq xreq;
++      int ifnamsz = strlen(ifr.ifr_name);
++
++      dest.sin_family = AF_INET;
+       dest.sin_addr = mess->yiaddr;
+       dest.sin_port = htons(daemon->dhcp_client_port);
+-      *((struct sockaddr_in *)&req.arp_pa) = dest;
+-      req.arp_ha.sa_family = AF_UNSPEC;
+-      memcpy(req.arp_ha.sa_data, mess->chaddr, mess->hlen);
+-      req.arp_flags = ATF_COM;
+-      ioctl(daemon->dhcpfd, SIOCSARP, &req);
++      *((struct sockaddr_in *)&xreq.xarp_pa) = dest;
++      xreq.xarp_ha.sdl_nlen = ifnamsz;
++      memcpy(xreq.xarp_ha.sdl_data, ifr.ifr_name, ifnamsz);
++      xreq.xarp_ha.sdl_family = AF_LINK;
++      xreq.xarp_ha.sdl_index = iface_index;
++      /* 6 corresponds to IFT_ETHER */
++      xreq.xarp_ha.sdl_type = 6;
++      xreq.xarp_ha.sdl_alen = ETHER_ADDR_LEN;
++      memcpy(xreq.xarp_ha.sdl_data + ifnamsz, mess->chaddr, mess->hlen);
++      xreq.xarp_flags = ATF_COM;
++      ioctl(daemon->dhcpfd, SIOCSXARP, &xreq);
+     }
+ #elif defined(HAVE_BSD_NETWORK)
+   else 
