@@ -1,0 +1,45 @@
+This patch was created inhouse and is not applicable for submitting to
+upstream. This is because it implements Solaris oddity - having the binaries
+available both without prefix and with 'g' prefix at the same time, only in
+different paths.
+
+--- grep-2.20/src/egrep.sh	2015-06-29 16:48:08.536062429 +0200
++++ grep-2.20/src/egrep.sh	2015-06-29 16:47:57.380731794 +0200
+@@ -1,11 +1,29 @@
+ #!@SHELL@
+-grep=grep
+-case $0 in
++# The script is a wrapper to GNU grep to be called with apropriate (-E or -F)
++# command line option. We can't just run 'ggrep' as the path may not contain
++# '/usr/bin' and we can't just use 'grep' as the PATH may not contain
++# '/usr/gnu/bin'. Also we can't just use fixed path as /usr/gnu/bin/grep because
++# this script must work even from workspace before being installed into /usr/...
++# testing the binaries from the workspace.
++
++if [[ "$( /usr/bin/basename "$0" )" == g* ]]; then
++  # gfgrep or gegrep (potentially in /usr/bin)
++  grep=ggrep
++else
++  # fgrep or egrep in (potentially in /usr/gnu/bin)
++  grep=grep
++fi
++
++case "$0" in
+   */*)
+-    dir=${0%/*}
+-    if test -x "$dir/@grep@"; then
+-      PATH=$dir:$PATH
+-      grep=@grep@
+-    fi;;
++    dir="${0%/*}"
++    if test -x "$dir/$grep"; then
++      PATH="$dir:$PATH"
++    fi
++    ;;
++  *)
++    PATH="@prefix@/bin:$PATH"
++    ;;
+ esac
+-exec $grep @option@ "$@"
++
++exec "$grep" @option@ "$@"
