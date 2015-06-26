@@ -21,8 +21,8 @@ COMPONENT_SUMMARY=	Engine for Sun Nimbus GTK2 Theme
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:6f26e3539f99ee172b6b768fb0f07bfc15ebb3ab91f687435ddbba7d36fb903b
-COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/schwer-q.u/files/nimbus/$(COMPONENT_ARCHIVE)/download
+    sha256:aff6aef7a9c5fd8d05aa42da5dd79d8ff86c74730d5a200422e25f42a1430fae
+COMPONENT_ARCHIVE_URL=	https://github.com/aszeszo/archives/raw/master/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		gnome/theme/nimbus
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Theming
 COMPONENT_LICENSE = LGPLv2
