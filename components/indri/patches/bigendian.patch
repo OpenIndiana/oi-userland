@@ -1,0 +1,12 @@
+Indri tries to define htonll and ntohll function which clash with solaris definitions
+--- indri-5.4/contrib/lemur/include/lemur/lemur-compat.hpp	2013-10-08 00:25:53.513213629 +0200
++++ indri-5.4/contrib/lemur/include/lemur/lemur-compat.hpp	2013-10-08 00:25:34.165330285 +0200
+@@ -212,6 +212,8 @@
+ #endif 
+ 
+ #if defined(WORDS_BIGENDIAN)
++#undef htonll
++#undef ntohll
+ inline UINT64 htonll( UINT64 native ) {
+   return native;
+ }

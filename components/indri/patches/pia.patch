@@ -1,0 +1,1028 @@
+Add our PIA wrapper to indri sources. This patch does several things:
+ - Add pia wrapper sources to indri source tree
+ - Add new tokenizer which does not treat '_' as a separator
+   - The TextTokenizerPIA.l differs from TextTokenizer.l only in single character
+      -[a-zA-Z0-9']+  { byte_position += tokleng; return ASCII_TOKEN; }
+      +[a-zA-Z0-9_']+ { byte_position += tokleng; return ASCII_TOKEN; }
+   - plus many symbol renames so that the parsers can coexist (toktext -> piatoktext etc.)
+   - TextTokenizerPIA.hpp contains only symbol renamse
+ - Rest are modifications to make indri build PIA wrapper
+
+
+--- indri-5.4/pia_wrapper.cpp	po Ärc 15 14:30:41 2013
++++ indri-5.4/pia_wrapper.cpp	po Ärc 15 14:29:09 2013
+@@ -0,0 +1,222 @@
++/*
++ * TO compile :
++ *      g++ -o libpia_wrapper.so -shared -fPIC -I../vlad-libs/sparc/usr/include/ -L../vlad-libs/sparc/usr/lib/ -lclucene-core -lnvpair pia_wrapper.cc
++ *
++ */
++
++#include <sys/stat.h>
++#include <strings.h>
++#include <stdio.h>
++#include <libnvpair.h>
++
++#include <iostream>
++#include <string>
++#include <sstream>
++#include <fstream>
++
++#include <vector>
++#include "indri/QueryEnvironment.hpp"
++#include "indri/SnippetBuilder.hpp"
++#include "indri/Repository.hpp"
++
++using namespace std;
++
++using namespace indri::api;
++
++#define MAX_RESULTS 3
++#define PIA_DATABASE "/var/db/piadb"
++#define PIA_DATABASE_STORAGE PIA_DATABASE "/collection/storage"
++
++indri::collection::Repository repository;
++
++std::string
++getFieldText(int documentID, std::string field) {
++	std::string ret_val = "";
++	indri::collection::Repository::index_state repIndexState = repository.indexes();
++	indri::index::Index *thisIndex=(*repIndexState)[0];
++	int fieldID=thisIndex->field(field);
++
++	if (fieldID < 1) {
++		return "";
++	}
++
++	const indri::index::TermList *termList=thisIndex->termList(documentID);
++
++	if (!termList) {
++		return "";
++	}
++
++	indri::utility::greedy_vector< indri::index::FieldExtent > fieldVec=termList->fields();
++	indri::utility::greedy_vector< indri::index::FieldExtent >::iterator fIter=fieldVec.begin();
++	while (fIter!=fieldVec.end()) {
++
++		if ((*fIter).id==fieldID) {
++			int beginTerm=(*fIter).begin;
++			int endTerm=(*fIter).end;
++
++	        	/*
++	 	 	 * note that the text is inclusive of the beginning
++		         * but exclusive of the ending
++		 	 */
++			for (int t=beginTerm; t < endTerm; t++) {
++				int thisTermID=termList->terms()[t];
++		       		ret_val = ret_val + thisIndex->term(thisTermID) + " ";
++			}
++		}
++
++		fIter++;
++	}
++
++	delete termList;
++	termList=NULL;
++	return ret_val;
++}
++
++/*
++ * Returns NULL on failure
++ * nvlist *
++ * search(
++ *  nvlist_t *search_params,
++ *  char **errmsg            // Similar to pia_index()
++ * );
++ */
++nvlist *
++search (nvlist_t *search_params, char **errmsg) {
++
++	char *index_path = PIA_DATABASE;
++	nvlist_t **nvl_list_result;
++	nvlist_t *nvl_return;
++	nvlist_t *nvl_result;
++	nvlist_t *results = NULL;
++
++	if (nvlist_alloc(&results, NV_UNIQUE_NAME, 0) != 0) {
++		*errmsg = strdup("nvlist_alloc failed\n");
++		return NULL;
++	}
++
++	try {
++		std::string query;
++		char *panicstack;
++		(void) nvlist_lookup_string(search_params, "stack", &panicstack);
++
++		QueryEnvironment indriEnvironment;
++		indriEnvironment.addIndex(index_path);
++
++		/* Create Indri query */
++		query = "#combine (" + std::string(panicstack) + ")";
++
++		QueryAnnotation *QAresults=indriEnvironment.runAnnotatedQuery(query.c_str(), MAX_RESULTS);
++
++		std::vector<indri::api::ScoredExtentResult> resultVector=QAresults->getResults();
++
++		int totalNumResults=resultVector.size();
++
++		/* Get Parsed document of the results */
++		std::vector<ParsedDocument*> parsedDocs=indriEnvironment.documents(resultVector);
++
++		int results_to_return = 0;
++		for ( size_t i=0; i < totalNumResults && i < MAX_RESULTS; i++ ) {
++				results_to_return++;
++		}
++
++		/* Open Repository */
++		repository.openRead(index_path);
++
++		nvl_list_result = (nvlist_t **) malloc(results_to_return * sizeof(nvlist_t *));
++
++		for ( size_t i=0; i < results_to_return; i++ ) {
++
++			std::string ret="";
++
++			int thisResultDocID=resultVector[i].document;
++
++			if (nvlist_alloc(&nvl_list_result[i], NV_UNIQUE_NAME, 0) != 0) {
++				*errmsg = strdup("nvlist_alloc failed\n");
++				return NULL;
++			}
++
++			if ((ret = getFieldText(thisResultDocID, "bug")) == "") {
++				*errmsg = strdup("Lookup of bugid failed\n");
++				return NULL;
++			} else if (nvlist_add_string(nvl_list_result[i], "pia-bugid", ret.c_str())) {
++				*errmsg = strdup("nvlist_add bugid failed\n");
++				return NULL;
++			}
++
++			if ((ret = getFieldText(thisResultDocID, "stack")) == "") {
++				*errmsg = strdup("Lookup of stack failed\n");
++				return NULL;
++			} else if (nvlist_add_string(nvl_list_result[i], "pia-stack", ret.c_str())) {
++				*errmsg = strdup("nvlist_add stack failed\n");
++				return NULL;
++			}
++
++			if ((ret = getFieldText(thisResultDocID, "signature")) == "") {
++				*errmsg = strdup("Lookup of signature failed\n");
++				return NULL;
++			} else if (nvlist_add_string(nvl_list_result[i], "pia-signature", ret.c_str())) {
++				*errmsg = strdup("nvlist_add signature failed\n");
++				return NULL;
++			}
++
++			int indri_score = 1000 + (int)resultVector[i].score*1000;
++			if (nvlist_add_int32(nvl_list_result[i], "pia-score", indri_score)) {
++				*errmsg = strdup("nvlist_add score failed\n");
++				return NULL;
++			}
++		}
++		repository.close();
++
++		nvlist_add_nvlist_array(results, "results", nvl_list_result, results_to_return);
++
++		for (int i=0; i<results_to_return; i++) {
++			nvlist_free(nvl_list_result[i]);
++		}
++
++		return results;
++
++	} catch(...){
++		nvl_list_result = (nvlist_t **) malloc(1 * sizeof(nvlist_t **));
++
++		if (nvlist_alloc(&nvl_result, NV_UNIQUE_NAME, 0) != 0) {
++			*errmsg = strdup("nvlist_alloc failed\n");
++			return NULL;
++		}
++
++		if (nvlist_add_string(nvl_result, "error", "Indri Error")) {
++			*errmsg = strdup("nvlist_add error failed\n");
++			return NULL;
++                }
++
++		nvlist_dup(nvl_result, &nvl_list_result[0], 0);
++		nvlist_free(nvl_result);
++		nvlist_add_nvlist_array(results, "results", nvl_list_result, 1);
++
++		return results;
++        }
++}
++
++extern "C" nvlist*
++pia_search (nvlist_t *search_params, char **errmsg) {
++
++	return search (search_params, errmsg);
++
++}
++
++int
++init () {
++
++	struct stat sb;
++	if (stat(PIA_DATABASE_STORAGE, &sb) != 0) {
++		return 1;
++	}
++
++	return 0;
++}
++
++extern "C" int
++pia_init () {
++
++	return init ();
++
++}
+--- indri-5.4/src/TextTokenizerPIA.l	po Ärc 15 14:38:12 2013
++++ indri-5.4/src/TextTokenizerPIA.l	po Ärc 15 14:36:55 2013
+@@ -0,0 +1,588 @@
++%option noyywrap
++%option never-interactive
++%option prefix="piatok"
++
++%{
++
++/*==========================================================================
++ * Copyright (c) 2004 University of Massachusetts.  All Rights Reserved.
++ *
++ * Use of the Lemur Toolkit for Language Modeling and Information Retrieval
++ * is subject to the terms of the software license set forth in the LICENSE
++ * file included with this software, and also available at
++ * http://www.lemurproject.org/license.html
++ *
++ *==========================================================================
++ */
++
++//
++// TextTokenizerPIA
++//
++// 15 September 2005 -- mwb
++//
++
++#include <string.h>
++#include <ctype.h>
++#include "indri/TextTokenizerPIA.hpp"
++#include "indri/TermExtent.hpp"
++#include "indri/TagEvent.hpp"
++#include "indri/TokenizedDocument.hpp"
++#include "indri/UnparsedDocument.hpp"
++#include "indri/UTF8Transcoder.hpp"
++#include "indri/AttributeValuePair.hpp"
++
++static long byte_position;
++
++#define ZAP           1
++#define TAG           2
++#define ASCII_TOKEN   3
++#define UTF8_TOKEN    4
++
++%}
++%start COMMENT
++%%
++
++"<!--" { BEGIN(COMMENT); byte_position += piatokleng; return ZAP; }
++<COMMENT>[^-]+ { byte_position += piatokleng; return ZAP; }
++<COMMENT>"-->" { BEGIN(INITIAL); byte_position += piatokleng; return ZAP; }
++<COMMENT>"-" { byte_position += piatokleng; return ZAP; }
++"<!"[^\>]*">" { byte_position += piatokleng; return ZAP; }
++\<[a-zA-Z/][^\>]*\>                                             { byte_position += piatokleng; return TAG; }
++[&]([a-zA-Z]+|[#]([0-9]+|[xX][a-fA-F0-9]+))[;]         { byte_position += piatokleng; return ZAP; /* symbols */ }
++[A-Z0-9]"."([A-Z0-9]".")*                                        { byte_position += piatokleng; return ASCII_TOKEN; }
++[a-zA-Z0-9_']+                                        { byte_position += piatokleng; return ASCII_TOKEN; }
++"-"[0-9]+("."[0-9]+)?                                  { byte_position += piatokleng; return ASCII_TOKEN; }
++[a-zA-Z0-9\x80-\xFD]+                               { byte_position += piatokleng; return UTF8_TOKEN; }
++
++[\n]                                                   { byte_position += piatokleng; return ZAP; }
++.                                                      { byte_position += piatokleng; return ZAP; }
++
++%%
++
++indri::parse::TokenizedDocument* indri::parse::TextTokenizerPIA::tokenize( indri::parse::UnparsedDocument* document ) {
++
++  _termBuffer.clear();
++  if ( _tokenize_entire_words)
++    _termBuffer.grow( document->textLength * 4);
++  else
++    _termBuffer.grow( document->textLength * 8 ); // extra null per char.
++
++  _document.terms.clear();
++  _document.tags.clear();
++  _document.positions.clear();
++
++  _document.metadata = document->metadata;
++  _document.text = document->text;
++  _document.textLength = document->textLength;
++  _document.content = document->content;
++  _document.contentLength = document->contentLength;
++
++  // byte offset
++  byte_position = document->content - document->text;
++
++  piatok_scan_bytes( document->content, document->contentLength );
++
++  // Main Tokenizer loop
++
++  int type;
++
++  while ( type = piatoklex() ) {
++
++    switch ( type ) {
++
++    case ASCII_TOKEN: processASCIIToken(); break;
++
++    case UTF8_TOKEN: processUTF8Token(); break;
++
++    case TAG: if ( _tokenize_markup ) processTag(); break;
++
++    default:
++    case ZAP:
++      break;
++
++    }
++
++  }
++
++  piatok_delete_buffer( YY_CURRENT_BUFFER );
++
++  return &_document;
++}
++
++// Member functions for processing tokenization events as dispatched
++// from the main tokenizer loop
++
++void indri::parse::TextTokenizerPIA::processTag() {
++
++  // Here, we parse the tag in a fashion that is relatively robust to
++  // malformed markup.  toktext matches this pattern: <[^>]+>
++
++  if ( piatoktext[1] == '?' || piatoktext[1] == '!' ) {
++
++    // XML declaration like <? ... ?> and <!DOCTYPE ... >
++    return; // ignore
++
++  } else if ( piatoktext[1] == '/' ) { // close tag, eg. </FOO>
++
++    // Downcase the tag name.
++
++    int len = 0;
++
++    for ( char *c = piatoktext + 2;
++#ifndef WIN32
++          isalnum( *c ) || *c == '-' || *c == '_' || *c == ':' ; c++ ) {
++#else
++          ((*c >= 0) && isalnum( *c )) || *c == '-' || *c == '_' || *c == ':' ; c++ ) {
++#endif
++
++      *c = tolower( *c );
++      if ( *c == ':' ) *c = '_'; /* replace colon (from namespaces) */
++      len++;
++    }
++
++    TagEvent te;
++
++    te.open_tag = false;
++
++    // We need to write len characters, plus a NULL
++    char* write_loc = _termBuffer.write( len + 1 );
++    strncpy( write_loc, piatoktext + 2, len );
++    write_loc[len] = '\0';
++    te.name = write_loc;
++
++    // token position of tag event w/r/t token string
++    te.pos = _document.terms.size();
++
++    te.begin = byte_position - piatokleng;
++    te.end = byte_position;
++
++    _document.tags.push_back( te );
++
++#ifndef WIN32
++    } else if ( isalpha( piatoktext[1] ) ) {
++#else
++    } else if ( (piatoktext[1]  >= 0) && (isalpha( piatoktext[1] ) )) {
++#endif
++
++    // Try to extract the tag name:
++
++    char* c = piatoktext + 1;
++    int i = 0;
++    int offset = 1; // current offset w/r/t byte_position - piatokleng
++    // it starts at one because it is incremented when c is, and c starts at one.
++    char* write_loc;
++
++#ifndef WIN32
++    while ( isalnum( c[i] ) || c[i] == '-' || c[i] == '_' || c[i] == ':' ) i++;
++#else
++    while ( ( (c[i] >= 0) && isalnum( c[i] )) || c[i] == '-' || c[i] == '_' || c[i] == ':' ) i++;
++#endif
++    if ( c[i] == '>' ) {
++
++      // open tag with no attributes, eg. <title>
++
++      // Ensure tag name is downcased
++      for ( int j = 0; j < i; j++ ) {
++        c[j] = tolower( c[j] );
++        if ( c[j] == ':' ) c[j] = '_'; /* replace colon (from namespaces) */
++      }
++
++      TagEvent te;
++
++      te.open_tag = true;
++
++      // need to write i characters, plus a NULL
++      char* write_loc = _termBuffer.write( i + 1 );
++      strncpy( write_loc, c, i );
++      write_loc[i] = '\0';
++      te.name = write_loc;
++
++      te.pos = _document.terms.size();
++
++      te.begin = byte_position - piatokleng;
++      te.end = byte_position;
++
++      _document.tags.push_back( te );
++
++#ifndef WIN32
++    } else if ( isspace( c[i] ) ) {
++#else
++    } else if ( (c[i]  >= 0) && (isspace( c[i] ) )) {
++#endif
++
++      // open tag with attributes, eg. <A HREF="www.foo.com/bar">
++
++      TagEvent te;
++
++      te.open_tag = true;
++
++      // Ensure tag name is downcased
++      for ( int j = 0; j < i; j++ ) {
++        c[j] = tolower( c[j] );
++        if ( c[j] == ':' ) c[j] = '_'; /* replace colon (from namespaces) */
++      }
++
++      // need to write i characters, plus a NULL
++      char* write_loc = _termBuffer.write( i + 1 );
++      strncpy( write_loc, c, i );
++      write_loc[i] = '\0';
++      te.name = write_loc;
++      c += i;
++      offset += i;
++
++#ifndef WIN32
++    while ( isspace( *c ) ) { c++; offset++; }
++#else
++    while (((*c) >=0) &&  isspace( *c )) { c++; offset++; }
++#endif
++
++      te.pos = _document.terms.size();
++
++      te.begin = byte_position - piatokleng;
++      te.end = byte_position;
++
++      // Now search for attributes:
++
++      while ( *c != '>' && *c != '\0' ) {
++
++        AttributeValuePair avp;
++
++        // Try to extract attribute name:
++
++        i = 0;
++#ifndef WIN32
++        while ( isalnum( c[i] ) || c[i] == '-' || c[i] == '_' ) i++;
++#else
++        while ( (c[i] >= 0) && isalnum( c[i] ) || c[i] == '-' || c[i] == '_') i++;
++#endif
++
++        if ( i == 0 ) break;
++
++        // Ensure attribute name is downcased
++        for ( int j = 0; j < i; j++ )
++          c[j] = tolower( c[j] );
++
++        // need to write i characters, plus a NULL
++        write_loc = _termBuffer.write( i + 1 );
++        strncpy( write_loc, c, i );
++        write_loc[i] = '\0';
++        avp.attribute = write_loc;
++        c += i;
++        offset += i;
++
++        // attributes can be foo\s*=\s*"bar[">] or foo\s*=\s*bar
++
++		// ignore any spaces
++#ifndef WIN32
++    while ( isspace( *c ) ) { c++; offset++; }
++#else
++    while (((*c) >=0) &&  isspace( *c )) { c++; offset++; }
++#endif
++
++        if ( *c == '=' ) {
++
++          c++; // get past the '=' sign.
++          offset++;
++
++#ifndef WIN32
++    while ( isspace( *c ) ) { c++; offset++; }
++#else
++    while (((*c) >=0) &&  isspace( *c )) { c++; offset++; }
++#endif
++
++          if ( *c == '>' ) {
++
++            // common malformed markup <a href=>
++
++            // Insert empty attribute value
++            // need to write a single NULL
++            write_loc = _termBuffer.write( 1 );
++            write_loc[0] = '\0';
++            avp.value = write_loc;
++            avp.begin = byte_position - piatokleng + offset;
++            avp.end = byte_position - piatokleng + offset;
++
++          } else {
++
++            bool quoted = true;
++            char quote_char;
++            if ( *c == '"' || *c =='\'' ) { quote_char = *c; c++; offset++; }
++            else quoted = false;
++
++            // Attribute value starts here.
++
++            i = 0;
++// make sure the opening and closing quote character match...
++            if ( quoted )
++//              while ( c[i] != '"' && c[i] != '>' && c[i] !='\'') i++;
++              while ( c[i] != quote_char && c[i] != '>') i++;
++            else
++#ifndef WIN32
++              while ( ! isspace( c[i] ) && c[i] != '>' ) i++;
++#else
++              while ( ((c[i] >= 0)  && ! isspace( c[i] ) ) && c[i] != '>' ) i++;
++#endif
++
++            // need to write i characters, plus a NULL
++            write_loc = _termBuffer.write( i + 1 );
++            strncpy( write_loc, c, i );
++            write_loc[i] = '\0';
++            avp.value = write_loc;
++            avp.begin = byte_position - piatokleng + offset;
++            avp.end = byte_position - piatokleng + offset + i;
++            c += i;
++            offset += i;
++
++          }
++        } else {
++
++          // Insert empty attribute value
++          // need to write a single NULL
++          write_loc = _termBuffer.write( 1 );
++          write_loc[0] = '\0';
++          avp.value = write_loc;
++          avp.begin = byte_position - piatokleng + offset;
++          avp.end = byte_position - piatokleng + offset;
++        }
++#ifndef WIN32
++        while ( isspace( *c ) || *c == '"' ) { c++; offset++; }
++#else
++        while ( ((*c >= 0) && isspace( *c )) || *c == '"' ) { c++; offset++; }
++#endif
++
++        te.attributes.push_back( avp );
++      }
++
++      _document.tags.push_back( te );
++
++    }
++
++    // One of the cases that is ignored is this common malformed
++    // markup <foo=bar> with no tag name.  Another is the case
++    // of an email address <foo@bar.com>
++
++
++  }
++}
++
++void indri::parse::TextTokenizerPIA::processUTF8Token() {
++
++  // A UTF-8 token, as recognized by flex, could actually be
++  // a mixed ASCII/UTF-8 string containing any number of
++  // UTF-8 characters, so we re-tokenize it here.
++
++  indri::utility::HashTable<UINT64,const int>& unicode = _transcoder.unicode();
++
++  int len = strlen( piatoktext );
++
++  UINT64* unicode_chars = new UINT64[len + 1];
++  int* offsets = new int[len + 1];
++  int* lengths = new int[len + 1];
++  _transcoder.utf8_decode( piatoktext, &unicode_chars, NULL, NULL,
++                           &offsets, &lengths );
++
++  const int* p;
++  int cls;             // Character class of current UTF-8 character
++  // offset of current UTF-8 character w/r/t toktext stored in offsets[i]
++  // byte length of current UTF-8 character stored in lengths[i]
++
++  int offset = 0;      // Position of start of current *token* (not character) w/r/t toktext
++  int extent = 0;      // Extent for this *token* including trailing punct
++  int piatoken_len = 0;   // Same as above, minus the trailing punctuation
++
++  char buf[64];
++
++  // If this flag is true, we have punctuation symbols at the end of a
++  // token, so do not attach another letter to this token.
++  bool no_letter = false;
++
++  // In case there are malformed characters preceding the good
++  // characters:
++  offset = offsets[0];
++
++  for ( int i = 0; unicode_chars[i] != 0; i++ ) {
++
++    p = unicode.find( unicode_chars[i] );
++    cls = p ? *p : 0;
++
++    if ( ! _tokenize_entire_words ) { // Tokenize by character
++
++      if ( cls != 0 && cls != 3 && cls != 5 && cls != 9 ) {
++
++        writeToken( piatoktext + offsets[i], lengths[i],
++                    byte_position - piatokleng + offsets[i],
++                    byte_position - piatokleng + offsets[i] + lengths[i] );
++      }
++      continue;
++    }
++
++    // If this is not the first time through this loop, we need
++    // to check to see if any bytes in toktext were skipped
++    // during the UTF-8 analysis:
++
++    if ( i != 0 && offset + piatoken_len != offsets[i] ) {
++
++      // Write out the token we are working on, if any:
++
++      if ( piatoken_len > 0 ) {
++
++        writeToken( piatoktext + offset, piatoken_len,
++                    byte_position - piatokleng + offset,
++                    byte_position - piatokleng + offset + extent );
++      }
++
++      extent = 0;
++      piatoken_len = 0;
++      no_letter = false;
++      offset = offsets[i];
++    }
++
++    // Tokenize by word:
++
++    switch ( cls ) {
++
++    case 4: // Currency symbol: always extracted alone
++      // Action: write the token we are working on,
++      // and write this symbol as a separate token
++      writeToken( piatoktext + offset, extent,
++                  byte_position - piatokleng + offset,
++                  byte_position - piatokleng + offset + extent );
++
++      offset += extent;
++
++      writeToken( piatoktext + offset, lengths[i],
++                  byte_position - piatokleng + offset,
++                  byte_position - piatokleng + offset + lengths[i] );
++
++      offset += lengths[i];
++      piatoken_len = 0;
++      extent = 0;
++      no_letter = false;
++      break;
++
++    case 1: // Apostrophe
++    case 10: // Decimal separator
++    case 6: // Letter
++    case 7: // Digit
++      // Action: add this character to the end of the token we are
++      // working on
++      if ( no_letter ) { // This is a token boundary
++        writeToken( piatoktext + offset, piatoken_len,
++                    byte_position - piatokleng + offset,
++                    byte_position - piatokleng + offset + extent );
++
++        offset += extent;
++        extent = 0;
++        piatoken_len = 0;
++        no_letter = false;
++
++      }
++
++      extent += lengths[i];
++      piatoken_len += lengths[i];
++      break;
++
++    case 2: // Percent
++    case 8: // Punctuation
++    case 12: // Thousands separator
++    case 11: // Hyphen
++      // Action: These characters are included in the extent of the
++      // token we are working on.
++      no_letter = true;
++      extent += lengths[i];
++      break;
++
++    case 0: // No character class!
++    case 3: // Control character
++    case 5: // Non-punctuation symbol
++    case 9: // Whitespace
++    default:
++      // Action: write the token we are working on.  Do not include
++      // this character in any future token.
++      writeToken( piatoktext + offset, piatoken_len,
++                  byte_position - piatokleng + offset,
++                  byte_position - piatokleng + offset + extent );
++
++      offset += (extent + lengths[i]); // Include current character
++      extent = 0;
++      piatoken_len = 0;
++      no_letter = false;
++
++      break;
++    }
++  }
++
++  // Write out last token
++  if ( piatoken_len > 0 )
++    writeToken( piatoktext + offset, piatoken_len,
++                byte_position - piatokleng + offset,
++                byte_position - piatokleng + offset + extent );
++
++  delete[] unicode_chars;
++  delete[] offsets;
++  delete[] lengths;
++}
++
++void indri::parse::TextTokenizerPIA::processASCIIToken() {
++
++  int piatoken_len = strlen( piatoktext );
++
++  // token_len here is the length of the token without
++  // any trailing punctuation.
++
++  for ( int i = piatoken_len - 1; i > 0; i-- ) {
++
++    if ( ! ispunct( piatoktext[i] ) )
++      break;
++    else
++      piatoken_len--;
++  }
++
++  if ( _tokenize_entire_words ) {
++
++    writeToken( piatoktext, piatoken_len, byte_position - piatokleng, byte_position );
++
++  } else {
++
++    for ( int i = 0; i < piatoken_len; i++ )
++      writeToken( piatoktext + i, 1, byte_position - piatokleng + i,
++                  byte_position - piatokleng + i + 1 );
++  }
++}
++
++
++// ObjectHandler implementation
++
++void indri::parse::TextTokenizerPIA::handle( indri::parse::UnparsedDocument* document ) {
++
++  _handler->handle( tokenize( document ) );
++}
++
++void indri::parse::TextTokenizerPIA::setHandler( ObjectHandler<indri::parse::TokenizedDocument>& h ) {
++
++  _handler = &h;
++}
++
++void indri::parse::TextTokenizerPIA::writeToken( char* token, int piatoken_len,
++                                              int extent_begin, int extent_end ) {
++
++
++  // The TermExtent for a token will include trailing punctuation.
++  // The purpose for this is that it makes for a nicer display when a
++  // sequence of tokens (say, a sentence) is retrieved and shown to
++  // the user.
++
++  TermExtent extent;
++  extent.begin = extent_begin;
++  extent.end = extent_end;
++  _document.positions.push_back( extent );
++
++  // The terms entry for a token won't include the punctuation.
++
++  char* write_loc = _termBuffer.write( piatoken_len + 1 );
++  strncpy( write_loc, token, piatoken_len );
++  write_loc[piatoken_len] = '\0';
++  _document.terms.push_back( write_loc );
++}
++
++
+--- indri-5.4/include/indri/TextTokenizerPIA.hpp	po Ärc 15 14:38:50 2013
++++ indri-5.4/include/indri/TextTokenizerPIA.hpp	po Ärc 15 14:36:54 2013
+@@ -0,0 +1,73 @@
++/*==========================================================================
++ * Copyright (c) 2003-2005 University of Massachusetts.  All Rights Reserved.
++ *
++ * Use of the Lemur Toolkit for Language Modeling and Information Retrieval
++ * is subject to the terms of the software license set forth in the LICENSE
++ * file included with this software, and also available at
++ * http://www.lemurproject.org/license.html
++ *
++ *==========================================================================
++ */
++
++//
++// TextTokenizerPIA
++//
++// 15 September 2005 -- mwb
++//
++
++#ifndef INDRI_TEXTTOKENIZERPIA_HPP
++#define INDRI_TEXTTOKENIZERPIA_HPP
++
++#include <stdio.h>
++#include <string>
++#include <map>
++
++#include "indri/IndriTokenizer.hpp"
++#include "indri/Buffer.hpp"
++#include "indri/TagEvent.hpp"
++#include "indri/UnparsedDocument.hpp"
++#include "indri/TokenizedDocument.hpp"
++#include "indri/UTF8Transcoder.hpp"
++
++namespace indri {
++  namespace parse {
++
++    class TextTokenizerPIA : public Tokenizer {
++
++    public:
++      TextTokenizerPIA( bool tokenize_markup = true, bool tokenize_entire_words = true ) : _handler(0) {
++
++        _tokenize_markup = tokenize_markup;
++        _tokenize_entire_words = tokenize_entire_words;
++      }
++
++      ~TextTokenizerPIA() {}
++
++      TokenizedDocument* tokenize( UnparsedDocument* document );
++
++      void handle( UnparsedDocument* document );
++      void setHandler( ObjectHandler<TokenizedDocument>& h );
++
++    protected:
++      void processASCIIToken();
++      void processUTF8Token();
++      void processTag();
++
++      indri::utility::Buffer _termBuffer;
++      UTF8Transcoder _transcoder;
++
++      bool _tokenize_markup;
++      bool _tokenize_entire_words;
++
++    private:
++      ObjectHandler<TokenizedDocument>* _handler;
++      TokenizedDocument _document;
++
++      void writeToken( char* token, int token_len, int extent_begin,
++                       int extent_end );
++    };
++  }
++}
++
++#endif // INDRI_TEXTTOKENIZERPIA_HPP
++
+--- indri-5.4/src/TokenizerFactory.cpp	po Ärc 15 14:39:30 2013
++++ indri-5.4/src/TokenizerFactory.cpp	po Ärc 15 14:29:11 2013
+@@ -22,6 +22,7 @@
+
+ #include "indri/TextTokenizer.hpp"
+ // Add an #include for your Tokenizer here.
++#include "indri/TextTokenizerPIA.hpp"
+
+
+ #define TOKENIZER_WORD ("Word")
+@@ -29,6 +30,8 @@
+ #define TOKENIZER_CHAR ("Char")
+ #define TOKENIZER_CHAR_NO_MARKUP ("Char without Markup")
+ // Add a #define for your Tokenizer here.
++#define TOKENIZER_PIA ("PIA")
++#define TOKENIZER_PIA_NO_MARKUP ("PIA without Markup")
+
+
+ //
+@@ -78,8 +81,23 @@
+     // got "char"
+     return TOKENIZER_CHAR;
+
++  } else if ( ( name[0] == 'p' || name[0] == 'P' ) &&
++       ( name[1] == 'i' || name[1] == 'I' ) &&
++       ( name[2] == 'a' || name[3] == 'A' ) ) {
++
++    if ( name[4] == '-' &&
++         ( name[5] == 'n' || name[5] == 'N' ) &&
++         ( name[5] == 'o' || name[5] == 'O' ) ) {
++
++      // got "pia-nomarkup"
++      return TOKENIZER_PIA_NO_MARKUP;
++    }
++
++    // got "pia"
++    return TOKENIZER_PIA;
+   }
+
++
+   return "";
+ }
+
+@@ -105,6 +123,14 @@
+
+     tokenizer = new indri::parse::TextTokenizer( false, false );
+
++  } else if ( preferred == TOKENIZER_PIA ) {
++
++    tokenizer = new indri::parse::TextTokenizerPIA();
++
++  } else if ( preferred == TOKENIZER_PIA_NO_MARKUP ) {
++
++    tokenizer = new indri::parse::TextTokenizerPIA( false );
++
+   } else {
+
+     LEMUR_THROW( LEMUR_RUNTIME_ERROR, name + " is not a known tokenizer." );
+--- indri-5.4/src/FileClassEnvironmentFactory.cpp	po Ärc 15 14:40:19 2013
++++ indri-5.4/src/FileClassEnvironmentFactory.cpp	po Ärc 15 14:29:12 2013
+@@ -189,6 +189,20 @@
+     trec_conflations      // conflations
+   },
+   {
++    "trecpia",           // name
++    "xml",                // parser
++    "pia",               // tokenizer
++    "tagged",             // iterator
++    "<DOC>",              // startDocTag
++    "</DOC>",             // endDocTag
++    NULL,                 // endMetadataTag
++    trec_include_tags,    // includeTags
++    NULL,                 // excludeTags
++    trec_index_tags,      // indexTags
++    trec_metadata_tags,   // metadataTags
++    trec_conflations      // conflations
++  },
++  {
+     "trecchar",           // name
+     "xml",                // parser
+     "char",               // tokenizer
+--- indri-5.4/Makefile.app.in	2013-09-04 06:31:06.740210927 -0700
++++ indri-5.4/Makefile.app.in	2013-09-04 06:27:24.857989779 -0700
+@@ -1,22 +1,26 @@
++include MakeDefns
++
+ ## your application name here
+-APP=
++APP=pia_wrapper
+ SRC=$(APP).cpp
+ ## extra object files for your app here
+ OBJ=
++OUTPUT=lib$(APP).so.1
+
+ prefix = @prefix@
+ exec_prefix = ${prefix}
+ libdir = @libdir@
+ includedir = @includedir@
+-INCPATH=-I$(includedir)
+-LIBPATH=-L$(libdir)
++INCPATH=-Iinclude -Icontrib/lemur/include
++LIBPATH=-Lobj
+ CXXFLAGS=@DEFS@ @CPPFLAGS@ @CXXFLAGS@ $(INCPATH)
+-CPPLDFLAGS  = @LDFLAGS@ -lindri @LIBS@
++CPPLDFLAGS  = @LDFLAGS@ -lnvpair -lindri @LIBS@
+
+ all:
+-	$(CXX) $(CXXFLAGS) $(SRC) -o $(APP) $(OBJ) $(LIBPATH) $(CPPLDFLAGS)
++	$(CXX) $(CXXFLAGS) $(SRC) -fpic -shared -static-libgcc -h $(OUTPUT) -o $(OUTPUT) $(OBJ) $(LIBPATH) $(CPPLDFLAGS)
+
+ clean:
+ 	rm -f $(APP)
+
+-
++install:
++	cp $(OUTPUT) $(libdir)
+--- indri-5.4/Makefile	2013-09-12 07:39:16.027125829 -0700
++++ indri-5.4/Makefile	2013-09-12 07:38:44.720450641 -0700
+@@ -73,5 +73,6 @@
+ 	$(MAKE) install -C doc
+ 	$(MAKE) -C site-search install
+ 	$(INSTALL_DATA) Makefile.app $(pkgdatadir)
++	$(MAKE) -f Makefile.app install
+
+ test:
