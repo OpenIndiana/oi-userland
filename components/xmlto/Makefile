@@ -49,9 +49,24 @@ CONFIGURE_ENV += TAIL="/usr/gnu/bin/tail"
 
 CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 
+# Strip compilation lines from test output
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s|^.*$(CC).*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^.*source=.*libtool=no.*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^.*DEPDIR=.deps.*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^.*xmlif.l.*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^make.*: Leaving directory.*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^make.*: Entering directory.*$$|XXX_CC_XXX|g" ' \
+	'-e "/^XXX_CC_XXX$$/d" '
+
+COMPONENT_SYSTEM_TEST_ENV += top_srcdir=$(SOURCE_DIR)
+COMPONENT_SYSTEM_TEST_ENV += top_builddir=$(BUILD_DIR)
+COMPONENT_PRE_SYSTEM_TEST_ACTION += \
+	$(GSED) -i -e "s|^XMLIF=.*$$|XMLIF=/usr/bin/xmlif|" \
+	$(SOURCE_DIR)/xmlif/test/run-test
+
 ASLR_MODE = $(ASLR_ENABLE)
 
-# common targets
 configure:	$(CONFIGURE_64)
 
 build:		$(BUILD_64)
@@ -60,7 +75,7 @@ install:	$(INSTALL_64)
 
 test:		$(TEST_64)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+system-test:    configure $(SYSTEM_TEST_64)
 
 
 REQUIRED_PACKAGES += file/gnu-coreutils
