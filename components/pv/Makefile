@@ -49,6 +49,17 @@ COMPILER =	gcc
 
 COMPONENT_TEST_ENV +=  PATH="$(GNUBIN):$(PATH)"
 
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s|^sh .*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^make.*: Leaving directory.*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^make.*: Entering directory.*$$|XXX_CC_XXX|g" ' \
+	'-e "/^XXX_CC_XXX$$/d" '
+
+COMPONENT_SYSTEM_TEST_ENV +=	PATH="$(GNUBIN):$(PATH)"
+COMPONENT_SYSTEM_TEST_CMD =	sh $(SOURCE_DIR)/autoconf/scripts/run-test.sh
+COMPONENT_SYSTEM_TEST_ARGS =	/usr/bin/pv $(SOURCE_DIR)
+COMPONENT_SYSTEM_TEST_TARGETS =
+
 ASLR_MODE = $(ASLR_ENABLE)
 
 configure:	$(CONFIGURE_64)
@@ -59,7 +70,6 @@ install:	$(INSTALL_64)
 
 test:		$(TEST_64)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
+system-test:    $(SYSTEM_TEST_64)
 
 REQUIRED_PACKAGES += system/library
