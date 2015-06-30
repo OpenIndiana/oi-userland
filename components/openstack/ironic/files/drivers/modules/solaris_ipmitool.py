@@ -2530,10 +2530,12 @@ class AIService():
         # Get index into string for client/manifest/profile names
         # client/manifest/profile names are all in 2nd column of output
         if len(lines) > 1:
-            col_start = lines[1].index(" --")
+            col_start = lines[1].index(" --") + 1
+            col_end = lines[1][col_start:].index(" --") + 1 + col_start
 
             for line in range(2, len(lines)):
-                names.append(lines[line][col_start:].split()[0])
+                if lines[line][col_start:col_end].strip():
+                    names.append(lines[line][col_start:col_end].strip())
 
         LOG.debug("AIService._parse_names():names: %s" % (names))
         return names
