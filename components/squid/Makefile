@@ -96,6 +96,13 @@ CONFIGURE_OPTIONS += --with-pthreads
 
 COMPONENT_BUILD_ARGS += CFLAGS="$(CFLAGS)"
 
+# Appends the following line to the end of the squid.conf configuration
+# file. This line is necessary for running squid for testing. 
+# This starts up squid as user webservd. 
+COMPONENT_POST_INSTALL_ACTION += \
+	(cd $(PROTO_DIR)/etc/squid ; \
+ 	echo '\ncache_effective_user webservd' >> squid.conf)
+
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
