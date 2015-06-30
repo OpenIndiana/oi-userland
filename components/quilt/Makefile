@@ -73,6 +73,18 @@ CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
 
 COMPONENT_INSTALL_ARGS +=	BUILD_ROOT=$(PROTO_DIR)
 
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s|^.* -> .*$$|XXX_REMOVE_XXX|g" ' \
+	'-e "s|^Generating.*$$|XXX_REMOVE_XXX|g" ' \
+	'-e "s|^make.*: Leaving directory.*$$|XXX_REMOVE_XXX|g" ' \
+	'-e "s|^make.*: Entering directory.*$$|XXX_REMOVE_XXX|g" ' \
+	'-e "/^XXX_REMOVE_XXX$$/d" '
+
+COMPONENT_PRE_SYSTEM_TEST_ACTION += \
+	$(GSED) -e "s|^PATH.*$$|PATH := /usr/gnu/bin:/usr/bin|" \
+	$(BUILD_DIR_64)/Makefile > $(BUILD_DIR_64)/Makefile-system-test
+COMPONENT_SYSTEM_TEST_ARGS = -f $(BUILD_DIR_64)/Makefile-system-test
+
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 configure:	$(CONFIGURE_64)
@@ -83,7 +95,7 @@ install:	$(INSTALL_64)
 
 test:		$(TEST_64)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+system-test:    configure $(SYSTEM_TEST_64)
 
 
 REQUIRED_PACKAGES += archiver/gnu-tar
