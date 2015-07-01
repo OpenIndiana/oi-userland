@@ -143,7 +143,8 @@ def main():
         raise SystemExit(_("Could not retrieve EVS info from EVS Controller"))
     evsinfo = evs_contr.getEVSInfo()
     if not evsinfo:
-        raise SystemExit(_("No data to migrate"))
+        print "No data to migrate"
+        return
 
     config.readfp(open("/etc/neutron/neutron.conf"))
     if config.has_option("database", 'connection'):
