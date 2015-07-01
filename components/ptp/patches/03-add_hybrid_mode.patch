@@ -1,0 +1,106 @@
+Add support for hybrid mode of operation. An user can provide -U option
+to ptpd to have hybrid mode enabled. ptpd version higher than 2.2.0 may have
+hybrid mode enabled by default in which case this patch should be removed.
+
+diff -r 1a6514e3570d src/Makefile
+--- a/src/Makefile	Fri Apr 03 18:07:43 2015 -0700
++++ b/src/Makefile	Fri Apr 03 21:12:39 2015 -0700
+@@ -43,7 +43,7 @@
+ #CFLAGS += -DDBG_SIGUSR2_CHANGE_DEBUG
+ #CFLAGS += -DPTPD_FULL_OPTIONS
+ 
+-#CFLAGS += -DPTP_EXPERIMENTAL
++CFLAGS += -DPTP_EXPERIMENTAL
+ 
+ LDFLAGS+= -lm -lrt
+ LDFLAGS += -lnsl -lsocket -lv12n -m64
+diff -r 1a6514e3570d src/datatypes.h
+--- a/src/datatypes.h	Fri Apr 03 18:07:43 2015 -0700
++++ b/src/datatypes.h	Fri Apr 03 21:12:39 2015 -0700
+@@ -473,6 +473,11 @@
+ 
+   Statistics statistics;
+   
++#ifdef PTP_EXPERIMENTAL
++	Integer32 MasterAddr;                           // used for hybrid mode, when receiving announces
++	Integer32 LastSlaveAddr;                        // used for hybrid mode, when receiving delayreqs
++#endif
++
+ } PtpClock;
+ 
+ /**
+diff -r 1a6514e3570d src/dep/datatypes_dep.h
+--- a/src/dep/datatypes_dep.h	Fri Apr 03 18:07:43 2015 -0700
++++ b/src/dep/datatypes_dep.h	Fri Apr 03 21:12:39 2015 -0700
+@@ -133,6 +133,12 @@
+ 
+   /* used by IGMP refresh */
+   struct in_addr interfaceAddr;
++
++#ifdef PTP_EXPERIMENTAL
++  /* used for Hybrid mode */
++  Integer32 lastRecvAddr;
++#endif
++
+ } NetPath;
+ 
+ #endif /*DATATYPES_DEP_H_*/
+diff -r 1a6514e3570d src/dep/msg.c
+--- a/src/dep/msg.c	Fri Apr 03 18:07:43 2015 -0700
++++ b/src/dep/msg.c	Fri Apr 03 21:12:39 2015 -0700
+@@ -40,6 +40,10 @@
+ 
+ #include "../ptpd.h"
+ 
++#ifdef PTP_EXPERIMENTAL
++extern RunTimeOpts rtOpts; 
++#endif
++
+ /*Unpack Header from IN buffer to msgTmpHeader field */
+ void 
+ msgUnpackHeader(Octet * buf, MsgHeader * header)
+@@ -328,6 +332,12 @@
+ 	/* Table 19 */
+ 	*(UInteger16 *) (buf + 2) = flip16(DELAY_RESP_LENGTH);
+ 	*(UInteger8 *) (buf + 4) = header->domainNumber;
++
++#ifdef PTP_EXPERIMENTAL
++	if(rtOpts.do_hybrid_mode)    
++		*(char *)(buf + 6) |= PTP_UNICAST;
++#endif
++
+ 	memset((buf + 8), 0, 8);
+ 
+ 	/* Copy correctionField of PdelayReqMessage */
+diff -r 1a6514e3570d src/dep/startup.c
+--- a/src/dep/startup.c	Fri Apr 03 18:07:43 2015 -0700
++++ b/src/dep/startup.c	Fri Apr 03 21:12:39 2015 -0700
+@@ -662,7 +662,7 @@
+ #endif
+ */
+ 
+-   const char *getopt_string = "?HgGWb:cCf:ST:dDPR:xO:tM:a:w:u:ehzl:o:i:n:N:y:m:v:r:s:p:q:Y:BjLV:XZKF";
++   const char *getopt_string = "?HgGWb:cCf:ST:dDPR:xO:tM:a:w:u:ehzl:o:i:n:N:y:m:v:r:s:p:q:Y:BjLV:XZKFU";
+ 
+   /* parse command line arguments */
+   while ((c = getopt(argc, argv, getopt_string)) != -1) {
+--- a/src/ptpd2.8	2015-05-18 14:05:20.934031705 -0700
++++ b/src/ptpd2.8	2015-05-18 13:59:54.195214157 -0700
+@@ -27,6 +27,7 @@
+ [-b NAME]
+ [-K]
+ [-u ADDRESS]
++[-U]
+ [-e]
+ [-h]
+ [-l NUMBER,NUMBER]
+@@ -204,6 +205,9 @@
+ .B \-u ADDRESS
+ also send uni-cast to ADDRESS
+ .TP
++.B \-U
++enable hybrid mode which uses both unicast and multicast
++.TP
+ .B \-e
+ run in ethernet mode (currently unimplemented)
+ .TP
