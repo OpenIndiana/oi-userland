@@ -59,11 +59,28 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|^.*$(CC).*$$|XXX_CC_XXX|g" ' \
 	'-e "s|^.*source=.*libtool=no.*$$|XXX_CC_XXX|g" ' \
 	'-e "s|^.*DEPDIR=.deps.*$$|XXX_CC_XXX|g" ' \
+        '-e "s|^.*make.*$$|XXX_CC_XXX|g" ' \
+        '-e "s|^make.*: Leaving directory.*$$|XXX_CC_XXX|g" ' \
+        '-e "s|^make.*: Entering directory.*$$|XXX_CC_XXX|g" ' \
 	'-e "/^XXX_CC_XXX$$/d" '
+
+# Just run "gmake check" from the tests directory.
+COMPONENT_TEST_DIR =		$(BUILD_DIR_$(BITS))/tests
+COMPONENT_SYSTEM_TEST_DIR =	$(BUILD_DIR_$(BITS))/tests
+
+# Adjust how the simple test program is built.
+COMPONENT_PRE_SYSTEM_TEST_ACTION += \
+	$(GSED) -e "s|^simple_DEPENDENCIES.*$$|simple_DEPENDENCIES =|" \
+		-e "s|^LDADD.*$$|LDADD = -lssh2|" \
+		$(BUILD_DIR_$(BITS))/tests/Makefile \
+		> $(BUILD_DIR_$(BITS))/tests/Makefile-system-test
+
+COMPONENT_SYSTEM_TEST_ENV = \
+	AM_MAKEFLAGS="-f $(BUILD_DIR_$(BITS))/tests/Makefile-system-test"
+COMPONENT_SYSTEM_TEST_ARGS = -f $(BUILD_DIR_$(BITS))/tests/Makefile-system-test
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-# common targets
 configure:	$(CONFIGURE_32_and_64)
 
 build:		$(BUILD_32_and_64)
@@ -72,7 +89,7 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+system-test:    configure $(SYSTEM_TEST_32_and_64)
 
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
