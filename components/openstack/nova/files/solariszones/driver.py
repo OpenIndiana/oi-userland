@@ -50,6 +50,7 @@ from nova import exception
 from nova.i18n import _
 from nova.image import glance
 from nova.network import neutronv2
+from nova import objects
 from nova.objects import flavor as flavor_obj
 from nova.openstack.common import fileutils
 from nova.openstack.common import jsonutils
@@ -843,10 +844,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
                     continue
                 zc.setprop('global', prop, value)
 
-    def _connect_boot_volume(self, context, instance, extra_specs):
-        """Provision a (Cinder) volume service backed boot volume"""
-        brand = extra_specs.get('zonecfg:brand', ZONE_BRAND_SOLARIS)
-        connection_info = None
+    def _create_boot_volume(self, context, instance):
+        """Create a (Cinder) volume service backed boot volume"""
         try:
             vol = self._volume_api.create(
                 context,
@@ -859,7 +858,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
             while True:
                 volume = self._volume_api.get(context, vol['id'])
                 if volume['status'] != 'creating':
-                    break
+                    return volume
                 greenthread.sleep(1)
 
         except Exception as reason:
@@ -867,88 +866,60 @@ class SolarisZonesDriver(driver.ComputeDriver):
                         ": %s") % (instance['name'], reason))
             raise
 
+    def _connect_boot_volume(self, volume, mountpoint, context, instance,
+                             extra_specs):
+        """Connect a (Cinder) volume service backed boot volume"""
+        brand = extra_specs.get('zonecfg:brand', ZONE_BRAND_SOLARIS)
         instance_uuid = instance['uuid']
         volume_id = volume['id']
-        # TODO(npower): Adequate for default boot device. We currently
-        # ignore this value, but cinder gets stroppy about this if we set it to
-        # None
-        mountpoint = "c1d0"
 
-        try:
-            connector = self.get_volume_connector(instance)
-            connection_info = self._volume_api.initialize_connection(
-                context, volume_id, connector)
-            # Check connection_info to determine if the provided volume is
-            # local to this compute node. If it is, then don't use it for
-            # Solaris branded zones in order to avoid a know ZFS deadlock issue
-            # when using a zpool within another zpool on the same system.
-            delete_boot_volume = False
-            if brand == ZONE_BRAND_SOLARIS:
-                driver_type = connection_info['driver_volume_type']
-                if driver_type == 'local':
-                    LOG.warning(_("Detected 'local' zvol driver volume type "
-                                  "from volume service, which should not be "
-                                  "used as a boot device for 'solaris' "
-                                  "branded zones."))
-                    delete_boot_volume = True
-                elif driver_type == 'iscsi':
-                    # Check for a potential loopback iSCSI situation
-                    data = connection_info['data']
-                    target_portal = data['target_portal']
-                    # Strip off the port number (eg. 127.0.0.1:3260)
-                    host = target_portal.rsplit(':', 1)
-                    # Strip any enclosing '[' and ']' brackets for
-                    # IPV6 addresses.
-                    target_host = host[0].strip('[]')
+        connector = self.get_volume_connector(instance)
+        connection_info = self._volume_api.initialize_connection(
+            context, volume_id, connector)
 
-                    # Check if target_host is an IP or hostname matching the
-                    # connector host or IP, which would mean the provisioned
-                    # iSCSI LUN is on the same host as the instance.
-                    if target_host in [connector['ip'], connector['host']]:
-                        LOG.warning(_("iSCSI connection info from volume "
-                                      "service indicates that the target is a "
-                                      "local volume, which should not be used "
-                                      "as a boot device for 'solaris' branded "
-                                      "zones."))
-                        delete_boot_volume = True
-                # Assuming that fibre_channel is non-local
-                elif driver_type != 'fibre_channel':
-                    # Some other connection type that we don't understand
-                    # Let zone use some local fallback instead.
-                    LOG.warning(_("Unsupported volume driver type '%s' "
-                                  "can not be used as a boot device for "
-                                  "'solaris' branded zones."))
-                    delete_boot_volume = True
+        # Check connection_info to determine if the provided volume is
+        # local to this compute node. If it is, then don't use it for
+        # Solaris branded zones in order to avoid a known ZFS deadlock issue
+        # when using a zpool within another zpool on the same system.
+        if brand == ZONE_BRAND_SOLARIS:
+            driver_type = connection_info['driver_volume_type']
+            if driver_type == 'local':
+                msg = _("Detected 'local' zvol driver volume type "
+                        "from volume service, which should not be "
+                        "used as a boot device for 'solaris' "
+                        "branded zones.")
+                raise exception.InvalidVolume(reason=msg)
+            elif driver_type == 'iscsi':
+                # Check for a potential loopback iSCSI situation
+                data = connection_info['data']
+                target_portal = data['target_portal']
+                # Strip off the port number (eg. 127.0.0.1:3260)
+                host = target_portal.rsplit(':', 1)
+                # Strip any enclosing '[' and ']' brackets for
+                # IPV6 addresses.
+                target_host = host[0].strip('[]')
 
-            if delete_boot_volume:
-                LOG.warning(_("Volume '%s' is being discarded") % volume['id'])
-                self._volume_api.delete(context, volume_id)
-                return None
+                # Check if target_host is an IP or hostname matching the
+                # connector host or IP, which would mean the provisioned
+                # iSCSI LUN is on the same host as the instance.
+                if target_host in [connector['ip'], connector['host']]:
+                    msg = _("iSCSI connection info from volume "
+                            "service indicates that the target is a "
+                            "local volume, which should not be used "
+                            "as a boot device for 'solaris' branded "
+                            "zones.")
+                    raise exception.InvalidVolume(reason=msg)
+            # Assuming that fibre_channel is non-local
+            elif driver_type != 'fibre_channel':
+                # Some other connection type that we don't understand
+                # Let zone use some local fallback instead.
+                msg = _("Unsupported volume driver type '%s' can not be used "
+                        "as a boot device for zones." % driver_type)
+                raise exception.InvalidVolume(reason=msg)
 
-            # Notify Cinder DB of the volume attachment.
-            self._volume_api.attach(context, volume_id, instance_uuid,
-                                    mountpoint)
-            values = {
-                'instance_uuid': instance['uuid'],
-                'connection_info': jsonutils.dumps(connection_info),
-                # TODO(npower): device_name also ignored currently, but Cinder
-                # breaks without it. Figure out a sane mapping scheme.
-                'device_name': mountpoint,
-                'delete_on_termination': True,
-                'virtual_name': None,
-                'snapshot_id': None,
-                'volume_id': volume_id,
-                'volume_size': instance['root_gb'],
-                'no_device': None}
-            self._conductor_api.block_device_mapping_update_or_create(context,
-                                                                      values)
-
-        except Exception as reason:
-            LOG.error(_("Unable to attach root zpool volume '%s' to instance "
-                        "%s: %s") % (volume['id'], instance['name'], reason))
-            self._volume_api.detach(context, volume_id)
-            self._volume_api.delete(context, volume_id)
-            raise
+        # Volume looks OK to use. Notify Cinder of the attachment.
+        self._volume_api.attach(context, volume_id, instance_uuid,
+                                mountpoint)
         return connection_info
 
     def _set_boot_device(self, name, connection_info, brand):
@@ -1397,6 +1368,10 @@ class SolarisZonesDriver(driver.ComputeDriver):
         if zone is None:
             raise exception.InstanceNotFound(instance_id=name)
 
+        if zone.state == ZONE_STATE_CONFIGURED:
+            LOG.debug(_("Uninstall not required for zone '%s' in state '%s'")
+                      % (name, zone.state))
+            return
         try:
             zone.uninstall(['-F'])
         except Exception as reason:
@@ -1456,8 +1431,30 @@ class SolarisZonesDriver(driver.ComputeDriver):
         os.chmod(sc_dir, 0755)
 
         # Attempt to provision a (Cinder) volume service backed boot volume
-        connection_info = self._connect_boot_volume(context, instance,
-                                                    extra_specs)
+        volume = self._create_boot_volume(context, instance)
+        volume_id = volume['id']
+        # c1d0 is the standard dev for for default boot device.
+        # Irrelevant value for ZFS, but Cinder gets stroppy without it.
+        mountpoint = "c1d0"
+        try:
+            connection_info = self._connect_boot_volume(volume, mountpoint,
+                                                        context, instance,
+                                                        extra_specs)
+        except exception.InvalidVolume as badvol:
+            # This Cinder volume is not usable for ZOSS so discard it.
+            # zonecfg will apply default zonepath dataset configuration
+            # instead. Carry on
+            LOG.warning(_("Volume '%s' is being discarded: %s")
+                        % (volume_id, badvol))
+            self._volume_api.delete(context, volume_id)
+            connection_info = None
+        except Exception as reason:
+            # Something really bad happened. Don't pass Go.
+            LOG.error(_("Unable to attach root zpool volume '%s' to instance "
+                        "%s: %s") % (volume['id'], instance['name'], reason))
+            self._volume_api.delete(context, volume_id)
+            raise
+
         name = instance['name']
 
         LOG.debug(_("creating zone configuration for '%s' (%s)") %
@@ -1471,8 +1468,23 @@ class SolarisZonesDriver(driver.ComputeDriver):
             LOG.error(_("Unable to spawn instance '%s' via zonemgr(3RAD): %s")
                       % (name, reason))
             self._uninstall(instance)
+            if connection_info:
+                self._volume_api.detach(context, volume_id)
+                self._volume_api.delete(context, volume_id)
             self._delete_config(instance)
             raise
+
+        if connection_info:
+            bdm = objects.BlockDeviceMapping(
+                    source_type='volume', destination_type='volume',
+                    instance_uuid=instance.uuid,
+                    volume_id=volume_id,
+                    connection_info=jsonutils.dumps(connection_info),
+                    device_name=mountpoint,
+                    delete_on_termination=True,
+                    volume_size=instance['root_gb'])
+            bdm.create(context)
+            bdm.save()
 
     def _power_off(self, instance, halt_type):
         """Power off a Solaris Zone."""
