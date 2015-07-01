@@ -82,13 +82,17 @@ COMPONENT_PRE_TEST_ACTION = \
 COMPONENT_TEST_TRANSFORMER =	$(NAWK)
 COMPONENT_TEST_TRANSFORMS = "'/^ERROR: / { print }; /^Ran / { sub(\" tests in .+s\", \" tests in\"); print }; /^FAILED / { print }; /^OK / { print };'"
 
+COMPONENT_SYSTEM_TEST_DIR =	$(SOURCE_DIR)
+COMPONENT_SYSTEM_TEST_ENV =
+COMPONENT_SYSTEM_TEST_ARGS =	selftest.py
+
 build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
 test:		$(TEST_NO_ARCH)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+system-test:    $(SYSTEM_TEST_NO_ARCH)
 
 REQUIRED_PACKAGES += library/python/setuptools-26
 REQUIRED_PACKAGES += library/python/setuptools-27

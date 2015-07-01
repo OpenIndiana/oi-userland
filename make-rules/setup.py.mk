@@ -50,6 +50,18 @@ $(BUILD_DIR)/%-3.4/.tested-and-compared:	PYTHON_VERSION=3.4
 $(BUILD_DIR)/$(MACH32)-%/.tested-and-compared:	BITS=32
 $(BUILD_DIR)/$(MACH64)-%/.tested-and-compared:	BITS=64
 
+$(BUILD_DIR)/%-2.6/.system-tested:		PYTHON_VERSION=2.6
+$(BUILD_DIR)/%-2.7/.system-tested:		PYTHON_VERSION=2.7
+$(BUILD_DIR)/%-3.4/.system-tested:		PYTHON_VERSION=3.4
+$(BUILD_DIR)/$(MACH32)-%/.system-tested:	BITS=32
+$(BUILD_DIR)/$(MACH64)-%/.system-tested:	BITS=64
+
+$(BUILD_DIR)/%-2.6/.system-tested-and-compared:		PYTHON_VERSION=2.6
+$(BUILD_DIR)/%-2.7/.system-tested-and-compared:		PYTHON_VERSION=2.7
+$(BUILD_DIR)/%-3.4/.system-tested-and-compared:		PYTHON_VERSION=3.4
+$(BUILD_DIR)/$(MACH32)-%/.system-tested-and-compared:	BITS=32
+$(BUILD_DIR)/$(MACH64)-%/.system-tested-and-compared:	BITS=64
+
 BUILD_32 = $(PYTHON2_VERSIONS:%=$(BUILD_DIR)/$(MACH32)-%/.built)
 BUILD_64 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.built)
 BUILD_NO_ARCH = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH)-%/.built)
