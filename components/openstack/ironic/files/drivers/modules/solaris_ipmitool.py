@@ -22,6 +22,7 @@
 Solaris Driver and supporting meta-classes.
 """
 
+import errno
 import os
 import platform
 import re
@@ -43,7 +44,7 @@ from scp import SCPClient
 
 from ironic.common import boot_devices, exception, images, keystone, states, \
     utils
-from ironic.common.i18n import _, _LW
+from ironic.common.i18n import _, _LE, _LW
 from ironic.conductor import task_manager
 from ironic.conductor import utils as manager_utils
 from ironic.db import api as dbapi
@@ -188,6 +189,7 @@ def _ssh_execute(ssh_obj, ssh_cmd, raise_exception=True, err_msg=None):
     LOG.debug("_ssh_execute():ssh_cmd: %s" % (ssh_cmd))
 
     returncode = 0
+    stdout = None
     try:
         stdout = processutils.ssh_execute(ssh_obj, ssh_cmd)[0]
     except Exception as err:
@@ -387,8 +389,10 @@ def _get_node_architecture(node):
     driver_info = _parse_driver_info(node)
     try:
         out, _err = _exec_ipmitool(driver_info, ipmi_cmd_args)
-    except Exception:
-        raise exception.IPMIFailure(cmd=ipmi_cmd_args)
+    except Exception as err:
+        LOG.error(_LE("Failed to get node architecture from IPMI : %s" %
+                  (err)))
+        raise exception.IPMIFailure(cmd=err)
 
     LOG.debug("SolarisDeploy._get_node_architecture: arch: '%s'" % (out))
 
@@ -441,7 +445,7 @@ def _check_deploy_state(task, node_uuid, deploy_thread):
         raise loopingcall.LoopingCallDone()
     except Exception as err:
         LOG.info(_("During check_deploy_state, node %(node)s could "
-                   "not be retrieved: %(err)") %
+                   "not be retrieved: %(err)s") %
                  {'node': node_uuid, 'err': err})
         # Thread should have stopped already, but lets make sure.
         deploy_thread.stop()
@@ -595,8 +599,16 @@ def _image_refcount_adjust(image_path, count, release=True):
         # refcount file and image file
         if int(ref_count) <= 0:
             lock.release()
-            os.remove(ref_filename)
-            os.remove(image_path)
+            try:
+                os.remove(ref_filename)
+            except OSError as err:
+                if err.errno != errno.ENOENT:
+                    raise
+            try:
+                os.remove(image_path)
+            except OSError as err:
+                if err.errno != errno.ENOENT:
+                    raise
         else:
             fp.seek(0)
             fp.write(ref_count)
@@ -669,6 +681,7 @@ def _fetch_uri(task, uri):
                         _stdout, err = pc.communicate()
                         if pc.returncode != 0:
                             err_msg = _("Failed to retrieve image: %s") % err
+                            _image_refcount_adjust(temp_uri, -1)
                             raise SolarisIPMIError(msg=err_msg)
 
                         # Release acquired lock now that file is retrieved
@@ -688,7 +701,11 @@ def _fetch_uri(task, uri):
         if url.scheme == "glance":
             _image_refcount_adjust(temp_uri, -1)
         else:
-            os.remove(temp_uri)
+            try:
+                os.remove(temp_uri)
+            except OSError as err:
+                if err.errno != errno.ENOENT:
+                    raise
         raise
 
     return temp_uri
@@ -1856,7 +1873,7 @@ class SolarisManagement(base.ManagementInterface):
                     "Invalid boot device %s specified.") % device)
             cmd = ["chassis", "bootdev", device]
             if persistent:
-                cmd = cmd + " options=persistent"
+                cmd.append("options=persistent")
         elif arch == 'SPARC':
             # Set bootmode script to network DHCP or disk
             if device == 'wanboot':
@@ -1995,7 +2012,7 @@ class SolarisManagement(base.ManagementInterface):
         driver_info = _parse_driver_info(task.node)
         # with '-v' option, we can get the entire sensor data including the
         # extended sensor informations
-        cmd = "-v sdr"
+        cmd = ["sdr", "-v"]
         try:
             out, _err = _exec_ipmitool(driver_info, cmd)
         except (exception.PasswordFileFailedToCreate,
@@ -2440,7 +2457,8 @@ class AIService():
         :returns: dictionary for paramiko connection
         """
         LOG.debug("AIService._get_ssh_dict()")
-        if not CONF.ai.server or not CONF.ai.username:
+        if not CONF.ai.server or CONF.ai.server == "None" or \
+                not CONF.ai.username or CONF.ai.username == "None":
             raise exception.InvalidParameterValue(_(
                 "SSH server and username must be set."))
 
