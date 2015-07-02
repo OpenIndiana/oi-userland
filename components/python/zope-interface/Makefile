@@ -61,13 +61,17 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|\(Ran 1 test in\).*|\1|" ' \
 	'-e "s|\(Ran .* tests in\).*|\1|" '
 
-# common targets
+COMPONENT_SYSTEM_TEST_ARGS=	../runtests.sh
+COMPONENT_SYSTEM_TEST_CMD=	/bin/sh
+COMPONENT_SYSTEM_TEST_DIR=	$(SOURCE_DIR)
+COMPONENT_SYSTEM_TEST_ENV+=	PYTHON=$(PYTHON)
+
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+system-test:    $(SYSTEM_TEST_32_and_64)
 
 REQUIRED_PACKAGES += system/library

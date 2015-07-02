@@ -70,6 +70,11 @@ COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(PYTHON_VERSION)-
 COMPONENT_TEST_TRANSFORMER =    $(NAWK)
 COMPONENT_TEST_TRANSFORMS = "'/^\[FAIL\]: / { print }; /^\[ERROR\]: / { print }; /^Ran / { sub(\" tests in .+s\", \" tests in\"); print }; /^FAILED / { print }; /^OK / { print };'"
 
+COMPONENT_SYSTEM_TEST_DIR=	$(COMPONENT_SRC)
+COMPONENT_SYSTEM_TEST_ENV=
+COMPONENT_SYSTEM_TEST_CMD=	/usr/demo/twisted-python$(PYTHON_VERSION)/trial
+COMPONENT_SYSTEM_TEST_ARGS=	twisted
+
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 build:		$(BUILD_32_and_64)
@@ -78,6 +83,6 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+system-test:    $(SYSTEM_TEST_32_and_64)
 
 REQUIRED_PACKAGES += system/library

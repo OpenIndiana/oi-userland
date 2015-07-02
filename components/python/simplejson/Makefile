@@ -54,14 +54,16 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|\(creating build/temp.solaris\).*|\1|" ' \
 	'-e "s|\(Ran 132 tests in\).*|\1|" '
 
-# common targets
+COMPONENT_SYSTEM_TEST_DIR =	$(COMPONENT_SRC)
+COMPONENT_SYSTEM_TEST_ENV =
+COMPONENT_SYSTEM_TEST_ARGS =	./setup.py test
+
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
+system-test:    $(SYSTEM_TEST_32_and_64)
 
 REQUIRED_PACKAGES += system/library

@@ -60,6 +60,11 @@ COMPONENT_TEST_DIR =	$(COMPONENT_SRC)
 COMPONENT_TEST_CMD =	/usr/demo/twisted-python$(PYTHON_VERSION)/trial
 COMPONENT_TEST_ARGS =	twisted/web2/test/test_xmlrpc.py
 
+COMPONENT_SYSTEM_TEST_DIR =	$(COMPONENT_SRC)
+COMPONENT_SYSTEM_TEST_ENV =
+COMPONENT_SYSTEM_TEST_CMD =	/usr/demo/twisted-python$(PYTHON_VERSION)/trial
+COMPONENT_SYSTEM_TEST_ARGS =	twisted/web2/test/test_xmlrpc.py
+
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 build:          $(BUILD_NO_ARCH)
@@ -68,4 +73,4 @@ install:        $(INSTALL_NO_ARCH)
 
 test:           $(TEST_NO_ARCH)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+system-test:    $(SYSTEM_TEST_NO_ARCH)

@@ -37,7 +37,6 @@ TPNO=			13152
 # The argparse module was integrated into Python 2.7, so we should only deliver
 # a 2.6 module.
 PYTHON_VERSIONS = 2.6
-PYTHON_VERSION = 2.6
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
