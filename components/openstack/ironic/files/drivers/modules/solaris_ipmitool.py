@@ -38,8 +38,7 @@ from urlparse import urlparse
 
 from lockfile import LockFile, LockTimeout
 from oslo.config import cfg
-from pkg.fmri import is_valid_pkg_name
-from pkg.misc import valid_pub_prefix, valid_pub_url
+
 from scp import SCPClient
 
 from ironic.common import boot_devices, exception, images, keystone, states, \
@@ -57,6 +56,9 @@ from ironic.openstack.common import loopingcall, processutils
 PLATFORM = platform.system()
 if PLATFORM != "SunOS":
     import tarfile
+else:
+    from pkg.fmri import is_valid_pkg_name
+    from pkg.misc import valid_pub_prefix, valid_pub_url
 
 
 AI_OPTS = [
@@ -1105,7 +1107,7 @@ def _validate_fmri_format(fmri):
     if not url.path:
         raise exception.InvalidParameterValue(_(
             "Missing IPS package name in fmri (%s).") % (fmri))
-    else:
+    elif PLATFORM == "SunOS":
         # Validate package name
         if not is_valid_pkg_name(url.path.strip("/")):
             raise exception.InvalidParameterValue(_(
@@ -1135,13 +1137,14 @@ def _validate_publishers(task):
                 "Malformed IPS publisher must be of format "
                 "name@origin (%s).") % (pub))
 
-        if not valid_pub_prefix(name):
-            raise exception.InvalidParameterValue(_(
-                "Malformed IPS publisher name (%s).") % (name))
+        if PLATFORM == "SunOS":
+            if not valid_pub_prefix(name):
+                raise exception.InvalidParameterValue(_(
+                    "Malformed IPS publisher name (%s).") % (name))
 
-        if not valid_pub_url(origin):
-            raise exception.InvalidParameterValue(_(
-                "Malformed IPS publisher origin (%s).") % (origin))
+            if not valid_pub_url(origin):
+                raise exception.InvalidParameterValue(_(
+                    "Malformed IPS publisher origin (%s).") % (origin))
 
 
 def _fetch_and_create(task, obj_type, obj_name, obj_uri, aiservice, mac,
