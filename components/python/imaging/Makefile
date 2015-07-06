@@ -47,6 +47,14 @@ include $(WS_MAKE_RULES)/ips.mk
 TEST_PYTHONPATH.32 = $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/PIL
 TEST_PYTHONPATH.64 = $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/PIL:$(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/PIL/64
 
+# This binary image file accompanies the test which is created along with a fix
+# in patches/04-CVE-2014-9601.patch
+COMPONENT_PRE_TEST_ACTION= \
+	if [ ! -e $(SOURCE_DIR)/Images/png_decompression_dos.png ]; then \
+		$(CP) files/png_decompression_dos.png \
+		$(SOURCE_DIR)/Images/png_decompression_dos.png ; \
+	fi
+
 COMPONENT_TEST_DIR= $(COMPONENT_SRC)
 COMPONENT_TEST_ARGS= ./selftest.py
 COMPONENT_TEST_ENV= PYTHONPATH=$(TEST_PYTHONPATH.$(BITS))
