@@ -19,6 +19,7 @@
 Driver for Solaris Zones (nee Containers):
 """
 
+import base64
 import glob
 import os
 import platform
@@ -39,13 +40,16 @@ from solaris_install.target.size import Size
 from eventlet import greenthread
 from lxml import etree
 from oslo_config import cfg
+from passlib.hash import sha256_crypt
 
+from nova.api.metadata import password
 from nova.compute import power_state
 from nova.compute import task_states
 from nova.compute import vm_states
 from nova.console import type as ctype
 from nova import conductor
 from nova import context as nova_context
+from nova import crypto
 from nova import exception
 from nova.i18n import _
 from nova.image import glance
@@ -1046,7 +1050,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
             with ZoneConfig(zone) as zc:
                 zc.setprop('global', 'tenant', tenant_id)
 
-    def _verify_sysconfig(self, sc_dir, instance):
+    def _verify_sysconfig(self, sc_dir, instance, admin_password=None):
         """verify the SC profile(s) passed in contain an entry for
         system/config-user to configure the root account.  If an SSH key is
         specified, configure root's profile to use it.
@@ -1058,6 +1062,11 @@ class SolarisZonesDriver(driver.ComputeDriver):
         hostname_needed = True
         sshkey = instance.get('key_data')
         name = instance.get('display_name')
+        encrypted_password = None
+
+        # encrypt admin password, using SHA-256 as default
+        if admin_password is not None:
+            encrypted_password = sha256_crypt.encrypt(admin_password)
 
         # find all XML files in sc_dir
         for root, dirs, files in os.walk(sc_dir):
@@ -1085,12 +1094,22 @@ class SolarisZonesDriver(driver.ComputeDriver):
         if root_account_needed:
             fp = os.path.join(sc_dir, 'config-root.xml')
 
-            if sshkey is not None:
-                # set up the root account as 'normal' with no expiration and
-                # an ssh key
-                tree = sysconfig.create_default_root_account(sshkey=sshkey)
+            if admin_password is not None and sshkey is not None:
+                # store password for horizon retrieval
+                ctxt = nova_context.get_admin_context()
+                enc = crypto.ssh_encrypt_text(sshkey, admin_password)
+                instance.system_metadata.update(
+                    password.convert_password(ctxt, base64.b64encode(enc)))
+                instance.save()
+
+            if encrypted_password is not None or sshkey is not None:
+                # set up the root account as 'normal' with no expiration,
+                # an ssh key, and a root password
+                tree = sysconfig.create_default_root_account(
+                    sshkey=sshkey, password=encrypted_password)
             else:
-                # set up the root account as 'normal' but to expire immediately
+                # sets up root account with expiration if sshkey is None
+                # and password is none
                 tree = sysconfig.create_default_root_account(expire='0')
 
             sysconfig.create_sc_profile(fp, tree)
@@ -1104,8 +1123,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
             fp = os.path.join(sc_dir, 'hostname.xml')
             sysconfig.create_sc_profile(fp, sysconfig.create_hostname(name))
 
-    def _create_config(self, context, instance, network_info,
-                       connection_info, extra_specs, sc_dir):
+    def _create_config(self, context, instance, network_info, connection_info,
+                       extra_specs, sc_dir, admin_password=None):
         """Create a new Solaris Zone configuration."""
         name = instance['name']
         if self._get_zone_by_name(name) is not None:
@@ -1127,7 +1146,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
             elif os.path.isdir(sc_profile):
                 shutil.copytree(sc_profile, os.path.join(sc_dir, 'sysconfig'))
 
-        self._verify_sysconfig(sc_dir, instance)
+        self._verify_sysconfig(sc_dir, instance, admin_password)
 
         zonemanager = self.rad_connection.get_object(zonemgr.ZoneManager())
         try:
@@ -1459,8 +1478,9 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
         LOG.debug(_("creating zone configuration for '%s' (%s)") %
                   (name, instance['display_name']))
-        self._create_config(context, instance, network_info,
-                            connection_info, extra_specs, sc_dir)
+
+        self._create_config(context, instance, network_info, connection_info,
+                            extra_specs, sc_dir, admin_password)
         try:
             self._install(instance, image, extra_specs, sc_dir)
             self._power_on(instance)

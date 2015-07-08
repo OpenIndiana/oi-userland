@@ -152,7 +152,7 @@ def create_ncp_automatic():
     return svcbundle
 
 
-def create_default_root_account(expire=None, sshkey=None):
+def create_default_root_account(expire=None, sshkey=None, password=None):
     """ return an etree object representing the root account
     """
     svcbundle = etree.Element("service_bundle", type="profile",
@@ -163,10 +163,15 @@ def create_default_root_account(expire=None, sshkey=None):
                                 name="default")
     root_pg = etree.SubElement(instance, "property_group", type="application",
                                name="root_account")
-    etree.SubElement(root_pg, "propval", type="astring", name="password",
-                     value="NP")
     etree.SubElement(root_pg, "propval", type="astring", name="type",
                      value="normal")
+
+    if password is not None:
+        etree.SubElement(root_pg, "propval", type="astring", name="password",
+                         value=password)
+    else:
+        etree.SubElement(root_pg, "propval", type="astring", name="password",
+                         value='NP')
 
     if expire is not None:
         etree.SubElement(root_pg, "propval", type="astring", name="expire",

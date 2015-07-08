@@ -175,7 +175,7 @@ OPENSTACK_KEYSTONE_BACKEND = {
 
 #Setting this to True, will add a new "Retrieve Password" action on instance,
 #allowing Admin session password retrieval/decryption.
-#OPENSTACK_ENABLE_PASSWORD_RETRIEVE = False
+OPENSTACK_ENABLE_PASSWORD_RETRIEVE = True
 
 # The Xen Hypervisor has the ability to set the mount point for volumes
 # attached to instances (other Hypervisors currently do not). Setting
@@ -183,7 +183,7 @@ OPENSTACK_KEYSTONE_BACKEND = {
 # from the UI.
 OPENSTACK_HYPERVISOR_FEATURES = {
     'can_set_mount_point': False,
-    'can_set_password': False,
+    'can_set_password': True,
 }
 
 # The OPENSTACK_CINDER_FEATURES settings can be used to enable optional

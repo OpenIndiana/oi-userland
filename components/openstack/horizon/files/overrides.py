@@ -96,6 +96,7 @@ project_tables.InstancesTable._meta.row_actions = (
     project_tables.AssociateIP,
     project_tables.SimpleDisassociateIP,
     project_tables.EditInstance,
+    project_tables.DecryptInstancePassword,
     project_tables.ConsoleLink,
     project_tables.LogLink,
     project_tables.SoftRebootInstance,
