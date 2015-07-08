@@ -35,6 +35,9 @@ COMPONENT_PROJECT_URL=  http://oss.oetiker.ch/rrdtool/
 COMPONENT_BUGDB=        utility/rrdtool
 TPNO=                   21430 
 
+PYTHON_VERSION=         2.7
+PYTHON_VERSIONS=        2.7
+
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
@@ -51,7 +54,7 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 COMPONENT_PREP_ACTION = ( cd $(@D); autoconf -f)
 
 CONFIGURE_OPTIONS  += --enable-perl 
-CONFIGURE_OPTIONS  += --disable-python
+CONFIGURE_OPTIONS  += --enable-python
 CONFIGURE_OPTIONS  += --disable-ruby
 CONFIGURE_OPTIONS  += --enable-tcl
 CONFIGURE_OPTIONS  += --enable-static=no
@@ -68,12 +71,23 @@ CONFIGURE_OPTIONS  +=   PERLLIB=/usr/perl5/$(PERL_VERSION)/lib
 CONFIGURE_OPTIONS  +=   PERLINSTALLMAN3DIR=/usr/share/man/man3
 CONFIGURE_OPTIONS  +=   PERLINSTALLSITEMAN3DIR=/usr/share/man/man3
 CONFIGURE_OPTIONS  +=   PERLINSTALLVENDORMAN3DIR=/usr/share/man/man3
+CONFIGURE_OPTIONS +=    am_cv_python_pythondir=$(PYTHON_VENDOR_PACKAGES)
+CONFIGURE_OPTIONS +=    am_cv_python_pyexecdir=$(PYTHON_VENDOR_PACKAGES)
+CONFIGURE_OPTIONS  +=   PYTHON=$(PYTHON.$(PYTHON_VERSION).$(BITS))
 
 $(CONFIGURE_64): CONFIGURE_OPTIONS  +=   LUARRDLIBDIR=64
+
+PYTHON_ENV  =   CC="$(CC)"
+PYTHON_ENV +=   CFLAGS="$(CFLAGS)"
+COMPONENT_BUILD_ENV += $(PYTHON_ENV)
+COMPONENT_INSTALL_ENV += $(PYTHON_ENV)
 
 PKG_MACROS         +=   P_ARCH=$(shell arch)
 
 ASLR_MODE	    =   $(ASLR_ENABLE)
+
+PKG_MACROS +=  PYVER=$(PYTHON_VERSION)
+PKG_MACROS +=  PYV=$(shell echo $(PYTHON_VERSION) | tr -d .)
 
 # common targets
 configure:	$(CONFIGURE_32_and_64)
@@ -96,3 +110,4 @@ REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += runtime/lua
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += runtime/python-27
