@@ -24,22 +24,29 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		patch
-COMPONENT_VERSION=	2.7.1
+COMPONENT_VERSION=	2.7.5
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/patch/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:c05f28668c3474bc63adcd48abae921d15e71c254fbebdbaeda40456d64039d5
+    sha256:7436f5a19f93c3ca83153ce9c5cbe4847e97c5d956e57a220121e741f6e7968f
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/patch/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gpatch
 
-TPNO=			18936
+TPNO=			22293
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
+
+# Needed for "gmake test" to work successfully.
+# If SHELLOPTS is exported (as it is by the userland makefiles),
+# then all shell options get exported to child invocations of bash,
+# which results in test failures due to nounset being
+# set unexpectedly, and errors such as "$1: unbound variable"
+unexport SHELLOPTS
 
 COMPONENT_INSTALL_ARGS += bindir=$(USRBINDIR)
 
