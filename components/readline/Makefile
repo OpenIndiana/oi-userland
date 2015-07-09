@@ -26,16 +26,28 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		readline
-COMPONENT_VERSION=	5.2
+COMPONENT_VERSION=	6.3
 COMPONENT_PROJECT_URL=	http://cnswww.cns.cwru.edu/php/chet/readline/rltop.html
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:12e88d96aee2cd1192500356f0535540db499282ca7f76339fb4228c31249f45
+    sha256:56ba6071b9462f980c5a72ab0023893b65ba6debb4eeb475d7a563dc65cafd43
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/readline/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/readline
 
-TPNO=			9042
+TPNO_V6=		22356
+TPNO_V5=		9042
+
+# For now, we want to continue to provide the libreadline and libhistory so's
+# (and their links) from readline 5.2.
+#
+COMPONENT_VERSION_1 =   5.2
+COMPONENT_SRC_1 =       $(COMPONENT_NAME)-$(COMPONENT_VERSION_1)
+COMPONENT_ARCHIVE_1 =   $(COMPONENT_SRC_1).tar.gz
+COMPONENT_ARCHIVE_HASH_1 = \
+    sha256:12e88d96aee2cd1192500356f0535540db499282ca7f76339fb4228c31249f45
+COMPONENT_ARCHIVE_URL_1 = http://ftp.gnu.org/gnu/readline/$(COMPONENT_ARCHIVE_1)
+SOURCE_DIR_1 =          $(COMPONENT_DIR)/$(COMPONENT_SRC_1)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -64,6 +76,41 @@ COMPONENT_TEST_TARGETS =
 # Master test results are the same for 32-bit and 64-bit, so override
 # here, rather than create multiple identical master files.
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
+# Macros to configure, build, and install the old version for the time being.
+BUILD_OLD_DIR_32 = $(COMPONENT_DIR)/build/$(COMPONENT_VERSION_1)-$(MACH32)
+BUILD_OLD_DIR_64 = $(COMPONENT_DIR)/build/$(COMPONENT_VERSION_1)-$(MACH64)
+
+$(BUILD_OLD_DIR_32)/.configured: CONFIGURE_SCRIPT = $(SOURCE_DIR_1)/configure
+$(BUILD_OLD_DIR_64)/.configured: CONFIGURE_SCRIPT = $(SOURCE_DIR_1)/configure
+$(BUILD_OLD_DIR_32)/.configured:        BITS=32
+$(BUILD_OLD_DIR_64)/.configured:        BITS=64
+
+BUILD_32 += $(BUILD_OLD_DIR_32)/.built
+BUILD_64 += $(BUILD_OLD_DIR_64)/.built
+
+INSTALL_32 += $(BUILD_OLD_DIR_32)/.installed
+INSTALL_64 += $(BUILD_OLD_DIR_64)/.installed
+
+# install the old version first
+$(BUILD_DIR_32)/.installed:     $(BUILD_OLD_DIR_32)/.installed
+$(BUILD_DIR_64)/.installed:     $(BUILD_OLD_DIR_64)/.installed
+
+# we need to prep the old version too (this should be handled in prep.mk)
+$(SOURCE_DIR_1)/.unpacked:        download $(MAKEFILE_PREREQ) $(PATCHES)
+	$(RM) -r $(SOURCE_DIR_1)
+	$(UNPACK) $(UNPACK_ARGS) $(COMPONENT_ARCHIVE_1)
+	$(TOUCH) $@
+
+# prep the old version first
+$(SOURCE_DIR)/.prep:    $(SOURCE_DIR_1)/.prep
+
+$(SOURCE_DIR_1)/.prep:        $(SOURCE_DIR_1)/.unpacked
+	$(TOUCH) $@
+
+prep::  $(SOURCE_DIR_1)/.prep
+
+CLEAN_PATHS += $(SOURCE_DIR_1)
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
