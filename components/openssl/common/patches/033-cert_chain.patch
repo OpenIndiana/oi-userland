@@ -61,10 +61,10 @@ $ cvs diff -u -r1.105.2.9.2.4.2.3 -r1.105.2.9.2.4.2.4 x509_vfy.c
 +
  int X509_verify_cert(X509_STORE_CTX *ctx)
  {
-     X509 *x, *xtmp, *chain_ss = NULL;
+     X509 *x, *xtmp, *xtmp2, *chain_ss = NULL;
 @@ -304,8 +331,17 @@ int X509_verify_cert(X509_STORE_CTX *ctx)
- 
-     /* we now have our chain, lets check it... */
+         }
+     } while (retry);
  
 -    /* Is last certificate looked up self signed? */
 -    if (!ctx->check_issued(ctx, x, x)) {
@@ -184,9 +184,9 @@ Index: openssl/crypto/x509/x509_vfy.h
 $ cvs diff -u -r1.67.2.3.4.1 -r1.67.2.3.4.2 x509_vfy.h
 --- openssl/crypto/x509/x509_vfy.h    26 Sep 2012 13:50:42 -0000    1.67.2.3.4.1
 +++ openssl/crypto/x509/x509_vfy.h    14 Dec 2012 14:30:46 -0000    1.67.2.3.4.2
-@@ -406,6 +406,9 @@
- /* Check selfsigned CA signature */
- # define X509_V_FLAG_CHECK_SS_SIGNATURE          0x4000
+@@ -412,6 +412,9 @@
+  */
+ # define X509_V_FLAG_NO_ALT_CHAINS               0x100000
  
 +/* Allow partial chains if at least one certificate is in trusted store */
 +# define X509_V_FLAG_PARTIAL_CHAIN               0x80000
