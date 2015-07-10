@@ -28,6 +28,7 @@ from oslo.config import cfg
 
 from neutron.agent.common import config
 from neutron.agent import l3_agent
+from neutron.agent.linux import external_process
 from neutron.agent.linux import utils
 from neutron.agent.solaris import interface
 from neutron.agent.solaris import net_lib
@@ -80,6 +81,13 @@ class EVSL3NATAgent(l3_agent.L3NATAgentWithStateReport):
             self._destroy_metadata_proxy(ri.router_id, ri.ns_name)
 
         del self.router_info[router_id]
+
+    def _get_metadata_proxy_process_manager(self, router_id, ns_name):
+        return external_process.ProcessManager(
+            self.conf,
+            router_id,
+            root_helper=None,
+            namespace=ns_name)
 
     def _get_metadata_proxy_callback(self, router_id):
         """Need to override this since we need to pass the absolute
