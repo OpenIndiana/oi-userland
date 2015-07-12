@@ -1,6 +1,6 @@
 /*
  * ProFTPD - FTP server daemon
- * Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -282,6 +282,11 @@ static int audit_sess_init(void) {
     pr_log_pri(PR_LOG_ERR, "Auditing privilege initialization failed");
     return rval;
   }
+
+  (void) getppriv(PRIV_INHERITABLE, privset);
+  priv_addset(privset, PRIV_PROC_AUDIT);
+  (void) setppriv(PRIV_SET, PRIV_INHERITABLE, privset);
+
   (void) getppriv(PRIV_EFFECTIVE, privset);
   priv_addset(privset, PRIV_SYS_AUDIT);
   (void) setppriv(PRIV_SET, PRIV_EFFECTIVE, privset);

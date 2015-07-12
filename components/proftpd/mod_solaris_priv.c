@@ -2,7 +2,7 @@
  * ProFTPD - FTP server daemon
  * Copyright (c) 1997, 1998 Public Flood Software
  * Copyright (c) 2003-2010 The ProFTPD Project team
- * Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,6 +55,11 @@
 #define	PRIV_USE_SETID			0x0020
 #define	PRIV_USE_FILE_OWNER		0x0040
 #define	PRIV_DROP_FILE_WRITE		0x0080
+
+#define	PRIV_SOL_ROOT_PRIVS	\
+	(PRIV_USE_FILE_CHOWN | PRIV_USE_FILE_CHOWN_SELF | \
+	PRIV_USE_DAC_READ | PRIV_USE_DAC_WRITE | PRIV_USE_DAC_SEARCH | \
+	PRIV_USE_FILE_OWNER)
 
 static unsigned int solaris_priv_flags = 0;
 static unsigned char use_privs = TRUE;
@@ -145,11 +150,17 @@ MODRET set_solaris_priv_engine(cmd_rec *cmd) {
  */
 MODRET solaris_priv_post_pass(cmd_rec *cmd) {
   int res = -1;
+  int priv_flags = solaris_priv_flags;
   priv_set_t *p = NULL;
   priv_set_t *i = NULL;
 
   if (!use_privs)
     return PR_DECLINED(cmd);
+
+  /* If we authenticated as root, we get all appropriate privs */
+  if (session.uid == 0) {
+    priv_flags = PRIV_SOL_ROOT_PRIVS;
+  }
 
   pr_signals_block();
 
@@ -185,29 +196,29 @@ MODRET solaris_priv_post_pass(cmd_rec *cmd) {
   priv_delset(p, PRIV_PROC_INFO);
   priv_delset(p, PRIV_PROC_SESSION);
 
-  if (solaris_priv_flags & PRIV_USE_SETID)
+  if (priv_flags & PRIV_USE_SETID)
     priv_addset(p, PRIV_PROC_SETID);
 
   /* Add any of the configurable privileges. */
-  if (solaris_priv_flags & PRIV_USE_FILE_CHOWN)
+  if (priv_flags & PRIV_USE_FILE_CHOWN)
     priv_addset(p, PRIV_FILE_CHOWN);
 
-  if (solaris_priv_flags & PRIV_USE_FILE_CHOWN_SELF)
+  if (priv_flags & PRIV_USE_FILE_CHOWN_SELF)
     priv_addset(p, PRIV_FILE_CHOWN_SELF);
 
-  if (solaris_priv_flags & PRIV_USE_DAC_READ)
+  if (priv_flags & PRIV_USE_DAC_READ)
     priv_addset(p, PRIV_FILE_DAC_READ);
 
-  if (solaris_priv_flags & PRIV_USE_DAC_WRITE)
+  if (priv_flags & PRIV_USE_DAC_WRITE)
     priv_addset(p, PRIV_FILE_DAC_WRITE);
 
-  if (solaris_priv_flags & PRIV_USE_DAC_SEARCH)
+  if (priv_flags & PRIV_USE_DAC_SEARCH)
     priv_addset(p, PRIV_FILE_DAC_SEARCH);
 
-  if (solaris_priv_flags & PRIV_USE_FILE_OWNER)
+  if (priv_flags & PRIV_USE_FILE_OWNER)
     priv_addset(p, PRIV_FILE_OWNER);
 
-  if (solaris_priv_flags & PRIV_DROP_FILE_WRITE)
+  if (priv_flags & PRIV_DROP_FILE_WRITE)
     priv_delset(p, PRIV_FILE_WRITE);
 
   res = setppriv(PRIV_SET, PRIV_PERMITTED, p);
@@ -245,51 +256,6 @@ out:
 static void log_err_effective(const char* fn) {
   pr_log_pri(PR_LOG_ERR, MOD_SOLARIS_PRIV_VERSION ": %s(%s): %s",
     fn, "effective", strerror(errno));
-}
-
-MODRET solaris_priv_post_fail(cmd_rec *cmd) {
-  priv_set_t* effective_set = NULL;
-
-  if ((effective_set = priv_allocset()) == NULL) {
-    log_err_effective("priv_allocset");
-    goto out;
-  }
-
-  if (getppriv(PRIV_EFFECTIVE, effective_set) != 0) {
-    log_err_effective("getppriv");
-    goto out;
-  }
-
-  if (priv_addset(effective_set, PRIV_PROC_AUDIT) != 0) {
-    log_err_effective("priv_addset");
-    goto out;
-  }
-
-  if (priv_addset(effective_set, PRIV_SYS_AUDIT) != 0) {
-    log_err_effective("priv_addset");
-    goto out;
-  }
-
-  if (priv_addset(effective_set, PRIV_PROC_SETID) != 0) {
-    log_err_effective("priv_addset");
-    goto out;
-  }
-
-  if (priv_addset(effective_set, PRIV_PROC_TASKID) != 0) {
-    log_err_effective("priv_addset");
-    goto out;
-  }
-
-  if (setppriv(PRIV_SET, PRIV_EFFECTIVE, effective_set) != 0) {
-    log_err_effective("setppriv");
-    goto out;
-  }
-
-out:
-  if (effective_set != NULL)
-    priv_freeset(effective_set);
-
-  return PR_DECLINED(cmd);
 }
 
 /* Initialization routines
@@ -414,7 +380,6 @@ static conftable solaris_priv_conftab[] = {
 
 static cmdtable solaris_priv_cmdtab[] = {
   { POST_CMD, C_PASS, G_NONE, solaris_priv_post_pass, FALSE, FALSE },
-  { POST_CMD_ERR, C_PASS, G_NONE, solaris_priv_post_fail, FALSE, FALSE },
   { 0, NULL }
 };
 
