@@ -33,3 +33,23 @@
  	  enumlist maybecomma_warn '}' maybe_attribute
  		{ $$ = finish_enum ($<ttype>3, nreverse ($4),
  				    chainon ($1, $7)); }
+--- gcc-3.4.3/gcc/c-parse.in.orig	Sun Dec 15 10:24:57 2013
++++ gcc-3.4.3/gcc/c-parse.in	Sun Dec 15 10:28:18 2013
+@@ -635,7 +635,7 @@
+ 	IDENTIFIER
+ 		{
+ 		  if (yychar == YYEMPTY)
+-		    yychar = YYLEX;
++		    yychar = yylex();
+ 		  $$ = build_external_ref ($1, yychar == '(');
+ 		}
+ 	| CONSTANT
+@@ -2227,7 +2227,7 @@
+ 
+ save_location:
+ 		{ if (yychar == YYEMPTY)
+-		    yychar = YYLEX;
++		    yychar = yylex();
+ 		  $$ = input_location; }
+ 	;
+ 
