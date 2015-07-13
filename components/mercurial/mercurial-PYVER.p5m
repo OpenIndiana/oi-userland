@@ -18,31 +18,33 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+
+#
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
-set name=pkg.fmri value=pkg:/developer/versioning/mercurial-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri \
+    value=pkg:/developer/versioning/mercurial-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="The Mercurial Source Control Management System"
-set name=pkg.description value="A fast, lightweight source control management system designed for efficient handling of very large distributed projects."
-set name=com.oracle.info.description value="the Mercurial source control management system"
-set name=info.classification value="org.opensolaris.category.2008:Development/Source Code Management"
-set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=pkg.description \
+    value="A fast, lightweight source control management system designed for efficient handling of very large distributed projects."
+set name=com.oracle.info.description \
+    value="the Mercurial source control management system"
+set name=info.classification \
+    value="org.opensolaris.category.2008:Development/Source Code Management"
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2006/417
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-
-license mercurial.copyright license='GPLv2+'
-
-# force a dependency on the mercurial package
-depend fmri=developer/versioning/mercurial@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
-    type=optional
-
-
+#
+link path=usr/bin/hg target=hg-$(PYVER) mediator=python \
+    mediator-version=$(PYVER)
 file path=usr/bin/hg-$(PYVER)
 file path=usr/lib/python$(PYVER)/vendor-packages/hgext/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/hgext/acl.py
 file path=usr/lib/python$(PYVER)/vendor-packages/hgext/blackbox.py
 file path=usr/lib/python$(PYVER)/vendor-packages/hgext/bugzilla.py
+file path=usr/lib/python$(PYVER)/vendor-packages/hgext/censor.py
 file path=usr/lib/python$(PYVER)/vendor-packages/hgext/children.py
 file path=usr/lib/python$(PYVER)/vendor-packages/hgext/churn.py
 file path=usr/lib/python$(PYVER)/vendor-packages/hgext/color.py
@@ -111,8 +113,8 @@ file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/base85.so
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/bdiff.so
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/bookmarks.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/branchmap.py
-file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/bundlerepo.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/bundle2.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/bundlerepo.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/byterange.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/changegroup.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/changelog.py
@@ -122,6 +124,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/commandserver.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/config.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/context.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/copies.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/crecord.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/dagparser.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/dagutil.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/default.d/mergetools.rc
@@ -130,7 +133,6 @@ file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/diffhelpers.so
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/dirstate.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/discovery.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/dispatch.py
-file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/dummycert.pem
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/encoding.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/error.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/exchange.py
@@ -231,7 +233,8 @@ file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/scmutil.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/scmwindows.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/setdiscovery.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/similar.py
-file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/simplemerge.py pkg.depend.bypass-generate=.*
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/simplemerge.py \
+    pkg.depend.bypass-generate=.*
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/sshpeer.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/sshserver.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/sslutil.py
@@ -282,6 +285,8 @@ file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/templates/gitweb/sear
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/templates/gitweb/shortlog.tmpl
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/templates/gitweb/summary.tmpl
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/templates/gitweb/tags.tmpl
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/templates/json/changelist.tmpl
+file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/templates/json/map
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/templates/map-cmdline.bisect
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/templates/map-cmdline.changelog
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/templates/map-cmdline.compact
@@ -408,5 +413,11 @@ file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/win32.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/windows.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/wireproto.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mercurial/worker.py
+#
+license mercurial.copyright.excanvas license="Apache v2.0"
+license mercurial.copyright.google license="BSD 3-Clause"
+license mercurial.copyright license=GPLv2+
 
-link path=usr/bin/hg target=hg-$(PYVER) mediator=python mediator-version=$(PYVER)
+# force a dependency on the mercurial package
+depend type=optional \
+    fmri=developer/versioning/mercurial@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
