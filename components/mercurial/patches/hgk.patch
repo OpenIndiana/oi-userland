@@ -1,13 +1,15 @@
-# 6542518 hg view does not work
+Make the hgk extension find the GUI bits as installed on Solaris without
+making the user do any extra configuration.  Because this is patch is
+specific to Solaris, it's not appropriate for sending upstream, and because
+it's so simple, it's effectively a zero maintenance burden.
 
---- mercurial-2.2.1/hgext/hgk.py	Thu May  3 14:06:28 2012
-+++ mercurial-2.2.1/hgext/hgk.py	Sat May 12 17:31:15 2012
-@@ -307,7 +307,7 @@
-     "start interactive history viewer"
-     os.chdir(repo.root)
-     optstr = ' '.join(['--%s %s' % (k, v) for k, v in opts.iteritems() if v])
+--- mercurial-3.4/hgext/hgk.py.orig	Fri May  1 14:48:50 2015
++++ mercurial-3.4/hgext/hgk.py	Mon May  4 14:43:19 2015
+@@ -326,6 +326,6 @@
+     if repo.filtername is None:
+         optstr += '--hidden'
+ 
 -    cmd = ui.config("hgk", "path", "hgk") + " %s %s" % (optstr, " ".join(etc))
 +    cmd = ui.config("hgk", "path", "/usr/demo/mercurial/hgk") + " %s %s" % (optstr, " ".join(etc))
      ui.debug("running %s\n" % cmd)
-     util.system(cmd)
- 
+     ui.system(cmd)
