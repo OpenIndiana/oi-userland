@@ -1,0 +1,16 @@
+Description: relax minimum DH size to 768 bits for compatibility reasons
+Author: Marc Deslauriers <marc.deslauriers@canonical.com>
+
+Index: nss-3.19.2/nss/lib/ssl/sslimpl.h
+===================================================================
+--- nss-3.19.2.orig/nss/lib/ssl/sslimpl.h	2015-06-17 14:26:43.000000000 -0400
++++ nss-3.19.2/nss/lib/ssl/sslimpl.h	2015-07-07 11:36:50.045187817 -0400
+@@ -159,7 +159,7 @@
+ /* 1023 to avoid cases where p = 2q+1 for a 512-bit q turns out to be
+  * only 1023 bits and similar.  We don't have good data on whether this
+  * happens because NSS used to count bit lengths incorrectly. */
+-#define SSL_DH_MIN_P_BITS 1023
++#define SSL_DH_MIN_P_BITS 768
+ #define SSL_DSA_MIN_P_BITS 1023
+ 
+ #define INITIAL_DTLS_TIMEOUT_MS   1000  /* Default value from RFC 4347 = 1s*/
