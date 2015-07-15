@@ -36,7 +36,7 @@ from sqlalchemy.schema import DropConstraint
 
 from neutron import context as ctx
 from neutron.db import common_db_mixin, model_base
-from neutron.plugins.evs.migrate import havana_api 
+from neutron.plugins.evs.migrate import havana_api
 
 
 def create_db_network(nw, engine, ext_ro):
@@ -141,10 +141,6 @@ def main():
         evs_contr = rc.get_object(evsc.EVSController())
     except:
         raise SystemExit(_("Could not retrieve EVS info from EVS Controller"))
-    evsinfo = evs_contr.getEVSInfo()
-    if not evsinfo:
-        print "No data to migrate"
-        return
 
     config.readfp(open("/etc/neutron/neutron.conf"))
     if config.has_option("database", 'connection'):
@@ -161,6 +157,7 @@ def main():
     neutron_engine = sa.create_engine(SQL_CONNECTION)
     router_port_ids = {}
 
+    evsinfo = evs_contr.getEVSInfo()
     for e in evsinfo:
         ext_ro = False
         for p in e.props:
@@ -368,7 +365,8 @@ def main():
     for t in meta.tables.values():
         for fk in t.foreign_keys:
             if fk.column.table.name == "routers":
-                engine.execute(DropConstraint(fk.constraint))
+                if fk.constraint.name:
+                    engine.execute(DropConstraint(fk.constraint))
     for t in meta.tables.values():
         if t.name == "routers":
             t.drop(bind=conn)
@@ -378,7 +376,8 @@ def main():
     for t in meta.tables.values():
         for fk in t.foreign_keys:
             if fk.column.table.name == "floatingips":
-                engine.execute(DropConstraint(fk.constraint))
+                if fk.constraint.name:
+                    engine.execute(DropConstraint(fk.constraint))
     for t in meta.tables.values():
         if t.name == "floatingips":
             t.drop(bind=conn)

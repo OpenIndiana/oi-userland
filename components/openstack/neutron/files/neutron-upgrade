@@ -44,7 +44,6 @@ NEUTRON_CONF_EXCEPTIONS = [
     ('keystone_authtoken', 'admin_user'),
     ('keystone_authtoken', 'admin_password'),
     ('keystone_authtoken', 'signing_dir'),
-    ('database', 'connection'),
 ]
 
 
@@ -91,7 +90,16 @@ def start():
         sys.exit(smf_include.SMF_EXIT_OK)
 
     # look for any .new files
+    db_connection = None
     if glob.glob('/etc/neutron/*.new'):
+        # extract sql_connection from evs_plugin.ini
+        db_connection = 'sqlite:////var/lib/neutron/neutron.sqlite'
+        evs_ini = iniparse.RawConfigParser()
+        evs_ini.read('/etc/neutron/plugins/evs/evs_plugin.ini')
+        if evs_ini.has_section('DATABASE'):
+            if evs_ini.has_option('DATABASE', 'sql_connection'):
+                db_connection = evs_ini.get('DATABASE', 'sql_connection')
+
         # the versions are different, so perform an upgrade
         # modify the configuration files
 
@@ -113,7 +121,21 @@ def start():
     # In certain cases the database section does not exist and the
     # default database chosen is sqlite.
     if config.has_section('database'):
-        db_connection = config.get('database', 'connection')
+        if db_connection:
+            config.set('database', 'connection', db_connection)
+            with open('/etc/neutron/neutron.conf', 'wb+') as fh:
+                config.write(fh)
+            if 'sqlite' in db_connection:
+                print "WARNING: Neutron database is on sqlite"
+                print "which is not a supported backend for"
+                print "Solaris Openstack. Please make sure"
+                print "to migrate to MySQL after upgrade to Juno"
+        # Need this else part because this code path is exercised
+        # during fresh install of Juno, when the
+        # [database].connection is set to default mysql
+        else:
+            db_connection = config.get('database', 'connection')
+
         engine = sqlalchemy.create_engine(db_connection)
 
         # migrate EVS to Neutron db
