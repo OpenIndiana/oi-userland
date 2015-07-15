@@ -1,0 +1,31 @@
+Fixes problem with setting the TLS client protocol version and ciphersuite
+in the NSSWITCH LDAP library in Solaris.
+Patch was developed in-house; it is Solaris specific and
+will not be contributed upstream.
+
+--- openldap-2.4.30/libraries/libldap/ldap.conf.old	Mon Jun  1 16:46:56 2015
++++ openldap-2.4.30/libraries/libldap/ldap.conf	Mon Jun  1 16:47:08 2015
+@@ -9,5 +9,8 @@
+ #URI	ldap://ldap.example.com ldap://ldap-master.example.com:666
+ 
+ #SIZELIMIT	12
+ #TIMELIMIT	15
+ #DEREF		never
++
++TLS_PROTOCOL_MIN	3.2
++TLS_CIPHER_SUITE	-ALL:+TLSv1.2:+TLSv1.1
+--- openldap-2.4.30/servers/slapd/slapd.conf.old	Mon Jun  1 16:47:47 2015
++++ openldap-2.4.30/servers/slapd/slapd.conf	Mon Jun  1 16:47:59 2015
+@@ -22,10 +22,12 @@
+ # Sample security restrictions
+ #	Require integrity protection (prevent hijacking)
+ #	Require 112-bit (3DES or better) encryption for updates
+ #	Require 63-bit encryption for simple bind
+ # security ssf=1 update_ssf=112 simple_bind=64
++TLSProtocolMin	3.2
++TLSCipherSuite	-ALL:+TLSv1.2:+TLSv1.1
+ 
+ # Sample access control policy:
+ #	Root DSE: allow anyone to read it
+ #	Subschema (sub)entry DSE: allow anyone to read it
+ #	Other DSEs:

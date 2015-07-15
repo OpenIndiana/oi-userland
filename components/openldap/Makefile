@@ -78,7 +78,7 @@ CONFIGURE_OPTIONS += --includedir=$(USRINCDIR)/openldap
 CONFIGURE_OPTIONS += --docdir=$(USRSHAREDOCDIR)
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-overlays
-CONFIGURE_OPTIONS += --disable-dynamic
+CONFIGURE_OPTIONS += --enable-dynamic
 CONFIGURE_OPTIONS += --enable-crypt
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --enable-bdb
