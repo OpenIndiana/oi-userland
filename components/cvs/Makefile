@@ -50,6 +50,9 @@ ASLR_MODE = $(ASLR_ENABLE)
 COMPONENT_TEST_ENV += PATH=$(GNUBIN):$(PATH)
 COMPONENT_TEST_TARGETS = localcheck
 
+# Test transforms to cut out randomly-ordered test messages
+COMPONENT_TEST_TRANSFORMS += '-e "/^cp.*/d" ' \
+
 configure:	$(CONFIGURE_64)
 
 build:		$(BUILD_64)
