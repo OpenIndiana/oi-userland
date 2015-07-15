@@ -23,25 +23,20 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		screen
-COMPONENT_VERSION=	4.2.1
+COMPONENT_VERSION=	4.3.1
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/screen/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:5468545047e301d2b3579f9d9ce00466d14a7eec95ce806e3834a3d6b0b9b080
+    sha256:fa4049f8aee283de62e283d427f2cfd35d6c369b40f7f45f947dbfd915699d63
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/screen/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/screen
 
-TPNO=			20744	
+TPNO=			23486	
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
-
-# We need to remove the following files to make sure that the generated ones
-# inside the build directory will be used
-#
-COMPONENT_PREP_ACTION=	(cd $(@D) ; rm config.h config.log config.status) 
 
 CONFIGURE_OPTIONS +=	--enable-colors256
 CONFIGURE_OPTIONS +=	--with-sys-screenrc=/etc/screenrc
