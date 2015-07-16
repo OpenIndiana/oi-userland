@@ -23,16 +23,16 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =        curl
-COMPONENT_VERSION=      7.42.1
+COMPONENT_VERSION=      7.43.0
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  http://curl.haxx.se/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:4fc504f4fac56d091162707941d06c72a4222fc6fa48ca8193e44ee74baf079c
+    sha256:1a084da1edbfc3bd632861358b26af45ba91aaadfb15d6482de55748b8dfc693
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/curl
 
-TPNO=			22725
+TPNO=			23337
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -88,7 +88,7 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|\(^/bin/bash ../../libtool\).*|\1|" ' \
 	'-e "s|\(^libtool: link:\).*|\1|" ' \
 	'-e "s|remaining: ..:..|remaining: xx:xx|" ' \
-	'-e "s|\(^TESTDONE: 984 tests were considered during\).*|\1|" ' \
+	'-e "s|\(^TESTDONE: 988 tests were considered during\).*|\1|" ' \
 	'-e "s|\(^\* curl $(COMPONENT_VERSION)\).*|\1|" ' \
 	'-e "s|\(^\* Host:\).*|\1|" ' \
 	'-e "s|\(^\* System: SunOS\).*|\1|" ' \

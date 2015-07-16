@@ -14,28 +14,3 @@ This change will be sent back up stream for consideration.
      f.close()
  
  server = PipelineServer(('0.0.0.0', args.port), PipelineRequestHandler)
-
-
-# ----------------------------------------------------------------------------
-Tests #530 and #584 fail with curl version 7.40.0. This is discussed at:
-
-  http://curl.haxx.se/mail/lib-2014-08/0161.html
-
-with the patch at:
-
-http://curl.haxx.se/mail/lib-2014-06/att-0139/0001-Delay-Curl_addHandleToPipeline-by-a-milisecond.patch
-
-addressing the problem.
-
-Upstream is already aware of this issue.
-
---- lib/url.c.orig	2015-01-26 13:49:21.041657976 -0800
-+++ lib//url.c	2015-01-26 13:50:45.391515086 -0800
-@@ -2748,6 +2748,7 @@
- {
-   if(!Curl_llist_insert_next(pipeline, pipeline->tail, data))
-     return CURLE_OUT_OF_MEMORY;
-+  Curl_wait_ms(1);
-   return CURLE_OK;
- }
- 
