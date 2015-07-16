@@ -1,0 +1,62 @@
+Add notes on SMF integration and change to reflect default startup via
+inetd.
+
+diff -urp -x '*~' -x '*.orig' man/xfs.man man/xfs.man
+--- a/man/xfs.man	2010-08-06 18:40:29.000000000 -0700
++++ b/man/xfs.man	2011-01-28 18:01:17.083394642 -0800
+@@ -68,10 +68,14 @@ xfs \- X font server
+ .B xfs
+ is the X Window System font server.
+ It supplies fonts to X Window System display servers.
+-The server is usually run by a system administrator, and started via
+-.BR init (__adminmansuffix__)
+-or
+-.BR inetd (__adminmansuffix__).
++The server is usually run by 
++.BR inetd (1M),
++as described in the NOTES section below.
++Automatic starting can be enabled or disabled through the
++.BR fsadmin (1)
++or 
++.BR inetadm (1M)
++commands.
+ Users may also wish to start private font servers for specific sets of
+ fonts.
+ .PP
+@@ -361,6 +365,22 @@ causes
+ .B xfs
+ to reset, closing all active connections and re-reading the configuration
+ file.
++.\" OpenIndiana additions for SMF:
++.SH "NOTES"
++.PP
++The \fBxfs\fR service is managed by the service management facility, 
++\fBsmf\fR(5), under the service identifier:
++.PP
++.nf
++svc:/application/x11/xfs:default
++.fi
++.PP
++Administrative actions on this service, such as enabling, disabling, or 
++requesting restart, can be performed using \fBsvcadm\fR(1M)\&. Responsibility 
++for initiating and restarting this service is delegated to \fBinetd\fR(1M)\&.
++Use \fBinetadm\fR(1M) to make configuration changes and to view configuration 
++information for this service\&. The service\&'s status can be queried using 
++the \fBsvcs\fR(1) command\&.
+ .SH BUGS
+ Multiple catalogues should be supported.
+ .SH "FUTURE DIRECTIONS"
+@@ -382,8 +402,11 @@ Keith Packard, Massachusetts Institute o
+ .BR X (__miscmansuffix__),
+ .BR xfsinfo (__appmansuffix__),
+ .BR fslsfonts (__appmansuffix__),
+-.BR init (__adminmansuffix__),
+ .BR inetd (__adminmansuffix__),
+-.BR syslog (__libmansuffix__),
++.BR fsadmin (1),
++.BR inetadm (1M),
++.BR smf (5),
++.BR syslogd (1M),
++.BR syslog (3c),
+ .IR "The X Font Service Protocol" ,
+ .I Font Server Implementation Overview
