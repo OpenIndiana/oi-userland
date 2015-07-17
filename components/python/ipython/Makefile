@@ -53,13 +53,30 @@ COMPONENT_POST_INSTALL_ACTION = \
 	/usr/bin/find $(PROTOUSRLIBDIR)/python$(PYTHON_VERSION) -name *.py \
 		-exec $(GSED) -i -e 's|env python|python$(PYTHON_VERSION)|' "{}" \; ;
 
+COMPONENT_TEST_ARGS= ../scripts/iptest
+
+# We don't want anything created in the home directory.
+COMPONENT_TEST_ENV+= IPYTHONDIR=$(BUILD_DIR)
+
+# Different amount of tests are run for sparc and x86
+COMPONENT_TEST_MASTER = \
+        $(COMPONENT_TEST_RESULTS_DIR)/results-$(PYTHON_VERSION)-$(MACH)-$(BITS).master
+
+# Touching up test results
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s|\(^Ran [0-9][0-9]* tests* \).*|\1|" ' \
+	'-e "/tmp.*/d" ' \
+	'-e "/fakemodule.*/d" ' \
+	'-e "/builds.*/d" ' \
+	'-e "/home.*/d" '
+
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 build:          $(BUILD_32)
 
 install:        $(INSTALL_32)
 
-test:           $(NO_TESTS)
+test:           $(TEST_NO_ARCH)
 
 system-test:    $(NO_TESTS)
 
@@ -67,3 +84,4 @@ REQUIRED_PACKAGES += library/python/python-twisted-26
 REQUIRED_PACKAGES += library/python/python-twisted-27
 REQUIRED_PACKAGES += library/python/setuptools-26
 REQUIRED_PACKAGES += library/python/setuptools-27
+
