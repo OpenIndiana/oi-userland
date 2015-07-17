@@ -9,7 +9,7 @@
 #
 
 #
-# Copyright 2012-2013, EveryCity Ltd. All rights reserved.
+# Copyright 2015 EveryCity Ltd. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -17,13 +17,14 @@ include ../../make-rules/shared-macros.mk
 COMPONENT_NAME=		node
 COMPONENT_FMRI=		runtime/nodejs
 COMPONENT_SUMMARY=	Evented I/O for V8 JavaScript.
+COMPONENT_CLASSIFICATION=	Development/Other Languages
 COMPONENT_PROJECT_URL=	http://nodejs.org
-COMPONENT_VERSION=	0.10.21
+COMPONENT_VERSION=	0.12.7
 COMPONENT_LICENSE=	BSD-like, MIT, Apache
 COMPONENT_LICENSE_FILE=	node.license	
 COMPONENT_SRC=		$(COMPONENT_NAME)-v$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:7c125bf22c1756064f2a68310d4822f77c8134ce178b2faa6155671a8124140d
+COMPONENT_ARCHIVE_HASH=	sha256:b23d64df051c9c969b0c583f802d5d71de342e53067127a5061415be7e12f39d
 COMPONENT_ARCHIVE_URL=	http://nodejs.org/dist/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
 include $(WS_TOP)/make-rules/prep.mk
@@ -39,7 +40,7 @@ COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_SCRIPT =	$(@D)/configure
 
-CONFIGURE_OPTIONS= --prefix=/usr/node/0.10
+CONFIGURE_OPTIONS= --prefix=/usr/node/0.12
 
 build:		$(BUILD_32)
 
