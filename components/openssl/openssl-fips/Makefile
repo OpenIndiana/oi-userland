@@ -50,7 +50,7 @@ PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin:/usr/perl5/bin
 # command sets U1 and U2 are defined in the FIPS 2.0.5 security policy and must be
 # run as shown there. Nothing from the tarball can be modified. We use the U2
 # command set, see below.
-FAKE_ISALIST = 32/isalist
+FAKE_ISALIST = 32/isalist 64/isalist
 FAKE_MAKE = fips-gmake
 FAKE_CC = cc
 FAKE_APPS = $(FAKE_ISALIST) $(FAKE_MAKE) $(FAKE_CC)
@@ -62,7 +62,7 @@ CLEAN_PATHS += $(FAKE_APPS)
 # we'll also pick up gcc if we find it in the path, so force it to
 # find one that doesn't work like it wants
 FIPS_PATH_32 = $(COMPONENT_DIR)/32:$(COMPONENT_DIR)/gcc:$(PATH)
-FIPS_PATH_64 = $(COMPONENT_DIR)/gcc:$(PATH)
+FIPS_PATH_64 = $(COMPONENT_DIR)/64:$(COMPONENT_DIR)/gcc:$(PATH)
 
 # HMAC-SHA-1 digest of the OpenSSL FIPS tar file is used for the
 # integrity test requirement for the FIPS-140 validation.
