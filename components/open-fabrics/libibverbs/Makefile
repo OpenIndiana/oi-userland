@@ -22,7 +22,7 @@
 #
 
 # OFED only builds with GCC
-COMPILER=gcc3
+COMPILER=gcc
 
 include ../../../make-rules/shared-macros.mk
 
@@ -52,6 +52,8 @@ CPPFLAGS +=	-I$(PWD)/../librdmacm/librdmacm-1.0.14.1/include
 
 LIBS +=	-lsocket -lnsl -lkstat
 
+CONFIGURE_OPTIONS +=	--bindir=$(USRBINDIR)
+
 # --disable-libcheck is not a supported option for this component
 DISABLE_LIBCHECK=
 
@@ -63,14 +65,7 @@ COMPONENT_PREP_ACTION = \
 
 COMPONENT_POST_INSTALL_ACTION = \
 	$(RM) $(PROTO_DIR)/$(CONFIGURE_BINDIR.$(BITS))/ibv_uc_pingpong; \
-	$(RM) $(PROTO_DIR)/$(CONFIGURE_BINDIR.64)/ibv_devices \
-	$(PROTO_DIR)/$(CONFIGURE_BINDIR.64)/ibv_devinfo \
-	$(PROTO_DIR)/$(CONFIGURE_BINDIR.64)/ibv_asyncwatch \
-	$(PROTO_DIR)/$(CONFIGURE_BINDIR.64)/ibv_rc_pingpong \
-	$(PROTO_DIR)/$(CONFIGURE_BINDIR.64)/ibv_uc_pingpong \
-	$(PROTO_DIR)/$(CONFIGURE_BINDIR.64)/ibv_ud_pingpong \
-	$(PROTO_DIR)/$(CONFIGURE_BINDIR.64)/ibv_srq_pingpong \
-	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man1/ibv_uc_pingpong.1 \
+	$(RM) $(PROTO_DIR)/$(CONFIGURE_MANDIR)/man1/ibv_uc_pingpong.1 \
 	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man3/ibv_reg_xrc_rcv_qp.3 \
 	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man3/ibv_create_xrc_srq.3 \
 	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man3/ibv_open_xrc_domain.3 \

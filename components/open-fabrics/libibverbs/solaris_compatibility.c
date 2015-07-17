@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2015, Oracle and/or its affiliates. All rights reserved.
  *
  * This software is available to you under a choice of one of two
  * licenses.  You may choose to be licensed under the terms of the GNU
@@ -47,12 +47,8 @@
 #include <stdlib.h>
 #include <strings.h>
 #include <sys/param.h>
-#include <sys/ib/adapters/hermon/hermon_ioctl.h>
-#include <sys/ib/adapters/tavor/tavor_ioctl.h>
 #include <sys/ib/clients/of/sol_uverbs/sol_uverbs_ioctl.h>
 #include <sys/ib/clients/of/sol_umad/sol_umad_ioctl.h>
-#include <sys/ib/adapters/MELLANOX.h>
-
 #include <alloca.h>
 #include "../include/infiniband/arch.h"
 #include "../include/infiniband/verbs.h"
@@ -64,58 +60,23 @@
 
 #define	min(a, b)	((a) < (b) ? (a) : (b))
 
-
-/*
- * The followings will be removed when changes in hermon_ioctl.h
- * are delivered through ON.
- */
-#ifndef	HERMON_GET_HWINFO_IOCTL_SUP
-#define	HERMON_IOCTL_GET_HWINFO	(('t' << 8) | 0x32)
-#pragma	pack(1)
-
-/* Structure used for getting HW info */
-typedef struct hermon_hw_info_ioctl_s {
-	uint32_t	af_hw_info_version;
-	uint32_t	af_padding1;	/* Padding for af_hwpn to be on */
-					/* 64 byte boundary */
-	char		af_hwpn[64];
-	uint16_t	af_pn_len;
-	uint64_t	af_padding2:48;	/* Padding for af_psid to be on */
-					/* 64 byte boundary */
-	char		af_psid[16];
-	uint16_t	af_psid_len;
-	uint32_t	af_padding3;	/* Padding for reserved to be on */
-					/* 64 byte boundary */
-	uint8_t		reserved[64];
-} hermon_hw_info_ioctl_t;
-#pragma	pack()
-#endif
-
-
 /*
  * duplicate ABI definitions for HCAs as the HCA abi headers are not
  * installed in proto.
  */
-#define	MLX4_UVERBS_MAX_ABI_VERSION	3 /* mlx4-abi.h */
 #define	RDMA_USER_CM_MIN_ABI_VERSION	3 /* rdma_cma_abi.h */
 #define	RDMA_USER_CM_MAX_ABI_VERSION	4 /* rdma_cma_abi.h */
 
-#define	MLX4	0
+/*
+ * Some useful definitions.
+ */
 #define	HW_DRIVER_MAX_NAME_LEN			20
 #define	UVERBS_KERNEL_SYSFS_NAME_BASE		"uverbs"
 #define	UMAD_KERNEL_SYSFS_NAME_BASE		"umad"
 #define	IB_HCA_DEVPATH_PREFIX			"/dev/infiniband/hca"
 #define	IB_OFS_DEVPATH_PREFIX			"/dev/infiniband/ofs"
-#define	CONNECTX_NAME				"mlx4_"
-
-#define	MELLANOX_VENDOR_ID			0x15b3
-#define	PCI_DEVICE_ID_MELLANOX_HERMON_SDR	0x6340
-#define	PCI_DEVICE_ID_MELLANOX_HERMON_DDR	0x634a
-#define	PCI_DEVICE_ID_MELLANOX_HERMON_QDR	0x6354
-#define	PCI_DEVICE_ID_MELLANOX_HERMON_DDR_PCIE2	0x6732
-#define	PCI_DEVICE_ID_MELLANOX_HERMON_QDR_PCIE2	0x673c
-#define	INFINIHOST_DEVICE_ID_2			0x5a45
-#define	INFINIHOST_DEVICE_ID_4			0x6279
+#define	IB_HCA_DEVPATH_SZ			64
+#define	MAX_OFS_DEVPATH_LEN			64
 
 #define	MAX_HCAS				(64*16)
 #define	MAX_PORTS				(MAX_HCAS*2)
@@ -133,6 +94,71 @@ static int sol_uverbs_drv_status = SOL_UVERBS_DRV_STATUS_UNKNOWN;
 static int sol_uverbs_minor_dev = -1;
 
 /*
+ * Ugly, evil and rest of the names that qualify for it.
+ * This is a side definition for the uverbs hca_info till the
+ * new header file can appear in the userland build environment once that
+ * happens this code will go.
+ */
+#if	(IB_USER_VERBS_SOLARIS_ABI_VERSION == 2)
+#undef	IB_USER_VERBS_SOLARIS_ABI_VERSION
+#define	IB_USER_VERBS_SOLARIS_ABI_VERSION	3
+#define	__VERBS_COMPAT_MODE	1
+
+/*
+ * Some useful definitions.
+ */
+#define	PSID_STR_SZ		40
+#define	IBDEV_NAME_SZ		64
+#define	HCA_DRIVER_NAME_SZ	40
+#define	DEVID_STR_SZ		40
+
+/*
+ * These are duplicate definitions to help the build complete on userland
+ * build machines till the header files are populated with the new versions.
+ * Once the new header file is available in the build system this code will
+ * be removed.
+ */
+typedef struct sol_uverbs_hca_infov3_s {
+	char		uverbs_hca_psid_string[PSID_STR_SZ];
+	char		uverbs_hca_ibdev_name[IBDEV_NAME_SZ];
+	char		uverbs_hca_driver_name[HCA_DRIVER_NAME_SZ];
+	uint32_t	uverbs_hca_driver_instance;
+	uint32_t	uverbs_hca_vendorid;
+	uint16_t	uverbs_hca_deviceid;
+	uint16_t	uverbs_hca_devidx;
+	int32_t		uverbs_hca_abi_version;
+	uint64_t	uverbs_hca_fw_ver;
+	uint64_t	uverbs_hca_node_guid;
+	uint64_t	uverbs_hca_node_external_guid;
+	uint64_t	uverbs_hca_sys_image_guid;
+	uint32_t	uverbs_hca_hw_version;
+	uint8_t		uverbs_hca_pad1[4];
+	char		uverbs_hca_devid_string[DEVID_STR_SZ];
+} sol_uverbs_hca_infov3_t;
+
+typedef struct sol_uverbs_info_v3_s {
+	int32_t			uverbs_abi_version;
+	int32_t			uverbs_solaris_abi_version;
+	int16_t			uverbs_hca_cnt;
+	int8_t			uverbs_pad1[6]; /* Padding for alignment */
+	sol_uverbs_hca_infov3_t uverbs_hca_info[];
+} sol_uverbs_infov3_t;
+
+#define	SIZEOF_UVERBS_INFO	(sizeof (sol_uverbs_infov3_t))
+#define	SIZEOF_HCA_INFO		(sizeof (sol_uverbs_hca_infov3_t))
+#define	UVERBS_INFO(x)		((sol_uverbs_infov3_t *)x)
+#define	HCA_INFO(x)		((sol_uverbs_hca_infov3_t *)x)
+
+#else /* (IB_USER_VERBS_SOLARIS_ABI_VERSION == 3) */
+
+#define	SIZEOF_UVERBS_INFO	(sizeof (sol_uverbs_info_t))
+#define	SIZEOF_HCA_INFO		(sizeof (sol_uverbs_hca_info_t))
+#define	UVERBS_INFO(x)		((sol_uverbs_info_t *)x)
+#define	HCA_INFO(x)		((sol_uverbs_hca_info_t *)x)
+
+#endif /* END */
+
+/*
  * check_path() prefixs
  */
 typedef enum cp_prefix_e {
@@ -141,17 +167,16 @@ typedef enum cp_prefix_e {
 	CP_D			= 3,
 	CP_GIDS			= 4,
 	CP_PKEYS		= 5,
-	CP_MLX4			= 6,
-	CP_PORTS		= 7,
-	CP_UMAD			= 8,
-	CP_SLASH		= 9,
-	CP_SYS			= 10,
-	CP_CLASS		= 11,
-	CP_INFINIBAND_VERBS	= 12,
-	CP_INFINIBAND		= 13,
-	CP_INFINIBAND_MAD	= 14,
-	CP_MISC			= 15,
-	CP_RDMA_CM		= 16
+	CP_PORTS		= 6,
+	CP_UMAD			= 7,
+	CP_SLASH		= 8,
+	CP_SYS			= 9,
+	CP_CLASS		= 10,
+	CP_INFINIBAND_VERBS	= 11,
+	CP_INFINIBAND		= 12,
+	CP_INFINIBAND_MAD	= 13,
+	CP_MISC			= 14,
+	CP_RDMA_CM		= 15
 } cp_prefix_t;
 
 /*
@@ -159,30 +184,23 @@ typedef enum cp_prefix_e {
  * work. This will speed up the sysfs emulation.
  */
 typedef struct ibdev_cache_info_s {
-	uint_t		ibd_valid;
-	uint_t		ibd_hw_rev;
-	char		ibd_node_guid_str[20];
-	char		ibd_node_guid_external_str[20];
-	char		ibd_sys_image_guid[20];
-	char		ibd_fw_ver[16];
-	char		ibd_name[16];
-	int		ibd_boardid_index;
-	uint_t		ibd_device_id;
+	boolean_t			ibd_valid;
+	uint_t				ibd_hw_rev;
+	uint_t				ibd_abi_version;
+	uint_t				ibd_vendor_id;
+	uint_t				ibd_device_id;
+	char				ibd_hca_path[IB_HCA_DEVPATH_SZ];
+	char				ibd_node_guid_str[20];
+	char				ibd_node_guid_external_str[20];
+	char				ibd_sys_image_guid[20];
+	char				ibd_fw_ver[16];
+	char				ibd_name[IBDEV_NAME_SZ];
+	char				ibd_boardid_string[PSID_STR_SZ];
+	char				ibd_devid_string[DEVID_STR_SZ];
 } ibdev_cache_info_t;
 
-/* hermon - hence 2 */
-static ibdev_cache_info_t ibdev_cache[2][MAX_HCAS];
-
-typedef struct uverbs_cache_info_s {
-	uint_t		uvc_valid;
-	uint_t		uvc_ibdev_abi_version;
-	uint_t		uvc_vendor_id;
-	uint_t		uvc_device_id;
-	int		uvc_hca_instance;
-	char		uvc_ibdev_name[16];
-	char		uvc_ibdev_hca_path[MAXPATHLEN];
-} uverbs_cache_info_t;
-static uverbs_cache_info_t	uverbs_dev_cache[MAX_HCAS];
+/* IB device info cache */
+static ibdev_cache_info_t	ibdev_cache[MAX_HCAS];
 static int			uverbs_abi_version = -1;
 
 typedef struct umad_cache_info_s {
@@ -195,15 +213,11 @@ static int			umad_abi_version = -1;
 
 pthread_once_t		oneTimeInit = PTHREAD_ONCE_INIT;
 static int 		umad_cache_cnt = 0;
-static int 		ibdev_cache_cnt = 0;
-static int 		uverbs_cache_cnt = 0;
 static boolean_t	initialized = B_FALSE;
 static boolean_t	umad_cache_initialized = B_FALSE;
 static boolean_t	ibdev_cache_initialized = B_FALSE;
-static boolean_t	uverbs_cache_initialized = B_FALSE;
 static pthread_mutex_t	umad_cache_mutex = PTHREAD_MUTEX_INITIALIZER;
 static pthread_mutex_t	ibdev_cache_mutex = PTHREAD_MUTEX_INITIALIZER;
-static pthread_mutex_t	uverbs_cache_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 int sol_ibv_query_gid(struct ibv_context *, uint8_t, int, union ibv_gid *);
 int sol_ibv_query_pkey(struct ibv_context *, uint8_t, int, uint16_t *);
@@ -214,7 +228,6 @@ int sol_ibv_query_device(struct ibv_device *device,
     struct ibv_device_attr *device_attr);
 
 int sol_ibv_query_port(struct ibv_context *, uint8_t, struct ibv_port_attr *);
-
 
 void
 solaris_init(void)
@@ -234,6 +247,218 @@ solaris_fini(void)
 	(void) kstat_close(kc);
 }
 
+#define	isdigit(c)	((c) >= '0' && (c) <= '9')
+
+/*
+ * Given a device name of the form <driver-prefix><instance>,
+ * get the device number. Device name is of the form
+ * for example:- mlx4_0, mlx4_2 etc. Function will return the device instance
+ * extracted from the name.
+ * for example:- mlx4_0 will return 0 and mlx4_2 will return 2.
+ */
+static int
+get_device_num(const char *device_name)
+{
+	const char *temp;
+	const char *end;
+	const char *start = device_name;
+	int len;
+	int devnum;
+
+	if (!start)
+		return (-1);
+
+	len = strlen(device_name);
+	end = &device_name[len - 1];
+
+	for (temp = end; temp >= start && isdigit(*temp); temp--)
+		/* Null body */;
+
+	/*
+	 * Check if the device number is invalid.
+	 */
+	if (temp == end || temp < start)
+		return (-1);
+
+	devnum = atoi(temp + 1);
+	if (devnum < 0 || devnum >= MAX_HCAS)
+		return (-1);
+
+	return (devnum);
+}
+
+/*
+ * For usages where ibdev cache needs to be read based on the IB device
+ * name instead of uverbs device name a simple compare against the cache
+ * entries is used to retrieve the corresponding ibdev cache entry.
+ */
+static ibdev_cache_info_t *
+ibdev_cache_read_by_devname(const char *devname)
+{
+	int idx;
+	ibdev_cache_info_t *cache = NULL;
+
+	if (!devname)
+		return (NULL);
+
+	for (idx = 0; idx < MAX_HCAS; idx++) {
+		cache = &ibdev_cache[idx];
+		if (strcmp(cache->ibd_name, devname) == 0)
+			break;
+	}
+
+	/*
+	 * If we failed to find an entry return NULL.
+	 */
+	if (idx == MAX_HCAS)
+		cache = NULL;
+
+	return (cache);
+}
+
+/*
+ * Helper function to update the ibdev cache entries with the values obtained
+ * from the uverbs HCA info ioctl.
+ */
+static int
+ibdev_cache_init()
+{
+	ibdev_cache_info_t		*info;
+	int				fd, i, hca_cnt;
+	char				uverbs_devpath[MAX_OFS_DEVPATH_LEN];
+#ifdef	__VERBS_COMPAT_MODE
+	sol_uverbs_infov3_t		*uverbs_infop;
+	sol_uverbs_hca_infov3_t		*hca_infop;
+#else
+	sol_uverbs_info_t		*uverbs_infop;
+	sol_uverbs_hca_info_t		*hca_infop;
+#endif /* END __VERBS_COMPAT_MODE */
+	char 				*buf;
+	size_t				bufsize;
+	uint16_t			major, minor, sub_minor;
+	uint64_t			raw_fw_ver;
+	uint64_t			guid;
+
+	snprintf(uverbs_devpath, MAX_OFS_DEVPATH_LEN, "%s/%s%d",
+	    IB_OFS_DEVPATH_PREFIX, UVERBS_KERNEL_SYSFS_NAME_BASE,
+	    sol_uverbs_minor_dev);
+
+	/*
+	 * using the first sol_uverbs minor node that can be opened to get
+	 * all the HCA information
+	 */
+	if ((fd = open(uverbs_devpath, O_RDWR)) < 0) {
+		fprintf(stderr, "sol_uverbs failed to open: %s\n",
+		    strerror(errno));
+		return (-1);
+	}
+
+	bufsize = SIZEOF_UVERBS_INFO + (MAX_HCAS * SIZEOF_HCA_INFO);
+	buf = malloc(bufsize);
+	if (!buf) {
+		fprintf(stderr, "ibdev_cache_update() failed to alloc\n");
+		close(fd);
+		return (-1);
+	}
+	memset(buf, 0, bufsize);
+
+	uverbs_infop = UVERBS_INFO(buf);
+	uverbs_infop->uverbs_hca_cnt = MAX_HCAS;
+
+	if (ioctl(fd, UVERBS_IOCTL_GET_HCA_INFO, uverbs_infop) != 0) {
+		fprintf(stderr, "sol_uverbs ioctl failed: %s\n",
+		    strerror(errno));
+
+		goto error_exit1;
+	}
+
+	if (uverbs_infop->uverbs_solaris_abi_version !=
+	    IB_USER_VERBS_SOLARIS_ABI_VERSION) {
+		fprintf(stderr, "sol_uverbs solaris_abi_version !="
+		    "IB_USER_VERBS_SOLARIS_ABI_VERSION : %d\n",
+		    uverbs_infop->uverbs_solaris_abi_version);
+		goto error_exit1;
+	}
+
+	hca_cnt = uverbs_infop->uverbs_hca_cnt;	/* hca count returned */
+	hca_infop = uverbs_infop->uverbs_hca_info;
+
+	if (hca_cnt > MAX_HCAS) {
+		fprintf(stderr, "Number of HCAs returned exceeds max\n");
+		goto error_exit1;
+	}
+
+	if (uverbs_abi_version == -1)
+		uverbs_abi_version = uverbs_infop->uverbs_abi_version;
+
+	for (i = 0; i < hca_cnt; i++, hca_infop++) {
+
+		/*
+		 * Update the cache.
+		 */
+		info = &ibdev_cache[hca_infop->uverbs_hca_devidx];
+
+		(void) strncpy(info->ibd_name,
+		    hca_infop->uverbs_hca_ibdev_name, IBDEV_NAME_SZ);
+
+		guid = hca_infop->uverbs_hca_node_guid;
+		sprintf(info->ibd_node_guid_str, "%04x:%04x:%04x:%04x",
+		    (unsigned)(guid >> 48) & 0xffff,
+		    (unsigned)(guid >> 32) & 0xffff,
+		    (unsigned)(guid >> 16) & 0xffff,
+		    (unsigned)(guid >>  0) & 0xffff);
+
+		guid = hca_infop->uverbs_hca_node_external_guid;
+		sprintf(info->ibd_node_guid_external_str, "%04x:%04x:%04x:%04x",
+		    (unsigned)(guid >> 48) & 0xffff,
+		    (unsigned)(guid >> 32) & 0xffff,
+		    (unsigned)(guid >> 16) & 0xffff,
+		    (unsigned)(guid >>  0) & 0xffff);
+
+		guid = hca_infop->uverbs_hca_sys_image_guid;
+		sprintf(info->ibd_sys_image_guid, "%04x:%04x:%04x:%04x",
+		    (unsigned)(guid >> 48) & 0xffff,
+		    (unsigned)(guid >> 32) & 0xffff,
+		    (unsigned)(guid >> 16) & 0xffff,
+		    (unsigned)(guid >>  0) & 0xffff);
+
+		raw_fw_ver = hca_infop->uverbs_hca_fw_ver;
+		major	   = (raw_fw_ver >> 32) & 0xffff;
+		minor	   = (raw_fw_ver >> 16) & 0xffff;
+		sub_minor  = raw_fw_ver & 0xffff;
+
+		snprintf(info->ibd_fw_ver, sizeof (info->ibd_fw_ver),
+		    "%d.%d.%03d", major, minor, sub_minor);
+
+		info->ibd_hw_rev	= hca_infop->uverbs_hca_hw_version;
+		info->ibd_vendor_id	= hca_infop->uverbs_hca_vendorid;
+		info->ibd_device_id	= hca_infop->uverbs_hca_deviceid;
+		info->ibd_abi_version	= hca_infop->uverbs_hca_abi_version;
+
+		snprintf(info->ibd_hca_path, sizeof (info->ibd_hca_path),
+		    "%s/%s%d", IB_HCA_DEVPATH_PREFIX,
+		    hca_infop->uverbs_hca_driver_name,
+		    hca_infop->uverbs_hca_driver_instance);
+
+		strncpy(info->ibd_boardid_string,
+		    hca_infop->uverbs_hca_psid_string, PSID_STR_SZ);
+
+		strncpy(info->ibd_devid_string,
+		    hca_infop->uverbs_hca_devid_string, DEVID_STR_SZ);
+
+		info->ibd_valid = B_TRUE;
+	}
+
+	free(buf);
+	close(fd);
+	return (0);
+
+error_exit1:
+	free(buf);
+	close(fd);
+	return (-1);
+}
+
 static int
 umad_cache_add(uint_t dev_num, int port, char *ibdev)
 {
@@ -250,228 +475,17 @@ umad_cache_add(uint_t dev_num, int port, char *ibdev)
 }
 
 static int
-ibdev_cache_add(uint_t dev_num, ibdev_cache_info_t *info_p)
-{
-	if ((dev_num >= MAX_HCAS) || (ibdev_cache_cnt >= (MAX_HCAS * 2))) {
-		fprintf(stderr, "dev %d: exceeds hca cache size\n", dev_num);
-		return (1);
-	}
-
-	if (!(strncmp(info_p->ibd_name, "mlx4", 4))) {
-		memcpy(&(ibdev_cache[MLX4][dev_num]), info_p,
-		    sizeof (ibdev_cache_info_t));
-		ibdev_cache[MLX4][dev_num].ibd_valid = 1;
-	} else {
-		fprintf(stderr, "dev %d: has no proper ibdev name\n", dev_num);
-		return (1);
-	}
-
-	ibdev_cache_cnt++;
-	return (0);
-}
-
-static int
-uverbs_cache_add(uint_t dev_num, uverbs_cache_info_t *info_p)
-{
-	if ((dev_num >= MAX_HCAS) || (uverbs_cache_cnt >= MAX_HCAS)) {
-		fprintf(stderr, "dev %d: exceeds uverbs cache size\n", dev_num);
-		return (1);
-	}
-
-	memcpy(&(uverbs_dev_cache[dev_num]), info_p,
-	    sizeof (uverbs_cache_info_t));
-
-	uverbs_dev_cache[dev_num].uvc_valid = 1;
-	uverbs_cache_cnt++;
-	return (0);
-}
-
-static int
-ibdev_cache_init()
-{
-	ibdev_cache_info_t	info;
-	struct ibv_device	**root_dev_list, **dev_list = NULL;
-	struct ibv_device_attr	device_attr;
-	int			i, num_dev, dev_num, ret = 1;
-	uint64_t		guid;
-	const char		*p, *ibdev;
-
-
-	root_dev_list = dev_list = ibv_get_device_list(&num_dev);
-	if (!dev_list) {
-		fprintf(stderr, "No HCA devices found");
-		goto error_exit1;
-	}
-
-	for (i = 0; i < num_dev; i++, dev_list++) {
-
-		if (sol_ibv_query_device(*dev_list, &device_attr)) {
-			fprintf(stderr, "failed to query device %p\n",
-			    *dev_list);
-			goto error_exit2;
-		}
-
-		guid = ntohll(device_attr.node_guid);
-		sprintf(info.ibd_node_guid_str, "%04x:%04x:%04x:%04x",
-		    (unsigned)(guid >> 48) & 0xffff,
-		    (unsigned)(guid >> 32) & 0xffff,
-		    (unsigned)(guid >> 16) & 0xffff,
-		    (unsigned)(guid >>  0) & 0xffff);
-
-		guid = ntohll(device_attr.node_guid_external);
-		sprintf(info.ibd_node_guid_external_str, "%04x:%04x:%04x:%04x",
-		    (unsigned)(guid >> 48) & 0xffff,
-		    (unsigned)(guid >> 32) & 0xffff,
-		    (unsigned)(guid >> 16) & 0xffff,
-		    (unsigned)(guid >>  0) & 0xffff);
-
-		guid = ntohll(device_attr.sys_image_guid);
-		sprintf(info.ibd_sys_image_guid, "%04x:%04x:%04x:%04x",
-		    (unsigned)(guid >> 48) & 0xffff,
-		    (unsigned)(guid >> 32) & 0xffff,
-		    (unsigned)(guid >> 16) & 0xffff,
-		    (unsigned)(guid >>  0) & 0xffff);
-
-		(void) strcpy(info.ibd_fw_ver, device_attr.fw_ver);
-		info.ibd_hw_rev = device_attr.hw_ver;
-		info.ibd_device_id = device_attr.vendor_part_id;
-
-		ibdev = ibv_get_device_name(*dev_list);
-		if (strncmp(ibdev, "mlx4_", 5) == 0) {
-			p = ibdev + (strlen("mlx4_"));
-		} else {
-			fprintf(stderr, "Invalid device %s\n", ibdev);
-			goto error_exit2;
-		}
-		dev_num = atoi(p);
-		(void) strcpy(info.ibd_name, ibdev);
-
-		info.ibd_boardid_index = -1;
-
-		if (ibdev_cache_add(dev_num, &info)) {
-			fprintf(stderr, "failed to add dev %d to ibdev cache\n",
-			    dev_num);
-			goto error_exit2;
-		}
-	}
-
-	ret = 0;
-
-	/* clean up and Return */
-error_exit2:
-	if (root_dev_list)
-		ibv_free_device_list(root_dev_list);
-error_exit1:
-	return (ret);
-}
-
-static int
-uverbs_cache_init()
-{
-	uverbs_cache_info_t	info;
-	int			dev_num, fd, i, bufsize, hca_cnt;
-	char			uverbs_devpath[MAXPATHLEN];
-	sol_uverbs_info_t	*uverbs_infop;
-	sol_uverbs_hca_info_t	*hca_infop;
-	char *buf;
-
-	snprintf(uverbs_devpath, MAXPATHLEN, "%s/%s%d",
-	    IB_OFS_DEVPATH_PREFIX, UVERBS_KERNEL_SYSFS_NAME_BASE,
-	    sol_uverbs_minor_dev);
-
-	/*
-	 * using the first sol_uverbs minor node that can be opened to get
-	 * all the HCA information
-	 */
-	if ((fd = open(uverbs_devpath, O_RDWR)) < 0) {
-		fprintf(stderr, "sol_uverbs failed to open: %s\n",
-		    strerror(errno));
-		goto error_exit1;
-	}
-
-	bufsize = sizeof (sol_uverbs_info_t) + sizeof (sol_uverbs_hca_info_t) *
-	    MAX_HCAS;
-	buf = malloc(bufsize);
-	memset(buf, 0, bufsize);
-	uverbs_infop = (sol_uverbs_info_t *)buf;
-	uverbs_infop->uverbs_hca_cnt = MAX_HCAS;
-
-	if (ioctl(fd, UVERBS_IOCTL_GET_HCA_INFO, uverbs_infop) != 0) {
-		fprintf(stderr, "sol_uverbs ioctl failed: %s\n",
-		    strerror(errno));
-
-		goto error_exit2;
-	}
-
-	if (uverbs_infop->uverbs_solaris_abi_version !=
-	    IB_USER_VERBS_SOLARIS_ABI_VERSION) {
-		fprintf(stderr, "sol_uverbs solaris_abi_version !="
-		    "IB_USER_VERBS_SOLARIS_ABI_VERSION : %d\n",
-		    uverbs_infop->uverbs_solaris_abi_version);
-		goto error_exit2;
-	}
-
-	hca_cnt = uverbs_infop->uverbs_hca_cnt;	/* hca count returned */
-	hca_infop = uverbs_infop->uverbs_hca_info;
-
-	if (uverbs_abi_version == -1)
-		uverbs_abi_version = uverbs_infop->uverbs_abi_version;
-
-	for (i = 0; i < hca_cnt; i++, hca_infop++) {
-		info.uvc_vendor_id = hca_infop->uverbs_hca_vendorid;
-		info.uvc_device_id = hca_infop->uverbs_hca_deviceid;
-		info.uvc_hca_instance =
-		    hca_infop->uverbs_hca_driver_instance;
-
-		snprintf(info.uvc_ibdev_hca_path,
-		    sizeof (info.uvc_ibdev_hca_path),
-		    "%s/%s%d", IB_HCA_DEVPATH_PREFIX,
-		    hca_infop->uverbs_hca_driver_name,
-		    hca_infop->uverbs_hca_driver_instance);
-
-		if (strncmp(hca_infop->uverbs_hca_ibdev_name, "mlx4_", 5) == 0)
-			info.uvc_ibdev_abi_version =
-			    MLX4_UVERBS_MAX_ABI_VERSION;
-		else {
-			fprintf(stderr, "libibverbs: sol_uverbs unsupported "
-			    "device: %s\n", hca_infop->uverbs_hca_ibdev_name);
-			goto error_exit2;
-		}
-
-		strcpy(info.uvc_ibdev_name, hca_infop->uverbs_hca_ibdev_name);
-
-		dev_num = hca_infop->uverbs_hca_devidx;
-		if (uverbs_cache_add(dev_num, &info)) {
-			fprintf(stderr, "failed to add dev %d to uverbs "
-			    "cache\n", dev_num);
-			goto error_exit2;
-		}
-	}
-
-	free(buf);
-	close(fd);
-	return (1);
-
-error_exit2:
-	free(buf);
-	close(fd);
-
-error_exit1:
-	return (0);
-}
-
-static int
 umad_cache_init()
 {
 	int				i, fd, minor;
 	int				save_errno = 0;
 	int				port_cnt, bufsize;
-	char				umad_devpath[MAXPATHLEN], *buf;
+	char				umad_devpath[MAX_OFS_DEVPATH_LEN], *buf;
 	sol_umad_ioctl_info_t		*umad_infop;
 	sol_umad_ioctl_port_info_t	*port_infop;
 
 	for (minor = 0; minor < MAX_PORTS; minor++) {
-		snprintf(umad_devpath, MAXPATHLEN, "%s/%s%d",
+		snprintf(umad_devpath, MAX_OFS_DEVPATH_LEN, "%s/%s%d",
 		    IB_OFS_DEVPATH_PREFIX, UMAD_KERNEL_SYSFS_NAME_BASE,
 		    minor);
 
@@ -487,7 +501,7 @@ umad_cache_init()
 			save_errno = errno;
 		fprintf(stderr, "failed to open sol_umad: %s\n",
 		    strerror(save_errno));
-		return (0);
+		return (-1);
 	}
 
 	bufsize = sizeof (sol_umad_ioctl_info_t) +
@@ -534,26 +548,26 @@ umad_cache_init()
 
 	free(buf);
 	close(fd);
-	return (1);
+	return (0);
 
 error_exit:
 	free(buf);
 	close(fd);
-	return (0);
+	return (-1);
 }
 
 void
 initialize(void)
 {
 	int		fd, minor;
-	char		uverbs_devpath[MAXPATHLEN];
+	char		uverbs_devpath[MAX_OFS_DEVPATH_LEN];
 
 	/*
 	 * find the first sol_uverbs minor node that can be opened successfully
 	 * and set sol_uverbs_mino_dev to that minor no.
 	 */
 	for (minor = 0; minor < MAX_HCAS; minor++) {
-		snprintf(uverbs_devpath, MAXPATHLEN, "%s/%s%d",
+		snprintf(uverbs_devpath, MAX_OFS_DEVPATH_LEN, "%s/%s%d",
 		    IB_OFS_DEVPATH_PREFIX, UVERBS_KERNEL_SYSFS_NAME_BASE,
 		    minor);
 
@@ -576,8 +590,7 @@ initialize(void)
 		return;
 	}
 
-	memset(&uverbs_dev_cache, 0, (sizeof (uverbs_cache_info_t) * MAX_HCAS));
-	memset(&ibdev_cache, 0, (sizeof (ibdev_cache_info_t) * MAX_HCAS * 2));
+	memset(&ibdev_cache, 0, (sizeof (ibdev_cache_info_t) * MAX_HCAS));
 	memset(&umad_dev_cache, 0,
 	    (sizeof (umad_cache_info_t) * MAX_PORTS));
 
@@ -588,6 +601,37 @@ initialize(void)
  * Some sysfs emulation software
  */
 
+/*
+ * Extract the HCA dev name from the path and remove it from the path.
+ * Given a path extract the HCA dev name of the form <dev-prefix><dev-instance>
+ * During parsing the device instance number is validated to make sure it is
+ * within MAX_HCAS limit, the routine also skips over the duplicate slashes.
+ */
+static int
+check_path_for_hca(char *path, char *device_name)
+{
+	int pos = 0;
+	int len;
+
+	while ((path[pos] != '/') || (path[pos] == '\0'))
+		pos++;
+
+	if (path[pos] != '/')
+		return (0);
+
+	strncpy(device_name, path, (pos + 1));
+	device_name[pos] = '\0';
+
+	if (get_device_num(device_name) < 0)
+		return (0);
+
+	while (path[pos] == '/')
+		pos++;
+
+	len = strlen(path);
+	memmove(path, &path[pos], (len - pos) + 1);
+	return (1);
+}
 
 /*
  * Check whether a path starts with prefix, and if it does, remove it
@@ -614,9 +658,6 @@ check_path(char *path, cp_prefix_t prefix, unsigned int *arg)
 			break;
 		case CP_PKEYS:
 			ret = sscanf(path, "pkeys%n/", &pos);
-			break;
-		case CP_MLX4:
-			ret = sscanf(path, "mlx4_%d%n/", arg, &pos);
 			break;
 		case CP_PORTS:
 			ret = sscanf(path, "ports%n/", &pos);
@@ -669,8 +710,6 @@ static ibdev_cache_info_t *
 get_device_info(const char *devname)
 {
 	ibdev_cache_info_t 	*info = NULL;
-	const char		*p = devname;
-	int			dev_num;
 
 	if (pthread_mutex_lock(&ibdev_cache_mutex) != 0) {
 		fprintf(stderr, "failed: to acquire ibdev_cache_mutex %s\n",
@@ -678,41 +717,17 @@ get_device_info(const char *devname)
 		return (NULL);
 	}
 
-	if (!ibdev_cache_initialized) {
-		if (ibdev_cache_init()) {
+	if (ibdev_cache_initialized == B_FALSE) {
+		if (ibdev_cache_init() != 0) {
 			(void) pthread_mutex_unlock(&ibdev_cache_mutex);
 			fprintf(stderr, "failed to init ibdev_cache\n");
 			return (NULL);
-		} else {
-			ibdev_cache_initialized = B_TRUE;
 		}
+		ibdev_cache_initialized = B_TRUE;
 	}
 	(void) pthread_mutex_unlock(&ibdev_cache_mutex);
 
-	if (strncmp(p, "mlx4_", 5) == 0) {
-		p = p+(strlen("mlx4_"));
-	} else {
-		fprintf(stderr, "libibverbs: sol_uverbs unsupported "
-		    "device: %s\n", p);
-		return (NULL);
-	}
-	dev_num = atoi(p);
-
-	if (dev_num >= MAX_HCAS) {
-		fprintf(stderr, "Invalid device %s\n", devname);
-		return (NULL);
-	}
-
-	if (strncmp(devname, "mlx4", 4) == 0) {
-		if (ibdev_cache[MLX4][dev_num].ibd_valid)
-			info = &(ibdev_cache[MLX4][dev_num]);
-		else
-			info = NULL;
-	} else {
-		fprintf(stderr, "libibverbs: sol_uverbs unsupported "
-		    "device: %s\n", devname);
-		info = NULL;
-	}
+	info = ibdev_cache_read_by_devname(devname);
 
 	return (info);
 }
@@ -736,7 +751,7 @@ get_port_info(const char *devname, uint8_t port_num,
 	union ibv_gid 		*gids = NULL;
 	uint16_t		*pkeys = NULL;
 	int 			i, num_dev, rv, ret = 1;
-	char			uverbs_devpath[MAXPATHLEN];
+	char			uverbs_devpath[MAX_OFS_DEVPATH_LEN];
 
 	root_dev_list = dev_list = ibv_get_device_list(&num_dev);
 	if (!dev_list) {
@@ -755,8 +770,8 @@ get_port_info(const char *devname, uint8_t port_num,
 		goto error_exit2;
 	}
 
-	snprintf(uverbs_devpath, MAXPATHLEN, "%s/%s", IB_OFS_DEVPATH_PREFIX,
-	    (*dev_list)->dev_name);
+	snprintf(uverbs_devpath, MAX_OFS_DEVPATH_LEN, "%s/%s",
+	    IB_OFS_DEVPATH_PREFIX, (*dev_list)->dev_name);
 
 	ctx.device = *dev_list;
 
@@ -839,25 +854,26 @@ ibv_open_mmap_driver(char *dev_name)
 #ifndef _LP64
 	int			tmpfd;
 #endif
-	int			uverbs_indx;
+	int			indx;
 
 	/*
 	 * Map the user verbs device (uverbs) to the associated
-	 * hca device.
+	 * hca device. ibdev_cache is indexed by uverbs device minor number
+	 * so extracting the index here to refer to the ibdev_cache value,
 	 */
-	uverbs_indx = strtol(dev_name + strlen(UVERBS_KERNEL_SYSFS_NAME_BASE),
+	indx = strtol(dev_name + strlen(UVERBS_KERNEL_SYSFS_NAME_BASE),
 	    NULL, 0);
-	if (uverbs_indx >= MAX_HCAS) {
+	if (indx >= MAX_HCAS) {
 		fprintf(stderr, "Invalid device %s\n", dev_name);
 		goto err_dev;
 	}
 
-	if (!uverbs_dev_cache[uverbs_indx].uvc_valid) {
+	if (!ibdev_cache[indx].ibd_valid) {
 		fprintf(stderr, "Invalid Device %s\n", dev_name);
 		goto err_dev;
 	}
 
-	fd = open(uverbs_dev_cache[uverbs_indx].uvc_ibdev_hca_path, O_RDWR);
+	fd = open(ibdev_cache[indx].ibd_hca_path, O_RDWR);
 	if (fd < 0) {
 		goto err_dev;
 	}
@@ -892,27 +908,27 @@ infiniband_verbs(char *path, char *buf, size_t size)
 {
 	unsigned int		device_num;
 	int 			len = -1;
-	uverbs_cache_info_t	*info_p;
+	ibdev_cache_info_t	*info_p;
 
-	if (pthread_mutex_lock(&uverbs_cache_mutex) != 0) {
-		fprintf(stderr, "failed: to acquire uverbs_cache_mutex %s\n",
+	if (pthread_mutex_lock(&ibdev_cache_mutex) != 0) {
+		fprintf(stderr, "failed: to acquire ibdev_cache_mutex %s\n",
 		    strerror(errno));
 		goto exit;
 	}
 
-	if (!uverbs_cache_initialized) {
-		if (uverbs_cache_init())
-			uverbs_cache_initialized = B_TRUE;
+	if (ibdev_cache_initialized == B_FALSE) {
+		if (ibdev_cache_init() == 0)
+			ibdev_cache_initialized = B_TRUE;
 		else {
-			(void) pthread_mutex_unlock(&uverbs_cache_mutex);
+			(void) pthread_mutex_unlock(&ibdev_cache_mutex);
 #ifdef	DEBUG
-			fprintf(stderr, "failed: to init uverbs cache %s\n",
+			fprintf(stderr, "failed: to init ibdev cache %s\n",
 			    strerror(errno));
 #endif
 			goto exit;
 		}
 	}
-	(void) pthread_mutex_unlock(&uverbs_cache_mutex);
+	(void) pthread_mutex_unlock(&ibdev_cache_mutex);
 
 	if (check_path(path, CP_SOL_UVERBS, &device_num)) {
 
@@ -921,11 +937,10 @@ infiniband_verbs(char *path, char *buf, size_t size)
 			goto exit;
 		}
 
-		if (!uverbs_dev_cache[device_num].uvc_valid) {
+		if (!ibdev_cache[device_num].ibd_valid)
 			goto exit;
-		}
 
-		info_p = &uverbs_dev_cache[device_num];
+		info_p = &ibdev_cache[device_num];
 
 		if (check_path(path, CP_DEVICE, NULL)) {
 			/*
@@ -934,17 +949,15 @@ infiniband_verbs(char *path, char *buf, size_t size)
 			 */
 			if (strcmp(path, "vendor") == 0) {
 				len = 1 + sprintf(buf, "0x%x",
-				    info_p->uvc_vendor_id);
+				    info_p->ibd_vendor_id);
 			} else if (strcmp(path, "device") == 0) {
 				len = 1 + sprintf(buf, "0x%x",
-				    info_p->uvc_device_id);
+				    info_p->ibd_device_id);
 			}
 		} else if (strcmp(path, "ibdev") == 0) {
-			len = 1 + sprintf(buf, "%s",
-			    info_p->uvc_ibdev_name);
+			len = 1 + sprintf(buf, "%s", info_p->ibd_name);
 		} else if (strcmp(path, "abi_version") == 0) {
-			len = 1 + sprintf(buf, "%d",
-			    info_p->uvc_ibdev_abi_version);
+			len = 1 + sprintf(buf, "%d", info_p->ibd_abi_version);
 		}
 	} else if (strcmp(path, "abi_version") == 0) {
 
@@ -1151,181 +1164,17 @@ exit:
 	return (len);
 }
 
-/*
- * This function passes the HW PSID / HWPN string obtained from
- * driver HERMON_IOCTL_GET_HWINFO IOCTL. The memory for "hca_hwpsid"
- * & "hca_hwpn" argument has to be passed by the caller and has to
- * be at least 16 bytes & 64 bytes in size.
- */
-static int
-get_hca_psid_pn(char *ibd_name, int fd, char *hca_hwpsid,
-    char *hca_hwpn)
-{
-	hermon_hw_info_ioctl_t		hermon_hw_info;
-	int				rc;
-
-	if (strncmp(ibd_name, "mlx4_", 5) == 0) {
-		if ((rc = ioctl(fd, HERMON_IOCTL_GET_HWINFO,
-		    &hermon_hw_info)) != 0)
-			return (rc);
-
-		strncpy(hca_hwpsid, hermon_hw_info.af_psid, 16);
-		strncpy(hca_hwpn, hermon_hw_info.af_hwpn, 64);
-	} else {
-		fprintf(stderr, "libibverbs: sol_uverbs unsupported "
-		    "device: %s\n", ibd_name);
-		return (1);
-	}
-	return (0);
-}
-
-/*
- * This function passes the HW Part number string obtained from driver
- * IOCTL. The memory for "hca_hwpn" argument has to be passed by the
- * caller and has to be at least 64 bytes in size.
- */
-static int
-get_hca_hwpn_str(char *ibd_name, int fd, char *hca_hwpn)
-{
-	hermon_flash_init_ioctl_t	hermon_flash_info;
-	int				rc;
-
-	if (strncmp(ibd_name, "mlx4_", 5) == 0) {
-		if ((rc = ioctl(fd, HERMON_IOCTL_FLASH_INIT,
-		    &hermon_flash_info)) != 0)
-			return (rc);
-		strncpy(hca_hwpn, hermon_flash_info.af_hwpn, 64);
-	} else {
-		fprintf(stderr, "libibverbs: sol_uverbs unsupported "
-		    "device: %s\n", ibd_name);
-		return (1);
-	}
-	return (0);
-}
-
-static void
-init_boardid_index(ibdev_cache_info_t *ibd_info)
-{
-	int		i;
-	int		fd;
-	char		hca_hwpsid[16];
-	char		hca_hwpn[64];
-	char		*pn_psidp;
-	boolean_t	psid_valid, pn_valid;
-
-	if (pthread_mutex_lock(&uverbs_cache_mutex) != 0) {
-		fprintf(stderr, "failed: to acquire "
-		    "uverbs_cache_mutex %s\n",
-		    strerror(errno));
-		goto boardid_err;
-	}
-	if (!uverbs_cache_initialized) {
-		if (uverbs_cache_init())
-			uverbs_cache_initialized = B_TRUE;
-		else {
-			(void) pthread_mutex_unlock(&uverbs_cache_mutex);
-#ifdef	DEBUG
-			fprintf(stderr, "failed: to init uverbs cache %s\n",
-			    strerror(errno));
-#endif
-			goto boardid_err;
-		}
-	}
-	(void) pthread_mutex_unlock(&uverbs_cache_mutex);
-
-	for (i = 0; i < MAX_HCAS; i++) {
-		if (uverbs_dev_cache[i].uvc_valid &&
-		    strcmp(uverbs_dev_cache[i].uvc_ibdev_name,
-		    ibd_info->ibd_name) == 0) {
-			break;
-		}
-	}
-
-	if (i == MAX_HCAS) {
-		fprintf(stderr, "failed to find uverbs_dev for %s\n",
-		    ibd_info->ibd_name);
-		goto boardid_err;
-	}
-
-	fd = open(uverbs_dev_cache[i].uvc_ibdev_hca_path, O_RDWR);
-	if (fd < 0) {
-		goto boardid_err;
-	}
-
-	psid_valid = pn_valid = B_FALSE;
-	if (get_hca_psid_pn(ibd_info->ibd_name, fd,
-	    hca_hwpsid, hca_hwpn)) {
-		if (get_hca_hwpn_str(ibd_info->ibd_name, fd, hca_hwpn)) {
-			close(fd);
-			goto boardid_err;
-		} else {
-			if (hca_hwpn[0]) {
-				if ((pn_psidp = strchr(
-				    hca_hwpn, ' ')) != NULL)
-					*pn_psidp = '\0';
-				pn_valid = B_TRUE;
-			}
-		}
-	} else {
-		if (hca_hwpsid[0]) {
-			if ((pn_psidp = strchr(
-			    hca_hwpsid, ' ')) != NULL)
-				*pn_psidp = '\0';
-			psid_valid = B_TRUE;
-		} else if (hca_hwpn[0]) {
-			if ((pn_psidp = strchr(
-			    hca_hwpn, ' ')) != NULL)
-				*pn_psidp = '\0';
-			pn_valid = B_TRUE;
-		}
-	}
-	close(fd);
-
-	if (pn_valid == B_FALSE && psid_valid == B_FALSE)
-		goto boardid_err;
-
-	for (i = 0; i < MLX_MAX_ID; i++) {
-		/*
-		 * Find PSID number, set the boardid_index,
-		 * Skip index 0, as it is for failure "unknown"
-		 * case
-		 */
-		if ((psid_valid == B_TRUE &&
-		    strncmp(mlx_mdr[i].mlx_psid,
-		    (const char *)hca_hwpsid,
-		    min(strlen(hca_hwpsid),
-		    strlen(mlx_mdr[i].mlx_psid))) == 0) ||
-		    (pn_valid == B_TRUE &&
-		    strncmp(mlx_mdr[i].mlx_pn,
-		    (const char *)hca_hwpn,
-		    min(strlen(hca_hwpn),
-		    strlen(mlx_mdr[i].mlx_pn))) == 0)) {
-			/* Set boardid_index */
-			ibd_info->ibd_boardid_index = i;
-			return;
-		}
-	}
-
-boardid_err:
-	/* Failure case, default to "unknown" */
-	ibd_info->ibd_boardid_index = -2;
-}
-
 static int
 infiniband(char *path, char *buf, size_t size)
 {
 	int			len = -1;
-	unsigned int		device_num;
-	char			dev_name[10];
+	char			dev_name[MAXNAMELEN];
 	ibdev_cache_info_t	*info;
 
-	memset(dev_name, 0, 10);
+	memset(dev_name, 0, MAXNAMELEN);
 
-	if (check_path(path, CP_MLX4, &device_num)) {
-		sprintf(dev_name, "mlx4_%d", device_num);
-	} else {
+	if (!check_path_for_hca(path, dev_name))
 		goto exit;
-	}
 
 	if (check_path(path, CP_PORTS, NULL)) {
 		len = infiniband_ports(path, buf, size, dev_name);
@@ -1347,22 +1196,9 @@ infiniband(char *path, char *buf, size_t size)
 		} else if (strcmp(path, "hw_rev") == 0) {
 			len = 1 + sprintf(buf, "%d", info->ibd_hw_rev);
 		} else if (strcmp(path, "hca_type") == 0) {
-			if (!(strncmp(info->ibd_name, "mlx4", 4)))
-				len = 1 + sprintf(buf, "MT%d",
-				    info->ibd_device_id);
-			else
-				len = 1 + sprintf(buf, "unavailable");
+			len = 1 + sprintf(buf, "%s", info->ibd_devid_string);
 		} else if (strcmp(path, "board_id") == 0) {
-			if (info->ibd_boardid_index == -1)
-				init_boardid_index(info);
-
-			if (info->ibd_boardid_index >= 0) {
-				len = 1 + sprintf(buf, "%s",
-				    mlx_mdr[info->ibd_boardid_index].mlx_psid);
-			} else {
-				len = 1 + sprintf(buf, "%s",
-				    "unknown");
-			}
+			len = 1 + sprintf(buf, "%s", info->ibd_boardid_string);
 		}
 	}
 exit:
@@ -1380,8 +1216,8 @@ infiniband_mad(char *path, char *buf, size_t size)
 		    strerror(errno));
 		goto exit;
 	}
-	if (!umad_cache_initialized) {
-		if (umad_cache_init())
+	if (umad_cache_initialized == B_FALSE) {
+		if (umad_cache_init() == 0)
 			umad_cache_initialized = B_TRUE;
 		else {
 			(void) pthread_mutex_unlock(&umad_cache_mutex);
@@ -1539,7 +1375,7 @@ sol_get_cpu_stats(sol_cpu_stats_t *stats)
 	kstat_t		*ksp;
 	kstat_named_t	*knp;
 
-	memset(stats, 0, sizeof (stats));
+	memset(stats, 0, sizeof (sol_cpu_stats_t));
 	nr_cpus = sysconf(_SC_NPROCESSORS_ONLN);
 
 	/* Aggregate the value of all CPUs */
@@ -1735,8 +1571,8 @@ sol_ibv_query_device(struct ibv_device *device, struct ibv_device_attr *attr)
 {
 	struct ibv_query_device cmd;
 	struct ibv_context	context;
-	char			uverbs_devpath[MAXPATHLEN];
-	int			uverbs_fd, ret;
+	char			uverbs_devpath[MAX_OFS_DEVPATH_LEN];
+	int			ret;
 	uint64_t		raw_fw_ver;
 	unsigned		major, minor, sub_minor;
 
@@ -1745,8 +1581,8 @@ sol_ibv_query_device(struct ibv_device *device, struct ibv_device_attr *attr)
 	if (!device || !attr)
 		return (-1);
 
-	snprintf(uverbs_devpath, MAXPATHLEN, "%s/%s", IB_OFS_DEVPATH_PREFIX,
-	    device->dev_name);
+	snprintf(uverbs_devpath, MAX_OFS_DEVPATH_LEN, "%s/%s",
+	    IB_OFS_DEVPATH_PREFIX, device->dev_name);
 
 	if ((context.cmd_fd = open(uverbs_devpath, O_RDWR)) <  0)
 		return (-1);

@@ -22,7 +22,7 @@
 #
 
 # OFED only builds with GCC
-COMPILER=gcc3
+COMPILER=gcc
 
 include ../../../make-rules/shared-macros.mk
 
@@ -54,6 +54,7 @@ COMPONENT_PREP_ACTION += (if [ x$(MACH) = "xi386" ]; then \
 		else \
 		cp mlx4.driver.sparc $(@D)/mlx4.driver; \
 		fi; \
+		cp mlnx_umap.h $(@D)/src ; \
 		cd $(@D) ; \
 		aclocal-1.11 --force ; \
 		libtoolize --copy --force --ltdl ; \

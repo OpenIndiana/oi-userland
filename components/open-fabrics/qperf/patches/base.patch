@@ -47,7 +47,28 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
  /*
   * Configurable parameters.  If your change makes this version of qperf
   * incompatible with previous versions (usually a change to the Req structure),
-@@ -224,7 +234,9 @@
+@@ -165,6 +175,10 @@
+     char        qperf[STRSIZE];         /* Qperf version */
+ } CONF;
+ 
++char *t_bits[] ={ "bits/sec", "Kb/sec", "Mb/sec", "Gb/sec", "Tb/sec" };
++int s_bits = cardof(t_bits);
++char *t_bytes[] ={ "bytes/sec", "KB/sec", "MB/sec", "GB/sec", "TB/sec" };
++int s_bytes = cardof(t_bytes);
+ 
+ /*
+  * Function prototypes.
+@@ -177,7 +191,9 @@
+ static void      calc_node(RESN *resn, STAT *stat);
+ static void      calc_results(void);
+ static void      client(TEST *test);
++#if !(defined(__SVR4) && defined(__sun))
+ static int       cmpsub(char *s2, char *s1);
++#endif
+ static char     *commify(char *data);
+ static void      dec_req_data(REQ *host);
+ static void      dec_req_version(REQ *host);
+@@ -224,7 +240,9 @@
  static void      sig_alrm(int signo, siginfo_t *siginfo, void *ucontext);
  static void      sig_quit(int signo, siginfo_t *siginfo, void *ucontext);
  static void      sig_urg(int signo, siginfo_t *siginfo, void *ucontext);
@@ -58,7 +79,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
  static void      start_test_timer(int seconds);
  static long      str_size(char *arg, char *str);
  static void      strncopy(char *d, char *s, int n);
-@@ -257,7 +269,9 @@
+@@ -257,9 +275,11 @@
  static STAT     IStat;
  static int      ListenFD;
  static LOOP    *Loops;
@@ -66,9 +87,21 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
  static int      ProcStatFD;
 +#endif
  static STAT     RStat;
- static int      ShowIndex;
+-static int      ShowIndex;
++volatile static int      ShowIndex = 0;
  static SHOW     ShowTable[256];
-@@ -601,6 +615,9 @@
+ static int      UnifyUnits;
+ static int      UnifyNodes;
+@@ -281,7 +301,7 @@
+ int          ServerAddrLen;
+ int          RemoteFD;
+ int          Debug;
+-volatile int Finished;
++volatile int Finished = 0;
+ 
+ 
+ /*
+@@ -601,6 +621,9 @@
      initialize();
      set_signals();
      do_args(&argv[1]);
@@ -78,7 +111,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
      return 0;
  }
  
-@@ -617,14 +634,19 @@
+@@ -617,14 +640,19 @@
      for (i = 0; i < P_N; ++i)
          if (ParInfo[i].index != i)
              error(BUG, "initialize: ParInfo: out of order: %d", i);
@@ -98,7 +131,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
  /*
   * Look for a colon and skip past it and any spaces.
   */
-@@ -643,6 +665,7 @@
+@@ -643,6 +671,7 @@
          s++;
      return s;
  }
@@ -106,7 +139,23 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
  
  
  /*
-@@ -1667,13 +1690,18 @@
+@@ -649,6 +678,7 @@
+  * A case insensitive string compare.  s2 must at least contain all of s1 but
+  * can be longer.
+  */
++#if !(defined(__SVR4) && defined(__sun))
+ static int
+ cmpsub(char *s2, char *s1)
+ {
+@@ -664,6 +694,7 @@
+             return 0;
+     }
+ }
++#endif
+ 
+ 
+ /*
+@@ -1667,13 +1698,18 @@
  {
      char count[STRSIZE];
      char speed[STRSIZE];
@@ -127,7 +176,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
      if (!fp)
          error(0, "cannot open /proc/cpuinfo");
      cpu[0] = '\0';
-@@ -1732,6 +1760,7 @@
+@@ -1732,6 +1768,7 @@
  
      /* CPU speed */
      speed[0] = '\0';
@@ -135,7 +184,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
      if (!mixed) {
          int n = strlen(cpu);
          if (n < 3 || cpu[n-2] != 'H' || cpu[n-1] != 'z') {
-@@ -1745,7 +1774,24 @@
+@@ -1745,7 +1782,24 @@
              }
          }
      }
@@ -160,7 +209,80 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
      /* Number of CPUs */
      if (cpus == 1)
          count[0] = '\0';
-@@ -2615,14 +2661,20 @@
+@@ -1776,11 +1830,10 @@
+ static void
+ run_server_quit(void)
+ {
+-    int z;
+     char buf[1];
+ 
+     sync_test();
+-    z = read(RemoteFD, buf, sizeof(buf));
++    (void)read(RemoteFD, buf, sizeof(buf));
+     kill(getppid(), SIGQUIT);
+     exit(0);
+ }
+@@ -2296,6 +2349,7 @@
+     char *tab[] ={ "ns/GB", "us/GB", "ms/GB", "sec/GB" };
+ 
+     value *=  1E9;
++
+     if (!verbose(type, value))
+         return;
+     if (!UnifyUnits) {
+@@ -2371,21 +2425,20 @@
+ view_band(int type, char *pref, char *name, double value)
+ {
+     int n, s;
+-    char **tab;
+-
++    char **tab, **t;
++    n = s = 0; 
+     if (!verbose(type, value))
+         return;
+     if (UseBitsPerSec) {
+-        char *t[] ={ "bits/sec", "Kb/sec", "Mb/sec", "Gb/sec", "Tb/sec" };
+-        s = cardof(t);
++        t=&t_bits[0];
++        s = s_bits;
+         tab = t;
+         value *= 8;
+     } else {
+-        char *t[] ={ "bytes/sec", "KB/sec", "MB/sec", "GB/sec", "TB/sec" };
+-        s = cardof(t);
++        t=&t_bytes[0];
++        s = s_bytes; 
+         tab = t;
+     }
+-
+     n = 0;
+     if (!UnifyUnits) {
+         while (value >= 1000 && n < s-1) {
+@@ -2515,10 +2568,13 @@
+ static void
+ place_val(char *pref, char *name, char *unit, double value)
+ {
+-    char *data = qasprintf("%.0f", value);
+-    char *p    = data;
++    char *data;
++    char *p;
+     int   n    = Precision;
+ 
++
++    data = qasprintf("%.0f", value);
++    p = data;
+     if (*p == '-')
+         ++p;
+     while (isdigit(*p++))
+@@ -2570,6 +2626,7 @@
+     for (i = 0; i < ShowIndex; ++i) {
+         int n;
+         SHOW *show = &ShowTable[i];
++
+         n = (show->pref ? strlen(show->pref) : 0) + strlen(show->name);
+         if (n > nameLen)
+             nameLen = n;
+@@ -2615,14 +2672,20 @@
  static void
  set_affinity(void)
  {
@@ -181,7 +303,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
          error(SYS, "cannot set processor affinity (cpu %d)", a-1);
  }
  
-@@ -2771,9 +2823,36 @@
+@@ -2771,9 +2834,36 @@
  /*
   * Get various temporal parameters.
   */
@@ -218,7 +340,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
      int n;
      char *p;
      char buf[BUFSIZE];
-@@ -2802,6 +2881,7 @@
+@@ -2802,6 +2892,7 @@
      while (n < T_N)
          timex[n++] = 0;
  }
@@ -522,3 +644,87 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.h qperf-0.4.6/src/qperf.h
      CLOCK       time_s[T_N];            /* Start times */
      CLOCK       time_e[T_N];            /* End times */
      USTAT       s;                      /* Send statistics */
+diff -r -u /tmp/730054/qperf-0.4.6/src/support.c qperf-0.4.6/src/support.c
+--- /tmp/730054/qperf-0.4.6/src/support.c	Mon Aug 31 00:00:40 2009
++++ qperf-0.4.6/src/support.c	Mon Jun  8 15:01:41 2015
+@@ -212,18 +212,17 @@
+ void
+ touch_data(void *p, int n)
+ {
+-    uint64_t a;
+     volatile uint64_t *p64 = p;
+ 
+     while (n >= sizeof(*p64)) {
+-        a = *p64++;
+         n -= sizeof(*p64);
++	*p64++;
+     }
+     if (n) {
+         volatile uint8_t *p8 = (uint8_t *)p64;
+         while (n >= sizeof(*p8)) {
+-            a = *p8++;
+             n -= sizeof(*p8);
++	    *p8++;
+         }
+     }
+ }
+@@ -419,7 +418,6 @@
+ void
+ urgent(void)
+ {
+-    int z;
+     char *p, *q;
+     char buffer[256];
+ 
+@@ -471,7 +469,7 @@
+             remote_failure_error();
+         if (s)
+             break;
+-        z = read(RemoteFD, p, q-p);
++        (void)read(RemoteFD, p, q-p);
+     }
+ 
+     while (p < q) {
+@@ -484,7 +482,7 @@
+     timeout_end();
+ 
+     buf_end(&p, q);
+-    z = write(2, buffer, p+1-buffer);
++    (void)write(2, buffer, p+1-buffer);
+     die();
+ }
+ 
+@@ -505,7 +503,6 @@
+ static void
+ remote_failure_error(void)
+ {
+-    int z;
+     char buffer[256];
+     char *p = buffer;
+     char *q = p + sizeof(buffer);
+@@ -513,7 +510,7 @@
+     buf_app(&p, q, remote_name());
+     buf_app(&p, q, " failure");
+     buf_end(&p, q);
+-    z = write(2, buffer, p+1-buffer);
++    (void)write(2, buffer, p+1-buffer);
+     die();
+ }
+ 
+@@ -539,7 +536,6 @@
+ int
+ error(int actions, char *fmt, ...)
+ {
+-    int z;
+     va_list alist;
+     char buffer[256];
+     char *p = buffer;
+@@ -561,7 +557,7 @@
+ 
+     if (RemoteFD >= 0) {
+         send(RemoteFD, "?", 1, MSG_OOB);
+-        z = write(RemoteFD, buffer, p-buffer);
++        (void)write(RemoteFD, buffer, p-buffer);
+         shutdown(RemoteFD, SHUT_WR);
+         timeout_set(ERROR_TIMEOUT, sig_alrm_die);
+         while (read(RemoteFD, buffer, sizeof(buffer)) > 0)

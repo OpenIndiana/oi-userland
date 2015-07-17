@@ -305,60 +305,15 @@ diff -r -u /tmp/ibutils-1.5.7/ibdiag/src/Makefile.in ibutils-1.5.7/ibdiag/src/Ma
  install_sh_PROGRAM = $(install_sh) -c
  install_sh_SCRIPT = $(install_sh) -c
  INSTALL_HEADER = $(INSTALL_DATA)
-@@ -96,7 +96,7 @@
- am__base_list = \
-   sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
-   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
--am__installdirs = "$(DESTDIR)$(bindir)"
-+am__installdirs = "$(DESTDIR)$(sbindir)"
- SCRIPTS = $(bin_SCRIPTS)
- SOURCES =
- DIST_SOURCES =
-@@ -224,8 +224,8 @@
- $(am__aclocal_m4_deps):
- install-binSCRIPTS: $(bin_SCRIPTS)
- 	@$(NORMAL_INSTALL)
--	test -z "$(bindir)" || $(MKDIR_P) "$(DESTDIR)$(bindir)"
--	@list='$(bin_SCRIPTS)'; test -n "$(bindir)" || list=; \
-+	test -z "$(sbindir)" || $(MKDIR_P) "$(DESTDIR)$(sbindir)"
-+	@list='$(bin_SCRIPTS)'; test -n "$(sbindir)" || list=; \
- 	for p in $$list; do \
- 	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
- 	  if test -f "$$d$$p"; then echo "$$d$$p"; echo "$$p"; else :; fi; \
-@@ -243,19 +243,19 @@
- 	while read type dir files; do \
+@@ -244,7 +244,7 @@
  	     if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
  	     test -z "$$files" || { \
--	       echo " $(INSTALL_SCRIPT) $$files '$(DESTDIR)$(bindir)$$dir'"; \
+ 	       echo " $(INSTALL_SCRIPT) $$files '$(DESTDIR)$(bindir)$$dir'"; \
 -	       $(INSTALL_SCRIPT) $$files "$(DESTDIR)$(bindir)$$dir" || exit $$?; \
-+	       echo " $(INSTALL_SCRIPT) $$files '$(DESTDIR)$(sbindir)$$dir'"; \
-+	       $(INSTALL_SCRIPT) -m 755 $$files "$(DESTDIR)$(sbindir)$$dir" || exit $$?; \
++	       $(INSTALL_SCRIPT) -m 755 $$files "$(DESTDIR)$(bindir)$$dir" || exit $$?; \
  	     } \
  	; done
  
- uninstall-binSCRIPTS:
- 	@$(NORMAL_UNINSTALL)
--	@list='$(bin_SCRIPTS)'; test -n "$(bindir)" || exit 0; \
-+	@list='$(bin_SCRIPTS)'; test -n "$(sbindir)" || exit 0; \
- 	files=`for p in $$list; do echo "$$p"; done | \
- 	       sed -e 's,.*/,,;$(transform)'`; \
- 	test -n "$$list" || exit 0; \
--	echo " ( cd '$(DESTDIR)$(bindir)' && rm -f" $$files ")"; \
--	cd "$(DESTDIR)$(bindir)" && rm -f $$files
-+	echo " ( cd '$(DESTDIR)$(sbindir)' && rm -f" $$files ")"; \
-+	cd "$(DESTDIR)$(sbindir)" && rm -f $$files
- tags: TAGS
- TAGS:
- 
-@@ -297,7 +297,7 @@
- check: check-am
- all-am: Makefile $(SCRIPTS)
- installdirs:
--	for dir in "$(DESTDIR)$(bindir)"; do \
-+	for dir in "$(DESTDIR)$(sbindir)"; do \
- 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
- 	done
- install: install-am
 @@ -426,6 +426,7 @@
  	sed -e 's=%ibdiag_libdir%='$(DESTDIR)$(libdir)'=' \
  	    -e 's=%with_ibdm_lib%='$(with_ibdm_lib)'=' \
@@ -491,61 +446,6 @@ diff -r -u /tmp/ibutils-1.5.7/ibdm/src/Makefile.in ibutils-1.5.7/ibdm/src/Makefi
  install_sh_PROGRAM = $(install_sh) -c
  install_sh_SCRIPT = $(install_sh) -c
  INSTALL_HEADER = $(INSTALL_DATA)
-@@ -105,7 +105,7 @@
- am__base_list = \
-   sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
-   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
--am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(bindir)" \
-+am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(sbindir)" \
- 	"$(DESTDIR)$(pkgincludedir)"
- LTLIBRARIES = $(lib_LTLIBRARIES)
- libibsysapi_la_DEPENDENCIES =
-@@ -369,8 +369,8 @@
- 	$(libibsysapi_la_LINK) -rpath $(libdir) $(libibsysapi_la_OBJECTS) $(libibsysapi_la_LIBADD) $(LIBS)
- install-binPROGRAMS: $(bin_PROGRAMS)
- 	@$(NORMAL_INSTALL)
--	test -z "$(bindir)" || $(MKDIR_P) "$(DESTDIR)$(bindir)"
--	@list='$(bin_PROGRAMS)'; test -n "$(bindir)" || list=; \
-+	test -z "$(sbindir)" || $(MKDIR_P) "$(DESTDIR)$(sbindir)"
-+	@list='$(bin_PROGRAMS)'; test -n "$(sbindir)" || list=; \
- 	for p in $$list; do echo "$$p $$p"; done | \
- 	sed 's/$(EXEEXT)$$//' | \
- 	while read p p1; do if test -f $$p || test -f $$p1; \
-@@ -387,20 +387,20 @@
- 	while read type dir files; do \
- 	    if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
- 	    test -z "$$files" || { \
--	    echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files '$(DESTDIR)$(bindir)$$dir'"; \
--	    $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files "$(DESTDIR)$(bindir)$$dir" || exit $$?; \
-+	    echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files '$(DESTDIR)$(sbindir)$$dir'"; \
-+	    $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files "$(DESTDIR)$(sbindir)$$dir" || exit $$?; \
- 	    } \
- 	; done
- 
- uninstall-binPROGRAMS:
- 	@$(NORMAL_UNINSTALL)
--	@list='$(bin_PROGRAMS)'; test -n "$(bindir)" || list=; \
-+	@list='$(bin_PROGRAMS)'; test -n "$(sbindir)" || list=; \
- 	files=`for p in $$list; do echo "$$p"; done | \
- 	  sed -e 'h;s,^.*/,,;s/$(EXEEXT)$$//;$(transform)' \
- 	      -e 's/$$/$(EXEEXT)/' `; \
- 	test -n "$$list" || exit 0; \
--	echo " ( cd '$(DESTDIR)$(bindir)' && rm -f" $$files ")"; \
--	cd "$(DESTDIR)$(bindir)" && rm -f $$files
-+	echo " ( cd '$(DESTDIR)$(sbindir)' && rm -f" $$files ")"; \
-+	cd "$(DESTDIR)$(sbindir)" && rm -f $$files
- 
- clean-binPROGRAMS:
- 	@list='$(bin_PROGRAMS)'; test -n "$$list" || exit 0; \
-@@ -573,7 +573,7 @@
- install-binPROGRAMS: install-libLTLIBRARIES
- 
- installdirs:
--	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(pkgincludedir)"; do \
-+	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(sbindir)" "$(DESTDIR)$(pkgincludedir)"; do \
- 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
- 	done
- install: install-am
 diff -r -u /tmp/ibutils-1.5.7/ibdm/Makefile.in ibutils-1.5.7/ibdm/Makefile.in
 --- /tmp/ibutils-1.5.7/ibdm/Makefile.in	Tue Mar  8 03:09:42 2011
 +++ ibutils-1.5.7/ibdm/Makefile.in	Thu Feb 24 16:51:16 2011
@@ -558,16 +458,6 @@ diff -r -u /tmp/ibutils-1.5.7/ibdm/Makefile.in ibutils-1.5.7/ibdm/Makefile.in
  install_sh_PROGRAM = $(install_sh) -c
  install_sh_SCRIPT = $(install_sh) -c
  INSTALL_HEADER = $(INSTALL_DATA)
-diff -r -u /tmp/ibutils-1.5.7/ibdm/scripts/Makefile.am ibutils-1.5.7/ibdm/scripts/Makefile.am
---- /tmp/ibutils-1.5.7/ibdm/scripts/Makefile.am	Mon Nov  1 16:03:44 2010
-+++ ibutils-1.5.7/ibdm/scripts/Makefile.am	Thu Feb 24 16:51:17 2011
-@@ -37,5 +37,5 @@
- EXTRA_DIST = $(pkgdata_DATA)
- 
- install-data-am:
--	for s in $(pkgdata_DATA); do cp $$s $(DESTDIR)$(bindir)/; done
-+	for s in $(pkgdata_DATA); do cp $$s $(DESTDIR)$(sbindir)/; done
- 
 diff -r -u /tmp/ibutils-1.5.7/ibdm/scripts/Makefile.in ibutils-1.5.7/ibdm/scripts/Makefile.in
 --- /tmp/ibutils-1.5.7/ibdm/scripts/Makefile.in	Tue Mar  8 03:09:41 2011
 +++ ibutils-1.5.7/ibdm/scripts/Makefile.in	Thu Feb 24 16:51:17 2011
@@ -580,15 +470,6 @@ diff -r -u /tmp/ibutils-1.5.7/ibdm/scripts/Makefile.in ibutils-1.5.7/ibdm/script
  install_sh_PROGRAM = $(install_sh) -c
  install_sh_SCRIPT = $(install_sh) -c
  INSTALL_HEADER = $(INSTALL_DATA)
-@@ -447,7 +447,7 @@
- 
- 
- install-data-am:
--	for s in $(pkgdata_DATA); do cp $$s $(DESTDIR)$(bindir)/; done
-+	for s in $(pkgdata_DATA); do cp $$s $(DESTDIR)$(sbindir)/; done
- 
- # Tell versions [3.59,3.63) of GNU make to not export all variables.
- # Otherwise a system limit (for SysV at least) may be exceeded.
 diff -r -u /tmp/ibutils-1.5.7/ibdm/ibdm/Fabric.cpp ibutils-1.5.7/ibdm/ibdm/Fabric.cpp
 --- /tmp/ibutils-1.5.7/ibdm/ibdm/Fabric.cpp	Thu Oct  7 07:29:56 2010
 +++ ibutils-1.5.7/ibdm/ibdm/Fabric.cpp	Mon Sep 19 12:03:07 2011
@@ -645,15 +526,6 @@ diff -r -u /tmp/ibutils-1.5.7/ibdm/ibdm/Makefile.in ibutils-1.5.7/ibdm/ibdm/Make
  install_sh_PROGRAM = $(install_sh) -c
  install_sh_SCRIPT = $(install_sh) -c
  INSTALL_HEADER = $(INSTALL_DATA)
-@@ -102,7 +102,7 @@
- am__base_list = \
-   sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
-   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
--am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(bindir)" \
-+am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(sbindir)" \
- 	"$(DESTDIR)$(pkgincludedir)"
- LTLIBRARIES = $(lib_LTLIBRARIES)
- am__DEPENDENCIES_1 =
 @@ -316,7 +316,7 @@
  AM_CFLAGS = $(DBG) $(IBNL_PATH) $(TCL_CFLAGS)
  lib_LTLIBRARIES = libibdmcom.la libibdm.la
@@ -663,52 +535,6 @@ diff -r -u /tmp/ibutils-1.5.7/ibdm/ibdm/Makefile.in ibutils-1.5.7/ibdm/ibdm/Make
  libibdmcom_la_LDFLAGS = -version-info $(LIB_VER_TRIPLET)
  libibdm_la_SOURCES = ibdm_wrap.cpp ibdm.i $(common_SOURCES)
  libibdm_la_LIBADD = $(TCL_LIBS) 
-@@ -402,8 +402,8 @@
- 	$(libibdmcom_la_LINK) -rpath $(libdir) $(libibdmcom_la_OBJECTS) $(libibdmcom_la_LIBADD) $(LIBS)
- install-binPROGRAMS: $(bin_PROGRAMS)
- 	@$(NORMAL_INSTALL)
--	test -z "$(bindir)" || $(MKDIR_P) "$(DESTDIR)$(bindir)"
--	@list='$(bin_PROGRAMS)'; test -n "$(bindir)" || list=; \
-+	test -z "$(sbindir)" || $(MKDIR_P) "$(DESTDIR)$(sbindir)"
-+	@list='$(bin_PROGRAMS)'; test -n "$(sbindir)" || list=; \
- 	for p in $$list; do echo "$$p $$p"; done | \
- 	sed 's/$(EXEEXT)$$//' | \
- 	while read p p1; do if test -f $$p || test -f $$p1; \
-@@ -420,20 +420,20 @@
- 	while read type dir files; do \
- 	    if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
- 	    test -z "$$files" || { \
--	    echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files '$(DESTDIR)$(bindir)$$dir'"; \
--	    $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files "$(DESTDIR)$(bindir)$$dir" || exit $$?; \
-+	    echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files '$(DESTDIR)$(sbindir)$$dir'"; \
-+	    $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files "$(DESTDIR)$(sbindir)$$dir" || exit $$?; \
- 	    } \
- 	; done
- 
- uninstall-binPROGRAMS:
- 	@$(NORMAL_UNINSTALL)
--	@list='$(bin_PROGRAMS)'; test -n "$(bindir)" || list=; \
-+	@list='$(bin_PROGRAMS)'; test -n "$(sbindir)" || list=; \
- 	files=`for p in $$list; do echo "$$p"; done | \
- 	  sed -e 'h;s,^.*/,,;s/$(EXEEXT)$$//;$(transform)' \
- 	      -e 's/$$/$(EXEEXT)/' `; \
- 	test -n "$$list" || exit 0; \
--	echo " ( cd '$(DESTDIR)$(bindir)' && rm -f" $$files ")"; \
--	cd "$(DESTDIR)$(bindir)" && rm -f $$files
-+	echo " ( cd '$(DESTDIR)$(sbindir)' && rm -f" $$files ")"; \
-+	cd "$(DESTDIR)$(sbindir)" && rm -f $$files
- 
- clean-binPROGRAMS:
- 	@list='$(bin_PROGRAMS)'; test -n "$$list" || exit 0; \
-@@ -628,7 +628,7 @@
- install-binPROGRAMS: install-libLTLIBRARIES
- 
- installdirs:
--	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(pkgincludedir)"; do \
-+	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(sbindir)" "$(DESTDIR)$(pkgincludedir)"; do \
- 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
- 	done
- install: install-am
 diff -r -u /tmp/ibutils-1.5.7/ibdm/ibdm/ibdm_wrap.cpp ibutils-1.5.7/ibdm/ibdm/ibdm_wrap.cpp
 --- /tmp/ibutils-1.5.7/ibdm/ibdm/ibdm_wrap.cpp	Thu Oct  7 07:28:58 2010
 +++ ibutils-1.5.7/ibdm/ibdm/ibdm_wrap.cpp	Thu Feb 24 16:51:17 2011
@@ -858,61 +684,6 @@ diff -r -u /tmp/ibutils-1.5.7/ibis/src/Makefile.in ibutils-1.5.7/ibis/src/Makefi
  install_sh_PROGRAM = $(install_sh) -c
  install_sh_SCRIPT = $(install_sh) -c
  INSTALL_HEADER = $(INSTALL_DATA)
-@@ -113,7 +113,7 @@
- am__base_list = \
-   sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
-   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
--am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(bindir)"
-+am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(sbindir)"
- LTLIBRARIES = $(lib_LTLIBRARIES)
- libibis_la_LIBADD =
- am_libibis_la_OBJECTS = ibis_wrap.lo ibbbm.lo ibcr.lo ibis.lo \
-@@ -420,8 +420,8 @@
- 	$(libibis_la_LINK) -rpath $(libdir) $(libibis_la_OBJECTS) $(libibis_la_LIBADD) $(LIBS)
- install-binPROGRAMS: $(bin_PROGRAMS)
- 	@$(NORMAL_INSTALL)
--	test -z "$(bindir)" || $(MKDIR_P) "$(DESTDIR)$(bindir)"
--	@list='$(bin_PROGRAMS)'; test -n "$(bindir)" || list=; \
-+	test -z "$(sbindir)" || $(MKDIR_P) "$(DESTDIR)$(sbindir)"
-+	@list='$(bin_PROGRAMS)'; test -n "$(sbindir)" || list=; \
- 	for p in $$list; do echo "$$p $$p"; done | \
- 	sed 's/$(EXEEXT)$$//' | \
- 	while read p p1; do if test -f $$p || test -f $$p1; \
-@@ -438,20 +438,20 @@
- 	while read type dir files; do \
- 	    if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
- 	    test -z "$$files" || { \
--	    echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files '$(DESTDIR)$(bindir)$$dir'"; \
--	    $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files "$(DESTDIR)$(bindir)$$dir" || exit $$?; \
-+	    echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files '$(DESTDIR)$(sbindir)$$dir'"; \
-+	    $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files "$(DESTDIR)$(sbindir)$$dir" || exit $$?; \
- 	    } \
- 	; done
- 
- uninstall-binPROGRAMS:
- 	@$(NORMAL_UNINSTALL)
--	@list='$(bin_PROGRAMS)'; test -n "$(bindir)" || list=; \
-+	@list='$(bin_PROGRAMS)'; test -n "$(sbindir)" || list=; \
- 	files=`for p in $$list; do echo "$$p"; done | \
- 	  sed -e 'h;s,^.*/,,;s/$(EXEEXT)$$//;$(transform)' \
- 	      -e 's/$$/$(EXEEXT)/' `; \
- 	test -n "$$list" || exit 0; \
--	echo " ( cd '$(DESTDIR)$(bindir)' && rm -f" $$files ")"; \
--	cd "$(DESTDIR)$(bindir)" && rm -f $$files
-+	echo " ( cd '$(DESTDIR)$(sbindir)' && rm -f" $$files ")"; \
-+	cd "$(DESTDIR)$(sbindir)" && rm -f $$files
- 
- clean-binPROGRAMS:
- 	@list='$(bin_PROGRAMS)'; test -n "$$list" || exit 0; \
-@@ -754,7 +754,7 @@
- install-binPROGRAMS: install-libLTLIBRARIES
- 
- installdirs:
--	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(bindir)"; do \
-+	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(sbindir)"; do \
- 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
- 	done
- install: install-am
 diff -r -u /tmp/ibutils-1.5.7/ibis/src/ibbbm_base.h ibutils-1.5.7/ibis/src/ibbbm_base.h
 --- /tmp/ibutils-1.5.7/ibis/src/ibbbm_base.h	Wed Feb 24 02:09:25 2010
 +++ ibutils-1.5.7/ibis/src/ibbbm_base.h	Thu Feb 24 16:51:18 2011
@@ -993,6 +764,117 @@ diff -r -u /tmp/ibutils-1.5.7/ibis/src/ibis_wrap.c ibutils-1.5.7/ibis/src/ibis_w
  
    /* TODO - define a Vendor Specific CR Read/Write attributes to use VL15 */
  
+@@ -35180,7 +35180,18 @@
+ }
+     return TCL_OK;
+ }
++#ifdef __sparcv9
++#define _ibsm_node_info_sys_guid_set(_swigobj,_swigval)  _ibsm_node_info_sys_guid_set_64(_swigobj, _swigval)
++static inline ib_net64_t *
++_ibsm_node_info_sys_guid_set_64(smNodeInfo *_swigobj, ib_net64_t *swigval)
++{
++        *(ib_net32_t *)&(_swigobj->sys_guid) = *((ib_net32_t *)swigval);
++        *((ib_net32_t *)&(_swigobj->sys_guid) + 1) = *((ib_net32_t *)swigval +1);
++        return ((ib_net64_t *)swigval);
++}
++#else
+ #define _ibsm_node_info_sys_guid_set(_swigobj,_swigval) (_swigobj->sys_guid = *(_swigval),_swigval)
++#endif
+ static int _wrap_smNodeInfo_sys_guid_set(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
+ 
+     ib_net64_t * _result;
+@@ -35238,7 +35249,17 @@
+ }
+     return TCL_OK;
+ }
++#ifdef __sparcv9
++#define _ibsm_node_info_sys_guid_get(_swigobj)  _ibsm_node_info_sys_guid_get_64(_swigobj)
++static inline ib_net64_t * _ibsm_node_info_sys_guid_get_64(smNodeInfo *_swigobj){
++	static uint32_t	val[2];
++	val[0] = *(ib_net32_t *)&(_swigobj->sys_guid);
++	val[1] = *((ib_net32_t *)&(_swigobj->sys_guid) + 1);
++	return ((ib_net64_t *)&val);
++}
++#else
+ #define _ibsm_node_info_sys_guid_get(_swigobj) (&_swigobj->sys_guid)
++#endif
+ static int _wrap_smNodeInfo_sys_guid_get(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
+ 
+     ib_net64_t * _result;
+@@ -35290,7 +35311,18 @@
+ }
+     return TCL_OK;
+ }
++#ifdef __sparcv9
++#define _ibsm_node_info_node_guid_set(_swigobj,_swigval)  _ibsm_node_info_node_guid_set_64(_swigobj, _swigval)
++static inline ib_net64_t *
++_ibsm_node_info_node_guid_set_64(smNodeInfo *_swigobj, ib_net64_t *swigval)
++{
++        *(ib_net32_t *)&(_swigobj->node_guid) = *((ib_net32_t *)swigval);
++        *((ib_net32_t *)&(_swigobj->node_guid) + 1) = *((ib_net32_t *)swigval +1);
++        return ((ib_net64_t *)swigval);
++}
++#else
+ #define _ibsm_node_info_node_guid_set(_swigobj,_swigval) (_swigobj->node_guid = *(_swigval),_swigval)
++#endif
+ static int _wrap_smNodeInfo_node_guid_set(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
+ 
+     ib_net64_t * _result;
+@@ -35348,7 +35380,17 @@
+ }
+     return TCL_OK;
+ }
++#ifdef __sparcv9
++#define _ibsm_node_info_node_guid_get(_swigobj)  _ibsm_node_info_node_guid_get_64(_swigobj)
++static inline ib_net64_t * _ibsm_node_info_node_guid_get_64(smNodeInfo *_swigobj){
++	static uint32_t	val[2];
++	val[0] = *(ib_net32_t *)&(_swigobj->node_guid);
++	val[1] = *((ib_net32_t *)&(_swigobj->node_guid) + 1);
++	return ((ib_net64_t *)&val);
++}
++#else
+ #define _ibsm_node_info_node_guid_get(_swigobj) (&_swigobj->node_guid)
++#endif
+ static int _wrap_smNodeInfo_node_guid_get(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
+ 
+     ib_net64_t * _result;
+@@ -35400,7 +35442,18 @@
+ }
+     return TCL_OK;
+ }
++#ifdef __sparcv9
++#define _ibsm_node_info_port_guid_set(_swigobj,_swigval)  _ibsm_node_info_port_guid_set_64(_swigobj, _swigval)
++static inline ib_net64_t *
++_ibsm_node_info_port_guid_set_64(smNodeInfo *_swigobj, ib_net64_t *swigval)
++{
++        *(ib_net32_t *)&(_swigobj->port_guid) = *((ib_net32_t *)swigval);
++        *((ib_net32_t *)&(_swigobj->port_guid) + 1) = *((ib_net32_t *)swigval +1);
++        return ((ib_net64_t *)swigval);
++}
++#else
+ #define _ibsm_node_info_port_guid_set(_swigobj,_swigval) (_swigobj->port_guid = *(_swigval),_swigval)
++#endif
+ static int _wrap_smNodeInfo_port_guid_set(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
+ 
+     ib_net64_t * _result;
+@@ -35458,7 +35511,17 @@
+ }
+     return TCL_OK;
+ }
++#ifdef __sparcv9
++#define _ibsm_node_info_port_guid_get(_swigobj)  _ibsm_node_info_port_guid_get_64(_swigobj)
++static inline ib_net64_t * _ibsm_node_info_port_guid_get_64(smNodeInfo *_swigobj){
++	static uint32_t	val[2];
++	val[0] = *(ib_net32_t *)&(_swigobj->port_guid);
++	val[1] = *((ib_net32_t *)&(_swigobj->port_guid) + 1);
++	return ((ib_net64_t *)&val);
++}
++#else
+ #define _ibsm_node_info_port_guid_get(_swigobj) (&_swigobj->port_guid)
++#endif
+ static int _wrap_smNodeInfo_port_guid_get(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
+ 
+     ib_net64_t * _result;
 diff -r -u /tmp/ibutils-1.5.7/ibis/src/ibpm_base.h ibutils-1.5.7/ibis/src/ibpm_base.h
 --- /tmp/ibutils-1.5.7/ibis/src/ibpm_base.h	Wed Feb 24 02:09:25 2010
 +++ ibutils-1.5.7/ibis/src/ibpm_base.h	Thu Feb 24 16:51:18 2011
@@ -1094,6 +976,126 @@ diff -r -u /tmp/ibutils-1.5.7/ibis/src/ibissh_wrap.cpp ibutils-1.5.7/ibis/src/ib
  
    /* TODO - define a Vendor Specific CR Read/Write attributes to use VL15 */
  
+@@ -35242,7 +35251,18 @@
+ }
+     return TCL_OK;
+ }
++#ifdef __sparcv9
++#define _ibsm_node_info_sys_guid_set(_swigobj,_swigval)  _ibsm_node_info_sys_guid_set_64(_swigobj, _swigval)
++static inline ib_net64_t *
++_ibsm_node_info_sys_guid_set_64(smNodeInfo *_swigobj, ib_net64_t *swigval)
++{
++        *(ib_net32_t *)&(_swigobj->sys_guid) = *((ib_net32_t *)swigval);
++        *((ib_net32_t *)&(_swigobj->sys_guid) + 1) = *((ib_net32_t *)swigval +1);
++        return ((ib_net64_t *)swigval);
++}
++#else
+ #define _ibsm_node_info_sys_guid_set(_swigobj,_swigval) (_swigobj->sys_guid = *(_swigval),_swigval)
++#endif
+ static int _wrap_smNodeInfo_sys_guid_set(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
+ 
+     ib_net64_t * _result;
+@@ -35300,7 +35320,18 @@
+ }
+     return TCL_OK;
+ }
++
++#ifdef __sparcv9
++#define _ibsm_node_info_sys_guid_get(_swigobj)  _ibsm_node_info_sys_guid_get_64(_swigobj)
++static inline ib_net64_t * _ibsm_node_info_sys_guid_get_64(smNodeInfo *_swigobj){
++	static uint32_t	val[2];
++	val[0] = *(ib_net32_t *)&(_swigobj->sys_guid);
++	val[1] = *((ib_net32_t *)&(_swigobj->sys_guid) + 1);
++	return ((ib_net64_t *)&val);
++}
++#else
+ #define _ibsm_node_info_sys_guid_get(_swigobj) (&_swigobj->sys_guid)
++#endif
+ static int _wrap_smNodeInfo_sys_guid_get(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
+ 
+     ib_net64_t * _result;
+@@ -35340,6 +35371,7 @@
+   ibis_tcl_error = 0;
+       _result = (ib_net64_t *)_ibsm_node_info_sys_guid_get(_arg0);
+ ;
++
+   if (ibis_tcl_error) {
+ 	 Tcl_SetStringObj(Tcl_GetObjResult(interp), ibis_tcl_error_msg, -1);
+ 	 return TCL_ERROR;
+@@ -35352,7 +35384,18 @@
+ }
+     return TCL_OK;
+ }
++#ifdef __sparcv9
++#define _ibsm_node_info_node_guid_set(_swigobj,_swigval)  _ibsm_node_info_node_guid_set_64(_swigobj, _swigval)
++static inline ib_net64_t *
++_ibsm_node_info_node_guid_set_64(smNodeInfo *_swigobj, ib_net64_t *swigval)
++{
++        *(ib_net32_t *)&(_swigobj->node_guid) = *((ib_net32_t *)swigval);
++        *((ib_net32_t *)&(_swigobj->node_guid) + 1) = *((ib_net32_t *)swigval +1);
++        return ((ib_net64_t *)swigval);
++}
++#else
+ #define _ibsm_node_info_node_guid_set(_swigobj,_swigval) (_swigobj->node_guid = *(_swigval),_swigval)
++#endif
+ static int _wrap_smNodeInfo_node_guid_set(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
+ 
+     ib_net64_t * _result;
+@@ -35410,7 +35453,17 @@
+ }
+     return TCL_OK;
+ }
++#ifdef __sparcv9
++#define _ibsm_node_info_node_guid_get(_swigobj)  _ibsm_node_info_node_guid_get_64(_swigobj)
++static inline ib_net64_t * _ibsm_node_info_node_guid_get_64(smNodeInfo *_swigobj){
++	static uint32_t	val[2];
++	val[0] = *(ib_net32_t *)&(_swigobj->node_guid);
++	val[1] = *((ib_net32_t *)&(_swigobj->node_guid) + 1);
++	return ((ib_net64_t *)&val);
++}
++#else
+ #define _ibsm_node_info_node_guid_get(_swigobj) (&_swigobj->node_guid)
++#endif
+ static int _wrap_smNodeInfo_node_guid_get(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
+ 
+     ib_net64_t * _result;
+@@ -35462,7 +35515,18 @@
+ }
+     return TCL_OK;
+ }
++#ifdef __sparcv9
++#define _ibsm_node_info_port_guid_set(_swigobj,_swigval)  _ibsm_node_info_port_guid_set_64(_swigobj, _swigval)
++static inline ib_net64_t *
++_ibsm_node_info_port_guid_set_64(smNodeInfo *_swigobj, ib_net64_t *swigval)
++{
++        *(ib_net32_t *)&(_swigobj->port_guid) = *((ib_net32_t *)swigval);
++        *((ib_net32_t *)&(_swigobj->port_guid) + 1) = *((ib_net32_t *)swigval +1);
++        return ((ib_net64_t *)swigval);
++}
++#else
+ #define _ibsm_node_info_port_guid_set(_swigobj,_swigval) (_swigobj->port_guid = *(_swigval),_swigval)
++#endif
+ static int _wrap_smNodeInfo_port_guid_set(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
+ 
+     ib_net64_t * _result;
+@@ -35520,7 +35584,17 @@
+ }
+     return TCL_OK;
+ }
++#ifdef __sparcv9
++#define _ibsm_node_info_port_guid_get(_swigobj)  _ibsm_node_info_port_guid_get_64(_swigobj)
++static inline ib_net64_t * _ibsm_node_info_port_guid_get_64(smNodeInfo *_swigobj){
++	static uint32_t	val[2];
++	val[0] = *(ib_net32_t *)&(_swigobj->port_guid);
++	val[1] = *((ib_net32_t *)&(_swigobj->port_guid) + 1);
++	return ((ib_net64_t *)&val);
++}
++#else
+ #define _ibsm_node_info_port_guid_get(_swigobj) (&_swigobj->port_guid)
++#endif
+ static int _wrap_smNodeInfo_port_guid_get(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
+ 
+     ib_net64_t * _result;
 diff -r -u /tmp/ibutils-1.5.7/ibis/tests/Makefile.in ibutils-1.5.7/ibis/tests/Makefile.in
 --- /tmp/ibutils-1.5.7/ibis/tests/Makefile.in	Tue Mar  8 03:09:51 2011
 +++ ibutils-1.5.7/ibis/tests/Makefile.in	Thu Feb 24 16:51:18 2011
@@ -1210,52 +1212,6 @@ diff -r -u /tmp/ibutils-1.5.7/ibmgtsim/src/Makefile.in ibutils-1.5.7/ibmgtsim/sr
  install_sh_PROGRAM = $(install_sh) -c
  install_sh_SCRIPT = $(install_sh) -c
  INSTALL_HEADER = $(INSTALL_DATA)
-@@ -103,7 +103,7 @@
- am__base_list = \
-   sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
-   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
--am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(bindir)" \
-+am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(sbindir)" \
- 	"$(DESTDIR)$(pkgincludedir)"
- LTLIBRARIES = $(lib_LTLIBRARIES)
- libibmscli_la_LIBADD =
-@@ -430,8 +430,8 @@
- 	$(libibmscli_la_LINK) -rpath $(libdir) $(libibmscli_la_OBJECTS) $(libibmscli_la_LIBADD) $(LIBS)
- install-binPROGRAMS: $(bin_PROGRAMS)
- 	@$(NORMAL_INSTALL)
--	test -z "$(bindir)" || $(MKDIR_P) "$(DESTDIR)$(bindir)"
--	@list='$(bin_PROGRAMS)'; test -n "$(bindir)" || list=; \
-+	test -z "$(sbindir)" || $(MKDIR_P) "$(DESTDIR)$(sbindir)"
-+	@list='$(bin_PROGRAMS)'; test -n "$(sbindir)" || list=; \
- 	for p in $$list; do echo "$$p $$p"; done | \
- 	sed 's/$(EXEEXT)$$//' | \
- 	while read p p1; do if test -f $$p || test -f $$p1; \
-@@ -455,13 +455,13 @@
- 
- uninstall-binPROGRAMS:
- 	@$(NORMAL_UNINSTALL)
--	@list='$(bin_PROGRAMS)'; test -n "$(bindir)" || list=; \
-+	@list='$(bin_PROGRAMS)'; test -n "$(sbindir)" || list=; \
- 	files=`for p in $$list; do echo "$$p"; done | \
- 	  sed -e 'h;s,^.*/,,;s/$(EXEEXT)$$//;$(transform)' \
- 	      -e 's/$$/$(EXEEXT)/' `; \
- 	test -n "$$list" || exit 0; \
--	echo " ( cd '$(DESTDIR)$(bindir)' && rm -f" $$files ")"; \
--	cd "$(DESTDIR)$(bindir)" && rm -f $$files
-+	echo " ( cd '$(DESTDIR)$(sbindir)' && rm -f" $$files ")"; \
-+	cd "$(DESTDIR)$(sbindir)" && rm -f $$files
- 
- clean-binPROGRAMS:
- 	@list='$(bin_PROGRAMS)'; test -n "$$list" || exit 0; \
-@@ -693,7 +693,7 @@
- install-binPROGRAMS: install-libLTLIBRARIES
- 
- installdirs:
--	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(pkgincludedir)"; do \
-+	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(sbindir)" "$(DESTDIR)$(pkgincludedir)"; do \
- 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
- 	done
- install: install-am
 diff -r -u /tmp/ibutils-1.5.7/ibmgtsim/tests/Makefile.in ibutils-1.5.7/ibmgtsim/tests/Makefile.in
 --- /tmp/ibutils-1.5.7/ibmgtsim/tests/Makefile.in	Tue Mar  8 03:10:01 2011
 +++ ibutils-1.5.7/ibmgtsim/tests/Makefile.in	Thu Feb 24 16:51:19 2011
@@ -1280,60 +1236,6 @@ diff -r -u /tmp/ibutils-1.5.7/ibmgtsim/utils/Makefile.in ibutils-1.5.7/ibmgtsim/
  install_sh_PROGRAM = $(install_sh) -c
  install_sh_SCRIPT = $(install_sh) -c
  INSTALL_HEADER = $(INSTALL_DATA)
-@@ -99,7 +99,7 @@
- am__base_list = \
-   sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
-   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
--am__installdirs = "$(DESTDIR)$(bindir)"
-+am__installdirs = "$(DESTDIR)$(sbindir)"
- SCRIPTS = $(bin_SCRIPTS)
- SOURCES =
- DIST_SOURCES =
-@@ -275,8 +275,8 @@
- $(am__aclocal_m4_deps):
- install-binSCRIPTS: $(bin_SCRIPTS)
- 	@$(NORMAL_INSTALL)
--	test -z "$(bindir)" || $(MKDIR_P) "$(DESTDIR)$(bindir)"
--	@list='$(bin_SCRIPTS)'; test -n "$(bindir)" || list=; \
-+	test -z "$(sbindir)" || $(MKDIR_P) "$(DESTDIR)$(sbindir)"
-+	@list='$(bin_SCRIPTS)'; test -n "$(sbindir)" || list=; \
- 	for p in $$list; do \
- 	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
- 	  if test -f "$$d$$p"; then echo "$$d$$p"; echo "$$p"; else :; fi; \
-@@ -294,19 +294,19 @@
- 	while read type dir files; do \
- 	     if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
- 	     test -z "$$files" || { \
--	       echo " $(INSTALL_SCRIPT) $$files '$(DESTDIR)$(bindir)$$dir'"; \
--	       $(INSTALL_SCRIPT) $$files "$(DESTDIR)$(bindir)$$dir" || exit $$?; \
-+	       echo " $(INSTALL_SCRIPT) $$files '$(DESTDIR)$(sbindir)$$dir'"; \
-+	       $(INSTALL_SCRIPT) $$files "$(DESTDIR)$(sbindir)$$dir" || exit $$?; \
- 	     } \
- 	; done
- 
- uninstall-binSCRIPTS:
- 	@$(NORMAL_UNINSTALL)
--	@list='$(bin_SCRIPTS)'; test -n "$(bindir)" || exit 0; \
-+	@list='$(bin_SCRIPTS)'; test -n "$(sbindir)" || exit 0; \
- 	files=`for p in $$list; do echo "$$p"; done | \
- 	       sed -e 's,.*/,,;$(transform)'`; \
- 	test -n "$$list" || exit 0; \
--	echo " ( cd '$(DESTDIR)$(bindir)' && rm -f" $$files ")"; \
--	cd "$(DESTDIR)$(bindir)" && rm -f $$files
-+	echo " ( cd '$(DESTDIR)$(sbindir)' && rm -f" $$files ")"; \
-+	cd "$(DESTDIR)$(sbindir)" && rm -f $$files
- 
- mostlyclean-libtool:
- 	-rm -f *.lo
-@@ -354,7 +354,7 @@
- check: check-am
- all-am: Makefile $(SCRIPTS)
- installdirs:
--	for dir in "$(DESTDIR)$(bindir)"; do \
-+	for dir in "$(DESTDIR)$(sbindir)"; do \
- 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
- 	done
- install: install-am
 diff -r -u /tmp/ibutils-1.5.7/ibmgtsim/Makefile.in ibutils-1.5.7/ibmgtsim/Makefile.in
 --- /tmp/ibutils-1.5.7/ibmgtsim/Makefile.in	Tue Mar  8 03:10:02 2011
 +++ ibutils-1.5.7/ibmgtsim/Makefile.in	Thu Feb 24 16:51:18 2011
@@ -1390,7 +1292,7 @@ diff -r -u /tmp/ibutils-1.5.7/Makefile.in ibutils-1.5.7/Makefile.in
  INSTALL_HEADER = $(INSTALL_DATA)
 diff -r -u /tmp/ibutils-1.5.7/configure ibutils-1.5.7/configure
 --- /tmp/ibutils-1.5.7/configure	Tue Mar  8 03:09:29 2011
-+++ ibutils-1.5.7/configure	Thu Mar 10 18:33:24 2011
++++ ibutils-1.5.7/configure	Wed Apr  1 01:47:48 2015
 @@ -1824,7 +1824,7 @@
  
  test -z "$INSTALL_SCRIPT" && INSTALL_SCRIPT='${INSTALL}'

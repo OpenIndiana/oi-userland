@@ -48,20 +48,22 @@ set name=org.opensolaris.arc-caseid value=PSARC/2010/346
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 set name=variant.opensolaris.zone value=global value=nonglobal
 file path=etc/libsdp.conf mode=0644 preserve=renameold
-file path=usr/bin/$(MACH64)/ib_clock_test
-file path=usr/bin/$(MACH64)/ib_read_bw
-file path=usr/bin/$(MACH64)/ib_read_lat
-file path=usr/bin/$(MACH64)/ib_send_bw
-file path=usr/bin/$(MACH64)/ib_send_lat
-file path=usr/bin/$(MACH64)/ib_write_bw
-file path=usr/bin/$(MACH64)/ib_write_bw_postlist
-file path=usr/bin/$(MACH64)/ib_write_lat
-file path=usr/bin/$(MACH64)/qperf
-file path=usr/bin/$(MACH64)/rdma_bw
-file path=usr/bin/$(MACH64)/rdma_lat
-file path=usr/bin/$(MACH64)/rds-info
-file path=usr/bin/$(MACH64)/rds-ping
-file path=usr/bin/$(MACH64)/rds-stress
+dir  path=usr/bin
+dir  path=usr/bin/$(MACH64)
+link path=usr/bin/$(MACH64)/ib_clock_test target=../ib_clock_test
+link path=usr/bin/$(MACH64)/ib_read_bw target=../ib_read_bw
+link path=usr/bin/$(MACH64)/ib_read_lat target=../ib_read_lat
+link path=usr/bin/$(MACH64)/ib_send_bw target=../ib_send_bw
+link path=usr/bin/$(MACH64)/ib_send_lat target=../ib_send_lat
+link path=usr/bin/$(MACH64)/ib_write_bw target=../ib_write_bw
+link path=usr/bin/$(MACH64)/ib_write_bw_postlist target=../ib_write_bw_postlist
+link path=usr/bin/$(MACH64)/ib_write_lat target=../ib_write_lat
+link path=usr/bin/$(MACH64)/qperf target=../qperf
+link path=usr/bin/$(MACH64)/rdma_bw target=../rdma_bw
+link path=usr/bin/$(MACH64)/rdma_lat target=../rdma_lat
+link path=usr/bin/$(MACH64)/rds-info target=../rds-info
+link path=usr/bin/$(MACH64)/rds-ping target=../rds-ping
+link path=usr/bin/$(MACH64)/rds-stress target=../rds-stress
 file path=usr/bin/ib_clock_test
 file path=usr/bin/ib_read_bw
 file path=usr/bin/ib_read_lat
@@ -86,6 +88,8 @@ file path=usr/bin/rds-stress
 file path=usr/bin/rping
 file path=usr/bin/ucmatose
 file path=usr/bin/udaddy
+dir  path=usr/include
+dir  path=usr/include/infiniband
 file path=usr/include/infiniband/arch.h
 file path=usr/include/infiniband/driver.h
 file path=usr/include/infiniband/kern-abi.h
@@ -95,11 +99,62 @@ file path=usr/include/infiniband/ofa_solaris.h
 file path=usr/include/infiniband/sa.h
 file path=usr/include/infiniband/umad.h
 file path=usr/include/infiniband/verbs.h
+dir  path=usr/include/rdma
 file path=usr/include/rdma/rdma_cma.h
 file path=usr/include/rdma/rdma_verbs.h
+dir  path=usr/lib
+dir  path=usr/lib/$(MACH64)
+dir  path=usr/lib/$(MACH64)/ibdiagnet1.5.7
+file path=usr/lib/$(MACH64)/ibdiagnet1.5.7/git_version.tcl
+file path=usr/lib/$(MACH64)/ibdiagnet1.5.7/ibdebug.tcl
+file path=usr/lib/$(MACH64)/ibdiagnet1.5.7/ibdebug_if.tcl
+file path=usr/lib/$(MACH64)/ibdiagnet1.5.7/ibdiagnet.tcl
+file path=usr/lib/$(MACH64)/ibdiagnet1.5.7/pkgIndex.tcl
+dir  path=usr/lib/$(MACH64)/ibdm1.5.7
+file path=usr/lib/$(MACH64)/ibdm1.5.7/ibnl/Buffalo.ibnl
+file path=usr/lib/$(MACH64)/ibdm1.5.7/ibnl/Buffalo8.topo
+file path=usr/lib/$(MACH64)/ibdm1.5.7/ibnl/Cheetah.ibnl
+file path=usr/lib/$(MACH64)/ibdm1.5.7/ibnl/Cougar.ibnl
+file path=usr/lib/$(MACH64)/ibdm1.5.7/ibnl/Eagle.ibnl
+file path=usr/lib/$(MACH64)/ibdm1.5.7/ibnl/FullGnu.topo
+file path=usr/lib/$(MACH64)/ibdm1.5.7/ibnl/Gazelle.ibnl
+file path=usr/lib/$(MACH64)/ibdm1.5.7/ibnl/Gnu.ibnl
+file path=usr/lib/$(MACH64)/ibdm1.5.7/ibnl/IS4_NATIVE.ibnl
+file path=usr/lib/$(MACH64)/ibdm1.5.7/ibnl/IS5100.ibnl
+file path=usr/lib/$(MACH64)/ibdm1.5.7/ibnl/IS5200.ibnl
+file path=usr/lib/$(MACH64)/ibdm1.5.7/ibnl/IS5300.ibnl
+file path=usr/lib/$(MACH64)/ibdm1.5.7/ibnl/Lion.ibnl
+file path=usr/lib/$(MACH64)/ibdm1.5.7/ibnl/LionMini.ibnl
+file path=usr/lib/$(MACH64)/ibdm1.5.7/ibnl/MIS5600.ibnl
+file path=usr/lib/$(MACH64)/ibdm1.5.7/ibnl/MTS14400-48.ibnl
+file path=usr/lib/$(MACH64)/ibdm1.5.7/ibnl/MTS14400-DDR.ibnl
+file path=usr/lib/$(MACH64)/ibdm1.5.7/ibnl/MTS14400-IntraDDR.ibnl
+file path=usr/lib/$(MACH64)/ibdm1.5.7/ibnl/MTS14400.ibnl
+file path=usr/lib/$(MACH64)/ibdm1.5.7/ibnl/MTS2400-12T4.ibnl
+file path=usr/lib/$(MACH64)/ibdm1.5.7/ibnl/MTS2400-24.ibnl
+file path=usr/lib/$(MACH64)/ibdm1.5.7/ibnl/MTS3600.ibnl
+file path=usr/lib/$(MACH64)/ibdm1.5.7/ibnl/MTS3610.ibnl
+file path=usr/lib/$(MACH64)/ibdm1.5.7/ibnl/PartialGazelle.topo
+file path=usr/lib/$(MACH64)/ibdm1.5.7/ibnl/RhinoBased512.lst
+file path=usr/lib/$(MACH64)/ibdm1.5.7/ibnl/RhinoBased512.no_sp2-3.lst
+file path=usr/lib/$(MACH64)/ibdm1.5.7/ibnl/RhinoBased512.topo
+file path=usr/lib/$(MACH64)/ibdm1.5.7/ibnl/SUNBQNEM48.ibnl
+file path=usr/lib/$(MACH64)/ibdm1.5.7/ibnl/SUNDCS36QDR.ibnl
+file path=usr/lib/$(MACH64)/ibdm1.5.7/ibnl/SUNDCS648QDR.ibnl
+file path=usr/lib/$(MACH64)/ibdm1.5.7/ibnl/SUNDCS72QDR.ibnl
+file path=usr/lib/$(MACH64)/ibdm1.5.7/ibnl/SingleGazelle.topo
+file path=usr/lib/$(MACH64)/ibdm1.5.7/ibnl/SingleRhino.topo
+file path=usr/lib/$(MACH64)/ibdm1.5.7/ibnl/subnet.lst
+file path=usr/lib/$(MACH64)/ibdm1.5.7/libibdm.so.1.5.7
+file path=usr/lib/$(MACH64)/ibdm1.5.7/pkgIndex.tcl
+dir  path=usr/lib/$(MACH64)/ibis1.5.7
+file path=usr/lib/$(MACH64)/ibis1.5.7/libibis.so.1.5.7
+file path=usr/lib/$(MACH64)/ibis1.5.7/pkgIndex.tcl
 link path=usr/lib/$(MACH64)/libibmad.so target=libibmad.so.5.1.2
 link path=usr/lib/$(MACH64)/libibmad.so.5 target=libibmad.so.5.1.2
 file path=usr/lib/$(MACH64)/libibmad.so.5.1.2
+link path=usr/lib/$(MACH64)/libibnetdisc.so.5 target=libibnetdisc.so.5.0.1
+file path=usr/lib/$(MACH64)/libibnetdisc.so.5.0.1
 link path=usr/lib/$(MACH64)/libibumad.so target=libibumad.so.3.0.2
 link path=usr/lib/$(MACH64)/libibumad.so.3 target=libibumad.so.3.0.2
 file path=usr/lib/$(MACH64)/libibumad.so.3.0.2
@@ -117,81 +172,21 @@ file path=usr/lib/$(MACH64)/libosmvendor.so.3.0.5
 link path=usr/lib/$(MACH64)/librdmacm.so target=librdmacm.so.1.0.0
 link path=usr/lib/$(MACH64)/librdmacm.so.1 target=librdmacm.so.1.0.0
 file path=usr/lib/$(MACH64)/librdmacm.so.1.0.0
-file path=usr/lib/ibdiagnet1.5.7/git_version.tcl
-file path=usr/lib/ibdiagnet1.5.7/ibdebug.tcl
-file path=usr/lib/ibdiagnet1.5.7/ibdebug_if.tcl
-file path=usr/lib/ibdiagnet1.5.7/ibdiagnet.tcl
-file path=usr/lib/ibdiagnet1.5.7/pkgIndex.tcl
-file path=usr/lib/ibdm1.5.7/ibnl/Buffalo.ibnl
-file path=usr/lib/ibdm1.5.7/ibnl/Buffalo8.topo
-file path=usr/lib/ibdm1.5.7/ibnl/Cheetah.ibnl
-file path=usr/lib/ibdm1.5.7/ibnl/Cougar.ibnl
-file path=usr/lib/ibdm1.5.7/ibnl/Eagle.ibnl
-file path=usr/lib/ibdm1.5.7/ibnl/FullGnu.topo
-file path=usr/lib/ibdm1.5.7/ibnl/Gazelle.ibnl
-file path=usr/lib/ibdm1.5.7/ibnl/Gnu.ibnl
-file path=usr/lib/ibdm1.5.7/ibnl/IS4_NATIVE.ibnl
-file path=usr/lib/ibdm1.5.7/ibnl/IS5100.ibnl
-file path=usr/lib/ibdm1.5.7/ibnl/IS5200.ibnl
-file path=usr/lib/ibdm1.5.7/ibnl/IS5300.ibnl
-file path=usr/lib/ibdm1.5.7/ibnl/Lion.ibnl
-file path=usr/lib/ibdm1.5.7/ibnl/LionMini.ibnl
-file path=usr/lib/ibdm1.5.7/ibnl/MIS5600.ibnl
-file path=usr/lib/ibdm1.5.7/ibnl/MTS14400-48.ibnl
-file path=usr/lib/ibdm1.5.7/ibnl/MTS14400-DDR.ibnl
-file path=usr/lib/ibdm1.5.7/ibnl/MTS14400-IntraDDR.ibnl
-file path=usr/lib/ibdm1.5.7/ibnl/MTS14400.ibnl
-file path=usr/lib/ibdm1.5.7/ibnl/MTS2400-12T4.ibnl
-file path=usr/lib/ibdm1.5.7/ibnl/MTS2400-24.ibnl
-file path=usr/lib/ibdm1.5.7/ibnl/MTS3600.ibnl
-file path=usr/lib/ibdm1.5.7/ibnl/MTS3610.ibnl
-file path=usr/lib/ibdm1.5.7/ibnl/PartialGazelle.topo
-file path=usr/lib/ibdm1.5.7/ibnl/RhinoBased512.lst
-file path=usr/lib/ibdm1.5.7/ibnl/RhinoBased512.no_sp2-3.lst
-file path=usr/lib/ibdm1.5.7/ibnl/RhinoBased512.topo
-file path=usr/lib/ibdm1.5.7/ibnl/SUNBQNEM48.ibnl
-file path=usr/lib/ibdm1.5.7/ibnl/SUNDCS36QDR.ibnl
-file path=usr/lib/ibdm1.5.7/ibnl/SUNDCS648QDR.ibnl
-file path=usr/lib/ibdm1.5.7/ibnl/SUNDCS72QDR.ibnl
-file path=usr/lib/ibdm1.5.7/ibnl/SingleGazelle.topo
-file path=usr/lib/ibdm1.5.7/ibnl/SingleRhino.topo
-file path=usr/lib/ibdm1.5.7/ibnl/subnet.lst
-file path=usr/lib/ibdm1.5.7/libibdm.so.1.5.7
-file path=usr/lib/ibdm1.5.7/pkgIndex.tcl
-file path=usr/lib/ibis1.5.7/libibis.so.1.5.7
-file path=usr/lib/ibis1.5.7/pkgIndex.tcl
-link path=usr/lib/libibmad.so target=libibmad.so.5.1.2
-link path=usr/lib/libibmad.so.5 target=libibmad.so.5.1.2
-file path=usr/lib/libibmad.so.5.1.2
-link path=usr/lib/libibnetdisc.so.5 target=libibnetdisc.so.5.0.1
-file path=usr/lib/libibnetdisc.so.5.0.1
-link path=usr/lib/libibumad.so target=libibumad.so.3.0.2
-link path=usr/lib/libibumad.so.3 target=libibumad.so.3.0.2
-file path=usr/lib/libibumad.so.3.0.2
-link path=usr/lib/libibverbs.so target=libibverbs.so.1.0.0
-link path=usr/lib/libibverbs.so.1 target=libibverbs.so.1.0.0
-file path=usr/lib/libibverbs.so.1.0.0
-file path=usr/lib/libmlx4-rdmav2.so
-link path=usr/lib/libmlx4.so target=libmlx4-rdmav2.so
-link path=usr/lib/libopensm.so.4 target=libopensm.so.4.0.2
-file path=usr/lib/libopensm.so.4.0.2
-link path=usr/lib/libosmcomp.so.3 target=libosmcomp.so.3.0.4
-file path=usr/lib/libosmcomp.so.3.0.4
-link path=usr/lib/libosmvendor.so.3 target=libosmvendor.so.3.0.5
-file path=usr/lib/libosmvendor.so.3.0.5
-link path=usr/lib/librdmacm.so target=librdmacm.so.1.0.0
-link path=usr/lib/librdmacm.so.1 target=librdmacm.so.1.0.0
-file path=usr/lib/librdmacm.so.1.0.0
+dir  path=usr/lib/secure
+dir  path=usr/lib/secure/$(MACH64)
 link path=usr/lib/secure/$(MACH64)/libsdp.so target=libsdp.so.1.0.0
 link path=usr/lib/secure/$(MACH64)/libsdp.so.1 target=libsdp.so.1.0.0
 file path=usr/lib/secure/$(MACH64)/libsdp.so.1.0.0
 link path=usr/lib/secure/libsdp.so target=libsdp.so.1.0.0
 link path=usr/lib/secure/libsdp.so.1 target=libsdp.so.1.0.0
 file path=usr/lib/secure/libsdp.so.1.0.0
+dir  path=usr/perl5/site_perl/5.12/i86pc-solaris-64int variant.arch=i386
 file path=usr/perl5/site_perl/5.12/i86pc-solaris-64int/IBswcountlimits.pm \
     group=root mode=0444 variant.arch=i386
+dir  path=usr/perl5/site_perl/5.12/sun4-solaris-64int variant.arch=sparc
 file path=usr/perl5/site_perl/5.12/sun4-solaris-64int/IBswcountlimits.pm \
     group=root mode=0444 variant.arch=sparc
+dir  path=usr/sbin
 file path=usr/sbin/dump2psl.pl
 file path=usr/sbin/dump2slvl.pl
 file path=usr/sbin/ibaddr
@@ -238,7 +233,10 @@ file path=usr/sbin/sminfo
 file path=usr/sbin/smpdump
 file path=usr/sbin/smpquery
 file path=usr/sbin/solaris_set_nodedesc variant.opensolaris.zone=global
+dir  path=usr/share/libibverbs.d
 file path=usr/share/libibverbs.d/mlx4.driver
+dir  path=usr/share/man
+dir  path=usr/share/man/man1
 file path=usr/share/man/man1/ib_clock_test.1
 file path=usr/share/man/man1/ib_read_bw.1
 link path=usr/share/man/man1/ib_read_lat.1 target=ib_read_bw.1
@@ -265,6 +263,7 @@ file path=usr/share/man/man1/rds-stress.1
 file path=usr/share/man/man1/rping.1
 file path=usr/share/man/man1/ucmatose.1
 file path=usr/share/man/man1/udaddy.1
+dir  path=usr/share/man/man1m
 file path=usr/share/man/man1m/ibaddr.1m
 file path=usr/share/man/man1m/ibcheckerrors.1m
 file path=usr/share/man/man1m/ibcheckerrs.1m
@@ -304,6 +303,7 @@ file path=usr/share/man/man1m/set_nodedesc.sh.1m variant.opensolaris.zone=global
 file path=usr/share/man/man1m/sminfo.1m
 file path=usr/share/man/man1m/smpdump.1m
 file path=usr/share/man/man1m/smpquery.1m
+dir  path=usr/share/man/man3
 link path=usr/share/man/man3/ibv_ack_async_event.3 target=ibv_get_async_event.3
 link path=usr/share/man/man3/ibv_ack_cq_events.3 target=ibv_get_cq_event.3
 file path=usr/share/man/man3/ibv_alloc_pd.3
@@ -389,8 +389,11 @@ file path=usr/share/man/man3/rdma_reject.3
 file path=usr/share/man/man3/rdma_resolve_addr.3
 file path=usr/share/man/man3/rdma_resolve_route.3
 file path=usr/share/man/man3/rdma_set_option.3
+dir  path=usr/share/man/man3lib
 file path=usr/share/man/man3lib/libsdp.3lib
+dir  path=usr/share/man/man4
 file path=usr/share/man/man4/libsdp.conf.4
+dir  path=usr/share/man/man7
 file path=usr/share/man/man7/rdma_cm.7
 file path=usr/share/man/man7/verbs.7
 

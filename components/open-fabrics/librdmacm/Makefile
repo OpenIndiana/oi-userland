@@ -22,7 +22,7 @@
 #
 
 # OFED only builds with GCC
-COMPILER=gcc3
+COMPILER=gcc
 
 include ../../../make-rules/shared-macros.mk
 
@@ -47,10 +47,6 @@ CLEANUP_FILES =\
 	$(PROTOUSRBINDIR)/rdma_client\
 	$(PROTOUSRBINDIR)/$(MACH64)/rdma_server\
 	$(PROTOUSRBINDIR)/$(MACH64)/rdma_client\
-	$(PROTOUSRBINDIR)/$(MACH64)/mckey\
-	$(PROTOUSRBINDIR)/$(MACH64)/rping\
-	$(PROTOUSRBINDIR)/$(MACH64)/udaddy\
-	$(PROTOUSRBINDIR)/$(MACH64)/ucmatose\
 	$(PROTOUSRINCDIR)/infiniband/ib.h\
 	$(PROTOUSRINCDIR)/rdma/rdma_cma_abi.h\
 	$(PROTO_DIR)/$(CONFIGURE_LIBDIR.32)/$(COMPONENT_NAME).la\
@@ -58,6 +54,8 @@ CLEANUP_FILES =\
 	
 COMPONENT_PREP_ACTION = \
 	$(TOUCH) $(COMPONENT_SRC)/Makefile.in
+
+CONFIGURE_OPTIONS +=	--bindir=$(USRBINDIR)
 
 COMPONENT_POST_INSTALL_ACTION = \
 	$(RM) $(CLEANUP_FILES);

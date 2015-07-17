@@ -22,7 +22,7 @@
 #
 
 # OFED only builds with GCC
-COMPILER=gcc3
+COMPILER=gcc
 
 include ../../../make-rules/shared-macros.mk
 
@@ -33,11 +33,6 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-0.42.gf350d3d.tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:164d32753ab87ba3152c84f69bf16bb592d77b922e66e753bd9ad0e229675793
 COMPONENT_ARCHIVE_URL=	http://www.openfabrics.org/downloads/perftest/$(COMPONENT_ARCHIVE)
-
-$(BUILD_32):	BITS=32
-$(BUILD_64):	BITS=64
-$(INSTALL_32):	BITS=32
-$(INSTALL_64):	BITS=64
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -56,11 +51,13 @@ LIBS +=         -lsocket -lnsl -lkstat -lrdmacm -libverbs -libumad -libmad
 LDFLAGS +=	-L$(PROTO_DIR)/$(CONFIGURE_LIBDIR.$(BITS))
 CFLAGS +=	$(SHARED_INCLUDES)
 
+CONFIGURE_OPTIONS +=	--bindir=$(USRBINDIR)
+
 COMMON_ARGS  +=	CC="$(CC)"
 COMMON_ARGS  +=	CFLAGS="$(CFLAGS)"
 COMMON_ARGS  +=	LDFLAGS="$(LDFLAGS) $(LIBS)"
 COMMON_ARGS  +=	INSTALL=$(INSTALL)
-COMMON_ARGS  +=  BINDIR=$(CONFIGURE_BINDIR.$(BITS))
+COMMON_ARGS  +=  BINDIR=$(CONFIGURE_BINDIR)/usr/bin
 COMPONENT_BUILD_ARGS  +=	$(COMMON_ARGS)
 COMPONENT_INSTALL_ARGS  +=	$(COMMON_ARGS)
 
@@ -76,11 +73,11 @@ COMPONENT_PREP_ACTION = $(TOUCH) $(@D)/configure
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 # common targets
-configure:	$(CONFIGURE_32_and_64)
+configure:	$(CONFIGURE_64)
 
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32_and_64) $(PROTOMAN1FILES)
+install:	$(INSTALL_64) $(PROTOMAN1FILES)
 
 test:		$(NO_TESTS)
 

@@ -22,7 +22,7 @@
 #
 
 # OFED only builds with GCC
-COMPILER=gcc3
+COMPILER=gcc
 
 include ../../../make-rules/shared-macros.mk
 

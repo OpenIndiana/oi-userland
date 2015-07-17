@@ -22,7 +22,7 @@
 #
 
 # OFED only builds with GCC
-COMPILER=gcc3
+COMPILER=gcc
 
 include ../../../make-rules/shared-macros.mk
 
@@ -49,6 +49,8 @@ COMPONENT_PREP_ACTION = \
 COMPONENT_INSTALL_ENV +=	PERL=$(PERL)
 
 CONFIGURE_ENV +=	PERL=$(PERL)
+
+CONFIGURE_OPTIONS +=	--sbindir=$(USRSBINDIR)
 
 # it apears that configure is broken
 COMPONENT_BUILD_ARGS  +=	LIBS="$(LIBS)"
@@ -81,11 +83,11 @@ COMPONENT_POST_INSTALL_ACTION =\
 	$(INSTALL) -m 644 manpages/set_nodedesc.sh.1m $(PROTOMAN)/man1m
 
 # common targets
-configure:	$(CONFIGURE_32)
+configure:	$(CONFIGURE_32_and_64)
 
-build:		$(BUILD_32)
+build:		$(BUILD_32_and_64)
 
-install:	$(INSTALL_32) #$(PROTOMAN1MFILES)
+install:	$(INSTALL_32_and_64) #$(PROTOMAN1MFILES)
 
 test:		$(NO_TESTS)
 

@@ -22,7 +22,7 @@
 #
 
 # OFED only builds with GCC
-COMPILER=gcc3
+COMPILER=gcc
 
 include ../../../make-rules/shared-macros.mk
 
@@ -40,6 +40,8 @@ include ../ofed.mk
 
 LIBS +=         -lsocket -lnsl -lkstat -lrdmacm -libverbs
 
+CONFIGURE_OPTIONS +=	--bindir=$(USRBINDIR)
+
 COMPONENT_INSTALL_ENV +=	INSTALL="$(INSTALL) -m 755"
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
@@ -47,11 +49,11 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
          ln -s $(SOURCE_DIR)/src/mkhelp ; ln -s $(SOURCE_DIR)/src/mkman)
 
 # common targets
-configure:	$(CONFIGURE_32_and_64)
+configure:	$(CONFIGURE_64)
 
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 

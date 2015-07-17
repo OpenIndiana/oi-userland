@@ -26,9 +26,9 @@
 # so we override PROTO_DIR
 PROTO_DIR = $(WS_COMPONENTS)/open-fabrics/prototype/$(MACH)
 
-PATH=$(GCC3_ROOT)/bin:/usr/bin:/usr/gnu/bin
+PATH=$(GCC_ROOT)/bin:/usr/bin:/usr/gnu/bin
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)
-PATH=$(PARFAIT_TOOLS_GCC3):$(GCC3_ROOT)/bin:/usr/bin
+PATH=$(PARFAIT_TOOLS):$(GCC_ROOT)/bin:/usr/bin
 endif
 
 

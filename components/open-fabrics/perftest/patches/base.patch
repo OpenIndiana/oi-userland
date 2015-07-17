@@ -1441,13 +1441,16 @@ diff -r -u /tmp/perftest-1.3.0/perftest_resources.c perftest-1.3.0/perftest_reso
      // Client.
      if (params->machine == CLIENT) {
  		if (ctx_write_keys(my_dest,params)) {
-@@ -904,6 +921,18 @@
+@@ -904,6 +921,21 @@
  			return -1;
  		}
      }
-+    // We could have tavor at one end and hermon at the other.
-+    // To avoid a modify QP error set max_rd_atomic to lowest
-+    // on either side of connection.
++
++    /*
++     * If we have different HCA's at either end of the connection with
++     * different RDMA attributes, then to avoid a modify QP error set
++     * max_rd_atomic to lowest on either side of connection.
++     */
 +    if (rem_dest->out_reads > my_dest->out_reads)
 +	temp_reads =  my_dest->out_reads;
 +
@@ -1604,16 +1607,17 @@ diff -r -u /tmp/perftest-1.3.0/read_lat.c perftest-1.3.0/read_lat.c
 diff -r -u /tmp/perftest-1.3.0/send_bw.c perftest-1.3.0/send_bw.c
 --- /tmp/perftest-1.3.0/send_bw.c	Thu Jan 20 07:37:18 2011
 +++ perftest-1.3.0/send_bw.c	Fri Feb 11 04:12:47 2011
-@@ -320,7 +320,7 @@
+@@ -320,9 +320,6 @@
  		user_parm->size = MTU_SIZE(user_parm->curr_mtu);
  	}
  
 -	if (is_dev_hermon(ctx->context) != NOT_HERMON && user_parm->inline_size != 0)
-+	if (is_dev_hermon(ctx->context) == NOT_HERMON && user_parm->inline_size != 0)
- 		user_parm->inline_size = 0;
- 
+-		user_parm->inline_size = 0;
+-
  	printf(" Inline data is used up to %d bytes message\n", user_parm->inline_size);
-@@ -649,7 +649,11 @@
+ 
+ 	ctx->size = user_parm->size;
+@@ -649,7 +646,11 @@
  			}
  	}
  
@@ -1768,16 +1772,17 @@ diff -r -u /tmp/perftest-1.3.0/write_bw.c perftest-1.3.0/write_bw.c
  #include <time.h>
  #include <infiniband/verbs.h>
  
-@@ -224,7 +225,7 @@
+@@ -224,9 +225,6 @@
  		return NULL;
  	}
  
 -	if (is_dev_hermon(ctx->context) != NOT_HERMON && user_parm->inline_size != 0)
-+	if (is_dev_hermon(ctx->context) == NOT_HERMON && user_parm->inline_size != 0)
- 		user_parm->inline_size = 0;
- 
+-		user_parm->inline_size = 0;
+-
  	printf(" Inline data is used up to %d bytes message\n", user_parm->inline_size);
-@@ -368,7 +369,6 @@
+ 
+ 	ctx->pd = ibv_alloc_pd(ctx->context);
+@@ -368,7 +366,6 @@
  	cycles_t t;
  	int iters = user_param->iters;
  
@@ -1785,7 +1790,7 @@ diff -r -u /tmp/perftest-1.3.0/write_bw.c perftest-1.3.0/write_bw.c
  	opt_delta = tcompleted[opt_posted] - tposted[opt_completed];
  
  	if (user_param->noPeak == OFF) {
-@@ -384,7 +384,11 @@
+@@ -384,7 +381,11 @@
  		  }
  	}
  	

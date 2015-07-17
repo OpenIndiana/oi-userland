@@ -22,7 +22,7 @@
 #
 
 # OFED only builds with GCC
-COMPILER=gcc3
+COMPILER=gcc
 
 include ../../../make-rules/shared-macros.mk
 
@@ -40,12 +40,16 @@ include ../ofed.mk
 
 LIBS +=	-lsocket -lnsl -lopensm -losmvendor -losmcomp -libumad -libmad
 
+LDFLAGS.64 +=	-L $(PROTO_DIR)/usr/lib/$(MACH64)
+
 # we want to use the libcheck here
 DISABLE_LIBCHECK=
 
 CONFIGURE_ENV +=	INSTALL_DATA="$(INSTALL) -m 644"
 
+CONFIGURE_OPTIONS +=	CXXFLAGS="$(CXXFLAGS)"
 CONFIGURE_OPTIONS +=	--with-osm=$(PROTO_DIR)/usr
+CONFIGURE_OPTIONS +=	--bindir=$(USRSBINDIR)
 
 PROTOMAN =	$(PROTO_DIR)/$(CONFIGURE_MANDIR)
 
@@ -98,11 +102,11 @@ COMPONENT_POST_INSTALL_ACTION=\
 	$(RM) -r $(CLEANUP_DIRS)
 
 # common targets
-configure:	$(CONFIGURE_32)
+configure:	$(CONFIGURE_32_and_64)
 
-build:		$(BUILD_32)
+build:		$(BUILD_32_and_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 

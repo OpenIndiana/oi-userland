@@ -22,7 +22,7 @@
 #
 
 # OFED only builds with GCC
-COMPILER=gcc3
+COMPILER=gcc
 
 include ../../../make-rules/shared-macros.mk
 
@@ -43,6 +43,8 @@ CFLAGS +=	-O2 -Wall -D_XOPEN_SOURCE=500 -D__EXTENSIONS__ $(CPPFLAGS)
 
 LIBS +=	-lsocket -lnsl -llgrp -lkstat -libverbs
 
+CONFIGURE_OPTIONS +=	--bindir=$(USRBINDIR)
+
 COMPONENT_PREP_ACTION = \
 	cp rds-vendor.c $(@D)/
 
@@ -62,11 +64,11 @@ COMPONENT_INSTALL_ENV += INSTALL=$(INSTALL)
 COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
 
 # common targets
-configure:	$(CONFIGURE_32_and_64)
+configure:	$(CONFIGURE_64)
 
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 

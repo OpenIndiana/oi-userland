@@ -1,5 +1,5 @@
-#
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+#This patch was developed in-house. We plan to submit it upstream, but do
+# not yet have a target date for doing so
 #
 diff -r -u /tmp/839450/libmlx4-1.0.1/Makefile.am libmlx4-1.0.1/Makefile.am
 --- /tmp/839450/libmlx4-1.0.1/Makefile.am	Tue Sep  8 06:40:35 2009
@@ -16,30 +16,121 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/Makefile.am libmlx4-1.0.1/Makefile.am
 diff -r -u /tmp/839450/libmlx4-1.0.1/src/mlx4-abi.h libmlx4-1.0.1/src/mlx4-abi.h
 --- /tmp/839450/libmlx4-1.0.1/src/mlx4-abi.h	Thu Mar 10 04:48:34 2011
 +++ libmlx4-1.0.1/src/mlx4-abi.h	Fri Feb 11 03:49:51 2011
-@@ -35,6 +35,10 @@
+@@ -35,6 +35,14 @@
  
  #include <infiniband/kern-abi.h>
  
 +#if defined(__SVR4) && defined(__sun)
-+#include <sys/ib/adapters/mlnx_umap.h>   /* Opaque CI data out definitions */
++/* Restore once build systems are in sync
++   See 21170572 - libmlx4 should be built with the system mlnx_umap.h
++#include <sys/ib/adapters/mlnx_umap.h>   / * Opaque CI data out definitions * /
++*/
++#include "mlnx_umap.h"   /* Opaque CI data out definitions */
 +#endif
 +
  #define MLX4_UVERBS_MIN_ABI_VERSION	2
  #define MLX4_UVERBS_MAX_ABI_VERSION	3
  
-@@ -49,6 +53,12 @@
- 	struct ibv_alloc_pd_resp	ibv_resp;
- 	__u32				pdn;
+@@ -43,6 +51,10 @@
+ 	__u32				qp_tab_size;
+ 	__u16				bf_reg_size;
+ 	__u16				bf_regs_per_page;
++#if defined(__SVR4) && defined(__sun)
++	uint32_t			muc_rev;
++	uint32_t			muc_reserved;
++#endif
+ };
+ 
+ struct mlx4_alloc_pd_resp {
+@@ -51,23 +63,45 @@
  	__u32				reserved;
-+};
-+
+ };
+ 
 +struct mlx4_share_pd_resp {
 +	struct ibv_share_pd_resp	ibv_resp;
 +	__u32				pdn;
 +	__u32				reserved;
++};
++
+ struct mlx4_create_cq {
+ 	struct ibv_create_cq		ibv_cmd;
++#if !(defined(__SVR4) && defined(__sun))
+ 	__u64				buf_addr;
+ 	__u64				db_addr;
++#endif
  };
  
- struct mlx4_create_cq {
+ struct mlx4_create_cq_resp {
+ 	struct ibv_create_cq_resp	ibv_resp;
++#if !(defined(__SVR4) && defined(__sun))
+ 	__u32				cqn;
+ 	__u32				reserved;
++#else
++	mlnx_umap_cq_data_out_t		mdd;
++#endif
+ };
+ 
+ struct mlx4_resize_cq {
+ 	struct ibv_resize_cq		ibv_cmd;
++#if !(defined(__SVR4) && defined(__sun))
+ 	__u64				buf_addr;
++#endif
+ };
+ 
++#if defined(__SVR4) && defined(__sun)
++struct mlx4_resize_cq_resp {
++	struct ibv_resize_cq_resp	ibv_resp;
++	mlnx_umap_cq_data_out_t		mdd;
++};
++#endif
++
++
+ #ifdef HAVE_IBV_XRC_OPS
+ struct mlx4_create_xrc_srq {
+ 	struct ibv_create_xrc_srq	ibv_cmd;
+@@ -78,18 +112,25 @@
+ 
+ struct mlx4_create_srq {
+ 	struct ibv_create_srq		ibv_cmd;
++#if !(defined(__SVR4) && defined(__sun))
+ 	__u64				buf_addr;
+ 	__u64				db_addr;
++#endif
+ };
+ 
+ struct mlx4_create_srq_resp {
+ 	struct ibv_create_srq_resp	ibv_resp;
++#if !(defined(__SVR4) && defined(__sun))
+ 	__u32				srqn;
+ 	__u32				reserved;
++#else
++	mlnx_umap_srq_data_out_t	mdd;
++#endif
+ };
+ 
+ struct mlx4_create_qp {
+ 	struct ibv_create_qp		ibv_cmd;
++#if !(defined(__SVR4) && defined(__sun))
+ 	__u64				buf_addr;
+ 	__u64				db_addr;
+ 	__u8				log_sq_bb_count;
+@@ -96,8 +137,16 @@
+ 	__u8				log_sq_stride;
+ 	__u8				sq_no_prefetch;	/* was reserved in ABI 2 */
+ 	__u8				reserved[5];
++#endif
+ };
+ 
++#if defined(__SVR4) && defined(__sun)
++struct mlx4_create_qp_resp {
++	struct ibv_create_qp_resp	ibv_resp;
++	mlnx_umap_qp_data_out_t		mdd;
++};
++#endif
++
+ #ifdef HAVE_IBV_XRC_OPS
+ struct mlx4_open_xrc_domain_resp {
+ 	struct ibv_open_xrc_domain_resp	ibv_resp;
 diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
 --- /tmp/839450/libmlx4-1.0.1/src/verbs.c	Thu Mar 10 04:48:34 2011
 +++ libmlx4-1.0.1/src/verbs.c	Fri Mar 11 14:40:18 2011
@@ -58,31 +149,7 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
  	major     = (raw_fw_ver >> 32) & 0xffff;
  	minor     = (raw_fw_ver >> 16) & 0xffff;
  	sub_minor = raw_fw_ver & 0xffff;
-@@ -79,6 +87,9 @@
- 	struct ibv_alloc_pd       cmd;
- 	struct mlx4_alloc_pd_resp resp;
- 	struct mlx4_pd		 *pd;
-+#if defined(__SVR4) && defined(__sun)
-+	mlnx_umap_pd_data_out_t   *mdd;
-+#endif
- 
- 	pd = malloc(sizeof *pd);
- 	if (!pd)
-@@ -90,11 +101,67 @@
- 		return NULL;
- 	}
- 
-+#if defined(__SVR4) && defined(__sun)
-+	/*
-+	 * kernel driver passes back the PD table index as opaque data.  This
-+	 * is required for specifying the PD in user space address vectors.
-+	 */
-+	mdd     = (mlnx_umap_pd_data_out_t *) &resp.ibv_resp.drv_out;
-+	pd->pdn = mdd->mpd_pdnum;
-+#else
- 	pd->pdn = resp.pdn;
-+#endif
- 
+@@ -95,6 +103,39 @@
  	return &pd->ibv_pd;
  }
  
@@ -105,9 +172,6 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
 +	struct ibv_share_pd       cmd;
 +	struct mlx4_share_pd_resp resp;
 +	struct mlx4_pd		 *pd;
-+#if defined(__SVR4) && defined(__sun)
-+	mlnx_umap_pd_data_out_t   *mdd;
-+#endif
 +
 +	pd = malloc(sizeof *pd);
 +	if (!pd)
@@ -118,25 +182,14 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
 +		free(pd);
 +		return NULL;
 +	}
-+
-+#if defined(__SVR4) && defined(__sun)
-+	/*
-+	 * kernel driver passes back the PD table index as opaque data.  This
-+	 * is required for specifying the PD in user space address vectors.
-+	 */
-+	mdd     = (mlnx_umap_pd_data_out_t *) &resp.ibv_resp.drv_out;
-+	pd->pdn = mdd->mpd_pdnum;
-+#else
 +	pd->pdn = resp.pdn;
-+#endif
-+
 +	return &pd->ibv_pd;
 +}
 +
  int mlx4_free_pd(struct ibv_pd *pd)
  {
  	int ret;
-@@ -138,6 +205,37 @@
+@@ -138,6 +179,37 @@
  	return mr;
  }
  
@@ -174,7 +227,7 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
  int mlx4_dereg_mr(struct ibv_mr *mr)
  {
  	int ret;
-@@ -150,6 +248,29 @@
+@@ -150,6 +222,29 @@
  	return 0;
  }
  
@@ -204,18 +257,17 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
  static int align_queue_size(int req)
  {
  	int nent;
-@@ -168,6 +289,10 @@
+@@ -168,6 +263,9 @@
  	struct mlx4_create_cq_resp resp;
  	struct mlx4_cq		  *cq;
  	int			   ret;
 +#if defined(__SVR4) && defined(__sun)
 +	void                      *cqbuf;
-+	mlnx_umap_cq_data_out_t   *mdd;
 +#endif
  
  	/* Sanity check CQ size before proceeding */
  	if (cqe > 0x3fffff)
-@@ -184,7 +309,8 @@
+@@ -184,7 +282,8 @@
  
  	cqe = align_queue_size(cqe + 1);
  
@@ -225,7 +277,7 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
  		goto err;
  
  	cq->set_ci_db  = mlx4_alloc_db(to_mctx(context), MLX4_DB_TYPE_CQ);
-@@ -198,15 +324,78 @@
+@@ -198,15 +297,73 @@
  
  	cmd.buf_addr = (uintptr_t) cq->buf.buf;
  	cmd.db_addr  = (uintptr_t) cq->set_ci_db;
@@ -239,30 +291,26 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
  	ret = ibv_cmd_create_cq(context, cqe - 1, channel, comp_vector,
  				&cq->ibv_cq, &cmd.ibv_cmd, sizeof cmd,
  				&resp.ibv_resp, sizeof resp);
-+#if defined(__SVR4) && defined(__sun)
  	if (ret)
-+		goto err;
-+#else
-+	if (ret)
++#if !(defined(__SVR4) && defined(__sun))
  		goto err_db;
-+#endif
- 
+-
  	cq->cqn = resp.cqn;
++#else
++		goto err;
  
-+#if defined(__SVR4) && defined(__sun)
 +        /*
 +         * For Solaris the kernel driver passes back mmap information for
 +	 *  mapping the CQ memory it allocated.
 +         */
-+        mdd = (mlnx_umap_cq_data_out_t *) &resp.ibv_resp.drv_out;
-+	if (mdd->mcq_rev < MLNX_UMAP_IF_VERSION) {
++	if (resp.mdd.mcq_rev < MLNX_UMAP_IF_VERSION) {
 +		fprintf(stderr, PFX "libmlx4_create_cq: libmlx4/hermon umap "
-+				"rev mismatch (kernel rev=%d)\n", mdd->mcq_rev);
++		    "rev mismatch (kernel rev=%d)\n", resp.mdd.mcq_rev);
 +		goto err_destroy;
 +	}
 +
-+        cqbuf = mmap64((void *)0, mdd->mcq_maplen, (PROT_READ | PROT_WRITE),
-+                    MAP_SHARED, context->mmap_fd, mdd->mcq_mapoffset);
++        cqbuf = mmap64((void *)0, resp.mdd.mcq_maplen, (PROT_READ | PROT_WRITE),
++	    MAP_SHARED, context->mmap_fd, resp.mdd.mcq_mapoffset);
 +
 +        if (cqbuf == MAP_FAILED)
 +                goto err_destroy;
@@ -271,29 +319,29 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
 +         * Extract hardware driver values for the number of CQEs and the
 +	 * hardware CQ number to use (needed for user space doorbells).
 +         */
-+	cqe            = mdd->mcq_numcqe;
-+	cq->cqn        = mdd->mcq_cqnum;
++	cqe            = resp.mdd.mcq_numcqe;
++	cq->cqn        = resp.mdd.mcq_cqnum;
 +	cq->buf.buf    = cqbuf;
-+	cq->buf.length = mdd->mcq_maplen;
++	cq->buf.length = resp.mdd.mcq_maplen;
 +	cq->ibv_cq.cqe = cqe-1;
 +
 +	/*
 +	 * We map both poll and arm as seperate doorbells (OFED assumes 1 word
-+	 * offset and just bumpts the address) since Solaris provides a
++	 * offset and just bumps the address) since Solaris provides a
 +	 * separate offst. This will amount to the same thing (a second
 +	 * reference to the first doorbell is added) but is more flexible.
 +	 */
 +	cq->set_ci_db = mlx4_alloc_db(to_mctx(context),
-+	                              mdd->mcq_polldbr_mapoffset,
-+	                              mdd->mcq_polldbr_maplen,
-+	                              mdd->mcq_polldbr_offset);
++	    resp.mdd.mcq_polldbr_mapoffset, resp.mdd.mcq_polldbr_maplen,
++	    resp.mdd.mcq_polldbr_offset);
++
 +        if (cq->set_ci_db == NULL)
 +                goto err_buf;
 +
 +	cq->arm_db = mlx4_alloc_db(to_mctx(context),
-+	                           mdd->mcq_armdbr_mapoffset,
-+	                           mdd->mcq_armdbr_maplen,
-+	                           mdd->mcq_armdbr_offset);
++	    resp.mdd.mcq_armdbr_mapoffset, resp.mdd.mcq_armdbr_maplen,
++	    resp.mdd.mcq_armdbr_offset);
++
 +        if (cq->arm_db == NULL)
 +                goto err_db;
 +
@@ -304,7 +352,7 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
  	return &cq->ibv_cq;
  
  err_db:
-@@ -215,6 +404,21 @@
+@@ -215,6 +372,21 @@
  err_buf:
  	mlx4_free_buf(&cq->buf);
  
@@ -326,17 +374,16 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
  err:
  	free(cq);
  
-@@ -225,12 +429,16 @@
- {
- 	struct mlx4_cq *cq = to_mcq(ibcq);
+@@ -227,10 +399,15 @@
  	struct mlx4_resize_cq cmd;
-+	struct ibv_resize_cq_resp resp;
  	struct mlx4_buf buf;
  	int old_cqe, outst_cqe, ret;
 -
-+#if defined(__SVR4) && defined(__sun)
-+	void			*cqbuf;
-+	mlnx_umap_cq_data_out_t	*mdd;
++#if !(defined(__SVR4) && defined(__sun))
++	struct ibv_resize_cq_resp resp;
++#else
++	struct mlx4_resize_cq_resp	resp;
++	void				*cqbuf;
 +#endif
  	/* Sanity check CQ size before proceeding */
  	if (cqe > 0x3fffff)
@@ -345,7 +392,7 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
  
  	pthread_spin_lock(&cq->lock);
  
-@@ -247,32 +455,76 @@
+@@ -247,32 +424,79 @@
  		goto out;
  	}
  
@@ -364,9 +411,13 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
 -		struct ibv_resize_cq_resp resp;
 -		ret = ibv_cmd_resize_cq(ibcq, cqe - 1, &cmd.ibv_cmd, sizeof cmd,
 +	ret = ibv_cmd_resize_cq(ibcq, cqe - 1, &cmd.ibv_cmd, sizeof cmd,
++#if !(defined(__SVR4) && defined(__sun))
  					&resp, sizeof resp);
 -	}
  #else
++					&resp.ibv_resp, sizeof resp);
++#endif
++#else
  	ret = ibv_cmd_resize_cq(ibcq, cqe - 1, &cmd.ibv_cmd, sizeof cmd);
  #endif
 -	if (ret) {
@@ -406,16 +457,15 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
 +	 * For Solaris the kernel driver passes back mmap information for
 +	 * mapping the CQ memory it allocated.
 +	 */
-+	mdd = (mlnx_umap_cq_data_out_t *) &resp.drv_out;
-+	if (mdd->mcq_rev < MLNX_UMAP_IF_VERSION) {
++	if (resp.mdd.mcq_rev < MLNX_UMAP_IF_VERSION) {
 +		fprintf(stderr, PFX "libmlx4_resize_cq: libmlx4/hermon umap "
-+		    "rev mismatch (kernel rev=%d)\n", mdd->mcq_rev);
++		    "rev mismatch (kernel rev=%d)\n", resp.mdd.mcq_rev);
 +		ret = EINVAL;
 +		goto out;
 +	}
  
-+	cqbuf = mmap64((void *)0, mdd->mcq_maplen, (PROT_READ | PROT_WRITE),
-+	     MAP_SHARED, ibcq->context->mmap_fd, mdd->mcq_mapoffset);
++	cqbuf = mmap64((void *)0, resp.mdd.mcq_maplen, (PROT_READ | PROT_WRITE),
++	     MAP_SHARED, ibcq->context->mmap_fd, resp.mdd.mcq_mapoffset);
 +
 +	if (cqbuf == MAP_FAILED) {
 +		ret = EINVAL;
@@ -425,15 +475,15 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
 +	cq->buf.length = buf.length;
 +	mlx4_cq_resize_copy_cqes(cq, cqbuf, old_cqe);
 +	cq->buf.buf    = cqbuf;
-+	cq->buf.length = mdd->mcq_maplen;
++	cq->buf.length = resp.mdd.mcq_maplen;
 +	free(buf.buf);
-+	cq->ibv_cq.cqe =  mdd->mcq_numcqe - 1;
-+	cq->cqn        = mdd->mcq_cqnum;
++	cq->ibv_cq.cqe =  resp.mdd.mcq_numcqe - 1;
++	cq->cqn        = resp.mdd.mcq_cqnum;
 +#endif
  out:
  	pthread_spin_unlock(&cq->lock);
  	return ret;
-@@ -287,6 +539,9 @@
+@@ -287,6 +511,9 @@
  		return ret;
  
  	mlx4_free_db(to_mctx(cq->context), MLX4_DB_TYPE_CQ, to_mcq(cq)->set_ci_db);
@@ -443,18 +493,17 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
  	mlx4_free_buf(&to_mcq(cq)->buf);
  	free(to_mcq(cq));
  
-@@ -300,6 +555,10 @@
+@@ -300,6 +527,9 @@
  	struct mlx4_create_srq_resp resp;
  	struct mlx4_srq		   *srq;
  	int			    ret;
 +#if defined(__SVR4) && defined(__sun)
-+	mlnx_umap_srq_data_out_t   *mdd;
 +	void                       *srqbuf;
 +#endif
  
  	/* Sanity check SRQ size before proceeding */
  	if (attr->attr.max_wr > 1 << 16 || attr->attr.max_sge > 64)
-@@ -312,6 +571,7 @@
+@@ -312,6 +542,7 @@
  	if (pthread_spin_init(&srq->lock, PTHREAD_PROCESS_PRIVATE))
  		goto err;
  
@@ -462,10 +511,10 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
  	srq->max     = align_queue_size(attr->attr.max_wr + 1);
  	srq->max_gs  = attr->attr.max_sge;
  	srq->counter = 0;
-@@ -324,7 +584,23 @@
- 		goto err_free;
+@@ -327,23 +558,118 @@
  
- 	*srq->db = 0;
+ 	cmd.buf_addr = (uintptr_t) srq->buf.buf;
+ 	cmd.db_addr  = (uintptr_t) srq->db;
 +#else
 +	/*
 +	 * Solaris SRQ WQE memory is supplied by the kernel; we'll update
@@ -483,10 +532,7 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
 +	 */
 +	attr->attr.max_wr += 1;
 +#endif
- 	cmd.buf_addr = (uintptr_t) srq->buf.buf;
- 	cmd.db_addr  = (uintptr_t) srq->db;
- 
-@@ -331,19 +607,97 @@
++
  	ret = ibv_cmd_create_srq(pd, &srq->ibv_srq, attr,
  				 &cmd.ibv_cmd, sizeof cmd,
  				 &resp.ibv_resp, sizeof resp);
@@ -500,31 +546,30 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
 +         * SRQ work queue memory it allocated and the doorbell for
 +	 * for posting.
 +         */
-+	mdd = (mlnx_umap_srq_data_out_t *) &resp.ibv_resp.drv_out;
-+	if (mdd->msrq_rev < 1) {
++	if (resp.mdd.msrq_rev < 1) {
 +		fprintf(stderr, PFX "libmlx4_create_srq libmlx4/hermon umap "
-+			"rev mismatch (kernel rev=%d)\n", mdd->msrq_rev);
++			"rev mismatch (kernel rev=%d)\n", resp.mdd.msrq_rev);
 +		goto err_destroy;
 +	}
 +
-+        srqbuf = mmap64((void *)0, mdd->msrq_maplen, (PROT_READ | PROT_WRITE),
-+                    MAP_SHARED, pd->context->mmap_fd, mdd->msrq_mapoffset);
++        srqbuf = mmap64((void *)0, resp.mdd.msrq_maplen,
++	    (PROT_READ | PROT_WRITE), MAP_SHARED, pd->context->mmap_fd,
++	    resp.mdd.msrq_mapoffset);
 +
 +        if (srqbuf == MAP_FAILED) {
 +                goto err_destroy;
 +        }
 +
 +	srq->buf.buf    = srqbuf;
-+	srq->buf.length = mdd->msrq_maplen;
++	srq->buf.length = resp.mdd.msrq_maplen;
 +	srq->max	= resp.ibv_resp.max_wr;
 +	srq->max_gs	= resp.ibv_resp.max_sge;
-+	srq->srqn       = mdd->msrq_srqnum;
++	srq->srqn       = resp.mdd.msrq_srqnum;
 +	srq->counter 	= 0;
 +
 +	srq->db = mlx4_alloc_db(to_mctx(pd->context),
-+	                        mdd->msrq_rdbr_mapoffset,
-+	                        mdd->msrq_rdbr_maplen,
-+	                        mdd->msrq_rdbr_offset);
++	    resp.mdd.msrq_rdbr_mapoffset, resp.mdd.msrq_rdbr_maplen,
++	    resp.mdd.msrq_rdbr_offset);
 +	if (srq->db == NULL) {
 +                goto err_unmap;
 +	}
@@ -534,7 +579,8 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
 +	 * it utilizes the memory allocated by the kernel.
 +	 * It also allocates the srq->wrid memory.
 +	 */
-+	if (mlx4_set_srq_buf(pd, srq, mdd->msrq_wqesz, mdd->msrq_numwqe)) {
++	if (mlx4_set_srq_buf(pd, srq, resp.mdd.msrq_wqesz,
++	    resp.mdd.msrq_numwqe)) {
 +		goto err_db;
 +	}
 +
@@ -584,7 +630,7 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
  
  err:
  	free(srq);
-@@ -357,7 +711,16 @@
+@@ -357,7 +683,16 @@
  {
  	struct ibv_modify_srq cmd;
  
@@ -601,7 +647,7 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
  }
  
  int mlx4_query_srq(struct ibv_srq *srq,
-@@ -365,7 +728,17 @@
+@@ -365,7 +700,17 @@
  {
  	struct ibv_query_srq cmd;
  
@@ -619,18 +665,26 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
  }
  
  int mlx4_destroy_srq(struct ibv_srq *ibsrq)
-@@ -447,6 +820,10 @@
+@@ -443,12 +788,16 @@
+ struct ibv_qp *mlx4_create_qp(struct ibv_pd *pd, struct ibv_qp_init_attr *attr)
+ {
+ 	struct mlx4_create_qp     cmd;
+-	struct ibv_create_qp_resp resp;
  	struct mlx4_qp		 *qp;
  	int			  ret;
  	struct mlx4_context	 *context = to_mctx(pd->context);
-+#if defined(__SVR4) && defined(__sun)
-+	mlnx_umap_qp_data_out_t	*mdd;
-+	void			*qpbuf;
++#if !(defined(__SVR4) && defined(__sun))
++	struct ibv_create_qp_resp resp;
++#else
++	struct mlx4_create_qp_resp	resp;
++	void				*qpbuf;
 +#endif
  
- 
+-
  	/* Sanity check QP size before proceeding */
-@@ -457,6 +834,7 @@
+ 	if (verify_sizes(attr, context))
+ 		return NULL;
+@@ -457,6 +806,7 @@
  	if (!qp)
  		return NULL;
  
@@ -638,7 +692,7 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
  	mlx4_calc_sq_wqe_size(&attr->cap, attr->qp_type, qp);
  
  	/*
-@@ -466,6 +844,7 @@
+@@ -466,6 +816,7 @@
  	qp->sq_spare_wqes = (2048 >> qp->sq.wqe_shift) + 1;
  	qp->sq.wqe_cnt = align_queue_size(attr->cap.max_send_wr + qp->sq_spare_wqes);
  	qp->rq.wqe_cnt = align_queue_size(attr->cap.max_recv_wr);
@@ -646,7 +700,7 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
  
  	if (attr->srq || attr->qp_type == IBV_QPT_XRC)
  		attr->cap.max_recv_wr = qp->rq.wqe_cnt = 0;
-@@ -476,6 +855,22 @@
+@@ -476,6 +827,22 @@
  			attr->cap.max_recv_wr = 1;
  	}
  
@@ -669,7 +723,7 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
  	if (mlx4_alloc_qp_buf(pd, &attr->cap, attr->qp_type, qp))
  		goto err;
  
-@@ -505,17 +900,84 @@
+@@ -505,10 +872,12 @@
  		; /* nothing */
  	cmd.sq_no_prefetch = 0;	/* OK for ABI 2: just a reserved field */
  	memset(cmd.reserved, 0, sizeof cmd.reserved);
@@ -678,23 +732,30 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
  	pthread_mutex_lock(&to_mctx(pd->context)->qp_table_mutex);
  
  	ret = ibv_cmd_create_qp(pd, &qp->ibv_qp, attr, &cmd.ibv_cmd, sizeof cmd,
++#if !(defined(__SVR4) && defined(__sun))
  				&resp, sizeof resp);
-+#if defined(__SVR4) && defined(__sun)
  	if (ret)
+ 		goto err_rq_db;
+@@ -516,6 +885,70 @@
+ 	ret = mlx4_store_qp(to_mctx(pd->context), qp->ibv_qp.qp_num, qp);
+ 	if (ret)
+ 		goto err_destroy;
++#else
++				&resp.ibv_resp, sizeof resp);
++	if (ret)
 +		goto err_free;
 +
 +        /*
 +         * The kernel driver passes back mmap information for mapping the
 +         * QP work queue memory it allocated back into user space.
 +         */
-+        mdd = (mlnx_umap_qp_data_out_t *) &resp.drv_out;
-+	if (mdd->mqp_rev < 2) {
++	if (resp.mdd.mqp_rev < 2) {
 +		fprintf(stderr, PFX "libmlx4_create_qp: libmlx4/hermon umap "
-+				"rev mismatch (kernel rev=%d)\n", mdd->mqp_rev);
++		    "rev mismatch (kernel rev=%d)\n", resp.mdd.mqp_rev);
 +		goto err_destroy;
 +	}
-+	qpbuf = mmap64((void *)0, mdd->mqp_maplen, (PROT_READ | PROT_WRITE),
-+	                MAP_SHARED, pd->context->mmap_fd, mdd->mqp_mapoffset);
++	qpbuf = mmap64((void *)0, resp.mdd.mqp_maplen, (PROT_READ | PROT_WRITE),
++	    MAP_SHARED, pd->context->mmap_fd, resp.mdd.mqp_mapoffset);
 +
 +	if (qpbuf == MAP_FAILED)
 +		goto err_destroy;
@@ -704,13 +765,12 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
 +	 * we'll call mlx4_free_buf() to umap.
 +	 */
 +	qp->buf.buf	= qpbuf;
-+	qp->buf.length	= mdd->mqp_maplen;
++	qp->buf.length	= resp.mdd.mqp_maplen;
 +
 +	if (!attr->srq && attr->qp_type != IBV_QPT_XRC) {
 +		qp->db = mlx4_alloc_db(to_mctx(pd->context),
-+		                       mdd->mqp_rdbr_mapoffset,
-+		                       mdd->mqp_rdbr_maplen,
-+		                       mdd->mqp_rdbr_offset);
++		    resp.mdd.mqp_rdbr_mapoffset, resp.mdd.mqp_rdbr_maplen,
++		    resp.mdd.mqp_rdbr_offset);
 +		if (qp->db == NULL)
 +			goto err_buf;
 +
@@ -725,36 +785,29 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
 +	 *	      wqe.cnt also includes headroom wqes, the verbs count
 +	 *	      should reflect the wqe count that is usable.
 +	 */
-+	qp->sq_spare_wqes = mdd->mqp_sq_headroomwqes;
-+	qp->sq.wqe_cnt    = mdd->mqp_sq_numwqe;
++	qp->sq_spare_wqes = resp.mdd.mqp_sq_headroomwqes;
++	qp->sq.wqe_cnt    = resp.mdd.mqp_sq_numwqe;
 +
 +	if (attr->srq)
 +		qp->rq.wqe_cnt  = 0;
 +	else
-+		qp->rq.wqe_cnt  = mdd->mqp_rq_numwqe;
++		qp->rq.wqe_cnt  = resp.mdd.mqp_rq_numwqe;
 +
-+	if (mlx4_set_qp_buf(pd, qp, qpbuf, mdd->mqp_maplen,
-+	                    mdd->mqp_rq_wqesz, mdd->mqp_rq_off,
-+	                    mdd->mqp_sq_wqesz, mdd->mqp_sq_off))
- 		goto err_rq_db;
- 
++	if (mlx4_set_qp_buf(pd, qp, qpbuf, resp.mdd.mqp_maplen,
++	    resp.mdd.mqp_rq_wqesz, resp.mdd.mqp_rq_off,
++	    resp.mdd.mqp_sq_wqesz, resp.mdd.mqp_sq_off))
++		goto err_rq_db;
++
 +	mlx4_init_qp_indices(qp);
-+
- 	ret = mlx4_store_qp(to_mctx(pd->context), qp->ibv_qp.qp_num, qp);
- 	if (ret)
-+		goto err_rq_db;
-+#else
-+	if (ret)
-+		goto err_rq_db;
 +
 +	ret = mlx4_store_qp(to_mctx(pd->context), qp->ibv_qp.qp_num, qp);
 +	if (ret)
- 		goto err_destroy;
++		goto err_rq_db;
 +#endif
  	pthread_mutex_unlock(&to_mctx(pd->context)->qp_table_mutex);
  
  	qp->rq.wqe_cnt = attr->cap.max_recv_wr;
-@@ -536,9 +998,38 @@
+@@ -536,9 +969,38 @@
  
  	return &qp->ibv_qp;
  
@@ -793,7 +846,7 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
  err_rq_db:
  	pthread_mutex_unlock(&to_mctx(pd->context)->qp_table_mutex);
  	if (!attr->srq && attr->qp_type != IBV_QPT_XRC)
-@@ -552,6 +1043,7 @@
+@@ -552,6 +1014,7 @@
  
  err:
  	free(qp);
@@ -801,7 +854,7 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
  
  	return NULL;
  }
-@@ -745,6 +1237,13 @@
+@@ -745,6 +1208,13 @@
  				    struct ibv_cq *xrc_cq,
  				    struct ibv_srq_init_attr *attr)
  {
@@ -815,7 +868,7 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
  	struct mlx4_create_xrc_srq  cmd;
  	struct mlx4_create_srq_resp resp;
  	struct mlx4_srq		   *srq;
-@@ -807,6 +1306,7 @@
+@@ -807,6 +1277,7 @@
  	free(srq);
  
  	return NULL;
@@ -836,14 +889,14 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/qp.c libmlx4-1.0.1/src/qp.c
  		ctrl->owner_opcode |= htonl((qp->sq.head & 0xffff) << 8);
  		*(uint32_t *) (&ctrl->vlan_tag) |= qp->doorbell_qpn;
  		/*
-@@ -589,6 +590,58 @@
+@@ -589,6 +590,59 @@
  		; /* nothing */
  }
  
 +#if defined(__SVR4) && defined(__sun)
 +int mlx4_set_qp_buf(struct ibv_pd *pd, struct mlx4_qp *qp, void *qpbuf,
-+                    uint64_t buflen, uint32_t rq_wqesz, uint32_t rq_off,
-+                    uint32_t sq_wqesz, uint32_t sq_off)
++    uint64_t buflen, uint32_t rq_wqesz, uint32_t rq_off,
++    uint32_t sq_wqesz, uint32_t sq_off)
 +{
 +	qp->buf.buf      = qpbuf;
 +	qp->buf.length   = buflen;
@@ -881,11 +934,12 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/qp.c libmlx4-1.0.1/src/qp.c
 +	}
 +
 +	if ((long int)qp->buf.length < (long int)qp->buf_size) {
-+		fprintf(stderr, PFX "QP kernel buffer size %d < user buf size %d\n",
-+		        qp->buf.length, qp->buf_size);
++		fprintf(stderr, PFX "QP kernel buffer size %lu < user buf "
++		    "size %d\n", (unsigned long)qp->buf.length, qp->buf_size);
 +	}
 +	if ((!rq_off && qp->rq.offset) || (!sq_off && qp->sq.offset)) {
-+		fprintf(stderr, PFX "QP kernel and user out of sync on buffer order\n");
++		fprintf(stderr, PFX "QP kernel and user out of sync on "
++		    "buffer order\n");
 +	}
 +
 +	memset(qp->buf.buf, 0, qp->buf_size);
@@ -1235,14 +1289,14 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/mlx4.c libmlx4-1.0.1/src/mlx4.c
  
  	context = calloc(1, sizeof *context);
  	if (!context)
-@@ -150,11 +160,30 @@
+@@ -150,11 +160,29 @@
  		return NULL;
  
  	context->ibv_ctx.cmd_fd = cmd_fd;
+-
 +#if defined(__SVR4) && defined(__sun)
 +	context->ibv_ctx.device = ibdev;
 +#endif
- 
  	if (ibv_cmd_get_context(&context->ibv_ctx, &cmd, sizeof cmd,
  				&resp.ibv_resp, sizeof resp))
  		goto err_free;
@@ -1266,7 +1320,7 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/mlx4.c libmlx4-1.0.1/src/mlx4.c
  	context->num_qps	= resp.qp_tab_size;
  	context->qp_table_shift = ffs(context->num_qps) - 1 - MLX4_QP_TABLE_BITS;
  	context->qp_table_mask	= (1 << context->qp_table_shift) - 1;
-@@ -172,20 +201,44 @@
+@@ -172,20 +200,45 @@
  	for (i = 0; i < MLX4_XRC_SRQ_TABLE_SIZE; ++i)
  		context->xrc_srq_table[i].refcnt = 0;
  
@@ -1298,11 +1352,12 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/mlx4.c libmlx4-1.0.1/src/mlx4.c
 +		 * If kernel driver is supporting Blue Flame feature, map
 +		 * the Blue Flame user access region as well.
 +		 */
-+		uarpg_offset = (((off64_t) cur_pid << MLNX_UMAP_RSRC_TYPE_SHIFT) |
-+		                MLNX_UMAP_BLUEFLAMEPG_RSRC) * to_mdev(ibdev)->page_size;
++		uarpg_offset = (((off64_t) cur_pid << MLNX_UMAP_RSRC_TYPE_SHIFT)
++		    | MLNX_UMAP_BLUEFLAMEPG_RSRC) * to_mdev(ibdev)->page_size;
++
 +		context->bf_page = mmap64((void *)0, to_mdev(ibdev)->page_size,
-+					  PROT_WRITE, MAP_SHARED, context->ibv_ctx.mmap_fd,
-+					  uarpg_offset);
++		    PROT_WRITE, MAP_SHARED, context->ibv_ctx.mmap_fd,
++		    uarpg_offset);
 +#else
  		context->bf_page = mmap(NULL, to_mdev(ibdev)->page_size,
  					PROT_WRITE, MAP_SHARED, cmd_fd,
