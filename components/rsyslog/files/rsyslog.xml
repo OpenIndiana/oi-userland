@@ -36,6 +36,58 @@
 	version='1'>
 
 	<instance name='rsyslog' enabled='false'>
+	<dependency
+		name='milestone'
+		grouping='require_all'
+		restart_on='none'
+		type='service'>
+		<service_fmri value='svc:/milestone/sysconfig' />
+	</dependency>
+
+	<!--
+	  rsyslog can log to non-root local directories.
+	-->
+	<dependency
+		name='filesystem'
+		grouping='require_all'
+		restart_on='none'
+		type='service'>
+		<service_fmri value='svc:/system/filesystem/local' />
+	</dependency>
+
+	<!--
+	  rsyslog can log to automounted files.
+	-->
+	<dependency
+		name='autofs'
+		grouping='optional_all'
+		restart_on='none'
+		type='service'>
+		<service_fmri value='svc:/system/filesystem/autofs' />
+	</dependency>
+
+	<!--
+	  rsyslog needs nameservice resolution to log to remote hosts.
+	-->
+	<dependency
+		name='name-services'
+		grouping='require_all'
+		restart_on='none'
+		type='service'>
+		<service_fmri value='svc:/milestone/name-services' />
+	</dependency>
+
+	<dependent
+		name='rsyslog_single-user'
+		grouping='optional_all'
+		restart_on='none'>
+		<service_fmri value='svc:/milestone/multi-user' />
+	</dependent>
+
+	<!--
+		The rsyslog start method includes a "savecore -m".
+		Use an appropriately long timeout value.
+	-->
 
 		<exec_method
 			type='method'
