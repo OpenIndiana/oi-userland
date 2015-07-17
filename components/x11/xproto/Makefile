@@ -16,12 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xproto
-COMPONENT_VERSION= 7.0.24
+COMPONENT_VERSION= 7.0.25
 COMPONENT_SUMMARY= headers & documentation for the X11 protocol
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:3698a1c7e3b734bc1139a7eb694ed8c66188658d6b4dea3d567066fe4e88b2fc
+  sha256:92247485dc4ffc3611384ba84136591923da857212a7dc29f4ad7797e13909fe
 COMPONENT_ARCHIVE_URL= \
   http://xorg.freedesktop.org/archive/individual/proto/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.freedesktop.org/wiki/
