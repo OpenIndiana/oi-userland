@@ -1,4 +1,4 @@
-# Copyright (c) 2006, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2006, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the
@@ -157,19 +157,6 @@ index fc4f205..5d66fc7 100644
  
  #include "internal.h"
  
-diff --git a/xf86drm.c b/xf86drm.c
-index 6ea068f..67e29a0 100644
---- a/xf86drm.c
-+++ b/xf86drm.c
-@@ -984,7 +984,7 @@ int drmRmMap(int fd, drm_handle_t handle)
- {
-     drm_map_t map;
- 
--    map.handle = (void *)(uintptr_t)handle;
-+    map.handle = (drm_handle_t)(uintptr_t)handle;
- 
-     if(drmIoctl(fd, DRM_IOCTL_RM_MAP, &map))
- 	return -errno;
 diff --git a/xf86drm.h b/xf86drm.h
 index 76eb94e..6a14120 100644
 --- a/xf86drm.h
@@ -207,4 +194,14 @@ index c809c44..715f23a 100644
  
  }
  
-
+--- a/xf86drm.c	Fri Mar 20 07:05:48 2015
++++ b/xf86drm.c	Fri Mar 20 07:06:10 2015
+@@ -1105,7 +1105,7 @@
+     drm_map_t map;
+ 
+     memclear(map);
+-    map.handle = (void *)(uintptr_t)handle;
++    map.handle = (drm_handle_t)(uintptr_t)handle;
+ 
+     if(drmIoctl(fd, DRM_IOCTL_RM_MAP, &map))
+ 	return -errno;
