@@ -15,14 +15,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libdrm
-COMPONENT_VERSION=      2.4.59
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=      2.4.62
 COMPONENT_PROJECT_URL=  http://dri.freedesktop.org
 COMPONENT_SUMMARY=      Userspace interface to kernel Direct Rendering Module services
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-    sha256:68d26e1fd85582f4243d66864f9b43ca4ee93662825de32b5506fc8e181ea41b
+    sha256:906c294bdbe1c94c3ca084305d61a6e5a8367f3b4986e6cc13b1e9b3f75931dc
 COMPONENT_ARCHIVE_URL=  http://dri.freedesktop.org/libdrm/$(COMPONENT_ARCHIVE) 
 COMPONENT_FMRI= x11/library/libdrm
 COMPONENT_CLASSIFICATION = System/X11
@@ -35,10 +34,14 @@ include $(WS_TOP)/make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
+CPPFLAGS += "-I/usr/include/pixman-1"
+
 CONFIGURE_LIBDIR.32 = /usr/lib/xorg
 CONFIGURE_LIBDIR.64 = /usr/lib/xorg/$(MACH64)
 
 CONFIGURE_OPTIONS+=      --disable-static
+CONFIGURE_OPTIONS+=      --disable-valgrind
+CONFIGURE_OPTIONS+=      --enable-cairo-tests
 CONFIGURE_OPTIONS+=      --enable-libkms
 CONFIGURE_OPTIONS+=      --enable-intel
 CONFIGURE_OPTIONS+=      --enable-radeon
@@ -46,7 +49,10 @@ CONFIGURE_OPTIONS+=      --disable-nouveau
 CONFIGURE_OPTIONS+=      --enable-omap-experimental-api
 CONFIGURE_OPTIONS+=      --enable-exynos-experimental-api
 CONFIGURE_OPTIONS+=      --enable-freedreno
+CONFIGURE_OPTIONS+=      --enable-freedreno-kgsl
 CONFIGURE_OPTIONS+=      --enable-tegra-experimental-api
+
+CONFIGURE_ENV+= CPPFLAGS="$(CPPFLAGS)"
 
 # common targets
 build:          $(BUILD_32_and_64)
