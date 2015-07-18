@@ -28,6 +28,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		openstack
 COMPONENT_VERSION=	2014.2.2
 COMPONENT_PROJECT_URL=	http://www.openstack.org/
+COMPONENT_BUGDB=	service/nova
 IPS_COMPONENT_VERSION=	0.$(COMPONENT_VERSION)
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -36,15 +37,17 @@ include $(WS_MAKE_RULES)/ips.mk
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # Used for placement of openstack_common.py
-PYTHON_VERSIONS=        2.7
-PKG_MACROS +=           PYVER=$(PYTHON_VERSIONS)
+PYTHON_VERSIONS=	2.7
+
+PKG_MACROS +=		PYVER=$(PYTHON_VERSIONS)
+PKG_MACROS +=		PYV=$(shell echo $(PYTHON_VERSIONS) | tr -d .)
 
 build:		FRC
 	@/bin/true
 
 install:	FRC
 	($(MKDIR) $(PROTO_DIR)$(PYTHON_LIB); \
-	    $(CP) files/openstack_common.py $(PROTO_DIR)$(PYTHON_LIB); \
+	 $(CP) files/openstack_common.py $(PROTO_DIR)$(PYTHON_LIB); \
 	 $(PYTHON) -m compileall $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES))
 
 download::
@@ -57,4 +60,4 @@ clean::
 
 test:		$(NO_TESTS)
 
-system-test:    $(NO_TESTS)
+system-test:	$(NO_TESTS)

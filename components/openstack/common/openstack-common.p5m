@@ -47,3 +47,14 @@ file path=usr/lib/python$(PYVER)/vendor-packages/openstack_common.py
 # in-house.  No TPNO is required.
 #
 license common.license license="Apache v2.0"
+
+# force a dependency on the Python runtime
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# force a dependency on iniparse; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/iniparse-$(PYV)
+
+# force a dependency on python-mysql; pkgdepend work is needed to flush this
+# out.
+depend type=require fmri=library/python/python-mysql-$(PYV)

@@ -36,7 +36,7 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://launchpad.net/$(COMPONENT_NAME)/$(COMPONENT_CODENAME)/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_PROJECT_URL=	http://www.openstack.org/
-COMPONENT_BUG_DB=	service/swift
+COMPONENT_BUGDB=	service/swift
 
 TPNO=			21826
 
@@ -59,10 +59,10 @@ PKG_MACROS +=		PYV=$(shell echo $(PYTHON_VERSIONS) | tr -d .)
 # into the proto directory for pkgdepend(1) to find.
 #
 COMPONENT_POST_INSTALL_ACTION += \
-        ($(MKDIR) $(PROTO_DIR)/lib/svc/manifest/application/openstack; \
-         $(CP) \
-             files/swift-*.xml \
-             $(PROTO_DIR)/lib/svc/manifest/application/openstack;)
+	($(MKDIR) $(PROTO_DIR)/lib/svc/manifest/application/openstack; \
+	 $(CP) \
+	     files/swift-*.xml \
+	     $(PROTO_DIR)/lib/svc/manifest/application/openstack;)
 
 COMPONENT_TEST_DIR =	$(SOURCE_DIR)
 COMPONENT_TEST_CMD =	nosetests
@@ -78,7 +78,7 @@ install:	$(INSTALL_NO_ARCH)
 
 test:		$(TEST_NO_ARCH)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+system-test:	$(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
 
 REQUIRED_PACKAGES += cloud/openstack/openstack-common

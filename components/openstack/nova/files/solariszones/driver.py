@@ -26,8 +26,8 @@ import shutil
 import tempfile
 import uuid
 
-import rad.bindings.com.oracle.solaris.rad.kstat as kstat
-import rad.bindings.com.oracle.solaris.rad.zonemgr as zonemgr
+import rad.bindings.com.oracle.solaris.rad.kstat_1 as kstat
+import rad.bindings.com.oracle.solaris.rad.zonemgr_1 as zonemgr
 import rad.client
 import rad.connect
 from solaris_install.archive.checkpoints import InstantiateUnifiedArchive
