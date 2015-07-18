@@ -1836,6 +1836,9 @@ class SolarisZonesDriver(driver.ComputeDriver):
         with ZoneConfig(zone) as zc:
             zc.addresource("device", [zonemgr.Property("storage", suri)])
 
+        # apply the configuration to the running zone
+        zone.apply()
+
     def detach_volume(self, connection_info, instance, mountpoint,
                       encryption=None):
         """Detach the disk attached to the instance."""
@@ -1861,6 +1864,9 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
         with ZoneConfig(zone) as zc:
             zc.removeresources("device", [zonemgr.Property("storage", suri)])
+
+        # apply the configuration to the running zone
+        zone.apply()
 
     def swap_volume(self, old_connection_info, new_connection_info,
                     instance, mountpoint, resize_to):
