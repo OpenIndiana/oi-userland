@@ -1,0 +1,442 @@
+#
+# This patch makes the changes necessary to enable/disable
+# elliptic curves and knuth lfib algorithms.
+# This patch is developed in-house.
+#
+--- ORIGINAL/./Makefile.in	2015-07-02 15:13:55.247310974 -0700
++++ nettle-3.1.1/./Makefile.in	2015-07-02 16:51:40.433371071 -0700
+@@ -106,7 +106,6 @@
+ 		 gosthash94.c gosthash94-meta.c \
+ 		 hmac.c hmac-md5.c hmac-ripemd160.c hmac-sha1.c \
+ 		 hmac-sha224.c hmac-sha256.c hmac-sha384.c hmac-sha512.c \
+-		 knuth-lfib.c \
+ 		 md2.c md2-meta.c md4.c md4-meta.c \
+ 		 md5.c md5-compress.c md5-compat.c md5-meta.c \
+ 		 memxor.c memxor3.c \
+@@ -135,6 +134,11 @@
+ 		 umac32.c umac64.c umac96.c umac128.c \
+ 		 write-be32.c write-le32.c write-le64.c \
+ 		 yarrow256.c yarrow_key_event.c
++knuth_nettle_SOURCES = \
++		 knuth-lfib.c
++ifneq (@BUILD_KNUTH_LFIB@,)
++nettle_SOURCES += $(knuth_nettle_SOURCES)
++endif
+ 
+ hogweed_SOURCES = sexp.c sexp-format.c \
+ 		  sexp-transport.c sexp-transport-format.c \
+@@ -160,7 +164,8 @@
+ 		  pgp-encode.c rsa2openpgp.c \
+ 		  der-iterator.c der2rsa.c der2dsa.c \
+ 		  sec-add-1.c sec-sub-1.c sec-tabselect.c \
+-		  gmp-glue.c cnd-copy.c \
++		  gmp-glue.c cnd-copy.c
++ec_hogweed_SOURCES = \
+ 		  ecc-mod.c ecc-mod-inv.c \
+ 		  ecc-mod-arith.c ecc-pp1-redc.c ecc-pm1-redc.c \
+ 		  ecc-192.c ecc-224.c ecc-256.c ecc-384.c ecc-521.c \
+@@ -179,16 +184,17 @@
+ 		  eddsa-hash.c eddsa-pubkey.c eddsa-sign.c eddsa-verify.c \
+ 		  ed25519-sha512-pubkey.c \
+ 		  ed25519-sha512-sign.c ed25519-sha512-verify.c
++ifneq (@BUILD_ELLIPTIC_CURVES@,)
++hogweed_SOURCES += $(ec_hogweed_SOURCES)
++endif
+ 
+ OPT_SOURCES = fat-x86_64.c fat-arm.c mini-gmp.c
+ 
+ HEADERS = aes.h arcfour.h arctwo.h asn1.h blowfish.h \
+ 	  base16.h base64.h bignum.h buffer.h camellia.h cast128.h \
+ 	  cbc.h ccm.h chacha.h chacha-poly1305.h ctr.h \
+-	  curve25519.h des.h des-compat.h dsa.h dsa-compat.h eax.h \
+-	  ecc-curve.h ecc.h ecdsa.h eddsa.h \
++	  des.h des-compat.h dsa.h dsa-compat.h eax.h \
+ 	  gcm.h gosthash94.h hmac.h \
+-	  knuth-lfib.h \
+ 	  macros.h \
+ 	  md2.h md4.h \
+ 	  md5.h md5-compat.h \
+@@ -199,13 +205,29 @@
+ 	  salsa20.h sexp.h \
+ 	  serpent.h sha.h sha1.h sha2.h sha3.h twofish.h \
+ 	  umac.h yarrow.h poly1305.h
++ec_HEADERS = \
++	  curve25519.h \
++	  ecc-curve.h ecc.h ecdsa.h eddsa.h
++knuth_HEADERS = \
++	  knuth-lfib.h
++ifneq (@BUILD_ELLIPTIC_CURVES@,)
++HEADERS += $(ec_HEADERS)
++endif
++ifneq (@BUILD_KNUTH_LFIB@,)
++HEADERS += $(knuth_HEADERS)
++endif
+ 
+ INSTALL_HEADERS = $(HEADERS) nettle-stdint.h version.h @IF_MINI_GMP@ mini-gmp.h
+ 
+ SOURCES = $(nettle_SOURCES) $(hogweed_SOURCES) \
+ 	  $(getopt_SOURCES) $(internal_SOURCES) \
+ 	  $(OPT_SOURCES) \
+-	  aesdata.c desdata.c twofishdata.c shadata.c gcmdata.c eccdata.c
++	  aesdata.c desdata.c twofishdata.c shadata.c gcmdata.c
++ec_SOURCES = \
++	  eccdata.c
++ifneq (@BUILD_ELLIPTIC_CURVES@,)
++SOURCES += $(ec_SOURCES)
++endif
+ 
+ # NOTE: This list must include all source files, with no duplicates,
+ # independently of which source files are included in the build.
+@@ -223,9 +245,14 @@
+ 	aes-internal.h camellia-internal.h serpent-internal.h \
+ 	cast128_sboxes.h desinfo.h desCode.h \
+ 	memxor-internal.h nettle-internal.h nettle-write.h \
+-	gmp-glue.h ecc-internal.h fat-setup.h \
++	gmp-glue.h fat-setup.h \
+ 	mini-gmp.h asm.m4 \
+ 	nettle.texinfo nettle.info nettle.html nettle.pdf sha-example.c
++ec_DISTFILES = \
++	ecc-internal.h
++ifneq (@BUILD_ELLIPTIC_CURVES@,)
++DISTFILES += $(ec_DISTFILES)
++endif
+ 
+ # Rules building static libraries
+ nettle_OBJS = $(nettle_SOURCES:.c=.$(OBJEXT)) \
+@@ -296,9 +323,11 @@
+ 	$(CC_FOR_BUILD) `test -f gcmdata.c || echo '$(srcdir)/'`gcmdata.c \
+ 	-o gcmdata$(EXEEXT_FOR_BUILD)
+ 
++ifneq (@BUILD_ELLIPTIC_CURVES@,)
+ eccdata$(EXEEXT_FOR_BUILD): eccdata.c mini-gmp.c mini-gmp.h
+ 	$(CC_FOR_BUILD) `test -f eccdata.c || echo '$(srcdir)/'`eccdata.c \
+ 	-o eccdata$(EXEEXT_FOR_BUILD)
++endif
+ 
+ # desCore rules
+ # It seems using $(srcdir)/ doesn't work with GNU make 3.79.1
+@@ -314,6 +343,7 @@
+ 
+ des.$(OBJEXT): des.c des.h $(des_headers)
+ 
++ifneq (@BUILD_ELLIPTIC_CURVES@,)
+ # Generate ECC files.
+ # Some possible choices for 192:
+ #	k = 15, c = 4,  64 entries,  ~3 KB
+@@ -369,6 +399,7 @@
+ ecc-384.$(OBJEXT): ecc-384.h
+ ecc-521.$(OBJEXT): ecc-521.h
+ ecc-25519.$(OBJEXT): ecc-25519.h
++endif
+ 
+ .asm.$(OBJEXT): $(srcdir)/asm.m4 machine.m4 config.m4
+ 	$(M4) $(srcdir)/asm.m4 machine.m4 config.m4 $< >$*.s
+--- ORIGINAL/./configure.ac	2015-07-02 14:58:35.502746605 -0700
++++ nettle-3.1.1/./configure.ac	2015-07-02 16:51:40.392341361 -0700
+@@ -45,6 +45,30 @@
+   AC_HELP_STRING([--disable-public-key], [Disable public key algorithms]),,
+   [enable_public_key=yes])
+ 
++# support elliptic curves or not
++AC_ARG_ENABLE(elliptic-curves,
++  AC_HELP_STRING([--disable-elliptic-curves],
++		[Disable elliptic curves algorithms]),,
++  [enable_elliptic_curves=yes])
++
++if test x$enable_elliptic_curves == xyes ; then
++  AC_DEFINE([ENABLE_ELLIPTIC_CURVES], 1, [Build with elliptic curves support])
++  BUILD_ELLIPTIC_CURVES=yes
++fi
++AC_SUBST([BUILD_ELLIPTIC_CURVES])
++
++# include knuth-lfib or not
++AC_ARG_ENABLE(knuth-lfib,
++  AC_HELP_STRING([--disable-knuth-lfib],
++		[Disable knuth lfib algorithms]),,
++  [enable_knuth_lfib=yes])
++
++if test x$enable_knuth_lfib == xyes ; then
++  AC_DEFINE([ENABLE_KNUTH_LFIB], 1, [Build with knuth lfib support])
++  BUILD_KNUTH_LFIB=yes
++fi
++AC_SUBST([BUILD_KNUTH_LFIB])
++
+ AC_ARG_ENABLE(assembler,
+   AC_HELP_STRING([--disable-assembler],[Disable assembler code]),,
+   [enable_assembler=yes])
+@@ -418,8 +442,10 @@
+ 
+ asm_hogweed_optional_list=""
+ if test "x$enable_public_key" = "xyes" ; then
+-  asm_hogweed_optional_list="ecc-192-modp.asm ecc-224-modp.asm \
+-    ecc-25519-modp.asm ecc-256-redc.asm ecc-384-modp.asm ecc-521-modp.asm"
++  if test x$enable_elliptic_curve == xyes ; then
++    asm_hogweed_optional_list="ecc-192-modp.asm ecc-224-modp.asm \
++      ecc-25519-modp.asm ecc-256-redc.asm ecc-384-modp.asm ecc-521-modp.asm"
++  fi
+ fi
+ 
+ OPT_NETTLE_OBJS=""
+--- ORIGINAL/./testsuite/testutils.h	2015-07-02 16:08:02.862562214 -0700
++++ nettle-3.1.1/./testsuite/testutils.h	2015-07-02 16:51:40.449390643 -0700
+@@ -15,13 +15,17 @@
+ #if WITH_HOGWEED
+ # include "rsa.h"
+ # include "dsa-compat.h"
++#if ENABLE_ELLIPTIC_CURVES
+ # include "ecc-curve.h"
+ # include "ecc.h"
+ # include "ecc-internal.h"
+ # include "ecdsa.h"
++#endif
+ # include "gmp-glue.h"
+ # if NETTLE_USE_MINI_GMP
++#if ENABLE_KNUTH_LFIB
+ #  include "knuth-lfib.h"
++#endif
+ # endif
+ 
+ /* Undo dsa-compat name mangling */
+@@ -169,6 +173,7 @@
+ mpn_out_str (FILE *f, int base, const mp_limb_t *xp, mp_size_t xn);
+ 
+ #if NETTLE_USE_MINI_GMP
++#if ENABLE_KNUTH_LFIB
+ typedef struct knuth_lfib_ctx gmp_randstate_t[1];
+ 
+ void gmp_randinit_default (struct knuth_lfib_ctx *ctx);
+@@ -176,6 +181,7 @@
+ void mpz_urandomb (mpz_t r, struct knuth_lfib_ctx *ctx, mp_bitcnt_t bits);
+ /* This is cheating */
+ #define mpz_rrandomb mpz_urandomb
++#endif
+ 
+ #endif /* NETTLE_USE_MINI_GMP */
+ 
+@@ -244,6 +250,7 @@
+ 	     const mpz_t key,
+ 	     unsigned q_size);
+ 
++#if ENABLE_ELLIPTIC_CURVES
+ extern const struct ecc_curve * const ecc_curves[];
+ 
+ struct ecc_ref_point
+@@ -262,6 +269,7 @@
+ 
+ void
+ test_ecc_mul_h (unsigned curve, unsigned n, const mp_limb_t *p);
++#endif
+ 
+ #endif /* WITH_HOGWEED */
+   
+--- ORIGINAL/./testsuite/testutils.c	2015-07-02 15:58:38.990141964 -0700
++++ nettle-3.1.1/./testsuite/testutils.c	2015-07-02 16:51:40.456216361 -0700
+@@ -5,7 +5,9 @@
+ #include "base16.h"
+ #include "cbc.h"
+ #include "ctr.h"
++#if ENABLE_KNUTH_LFIB
+ #include "knuth-lfib.h"
++#endif
+ #include "macros.h"
+ #include "nettle-internal.h"
+ 
+@@ -639,6 +641,7 @@
+ }
+ 
+ #if NETTLE_USE_MINI_GMP
++#if ENABLE_KNUTH_LFIB
+ void
+ gmp_randinit_default (struct knuth_lfib_ctx *ctx)
+ {
+@@ -655,6 +658,7 @@
+   nettle_mpz_set_str_256_u (r, bytes, buf);
+   free (buf);
+ }
++#endif
+ #endif /* NETTLE_USE_MINI_GMP */
+ 
+ mp_limb_t *
+@@ -990,6 +994,7 @@
+   (hash##_update(&hash, LDATA(msg)),		\
+    dsa_##hash##_verify(key, &hash, signature))
+ 
++#if ENABLE_KNUTH_LFIB
+ void
+ test_dsa160(const struct dsa_public_key *pub,
+ 	    const struct dsa_private_key *key,
+@@ -1148,6 +1153,7 @@
+   dsa_signature_clear(&signature);
+ }
+ #endif
++#endif
+ 
+ void
+ test_dsa_verify(const struct dsa_params *params,
+@@ -1223,6 +1229,7 @@
+   mpz_clear(t);
+ }
+ 
++#if ENABLE_ELLIPTIC_CURVES
+ const struct ecc_curve * const ecc_curves[] = {
+   &nettle_secp_192r1,
+   &nettle_secp_224r1,
+@@ -1232,6 +1239,7 @@
+   &_nettle_curve25519,
+   NULL
+ };
++#endif
+ 
+ static int
+ test_mpn (const char *ref, const mp_limb_t *xp, mp_size_t n)
+@@ -1255,6 +1263,7 @@
+   mpz_out_str (f, base, mpz_roinit_n (t,xp, n));
+ }
+ 
++#if ENABLE_ELLIPTIC_CURVES
+ void
+ test_ecc_point (const struct ecc_curve *ecc,
+ 		const struct ecc_ref_point *ref,
+@@ -1402,6 +1411,7 @@
+   free (np);
+   free (scratch);
+ }
++#endif
+ 
+ #endif /* WITH_HOGWEED */
+ 
+--- ORIGINAL/./testsuite/dsa-test.c	2015-07-02 16:51:04.667915044 -0700
++++ nettle-3.1.1/./testsuite/dsa-test.c	2015-07-02 16:51:40.450658383 -0700
+@@ -43,7 +43,9 @@
+   mpz_set_str(signature.r, "180342f8d4fb5bd0311ebf205bdee6e556014eaf", 16);
+   mpz_set_str(signature.s, "392dc6566b2735531a8460966171464ef7ddfe12", 16);
+ 
++  #if ENABLE_KNUTH_LFIB
+   test_dsa160(&pub, &key, &signature);
++  #endif
+ 
+   mpz_set_str(pub.p,
+ 	      "fda45d8f1df8f2b84fb3cf9ae69f93b087d98bea282f643e"
+@@ -97,7 +99,9 @@
+ 	      "839dbee8d30e6b0cc349528f900f30ee"
+ 	      "6d4ce9864332d07c87b5a98bd75dbdbb", 16);
+ 
++  #if ENABLE_KNUTH_LFIB
+   test_dsa256(&pub, &key, &signature);
++  #endif
+ 
+   /* Some of the test vectors from
+      http://csrc.nist.gov/groups/STM/cavp/documents/dss/186-3dsatestvectors.zip
+--- ORIGINAL/./testsuite/Makefile.in	2015-07-02 15:38:02.855988706 -0700
++++ nettle-3.1.1/./testsuite/Makefile.in	2015-07-02 16:51:40.455794818 -0700
+@@ -12,7 +12,7 @@
+ 
+ TS_NETTLE_SOURCES = aes-test.c arcfour-test.c arctwo-test.c \
+ 		    blowfish-test.c cast128-test.c \
+-	            base16-test.c base64-test.c \
++	            base16-test.c \
+ 		    camellia-test.c chacha-test.c \
+ 		    des-test.c des3-test.c des-compat-test.c \
+ 		    md2-test.c md4-test.c md5-test.c md5-compat-test.c \
+@@ -24,20 +24,28 @@
+ 		    sha3-permute-test.c sha3-224-test.c sha3-256-test.c \
+ 		    sha3-384-test.c sha3-512-test.c \
+ 		    serpent-test.c twofish-test.c \
+-		    knuth-lfib-test.c \
+-		    cbc-test.c ctr-test.c gcm-test.c eax-test.c ccm-test.c \
++		    ctr-test.c gcm-test.c eax-test.c \
+ 		    poly1305-test.c chacha-poly1305-test.c \
+ 		    hmac-test.c umac-test.c \
+ 		    meta-hash-test.c meta-cipher-test.c\
+ 		    meta-aead-test.c meta-armor-test.c \
+-		    buffer-test.c yarrow-test.c pbkdf2-test.c
++		    buffer-test.c pbkdf2-test.c
++knuth_TS_NETTLE_SOURCES = \
++		    base64-test.c \
++		    knuth-lfib-test.c \
++		    cbc-test.c ccm-test.c \
++		    yarrow-test.c
++ifneq (@BUILD_KNUTH_LFIB@,)
++TS_NETTLE_SOURCES += $(knuth_TS_NETTLE_SOURCES)
++endif
+ 
+ TS_HOGWEED_SOURCES = sexp-test.c sexp-format-test.c \
+ 		     rsa2sexp-test.c sexp2rsa-test.c \
+-		     bignum-test.c random-prime-test.c \
++		     bignum-test.c\
+ 		     pkcs1-test.c \
+-		     rsa-test.c rsa-encrypt-test.c rsa-keygen-test.c \
+-		     dsa-test.c dsa-keygen-test.c \
++		     rsa-test.c \
++		     dsa-test.c
++ec_TS_HOGWEED_SOURCES = \
+ 		     curve25519-dh-test.c \
+ 		     ecc-mod-test.c ecc-modinv-test.c ecc-redc-test.c \
+ 		     ecc-sqrt-test.c \
+@@ -47,6 +55,16 @@
+ 		     ecdsa-keygen-test.c ecdh-test.c \
+ 		     eddsa-compress-test.c eddsa-sign-test.c \
+ 		     eddsa-verify-test.c ed25519-test.c
++knuth_TS_HOGWEED_SOURCES = \
++		     random-prime-test.c \
++		     rsa-encrypt-test.c rsa-keygen-test.c\
++		     dsa-keygen-test.c
++ifneq (@BUILD_ELLIPTIC_CURVES@,)
++TS_HOGWEED_SOURCES += $(ec_TS_HOGWEED_SOURCES)
++endif
++ifneq (@BUILD_KNUTH_LFIB@,)
++TS_HOGWEED_SOURCES += $(knuth_TS_HOGWEED_SOURCES)
++endif
+ 
+ TS_SOURCES = $(TS_NETTLE_SOURCES) $(TS_HOGWEED_SOURCES)
+ CXX_SOURCES = cxx-test.cxx
+--- ORIGINAL/./examples/Makefile.in	2015-07-02 15:53:49.373958086 -0700
++++ nettle-3.1.1/./examples/Makefile.in	2015-07-02 16:51:40.395847338 -0700
+@@ -15,20 +15,29 @@
+ 
+ HOGWEED_TARGETS = rsa-keygen$(EXEEXT) rsa-sign$(EXEEXT) \
+ 	      rsa-verify$(EXEEXT) rsa-encrypt$(EXEEXT) rsa-decrypt$(EXEEXT) \
+-	      random-prime$(EXEEXT) \
++	      random-prime$(EXEEXT)
++ec_HOGWEED_TARGETS = \
+ 	      hogweed-benchmark$(EXEEXT) ecc-benchmark$(EXEEXT)
++ifneq (@BUILD_ELLIPTIC_CURVES@,)
++HOGWEED_TARGETS += $(ec_HOGWEED_TARGETS)
++endif
+ 
+ ENC_TARGETS = base16enc$(EXEEXT) base16dec$(EXEEXT) \
+ 	      base64enc$(EXEEXT) base64dec$(EXEEXT)
+ TARGETS = nettle-benchmark$(EXEEXT) eratosthenes$(EXEEXT) \
+ 	  $(ENC_TARGETS) @IF_HOGWEED@ $(HOGWEED_TARGETS)
+ 
+-SOURCES = nettle-benchmark.c hogweed-benchmark.c ecc-benchmark.c \
++SOURCES = nettle-benchmark.c \
+ 	eratosthenes.c random-prime.c \
+ 	nettle-openssl.c \
+ 	io.c read_rsa_key.c \
+ 	rsa-encrypt.c rsa-decrypt.c rsa-keygen.c rsa-sign.c rsa-verify.c \
+ 	base16enc.c base16dec.c base64enc.c base64dec.c timing.c
++ec_SOURCES = \
++	hogweed-benchmark.c ecc-benchmark.c
++ifneq (@BUILD_ELLIPTIC_CURVES@,)
++SOURCES += $(ec_SOURCES)
++endif
+ 
+ 
+ GETOPT_OBJS = ../getopt.$(OBJEXT) ../getopt1.$(OBJEXT)
+--- ORIGINAL/./tools/Makefile.in	2015-07-02 16:19:42.173920583 -0700
++++ nettle-3.1.1/./tools/Makefile.in	2015-07-02 16:51:40.443561094 -0700
+@@ -19,8 +19,12 @@
+ 
+ HOGWEED_TARGETS = pkcs1-conv$(EXEEXT)
+ TARGETS = sexp-conv$(EXEEXT) nettle-hash$(EXEEXT) nettle-pbkdf2$(EXEEXT) \
+-	  nettle-lfib-stream$(EXEEXT) \
+ 	  @IF_HOGWEED@ $(HOGWEED_TARGETS)
++knuth_TARGETS = \
++	  nettle-lfib-stream$(EXEEXT)
++ifneq (@BUILD_KNUTH_LFIB@,)
++TARGETS += $(knuth_TARGETS)
++endif
+ 
+ all: $(TARGETS)
+ 

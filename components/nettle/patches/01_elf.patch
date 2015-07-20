@@ -1,0 +1,42 @@
+#
+# This patch makes the changes necessary to use SunPro compiler.
+# This patch is developed in-house.
+# 
+--- ORIGINAL/./configure.ac	2015-07-02 14:46:58.958979352 -0700
++++ nettle-3.1.1/./configure.ac	2015-07-02 14:52:39.915550201 -0700
+@@ -694,16 +694,32 @@
+        [nettle_cv_asm_type_hash_function=yes],
+        [nettle_cv_asm_type_hash_function=no])])
+ 
++  AC_CACHE_CHECK([[for ELF-style .type,@function pseudo-ops]],
++    [nettle_cv_asm_type_at_function],
++    [GMP_TRY_ASSEMBLE([
++.text
++.globl foo
++.type foo,@function
++foo:
++.Lend:
++
++.size foo, .Lend - foo
++],
++	[nettle_cv_asm_type_at_function=yes],
++	[nettle_cv_asm_type_at_function=no])])
++
+   if test x$nettle_cv_asm_type_percent_function = xyes ; then
+     ASM_ELF_STYLE='yes'
+     ASM_TYPE_FUNCTION='%function'
+     ASM_TYPE_PROGBITS='%progbits'
+-  else
+-    if test x$nettle_cv_asm_type_hash_function = xyes ; then
++  elif test x$nettle_cv_asm_type_hash_function = xyes ; then
+       ASM_ELF_STYLE='yes'
+       ASM_TYPE_FUNCTION='#function'
+       ASM_TYPE_PROGBITS='#progbits'
+-    fi
++  elif test x$nettle_cv_asm_type_at_function = xyes ; then
++      ASM_ELF_STYLE='yes'
++      ASM_TYPE_FUNCTION='@function'
++      ASM_TYPE_PROGBITS='@progbits'
+   fi
+ 
+   AC_CACHE_CHECK([for COFF-style .type directive],
