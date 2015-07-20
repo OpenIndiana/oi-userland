@@ -1,0 +1,27 @@
+--- xvidcore/build/generic/configure.in.~1~	2015-06-21 17:21:32.000000000 +0300
++++ xvidcore/build/generic/configure.in	2015-07-20 13:58:47.421422706 +0300
+@@ -295,7 +295,7 @@
+ SO_API_MAJOR_LINK=""
+ SO_LINK=""
+ case "$target_os" in
+-     linux*|solaris*|gnu*|*qnx*)
++     linux*|gnu*|*qnx*)
+ 	AC_MSG_RESULT([ok])
+ 	STATIC_LIB="libxvidcore.\$(STATIC_EXTENSION)"
+ 	SHARED_LIB="libxvidcore.\$(SHARED_EXTENSION).\$(API_MAJOR).\$(API_MINOR)"
+@@ -304,6 +304,15 @@
+ 	SPECIFIC_LDFLAGS="-Wl,-soname,libxvidcore.\$(SHARED_EXTENSION).\$(API_MAJOR) -shared -Wl,--version-script=libxvidcore.ld -lc -lm"
+ 	SPECIFIC_CFLAGS="-fPIC"
+ 	;;
++     solaris*)
++	AC_MSG_RESULT([ok])
++	STATIC_LIB="libxvidcore.\$(STATIC_EXTENSION)"
++	SHARED_LIB="libxvidcore.\$(SHARED_EXTENSION).\$(API_MAJOR).\$(API_MINOR)"
++	# because nasm don't produce pic code. And symbol 'main' is added and undefined.
++	#SPECIFIC_LDFLAGS="-Wl,-h,libxvidcore.\$(SHARED_EXTENSION).\$(API_MAJOR) -Wl,-G -Wl,-M,libxvidcore.ld -lc -lm"
++	SPECIFIC_LDFLAGS="-Wl,-h,libxvidcore.\$(SHARED_EXTENSION).\$(API_MAJOR) -Wl,-G -Wl,-M,libxvidcore.ld -lc -lm -shared -mimpure-text"
++	SPECIFIC_CFLAGS="-fPIC"
++        ;;
+      *bsd*|irix*)
+ 	AC_MSG_RESULT([ok])
+ 	STATIC_LIB="libxvidcore.\$(STATIC_EXTENSION)"
