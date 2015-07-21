@@ -1,10 +1,12 @@
 Patch origin: in-house
 Patch status: Solaris-specific; not suitable for upstream
-Patch status: SSLProtocol part will be submitted to upstream
+Patch status: SSLProtocol part submitted to upstream
+
+https://bz.apache.org/bugzilla/show_bug.cgi?id=57120
 
 --- docs/conf/extra/httpd-ssl.conf.in
 +++ docs/conf/extra/httpd-ssl.conf.in
-@@ -22,11 +22,16 @@
+@@ -22,9 +22,14 @@
  # Manual for more details.
  #
  #SSLRandomSeed startup file:/dev/random  512
@@ -13,17 +15,30 @@ Patch status: SSLProtocol part will be submitted to upstream
  #SSLRandomSeed connect file:/dev/random  512
 -#SSLRandomSeed connect file:/dev/urandom 512
 +SSLRandomSeed connect file:/dev/urandom 512
- 
++
 +#
 +# Enable Solaris crypto framework (recommended for T1/T2/T3 based systems)
 +#
 +#SSLCryptoDevice pkcs11
  
-+
+ 
  #
- # When we also provide SSL we have to listen to the 
- # standard HTTP port (see above) and to the HTTPS port
-@@ -75,7 +80,7 @@
+@@ -80,11 +85,11 @@
+ 
+ #   SSL Protocol support:
+ #   List the protocol versions which clients are allowed to connect with.
+-#   Disable SSLv2 and SSLv3 by default (cf. RFC 7525 3.1.1).  TLSv1 (1.0)
++#   SSLv2 and SSLv3 are disabled by default (cf. RFC 7525 3.1.1).  TLSv1 (1.0)
+ #   should be disabled as quickly as practical.  By the end of 2016, only
+ #   the TLSv1.2 protocol or later should remain in use.
+-SSLProtocol all -SSLv2 -SSLv3
+-SSLProxyProtocol all -SSLv2 -SSLv3
++SSLProtocol all
++SSLProxyProtocol all
+ 
+ #   Pass Phrase Dialog:
+ #   Configure the pass phrase gathering process.
+@@ -112,7 +117,7 @@
  
  #   General setup for the virtual host
  DocumentRoot "@exp_htdocsdir@"
@@ -32,15 +47,3 @@ Patch status: SSLProtocol part will be submitted to upstream
  ServerAdmin you@example.com
  ErrorLog "@exp_logfiledir@/error_log"
  TransferLog "@exp_logfiledir@/access_log"
-@@ -86,8 +91,9 @@
- 
- #   SSL Protocol support:
- #   List the protocol versions which clients are allowed to
--#   connect with. Disable SSLv2 by default (cf. RFC 6176).
--SSLProtocol all -SSLv2
-+#   connect with. SSLv2 and SSLv3 are disabled by default and
-+#   and must be enabled below if really needed.
-+SSLProtocol all
- 
- #   SSL Cipher Suite:
- #   List the ciphers that the client is permitted to negotiate.

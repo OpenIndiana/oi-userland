@@ -2,7 +2,7 @@ https://issues.apache.org/bugzilla/show_bug.cgi?id=48357
 
 --- server/protocol.c	Tue Jan 24 12:02:19 2012
 +++ server/protocol.c	Mon Oct  1 04:53:41 2012
-@@ -869,7 +869,7 @@
+@@ -871,7 +871,7 @@
      request_rec *r;
      apr_pool_t *p;
      const char *expect;
@@ -11,7 +11,7 @@ https://issues.apache.org/bugzilla/show_bug.cgi?id=48357
      apr_bucket_brigade *tmp_bb;
      apr_socket_t *csd;
      apr_interval_time_t cur_timeout;
-@@ -1021,7 +1021,7 @@
+@@ -1049,7 +1049,7 @@
           * HTTP/1.1 mentions twice (S9, S14.23) that a request MUST contain
           * a Host: header, and the server MUST respond with 400 if it doesn't.
           */
@@ -20,7 +20,7 @@ https://issues.apache.org/bugzilla/show_bug.cgi?id=48357
          ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r,
                        "client sent HTTP/1.1 request without hostname "
                        "(see RFC2616 section 14.23): %s", r->uri);
-@@ -1037,14 +1037,8 @@
+@@ -1065,14 +1065,8 @@
      ap_add_input_filter_handle(ap_http_input_filter_handle,
                                 NULL, r, r->connection);
  
