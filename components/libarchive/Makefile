@@ -42,6 +42,11 @@ include $(WS_MAKE_RULES)/ips.mk
 # Userland default includes -mt which links with libthread which we don't need.
 studio_MT =
 
+# Nettle is coming.  Disable building with it until it actually arrives, at
+# which point we can verify it works, then remove the following (and add a
+# REQUIRED_PACKAGES entry below).
+CONFIGURE_OPTIONS +=	--without-nettle
+
 # libarchive's Makefile hard-codes some gcc-only flags in COMMON_CFLAGS, then
 # appends CFLAGS to that.  Reset the former here so we can build with Studio.
 COMPONENT_BUILD_ARGS +=	COMMON_CFLAGS=''
