@@ -1,0 +1,38 @@
+--- libvpx-1.4.0/build/make/Makefile.~1~	2015-07-21 14:59:34.891087229 +0300
++++ libvpx-1.4.0/build/make/Makefile	2015-07-21 15:04:13.227553454 +0300
+@@ -296,8 +296,8 @@
+ 	$(if $(quiet),@echo "    [LD] $$@")
+ 	$(qexec)$$(LD) -shared $$(LDFLAGS) \
+             -Wl,--no-undefined -Wl,-soname,$$(SONAME) \
+-            -Wl,--version-script,$$(EXPORTS_FILE) -o $$@ \
+-            $$(filter %.o,$$^) $$(extralibs)
++            -Wl,-M$$(EXPORTS_FILE) -o $$@ \
++            $$(filter %.o,$$^) -lc $$(extralibs)
+ endef
+ 
+ define dl_template
+--- libvpx-1.4.0/vpx/exports_enc.~1~	2015-07-21 16:26:10.298776976 +0300
++++ libvpx-1.4.0/vpx/exports_enc	2015-07-21 16:26:48.308174527 +0300
+@@ -7,9 +7,3 @@
+ text vpx_codec_get_global_headers
+ text vpx_codec_get_preview_frame
+ text vpx_codec_set_cx_data_buf
+-text vpx_svc_dump_statistics
+-text vpx_svc_encode
+-text vpx_svc_get_message
+-text vpx_svc_init
+-text vpx_svc_release
+-text vpx_svc_set_options
+--- libvpx-1.4.0/vpx/exports_dec.~1~	2015-07-21 16:28:02.598217310 +0300
++++ libvpx-1.4.0/vpx/exports_dec	2015-07-21 16:28:10.131279373 +0300
+@@ -1,10 +1,8 @@
+ text vpx_codec_dec_init_ver
+ text vpx_codec_decode
+ text vpx_codec_get_frame
+-text vpx_codec_get_mem_map
+ text vpx_codec_get_stream_info
+ text vpx_codec_peek_stream_info
+ text vpx_codec_register_put_frame_cb
+ text vpx_codec_register_put_slice_cb
+ text vpx_codec_set_frame_buffer_functions
+-text vpx_codec_set_mem_map
