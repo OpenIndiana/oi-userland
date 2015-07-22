@@ -16,12 +16,12 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= freetype
-COMPONENT_VERSION= 2.4.11
+COMPONENT_VERSION= 2.5.5
 COMPONENT_SUMMARY=  FreeType 2 font engine
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:ef9d0bcb64647d9e5125dc7534d7ca371c98310fec87677c410f397f71ffbe3f
+  sha256:387bcc4b780b12484aa2ec9f7db1a55d8286eb5639f45fbc0fbba7a4e5a1afb9
 COMPONENT_ARCHIVE_URL= \
   http://download.savannah.gnu.org/releases/freetype/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://freetype.org/
