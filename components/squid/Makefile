@@ -93,6 +93,7 @@ CONFIGURE_OPTIONS += --with-aio
 CONFIGURE_OPTIONS += --with-aufs-threads=8
 CONFIGURE_OPTIONS += --with-build-environment=POSIX_V6_ILP32_OFFBIG
 CONFIGURE_OPTIONS += --with-pthreads
+CONFIGURE_OPTIONS += --without-nettle
 
 COMPONENT_BUILD_ARGS += CFLAGS="$(CFLAGS)"
 
