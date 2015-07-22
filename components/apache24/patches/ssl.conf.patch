@@ -1,5 +1,8 @@
 Patch origin: in-house
 Patch status: Solaris-specific; not suitable for upstream
+Patch status: SSLProtocol part submitted to upstream
+
+https://bz.apache.org/bugzilla/show_bug.cgi?id=57120
 
 --- docs/conf/extra/httpd-ssl.conf.in
 +++ docs/conf/extra/httpd-ssl.conf.in
@@ -24,9 +27,24 @@ Patch status: Solaris-specific; not suitable for upstream
 +#SSLFIPS on 
 +
  #   SSL Cipher Suite:
- #   List the ciphers that the client is permitted to negotiate.
- #   See the mod_ssl documentation for a complete list.
-@@ -103,7 +107,7 @@
+ #   List the ciphers that the client is permitted to negotiate,
+ #   and that httpd will negotiate as the client of a proxied server.
+@@ -73,11 +77,11 @@
+ 
+ #   SSL Protocol support:
+ #   List the protocol versions which clients are allowed to connect with.
+-#   Disable SSLv3 by default (cf. RFC 7525 3.1.1).  TLSv1 (1.0) should be
++#   SSLv3 is disabled by default (cf. RFC 7525 3.1.1).  TLSv1 (1.0) should be
+ #   disabled as quickly as practical.  By the end of 2016, only the TLSv1.2
+ #   protocol or later should remain in use.
+-SSLProtocol all -SSLv3
+-SSLProxyProtocol all -SSLv3
++SSLProtocol all
++SSLProxyProtocol all
+ 
+ #   Pass Phrase Dialog:
+ #   Configure the pass phrase gathering process.
+@@ -122,7 +126,7 @@
  
  #   General setup for the virtual host
  DocumentRoot "@exp_htdocsdir@"
