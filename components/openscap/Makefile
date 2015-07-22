@@ -96,7 +96,7 @@ CONFIGURE_OPTIONS +=	--enable-perl=yes
 CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS +=	am_cv_python_pythondir=$(PYTHON_VENDOR_PACKAGES)
 CONFIGURE_OPTIONS +=	am_cv_python_pyexecdir=$(PYTHON_VENDOR_PACKAGES)
-CONFIGURE_OPTIONS +=	LIBS="-lldap_r -lscf -ldlpi -lsec -lzonecfg"
+CONFIGURE_OPTIONS +=	LIBS="-lldap_r -lscf -ldlpi -lsec -lzonecfg -lv12n"
 
 DOCS_DIR = $(PROTO_DIR)/usr/share/docs/openscap/html/
 
@@ -135,5 +135,6 @@ REQUIRED_PACKAGES += system/library/gcc-45-runtime
 REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/security/libgcrypt
+REQUIRED_PACKAGES += system/library/libv12n
 REQUIRED_PACKAGES += system/zones
 REQUIRED_PACKAGES += web/curl

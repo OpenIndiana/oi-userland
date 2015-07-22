@@ -1,0 +1,330 @@
+This patch provides the implementation of the smfproperty probe
+on solaris.
+This patch will be contributed upstream by 2015-Aug-01.
+--- openscap-1.2.3/src/OVAL/oval_probe.c.~3~	2015-06-09 10:47:16.093295773 -0700
++++ openscap-1.2.3/src/OVAL/oval_probe.c	2015-06-09 10:45:27.608974352 -0700
+@@ -92,7 +92,8 @@
+         OVAL_PROBE_EXTERNAL(OVAL_UNIX_GCONF, "gconf"),
+         OVAL_PROBE_EXTERNAL(OVAL_UNIX_ROUTINGTABLE, "routingtable"),
+         OVAL_PROBE_EXTERNAL(OVAL_SOLARIS_SMF, "smf"),
+-        OVAL_PROBE_EXTERNAL(OVAL_SOLARIS_SMFPROPERTY, "smfproperty")
++        OVAL_PROBE_EXTERNAL(OVAL_SOLARIS_SMFPROPERTY, "smfproperty"),
++        OVAL_PROBE_EXTERNAL(OVAL_SOLARIS_VIRTUALIZATIONINFO, "virtualizationinfo")
+ };
+ 
+ #define __PROBE_META_COUNT (sizeof OSCAP_GSYM(__probe_meta)/sizeof OSCAP_GSYM(__probe_meta)[0])
+--- openscap-1.2.3/src/OVAL/public/oval_types.h.~2~	2015-06-09 12:38:09.977190833 -0700
++++ openscap-1.2.3/src/OVAL/public/oval_types.h	2015-06-09 12:40:10.173236122 -0700
+@@ -239,7 +239,8 @@
+ 	OVAL_SOLARIS_PATCH54 = OVAL_FAMILY_SOLARIS + 5,
+ 	OVAL_SOLARIS_NDD = OVAL_FAMILY_SOLARIS + 6,
+ 	OVAL_SOLARIS_PACKAGECHECK = OVAL_FAMILY_SOLARIS + 7,
+-	OVAL_SOLARIS_SMFPROPERTY = OVAL_FAMILY_SOLARIS + 8
++	OVAL_SOLARIS_SMFPROPERTY = OVAL_FAMILY_SOLARIS + 8,
++	OVAL_SOLARIS_VIRTUALIZATIONINFO = OVAL_FAMILY_SOLARIS + 9
+ } oval_solaris_subtype_t;
+ 
+ /// Unix subtypes
+--- openscap-1.2.3/configure.ac.~4~	2015-06-09 10:49:21.540749400 -0700
++++ openscap-1.2.3/configure.ac	2015-06-09 10:54:00.258561346 -0700
+@@ -261,6 +261,10 @@
+ probe_smfproperty_req_deps_missing=
+ probe_smfproperty_opt_deps_ok=yes
+ probe_smfproperty_opt_deps_missing=
++probe_virtualizationinfo_req_deps_ok=yes
++probe_virtualizationinfo_req_deps_missing=
++probe_virtualizationinfo_opt_deps_ok=yes
++probe_virtualizationinfo_opt_deps_missing=
+ 
+ #
+ # env
+@@ -1341,6 +1345,8 @@
+ probe_systemdunitdependency_enabled=$probe_systemdunitdependency_req_deps_ok
+ AM_CONDITIONAL([probe_smfproperty_enabled], test "$probe_smfproperty_req_deps_ok" = yes)
+ probe_smfproperty_enabled=$probe_smfproperty_req_deps_ok
++AM_CONDITIONAL([probe_virtualizationinfo_enabled], test "$probe_virtualizationinfo_req_deps_ok" = yes)
++probe_virtualizationinfo_enabled=$probe_virtualizationinfo_req_deps_ok
+ 
+ AM_CONDITIONAL([WANT_CCE],  test "$cce"  = yes)
+ 
+@@ -1763,6 +1769,12 @@
+   probe_smfproperty_table_result="NO (missing: $probe_smfproperty_req_deps_missing)"
+ fi
+ printf "  %-28s %s\n" "smfproperty:" "$probe_smfproperty_table_result"
++if test "$probe_virtualizationinfo_req_deps_ok" = "yes"; then
++  probe_virtualizationinfo_table_result="yes"
++else
++  probe_virtualizationinfo_table_result="NO (missing: $probe_virtualizationinfo_req_deps_missing)"
++fi
++printf "  %-28s %s\n" "virtualizationinfo:" "$probe_virtualizationinfo_table_result"
+ echo
+ echo "  === configuration ==="
+ echo "  probe directory set to:      $probe_dir"
+--- openscap-1.2.3/src/OVAL/oval_enumerations.c.~2~	2015-06-09 10:55:38.570940000 -0700
++++ openscap-1.2.3/src/OVAL/oval_enumerations.c	2015-06-09 10:56:31.829739468 -0700
+@@ -514,6 +514,7 @@
+ 	{OVAL_SOLARIS_NDD, "ndd"},
+ 	{OVAL_SOLARIS_PACKAGECHECK, "packagecheck"},
+ 	{OVAL_SOLARIS_SMFPROPERTY, "smfproperty"},
++	{OVAL_SOLARIS_VIRTUALIZATIONINFO, "virtualizationinfo"},
+ 	{OVAL_SUBTYPE_UNKNOWN, NULL}
+ };
+ 
+--- openscap-1.2.3/src/OVAL/probes/Makefile.am.~2~	2015-06-09 12:57:21.489291652 -0700
++++ openscap-1.2.3/src/OVAL/probes/Makefile.am	2015-06-09 12:59:07.124539196 -0700
+@@ -1,3 +1,4 @@
++AUTOMAKE_OPTIONS=subdir-objects
+ SUBDIRS= probe crapi
+ 
+ pkglibexecdir= $(libexecdir)/openscap
+@@ -207,6 +208,11 @@
+ probe_smfproperty_SOURCES= unix/solaris/smfproperty.c
+ endif
+ 
++if probe_virtualizationinfo_enabled
++pkglibexec_PROGRAMS += probe_virtualizationinfo
++probe_virtualizationinfo_SOURCES= unix/solaris/virtualizationinfo.c
++endif
++
+ endif
+ 
+ #
+--- /dev/null	2015-06-12 08:24:23.000000000 -0700
++++ openscap-1.2.3/src/OVAL/probes/unix/solaris/virtualizationinfo.c	2015-06-12 08:57:14.458223740 -0700
+@@ -0,0 +1,236 @@
++/**
++ * @file virtualizationinfo.c
++ * @brief virtualizationinfo probe
++ * @author "Jacob Varughese" <jacob.varughese@oracle.com>
++ *
++ * This probe processes the properties of virtual environments.
++ */
++
++
++#include "probe-api.h"
++#ifdef HAVE_CONFIG_H
++#include <config.h>
++#endif
++
++#if	defined(__SVR4)	&&	defined(__sun)
++#include <stdlib.h>
++#include <string.h>
++#include <stdio.h>
++#include <errno.h>
++#include <sys/stat.h>
++#include <ctype.h>
++#include <sys/types.h>
++#include <limits.h>
++#include <unistd.h>
++#include <libv12n.h>
++#include "probe/entcmp.h"
++#include "alloc.h"
++#include "common/debug_priv.h"
++#include <syslog.h>
++
++
++/*
++ * virtualizationinfo probe
++ *
++ * current - name of current environment
++ * supported - list of supported virtual environments by this environment
++ * parent - parent environment of the current environment
++ * ldom-role - ldom domain role types
++ * properties - record type of properties for the current environment
++ */
++#define	BUFFER_LEN	1024;
++
++struct result_info {
++	char *current;
++	char *supported;
++	char *parent;
++	char *ldomrole;
++	SEXP_t *properties;
++};
++
++
++static void
++report_finding(struct result_info *res, probe_ctx *ctx)
++{
++	SEXP_t *item;
++
++	item = probe_item_create(OVAL_SOLARIS_VIRTUALIZATIONINFO, NULL,
++	    "current", OVAL_DATATYPE_STRING, res->current,
++	    "supported", OVAL_DATATYPE_STRING, res->supported,
++	    "parent", OVAL_DATATYPE_STRING, res->parent,
++	    "ldom-role", OVAL_DATATYPE_STRING, res->ldomrole,
++	    "properties", OVAL_DATATYPE_RECORD, res->properties,
++	    NULL);
++	probe_item_collect(ctx, item);
++}
++
++static void
++get_env_props_str(v12n_env_t *curr, SEXP_t *properties)
++{
++	v12n_prop_t *props;
++	v12n_prop_t prop;
++	int i;
++
++	if (properties == NULL || curr == NULL)
++		return;
++	if ((props = v12n_list_env_props(curr)) == NULL) {
++		dE("No properties for current environment\n");
++		return;
++	}
++	for (i = 0; props[i] != 0;  i++) {
++		char *name = NULL, *value = NULL;
++		SEXP_t *field, se_tmp;
++
++		prop = props[i];
++		if ((name = v12n_get_prop_name(prop)) != NULL &&
++		    (prop ==  V12N_PROP_NAME || prop == V12N_PROP_CLASS))
++			continue;
++		if ((value = v12n_get_env_prop(curr, prop)) == NULL)
++			continue;
++		field = probe_ent_creat1(name, NULL,
++		    SEXP_string_new_r(&se_tmp, value, strlen(value)));
++		probe_ent_setdatatype(field, OVAL_DATATYPE_STRING);
++		SEXP_list_add(properties, field);
++		free(value);
++		SEXP_free_r(&se_tmp);
++		SEXP_free(field);
++	}
++	free(props);
++}
++
++static char *
++get_env_prop_str(v12n_env_t *curr, v12n_prop_t *prop)
++{
++	char *value = NULL;
++
++	if (curr != NULL && prop != NULL &&
++	    ((value = v12n_get_env_prop(curr, *prop)) != NULL) &&
++	    (strcmp(value, "non-virtualized") != 0)) {
++		return value;
++	}
++	return NULL;
++}
++
++static int
++get_supported_envs(v12n_env_t **envs, char **result)
++{
++	int i;
++	int size = 0;
++	int len;
++	int cur_size;
++	char *suppenvs;
++
++	cur_size = BUFFER_LEN;
++	if ((suppenvs = malloc(cur_size)) == NULL) {
++		dE("Out of memory error.\n");
++		return PROBE_ENOMEM;
++	}
++	suppenvs[0] = '\0';
++	for (i = 0; envs[i] != 0;  i++) {
++		char *child_env;
++		char *tmp;
++		v12n_env_t *supp;
++		v12n_prop_t prop;
++
++		supp = envs[i];
++		prop = V12N_PROP_NAME;
++		if ((child_env = get_env_prop_str(supp, &prop)) == NULL)
++			continue;
++		len = strlen(child_env);
++		if ((len + size + 2) > cur_size) {
++			cur_size = size *2 + len;
++			if ((suppenvs = realloc(suppenvs, cur_size)) == NULL) {
++				dE("Out of memory error.\n");
++				return PROBE_ENOMEM;
++			}
++		}
++		if (i > 0) {
++			suppenvs[size -1] = ' ';
++			suppenvs[size] = '\0';
++			tmp = &suppenvs[size];
++		} else {
++			tmp = &suppenvs[0];
++		}
++		strcpy(tmp, child_env);
++		size += len +1;
++		free(child_env);
++		v12n_free_env(envs[i]);
++	}
++	*result = suppenvs;
++	return 0;
++}
++
++static int
++get_environment_settings(probe_ctx *ctx)
++{
++	struct result_info r;
++	v12n_env_t **envs = NULL;
++	v12n_env_t *curr = NULL;
++	v12n_env_t *parent = NULL;
++	v12n_prop_t prop;
++	SEXP_t *properties;
++	boolean_t ldom = false;
++	int rc = 0;
++
++	memset(&r, 0x0, sizeof(struct result_info));
++	prop = V12N_PROP_NAME;
++	curr = v12n_get_current_env();
++	parent = v12n_get_parent_env();
++	r.current = get_env_prop_str(curr, &prop);
++	r.parent = get_env_prop_str(parent, &prop);
++	if (r.current != NULL && strcmp(r.current, "logical-domain") == 0)
++		ldom = true;
++	if ((envs = v12n_list_supported_envs()) != NULL) {
++		if ((rc = get_supported_envs(envs, &r.supported)) > 0)
++			goto error;
++	}
++	dI("supported envs: %s\n", r.supported);
++	dI("current: %s\n", r.current);
++	dI("parent: %s\n", r.parent);
++
++	/* check ldom roles */
++	if (ldom == true) {
++		for (prop = V12N_PROP_LDOMS_ROLE_CONTROL;
++		    prop < V12N_PROP_LDOMS_NAME; prop++) {
++			char *value = NULL;
++
++			if ((value = get_env_prop_str(curr, &prop)) != NULL &&
++			    strcmp(value, "true") == 0) {
++				r.ldomrole = strdup(v12n_get_prop_name(prop));
++				free(value);
++				break;
++			}
++			free(value);
++		}
++		dI("ldom-role : %s\n", r.ldomrole);
++	}
++
++	/* properties name, uuid, control-name, chassis, kzone-name */
++	properties = probe_ent_creat1("properties", NULL, NULL);
++	probe_ent_setdatatype(properties, OVAL_DATATYPE_RECORD);
++	get_env_props_str(curr, properties);
++	r.properties = properties;
++	report_finding(&r, ctx);
++	SEXP_free(properties);
++error:
++	v12n_free_env(curr);
++	v12n_free_env(parent);
++	free(envs);
++	free(r.supported);
++	free(r.current);
++	free(r.parent);
++	free(r.ldomrole);
++	return rc;
++}
++
++int
++probe_main(probe_ctx *ctx, void *probe_arg)
++{
++
++	if (ctx == NULL) {
++		dE("No object in context.\n");
++		return PROBE_ENOOBJ;
++	}
++	return get_environment_settings(ctx);
++}
++#endif
