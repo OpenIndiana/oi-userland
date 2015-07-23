@@ -1266,7 +1266,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
         console_fmri = VNC_CONSOLE_BASE_FMRI + ':' + name
         # TODO(npower): investigate using RAD instead of CLI invocation
         try:
-            out, err = utils.execute('/usr/sbin/svcadm', 'disable',
+            out, err = utils.execute('/usr/sbin/svcadm', 'disable', '-s',
                                      console_fmri)
         except processutils.ProcessExecutionError as err:
             LOG.error(_("Unable to disable zone VNC console SMF service "
