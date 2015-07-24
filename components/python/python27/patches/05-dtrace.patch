@@ -64,8 +64,8 @@ integrated into the main tree.
      f->f_lineno = code->co_firstlineno;
      f->f_iblock = 0;
  
---- Python-2.7.9/Python/ceval.c.~1~	2014-12-10 07:59:58.000000000 -0800
-+++ Python-2.7.9/Python/ceval.c	2014-12-11 09:19:01.398584575 -0800
+--- Python-2.7.10/Python/ceval.c.~1~	2015-05-10 10:17:06 -0800
++++ Python-2.7.10/Python/ceval.c	2015-05-18 14:31:31 -0800
 @@ -19,6 +19,11 @@
  
  #include <ctype.h>
@@ -78,7 +78,7 @@ integrated into the main tree.
  #ifndef WITH_TSC
  
  #define READ_TIMESTAMP(var)
-@@ -672,6 +677,55 @@
+@@ -674,6 +679,55 @@
                        NULL);
  }
  
@@ -134,7 +134,7 @@ integrated into the main tree.
  
  /* Interpreter main loop */
  
-@@ -683,9 +737,84 @@
+@@ -685,9 +739,84 @@
      return PyEval_EvalFrameEx(f, 0);
  }
  
@@ -219,7 +219,7 @@ integrated into the main tree.
  #ifdef DXPAIRS
      int lastopcode = 0;
  #endif
-@@ -910,6 +1039,11 @@
+@@ -912,6 +1041,11 @@
          }
      }
  
@@ -231,7 +231,7 @@ integrated into the main tree.
      co = f->f_code;
      names = co->co_names;
      consts = co->co_consts;
-@@ -2673,6 +2807,9 @@
+@@ -2675,6 +2809,9 @@
              PyObject **sp;
              PCALL(PCALL_ALL);
              sp = stack_pointer;
@@ -241,7 +241,7 @@ integrated into the main tree.
  #ifdef WITH_TSC
              x = call_function(&sp, oparg, &intr0, &intr1);
  #else
-@@ -2714,6 +2851,9 @@
+@@ -2716,6 +2853,9 @@
              } else
                  Py_INCREF(func);
              sp = stack_pointer;
@@ -251,7 +251,7 @@ integrated into the main tree.
              READ_TIMESTAMP(intr0);
              x = ext_do_call(func, &sp, flags, na, nk);
              READ_TIMESTAMP(intr1);
-@@ -3014,6 +3154,10 @@
+@@ -3016,6 +3156,10 @@
  
      /* pop frame */
  exit_eval_frame:
@@ -419,9 +419,9 @@ new file mode 100644
 +#pragma D attributes Private/Private/Common provider python function
 +#pragma D attributes Evolving/Evolving/Common provider python name
 +#pragma D attributes Evolving/Evolving/Common provider python args
---- Python-2.7.9/Lib/test/test_sys.py.~1~	2014-12-10 07:59:47.000000000 -0800
-+++ Python-2.7.9/Lib/test/test_sys.py	2014-12-11 09:20:26.361157717 -0800
-@@ -619,7 +619,7 @@
+--- Python-2.7.10/Lib/test/test_sys.py.~1~	2015-05-10 10:17:04 -0800
++++ Python-2.7.10/Lib/test/test_sys.py	2015-05-18 14:35:06 -0800
+@@ -620,7 +620,7 @@
          nfrees = len(x.f_code.co_freevars)
          extras = x.f_code.co_stacksize + x.f_code.co_nlocals +\
                   ncells + nfrees - 1
