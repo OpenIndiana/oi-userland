@@ -24,12 +24,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME			= sqlite
-COMPONENT_VERSION		= 3.8.8.3
-TARBALL_VERSION			= 3080803
+COMPONENT_VERSION		= 3.8.10.2
+TARBALL_VERSION			= 3081002
 COMPONENT_SRC			= sqlite-autoconf-$(TARBALL_VERSION)
 COMPONENT_ARCHIVE		= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH	= \
-	sha256:74576964cd9db44c13bf95d6a7c36b06cfdfb2fe4e3e26c9ce1ae0b2e328b411
+	sha256:8382e55a4e7d853c93038562ca3dd00307937fccf1c6b65ddd813e503a56d626
 COMPONENT_ARCHIVE_URL=	http://www.sqlite.org/2015/$(COMPONENT_ARCHIVE)
 
 include ../../../make-rules/prep.mk
@@ -41,6 +41,8 @@ COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
                                         aclocal -I . &&\
                                         automake -c -f -a &&\
                                         autoconf )
+
+COMPONENT_BUILD_ARGS=
 
 COMPONENT_PRE_CONFIGURE_ACTION   += $(CLONEY) $(SOURCE_DIR) $(@D);
 COMPONENT_PRE_CONFIGURE_ACTION   += $(CP) $(COMPONENT_DIR)/mapfile $(@D)
