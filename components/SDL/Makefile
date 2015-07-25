@@ -43,6 +43,7 @@ CONFIGURE_OPTIONS +=	--sysconfdir=/etc
 CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS +=	--with-esd-prefix=/usr
 CONFIGURE_OPTIONS +=	--disable-static
+CONFIGURE_OPTIONS +=	--disable-assembly
 
 # common targets
 build:		$(BUILD_32_and_64)
