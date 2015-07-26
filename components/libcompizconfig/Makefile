@@ -35,14 +35,17 @@ include $(WS_TOP)/make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
+# Missing files in build dir without this.
+COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
+
 COMPONENT_PREP_ACTION =        ( cd $(@D) && \
 					rm -f ltmain.sh &&\
 			                libtoolize --automake --copy --force && \
+					intltoolize --force --copy &&\
 					aclocal -I. && \
 				        autoheader && \
 					automake -a -f -c &&\
-					autoconf &&\
-					intltoolize )
+					autoconf )
 
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
