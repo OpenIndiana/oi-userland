@@ -15,14 +15,14 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ccsm
-COMPONENT_VERSION=	0.8.4
-COMPONENT_PROJECT_URL=	http://www.compiz.org/
+COMPONENT_VERSION=	0.8.10
+COMPONENT_PROJECT_URL=	http://www.northfield.ws/
 COMPONENT_SUMMARY=	ccsm settings manager for the CompizConfig system
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
+COMPONENT_SRC=		$(COMPONENT_NAME)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:46b9da032cf29e71aec0823799861d926937ad41f4edea3be718ac6a8532c16d
-COMPONENT_ARCHIVE_URL=	http://releases.compiz.org/components/ccsm/$(COMPONENT_ARCHIVE)
+    sha256:ae622878b651ff215de2673a057ca6c34f5fe4e68d8cf2eb073fb83e4cda3254
+COMPONENT_ARCHIVE_URL=	http://www.northfield.ws/projects/compiz/releases/$(COMPONENT_VERSION)/$(COMPONENT_SRC).tar.gz
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
@@ -41,6 +41,17 @@ COMPONENT_INSTALL_ARGS +=       --install-lib=$(PYTHON_LIB)
 COMPONENT_INSTALL_ARGS +=       --install-purelib=$(PYTHON_LIB)
 COMPONENT_INSTALL_ARGS +=       --install-platlib=$(PYTHON_LIB)
 COMPONENT_INSTALL_ARGS +=       --force
+
+COMPONENT_POST_BUILD_ACTION = \
+		(cd $(SOURCE_DIR);\
+		$(GSED) -i -e '1 s/env python/python2.6/' ccm/Conflicts.py; \
+		$(GSED) -i -e '1 s/env python/python2.6/' ccm/Constants.py; \
+		$(GSED) -i -e '1 s/env python/python2.6/' ccm/Pages.py; \
+		$(GSED) -i -e '1 s/env python/python2.6/' ccm/Settings.py; \
+		$(GSED) -i -e '1 s/env python/python2.6/' ccm/Utils.py; \
+		$(GSED) -i -e '1 s/env python/python2.6/' ccm/Widgets.py; \
+		$(GSED) -i -e '1 s/env python/python2.6/' ccm/Window.py; \
+		$(GSED) -i -e '1 s/env python/python2.6/' ccm/__init__.py; )
 
 # common targets
 build:		$(BUILD_32)

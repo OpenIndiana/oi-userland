@@ -16,8 +16,8 @@
 set name=pkg.fmri value=pkg:/desktop/compiz/ccsm@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="org.opensolaris.category.2008:Applications/Graphics and Imaging"
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license ccsm.license license="GPLv2"
@@ -25,12 +25,17 @@ license ccsm.license license="GPLv2"
 <transform file path=usr/share/applications/.* ->  default restart_fmri svc:/application/desktop-cache/desktop-mime-cache:default>
 <transform file path=usr/share/locale/([^/]+)(\..+){0,1}(/.+){0,1} -> default facet.locale.%<\1> true>
 
-# IPS can't find dependency
-<transform file path=(.*)\.py -> default pkg.depend.bypass-generate .*(gdk|sexy).*>
+#IPS can't find dependency for gdk
+<transform file path=(.*)\.py -> default pkg.depend.bypass-generate .*(gdk).*>
 
+# force a dependency on the Python runtime
+depend type=require fmri=__TBD pkg.debug.depend.file=python2.6 \
+	pkg.debug.depend.path=usr/bin
+
+# force a dependency on the unversioned package
 depend fmri=desktop/compiz/ccsm@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=require
 
-file path=usr/bin/ccsm mode=0555 pkg.depend.bypass-generate=.*sexy.*
+file path=usr/bin/ccsm mode=0555 
 file path=usr/lib/python2.6/vendor-packages/ccm/Conflicts.py
 file path=usr/lib/python2.6/vendor-packages/ccm/Constants.py
 file path=usr/lib/python2.6/vendor-packages/ccm/Pages.py
@@ -39,7 +44,7 @@ file path=usr/lib/python2.6/vendor-packages/ccm/Utils.py
 file path=usr/lib/python2.6/vendor-packages/ccm/Widgets.py
 file path=usr/lib/python2.6/vendor-packages/ccm/Window.py
 file path=usr/lib/python2.6/vendor-packages/ccm/__init__.py
-file path=usr/lib/python2.6/vendor-packages/ccsm-0.8.4-py2.6.egg-info
+file path=usr/lib/python2.6/vendor-packages/ccsm-$(COMPONENT_VERSION)-py2.6.egg-info
 file path=usr/share/applications/ccsm.desktop
 file path=usr/share/ccsm/icons/hicolor/22x22/categories/plugins-accessibility.png
 file path=usr/share/ccsm/icons/hicolor/22x22/categories/plugins-desktop.png
