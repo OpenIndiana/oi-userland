@@ -25,6 +25,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME			= sqlite
 COMPONENT_VERSION		= 3.8.10.2
+COMPONENT_REVISION		= 1
 TARBALL_VERSION			= 3081002
 COMPONENT_SRC			= sqlite-autoconf-$(TARBALL_VERSION)
 COMPONENT_ARCHIVE		= $(COMPONENT_SRC).tar.gz
@@ -57,6 +58,7 @@ CFLAGS			+= -DHAVE_FDATASYNC
 CFLAGS			+= -DHAVE_STATVFS 
 CFLAGS			+= -DSQLITE_ENABLE_UNLOCK_NOTIFY
 CFLAGS			+= -DSQLITE_ENABLE_STAT2
+CFLAGS			+= -DSQLITE_ENABLE_STMT_SCANSTATUS
 
 #Fixes firefox crash with new sqlite, don't remove until proper fix
 gcc_OPT                 =  -O2
