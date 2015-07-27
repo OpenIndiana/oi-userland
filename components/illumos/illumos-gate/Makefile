@@ -110,8 +110,8 @@ $(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.patched
 	    -e 's|^export NIGHTLY_OPTIONS=.*|export NIGHTLY_OPTIONS=\"$(NIGHTLY_OPTIONS)\"|' \
 	    -e 's|^export GATE=.*|export GATE=\"$$(git log -1 --format=illumos-%h)\"|' \
 	    -e 's|^export CODEMGR_WS=.*|export CODEMGR_WS=\"$$PWD\"|'; \
-	  echo export PERL_VERSION=\"5.16\"; \
-	  echo export PERL_PKGVERS=\"-516\"; \
+	  echo export PERL_VERSION=\"5.22\"; \
+	  echo export PERL_PKGVERS=\"-522\"; \
 	  echo export CW_NO_SHADOW=1; \
 	  echo export __GNUC=\"\"; \
 	  echo export ONLY_LINT_DEFS=-I\$$SPRO_ROOT/sunstudio12.1/prod/include/lint; \
