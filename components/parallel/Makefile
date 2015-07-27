@@ -26,17 +26,21 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		parallel
-COMPONENT_VERSION=	20121122
+COMPONENT_VERSION=	20150722
 # A leading "0." is included to make it easier to upgrade the package, should
 # the maintainers decide to go to a more standard version numbering system.
-IPS_COMPONENT_VERSION=  0.2012.11.22
+IPS_COMPONENT_VERSION=  0.2015.7.22
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/parallel/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:0315336141612ba2ec1f76e6c8c58a72f4531777c96b79b91ef64b3980be584f
+    sha256:7d2ee5d7c76aed193f5373425ed395289a795986b21ffba836bf64ae08a3f34a
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/parallel
+COMPONENT_SUMMARY=	GNU parallel is a shell tool for executing jobs in parallel using one or more computers.
+COMPONENT_FMRI=		shell/parallel
+COMPONENT_LICENSE_FILE=	COPYING
+COMPONENT_LICENSE=	GPLv3
+COMPONENT_CLASSIFICATION=	System/Shells
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

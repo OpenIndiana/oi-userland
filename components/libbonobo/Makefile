@@ -31,13 +31,16 @@ include $(WS_TOP)/make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
+COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
+					libtoolize --copy --force &&\
+					aclocal -I . &&\
+					automake -c -f -a &&\
+					autoconf )
+
 CONFIGURE_OPTIONS.32 += --sysconfdir=/etc
 CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib
 CONFIGURE_OPTIONS.64 += --sysconfdir=/etc/$(MACH64)
 CONFIGURE_OPTIONS.64 += --libexecdir=/usr/lib/$(MACH64)
-
-CONFIGURE_OPTIONS += --enable-bonobo-activation-debug
-CONFIGURE_OPTIONS += --enable-debug
 
 # common targets
 build:		$(BUILD_32_and_64)

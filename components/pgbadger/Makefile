@@ -17,6 +17,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	pgbadger
 COMPONENT_VERSION= 	4.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY= 	pgBadger PostgreSQL log analyzer
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
