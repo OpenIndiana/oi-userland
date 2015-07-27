@@ -11,15 +11,15 @@
 # Special thanks goes to Lou Picciano <Lou@Picciano.org> for additional testing 
 # and his guidance and Michal Hanula <michal@hanu.la> for further testing.
 # 
-# Copyright (c) 2012, Adam Stevko <adam.stevko@gmail.com> 
+# Copyright (c) 2015, Adam Stevko <adam.stevko@gmail.com> 
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		zabbix-agent
-COMPONENT_VERSION=	2.0.6
+COMPONENT_VERSION=	2.0.14
 COMPONENT_SRC=		zabbix-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	zabbix-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:46dfa7e63d3d38991cddaa7455e70179dc3fbef658ccbdce8cc8ce8e73baedf8	
+COMPONENT_ARCHIVE_HASH= sha256:ee6ed7ac109cd3196309217137a8f8bd031e3c4e0696f1f1f4fa1957db0c6be1
 COMPONENT_PROJECT_URL=	http://www.zabbix.com/
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/zabbix/files/ZABBIX%20Latest%20Stable/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 
