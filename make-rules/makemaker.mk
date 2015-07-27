@@ -21,8 +21,7 @@
 # Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
-# Perl 5.12 and older are 32-bit only.
-# Perl 5.16 and newer are 64-bit only.
+# All Perl versions are 32-bit only.
 
 COMMON_PERL_ENV +=	MAKE=$(GMAKE)
 COMMON_PERL_ENV +=	PATH=$(dir $(CC)):$(SPRO_VROOT)/bin:$(PATH)
@@ -36,20 +35,22 @@ COMMON_PERL_ENV +=	CFLAGS="$(PERL_OPTIMIZE)"
 
 $(BUILD_DIR)/$(MACH32)-5.16/.configured:	PERL_VERSION=5.16
 $(BUILD_DIR)/$(MACH32)-5.16/.configured:	BITS=32
-$(BUILD_DIR)/$(MACH32)-5.10.0/.configured:	PERL_VERSION=5.10.0
-$(BUILD_DIR)/$(MACH32)-5.10.0/.configured:	BITS=32
 $(BUILD_DIR)/$(MACH64)-5.16/.configured:	PERL_VERSION=5.16
 $(BUILD_DIR)/$(MACH64)-5.16/.configured:	BITS=64
+$(BUILD_DIR)/$(MACH32)-5.22/.configured:	PERL_VERSION=5.22
+$(BUILD_DIR)/$(MACH32)-5.22/.configured:	BITS=32
+$(BUILD_DIR)/$(MACH64)-5.22/.configured:	PERL_VERSION=5.22
+$(BUILD_DIR)/$(MACH64)-5.22/.configured:	BITS=64
 
-$(BUILD_DIR)/$(MACH32)-5.10.0/.tested:	PERL_VERSION=5.10.0
-$(BUILD_DIR)/$(MACH32)-5.10.0/.tested:	BITS=32
 $(BUILD_DIR)/$(MACH32)-5.16/.tested:	PERL_VERSION=5.16
 $(BUILD_DIR)/$(MACH32)-5.16/.tested:	BITS=32
+$(BUILD_DIR)/$(MACH32)-5.22/.tested:	PERL_VERSION=5.22
+$(BUILD_DIR)/$(MACH32)-5.22/.tested:	BITS=32
 
-$(BUILD_DIR)/$(MACH32)-5.10.0/.tested-and-compared:	PERL_VERSION=5.10.0
-$(BUILD_DIR)/$(MACH32)-5.10.0/.tested-and-compared:	BITS=32
 $(BUILD_DIR)/$(MACH32)-5.16/.tested-and-compared:	PERL_VERSION=5.16
 $(BUILD_DIR)/$(MACH32)-5.16/.tested-and-compared:	BITS=32
+$(BUILD_DIR)/$(MACH32)-5.22/.tested-and-compared:	BITS=32
+$(BUILD_DIR)/$(MACH32)-5.22/.tested-and-compared:	PERL_VERSION=5.22
 
 PERL_32_BUILD_FILES:=$(foreach ver, $(PERL_VERSIONS), $(BUILD_DIR)/$(MACH32)-$(ver)/.built )
 PERL_32_INSTALL_FILES:=$(foreach ver, $(PERL_VERSIONS), $(BUILD_DIR)/$(MACH32)-$(ver)/.installed )
