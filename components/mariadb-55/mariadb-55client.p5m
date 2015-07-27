@@ -23,7 +23,6 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-<transform file -> default pkg.depend.bypass-generate perl >
 <transform file -> default mangler.man.stability committed>
 
 license mariadb-55.license license=GPLv2
@@ -31,8 +30,6 @@ license mariadb-55.license license=GPLv2
 link path=usr/bin/mysql target=../mariadb/5.5/bin/mysql mediator=mysql mediator-version=5.5 mediator-implementation=mariadb
 link path=usr/share/man/man1/mysql.1 target=../../../mariadb/5.5/man/man1/mysql.1 mediator=mysql mediator-version=5.5 mediator-implementation=mariadb
 depend fmri=database/mysql-common type=require
-
-depend type=require-any fmri=runtime/perl-510 fmri=runtime/perl-516
 
 file path=usr/mariadb/5.5/bin/$(MACH64)/mytop mode=0555
 file path=usr/mariadb/5.5/bin/mytop mode=0555
