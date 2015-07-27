@@ -16,8 +16,8 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= mrtg
-
 COMPONENT_VERSION= 2.17.4
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= mrtg - The Multi Router Traffic Grapher
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz

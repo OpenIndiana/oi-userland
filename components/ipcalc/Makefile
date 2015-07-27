@@ -16,6 +16,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ipcalc
 COMPONENT_VERSION=	0.41
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://jodies.de/ipcalc
 COMPONENT_SUMMARY=	IP Calculator
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)

@@ -23,7 +23,6 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-<transform file -> default pkg.depend.bypass-generate perl >
 <transform file -> default mangler.man.stability committed>
 
 license percona-server-56.license license=GPLv2
@@ -31,8 +30,6 @@ license percona-server-56.license license=GPLv2
 link path=usr/bin/mysql target=../percona-server/5.6/bin/mysql mediator=mysql mediator-version=5.6 mediator-implementation=percona-server
 link path=usr/share/man/man1/mysql.1 target=../../../percona-server/5.6/man/man1/mysql.1 mediator=mysql mediator-version=5.6 mediator-implementation=percona-server
 depend fmri=database/mysql-common type=require
-
-depend type=require-any fmri=runtime/perl-510 fmri=runtime/perl-516
 
 file path=usr/percona-server/5.6/man/man1/msql2mysql.1
 file path=usr/percona-server/5.6/man/man1/mysql.1

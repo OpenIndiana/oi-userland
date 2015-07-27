@@ -27,6 +27,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mc
 COMPONENT_VERSION=	4.8.8
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.midnight-commander.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
