@@ -24,9 +24,6 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:31354975140fe6235ac130a109496491ad33dd42f9c62189e23f49f75f936d75
 COMPONENT_ARCHIVE_URL=	http://search.cpan.org/CPAN/authors/id/C/CH/CHORNY/$(COMPONENT_ARCHIVE)
 
-# Perl 5.10 has Switch.pm module
-PERL_VERSIONS = 5.16
-
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/makemaker.mk
 include $(WS_TOP)/make-rules/ips.mk
