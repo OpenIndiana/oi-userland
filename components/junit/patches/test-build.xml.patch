@@ -1,0 +1,20 @@
+Internal patch to get Userland test working.
+Will not offer upstream.
+
+
+--- junit-r4.11/build.xml_orig	2015-07-16 13:17:09.182838009 -0700
++++ junit-r4.11/build.xml	2015-07-17 13:15:36.944965837 -0700
+@@ -203,6 +203,13 @@
+     </sequential>
+   </macrodef>
+ 
++  <!-- copy of target name=dist minus depends -->
++  <target name="test-build">
++    <run-dist-tests>
++      <jvmarg value="-Dignore.this=ignored"/>
++    </run-dist-tests>
++  </target>
++
+   <target name="test" depends="build">
+     <run-local-tests />
+   </target>

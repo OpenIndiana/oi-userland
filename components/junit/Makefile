@@ -43,7 +43,24 @@ COMPONENT_BUILD_ARGS 	+= -Ddist=${PROTO_DIR}
 COMPONENT_BUILD_ARGS    += -Djavadocdir=${PROTO_DIR}
 COMPONENT_BUILD_ARGS    += -Dversion-status=""
 COMPONENT_BUILD_ARGS    += -Dadditionalparam="-Xdoclint:none"
-COMPONENT_BUILD_TARGETS += dist
+COMPONENT_BUILD_TARGETS  = populate-dist
+
+# We patched in test-build into build.xml which is a copy of
+# dist but without the depends=populate-dist
+# because userland infrasture will handle the build and we
+# need to build tests which are also part of the overall softare build.
+COMPONENT_TEST_ARGS	+= $(COMPONENT_BUILD_ARGS)
+COMPONENT_TEST_TARGETS	 = test-build
+
+COMPONENT_SYSTEM_TEST_ARGS	+= -Dsystem-binjar=/usr/share/lib/java/$(COMPONENT_NAME).jar
+COMPONENT_SYSTEM_TEST_TARGETS	 = test
+
+# Test transforms
+# 	remove everything upto "test" which is build noise
+#	remove time
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "1,/^test/d"' \
+	'-e "s/.*[Tt]ime.*$$//"'
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
@@ -51,16 +68,17 @@ build:		$(BUILD_32)
 	
 install:	build	
 
-# Testing is run as part of the build.
-# To really test AFTER you have installed the resulting package do:
+# Another test is:
+# To test after you have installed the resulting package do:
 # $ java -cp /usr/share/lib/java/junit.jar:/usr/share/doc/junit/samples/org \
 #       junit/samples/money/MoneyTest
 # ......................
 # Time: 0.003
 #
 # OK (22 tests)
-test:		$(NO_TESTS)
 
-system-test:    $(NO_TESTS)
+test:		$(TEST_32)
+
+system-test:    build $(SYSTEM_TEST_32)
 		
 REQUIRED_PACKAGES += runtime/java/jre-8

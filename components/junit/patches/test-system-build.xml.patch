@@ -1,0 +1,34 @@
+Internal patch to get Userland system-test working.
+Will not offer upstream.
+
+
+--- junit-r4.11/build.xml_orig	2015-07-21 14:04:27.085904567 -0700
++++ junit-r4.11/build.xml	2015-07-22 16:03:07.512692190 -0700
+@@ -7,6 +7,7 @@
+   <property name="src" value="src/main/java" />
+   <property name="target" location="target" />
+   <property name="bin" location="${target}/main" />
++  <property name="system-binjar" location="/usr/share/lib/java/junit.jar" />
+   <property name="version-base" value="4.11" />
+   <property name="version-status" value="-SNAPSHOT" />
+   <property name="version" value="${version-base}${version-status}" />
+@@ -195,9 +196,8 @@
+       <java classname="org.junit.runner.JUnitCore" fork="yes" failonerror="true">
+         <arg value="org.junit.tests.AllTests"/>
+         <classpath>
+-          <pathelement location="${bin}" />
++          <pathelement location="${system-binjar}" />
+           <pathelement location="${testbin}" />
+-          <pathelement location="${hamcrestlib}" />
+         </classpath>
+       </java>    
+     </sequential>
+@@ -210,7 +210,7 @@
+     </run-dist-tests>
+   </target>
+ 
+-  <target name="test" depends="build">
++  <target name="test">
+     <run-local-tests />
+   </target>
+ 
