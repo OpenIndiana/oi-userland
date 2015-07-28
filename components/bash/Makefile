@@ -87,7 +87,6 @@ COMPONENT_TEST_TRANSFORMS += \
 
 # The bash test harness needs the GNU userland utilities
 TEST_PATH = "PATH=$(BUILD_DIR_64):$(GNUBIN):$(USRBINDIR)"
-TEST_RESULTS_FILE = $(COMPONENT_TEST_RESULTS_DIR)/test-$(BITS)-results
 
 CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_ENV +=	LDFLAGS="$(LDFLAGS)"
@@ -138,7 +137,11 @@ CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 
 COMPONENT_TEST_DIR =		$(BUILD_DIR_64)
 COMPONENT_TEST_ENV =		- $(TEST_PATH)
-COMPONENT_TEST_TARGETS =	check > $(TEST_RESULTS_FILE) 2>&1
+
+# The tests use /tmp/xx, and there can only be one user running
+# the them at a time. Need to remove /tmp/xx after testing to 
+# avoid permission issues for other users running these tests
+COMPONENT_POST_TEST_ACTION =	rm -f /tmp/xx
 
 ASLR_MODE=$(ASLR_ENABLE)
 
