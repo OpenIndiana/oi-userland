@@ -24,7 +24,7 @@ COMPONENT_ARCHIVE_HASH= \
   sha256:c5141199f4cfb17d749c36ba8cfe4b25f838da67c22f0fec40228b6b9c3d19df
 COMPONENT_ARCHIVE_URL= \
   http://downloads.sourceforge.net/project/faac/faac-src/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://djvu.sourceforge.net/
+COMPONENT_PROJECT_URL = http://www.audiocoding.com/faac.html
 COMPONENT_LICENSE = LGPLv2
 COMPONENT_LICENSE_FILE = COPYING
 COMPONENT_CLASSIFICATION = Applications/Sound and Video
