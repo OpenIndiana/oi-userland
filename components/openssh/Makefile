@@ -81,6 +81,7 @@ CONFIGURE_OPTIONS += --with-sandbox=no
 CONFIGURE_OPTIONS += --with-solaris-contracts
 CONFIGURE_OPTIONS += --with-tcp-wrappers
 CONFIGURE_OPTIONS += --with-4in6
+CONFIGURE_OPTIONS += --with-xauth=/usr/bin/xauth
 CONFIGURE_OPTIONS += --enable-strip=no
 CONFIGURE_OPTIONS += --without-rpath
 CONFIGURE_OPTIONS += --libexecdir=/usr/lib/ssh

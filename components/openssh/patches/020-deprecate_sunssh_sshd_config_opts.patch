@@ -13,12 +13,11 @@
 # This is a Solaris specific change to ease the transition and will not be
 # offered upstream.
 #
-diff -pur old/servconf.c new/servconf.c
---- old/servconf.c	2015-03-28 22:31:16.652020119 +0100
-+++ new/servconf.c	2015-03-28 22:34:36.569887785 +0100
-@@ -557,6 +557,28 @@ static struct {
-         { "pamserviceprefix", sPAMServicePrefix, SSHCFG_GLOBAL },
-         { "pamservicename", sPAMServiceName, SSHCFG_GLOBAL },
+--- orig/servconf.c	Tue Jul 21 16:34:07 2015
++++ new/servconf.c	Tue Jul 21 17:00:39 2015
+@@ -567,6 +567,29 @@
+ 	{ "pamserviceprefix", sPAMServicePrefix, SSHCFG_GLOBAL },
+ 	{ "pamservicename", sPAMServiceName, SSHCFG_GLOBAL },
  #endif
 +#ifdef DEPRECATE_SUNSSH_OPT
 +	/*
@@ -41,6 +40,7 @@ diff -pur old/servconf.c new/servconf.c
 +	{ "trustedanchorkeystore", sDeprecated, SSHCFG_GLOBAL },
 +	{ "useunsupportedsshv1", sDeprecated, SSHCFG_GLOBAL },
 +	{ "usefips140", sDeprecated, SSHCFG_ALL},
++	{ "gssapistoredelegatedcredentials", sDeprecated, SSHCFG_ALL },
 +#endif
  	{ "revokedkeys", sRevokedKeys, SSHCFG_ALL },
  	{ "trustedusercakeys", sTrustedUserCAKeys, SSHCFG_ALL },

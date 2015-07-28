@@ -1,0 +1,35 @@
+#
+# This is to fix a keyboard-interactive authentication brute force
+# vulnerability (MaxAuthTries bypass). A CVE number (CVE-2015-5600) has been
+# reserved for this problem, but not officially issued yet. This fix came from
+# OpenSSH upstream, which will be included in the future OpenSSH 7.0p1 release.
+# When we upgrade OpenSSH to 7.0 in the future, we will remove this patch.
+#
+--- orig/auth2-chall.c	Fri Jul 24 17:36:37 2015
++++ new/auth2-chall.c	Fri Jul 24 17:47:21 2015
+@@ -83,6 +83,7 @@
+ 	void *ctxt;
+ 	KbdintDevice *device;
+ 	u_int nreq;
++        u_int devices_done;
+ };
+ 
+ #ifdef USE_PAM
+@@ -169,11 +170,15 @@
+ 		if (len == 0)
+ 			break;
+ 		for (i = 0; devices[i]; i++) {
+-			if (!auth2_method_allowed(authctxt,
++			if ((kbdintctxt->devices_done & (1 << i)) != 0 ||
++			    !auth2_method_allowed(authctxt,
+ 			    "keyboard-interactive", devices[i]->name))
+ 				continue;
+-			if (strncmp(kbdintctxt->devices, devices[i]->name, len) == 0)
++			if (strncmp(kbdintctxt->devices, devices[i]->name,
++			    len) == 0) {
+ 				kbdintctxt->device = devices[i];
++				kbdintctxt->devices_done |= 1 << i;
++			}
+ 		}
+ 		t = kbdintctxt->devices;
+ 		kbdintctxt->devices = t[len] ? xstrdup(t+len+1) : NULL;
