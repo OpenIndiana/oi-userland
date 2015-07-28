@@ -43,20 +43,25 @@ include $(WS_MAKE_RULES)/ips.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-COMPONENT_TEST_DIR= $(COMPONENT_SRC)
-COMPONENT_TEST_ARGS= ./setup.py test
+COMPONENT_TEST_DIR= $(COMPONENT_SRC)/$(COMPONENT_NAME)/tests
+COMPONENT_TEST_CMD= /usr/bin/py.test-$(PYTHON_VERSION)
+COMPONENT_TEST_ARGS= -v
 
 # The additional simplejson specific set of transforms to be applied
 # to the test results to try to normalize them.
 COMPONENT_TEST_TRANSFORMS += \
-	'-e "s|\(^$(CC)\).*|\\$$(CC)|" ' \
-	'-e "s|\(^cc -G \).*|\1|" ' \
-	'-e "s|\(creating build/temp.solaris\).*|\1|" ' \
-	'-e "s|\(Ran 132 tests in\).*|\1|" '
+	'-e "/^_.*/d" ' \
+	'-e "/^=.*/d" ' \
+	'-e "/SOURCE_DIR.*/d" ' \
+	'-e "/^ *$$/d" ' \
+	'-e "/^plugins.*/d" ' \
+	'-e "/pep8/d" ' \
+	'-e "/pyflakes/d" '
 
-COMPONENT_SYSTEM_TEST_DIR =	$(COMPONENT_SRC)
+COMPONENT_SYSTEM_TEST_DIR= $(COMPONENT_SRC)/$(COMPONENT_NAME)/tests
+COMPONENT_SYSTEM_TEST_CMD= /usr/bin/py.test-$(PYTHON_VERSION)
+COMPONENT_SYSTEM_TEST_ARGS= -v
 COMPONENT_SYSTEM_TEST_ENV =
-COMPONENT_SYSTEM_TEST_ARGS =	./setup.py test
 
 build:		$(BUILD_32_and_64)
 
