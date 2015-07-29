@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004, 2014, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2004, 2015, Oracle and/or its affiliates. All rights reserved.
  */
 
 /* crypto/engine/e_pk11.c */
@@ -2168,7 +2168,6 @@ pk11_destroy_dh_key_objects(PK11_SESSION *session)
 			continue;
 			}
 		}
-err:
 	if (session == NULL)
 		(void) pthread_mutex_unlock(session_cache[OP_DH].lock);
 

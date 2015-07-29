@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004, 2013, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2004, 2015, Oracle and/or its affiliates. All rights reserved.
  *
  */
 
@@ -248,6 +248,7 @@ pk11_process_pkcs11_uri(const char *uristr, pkcs11_uri *uri_struct,
 		 * attributes.
 		 */
 		if (strcmp(name, PK11_TOKEN) == 0)
+			{
 			if (uri_struct->token == NULL)
 				{
 				if ((uri_struct->token = strdup(l2)) == NULL)
@@ -255,7 +256,9 @@ pk11_process_pkcs11_uri(const char *uristr, pkcs11_uri *uri_struct,
 				}
 			else
 				goto bad_uri;
+			}
 		else if (strcmp(name, PK11_MANUF) == 0)
+			{
 			if (uri_struct->manuf == NULL)
 				{
 				if ((uri_struct->manuf = strdup(l2)) == NULL)
@@ -263,7 +266,9 @@ pk11_process_pkcs11_uri(const char *uristr, pkcs11_uri *uri_struct,
 				}
 			else
 				goto bad_uri;
+			}
 		else if (strcmp(name, PK11_SERIAL) == 0)
+			{
 			if (uri_struct->serial == NULL)
 				{
 				if ((uri_struct->serial = strdup(l2)) == NULL)
@@ -271,7 +276,9 @@ pk11_process_pkcs11_uri(const char *uristr, pkcs11_uri *uri_struct,
 				}
 			else
 				goto bad_uri;
+			}
 		else if (strcmp(name, PK11_MODEL) == 0)
+			{
 			if (uri_struct->model == NULL)
 				{
 				if ((uri_struct->model = strdup(l2)) == NULL)
@@ -279,7 +286,9 @@ pk11_process_pkcs11_uri(const char *uristr, pkcs11_uri *uri_struct,
 				}
 			else
 				goto bad_uri;
+			}
 		else if (strcmp(name, PK11_OBJECT) == 0)
+			{
 			if (uri_struct->object == NULL)
 				{
 				if ((uri_struct->object = strdup(l2)) == NULL)
@@ -287,7 +296,9 @@ pk11_process_pkcs11_uri(const char *uristr, pkcs11_uri *uri_struct,
 				}
 			else
 				goto bad_uri;
+			}
 		else if (strcmp(name, PK11_OBJECTTYPE) == 0)
+			{
 			if (uri_struct->objecttype == NULL)
 				{
 				uri_struct->objecttype = strdup(l2);
@@ -296,7 +307,9 @@ pk11_process_pkcs11_uri(const char *uristr, pkcs11_uri *uri_struct,
 				}
 			else
 				goto bad_uri;
+			}
 		else if (strcmp(name, PK11_ASKPASS) == 0)
+			{
 			if (uri_struct->askpass == NULL)
 				{
 				if ((uri_struct->askpass = strdup(l2)) == NULL)
@@ -304,6 +317,7 @@ pk11_process_pkcs11_uri(const char *uristr, pkcs11_uri *uri_struct,
 				}
 			else
 				goto bad_uri;
+			}
 		else
 			goto bad_uri;
 		}
@@ -494,17 +508,21 @@ pk11_cache_pin(char *pin)
 		goto ok;
 
 	if (pk11_get_pin_caching_policy() == POLICY_MEMORY)
+		{
 		if ((token_pin = strdup(pin)) == NULL)
 			{
 			PK11err(PK11_F_CACHE_PIN, PK11_R_MALLOC_FAILURE);
 			goto err;
 			}
+		}
 	else
+		{
 		if (pk11_get_pin_caching_policy() == POLICY_MLOCKED_MEMORY)
 			{
 			if (mlock_pin_in_memory(pin) == 0)
 				goto err;
 			}
+		}
 
 ok:
 	(void) pthread_mutex_unlock(uri_lock);
