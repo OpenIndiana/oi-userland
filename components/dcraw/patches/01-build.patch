@@ -2,10 +2,10 @@ We create Makefile as dcraw doesn't ship one and remove install script for gmake
 --- /dev/null	2015-04-01 10:52:59.000000000 +0300
 +++ dcraw/Makefile	2015-04-01 10:55:40.131114779 +0300
 @@ -0,0 +1,22 @@
-+LCMS_CFLAGS=$(shell pkg-config --cflags lcms)
-+LCMS_LIBS=$(shell pkg-config --libs lcms)
-+dcraw_CFLAGS = $(CFLAGS) $(LCMS_CFLAGS)
-+dcraw_LDFLAGS = $(LDFLAGS) $(LCMS_LIBS) -lm -ljpeg
++LCMS_CFLAGS=$(shell pkg-config --cflags lcms2)
++LCMS_LIBS=$(shell pkg-config --libs lcms2)
++dcraw_CFLAGS = $(CFLAGS) $(LCMS_CFLAGS) # -DLOCALEDIR=\"/usr/share/locale/\"
++dcraw_LDFLAGS = $(LDFLAGS) $(LCMS_LIBS) -lm -ljasper -ljpeg 
 +CC?=gcc
 +MKDIR?=mkdir -p
 +
@@ -24,37 +24,3 @@ We create Makefile as dcraw doesn't ship one and remove install script for gmake
 +	done
 +	$(MKDIR) $(DESTDIR)/usr/share/man/man1
 +	cp dcraw.1 $(DESTDIR)/usr/share/man/man1
---- dcraw/install	2009-12-25 21:14:19.000000000 +0300
-+++ /dev/null	2015-04-01 10:57:29.000000000 +0300
-@@ -1,31 +0,0 @@
--#!/bin/sh
--# Simple installer for dcraw executable, manpages, and message catalogs.
--# Dave Coffin, dcoffin a cybercom o net
--
--# You will need these:
--# apt-get install libjpeg-dev liblcms-dev gettext
--
--prefix=/usr/local
--
--gcc -O4 -march=native -o $prefix/bin/dcraw dcraw.c \
--	-Wall -Wno-unused-result -Wno-array-bounds \
--	-lm -ljpeg -llcms -s -DLOCALEDIR=\"$prefix/share/locale/\"
--
--mkdir -p -m 755 $prefix/share/man/man1
--cp dcraw.1 $prefix/share/man/man1
--
--# Please help me add more languages
--for langchar in \
--  fr.latin1 it.latin1 de.latin1 pt.latin1 es.latin1 nl.latin1 sv.latin1 \
--  ca.latin1 da.latin1 cs.latin2 hu.latin2 pl.latin2 eo.latin3 ru.koi8-r \
--  zh_TW.big5 zh_CN.gb2312
--do
--  lang=`echo $langchar | cut -d. -f1`
--  char=`echo $langchar | cut -d. -f2-`
--  mkdir -p -m 755 $prefix/share/man/$lang/man1
--  iconv -f utf-8 -t $char dcraw_$lang.1 > $prefix/share/man/$lang/man1/dcraw.1
--  mkdir -p -m 755 $prefix/share/man/$lang.UTF-8/man1
--  cp dcraw_$lang.1 $prefix/share/man/$lang.UTF-8/man1/dcraw.1
--  mkdir -p -m 755 $prefix/share/locale/$lang/LC_MESSAGES
--  msgfmt -o $prefix/share/locale/$lang/LC_MESSAGES/dcraw.mo dcraw_$lang.po
--done

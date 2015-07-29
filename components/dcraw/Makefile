@@ -15,15 +15,14 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           dcraw
-COMPONENT_VERSION=        8.99
+COMPONENT_VERSION=        9.26.0
 COMPONENT_PROJECT_URL=    https://www.cybercom.net/~dcoffin/dcraw/
 COMPONENT_SUMMARY=        dcraw - Decoding RAW digital photos
 COMPONENT_SRC=            $(COMPONENT_NAME)
 COMPONENT_ARCHIVE=        $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=        \
-    sha256:f8c64153998c375390cd24d9695701c7d71773d810fece8c31da2199353da570
-#COMPONENT_ARCHIVE_URL=        http://cybercom.net/~dcoffin/dcraw/archive/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_URL=        http://dlc.openindiana.org/oi/jds/downloads/sources/$(COMPONENT_ARCHIVE)
+    sha256:85791d529e037ad5ca09770900ae975e2e4cc1587ca1da4192ca072cbbfafba3
+COMPONENT_ARCHIVE_URL=        http://cybercom.net/~dcoffin/dcraw/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	dcraw.license
 COMPONENT_FMRI=		image/dcraw
@@ -33,9 +32,12 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/justmake.mk
 include $(WS_TOP)/make-rules/ips.mk
 
+COMPONENT_PREP_ACTION=( cd $(@D) && rm -f install )
+
 COMPONENT_BUILD_ARGS += CC=$(CC)
 COMPONENT_BUILD_ARGS += CXX=$(CXX)
 COMPONENT_BUILD_ARGS += CFLAGS="$(CFLAGS)"
+
                                         
 # common targets
 build:                $(BUILD_32)
