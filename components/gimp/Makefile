@@ -47,6 +47,7 @@ CONFIGURE_OPTIONS+=	--localstatedir=/var/lib
 CONFIGURE_OPTIONS+=	--enable-mp
 CONFIGURE_OPTIONS+=	--enable-default-binary
 CONFIGURE_OPTIONS+=	--enable-mmx=no
+CONFIGURE_OPTIONS+=	--with-lcms=2
 #CONFIGURE_OPTIONS+=	--enable-glibtest=no
 
 # common targets
