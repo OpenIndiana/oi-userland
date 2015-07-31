@@ -1,0 +1,236 @@
+Developed in-house, not fed back.
+Solaris-specific: SolarisStudio Customization.
+=== modified file 'CMakeLists.txt'
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-# Copyright (c) 2006, 2014, Oracle and/or its affiliates. All rights reserved.
++# Copyright (c) 2006, 2015, Oracle and/or its affiliates. All rights reserved.
+ # 
+ # This program is free software; you can redistribute it and/or modify
+ # it under the terms of the GNU General Public License as published by
+@@ -19,6 +19,11 @@ if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" GREATER 2.6)
+  CMAKE_POLICY(VERSION 2.8)
+ endif()
+ 
++# We use CMAKE_SHARED_LIBRARY_<Lang>_FLAGS. See cmake --help-policy CMP0018
++IF(CMAKE_VERSION VERSION_GREATER "2.8.8")
++  CMAKE_POLICY(SET CMP0018 OLD)
++ENDIF()
++
+ # We use PROPERTIES LINK_INTERFACE_LIBRARIES. See cmake --help-policy CMP0022
+ IF(CMAKE_VERSION VERSION_EQUAL "2.8.12" OR
+    CMAKE_VERSION VERSION_GREATER "2.8.12")
+=== modified file 'cmake/plugin.cmake'
+--- a/cmake/plugin.cmake
++++ b/cmake/plugin.cmake
+@@ -1,4 +1,4 @@
+-# Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
++# Copyright (c) 2009, 2015, Oracle and/or its affiliates. All rights reserved.
+ # 
+ # This program is free software; you can redistribute it and/or modify
+ # it under the terms of the GNU General Public License as published by
+@@ -175,6 +175,15 @@ MACRO(MYSQL_ADD_PLUGIN)
+       COMPILE_DEFINITIONS "MYSQL_DYNAMIC_PLUGIN")
+     TARGET_LINK_LIBRARIES (${target} mysqlservices)
+ 
++    GET_TARGET_PROPERTY(LINK_FLAGS ${target} LINK_FLAGS)
++    IF(NOT LINK_FLAGS)
++      # Avoid LINK_FLAGS-NOTFOUND
++      SET(LINK_FLAGS)
++    ENDIF()
++    SET_TARGET_PROPERTIES(${target} PROPERTIES
++      LINK_FLAGS "${CMAKE_SHARED_LIBRARY_C_FLAGS} ${LINK_FLAGS} "
++    )
++
+     # Plugin uses symbols defined in mysqld executable.
+     # Some operating systems like Windows and OSX and are pretty strict about 
+     # unresolved symbols. Others are less strict and allow unresolved symbols
+=== modified file 'configure.cmake'
+--- a/configure.cmake
++++ b/configure.cmake
+@@ -1,4 +1,4 @@
+-# Copyright (c) 2009, 2014, Oracle and/or its affiliates. All rights reserved.
++# Copyright (c) 2009, 2015, Oracle and/or its affiliates. All rights reserved.
+ # 
+ # This program is free software; you can redistribute it and/or modify
+ # it under the terms of the GNU General Public License as published by
+@@ -43,6 +43,13 @@ IF(UNIX)
+ ENDIF()
+ 
+ 
++IF(CMAKE_SYSTEM_NAME MATCHES "SunOS" AND CMAKE_COMPILER_IS_GNUCXX)
++  ## We will be using gcc to generate .so files
++  ## Add C flags (e.g. -m64) to CMAKE_SHARED_LIBRARY_C_FLAGS
++  SET(CMAKE_SHARED_LIBRARY_C_FLAGS
++    "${CMAKE_SHARED_LIBRARY_C_FLAGS} ${CMAKE_C_FLAGS}")
++ENDIF()
++
+ 
+ # System type affects version_compile_os variable 
+ IF(NOT SYSTEM_TYPE)
+@@ -65,6 +72,10 @@ IF(CMAKE_SYSTEM_NAME MATCHES "SunOS")
+   IF(CMAKE_CXX_COMPILER_ID MATCHES "SunPro")
+     IF(SUNPRO_CXX_LIBRARY)
+       SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -library=${SUNPRO_CXX_LIBRARY}")
++      IF(SUNPRO_CXX_LIBRARY STREQUAL "stdcxx4")
++        ADD_DEFINITIONS(-D__MATHERR_RENAME_EXCEPTION)
++        SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -template=extdef")
++      ENDIF()
+     ELSE()
+       SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -library=stlport4")
+     ENDIF()
+@@ -88,45 +99,109 @@ MACRO(DIRNAME IN OUT)
+   GET_FILENAME_COMPONENT(${OUT} ${IN} PATH)
+ ENDMACRO()
+ 
++MACRO(FIND_REAL_LIBRARY SOFTLINK_NAME REALNAME)
++  # We re-distribute libstlport.so/libstdc++.so which are both symlinks.
++  # There is no 'readlink' on solaris, so we use perl to follow links:
++  SET(PERLSCRIPT
++    "my $link= $ARGV[0]; use Cwd qw(abs_path); my $file = abs_path($link); print $file;")
++  EXECUTE_PROCESS(
++    COMMAND perl -e "${PERLSCRIPT}" ${SOFTLINK_NAME}
++    RESULT_VARIABLE result
++    OUTPUT_VARIABLE real_library
++    )
++  SET(REALNAME ${real_library})
++ENDMACRO()
++
++MACRO(EXTEND_CXX_LINK_FLAGS LIBRARY_PATH)
++  # Using the $ORIGIN token with the -R option to locate the libraries
++  # on a path relative to the executable:
++  # We need an extra backslash to pass $ORIGIN to the mysql_config script...
++  SET(QUOTED_CMAKE_CXX_LINK_FLAGS
++    "${CMAKE_CXX_LINK_FLAGS} -R'\\$ORIGIN/../lib' -R${LIBRARY_PATH}")
++  SET(CMAKE_CXX_LINK_FLAGS
++    "${CMAKE_CXX_LINK_FLAGS} -R'\$ORIGIN/../lib' -R${LIBRARY_PATH}")
++  MESSAGE(STATUS "CMAKE_CXX_LINK_FLAGS ${CMAKE_CXX_LINK_FLAGS}")
++ENDMACRO()
++
++MACRO(EXTEND_C_LINK_FLAGS LIBRARY_PATH)
++  SET(QUOTED_CMAKE_C_LINK_FLAGS
++    "${CMAKE_C_LINK_FLAGS} -R'\\$ORIGIN/../lib' -R${LIBRARY_PATH}")
++  SET(CMAKE_C_LINK_FLAGS
++    "${CMAKE_C_LINK_FLAGS} -R'\$ORIGIN/../lib' -R${LIBRARY_PATH}")
++  MESSAGE(STATUS "CMAKE_C_LINK_FLAGS ${CMAKE_C_LINK_FLAGS}")
++  SET(CMAKE_SHARED_LIBRARY_C_FLAGS
++    "${CMAKE_SHARED_LIBRARY_C_FLAGS} -R'\$ORIGIN/..' -R'\$ORIGIN/../lib' -R${LIBRARY_PATH}")
++ENDMACRO()
++
+ IF(CMAKE_SYSTEM_NAME MATCHES "SunOS" AND
+    CMAKE_C_COMPILER_ID MATCHES "SunPro" AND
+    CMAKE_CXX_FLAGS MATCHES "stlport4")
+   DIRNAME(${CMAKE_CXX_COMPILER} CXX_PATH)
+-  SET(STLPORT_SUFFIX "lib/stlport4")
+-  IF(CMAKE_SIZEOF_VOID_P EQUAL 8 AND CMAKE_SYSTEM_PROCESSOR MATCHES "sparc")
+-    SET(STLPORT_SUFFIX "lib/stlport4/v9")
++  # Also extract real path to the compiler(which is normally
++  # in <install_path>/prod/bin) and try to find the
++  # stlport libs relative to that location as well.
++  GET_FILENAME_COMPONENT(CXX_REALPATH ${CMAKE_CXX_COMPILER} REALPATH)
++
++  # CC -V yields
++  # CC: Sun C++ 5.13 SunOS_sparc Beta 2014/03/11
++  # CC: Sun C++ 5.11 SunOS_sparc 2010/08/13
++
++  EXECUTE_PROCESS(
++    COMMAND ${CMAKE_CXX_COMPILER} "-V"
++    OUTPUT_VARIABLE stdout
++    ERROR_VARIABLE  stderr
++    RESULT_VARIABLE result
++  )
++  IF(result)
++    MESSAGE(FATAL_ERROR "Failed to execute ${CMAKE_CXX_COMPILER} -V")
+   ENDIF()
+-  IF(CMAKE_SIZEOF_VOID_P EQUAL 8 AND CMAKE_SYSTEM_PROCESSOR MATCHES "i386")
+-    SET(STLPORT_SUFFIX "lib/stlport4/amd64")
++
++  STRING(REGEX MATCH "CC: Sun C\\+\\+ 5\\.([0-9]+)" VERSION_STRING ${stderr})
++  SET(CC_MINOR_VERSION ${CMAKE_MATCH_1})
++
++  IF(${CC_MINOR_VERSION} EQUAL 13)
++    SET(STLPORT_SUFFIX "lib/compilers/stlport4")
++    IF(SIZEOF_VOIDP EQUAL 8 AND CMAKE_SYSTEM_PROCESSOR MATCHES "sparc")
++      SET(STLPORT_SUFFIX "lib/compilers/stlport4/sparcv9")
++    ENDIF()
++    IF(SIZEOF_VOIDP EQUAL 8 AND CMAKE_SYSTEM_PROCESSOR MATCHES "i386")
++      SET(STLPORT_SUFFIX "lib/compilers/stlport4/amd64")
++    ENDIF()
++  ELSE()
++    SET(STLPORT_SUFFIX "lib/stlport4")
++    IF(SIZEOF_VOIDP EQUAL 8 AND CMAKE_SYSTEM_PROCESSOR MATCHES "sparc")
++      SET(STLPORT_SUFFIX "lib/stlport4/v9")
++    ENDIF()
++    IF(SIZEOF_VOIDP EQUAL 8 AND CMAKE_SYSTEM_PROCESSOR MATCHES "i386")
++      SET(STLPORT_SUFFIX "lib/stlport4/amd64")
++    ENDIF()
+   ENDIF()
+ 
+   FIND_LIBRARY(STL_LIBRARY_NAME
+     NAMES "stlport"
+     PATHS ${CXX_PATH}/../${STLPORT_SUFFIX}
++          ${CXX_REALPATH}/../../${STLPORT_SUFFIX}
+   )
+   MESSAGE(STATUS "STL_LIBRARY_NAME ${STL_LIBRARY_NAME}")
+   IF(STL_LIBRARY_NAME)
+     DIRNAME(${STL_LIBRARY_NAME} STLPORT_PATH)
+-    # We re-distribute libstlport.so which is a symlink to libstlport.so.1
+-    # There is no 'readlink' on solaris, so we use perl to follow links:
+-    SET(PERLSCRIPT
+-      "my $link= $ARGV[0]; use Cwd qw(abs_path); my $file = abs_path($link); print $file;")
+-    EXECUTE_PROCESS(
+-      COMMAND perl -e "${PERLSCRIPT}" ${STL_LIBRARY_NAME}
+-      RESULT_VARIABLE result
+-      OUTPUT_VARIABLE real_library
+-    )
++    FIND_REAL_LIBRARY(${STL_LIBRARY_NAME} real_library)
+     MESSAGE(STATUS "INSTALL ${STL_LIBRARY_NAME} ${real_library}")
+     INSTALL(FILES ${STL_LIBRARY_NAME} ${real_library}
+-            DESTINATION ${INSTALL_LIBDIR} COMPONENT Development)
+-    # Using the $ORIGIN token with the -R option to locate the libraries
+-    # on a path relative to the executable:
+-    # We need an extra backslash to pass $ORIGIN to the mysql_config script...
+-    SET(QUOTED_CMAKE_CXX_LINK_FLAGS
+-      "${CMAKE_CXX_LINK_FLAGS} -R'\\$ORIGIN/../lib' -R${STLPORT_PATH}")
+-    SET(CMAKE_CXX_LINK_FLAGS
+-      "${CMAKE_CXX_LINK_FLAGS} -R'\$ORIGIN/../lib' -R${STLPORT_PATH}")
+-    MESSAGE(STATUS "CMAKE_CXX_LINK_FLAGS ${CMAKE_CXX_LINK_FLAGS}")
++            DESTINATION ${INSTALL_LIBDIR} COMPONENT SharedLibraries)
++    EXTEND_C_LINK_FLAGS(${STLPORT_PATH})
++    EXTEND_CXX_LINK_FLAGS(${STLPORT_PATH})
++  ELSE()
++    MESSAGE(STATUS "Failed to find the required stlport library, print some"
++                   "variables to help debugging and bail out")
++    MESSAGE(STATUS "CMAKE_CXX_COMPILER ${CMAKE_CXX_COMPILER}")
++    MESSAGE(STATUS "CXX_PATH ${CXX_PATH}")
++    MESSAGE(STATUS "CXX_REALPATH ${CXX_REALPATH}")
++    MESSAGE(STATUS "STLPORT_SUFFIX ${STLPORT_SUFFIX}")
++    MESSAGE(STATUS "PATH: ${CXX_PATH}/../${STLPORT_SUFFIX}")
++    MESSAGE(STATUS "PATH: ${CXX_REALPATH}/../../${STLPORT_SUFFIX}")
++    MESSAGE(FATAL_ERROR
++      "Could not find the required stlport library.")
+   ENDIF()
+ ENDIF()
+=== modified file 'plugin/password_validation/validate_password.cc'
+--- a/plugin/password_validation/validate_password.cc
++++ b/plugin/password_validation/validate_password.cc
+@@ -17,6 +17,7 @@
+ #include <string>
+ #include <mysql/plugin_validate_password.h>
+ #include <set>
++#include <ios>       // std::streamoff
+ #include <iostream>
+ #include <fstream>
+ 
+=== modified file 'unittest/gunit/CMakeLists.txt'
+--- a/unittest/gunit/CMakeLists.txt
++++ b/unittest/gunit/CMakeLists.txt
+@@ -255,7 +255,6 @@ SET(TESTS
+   sql_list
+   sql_plist
+   sql_string
+-  stdcxx
+   strtoll
+   thread_utils
+   )

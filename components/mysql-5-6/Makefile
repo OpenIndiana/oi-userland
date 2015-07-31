@@ -24,15 +24,14 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME        = mysql
-COMPONENT_VERSION     = 5.6.21
+COMPONENT_VERSION     = 5.6.25
 COMPONENT_SRC         = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE     = $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-         sha256:ea4daf6a8f4b1a9c62e416249a08fbdcbf686667d738004ef82044def96feb7c
-COMPONENT_ARCHIVE_URL = http://downloads.mysql.com/archives/mysql-5.6/$(COMPONENT_ARCHIVE)
+         sha256:15079c0b83d33a092649cbdf402c9225bcd3f33e87388407be5cdbf1432c7fbd
+COMPONENT_ARCHIVE_URL = http://cdn.mysql.com/Downloads/MySQL-5.6/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://dev.mysql.com/ 
 COMPONENT_BUGDB       = database/mysql
-COMPILER              = gcc
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
@@ -40,6 +39,9 @@ include $(WS_MAKE_RULES)/ips.mk
 
 # Enable ASLR for this component
 ASLR_MODE           = $(ASLR_ENABLE)
+
+# MySQL being one of Oracle's own product doesn't require to have a
+# TPNO License number.
 
 # This component uses cmake to generate Makefiles and thus does not
 # run any configure script
@@ -54,8 +56,10 @@ CMAKE_LIBDIR.32     = lib
 CMAKE_LIBDIR.64     = lib/$(MACH64)
 CMAKE_PLUGINDIR.32  = lib/plugin
 CMAKE_PLUGINDIR.64  = lib/$(MACH64)/plugin
-CMAKE_CFLAGS.64     = -m64
-CMAKE_CXXFLAGS.64   = -m64
+CMAKE_CFLAGS.32     = -D__MATHERR_RENAME_EXCEPTION
+CMAKE_CFLAGS.64     = -m64 -D__MATHERR_RENAME_EXCEPTION
+CMAKE_CXXFLAGS.32   = -D__MATHERR_RENAME_EXCEPTION -template=extdef -xnorunpath
+CMAKE_CXXFLAGS.64   = -m64 -D__MATHERR_RENAME_EXCEPTION -template=extdef -xnorunpath
 
 # Providing component specific build options to cmake
 CMAKE_OPTIONS += -DBUILD_CONFIG=mysql_release
@@ -81,10 +85,11 @@ CMAKE_OPTIONS += -DWITH_FEDERATED_STORAGE_ENGINE=1
 CMAKE_OPTIONS += -DWITH_INNOBASE_STORAGE_ENGINE=1
 CMAKE_OPTIONS += -DCMAKE_CXX_COMPILER=$(CXX)
 CMAKE_OPTIONS += -DCMAKE_C_COMPILER=$(CC)
-CMAKE_OPTIONS += -DCMAKE_C_FLAGS=$(CMAKE_CFLAGS.$(BITS))
-CMAKE_OPTIONS += -DCMAKE_CXX_FLAGS=$(CMAKE_CXXFLAGS.$(BITS))
+CMAKE_OPTIONS += -DCMAKE_C_FLAGS="$(CMAKE_CFLAGS.$(BITS))"
+CMAKE_OPTIONS += -DCMAKE_CXX_FLAGS="$(CMAKE_CXXFLAGS.$(BITS))"
 CMAKE_OPTIONS += '-DCOMPILATION_COMMENT=MySQL Community Server (GPL)'
 CMAKE_OPTIONS += -DFEATURE_SET=community
+CMAKE_OPTIONS += -DSUNPRO_CXX_LIBRARY=stdcxx4
 
 COMPONENT_PRE_BUILD_ACTION += cd $(@D);
 COMPONENT_PRE_BUILD_ACTION += export LDFLAGS=$(CMAKE_CXXFLAGS.$(BITS));
@@ -99,6 +104,7 @@ test: $(NO_TESTS)
 
 system-test:    $(NO_TESTS)
 
+REQUIRED_PACKAGES += database/mysql-56/client
 REQUIRED_PACKAGES += developer/build/cmake
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += runtime/perl-512
@@ -106,7 +112,7 @@ REQUIRED_PACKAGES += runtime/perl-516
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/gcc/gcc-c++-runtime
-REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
+REQUIRED_PACKAGES += system/library/c++-runtime
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/network
+REQUIRED_PACKAGES += library/c++/stdcxx
