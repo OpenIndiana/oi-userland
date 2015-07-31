@@ -1,0 +1,59 @@
+Source:
+Internal
+
+Info:
+To fix the test input and expected output for testing function asn1_parser_asn1
+
+Status:
+Need to determine if this patch has been sent upstream.
+
+--- ORIGINAL/./tests/Test_parser.c	2015-07-14 19:10:29.112559485 -0700
++++ libtasn1-2.8/./tests/Test_parser.c	2015-07-14 19:11:26.058882047 -0700
+@@ -48,17 +48,17 @@
+   /* Test DEFINITIONS syntax */
+   {5,
+    "TEST_PARSER2 { } DEFINITIONS IMPLICIT TAGS ::= BEGIN int1 ::= INTEGER END",
+-   ASN1_SYNTAX_ERROR, _FILE_ ":6: parse error near 'TEST_PARSER'"},
++   ASN1_SYNTAX_ERROR, _FILE_ ":6: Error: syntax error, unexpected IDENTIFIER, expecting $end near 'TEST_PARSER'"},
+   {6, "TEST_PARSER { }", ASN1_SUCCESS, ""},
+ 
+   /* Test ASN1_MAX_NAME_SIZE (128) */
+   {12,
+-   "a1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567 ::= INTEGER",
++   "a123456789012345678901234567890123456789012345678901234567890123 ::= INTEGER",
+    ASN1_SUCCESS, ""},
+   {12,
+-   "a12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678 ::= INTEGER",
++   "a1234567890123456789012345678901234567890123456789012345678901234 ::= INTEGER",
+    ASN1_NAME_TOO_LONG,
+-   _FILE_ ":12: name too long (more than 128 characters)"},
++   _FILE_ ":12: name too long (more than 64 characters)"},
+ 
+   /* Test 'check identifier' function */
+   {12, "ident1 ::= ident2   ident2 ::= INTEGER",
+@@ -81,13 +81,13 @@
+   {14, "int1 [1] IMPLICIT INTEGER,", ASN1_SUCCESS, ""},
+   {12, "Integer ::= [1] EXPLICIT INTEGER {v1(-1), v2(1)}", ASN1_SUCCESS, ""},
+   {12, "Integer ::= INTEGER {v1(0), v2}",
+-   ASN1_SYNTAX_ERROR, _FILE_ ":12: parse error near '}'"},
++   ASN1_SYNTAX_ERROR, _FILE_ ":12: Error: syntax error, unexpected '}', expecting '(' near '}'"},
+   {12, "Integer ::= INTEGER {v1(0), 1}",
+-   ASN1_SYNTAX_ERROR, _FILE_ ":12: parse error near '1'"},
++   ASN1_SYNTAX_ERROR, _FILE_ ":12: Error: syntax error, unexpected NUM, expecting IDENTIFIER or '(' near '1'"},
+   {12, "const1 INTEGER ::= -1", ASN1_SUCCESS, ""},
+   {12, "const1 INTEGER ::= 1", ASN1_SUCCESS, ""},
+   {12, "const1 INTEGER ::= v1",
+-   ASN1_SYNTAX_ERROR, _FILE_ ":12: parse error near 'v1'"},
++   ASN1_SYNTAX_ERROR, _FILE_ ":12: Error: syntax error, unexpected IDENTIFIER, expecting NUM or '+' or '-' near 'v1'"},
+   {16, " generic generalstring",
+    ASN1_IDENTIFIER_NOT_FOUND,
+    _FILE_ ":: identifier 'generalstring' not found"},
+@@ -98,7 +98,7 @@
+   {20, "   oid1    OBJECT IDENTIFIER DEFAULT 1",
+    ASN1_IDENTIFIER_NOT_FOUND, _FILE_ ":: identifier '1' not found"},
+   {20, "   oid1    OBJECT IDENTIFIER DEFAULT",
+-   ASN1_SYNTAX_ERROR, _FILE_ ":21: parse error near '}'"},
++   ASN1_SYNTAX_ERROR, _FILE_ ":21: Error: syntax error, unexpected '}' near '}'"},
+   {20, "   oid1    OBJECT IDENTIFIER DEFAULT Oid-type1",
+    ASN1_SUCCESS, ""},
+ 

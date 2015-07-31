@@ -1,0 +1,39 @@
+Source:
+Internal
+
+Info:
+To take out buffer overflow issue.
+
+Status:
+Need to determine if this patch has been sent upstream.
+
+--- a/lib/coding.c
++++ b/lib/coding.c
+@@ -253,18 +253,23 @@ static asn1_retCode
+ _asn1_objectid_der (unsigned char *str, unsigned char *der, int *der_len)
+ {
+   int len_len, counter, k, first, max_len;
+-  char *temp, *n_end, *n_start;
++  char *temp = NULL, *n_end, *n_start;
+   unsigned char bit7;
+   unsigned long val, val1 = 0;
++  size_t temp_size = str ? strlen (str) : 0;
++
++  temp_size += 2;
++  if (temp_size < 2)
++    return ASN1_MEM_ALLOC_ERROR;
+ 
+   max_len = *der_len;
+ 
+-  temp = (char *) _asn1_malloc (strlen (str) + 2);
++  temp = (char *) _asn1_malloc (temp_size);
+   if (temp == NULL)
+     return ASN1_MEM_ALLOC_ERROR;
+ 
+-  strcpy (temp, str);
+-  strcat (temp, ".");
++  strncpy (temp, str ? (const char *)str : "", temp_size);
++  strncat (temp, ".", 1);
+ 
+   counter = 0;
+   n_start = temp;

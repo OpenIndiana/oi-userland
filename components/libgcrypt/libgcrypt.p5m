@@ -1,0 +1,53 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+#
+
+set name=pkg.fmri \
+    value=pkg:/system/library/security/libgcrypt@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="libgcrypt - cryptographic library"
+set name=pkg.description \
+    value="Libgcrypt is a general purpose crypto library based on the code used in GnuPG."
+set name=com.oracle.info.description value="the libgcrypt cryptographic library"
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value=org.opensolaris.category.2008:System/Libraries
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2013/422
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+file path=usr/bin/$(MACH64)/libgcrypt-config
+file usr/bin/$(MACH64)/dumpsexp path=usr/bin/dumpsexp
+file usr/bin/$(MACH64)/hmac256 path=usr/bin/hmac256
+file path=usr/bin/libgcrypt-config
+file path=usr/include/gcrypt-module.h
+file path=usr/include/gcrypt.h
+link path=usr/lib/$(MACH64)/libgcrypt.so target=libgcrypt.so.11.8.2
+link path=usr/lib/$(MACH64)/libgcrypt.so.11 target=libgcrypt.so.11.8.2
+file path=usr/lib/$(MACH64)/libgcrypt.so.11.8.2
+link path=usr/lib/libgcrypt.so target=libgcrypt.so.11.8.2
+link path=usr/lib/libgcrypt.so.11 target=libgcrypt.so.11.8.2
+file path=usr/lib/libgcrypt.so.11.8.2
+file path=usr/share/aclocal/libgcrypt.m4
+license COPYING license=GPLv2
+license COPYING.LIB license=LGPLv2.1
