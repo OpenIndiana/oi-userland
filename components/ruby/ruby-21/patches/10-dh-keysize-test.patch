@@ -1,0 +1,26 @@
+Test adapted from fix to RubyGems test here:
+https://github.com/rubygems/rubygems/commit/71a4198783ebe3087f0cae7db8a4db8558e0f042
+to allow tests to be compatible when run with OpenSSL 1.0.1n+
+
+--- ruby-2.1.6-orig/test/openssl/test_pkey_dh.rb	2015-07-17 14:51:02.268866378 -0700
++++ ruby-2.1.6/test/openssl/test_pkey_dh.rb	2015-07-17 15:58:25.937323682 -0700
+@@ -4,7 +4,7 @@ if defined?(OpenSSL)
+ 
+ class OpenSSL::TestPKeyDH < Test::Unit::TestCase
+ 
+-  NEW_KEYLEN = 256
++  NEW_KEYLEN = 1024
+ 
+   def test_new
+     dh = OpenSSL::PKey::DH.new(NEW_KEYLEN)
+--- ruby-2.1.6-orig/test/rubygems/test_gem_remote_fetcher.rb	2015-07-17 14:50:07.921167590 -0700
++++ ruby-2.1.6/test/rubygems/test_gem_remote_fetcher.rb	2015-07-17 15:58:29.969724053 -0700
+@@ -789,7 +789,7 @@ gems:
+       server.mount_proc("/insecure_redirect") { |req, res|
+         res.set_redirect(WEBrick::HTTPStatus::MovedPermanently, req.query['to'])
+       }
+-      server.ssl_context.tmp_dh_callback = proc { OpenSSL::PKey::DH.new 128 }
++      server.ssl_context.tmp_dh_callback = proc { OpenSSL::PKey::DH.new 1024 }
+       t = Thread.new do
+         begin
+           server.start
