@@ -21,6 +21,8 @@
 # Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
+export PARFAIT_BUILD=no
+
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME        = mysql
