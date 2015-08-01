@@ -47,6 +47,35 @@ CONFIGURE_OPTIONS  +=	CXXFLAGS="$(CXXFLAGS)"
 
 ASLR_MODE = $(ASLR_ENABLE)
 
+# test/system-test is tricky.
+#    Reason being is this component bundles! test results
+#    with the source and those results are compared against
+#    generated results.
+#    Unfortunately these test results embed the string:
+#    /* Command-line: ../src/gperf -L C -F ', 0, 0' -j1 -i 1 -g
+#    which contains the actual command run: ../src/gperf
+#    That string is correct for test but system-test will have /usr/bin/gperf
+#    do a sed is run over the bundled test results with /usr/bin/gperf
+#    so that an internal compare will pass.
+#    Put another way this component does internally what the userland
+#    test infrastructure is doing.
+
+# modify bundled test results for system-test
+COMPONENT_PRE_SYSTEM_TEST_ACTION = \
+	($(GSED) -i -e "s|../src/gperf|/usr/bin/gperf|" \
+		$(SOURCE_DIR)/tests/*.exp)
+
+COMPONENT_SYSTEM_TEST_ARGS = GPERF=/usr/bin/gperf
+
+# normalize the name of gperf
+# remove compilation lines
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s|../src/gperf|gperf|g" ' \
+	'-e "s|/usr/bin/gperf|gperf|g" ' \
+	'-e "s|^.*$(CC).*$$|XXX_CC_XXX|g" ' \
+	'-e "/^XXX_CC_XXX$$/d" '
+
+
 configure:	$(CONFIGURE_64)
 
 build:		$(BUILD_64)
@@ -55,7 +84,8 @@ install:	$(INSTALL_64)
 
 test:		$(TEST_64)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+# must build tests before use
+system-test:    build $(SYSTEM_TEST_64)
 
 
 REQUIRED_PACKAGES += system/library
