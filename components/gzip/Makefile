@@ -56,10 +56,6 @@ unexport SHELLOPTS
 
 COMPONENT_PREP_ACTION = (cd $(SOURCE_DIR); $(AUTORECONF) -if)
 
-# Get the binaries to test from the component build area.
-COMPONENT_TEST_ENV +=	PATH=$(BUILD_DIR_$(BITS)):/usr/xpg4/bin:/usr/bin
-COMPONENT_TEST_TARGETS = check
-
 # Fix references to Solaris renamed programs (z*->gz*) in man pages, info
 # pages and in wrapper scripts.
 COMPONENT_PRE_INSTALL_ACTION = \
@@ -86,6 +82,17 @@ GZGREP_MAN_VARIANTS+=$(PROTOUSRSHAREMAN1DIR)/gzfgrep.1
 $(GZGREP_MAN_VARIANTS):
 	$(RM) $@; echo ".so man1/gzgrep.1" > $@
 
+# Get the binaries to test from the component build area.
+COMPONENT_TEST_ENV +=	PATH=$(BUILD_DIR_$(BITS)):/usr/xpg4/bin:/usr/bin
+
+# Use the installed gzip binary from /usr/bin.
+COMPONENT_SYSTEM_TEST_ENV +=	PATH=/usr/xpg4/bin:/usr/bin
+
+COMPONENT_TEST_TRANSFORMS += \
+	'-n ' \
+	'-e "/PASS/p" ' \
+	'-e "/FAIL/p" '
+
 ASLR_MODE = $(ASLR_ENABLE)
 
 configure:	$(CONFIGURE_64)
@@ -96,7 +103,7 @@ install:	$(INSTALL_64) $(GZGREP_MAN_VARIANTS)
 
 test:		$(TEST_64)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+system-test:    configure $(SYSTEM_TEST_64)
 
 
 REQUIRED_PACKAGES += runtime/python-26

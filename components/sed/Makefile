@@ -44,10 +44,21 @@ include $(WS_MAKE_RULES)/ips.mk
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 
-# Enable ASLR for this component
+COMPONENT_TEST_DIR =		$(@D)/testsuite
+
+COMPONENT_TEST_TRANSFORMS += \
+    '-e "s|^make.*: Leaving directory.*$$|XXX_CC_XXX|g" ' \
+    '-e "s|^make.*: Entering directory.*$$|XXX_CC_XXX|g" ' \
+    '-e "s|^make.*: Nothing to be.*$$|XXX_CC_XXX|g" ' \
+    '-e "s|^/usr/gnu/bin/make.*$$|XXX_CC_XXX|g" ' \
+    '-e "/^XXX_CC_XXX$$/d" '
+
+COMPONENT_SYSTEM_TEST_ENV +=	SED=/usr/gnu/bin/sed
+COMPONENT_SYSTEM_TEST_ENV +=	PATH="$(GNUBIN):$(PATH)"
+COMPONENT_SYSTEM_TEST_DIR =	$(@D)/testsuite
+
 ASLR_MODE = $(ASLR_ENABLE)
 
-# common targets
 configure:	$(CONFIGURE_64)
 
 build:		$(BUILD_64)
@@ -56,7 +67,7 @@ install:	$(INSTALL_64)
 
 test:		$(TEST_64)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+system-test:    configure $(SYSTEM_TEST_64)
 
 
 REQUIRED_PACKAGES += system/library

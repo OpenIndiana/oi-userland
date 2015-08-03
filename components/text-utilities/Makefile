@@ -96,6 +96,23 @@ COMPONENT_TEST_CMD =		./run.sh
 COMPONENT_TEST_ARGS =		--verbose
 COMPONENT_TEST_TARGETS =	colrm column hexdump tailf
 
+COMPONENT_SYSTEM_TEST_ENV +=   TS_CMD_COLRM=/usr/bin/colrm
+COMPONENT_SYSTEM_TEST_ENV +=   TS_CMD_COLUMN=/usr/bin/column
+COMPONENT_SYSTEM_TEST_ENV +=   TS_CMD_HEXDUMP=/usr/bin/hexdump
+COMPONENT_SYSTEM_TEST_ENV +=   TS_CMD_TAILF=/usr/bin/tailf
+COMPONENT_SYSTEM_TEST_ENV +=   PATH="$(GNUBIN):$(PATH)"
+COMPONENT_SYSTEM_TEST_DIR =    $(COMPONENT_SRC)/tests
+
+# Build the test_sysinfo program; copy it where the tests are looking for it.
+COMPONENT_PRE_SYSTEM_TEST_ACTION = \
+	(cd $(@D) ; $(GMAKE) AM_CFLAGS="" \
+		V=1 bin_PROGRAMS="test_sysinfo" test_sysinfo ; \
+		$(CP) test_sysinfo $(SOURCE_DIR))
+
+COMPONENT_SYSTEM_TEST_CMD =	./run.sh
+COMPONENT_SYSTEM_TEST_ARGS =	--verbose
+COMPONENT_SYSTEM_TEST_TARGETS =	colrm column hexdump tailf
+
 configure:	$(CONFIGURE_64)
 
 build:		$(BUILD_64)
@@ -104,7 +121,6 @@ install:	$(INSTALL_64)
 
 test:		install $(TEST_64)
 
-# Add install dependency as above when system-test targets are implemented.
-system-test: 	$(SYSTEM_TESTS_NOT_IMPLEMENTED)
+system-test: 	configure $(SYSTEM_TEST_64)
 
 REQUIRED_PACKAGES += system/library

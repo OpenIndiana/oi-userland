@@ -71,6 +71,11 @@ COMPONENT_TEST_TARGETS =
 # here, rather than create multiple identical master files.
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
+COMPONENT_SYSTEM_TEST_ENV =	TIDY_BIN=/usr/bin/tidy
+COMPONENT_SYSTEM_TEST_DIR =	$(SOURCE_DIR)/test
+COMPONENT_SYSTEM_TEST_CMD =	./testall.sh
+COMPONENT_SYSTEM_TEST_TARGETS =
+
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
@@ -83,7 +88,7 @@ install:	$(INSTALL_32_and_64) $(PROTODOCDIR)
 
 test:		$(TEST_32_and_64)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+system-test:    $(SYSTEM_TEST_32_and_64)
 
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen
 REQUIRED_PACKAGES += system/library
