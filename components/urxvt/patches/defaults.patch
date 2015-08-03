@@ -1,0 +1,51 @@
+diff -ruN rxvt-unicode-9.11.orig/src/init.C rxvt-unicode-9.11/src/init.C
+--- rxvt-unicode-9.11.orig/src/init.C	2011-05-18 16:01:43.044354481 +0100
++++ rxvt-unicode-9.11/src/init.C	2011-05-18 16:32:14.306130075 +0100
+@@ -548,7 +548,9 @@
+   oldcursor.row = oldcursor.col = -1;
+ 
+   set_option (Opt_scrollBar);
+-  set_option (Opt_scrollTtyOutput);
++  set_option (Opt_scrollBar_right);
++/*  set_option (Opt_scrollTtyOutput); */
++  set_option (Opt_scrollTtyKeypress);
+   set_option (Opt_jumpScroll);
+   set_option (Opt_skipScroll);
+   set_option (Opt_secondaryScreen);
+diff -ruN rxvt-unicode-9.11.orig/src/main.C rxvt-unicode-9.11/src/main.C
+--- rxvt-unicode-9.11.orig/src/main.C	2011-05-18 16:01:43.055816432 +0100
++++ rxvt-unicode-9.11/src/main.C	2011-05-18 16:28:26.013209066 +0100
+@@ -745,7 +745,7 @@
+   rxvt_fontprop prop;
+ 
+   if (!fs
+-      || !fs->populate (rs[Rs_font] ? rs[Rs_font] : "fixed")
++      || !fs->populate (rs[Rs_font] ? rs[Rs_font] : "xft:Monospace:pixelsize=12")
+       || !fs->realize_font (1))
+     {
+       delete fs;
+diff -ruN rxvt-unicode-9.11.orig/src/rxvt.h rxvt-unicode-9.11/src/rxvt.h
+--- rxvt-unicode-9.21/src/rxvt.h.~1~	2015-08-03 17:55:20.522241740 +0300
++++ rxvt-unicode-9.21/src/rxvt.h	2015-08-03 17:57:08.899087065 +0300
+@@ -342,17 +342,13 @@
+  */
+ 
+ /* COLORTERM, TERM environment variables */
+-#define COLORTERMENV    "rxvt"
+-#if BG_IMAGE_FROM_FILE
+-# define COLORTERMENVFULL COLORTERMENV "-xpm"
+-#else
+-# define COLORTERMENVFULL COLORTERMENV
+-#endif
++#define COLORTERMENV    "xterm"
++#define COLORTERMENVFULL COLORTERMENV
+ #ifndef TERMENV
+ # if USE_256_COLORS
+-#  define TERMENV        "rxvt-unicode-256color"
++#  define TERMENV        "xterm"
+ # else
+-#  define TERMENV        "rxvt-unicode"
++#  define TERMENV        "xterm"
+ # endif
+ #endif
+ 
