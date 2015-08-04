@@ -854,7 +854,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
             vol = self._volume_api.create(
                 context,
                 instance['root_gb'],
-                instance['display_name'] + "-rootzpool",
+                instance['hostname'] + "-rootzpool",
                 "Boot volume for instance '%s' (%s)"
                 % (instance['name'], instance['uuid']))
             # TODO(npower): Polling is what nova/compute/manager also does when
@@ -1061,7 +1061,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
         root_account_needed = True
         hostname_needed = True
         sshkey = instance.get('key_data')
-        name = instance.get('display_name')
+        name = instance.get('hostname')
         encrypted_password = None
 
         # encrypt admin password, using SHA-256 as default
