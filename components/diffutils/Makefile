@@ -48,6 +48,26 @@ COMPONENT_PREP_ACTION =		(cd $(@D) ; autoreconf -f)
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 
+# Needed for "gmake test" to work successfully.
+# If SHELLOPTS is exported (as it is by the userland makefiles),
+# then all shell options get exported to child invocations of bash,
+# which results in test failures due to nounset and xtrace being
+# set unexpectedly, and errors such as "$1: unbound variable" and
+# diffs failing due to script tracing in output files.
+unexport SHELLOPTS
+
+COMPONENT_TEST_DIR =	$(@D)/tests
+
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s|^make.*: Leaving directory.*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^make.*: Entering directory.*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^make.*: Nothing to be.*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^/usr/gnu/bin/make.*$$|XXX_CC_XXX|g" ' \
+	'-e "/^XXX_CC_XXX$$/d" '
+
+COMPONENT_SYSTEM_TEST_DIR =	$(@D)/tests
+COMPONENT_SYSTEM_TEST_ENV +=	PATH="$(GNUBIN):$(PATH)"
+
 ASLR_MODE = $(ASLR_ENABLE)
 
 configure:	$(CONFIGURE_64)
@@ -58,7 +78,7 @@ install:	$(INSTALL_64)
 
 test:		$(TEST_64)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+system-test:    configure $(SYSTEM_TEST_64)
 
 
 REQUIRED_PACKAGES += system/library

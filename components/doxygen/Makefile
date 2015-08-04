@@ -78,7 +78,19 @@ COMPONENT_TEST_TARGETS =	tests
 COMPONENT_TEST_TRANSFORMS += \
         '-e "s|\(error opening bib\).*|\1|" ' \
         '-e "s|\(test_output_012/indexpage.xml\).*|\1|" ' \
-        '-e "s|\(012/indexpage.xml\).*|\1|" '
+        '-e "s|\(012/indexpage.xml\).*|\1|" ' \
+	'-e "s|^\$$(@D)/|\.\.\./|g" ' \
+	'-e "s|^\$$(SOURCE_DIR)/|\.\.\./|g" ' \
+	'-e "s|^make.*: Leaving directory.*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^make.*: Entering directory.*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^make\[1\].*$$|XXX_CC_XXX|g" ' \
+	'-e "/^XXX_CC_XXX$$/d" '
+
+COMPONENT_SYSTEM_TEST_ENV =	PATH="$(GNUBIN):$(PATH)"
+COMPONENT_SYSTEM_TEST_DIR =	$(SOURCE_DIR)/testing
+COMPONENT_SYSTEM_TEST_CMD =	perl
+COMPONENT_SYSTEM_TEST_ARGS =	runtests.pl --doxygen /usr/bin/doxygen
+COMPONENT_SYSTEM_TEST_TARGETS =
 
 ASLR_MODE = $(ASLR_ENABLE)
 
@@ -91,7 +103,7 @@ install:	$(INSTALL_64)
 
 test:		$(TEST_64)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+system-test:    $(SYSTEM_TEST_64)
 
 
 REQUIRED_PACKAGES += developer/lexer/flex

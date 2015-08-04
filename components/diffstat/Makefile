@@ -40,11 +40,20 @@ include $(WS_MAKE_RULES)/ips.mk
 
 CC += $(CC_BITS)
 
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "/^Checking/d" '
+
 COMPONENT_TEST_DIR =	$(SOURCE_DIR)
 COMPONENT_TEST_ENV =	PATH=$(@D):$(SOURCE_DIR):$(PATH)
 COMPONENT_TEST_CMD =	./testing/run_test.sh
 COMPONENT_TEST_ARGS =	./testing/case*.pat
 COMPONENT_TEST_TARGETS =
+
+COMPONENT_SYSTEM_TEST_DIR =	$(SOURCE_DIR)
+COMPONENT_SYSTEM_TEST_ENV =	PATH=/usr/bin:$(SOURCE_DIR):$(PATH)
+COMPONENT_SYSTEM_TEST_CMD =	./testing/run_test.sh
+COMPONENT_SYSTEM_TEST_ARGS =	./testing/case*.pat
+COMPONENT_SYSTEM_TEST_TARGETS =
 
 ASLR_MODE = $(ASLR_ENABLE)
 
@@ -56,7 +65,7 @@ install:	$(INSTALL_64)
 
 test:		$(TEST_64)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+system-test:    $(SYSTEM_TEST_64)
 
 REQUIRED_PACKAGES += system/library
 

@@ -46,14 +46,26 @@ COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
 
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s|^make.*: Leaving directory.*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^make.*: Entering directory.*$$|XXX_CC_XXX|g" ' \
+	'-e "/^XXX_CC_XXX$$/d" '
+
 COMPONENT_TEST_DIR =		$(@D)/regression
 # Need to put /usr/gnu/bin at the front of $PATH for GNU diff.
+COMPONENT_TEST_CMD =		./TEST
 COMPONENT_TEST_ENV +=		PATH=$(GNUBIN):/usr/bin
-COMPONENT_TEST_TARGETS =	test
+COMPONENT_TEST_TARGETS =
+
+COMPONENT_SYSTEM_TEST_DIR =	$(@D)/regression
+COMPONENT_SYSTEM_TEST_CMD =	./TEST
+# Need to put /usr/gnu/bin at the front of $PATH for GNU diff.
+COMPONENT_SYSTEM_TEST_ENV +=	PATH=$(GNUBIN):/usr/bin
+COMPONENT_SYSTEM_TEST_ENV +=	INDENT_BIN=/usr/bin/indent
+COMPONENT_SYSTEM_TEST_TARGETS =
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-# common targets
 configure:	$(CONFIGURE_64)
 
 build:		$(BUILD_64)
@@ -62,7 +74,6 @@ install:	$(INSTALL_64)
 
 test:		install $(TEST_64)
 
-# Add install dependency as above when system-test targets are implemented.
-system-test:	$(SYSTEM_TESTS_NOT_IMPLEMENTED)
+system-test:	configure $(SYSTEM_TEST_64)
 
 REQUIRED_PACKAGES += system/library
