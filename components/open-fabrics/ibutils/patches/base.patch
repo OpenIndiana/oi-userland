@@ -1157,17 +1157,26 @@ diff -r -u /tmp/ibutils-1.5.7/ibis/configure ibutils-1.5.7/ibis/configure
          ;;
  
      sysv4*uw2* | sysv5OpenUNIX* | sysv5UnixWare7.[01].[10]* | unixware7* | sco3.2v5.0.[024]*)
-@@ -15295,7 +15297,8 @@
+@@ -15284,8 +15286,8 @@
+       else
+          osm_lib_dir=lib
+       fi
++      with_osm_libs=$with_osm/$osm_lib_dir
+    fi
+-   with_osm_libs=$with_osm/$osm_lib_dir
+ 
+       if test -d $with_osm/include/infiniband; then
+       OSM_BUILD=openib
+@@ -15295,7 +15297,7 @@
     { $as_echo "$as_me:${as_lineno-$LINENO}: OSM: build type $OSM_BUILD" >&5
  $as_echo "$as_me: OSM: build type $OSM_BUILD" >&6;}
  
 -   OSM_LDFLAGS="-Wl,-rpath -Wl,$with_osm_libs -L$with_osm_libs"
-+   with_osm_libs=`echo "$with_osm_libs" | $SED -e "s/\/lib64$/\/lib/g"`
 +   OSM_LDFLAGS="-L$with_osm_libs"
           if test $OSM_BUILD = openib; then
              osm_include_dir="$with_osm/include/infiniband"
        osm_extra_includes="-I$with_osm/include"
-@@ -15378,7 +15381,7 @@
+@@ -15378,7 +15380,7 @@
        osm_debug_flags=
     fi
  
