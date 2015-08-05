@@ -90,7 +90,7 @@ PUBLISH_TRANSFORMS +=	$(PKGMOGRIFY_TRANSFORMS)
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/incorporate
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/publish-cleanup
 
-# If we are building "evaluation" packages, add the evaluation license
+# If we are building "evaluation" packages, add the evaluation information
 # action so that the package(s) display the terms and require acceptance
 # to install.
 ifeq ($(BUILD_TYPE),evaluation)

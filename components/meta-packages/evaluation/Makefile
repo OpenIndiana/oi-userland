@@ -34,4 +34,8 @@ ifneq ($(BUILD_TYPE), evaluation)
 PUBLISH_STAMP=
 endif
 
+# Override default settings in prep.mk so we don't delete the entire directory.
+CLEAN_PATHS=	$(BUILD_DIR)
+CLOBBER_PATHS=	$(BUILD_DIR)
+
 include $(WS_MAKE_RULES)/ips.mk

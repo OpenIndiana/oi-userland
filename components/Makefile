@@ -169,7 +169,10 @@ incorporation:
 	done
 
 publish:
+ifneq ($(BUILD_TYPE), evaluation)
+	# evaluation packages don't need to be incorporated
 	$(MAKE) incorporation
+endif
 # pkglint all of the published manifests in one batch.
 ifdef CANONICAL_REPO
 	@echo 'pkglinting all package manifests...'
