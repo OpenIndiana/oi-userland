@@ -1,7 +1,7 @@
 # This patch is Solaris-specific and thus has not been contributed upstream.
 
---- sendmail-8.15.1/cf/README.~1~	2014-09-17 11:34:33.000000000 -0700
-+++ sendmail-8.15.1/cf/README	2015-02-27 13:05:45.063619464 -0800
+--- sendmail-8.15.1.30/cf/README.~1~	2015-05-22 06:42:27.000000000 -0700
++++ sendmail-8.15.1.30/cf/README	2015-05-23 15:44:42.381819318 -0700
 @@ -4,12 +4,10 @@
  This document describes the sendmail configuration files.  It
  explains how to create a sendmail.cf file for use with sendmail.
@@ -49,9 +49,9 @@
 -*******************************************************************
 -
  
- +----------------------------+
- | A BRIEF INTRODUCTION TO M4 |
-@@ -197,20 +186,6 @@
+ Note:
+ Some rulesets, features, and options are only useful if the sendmail
+@@ -217,20 +206,6 @@
  messages; in the worst case it might be ok to change the value
  directly in the generated .cf file, which however is not advised.
  
@@ -72,7 +72,7 @@
  +----------------+
  | FILE LOCATIONS |
  +----------------+
-@@ -319,8 +294,7 @@
+@@ -339,8 +314,7 @@
  			corresponding queue file types as explained in
  			doc/op/op.me.  See also QUEUE GROUP DEFINITIONS.
  MSP_QUEUE_DIR		[/var/spool/clientmqueue] The directory containing
@@ -82,7 +82,7 @@
  STATUS_FILE		[/etc/mail/statistics] The file containing status
  			information.
  LOCAL_MAILER_PATH	[/bin/mail] The program used to deliver local mail.
-@@ -350,17 +324,6 @@
+@@ -370,17 +344,6 @@
  LOCAL_SHELL_DIR		[$z:/] The directory search path in which the
  			shell should run.
  LOCAL_MAILER_QGRP	[undefined] The queue group for the local mailer.
@@ -100,7 +100,7 @@
  SMTP_MAILER_FLAGS	[undefined] Flags added to SMTP mailer.  Default
  			flags are `mDFMuX' for all SMTP-based mailers; the
  			"esmtp" mailer adds `a'; "smtp8" adds `8'; and
-@@ -417,17 +380,6 @@
+@@ -437,17 +400,6 @@
  			the UUCP mailers and which are converted to MIME will
  			be labeled with this character set.
  UUCP_MAILER_QGRP	[undefined] The queue group for the UUCP mailers.
@@ -118,7 +118,7 @@
  PROCMAIL_MAILER_PATH	[/usr/local/bin/procmail] The path to the procmail
  			program.  This is also used by
  			FEATURE(`local_procmail').
-@@ -442,60 +394,9 @@
+@@ -462,60 +414,9 @@
  PROCMAIL_MAILER_MAX	[undefined] If set, the maximum size message that
  			will be accepted by the procmail mailer.
  PROCMAIL_MAILER_QGRP	[undefined] The queue group for the procmail mailer.
@@ -179,7 +179,7 @@
  LOCAL_PROG_QGRP		[undefined] The queue group for the prog mailer.
  
  Note: to tweak Name_MAILER_FLAGS use the macro MODIFY_MAILER_FLAGS:
-@@ -613,18 +514,6 @@
+@@ -633,18 +534,6 @@
  		See the section below describing UUCP mailers in more
  		detail.
  
@@ -198,7 +198,7 @@
  procmail	An interface to procmail (does not come with sendmail).
  		This is designed to be used in mailertables.  For example,
  		a common question is "how do I forward all mail for a given
-@@ -647,37 +536,6 @@
+@@ -667,37 +556,6 @@
  		Of course there are other ways to solve this particular
  		problem, e.g., a catch-all entry in a virtusertable.
  
@@ -236,7 +236,7 @@
  The local mailer accepts addresses of the form "user+detail", where
  the "+detail" is not used for mailbox matching but is available
  to certain local mail programs (in particular, see
-@@ -1393,12 +1251,6 @@
+@@ -1413,12 +1271,6 @@
  		user@site for relaying.  This feature changes that
  		behavior.  It should not be needed for most installations.
  
@@ -249,7 +249,7 @@
  preserve_luser_host
  		Preserve the name of the recipient host if LUSER_RELAY is
  		used.  Without this option, the domain part of the
-@@ -1435,7 +1287,7 @@
+@@ -1455,7 +1307,7 @@
  		FEATURE and introduce new settings via DAEMON_OPTIONS().
  
  msp		Defines config file for Message Submission Program.
@@ -258,7 +258,7 @@
  		to use it.  An optional argument can be used to override
  		the default of `[localhost]' to use as host to send all
  		e-mails to.  Note that MX records will be used if the
-@@ -1579,78 +1431,6 @@
+@@ -1603,78 +1455,6 @@
  		has been compiled with the options MAP_REGEX and
  		DNSMAP.
  
@@ -337,7 +337,7 @@
  +--------------------+
  | USING UUCP MAILERS |
  +--------------------+
-@@ -2438,7 +2218,7 @@
+@@ -2462,7 +2242,7 @@
  map entries.  This feature allows spammers to abuse your mail server
  by specifying a return address that you enabled in your access file.
  This may be harder to figure out for spammers, but it should not
@@ -346,7 +346,7 @@
  allow relaying for roaming users.
  
  
-@@ -2906,8 +2686,7 @@
+@@ -2930,8 +2710,7 @@
  tokenization.  It might be simpler to use a regex map and apply it
  to $&{currHeader}.
  2. There are no default rulesets coming with this distribution of
@@ -356,7 +356,7 @@
  3. When using a default ruleset for headers, the name of the header
  currently being checked can be found in the $&{hdr_name} macro.
  
-@@ -3208,101 +2987,6 @@
+@@ -3264,101 +3043,6 @@
  (version=${tls_version} cipher=${cipher} bits=${cipher_bits} verify=${verify})
  
  
@@ -458,7 +458,7 @@
  +--------------------------------+
  | ADDING NEW MAILERS OR RULESETS |
  +--------------------------------+
-@@ -3628,8 +3312,6 @@
+@@ -3684,8 +3368,6 @@
  This list is shown in four columns:  the name you define, the default
  value for that definition, the option or macro that is affected
  (either Ox for an option or Dx for a macro), and a brief description.
@@ -467,7 +467,7 @@
  
  Some options are likely to be deprecated in future versions -- that is,
  the option is only included to provide back-compatibility.  These are
-@@ -3853,8 +3535,6 @@
+@@ -3915,8 +3597,6 @@
  					(e.g., :include: file) to be opened.
  confTO_LHLO		Timeout.lhlo	[2m] The timeout waiting for a response
  					to an LMTP LHLO command.
@@ -476,7 +476,7 @@
  confTO_STARTTLS		Timeout.starttls
  					[1h] The timeout waiting for a
  					response to an SMTP STARTTLS command.
-@@ -4220,46 +3900,6 @@
+@@ -4282,46 +3962,6 @@
  					memory-buffered transcript (xf)
  					file before a disk-based file is
  					used.
@@ -523,7 +523,7 @@
  confTLS_SRV_OPTIONS	TLSSrvOptions	If this option is 'V' no client
  					verification is performed, i.e.,
  					the server doesn't ask for a
-@@ -4323,7 +3963,7 @@
+@@ -4386,7 +4026,7 @@
  					[undefined] Defines {daemon_flags}
  					for direct submissions.
  confUSE_MSP		UseMSP		[undefined] Use as mail submission
@@ -532,7 +532,7 @@
  confDELIVER_BY_MIN	DeliverByMin	[0] Minimum time for Deliver By
  					SMTP Service Extension (RFC 2852).
  confREQUIRES_DIR_FSYNC	RequiresDirfsync	[true] RequiresDirfsync can
-@@ -4469,8 +4109,7 @@
+@@ -4532,8 +4172,7 @@
  | MESSAGE SUBMISSION PROGRAM |
  +----------------------------+
  
@@ -542,7 +542,7 @@
  a few hints how for those who want to tweak the default configuration
  for it (which is installed as submit.cf).
  
-@@ -4485,13 +4124,10 @@
+@@ -4548,13 +4187,10 @@
    of the default background mode.
  - FEATURE(stickyhost) and LOCAL_RELAY to send unqualified addresses
    to the LOCAL_RELAY instead of the default relay.
@@ -559,7 +559,7 @@
  
  	FEATURE(`nocanonify', `canonify_hosts')
  	define(`confDIRECT_SUBMISSION_MODIFIERS', `C')
-@@ -4507,39 +4143,10 @@
+@@ -4570,39 +4206,10 @@
  can cause security problems.
  
  Other things don't work well with the MSP and require tweaking or
