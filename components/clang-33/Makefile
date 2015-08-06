@@ -20,7 +20,7 @@ LLVM_NAME=llvm
 CLANG_NAME=cfe
 
 COMPONENT_VERSION= 3.3
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= LLVM tools and Clang compiler
 COMPONENT_SRC= $(LLVM_NAME)-$(COMPONENT_VERSION).src
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -41,7 +41,7 @@ include ../../make-rules/ips.mk
 
 CONFIGURE_PREFIX= /usr/clang/$(COMPONENT_VERSION)
 
-PATH=/usr/sbin:/usr/bin:/usr/perl5/bin
+PATH=/usr/sbin:/usr/bin:/usr/perl5/bin:/usr/gnu/bin
 
 COMPONENT_POST_UNPACK_ACTION += $(UNPACK) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1) && \
 	mv $(CLANG_NAME)-$(COMPONENT_VERSION).src $(COMPONENT_SRC)/tools/clang
