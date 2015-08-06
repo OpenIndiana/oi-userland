@@ -52,6 +52,8 @@ COMPONENT_INSTALL_ARGS += bindir=$(USRBINDIR)
 
 ASLR_MODE = $(ASLR_ENABLE)
 
+COMPONENT_SYSTEM_TEST_ENV += PATCH=$(GPATCH)
+
 # common targets
 configure:	$(CONFIGURE_64)
 
@@ -61,7 +63,12 @@ install:	$(INSTALL_64)
 
 test:		$(TEST_64)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+# Although system-test doesn't run against the built bits, the tests
+# require the bits are built.  Using BUILD_64 as a pre-requisite
+# to system-test separates the compilation output from the
+# test output, so the master test results will be consistent between
+# test and system-test targets.
+system-test:    $(BUILD_64) $(SYSTEM_TEST_64)
 
 
 REQUIRED_PACKAGES += system/library
