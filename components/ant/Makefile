@@ -83,5 +83,5 @@ system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 REQUIRED_PACKAGES += developer/java/junit
 REQUIRED_PACKAGES += developer/parser/antlr-2
 REQUIRED_PACKAGES += runtime/perl-512
-REQUIRED_PACKAGES += runtime/perl-516
+REQUIRED_PACKAGES += runtime/perl-520
 REQUIRED_PACKAGES += shell/ksh93

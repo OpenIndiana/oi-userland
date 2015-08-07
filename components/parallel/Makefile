@@ -63,5 +63,5 @@ system-test:    $(NO_TESTS)
 
 
 REQUIRED_PACKAGES += runtime/perl-512
-REQUIRED_PACKAGES += runtime/perl-516
+REQUIRED_PACKAGES += runtime/perl-520
 REQUIRED_PACKAGES += shell/which

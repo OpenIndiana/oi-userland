@@ -23,7 +23,7 @@
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
-PERL_VERSION =		5.16
+PERL_VERSION =		5.20
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		graphviz
@@ -128,7 +128,7 @@ REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += print/filter/ghostscript
 REQUIRED_PACKAGES += runtime/lua
 REQUIRED_PACKAGES += runtime/ocaml
-REQUIRED_PACKAGES += runtime/perl-516
+REQUIRED_PACKAGES += runtime/perl-520
 REQUIRED_PACKAGES += runtime/ruby-19
 REQUIRED_PACKAGES += runtime/tk-8
 REQUIRED_PACKAGES += shell/ksh93

@@ -107,7 +107,7 @@ system-test:    $(NO_TESTS)
 REQUIRED_PACKAGES += developer/build/cmake
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += runtime/perl-512
-REQUIRED_PACKAGES += runtime/perl-516
+REQUIRED_PACKAGES += runtime/perl-520
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
 REQUIRED_PACKAGES += system/library

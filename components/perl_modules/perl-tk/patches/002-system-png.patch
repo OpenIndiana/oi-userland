@@ -1,60 +1,74 @@
 In-House patch. 
 Making sure Perl-Tk does not build its own copy of libpng and libz, instead links against these libraries already present in Solaris in /usr/lib.
 
---- Tk-804.031/PNG/Makefile.PL.orig	Tue Nov 12 22:36:34 2013
-+++ Tk-804.031/PNG/Makefile.PL	Tue Nov 12 22:36:41 2013
-@@ -2,19 +2,7 @@
+--- Tk-804.033/PNG/Makefile.PL.orig	2015-05-01 10:47:20.131896716 -0700
++++ Tk-804.033/PNG/Makefile.PL	2015-05-01 10:52:57.599540636 -0700
+@@ -2,19 +2,6 @@
  use strict;
  use Tk::MMutil;
  use Tk::Config ();
 -use Tk::MMtry;
 -use File::Copy;
- 
+-
 -my $l = $Config::Config{'lib_ext'};
 -my $cc = $Config::Config{'cc'};
 -my $zlib = "libz$l";
 -
 -foreach my $file (qw(zlib/Makefile.PL libpng/Makefile.PL))
 - {
+-  next unless -f $file;
 -  chmod(0666,$file) unless -w $file;
 -  unlink($file);
 - }
--
- my $libpng_cflags;
- my $libpng_libs;
- system('pkg-config --exists libpng');
-@@ -21,74 +9,17 @@
- if ($? == 0) {
-     chomp($libpng_cflags = `pkg-config --cflags libpng`);
-     chomp($libpng_libs   = `pkg-config --libs libpng`);
--} else {
--    warn "'pkg-config libpng' failed, continue with fallback values for cflags and libs...\n";
--    $libpng_cflags = '-I/usr/local/include';
--    $libpng_libs   = '-lpng -lz -lm';
+ 
+ my $all_cflags;
+ my $all_libs;
+@@ -27,12 +14,6 @@
+    chomp($libpng_cflags = `pkg-config --cflags libpng`);
+    chomp($libpng_libs   = `pkg-config --libs libpng`);
+   }
+- else
+-  {
+-   warn "'pkg-config libpng' failed, continue with fallback values for cflags and libs...\n";
+-   $libpng_cflags = '-I/usr/local/include';
+-   $libpng_libs   = '-lpng -lm';
+-  }
+ 
+  my $zlib_cflags;
+  my $zlib_libs;
+@@ -51,65 +32,18 @@
+ 
+  $all_cflags = "$libpng_cflags $zlib_cflags";
+  $all_libs   = "$libpng_libs $zlib_libs";
++
++ Tk::MMutil::TkExtMakefile(
++     NAME         => 'Tk::PNG',
++     VERSION_FROM => 'PNG.pm',
++     XS_VERSION   => $Tk::Config::VERSION,
++     dist         => { COMPRESS => 'gzip -f9', SUFFIX => '.gz' },
++     OBJECT       => '$(O_FILES)',
++     INC          => $libpng_cflags,
++     LIBS         => [$libpng_libs],
++   );
  }
  
 -if ($Tk::MMtry::VERSION ge '4.007' &&
--    try_run("config/has_png.c",[$libpng_cflags],[$libpng_libs]))
+-    try_run("config/has_png.c",[$all_cflags],[$all_libs]))
 - {
+-  warn "Using system's -lpng\n";
 -  Tk::MMutil::TkExtMakefile(
 -       NAME         => 'Tk::PNG',
 -       VERSION_FROM => 'PNG.pm',
 -       XS_VERSION   => $Tk::Config::VERSION,
 -       dist         => { COMPRESS => 'gzip -f9', SUFFIX => '.gz' },
 -       OBJECT       => '$(O_FILES)',
--       INC          => $libpng_cflags,
--       LIBS         => [$libpng_libs],
+-       INC          => $all_cflags,
+-       LIBS         => [$all_libs],
 -     );
 - }
 -else
 - {
 -  my $ok = 1;
--  foreach my $file ("libpng/Makefile.PL","zlib/Makefile.PL")
--   {
--    next unless -f $file;
--    chmod(0666,$file);
--    unlink($file);
--   }
 -  unless (copy("Makefile.libpng.maybe","libpng/Makefile.PL"))
 -   {
 -    warn "Cannot copy Makefile.libpng.maybe => libpng/Makefile.PL ($!)";
@@ -95,37 +109,13 @@ Making sure Perl-Tk does not build its own copy of libpng and libz, instead link
 -     ExtUtils::MakeMaker::WriteEmptyMakefile();
 -    }
 - }
-+Tk::MMutil::TkExtMakefile(
-+     NAME         => 'Tk::PNG',
-+     VERSION_FROM => 'PNG.pm',
-+     XS_VERSION   => $Tk::Config::VERSION,
-+     dist         => { COMPRESS => 'gzip -f9', SUFFIX => '.gz' },
-+     OBJECT       => '$(O_FILES)',
-+     INC          => $libpng_cflags,
-+     LIBS         => [$libpng_libs],
-+   );
  
  sub MY::test_via_harness
  {
-@@ -98,63 +29,3 @@
+@@ -134,48 +68,3 @@
+     qq[PASTHRU="CC=$Config::Config{cc} $Config::Config{cccdlflags}" RANLIB=\"$Config::Config{ranlib}\"];
+    }
  }
- 
- package MY;
--
--sub pasthru {
--  if ($^O eq 'MSWin32' && $Config::Config{cc} =~ /gcc/)
--   {
--    # gcc usually has ranlib, also dmake does not understand "rem"
--    # which is default setting for $Config::Config{ranlib} under
--    # Windows, unless .USE_SHELL: is specified (see also special_targets
--    # in ExtUtils::MM_Win32)
--    qq[PASTHRU="CC=$Config::Config{cc} $Config::Config{cccdlflags}"];
--   }
--  else
--   {
--    qq[PASTHRU="CC=$Config::Config{cc} $Config::Config{cccdlflags}" RANLIB=\"$Config::Config{ranlib}\"];
--   }
--}
 -
 -sub postamble {
 -  my $s = '';

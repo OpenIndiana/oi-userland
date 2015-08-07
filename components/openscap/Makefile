@@ -47,14 +47,17 @@ CFLAGS+=		-DOSCAP_THREAD_SAFE
 PYTHON_VERSION=		2.6
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
 
+PERL_VERSIONS = 5.12 5.20
+
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 PERL_VERSION.32 = 5.12
-PERL_VERSION.64 = 5.16
+PERL_VERSION.64 = 5.20
 PERL_VERSION = $(PERL_VERSION.$(BITS))
 PERL = $(PERL.$(PERL_VERSION))
+PKG_MACROS		+=	P_ARCH=$(shell arch)
 CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/bin
 CPPFLAGS +=	-I/usr/include/openldap
 
@@ -125,7 +128,7 @@ REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += runtime/perl-512
-REQUIRED_PACKAGES += runtime/perl-516
+REQUIRED_PACKAGES += runtime/perl-520
 REQUIRED_PACKAGES += runtime/python-26
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += security/compliance/openscap

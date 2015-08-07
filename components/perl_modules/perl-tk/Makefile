@@ -24,17 +24,17 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Tk
 # pkg does not like leading zeros, removed zero after dot.
-COMPONENT_VERSION=	804.31
-HUMAN_VERSION=		804.031
+COMPONENT_VERSION=	804.33
+HUMAN_VERSION=		804.033
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	http://search.cpan.org/~srezic/Tk
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:ce8d857a82a77f6bad3f94c1a8c3e3f32d5489bfb41619c3b8cae00103428054
+    sha256:84756e9b07a2555c8eecf88e63d5cbbba9b1aa97b1e71a3d4aa524a7995a88ad
 COMPONENT_ARCHIVE_URL=	http://search.cpan.org/CPAN/authors/id/S/SR/SREZIC/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	perl-mod/tk
 
-TPNO=			13259
+TPNO=			22548
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk

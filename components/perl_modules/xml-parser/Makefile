@@ -56,7 +56,10 @@ COMPONENT_INSTALL_ENV += INSTALLVENDORMAN3DIR=$(USRSHAREMAN3DIR)
 COMPONENT_TEST_TARGETS = test
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_TRANSFORMS += \
-        '-e "s|\(^Files=\).*|\1|" '
+        '-e "s|\(^Files=\).*|\1|" ' \
+	'-e "s|\(^PERL_DL_NONLAZY=\).*|\1|" ' \
+	'-e "/\(^Running Mkbootstrap for XML::Parser::Expat ()\).*/d" ' \
+	'-e "/\(^chmod 644 Expat.bs\).*/d" '
 
 PKG_MACROS +=	PERL_A=$(shell arch)
 
