@@ -43,17 +43,16 @@ include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_TEST_ENV +=	PATH="$(GNUBIN):$(PATH)"
 
-# The additional dejagnu specific set of transforms to be applied to the
-# test results to try to normalize them.
 COMPONENT_TEST_TRANSFORMS += \
-	'-e "s|^.*$(CXX).*$$|XXX_CXX_XXX|g" ' \
-	'-e "/^XXX_CXX_XXX$$/d" ' \
-	'-e "s|\(Test Run By\).*|\1|" ' \
-	'-e "s|\(Native configuration is\).*|\1|" '
+	'-n ' \
+	'-e "/Running/p" ' \
+	'-e "/\# of /p" '
+
+COMPONENT_SYSTEM_TEST_ENV +=	PATH="$(GNUBIN):$(PATH)"
+COMPONENT_SYSTEM_TEST_ENV +=	RUNTEST_SCRIPT=/usr/bin/runtest
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-# common targets
 configure:	$(CONFIGURE_64)
 
 build:		$(BUILD_64)
@@ -62,7 +61,7 @@ install:	$(INSTALL_64)
 
 test:		$(TEST_64)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+system-test:    configure $(SYSTEM_TEST_64)
 
 REQUIRED_PACKAGES += shell/expect
 REQUIRED_PACKAGES += shell/ksh93

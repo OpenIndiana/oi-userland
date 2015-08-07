@@ -50,16 +50,32 @@ CC +=		$(CC_BITS)
 # here, rather than create multiple identical master files.
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
+COMPONENT_TEST_TRANSFORMS += \
+        '-n ' \
+	'-e "/passed/p" ' \
+	'-e "/failed/p" ' \
+	'-e "/Checks:/p" ' \
+	'-e "/Total:/p" ' \
+	'-e "/Passed/p" ' \
+	'-e "/Failed/p" ' \
+	'-e "/Failure expected/p" ' \
+        '-e "/SKIP/p" ' \
+	'-e "/PASS/p" ' \
+        '-e "/FAIL/p" '
+
+COMPONENT_SYSTEM_TEST_ENV =	CHECKMK_SCRIPT=/usr/bin/checkmk
+
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-# common targets
+configure:	$(CONFIGURE_32_and_64)
+
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+system-test:    configure $(SYSTEM_TEST_32_and_64)
 
 REQUIRED_PACKAGES +=	system/library
 REQUIRED_PACKAGES +=	system/library/math

@@ -64,7 +64,15 @@ COMPONENT_TEST_TARGETS =
 # The additional conflict specific set of transforms to be applied to the
 # test results to try to normalize them.
 COMPONENT_TEST_TRANSFORMS += \
-	'-e "s|/tmp/conflict\.......|/tmp/conflict\.xxxxxx|g" '
+	'-e "s|/tmp/conflict\.......|/tmp/conflict\.xxxxxx|g" ' \
+	'-e "s|^\*\*		\$$(@D)/.*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^\*\*		/usr/bin/.*$$|XXX_CC_XXX|g" ' \
+	'-e "/^XXX_CC_XXX$$/d" '
+
+COMPONENT_SYSTEM_TEST_DIR =	$(BUILD_DIR_64)
+COMPONENT_SYSTEM_TEST_ENV =	CONFLICT_BIN=/usr/bin/conflict
+COMPONENT_SYSTEM_TEST_CMD =	./run_test.sh
+COMPONENT_SYSTEM_TEST_TARGETS =
 
 ASLR_MODE = $(ASLR_ENABLE)
 
@@ -76,7 +84,10 @@ install:	$(INSTALL_64)
 
 test:		$(TEST_64)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+# We really do need to build conflict so that it can use the files in the
+# build directory. We are using the installed conflict binary to do this
+# though when we run the system tests.
+system-test:    build $(SYSTEM_TEST_64)
 
 
 REQUIRED_PACKAGES += system/library

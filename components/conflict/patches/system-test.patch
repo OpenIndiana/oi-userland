@@ -1,0 +1,15 @@
+Patch to allow us to specify an alternate conflict binary when running tests.
+
+This patch should be sent upstream.
+
+--- conflict-20140723/run_test.sh.orig	2015-08-04 07:48:20.892345554 -0700
++++ conflict-20140723/run_test.sh	2015-08-04 07:49:21.230009358 -0700
+@@ -2,7 +2,7 @@
+ # $Id: run_test.sh,v 6.3 2004/06/20 23:13:23 tom Exp $
+ # Run a test to show that CONFLICT is working
+ BIN=`pwd`
+-PROG=$BIN/conflict
++PROG="${CONFLICT_BIN:-$BIN/conflict}"
+ PATH=".:$BIN:/bin"; export PATH
+ #
+ cat <<eof/

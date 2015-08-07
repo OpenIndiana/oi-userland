@@ -75,7 +75,8 @@ COMPONENT_BUILD_ARGS += LDFLAGS="$(LDFLAGS)"
 
 CC += $(CC_BITS)
 
-COMPONENT_TEST_ARGS =	-k -i
+COMPONENT_TEST_ARGS =		-k -i
+COMPONENT_SYSTEM_TEST_ARGS =	-k -i
 
 # Master test results are different not only between 32-bit and 64-bit, but
 # also between x86 and SPARC (different # of tests run).
@@ -86,7 +87,17 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|^.*$(CC).*$$|XXX_CC_XXX|g" ' \
 	'-e "s|^.*source=.*libtool=no.*$$|XXX_CC_XXX|g" ' \
 	'-e "s|^.*DEPDIR=.deps.*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^make.*: Leaving directory.*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^make.*: Entering directory.*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^make.*: Nothing to be.*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^.*warning:.*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^.*s up to date.*$$|XXX_CC_XXX|g" ' \
 	'-e "/^XXX_CC_XXX$$/d" '
+
+# Get correct libgsl.so from the proto area.
+TEST_LIBPATH.32 =	$(PROTOUSRLIBDIR)
+TEST_LIBPATH.64 =	$(PROTOUSRLIBDIR64)
+COMPONENT_TEST_ENV +=	LD_LIBRARY_PATH=$(TEST_LIBPATH.$(BITS))
 
 # Needed for "gmake test" to work successfully.
 # If SHELLOPTS is exported (as it is by the userland makefiles),
@@ -110,9 +121,9 @@ install:	$(INSTALL_32_and_64)
 # caused by 20914954 cblas_gemm differences between x86 and sparcv7
 # linalg: FAIL:   cholesky_invert hilbert(4)                        (64-bit)
 # caused by 20909151 cblas_dsymm differences between amd64 and sparcv9.
-test:		$(TEST_32_and_64)
+test:		install $(TEST_32_and_64)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+system-test:    build $(SYSTEM_TEST_32_and_64)
 
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library

@@ -53,13 +53,14 @@ CONFIGURE_OPTIONS	+=	CFLAGS="$(CFLAGS)"
 # Recreate configure and Makefile to pick up changes in .../src/local.mk
 COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -f && automake)
 
+# Needed to get tests to work when run directly from the tests subdirectory.
+COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
+
 # Always show the build and link lines for easier debugging.
 COMPONENT_BUILD_ARGS +=		V=1
 
-# Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
 
-# common targets
 configure:	$(CONFIGURE_32_and_64)
 
 build:		$(BUILD_32_and_64)
@@ -76,32 +77,26 @@ unexport SHELLOPTS
 
 # Get the binaries to test from the component proto area.
 COMPONENT_TEST_ENV +=   PATH=$(PROTOUSRSBINDIR):/usr/bin
+COMPONENT_TEST_DIR =	$(@D)/tests
 
 # Always show the build and link lines for easier debugging.
 COMPONENT_TEST_ARGS +=	V=1
 
-# The additional coreutils specific set of transforms to be applied to the
-# test results to try to normalize them.
 COMPONENT_TEST_TRANSFORMS += \
-	'-e "s|^.*$(CC).*$$|XXX_CC_XXX|g" ' \
-	'-e "s|^.*source=.*libtool=no.*$$|XXX_CC_XXX|g" ' \
-	'-e "s|^.*DEPDIR=.deps.*$$|XXX_CC_XXX|g" ' \
-	'-e "/^XXX_CC_XXX$$/d" ' \
-	'-e "/^separator.sh:/d" ' \
-	'-e "s|\(/gnulib-tests/test-getlogin.c:\).*|\1|" ' \
-	'-e "s|\(^/bin/bash: line 1:\).*|\1|" ' \
-	'-e "s|\(^df-symlink.sh: skipped test:\).*|\1|" ' \
-	'-e "s|\(^tail-n0f.sh: skipped test:\).*|\1|" '
+	'-n ' \
+	'-e "/TOTAL/p" ' \
+	'-e "/SKIP/p" ' \
+	'-e "/PASS/p" ' \
+	'-e "/FAIL/p" ' \
+	'-e "/ERROR/p" '
 
-# There are currently two tests that are failing, for which the following
-# bugs are filed; see the bug reports for more details:
-# test-mbsalign - 20432332
-# test-posixtm  - 19344177
+# Get the binaries to test from their installed locations.
+COMPONENT_SYSTEM_TEST_ENV +=	PATH=/usr/gnu/bin:/usr/bin
+COMPONENT_SYSTEM_TEST_DIR =	$(@D)/tests
 
 test:		install $(TEST_64)
 
-# Add install as above when system-test target is implemented
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+system-test:    configure $(SYSTEM_TEST_64)
 
 REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += system/library
