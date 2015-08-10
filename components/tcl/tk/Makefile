@@ -52,8 +52,10 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 CONFIGURE_SCRIPT = $(SOURCE_DIR)/unix/configure
 
 CFLAGS += $(studio_XREGS) -xstrconst $(XPG6MODE) $(studio_C99_ENABLE)
+LDFLAGS += $(CC_BITS)
 
 CONFIGURE_OPTIONS 	+= CFLAGS="$(CFLAGS)"
+CONFIGURE_OPTIONS 	+= LDFLAGS="$(LDFLAGS)"
 CONFIGURE_OPTIONS	+= --enable-shared
 CONFIGURE_OPTIONS	+= --enable-man-symlinks
 CONFIGURE_OPTIONS	+= --enable-threads
@@ -61,12 +63,12 @@ CONFIGURE_OPTIONS.32	+= --with-tcl="$(COMPONENT_DIR)/../tcl/build/$(MACH32)"
 CONFIGURE_OPTIONS.64	+= --with-tcl="$(COMPONENT_DIR)/../tcl/build/$(MACH64)"
 CONFIGURE_OPTIONS.64	+= --enable-64bit
 
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_TARGETS = test
 COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|^.*$(CC).*$$|XXX_CC_XXX|"' \
 	'-e "s|^.*tcl/build/$(MACH$(BITS)).*$$|XXX_CC_XXX|g"' \
 	'-e "s|^cc: Warning: -xarch=v9 is deprecated.*$$|XXX_CC_XXX|g"' \
+	'-e "s|^cc: Warning: illegal use of -x.* option, .*$$|XXX_CC_XXX|g"' \
 	'-e "/^XXX_CC_XXX$$/d"' \
 	'-e "/^Tests began at .*$$/d"' \
 	'-e "/^Tests ended at .*$$/d"'

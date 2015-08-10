@@ -420,6 +420,56 @@ up up up
 x-up up up y-up up
 ==== textTag-15.1 FAILED
 
+
+
+==== textTag-16.2 TkTextPickCurrent procedure FAILED
+==== Contents of test case:
+
+    event gen .t <ButtonRelease-1> -state 0x100 -x $x1 -y $y1
+    event gen .t <Motion> -x $x2 -y $y2
+    set x [.t index current]
+    .t tag add big 3.0
+    update
+    lappend x [.t index current]
+
+---- Result was:
+3.2 2.2
+---- Result should have been (exact matching):
+3.2 3.1
+==== textTag-16.2 FAILED
+
+
+
+==== textTag-18.1 TkTextPickCurrent tag bindings FAILED
+==== Contents of test case:
+
+    text .t -width 30 -height 4 -relief sunken -borderwidth 10  -highlightthickness 10 -pady 2
+    pack .t
+    
+    .t insert end " Tag here " TAG " no tag here"
+    .t tag configure TAG -borderwidth 4 -relief raised
+    .t tag bind TAG <Enter>  {lappend res "%x %y tag-Enter"}
+    .t tag bind TAG <Leave>  {lappend res "%x %y tag-Leave"}
+    bind .t <Enter> {lappend res Enter}
+    bind .t <Leave> {lappend res Leave}
+
+    set res {}
+    # Bindings must not trigger on the widget border, only over
+    # the actual tagged characters themselves.
+    event gen .t <Motion> -warp 1 -x 0 -y 0 ; update
+    event gen .t <Motion> -warp 1 -x 10 -y 10 ; update
+    event gen .t <Motion> -warp 1 -x 25 -y 25 ; update
+    event gen .t <Motion> -warp 1 -x 20 -y 20 ; update
+    event gen .t <Motion> -warp 1 -x 10 -y 10 ; update
+    event gen .t <Motion> -warp 1 -x 25 -y 25 ; update
+    set res
+
+---- Result was:
+{25 25 tag-Enter} Enter {10 10 tag-Leave} {25 25 tag-Enter} {20 20 tag-Leave} {25 25 tag-Enter}
+---- Result should have been (exact matching):
+Enter {25 25 tag-Enter} {20 20 tag-Leave} {25 25 tag-Enter}
+==== textTag-18.1 FAILED
+
 textWind.test
 
 
@@ -462,54 +512,6 @@ unixFont.test
 ---- Result should have been (exact matching):
 6
 ==== unixfont-1.2 FAILED
-
-
-
-==== unixfont-2.2 TkpGetFontFromAttributes procedure: Times relatives FAILED
-==== Contents of test case:
-
-    set x {}
-    lappend x [lindex [font actual {-family "Times New Roman"}] 1]
-    lappend x [lindex [font actual {-family "New York"}] 1]
-    lappend x [lindex [font actual {-family "Times"}] 1]
-
----- Result was:
-{Times New Roman} {DejaVu Sans} {Times New Roman}
----- Result should have been (exact matching):
-times times times
-==== unixfont-2.2 FAILED
-
-
-
-==== unixfont-2.3 TkpGetFontFromAttributes procedure: Courier relatives FAILED
-==== Contents of test case:
-
-    set x {}
-    lappend x [lindex [font actual {-family "Courier New"}] 1]
-    lappend x [lindex [font actual {-family "Monaco"}] 1]
-    lappend x [lindex [font actual {-family "Courier"}] 1]
-
----- Result was:
-{Courier New} {DejaVu Sans} {Courier New}
----- Result should have been (exact matching):
-courier courier courier
-==== unixfont-2.3 FAILED
-
-
-
-==== unixfont-2.4 TkpGetFontFromAttributes procedure: Helvetica relatives FAILED
-==== Contents of test case:
-
-    set x {}
-    lappend x [lindex [font actual {-family "Arial"}] 1]
-    lappend x [lindex [font actual {-family "Geneva"}] 1]
-    lappend x [lindex [font actual {-family "Helvetica"}] 1]
-
----- Result was:
-Arial {DejaVu Sans} Arial
----- Result should have been (exact matching):
-helvetica helvetica helvetica
-==== unixfont-2.4 FAILED
 
 
 
@@ -864,7 +866,7 @@ wm.test
 
 xmfbox.test
 
-all.tcl:	Total	9101	Passed	7910	Skipped	1152	Failed	39
+all.tcl:	Total	9101	Passed	7908	Skipped	1155	Failed	38
 Sourced 87 Test Files.
 Files with failing tests: focus.test font.test scrollbar.test spinbox.test textDisp.test textImage.test textTag.test textWind.test unixFont.test unixWm.test wm.test
 Number of tests skipped for each constraint:
@@ -875,6 +877,9 @@ Number of tests skipped for each constraint:
 	21	defaultPseudocolor8
 	10	emptyTest
 	139	fonts
+	1	hasArial
+	1	hasCourierNew
+	1	hasTimesNew
 	1	havePseudocolorVisual
 	6	knownBug
 	1	memory

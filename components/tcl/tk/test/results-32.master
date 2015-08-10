@@ -1,0 +1,900 @@
+make[1]: Entering directory `$(@D)'
+rm -f tkTestInit.o
+mv tkAppInit.o tkTestInit.o
+make[2]: Entering directory `$(@D)'
+make[2]: Leaving directory `$(@D)'
+Tests running in interp:  $(@D)/tktest
+Tests located in:  $(SOURCE_DIR)/tests
+Tests running in:  $(@D)
+Temporary files stored in $(@D)
+Test files sourced into current interpreter
+Running tests that match:  *
+Skipping test files that match:  l.*.test
+Only running test files that match:  *.test
+bell.test
+Bell should ring now ...
+bgerror.test
+bind.test
+bitmap.test
+border.test
+button.test
+canvImg.test
+canvPs.test
+canvRect.test
+canvText.test
+canvWind.test
+canvas.test
+choosedir.test
+clipboard.test
+clrpick.test
+cmds.test
+color.test
+config.test
+cursor.test
+dialog.test
+embed.test
+entry.test
+event.test
+filebox.test
+focus.test
+
+
+==== focus-5.1 ChangeXFocus procedure, don't take focus unless have it FAILED
+==== Contents of test case:
+
+    focusSetup
+    focus -force .t
+    update
+    set result [focus]
+    send [dobg {tk appname}] {focus -force .; update}
+    lappend result [focus]
+    focus .t.b2
+    update
+    lappend result [focus]
+
+---- Result was:
+.t .t {}
+---- Result should have been (exact matching):
+.t {} {}
+==== focus-5.1 FAILED
+
+focusTcl.test
+font.test
+
+
+==== font-4.9 font command: actual FAILED
+==== Contents of test case:
+
+    # (objc > 3) so objPtr = objv[3 + skip]
+    string tolower [font actual {-family times} -family]
+
+---- Result was:
+times new roman
+---- Result should have been (exact matching):
+times
+==== font-4.9 FAILED
+
+
+
+==== font-24.5 Tk_ComputeTextLayout: break line FAILED
+==== Contents of test case:
+
+    .b.l config -text "000\t00000" -wrap [expr 9*$ax]
+    set x [getsize]
+    .b.l config -wrap 0
+    set x
+
+---- Result was:
+63 28
+---- Result should have been (exact matching):
+56 28
+==== font-24.5 FAILED
+
+
+
+==== font-44.1 TkFontGetPixels: size < 0 FAILED
+==== Contents of test case:
+
+    font actual {times -12} -size
+
+---- Result was:
+-12
+---- Result should have been (exact matching):
+24
+==== font-44.1 FAILED
+
+frame.test
+geometry.test
+get.test
+grab.test
+grid.test
+id.test
+image.test
+imgBmap.test
+imgPPM.test
+imgPhoto.test
+listbox.test
+main.test
+menu.test
+menuDraw.test
+menubut.test
+message.test
+msgbox.test
+obj.test
+oldpack.test
+option.test
+pack.test
+panedwindow.test
+place.test
+raise.test
+safe.test
+scale.test
+scrollbar.test
+
+
+==== scrollbar-3.36 ScrollbarWidgetCmd procedure, "fraction" option FAILED
+==== Contents of test case:
+
+    format {%.6g} [.s fraction 4 179]
+
+---- Result was:
+0.976048
+---- Result should have been (exact matching):
+1
+==== scrollbar-3.36 FAILED
+
+
+
+==== scrollbar-3.38 ScrollbarWidgetCmd procedure, "fraction" option FAILED
+==== Contents of test case:
+
+    format {%.6g} [.s fraction 4 178]
+
+---- Result was:
+0.97006
+---- Result should have been (exact matching):
+0.993711
+==== scrollbar-3.38 FAILED
+
+
+
+==== scrollbar-6.12 ScrollbarPosition procedure FAILED
+==== Contents of test case:
+
+    .s identify 8 19
+
+---- Result was:
+trough1
+---- Result should have been (exact matching):
+arrow1
+==== scrollbar-6.12 FAILED
+
+
+
+==== scrollbar-6.29 ScrollbarPosition procedure FAILED
+==== Contents of test case:
+
+    .s identify 8 180
+
+---- Result was:
+trough2
+---- Result should have been (exact matching):
+arrow2
+==== scrollbar-6.29 FAILED
+
+
+
+==== scrollbar-6.35 ScrollbarPosition procedure FAILED
+==== Contents of test case:
+
+    .s identify 18 100
+
+---- Result was:
+
+---- Result should have been (exact matching):
+trough2
+==== scrollbar-6.35 FAILED
+
+
+
+==== scrollbar-6.44 ScrollbarPosition procedure FAILED
+==== Contents of test case:
+
+    .t.s identify 100 18
+
+---- Result was:
+
+---- Result should have been (exact matching):
+trough2
+==== scrollbar-6.44 FAILED
+
+select.test
+send.test
+spinbox.test
+
+
+==== spinbox-3.70 SpinboxWidgetCmd procedure, "xview" widget command FAILED
+==== Contents of test case:
+
+    .e xview moveto 0.5
+    format {%.6f %.6f} {*}[.e xview]
+
+---- Result was:
+0.505376 0.720430
+---- Result should have been (exact matching):
+0.505376 0.72043
+==== spinbox-3.70 FAILED
+
+
+
+==== spinbox-21.1 spinbox button, out of range checking FAILED
+==== Contents of test case:
+
+    destroy .e
+    spinbox .e -from -10 -to 20 -increment 2
+    set out {}
+    lappend out [.e get]; # -10
+    .e delete 0 end
+    .e insert 0 25; # set outside of range
+    .e invoke buttondown; # should constrain
+    lappend out [.e get]; # 20
+    .e delete 0 end
+    .e insert 0 25; # set outside of range
+    .e invoke buttonup; # should constrain
+    lappend out [.e get]; # 20
+    .e delete 0 end
+    .e insert 0 -100; # set outside of range
+    .e invoke buttonup; # should constrain
+    lappend out [.e get]; # -10
+    .e delete 0 end
+    .e insert 0 -100; # set outside of range
+    .e invoke buttondown; # should constrain
+    lappend out [.e get]; # -10
+    .e delete 0 end
+    .e insert 0 bogus; # set to a bogus value
+    .e invoke buttondown; # should use fromValue
+    lappend out [.e get]; # -10
+    .e delete 0 end
+    .e insert 0 19; # set just inside of range
+    .e invoke buttonup; # no wrap
+    lappend out [.e get]; # 20
+    .e invoke buttonup; # no wrap
+    lappend out [.e get]; # 20
+    .e invoke buttondown
+    lappend out [.e get]; # 18
+    .e delete 0 end
+    .e insert 0 -9; # set just inside of range
+    .e invoke buttondown; # no wrap
+    lappend out [.e get]; # -10
+    .e invoke buttondown; # no wrap
+    lappend out [.e get]; # -10
+    .e invoke buttonup; # no wrap
+    lappend out [.e get]; # -8
+
+    .e configure -wrap 1
+    .e delete 0 end
+    .e insert 0 19; # set just inside of range
+    .e invoke buttonup; # wrap
+    lappend out [.e get]; # -10
+    .e invoke buttonup
+    lappend out [.e get]; # -8
+    .e invoke buttondown
+    lappend out [.e get]; # -10
+    .e delete 0 end
+    .e insert 0 -9; # set just inside of range
+    .e invoke buttondown; # wrap
+    lappend out [.e get]; # 20
+    .e invoke buttondown
+    lappend out [.e get]; # 18
+    .e invoke buttonup; # no wrap
+    lappend out [.e get]; # 20
+
+
+---- Result was:
+0 20 20 -10 -10 -10 20 20 18 -10 -10 -8 -10 -8 -10 20 18 20
+---- Result should have been (exact matching):
+-10 20 20 -10 -10 -10 20 20 18 -10 -10 -8 -10 -8 -10 20 18 20
+==== spinbox-21.1 FAILED
+
+text.test
+textBTree.test
+textDisp.test
+
+
+==== textDisp-32.2 elide and tags FAILED
+==== Contents of test case:
+
+    pack [text .tt -height 30 -width 100 -bd 0  -highlightthickness 0 -padx 0]
+    .tt insert end  {test text using tags 1 and 3 }  {testtag1 testtag3}  {[this bit here uses tags 2 and 3]}  {testtag2 testtag3}
+    update
+    # indent left margin of tag 1 by 20 pixels
+    # text should be indented
+    .tt tag configure testtag1 -lmargin1 20 ; update
+    #1
+    set res {}
+    lappend res [list [.tt index "1.0 + 0 displaychars"]  [lindex [.tt bbox 1.0] 0]  [lindex [.tt bbox "1.0 + 0 displaychars"] 0]]
+    # hide tag 1, remaining text should not be indented, since
+    # the indented tag and character is hidden.
+    .tt tag configure testtag1 -elide 1 ; update
+    #2
+    lappend res [list [.tt index "1.0 + 0 displaychars"]  [lindex [.tt bbox 1.0] 0]  [lindex [.tt bbox "1.0 + 0 displaychars"] 0]]
+    # reset
+    .tt tag configure testtag1 -lmargin1 0
+    .tt tag configure testtag1 -elide 0
+    # indent left margin of tag 2 by 20 pixels
+    # text should not be indented, since tag1 has lmargin1 of 0.
+    .tt tag configure testtag2 -lmargin1 20 ; update
+    #3
+    lappend res [list [.tt index "1.0 + 0 displaychars"]  [lindex [.tt bbox 1.0] 0]  [lindex [.tt bbox "1.0 + 0 displaychars"] 0]]
+    # hide tag 1, remaining text should now be indented, but
+    # the bbox of 1.0 should have zero width and zero indent,
+    # since it is elided at that position.
+    .tt tag configure testtag1 -elide 1 ; update
+    #4
+    lappend res [list [.tt index "1.0 + 0 displaychars"]  [lindex [.tt bbox 1.0] 0]  [lindex [.tt bbox "1.0 + 0 displaychars"] 0]]
+    # reset
+    .tt tag configure testtag2 -lmargin1 {}
+    .tt tag configure testtag1 -elide 0
+    # indent left margin of tag 3 by 20 pixels
+    # text should be indented, since this tag takes
+    # precedence over testtag1, and is applied to the
+    # start of the text.
+    .tt tag configure testtag3 -lmargin1 20 ; update
+    #5
+    lappend res [list [.tt index "1.0 + 0 displaychars"]  [lindex [.tt bbox 1.0] 0]  [lindex [.tt bbox "1.0 + 0 displaychars"] 0]]
+    # hide tag 1, remaining text should still be indented,
+    # since it still has testtag3 on it.  Again the
+    # bbox of 1.0 should have 0.
+    .tt tag configure testtag1 -elide 1 ; update
+    #6
+    lappend res [list [.tt index "1.0 + 0 displaychars"]  [lindex [.tt bbox 1.0] 0]  [lindex [.tt bbox "1.0 + 0 displaychars"] 0]]
+    .tt tag configure testtag3 -lmargin1 {} -elide 0
+    .tt tag configure testtag1 -elide 1 -lmargin1 20
+    #7
+    lappend res [list [.tt index "1.0 + 0 displaychars"]  [lindex [.tt bbox 1.0] 0]  [lindex [.tt bbox "1.0 + 0 displaychars"] 0]]
+    destroy .tt
+    set res
+
+---- Result was:
+{1.0 20 20} {1.0 0 0} {1.0 0 0} {1.0 0 0} {1.0 20 20} {1.0 0 0} {1.0 20 20}
+---- Result should have been (exact matching):
+{1.0 20 20} {1.29 0 0} {1.0 0 0} {1.29 0 20} {1.0 20 20} {1.29 0 20} {1.0 20 20}
+==== textDisp-32.2 FAILED
+
+textImage.test
+
+
+==== textImage-3.2 delayed image management FAILED
+==== Contents of test case:
+
+	catch {
+	    image create photo small -width 5 -height 5
+	    small put red -to 0 0 4 4
+	}
+	catch {destroy .t}
+	text .t -font test_font -bd 0 -highlightthickness 0 -padx 0 -pady 0
+	pack .t
+	.t image create end -name test
+	update
+	set result ""
+	lappend result [.t bbox test]
+	.t image configure test -image small -align top
+	update
+	lappend result [.t bbox test]
+
+---- Result was:
+{0 11 0 0} {0 0 5 5}
+---- Result should have been (exact matching):
+{} {0 0 5 5}
+==== textImage-3.2 FAILED
+
+textIndex.test
+textMark.test
+textTag.test
+
+
+==== textTag-15.1 TkTextBindProc FAILED
+==== Contents of test case:
+
+    bind .t <ButtonRelease> {lappend x up}
+    .t tag bind x <ButtonRelease> {lappend x x-up}
+    .t tag bind y <ButtonRelease> {lappend x y-up}
+    set x {}
+    .t tag add x 2.0 2.4
+    .t tag add y 4.3
+    event gen .t <Button> -x $x1 -y $y1
+    event gen .t <Motion> -x $x1 -y $y1
+    event gen .t <ButtonRelease> -x $x1 -y $y1
+    event gen .t <Button> -x $x1 -y $y1
+    event gen .t <Motion> -x $x2 -y $y2
+    event gen .t <ButtonRelease> -x $x2 -y $y2
+    event gen .t <Button> -x $x2 -y $y2
+    event gen .t <Motion> -x $x3 -y $y3
+    event gen .t <ButtonRelease> -x $x3 -y $y3
+    bind .t <ButtonRelease> {}
+    set x
+
+---- Result was:
+up up up
+---- Result should have been (exact matching):
+x-up up up y-up up
+==== textTag-15.1 FAILED
+
+textWind.test
+
+
+==== textWind-10.6.1 EmbWinLayoutProc procedure, error in creating window FAILED
+==== Contents of test case:
+
+    .t delete 1.0 end
+    .t insert 1.0 "Some sample text"
+    catch {destroy .t2}
+    .t window create 1.5 -create {
+	toplevel .t2 -width 100 -height 150
+	wm geom .t2 +0+0
+	concat .t2
+    }
+    set msg {}
+    update
+    set i 0
+    while {[llength $msg] == 1 && [incr i] < 200} { update }
+    set msg
+
+---- Result was:
+{{can't embed .t2 relative to .t}}
+---- Result should have been (exact matching):
+{{can't embed .t2 relative to .t}} {{window name "t2" already exists in parent}}
+==== textWind-10.6.1 FAILED
+
+tk.test
+unixButton.test
+unixEmbed.test
+unixFont.test
+
+
+==== unixfont-1.2 TkpGetNativeFont procedure: native FAILED
+==== Contents of test case:
+
+    font measure fixed 0
+
+---- Result was:
+8
+---- Result should have been (exact matching):
+6
+==== unixfont-1.2 FAILED
+
+
+
+==== unixfont-2.6 TkpGetFontFromAttributes: fallback to fixed family FAILED
+==== Contents of test case:
+
+    lindex [font actual {-family fixed -size 10}] 1
+
+---- Result was:
+Fixed
+---- Result should have been (exact matching):
+fixed
+==== unixfont-2.6 FAILED
+
+
+
+==== unixfont-2.8 TkpGetFontFromAttributes: loop over returned font names FAILED
+==== Contents of test case:
+
+    lindex [font actual {-family fixed -size 31}] 1
+
+---- Result was:
+Fixed
+---- Result should have been (exact matching):
+fixed
+==== unixfont-2.8 FAILED
+
+
+
+==== unixfont-2.9 TkpGetFontFromAttributes: reject adobe courier if possible FAILED
+==== Contents of test case:
+
+    lindex [font actual {-family courier}] 1
+
+---- Result was:
+Courier New
+---- Result should have been (exact matching):
+courier
+==== unixfont-2.9 FAILED
+
+
+
+==== unixfont-5.9 Tk_MeasureChars procedure: TK_PARTIAL_OK FAILED
+==== Contents of test case:
+
+    .b.c dchars $t 0 end
+    .b.c insert $t 0 "0000"
+    .b.c index $t @[expr int($ax*2.5)],1
+
+---- Result was:
+3
+---- Result should have been (exact matching):
+2
+==== unixfont-5.9 FAILED
+
+
+
+==== unixfont-8.4 AllocFont procedure: classify characters FAILED
+==== Contents of test case:
+
+    set x 0
+    incr x [font measure $courier "\u4000"]   ;# 6
+    incr x [font measure $courier "\002"]   ;# 4
+    incr x [font measure $courier "\012"]   ;# 2
+    incr x [font measure $courier "\101"]   ;# 1
+    set x
+
+---- Result was:
+33
+---- Result should have been (exact matching):
+78
+==== unixfont-8.4 FAILED
+
+
+
+==== unixfont-8.5 AllocFont procedure: setup widths of normal chars FAILED
+==== Contents of test case:
+
+    font metrics $courier -fixed
+
+---- Result was:
+0
+---- Result should have been (exact matching):
+1
+==== unixfont-8.5 FAILED
+
+
+
+==== unixfont-8.6 AllocFont procedure: setup widths of special chars FAILED
+==== Contents of test case:
+
+    set x 0
+    incr x [font measure $courier "\001"]   ;# 4
+    incr x [font measure $courier "\002"]   ;# 4
+    incr x [font measure $courier "\012"]   ;# 2
+    set x
+
+---- Result was:
+29
+---- Result should have been (exact matching):
+60
+==== unixfont-8.6 FAILED
+
+
+
+==== unixfont-9.1 GetControlCharSubst procedure: 2 chars subst FAILED
+==== Contents of test case:
+
+    .b.c dchars $t 0 end
+    .b.c insert $t 0 "0\a0"
+    set x {}
+    lappend x [.b.c index $t @[expr $ax*0],0]
+    lappend x [.b.c index $t @[expr $ax*1],0]
+    lappend x [.b.c index $t @[expr $ax*2],0]
+    lappend x [.b.c index $t @[expr $ax*3],0]
+
+---- Result was:
+0 1 2 3
+---- Result should have been (exact matching):
+0 1 1 2
+==== unixfont-9.1 FAILED
+
+
+
+==== unixfont-9.2 GetControlCharSubst procedure: 4 chars subst FAILED
+==== Contents of test case:
+
+    .b.c dchars $t 0 end
+    .b.c insert $t 0 "0\0010"
+    set x {}
+    lappend x [.b.c index $t @[expr $ax*0],0]
+    lappend x [.b.c index $t @[expr $ax*1],0]
+    lappend x [.b.c index $t @[expr $ax*2],0]
+    lappend x [.b.c index $t @[expr $ax*3],0]
+    lappend x [.b.c index $t @[expr $ax*4],0]
+    lappend x [.b.c index $t @[expr $ax*5],0]
+
+---- Result was:
+0 1 1 3 3 3
+---- Result should have been (exact matching):
+0 1 1 1 1 2
+==== unixfont-9.2 FAILED
+
+unixMenu.test
+unixSelect.test
+unixWm.test
+
+
+==== unixWm-45.2 UpdateSizeHints procedure FAILED
+==== Contents of test case:
+
+    destroy .t
+    toplevel .t -width 80 -height 60
+    wm minsize .t 30 40
+    wm maxsize .t 200 500
+    wm geometry .t +0+0
+    tkwait visibility .t
+    set property [testprop [testwrapper .t] WM_NORMAL_HINTS]
+    list [expr [lindex $property 5]] [expr [lindex $property 6]]  [expr [lindex $property 7]] [expr [lindex $property 8]]  [expr [lindex $property 9]] [expr [lindex $property 10]]
+
+---- Result was:
+30 40 200 500 0 0
+---- Result should have been (exact matching):
+30 40 200 500 1 1
+==== unixWm-45.2 FAILED
+
+
+
+==== unixWm-45.4 UpdateSizeHints procedure, not resizable with menu FAILED
+==== Contents of test case:
+
+    destroy .t
+    toplevel .t -width 80 -height 60
+    frame .t.menu -height 23 -width 50
+    testmenubar window .t .t.menu
+    wm resizable .t 0 0
+    wm geometry .t +0+0
+    tkwait visibility .t
+    set property [testprop [testwrapper .t] WM_NORMAL_HINTS]
+    list [winfo height .t]  [expr [lindex $property 5]] [expr [lindex $property 6]]  [expr [lindex $property 7]] [expr [lindex $property 8]]  [expr [lindex $property 9]] [expr [lindex $property 10]]
+
+---- Result was:
+60 80 83 80 83 0 0
+---- Result should have been (exact matching):
+60 80 83 80 83 1 1
+==== unixWm-45.4 FAILED
+
+
+
+==== unixWm-51.7 TkWmRestackToplevel procedure, other window isn't mapped FAILED
+==== Contents of test case:
+
+    foreach w {.t .t2 .t3} {
+	destroy $w
+	toplevel $w -width 200 -height 200 -bg green
+	wm geometry $w +0+0
+    }
+    raise .t .t2
+    sleep 2000
+    update
+    set result [list [winfo containing 100 100]]
+    lower .t3
+    sleep 2000
+    lappend result [winfo containing 100 100]
+
+---- Result was:
+.t3 .t2
+---- Result should have been (exact matching):
+.t3 .t
+==== unixWm-51.7 FAILED
+
+util.test
+visual.test
+visual_bb.test
+winButton.test
+winClipboard.test
+winDialog.test
+winFont.test
+winMenu.test
+winMsgbox.test
+winSend.test
+winWm.test
+window.test
+winfo.test
+wm.test
+
+
+==== wm-stackorder-2.2 stacking order FAILED
+==== Contents of test case:
+
+    toplevel .t ; update
+    raise .
+    raiseDelay
+    wm stackorder .
+
+---- Result was:
+. .t
+---- Result should have been (exact matching):
+.t .
+==== wm-stackorder-2.2 FAILED
+
+
+
+==== wm-stackorder-2.3 stacking order FAILED
+==== Contents of test case:
+
+    toplevel .t ; update
+    toplevel .t2 ; update
+    raise .
+    raise .t2
+    raiseDelay
+    wm stackorder .
+
+---- Result was:
+. .t .t2
+---- Result should have been (exact matching):
+.t . .t2
+==== wm-stackorder-2.3 FAILED
+
+
+
+==== wm-stackorder-2.4 stacking order FAILED
+==== Contents of test case:
+
+    toplevel .t ; update
+    toplevel .t2 ; update
+    raise .
+    lower .t2
+    raiseDelay
+    wm stackorder .
+
+---- Result was:
+.t2 . .t
+---- Result should have been (exact matching):
+.t2 .t .
+==== wm-stackorder-2.4 FAILED
+
+
+
+==== wm-stackorder-2.5 stacking order FAILED
+==== Contents of test case:
+
+    toplevel .parent ; update
+    destroy .parent.child1
+    toplevel .parent.child1 ; update
+    destroy .parent.child2
+    toplevel .parent.child2 ; update
+    destroy .extra
+    toplevel .extra ; update
+    raise .parent
+    lower .parent.child2
+    raiseDelay
+    wm stackorder .parent
+
+---- Result was:
+.parent .parent.child1 .parent.child2
+---- Result should have been (exact matching):
+.parent.child2 .parent.child1 .parent
+==== wm-stackorder-2.5 FAILED
+
+
+
+==== wm-stackorder-4.3 wm stackorder isabove|isbelow FAILED
+==== Contents of test case:
+
+    toplevel .t ; update
+    raise .
+    raiseDelay
+    wm stackorder .t isa .
+
+---- Result was:
+1
+---- Result should have been (exact matching):
+0
+==== wm-stackorder-4.3 FAILED
+
+
+
+==== wm-stackorder-4.4 wm stackorder isabove|isbelow FAILED
+==== Contents of test case:
+
+    toplevel .t ; update
+    raise .
+    raiseDelay
+    wm stackorder .t isb .
+
+---- Result was:
+0
+---- Result should have been (exact matching):
+1
+==== wm-stackorder-4.4 FAILED
+
+
+
+==== wm-stackorder-5.1 a menu is not a toplevel FAILED
+==== Contents of test case:
+
+    toplevel .t
+    menu .t.m -type menubar
+    .t.m add cascade -label "File"
+    .t configure -menu .t.m
+    update
+    raise .
+    raiseDelay
+    wm stackorder .
+
+---- Result was:
+. .t
+---- Result should have been (exact matching):
+.t .
+==== wm-stackorder-5.1 FAILED
+
+xmfbox.test
+
+all.tcl:	Total	9101	Passed	7910	Skipped	1155	Failed	36
+Sourced 87 Test Files.
+Files with failing tests: focus.test font.test scrollbar.test spinbox.test textDisp.test textImage.test textTag.test textWind.test unixFont.test unixWm.test wm.test
+Number of tests skipped for each constraint:
+	14	altDisplay
+	1	aqua
+	16	colorsFree
+	3	colorsLeftover
+	21	defaultPseudocolor8
+	10	emptyTest
+	139	fonts
+	1	hasArial
+	1	hasCourierNew
+	1	hasTimesNew
+	1	havePseudocolorVisual
+	6	knownBug
+	1	memory
+	378	nonPortable
+	33	nt
+	5	pseudocolor8
+	11	testmetrics
+	7	testwinevent
+	141	textfonts
+	1	unthreaded
+	1	userInteraction
+	312	win
+	51	winSend
+
+Tests running in interp:  $(@D)/tktest
+Tests located in:  $(SOURCE_DIR)/tests/ttk
+Tests running in:  $(@D)
+Temporary files stored in $(@D)
+Test files sourced into current interpreter
+Running tests that match:  *
+Skipping test files that match:  l.*.test
+Only running test files that match:  *.test
+checkbutton.test
+combobox.test
+entry.test
+image.test
+labelframe.test
+layout.test
+notebook.test
+panedwindow.test
+progressbar.test
+radiobutton.test
+scrollbar.test
+spinbox.test
+
+
+==== spinbox-1.8.4 -validate option: FAILED
+==== Contents of test case:
+
+    .sb configure -validate all -validatecommand {lappend ::spinbox_test %P}
+    pack .sb
+    .sb set 50
+    focus .sb
+    after 100 {set ::spinbox_wait 1} ; vwait ::spinbox_wait
+    set ::spinbox_test
+
+---- Result was:
+
+---- Result should have been (exact matching):
+50
+==== spinbox-1.8.4 FAILED
+
+treetags.test
+treeview.test
+ttk.test
+validate.test
+vsapi.test
+
+all.tcl:	Total	457	Passed	439	Skipped	17	Failed	1
+Sourced 17 Test Files.
+Files with failing tests: spinbox.test
+Number of tests skipped for each constraint:
+	2	NA
+	4	coreEntry
+	3	coreScrollbar
+	5	nyi
+	3	xpnative
+make[1]: Leaving directory `$(@D)'
