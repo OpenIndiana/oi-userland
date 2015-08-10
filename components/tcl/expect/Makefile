@@ -50,12 +50,13 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 
 COMPONENT_BUILD_TARGETS = all ${SCRIPTS}
 
+LDFLAGS +=		$(CC_BITS)
+
 CONFIGURE_OPTIONS 	+= CFLAGS="$(CFLAGS)"
+CONFIGURE_OPTIONS	+= LDFLAGS="$(LDFLAGS)"
 CONFIGURE_OPTIONS 	+= --enable-shared
 CONFIGURE_OPTIONS 	+= --with-tcl="$(COMPONENT_DIR)/../tcl/build/$(MACH$(BITS))"
 CONFIGURE_OPTIONS 	+= --with-tclinclude="$(COMPONENT_DIR)/../tcl/build/$(MACH$(BITS))/generic"
-
-CONFIGURE_OPTIONS.64	+= LDFLAGS="$(LDFLAGS) -m64"
 
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_TARGETS = test
@@ -67,13 +68,9 @@ ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
 configure:	$(CONFIGURE_32_and_64)
-
 build:		$(BUILD_32_and_64)
-
 install:	$(INSTALL_32_and_64) 
-	
 test: 		$(TEST_32_and_64)
-
 system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
 # special targets due to tcl internals dependencies
@@ -81,9 +78,7 @@ system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 	(cd ../tcl ; $(GMAKE) build)
 
 $(CONFIGURE_32):	../tcl/build/$(MACH32)/.built
-
 $(CONFIGURE_64):	../tcl/build/$(MACH64)/.built
-
 
 REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += shell/ksh93
