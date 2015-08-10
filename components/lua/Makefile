@@ -95,14 +95,27 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|\(total time:\).*|\1|" ' \
 	'-e "s|\(test done on\).*|\1|" '
 
-# common targets
+# Unpack and patch the tests once, and work around CR #19661394, which is
+# causing the lua self-tests to fail.
+COMPONENT_PRE_SYSTEM_TEST_ACTION = \
+	(if ! test -d $(LUA_TESTS) ; then \
+		$(UNPACK) $(UNPACK_ARGS) $(LUA_TESTS).tar.gz ; \
+		(cd $(LUA_TESTS); $(GPATCH) $(GPATCH_FLAGS) \
+			<$(COMPONENT_DIR)/files/fix-tests.patch) ; \
+	fi)
+
+COMPONENT_SYSTEM_TEST_DIR =	$(LUA_TESTS)
+COMPONENT_SYSTEM_TEST_CMD =	/usr/bin/lua
+COMPONENT_SYSTEM_TEST_ARGS =	-e"_U=true"
+COMPONENT_SYSTEM_TEST_TARGETS =	all.lua
+
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64) $(BUILD_DIR)/lua-64.pc
 
 test: 		$(TEST_32_and_64)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+system-test:	$(SYSTEM_TEST_32_and_64)
 
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

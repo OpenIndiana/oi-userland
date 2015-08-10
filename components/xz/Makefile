@@ -55,9 +55,18 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|^.*DEPDIR=.deps.*$$|XXX_CC_XXX|g" ' \
 	'-e "/^XXX_CC_XXX$$/d" '
 
+# Needed to build the test programs.
+COMPONENT_PRE_SYSTEM_TEST_ACTION += \
+	(cd $(@D)/src/liblzma ; $(GMAKE) liblzma.la )
+
+COMPONENT_SYSTEM_TEST_DIR =	$(@D)/tests
+COMPONENT_SYSTEM_TEST_ENV +=	XZ_SCRIPT=/usr/bin/xz
+COMPONENT_SYSTEM_TEST_ENV +=	XZDEC_SCRIPT=/usr/bin/xzdec
+COMPONENT_SYSTEM_TEST_ENV +=	XZDIFF_SCRIPT=/usr/bin/xzdiff
+COMPONENT_SYSTEM_TEST_ENV +=	XZGREP_SCRIPT=/usr/bin/xzgrep
+
 ASLR_MODE = $(ASLR_ENABLE)
 
-# common targets
 configure:	$(CONFIGURE_32_and_64)
 
 build:		$(BUILD_32_and_64)
@@ -68,7 +77,7 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+system-test:    configure $(SYSTEM_TEST_32_and_64)
 
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += system/library

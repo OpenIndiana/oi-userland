@@ -1,0 +1,84 @@
+Patches to allow us to specify alternate locations for various xz scripts
+when running tests
+
+This patch should be sent upstream.
+
+--- xz-5.2.1/tests/test_compress.sh.orig	2015-08-10 05:34:11.999000878 -0700
++++ xz-5.2.1/tests/test_compress.sh	2015-08-10 05:49:30.044238292 -0700
+@@ -9,13 +9,15 @@
+ #
+ ###############################################################################
+ 
+-# If xz wasn't built, this test is skipped.
+-if test -x ../src/xz/xz ; then
+-	:
+-else
++# If the xz script isn't found, this test is skipped.
++XZ_PROG="${XZ_SCRIPT:-../src/xz/xz}"
++XZDEC_PROG="${XZDEC_SCRIPT:-../src/xzdec/xzdec}"
++
++for i in XZ_PROG XZDEC_PROG; do
++	eval test -x "\$$i" && continue
+ 	(exit 77)
+ 	exit 77
+-fi
++done
+ 
+ # Find out if our shell supports functions.
+ eval 'unset foo ; foo() { return 42; } ; foo'
+@@ -74,10 +76,10 @@
+ 	echo . | tr -d '\n\r'
+ }
+ 
+-XZ="../src/xz/xz --memlimit-compress=48MiB --memlimit-decompress=5MiB \
++XZ="$XZ_PROG --memlimit-compress=48MiB --memlimit-decompress=5MiB \
+ 		--no-adjust --threads=1 --check=crc64"
+-XZDEC="../src/xzdec/xzdec" # No memory usage limiter available
+-test -x ../src/xzdec/xzdec || XZDEC=
++XZDEC="$XZDEC_PROG" # No memory usage limiter available
++test -x $XZDEC_PROG || XZDEC=
+ 
+ # Create the required input files.
+ if ./create_compress_files ; then
+--- xz-5.2.1/tests/test_files.sh.orig	2015-08-10 05:33:23.741544673 -0700
++++ xz-5.2.1/tests/test_files.sh	2015-08-10 05:46:25.045018366 -0700
+@@ -9,15 +9,15 @@
+ #
+ ###############################################################################
+ 
+-# If both xz and xzdec were not build, skip this test.
+-XZ=../src/xz/xz
+-XZDEC=../src/xzdec/xzdec
+-test -x "$XZ" || XZ=
+-test -x "$XZDEC" || XZDEC=
+-if test -z "$XZ$XZDEC"; then
++# If both xz and xzdec are not found, skip this test.
++XZ="${XZ_SCRIPT:-../src/xz/xz}"
++XZDEC="${XZDEC_SCRIPT:-../src/xzdec/xzdec}"
++
++for i in XZ XZDEC; do
++	eval test -x "\$$i" && continue
+ 	(exit 77)
+ 	exit 77
+-fi
++done
+ 
+ for I in "$srcdir"/files/good-*.xz
+ do
+--- xz-5.2.1/tests/test_scripts.sh.orig	2015-08-10 05:35:11.436118619 -0700
++++ xz-5.2.1/tests/test_scripts.sh	2015-08-10 05:38:39.611332394 -0700
+@@ -9,10 +9,10 @@
+ #
+ ###############################################################################
+ 
+-# If scripts weren't built, this test is skipped.
+-XZ=../src/xz/xz
+-XZDIFF=../src/scripts/xzdiff
+-XZGREP=../src/scripts/xzgrep
++# If scripts not found, this test is skipped.
++XZ="${XZ_SCRIPT:-../src/xz/xz}"
++XZDIFF="${XZDIFF_SCRIPT:-../src/scripts/xzdiff}"
++XZGREP="${XZGREP_SCRIPT:-../src/scripts/xzgrep}"
+ 
+ for i in XZ XZDIFF XZGREP; do
+ 	eval test -x "\$$i" && continue

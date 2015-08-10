@@ -77,6 +77,25 @@ COMPONENT_TEST_DIR =	$(@D)/test/check
 
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
+COMPONENT_TEST_TRANSFORMS += \
+	'-n ' \
+	'-e "/TOTAL/p" ' \
+	'-e "/SKIP/p" ' \
+	'-e "/PASS/p" ' \
+	'-e "/FAIL/p" ' \
+	'-e "/ERROR/p" '
+
+# Needed to build the test programs.
+COMPONENT_PRE_SYSTEM_TEST_ACTION += \
+	(cd $(@D)/src ; $(GMAKE) libdnet.la )
+
+COMPONENT_SYSTEM_TEST_DIR =	$(@D)/test/check
+
+# Get correct libdnet.so.1 from the proto area.
+TEST_LIBPATH.32 =	$(PROTOUSRLIBDIR)
+TEST_LIBPATH.64 =	$(PROTOUSRLIBDIR64)
+COMPONENT_TEST_ENV +=	LD_LIBRARY_PATH=$(TEST_LIBPATH.$(BITS))
+
 ASLR_MODE = $(ASLR_ENABLE)
 
 configure:	$(CONFIGURE_32_and_64)
@@ -85,9 +104,9 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-test:		$(TEST_32_and_64)
+test:		install $(TEST_32_and_64)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+system-test:    configure $(SYSTEM_TEST_32_and_64)
 
 REQUIRED_PACKAGES += developer/test/check
 REQUIRED_PACKAGES += runtime/python-27

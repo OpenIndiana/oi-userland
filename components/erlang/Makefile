@@ -108,6 +108,9 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|/ldisk/tests|XXX_UID_XXX|g" ' \
 	'-e "/XXX_UID_XXX/d" '
 
+COMPONENT_SYSTEM_TEST_ENV +=		ERL_TOP=$(BUILD_DIR_64)
+COMPONENT_SYSTEM_TEST_TARGETS =	tests
+
 ASLR_MODE = $(ASLR_ENABLE)
 
 configure:	$(CONFIGURE_64)
@@ -122,7 +125,7 @@ install:	$(INSTALL_64)
 
 test:	$(TEST_64)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+system-test:	configure $(SYSTEM_TEST_64)
 
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/security/openssl
