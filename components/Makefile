@@ -169,8 +169,8 @@ incorporation:
 	done
 
 publish:
+# evaluation packages don't need to be incorporated
 ifneq ($(BUILD_TYPE), evaluation)
-	# evaluation packages don't need to be incorporated
 	$(MAKE) incorporation
 endif
 # pkglint all of the published manifests in one batch.
