@@ -1,0 +1,65 @@
+Patch origin: in-house
+Patch status: will be submitted to upstream
+
+Add support for system-test which allows to test mod_perl installed on
+system.
+
+--- Apache-Test/lib/Apache/TestMM.pm
++++ Apache-Test/lib/Apache/TestMM.pm
+@@ -101,8 +101,15 @@
+ 	$(FULLPERL) -I$(INST_ARCHLIB) -I$(INST_LIB) \
+ 	t/TEST $(APACHE_TEST_EXTRA_ARGS) -bugreport -verbose=$(TEST_VERBOSE) $(TEST_FILES)
+ 
++run_system_tests :
++	$(PASSENV) \
++	$(FULLPERL) -I$(APACHEINSTALLSITELIB) \
++	t/TEST $(APACHE_TEST_EXTRA_ARGS) -libmodperl $(APACHEINSTALLSITELIB)/../../libexec/mod_perl.so -bugreport -verbose=$(TEST_VERBOSE) $(TEST_FILES)
++
+ test :: pure_all test_clean run_tests
+ 
++system_test :: pure_all test_clean run_system_tests
++
+ test_config :
+ 	$(PASSENV) \
+ 	$(FULLPERL) -I$(INST_ARCHLIB) -I$(INST_LIB) \
+--- Makefile.PL
++++ Makefile.PL
+@@ -850,22 +850,38 @@
+ 	$(FULLPERL) -I$(INST_ARCHLIB) -I$(INST_LIB) \
+ 	t/TEST -bugreport -verbose=$(TEST_VERBOSE) $(TEST_FILES)
+ 
++run_system_tests : test_clean
++	$(PASSENV) \
++	$(FULLPERL) -I$(INSTALLSITELIB) \
++	t/TEST -libmodperl $(INSTALLSITELIB)/../../libexec/mod_perl.so -bugreport -verbose=$(TEST_VERBOSE) $(TEST_FILES)
++
+ run_subtests ::
+ 	cd ModPerl-Registry && $(MAKE) test
+ 
++run_system_subtests ::
++	cd ModPerl-Registry && $(MAKE) system_test APACHEINSTALLSITELIB=$(INSTALLSITELIB)
++
+ run_subtests ::
+ 	cd Apache-Reload && $(MAKE) test
+ 
++run_system_subtests ::
++	cd Apache-Reload && $(MAKE) system_test APACHEINSTALLSITELIB=$(INSTALLSITELIB)
++
+ EOF
+ 
+     $preamble .= <<'EOF' unless $build->mpm_is_threaded();
+ run_subtests ::
+ 	cd Apache-SizeLimit && $(MAKE) test
+ 
++run_system_subtests ::
++	cd Apache-SizeLimit && $(MAKE) system_test APACHEINSTALLSITELIB=$(INSTALLSITELIB)
++
+ EOF
+ 
+     $preamble .= <<'EOF';
+ test :: pure_all run_tests run_subtests
++
++system_test :: pure_all run_system_tests run_system_subtests
+ EOF
+ 
+     return $preamble;

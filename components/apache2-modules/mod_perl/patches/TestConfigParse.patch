@@ -1,26 +1,51 @@
 Patch origin: in-house
 Patch status: Solaris-specific; not suitable for upstream
 
-This change makes sure that 64 bit modules and mod_fcgid module are not
-used for testing. Mod_fcgid is disabled because it by default creates
-shared memory and socket in paths which are not suitable for ordinary
-user (or there can be interaction with running Apache).
+For Apache 2.2 distinguishes 32bit and 64bit modules.
+For Apache 2.4 removes all MPMs modules except event MPM.
 
---- mod_perl-2.0.4/Apache-Test/lib/Apache/TestConfigParse.pm
-+++ mod_perl-2.0.4/Apache-Test/lib/Apache/TestConfigParse.pm
-@@ -211,6 +211,16 @@
+--- Apache-Test/lib/Apache/TestConfigParse.pm
++++ Apache-Test/lib/Apache/TestConfigParse.pm
+@@ -20,6 +20,7 @@
+ 
+ use strict;
+ use warnings FATAL => 'all';
++use Cwd;
+ 
+ use Apache::TestTrace;
+ 
+@@ -185,7 +186,7 @@
+ # - mod_fcgid causes https://rt.cpan.org/Public/Bug/Display.html?id=54476
+ # - mod_modnss.c and mod_rev.c require further configuration
+ my @autoconfig_skip_module = qw(mod_jk.c mod_casp2.c mod_bwshare.c
+-    mod_fcgid.c mod_evasive20.c mod_modnss.c mod_rev.c);
++    mod_fcgid.c mod_evasive20.c mod_modnss.c mod_rev.c mod_mpm_prefork.c mod_mpm_worker.c);
+ 
+ # add modules to be not inherited from the existing config.
+ # e.g. prevent from LoadModule perl_module to be included twice, when
+@@ -212,10 +213,26 @@
+ #inherit LoadModule
+ sub inherit_load_module {
+     my($self, $c, $directive) = @_;
++    my $httpd64bit = 0;
++    my $cwd = getcwd();
++    if (index($cwd, "amd64") != -1 or index($cwd, "sparcv9") != -1) {
++        $httpd64bit = 1;
++    }
+ 
      for my $args (@{ $c->{$directive} }) {
          my $modname = $args->[0];
          my $file = $self->server_file_rel2abs($args->[1]);
-+	
-+        unless ($file !~ m/\/64\//) {
-+            debug "$file is 64 bit module (we don't want it)";
-+            next;
-+        }
-+
-+        unless ($file !~ m/mod_fcgid.so/) {
-+            debug "$file creates shared memory and sockets on wrong place (skipping)";
-+            next;
++        if ($httpd64bit == 0) {
++            unless ($file !~ m/\/64\//) {
++                debug "$file is 64 bit module (we don't want it)";
++                next;
++            }
++        } else {
++            unless ($file =~ m/\/64\// || $file =~ m/\/2\.4\//) {
++                debug "$file is 32 bit module (we don't want it)";
++                next;
++            }
 +        }
  
          unless (-e $file) {

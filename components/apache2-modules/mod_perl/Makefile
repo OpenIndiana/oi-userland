@@ -23,16 +23,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mod_perl
-COMPONENT_VERSION=	2.0.4
+COMPONENT_VERSION=	2.0.9
 COMPONENT_PROJECT_URL=	http://perl.apache.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:7da2046aa65dbef64ff5b71400bed4b6b82441e6313c8ca4becb85fb4a89a0f0
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)dist/$(COMPONENT_ARCHIVE)
+    sha256:0260f26ab771c1c95fadc67544b3400e420bb30b8a77565d2d02ad05498ef52b
+COMPONENT_ARCHIVE_URL=	http://www.apache.org/dist/perl/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/apache
 
-TPNO=			8896
+TPNO=			23900
 
 CONFIGURE_DEFAULT_DIRS=no
 
@@ -40,7 +40,13 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-APACHE_USR_PREFIX=/usr/apache2/2.2
+PATCH_LEVEL=0
+
+$(BUILD_DIR)/$(MACH64)/.built: PERL=/usr/perl5/5.20/bin/perl
+
+$(BUILD_DIR)/$(MACH32)/.built: APACHE_USR_PREFIX=/usr/apache2/2.2
+$(BUILD_DIR)/$(MACH64)/.built: APACHE_USR_PREFIX=/usr/apache2/2.4
+
 AP_PERL5LIB=$(APACHE_USR_PREFIX)/lib/perl
 AP_PERL5BIN=$(APACHE_USR_PREFIX)/bin
 PERLMAN=$(APACHE_USR_PREFIX)/man
@@ -60,27 +66,46 @@ COMPONENT_PRE_BUILD_ACTION= ( \
 	MP_APXS=$(APACHE_USR_PREFIX)/bin/apxs)
 
 COMPONENT_TEST_TARGETS=	test
+COMPONENT_SYSTEM_TEST_TARGETS=	system_test
 
 PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)
 PATH=$(PARFAIT_TOOLS):$(SPRO_VROOT)/bin:/usr/bin
 endif
 
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s/\[pid [0-9][0-9]*:tid [0-9][0-9]*\] //" ' \
+	'-e "/\[.* 20[0-9][0-9]\] \[/s/\[.* 20[0-9][0-9]\]/[date]/" ' \
+	'-e "/^server localhost/s/ (.*)//" ' \
+	'-e "/base server + [0-9][0-9] vhosts ready to run tests/d" ' \
+	'-e "/^Files=/s/, Tests=[0-9][0-9]*,  *[0-9][0-9]* wallclock secs (.*)//" ' \
+	'-e "/^waiting .* to start: ok/s/ (waited [0-9][0-9]* secs)//" ' \
+	'-e "/^waiting .* to start: \./s/\.\.*//" ' \
+	'-e "/^\.\.*$$/d" ' \
+	'-e "/^\[warning\] port 8529 still in use\.\.\.$$/d" ' \
+	'-e "/^\.*done$$/d" ' \
+	'-e "s/ -I.*blib\/arch -I.*blib\/lib//" ' \
+	'-e "s/ -I\/usr\/apache2\/2\.[0-9]\/lib\/perl//" ' \
+	'-e "s/ -libmodperl .*mod_perl\.so//" ' \
+	'-e "s/ make system_test APACHEINSTALLSITELIB=.*/ make test/" ' \
+	'-e "s/using Apache\/2.[0-9].[0-9][0-9]* (/using Apache\/2.x.x (/" '
+
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-build: $(BUILD_32)
+build: $(BUILD_32_and_64)
 
-install: $(INSTALL_32)
+install: $(INSTALL_32_and_64)
 
-test: $(TEST_32)
+test: $(TEST_32_and_64)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
+system-test:    $(BUILD_32_and_64) $(SYSTEM_TEST_32_and_64)
 
 REQUIRED_PACKAGES += library/apr-15
 REQUIRED_PACKAGES += library/apr-util-15
 REQUIRED_PACKAGES += runtime/perl-512
+REQUIRED_PACKAGES += runtime/perl-520
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/linker
 REQUIRED_PACKAGES += web/server/apache-22
+REQUIRED_PACKAGES += web/server/apache-24
