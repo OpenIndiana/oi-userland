@@ -94,14 +94,31 @@ COMPONENT_TEST_TARGETS =
 COMPONENT_POST_TEST_ACTION = \
 	(cd $(@D); rm asciidoc)
 
-# The additional asciidoc specific set of transforms to be applied to the
-# test results to try to normalize them.
 COMPONENT_TEST_TRANSFORMS += \
-	'-e "s|/tmp......|/tmpxxxxxx|g" '
+	'-n ' \
+	'-e "/passed/p" ' \
+	'-e "/^[1-9]: /p" ' \
+	'-e "/^[1-9][0-9]: /p" ' \
+	'-e "/^SOURCE/p" ' \
+	'-e "/^PASSED/p" ' \
+	'-e "/^FAILED/p" ' \
+	'-e "/^TOTAL/p" '
+
+COMPONENT_SYSTEM_TEST_DIR =    $(@D)/tests
+COMPONENT_SYSTEM_TEST_ENV_CMD =
+COMPONENT_SYSTEM_TEST_CMD =    \
+	python$(PYTHON_VERSION) ./asciidocapi.py; \
+	if [ $$? -eq 0 ] ; \
+		then print "asciidocapi test passed"; \
+		else print "asciidocapi test failed"; \
+	fi; \
+	python$(PYTHON_VERSION) ./testasciidoc.py update; \
+	python$(PYTHON_VERSION) ./testasciidoc.py run
+COMPONENT_SYSTEM_TEST_TARGETS =
 
 test:           $(TEST_64)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+system-test:    configure $(SYSTEM_TEST_64)
 
 
 REQUIRED_PACKAGES += library/libxml2

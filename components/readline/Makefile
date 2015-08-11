@@ -77,6 +77,23 @@ COMPONENT_TEST_TARGETS =
 # here, rather than create multiple identical master files.
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
+# Needed to build the test program.
+COMPONENT_PRE_SYSTEM_TEST_ACTION += \
+	(cd $(@D) ; $(GMAKE) libreadline.a ) ;
+
+# Build the test program.
+COMPONENT_PRE_SYSTEM_TEST_ACTION += \
+	(cd $(@D)/examples ; $(GMAKE) rlcat ) ;
+
+# Get correct libreadline.so.6 from the proto area.
+TEST_LIBPATH.32 =       $(PROTOUSRLIBDIR)
+TEST_LIBPATH.64 =       $(PROTOUSRLIBDIR64)
+COMPONENT_TEST_ENV +=   LD_LIBRARY_PATH=$(TEST_LIBPATH.$(BITS))
+
+COMPONENT_SYSTEM_TEST_DIR =	$(@D)/examples
+COMPONENT_SYSTEM_TEST_CMD =	$(CAT) $(SOURCE_DIR)/examples/Inputrc | ./rlcat
+COMPONENT_SYSTEM_TEST_TARGETS =
+
 # Macros to configure, build, and install the old version for the time being.
 BUILD_OLD_DIR_32 = $(COMPONENT_DIR)/build/$(COMPONENT_VERSION_1)-$(MACH32)
 BUILD_OLD_DIR_64 = $(COMPONENT_DIR)/build/$(COMPONENT_VERSION_1)-$(MACH64)
@@ -120,9 +137,9 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-test:		$(TEST_32_and_64)
+test:		install $(TEST_32_and_64)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+system-test:    configure $(SYSTEM_TEST_32_and_64)
 
 
 REQUIRED_PACKAGES += system/library
