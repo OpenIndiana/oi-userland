@@ -50,9 +50,11 @@ CONFIGURE_OPTIONS	+=	--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS	+=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS	+=	CFLAGS="$(CFLAGS)"
 
+COMPONENT_SYSTEM_TEST_ARGS = AWKPROG=/usr/bin/gawk
+
 ASLR_MODE = $(ASLR_ENABLE)
 
-# common targets
+
 configure:	$(CONFIGURE_64)
 
 build:		$(BUILD_64)
@@ -61,7 +63,8 @@ install:	$(INSTALL_64)
 
 test:		$(TEST_64)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+# must build tests before using
+system-test:    build $(SYSTEM_TEST_64)
 
 
 REQUIRED_PACKAGES += library/libsigsegv

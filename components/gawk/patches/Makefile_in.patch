@@ -1,0 +1,21 @@
+Internally produced patch to allow both test and system-test to work.
+Will offer to upstream.
+
+
+--- gawk-3.1.8/test/Makefile.in_orig	2015-08-03 15:16:05.007746388 -0700
++++ gawk-3.1.8/test/Makefile.in	2015-08-03 15:16:57.152891167 -0700
+@@ -1187,12 +1187,12 @@
+ # so this can still fail
+ poundbang::
+ 	@echo $@
+-	@sed "s;/tmp/gawk;`pwd`/$(AWKPROG);" < $(srcdir)/poundbang.awk > ./_pbd.awk
++	@sed "s;/tmp/gawk;$(AWKPROG);" < $(srcdir)/poundbang.awk > ./_pbd.awk
+ 	@chmod +x ./_pbd.awk
+ 	@if ./_pbd.awk $(srcdir)/poundbang.awk > _`basename $@` ; \
+ 	then : ; \
+ 	else \
+-		sed "s;/tmp/gawk;../$(AWKPROG);" < $(srcdir)/poundbang.awk > ./_pbd.awk ; \
++		sed "s;/tmp/gawk;$(AWKPROG);" < $(srcdir)/poundbang.awk > ./_pbd.awk ; \
+ 		chmod +x ./_pbd.awk ; \
+ 		LC_ALL=$${GAWKLOCALE:-C} LANG=$${GAWKLOCALE:-C} ./_pbd.awk $(srcdir)/poundbang.awk > _`basename $@`;  \
+ 	fi

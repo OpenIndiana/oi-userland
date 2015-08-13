@@ -46,12 +46,25 @@ CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
 
-# "check" is not working yet.  It's asking for a password.
+# need gnu grep
 COMPONENT_TEST_ENV += PATH=$(GNUBIN):$(PATH)
+# "check" is not working yet.  It's asking for a password.
 COMPONENT_TEST_TARGETS = localcheck
 
-# Test transforms to cut out randomly-ordered test messages
-COMPONENT_TEST_TRANSFORMS += '-e "/^cp.*/d" ' \
+# mimic localcheck from src/Makefile
+COMPONENT_SYSTEM_TEST_DIR = $(SOURCE_DIR)/src
+COMPONENT_SYSTEM_TEST_ENV += PATH=$(GNUBIN):$(PATH)
+COMPONENT_SYSTEM_TEST_CMD = ./sanity.sh
+COMPONENT_SYSTEM_TEST_ARGS = /usr/bin/cvs
+COMPONENT_SYSTEM_TEST_TARGETS =
+
+# extract just the final results
+# delete make lines
+# delete cp lines
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "/^This/,/^make/!d" ' \
+	'-e "/^[mM]ake/d" ' \
+	'-e "/^cp.*/d" '
 
 configure:	$(CONFIGURE_64)
 
@@ -61,7 +74,7 @@ install:	$(INSTALL_64)
 
 test:		$(TEST_64)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+system-test:	$(SYSTEM_TEST_64)
 
 
 REQUIRED_PACKAGES += library/zlib
