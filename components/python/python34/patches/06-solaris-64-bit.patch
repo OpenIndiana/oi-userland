@@ -173,16 +173,34 @@ not suitable for upstream.
  
      with open(destfile, 'w', encoding='utf8') as f:
          f.write('# system configuration generated and used by'
---- Python-3.4.0/Modules/getpath.c.~1~ 2014-03-16 19:31:31.000000000 -0700
-+++ Python-3.4.0/Modules/getpath.c     2014-04-25 15:02:02.837613851 -0700
-@@ -697,6 +697,10 @@
+--- Python-3.4.3/Modules/getpath.c.~1~	2015-02-25 03:27:46.000000000 -0800
++++ Python-3.4.3/Modules/getpath.c	2015-08-13 08:51:05.849178060 -0700
+@@ -472,6 +472,7 @@
+     wchar_t argv0_path[MAXPATHLEN+1];
+     wchar_t zip_path[MAXPATHLEN+1];
+     int pfound, efound; /* 1 if found; -1 if found build directory */
++    boolean_t added_64 = B_FALSE;
+     wchar_t *buf;
+     size_t bufsz;
+     size_t prefixsz;
+@@ -697,6 +698,11 @@
          wcsncpy(exec_prefix, _exec_prefix, MAXPATHLEN);
          joinpath(exec_prefix, L"lib/lib-dynload");
      }
 +    if (sizeof(void *) == 8 && wcslen(exec_prefix) + 3 <= MAXPATHLEN) {
 +        wcscat(exec_prefix, L"/64");
++        added_64 = B_TRUE;
 +    }
 +
      /* If we found EXEC_PREFIX do *not* reduce it!  (Yet.) */
  
      if ((!pfound || !efound) && !Py_FrozenFlag)
+@@ -805,6 +811,8 @@
+         reduce(exec_prefix);
+         reduce(exec_prefix);
+         reduce(exec_prefix);
++        if (added_64);
++            reduce(exec_prefix);
+         if (!exec_prefix[0])
+                 wcscpy(exec_prefix, separator);
+     }
