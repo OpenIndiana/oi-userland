@@ -24,7 +24,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bash
 COMPONENT_VERSION=	4.2
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/bash/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -37,7 +37,8 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-IPS_COMPONENT_VERSION = $(COMPONENT_VERSION).45
+BASH_PATCHLEVEL=$(shell grep -h "define PATCHLEVEL" $(COMPONENT_DIR)/patches/bash* | nawk '{print $$NF}' | sort -n | tail -1)
+IPS_COMPONENT_VERSION = $(COMPONENT_VERSION).$(BASH_PATCHLEVEL)
 PATCH_LEVEL = 0
 
 PKG_PROTO_DIRS += $(COMPONENT_DIR)/Solaris
