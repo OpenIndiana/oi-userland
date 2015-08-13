@@ -39,7 +39,7 @@ check_running() {
 			# This is infinite loop which will be killed after smf timeout
 			while : ; do
 				sleep 2
-				PING=`/usr/bin/wbinfo --ping-dc 2>&1`
+				PING=`/usr/bin/wbinfo -P 2>&1`
 				if [ $? -eq 0 ]; then
 					break
 				fi
