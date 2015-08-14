@@ -67,9 +67,19 @@ COMPONENT_POST_UNPACK_ACTION = \
 # here, rather than create multiple identical master files.
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
+COMPONENT_TEST_TRANSFORMS += \
+	'-n ' \
+	'-e "/SKIP/p" ' \
+	'-e "/PASS/p" ' \
+	'-e "/FAIL/p" ' \
+	'-e "/passed/p" '
+
+COMPONENT_SYSTEM_TEST_ENV +=	CLexe=/usr/bin/columns
+COMPONENT_SYSTEM_TEST_ENV +=	GDexe=/usr/bin/getdefs
+COMPONENT_SYSTEM_TEST_ENV +=	AGexe=/usr/bin/autogen
+
 ASLR_MODE = $(ASLR_ENABLE)
 
-# common targets
 configure:	$(CONFIGURE_32_and_64)
 
 build:		$(BUILD_32_and_64)
@@ -78,7 +88,8 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+# Tests need to be built.
+system-test:	build $(SYSTEM_TEST_32_and_64)
 
 
 REQUIRED_PACKAGES += library/gmp
