@@ -26,12 +26,12 @@ include ../../make-rules/shared-macros.mk
 PATH = /usr/gnu/bin:/usr/bin
 
 COMPONENT_NAME=		pinentry
-COMPONENT_VERSION=	0.8.3
+COMPONENT_VERSION=	0.8.4
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.gnupg.org/related_software/pinentry/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:568b0b09b50b2388a4f94d704d5bcb28718ecd4654ed1acc43ab1f97d921a0ad
+    sha256:359db3bf46cb743ba0b3aeef259f6107271ca888ba3e22c1cba525c9aca35612
 COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/pinentry/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gnupg
 
@@ -63,6 +63,7 @@ CONFIGURE_OPTIONS  +=		--disable-gtktest
 CONFIGURE_OPTIONS  +=		--enable-threading
 CONFIGURE_OPTIONS  +=		--disable-pinentry-gtk
 CONFIGURE_OPTIONS  +=		--disable-pinentry-qt
+CONFIGURE_OPTIONS  +=		--disable-pinentry-qt4
 CONFIGURE_OPTIONS  +=		--disable-ncurses
 
 build: $(BUILD_32)
