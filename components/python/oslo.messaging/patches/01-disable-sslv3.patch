@@ -1,0 +1,57 @@
+This upstream patch addresses the removal of SSLv3 (Bug# 1395095)
+
+From https://review.openstack.org/openstack/oslo.messaging
+ * branch            refs/changes/78/136278/2 -> FETCH_HEAD
+From 42f55a1dda96d4ceecf8cca5fba9cd723673f6e3 Mon Sep 17 00:00:00 2001
+From: Thomas Goirand <thomas@goirand.fr>
+Date: Fri, 21 Nov 2014 17:40:46 +0800
+Subject: [PATCH] Remove the use of PROTOCOL_SSLv3
+
+The PROTOCOL_SSLv3 should not be used, as it can be exploited with
+a protocol downgrade attack. Also, its support has been removed in
+Debian, so it simply doesn't work at all now in Sid.
+
+This patch removes PROTOCOL_SSLv3 from one of the possible protocols
+used by oslo.messaging.
+
+Closes-Bug: #1395095
+Change-Id: I2c1977c3bfc1923bcb03744e909f2e70c7fdb14c
+---
+ oslo/messaging/_drivers/impl_rabbit.py |   12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/oslo/messaging/_drivers/impl_rabbit.py b/oslo/messaging/_drivers/impl_rabbit.py
+index 939a3ce..0c786ed 100644
+--- a/oslo/messaging/_drivers/impl_rabbit.py
++++ b/oslo/messaging/_drivers/impl_rabbit.py
+@@ -41,8 +41,8 @@ rabbit_opts = [
+     cfg.StrOpt('kombu_ssl_version',
+                default='',
+                help='SSL version to use (valid only if SSL enabled). '
+-                    'valid values are TLSv1, SSLv23 and SSLv3. SSLv2 may '
+-                    'be available on some distributions.'
++                    'valid values are TLSv1 and SSLv23. SSLv2 and '
++                    'SSLv3 may be available on some distributions.'
+                ),
+     cfg.StrOpt('kombu_ssl_keyfile',
+                default='',
+@@ -496,8 +496,7 @@ class Connection(object):
+     # FIXME(markmc): use oslo sslutils when it is available as a library
+     _SSL_PROTOCOLS = {
+         "tlsv1": ssl.PROTOCOL_TLSv1,
+-        "sslv23": ssl.PROTOCOL_SSLv23,
+-        "sslv3": ssl.PROTOCOL_SSLv3
++        "sslv23": ssl.PROTOCOL_SSLv23
+     }
+ 
+     try:
+@@ -505,6 +504,11 @@ class Connection(object):
+     except AttributeError:
+         pass
+ 
++    try:
++        _SSL_PROTOCOLS["sslv3"] = ssl.PROTOCOL_SSLv3
++    except AttributeError:
++        pass
++
+     @classmethod

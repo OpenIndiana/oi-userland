@@ -1,0 +1,27 @@
+In-house patch to disable SSLv3 support. 
+(See also upstream bug #1395095)
+
+--- cinder-2014.2.2/cinder/openstack/common/sslutils.py.orig	2015-02-05 11:03:26.000000000 -0500
++++ cinder-2014.2.2/cinder/openstack/common/sslutils.py	2015-08-13 20:27:21.205921362 -0400
+@@ -80,8 +80,7 @@
+ 
+ _SSL_PROTOCOLS = {
+     "tlsv1": ssl.PROTOCOL_TLSv1,
+-    "sslv23": ssl.PROTOCOL_SSLv23,
+-    "sslv3": ssl.PROTOCOL_SSLv3
++    "sslv23": ssl.PROTOCOL_SSLv23
+ }
+ 
+ try:
+@@ -89,6 +88,11 @@
+ except AttributeError:
+     pass
+ 
++try:
++    _SSL_PROTOCOLS["sslv3"] = ssl.PROTOCOL_SSLv3
++except AttributeError:
++    pass
++
+ 
+ def validate_ssl_version(version):
+     key = version.lower()
