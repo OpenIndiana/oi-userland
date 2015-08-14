@@ -75,19 +75,20 @@ update_instance.UpdateInstance.default_steps = (
 AccessAndSecurityTabs.tabs = (KeypairsTab, FloatingIPsTab, APIAccessTab)
 
 # Remove 'ConfirmResize', 'RevertResize', 'TogglePause',
-# 'ToggleSuspend', 'MigrateInstance' actions from Admin/Instances/Actions
+# 'MigrateInstance' actions from Admin/Instances/Actions
 admin_tables.AdminInstancesTable._meta.row_actions = (
     admin_tables.AdminEditInstance,
     project_tables.ConsoleLink,
     project_tables.LogLink,
     project_tables.CreateSnapshot,
+    project_tables.ToggleSuspend,
     project_tables.SoftRebootInstance,
     project_tables.RebootInstance,
     project_tables.TerminateInstance
 )
 
 # Remove 'ConfirmResize', 'RevertResize', 'EditInstanceSecurityGroups',
-# 'TogglePause', 'ToggleSuspend', 'ResizeLink', 'RebuildInstance' actions
+# 'TogglePause', 'ResizeLink', 'RebuildInstance' actions
 # from Project/Instances/Actions
 project_tables.InstancesTable._meta.row_actions = (
     project_tables.StartInstance,
@@ -99,6 +100,7 @@ project_tables.InstancesTable._meta.row_actions = (
     project_tables.DecryptInstancePassword,
     project_tables.ConsoleLink,
     project_tables.LogLink,
+    project_tables.ToggleSuspend,
     project_tables.SoftRebootInstance,
     project_tables.RebootInstance,
     project_tables.StopInstance,

@@ -14,12 +14,54 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import ConfigParser
 import os
+from subprocess import CalledProcessError, Popen, PIPE, check_call
 
 import smf_include
 
 
 def start():
+    # retrieve dataset path for suspend images
+    nova_conf = "/etc/nova/nova.conf"
+    if not os.path.exists(nova_conf):
+        print "%s doesn't exist" % nova_conf
+        return smf_include.SMF_EXIT_ERR_CONFIG
+
+    parser = ConfigParser.ConfigParser()
+    parser.read(nova_conf)
+
+    # retrieve the suspend path or just get the default
+    default_path = '/var/share/suspend'
+    try:
+        suspend_path = parser.get('DEFAULT', 'zones_suspend_path')
+    except ConfigParser.NoOptionError:
+        suspend_path = default_path
+
+    if not os.path.exists(suspend_path):
+        if suspend_path == default_path:
+            # get the root pool name
+            cmd = ['/usr/sbin/zfs', 'list', '-Ho', 'name', '/']
+            p = Popen(cmd, stdout=PIPE, stderr=PIPE)
+            output, error = p.communicate()
+            if p.returncode != 0:
+                print "unable to determine root pool name: %s" % (error)
+                return smf_include.SMF_EXIT_ERR_CONFIG
+            rpool = output.split('/')[0]
+
+            # the default directory doesn't exist, create a new dataset for it
+            suspend_ds = os.path.join(rpool, 'VARSHARE/suspend')
+            try:
+                check_call(['/usr/bin/pfexec', '/usr/sbin/zfs', 'create', '-p',
+                            '-o', 'mountpoint=' + suspend_path, suspend_ds])
+            except CalledProcessError as err:
+                print "unable to create %s: %s" % (suspend_ds, err)
+                return smf_include.SMF_EXIT_ERR_CONFIG
+        else:
+            # the user specified a path, but it doesn't exist
+            print "Zones suspend path %s does not exist" % (suspend_path)
+            return smf_include.SMF_EXIT_ERR_CONFIG
+
     smf_include.smf_subprocess("/usr/bin/pfexec /usr/lib/nova/nova-compute")
 
 if __name__ == "__main__":

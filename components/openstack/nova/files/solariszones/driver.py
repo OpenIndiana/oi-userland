@@ -20,6 +20,7 @@ Driver for Solaris Zones (nee Containers):
 """
 
 import base64
+import errno
 import glob
 import os
 import platform
@@ -77,6 +78,9 @@ solariszones_opts = [
                default='$instances_path/snapshots',
                help='Location where solariszones driver will store snapshots '
                     'before uploading them to the Glance image service'),
+    cfg.StrOpt('zones_suspend_path',
+               default='/var/share/suspend',
+               help='Default path for suspend images for Solaris Zones.'),
 ]
 
 CONF = cfg.CONF
@@ -129,6 +133,17 @@ VNC_CONSOLE_BASE_FMRI = 'svc:/application/openstack/nova/zone-vnc-console'
 # Required in order to create a zone VNC console SMF service instance
 VNC_SERVER_PATH = '/usr/bin/vncserver'
 XTERM_PATH = '/usr/bin/xterm'
+
+
+def lookup_resource(zone, resource):
+    """Lookup specified resource from specified Solaris Zone."""
+    try:
+        val = zone.getResources(zonemgr.Resource(resource))
+    except rad.client.ObjectError:
+        return None
+    except Exception:
+        raise
+    return val[0] if val else None
 
 
 def lookup_resource_property(zone, resource, prop, filter=None):
@@ -1049,6 +1064,18 @@ class SolarisZonesDriver(driver.ComputeDriver):
             # set the tenant id
             with ZoneConfig(zone) as zc:
                 zc.setprop('global', 'tenant', tenant_id)
+
+    def _set_suspend(self, instance):
+        """Use the instance name to specify the pathname for the suspend image.
+        """
+        name = instance['name']
+        zone = self._get_zone_by_name(name)
+        if zone is None:
+            raise exception.InstanceNotFound(instance_id=name)
+
+        path = os.path.join(CONF.zones_suspend_path, '%{zonename}')
+        with ZoneConfig(zone) as zc:
+            zc.addresource('suspend', [zonemgr.Property('path', path)])
 
     def _verify_sysconfig(self, sc_dir, instance, admin_password=None):
         """verify the SC profile(s) passed in contain an entry for
@@ -2089,7 +2116,39 @@ class SolarisZonesDriver(driver.ComputeDriver):
         :param instance: nova.objects.instance.Instance
         """
         # TODO(Vek): Need to pass context in for access to auth_token
-        raise NotImplementedError()
+        name = instance['name']
+        zone = self._get_zone_by_name(name)
+        if zone is None:
+            raise exception.InstanceNotFound(instance_id=name)
+
+        if zone.brand != ZONE_BRAND_SOLARIS_KZ:
+            # Only Solaris kernel zones are currently supported.
+            reason = (_("'%s' branded zones do not currently support "
+                        "suspend. Use 'nova reset-state --active %s' "
+                        "to reset instance state back to 'active'.")
+                      % (zone.brand, instance['display_name']))
+            raise exception.InstanceSuspendFailure(reason=reason)
+
+        if self._get_state(zone) != power_state.RUNNING:
+            reason = (_("Instance '%s' is not running.") % name)
+            raise exception.InstanceSuspendFailure(reason=reason)
+
+        try:
+            new_path = os.path.join(CONF.zones_suspend_path, '%{zonename}')
+            if not lookup_resource(zone, 'suspend'):
+                # add suspend if not configured
+                self._set_suspend(instance)
+            elif lookup_resource_property(zone, 'suspend', 'path') != new_path:
+                # replace the old suspend resource with the new one
+                with ZoneConfig(zone) as zc:
+                    zc.removeresources('suspend')
+                self._set_suspend(instance)
+
+            zone.suspend()
+        except Exception as reason:
+            LOG.error(_("Unable to suspend instance '%s' via "
+                        "zonemgr(3RAD): %s") % (name, reason))
+            raise exception.InstanceSuspendFailure(reason=reason)
 
     def resume(self, context, instance, network_info, block_device_info=None):
         """resume the specified instance.
@@ -2100,7 +2159,28 @@ class SolarisZonesDriver(driver.ComputeDriver):
            :py:meth:`~nova.network.manager.NetworkManager.get_instance_nw_info`
         :param block_device_info: instance volume block device info
         """
-        raise NotImplementedError()
+        name = instance['name']
+        zone = self._get_zone_by_name(name)
+        if zone is None:
+            raise exception.InstanceNotFound(instance_id=name)
+
+        if zone.brand != ZONE_BRAND_SOLARIS_KZ:
+            # Only Solaris kernel zones are currently supported.
+            reason = (_("'%s' branded zones do not currently support "
+                      "resume.") % zone.brand)
+            raise exception.InstanceResumeFailure(reason=reason)
+
+        # check that the instance is suspended
+        if self._get_state(zone) != power_state.SHUTDOWN:
+            reason = (_("Instance '%s' is not suspended.") % name)
+            raise exception.InstanceResumeFailure(reason=reason)
+
+        try:
+            zone.boot()
+        except Exception as reason:
+            LOG.error(_("Unable to resume instance '%s' via zonemgr(3RAD): %s")
+                      % (name, reason))
+            raise exception.InstanceResumeFailure(reason=reason)
 
     def resume_state_on_host_boot(self, context, instance, network_info,
                                   block_device_info=None):
