@@ -20,6 +20,10 @@
 #
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
+# parfait is suddenly unhappy with us (21638460)
+export PARFAIT_BUILD=no
+
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		swig
