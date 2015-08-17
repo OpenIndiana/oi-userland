@@ -1,19 +1,16 @@
---- net-snmp-5.4.1/snmplib/scapi.c	Fri Sep 15 05:47:01 2006
-+++ net-snmp-5.4.1.mod/snmplib/scapi.c	Sat Jul  4 02:58:34 2009
-@@ -406,11 +406,11 @@
+--- net-snmp-5.4.4/snmplib/scapi.c.~1~	2011-01-07 16:24:31.000000000 +0300
++++ net-snmp-5.4.4/snmplib/scapi.c	2015-08-17 20:50:11.401118436 +0300
+@@ -407,8 +407,8 @@
+ {
+ #if defined(NETSNMP_USE_OPENSSL) || defined(NETSNMP_USE_PKCS11)
      int            rval = SNMPERR_SUCCESS;
- #endif
-     int            ret;
-+    unsigned int   tmp_len;
- 
- #ifdef NETSNMP_USE_OPENSSL
-     const EVP_MD   *hashfn;
-     EVP_MD_CTX     ctx, *cptr;
 -    unsigned int   tmp_len;
  #endif
++    unsigned int   tmp_len;
+     int            ret;
  
-     DEBUGTRACE;
-@@ -479,13 +479,11 @@
+ #ifdef NETSNMP_USE_OPENSSL
+@@ -482,13 +482,11 @@
  
  #ifndef NETSNMP_DISABLE_MD5
      if (ISTRANSFORM(hashtype, HMACMD5Auth)) {
