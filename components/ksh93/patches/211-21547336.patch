@@ -1,0 +1,16 @@
+http://lists.research.att.com/pipermail/ast-developers/2015q3.txt
+Message-ID: <55B9124F.6020501@oracle.com>
+
+diff --git a/src/cmd/ksh93/bltins/cd_pwd.c b/src/cmd/ksh93/bltins/cd_pwd.c
+index 0735be9..ed544bf 100644
+--- a/src/cmd/ksh93/bltins/cd_pwd.c
++++ b/src/cmd/ksh93/bltins/cd_pwd.c
+@@ -191,7 +191,7 @@ success:
+ 	if(*dir != '/')
+ 		return(0);
+ 	nv_putval(opwdnod,oldpwd,NV_RDONLY);
+-	if(oldpwd)
++	if(oldpwd && (oldpwd!=e_dot))
+ 		free(oldpwd);
+ 	flag = strlen(dir);
+ 	/* delete trailing '/' */
