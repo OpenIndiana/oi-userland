@@ -104,7 +104,19 @@ COMPONENT_POST_INSTALL_ACTION = \
 # One of the tests now needs the GNU tail command.
 COMPONENT_TEST_ENV +=  PATH="$(GNUBIN):$(PATH)"
 
-# common targets
+COMPONENT_SYSTEM_TEST_ARGS += LISP="LC_MESSAGES=en_US /usr/bin/clisp -E utf-8 -norc -m 30MW -L english"
+COMPONENT_SYSTEM_TEST_ENV  += PATH="$(GNUBIN):$(PATH)"
+
+# different results for different architectures
+COMPONENT_TEST_MASTER = \
+	$(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH)-$(BITS).master
+
+# extract the test result summaries
+COMPONENT_TEST_TRANSFORMS += \
+	'-n ' \
+	'-e "/error[s]* out of.*test[s]*$$/p" '
+
+
 configure:	$(CONFIGURE_32)
 
 build:		$(BUILD_32)
@@ -113,7 +125,8 @@ install:	$(INSTALL_32)
 
 test:		$(TEST_32)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+# system-test on sparc segfaults and produces a different result on x86
+system-test:	$(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
 
 REQUIRED_PACKAGES += library/libsigsegv
