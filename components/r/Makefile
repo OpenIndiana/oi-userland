@@ -23,9 +23,6 @@
 # Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
-# we can't quite run parfait yet (21561982)
-export PARFAIT_BUILD=no
-
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		R
