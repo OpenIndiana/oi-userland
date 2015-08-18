@@ -1,14 +1,16 @@
 # Ensure that emacs uses GNU find. See components/emacs/README.
+#    16171813 emacs rgrep assumes gnu find in path; fails using
+#            GNU-specific options
 #
---- emacs-24.3.orig/lisp/progmodes/grep.el	2013-01-01 13:37:17.000000000 -0700
-+++ emacs-24.3/lisp/progmodes/grep.el	2013-09-23 14:41:27.331614612 -0600
-@@ -419,7 +419,8 @@
+--- emacs-24.5.orig/lisp/progmodes/grep.el	2015-04-02 01:23:06.000000000 -0600
++++ emacs-24.5/lisp/progmodes/grep.el	2015-06-26 15:15:32.310280505 -0600
+@@ -422,7 +422,8 @@
  This variable's value takes effect when `grep-compute-defaults' is called.")
  
  ;;;###autoload
 -(defvar find-program (purecopy "find")
 +;;Change from find to GNU find for Solaris, as emacs uses GNU-specific options
 +(defvar find-program (purecopy "/usr/gnu/bin/find")
-   "The default find program for `grep-find-command'.
- This variable's value takes effect when `grep-compute-defaults' is called.")
- 
+   "The default find program.
+ This is used by commands like `grep-find-command', `find-dired'
+ and others.")

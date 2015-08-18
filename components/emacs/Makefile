@@ -23,22 +23,25 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		emacs
-COMPONENT_VERSION=	24.3
+COMPONENT_VERSION=	24.5
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/emacs/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:0098ca3204813d69cd8412045ba33e8701fa2062f4bff56bedafc064979eef41
+    sha256:2737a6622fb2d9982e9c47fb6f2fb297bda42674e09db40fc9bcc0db4297c3b6
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/emacs/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/emacs
 
-TPNO=			15684
+TPNO=			23457
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-# we build three different variants of emacs for our users. As Solaris
+# We patch the configure.ac file. Get the new configure generated during prep.
+COMPONENT_PREP_ACTION = (cd $(@D) ; aclocal -I m4; autoconf )
+
+# We build three different variants of emacs for our users. As Solaris
 # always has a 64-bit kernel, and 64-bit emacs can handle larger files,
 # we only build and deliver 64-bit binaries.
 VARIANTS =	nox x gtk
@@ -61,7 +64,10 @@ LD_MAP_NOEXSTK.sparc=
 LD_MAP_NOEXDATA.sparc=
 
 # Uncomment this for debugging only. It configures emacs to run from the
-# local proto instead of from its final installed location.
+# local proto instead of from its final installed location. This is useful
+# for initial bringup of new emacs versions, but can only be used up through
+# the 'gmake build' stage.
+#
 #CONFIGURE_PREFIX =	$(PROTO_DIR)/usr
 
 # The configure script runs the pkg-config command. Since we're building
@@ -70,16 +76,26 @@ CONFIGURE_ENV += PKG_CONFIG_PATH=/usr/lib/$(MACH64)/pkgconfig
 
 # configure options common to all variants of emacs that we want to build.
 CONFIGURE_OPTIONS +=	CC="$(CC) -m64"
-CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)  --with-compress-info=no
+CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS +=	--datarootdir=$(CONFIGURE_PREFIX)/share
 CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_PREFIX)/lib
 CONFIGURE_OPTIONS +=	--with-gif=no
 CONFIGURE_OPTIONS +=	ac_cv_sys_long_file_names=yes
 
-# ASLR should remain disabled for emacs (the default). ASLR undermines
-# emacs's dumping code, which requires every execution to have the same
-# mappings. Since emacs is not network facing, or run with elevated
-# privileges, this is not a security concern.
+# Disable gsettings and dbus. gsettings causes numerous startup errors
+# of the form
+#    (process:25309): GLib-GIO-CRITICAL **: file gsettingsschema.c:
+#	line 416: assertion 'source != NULL' failed
+# without providing much benefit on Solaris. dbus does not offer sufficient
+# utility for Solaris to be worth the negative interactions with ssh, where
+# the session blocks on exit due to dbus holding an open port.
+# 
+CONFIGURE_OPTIONS +=	--without-gsettings --without-dbus
+
+# ASLR should remain disabled for emacs. ASLR undermines emacs's dumping
+# code, which requires every execution to have the same mappings. Since
+# emacs is not network facing, or run with elevated privileges, this is
+# not a security concern.
 ASLR_MODE = $(ASLR_DISABLE)
 
 # variant specific configure options
@@ -103,8 +119,8 @@ PGSHAREMAN1=	$(PROTO_DIR)/usr/gnu/share/man/man1
 PSHAREMAN1=	$(PROTO_DIR)/usr/share/man/man1
 PVAR=		$(PROTO_DIR)/var
 
-# Remove existing emacs executable from usr/bin, so that we can replace
-# it with our script.
+# Remove existing emacs executable from usr/bin. We install the binaries
+# under their variant names. /usr/bin/emacs ends up as an IPS mediated link.
 COMPONENT_POST_INSTALL_ACTION += $(RM) $(PBIN)/emacs $(PBIN)/emacs-* ;
 
 # GTK binaries
@@ -128,10 +144,6 @@ COMPONENT_POST_INSTALL_ACTION += \
 COMPONENT_POST_INSTALL_ACTION += \
 	$(LN) $(PBIN)/emacs-x $(PBIN)/emacs-x-$(COMPONENT_VERSION) ;
 
-# Emacs shell script that picks the right variant at runtime
-COMPONENT_POST_INSTALL_ACTION += $(CP) augment/emacs $(PBIN) ;
-COMPONENT_POST_INSTALL_ACTION += $(CHMOD) +x $(PBIN)/emacs ;
-
 # ctags and etags go in /usr/gnu/bin instead of /usr/bin. At this time,
 # etags could arguably go into /usr/bin, but we'd like to preserve the
 # ability to replace the standard Solaris /usr/bin/ctags, along with
@@ -146,14 +158,7 @@ COMPONENT_POST_INSTALL_ACTION += $(MV) $(PBIN)/ctags $(PBIN)/etags $(PGBIN) ;
 # by Debian, among others.
 COMPONENT_POST_INSTALL_ACTION += $(RM) -r $(PVAR) ;
 
-# The file usr/share/emacs/23.1/etc/DOC-23.1.2 gets installed instead of
-# DOC-23.1.1. Remove and replace.
-COMPONENT_POST_INSTALL_ACTION += $(RM) $(PETC)/DOC-$(COMPONENT_VERSION).2 ;
-COMPONENT_POST_INSTALL_ACTION += \
-	$(CP) $(BUILD_DIR)/$(MACH64)-x/etc/DOC-$(COMPONENT_VERSION).1 \
-		$(PETC)/DOC-$(COMPONENT_VERSION).1 ;
-
-# Provide manpages for the emacs variants, which are our creation, refering
+# Provide manpages for the emacs variants, which are our creation, referring
 # the reader to the main emacs(1) manpage.
 COMPONENT_POST_INSTALL_ACTION += \
 	$(CP) augment/man/man1/emacs-gtk.1 $(PSHAREMAN1)/emacs-gtk.1 ;
@@ -168,11 +173,22 @@ COMPONENT_POST_INSTALL_ACTION += \
 COMPONENT_POST_INSTALL_ACTION += \
 	$(CP) $(COMPONENT_SRC)/doc/man/etags.1 $(PGSHAREMAN1)/etags.1 ;
 
-# Throw away usr/share/info/dir. This file is the topmost node of the Info
-# hierarchy. Emacs builds it, as presumably do all GNU packages, but on
-# Solaris, it is delivered by system/prerequisite/gnu.
-COMPONENT_POST_INSTALL_ACTION += $(RM) $(PROTO_DIR)/usr/share/info/dir ;
+# Throw away usr/share/info/dir and usr/share/info/info.info. These files
+# live at the topmost node of the Info hierarchy. Emacs builds them, as
+# presumably do all GNU packages, but on Solaris, they are delivered by
+# pkg:/text/texinfo.
+COMPONENT_POST_INSTALL_ACTION += $(RM) \
+	$(PROTO_DIR)/usr/share/info/dir \
+	$(PROTO_DIR)/usr/share/info/info.info ;
 
+# By default, emacs is configured to compress lisp files, manpages, and info
+# files. The option to disable that (--without-compress-install) has no
+# granularity --- it's all or nothing. For Solaris, we want to compress lisp
+# sources, but not the others. It's simplest to let everything be compressed.
+# and then explicitly decompress the manpages and info files.
+COMPONENT_POST_INSTALL_ACTION += $(GUNZIP) \
+	$(PROTO_DIR)/usr/share/info/*.gz \
+	$(PROTO_DIR)/usr/share/man/man1/*.gz ;
 
 # common targets
 configure:	$(CONFIGURE_64)
@@ -181,6 +197,8 @@ build:          $(BUILD_64)
 
 install:	$(BUILD_64) $(BUILD_DIR)/$(MACH64)-x/.installed 
 
+# The upstream emacs distribution does not have tests to be run
+# from this target.
 test:		$(NO_TESTS)
 
 system-test:    $(NO_TESTS)
@@ -202,20 +220,22 @@ REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/gnutls
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/perl-512
 REQUIRED_PACKAGES += runtime/perl-520
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
-REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libice
 REQUIRED_PACKAGES += x11/library/libsm
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxft
+REQUIRED_PACKAGES += x11/library/libxinerama
 REQUIRED_PACKAGES += x11/library/libxmu
 REQUIRED_PACKAGES += x11/library/libxpm
+REQUIRED_PACKAGES += x11/library/libxrandr
 REQUIRED_PACKAGES += x11/library/libxrender
 REQUIRED_PACKAGES += x11/library/toolkit/libxaw7
 REQUIRED_PACKAGES += x11/library/toolkit/libxt

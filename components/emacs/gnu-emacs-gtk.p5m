@@ -34,6 +34,10 @@ set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2008/494
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
+# Mediated symlink for usr/bin/emacs, to run "best" version
+link path=usr/bin/emacs target=emacs-gtk mediator=emacs \
+    mediator-implementation=emacs-gtk mediator-priority=vendor
+
 
 file path=usr/bin/emacs-gtk
 hardlink path=usr/bin/emacs-gtk-$(COMPONENT_VERSION) target=emacs-gtk
@@ -45,5 +49,5 @@ license emacs.license license=GPLv3
 # pkgdepend find that relationship without hardwiring an fmri, specify
 # a dependency on a file known to always be present in the core package,
 # and allow pkgdepend to generate the fmri.
-depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/emacs \
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/emacsclient \
     pkg.debug.reason=usr/bin/emacs-gtk
