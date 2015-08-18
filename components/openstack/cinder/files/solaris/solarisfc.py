@@ -17,6 +17,7 @@
 """Generic Solaris Fibre Channel utilities."""
 
 import os
+import platform
 import time
 
 from cinder.brick import exception
@@ -107,7 +108,7 @@ class SolarisFibreChannel(object):
         for wwpn in wwpns:
             self.execute('/usr/sbin/fcadm', 'force-lip', wwpn)
 
-    def get_device_path(self, wwn):
+    def _get_device_path(self, wwn):
         """Get the Device Name of the WWN"""
         try:
             out, err = self.execute('/usr/sbin/fcinfo', 'logical-unit', '-v')
@@ -146,7 +147,7 @@ class SolarisFibreChannel(object):
         # a refresh.
         for i in range(1, scan_tries):
             LOG.debug("Looking for Fibre Channel device")
-            host_dev = self.get_device_path(wwn)
+            host_dev = self._get_device_path(wwn)
 
             if host_dev is not None and os.path.exists(host_dev):
                 break
@@ -157,6 +158,16 @@ class SolarisFibreChannel(object):
             msg = _("Fibre Channel volume device not found.")
             LOG.error(msg)
             raise exception.NoFibreChannelVolumeDeviceFound()
+
+        # Set the label EFI to the disk on SPARC before it is accessed and
+        # make sure the correct device path with slice 0
+        # (like '/dev/rdsk/c0t600xxxd0s0').
+        if platform.processor() == 'sparc':
+            tmp_dev_name = host_device.rsplit('s', 1)
+            disk_name = tmp_dev_name[0].split('/')[-1]
+            (out, _err) = self.execute('/usr/sbin/format', '-L', 'efi', '-d',
+                                       disk_name)
+            host_device = '%ss0' % tmp_dev_name[0]
 
         device_info['path'] = host_dev
         return device_info

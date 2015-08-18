@@ -17,6 +17,7 @@
 """Generic Solaris iSCSI utilities."""
 
 import os
+import platform
 import time
 
 from cinder.brick import exception
@@ -106,6 +107,16 @@ class SolarisiSCSI(object):
                 time.sleep(i ** 2)
         else:
             raise exception.VolumeDeviceNotFound(device=host_device)
+
+        # Set the label EFI to the disk on SPARC before it is accessed and
+        # make sure the correct device path with slice 0
+        # (like '/dev/rdsk/c0t600xxxd0s0').
+        if platform.processor() == 'sparc':
+            tmp_dev_name = host_device.rsplit('s', 1)
+            disk_name = tmp_dev_name[0].split('/')[-1]
+            (out, _err) = self.execute('/usr/sbin/format', '-L', 'efi', '-d',
+                                       disk_name)
+            host_device = '%ss0' % tmp_dev_name[0]
 
         device_info['path'] = host_device
         return device_info
