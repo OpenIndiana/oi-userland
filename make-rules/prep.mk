@@ -43,6 +43,7 @@ $(SOURCE_DIR)/.prep:	download unpack patch
 prep::	$(SOURCE_DIR)/.prep
 
 clean::
+	$(PRE_CLEAN_ACTION)
 	$(RM) -r $(CLEAN_PATHS)
 
 clobber::	clean
