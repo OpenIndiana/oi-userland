@@ -58,11 +58,37 @@ ASLR_MODE = $(ASLR_ENABLE)
 # other than "test." 
 unexport SHELLOPTS
 
-# Test transforms to cut out compile lines
-COMPONENT_TEST_TRANSFORMS += '-e "/^  CC .*/d" ' \
-			     '-e "/^  CCLD .*/d" ' \
-			     '-e "/^  GEN .*/d" ' \
-                             '-e "/^  AR .*/d" '
+# Test transforms retain only relevant results output.
+COMPONENT_TEST_TRANSFORMS += \
+        '-n ' \
+        '-e "/TOTAL/p" ' \
+        '-e "/SKIP/p" ' \
+        '-e "/PASS/p" ' \
+        '-e "/FAIL/p" ' \
+        '-e "/ERROR/p" '
+
+# Putting GNU on path first prevents some tests from being skipped,
+# which also  keeps the test and system-test results consistent.
+# With the test target, the path to the just-built commands is
+# prepended to PATH.  With the system-test target, we patch
+# to prevent the PATH from being prepended.
+COMPONENT_TEST_ENV += "PATH=$(GNUBIN):$(PATH)"
+COMPONENT_SYSTEM_TEST_ENV += "PATH=$(GNUBIN):$(PATH)"
+
+# Patch to change test path so it tests grep commands from /usr/gnu/bin
+# installed on the test system. If we patch, we must re-configure the
+# tests.
+$(SOURCE_DIR)/.system-test-patched: $(SOURCE_DIR)/.prep
+	$(GPATCH) -d $(@D) $(GPATCH_FLAGS) < $(COMPONENT_DIR)/system-test-patches/systest.patch
+	$(TOUCH) $(@)
+
+# if we previously patched the source for the system-test target,
+# ensure we rebuild without that patch
+test-check:
+	if [ -e $(SOURCE_DIR)/.system-test-patched ]; then \
+	   cd $(COMPONENT_DIR); \
+	   $(GMAKE) clean build; \
+	fi
 
 # common targets
 configure:	$(CONFIGURE_64)
@@ -71,9 +97,9 @@ build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
 
-test:		$(TEST_64)
+test:		test-check $(TEST_64)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+system-test:    $(SOURCE_DIR)/.system-test-patched configure $(SYSTEM_TEST_64)
 
 
 REQUIRED_PACKAGES += library/pcre

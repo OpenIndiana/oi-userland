@@ -1,0 +1,33 @@
+Patch for system-test target is not appropriate for upstream
+
+--- grep-2.20-orig/tests/init.sh	2014-02-08 10:04:29.000000000 -0800
++++ grep-2.20/tests/init.sh	2015-08-17 14:04:07.099166503 -0700
+@@ -406,11 +406,16 @@ create_exe_shims_ ()
+ 
+ # Use this function to prepend to PATH an absolute name for each
+ # specified, possibly-$initial_cwd_-relative, directory.
++
++# For system-test, we want to test the installed commands, not
++# the ones built in the src directory, so don't prepend src
+ path_prepend_ ()
+ {
+   while test $# != 0; do
+     path_dir_=$1
+     case $path_dir_ in
++      */src) shift 
++             continue;;
+       '') fail_ "invalid path dir: '$1'";;
+       /*) abs_path_dir_=$path_dir_;;
+       *) abs_path_dir_=$initial_cwd_/$path_dir_;;
+
+--- grep-2.20-orig/tests/Makefile.in	2015-08-04 15:02:58.000000000 -0700
++++ grep-2.20/tests/Makefile.in	2015-08-17 14:41:15.351985280 -0700
+@@ -1470,7 +1470,7 @@ TESTS_ENVIRONMENT = \
+   PACKAGE_VERSION=$(PACKAGE_VERSION)		\
+   PERL='$(PERL)'				\
+   SHELL='$(SHELL)'				\
+-  PATH='$(abs_top_builddir)/src$(PATH_SEPARATOR)'"$$PATH" \
++  PATH="$$PATH" \
+   ; 9>&2
+ 
+ LOG_COMPILER = $(SHELL)
