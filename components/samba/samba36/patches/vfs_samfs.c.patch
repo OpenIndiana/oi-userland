@@ -1,4 +1,6 @@
-bug #5780
+Source: Oracle Solaris (based on VFS module written by dirk.nitschke@oracle.com)
+Shared with community as Samba.org bug #5780 :
+https://bugzilla.samba.org/show_bug.cgi?id=5780
 
 diff --git a/source3/Makefile.in b/source3/Makefile.in
 index 425aa2b..db1d809 100644
@@ -41,7 +43,7 @@ new file mode 100644
 index 0000000..9370768
 --- /dev/null	2012-07-16 09:13:54.000000000 -0700
 +++ b/source3/modules/vfs_samfs.c	2012-07-16 09:21:00.168046000 -0700
-@@ -0,0 +1,181 @@
+@@ -0,0 +1,179 @@
 +/*
 + * Support for offline files with Sun SAM-QFS
 + *
@@ -71,8 +73,8 @@ index 0000000..9370768
 + * Include files for Sun SAM-QFS
 + *
 + */
-+#include <pub/stat.h>
-+#include <pub/lib.h>
++#include <samfs/stat.h>
++#include <samfs/lib.h>
 +
 +#undef DBGC_CLASS
 +#define DBGC_CLASS DBGC_VFS
@@ -143,7 +145,7 @@ index 0000000..9370768
 +		number_of_segments = NUM_SEGS(&file_info);
 +		seg_info_ptr = (struct sam_stat *)TALLOC_ZERO_ARRAY(talloc_tos(),
 +						struct sam_stat, number_of_segments);
-+		if (seg_info_ptr != NULL) {
++		if (seg_info_ptr == NULL) {
 +			DEBUG(10,("samfs_is_offline: cannot talloc for "
 +				"segment stat info %s\nAssuming file is offline.\n",
 +				path));
@@ -179,11 +181,6 @@ index 0000000..9370768
 +}
 +
 +/*
-+ * release a file-command to SAM-stagger
-+ */
-+extern int sam_release(const char *path, const char *command);
-+
-+/*
 + * samfs_set_offline()
 + *
 + * Release the local file in the sense of SAM-QFS.
@@ -202,6 +199,9 @@ index 0000000..9370768
 +                return false;
 +        }
 +
++	/*
++	 * release a file-command to SAM-stager
++	 */
 +	result = sam_release(path, "i");
 +	if (result != 0) {
 +		DEBUG(10,("samfs_set_offline: sam_release %s returned %s\n",
