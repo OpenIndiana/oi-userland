@@ -59,7 +59,7 @@ Puppet::Type.newtype(:evs_vport) do
     end
 
     newproperty(:maxbw) do
-        desc "The full duplex bandwith for the virtual port"
+        desc "The full duplex bandwidth for the virtual port"
     end
 
     newproperty(:priority) do
@@ -69,7 +69,7 @@ Puppet::Type.newtype(:evs_vport) do
 
     newproperty(:protection) do
         desc "Enables one or more types of link protection"
-        # verify protection value: comma(,) separatable
+        # verify protection value: comma(,) separable
         validate do |value| 
             value.split(",").collect do |each_val|
                 if not ["mac-nospoof", "restricted", "ip-nospoof", 

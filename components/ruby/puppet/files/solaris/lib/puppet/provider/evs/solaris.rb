@@ -67,7 +67,7 @@ Puppet::Type.type(:evs).provide(:evs) do
                 evs_properties[:priority] = value
             when "protection"
                 evs_properties[:protection] = value
-            # read-only properties (settable upon cration)
+            # read-only properties (settable upon creation)
             when "l2-type"
                 evs_properties[:l2_type] = value
             when "vlanid"

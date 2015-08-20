@@ -97,7 +97,7 @@ Puppet::Type.type(:evs_properties).provide(:evs_properties) do
                 end
             end
         rescue Puppet::ExecutionFailure => e
-            # EVS controller is not set or valid
+            # EVS controller is not set or invalid
             # Handle the exception at upper level
             raise
         end
@@ -196,10 +196,8 @@ Puppet::Type.type(:evs_properties).provide(:evs_properties) do
         case @resource[:name]
         when "controller_property"
             if @property_flush.has_key?(:controller)
-                puts "foo"
                 raise Puppet::Error, "controller_property does not have "\
                     "'controller' property. Try client_property"
-                puts "bar"
             end
             
             props = []
