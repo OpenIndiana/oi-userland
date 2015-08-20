@@ -23,7 +23,7 @@
 -->
 <!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
 <!--
-	Copyright (c) 2006, 2012, Oracle and/or its affiliates. All rights reserved.
+	Copyright (c) 2006, 2013, Oracle and/or its affiliates. All rights reserved.
 
 	#ident	"@(#)winbind.xml	1.2	10/07/26 SMI"
 
@@ -41,19 +41,14 @@
 
 	<single_instance/>
 
-	<dependency name='net-loopback' grouping='require_any'
+	<dependency name='network' grouping='require_all'
 			restart_on='none' type='service'>
-		<service_fmri value='svc:/network/loopback' />
+		<service_fmri value='svc:/milestone/network' />
 	</dependency>
 
 	<dependency name='net-service' grouping='require_all'
 			restart_on='none' type='service'>
 		<service_fmri value='svc:/network/service'/>
-	</dependency>
-
-	<dependency name='net-physical' grouping='require_all'
-			restart_on='none' type='service'>
-		<service_fmri value='svc:/network/physical' />
 	</dependency>
 
 	<dependency name='filesystem-local' grouping='require_all'

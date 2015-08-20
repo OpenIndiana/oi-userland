@@ -29,6 +29,8 @@
 
 SAMBA_CONFIG=/etc/samba/smb.conf
 
+NSS_STRICT_NOFORK=DISABLED; export NSS_STRICT_NOFORK
+
 # Check if given service is working properly
 check_running() {
 	case "$SMF_FMRI" in
