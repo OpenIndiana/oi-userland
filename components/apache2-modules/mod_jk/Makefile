@@ -23,17 +23,17 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mod_jk
-COMPONENT_VERSION=	1.2.40
+COMPONENT_VERSION=	1.2.41
 COMPONENT_PROJECT_URL=	http://tomcat.apache.org/connectors-doc/
 COMPONENT_SRC_NAME=	tomcat-connectors
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)-src
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:895e347c4dff74049a848603fb29958e6cf429ea0fc708d514b3a8958236705d
+    sha256:f193b02aeec71daab13fc5bbb99f13eca9d916b79a024f8035a65f39559bc7fd
 COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/tomcat/tomcat-connectors/jk/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/apache
 
-TPNO=			19268
+TPNO=			24206
 
 CONFIGURE_DEFAULT_DIRS=no
 DEFAULT_COMPILER=no
