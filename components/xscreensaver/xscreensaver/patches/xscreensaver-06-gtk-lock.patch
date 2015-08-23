@@ -3393,10 +3393,10 @@ diff --git driver/subprocs.c driver/subprocs.c
 diff --git driver/timers.c driver/timers.c
 --- driver/timers.c
 +++ driver/timers.c
-@@ -47,6 +47,8 @@
- #endif /* HAVE_RANDR */
+@@ -48,6 +48,8 @@
  
  #include "xscreensaver.h"
+ #include "atoms.h"
 +#include "types.h"
 +#include "dialog-data.h"
  
@@ -3752,14 +3752,14 @@ diff --git driver/xscreensaver.c driver/xscreensaver.c
  
  static XrmOptionDescRec options [] = {
  
-@@ -630,6 +650,9 @@ connect_to_server (saver_info *si, int *argc, char **argv)
- 	{ &XA_XSETROOT_ID, "_XSETROOT_ID" },
- 	{ &XA_ESETROOT_PMAP_ID, "ESETROOT_PMAP_ID" },
- 	{ &XA_XROOTPMAP_ID, "_XROOTPMAP_ID" },
+@@ -659,6 +679,9 @@ connect_to_server (saver_info *si, int *argc, char **argv)
+        { &XA_XSETROOT_ID, "_XSETROOT_ID" },
+        { &XA_ESETROOT_PMAP_ID, "ESETROOT_PMAP_ID" },
+        { &XA_XROOTPMAP_ID, "_XROOTPMAP_ID" },
 +#ifdef HAVE_XSCREENSAVER_LOCK
-+	{ &XA_UNLOCK_RATIO, "UNLOCK_RATIO" },
++       { &XA_UNLOCK_RATIO, "UNLOCK_RATIO" },
 +#endif
- 	{ NULL, NULL } /* Must be last to terminate list */
+        { NULL, NULL } /* Must be last to terminate list */
        };
      const struct atom_request *atom_lists[3] = { NULL, NULL, NULL };
 @@ -1105,8 +1128,36 @@ static void
