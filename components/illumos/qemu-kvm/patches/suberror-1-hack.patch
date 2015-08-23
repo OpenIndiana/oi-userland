@@ -1,0 +1,25 @@
+diff -Nur illumos-kvm-cmd-1c6181b.orig/exec.c illumos-kvm-cmd-1c6181b/exec.c
+--- illumos-kvm-cmd-1c6181b.orig/exec.c	2013-10-24 23:42:07.000000000 -0400
++++ illumos-kvm-cmd-1c6181b/exec.c	2015-08-20 16:07:46.844668142 -0400
+@@ -2832,6 +2832,7 @@
+ static int
+ qemu_mlock(caddr_t base, ram_addr_t size)
+ {
++	caddr_t ramstart = base;
+ 	ram_addr_t ps = qemu_real_host_page_size, nbytes, locked = 0;
+ 	ram_addr_t remaining = size / ps;
+ 	ram_addr_t step = remaining;
+@@ -2890,6 +2891,13 @@
+ 		step <<= 1;
+ 	}
+ 
++	/*
++	 * UGLY HACK - prefault all the pages in so that we never get a
++	 * fault on an instruction that we don't know how to emulate.  This
++	 * avoids the stupid 'suberror 1' failure.
++	 */
++	memset(ramstart, 0, size);
++
+ 	return (0);
+ }
+ #endif
