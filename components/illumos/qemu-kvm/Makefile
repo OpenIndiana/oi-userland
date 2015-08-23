@@ -47,7 +47,7 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 CONFIGURE_ENV += PATH=$(PATH):/usr/sbin
 
 CONFIGURE_OPTIONS = --cc=$(CC)
-CONFIGURE_OPTIONS += --extra-cflags="-fno-builtin"
+CONFIGURE_OPTIONS += --extra-cflags="-fno-builtin -msave-args"
 CONFIGURE_OPTIONS += --extra-ldflags="-nodefaultlibs -lz -lm -lc"
 CONFIGURE_OPTIONS += --prefix=/usr
 CONFIGURE_OPTIONS += --mandir=/usr/share/man
