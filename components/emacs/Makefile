@@ -81,6 +81,9 @@ CONFIGURE_OPTIONS +=	--datarootdir=$(CONFIGURE_PREFIX)/share
 CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_PREFIX)/lib
 CONFIGURE_OPTIONS +=	--with-gif=no
 CONFIGURE_OPTIONS +=	ac_cv_sys_long_file_names=yes
+ifeq   ($(strip $(PARFAIT_BUILD)),yes)
+CONFIGURE_OPTIONS +=	emacs_cv_prog_cc_o=no
+endif
 
 # Disable gsettings and dbus. gsettings causes numerous startup errors
 # of the form
