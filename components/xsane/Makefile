@@ -16,6 +16,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xsane
 COMPONENT_VERSION=	0.999
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.xsane.org
 COMPONENT_SUMMARY=	Graphical scanning frontend for the SANE scanner interface
 COMPONENT_FMRI=		image/scanner/xsane
