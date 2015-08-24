@@ -614,7 +614,7 @@ done
 # docbook-style-xsl.spec %post
 #
 
-Version=1.69.1
+Version=1.78.1
 Release=5.1
 
 CATALOG=/etc/xml/catalog
