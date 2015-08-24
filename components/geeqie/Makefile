@@ -14,23 +14,29 @@
 
 include ../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		gqview
-COMPONENT_VERSION=	2.1.5
-COMPONENT_PROJECT_URL=	http://gqview.sourceforge.net/
-COMPONENT_SUMMARY=	GQview - Image browser
+COMPONENT_NAME=		geeqie
+COMPONENT_VERSION=	1.1
+COMPONENT_PROJECT_URL=	http://geeqie.sourceforge.net/
+COMPONENT_SUMMARY=	Geeqie is a lightweight Gtk+ based image viewer
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:12fea494e607a69eff31cdca13d306ef1b0b3b7850be0f8b236f267d8f2e9546
-COMPONENT_ARCHIVE_URL=	 http://prdownloads.sourceforge.net/gqview/$(COMPONENT_ARCHIVE)
+    sha256:5544e81c29917a647f19bfe800d9f0dd1cd5b890329feebd9abd80927e1afecf
+COMPONENT_ARCHIVE_URL=	 http://prdownloads.sourceforge.net/geeqie/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=	Applications/Graphics and Imaging
 COMPONENT_LICENSE=      GPLv2
 COMPONENT_LICENSE_FILE= COPYING
-COMPONENT_FMRI=         image/viewer/gqview
+COMPONENT_FMRI=         image/viewer/geeqie
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
+
+COMPONENT_PREP_ACTION = ( cd $(@D) && aclocal  -I . && \
+					libtoolize --force --copy&&\
+					autoheader &&\
+					automake -a -f -c --gnu &&\
+					autoconf )
 
 PATH=/usr/gnu/bin:/usr/bin
 

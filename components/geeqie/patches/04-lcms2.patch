@@ -1,0 +1,106 @@
+diff -Nurb --strip-trailing-cr geeqie-1.1-orig/configure.in geeqie-1.1/configure.in
+--- geeqie-1.1-orig/configure.in	2012-08-12 22:13:40.000000000 +0200
++++ geeqie-1.1/configure.in	2013-12-09 18:34:25.367495538 +0100
+@@ -275,6 +275,13 @@
+     [liblcms=$enableval], [liblcms=auto])
+ 
+ if test "x${liblcms}" != "xno"; then
++  PKG_CHECK_MODULES(LCMS, [lcms2 >= 2.0],
++    [
++      HAVE_LCMS=yes
++      AC_DEFINE(HAVE_LCMS2, 1, [lcms2 is used])
++      AC_DEFINE(HAVE_LCMS, 1, [enable LCMS])
++    ],
++    [
+   PKG_CHECK_MODULES(LCMS, [lcms >= 1.14],
+     [
+       HAVE_LCMS=yes
+@@ -284,6 +291,7 @@
+       HAVE_LCMS=no
+       AC_MSG_WARN([$LCMS_PKG_ERRORS])
+     ])
++    ])
+ else
+   HAVE_LCMS=disabled
+ fi
+diff -Nurb --strip-trailing-cr geeqie-1.1-orig/src/color-man.c geeqie-1.1/src/color-man.c
+--- geeqie-1.1-orig/src/color-man.c	2012-08-12 22:13:41.000000000 +0200
++++ geeqie-1.1/src/color-man.c	2013-12-09 18:34:07.441461661 +0100
+@@ -21,7 +21,11 @@
+ #ifdef HAVE_LCMS
+ /*** color support enabled ***/
+ 
++#ifdef HAVE_LCMS2
++#include <lcms2.h>
++#else
+ #include <lcms.h>
++#endif
+ 
+ 
+ typedef struct _ColorManCache ColorManCache;
+@@ -52,7 +56,9 @@
+ 	if (init_done) return;
+ 	init_done = TRUE;
+ 
++#ifndef HAVE_LCMS2
+ 	cmsErrorAction(LCMS_ERROR_IGNORE);
++#endif
+ }
+ 
+ static cmsHPROFILE color_man_create_adobe_comp(void)
+@@ -425,7 +431,14 @@
+ 		case COLOR_PROFILE_FILE:
+ 			if (profile)
+ 				{
++#ifdef HAVE_LCMS2
++				cmsUInt8Number profileID[17];
++				profileID[16] = '\0';
++				cmsGetHeaderProfileID(profile, profileID);
++				return g_strdup(profileID);
++#else
+ 				return g_strdup(cmsTakeProductName(profile));
++#endif
+ 				}
+ 			return g_strdup(_("Custom profile"));
+ 			break;
+diff -Nurb --strip-trailing-cr geeqie-1.1-orig/src/exif-common.c geeqie-1.1/src/exif-common.c
+--- geeqie-1.1-orig/src/exif-common.c	2012-08-12 22:13:41.000000000 +0200
++++ geeqie-1.1/src/exif-common.c	2013-12-09 18:34:07.442461606 +0100
+@@ -23,10 +23,10 @@
+ #ifdef HAVE_LCMS
+ /*** color support enabled ***/
+ 
+-#ifdef HAVE_LCMS_LCMS_H
+-  #include <lcms/lcms.h>
++#ifdef HAVE_LCMS2
++#include <lcms2.h>
+ #else
+-  #include <lcms.h>
++#include <lcms.h>
+ #endif
+ #endif
+ 
+@@ -413,6 +413,9 @@
+ 
+ static gchar *exif_build_formatted_ColorProfile(ExifData *exif)
+ {
++#ifdef HAVE_LCMS2
++	cmsUInt8Number profileID[17];
++#endif
+ 	const gchar *name = "";
+ 	const gchar *source = "";
+ 	guchar *profile_data;
+@@ -452,7 +455,13 @@
+ 			profile = cmsOpenProfileFromMem(profile_data, profile_len);
+ 			if (profile)
+ 				{
++#ifdef HAVE_LCMS2
++				profileID[16] = '\0';
++				cmsGetHeaderProfileID(profile, profileID);
++				name = profileID;
++#else
+ 				name = cmsTakeProductName(profile);
++#endif
+ 				cmsCloseProfile(profile);
+ 				}
+ 			g_free(profile_data);
