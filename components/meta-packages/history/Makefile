@@ -37,14 +37,29 @@ PKGMOGRIFY =	/usr/bin/pkgmogrify
 COMPONENT_NAME=		"Package History"
 COMPONENT_BUGDB=	gate-stuff/userland
 
+GENERATE_HISTORY=	$(WS_TOOLS)/generate-history
+HISTORY=		history
+
+MANIFEST_BASE =		$(BUILD_DIR)/manifest-$(MACH)
+
 CANONICAL_MANIFESTS =	$(wildcard *.p5m)
+HISTORICAL_MANIFESTS =	$(shell $(NAWK) -v FUNCTION=name -f $(GENERATE_HISTORY) < $(HISTORY))
 ARCH_MANIFESTS =	$(wildcard *.p5m.$(MACH))
 GENERATED_ARCH_MANIFESTS =	$(ARCH_MANIFESTS:%.p5m.$(MACH)=%.p5m)
 CANONICAL_MANIFESTS +=  $(GENERATED_ARCH_MANIFESTS)
 
-MANIFEST_BASE =		$(BUILD_DIR)/manifest-$(MACH)
 MOGRIFIED =		$(CANONICAL_MANIFESTS:%.p5m=$(MANIFEST_BASE)-%.mogrified)
+HISTOGRIFIED =		$(HISTORICAL_MANIFESTS:%.p5m=$(MANIFEST_BASE)-%.histogrified)
 PUBLISHED =		$(CANONICAL_MANIFESTS:%.p5m=$(MANIFEST_BASE)-%.published)
+PUBLISHED +=		$(HISTORICAL_MANIFESTS:%.p5m=$(MANIFEST_BASE)-%.published)
+
+# Rule to generate historical manifests from the $(HISTORY) file.
+define history-manifest-rule
+$(MANIFEST_BASE)-$(1): $(HISTORY) $(BUILD_DIR)
+	$(NAWK) -v FUNCTION=manifest -v TARGET=$1 -f $(GENERATE_HISTORY) < \
+	    $(HISTORY) > $$@
+endef
+$(foreach mfst,$(HISTORICAL_MANIFESTS),$(eval $(call history-manifest-rule,$(mfst))))
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
@@ -64,11 +79,19 @@ $(MANIFEST_BASE)-%.mogrified: %.p5m $(BUILD_DIR)
 	$(PKGMOGRIFY) $(PKG_OPTIONS) $< \
 	              $(WS_TOP)/transforms/incorporate > $@
 
+$(MANIFEST_BASE)-%.histogrified: $(MANIFEST_BASE)-%.p5m $(BUILD_DIR)
+	$(PKGMOGRIFY) $(PKG_OPTIONS) $< \
+	              $(WS_TOP)/transforms/incorporate > $@
+
 $(MANIFEST_BASE)-%.published: $(MANIFEST_BASE)-%.mogrified $(BUILD_DIR)
 	$(PKGSEND) -s $(PKG_REPO) publish --fmri-in-manifest --no-catalog $<
 	$(CP) $< $@
 
-$(BUILD_DIR)/.linted-$(MACH): $(MOGRIFIED) $(BUILD_DIR)
+$(MANIFEST_BASE)-%.published: $(MANIFEST_BASE)-%.histogrified $(BUILD_DIR)
+	$(PKGSEND) -s $(PKG_REPO) publish --fmri-in-manifest --no-catalog $<
+	$(CP) $< $@
+
+$(BUILD_DIR)/.linted-$(MACH): $(MOGRIFIED) $(HISTOGRIFIED) $(BUILD_DIR)
 	$(ENV) PYTHONPATH=$(WS_TOOLS)/python \
 		SOLARIS_VERSION=$(SOLARIS_VERSION) \
 		$(PKGLINT) $(CANONICAL_REPO:%=-c $(WS_LINT_CACHE)) \

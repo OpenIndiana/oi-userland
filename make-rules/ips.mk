@@ -48,6 +48,9 @@ PKGLINT =	${WS_TOOLS}/pkglint
 endif
 PKGMANGLE =	$(WS_TOOLS)/userland-mangler
 
+GENERATE_HISTORY= $(WS_TOOLS)/generate-history
+HISTORY=	history
+
 # pkgfmt has an odd behavior at present where -c means "check validity
 # against any format" whereas -d means "diffs against latest format" and
 # no arguments means "update to latest format".  Thus, 'pkgfmt -c' can
@@ -140,6 +143,9 @@ PKG_PROTO_DIRS += $(MANGLED_DIR) $(PROTO_DIR) $(@D) $(COMPONENT_DIR) $(COMPONENT
 MANIFEST_BASE =		$(BUILD_DIR)/manifest-$(MACH)
 
 CANONICAL_MANIFESTS =	$(wildcard *.p5m)
+ifneq ($(wildcard $(HISTORY)),)
+HISTORICAL_MANIFESTS = $(shell $(NAWK) -v FUNCTION=name -f $(GENERATE_HISTORY) < $(HISTORY))
+endif
 
 # Look for manifests which need to be duplicated for each version of python.
 ifeq ($(findstring -PYVER,$(CANONICAL_MANIFESTS)),-PYVER)
@@ -182,7 +188,7 @@ VERSIONED_MANIFESTS = \
 	$(PYV_MANIFESTS) $(PYNV_MANIFESTS) \
 	$(PERLV_MANIFESTS) $(PERLNV_MANIFESTS) \
 	$(RUBYV_MANIFESTS) $(RUBYNV_MANIFESTS) \
-	$(NORUBY_MANIFESTS)
+	$(NORUBY_MANIFESTS) $(HISTORICAL_MANIFESTS)
 
 GENERATED =		$(MANIFEST_BASE)-generated
 COMBINED =		$(MANIFEST_BASE)-combined
@@ -335,6 +341,14 @@ $(MANIFEST_BASE)-%.p5m: %-RUBYVER.p5m $(BUILD_DIR)/mkgeneric-ruby
 		$(WS_TOP)/transforms/mkgeneric $< > $@
 	if [ -f $*-GENFRAG.p5m ]; then cat $*-GENFRAG.p5m >> $@; fi
 
+# Rule to generate historical manifests from the $(HISTORY) file.
+define history-manifest-rule
+$(MANIFEST_BASE)-$(1): $(HISTORY) $(BUILD_DIR)
+	$(NAWK) -v TARGET=$(1) -v FUNCTION=manifest -f $(GENERATE_HISTORY) < \
+	    $(HISTORY) > $$@
+endef
+$(foreach mfst,$(HISTORICAL_MANIFESTS),$(eval $(call history-manifest-rule,$(mfst))))
+
 # mogrify non-parameterized manifests
 $(MANIFEST_BASE)-%.mogrified:	%.p5m $(BUILD_DIR)
 	$(PKGFMT) $(PKGFMT_CHECK_ARGS) $<
@@ -452,7 +466,8 @@ install-packages:	publish
 
 $(RESOLVED):	install
 
-canonical-manifests:	$(CANONICAL_MANIFESTS) $(MAKEFILE_PREREQ) $(PATCHES)
+canonical-manifests:	$(CANONICAL_MANIFESTS) $(MAKEFILE_PREREQ) $(PATCHES) \
+    $(HISTORY)
 ifeq	($(strip $(CANONICAL_MANIFESTS)),)
 	# If there were no canonical manifests in the workspace, nothing will
 	# be published and we should fail.  A sample manifest can be generated

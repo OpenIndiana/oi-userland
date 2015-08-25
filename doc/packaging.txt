@@ -187,13 +187,16 @@ Renames
       for alembic, "1.0.12" for amqp, etc.), and BUILD was set to
       "5.12-5.12.0.0.0.41.0".  Note that BUILD needs to be set to
       the value of the build you are integrating into.
-    * one or more new manifests (typically one for the versionless package,
-      plus one for each versioned instance of the package) with actions:
-      * set name=pkg.fmri value=pkg:/library/python-2/FOO@VERSION,BUILD
-      * set name=pkg.renamed value=true
-      * set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-      * depend fmri=library/python/FOO type=require
-      where FOO, VERSION and BUILD are all as above.
+    * creation of the file "history" (or adding to it if it already exists)
+      in each affected component directory; one or more new lines should be
+      added (typically one for the versionless package, plus one for each
+      versioned instance of the package) with syntax:
+      OLD-NAME@VERSION,BUILD NEW-NAME
+      for renames and:
+      OLD-NAME@VERSION,BUILD
+      for obsoletions, where FOO, VERSION and BUILD are all as above.  Most
+      Python modules, including the two mentioned above, have such files
+      which can serve as examples.
 
     So far, not too bad.  This gets slightly more complicated when back-
     porting in that BUILD needs to be set to the back-port build (e.g.,
