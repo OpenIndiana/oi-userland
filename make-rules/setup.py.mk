@@ -250,11 +250,13 @@ pypi_url = $(PYPI_BASE)/$(if $(COMPONENT_NAME_$(1)),$(pypi_url_multi),$(pypi_url
 
 ifneq ($(findstring 2.6, $(PYTHON_VERSIONS)),)
 REQUIRED_PACKAGES += runtime/python-26
+REQUIRED_PACKAGES += library/python/setuptools-26
 endif
 ifneq ($(findstring 2.7, $(PYTHON_VERSIONS)),)
 REQUIRED_PACKAGES += runtime/python-27
+REQUIRED_PACKAGES += library/python/setuptools-27
 endif
 ifneq ($(findstring 3.4, $(PYTHON_VERSIONS)),)
 REQUIRED_PACKAGES += runtime/python-34
+REQUIRED_PACKAGES += library/python/setuptools-34
 endif
-REQUIRED_PACKAGES += library/python/setuptools
