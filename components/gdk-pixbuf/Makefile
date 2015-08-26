@@ -17,15 +17,14 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gdk-pixbuf
 
-COMPONENT_VERSION= 2.24.1
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 2.31.6
 COMPONENT_SUMMARY= GNOME gdk-pixbuf
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:da7a3f00db360913716368e19e336402755cafa93769f3cfa28a969303e4bee1
+  sha256:111203d6f295d69d36e7190204248331cd37285130ac483becdedcd3f0135d18
 COMPONENT_ARCHIVE_URL= \
-  ftp://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.24/$(COMPONENT_ARCHIVE)
+  ftp://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.31/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://cairographics.org
 
 include ../../make-rules/prep.mk
@@ -34,7 +33,12 @@ include ../../make-rules/ips.mk
 
 gcc_OPT = -O2
 
-COMPONENT_PREP_ACTION =        ( cd $(@D) && autoconf )
+COMPONENT_PREP_ACTION = ( cd $(@D) && aclocal  -I m4 && \
+				libtoolize --force --copy&&\
+				autoheader &&\
+				automake -a -f -c --gnu &&\
+				autoconf )
+
 
 CONFIGURE_OPTIONS.32 += --sysconfdir=/etc
 CONFIGURE_OPTIONS.64 += --sysconfdir=/etc/$(MACH64)
