@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 require 'ipaddr'
@@ -298,6 +298,15 @@ Puppet::Type.newtype(:ldap) do
         end
     end
 
+    newproperty(:service_search_descriptor) do
+        desc "How and where LDAP should search for information for a particular
+              service"
+        class << self
+            attr_accessor :pg
+        end
+        self.pg = "config"
+    end
+
     newproperty(:bind_dn, :parent => Puppet::Property::List) do
         desc "An entry that has read permission for the requested database.
               Specify multiple entries as an array."
@@ -365,4 +374,5 @@ Puppet::Type.newtype(:ldap) do
         end
         self.pg = "cred"
     end
+
 end
