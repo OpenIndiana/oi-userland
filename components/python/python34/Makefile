@@ -152,12 +152,14 @@ COMPONENT_INSTALL_ENV +=	LDFLAGS="$(LDFLAGS)"
 COMPONENT_INSTALL_ENV +=	PATH="$(PATH)"
 COMPONENT_INSTALL_ARGS +=	-e
 
-# Strip build machine paths from _sysconfigdata.py & config/Makefile.
+# Strip build machine paths from _sysconfigdata.py & config/Makefile,
+# then (re)compile _sysconfigdata.py since we just updated it.
 COMPONENT_POST_INSTALL_ACTION= \
     (cd $(PROTOUSRLIBDIR)/python3.4 ; \
      $(GSED) -i -e 's|$(SOURCE_DIR)|.|g' -e 's|$(COMPONENT_DIR)|..|g' \
 	-e 's|$(SPRO_VROOT)/bin/||g' lib-dynload/64/_sysconfigdata.py \
-	config-3.4m/Makefile)
+	config-3.4m/Makefile; \
+	$(PYTHON.3.4) -m py_compile lib-dynload/64/_sysconfigdata.py)
 
 # common targets
 configure:	$(CONFIGURE_64)
