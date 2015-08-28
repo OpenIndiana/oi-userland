@@ -8,8 +8,8 @@
 #
 --- a/crypto/aes/Makefile.orig	čt dub 30 03:15:03 2015
 +++ b/crypto/aes/Makefile	čt dub 30 03:19:32 2015
-@@ -72,6 +72,9 @@
- aest4-sparcv9.s: asm/aest4-sparcv9.pl
+@@ -75,6 +75,9 @@
+ aest4-sparcv9.s: asm/aest4-sparcv9.pl ../perlasm/sparcv9_modes.pl
  	$(PERL) asm/aest4-sparcv9.pl $(CFLAGS) > $@
  
 +aest4-sparcv9.o: aest4-sparcv9.s
@@ -17,10 +17,10 @@
 +
  aes-ppc.s:	asm/aes-ppc.pl
  	$(PERL) asm/aes-ppc.pl $(PERLASM_SCHEME) $@
- 
+ vpaes-ppc.s:	asm/vpaes-ppc.pl
 --- a/crypto/sha/Makefile.orig	čt dub 30 14:37:32 2015
 +++ b/crypto/sha/Makefile	čt dub 30 14:40:49 2015
-@@ -71,6 +71,8 @@
+@@ -73,6 +73,8 @@
  sha1-sparcv9.S:	asm/sha1-sparcv9.pl;	$(PERL) asm/sha1-sparcv9.pl $@ $(CFLAGS)
  sha256-sparcv9.S:asm/sha512-sparcv9.pl;	$(PERL) asm/sha512-sparcv9.pl $@ $(CFLAGS)
  sha512-sparcv9.S:asm/sha512-sparcv9.pl;	$(PERL) asm/sha512-sparcv9.pl $@ $(CFLAGS)
@@ -44,3 +44,27 @@
  sparcv9-gf2m.S:	asm/sparcv9-gf2m.pl
  	$(PERL) asm/sparcv9-gf2m.pl $(CFLAGS) > $@
  
+--- a/crypto/camellia/Makefile.orig        Fri Aug 21 14:51:49 2015rypto/camellia/Makef
++++ b/crypto/camellia/Makefile     Fri Aug 21 14:53:18 2015.2d/crypto/camellia/Make
+@@ -51,6 +51,9 @@
+ cmllt4-sparcv9.s: asm/cmllt4-sparcv9.pl ../perlasm/sparcv9_modes.pl
+ 	$(PERL) asm/cmllt4-sparcv9.pl $(CFLAGS) > $@
+ 
++cmllt4-sparcv9.o: cmllt4-sparcv9.s
++	$(AS) $(ASFLAGS) -Wa,-n -o $@ $^
++
+ files:
+ 	$(PERL) $(TOP)/util/files.pl Makefile >> $(TOP)/MINFO
+ 
+--- a/crypto/modes/Makefile.orig       Fri Aug 21 15:22:37 2015
++++ b/crypto/modes/Makefile    Fri Aug 21 15:26:12 2015
+@@ -54,6 +54,9 @@
+ 	$(PERL) asm/aesni-gcm-x86_64.pl $(PERLASM_SCHEME) > $@
+ ghash-sparcv9.s:	asm/ghash-sparcv9.pl
+ 	$(PERL) asm/ghash-sparcv9.pl $@ $(CFLAGS)
++ghash-sparcv9.o:	ghash-sparcv9.s
++	$(AS) $(ASFLAGS) -Wa,-n -o $@ $^
++
+ ghash-alpha.s:	asm/ghash-alpha.pl
+ 	(preproc=$$$$.$@.S; trap "rm $$preproc" INT; \
+ 	$(PERL) asm/ghash-alpha.pl > $$preproc && \

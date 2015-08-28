@@ -4,7 +4,7 @@
 #
 --- openssl-1.0.0g/Makefile.org    2010-01-27 08:06:58.000000000 -0800
 +++ openssl-1.0.0g-1/Makefile.org    2012-03-26 03:04:08.440194448 -0700
-@@ -138,7 +138,13 @@
+@@ -139,7 +139,13 @@
 
  BASEADDR=
 
@@ -20,7 +20,7 @@
 
 --- openssl-1.0.0g/Makefile    2012-01-18 05:42:28.000000000 -0800
 +++ openssl-1.0.0g-1/Makefile    2012-03-26 03:03:59.170540344 -0700
-@@ -137,7 +137,13 @@
+@@ -138,7 +138,13 @@
 
  BASEADDR=0xFB00000
 
@@ -49,8 +49,8 @@
 +#endif
  }
  
- 
-@@ -435,6 +437,7 @@
+ /*
+@@ -434,6 +436,7 @@
  static struct CRYPTO_dynlock_value *
  solaris_dynlock_create(const char *file, int line)
  {
@@ -58,7 +58,7 @@
      int                        ret;
      pthread_mutex_t    *dynlock;
 
-@@ -447,6 +450,9 @@
+@@ -446,6 +449,9 @@
      OPENSSL_assert(ret);
 
      return ((struct CRYPTO_dynlock_value *)dynlock);
@@ -68,7 +68,7 @@
  }
 
  static void
-@@ -453,6 +459,7 @@
+@@ -452,6 +458,7 @@
  solaris_dynlock_lock(int mode, struct CRYPTO_dynlock_value *dynlock,
      const char *file, int line)
  {
@@ -76,7 +76,7 @@
      int        ret;
  
      if (mode & CRYPTO_LOCK) {
-@@ -462,6 +469,7 @@
+@@ -461,6 +468,7 @@
      }
 
      OPENSSL_assert(ret == 0);
@@ -84,7 +84,7 @@
  }
 
  static void
-@@ -468,9 +476,11 @@
+@@ -467,9 +475,11 @@
  solaris_dynlock_destroy(struct CRYPTO_dynlock_value *dynlock,
      const char *file, int line)
  {
@@ -96,7 +96,7 @@
  }
 
 
-@@ -514,6 +524,12 @@
+@@ -513,6 +523,12 @@
      }
  
      /*
@@ -109,7 +109,7 @@
       * Set atfork handler so that child can setup its own mutexes and
       * locking callbacks when it is forked
       */
-@@ -534,7 +550,7 @@
+@@ -533,7 +549,7 @@
          pthread_mutex_init(&solaris_openssl_locks[i], NULL);
      }
      locking_callback = solaris_locking_callback;
@@ -118,7 +118,7 @@
  }
  
  void CRYPTO_set_locking_callback(void (*func) (int mode, int type,
-@@ -1084,6 +1100,12 @@
+@@ -1104,6 +1120,12 @@
          MessageBox(NULL, buf, _T("OpenSSL: FATAL"), MB_OK | MB_ICONSTOP);
  }
  #else
@@ -131,7 +131,7 @@
  void OPENSSL_showfatal(const char *fmta, ...)
  {
      va_list ap;
-@@ -1092,6 +1114,7 @@
+@@ -1112,6 +1134,7 @@
      vfprintf(stderr, fmta, ap);
      va_end(ap);
  }
@@ -139,7 +139,7 @@
  
  int OPENSSL_isservice(void)
  {
-@@ -1101,9 +1124,15 @@
+@@ -1121,9 +1144,15 @@
  
  void OpenSSLDie(const char *file, int line, const char *assertion)
  {
@@ -302,7 +302,7 @@
 +#endif /* _BOOT */
 --- openssl-1.0.0e/crypto/x509v3/v3_utl.c    2009-07-27 14:08:53.000000000 -0700
 +++ openssl-1.0.0e_patched/crypto/x509v3/v3_utl.c    2011-12-13 05:10:08.844191400 -0800
-@@ -715,9 +715,50 @@
+@@ -1146,9 +1146,50 @@
      }
  }
  
@@ -353,7 +353,7 @@
      if (sscanf(in, "%d.%d.%d.%d", &a0, &a1, &a2, &a3) != 4)
          return 0;
      if ((a0 < 0) || (a0 > 255) || (a1 < 0) || (a1 > 255)
-@@ -727,6 +768,7 @@
+@@ -1158,6 +1199,7 @@
      v4[1] = a1;
      v4[2] = a2;
      v4[3] = a3;
@@ -385,56 +385,59 @@
  #  define MS_CALLBACK   _far _loadds
 --- openssl-1.0.0e/crypto/sparcv9cap.c	2010-09-05 12:48:01.000000000 -0700
 +++ openssl-1.0.0e_patched/crypto/sparcv9cap.c	2011-12-23 05:24:02.011607700 -0800
-@@ -13,7 +13,11 @@
- #define SPARCV9_FMADD           (1<<4) /* reserved for SPARC64 V */
- #define SPARCV9_BLK             (1<<5)
-
+@@ -12,7 +12,11 @@
+ #if defined(__GNUC__) && defined(__linux)
+ __attribute__ ((visibility("hidden")))
+ #endif
 +#ifndef        _BOOT
- static int OPENSSL_sparcv9cap_P = SPARCV9_TICK_PRIVILEGED;
+ unsigned int OPENSSL_sparcv9cap_P[2] = { SPARCV9_TICK_PRIVILEGED, 0 };
 +#else
-+static int OPENSSL_sparcv9cap_P = SPARCV9_VIS1;
++unsigned int OPENSSL_sparcv9cap_P[2] = { SPARCV9_VIS1, 0 };
 +#endif
  
  int bn_mul_mont(BN_ULONG *rp, const BN_ULONG *ap, const BN_ULONG *bp,
                  const BN_ULONG *np, const BN_ULONG *n0, int num)
-@@ -34,6 +38,7 @@
- unsigned long _sparcv9_rdtick(void);
- unsigned long _sparcv9_vis1_instrument(void);
+@@ -74,6 +78,7 @@
+ size_t _sparcv9_vis1_instrument_bus(unsigned int *, size_t);
+ size_t _sparcv9_vis1_instrument_bus2(unsigned int *, size_t, size_t);
  
 +#ifndef _BOOT
  unsigned long OPENSSL_rdtsc(void)
  {
-     if (OPENSSL_sparcv9cap_P & SPARCV9_TICK_PRIVILEGED)
-@@ -45,8 +50,19 @@
+     if (OPENSSL_sparcv9cap_P[0] & SPARCV9_TICK_PRIVILEGED)
+@@ -103,9 +108,20 @@
      else
-         return _sparcv9_rdtick();
+         return 0;
  }
 +#endif
-+
+ 
+-#if 0 && defined(__sun) && defined(__SVR4)
 +#if defined(_BOOT)
-+/*
+ /*
 + * Hardcoding sparc capabilities for wanboot.
 + * Older CPUs are EOLed anyway.
 + */
 +void OPENSSL_cpuid_setup(void)
-+       {
-+       OPENSSL_sparcv9cap_P = SPARCV9_VIS1;
-+       }
-
--#if 0 && defined(__sun) && defined(__SVR4)
++{
++    OPENSSL_sparcv9cap_P[0] = SPARCV9_VIS1;
++}
++
 +#elif 0 && defined(__sun) && defined(__SVR4)
- /*
++/*
   * This code path is disabled, because of incompatibility of libdevinfo.so.1
   * and libmalloc.so.1 (see below for details)
+  */
 --- openssl-1.0.0e/crypto/sparccpuid.S	2010-09-05 12:48:01.000000000 -0700
 +++ openssl-1.0.0e_patched/crypto/sparccpuid.S	2012-02-13 07:42:58.259478325 -0800
-@@ -369,8 +369,13 @@
+@@ -400,6 +400,7 @@
  .type	OPENSSL_cleanse,#function
  .size	OPENSSL_cleanse,.-OPENSSL_cleanse
- 
+
 +#ifndef _BOOT
- .section	".init",#alloc,#execinstr
- 	call	solaris_locking_setup
+ .global	_sparcv9_vis1_instrument_bus
+ .align	8
+ _sparcv9_vis1_instrument_bus:
+@@ -501,3 +502,7 @@
  	nop
  	call	OPENSSL_cpuid_setup
  	nop
@@ -458,21 +461,54 @@
 
 --- openssl-1.0.1f/ssl/s3_clnt.c    Thu Jan 30 02:53:33 2014
 +++ openssl-1.0.1f/ssl/s3_clnt.c.new   Thu Jan 30 02:57:51 2014
-@@ -668,7 +668,11 @@
- 
-         p = s->s3->client_random;
+@@ -698,6 +698,7 @@
+             if (!ssl_get_new_session(s, 0))
+                 goto err;
+         }
++#ifndef        _BOOT
+         if (s->method->version == DTLS_ANY_VERSION) {
+             /* Determine which DTLS version to use */
+             int options = s->options;
+@@ -730,6 +731,7 @@
+             }
+             s->client_version = s->version;
+         }
++#endif
+         /* else use the pre-loaded session */
 
+         p = s->s3->client_random;
+@@ -750,8 +750,12 @@
+         } else
+             i = 1;
+ 
 +#ifndef    _BOOT
-         if (ssl_fill_hello_random(s, 0, p, SSL3_RANDOM_SIZE) <= 0)
+         if (i && ssl_fill_hello_random(s, 0, p,
+                                        sizeof(s->s3->client_random)) <= 0)
 +#else
-+        if (RAND_pseudo_bytes(p,SSL3_RANDOM_SIZE) <= 0)
++        if (i && RAND_pseudo_bytes(p, sizeof(s->s3->client_random)) <= 0)
 +#endif
              goto err;
  
          /* Do the message type and length last */
+@@ -938,6 +942,7 @@
+     }
+ 
+     d = p = (unsigned char *)s->init_msg;
++#ifndef	_BOOT
+     if (s->method->version == DTLS_ANY_VERSION) {
+         /* Work out correct protocol version to use */
+         int hversion = (p[0] << 8) | p[1];
+@@ -960,6 +965,7 @@
+         }
+         s->session->ssl_version = s->version = s->method->version;
+     }
++#endif
+ 
+     if ((p[0] != (s->version >> 8)) || (p[1] != (s->version & 0xff))) {
+         SSLerr(SSL_F_SSL3_GET_SERVER_HELLO, SSL_R_WRONG_SSL_VERSION);
 --- openssl-1.0.1f/ssl/s3_lib.c       Wed Oct 15 11:18:30 2014
 +++ openssl-1.0.1f/ssl/s3_lib.c.new    Wed Oct 15 11:20:07 2014
-@@ -3343,7 +3343,11 @@
+@@ -3574,7 +3574,11 @@
           * Apparently we're using a version-flexible SSL_METHOD (not at its
           * highest protocol version).
           */
@@ -484,3 +520,417 @@
  #if TLS_MAX_VERSION != TLS1_2_VERSION
  # error Code needs update for SSLv23_method() support beyond TLS1_2_VERSION.
  #endif
+--- openssl-1.0.2d/ssl/ssl_algs.c.orig	Fri Aug  7 08:54:56 2015
++++ openssl-1.0.2d/ssl/ssl_algs.c	Fri Aug  7 08:14:38 2015
+@@ -96,8 +96,10 @@
+     EVP_add_cipher(EVP_aes_256_cbc_hmac_sha1());
+ # endif
+ # if !defined(OPENSSL_NO_SHA) && !defined(OPENSSL_NO_SHA256)
++#ifndef	_BOOT
+     EVP_add_cipher(EVP_aes_128_cbc_hmac_sha256());
+     EVP_add_cipher(EVP_aes_256_cbc_hmac_sha256());
++#endif
+ # endif
+ 
+ #endif
+--- openssl-1.0.2d/ssl/ssl_cert.c.orig	Fri Aug  7 08:57:29 2015
++++ openssl-1.0.2d/ssl/ssl_cert.c	Fri Aug  7 08:14:37 2015
+@@ -384,11 +384,13 @@
+     ret->ciphers_raw = NULL;
+ 
+ #ifndef OPENSSL_NO_TLSEXT
++#ifndef	_BOOT
+     if (!custom_exts_copy(&ret->cli_ext, &cert->cli_ext))
+         goto err;
+     if (!custom_exts_copy(&ret->srv_ext, &cert->srv_ext))
+         goto err;
+ #endif
++#endif
+ 
+     return (ret);
+ 
+@@ -409,9 +411,11 @@
+ #endif
+ 
+ #ifndef OPENSSL_NO_TLSEXT
++#ifndef	_BOOT
+     custom_exts_free(&ret->cli_ext);
+     custom_exts_free(&ret->srv_ext);
+ #endif
++#endif
+ 
+     ssl_cert_clear_certs(ret);
+ 
+@@ -502,9 +506,11 @@
+     if (c->ciphers_raw)
+         OPENSSL_free(c->ciphers_raw);
+ #ifndef OPENSSL_NO_TLSEXT
++#ifndef	_BOOT
+     custom_exts_free(&c->cli_ext);
+     custom_exts_free(&c->srv_ext);
+ #endif
++#endif
+     OPENSSL_free(c);
+ }
+ 
+--- openssl-1.0.2d/ssl/ssl_conf.c.orig	Fri Aug  7 08:57:43 2015
++++ openssl-1.0.2d/ssl/ssl_conf.c	Fri Aug  7 08:14:38 2015
+@@ -386,6 +386,7 @@
+     return rv > 0;
+ }
+ 
++#ifndef	_BOOT
+ static int cmd_ServerInfoFile(SSL_CONF_CTX *cctx, const char *value)
+ {
+     int rv = 1;
+@@ -398,6 +399,8 @@
+     return rv > 0;
+ }
+ 
++#endif
++
+ #ifndef OPENSSL_NO_DH
+ static int cmd_DHParameters(SSL_CONF_CTX *cctx, const char *value)
+ {
+@@ -456,7 +459,9 @@
+     SSL_CONF_CMD_STRING(Options, NULL),
+     SSL_CONF_CMD(Certificate, "cert", SSL_CONF_TYPE_FILE),
+     SSL_CONF_CMD(PrivateKey, "key", SSL_CONF_TYPE_FILE),
++#ifndef	_BOOT
+     SSL_CONF_CMD(ServerInfoFile, NULL, SSL_CONF_TYPE_FILE),
++#endif
+ #ifndef OPENSSL_NO_DH
+     SSL_CONF_CMD(DHParameters, "dhparam", SSL_CONF_TYPE_FILE)
+ #endif
+--- openssl-1.0.2d/ssl/ssl_rsa.c.orig	Fri Aug  7 08:58:26 2015
++++ openssl-1.0.2d/ssl/ssl_rsa.c	Fri Aug  7 08:14:38 2015
+@@ -788,6 +788,7 @@
+     return 0;                   /* Error */
+ }
+ 
++#ifndef	_BOOT
+ static int serverinfo_srv_parse_cb(SSL *s, unsigned int ext_type,
+                                    const unsigned char *in,
+                                    size_t inlen, int *al, void *arg)
+@@ -1005,4 +1006,5 @@
+     return ret;
+ }
+ # endif                         /* OPENSSL_NO_STDIO */
++#endif	/*!_BOOT*/
+ #endif                          /* OPENSSL_NO_TLSEXT */
+--- openssl-1.0.2d/ssl/t1_lib.c.orig	Fri Aug  7 08:59:39 2015
++++ openssl-1.0.2d/ssl/t1_lib.c	Fri Aug  7 09:01:32 2015
+@@ -1559,10 +1559,12 @@
+         ret += el;
+     }
+ # endif
++#ifndef	_BOOT
+     custom_ext_init(&s->cert->cli_ext);
+     /* Add custom TLS Extensions to ClientHello */
+     if (!custom_ext_add(s, 0, &ret, limit, al))
+         return NULL;
++#endif
+ 
+     /*
+      * Add padding to workaround bugs in F5 terminators. See
+@@ -1798,8 +1800,10 @@
+         }
+     }
+ # endif
++#ifndef	_BOOT
+     if (!custom_ext_add(s, 1, &ret, limit, al))
+         return NULL;
++#endif
+ 
+     if (s->s3->alpn_selected) {
+         const unsigned char *selected = s->s3->alpn_selected;
+@@ -2428,6 +2432,7 @@
+     return 0;
+ }
+ 
++#ifndef	_BOOT
+ /*
+  * Parse any custom extensions found.  "data" is the start of the extension data
+  * and "limit" is the end of the record. TODO: add strict syntax checking.
+@@ -2464,6 +2469,7 @@
+ 
+     return 1;
+ }
++#endif /*!_BOOT*/
+ 
+ int ssl_parse_clienthello_tlsext(SSL *s, unsigned char **p, unsigned char *d,
+                                  int n)
+@@ -2486,11 +2492,13 @@
+         return 0;
+     }
+ 
++#ifndef	_BOOT
+     custom_ext_init(&s->cert->srv_ext);
+     if (ssl_scan_clienthello_custom_tlsext(s, ptmp, d + n, &al) <= 0) {
+         ssl3_send_alert(s, SSL3_AL_FATAL, al);
+         return 0;
+     }
++#endif
+ 
+     return 1;
+ }
+@@ -2762,6 +2770,7 @@
+                 return 0;
+         }
+ # endif
++#ifndef	_BOOT
+         /*
+          * If this extension type was not otherwise handled, but matches a
+          * custom_cli_ext_record, then send it to the c callback
+@@ -2768,6 +2777,7 @@
+          */
+         else if (custom_ext_parse(s, 0, type, data, size, al) <= 0)
+             return 0;
++#endif
+ 
+         data += size;
+     }
+--- openssl-1.0.2d/crypto/x509/x_all.c.orig	Fri Aug  7 09:28:54 2015
++++ openssl-1.0.2d/crypto/x509/x_all.c	Fri Aug  7 08:14:33 2015
+@@ -106,11 +106,13 @@
+                               x->sig_alg, x->signature, x->cert_info, ctx);
+ }
+ 
++#ifndef	_BOOT
+ int X509_http_nbio(OCSP_REQ_CTX *rctx, X509 **pcert)
+ {
+     return OCSP_REQ_CTX_nbio_d2i(rctx,
+                                  (ASN1_VALUE **)pcert, ASN1_ITEM_rptr(X509));
+ }
++#endif
+ 
+ int X509_REQ_sign(X509_REQ *x, EVP_PKEY *pkey, const EVP_MD *md)
+ {
+@@ -140,6 +142,7 @@
+                               x->crl, ctx);
+ }
+ 
++#ifndef	_BOOT
+ int X509_CRL_http_nbio(OCSP_REQ_CTX *rctx, X509_CRL **pcrl)
+ {
+     return OCSP_REQ_CTX_nbio_d2i(rctx,
+@@ -146,6 +149,7 @@
+                                  (ASN1_VALUE **)pcrl,
+                                  ASN1_ITEM_rptr(X509_CRL));
+ }
++#endif
+ 
+ int NETSCAPE_SPKI_sign(NETSCAPE_SPKI *x, EVP_PKEY *pkey, const EVP_MD *md)
+ {
+--- openssl-1.0.2d/crypto/dh/dh_ameth.c.orig	Fri Aug  7 10:19:49 2015
++++ openssl-1.0.2d/crypto/dh/dh_ameth.c	Fri Aug  7 08:14:35 2015
+@@ -557,6 +557,7 @@
+     return do_dh_print(bp, x, 4, NULL, 0);
+ }
+ 
++#ifndef	_BOOT
+ #ifndef OPENSSL_NO_CMS
+ static int dh_cms_decrypt(CMS_RecipientInfo *ri);
+ static int dh_cms_encrypt(CMS_RecipientInfo *ri);
+@@ -583,6 +584,7 @@
+     }
+ 
+ }
++#endif
+ 
+ const EVP_PKEY_ASN1_METHOD dh_asn1_meth = {
+     EVP_PKEY_DH,
+@@ -645,9 +647,14 @@
+     0,
+ 
+     int_dh_free,
++#ifndef	_BOOT
+     dh_pkey_ctrl
++#else
++    0
++#endif
+ };
+ 
++#ifndef	_BOOT
+ #ifndef OPENSSL_NO_CMS
+ 
+ static int dh_cms_set_peerkey(EVP_PKEY_CTX *pctx,
+@@ -955,3 +962,5 @@
+ }
+ 
+ #endif
++
++#endif
+--- openssl-1.0.2d/crypto/dh/dh_pmeth.c.orig	Fri Aug  7 10:16:52 2015
++++ openssl-1.0.2d/crypto/dh/dh_pmeth.c	Fri Aug  7 08:14:34 2015
+@@ -194,11 +194,13 @@
+         dctx->use_dsa = p1;
+         return 1;
+ 
++#ifndef	_BOOT
+     case EVP_PKEY_CTRL_DH_RFC5114:
+         if (p1 < 1 || p1 > 3)
+             return -2;
+         dctx->rfc5114_param = p1;
+         return 1;
++#endif
+ 
+     case EVP_PKEY_CTRL_PEER_KEY:
+         /* Default behaviour is OK */
+@@ -207,7 +209,11 @@
+     case EVP_PKEY_CTRL_DH_KDF_TYPE:
+         if (p1 == -2)
+             return dctx->kdf_type;
++#ifndef	_BOOT
+         if (p1 != EVP_PKEY_DH_KDF_NONE && p1 != EVP_PKEY_DH_KDF_X9_42)
++#else
++        if (p1 != EVP_PKEY_DH_KDF_NONE)
++#endif
+             return -2;
+         dctx->kdf_type = p1;
+         return 1;
+@@ -268,6 +274,7 @@
+         len = atoi(value);
+         return EVP_PKEY_CTX_set_dh_paramgen_prime_len(ctx, len);
+     }
++#ifndef	_BOOT
+     if (!strcmp(type, "dh_rfc5114")) {
+         DH_PKEY_CTX *dctx = ctx->data;
+         int len;
+@@ -277,6 +284,7 @@
+         dctx->rfc5114_param = len;
+         return 1;
+     }
++#endif
+     if (!strcmp(type, "dh_paramgen_generator")) {
+         int len;
+         len = atoi(value);
+@@ -355,6 +363,7 @@
+     DH_PKEY_CTX *dctx = ctx->data;
+     BN_GENCB *pcb, cb;
+     int ret;
++#ifndef	_BOOT
+     if (dctx->rfc5114_param) {
+         switch (dctx->rfc5114_param) {
+         case 1:
+@@ -375,6 +384,7 @@
+         EVP_PKEY_assign(pkey, EVP_PKEY_DHX, dh);
+         return 1;
+     }
++#endif
+ 
+     if (ctx->pkey_gencb) {
+         pcb = &cb;
+@@ -448,6 +458,7 @@
+             return ret;
+         *keylen = ret;
+         return 1;
++#ifndef	_BOOT
+     } else if (dctx->kdf_type == EVP_PKEY_DH_KDF_X9_42) {
+         unsigned char *Z = NULL;
+         size_t Zlen = 0;
+@@ -478,6 +489,7 @@
+             OPENSSL_free(Z);
+         }
+         return ret;
++#endif
+     }
+     return 1;
+ }
+--- openssl-1.0.2d/crypto/evp/e_des3.c.orig	Fri Aug  7 10:22:12 2015
++++ openssl-1.0.2d/crypto/evp/e_des3.c	Fri Aug  7 10:23:16 2015
+@@ -381,6 +381,8 @@
+     return &des_ede3_ecb;
+ }
+ 
++#ifndef	_BOOT
++
+ # ifndef OPENSSL_NO_SHA
+ 
+ #  include <openssl/sha.h>
+@@ -491,4 +493,6 @@
+ }
+ 
+ # endif
++#endif
++
+ #endif
+--- openssl-1.0.2d/crypto/evp/c_allc.c.orig	Fri Aug  7 10:21:48 2015
++++ openssl-1.0.2d/crypto/evp/c_allc.c	Fri Aug  7 08:14:31 2015
+@@ -93,8 +93,10 @@
+     EVP_add_cipher(EVP_des_ecb());
+     EVP_add_cipher(EVP_des_ede());
+     EVP_add_cipher(EVP_des_ede3());
++#ifndef	_BOOT
+     EVP_add_cipher(EVP_des_ede3_wrap());
+ #endif
++#endif
+ 
+ #ifndef OPENSSL_NO_RC4
+     EVP_add_cipher(EVP_rc4());
+@@ -207,8 +209,10 @@
+     EVP_add_cipher(EVP_aes_256_cbc_hmac_sha1());
+ # endif
+ # if !defined(OPENSSL_NO_SHA) && !defined(OPENSSL_NO_SHA256)
++#ifndef	_BOOT
+     EVP_add_cipher(EVP_aes_128_cbc_hmac_sha256());
+     EVP_add_cipher(EVP_aes_256_cbc_hmac_sha256());
++#endif
+ # endif
+ #endif
+ 
+--- openssl-1.0.2d/crypto/cms/cms_env.c.orig	Fri Aug  7 10:25:00 2015
++++ openssl-1.0.2d/crypto/cms/cms_env.c	Fri Aug  7 10:25:37 2015
+@@ -106,6 +106,7 @@
+     int i;
+     if (ri->type == CMS_RECIPINFO_TRANS)
+         pkey = ri->d.ktri->pkey;
++#ifndef	_BOOT
+     else if (ri->type == CMS_RECIPINFO_AGREE) {
+         EVP_PKEY_CTX *pctx = ri->d.kari->pctx;
+         if (!pctx)
+@@ -114,6 +115,9 @@
+         if (!pkey)
+             return 0;
+     } else
++#else
++    else
++#endif
+         return 0;
+     if (!pkey->ameth || !pkey->ameth->pkey_ctrl)
+         return 1;
+@@ -148,8 +152,10 @@
+ {
+     if (ri->type == CMS_RECIPINFO_TRANS)
+         return ri->d.ktri->pctx;
++#ifndef	_BOOT
+     else if (ri->type == CMS_RECIPINFO_AGREE)
+         return ri->d.kari->pctx;
++#endif
+     return NULL;
+ }
+ 
+@@ -255,10 +261,12 @@
+             goto err;
+         break;
+ 
++#ifndef	_BOOT
+     case CMS_RECIPINFO_AGREE:
+         if (!cms_RecipientInfo_kari_init(ri, recip, pk, flags))
+             goto err;
+         break;
++#endif
+ 
+     default:
+         CMSerr(CMS_F_CMS_ADD1_RECIPIENT_CERT,
+@@ -827,8 +835,10 @@
+     case CMS_RECIPINFO_TRANS:
+         return cms_RecipientInfo_ktri_encrypt(cms, ri);
+ 
++#ifndef	_BOOT
+     case CMS_RECIPINFO_AGREE:
+         return cms_RecipientInfo_kari_encrypt(cms, ri);
++#endif
+ 
+     case CMS_RECIPINFO_KEK:
+         return cms_RecipientInfo_kekri_encrypt(cms, ri);

@@ -25,34 +25,17 @@
 Build Layout
 ---
 
-OpenSSL build is run four times. Once for regular dynamic 1.0.1 non-fips, once 
-for static 1.0.1 bits to link with standalone wanboot binary, once for 1.0.1
-fips-140, and once for 1.0.1 FIPS-140 canister (in the openssl-fips component)
-needed to build 1.0.1 FIPS-140 certified libraries. All builds apart from 
+OpenSSL build is run four times. Once for regular dynamic non-fips, once 
+for static bits to link with standalone wanboot binary, once for fips-140,
+and once for FIPS-140 canister (in the openssl-fips component)
+needed to build FIPS-140 certified libraries. All builds apart from 
 static libraries for wanboot are done for 32 and 64 bits. So, in total, OpenSSL
 is built seven times. OpenSSL for wanboot is only built on sparc.
 
 See also comments in all the Makefiles for more information.
 
 OpenSSL Version
----
-
-For non-FIPS build, we currently deliver OpenSSL 1.0.1 with some updates
-from OpenSSL 1.0.2 to make T4 instructions embedded in the OpenSSL
-upstream code.  As of April 2013, 1.0.2 is not yet released, and therefore,
-we have decided to patch the code.
-The following files/code are copied in from 1.0.2.
-added:
-   components/openssl/openssl-1.0.1/inline-t4/aest4-sparcv9.pl
-   components/openssl/openssl-1.0.1/inline-t4/dest4-sparcv9.pl
-   components/openssl/openssl-1.0.1/inline-t4/md5-sparcv9.pl
-   components/openssl/openssl-1.0.1/inline-t4/sparc_arch.h
-   components/openssl/openssl-1.0.1/inline-t4/sparct4-mont.pl
-   components/openssl/openssl-1.0.1/inline-t4/sparcv9_modes.pl
-   components/openssl/openssl-1.0.1/inline-t4/sparcv9-gf2m.pl
-   components/openssl/openssl-1.0.1/inline-t4/vis3-mont.pl
-   components/openssl/openssl-1.0.1/patches/openssl-t4-inline.sparc-patch
-
+--------------
 
 The non-fips Build.
 ---
@@ -64,7 +47,7 @@ binaries, libraries, man pages, and header files.
 The fips Build
 ---
 
-We are now shipping FIPS-140 certified OpenSSL 1.0.1 with S12 and S11.2.
+We are now shipping FIPS-140 certified OpenSSL with S11.2 and later.
 The admin may choose to activate 'openssl-fips' implementation using 'pkg mediator'.
 
 The wanboot Build
@@ -97,7 +80,7 @@ In order to determine which openssl object files are required for wanboot,
 first build static standalone openssl bits in Userland. As a site effect,
 static libraries libssl.a and libcrypto.a are created in build/sparcv9-wanboot.
 
-    $ cd $USERLAND/components/openssl/openssl-1.0.1 ; gmake build
+    $ cd $USERLAND/components/openssl/openssl-default ; gmake build
 
 Next, collect some information from linking wanboot static libraries in ON.
 This can be done by the following hack.
@@ -105,16 +88,16 @@ This can be done by the following hack.
     $ cd $ON/usr/src/psm/stand/boot/sparcv9/sun4
     $ touch wanboot.o
     $ LD_OPTIONS="-Dfiles,symbols,output=ld.dbg \
-        -L$USERLAND/components/openssl/openssl-1.0.1/build/sparcv9-wanboot " \
+        -L$USERLAND/components/openssl/openssl-default/build/sparcv9-wanboot " \
         WAN_OPENSSL=" -lwanboot -lssl -lcrypto" dmake all
 
 The following sort of information ends up in ld.dbg (note that the debugging
 output from the link-editor is not considered a 'stable interface' and may
 change in the future):
 
-    debug: file=/builds/tkuthan/ul-wanboot-rebuilt/components/openssl/openssl-1.0.1/build/sparcv9-wanboot/libcrypto.a(sparcv9cap.o)  [ ET_REL ]
+    debug: file=/builds/tkuthan/ul-wanboot-rebuilt/components/openssl/openssl-default/build/sparcv9-wanboot/libcrypto.a(sparcv9cap.o)  [ ET_REL ]
     debug:
-    debug: symbol table processing; file=/builds/tkuthan/ul-wanboot-rebuilt/components/openssl/openssl-1.0.1/build/sparcv9-wanboot/libcrypto.a(sparcv9cap.o)  [ ET_REL ]
+    debug: symbol table processing; file=/builds/tkuthan/ul-wanboot-rebuilt/components/openssl/openssl-default/build/sparcv9-wanboot/libcrypto.a(sparcv9cap.o)  [ ET_REL ]
     debug: symbol[1]=sparcv9cap.c
     ....
 
@@ -126,7 +109,7 @@ Now run the following script in Userland:
     USERLAND=/builds/tkuthan/ul-wanboot-rebuilt
     ON=/builds/tkuthan/on11u1-wanboot-rti
  
-    BUILD=$USERLAND/components/openssl/openssl-1.0.1/build/sparcv9-wanboot
+    BUILD=$USERLAND/components/openssl/openssl-default/build/sparcv9-wanboot
     LD_DBG=$ON/usr/src/psm/stand/boot/sparcv9/sun4/ld.dbg
  
     for i in `find $BUILD/crypto $BUILD/ssl -name '*.o'`
@@ -241,111 +224,18 @@ Common patch files are located in the components/openssl/common/patches dir,
 and they are copied to both FIPS and non-FIPS 'patches' dir as soon as the
 Makefile is parsed.  The Common patch filename has prefix '0',
 
-----
-
-008-6193522.patch
-Give CA.pl better defaults. See 6193522 for more information.
-
-011-6546806.patch
-Make sure the HMAC_CTX_init(3) man page gets delivered. See 6546806 for
-more information.
-
-015-pkcs11_engine-0.9.8a.patch
-Patch which adds the pkcs11 engine. See also the engine/pkcs11
-sub-directory. 
-
-018-compiler_opts.patch
-Adds five Solaris specific configurations (both 32bit and 64bit for both sparc
-and x86, plus 64bit sparc for wanboot) to Configure which are then explicitly
-used by the Makefiles. Wanboot configuration is special in that it doesn't link
-with libc and uses -xF=%all to put functions in separate sections, so that
-unused code can be discarded.
-
-Care should be taken if modifying this patch as changes to compile-time options
-can change the ABI. One example of this is the use of RC4_INT vs RC4_CHAR.
-
-020-remove_rpath.patch
-Prevent build binaries having an unnecessary runpath (/lib).
-
-023-noexstack.patch
-Build with non-executable stacks and non-executable data (x86).
-
-027-6978791.patch
-Modifies Makefile.shared so that libssl is built with -znodelete.
-
-028-enginesdir.patch
-Adds a new "enginesdir" option to the Configure script which allows a user to
-specify the engines directory.
-
-029-fork_safe.patch
-Adds the code to setup internal mutexes and callback function.
-See PSARC/2014/077.
-
-032-aes_cbc_len_check.patch
-AES-CBC input length is checked to avoid segmentation fault.
-
-033-cert_chain.patch
-Fixes the certificate chain bug.
-
-036-evp_leak.patch
-Fixes the memory leak bug.
-
-038_remove_illegal_instruction_calls.patch
-SPARC patch. Solaris-only patch.
-For instructions in sparcv9cap.c, remove if not supported on any platforms.
-Otherwise modify them to call getisax() to check for HW capability instead. 
-
-039-internal_tests.patch
-Remove test 'test_ca' because it depends on directories not present in the
-build directory. 
-
 =========================
 Non-FIPS specific Patches
 =========================
 
 Non-FIPS specific patch files are located in the
-components/openssl/openssl-1.0.1/patches dir.
+components/openssl/openssl-default/patches dir.
 The Non-FIPS specific patch filename has prefix '1',
-
-----
-101-manpage_openssl.patch
-Force openssl to install man pages into man[1357]openssl instead of man[1357].
-
-102-wanboot.patch:
-Wanboot specific patches.
-- modified Makefiles not to build in engines apps test tools
-- not using vfprintf for error print in crypto/cryptlib.c
-- not using ERR_load_DSO_strings() in crypto/err/err_all.c
-- not using EVP_read_pw_string() in crypto/evp/evp_key.c
-    - reading password is implemented in disabled DES library
-- avoid select() in crypto/rand/rand_unix.c
-- direct reading of IP to avoid sscanf() in crypto/x509v3/v3_utl.c
-- using functions from libsock in e_os.h
-- by-passing version of sparc detection in crypto/sparcv9cap.c
-    - results in not using FPU for big numbers multiplication
-    - should be ok - original detection seems broken, FPU gets never used
-- implementation of atoi()
-- avoid using ssl_fill_hello_random() in s3_clnt.c
-
-103-openssl_t4_inline.patch
-Add patch to support inline T4 instruction in OpenSSL upstream code until
-OpenSSL 1.0.2 is released.
-
-104-suppress_v8plus_abi_warnings.patch
-Suppress warnings about sparcv8+ ABI violation when building T4-specific
-modules as 32-bit.
 
 =========================
 FIPS specific Patches
 =========================
 
 FIPS specific patch files are located in the
-components/openssl/openssl-1.0.1-fips-140/patches dir.
+components/openssl/openssl-fips-140/patches dir.
 The FIPS specific patch filename has prefix '2',
-
----
-201-openssl_fips.patch 
-Change openssl(1) to call the FIPS routines only if the fips mediator is activated.
-
-202-17952966.patch
-FIPS version needs to build with '-lc' explicitly with stuido 12.3 and above.

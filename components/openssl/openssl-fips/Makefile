@@ -58,7 +58,7 @@ FAKE_APPS = $(FAKE_ISALIST) $(FAKE_MAKE) $(FAKE_CC)
 CLEAN_PATHS += $(FAKE_APPS)
 
 # Do not use $(PWD), it would not work if run from a different directory with
-# "gmake -C" as we do from openssl-1.0.1
+# "gmake -C" as we do from openssl-default
 # we'll also pick up gcc if we find it in the path, so force it to
 # find one that doesn't work like it wants
 FIPS_PATH_32 = $(COMPONENT_DIR)/32:$(COMPONENT_DIR)/gcc:$(PATH)

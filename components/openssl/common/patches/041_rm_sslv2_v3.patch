@@ -35,7 +35,7 @@
  # endif
 --- openssl-1.0.1/ssl/s2_srvr.c      Fri May  8 09:38:02 2015
 +++ openssl-1.0.1/ssl/s2_srvr.c.new       Fri May  8 09:53:43 2015
-@@ -1150,6 +1150,13 @@
+@@ -1148,6 +1148,13 @@
  }
  #else                           /* !OPENSSL_NO_SSL2 */
 
@@ -51,7 +51,7 @@
  # endif
 --- openssl-1.0.1/ssl/ssl.h	Tue May 26 11:13:15 2015
 +++ openssl-1.0.1/ssl/ssl.h.new	Tue May 26 11:32:09 2015
-@@ -2017,12 +2017,26 @@
+@@ -2345,12 +2345,26 @@
  /* This sets the 'default' SSL version that SSL_new() will create */
  int SSL_CTX_set_ssl_version(SSL_CTX *ctx, const SSL_METHOD *meth);
  
@@ -441,7 +441,7 @@
  there are no ciphersuites specific to TLS v1.1.
  
  =item B<AES128>, B<AES256>, B<AES>
-@@ -569,16 +555,6 @@
+@@ -579,16 +565,6 @@
   TLS_PSK_WITH_AES_128_CBC_SHA              PSK-AES128-CBC-SHA
   TLS_PSK_WITH_AES_256_CBC_SHA              PSK-AES256-CBC-SHA
  
@@ -457,31 +457,28 @@
 -
  =head1 NOTES
  
- The non-ephemeral DH modes are currently unimplemented in OpenSSL
+ Some compiled versions of OpenSSL may not include all the ciphers
 --- openssl-1.0.1/doc/apps/s_client.pod	Thu Mar 19 06:37:10 2015
 +++ openssl-1.0.1/doc/apps/s_client.pod.new	Tue May 26 12:15:40 2015
-@@ -31,12 +31,12 @@
+@@ -32,11 +32,9 @@
  [B<-ign_eof>]
  [B<-no_ign_eof>]
  [B<-quiet>]
 -[B<-ssl2>]
 -[B<-ssl3>]
  [B<-tls1>]
--[B<-no_ssl2>]
--[B<-no_ssl3>]
 +[B<-tls1_1>]
 +[B<-tls1_2>]
+-[B<-no_ssl2>]
+-[B<-no_ssl3>]
  [B<-no_tls1>]
-+[B<-no_tls1_1>]
-+[B<-no_tls1_2>]
- [B<-bugs>]
- [B<-cipher cipherlist>]
- [B<-serverpref>]
-@@ -196,11 +196,11 @@
+ [B<-no_tls1_1>]
+ [B<-no_tls1_2>]
+@@ -201,11 +199,11 @@
  given as a hexadecimal number without leading 0x, for example -psk
  1a2b3c4d.
  
--=item B<-ssl2>, B<-ssl3>, B<-tls1>, B<-no_ssl2>, B<-no_ssl3>, B<-no_tls1>
+-=item B<-ssl2>, B<-ssl3>, B<-tls1>, B<-no_ssl2>, B<-no_ssl3>, B<-no_tls1>, B<-no_tls1_1>, B<-no_tls1_2>
 +=item B<-tls1>, B<-tls1_1>, B<-tls1_2>, B<-no_tls1>, B<-no_tls1_1>, B<-no_tls1_2>
  
 -these options disable the use of certain SSL or TLS protocols. By default
@@ -490,9 +487,9 @@
 -servers and permit them to use SSL v3, SSL v2 or TLS as appropriate.
 +servers.
  
- Unfortunately there are a lot of ancient and broken servers in use which
+ Unfortunately there are still ancient and broken servers in use which
  cannot handle this technique and will fail to connect. Some servers only
-@@ -219,10 +219,6 @@
+@@ -227,10 +225,6 @@
  supported cipher in the list sent by the client. See the B<ciphers>
  command for more information.
  
@@ -503,7 +500,7 @@
  =item B<-starttls protocol>
  
  send the protocol-specific message(s) to switch to TLS for communication.
-@@ -299,8 +295,8 @@
+@@ -314,8 +308,8 @@
  then an HTTP command can be given such as "GET /" to retrieve a web page.
  
  If the handshake fails then there are several possible causes, if it is
@@ -514,7 +511,7 @@
  in case it is a buggy server. In particular you should play with these
  options B<before> submitting a bug report to an OpenSSL mailing list.
  
-@@ -322,10 +318,6 @@
+@@ -337,10 +331,6 @@
  If there are problems verifying a server certificate then the
  B<-showcerts> option can be used to show the whole chain.
  
@@ -525,9 +522,9 @@
  The B<s_client> utility is a test tool and is designed to continue the
  handshake after any certificate verification errors. As a result it will
  accept any certificate chain (trusted or not) sent by the peer. None test
---- openssl-1.0.1/doc/apps/s_server.pod	Thu Mar 19 06:37:10 2015
-+++ openssl-1.0.1/doc/apps/s_server.pod.new	Tue May 26 12:15:02 2015
-@@ -38,12 +38,12 @@
+--- openssl-1.0.1/doc/apps/s_server.pod Thu Mar 19 06:37:10 2015
++++ openssl-1.0.1/doc/apps/s_server.pod.new     Tue May 26 12:15:02 2015
+@@ -39,12 +39,12 @@
  [B<-serverpref>]
  [B<-quiet>]
  [B<-no_tmp_rsa>]
@@ -542,9 +539,9 @@
 +[B<-no_tls1_1>]
 +[B<-no_tls1_2>]
  [B<-no_dhe>]
- [B<-no_ecdhe>]
  [B<-bugs>]
-@@ -216,11 +216,11 @@
+ [B<-hack>]
+@@ -217,11 +217,11 @@
  given as a hexadecimal number without leading 0x, for example -psk
  1a2b3c4d.
  

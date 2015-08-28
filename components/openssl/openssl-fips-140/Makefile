@@ -31,18 +31,18 @@ endif
 COMPONENT_NAME =	openssl-fips-140
 # Note that this is the OpenSSL version that is used to build FIPS-140 certified
 # libraries. However, we use the FIPS canister version for the IPS package.
-COMPONENT_VERSION =	1.0.1p
+COMPONENT_VERSION =	1.0.2d
 IPS_COMPONENT_VERSION = 2.0.6
 COMPONENT_PROJECT_URL=	http://www.openssl.org/
 COMPONENT_SRC_NAME =	openssl
 COMPONENT_SRC =		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:bd5ee6803165c0fb60bbecbacacf244f1f90d2aa0d71353af610c29121e9b2f1
+    sha256:671c36487785628a703374c652ad2cebea45fa920ae5681515df25d9f2c9a8c8
 COMPONENT_ARCHIVE_URL =	$(COMPONENT_PROJECT_URL)source/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/openssl
 
-TPNO=			23452
+TPNO=			24194
 
 # Clone the patch files to the patches-all dir.
 # COPY_COMMON_FILES is there so that rsync is called as soon as
@@ -71,9 +71,9 @@ ENGINESDIR_64 = /lib/openssl/engines/64
 # Built openssl/openssl-fips component is used when building FIPS-140 libraries.
 # What we do here follows the OpenSSL FIPS-140 User Guide instructions.
 FIPS_BUILD_DIR_32 = $(shell echo $(BUILD_DIR_32) | \
-    sed -e 's/openssl-1.0.1-fips-140/openssl-fips/g' )
+    sed -e 's/openssl-fips-140/openssl-fips/g' )
 FIPS_BUILD_DIR_64 = $(shell echo $(BUILD_DIR_64) | \
-    sed -e 's/openssl-1.0.1-fips-140/openssl-fips/g' )
+    sed -e 's/openssl-fips-140/openssl-fips/g' )
 
 CONFIGURE_OPTIONS =  -DSOLARIS_OPENSSL -DNO_WINDOWS_BRAINDEATH
 CONFIGURE_OPTIONS += --openssldir=/etc/openssl
@@ -142,7 +142,7 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 # Enable ASLR for this component
 ASLR_MODE =	$(ASLR_ENABLE)
 
-# We must make sure that openssl-fips component is built before this 1.0.1
+# We must make sure that openssl-fips component is built before this openssl-fips-140
 # component since in order to build FIPS-140 certified libraries, the canister
 # is needed. Note that we must unset BITS that would override the same variable
 # used in openssl-fips' Makefile, and we would end up up with both canisters

@@ -60,7 +60,7 @@
  }
 
  void (*CRYPTO_get_locking_callback(void)) (int mode, int type,
-@@ -402,6 +414,129@@
+@@ -402,6 +414,128@@
      return (add_lock_callback);
  }
 
@@ -77,7 +77,6 @@
 +        pthread_mutex_unlock(&solaris_openssl_locks[type]);
 +    }
 +}
-+
 +
 +/*
 + * Implement Solaris's own dynamic locking routines.
@@ -217,7 +216,7 @@
      return 1;
  }
  
-@@ -531,7 +611,10 @@
+@@ -529,7 +669,10 @@
  
  void CRYPTO_set_id_callback(unsigned long (*func) (void))
  {
@@ -242,8 +241,8 @@
  #endif
 --- openssl-1.0.1f/crypto/sparccpuid.S.~1~	Fri Feb  7 10:41:37 2014
 +++ openssl-1.0.1f/crypto/sparccpuid.S	Thu Feb  6 16:04:14 2014
-@@ -398,5 +398,7 @@
- .size	OPENSSL_cleanse,.-OPENSSL_cleanse
+@@ -525,5 +525,7 @@
+ .size	_sparcv9_vis1_instrument_bus2,.-_sparcv9_vis1_instrument_bus2
 
  .section	".init",#alloc,#execinstr
 +	call	solaris_locking_setup
@@ -265,11 +264,14 @@
  .hidden	OPENSSL_ia32cap_P
 --- openssl-1.0.1f/crypto/x86cpuid.pl.~1~	Wed Feb 12 13:38:03 2014
 +++ openssl-1.0.1f/crypto/x86cpuid.pl	Wed Feb 12 13:38:31 2014
-@@ -353,6 +353,7 @@
+@@ -379,8 +379,10 @@
  	&ret	();
- &function_end_B("OPENSSL_ia32_rdrand");
+ &function_end_B("OPENSSL_ia32_rdseed");
  
 +&initseg("solaris_locking_setup");
  &initseg("OPENSSL_cpuid_setup");
  
- &asm_finish();
++&hidden("solaris_locking_setup");
+ &hidden("OPENSSL_cpuid_setup");
+ &hidden("OPENSSL_ia32cap_P");
+ 

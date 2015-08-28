@@ -28,19 +28,19 @@ COMPONENT_NAME =	openssl
 # When upgrading OpenSSL, please, DON'T FORGET TO TEST WANBOOT too. 
 # For more information about wanboot-openssl testing, please refer to
 # ../README.
-COMPONENT_VERSION =	1.0.1p
+COMPONENT_VERSION =	1.0.2d
 # Version for IPS. It is easier to do it manually than convert the letter to a
 # number while taking into account that there might be no letter at all.
-IPS_COMPONENT_VERSION = 1.0.1.16
+IPS_COMPONENT_VERSION = 1.0.2.4
 COMPONENT_PROJECT_URL=	http://www.openssl.org/
 COMPONENT_SRC =		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:bd5ee6803165c0fb60bbecbacacf244f1f90d2aa0d71353af610c29121e9b2f1
+    sha256:671c36487785628a703374c652ad2cebea45fa920ae5681515df25d9f2c9a8c8
 COMPONENT_ARCHIVE_URL =	$(COMPONENT_PROJECT_URL)source/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/openssl
 
-TPNO=			23452
+TPNO=			24194
 
 # Clone the patch files to the patches-all dir.
 # COPY_COMMON_FILES is there so that rsync is called as soon as
@@ -185,15 +185,7 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 COMPONENT_PRE_BUILD_ACTION = \
     ( echo "Cloning engines..."; \
       $(LN) -fs $(COMPONENT_DIR)/engines/pkcs11/*.[ch]		$(@D)/engines; \
-      $(LN) -fs $(COMPONENT_DIR)/wanboot-openssl/wanboot-stubs.c	$(@D)/crypto; \
-      $(LN) -fs $(COMPONENT_DIR)/inline-t4/sparc_arch.h		$(@D)/crypto/; \
-      $(LN) -fs $(COMPONENT_DIR)/inline-t4/md5-sparcv9.pl		$(@D)/crypto/md5/asm; \
-      $(LN) -fs $(COMPONENT_DIR)/inline-t4/aest4-sparcv9.pl		$(@D)/crypto/aes/asm; \
-      $(LN) -fs $(COMPONENT_DIR)/inline-t4/dest4-sparcv9.pl		$(@D)/crypto/des/asm; \
-      $(LN) -fs $(COMPONENT_DIR)/inline-t4/sparcv9_modes.pl		$(@D)/crypto/perlasm; \
-      $(LN) -fs $(COMPONENT_DIR)/inline-t4/vis3-mont.pl		$(@D)/crypto/bn/asm; \
-      $(LN) -fs $(COMPONENT_DIR)/inline-t4/sparcv9-gf2m.pl	$(@D)/crypto/bn/asm; \
-      $(LN) -fs $(COMPONENT_DIR)/inline-t4/sparct4-mont.pl	$(@D)/crypto/bn/asm; )
+      $(LN) -fs $(COMPONENT_DIR)/wanboot-openssl/wanboot-stubs.c	$(@D)/crypto; )
 
 # Enable ASLR for this component
 ASLR_MODE =	$(ASLR_ENABLE)
@@ -251,7 +243,8 @@ WANBOOT_OBJS =  \
     crypto/camellia/camellia.o crypto/camellia/cmll_cbc.o \
     crypto/camellia/cmll_cfb.o crypto/camellia/cmll_ecb.o \
     crypto/camellia/cmll_misc.o crypto/camellia/cmll_ofb.o \
-    crypto/camellia/cmll_utl.o crypto/cmac/cm_ameth.o crypto/cmac/cm_pmeth.o \
+    crypto/camellia/cmll_utl.o crypto/camellia/cmllt4-sparcv9.o \
+    crypto/cmac/cm_ameth.o crypto/cmac/cm_pmeth.o \
     crypto/cmac/cmac.o crypto/cms/cms_asn1.o crypto/cms/cms_att.o \
     crypto/cms/cms_dd.o crypto/cms/cms_enc.o crypto/cms/cms_env.o \
     crypto/cms/cms_err.o crypto/cms/cms_io.o crypto/cms/cms_lib.o \
@@ -296,7 +289,8 @@ WANBOOT_OBJS =  \
     crypto/md5/md5_dgst.o crypto/mem.o crypto/mem_dbg.o crypto/modes/cbc128.o \
     crypto/modes/ccm128.o crypto/modes/cfb128.o crypto/modes/ctr128.o \
     crypto/modes/gcm128.o crypto/modes/ghash-sparcv9.o crypto/modes/ofb128.o \
-    crypto/modes/xts128.o crypto/o_dir.o crypto/o_init.o crypto/o_time.o \
+    crypto/modes/wrap128.o crypto/modes/xts128.o crypto/o_dir.o \
+    crypto/o_init.o crypto/o_time.o \
     crypto/objects/o_names.o crypto/objects/obj_dat.o \
     crypto/objects/obj_err.o crypto/objects/obj_lib.o \
     crypto/objects/obj_xref.o crypto/ocsp/ocsp_asn.o crypto/ocsp/ocsp_err.o \
@@ -328,7 +322,8 @@ WANBOOT_OBJS =  \
     crypto/x509/x509_err.o crypto/x509/x509_ext.o crypto/x509/x509_lu.o \
     crypto/x509/x509_obj.o crypto/x509/x509_req.o crypto/x509/x509_trs.o \
     crypto/x509/x509_txt.o crypto/x509/x509_v3.o crypto/x509/x509_vfy.o \
-    crypto/x509/x509_vpm.o crypto/x509/x509name.o crypto/x509/x509rset.o \
+    crypto/x509/x509_vpm.o crypto/x509/x509cset.o \
+    crypto/x509/x509name.o crypto/x509/x509rset.o \
     crypto/x509/x509type.o crypto/x509/x_all.o crypto/x509v3/pcy_cache.o \
     crypto/x509v3/pcy_data.o crypto/x509v3/pcy_lib.o crypto/x509v3/pcy_map.o \
     crypto/x509v3/pcy_node.o crypto/x509v3/pcy_tree.o crypto/x509v3/v3_akey.o \
@@ -339,14 +334,13 @@ WANBOOT_OBJS =  \
     crypto/x509v3/v3_int.o crypto/x509v3/v3_lib.o crypto/x509v3/v3_ncons.o \
     crypto/x509v3/v3_ocsp.o crypto/x509v3/v3_pci.o crypto/x509v3/v3_pcia.o \
     crypto/x509v3/v3_pcons.o crypto/x509v3/v3_pku.o crypto/x509v3/v3_pmaps.o \
-    crypto/x509v3/v3_prn.o crypto/x509v3/v3_purp.o crypto/x509v3/v3_skey.o \
+    crypto/x509v3/v3_prn.o crypto/x509v3/v3_purp.o \
+    crypto/x509v3/v3_scts.o crypto/x509v3/v3_skey.o \
     crypto/x509v3/v3_sxnet.o crypto/x509v3/v3_utl.o crypto/x509v3/v3err.o \
     ssl/s3_both.o ssl/s3_clnt.o ssl/s3_enc.o ssl/s3_lib.o ssl/s3_pkt.o \
     ssl/ssl_algs.o ssl/ssl_asn1.o ssl/ssl_cert.o ssl/ssl_ciph.o ssl/ssl_err.o \
     ssl/ssl_err2.o ssl/ssl_lib.o ssl/ssl_rsa.o ssl/ssl_sess.o ssl/t1_enc.o \
     ssl/t1_lib.o ssl/t1_reneg.o ssl/d1_srtp.o ssl/s3_cbc.o ssl/t1_clnt.o
-
-
 
 # Linking of openssl bits for wanboot.
 # Interface for wanboot is specified in mapfile.wanboot. Object files are
