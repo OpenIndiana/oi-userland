@@ -46,6 +46,7 @@ CONFIGURE_INCLUDEDIR =  $(CONFIGURE_PREFIX)/include
 CONFIGURE_MANDIR =	$(CONFIGURE_PREFIX)/share/man
 
 COMPONENT_TEST_TRANSFORMS += \
+	'-e "/libtool/d"' \
 	'-e "/^TIME START/d"' \
 	'-e "/^TIME END/d"' \
 	'-e "/^Time taken/d"' \

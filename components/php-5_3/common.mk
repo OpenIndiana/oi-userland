@@ -261,3 +261,10 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "s/^Time.*$$//"' \
 	'-e "s/^PHP   .*$$//"' \
 	'-e "\$$d"'
+
+# Use openldap
+# This is good enough to fool configure
+SOLARIS_OPENLDAP= CPPFLAGS="$(CPPFLAGS) -I/usr/include/openldap" \
+	LDFLAGS="$(LDFLAGS) -lldap_r"
+# but ensure "make" gets the point
+COMPONENT_BUILD_ARGS += LDAP_SHARED_LIBADD="-lldap_r"

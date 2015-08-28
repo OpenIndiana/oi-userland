@@ -66,6 +66,13 @@ CONFIGURE_OPTIONS +=	--with-config-file-scan-dir=/etc/php/$(UL_PHP_MINOR_VERSION
 # Nor does PEAR (default: $PREFIX/lib/php)
 CONFIGURE_OPTIONS +=	--with-pear=/var/php/$(UL_PHP_MINOR_VERSION)/pear
 
+# Use openldap
+# This is good enough to fool configure
+CONFIGURE_OPTIONS += CPPFLAGS="$(CPPFLAGS) -I/usr/include/openldap" \
+	LDFLAGS="$(LDFLAGS) -lldap_r"
+# but ensure "make" gets the point
+COMPONENT_BUILD_ARGS += LDAP_SHARED_LIBADD="-lldap_r"
+
 # Disable SSLv2 and SSLv3 for security reasons
 CFLAGS += -DOPENSSL_NO_SSL2
 CFLAGS += -DOPENSSL_NO_SSL3
@@ -98,6 +105,11 @@ COMPONENT_POST_INSTALL_ACTION += \
 	 > proto-scripts/php-config-proto ; \
 	chmod 755 proto-scripts/php-config-proto ) ;
 
+# test failures; keep going
+COMPONENT_TEST_ARGS += -k -i
+# different results for different architectures
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH)-$(BITS).master
+
 CLEAN_PATHS += proto-scripts
 
 # For picking up php.ini-development and -production
@@ -113,5 +125,6 @@ test:			$(TEST_64)
 
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/openldap
+REQUIRED_PACKAGES += library/security/openssl

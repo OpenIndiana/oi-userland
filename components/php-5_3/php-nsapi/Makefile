@@ -92,7 +92,8 @@ CONFIGURE_OPTIONS  += \
 	--with-pdo-sqlite=shared \
 	--with-snmp=shared,/usr \
 	--with-sqlite3=shared \
-	--with-tidy=shared,/usr
+	--with-tidy=shared,/usr \
+	$(SOLARIS_OPENLDAP)
 
 CONFIGURE_ENV += $(ZTS_CONF_ENVLINE)
 

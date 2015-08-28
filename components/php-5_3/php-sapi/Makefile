@@ -96,7 +96,8 @@ CONFIGURE_OPTIONS  += \
 	--with-snmp=shared,/usr \
 	--with-sqlite=shared \
 	--with-tidy=shared,/usr \
-	--without-tsrm-pthreads
+	--without-tsrm-pthreads \
+	$(SOLARIS_OPENLDAP)
 
 CONFIGURE_ENV += $(CONF_ENVLINE)
 
