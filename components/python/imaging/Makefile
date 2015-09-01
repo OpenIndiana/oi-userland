@@ -44,9 +44,6 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-TEST_PYTHONPATH.32 = $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/PIL
-TEST_PYTHONPATH.64 = $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/PIL:$(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/PIL/64
-
 # This binary image file accompanies the test which is created along with a fix
 # in patches/04-CVE-2014-9601.patch
 COMPONENT_PRE_TEST_ACTION= \
@@ -57,7 +54,7 @@ COMPONENT_PRE_TEST_ACTION= \
 
 COMPONENT_TEST_DIR= $(COMPONENT_SRC)
 COMPONENT_TEST_ARGS= ./selftest.py
-COMPONENT_TEST_ENV= PYTHONPATH=$(TEST_PYTHONPATH.$(BITS))
+COMPONENT_TEST_ENV= PYTHONPATH=$(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES.32)
 
 # Master test results are the same for both 32-bit and 64-bit, 
 # for all versions of Python, so override
@@ -65,7 +62,20 @@ COMPONENT_TEST_ENV= PYTHONPATH=$(TEST_PYTHONPATH.$(BITS))
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
 COMPONENT_TEST_TRANSFORMS += \
+	'-e "s|^PIL [0-9]\{1,\}\(\.[0-9]\{1,\}\)\{1,\}|PIL|" ' \
+	'-e "s|\(^Python modules loaded from \).*|\1|" ' \
 	'-e "s|\(^Binary modules loaded from \).*|\1|" '
+
+# This binary image file accompanies the test which is created along with a fix
+# in patches/04-CVE-2014-9601.patch
+COMPONENT_PRE_SYSTEM_TEST_ACTION= \
+	if [ ! -e $(SOURCE_DIR)/Images/png_decompression_dos.png ]; then \
+		$(CP) files/png_decompression_dos.png \
+		$(SOURCE_DIR)/Images/png_decompression_dos.png ; \
+	fi
+COMPONENT_SYSTEM_TEST_DIR= $(COMPONENT_SRC)
+COMPONENT_SYSTEM_TEST_ARGS= ./selftest.py
+COMPONENT_SYSTEM_TEST_ENV= PYTHONPATH=$(PYTHON_VENDOR_PACKAGES.32)
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
@@ -76,7 +86,7 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+system-test:    $(SYSTEM_TEST_32_and_64)
 
 
 REQUIRED_PACKAGES += image/library/libjpeg
