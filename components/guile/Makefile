@@ -48,6 +48,19 @@ CONFIGURE_OPTIONS +=	--disable-error-on-warning
 CONFIGURE_OPTIONS +=	ac_cv_type_complex_double=no
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 
+# Remove the GNU specific "-pthreads" Cflags option from the guile config
+# files. In case we need to back-port this to earlier versions of Solaris,
+# -D_POSIX_PTHREAD_SEMANTICS is added in its place, which makes the pthreads
+# interfaces behave as specified in the POSIX standard (even though it does
+# nothing for Solaris 12).
+
+PROTOPKGCONFIGDIR.32 = $(PROTOUSRLIBDIR)/pkgconfig
+PROTOPKGCONFIGDIR.64 = $(PROTOUSRLIBDIR64)/pkgconfig
+
+COMPONENT_POST_INSTALL_ACTION += \
+	$(GSED) -i -e 's/-pthreads/-D_POSIX_PTHREAD_SEMANTICS/' \
+		$(PROTOPKGCONFIGDIR.$(BITS))/guile-1.8.pc
+
 # Master test results are the same for 32-bit and 64-bit, so override
 # here, rather than create multiple identical master files.
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
