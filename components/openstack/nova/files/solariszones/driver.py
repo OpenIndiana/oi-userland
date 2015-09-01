@@ -1371,11 +1371,11 @@ class SolarisZonesDriver(driver.ComputeDriver):
             LOG.debug(zc.zone.exportConfig(True))
             LOG.debug("-" * 80)
 
-        options = ['-a ', image]
+        options = ['-a', image]
 
         if os.listdir(sc_dir):
             # the directory isn't empty so pass it along to install
-            options.extend(['-c ', sc_dir])
+            options.extend(['-c', sc_dir])
 
         try:
             LOG.debug(_("installing instance '%s' (%s)") %
