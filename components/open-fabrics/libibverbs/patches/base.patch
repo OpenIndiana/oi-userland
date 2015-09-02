@@ -1,5 +1,5 @@
-#This patch was developed in-house. We plan to submit it upstream, but do
-# not yet have a target date for doing so
+#This patch was developed both in-house and from outside. We plan to submit it
+#upstream, but do not yet have a target date for doing so
 #
 diff -r -u /tmp/846623/libibverbs-1.1.4/Makefile.am libibverbs-1.1.4/Makefile.am
 --- /tmp/846623/libibverbs-1.1.4/Makefile.am	Thu Feb  3 01:53:17 2011
@@ -559,7 +559,62 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/verbs.c libibverbs-1.1.4/src/verbs.c
  int ibv_rate_to_mult(enum ibv_rate rate)
  {
  	switch (rate) {
-@@ -93,6 +108,12 @@
+@@ -76,6 +91,54 @@
+ 	}
+ }
+ 
++int ibv_rate_to_mbps(enum ibv_rate rate)
++{
++	switch (rate) {
++	case IBV_RATE_2_5_GBPS: return 2500;
++	case IBV_RATE_5_GBPS:   return 5000;
++	case IBV_RATE_10_GBPS:  return 10000;
++	case IBV_RATE_20_GBPS:  return 20000;
++	case IBV_RATE_30_GBPS:  return 30000;
++	case IBV_RATE_40_GBPS:  return 40000;
++	case IBV_RATE_60_GBPS:  return 60000;
++	case IBV_RATE_80_GBPS:  return 80000;
++	case IBV_RATE_120_GBPS: return 120000;
++	case IBV_RATE_14_GBPS:  return 14062;
++	case IBV_RATE_56_GBPS:  return 56250;
++	case IBV_RATE_112_GBPS: return 112500;
++	case IBV_RATE_168_GBPS: return 168750;
++	case IBV_RATE_25_GBPS:  return 25781;
++	case IBV_RATE_100_GBPS: return 103125;
++	case IBV_RATE_200_GBPS: return 206250;
++	case IBV_RATE_300_GBPS: return 309375;
++	default:               return -1;
++	}
++}
++
++enum ibv_rate mbps_to_ibv_rate(int mbps)
++{
++	switch (mbps) {
++	case 2500:   return IBV_RATE_2_5_GBPS;
++	case 5000:   return IBV_RATE_5_GBPS;
++	case 10000:  return IBV_RATE_10_GBPS;
++	case 20000:  return IBV_RATE_20_GBPS;
++	case 30000:  return IBV_RATE_30_GBPS;
++	case 40000:  return IBV_RATE_40_GBPS;
++	case 60000:  return IBV_RATE_60_GBPS;
++	case 80000:  return IBV_RATE_80_GBPS;
++	case 120000: return IBV_RATE_120_GBPS;
++	case 14062:  return IBV_RATE_14_GBPS;
++	case 56250:  return IBV_RATE_56_GBPS;
++	case 112500: return IBV_RATE_112_GBPS;
++	case 168750: return IBV_RATE_168_GBPS;
++	case 25781:  return IBV_RATE_25_GBPS;
++	case 103125: return IBV_RATE_100_GBPS;
++	case 206250: return IBV_RATE_200_GBPS;
++	case 309375: return IBV_RATE_300_GBPS;
++	default:     return IBV_RATE_MAX;
++	}
++}
++
+ int __ibv_query_device(struct ibv_context *context,
+ 		       struct ibv_device_attr *device_attr)
+ {
+@@ -93,6 +156,12 @@
  int __ibv_query_gid(struct ibv_context *context, uint8_t port_num,
  		    int index, union ibv_gid *gid)
  {
@@ -572,7 +627,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/verbs.c libibverbs-1.1.4/src/verbs.c
  	char name[24];
  	char attr[41];
  	uint16_t val;
-@@ -112,6 +133,7 @@
+@@ -112,6 +181,7 @@
  	}
  
  	return 0;
@@ -580,7 +635,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/verbs.c libibverbs-1.1.4/src/verbs.c
  }
  default_symver(__ibv_query_gid, ibv_query_gid);
  
-@@ -118,6 +140,12 @@
+@@ -118,6 +188,12 @@
  int __ibv_query_pkey(struct ibv_context *context, uint8_t port_num,
  		     int index, uint16_t *pkey)
  {
@@ -593,7 +648,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/verbs.c libibverbs-1.1.4/src/verbs.c
  	char name[24];
  	char attr[8];
  	uint16_t val;
-@@ -133,9 +161,159 @@
+@@ -133,9 +209,159 @@
  
  	*pkey = htons(val);
  	return 0;
@@ -753,7 +808,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/verbs.c libibverbs-1.1.4/src/verbs.c
  struct ibv_pd *__ibv_alloc_pd(struct ibv_context *context)
  {
  	struct ibv_pd *pd;
-@@ -148,6 +326,27 @@
+@@ -148,6 +374,27 @@
  }
  default_symver(__ibv_alloc_pd, ibv_alloc_pd);
  
@@ -781,7 +836,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/verbs.c libibverbs-1.1.4/src/verbs.c
  int __ibv_dealloc_pd(struct ibv_pd *pd)
  {
  	return pd->context->ops.dealloc_pd(pd);
-@@ -175,6 +374,27 @@
+@@ -175,6 +422,27 @@
  }
  default_symver(__ibv_reg_mr, ibv_reg_mr);
  
@@ -809,7 +864,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/verbs.c libibverbs-1.1.4/src/verbs.c
  int __ibv_dereg_mr(struct ibv_mr *mr)
  {
  	int ret;
-@@ -189,6 +409,26 @@
+@@ -189,6 +457,26 @@
  }
  default_symver(__ibv_dereg_mr, ibv_dereg_mr);
  
@@ -836,7 +891,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/verbs.c libibverbs-1.1.4/src/verbs.c
  static struct ibv_comp_channel *ibv_create_comp_channel_v2(struct ibv_context *context)
  {
  	struct ibv_abi_compat_v2 *t = context->abi_compat;
-@@ -212,6 +452,10 @@
+@@ -212,6 +500,10 @@
  	struct ibv_comp_channel            *channel;
  	struct ibv_create_comp_channel      cmd;
  	struct ibv_create_comp_channel_resp resp;
@@ -847,7 +902,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/verbs.c libibverbs-1.1.4/src/verbs.c
  
  	if (abi_ver <= 2)
  		return ibv_create_comp_channel_v2(context);
-@@ -221,7 +465,23 @@
+@@ -221,7 +513,23 @@
  		return NULL;
  
  	IBV_INIT_CMD_RESP(&cmd, sizeof cmd, CREATE_COMP_CHANNEL, &resp, sizeof resp);
@@ -871,7 +926,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/verbs.c libibverbs-1.1.4/src/verbs.c
  		free(channel);
  		return NULL;
  	}
-@@ -228,6 +488,9 @@
+@@ -228,6 +536,9 @@
  
  	VALGRIND_MAKE_MEM_DEFINED(&resp, sizeof resp);
  
@@ -2328,7 +2383,45 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/verbs.h libibverbs-1.
  enum ibv_rereg_mr_flags {
  	IBV_REREG_MR_CHANGE_TRANSLATION	= (1 << 0),
  	IBV_REREG_MR_CHANGE_PD		= (1 << 1),
-@@ -425,6 +448,14 @@
+@@ -360,7 +383,15 @@
+ 	IBV_RATE_40_GBPS  = 7,
+ 	IBV_RATE_60_GBPS  = 8,
+ 	IBV_RATE_80_GBPS  = 9,
+-	IBV_RATE_120_GBPS = 10
++	IBV_RATE_120_GBPS = 10,
++	IBV_RATE_14_GBPS  = 11,
++	IBV_RATE_56_GBPS  = 12,
++	IBV_RATE_112_GBPS = 13,
++	IBV_RATE_168_GBPS = 14,
++	IBV_RATE_25_GBPS  = 15,
++	IBV_RATE_100_GBPS = 16,
++	IBV_RATE_200_GBPS = 17,
++	IBV_RATE_300_GBPS = 18
+ };
+ 
+ /**
+@@ -377,6 +408,20 @@
+  */
+ enum ibv_rate mult_to_ibv_rate(int mult) __attribute_const;
+ 
++/**
++ * ibv_rate_to_mbps - Convert the IB rate enum to Mbit/sec.
++ * For example, IBV_RATE_5_GBPS will return the value 5000.
++ * @rate: rate to convert.
++ */
++int ibv_rate_to_mbps(enum ibv_rate rate) __attribute_const;
++
++/**
++ * mbps_to_ibv_rate - Convert a Mbit/sec value to an IB rate enum.
++ * @mbps: value to convert.
++ */
++enum ibv_rate mbps_to_ibv_rate(int mbps) __attribute_const;
++
++
+ struct ibv_ah_attr {
+ 	struct ibv_global_route	grh;
+ 	uint16_t		dlid;
+@@ -425,6 +470,14 @@
  	uint32_t		max_inline_data;
  };
  
@@ -2343,7 +2436,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/verbs.h libibverbs-1.
  struct ibv_qp_init_attr {
  	void		       *qp_context;
  	struct ibv_cq	       *send_cq;
-@@ -659,6 +690,7 @@
+@@ -659,6 +712,7 @@
  	char			dev_path[IBV_SYSFS_PATH_MAX];
  	/* Path to infiniband class device in sysfs */
  	char			ibdev_path[IBV_SYSFS_PATH_MAX];
@@ -2351,7 +2444,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/verbs.h libibverbs-1.
  };
  
  struct ibv_more_ops {
-@@ -743,6 +775,12 @@
+@@ -743,6 +797,12 @@
  	int			(*detach_mcast)(struct ibv_qp *qp, const union ibv_gid *gid,
  						uint16_t lid);
  	void			(*async_event)(struct ibv_async_event *event);
@@ -2364,7 +2457,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/verbs.h libibverbs-1.
  };
  
  struct ibv_context {
-@@ -749,6 +787,13 @@
+@@ -749,6 +809,13 @@
  	struct ibv_device      *device;
  	struct ibv_context_ops	ops;
  	int			cmd_fd;
@@ -2378,7 +2471,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/verbs.h libibverbs-1.
  	int			async_fd;
  	int			num_comp_vectors;
  	pthread_mutex_t		mutex;
-@@ -797,6 +842,11 @@
+@@ -797,6 +864,11 @@
  uint64_t ibv_get_device_guid(struct ibv_device *device);
  
  /**
@@ -2390,7 +2483,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/verbs.h libibverbs-1.
   * ibv_open_device - Initialize device for use
   */
  struct ibv_context *ibv_open_device(struct ibv_device *device);
-@@ -853,11 +903,44 @@
+@@ -853,11 +925,44 @@
  		   int index, uint16_t *pkey);
  
  /**
@@ -2435,7 +2528,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/verbs.h libibverbs-1.
   * ibv_dealloc_pd - Free a protection domain
   */
  int ibv_dealloc_pd(struct ibv_pd *pd);
-@@ -869,11 +952,27 @@
+@@ -869,11 +974,27 @@
  			  size_t length, int access);
  
  /**
@@ -3176,3 +3269,13 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/examples/devinfo.c libibverbs-1.1.4/exam
  
  #include <infiniband/verbs.h>
  #include <infiniband/driver.h>
+@@ -140,6 +142,9 @@
+ 	case 1:  return "2.5 Gbps";
+ 	case 2:  return "5.0 Gbps";
+ 	case 4:  return "10.0 Gbps";
++	case 8:  return "10.0 Gbps";
++	case 16: return "14.0 Gbps";
++	case 32: return "25.0 Gbps";
+ 	default: return "invalid speed";
+ 	}
+ }

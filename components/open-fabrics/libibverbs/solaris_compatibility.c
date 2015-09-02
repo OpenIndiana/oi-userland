@@ -94,69 +94,11 @@ static int sol_uverbs_drv_status = SOL_UVERBS_DRV_STATUS_UNKNOWN;
 static int sol_uverbs_minor_dev = -1;
 
 /*
- * Ugly, evil and rest of the names that qualify for it.
- * This is a side definition for the uverbs hca_info till the
- * new header file can appear in the userland build environment once that
- * happens this code will go.
- */
-#if	(IB_USER_VERBS_SOLARIS_ABI_VERSION == 2)
-#undef	IB_USER_VERBS_SOLARIS_ABI_VERSION
-#define	IB_USER_VERBS_SOLARIS_ABI_VERSION	3
-#define	__VERBS_COMPAT_MODE	1
-
-/*
  * Some useful definitions.
  */
-#define	PSID_STR_SZ		40
-#define	IBDEV_NAME_SZ		64
-#define	HCA_DRIVER_NAME_SZ	40
-#define	DEVID_STR_SZ		40
-
-/*
- * These are duplicate definitions to help the build complete on userland
- * build machines till the header files are populated with the new versions.
- * Once the new header file is available in the build system this code will
- * be removed.
- */
-typedef struct sol_uverbs_hca_infov3_s {
-	char		uverbs_hca_psid_string[PSID_STR_SZ];
-	char		uverbs_hca_ibdev_name[IBDEV_NAME_SZ];
-	char		uverbs_hca_driver_name[HCA_DRIVER_NAME_SZ];
-	uint32_t	uverbs_hca_driver_instance;
-	uint32_t	uverbs_hca_vendorid;
-	uint16_t	uverbs_hca_deviceid;
-	uint16_t	uverbs_hca_devidx;
-	int32_t		uverbs_hca_abi_version;
-	uint64_t	uverbs_hca_fw_ver;
-	uint64_t	uverbs_hca_node_guid;
-	uint64_t	uverbs_hca_node_external_guid;
-	uint64_t	uverbs_hca_sys_image_guid;
-	uint32_t	uverbs_hca_hw_version;
-	uint8_t		uverbs_hca_pad1[4];
-	char		uverbs_hca_devid_string[DEVID_STR_SZ];
-} sol_uverbs_hca_infov3_t;
-
-typedef struct sol_uverbs_info_v3_s {
-	int32_t			uverbs_abi_version;
-	int32_t			uverbs_solaris_abi_version;
-	int16_t			uverbs_hca_cnt;
-	int8_t			uverbs_pad1[6]; /* Padding for alignment */
-	sol_uverbs_hca_infov3_t uverbs_hca_info[];
-} sol_uverbs_infov3_t;
-
-#define	SIZEOF_UVERBS_INFO	(sizeof (sol_uverbs_infov3_t))
-#define	SIZEOF_HCA_INFO		(sizeof (sol_uverbs_hca_infov3_t))
-#define	UVERBS_INFO(x)		((sol_uverbs_infov3_t *)x)
-#define	HCA_INFO(x)		((sol_uverbs_hca_infov3_t *)x)
-
-#else /* (IB_USER_VERBS_SOLARIS_ABI_VERSION == 3) */
-
 #define	SIZEOF_UVERBS_INFO	(sizeof (sol_uverbs_info_t))
 #define	SIZEOF_HCA_INFO		(sizeof (sol_uverbs_hca_info_t))
 #define	UVERBS_INFO(x)		((sol_uverbs_info_t *)x)
-#define	HCA_INFO(x)		((sol_uverbs_hca_info_t *)x)
-
-#endif /* END */
 
 /*
  * check_path() prefixs
@@ -326,13 +268,8 @@ ibdev_cache_init()
 	ibdev_cache_info_t		*info;
 	int				fd, i, hca_cnt;
 	char				uverbs_devpath[MAX_OFS_DEVPATH_LEN];
-#ifdef	__VERBS_COMPAT_MODE
-	sol_uverbs_infov3_t		*uverbs_infop;
-	sol_uverbs_hca_infov3_t		*hca_infop;
-#else
 	sol_uverbs_info_t		*uverbs_infop;
 	sol_uverbs_hca_info_t		*hca_infop;
-#endif /* END __VERBS_COMPAT_MODE */
 	char 				*buf;
 	size_t				bufsize;
 	uint16_t			major, minor, sub_minor;
@@ -1121,7 +1058,15 @@ infiniband_ports(char *path, char *buf, size_t size, char *dev_name)
 				rate = 5;
 				break;
 			case 4:
+				/* FALLTHROUGH */
+			case 8:
 				rate = 10;
+				break;
+			case 16:
+				rate = 14.0625;
+				break;
+			case 32:
+				rate = 25.78125;
 				break;
 			default:
 				rate = 0;

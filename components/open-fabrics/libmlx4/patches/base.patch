@@ -16,22 +16,18 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/Makefile.am libmlx4-1.0.1/Makefile.am
 diff -r -u /tmp/839450/libmlx4-1.0.1/src/mlx4-abi.h libmlx4-1.0.1/src/mlx4-abi.h
 --- /tmp/839450/libmlx4-1.0.1/src/mlx4-abi.h	Thu Mar 10 04:48:34 2011
 +++ libmlx4-1.0.1/src/mlx4-abi.h	Fri Feb 11 03:49:51 2011
-@@ -35,6 +35,14 @@
+@@ -35,6 +35,10 @@
  
  #include <infiniband/kern-abi.h>
  
 +#if defined(__SVR4) && defined(__sun)
-+/* Restore once build systems are in sync
-+   See 21170572 - libmlx4 should be built with the system mlnx_umap.h
 +#include <sys/ib/adapters/mlnx_umap.h>   / * Opaque CI data out definitions * /
-+*/
-+#include "mlnx_umap.h"   /* Opaque CI data out definitions */
 +#endif
 +
  #define MLX4_UVERBS_MIN_ABI_VERSION	2
  #define MLX4_UVERBS_MAX_ABI_VERSION	3
  
-@@ -43,6 +51,10 @@
+@@ -43,6 +47,10 @@
  	__u32				qp_tab_size;
  	__u16				bf_reg_size;
  	__u16				bf_regs_per_page;
@@ -42,7 +38,7 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/mlx4-abi.h libmlx4-1.0.1/src/mlx4-abi.h
  };
  
  struct mlx4_alloc_pd_resp {
-@@ -51,23 +63,45 @@
+@@ -51,23 +59,45 @@
  	__u32				reserved;
  };
  
@@ -88,7 +84,7 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/mlx4-abi.h libmlx4-1.0.1/src/mlx4-abi.h
  #ifdef HAVE_IBV_XRC_OPS
  struct mlx4_create_xrc_srq {
  	struct ibv_create_xrc_srq	ibv_cmd;
-@@ -78,18 +112,25 @@
+@@ -78,18 +108,25 @@
  
  struct mlx4_create_srq {
  	struct ibv_create_srq		ibv_cmd;
@@ -114,7 +110,7 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/mlx4-abi.h libmlx4-1.0.1/src/mlx4-abi.h
  	__u64				buf_addr;
  	__u64				db_addr;
  	__u8				log_sq_bb_count;
-@@ -96,8 +137,16 @@
+@@ -96,8 +133,16 @@
  	__u8				log_sq_stride;
  	__u8				sq_no_prefetch;	/* was reserved in ABI 2 */
  	__u8				reserved[5];
