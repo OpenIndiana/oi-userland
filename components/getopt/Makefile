@@ -27,12 +27,12 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		getopt
 COMPONENT_VERSION=	1.1.5
-COMPONENT_PROJECT_URL=	http://software.frodo.looijaard.name/getopt/
+COMPONENT_PROJECT_URL=	http://frodo.looijaard.name/project/getopt/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:11893276b94b1629606ab75772143918a5713259950fbf4216288e246f19fbb6
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)files/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	http://frodo.looijaard.name/system/files/software/getopt/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gnu-getopt
 
 include ../../make-rules/prep.mk

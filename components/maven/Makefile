@@ -25,7 +25,7 @@ COMPONENT_ARCHIVE= $(COMPONENT_SRC)-bin.tar.gz
 COMPONENT_ARCHIVE_HASH= \
   sha256:bf3f04aadee3a67158aebdfb0b4cb022063329d459d10fd6b4b02223e10aa8ed
 COMPONENT_ARCHIVE_URL= \
-  http://apache-mirror.rbc.ru/pub/apache/maven/maven-3/$(COMPONENT_VERSION)/binaries/$(COMPONENT_ARCHIVE)
+  http://archive.apache.org/dist/maven/maven-3/$(COMPONENT_VERSION)/binaries/$(COMPONENT_ARCHIVE)
 COMPONENT_SUMMARY= Apache Maven is a software project management and comprehension tool
 
 include ../../make-rules/prep.mk
