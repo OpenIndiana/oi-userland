@@ -26,8 +26,8 @@ COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
   sha256:1442c85624b7de74c7745132a65aa0de47d280c4f01f293d111bc0b6d8271f43
 COMPONENT_ARCHIVE_URL= \
-  ftp://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_3_15_5_RTM/src/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://developer.mozilla.org/ru/docs/NSS
+  https://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_3_15_5_RTM/src/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL = https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS
 
 include ../../make-rules/prep.mk
 include ../../make-rules/ips.mk

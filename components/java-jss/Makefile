@@ -21,7 +21,7 @@ COMPONENT_PROJECT_URL=	https://developer.mozilla.org/en-US/docs/Mozilla/Projects
 COMPONENT_SRC=		mozilla
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.bz2
 COMPONENT_ARCHIVE_HASH=	sha256:8d3e848f018fca1a2e5b75f3231546b17923df10002091f7dfa2e53cf6f7a183
-COMPONENT_ARCHIVE_URL=	ftp://ftp.mozilla.org/pub/mozilla.org/security/jss/releases/JSS_4_3_1_RTM/src/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	https://ftp.mozilla.org/pub/mozilla.org/security/jss/releases/JSS_4_3_1_RTM/src/$(COMPONENT_ARCHIVE)
 
 # Enable compiler optimizations and disable debugging code
 COMPONENT_BUILD_ENV += BUILD_OPT=1

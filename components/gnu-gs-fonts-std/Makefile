@@ -30,7 +30,7 @@ COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
     sha256:4cef38d05aa958dfee4dabb8d1599b8ad2b2347413b7895c94d8882c8a0fb9d3
-COMPONENT_ARCHIVE_URL=  http://softlayer.dl.sourceforge.net/sourceforge/gs-fonts/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)files/gs-fonts/6.0%20%28base%2035%2C%20GPL%29/$(COMPONENT_ARCHIVE)/download
 COMPONENT_BUGDB=	utility/ghostscript
 
 # set relocate_to option while unpacking the tar ball
