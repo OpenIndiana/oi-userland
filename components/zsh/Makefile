@@ -20,20 +20,20 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 include ../../make-rules/shared-targets.mk
 
 COMPONENT_NAME=		zsh
-COMPONENT_VERSION=	4.3.17
+COMPONENT_VERSION=	5.1
 COMPONENT_PROJECT_URL=	http://www.zsh.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:054e0452afd9c742c9f1489465175e1d4d7db50d88b602d132551d850cf7a704
-COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/zsh/zsh-dev/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+    sha256:c3a654fa0ef26cb1a3228c9257101870e72899fde1cd815388b1b2cbbdfa59b4
+COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/zsh/zsh/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/zsh
 
 include ../../make-rules/prep.mk
@@ -53,17 +53,17 @@ CONFIGURE_OPTIONS += --enable-pcre
 CONFIGURE_OPTIONS += --with-tcsetpgrp
 CONFIGURE_OPTIONS += --disable-gdbm
 
-# pcre-config --libs unnecessarily emits "-L/usr/lib -R/usr/lib"; we remove it
-# so that it doesn't end up in the binaries.
+# pcre-config --libs unnecessarily emits "-R/usr/lib"; we remove it so that it
+# doesn't end up in the binaries.
 COMPONENT_POST_CONFIGURE_ACTION = \
 	(cd $(@D); \
-	sed -e 's,-L/usr/lib -R/usr/lib,,' \
+	sed -e 's,-R/usr/lib,,' \
 		config.status > config.status.new; \
 	mv config.status.new config.status; \
 	chmod 755 config.status; \
 	./config.status)
 
-COMPOVERRIDES = $(shell find Completion -type f -print)
+COMPOVERRIDES = $(shell test -d Completion && find Completion -type f -print)
 
 $(PROTOETCDIR)/%: % $(PROTOETCDIR)
 	$(INS.file)
@@ -76,13 +76,19 @@ $(PROTOETCDIR)/zprofile: $(PROTOETCDIR)
 # the language.
 COMPONENT_BUILD_ENV += LC_ALL=C
 
+# The configure test for NIS tests to make sure that NIS is working, not whether
+# it's available to compile against.  We actually want to go through the switch
+# in all cases, so we force it off, regardless of whether the build environment
+# has it enabled.
+CONFIGURE_ENV += zsh_cv_sys_nis=no
+
 $(COMPONENT_SRC)/Completion/%: Completion/%
 	$(CP) $< $@
 
 $(COMPONENT_SRC)/LICENCE: prep
 
 license: $(COMPONENT_SRC)/LICENCE
-	iconv -f 8859-1 -t utf-8 $< > $@
+	tail +13 $< > $@
 
 CLEAN_PATHS += license
 
