@@ -72,23 +72,20 @@ COMPONENT_INSTALL_TARGETS = install
 COMPONENT_INSTALL_ARGS += bindir=$(USRBINDIR)
 COMPONENT_INSTALL_ARGS += sbindir=$(USRSBINDIR)
 
-# Since linking with libmd.so (which provides sha2 capability on
-# Solaris) is optional, we have a check here to make sure that the
-# configure script found it correctly.
-# http://www.sudo.ws/bugs/show_bug.cgi?id=641
 # Make sure that sudo is NOT built with its internal sha2 implementation
-# ... but is linked with libmd instead
+# http://www.sudo.ws/bugs/show_bug.cgi?id=641
 COMPONENT_TEST_ENV_CMD =
 COMPONENT_TEST_CMD = \
 	if [[ -n $$( elfdump -s "$(VISUDO)" | grep SHA256Init | grep -v UNDEF ) ]]; then \
 		echo "SHA256Init is not an undefined symbol in $(VISUDO)"; \
 		exit 1; \
 	fi; \
-	if [[ -z $$( elfdump -d "$(VISUDO)" | grep 'NEEDED .* libmd.so' ) ]]; then \
-		echo "$(VISUDO) is not linked against libmd.so"; \
-		exit 1; \
-	fi
-COMPONENT_TEST_TARGETS =
+	$(GMAKE)
+
+# Tests may output some compilation lines, so just pull out the relevant test
+# output lines for the test results comparison
+COMPONENT_TEST_TRANSFORMS += '-e "/^sudo_conf\|^sudo_parseln\|^check_addr\|^check_base64\|^check_fill\|^iolog_path\|^check_symbols\|^sudoers\|^testsudoers\|^visudo\|^check_ttyname/!d"'
+COMPONENT_TEST_TRANSFORMS += '-e "s/\(\/dev\/pts\/\)[0-9][0-9]*/\1\#/"'
 
 # Enable aslr for this component
 ASLR_MODE = $(ASLR_ENABLE)
