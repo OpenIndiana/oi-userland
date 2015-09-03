@@ -23,14 +23,17 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tcpdump
-COMPONENT_VERSION=	4.5.1
+COMPONENT_VERSION=	4.7.4
 COMPONENT_PROJECT_URL=	http://www.tcpdump.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:14ab39657128f3a650aed4cf455f76c7590601087b6101c253d698f6e73f0b96
+    sha256:5a321f0fb959b928f26112c9f49f81d754c23c1d8ffb0feb69304fee06b77e0a
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)release/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/tcpdump
+
+# Prevent macro redefinition error 
+CFLAGS += -D _NETINET_IP_H
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
@@ -38,6 +41,8 @@ include ../../make-rules/ips.mk
 
 # fix my alignment issues instead of falling over on sparc
 studio_ALIGN.sparc.64=-xmemalign=16i
+CONFIGURE_OPTIONS.sparc += ac_cv___attribute__=no
+CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(MACH))
 
 # lazyloading (indirectly enabled by -Bdirect) seems to cause problems with
 # libpcap device enumeration.
@@ -48,6 +53,10 @@ CONFIGURE_OPTIONS += --with-user=nobody
 CONFIGURE_OPTIONS += --without-crypto
 
 ASLR_MODE = $(ASLR_ENABLE)
+
+# Master test results are the same for both 32-bit and 64-bit, so override
+# here, rather than create multiple identical master files.
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
 # common targets
 build:          $(BUILD_32_and_64)
