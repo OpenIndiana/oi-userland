@@ -1,0 +1,16 @@
+Description: fix an issue.
+Author: Lukáš Lalinský <lalinsky@gmail.com>
+Last-Update: 2006-08-27
+Index: libofa-0.9.3/examples/protocol.cpp
+===================================================================
+--- libofa-0.9.3.orig/examples/protocol.cpp
++++ libofa-0.9.3/examples/protocol.cpp
+@@ -258,7 +258,7 @@ bool retrieve_metadata(string client_key
+     }
+     // printf("response: %s\n\n", response.c_str());
+ 
+-    unsigned int q = response.find("<?xml");
++    string::size_type q = response.find("<?xml");
+     if (q != string::npos) {
+         response = response.substr(q);
+     }
