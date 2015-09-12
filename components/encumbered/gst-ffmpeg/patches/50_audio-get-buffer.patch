@@ -1,0 +1,29 @@
+From 99d47920144f08f7efd0ca03ec5ab583046c496d Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Sebastian=20Dr=C3=B6ge?= <sebastian.droege@collabora.co.uk>
+Date: Wed, 18 Jan 2012 10:05:09 +0100
+Subject: [PATCH] ffdec: Only set get_buffer() function for video
+
+Fixes bug #666435.
+---
+ ext/ffmpeg/gstffmpegdec.c |    8 +++++---
+ 1 files changed, 5 insertions(+), 3 deletions(-)
+
+Index: gstreamer0.10-ffmpeg/ext/ffmpeg/gstffmpegdec.c
+===================================================================
+--- gstreamer0.10-ffmpeg.orig/ext/ffmpeg/gstffmpegdec.c	2011-11-03 11:10:13.822052601 +0100
++++ gstreamer0.10-ffmpeg/ext/ffmpeg/gstffmpegdec.c	2012-01-18 10:13:58.981940454 +0100
+@@ -758,9 +758,11 @@
+   }
+ 
+   /* set buffer functions */
+-  ffmpegdec->context->get_buffer = gst_ffmpegdec_get_buffer;
+-  ffmpegdec->context->release_buffer = gst_ffmpegdec_release_buffer;
+-  ffmpegdec->context->draw_horiz_band = NULL;
++  if (oclass->in_plugin->type == AVMEDIA_TYPE_VIDEO) {
++    ffmpegdec->context->get_buffer = gst_ffmpegdec_get_buffer;
++    ffmpegdec->context->release_buffer = gst_ffmpegdec_release_buffer;
++    ffmpegdec->context->draw_horiz_band = NULL;
++  }
+ 
+   /* default is to let format decide if it needs a parser */
+   ffmpegdec->turnoff_parser = FALSE;
