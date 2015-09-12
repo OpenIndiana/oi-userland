@@ -1,0 +1,26 @@
+From 8767a624f027e6c762d0eeed16d4fafd85ba858f Mon Sep 17 00:00:00 2001
+From: Vincent Penquerc'h <vincent.penquerch@collabora.co.uk>
+Date: Tue, 29 May 2012 17:24:02 +0100
+Subject: [PATCH 17/20] opusdec: read gain from the right place in the header
+
+It's at byte offset 16, not 14.
+---
+ ext/opus/gstopusdec.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/ext/opus/gstopusdec.c b/ext/opus/gstopusdec.c
+index 9fb397c..65ecb06 100644
+--- a/ext/opus/gstopusdec.c
++++ b/ext/opus/gstopusdec.c
+@@ -251,7 +251,7 @@ gst_opus_dec_parse_header (GstOpusDec * dec, GstBuffer * buf)
+ 
+   dec->n_channels = data[9];
+   dec->pre_skip = GST_READ_UINT16_LE (data + 10);
+-  dec->r128_gain = GST_READ_UINT16_LE (data + 14);
++  dec->r128_gain = GST_READ_UINT16_LE (data + 16);
+   dec->r128_gain_volume = gst_opus_dec_get_r128_volume (dec->r128_gain);
+   GST_INFO_OBJECT (dec,
+       "Found pre-skip of %u samples, R128 gain %d (volume %f)",
+-- 
+1.7.10.4
+

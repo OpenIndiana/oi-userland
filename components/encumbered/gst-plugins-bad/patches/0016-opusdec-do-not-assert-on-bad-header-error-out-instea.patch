@@ -1,0 +1,35 @@
+From 722b15abcaadbf32542184df889ed06d7a01f8fe Mon Sep 17 00:00:00 2001
+From: Vincent Penquerc'h <vincent.penquerch@collabora.co.uk>
+Date: Sun, 27 May 2012 23:41:24 +0100
+Subject: [PATCH 16/20] opusdec: do not assert on bad header, error out
+ instead
+
+---
+ ext/opus/gstopusdec.c |   11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/ext/opus/gstopusdec.c b/ext/opus/gstopusdec.c
+index cbfc3ac..9fb397c 100644
+--- a/ext/opus/gstopusdec.c
++++ b/ext/opus/gstopusdec.c
+@@ -240,9 +240,14 @@ gst_opus_dec_parse_header (GstOpusDec * dec, GstBuffer * buf)
+   GstCaps *caps;
+   const GstAudioChannelPosition *pos = NULL;
+ 
+-  g_return_val_if_fail (gst_opus_header_is_id_header (buf), GST_FLOW_ERROR);
+-  g_return_val_if_fail (dec->n_channels == 0
+-      || dec->n_channels == data[9], GST_FLOW_ERROR);
++  if (!gst_opus_header_is_id_header (buf)) {
++    GST_ERROR_OBJECT (dec, "Header is not an Opus ID header");
++    return GST_FLOW_ERROR;
++  }
++  if (!(dec->n_channels == 0 || dec->n_channels == data[9])) {
++    GST_ERROR_OBJECT (dec, "Opus ID header has invalid channels");
++    return GST_FLOW_ERROR;
++  }
+ 
+   dec->n_channels = data[9];
+   dec->pre_skip = GST_READ_UINT16_LE (data + 10);
+-- 
+1.7.10.4
+

@@ -1,0 +1,31 @@
+From db0aa7f0567435b14011750c02b0dcfd12cceb65 Mon Sep 17 00:00:00 2001
+From: Mark Nauwelaerts <mark.nauwelaerts@collabora.co.uk>
+Date: Wed, 7 Mar 2012 12:55:43 +0100
+Subject: [PATCH 08/20] opusenc: configure baseclass requested samples really
+ in samples
+
+... as opposed to bytes.
+---
+ ext/opus/gstopusenc.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/ext/opus/gstopusenc.c b/ext/opus/gstopusenc.c
+index 29b254e..a87e08b 100644
+--- a/ext/opus/gstopusenc.c
++++ b/ext/opus/gstopusenc.c
+@@ -382,10 +382,8 @@ gst_opus_enc_setup_base_class (GstOpusEnc * enc, GstAudioEncoder * benc)
+ {
+   gst_audio_encoder_set_latency (benc,
+       gst_opus_enc_get_latency (enc), gst_opus_enc_get_latency (enc));
+-  gst_audio_encoder_set_frame_samples_min (benc,
+-      enc->frame_samples * enc->n_channels * 2);
+-  gst_audio_encoder_set_frame_samples_max (benc,
+-      enc->frame_samples * enc->n_channels * 2);
++  gst_audio_encoder_set_frame_samples_min (benc, enc->frame_samples);
++  gst_audio_encoder_set_frame_samples_max (benc, enc->frame_samples);
+   gst_audio_encoder_set_frame_max (benc, 0);
+ }
+ 
+-- 
+1.7.10.4
+
