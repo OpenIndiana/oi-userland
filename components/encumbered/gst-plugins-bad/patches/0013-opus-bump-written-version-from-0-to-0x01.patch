@@ -1,0 +1,26 @@
+From b4d365257091c2127e7e0557589d141364ebe55e Mon Sep 17 00:00:00 2001
+From: Vincent Penquerc'h <vincent.penquerch@collabora.co.uk>
+Date: Thu, 24 May 2012 21:58:44 +0100
+Subject: [PATCH 13/20] opus: bump written version from 0 to 0x01
+
+as per the spec update at https://wiki.xiph.org/OggOpus#ID_Header
+---
+ ext/opus/gstopusheader.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/ext/opus/gstopusheader.c b/ext/opus/gstopusheader.c
+index 9048eb8..dc9954f 100644
+--- a/ext/opus/gstopusheader.c
++++ b/ext/opus/gstopusheader.c
+@@ -43,7 +43,7 @@ gst_opus_enc_create_id_buffer (gint nchannels, gint n_stereo_streams,
+ 
+   /* See http://wiki.xiph.org/OggOpus */
+   hdl &= gst_byte_writer_put_data (&bw, (const guint8 *) "OpusHead", 8);
+-  hdl &= gst_byte_writer_put_uint8 (&bw, 0);    /* version number */
++  hdl &= gst_byte_writer_put_uint8 (&bw, 0x01); /* version number */
+   hdl &= gst_byte_writer_put_uint8 (&bw, nchannels);
+   hdl &= gst_byte_writer_put_uint16_le (&bw, 0);        /* pre-skip */
+   hdl &= gst_byte_writer_put_uint32_le (&bw, sample_rate);
+-- 
+1.7.10.4
+

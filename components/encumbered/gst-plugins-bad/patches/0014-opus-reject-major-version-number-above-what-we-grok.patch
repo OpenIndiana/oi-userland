@@ -1,0 +1,33 @@
+From b73a14139f54621a06137db7e7373f43c65870fa Mon Sep 17 00:00:00 2001
+From: Vincent Penquerc'h <vincent.penquerch@collabora.co.uk>
+Date: Thu, 24 May 2012 22:12:56 +0100
+Subject: [PATCH 14/20] opus: reject major version number above what we grok
+
+---
+ ext/opus/gstopusheader.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/ext/opus/gstopusheader.c b/ext/opus/gstopusheader.c
+index dc9954f..597808d 100644
+--- a/ext/opus/gstopusheader.c
++++ b/ext/opus/gstopusheader.c
+@@ -219,12 +219,15 @@ gst_opus_header_is_id_header (GstBuffer * buf)
+ {
+   gsize size = GST_BUFFER_SIZE (buf);
+   const guint8 *data = GST_BUFFER_DATA (buf);
+-  guint8 channels, channel_mapping_family, n_streams, n_stereo_streams;
++  guint8 version, channels, channel_mapping_family, n_streams, n_stereo_streams;
+ 
+   if (size < 19)
+     return FALSE;
+   if (!gst_opus_header_is_header (buf, "OpusHead", 8))
+     return FALSE;
++  version = data[8];
++  if (version >= 0x0f)          /* major version >=0 is what we grok */
++    return FALSE;
+   channels = data[9];
+   if (channels == 0)
+     return FALSE;
+-- 
+1.7.10.4
+
