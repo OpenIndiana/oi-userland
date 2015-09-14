@@ -147,16 +147,16 @@ index af3ce17..96d391d 100644
  	__u32 unused1, unused2, unused3;
 diff --git a/libkms/linux.c b/libkms/linux.c
 index fc4f205..5d66fc7 100644
---- a/libkms/linux.c
-+++ b/libkms/linux.c
-@@ -39,6 +39,7 @@
+--- libdrm-2.4.64/libkms/linux.c.~1~	2015-09-14 10:39:04.176885400 +0300
++++ libdrm-2.4.64/libkms/linux.c	2015-09-14 10:40:12.713465696 +0300
+@@ -40,6 +40,7 @@
+ #include <string.h>
  #include <unistd.h>
- 
  #include <sys/stat.h>
 +#include <sys/sysmacros.h>
- 
- #include "internal.h"
- 
+ #include <sys/types.h>
+ #ifdef HAVE_SYS_MKDEV_H
+ #include <sys/mkdev.h>
 diff --git a/xf86drm.h b/xf86drm.h
 index 76eb94e..6a14120 100644
 --- a/xf86drm.h
@@ -181,19 +181,19 @@ index 76eb94e..6a14120 100644
  #endif
 diff --git a/xf86drmMode.c b/xf86drmMode.c
 index c809c44..715f23a 100644
---- a/xf86drmMode.c
-+++ b/xf86drmMode.c
-@@ -737,7 +737,9 @@ int drmCheckModesettingSupported(const char *busid)
- 	if (found)
- 		return 0;
+--- libdrm-2.4.64/xf86drmMode.c.~1~	2015-09-14 10:33:51.340507095 +0300
++++ libdrm-2.4.64/xf86drmMode.c	2015-09-14 10:36:09.881744836 +0300
+@@ -834,7 +834,9 @@
+ 	drmClose(fd);
+ 	return 0;
  #endif
 -	return -ENOSYS;
 +
 +/* for now return 0 on solaris */
 +	return 0;
- 
  }
  
+ int drmModeCrtcGetGamma(int fd, uint32_t crtc_id, uint32_t size,
 --- a/xf86drm.c	Fri Mar 20 07:05:48 2015
 +++ b/xf86drm.c	Fri Mar 20 07:06:10 2015
 @@ -1105,7 +1105,7 @@
@@ -205,3 +205,13 @@ index c809c44..715f23a 100644
  
      if(drmIoctl(fd, DRM_IOCTL_RM_MAP, &map))
  	return -errno;
+--- libdrm-2.4.64/amdgpu/amdgpu_cs.c.~1~	2015-09-14 10:42:37.518409301 +0300
++++ libdrm-2.4.64/amdgpu/amdgpu_cs.c	2015-09-14 10:42:52.951974725 +0300
+@@ -25,6 +25,7 @@
+ #include "config.h"
+ #endif
+ 
++#include <alloca.h>
+ #include <stdlib.h>
+ #include <stdio.h>
+ #include <string.h>
