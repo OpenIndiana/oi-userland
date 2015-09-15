@@ -135,7 +135,6 @@ LDFLAGS += -R$(LIBSVNDIR.$(BITS)) -R$(APR-CONFIG-RPATH.$(BITS)) \
 	   -R$(APU-CONFIG-RPATH.$(BITS))
 
 CONFIGURE_ENV += LDFLAGS="$(LDFLAGS)"
-CONFIGURE_ENV += RUBY="$(RUBY.1.9)"
 
 # Let's make noise just because we have to override --libdir
 CONFIGURE_OPTIONS = --prefix=$(CONFIGURE_PREFIX)
