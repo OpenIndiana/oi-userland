@@ -67,12 +67,12 @@ CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)/squid
 CONFIGURE_OPTIONS += --mandir=$(CONFIGURE_PREFIX)/man
 CONFIGURE_OPTIONS += --sbindir=$(CONFIGURE_PREFIX)/sbin
 CONFIGURE_OPTIONS += --enable-arp-acl
-CONFIGURE_OPTIONS += --enable-auth-basic='DB,NCSA,LDAP,PAM,getpwnam,MSNT-multi-domain,POP3,SMB,SASL'
+CONFIGURE_OPTIONS += --enable-auth-basic='DB,NCSA,NIS,LDAP,PAM,getpwnam,MSNT-multi-domain,POP3,SMB,SMB_LM,SASL'
 CONFIGURE_OPTIONS += --enable-cache-digests
 CONFIGURE_OPTIONS += --enable-carp
 CONFIGURE_OPTIONS += --enable-coss-aio-ops
 CONFIGURE_OPTIONS += --enable-delay-pools
-CONFIGURE_OPTIONS += --enable-auth-digest='LDAP'
+CONFIGURE_OPTIONS += --enable-auth-digest='file,LDAP'
 CONFIGURE_OPTIONS += --enable-external-acl-helpers='file_userip,unix_group,LDAP_group,wbinfo_group'
 CONFIGURE_OPTIONS += --enable-follow-x-forwarded-for
 CONFIGURE_OPTIONS += --enable-forward-log
