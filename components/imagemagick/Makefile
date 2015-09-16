@@ -97,6 +97,15 @@ COMPONENT_TEST_TARGETS = check < /dev/null
 
 ASLR_MODE = $(ASLR_ENABLE)
 
+# Master test transforms
+COMPONENT_TEST_TRANSFORMS += \
+	'-n '\
+	'-e "/TOTAL/p" ' \
+	'-e "/SKIP/p" ' \
+	'-e "/PASS/p" ' \
+	'-e "/FAIL/p" ' \
+	'-e "/ERROR/p" ' 
+
 configure:	$(CONFIGURE_32_and_64)
 
 build:		$(BUILD_32_and_64)
