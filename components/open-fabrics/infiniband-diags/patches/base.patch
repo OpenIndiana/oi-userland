@@ -1,5 +1,5 @@
-# This patch was developed in-house. Since it is Solaris-specific,
-# it is not suitable for upstream.
+# This patch was developed both in-house and from outside. We plan to submit it
+# upstream, but do not yet have a target date for doing so
 #
 diff -r -u /tmp/infiniband-diags-1.5.8/Makefile.am infiniband-diags-1.5.8/Makefile.am
 --- /tmp/infiniband-diags-1.5.8/Makefile.am	Wed Feb 16 02:13:21 2011
@@ -1806,16 +1806,14 @@ diff -r -u /tmp/infiniband-diags-1.5.8/src/ibnetdiscover.c infiniband-diags-1.5.
 diff -r -u /tmp/infiniband-diags-1.5.8/src/saquery.c infiniband-diags-1.5.8/src/saquery.c
 --- /tmp/infiniband-diags-1.5.8/src/saquery.c	Wed Feb 16 02:13:21 2011
 +++ infiniband-diags-1.5.8/src/saquery.c	Thu Jun 23 10:36:40 2011
-@@ -104,8 +104,7 @@
+@@ -104,7 +104,6 @@
  /**
   * Declare some globals because I don't want this to be too complex.
   */
 -#define MAX_PORTS (8)
--#define DEFAULT_SA_TIMEOUT_MS (1000)
-+#define DEFAULT_SA_TIMEOUT_MS (10000)
+ #define DEFAULT_SA_TIMEOUT_MS (1000)
  static struct query_res result;
  
- enum {
 @@ -1757,7 +1756,7 @@
  			requested_lid = (uint16_t) strtoul(argv[0], NULL, 0);
  			requested_lid_flag++;
