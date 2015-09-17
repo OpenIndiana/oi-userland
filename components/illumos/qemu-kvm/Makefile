@@ -18,12 +18,11 @@ include ../../../make-rules/shared-macros.mk
 
 PATH=	/opt/onbld/bin/i386:/usr/bin:/usr/sbin:/sbin:/usr/gnu/bin
 COMPONENT_NAME=		illumos-kvm-cmd
-COMPONENT_VERSION=	1c6181b
-IPS_COMPONENT_VERSION=	0.0.1.20131024
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	2642413
+IPS_COMPONENT_VERSION=	0.0.1.20150903
 COMPONENT_SRC=		illumos-kvm-cmd-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:1664981d73d4a17e3271f167a15b20601f3c5a9cbb500db9ebe6dfa58d37f87a
+COMPONENT_ARCHIVE_HASH=	sha256:9eda99aa404bba1813b270ceab35d82b0c5fa02682f6a4b08be71df630b5db0f
 COMPONENT_ARCHIVE_URL=	https://codeload.github.com/joyent/illumos-kvm-cmd/tar.gz/$(COMPONENT_VERSION)
 
 ifeq ($(MACH), sparc)
