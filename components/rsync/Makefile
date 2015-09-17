@@ -26,12 +26,12 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rsync
-COMPONENT_VERSION=	3.0.9
+COMPONENT_VERSION=	3.1.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://rsync.samba.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:30f10f8dd5490d28240d4271bb652b1da7a60b22ed2b9ae28090668de9247c05
+    sha256:7de4364fcf5fe42f3bdb514417f1c40d10bbca896abe7e7f2c581c6ea08a2621
 COMPONENT_ARCHIVE_URL=	http://rsync.samba.org/ftp/rsync/src/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/rsync
 
@@ -43,6 +43,7 @@ include ../../make-rules/ips.mk
 
 CONFIGURE_OPTIONS  +=		--prefix=/usr
 CONFIGURE_OPTIONS  +=		--with-included-popt
+CONFIGURE_OPTIONS  +=		--enable-xattr-support
 
 # common targets
 build:		$(BUILD_32_and_64)
