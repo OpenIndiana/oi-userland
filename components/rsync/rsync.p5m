@@ -35,13 +35,15 @@ set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2006/642
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-file path=usr/bin/rsync
+hardlink path=usr/bin/rsync target=../lib/isaexec pkg.linted.userland.action002.0=true
+
+file usr/bin/rsync path=usr/bin/$(MACH32)/rsync
 file path=usr/bin/$(MACH64)/rsync
-file rsync.1 path=usr/share/man/man1/rsync.1
-file rsyncd.conf.5 path=usr/share/man/man5/rsyncd.conf.5
+file path=usr/share/man/man1/rsync.1
+file path=usr/share/man/man5/rsyncd.conf.5
 
 legacy pkg=SUNWrsync \
     desc="rsync - A utility that provides fast incremental file transfer and copy." \
     name="rsync - faster, flexible replacement for rcp"
 
-license rsync.license license="GPLv3, GPLv2, ISC, MIT-like, Zlib"
+license rsync.license license="GPLv3, Zlib"

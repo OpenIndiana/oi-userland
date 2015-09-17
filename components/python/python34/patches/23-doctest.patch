@@ -1,0 +1,23 @@
+This patch was developed in-house and has been submitted upstream:
+http://bugs.python.org/issue23584
+
+--- Python-3.4.3/Lib/test/test_doctest.py.~1~	2015-02-25 09:03:45.000000000 -0800
++++ Python-3.4.3/Lib/test/test_doctest.py	2015-03-04 08:26:35.762756585 -0800
+@@ -2627,7 +2627,7 @@
+     >>> with open(fn, 'w') as f:
+     ...    f.write('Test:\r\n\r\n  >>> x = 1 + 1\r\n\r\nDone.\r\n')
+     35
+-    >>> doctest.testfile(fn, False)
++    >>> doctest.testfile(fn, False, verbose=False)
+     TestResults(failed=0, attempted=1)
+     >>> os.remove(fn)
+ 
+@@ -2637,7 +2637,7 @@
+     >>> with open(fn, 'w') as f:
+     ...     f.write('Test:\n\n  >>> x = 1 + 1\n\nDone.\n')
+     30
+-    >>> doctest.testfile(fn, False)
++    >>> doctest.testfile(fn, False, verbose=False)
+     TestResults(failed=0, attempted=1)
+     >>> os.remove(fn)
+ 
