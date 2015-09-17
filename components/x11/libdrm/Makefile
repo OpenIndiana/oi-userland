@@ -15,14 +15,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libdrm
-COMPONENT_VERSION=      2.4.64
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=      2.4.65
 COMPONENT_PROJECT_URL=  http://dri.freedesktop.org
 COMPONENT_SUMMARY=      Userspace interface to kernel Direct Rendering Module services
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-    sha256:b60786fe7d6e42adb3966ce1a658f63fec528d537396381cbda93bcc99a934b6
+    sha256:71960ac8bde7d710992b1bc8879935e8300a870c36bd06f22412d0447e3d96c4
 COMPONENT_ARCHIVE_URL=  http://dri.freedesktop.org/libdrm/$(COMPONENT_ARCHIVE) 
 COMPONENT_FMRI= x11/library/libdrm
 COMPONENT_CLASSIFICATION = System/X11
@@ -52,6 +51,7 @@ CONFIGURE_OPTIONS+=      --enable-exynos-experimental-api
 CONFIGURE_OPTIONS+=      --enable-freedreno
 CONFIGURE_OPTIONS+=      --enable-freedreno-kgsl
 CONFIGURE_OPTIONS+=      --enable-tegra-experimental-api
+CONFIGURE_OPTIONS+=      --enable-amdgpu
 
 CONFIGURE_ENV+= CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_ENV+= MISC_MAN_SUFFIX=7
