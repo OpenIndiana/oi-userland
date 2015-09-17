@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= faad2
 COMPONENT_VERSION= 2.7
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Open source MPEG-4 and MPEG-2 AAC decoder
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -40,7 +41,7 @@ COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -if)
 CFLAGS += $(CPP_LARGEFILES)
 
 CONFIGURE_OPTIONS += --disable-static
-CONFIGURE_OPTIONS += --with-drm
+CONFIGURE_OPTIONS += --without-drm
 CONFIGURE_OPTIONS += --with-mpeg4ip
 
 build: $(BUILD_32_and_64)
