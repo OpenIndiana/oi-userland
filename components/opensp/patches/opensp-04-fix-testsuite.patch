@@ -1,0 +1,20 @@
+# Change to build and run the tests on Solaris
+# Not suitable for upstream
+
+--- OpenSP-1.5.1/tests/Makefile.am	Wed Aug 26 12:43:54 2015
++++ OpenSP-1.5.1/tests/Makefile.am	Wed Aug 26 12:47:41 2015
+@@ -16,11 +16,12 @@
+ 
+ EXTRA_DIST = $(TESTS)
+ 
++SHELL = /bin/sh
++
+ TESTS_ENVIRONMENT = top_srcdir=$(top_srcdir) \
+ 	PATH=.:../nsgmls:../sgmlnorm:../sx:../spent:../spcat:../spam:$$PATH \
+ 	ONSGMLS=`echo onsgmls|sed '$(transform)'`\
+-	OSGMLNORM=`echo osgmlnorm|sed '$(transform)'`\
+-	$(SHELL)
++	OSGMLNORM=`echo osgmlnorm|sed '$(transform)'`
+ 
+ # Two auxiliary programs used by the tests.
+ INCLUDES = -I.. -I$(top_srcdir)/lib -I$(top_srcdir)/intl
