@@ -95,7 +95,6 @@ CONFIGURE_OPTIONS +=	--enable-luainterp=dynamic
 # CONFIGURE_OPTIONS +=	--enable-perlinterp=dynamic
 CONFIGURE_OPTIONS +=	--enable-pythoninterp=dynamic
 CONFIGURE_OPTIONS +=	--enable-rubyinterp=dynamic
-CONFIGURE_OPTIONS +=	--with-ruby-command=$(RUBY.1.9)
 
 # We build two variants: with and without X support.
 $(NOX_VARIANT)/.configured:	CONFIGURE_OPTIONS += --without-x
