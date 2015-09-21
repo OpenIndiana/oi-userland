@@ -55,8 +55,10 @@ PATCH_LEVEL=	0
 # generated README and man pages.
 COMPONENT_BUILD_ARGS+=	--no-print-directory
 
+CONFIGURE_OPTIONS += --with-column=/usr/bin/column
 CONFIGURE_OPTIONS += --with-cp=/usr/gnu/bin/cp
 CONFIGURE_OPTIONS += --with-date=/usr/gnu/bin/date
+CONFIGURE_OPTIONS += --with-getopt=/usr/gnu/bin/getopt
 CONFIGURE_OPTIONS += --with-grep=/usr/gnu/bin/grep
 CONFIGURE_OPTIONS += --with-tail=/usr/gnu/bin/tail
 CONFIGURE_OPTIONS += --with-tr=/usr/gnu/bin/tr
@@ -80,11 +82,6 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|^make.*: Entering directory.*$$|XXX_REMOVE_XXX|g" ' \
 	'-e "/^XXX_REMOVE_XXX$$/d" '
 
-COMPONENT_PRE_SYSTEM_TEST_ACTION += \
-	$(GSED) -e "s|^PATH.*$$|PATH := /usr/gnu/bin:/usr/bin|" \
-	$(BUILD_DIR_64)/Makefile > $(BUILD_DIR_64)/Makefile-system-test
-COMPONENT_SYSTEM_TEST_ARGS = -f $(BUILD_DIR_64)/Makefile-system-test
-
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 configure:	$(CONFIGURE_64)
@@ -104,8 +101,10 @@ REQUIRED_PACKAGES += file/gnu-findutils
 REQUIRED_PACKAGES += runtime/perl-512
 REQUIRED_PACKAGES += service/network/smtp/sendmail
 REQUIRED_PACKAGES += shell/bash
+REQUIRED_PACKAGES += shell/gnu-getopt
 REQUIRED_PACKAGES += text/gawk
 REQUIRED_PACKAGES += text/gnu-diffutils
 REQUIRED_PACKAGES += text/gnu-grep
 REQUIRED_PACKAGES += text/gnu-patch
 REQUIRED_PACKAGES += text/gnu-sed
+REQUIRED_PACKAGES += text/text-utilities
