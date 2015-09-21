@@ -46,15 +46,9 @@ COMPONENT_PREP_ACTION += (cd $(@D); autoreconf -fiv)
 # Needed to find the man pages at install time.
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CXX +=			$(studio_NORUNPATH)
-
 CONFIGURE_OPTIONS +=	--disable-http
 CONFIGURE_OPTIONS +=	--disable-nls
 CONFIGURE_OPTIONS +=	--enable-default-catalog="CATALOG:/etc/sgml/catalog:/usr/share/sgml/CATALOG"
-CONFIGURE_OPTIONS +=    CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS +=	CXX="$(CXX)"
-CONFIGURE_OPTIONS +=	CXXFLAGS="$(CXXFLAGS)"
-CONFIGURE_OPTIONS +=	LDFLAGS="$(LDFLAGS)"
 
 # 21786575 for gmake test failures
 COMPONENT_TEST_DIR =	$(BUILD_DIR)/$(MACH$(BITS))/tests 
@@ -68,9 +62,7 @@ COMPONENT_TEST_TRANSFORMS += \
         '-e "/FAIL:/p" ' \
         '-e "/ERROR:/p" '
 
-ASLR_MODE =	$(ASLR_ENABLE)
-
-configure:	$(CONFIGURE_32_and_64)
+# ASLR_MODE =	$(ASLR_ENABLE)
 
 build:          $(BUILD_32_and_64)
 
@@ -79,6 +71,3 @@ install:        $(INSTALL_32_and_64)
 test:           $(TEST_32_and_64)
 
 system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
-REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/c++-runtime
