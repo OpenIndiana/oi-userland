@@ -49,6 +49,8 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 COMPILER=	gcc
 PATCH_LEVEL=	0
 
+COMPONENT_BUILD_ARGS =
+
 # SHELLOPTS appears to cause clisp's configure script to fail while
 # checking the compiler.
 unexport SHELLOPTS
@@ -66,7 +68,7 @@ CONFIGURE_OPTIONS += --with-libsigsegv-prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --with-libreadline-prefix=$(CONFIGURE_PREFIX)
 
 # For now keep ASLR disabled for clisp (the default); build may core dump with ASLR
-ASLR_MODE = $(ASLR_DISABLE)
+# ASLR_MODE = $(ASLR_DISABLE)
 
 # Prevent clisp.ps and clisp.pdf having different versions for SPARC
 # and x86 in the clisp package, because of embedded dates.
