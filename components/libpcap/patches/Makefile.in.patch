@@ -1,0 +1,20 @@
+# This patch comes from Oracle. It makes pcap-int.h available
+# for inclusion into the resulting package delivering libpcap.
+# It is needed to build pflogd (we need 'struct pcap' at least).
+#
+# I filed a bug for upstream at
+#   https://github.com/the-tcpdump-group/libpcap/issues/457
+# however, upstream does not like this idea as they consider
+# this header file 'internal' and subject to possible future
+# changes that would break its consumers.
+
+--- ORIGINAL/Makefile.in	2015-08-28 02:11:53.366420716 -0700
++++ libpcap-1.7.4/Makefile.in	2015-08-28 02:15:07.102236830 -0700
+@@ -101,6 +101,7 @@
+ PUBHDR = \
+ 	pcap.h \
+ 	pcap-bpf.h \
++	pcap-int.h \
+ 	pcap-namedb.h \
+ 	pcap/bpf.h \
+ 	pcap/bluetooth.h \
