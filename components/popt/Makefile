@@ -56,9 +56,6 @@ CONFIGURE_ENV +=	PATH=/usr/gnu/bin:$(PATH)
 
 CONFIGURE_OPTIONS +=	--disable-nls
 
-CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS += LDFLAGS="$(LDFLAGS)"
-
 PKG_PROTO_DIRS +=	$(COMPONENT_DIR)/files
 
 # common targets
