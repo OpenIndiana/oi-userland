@@ -125,4 +125,3 @@ REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += runtime/python-26
 REQUIRED_PACKAGES += web/browser/lynx
-REQUIRED_PACKAGES += web/browser/w3m

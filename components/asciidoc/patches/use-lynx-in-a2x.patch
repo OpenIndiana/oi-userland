@@ -1,0 +1,61 @@
+Adjusted the a2x script to always use lynx to convert to text (rather
+than w3m). Note that this patch just does the minimal change required
+to achieve this rather than purge all the Python w3m code in a2x.py
+The a2x manual page has been updated to match.
+
+This patch will not be sent upstream.
+
+--- a2x.py.orig	2015-09-21 17:43:51.919082319 -0700
++++ a2x.py	2015-09-21 17:54:58.379239030 -0700
+@@ -883,7 +883,7 @@
+         action='store_true', dest='keep_artifacts', default=False,
+         help='do not delete temporary build files')
+     parser.add_option('--lynx',
+-        action='store_true', dest='lynx', default=False,
++        action='store_true', dest='lynx', default=True,
+         help='use lynx to generate text files')
+     parser.add_option('-L', '--no-xmllint',
+         action='store_true', dest='no_xmllint', default=False,
+--- doc/a2x.1.orig	2015-09-21 18:03:27.062349415 -0700
++++ doc/a2x.1	2015-09-21 18:08:23.216968250 -0700
+@@ -145,8 +145,7 @@
+ .RS 4
+ Use
+ \fIlynx(1)\fR
+-to generate text formatted output\&. The default behavior is to use
+-\fIw3m(1)\fR\&.
++to generate text formatted output\&. Note that this is the default behavior on Solaris\&.
+ .RE
+ .PP
+ \fB\-L, \-\-no\-xmllint\fR
+@@ -603,20 +602,6 @@
+ .IP \(bu 2.3
+ .\}
+ 
+-\fBw3m\fR
+-(text format):
+-http://w3m\&.sourceforge\&.net/index\&.en\&.html
+-.RE
+-.sp
+-.RS 4
+-.ie n \{\
+-\h'-04'\(bu\h'+03'\c
+-.\}
+-.el \{\
+-.sp -1
+-.IP \(bu 2.3
+-.\}
+-
+ \fBLynx\fR
+ (text format \(em alternative text file generator):
+ http://lynx\&.isc\&.org/
+@@ -715,8 +700,7 @@
+ XSLTPROC = \*(Aqxsltproc\*(Aq
+ DBLATEX = \*(Aqdblatex\*(Aq         # pdf generation\&.
+ FOP = \*(Aqfop\*(Aq                 # pdf generation (\-\-fop option)\&.
+-W3M = \*(Aqw3m\*(Aq                 # text generation\&.
+-LYNX = \*(Aqlynx\*(Aq               # text generation (if no w3m)\&.
++LYNX = \*(Aqlynx\*(Aq               # text generation (\-\-lynx option)\&.
+ XMLLINT = \*(Aqxmllint\*(Aq         # Set to \*(Aq\*(Aq to disable\&.
+ EPUBCHECK = \*(Aqepubcheck\*(Aq     # Set to \*(Aq\*(Aq to disable\&.
+ # External executable default options\&.
