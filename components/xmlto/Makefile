@@ -86,3 +86,4 @@ REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/gnu-getopt
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += text/gnu-grep
+REQUIRED_PACKAGES += web/browser/lynx
