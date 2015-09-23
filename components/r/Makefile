@@ -118,6 +118,8 @@ ASLR_MODE = $(ASLR_ENABLE)
 
 COMPONENT_TEST_ARGS =   -k -i
 
+configure:	$(CONFIGURE_64)
+
 build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
@@ -132,12 +134,14 @@ REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/icu
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fortran-runtime
+REQUIRED_PACKAGES += system/library/iconv/xsh4/latin
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/sunperf
 REQUIRED_PACKAGES += web/curl
