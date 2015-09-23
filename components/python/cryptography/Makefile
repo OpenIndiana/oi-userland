@@ -43,26 +43,12 @@ include $(WS_MAKE_RULES)/ips.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-#
-# Until enum is available in the build environment, it needs to be built
-# in order for setuptools to work here.
-#
-ENUM=	$(WS_COMPONENTS)/python/enum/build/prototype/$(MACH)/$(PYTHON_LIB)
+# Use the CFFI version in the gate because if the CFFI version changes
+# everything using CFFI will break.
+CFFI = $(WS_COMPONENTS)/python/cffi/build/prototype/$(MACH)/$(PYTHON_LIB)
 
-$(ENUM):
-	(cd ../enum ; $(MAKE) install)
-
-COMPONENT_BUILD_ENV +=		PYTHONPATH=$(ENUM)
-
-COMPONENT_INSTALL_ENV +=	PYTHONPATH=$(ENUM)
-
-$(BUILD_32_and_64):		$(ENUM)
-
-clean::
-	(cd ../enum ; $(MAKE) clean)
-
-clobber::
-	(cd ../enum ; $(MAKE) clobber)
+COMPONENT_BUILD_ENV +=		PYTHONPATH=$(CFFI)
+COMPONENT_INSTALL_ENV +=	PYTHONPATH=$(CFFI)
 
 # common targets
 build:		$(BUILD_32_and_64)

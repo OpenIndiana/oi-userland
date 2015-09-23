@@ -26,16 +26,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cffi
-COMPONENT_VERSION=	0.8.2
+COMPONENT_VERSION=	1.1.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:8192393640f7bc304ce82669b35eb90592566a30abbb4924456f52079afc18e2
+    sha256:390970b602708c91ddc73953bb6929e56291c18a4d80f360afa00fad8b6f3339
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://cffi.readthedocs.org/
 COMPONENT_BUGDB=	python-mod/cffi
 
-TPNO=			16913
+TPNO=			24051
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -52,22 +52,17 @@ COMPONENT_TEST_ARGS =	--resultlog $(@D)/testresults
 COMPONENT_TEST_ARGS +=	-p no:codechecker
 COMPONENT_TEST_ARGS +=	$(TEST_SKIPS)
 COMPONENT_TEST_ARGS +=	c testing
-# The following tests cause core dumps on SPARC (bus error, illegal hardware
-# instruction).  We don't skip test_install_and_reload_module{,_package}, which
-# fail on both 64-bit platforms, since those don't cause the interpreter to
-# crash.
-$(BUILD_DIR)/sparcv7-%/.tested: TEST_SKIPS = -k "not test_callback_return_type and not test_struct_packed and not test_opaque_integer_as_function_result"
-$(BUILD_DIR)/sparcv9-%/.tested: TEST_SKIPS = -k "not test_callback and not test_a_lot_of_callbacks and not test_struct_packed and not test_opaque_integer_as_function_result and not test_wchar"
 
 # Copy the tests and a few of the source files they read into a scratch
 # directory so running the tests don't leave turds in the source directory.
 COMPONENT_PRE_TEST_ACTION = \
 	$(MKDIR) $(@D)/tests/doc/source; \
-	$(CP) -r $(SOURCE_DIR)/c $(SOURCE_DIR)/testing $(@D)/tests; \
+	$(CP) -r $(SOURCE_DIR)/c $(SOURCE_DIR)/testing $(SOURCE_DIR)/cffi $(@D)/tests; \
 	$(CP) $(SOURCE_DIR)/setup.py $(@D)/tests; \
 	$(CP) \
 	    $(SOURCE_DIR)/doc/source/conf.py \
 	    $(SOURCE_DIR)/doc/source/index.rst \
+	    $(SOURCE_DIR)/doc/source/installation.rst \
 	    $(@D)/tests/doc/source
 
 # common targets

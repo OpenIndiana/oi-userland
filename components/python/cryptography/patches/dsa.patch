@@ -1,0 +1,22 @@
+Fix DSA double free. This has been fixed in newer versions of cryptography and
+will be part of a future update of the cryptography version in userland.
+
+https://github.com/pyca/cryptography/pull/2010
+
+--- cryptography-0.8.2/src/cryptography/hazmat/backends/openssl/dsa.py	2015-09-04 11:01:09.332591847 -0700
++++ cryptography-0.8.2/src/cryptography/hazmat/backends/openssl/dsa.py	2015-09-04 11:01:43.317323715 -0700
+@@ -40,13 +40,10 @@
+         self._hash_ctx.update(data)
+ 
+     def verify(self):
+-        self._dsa_cdata = self._backend._ffi.gc(self._public_key._dsa_cdata,
+-                                                self._backend._lib.DSA_free)
+-
+         data_to_verify = self._hash_ctx.finalize()
+ 
+         data_to_verify = _truncate_digest_for_dsa(
+-            self._dsa_cdata, data_to_verify, self._backend
++            self._public_key._dsa_cdata, data_to_verify, self._backend
+         )
+ 
+         # The first parameter passed to DSA_verify is unused by OpenSSL but

@@ -2,6 +2,10 @@ Every file on Solaris 11 and on has two extended attributes, so if we find
 them, we shouldn't fail.  Also, we don't support extended attributes on
 symlinks, so just quietly pass that test.
 
+Additionally, fix comparison of lists to dict_keys in Python 3. This has been
+fixed in newer versions of xattr which will be part of a future update of the
+userland version of xattr.
+
 Merged as of 0.7.6.
 
 diff --git a/xattr/tests/test_xattr.py b/xattr/tests/test_xattr.py
@@ -13,14 +17,14 @@ diff --git a/xattr/tests/test_xattr.py b/xattr/tests/test_xattr.py
  from unittest import TestCase
  from tempfile import mkdtemp, NamedTemporaryFile
  
-@@ -8,10 +9,19 @@
+@@ -8,9 +9,18 @@
  class BaseTestXattr(object):
      def test_attr(self):
          x = xattr.xattr(self.tempfile)
 -        self.assertEqual(x.keys(), [])
 -        self.assertEqual(x.list(), [])
 -        self.assertEqual(dict(x), {})
- 
++
 +        # Solaris 11 and forward contain system attributes (file flags) in
 +        # extended attributes present on all files, so cons them up into a
 +        # comparison dict.
@@ -29,13 +33,12 @@ diff --git a/xattr/tests/test_xattr.py b/xattr/tests/test_xattr.py
 +            d['SUNWattr_ro'] = x['SUNWattr_ro']
 +            d['SUNWattr_rw'] = x['SUNWattr_rw']
 +
-+        self.assertEqual(x.keys(), d.keys())
-+        self.assertEqual(x.list(), d.keys())
++        self.assertEqual(x.keys(), list(d.keys()))
++        self.assertEqual(x.list(), list(d.keys()))
 +        self.assertEqual(dict(x), d)
-+
+ 
          x['user.sopal'] = b'foo'
          x['user.sop.foo'] = b'bar'
-         x[u'user.\N{SNOWMAN}'] = b'not a snowman'
 @@ -38,6 +48,9 @@
          self.assertTrue('user.sop.foo' not in x)
  
