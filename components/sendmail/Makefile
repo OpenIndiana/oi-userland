@@ -77,7 +77,8 @@ COMPONENT_PREP_ACTION =	$(GSED) -i -e 's/\(Version\[\] = "8\.[^"]*\)/\1+Sun/' \
 
 # libmilter and sendmail must come before include, so appending to the default
 # value of LINT_FLAGS will not work; we must redefine it here.
-SM_DEFS=	-DSOLARIS=21200
+SM_DEFS=	-DSOLARIS=$(shell echo $(SOLARIS_VERSION) | \
+    $(GSED) -e 's/\.//' -e 's/$$/00/')
 SM_INCLUDES=	-I$(SM_BUILD_DIR)/libmilter -I$(SOURCE_DIR)/sendmail \
     -I$(SOURCE_DIR)/include -I$(SOURCE_DIR) -I.
 LINT_FLAGS =	-nsvx $(SM_DEFS) $(SM_INCLUDES)
