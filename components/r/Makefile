@@ -101,8 +101,12 @@ CONFIGURE_OPTIONS += --enable-prebuilt-html
 COMPONENT_PRE_TEST_ACTION = \
 	$(RM) $(BUILD_DIR_64)/tests/Examples/*.prev
 
+COMPONENT_PRE_SYSTEM_TEST_ACTION = \
+	$(RM) $(BUILD_DIR_64)/tests/Examples/*.prev
+
 # Increase stack limit to allow the "infinite recursion" test to work.
 COMPONENT_TEST_ENV_CMD =	ulimit -Ss 32768 ; $(ENV)
+COMPONENT_SYSTEM_TEST_ENV_CMD =	ulimit -Ss 32768 ; $(ENV)
 
 # Master test results are different between x86 and SPARC.
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
@@ -116,7 +120,16 @@ COMPONENT_TEST_TRANSFORMS += \
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-COMPONENT_TEST_ARGS =   -k -i
+# Use the installed version of R, not the one in the build area.
+# These definitions override those found in .../test/Makefile.
+COMPONENT_SYSTEM_TEST_ARGS += R="LANGUAGE=en LC_ALL=C SRCDIR=$(srcdir) R_DEFAULT_PACKAGES= /usr/bin/R --vanilla"
+COMPONENT_SYSTEM_TEST_ARGS += R2="R_DEFAULT_PACKAGES= /usr/bin/R --vanilla"
+COMPONENT_SYSTEM_TEST_ARGS += R3="/usr/bin/R CMD check"
+COMPONENT_SYSTEM_TEST_ARGS += RDIFF="/usr/bin/R CMD Rdiff"
+COMPONENT_SYSTEM_TEST_ARGS += RDCONV="LC_CTYPE=C /usr/bin/R CMD Rdconv"
+
+COMPONENT_TEST_ARGS =		-k -i
+COMPONENT_SYSTEM_TEST_ARGS +=	-k -i
 
 configure:	$(CONFIGURE_64)
 
@@ -126,7 +139,8 @@ install:	$(INSTALL_64)
 
 test:		$(TEST_64)
 
-system-test:	$(SYSTEM_TESTS_NOT_IMPLEMENTED)
+# Need to build the tests before use them.
+system-test:	build $(SYSTEM_TEST_64)
 
 REQUIRED_PACKAGES += image/library/libjpeg
 REQUIRED_PACKAGES += image/library/libpng
