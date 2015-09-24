@@ -98,6 +98,17 @@ SOLARIS_VERSION =	$(OS_VERSION:5.%=2.%)
 # Target OS version
 PKG_SOLARIS_VERSION ?= 5.12
 
+# We generally build the default branch on the latest release.  But for
+# the FOSS evaluation repo project, we build on the previous release.
+# Add macros to make that easier.
+ifeq ($(OS_VERSION),5.12)
+SOLARIS_12_ONLY =
+SOLARIS_11_ONLY =\#
+else
+SOLARIS_12_ONLY =\#
+SOLARIS_11_ONLY =
+endif
+
 include $(WS_MAKE_RULES)/ips-buildinfo.mk
 
 COMPILER ?=		studio
