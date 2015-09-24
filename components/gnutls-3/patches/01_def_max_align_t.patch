@@ -1,0 +1,27 @@
+Source:
+Internal
+
+Info:
+This patch check to see if _MAX_ALIGN_T has been defined.
+
+Status:
+Need to determine if this patch has been sent upstream.
+
+--- ORIGINAL/src/gl/stddef.in.h	2015-07-24 17:04:37.414430921 -0700
++++ gnutls-3.4.1/src/gl/stddef.in.h	2015-07-24 16:58:31.925282844 -0700
+@@ -83,6 +83,7 @@
+ 
+ /* Some platforms lack max_align_t.  */
+ #if !@HAVE_MAX_ALIGN_T@
++ #ifndef _MAX_ALIGN_T
+ typedef union
+ {
+   char *__p;
+@@ -90,6 +91,7 @@
+   long double __ld;
+   long int __i;
+ } max_align_t;
++ #endif /* #ifndef _MAX_ALIGN_T */
+ #endif
+ 
+ #  endif /* _@GUARD_PREFIX@_STDDEF_H */
