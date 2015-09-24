@@ -296,12 +296,13 @@ class EVSNeutronPluginV2(db_base_plugin_v2.NeutronDbPluginV2,
         evs_rpccall_sync = subnet.pop('evs_rpccall_sync', False)
         if (set(subnet['subnet'].keys()) - set(('enable_dhcp',
                                                 'allocation_pools',
+                                                'dns_nameservers',
                                                 'ipv6_address_mode',
                                                 'ipv6_ra_mode'))):
                 raise EVSOpNotSupported(_("only following subnet attributes "
                                           "enable-dhcp, allocation-pool, "
-                                          "ipv6-address-mode, and "
-                                          "ipv6-ra-mode can be updated"))
+                                          "dns-nameserver, ipv6-address-mode, "
+                                          "and ipv6-ra-mode can be updated"))
 
         poolstr = self._subnet_pool_to_evs_pool(subnet['subnet'])
 
