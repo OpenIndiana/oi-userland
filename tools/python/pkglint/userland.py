@@ -560,7 +560,7 @@ class UserlandManifestChecker(base.ManifestChecker):
                         if not any(
                             f
                             for f in action.attrlist("fmri")
-                            if "/cffi-" in pkg.fmri.PkgFmri(f).pkg_name):
+                            if "/cffi-" in pkg.fmri.PkgFmri(f, "5.12").pkg_name):
                                 continue
                         if action.attrs["type"] in ("require", "require-any"):
                                 cffi_require = action
@@ -599,7 +599,7 @@ class UserlandManifestChecker(base.ManifestChecker):
                     return
 
                 cffi_incorp_ver = str(pkg.fmri.PkgFmri(
-                    cffi_incorp.attrs["fmri"]).version.release)
+                    cffi_incorp.attrs["fmri"], "5.12").version.release)
                 if cffi_incorp_ver != cffi_version:
                         engine.error(_("package %(pkg)s depends on CFFI, but "
                             "incorporates it at the wrong version (%(actual)s "
