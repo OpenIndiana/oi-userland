@@ -86,6 +86,7 @@ CONFIGURE_OPTIONS += --enable-hdb
 CONFIGURE_OPTIONS += --enable-null
 CONFIGURE_OPTIONS += --enable-passwd	 
 CONFIGURE_OPTIONS += --enable-shell
+CONFIGURE_OPTIONS += --enable-ldap
 CONFIGURE_OPTIONS += --with-cyrus-sasl
 CONFIGURE_OPTIONS += --with-threads
 CONFIGURE_OPTIONS += --with-tls=openssl
