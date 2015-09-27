@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-video-openchrome
 COMPONENT_VERSION= 0.3.3
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= xf86-video-openchrome - OpenChrome driver for the Xorg X server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -68,6 +69,9 @@ COMPONENT_BUILD_ENV += \
 
 # this is needed to set path for XvMC libraries
 CONFIGURE_LIBDIR.$(BITS) =   $(X11_SERVERLIBS_DIR)$(SERVERMOD_SUBDIR)
+
+CONFIGURE_OPTIONS += --disable-dri
+CONFIGURE_OPTIONS += --disable-kms
 
 build: $(BUILD_32_and_64)
 

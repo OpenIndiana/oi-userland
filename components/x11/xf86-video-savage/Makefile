@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-video-savage
 COMPONENT_VERSION= 2.3.7
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= xf86-video-savage - S3 Savage video driver for the Xorg X server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -54,7 +55,7 @@ LD_OPTIONS= -M$(COMPONENT_DIR)/mapfile.externs \
         -L$(X11_SERVERLIBS_DIR)$(SERVERMOD_SUBDIR) \
         -R$(X11_SERVERMODS_DIR)$(SERVERMOD_SUBDIR) \
         -R$(X11_SERVERLIBS_DIR)$(SERVERMOD_SUBDIR) \
-        -lexa -lfb -lint10 -lpciaccess -lshadowfb -lXfont -lvbe -lvgahw -lxaa -lm
+        -lexa -lfb -lint10 -lpciaccess -lshadowfb -lXfont -lvbe -lvgahw -lm
 
 # - Disable DRI since the kernel module isn't ported
 CONFIGURE_OPTIONS += --disable-dri
