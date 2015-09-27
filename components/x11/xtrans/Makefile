@@ -16,12 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xtrans
-COMPONENT_VERSION= 1.2.7
+COMPONENT_VERSION= 1.3.5
 COMPONENT_SUMMARY= xtrans - X network protocol transport layer development files
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:7f811191ba70a34a9994d165ea11a239e52c527f039b6e7f5011588f075fe1a6
+  sha256:adbd3b36932ce4c062cd10f57d78a156ba98d618bdb6f50664da327502bc8301
 COMPONENT_ARCHIVE_URL= \
   http://xorg.freedesktop.org/archive/individual/lib/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.freedesktop.org/wiki/
