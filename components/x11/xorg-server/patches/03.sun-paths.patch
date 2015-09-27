@@ -1,5 +1,5 @@
 diff --git a/hw/xfree86/common/xf86Config.c b/hw/xfree86/common/xf86Config.c
-index ec679df..19feac1 100644
+index 486752b..c2cfc90 100644
 --- a/hw/xfree86/common/xf86Config.c
 +++ b/hw/xfree86/common/xf86Config.c
 @@ -74,9 +74,9 @@
@@ -26,10 +26,10 @@ index ec679df..19feac1 100644
  			"%P/etc/X11/%X.%H," \
  			"%P/etc/X11/%X," \
 diff --git a/hw/xfree86/common/xf86Globals.c b/hw/xfree86/common/xf86Globals.c
-index 0071004..6f6c766 100644
+index 7df7a80..74e503c 100644
 --- a/hw/xfree86/common/xf86Globals.c
 +++ b/hw/xfree86/common/xf86Globals.c
-@@ -135,7 +135,8 @@ xf86InfoRec xf86Info = {
+@@ -141,7 +141,8 @@ xf86InfoRec xf86Info = {
  
  const char *xf86ConfigFile = NULL;
  const char *xf86ConfigDir = NULL;
@@ -40,7 +40,7 @@ index 0071004..6f6c766 100644
  const char *xf86LogFile = DEFAULT_LOGPREFIX;
  MessageType xf86LogFileFrom = X_DEFAULT;
 diff --git a/hw/xfree86/man/xorg.conf.man b/hw/xfree86/man/xorg.conf.man
-index c1b3c4f..d15bbf5 100644
+index 5d92bbe..2b5a8f6 100644
 --- a/hw/xfree86/man/xorg.conf.man
 +++ b/hw/xfree86/man/xorg.conf.man
 @@ -36,9 +36,9 @@ server is started as a normal user:
@@ -52,9 +52,9 @@ index c1b3c4f..d15bbf5 100644
  .IB /etc/X11/ $XORGCONFIG
 -.IB __projectroot__/etc/X11/ $XORGCONFIG
 +.IB __projectroot__/lib/X11/ $XORGCONFIG
- .I /etc/X11/__xconfigfile__
- .I /etc/__xconfigfile__
- .IR __projectroot__/etc/X11/__xconfigfile__. <hostname>
+ .I /etc/X11/xorg.conf
+ .I /etc/xorg.conf
+ .IR __projectroot__/etc/X11/xorg.conf. <hostname>
 @@ -67,10 +67,10 @@ search locations are as follows:
  .nf
  <cmdline>
@@ -65,16 +65,16 @@ index c1b3c4f..d15bbf5 100644
  .IB /etc/X11/ $XORGCONFIG
 -.IB __projectroot__/etc/X11/ $XORGCONFIG
 +.IB __projectroot__/lib/X11/ $XORGCONFIG
- .I /etc/X11/__xconfigfile__
- .I /etc/__xconfigfile__
- .IR __projectroot__/etc/X11/__xconfigfile__. <hostname>
+ .I /etc/X11/xorg.conf
+ .I /etc/xorg.conf
+ .IR __projectroot__/etc/X11/xorg.conf. <hostname>
 diff --git a/include/xorg-server.h.in b/include/xorg-server.h.in
-index 8086f32..37b9315 100644
+index 81935be..9473e34 100644
 --- a/include/xorg-server.h.in
 +++ b/include/xorg-server.h.in
-@@ -205,6 +205,7 @@
- /* X Access Control Extension */
- #undef XACE
+@@ -208,6 +208,7 @@
+ /* Have X server platform bus support */
+ #undef XSERVER_PLATFORM_BUS
  
 +#include <sys/isa_defs.h> /* Ensure _LP64 is defined when needed on Solaris */
  #ifdef _LP64

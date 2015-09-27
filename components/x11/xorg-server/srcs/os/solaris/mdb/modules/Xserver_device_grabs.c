@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2006, 2014, Oracle and/or its affiliates. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -50,7 +50,7 @@ inputdev_walk_init(mdb_walk_state_t *wsp)
 
     if (mdb_readsym(&(iwda->inputInfo), sizeof (InputInfo), "inputInfo") == -1)
     {
-	mdb_warn("failed to read inputInfo data", inputInfoPtr);
+	mdb_warn("failed to read inputInfo data");
 	return (WALK_ERR);
     }
 

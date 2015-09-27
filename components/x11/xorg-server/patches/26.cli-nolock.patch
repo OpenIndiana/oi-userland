@@ -19,33 +19,32 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 # DEALINGS IN THE SOFTWARE.
 
-diff --git a/os/utils.c b/os/utils.c
-index 30592d2..6c00185 100644
 --- a/os/utils.c
 +++ b/os/utils.c
-@@ -502,7 +502,9 @@ UseMsg(void)
- #ifdef RLIMIT_STACK
+@@ -523,8 +523,10 @@
      ErrorF("-ls int                limit stack space to N Kb\n");
  #endif
+ #ifdef LOCK_SERVER
 +#ifndef SUNSOFT /* Not in Sun version as required by PSARC 2004/187 TCR */
      ErrorF("-nolock                disable the locking mechanism\n");
+ #endif
 +#endif
      ErrorF("-nolisten string       don't listen on protocol\n");
      ErrorF("-noreset               don't reset after last client exists\n");
      ErrorF("-background [none]     create root window with no background\n");
-@@ -734,6 +736,7 @@ ProcessCommandLine(int argc, char *argv[])
-                 UseMsg();
+@@ -768,6 +770,7 @@
          }
  #endif
+ #ifdef LOCK_SERVER
 +#ifndef SUNSOFT /* Not in Sun version as required by PSARC 2004/187 TCR */
          else if (strcmp(argv[i], "-nolock") == 0) {
  #if !defined(WIN32) && !defined(__CYGWIN__)
              if (getuid() != 0)
-@@ -743,6 +746,7 @@ ProcessCommandLine(int argc, char *argv[])
- #endif
+@@ -778,6 +781,7 @@
                  nolock = TRUE;
          }
+ #endif
 +#endif
-         else if (strcmp(argv[i], "-nolisten") == 0) {
-             if (++i < argc) {
-                 if (_XSERVTransNoListen(argv[i]))
+ #ifdef SUNSOFT
+         else if (strcmp(argv[i], "-nobanner") == 0) {
+           /* ignore - just maintaining compatibility with Xsun CLI */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2004, 2013, Oracle and/or its affiliates. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -342,6 +342,13 @@ TsolCheckDrawableAccess(CallbackListPtr *pcbl, pointer nulldata, pointer calldat
 		break;
 	}
 
+	/* Ignore unlabeled resources */
+	if (tsolres->sl == NULL) {
+		tsolres->sl= tsolinfo->sl;
+		tsolres->uid = tsolinfo->uid;
+		tsolres->pid = tsolinfo->pid;
+	}
+
 	switch (reqtype) {
 	case X_GetImage:
 	case X_CopyArea:
@@ -372,6 +379,7 @@ TsolCheckDrawableAccess(CallbackListPtr *pcbl, pointer nulldata, pointer calldat
 	case X_UngrabKey:
 	case X_GrabButton:
 	case X_UngrabButton:
+	case X_WarpPointer:
 		/*
 		 * Allow pointer grab on root window, as long as
 		 * pointer is currently in a window owned by
@@ -771,7 +779,8 @@ TsolCheckDeviceAccess(CallbackListPtr *pcbl, pointer nulldata, pointer calldata)
 
 	/* change/set access requires privilege */
 	modes = (DixFreezeAccess | DixGrabAccess | DixManageAccess |
-		 DixSetAttrAccess | DixSetFocusAccess | DixForceAccess);
+		 DixSetAttrAccess | DixSetFocusAccess | DixForceAccess |
+		 DixWriteAccess);
 	if (check_mode & modes) {
 		if (priv_win_devices ||
 		    client_has_privilege(tsolinfo, pset_win_devices))

@@ -18,9 +18,9 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 # DEALINGS IN THE SOFTWARE.
---- xorg-server-1.12.4/hw/xfree86/loader/loadmod.c.~1~	2012-08-02 04:40:41.000000000 +0400
-+++ xorg-server-1.12.4/hw/xfree86/loader/loadmod.c	2015-02-14 16:17:26.477471816 +0300
-@@ -166,6 +166,13 @@
+--- xorg-server-1.17.2/hw/xfree86/loader/loadmod.c.~1~	2015-06-16 16:55:48.000000000 +0300
++++ xorg-server-1.17.2/hw/xfree86/loader/loadmod.c	2015-09-18 16:22:08.378581607 +0300
+@@ -162,6 +162,13 @@
                  list[n][len - 1] = '/';
                  list[n][len] = '\0';
              }
@@ -34,7 +34,7 @@
              n++;
          }
          elem = strtok(NULL, ",");
-@@ -391,6 +398,18 @@
+@@ -392,6 +399,18 @@
      char *ret = NULL, tmpBuf[PATH_MAX];
      struct stat stat_buf;
  
@@ -53,7 +53,7 @@
      dir = opendir(dirpath);
      if (!dir)
          return NULL;
-@@ -398,6 +417,13 @@
+@@ -399,6 +418,13 @@
      while ((direntry = readdir(dir))) {
          if (direntry->d_name[0] == '.')
              continue;
@@ -67,7 +67,7 @@
          snprintf(tmpBuf, PATH_MAX, "%s%s/", dirpath, direntry->d_name);
          /* the stat with the appended / fails for normal files,
             and works for sub dirs fine, looks a bit strange in strace
-@@ -408,6 +434,12 @@
+@@ -409,6 +435,12 @@
              continue;
          }
  
@@ -77,6 +77,6 @@
 +            continue;
 +#endif
 +
-         snprintf(tmpBuf, PATH_MAX, "lib%s.so", module);
-         if (strcmp(direntry->d_name, tmpBuf) == 0) {
-             if (asprintf(&ret, "%s%s", dirpath, tmpBuf) == -1)
+ #ifdef __CYGWIN__
+         snprintf(tmpBuf, PATH_MAX, "cyg%s.dll", module);
+ #else

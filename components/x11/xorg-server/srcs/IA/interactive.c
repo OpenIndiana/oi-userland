@@ -329,7 +329,7 @@ ProcIASetProcessInfo(ClientPtr client)
 
     if ((stuff->flags & INTERACTIVE_INFO) &&
 	(stuff->uid==ServerUid || ServerUid==0 || stuff->uid==0) &&
-	LocalClient(client)) {
+	client->local) {
 	length = stuff->length - (sizeof(xIASetProcessInfoReq)>>2);
 	SetClientPrivate(client, (ConnectionPidPtr)&stuff[1], length);
 	ChangeInteractive(client);
@@ -337,7 +337,7 @@ ProcIASetProcessInfo(ClientPtr client)
 
     if ((stuff->flags & INTERACTIVE_SETTING) &&
 	(stuff->uid==ServerUid || ServerUid==0) &&
-	LocalClient(client)) {
+	client->local) {
 	SetIAPrivate((int *)&stuff[1]);
     }
 

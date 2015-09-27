@@ -38,8 +38,6 @@ static ExtensionModule IAExt =
 {
     IAExtensionInit,
     IANAME,
-    NULL,
-    NULL,
     NULL
 };
 
