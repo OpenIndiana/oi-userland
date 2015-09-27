@@ -1,0 +1,345 @@
+'\" t
+.\" Copyright (c) 1995, 2008, Oracle and/or its affiliates. All rights reserved.
+.\"
+.\" Permission is hereby granted, free of charge, to any person obtaining a
+.\" copy of this software and associated documentation files (the "Software"),
+.\" to deal in the Software without restriction, including without limitation
+.\" the rights to use, copy, modify, merge, publish, distribute, sublicense,
+.\" and/or sell copies of the Software, and to permit persons to whom the
+.\" Software is furnished to do so, subject to the following conditions:
+.\"
+.\" The above copyright notice and this permission notice (including the next
+.\" paragraph) shall be included in all copies or substantial portions of the
+.\" Software.
+.\"
+.\" THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+.\" IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+.\" FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+.\" THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+.\" LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+.\" FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+.\" DEALINGS IN THE SOFTWARE.
+.\"
+.TH XSolarisOvlCopyAreaAndPaintType __libmansuffix__ __xorgversion__ "X FUNCTIONS"
+.IX "XSolarisOvlCopyAreaAndPaintType" "" "\f3XSolarisOvlCopyAreaAndPaintType\f1(3) \(em copies the given area and paint type data
+.SH NAME
+XSolarisOvlCopyAreaAndPaintType \- copies the given area and paint type data
+from one pair of drawables to another
+.SH SYNOPSIS
+.LP
+\&#include <X11/extensions/transovl.h>
+
+.IP \f3void\f1 5n
+.B XSolarisOvlCopyPaintType
+.B (Display
+.I *display,
+.B Drawable
+.I colorsrc,
+.B Drawable
+.I painttypesrc,
+.B Drawable
+.I colordst,
+.B Drawable
+.I painttypedst,
+.B GC
+.I colorgc,
+.B GC
+.I painttypegc,
+.B int
+.I colorsrc_x,
+.B int
+.I colorsrc_y,
+.B int
+.I painttypesrc_x,
+.B int
+.I painttypesrc_y,
+.B unsigned
+.I int width,
+.B unsigned
+.I int height,
+.B int
+.I colordst_x,
+.B int
+.I colordst_y,
+.B int
+.I painttypedst_x,
+.B int
+.I painttypedst_y,
+.B unsigned long
+.I action,
+.B unsigned long
+.I plane)
+.SH Arguments
+.TP
+.I display
+Specifies the connection to the X server.
+.TP
+.I colorsrc
+The color information source drawable.
+.TP
+.I painttypesrc
+The paint type information source drawable.
+.TP
+.I colordst
+The color information destination drawable.
+.TP
+.I painttypedst
+The paint type information destination drawable.
+If
+.I colordst
+is an overlay, this drawable will be ignored.
+.TP
+.I colorgc
+The GC to use for the color information copy.
+.TP
+.I painttypegc
+The GC to use to fill areas in painttypedst.  If
+.I colordst/painttypedst
+is an overlay, this GC will be ignored.
+.TP
+.I colorsrc_x, colorsrc_y
+The X and Y coordinates of the upper-left corner of the source rectangle
+for color information relative to the origin of the color source drawable.
+.TP
+.I painttypesrc_x, painttypesrc_y
+The X and Y coordinates of the upper-left corner of the source rectangle
+for paint type information relative to the origin of the paint type source
+drawable.
+.TP
+.I width, height
+The dimensions in pixels of all the source and destination rectangles.
+.TP
+.I colordst_x, colordst_y
+The X and Y coordinates of the upper-left corner of the destination
+rectangle for color information relative to the origin of the color
+destination drawable.
+.TP
+.I painttypedst_x, painttypedst_y
+The X and Y coordinates of the upper-left corner of the destination
+rectangle for paint type information relative to the origin of the
+paint type destination drawable.  If
+.I colordst/painttypedst
+is an overlay,
+.I colordst_x
+and
+.I colordst_y
+will be used.
+.TP
+.I action
+Specifies which paint type data is to be copied.  This can be one of
+.B XSolarisOvlCopyOpaque,
+.B XSolarisOvlCopyTransparent,
+or
+.B XSolarisOvlCopyAll.
+.TP
+.I plane
+Specifies the source bit-plane in
+.I painttypesrc
+to be used as paint type information when
+.I painttypesrc
+is not an overlay.
+.SH DESCRIPTION
+This routine copies the specified area of
+.I colorsrc
+to the specified area of
+.I colordst.
+If
+.I colordst
+is not an overlay, it also fills the specified areas of
+.I painttypedst
+according to the paint type information specified in
+.I painttypesrc.
+.LP
+.I colorsrc
+can be any depth drawable or an overlay window.
+.I painttypesrc
+can be any drawable or an overlay window.  If
+.I painttypesrc
+is not an overlay window, the bit-plane of
+.I painttypesrc
+specified in
+.I plane
+is treated as if it were paint type data and it is used for the copy.
+.I plane
+must have only one bit set in this case.
+.I colordst
+can be any drawable, but must be of the same depth and have the same root as
+.I colorsrc,
+otherwise
+.SB BadMatch
+is generated.  If
+.I colordst
+is an overlay, then
+.I painttypedst
+is ignored, otherwise
+.I painttypedst
+can be any type of drawable.
+.LP
+The following table summarizes the possible combinations of sources and
+destinations and their respective actions.  The left side of the table shows
+the possible
+.I colorsrc/painttypesrc
+combinations and the top of the table shows the possible
+.I colordst/painttypedst
+combinations.  The actions, A1-A8, are explained below the table.
+An Impossible entry in the table indicates that the given combination is
+impossible since the
+.I painttypedst
+is ignored when the
+.I colordst
+is an overlay.
+.LP
+.TS
+center, box;
+lfB | lfB lfB lfB lfB
+lfB | lfB lfB lfB lfB
+l | l l l l .
+	Overlay/	Overlay/	Drawable/	Drawable/
+	 Overlay	 Drawable	 Overlay	 Drawable
+_
+overlay/overlay	A1	Impossible	A5	A5
+overlay/drawable	A2	Impossible	A6	A6
+drawable/overlay	A3	Impossible	A7	A7
+drawable/drawable	A4	Impossible	A8	A8
+.TE
+.LP
+.HP
+A1\(emThe paint type information from
+.I painttypesrc
+is used as a mask to copy the color information from
+.I colorsrc
+to
+.I colordst.
+Opaque pixels in
+.I painttypesrc
+cause the corresponding pixel in
+.I colorsrc
+to be copied to
+.I colordst,
+transparent pixels cause the corresponding pixel in
+.I colordst
+to be made transparent.  If a transparent pixel from
+.I colorsrc
+is copied to
+.I colordst,
+the actual color transferred will be undefined.
+.HP
+A2\(emSame as A1 except that the paint type information is extracted
+from the bit-plane of
+.I painttypesrc
+specified by
+.I plane.
+A bit value of 1 indicates an opaque pixel whereas a bit value of 0
+indicates transparent.
+.HP
+A3\(emSame as A1 except that a non-overlay drawable is used to obtain
+the color information so there will be no undefined colors due to
+transparent pixels.
+.HP
+A4\(emSame as A3 except that the paint type information is taken from
+the specified bit-plane of
+.I painttypesrc
+as in A2.
+.HP
+A5\(emThe paint type information from
+.I painttypesrc
+is used as a mask to copy the color information from
+.I colorsrc to
+.I colordst
+as in A1.  In addition, the paint type information controls rendering to
+the
+.I painttypedst
+drawable as in
+.BR XSolarisOvlCopyPaintType (3) .
+.HP
+A6\(emSame as A5 except that the paint type information is taken from the
+specified bit-plane of
+.I painttypesrc
+as in A2.
+.HP
+A7\(emSame as A5 except that there will be no undefined colors due to
+transparent color source pixels.
+.HP
+A8\(emSame as A7 except that the paint type information is taken from the
+specified bit-plane of
+.I painttypesrc
+as in A2.
+.LP
+The
+.I action
+argument specifies whether opaque paint
+(\f3XSolarisOvlCopyOpaque\f1), transparent paint
+(\f3XSolarisOvlCopyTransparent\f1), or both
+(\f3XSolarisOvlCopyAll\f1) should be copied. This allows a client to
+accumulate opaque or transparent paint.
+.LP
+.I NoExpose
+and
+.I GraphicsExpose
+events are generated in the same manner as
+.BR XSolarisOvlCopyPaintType (3) .
+.LP
+If an overlay is used for the
+.I colordst
+argument, the
+.I painttypedst, painttypegc,
+.I painttypedst_x
+and
+.I painttypedst_y
+arguments will all be ignored.  A NULL pointer can be used for
+.I painttypegc
+and a value of None can be used for
+.I painttypedst.
+The overlay will have the exact paint type defined by the pixels in the area
+specified in
+.I painttypesrc.
+The color information copy will not affect the destination paint type.
+.LP
+You can use
+.B XSolarisOvlCopyAreaAndPaintType
+to combine an image in the client's memory space (consisting of color and/or
+paint type information) with a rectangle of the specified overlay window.
+To do this, first move the image and paint type data into the server: use
+.B XPutImage
+to copy the data into 2 pixmaps of the appropriate depths.
+Then call
+.B XSolarisOvlCopyAreaAndPaintType
+with the color and paint type drawables to copy information to the overlay.
+.LP
+You can also use
+.B XSolarisOvlCopyAreaAndPaintType
+to retrieve pixel information (color and/or paint type information) from a
+specified drawable.  To do this, call
+.B XSolarisOvlCopyAreaAndPaintType
+with two separable destination drawables.  Then call
+.B XGetImage
+on each of the drawables, to get the data from the server into the client's
+memory space.
+.LP
+This function uses these GC components from colorgc: function, plane-mask,
+subwindow-mode, graphics-exposures, clip-x-origin, clip-y-origin, and clip-mask.
+If
+.I colordst
+is not an overlay then this function will use these GC components from
+.I painttypegc:
+function, plane-mask, fill-style, subwindow-mode, clip-x-origin, clip-y-origin,
+and clip-mask.  In addition, it may also use these GC mode-dependent components:
+foreground, background, tile, stipple, tile-stipple-x-origin, and
+tile-stipple-y-origin.
+.LP
+.B XSolarisOvlCopyAreaAndPaintType
+can generate
+.SB BadDrawable,
+.SB BadGC,
+.SB BadMatch,
+and
+.SB BadValue
+errors.
+.SH ERRORS
+.LP
+.nf
+.SB BadDrawable
+.SB BadGC
+.SB BadMatch
+.SB BadValue
+.fi
