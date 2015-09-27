@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2004, 2014, Oracle and/or its affiliates. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -399,8 +399,8 @@ CALLBACK(TsolClientStateCallback)
 			priv_freeset(tsolinfo->privs);
 		}
 		/* Audit disconnect */
-		if (system_audit_on && (au_preselect(AUE_ClientDisconnect, &(tsolinfo->amask),
-                              AU_PRS_BOTH, AU_PRS_USECACHE) == 1)) {
+		if (au_preselect(AUE_ClientDisconnect, &(tsolinfo->amask),
+				 AU_PRS_BOTH, AU_PRS_USECACHE) == 1) {
 			auditwrite(AW_PRESELECT, &(tsolinfo->amask),AW_END);
 			auditwrite(AW_EVENTNUM, AUE_ClientDisconnect,
                                AW_XCLIENT, client->index,
@@ -1018,10 +1018,14 @@ ProcGetClientAttributes(ClientPtr client)
     int         n;
     int         rc;
     ClientPtr   res_client; /* resource owner client */
-    TsolInfoPtr res_tsolinfo;
+    TsolInfoPtr tsolinfo, res_tsolinfo;
     WindowPtr	pWin;
 
-    xGetClientAttributesReply rep;
+    xGetClientAttributesReply rep = {
+	.type = X_Reply,
+	.sequenceNumber = client->sequence,
+	.length = 0
+    };
 
     REQUEST(xGetClientAttributesReq);
     REQUEST_SIZE_MATCH(xGetClientAttributesReq);
@@ -1037,11 +1041,10 @@ ProcGetClientAttributes(ClientPtr client)
         return (BadWindow);
     }
 
+    tsolinfo = GetClientTsolInfo(client);
     res_tsolinfo = GetClientTsolInfo(res_client);
 
     /* Transfer the client info to reply rec */
-    rep.type = X_Reply;
-    rep.sequenceNumber = client->sequence;
     rep.trustflag = (res_tsolinfo->forced_trust == 1
 	|| res_tsolinfo->trusted_path) ? (BYTE)1 : (BYTE)0;
     rep.uid = (CARD32) res_tsolinfo->uid;
@@ -1050,7 +1053,6 @@ ProcGetClientAttributes(ClientPtr client)
     rep.auditid = (CARD32) res_tsolinfo->auid;
     rep.sessionid = (CARD32) res_tsolinfo->asid;
     rep.iaddr = (CARD32) res_tsolinfo->iaddr;
-    rep.length = (CARD32) 0;
 
     if (client->swapped)
     {
@@ -1072,15 +1074,21 @@ ProcGetClientAttributes(ClientPtr client)
 static int
 ProcGetClientLabel(ClientPtr client)
 {
+    int         n;
     int         reply_length = 0;
     int         rc;
     Bool        write_to_client = 0;
     bslabel_t   *sl;
     ClientPtr   res_client; /* resource owner client */
-    TsolInfoPtr res_tsolinfo;
+    TsolInfoPtr tsolinfo, res_tsolinfo;
     WindowPtr	pWin;
 
-    xGenericReply rep;
+    xGetClientLabelReply rep = {
+	.type = X_Reply,
+	.sequenceNumber = client->sequence,
+	.length = 0,
+	.blabel_bytes = 0
+    };
 
     REQUEST(xGetClientLabelReq);
     REQUEST_SIZE_MATCH(xGetClientLabelReq);
@@ -1096,15 +1104,11 @@ ProcGetClientLabel(ClientPtr client)
         return (BadWindow);
     }
 
+    tsolinfo = GetClientTsolInfo(client);
     res_tsolinfo = GetClientTsolInfo(res_client);
-
-    /* Transfer the client info to reply rec */
-    rep.type = X_Reply;
-    rep.sequenceNumber = client->sequence;
 
     /* allocate temp storage for labels */
     sl = malloc(SL_SIZE);
-    rep.data00 = rep.data01 = 0;
     if (sl == NULL)
         return (BadAlloc);
 
@@ -1112,10 +1116,10 @@ ProcGetClientLabel(ClientPtr client)
     if (stuff->mask & RES_SL)
     {
         memcpy(sl, res_tsolinfo->sl, SL_SIZE);
-        rep.data00 = SL_SIZE;
+        rep.blabel_bytes = SL_SIZE;
     }
 
-    rep.length = (CARD32)(rep.data00)/4;
+    rep.length = (CARD32)(rep.blabel_bytes)/4;
 
     if (rep.length > 0)
     {
@@ -1126,11 +1130,10 @@ ProcGetClientLabel(ClientPtr client)
     {
         swaps(&rep.sequenceNumber);
         swapl(&rep.length);
-        swapl(&rep.data00);
-        swapl(&rep.data01);
+        swapl(&rep.blabel_bytes);
     }
 
-    WriteToClient(client, sizeof(xGenericReply), (char *)&rep);
+    WriteToClient(client, sizeof(xGetClientLabelReply), &rep);
 
     if (write_to_client == 1)
     {
@@ -1155,7 +1158,13 @@ ProcGetPropAttributes(ClientPtr client)
     TsolResPtr	tsolres;
     TsolInfoPtr  tsolinfo = GetClientTsolInfo(client);
 
-    xGetPropAttributesReply rep;
+    xGetPropAttributesReply rep  = {
+	.type = X_Reply,
+	.sequenceNumber = client->sequence,
+	.length = 0,
+	.sllength = 0,
+	.illength = 0
+    };
 
     REQUEST(xGetPropAttributesReq);
 
@@ -1207,7 +1216,6 @@ ProcGetPropAttributes(ClientPtr client)
 
     /* allocate temp storage for labels */
     sl = malloc(SL_SIZE);
-    rep.sllength = rep.illength = 0;
     if (sl == NULL)
         return (BadAlloc);
 
@@ -1218,8 +1226,6 @@ ProcGetPropAttributes(ClientPtr client)
         rep.sllength = SL_SIZE;
     }
 
-    rep.type = X_Reply;
-    rep.sequenceNumber = client->sequence;
     rep.length = (CARD32) (rep.sllength)/4;
 
     if (rep.length > 0)
@@ -1259,7 +1265,14 @@ ProcGetResAttributes(ClientPtr client)
     WindowPtr   pWin;
     TsolResPtr  tsolres = NULL;
 
-    xGetResAttributesReply rep;
+    xGetResAttributesReply rep  = {
+	.type = X_Reply,
+	.sequenceNumber = client->sequence,
+	.length = 0,
+	.sllength = 0,
+	.illength = 0,
+	.iillength = 0
+    };
 
     REQUEST(xGetResAttributesReq);
 
@@ -1301,7 +1314,6 @@ ProcGetResAttributes(ClientPtr client)
 
     /* allocate temp storage for labels */
     sl = malloc(SL_SIZE);
-    rep.sllength = rep.illength = rep.iillength = 0;
     if (sl == NULL)
         return (BadAlloc);
 
@@ -1312,8 +1324,6 @@ ProcGetResAttributes(ClientPtr client)
         rep.sllength = SL_SIZE;
     }
 
-    rep.type = X_Reply;
-    rep.sequenceNumber = client->sequence;
     rep.length = (CARD32) (rep.sllength)/4;
 
     if (rep.length > 0)
@@ -1540,8 +1550,6 @@ TsolSetClientInfo(ClientPtr client)
 	priv_set_t *privs;
 	const au_mask_t *amask;
 	socklen_t namelen;
-	struct auditinfo auinfo;
-	struct auditinfo *pauinfo;
 	OsCommPtr oc = (OsCommPtr)client->osPrivate;
 	int fd = oc->fd;
 	ucred_t *uc = NULL;
@@ -1651,11 +1659,6 @@ TsolSetClientInfo(ClientPtr client)
 	}
 
 	/* setup audit context */
-	if (getaudit(&auinfo) == 0) {
-	    pauinfo = &auinfo;
-	} else {
-	    pauinfo = NULL;
-	}
 
 	/* Audit id */
 	tsolinfo->auid = ucred_getauid(uc);
@@ -1670,12 +1673,9 @@ TsolSetClientInfo(ClientPtr client)
 	if ((amask = ucred_getamask(uc)) != NULL) {
 	    tsolinfo->amask = *amask;
 	} else {
-	    if (pauinfo != NULL) {
-	        tsolinfo->amask = pauinfo->ai_mask;
-	    } else {
-	        tsolinfo->amask.am_failure = 0; /* clear the masks */
-	        tsolinfo->amask.am_success = 0;
-	    }
+	    /* clear the masks */
+	    tsolinfo->amask.am_failure = AU_MASK_NONE;
+	    tsolinfo->amask.am_success = AU_MASK_NONE;
 	}
 
 	tsolinfo->asaverd = 0;
@@ -1847,9 +1847,8 @@ TsolCheckAuthorization(unsigned int name_length, char *name,
 		audit_val = 0;
 	}
 
-	if (system_audit_on &&
-		(au_preselect(AUE_ClientConnect, &(tsolinfo->amask),
-                      AU_PRS_BOTH, AU_PRS_USECACHE) == 1)) {
+	if (au_preselect(AUE_ClientConnect, &(tsolinfo->amask),
+			 AU_PRS_BOTH, AU_PRS_USECACHE) == 1) {
 		int status;
 		ushort_t connect_port = 0;
 		struct in_addr *connect_addr = NULL;

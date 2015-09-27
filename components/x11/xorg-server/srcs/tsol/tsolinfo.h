@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2004, 2014, Oracle and/or its affiliates. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -91,8 +91,8 @@ extern const char *TsolResourceTypeString(RESTYPE resource);
 #define XAUDIT_OFFSET     9102
 #define XAUDIT_EXTENSION  128
 
-#define MAX_CLIENT        16
-#define MAX_SLS           16            /* used in atom */
+#define MAX_CLIENT        256
+#define MAX_SLS           256           /* used in atom */
 #define MAX_POLYPROPS     128           /* used in property */
 #define DEF_UID           (uid_t)0      /* uid used for default objects */
 #define INVALID_UID       (uid_t)0xFFFF /* invalid uid */
@@ -291,7 +291,7 @@ TsolKeyboardPrivate (DeviceIntPtr pDev)
 }
 
 
-#define NODE_SLSIZE	16	/* increase sl array by this amount */
+#define NODE_SLSIZE	256	/* increase sl array by this amount */
 typedef struct _TsolNodeRec {
 	unsigned int flags;
 	int slcount; 		/* no. of SLs referenced */
@@ -337,7 +337,6 @@ extern  int PolyProperty(Atom atom, WindowPtr pWin);
 extern  int PolySelection(Atom atom);
 extern  TsolPolyInstInfoRec tsolpolyinstinfo;
 extern  uid_t OwnerUID;                 /* Workstation owner uid */
-extern Bool system_audit_on;
 
 /*********************************
  *

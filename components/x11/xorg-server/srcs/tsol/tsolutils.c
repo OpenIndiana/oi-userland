@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2004, 2014, Oracle and/or its affiliates. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -62,7 +62,6 @@
 	( ((b1)->y2 <= (b2)->y1)) || \
 	( ((b1)->y1 >= (b2)->y2)) ) )
 
-Bool system_audit_on = FALSE;
 Bool priv_win_colormap = FALSE;
 Bool priv_win_config = FALSE;
 Bool priv_win_devices = FALSE;
@@ -410,8 +409,6 @@ DoScreenStripeHeight(int screen_num)
 	return (0);
 }
 
-extern int cannot_audit(int);	/* bsm function */
-
 void
 init_xtsol(void)
 {
@@ -420,11 +417,6 @@ init_xtsol(void)
 	bsllow(&PublicObjSL);
 	init_TSOL_cached_SL();
 	init_TSOL_uid_table();
-
-	if (cannot_audit(TRUE))
-		system_audit_on = FALSE;
-	else
-		system_audit_on = TRUE;
 
 	auditwrite(AW_QUEUE, XAUDIT_Q_SIZE, AW_END);
 }
@@ -638,6 +630,7 @@ LoadTsolConfig(void)
 		value = strtok(NULL, " \t\n");
 		UpdateTsolConfig(keyword, value);
 	}
+	fclose(fp);
 
 	InitPrivileges();
 }

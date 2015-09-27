@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2004, 2014, Oracle and/or its affiliates. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -817,12 +817,12 @@ TsolAuditStart)
     unsigned int protocol;
     int xevent_num = -1;
     int count = 0;
+    int status = 0;
     Bool do_x_audit = FALSE;
     Bool audit_event = FALSE;
     TsolInfoPtr tsolinfo = (TsolInfoPtr)NULL;
     tsolinfo = GetClientTsolInfo(client);
-    if (system_audit_on &&
-	(tsolinfo->amask.am_success || tsolinfo->amask.am_failure)) {
+    if (tsolinfo->amask.am_success || tsolinfo->amask.am_failure) {
 
 	do_x_audit = TRUE;
         auditwrite(AW_PRESELECT, &(tsolinfo->amask), AW_END);
@@ -862,7 +862,7 @@ TsolAuditStart)
 	    (au_preselect(xevent_num, &(tsolinfo->amask), AU_PRS_BOTH,
                               AU_PRS_USECACHE) == 1)) {
             tsolinfo->flags |= TSOL_AUDITEVENT;
-            auditwrite(AW_EVENTNUM, xevent_num, AW_APPEND, AW_END);
+            status = auditwrite(AW_EVENTNUM, xevent_num, AW_APPEND, AW_END);
 	} else {
 	    tsolinfo->flags &= ~TSOL_AUDITEVENT;
             tsolinfo->flags &= ~TSOL_DOXAUDIT;
@@ -877,7 +877,7 @@ TsolAuditEnd)
     ClientPtr client = rec->client;
     int result = rec->requestResult;
 
-    char audit_ret;
+    char audit_ret = (char)0;
     TsolInfoPtr tsolinfo = GetClientTsolInfo(client);
 
     if (tsolinfo->flags & TSOL_DOXAUDIT)
@@ -906,6 +906,7 @@ ProcTsolQueryPointer(ClientPtr client)
     WindowPtr pWin, ptrWin;
     DeviceIntPtr mouse = PickPointer(client);
     DeviceIntPtr keyboard;
+    SpritePtr pSprite;
     int rc;
     TsolResPtr tsolres;
     TsolInfoPtr tsolinfo = GetClientTsolInfo(client);
@@ -922,6 +923,8 @@ ProcTsolQueryPointer(ClientPtr client)
         return rc;
 
     keyboard = GetPairedDevice(mouse);
+
+    pSprite = mouse->spriteInfo->sprite;
 
     ptrWin = GetSpriteWindow(mouse);
     tsolres = TsolWindowPrivate(ptrWin);
@@ -1001,6 +1004,7 @@ TsolDoGetImage(
     Bool        overlap = FALSE;
     Bool        not_root_window = FALSE;
     WindowPtr   pHead = NULL, pWin = NULL, pRoot;
+    TsolResPtr  tsolres_win;
     BoxRec      winbox, box;
     BoxPtr      pwinbox;
     DrawablePtr pDrawtmp;
@@ -1088,6 +1092,7 @@ TsolDoGetImage(
             box.y1 = pwinbox->y1;
             box.x2 = pwinbox->x2;
             box.y2 = box.y1;
+            tsolres_win = TsolWindowPrivate(pWin);
             root = pWin->drawable.pScreen->root->drawable.id;
             rc = dixLookupWindow(&pRoot, root, client, DixReadAccess);
             if (rc != Success)
@@ -1445,6 +1450,7 @@ ProcTsolCopyArea (ClientPtr client)
 int
 ProcTsolCopyPlane(ClientPtr client)
 {
+    int savedtrust;
     int status;
     DrawablePtr psrcDraw, pdstDraw;
     GC *pGC;
@@ -1457,7 +1463,7 @@ ProcTsolCopyPlane(ClientPtr client)
 
     REQUEST_SIZE_MATCH(xCopyPlaneReq);
 
-    setClientTrustLevel(client, XSecurityClientTrusted);
+    savedtrust = setClientTrustLevel(client, XSecurityClientTrusted);
 
     VALIDATE_DRAWABLE_AND_GC(stuff->dstDrawable, pdstDraw,  DixWriteAccess);
 

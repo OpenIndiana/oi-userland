@@ -20,7 +20,7 @@
 # DEALINGS IN THE SOFTWARE.
 
 diff --git a/Makefile.am b/Makefile.am
-index b1408f2..54d64ab 100644
+index 7ce17e3..8d5c65d 100644
 --- a/Makefile.am
 +++ b/Makefile.am
 @@ -17,6 +17,10 @@ if RECORD
@@ -43,10 +43,10 @@ index b1408f2..54d64ab 100644
  	config \
  	hw \
 diff --git a/Xext/security.c b/Xext/security.c
-index 3699510..843a33a 100644
+index 6cc9aa0..3fed0b3 100644
 --- a/Xext/security.c
 +++ b/Xext/security.c
-@@ -1082,3 +1082,27 @@ SecurityExtensionInit(INITARGS)
+@@ -1084,3 +1084,27 @@ SecurityExtensionInit(void)
      /* Label objects that were created before we could register ourself */
      SecurityLabelInitial();
  }
@@ -88,10 +88,10 @@ index 8904242..56dbfc6 100644
 +
  #endif                          /* _SECURITY_SRV_H */
 diff --git a/configure.ac b/configure.ac
-index a7c8900..4ad4011 100644
+index 5a8e173..017fcd7 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -221,6 +221,14 @@ dnl Find the math libary, then check for cbrt function in it.
+@@ -223,6 +223,14 @@ dnl Find the math libary, then check for cbrt function in it.
  AC_CHECK_LIB(m, sqrt)
  AC_CHECK_FUNCS([cbrt])
  
@@ -106,7 +106,7 @@ index a7c8900..4ad4011 100644
  AC_CHECK_HEADERS([ndbm.h dbm.h rpcsvc/dbm.h])
  
  dnl AGPGART headers
-@@ -1500,6 +1508,8 @@ AM_CONDITIONAL(XVFB, [test "x$XVFB" = xyes])
+@@ -1569,6 +1577,8 @@ AM_CONDITIONAL(XVFB, [test "x$XVFB" = xyes])
  if test "x$XVFB" = xyes; then
  	XVFB_LIBS="$FB_LIB $FIXES_LIB $XEXT_LIB $DBE_LIB $RECORD_LIB $GLX_LIBS $RANDR_LIB $RENDER_LIB $DAMAGE_LIB $MIEXT_SYNC_LIB $MIEXT_DAMAGE_LIB $MIEXT_SHADOW_LIB $XI_LIB $XKB_LIB $XKB_STUB_LIB $COMPOSITE_LIB"
  	XVFB_SYS_LIBS="$XVFBMODULES_LIBS $GLX_SYS_LIBS"
@@ -115,7 +115,7 @@ index a7c8900..4ad4011 100644
  	AC_SUBST([XVFB_LIBS])
  	AC_SUBST([XVFB_SYS_LIBS])
  fi
-@@ -1521,6 +1531,8 @@ if test "x$XNEST" = xyes; then
+@@ -1590,6 +1600,8 @@ if test "x$XNEST" = xyes; then
  	fi
  	XNEST_LIBS="$FB_LIB $FIXES_LIB $MI_LIB $XEXT_LIB $DBE_LIB $RECORD_LIB $GLX_LIBS $RANDR_LIB $RENDER_LIB $DAMAGE_LIB $MIEXT_SYNC_LIB $MIEXT_DAMAGE_LIB $MIEXT_SHADOW_LIB $XI_LIB $XKB_LIB $XKB_STUB_LIB $COMPOSITE_LIB $MAIN_LIB $DIX_LIB $OS_LIB"
  	XNEST_SYS_LIBS="$XNESTMODULES_LIBS $GLX_SYS_LIBS"
@@ -124,7 +124,7 @@ index a7c8900..4ad4011 100644
  	AC_SUBST([XNEST_LIBS])
  	AC_SUBST([XNEST_SYS_LIBS])
  fi
-@@ -2057,6 +2069,7 @@ if test "$KDRIVE" = yes; then
+@@ -2132,6 +2144,7 @@ if test "$KDRIVE" = yes; then
      KDRIVE_CFLAGS="$XSERVER_CFLAGS -DHAVE_KDRIVE_CONFIG_H $TSLIB_CFLAGS"
  
      KDRIVE_PURE_LIBS="$FB_LIB $MI_LIB $FIXES_LIB $XEXT_LIB $DBE_LIB $RECORD_LIB $GLX_LIBS $RANDR_LIB $RENDER_LIB $DAMAGE_LIB $MIEXT_SYNC_LIB $MIEXT_DAMAGE_LIB $MIEXT_SHADOW_LIB $XI_LIB $XKB_LIB $XKB_STUB_LIB $COMPOSITE_LIB $OS_LIB"
@@ -132,7 +132,7 @@ index a7c8900..4ad4011 100644
      KDRIVE_LIB='$(top_builddir)/hw/kdrive/src/libkdrive.la'
      case $host_os in
  	*linux*)
-@@ -2247,3 +2260,6 @@ xorg-server.pc
+@@ -2319,3 +2332,6 @@ xorg-server.pc
  
  # Add Sun IA extension
  AC_OUTPUT([IA/Makefile])
@@ -140,7 +140,7 @@ index a7c8900..4ad4011 100644
 +# Add Sun Trusted Extensions extension
 +AC_OUTPUT([tsol/Makefile])
 diff --git a/dix/dispatch.c b/dix/dispatch.c
-index 104dcc9..5a80c13 100644
+index 0ce10c2..dd70ee7 100644
 --- a/dix/dispatch.c
 +++ b/dix/dispatch.c
 @@ -73,8 +73,8 @@ Equipment Corporation.
@@ -165,7 +165,7 @@ index 104dcc9..5a80c13 100644
  static int nextFreeClientID;    /* always MIN free client ID */
  
  static int nClients;            /* number of authorized clients */
-@@ -884,7 +888,12 @@ ProcCirculateWindow(ClientPtr client)
+@@ -885,7 +889,12 @@ ProcCirculateWindow(ClientPtr client)
      return Success;
  }
  
@@ -179,7 +179,7 @@ index 104dcc9..5a80c13 100644
  GetGeometry(ClientPtr client, xGetGeometryReply * rep)
  {
      DrawablePtr pDraw;
-@@ -1964,7 +1973,12 @@ ProcPutImage(ClientPtr client)
+@@ -1966,7 +1975,12 @@ ProcPutImage(ClientPtr client)
      return Success;
  }
  
@@ -194,10 +194,10 @@ index 104dcc9..5a80c13 100644
             int x, int y, int width, int height,
             Mask planemask, xGetImageReply ** im_return)
 diff --git a/dix/events.c b/dix/events.c
-index 0e4ba86..66e9104 100644
+index ddb5b34..14c2833 100644
 --- a/dix/events.c
 +++ b/dix/events.c
-@@ -2723,6 +2723,9 @@ PointInBorderSize(WindowPtr pWin, int x, int y)
+@@ -2771,6 +2771,9 @@ PointInBorderSize(WindowPtr pWin, int x, int y)
   *
   * @returns the window at the given coordinates.
   */
@@ -208,7 +208,7 @@ index 0e4ba86..66e9104 100644
  XYToWindow(SpritePtr pSprite, int x, int y)
  {
 diff --git a/dix/window.c b/dix/window.c
-index a31e78f..4cf5fdf 100644
+index 49ef4a0..3f2a99e 100644
 --- a/dix/window.c
 +++ b/dix/window.c
 @@ -96,6 +96,34 @@ Equipment Corporation.
@@ -258,7 +258,7 @@ index a31e78f..4cf5fdf 100644
  #ifdef COMPOSITE
  static const char *overlay_win_name = "<composite overlay>";
  #endif
-@@ -1833,7 +1866,12 @@ IsSiblingAboveMe(WindowPtr pMe, WindowPtr pSib)
+@@ -1831,7 +1864,12 @@ IsSiblingAboveMe(WindowPtr pMe, WindowPtr pSib)
      return Below;
  }
  
@@ -272,7 +272,7 @@ index a31e78f..4cf5fdf 100644
  WindowExtents(WindowPtr pWin, BoxPtr pBox)
  {
      pBox->x1 = pWin->drawable.x - wBorderWidth(pWin);
-@@ -1860,7 +1898,12 @@ MakeBoundingRegion(WindowPtr pWin, BoxPtr pBox)
+@@ -1858,7 +1896,12 @@ MakeBoundingRegion(WindowPtr pWin, BoxPtr pBox)
      return pRgn;
  }
  
@@ -286,7 +286,7 @@ index a31e78f..4cf5fdf 100644
  ShapeOverlap(WindowPtr pWin, BoxPtr pWinBox, WindowPtr pSib, BoxPtr pSibBox)
  {
      RegionPtr pWinRgn, pSibRgn;
-@@ -2036,7 +2079,12 @@ WhereDoIGoInTheStack(WindowPtr pWin,
+@@ -2034,7 +2077,12 @@ WhereDoIGoInTheStack(WindowPtr pWin,
      }
  }
  
@@ -301,11 +301,11 @@ index a31e78f..4cf5fdf 100644
  {
  /* Note that pSib might be NULL */
 diff --git a/hw/xfree86/common/xf86Config.c b/hw/xfree86/common/xf86Config.c
-index b38d265..4299257 100644
+index 907a103..af8a89e 100644
 --- a/hw/xfree86/common/xf86Config.c
 +++ b/hw/xfree86/common/xf86Config.c
-@@ -126,6 +126,7 @@ static ModuleDefault ModuleDefaults[] = {
-     {.name = "dri2",.toLoad = TRUE,.load_opt = NULL},
+@@ -118,6 +118,7 @@ static ModuleDefault ModuleDefaults[] = {
+     {.name = "shadow",.toLoad = TRUE,.load_opt = NULL},
  #endif
      {.name = "ia",.toLoad = TRUE,.load_opt = NULL},
 +    {.name = "xtsol",.toLoad = TRUE,.load_opt = NULL},
@@ -313,10 +313,10 @@ index b38d265..4299257 100644
  };
  
 diff --git a/hw/xfree86/dixmods/Makefile.am b/hw/xfree86/dixmods/Makefile.am
-index 02a6d0d..00f8021 100644
+index fd524c5..c02677a 100644
 --- a/hw/xfree86/dixmods/Makefile.am
 +++ b/hw/xfree86/dixmods/Makefile.am
-@@ -73,3 +73,11 @@ libia_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_builddir)/IA
+@@ -56,3 +56,11 @@ libia_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_builddir)/IA
  libia_la_LDFLAGS = -avoid-version
  libia_la_LIBADD = $(top_builddir)/IA/libIA.la
  libia_la_SOURCES = iamodule.c
@@ -329,16 +329,16 @@ index 02a6d0d..00f8021 100644
 +libxtsol_la_SOURCES = tsolmodule.c
 +endif
 diff --git a/include/dix.h b/include/dix.h
-index d604e06..012a5a5 100644
+index 74123b5..6e53887 100644
 --- a/include/dix.h
 +++ b/include/dix.h
-@@ -164,6 +164,14 @@ extern _X_EXPORT void MarkClientException(ClientPtr /*client */ );
+@@ -166,6 +166,14 @@ extern _X_EXPORT void MarkClientException(ClientPtr /*client */ );
  
  extern _X_HIDDEN Bool CreateConnectionBlock(void);
  
 +#ifdef TSOL
-+extern _X_EXPORT int DoGetImage(ClientPtr client, int format, Drawable drawable, 
-+                      int x, int y, int width, int height, 
++extern _X_EXPORT int DoGetImage(ClientPtr client, int format, Drawable drawable,
++                      int x, int y, int width, int height,
 +                      Mask planemask, xGetImageReply **im_return);
 +
 +extern _X_EXPORT int GetGeometry(ClientPtr client, xGetGeometryReply *rep);
@@ -348,7 +348,7 @@ index d604e06..012a5a5 100644
  
  extern _X_EXPORT int CompareISOLatin1Lowered(const unsigned char * /*a */ ,
 diff --git a/include/extnsionst.h b/include/extnsionst.h
-index e825236..5417c57 100644
+index e825236..d3e70d1 100644
 --- a/include/extnsionst.h
 +++ b/include/extnsionst.h
 @@ -44,6 +44,34 @@ SOFTWARE.
@@ -419,7 +419,7 @@ index e825236..5417c57 100644
 +
  #endif                          /* EXTENSIONSTRUCT_H */
 diff --git a/include/input.h b/include/input.h
-index d891fe5..63a7e79 100644
+index f8459b8..efb77f7 100644
 --- a/include/input.h
 +++ b/include/input.h
 @@ -397,7 +397,7 @@ extern void NoteLedState(DeviceIntPtr /*keybd */ ,
@@ -432,25 +432,26 @@ index d891fe5..63a7e79 100644
  
  extern void ProcessPointerEvent(InternalEvent * /* ev */ ,
 diff --git a/include/window.h b/include/window.h
-index 64c56ae..f3a8a37 100644
+index f8fc2a5..f25a27a 100644
 --- a/include/window.h
 +++ b/include/window.h
-@@ -229,4 +229,10 @@ extern _X_EXPORT void EnableMapUnmapEvents(WindowPtr /* pWin */ );
+@@ -227,5 +227,11 @@ extern _X_EXPORT void EnableMapUnmapEvents(WindowPtr /* pWin */ );
  extern _X_EXPORT void SetRootClip(ScreenPtr pScreen, Bool enable);
  extern _X_EXPORT void PrintWindowTree(void);
  
 +#ifdef TSOL
-+# include "validate.h" /* needed for VTKind enum definition */
++#include "validate.h" /* needed for VTKind enum definition */
 +extern _X_EXPORT void ReflectStackChange(WindowPtr pWin, WindowPtr pSib,
 +                                         VTKind  kind);
 +#endif
 +
+ extern _X_EXPORT VisualPtr WindowGetVisual(WindowPtr /*pWin*/);
  #endif                          /* WINDOW_H */
 diff --git a/mi/miinitext.c b/mi/miinitext.c
-index 433aec7..08b9309 100644
+index 720dca4..26e7f5c 100644
 --- a/mi/miinitext.c
 +++ b/mi/miinitext.c
-@@ -65,6 +65,7 @@ SOFTWARE.
+@@ -90,6 +90,7 @@ SOFTWARE.
  #undef DAMAGE
  #undef COMPOSITE
  #undef MITSHM
@@ -458,27 +459,7 @@ index 433aec7..08b9309 100644
  #endif
  
  #ifdef HAVE_XNEST_CONFIG_H
-@@ -158,6 +159,9 @@ extern Bool noGEExtension;
- #ifdef SolarisIAExtension
- Bool noIAExtension;
- #endif
-+#ifdef TSOL
-+Bool noXTSolExtension;
-+#endif
- 
- #ifndef XFree86LOADER
- #define INITARGS void
-@@ -193,6 +197,9 @@ typedef void (*InitExtension) (INITARGS);
- #include <X11/extensions/interactive.h>
- #include "../IA/interactive_srv.h"
- #endif
-+#ifdef TSOL
-+#include "../tsol/tsolextension.h"
-+#endif
- 
- /* FIXME: this whole block of externs should be from the appropriate headers */
- #ifdef MITSHM
-@@ -319,6 +326,9 @@ static ExtensionToggle ExtensionToggleList[] = {
+@@ -154,6 +155,9 @@ static ExtensionToggle ExtensionToggleList[] = {
  #ifdef SolarisIAExtension
      { IANAME /* "SolarisIA" */, &noIAExtension },
  #endif
@@ -488,20 +469,8 @@ index 433aec7..08b9309 100644
  #ifdef RES
      {"X-Resource", &noResExtension},
  #endif
-@@ -512,6 +522,11 @@ InitExtensions(int argc, char *argv[])
- #ifdef SolarisIAExtension
-     if (!noIAExtension) IAExtensionInit();
- #endif
-+#ifdef TSOL
-+    if (!noXTSolExtension) {
-+        TsolExtensionInit();
-+    }
-+#endif
- }
- 
- #else                           /* XFree86LOADER */
 diff --git a/os/connection.c b/os/connection.c
-index 1099752..f9ba2d7 100644
+index 721ad65..62a227c 100644
 --- a/os/connection.c
 +++ b/os/connection.c
 @@ -43,6 +43,33 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
@@ -538,7 +507,7 @@ index 1099752..f9ba2d7 100644
  /*****************************************************************
   *  Stuff to create connections --- OS dependent
   *
-@@ -254,6 +281,11 @@ static int ListenTransCount;
+@@ -255,6 +282,11 @@ static int ListenTransCount;
  
  static void ErrorConnMax(XtransConnInfo /* trans_conn */ );
  
@@ -550,7 +519,7 @@ index 1099752..f9ba2d7 100644
  static XtransConnInfo
  lookup_trans_conn(int fd)
  {
-@@ -638,6 +670,12 @@ ClientAuthorized(ClientPtr client,
+@@ -667,6 +699,12 @@ ClientAuthorized(ClientPtr client,
      priv = (OsCommPtr) client->osPrivate;
      trans_conn = priv->trans_conn;
  

@@ -23,10 +23,10 @@ Integration of Display Manager (gdm/xdm/etc.) to X server communication pipe
 with core server code - see sun-src/os/dtlogin.c for the main implementation.
 
 diff --git a/configure.ac b/configure.ac
-index 3047b2a..1ff432f 100644
+index 77ad53d..28eb2f1 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -1457,6 +1457,7 @@ PKG_CHECK_MODULES([XSERVERLIBS], [$REQUIRED_LIBS])
+@@ -1492,6 +1492,7 @@ PKG_CHECK_MODULES([XSERVERLIBS], [$REQUIRED_LIBS])
  XSERVER_CFLAGS="${XSERVER_CFLAGS} ${XSERVERCFLAGS_CFLAGS}"
  XSERVER_LIBS="$DIX_LIB $MI_LIB $OS_LIB"
  XSERVER_SYS_LIBS="${XSERVERLIBS_LIBS} ${SYS_LIBS} ${LIBS}"
@@ -35,10 +35,10 @@ index 3047b2a..1ff432f 100644
  AC_SUBST([XSERVER_SYS_LIBS])
  
 diff --git a/dix/main.c b/dix/main.c
-index 4563cb3..f9ecfa7 100644
+index e2ec177..0eaa6aa 100644
 --- a/dix/main.c
 +++ b/dix/main.c
-@@ -115,6 +115,11 @@ Equipment Corporation.
+@@ -116,6 +116,11 @@ Equipment Corporation.
  #include "dpmsproc.h"
  #endif
  
@@ -50,7 +50,7 @@ index 4563cb3..f9ecfa7 100644
  extern void Dispatch(void);
  
  #ifdef XQUARTZ
-@@ -164,6 +169,13 @@ main(int argc, char *argv[], char *envp[])
+@@ -165,6 +170,13 @@ main(int argc, char *argv[], char *envp[])
          InitBlockAndWakeupHandlers();
          /* Perform any operating system dependent initializations you'd like */
          OsInit();
@@ -64,7 +64,7 @@ index 4563cb3..f9ecfa7 100644
          if (serverGeneration == 1) {
              CreateWellKnownSockets();
              for (i = 1; i < MAXCLIENTS; i++)
-@@ -295,6 +307,11 @@ main(int argc, char *argv[], char *envp[])
+@@ -302,6 +314,11 @@ main(int argc, char *argv[], char *envp[])
          pthread_mutex_unlock(&serverRunningMutex);
  #endif
  
@@ -74,8 +74,8 @@ index 4563cb3..f9ecfa7 100644
 +#endif
 +
          UndisplayDevices();
+         DisableAllDevices();
  
-         /* Now free up whatever must be freed */
 diff --git a/os/Makefile.am b/os/Makefile.am
 index c4825ad..27d70ca 100644
 --- a/os/Makefile.am

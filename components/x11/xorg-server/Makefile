@@ -10,19 +10,18 @@
 #
 
 #
-# Copyright 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright 2015 Alexander Pyhalov
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xorg-server
-COMPONENT_VERSION= 1.12.4
-COMPONENT_REVISION= 2
+COMPONENT_VERSION= 1.14.7
 COMPONENT_SUMMARY= Xorg - X11R7 X server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:8ac07c35306ba3fb3c0972722dd4e919303039eca1d40ac7862560e0b2c94cf7
+  sha256:fcf66fa6ad86227613d2d3e8ae13ded297e2a1e947e9060a083eaf80d323451f
 COMPONENT_ARCHIVE_URL= \
   http://ftp.x.org/pub/individual/xserver/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.x.org/wiki/
@@ -41,7 +40,7 @@ COMPONENT_PRE_CONFIGURE_ACTION =        (cp -a $(SOURCE_DIR)/* $(@D) &&\
 		cd $(@D) && autoreconf --install --force )
 
 # Enabling gcc optimization leads to crashes
-gcc_OPT = 
+gcc_OPT =
 
 SERVERMOD_SUBDIR.64=/$(MACH64)
 SERVERMOD_SUBDIR=$(SERVERMOD_SUBDIR.$(BITS))
@@ -49,6 +48,7 @@ X11_SERVERMODS_DIR=/usr/lib/xorg/modules
 X11_SERVERLIBS_DIR=/usr/lib/xorg
 
 CPPFLAGS += -DSUNSOFT -DTSOL
+CPP = $(CC) -E -std=gnu99
 
 CONFIGURE_SCRIPT = $(@D)/configure
 
@@ -57,14 +57,11 @@ CONFIGURE_OPTIONS.64 += --bindir=/usr/bin/$(MACH64)
 
 CONFIGURE_OPTIONS = $(CONFIGURE_OPTIONS.$(BITS))
 CONFIGURE_OPTIONS += --disable-install-setuid
-#CONFIGURE_OPTIONS += --disable-dmx
-CONFIGURE_OPTIONS += --disable-shave
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --disable-unit-tests
-CONFIGURE_OPTIONS += --disable-xsdl
 CONFIGURE_OPTIONS += --disable-xwin
 CONFIGURE_OPTIONS += --disable-xnest
-CONFIGURE_OPTIONS += --enable-builddocs
+CONFIGURE_OPTIONS += --enable-dmx
 CONFIGURE_OPTIONS += --enable-dri2
 CONFIGURE_OPTIONS += --enable-glx
 CONFIGURE_OPTIONS += --enable-kdrive
@@ -76,7 +73,6 @@ CONFIGURE_OPTIONS += --enable-xdmcp
 CONFIGURE_OPTIONS += --prefix=/usr
 CONFIGURE_OPTIONS += --with-builderstring="Solaris ABI: $(BITS)-bit"
 CONFIGURE_OPTIONS += --with-default-font-path='catalogue:/etc/X11/fontpath.d'
-CONFIGURE_OPTIONS += --with-dri-driver-path='$(X11_SERVERMODS_DIR)/dri$(SERVERMOD_SUBDIR)'
 CONFIGURE_OPTIONS += --with-default-xkb-model=pc105
 CONFIGURE_OPTIONS += --with-log-dir=/var/log
 CONFIGURE_OPTIONS += --with-module-dir=/usr/lib/xorg/modules$(SERVERMOD_SUBDIR)
@@ -88,6 +84,7 @@ CONFIGURE_OPTIONS += --with-xkb-bin-directory=/usr/bin
 #CONFIGURE_OPTIONS += --disable-selective-werror
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
+CONFIGURE_ENV += CPP="$(CPP)"
 
 COMPONENT_BUILD_ENV += SERVERMOD_SUBDIR="$(SERVERMOD_SUBDIR)"
 

@@ -1,4 +1,4 @@
-# Copyright (c) 2006, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2006, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -19,7 +19,7 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 # DEALINGS IN THE SOFTWARE.
 diff --git a/Makefile.am b/Makefile.am
-index cea140b..b1408f2 100644
+index 9a62853..7ce17e3 100644
 --- a/Makefile.am
 +++ b/Makefile.am
 @@ -37,6 +37,7 @@ SUBDIRS = \
@@ -31,10 +31,10 @@ index cea140b..b1408f2 100644
  	config \
  	hw \
 diff --git a/configure.ac b/configure.ac
-index 1ff432f..a7c8900 100644
+index 28eb2f1..5a8e173 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -1191,6 +1191,10 @@ AC_DEFINE(XINPUT, 1, [Support X Input extension])
+@@ -1214,6 +1214,10 @@ AC_DEFINE(XINPUT, 1, [Support X Input extension])
  XI_LIB='$(top_builddir)/Xi/libXi.la'
  XI_INC='-I$(top_srcdir)/Xi'
  
@@ -43,9 +43,9 @@ index 1ff432f..a7c8900 100644
 +XEXT_LIB="${XEXT_LIB} ${IA_LIB}"
 +
  AM_CONDITIONAL(XF86UTILS, test "x$XF86UTILS" = xyes)
- AM_CONDITIONAL(XAA, test "x$XAA" = xyes)
  AM_CONDITIONAL(VGAHW, test "x$VGAHW" = xyes)
-@@ -2240,3 +2244,6 @@ test/xi2/Makefile
+ AM_CONDITIONAL(VBE, test "x$VBE" = xyes)
+@@ -2312,3 +2316,6 @@ test/xi2/Makefile
  xserver.ent
  xorg-server.pc
  ])
@@ -53,62 +53,38 @@ index 1ff432f..a7c8900 100644
 +# Add Sun IA extension
 +AC_OUTPUT([IA/Makefile])
 diff --git a/hw/xfree86/common/xf86Config.c b/hw/xfree86/common/xf86Config.c
-index 19feac1..b38d265 100644
+index c2cfc90..907a103 100644
 --- a/hw/xfree86/common/xf86Config.c
 +++ b/hw/xfree86/common/xf86Config.c
-@@ -125,6 +125,7 @@ static ModuleDefault ModuleDefaults[] = {
- #ifdef DRI2
-     {.name = "dri2",.toLoad = TRUE,.load_opt = NULL},
+@@ -117,6 +117,7 @@ static ModuleDefault ModuleDefaults[] = {
+     {.name = "fb",.toLoad = TRUE,.load_opt = NULL},
+     {.name = "shadow",.toLoad = TRUE,.load_opt = NULL},
  #endif
 +    {.name = "ia",.toLoad = TRUE,.load_opt = NULL},
      {.name = NULL,.toLoad = FALSE,.load_opt = NULL}
  };
  
 diff --git a/hw/xfree86/dixmods/Makefile.am b/hw/xfree86/dixmods/Makefile.am
-index a5be3ae..02a6d0d 100644
+index f161db6..fd524c5 100644
 --- a/hw/xfree86/dixmods/Makefile.am
 +++ b/hw/xfree86/dixmods/Makefile.am
-@@ -65,3 +65,11 @@ libdixmods_la_SOURCES = $(top_srcdir)/mi/miinitext.c
- libdixmods_la_CFLAGS = -DXFree86LOADER $(AM_CFLAGS)
+@@ -48,3 +48,11 @@ libdixmods_la_SOURCES = $(top_srcdir)/mi/miinitext.c
+ libdixmods_la_CFLAGS = $(AM_CFLAGS)
  
  libxorgxkb_la_SOURCES = xkbVT.c xkbPrivate.c xkbKillSrv.c
 +
 +
 +# Sun IA extension module additions
 +extsmodule_LTLIBRARIES += libia.la
-+libia_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_builddir)/IA
++libia_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/IA
 +libia_la_LDFLAGS = -avoid-version
 +libia_la_LIBADD = $(top_builddir)/IA/libIA.la
 +libia_la_SOURCES = iamodule.c
 diff --git a/mi/miinitext.c b/mi/miinitext.c
-index 6ceae05..433aec7 100644
+index d175440..720dca4 100644
 --- a/mi/miinitext.c
 +++ b/mi/miinitext.c
-@@ -153,6 +153,12 @@ extern Bool noXvExtension;
- #endif
- extern Bool noGEExtension;
- 
-+#define SolarisIAExtension
-+
-+#ifdef SolarisIAExtension
-+Bool noIAExtension;
-+#endif
-+
- #ifndef XFree86LOADER
- #define INITARGS void
- typedef void (*InitExtension) (INITARGS);
-@@ -183,6 +189,10 @@ typedef void (*InitExtension) (INITARGS);
- #ifdef RES
- #include <X11/extensions/XResproto.h>
- #endif
-+#ifdef SolarisIAExtension
-+#include <X11/extensions/interactive.h>
-+#include "../IA/interactive_srv.h"
-+#endif
- 
- /* FIXME: this whole block of externs should be from the appropriate headers */
- #ifdef MITSHM
-@@ -306,6 +316,9 @@ static ExtensionToggle ExtensionToggleList[] = {
+@@ -151,6 +151,9 @@ static ExtensionToggle ExtensionToggleList[] = {
  #ifdef XCSECURITY
      {"SECURITY", &noSecurityExtension},
  #endif
@@ -118,13 +94,3 @@ index 6ceae05..433aec7 100644
  #ifdef RES
      {"X-Resource", &noResExtension},
  #endif
-@@ -496,6 +509,9 @@ InitExtensions(int argc, char *argv[])
-     if (!noGlxExtension)
-         GlxExtensionInit();
- #endif
-+#ifdef SolarisIAExtension
-+    if (!noIAExtension) IAExtensionInit();
-+#endif
- }
- 
- #else                           /* XFree86LOADER */

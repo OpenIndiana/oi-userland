@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1996, 2012, Oracle and/or its affiliates. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -109,7 +109,7 @@ static DevPrivateKeyRec dmScreenKeyRec;
 static struct dmdata *dmHandlerData;
 static struct dmuser originalUser; /* user to switch back to in CloseDown */
 
-static Bool DtloginCloseScreen(int i, ScreenPtr pScreen);
+static Bool DtloginCloseScreen(ScreenPtr pScreen);
 static void DtloginBlockHandler(pointer, struct timeval **, pointer);
 static void DtloginWakeupHandler(pointer, int, pointer);
 static int  dtlogin_create_pipe(int, struct dmdata *);
@@ -191,7 +191,7 @@ DtloginCloseDown(void)
 }
 
 static Bool
-DtloginCloseScreen (int i, ScreenPtr pScreen)
+DtloginCloseScreen (ScreenPtr pScreen)
 {
     struct dmScreenPriv *pScreenPriv;
 
@@ -204,7 +204,7 @@ DtloginCloseScreen (int i, ScreenPtr pScreen)
     pScreen->CloseScreen = pScreenPriv->CloseScreen;
     free (pScreenPriv);
 
-    return (*pScreen->CloseScreen) (i, pScreen);
+    return (*pScreen->CloseScreen) (pScreen);
 }
 
 static void

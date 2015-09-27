@@ -22,6 +22,8 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+<transform file -> add pkg.depend.bypass-generate libGL\.so\.1>
+
 file config/x11-input.fdi path=etc/hal/fdi/preprobe/10osvendor/10-x11-input.fdi
 file usr/bin/Xorg path=usr/bin/$(MACH32)/Xorg
 file hw/xfree86/man/xorgcfg.1 path=usr/share/man/man1/xorgcfg.1
@@ -52,6 +54,8 @@ file usr/lib/xorg/modules/extensions/libglx.so path=usr/lib/mesa/modules/extensi
 
 # libglx was moved from xorg to mesa
 depend type=optional fmri=x11/library/mesa@7.4.4,5.11-2014.1.3.0
+
+depend fmri=service/opengl/ogl-select type=require
 
 file path=usr/bin/$(MACH64)/Xorg
 file path=usr/bin/cvt
@@ -105,6 +109,7 @@ file path=usr/include/xorg/gcstruct.h
 file path=usr/include/xorg/geext.h
 file path=usr/include/xorg/geint.h
 file path=usr/include/xorg/globals.h
+file path=usr/include/xorg/glx_extinit.h
 file path=usr/include/xorg/glyphstr.h
 file path=usr/include/xorg/hotplug.h
 file path=usr/include/xorg/i2c_def.h
@@ -112,7 +117,6 @@ file path=usr/include/xorg/input.h
 file path=usr/include/xorg/inputstr.h
 file path=usr/include/xorg/list.h
 file path=usr/include/xorg/mi.h
-file path=usr/include/xorg/mibstore.h
 file path=usr/include/xorg/micmap.h
 file path=usr/include/xorg/micoord.h
 file path=usr/include/xorg/mifillarc.h
@@ -178,8 +182,6 @@ file path=usr/include/xorg/vidmodeproc.h
 file path=usr/include/xorg/wfbrename.h
 file path=usr/include/xorg/window.h
 file path=usr/include/xorg/windowstr.h
-file path=usr/include/xorg/xaa.h
-file path=usr/include/xorg/xaalocal.h
 file path=usr/include/xorg/xaarop.h
 file path=usr/include/xorg/xace.h
 file path=usr/include/xorg/xacestr.h
@@ -208,6 +210,7 @@ file path=usr/include/xorg/xf86cmap.h
 file path=usr/include/xorg/xf86fbman.h
 file path=usr/include/xorg/xf86i2c.h
 file path=usr/include/xorg/xf86int10.h
+file path=usr/include/xorg/xf86platformBus.h
 file path=usr/include/xorg/xf86sbusBus.h
 file path=usr/include/xorg/xf86str.h
 file path=usr/include/xorg/xf86xv.h
@@ -234,22 +237,11 @@ file path=usr/lib/xorg/modules/$(MACH64)/libshadowfb.so
 file path=usr/lib/xorg/modules/$(MACH64)/libvbe.so
 file path=usr/lib/xorg/modules/$(MACH64)/libvgahw.so
 file path=usr/lib/xorg/modules/$(MACH64)/libwfb.so
-file path=usr/lib/xorg/modules/$(MACH64)/libxaa.so
-file path=usr/lib/xorg/modules/extensions/$(MACH64)/libdbe.so
-file path=usr/lib/xorg/modules/extensions/$(MACH64)/libdri.so
-file path=usr/lib/xorg/modules/extensions/$(MACH64)/libdri2.so
-file path=usr/lib/xorg/modules/extensions/$(MACH64)/libextmod.so
 #file path=usr/lib/xorg/modules/extensions/$(MACH64)/libglx.so
 file path=usr/lib/xorg/modules/extensions/$(MACH64)/libia.so
-file path=usr/lib/xorg/modules/extensions/$(MACH64)/librecord.so
 #file path=usr/lib/xorg/modules/extensions/$(MACH64)/libxtsol.so
-file path=usr/lib/xorg/modules/extensions/libdbe.so
-file path=usr/lib/xorg/modules/extensions/libdri.so
-file path=usr/lib/xorg/modules/extensions/libdri2.so
-file path=usr/lib/xorg/modules/extensions/libextmod.so
 #file path=usr/lib/xorg/modules/extensions/libglx.so
 file path=usr/lib/xorg/modules/extensions/libia.so
-file path=usr/lib/xorg/modules/extensions/librecord.so
 #file path=usr/lib/xorg/modules/extensions/libxtsol.so
 file path=usr/lib/xorg/modules/libexa.so
 file path=usr/lib/xorg/modules/libfb.so
@@ -260,7 +252,6 @@ file path=usr/lib/xorg/modules/libshadowfb.so
 file path=usr/lib/xorg/modules/libvbe.so
 file path=usr/lib/xorg/modules/libvgahw.so
 file path=usr/lib/xorg/modules/libwfb.so
-file path=usr/lib/xorg/modules/libxaa.so
 file path=usr/lib/xorg/modules/multimedia/$(MACH64)/bt829_drv.so
 file path=usr/lib/xorg/modules/multimedia/$(MACH64)/fi1236_drv.so
 file path=usr/lib/xorg/modules/multimedia/$(MACH64)/msp3430_drv.so

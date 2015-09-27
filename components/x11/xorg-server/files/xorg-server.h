@@ -141,7 +141,7 @@
 /* #undef XORG_RELEASE */
 
 /* Current Xorg version */
-#define XORG_VERSION_CURRENT (((1) * 10000000) + ((12) * 100000) + ((4) * 1000) + 0)
+#define XORG_VERSION_CURRENT (((1) * 10000000) + ((14) * 100000) + ((7) * 1000) + 0)
 
 /* Build Xv Extension */
 #define XvExtension 1
@@ -198,13 +198,16 @@
 /* #undef WSCONS_SUPPORT */
 
 /* Loadable XFree86 server awesomeness */
-#define XFree86LOADER 1
+#define XFree86LOADER
 
 /* Use libpciaccess */
 #define XSERVER_LIBPCIACCESS 1
 
 /* X Access Control Extension */
 #define XACE 1
+
+/* Have X server platform bus support */
+/* #undef XSERVER_PLATFORM_BUS */
 
 #include <sys/isa_defs.h> /* Ensure _LP64 is defined when needed on Solaris */
 #ifdef _LP64
