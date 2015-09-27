@@ -34,14 +34,21 @@ $(SOURCE_DIR)/.unpacked: download Makefile $(PATCHES)
 	$(SHELL) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE) -x
 	$(TOUCH) $@
 
-build: prep
+$(BUILD_32):	$(SOURCE_DIR)/.prep
+	$(RM) -r $(@D) ; $(MKDIR) $(@D)
+	$(TOUCH) $@
 
-install: build
+$(INSTALL_32): 	$(BUILD_32)
 	[ -d $(PROTO_DIR)/kernel/drv/amd64 ] || mkdir -p $(PROTO_DIR)/kernel/drv/amd64
 	for i in kernel/drv/amd64/nvidia kernel/drv/nvidia kernel/drv/nvidia.conf; do \
 	    cp $(SOURCE_DIR)/NVDAgraphicsr/reloc/$$i $(PROTO_DIR)/$$i; done
 	[ -h $(PROTO_DIR)/usr ] && rm $(PROTO_DIR)/usr || true
 	ln -sf $(SOURCE_DIR)/NVDAgraphics/reloc $(PROTO_DIR)/usr
+	$(TOUCH) $@
+
+build: $(BUILD_32)
+
+install: $(INSTALL_32)
 
 clean::
 	if [ -d $(BUILD_DIR) ] ;  then \
