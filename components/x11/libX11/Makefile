@@ -17,13 +17,12 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libX11
 
-COMPONENT_VERSION= 1.6.2
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 1.6.3
 COMPONENT_SUMMARY= libX11 - X11 core protocol client library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:2aa027e837231d2eeea90f3a4afe19948a6eb4c8b2bec0241eba7dbc8106bd16
+  sha256:cf31a7c39f2f52e8ebd0db95640384e63451f9b014eed2bb7f5de03e8adc8111
 COMPONENT_ARCHIVE_URL= \
   http://xorg.freedesktop.org/archive/individual/lib/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
@@ -62,8 +61,8 @@ CONFIGURE_OPTIONS +=  --without-fop
 CONFIGURE_OPTIONS +=  --localstatedir=/var
 CONFIGURE_OPTIONS +=  --enable-shared=yes
 CONFIGURE_OPTIONS +=  --enable-static=no
-CONFIGURE_OPTIONS +=  --with-lint
-CONFIGURE_OPTIONS +=  --enable-lint-library
+CONFIGURE_OPTIONS +=  --without-lint
+CONFIGURE_OPTIONS +=  --disable-lint-library
 CONFIGURE_OPTIONS +=  --with-pic
 CONFIGURE_OPTIONS +=  --enable-xthreads 
 CONFIGURE_OPTIONS +=  --enable-loadable-i18n 

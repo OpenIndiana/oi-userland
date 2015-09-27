@@ -47,6 +47,7 @@ static const unsigned short gb18030ext_2uni_pagefe[95] = {
   0x4d14, 0x4d15, 0x4d16, 0x4d17, 0x4d18, 0x4d19, 0x4dae,
 };
 
+/*
 static int
 gb18030ext_mbtowc (conv_t conv, ucs4_t *pwc, const unsigned char *s, int n)
 {
@@ -80,6 +81,7 @@ gb18030ext_mbtowc (conv_t conv, ucs4_t *pwc, const unsigned char *s, int n)
   }
   return RET_ILSEQ;
 }
+*/
 
 static const unsigned short gb18030ext_page2e[80] = {
   0x0000, 0xfe50, 0x0000, 0x0000, 0xfe54, 0x0000, 0x0000, 0x0000, /*0x80-0x87*/
@@ -171,6 +173,7 @@ static const unsigned short gb18030ext_page4d[16] = {
   0xfe9d, 0xfe9e, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, /*0x18-0x1f*/
 };
 
+/*
 static int
 gb18030ext_wctomb (conv_t conv, unsigned char *r, ucs4_t wc, int n)
 {
@@ -238,3 +241,4 @@ gb18030ext_wctomb (conv_t conv, unsigned char *r, ucs4_t wc, int n)
   }
   return RET_TOOSMALL;
 }
+*/

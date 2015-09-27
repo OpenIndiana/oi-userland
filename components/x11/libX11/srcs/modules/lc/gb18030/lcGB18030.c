@@ -1,5 +1,5 @@
 /*
- * Copyright © 1996, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright © 1996, 2015, Oracle and/or its affiliates. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -792,28 +792,28 @@ gb18030_ctstowcs(
     XPointer *args,
     int num_args)
 {
-    XPointer	outbufptr, outbufptr_save;
+    XPointer	outbufptr, outbufptr_end;
     int		to_left_save = *to_left;
     wchar_t 	*pwc = (wchar_t *) *to;
     int		rtn, rtn_1;
 
 
     outbufptr = (XPointer) Xmalloc(*to_left * 4); /* 100 safty tolerence */
-    outbufptr_save = outbufptr;
+    outbufptr_end = outbufptr;
 
     rtn = gb18030_ctstombs(conv,
 	    from,
 	    from_left,
-	    &outbufptr,
+	    &outbufptr_end,
 	    to_left,
 	    args,
 	    num_args);
 
-    *outbufptr='\0';
+    *outbufptr_end = '\0';
 
-    rtn_1 = mbstowcs(pwc, outbufptr_save, (to_left_save - *to_left));
+    rtn_1 = mbstowcs(pwc, outbufptr, (to_left_save - *to_left));
 
-    Xfree(outbufptr_save);
+    Xfree(outbufptr);
 
     *to_left = to_left_save - rtn_1;
     *to = *to + rtn_1 * sizeof(wchar_t);
