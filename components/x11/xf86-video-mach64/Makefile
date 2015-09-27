@@ -16,12 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-video-mach64
-COMPONENT_VERSION= 6.9.4
+COMPONENT_VERSION= 6.9.5
 COMPONENT_SUMMARY= xf86-video-mach64 - MACH64 driver for the Xorg X server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:97f108b8d7c0a8426bef9562683323ab6369956f18b0e220ee0d1a66b740855e
+  sha256:3e98985b6e044189efd42342862208f472881c25debf22230a1d54a96d71b41f
 COMPONENT_ARCHIVE_URL= \
   http://xorg.freedesktop.org/archive/individual/driver/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://xorg.freedesktop.org

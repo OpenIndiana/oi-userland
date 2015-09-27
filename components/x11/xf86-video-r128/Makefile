@@ -16,12 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-video-r128
-COMPONENT_VERSION= 6.9.2
+COMPONENT_VERSION= 6.10.0
 COMPONENT_SUMMARY= xf86-video-r128 - ATI Rage 128 video driver for the Xorg X server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:8b2d295f1842d07304a75da1cfb9bf139b320a6539970eaf8d5ecc010cd36ee0
+  sha256:80d531a07168230a408b88809a5440cfd48f9098666d12702d0012148a0d353d
 COMPONENT_ARCHIVE_URL= \
   http://xorg.freedesktop.org/archive/individual/driver/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://xorg.freedesktop.org

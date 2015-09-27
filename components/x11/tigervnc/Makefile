@@ -36,22 +36,24 @@ PATCH_PATTERN = [0-9][0-9]*.patch
 
 XORG_ADDITIONAL_PATCH_1 = $(PATCH_DIR)/tigervnc11-xorg111.patch
 XORG_ADDITIONAL_PATCH_2 = $(PATCH_DIR)/tigervnc11-xorg112.patch
+XORG_ADDITIONAL_PATCH_3 = $(PATCH_DIR)/tigervnc11-xorg114.patch
 
-XORG_SERVER_VERSION= 1.12.4
+XORG_SERVER_VERSION= 1.14.7
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-COMPONENT_POST_UNPACK_ACTION +=  ( cp -r $(COMPONENT_DIR)/files/java $(SOURCE_DIR) )
+COMPONENT_POST_UNPACK_ACTION +=  ( cp -r $(COMPONENT_DIR)/srcs/* $(SOURCE_DIR) )
 
 $(SOURCE_DIR)/.prep: $(ARCHIVE_STAMPS) $(COMPONENT_DIR)/../xorg-server/xorg-server-$(XORG_SERVER_VERSION)/.prep
 	$(COMPONENT_PREP_ACTION)
 	chmod -R u+w $(COMPONENT_SRC)/unix/xserver
 	cp -r $(COMPONENT_DIR)/../xorg-server/xorg-server-$(XORG_SERVER_VERSION)/* $(COMPONENT_SRC)/unix/xserver
-	$(GPATCH) -d $(@D)/unix $(GPATCH_FLAGS) < $(SOURCE_DIR)/unix/xserver110.patch
+	$(GPATCH) -d $(@D)/unix $(GPATCH_FLAGS) < $(SOURCE_DIR)/unix/xserver114.patch
 	$(GPATCH) -d $(@D) $(GPATCH_FLAGS) <  $(XORG_ADDITIONAL_PATCH_1) 
 	$(GPATCH) -d $(@D) $(GPATCH_FLAGS) <  $(XORG_ADDITIONAL_PATCH_2) 
+	$(GPATCH) -d $(@D) $(GPATCH_FLAGS) <  $(XORG_ADDITIONAL_PATCH_3) 
 	( cd $(@D)/unix/xserver && \
 		aclocal -I m4 && \
 		autoheader && \
@@ -85,6 +87,7 @@ gcc_OPT=
 
 CPPFLAGS += -DSUNSOFT -DTSOL
 CPPFLAGS += -I/usr/include/pixman-1
+CPPFLAGS += -I/usr/include/xorg
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
@@ -97,8 +100,10 @@ XVNC_CONFIGURE_OPTIONS += --disable-builddocs
 XVNC_CONFIGURE_OPTIONS += --disable-config-hal
 XVNC_CONFIGURE_OPTIONS += --disable-dga
 XVNC_CONFIGURE_OPTIONS += --disable-dmx
+XVNC_CONFIGURE_OPTIONS += --disable-dri3
 XVNC_CONFIGURE_OPTIONS += --disable-install-setuid
 XVNC_CONFIGURE_OPTIONS += --disable-kdrive
+XVNC_CONFIGURE_OPTIONS += --disable-present
 XVNC_CONFIGURE_OPTIONS += --disable-static
 XVNC_CONFIGURE_OPTIONS += --disable-unit-tests
 XVNC_CONFIGURE_OPTIONS += --disable-xephyr

@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-video-nv
 COMPONENT_VERSION= 2.1.20
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= xf86-video-nv - NVIDIA video driver for the Xorg X server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -53,7 +54,7 @@ LD_OPTIONS= \
         -L$(X11_SERVERLIBS_DIR)$(SERVERMOD_SUBDIR) \
         -R$(X11_SERVERMODS_DIR)$(SERVERMOD_SUBDIR) \
         -R$(X11_SERVERLIBS_DIR)$(SERVERMOD_SUBDIR) \
-        -lexa -lfb -lint10 -lshadowfb -lXfont -lvbe -lvgahw -lxaa -lfbdevhw \
+        -lexa -lfb -lint10 -lshadowfb -lXfont -lvbe -lvgahw -lfbdevhw \
 	-lpciaccess -lpixman-1 -lm
 
 build: $(BUILD_32_and_64)
