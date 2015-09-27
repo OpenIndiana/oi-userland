@@ -16,12 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= fontsproto
-COMPONENT_VERSION= 2.1.2
+COMPONENT_VERSION= 2.1.3
 COMPONENT_SUMMARY= headers & documentation for font support in the X Window System
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:869c97e5a536a8f3c9bc8b9923780ff1f062094bab935e26f96df3d6f1aa68a9
+  sha256:259046b0dd9130825c4a4c479ba3591d6d0f17a33f54e294b56478729a6e5ab8
 COMPONENT_ARCHIVE_URL= \
   http://xorg.freedesktop.org/archive/individual/proto/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.freedesktop.org/wiki/
