@@ -56,6 +56,11 @@ COMPONENT_POST_UNPACK_ACTION= ( $(MV) $(COMPONENT_SRC)-$(COMPONENT_SUBVERSION) \
 # to the build directory
 COMPONENT_PRE_CONFIGURE_ACTION= ($(CP) -R $(SOURCE_DIR)/PerlMagick $(@D))
 
+ifeq ($(OS_VERSION),5.11)
+LIBS += -lsocket -lnsl
+CONFIGURE_ENV += LIBS="$(LIBS)"
+endif
+
 # Show name of "error tag" as part of the warning
 CFLAGS += -errtags=yes
 # To remove the compiler complaints about __restrict keyword,
