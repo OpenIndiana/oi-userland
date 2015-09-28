@@ -42,7 +42,11 @@ COMPILER =	gcc
 
 CC +=		$(CC_BITS)
 
-COMPONENT_BUILD_ARGS +=	LDFLAGS="$(LDFLAGS) -lfftw3 -lssl -lcrypto -lresolv -lm"
+ifeq ($(OS_VERSION),5.11)
+EXTRA_LIBRARIES =	-lsocket -lnsl
+endif
+EXTRA_LIBRARIES +=	-lfftw3 -lssl -lcrypto -lresolv -lm
+COMPONENT_BUILD_ARGS +=	LDFLAGS="$(LDFLAGS) $(EXTRA_LIBRARIES)"
 COMPONENT_BUILD_ENV += CC="$(CC)"
 
 ASLR_MODE = $(ASLR_ENABLE)
