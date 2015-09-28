@@ -61,6 +61,9 @@ COMPONENT_PREP_ACTION = \
 CC=$(CXX)
 
 LDFLAGS += -L/usr/gnu/lib/$(MACH64) -R/usr/gnu/lib/$(MACH64)
+ifeq ($(OS_VERSION),5.11)
+LDFLAGS += -lnsl -lsocket
+endif
 
 CXXFLAGS +=	-i
 CXXFLAGS +=	-template=no%extdef
