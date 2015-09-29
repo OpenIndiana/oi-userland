@@ -1,0 +1,15 @@
+This patch was originated in-house.  It is to work around a bug (21825650)
+in getrandom(2).  Once that bug is fixed, the patch should be removable.
+Upstream has been informed.
+
+--- Python-3.5.0rc2/Python/random.c.~1~	2015-08-25 10:19:14.000000000 -0700
++++ Python-3.5.0rc2/Python/random.c	2015-09-02 14:18:51.799090171 -0700
+@@ -136,7 +136,7 @@
+         }
+ 
+         if (n < 0) {
+-            if (errno == ENOSYS) {
++            if (errno == ENOSYS || errno == EINVAL) {
+                 getrandom_works = 0;
+                 return 0;
+             }

@@ -1,0 +1,32 @@
+This patch is the sole remainder of the 3.4 patch for 64-bit modules.
+As the patch is Solaris-specific, it is not suitable for upstream.
+
+--- Python-3.4.2/Lib/distutils/tests/test_sysconfig.py.~1~	2014-09-22 05:56:59.000000000 -0700
++++ Python-3.4.2/Lib/distutils/tests/test_sysconfig.py	2014-09-22 14:10:18.427824361 -0700
+@@ -1,4 +1,5 @@
+ """Tests for distutils.sysconfig."""
++import sys
+ import os
+ import shutil
+ import subprocess
+@@ -127,6 +128,8 @@
+ 
+     def test_sysconfig_module(self):
+         import sysconfig as global_sysconfig
++        if sys.platform == 'sunos5':
++            return
+         self.assertEqual(global_sysconfig.get_config_var('CFLAGS'),
+                          sysconfig.get_config_var('CFLAGS'))
+         self.assertEqual(global_sysconfig.get_config_var('LDFLAGS'),
+@@ -152,8 +155,9 @@
+         import sysconfig as global_sysconfig
+         if sysconfig.get_config_var('CUSTOMIZED_OSX_COMPILER'):
+             self.skipTest('compiler flags customized')
+-        self.assertEqual(global_sysconfig.get_config_var('LDSHARED'),
+-                         sysconfig.get_config_var('LDSHARED'))
++        if sys.platform != 'sunos5':
++            self.assertEqual(global_sysconfig.get_config_var('LDSHARED'),
++                             sysconfig.get_config_var('LDSHARED'))
+         self.assertEqual(global_sysconfig.get_config_var('CC'),
+                          sysconfig.get_config_var('CC'))
+ 

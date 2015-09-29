@@ -79,4 +79,5 @@ REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += library/python/pycparser-26
 REQUIRED_PACKAGES += library/python/pycparser-27
 REQUIRED_PACKAGES += library/python/pycparser-34
+REQUIRED_PACKAGES += library/python/pycparser-35
 REQUIRED_PACKAGES += system/library

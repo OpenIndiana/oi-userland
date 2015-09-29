@@ -130,6 +130,7 @@ $(foreach macro, $(filter TPNO_%, $(.VARIABLES)), \
 PKG_MACROS +=		PYTHON_2.6_ONLY=\#
 PKG_MACROS +=		PYTHON_2.7_ONLY=\#
 PKG_MACROS +=		PYTHON_3.4_ONLY=\#
+PKG_MACROS +=		PYTHON_3.5_ONLY=\#
 
 PKG_OPTIONS +=		$(PKG_MACROS:%=-D %)
 
