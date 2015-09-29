@@ -1,0 +1,63 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"). You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright (c) 2015 Jim Klimov
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+<transform file path=usr/share/applications/.* ->  default restart_fmri svc:/application/desktop-cache/desktop-mime-cache:default>
+<transform file path=usr/share/applications/.* ->  default restart_fmri svc:/application/desktop-cache/mime-types-cache:default>
+
+# Add-on files for this package
+file files/gcm path=usr/bin/gcm mode=555
+file files/gcm.desktop path=usr/share/applications/gcm.desktop
+file icon.png path=usr/share/pixmaps/gcm.png
+# Deliver the icon into the path expected by script as well
+# so it goes well into the window title bar (TODO: sym/hard-link?)
+file icon.png path=usr/share/gnome-connection-manager/icon.png
+# This is not from tarball but is compiled by our Makefile
+file gnome_connection_manager.pyc path=usr/share/gnome-connection-manager/gnome_connection_manager.pyc
+
+# Files delivered by source tarball, as of version 1.1.0, listed via:
+#   find . -type f | sed 's,^./\(.*\)$,file \1 path=usr/share/gnome-connection-manager/\1,'
+file donate.gif path=usr/share/gnome-connection-manager/donate.gif
+file gnome_connection_manager.py path=usr/share/gnome-connection-manager/gnome_connection_manager.py mode=0555
+file gnome-connection-manager.glade path=usr/share/gnome-connection-manager/gnome-connection-manager.glade
+file lang/de_DE.po path=usr/share/gnome-connection-manager/lang/de_DE.po
+file lang/de/LC_MESSAGES/gcm-lang.mo path=usr/share/gnome-connection-manager/lang/de/LC_MESSAGES/gcm-lang.mo
+file lang/en_US.po path=usr/share/gnome-connection-manager/lang/en_US.po
+file lang/en/LC_MESSAGES/gcm-lang.mo path=usr/share/gnome-connection-manager/lang/en/LC_MESSAGES/gcm-lang.mo
+file lang/fr_FR.po path=usr/share/gnome-connection-manager/lang/fr_FR.po
+file lang/fr/LC_MESSAGES/gcm-lang.mo path=usr/share/gnome-connection-manager/lang/fr/LC_MESSAGES/gcm-lang.mo
+file lang/it_IT.po path=usr/share/gnome-connection-manager/lang/it_IT.po
+file lang/it/LC_MESSAGES/gcm-lang.mo path=usr/share/gnome-connection-manager/lang/it/LC_MESSAGES/gcm-lang.mo
+file lang/ko_KO.po path=usr/share/gnome-connection-manager/lang/ko_KO.po
+file lang/ko/LC_MESSAGES/gcm-lang.mo path=usr/share/gnome-connection-manager/lang/ko/LC_MESSAGES/gcm-lang.mo
+file lang/pl_PL.po path=usr/share/gnome-connection-manager/lang/pl_PL.po
+file lang/pl/LC_MESSAGES/gcm-lang.mo path=usr/share/gnome-connection-manager/lang/pl/LC_MESSAGES/gcm-lang.mo
+file lang/pt_BR.po path=usr/share/gnome-connection-manager/lang/pt_BR.po
+file lang/pt/LC_MESSAGES/gcm-lang.mo path=usr/share/gnome-connection-manager/lang/pt/LC_MESSAGES/gcm-lang.mo
+file lang/ru_RU.po path=usr/share/gnome-connection-manager/lang/ru_RU.po
+file lang/ru/LC_MESSAGES/gcm-lang.mo path=usr/share/gnome-connection-manager/lang/ru/LC_MESSAGES/gcm-lang.mo
+file pyAES.py path=usr/share/gnome-connection-manager/pyAES.py
+file pyAES.pyc path=usr/share/gnome-connection-manager/pyAES.pyc
+file README.txt path=usr/share/gnome-connection-manager/README.txt
+file SimpleGladeApp.py path=usr/share/gnome-connection-manager/SimpleGladeApp.py
+file SimpleGladeApp.pyc path=usr/share/gnome-connection-manager/SimpleGladeApp.pyc
+file ssh.expect path=usr/share/gnome-connection-manager/ssh.expect mode=0555
