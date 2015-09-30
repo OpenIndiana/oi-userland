@@ -16,12 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-video-ast
-COMPONENT_VERSION= 1.0.1
+COMPONENT_VERSION= 1.1.5
 COMPONENT_SUMMARY= xf86-video-ast - ASPEED AST driver for the Xorg X server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:e778f1824f5eed7e3197f00f39418de1525e310fd78e0335f6178c26b9b0495b
+  sha256:1edbbc55d47d3fd71dec99b15c2483e22738c642623a0fb86ef4a81a9067a2de
 COMPONENT_ARCHIVE_URL= \
   http://xorg.freedesktop.org/archive/individual/driver/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
