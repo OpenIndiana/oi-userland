@@ -109,7 +109,7 @@ CONFIGURE_OPTIONS += no-seed
 
 # Disable SSLv2 and SSLv3 protocols
 CONFIGURE_OPTIONS += no-ssl2
-CONFIGURE_OPTIONS += no-ssl3
+CONFIGURE_OPTIONS += no-ssl3 no-ssl3-method
 
 # We define our own compiler and linker option sets for Solaris. See Configure
 # for more information.

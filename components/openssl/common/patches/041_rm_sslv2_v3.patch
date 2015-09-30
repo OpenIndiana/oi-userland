@@ -18,7 +18,7 @@
  static void *dummy = &dummy;
  # endif
 --- openssl-1.0.1/ssl/s2_clnt.c      Fri May  8 09:37:51 2015
-+++ openssl-1.0.1/ssl/ss2_clnt.c.new       Fri May  8 09:53:12 2015
++++ openssl-1.0.1/ssl/s2_clnt.c.new       Fri May  8 09:53:12 2015
 @@ -1087,6 +1087,13 @@
  }
  #else                           /* !OPENSSL_NO_SSL2 */
@@ -83,6 +83,58 @@
  # ifndef OPENSSL_NO_SSL3_METHOD
  const SSL_METHOD *SSLv3_method(void); /* SSLv3 */
  const SSL_METHOD *SSLv3_server_method(void); /* SSLv3 */
+--- openssl/ssl/s3_meth.c.orig	Fri Sep 11 12:19:54 2015
++++ openssl/ssl/s3_meth.c	Fri Sep 11 12:22:24 2015
+@@ -71,4 +71,13 @@
+ 
+ IMPLEMENT_ssl3_meth_func(SSLv3_method,
+                          ssl3_accept, ssl3_connect, ssl3_get_method)
++#else	/* !OPENSSL_NO_SSL3_METHOD */
++
++/* stub function */
++const SSL_METHOD *
++SSLv3_method(void)
++{
++	return (NULL);
++}
++
+ #endif
+--- openssl/ssl/s3_clnt.c.orig	Fri Sep 11 12:21:09 2015
++++ openssl/ssl/s3_clnt.c	Fri Sep 11 12:24:31 2015
+@@ -184,6 +184,15 @@
+ IMPLEMENT_ssl3_meth_func(SSLv3_client_method,
+                          ssl_undefined_function,
+                          ssl3_connect, ssl3_get_client_method)
++#else	/* !OPENSSL_NO_SSL3_METHOD */
++
++/* stub function */
++const SSL_METHOD *
++SSLv3_client_method(void)
++{
++	return (NULL);
++}
++
+ #endif
+ int ssl3_connect(SSL *s)
+ {
+--- openssl/ssl/s3_srvr.c.orig	Fri Sep 11 12:21:18 2015
++++ openssl/ssl/s3_srvr.c	Fri Sep 11 12:24:15 2015
+@@ -184,6 +184,15 @@
+ IMPLEMENT_ssl3_meth_func(SSLv3_server_method,
+                          ssl3_accept,
+                          ssl_undefined_function, ssl3_get_server_method)
++#else	/* !OPENSSL_NO_SSL3_METHOD */
++
++/* stub function */
++const SSL_METHOD *
++SSLv3_server_method(void)
++{
++	return (NULL);
++}
++
+ #endif
+ #ifndef OPENSSL_NO_SRP
+ static int ssl_check_srp_ext_ClientHello(SSL *s, int *al)
 --- openssl-1.0.1/doc/ssl/SSL_CIPHER_get_name.pod	Tue May 26 11:13:15 2015
 +++ openssl-1.0.1/doc/ssl/SSL_CIPHER_get_name.pod.new	Tue May 26 11:32:09 2015
 @@ -25,7 +25,7 @@
