@@ -1,0 +1,63 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+#
+
+set name=pkg.fmri \
+    value=pkg:/system/management/puppet/puppet-memcached@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Memcached Puppet Module"
+set name=pkg.description \
+    value="The memcached module manages memcached via Puppet"
+set name=com.oracle.info.description value="Memcached Puppet Module"
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value="org.opensolaris.category.2008:System/Administration and Configuration" \
+    value="org.opensolaris.category.2008:System/Enterprise Management"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream value="OpenStack <openstack-dev@lists.openstack.org>"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2015/368
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+#
+file path=etc/puppet/modules/memcached/Gemfile
+file path=etc/puppet/modules/memcached/LICENSE
+file path=etc/puppet/modules/memcached/README-DEVELOPER
+file path=etc/puppet/modules/memcached/README.md
+file path=etc/puppet/modules/memcached/Rakefile
+file path=etc/puppet/modules/memcached/checksums.json
+file path=etc/puppet/modules/memcached/lib/puppet/parser/functions/memcached_max_memory.rb
+file path=etc/puppet/modules/memcached/manifests/init.pp
+file path=etc/puppet/modules/memcached/manifests/params.pp
+file path=etc/puppet/modules/memcached/metadata.json
+file path=etc/puppet/modules/memcached/spec/classes/memcached_spec.rb
+file path=etc/puppet/modules/memcached/spec/spec.opts
+file path=etc/puppet/modules/memcached/spec/spec_helper.rb
+file path=etc/puppet/modules/memcached/templates/memcached.conf.erb
+file path=etc/puppet/modules/memcached/templates/memcached_sysconfig.erb
+file path=etc/puppet/modules/memcached/templates/memcached_windows.erb
+file path=etc/puppet/modules/memcached/tests/init.pp
+#
+license saz-memcached.license license="Apache v2.0"
+
+# force a dependency on puppet-stdlib
+depend type=require fmri=system/management/puppet/puppet-stdlib

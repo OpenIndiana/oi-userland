@@ -1,0 +1,16 @@
+Patch to add a list of default Apache mods for Solaris.  This patch
+has not yet been submitted upstream.
+
+--- puppetlabs-apache-1.4.0/manifests/default_mods.pp.orig	2015-06-08 14:01:18.373054664 -0600
++++ puppetlabs-apache-1.4.0/manifests/default_mods.pp	2015-06-08 14:01:47.911393573 -0600
+@@ -22,6 +22,10 @@ class apache::default_mods (
+       ::apache::mod { 'log_config': }
+       ::apache::mod { 'unixd': }
+     }
++    'solaris': {
++      ::apache::mod { 'log_config': }
++      ::apache::mod { 'unixd': }
++    }
+     default: {}
+   }
+   case $::osfamily {

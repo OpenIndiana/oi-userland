@@ -1,0 +1,19 @@
+Patch to add Solaris support.  This patch has not yet been submitted
+upstream.
+
+--- puppetlabs-rabbitmq-3.1.0/manifests/params.pp.orig	2015-04-23 13:55:03.123169856 -0600
++++ puppetlabs-rabbitmq-3.1.0/manifests/params.pp	2015-04-23 13:57:16.271618071 -0600
+@@ -32,6 +32,13 @@ class rabbitmq::params {
+       # This must remain at the end as we need $base_version and $version defined first.
+       $package_source   = "http://www.rabbitmq.com/releases/rabbitmq-server/v${base_version}/rabbitmq-server-${version}.noarch.rpm"
+     }
++    'Solaris': {
++      $package_ensure   = 'installed'
++      $package_name     = 'network/amqp/rabbitmq'
++      $service_name     = 'application/rabbitmq:default'
++      $package_provider = 'pkg'
++      $version          = '3.1.3'
++    }
+     default: {
+       fail("The ${module_name} module is not supported on an ${::osfamily} based system.")
+     }

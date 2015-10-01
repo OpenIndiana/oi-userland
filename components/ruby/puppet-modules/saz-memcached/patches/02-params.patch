@@ -1,0 +1,24 @@
+Patch to add Solaris support.  This patch has not yet been submitted
+upstream.
+
+--- saz-memcached-2.7.1/manifests/params.pp.orig	2015-04-23 15:28:05.970302743 -0600
++++ saz-memcached-2.7.1/manifests/params.pp	2015-04-23 15:32:28.863884307 -0600
+@@ -38,6 +38,18 @@ class memcached::params {
+       $logfile           = undef
+       $use_registry      = true
+     }
++    'Solaris': {
++      $package_name      = 'service/memcached'
++      $package_provider  = 'pkg'
++      $service_name      = 'application/database/memcached:default'
++      $service_hasstatus = false
++      $dev_package_name  = undef
++      $config_file       = '/etc/memcached.conf'
++      $config_tmpl       = "${module_name}/memcached.conf.erb"
++      $user              = 'root'
++      $logfile           = undef
++      $use_registry      = false
++    }
+     default: {
+       case $::operatingsystem {
+         'Amazon': {

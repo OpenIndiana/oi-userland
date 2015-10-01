@@ -1,0 +1,14 @@
+In-house patch to change the path for Solaris to find install_db.
+This patch is not suitable for upstream.
+
+--- puppetlabs-mysql-3.6.0/manifests/server/installdb.pp.orig	2015-08-04 09:50:53.470952177 -0700
++++ puppetlabs-mysql-3.6.0/manifests/server/installdb.pp	2015-08-04 09:51:21.619646340 -0700
+@@ -18,7 +18,7 @@ class mysql::server::installdb {
+       command   => "mysql_install_db ${install_db_args}",
+       creates   => "${datadir}/mysql",
+       logoutput => on_failure,
+-      path      => '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin',
++      path      => '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:/usr/mysql/5.5/bin',
+       require   => Package['mysql-server'],
+     }
+ 

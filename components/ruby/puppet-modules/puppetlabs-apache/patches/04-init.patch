@@ -1,0 +1,18 @@
+Patch to add Solaris specific elements to the main Apache
+configuration file.  This patch has not yet been submitted upstream.
+
+--- puppetlabs-apache-1.4.0/manifests/init.pp.orig	2015-06-03 13:46:16.375098644 -0600
++++ puppetlabs-apache-1.4.0/manifests/init.pp	2015-06-03 13:46:39.983927244 -0600
+@@ -281,6 +281,12 @@ class apache (
+           require => Package['httpd'],
+         }
+       }
++      'solaris': {
++        $pidfile              = '/system/volatile/apache2/2.4/httpd.pid'
++        $error_log            = 'error_log'
++        $scriptalias          = '/var/apache2/2.4/cgi-bin/'
++        $access_log_file      = 'access_log'
++      }
+       default: {
+         fail("Unsupported osfamily ${::osfamily}")
+       }
