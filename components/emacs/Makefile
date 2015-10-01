@@ -206,7 +206,8 @@ test:		$(NO_TESTS)
 
 system-test:    $(NO_TESTS)
 
-
+# Desktop packages differ slightly between S11 & S12: list union to allow
+# for BUILD_TYPE=evaluation and normal builds.
 REQUIRED_PACKAGES += editor/gnu-emacs
 REQUIRED_PACKAGES += file/gnu-findutils
 REQUIRED_PACKAGES += gnome/config/gconf
@@ -217,6 +218,7 @@ REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
