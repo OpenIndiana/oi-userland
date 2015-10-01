@@ -82,7 +82,10 @@ install:	$(INSTALL_64)
 test:		$(TEST_64)
 system-test:	$(SYSTEM_TEST_64)
 
+# The desktop packages differ between S11 and S12; list both for normal
+# and BUILD_TYPE=evaluation builds.
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/gc
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/security/openssl
