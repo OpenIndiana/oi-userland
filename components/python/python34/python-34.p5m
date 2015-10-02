@@ -20,6 +20,12 @@
 #
 # Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
+# bootstrap: pkgdepend doesn't like python 3.4 yet:
+# 19510349 pkgdepend needs to be PEP 3149 aware
+# fixed in S12 but not back-ported to 11.3
+<transform file path=.+\.py$ -> default pkg.depend.bypass-generate .* >
+
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 <transform file path=.*/(idle_)?tests?/.* -> default facet.optional.test true>
 set name=pkg.fmri \
@@ -1354,8 +1360,10 @@ file path=usr/lib/python3.4/test/randv2_32.pck
 file path=usr/lib/python3.4/test/randv2_64.pck
 file path=usr/lib/python3.4/test/randv3.pck
 file path=usr/lib/python3.4/test/re_tests.py
-file path=usr/lib/python3.4/test/regrtest.py \
-    pkg.depend.bypass-generate=.*/msvcrt.*
+#XXX fix for 19510349 needed
+#file path=usr/lib/python3.4/test/regrtest.py
+#    pkg.depend.bypass-generate=.*/msvcrt.*
+file path=usr/lib/python3.4/test/regrtest.py pkg.depend.bypass-generate=.*
 file path=usr/lib/python3.4/test/relimport.py
 file path=usr/lib/python3.4/test/reperf.py
 file path=usr/lib/python3.4/test/revocation.crl
