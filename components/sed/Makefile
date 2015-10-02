@@ -53,6 +53,17 @@ COMPONENT_TEST_TRANSFORMS += \
     '-e "s|^/usr/gnu/bin/make.*$$|XXX_CC_XXX|g" ' \
     '-e "/^XXX_CC_XXX$$/d" '
 
+# Modify test results for system-test
+COMPONENT_PRE_SYSTEM_TEST_ACTION += \
+	($(GSED) -i -e "s|../sed/sed|/usr/gnu/bin/sed|" \
+                $(@D)/testsuite/version.good) ;
+COMPONENT_PRE_SYSTEM_TEST_ACTION += \
+	($(GSED) -i -e "s|../sed/sed|/usr/gnu/bin/sed|" \
+                $(SOURCE_DIR)/testsuite/eval.good) ;
+COMPONENT_PRE_SYSTEM_TEST_ACTION += \
+	($(GSED) -i -e "s|../sed/sed|/usr/gnu/bin/sed|" \
+                $(SOURCE_DIR)/testsuite/eval.sed) ;
+
 COMPONENT_SYSTEM_TEST_ENV +=	SED=/usr/gnu/bin/sed
 COMPONENT_SYSTEM_TEST_ENV +=	PATH="$(GNUBIN):$(PATH)"
 COMPONENT_SYSTEM_TEST_DIR =	$(@D)/testsuite
