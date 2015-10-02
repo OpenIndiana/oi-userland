@@ -1,8 +1,8 @@
 This patch modifies the setup script to support Solaris.
 As it is Solaris-specific, it is not suitable for upstream.
 
---- Python-3.4.2/setup.py.~2~	2015-02-09 18:43:32.656965175 -0800
-+++ Python-3.4.2/setup.py	2015-02-09 19:28:55.015474602 -0800
+--- Python-3.4.3/setup.py.~2~	2015-03-16 12:52:28.721744829 -0700
++++ Python-3.4.3/setup.py	2015-03-16 12:58:55.474886590 -0700
 @@ -447,12 +447,15 @@
              os.unlink(tmpfile)
  
@@ -38,7 +38,17 @@ As it is Solaris-specific, it is not suitable for upstream.
              exts.append( Extension('readline', ['readline.c'],
                                     library_dirs=['/usr/lib/termcap'],
                                     extra_link_args=readline_extra_link_args,
-@@ -1295,6 +1305,8 @@
+@@ -759,7 +769,8 @@
+ 
+         # socket(2)
+         exts.append( Extension('_socket', ['socketmodule.c'],
+-                               depends = ['socketmodule.h']) )
++                               depends = ['socketmodule.h'],
++                               libraries = ['socket', 'nsl']) )
+         # Detect SSL support for the socket module (via _ssl)
+         search_for_ssl_incs_in = [
+                               '/usr/local/ssl/include',
+@@ -1295,6 +1306,8 @@
              curses_defines.append(('_XOPEN_SOURCE_EXTENDED', '1'))
  
          if curses_library.startswith('ncurses'):
@@ -47,7 +57,7 @@ As it is Solaris-specific, it is not suitable for upstream.
              curses_libs = [curses_library]
              exts.append( Extension('_curses', ['_cursesmodule.c'],
                                     include_dirs=curses_includes,
-@@ -1319,10 +1331,32 @@
+@@ -1319,10 +1332,32 @@
          # If the curses module is enabled, check for the panel module
          if (module_enabled(exts, '_curses') and
              self.compiler.find_library_file(lib_dirs, panel_library)):
@@ -81,7 +91,7 @@ As it is Solaris-specific, it is not suitable for upstream.
          else:
              missing.append('_curses_panel')
  
-@@ -1918,7 +1952,7 @@
+@@ -1918,7 +1953,7 @@
              # this option. If you want to compile ctypes with the Sun
              # compiler, please research a proper solution, instead of
              # finding some -z option for the Sun compiler.
