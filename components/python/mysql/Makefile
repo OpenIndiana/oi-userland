@@ -69,5 +69,6 @@ test:		$(NO_TESTS)
 system-test:    $(NO_TESTS)
 
 
+REQUIRED_PACKAGES += database/mysql-55
 REQUIRED_PACKAGES += database/mysql-55/library
 REQUIRED_PACKAGES += system/library

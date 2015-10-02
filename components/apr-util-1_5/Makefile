@@ -89,9 +89,10 @@ test: $(TEST_32_and_64)
 system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
 
-REQUIRED_PACKAGES += developer/documentation-tool/doxygen
+REQUIRED_PACKAGES += database/mysql-55
 REQUIRED_PACKAGES += database/mysql-55/library
 REQUIRED_PACKAGES += database/sqlite-3
+REQUIRED_PACKAGES += developer/documentation-tool/doxygen
 REQUIRED_PACKAGES += library/apr-15
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/openldap

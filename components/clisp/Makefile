@@ -135,3 +135,4 @@ REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += text/groff/groff-core

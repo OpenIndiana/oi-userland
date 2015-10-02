@@ -123,8 +123,9 @@ install:		$(INSTALL_64)
 $(SKIP_TEST_AT_TOP_LEVEL)
 test:			$(TEST_64)
 
-REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += developer/icu
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math

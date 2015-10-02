@@ -156,10 +156,11 @@ system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
 
 
+REQUIRED_PACKAGES += database/berkeleydb-5
 REQUIRED_PACKAGES += developer/lexer/flex
 REQUIRED_PACKAGES += developer/parser/bison
-REQUIRED_PACKAGES += database/berkeleydb-5
 REQUIRED_PACKAGES += library/database/gdbm
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/linker
+REQUIRED_PACKAGES += text/groff/groff-core

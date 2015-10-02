@@ -122,3 +122,4 @@ REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
 REQUIRED_PACKAGES += system/library/security/gss
 REQUIRED_PACKAGES += system/linker
+REQUIRED_PACKAGES += text/groff/groff-core

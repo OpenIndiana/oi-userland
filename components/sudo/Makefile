@@ -104,7 +104,8 @@ test:		$(TEST_64)
 system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
 
-REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += library/openldap
+REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/crypto
+REQUIRED_PACKAGES += text/groff/groff-core
