@@ -1,0 +1,24 @@
+Patch to allow us to specify an alternate pixz binary when running tests.
+
+This patch should be sent upstream.
+
+--- pixz-1.0/test.sh.orig	2015-10-01 05:53:31.844847241 -0700
++++ pixz-1.0/test.sh	2015-10-01 06:03:39.267035275 -0700
+@@ -3,13 +3,15 @@
+ tarball=$1
+ sample=$2
+ 
++PIXZ="${PIXZ_BIN:-./pixz}"
++
+ echo XZ
+ time xz -c < "$tarball" > test.txz
+ time xz -cd < test.txz | tar xO "$sample" | md5sum
+ 
+ echo; echo; echo PIXZ
+-time ./pixz < "$tarball" > test.tpxz
+-time ./pixz -x "$sample" < test.tpxz | tar xO "$sample" | md5sum
++time $PIXZ < "$tarball" > test.tpxz
++time $PIXZ -x "$sample" < test.tpxz | tar xO "$sample" | md5sum
+ 
+ echo; echo; echo CROSS
+ xz -cd < test.tpxz | tar xO "$sample" | md5sum

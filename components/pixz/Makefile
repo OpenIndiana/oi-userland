@@ -53,16 +53,37 @@ COMPONENT_BUILD_ARGS += MYLDFLAGS='$(patsubst %,-L%/lib,$(LIBPREFIX)) $(OPT)'
 COMPONENT_BUILD_ARGS += CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ARGS += LDFLAGS="$(CC_BITS)"
 
+# Create a small testball to use with the test script.
+COMPONENT_PRE_TEST_ACTION = \
+	(cd $(@D); tar cvf pixz-test-tarball.tar  *.c *.o)
+COMPONENT_PRE_SYSTEM_TEST_ACTION = \
+	(cd $(@D); tar cvf pixz-test-tarball.tar  *.c *.o)
+
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "/^real/d" ' \
+	'-e "/^user/d" ' \
+	'-e "/^sys/d" '
+
+COMPONENT_TEST_ENV =		PATH=$(GNUBIN):$(PATH)
+COMPONENT_TEST_CMD =		$(SOURCE_DIR)/test.sh
+COMPONENT_TEST_ARGS =		pixz-test-tarball.tar pixz.c
+COMPONENT_TEST_TARGETS =
+
+COMPONENT_SYSTEM_TEST_ENV =	PATH=$(GNUBIN):$(PATH)
+COMPONENT_SYSTEM_TEST_ENV +=	PIXZ_BIN=/usr/bin/pixz
+COMPONENT_SYSTEM_TEST_CMD =	$(SOURCE_DIR)/test.sh
+COMPONENT_SYSTEM_TEST_ARGS =	pixz-test-tarball.tar pixz.c
+COMPONENT_SYSTEM_TEST_TARGETS =
+
 ASLR_MODE = $(ASLR_ENABLE)
 
-# common targets
 build:		$(BUILD_64)
 
 install:	$(BUILD_64)
 
-test:		$(NO_TESTS)
+test:		$(TEST_64)
 
-system-test:    $(NO_TESTS)
+system-test:    build $(SYSTEM_TEST_64)
 
 
 REQUIRED_PACKAGES += compress/xz
