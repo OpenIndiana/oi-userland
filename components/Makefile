@@ -129,17 +129,18 @@ $(COMPONENT_DIRS):	$(WS_LOGS) setup FORCE
 	 $(BASS_O_MATIC) $(TEMPLATE_ZONE:%=--template-zone %) \
 			 $(@:%=--component %) --make $(TARGET) $(LOG)
 
+incorporation:
+	$(WS_TOOLS)/userland-incorporator --repository $(PKG_REPO) \
+	  --version=0.$(OS_VERSION),$(BUILD_VERSION) -p $(PUBLISHER) \
+	  -c $(CONSOLIDATION) --destdir=$(WS_MACH) $(INCORPORATE_WERROR)
+	for incorporation in $(WS_MACH)/*.p5m ; do \
+	    $(PKGSEND) -s $(PKG_REPO) publish --fmri-in-manifest \
+	               $${incorporation} ; \
+	done
+
+
 publish:
-	$(PKGREPO) rebuild -s $(PKG_REPO)
-# No need for userland incorporation on OI
-#	$(WS_TOOLS)/userland-incorporator --repository $(PKG_REPO) \
-#	  -p pkg:/consolidation/$(CONSOLIDATION)/$(CONSOLIDATION)-incorporation@0.$(OS_VERSION),$(BUILD_VERSION) \
-#	  -s "$(CONSOLIDATION) consolidation incorporation" \
-#	  -d "This incorporation constrains packages from the $(CONSOLIDATION) consolidation" \
-#	  -c $(CONSOLIDATION) >$(WS_LOGS)/$(CONSOLIDATION)-incorporation.p5m
-#	$(PKGSEND) -s $(PKG_REPO) publish --fmri-in-manifest \
-#	  $(WS_LOGS)/$(CONSOLIDATION)-incorporation.p5m
-# pkglint all of the published manifests in one batch.
+	$(PKGREPO) refresh -s $(PKG_REPO)
 ifdef CANONICAL_REPO
 	@echo 'pkglinting all package manifests...'
 	@$(ENV) PYTHONPATH=$(WS_TOOLS)/python $(PKGLINT) \
