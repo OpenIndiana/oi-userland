@@ -46,13 +46,15 @@ export WS_TOP := \
 	$(shell hg root 2>/dev/null || git rev-parse --show-toplevel)
 endif
 
-WS_LOGS =	$(WS_TOP)/$(MACH)/logs
-WS_REPO =	$(WS_TOP)/$(MACH)/repo
-WS_TOOLS =	$(WS_TOP)/tools
-WS_MAKE_RULES =	$(WS_TOP)/make-rules
-WS_COMPONENTS =	$(WS_TOP)/components
-WS_INCORPORATIONS =	$(WS_TOP)/incorporations
-WS_LINT_CACHE =	$(WS_TOP)/$(MACH)/pkglint-cache
+WS_MACH =       $(WS_TOP)/$(MACH)
+WS_LOGS =       $(WS_MACH)/logs
+WS_REPO =       $(WS_MACH)/repo
+WS_TOOLS =      $(WS_TOP)/tools
+WS_MAKE_RULES = $(WS_TOP)/make-rules
+WS_COMPONENTS = $(WS_TOP)/components
+WS_LICENSES =   $(WS_TOP)/licenses
+WS_INCORPORATIONS =     $(WS_TOP)/incorporations
+WS_LINT_CACHE = $(WS_MACH)/pkglint-cache
 
 # we want our pkg piplines to fail if there is an error
 # (like if pkgdepend fails in the middle of a pipe), but
