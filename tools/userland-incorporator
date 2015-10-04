@@ -91,6 +91,7 @@ def get_incorporations(repository, publisher, inc_version='5.11'):
                            stdout=subprocess.PIPE)
     incorporations = {}
     packages = json.load(tmp.stdout)
+    inc_name='consolidation/userland/userland-incorporation'
 
     # Check for multiple versions of packages in the repo, but keep track of
     # the latest one.
@@ -109,14 +110,14 @@ def get_incorporations(repository, publisher, inc_version='5.11'):
         pkg_version = package['version']
 
         # skip older packages and those that explicitly don't want to be incorporated
-	if 'pkg.tmp.noincorporate' in package or pkg_version != versions[pkg_name]:
+	# also skip the incorporation itself
+	if 'pkg.tmp.noincorporate' in package or pkg_version != versions[pkg_name] or pkg_name == inc_name:
             continue
 
 	# We don't want to support multiple incorporations for now
         # a dict inside a list inside a dict
         # incorporate = package['pkg.tmp.incorporate'][0]['value']
         
-        inc_name='consolidation/userland/userland-incorporation'
         # for inc_name in incorporate:
             # if we haven't started to build this incorporation, create one.
         if inc_name not in incorporations:
