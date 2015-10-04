@@ -31,6 +31,7 @@ import sys
 import getopt
 import re
 import os.path
+from pkg.version import Version
 
 Werror = False	# set to true to exit with any warning
 
@@ -102,7 +103,8 @@ def get_incorporations(repository, publisher, inc_version='5.11'):
 
         if pkg_name in versions:
             warning("%s is in the repo at multiple versions (%s, %s)" % (pkg_name, pkg_version, versions[pkg_name]))
-            pkg_version = max(pkg_version, versions[pkg_name])
+            if(Version(package['version']) < Version(versions[pkg_name])):
+               pkg_version = versions[pkg_name]
         versions[pkg_name] = pkg_version
 
     for package in packages:
