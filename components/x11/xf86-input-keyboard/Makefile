@@ -16,12 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-input-keyboard
-COMPONENT_VERSION= 1.8.0
+COMPONENT_VERSION= 1.8.1
 COMPONENT_SUMMARY= xf86-input-keyboard - Keyboard input driver for the Xorg X server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:41c51c4e0a87aad6a1c4973c68a8de23b61162d0223f4ab36c627c307830cb5b
+  sha256:1ac8ff39bf9da7d2fc7fd6c24515726e8138340c0518ab8c606e008cf93ca211
 COMPONENT_ARCHIVE_URL= \
   http://xorg.freedesktop.org/archive/individual/driver/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
