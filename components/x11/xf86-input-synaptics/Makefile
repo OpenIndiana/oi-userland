@@ -16,12 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-input-synaptics
-COMPONENT_VERSION= 1.8.1
+COMPONENT_VERSION= 1.8.2
 COMPONENT_SUMMARY= xf86-input-synaptics - Synaptics touchpad driver for X.Org
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:d74fdaf29e9888a2cb494e16d0a9ddb24265c5c765b05392b69c50e84ffbf09a
+  sha256:7b0e164ebd02a680e0c695955e783059f37edb0c2656398e0a972adc8e698c80
 COMPONENT_ARCHIVE_URL= \
   http://xorg.freedesktop.org/archive/individual/driver/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
