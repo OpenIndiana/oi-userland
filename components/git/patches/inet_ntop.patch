@@ -1,0 +1,25 @@
+This patch was developed in-house and is planned to be contributed upstream
+(it is still needed for version 2.6.1).
+
+--- git-1.7.9.2/git-compat-util.h.~1~	2015-09-24 16:14:32.844686777 -0700
++++ git-1.7.9.2/git-compat-util.h	2015-09-24 16:13:05.181990467 -0700
+@@ -418,7 +418,7 @@
+ #endif
+ 
+ #ifdef NO_INET_NTOP
+-const char *inet_ntop(int af, const void *src, char *dst, size_t size);
++const char *inet_ntop(int af, const void *src, char *dst, socklen_t size);
+ #endif
+ 
+ extern void release_pack_memory(size_t, int);
+--- git-1.7.9.2/compat/inet_ntop.c.~1~	2015-09-24 16:16:58.256287899 -0700
++++ git-1.7.9.2/compat/inet_ntop.c	2015-09-24 16:17:19.386385899 -0700
+@@ -168,7 +168,7 @@
+  *	Paul Vixie, 1996.
+  */
+ const char *
+-inet_ntop(int af, const void *src, char *dst, size_t size)
++inet_ntop(int af, const void *src, char *dst, socklen_t size)
+ {
+ 	switch (af) {
+ 	case AF_INET:
