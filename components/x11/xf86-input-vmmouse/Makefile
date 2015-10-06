@@ -16,12 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-input-vmmouse
-COMPONENT_VERSION= 13.0.0
+COMPONENT_VERSION= 13.1.0
 COMPONENT_SUMMARY= xf86-input-vmmouse - VMWare guest mouse input driver for the Xorg X server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:04cfb60366008d4db815c550d8fb8d0a4270c75fa7a20fa3bddc9ecbd355612c
+  sha256:0af558957ac1be1b2863712c2475de8f4d7f14921fd01ded2e2fde4921b19319
 COMPONENT_ARCHIVE_URL= \
   http://xorg.freedesktop.org/archive/individual/driver/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
@@ -43,6 +43,8 @@ CONFIGURE_BINDIR.64=/usr/lib/xorg/$(MACH64)
 CONFIGURE_OPTIONS += --with-hal-bin-dir=/usr/sbin
 CONFIGURE_OPTIONS += --with-hal-callouts-dir=$(HAL_CALLOUTS_DIR.$(BITS))
 CONFIGURE_OPTIONS += --with-hal-fdi-dir=/etc/hal/fdi/policy/10osvendor
+CONFIGURE_OPTIONS += --without-libudev
+CONFIGURE_OPTIONS += --with-udev-rules-dir=no
 
 build: $(BUILD_32_and_64)
 
