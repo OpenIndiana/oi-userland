@@ -290,6 +290,18 @@ def mangle_manifest(manifest):
 		for action in manifest.gen_actions_by_type("license"):
 			manifest.actions.remove(action)
 
+	# Check for pkg.obsolete and if found, remove any depend actions.
+	manifest_is_obsolete = False
+
+	for action in manifest.gen_actions_by_type("set"):
+		if (action.attrs["name"] == "pkg.obsolete" and
+		    action.attrs["value"] == "true"):
+			manifest_is_obsolete = True
+
+	if manifest_is_obsolete:
+		for action in manifest.gen_actions_by_type("depend"):
+			manifest.actions.remove(action)
+
 def load_manifest(manifest_file):
 	manifest = pkg.manifest.Manifest()
 	manifest.set_content(pathname=manifest_file)
