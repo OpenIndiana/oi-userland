@@ -14,15 +14,6 @@
  
  #define SUBPIXEL_X 0.125
  #define SUBPIXEL_Y 0.125
-@@ -301,7 +305,7 @@
-  * than COPY_DWORDS would:
-  * XXX Put this in src/mesa/main/imports.h ???
-  */
--#if defined(i386) || defined(__i386__)
-+#if (defined(i386) || defined(__i386__)) && !(defined(__SOLARIS__) || defined(sun))
- static INLINE void * __memcpy(void * to, const void * from, size_t n)
- {
-    int d0, d1, d2;
 --- src/mesa/drivers/dri/common/dri_util.h	Thu Sep  6 08:33:58 2012
 +++ src/mesa/drivers/dri/common/dri_util.h	Thu Sep  6 08:37:46 2012
 @@ -58,6 +58,11 @@
@@ -128,15 +119,3 @@
 +   intel->batch.reserved_space = 4096;
     intel->batch.used = 0;
  }
- 
---- src/util/strtod.cpp.1	2015-02-19 13:54:25.905750416 +0300
-+++ src/util/strtod.cpp	2015-02-19 13:55:48.189629681 +0300
-@@ -65,7 +65,7 @@
- float
- _mesa_strtof(const char *s, char **end)
- {
--#if defined(_GNU_SOURCE) && defined(HAVE_XLOCALE_H)
-+#if defined(_GNU_SOURCE) && defined(HAVE_XLOCALE_H) && !defined(__sun__)
-    return strtof_l(s, end, loc_init.loc);
- #elif defined(HAVE_STRTOF)
-    return strtof(s, end);

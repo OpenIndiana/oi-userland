@@ -11,17 +11,18 @@
 
 #
 # Copyright 2015 Alexander Pyhalov
+# Copyright 2015 Ken Mays
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= mesa
-COMPONENT_VERSION= 10.5.9
+COMPONENT_VERSION= 11.0.2
 COMPONENT_SUMMARY= The Mesa 3-D Graphics Library
 COMPONENT_SRC= mesa-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= mesa-$(COMPONENT_VERSION).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:71c69f31d3dbc35cfa79950e58a01d27030378d8c7ef1259a0b31d4d0487f4ec
+  sha256:fce11fb27eb87adf1e620a76455d635c6136dfa49ae58c53b34ef8d0c7b7eae4
 COMPONENT_ARCHIVE_URL= \
   ftp://ftp.freedesktop.org/pub/mesa/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.mesa3d.org/
@@ -65,12 +66,13 @@ DRI_DRIVER_LIST=i915 i965 r200 radeon swrast
 
 # Command line options to GNU autoconf configure script
 CONFIGURE_OPTIONS += --with-dri-driverdir='$(X11_SERVERMODS_DIR)/dri$(SERVERMOD_SUBDIR)'
-CONFIGURE_OPTIONS += --with-driver=dri
 CONFIGURE_OPTIONS += --with-dri-drivers='$(DRI_DRIVER_LIST)'
 CONFIGURE_OPTIONS += --disable-gallium-llvm
 CONFIGURE_OPTIONS += --disable-egl 
-CONFIGURE_OPTIONS += --disable-gallium
 CONFIGURE_OPTIONS += --with-gallium-drivers=
+CONFIGURE_OPTIONS += --enable-shared-glapi
+CONFIGURE_OPTIONS += --enable-texture-float
+CONFIGURE_OPTIONS += --enable-osmesa
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 
 CONFIGURE_ENV+=PYTHON=$(PYTHON)
