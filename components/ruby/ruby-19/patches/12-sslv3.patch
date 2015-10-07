@@ -1,0 +1,25 @@
+Fix based on changes from upstream Ruby 2.2.3 trunk:
+https://github.com/ruby/ruby/commit/801e1fe46d83c856844ba18ae4751478c59af0d1#diff-86486e0194e938f8d5bc4f00dce7d99a
+to fix issue 11376 Stop using SSLv3 methods:
+https://bugs.ruby-lang.org/issues/11376
+
+However, we do not include changes to extconf.rb that check for
+the SSLv3_* methods and set the HAVE_SSLV3*METHOD macros;
+in openssl on Solaris these methods are defined 
+as stub functions.
+
+--- ruby-1.9.3-p551-orig/ext/openssl/ossl_ssl.c	2013-05-13 19:35:39.000000000 -0700
++++ ruby-1.9.3-p551/ext/openssl/ossl_ssl.c	2015-10-06 14:27:11.176975409 -0700
+@@ -113,9 +113,12 @@ struct {
+     OSSL_SSL_METHOD_ENTRY(SSLv2_server),
+     OSSL_SSL_METHOD_ENTRY(SSLv2_client),
+ #endif
++#if defined(HAVE_SSLV3_METHOD) && defined(HAVE_SSLV3_SERVER_METHOD) && \
++defined(HAVE_SSLV3_CLIENT_METHOD)
+     OSSL_SSL_METHOD_ENTRY(SSLv3),
+     OSSL_SSL_METHOD_ENTRY(SSLv3_server),
+     OSSL_SSL_METHOD_ENTRY(SSLv3_client),
++#endif
+     OSSL_SSL_METHOD_ENTRY(SSLv23),
+     OSSL_SSL_METHOD_ENTRY(SSLv23_server),
+     OSSL_SSL_METHOD_ENTRY(SSLv23_client),
