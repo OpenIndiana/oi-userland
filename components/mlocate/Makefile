@@ -48,21 +48,35 @@ CONFIGURE_OPTIONS += --sysconfdir="/etc"
 COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -f && automake)
 COMPONENT_POST_INSTALL_ACTION= \
     @$(MKDIR) -p $(PROTO_DIR)/etc/; \
-    $(CP) files/updatedb.conf $(PROTO_DIR)/etc/ 
+    $(CP) files/updatedb.conf $(PROTO_DIR)/etc/
 
-# Enable aslr for this component
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s|^make.*: Leaving directory.*$$|XXX_REMOVE_XXX|g" ' \
+	'-e "s|^make.*: Entering directory.*$$|XXX_REMOVE_XXX|g" ' \
+	'-e "s|^make.*: Nothing to be.*$$|XXX_REMOVE_XXX|g" ' \
+	'-e "s|^/usr/gnu/bin/make.*$$|XXX_REMOVE_XXX|g" ' \
+	'-e "/^XXX_REMOVE_XXX$$/d" '
+
+COMPONENT_TEST_ENV +=		PATH="$(@D)/src:$(USRBINDIR):$(USRSBINDIR)"
+COMPONENT_TEST_CMD =		$(SOURCE_DIR)/tests/testsuite
+COMPONENT_TEST_TARGETS =
+
+COMPONENT_SYSTEM_TEST_ENV +=	PATH="$(USRBINDIR):$(USRSBINDIR)"
+COMPONENT_SYSTEM_TEST_CMD =	$(SHELL) $(SOURCE_DIR)/tests/testsuite
+COMPONENT_SYSTEM_TEST_ARGS =	AUTOTEST_PATH=$(USRBINDIR):$(USRSBINDIR)
+COMPONENT_SYSTEM_TEST_TARGETS =
+
 ASLR_MODE = $(ASLR_ENABLE)
 
-# common targets
 configure:	$(CONFIGURE_64)
 
-build:		$(BUILD_64) 
+build:		$(BUILD_64)
 
-install:	$(INSTALL_64) 
-		
-test:		$(NO_TESTS)
+install:	$(INSTALL_64)
 
-system-test:    $(NO_TESTS)
+test:		$(TEST_64)
+
+system-test:    configure $(SYSTEM_TEST_64)
 
 
 REQUIRED_PACKAGES += system/library
