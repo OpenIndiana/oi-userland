@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
@@ -121,6 +121,10 @@ file path=usr/lib/python$(PYVER)/vendor-packages/dns/wiredata.py
 file path=usr/lib/python$(PYVER)/vendor-packages/dns/zone.py
 file path=usr/lib/python$(PYVER)/vendor-packages/dnspython-$(COMPONENT_VERSION)-py$(PYVER).egg-info
 license LICENSE license=BSD-like
+
+# force a dependency on the Python runtime
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
 
 # force a dependency on the dnspython package
 depend type=require \
