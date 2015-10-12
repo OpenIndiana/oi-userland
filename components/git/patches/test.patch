@@ -1,0 +1,40 @@
+A couple of tests need patching:
+
+  - There's a garbled sed command in the clone tests, which works for GNU
+    sed, but not for Solaris.
+
+  - Because we're doing the build in a symlink farm, one of the diff tests
+    thinks that we're changing the type of the files from symlink to file,
+    so the diffs come out wrong.  Rather than cleverly mucking around with
+    the working directory vs the repo directory, we just cat the files as
+    real files into place.
+
+The first patch is probably fine for upstream; the latter perhaps less so.
+
+--- git-2.4.5/t/t5601-clone.sh	Thu Jun 25 12:15:40 2015
++++ git-2.4.5/t/t5601-clone.sh	Thu Jul  2 12:35:08 2015
+@@ -445,7 +445,7 @@
+ #IPv6
+ for tuah in ::1 [::1] [::1]: user@::1 user@[::1] user@[::1]: [user@::1] [user@::1]:
+ do
+-	ehost=$(echo $tuah | sed -e "s/1]:/1]/ "| tr -d "[]")
++	ehost=$(echo $tuah | sed -e "s/1]:/1]/" | tr -d "[]")
+ 	test_expect_success "clone ssh://$tuah/home/user/repo" "
+ 	  test_clone_url ssh://$tuah/home/user/repo $ehost /home/user/repo
+ 	"
+--- git-2.4.5/t/t4018-diff-funcname.sh	Thu Jun 25 12:15:40 2015
++++ git-2.4.5/t/t4018-diff-funcname.sh	Thu Jul  2 14:11:09 2015
+@@ -79,8 +79,11 @@
+ 
+ 	# add all test files to the index
+ 	(
+-		cd "$TEST_DIRECTORY"/t4018 &&
+-		git --git-dir="$TRASH_DIRECTORY/.git" add .
++		( cd "$TEST_DIRECTORY"/t4018 && printf "%s\n" * ) | while read f
++		do
++			cat "$TEST_DIRECTORY"/t4018/$f > $f
++			git add -v $f
++		done
+ 	) &&
+ 
+ 	# place modified files in the worktree

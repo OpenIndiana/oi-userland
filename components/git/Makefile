@@ -18,29 +18,32 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		git
-COMPONENT_VERSION=	1.7.9.2
+COMPONENT_VERSION=	2.6.1
 COMPONENT_PROJECT_URL=	http://git-scm.com/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:bd7725fb80f305bf27666e3d26a9b7b79596e2248f2ae2d27e06bc15a501ac75
-COMPONENT_ARCHIVE_URL=	http://git-core.googlecode.com/files/$(COMPONENT_ARCHIVE)
+    sha256:fc7c727745d5eb0d796a16dc7c4b999c184830110e0aeb592c788597cc8e9ccd
+COMPONENT_ARCHIVE_URL=	https://www.kernel.org/pub/software/scm/git/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/git
 
-TPNO=			8436
+TPNO=			24887
 
 #
 # man pages are a separate archive
 #
-COMPONENT_ARCHIVE_1 =	$(COMPONENT_NAME)-manpages-$(COMPONENT_VERSION).tar.gz
+COMPONENT_ARCHIVE_1 =	$(COMPONENT_NAME)-manpages-$(COMPONENT_VERSION).tar.xz
 COMPONENT_ARCHIVE_HASH_1 = \
-    sha256:c653a3678bb5668c280a0d5ba584fdfb0e4272acbbd00901dc2363ea3f58eede
-COMPONENT_ARCHIVE_URL_1 = http://git-core.googlecode.com/files/$(COMPONENT_ARCHIVE_1)
+    sha256:e4cf64edcecd284d9ef4e6ca7fa0e8556d2414b5d9881a9abfe477f95b416391
+COMPONENT_ARCHIVE_URL_1 = https://www.kernel.org/pub/software/scm/git/$(COMPONENT_ARCHIVE_1)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -48,25 +51,32 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PYTHON_VERSION =	2.7
 
+PKG_HARDLINKS +=	usr/lib/git-core/git-cherry-pick
+PKG_HARDLINKS +=	usr/lib/git-core/git-remote-ftps
+
 PKG_MACROS +=		PYVER=$(PYTHON_VERSION)
 
 CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/bin
 CONFIGURE_LIBDIR.64 =	$(CONFIGURE_PREFIX)/lib
 
 CONFIGURE_PREFIX    =	/usr
-CONFIGURE_OPTIONS  +=	--without-openssl
+CONFIGURE_OPTIONS  +=	--with-libpcre
 CONFIGURE_OPTIONS  +=	--libexecdir=/usr/lib
 CONFIGURE_OPTIONS  +=	--with-perl=$(PERL)
 CONFIGURE_OPTIONS  +=	--with-python=$(PYTHON.$(PYTHON_VERSION))
 CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
+CONFIGURE_OPTIONS  +=	CPPFLAGS="-I/usr/include/pcre"
 
 # Build fails if environment variable PROFILE is set.
 COMPONENT_BUILD_ENV+=	PROFILE=
 COMPONENT_INSTALL_ENV+=	PROFILE=
 COMPONENT_TEST_ENV+=	PROFILE=
 
-COMPONENT_BUILD_ENV+=	NO_PERL_MAKEMAKER=1
-COMPONENT_INSTALL_ENV+=	PERL_LIB=$(shell $(PERL) -MConfig -e 'print "$$Config{installvendorarch}"')
+# We set prefix_SQ empty to make sure that perl's MakeMaker module doesn't grab
+# the value from $prefix (set by configure) and force VENDORPREFIX to $prefix,
+# thereby putting the perl modules in /usr/lib/Git.
+COMPONENT_BUILD_ARGS+=		prefix_SQ=
+COMPONENT_INSTALL_ARGS+=	prefix_SQ=
 COMPONENT_INSTALL_ARGS+=	INSTALL="$(INSTALL)"
 
 # get rid of terminal escape codes in test output
@@ -121,6 +131,8 @@ $(BUILD_DIR)/.manpages:
 	$(TOUCH) $@
 
 REQUIRED_PACKAGES += library/expat
+REQUIRED_PACKAGES += library/pcre
+REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/perl-512
 REQUIRED_PACKAGES += runtime/python-27

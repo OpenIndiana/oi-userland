@@ -1,0 +1,16 @@
+Patch to allow the Studio compilers to compile.  Although the existing code
+catches cases where you're using an older gcc that doesn't support the
+feature, it omits the case where gcc is not the compiler and the feature
+is not available.  This is suitable for upstream.
+
+--- git-2.5.3/git-compat-util.h	Thu Sep 17 13:26:50 2015
++++ git-2.5.3/git-compat-util.h	Thu Sep 24 14:32:55 2015
+@@ -32,6 +32,8 @@
+ # else
+ #  define FLEX_ARRAY 0 /* older GNU extension */
+ # endif
++#else
++# define BARF_UNLESS_AN_ARRAY(arr) 0
+ #endif
+ 
+ /*
