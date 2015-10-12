@@ -55,20 +55,37 @@ Building the Bits
 
     You can build individual components or the contents of the entire gate.
 
+  Integration with ccache to speed up re-builds
+
+    If you happen to build the same sources several times (e.g. iterating
+    attempts to produce a working recipe, or maintaining an automated build
+    server), you can benefit from 'ccache' integration in 'oi-userland'.
+    Note that this feature is currently experimental and off by default.
+
+    The 'ccache' component is available as part of the project repository.
+    Once you have the resulting package installed, you can pass the 'make'
+    argument or environment variable 'ENABLE_CCACHE=true' to wrap the GNU
+    compiler invocations with the caching program - so that the same inputs
+    would re-produce same outputs quickly.
+
+    You can pre-set this variable in your user account '~/.profile' like this:
+
+       ### To speed up OI-userland re-builds
+       ENABLE_CCACHE=true
+       export ENABLE_CCACHE
+
   Keeping all sources in one place
 
     The Userland consolidation tools automate download of required source
     tarballs.  By default they are kept in each component's directory, but
-    you can centralize it by using the `USERLAND_ARCHIVES` variable.
+    you can centralize it by using the 'USERLAND_ARCHIVES' variable.
 
-    You can pre-set this variable in your user account `~/.profile` like
+    You can pre-set this variable in your user account '~/.profile' like
     this (and note that the trailing slash is required):
 
-````
-# For oi-userland
-USERLAND_ARCHIVES="$HOME/Downloads/"
-export USERLAND_ARCHIVES
-````
+       ### For oi-userland source files
+       USERLAND_ARCHIVES="$HOME/Downloads/"
+       export USERLAND_ARCHIVES
 
   Component build
 
@@ -108,7 +125,7 @@ export USERLAND_ARCHIVES
     succeed to complete the missing build products.
 
     It is worth noting that the OpenIndiana Hipster build server uses the
-    `COMPONENT_BUILD_ARGS=-j4` option by default for moderate parallelization
+    'COMPONENT_BUILD_ARGS=-j4' option by default for moderate parallelization
     of its builds.
 
     The gate should only incrementally build what it needs to based on what has
