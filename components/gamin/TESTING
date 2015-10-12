@@ -1,0 +1,68 @@
+Use the 'testgam' binary from workspace which is not shipped
+in gamin package.
+
+on terminal 1:
+==============
+mkdir /tmp/aha
+GAM_DEBUG= /usr/lib/gam_server --notimeout test
+
+on terminal 2:
+==============
+testgam -
+> connect test
+...
+> mondir /tmp/aha
+
+on terminal 3:
+==============
+mkdir /tmp/aha/x
+touch /tmp/aha/y
+rmdir /tmp/aha/x
+rm /tmp/aha/y
+
+On terminal 2 observe notifications about created and deleted entities.
+
+
+Verify that both 32 bit and 64 bit testgam binary works with
+64 bit gam_server.
+
+
+
+
+Python bindings are tested by this program:
+
+------------------------------------->8----
+#!/usr/bin/env python
+
+import gamin
+import time
+
+def callback(path, event):
+    print "Got callback: %s, %s" % (path, event)
+
+mon = gamin.WatchMonitor()
+mon.watch_directory("/tmp/aha", callback)
+while True:
+        time.sleep(1)
+        ret = mon.event_pending()
+        if ret > 0:
+            ret = mon.handle_one_event()
+            ret = mon.handle_events()
+mon.stop_watch("/tmp/aha")
+del mon
+------------------------------------->8----
+
+$ pkill -9 -f gam_server # this will also test that gam_server is
+                         # spawned from the library when needed
+$ export GAM_CLIENT_ID=test
+$ /usr/bin/python2.7 /tmp/test.py
+
+# on second terminal create and delete files in /tmp/aha
+# and observe the test.py output
+
+$ pkill -9 -f gam_server
+$ /usr/bin/amd64/python2.7 /tmp/test.py # or sparcv9
+
+# on second terminal create and delete files in /tmp/aha
+# and observe the test.py output
+

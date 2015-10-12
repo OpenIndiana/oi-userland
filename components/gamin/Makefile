@@ -68,13 +68,36 @@ COMPONENT_TEST_TRANSFORMS += '-e "/^\-/d"'
 COMPONENT_TEST_TRANSFORMS += '-e "/^\*/d"'
 COMPONENT_TEST_TRANSFORMS += '-e "/^!/d"'
 
-configure:	$(CONFIGURE_32)
+# Where the gam_server will be located
+CONFIGURE_OPTIONS    +=      --libexecdir="$(USRLIBDIR)"
 
-build:          $(BUILD_32)
+# Needed for 64 bit build - adds -m64
+CONFIGURE_OPTIONS    +=      CFLAGS="$(CFLAGS)"
 
-install:        $(INSTALL_32)
+# Direct the python packages to vendor-packages dir instead of site-packages
+COMPONENT_BUILD_ARGS +=      PYTHON_SITE_PACKAGES=$(PYTHON_VENDOR_PACKAGES)
 
-test:           $(TEST_32)
+# Use 64 bit python for 64 bit build
+CONFIGURE_OPTIONS +=      --with-python=$(PYTHON)
+
+# Use 64 bit install path for 64 bit python
+COMPONENT_INSTALL_ARGS += pythondir=$(PYTHON_VENDOR_PACKAGES)
+
+# The 64 bit compilation puts the .so module into .libs directory, but python
+# expects it in .libs/64
+$(BUILD_DIR_64)/.built: COMPONENT_POST_BUILD_ACTION = ( \
+	cd $(@D)/python/.libs ; \
+	mkdir -p 64 ; \
+	cp _gamin.so 64 \
+)
+
+configure:	$(CONFIGURE_32_and_64)
+
+build:          $(BUILD_32_and_64)
+
+install:        $(INSTALL_32_and_64)
+
+test:           $(TEST_32_and_64)
 
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += runtime/python-27
