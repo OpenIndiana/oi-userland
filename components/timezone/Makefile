@@ -33,6 +33,14 @@ HUMAN_VERSION=		2015f
 
 TPNO=			24066
 
+# Build info part of pkg(5) FMRI dropped ",$(OS_VERSION)" between 11 and 12;
+# needed for evaluation repo where we build the default repo from 12 on 11.
+ifeq ($(OS_VERSION),5.11)
+OS_META_VERSION=	,$(OS_VERSION)-$(OS_VERSION)
+else
+OS_META_VERSION=	-$(OS_VERSION)
+endif
+
 # "etcetera" must be listed before "backward" because it sets up links that
 # "backward" needs.
 TZFILES= africa antarctica asia australasia etcetera europe \
@@ -41,6 +49,8 @@ TZFILES= africa antarctica asia australasia etcetera europe \
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
+
+PKG_MACROS +=		OS_META_VERSION=$(OS_META_VERSION)
 
 POFILE=zoneinfo.po
 
