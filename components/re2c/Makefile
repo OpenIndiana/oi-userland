@@ -57,13 +57,19 @@ CONFIGURE_OPTIONS  +=	CXXFLAGS="$(CXXFLAGS)"
 # diffs failing due to script tracing in output files.
 unexport SHELLOPTS
 
+COMPONENT_SYSTEM_TEST_ENV +=	RE2C_BIN=/usr/bin/re2c
+
 ASLR_MODE = $(ASLR_ENABLE)
+
+configure:	$(CONFIGURE_64)
 
 build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
 
 test:		$(TEST_64)
+
+system-test:	build $(SYSTEM_TEST_64)
 
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/gcc/gcc-c++-runtime
