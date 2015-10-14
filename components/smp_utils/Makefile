@@ -38,6 +38,14 @@ COMPONENT_BUGDB=	utility/smputils
 TPNO=			11065
 
 include $(WS_MAKE_RULES)/prep.mk
+
+# Needs header file from ON only available in S12.
+ifeq ($(BUILD_TYPE), evaluation)
+BUILD_64=
+INSTALL_64=
+PUBLISH_STAMP=
+endif
+
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 

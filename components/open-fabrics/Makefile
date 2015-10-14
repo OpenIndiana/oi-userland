@@ -44,11 +44,18 @@ TPNO_QPERF=		5083
 TPNO_RDS_TOOLS=		5092
 
 include ../../make-rules/shared-macros.mk
-include $(WS_MAKE_RULES)/ips.mk
-include ofed.mk
 
+# sensitive to kernel interface changes.
+ifeq ($(BUILD_TYPE), evaluation)
+PUBLISH_STAMP=
+SUBDIRS =
+else
 # for now, everything with a Makefile should be built
 SUBDIRS =	$(shell echo */Makefile | sed -e 's;/Makefile;;g')
+endif
+
+include $(WS_MAKE_RULES)/ips.mk
+include ofed.mk
 
 # Do not apply the standard license transforms for this component. The
 # license actions in the open-fabrics.p5m file are already tagged with the
