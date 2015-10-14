@@ -1,0 +1,103 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
+set name=pkg.fmri \
+    value=pkg:/developer/documentation-tool/openjade@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="The OpenJade group's SGML and XML parsing tools"
+set name=com.oracle.info.description \
+    value="OpenJade is an implementation of DSSSL - Document Style Semantics and Specification Language - an ISO standard for formatting SGML and XML documents."
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value="org.opensolaris.category.2008:System/Text Tools"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=LSARC/2009/475
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+link path=usr/bin/$(MACH64)/jade target=openjade
+file path=usr/bin/$(MACH64)/openjade
+link path=usr/bin/jade target=openjade
+file path=usr/bin/openjade
+dir  path=usr/include/openjade
+file DssslApp.h path=usr/include/openjade/DssslApp.h
+file EventGenerator.h path=usr/include/openjade/EventGenerator.h
+file FOTBuilder.h path=usr/include/openjade/FOTBuilder.h
+file GroveApp.h path=usr/include/openjade/GroveApp.h
+file GroveBuilder.h path=usr/include/openjade/GroveBuilder.h
+file GroveManager.h path=usr/include/openjade/GroveManager.h
+file Node.h path=usr/include/openjade/Node.h
+file ParserEventGeneratorKit.h \
+    path=usr/include/openjade/ParserEventGeneratorKit.h
+file SGMLApplication.h path=usr/include/openjade/SGMLApplication.h
+file dsssl_ns.h path=usr/include/openjade/dsssl_ns.h
+link path=usr/lib/$(MACH64)/libogrove.so target=libogrove.so.0.0.1
+link path=usr/lib/$(MACH64)/libogrove.so.0 target=libogrove.so.0.0.1
+file path=usr/lib/$(MACH64)/libogrove.so.0.0.1
+link path=usr/lib/$(MACH64)/libospgrove.so target=libospgrove.so.0.0.1
+link path=usr/lib/$(MACH64)/libospgrove.so.0 target=libospgrove.so.0.0.1
+file path=usr/lib/$(MACH64)/libospgrove.so.0.0.1
+link path=usr/lib/$(MACH64)/libostyle.so target=libostyle.so.0.0.1
+link path=usr/lib/$(MACH64)/libostyle.so.0 target=libostyle.so.0.0.1
+file path=usr/lib/$(MACH64)/libostyle.so.0.0.1
+link path=usr/lib/libogrove.so target=libogrove.so.0.0.1
+link path=usr/lib/libogrove.so.0 target=libogrove.so.0.0.1
+file path=usr/lib/libogrove.so.0.0.1
+link path=usr/lib/libospgrove.so target=libospgrove.so.0.0.1
+link path=usr/lib/libospgrove.so.0 target=libospgrove.so.0.0.1
+file path=usr/lib/libospgrove.so.0.0.1
+link path=usr/lib/libostyle.so target=libostyle.so.0.0.1
+link path=usr/lib/libostyle.so.0 target=libostyle.so.0.0.1
+file path=usr/lib/libostyle.so.0.0.1
+file path=usr/share/man/man1/jade.1
+file path=usr/share/man/man1/openjade.1
+link path=usr/share/sgml/CATALOG.jade_dsl \
+    target=../../../../var/lib/sgml/CATALOG.openjade
+link path=usr/share/sgml/CATALOG.openjade \
+    target=../../../../var/lib/sgml/CATALOG.openjade
+link path=usr/share/sgml/ISO_IEC_10179:1996/dtd/DSSSL_Architecture \
+    target=../../openjade/dsssl.dtd
+link path=usr/share/sgml/James_Clark/dtd/DSSSL_Style_Sheet \
+    target=../../openjade/jade_style-sheet.dtd
+link path=usr/share/sgml/OpenJade/dtd/DSSSL_Style_Sheet \
+    target=../../openjade/style-sheet.dtd
+file builtins.dsl path=usr/share/sgml/openjade/builtins.dsl
+file catalog path=usr/share/sgml/openjade/catalog
+file dsssl.dtd path=usr/share/sgml/openjade/dsssl.dtd
+file extensions.dsl path=usr/share/sgml/openjade/extensions.dsl
+file fot.dtd path=usr/share/sgml/openjade/fot.dtd
+file files/jade_style-sheet.dtd \
+    path=usr/share/sgml/openjade/jade_style-sheet.dtd
+link path=usr/share/sgml/openjade/japan.dcl target=../opensp/japan.dcl
+link path=usr/share/sgml/openjade/japan.decl target=japan.dcl
+link path=usr/share/sgml/openjade/sp_implied.dcl \
+    target=../opensp/opensp-implied.dcl
+link path=usr/share/sgml/openjade/sp_implied.decl target=sp_implied.dcl
+file style-sheet.dtd path=usr/share/sgml/openjade/style-sheet.dtd
+link path=usr/share/sgml/openjade/xml.dcl target=../opensp/xml.dcl
+link path=usr/share/sgml/openjade/xml.decl target=xml.dcl
+link path=usr/share/sgml/openjade/xml.soc target=../opensp/xml.soc
+link path=var/lib/sgml/CATALOG.jade_dsl target=CATALOG.openjade
+file files/CATALOG.openjade path=var/lib/sgml/CATALOG.openjade
+license COPYING license=MIT
