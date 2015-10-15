@@ -40,10 +40,13 @@ TPNO=			24887
 #
 # man pages are a separate archive
 #
-COMPONENT_ARCHIVE_1 =	$(COMPONENT_NAME)-manpages-$(COMPONENT_VERSION).tar.xz
+COMPONENT_SRC_1=        $(COMPONENT_NAME)-manpages-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE_1 =	$(COMPONENT_SRC_1).tar.xz
 COMPONENT_ARCHIVE_HASH_1 = \
     sha256:e4cf64edcecd284d9ef4e6ca7fa0e8556d2414b5d9881a9abfe477f95b416391
 COMPONENT_ARCHIVE_URL_1 = https://www.kernel.org/pub/software/scm/git/$(COMPONENT_ARCHIVE_1)
+UNPACK_ARGS_1 =		-r $(COMPONENT_SRC_1)
+PKG_PROTO_DIRS +=	$(COMPONENT_SRC_1)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -99,36 +102,12 @@ configure:	$(CONFIGURE_64)
 
 build:		$(BUILD_64)
 
-install:	$(INSTALL_64) $(BUILD_DIR)/.manpages
+install:	$(INSTALL_64)
 
 # There are some known issues around I18N.
 test:		$(TEST_64)
 
 system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
-# These man pages come in a separate archive with no Makefile
-# and Solaris likes some of them moved around hence we'll just
-# do it manually here.
-
-$(BUILD_DIR)/.manpages:
-	cd $(BUILD_DIR) ; $(UNPACK) $(UNPACK_ARGS) ../$(COMPONENT_ARCHIVE_1)
-	$(MKDIR) $(PROTOUSRSHAREMAN1DIR)
-	$(MKDIR) $(PROTOUSRSHAREMAN4DIR)
-	$(MKDIR) $(PROTOUSRSHAREMAN5DIR)
-	cd $(BUILD_DIR) ; for manfile in man*/* ; \
-	do \
-		filename=`basename $$manfile`; \
-		fname=$${filename%.*}; \
-		ext=$${filename##*.}; \
-		newext=1; \
-		if [ $$ext = 5 ]; then newext=4; fi; \
-		if [ $$ext = 7 ]; then newext=5; fi; \
-		$(GSED) -e 's/\\m\[blue\]//g' -e 's/\\m\[\]//g' \
-		        -e 's/"5"/"4"/' -e 's/(5)/(4)/g' \
-			-e 's/"7"/"5"/' -e 's/(7)/(5)/g' $$manfile > \
-		   $(PROTOUSRSHAREMANDIR)/man$$newext/$$fname.$$newext; \
-	done
-	$(TOUCH) $@
 
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/pcre
