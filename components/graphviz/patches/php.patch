@@ -1,0 +1,21 @@
+# graphviz not compiling with php 5.6.
+# Found this patch.  Seems to do the trick for both php 5.3 (32-bit)
+# and 5.6 (64-bit).
+# http://www.linuxquestions.org/questions/slackware-14/graphviz-and-current-948363/
+
+--- graphviz-2.28.0/tclpkg/gv/gv_php_init.c_orig	2015-10-12 11:47:24.351781429 -0700
++++ graphviz-2.28.0/tclpkg/gv/gv_php_init.c	2015-10-12 11:47:53.491500047 -0700
+@@ -19,11 +19,13 @@
+ 
+ static size_t gv_string_writer (GVJ_t *job, const char *s, size_t len)
+ {
++    TSRMLS_FETCH();
+     return PHPWRITE(s, len);
+ }
+ 
+ static size_t gv_channel_writer (GVJ_t *job, const char *s, size_t len)
+ {
++    TSRMLS_FETCH();
+     return PHPWRITE(s, len);
+ }
+ 

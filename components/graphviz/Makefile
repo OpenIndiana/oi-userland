@@ -42,7 +42,7 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH =		/usr/php/5.3/bin:/usr/bin:/usr/gnu/bin
+PATH =		/usr/php/5.6/bin:/usr/bin:/usr/gnu/bin
 
 # GMP header files for the guile extension (no --with- flag)
 # The guile build is broken with studio (15732452), so we disable this for now.
@@ -67,13 +67,12 @@ CONFIGURE_OPTIONS +=	--x-libraries=$(CONFIGURE_LIBDIR.$(BITS))
 
 COMPONENT_BUILD_ARGS += 	GREP=/usr/bin/ggrep
 
-# Both perl and ruby ship 64-bit only.
+# perl, ruby, php ship 64-bit only.
 $(CONFIGURE_32): CONFIGURE_OPTIONS +=	--enable-perl=no
 $(CONFIGURE_32): CONFIGURE_OPTIONS +=	--enable-ruby=no
+$(CONFIGURE_32): CONFIGURE_OPTIONS +=	--enable-php=no
 $(CONFIGURE_64): CONFIGURE_ENV +=	PERL=$(PERL)
 $(CONFIGURE_64): CONFIGURE_ENV +=	RUBY=$(RUBY.1.9)
-# PHP ships 32-bit only.
-$(CONFIGURE_64): CONFIGURE_OPTIONS +=	--enable-php=no
 $(INSTALL_64): COMPONENT_INSTALL_ARGS += PHP_INSTALL_DIR=$(shell PATH=$(PATH) php-config --extension-dir)
 # tcl ships both 32 and 64 bit, but even though /usr/bin/tclsh is 64-bit, there
 # is no place to stick 64-bit modules, so skip it.  On the other hand, make
@@ -138,7 +137,7 @@ REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/linker
-REQUIRED_PACKAGES += web/php-53
+REQUIRED_PACKAGES += web/php-56
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxcursor
 REQUIRED_PACKAGES += x11/library/libxmu
