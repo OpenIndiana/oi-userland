@@ -1,0 +1,14 @@
+Home brewed patch, not suitable for sending to upstream. In order to compile
+with Studio compiler we have to remove hardcoded gcc command line options.
+
+--- libdaemon-0.14/configure.ac-orig	2010-01-28 22:49:57.256005166 -0600
++++ libdaemon-0.14/configure.ac	2010-01-28 22:49:35.799099150 -0600
+@@ -51,8 +51,6 @@ AC_PROG_LN_S
+ AC_PROG_MAKE_SET
+ AC_PROG_LIBTOOL
+ 
+-CC_CHECK_CFLAGS_APPEND([-pipe -Wall -W -Wextra -pedantic -Wformat -Wold-style-definition -Wdeclaration-after-statement -Wfloat-equal -Wmissing-declarations -Wmissing-prototypes -Wstrict-prototypes -Wredundant-decls -Wmissing-noreturn -Wshadow -Wendif-labels -Wpointer-arith -Wbad-function-cast -Wcast-qual -Wcast-align -Wwrite-strings -Winline -Wno-unused-parameter -Wstrict-aliasing])
+-
+ # Checks for header files.
+ AC_HEADER_ASSERT
+ AC_HEADER_STDC
