@@ -39,24 +39,25 @@ cfg.CONF.register_opts(OPTS)
 
 NDP_SMF_FMRI = 'svc:/network/routing/ndp:default'
 
-CONFIG_TEMPLATE = jinja2.Template("""if {{ interface_name }} \
-   AdvSendAdvertisements on \
-   MinRtrAdvInterval 3 \
-   MaxRtrAdvInterval 10 \
-   {% if ra_mode == constants.DHCPV6_STATELESS %}
-   AdvOtherConfigFlag on \
-   {% endif %}
-
-   {% if ra_mode == constants.DHCPV6_STATEFUL %}
-   AdvManagedFlag on
-   {% endif %}
-
-{% if ra_mode in (constants.IPV6_SLAAC, constants.DHCPV6_STATELESS) %}
-prefix {{ prefix }} {{ interface_name }} \
-        AdvOnLinkFlag on \
-        AdvAutonomousFlag on
-{% endif %}
-""")
+# The configuration file for ndpd daemon expects all the 'key value' to be
+# on the same line as that of the interface. For example:
+#
+# if net0  AdvSendAdvertisements on MinRtrAdvInterval 3 MaxRtrAdvInterval 10
+# prefix 3234234 net0 AdvOnLinkFlag on AdvAutonomousFlag on
+CONFIG_TEMPLATE = jinja2.Template(
+    """if {{ interface_name }} """
+    """ AdvSendAdvertisements on MinRtrAdvInterval 3 MaxRtrAdvInterval 10 """
+    """ {% if ra_mode == constants.DHCPV6_STATELESS %} """
+    """ AdvOtherConfigFlag on """
+    """ {% endif %} """
+    """ {% if ra_mode == constants.DHCPV6_STATEFUL %} """
+    """ AdvManagedFlag on """
+    """ {% endif %} """
+    """ {% if ra_mode in (constants.IPV6_SLAAC, """
+    """ constants.DHCPV6_STATELESS) %} """
+    """\nprefix {{ prefix }} {{ interface_name }} """
+    """ AdvOnLinkFlag on AdvAutonomousFlag on """
+    """ {% endif %} """)
 
 
 def _generate_ndpd_conf(router_id, router_ports, dev_name_helper):
@@ -68,7 +69,7 @@ def _generate_ndpd_conf(router_id, router_ports, dev_name_helper):
         if netaddr.IPNetwork(prefix).version == 6:
             interface_name = dev_name_helper(p['id'])
             ra_mode = p['subnet']['ipv6_ra_mode']
-            buf.write('%s' % CONFIG_TEMPLATE.render(
+            buf.write('%s\n' % CONFIG_TEMPLATE.render(
                 ra_mode=ra_mode,
                 interface_name=interface_name,
                 prefix=prefix,
@@ -81,6 +82,10 @@ def _generate_ndpd_conf(router_id, router_ports, dev_name_helper):
 def _refresh_ndpd(ndpd_conf):
     cmd = ['/usr/sbin/svccfg', '-s', NDP_SMF_FMRI, 'setprop',
            'routing/config_file', '=', ndpd_conf]
+    utils.execute(cmd)
+    # this is needed to reflect the routing/config_file property
+    # in svcprop output
+    cmd = ['/usr/sbin/svccfg', '-s', NDP_SMF_FMRI, 'refresh']
     utils.execute(cmd)
     # ndpd SMF service doesn't support refresh method, so we
     # need to restart

@@ -1,0 +1,69 @@
+This patch fixes the upstream bug 1431105 that is only fixed in Kilo.
+
+commit 05f234481474aa05f59c4af459b4343d21397afc
+Author: Kevin Benton <email address hidden>
+Date: Wed Mar 11 18:32:52 2015 -0700
+
+    Schedule net to a DHCP agt on subnet create
+
+    Change the DHCP notifier behavior to schedule a network
+    to a DHCP agent when a subnet is created rather than
+    waiting for the first port to be created.
+
+    This will reduce the possibility to get a VM port created
+    and have it send a DHCP request before the DHCP agent is
+    ready. Before, the network would be scheduled to an agent
+    as a result of the API call to create the VM port, so the
+    DHCP port wouldn't be created until after the VM port.
+    After this patch, the network will have been scheduled to
+    a DHCP agent before the first VM port is created.
+
+    There is still a possibility that the DHCP agent could be
+    responding so slowly that it doesn't create its port and
+    activate the dnsmasq instance before the VM sends traffic.
+    A proper fix will ensure that the dnsmasq instance is
+    truly ready to serve requests for a new port will require
+    significantly more code for barriers (either on the subnet
+    creation, port creation, or the nova boot process) are too
+    complex to add this late in the cycle.
+
+    This patch also eliminates the logic in the n1kv plugin that
+    was already doing the same thing.
+
+    Closes-Bug: #1431105
+    Change-Id: I1c1caed0fdda6b801375a07f9252a9127058a07e
+
+--- neutron-2014.2.2/neutron/api/rpc/agentnotifiers/dhcp_rpc_agent_api.py	2015-02-05 07:45:33.000000000 -0800
++++ new/neutron/api/rpc/agentnotifiers/dhcp_rpc_agent_api.py	2015-10-13 15:48:35.280824405 -0700
+@@ -63,8 +63,8 @@
+                     {'network': {'id': network['id']}}, agent['host'])
+         elif not existing_agents:
+             LOG.warn(_('Unable to schedule network %s: no agents available; '
+-                       'will retry on subsequent port creation events.'),
+-                     network['id'])
++                       'will retry on subsequent port and subnet creation '
++                       'events.'), network['id'])
+         return new_agents + existing_agents
+ 
+     def _get_enabled_agents(self, context, network, agents, method, payload):
+@@ -119,6 +119,7 @@
+ 
+             # schedule the network first, if needed
+             schedule_required = (
++                method == 'subnet_create_end' or
+                 method == 'port_create_end' and
+                 not self._is_reserved_dhcp_port(payload['port']))
+             if schedule_required:
+--- neutron-2014.2.2/neutron/plugins/cisco/n1kv/n1kv_neutron_plugin.py	2015-02-05 07:45:33.000000000 -0800
++++ new/neutron/plugins/cisco/n1kv/n1kv_neutron_plugin.py	2015-10-16 13:04:56.539001054 -0700
+@@ -1293,10 +1293,6 @@
+                       self).delete_subnet(context, sub['id'])
+         else:
+             LOG.debug(_("Created subnet: %s"), sub['id'])
+-            if not q_conf.CONF.network_auto_schedule:
+-                # Schedule network to a DHCP agent
+-                net = self.get_network(context, sub['network_id'])
+-                self.schedule_network(context, net)
+             return sub
+ 
+     def update_subnet(self, context, id, subnet):

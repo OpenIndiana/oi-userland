@@ -82,8 +82,7 @@ class IPInterface(CommandBase):
             if temp:
                 cmd.append('-t')
             self.execute_with_pfexec(cmd)
-
-        if self.ipaddr_exists(self._ifname, ipaddr):
+        elif self.ipaddr_exists(self._ifname, ipaddr):
             return
 
         # If an address is IPv6, then to create a static IPv6 address
@@ -109,6 +108,25 @@ class IPInterface(CommandBase):
         if temp:
             cmd.append('-t')
 
+        self.execute_with_pfexec(cmd)
+
+    def create_addrconf(self, temp=True):
+        if not self.ifname_exists(self._ifname):
+            # create ip interface
+            cmd = ['/usr/sbin/ipadm', 'create-ip', self._ifname]
+            if temp:
+                cmd.append('-t')
+            self.execute_with_pfexec(cmd)
+        else:
+            cmd = ['/usr/sbin/ipadm', 'show-addr', '-po', 'type', self._ifname]
+            stdout = self.execute(cmd)
+            if 'addrconf' in stdout:
+                return
+
+        cmd = ['/usr/sbin/ipadm', 'create-addr', '-T', 'addrconf',
+               self._ifname]
+        if temp:
+            cmd.append('-t')
         self.execute_with_pfexec(cmd)
 
     def delete_address(self, ipaddr):

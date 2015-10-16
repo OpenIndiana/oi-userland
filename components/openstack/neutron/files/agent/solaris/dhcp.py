@@ -36,6 +36,7 @@ from neutron.agent.linux import utils
 from neutron.agent.solaris import net_lib
 from neutron.common import constants
 from neutron.common import exceptions
+from neutron.common import ipv6_utils
 from neutron.openstack.common import importutils
 from neutron.openstack.common import jsonutils
 from neutron.openstack.common import log as logging
@@ -912,17 +913,21 @@ class DeviceManager(object):
             self.driver.plug(network.tenant_id, network.id,
                              port.id, interface_name)
         ip_cidrs = []
+        addrconf = False
         for fixed_ip in port.fixed_ips:
             subnet = fixed_ip.subnet
-            net = netaddr.IPNetwork(subnet.cidr)
-            ip_cidr = '%s/%s' % (fixed_ip.ip_address, net.prefixlen)
-            ip_cidrs.append(ip_cidr)
+            if not ipv6_utils.is_auto_address_subnet(subnet):
+                net = netaddr.IPNetwork(subnet.cidr)
+                ip_cidr = '%s/%s' % (fixed_ip.ip_address, net.prefixlen)
+                ip_cidrs.append(ip_cidr)
+            else:
+                addrconf = True
 
         if (self.conf.enable_isolated_metadata and
                 self.conf.use_namespaces):
             ip_cidrs.append(METADATA_DEFAULT_CIDR)
 
-        self.driver.init_l3(interface_name, ip_cidrs)
+        self.driver.init_l3(interface_name, ip_cidrs, addrconf=addrconf)
 
         if self.conf.use_namespaces:
             self._set_default_route(network, interface_name)

@@ -1,0 +1,57 @@
+This upstream patch addresses Launchpad bug 1255441. Although it's been
+addressed in Kilo, the patch below is still not yet released for Juno.
+
+commit a8c7db5b9d9bba44660de3c7a64295f9f318b63a
+Author: Assaf Muller <email address hidden>
+Date: Wed Apr 1 09:38:21 2015 -0400
+
+    Remove "Arguments dropped when creating context" logging
+
+    This log was previously reduced from warning to debug.
+    Cinder removed it entirely in:
+    https://bugs.launchpad.net/cinder/+bug/1329156
+
+    The root cause is this:
+    Agent heartbeats use an admin context. The context is serialized
+    with its to_dict method, which exposes 'tenant' and 'project_name'
+    (These are properties of the class that are calculated from other
+    attributes). In the controller, this dict is used to initialize a
+    ContextBase, which does not accept tenant and project_name as arguments,
+    de facto sending those values as key word arguments.
+
+    We can either handle 'tenant' and 'project_name' specially, fix
+    it any other way, or drop the logging entirely. Is this logging
+    ever useful?
+
+    Change-Id: Ifd51b62bae7b96de44f04836015d2ed939bcb650
+    Closes-Bug: #1255441
+
+--- neutron-2014.2.2/neutron/context.py	2015-02-05 07:45:33.000000000 -0800
++++ new/neutron/context.py	2015-10-15 09:34:13.121138271 -0700
+@@ -76,12 +76,6 @@
+         if overwrite or not hasattr(local.store, 'context'):
+             local.store.context = self
+ 
+-        # Log only once the context has been configured to prevent
+-        # format errors.
+-        if kwargs:
+-            LOG.debug(_('Arguments dropped when creating '
+-                        'context: %s'), kwargs)
+-
+     @property
+     def project_id(self):
+         return self.tenant
+--- neutron-2014.2.2/neutron/tests/unit/test_neutron_context.py	2015-02-05 07:45:26.000000000 -0800
++++ new/neutron/tests/unit/test_neutron_context.py	2015-10-16 12:51:55.872425513 -0700
+@@ -41,11 +41,6 @@
+         self.assertIsNone(ctx.tenant_name)
+         self.assertIsNone(ctx.auth_token)
+ 
+-    def test_neutron_context_create_logs_unknown_kwarg(self):
+-        with mock.patch.object(context.LOG, 'debug') as mock_log:
+-            context.Context('user_id', 'tenant_id', foo=None)
+-        self.assertEqual(mock_log.call_count, 1)
+-
+     def test_neutron_context_create_with_name(self):
+         ctx = context.Context('user_id', 'tenant_id',
+                               tenant_name='tenant_name', user_name='user_name')

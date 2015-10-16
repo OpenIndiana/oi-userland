@@ -16,11 +16,15 @@
 #
 # @author: Girish Moodalbail, Oracle, Inc.
 
+import time
+
 import rad.client as radcli
 import rad.connect as radcon
 import rad.bindings.com.oracle.solaris.rad.evscntl_1 as evsbind
 
 from oslo.config import cfg
+from oslo.db import exception as os_db_exc
+from sqlalchemy import exc as sqla_exc
 
 from neutron.api.rpc.agentnotifiers import dhcp_rpc_agent_api
 from neutron.api.rpc.agentnotifiers import l3_rpc_agent_api
@@ -38,6 +42,7 @@ from neutron.db import db_base_plugin_v2
 from neutron.db import external_net_db
 from neutron.db import l3_gwmode_db
 from neutron.db import model_base
+from neutron.db import models_v2
 from neutron.db import quota_db
 from neutron.extensions import external_net
 from neutron.extensions import providernet
@@ -47,6 +52,8 @@ from neutron.openstack.common import log as logging
 from neutron.plugins.common import constants as svc_constants
 
 LOG = logging.getLogger(__name__)
+MAX_RETRIES = 10
+RETRY_INTERVAL = 2
 
 evs_controller_opts = [
     cfg.StrOpt('evs_controller', default='ssh://evsuser@localhost',
@@ -286,14 +293,10 @@ class EVSNeutronPluginV2(db_base_plugin_v2.NeutronDbPluginV2,
             self._evs_controller_addIPnet(tenantname, evsname, ipnetname,
                                           ",".join(proplist))
 
-        # notify dhcp agent of subnet creation
-        self.dhcp_agent_notifier.notify(context, {'subnet': db_subnet},
-                                        'subnet.create.end')
         return db_subnet
 
     def update_subnet(self, context, id, subnet):
         LOG.debug(_("Updating Subnet: %s with %s") % (id, subnet))
-        evs_rpccall_sync = subnet.pop('evs_rpccall_sync', False)
         if (set(subnet['subnet'].keys()) - set(('enable_dhcp',
                                                 'allocation_pools',
                                                 'dns_nameservers',
@@ -314,16 +317,6 @@ class EVSNeutronPluginV2(db_base_plugin_v2.NeutronDbPluginV2,
             if poolstr:
                 self._evs_controller_updateIPnet(id, "pool=%s" % poolstr)
 
-        # notify dhcp agent of subnet update
-        methodname = 'subnet.update.end'
-        payload = {'subnet': retval}
-        if not evs_rpccall_sync:
-            self.dhcp_agent_notifier.notify(context, payload, methodname)
-        else:
-            msg = self.dhcp_agent_notifier.make_msg(
-                methodname.replace(".", "_"), payload=payload)
-            self.dhcp_agent_notifier.call(context, msg,
-                                          topic=topics.DHCP_AGENT)
         return retval
 
     def get_subnet(self, context, id, fields=None):
@@ -338,49 +331,29 @@ class EVSNeutronPluginV2(db_base_plugin_v2.NeutronDbPluginV2,
                         page_reverse)
         return [self._fields(subnet, fields) for subnet in subnets]
 
-    def _release_subnet_dhcp_port(self, context, subnet, delete_network):
-        """Release any dhcp port associated with the subnet"""
-        filters = dict(network_id=[subnet['network_id']])
-        portlist = self.get_ports(context, filters)
-
-        if delete_network:
-            # One can delete a network if there is only one port that has a
-            # VNIC attached to it and that port happens to be a DHCP port.
-            ports_with_deviceid = [port for port in portlist
-                                   if port['device_id'] != '']
-            update_subnet = len(ports_with_deviceid) == 1
-        else:
-            # One can delete a subnet if there is only one port and that
-            # port happens to be a DHCP port.
-            update_subnet = len(portlist) == 1
-        if update_subnet:
-            # For IPv6 we need to first reset the IPv6 attributes
-            if subnet['ip_version'] == 6:
-                if (attributes.is_attr_set(subnet.get('ipv6_address_mode'))):
-                    subnet_update = {'subnet':
-                                     {'ipv6_address_mode': None,
-                                      'ipv6_ra_mode': None
-                                      },
-                                     'evs_rpccall_sync': True
-                                     }
-                    self.update_subnet(context, subnet['id'], subnet_update)
-            # the lone port is a dhcp port created by dhcp agent
-            # it must be released before we can delete the subnet
-            subnet_update = {'subnet': {'enable_dhcp': False},
-                             'evs_rpccall_sync': True}
-            self.update_subnet(context, subnet['id'], subnet_update)
-
     @lockutils.synchronized('evs-plugin', 'neutron-')
-    def _evs_controller_removeIPnet(self, tenantname, evsname, ipnetuuid):
+    def _evs_controller_removeIPnet(self, tenantname, evsname, ipnetuuid,
+                                    auto_created_ports):
         LOG.debug(_("Removing IPnet with id: %s for tenant: %s for evs: %s") %
                   (ipnetuuid, tenantname, evsname))
         pat = radcli.ADRGlobPattern({'name': evsname, 'tenant': tenantname})
         try:
             evs = self.rad_connection.get_object(evsbind.EVS(), pat)
+            if auto_created_ports:
+                LOG.debug(_("Need to remove following ports %s before "
+                            "removing the IPnet") % (auto_created_ports))
+                for port in auto_created_ports:
+                    try:
+                        evs.removeVPort(port['id'], "force=yes")
+                    except radcli.ObjectError as oe:
+                        # '43' corresponds to EVS' EVS_ENOENT_VPORT error code
+                        if oe.get_payload().err == 43:
+                            LOG.debug(_("VPort %s could not be found") %
+                                      (port['id']))
             evs.removeIPnet(ipnetuuid)
-        except radcli.ObjectError as oe:
+        except (radcli.NotFoundError, radcli.ObjectError) as oe:
             # '42' corresponds to EVS' EVS_ENOENT_IPNET error code
-            if oe.get_payload().err == 42:
+            if oe.get_payload() is None or oe.get_payload().err == 42:
                 # EVS doesn't have that IPnet, return success to delete
                 # the IPnet from Neutron DB.
                 LOG.debug(_("IPnet could not be found in EVS."))
@@ -392,29 +365,16 @@ class EVSNeutronPluginV2(db_base_plugin_v2.NeutronDbPluginV2,
         if not subnet:
             return
 
-        # If the subnet is dhcp_enabled, then the dhcp agent would have
-        # created a port connected to this subnet. We need to remove
-        # that port before we can proceed with subnet delete operation.
-        # Since, there is no subnet.delete.start event, we use an another
-        # approach of updating the subnet's enable_dhcp attribute to
-        # False that in turn sends a subnet.udpate notification. This
-        # results in DHCP agent releasing the port.
-        if subnet['enable_dhcp']:
-                self._release_subnet_dhcp_port(context, subnet, False)
         with context.session.begin(subtransactions=True):
+            # get a list of ports automatically created by Neutron
+            auto_created_ports = context.session.query(models_v2.Port).\
+                filter(models_v2.Port.device_owner.
+                       in_(db_base_plugin_v2.AUTO_DELETE_PORT_OWNERS)).all()
             # delete subnet in DB
             super(EVSNeutronPluginV2, self).delete_subnet(context, id)
             self._evs_controller_removeIPnet(subnet['tenant_id'],
-                                             subnet['network_id'], id)
-
-        # notify dhcp agent
-        payload = {
-            'subnet': {
-                'network_id': subnet['network_id'],
-                'id': id,
-            }
-        }
-        self.dhcp_agent_notifier.notify(context, payload, 'subnet.delete.end')
+                                             subnet['network_id'], id,
+                                             auto_created_ports)
 
     @lockutils.synchronized('evs-plugin', 'neutron-')
     def _evs_controller_createEVS(self, tenantname, evsname, propstr):
@@ -557,9 +517,9 @@ class EVSNeutronPluginV2(db_base_plugin_v2.NeutronDbPluginV2,
             self.rad_connection.\
                 get_object(evsbind.EVSController()).\
                 deleteEVS(evsuuid, tenantname)
-        except radcli.ObjectError as oe:
+        except (radcli.NotFoundError, radcli.ObjectError) as oe:
             # '41' corresponds to EVS' EVS_ENOENT_EVS error code
-            if oe.get_payload().err == 41:
+            if oe.get_payload() is None or oe.get_payload().err == 41:
                 # EVS doesn't have that EVS, return success to delete
                 # the EVS from Neutron DB.
                 LOG.debug(_("EVS could not be found in EVS backend."))
@@ -567,28 +527,35 @@ class EVSNeutronPluginV2(db_base_plugin_v2.NeutronDbPluginV2,
             raise EVSControllerError(oe.get_payload().errmsg)
 
     def delete_network(self, context, id):
-        # Check if it is an external network and whether addresses in that
-        # network are being used for floating ips
-        net = self.get_network(context, id)
-        if net[external_net.EXTERNAL]:
-            filters = dict(network_id=[id])
-            portlist = self.get_ports(context, filters)
-            ports_with_deviceid = [port for port in portlist
-                                   if port['device_id'] != '']
-            if ports_with_deviceid:
-                raise exceptions.NetworkInUse(net_id=id)
-        filters = dict(network_id=[id])
-        subnets = self.get_subnets(context, filters=filters)
-        dhcp_subnets = [s for s in subnets if s['enable_dhcp']]
-        for subnet in dhcp_subnets:
-            self._release_subnet_dhcp_port(context, subnet, True)
         with context.session.begin(subtransactions=True):
-            super(EVSNeutronPluginV2, self).delete_network(context, id)
-            self._evs_controller_deleteEVS(net['tenant_id'], id)
+            network = self._get_network(context, id)
 
-        # notify dhcp agent of network deletion
-        self.dhcp_agent_notifier.notify(context, {'network': {'id': id}},
-                                        'network.delete.end')
+            qry_network_ports = context.session.query(models_v2.Port).\
+                filter_by(network_id=id).filter(models_v2.Port.device_owner.
+                                                in_(db_base_plugin_v2.
+                                                    AUTO_DELETE_PORT_OWNERS))
+
+            auto_created_ports = qry_network_ports.all()
+            qry_network_ports.delete(synchronize_session=False)
+
+            port_in_use = context.session.query(models_v2.Port).filter_by(
+                network_id=id).first()
+
+            if port_in_use:
+                raise exceptions.NetworkInUse(net_id=id)
+
+            # clean up subnets
+            subnets = self._get_subnets_by_network(context, id)
+            for subnet in subnets:
+                super(EVSNeutronPluginV2, self).delete_subnet(context,
+                                                              subnet['id'])
+                self._evs_controller_removeIPnet(subnet['tenant_id'],
+                                                 subnet['network_id'],
+                                                 subnet['id'],
+                                                 auto_created_ports)
+
+            context.session.delete(network)
+            self._evs_controller_deleteEVS(network['tenant_id'], id)
 
     @lockutils.synchronized('evs-plugin', 'neutron-')
     def _evs_controller_addVPort(self, tenantname, evsname, vportname,
@@ -606,6 +573,41 @@ class EVSNeutronPluginV2(db_base_plugin_v2.NeutronDbPluginV2,
             raise EVSControllerError(oe.get_payload().errmsg)
         return vport
 
+    def _create_port_db(self, context, port):
+        with context.session.begin(subtransactions=True):
+            # for external gateway ports and floating ips, tenant_id
+            # is not set, but EVS does not like it.
+            tenant_id = self._get_tenant_id_for_create(context, port['port'])
+            if not tenant_id:
+                network = self._get_network(context,
+                                            port['port']['network_id'])
+                port['port']['tenant_id'] = network['tenant_id']
+            # create the port in the DB
+            db_port = super(EVSNeutronPluginV2, self).create_port(context,
+                                                                  port)
+            # Neutron allows to create a port on a network that doesn't
+            # yet have subnet associated with it, however EVS doesn't
+            # support this.
+            if not db_port['fixed_ips']:
+                raise EVSOpNotSupported(_("creating a port on a network that "
+                                          "does not yet have subnet "
+                                          "associated with it is not "
+                                          "supported"))
+            tenantname = db_port['tenant_id']
+            vportname = db_port['name']
+            if not vportname:
+                vportname = None
+            evs_id = db_port['network_id']
+            proplist = ['macaddr=%s' % db_port['mac_address']]
+            proplist.append('ipaddr=%s' %
+                            db_port['fixed_ips'][0].get('ip_address'))
+            proplist.append('uuid=%s' % db_port['id'])
+
+            self._evs_controller_addVPort(tenantname, evs_id, vportname,
+                                          ",".join(proplist))
+
+        return db_port
+
     def create_port(self, context, port):
         """Creates a port(VPort) for a given network(EVS).
 
@@ -621,34 +623,25 @@ class EVSNeutronPluginV2(db_base_plugin_v2.NeutronDbPluginV2,
             raise EVSOpNotSupported(_("setting admin_state_up=False for a "
                                       "port not supported"))
 
-        with context.session.begin(subtransactions=True):
-            # for external gateway ports and floating ips, tenant_id
-            # is not set, but EVS does not like it.
-            tenant_id = self._get_tenant_id_for_create(context, port['port'])
-            if not tenant_id:
-                network = self.get_network(context, port['port']['network_id'])
-                port['port']['tenant_id'] = network['tenant_id']
-            # create the port in the DB
-            db_port = super(EVSNeutronPluginV2, self).create_port(context,
-                                                                  port)
-
-            tenantname = db_port['tenant_id']
-            vportname = db_port['name']
-            if not vportname:
-                vportname = None
-            evs_id = db_port['network_id']
-            proplist = ['macaddr=%s' % db_port['mac_address']]
-            proplist.append('ipaddr=%s' %
-                            db_port['fixed_ips'][0].get('ip_address'))
-            proplist.append('uuid=%s' % db_port['id'])
-
-            self._evs_controller_addVPort(tenantname, evs_id, vportname,
-                                          ",".join(proplist))
-
-        # notify dhcp agent of port creation
-        self.dhcp_agent_notifier.notify(context, {'port': db_port},
-                                        'port.create.end')
-        return db_port
+        exc = None
+        for attempt in xrange(1, MAX_RETRIES):
+            try:
+                return self._create_port_db(context, port)
+            except os_db_exc.DBDeadlock as exc:
+                LOG.debug(_("Found %s. Restarting the transaction. "
+                            "Attempt: %s") % (exc, attempt))
+                time.sleep(RETRY_INTERVAL)
+            except sqla_exc.OperationalError as exc:
+                if ('timeout' in exc.message.lower() or
+                        'restart' in exc.message.lower()):
+                    LOG.debug(_("Found %s. Restarting the transaction. "
+                                "Attempt: %s") % (exc, attempt))
+                    time.sleep(RETRY_INTERVAL)
+                    continue
+                raise
+        else:
+            assert exc is not None
+            raise exc
 
     def update_port(self, context, id, port):
         # EVS does not allow updating certain attributes, so check for it
@@ -672,9 +665,6 @@ class EVSNeutronPluginV2(db_base_plugin_v2.NeutronDbPluginV2,
         db_port = super(EVSNeutronPluginV2, self).update_port(context,
                                                               id, port)
 
-        # notify dhcp agent of port update
-        self.dhcp_agent_notifier.notify(context, {'port': db_port},
-                                        'port.update.end')
         return db_port
 
     def get_port(self, context, id, fields=None):
@@ -689,35 +679,6 @@ class EVSNeutronPluginV2(db_base_plugin_v2.NeutronDbPluginV2,
                       page_reverse)
         return [self._fields(port, fields) for port in ports]
 
-    def notify_l3agent(self, context, port):
-        """ If an L3 agent is using this port, then we need to send
-        a notification to the L3 agent so that it can remove the EVS VPort
-        associated with the Neutron Port. In that case, the EVS Plugin will
-        only remove the Neutron port from the DB, so return False.
-
-        If the port is not used by the L3 agent, then the EVS plugin
-        will remove both the Neutron port and EVS VPort, so return True.
-        """
-
-        device_owner = port['device_owner']
-        if device_owner not in [constants.DEVICE_OWNER_ROUTER_INTF,
-                                constants.DEVICE_OWNER_ROUTER_GW,
-                                constants.DEVICE_OWNER_FLOATINGIP]:
-            return True
-        router_id = port['device_id']
-        port_update = {
-            'port': {
-                'device_id': '',
-                'device_owner': ''
-            }
-        }
-        self.update_port(context, port['id'], port_update)
-        if device_owner in [constants.DEVICE_OWNER_ROUTER_INTF,
-                            constants.DEVICE_OWNER_ROUTER_GW]:
-            self.l3_agent_notifier.routers_updated(context, [router_id])
-            return False
-        return True
-
     @lockutils.synchronized('evs-plugin', 'neutron-')
     def _evs_controller_removeVPort(self, tenantname, evsname, vportuuid):
         LOG.debug(_("Removing VPort with id: %s for tenant: %s for evs: %s") %
@@ -726,32 +687,15 @@ class EVSNeutronPluginV2(db_base_plugin_v2.NeutronDbPluginV2,
                                      'tenant': tenantname})
         try:
             evs = self.rad_connection.get_object(evsbind.EVS(), pat)
-            evs.removeVPort(vportuuid)
-        except radcli.ObjectError as oe:
-            # '7' corresponds to EVS' EVS_EBUSY_VPORT error code
-            if oe.get_payload().err == 7:
-                # It is possible that the VM is destroyed, but EVS is unaware
-                # of it. So, try to reset the vport. If it succeeds, then call
-                # removeVPort() again.
-                LOG.debug(_("EVS VPort is busy. We will need to reset "
-                            "and then remove"))
-                try:
-                    evs.resetVPort(vportuuid)
-                    evs.removeVPort(vportuuid)
-                except:
-                    # we failed one of the above operations, just return
-                    # the original exception.
-                    pass
-                else:
-                    # the reset and remove succeeded, just return.
-                    return
+            evs.removeVPort(vportuuid, "force=yes")
+        except (radcli.NotFoundError, radcli.ObjectError) as oe:
             # '43' corresponds to EVS' EVS_ENOENT_VPORT error code
-            elif oe.get_payload().err == 43:
+            if oe.get_payload() is None or oe.get_payload().err == 43:
                 # EVS doesn't have that VPort, return success to delete
                 # the VPort from Neutron DB.
                 LOG.debug(_("VPort could not be found in EVS."))
-                return
-            raise EVSControllerError(oe.get_payload().errmsg)
+            else:
+                raise EVSControllerError(oe.get_payload().errmsg)
 
     def delete_port(self, context, id, l3_port_check=True):
         if l3_port_check:
@@ -760,19 +704,8 @@ class EVSNeutronPluginV2(db_base_plugin_v2.NeutronDbPluginV2,
         port = self.get_port(context, id)
         if not port:
             return
-        del_vport = l3_port_check or self.notify_l3agent(context, port)
         with context.session.begin(subtransactions=True):
             super(EVSNeutronPluginV2, self).delete_port(context, id)
-            if del_vport:
-                self._evs_controller_removeVPort(port['tenant_id'],
-                                                 port['network_id'],
-                                                 port['id'])
-
-        # notify dhcp agent of port deletion
-        payload = {
-            'port': {
-                'network_id': port['network_id'],
-                'id': id,
-            }
-        }
-        self.dhcp_agent_notifier.notify(context, payload, 'port.delete.end')
+            self._evs_controller_removeVPort(port['tenant_id'],
+                                             port['network_id'],
+                                             port['id'])

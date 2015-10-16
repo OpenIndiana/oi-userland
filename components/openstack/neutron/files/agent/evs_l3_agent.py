@@ -79,7 +79,7 @@ class EVSL3NATAgent(l3_agent.L3NATAgentWithStateReport):
         self.process_router(ri)
         if self.conf.enable_metadata_proxy:
             self._destroy_metadata_proxy(ri.router_id, ri.ns_name)
-
+        ra.disable_ipv6_ra(ri.router_id)
         del self.router_info[router_id]
 
     def _get_metadata_proxy_process_manager(self, router_id, ns_name):
@@ -368,32 +368,9 @@ class EVSL3NATAgent(l3_agent.L3NATAgentWithStateReport):
                 dl.create_vnic(self.conf.external_network_datalink,
                                mac_address=mac_address, vid=vid)
             else:
-                # This is to handle HA by Solaris Cluster and is similar to
-                # the code we already have for the DHCP Agent. So, when
-                # the 1st L3 agent is down and the second L3 agent tries to
-                # connect its VNIC to EVS, we will end up in "vport in use"
-                # error. So, we need to reset the vport before we connect
-                # the VNIC to EVS.
-                cmd = ['/usr/sbin/evsadm', 'show-vport', '-f',
-                       'vport=%s' % ex_gw_port['id'], '-co',
-                       'evs,vport,status']
-                stdout = utils.execute(cmd)
-                evsname, vportname, status = stdout.strip().split(':')
-                tenant_id = ex_gw_port['tenant_id']
-                if status == 'used':
-                    cmd = ['/usr/sbin/evsadm', 'reset-vport', '-T', tenant_id,
-                           '%s/%s' % (evsname, vportname)]
-                    utils.execute(cmd)
-
-                # next remove protection setting on the VPort to allow
-                # multiple floating IPs to be configured on the l3e*
-                # interface
-                evsvport = "%s/%s" % (ex_gw_port['network_id'],
-                                      ex_gw_port['id'])
-                cmd = ['/usr/sbin/evsadm', 'set-vportprop', '-T',
-                       tenant_id, '-p', 'protection=none', evsvport]
-                utils.execute(cmd)
-                dl.connect_vnic(evsvport, tenant_id)
+                self.driver.plug(ex_gw_port['tenant_id'],
+                                 ex_gw_port['network_id'],
+                                 ex_gw_port['id'], external_dlname)
 
         self.driver.init_l3(external_dlname, [ex_gw_port['ip_cidr']])
 
@@ -441,16 +418,6 @@ class EVSL3NATAgent(l3_agent.L3NATAgentWithStateReport):
         if net_lib.Datalink.datalink_exists(external_dlname):
             self.driver.fini_l3(external_dlname)
             self.driver.unplug(external_dlname)
-
-        # remove the EVS VPort associated with external network
-        cmd = ['/usr/sbin/evsadm', 'remove-vport',
-               '-T', ex_gw_port['tenant_id'],
-               '%s/%s' % (ex_gw_port['network_id'], ex_gw_port['id'])]
-        try:
-            utils.execute(cmd)
-        except Exception as err:
-            LOG.error(_("Failed to delete the EVS VPort associated with "
-                        "external network: %s") % err)
 
     def _get_ippool_name(self, mac_address, suffix=None):
         # Generate a unique-name for ippool(1m) from that last 3
@@ -595,15 +562,6 @@ class EVSL3NATAgent(l3_agent.L3NATAgentWithStateReport):
         if net_lib.Datalink.datalink_exists(internal_dlname):
             self.driver.fini_l3(internal_dlname)
             self.driver.unplug(internal_dlname)
-
-        # remove the EVS VPort associated with internal network
-        cmd = ['/usr/sbin/evsadm', 'remove-vport', '-T', port['tenant_id'],
-               '%s/%s' % (port['network_id'], port['id'])]
-        try:
-            utils.execute(cmd)
-        except Exception as err:
-            LOG.error(_("Failed to delete the EVS VPort associated with "
-                        "internal network: %s") % err)
 
     def routes_updated(self, ri):
         pass
