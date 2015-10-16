@@ -35,7 +35,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:c10316fb003bd25eccbc08c77dd9057e053693e6527ffa2ea2cc4e08ccb87715
 COMPONENT_ARCHIVE_URL=	ftp://ftp.proftpd.org/distrib/source/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	service/ftp-server
+COMPONENT_BUGDB=	service/proftpd
 
 # mod_gss subcomponent
 COMPONENT_NAME_1=	mod_gss
