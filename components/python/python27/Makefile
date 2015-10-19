@@ -49,8 +49,7 @@ PKGSEND_PUBLISH_OPTIONS += -T \*Grammar\*.txt
 PKGSEND_PUBLISH_OPTIONS += -T \*Grammar\*.pickle
 
 # We patch auto* files, so regenerate headers and configure
-COMPONENT_PREP_ACTION = \
-	(cd $(@D) ; autoheader ; autoconf)
+COMPONENT_PREP_ACTION = (cd $(@D) ; autoheader ; autoconf -f)
 
 # we don't want to leak $(CC_BITS) into BASECFLAGS as it causes problems with
 # python-config

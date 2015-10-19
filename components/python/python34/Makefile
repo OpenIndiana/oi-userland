@@ -49,8 +49,7 @@ PKGSEND_PUBLISH_OPTIONS += -T \*Grammar\*.txt
 PKGSEND_PUBLISH_OPTIONS += -T \*Grammar\*.pickle
 
 # We patch auto* files, so regenerate headers and configure
-COMPONENT_PREP_ACTION = \
-	(cd $(@D) ; autoheader ; autoconf)
+COMPONENT_PREP_ACTION = (cd $(@D) ; autoheader ; autoconf -f)
 
 # The DTrace patch needs this file to be mode 0755.
 COMPONENT_PRE_BUILD_ACTION=($(CHMOD) +x \
