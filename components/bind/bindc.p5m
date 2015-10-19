@@ -21,6 +21,11 @@
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
+# Put the various bind man pages in the right directories.
+<transform file path=usr/share/man/man8/(.+)$ -> set action.hash Solaris/%<1> >
+<transform file path=usr/share/man/ja_JP.UTF-8/man8/(.+)$ -> set action.hash Solaris/ja/%<1> >
+<transform file path=usr/share/man/zh_CN.UTF-8/man8/(.+)$ -> set action.hash Solaris/zh/%<1> >
+
 # Bypass the mangler for these files because they are pre-Solarified.
 <transform file path=usr/share/man/.+$ -> add mangler.bypass true >
 set name=pkg.fmri \
@@ -63,15 +68,15 @@ file path=usr/sbin/nslookup
 file path=usr/sbin/nsupdate
 file path=usr/sbin/rndc
 file path=usr/sbin/rndc-confgen
-file Solaris/ja/dig.1m path=usr/share/man/ja_JP.UTF-8/man1m/dig.1m
-file Solaris/ja/nsupdate.1m path=usr/share/man/ja_JP.UTF-8/man1m/nsupdate.1m
-file Solaris/dig.1m path=usr/share/man/man1m/dig.1m
-file Solaris/host.1m path=usr/share/man/man1m/host.1m
-file Solaris/nslookup.1m path=usr/share/man/man1m/nslookup.1m
-file Solaris/nsupdate.1m path=usr/share/man/man1m/nsupdate.1m
-file Solaris/rndc-confgen.1m path=usr/share/man/man1m/rndc-confgen.1m
-file Solaris/rndc.1m path=usr/share/man/man1m/rndc.1m
-file Solaris/rndc.conf.4 path=usr/share/man/man4/rndc.conf.4
-file Solaris/zh/dig.1m path=usr/share/man/zh_CN.UTF-8/man1m/dig.1m
-file Solaris/zh/nsupdate.1m path=usr/share/man/zh_CN.UTF-8/man1m/nsupdate.1m
+file path=usr/share/man/ja_JP.UTF-8/man8/dig.8
+file path=usr/share/man/ja_JP.UTF-8/man8/nsupdate.8
+file Solaris/rndc.conf.5 path=usr/share/man/man5/rndc.conf.5
+file path=usr/share/man/man8/dig.8
+file path=usr/share/man/man8/host.8
+file path=usr/share/man/man8/nslookup.8
+file path=usr/share/man/man8/nsupdate.8
+file path=usr/share/man/man8/rndc-confgen.8
+file path=usr/share/man/man8/rndc.8
+file path=usr/share/man/zh_CN.UTF-8/man8/dig.8
+file path=usr/share/man/zh_CN.UTF-8/man8/nsupdate.8
 license bind.license license="ISC license"

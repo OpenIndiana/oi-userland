@@ -83,10 +83,8 @@ build:		$(BUILD_32)
 
 # Install.
 #
-# Currently manual pages are distributed from pkg:/system/manual@.
-# While there are some changes in our manuals, for example section
-# numbering and additions to named(1M) for SMF - that could be fixed
-# by patch.
+# While there are some changes in our manuals, for example additions
+# to named(8) for SMF - that could be fixed by patch.
 #
 # In addition to BIND deliverables we also deliver SMF files and
 # migration notes.  There is no need to install these extras into the

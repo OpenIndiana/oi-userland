@@ -121,7 +121,7 @@ case "$method" in
           echo "$I : Warning: rndc configuration failed! Use of 'rndc' to" \
 		    "control 'named' may fail and 'named' may report further error" \
 		    "messages to the system log. This is not fatal. For more" \
-		    "information see rndc(1M) and rndc-confgen(1M)." >&2
+		    "information see rndc(8) and rndc-confgen(8)." >&2
         fi
       fi
     fi
@@ -137,8 +137,8 @@ case "$method" in
 
     if [ ${result} = ${SMF_EXIT_OK} ]; then
 	echo "$I: Executing: ${server} ${cmdopts}"
-	# Execute named(1M) with relevant command line options.  Note
-	# the server forks before reading named.conf(4) and so a
+	# Execute named(8) with relevant command line options.  Note
+	# the server forks before reading named.conf(5) and so a
 	# good exit code here does not mean the service is ready.
 	${server} ${cmdopts}
 	result=$?

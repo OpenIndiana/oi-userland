@@ -2,7 +2,7 @@
 .\" Copyright (C) 2010 Internet Systems Consortium, Inc. ("ISC")
 .\" Permission to use, copy, modify, and/or distribute this software for any purpose  with or without fee is hereby granted, provided that the above copyright notice  and this permission notice appear in all copies.  THE SOFTWARE IS PROVIDED "AS IS" AND ISC DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL ISC BE LIABLE FOR ANY SPECIAL,  DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING  FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE  USE OR PERFORMANCE OF THIS SOFTWARE.
 .\" Portions Copyright (c) 2010, Sun Microsystems, Inc. All Rights Reserved.
-.TH named 1M "11 Jan 2010" "SunOS 5.12" "System Administration Commands"
+.TH named 8 "19 Oct 2015" "SunOS 5.12" "System Administration Commands"
 .SH NAME
 named, in.named \- Internet domain name server
 .SH SYNOPSIS
@@ -218,7 +218,7 @@ This section describes additional attributes of \fBnamed\fR.
 .SS "SMF Properties"
 .sp
 .LP
-When starting named from the service management facility, \fBsmf\fR(5), \fBnamed\fR configuration is read from the service configuration repository. Use \fBsvcprop\fR(1) to list the properties and \fBsvccfg\fR(1M) to make changes.
+When starting named from the service management facility, \fBsmf\fR(5), \fBnamed\fR configuration is read from the service configuration repository. Use \fBsvcprop\fR(1) to list the properties and \fBsvccfg\fR(8) to make changes.
 .sp
 .LP
 The following application configuration properties are available to administrators:
@@ -298,7 +298,7 @@ Specifies the number of CPU worker threads to create. The default of 0 causes \f
 .RS 4n
 Specifies the directory to be used as the root directory after processing SMF properties and the command line arguments but before reading the configuration file. Use this property when using a \fBchroot\fR(2) environment. Synonymous to command line option \fB-t\fR \fIpathname\fR.
 .sp
-When using \fBchroot\fR(2), \fBnamed\fR is unable to disable itself when receiving \fBrndc\fR(1M) \fBstop\fR or \fBhalt\fR commands. Instead, you must use the \fBsvcadm\fR(1M) \fBdisable\fR command.
+When using \fBchroot\fR(2), \fBnamed\fR is unable to disable itself when receiving \fBrndc\fR(8) \fBstop\fR or \fBhalt\fR commands. Instead, you must use the \fBsvcadm\fR(8) \fBdisable\fR command.
 .RE
 
 .sp
@@ -318,13 +318,13 @@ In addition to the properties listed above, the following property can be used t
 .ad
 .sp .6
 .RS 4n
-Specifies the identity of the user that is invoking \fBnamed\fR. See \fBsmf_method\fR(5) and \fBchroot\fR(2). Note that the user must have \fBsolaris.smf.manage.bind\fR authorization. Without this role the \fBnamed\fR will be unable to manage its SMF FMRI and \fBnamed\fR will automatically be restarted by the SMF after an \fBrndc\fR(1M) \fBstop\fR or \fBhalt\fR command. See \fBEXAMPLES\fR for a sequence of commands that establishes the correct authorization.
+Specifies the identity of the user that is invoking \fBnamed\fR. See \fBsmf_method\fR(5) and \fBchroot\fR(2). Note that the user must have \fBsolaris.smf.manage.bind\fR authorization. Without this role the \fBnamed\fR will be unable to manage its SMF FMRI and \fBnamed\fR will automatically be restarted by the SMF after an \fBrndc\fR(8) \fBstop\fR or \fBhalt\fR command. See \fBEXAMPLES\fR for a sequence of commands that establishes the correct authorization.
 .RE
 
 .SS "SIGNALS"
 .sp
 .LP
-In routine operation, signals should not be used to control the nameserver; \fBrndc\fR(1M) should be used instead.
+In routine operation, signals should not be used to control the nameserver; \fBrndc\fR(8) should be used instead.
 .sp
 .ne 2
 .mk
@@ -505,7 +505,7 @@ Interface StabilityVolatile
 .SH SEE ALSO
 .sp
 .LP
-\fBsvcs\fR(1), \fBnamed-checkconf\fR(1M), \fBnamed-checkzone\fR(1M), \fBrndc\fR(1M), \fBrndc-confgen\fR(1M), \fBsvcadm\fR(1M), \fBsvccfg\fR(1M), \fBsvcprop\fR(1), \fBchroot\fR(2), \fBsetuid\fR(2), \fBbind\fR(3C), \fBattributes\fR(5), \fBsmf\fR(5), \fBsmf_method\fR(5)
+\fBsvcs\fR(1), \fBnamed-checkconf\fR(8), \fBnamed-checkzone\fR(8), \fBrndc\fR(8), \fBrndc-confgen\fR(8), \fBsvcadm\fR(8), \fBsvccfg\fR(8), \fBsvcprop\fR(1), \fBchroot\fR(2), \fBsetuid\fR(2), \fBbind\fR(3C), \fBattributes\fR(5), \fBsmf\fR(5), \fBsmf_method\fR(5)
 .sp
 .LP
 \fIRFC 1033\fR, \fIRFC 1034\fR, \fIRFC 1035\fR
