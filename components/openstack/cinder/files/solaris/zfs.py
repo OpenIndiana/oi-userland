@@ -27,6 +27,7 @@ import subprocess
 import time
 
 from oslo.config import cfg
+import paramiko
 
 from cinder import exception
 from cinder.i18n import _
@@ -110,20 +111,11 @@ class ZFSVolumeDriver(SanDriver):
                                     src_vref['size']))
             raise exception.VolumeBackendAPIException(data=exception_message)
 
-        src_volume_name = src_vref['name']
-        volume_name = volume['name']
-        tmp_snapshot = {'volume_name': src_volume_name,
-                        'name': 'tmp-snapshot-%s' % volume['id']}
-        self.create_snapshot(tmp_snapshot)
-
-        # Create a ZFS clone
-        zfs_snapshot = self._get_zfs_snap_name(tmp_snapshot)
-        zfs_volume = self._get_zfs_volume_name(volume['name'])
-        cmd = ['/usr/sbin/zfs', 'clone', zfs_snapshot, zfs_volume]
-        self._execute(*cmd)
+        self._zfs_send_recv(src_vref,
+                            self._get_zfs_volume_name(volume['name']))
 
         LOG.debug(_("Created cloned volume '%s' from source volume '%s'")
-                  % (volume_name, src_volume_name))
+                  % (volume['name'], src_vref['name']))
 
     def delete_volume(self, volume):
         """Delete a volume.
@@ -248,6 +240,27 @@ class ZFSVolumeDriver(SanDriver):
         return "%s/%s" % (self.configuration.zfs_volume_base,
                           volume_name)
 
+    def _remote_piped_execute(self, cmd1, cmd2, ip, username, password):
+        """Piped execute on a remote host."""
+        LOG.debug(_("Piping cmd1='%s' into cmd='%s' on host '%s'") %
+                  (' '.join(cmd1), ' '.join(cmd2), ip))
+
+        client = paramiko.SSHClient()
+        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        client.connect(ip, username=username, password=password)
+
+        cmd = ' '.join(cmd1) + '|' + ' '.join(cmd2)
+        stdin, stdout, stderr = client.exec_command(cmd)
+        channel = stdout.channel
+        exit_status = channel.recv_exit_status()
+
+        if exit_status != 0:
+            LOG.error(_("_remote_piped_execute: failed to host '%s' with "
+                        "stdout '%s' and stderr '%s'")
+                      % (ip, stdout.read(), stderr.read()))
+            msg = (_("Remote piped execution failed to host '%s'.") % ip)
+            raise exception.VolumeBackendAPIException(data=msg)
+
     def _piped_execute(self, cmd1, cmd2):
         """Pipe output of cmd1 into cmd2."""
         LOG.debug(_("Piping cmd1='%s' into cmd2='%s'") %
@@ -275,7 +288,7 @@ class ZFSVolumeDriver(SanDriver):
                    (stdout, stderr))
             raise exception.VolumeBackendAPIException(data=msg)
 
-    def _zfs_send_recv(self, src, dst, remote=False):
+    def _zfs_send_recv(self, src, dst):
         """Replicate the ZFS dataset by calling zfs send/recv cmd"""
         src_snapshot = {'volume_name': src['name'],
                         'name': 'tmp-snapshot-%s' % src['id']}
@@ -290,7 +303,18 @@ class ZFSVolumeDriver(SanDriver):
 
         cmd1 = ['/usr/sbin/zfs', 'send', src_snapshot_name]
         cmd2 = ['/usr/sbin/zfs', 'receive', dst]
-        self._piped_execute(cmd1, cmd2)
+        # Due to pipe injection protection in the ssh utils method,
+        # cinder.utils.check_ssh_injection(), the piped commands must be passed
+        # through via paramiko.  These commands take no user defined input
+        # other than the names of the zfs datasets which are already protected
+        # against the special characters of concern.
+        if not self.run_local:
+            ip = self.configuration.san_ip
+            username = self.configuration.san_login
+            password = self.configuration.san_password
+            self._remote_piped_execute(cmd1, cmd2, ip, username, password)
+        else:
+            self._piped_execute(cmd1, cmd2)
 
         # Delete the temporary src snapshot and dst snapshot
         self.delete_snapshot(src_snapshot)
@@ -523,8 +547,15 @@ class ZFSISCSIDriver(STMFDriver, driver.ISCSIDriver):
         """Export the volume."""
         # If the volume is already exported there is nothing to do, as we
         # simply export volumes and they are universally available.
-        if self._get_luid(volume):
-            return
+        luid = self._get_luid(volume)
+        if luid:
+            view_lun = self._get_view_and_lun(luid)
+            if view_lun['view'] is not None:
+                return
+            else:
+                msg = (_("Failed to create logical unit for volume '%s' due "
+                         "to an existing LU id but no view.") % volume['name'])
+                raise exception.VolumeBackendAPIException(data=msg)
 
         zvol = self._get_zvol_path(volume)
 
@@ -758,6 +789,18 @@ class ZFSFCDriver(STMFDriver, driver.FibreChannelDriver):
 
     def create_export(self, context, volume):
         """Export the volume."""
+        # If the volume is already exported there is nothing to do, as we
+        # simply export volumes and they are universally available.
+        luid = self._get_luid(volume)
+        if luid:
+            view_lun = self._get_view_and_lun(luid)
+            if view_lun['view'] is not None:
+                return
+            else:
+                msg = (_("Failed to create logical unit for volume '%s' due "
+                         "to an existing LU id but no view.") % volume['name'])
+                raise exception.VolumeBackendAPIException(data=msg)
+
         zvol = self._get_zvol_path(volume)
 
         # Create a Logical Unit (LU)
