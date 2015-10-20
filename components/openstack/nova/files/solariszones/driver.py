@@ -38,6 +38,7 @@ from solaris_install.archive import UnifiedArchive
 from solaris_install.engine import InstallEngine
 from solaris_install.target.size import Size
 
+from cinderclient import exceptions as cinder_exception
 from eventlet import greenthread
 from lxml import etree
 from oslo_config import cfg
@@ -69,6 +70,11 @@ from nova.virt import event as virtevent
 from nova.virt import images
 from nova.virt.solariszones import sysconfig
 from nova import volume
+from nova.volume.cinder import API
+from nova.volume.cinder import cinderclient
+from nova.volume.cinder import get_cinder_client_version
+from nova.volume.cinder import translate_volume_exception
+from nova.volume.cinder import _untranslate_volume_summary_view
 
 solariszones_opts = [
     cfg.StrOpt('glancecache_dirname',
@@ -134,6 +140,8 @@ VNC_CONSOLE_BASE_FMRI = 'svc:/application/openstack/nova/zone-vnc-console'
 VNC_SERVER_PATH = '/usr/bin/vncserver'
 XTERM_PATH = '/usr/bin/xterm'
 
+ROOTZPOOL_RESOURCE = 'rootzpool'
+
 
 def lookup_resource(zone, resource):
     """Lookup specified resource from specified Solaris Zone."""
@@ -174,6 +182,87 @@ def lookup_resource_property_value(zone, resource, prop, value):
         return None
     except Exception:
         raise
+
+
+class SolarisVolumeAPI(API):
+    """ Extending the volume api to support additional cinder sub-commands
+    """
+    @translate_volume_exception
+    def create(self, context, size, name, description, snapshot=None,
+               image_id=None, volume_type=None, metadata=None,
+               availability_zone=None, source_volume=None):
+        """Clone the source volume by calling the cinderclient version of
+        create with a source_volid argument
+
+        :param context: the context for the clone
+        :param size: size of the new volume, must be the same as the source
+            volume
+        :param name: display_name of the new volume
+        :param description: display_description of the new volume
+        :param snapshot: Snapshot object
+        :param image_id: image_id to create the volume from
+        :param volume_type: type of volume
+        :param metadata: Additional metadata for the volume
+        :param availability_zone: zone:host where the volume is to be created
+        :param source_volume: Volume object
+
+        Returns a volume object
+        """
+        if snapshot is not None:
+            snapshot_id = snapshot['id']
+        else:
+            snapshot_id = None
+
+        if source_volume is not None:
+            source_volid = source_volume['id']
+        else:
+            source_volid = None
+
+        kwargs = dict(snapshot_id=snapshot_id,
+                      volume_type=volume_type,
+                      user_id=context.user_id,
+                      project_id=context.project_id,
+                      availability_zone=availability_zone,
+                      metadata=metadata,
+                      imageRef=image_id,
+                      source_volid=source_volid)
+
+        version = get_cinder_client_version(context)
+        if version == '1':
+            kwargs['display_name'] = name
+            kwargs['display_description'] = description
+        elif version == '2':
+            kwargs['name'] = name
+            kwargs['description'] = description
+
+        try:
+            item = cinderclient(context).volumes.create(size, **kwargs)
+            return _untranslate_volume_summary_view(context, item)
+        except cinder_exception.OverLimit:
+            raise exception.OverQuota(overs='volumes')
+        except cinder_exception.BadRequest as err:
+            raise exception.InvalidInput(reason=unicode(err))
+
+    @translate_volume_exception
+    def update(self, context, volume_id, fields):
+        """Update the fields of a volume for example used to rename a volume
+        via a call to cinderclient
+
+        :param context: the context for the update
+        :param volume_id: the id of the volume to update
+        :param fields: a dictionary of of the name/value pairs to update
+        """
+        cinderclient(context).volumes.update(volume_id, **fields)
+
+    @translate_volume_exception
+    def extend(self, context, volume, newsize):
+        """Extend the size of a cinder volume by calling the cinderclient
+
+        :param context: the context for the extend
+        :param volume: the volume object to extend
+        :param newsize: the new size of the volume in GB
+        """
+        cinderclient(context).volumes.extend(volume, newsize)
 
 
 class ZoneConfig(object):
@@ -244,18 +333,31 @@ class ZoneConfig(object):
                       % (prop, resource, self.zone.name, err))
             raise
 
-    def addresource(self, resource, props=None):
-        """creates a new resource with an optional property list."""
+    def addresource(self, resource, props=None, ignore_exists=False):
+        """creates a new resource with an optional property list, or set the
+        property if the resource exists and ignore_exists is true.
+
+        :param ignore_exists: If the resource exists, set the property for the
+            resource.
+        """
         if props is None:
             props = []
 
         try:
             self.zone.addResource(zonemgr.Resource(resource, props))
         except rad.client.ObjectError as err:
-            LOG.error(_("Unable to create new resource '%s' for instance '%s'"
-                        "via zonemgr(3RAD): %s")
-                      % (resource, self.zone.name, err))
-            raise
+            result = err.get_payload()
+            if not ignore_exists:
+                LOG.error(_("Unable to create new resource '%s' for instance "
+                            "'%s' via zonemgr(3RAD): %s")
+                          % (resource, self.zone.name, err))
+                raise
+
+            if result.code == zonemgr.ErrorCode.RESOURCE_ALREADY_EXISTS:
+                self.zone.setResourceProperties(zonemgr.Resource(
+                    resource, None), props)
+            else:
+                raise
 
     def removeresources(self, resource, props=None):
         """removes resources whose properties include the optional property
@@ -322,7 +424,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
         self._rad_connection = None
         self._uname = os.uname()
         self._validated_archives = list()
-        self._volume_api = volume.API()
+        self._volume_api = SolarisVolumeAPI()
+        self._rootzpool_suffix = ROOTZPOOL_RESOURCE
 
     @property
     def rad_connection(self):
@@ -466,7 +569,12 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
     def _get_max_mem(self, zone):
         """Return the maximum memory in KBytes allowed."""
-        max_mem = lookup_resource_property(zone, 'capped-memory', 'physical')
+        if zone.brand == ZONE_BRAND_SOLARIS:
+            mem_resource = 'swap'
+        else:
+            mem_resource = 'physical'
+
+        max_mem = lookup_resource_property(zone, 'capped-memory', mem_resource)
         if max_mem is not None:
             return strutils.string_to_bytes("%sB" % max_mem) / 1024
 
@@ -869,7 +977,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
             vol = self._volume_api.create(
                 context,
                 instance['root_gb'],
-                instance['hostname'] + "-rootzpool",
+                instance['hostname'] + "-" + self._rootzpool_suffix,
                 "Boot volume for instance '%s' (%s)"
                 % (instance['name'], instance['uuid']))
             # TODO(npower): Polling is what nova/compute/manager also does when
@@ -895,6 +1003,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
         connector = self.get_volume_connector(instance)
         connection_info = self._volume_api.initialize_connection(
             context, volume_id, connector)
+        connection_info['serial'] = volume_id
 
         # Check connection_info to determine if the provided volume is
         # local to this compute node. If it is, then don't use it for
@@ -959,8 +1068,9 @@ class SolarisZonesDriver(driver.ComputeDriver):
                     [zonemgr.Property("storage", suri)])
             else:
                 zc.addresource(
-                    "rootzpool",
-                    [zonemgr.Property("storage", listvalue=[suri])])
+                    ROOTZPOOL_RESOURCE,
+                    [zonemgr.Property("storage", listvalue=[suri])],
+                    ignore_exists=True)
 
     def _set_num_cpu(self, name, vcpus, brand):
         """Set number of VCPUs in a Solaris Zone configuration."""
@@ -1045,20 +1155,27 @@ class SolarisZonesDriver(driver.ComputeDriver):
                                                   filter)
                     linkname = 'net%s' % id
 
-            # create the required sysconfig file
-            subnet_uuid = port['fixed_ips'][0]['subnet_id']
-            subnet = network_plugin.show_subnet(subnet_uuid)['subnet']
+            # create the required sysconfig file (or skip if this is part of a
+            # resize process)
+            tstate = instance['task_state']
+            if tstate not in [task_states.RESIZE_FINISH,
+                              task_states.RESIZE_REVERTING,
+                              task_states.RESIZE_MIGRATING]:
+                subnet_uuid = port['fixed_ips'][0]['subnet_id']
+                subnet = network_plugin.show_subnet(subnet_uuid)['subnet']
 
-            if subnet['enable_dhcp']:
-                tree = sysconfig.create_ncp_defaultfixed('dhcp', linkname,
-                                                         netid, ip_version)
-            else:
-                tree = sysconfig.create_ncp_defaultfixed('static', linkname,
-                                                         netid, ip_version, ip,
-                                                         route, nameservers)
+                if subnet['enable_dhcp']:
+                    tree = sysconfig.create_ncp_defaultfixed('dhcp', linkname,
+                                                             netid, ip_version)
+                else:
+                    tree = sysconfig.create_ncp_defaultfixed('static',
+                                                             linkname, netid,
+                                                             ip_version, ip,
+                                                             route,
+                                                             nameservers)
 
-            fp = os.path.join(sc_dir, 'evs-network-%d.xml' % netid)
-            sysconfig.create_sc_profile(fp, tree)
+                fp = os.path.join(sc_dir, 'evs-network-%d.xml' % netid)
+                sysconfig.create_sc_profile(fp, tree)
 
         if tenant_id is not None:
             # set the tenant id
@@ -1166,14 +1283,19 @@ class SolarisZonesDriver(driver.ComputeDriver):
                    % (brand, name)))
             raise exception.NovaException(msg)
 
-        sc_profile = extra_specs.get('install:sc_profile')
-        if sc_profile is not None:
-            if os.path.isfile(sc_profile):
-                shutil.copy(sc_profile, sc_dir)
-            elif os.path.isdir(sc_profile):
-                shutil.copytree(sc_profile, os.path.join(sc_dir, 'sysconfig'))
+        tstate = instance['task_state']
+        if tstate not in [task_states.RESIZE_FINISH,
+                          task_states.RESIZE_REVERTING,
+                          task_states.RESIZE_MIGRATING]:
+            sc_profile = extra_specs.get('install:sc_profile')
+            if sc_profile is not None:
+                if os.path.isfile(sc_profile):
+                    shutil.copy(sc_profile, sc_dir)
+                elif os.path.isdir(sc_profile):
+                    shutil.copytree(sc_profile, os.path.join(sc_dir,
+                                    'sysconfig'))
 
-        self._verify_sysconfig(sc_dir, instance, admin_password)
+            self._verify_sysconfig(sc_dir, instance, admin_password)
 
         zonemanager = self.rad_connection.get_object(zonemgr.ZoneManager())
         try:
@@ -1523,7 +1645,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
         if connection_info:
             bdm = objects.BlockDeviceMapping(
-                    source_type='volume', destination_type='volume',
+                    source_type='volume',
+                    destination_type='volume',
                     instance_uuid=instance.uuid,
                     volume_id=volume_id,
                     connection_info=jsonutils.dumps(connection_info),
@@ -1558,6 +1681,40 @@ class SolarisZonesDriver(driver.ComputeDriver):
                         "%s") % (name, reason))
             raise exception.InstancePowerOffFailure(reason=reason)
 
+    def _samehost_revert_resize(self, context, instance, network_info,
+                                block_device_info):
+        """Reverts the zones configuration to pre-resize config
+        """
+        self.power_off(instance)
+
+        inst_type = flavor_obj.Flavor.get_by_id(
+            nova_context.get_admin_context(read_deleted='yes'),
+            instance['instance_type_id'])
+        extra_specs = inst_type['extra_specs'].copy()
+        brand = extra_specs.get('zonecfg:brand', ZONE_BRAND_SOLARIS)
+
+        name = instance['name']
+
+        cpu = int(instance.system_metadata['old_instance_type_vcpus'])
+        mem = int(instance.system_metadata['old_instance_type_memory_mb'])
+
+        self._set_num_cpu(name, cpu, brand)
+        self._set_memory_cap(name, mem, brand)
+
+        rgb = int(instance.system_metadata['new_instance_type_root_gb'])
+        old_rvid = instance.system_metadata.get('old_instance_volid')
+        if old_rvid:
+            new_rvid = instance.system_metadata.get('new_instance_volid')
+            newvname = instance['display_name'] + "-" + self._rootzpool_suffix
+            mount_dev = instance['root_device_name']
+            del instance.system_metadata['new_instance_volid']
+            del instance.system_metadata['old_instance_volid']
+
+            self._resize_disk_migration(context, instance, new_rvid, old_rvid,
+                                        rgb, mount_dev)
+
+            self._volume_api.delete(context, new_rvid)
+
     def destroy(self, context, instance, network_info, block_device_info=None,
                 destroy_disks=True, migrate_data=None):
         """Destroy the specified instance from the Hypervisor.
@@ -1575,6 +1732,12 @@ class SolarisZonesDriver(driver.ComputeDriver):
         :param destroy_disks: Indicates if disks should be destroyed
         :param migrate_data: implementation specific params
         """
+        if (instance['task_state'] == task_states.RESIZE_REVERTING and
+           instance.system_metadata['old_vm_state'] == vm_states.RESIZED):
+            self._samehost_revert_resize(context, instance, network_info,
+                                         block_device_info)
+            return
+
         try:
             # These methods log if problems occur so no need to double log
             # here. Just catch any stray exceptions and allow destroy to
@@ -1603,6 +1766,33 @@ class SolarisZonesDriver(driver.ComputeDriver):
         except Exception as reason:
             LOG.warning(_("Unable to destroy instance '%s' via zonemgr(3RAD): "
                           "%s") % (name, reason))
+
+        # One last point of house keeping. If we are deleting the instance
+        # during a resize operation we want to make sure the cinder volumes are
+        # property cleaned up. We need to do this here, because the periodic
+        # task that comes along and cleans these things up isn't nice enough to
+        # pass a context in so that we could simply do the work there.  But
+        # because we have access to a context, we can handle the work here and
+        # let the periodic task simply clean up the left over zone
+        # configuration that might be left around.  Note that the left over
+        # zone will only show up in zoneadm list, not nova list.
+        #
+        # If the task state is RESIZE_REVERTING do not process these because
+        # the cinder volume cleanup is taken care of in
+        # finish_revert_migration.
+        if instance['task_state'] == task_states.RESIZE_REVERTING:
+            return
+
+        tags = ['old_instance_volid', 'new_instance_volid']
+        for tag in tags:
+            volid = instance.system_metadata.get(tag)
+            if volid:
+                try:
+                    LOG.debug(_("Deleting volume %s"), volid)
+                    self._volume_api.delete(context, volid)
+                    del instance.system_metadata[tag]
+                except Exception:
+                    pass
 
     def cleanup(self, context, instance, network_info, block_device_info=None,
                 destroy_disks=True, migrate_data=None, destroy_vifs=True):
@@ -1884,7 +2074,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
             zc.addresource("device", [zonemgr.Property("storage", suri)])
 
         # apply the configuration to the running zone
-        zone.apply()
+        if zone.state == ZONE_STATE_RUNNING:
+            zone.apply()
 
     def detach_volume(self, connection_info, instance, mountpoint,
                       encryption=None):
@@ -1913,7 +2104,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
             zc.removeresources("device", [zonemgr.Property("storage", suri)])
 
         # apply the configuration to the running zone
-        zone.apply()
+        if zone.state == ZONE_STATE_RUNNING:
+            zone.apply()
 
     def swap_volume(self, old_connection_info, new_connection_info,
                     instance, mountpoint, resize_to):
@@ -1940,6 +2132,19 @@ class SolarisZonesDriver(driver.ComputeDriver):
         """
         raise NotImplementedError()
 
+    def _cleanup_migrate_disk(self, context, instance, volume):
+        """Make a best effort at cleaning up the volume that was created to
+        hold the new root disk
+
+        :param context: the context for the migration/resize
+        :param instance: nova.objects.instance.Instance being migrated/resized
+        :param volume: new volume created by the call to cinder create
+        """
+        try:
+            self._volume_api.delete(context, volume['id'])
+        except Exception as err:
+            LOG.error(_("Unable to cleanup the resized volume: %s" % err))
+
     def migrate_disk_and_power_off(self, context, instance, dest,
                                    flavor, network_info,
                                    block_device_info=None,
@@ -1952,7 +2157,88 @@ class SolarisZonesDriver(driver.ComputeDriver):
         :param retry_interval: How often to signal guest while
                                waiting for it to shutdown
         """
-        raise NotImplementedError()
+        LOG.debug("Starting migrate_disk_and_power_off", instance=instance)
+
+        samehost = (dest == self.get_host_ip_addr())
+        inst_type = flavor_obj.Flavor.get_by_id(
+            nova_context.get_admin_context(read_deleted='yes'),
+            instance['instance_type_id'])
+        extra_specs = inst_type['extra_specs'].copy()
+        brand = extra_specs.get('zonecfg:brand', ZONE_BRAND_SOLARIS)
+        if brand != ZONE_BRAND_SOLARIS_KZ and not samehost:
+            msg = (_("'%s' branded zones do not currently support "
+                     "resize to a different host.") % brand)
+            raise exception.MigrationPreCheckError(reason=msg)
+
+        if brand != flavor['extra_specs'].get('zonecfg:brand'):
+            msg = (_("Unable to change brand of zone during resize."))
+            raise exception.MigrationPreCheckError(reason=msg)
+
+        orgb = instance['root_gb']
+        nrgb = int(instance.system_metadata['new_instance_type_root_gb'])
+        if orgb > nrgb:
+            msg = (_("Unable to resize to a smaller boot volume."))
+            raise exception.ResizeError(reason=msg)
+
+        self.power_off(instance, timeout, retry_interval)
+
+        disk_info = None
+        if nrgb > orgb or not samehost:
+            bmap = block_device_info.get('block_device_mapping')
+            rootmp = instance.root_device_name
+            for entry in bmap:
+                mountdev = entry['mount_device'].rpartition('/')[2]
+                if mountdev == rootmp:
+                    root_ci = entry['connection_info']
+                    break
+            else:
+                # If this is a non-global zone that is on the same host and is
+                # simply using a dataset, the disk size is purely an OpenStack
+                # quota.  We can continue without doing any disk work.
+                if samehost and brand == ZONE_BRAND_SOLARIS:
+                    return disk_info
+                else:
+                    msg = (_("Cannot find an attached root device."))
+                    raise exception.ResizeError(reason=msg)
+
+            if root_ci['driver_volume_type'] == 'iscsi':
+                volume_id = root_ci['data']['volume_id']
+            else:
+                volume_id = root_ci['serial']
+
+            if volume_id is None:
+                msg = (_("Cannot find an attached root device."))
+                raise exception.ResizeError(reason=msg)
+
+            vinfo = self._volume_api.get(context, volume_id)
+            newvolume = self._volume_api.create(context, orgb,
+                                                vinfo['display_name'] +
+                                                '-resized',
+                                                vinfo['display_description'],
+                                                source_volume=vinfo)
+
+            instance.system_metadata['old_instance_volid'] = volume_id
+            instance.system_metadata['new_instance_volid'] = newvolume['id']
+
+            # TODO(npower): Polling is what nova/compute/manager also does when
+            # creating a new volume, so we do likewise here.
+            while True:
+                volume = self._volume_api.get(context, newvolume['id'])
+                if volume['status'] != 'creating':
+                    break
+                greenthread.sleep(1)
+
+            if nrgb > orgb:
+                try:
+                    self._volume_api.extend(context, newvolume['id'], nrgb)
+                except Exception:
+                    LOG.error(_("Failed to extend the new volume"))
+                    self._cleanup_migrate_disk(context, instance, newvolume)
+                    raise
+
+            disk_info = newvolume
+
+        return disk_info
 
     def snapshot(self, context, instance, image_id, update_task_state):
         """Snapshots the specified instance.
@@ -2050,6 +2336,42 @@ class SolarisZonesDriver(driver.ComputeDriver):
         """
         pass
 
+    def _cleanup_finish_migration(self, context, instance, disk_info,
+                                  network_info, samehost):
+        """Best effort attempt at cleaning up any additional resources that are
+        not directly managed by Nova or Cinder so as not to leak these
+        resources.
+        """
+        if disk_info:
+            self._volume_api.detach(context, disk_info['id'])
+            self._volume_api.delete(context, disk_info['id'])
+
+            old_rvid = instance.system_metadata.get('old_instance_volid')
+            if old_rvid:
+                connector = self.get_volume_connector(instance)
+                connection_info = self._volume_api.initialize_connection(
+                                    context, old_rvid, connector)
+
+                new_rvid = instance.system_metadata['new_instance_volid']
+
+                rootmp = instance.root_device_name
+                self._volume_api.attach(context, old_rvid, instance['uuid'],
+                                        rootmp)
+
+                bdmobj = objects.BlockDeviceMapping()
+                bdm = bdmobj.get_by_volume_id(context, new_rvid)
+                bdm['connection_info'] = jsonutils.dumps(connection_info)
+                bdm['volume_id'] = old_rvid
+                bdm.save()
+
+                del instance.system_metadata['new_instance_volid']
+                del instance.system_metadata['old_instance_volid']
+
+        if not samehost:
+            self.destroy(context, instance, network_info)
+            instance['host'] = instance['launched_on']
+            instance['node'] = instance['launched_on']
+
     def finish_migration(self, context, migration, instance, disk_info,
                          network_info, image_meta, resize_instance,
                          block_device_info=None, power_on=True):
@@ -2070,15 +2392,183 @@ class SolarisZonesDriver(driver.ComputeDriver):
         :param power_on: True if the instance should be powered on, False
                          otherwise
         """
-        raise NotImplementedError()
+        if not resize_instance:
+            raise NotImplementedError()
 
-    def confirm_migration(self, migration, instance, network_info):
+        samehost = (migration['dest_node'] == migration['source_node'])
+        if samehost:
+            instance.system_metadata['old_vm_state'] = vm_states.RESIZED
+
+        inst_type = flavor_obj.Flavor.get_by_id(
+            nova_context.get_admin_context(read_deleted='yes'),
+            instance['instance_type_id'])
+        extra_specs = inst_type['extra_specs'].copy()
+        brand = extra_specs.get('zonecfg:brand', ZONE_BRAND_SOLARIS)
+        name = instance['name']
+
+        if disk_info:
+            bmap = block_device_info.get('block_device_mapping')
+            rootmp = instance['root_device_name']
+            for entry in bmap:
+                if entry['mount_device'] == rootmp:
+                    mount_dev = entry['mount_device']
+                    root_ci = entry['connection_info']
+                    break
+
+        try:
+            if samehost:
+                metadstr = 'new_instance_type_vcpus'
+                cpu = int(instance.system_metadata[metadstr])
+                metadstr = 'new_instance_type_memory_mb'
+                mem = int(instance.system_metadata[metadstr])
+                self._set_num_cpu(name, cpu, brand)
+                self._set_memory_cap(name, mem, brand)
+
+                # Add the new disk to the volume if the size of the disk
+                # changed
+                if disk_info:
+                    metadstr = 'new_instance_type_root_gb'
+                    rgb = int(instance.system_metadata[metadstr])
+                    self._resize_disk_migration(context, instance,
+                                                root_ci['serial'],
+                                                disk_info['id'],
+                                                rgb, mount_dev)
+
+            else:
+                # No need to check disk_info here, because when not on the
+                # same host a disk_info is always passed in.
+                mount_dev = 'c1d0'
+                root_serial = root_ci['serial']
+                connection_info = self._resize_disk_migration(context,
+                                                              instance,
+                                                              root_serial,
+                                                              disk_info['id'],
+                                                              0, mount_dev,
+                                                              samehost)
+
+                self._create_config(context, instance, network_info,
+                                    connection_info, extra_specs, None)
+
+                zone = self._get_zone_by_name(name)
+                if zone is None:
+                    raise exception.InstanceNotFound(instance_id=name)
+
+                zone.attach(['-x', 'initialize-hostdata'])
+
+                bmap = block_device_info.get('block_device_mapping')
+                for entry in bmap:
+                    if entry['mount_device'] != rootmp:
+                        self.attach_volume(context,
+                                           entry['connection_info'], instance,
+                                           entry['mount_device'])
+
+            if power_on:
+                self._power_on(instance)
+
+                if brand == ZONE_BRAND_SOLARIS:
+                    return
+
+                # Toggle the autoexpand to extend the size of the rpool.
+                # We need to sleep for a few seconds to make sure the zone
+                # is in a state to accept the toggle.  Once bugs are fixed
+                # around the autoexpand and the toggle is no longer needed
+                # or zone.boot() returns only after the zone is ready we
+                # can remove this hack.
+                greenthread.sleep(15)
+                out, err = utils.execute('/usr/sbin/zlogin', '-S', name,
+                                         '/usr/sbin/zpool', 'set',
+                                         'autoexpand=off', 'rpool')
+                out, err = utils.execute('/usr/sbin/zlogin', '-S', name,
+                                         '/usr/sbin/zpool', 'set',
+                                         'autoexpand=on', 'rpool')
+        except Exception:
+            # Attempt to cleanup the new zone and new volume to at least
+            # give the user a chance to recover without too many hoops
+            self._cleanup_finish_migration(context, instance, disk_info,
+                                           network_info, samehost)
+            raise
+
+    def confirm_migration(self, context, migration, instance, network_info):
         """Confirms a resize, destroying the source VM.
 
         :param instance: nova.objects.instance.Instance
         """
-        # TODO(Vek): Need to pass context in for access to auth_token
-        raise NotImplementedError()
+        samehost = (migration['dest_host'] == self.get_host_ip_addr())
+        old_rvid = instance.system_metadata.get('old_instance_volid')
+        new_rvid = instance.system_metadata.get('new_instance_volid')
+        if new_rvid and old_rvid:
+            new_vname = instance['display_name'] + "-" + self._rootzpool_suffix
+            del instance.system_metadata['old_instance_volid']
+            del instance.system_metadata['new_instance_volid']
+
+            self._volume_api.delete(context, old_rvid)
+            self._volume_api.update(context, new_rvid,
+                                    {'display_name': new_vname})
+
+        if not samehost:
+            self.destroy(context, instance, network_info)
+
+    def _resize_disk_migration(self, context, instance, configured,
+                               replacement, newvolumesz, mountdev,
+                               samehost=True):
+        """Handles the zone root volume switch-over or simply
+        initializing the connection for the new zone if not resizing to the
+        same host
+
+        :param context: the context for the _resize_disk_migration
+        :param instance: nova.objects.instance.Instance being resized
+        :param configured: id of the current configured volume
+        :param replacement: id of the new volume
+        :param newvolumesz: size of the new volume
+        :param mountdev: the mount point of the device
+        :param samehost: is the resize happening on the same host
+        """
+        connector = self.get_volume_connector(instance)
+        connection_info = self._volume_api.initialize_connection(context,
+                                                                 replacement,
+                                                                 connector)
+        connection_info['serial'] = replacement
+        rootmp = instance.root_device_name
+
+        if samehost:
+            name = instance['name']
+            zone = self._get_zone_by_name(name)
+            if zone is None:
+                raise exception.InstanceNotFound(instance_id=name)
+
+            # Need to detach the zone and re-attach the zone if this is a
+            # non-global zone so that the update of the rootzpool resource does
+            # not fail.
+            if zone.brand == ZONE_BRAND_SOLARIS:
+                zone.detach()
+
+            try:
+                self._set_boot_device(name, connection_info, zone.brand)
+            finally:
+                if zone.brand == ZONE_BRAND_SOLARIS:
+                    zone.attach()
+
+        try:
+            self._volume_api.detach(context, configured)
+        except Exception:
+            LOG.error(_("Failed to detach the volume"))
+            raise
+
+        try:
+            self._volume_api.attach(context, replacement, instance['uuid'],
+                                    rootmp)
+        except Exception:
+            LOG.error(_("Failed to attach the volume"))
+            raise
+
+        bdmobj = objects.BlockDeviceMapping()
+        bdm = bdmobj.get_by_volume_id(context, configured)
+        bdm['connection_info'] = jsonutils.dumps(connection_info)
+        bdm['volume_id'] = replacement
+        bdm.save()
+
+        if not samehost:
+            return connection_info
 
     def finish_revert_migration(self, context, instance, network_info,
                                 block_device_info=None, power_on=True):
@@ -2092,7 +2582,42 @@ class SolarisZonesDriver(driver.ComputeDriver):
         :param power_on: True if the instance should be powered on, False
                          otherwise
         """
-        raise NotImplementedError()
+        # If this is not a samehost migration then we need to re-attach the
+        # original volume to the instance.  If this was processed in the
+        # initial revert handling this work has already been done.
+        old_rvid = instance.system_metadata.get('old_instance_volid')
+        if old_rvid:
+            connector = self.get_volume_connector(instance)
+            connection_info = self._volume_api.initialize_connection(context,
+                                                                     old_rvid,
+                                                                     connector)
+
+            new_rvid = instance.system_metadata['new_instance_volid']
+            self._volume_api.detach(context, new_rvid)
+            self._volume_api.delete(context, new_rvid)
+
+            rootmp = instance.root_device_name
+            self._volume_api.attach(context, old_rvid, instance['uuid'],
+                                    rootmp)
+
+            bdmobj = objects.BlockDeviceMapping()
+            bdm = bdmobj.get_by_volume_id(context, new_rvid)
+            bdm['connection_info'] = jsonutils.dumps(connection_info)
+            bdm['volume_id'] = old_rvid
+            bdm.save()
+
+            del instance.system_metadata['new_instance_volid']
+            del instance.system_metadata['old_instance_volid']
+
+            rootmp = instance.root_device_name
+            bmap = block_device_info.get('block_device_mapping')
+            for entry in bmap:
+                if entry['mount_device'] != rootmp:
+                    self.attach_volume(context,
+                                       entry['connection_info'], instance,
+                                       entry['mount_device'])
+
+        self._power_on(instance)
 
     def pause(self, instance):
         """Pause the specified instance.
@@ -3040,6 +3565,14 @@ class SolarisZonesDriver(driver.ComputeDriver):
         :param instance: nova.objects.instance.Instance
         :returns: True if the instance was deleted from disk, False otherwise.
         """
+        LOG.debug(_("Cleaning up for instance %s"), instance['name'])
+        # Delete the zone configuration for the instance using destroy, because
+        # it will simply take care of the work, and we don't need to duplicate
+        # the code here.
+        try:
+            self.destroy(None, instance, None)
+        except Exception:
+            return False
         return True
 
     @property

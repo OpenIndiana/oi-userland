@@ -521,6 +521,11 @@ class ZFSISCSIDriver(STMFDriver, driver.ISCSIDriver):
 
     def create_export(self, context, volume):
         """Export the volume."""
+        # If the volume is already exported there is nothing to do, as we
+        # simply export volumes and they are universally available.
+        if self._get_luid(volume):
+            return
+
         zvol = self._get_zvol_path(volume)
 
         # Create a Logical Unit (LU)
