@@ -36,7 +36,7 @@ TPNO=			12679
 
 # mock has been subsumed into Python starting with 3.3, so no need to build
 # it for Python 3.
-PYTHON_VERSIONS=	2.7 2.6
+PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk

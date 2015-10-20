@@ -38,7 +38,7 @@ COMPONENT_BUGDB=	python-mod/ipaddr
 TPNO=			20373
 
 # ipaddr is not Python 3.x compatible, ipaddress should be used instead.
-PYTHON_VERSIONS=	2.6 2.7
+PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk

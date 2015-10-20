@@ -39,7 +39,7 @@ TPNO=			21639
 
 # wsme requires ipaddr, which is not Python3.x compatible thus only building
 # Python 2.x
-PYTHON_VERSIONS=	2.6 2.7
+PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk

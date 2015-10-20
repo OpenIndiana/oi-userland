@@ -147,7 +147,6 @@ REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/python-26
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

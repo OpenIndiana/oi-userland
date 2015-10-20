@@ -43,10 +43,8 @@ include ../modules.mk
 
 APACHE_USR_PREFIX = /usr/apache2/
 
-VARIANT_AP_22_PY26 = $(BUILD_DIR)/apache22-python26
 VARIANT_AP_22_PY27 = $(BUILD_DIR)/apache22-python27
 VARIANT_AP_22_PY34 = $(BUILD_DIR)/apache22-python34
-VARIANT_AP_24_PY26 = $(BUILD_DIR)/apache24-python26
 VARIANT_AP_24_PY27 = $(BUILD_DIR)/apache24-python27
 VARIANT_AP_24_PY34 = $(BUILD_DIR)/apache24-python34
 
@@ -58,8 +56,6 @@ $(BUILD_DIR)/apache22-%/$(MACH32)/.configured: APXS=$(APACHE_USR_PREFIX)/2.2/bin
 $(BUILD_DIR)/apache22-%/$(MACH64)/.configured: APXS=$(APACHE_USR_PREFIX)/2.2/bin/$(MACH64)/apxs
 $(BUILD_DIR)/apache24-%/$(MACH64)/.configured: APXS=$(APACHE_USR_PREFIX)/2.4/bin/apxs
 
-$(BUILD_DIR)/apache2%-python26/$(MACH32)/.configured: PYTHON=$(PYTHON.2.6.32)
-$(BUILD_DIR)/apache2%-python26/$(MACH64)/.configured: PYTHON=$(PYTHON.2.6.64)
 $(BUILD_DIR)/apache2%-python27/$(MACH32)/.configured: PYTHON=$(PYTHON.2.7.32)
 $(BUILD_DIR)/apache2%-python27/$(MACH64)/.configured: PYTHON=$(PYTHON.2.7.64)
 $(BUILD_DIR)/apache2%-python34/$(MACH32)/.configured: PYTHON=$(PYTHON.3.4.32)
@@ -82,7 +78,6 @@ install:	$(INSTALL_32_and_64)
 
 system-test:	$(NO_TESTS)
 
-REQUIRED_PACKAGES += runtime/python-26
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += system/library

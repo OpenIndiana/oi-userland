@@ -41,7 +41,7 @@ TPNO=			21622
 # The futures module was integrated into Python 3.2, so we should only
 # deliver 2.6 & 2.7 modules.
 #
-PYTHON_VERSIONS = 2.7 2.6
+PYTHON_VERSIONS = $(PYTHON2_VERSIONS)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk

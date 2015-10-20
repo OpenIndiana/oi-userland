@@ -35,7 +35,7 @@ COMPONENT_BUGDB=	python-mod/librabbitmq
 TPNO=			14503
 
 # This module is not Python 3 ready: syntax work needed.
-PYTHON_VERSIONS=	2.7 2.6
+PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk

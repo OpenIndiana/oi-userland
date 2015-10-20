@@ -38,7 +38,7 @@ COMPONENT_BUGDB=	python-mod/pyscss
 TPNO=			20384
 
 # Python 3.4 has build errors.  Need to investigate...
-PYTHON_VERSIONS =	2.7 2.6
+PYTHON_VERSIONS =	$(PYTHON2_VERSIONS)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -59,11 +59,7 @@ test:		$(NO_TESTS)
 
 system-test:    $(NO_TESTS)
 
-
 REQUIRED_PACKAGES += library/pcre
-REQUIRED_PACKAGES += library/python/pytest-26
 REQUIRED_PACKAGES += library/python/pytest-27
-REQUIRED_PACKAGES += library/python/setuptools-26
 REQUIRED_PACKAGES += library/python/setuptools-27
-REQUIRED_PACKAGES += library/python/six-26
 REQUIRED_PACKAGES += library/python/six-27

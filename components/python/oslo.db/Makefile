@@ -38,7 +38,7 @@ COMPONENT_BUGDB=	python-mod/oslo.db
 TPNO=			21627
 
 # Depends on sqlalchemy-migrate which is not Python3 ready.
-PYTHON_VERSIONS =	2.6 2.7
+PYTHON_VERSIONS =	$(PYTHON2_VERSIONS)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk

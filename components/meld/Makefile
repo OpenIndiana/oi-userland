@@ -42,8 +42,6 @@ include $(WS_MAKE_RULES)/ips.mk
 # Needed to find the GNU version of install.
 PATH =			/usr/gnu/bin:/usr/bin
 
-PYTHON_VERSION =	2.7
-
 PKG_MACROS +=		PYVER=$(PYTHON_VERSION)
 
 # Meld has no configure however it honors DESTDIR which is necessary so

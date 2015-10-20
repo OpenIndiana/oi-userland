@@ -35,7 +35,7 @@ COMPONENT_BUGDB=	python-mod/python-ldap
 TPNO=			14503
 
 # This module has syntax issues and thus is not Python 3 ready.
-PYTHON_VERSIONS=	2.7 2.6
+PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -74,10 +74,7 @@ test:		$(TEST_32_and_64)
 
 system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
-
 REQUIRED_PACKAGES += library/openldap
-REQUIRED_PACKAGES += library/python/pyasn1-26
 REQUIRED_PACKAGES += library/python/pyasn1-27
-REQUIRED_PACKAGES += library/python/pyasn1-modules-26
 REQUIRED_PACKAGES += library/python/pyasn1-modules-27
 REQUIRED_PACKAGES += system/library

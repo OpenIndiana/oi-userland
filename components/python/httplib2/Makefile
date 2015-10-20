@@ -37,7 +37,7 @@ TPNO=			14503
 # Depends on SocksiPy; for Python 2.x, the module is part of httplib2, but
 # for Python 3.x, it is separate.  Once we add this module, httplib2 will
 # most likely work with Python 3.
-PYTHON_VERSIONS=	2.7 2.6
+PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk

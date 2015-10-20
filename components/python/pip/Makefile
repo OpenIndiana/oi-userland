@@ -56,11 +56,9 @@ test:           $(NO_TESTS)
 
 system-test:    $(NO_TESTS)
 
-REQUIRED_PACKAGES += library/python/requests-26
 REQUIRED_PACKAGES += library/python/requests-27
 REQUIRED_PACKAGES += library/python/requests-34
 REQUIRED_PACKAGES += library/python/requests-35
-REQUIRED_PACKAGES += library/python/setuptools-26
 REQUIRED_PACKAGES += library/python/setuptools-27
 REQUIRED_PACKAGES += library/python/setuptools-34
 REQUIRED_PACKAGES += library/python/setuptools-35

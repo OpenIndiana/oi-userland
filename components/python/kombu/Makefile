@@ -40,7 +40,7 @@ TPNO=			21722
 # Depends on pyrabbit which depends on httplib2 which has its own dependency
 # issues (see its Makefile for details).  So don't build for Python 3 until
 # dependencies resolved.
-PYTHON_VERSIONS=	2.7 2.6
+PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk

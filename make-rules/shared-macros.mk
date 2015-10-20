@@ -116,7 +116,7 @@ BITS =			32
 
 # The default version should go last.
 PYTHON_VERSION =	2.7
-PYTHON2_VERSIONS =	2.6 2.7
+PYTHON2_VERSIONS =	2.7
 PYTHON3_VERSIONS =	3.4 3.5
 PYTHON_VERSIONS =	$(PYTHON3_VERSIONS) $(PYTHON2_VERSIONS)
 
@@ -479,10 +479,6 @@ RUBY =		$(RUBY.$(RUBY_VERSION))
 # both the ruby version and the ruby library version are needed. 
 RUBY_VERSIONS = $(RUBY_LIB_VERSION)
 
-PYTHON.2.6.VENDOR_PACKAGES.32 = /usr/lib/python2.6/vendor-packages
-PYTHON.2.6.VENDOR_PACKAGES.64 = /usr/lib/python2.6/vendor-packages/64
-PYTHON.2.6.VENDOR_PACKAGES = $(PYTHON.2.6.VENDOR_PACKAGES.$(BITS))
-
 PYTHON.2.7.VENDOR_PACKAGES.32 = /usr/lib/python2.7/vendor-packages
 PYTHON.2.7.VENDOR_PACKAGES.64 = /usr/lib/python2.7/vendor-packages/64
 PYTHON.2.7.VENDOR_PACKAGES = $(PYTHON.2.7.VENDOR_PACKAGES.$(BITS))
@@ -497,7 +493,6 @@ PYTHON_VENDOR_PACKAGES.32 = /usr/lib/python$(PYTHON_VERSION)/vendor-packages
 PYTHON_VENDOR_PACKAGES.64 = /usr/lib/python$(PYTHON_VERSION)/vendor-packages/64
 PYTHON_VENDOR_PACKAGES = $(PYTHON_VENDOR_PACKAGES.$(BITS))
 
-PYTHON.2.6.TEST = /usr/lib/python2.6/test
 PYTHON.2.7.TEST = /usr/lib/python2.7/test
 PYTHON.3.4.TEST = /usr/lib/python3.4/test
 PYTHON.3.5.TEST = /usr/lib/python3.5/test
@@ -505,10 +500,6 @@ PYTHON.3.5.TEST = /usr/lib/python3.5/test
 USRBIN.32 =	/usr/bin
 USRBIN.64 =	/usr/bin/$(MACH64)
 USRBIN =	$(USRBIN.$(BITS))
-
-PYTHON.2.6.32 =	$(USRBIN.32)/python2.6
-PYTHON.2.6.64 =	$(USRBIN.64)/python2.6
-PYTHON.2.6 =	$(USRBIN)/python2.6
 
 PYTHON.2.7.32 =	$(USRBIN.32)/python2.7
 PYTHON.2.7.64 =	$(USRBIN.64)/python2.7

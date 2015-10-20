@@ -57,11 +57,9 @@ CONFIGURE_ENV +=	CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_ENV +=	CXXFLAGS="$(CXXFLAGS)"
 # Make sure to use the right python, depending on the 32/64-bit build.
-CONFIGURE_ENV +=	PYTHON26=$(PYTHON.2.6)
 CONFIGURE_ENV +=	PYTHON27=$(PYTHON.2.7)
 CONFIGURE_OPTIONS +=	--without-included-ltdl
 CONFIGURE_OPTIONS +=	--enable-python=no
-CONFIGURE_OPTIONS +=	--enable-python26=yes
 CONFIGURE_OPTIONS +=	--enable-python27=yes
 CONFIGURE_OPTIONS +=	--x-libraries=$(CONFIGURE_LIBDIR.$(BITS))
 
@@ -96,7 +94,6 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 	env LD_LIBRARY_PATH=$(PROTO_DIR)/usr/lib GVBINDIR=$(PROTO_DIR)/usr/lib/graphviz $(PROTO_DIR)/usr/bin/dot -c
-	$(PYTHON.2.6.32) -m compileall $(PROTO_DIR)/$(PYTHON.2.6.VENDOR_PACKAGES)
 	$(PYTHON.2.7.32) -m compileall $(PROTO_DIR)/$(PYTHON.2.7.VENDOR_PACKAGES)
 
 # The test infrastructure doesn't run in a VPATHed environment.

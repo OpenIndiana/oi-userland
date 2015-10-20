@@ -49,10 +49,6 @@ LINT_FLAGS +=	-I/usr/include/libxml2
 CFLAGS +=	$(CPP_LARGEFILES)
 LDFLAGS +=	$(LD_Z_DEFS) $(LD_Z_TEXT) -lpthread
 
-# When 2.6 goes away, we can remove the version line below, as well as the
-# COMPONENT_POST_{CONFIGURE,INSTALL_ACTION} lines below.
-PYTHON_VERSION=2.6
-
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --with-pic
 CONFIGURE_OPTIONS += --with-python=$(PYTHON.$(BITS))
@@ -71,30 +67,12 @@ COMPONENT_PREP_ACTION = \
 COMPONENT_PREP_ACTION += \
 	(cd $(@D) ; ACLOCAL=aclocal-1.11 AUTOMAKE=automake-1.11 autoreconf -fiv)
 
-# After we have configured, make a copy of the python bits so we
-# can build separate python 2.7 support.
-COMPONENT_POST_CONFIGURE_ACTION = (cd $(@D) ; cp -rp python python2.7)
-
-# After we have built/installed libxslt, rebuild/install the python
-# support for python 2.7
-COMPONENT_POST_INSTALL_ACTION = \
-    (cd $(@D)/python2.7 ; $(GMAKE) $(COMPONENT_INSTALL_ARGS) \
-                                PYTHON=$(PYTHON.2.7.$(BITS)) \
-                                PYTHON_VERSION=2.7 \
-                                PYTHON_INCLUDES=/usr/include/python2.7 \
-                                PYTHON_LIBS=$(PYTHON.2.7.VENDOR_PACKAGES) \
-                                PYTHON_SITE_PACKAGES=$(PYTHON.2.7.VENDOR_PACKAGES) \
-                                install)
-
-
-
 # common targets
 configure:	$(CONFIGURE_32_and_64)
 
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
-	$(PYTHON.2.6.32) -m compileall $(PROTO_DIR)/usr/lib/python2.6/vendor-packages
 	$(PYTHON.2.7.32) -m compileall $(PROTO_DIR)/usr/lib/python2.7/vendor-packages
 
 test:		$(TEST_32_and_64)
@@ -104,7 +82,7 @@ system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
-REQUIRED_PACKAGES += runtime/python-26
+REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

@@ -80,8 +80,6 @@ test:           $(TEST_NO_ARCH)
 
 system-test:    $(NO_TESTS)
 
-REQUIRED_PACKAGES += library/python/python-twisted-26
 REQUIRED_PACKAGES += library/python/python-twisted-27
-REQUIRED_PACKAGES += library/python/setuptools-26
 REQUIRED_PACKAGES += library/python/setuptools-27
 

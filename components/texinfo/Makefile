@@ -64,10 +64,8 @@ test:		$(NO_TESTS)
 
 system-test:    $(NO_TESTS)
 
-
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += runtime/perl-512
-REQUIRED_PACKAGES += runtime/python-26
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93

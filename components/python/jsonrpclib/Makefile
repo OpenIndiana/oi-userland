@@ -40,7 +40,7 @@ TPNO=			8061
 
 # This module builds with Python 3, but depends on simplejson.  The following
 # line can be removed when simplejson supports Python 3.
-PYTHON_VERSIONS=	2.7 2.6
+PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk

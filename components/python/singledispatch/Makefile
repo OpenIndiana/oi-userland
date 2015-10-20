@@ -38,7 +38,7 @@ COMPONENT_BUGDB=	python-mod/singledispatch
 TPNO=			22463
 
 # singledispatch is superfluous in Python 3.4
-PYTHON_VERSIONS=	2.7 2.6
+PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk

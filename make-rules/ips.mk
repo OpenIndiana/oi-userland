@@ -129,7 +129,6 @@ $(foreach macro, $(filter TPNO_%, $(.VARIABLES)), \
     $(eval PKG_MACROS += $(macro)=$$($(macro))) \
 )
 
-PKG_MACROS +=		PYTHON_2.6_ONLY=\#
 PKG_MACROS +=		PYTHON_2.7_ONLY=\#
 PKG_MACROS +=		PYTHON_3.4_ONLY=\#
 PKG_MACROS +=		PYTHON_3.5_ONLY=\#

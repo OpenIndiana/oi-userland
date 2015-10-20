@@ -38,7 +38,7 @@ COMPONENT_BUGDB=	python-mod/iniparse
 TPNO=			21564
 
 # Syntax Errors - not Python 3 ready
-PYTHON_VERSIONS =	2.7 2.6
+PYTHON_VERSIONS =	$(PYTHON2_VERSIONS)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk

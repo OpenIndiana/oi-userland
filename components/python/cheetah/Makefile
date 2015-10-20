@@ -35,7 +35,7 @@ COMPONENT_BUGDB=	python-mod/cheetah
 TPNO=			14503
 
 # Syntax issues: not Python 3 ready.
-PYTHON_VERSIONS=	2.7 2.6
+PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -65,6 +65,5 @@ test:		$(TEST_32_and_64)
 system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
 
-REQUIRED_PACKAGES += runtime/python-26/tests
 REQUIRED_PACKAGES += runtime/python-27/tests
 REQUIRED_PACKAGES += system/library

@@ -40,7 +40,7 @@ TPNO=			10021
 # Not Python 3 ready: weird build issues (tries to download & install
 # "distribute").  But coverage version 3.7.1 has fixed these issues; it
 # builds and publishes fine with Python 3.
-PYTHON_VERSIONS = 2.7 2.6
+PYTHON_VERSIONS = $(PYTHON2_VERSIONS)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -61,6 +61,5 @@ test:		$(NO_TESTS)
 system-test:    $(NO_TESTS)
 
 
-REQUIRED_PACKAGES += library/python/setuptools-26
 REQUIRED_PACKAGES += library/python/setuptools-27
 REQUIRED_PACKAGES += system/library

@@ -42,9 +42,6 @@ CFLAGS+=		-std=c99
 CFLAGS+=		-DNDEBUG
 CFLAGS+=		-DOSCAP_THREAD_SAFE
 
-# When Python 2.6 goes away, the _VERSION (singular) line below can go as well,
-# as can the COMPONENT_POST_CONFIGURE_ACTION and possibly more.
-PYTHON_VERSION=		2.6
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
 
 PERL_VERSIONS = 5.12 5.20
@@ -68,17 +65,7 @@ COMPONENT_PREP_ACTION +=(cd $(@D); autoreconf);
 COMPONENT_PRE_CONFIGURE_ACTION = \
     ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-# We could use a single regular expression to cover all of the following,
-# but we want to be as specific as possible to avoid accidentally catching
-# workspace paths in our substitution.
-COMPONENT_POST_CONFIGURE_ACTION = \
-    (cd $(@D) ; cp -rp swig swig2.7 ; \
-    $(GSED) -i -e 's|usr/include/python2.6|usr/include/python2.7|' \
-     -e 's|$(PYTHON.2.6.VENDOR_PACKAGES.32)|$(PYTHON.2.7.VENDOR_PACKAGES.32)|' \
-     -e 's|PYTHON_VERSION = 2.6|PYTHON_VERSION = 2.7|' swig2.7/Makefile swig2.7/python2/Makefile)
-
 COMPONENT_POST_INSTALL_ACTION =	\
-	(cd $(@D)/swig2.7 ; $(GMAKE) $(COMPONENT_INSTALL_ARGS) install) ; \
 	$(RM) $(PROTO_DIR)/usr/share/openscap/cpe/* && \
 	$(CP) files/cpe/* $(PROTO_DIR)/usr/share/openscap/cpe
 
@@ -134,7 +121,6 @@ REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += runtime/perl-512
 REQUIRED_PACKAGES += runtime/perl-520
-REQUIRED_PACKAGES += runtime/python-26
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += security/compliance/openscap
 REQUIRED_PACKAGES += system/library

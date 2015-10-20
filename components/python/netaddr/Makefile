@@ -38,7 +38,7 @@ COMPONENT_BUGDB=	python-mod/netaddr
 TPNO=			21724
 
 # Depends on iPython which is not Python 3 ready.
-PYTHON_VERSIONS=	2.7 2.6
+PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -75,5 +75,4 @@ test:		$(TEST_NO_ARCH)
 system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
 
-REQUIRED_PACKAGES += library/python/ipython-26
 REQUIRED_PACKAGES += library/python/ipython-27

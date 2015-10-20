@@ -106,7 +106,6 @@ test:		$(TEST_64)
 system-test:    configure $(SYSTEM_TEST_64)
 
 
-REQUIRED_PACKAGES += runtime/python-26
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += system/library

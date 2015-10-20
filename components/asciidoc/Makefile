@@ -120,8 +120,6 @@ test:           $(TEST_64)
 
 system-test:    configure $(SYSTEM_TEST_64)
 
-
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
-REQUIRED_PACKAGES += runtime/python-26
 REQUIRED_PACKAGES += web/browser/lynx

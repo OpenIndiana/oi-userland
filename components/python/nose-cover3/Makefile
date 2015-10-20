@@ -35,7 +35,7 @@ COMPONENT_BUGDB=	python-mod/nose-cover3
 TPNO=			14503
 
 # Depends on coverage, which is not Python 3 ready.
-PYTHON_VERSIONS=	2.7 2.6
+PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk

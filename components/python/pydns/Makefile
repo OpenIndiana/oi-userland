@@ -35,7 +35,7 @@ COMPONENT_BUGDB=	python-mod/pydns
 TPNO=			14503
 
 # Import/syntax issues: not Python 3 ready.
-PYTHON_VERSIONS=	2.7 2.6
+PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk

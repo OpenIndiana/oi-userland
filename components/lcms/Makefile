@@ -61,10 +61,6 @@ COMPONENT_TEST_TRANSFORMS += \
 CXXFLAGS += -features=extensions,nestedaccess,tmplrefstatic
 CXXFLAGS += -template=geninlinefuncs
 
-# When 2.6 goes away, we can remove the version line below, as well as the
-# COMPONENT_POST_{CONFIGURE,INSTALL_ACTION} lines below.
-PYTHON_VERSION=2.6
-
 CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
 CONFIGURE_ENV += CXXFLAGS="$(CXXFLAGS)"
 CONFIGURE_ENV += PYTHON="$(PYTHON)"
@@ -91,16 +87,6 @@ COMPONENT_POST_CONFIGURE_ACTION = \
     $(RM) -f $(SOURCE_DIR)/include/icc34.h ; \
     $(CP) -p include/icc34.h $(SOURCE_DIR)/include/ )
 
-# After we have configured, make a copy of the python bits so we
-# can build separate python 2.7 support.
-COMPONENT_POST_CONFIGURE_ACTION += ; (cd $(@D) ; cp -rp python python2.7 ; \
-	 		$(GSED) -i -e 's/2[.]6/2.7/g' python2.7/Makefile)
-
-# After we have built/installed lcms, rebuild/install the python
-# support for python 2.7
-COMPONENT_POST_INSTALL_ACTION = \
-    (cd $(@D)/python2.7 ; $(GMAKE) $(COMPONENT_INSTALL_ARGS) install)
-
 LINT_FLAGS += -I$(COMPONENT_DIR)/$(COMPONENT_SRC)/include
 
 configure:	$(CONFIGURE_32_and_64)
@@ -108,7 +94,6 @@ configure:	$(CONFIGURE_32_and_64)
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
-	$(PYTHON.2.6.32) -m compileall $(PROTO_DIR)/usr/lib/python2.6/vendor-packages
 	$(PYTHON.2.7.32) -m compileall $(PROTO_DIR)/usr/lib/python2.7/vendor-packages
 
 
@@ -119,7 +104,6 @@ system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 REQUIRED_PACKAGES += image/library/libjpeg
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += library/lcms
-REQUIRED_PACKAGES += runtime/python-26
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/c++-runtime

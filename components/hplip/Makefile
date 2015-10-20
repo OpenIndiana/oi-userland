@@ -48,8 +48,6 @@ CXX += $(studio_FEATURES_EXTENSIONS) $(studio_NORUNPATH) $(studio_CXXLIB_CSTD)
 
 ROOTPPDCACHE =  $(PROTO_DIR)/usr/lib/lp/caches/SUNWhpijs.cache
 
-PYTHON_VERSION = 2.7
-
 # common configure options
 CONFIGURE_OPTIONS +=	--localedir=$(CONFIGURE_LOCALEDIR)
 CONFIGURE_OPTIONS +=	--disable-pp-build

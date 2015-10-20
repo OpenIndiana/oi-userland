@@ -52,8 +52,6 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PYTHON_VERSION =	2.7
-
 PKG_HARDLINKS +=	usr/lib/git-core/git-cherry-pick
 PKG_HARDLINKS +=	usr/lib/git-core/git-remote-ftps
 

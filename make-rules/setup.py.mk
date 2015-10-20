@@ -26,28 +26,24 @@
 # $ (foreach suffix,$(VERSIONS),$(eval include $(WS_MAKE_RULES)/python-$(suffix).mk))
 
 
-$(BUILD_DIR)/%-2.6/.built:		PYTHON_VERSION=2.6
 $(BUILD_DIR)/%-2.7/.built:		PYTHON_VERSION=2.7
 $(BUILD_DIR)/%-3.4/.built:		PYTHON_VERSION=3.4
 $(BUILD_DIR)/%-3.5/.built:		PYTHON_VERSION=3.5
 $(BUILD_DIR)/$(MACH32)-%/.built:	BITS=32
 $(BUILD_DIR)/$(MACH64)-%/.built:	BITS=64
 
-$(BUILD_DIR)/%-2.6/.installed:		PYTHON_VERSION=2.6
 $(BUILD_DIR)/%-2.7/.installed:		PYTHON_VERSION=2.7
 $(BUILD_DIR)/%-3.4/.installed:		PYTHON_VERSION=3.4
 $(BUILD_DIR)/%-3.5/.installed:		PYTHON_VERSION=3.5
 $(BUILD_DIR)/$(MACH32)-%/.installed:	BITS=32
 $(BUILD_DIR)/$(MACH64)-%/.installed:	BITS=64
 
-$(BUILD_DIR)/%-2.6/.tested:		PYTHON_VERSION=2.6
 $(BUILD_DIR)/%-2.7/.tested:		PYTHON_VERSION=2.7
 $(BUILD_DIR)/%-3.4/.tested:		PYTHON_VERSION=3.4
 $(BUILD_DIR)/%-3.5/.tested:		PYTHON_VERSION=3.5
 $(BUILD_DIR)/$(MACH32)-%/.tested:	BITS=32
 $(BUILD_DIR)/$(MACH64)-%/.tested:	BITS=64
 
-$(BUILD_DIR)/%-2.6/.tested-and-compared:	PYTHON_VERSION=2.6
 $(BUILD_DIR)/%-2.7/.tested-and-compared:	PYTHON_VERSION=2.7
 $(BUILD_DIR)/%-3.4/.tested-and-compared:	PYTHON_VERSION=3.4
 $(BUILD_DIR)/%-3.5/.tested-and-compared:	PYTHON_VERSION=3.5
@@ -98,10 +94,6 @@ COMPONENT_TEST_ENV += $(PYTHON_ENV)
 COMPONENT_SYSTEM_TEST_ENV += $(PYTHON_ENV)
 
 # Build the canonical version (currently 2.7) last.
-ifneq ($(findstring 2.6,$(PYTHON_VERSIONS)),)
-$(BUILD_DIR)/%-2.7/.built:     $(BUILD_DIR)/%-2.6/.built
-$(BUILD_DIR)/%-2.7/.installed: $(BUILD_DIR)/%-2.6/.installed
-endif
 ifneq ($(findstring 3.4,$(PYTHON_VERSIONS)),)
 $(BUILD_DIR)/%-2.7/.built:     $(BUILD_DIR)/%-3.4/.built
 $(BUILD_DIR)/%-2.7/.installed: $(BUILD_DIR)/%-3.4/.installed
@@ -268,10 +260,6 @@ pypi_url_multi = $(shell echo $(COMPONENT_NAME_$(1)) | cut -c1)/$(COMPONENT_NAME
 pypi_url_single = $(shell echo $(COMPONENT_NAME) | cut -c1)/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 pypi_url = $(PYPI_BASE)/$(if $(COMPONENT_NAME_$(1)),$(pypi_url_multi),$(pypi_url_single))
 
-ifneq ($(findstring 2.6, $(PYTHON_VERSIONS)),)
-REQUIRED_PACKAGES += runtime/python-26
-REQUIRED_PACKAGES += library/python/setuptools-26
-endif
 ifneq ($(findstring 2.7, $(PYTHON_VERSIONS)),)
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += library/python/setuptools-27

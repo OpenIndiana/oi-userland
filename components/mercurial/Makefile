@@ -41,7 +41,7 @@ COMPONENT_BUGDB=	utility/hg
 TPNO=			22534
 
 # Mercurial does not yet support Python 3.
-PYTHON_VERSIONS = 2.7 2.6
+PYTHON_VERSIONS = $(PYTHON2_VERSIONS)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk

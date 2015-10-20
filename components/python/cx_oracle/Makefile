@@ -36,12 +36,6 @@ COMPONENT_BUGDB=	python-mod/cx_oracle
 
 TPNO=			23247
 
-# Specifying PYTHON2_VERSIONS so that we don't get the 2.6
-# version built as well. It's an oversight in setup.py.mk
-# that isn't worth fixing since 2.6 is going away very soon.
-PYTHON2_VERSIONS=	2.7
-PYTHON_VERSIONS=	2.7 $(PYTHON3_VERSIONS)
-
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
 include $(WS_MAKE_RULES)/setup.py.mk

@@ -46,11 +46,6 @@ include $(WS_MAKE_RULES)/ips.mk
 CFLAGS += $(studio_C99_ENABLE)
 CPPFLAGS += "-DFALSE_SHARING_ALIGN=64"
 
-# After Python 2.6 goes away, the COMPONENT_POST_{CONFIGURE,INSTALL}_ACTIONs
-# below can go away as well (for INSTALL_ACTION, 32-bit goes away; 64-bit
-# remains).
-PYTHON_VERSION=2.6
-
 CONFIGURE_ENV +=	PYTHONPROG=$(PYTHON.$(BITS))
 
 CONFIGURE_OPTIONS  +=	--with-default-snmp-version=3
@@ -97,10 +92,6 @@ PKG_MACROS +=	BUILD_DIR=$(BUILD_DIR)
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D); $(CLONEY) $(COMPONENT_DIR)/sun $(@D)/sun)
 
-# After we have configured, make a copy of the python bits so we
-# can build separate python 2.7 support.
-COMPONENT_POST_CONFIGURE_ACTION = (cd $(@D) ; cp -rp python python2.7)
-
 # for the goofy definition of ARCH in the extra Makefiles
 ARCH=32
 ARCH=$(BITS:64=$(MACH64))
@@ -122,11 +113,7 @@ $(INSTALL_32): COMPONENT_INSTALL_ARGS += PYTHON_VENDOR_PACKAGES=$(PYTHON_VENDOR_
 
 $(INSTALL_32): COMPONENT_POST_INSTALL_ACTION= \
 	($(MKDIR) -p $(BUILD_DIR)/prototype/$(MACH)/etc/net-snmp/snmp/mibs; \
-	 cd $(BUILD_DIR)/$(MACH32)/sun ; ls agent; $(CCSMAKE) -e $(CCSMAKE_ARGS) install) ; \
-	(cd $(@D)/python2.7 ; env PYTHON=$(PYTHON.2.7.$(BITS)) \
-		$(PYTHON.2.7.$(BITS)) ./setup.py install \
-			--root $(PROTO_DIR) \
-			--install-lib=$(PYTHON.2.7.VENDOR_PACKAGES))
+	 cd $(BUILD_DIR)/$(MACH32)/sun ; ls agent; $(CCSMAKE) -e $(CCSMAKE_ARGS) install)
 
 $(INSTALL_64): COMPONENT_POST_INSTALL_ACTION= \
 	($(MKDIR) -p $(BUILD_DIR)/prototype/$(MACH64)/etc/net-snmp/snmp/mibs; \
@@ -153,7 +140,6 @@ $(BUILD_DIR_32)/.docs:
 
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen
 REQUIRED_PACKAGES += runtime/perl-512
-REQUIRED_PACKAGES += runtime/python-26
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93

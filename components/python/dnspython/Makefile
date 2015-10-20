@@ -38,7 +38,7 @@ TPNO=			17630
 
 # dnspython is not Python3 ready.  dnspython3 should be used for
 # Python3
-PYTHON_VERSIONS=	2.7 2.6
+PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk

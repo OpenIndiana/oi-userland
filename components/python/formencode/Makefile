@@ -35,7 +35,7 @@ COMPONENT_BUGDB=	python-mod/formencode
 TPNO=			14503
 
 # Code explicitly checks for sys.version < '3.0'
-PYTHON_VERSIONS=	2.7 2.6
+PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk

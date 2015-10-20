@@ -35,7 +35,7 @@ COMPONENT_BUGDB=	python-mod/lesscpy
 TPNO=			16108
 
 # Depends on ply which is not Python 3 ready.
-PYTHON_VERSIONS=	2.7 2.6
+PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
 
 # convert the 'j' in COMPONENT_VERSION to 10
 IPS_COMPONENT_VERSION = 0.9.10
