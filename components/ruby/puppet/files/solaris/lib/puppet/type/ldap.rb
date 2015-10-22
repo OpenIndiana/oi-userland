@@ -81,9 +81,18 @@ Puppet::Type.newtype(:ldap) do
             is.sort == self.should.sort
         end
 
-        # svcprop returns multivalue entries delimited with a space
+        # svcprop returns multivalue entries delimited with a spaces/backslashes
         def delimiter
-            " "
+            /[\s\\]+/
+        end
+
+        # create a list using spaces as a delimiter
+        def is_to_s(currentvalue)
+            if currentvalue == :absent
+                return "absent"
+            else
+                return currentvalue.join(" ")
+            end
         end
 
         validate do |value|
@@ -110,9 +119,18 @@ Puppet::Type.newtype(:ldap) do
             is.sort == self.should.sort
         end
 
-        # svcprop returns multivalue entries delimited with a space
+        # svcprop returns multivalue entries delimited with a spaces/backslashes
         def delimiter
-            " "
+            /[\s\\]+/
+        end
+
+        # create a list using spaces as a delimiter
+        def is_to_s(currentvalue)
+            if currentvalue == :absent
+                return "absent"
+            else
+                return currentvalue.join(" ")
+            end
         end
 
         validate do |value|

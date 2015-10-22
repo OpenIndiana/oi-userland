@@ -1,0 +1,68 @@
+Split from BSD method and add getent hosts
+Also don't try to run `host hostname` if the host command isn't available.
+No upstream facter 2.x is dead and new bugs are not being accepted.
+--- facter-2.1.0/lib/facter/ipaddress.rb.orig	2015-10-02 13:17:19.199030743 -0400
++++ facter-2.1.0/lib/facter/ipaddress.rb	2015-10-02 13:17:25.713426750 -0400
+@@ -64,7 +64,7 @@
+ end
+ 
+ Facter.add(:ipaddress) do
+-  confine :kernel => %w{NetBSD SunOS}
++  confine :kernel => %w{NetBSD}
+   setcode do
+     ip = nil
+     output = Facter::Util::IP.exec_ifconfig(["-a"])
+@@ -84,6 +84,41 @@
+ end
+ 
+ Facter.add(:ipaddress) do
++  confine :osfamily => %w{Solaris}
++  setcode do
++    ip = nil
++    output = Facter::Util::IP.exec_ifconfig(["-a"])
++
++    output.each_line { |str|
++      if str =~ /inet ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
++        tmp = $1
++        unless tmp =~ /^127\./ or tmp == "0.0.0.0"
++          ip = tmp
++          break
++        end
++      end
++    }
++
++    # If we didn't get an IP from ifconfig see if we can get one from
++    # the hosts database
++    if ip.nil? && hostname = Facter.value(:hostname)
++      # we need Hostname to exist for this to work
++      host = nil
++      Facter::Core::Execution.execute("getent hosts #{hostname}").each_line {
++        |l|
++        _ip = l.chomp.split()[0]
++        if _ip !~ /^127\./ && _ip =~ /[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/
++          ip = _ip
++          break
++        end
++      }
++    end
++
++    ip
++  end
++end
++
++Facter.add(:ipaddress) do
+   confine :kernel => %w{AIX}
+   setcode do
+     ip = nil
+@@ -152,8 +187,9 @@
+ 
+ Facter.add(:ipaddress, :timeout => 2) do
+   setcode do
+-    if hostname = Facter.value(:hostname)
+-      # we need Hostname to exist for this to work
++    if hostname = Facter.value(:hostname) &&
++      Facter::Core::Execution.which('host')
++      # we need Hostname and `host` to exist for this to work
+       host = nil
+       if host = Facter::Core::Execution.execute("host #{hostname}")
+         list = host.chomp.split(/\s/)
