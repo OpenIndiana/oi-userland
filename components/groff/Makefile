@@ -69,14 +69,6 @@ CONFIGURE_OPTIONS +=	CXX="$(CXX)"
 CONFIGURE_OPTIONS +=	CXXFLAGS="$(CXXFLAGS)"
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 
-# Groff's manual section numbering is configurable.  Renumber the sections
-# during build to get the internal references substituted, and during install
-# to get them into the right directories.
-COMPONENT_BUILD_ARGS +=	man5ext=4
-COMPONENT_BUILD_ARGS +=	man7ext=5
-COMPONENT_INSTALL_ARGS +=	man5ext=4
-COMPONENT_INSTALL_ARGS +=	man7ext=5
-
 # Don't generate tmac wrappers for the Solaris troff macro packages.
 # Some man pages (such as groff.1) use long macro name definitions
 # which fail in compatibility mode. See:

@@ -150,14 +150,6 @@ build: $(BUILD_64)
 install: $(INSTALL_64)
 	( cd $(PROTOUSRSHARELOCALEDIR) ; \
 	    $(CP) -R 'en@boldquot' en )
-	( cd $(PROTOUSRSHAREMANDIR) ; \
-	    if test -d man8 ; then \
-	    $(MV) man8 man1m ; fi )
-	( cd $(PROTOUSRSHAREMANDIR)/man1m ; \
-	    list1='$(MAN8LIST)' ; for f in $$list1; do \
-	    if test -f $$f.8 ; then \
-	    $(MV) $$f.8 $$f.1m ; fi ; \
-	    done )
 
 test: $(TEST_64)
 
