@@ -43,28 +43,54 @@ set name=org.opensolaris.arc-caseid value=PSARC/2012/356
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 file path=usr/include/archive.h
 file path=usr/include/archive_entry.h
-link path=usr/lib/$(MACH64)/libarchive.so target=libarchive.so.12.0.4
-link path=usr/lib/$(MACH64)/libarchive.so.12 target=libarchive.so.12.0.4
-file path=usr/lib/$(MACH64)/libarchive.so.12.0.4
+link path=usr/lib/$(MACH64)/libarchive.so \
+    target=libarchive.so.1$(COMPONENT_VERSION)
+file path=usr/lib/$(MACH64)/libarchive.so.1$(COMPONENT_VERSION)
+# Symlink for the old SONAME libarchive.so.12 to the new libarchive.so.13.
+# This is to aid consumers of the old library. Upstream has confirmed that
+# the new library is both API and ABI backwards compatible.
+link path=usr/lib/$(MACH64)/libarchive.so.12 target=libarchive.so.13
+link path=usr/lib/$(MACH64)/libarchive.so.13 \
+    target=libarchive.so.1$(COMPONENT_VERSION)
 file path=usr/lib/$(MACH64)/pkgconfig/libarchive.pc
-link path=usr/lib/libarchive.so target=libarchive.so.12
-link path=usr/lib/libarchive.so.12 target=libarchive.so.12.0.4
-file path=usr/lib/libarchive.so.12.0.4
+link path=usr/lib/libarchive.so target=libarchive.so.1$(COMPONENT_VERSION)
+file path=usr/lib/libarchive.so.1$(COMPONENT_VERSION)
+link path=usr/lib/libarchive.so.13 target=libarchive.so.1$(COMPONENT_VERSION)
 file path=usr/lib/pkgconfig/libarchive.pc
 file path=usr/share/man/man3archive/archive_entry.3archive
 file path=usr/share/man/man3archive/archive_entry_acl.3archive
-file path=usr/share/man/man3archive/archive_entry_linkify.3archive
 file path=usr/share/man/man3archive/archive_entry_paths.3archive
 file path=usr/share/man/man3archive/archive_entry_perms.3archive
 file path=usr/share/man/man3archive/archive_entry_stat.3archive
 file path=usr/share/man/man3archive/archive_entry_time.3archive
 file path=usr/share/man/man3archive/archive_read.3archive
+file path=usr/share/man/man3archive/archive_read_data.3archive
 file path=usr/share/man/man3archive/archive_read_disk.3archive
+file path=usr/share/man/man3archive/archive_read_extract.3archive
+file path=usr/share/man/man3archive/archive_read_filter.3archive
+file path=usr/share/man/man3archive/archive_read_format.3archive
+file path=usr/share/man/man3archive/archive_read_free.3archive
+file path=usr/share/man/man3archive/archive_read_header.3archive
+file path=usr/share/man/man3archive/archive_read_new.3archive
+file path=usr/share/man/man3archive/archive_read_open.3archive
 file path=usr/share/man/man3archive/archive_read_set_options.3archive
 file path=usr/share/man/man3archive/archive_util.3archive
 file path=usr/share/man/man3archive/archive_write.3archive
+file path=usr/share/man/man3archive/archive_write_blocksize.3archive
+file path=usr/share/man/man3archive/archive_write_data.3archive
 file path=usr/share/man/man3archive/archive_write_disk.3archive
+file path=usr/share/man/man3archive/archive_write_filter.3archive
+file path=usr/share/man/man3archive/archive_write_finish_entry.3archive
+file path=usr/share/man/man3archive/archive_write_format.3archive
+file path=usr/share/man/man3archive/archive_write_free.3archive
+file path=usr/share/man/man3archive/archive_write_header.3archive
+file path=usr/share/man/man3archive/archive_write_new.3archive
+file path=usr/share/man/man3archive/archive_write_open.3archive
 file path=usr/share/man/man3archive/archive_write_set_options.3archive
 file path=usr/share/man/man3lib/libarchive.3lib
-file libarchive-formats.5 path=usr/share/man/man4/libarchive-formats.4
+file path=usr/share/man/man3lib/libarchive_changes.3lib
+file path=usr/share/man/man3lib/libarchive_internals.3lib
+file path=usr/share/man/man5/libarchive-formats.5
+file path=usr/share/man/man5/mtree.5
+file path=usr/share/man/manarchive3/archive_entry_linkify.3archive
 license libarchive.license license=BSD-like
