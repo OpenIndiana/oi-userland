@@ -25,13 +25,13 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	timezone
 
-COMPONENT_VERSION=    	2015.6
+COMPONENT_VERSION=    	2015.7
 
 COMPONENT_BUGDB=	utility/timezone
 
-HUMAN_VERSION=		2015f
+HUMAN_VERSION=		2015g
 
-TPNO=			24066
+TPNO=			24870
 
 # Build info part of pkg(5) FMRI dropped ",$(OS_VERSION)" between 11 and 12;
 # needed for evaluation repo where we build the default repo from 12 on 11.
