@@ -1,0 +1,23 @@
+In Solaris 12, we will be normalizing man pages. See PSARC 2015/428.
+This means that what was section 1m, is now section 8. But currently
+only for Solaris 12.
+
+This patch should eventually be sent upstream, but for that to happen
+it will need to be reworked into a form that will be acceptable for
+all versions of Solaris. Plus the Solaris section also needs to be
+split from the HP-UX section.  Until then, we are just using this
+Solaris 12 specific patch.
+
+--- config-scripts/cups-manpages.m4.orig	2015-10-21 11:10:09.020523290 -0700
++++ config-scripts/cups-manpages.m4	2015-10-21 11:10:24.716548936 -0700
+@@ -64,8 +64,8 @@
+ 		MAN1EXT=1
+ 		MAN5EXT=5
+ 		MAN7EXT=7
+-		MAN8EXT=1m
+-		MAN8DIR=1m
++		MAN8EXT=8
++		MAN8DIR=8
+ 		;;
+ 	Linux* | GNU* | Darwin*)
+ 		# Linux, GNU Hurd, and Mac OS X

@@ -41,8 +41,8 @@ diff -r 3f1e7d35d0ab -r 821e8eadeaff Makefile
 +install:
 +	mkdir -p $(DESTDIR)/usr/lib/inet
 +	ginstall -D -p -m 755 src/ptpd $(DESTDIR)/usr/lib/inet/ptpd
-+	mkdir -p $(DESTDIR)/usr/share/man/man1m/
-+	ginstall -D -p -m 444 src/ptpd2.8 $(DESTDIR)/usr/share/man/man1m/ptpd.1m
++	mkdir -p $(DESTDIR)/usr/share/man/man8/
++	ginstall -D -p -m 444 src/ptpd2.8 $(DESTDIR)/usr/share/man/man8/ptpd.8
 +	
 diff -r 3f1e7d35d0ab -r 821e8eadeaff src/Makefile
 --- a/src/Makefile	Tue May 14 17:07:59 2013 -0700
@@ -10284,9 +10284,9 @@ diff -r 3f1e7d35d0ab -r 821e8eadeaff src/ptpd2.8
  .\" -*- nroff -*"
 -.TH ptpd2 8 "January, 2012" "version 2.2.0" "Precision Time Protocol daemon"
 +.\"
-+.\" Copyright (c) 2009, 2011, Oracle and/or its affiliates. All rights reserved.
++.\" Copyright (c) 2009, 2015, Oracle and/or its affiliates. All rights reserved.
 +.\"
-+.TH ptpd "1M" "January, 2012" "version 2.2.0" "System Administration Commands"
++.TH ptpd "8" "October, 2015" "version 2.2.0" "System Administration Commands"
  .SH NAME
 -ptpd2 \- Precision Time Protocol daemon (1588-2008)
 +ptpd \- Precision Time Protocol daemon (1588-2008)
@@ -10339,7 +10339,7 @@ diff -r 3f1e7d35d0ab -r 821e8eadeaff src/ptpd2.8
 +in certain NICs (Network Interface Card) for improved accuracy.
 +.SH SERVICE MANAGEMENT
 +The operation of ptpd is managed as a service by the service
-+management facility, smf(5), under the service identifier:
++management facility, smf(7), under the service identifier:
 +.TP
 +.nf
 +  svc:/network/ptp:default
@@ -10348,7 +10348,7 @@ diff -r 3f1e7d35d0ab -r 821e8eadeaff src/ptpd2.8
 +.PP
 +Administrative actions on this service, such as  enabling,
 +disabling,  or  requesting  restart,  can be performed using
-+svcadm(1M). The service's status can be  queried  using  the
++svcadm(8). The service's status can be  queried  using  the
 +svcs(1) command.  There are several options controlled by
 +services properties which can be set by the system
 +administrator. The available options can be listed by
@@ -10367,7 +10367,7 @@ diff -r 3f1e7d35d0ab -r 821e8eadeaff src/ptpd2.8
 +.aj
 +
 +
-+See svcadm(1M) and svccfg(1M).
++See svcadm(8) and svccfg(8).
 +
 +Available options and their meaning are as follows:
 +.TP
@@ -10515,7 +10515,7 @@ diff -r 3f1e7d35d0ab -r 821e8eadeaff src/ptpd2.8
 +interfac which has pre-existing vnic(s).
 +
 +.SH SEE ALSO
-+svcs(1), svcadm(1M), attributes(5), smf(5)
++svcs(1), svcadm(8), attributes(7), smf(7)
 +
 +
 +IEEE Standard 1588-2008, Precision Clock Synchronization
