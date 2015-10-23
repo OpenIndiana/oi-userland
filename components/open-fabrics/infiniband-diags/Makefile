@@ -38,7 +38,7 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include ../ofed.mk
 
-MAN1MFILES = set_nodedesc.sh.1m
+MAN8FILES = set_nodedesc.sh.8
 
 CFLAGS += -I$(PROTO_DIR)/usr/include/infiniband
 LIBS +=	-lsocket -lnsl -lopensm -losmvendor -losmcomp -libumad -libmad -libverbs -ldevinfo
@@ -71,23 +71,23 @@ CLEANUP_FILES =\
 	$(PROTOUSRBINDIR)/dump_mfts.sh\
 	$(PROTOUSRBINDIR)/ibidsverify.pl \
 	$(PROTOUSRBINDIR)/ibfindnodesusing.pl\
-	$(PROTOMAN)/man1m/vendstat.1m \
-	$(PROTOMAN)/man1m/dump_lfts.1m\
-	$(PROTOMAN)/man1m/dump_mfts.1m \
-	$(PROTOMAN)/man1m/ibidsverify.1m\
-	$(PROTOMAN)/man1m/ibfindnodesusing.1m \
+	$(PROTOMAN)/man8/vendstat.8 \
+	$(PROTOMAN)/man8/dump_lfts.8 \
+	$(PROTOMAN)/man8/dump_mfts.8 \
+	$(PROTOMAN)/man8/ibidsverify.8 \
+	$(PROTOMAN)/man8/ibfindnodesusing.8 \
 	$(PROTOUSRINCDIR)/infiniband/ibnetdisc.h\
 
 COMPONENT_POST_INSTALL_ACTION =\
 	$(RM) $(CLEANUP_FILES);\
-	$(INSTALL) -m 644 manpages/set_nodedesc.sh.1m $(PROTOMAN)/man1m
+	$(INSTALL) -m 644 manpages/set_nodedesc.sh.8 $(PROTOMAN)/man8
 
 # common targets
 configure:	$(CONFIGURE_32_and_64)
 
 build:		$(BUILD_32_and_64)
 
-install:	$(INSTALL_32_and_64) #$(PROTOMAN1MFILES)
+install:	$(INSTALL_32_and_64) #$(PROTOMAN8FILES)
 
 test:		$(NO_TESTS)
 

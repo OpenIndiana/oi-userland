@@ -39,7 +39,7 @@ include $(WS_MAKE_RULES)/configure.mk
 include ../ofed.mk
 
 MAN3FILES = libsdp.3lib
-MAN4FILES = libsdp.conf.4
+MAN5FILES = libsdp.conf.5
 
 SUFFIX.64 = $(MACH64)
 
@@ -57,7 +57,7 @@ CLEANUP_FILES =\
 
 COMPONENT_PREP_ACTION = \
 	$(MKDIR) $(@D)/man ; \
-	cp manpages/$(MAN3FILES) manpages/$(MAN4FILES) $(@D)/man ; \
+	cp manpages/$(MAN3FILES) manpages/$(MAN5FILES) $(@D)/man ; \
 
 COMPONENT_POST_INSTALL_ACTION=\
 	$(RM) $(CLEANUP_FILES);\

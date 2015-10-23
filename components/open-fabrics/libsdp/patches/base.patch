@@ -765,11 +765,11 @@ diff -r -u /tmp/895782/libsdp-1.1.108/Makefile.in libsdp-1.1.108/Makefile.in
  	install-recursive installcheck-recursive installdirs-recursive \
  	pdf-recursive ps-recursive uninstall-info-recursive \
  	uninstall-recursive
-+am__installdirs = "$(DESTDIR)$(man3libdir)" "$(DESTDIR)$(man4dir)"
++am__installdirs = "$(DESTDIR)$(man3libdir)" "$(DESTDIR)$(man5dir)"
 +man3libdir = $(mandir)/man3lib
-+man4dir = $(mandir)/man4
++man5dir = $(mandir)/man5
 +NROFF = nroff
-+man_MANS = man/libsdp.3lib man/libsdp.conf.4
++man_MANS = man/libsdp.3lib man/libsdp.conf.5
 +MANS = $(man_MANS)
  ETAGS = etags
  CTAGS = ctags
@@ -800,7 +800,7 @@ diff -r -u /tmp/895782/libsdp-1.1.108/Makefile.in libsdp-1.1.108/Makefile.in
  target_alias = @target_alias@
  SUBDIRS = src
 -EXTRA_DIST = libsdp.spec.in libsdp.conf
-+EXTRA_DIST = libsdp.spec.in libsdp.conf libsdp.3lib libsdp.conf.4
++EXTRA_DIST = libsdp.spec.in libsdp.conf libsdp.3lib libsdp.conf.5
  all: config.h
  	$(MAKE) $(AM_MAKEFLAGS) all-recursive
  
@@ -808,14 +808,14 @@ diff -r -u /tmp/895782/libsdp-1.1.108/Makefile.in libsdp-1.1.108/Makefile.in
  distclean-libtool:
  	-rm -f libtool
  uninstall-info-am:
-+install-man4: $(man4_MANS) $(man_MANS)
++install-man5: $(man5_MANS) $(man_MANS)
 +	@$(NORMAL_INSTALL)
-+	test -z "$(man4dir)" || $(mkdir_p) "$(DESTDIR)$(man4dir)"
-+	@list='$(man4_MANS) $(dist_man4_MANS) $(nodist_man4_MANS)'; \
++	test -z "$(man5dir)" || $(mkdir_p) "$(DESTDIR)$(man5dir)"
++	@list='$(man5_MANS) $(dist_man5_MANS) $(nodist_man5_MANS)'; \
 +	l2='$(man_MANS) $(dist_man_MANS) $(nodist_man_MANS)'; \
 +	for i in $$l2; do \
 +	  case "$$i" in \
-+	    *.4*) list="$$list $$i" ;; \
++	    *.5*) list="$$list $$i" ;; \
 +	  esac; \
 +	done; \
 +	for i in $$list; do \
@@ -823,35 +823,35 @@ diff -r -u /tmp/895782/libsdp-1.1.108/Makefile.in libsdp-1.1.108/Makefile.in
 +	  else file=$$i; fi; \
 +	  ext=`echo $$i | sed -e 's/^.*\\.//'`; \
 +	  case "$$ext" in \
-+	    4*) ;; \
-+	    *) ext='4' ;; \
++	    5*) ;; \
++	    *) ext='5' ;; \
 +	  esac; \
 +	  inst=`echo $$i | sed -e 's/\\.[0-9a-z]*$$//'`; \
 +	  inst=`echo $$inst | sed -e 's/^.*\///'`; \
 +	  inst=`echo $$inst | sed '$(transform)'`.$$ext; \
-+	  echo " $(INSTALL_DATA) '$$file' '$(DESTDIR)$(man4dir)/$$inst'"; \
-+	  $(INSTALL_DATA) "$$file" "$(DESTDIR)$(man4dir)/$$inst"; \
++	  echo " $(INSTALL_DATA) '$$file' '$(DESTDIR)$(man5dir)/$$inst'"; \
++	  $(INSTALL_DATA) "$$file" "$(DESTDIR)$(man5dir)/$$inst"; \
 +	done
-+uninstall-man4:
++uninstall-man5:
 +	@$(NORMAL_UNINSTALL)
-+	@list='$(man4_MANS) $(dist_man4_MANS) $(nodist_man4_MANS)'; \
++	@list='$(man5_MANS) $(dist_man5_MANS) $(nodist_man5_MANS)'; \
 +	l2='$(man_MANS) $(dist_man_MANS) $(nodist_man_MANS)'; \
 +	for i in $$l2; do \
 +	  case "$$i" in \
-+	    *.4*) list="$$list $$i" ;; \
++	    *.5*) list="$$list $$i" ;; \
 +	  esac; \
 +	done; \
 +	for i in $$list; do \
 +	  ext=`echo $$i | sed -e 's/^.*\\.//'`; \
 +	  case "$$ext" in \
-+	    4*) ;; \
-+	    *) ext='4' ;; \
++	    5*) ;; \
++	    *) ext='5' ;; \
 +	  esac; \
 +	  inst=`echo $$i | sed -e 's/\\.[0-9a-z]*$$//'`; \
 +	  inst=`echo $$inst | sed -e 's/^.*\///'`; \
 +	  inst=`echo $$inst | sed '$(transform)'`.$$ext; \
-+	  echo " rm -f '$(DESTDIR)$(man4dir)/$$inst'"; \
-+	  rm -f "$(DESTDIR)$(man4dir)/$$inst"; \
++	  echo " rm -f '$(DESTDIR)$(man5dir)/$$inst'"; \
++	  rm -f "$(DESTDIR)$(man5dir)/$$inst"; \
 +	done
 +install-man3lib: $(man3lib_MANS) $(man_MANS)
 +	@$(NORMAL_INSTALL)
@@ -910,7 +910,7 @@ diff -r -u /tmp/895782/libsdp-1.1.108/Makefile.in libsdp-1.1.108/Makefile.in
 +check: installmandirs check-recursive
 +all-am: Makefile config.h installmandirs
 +installmandirs:
-+	for dir in "$(DESTDIR)$(man3libdir)" "$(DESTDIR)$(man4dir)"; do \
++	for dir in "$(DESTDIR)$(man3libdir)" "$(DESTDIR)$(man5dir)"; do \
 +	  test -z "$$dir" || $(mkdir_p) "$$dir"; \
 +	done
  installdirs: installdirs-recursive
@@ -939,7 +939,7 @@ diff -r -u /tmp/895782/libsdp-1.1.108/Makefile.in libsdp-1.1.108/Makefile.in
  	@$(NORMAL_INSTALL)
  	$(MAKE) $(AM_MAKEFLAGS) install-data-hook
  
-+install-man: install-man4 install-man3lib
++install-man: install-man5 install-man3lib
 +
  install-exec-am:
  
@@ -960,7 +960,7 @@ diff -r -u /tmp/895782/libsdp-1.1.108/Makefile.in libsdp-1.1.108/Makefile.in
  uninstall-info: uninstall-info-recursive
  
 -.PHONY: $(RECURSIVE_TARGETS) CTAGS GTAGS all all-am am--refresh check \
-+uninstall-man: uninstall-man4 uninstall-man3lib
++uninstall-man: uninstall-man5 uninstall-man3lib
 +
 +.PHONY: installmandirs $(RECURSIVE_TARGETS) CTAGS GTAGS all \
 +	all-am am--refresh check \
@@ -972,7 +972,7 @@ diff -r -u /tmp/895782/libsdp-1.1.108/Makefile.in libsdp-1.1.108/Makefile.in
  	install install-am install-data install-data-am \
  	install-data-hook install-exec install-exec-am install-info \
 -	install-info-am install-man install-strip installcheck \
-+	install-info-am install-man install-man3lib install-man4 \
++	install-info-am install-man install-man3lib install-man5 \
 +	install-strip installcheck \
  	installcheck-am installdirs installdirs-am maintainer-clean \
  	maintainer-clean-generic maintainer-clean-recursive \
@@ -980,7 +980,7 @@ diff -r -u /tmp/895782/libsdp-1.1.108/Makefile.in libsdp-1.1.108/Makefile.in
  	mostlyclean-recursive pdf pdf-am ps ps-am tags tags-recursive \
 -	uninstall uninstall-am uninstall-info-am
 +	uninstall uninstall-am uninstall-info-am uninstall-man \
-+	uninstall-man3lib uninstall-man4
++	uninstall-man3lib uninstall-man5
  
  
  dist-hook: libsdp.spec
@@ -1004,8 +1004,8 @@ diff -r -u /tmp/895782/libsdp-1.1.108/Makefile.in libsdp-1.1.108/Makefile.in
 +	fi; \
 +	cd $(DESTDIR)$(mandir)/man3lib && \
 +	$(RM) libssdp.3lib && \
-+	cd $(DESTDIR)$(mandir)/man4 && \
-+	$(RM) libssdp.conf.4
++	cd $(DESTDIR)$(mandir)/man5 && \
++	$(RM) libssdp.conf.5
  # Tell versions [3.59,3.63) of GNU make to not export all variables.
  # Otherwise a system limit (for SysV at least) may be exceeded.
  .NOEXPORT:
