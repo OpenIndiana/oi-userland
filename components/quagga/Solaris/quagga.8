@@ -1,6 +1,6 @@
 '\" te
-.\" Copyright (c) 2006, 2011, Oracle and/or its affiliates\&. All rights reserved\&.
-.TH quagga 1m "01 Aug 2006" "SunOS 5.11" "System Administration Commands"
+.\" Copyright (c) 2006, 2015, Oracle and/or its affiliates\&. All rights reserved\&.
+.TH quagga 8 "20 Oct 2015" "SunOS 5.12" "System Administration Commands"
 .SH "NAME"
 quagga - advanced routing protocol suite from www.quagga.net
 .SH "SYNOPSIS"
@@ -32,7 +32,7 @@ More detailed \fBQuagga\fR documentation is available from
 http://www.quagga.net/docs, or in the GNU Info format \fBQuagga\fR documentation
 installed in /usr/share/info.
 .PP
-In Solaris, quagga daemons are managed by the following smf(5) services:
+In Solaris, quagga daemons are managed by the following smf(7) services:
 .PP
 svc:/network/routing/zebra:quagga	zebra routing manager daemon
 .PP
@@ -46,7 +46,7 @@ svc:/network/routing/ospf:quagga	OSPF routing daemon
 .PP
 svc:/network/routing/ospf6:quagga	OSPF6 routing daemon
 .PP
-\fBQuagga\fR daemons can be configured either via the \fBsmf\fR(5) framework, or via routeadm(1M),
+\fBQuagga\fR daemons can be configured either via the \fBsmf\fR(7) framework, or via routeadm(8),
 the global dynamic routing management utility.
 .PP
 Note that quagga was built without the vtysh (unified vty shell) utility, as it depends on a package
@@ -56,8 +56,8 @@ not currently distributed with Solaris.
 .PP
 By default, \fBin.routed\fR and \fBin.ripngd\fR, managed by the svc:/network/routing/route
 and svc:/network/routing/ripng services respectively, are configured as default 
-IPv4/IPv6 routing services. To disable these, either utilize \fBrouteadm\fR (1M) or 
-\fBsvcadm\fR (1M) as follows:
+IPv4/IPv6 routing services. To disable these, either utilize \fBrouteadm\fR (8) or 
+\fBsvcadm\fR (8) as follows:
 .sp
 .nf
 \f(CW# routeadm -d route
@@ -65,7 +65,7 @@ IPv4/IPv6 routing services. To disable these, either utilize \fBrouteadm\fR (1M)
 \fR
 .fi
 .sp
-disables in.routed and in.ripngd respectively using \fBrouteadm\fR (1M). 
+disables in.routed and in.ripngd respectively using \fBrouteadm\fR (8). 
 .sp
 .nf
 \f(CW# svcadm disable route:default
@@ -73,16 +73,16 @@ disables in.routed and in.ripngd respectively using \fBrouteadm\fR (1M).
 \fR
 .fi
 .sp
-disables in.routed and in.ripngd respectively using smf(1). 
+disables in.routed and in.ripngd respectively using smf(7). 
 .PP
 Note that these services must be disabled or their quagga counterparts
 (rip:quagga, ripng:quagga) will not run, since they services specify to the
 smf framework that they and their quagga counterparts cannot run
 simultaneously.
 .PP
-To enable quagga services, again either \fBrouteadm\fR(1M) or \fBsvcadm\fR(1M) can be used.
+To enable quagga services, again either \fBrouteadm\fR(8) or \fBsvcadm\fR(8) can be used.
 Note that quagga services, like in.routed and in.ripngd, specify dependencies
-on ipv4(6)-routing(forwarding) services, so as with all smf(1) services, ensure the 
+on ipv4(6)-routing(forwarding) services, so as with all smf(7) services, ensure the 
 appropriate dependencies are enabled or the services will not start.
 .PP
 For example,
@@ -97,7 +97,7 @@ enables quagga's RIPv2 daemon (the -u option above is required, as
 global ip routing/forwarding settings are not applied to the system until next reboot
 unless the -u is issued).
 .PP
-To do the same via \fBsmf\fR(1),
+To do the same via \fBsmf\fR(7),
 .sp
 .nf
 \f(CW# svcadm enable -r rip:quagga
@@ -107,12 +107,12 @@ To do the same via \fBsmf\fR(1),
 The "-r" option recursively enables rip:quagga's dependencies, which include
 the ipv4-routing service.
 .PP
-The status of all routing daemon services can be displayed via \fBrouteadm\fR(1M),
-run without options, or, through smf(1), via the svcs(1) command.
+The status of all routing daemon services can be displayed via \fBrouteadm\fR(8),
+run without options, or, through smf(7), via the svcs(1) command.
 .PP
 Commandline arguments to the quagga daemons can be altered by
-modifying the routing/daemon-args property, again either via \fBrouteadm\fR(1M)
-or svccfg(1M):
+modifying the routing/daemon-args property, again either via \fBrouteadm\fR(8)
+or svccfg(8):
 .sp
 .nf
 \f(CW# routeadm -m rip:quagga daemon-args="-s"
@@ -130,10 +130,10 @@ or
 The "refresh" is required to ensure the daemon re-reads its configuration.
 .SH "DIAGNOSTICS"
 .PP
-To see status of all routing services, run \fBrouteadm\fR(1M) without options.
+To see status of all routing services, run \fBrouteadm\fR(8) without options.
 .SH "SEE ALSO"
 .PP
-\fBripngd\fR(1m), \fBisisd\fR(1m), \fBospfd\fR(1m), \fBospf6d\fR(1m), \fBbgpd\fR(1m), \fBzebra\fR(1m), \fBrouteadm\fR(1M),
-\fBsvcadm\fR(1M), svcs(1), svccfg(1M), smf(5)
+\fBripngd\fR(8), \fBisisd\fR(8), \fBospfd\fR(8), \fBospf6d\fR(8), \fBbgpd\fR(8), \fBzebra\fR(8), \fBrouteadm\fR(8),
+\fBsvcadm\fR(8), svcs(1), svccfg(8), smf(7)
 .SH "AUTHORS"
 See <http://www.quagga.net>, or the Info file for an  accurate  list of authors.
