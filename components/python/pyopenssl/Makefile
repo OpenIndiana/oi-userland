@@ -50,7 +50,13 @@ COMPONENT_TEST_ENV += PYTHONPATH=$(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES.32)
 COMPONENT_TEST_CMD = $(SHELL)
 COMPONENT_TEST_ARGS = $(COMPONENT_DIR)/files/runtests
 
-# common targets
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
+# Using nawk for easier test results processing and stripping out the
+# random portions (like time to complete the tests).
+COMPONENT_TEST_TRANSFORMER =    $(NAWK)
+COMPONENT_TEST_TRANSFORMS = "'/^Running / { print }; /^ERROR: / { print }; /^FAIL: / { print }; /^Ran / { sub(\" tests in .+s\", \" tests in\"); print }; /^FAILED / { print }; /^OK / { print };'"
+
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
