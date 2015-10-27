@@ -26,16 +26,16 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lftp
-COMPONENT_VERSION=	4.3.1
+COMPONENT_VERSION=	4.6.4
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://lftp.yar.ru/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:a3df26383053081e67b8101aa9e1705ee8274e14a5938746a944b0a2d97948e3
-COMPONENT_ARCHIVE_URL=	http://ftp.yars.free.net/pub/source/lftp/$(COMPONENT_ARCHIVE)
+    sha256:762ad076124e605112feabbc5ae3df44e91bc3e01d5cd9b96afcdba14d6b407e
+COMPONENT_ARCHIVE_URL= $(COMPONENT_PROJECT_URL)/ftp/$(COMPONENT_ARCHIVE)	
 COMPONENT_BUGDB=	utility/lftp
 
-TPNO=			16991
+TPNO=			25164
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -64,6 +64,7 @@ system-test:    $(NO_TESTS)
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/gnutls
 REQUIRED_PACKAGES += library/readline
+REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/perl-512
 REQUIRED_PACKAGES += runtime/perl-520
 REQUIRED_PACKAGES += shell/ksh93

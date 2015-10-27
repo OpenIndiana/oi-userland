@@ -1,20 +1,19 @@
 - Solaris specific documentation change.
 - Solaris tbl(1) won't handle 'x' suffix.
-- Man page category change.
 
---- doc/lftp.1	Tue Jun 28 02:36:24 2011
-+++ doc/lftp.1	Thu Jul 14 06:55:30 2011
-@@ -68,8 +68,7 @@
+--- doc/lftp.1	2015-10-14 14:44:17.423356916 -0700
++++ doc/lftp.1	2015-10-14 14:47:00.443113545 -0700
+@@ -67,8 +67,7 @@ will connect to that site otherwise a co
  the open command.
  .PP
- \fBlftp\fP can handle several file access methods - ftp, ftps, http, https,
--hftp, fish, sftp and file (https and ftps are only available when lftp is
+ \fBlftp\fP can handle several file access methods - FTP, FTPS, HTTP, HTTPS,
+-HFTP, FISH, SFTP and file (HTTPS and FTPS are only available when lftp is
 -compiled with GNU TLS or OpenSSL library). You can specify the method to use in `open
-+hftp, fish, sftp and file. You can specify the method to use in `open
- URL' command, e.g. `open http://www.us.kernel.org/pub/linux'. hftp is
- ftp-over-http-proxy protocol. It can be used automatically instead of ftp
++HFTP, FISH, SFTP and file. You can specify the method to use in `open
+ URL' command, e.g. `open http://www.us.kernel.org/pub/linux'. HFTP is
+ ftp-over-http-proxy protocol. It can be used automatically instead of FTP
  if ftp:proxy is set to `http://proxy[:port]'. Fish is a protocol working
-@@ -164,7 +163,7 @@
+@@ -167,7 +166,7 @@ any command that accepts input URLs usin
  .Sp
  .in +0.5i
  .TS
@@ -23,7 +22,7 @@
  add <name> [<loc>]	T{
  add current place or given location to bookmarks and bind to given name
  T}
-@@ -182,7 +181,7 @@
+@@ -185,7 +184,7 @@ The following subcommands are recognized
  .Sp
  .in +0.5i
  .TS
@@ -32,7 +31,25 @@
  stat	print cache status (default)
  on|off	turn on/off caching
  flush	flush cache
-@@ -292,7 +291,7 @@
+@@ -226,7 +225,7 @@ and outputs the information according to
+ .Sp
+ .in +0.5i
+ .TS
+-l1	l	lx	.
++l1	l	l	.
+ \-1		single-column output
+ \-a,	\-\-all	show dot files
+ \-B,	\-\-basename	show basename of files only
+@@ -345,7 +344,7 @@ of this command. Options:
+ .Sp
+ .in +0.5i
+ .TS
+-l1	l	lx	.
++l1	l	l	.
+ \-d \fIMD\fP,	\-\-max\-depth=\fIMD\fP	specify maximum scan depth
+ \-l,	\-\-list 	use long listing format
+ .TE
+@@ -377,7 +376,7 @@ instances of \fIrfile\fP (and \-o \fIlfi
  .Sp
  .in +0.5i
  .TS
@@ -40,8 +57,8 @@
 +l	l	.
  \-c	continue, reget
  \-E	delete source files after successful transfer
- \-a	use ascii mode (binary is the default)
-@@ -318,7 +317,7 @@
+ \-e	delete target file before the transfer
+@@ -404,7 +403,7 @@ Transfer a single file. Options:
  .Sp
  .in +0.5i
  .TS
@@ -50,7 +67,7 @@
  \-o <lfile>	T{
  destination file name (default - basename of rfile)
  T}
-@@ -343,7 +342,7 @@
+@@ -429,7 +428,7 @@ Glob given patterns containing metachara
  .Sp
  .in +0.5i
  .TS
@@ -59,7 +76,16 @@
  \-f	plain files (default)
  \-d	directories
  \-a	all types
-@@ -413,7 +412,7 @@
+@@ -458,7 +457,7 @@ Options:
+ .Sp
+ .in +0.5i
+ .TS
+-l	lx	.
++l	l	.
+ \-v	verbose, several \-v increase verbosity
+ \-r	list just one specified job without recursion
+ .TE
+@@ -517,7 +516,7 @@ Gets selected files with expanded wildca
  .Sp
  .in +0.5i
  .TS
@@ -68,7 +94,7 @@
  \-c	continue, reget.
  \-d	T{
  create directories the same as file names and get the files into them instead of current directory.
-@@ -436,7 +435,7 @@
+@@ -540,7 +539,7 @@ directory name. Source and/or target can
  .Sp
  .in +0.5i
  .TS
@@ -77,7 +103,7 @@
  \-c,	\-\-continue	T{
  continue a mirror job if possible
  T}
-@@ -620,7 +619,7 @@
+@@ -768,7 +767,7 @@ local name as remote one. This can be ch
  .Sp
  .in +0.5i
  .TS
@@ -86,7 +112,7 @@
  \-c	continue, reput
  \-d	T{
  create directories the same as in file names and put the files into them instead of current directory
-@@ -668,7 +667,7 @@
+@@ -816,7 +815,7 @@ Options:
  .Sp
  .in +0.5i
  .TS
@@ -95,7 +121,7 @@
  \-c	T{
  continue transfer. Requires \fIlfile.lftp-pget-status\fP file.
  T}
-@@ -690,7 +689,7 @@
+@@ -838,7 +837,7 @@ of \fIlfile\fP is used as remote name. D
  .Sp
  .in +0.5i
  .TS
@@ -104,7 +130,7 @@
  \-o <rfile>	T{
  specifies remote file name (default - basename of lfile)
  T}
-@@ -745,7 +744,7 @@
+@@ -893,7 +892,7 @@ destination is given.
  .Sp
  .in +0.5i
  .TS
@@ -113,7 +139,7 @@
  \-q	Be quiet.
  \-v	Be verbose.
  \-Q	T{
-@@ -766,7 +765,7 @@
+@@ -914,7 +913,7 @@ Examples:
  .Sp
  .in +0.5i
  .TS
@@ -122,7 +148,7 @@
  queue \-d 3	Delete the third item in the queue.
  queue \-m 6 4	T{
  Move the sixth item in the queue before the fourth.
-@@ -829,7 +828,7 @@
+@@ -977,7 +976,7 @@ Default delay is one second, default com
  .Sp
  .in +0.5i
  .TS
@@ -131,7 +157,7 @@
  \-c <count>	maximum number of iterations
  \-d <delay>	delay between iterations
  \-\-while\-ok	stop when command exits with non-zero code
-@@ -876,7 +875,7 @@
+@@ -1024,7 +1023,7 @@ It can be changed by options:
  .Sp
  .in +0.5i
  .TS
@@ -140,7 +166,7 @@
  \-a	list all settings, including default values
  \-d	list only default values, not necessary current ones
  .TE
-@@ -934,7 +933,7 @@
+@@ -1083,7 +1082,7 @@ Options:
  .Sp
  .in +0.5i
  .TS
@@ -149,7 +175,7 @@
  \-O <directory>	T{
  specifies base directory where files should be placed
  T}
-@@ -1130,7 +1129,7 @@
+@@ -1354,7 +1353,7 @@ The following escapes are supported:
  .Sp
  .in +0.5i
  .TS
@@ -158,12 +184,3 @@
  \\a	bell
  \\e	escape
  \\n	new line
-@@ -1996,7 +1995,7 @@
- password is used.
- 
- .SH SEE ALSO
--.BR ftpd (8),\  ftp (1)
-+.BR ftpd (1M),\  ftp (1)
- .br
- RFC854 (telnet),
- RFC959 (ftp),
