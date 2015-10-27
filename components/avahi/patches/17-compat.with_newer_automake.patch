@@ -1,0 +1,46 @@
+Source: http://git.0pointer.net/avahi.git/commit/?id=e98b5b0df0b6241a59a39cda8f78c7d8d4622881
+
+From e98b5b0df0b6241a59a39cda8f78c7d8d4622881 Mon Sep 17 00:00:00 2001
+From: Lennart Poettering <lennart@poettering.net>
+Date: Tue, 14 Feb 2012 21:43:03 +0000
+Subject: build-sys: compatibility with newer automake
+
+Place the service type database in $(prefix)/lib/avahi instead of
+$(libdir)/avahi.
+---
+(limited to 'service-type-database/Makefile.am')
+
+diff --git a/service-type-database/Makefile.am b/service-type-database/Makefile.am
+index fa1bd40..1e9e70f 100644
+--- a/service-type-database/Makefile.am
++++ b/service-type-database/Makefile.am
+@@ -17,14 +17,16 @@
+ 
+ EXTRA_DIST=build-db.in service-types
+ 
++pkglibdatadir=$(prefix)/lib/avahi
++
+ pkgdata_DATA=service-types
+-pkglib_DATA=
++pkglibdata_DATA=
+ 
+ if HAVE_PYTHON
+ if HAVE_GDBM
+ 
+ noinst_SCRIPTS=build-db
+-pkglib_DATA+=service-types.db
++pkglibdata_DATA+=service-types.db
+ 
+ build-db: build-db.in
+ 	$(AM_V_GEN)sed -e 's,@PYTHON\@,$(PYTHON),g' \
+@@ -41,7 +43,7 @@ endif
+ if HAVE_DBM
+ 
+ noinst_SCRIPTS=build-db
+-pkglib_DATA+=service-types.db.pag service-types.db.dir
++pkglibdata_DATA+=service-types.db.pag service-types.db.dir
+ 
+ build-db: build-db.in
+ 	$(AM_V_GEN)sed -e 's,@PYTHON\@,$(PYTHON),g' \
+--
+cgit v0.9.2

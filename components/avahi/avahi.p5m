@@ -1,0 +1,278 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
+# man pages stability
+<transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
+
+# config files transforms
+# avahi is distributed from desktop with /etc/avahi empty yet
+#<transform file path=etc/.+ -> default preserve true>
+#<transform file path=etc/avahi/(?!.+/).+ -> default mode 644>
+
+# pkglint has a problem to find the appropriate modules when python executable has no .py
+<transform file path=usr/bin/avahi-bookmarks -> default pkg.depend.bypass-generate .*>
+<transform file path=usr/bin/avahi-bookmarks -> default pkg.linted.userland.action001.3 true>
+<transform file path=usr/bin/avahi-discover -> default pkg.depend.bypass-generate .*>
+<transform file path=usr/bin/avahi-discover -> default pkg.linted.userland.action001.3 true>
+
+# package attribs
+set name=pkg.fmri \
+    value=pkg:/system/network/avahi@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Avahi client and bridge to mdns"
+set name=com.oracle.info.description \
+    value="System which facilitates service discovery on a local network."
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value=org.opensolaris.category.2008:Applications/Internet
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=LSARC/2007/464
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+# Desktop do not deliver any avahi config. files but it would rather to be changed
+dir  path=etc/avahi
+#file path=etc/avahi/avahi-daemon.conf
+#file path=etc/avahi/avahi-dnsconfd.action
+#file path=etc/avahi/hosts
+# "as above" but without knowing where to put the service defs it is hard to configure anything
+dir  path=etc/avahi/services
+#file path=etc/avahi/services/sftp-ssh.service
+#file path=etc/avahi/services/ssh.service
+#
+file path=etc/dbus-1/system.d/avahi-dbus.conf
+#
+
+# SMF service: svc:/system/avahi-bridge-dsd:default
+file files/avahi-bridge-dsd.xml \
+    path=lib/svc/manifest/system/avahi-bridge-dsd.xml
+# service method
+file files/svc-avahi-bridge-dsd path=lib/svc/method/svc-avahi-bridge-dsd
+#
+
+# not delivered by Desktop
+#file path=usr/bin/avahi-bookmarks
+file path=usr/bin/avahi-browse
+link path=usr/bin/avahi-browse-domains target=avahi-browse
+# LSARC/2007/464/ -> rename avahi-daemon to avahi-daemon-bridge-dsd
+#file path=usr/bin/avahi-daemon
+file path=usr/bin/avahi-discover
+# not delivered by Desktop
+#file path=usr/bin/avahi-discover-standalone
+# not delivered by Desktop
+#file path=usr/bin/avahi-dnsconfd
+file path=usr/bin/avahi-publish
+link path=usr/bin/avahi-publish-address target=avahi-publish
+link path=usr/bin/avahi-publish-service target=avahi-publish
+file path=usr/bin/avahi-resolve
+link path=usr/bin/avahi-resolve-address target=avahi-resolve
+link path=usr/bin/avahi-resolve-host-name target=avahi-resolve
+file path=usr/bin/avahi-set-host-name
+link path=usr/bin/bshell target=bssh
+file path=usr/bin/bssh
+link path=usr/bin/bvnc target=bssh
+#
+file path=usr/include/avahi-client/client.h
+file path=usr/include/avahi-client/lookup.h
+file path=usr/include/avahi-client/publish.h
+file path=usr/include/avahi-common/address.h
+file path=usr/include/avahi-common/alternative.h
+file path=usr/include/avahi-common/cdecl.h
+file path=usr/include/avahi-common/defs.h
+file path=usr/include/avahi-common/domain.h
+file path=usr/include/avahi-common/error.h
+file path=usr/include/avahi-common/gccmacro.h
+file path=usr/include/avahi-common/llist.h
+file path=usr/include/avahi-common/malloc.h
+file path=usr/include/avahi-common/rlist.h
+file path=usr/include/avahi-common/simple-watch.h
+file path=usr/include/avahi-common/strlst.h
+file path=usr/include/avahi-common/thread-watch.h
+file path=usr/include/avahi-common/timeval.h
+file path=usr/include/avahi-common/watch.h
+file path=usr/include/avahi-core/core.h
+file path=usr/include/avahi-core/log.h
+file path=usr/include/avahi-core/lookup.h
+file path=usr/include/avahi-core/publish.h
+file path=usr/include/avahi-core/rr.h
+file path=usr/include/avahi-glib/glib-malloc.h
+file path=usr/include/avahi-glib/glib-watch.h
+file path=usr/include/avahi-gobject/ga-client.h
+file path=usr/include/avahi-gobject/ga-entry-group.h
+file path=usr/include/avahi-gobject/ga-enums.h
+file path=usr/include/avahi-gobject/ga-error.h
+file path=usr/include/avahi-gobject/ga-record-browser.h
+file path=usr/include/avahi-gobject/ga-service-browser.h
+file path=usr/include/avahi-gobject/ga-service-resolver.h
+file path=usr/include/avahi-ui/avahi-ui.h
+#
+file path=usr/lib/$(MACH64)/girepository-1.0/Avahi-0.6.typelib
+file path=usr/lib/$(MACH64)/girepository-1.0/AvahiCore-0.6.typelib
+link path=usr/lib/$(MACH64)/libavahi-client.so target=libavahi-client.so.3.2.9
+link path=usr/lib/$(MACH64)/libavahi-client.so.3 target=libavahi-client.so.3.2.9
+file path=usr/lib/$(MACH64)/libavahi-client.so.3.2.9
+link path=usr/lib/$(MACH64)/libavahi-common.so target=libavahi-common.so.3.5.3
+link path=usr/lib/$(MACH64)/libavahi-common.so.3 target=libavahi-common.so.3.5.3
+file path=usr/lib/$(MACH64)/libavahi-common.so.3.5.3
+link path=usr/lib/$(MACH64)/libavahi-core.so target=libavahi-core.so.7.0.2
+link path=usr/lib/$(MACH64)/libavahi-core.so.7 target=libavahi-core.so.7.0.2
+file path=usr/lib/$(MACH64)/libavahi-core.so.7.0.2
+link path=usr/lib/$(MACH64)/libavahi-glib.so target=libavahi-glib.so.1.0.2
+link path=usr/lib/$(MACH64)/libavahi-glib.so.1 target=libavahi-glib.so.1.0.2
+file path=usr/lib/$(MACH64)/libavahi-glib.so.1.0.2
+link path=usr/lib/$(MACH64)/libavahi-gobject.so target=libavahi-gobject.so.0.0.4
+link path=usr/lib/$(MACH64)/libavahi-gobject.so.0 \
+    target=libavahi-gobject.so.0.0.4
+file path=usr/lib/$(MACH64)/libavahi-gobject.so.0.0.4
+link path=usr/lib/$(MACH64)/libavahi-ui.so target=libavahi-ui.so.0.1.4
+link path=usr/lib/$(MACH64)/libavahi-ui.so.0 target=libavahi-ui.so.0.1.4
+file path=usr/lib/$(MACH64)/libavahi-ui.so.0.1.4
+file path=usr/lib/$(MACH64)/pkgconfig/avahi-client.pc
+file path=usr/lib/$(MACH64)/pkgconfig/avahi-core.pc
+file path=usr/lib/$(MACH64)/pkgconfig/avahi-glib.pc
+file path=usr/lib/$(MACH64)/pkgconfig/avahi-gobject.pc
+file path=usr/lib/$(MACH64)/pkgconfig/avahi-ui.pc
+#
+file path=usr/lib/avahi/service-types.db.dir
+file path=usr/lib/avahi/service-types.db.pag
+#
+file path=usr/lib/girepository-1.0/Avahi-0.6.typelib
+file path=usr/lib/girepository-1.0/AvahiCore-0.6.typelib
+#
+link path=usr/lib/libavahi-client.so target=libavahi-client.so.3.2.9
+link path=usr/lib/libavahi-client.so.3 target=libavahi-client.so.3.2.9
+file path=usr/lib/libavahi-client.so.3.2.9
+link path=usr/lib/libavahi-common.so target=libavahi-common.so.3.5.3
+link path=usr/lib/libavahi-common.so.3 target=libavahi-common.so.3.5.3
+file path=usr/lib/libavahi-common.so.3.5.3
+link path=usr/lib/libavahi-core.so target=libavahi-core.so.7.0.2
+link path=usr/lib/libavahi-core.so.7 target=libavahi-core.so.7.0.2
+file path=usr/lib/libavahi-core.so.7.0.2
+link path=usr/lib/libavahi-glib.so target=libavahi-glib.so.1.0.2
+link path=usr/lib/libavahi-glib.so.1 target=libavahi-glib.so.1.0.2
+file path=usr/lib/libavahi-glib.so.1.0.2
+link path=usr/lib/libavahi-gobject.so target=libavahi-gobject.so.0.0.4
+link path=usr/lib/libavahi-gobject.so.0 target=libavahi-gobject.so.0.0.4
+file path=usr/lib/libavahi-gobject.so.0.0.4
+link path=usr/lib/libavahi-ui.so target=libavahi-ui.so.0.1.4
+link path=usr/lib/libavahi-ui.so.0 target=libavahi-ui.so.0.1.4
+file path=usr/lib/libavahi-ui.so.0.1.4
+file path=usr/lib/pkgconfig/avahi-client.pc
+file path=usr/lib/pkgconfig/avahi-core.pc
+file path=usr/lib/pkgconfig/avahi-glib.pc
+file path=usr/lib/pkgconfig/avahi-gobject.pc
+file path=usr/lib/pkgconfig/avahi-ui.pc
+#
+file path=usr/lib/python2.7/vendor-packages/64/avahi/ServiceTypeDatabase.py
+file path=usr/lib/python2.7/vendor-packages/64/avahi/ServiceTypeDatabase.pyc
+file path=usr/lib/python2.7/vendor-packages/64/avahi/__init__.py
+file path=usr/lib/python2.7/vendor-packages/64/avahi/__init__.pyc
+file path=usr/lib/python2.7/vendor-packages/64/avahi_discover/__init__.py
+file path=usr/lib/python2.7/vendor-packages/64/avahi_discover/__init__.pyc
+#
+
+# LSARC/2007/464/ -> rename avahi-daemon to avahi-daemon-bridge-dsd
+file usr/bin/avahi-daemon path=usr/sbin/avahi-daemon-bridge-dsd
+#
+
+#
+file path=usr/share/applications/avahi-discover.desktop
+file path=usr/share/applications/bssh.desktop
+file path=usr/share/applications/bvnc.desktop
+#
+file path=usr/share/avahi/avahi-service.dtd
+file path=usr/share/avahi/interfaces/avahi-discover.ui
+file path=usr/share/avahi/service-types
+#
+file path=usr/share/dbus-1/interfaces/org.freedesktop.Avahi.AddressResolver.xml
+file path=usr/share/dbus-1/interfaces/org.freedesktop.Avahi.DomainBrowser.xml
+file path=usr/share/dbus-1/interfaces/org.freedesktop.Avahi.EntryGroup.xml
+file path=usr/share/dbus-1/interfaces/org.freedesktop.Avahi.HostNameResolver.xml
+file path=usr/share/dbus-1/interfaces/org.freedesktop.Avahi.RecordBrowser.xml
+file path=usr/share/dbus-1/interfaces/org.freedesktop.Avahi.Server.xml
+file path=usr/share/dbus-1/interfaces/org.freedesktop.Avahi.ServiceBrowser.xml
+file path=usr/share/dbus-1/interfaces/org.freedesktop.Avahi.ServiceResolver.xml
+file path=usr/share/dbus-1/interfaces/org.freedesktop.Avahi.ServiceTypeBrowser.xml
+#
+file path=usr/share/gir-1.0/Avahi-0.6.gir
+file path=usr/share/gir-1.0/AvahiCore-0.6.gir
+#
+file path=usr/share/locale/bg/LC_MESSAGES/avahi.mo
+file path=usr/share/locale/ca/LC_MESSAGES/avahi.mo
+file path=usr/share/locale/cs/LC_MESSAGES/avahi.mo
+file path=usr/share/locale/da/LC_MESSAGES/avahi.mo
+file path=usr/share/locale/de/LC_MESSAGES/avahi.mo
+file path=usr/share/locale/el/LC_MESSAGES/avahi.mo
+file path=usr/share/locale/en_AU/LC_MESSAGES/avahi.mo
+file path=usr/share/locale/en_CA/LC_MESSAGES/avahi.mo
+file path=usr/share/locale/en_GB/LC_MESSAGES/avahi.mo
+file path=usr/share/locale/en_NZ/LC_MESSAGES/avahi.mo
+file path=usr/share/locale/es/LC_MESSAGES/avahi.mo
+file path=usr/share/locale/fi/LC_MESSAGES/avahi.mo
+file path=usr/share/locale/fo/LC_MESSAGES/avahi.mo
+file path=usr/share/locale/fr/LC_MESSAGES/avahi.mo
+file path=usr/share/locale/gl/LC_MESSAGES/avahi.mo
+file path=usr/share/locale/he/LC_MESSAGES/avahi.mo
+file path=usr/share/locale/hu/LC_MESSAGES/avahi.mo
+file path=usr/share/locale/id/LC_MESSAGES/avahi.mo
+file path=usr/share/locale/it/LC_MESSAGES/avahi.mo
+file path=usr/share/locale/ja/LC_MESSAGES/avahi.mo
+file path=usr/share/locale/ms/LC_MESSAGES/avahi.mo
+file path=usr/share/locale/nl/LC_MESSAGES/avahi.mo
+file path=usr/share/locale/pl/LC_MESSAGES/avahi.mo
+file path=usr/share/locale/pt_BR/LC_MESSAGES/avahi.mo
+file path=usr/share/locale/ro/LC_MESSAGES/avahi.mo
+file path=usr/share/locale/ru/LC_MESSAGES/avahi.mo
+file path=usr/share/locale/sl/LC_MESSAGES/avahi.mo
+file path=usr/share/locale/sr/LC_MESSAGES/avahi.mo
+file path=usr/share/locale/sr@latin/LC_MESSAGES/avahi.mo
+file path=usr/share/locale/sv/LC_MESSAGES/avahi.mo
+file path=usr/share/locale/uk/LC_MESSAGES/avahi.mo
+file path=usr/share/locale/zh_CN/LC_MESSAGES/avahi.mo
+file path=usr/share/locale/zh_TW/LC_MESSAGES/avahi.mo
+link path=usr/share/man/man1/avahi-browse-domains.1 target=avahi-browse.1
+#
+
+# Man pages can not be rebuilt because the xmltoman is missing on Solaris
+# ...current man pages are patched instead.
+file man/avahi-browse.1 path=usr/share/man/man1/avahi-browse.1
+file man/avahi-daemon-bridge-dsd.1 \
+    path=usr/share/man/man1/avahi-daemon-bridge-dsd.1
+file man/avahi-discover.1 path=usr/share/man/man1/avahi-discover.1
+link path=usr/share/man/man1/avahi-publish-address.1 target=avahi-publish.1
+link path=usr/share/man/man1/avahi-publish-service.1 target=avahi-publish.1
+file man/avahi-publish.1 path=usr/share/man/man1/avahi-publish.1
+link path=usr/share/man/man1/avahi-resolve-address.1 target=avahi-resolve.1
+link path=usr/share/man/man1/avahi-resolve-host-name.1 target=avahi-resolve.1
+file man/avahi-resolve.1 path=usr/share/man/man1/avahi-resolve.1
+file man/avahi-set-host-name.1 path=usr/share/man/man1/avahi-set-host-name.1
+file man/bssh.1 path=usr/share/man/man1/bssh.1
+link path=usr/share/man/man1/bvnc.1 target=bssh.1
+#
+dir  path=var/avahi
+dir  path=var/avahi/run
+#
+
+# license file
+license avahi.license license=$(COPYRIGHTS)
