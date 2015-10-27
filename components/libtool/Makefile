@@ -90,9 +90,17 @@ INSTALL_64 += $(BUILD_OLD_DIR_64)/.installed
 $(BUILD_DIR_32)/.installed:	$(BUILD_OLD_DIR_32)/.installed
 $(BUILD_DIR_64)/.installed:	$(BUILD_OLD_DIR_64)/.installed
 
+COMPONENT_TEST_TRANSFORMS += \
+	'-n ' \
+	'-e "/SKIP/p" ' \
+	'-e "/PASS/p" ' \
+	'-e "/FAIL/p" ' \
+	'-e "/^===/p" ' \
+	'-e "/failed/p" ' \
+	'-e "/passed/p" '
+
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-# common targets
 configure:	$(CONFIGURE_32_and_64)
 
 build:		$(BUILD_32_and_64)
