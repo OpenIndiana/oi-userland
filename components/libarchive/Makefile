@@ -18,28 +18,36 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libarchive
-COMPONENT_VERSION=	3.0.4
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	3.1.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://github.com/
+COMPONENT_PROJECT_URL=	http://www.libarchive.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:76e8d7c7b100ec4071e48c1b7d3f3ea1d22b39db3e45b7189f75b5ff4df90fac
+	sha256:eb87eacd8fe49e8d90c8fdc189813023ccc319c5e752b01fb6ad0cc7b2c53d5e
 COMPONENT_ARCHIVE_URL=	\
-    $(COMPONENT_PROJECT_URL)downloads/libarchive/libarchive/$(COMPONENT_ARCHIVE)
+    $(COMPONENT_PROJECT_URL)downloads/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libarchive
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+TPNO=			24584
 
-# Userland default includes -mt which links with libthread which we don't need.
-studio_MT =
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
+
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --enable-largefile
+# We prefer openssl over nettle.
+CONFIGURE_OPTIONS += --without-nettle
+CONFIGURE_OPTIONS += --with-openssl
+CONFIGURE_OPTIONS += --with-pic
+CONFIGURE_OPTIONS += --with-xml2
+CONFIGURE_OPTIONS += --with-zlib
 
 # libarchive's Makefile hard-codes some gcc-only flags in COMMON_CFLAGS, then
 # appends CFLAGS to that.  Reset the former here so we can build with Studio.
@@ -49,17 +57,30 @@ COMPONENT_TEST_ARGS +=	COMMON_CFLAGS=''
 COMPONENT_TEST_ARGS +=	CFLAGS="$(CFLAGS)"
 
 # We need GNU awk for the following to work; hence the PATH tweak.
+# We then convert BSD-style section numbers in the libarchive man pages to
+# Solaris-style section numbers.
 COMPONENT_PREP_ACTION = \
-    (cd $(@D)/doc/man ; rm *.[135] ; env PATH=/usr/gnu/bin:$$PATH gmake all)
+	cd $(@D)/doc/man ; rm *.[135] ; env PATH=/usr/gnu/bin:$$PATH gmake all ; \
+	cd $(@D)/libarchive ; \
+	find . -name "*\.[35]" | xargs /usr/bin/gsed -i 's/\(Xr.*\|Dt.*\)3/\13ARCHIVE/' ; \
+	find . -name "*\.[35]" | xargs /usr/bin/gsed -i \
+	-e 's/Xr \(malloc\|getpwuid\|getgrgud\|strerror\|printf\|getpwnam\|getgrnam\) 3ARCHIVE/Xr \13C/' \
+	-e 's/\(Dt.*LIBARCHIVE.*\)3ARCHIVE/\13LIB/' \
+	-e 's/Xr \(libarchive\|archive\) 3ARCHIVE/Xr libarchive 3LIB/';
+
 PKG_PROTO_DIRS += $(COMPONENT_SRC)/doc/man
 
-# common targets
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s|/tmp/.*_test.*|\\$$(TESTDIR)|g"' \
+	'-e "s|^.*$(CC).*$$|XXX_CC_XXX|"' \
+	'-e "s/ld: warning: symbol .* has differing sizes:$$/XXX_CC_XXX/"' \
+	'-e "s/.*value=0x[0-9a-f]\+.*$$/XXX_CC_XXX/"' \
+	'-e "s/.* definition taken$$/XXX_CC_XXX/"' \
+	'-e "/^XXX_CC_XXX$$/d"'
+
 build:		$(BUILD_32_and_64)
-
 install:	$(INSTALL_32_and_64)
-
 test:		$(TEST_32_and_64)
-
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
