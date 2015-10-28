@@ -53,6 +53,14 @@ ASLR_MODE = $(ASLR_ENABLE)
 COMPONENT_TEST_TRANSFORMS += \
 	'-e "/^+ sed -e /d" '
 
+ifeq ($(OS_VERSION),5.11)
+OLD_DESKTOP_BUILD=	0.175.2.0.0.21.0
+else
+OLD_DESKTOP_BUILD=	5.12.0.0.0.25.0
+endif
+
+PKG_MACROS +=		OLD_DESKTOP_BUILD=$(OLD_DESKTOP_BUILD)
+
 # common targets
 configure:	$(CONFIGURE_64)
 
