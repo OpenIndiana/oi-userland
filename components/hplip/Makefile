@@ -24,11 +24,11 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         hplip
-COMPONENT_VERSION=      3.15.7
+COMPONENT_VERSION=      3.15.9
 COMPONENT_PROJECT_URL=	http://hplipopensource.com/hplip-web/index.html
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:d310903048f3600f93422e5a8c39ddd682511e0849cd9abc5e943f9a10bdd49d
+COMPONENT_ARCHIVE_HASH= sha256:a1f58fe8707373c193728a7fd826523e99c30e3ca7f660faa75531acdff89d6d
 COMPONENT_ARCHIVE_URL=  http://sourceforge.net/projects/hplip/files/hplip/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/hplip
 
