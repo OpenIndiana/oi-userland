@@ -44,6 +44,8 @@ include $(WS_MAKE_RULES)/ips.mk
 PATCH_LEVEL=0
 
 COMPONENT_TEST_TARGETS= test 
+COMPONENT_SYSTEM_TEST_TARGETS=	test
+COMPONENT_SYSTEM_TEST_ENV=	CONVMV=/usr/bin/convmv
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
@@ -54,7 +56,7 @@ install:	$(INSTALL_64)
 
 test:		$(TEST_64)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+system-test:    $(SYSTEM_TEST_64)
 
 
 REQUIRED_PACKAGES += runtime/perl-512
