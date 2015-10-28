@@ -15,13 +15,13 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pixman
-COMPONENT_VERSION=	0.32.6
+COMPONENT_VERSION=	0.32.8
 COMPONENT_PROJECT_URL=	http://www.pixman.org/
 COMPONENT_SUMMARY=	Pixman: The pixel-manipulation library for X and Cairo
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:3dfed13b8060eadabf0a4945c7045b7793cc7e3e910e748a8bb0f0dc3e794904
+    sha256:575ade17c40b47d391b02b4c0c63531c897b31e70046c96749514b7d8800d65d
 COMPONENT_ARCHIVE_URL=	http://cairographics.org/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_FMRI=		library/graphics/pixman
