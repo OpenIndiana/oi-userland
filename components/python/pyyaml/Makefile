@@ -44,9 +44,9 @@ include $(WS_MAKE_RULES)/ips.mk
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 COMPONENT_TEST_DIR =		$(SOURCE_DIR)
-COMPONENT_TEST_ARGS.2.6 =	./tests/lib/test_all.py
 COMPONENT_TEST_ARGS.2.7 =	./tests/lib/test_all.py
 COMPONENT_TEST_ARGS.3.4 =	./tests/lib3/test_all.py
+COMPONENT_TEST_ARGS.3.5 =	./tests/lib3/test_all.py
 COMPONENT_TEST_ARGS =		$(COMPONENT_TEST_ARGS.$(PYTHON_VERSION))
 
 # common targets

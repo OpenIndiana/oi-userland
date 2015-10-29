@@ -39,7 +39,7 @@ TPNO=			21622
 
 #
 # The futures module was integrated into Python 3.2, so we should only
-# deliver 2.6 & 2.7 modules.
+# deliver 2.x modules.
 #
 PYTHON_VERSIONS = $(PYTHON2_VERSIONS)
 

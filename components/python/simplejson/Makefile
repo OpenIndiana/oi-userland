@@ -62,6 +62,7 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/^=.*/d" ' \
 	'-e "/SOURCE_DIR.*/d" ' \
 	'-e "/^ *$$/d" ' \
+	'-e "/^platform sunos5 .*/d" ' \
 	'-e "/^plugins.*/d" ' \
 	'-e "/pep8/d" ' \
 	'-e "/pyflakes/d" '
