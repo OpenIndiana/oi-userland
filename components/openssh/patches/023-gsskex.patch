@@ -731,19 +731,23 @@ diff -pur old/readconf.c new/readconf.c
  	oServerAliveInterval, oServerAliveCountMax, oIdentitiesOnly,
  	oSendEnv, oControlPath, oControlMaster, oControlPersist,
  	oHashKnownHosts,
-@@ -196,9 +197,11 @@ static struct {
- #if defined(GSSAPI)
- 	{ "gssapiauthentication", oGssAuthentication },
+@@ -198,11 +199,15 @@ static struct {
+ 	{ "gssauthentication", oGssAuthentication },                /* alias */
  	{ "gssapidelegatecredentials", oGssDelegateCreds },
+ 	{ "gssdelegatecreds", oGssDelegateCreds },                  /* alias */
 +	{ "gssapikeyexchange", oGssKeyEx },
++	{ "gsskeyex", oGssKeyEx },                                  /* alias */
  #else
  	{ "gssapiauthentication", oUnsupported },
+ 	{ "gssauthentication", oUnsupported },
  	{ "gssapidelegatecredentials", oUnsupported },
+ 	{ "gssdelegatecreds", oUnsupported },
 +	{ "gssapikeyexchange", oUnsupported },
++	{ "gsskeyex", oUnsupported },
  #endif
  	{ "fallbacktorsh", oDeprecated },
  	{ "usersh", oDeprecated },
-@@ -929,6 +932,10 @@ parse_time:
+@@ -933,6 +938,10 @@ parse_time:
  		intptr = &options->gss_authentication;
  		goto parse_flag;
  
@@ -754,7 +758,7 @@ diff -pur old/readconf.c new/readconf.c
  	case oGssDelegateCreds:
  		intptr = &options->gss_deleg_creds;
  		goto parse_flag;
-@@ -1643,6 +1650,7 @@ initialize_options(Options * options)
+@@ -1647,6 +1656,7 @@ initialize_options(Options * options)
  	options->pubkey_authentication = -1;
  	options->challenge_response_authentication = -1;
  	options->gss_authentication = -1;
@@ -762,7 +766,7 @@ diff -pur old/readconf.c new/readconf.c
  	options->gss_deleg_creds = -1;
  	options->password_authentication = -1;
  	options->kbd_interactive_authentication = -1;
-@@ -1782,6 +1790,12 @@ fill_default_options(Options * options)
+@@ -1786,6 +1796,12 @@ fill_default_options(Options * options)
  #else
  		options->gss_authentication = 0;
  #endif
@@ -818,23 +822,25 @@ diff -pur old/servconf.c new/servconf.c
  	sGssAuthentication, sGssCleanupCreds, sGssStrictAcceptor,
  	sAcceptEnv, sPermitTunnel,
  	sMatch, sPermitOpen, sForceCommand, sChrootDirectory,
-@@ -518,6 +526,7 @@ static struct {
- 	{ "afstokenpassing", sUnsupported, SSHCFG_GLOBAL },
+@@ -519,6 +527,8 @@ static struct {
  #ifdef GSSAPI
  	{ "gssapiauthentication", sGssAuthentication, SSHCFG_ALL },
+ 	{ "gssauthentication", sGssAuthentication, SSHCFG_ALL },   /* alias */
 +	{ "gssapikeyexchange", sGssKeyEx, SSHCFG_ALL },
++	{ "gsskeyex", sGssKeyEx, SSHCFG_ALL },                     /* alias */
  #ifdef USE_GSS_STORE_CRED
  	{ "gssapicleanupcredentials", sUnsupported, SSHCFG_GLOBAL },
  #else /* USE_GSS_STORE_CRED */
-@@ -526,6 +535,7 @@ static struct {
- 	{ "gssapistrictacceptorcheck", sGssStrictAcceptor, SSHCFG_GLOBAL },
+@@ -528,6 +538,8 @@ static struct {
  #else
  	{ "gssapiauthentication", sUnsupported, SSHCFG_ALL },
-+	{ "gssapikeyexchange", sUnsupported, SSHCFG_ALL },
+ 	{ "gssauthentication", sUnsupported, SSHCFG_ALL },          /* alias */
++	{ "gssapikeyexchange", sUnsupported,, SSHCFG_ALL },
++	{ "gsskeyex", sUnsupported,, SSHCFG_ALL },
  	{ "gssapicleanupcredentials", sUnsupported, SSHCFG_GLOBAL },
  	{ "gssapistrictacceptorcheck", sUnsupported, SSHCFG_GLOBAL },
  #endif
-@@ -1309,6 +1319,10 @@ process_server_config_line(ServerOptions
+@@ -1311,6 +1323,10 @@ process_server_config_line(ServerOptions
  		intptr = &options->gss_authentication;
  		goto parse_flag;
  
@@ -845,7 +851,7 @@ diff -pur old/servconf.c new/servconf.c
  	case sGssCleanupCreds:
  		intptr = &options->gss_cleanup_creds;
  		goto parse_flag;
-@@ -2355,6 +2369,7 @@ dump_config(ServerOptions *o)
+@@ -2357,6 +2373,7 @@ dump_config(ServerOptions *o)
  #endif
  #ifdef GSSAPI
  	dump_cfg_fmtint(sGssAuthentication, o->gss_authentication);

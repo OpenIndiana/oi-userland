@@ -13,9 +13,26 @@
 # This is a Solaris specific change to ease the transition and will not be
 # offered upstream.
 #
---- orig/servconf.c	Tue Jul 21 16:34:07 2015
-+++ new/servconf.c	Tue Jul 21 17:00:39 2015
-@@ -567,6 +567,29 @@
+diff -pur old/servconf.c new/servconf.c
+--- old/servconf.c
++++ new/servconf.c
+@@ -518,6 +518,7 @@ static struct {
+ 	{ "afstokenpassing", sUnsupported, SSHCFG_GLOBAL },
+ #ifdef GSSAPI
+ 	{ "gssapiauthentication", sGssAuthentication, SSHCFG_ALL },
++	{ "gssauthentication", sGssAuthentication, SSHCFG_ALL },   /* alias */
+ #ifdef USE_GSS_STORE_CRED
+ 	{ "gssapicleanupcredentials", sUnsupported, SSHCFG_GLOBAL },
+ #else /* USE_GSS_STORE_CRED */
+@@ -526,6 +527,7 @@ static struct {
+ 	{ "gssapistrictacceptorcheck", sGssStrictAcceptor, SSHCFG_GLOBAL },
+ #else
+ 	{ "gssapiauthentication", sUnsupported, SSHCFG_ALL },
++	{ "gssauthentication", sUnsupported, SSHCFG_ALL },          /* alias */
+ 	{ "gssapicleanupcredentials", sUnsupported, SSHCFG_GLOBAL },
+ 	{ "gssapistrictacceptorcheck", sUnsupported, SSHCFG_GLOBAL },
+ #endif
+@@ -592,6 +594,30 @@ static struct {
  	{ "pamserviceprefix", sPAMServicePrefix, SSHCFG_GLOBAL },
  	{ "pamservicename", sPAMServiceName, SSHCFG_GLOBAL },
  #endif
@@ -41,6 +58,7 @@
 +	{ "useunsupportedsshv1", sDeprecated, SSHCFG_GLOBAL },
 +	{ "usefips140", sDeprecated, SSHCFG_ALL},
 +	{ "gssapistoredelegatedcredentials", sDeprecated, SSHCFG_ALL },
++	{ "gssstoredelegcreds", sDeprecated, SSHCFG_ALL },
 +#endif
  	{ "revokedkeys", sRevokedKeys, SSHCFG_ALL },
  	{ "trustedusercakeys", sTrustedUserCAKeys, SSHCFG_ALL },

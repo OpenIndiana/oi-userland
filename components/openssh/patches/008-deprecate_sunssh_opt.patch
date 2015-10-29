@@ -6,10 +6,26 @@
 # changed from deprecated to supported. Since this is for Solaris only, we will
 # not contribute back this change to the upstream community.
 #
---- old/readconf.c	2014-01-17 05:03:57.000000000 -0800
-+++ new/readconf.c	2014-11-22 04:15:00.066981692 -0800
-@@ -268,6 +268,24 @@ static struct {
- 	{ "canonicalizepermittedcnames", oCanonicalizePermittedCNAMEs },
+diff -pur old/readconf.c new/readconf.c
+--- old/readconf.c
++++ new/readconf.c
+@@ -192,10 +192,14 @@ static struct {
+ 	{ "afstokenpassing", oUnsupported },
+ #if defined(GSSAPI)
+ 	{ "gssapiauthentication", oGssAuthentication },
++	{ "gssauthentication", oGssAuthentication },                /* alias */
+ 	{ "gssapidelegatecredentials", oGssDelegateCreds },
++	{ "gssdelegatecreds", oGssDelegateCreds },                  /* alias */
+ #else
+ 	{ "gssapiauthentication", oUnsupported },
++	{ "gssauthentication", oUnsupported },
+ 	{ "gssapidelegatecredentials", oUnsupported },
++	{ "gssdelegatecreds", oUnsupported },
+ #endif
+ 	{ "fallbacktorsh", oDeprecated },
+ 	{ "usersh", oDeprecated },
+@@ -279,6 +283,24 @@ static struct {
+ 	{ "pubkeyacceptedkeytypes", oPubkeyAcceptedKeyTypes },
  	{ "ignoreunknown", oIgnoreUnknown },
  
 +#ifdef DEPRECATE_SUNSSH_OPT
