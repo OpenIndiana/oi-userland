@@ -37,6 +37,12 @@ TPNO=			23958
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
+
+# Mostly but not completely migrated from ON in S12.
+ifeq ($(BUILD_TYPE), evaluation)
+PUBLISH_STAMP=
+endif
+
 include $(WS_MAKE_RULES)/ips.mk
 include $(WS_MAKE_RULES)/lint-libraries.mk
 

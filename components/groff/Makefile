@@ -39,6 +39,12 @@ TPNO=			8829
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
+
+# Complex dependencies on ON only available in S12.
+ifeq ($(BUILD_TYPE), evaluation)
+PUBLISH_STAMP=
+endif
+
 include $(WS_MAKE_RULES)/ips.mk
 
 # The grog.sh script needs GNU awk not the Solaris one.
