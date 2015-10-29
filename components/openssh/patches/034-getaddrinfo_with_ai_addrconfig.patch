@@ -1,0 +1,187 @@
+#
+# Use AI_ADDRCONFIG flag for getaddrinfo() hints where
+# the address family is AF_UNSPEC. See description of AI_ADDRCONFIG
+# in getaddrinfo(3C).
+# 
+# We have contributed back this fix to the OpenSSH upstream community. For
+# more information, see https://bugzilla.mindrot.org/show_bug.cgi?id=2483
+# In the future, if this fix is accepted by the upsteam in a later release, we
+# will remove this patch when we upgrade to that release.
+#
+--- a/canohost.c	Sun Oct 25 20:11:35 2015
++++ b/canohost.c	Sun Oct 25 20:11:57 2015
+@@ -113,6 +113,10 @@
+ 	memset(&hints, 0, sizeof(hints));
+ 	hints.ai_family = from.ss_family;
+ 	hints.ai_socktype = SOCK_STREAM;
++#ifdef AI_ADDRCONFIG
++	if (hints.ai_family == AF_UNSPEC)
++		hints.ai_flags = AI_ADDRCONFIG;
++#endif /* AI_ADDRCONFIG */
+ 	if (getaddrinfo(name, NULL, &hints, &aitop) != 0) {
+ 		logit("reverse mapping checking getaddrinfo for %.700s "
+ 		    "[%s] failed - POSSIBLE BREAK-IN ATTEMPT!", name, ntop);
+--- a/channels.c	Sun Oct 25 19:30:33 2015
++++ b/channels.c	Sun Oct 25 19:54:36 2015
+@@ -2853,8 +2853,12 @@
+ 	 */
+ 	memset(&hints, 0, sizeof(hints));
+ 	hints.ai_family = IPv4or6;
+-	hints.ai_flags = wildcard ? AI_PASSIVE : 0;
+ 	hints.ai_socktype = SOCK_STREAM;
++	hints.ai_flags = wildcard ? AI_PASSIVE : 0;
++#ifdef AI_ADDRCONFIG
++	if (hints.ai_family == AF_UNSPEC)
++		hints.ai_flags |= AI_ADDRCONFIG;
++#endif /* AI_ADDRCONFIG */
+ 	snprintf(strport, sizeof strport, "%d", fwd->listen_port);
+ 	if ((r = getaddrinfo(addr, strport, &hints, &aitop)) != 0) {
+ 		if (addr == NULL) {
+@@ -3736,6 +3740,10 @@
+ 		memset(&hints, 0, sizeof(hints));
+ 		hints.ai_family = IPv4or6;
+ 		hints.ai_socktype = SOCK_STREAM;
++#ifdef AI_ADDRCONFIG
++		if (hints.ai_family == AF_UNSPEC)
++			hints.ai_flags = AI_ADDRCONFIG;
++#endif /* AI_ADDRCONFIG */
+ 		snprintf(strport, sizeof strport, "%d", port);
+ 		if ((gaierr = getaddrinfo(name, strport, &hints, &cctx.aitop)) != 0) {
+ 			error("connect_to %.100s: unknown host (%s)", name,
+@@ -3908,8 +3916,12 @@
+ 		port = 6000 + display_number;
+ 		memset(&hints, 0, sizeof(hints));
+ 		hints.ai_family = IPv4or6;
+-		hints.ai_flags = x11_use_localhost ? 0: AI_PASSIVE;
+ 		hints.ai_socktype = SOCK_STREAM;
++		hints.ai_flags = x11_use_localhost ? 0: AI_PASSIVE;
++#ifdef AI_ADDRCONFIG
++		if (hints.ai_family == AF_UNSPEC)
++			hints.ai_flags |= AI_ADDRCONFIG;
++#endif /* AI_ADDRCONFIG */
+ 		snprintf(strport, sizeof strport, "%d", port);
+ 		if ((gaierr = getaddrinfo(NULL, strport, &hints, &aitop)) != 0) {
+ 			error("getaddrinfo: %.100s", ssh_gai_strerror(gaierr));
+@@ -4090,6 +4102,10 @@
+ 	memset(&hints, 0, sizeof(hints));
+ 	hints.ai_family = IPv4or6;
+ 	hints.ai_socktype = SOCK_STREAM;
++#ifdef AI_ADDRCONFIG
++	if (hints.ai_family == AF_UNSPEC)
++		hints.ai_flags = AI_ADDRCONFIG;
++#endif /* AI_ADDRCONFIG */
+ 	snprintf(strport, sizeof strport, "%u", 6000 + display_number);
+ 	if ((gaierr = getaddrinfo(buf, strport, &hints, &aitop)) != 0) {
+ 		error("%.100s: unknown host. (%s)", buf,
+--- a/servconf.c	Sun Oct 25 19:39:38 2015
++++ b/servconf.c	Sun Oct 25 19:45:16 2015
+@@ -722,6 +722,10 @@
+ 	hints.ai_family = options->address_family;
+ 	hints.ai_socktype = SOCK_STREAM;
+ 	hints.ai_flags = (addr == NULL) ? AI_PASSIVE : 0;
++#ifdef AI_ADDRCONFIG
++	if (hints.ai_family == AF_UNSPEC)
++		hints.ai_flags |= AI_ADDRCONFIG;
++#endif /* AI_ADDRCONFIG */
+ 	snprintf(strport, sizeof strport, "%d", port);
+ 	if ((gaierr = getaddrinfo(addr, strport, &hints, &aitop)) != 0)
+ 		fatal("bad addr or host: %s (%s)",
+--- a/ssh-keyscan.c	Sun Oct 25 19:46:28 2015
++++ b/ssh-keyscan.c	Sun Oct 25 19:54:55 2015
+@@ -326,6 +326,10 @@
+ 	memset(&hints, 0, sizeof(hints));
+ 	hints.ai_family = IPv4or6;
+ 	hints.ai_socktype = SOCK_STREAM;
++#ifdef AI_ADDRCONFIG
++	if (hints.ai_family == AF_UNSPEC)
++		hints.ai_flags = AI_ADDRCONFIG;
++#endif /* AI_ADDRCONFIG */
+ 	if ((gaierr = getaddrinfo(host, strport, &hints, &aitop)) != 0) {
+ 		error("getaddrinfo %s: %s", host, ssh_gai_strerror(gaierr));
+ 		return -1;
+--- a/ssh.c	Sun Oct 25 19:49:46 2015
++++ b/ssh.c	Sun Oct 25 19:55:15 2015
+@@ -259,6 +259,10 @@
+ 	hints.ai_socktype = SOCK_STREAM;
+ 	if (cname != NULL)
+ 		hints.ai_flags = AI_CANONNAME;
++#ifdef AI_ADDRCONFIG
++	if (hints.ai_family == AF_UNSPEC)
++		hints.ai_flags |= AI_ADDRCONFIG;
++#endif /* AI_ADDRCONFIG */
+ 	if ((gaierr = getaddrinfo(name, strport, &hints, &res)) != 0) {
+ 		if (logerr || (gaierr != EAI_NONAME && gaierr != EAI_NODATA))
+ 			loglevel = SYSLOG_LEVEL_ERROR;
+@@ -298,6 +302,10 @@
+ 	    AF_UNSPEC : options.address_family;
+ 	hints.ai_socktype = SOCK_STREAM;
+ 	hints.ai_flags = AI_NUMERICHOST|AI_NUMERICSERV;
++#ifdef AI_ADDRCONFIG
++	if (hints.ai_family == AF_UNSPEC)
++		hints.ai_flags |= AI_ADDRCONFIG;
++#endif /* AI_ADDRCONFIG */
+ 	if ((gaierr = getaddrinfo(name, strport, &hints, &res)) != 0) {
+ 		debug2("%s: could not resolve name %.100s as address: %s",
+ 		    __func__, name, ssh_gai_strerror(gaierr));
+--- a/sshconnect.c	Sun Oct 25 19:57:46 2015
++++ b/sshconnect.c	Sun Oct 25 19:58:19 2015
+@@ -292,6 +292,10 @@
+ 		hints.ai_socktype = ai->ai_socktype;
+ 		hints.ai_protocol = ai->ai_protocol;
+ 		hints.ai_flags = AI_PASSIVE;
++#ifdef AI_ADDRCONFIG
++		if (hints.ai_family == AF_UNSPEC)
++			hints.ai_flags |= AI_ADDRCONFIG;
++#endif /* AI_ADDRCONFIG */
+ 		gaierr = getaddrinfo(options.bind_address, NULL, &hints, &res);
+ 		if (gaierr) {
+ 			error("getaddrinfo: %s: %s", options.bind_address,
+--- a/regress/netcat.c	Sun Oct 25 19:59:44 2015
++++ b/regress/netcat.c	Sun Oct 25 20:07:05 2015
+@@ -371,6 +371,10 @@
+ 		hints.ai_protocol = uflag ? IPPROTO_UDP : IPPROTO_TCP;
+ 		if (nflag)
+ 			hints.ai_flags |= AI_NUMERICHOST;
++#ifdef AI_ADDRCONFIG
++		if (hints.ai_family == AF_UNSPEC)
++			hints.ai_flags |= AI_ADDRCONFIG;
++#endif /* AI_ADDRCONFIG */
+ 	}
+ 
+ 	if (xflag) {
+@@ -399,6 +403,10 @@
+ 		proxyhints.ai_protocol = IPPROTO_TCP;
+ 		if (nflag)
+ 			proxyhints.ai_flags |= AI_NUMERICHOST;
++#ifdef AI_ADDRCONFIG
++		if (proxyhints.ai_family == AF_UNSPEC)
++			proxyhints.ai_flags |= AI_ADDRCONFIG;
++#endif /* AI_ADDRCONFIG */
+ 	}
+ 
+ 	if (lflag) {
+@@ -673,6 +681,10 @@
+ 			ahints.ai_socktype = uflag ? SOCK_DGRAM : SOCK_STREAM;
+ 			ahints.ai_protocol = uflag ? IPPROTO_UDP : IPPROTO_TCP;
+ 			ahints.ai_flags = AI_PASSIVE;
++#ifdef AI_ADDRCONFIG
++			if (ahints.ai_family == AF_UNSPEC)
++				ahints.ai_flags |= AI_ADDRCONFIG;
++#endif /* AI_ADDRCONFIG */
+ 			if ((error = getaddrinfo(sflag, pflag, &ahints, &ares)))
+ 				errx(1, "getaddrinfo: %s", gai_strerror(error));
+ 
+@@ -1422,8 +1434,12 @@
+ 
+ 	bzero(&hints, sizeof(hints));
+ 	hints.ai_family = v4only ? PF_INET : PF_UNSPEC;
+-	hints.ai_flags = numeric ? AI_NUMERICHOST : 0;
+ 	hints.ai_socktype = SOCK_STREAM;
++	hints.ai_flags = numeric ? AI_NUMERICHOST : 0;
++#ifdef AI_ADDRCONFIG
++	if (hints.ai_family == AF_UNSPEC)
++		hints.ai_flags |= AI_ADDRCONFIG;
++#endif /* AI_ADDRCONFIG */
+ 	r = getaddrinfo(h, p, &hints, &res);
+ 	/* Don't fatal when attempting to convert a numeric address */
+ 	if (r != 0) {
