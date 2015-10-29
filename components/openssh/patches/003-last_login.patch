@@ -12,58 +12,52 @@
 # can't be changed so we update sshd's configuration parsing to flag
 # this as unsupported and update the man page here.
 #
-*** old/servconf.c Wed Sep 17 02:54:26 2014
---- new/servconf.c Wed Sep 17 02:56:55 2014
-***************
-*** 432,438 ****
---- 432,442 ----
-  	{ "listenaddress", sListenAddress, SSHCFG_GLOBAL },
-  	{ "addressfamily", sAddressFamily, SSHCFG_GLOBAL },
-  	{ "printmotd", sPrintMotd, SSHCFG_GLOBAL },
-+ #ifdef DISABLE_LASTLOG
-+ 	{ "printlastlog", sUnsupported, SSHCFG_GLOBAL },
-+ #else
-  	{ "printlastlog", sPrintLastLog, SSHCFG_GLOBAL },
-+ #endif
-  	{ "ignorerhosts", sIgnoreRhosts, SSHCFG_GLOBAL },
-  	{ "ignoreuserknownhosts", sIgnoreUserKnownHosts, SSHCFG_GLOBAL },
-  	{ "x11forwarding", sX11Forwarding, SSHCFG_ALL },
-*** old/sshd_config.5	Tue Sep 16 06:24:13 2014
---- new/sshd_config.5	Tue Sep 16 06:47:47 2014
-***************
-*** 1008,1015 ****
-  .Xr sshd 1M
-  should print the date and time of the last user login when a user logs
-  in interactively.
-! The default is
-! .Dq yes .
-  .It Cm PrintMotd
-  Specifies whether
-  .Xr sshd 1M
---- 1008,1015 ----
-  .Xr sshd 1M
-  should print the date and time of the last user login when a user logs
-  in interactively.
-! On Solaris this option is always ignored since pam_unix_session(5)
-! reports the last login time.
-  .It Cm PrintMotd
-  Specifies whether
-  .Xr sshd 1M
-***************
-*** 1349,1355 ****
-  (though not necessary) that it be world-readable.
-  .El
-  .Sh SEE ALSO
-! .Xr sshd 8
-  .Sh AUTHORS
-  OpenSSH is a derivative of the original and free
-  ssh 1.2.12 release by Tatu Ylonen.
---- 1349,1356 ----
-  (though not necessary) that it be world-readable.
-  .El
-  .Sh SEE ALSO
-! .Xr sshd 8 ,
-! .Xr pam_unix_session 5
-  .Sh AUTHORS
-  OpenSSH is a derivative of the original and free
-  ssh 1.2.12 release by Tatu Ylonen.
+diff -pur old/servconf.c new/servconf.c
+--- old/servconf.c
++++ new/servconf.c
+@@ -504,7 +504,11 @@ static struct {
+ 	{ "listenaddress", sListenAddress, SSHCFG_GLOBAL },
+ 	{ "addressfamily", sAddressFamily, SSHCFG_GLOBAL },
+ 	{ "printmotd", sPrintMotd, SSHCFG_GLOBAL },
++#ifdef DISABLE_LASTLOG
++	{ "printlastlog", sUnsupported, SSHCFG_GLOBAL },
++#else
+ 	{ "printlastlog", sPrintLastLog, SSHCFG_GLOBAL },
++#endif
+ 	{ "ignorerhosts", sIgnoreRhosts, SSHCFG_GLOBAL },
+ 	{ "ignoreuserknownhosts", sIgnoreUserKnownHosts, SSHCFG_GLOBAL },
+ 	{ "x11forwarding", sX11Forwarding, SSHCFG_ALL },
+@@ -2268,7 +2272,9 @@ dump_config(ServerOptions *o)
+ 	dump_cfg_fmtint(sChallengeResponseAuthentication,
+ 	    o->challenge_response_authentication);
+ 	dump_cfg_fmtint(sPrintMotd, o->print_motd);
++#ifndef DISABLE_LASTLOG
+ 	dump_cfg_fmtint(sPrintLastLog, o->print_lastlog);
++#endif /* !DISABLE_LASTLOG */
+ 	dump_cfg_fmtint(sX11Forwarding, o->x11_forwarding);
+ 	dump_cfg_fmtint(sX11UseLocalhost, o->x11_use_localhost);
+ 	dump_cfg_fmtint(sPermitTTY, o->permit_tty);
+diff -pur old/sshd_config.5 new/sshd_config.5
+--- old/sshd_config.5
++++ new/sshd_config.5
+@@ -1300,8 +1300,8 @@ Specifies whether
+ .Xr sshd 8
+ should print the date and time of the last user login when a user logs
+ in interactively.
+-The default is
+-.Dq yes .
++On Solaris this option is always ignored since pam_unix_session(5)
++reports the last login time.
+ .It Cm PrintMotd
+ Specifies whether
+ .Xr sshd 8
+@@ -1721,7 +1721,8 @@ This file should be writable by root onl
+ (though not necessary) that it be world-readable.
+ .El
+ .Sh SEE ALSO
+-.Xr sshd 8
++.Xr sshd 8 ,
++.Xr pam_unix_session 5
+ .Sh AUTHORS
+ OpenSSH is a derivative of the original and free
+ ssh 1.2.12 release by Tatu Ylonen.

@@ -6,8 +6,8 @@
 #     https://bugzilla.mindrot.org/show_bug.cgi?id=2376
 #
 diff -pur old/Makefile.in new/Makefile.in
---- old/Makefile.in	2015-05-12 06:57:55.737824435 -0700
-+++ new/Makefile.in	2015-05-12 06:57:55.859410671 -0700
+--- old/Makefile.in
++++ new/Makefile.in
 @@ -155,7 +155,7 @@ $(SSHDOBJS): Makefile.in config.h
  	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
  
@@ -18,9 +18,9 @@ diff -pur old/Makefile.in new/Makefile.in
  always:
  
 diff -pur old/authfd.c new/authfd.c
---- old/authfd.c	2015-03-16 22:49:20.000000000 -0700
-+++ new/authfd.c	2015-05-12 06:57:55.860206664 -0700
-@@ -569,8 +569,10 @@ ssh_add_identity_constrained(int sock, s
+--- old/authfd.c
++++ new/authfd.c
+@@ -565,8 +565,10 @@ ssh_add_identity_constrained(int sock, s
  	case KEY_ECDSA:
  	case KEY_ECDSA_CERT:
  #endif
@@ -32,23 +32,21 @@ diff -pur old/authfd.c new/authfd.c
  		    SSH2_AGENTC_ADD_ID_CONSTRAINED :
  		    SSH2_AGENTC_ADD_IDENTITY;
 diff -pur old/authfile.c new/authfile.c
---- old/authfile.c	2015-03-16 22:49:20.000000000 -0700
-+++ new/authfile.c	2015-05-12 06:57:55.860669228 -0700
-@@ -446,8 +446,10 @@ sshkey_load_private_cert(int type, const
- 	case KEY_RSA:
+--- old/authfile.c
++++ new/authfile.c
+@@ -449,7 +449,9 @@ sshkey_load_private_cert(int type, const
  	case KEY_DSA:
  	case KEY_ECDSA:
--	case KEY_ED25519:
  #endif /* WITH_OPENSSL */
 +#ifndef WITHOUT_ED25519
-+	case KEY_ED25519:
+ 	case KEY_ED25519:
 +#endif /* WITHOUT_ED25519 */
  	case KEY_UNSPEC:
  		break;
  	default:
 diff -pur old/dns.c new/dns.c
---- old/dns.c	2015-03-16 22:49:20.000000000 -0700
-+++ new/dns.c	2015-05-12 06:57:55.861065113 -0700
+--- old/dns.c
++++ new/dns.c
 @@ -100,11 +100,13 @@ dns_read_key(u_int8_t *algorithm, u_int8
  		if (!*digest_type)
  			*digest_type = SSHFP_HASH_SHA256;
@@ -64,21 +62,22 @@ diff -pur old/dns.c new/dns.c
  		*algorithm = SSHFP_KEY_RESERVED; /* 0 */
  		*digest_type = SSHFP_HASH_RESERVED; /* 0 */
 diff -pur old/dns.h new/dns.h
---- old/dns.h	2015-03-16 22:49:20.000000000 -0700
-+++ new/dns.h	2015-05-12 06:57:55.861358245 -0700
+--- old/dns.h
++++ new/dns.h
 @@ -33,7 +33,9 @@ enum sshfp_types {
  	SSHFP_KEY_RSA = 1,
  	SSHFP_KEY_DSA = 2,
  	SSHFP_KEY_ECDSA = 3,
+-	SSHFP_KEY_ED25519 = 4
 +#ifndef WITHOUT_ED25519
- 	SSHFP_KEY_ED25519 = 4 
++ 	SSHFP_KEY_ED25519 = 4 
 +#endif /* WITHOUT_ED25519 */
  };
  
  enum sshfp_hashes {
 diff -pur old/ed25519.c new/ed25519.c
---- old/ed25519.c	2015-03-16 22:49:20.000000000 -0700
-+++ new/ed25519.c	2015-05-12 06:57:55.861707517 -0700
+--- old/ed25519.c
++++ new/ed25519.c
 @@ -7,6 +7,7 @@
   */
  
@@ -93,8 +92,8 @@ diff -pur old/ed25519.c new/ed25519.c
  }
 +#endif /* WITHOUT_ED25519 */
 diff -pur old/fe25519.c new/fe25519.c
---- old/fe25519.c	2015-03-16 22:49:20.000000000 -0700
-+++ new/fe25519.c	2015-05-12 06:57:55.862124169 -0700
+--- old/fe25519.c
++++ new/fe25519.c
 @@ -8,6 +8,7 @@
  
  #include "includes.h"
@@ -109,8 +108,8 @@ diff -pur old/fe25519.c new/fe25519.c
  }
 +#endif /* WITHOUT_ED25519 */
 diff -pur old/fe25519.h new/fe25519.h
---- old/fe25519.h	2015-03-16 22:49:20.000000000 -0700
-+++ new/fe25519.h	2015-05-12 06:57:55.862460867 -0700
+--- old/fe25519.h
++++ new/fe25519.h
 @@ -8,6 +8,7 @@
  
  #ifndef FE25519_H
@@ -126,8 +125,8 @@ diff -pur old/fe25519.h new/fe25519.h
 +#endif /* WITHOUT_ED25519 */
  #endif
 diff -pur old/ge25519.c new/ge25519.c
---- old/ge25519.c	2015-03-16 22:49:20.000000000 -0700
-+++ new/ge25519.c	2015-05-12 06:57:55.862878000 -0700
+--- old/ge25519.c
++++ new/ge25519.c
 @@ -7,6 +7,7 @@
   */
  
@@ -142,8 +141,8 @@ diff -pur old/ge25519.c new/ge25519.c
  }
 +#endif /* WITHOUT_ED25519 */
 diff -pur old/ge25519.h new/ge25519.h
---- old/ge25519.h	2015-03-16 22:49:20.000000000 -0700
-+++ new/ge25519.h	2015-05-12 06:57:55.863212105 -0700
+--- old/ge25519.h
++++ new/ge25519.h
 @@ -8,6 +8,7 @@
  
  #ifndef GE25519_H
@@ -159,8 +158,8 @@ diff -pur old/ge25519.h new/ge25519.h
 +#endif /* WITHOUT_ED25519 */
  #endif
 diff -pur old/kex.c new/kex.c
---- old/kex.c	2015-05-12 06:57:55.741193024 -0700
-+++ new/kex.c	2015-05-12 07:00:10.308904895 -0700
+--- old/kex.c
++++ new/kex.c
 @@ -96,9 +96,11 @@ static const struct kexalg kexalgs[] = {
  # endif /* OPENSSL_HAS_NISTP521 */
  #endif /* OPENSSL_HAS_ECC */
@@ -174,8 +173,8 @@ diff -pur old/kex.c new/kex.c
  	{ KEX_GSS_GEX_SHA1_ID, KEX_GSS_GEX_SHA1, 0, SSH_DIGEST_SHA1 },
  	{ KEX_GSS_GRP1_SHA1_ID, KEX_GSS_GRP1_SHA1, 0, SSH_DIGEST_SHA1 },
 diff -pur old/kex.h new/kex.h
---- old/kex.h	2015-05-12 06:57:55.741694192 -0700
-+++ new/kex.h	2015-05-12 07:01:49.320801815 -0700
+--- old/kex.h
++++ new/kex.h
 @@ -58,13 +58,17 @@
  #define	KEX_ECDH_SHA2_NISTP256	"ecdh-sha2-nistp256"
  #define	KEX_ECDH_SHA2_NISTP384	"ecdh-sha2-nistp384"
@@ -204,7 +203,7 @@ diff -pur old/kex.h new/kex.h
  	KEX_GSS_GRP1_SHA1,
  	KEX_GSS_GRP14_SHA1,
  	KEX_GSS_GEX_SHA1,
-@@ -160,8 +166,10 @@ struct kex {
+@@ -161,8 +167,10 @@ struct kex {
  	u_int	min, max, nbits;	/* GEX */
  	EC_KEY	*ec_client_key;		/* ECDH */
  	const EC_GROUP *ec_group;	/* ECDH */
@@ -215,7 +214,7 @@ diff -pur old/kex.h new/kex.h
  };
  
  int	 kex_names_valid(const char *);
-@@ -188,8 +196,10 @@ int	 kexgex_client(struct ssh *);
+@@ -191,8 +199,10 @@ int	 kexgex_client(struct ssh *);
  int	 kexgex_server(struct ssh *);
  int	 kexecdh_client(struct ssh *);
  int	 kexecdh_server(struct ssh *);
@@ -224,9 +223,9 @@ diff -pur old/kex.h new/kex.h
  int	 kexc25519_server(struct ssh *);
 +#endif /* WITHOUT_ED25519 */
  #ifdef GSSAPI
- int	 kexgss_client(Kex *);
- void	 kexgss_server(Kex *);
-@@ -210,6 +220,7 @@ int kex_ecdh_hash(int, const EC_GROUP *,
+ int	 kexgss_client(struct ssh *);
+ int	 kexgss_server(struct ssh *);
+@@ -213,6 +223,7 @@ int kex_ecdh_hash(int, const EC_GROUP *,
      const u_char *, size_t, const u_char *, size_t, const u_char *, size_t,
      const EC_POINT *, const EC_POINT *, const BIGNUM *, u_char *, size_t *);
  
@@ -234,7 +233,7 @@ diff -pur old/kex.h new/kex.h
  int	 kex_c25519_hash(int, const char *, const char *, const char *, size_t,
      const char *, size_t, const u_char *, size_t, const u_char *, const u_char *,
      const u_char *, size_t, u_char *, size_t *);
-@@ -221,6 +232,7 @@ int	kexc25519_shared_key(const u_char ke
+@@ -224,6 +235,7 @@ int	kexc25519_shared_key(const u_char ke
      const u_char pub[CURVE25519_SIZE], struct sshbuf *out)
  	__attribute__((__bounded__(__minbytes__, 1, CURVE25519_SIZE)))
  	__attribute__((__bounded__(__minbytes__, 2, CURVE25519_SIZE)));
@@ -243,8 +242,8 @@ diff -pur old/kex.h new/kex.h
  int
  derive_ssh1_session_id(BIGNUM *, BIGNUM *, u_int8_t[8], u_int8_t[16]);
 diff -pur old/kexc25519.c new/kexc25519.c
---- old/kexc25519.c	2015-03-16 22:49:20.000000000 -0700
-+++ new/kexc25519.c	2015-05-12 06:57:55.865837542 -0700
+--- old/kexc25519.c
++++ new/kexc25519.c
 @@ -27,6 +27,7 @@
  
  #include "includes.h"
@@ -253,14 +252,14 @@ diff -pur old/kexc25519.c new/kexc25519.c
  #include <sys/types.h>
  
  #include <signal.h>
-@@ -126,3 +127,4 @@ kex_c25519_hash(
+@@ -131,3 +132,4 @@ kex_c25519_hash(
  #endif
  	return 0;
  }
 +#endif /* WITHOUT_ED25519 */
 diff -pur old/kexc25519c.c new/kexc25519c.c
---- old/kexc25519c.c	2015-03-16 22:49:20.000000000 -0700
-+++ new/kexc25519c.c	2015-05-12 06:57:55.866212606 -0700
+--- old/kexc25519c.c
++++ new/kexc25519c.c
 @@ -27,6 +27,7 @@
  
  #include "includes.h"
@@ -275,8 +274,8 @@ diff -pur old/kexc25519c.c new/kexc25519c.c
  }
 +#endif /* WITHOUT_ED25519 */
 diff -pur old/kexc25519s.c new/kexc25519s.c
---- old/kexc25519s.c	2015-03-16 22:49:20.000000000 -0700
-+++ new/kexc25519s.c	2015-05-12 06:57:55.866584623 -0700
+--- old/kexc25519s.c
++++ new/kexc25519s.c
 @@ -26,6 +26,8 @@
  
  #include "includes.h"
@@ -284,17 +283,17 @@ diff -pur old/kexc25519s.c new/kexc25519s.c
 +#ifndef WITHOUT_ED25519
 +
  #include <sys/types.h>
+ #include <stdio.h>
  #include <string.h>
- #include <signal.h>
-@@ -156,3 +158,4 @@ out:
+@@ -157,3 +159,4 @@ out:
  	sshbuf_free(shared_secret);
  	return r;
  }
 +#endif /* WITHOUT_ED25519 */
 diff -pur old/monitor.c new/monitor.c
---- old/monitor.c	2015-05-12 06:57:55.743678816 -0700
-+++ new/monitor.c	2015-05-12 07:02:27.111640142 -0700
-@@ -1937,7 +1937,9 @@ monitor_apply_keystate(struct monitor *p
+--- old/monitor.c
++++ new/monitor.c
+@@ -1941,7 +1941,9 @@ monitor_apply_keystate(struct monitor *p
  		kex->kex[KEX_ECDH_SHA2] = kexecdh_server;
  # endif
  #endif /* WITH_OPENSSL */
@@ -305,8 +304,8 @@ diff -pur old/monitor.c new/monitor.c
  		if (options.gss_keyex) {
  			kex->kex[KEX_GSS_GRP1_SHA1] = kexgss_server;
 diff -pur old/myproposal.h new/myproposal.h
---- old/myproposal.h	2015-03-16 22:49:20.000000000 -0700
-+++ new/myproposal.h	2015-06-05 02:29:36.569958448 -0700
+--- old/myproposal.h
++++ new/myproposal.h
 @@ -59,6 +59,20 @@
  # define HOSTKEY_ECDSA_METHODS
  #endif
@@ -327,7 +326,7 @@ diff -pur old/myproposal.h new/myproposal.h
 +
  #ifdef OPENSSL_HAVE_EVPGCM
  # define AESGCM_CIPHER_MODES \
- 	"aes128-gcm@openssh.com,aes256-gcm@openssh.com,"
+ 	",aes128-gcm@openssh.com,aes256-gcm@openssh.com"
 @@ -78,11 +92,6 @@
  #endif
  
@@ -337,26 +336,23 @@ diff -pur old/myproposal.h new/myproposal.h
 -# else
 -#  define KEX_CURVE25519_METHODS ""
 -# endif
- #define KEX_SERVER_KEX \
+ #define KEX_COMMON_KEX \
  	KEX_CURVE25519_METHODS \
  	KEX_ECDH_METHODS \
-@@ -95,13 +104,13 @@
+@@ -97,10 +106,10 @@
  
  #define	KEX_DEFAULT_PK_ALG	\
  	HOSTKEY_ECDSA_CERT_METHODS \
 -	"ssh-ed25519-cert-v01@openssh.com," \
 +	HOSTKEY_CURVE25519_CERT_METHODS \
  	"ssh-rsa-cert-v01@openssh.com," \
- 	"ssh-dss-cert-v01@openssh.com," \
- 	"ssh-rsa-cert-v00@openssh.com," \
- 	"ssh-dss-cert-v00@openssh.com," \
  	HOSTKEY_ECDSA_METHODS \
 -	"ssh-ed25519," \
 +	HOSTKEY_CURVE25519_METHODS \
- 	"ssh-rsa," \
- 	"ssh-dss"
+ 	"ssh-rsa" \
  
-@@ -143,10 +152,10 @@
+ /* the actual algorithms */
+@@ -141,10 +150,10 @@
  #else
  
  #define KEX_SERVER_KEX		\
@@ -368,11 +364,11 @@ diff -pur old/myproposal.h new/myproposal.h
 +	HOSTKEY_CURVE25519_CERT_METHODS \
 +	HOSTKEY_CURVE25519_METHODS
  #define	KEX_SERVER_ENCRYPT \
- 	"aes128-ctr,aes192-ctr,aes256-ctr," \
- 	"chacha20-poly1305@openssh.com"
+ 	"chacha20-poly1305@openssh.com," \
+ 	"aes128-ctr,aes192-ctr,aes256-ctr"
 diff -pur old/openbsd-compat/Makefile.in new/openbsd-compat/Makefile.in
---- old/openbsd-compat/Makefile.in	2015-03-16 22:49:20.000000000 -0700
-+++ new/openbsd-compat/Makefile.in	2015-05-12 06:57:55.869383953 -0700
+--- old/openbsd-compat/Makefile.in
++++ new/openbsd-compat/Makefile.in
 @@ -32,7 +32,7 @@ $(OPENBSD): ../config.h
  $(PORTS): ../config.h
  
@@ -383,8 +379,8 @@ diff -pur old/openbsd-compat/Makefile.in new/openbsd-compat/Makefile.in
  
  clean:
 diff -pur old/pathnames.h new/pathnames.h
---- old/pathnames.h	2015-03-16 22:49:20.000000000 -0700
-+++ new/pathnames.h	2015-05-12 06:57:55.869773325 -0700
+--- old/pathnames.h
++++ new/pathnames.h
 @@ -39,7 +39,9 @@
  #define _PATH_HOST_KEY_FILE		SSHDIR "/ssh_host_key"
  #define _PATH_HOST_DSA_KEY_FILE		SSHDIR "/ssh_host_dsa_key"
@@ -406,9 +402,9 @@ diff -pur old/pathnames.h new/pathnames.h
  /*
   * Configuration file in user's home directory.  This file need not be
 diff -pur old/readconf.c new/readconf.c
---- old/readconf.c	2015-05-12 06:57:55.746561528 -0700
-+++ new/readconf.c	2015-05-12 06:57:55.870873194 -0700
-@@ -1848,8 +1848,10 @@ fill_default_options(Options * options)
+--- old/readconf.c
++++ new/readconf.c
+@@ -1846,8 +1846,10 @@ fill_default_options(Options * options)
  			add_identity_file(options, "~/",
  			    _PATH_SSH_CLIENT_ID_ECDSA, 0);
  #endif
@@ -420,9 +416,9 @@ diff -pur old/readconf.c new/readconf.c
  	}
  	if (options->escape_char == -1)
 diff -pur old/servconf.c new/servconf.c
---- old/servconf.c	2015-05-12 06:57:55.748493685 -0700
-+++ new/servconf.c	2015-05-12 06:57:55.872093181 -0700
-@@ -216,8 +216,10 @@ fill_default_server_options(ServerOption
+--- old/servconf.c
++++ new/servconf.c
+@@ -222,8 +222,10 @@ fill_default_server_options(ServerOption
  			options->host_key_files[options->num_host_key_files++] =
  			    _PATH_HOST_ECDSA_KEY_FILE;
  #endif
@@ -434,8 +430,8 @@ diff -pur old/servconf.c new/servconf.c
  	}
  	/* No certificates by default */
 diff -pur old/smult_curve25519_ref.c new/smult_curve25519_ref.c
---- old/smult_curve25519_ref.c	2015-03-16 22:49:20.000000000 -0700
-+++ new/smult_curve25519_ref.c	2015-05-12 06:57:55.872682983 -0700
+--- old/smult_curve25519_ref.c
++++ new/smult_curve25519_ref.c
 @@ -6,6 +6,8 @@ Public domain.
  Derived from public domain code by D. J. Bernstein.
  */
@@ -451,8 +447,8 @@ diff -pur old/smult_curve25519_ref.c new/smult_curve25519_ref.c
  }
 +#endif /* WITHOUT_ED25519 */
 diff -pur old/ssh-add.0 new/ssh-add.0
---- old/ssh-add.0	2015-03-17 21:26:35.000000000 -0700
-+++ new/ssh-add.0	2015-05-12 07:37:37.356166396 -0700
+--- old/ssh-add.0
++++ new/ssh-add.0
 @@ -11,7 +11,7 @@ SYNOPSIS
  DESCRIPTION
       ssh-add adds private key identities to the authentication agent,
@@ -462,7 +458,7 @@ diff -pur old/ssh-add.0 new/ssh-add.0
       ~/.ssh/identity.  After loading a private key, ssh-add will try to load
       corresponding certificate information from the filename obtained by
       appending -cert.pub to the name of the private key file.  Alternative
-@@ -96,14 +96,6 @@ FILES
+@@ -97,14 +97,6 @@ FILES
               Contains the protocol version 2 DSA authentication identity of
               the user.
  
@@ -478,8 +474,8 @@ diff -pur old/ssh-add.0 new/ssh-add.0
               Contains the protocol version 2 RSA authentication identity of
               the user.
 diff -pur old/ssh-add.1 new/ssh-add.1
---- old/ssh-add.1	2015-03-16 22:49:20.000000000 -0700
-+++ new/ssh-add.1	2015-05-12 07:47:42.099918141 -0700
+--- old/ssh-add.1
++++ new/ssh-add.1
 @@ -58,8 +58,6 @@ adds private key identities to the authe
  When run without arguments, it adds the files
  .Pa ~/.ssh/id_rsa ,
@@ -489,7 +485,7 @@ diff -pur old/ssh-add.1 new/ssh-add.1
  and
  .Pa ~/.ssh/identity .
  After loading a private key,
-@@ -177,10 +175,6 @@ socket used to communicate with the agen
+@@ -178,10 +176,6 @@ socket used to communicate with the agen
  Contains the protocol version 1 RSA authentication identity of the user.
  .It Pa ~/.ssh/id_dsa
  Contains the protocol version 2 DSA authentication identity of the user.
@@ -501,21 +497,22 @@ diff -pur old/ssh-add.1 new/ssh-add.1
  Contains the protocol version 2 RSA authentication identity of the user.
  .El
 diff -pur old/ssh-add.c new/ssh-add.c
---- old/ssh-add.c	2015-03-16 22:49:20.000000000 -0700
-+++ new/ssh-add.c	2015-05-12 06:57:55.873128238 -0700
+--- old/ssh-add.c
++++ new/ssh-add.c
 @@ -78,7 +78,9 @@ static char *default_files[] = {
  	_PATH_SSH_CLIENT_ID_ECDSA,
  #endif
  #endif /* WITH_OPENSSL */
+-	_PATH_SSH_CLIENT_ID_ED25519,
 +#ifndef WITHOUT_ED25519
- 	_PATH_SSH_CLIENT_ID_ED25519,
++ 	_PATH_SSH_CLIENT_ID_ED25519,
 +#endif /* WITHOUT_ED25519 */
+ #ifdef WITH_SSH1
  	_PATH_SSH_CLIENT_IDENTITY,
- 	NULL
- };
+ #endif
 diff -pur old/ssh-agent.0 new/ssh-agent.0
---- old/ssh-agent.0	2015-03-17 21:26:35.000000000 -0700
-+++ new/ssh-agent.0	2015-05-12 07:37:55.617194120 -0700
+--- old/ssh-agent.0
++++ new/ssh-agent.0
 @@ -10,7 +10,7 @@ SYNOPSIS
  
  DESCRIPTION
@@ -526,8 +523,8 @@ diff -pur old/ssh-agent.0 new/ssh-agent.0
       windows or programs are started as clients to the ssh-agent program.
       Through use of environment variables the agent can be located and
 diff -pur old/ssh-agent.1 new/ssh-agent.1
---- old/ssh-agent.1	2015-03-16 22:49:20.000000000 -0700
-+++ new/ssh-agent.1	2015-05-12 07:47:53.707510271 -0700
+--- old/ssh-agent.1
++++ new/ssh-agent.1
 @@ -54,7 +54,7 @@
  .Sh DESCRIPTION
  .Nm
@@ -538,8 +535,8 @@ diff -pur old/ssh-agent.1 new/ssh-agent.1
  is usually started in the beginning of an X-session or a login session, and
  all other windows or programs are started as clients to the ssh-agent
 diff -pur old/ssh-ed25519.c new/ssh-ed25519.c
---- old/ssh-ed25519.c	2015-03-16 22:49:20.000000000 -0700
-+++ new/ssh-ed25519.c	2015-05-12 06:57:55.873512963 -0700
+--- old/ssh-ed25519.c
++++ new/ssh-ed25519.c
 @@ -17,6 +17,8 @@
  
  #include "includes.h"
@@ -555,8 +552,8 @@ diff -pur old/ssh-ed25519.c new/ssh-ed25519.c
  }
 +#endif /* WITHOUT_ED25519 */
 diff -pur old/ssh-keygen.0 new/ssh-keygen.0
---- old/ssh-keygen.0	2015-03-17 21:26:35.000000000 -0700
-+++ new/ssh-keygen.0	2015-05-12 07:40:51.445122062 -0700
+--- old/ssh-keygen.0
++++ new/ssh-keygen.0
 @@ -4,7 +4,7 @@ NAME
       ssh-keygen M-bM-^@M-^S authentication key generation, management and conversion
  
@@ -603,7 +600,7 @@ diff -pur old/ssh-keygen.0 new/ssh-keygen.0
               used.  Higher numbers result in slower passphrase verification
 @@ -103,12 +103,7 @@ DESCRIPTION
               Specifies the number of bits in the key to create.  For RSA keys,
-              the minimum size is 768 bits and the default is 2048 bits.
+              the minimum size is 1024 bits and the default is 2048 bits.
               Generally, 2048 bits is considered sufficient.  DSA keys must be
 -             exactly 1024 bits as specified by FIPS 186-2.  For ECDSA keys,
 -             the -b flag determines the key length by selecting from one of
@@ -661,8 +658,8 @@ diff -pur old/ssh-keygen.0 new/ssh-keygen.0
               added to ~/.ssh/authorized_keys on all machines where the user
               wishes to log in using public key authentication.  There is no
 diff -pur old/ssh-keygen.1 new/ssh-keygen.1
---- old/ssh-keygen.1	2015-03-16 22:49:20.000000000 -0700
-+++ new/ssh-keygen.1	2015-05-12 07:49:52.125219558 -0700
+--- old/ssh-keygen.1
++++ new/ssh-keygen.1
 @@ -46,7 +46,7 @@
  .Nm ssh-keygen
  .Op Fl q
@@ -709,7 +706,7 @@ diff -pur old/ssh-keygen.1 new/ssh-keygen.1
  .Fl o
  flag is set), this option specifies the number of KDF (key derivation function)
 @@ -247,15 +245,6 @@ Specifies the number of bits in the key
- For RSA keys, the minimum size is 768 bits and the default is 2048 bits.
+ For RSA keys, the minimum size is 1024 bits and the default is 2048 bits.
  Generally, 2048 bits is considered sufficient.
  DSA keys must be exactly 1024 bits as specified by FIPS 186-2.
 -For ECDSA keys, the
@@ -773,22 +770,22 @@ diff -pur old/ssh-keygen.1 new/ssh-keygen.1
  The contents of this file should be added to
  .Pa ~/.ssh/authorized_keys
 diff -pur old/ssh-keygen.c new/ssh-keygen.c
---- old/ssh-keygen.c	2015-03-16 22:49:20.000000000 -0700
-+++ new/ssh-keygen.c	2015-05-12 06:57:55.874834232 -0700
-@@ -214,7 +214,11 @@ type_bits_valid(int type, const char *na
- 	}
+--- old/ssh-keygen.c
++++ new/ssh-keygen.c
+@@ -217,7 +217,11 @@ type_bits_valid(int type, const char *na
+ 		fatal("key bits exceeds maximum %d", maxbits);
  	if (type == KEY_DSA && *bitsp != 1024)
  		fatal("DSA keys must be 1024 bits");
--	else if (type != KEY_ECDSA && type != KEY_ED25519 && *bitsp < 768)
+-	else if (type != KEY_ECDSA && type != KEY_ED25519 && *bitsp < 1024)
 +	else if (type != KEY_ECDSA &&
 +#ifndef WITHOUT_ED25519
 +		 type != KEY_ED25519 &&
 +#endif /* WITHOUT_ED25519 */
-+		 *bitsp < 768)
- 		fatal("Key must at least be 768 bits");
++		 *bitsp < 1024)
+ 		fatal("Key must at least be 1024 bits");
  	else if (type == KEY_ECDSA && sshkey_ecdsa_bits_to_nid(*bitsp) == -1)
  		fatal("Invalid ECDSA key length - valid lengths are "
-@@ -251,10 +255,12 @@ ask_filename(struct passwd *pw, const ch
+@@ -252,10 +256,12 @@ ask_filename(struct passwd *pw, const ch
  		case KEY_RSA:
  			name = _PATH_SSH_CLIENT_ID_RSA;
  			break;
@@ -799,19 +796,20 @@ diff -pur old/ssh-keygen.c new/ssh-keygen.c
  			break;
 +#endif /* WITHOUT_ED25519 */
  		default:
- 			fprintf(stderr, "bad key type\n");
- 			exit(1);
-@@ -954,7 +960,9 @@ do_gen_all_hostkeys(struct passwd *pw)
- #ifdef OPENSSL_HAS_ECC
+ 			fatal("bad key type");
+ 		}
+@@ -939,7 +945,9 @@ do_gen_all_hostkeys(struct passwd *pw)
  		{ "ecdsa", "ECDSA",_PATH_HOST_ECDSA_KEY_FILE },
- #endif
+ #endif /* OPENSSL_HAS_ECC */
+ #endif /* WITH_OPENSSL */
+-		{ "ed25519", "ED25519",_PATH_HOST_ED25519_KEY_FILE },
 +#ifndef WITHOUT_ED25519
- 		{ "ed25519", "ED25519",_PATH_HOST_ED25519_KEY_FILE },
++ 		{ "ed25519", "ED25519",_PATH_HOST_ED25519_KEY_FILE },
 +#endif /* WITHOUT_ED25519 */
  		{ NULL, NULL, NULL }
  	};
  
-@@ -1643,7 +1651,10 @@ do_ca_sign(struct passwd *pw, int argc,
+@@ -1605,7 +1613,10 @@ do_ca_sign(struct passwd *pw, int argc,
  			fatal("%s: unable to open \"%s\": %s",
  			    __func__, tmp, ssh_err(r));
  		if (public->type != KEY_RSA && public->type != KEY_DSA &&
@@ -823,7 +821,7 @@ diff -pur old/ssh-keygen.c new/ssh-keygen.c
  			fatal("%s: key \"%s\" type %s cannot be certified",
  			    __func__, tmp, sshkey_type(public));
  
-@@ -2558,8 +2569,10 @@ main(int argc, char **argv)
+@@ -2502,8 +2513,10 @@ main(int argc, char **argv)
  			    _PATH_HOST_DSA_KEY_FILE, rr_hostname);
  			n += do_print_resource_record(pw,
  			    _PATH_HOST_ECDSA_KEY_FILE, rr_hostname);
@@ -835,8 +833,8 @@ diff -pur old/ssh-keygen.c new/ssh-keygen.c
  				fatal("no keys found.");
  			exit(0);
 diff -pur old/ssh-keyscan.0 new/ssh-keyscan.0
---- old/ssh-keyscan.0	2015-03-17 21:26:35.000000000 -0700
-+++ new/ssh-keyscan.0	2015-05-12 07:42:45.592281964 -0700
+--- old/ssh-keyscan.0
++++ new/ssh-keyscan.0
 @@ -48,9 +48,9 @@ DESCRIPTION
       -t type
               Specifies the type of the key to fetch from the scanned hosts.
@@ -874,8 +872,8 @@ diff -pur old/ssh-keyscan.0 new/ssh-keyscan.0
  
  SEE ALSO
 diff -pur old/ssh-keyscan.1 new/ssh-keyscan.1
---- old/ssh-keyscan.1	2015-03-16 22:49:20.000000000 -0700
-+++ new/ssh-keyscan.1	2015-05-12 07:50:53.173745820 -0700
+--- old/ssh-keyscan.1
++++ new/ssh-keyscan.1
 @@ -90,18 +90,13 @@ Specifies the type of the key to fetch f
  The possible values are
  .Dq rsa1
@@ -927,8 +925,8 @@ diff -pur old/ssh-keyscan.1 new/ssh-keyscan.1
  .Ed
  .Sh SEE ALSO
 diff -pur old/ssh-keyscan.c new/ssh-keyscan.c
---- old/ssh-keyscan.c	2015-03-16 22:49:20.000000000 -0700
-+++ new/ssh-keyscan.c	2015-05-12 06:57:55.875467494 -0700
+--- old/ssh-keyscan.c
++++ new/ssh-keyscan.c
 @@ -286,7 +286,9 @@ keygrab_ssh2(con *c)
  	c->c_ssh->kex->kex[KEX_ECDH_SHA2] = kexecdh_client;
  # endif
@@ -939,7 +937,7 @@ diff -pur old/ssh-keyscan.c new/ssh-keyscan.c
  	ssh_set_verify_host_key_callback(c->c_ssh, key_print_wrapper);
  	/*
  	 * do the key-exchange until an error occurs or until
-@@ -609,10 +611,15 @@ do_host(char *host)
+@@ -612,10 +614,15 @@ do_host(char *host)
  {
  	char *name = strnnsep(&host, " \t\n");
  	int j;
@@ -956,7 +954,7 @@ diff -pur old/ssh-keyscan.c new/ssh-keyscan.c
  		if (get_keytypes & j) {
  			while (ncon >= MAXCON)
  				conloop();
-@@ -716,9 +723,11 @@ main(int argc, char **argv)
+@@ -719,9 +726,11 @@ main(int argc, char **argv)
  				case KEY_RSA:
  					get_keytypes |= KT_RSA;
  					break;
@@ -969,8 +967,8 @@ diff -pur old/ssh-keyscan.c new/ssh-keyscan.c
  					fatal("unknown key type %s", tname);
  				}
 diff -pur old/ssh-keysign.0 new/ssh-keysign.0
---- old/ssh-keysign.0	2015-03-17 21:26:36.000000000 -0700
-+++ new/ssh-keysign.0	2015-05-12 07:42:57.261187576 -0700
+--- old/ssh-keysign.0
++++ new/ssh-keysign.0
 @@ -24,8 +24,6 @@ FILES
               Controls whether ssh-keysign is enabled.
  
@@ -990,8 +988,8 @@ diff -pur old/ssh-keysign.0 new/ssh-keysign.0
               If these files exist they are assumed to contain public
               certificate information corresponding with the private keys
 diff -pur old/ssh-keysign.8 new/ssh-keysign.8
---- old/ssh-keysign.8	2015-05-12 06:57:55.609219058 -0700
-+++ new/ssh-keysign.8	2015-05-12 07:52:35.880504667 -0700
+--- old/ssh-keysign.8
++++ new/ssh-keysign.8
 @@ -62,8 +62,6 @@ Controls whether
  is enabled.
  .Pp
@@ -1011,8 +1009,8 @@ diff -pur old/ssh-keysign.8 new/ssh-keysign.8
  If these files exist they are assumed to contain public certificate
  information corresponding with the private keys above.
 diff -pur old/ssh-keysign.c new/ssh-keysign.c
---- old/ssh-keysign.c	2015-03-16 22:49:20.000000000 -0700
-+++ new/ssh-keysign.c	2015-05-25 04:37:07.788045828 -0700
+--- old/ssh-keysign.c
++++ new/ssh-keysign.c
 @@ -168,7 +168,7 @@ main(int argc, char **argv)
  {
  	struct sshbuf *b;
@@ -1022,8 +1020,8 @@ diff -pur old/ssh-keysign.c new/ssh-keysign.c
  	struct sshkey *keys[NUM_KEYTYPES], *key = NULL;
  	struct passwd *pw;
  	int r, key_fd[NUM_KEYTYPES], i, found, version = 2, fd;
-@@ -189,7 +189,9 @@ main(int argc, char **argv)
- 	i = 0;
+@@ -190,7 +190,9 @@ main(int argc, char **argv)
+ 	/* XXX This really needs to read sshd_config for the paths */
  	key_fd[i++] = open(_PATH_HOST_DSA_KEY_FILE, O_RDONLY);
  	key_fd[i++] = open(_PATH_HOST_ECDSA_KEY_FILE, O_RDONLY);
 +#ifndef WITHOUT_ED25519
@@ -1033,9 +1031,9 @@ diff -pur old/ssh-keysign.c new/ssh-keysign.c
  
  	original_real_uid = getuid();	/* XXX readconf.c needs this */
 diff -pur old/ssh.0 new/ssh.0
---- old/ssh.0	2015-03-17 21:26:35.000000000 -0700
-+++ new/ssh.0	2015-05-12 07:44:32.393217723 -0700
-@@ -141,8 +141,8 @@ DESCRIPTION
+--- old/ssh.0
++++ new/ssh.0
+@@ -140,8 +140,8 @@ DESCRIPTION
       -i identity_file
               Selects a file from which the identity (private key) for public
               key authentication is read.  The default is ~/.ssh/identity for
@@ -1046,7 +1044,7 @@ diff -pur old/ssh.0 new/ssh.0
               Identity files may also be specified on a per-host basis in the
               configuration file.  It is possible to have multiple -i options
               (and multiple identities specified in configuration files).  ssh
-@@ -451,7 +451,7 @@ AUTHENTICATION
+@@ -463,7 +463,7 @@ AUTHENTICATION
       creates a public/private key pair for authentication purposes.  The
       server knows the public key, and only the user knows the private key.
       ssh implements public key authentication protocol automatically, using
@@ -1055,7 +1053,7 @@ diff -pur old/ssh.0 new/ssh.0
       restricted to using only RSA keys, but protocol 2 may use any.  The
       HISTORY section of ssl(8) contains a brief discussion of the DSA and RSA
       algorithms.
-@@ -464,11 +464,9 @@ AUTHENTICATION
+@@ -476,11 +476,9 @@ AUTHENTICATION
  
       The user creates his/her key pair by running ssh-keygen(1).  This stores
       the private key in ~/.ssh/identity (protocol 1), ~/.ssh/id_dsa (protocol
@@ -1070,7 +1068,7 @@ diff -pur old/ssh.0 new/ssh.0
       directory.  The user should then copy the public key to
       ~/.ssh/authorized_keys in his/her home directory on the remote machine.
       The authorized_keys file corresponds to the conventional ~/.rhosts file,
-@@ -804,7 +802,7 @@ FILES
+@@ -825,7 +823,7 @@ FILES
               for the user, and not accessible by others.
  
       ~/.ssh/authorized_keys
@@ -1079,7 +1077,7 @@ diff -pur old/ssh.0 new/ssh.0
               for logging in as this user.  The format of this file is
               described in the sshd(8) manual page.  This file is not highly
               sensitive, but the recommended permissions are read/write for the
-@@ -822,8 +820,6 @@ FILES
+@@ -843,8 +841,6 @@ FILES
  
       ~/.ssh/identity
       ~/.ssh/id_dsa
@@ -1088,7 +1086,7 @@ diff -pur old/ssh.0 new/ssh.0
       ~/.ssh/id_rsa
               Contains the private key for authentication.  These files contain
               sensitive data and should be readable by the user but not
-@@ -835,8 +831,6 @@ FILES
+@@ -856,8 +852,6 @@ FILES
  
       ~/.ssh/identity.pub
       ~/.ssh/id_dsa.pub
@@ -1097,7 +1095,7 @@ diff -pur old/ssh.0 new/ssh.0
       ~/.ssh/id_rsa.pub
               Contains the public key for authentication.  These files are not
               sensitive and can (but need not) be readable by anyone.
-@@ -867,8 +861,6 @@ FILES
+@@ -888,8 +882,6 @@ FILES
  
       /etc/ssh/ssh_host_key
       /etc/ssh/ssh_host_dsa_key
@@ -1107,9 +1105,9 @@ diff -pur old/ssh.0 new/ssh.0
               These files contain the private parts of the host keys and are
               used for host-based authentication.  If protocol version 1 is
 diff -pur old/ssh.1 new/ssh.1
---- old/ssh.1	2015-03-16 22:49:20.000000000 -0700
-+++ new/ssh.1	2015-05-12 07:51:38.403098490 -0700
-@@ -274,9 +274,7 @@ public key authentication is read.
+--- old/ssh.1
++++ new/ssh.1
+@@ -292,9 +292,7 @@ public key authentication is read.
  The default is
  .Pa ~/.ssh/identity
  for protocol version 1, and
@@ -1120,7 +1118,7 @@ diff -pur old/ssh.1 new/ssh.1
  and
  .Pa ~/.ssh/id_rsa
  for protocol version 2.
-@@ -761,7 +759,7 @@ key pair for authentication purposes.
+@@ -848,7 +846,7 @@ key pair for authentication purposes.
  The server knows the public key, and only the user knows the private key.
  .Nm
  implements public key authentication protocol automatically,
@@ -1129,7 +1127,7 @@ diff -pur old/ssh.1 new/ssh.1
  Protocol 1 is restricted to using only RSA keys,
  but protocol 2 may use any.
  The HISTORY section of
-@@ -786,10 +784,6 @@ This stores the private key in
+@@ -873,10 +871,6 @@ This stores the private key in
  (protocol 1),
  .Pa ~/.ssh/id_dsa
  (protocol 2 DSA),
@@ -1140,7 +1138,7 @@ diff -pur old/ssh.1 new/ssh.1
  or
  .Pa ~/.ssh/id_rsa
  (protocol 2 RSA)
-@@ -798,10 +792,6 @@ and stores the public key in
+@@ -885,10 +879,6 @@ and stores the public key in
  (protocol 1),
  .Pa ~/.ssh/id_dsa.pub
  (protocol 2 DSA),
@@ -1151,7 +1149,7 @@ diff -pur old/ssh.1 new/ssh.1
  or
  .Pa ~/.ssh/id_rsa.pub
  (protocol 2 RSA)
-@@ -1341,7 +1331,7 @@ secret, but the recommended permissions
+@@ -1444,7 +1434,7 @@ secret, but the recommended permissions
  and not accessible by others.
  .Pp
  .It Pa ~/.ssh/authorized_keys
@@ -1160,7 +1158,7 @@ diff -pur old/ssh.1 new/ssh.1
  that can be used for logging in as this user.
  The format of this file is described in the
  .Xr sshd 8
-@@ -1363,8 +1353,6 @@ above.
+@@ -1466,8 +1456,6 @@ above.
  .Pp
  .It Pa ~/.ssh/identity
  .It Pa ~/.ssh/id_dsa
@@ -1169,7 +1167,7 @@ diff -pur old/ssh.1 new/ssh.1
  .It Pa ~/.ssh/id_rsa
  Contains the private key for authentication.
  These files
-@@ -1378,8 +1366,6 @@ sensitive part of this file using 3DES.
+@@ -1481,8 +1469,6 @@ sensitive part of this file using 3DES.
  .Pp
  .It Pa ~/.ssh/identity.pub
  .It Pa ~/.ssh/id_dsa.pub
@@ -1178,7 +1176,7 @@ diff -pur old/ssh.1 new/ssh.1
  .It Pa ~/.ssh/id_rsa.pub
  Contains the public key for authentication.
  These files are not
-@@ -1418,8 +1404,6 @@ The file format and configuration option
+@@ -1521,8 +1507,6 @@ The file format and configuration option
  .Pp
  .It Pa /etc/ssh/ssh_host_key
  .It Pa /etc/ssh/ssh_host_dsa_key
@@ -1188,9 +1186,9 @@ diff -pur old/ssh.1 new/ssh.1
  These files contain the private parts of the host keys
  and are used for host-based authentication.
 diff -pur old/ssh.c new/ssh.c
---- old/ssh.c	2015-03-16 22:49:20.000000000 -0700
-+++ new/ssh.c	2015-05-12 06:57:55.876878130 -0700
-@@ -1234,8 +1234,10 @@ main(int ac, char **av)
+--- old/ssh.c
++++ new/ssh.c
+@@ -1233,8 +1233,10 @@ main(int ac, char **av)
  		sensitive_data.keys[1] = key_load_private_cert(KEY_ECDSA,
  		    _PATH_HOST_ECDSA_KEY_FILE, "", NULL);
  #endif
@@ -1201,7 +1199,7 @@ diff -pur old/ssh.c new/ssh.c
  		sensitive_data.keys[3] = key_load_private_cert(KEY_RSA,
  		    _PATH_HOST_RSA_KEY_FILE, "", NULL);
  		sensitive_data.keys[4] = key_load_private_cert(KEY_DSA,
-@@ -1244,8 +1246,10 @@ main(int ac, char **av)
+@@ -1243,8 +1245,10 @@ main(int ac, char **av)
  		sensitive_data.keys[5] = key_load_private_type(KEY_ECDSA,
  		    _PATH_HOST_ECDSA_KEY_FILE, "", NULL, NULL);
  #endif
@@ -1212,7 +1210,7 @@ diff -pur old/ssh.c new/ssh.c
  		sensitive_data.keys[7] = key_load_private_type(KEY_RSA,
  		    _PATH_HOST_RSA_KEY_FILE, "", NULL, NULL);
  		sensitive_data.keys[8] = key_load_private_type(KEY_DSA,
-@@ -1262,8 +1266,10 @@ main(int ac, char **av)
+@@ -1261,8 +1265,10 @@ main(int ac, char **av)
  			sensitive_data.keys[1] = key_load_cert(
  			    _PATH_HOST_ECDSA_KEY_FILE);
  #endif
@@ -1223,7 +1221,7 @@ diff -pur old/ssh.c new/ssh.c
  			sensitive_data.keys[3] = key_load_cert(
  			    _PATH_HOST_RSA_KEY_FILE);
  			sensitive_data.keys[4] = key_load_cert(
-@@ -1272,8 +1278,10 @@ main(int ac, char **av)
+@@ -1271,8 +1277,10 @@ main(int ac, char **av)
  			sensitive_data.keys[5] = key_load_public(
  			    _PATH_HOST_ECDSA_KEY_FILE, NULL);
  #endif
@@ -1235,8 +1233,8 @@ diff -pur old/ssh.c new/ssh.c
  			    _PATH_HOST_RSA_KEY_FILE, NULL);
  			sensitive_data.keys[8] = key_load_public(
 diff -pur old/ssh_api.c new/ssh_api.c
---- old/ssh_api.c	2015-03-16 22:49:20.000000000 -0700
-+++ new/ssh_api.c	2015-05-12 06:57:55.877368137 -0700
+--- old/ssh_api.c
++++ new/ssh_api.c
 @@ -109,7 +109,9 @@ ssh_init(struct ssh **sshp, int is_serve
  		ssh->kex->kex[KEX_ECDH_SHA2] = kexecdh_server;
  # endif
@@ -1258,24 +1256,39 @@ diff -pur old/ssh_api.c new/ssh_api.c
  	}
  	*sshp = ssh;
 diff -pur old/ssh_config.0 new/ssh_config.0
---- old/ssh_config.0	2015-03-17 21:26:36.000000000 -0700
-+++ new/ssh_config.0	2015-05-12 07:45:14.754320503 -0700
-@@ -443,14 +443,8 @@ DESCRIPTION
-              client wants to use in order of preference.  The default for this
-              option is:
+--- old/ssh_config.0
++++ new/ssh_config.0
+@@ -444,13 +444,8 @@ DESCRIPTION
+              specified key types will be appended to the default set instead
+              of replacing them.  The default for this option is:
  
 -                ecdsa-sha2-nistp256-cert-v01@openssh.com,
 -                ecdsa-sha2-nistp384-cert-v01@openssh.com,
 -                ecdsa-sha2-nistp521-cert-v01@openssh.com,
 -                ssh-ed25519-cert-v01@openssh.com,
-                 ssh-rsa-cert-v01@openssh.com,ssh-dss-cert-v01@openssh.com,
-                 ssh-rsa-cert-v00@openssh.com,ssh-dss-cert-v00@openssh.com,
+                 ssh-rsa-cert-v01@openssh.com,
 -                ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,
--                ssh-ed25519,ssh-rsa,ssh-dss
+-                ssh-ed25519,ssh-rsa
++                ssh-rsa
+ 
+              The -Q option of ssh(1) may be used to list supported key types.
+ 
+@@ -461,13 +456,8 @@ DESCRIPTION
+              key types will be appended to the default set instead of
+              replacing them.  The default for this option is:
+ 
+-                ecdsa-sha2-nistp256-cert-v01@openssh.com,
+-                ecdsa-sha2-nistp384-cert-v01@openssh.com,
+-                ecdsa-sha2-nistp521-cert-v01@openssh.com,
+-                ssh-ed25519-cert-v01@openssh.com,
+                 ssh-rsa-cert-v01@openssh.com,
+-                ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,
+-                ssh-ed25519,ssh-rsa
++                ssh-rsa
  
               If hostkeys are known for the destination host then this default
               is modified to prefer their algorithms.
-@@ -486,10 +480,10 @@ DESCRIPTION
+@@ -503,10 +493,10 @@ DESCRIPTION
               default is M-bM-^@M-^\noM-bM-^@M-^].
  
       IdentityFile
@@ -1289,33 +1302,63 @@ diff -pur old/ssh_config.0 new/ssh_config.0
               Additionally, any identities represented by the authentication
               agent will be used for authentication unless IdentitiesOnly is
               set.  ssh(1) will try to load certificate information from the
-@@ -549,7 +543,6 @@ DESCRIPTION
-              Specifies the available KEX (Key Exchange) algorithms.  Multiple
-              algorithms must be comma-separated.  The default is:
+@@ -569,7 +559,6 @@ DESCRIPTION
+              will be appended to the default set instead of replacing them.
+              The default is:
  
 -                   curve25519-sha256@libssh.org,
                     ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,
                     diffie-hellman-group-exchange-sha256,
-                    diffie-hellman-group14-sha1,
+                    diffie-hellman-group-exchange-sha1,
+@@ -727,13 +716,8 @@ DESCRIPTION
+              types after it will be appended to the default instead of
+              replacing it.  The default for this option is:
+ 
+-                ecdsa-sha2-nistp256-cert-v01@openssh.com,
+-                ecdsa-sha2-nistp384-cert-v01@openssh.com,
+-                ecdsa-sha2-nistp521-cert-v01@openssh.com,
+-                ssh-ed25519-cert-v01@openssh.com,
+                 ssh-rsa-cert-v01@openssh.com,
+-                ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,
+-                ssh-ed25519,ssh-rsa
++                ssh-rsa
+ 
+              The -Q option of ssh(1) may be used to list supported key types.
+ 
 diff -pur old/ssh_config.5 new/ssh_config.5
---- old/ssh_config.5	2015-05-12 06:57:55.750682668 -0700
-+++ new/ssh_config.5	2015-05-12 07:52:05.483411337 -0700
-@@ -807,14 +807,8 @@ Specifies the protocol version 2 host ke
- that the client wants to use in order of preference.
+--- old/ssh_config.5
++++ new/ssh_config.5
+@@ -806,13 +806,8 @@ character, then the specified key types
+ instead of replacing them.
  The default for this option is:
  .Bd -literal -offset 3n
 -ecdsa-sha2-nistp256-cert-v01@openssh.com,
 -ecdsa-sha2-nistp384-cert-v01@openssh.com,
 -ecdsa-sha2-nistp521-cert-v01@openssh.com,
 -ssh-ed25519-cert-v01@openssh.com,
- ssh-rsa-cert-v01@openssh.com,ssh-dss-cert-v01@openssh.com,
- ssh-rsa-cert-v00@openssh.com,ssh-dss-cert-v00@openssh.com,
+ ssh-rsa-cert-v01@openssh.com,
 -ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,
--ssh-ed25519,ssh-rsa,ssh-dss
+-ssh-ed25519,ssh-rsa
++ssh-rsa
+ .Ed
+ .Pp
+ The
+@@ -829,13 +824,8 @@ character, then the specified key types
+ instead of replacing them.
+ The default for this option is:
+ .Bd -literal -offset 3n
+-ecdsa-sha2-nistp256-cert-v01@openssh.com,
+-ecdsa-sha2-nistp384-cert-v01@openssh.com,
+-ecdsa-sha2-nistp521-cert-v01@openssh.com,
+-ssh-ed25519-cert-v01@openssh.com,
+ ssh-rsa-cert-v01@openssh.com,
+-ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,
+-ssh-ed25519,ssh-rsa
++ssh-rsa
  .Ed
  .Pp
  If hostkeys are known for the destination host then this default is modified
-@@ -869,14 +863,12 @@ offers many different identities.
+@@ -890,14 +880,12 @@ offers many different identities.
  The default is
  .Dq no .
  .It Cm IdentityFile
@@ -1331,18 +1374,33 @@ diff -pur old/ssh_config.5 new/ssh_config.5
  and
  .Pa ~/.ssh/id_rsa
  for protocol version 2.
-@@ -989,7 +981,6 @@ Specifies the available KEX (Key Exchang
- Multiple algorithms must be comma-separated.
+@@ -1014,7 +1002,6 @@ character, then the specified methods wi
+ instead of replacing them.
  The default is:
  .Bd -literal -offset indent
 -curve25519-sha256@libssh.org,
  ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,
  diffie-hellman-group-exchange-sha256,
- diffie-hellman-group14-sha1,
+ diffie-hellman-group-exchange-sha1,
+@@ -1259,13 +1246,8 @@ character, then the key types after it w
+ instead of replacing it.
+ The default for this option is:
+ .Bd -literal -offset 3n
+-ecdsa-sha2-nistp256-cert-v01@openssh.com,
+-ecdsa-sha2-nistp384-cert-v01@openssh.com,
+-ecdsa-sha2-nistp521-cert-v01@openssh.com,
+-ssh-ed25519-cert-v01@openssh.com,
+ ssh-rsa-cert-v01@openssh.com,
+-ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,
+-ssh-ed25519,ssh-rsa
++ssh-rsa
+ .Ed
+ .Pp
+ The
 diff -pur old/sshconnect.c new/sshconnect.c
---- old/sshconnect.c	2015-03-16 22:49:20.000000000 -0700
-+++ new/sshconnect.c	2015-05-12 06:57:55.878078115 -0700
-@@ -1391,7 +1391,9 @@ show_other_keys(struct hostkeys *hostkey
+--- old/sshconnect.c
++++ new/sshconnect.c
+@@ -1392,7 +1392,9 @@ show_other_keys(struct hostkeys *hostkey
  		KEY_RSA,
  		KEY_DSA,
  		KEY_ECDSA,
@@ -1353,9 +1411,9 @@ diff -pur old/sshconnect.c new/sshconnect.c
  	};
  	int i, ret = 0;
 diff -pur old/sshconnect2.c new/sshconnect2.c
---- old/sshconnect2.c	2015-05-12 06:57:55.751927078 -0700
-+++ new/sshconnect2.c	2015-05-12 07:03:03.597484825 -0700
-@@ -254,7 +254,9 @@ ssh_kex2(char *host, struct sockaddr *ho
+--- old/sshconnect2.c
++++ new/sshconnect2.c
+@@ -247,7 +247,9 @@ ssh_kex2(char *host, struct sockaddr *ho
  	kex->kex[KEX_ECDH_SHA2] = kexecdh_client;
  # endif
  #endif
@@ -1366,8 +1424,8 @@ diff -pur old/sshconnect2.c new/sshconnect2.c
  	if (options.gss_keyex) {
  		kex->kex[KEX_GSS_GRP1_SHA1] = kexgss_client;
 diff -pur old/sshd.0 new/sshd.0
---- old/sshd.0	2015-03-17 21:26:35.000000000 -0700
-+++ new/sshd.0	2015-05-12 07:46:43.700877984 -0700
+--- old/sshd.0
++++ new/sshd.0
 @@ -81,8 +81,7 @@ DESCRIPTION
               be given if sshd is not run as root (as the normal host key files
               are normally not readable by anyone but root).  The default is
@@ -1378,7 +1436,7 @@ diff -pur old/sshd.0 new/sshd.0
               protocol version 2.  It is possible to have multiple host key
               files for the different protocol versions and host key
               algorithms.
-@@ -147,7 +146,7 @@ DESCRIPTION
+@@ -146,7 +145,7 @@ DESCRIPTION
  AUTHENTICATION
       The OpenSSH SSH daemon supports SSH protocols 1 and 2.  The default is to
       use protocol 2 only, though this can be changed via the Protocol option
@@ -1387,7 +1445,7 @@ diff -pur old/sshd.0 new/sshd.0
       protocol 1 only supports RSA keys.  For both protocols, each host has a
       host-specific key, normally 2048 bits, used to identify the host.
  
-@@ -278,15 +277,13 @@ AUTHORIZED_KEYS FILE FORMAT
+@@ -279,15 +278,13 @@ AUTHORIZED_KEYS FILE FORMAT
       starts with a number).  The bits, exponent, modulus, and comment fields
       give the RSA key for protocol version 1; the comment field is not used
       for anything (but may be convenient for the user to identify the key).
@@ -1405,7 +1463,7 @@ diff -pur old/sshd.0 new/sshd.0
       file and edit it.
  
       sshd enforces a minimum RSA key modulus size for protocol 1 and protocol
-@@ -513,7 +510,7 @@ FILES
+@@ -514,7 +511,7 @@ FILES
               for the user, and not accessible by others.
  
       ~/.ssh/authorized_keys
@@ -1414,7 +1472,7 @@ diff -pur old/sshd.0 new/sshd.0
               for logging in as this user.  The format of this file is
               described above.  The content of the file is not highly
               sensitive, but the recommended permissions are read/write for the
-@@ -569,8 +566,6 @@ FILES
+@@ -570,8 +567,6 @@ FILES
  
       /etc/ssh/ssh_host_key
       /etc/ssh/ssh_host_dsa_key
@@ -1423,7 +1481,7 @@ diff -pur old/sshd.0 new/sshd.0
       /etc/ssh/ssh_host_rsa_key
               These files contain the private parts of the host keys.  These
               files should only be owned by root, readable only by root, and
-@@ -579,8 +574,6 @@ FILES
+@@ -580,8 +575,6 @@ FILES
  
       /etc/ssh/ssh_host_key.pub
       /etc/ssh/ssh_host_dsa_key.pub
@@ -1433,8 +1491,8 @@ diff -pur old/sshd.0 new/sshd.0
               These files contain the public parts of the host keys.  These
               files should be world-readable but writable only by root.  Their
 diff -pur old/sshd.8 new/sshd.8
---- old/sshd.8	2015-05-12 06:57:55.682941332 -0700
-+++ new/sshd.8	2015-05-12 07:53:14.229250081 -0700
+--- old/sshd.8
++++ new/sshd.8
 @@ -172,8 +172,6 @@ The default is
  .Pa /etc/ssh/ssh_host_key
  for protocol version 1, and
@@ -1444,7 +1502,7 @@ diff -pur old/sshd.8 new/sshd.8
  and
  .Pa /etc/ssh/ssh_host_rsa_key
  for protocol version 2.
-@@ -278,7 +276,7 @@ though this can be changed via the
+@@ -275,7 +273,7 @@ though this can be changed via the
  .Cm Protocol
  option in
  .Xr sshd_config 4 .
@@ -1453,7 +1511,7 @@ diff -pur old/sshd.8 new/sshd.8
  protocol 1 only supports RSA keys.
  For both protocols,
  each host has a host-specific key,
-@@ -492,10 +490,6 @@ protocol version 1; the
+@@ -491,10 +489,6 @@ protocol version 1; the
  comment field is not used for anything (but may be convenient for the
  user to identify the key).
  For protocol version 2 the keytype is
@@ -1464,7 +1522,7 @@ diff -pur old/sshd.8 new/sshd.8
  .Dq ssh-dss
  or
  .Dq ssh-rsa .
-@@ -507,8 +501,6 @@ keys up to 16 kilobits.
+@@ -506,8 +500,6 @@ keys up to 16 kilobits.
  You don't want to type them in; instead, copy the
  .Pa identity.pub ,
  .Pa id_dsa.pub ,
@@ -1473,7 +1531,7 @@ diff -pur old/sshd.8 new/sshd.8
  or the
  .Pa id_rsa.pub
  file and edit it.
-@@ -808,7 +800,7 @@ secret, but the recommended permissions
+@@ -807,7 +799,7 @@ secret, but the recommended permissions
  and not accessible by others.
  .Pp
  .It Pa ~/.ssh/authorized_keys
@@ -1482,7 +1540,7 @@ diff -pur old/sshd.8 new/sshd.8
  that can be used for logging in as this user.
  The format of this file is described above.
  The content of the file is not highly sensitive, but the recommended
-@@ -882,8 +874,6 @@ rlogin/rsh.
+@@ -881,8 +873,6 @@ rlogin/rsh.
  .Pp
  .It Pa /etc/ssh/ssh_host_key
  .It Pa /etc/ssh/ssh_host_dsa_key
@@ -1491,7 +1549,7 @@ diff -pur old/sshd.8 new/sshd.8
  .It Pa /etc/ssh/ssh_host_rsa_key
  These files contain the private parts of the host keys.
  These files should only be owned by root, readable only by root, and not
-@@ -894,8 +884,6 @@ does not start if these files are group/
+@@ -893,8 +883,6 @@ does not start if these files are group/
  .Pp
  .It Pa /etc/ssh/ssh_host_key.pub
  .It Pa /etc/ssh/ssh_host_dsa_key.pub
@@ -1501,9 +1559,9 @@ diff -pur old/sshd.8 new/sshd.8
  These files contain the public parts of the host keys.
  These files should be world-readable but writable only by
 diff -pur old/sshd.c new/sshd.c
---- old/sshd.c	2015-05-12 06:57:55.753246429 -0700
-+++ new/sshd.c	2015-05-12 07:03:44.715843663 -0700
-@@ -803,7 +803,9 @@ list_hostkey_types(void)
+--- old/sshd.c
++++ new/sshd.c
+@@ -811,7 +811,9 @@ list_hostkey_types(void)
  		case KEY_RSA:
  		case KEY_DSA:
  		case KEY_ECDSA:
@@ -1513,7 +1571,7 @@ diff -pur old/sshd.c new/sshd.c
  			if (buffer_len(&b) > 0)
  				buffer_append(&b, ",", 1);
  			p = key_ssh_name(key);
-@@ -820,7 +822,9 @@ list_hostkey_types(void)
+@@ -826,7 +828,9 @@ list_hostkey_types(void)
  		case KEY_RSA_CERT:
  		case KEY_DSA_CERT:
  		case KEY_ECDSA_CERT:
@@ -1523,7 +1581,7 @@ diff -pur old/sshd.c new/sshd.c
  			if (buffer_len(&b) > 0)
  				buffer_append(&b, ",", 1);
  			p = key_ssh_name(key);
-@@ -848,7 +852,9 @@ get_hostkey_by_type(int type, int nid, i
+@@ -852,7 +856,9 @@ get_hostkey_by_type(int type, int nid, i
  		case KEY_RSA_CERT:
  		case KEY_DSA_CERT:
  		case KEY_ECDSA_CERT:
@@ -1533,7 +1591,7 @@ diff -pur old/sshd.c new/sshd.c
  			key = sensitive_data.host_certificates[i];
  			break;
  		default:
-@@ -1798,7 +1804,9 @@ main(int ac, char **av)
+@@ -1810,7 +1816,9 @@ main(int ac, char **av)
  		case KEY_RSA:
  		case KEY_DSA:
  		case KEY_ECDSA:
@@ -1543,7 +1601,7 @@ diff -pur old/sshd.c new/sshd.c
  			if (have_agent || key != NULL)
  				sensitive_data.have_ssh2_key = 1;
  			break;
-@@ -2644,7 +2652,9 @@ do_ssh2_kex(void)
+@@ -2646,7 +2654,9 @@ do_ssh2_kex(void)
  	kex->kex[KEX_ECDH_SHA2] = kexecdh_server;
  # endif
  #endif
@@ -1554,33 +1612,66 @@ diff -pur old/sshd.c new/sshd.c
  	if (options.gss_keyex) {
  		kex->kex[KEX_GSS_GRP1_SHA1] = kexgss_server;
 diff -pur old/sshd_config.0 new/sshd_config.0
---- old/sshd_config.0	2015-03-17 21:26:36.000000000 -0700
-+++ new/sshd_config.0	2015-05-12 07:47:28.488941581 -0700
-@@ -375,12 +375,11 @@ DESCRIPTION
+--- old/sshd_config.0
++++ new/sshd_config.0
+@@ -403,13 +403,8 @@ DESCRIPTION
+              specified key types will be appended to the default set instead
+              of replacing them.  The default for this option is:
+ 
+-                ecdsa-sha2-nistp256-cert-v01@openssh.com,
+-                ecdsa-sha2-nistp384-cert-v01@openssh.com,
+-                ecdsa-sha2-nistp521-cert-v01@openssh.com,
+-                ssh-ed25519-cert-v01@openssh.com,
+                 ssh-rsa-cert-v01@openssh.com,
+-                ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,
+-                ssh-ed25519,ssh-rsa
++                ssh-rsa
+ 
+              The -Q option of ssh(1) may be used to list supported key types.
+ 
+@@ -438,8 +433,7 @@ DESCRIPTION
       HostKey
               Specifies a file containing a private host key used by SSH.  The
               default is /etc/ssh/ssh_host_key for protocol version 1, and
 -             /etc/ssh/ssh_host_dsa_key, /etc/ssh/ssh_host_ecdsa_key,
 -             /etc/ssh/ssh_host_ed25519_key and /etc/ssh/ssh_host_rsa_key for
-+             /etc/ssh/ssh_host_dsa_key and /etc/ssh/ssh_host_rsa_key for
-              protocol version 2.  Note that sshd(8) will refuse to use a file
-              if it is group/world-accessible.  It is possible to have multiple
--             host key files.  M-bM-^@M-^\rsa1M-bM-^@M-^] keys are used for version 1 and M-bM-^@M-^\dsaM-bM-^@M-^],
--             M-bM-^@M-^\ecdsaM-bM-^@M-^], M-bM-^@M-^\ed25519M-bM-^@M-^] or M-bM-^@M-^\rsaM-bM-^@M-^] are used for version 2 of the SSH
-+             host key files.  M-bM-^@M-^\rsa1M-bM-^@M-^] keys are used for version 1 and M-bM-^@M-^\dsaM-bM-^@M-^]
-+             or M-bM-^@M-^\rsaM-bM-^@M-^] are used for version 2 of the SSH
-              protocol.  It is also possible to specify public host key files
-              instead.  In this case operations on the private key will be
-              delegated to an ssh-agent(1).
-@@ -448,7 +447,6 @@ DESCRIPTION
-              algorithms must be comma-separated.  The supported algorithms
-              are:
++             /etc/ssh/ssh_host_dsa_key, and /etc/ssh/ssh_host_rsa_key for
+              protocol version 2.
+ 
+              Note that sshd(8) will refuse to use a file if it is group/world-
+@@ -447,7 +441,7 @@ DESCRIPTION
+              of the keys are actually used by sshd(8).
+ 
+              It is possible to have multiple host key files.  M-bM-^@M-^\rsa1M-bM-^@M-^] keys are
+-             used for version 1 and M-bM-^@M-^\dsaM-bM-^@M-^], M-bM-^@M-^\ecdsaM-bM-^@M-^], M-bM-^@M-^\ed25519M-bM-^@M-^] or M-bM-^@M-^\rsaM-bM-^@M-^] are
++             used for version 1 and M-bM-^@M-^\dsaM-bM-^@M-^], or M-bM-^@M-^\rsaM-bM-^@M-^] are
+              used for version 2 of the SSH protocol.  It is also possible to
+              specify public host key files instead.  In this case operations
+              on the private key will be delegated to an ssh-agent(1).
+@@ -462,13 +456,8 @@ DESCRIPTION
+              Specifies the protocol version 2 host key algorithms that the
+              server offers.  The default for this option is:
+ 
+-                ecdsa-sha2-nistp256-cert-v01@openssh.com,
+-                ecdsa-sha2-nistp384-cert-v01@openssh.com,
+-                ecdsa-sha2-nistp521-cert-v01@openssh.com,
+-                ssh-ed25519-cert-v01@openssh.com,
+                 ssh-rsa-cert-v01@openssh.com,
+-                ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,
+-                ssh-ed25519,ssh-rsa
++                ssh-rsa
+ 
+              The list of available key types may also be obtained using the -Q
+              option of ssh(1) with an argument of M-bM-^@M-^\keyM-bM-^@M-^].
+@@ -532,7 +521,6 @@ DESCRIPTION
+              will be appended to the default set instead of replacing them.
+              The supported algorithms are:
  
 -                   curve25519-sha256@libssh.org
                     diffie-hellman-group1-sha1
                     diffie-hellman-group14-sha1
                     diffie-hellman-group-exchange-sha1
-@@ -459,7 +457,6 @@ DESCRIPTION
+@@ -543,7 +531,6 @@ DESCRIPTION
  
               The default is:
  
@@ -1588,10 +1679,25 @@ diff -pur old/sshd_config.0 new/sshd_config.0
                     ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,
                     diffie-hellman-group-exchange-sha256,
                     diffie-hellman-group14-sha1
+@@ -787,13 +774,8 @@ DESCRIPTION
+              specified key types will be appended to the default set instead
+              of replacing them.  The default for this option is:
+ 
+-                ecdsa-sha2-nistp256-cert-v01@openssh.com,
+-                ecdsa-sha2-nistp384-cert-v01@openssh.com,
+-                ecdsa-sha2-nistp521-cert-v01@openssh.com,
+-                ssh-ed25519-cert-v01@openssh.com,
+                 ssh-rsa-cert-v01@openssh.com,
+-                ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,
+-                ssh-ed25519,ssh-rsa
++                ssh-rsa
+ 
+              The -Q option of ssh(1) may be used to list supported key types.
+ 
 diff -pur old/sshd_config.5 new/sshd_config.5
---- old/sshd_config.5	2015-05-12 06:57:55.754541097 -0700
-+++ new/sshd_config.5	2015-05-12 07:52:26.170307089 -0700
-@@ -628,8 +628,6 @@ The default is
+--- old/sshd_config.5
++++ new/sshd_config.5
+@@ -712,8 +712,6 @@ The default is
  .Pa /etc/ssh/ssh_host_key
  for protocol version 1, and
  .Pa /etc/ssh/ssh_host_dsa_key ,
@@ -1600,7 +1706,7 @@ diff -pur old/sshd_config.5 new/sshd_config.5
  and
  .Pa /etc/ssh/ssh_host_rsa_key
  for protocol version 2.
-@@ -640,8 +638,6 @@ It is possible to have multiple host key
+@@ -730,8 +728,6 @@ It is possible to have multiple host key
  .Dq rsa1
  keys are used for version 1 and
  .Dq dsa ,
@@ -1609,7 +1715,7 @@ diff -pur old/sshd_config.5 new/sshd_config.5
  or
  .Dq rsa
  are used for version 2 of the SSH protocol.
-@@ -764,8 +760,6 @@ The supported algorithms are:
+@@ -878,8 +874,6 @@ The supported algorithms are:
  .Pp
  .Bl -item -compact -offset indent
  .It
@@ -1618,7 +1724,7 @@ diff -pur old/sshd_config.5 new/sshd_config.5
  diffie-hellman-group1-sha1
  .It
  diffie-hellman-group14-sha1
-@@ -783,7 +777,6 @@ ecdh-sha2-nistp521
+@@ -897,7 +891,6 @@ ecdh-sha2-nistp521
  .Pp
  The default is:
  .Bd -literal -offset indent
@@ -1627,8 +1733,8 @@ diff -pur old/sshd_config.5 new/sshd_config.5
  diffie-hellman-group-exchange-sha256,
  diffie-hellman-group14-sha1
 diff -pur old/sshkey.c new/sshkey.c
---- old/sshkey.c	2015-05-12 06:57:55.756061267 -0700
-+++ new/sshkey.c	2015-05-27 03:34:57.475875579 -0700
+--- old/sshkey.c
++++ new/sshkey.c
 @@ -85,9 +85,11 @@ struct keytype {
  	int cert;
  };
@@ -1641,7 +1747,7 @@ diff -pur old/sshkey.c new/sshkey.c
  #ifdef WITH_OPENSSL
  	{ NULL, "RSA1", KEY_RSA1, 0, 0 },
  	{ "ssh-rsa", "RSA", KEY_RSA, 0, 0 },
-@@ -284,8 +286,10 @@ sshkey_size(const struct sshkey *k)
+@@ -278,8 +280,10 @@ sshkey_size(const struct sshkey *k)
  	case KEY_ECDSA_CERT:
  		return sshkey_curve_nid_to_bits(k->ecdsa_nid);
  #endif /* WITH_OPENSSL */
@@ -1652,7 +1758,7 @@ diff -pur old/sshkey.c new/sshkey.c
  		return 256;	/* XXX */
  	}
  	return 0;
-@@ -310,7 +314,9 @@ sshkey_type_is_valid_ca(int type)
+@@ -292,7 +296,9 @@ sshkey_type_is_valid_ca(int type)
  	case KEY_RSA:
  	case KEY_DSA:
  	case KEY_ECDSA:
@@ -1662,7 +1768,7 @@ diff -pur old/sshkey.c new/sshkey.c
  		return 1;
  	default:
  		return 0;
-@@ -338,8 +344,10 @@ sshkey_type_plain(int type)
+@@ -318,8 +324,10 @@ sshkey_type_plain(int type)
  		return KEY_DSA;
  	case KEY_ECDSA_CERT:
  		return KEY_ECDSA;
@@ -1673,7 +1779,7 @@ diff -pur old/sshkey.c new/sshkey.c
  	default:
  		return type;
  	}
-@@ -492,8 +500,10 @@ sshkey_new(int type)
+@@ -472,8 +480,10 @@ sshkey_new(int type)
  	k->dsa = NULL;
  	k->rsa = NULL;
  	k->cert = NULL;
@@ -1684,7 +1790,7 @@ diff -pur old/sshkey.c new/sshkey.c
  	switch (k->type) {
  #ifdef WITH_OPENSSL
  	case KEY_RSA1:
-@@ -530,10 +540,12 @@ sshkey_new(int type)
+@@ -508,10 +518,12 @@ sshkey_new(int type)
  		/* Cannot do anything until we know the group */
  		break;
  #endif /* WITH_OPENSSL */
@@ -1697,7 +1803,7 @@ diff -pur old/sshkey.c new/sshkey.c
  	case KEY_UNSPEC:
  		break;
  	default:
-@@ -582,10 +594,12 @@ sshkey_add_private(struct sshkey *k)
+@@ -558,10 +570,12 @@ sshkey_add_private(struct sshkey *k)
  		/* Cannot do anything until we know the group */
  		break;
  #endif /* WITH_OPENSSL */
@@ -1710,7 +1816,7 @@ diff -pur old/sshkey.c new/sshkey.c
  	case KEY_UNSPEC:
  		break;
  	default:
-@@ -639,6 +653,7 @@ sshkey_free(struct sshkey *k)
+@@ -613,6 +627,7 @@ sshkey_free(struct sshkey *k)
  		break;
  # endif /* OPENSSL_HAS_ECC */
  #endif /* WITH_OPENSSL */
@@ -1718,7 +1824,7 @@ diff -pur old/sshkey.c new/sshkey.c
  	case KEY_ED25519:
  	case KEY_ED25519_CERT:
  		if (k->ed25519_pk) {
-@@ -652,6 +667,7 @@ sshkey_free(struct sshkey *k)
+@@ -626,6 +641,7 @@ sshkey_free(struct sshkey *k)
  			k->ed25519_sk = NULL;
  		}
  		break;
@@ -1726,7 +1832,7 @@ diff -pur old/sshkey.c new/sshkey.c
  	case KEY_UNSPEC:
  		break;
  	default:
-@@ -731,10 +747,12 @@ sshkey_equal_public(const struct sshkey
+@@ -703,10 +719,12 @@ sshkey_equal_public(const struct sshkey
  		return 1;
  # endif /* OPENSSL_HAS_ECC */
  #endif /* WITH_OPENSSL */
@@ -1739,7 +1845,7 @@ diff -pur old/sshkey.c new/sshkey.c
  	default:
  		return 0;
  	}
-@@ -773,7 +791,9 @@ to_blob_buf(const struct sshkey *key, st
+@@ -749,7 +767,9 @@ to_blob_buf(const struct sshkey *key, st
  	case KEY_ECDSA_CERT:
  	case KEY_RSA_CERT:
  #endif /* WITH_OPENSSL */
@@ -1749,7 +1855,7 @@ diff -pur old/sshkey.c new/sshkey.c
  		/* Use the existing blob */
  		/* XXX modified flag? */
  		if ((ret = sshbuf_putb(b, key->cert->certblob)) != 0)
-@@ -810,6 +830,7 @@ to_blob_buf(const struct sshkey *key, st
+@@ -786,6 +806,7 @@ to_blob_buf(const struct sshkey *key, st
  			return ret;
  		break;
  #endif /* WITH_OPENSSL */
@@ -1757,7 +1863,7 @@ diff -pur old/sshkey.c new/sshkey.c
  	case KEY_ED25519:
  		if (key->ed25519_pk == NULL)
  			return SSH_ERR_INVALID_ARGUMENT;
-@@ -818,6 +839,7 @@ to_blob_buf(const struct sshkey *key, st
+@@ -794,6 +815,7 @@ to_blob_buf(const struct sshkey *key, st
  		    key->ed25519_pk, ED25519_PK_SZ)) != 0)
  			return ret;
  		break;
@@ -1765,25 +1871,23 @@ diff -pur old/sshkey.c new/sshkey.c
  	default:
  		return SSH_ERR_KEY_TYPE_UNKNOWN;
  	}
-@@ -1291,13 +1313,17 @@ sshkey_read(struct sshkey *ret, char **c
+@@ -1267,11 +1289,13 @@ sshkey_read(struct sshkey *ret, char **c
  	case KEY_RSA:
  	case KEY_DSA:
  	case KEY_ECDSA:
+-	case KEY_ED25519:
 +#ifndef WITHOUT_ED25519
- 	case KEY_ED25519:
++ 	case KEY_ED25519:
++	case KEY_ED25519_CERT:
 +#endif /* WITHOUT_ED25519 */
- 	case KEY_DSA_CERT_V00:
- 	case KEY_RSA_CERT_V00:
  	case KEY_DSA_CERT:
  	case KEY_ECDSA_CERT:
  	case KEY_RSA_CERT:
-+#ifndef WITHOUT_ED25519
- 	case KEY_ED25519_CERT:
-+#endif /* WITHOUT_ED25519 */
+-	case KEY_ED25519_CERT:
  		space = strchr(cp, ' ');
  		if (space == NULL)
  			return SSH_ERR_INVALID_FORMAT;
-@@ -1389,6 +1415,7 @@ sshkey_read(struct sshkey *ret, char **c
+@@ -1363,6 +1387,7 @@ sshkey_read(struct sshkey *ret, char **c
  		}
  # endif /* OPENSSL_HAS_ECC */
  #endif /* WITH_OPENSSL */
@@ -1791,7 +1895,7 @@ diff -pur old/sshkey.c new/sshkey.c
  		if (sshkey_type_plain(ret->type) == KEY_ED25519) {
  			free(ret->ed25519_pk);
  			ret->ed25519_pk = k->ed25519_pk;
-@@ -1397,6 +1424,7 @@ sshkey_read(struct sshkey *ret, char **c
+@@ -1371,6 +1396,7 @@ sshkey_read(struct sshkey *ret, char **c
  			/* XXX */
  #endif
  		}
@@ -1799,18 +1903,7 @@ diff -pur old/sshkey.c new/sshkey.c
  		retval = 0;
  /*XXXX*/
  		sshkey_free(k);
-@@ -1460,8 +1488,10 @@ sshkey_write(const struct sshkey *key, F
- 	case KEY_RSA_CERT_V00:
- 	case KEY_RSA_CERT:
- #endif /* WITH_OPENSSL */
-+#ifndef WITHOUT_ED25519
- 	case KEY_ED25519:
- 	case KEY_ED25519_CERT:
-+#endif /* WITHOUT_ED25519 */
- 		if ((bb = sshbuf_new()) == NULL) {
- 			ret = SSH_ERR_ALLOC_FAIL;
- 			goto out;
-@@ -1671,7 +1701,8 @@ sshkey_generate(int type, u_int bits, st
+@@ -1662,7 +1688,8 @@ sshkey_generate(int type, u_int bits, st
  	if ((k = sshkey_new(KEY_UNSPEC)) == NULL)
  		return SSH_ERR_ALLOC_FAIL;
  	switch (type) {
@@ -1820,7 +1913,7 @@ diff -pur old/sshkey.c new/sshkey.c
  		if ((k->ed25519_pk = malloc(ED25519_PK_SZ)) == NULL ||
  		    (k->ed25519_sk = malloc(ED25519_SK_SZ)) == NULL) {
  			ret = SSH_ERR_ALLOC_FAIL;
-@@ -1680,6 +1711,7 @@ sshkey_generate(int type, u_int bits, st
+@@ -1671,6 +1698,7 @@ sshkey_generate(int type, u_int bits, st
  		crypto_sign_ed25519_keypair(k->ed25519_pk, k->ed25519_sk);
  		ret = 0;
  		break;
@@ -1828,7 +1921,7 @@ diff -pur old/sshkey.c new/sshkey.c
  #ifdef WITH_OPENSSL
  	case KEY_DSA:
  		ret = dsa_generate_private_key(bits, &k->dsa);
-@@ -1817,6 +1849,7 @@ sshkey_from_private(const struct sshkey
+@@ -1806,6 +1834,7 @@ sshkey_from_private(const struct sshkey
  		}
  		break;
  #endif /* WITH_OPENSSL */
@@ -1836,7 +1929,7 @@ diff -pur old/sshkey.c new/sshkey.c
  	case KEY_ED25519:
  	case KEY_ED25519_CERT:
  		if ((n = sshkey_new(k->type)) == NULL)
-@@ -1829,6 +1862,7 @@ sshkey_from_private(const struct sshkey
+@@ -1818,6 +1847,7 @@ sshkey_from_private(const struct sshkey
  			memcpy(n->ed25519_pk, k->ed25519_pk, ED25519_PK_SZ);
  		}
  		break;
@@ -1844,7 +1937,7 @@ diff -pur old/sshkey.c new/sshkey.c
  	default:
  		return SSH_ERR_KEY_TYPE_UNKNOWN;
  	}
-@@ -2100,6 +2134,7 @@ sshkey_from_blob_internal(struct sshbuf
+@@ -2084,6 +2114,7 @@ sshkey_from_blob_internal(struct sshbuf
  		break;
  # endif /* OPENSSL_HAS_ECC */
  #endif /* WITH_OPENSSL */
@@ -1852,7 +1945,7 @@ diff -pur old/sshkey.c new/sshkey.c
  	case KEY_ED25519_CERT:
  		/* Skip nonce */
  		if (sshbuf_get_string_direct(b, NULL, NULL) != 0) {
-@@ -2121,6 +2156,7 @@ sshkey_from_blob_internal(struct sshbuf
+@@ -2105,6 +2136,7 @@ sshkey_from_blob_internal(struct sshbuf
  		key->ed25519_pk = pk;
  		pk = NULL;
  		break;
@@ -1860,7 +1953,7 @@ diff -pur old/sshkey.c new/sshkey.c
  	case KEY_UNSPEC:
  		if ((key = sshkey_new(type)) == NULL) {
  			ret = SSH_ERR_ALLOC_FAIL;
-@@ -2215,9 +2251,11 @@ sshkey_sign(const struct sshkey *key,
+@@ -2197,9 +2229,11 @@ sshkey_sign(const struct sshkey *key,
  	case KEY_RSA:
  		return ssh_rsa_sign(key, sigp, lenp, data, datalen, compat);
  #endif /* WITH_OPENSSL */
@@ -1872,7 +1965,7 @@ diff -pur old/sshkey.c new/sshkey.c
  	default:
  		return SSH_ERR_KEY_TYPE_UNKNOWN;
  	}
-@@ -2249,9 +2287,11 @@ sshkey_verify(const struct sshkey *key,
+@@ -2229,9 +2263,11 @@ sshkey_verify(const struct sshkey *key,
  	case KEY_RSA:
  		return ssh_rsa_verify(key, sig, siglen, data, dlen, compat);
  #endif /* WITH_OPENSSL */
@@ -1884,7 +1977,7 @@ diff -pur old/sshkey.c new/sshkey.c
  	default:
  		return SSH_ERR_KEY_TYPE_UNKNOWN;
  	}
-@@ -2275,8 +2315,10 @@ sshkey_demote(const struct sshkey *k, st
+@@ -2255,8 +2291,10 @@ sshkey_demote(const struct sshkey *k, st
  	pk->dsa = NULL;
  	pk->ecdsa = NULL;
  	pk->rsa = NULL;
@@ -1895,7 +1988,7 @@ diff -pur old/sshkey.c new/sshkey.c
  
  	switch (k->type) {
  #ifdef WITH_OPENSSL
-@@ -2328,6 +2370,7 @@ sshkey_demote(const struct sshkey *k, st
+@@ -2306,6 +2344,7 @@ sshkey_demote(const struct sshkey *k, st
  		break;
  # endif /* OPENSSL_HAS_ECC */
  #endif /* WITH_OPENSSL */
@@ -1903,7 +1996,7 @@ diff -pur old/sshkey.c new/sshkey.c
  	case KEY_ED25519_CERT:
  		if ((ret = sshkey_cert_copy(k, pk)) != 0)
  			goto fail;
-@@ -2341,6 +2384,7 @@ sshkey_demote(const struct sshkey *k, st
+@@ -2319,6 +2358,7 @@ sshkey_demote(const struct sshkey *k, st
  			memcpy(pk->ed25519_pk, k->ed25519_pk, ED25519_PK_SZ);
  		}
  		break;
@@ -1911,21 +2004,19 @@ diff -pur old/sshkey.c new/sshkey.c
  	default:
  		ret = SSH_ERR_KEY_TYPE_UNKNOWN;
   fail:
-@@ -2371,11 +2415,13 @@ sshkey_to_certified(struct sshkey *k, in
+@@ -2347,9 +2387,11 @@ sshkey_to_certified(struct sshkey *k)
  		newtype = KEY_ECDSA_CERT;
  		break;
  #endif /* WITH_OPENSSL */
 +#ifndef WITHOUT_ED25519
  	case KEY_ED25519:
- 		if (legacy)
- 			return SSH_ERR_INVALID_ARGUMENT;
  		newtype = KEY_ED25519_CERT;
  		break;
 +#endif /* WITHOUT_ED25519 */
  	default:
  		return SSH_ERR_INVALID_ARGUMENT;
  	}
-@@ -2458,11 +2504,13 @@ sshkey_certify(struct sshkey *k, struct
+@@ -2428,11 +2470,13 @@ sshkey_certify(struct sshkey *k, struct
  			goto out;
  		break;
  #endif /* WITH_OPENSSL */
@@ -1939,7 +2030,7 @@ diff -pur old/sshkey.c new/sshkey.c
  	default:
  		ret = SSH_ERR_INVALID_ARGUMENT;
  		goto out;
-@@ -2657,6 +2705,7 @@ sshkey_private_serialize(const struct ss
+@@ -2607,6 +2651,7 @@ sshkey_private_serialize(const struct ss
  		break;
  # endif /* OPENSSL_HAS_ECC */
  #endif /* WITH_OPENSSL */
@@ -1947,7 +2038,7 @@ diff -pur old/sshkey.c new/sshkey.c
  	case KEY_ED25519:
  		if ((r = sshbuf_put_string(b, key->ed25519_pk,
  		    ED25519_PK_SZ)) != 0 ||
-@@ -2676,6 +2725,7 @@ sshkey_private_serialize(const struct ss
+@@ -2626,6 +2671,7 @@ sshkey_private_serialize(const struct ss
  		    ED25519_SK_SZ)) != 0)
  			goto out;
  		break;
@@ -1955,7 +2046,7 @@ diff -pur old/sshkey.c new/sshkey.c
  	default:
  		r = SSH_ERR_INVALID_ARGUMENT;
  		goto out;
-@@ -2802,6 +2852,7 @@ sshkey_private_deserialize(struct sshbuf
+@@ -2750,6 +2796,7 @@ sshkey_private_deserialize(struct sshbuf
  			goto out;
  		break;
  #endif /* WITH_OPENSSL */
@@ -1963,7 +2054,7 @@ diff -pur old/sshkey.c new/sshkey.c
  	case KEY_ED25519:
  		if ((k = sshkey_new_private(type)) == NULL) {
  			r = SSH_ERR_ALLOC_FAIL;
-@@ -2832,6 +2883,7 @@ sshkey_private_deserialize(struct sshbuf
+@@ -2780,6 +2827,7 @@ sshkey_private_deserialize(struct sshbuf
  		k->ed25519_sk = ed25519_sk;
  		ed25519_pk = ed25519_sk = NULL;
  		break;
@@ -1971,7 +2062,7 @@ diff -pur old/sshkey.c new/sshkey.c
  	default:
  		r = SSH_ERR_KEY_TYPE_UNKNOWN;
  		goto out;
-@@ -3591,9 +3643,11 @@ sshkey_private_to_fileblob(struct sshkey
+@@ -3545,9 +3593,11 @@ sshkey_private_to_fileblob(struct sshkey
  		return sshkey_private_pem_to_blob(key, blob,
  		    passphrase, comment);
  #endif /* WITH_OPENSSL */
@@ -1983,7 +2074,7 @@ diff -pur old/sshkey.c new/sshkey.c
  	default:
  		return SSH_ERR_KEY_TYPE_UNKNOWN;
  	}
-@@ -3899,9 +3953,11 @@ sshkey_parse_private_fileblob_type(struc
+@@ -3853,9 +3903,11 @@ sshkey_parse_private_fileblob_type(struc
  		return sshkey_parse_private_pem_fileblob(blob, type,
  		    passphrase, keyp);
  #endif /* WITH_OPENSSL */
@@ -1996,14 +2087,15 @@ diff -pur old/sshkey.c new/sshkey.c
  		if ((r = sshkey_parse_private2(blob, type, passphrase, keyp,
  		    commentp)) == 0)
 diff -pur old/sshkey.h new/sshkey.h
---- old/sshkey.h	2015-05-12 06:57:55.756485788 -0700
-+++ new/sshkey.h	2015-05-12 06:57:55.885805405 -0700
+--- old/sshkey.h
++++ new/sshkey.h
 @@ -57,11 +57,15 @@ enum sshkey_types {
  	KEY_RSA,
  	KEY_DSA,
  	KEY_ECDSA,
+-	KEY_ED25519,
 +#ifndef WITHOUT_ED25519
- 	KEY_ED25519,
++ 	KEY_ED25519,
 +#endif /* WITHOUT_ED25519 */
  	KEY_RSA_CERT,
  	KEY_DSA_CERT,
@@ -2011,10 +2103,10 @@ diff -pur old/sshkey.h new/sshkey.h
 +#ifndef WITHOUT_ED25519
  	KEY_ED25519_CERT,
 +#endif /* WITHOUT_ED25519 */
- 	KEY_RSA_CERT_V00,
- 	KEY_DSA_CERT_V00,
  	KEY_NULL,
-@@ -106,13 +110,17 @@ struct sshkey {
+ 	KEY_UNSPEC
+ };
+@@ -104,13 +108,17 @@ struct sshkey {
  	DSA	*dsa;
  	int	 ecdsa_nid;	/* NID of curve */
  	EC_KEY	*ecdsa;
@@ -2032,7 +2124,7 @@ diff -pur old/sshkey.h new/sshkey.h
  
  struct sshkey	*sshkey_new(int);
  int		 sshkey_add_private(struct sshkey *);
-@@ -210,11 +218,13 @@ int ssh_ecdsa_sign(const struct sshkey *
+@@ -208,11 +216,13 @@ int ssh_ecdsa_sign(const struct sshkey *
  int ssh_ecdsa_verify(const struct sshkey *key,
      const u_char *signature, size_t signaturelen,
      const u_char *data, size_t datalen, u_int compat);
