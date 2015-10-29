@@ -38,6 +38,9 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+# Rebuild the configure script so the man pages are normalized.
+COMPONENT_PREP_ACTION =	(cd $(@D); autoconf);
+
 #
 # libpcap Makefile does not use CFLAGS when building shared library
 # so we require the following line to add the -m option to CC
@@ -48,7 +51,6 @@ CONFIGURE_OPTIONS  +=	--disable-dbus
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-# common targets
 configure:	$(CONFIGURE_32_and_64)
 
 build:		$(BUILD_32_and_64)

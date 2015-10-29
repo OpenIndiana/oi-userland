@@ -149,7 +149,7 @@ flag specified.
 .TP 4
 .B \-m
 The shell loads \fI~/.tcshrc\fR even if it does not belong to the effective
-user.  Newer versions of \fIsu\fR(1M) can pass \fB\-m\fR to the shell. (+)
+user.  Newer versions of \fIsu\fR(8) can pass \fB\-m\fR to the shell. (+)
 .TP 4
 .B \-n
 The shell parses commands but does not execute them.
@@ -2675,7 +2675,7 @@ The \fBecho_style\fR shell variable may be set to emulate (or not) the flags and
 sequences of the BSD and/or System V versions of \fIecho\fR; see \fIecho\fR(1).
 .TP 8
 .B echotc \fR[\fB\-sv\fR] \fIarg\fR ... (+)
-Exercises the terminal capabilities (see \fIterminfo\fR(4)) in \fIargs\fR.
+Exercises the terminal capabilities (see \fIterminfo\fR(5)) in \fIargs\fR.
 For example, 'echotc home' sends the cursor to the home position,
 \&'echotc cm 3 10' sends it to column 3 and row 10, and
 \&'echotc ts 0; echo "This is a test."; echotc fs' prints "This is a test."
@@ -3315,7 +3315,7 @@ Sets the system execution path.  (TCF only)
 .TP 8
 .B settc \fIcap value \fR(+)
 Tells the shell to believe that the terminal capability \fIcap\fR
-(as defined in \fIterminfo\fR(4)) has the value \fIvalue\fR.
+(as defined in \fIterminfo\fR(5)) has the value \fIvalue\fR.
 No sanity checking is done.
 Concept terminal users may have to `settc xn no' to get proper
 wrapping at the rightmost column.
@@ -3368,7 +3368,7 @@ the current job.
 .B suspend
 Causes the shell to stop in its tracks, much as if it had
 been sent a stop signal with \fB^Z\fR.  This is most often used to
-stop shells started by \fIsu\fR(1M).
+stop shells started by \fIsu\fR(8).
 .PP
 .B switch (\fIstring\fB)
 .br
@@ -3402,12 +3402,12 @@ there is no default, execution continues after the \fIendsw\fR.
 .PD
 .TP 8
 .B telltc \fR(+)
-Lists the values of all terminal capabilities (see \fIterminfo\fR(4)).
+Lists the values of all terminal capabilities (see \fIterminfo\fR(5)).
 .TP 8
 .B termname \fR[\fIterminal type\fR] \fR(+)
 Tests if \fIterminal type\fR (or the current value of \fBTERM\fR if no
 \fIterminal type\fR is given) has an entry in the hosts
-terminfo(4) database. Prints the terminal type to stdout and returns 0
+terminfo(5) database. Prints the terminal type to stdout and returns 0
 if an entry is present otherwise returns 1.
 .TP 8
 .B time \fR[\fIcommand\fR]
@@ -4741,7 +4741,7 @@ Equivalent to the \fBafsuser\fR shell variable.
 The number of columns in the terminal.  See \fBTerminal management\fR.
 .TP 8
 .B DISPLAY
-Used by X Window System (see \fIX\fR(5)).
+Used by X Window System (see \fIX\fR(7)).
 If set, the shell does not set \fBautologout\fR (q.v.).
 .TP 8
 .B EDITOR
@@ -5200,10 +5200,10 @@ an argument list.
 To detect looping, the shell restricts the number of \fIalias\fR
 substitutions on a single line to 20.
 .SH "SEE ALSO"
-csh(1), emacs(1), ls(1), newgrp(1), sh(1), stty(1), su(1M),
-tset(1B), vi(1), X(5), access(2), execve(2), fork(2), killpg(3C),
+csh(1), emacs(1), ls(1), newgrp(1), sh(1), stty(1), su(8),
+tset(1B), vi(1), X(7), access(2), execve(2), fork(2), killpg(3C),
 pipe(2), setrlimit(2), sigvec(3UCB), stat(2), umask(2), vfork(2), wait(2),
-malloc(3C), setlocale(3C), tty(7D), a.out(4), terminfo(4), environ(5),
+malloc(3C), setlocale(3C), tty(7D), a.out(5), terminfo(5), environ(7),
 termio(7I), Introduction to the C Shell
 .SH VERSION
 This manual documents tcsh 6.18.01 (Astron) 2012-02-14.
