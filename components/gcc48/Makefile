@@ -132,6 +132,17 @@ COMPONENT_PRE_TEST_ACTION = ulimit -Ss 16384
 COMPONENT_TEST_ARGS = -k -i
 COMPONENT_TEST_TARGETS = check check-target
 
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s|\(Test Run By\).*|\1|" ' \
+	'-e "/\(Missing header fix: \).*/d" ' \
+	'-e "/\(\\*\\*\\* complex.h\).*/d" ' \
+	'-e "/\(\\*\\*\\* math.h\).*/d" ' \
+	'-e "/\(\\*\\*\\* stdio.h\).*/d" '
+
+# Master test results are different between x86 and SPARC.
+COMPONENT_TEST_MASTER = \
+	$(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH)-$(BITS).master
+
 test:	$(TEST_32)
 
 system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
