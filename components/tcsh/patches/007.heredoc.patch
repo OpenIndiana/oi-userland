@@ -1,0 +1,19 @@
+Developed in-house but accepted upstream.
+
+--- tcsh-6.18.01/sh.sem.c.orig	Sat Oct 31 10:58:21 2015
++++ tcsh-6.18.01/sh.sem.c	Sat Oct 31 10:59:42 2015
+@@ -212,8 +212,14 @@
+ 	 * If noexec then this is all we do.
+ 	 */
+ 	if (t->t_dflg & F_READ) {
++	    int	old_pintr_disabled;
++	    
+ 	    xclose(0);
++	    if (setintr)
++	        pintr_push_enable(&old_pintr_disabled);
+ 	    heredoc(t->t_dlef);
++	    if (setintr)
++	        cleanup_until(&old_pintr_disabled);
+ 	    if (noexec)
+ 		xclose(0);
+ 	}
