@@ -35,9 +35,9 @@ include ../../make-rules/ips.mk
 
 CLEAN_PATHS +=  package.xml
 
-PHP_PREFIX=/usr/php/5.5
-PHP_SYSCONFDIR=/etc/php/5.5
-PHP_DATADIR=/var/php/5.5
+PHP_PREFIX=/usr/php/5.6
+PHP_SYSCONFDIR=/etc/php/5.6
+PHP_DATADIR=/var/php/5.6
 
 CONFIGURE_OPTIONS      =	--prefix=$(PHP_PREFIX)
 CONFIGURE_OPTIONS.32  +=	--bindir=$(PHP_PREFIX)/bin

@@ -22,12 +22,13 @@
 #
 include ../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		xdebug
-COMPONENT_VERSION=	2.3.3
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_NAME=		php-5_6-ext-memcached
+COMPONENT_VERSION=	2.2.0
+MEMCACHED_COMMIT=	37069e18ad399a8cc03d5fe9757e1481814ecb44
+COMPONENT_SRC=		memcached-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
-COMPONENT_ARCHIVE_HASH=	sha256:b27bd09b23136d242dbc94f4503c98f012a521d5597002c9d463a63c6b0cdfe3
-COMPONENT_ARCHIVE_URL=	http://pecl.php.net/get/$(COMPONENT_SRC).tgz
+COMPONENT_ARCHIVE_HASH=	sha256:17b9600f6d4c807f23a3f5c45fcd8775ca2e61d6eda70370af2bef4c6e159f58
+COMPONENT_ARCHIVE_URL=	http://pecl.php.net/get/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
@@ -35,9 +36,9 @@ include ../../make-rules/ips.mk
 
 CLEAN_PATHS +=  package.xml
 
-PHP_PREFIX=/usr/php/5.5
-PHP_SYSCONFDIR=/etc/php/5.5
-PHP_DATADIR=/var/php/5.5
+PHP_PREFIX=/usr/php/5.6
+PHP_SYSCONFDIR=/etc/php/5.6
+PHP_DATADIR=/var/php/5.6
 
 CONFIGURE_OPTIONS      =	--prefix=$(PHP_PREFIX)
 CONFIGURE_OPTIONS.32  +=	--bindir=$(PHP_PREFIX)/bin
@@ -52,7 +53,7 @@ CONFIGURE_OPTIONS     +=	--includedir=$(PHP_PREFIX)/include
 CONFIGURE_OPTIONS     +=	--sysconfdir=$(PHP_SYSCONFDIR)
 CONFIGURE_OPTIONS     +=	--datadir=$(PHP_DATADIR)
 CONFIGURE_OPTIONS     +=	--mandir=$(PHP_PREFIX)/share/man
-CONFIGURE_OPTIONS     +=        CPPFLAGS="$(CPPFLAGS)"
+CONFIGURE_OPTIONS     +=	--disable-memcached-sasl
 
 CONFIGURE_OPTIONS.64  +=	--build=x86_64-pc-solaris2.10
 CONFIGURE_OPTIONS.32  +=	--with-php-config=$(PHP_PREFIX)/bin/php-config
@@ -61,9 +62,10 @@ CONFIGURE_OPTIONS.64  +=	--with-php-config=$(PHP_PREFIX)/bin/amd64/php-config
 CONFIGURE_OPTIONS     +=	$(CONFIGURE_OPTIONS.$(BITS))
 
 CFLAGS                +=	-I/usr/include -I$(PHP_PREFIX)/include
-CPPFLAGS              +=	$(CFLAGS) -DNAME_MAX=1024
+CPPFLAGS              +=	$(CFLAGS)
 LDFLAGS.32            +=	-L$(PHP_PREFIX)/lib -R$(PHP_PREFIX)/lib
 LDFLAGS.64            +=	-L$(PHP_PREFIX)/lib/$(MACH64) -R$(PHP_PREFIX)/lib/$(MACH64)
+LDFLAGS               +=	$(LDFLAGS.$(BITS))
 
 CONFIGURE_SCRIPT       =	$(@D)/configure
 
