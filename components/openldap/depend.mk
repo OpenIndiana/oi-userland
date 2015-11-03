@@ -1,1 +1,1 @@
-openldap:      libsasl
+openldap:      cyrus-sasl
