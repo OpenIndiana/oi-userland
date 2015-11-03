@@ -99,8 +99,12 @@ COMPONENT_POST_INSTALL_ACTION = \
 
 # It's also nice to test python 3.4 modules.
 COMPONENT_POST_TEST_ACTION = \
-    ([ $(BITS) -eq 64 ] && (cd $(@D)/python3.4 ; \
-     $(GMAKE) $(COMPONENT_TEST_ARGS) test))
+    ( if [ $(BITS) -eq 64 ]; then \
+	cd $(@D)/python3.4 ; \
+	$(GMAKE) $(COMPONENT_TEST_ARGS) test ; \
+     else \
+        true ; \
+     fi )
 
 # We have patched our 64 bit python so it will search for modules only in
 # '64/' directories. Now we need to provide one. Otherwise python will
