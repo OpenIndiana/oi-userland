@@ -48,24 +48,14 @@ CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-# common targets
 configure:	$(CONFIGURE_64)
 
 build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
 
-test:		$(TEST_64)
+test:		$(NO_TESTS)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
-REQUIRED_PACKAGES += system/library
-# Auto-generated contents below.  Please manually verify and remove this comment
-
-REQUIRED_PACKAGES += system/library
-# Auto-generated contents below.  Please manually verify and remove this comment
-
-REQUIRED_PACKAGES += system/library
-# Auto-generated contents below.  Please manually verify and remove this comment
+system-test:    $(NO_TESTS)
 
 REQUIRED_PACKAGES += system/library

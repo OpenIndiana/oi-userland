@@ -60,6 +60,18 @@ CONFIGURE_OPTIONS  +=           --enable-threading
 CONFIGURE_OPTIONS  +=           --enable-posix-sem
 CONFIGURE_OPTIONS  +=           --with-pic
 
+COMPONENT_TEST_MASTER =	$(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+# Strip compilation lines from test output
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s|^.*$(CC).*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^.*$(CXX).*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^.*source=.*libtool=no.*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^.*DEPDIR=.deps.*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^config.status: .*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^make.*: Leaving directory.*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^make.*: Entering directory.*$$|XXX_CC_XXX|g" ' \
+	'-e "/^XXX_CC_XXX$$/d" '
+
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 configure:	$(CONFIGURE_32_and_64)

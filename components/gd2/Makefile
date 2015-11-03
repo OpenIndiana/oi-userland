@@ -71,6 +71,14 @@ COMPONENT_TEST_CMD = \
 	(cd $(@D)/tests; gmake); \
 	ctest .
 COMPONENT_TEST_TARGETS =
+COMPONENT_TEST_MASTER =	$(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s|\(^.*32 Test.*Passed\).*|\1|" ' \
+	'-e "s|\(^.*32 Test.*Failed\).*|\1|" ' \
+	'-e "s|\(^Total Test time (real) =\).*|\1|" ' \
+	'-e "s|^make.*: Leaving directory.*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^make.*: Entering directory.*$$|XXX_CC_XXX|g" ' \
+	'-e "/^XXX_CC_XXX$$/d" '
 
 ASLR_MODE = $(ASLR_ENABLE)
 

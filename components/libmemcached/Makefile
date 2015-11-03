@@ -75,9 +75,15 @@ ASLR_MODE = $(ASLR_ENABLE)
 
 COMPONENT_INSTALL_ENV +=	DESTDIR=$(PROTO_DIR)
 
+COMPONENT_TEST_ARGS +=		-k -i
+COMPONENT_TEST_DIR =		$(@D)/tests
 COMPONENT_TEST_TARGETS =	test
-
-# common targets
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s|\(bash: line 1:\).*|\1|" ' \
+	'-e "s|\(Testing \)\(.*\)\([0-9].[0-9][0-9][0-9]\)\(.*$$\)|\1\2\4|" ' \
+	'-e "s|^make.*: Leaving directory.*$$|XXX_REMOVE_XXX|g" ' \
+	'-e "s|^make.*: Entering directory.*$$|XXX_REMOVE_XXX|g" ' \
+	'-e "/^XXX_REMOVE_XXX$$/d" '
 
 configure:	$(CONFIGURE_32_and_64)
 
