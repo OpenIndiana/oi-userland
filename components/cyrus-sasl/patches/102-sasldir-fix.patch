@@ -1,0 +1,55 @@
+Developed in-house at Oracle 
+sasl install destination for plugins needs to be configurable
+Intended to go upstream
+
+diff -rupN old/configure.in new/configure.in
+--- old/configure.in	2015-01-16 16:06:51.953695234 -0800
++++ new/configure.in	2015-01-16 16:09:35.970052678 -0800
+@@ -1019,6 +1019,12 @@ AC_ARG_WITH(configdir, [   --with-config
+ AC_DEFINE_UNQUOTED(CONFIGDIR, "$configdir", [Runtime config file location])
+ AC_SUBST(configdir)
+ 
++AC_ARG_WITH(sasldir, [  --with-sasldir=DIR    set the directory where plugins
++	     will be installed, possibly 32 vs 64 [[/usr/lib/sasl]] ],
++	     sasldir=$withval, sasldir=/usr/lib/sasl)
++AC_DEFINE_UNQUOTED(SASLDIR, "$sasldir", [Installtime plugin location])
++AC_SUBST(sasldir)
++
+ dnl look for rc4 libraries. we accept the CMU one or one from openSSL
+ AC_ARG_WITH(rc4, [  --with-rc4              use internal rc4 routines [[yes]] ],
+ 	with_rc4=$withval,
+diff -rupN old/Makefile.am new/Makefile.am
+--- old/Makefile.am	2015-01-16 16:11:08.980698791 -0800
++++ new/Makefile.am	2015-01-16 16:16:28.670281716 -0800
+@@ -83,14 +83,15 @@ dist-hook:
+ 
+ framedir = /Library/Frameworks/SASL2.framework
+ install-exec-local: $(INSTALLOSX)
+-	@if test "$(plugindir)" != "$(prefix)/lib/sasl2"; then \
++	@if test "$(plugindir)" != "$(sasldir)"; then \
+ 	  echo "********************************************************"; \
+ 	  echo "* WARNING:"; \
+-	  echo "* Plugins are being installed into $(prefix)/lib/sasl2,"; \
++	  echo "* Plugins are being installed into $(sasldir),"; \
+ 	  echo "* but the library will look for them in $(plugindir)."; \
+-	  echo "* You need to make sure that the plugins will eventually"; \
++	  echo "* If this is not deliberate (for 32/64 bits), make " ; \
++	  echo "* sure that the plugins will eventually"; \
+ 	  echo "* be in $(plugindir) -- the easiest way is to make a"; \
+-	  echo "* symbolic link from $(plugindir) to $(prefix)/lib/sasl2,"; \
++	  echo "* symbolic link from $(plugindir) to $(sasldir),"; \
+ 	  echo "* but this may not be appropriate for your site, so this"; \
+ 	  echo "* installation procedure won't do it for you."; \
+ 	  echo "*"; \
+diff -rupN old/plugins/Makefile.am new/plugins/Makefile.am
+--- old/plugins/Makefile.am	2015-01-16 16:17:16.113465999 -0800
++++ new/plugins/Makefile.am	2015-01-16 16:18:02.347850991 -0800
+@@ -63,7 +63,7 @@ plugindir = @plugindir@
+ 
+ common_sources = plugin_common.c plugin_common.h
+ 
+-sasldir = $(prefix)/lib/sasl2
++sasldir = @sasldir@
+ sasl_LTLIBRARIES = @SASL_MECHS@
+ EXTRA_LTLIBRARIES = libplain.la libanonymous.la libkerberos4.la libcrammd5.la \
+ 	libgs2.la libgssapiv2.la libdigestmd5.la liblogin.la libsrp.la libotp.la \

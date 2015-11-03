@@ -1,0 +1,16 @@
+Developed in-house at Oracle 
+incorrect function definition for do_request in ipc_doors.c
+Intended to go upstream
+
+diff -rupN old/saslauthd/ipc_doors.c new/saslauthd/ipc_doors.c
+--- old/saslauthd/ipc_doors.c	2015-02-09 15:20:57.830073308 -0800
++++ new/saslauthd/ipc_doors.c	2015-02-09 15:23:22.530689631 -0800
+@@ -209,7 +209,7 @@ void ipc_cleanup() {
+  * do_auth() back in saslauthd-main.c, then send the 
+  * result back through the door.
+  **************************************************************/
+-void do_request(void *cookie, char *data, size_t datasize, door_desc_t *dp, size_t ndesc) {
++void do_request(void *cookie, char *data, size_t datasize, door_desc_t *dp, uint_t ndesc) {
+ 	unsigned short		count = 0;                 /* input/output data byte count           */
+ 	char			*response = NULL;          /* response to send to the client         */
+ 	char			response_buff[1024];       /* temporary response buffer              */

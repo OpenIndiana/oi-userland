@@ -1,0 +1,29 @@
+Developed in-house at Oracle 
+libtool.m4 overrides configuration for --no-verify
+
+This will probably not be welcomed upstream, though we can try. 
+
+diff -rupN old/config/libtool.m4 new/config/libtool.m4
+--- old/config/libtool.m4	2015-01-16 16:29:56.329848513 -0800
++++ new/config/libtool.m4	2015-01-16 17:46:44.950680511 -0800
+@@ -34,7 +34,7 @@ LD="$LD" LDFLAGS="$LDFLAGS" LIBS="$LIBS"
+ LN_S="$LN_S" NM="$NM" RANLIB="$RANLIB" \
+ DLLTOOL="$DLLTOOL" AS="$AS" OBJDUMP="$OBJDUMP" \
+ ${CONFIG_SHELL-/bin/sh} $ac_aux_dir/ltconfig --no-reexec \
+-$libtool_flags --no-verify $ac_aux_dir/ltmain.sh $lt_target \
++$libtool_flags  $ac_aux_dir/ltmain.sh $lt_target \
+ || AC_MSG_ERROR([libtool configure failed])
+ 
+ # Reload cache, that may have been modified by ltconfig
+diff -rupN old/saslauthd/config/libtool.m4 new/saslauthd/config/libtool.m4
+--- old/saslauthd/config/libtool.m4	2015-01-16 16:30:18.093408947 -0800
++++ new/saslauthd/config/libtool.m4	2015-01-16 17:47:29.492859873 -0800
+@@ -34,7 +34,7 @@ LD="$LD" LDFLAGS="$LDFLAGS" LIBS="$LIBS"
+ LN_S="$LN_S" NM="$NM" RANLIB="$RANLIB" \
+ DLLTOOL="$DLLTOOL" AS="$AS" OBJDUMP="$OBJDUMP" \
+ ${CONFIG_SHELL-/bin/sh} $ac_aux_dir/ltconfig --no-reexec \
+-$libtool_flags --no-verify $ac_aux_dir/ltmain.sh $lt_target \
++$libtool_flags $ac_aux_dir/ltmain.sh $lt_target \
+ || AC_MSG_ERROR([libtool configure failed])
+ 
+ # Reload cache, that may have been modified by ltconfig

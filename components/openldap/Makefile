@@ -98,6 +98,31 @@ COMPONENT_TEST_ARGS += -e
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
 
+#
+# OpenLDAP must be built with cyrus-sasl out of the gate instead of the
+# installed copy.
+#
+CYRUS_SASL_ROOT = $(WS_COMPONENTS)/cyrus-sasl/build/prototype/$(MACH)
+LDFLAGS.32 +="-L$(CYRUS_SASL_ROOT)/usr/lib"
+LDFLAGS.64 +="-L$(CYRUS_SASL_ROOT)/usr/lib/$(MACH64)"
+LDFLAGS +=$(LDFLAGS.$(BITS))
+CPPFLAGS +="-I$(CYRUS_SASL_ROOT)/usr/include"
+CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
+CONFIGURE_ENV += LDFLAGS="$(LDFLAGS)"
+# make sure that we don't add the cyrus-sasl proto area to the RUNPATH
+LD_UNSET.32="-R$(CYRUS_SASL_ROOT)/usr/lib"
+LD_UNSET.64="-R$(CYRUS_SASL_ROOT)/usr/lib/$(MACH64)"
+LD_UNSET += $(LD_UNSET.$(BITS))
+COMPONENT_BUILD_ENV += LD_UNSET="$(LD_UNSET)"
+COMPONENT_INSTALL_ENV += LD_UNSET="$(LD_UNSET)"
+
+# special targets due to dependency on cyrus-sasl
+../cyrus-sasl/build/%/.installed:
+	(cd ../cyrus-sasl && $(GMAKE) install)
+
+$(CONFIGURE_32):       ../cyrus-sasl/build/$(MACH32)/.installed
+$(CONFIGURE_64):       ../cyrus-sasl/build/$(MACH64)/.installed
+
 # common targets
 configure:	$(CONFIGURE_32_and_64)
 

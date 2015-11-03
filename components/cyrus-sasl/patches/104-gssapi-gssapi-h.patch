@@ -1,0 +1,37 @@
+Developed in-house at Oracle 
+sasl adjustment for location of gssapi.h incorrectly implemented.
+Intended to go upstream
+
+diff -rupN old/cmulocal/sasl2.m4 new/cmulocal/sasl2.m4
+--- old/cmulocal/sasl2.m4	2015-01-16 15:18:02.047946282 -0800
++++ new/cmulocal/sasl2.m4	2015-01-16 15:31:22.716646757 -0800
+@@ -73,10 +73,12 @@ if test "$gssapi" != no; then
+ 
+ fi
+ 
+-if test "$gssapi" != no; then
+-  if test "$ac_cv_header_gssapi_h" = "yes" -o "$ac_cv_header_gssapi_gssapi_h" = "yes"; then
+-    AC_DEFINE(HAVE_GSSAPI_H,,[Define if you have the gssapi.h header file])
+-  fi
++ if test "$gssapi" != no; then
++    if test "$ac_cv_header_gssapi_h" = "yes" ; then
++      AC_DEFINE(HAVE_GSSAPI_H,,[Define if you have the gssapi.h header file])
++    elif test "$ac_cv_header_gssapi_gssapi_h" = "yes"; then
++      AC_DEFINE(HAVE_GSSAPI_GSSAPI_H,,[Define for gssapi/gssapi.h header file])
++    fi
+ 
+   # We need to find out which gssapi implementation we are
+   # using. Supported alternatives are: MIT Kerberos 5,
+diff -rupN old/config.h.in new/config.h.in
+--- old/config.h.in	2015-01-16 15:14:54.941649896 -0800
++++ new/config.h.in	2015-01-16 15:16:16.884212684 -0800
+@@ -122,6 +122,9 @@
+ /* Define if you have the gssapi.h header file */
+ #undef HAVE_GSSAPI_H
+ 
++/* Define if you have the gssapi/gssapi.h header file */
++#undef HAVE_GSSAPI_GSSAPI_H
++
+ /* Define to 1 if you have the `gsskrb5_register_acceptor_identity' function.
+    */
+ #undef HAVE_GSSKRB5_REGISTER_ACCEPTOR_IDENTITY

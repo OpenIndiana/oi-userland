@@ -1,0 +1,19 @@
+Developed in-house at Oracle 
+ifdef sun for gethostname in saslutil.c is obsolete
+Intended to go upstream
+
+diff -ru old/lib/saslutil.c new/lib/saslutil.c
+--- old/lib/saslutil.c	2012-10-12 07:05:48.000000000 -0700
++++ new/lib/saslutil.c	2014-09-15 17:16:31.437610001 -0700
+@@ -80,11 +80,6 @@
+  * sasl_erasebuffer
+  */
+ 
+-#ifdef sun
+-/* gotta define gethostname ourselves on suns */
+-extern int gethostname(char *, int);
+-#endif
+-
+ char *encode_table;
+ char *decode_table;
+ 
