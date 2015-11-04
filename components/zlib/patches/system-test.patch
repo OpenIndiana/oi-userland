@@ -1,0 +1,20 @@
+Patch origin: in-house
+Patch status: Solaris-specific; not suitable for upstream
+
+Allows to test minigzip with installed version of zlib.
+
+--- zlib-1.2.8/Makefile.in
++++ zlib-1.2.8/Makefile.in
+@@ -92,9 +92,11 @@
+ 	rm -f $$TMPST
+ 
+ testshared: shared
+-	@LD_LIBRARY_PATH=`pwd`:$(LD_LIBRARY_PATH) ; export LD_LIBRARY_PATH; \
++	@if test -z $(SYSTEM_TEST); then \
++	LD_LIBRARY_PATH=`pwd`:$(LD_LIBRARY_PATH) ; export LD_LIBRARY_PATH; \
+ 	LD_LIBRARYN32_PATH=`pwd`:$(LD_LIBRARYN32_PATH) ; export LD_LIBRARYN32_PATH; \
+ 	DYLD_LIBRARY_PATH=`pwd`:$(DYLD_LIBRARY_PATH) ; export DYLD_LIBRARY_PATH; \
++	fi; \
+ 	SHLIB_PATH=`pwd`:$(SHLIB_PATH) ; export SHLIB_PATH; \
+ 	TMPSH=tmpsh_$$; \
+ 	if echo hello world | ./minigzipsh | ./minigzipsh -d && ./examplesh $$TMPSH; then \

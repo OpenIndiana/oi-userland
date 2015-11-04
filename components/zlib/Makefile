@@ -106,6 +106,12 @@ $(BUILD_DIR)/sparc%/.built: COMPONENT_PRE_BUILD_ACTION = ( \
 
 COMPONENT_TEST_TARGETS = test
 
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
+COMPONENT_TEST_TRANSFORMS += '-e "/^zlib version/s/0x..$$/0xXX/" '
+
+COMPONENT_SYSTEM_TEST_TARGETS= test SYSTEM_TEST=1
+
 configure:	$(CONFIGURE_32_and_64)
 
 build:		$(BUILD_32_and_64)
@@ -114,7 +120,7 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+system-test:    $(BUILD_32_and_64) $(SYSTEM_TEST_32_and_64)
 
 clean::
 	$(RM) -r $(BUILD_DIR) $(PROTO_DIR) capabilities/*/*/*.o capabilities/*/$(MACH32)/*.s
