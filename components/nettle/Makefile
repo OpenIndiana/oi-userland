@@ -22,16 +22,16 @@
 #
 
 COMPONENT_NAME=		nettle
-COMPONENT_VERSION=	3.1
+COMPONENT_VERSION=	3.1.1
 COMPONENT_PROJECT_URL=	http://www.lysator.liu.se/~nisse/nettle/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:f6859d4ec88e70805590af9862b4b8c43a2d1fc7991df0a7a711b1e7ca9fc9d3
+    sha256:5fd4d25d64d8ddcb85d0d897572af73b05b4d163c6cc49438a5bfbb8ff293d4c
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/nettle/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/nettle
 
-TPNO=	22160
+TPNO=	23793
 
 include ../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/prep.mk
