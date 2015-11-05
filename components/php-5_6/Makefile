@@ -15,6 +15,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		php
 COMPONENT_VERSION=	5.6.15
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:bb2d4c226a4897b7c3659c2538a87aef7ec104f58f5ae930a263dd77fb8ebc40
@@ -36,6 +37,7 @@ PHP_SYSCONFDIR=/etc/php/5.6
 PHP_DATADIR=/var/php/5.6
 
 CFLAGS = $(CC_BITS) -D_POSIX_PTHREAD_SEMANTICS
+CPPFLAGS += -I/usr/include/openldap
 
 COMPONENT_PREP_ACTION =        ( cd $(@D) && autoconf )
 # Configure Options
@@ -177,6 +179,7 @@ CONFIGURE_ENV.32 +=     EXTENSION_DIR=$(PHP_PREFIX)/extensions
 CONFIGURE_ENV.64 +=     EXTENSION_DIR=$(PHP_PREFIX)/extensions/$(MACH64)
 CONFIGURE_ENV.32 +=     ICU_CONFIG=/usr/bin/icu-config
 CONFIGURE_ENV.64 +=     ICU_CONFIG=/usr/bin/amd64/icu-config
+CONFIGURE_ENV +=	CPPFLAGS="$(CPPFLAGS)"
 
 build:		$(BUILD_32_and_64) 
 
