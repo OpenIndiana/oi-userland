@@ -38,4 +38,3 @@ ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 configure build install test system-test:
 
-REQUIRED_PACKAGES += system/linker

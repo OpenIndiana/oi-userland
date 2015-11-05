@@ -209,5 +209,4 @@ REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += runtime/tk-8
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += system/linker
 REQUIRED_PACKAGES += x11/library/libx11

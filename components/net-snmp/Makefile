@@ -146,6 +146,5 @@ REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/pkcs11
-REQUIRED_PACKAGES += system/linker
 REQUIRED_PACKAGES += system/management/snmp/net-snmp
 REQUIRED_PACKAGES += system/network

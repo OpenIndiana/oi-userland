@@ -133,7 +133,6 @@ REQUIRED_PACKAGES += system/library/c++-runtime
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
 REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += system/linker
 REQUIRED_PACKAGES += web/php-56
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxcursor

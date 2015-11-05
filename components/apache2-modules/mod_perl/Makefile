@@ -106,6 +106,5 @@ REQUIRED_PACKAGES += runtime/perl-512
 REQUIRED_PACKAGES += runtime/perl-520
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += system/linker
 REQUIRED_PACKAGES += web/server/apache-22
 REQUIRED_PACKAGES += web/server/apache-24

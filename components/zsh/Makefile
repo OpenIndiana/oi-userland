@@ -116,4 +116,3 @@ REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += system/linker

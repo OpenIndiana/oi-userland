@@ -162,5 +162,4 @@ REQUIRED_PACKAGES += developer/parser/bison
 REQUIRED_PACKAGES += library/database/gdbm
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += system/linker
 REQUIRED_PACKAGES += text/groff/groff-core

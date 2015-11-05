@@ -977,6 +977,7 @@ REQUIRED_PACKAGES += package/pkg
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/linker
 REQUIRED_PACKAGES += text/gawk
 REQUIRED_PACKAGES += text/gnu-grep
 REQUIRED_PACKAGES += text/gnu-sed

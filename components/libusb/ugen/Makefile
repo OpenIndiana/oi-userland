@@ -60,4 +60,3 @@ system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
 REQUIRED_PACKAGES += system/io/usb
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/linker

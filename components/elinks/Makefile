@@ -93,5 +93,4 @@ REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/linker
 REQUIRED_PACKAGES += x11/library/libx11

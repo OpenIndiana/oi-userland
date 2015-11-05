@@ -96,4 +96,3 @@ REQUIRED_PACKAGES += library/security/libgpg-error
 REQUIRED_PACKAGES += library/security/libassuan
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/linker

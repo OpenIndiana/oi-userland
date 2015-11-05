@@ -99,5 +99,4 @@ REQUIRED_PACKAGES += system/library/libdaq
 REQUIRED_PACKAGES += system/library/libdnet
 REQUIRED_PACKAGES += system/library/libpcap
 REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += system/linker
 REQUIRED_PACKAGES += system/network

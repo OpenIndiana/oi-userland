@@ -124,4 +124,3 @@ RUN=run_std
 REQUIRED_PACKAGES += system/core-os
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/c++-runtime
-REQUIRED_PACKAGES += system/linker

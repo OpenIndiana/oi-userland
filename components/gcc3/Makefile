@@ -105,4 +105,3 @@ REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/gcc-3-runtime
 REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += system/linker

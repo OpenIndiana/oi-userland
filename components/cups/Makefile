@@ -115,4 +115,3 @@ REQUIRED_PACKAGES += system/library/c++-runtime
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/security/gss
-REQUIRED_PACKAGES += system/linker

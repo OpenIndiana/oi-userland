@@ -319,7 +319,6 @@ REQUIRED_PACKAGES += system/library/gcc-45-runtime
 REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
 REQUIRED_PACKAGES += system/library/security/crypto
 REQUIRED_PACKAGES += system/library/security/gss
-REQUIRED_PACKAGES += system/linker
 REQUIRED_PACKAGES += system/network
 REQUIRED_PACKAGES += system/network/avahi
 REQUIRED_PACKAGES += text/gawk

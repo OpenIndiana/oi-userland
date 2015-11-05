@@ -101,4 +101,3 @@ REQUIRED_PACKAGES += system/library/gcc-3-runtime
 REQUIRED_PACKAGES += system/library/gcc-45-runtime
 REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
 REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += system/linker

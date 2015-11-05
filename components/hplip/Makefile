@@ -149,5 +149,4 @@ REQUIRED_PACKAGES += system/library/c++-runtime
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/usb/libusb
-REQUIRED_PACKAGES += system/linker
 REQUIRED_PACKAGES += system/management/snmp/net-snmp

@@ -70,5 +70,4 @@ REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/linker
 

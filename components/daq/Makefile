@@ -69,4 +69,3 @@ REQUIRED_PACKAGES += developer/parser/bison
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libpcap
-REQUIRED_PACKAGES += system/linker

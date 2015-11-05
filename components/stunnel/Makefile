@@ -85,5 +85,4 @@ system-test:    $(NO_TESTS)
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += system/core-os
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/linker
 REQUIRED_PACKAGES += system/network
