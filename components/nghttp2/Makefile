@@ -36,6 +36,7 @@ include ../../make-rules/ips.mk
 
 CONFIGURE_OPTIONS += --disable-examples
 CONFIGURE_OPTIONS += --disable-python-bindings
+CONFIGURE_OPTIONS += --disable-app
 
 build: $(BUILD_32_and_64)
 
