@@ -68,6 +68,13 @@ PROTO_CONFDIR = $(PROTO_DIR)$(SASL_CONFDIR)
 include $(WS_TOP)/make-rules/prep.mk
 CONFIGURE_DEFAULT_DIRS=no
 include $(WS_TOP)/make-rules/configure.mk
+
+# Migrated from ON in S12, including stuff from system/header, so this
+# cannot be installed on an S11 box.
+ifeq ($(BUILD_TYPE), evaluation)
+PUBLISH_STAMP=
+endif
+
 include $(WS_TOP)/make-rules/ips.mk
 include $(WS_TOP)/make-rules/lint-libraries.mk
 

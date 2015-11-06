@@ -159,7 +159,6 @@ $(COMPONENT_DIRS):	$(WS_LOGS) setup FORCE
 INCORPORATE_WERROR ?= --Werror
 
 incorporation:
-	$(PKGREPO) refresh -s $(PKG_REPO)
 	$(WS_TOOLS)/userland-incorporator --repository $(PKG_REPO) \
           --version=0.$(OS_VERSION),$(BUILD_VERSION) -p $(PUBLISHER) \
 	  -c $(CONSOLIDATION) --destdir=$(WS_MACH) $(INCORPORATE_WERROR)
@@ -169,6 +168,7 @@ incorporation:
 	done
 
 publish:
+	$(PKGREPO) refresh -s $(PKG_REPO)
 # evaluation packages don't need to be incorporated
 ifneq ($(BUILD_TYPE), evaluation)
 	$(MAKE) incorporation

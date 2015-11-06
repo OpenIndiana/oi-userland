@@ -32,6 +32,13 @@ COMPONENT_ARCHIVE_URL=	http://hg.java.net/solaris-userland-gate/
 COMPONENT_BUGDB=	gate-stuff/userland
 
 include $(WS_MAKE_RULES)/prep.mk
+
+# This has a dependency on every REQUIRED_PACKAGE in Userland, some of which
+# are not available on S11.
+ifeq ($(BUILD_TYPE), evaluation)
+PUBLISH_STAMP=
+endif
+
 include $(WS_MAKE_RULES)/ips.mk
 
 $(WS_MACH)/requires.mk:
