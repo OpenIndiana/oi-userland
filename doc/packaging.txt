@@ -213,3 +213,80 @@ Renames
     our gatekeeper will make you do a follow-up push to fix this.
 
 # vi:set fdm=marker expandtab ts=4:
+
+=============================
+Component EOF (End Of Feature) 
+=============================
+This is a brief description on how to remove a component from Userland for
+an EOF.
+
+Deleting the Component
+----------------------
+
+At some point, you will need to do a "hg remove" of the component's directory.
+This can be done before or after you make the necessary entry in the
+components/meta-packages/history/history file.  In this file you will see plenty
+of examples like this:
+
+backup/areca@7.1-5.12.0.0.0.85.0
+
+You will need to make sure you have the correct package name, version, and
+build you are targeting for the EOF for your new entry.  Also check for an old
+SUNW entry at the top of the file.  If there is one you will need to change
+this to match the targeted build.  So something like this:
+
+SUNWareca@7.1,5.11-0.133 backup/areca@7.1-0.133
+
+Should be changed to:
+
+SUNWareca@7.1-5.12.0.0.0.85.0
+
+Remember that the package may have had numerous names in its history.
+Generally the way to find this is by using:
+
+    pkg search -o search.match_type,pkg.name depend::<package name>
+
+First with the package to be EOF'ed, and then examining each of the dependent
+packages. If there are require dependencies on any of the dependents, then the
+latter should be examined to see if it need to be either EOF'ed at the same
+time, or at least updated to remove the dependency you're trying to EOF.
+
+Check to see if the package you are removing is referenced by a group package
+(pkg list -n 'group/*').  See the 'EOFs and Removals' and 'Group Packages'
+sections in /usr/src/pkg/README.pkg from the on-gate for further details. 
+
+Testing
+-------
+
+To test your changes the first thing you will need to do is to invoke
+'gmake publish' from the components/meta-packages/history directory or at the
+top level (a full Userland build) if you are removing multiple components.  Once
+this is complete you will need to setup a client with the EOF package(s)
+installed.
+
+Then perform the following steps:
+
+1. # pkg set-publisher \
+     -P -p file:///net/strax/builds/your_name/your_dir/i386/repo
+
+
+If you are removing just a single component:
+
+2. pkg change-facet 'facet.version-lock.<eof_package_name_goes_here>=false'
+3. pkg update pkg://nightly/<eof_package_name_goes_here>
+
+After the update the component package should be removed from the test system.
+
+
+If you are removing multiple components:
+
+2. pkg change-facet \
+     version-lock.consolidation/userland/userland-incorporation=false
+3. pkg update pkg://nightly/consolidation/userland/userland-incorporation
+
+After the update the EOF component packages should be removed from the test
+system.
+
+For languages and anything else that has modules or is otherwise part of the
+Userland build environment you will need to do a full build, of both ISAs, on
+the test machines you just updated.
