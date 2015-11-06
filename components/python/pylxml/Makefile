@@ -50,6 +50,16 @@ ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 COMPONENT_TEST_ARGS=	test
 COMPONENT_TEST_CMD=	$(MAKE) -i
 COMPONENT_TEST_DIR=	$(SOURCE_DIR)
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "/\(cc\).*/d" ' \
+	'-e "/\(PYTHONPATH\).*/d" ' \
+	'-e "/\(Doctest\).*/d" ' \
+	'-e "/\(Building\).*/d" ' \
+	'-e "/\(building\).*/d" ' \
+        '-e "/\(copying\).*/d" ' \
+	'-e "/\(creating\).*/d" ' \
+	'-e "s|\(Ran 1368 tests\).*|\1|" '
 
 # common targets
 build:		$(BUILD_32_and_64)
