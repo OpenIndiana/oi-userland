@@ -83,8 +83,6 @@ $(HPIJS_VARIANT)/.configured: CONFIGURE_OPTIONS += --disable-doc-build
 $(HPIJS_VARIANT)/.configured: CONFIGURE_OPTIONS += --enable-hpijs-only-build
 $(HPIJS_VARIANT)/.configured: CONFIGURE_OPTIONS += --enable-hpijs-install
 
-install: COMPONENT_INSTALL_ENV += halpredir=/etc/hal/fdi/preprobe/10osvendor
-
 COMPONENT_INSTALL_ARGS += -e
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
