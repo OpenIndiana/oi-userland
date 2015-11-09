@@ -23,12 +23,12 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =        curl
-COMPONENT_VERSION=      7.42.1
+COMPONENT_VERSION=      7.45.0
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  http://curl.haxx.se/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:4fc504f4fac56d091162707941d06c72a4222fc6fa48ca8193e44ee74baf079c
+    sha256:02c78c8060d587422e2826f622c729189b56084bba365140f13af3d402b6cb6b
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/curl
 
@@ -69,6 +69,7 @@ CONFIGURE_OPTIONS += --with-ca-path=/etc/openssl/certs
 CONFIGURE_OPTIONS += --with-zlib=/usr --with-libidn=/usr
 CONFIGURE_OPTIONS += --with-pic
 CONFIGURE_OPTIONS += --with-libssh2
+CONFIGURE_OPTIONS += --without-librtmp
 CONFIGURE_OPTIONS += "curl_disallow_getifaddrs=yes"
 
 LINT_FLAGS += -I$(SOURCE_DIR)/include
