@@ -26,17 +26,16 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ncftp
-COMPONENT_VERSION=	3.2.3
+COMPONENT_VERSION=	3.2.5
 COMPONENT_PROJECT_URL=	http://www.ncftp.com/ncftp/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-src.tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:46f4f2fbde40187a164bdd0fe3d37d2d85d36445e56f2bf08fc814ee8dcba510
-# though 3.2.3 is mysteriously missing from the upstream site, it would be here.
-COMPONENT_ARCHIVE_URL=	ftp://ftp.ncftp.com/ncftp/older_versions/$(COMPONENT_ARCHIVE)
+    sha256:b4ebe2415761a5137cd1d313c8fc1352f26d8963cc9e9e354e29720aa2089d42
+COMPONENT_ARCHIVE_URL=	ftp://ftp.ncftp.com/ncftp/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/ncftp-client
 
-TPNO=			9255
+TPNO=			24893
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
