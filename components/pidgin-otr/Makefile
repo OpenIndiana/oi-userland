@@ -16,6 +16,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pidgin-otr
 COMPONENT_VERSION=	4.0.0
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.cypherpunks.ca/otr/
 COMPONENT_SUMMARY=	Off-the-Record (OTR) Messaging plugin for Pidgin
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
