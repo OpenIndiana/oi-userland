@@ -21,24 +21,33 @@
 
 #
 # Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
+# Modified by Aurelien Larcher, 2015.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		automake
-COMPONENT_VERSION=	1.11.6
+COMPONENT_VERSION=	1.15
+COMPONENT_FMRI=		developer/build/automake-115
+COMPONENT_CLASSIFICATION=Development/GNU
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:53dbf1945401c43f4ce19c1971baecdbf8bc32e0f37fa3f49fe7b6992d0d2030
+    sha256:7946e945a96e28152ba5a6beb0625ca715c6e32ac55f2e353ef54def0c8ed924
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/automake/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/automake
+COMPONENT_SUMMARY=	A Makefile generator
+COMPONENT_PROJECT_URL=  http://www.gnu.org/software/automake/ 
+COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
+COMPONENT_LICENSE=	GPLv2 FDLv1.3
+
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-CONFIGURE_OPTIONS  +=	--docdir=$(CONFIGURE_PREFIX)/share/doc/automake-1.11
+CONFIGURE_OPTIONS  +=	--program-transform-name=s/$$/-$(COMPONENT_VERSION)/
+CONFIGURE_OPTIONS  +=	--docdir=$(CONFIGURE_PREFIX)/share/doc/$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 CONFIGURE_OPTIONS  +=	--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=	PERL="$(PERL)"
 
