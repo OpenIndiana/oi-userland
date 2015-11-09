@@ -27,6 +27,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		popt
 COMPONENT_VERSION=	1.7
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://freecode.com/projects/popt/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -40,12 +41,12 @@ include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
 COMPONENT_PREP_ACTION = \
-        (cd $(@D) ; \
-	$(TOUCH) config.rpath ; \
-	libtoolize -f ; \
-	aclocal -I . ; \
-	autoconf ; \
-	automake -a -c -f )
+        (cd $(@D) && \
+	$(TOUCH) config.rpath && \
+	libtoolize -f && \
+	aclocal -I . && \
+	automake -a -c -f && \
+	autoconf )
 
 # Needed to get "gmake test" to work.
 COMPONENT_PRE_CONFIGURE_ACTION = \
