@@ -172,6 +172,8 @@ Puppet::Type.newtype(:ldap) do
         
         def insync?(is)
             is = [] if is == :absent or is.nil?
+            is.collect! {|x| x.to_s}
+            self.should.collect! {|x| x.to_s}
             is.sort == self.should.sort
         end
 
