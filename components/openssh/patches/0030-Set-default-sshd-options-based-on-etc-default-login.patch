@@ -1,0 +1,147 @@
+From cc91116e7676f57dd2afa3a8aa18dbd661e90e87 Mon Sep 17 00:00:00 2001
+From: Alex Wilson <alex.wilson@joyent.com>
+Date: Mon, 24 Aug 2015 18:57:27 -0700
+Subject: [PATCH 30/30] Set default sshd options based on /etc/default/login
+
+---
+ pathnames.h   |  1 +
+ servconf.c    | 61 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ sshd_config.4 | 17 +++++++++++++++--
+ 3 files changed, 77 insertions(+), 2 deletions(-)
+
+diff --git a/pathnames.h b/pathnames.h
+index 0b2281b..11c9bf6 100644
+--- a/pathnames.h
++++ b/pathnames.h
+@@ -46,6 +46,7 @@
+ #define _PATH_HOST_ED25519_KEY_FILE	SSHDIR "/ssh_host_ed25519_key"
+ #define _PATH_HOST_RSA_KEY_FILE		SSHDIR "/ssh_host_rsa_key"
+ #define _PATH_DH_MODULI			SSHDIR "/moduli"
++#define _PATH_DEFAULT_LOGIN		ETCDIR "/default/login"
+ /* Backwards compatibility */
+ #define _PATH_DH_PRIMES			SSHDIR "/primes"
+ 
+diff --git a/servconf.c b/servconf.c
+index a0edff2..f8122aa 100644
+--- a/servconf.c
++++ b/servconf.c
+@@ -30,6 +30,7 @@
+ #include <unistd.h>
+ #include <limits.h>
+ #include <stdarg.h>
++#include <deflt.h>
+ #include <errno.h>
+ #ifdef HAVE_UTIL_H
+ #include <util.h>
+@@ -192,6 +193,64 @@ option_clear_or_none(const char *o)
+ 	return o == NULL || strcasecmp(o, "none") == 0;
+ }
+ 
++/*
++ * Reads /etc/default/login and defaults several ServerOptions:
++ *
++ * PermitRootLogin
++ * PermitEmptyPasswords
++ * LoginGraceTime
++ *
++ * CONSOLE=*      -> PermitRootLogin=without-password
++ * #CONSOLE=*     -> PermitRootLogin=yes
++ *
++ * PASSREQ=YES    -> PermitEmptyPasswords=no
++ * PASSREQ=NO     -> PermitEmptyPasswords=yes
++ * #PASSREQ=*     -> PermitEmptyPasswords=no
++ *
++ * TIMEOUT=<secs> -> LoginGraceTime=<secs>
++ * #TIMEOUT=<secs> -> LoginGraceTime=300
++ */
++static void
++deflt_fill_default_server_options(ServerOptions *options)
++{
++	int	flags;
++	char	*ptr;
++
++	if (defopen(_PATH_DEFAULT_LOGIN))
++		return;
++
++	/* Ignore case */
++	flags = defcntl(DC_GETFLAGS, 0);
++	TURNOFF(flags, DC_CASE);
++	(void) defcntl(DC_SETFLAGS, flags);
++
++	if (options->permit_root_login == PERMIT_NOT_SET &&
++	    (ptr = defread("CONSOLE=")) != NULL)
++		options->permit_root_login = PERMIT_NO_PASSWD;
++
++	if (options->permit_empty_passwd == -1 &&
++	    (ptr = defread("PASSREQ=")) != NULL) {
++		if (strcasecmp("YES", ptr) == 0)
++			options->permit_empty_passwd = 0;
++		else if (strcasecmp("NO", ptr) == 0)
++			options->permit_empty_passwd = 1;
++	}
++
++	if (options->max_authtries == -1 &&
++	    (ptr = defread("RETRIES=")) != NULL) {
++		options->max_authtries = atoi(ptr);
++	}
++
++	if (options->login_grace_time == -1) {
++		if ((ptr = defread("TIMEOUT=")) != NULL)
++			options->login_grace_time = (unsigned)atoi(ptr);
++		else
++			options->login_grace_time = 300;
++	}
++
++	(void) defopen((char *)NULL);
++}
++
+ void
+ fill_default_server_options(ServerOptions *options)
+ {
+@@ -206,6 +265,8 @@ fill_default_server_options(ServerOptions *options)
+ 		options->use_pam = 0;
+ #endif
+ 
++	deflt_fill_default_server_options(options);
++
+ 	/* Standard Options */
+ 	if (options->protocol == SSH_PROTO_UNKNOWN)
+ 		options->protocol = SSH_PROTO_2;
+diff --git a/sshd_config.4 b/sshd_config.4
+index 0c07fd1..cce3a5a 100644
+--- a/sshd_config.4
++++ b/sshd_config.4
+@@ -1138,7 +1138,13 @@ Specifies the maximum number of authentication attempts permitted per
+ connection.
+ Once the number of failures reaches half this value,
+ additional failures are logged.
+-The default is 6.
++The default is 6, or the value given by
++.Dq RETRIES=
++in the file
++.Dq /etc/default/login ,
++if available (see
++.Xr login 1
++).
+ .It Cm MaxSessions
+ Specifies the maximum number of open sessions permitted per network connection.
+ The default is 10.
+@@ -1189,7 +1195,14 @@ The default is
+ When password authentication is allowed, it specifies whether the
+ server allows login to accounts with empty password strings.
+ The default is
+-.Dq no .
++.Dq no
++unless
++.Dq PASSREQ=YES
++is present in
++.Dq /etc/default/login
++(see
++.Xr login 1
++).
+ .It Cm PermitOpen
+ Specifies the destinations to which TCP port forwarding is permitted.
+ The forwarding specification must be one of the following forms:
+-- 
+2.3.2 (Apple Git-55)
+
