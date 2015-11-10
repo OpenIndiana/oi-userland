@@ -38,11 +38,12 @@ set name=org.opensolaris.arc-caseid \
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 
-file usr/bin/egrep path=usr/gnu/bin/egrep
-file usr/bin/fgrep path=usr/gnu/bin/fgrep
+file files/efgrep path=usr/gnu/bin/egrep
+hardlink path=usr/gnu/bin/fgrep target=./egrep
+hardlink path=usr/gnu/bin/$(MACH64)/egrep target=../egrep
+hardlink path=usr/gnu/bin/$(MACH64)/fgrep target=../egrep
+
 file usr/bin/grep path=usr/gnu/bin/grep
-file usr/bin/$(MACH64)/egrep path=usr/gnu/bin/$(MACH64)/egrep
-file usr/bin/$(MACH64)/fgrep path=usr/gnu/bin/$(MACH64)/fgrep
 file usr/bin/$(MACH64)/grep path=usr/gnu/bin/$(MACH64)/grep
 file path=usr/share/info/grep.info
 file path=usr/share/locale/af/LC_MESSAGES/grep.mo
