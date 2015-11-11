@@ -34,4 +34,4 @@ install: prep
 		cp $(SOURCE_DIR)/commons-logging-1.2.jar $(PROTO_DIR)/usr/share/lib
 
 clean::
-	[ -d $(BUILD_DIR) ] && rm -rf $(BUILD_DIR)
+	rm -rf $(BUILD_DIR)
