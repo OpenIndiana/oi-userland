@@ -1,0 +1,16 @@
+In house patch for setting rabbitmqadmin to sensible Solaris defaults
+
+--- puppetlabs-rabbitmq-3.1.0/manifests/install/rabbitmqadmin.pp.orig   2015-11-11 08:04:09.122236875 -0800
++++ puppetlabs-rabbitmq-3.1.0/manifests/install/rabbitmqadmin.pp        2015-11-11 08:04:25.374437622 -0800
+@@ -12,9 +12,9 @@ class rabbitmq::install::rabbitmqadmin {
+     ],
+   }
+
+-  file { '/usr/local/bin/rabbitmqadmin':
++  file { '/usr/bin/rabbitmqadmin':
+     owner   => 'root',
+-    group   => 'root',
++    group   => 'bin',
+     source  => '/var/lib/rabbitmq/rabbitmqadmin',
+     mode    => '0755',
+     require => Exec['Download rabbitmqadmin'],
