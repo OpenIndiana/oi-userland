@@ -44,13 +44,12 @@ CFLAGS+=		-DOSCAP_THREAD_SAFE
 
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
 
-PERL_VERSIONS = 5.12 5.20
+PERL_VERSIONS = 5.20
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PERL_VERSION.32 = 5.12
 PERL_VERSION.64 = 5.20
 PERL_VERSION = $(PERL_VERSION.$(BITS))
 PERL = $(PERL.$(PERL_VERSION))
@@ -77,7 +76,6 @@ CPPFLAGS +=	-I/usr/include/pcre
 
 CONFIGURE_ENV +=        PERL="$(PERL)"
 CONFIGURE_ENV +=        PYTHON="$(PYTHON.$(BITS))"
-CONFIGURE_OPTIONS.32 +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS.64 +=	CFLAGS="$(CFLAGS) -D_FILE_OFFSET_BITS=64"
 CONFIGURE_OPTIONS +=	CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_OPTIONS +=	--enable-debug=no
@@ -99,15 +97,15 @@ DOCS_DIR = $(PROTO_DIR)/usr/share/docs/openscap/html/
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-configure:	$(CONFIGURE_32_and_64)
+configure:	$(CONFIGURE_64)
 
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_64)
 		$(MKDIR) $(DOCS_DIR)
 		$(CP) $(SOURCE_DIR)/docs/html/* $(DOCS_DIR)
 
-test:		$(TEST_32_and_64)
+test:		$(TEST_64)
 
 system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
@@ -119,7 +117,6 @@ REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/pcre
-REQUIRED_PACKAGES += runtime/perl-512
 REQUIRED_PACKAGES += runtime/perl-520
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += security/compliance/openscap

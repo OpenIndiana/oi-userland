@@ -1,0 +1,25 @@
+This fix addresses an issue in openscap which is meant
+to handle systems with small memory configurations. But
+on solaris we are not choosing to limit the applications
+memory usage. This has not been contributed upstream,
+but is intended to by 2015-Dec-15.
+--- openscap-1.2.3/src/OVAL/probes/probe/icache.c.~1~	2013-03-21 08:27:20.000000000 -0700
++++ openscap-1.2.3/src/OVAL/probes/probe/icache.c	2015-11-06 14:06:01.150096481 -0800
+@@ -506,7 +506,8 @@
+ 	cobj_itemcnt = SEXP_list_length(cobj_content);
+ 	SEXP_free(cobj_content);
+ 
+-	if (probe_cobj_memcheck(cobj_itemcnt) != 0) {
++#if !defined (__sun)  && !defined  (__SVR4)
++	if (probe_cobj_memcheck(cobj_itemcnt) != 0) { 
+ 
+ 		/*
+ 		 * Don't set the message again if the collected object is
+@@ -532,6 +533,7 @@
+ 
+ 		return 2;
+ 	}
++#endif
+ 
+         if (ctx->filters != NULL && probe_item_filtered(item, ctx->filters)) {
+                 SEXP_free(item);
