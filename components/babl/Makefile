@@ -17,6 +17,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= babl
 COMPONENT_VERSION= 0.1.10
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Babl is a dynamic, any to any, pixel format conversion library
 COMPONENT_FMRI = image/library/babl
 COMPONENT_CLASSIFICATION = System/Multimedia Libraries
@@ -35,7 +36,7 @@ include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
 COMPONENT_PREP_ACTION = ( cd $(@D)  && \
-                                autoreconf -f)
+                                autoreconf -f -i)
 
 
 CONFIGURE_OPTIONS+= --sysconfdir=$(ETCDIR)
