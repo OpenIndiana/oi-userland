@@ -17,7 +17,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= atk
 COMPONENT_VERSION= 1.32.0
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= GNOME accesibility toolkit libraries
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -35,7 +35,7 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f)
+COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f -i)
 
 gcc_OPT = -O2
 
