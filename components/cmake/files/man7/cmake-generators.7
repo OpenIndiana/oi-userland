@@ -1,0 +1,449 @@
+.\" Man page generated from reStructuredText.
+.
+.TH "CMAKE-GENERATORS" "7" "October 14, 2015" "3.3.2" "CMake"
+.SH NAME
+cmake-generators \- CMake Generators Reference
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.SH INTRODUCTION
+.sp
+A \fICMake Generator\fP is responsible for writing the input files for
+a native build system.  Exactly one of the \fI\%CMake Generators\fP must be
+selected for a build tree to determine what native build system is to
+be used.  Optionally one of the \fI\%Extra Generators\fP may be selected
+as a variant of some of the \fI\%Command\-Line Build Tool Generators\fP to
+produce project files for an auxiliary IDE.
+.sp
+CMake Generators are platform\-specific so each may be available only
+on certain platforms.  The \fBcmake(1)\fP command\-line tool \fB\-\-help\fP
+output lists available generators on the current platform.  Use its \fB\-G\fP
+option to specify the generator for a new build tree.
+The \fBcmake\-gui(1)\fP offers interactive selection of a generator
+when creating a new build tree.
+.SH CMAKE GENERATORS
+.SS Command\-Line Build Tool Generators
+.sp
+These generators support command\-line build tools.  In order to use them,
+one must launch CMake from a command\-line prompt whose environment is
+already configured for the chosen compiler and build tool.
+.SS Makefile Generators
+.SS Borland Makefiles
+.sp
+Generates Borland makefiles.
+.SS MSYS Makefiles
+.sp
+Generates makefiles for use with MSYS \fBmake\fP under the MSYS shell.
+.sp
+Use this generator in a MSYS shell prompt and using \fBmake\fP as the build
+tool.  The generated makefiles use \fB/bin/sh\fP as the shell to launch build
+rules.  They are not compatible with a Windows command prompt.
+.sp
+To build under a Windows command prompt, use the
+\fBMinGW Makefiles\fP generator.
+.SS MinGW Makefiles
+.sp
+Generates makefiles for use with \fBmingw32\-make\fP under a Windows command
+prompt.
+.sp
+Use this generator under a Windows command prompt with MinGW in the \fBPATH\fP
+and using \fBmingw32\-make\fP as the build tool.  The generated makefiles use
+\fBcmd.exe\fP as the shell to launch build rules.  They are not compatible with
+MSYS or a unix shell.
+.sp
+To build under the MSYS shell, use the \fBMSYS Makefiles\fP generator.
+.SS NMake Makefiles
+.sp
+Generates NMake makefiles.
+.SS NMake Makefiles JOM
+.sp
+Generates JOM makefiles.
+.SS Unix Makefiles
+.sp
+Generates standard UNIX makefiles.
+.sp
+A hierarchy of UNIX makefiles is generated into the build tree.  Any
+standard UNIX\-style make program can build the project through the
+default make target.  A "make install" target is also provided.
+.SS Watcom WMake
+.sp
+Generates Watcom WMake makefiles.
+.SS Ninja Generator
+.SS Ninja
+.sp
+Generates build.ninja files.
+.sp
+A build.ninja file is generated into the build tree.  Recent versions
+of the ninja program can build the project through the "all" target.
+An "install" target is also provided.
+.SS IDE Build Tool Generators
+.sp
+These generators support Integrated Development Environment (IDE)
+project files.  Since the IDEs configure their own environment
+one may launch CMake from any environment.
+.SS Visual Studio Generators
+.SS Visual Studio 6
+.sp
+Deprected.  Generates Visual Studio 6 project files.
+.sp
+\fBNOTE:\fP
+.INDENT 0.0
+.INDENT 3.5
+This generator is deprecated and will be removed
+in a future version of CMake.  It will still be
+possible to build with VS 6 tools using the
+\fBNMake Makefiles\fP generator.
+.UNINDENT
+.UNINDENT
+.SS Visual Studio 7
+.sp
+Deprected.  Generates Visual Studio .NET 2002 project files.
+.sp
+\fBNOTE:\fP
+.INDENT 0.0
+.INDENT 3.5
+This generator is deprecated and will be removed
+in a future version of CMake.  It will still be
+possible to build with VS 7.0 tools using the
+\fBNMake Makefiles\fP generator.
+.UNINDENT
+.UNINDENT
+.SS Visual Studio 7 .NET 2003
+.sp
+Generates Visual Studio .NET 2003 project files.
+.SS Visual Studio 8 2005
+.sp
+Generates Visual Studio 8 2005 project files.
+.sp
+The \fBCMAKE_GENERATOR_PLATFORM\fP variable may be set
+to specify a target platform name.
+.sp
+For compatibility with CMake versions prior to 3.1, one may specify
+a target platform name optionally at the end of this generator name:
+.INDENT 0.0
+.TP
+.B \fBVisual Studio 8 2005 Win64\fP
+Specify target platform \fBx64\fP\&.
+.TP
+.B \fBVisual Studio 8 2005 <WinCE\-SDK>\fP
+Specify target platform matching a Windows CE SDK name.
+.UNINDENT
+.SS Visual Studio 9 2008
+.sp
+Generates Visual Studio 9 2008 project files.
+.sp
+The \fBCMAKE_GENERATOR_PLATFORM\fP variable may be set
+to specify a target platform name.
+.sp
+For compatibility with CMake versions prior to 3.1, one may specify
+a target platform name optionally at the end of this generator name:
+.INDENT 0.0
+.TP
+.B \fBVisual Studio 9 2008 Win64\fP
+Specify target platform \fBx64\fP\&.
+.TP
+.B \fBVisual Studio 9 2008 IA64\fP
+Specify target platform \fBItanium\fP\&.
+.TP
+.B \fBVisual Studio 9 2008 <WinCE\-SDK>\fP
+Specify target platform matching a Windows CE SDK name.
+.UNINDENT
+.SS Visual Studio 10 2010
+.sp
+Generates Visual Studio 10 (VS 2010) project files.
+.sp
+The \fBCMAKE_GENERATOR_PLATFORM\fP variable may be set
+to specify a target platform name.
+.sp
+For compatibility with CMake versions prior to 3.1, one may specify
+a target platform name optionally at the end of this generator name:
+.INDENT 0.0
+.TP
+.B \fBVisual Studio 10 2010 Win64\fP
+Specify target platform \fBx64\fP\&.
+.TP
+.B \fBVisual Studio 10 2010 IA64\fP
+Specify target platform \fBItanium\fP\&.
+.UNINDENT
+.sp
+For compatibility with CMake versions prior to 3.0, one may specify this
+generator using the name \fBVisual Studio 10\fP without the year component.
+.SS Visual Studio 11 2012
+.sp
+Generates Visual Studio 11 (VS 2012) project files.
+.sp
+The \fBCMAKE_GENERATOR_PLATFORM\fP variable may be set
+to specify a target platform name.
+.sp
+For compatibility with CMake versions prior to 3.1, one may specify
+a target platform name optionally at the end of this generator name:
+.INDENT 0.0
+.TP
+.B \fBVisual Studio 11 2012 Win64\fP
+Specify target platform \fBx64\fP\&.
+.TP
+.B \fBVisual Studio 11 2012 ARM\fP
+Specify target platform \fBARM\fP\&.
+.TP
+.B \fBVisual Studio 11 2012 <WinCE\-SDK>\fP
+Specify target platform matching a Windows CE SDK name.
+.UNINDENT
+.sp
+For compatibility with CMake versions prior to 3.0, one may specify this
+generator using the name "Visual Studio 11" without the year component.
+.SS Visual Studio 12 2013
+.sp
+Generates Visual Studio 12 (VS 2013) project files.
+.sp
+The \fBCMAKE_GENERATOR_PLATFORM\fP variable may be set
+to specify a target platform name.
+.sp
+For compatibility with CMake versions prior to 3.1, one may specify
+a target platform name optionally at the end of this generator name:
+.INDENT 0.0
+.TP
+.B \fBVisual Studio 12 2013 Win64\fP
+Specify target platform \fBx64\fP\&.
+.TP
+.B \fBVisual Studio 12 2013 ARM\fP
+Specify target platform \fBARM\fP\&.
+.UNINDENT
+.sp
+For compatibility with CMake versions prior to 3.0, one may specify this
+generator using the name "Visual Studio 12" without the year component.
+.SS Visual Studio 14 2015
+.sp
+Generates Visual Studio 14 (VS 2015) project files.
+.sp
+The \fBCMAKE_GENERATOR_PLATFORM\fP variable may be set
+to specify a target platform name.
+.sp
+For compatibility with CMake versions prior to 3.1, one may specify
+a target platform name optionally at the end of this generator name:
+.INDENT 0.0
+.TP
+.B \fBVisual Studio 14 2015 Win64\fP
+Specify target platform \fBx64\fP\&.
+.TP
+.B \fBVisual Studio 14 2015 ARM\fP
+Specify target platform \fBARM\fP\&.
+.UNINDENT
+.SS Other Generators
+.SS Green Hills MULTI
+.sp
+Generates Green Hills MULTI project files (experimental, work\-in\-progress).
+.sp
+Customizations are available through the following cache variables:
+.INDENT 0.0
+.IP \(bu 2
+\fBGHS_BSP_NAME\fP
+.IP \(bu 2
+\fBGHS_CUSTOMIZATION\fP
+.IP \(bu 2
+\fBGHS_GPJ_MACROS\fP
+.IP \(bu 2
+\fBGHS_OS_DIR\fP
+.UNINDENT
+.sp
+\fBNOTE:\fP
+.INDENT 0.0
+.INDENT 3.5
+This generator is deemed experimental as of CMake 3.3.2
+and is still a work in progress.  Future versions of CMake
+may make breaking changes as the generator matures.
+.UNINDENT
+.UNINDENT
+.SS Xcode
+.sp
+Generate Xcode project files.
+.SH EXTRA GENERATORS
+.sp
+Some of the \fI\%CMake Generators\fP listed in the \fBcmake(1)\fP
+command\-line tool \fB\-\-help\fP output may have variants that specify
+an extra generator for an auxiliary IDE tool.  Such generator
+names have the form \fB<extra\-generator> \- <main\-generator>\fP\&.
+The following extra generators are known to CMake.
+.SS CodeBlocks
+.sp
+Generates CodeBlocks project files.
+.sp
+Project files for CodeBlocks will be created in the top directory and
+in every subdirectory which features a CMakeLists.txt file containing
+a PROJECT() call.  Additionally a hierarchy of makefiles is generated
+into the build tree.  The appropriate make program can build the
+project through the default make target.  A "make install" target is
+also provided.
+.sp
+This "extra" generator may be specified as:
+.INDENT 0.0
+.TP
+.B \fBCodeBlocks \- MinGW Makefiles\fP
+Generate with \fBMinGW Makefiles\fP\&.
+.TP
+.B \fBCodeBlocks \- NMake Makefiles\fP
+Generate with \fBNMake Makefiles\fP\&.
+.TP
+.B \fBCodeBlocks \- Ninja\fP
+Generate with \fBNinja\fP\&.
+.TP
+.B \fBCodeBlocks \- Unix Makefiles\fP
+Generate with \fBUnix Makefiles\fP\&.
+.UNINDENT
+.SS CodeLite
+.sp
+Generates CodeLite project files.
+.sp
+Project files for CodeLite will be created in the top directory and
+in every subdirectory which features a CMakeLists.txt file containing
+a PROJECT() call. The appropriate make program can build the
+project through the default make target.  A "make install" target is
+also provided.
+.sp
+This "extra" generator may be specified as:
+.INDENT 0.0
+.TP
+.B \fBCodeLite \- MinGW Makefiles\fP
+Generate with \fBMinGW Makefiles\fP\&.
+.TP
+.B \fBCodeLite \- NMake Makefiles\fP
+Generate with \fBNMake Makefiles\fP\&.
+.TP
+.B \fBCodeLite \- Ninja\fP
+Generate with \fBNinja\fP\&.
+.TP
+.B \fBCodeLite \- Unix Makefiles\fP
+Generate with \fBUnix Makefiles\fP\&.
+.UNINDENT
+.SS Eclipse CDT4
+.sp
+Generates Eclipse CDT 4.0 project files.
+.sp
+Project files for Eclipse will be created in the top directory.  In
+out of source builds, a linked resource to the top level source
+directory will be created.  Additionally a hierarchy of makefiles is
+generated into the build tree.  The appropriate make program can build
+the project through the default make target.  A "make install" target
+is also provided.
+.sp
+This "extra" generator may be specified as:
+.INDENT 0.0
+.TP
+.B \fBEclipse CDT4 \- MinGW Makefiles\fP
+Generate with \fBMinGW Makefiles\fP\&.
+.TP
+.B \fBEclipse CDT4 \- NMake Makefiles\fP
+Generate with \fBNMake Makefiles\fP\&.
+.TP
+.B \fBEclipse CDT4 \- Ninja\fP
+Generate with \fBNinja\fP\&.
+.TP
+.B \fBEclipse CDT4 \- Unix Makefiles\fP
+Generate with \fBUnix Makefiles\fP\&.
+.UNINDENT
+.SS KDevelop3
+.sp
+Generates KDevelop 3 project files.
+.sp
+Project files for KDevelop 3 will be created in the top directory and
+in every subdirectory which features a CMakeLists.txt file containing
+a PROJECT() call.  If you change the settings using KDevelop cmake
+will try its best to keep your changes when regenerating the project
+files.  Additionally a hierarchy of UNIX makefiles is generated into
+the build tree.  Any standard UNIX\-style make program can build the
+project through the default make target.  A "make install" target is
+also provided.
+.sp
+This "extra" generator may be specified as:
+.INDENT 0.0
+.TP
+.B \fBKDevelop3 \- Unix Makefiles\fP
+Generate with \fBUnix Makefiles\fP\&.
+.TP
+.B \fBKDevelop3\fP
+Generate with \fBUnix Makefiles\fP\&.
+.sp
+For historical reasons this extra generator may be specified
+directly as the main generator and it will be used as the
+extra generator with \fBUnix Makefiles\fP automatically.
+.UNINDENT
+.SS Kate
+.sp
+Generates Kate project files.
+.sp
+A project file for Kate will be created in the top directory in the top level
+build directory.
+To use it in kate, the Project plugin must be enabled.
+The project file is loaded in kate simply by opening the
+ProjectName.kateproject file in the editor.
+If the kate Build\-plugin is enabled, all targets generated by CMake are
+available for building.
+.sp
+This "extra" generator may be specified as:
+.INDENT 0.0
+.TP
+.B \fBKate \- MinGW Makefiles\fP
+Generate with \fBMinGW Makefiles\fP\&.
+.TP
+.B \fBKate \- NMake Makefiles\fP
+Generate with \fBNMake Makefiles\fP\&.
+.TP
+.B \fBKate \- Ninja\fP
+Generate with \fBNinja\fP\&.
+.TP
+.B \fBKate \- Unix Makefiles\fP
+Generate with \fBUnix Makefiles\fP\&.
+.UNINDENT
+.SS Sublime Text 2
+.sp
+Generates Sublime Text 2 project files.
+.sp
+Project files for Sublime Text 2 will be created in the top directory
+and in every subdirectory which features a CMakeLists.txt file
+containing a PROJECT() call.  Additionally Makefiles (or build.ninja
+files) are generated into the build tree.  The appropriate make
+program can build the project through the default make target.  A
+"make install" target is also provided.
+.sp
+This "extra" generator may be specified as:
+.INDENT 0.0
+.TP
+.B \fBSublime Text 2 \- MinGW Makefiles\fP
+Generate with \fBMinGW Makefiles\fP\&.
+.TP
+.B \fBSublime Text 2 \- NMake Makefiles\fP
+Generate with \fBNMake Makefiles\fP\&.
+.TP
+.B \fBSublime Text 2 \- Ninja\fP
+Generate with \fBNinja\fP\&.
+.TP
+.B \fBSublime Text 2 \- Unix Makefiles\fP
+Generate with \fBUnix Makefiles\fP\&.
+.UNINDENT
+.SH COPYRIGHT
+2000-2015 Kitware, Inc.
+.\" Generated by docutils manpage writer.
+.

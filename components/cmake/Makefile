@@ -25,20 +25,28 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cmake
-COMPONENT_VERSION=	2.8.6
+COMPONENT_VERSION=	3.3.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e6999b81ac367d85ffb0f69b6c4a0ef96f95dc154efd3592f9cfebacdf75728e
-COMPONENT_ARCHIVE_URL=	http://www.cmake.org/files/v2.8/$(COMPONENT_ARCHIVE)
+    sha256:e75a178d6ebf182b048ebfe6e0657c49f0dc109779170bad7ffcb17463f2fc22
+COMPONENT_ARCHIVE_URL=	http://www.cmake.org/files/v3.3/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://www.cmake.org/
 COMPONENT_BUGDB=	utility/cmake
 
-TPNO=			6581
+TPNO=			25030
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
+
+# Remove undesriable /opt/csw lines from the Modules/*.cmake files.
+COMPONENT_PREP_ACTION += \
+	cd $(COMPONENT_SRC)/Modules; $(GNU_GREP) -l '/opt/csw' *.cmake | /usr/bin/xargs -I \{\} $(GSED) -i -e '/^[ ]*\/opt\/csw/d' \{\}
+# Currently only builds with gcc, and since it's C++, we'll just force it to
+# build as C++11 for ABI compatibility.
+COMPILER=gcc
+CXXFLAGS += -std=c++11
 
 # Need to remove this option from LD_OPTIONS (only affects sparc build);
 # it causes a SegFault failure in kwsys/testSystemInformation
@@ -56,13 +64,20 @@ CONFIGURE_ENV +=	MAKE="$(GMAKE)"
 CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_ENV +=	CXXFLAGS="$(CXXFLAGS)"
 
+# configure in cmake does not accept many of the options set in
+# configure.mk (CC=, CXX=, --bindir, --libdir, --sbindir). Clear those
+# out and just include the default options it does accept.
+CONFIGURE_OPTIONS =
+CONFIGURE_OPTIONS +=	--prefix=$(CONFIGURE_PREFIX)
+CONFIGURE_OPTIONS +=	--mandir=$(CONFIGURE_MANDIR)
+
 # Use system-installed third-party libraries, rather than the private
-# copies in the cmake source.  Only libarchive will come from the cmake
-# source, since it is not currently part of Solaris.
+# copies in the cmake source.
 CONFIGURE_OPTIONS +=	--system-curl
 CONFIGURE_OPTIONS +=	--system-expat
 CONFIGURE_OPTIONS +=	--system-zlib
 CONFIGURE_OPTIONS +=	--system-bzip2
+CONFIGURE_OPTIONS +=	--system-libarchive
 
 COMPONENT_BUILD_ENV +=	CC="$(CC)"	
 COMPONENT_BUILD_ENV +=	CXX="$(CXX)"	
@@ -84,6 +99,26 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "s/\s\s*[0-9][0-9]*\.[0-9][0-9]* sec/ SEC sec/"' \
 	'-e "s/\][0-9][0-9]*\.[0-9][0-9]* sec/\]SEC sec/"'
 
+COMPONENT_SYSTEM_TEST_ENV +=	CC="$(CC)"
+COMPONENT_SYSTEM_TEST_ENV +=	CXX="$(CXX)"
+
+COMPONENT_SYSTEM_TEST_TARGETS =	test
+
+# Built binaries are moved aside and replaced with
+# symlinks to the system-installed binaries in /usr/bin,
+# which will be executed for the system-test target
+COMPONENT_PRE_SYSTEM_TEST_ACTION += \
+	$(MV) $(BUILD_DIR_64)/bin $(BUILD_DIR_64)/bin-save; \
+	$(MKDIR) $(BUILD_DIR_64)/bin; cd $(BUILD_DIR_64)/bin; \
+	$(LN) -s /usr/bin/cmake; $(LN) -s /usr/bin/ctest; \
+	$(LN) -s /usr/bin/ccmake; $(LN) -s /usr/bin/cpack
+
+# Restore the built binaries after system-test is done
+COMPONENT_POST_SYSTEM_TEST_ACTION += \
+	$(RM) -r $(BUILD_DIR_64)/bin; \
+	$(MV) $(BUILD_DIR_64)/bin-save $(BUILD_DIR_64)/bin
+
+
 # common targets
 
 configure:	$(CONFIGURE_64)
@@ -95,12 +130,16 @@ install:	$(INSTALL_64)
 # expected failure: CTestTestUpload
 test:		$(TEST_64)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+system-test:    $(BUILD_64) $(SYSTEM_TEST_64)
 
 REQUIRED_PACKAGES += compress/bzip2
+REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += library/expat
+REQUIRED_PACKAGES += library/libarchive
+REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/c++-runtime
+REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
+REQUIRED_PACKAGES += system/library/gcc/gcc-c++-runtime
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += web/curl
