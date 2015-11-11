@@ -20,6 +20,10 @@
 #
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+
+# As Solaris always has a 64-bit kernel, and 64-bit emacs can handle larger
+# files, we only build and deliver 64-bit binaries. 
+BITS=64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		emacs
@@ -41,9 +45,7 @@ include $(WS_MAKE_RULES)/ips.mk
 # We patch the configure.ac file. Get the new configure generated during prep.
 COMPONENT_PREP_ACTION = (cd $(@D) ; aclocal -I m4; autoconf )
 
-# We build three different variants of emacs for our users. As Solaris
-# always has a 64-bit kernel, and 64-bit emacs can handle larger files,
-# we only build and deliver 64-bit binaries.
+# We build three different variants of emacs for our users.
 VARIANTS =	nox x gtk
 
 BUILD_64 = $(VARIANTS:%=$(BUILD_DIR)/$(MACH64)-%/.built)
@@ -70,15 +72,21 @@ LD_MAP_NOEXDATA.sparc=
 #
 #CONFIGURE_PREFIX =	$(PROTO_DIR)/usr
 
-# The configure script runs the pkg-config command. Since we're building
-# 64-bit executables, we need pkg-config to use the 64-bit metadata files
-CONFIGURE_ENV += PKG_CONFIG_PATH=/usr/lib/$(MACH64)/pkgconfig
+# The configure script runs the pkg-config command. This allows it to
+# find the non-default GnuTLS v3 library.
+CONFIGURE_ENV +=	PKG_CONFIG_PATH=/usr/lib/$(MACH64)/pkgconfig/gnutls-3
+
+# Never use xmkmf to find X11 libraries from autoconf. They are all available
+# from standard system locations, and we don't want the ld -L option that
+# gets injected.
+CONFIGURE_ENV +=	XMKMF="false" 
 
 # configure options common to all variants of emacs that we want to build.
 CONFIGURE_OPTIONS +=	CC="$(CC) -m64"
 CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS +=	--datarootdir=$(CONFIGURE_PREFIX)/share
 CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_PREFIX)/lib
+CONFIGURE_OPTIONS +=	--libdir=$(CONFIGURE_LIBDIR.32) 
 CONFIGURE_OPTIONS +=	--with-gif=no
 CONFIGURE_OPTIONS +=	ac_cv_sys_long_file_names=yes
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)
@@ -223,6 +231,7 @@ REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/gnutls
+REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/zlib

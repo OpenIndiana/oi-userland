@@ -207,6 +207,25 @@ information needed to understand how this component is put together.
   lines in the Makefile are updated to match. Instructions can be found in the
   doc directory at the top of the userland workspace.
 
+  This is currently complicated by additions not needed by the latest
+  Solaris builds, which are added in order to be able to build this
+  default branch on older releases of Solaris. Be careful in removing
+  unnecessary REQUIRED_PACKAGES, as these additions are not tagged in a
+  way that makes their purpose clear.
+
+- Emacs is currently configured to use GnuTLS 3 rather than version 2.
+  As version 3 is temporarily installed in a non-default manner, this is
+  achieved with the following additions to Makefile:
+
+    # The configure script runs the pkg-config command. This allows it to
+    # find the non-default GnuTLS v3 library.
+    CONFIGURE_ENV +=	PKG_CONFIG_PATH=/usr/lib/$(MACH64)/pkgconfig/gnutls-3
+...
+    REQUIRED_PACKAGES += library/gnutls-3
+
+  These lines will need to be removed/adjusted when version 3 becomes the
+  system default.
+
 - We deliver the following packages:
 
 	gnu-emacs - Everything you need to run emacs, except the
