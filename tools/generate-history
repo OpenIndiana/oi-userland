@@ -17,11 +17,16 @@
     continue
   }
   printf "set name=pkg.fmri value=pkg:/%s\n", fmri
-  if (NF == 2) {
+  
+  if (NF >= 2) {
     print "set name=pkg.renamed value=true"
     printf "depend type=require fmri=%s\n", $2
   } else {
     print "set name=pkg.obsolete value=true"
+  }
+  
+  if ($NF == "noincorporate") {
+    print "set name=pkg.tmp.noincorporate value=true"
   }
   print "set name=org.opensolaris.consolidation value=$(CONSOLIDATION)"
   exit 0 # We're done; no point continuing.
