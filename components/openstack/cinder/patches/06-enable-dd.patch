@@ -1,0 +1,13 @@
+In-house supporting volume_dd_blocksize ('1M', 'G') to enable 'dd' to run on Solaris. This patch
+is Solaris-specific and not suitable for upstream.
+
+--- cinder-2014.2.2/cinder/volume/utils.py.old	2015-10-20 12:55:15.089090904 -0700
++++ cinder-2014.2.2/cinder/volume/utils.py	2015-10-20 12:55:23.640892844 -0700
+@@ -281,6 +281,7 @@
+         bs = strutils.string_to_bytes('%sB' % blocksize)
+ 
+     count = math.ceil(size_in_m * units.Mi / bs)
++    blocksize = int(bs)
+ 
+     return blocksize, int(count)
+ 
