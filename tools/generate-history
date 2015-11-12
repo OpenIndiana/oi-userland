@@ -18,7 +18,7 @@
   }
   printf "set name=pkg.fmri value=pkg:/%s\n", fmri
   
-  if (NF >= 2) {
+  if (NF == 3 || (NF ==2  && $2 != "noincorporate")) {
     print "set name=pkg.renamed value=true"
     printf "depend type=require fmri=%s\n", $2
   } else {
