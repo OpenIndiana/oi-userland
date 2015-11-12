@@ -45,7 +45,10 @@ LOG = logging.getLogger(__name__)
 solaris_zfs_opts = [
     cfg.StrOpt('zfs_volume_base',
                default='rpool/cinder',
-               help='The base dataset for ZFS volumes.'), ]
+               help='The base dataset for ZFS volumes.'),
+    cfg.StrOpt('zfs_target_group',
+               default='tgt-grp',
+               help='iSCSI target group name.'), ]
 
 FLAGS.register_opts(solaris_zfs_opts)
 
@@ -543,6 +546,31 @@ class ZFSISCSIDriver(STMFDriver, driver.ISCSIDriver):
     def __init__(self, *args, **kwargs):
         super(ZFSISCSIDriver, self).__init__(*args, **kwargs)
 
+    def do_setup(self, context):
+        """Setup the target and target group."""
+        target_group = self.configuration.zfs_target_group
+        target_name = '%s%s-%s-target' % \
+                      (self.configuration.iscsi_target_prefix,
+                       self.hostname,
+                       target_group)
+
+        if not self._check_tg(target_group):
+            self._stmf_execute('/usr/sbin/stmfadm', 'create-tg', target_group)
+        if self._check_target(target_name, 'iSCSI'):
+            return
+
+        # Create and add the target into the target group
+        self._stmf_execute('/usr/sbin/itadm', 'create-target', '-n',
+                           target_name)
+        self._stmf_execute('/usr/sbin/stmfadm', 'offline-target',
+                           target_name)
+        self._stmf_execute('/usr/sbin/stmfadm', 'add-tg-member', '-g',
+                           target_group, target_name)
+        self._stmf_execute('/usr/sbin/stmfadm', 'online-target',
+                           target_name)
+
+        assert self._check_target(target_name, 'iSCSI')
+
     def create_export(self, context, volume):
         """Export the volume."""
         # If the volume is already exported there is nothing to do, as we
@@ -567,23 +595,10 @@ class ZFSISCSIDriver(STMFDriver, driver.ISCSIDriver):
                    % volume['name'])
             raise exception.VolumeBackendAPIException(data=msg)
 
-        # Create a target group and a target belonging to the target group
-        target_group = 'tg-%s' % volume['name']
-        self._stmf_execute('/usr/sbin/stmfadm', 'create-tg', target_group)
-
-        target_name = '%s%s' % (self.configuration.iscsi_target_prefix,
-                                volume['name'])
-        self._stmf_execute('/usr/sbin/stmfadm', 'add-tg-member', '-g',
-                           target_group, target_name)
-
-        self._stmf_execute('/usr/sbin/itadm', 'create-target', '-n',
-                           target_name)
-        assert self._check_target(target_name, 'iSCSI')
-
-        # Add a view entry to the logical unit with the specified LUN, 8776
-        if luid is not None:
-            self._stmf_execute('/usr/sbin/stmfadm', 'add-view', '-n', '8776',
-                               '-t', target_group, luid)
+        # Add a view entry to the logical unit
+        target_group = self.configuration.zfs_target_group
+        self._stmf_execute('/usr/sbin/stmfadm', 'add-view',
+                           '-t', target_group, luid)
 
     def remove_export(self, context, volume):
         """Remove an export for a volume.
@@ -592,9 +607,6 @@ class ZFSISCSIDriver(STMFDriver, driver.ISCSIDriver):
         target, target group, view entry and lu, are deleted.
         """
         luid = self._get_luid(volume)
-        target_group = 'tg-%s' % volume['name']
-        target_name = '%s%s' % (self.configuration.iscsi_target_prefix,
-                                volume['name'])
 
         # Remove the view entry
         if luid is not None:
@@ -603,7 +615,12 @@ class ZFSISCSIDriver(STMFDriver, driver.ISCSIDriver):
                 self._stmf_execute('/usr/sbin/stmfadm', 'remove-view', '-l',
                                    luid, view_lun['view'])
 
-        # Remove the target and its target group
+        # Remove the target and its target group if they were created by
+        # earlier versions of the volume driver
+        target_group = 'tg-%s' % volume['name']
+        target_name = '%s%s' % (self.configuration.iscsi_target_prefix,
+                                volume['name'])
+
         if self._check_target(target_name, 'iSCSI'):
             self._stmf_execute('/usr/sbin/stmfadm', 'offline-target',
                                target_name)
@@ -642,6 +659,12 @@ class ZFSISCSIDriver(STMFDriver, driver.ISCSIDriver):
 
         target_name = '%s%s' % (self.configuration.iscsi_target_prefix,
                                 volume['name'])
+        if not self._check_target(target_name, 'iSCSI'):
+            target_name = '%s%s-%s-target' % \
+                          (self.configuration.iscsi_target_prefix,
+                           self.hostname,
+                           self.configuration.zfs_target_group)
+
         properties = {}
 
         properties['target_discovered'] = True

@@ -33,18 +33,46 @@ class SolarisiSCSI(object):
         self.execute = putils.execute
 
     def _get_device_path(self, connection_properties):
-        """Get the device path from the target info."""
+        """Get the device path from the target info.
+
+        The output of cmd below is like this:
+        Target: iqn.2010-10.org.openstack:hostname1-tgt-grp-target
+        Alias: -
+        TPGT: 1
+        ISID: 4000002a0000
+        Connections: 1
+        LUN: 1
+             Vendor:  SUN
+             Product: COMSTAR
+             OS Device Name: /dev/rdsk/c0t600144F0FDFAD05D0000563C04030003d0s2
+        LUN: 0
+             Vendor:  SUN
+             Product: COMSTAR
+             OS Device Name: /dev/rdsk/c0t600144F0FDFAD05D0000563C02270002d0s2
+
+        """
         (out, _err) = self.execute('/usr/sbin/iscsiadm', 'list',
                                    'target', '-S',
                                    connection_properties['target_iqn'])
 
+        found = False
         for line in [l.strip() for l in out.splitlines()]:
-            if line.startswith("OS Device Name:"):
-                dev_path = line.split()[-1]
-                return dev_path
-        else:
-            LOG.error(_("No device is found for the target %s.") %
-                      connection_properties['target_iqn'])
+            if line.startswith("LUN:"):
+                lun = line.split()[-1]
+                if int(lun) == int(connection_properties['target_lun']):
+                    found = True
+                    continue
+            if found:
+                if line.startswith("OS Device Name:"):
+                    dev_path = line.split()[-1]
+                    return dev_path
+                elif line.startswith("LUN:"):
+                    found = False
+
+        if not found:
+            LOG.error(_("No device is found for the target %s LUN %s.") %
+                      (connection_properties['target_iqn'],
+                       connection_properties['target_lun']))
             raise
 
     def get_initiator(self):
