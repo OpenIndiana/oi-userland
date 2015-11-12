@@ -77,6 +77,7 @@ system-test:    $(NO_TESTS)
 REQUIRED_PACKAGES += data/docbook/docbook-dtds
 REQUIRED_PACKAGES += data/docbook/docbook-style-dsssl
 REQUIRED_PACKAGES += data/docbook/docbook-style-xsl
+REQUIRED_PACKAGES += data/xml-common
 REQUIRED_PACKAGES += library/database/gdbm
 REQUIRED_PACKAGES += library/libidn
 REQUIRED_PACKAGES += library/security/openssl
