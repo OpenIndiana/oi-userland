@@ -17,7 +17,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cheese
 COMPONENT_VERSION=	2.28.1
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	Cheese - GNOME application for taking photos and videos from a webcam
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -38,7 +38,7 @@ PATH=/usr/gnu/bin:/usr/bin
 
 COMPONENT_PREP_ACTION += (cd $(@D) && \
 				libtoolize --force &&\
-				 autoreconf -f )
+				 autoreconf -f -i)
 
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
