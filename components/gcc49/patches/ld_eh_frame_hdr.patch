@@ -1,0 +1,54 @@
+--- gcc-4.9.3/gcc/configure.ac.~1~	2015-05-12 11:55:54.000000000 +0300
++++ gcc-4.9.3/gcc/configure.ac	2015-11-10 14:16:46.276627889 +0300
+@@ -2406,6 +2406,7 @@
+ 	    -e 's,^.*: 5\.[0-9][0-9]*-\([0-9]\.[0-9][0-9]*\).*$,\1,p'`
+ 	  ld_vers_major=`expr "$ld_vers" : '\([0-9]*\)'`
+ 	  ld_vers_minor=`expr "$ld_vers" : '[0-9]*\.\([0-9]*\)'`
++	  ld_vers_variant=`echo "$ld_ver" | sed -n -e 's,.*(\(illumos\)),\1,p'`
+ 	fi
+ 	;;
+     esac
+@@ -4615,13 +4616,15 @@
+     case "$target" in
+       *-*-solaris2*)
+         # Sun ld has various bugs in .eh_frame_hdr support before version 1.2251.
+-        if test "$ld_vers_major" -gt 1 || test "$ld_vers_minor" -ge 2251; then
++        if test "$ld_vers_major" -gt 1 || test "$ld_vers_minor" -ge 2251 \
++	  || "$ld_vers_variant" = "illumos" ; then
+           gcc_cv_ld_eh_frame_hdr=yes
+         fi
+         ;;
+     esac
+   fi
+ fi
++gcc_cv_ld_eh_frame_hdr=yes
+ GCC_TARGET_TEMPLATE([HAVE_LD_EH_FRAME_HDR])
+ if test x"$gcc_cv_ld_eh_frame_hdr" = xyes; then
+ 	AC_DEFINE(HAVE_LD_EH_FRAME_HDR, 1,
+--- gcc-4.9.3/gcc/configure.~1~	2015-05-12 11:55:54.000000000 +0300
++++ gcc-4.9.3/gcc/configure	2015-11-10 14:16:46.274866812 +0300
+@@ -22271,6 +22271,7 @@
+ 	    -e 's,^.*: 5\.[0-9][0-9]*-\([0-9]\.[0-9][0-9]*\).*$,\1,p'`
+ 	  ld_vers_major=`expr "$ld_vers" : '\([0-9]*\)'`
+ 	  ld_vers_minor=`expr "$ld_vers" : '[0-9]*\.\([0-9]*\)'`
++	  ld_vers_variant=`echo "$ld_ver" | sed -n -e 's,.*(\(illumos\)),\1,p'`
+ 	fi
+ 	;;
+     esac
+@@ -26900,13 +26901,15 @@
+     case "$target" in
+       *-*-solaris2*)
+         # Sun ld has various bugs in .eh_frame_hdr support before version 1.2251.
+-        if test "$ld_vers_major" -gt 1 || test "$ld_vers_minor" -ge 2251; then
++        if test "$ld_vers_major" -gt 1 || test "$ld_vers_minor" -ge 2251 \
++	  || "$ld_vers_variant" = "illumos" ; then
+           gcc_cv_ld_eh_frame_hdr=yes
+         fi
+         ;;
+     esac
+   fi
+ fi
++gcc_cv_ld_eh_frame_hdr=yes
+ 
+ if test x"$gcc_cv_ld_eh_frame_hdr" = xyes; then
+ 
