@@ -1,6 +1,6 @@
---- libgksu-2.0.12/libgksu/Makefile.am-orig	2010-12-09 23:59:11.491180288 -0600
-+++ libgksu-2.0.12/libgksu/Makefile.am	2010-12-10 00:00:22.035013955 -0600
-@@ -3,7 +3,7 @@ INCLUDES = ${LIBGKSU_CFLAGS}
+--- libgksu-2.0.12/libgksu/Makefile.am.~3~	2015-11-13 14:08:34.122952055 +0300
++++ libgksu-2.0.12/libgksu/Makefile.am	2015-11-13 14:11:01.987602117 +0300
+@@ -3,13 +3,13 @@
  AM_CPPFLAGS = -DLOCALEDIR=\"$(datadir)/locale\" -DDATA_DIR=\"$(datadir)\" -DPREFIX=\"$(prefix)\"
  
  lib_LTLIBRARIES = libgksu2.la
@@ -9,6 +9,13 @@
  # 0.0.0 -> major.minor.micro
  # major -> breaks backward compatibility (changes to existing ABI)
  # minor -> keeps compatibility (additions to the API)
+ # micro -> no change to the API/ABI
+ libgksu2_la_LIBADD = ../libgksuui/libgksuui1.0.la
+-libgksu2_la_LDFLAGS = -version-info 0:2:0 ${LIBGKSU_LIBS}
++libgksu2_la_LDFLAGS = -version-info 0:2:0 ${LIBGKSU_LIBS} -lsecdb
+ if USE_VERSION_SCRIPT
+ libgksu2_la_LDFLAGS += -Wl,--version-script=libgksu.ver
+ endif
 --- libgksu-2.0.12/libgksu/libgksu.h-orig	2010-12-09 23:57:13.917357883 -0600
 +++ libgksu-2.0.12/libgksu/libgksu.h	2010-12-09 23:59:22.607325443 -0600
 @@ -21,9 +21,22 @@
