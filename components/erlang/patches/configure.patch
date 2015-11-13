@@ -1,54 +1,18 @@
-This patch makes two changes:
+Adjust the set of standard locations that the erlang erts configure script
+uses to try to find SSL. Without this change, we see the following error
+at pkglint time:
 
-1) Removes references to /usr/ucb/install which no longer exists in Solaris 12.
-2) Adjusts the set of standard locations that the erlang configure scripts
-   uses to try to find SSL. Without this change, we see the following errors
-   at pkglint time:
-   ERROR userland.action001.3        bad RUNPATH, 'usr/lib/amd64/erlang/lib/crypto-2.2/priv/lib/crypto.so' includes '/opt/local/lib/64:/opt/local/lib'
-   ERROR userland.action001.3        bad RUNPATH, 'usr/lib/erlang/lib/crypto-2.2/priv/lib/crypto.so' includes '/opt/local/lib'
+ERROR userland.action001.3        bad RUNPATH, 'usr/lib/amd64/erlang/lib/crypto-3.5/priv/lib/crypto.so' includes '/usr/local/lib/64:/opt/local/lib/64:/usr/pkg/lib/64:/usr/local/openssl/lib/64:/usr/lib/openssl/lib/64:/usr/openssl/lib/64:/usr/local/ssl/lib/64:/usr/lib/ssl/lib/64:/usr/ssl/lib/64://lib/64:/usr/local/lib:/opt/local/lib:/usr/pkg/lib:/usr/local/openssl/lib:/usr/lib/openssl/lib:/usr/openssl/lib:/usr/local/ssl/lib:/usr/lib/ssl/lib:/usr/ssl/lib://lib'
 
---- otp_src_R15B03/lib/erl_interface/configure.orig	2012-12-12 07:42:11.245364398 -0800
-+++ otp_src_R15B03/lib/erl_interface/configure	2012-12-12 07:42:31.268827476 -0800
-@@ -5212,16 +5212,6 @@
-    { (exit 1); exit 1; }; }
- fi
- 
--case $host in
--  *-*-solaris*|free_source)
--    if test -x /usr/ucb/install; then
--      INSTALL="/usr/ucb/install -c"
--    fi
--    ;;
--  *)
--    ;;
--esac
--
- # Find a good install program.  We prefer a C program (faster),
- # so one script is as good as another.  But avoid the broken or
- # incompatible versions:
---- otp_src_R15B03/erts/configure.orig	2012-12-12 07:41:37.651907946 -0800
-+++ otp_src_R15B03/erts/configure	2012-12-28 07:28:38.797816435 -0800
-@@ -6223,15 +6223,6 @@
- echo "$as_me: WARNING: No 'fop' command found: going to generate placeholder PDF files" >&2;}
- fi
- 
--case $host in
--  *-*-solaris*|free_source)
--    if test -x /usr/ucb/install; then
--      INSTALL="/usr/ucb/install -c"
--    fi
--    ;;
--  *)
--    ;;
--esac
- # Find a good install program.  We prefer a C program (faster),
- # so one script is as good as another.  But avoid the broken or
- # incompatible versions:
-@@ -36432,7 +36423,7 @@
+This change will not be sent upstream.
+
+--- otp_src_17.5/erts/configure.orig	2015-04-02 08:56:31.437691859 -0700
++++ otp_src_17.5/erts/configure	2015-04-02 08:56:55.704719035 -0700
+@@ -38754,7 +38754,7 @@
  
  
  
--std_ssl_locations="/usr/local /usr/sfw /usr /opt/local /usr/pkg /usr/local/openssl /usr/lib/openssl /usr/openssl /usr/local/ssl /usr/lib/ssl /usr/ssl"
+-std_ssl_locations="/usr/local /usr/sfw /usr /opt/local /usr/pkg /usr/local/openssl /usr/lib/openssl /usr/openssl /usr/local/ssl /usr/lib/ssl /usr/ssl /"
 +std_ssl_locations="/usr"
  
  
