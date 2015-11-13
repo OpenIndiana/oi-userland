@@ -16,7 +16,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		evolution-data-server
 COMPONENT_VERSION=	2.32.3
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	https://projects.gnome.org/evolution/developer.shtml
 COMPONENT_SUMMARY=	Backend library for Evolution
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -31,7 +31,7 @@ include $(WS_TOP)/make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
 
-COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -f)
+COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -f -i)
 gcc_OPT		= -O2
 
 LDFLAGS+=	-L/usr/lib/mps -R/usr/lib/mps
