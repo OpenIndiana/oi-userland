@@ -67,6 +67,14 @@ COMPONENT_PREP_ACTION = \
 COMPONENT_PREP_ACTION += \
 	(cd $(@D) ; ACLOCAL=aclocal-1.11 AUTOMAKE=automake-1.11 autoreconf -fiv)
 
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
+# rule out randomly sorted XSLT extensions list
+COMPONENT_TEST_TRANSFORMS += '-e "/http:\/\//d"'
+
+# system-test should really use system version library
+COMPONENT_PRE_SYSTEM_TEST_ACTION = ($(RM) $(@D)/libxslt/.libs/*)
+
 # common targets
 configure:	$(CONFIGURE_32_and_64)
 
@@ -77,10 +85,11 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+system-test:    $(BUILD_32_and_64) $(SYSTEM_TEST_32_and_64)
 
 
 REQUIRED_PACKAGES += data/xml-common
+REQUIRED_PACKAGES += developer/build/automake-111
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += runtime/python-27
