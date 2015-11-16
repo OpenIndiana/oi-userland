@@ -1,0 +1,84 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability committed>
+set name=pkg.fmri \
+    value=pkg:/service/network/openvswitch@$(COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Open Virtual Switch and Utilities"
+set name=pkg.description \
+    value="Open vSwitch is a production quality open source software switch designed to be used as a vswitch in virtualized server environments.  A vswitch forwards traffic between different VMs on the same physical host and also forwards traffic between VMs and the physical network."
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification value=org.opensolaris.category.2008:System/Services
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2015/999
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+file ovs.user_attr path=etc/security/auth_attr.d/application:openswitch:ovs \
+    group=sys
+file ovs.exec_attr path=etc/security/exec_attr.d/application:openswitch:ovs \
+    group=sys
+file ovs.prof_attr path=etc/security/prof_attr.d/application:openswitch:ovs \
+    group=sys
+file ovs.user_attr path=etc/user_attr.d/application:openswitch:ovs group=sys
+file ovsdb.xml path=lib/svc/manifest/application/openvswitch/ovsdb.xml group=sys
+# The following pkg.depend.bypass-generate is needed because the vswitch
+# service depends upon the ovsdb service. pkgdepend fails to find the file
+# containing the ovsdb service (since ovsdb.xml is under
+# $(COMPONENT_DIR)/files) and fails.
+file vswitch.xml path=lib/svc/manifest/application/openvswitch/vswitch.xml \
+    group=sys pkg.depend.bypass-generate=.*
+file ovs-svc path=lib/svc/method/ovs-svc mode=0555
+file ovs-clean.py path=usr/lib/ovs/ovs-clean.py mode=0555
+file path=usr/lib/ovs/ovs-vswitchd mode=0555
+file path=usr/lib/ovs/ovsdb-server mode=0555
+file usr/lib/ovs/share/openvswitch/vswitch.ovsschema \
+    path=usr/lib/ovs/share/vswitch.ovsschema
+file tests/test-controller path=usr/lib/ovs/tests/test-controller mode=0555 \
+    facet.optional.test=true
+file path=usr/sbin/ovs-appctl
+file path=usr/sbin/ovs-dpctl
+file path=usr/sbin/ovs-ofctl
+file path=usr/sbin/ovs-pki
+file path=usr/sbin/ovs-vsctl
+file path=usr/sbin/ovsdb-client
+file path=usr/sbin/ovsdb-tool
+file path=usr/share/man/man1/ovsdb-client.1
+file path=usr/share/man/man1/ovsdb-server.1
+file path=usr/share/man/man1/ovsdb-tool.1
+file path=usr/share/man/man8/ovs-appctl.8
+file path=usr/share/man/man8/ovs-dpctl.8
+file path=usr/share/man/man8/ovs-ofctl.8
+file path=usr/share/man/man8/ovs-pki.8
+file path=usr/share/man/man8/ovs-vsctl.8
+file path=usr/share/man/man8/ovs-vswitchd.8
+dir  path=var/lib/ovs/etc owner=_ovs group=_ovs mode=0700
+dir  path=var/log/ovs owner=_ovs group=_ovs mode=0700
+group groupname=_ovs gid=99
+user username=_ovs ftpuser=false gcos-field="Open Virtual Switch" group=_ovs \
+    home-dir=/var/lib/ovs uid=99
+license openvswitch.license license="openvswitch license"
+depend type=require fmri=__TBD \
+    pkg.debug.depend.file=lib/svc/share/net_include.sh \
+    pkg.debug.reason=lib/svc/method/ovs

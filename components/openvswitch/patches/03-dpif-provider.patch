@@ -1,0 +1,208 @@
+This patch includes support for the Solaris dpif provider.
+
+This patch has not been proposed upstream because we are not yet
+proposing Solaris specific requirements upstream.
+
+diff --git a/lib/dpif-netdev.c b/lib/dpif-netdev.c
+index 78f8636..d9b18d0 100644
+--- a/lib/dpif-netdev.c
++++ b/lib/dpif-netdev.c
+@@ -2269,6 +2269,7 @@ const struct dpif_class dpif_netdev_class = {
+     dpif_netdev_recv,
+     dpif_netdev_recv_wait,
+     dpif_netdev_recv_purge,
++    NULL,
+ };
+ 
+ static void
+diff --git a/lib/dpif-provider.h b/lib/dpif-provider.h
+index 389e84e..7df0e3c 100644
+--- a/lib/dpif-provider.h
++++ b/lib/dpif-provider.h
+@@ -436,9 +436,13 @@ struct dpif_class {
+     /* Throws away any queued upcalls that 'dpif' currently has ready to
+      * return. */
+     void (*recv_purge)(struct dpif *dpif);
++
++    /* Configure port on bridge. */
++    int (*configure_bridge_port)(const struct dpif *, const char *devname);
+ };
+ 
+ extern const struct dpif_class dpif_linux_class;
++extern const struct dpif_class dpif_solaris_class;
+ extern const struct dpif_class dpif_netdev_class;
+ 
+ #ifdef  __cplusplus
+diff --git a/lib/dpif.c b/lib/dpif.c
+index 450c6c8..d5a89da 100644
+--- a/lib/dpif.c
++++ b/lib/dpif.c
+@@ -60,6 +60,9 @@ static const struct dpif_class *base_dpif_classes[] = {
+ #ifdef __linux__
+     &dpif_linux_class,
+ #endif
++#ifdef __sun
++    &dpif_solaris_class,
++#endif
+     &dpif_netdev_class,
+ };
+ 
+@@ -661,6 +664,14 @@ dpif_port_get_pid(const struct dpif *dpif, odp_port_t port_no, uint32_t hash)
+             : 0);
+ }
+ 
++int
++dpif_configure_bridge_port(const struct dpif *dpif, const char *devname)
++{
++    return (dpif->dpif_class->configure_bridge_port
++	    ? (dpif->dpif_class->configure_bridge_port)(dpif, devname)
++	    : 0);
++}
++
+ /* Looks up port number 'port_no' in 'dpif'.  On success, returns 0 and copies
+  * the port's name into the 'name_size' bytes in 'name', ensuring that the
+  * result is null-terminated.  On failure, returns a positive errno value and
+diff --git a/lib/dpif.h b/lib/dpif.h
+index f13cc36..25b4845 100644
+--- a/lib/dpif.h
++++ b/lib/dpif.h
+@@ -468,6 +468,7 @@ int dpif_port_get_name(struct dpif *, odp_port_t port_no,
+                        char *name, size_t name_size);
+ uint32_t dpif_port_get_pid(const struct dpif *, odp_port_t port_no,
+                            uint32_t hash);
++int dpif_configure_bridge_port(const struct dpif *dpif, const char *devname);
+ 
+ struct dpif_port_dump {
+     const struct dpif *dpif;
+diff --git a/ofproto/ofproto-dpif.c b/ofproto/ofproto-dpif.c
+index 46595f8..2bb200c 100644
+--- a/ofproto/ofproto-dpif.c
++++ b/ofproto/ofproto-dpif.c
+@@ -1431,7 +1431,7 @@ run(struct ofproto *ofproto_)
+ }
+ 
+ static void
+-wait(struct ofproto *ofproto_)
++dpwait(struct ofproto *ofproto_)
+ {
+     struct ofproto_dpif *ofproto = ofproto_dpif_cast(ofproto_);
+ 
+@@ -2839,6 +2839,17 @@ port_query_by_name(const struct ofproto *ofproto_, const char *devname,
+ }
+ 
+ static int
++configure_bridge_port(const struct ofproto *ofproto_, const char *devname)
++{
++    struct ofproto_dpif *ofproto = ofproto_dpif_cast(ofproto_);
++
++    if (!sset_contains(&ofproto->ports, devname)) {
++        return ENODEV;
++    }
++    return (dpif_configure_bridge_port(ofproto->backer->dpif, devname));
++}
++
++static int
+ port_add(struct ofproto *ofproto_, struct netdev *netdev)
+ {
+     struct ofproto_dpif *ofproto = ofproto_dpif_cast(ofproto_);
+@@ -4867,7 +4878,7 @@ const struct ofproto_class ofproto_dpif_class = {
+     destruct,
+     dealloc,
+     run,
+-    wait,
++    dpwait,
+     NULL,                       /* get_memory_usage. */
+     type_get_memory_usage,
+     flush,
+@@ -4934,4 +4945,5 @@ const struct ofproto_class ofproto_dpif_class = {
+     group_dealloc,              /* group_dealloc */
+     group_modify,               /* group_modify */
+     group_get_stats,            /* group_get_stats */
++    configure_bridge_port       /* configure_bridge_port */
+ };
+diff --git a/ofproto/ofproto-provider.h b/ofproto/ofproto-provider.h
+index 1978a20..f743a8a 100644
+--- a/ofproto/ofproto-provider.h
++++ b/ofproto/ofproto-provider.h
+@@ -1695,6 +1695,8 @@ struct ofproto_class {
+ 
+     enum ofperr (*group_get_stats)(const struct ofgroup *,
+                                    struct ofputil_group_stats *);
++    int (*configure_bridge_port)(const struct ofproto *ofproto,
++                              const char *devname);
+ };
+ 
+ extern const struct ofproto_class ofproto_dpif_class;
+diff --git a/ofproto/ofproto.c b/ofproto/ofproto.c
+index 2048fde..2b25fe4 100644
+--- a/ofproto/ofproto.c
++++ b/ofproto/ofproto.c
+@@ -1826,6 +1826,13 @@ ofproto_port_query_by_name(const struct ofproto *ofproto, const char *devname,
+     return error;
+ }
+ 
++int
++ofproto_configure_bridge_port(const struct ofproto *ofproto,
++    const char *devname)
++{
++    return (ofproto->ofproto_class->configure_bridge_port(ofproto, devname));
++}
++
+ /* Deletes port number 'ofp_port' from the datapath for 'ofproto'.
+  * Returns 0 if successful, otherwise a positive errno. */
+ int
+diff --git a/ofproto/ofproto.h b/ofproto/ofproto.h
+index 9a06849..94dce34 100644
+--- a/ofproto/ofproto.h
++++ b/ofproto/ofproto.h
+@@ -224,6 +224,7 @@ int ofproto_port_get_stats(const struct ofport *, struct netdev_stats *stats);
+ 
+ int ofproto_port_query_by_name(const struct ofproto *, const char *devname,
+                                struct ofproto_port *);
++int ofproto_configure_bridge_port(const struct ofproto *, const char *);
+ 
+ /* Top-level configuration. */
+ uint64_t ofproto_get_datapath_id(const struct ofproto *);
+diff --git a/ofproto/ofproto-dpif-xlate.c b/ofproto/ofproto-dpif-xlate.c
+index 4f77ac5..b9f1801 100644
+--- a/ofproto/ofproto-dpif-xlate.c
++++ b/ofproto/ofproto-dpif-xlate.c
+@@ -3184,6 +3184,7 @@ xlate_actions(struct xlate_in *xin, struct xlate_out *xout)
+     ovs_rwlock_unlock(&xlate_rwlock);
+ }
+ 
++#ifdef __linux__
+ /* Returns the maximum number of packets that the Linux kernel is willing to
+  * queue up internally to certain kinds of software-implemented ports, or the
+  * default (and rarely modified) value if it cannot be determined. */
+@@ -3236,7 +3237,9 @@ count_output_actions(const struct ofpbuf *odp_actions)
+     }
+     return n;
+ }
++#endif
+ 
++#ifdef __linux__
+ /* Returns true if 'odp_actions' contains more output actions than the datapath
+  * can reliably handle in one go.  On Linux, this is the value of the
+  * net.core.netdev_max_backlog sysctl, which limits the maximum number of
+@@ -3245,15 +3248,18 @@ count_output_actions(const struct ofpbuf *odp_actions)
+ static bool
+ too_many_output_actions(const struct ofpbuf *odp_actions)
+ {
+-#ifdef __linux__
+     return (ofpbuf_size(odp_actions) / NL_A_U32_SIZE > netdev_max_backlog()
+             && count_output_actions(odp_actions) > netdev_max_backlog());
++}
+ #else
++static bool
++too_many_output_actions(const struct ofpbuf *odp_actions OVS_UNUSED)
++{
+     /* OSes other than Linux might have similar limits, but we don't know how
+      * to determine them.*/
+     return false;
+-#endif
+ }
++#endif
+ 
+ /* Translates the 'ofpacts_len' bytes of "struct ofpacts" starting at 'ofpacts'
+  * into datapath actions in 'odp_actions', using 'ctx'.

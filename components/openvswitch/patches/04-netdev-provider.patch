@@ -1,0 +1,136 @@
+This patch includes support for the Solaris netdev provider.
+
+This patch has not been proposed upstream because we are not yet
+proposing Solaris specific requirements upstream.
+
+diff --git a/lib/netdev-dummy.c b/lib/netdev-dummy.c
+index 501fb82..1051f08 100644
+--- a/lib/netdev-dummy.c
++++ b/lib/netdev-dummy.c
+@@ -1043,7 +1043,10 @@ static const struct netdev_class dummy_class = {
+     NULL,                       /* arp_lookup */
+ 
+     netdev_dummy_update_flags,
+-
++#ifdef __sun
++    NULL,
++    NULL,
++#endif
+     netdev_dummy_rxq_alloc,
+     netdev_dummy_rxq_construct,
+     netdev_dummy_rxq_destruct,
+diff --git a/lib/netdev-provider.h b/lib/netdev-provider.h
+index 37b9da3..bcec96a 100644
+--- a/lib/netdev-provider.h
++++ b/lib/netdev-provider.h
+@@ -647,6 +647,14 @@ struct netdev_class {
+     int (*update_flags)(struct netdev *netdev, enum netdev_flags off,
+                         enum netdev_flags on, enum netdev_flags *old_flags);
+ 
++
++    /* Returns true if netdev represents uplink for the switch */
++    int (*configure_uplink)(const struct netdev *netdev,
++                            const char *brname);
++
++    /* Returns true if netdev represents uplink for the switch */
++    bool (*is_uplink)(const struct netdev *netdev);
++
+ /* ## -------------------- ## */
+ /* ## netdev_rxq Functions ## */
+ /* ## -------------------- ## */
+@@ -692,6 +700,9 @@ extern const struct netdev_class netdev_tap_class;
+ #if defined(__FreeBSD__) || defined(__NetBSD__)
+ extern const struct netdev_class netdev_bsd_class;
+ #endif
++#ifdef __sun
++extern const struct netdev_class netdev_solaris_class;
++#endif
+ 
+ #ifdef  __cplusplus
+ }
+diff --git a/lib/netdev-vport.c b/lib/netdev-vport.c
+index a676784..54c9e0b 100644
+--- a/lib/netdev-vport.c
++++ b/lib/netdev-vport.c
+@@ -814,7 +814,9 @@ get_stats(const struct netdev *netdev, struct netdev_stats *stats)
+     NULL,                   /* rx_dealloc */                \
+     NULL,                   /* rx_recv */                   \
+     NULL,                   /* rx_wait */                   \
+-    NULL,                   /* rx_drain */
++    NULL,                   /* rx_drain */		    \
++    NULL,                   /* configure_uplink */	    \
++    NULL                    /* is_uplink */
+ 
+ #define TUNNEL_CLASS(NAME, DPIF_PORT)                       \
+     { DPIF_PORT,                                            \
+@@ -827,12 +829,14 @@ void
+ netdev_vport_tunnel_register(void)
+ {
+     static const struct vport_class vport_classes[] = {
++#ifndef __sun
+         TUNNEL_CLASS("gre", "gre_system"),
+         TUNNEL_CLASS("ipsec_gre", "gre_system"),
+         TUNNEL_CLASS("gre64", "gre64_system"),
+         TUNNEL_CLASS("ipsec_gre64", "gre64_system"),
+-        TUNNEL_CLASS("vxlan", "vxlan_system"),
+-        TUNNEL_CLASS("lisp", "lisp_system")
++        TUNNEL_CLASS("lisp", "lisp_system"),
++#endif
++        TUNNEL_CLASS("vxlan", "vxlan_system")
+     };
+     static struct ovsthread_once once = OVSTHREAD_ONCE_INITIALIZER;
+ 
+diff --git a/lib/netdev.c b/lib/netdev.c
+index 5bf2220..c59a308 100644
+--- a/lib/netdev.c
++++ b/lib/netdev.c
+@@ -135,6 +135,11 @@ netdev_initialize(void)
+         netdev_register_provider(&netdev_tap_class);
+         netdev_register_provider(&netdev_bsd_class);
+ #endif
++#ifdef __sun
++	netdev_register_provider(&netdev_solaris_class);
++	netdev_register_provider(&netdev_internal_class);
++        netdev_vport_tunnel_register();
++#endif
+         netdev_dpdk_register();
+ 
+         ovsthread_once_done(&once);
+@@ -684,6 +689,23 @@ netdev_get_etheraddr(const struct netdev *netdev, uint8_t mac[ETH_ADDR_LEN])
+     return netdev->netdev_class->get_etheraddr(netdev, mac);
+ }
+ 
++int
++netdev_configure_uplink(const struct netdev *netdev, const char *brname)
++{
++    const struct netdev_class *class = netdev->netdev_class;
++
++    return (class->configure_uplink
++           ? class->configure_uplink(netdev, brname) : 0);
++}
++
++bool
++netdev_is_uplink(const struct netdev *netdev)
++{
++    const struct netdev_class *class = netdev->netdev_class;
++
++    return(class->is_uplink ? class->is_uplink(netdev) : false);
++}
++
+ /* Returns the name of the network device that 'netdev' represents,
+  * e.g. "eth0".  The caller must not modify or free the returned string. */
+ const char *
+diff --git a/lib/netdev.h b/lib/netdev.h
+index 7cb3c80..9b663b7 100644
+--- a/lib/netdev.h
++++ b/lib/netdev.h
+@@ -177,6 +177,9 @@ void netdev_send_wait(struct netdev *);
+ int netdev_set_etheraddr(struct netdev *, const uint8_t mac[6]);
+ int netdev_get_etheraddr(const struct netdev *, uint8_t mac[6]);
+ 
++int netdev_configure_uplink(const struct netdev *, const char *);
++bool netdev_is_uplink(const struct netdev *);
++
+ /* PHY interface. */
+ bool netdev_get_carrier(const struct netdev *);
+ long long int netdev_get_carrier_resets(const struct netdev *);

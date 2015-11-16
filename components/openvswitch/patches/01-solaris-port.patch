@@ -1,0 +1,361 @@
+This patch includes changes that allow OVS to build on
+on Solaris. The specific changes are:
+
+    acinclude.m4           Use dlmgr to identify Solaris build
+    configure.ac
+
+    include/automake.mk    Build for Solaris
+    lib/automake.mk
+
+    lib/byte-order.h       Solaris supports htonll natively
+
+    lib/flow.h             Add ip6_ext structure for Solaris
+
+    lib/sflow.h            Map OVS int types to Solaris
+    lib/socket_util.h
+
+    lib/socket-util.c      Fix set_dscp setsockopt error return for Solaris
+    python/ovs/socket_util.py
+
+    vswitchd/automake.mk   Solaris sed whitespace fix
+    vtep/automake.mk
+
+    lib/socket-util.c      Rename 'sun' argument
+    lib/lib-stream-unix.c
+
+This patch has not been proposed upstream because we are not yet
+proposing Solaris specific requirements upstream.
+
+diff --git a/acinclude.m4 b/acinclude.m4
+index 8d10360..2b5944e 100644
+--- a/acinclude.m4
++++ b/acinclude.m4
+@@ -378,6 +378,22 @@ AC_DEFUN([OVS_CHECK_IF_DL],
+       AC_SEARCH_LIBS([pcap_open_live], [pcap])
+    fi])
+ 
++dnl Checks for rad/client/1/dlmgr.h
++dnl
++dnl (For now, we use this as a proxy for checking whether we're building on
++dnl Solaris). Also, note that LDFLAGS has to be modified because
++dnl libopenvswitch.la consumes the dlmgr RAD client.
++AC_DEFUN([OVS_CHECK_DLMGR],
++  [AC_CHECK_HEADER([rad/client/1/dlmgr.h],
++                   [HAVE_DLMGR=yes],
++                   [HAVE_DLMGR=no])
++   AM_CONDITIONAL([SOLARIS], [test "$HAVE_DLMGR" = yes])
++   if test "$HAVE_DLMGR" = yes; then
++      AC_DEFINE([SOLARIS], [1],
++                [Define to 1 if rad/client/1/dlmgr.h is available.])
++      LDFLAGS="$LDFLAGS -R /usr/lib/rad/client/c/64"
++   fi])
++
+ dnl Checks for buggy strtok_r.
+ dnl
+ dnl Some versions of glibc 2.7 has a bug in strtok_r when compiling
+diff --git a/configure.ac b/configure.ac
+index 5c1f398..56ce096 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -61,6 +61,7 @@ OVS_CHECK_PYTHON_COMPAT
+ OVS_CHECK_DOT
+ OVS_CHECK_IF_PACKET
+ OVS_CHECK_IF_DL
++OVS_CHECK_DLMGR
+ OVS_CHECK_STRTOK_R
+ AC_CHECK_DECLS([sys_siglist], [], [], [[#include <signal.h>]])
+ AC_CHECK_MEMBERS([struct stat.st_mtim.tv_nsec, struct stat.st_mtimensec],
+diff --git a/include/automake.mk b/include/automake.mk
+index 37a6f77..302329e 100644
+--- a/include/automake.mk
++++ b/include/automake.mk
+@@ -1,5 +1,6 @@
+ include include/linux/automake.mk
+ include include/openflow/automake.mk
+ include include/openvswitch/automake.mk
++include include/solaris/automake.mk
+ include include/sparse/automake.mk
+ include include/windows/automake.mk
+diff --git a/lib/automake.mk b/lib/automake.mk
+index de3f068..5029dd3 100644
+--- a/lib/automake.mk
++++ b/lib/automake.mk
+@@ -13,8 +13,21 @@ if WIN32
+ lib_libopenvswitch_la_LIBADD += ${PTHREAD_LIBS}
+ endif
+ 
++if SOLARIS
++lib_libopenvswitch_la_LIBADD += -ldladm
++lib_libopenvswitch_la_LIBADD += -ldlpi
++lib_libopenvswitch_la_LIBADD += -ldlmgr_client
++lib_libopenvswitch_la_LIBADD += -lradclient
++lib_libopenvswitch_la_LIBADD += -lkstat2
++lib_libopenvswitch_la_LIBADD += -ladr
++endif
++
+ lib_libopenvswitch_la_LDFLAGS = -release $(VERSION)
+ 
++if SOLARIS
++lib_libopenvswitch_la_LDFLAGS += -L/usr/lib/rad/client/c/64
++endif
++
+ lib_libopenvswitch_la_SOURCES = \
+ 	lib/aes128.c \
+ 	lib/aes128.h \
+@@ -304,6 +317,16 @@ lib_libopenvswitch_la_SOURCES += \
+ 	lib/route-table.h
+ endif
+ 
++if SOLARIS
++lib_libopenvswitch_la_SOURCES += \
++	lib/dpif-solaris.c \
++	lib/dpif-solaris.h \
++	lib/netdev-solaris.c \
++	lib/netdev-solaris.h \
++	lib/util-solaris.c \
++	lib/util-solaris.h
++endif
++
+ if DPDK_NETDEV
+ lib_libopenvswitch_la_SOURCES += \
+        lib/netdev-dpdk.c \
+@@ -322,12 +345,16 @@ lib_libopenvswitch_la_SOURCES += \
+ endif
+ 
+ if HAVE_IF_DL
++if SOLARIS
+ lib_libopenvswitch_la_SOURCES += \
++	lib/route-table-solaris.c
++else
+ 	lib/netdev-bsd.c \
+ 	lib/rtbsd.c \
+ 	lib/rtbsd.h \
+ 	lib/route-table-bsd.c
+ endif
++endif
+ 
+ if HAVE_OPENSSL
+ lib_libopenvswitch_la_SOURCES += lib/stream-ssl.c
+diff --git a/lib/byte-order.h b/lib/byte-order.h
+index 544f46f..b63a2b9 100644
+--- a/lib/byte-order.h
++++ b/lib/byte-order.h
+@@ -22,7 +22,7 @@
+ #include "openvswitch/types.h"
+ 
+ #ifndef __CHECKER__
+-#ifndef _WIN32
++#if !defined (_WIN32) && !defined (__sun)
+ static inline ovs_be64
+ htonll(uint64_t n)
+ {
+@@ -34,7 +34,7 @@ ntohll(ovs_be64 n)
+ {
+     return htonl(1) == 1 ? n : ((uint64_t) ntohl(n) << 32) | ntohl(n >> 32);
+ }
+-#endif /* _WIN32 */
++#endif /* _WIN32/__sun */
+ #else
+ /* Making sparse happy with these functions also makes them unreadable, so
+  * don't bother to show it their implementations. */
+diff --git a/lib/flow.h b/lib/flow.h
+index 0f3ffde..f141cb0 100644
+--- a/lib/flow.h
++++ b/lib/flow.h
+@@ -28,6 +28,10 @@
+ #include "hash.h"
+ #include "util.h"
+ 
++#ifdef __sun
++#include "solaris/solarisdefs.h"
++#endif
++
+ struct dpif_flow_stats;
+ struct ds;
+ struct flow_wildcards;
+diff --git a/lib/sflow.h b/lib/sflow.h
+index c6cde7f..2279a62 100644
+--- a/lib/sflow.h
++++ b/lib/sflow.h
+@@ -12,6 +12,10 @@
+ #include "windefs.h"
+ #endif
+ 
++#ifdef __sun
++#include "solaris/solarisdefs.h"
++#endif
++
+ typedef enum {
+     SFL_DSCLASS_IFINDEX = 0,
+     SFL_DSCLASS_VLAN = 1,
+diff --git a/lib/socket-util.h b/lib/socket-util.h
+index 2acc974..ebd3ae5 100644
+--- a/lib/socket-util.h
++++ b/lib/socket-util.h
+@@ -27,6 +27,10 @@
+ #include <netinet/in_systm.h>
+ #include <netinet/ip.h>
+ 
++#ifdef __sun
++#include "solaris/solarisdefs.h"
++#endif
++
+ int set_nonblocking(int fd);
+ void xset_nonblocking(int fd);
+ int set_dscp(int fd, uint8_t dscp);
+diff --git a/lib/socket-util.c b/lib/socket-util.c
+index aa0c719..afc607e 100644
+--- a/lib/socket-util.c
++++ b/lib/socket-util.c
+@@ -111,6 +111,7 @@ set_dscp(int fd, uint8_t dscp)
+ {
+     int val;
+     bool success;
++    int err = 0;
+ 
+     if (dscp > 63) {
+         return EINVAL;
+@@ -120,29 +121,39 @@ set_dscp(int fd, uint8_t dscp)
+     success = false;
+     val = dscp << 2;
+     if (setsockopt(fd, IPPROTO_IP, IP_TOS, &val, sizeof val)) {
++	err = sock_errno();
++#ifndef __sun
+ #ifndef _WIN32
+-        if (sock_errno() != ENOPROTOOPT) {
++        if (err != ENOPROTOOPT) {
+ #else
+-        if (sock_errno() != WSAENOPROTOOPT) {
++        if (err != WSAENOPROTOOPT) {
+ #endif
+-            return sock_errno();
++            return err;
+         }
++#endif
+     } else {
+         success = true;
+     }
+     if (setsockopt(fd, IPPROTO_IPV6, IPV6_TCLASS, &val, sizeof val)) {
++	err = sock_errno();
++#ifndef __sun
+ #ifndef _WIN32
+-        if (sock_errno() != ENOPROTOOPT) {
++        if (err != ENOPROTOOPT) {
+ #else
+-        if (sock_errno() != WSAENOPROTOOPT) {
++        if (err != WSAENOPROTOOPT) {
+ #endif
+-            return sock_errno();
++            return err;
+         }
++#endif
+     } else {
+         success = true;
+     }
+     if (!success) {
++#ifndef __sun
+         return ENOPROTOOPT;
++#else
++	return err;
++#endif
+     }
+ 
+     return 0;
+@@ -505,11 +516,11 @@ free_sockaddr_un(int dirfd, const char *linkname)
+ 
+ /* Binds Unix domain socket 'fd' to a file with permissions 0700. */
+ static int
+-bind_unix_socket(int fd, struct sockaddr *sun, socklen_t sun_len)
++bind_unix_socket(int fd, struct sockaddr *addr, socklen_t addrlen)
+ {
+     /* According to _Unix Network Programming_, umask should affect bind(). */
+     mode_t old_umask = umask(0077);
+-    int error = bind(fd, sun, sun_len) ? errno : 0;
++    int error = bind(fd, addr, addrlen) ? errno : 0;
+     umask(old_umask);
+     return error;
+ }
+@@ -1115,15 +1126,15 @@ describe_sockaddr(struct ds *string, int fd,
+                           ss_get_port(&ss));
+ #ifndef _WIN32
+         } else if (ss.ss_family == AF_UNIX) {
+-            struct sockaddr_un sun;
++            struct sockaddr_un addr;
+             const char *null;
+             size_t maxlen;
+ 
+-            memcpy(&sun, &ss, sizeof sun);
++            memcpy(&addr, &ss, sizeof addr);
+             maxlen = len - offsetof(struct sockaddr_un, sun_path);
+-            null = memchr(sun.sun_path, '\0', maxlen);
+-            ds_put_buffer(string, sun.sun_path,
+-                          null ? null - sun.sun_path : maxlen);
++            null = memchr(addr.sun_path, '\0', maxlen);
++            ds_put_buffer(string, addr.sun_path,
++                          null ? null - addr.sun_path : maxlen);
+ #endif
+         }
+ #ifdef HAVE_NETLINK
+diff --git a/lib/stream-unix.c b/lib/stream-unix.c
+index b3d70b6..a8cacc4 100644
+--- a/lib/stream-unix.c
++++ b/lib/stream-unix.c
+@@ -108,12 +108,12 @@ static int
+ punix_accept(int fd, const struct sockaddr_storage *ss, size_t ss_len,
+              struct stream **streamp)
+ {
+-    const struct sockaddr_un *sun = (const struct sockaddr_un *) ss;
++    const struct sockaddr_un *addr = (const struct sockaddr_un *) ss;
+     int name_len = get_unix_name_len(ss_len);
+     char name[128];
+ 
+     if (name_len > 0) {
+-        snprintf(name, sizeof name, "unix:%.*s", name_len, sun->sun_path);
++        snprintf(name, sizeof name, "unix:%.*s", name_len, addr->sun_path);
+     } else {
+         strcpy(name, "unix");
+     }
+diff --git a/python/ovs/socket_util.py b/python/ovs/socket_util.py
+index 1af6474..b334d7e 100644
+--- a/python/ovs/socket_util.py
++++ b/python/ovs/socket_util.py
+@@ -302,11 +302,11 @@ def set_dscp(sock, dscp):
+     try:
+         sock.setsockopt(socket.IPPROTO_IP, socket.IP_TOS, val)
+     except socket.error, e:
+-        if get_exception_errno(e) != errno.ENOPROTOOPT:
++        if get_exception_errno(e) != errno.EINVAL:
+             raise
+     success = True
+     try:
+         sock.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_TCLASS, val)
+     except socket.error, e:
+-        if get_exception_errno(e) != errno.ENOPROTOOPT or not success:
++        if get_exception_errno(e) != errno.EINVAL or not success:
+             raise
+diff --git a/vswitchd/automake.mk b/vswitchd/automake.mk
+index a09605f..19bf9ea 100644
+--- a/vswitchd/automake.mk
++++ b/vswitchd/automake.mk
+@@ -57,7 +57,7 @@ vswitchd/ovs-vswitchd.conf.db.5: \
+ # Version checking for vswitch.ovsschema.
+ ALL_LOCAL += vswitchd/vswitch.ovsschema.stamp
+ vswitchd/vswitch.ovsschema.stamp: vswitchd/vswitch.ovsschema
+-	@sum=`sed '/cksum/d' $? | cksum`; \
++	@sum=`sed '/cksum/d' $? | cksum | sed 's/	/ /'`; \
+ 	expected=`sed -n 's/.*"cksum": "\(.*\)".*/\1/p' $?`; \
+ 	if test "X$$sum" = "X$$expected"; then \
+ 	  touch $@; \
+diff --git a/vtep/automake.mk b/vtep/automake.mk
+index a15a067..9f8e9a9 100644
+--- a/vtep/automake.mk
++++ b/vtep/automake.mk
+@@ -59,7 +59,7 @@ $(srcdir)/vtep/vtep.5: \
+ # Version checking for vtep.ovsschema.
+ ALL_LOCAL += vtep/vtep.ovsschema.stamp
+ vtep/vtep.ovsschema.stamp: vtep/vtep.ovsschema
+-	@sum=`sed '/cksum/d' $? | cksum`; \
++	@sum=`sed '/cksum/d' $? | cksum | sed 's/	/ /'`; \
+ 	expected=`sed -n 's/.*"cksum": "\(.*\)".*/\1/p' $?`; \
+ 	if test "X$$sum" = "X$$expected"; then \
+ 	  touch $@; \

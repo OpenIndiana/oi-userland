@@ -1,0 +1,155 @@
+This patch includes Solaris bridge specific changes to OVS.
+
+This patch has not been proposed upstream because we are not yet
+proposing Solaris specific requirements upstream.
+
+diff --git a/vswitchd/bridge.c b/vswitchd/bridge.c
+index 6cd30b8..19ff759 100644
+--- a/vswitchd/bridge.c
++++ b/vswitchd/bridge.c
+@@ -943,6 +943,12 @@ port_configure(struct port *port)
+     free(s.lacp_slaves);
+ }
+ 
++static boolean_t
++bridge_is_system(const struct bridge *br)
++{
++    return (strcmp(br->type, "system") == 0);
++}
++
+ /* Pick local port hardware address and datapath ID for 'br'. */
+ static void
+ bridge_configure_datapath_id(struct bridge *br)
+@@ -954,6 +960,14 @@ bridge_configure_datapath_id(struct bridge *br)
+     char *dpid_string;
+ 
+     bridge_pick_local_hw_addr(br, ea, &hw_addr_iface);
++#ifdef __sun
++    /* Solaris "system" bridges are implicitly created VNICs. They 
++     * already have their ethernet addresses set, so there is no
++     * reason to set them. We prefer that they be "auto" generated.
++     */
++    if (bridge_is_system(br))
++	goto skip;
++#endif
+     local_iface = iface_from_ofp_port(br, OFPP_LOCAL);
+     if (local_iface) {
+         int error = netdev_set_etheraddr(local_iface->netdev, ea);
+@@ -964,6 +978,9 @@ bridge_configure_datapath_id(struct bridge *br)
+                         br->name, ovs_strerror(error));
+         }
+     }
++#ifdef __sun
++skip:
++#endif
+     memcpy(br->ea, ea, ETH_ADDR_LEN);
+ 
+     dpid = bridge_pick_datapath_id(br, ea, hw_addr_iface);
+@@ -1485,6 +1502,16 @@ iface_do_create(const struct bridge *br,
+         goto error;
+     }
+ 
++#ifdef __sun
++    if (bridge_is_system(br) && netdev_is_uplink(netdev)) {
++        VLOG_INFO("bridge %s: uplink %s", br->name, iface_cfg->name);
++        error = netdev_configure_uplink(netdev, br->name);
++        if (error) {
++            goto error;
++        }
++    }
++#endif
++
+     *ofp_portp = iface_pick_ofport(iface_cfg);
+     error = ofproto_port_add(br->ofproto, netdev, ofp_portp);
+     if (error) {
+@@ -1494,6 +1521,15 @@ iface_do_create(const struct bridge *br,
+     VLOG_INFO("bridge %s: added interface %s on port %d",
+               br->name, iface_cfg->name, *ofp_portp);
+ 
++#ifdef __sun
++    if (bridge_is_system(br) && iface_is_internal(iface_cfg, br->cfg)) {
++	error = ofproto_configure_bridge_port(br->ofproto, br->name);
++        if (error) {
++            goto error;
++        }
++    }
++#endif
++
+     if (port_cfg->vlan_mode && !strcmp(port_cfg->vlan_mode, "splinter")) {
+         netdev_turn_flags_on(netdev, NETDEV_UP, NULL);
+     }
+@@ -1620,10 +1656,31 @@ find_local_hw_addr(const struct bridge *br, uint8_t ea[ETH_ADDR_LEN],
+ {
+     struct hmapx mirror_output_ports;
+     struct port *port;
++    int i;
++    struct iface *iface = NULL;
++    uint8_t iface_ea[ETH_ADDR_LEN];
+     bool found_addr = false;
+     int error;
+-    int i;
+ 
++#ifdef __sun
++    /*
++     * Solaris does not currently support fake bridges.
++     */
++    if (bridge_is_system(br)) {
++	if (fake_br == NULL) {
++	    iface = iface_lookup(br, br->name);
++	    if (iface != NULL) {
++		error = netdev_get_etheraddr(iface->netdev, iface_ea);
++		if (error == 0) {
++		    memcpy(ea, iface_ea, ETH_ADDR_LEN);
++		    *hw_addr_iface = iface;
++		    found_addr = true;
++		}
++            }
++        }
++	goto skip;
++    }
++#endif
+     /* Mirror output ports don't participate in picking the local hardware
+      * address.  ofproto can't help us find out whether a given port is a
+      * mirror output because we haven't configured mirrors yet, so we need to
+@@ -1639,9 +1696,7 @@ find_local_hw_addr(const struct bridge *br, uint8_t ea[ETH_ADDR_LEN],
+     /* Otherwise choose the minimum non-local MAC address among all of the
+      * interfaces. */
+     HMAP_FOR_EACH (port, hmap_node, &br->ports) {
+-        uint8_t iface_ea[ETH_ADDR_LEN];
+         struct iface *candidate;
+-        struct iface *iface;
+ 
+         /* Mirror output ports don't participate. */
+         if (hmapx_contains(&mirror_output_ports, port->cfg)) {
+@@ -1708,13 +1763,15 @@ find_local_hw_addr(const struct bridge *br, uint8_t ea[ETH_ADDR_LEN],
+             found_addr = true;
+         }
+     }
++    hmapx_destroy(&mirror_output_ports);
++#ifdef __sun
++skip:
++#endif
+ 
+     if (!found_addr) {
+         memcpy(ea, br->default_ea, ETH_ADDR_LEN);
+         *hw_addr_iface = NULL;
+     }
+-
+-    hmapx_destroy(&mirror_output_ports);
+ }
+ 
+ static void
+diff --git a/vswitchd/system-stats.c b/vswitchd/system-stats.c
+index 7789787..cee0255 100644
+--- a/vswitchd/system-stats.c
++++ b/vswitchd/system-stats.c
+@@ -29,6 +29,9 @@
+ #if HAVE_SYS_STATVFS_H
+ #include <sys/statvfs.h>
+ #endif
++#ifdef __sun
++#include <sys/loadavg.h>
++#endif
+ #include <unistd.h>
+ 
+ #include "daemon.h"

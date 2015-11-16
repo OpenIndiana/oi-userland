@@ -1,0 +1,1367 @@
+This patch updates usage and man pages.
+
+This patch has not been proposed upstream because we are not yet
+proposing Solaris specific requirements upstream.
+
+diff --git a/utilities/ovs-ofctl.8.in b/utilities/ovs-ofctl.8.in
+index 5b0c52e..6a2b0a1 100644
+--- a/utilities/ovs-ofctl.8.in
++++ b/utilities/ovs-ofctl.8.in
+@@ -96,22 +96,11 @@ may be any one of the following:
+ Enable or disable the interface.  This is equivalent to \fBifconfig
+ up\fR or \fBifconfig down\fR on a Unix system.
+ .
+-.IP \fBstp\fR
+-.IQ \fBno\-stp\fR
+-Enable or disable 802.1D spanning tree protocol (STP) on the
+-interface.  OpenFlow implementations that don't support STP will
+-refuse to enable it.
+-.
+ .IP \fBreceive\fR
+ .IQ \fBno\-receive\fR
+-.IQ \fBreceive\-stp\fR
+-.IQ \fBno\-receive\-stp\fR
+ Enable or disable OpenFlow processing of packets received on this
+ interface.  When packet processing is disabled, packets will be
+-dropped instead of being processed through the OpenFlow table.  The
+-\fBreceive\fR or \fBno\-receive\fR setting applies to all packets
+-except 802.1D spanning tree packets, which are separately controlled
+-by \fBreceive\-stp\fR or \fBno\-receive\-stp\fR.
++dropped instead of being processed through the OpenFlow table.
+ .
+ .IP \fBforward\fR
+ .IQ \fBno\-forward\fR
+@@ -669,15 +658,6 @@ When \fBdl_type\fR is wildcarded or set to a value other than 0x0800 or
+ 0x86dd, the value of \fBip_dscp\fR is ignored (see \fBFlow Syntax\fR
+ above).
+ .
+-.IP \fBnw_ecn=\fIecn\fR
+-.IQ \fBip_ecn=\fIecn\fR
+-Matches \fIecn\fR bits in IP ToS or IPv6 traffic class fields, which is
+-specified as a decimal number between 0 and 3, inclusive.
+-.IP
+-When \fBdl_type\fR is wildcarded or set to a value other than 0x0800 or
+-0x86dd, the value of \fBnw_ecn\fR is ignored (see \fBFlow Syntax\fR
+-above).
+-.
+ .IP \fBnw_ttl=\fIttl\fR
+ Matches IP TTL or IPv6 hop limit value \fIttl\fR, which is
+ specified as a decimal number between 0 and 255, inclusive.
+@@ -760,48 +740,6 @@ Like the exact-match forms of \fBtp_src\fR and \fBtp_dst\fR described
+ above, the bitwise match forms apply only when \fBdl_type\fR and
+ \fBnw_proto\fR specify TCP or UDP or SCTP.
+ .
+-.IP \fBtcp_flags=\fIflags\fB/\fImask\fR
+-.IQ \fBtcp_flags=\fR[\fB+\fIflag\fR...][\fB-\fIflag\fR...]
+-Bitwise match on TCP flags.  The \fIflags\fR and \fImask\fR are 16-bit
+-numbers written in decimal or in hexadecimal prefixed by \fB0x\fR.
+-Each 1-bit in \fImask\fR requires that the corresponding bit in
+-\fIflags\fR must match.  Each 0-bit in \fImask\fR causes the corresponding
+-bit to be ignored.
+-.IP
+-Alternatively, the flags can be specified by their symbolic names
+-(listed below), each preceded by either \fB+\fR for a flag that must
+-be set, or \fB\-\fR for a flag that must be unset, without any other
+-delimiters between the flags.  Flags not mentioned are wildcarded.
+-For example, \fBtcp,tcp_flags=+syn\-ack\fR matches TCP SYNs that are
+-not ACKs.
+-.IP
+-TCP protocol currently defines 9 flag bits, and additional 3 bits are
+-reserved (must be transmitted as zero), see RFCs 793, 3168, and 3540.
+-The flag bits are, numbering from the least significant bit:
+-.RS
+-.IP "\fB0: fin\fR"
+-No more data from sender.
+-.IP "\fB1: syn\fR"
+-Synchronize sequence numbers.
+-.IP "\fB2: rst\fR"
+-Reset the connection.
+-.IP "\fB3: psh\fR"
+-Push function.
+-.IP "\fB4: ack\fR"
+-Acknowledgement field significant.
+-.IP "\fB5: urg\fR"
+-Urgent pointer field significant.
+-.IP "\fB6: ece\fR"
+-ECN Echo.
+-.IP "\fB7: cwr\fR"
+-Congestion Windows Reduced.
+-.IP "\fB8: ns\fR"
+-Nonce Sum.
+-.IP "\fB9-11:\fR"
+-Reserved.
+-.IP "\fB12-15:\fR"
+-Not matchable, must be zero.
+-.RE
+ .IP \fBicmp_type=\fItype\fR
+ .IQ \fBicmp_code=\fIcode\fR
+ When \fBdl_type\fR and \fBnw_proto\fR specify ICMP or ICMPv6, \fItype\fR
+@@ -943,27 +881,6 @@ Match packets with no 802.1Q header or tagged with VLAN 0 and priority
+ Some of these matching possibilities can also be achieved with
+ \fBdl_vlan\fR and \fBdl_vlan_pcp\fR.
+ .
+-.IP \fBip_frag=\fIfrag_type\fR
+-When \fBdl_type\fR specifies IP or IPv6, \fIfrag_type\fR
+-specifies what kind of IP fragments or non-fragments to match.  The
+-following values of \fIfrag_type\fR are supported:
+-.RS
+-.IP "\fBno\fR"
+-Matches only non-fragmented packets.
+-.IP "\fByes\fR"
+-Matches all fragments.
+-.IP "\fBfirst\fR"
+-Matches only fragments with offset 0.
+-.IP "\fBlater\fR"
+-Matches only fragments with nonzero offset.
+-.IP "\fBnot_later\fR"
+-Matches non-fragmented packets and fragments with zero offset.
+-.RE
+-.IP
+-The \fBip_frag\fR match type is likely to be most useful in
+-\fBnx\-match\fR mode.  See the description of the \fBset\-frags\fR
+-command, above, for more details.
+-.
+ .IP \fBarp_spa=\fIip\fR[\fB/\fInetmask\fR]
+ .IQ \fBarp_tpa=\fIip\fR[\fB/\fInetmask\fR]
+ When \fBdl_type\fR specifies either ARP or RARP, \fBarp_spa\fR and
+@@ -989,7 +906,6 @@ When \fBdl_type\fR specifies either ARP or RARP, \fBarp_sha\fR and
+ address is specified as 6 pairs of hexadecimal digits delimited by colons
+ (e.g. \fB00:0A:E4:25:6B:B0\fR), with a wildcard mask following the slash.
+ .
+-
+ .IP \fBipv6_src=\fIipv6\fR[\fB/\fInetmask\fR]
+ .IQ \fBipv6_dst=\fIipv6\fR[\fB/\fInetmask\fR]
+ When \fBdl_type\fR is 0x86dd (possibly via shorthand, e.g., \fBipv6\fR
+@@ -1006,73 +922,6 @@ and later support arbitrary masks; earlier versions support only CIDR
+ masks, that is, CIDR block and IPv6 addresses that are equivalent to
+ CIDR blocks.
+ .
+-.IP \fBipv6_label=\fIlabel\fR
+-When \fBdl_type\fR is 0x86dd (possibly via shorthand, e.g., \fBipv6\fR
+-or \fBtcp6\fR), matches IPv6 flow label \fIlabel\fR.
+-.
+-.IP \fBnd_target=\fIipv6\fR[\fB/\fInetmask\fR]
+-When \fBdl_type\fR, \fBnw_proto\fR, and \fBicmp_type\fR specify
+-IPv6 Neighbor Discovery (ICMPv6 type 135 or 136), matches the target address
+-\fIipv6\fR.  \fIipv6\fR is in the same format described earlier for the
+-\fBipv6_src\fR and \fBipv6_dst\fR fields.
+-.
+-.IP \fBnd_sll=\fIxx\fB:\fIxx\fB:\fIxx\fB:\fIxx\fB:\fIxx\fB:\fIxx\fR
+-When \fBdl_type\fR, \fBnw_proto\fR, and \fBicmp_type\fR specify IPv6
+-Neighbor Solicitation (ICMPv6 type 135), matches the source link\-layer
+-address option.  An address is specified as 6 pairs of hexadecimal
+-digits delimited by colons.
+-.
+-.IP \fBnd_tll=\fIxx\fB:\fIxx\fB:\fIxx\fB:\fIxx\fB:\fIxx\fB:\fIxx\fR
+-When \fBdl_type\fR, \fBnw_proto\fR, and \fBicmp_type\fR specify IPv6
+-Neighbor Advertisement (ICMPv6 type 136), matches the target link\-layer
+-address option.  An address is specified as 6 pairs of hexadecimal
+-digits delimited by colons.
+-.
+-.IP \fBmpls_bos=\fIbos\fR
+-When \fBdl_type\fR is 0x8847 or 0x8848 (possibly via shorthand e.g.,
+-\fBmpls\fR or \fBmplsm\fR), matches the bottom-of-stack bit of the
+-outer-most MPLS label stack entry. Valid values are 0 and 1.
+-.IP
+-If 1 then for a packet with a well-formed MPLS label stack the
+-bottom-of-stack bit indicates that the outer label stack entry is also
+-the inner-most label stack entry and thus that is that there is only one
+-label stack entry present.  Conversely, if 0 then for a packet with a
+-well-formed MPLS label stack the bottom-of-stack bit indicates that the
+-outer label stack entry is not the inner-most label stack entry and
+-thus there is more than one label stack entry present.
+-.
+-.IP \fBmpls_label=\fIlabel\fR
+-When \fBdl_type\fR is 0x8847 or 0x8848 (possibly via shorthand e.g.,
+-\fBmpls\fR or \fBmplsm\fR), matches the label of the outer
+-MPLS label stack entry. The label is a 20-bit value that is decimal by default;
+-use a \fB0x\fR prefix to specify them in hexadecimal.
+-.
+-.IP \fBmpls_tc=\fItc\fR
+-When \fBdl_type\fR is 0x8847 or 0x8848 (possibly via shorthand e.g.,
+-\fBmpls\fR or \fBmplsm\fR), matches the traffic-class of the outer
+-MPLS label stack entry. Valid values are between 0 (lowest) and 7 (highest).
+-.
+-.IP \fBtun_id=\fItunnel-id\fR[\fB/\fImask\fR]
+-.IQ \fBtunnel_id=\fItunnel-id\fR[\fB/\fImask\fR]
+-Matches tunnel identifier \fItunnel-id\fR.  Only packets that arrive
+-over a tunnel that carries a key (e.g. GRE with the RFC 2890 key
+-extension and a nonzero key value) will have a nonzero tunnel ID.
+-If \fImask\fR is omitted, \fItunnel-id\fR is the exact tunnel ID to match;
+-if \fImask\fR is specified, then a 1-bit in \fImask\fR indicates that the
+-corresponding bit in \fItunnel-id\fR must match exactly, and a 0-bit
+-wildcards that bit.
+-.
+-.IP \fBtun_src=\fIip\fR[\fB/\fInetmask\fR]
+-.IQ \fBtun_dst=\fIip\fR[\fB/\fInetmask\fR]
+-Matches tunnel IPv4 source (or destination) address \fIip\fR. Only packets
+-that arrive over a tunnel will have nonzero tunnel addresses.
+-The address may be specified as an IP address or host name
+-(e.g. \fB192.168.1.1\fR or \fBwww.example.com\fR).  The optional
+-\fInetmask\fR allows restricting a match to a masked IPv4 address.
+-The netmask may be specified as a dotted quad
+-(e.g. \fB192.168.1.0/255.255.255.0\fR) or as a CIDR block
+-(e.g. \fB192.168.1.0/24\fR).
+-.
+ .IP "\fBreg\fIidx\fB=\fIvalue\fR[\fB/\fImask\fR]"
+ Matches \fIvalue\fR either exactly or with optional \fImask\fR in
+ register number \fIidx\fR.  The valid range of \fIidx\fR depends on
+@@ -1085,13 +934,6 @@ exactly, and a 0-bit wildcards that bit.
+ When a packet enters an OpenFlow switch, all of the registers are set
+ to 0.  Only explicit Nicira extension actions change register values.
+ .
+-.IP \fBpkt_mark=\fIvalue\fR[\fB/\fImask\fR]
+-Matches packet metadata mark \fIvalue\fR either exactly or with optional
+-\fImask\fR. The mark is associated data that may be passed into other
+-system components in order to facilitate interaction between subsystems.
+-On Linux this corresponds to the skb mark but the exact implementation is
+-platform-dependent.
+-.
+ .PP
+ Defining IPv6 flows (those with \fBdl_type\fR equal to 0x86dd) requires
+ support for NXM.  The following shorthand notations are available for
+@@ -1212,12 +1054,6 @@ as necessary to match the value specified.  If the VLAN tag is added,
+ a priority of zero is used (see the \fBmod_vlan_pcp\fR action to set
+ this).
+ .
+-.IP \fBmod_vlan_pcp\fR:\fIvlan_pcp\fR
+-Modifies the VLAN priority on a packet.  The VLAN tag is added or modified 
+-as necessary to match the value specified.  Valid values are between 0
+-(lowest) and 7 (highest).  If the VLAN tag is added, a vid of zero is used 
+-(see the \fBmod_vlan_vid\fR action to set this).
+-.
+ .IP \fBstrip_vlan\fR
+ Strips the VLAN tag from a packet if it is present.
+ .
+@@ -1227,31 +1063,6 @@ for the tag. Only ethertype 0x8100 should be used. (0x88a8 which the spec
+ allows isn't supported at the moment.)
+ A priority of zero and the tag of zero are used for the new tag.
+ .
+-.IP \fBpush_mpls\fR:\fIethertype\fR
+-Changes the packet's Ethertype to \fIethertype\fR, which must be either
+-\fB0x8847\fR or \fB0x8848\fR, and pushes an MPLS LSE.
+-.IP
+-If the packet does not already contain any MPLS labels then an initial
+-label stack entry is pushed.  The label stack entry's label is 2 if the
+-packet contains IPv6 and 0 otherwise, its default traffic control value is
+-the low 3 bits of the packet's DSCP value (0 if the packet is not IP), and
+-its TTL is copied from the IP TTL (64 if the packet is not IP).
+-.IP
+-If the packet does already contain an MPLS label, pushes a new
+-outermost label as a copy of the existing outermost label.
+-.IP
+-A limitation of the implementation is that processing of actions will stop
+-if \fBpush_mpls\fR follows another \fBpush_mpls\fR unless there is a
+-\fBpop_mpls\fR in between.
+-.
+-.IP \fBpop_mpls\fR:\fIethertype\fR
+-Strips the outermost MPLS label stack entry.
+-Currently the implementation restricts \fIethertype\fR to a non-MPLS Ethertype
+-and thus \fBpop_mpls\fR should only be applied to packets with
+-an MPLS label stack depth of one. A further limitation is that processing of
+-actions will stop if \fBpop_mpls\fR follows another \fBpop_mpls\fR unless
+-there is a \fBpush_mpls\fR in between.
+-.
+ .IP \fBmod_dl_src\fB:\fImac\fR
+ Sets the source Ethernet address to \fImac\fR.
+ .
+@@ -1275,13 +1086,6 @@ Sets the DSCP bits in the IPv4 ToS/DSCP or IPv6 traffic class field to
+ \fItos\fR, which must be a multiple of 4 between 0 and 255.  This action
+ does not modify the two least significant bits of the ToS field (the ECN bits).
+ .
+-.IP \fBmod_nw_ecn\fB:\fIecn\fR
+-Sets the ECN bits in the IPv4 ToS or IPv6 traffic class field to \fIecn\fR,
+-which must be a value between 0 and 3, inclusive.  This action does not modify
+-the six most significant bits of the field (the DSCP bits).
+-.IP
+-Requires OpenFlow 1.1 or later.
+-.
+ .IP \fBmod_nw_ttl\fB:\fIttl\fR
+ Sets the IPv4 TTL or IPv6 hop limit field to \fIttl\fR, which is specified as
+ a decimal number between 0 and 255, inclusive.  Switch behavior when setting
+@@ -1325,45 +1129,6 @@ OpenFlow implementations do not support queuing at all.
+ Restores the queue to the value it was before any \fBset_queue\fR
+ actions were applied.
+ .
+-.IP \fBdec_ttl\fR
+-.IQ \fBdec_ttl\fB[\fR(\fIid1,id2\fI)\fR]\fR
+-Decrement TTL of IPv4 packet or hop limit of IPv6 packet.  If the
+-TTL or hop limit is initially zero or decrementing would make it so, no
+-decrement occurs, as packets reaching TTL zero must be rejected.  Instead,
+-a ``packet-in'' message with reason code \fBOFPR_INVALID_TTL\fR is
+-sent to each connected controller that has enabled receiving them,
+-if any.  Processing the current set of actions then stops.  However,
+-if the current set of actions was reached through ``resubmit'' then
+-remaining actions in outer levels resume processing.  This action
+-also optionally supports the ability to specify a list of valid
+-controller ids.  Each of controllers in the list will receive the
+-``packet_in'' message only if they have registered to receive the
+-invalid ttl packets.  If controller ids are not specified, the
+-``packet_in'' message will be sent only to the controllers having
+-controller id zero which have registered for the invalid ttl packets.
+-.
+-.IP \fBset_mpls_label\fR:\fIlabel\fR
+-Set the label of the outer MPLS label stack entry of a packet.
+-\fIlabel\fR should be a 20-bit value that is decimal by default;
+-use a \fB0x\fR prefix to specify them in hexadecimal.
+-.
+-.IP \fBset_mpls_tc\fR:\fItc\fR
+-Set the traffic-class of the outer MPLS label stack entry of a packet.
+-\fItc\fR should be a in the range 0 to 7 inclusive.
+-.
+-.IP \fBset_mpls_ttl\fR:\fIttl\fR
+-Set the TTL of the outer MPLS label stack entry of a packet.
+-\fIttl\fR should be in the range 0 to 255 inclusive.
+-.
+-.IP \fBdec_mpls_ttl\fR
+-Decrement TTL of the outer MPLS label stack entry of a packet.  If the TTL
+-is initially zero or decrementing would make it so, no decrement occurs.
+-Instead, a ``packet-in'' message with reason code \fBOFPR_INVALID_TTL\fR
+-is sent to the main controller (id zero), if it has enabled receiving them.
+-Processing the current set of actions then stops.  However, if the current
+-set of actions was reached through ``resubmit'' then remaining actions in
+-outer levels resume processing.
+-.
+ .IP \fBnote:\fR[\fIhh\fR]...
+ Does nothing at all.  Any number of bytes represented as hex digits
+ \fIhh\fR may be included.  Pairs of hex digits may be separated by
+@@ -1373,22 +1138,6 @@ payload, so the provided bytes will be padded on the right by enough
+ bytes with value 0 to make the total number 6 more than a multiple of
+ 8.
+ .
+-.IP "\fBmove:\fIsrc\fB[\fIstart\fB..\fIend\fB]\->\fIdst\fB[\fIstart\fB..\fIend\fB]\fR"
+-Copies the named bits from field \fIsrc\fR to field \fIdst\fR.
+-\fIsrc\fR and \fIdst\fR must be NXM field names as defined in
+-\fBnicira\-ext.h\fR, e.g. \fBNXM_OF_UDP_SRC\fR or \fBNXM_NX_REG0\fR.
+-Each \fIstart\fR and \fIend\fR pair, which are inclusive, must specify
+-the same number of bits and must fit within its respective field.
+-Shorthands for \fB[\fIstart\fB..\fIend\fB]\fR exist: use
+-\fB[\fIbit\fB]\fR to specify a single bit or \fB[]\fR to specify an
+-entire field.
+-.IP
+-Examples: \fBmove:NXM_NX_REG0[0..5]\->NXM_NX_REG1[26..31]\fR copies the
+-six bits numbered 0 through 5, inclusive, in register 0 into bits 26
+-through 31, inclusive;
+-\fBmove:NXM_NX_REG0[0..15]\->NXM_OF_VLAN_TCI[]\fR copies the least
+-significant 16 bits of register 0 into the VLAN TCI field.
+-.
+ .IP "\fBload:\fIvalue\fB\->\fIdst\fB[\fIstart\fB..\fIend\fB]"
+ Writes \fIvalue\fR to bits \fIstart\fR through \fIend\fR, inclusive,
+ in field \fIdst\fR.
+@@ -1396,23 +1145,6 @@ in field \fIdst\fR.
+ Example: \fBload:55\->NXM_NX_REG2[0..5]\fR loads value 55 (bit pattern
+ \fB110111\fR) into bits 0 through 5, inclusive, in register 2.
+ .
+-.IP "\fBpush:\fIsrc\fB[\fIstart\fB..\fIend\fB]"
+-Pushes \fIstart\fR to \fIend\fR bits inclusive, in fields
+-on top of the stack.
+-.IP
+-Example: \fBpush:NXM_NX_REG2[0..5]\fR push the value stored in register
+-2 bits 0 through 5, inclusive, on to the internal stack.
+-.
+-.IP "\fBpop:\fIdst\fB[\fIstart\fB..\fIend\fB]"
+-Pops from the top of the stack, retrieves the \fIstart\fR to \fIend\fR bits
+-inclusive, from the value popped and store them into the corresponding
+-bits in \fIdst\fR.
+-.
+-.IP
+-Example: \fBpop:NXM_NX_REG2[0..5]\fR pops the value from top of the stack.
+-Set register 2 bits 0 through 5, inclusive, based on bits 0 through 5 from the
+-value just popped.
+-.
+ .IP "\fBset_field:\fIvalue\fB\->\fIdst"
+ Writes the literal \fIvalue\fR into the field \fIdst\fR, which should
+ be specified as a name used for matching.  (This is similar to
+@@ -1422,50 +1154,6 @@ OpenFlow 1.2 and above.)
+ .IP
+ Example: \fBset_field:00:11:22:33:44:55->eth_src\fR.
+ .
+-.IP "\fBmultipath(\fIfields\fB, \fIbasis\fB, \fIalgorithm\fB, \fIn_links\fB, \fIarg\fB, \fIdst\fB[\fIstart\fB..\fIend\fB])\fR"
+-Hashes \fIfields\fR using \fIbasis\fR as a universal hash parameter,
+-then the applies multipath link selection \fIalgorithm\fR (with
+-parameter \fIarg\fR) to choose one of \fIn_links\fR output links
+-numbered 0 through \fIn_links\fR minus 1, and stores the link into
+-\fIdst\fB[\fIstart\fB..\fIend\fB]\fR, which must be an NXM field as
+-described above.
+-.IP
+-Currently, \fIfields\fR must be either \fBeth_src\fR or
+-\fBsymmetric_l4\fR and \fIalgorithm\fR must be one of \fBmodulo_n\fR,
+-\fBhash_threshold\fR, \fBhrw\fR, and \fBiter_hash\fR.  Only
+-the \fBiter_hash\fR algorithm uses \fIarg\fR.
+-.IP
+-Refer to \fBnicira\-ext.h\fR for more details.
+-.
+-.IP "\fBbundle(\fIfields\fB, \fIbasis\fB, \fIalgorithm\fB, \fIslave_type\fB, slaves:[\fIs1\fB, \fIs2\fB, ...])\fR"
+-Hashes \fIfields\fR using \fIbasis\fR as a universal hash parameter, then
+-applies the bundle link selection \fIalgorithm\fR to choose one of the listed
+-slaves represented as \fIslave_type\fR.  Currently the only supported
+-\fIslave_type\fR is \fBofport\fR.  Thus, each \fIs1\fR through \fIsN\fR should
+-be an OpenFlow port number. Outputs to the selected slave.
+-.IP
+-Currently, \fIfields\fR must be either \fBeth_src\fR or \fBsymmetric_l4\fR and
+-\fIalgorithm\fR must be one of \fBhrw\fR and \fBactive_backup\fR.
+-.IP
+-Example: \fBbundle(eth_src,0,hrw,ofport,slaves:4,8)\fR uses an Ethernet source
+-hash with basis 0, to select between OpenFlow ports 4 and 8 using the Highest
+-Random Weight algorithm.
+-.IP
+-Refer to \fBnicira\-ext.h\fR for more details.
+-.
+-.IP "\fBbundle_load(\fIfields\fB, \fIbasis\fB, \fIalgorithm\fB, \fIslave_type\fB, \fIdst\fB[\fIstart\fB..\fIend\fB], slaves:[\fIs1\fB, \fIs2\fB, ...])\fR"
+-Has the same behavior as the \fBbundle\fR action, with one exception.  Instead
+-of outputting to the selected slave, it writes its selection to
+-\fIdst\fB[\fIstart\fB..\fIend\fB]\fR, which must be an NXM field as described
+-above.
+-.IP
+-Example: \fBbundle_load(eth_src, 0, hrw, ofport, NXM_NX_REG0[],
+-slaves:4, 8)\fR uses an Ethernet source hash with basis 0, to select
+-between OpenFlow ports 4 and 8 using the Highest Random Weight
+-algorithm, and writes the selection to \fBNXM_NX_REG0[]\fR.
+-.IP
+-Refer to \fBnicira\-ext.h\fR for more details.
+-.
+ .IP "\fBlearn(\fIargument\fR[\fB,\fIargument\fR]...\fB)\fR"
+ This action adds or modifies a flow in an OpenFlow table, similar to
+ \fBovs\-ofctl \-\-strict mod\-flows\fR.  The arguments specify the
+@@ -1559,21 +1247,11 @@ the action set, the one written later replaces the earlier action:
+ .RS
+ .IP 1.
+ \fBstrip_vlan\fR
+-.IQ
+-\fBpop_mpls\fR
+ .
+ .IP 2.
+-\fBpush_mpls\fR
+-.
+-.IP 3.
+ \fBpush_vlan\fR
+ .
+-.IP 4.
+-\fBdec_ttl\fR
+-.IQ
+-\fBdec_mpls_ttl\fR
+-.
+-.IP 5.
++.IP 3.
+ \fBload\fR
+ .IQ
+ \fBmod_dl_dst\fR
+@@ -1586,8 +1264,6 @@ the action set, the one written later replaces the earlier action:
+ .IQ
+ \fBmod_nw_tos\fR
+ .IQ
+-\fBmod_nw_ecn\fR
+-.IQ
+ \fBmod_nw_ttl\fR
+ .IQ
+ \fBmod_tp_dst\fR
+@@ -1610,10 +1286,10 @@ part of a field, the later modification takes effect, and when they
+ modify different parts of a field (or different fields), then both
+ modifications are applied.
+ .
+-.IP 6.
++.IP 4.
+ \fBset_queue\fR
+ .
+-.IP 7.
++.IP 5.
+ \fBgroup\fR
+ .IQ
+ \fBoutput\fR
+@@ -1627,14 +1303,6 @@ anywhere and thus the modifications are not visible.)
+ .IP
+ Only the actions listed above may be written to the action set.
+ .
+-.IP \fBwrite_metadata\fB:\fIvalue\fR[/\fImask\fR]
+-Updates the metadata field for the flow. If \fImask\fR is omitted, the
+-metadata field is set exactly to \fIvalue\fR; if \fImask\fR is specified, then
+-a 1-bit in \fImask\fR indicates that the corresponding bit in the metadata
+-field will be replaced with the corresponding bit from \fIvalue\fR. Both
+-\fIvalue\fR and \fImask\fR are 64-bit values that are decimal by default; use
+-a \fB0x\fR prefix to specify them in hexadecimal.
+-.
+ .IP \fBmeter\fR:\fImeter_id\fR
+ Apply the \fImeter_id\fR before any other actions. If a meter band rate is
+ exceeded, the packet may be dropped, or modified, depending on the meter
+@@ -1644,94 +1312,6 @@ for more details.
+ .IP \fBgoto_table\fR:\fItable\fR
+ Indicates the next table in the process pipeline.
+ .
+-.IP "\fBfin_timeout(\fIargument\fR[\fB,\fIargument\fR]\fB)"
+-This action changes the idle timeout or hard timeout, or both, of this
+-OpenFlow rule when the rule matches a TCP packet with the FIN or RST
+-flag.  When such a packet is observed, the action reduces the rule's
+-timeouts to those specified on the action.  If the rule's existing
+-timeout is already shorter than the one that the action specifies,
+-then that timeout is unaffected.
+-.IP
+-\fIargument\fR takes the following forms:
+-.RS
+-.IP "\fBidle_timeout=\fIseconds\fR"
+-Causes the flow to expire after the given number of seconds of
+-inactivity.
+-.
+-.IP "\fBhard_timeout=\fIseconds\fR"
+-Causes the flow to expire after the given number of seconds,
+-regardless of activity.  (\fIseconds\fR specifies time since the
+-flow's creation, not since the receipt of the FIN or RST.)
+-.RE
+-.IP
+-This action was added in Open vSwitch 1.5.90.
+-.
+-.IP "\fBsample(\fIargument\fR[\fB,\fIargument\fR]...\fB)\fR"
+-Samples packets and sends one sample for every sampled packet.
+-.IP
+-\fIargument\fR takes the following forms:
+-.RS
+-.IP "\fBprobability=\fIpackets\fR"
+-The number of sampled packets out of 65535.  Must be greater or equal to 1.
+-.IP "\fBcollector_set_id=\fIid\fR"
+-The unsigned 32-bit integer identifier of the set of sample collectors
+-to send sampled packets to.  Defaults to 0.
+-.IP "\fBobs_domain_id=\fIid\fR"
+-When sending samples to IPFIX collectors, the unsigned 32-bit integer
+-Observation Domain ID sent in every IPFIX flow record.  Defaults to 0.
+-.IP "\fBobs_point_id=\fIid\fR"
+-When sending samples to IPFIX collectors, the unsigned 32-bit integer
+-Observation Point ID sent in every IPFIX flow record.  Defaults to 0.
+-.RE
+-.IP
+-Refer to \fBovs\-vswitchd.conf.db\fR(8) for more details on
+-configuring sample collector sets.
+-.IP
+-This action was added in Open vSwitch 1.10.90.
+-.
+-.IP "\fBexit\fR"
+-This action causes Open vSwitch to immediately halt execution of
+-further actions.  Those actions which have already been executed are
+-unaffected.  Any further actions, including those which may be in
+-other tables, or different levels of the \fBresubmit\fR call stack,
+-are ignored.  Actions in the action set is still executed (specify
+-\fBclear_actions\fR before \fBexit\fR to discard them).
+-.RE
+-.
+-.PP
+-An opaque identifier called a cookie can be used as a handle to identify
+-a set of flows:
+-.
+-.IP \fBcookie=\fIvalue\fR
+-.
+-A cookie can be associated with a flow using the \fBadd\-flow\fR,
+-\fBadd\-flows\fR, and \fBmod\-flows\fR commands.  \fIvalue\fR can be any
+-64-bit number and need not be unique among flows.  If this field is
+-omitted, a default cookie value of 0 is used.
+-.
+-.IP \fBcookie=\fIvalue\fR\fB/\fImask\fR
+-.
+-When using NXM, the cookie can be used as a handle for querying,
+-modifying, and deleting flows.  \fIvalue\fR and \fImask\fR may be
+-supplied for the \fBdel\-flows\fR, \fBmod\-flows\fR, \fBdump\-flows\fR, and
+-\fBdump\-aggregate\fR commands to limit matching cookies.  A 1-bit in
+-\fImask\fR indicates that the corresponding bit in \fIcookie\fR must
+-match exactly, and a 0-bit wildcards that bit.  A mask of \-1 may be used
+-to exactly match a cookie.
+-.IP
+-The \fBmod\-flows\fR command can update the cookies of flows that
+-match a cookie by specifying the \fIcookie\fR field twice (once with a
+-mask for matching and once without to indicate the new value):
+-.RS
+-.IP "\fBovs\-ofctl mod\-flows br0 cookie=1,actions=normal\fR"
+-Change all flows' cookies to 1 and change their actions to \fBnormal\fR.
+-.IP "\fBovs\-ofctl mod\-flows br0 cookie=1/\-1,cookie=2,actions=normal\fR"
+-Update cookies with a value of 1 to 2 and change their actions to
+-\fBnormal\fR.
+-.RE
+-.IP
+-The ability to match on cookies was added in Open vSwitch 1.5.0.
+-.
+ .PP
+ The following additional field sets the priority for flows added by
+ the \fBadd\-flow\fR and \fBadd\-flows\fR commands.  For
+diff --git a/utilities/ovs-vsctl.8.in b/utilities/ovs-vsctl.8.in
+index 43b00bf..e60e659 100644
+--- a/utilities/ovs-vsctl.8.in
++++ b/utilities/ovs-vsctl.8.in
+@@ -48,26 +48,6 @@ itself starts with command-specific options, if any, followed by the
+ command name and any arguments.  See \fBEXAMPLES\fR below for syntax
+ examples.
+ .
+-.SS "Linux VLAN Bridging Compatibility"
+-The \fBovs\-vsctl\fR program supports the model of a bridge
+-implemented by Open vSwitch, in which a single bridge supports ports
+-on multiple VLANs.  In this model, each port on a bridge is either a
+-trunk port that potentially passes packets tagged with 802.1Q headers
+-that designate VLANs or it is assigned a single implicit VLAN that is
+-never tagged with an 802.1Q header.
+-.PP
+-For compatibility with software designed for the Linux bridge,
+-\fBovs\-vsctl\fR also supports a model in which traffic associated
+-with a given 802.1Q VLAN is segregated into a separate bridge.  A
+-special form of the \fBadd\-br\fR command (see below) creates a ``fake
+-bridge'' within an Open vSwitch bridge to simulate this behavior.
+-When such a ``fake bridge'' is active, \fBovs\-vsctl\fR will treat it
+-much like a bridge separate from its ``parent bridge,'' but the actual
+-implementation in Open vSwitch uses only a single bridge, with ports on
+-the fake bridge assigned the implicit VLAN of the fake bridge of which
+-they are members.  (A fake bridge for VLAN 0 receives packets that
+-have no 802.1Q tag or a tag with VLAN 0.)
+-.
+ .SH OPTIONS
+ .
+ The following options affect the behavior \fBovs\-vsctl\fR as a whole.
+@@ -188,44 +168,17 @@ Without \fB\-\-may\-exist\fR, attempting to create a bridge that
+ exists is an error.  With \fB\-\-may\-exist\fR, this command does
+ nothing if \fIbridge\fR already exists as a real bridge.
+ .
+-.IP "[\fB\-\-may\-exist\fR] \fBadd\-br \fIbridge parent vlan\fR"
+-Creates a ``fake bridge'' named \fIbridge\fR within the existing Open
+-vSwitch bridge \fIparent\fR, which must already exist and must not
+-itself be a fake bridge.  The new fake bridge will be on 802.1Q VLAN
+-\fIvlan\fR, which must be an integer between 0 and 4095.  Initially
+-\fIbridge\fR will have no ports (other than \fIbridge\fR itself).
+-.IP
+-Without \fB\-\-may\-exist\fR, attempting to create a bridge that
+-exists is an error.  With \fB\-\-may\-exist\fR, this command does
+-nothing if \fIbridge\fR already exists as a VLAN bridge under
+-\fIparent\fR for \fIvlan\fR.
+-.
+ .IP "[\fB\-\-if\-exists\fR] \fBdel\-br \fIbridge\fR"
+-Deletes \fIbridge\fR and all of its ports.  If \fIbridge\fR is a real
+-bridge, this command also deletes any fake bridges that were created
+-with \fIbridge\fR as parent, including all of their ports.
++Deletes \fIbridge\fR and all of its ports.
+ .IP
+ Without \fB\-\-if\-exists\fR, attempting to delete a bridge that does
+ not exist is an error.  With \fB\-\-if\-exists\fR, attempting to
+ delete a bridge that does not exist has no effect.
+ .
+-.IP "[\fB\-\-real\fR|\fB\-\-fake\fR] \fBlist\-br\fR"
+-Lists all existing real and fake bridges on standard output, one per
+-line.  With \fB\-\-real\fR or \fB\-\-fake\fR, only bridges of that type
+-are returned.
+-.
+ .IP "\fBbr\-exists \fIbridge\fR"
+-Tests whether \fIbridge\fR exists as a real or fake bridge.  If so,
+-\fBovs\-vsctl\fR exits successfully with exit code 0.  If not,
+-\fBovs\-vsctl\fR exits unsuccessfully with exit code 2.
+-.
+-.IP "\fBbr\-to\-vlan \fIbridge\fR"
+-If \fIbridge\fR is a fake bridge, prints the bridge's 802.1Q VLAN as a
+-decimal integer.  If \fIbridge\fR is a real bridge, prints 0.
+-.
+-.IP "\fBbr\-to\-parent \fIbridge\fR"
+-If \fIbridge\fR is a fake bridge, prints the name of its parent
+-bridge.  If \fIbridge\fR is a real bridge, print \fIbridge\fR.
++Tests whether \fIbridge\fR exists. If so, \fBovs\-vsctl\fR exits
++successfully with exit code 0.  If not, \fBovs\-vsctl\fR exits
++unsuccessfully with exit code 2.
+ .
+ .IP "\fBbr\-set\-external\-id \fIbridge key\fR [\fIvalue\fR]"
+ Sets or clears an ``external ID'' value on \fIbridge\fR.  These values
+@@ -239,27 +192,16 @@ If \fIvalue\fR is specified, then \fIkey\fR is set to \fIvalue\fR for
+ \fIbridge\fR, overwriting any previous value.  If \fIvalue\fR is
+ omitted, then \fIkey\fR is removed from \fIbridge\fR's set of external
+ IDs (if it was present).
+-.IP
+-For real bridges, the effect of this command is similar to that of a
+-\fBset\fR or \fBremove\fR command in the \fBexternal\-ids\fR column of
+-the \fBBridge\fR table.  For fake bridges, it actually modifies keys
+-with names prefixed by \fBfake\-bridge\-\fR in the \fBPort\fR table.
+ .
+ .IP "\fBbr\-get\-external\-id \fIbridge\fR [\fIkey\fR]"
+ Queries the external IDs on \fIbridge\fR.  If \fIkey\fR is specified,
+ the output is the value for that \fIkey\fR or the empty string if
+ \fIkey\fR is unset.  If \fIkey\fR is omitted, the output is
+ \fIkey\fB=\fIvalue\fR, one per line, for each key-value pair.
+-.IP
+-For real bridges, the effect of this command is similar to that of a
+-\fBget\fR command in the \fBexternal\-ids\fR column of the
+-\fBBridge\fR table.  For fake bridges, it queries keys with names
+-prefixed by \fBfake\-bridge\-\fR in the \fBPort\fR table.
+ .
+ .SS "Port Commands"
+ .
+-These commands examine and manipulate Open vSwitch ports.  These
+-commands treat a bonded port as a single entity.
++These commands examine and manipulate Open vSwitch ports.
+ .
+ .IP "\fBlist\-ports \fIbridge\fR"
+ Lists all of the ports within \fIbridge\fR on standard output, one per
+@@ -276,30 +218,12 @@ command (see \fBDatabase Commands\fR below).
+ .IP
+ Without \fB\-\-may\-exist\fR, attempting to create a port that exists
+ is an error.  With \fB\-\-may\-exist\fR, this command does nothing if
+-\fIport\fR already exists on \fIbridge\fR and is not a bonded port.
+-.
+-.IP "[\fB\-\-fake\-iface\fR] \fBadd\-bond \fIbridge port iface\fR\&... [\fIcolumn\fR[\fB:\fIkey\fR]\fR=\fIvalue\fR]\&...\fR"
+-Creates on \fIbridge\fR a new port named \fIport\fR that bonds
+-together the network devices given as each \fIiface\fR.  At least two
+-interfaces must be named.
+-.IP
+-Optional arguments set values of column in the Port record created by
+-the command.  The syntax is the same as that for the \fBset\fR command
+-(see \fBDatabase Commands\fR below).
+-.IP
+-With \fB\-\-fake\-iface\fR, a fake interface with the name \fIport\fR is
+-created.  This should only be used for compatibility with legacy
+-software that requires it.
+-.IP
+-Without \fB\-\-may\-exist\fR, attempting to create a port that exists
+-is an error.  With \fB\-\-may\-exist\fR, this command does nothing if
+-\fIport\fR already exists on \fIbridge\fR and bonds together exactly
+-the specified interfaces.
++\fIport\fR already exists on \fIbridge\fR.
+ .
+ .IP "[\fB\-\-if\-exists\fR] \fBdel\-port \fR[\fIbridge\fR] \fIport\fR"
+ Deletes \fIport\fR.  If \fIbridge\fR is omitted, \fIport\fR is removed
+ from whatever bridge contains it; if \fIbridge\fR is specified, it
+-must be the real or fake bridge that contains \fIport\fR.
++must the bridge that contains \fIport\fR.
+ .IP
+ Without \fB\-\-if\-exists\fR, attempting to delete a port that does
+ not exist is an error.  With \fB\-\-if\-exists\fR, attempting to
+@@ -309,7 +233,7 @@ delete a port that does not exist has no effect.
+ Deletes the port named \fIiface\fR or that has an interface named
+ \fIiface\fR.  If \fIbridge\fR is omitted, the port is removed from
+ whatever bridge contains it; if \fIbridge\fR is specified, it must be
+-the real or fake bridge that contains the port.
++the bridge that contains the port.
+ .IP
+ Without \fB\-\-if\-exists\fR, attempting to delete the port for an
+ interface that does not exist is an error.  With \fB\-\-if\-exists\fR,
+@@ -323,8 +247,7 @@ output.
+ .SS "Interface Commands"
+ .
+ These commands examine the interfaces attached to an Open vSwitch
+-bridge.  These commands treat a bonded port as a collection of two or
+-more interfaces, rather than as a single port.
++bridge.
+ .
+ .IP "\fBlist\-ifaces \fIbridge\fR"
+ Lists all of the interfaces within \fIbridge\fR on standard output,
+@@ -507,37 +430,21 @@ identified by port name.
+ .IP "\fBQueue\fR"
+ Configuration for one queue within a \fBQoS\fR configuration.  Records
+ may only be identified by UUID.
+-.IP "\fBMirror\fR"
+-A port mirroring configuration attached to a bridge.  Records may be
+-identified by mirror name.
+ .IP "\fBController\fR"
+ Configuration for an OpenFlow controller.  A controller attached to a
+ particular bridge may be identified by the bridge's name.
+ .IP "\fBManager\fR"
+ Configuration for an OVSDB connection.  Records may be identified
+ by target (e.g. \fBtcp:1.2.3.4\fR).
+-.IP "\fBNetFlow\fR"
+-A NetFlow configuration attached to a bridge.  Records may be
+-identified by bridge name.
+ .IP "\fBSSL\fR"
+ The global SSL configuration for \fBovs\-vswitchd\fR.  The record
+ attached to the \fBOpen_vSwitch\fR table may be identified by
+ specifying \fB.\fR as the record name.
+-.IP "\fBsFlow\fR"
+-An sFlow exporter configuration attached to a bridge.  Records may be
+-identified by bridge name.
+-.IP "\fBIPFIX\fR"
+-An IPFIX exporter configuration attached to a bridge.  Records may be
+-identified by bridge name.
+-.IP "\fBFlow_Sample_Collector_Set\fR"
+-An IPFIX exporter configuration attached to a bridge for sampling
+-packets on a per-flow basis using OpenFlow \fBsample\fR actions.
+ .PP
+ Record names must be specified in full and with correct
+ capitalization.  Names of tables and columns are not case-sensitive,
+ and \fB\-\-\fR and \fB_\fR are treated interchangeably.  Unique
+-abbreviations are acceptable, e.g. \fBnet\fR or \fBn\fR is sufficient
+-to identify the \fBNetFlow\fR table.
++abbreviations are acceptable.
+ .
+ .ST "Database Values"
+ .PP
+@@ -798,15 +705,15 @@ after waiting only at most 5 seconds.
+ This command has no effect on behavior, but any database log record
+ created by the command will include the command and its arguments.
+ .SH "EXAMPLES"
+-Create a new bridge named br0 and add port eth0 to it:
++Create a new bridge named br0 and add port net1 to it:
+ .IP
+ .B "ovs\-vsctl add\-br br0"
+ .br
+-.B "ovs\-vsctl add\-port br0 eth0"
++.B "ovs\-vsctl add\-port br0 net1"
+ .PP
+ Alternatively, perform both operations in a single atomic transaction:
+ .IP 
+-.B "ovs\-vsctl add\-br br0 \-\- add\-port br0 eth0"
++.B "ovs\-vsctl add\-br br0 \-\- add\-port br0 net1"
+ .PP
+ Delete bridge \fBbr0\fR, reporting an error if it does not exist:
+ .IP
+@@ -816,62 +723,22 @@ Delete bridge \fBbr0\fR if it exists:
+ .IP
+ .B "ovs\-vsctl \-\-if\-exists del\-br br0"
+ .PP
+-Set the \fBqos\fR column of the \fBPort\fR record for \fBeth0\fR to
++Set the \fBqos\fR column of the \fBPort\fR record for \fBnet1\fR to
+ point to a new \fBQoS\fR record, which in turn points with its queue 0
+ to a new \fBQueue\fR record:
+ .IP
+-.B "ovs\-vsctl \-\- set port eth0 qos=@newqos \-\- \-\-id=@newqos create qos type=linux\-htb other\-config:max\-rate=1000000 queues:0=@newqueue \-\- \-\-id=@newqueue create queue other\-config:min\-rate=1000000 other\-config:max\-rate=1000000"
++.B "ovs\-vsctl \-\- set port net1 qos=@newqos \-\- \-\-id=@newqos create qos type=linux\-htb other\-config:max\-rate=1000000 queues:0=@newqueue \-\- \-\-id=@newqueue create queue other\-config:min\-rate=1000000 other\-config:max\-rate=1000000"
+ .SH "CONFIGURATION COOKBOOK"
+ .SS "Port Configuration"
+ .PP
+-Add an ``internal port'' \fBvlan10\fR to bridge \fBbr0\fR as a VLAN
+-access port for VLAN 10, and configure it with an IP address:
+-.IP
+-.B "ovs\-vsctl add\-port br0 vlan10 tag=10 \-\- set Interface vlan10 type=internal"
+-.IP
+-.B "ifconfig vlan10 192.168.0.123"
+-.
+-.PP
+-Add a GRE tunnel port \fBgre0\fR to remote IP address 1.2.3.4 to
+-bridge \fBbr0\fR:
+-.IP
+-.B "ovs\-vsctl add\-port br0 gre0 \-\- set Interface gre0 type=gre options:remote_ip=1.2.3.4"
+-.
+-.SS "Port Mirroring"
+-.PP
+-Mirror all packets received or sent on \fBeth0\fR or \fBeth1\fR onto
+-\fBeth2\fR, assuming that all of those ports exist on bridge \fBbr0\fR
+-(as a side-effect this causes any packets received on \fBeth2\fR to be
+-ignored):
+-.IP
+-.B "ovs\-vsctl \-\- set Bridge br0 mirrors=@m \(rs"
+-.IP
+-.B "\-\- \-\-id=@eth0 get Port eth0 \(rs"
+-.IP
+-.B "\-\- \-\-id=@eth1 get Port eth1 \(rs"
+-.IP
+-.B "\-\- \-\-id=@eth2 get Port eth2 \(rs"
+-.IP
+-.B "\-\- \-\-id=@m create Mirror name=mymirror select-dst-port=@eth0,@eth1 select-src-port=@eth0,@eth1 output-port=@eth2"
+-.PP
+-Remove the mirror created above from \fBbr0\fR, which also destroys
+-the Mirror record (since it is now unreferenced):
+-.IP
+-.B "ovs\-vsctl \-\- \-\-id=@rec get Mirror mymirror \(rs"
+-.IP
+-.B "\-\- remove Bridge br0 mirrors @rec"
+-.PP
+-The following simpler command also works:
+-.IP
+-.B "ovs\-vsctl clear Bridge br0 mirrors"
+ .SS "Quality of Service (QoS)"
+ .PP
+ Create a \fBlinux\-htb\fR QoS record that points to a few queues and
+-use it on \fBeth0\fR and \fBeth1\fR:
++use it on \fBnet1\fR and \fBnet2\fR:
+ .IP
+-.B "ovs\-vsctl \-\- set Port eth0 qos=@newqos \(rs"
++.B "ovs\-vsctl \-\- set Port net1 qos=@newqos \(rs"
+ .IP
+-.B "\-\- set Port eth1 qos=@newqos \(rs"
++.B "\-\- set Port net2 qos=@newqos \(rs"
+ .IP
+ .B "\-\- \-\-id=@newqos create QoS type=linux\-htb other\-config:max\-rate=1000000000 queues=0=@q0,1=@q1 \(rs"
+ .IP
+@@ -879,15 +746,15 @@ use it on \fBeth0\fR and \fBeth1\fR:
+ .IP
+ .B "\-\- \-\-id=@q1 create Queue other\-config:min\-rate=500000000"
+ .PP
+-Deconfigure the QoS record above from \fBeth1\fR only:
++Deconfigure the QoS record above from \fBnet2\fR only:
+ .IP
+-.B "ovs\-vsctl clear Port eth1 qos"
++.B "ovs\-vsctl clear Port net2 qos"
+ .PP
+-To deconfigure the QoS record from both \fBeth0\fR and \fBeth1\fR and
++To deconfigure the QoS record from both \fBnet1\fR and \fBnet2\fR and
+ then delete the QoS record (which must be done explicitly because
+ unreferenced QoS records are not automatically destroyed):
+ .IP
+-.B "ovs\-vsctl \-\- destroy QoS eth0 \-\- clear Port eth0 qos \-\- clear Port eth1 qos"
++.B "ovs\-vsctl \-\- destroy QoS net1 \-\- clear Port net1 qos \-\- clear Port net2 qos"
+ .PP
+ (This command will leave two unreferenced Queue records in the
+ database.  To delete them, use "\fBovs\-vsctl list Queue\fR" to find
+@@ -896,77 +763,13 @@ their UUIDs, then "\fBovs\-vsctl destroy Queue \fIuuid1\fR
+ "\fBovs\-vsctl -- --all destroy Queue\fR" to delete all records.)
+ .SS "Connectivity Monitoring"
+ .PP
+-Monitor connectivity to a remote maintenance point on eth0.
++Monitor connectivity to a remote maintenance point on net1.
+ .IP
+-.B "ovs\-vsctl set Interface eth0 cfm_mpid=1"
++.B "ovs\-vsctl set Interface net1 cfm_mpid=1"
+ .PP
+ Deconfigure connectivity monitoring from above:
+ .IP
+-.B "ovs\-vsctl clear Interface eth0 cfm_mpid"
+-.SS "NetFlow"
+-.PP
+-Configure bridge \fBbr0\fR to send NetFlow records to UDP port 5566 on
+-host 192.168.0.34, with an active timeout of 30 seconds:
+-.IP
+-.B "ovs\-vsctl \-\- set Bridge br0 netflow=@nf \(rs"
+-.IP
+-.B "\-\- \-\-id=@nf create NetFlow targets=\(rs\(dq192.168.0.34:5566\(rs\(dq active\-timeout=30"
+-.PP
+-Update the NetFlow configuration created by the previous command to
+-instead use an active timeout of 60 seconds:
+-.IP
+-.B "ovs\-vsctl set NetFlow br0 active_timeout=60"
+-.PP
+-Deconfigure the NetFlow settings from \fBbr0\fR, which also destroys
+-the NetFlow record (since it is now unreferenced):
+-.IP
+-.B "ovs\-vsctl clear Bridge br0 netflow"
+-.SS "sFlow"
+-.PP
+-Configure bridge \fBbr0\fR to send sFlow records to a collector on
+-10.0.0.1 at port 6343, using \fBeth1\fR\'s IP address as the source,
+-with specific sampling parameters:
+-.IP
+-.B "ovs\-vsctl \-\- \-\-id=@s create sFlow agent=eth1 target=\(rs\(dq10.0.0.1:6343\(rs\(dq header=128 sampling=64 polling=10 \(rs"
+-.IP
+-.B "\-\- set Bridge br0 sflow=@s"
+-.PP
+-Deconfigure sFlow from \fBbr0\fR, which also destroys the sFlow record
+-(since it is now unreferenced):
+-.IP
+-.B "ovs\-vsctl \-\- clear Bridge br0 sflow"
+-.SS "IPFIX"
+-.PP
+-Configure bridge \fBbr0\fR to send one IPFIX flow record per packet
+-sample to UDP port 4739 on host 192.168.0.34, with Observation Domain
+-ID 123 and Observation Point ID 456, a flow cache active timeout of 1
+-minute (60 seconds), and a maximum flow cache size of 13 flows:
+-.IP
+-.B "ovs\-vsctl \-\- set Bridge br0 ipfix=@i \(rs"
+-.IP
+-.B "\-\- \-\-id=@i create IPFIX targets=\(rs\(dq192.168.0.34:4739\(rs\(dq obs_domain_id=123 obs_point_id=456 cache_active_timeout=60 cache_max_flows=13"
+-.PP
+-Deconfigure the IPFIX settings from \fBbr0\fR, which also destroys the
+-IPFIX record (since it is now unreferenced):
+-.IP
+-.B "ovs\-vsctl clear Bridge br0 ipfix"
+-.SS "802.1D Spanning Tree Protocol (STP)"
+-.PP
+-Configure bridge \fBbr0\fR to participate in an 802.1D spanning tree:
+-.IP
+-.B "ovs\-vsctl set Bridge br0 stp_enable=true"
+-.PP
+-Set the bridge priority of \fBbr0\fR to 0x7800:
+-.IP
+-.B "ovs\-vsctl set Bridge br0 other_config:stp-priority=0x7800"
+-.PP
+-Set the path cost of port \fBeth0\fR to 10:
+-.IP
+-.B "ovs\-vsctl set Port eth0 other_config:stp-path-cost=10"
+-.PP
+-Deconfigure STP from above:
+-.IP
+-.B "ovs\-vsctl set Bridge br0 stp_enable=false"
++.B "ovs\-vsctl clear Interface net1 cfm_mpid"
+ .PP
+ .SS "OpenFlow Version"
+ .PP
+diff --git a/utilities/ovs-dpctl.8.in b/utilities/ovs-dpctl.8.in
+index 5a0dd70..6de87ad 100644
+--- a/utilities/ovs-dpctl.8.in
++++ b/utilities/ovs-dpctl.8.in
+@@ -15,7 +15,7 @@ ovs\-dpctl \- administer Open vSwitch datapaths
+ .
+ .SH DESCRIPTION
+ .PP
+-The \fBovs\-dpctl\fR program can create, modify, and delete Open vSwitch
++The \fBovs\-dpctl\fR program can be used to display Open vSwitch
+ datapaths.  A single machine may host any number of datapaths.
+ .PP
+ A newly created datapath is associated with only one network device, a
+@@ -38,58 +38,6 @@ default provider \fBsystem\fR is assumed.
+ The following commands manage datapaths.
+ .
+ .TP
+-\fBadd\-dp \fIdp\fR [\fInetdev\fR[\fB,\fIoption\fR]...]
+-Creates datapath \fIdp\fR, with a local port also named \fIdp\fR.
+-This will fail if a network device \fIdp\fR already exists.
+-.IP
+-If \fInetdev\fRs are specified, \fBovs\-dpctl\fR adds them to the
+-new datapath, just as if \fBadd\-if\fR was specified.
+-.
+-.TP
+-\fBdel\-dp \fIdp\fR
+-Deletes datapath \fIdp\fR.  If \fIdp\fR is associated with any network
+-devices, they are automatically removed.
+-.
+-.TP
+-\fBadd\-if \fIdp netdev\fR[\fB,\fIoption\fR]...
+-Adds each \fInetdev\fR to the set of network devices datapath
+-\fIdp\fR monitors, where \fIdp\fR is the name of an existing
+-datapath, and \fInetdev\fR is the name of one of the host's
+-network devices, e.g. \fBeth0\fR.  Once a network device has been added
+-to a datapath, the datapath has complete ownership of the network device's
+-traffic and the network device appears silent to the rest of the
+-system.
+-.IP
+-A \fInetdev\fR may be followed by a comma-separated list of options.
+-The following options are currently supported:
+-.
+-.RS
+-.IP "\fBtype=\fItype\fR"
+-Specifies the type of port to add.  The default type is \fBsystem\fR.
+-.IP "\fBport_no=\fIport\fR"
+-Requests a specific port number within the datapath.  If this option is
+-not specified then one will be automatically assigned.
+-.IP "\fIkey\fB=\fIvalue\fR"
+-Adds an arbitrary key-value option to the port's configuration.
+-.RE
+-.IP
+-\fBovs\-vswitchd.conf.db\fR(5) documents the available port types and
+-options.
+-.
+-.IP "\fBset\-if \fIdp port\fR[\fB,\fIoption\fR]..."
+-Reconfigures each \fIport\fR in \fIdp\fR as specified.  An
+-\fIoption\fR of the form \fIkey\fB=\fIvalue\fR adds the specified
+-key-value option to the port or overrides an existing key's value.  An
+-\fIoption\fR of the form \fIkey\fB=\fR, that is, without a value,
+-deletes the key-value named \fIkey\fR.  The type and port number of a
+-port cannot be changed, so \fBtype\fR and \fBport_no\fR are only allowed if
+-they match the existing configuration.
+-.TP
+-\fBdel\-if \fIdp netdev\fR...
+-Removes each \fInetdev\fR from the list of network devices datapath
+-\fIdp\fR monitors.
+-.
+-.TP
+ \fBdump\-dps\fR
+ Prints the name of each configured datapath on a separate line.
+ .
+@@ -151,37 +99,6 @@ The \fIfilter\fR is also useful to match wildcarded fields in the datapath
+ flow. As an example, \fBfilter='tcp,tp_src=100'\fR will match the
+ datapath flow containing '\fBtcp(src=80/0xff00,dst=8080/0xff)\fR'.
+ .
+-.IP "\fBadd\-flow\fR [\fIdp\fR] \fIflow actions\fR"
+-.IQ "[\fB\-\-clear\fR] [\fB\-\-may-create\fR] [\fB\-s\fR | \fB\-\-statistics\fR] \fBmod\-flow\fR [\fIdp\fR] \fIflow actions\fR"
+-Adds or modifies a flow in \fIdp\fR's flow table that, when a packet
+-matching \fIflow\fR arrives, causes \fIactions\fR to be executed.
+-.IP
+-The \fBadd\-flow\fR command succeeds only if \fIflow\fR does not
+-already exist in \fIdp\fR.  Contrariwise, \fBmod\-flow\fR without
+-\fB\-\-may\-create\fR only modifies the actions for an existing flow.
+-With \fB\-\-may\-create\fR, \fBmod\-flow\fR will add a new flow or
+-modify an existing one.
+-.IP
+-If \fB\-s\fR or \fB\-\-statistics\fR is specified, then
+-\fBmod\-flows\fR prints the modified flow's statistics.  A flow's
+-statistics are the number of packets and bytes that have passed
+-through the flow, the elapsed time since the flow last processed a
+-packet (if ever), and (for TCP flows) the union of the TCP flags
+-processed through the flow.
+-.IP
+-With \fB\-\-clear\fR, \fBmod\-flows\fR zeros out the flow's
+-statistics.  The statistics printed if \fB\-s\fR or
+-\fB\-\-statistics\fR is also specified are those from just before
+-clearing the statistics.
+-.
+-.IP "[\fB\-s\fR | \fB\-\-statistics\fR] \fBdel\-flow\fR [\fIdp\fR] \fIflow\fR"
+-Deletes the flow from \fIdp\fR's flow table that matches \fIflow\fR.
+-If \fB\-s\fR or \fB\-\-statistics\fR is specified, then
+-\fBmod\-flows\fR prints the deleted flow's statistics.
+-.
+-.IP "\fBdel\-flows\fR [\fIdp\fR]"
+-Deletes all flow entries from datapath \fIdp\fR's flow table.
+-.
+ .SH OPTIONS
+ .IP "\fB\-s\fR"
+ .IQ "\fB\-\-statistics\fR"
+diff --git a/utilities/ovs-dpctl.c b/utilities/ovs-dpctl.c
+index ccc55b5..4db43fd 100644
+--- a/utilities/ovs-dpctl.c
++++ b/utilities/ovs-dpctl.c
+@@ -158,6 +158,7 @@ parse_options(int argc, char *argv[])
+ static void
+ usage(void)
+ {
++#ifndef __sun
+     printf("%s: Open vSwitch datapath management utility\n"
+            "usage: %s [OPTIONS] COMMAND [ARG...]\n"
+            "  add-dp DP [IFACE...]     add new datapath DP (with IFACEs)\n"
+@@ -191,6 +192,26 @@ usage(void)
+            "  -t, --timeout=SECS          give up after SECS seconds\n"
+            "  -h, --help                  display this help message\n"
+            "  -V, --version               display version information\n");
++#else
++    printf("%s: Open vSwitch datapath management utility\n"
++           "usage: %s [OPTIONS] COMMAND [ARG...]\n"
++           "  dump-dps                 display names of all datapaths\n"
++           "  show                     show basic info on all datapaths\n"
++           "  show DP...               show basic info on each DP\n"
++           "  dump-flows [DP]          display flows in DP\n"
++           "For COMMAND dump-flows DP is optional if there is only\n"
++           " one datapath.\n",
++           program_name, program_name);
++    vlog_usage();
++    printf("\nOptions for show:\n"
++           "  -s,  --statistics           print statistics for port or flow\n"
++           "\nOptions for dump-flows:\n"
++           "  -m, --more                  increase verbosity of output\n"
++           "\nOther options:\n"
++           "  -t, --timeout=SECS          give up after SECS seconds\n"
++           "  -h, --help                  display this help message\n"
++           "  -V, --version               display version information\n");
++#endif
+     exit(EXIT_SUCCESS);
+ }
+ 
+diff --git a/utilities/ovs-vsctl.c b/utilities/ovs-vsctl.c
+index f837158..d9d92a3 100644
+--- a/utilities/ovs-vsctl.c
++++ b/utilities/ovs-vsctl.c
+@@ -642,6 +642,7 @@ vsctl_exit(int status)
+ static void
+ usage(void)
+ {
++#ifndef __sun
+     printf("\
+ %s: ovs-vswitchd management utility\n\
+ usage: %s [OPTIONS] COMMAND [ARG...]\n\
+@@ -718,6 +719,82 @@ Options:\n\
+   --dry-run                   do not commit changes to database\n\
+   --oneline                   print exactly one line of output per command\n",
+            program_name, program_name, default_db());
++#else
++    printf("\
++%s: ovs-vswitchd management utility\n\
++usage: %s [OPTIONS] COMMAND [ARG...]\n\
++\n\
++Open vSwitch commands:\n\
++  init                        initialize database, if not yet initialized\n\
++  show                        print overview of database contents\n\
++  emer-reset                  reset configuration to clean state\n\
++\n\
++Bridge commands:\n\
++  add-br BRIDGE               create a new bridge named BRIDGE\n\
++  add-br BRIDGE PARENT VLAN   create new fake BRIDGE in PARENT on VLAN\n\
++  del-br BRIDGE               delete BRIDGE and all of its ports\n\
++  list-br                     print the names of all the bridges\n\
++  br-exists BRIDGE            exit 2 if BRIDGE does not exist\n\
++  br-to-parent BRIDGE         print the parent of BRIDGE\n\
++  br-set-external-id BRIDGE KEY VALUE  set KEY on BRIDGE to VALUE\n\
++  br-set-external-id BRIDGE KEY  unset KEY on BRIDGE\n\
++  br-get-external-id BRIDGE KEY  print value of KEY on BRIDGE\n\
++  br-get-external-id BRIDGE  list key-value pairs on BRIDGE\n\
++\n\
++Port commands:\n\
++  list-ports BRIDGE           print the names of all the ports on BRIDGE\n\
++  add-port BRIDGE PORT        add network device PORT to BRIDGE\n\
++  del-port [BRIDGE] PORT      delete PORT (which may be bonded) from BRIDGE\n\
++  port-to-br PORT             print name of bridge that contains PORT\n\
++\n\
++Interface commands:\n\
++  list-ifaces BRIDGE          print the names of all interfaces on BRIDGE\n\
++  iface-to-br IFACE           print name of bridge that contains IFACE\n\
++\n\
++Controller commands:\n\
++  get-controller BRIDGE      print the controllers for BRIDGE\n\
++  del-controller BRIDGE      delete the controllers for BRIDGE\n\
++  set-controller BRIDGE TARGET...  set the controllers for BRIDGE\n\
++  get-fail-mode BRIDGE       print the fail-mode for BRIDGE\n\
++  del-fail-mode BRIDGE       delete the fail-mode for BRIDGE\n\
++  set-fail-mode BRIDGE MODE  set the fail-mode for BRIDGE to MODE\n\
++\n\
++Manager commands:\n\
++  get-manager                print the managers\n\
++  del-manager                delete the managers\n\
++  set-manager TARGET...      set the list of managers to TARGET...\n\
++\n\
++SSL commands:\n\
++  get-ssl                     print the SSL configuration\n\
++  del-ssl                     delete the SSL configuration\n\
++  set-ssl PRIV-KEY CERT CA-CERT  set the SSL configuration\n\
++\n\
++Switch commands:\n\
++  emer-reset                  reset switch to known good state\n\
++\n\
++Database commands:\n\
++  list TBL [REC]              list RECord (or all records) in TBL\n\
++  find TBL CONDITION...       list records satisfying CONDITION in TBL\n\
++  get TBL REC COL[:KEY]       print values of COLumns in RECord in TBL\n\
++  set TBL REC COL[:KEY]=VALUE set COLumn values in RECord in TBL\n\
++  add TBL REC COL [KEY=]VALUE add (KEY=)VALUE to COLumn in RECord in TBL\n\
++  remove TBL REC COL [KEY=]VALUE  remove (KEY=)VALUE from COLumn\n\
++  clear TBL REC COL           clear values from COLumn in RECord in TBL\n\
++  create TBL COL[:KEY]=VALUE  create and initialize new record\n\
++  destroy TBL REC             delete RECord from TBL\n\
++  wait-until TBL REC [COL[:KEY]=VALUE]  wait until condition is true\n\
++Potentially unsafe database commands require --force option.\n\
++\n\
++Options:\n\
++  --db=DATABASE               connect to DATABASE\n\
++                              (default: %s)\n\
++  --no-wait                   do not wait for ovs-vswitchd to reconfigure\n\
++  --retry                     keep trying to connect to server forever\n\
++  -t, --timeout=SECS          wait at most SECS seconds for ovs-vswitchd\n\
++  --dry-run                   do not commit changes to database\n\
++  --oneline                   print exactly one line of output per command\n",
++           program_name, program_name, default_db());
++#endif
+     vlog_usage();
+     printf("\
+   --no-syslog             equivalent to --verbose=vsctl:syslog:warn\n");
+diff --git a/vswitchd/ovs-vswitchd.8.in b/vswitchd/ovs-vswitchd.8.in
+index 8ffa7a0..12f8e55 100644
+--- a/vswitchd/ovs-vswitchd.8.in
++++ b/vswitchd/ovs-vswitchd.8.in
+@@ -30,32 +30,6 @@ switching across each bridge described in its configuration files.  As
+ the database changes, \fBovs\-vswitchd\fR automatically updates its
+ configuration to match.
+ .PP
+-\fBovs\-vswitchd\fR switches may be configured with any of the following
+-features:
+-.
+-.IP \(bu
+-L2 switching with MAC learning.
+-.
+-.IP \(bu
+-NIC bonding with automatic fail-over and source MAC-based TX load
+-balancing ("SLB").
+-.
+-.IP \(bu
+-802.1Q VLAN support.
+-.
+-.IP \(bu
+-Port mirroring, with optional VLAN tagging.
+-.
+-.IP \(bu
+-NetFlow v5 flow logging.
+-.
+-.IP \(bu
+-sFlow(R) monitoring.
+-.
+-.IP \(bu
+-Connectivity to an external OpenFlow controller, such as NOX.
+-.
+-.PP
+ Only a single instance of \fBovs\-vswitchd\fR is intended to run at a time.
+ A single \fBovs\-vswitchd\fR can manage any number of switch instances, up
+ to the maximum number of supported Open vSwitch datapaths.
+@@ -66,11 +40,6 @@ managing datapaths in conjunction with \fBovs\-vswitchd\fR, and their use
+ to modify datapaths when \fBovs\-vswitchd\fR is running can interfere with
+ its operation.  (\fBovs\-dpctl\fR may still be useful for diagnostics.)
+ .PP
+-An Open vSwitch datapath kernel module must be loaded for \fBovs\-vswitchd\fR
+-to be useful.  Please refer to the \fBINSTALL.Linux\fR file included in the
+-Open vSwitch distribution for instructions on how to build and load
+-the Open vSwitch kernel module.
+-.PP
+ .SH OPTIONS
+ .IP "\fB\-\-mlockall\fR"
+ Causes \fBovs\-vswitchd\fR to call the \fBmlockall()\fR function, to
+@@ -105,41 +74,8 @@ how to configure Open vSwitch.
+ .SS "GENERAL COMMANDS"
+ .IP "\fBexit\fR"
+ Causes \fBovs\-vswitchd\fR to gracefully terminate.
+-.IP "\fBqos/show\fR \fIinterface\fR"
+-Queries the kernel for Quality of Service configuration and statistics
+-associated with the given \fIinterface\fR.
+-.IP "\fBbfd/show\fR [\fIinterface\fR]"
+-Displays detailed information about Bidirectional Forwarding Detection
+-configured on \fIinterface\fR.  If \fIinterface\fR is not specified,
+-then displays detailed information about all interfaces with BFD
+-enabled.
+-.IP "\fBbfd/set-forwarding\fR [\fIinterface\fR] \fIstatus\fR"
+-Force the fault status of the BFD module on \fIinterface\fR (or all
+-interfaces if none is given) to be \fIstatus\fR.  \fIstatus\fR can be
+-"true", "false", or "normal" which reverts to the standard behavior.
+-.IP "\fBcfm/show\fR [\fIinterface\fR]"
+-Displays detailed information about Connectivity Fault Management
+-configured on \fIinterface\fR.  If \fIinterface\fR is not specified,
+-then displays detailed information about all interfaces with CFM
+-enabled.
+-.IP "\fBcfm/set-fault\fR [\fIinterface\fR] \fIstatus\fR"
+-Force the fault status of the CFM module on \fIinterface\fR (or all
+-interfaces if none is given) to be \fIstatus\fR.  \fIstatus\fR can be
+-"true", "false", or "normal" which reverts to the standard behavior.
+-.IP "\fBstp/tcn\fR [\fIbridge\fR]"
+-Forces a topology change event on \fIbridge\fR if it's running STP.  This
+-may cause it to send Topology Change Notifications to its peers and flush
+-its MAC table..  If no \fIbridge\fR is given, forces a topology change
+-event on all bridges.
+ .SS "BRIDGE COMMANDS"
+ These commands manage bridges.
+-.IP "\fBfdb/flush\fR [\fIbridge\fR]"
+-Flushes \fIbridge\fR MAC address learning table, or all learning tables
+-if no \fIbridge\fR is given.
+-.IP "\fBfdb/show\fR \fIbridge\fR"
+-Lists each MAC address/VLAN pair learned by the specified \fIbridge\fR,
+-along with the port on which it was learned and the age of the entry,
+-in seconds.
+ .IP "\fBbridge/reconnect\fR [\fIbridge\fR]"
+ Makes \fIbridge\fR drop all of its OpenFlow controller connections and
+ reconnect.  If \fIbridge\fR is not specified, then all bridges drop
+@@ -152,63 +88,6 @@ Lists all flows in \fIbridge\fR, including those normally hidden to
+ commands such as \fBovs\-ofctl dump\-flows\fR.  Flows set up by mechanisms
+ such as in-band control and fail-open are hidden from the controller
+ since it is not allowed to modify or override them.
+-.SS "BOND COMMANDS"
+-These commands manage bonded ports on an Open vSwitch's bridges.  To
+-understand some of these commands, it is important to understand a
+-detail of the bonding implementation called ``source load balancing''
+-(SLB).  Instead of directly assigning Ethernet source addresses to
+-slaves, the bonding implementation computes a function that maps an
+-48-bit Ethernet source addresses into an 8-bit value (a ``MAC hash''
+-value).  All of the Ethernet addresses that map to a single 8-bit
+-value are then assigned to a single slave.
+-.IP "\fBbond/list\fR"
+-Lists all of the bonds, and their slaves, on each bridge.
+-.
+-.IP "\fBbond/show\fR [\fIport\fR]"
+-Lists all of the bond-specific information (updelay, downdelay, time
+-until the next rebalance) about the given bonded \fIport\fR, or all
+-bonded ports if no \fIport\fR is given.  Also lists information about
+-each slave: whether it is enabled or disabled, the time to completion
+-of an updelay or downdelay if one is in progress, whether it is the
+-active slave, the hashes assigned to the slave.  Any LACP information
+-related to this bond may be found using the \fBlacp/show\fR command.
+-.
+-.IP "\fBbond/migrate\fR \fIport\fR \fIhash\fR \fIslave\fR"
+-Only valid for SLB bonds.  Assigns a given MAC hash to a new slave.
+-\fIport\fR specifies the bond port, \fIhash\fR the MAC hash to be
+-migrated (as a decimal number between 0 and 255), and \fIslave\fR the
+-new slave to be assigned.
+-.IP
+-The reassignment is not permanent: rebalancing or fail-over will
+-cause the MAC hash to be shifted to a new slave in the usual
+-manner.
+-.IP
+-A MAC hash cannot be migrated to a disabled slave.
+-.IP "\fBbond/set\-active\-slave\fR \fIport\fR \fIslave\fR"
+-Sets \fIslave\fR as the active slave on \fIport\fR.  \fIslave\fR must
+-currently be enabled.
+-.IP
+-The setting is not permanent: a new active slave will be selected
+-if \fIslave\fR becomes disabled.
+-.IP "\fBbond/enable\-slave\fR \fIport\fR \fIslave\fR"
+-.IQ "\fBbond/disable\-slave\fR \fIport\fR \fIslave\fR"
+-Enables (or disables) \fIslave\fR on the given bond \fIport\fR, skipping any
+-updelay (or downdelay).
+-.IP
+-This setting is not permanent: it persists only until the carrier
+-status of \fIslave\fR changes.
+-.IP "\fBbond/hash\fR \fImac\fR [\fIvlan\fR] [\fIbasis\fR]"
+-Returns the hash value which would be used for \fImac\fR with \fIvlan\fR
+-and \fIbasis\fR if specified.
+-.
+-.IP "\fBlacp/show\fR [\fIport\fR]"
+-Lists all of the LACP related information about the given \fIport\fR:
+-active or passive, aggregation key, system id, and system priority.  Also
+-lists information about each slave: whether it is enabled or disabled,
+-whether it is attached or detached, port id and priority, actor
+-information, and partner information.  If \fIport\fR is not specified,
+-then displays detailed information about all interfaces with CFM
+-enabled.
+ .
+ .so ofproto/ofproto-dpif-unixctl.man
+ .so ofproto/ofproto-unixctl.man

@@ -1,0 +1,21 @@
+This patch fixes a bug in ovsthread_key_destruct__.
+
+This patch has not been proposed upstream but will be proposed for 2.4.
+
+diff --git a/lib/ovs-thread.c b/lib/ovs-thread.c
+index 529756f..11735f9 100644
+--- a/lib/ovs-thread.c
++++ b/lib/ovs-thread.c
+@@ -641,8 +641,10 @@ ovsthread_key_destruct__(void *slots_)
+     n = n_keys;
+     ovs_mutex_unlock(&key_mutex);
+ 
+-    for (i = 0; i < n / L2_SIZE; i++) {
+-        free(slots->p1[i]);
++    if (n > 0) {
++	    for (i = 0; i <= (n - 1) / L2_SIZE; i++) {
++                free(slots->p1[i]);
++        }
+     }
+     free(slots);
+ }

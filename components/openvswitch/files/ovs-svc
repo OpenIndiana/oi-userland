@@ -1,0 +1,201 @@
+#!/sbin/sh
+#
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+#
+
+#
+# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+#
+
+. /lib/svc/share/smf_include.sh
+. /lib/svc/share/net_include.sh
+
+typeset -r OVS_OVSDB_FMRI=svc:/application/openvswitch/ovsdb-server:default
+typeset -r OVS_VSWITCHD_FMRI=svc:/application/openvswitch/vswitch-server:default
+
+typeset -r OVS_USRLIB_DIR=/usr/lib/ovs
+typeset -r OVS_VARLIB_DIR=/var/lib/ovs
+typeset -r OVS_TMP_DIR=/var/run/ovs
+typeset -r OVS_LOG_DIR=/var/log/ovs
+
+typeset -r OVS_USER=_ovs
+typeset -r OVS_GROUP=_ovs
+
+typeset -r OVS_SBIN_DIR=/usr/sbin
+typeset -r OVSDB_TOOL=${OVS_SBIN_DIR}/ovsdb-tool
+typeset -r OVS_VSCTL=${OVS_SBIN_DIR}/ovs-vsctl
+
+typeset -r OVS_VSWITCHD=ovs-vswitchd
+typeset -r OVSDB_SERVER=ovsdb-server
+typeset -r OVS_CLEAN=ovs-clean.py
+typeset -r OVSDB_SERVER_PATH=${OVS_USRLIB_DIR}/${OVSDB_SERVER}
+typeset -r OVS_VSWITCHD_PATH=${OVS_USRLIB_DIR}/${OVS_VSWITCHD}
+typeset -r OVS_CLEAN_PATH=${OVS_USRLIB_DIR}/${OVS_CLEAN}
+
+typeset -r OVSDB_REMOTE=${OVS_TMP_DIR}/db.sock
+
+typeset -r PFEXEC=/usr/bin/pfexec
+typeset -r MKDIR=/usr/bin/mkdir
+typeset -r CHOWN=/usr/bin/chown
+typeset -r PKILL=/usr/bin/pkill
+typeset -r DLADM=/usr/sbin/dladm
+typeset -r FLOWADM=/usr/sbin/flowadm
+
+errlog () {
+	echo $1 >&2
+}
+
+create_ovs_tempdir() {
+	if [[ ! -d ${OVS_TMP_DIR} ]]; then
+		${PFEXEC} ${MKDIR} -m 775 ${OVS_TMP_DIR} || exit $SMF_EXIT_ERR_CONFIG
+                ${PFEXEC} ${CHOWN} ${OVS_USER}:${OVS_GROUP} ${OVS_TMP_DIR}
+	fi
+}
+
+start_ovsdb_server() {
+	typeset -i OVSDB_INIT=0
+	typeset -r OVSDB_DATABASE=${OVS_VARLIB_DIR}/etc/conf.db
+
+	create_ovs_tempdir
+
+	if [[ ! -f ${OVSDB_DATABASE} ]]; then
+		typeset -r OVSDB_SCHEMA=${OVS_USRLIB_DIR}/share/vswitch.ovsschema
+
+		echo "Creating ${OVSDB_DATABASE} from ${OVSDB_SCHEMA}"
+		${OVSDB_TOOL} create ${OVSDB_DATABASE} ${OVSDB_SCHEMA}
+		if [ $? -ne 0 ]; then
+			errlog "Error creating database, exiting"
+			return 1
+		fi
+		OVSDB_INIT=1
+	fi
+
+	typeset -r OVSDB_LOGFILE=${OVS_LOG_DIR}/ovsdb-server.log
+	typeset -r OVSDB_PIDFILE=${OVS_TMP_DIR}/ovsdb-server.pid
+
+	${OVSDB_SERVER_PATH} ${OVSDB_DATABASE} \
+	    -vconsole:emer -vsyslog:err -vfile:info \
+	    --remote=punix:${OVSDB_REMOTE} \
+	    --remote=db:Open_vSwitch,Open_vSwitch,manager_options \
+	    --private-key=db:Open_vSwitch,SSL,private_key \
+	    --certificate=db:Open_vSwitch,SSL,certificate \
+	    --bootstrap-ca-cert=db:Open_vSwitch,SSL,ca_cert \
+	    --no-chdir --log-file=${OVSDB_LOGFILE} \
+	    --pidfile=${OVSDB_PIDFILE} \
+	    --detach
+	if [ $? -ne 0 ]; then
+		errlog "${OVSDB_SERVER_PATH} failed with $?"
+		exit $SMF_EXIT_ERR_FATAL
+	fi
+
+	if [ ${OVSDB_INIT} -ne 0 ]; then
+		echo "Initializing OVSDB database"
+		${OVS_VSCTL} --no-wait init
+		if [ $? -ne 0 ]; then
+			errlog "${OVSDB_VSCTL} failed with $?"
+			exit $SMF_EXIT_ERR_FATAL
+		fi
+	fi
+}
+
+stop_vswitch_server() {
+        typeset BRIDGENAME
+
+        $PKILL -x -u ${OVS_USER} -z `smf_zonename` ${OVS_VSWITCHD}
+        if [[ $? -ne 0 && $? -ne 1 ]]; then
+                errlog "pkill of ${OVS_VSWITCHD} failed with $?"
+        fi
+
+        ${OVS_VSCTL} list-br |
+                while read BRIDGENAME; do
+                        ${OVS_CLEAN_PATH} delete-vnic ${BRIDGENAME}
+                        if [ $? -ne 0 ]; then
+                                errlog "Error $? removing ${BRIDGENAME} VNIC"
+                        fi
+                done
+        ${OVS_CLEAN_PATH} reset-ofports
+	if [ $? -ne 0 ]; then
+        	errlog "Error $? resetting OF ports"
+	fi
+
+        ${OVS_CLEAN_PATH} remove-flows
+        if [ $? -ne 0 ]; then
+                errlog "Error $? removing OF flows"
+        fi
+
+        ${OVS_CLEAN_PATH} delete-etherstub ovs.etherstub0
+        if [ $? -ne 0 ]; then
+                errlog "Error $? deleting the OVS etherstub"
+        fi
+
+}
+
+start_vswitch_server() {
+	typeset -r VSWITCHD_LOGFILE=${OVS_LOG_DIR}/ovs-vswitchd.log
+	typeset -r VSWITCHD_PIDFILE=${OVS_TMP_DIR}/ovs-vswitchd.pid
+
+	create_ovs_tempdir
+
+	${OVS_VSWITCHD_PATH} unix:${OVSDB_REMOTE} \
+	    -vconsole:emer -vsyslog:err -vfile:info --mlockall --no-chdir \
+	    --log-file=${VSWITCHD_LOGFILE} \
+	    --pidfile=${VSWITCHD_PIDFILE} \
+	    --detach
+	if [ $? -ne 0 ]; then
+		errlog "${OVS_VSWITCHD} failed with $?"
+		exit $SMF_EXIT_ERR_FATAL
+	fi
+}
+
+case "$1" in
+'start')
+	case "$SMF_FMRI" in
+	"${OVS_OVSDB_FMRI}")
+		start_ovsdb_server
+		;;
+	"${OVS_VSWITCHD_FMRI}")
+		start_vswitch_server
+		;;
+	*)
+		echo "$SMF_FMRI does not support start method"
+		exit $SMF_EXIT_ERR_FATAL
+		;;
+	esac
+	;;
+'stop')
+	case "$SMF_FMRI" in
+	"${OVS_VSWITCHD_FMRI}")
+		stop_vswitch_server
+		;;
+	*)
+		echo "$SMF_FMRI does not support stop method"
+		exit $SMF_EXIT_ERR_FATAL
+		;;
+	esac 
+	;;
+*)
+	echo "Service must be invoked from within SMF"
+	exit $SMF_EXIT_ERR_FATAL
+	;;
+esac
+
+exit $SMF_EXIT_OK
