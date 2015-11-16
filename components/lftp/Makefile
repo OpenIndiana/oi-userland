@@ -43,6 +43,7 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATCH_LEVEL =   0
 
+CONFIGURE_ENV	+=	PKG_CONFIG_PATH=/usr/lib/$(MACH64)/pkgconfig/gnutls-3
 CONFIGURE_OPTIONS  +=		--localedir=$(CONFIGURE_LOCALEDIR)
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=		CXXFLAGS="$(CXXFLAGS)"
@@ -62,7 +63,7 @@ system-test:    $(NO_TESTS)
 
 
 REQUIRED_PACKAGES += library/expat
-REQUIRED_PACKAGES += library/gnutls
+REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/perl-512
