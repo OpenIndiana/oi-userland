@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 require 'ipaddr'
@@ -83,6 +83,19 @@ Puppet::Type.newtype(:nis) do
               The first element in the hash is either a host or a netmask.
               The second element must be an IP network address.  Specify
               multiple entries as separate entries in the hash."
+
+        def insync?(is)
+            is = {} if is == :absent or is.nil?
+            is.sort == self.should.sort
+        end
+
+        def should_to_s(newvalue)
+          newvalue.to_s
+        end
+
+        def is_to_s(currentvalue)
+          currentvalue.to_s
+        end
     end
 
     newproperty(:use_broadcast) do

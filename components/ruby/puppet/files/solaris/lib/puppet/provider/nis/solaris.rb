@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 Puppet::Type.type(:nis).provide(:nis) do
@@ -86,8 +86,40 @@ Puppet::Type.type(:nis).provide(:nis) do
         end
     end
 
+    [:securenets].each do |field|
+        define_method(field) do
+            begin
+                hash = {}
+                val = svcprop("-p", "config/" + field.to_s, Domain_fmri).strip()
+                arr = val.tr('\\', '').split(/ /)
+                until arr == []
+                  hash[arr[0]] = arr[1]
+                  arr.shift
+                  arr.shift
+                end
+                hash
+            rescue
+                # if the property isn't set, don't raise an error
+                nil
+            end
+        end
+
+        define_method(field.to_s + "=") do |should|
+          arr = []
+          if not should.empty?
+            should.each do |key, value|
+              arr.push('"' + key + " " + value + '"')
+            end
+            arr[0] = "(" + arr[0]
+            arr[-1] = arr[-1] + ")"
+          end
+          svccfg("-s", Domain_fmri, "setprop",
+                           "config/" + field.to_s, "=", arr)
+        end
+   end
+
     # svc:/network/nis/domain properties
-    [:domainname, :ypservers, :securenets].each do |field|
+    [:domainname, :ypservers].each do |field|
         define_method(field) do
             begin
                 svcprop("-p", "config/" + field.to_s, Domain_fmri).strip()
