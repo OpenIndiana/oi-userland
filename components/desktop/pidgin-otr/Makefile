@@ -58,6 +58,7 @@ test:		$(NO_TESTS)
 
 system-test:	$(NO_TESTS)
 
+REQUIRED_PACKAGES += communication/im/libotr
 REQUIRED_PACKAGES += communication/im/pidgin
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/libgcrypt
