@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 Puppet::Type.type(:address_object).provide(:address_object) do
@@ -40,7 +40,7 @@ Puppet::Type.type(:address_object).provide(:address_object) do
             # look to see if this is a point-to-point address object
             if addr.include?("->")
                 local, remote = addr.split("->")
-                local = locale.delete("\\")
+                local = local.delete("\\")
                 remote = remote.delete("\\")
             elsif type.downcase == "dhcp" and addr == "?"
                 local = nil
