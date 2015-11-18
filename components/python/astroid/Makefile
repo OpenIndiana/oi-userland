@@ -74,23 +74,31 @@ COMPONENT_TEST_ENV = PYTHONPATH=$(COMPONENT_DIR)/../logilab-common/build/prototy
 
 # The test output contains details from each test, in whatever order they
 # complete. Use nawk to extract just the sections that summarizes the test result.
+COMPONENT_TEST_DIR = $(COMPONENT_SRC)/astroid/tests
 COMPONENT_TEST_CMD = /usr/bin/pytest-$(PYTHON_VERSION)
 COMPONENT_TEST_ARGS =
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_TRANSFORMER =	$(NAWK)
 COMPONENT_TEST_TRANSFORMS = "'/Ran (.+) test cases/{ sub(/in(.+)\)/, \"\"); print }/All (.+) modules OK/'"
 
-# Expected failures for test target:
-# sparc:
-# 394 test cases, 24 skipped
-# All 15 modules OK
-# x86:
-# 394 test cases, 24 skipped
-# All 15 modules OK
+
+# This modutils test should expect the logilab module to be found under the
+# standard /usr/lib/python* location when we test installed system bits,
+# the opposite of what it expects when testing built bits in the proto area.
+# Temporarily modify its expected result for system-test,
+# and restore it afterwards.
+COMPONENT_PRE_SYSTEM_TEST_ACTION += \
+	($(MV) $(COMPONENT_SRC)/astroid/tests/unittest_modutils.py $(COMPONENT_SRC)/astroid/tests/unittest_modutils.py-orig; \
+	$(GSED) -e "s/self.assertEqual(modutils.is_standard_module('logilab'), False)/self.assertEqual(modutils.is_standard_module('logilab'), True)/" $(COMPONENT_SRC)/astroid/tests/unittest_modutils.py-orig > $(COMPONENT_SRC)/astroid/tests/unittest_modutils.py)
+COMPONENT_SYSTEM_TEST_DIR = $(COMPONENT_SRC)/astroid/tests
+COMPONENT_SYSTEM_TEST_CMD = /usr/bin/pytest-$(PYTHON_VERSION)
+COMPONENT_SYSTEM_TEST_ARGS =
+COMPONENT_POST_SYSTEM_TEST_ACTION += \
+	$(MV) $(COMPONENT_SRC)/astroid/tests/unittest_modutils.py-orig $(COMPONENT_SRC)/astroid/tests/unittest_modutils.py
 
 test:		$(TEST_NO_ARCH)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+system-test:    $(SYSTEM_TEST_NO_ARCH)
 
 REQUIRED_PACKAGES += library/python/logilab-common-27
 REQUIRED_PACKAGES += library/python/six-27

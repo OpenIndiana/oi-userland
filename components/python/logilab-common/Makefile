@@ -75,14 +75,22 @@ COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_TRANSFORMER =	$(NAWK)
 COMPONENT_TEST_TRANSFORMS = "'/Ran (.+) test cases/{ sub(/in(.+)\)/, \"\"); print }/(.+) modules OK/'"
 
-# Expected failures for test target:
-# 425 test cases, 2 error, 1 failures, 23 skipped
-# 19 modules OK (3 failed)
-# failures: unittest_shellutils [1/23], unittest_date [1/48], unittest_decorators[1/13]
+# This modutils test should expect the logilab module to be found under the
+# standard /usr/lib/python* location when we test installed system bits,
+# the opposite of what it expects when testing built bits in the proto area.
+# Temporarily modify its expected result for system-test,
+# and restore it afterwards.
+COMPONENT_PRE_SYSTEM_TEST_ACTION += \
+	($(MV) $(COMPONENT_SRC)/test/unittest_modutils.py $(COMPONENT_SRC)/test/unittest_modutils.py-orig; \
+	$(GSED) -e "s/self.assertEqual(modutils.is_standard_module('logilab'), False)/self.assertEqual(modutils.is_standard_module('logilab'), True)/" $(COMPONENT_SRC)/test/unittest_modutils.py-orig > $(COMPONENT_SRC)/test/unittest_modutils.py)
+COMPONENT_SYSTEM_TEST_CMD = /usr/bin/pytest-$(PYTHON_VERSION)
+COMPONENT_SYSTEM_TEST_ARGS =
+COMPONENT_POST_SYSTEM_TEST_ACTION += \
+	$(MV) $(COMPONENT_SRC)/test/unittest_modutils.py-orig $(COMPONENT_SRC)/test/unittest_modutils.py
 
 test:	$(TEST_NO_ARCH)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+system-test:    $(SYSTEM_TEST_NO_ARCH)
 
 REQUIRED_PACKAGES += library/python/pyorbit-27
 REQUIRED_PACKAGES += library/python/six-27
