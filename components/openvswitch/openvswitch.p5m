@@ -29,6 +29,12 @@ set name=pkg.fmri \
 set name=pkg.summary value="Open Virtual Switch and Utilities"
 set name=pkg.description \
     value="Open vSwitch is a production quality open source software switch designed to be used as a vswitch in virtualized server environments.  A vswitch forwards traffic between different VMs on the same physical host and also forwards traffic between VMs and the physical network."
+# Usernames with underscores result in a pkglint error, but are not
+# actually prohibited and are mandated by PSARC.
+set name=pkg.linted.pkglint.action010.2 value=true
+set name=pkg.linted.pkglint.action010.3 value=true
+set name=com.oracle.info.description \
+    value="portions of the Open vSwitch (OVS) software."
 set name=com.oracle.info.tpno value=$(TPNO)
 set name=info.classification value=org.opensolaris.category.2008:System/Services
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
@@ -46,7 +52,7 @@ file ovsdb.xml path=lib/svc/manifest/application/openvswitch/ovsdb.xml group=sys
 # The following pkg.depend.bypass-generate is needed because the vswitch
 # service depends upon the ovsdb service. pkgdepend fails to find the file
 # containing the ovsdb service (since ovsdb.xml is under
-# $(COMPONENT_DIR)/files) and fails.
+#  $(COMPONENT_DIR)/files) and fails.
 file vswitch.xml path=lib/svc/manifest/application/openvswitch/vswitch.xml \
     group=sys pkg.depend.bypass-generate=.*
 file ovs-svc path=lib/svc/method/ovs-svc mode=0555
