@@ -44,6 +44,14 @@ TPNO=			21407
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
+
+# Depends on S12-only changes in ON to build.
+ifeq ($(BUILD_TYPE), evaluation)
+BUILD_64=
+INSTALL_64=
+PUBLISH_STAMP=
+endif
+
 include ../../make-rules/ips.mk
 include ../../make-rules/lint-libraries.mk
 
