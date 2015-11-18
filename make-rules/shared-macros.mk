@@ -1036,6 +1036,7 @@ REQUIRED_PACKAGES += text/gawk
 REQUIRED_PACKAGES += text/gnu-grep
 REQUIRED_PACKAGES += text/gnu-sed
 REQUIRED_PACKAGES += developer/java/jdk-7
+REQUIRED_PACKAGES += developer/java/jdk-8
 REQUIRED_PACKAGES += security/sudo
 
 include $(WS_MAKE_RULES)/environment.mk
