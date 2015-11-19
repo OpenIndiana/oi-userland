@@ -26,21 +26,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		coverage
-COMPONENT_VERSION=	3.5
+COMPONENT_VERSION=	4.0.1
 COMPONENT_PROJECT_URL=	http://nedbatchelder.com/code/coverage/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:b181d5ec72baf7478942fd600503d9f32bb525cfca413b1c73ebfa7ff1b95ae9
-COMPONENT_ARCHIVE_URL=	http://pypi.python.org/packages/source/c/coverage/$(COMPONENT_ARCHIVE)
+    sha256:bc10f57a83863e8ca8916f763f13b4b249e2f85b553df3958281cb7f4f402d5b
+COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_BUGDB=	python-mod/coverage
 
-TPNO=			10021
-
-# Not Python 3 ready: weird build issues (tries to download & install
-# "distribute").  But coverage version 3.7.1 has fixed these issues; it
-# builds and publishes fine with Python 3.
-PYTHON_VERSIONS = $(PYTHON2_VERSIONS)
+TPNO=			25051
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -56,10 +51,13 @@ COMPONENT_POST_INSTALL_ACTION =	\
 
 install:	$(INSTALL_32_and_64)
 
+# test requires PyContracts and gevent which haven't been integrated yet.
 test:		$(NO_TESTS)
 
 system-test:    $(NO_TESTS)
 
 
 REQUIRED_PACKAGES += library/python/setuptools-27
+REQUIRED_PACKAGES += library/python/setuptools-34
+REQUIRED_PACKAGES += library/python/setuptools-35
 REQUIRED_PACKAGES += system/library

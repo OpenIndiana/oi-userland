@@ -25,19 +25,19 @@ include ../../../make-rules/shared-macros.mk
 PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
 
 COMPONENT_NAME=		ply
-COMPONENT_VERSION=	3.1
+COMPONENT_VERSION=	3.7
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:436461f455d83292bb9c2cd89ce02414de1421a2023628b94666bc5f71b0128b
+    sha256:f85fb7b44c1c9a04873e6d76fa2c2eef43f2cfd81468aa714a9c63af7ae0af80
 COMPONENT_ARCHIVE_URL=	http://www.dabeaz.com/ply/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://www.dabeaz.com/ply/
 COMPONENT_BUGDB=	python-mod/ply
 
-TPNO=			10013
+TPNO=			24766
 
-# Syntax issues: not Python 3 ready.
-PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
+# not Python 3.5 ready; test fail
+PYTHON_VERSIONS=	$(PYTHON2_VERSIONS) 3.4
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -45,12 +45,22 @@ include $(WS_MAKE_RULES)/ips.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
+COMPONENT_TEST_ENV = PYTHONPATH=$(PROTO_DIR)/$(PYTHON_LIB)
+COMPONENT_TEST_CMD = $(PYTHON) testlex.py; \
+                     $(PYTHON) testyacc.py
+COMPONENT_TEST_ARGS=
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
+COMPONENT_TEST_TRANSFORMS += \
+    '-e "s|\(^Ran 42 tests\).*|\1|" '
+
 # common targets
 build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
-test:		$(NO_TESTS)
+# Run 42 tests, OK.
+test:		$(TEST_NO_ARCH)
 
-system-test:    $(NO_TESTS)
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 

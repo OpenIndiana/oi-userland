@@ -34,7 +34,8 @@ COMPONENT_BUGDB=	python-mod/lesscpy
 
 TPNO=			16108
 
-# Depends on ply which is not Python 3 ready.
+# Depends on ply, which is now Python 3 ready, but further testing is needed
+# to determine if lesscpy can deliver 3.x package.
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
 
 # convert the 'j' in COMPONENT_VERSION to 10

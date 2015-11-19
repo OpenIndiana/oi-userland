@@ -26,23 +26,21 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pycurl
-COMPONENT_VERSION=	7.19.0
+COMPONENT_VERSION=	7.19.5.1
 COMPONENT_PROJECT_URL=	http://pycurl.sourceforge.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:8ef0bf1c0e48f0d193ef8ac4ae4b3596a1e91b6cbf1ff1b25de769fe3782aeb6
+    sha256:6e9770f80459757f73bd71af82fbb29cd398b38388cdf1beab31ea91a331bc6c
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_BUGDB=	python-mod/pycurl
 
-IPS_COMPONENT_VERSION=  7.19.0.1
+IPS_COMPONENT_VERSION=  7.19.5.1
 
-PATCH_LEVEL = 0
+TPNO=			24764
 
-TPNO=			5912
-
-# Syntax issues: not Python 3 ready.
-PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
+# upstream not Python 3.5 ready
+PYTHON_VERSIONS=        $(PYTHON2_VERSIONS) 3.4
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -58,9 +56,10 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
+# test requires bottle and vsftpd which haven't been integrated yet.
 test:		$(NO_TESTS)
 
-system-test:    $(NO_TESTS)
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
 
 REQUIRED_PACKAGES += library/security/openssl

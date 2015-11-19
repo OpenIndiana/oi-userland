@@ -34,9 +34,6 @@ COMPONENT_BUGDB=	python-mod/cov-core
 
 TPNO=			14503
 
-# Depends on coverage, which is not Python 3 ready.
-PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
-
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
 include $(WS_MAKE_RULES)/ips.mk

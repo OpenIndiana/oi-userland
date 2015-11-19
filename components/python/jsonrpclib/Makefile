@@ -26,21 +26,19 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		jsonrpclib
-COMPONENT_VERSION=	0.1.3
-COMPONENT_HASH=		e3a3cde
-COMPONENT_PROJECT_URL=	https://github.com/joshmarshall/jsonrpclib
-COMPONENT_SRC=		joshmarshall-jsonrpclib-$(COMPONENT_HASH)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_VERSION=	0.2.6
+COMPONENT_PROJECT_URL=	https://github.com/tcalmant/jsonrpclib
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	v$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:1480f0f189250d46552e29d2a6f04f5b92788ffd9b8f51d06fdaeee03aa2d8bb
-COMPONENT_ARCHIVE_URL=https://github.com/joshmarshall/jsonrpclib/tarball/$(COMPONENT_HASH)
+    sha256:17acc9f89f74fd9f4a22b2fe4bd26a97a7fe68a5ea0a9bd506fb96685cb0fed2
+COMPONENT_ARCHIVE_URL=https://github.com/tcalmant/jsonrpclib/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/jsonrpclib
 
-TPNO=			8061
+TPNO=			24886
 
-# This module builds with Python 3, but depends on simplejson.  The following
-# line can be removed when simplejson supports Python 3.
-PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
+# upstream not Python 3.5 ready
+PYTHON_VERSIONS=	$(PYTHON2_VERSIONS) 3.4
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -49,13 +47,20 @@ include $(WS_MAKE_RULES)/ips.mk
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 COMPONENT_TEST_DIR=	$(COMPONENT_SRC)
-COMPONENT_TEST_ARGS=	tests.py
+COMPONENT_TEST_CMD= /usr/bin/nosetests
+COMPONENT_TEST_ARGS = tests
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
+COMPONENT_TEST_TRANSFORMS += \
+    '-e "s|\(127.0.0.1\).*|\1|" ' \
+    '-e "s|\(^Ran 51 tests in\).*|\1|" '
 
 # common targets
 build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
+# Ran 51 tests, OK.
 test:		$(TEST_NO_ARCH)
 
 system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)

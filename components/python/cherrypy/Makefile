@@ -25,21 +25,18 @@ include ../../../make-rules/shared-macros.mk
 PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
 
 COMPONENT_NAME=		CherryPy
-COMPONENT_VERSION=	3.1.2
+COMPONENT_VERSION=	3.8.0
 COMPONENT_PROJECT_URL=	http://www.cherrypy.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:0dfd65507b047d54c09849e7a4b8bdd3616fa8776a5dbff7697cbf6ea1559bf6
+    sha256:ffcdb43667d4098247efaf8c82dd36d3dd4f8e5dc768ef5e90b480899e523bea
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_BUGDB=	python-mod/cherrypy
 
-TPNO=			5881
+TPNO=			25174
 
 PATCH_LEVEL=0
-
-# This module is not Python 3 ready: syntax issues.
-PYTHON_VERSIONS = $(PYTHON2_VERSIONS)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -50,13 +47,24 @@ COMPONENT_POST_INSTALL_ACTION = \
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
+COMPONENT_TEST_DIR = 	$(SOURCE_DIR)/cherrypy/test
+COMPONENT_TEST_CMD =	nosetests -s ./
+COMPONENT_TEST_ARGS = 
+
 # common targets
 build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
-test:		$(NO_TESTS)
+# test are not clean, so not appropriate to run at top level
+$(SKIP_TEST_AT_TOP_LEVEL)
 
-system-test:    $(NO_TESTS)
+# The test requires some interactive selections from the users to continue,
+# otherwise it'll hang.
+# Ran 246 tests, 3 skipped, 3 failures 
+# FAIL: test_598, test_queue_full, test_2_File_Concurrency
+test:		$(TEST_NO_ARCH)
+
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
 REQUIRED_PACKAGES += system/core-os
