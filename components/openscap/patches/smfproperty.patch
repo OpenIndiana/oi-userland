@@ -1,31 +1,7 @@
 This patch provides the implementation of the smfproperty probe
 on solaris.
-This patch has not been contributed upstream and will be done
-by 2015-Jul-01.
---- openscap-1.2.1/src/OVAL/oval_probe.c.~2~	2015-04-21 09:56:24.689455398 -0700
-+++ openscap-1.2.1/src/OVAL/oval_probe.c	2015-04-21 09:56:58.950099871 -0700
-@@ -91,7 +91,8 @@
-         OVAL_PROBE_EXTERNAL(OVAL_UNIX_FILEEXTENDEDATTRIBUTE, "fileextendedattribute"),
-         OVAL_PROBE_EXTERNAL(OVAL_UNIX_GCONF, "gconf"),
-         OVAL_PROBE_EXTERNAL(OVAL_UNIX_ROUTINGTABLE, "routingtable"),
--        OVAL_PROBE_EXTERNAL(OVAL_SOLARIS_SMF, "smf")
-+        OVAL_PROBE_EXTERNAL(OVAL_SOLARIS_SMF, "smf"),
-+        OVAL_PROBE_EXTERNAL(OVAL_SOLARIS_SMFPROPERTY, "smfproperty")
- };
- 
- #define __PROBE_META_COUNT (sizeof OSCAP_GSYM(__probe_meta)/sizeof OSCAP_GSYM(__probe_meta)[0])
---- openscap-1.2.1/src/OVAL/public/oval_types.h.~1~	2015-01-08 07:30:33.115663437 -0800
-+++ openscap-1.2.1/src/OVAL/public/oval_types.h	2015-04-22 16:01:03.302332582 -0700
-@@ -238,7 +238,8 @@
- 	OVAL_SOLARIS_SMF = OVAL_FAMILY_SOLARIS + 4,
- 	OVAL_SOLARIS_PATCH54 = OVAL_FAMILY_SOLARIS + 5,
- 	OVAL_SOLARIS_NDD = OVAL_FAMILY_SOLARIS + 6,
--	OVAL_SOLARIS_PACKAGECHECK = OVAL_FAMILY_SOLARIS + 7
-+	OVAL_SOLARIS_PACKAGECHECK = OVAL_FAMILY_SOLARIS + 7,
-+	OVAL_SOLARIS_SMFPROPERTY = OVAL_FAMILY_SOLARIS + 8
- } oval_solaris_subtype_t;
- 
- /// Unix subtypes
+This patch has not been contributed upstream but is planned to be contributed
+upstream.  Hoping to have it accepted by 2015-Dec-15.
 --- openscap-1.2.1/configure.ac.~3~	2015-04-22 16:20:53.433875799 -0700
 +++ openscap-1.2.1/configure.ac	2015-04-22 16:25:56.053053597 -0700
 @@ -257,6 +257,10 @@

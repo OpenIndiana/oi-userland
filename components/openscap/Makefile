@@ -27,16 +27,16 @@ COMPILER =	gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openscap
-COMPONENT_VERSION=	1.2.3
+COMPONENT_VERSION=	1.2.6
 COMPONENT_PROJECT_URL=  http://www.open-scap.org
 COMPONENT_DOWNLOAD_URL= https://fedorahosted.org/releases/o/p/openscap
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:c15d587e5cdfcef1316536e6ed8ad66fea3e083ac3d3b723b7e54208f63787c7
+COMPONENT_ARCHIVE_HASH= sha256:95f2345e041e9ba838ad8065b68ce0ec4b0971d7afc72d601489236bbfc0c652
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_DOWNLOAD_URL)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=        utility/openscap
 
-TPNO =			22513	
+TPNO =			25520
 
 CFLAGS+=		-std=c99
 CFLAGS+=		-DNDEBUG
@@ -103,7 +103,7 @@ build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
 		$(MKDIR) $(DOCS_DIR)
-		$(CP) $(SOURCE_DIR)/docs/html/* $(DOCS_DIR)
+		$(CP) -r $(SOURCE_DIR)/docs/html/* $(DOCS_DIR)
 
 test:		$(TEST_64)
 
