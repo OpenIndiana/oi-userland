@@ -608,12 +608,9 @@ class ZFSISCSIDriver(STMFDriver, driver.ISCSIDriver):
         """
         luid = self._get_luid(volume)
 
-        # Remove the view entry
+        # Remove the LU
         if luid is not None:
-            view_lun = self._get_view_and_lun(luid)
-            if view_lun['view']:
-                self._stmf_execute('/usr/sbin/stmfadm', 'remove-view', '-l',
-                                   luid, view_lun['view'])
+            self._stmf_execute('/usr/sbin/stmfadm', 'delete-lu', luid)
 
         # Remove the target and its target group if they were created by
         # earlier versions of the volume driver
@@ -622,17 +619,11 @@ class ZFSISCSIDriver(STMFDriver, driver.ISCSIDriver):
                                 volume['name'])
 
         if self._check_target(target_name, 'iSCSI'):
-            self._stmf_execute('/usr/sbin/stmfadm', 'offline-target',
-                               target_name)
             self._stmf_execute('/usr/sbin/itadm', 'delete-target', '-f',
                                target_name)
 
         if self._check_tg(target_group):
             self._stmf_execute('/usr/sbin/stmfadm', 'delete-tg', target_group)
-
-        # Remove the LU
-        if luid is not None:
-            self._stmf_execute('/usr/sbin/stmfadm', 'delete-lu', luid)
 
     def _get_iscsi_properties(self, volume):
         """Get iSCSI configuration
