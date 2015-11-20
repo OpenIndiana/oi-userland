@@ -59,6 +59,7 @@ CONFIGURE_OPTIONS +=	--with-qt=no
 CONFIGURE_OPTIONS +=	--with-gtk2=yes
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)" 
 CONFIGURE_OPTIONS +=	PATH="/usr/perl5/bin:/usr/gnu/bin:$(PATH)"
+CONFIGURE_OPTIONS +=	PKG_CONFIG_PATH=/usr/lib/$(MACH64)/pkgconfig/gnutls-3
 
 # Use the 64-bit versions of pkg-config files
 CONFIGURE_ENV +=	PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
@@ -94,7 +95,7 @@ REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/gnutls
+REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/security/libgpg-error
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/lua
