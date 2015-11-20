@@ -26,19 +26,19 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		stunnel
-COMPONENT_VERSION=	4.56
+COMPONENT_VERSION=	5.18
 COMPONENT_PROJECT_URL=	http://www.stunnel.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:9cae2cfbe26d87443398ce50d7d5db54e5ea363889d5d2ec8d2778a01c871293
+	sha256:0532c0a2f8de3da1ab625e384146501ce5936fac63d01561c3a9bf652b692317
 
-COMPONENT_ARCHIVE_URL=	http://pkgs.fedoraproject.org/repo/pkgs/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)/ac4c4a30bd7a55b6687cbd62d864054c/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	http://pkgs.fedoraproject.org/repo/pkgs/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)/04f90ffbb65ffa289a5b1db2c52950f5/$(COMPONENT_ARCHIVE)
 
 COMPONENT_PREP_ACTION += (cd $(@D) ; autoreconf -f)
 
 COMPONENT_BUGDB=	utility/stunnel
-TPNO=                   21367
+TPNO=                   24738
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
