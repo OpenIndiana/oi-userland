@@ -1,48 +1,29 @@
 #
-#*
-#* CDDL HEADER START
-#*
-#* The contents of this file are subject to the terms of the
-#* Common Development and Distribution License, Version 1.0 only
-#* (the "License").  You may not use this file except in compliance
-#* with the License.
-#*
-#* You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-#* or http://www.opensolaris.org/os/licensing.
-#* See the License for the specific language governing permissions
-#* and limitations under the License.
-#*
-#* When distributing Covered Code, include this CDDL HEADER in each
-#* file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-#* If applicable, add the following below this CDDL HEADER, with the
-#* fields enclosed by brackets "[]" replaced with your own identifying
-#* information: Portions Copyright [yyyy] [name of copyright owner]
-#*
-#* CDDL HEADER END
-#*
-#*
-#* Copyright 2015 OpenSXCE.org Martin Bochnig <opensxce@mail.ru>
-#* FireFox 20/30/40++ gcc4.x port with Flash support for OpenSolaris++ x86/x64
-#* (depends also on my kernel hack for flash-plugin follows next week)
-#* https://github.com/orgs/OpenSXCE-org/people/MartinBochnig
-#* https://github.com/OpenSXCE-org
-#*
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
 
 #
-# Copyright 2013 Alexander Pyhalov.  All rights reserved.
+# Copyright 2015 OpenSXCE.org Martin Bochnig <opensxce@mail.ru>
+# Copyright 2013-2015 Alexander Pyhalov
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	firefox
-COMPONENT_VERSION= 	43.0b3
-COMPONENT_REVISION=	4
-IPS_COMPONENT_VERSION=	43.0b3
+COMPONENT_VERSION= 	43.0b7
+IPS_COMPONENT_VERSION=	43.0.0.7
 COMPONENT_SUMMARY= 	Mozilla Firefox Web browser
-COMPONENT_SRC= 		firefox-43.0b3
+COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_NAME)-$(COMPONENT_VERSION).source.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:4cef62437d4b7517fa4717fcdd2116b017621e6f5a7a9bc0ad9dfa89602b1f51
+  sha256:4ee0779c3c18f89b0c5bdf46c10b0de17811926bb1d7659afba8a43cf106e56b
 COMPONENT_ARCHIVE_URL= \
   https://ftp.mozilla.org/pub/firefox/releases/$(COMPONENT_VERSION)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.mozilla.com/en-US/firefox/
@@ -54,7 +35,7 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D) )
+COMPONENT_PRE_CONFIGURE_ACTION = (cp $(COMPONENT_DIR)/files/gld-wrapper  $(BUILD_DIR); chmod +x $(BUILD_DIR)/gld-wrapper )
 
 PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
 
@@ -78,6 +59,7 @@ CONFIGURE_OPTIONS +=	--prefix=/usr
 CONFIGURE_OPTIONS +=	--libdir=/usr/lib
 
 ENV +=	CC=$(CC)
+ENV +=	GLD_WRAPPER=$(BUILD_DIR)/gld-wrapper
 ENV +=	CXX=$(CXX)
 ENV +=	MOZILLA_OFFICIAL=1
 ENV +=	MOZ_PKG_FORMAT=XZ
@@ -101,6 +83,7 @@ build: $(BUILD_32)
 
 COMPONENT_POST_INSTALL_ACTION  = ( \
     for file in $(PROTO_DIR)/usr/lib/firefox/browser/components/libbrowsercomps.so \
+          $(PROTO_DIR)/usr/lib/firefox/sdk/lib/libxul.so \
           $(PROTO_DIR)/usr/lib/firefox/sdk/bin/xpcshell ; do \
         /usr/bin/elfedit -e 'dyn:value -s  RPATH "/usr/lib:/usr/lib/firefox:$$ORIGIN:$$ORIGIN/.."'  \
         $$file ;\
