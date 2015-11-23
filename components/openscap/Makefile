@@ -91,7 +91,7 @@ endif
 EXTRA_LIBS +=		-lscf -ldlpi -lsec -lzonecfg -lv12n
 CONFIGURE_OPTIONS +=	LIBS="$(EXTRA_LIBS)"
 
-DOCS_DIR = $(PROTO_DIR)/usr/share/docs/openscap/html/
+DOCS_DIR = $(PROTO_DIR)/usr/share/doc/openscap/html/
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
