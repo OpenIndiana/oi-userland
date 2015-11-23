@@ -1,13 +1,32 @@
 #
-# This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL"), version 1.0.
-# You may only use this file in accordance with the terms of version
-# 1.0 of the CDDL.
-#
-# A full copy of the text of the CDDL should have accompanied this
-# source.  A copy of the CDDL is also available via the Internet at
-# http://www.illumos.org/license/CDDL.
-#
+#*
+#* CDDL HEADER START
+#*
+#* The contents of this file are subject to the terms of the
+#* Common Development and Distribution License, Version 1.0 only
+#* (the "License").  You may not use this file except in compliance
+#* with the License.
+#*
+#* You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+#* or http://www.opensolaris.org/os/licensing.
+#* See the License for the specific language governing permissions
+#* and limitations under the License.
+#*
+#* When distributing Covered Code, include this CDDL HEADER in each
+#* file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+#* If applicable, add the following below this CDDL HEADER, with the
+#* fields enclosed by brackets "[]" replaced with your own identifying
+#* information: Portions Copyright [yyyy] [name of copyright owner]
+#*
+#* CDDL HEADER END
+#*
+#*
+#* Copyright 2015 OpenSXCE.org Martin Bochnig <opensxce@mail.ru>
+#* FireFox 20/30/40++ gcc4.x port with Flash support for OpenSolaris++ x86/x64
+#* (depends also on my kernel hack for flash-plugin follows next week)
+#* https://github.com/orgs/OpenSXCE-org/people/MartinBochnig
+#* https://github.com/OpenSXCE-org
+#*
 
 #
 # Copyright 2013 Alexander Pyhalov.  All rights reserved.
@@ -16,14 +35,14 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	firefox
-COMPONENT_VERSION= 	24.8.1esr
-COMPONENT_REVISION=	3
-IPS_COMPONENT_VERSION=	24.8.1
+COMPONENT_VERSION= 	43.0b3
+COMPONENT_REVISION=	4
+IPS_COMPONENT_VERSION=	43.0b3
 COMPONENT_SUMMARY= 	Mozilla Firefox Web browser
-COMPONENT_SRC= 		mozilla-esr24
-COMPONENT_ARCHIVE= 	$(COMPONENT_NAME)-$(COMPONENT_VERSION).source.tar.bz2
+COMPONENT_SRC= 		firefox-43.0b3
+COMPONENT_ARCHIVE= 	$(COMPONENT_NAME)-$(COMPONENT_VERSION).source.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:53db5f6d52e4669bf2650b1dd9d480b31eb1cc42c107ed741a65fb5bcacc8932
+  sha256:4cef62437d4b7517fa4717fcdd2116b017621e6f5a7a9bc0ad9dfa89602b1f51
 COMPONENT_ARCHIVE_URL= \
   https://ftp.mozilla.org/pub/firefox/releases/$(COMPONENT_VERSION)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.mozilla.com/en-US/firefox/
@@ -39,42 +58,29 @@ COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D) )
 
 PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
 
-CONFIGURE_OPTIONS =	--disable-alsa
-CONFIGURE_OPTIONS +=	--enable-gnomevfs
-CONFIGURE_OPTIONS +=	--enable-dbus
-CONFIGURE_OPTIONS +=	--enable-gnomeui
-CONFIGURE_OPTIONS +=	--enable-libnotify
-CONFIGURE_OPTIONS +=	--enable-libxul
-CONFIGURE_OPTIONS +=	--enable-extensions=gnomevfs
-CONFIGURE_OPTIONS +=	--disable-jemalloc
-CONFIGURE_OPTIONS +=	--disable-debug
-CONFIGURE_OPTIONS +=    --disable-tests
-#CONFIGURE_OPTIONS +=	--enable-debug
-CONFIGURE_OPTIONS +=	--disable-debug-symbols
-#CONFIGURE_OPTIONS +=	--enable-debug-symbols
-CONFIGURE_OPTIONS +=	--enable-install-strip
-CONFIGURE_OPTIONS +=	--enable-optimize=-O2
-CONFIGURE_OPTIONS +=	--disable-webrtc
-CONFIGURE_OPTIONS +=	--enable-dtrace
+CONFIGURE_OPTIONS =	--enable-application=browser
 CONFIGURE_OPTIONS +=	--enable-official-branding
 CONFIGURE_OPTIONS +=	--disable-updater
-CONFIGURE_OPTIONS +=	--enable-ipc
-CONFIGURE_OPTIONS +=	--enable-system-ffi
-CONFIGURE_OPTIONS +=	--enable-system-sqlite
-CONFIGURE_OPTIONS +=	--with-system-libevent
-CONFIGURE_OPTIONS +=	--with-system-zlib
-CONFIGURE_OPTIONS +=	--with-system-bz2
+CONFIGURE_OPTIONS +=	--enable-debug-symbols=no
+CONFIGURE_OPTIONS +=	--enable-update-channel=esr
+CONFIGURE_OPTIONS +=	--disable-tests
+CONFIGURE_OPTIONS +=	--enable-jemalloc
+CONFIGURE_OPTIONS +=	--disable-dtrace
+CONFIGURE_OPTIONS +=    --disable-xinerama
 CONFIGURE_OPTIONS +=	--disable-crashreporter
-CONFIGURE_OPTIONS +=	--disable-necko-wifi
-CONFIGURE_OPTIONS +=	--enable-startup-notification
-CONFIGURE_OPTIONS +=	--enable-application=browser
+CONFIGURE_OPTIONS +=	--disable-pulseaudio
+CONFIGURE_OPTIONS +=	--disable-gstreamer
+CONFIGURE_OPTIONS +=	--with-intl-api
+CONFIGURE_OPTIONS +=	--disable-debug
+CONFIGURE_OPTIONS +=	--enable-ipc
+CONFIGURE_OPTIONS +=	--enable-default-toolkit=cairo-gtk2
 CONFIGURE_OPTIONS +=	--prefix=/usr
 CONFIGURE_OPTIONS +=	--libdir=/usr/lib
 
 ENV +=	CC=$(CC)
 ENV +=	CXX=$(CXX)
 ENV +=	MOZILLA_OFFICIAL=1
-ENV +=	MOZ_PKG_FORMAT=BZ2
+ENV +=	MOZ_PKG_FORMAT=XZ
 ENV +=	PKG_SKIP_STRIP=1
 ENV +=	MOZILLA_PKG_NAME=firefox
 ENV +=	SHELL="/bin/bash"
