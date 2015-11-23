@@ -86,6 +86,12 @@ CONSOLIDATION =	userland
 PUBLISHER ?=	nightly
 PUBLISHER_LOCALIZABLE ?=	$(CONSOLIDATION)-localizable
 
+# Defines $(space) as a single blank space, so we can use it to convert
+# space-separated paths to colon-separated paths in variables with
+# $(subst $(space),:,$(strip $(SPATHS)))
+empty :=
+space := $(empty) $(empty)
+
 ROOT =			/
 
 # The changset and external source repo used in building the packages.
@@ -112,7 +118,13 @@ endif
 include $(WS_MAKE_RULES)/ips-buildinfo.mk
 
 COMPILER ?=		studio
-BITS =			32
+BITS ?=			32
+
+# The values of BITS changes during the build process for components that
+# are built 32-bit and 64-bit.  This macro makes it possible to determine
+# which components are only built 64-bit and allow other make-rules files
+# to adjust accordingly.
+INITIAL_BITS=		$(BITS)
 
 # The default version should go last.
 PYTHON_VERSION =	2.7
@@ -140,6 +152,7 @@ USRDIR =	/usr
 BINDIR =	/bin
 SBINDIR =	/sbin
 LIBDIR =	/lib
+VARDIR =	/var
 USRBINDIR =	$(USRDIR)/bin
 USRBINDIR64 =	$(USRDIR)/bin/$(MACH64)
 USRSBINDIR =	$(USRDIR)/sbin
@@ -149,6 +162,8 @@ USRINCDIR =	$(USRDIR)/include
 USRSHARELOCALEDIR =	$(USRSHAREDIR)/locale
 USRSHAREMANDIR =	$(USRSHAREDIR)/man
 USRSHAREDOCDIR =	$(USRSHAREDIR)/doc
+USRSHAREFONTSDIR =	$(USRSHAREDIR)/fonts
+USRSHARETTFONTSDIR =	$(USRSHAREFONTSDIR)/TrueType
 USRSHARELIBDIR =	$(USRSHAREDIR)/lib
 USRSHAREMAN1DIR =	$(USRSHAREMANDIR)/man1
 USRSHAREMAN1MDIR =	$(USRSHAREMANDIR)/man1m
@@ -161,16 +176,21 @@ PROTOETCDIR =	$(PROTO_DIR)/$(ETCDIR)
 PROTOETCSECDIR = $(PROTO_DIR)/$(ETCDIR)/security
 PROTOUSRDIR =	$(PROTO_DIR)/$(USRDIR)
 PROTOLIBDIR =	$(PROTO_DIR)/$(LIBDIR)
+PROTOSVCMANIFESTDIR =	$(PROTOLIBDIR)/svc/manifest
+PROTOSVCMETHODDIR =	$(PROTOLIBDIR)/svc/method
 PROTOUSRBINDIR =	$(PROTO_DIR)/$(USRBINDIR)
 PROTOUSRBINDIR64 =	$(PROTO_DIR)/$(USRBINDIR64)
 PROTOUSRSBINDIR =	$(PROTO_DIR)/$(USRSBINDIR)
 PROTOUSRLIBDIR =	$(PROTO_DIR)/$(USRLIBDIR)
 PROTOUSRLIBDIR64 =	$(PROTO_DIR)/$(USRLIBDIR64)
+PROTOPKGCONFIGDIR = 	$(PROTOUSRLIBDIR)/pkgconfig
+PROTOPKGCONFIGDIR64 =	$(PROTOUSRLIBDIR64)/pkgconfig
 PROTOUSRINCDIR =	$(PROTO_DIR)/$(USRINCDIR)
 PROTOUSRSHAREDIR =	$(PROTO_DIR)/$(USRSHAREDIR)
 PROTOUSRSHARELIBDIR =	$(PROTO_DIR)/$(USRSHARELIBDIR)
-PROTOUSRSHAREMANDIR =	$(PROTO_DIR)/$(USRSHAREMANDIR)
 PROTOUSRSHAREDOCDIR =	$(PROTO_DIR)/$(USRSHAREDOCDIR)
+PROTOUSRSHAREINFODIR =	$(PROTOUSRSHAREDIR)/info
+PROTOUSRSHAREMANDIR =	$(PROTO_DIR)/$(USRSHAREMANDIR)
 PROTOUSRSHAREMAN1DIR =	$(PROTO_DIR)/$(USRSHAREMAN1DIR)
 PROTOUSRSHAREMAN1MDIR =	$(PROTO_DIR)/$(USRSHAREMAN1MDIR)
 PROTOUSRSHAREMAN3DIR =	$(PROTO_DIR)/$(USRSHAREMAN3DIR)
@@ -501,6 +521,10 @@ USRBIN.32 =	/usr/bin
 USRBIN.64 =	/usr/bin/$(MACH64)
 USRBIN =	$(USRBIN.$(BITS))
 
+USRLIB.32 =	$(USRLIBDIR)
+USRLIB.64 =	$(USRLIBDIR64)
+USRLIB =	$(USRLIB.$(BITS))
+
 PYTHON.2.7.32 =	$(USRBIN.32)/python2.7
 PYTHON.2.7.64 =	$(USRBIN.64)/python2.7
 PYTHON.2.7 =	$(USRBIN)/python2.7
@@ -607,10 +631,15 @@ TEE =		/usr/bin/tee
 INS.dir=        $(INSTALL) -d $@
 INS.file=       $(INSTALL) -m 444 $< $(@D)
 
+#
+# To simplify adding directories to PKG_CONFIG_PATH, since += adds spaces, not :
+# use PKG_CONFIG_PATHS += ... and the following will convert to the : form
+#
 PKG_CONFIG_PATH.32 = /usr/lib/pkgconfig
 PKG_CONFIG_PATH.64 = /usr/lib/$(MACH64)/pkgconfig
-PKG_CONFIG_PATH = $(PKG_CONFIG_PATH.$(BITS))
-
+PKG_CONFIG_DEFAULT = $(PKG_CONFIG_PATH.$(BITS))
+PKG_CONFIG_PATH    = $(subst $(space),:,$(strip \
+			$(PKG_CONFIG_PATHS) $(PKG_CONFIG_DEFAULT)))
 
 #
 # C preprocessor flag sets to ease feature selection.  Add the required
@@ -668,13 +697,13 @@ studio_XBITS = $(studio_XBITS.$(MACH).$(BITS))
 
 # Turn on recognition of supported C99 language features and enable the 1999 C
 # standard library semantics of routines that appear in	both the 1990 and
-# 1999 C standard. To use set studio_C99MODE=$(studio_99_ENABLE) in your
+# 1999 C standard. To use set studio_C99MODE=$(studio_C99_ENABLE) in your
 # component Makefile.
 studio_C99_ENABLE =		-xc99=all
 
 # Turn off recognition of C99 language features, and do not enable the 1999 C
 # standard library semantics of routines that appeared in both the 1990	and
-# 1999 C standard.  To use set studio_C99MODE=$(studio_99_DISABLE) in your
+# 1999 C standard.  To use set studio_C99MODE=$(studio_C99_DISABLE) in your
 # component Makefile.
 studio_C99_DISABLE =	-xc99=none
 
@@ -696,11 +725,11 @@ studio_cplusplus_C99MODE =
 studio_FEATURES_EXTENSIONS =	-features=extensions
 
 # Control the Studio optimization level.
-studio_OPT.sparc.32 =	-xO4
-studio_OPT.sparc.64 =	-xO4
-studio_OPT.i386.32 =	-xO4
-studio_OPT.i386.64 =	-xO4
-studio_OPT =		$(studio_OPT.$(MACH).$(BITS))
+studio_OPT.sparc.32 ?=	-xO4
+studio_OPT.sparc.64 ?=	-xO4
+studio_OPT.i386.32 ?=	-xO4
+studio_OPT.i386.64 ?=	-xO4
+studio_OPT ?=		$(studio_OPT.$(MACH).$(BITS))
 
 # Studio PIC code generation.  Use CC_PIC instead to select PIC code generation.
 studio_PIC = 	-KPIC -DPIC
@@ -758,6 +787,14 @@ CFLAGS.studio +=	$(studio_OPT) $(studio_XBITS) $(studio_XREGS) \
 			$(studio_IROPTS) $(studio_C99MODE) $(studio_ALIGN) \
 			$(studio_MT)
 
+# Default Studio C++ compiler flags.  Add the required feature to your Makefile
+# with CXXFLAGS += $(FEATURE_MACRO) and add to the component build with
+# CONFIGURE_OPTIONS += CXXFLAGS="$(CXXFLAGS)" or similiar.  In most cases, it
+# should not be necessary to add CXXFLAGS to any environment other than the
+# configure environment.
+CXXFLAGS.studio +=	$(studio_OPT) $(studio_XBITS) $(studio_XREGS) \
+			$(studio_IROPTS) $(studio_ALIGN)
+
 #
 # GNU C compiler flag sets to ease feature selection.  Add the required
 # feature to your Makefile with CFLAGS += $(FEATURE_MACRO) and add to the
@@ -765,13 +802,17 @@ CFLAGS.studio +=	$(studio_OPT) $(studio_XBITS) $(studio_XREGS) \
 #
 
 # GCC Compiler optimization flag
-gcc_OPT =	-O3
+gcc_OPT.sparc.32 ?=	-O3
+gcc_OPT.sparc.64 ?=	-O3
+gcc_OPT.i386.32 ?=	-O3
+gcc_OPT.i386.64 ?=	-O3
+gcc_OPT ?=		$(gcc_OPT.$(MACH).$(BITS))
 
 # GCC PIC code generation.  Use CC_PIC instead to select PIC code generation.
 gcc_PIC =	-fPIC -DPIC
 
 # Generic macro for PIC code generation.  Use this macro instead of the
-# compiler specific variant.
+# compiler-specific variant.
 CC_PIC =	$($(COMPILER)_PIC)
 
 
@@ -785,13 +826,22 @@ CFLAGS.gcc +=	$(gcc_XREGS)
 CFLAGS.gcc3 +=	$(gcc_OPT)
 CFLAGS.gcc3 +=	$(gcc_XREGS)
 
+# Default GNU C++ compiler flags.  Add the required feature to your Makefile
+# with CXXFLAGS += $(FEATURE_MACRO) and add to the component build with
+# CONFIGURE_OPTIONS += CXXFLAGS="$(CXXFLAGS)" or similiar.  In most cases, it
+# should not be necessary to add CXXFLAGS to any environment other than the
+# configure environment.
+CXXFLAGS.gcc +=		$(gcc_OPT)
+CXXFLAGS.gcc +=		$(gcc_XREGS)
+CXXFLAGS.gcc3 +=	$(gcc_OPT)
+CXXFLAGS.gcc3 +=	$(gcc_XREGS)
 
 # Build 32 or 64 bit objects.
 CFLAGS +=	$(CC_BITS)
 
-# Add compiler specific 'default' features
+# Add compiler-specific 'default' features
 CFLAGS +=	$(CFLAGS.$(COMPILER))
-
+CFLAGS +=	$(CFLAGS.$(COMPILER).$(BITS))
 
 # Studio C++ requires -norunpath to avoid adding its location into the RUNPATH
 # to C++ applications.
@@ -821,6 +871,10 @@ CXXFLAGS +=	$($(COMPILER)_NORUNPATH)
 
 # Build 32 or 64 bit objects in C++ as well.
 CXXFLAGS +=	$(CC_BITS)
+
+# Add compiler-specific 'default' features
+CXXFLAGS +=	$(CXXFLAGS.$(COMPILER))
+CXXFLAGS +=	$(CXXFLAGS.$(COMPILER).$(BITS))
 
 #
 # Solaris linker flag sets to ease feature selection.  Add the required

@@ -57,8 +57,6 @@ LDFLAGS +=	$($(COMPILER)_NORUNPATH)
 
 # We need these in the environment, although they are already passed
 # as CONFIGURE_OPTIONS; otherwise the correct compilers are not used
-CONFIGURE_ENV +=	CC="$(CC)"	
-CONFIGURE_ENV +=	CXX="$(CXX)"	
 CONFIGURE_ENV +=	LDFLAGS="$(LDFLAGS)"	
 CONFIGURE_ENV +=	MAKE="$(GMAKE)"	
 CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"

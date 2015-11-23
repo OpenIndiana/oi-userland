@@ -38,6 +38,8 @@ COMPONENT_BUGDB=	library/libz
 TPNO=			17611
 
 include $(WS_MAKE_RULES)/prep.mk
+# Omit directory options that cause zlib's CMake-based build to fail.
+CONFIGURE_DEFAULT_DIRS=no
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 include $(WS_MAKE_RULES)/lint-libraries.mk
@@ -86,12 +88,9 @@ CFLAGS += $(CFLAGS_EXTRA)
 
 # We need to reset configure options here because zlib is confused with
 # CC and CFLAGS definitions as configure parameters.
-CONFIGURE_OPTIONS	=  --shared
-CONFIGURE_OPTIONS	+= --prefix=/usr
-CONFIGURE_OPTIONS	+= $(CONFIGURE_OPTIONS.$(BITS))
+CONFIGURE_OPTIONS	+=  --shared
 CONFIGURE_OPTIONS.64	+= --libdir=/usr/lib/$(MACH64)
 
-CONFIGURE_ENV += CC="$(CC)"
 CONFIGURE_ENV += CFLAGS="$(CFLAGS) -xalias_level=basic -xdepend"
 CONFIGURE_ENV += LDSHARED="$(CC) $(CFLAGS) -G"
 

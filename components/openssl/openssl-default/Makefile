@@ -65,6 +65,11 @@ BUILD_DIR_WANBOOT = $(BUILD_DIR)/$(MACH64)-wanboot
 # OpenSSL does not use autoconf but its own configure system.
 CONFIGURE_SCRIPT = $(SOURCE_DIR)/Configure
 
+# Ignore default CC_FOR_BUILD, CC, and CXX in CONFIGURE_ENV.
+CONFIGURE_ENV += CC_FOR_BUILD=
+CONFIGURE_ENV += CC=
+CONFIGURE_ENV += CXX=
+
 # This is to force OpenSSL's Configure script to use gmake for 'make links'. 
 # Otherwise it fails with:
 #     mksh: Fatal error in reader: Unmatched `(' on line

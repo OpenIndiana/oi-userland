@@ -20,6 +20,7 @@
 #
 # Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+BITS=64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mailman
@@ -41,7 +42,7 @@ include $(WS_MAKE_RULES)/ips.mk
 CONFIGURE_ENV	+=	MAILMAN_USER=mailman
 CONFIGURE_ENV	+=	MAILMAN_GROUP=mailman
 
-CONFIGURE_OPTIONS +=	--prefix=/usr/lib/mailman
+CONFIGURE_PREFIX= /usr/lib/mailman
 CONFIGURE_OPTIONS +=	--with-var-prefix=/var/mailman
 CONFIGURE_OPTIONS +=	--with-mail-gid=other
 CONFIGURE_OPTIONS +=	--with-cgi-gid=webservd

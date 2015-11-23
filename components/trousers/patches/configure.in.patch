@@ -1,3 +1,19 @@
+Fix pure 64-bit x86 builds on Solaris, change default port, and ensure endian.h
+is included when appropriate.  No change is necessary for SPARC.
+--- configure.in	2015-10-28 16:05:06.799975827 -0700
++++ configure.in	2015-10-28 16:04:45.893833006 -0700
+@@ -38,6 +38,11 @@
+         *ppc64* | *powerpc64* | *x86_64*)
+ 		CFLAGS="$CFLAGS -m64"
+ 		;;
++        *)
++                ;;
++esac
++
++case $target in
+ 	*solaris*)
+ 		CFLAGS="$CFLAGS -DSOLARIS"
+ 		;;
 --- configure.in	2010-07-08 13:35:18.000000000 -0700
 +++ configure.in	2012-04-10 17:37:23.820532000 -0700
 @@ -143,7 +143,9 @@

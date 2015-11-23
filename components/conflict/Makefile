@@ -23,6 +23,7 @@
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
+BITS=64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		conflict
@@ -45,17 +46,7 @@ include $(WS_MAKE_RULES)/ips.mk
 # Required to configure correctly.
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
-
-CC +=	$(CC_BITS)
-
-CONFIGURE_ENV += "CC=$(CC)"
-
-# If the configure options are not explicitly set, then configure fails with:
-# configure: warning: CC=/ws/onnv-tools/SUNWspro/sunstudio12.1/bin/cc: invalid host type
-# configure: warning: CXX=/ws/onnv-tools/SUNWspro/sunstudio12.1/bin/CC: invalid host type
-# configure: error: can only configure for one host and one target at a time
-CONFIGURE_OPTIONS = --prefix=$(CONFIGURE_PREFIX)
-CONFIGURE_OPTIONS += --mandir=$(CONFIGURE_MANDIR)
+CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
 
 COMPONENT_TEST_DIR =	$(BUILD_DIR_64)
 COMPONENT_TEST_CMD =	./run_test.sh

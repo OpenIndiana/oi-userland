@@ -42,11 +42,6 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PKG_PROTO_DIRS += $(COMPONENT_DIR)/man
 
-# We need to compile with /usr/lib/$(MACH64)/glib-2.0 to ensure
-# that 64-bit headers will be used, see content of
-# /usr/lib/64/pkgconfig/glib-2.0.pc
-$(BUILD_64): CONFIGURE_OPTIONS += PKG_CONFIG_PATH=/usr/lib/$(MACH64)/pkgconfig
-
 # get rid of compiler path set in RUNPATH
 LDFLAGS += $(studio_NORUNPATH)
 LDFLAGS += $(CC_BITS)

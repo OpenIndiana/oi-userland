@@ -47,6 +47,11 @@ include $(WS_MAKE_RULES)/configure.mk
 
 PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
 
+# ghostscript uses a non-standard hybrid-build to build both 32 and 64-bit;
+# override these to prevent build failure.
+CC_FOR_BUILD=
+CONFIGURE_CPPFLAGS=
+
 # configure(1) options to use
 CONFIGURE_OPTIONS +=	--with-drivers=ALL
 CONFIGURE_OPTIONS +=	--with-ijs

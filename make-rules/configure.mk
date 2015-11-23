@@ -72,16 +72,25 @@ CONFIGURE_ENV = CONFIG_SHELL="$(CONFIG_SHELL)"
 
 CONFIGURE_DEFAULT_DIRS?=yes
 
-CONFIGURE_OPTIONS += CC="$(CC)"
-CONFIGURE_OPTIONS += CXX="$(CXX)"
+CONFIGURE_ENV += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
+CONFIGURE_ENV += CC="$(CC)"
+CONFIGURE_ENV += CXX="$(CXX)"
+
 CONFIGURE_OPTIONS += --prefix=$(CONFIGURE_PREFIX)
 ifeq ($(CONFIGURE_DEFAULT_DIRS),yes)
 CONFIGURE_OPTIONS += --mandir=$(CONFIGURE_MANDIR)
+ifeq ($(INITIAL_BITS),64)
+CONFIGURE_OPTIONS += --bindir=$(CONFIGURE_BINDIR.32)
+CONFIGURE_OPTIONS += --sbindir=$(CONFIGURE_SBINDIR.32)
+else
 CONFIGURE_OPTIONS += --bindir=$(CONFIGURE_BINDIR.$(BITS))
-CONFIGURE_OPTIONS += --libdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS += --sbindir=$(CONFIGURE_SBINDIR.$(BITS))
 endif
+CONFIGURE_OPTIONS += --libdir=$(CONFIGURE_LIBDIR.$(BITS))
+endif
 CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(BITS))
+CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(MACH))
+CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(MACH).$(BITS))
 
 COMPONENT_INSTALL_ARGS +=	DESTDIR=$(PROTO_DIR)
 
@@ -99,6 +108,31 @@ CONFIGURE_ENV += ac_cv_exeext=""
 CONFIGURE_ENV += ac_cv_header_stdbool_h=yes
 endif
 
+# This MUST be set in the build environment so that if pkg-config is executed
+# during the build process, the correct header files and libraries will be
+# picked up.  In the Linux world, a system is generally only 32-bit or 64-bit
+# at one time so this isn't an issue that various auto* files account for (they
+# don't set PKG_CONFIG_PATH when executing pkg-config even if it was specified
+# during ./configure).
+COMPONENT_BUILD_ENV += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
+
+# CC_FOR_BUILD is used by autoconf to set the compiler and required flags for
+# generating native executables and is typically used for host detection and
+# other tests during the autoconf process.  Explicitly specifying the target
+# bits ensures that autoconf reliably detects 32-bit and 64-bit builds.
+CC_FOR_BUILD ?= "$(CC) $(CC_BITS)"
+ifneq  ($(strip $(CC_FOR_BUILD)),)
+CONFIGURE_ENV += CC_FOR_BUILD=$(CC_FOR_BUILD)
+endif
+
+# Similar idea for CPP as above; there's a common macro found in lib-prefix.m4
+# for autoconf that detects a 64-bit host on Solaris by using CPP.  As such, by
+# default, we need to explicitly specify the target bits to ensure that
+# autoconf reliably detects 32-bit and 64-bit builds.
+CONFIGURE_CPPFLAGS ?= $(CC_BITS)
+ifneq  ($(strip $(CONFIGURE_CPPFLAGS)),)
+CONFIGURE_ENV += CPPFLAGS="$(CONFIGURE_CPPFLAGS) $(CPPFLAGS)"
+endif
 
 # temporarily work around some issues
 CONFIGURE_ENV += "ac_cv_func_realloc_0_nonnull=yes"
@@ -106,7 +140,7 @@ CONFIGURE_ENV += "NM=/usr/gnu/bin/nm"
 COMPONENT_BUILD_ENV += "ac_cv_func_realloc_0_nonnull=yes"
 
 # configure the unpacked source for building 32 and 64 bit version
-CONFIGURE_SCRIPT =	$(SOURCE_DIR)/configure
+CONFIGURE_SCRIPT ?=	$(SOURCE_DIR)/configure
 $(BUILD_DIR)/%/.configured:	$(SOURCE_DIR)/.prep
 	($(RM) -rf $(@D) ; $(MKDIR) $(@D))
 	$(COMPONENT_PRE_CONFIGURE_ACTION)

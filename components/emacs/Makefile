@@ -72,6 +72,9 @@ LD_MAP_NOEXDATA.sparc=
 #
 #CONFIGURE_PREFIX =	$(PROTO_DIR)/usr
 
+# configure env common to all variants of emacs that we want to build.
+CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
+
 # The configure script runs the pkg-config command. This allows it to
 # find the non-default GnuTLS v3 library.
 CONFIGURE_ENV +=	PKG_CONFIG_PATH=/usr/lib/$(MACH64)/pkgconfig/gnutls-3
@@ -82,7 +85,6 @@ CONFIGURE_ENV +=	PKG_CONFIG_PATH=/usr/lib/$(MACH64)/pkgconfig/gnutls-3
 CONFIGURE_ENV +=	XMKMF="false" 
 
 # configure options common to all variants of emacs that we want to build.
-CONFIGURE_OPTIONS +=	CC="$(CC) -m64"
 CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS +=	--datarootdir=$(CONFIGURE_PREFIX)/share
 CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_PREFIX)/lib

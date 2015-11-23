@@ -48,20 +48,16 @@ LINT_FLAGS += -I$(SOURCE_DIR)/src
 
 PKG_PROTO_DIRS +=	$(COMPONENT_SRC)
 
-# We need to reset configure options here because aalib is confused with
-# CC and CFLAGS definitions as configure parameters.
-CONFIGURE_OPTIONS	= --prefix=/usr
+# Ensure ancient autoconf scripts are overwritten with fixed versions that
+# properly detect SunOS 5.x hosts.
+COMPONENT_PREP_ACTION += (cd $(@D); autoreconf -fiv)
+
 CONFIGURE_OPTIONS	+= --infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS	+= --mandir=$(CONFIGURE_MANDIR)
-CONFIGURE_OPTIONS	+= --bindir=$(CONFIGURE_BINDIR.$(BITS))
-CONFIGURE_OPTIONS	+= --libdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS	+= --enable-shared
 CONFIGURE_OPTIONS	+= --disable-static
 CONFIGURE_OPTIONS	+= --x-includes=/usr/include
 CONFIGURE_OPTIONS	+= --x-libraries=$(CONFIGURE_LIBDIR.$(BITS))
-CONFIGURE_OPTIONS	+= $(CONFIGURE_OPTIONS.$(BITS))
 
-CONFIGURE_ENV += CC="$(CC)"
 CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
 
 COMPONENT_TEST_DIR =	$(@D)/src

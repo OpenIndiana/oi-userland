@@ -20,6 +20,7 @@
 #
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+BITS=64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		grep
@@ -43,8 +44,11 @@ include $(WS_MAKE_RULES)/ips.mk
 # We need to be able to return from void functions
 CFLAGS	+=			$(studio_FEATURES_EXTENSIONS)
 
+# 64-bit only components are delivered to the "32-bit" locations since we don't
+# need both versions.
+CONFIGURE_BINDIR.32 = $(CONFIGURE_PREFIX)/gnu/bin
+
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS  +=		--prefix=/usr
 
 # Enable aslr for this component
 ASLR_MODE = $(ASLR_ENABLE)

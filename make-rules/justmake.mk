@@ -45,6 +45,7 @@
 #
 
 COMPONENT_INSTALL_ARGS += DESTDIR=$(PROTO_DIR)
+COMPONENT_INSTALL_ARGS += $(COMPONENT_INSTALL_ARGS.$(BITS))
 
 # build the configured source
 $(BUILD_DIR)/%/.built:	$(SOURCE_DIR)/.prep

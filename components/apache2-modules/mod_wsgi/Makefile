@@ -37,6 +37,8 @@ COMPONENT_BUGDB=	utility/apache
 TPNO=			19269
 
 include $(WS_MAKE_RULES)/prep.mk
+# Don't use default CPPFLAGS; it causes Apache's custom CPP to fail.
+CONFIGURE_CPPFLAGS=
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 include ../modules.mk

@@ -94,7 +94,8 @@ test, they can be specified via the following.
   yielding the wrong results.
 * COMPONENT_BUILD_ENV is for when you just need to override things in the
   calling environment, like PATH.
-* COMPONENT_INSTALL_ARGS is mainly used for altering target directories.
+* COMPONENT_INSTALL_ARGS is mainly used for altering target directories;
+  there are also COMPONENT_INSTALL_ARGS.$(BITS) versions.
 * COMPONENT_INSTALL_ENV is mainly used for altering target directories.
 * COMPONENT_PUBLISH_ENV is so far only used to work around Python issues when
   used by "pkgdepend generate", though the variable may be extended in the
@@ -126,13 +127,37 @@ that need to be applied to the test output for just this component.
 * COMPONENT_PREP_ACTION is used to make alterations to the unpacked and patched
   source.  It should be used with care.
 
+For components that have a configure target, the following macros are used to
+control the options and arguments passed:
+
+* If BITS is set before shared-macros.mk is included, the default directories
+  used for various configure options as documented below will change.  For
+  example:
+
+  if BITS=64 explicitly:
+  	32-bit binaries -> $(CONFIGURE_PREFIX)/bin/$(MACH32)
+	32-bit libraries -> $(CONFIGURE_PREFIX)/lib
+  	64-bit binaries -> $(CONFIGURE_PREFIX)/bin
+	64-bit libraries -> $(CONFIGURE_PREFIX)/lib/$(MACH64)
+
+  if BITS=32 explicitly or BITS is unspecified:
+  	32-bit binaries -> $(CONFIGURE_PREFIX)/bin
+	32-bit libraries -> $(CONFIGURE_PREFIX)/lib
+  	64-bit binaries -> $(CONFIGURE_PREFIX)/bin/$(MACH64)
+	64-bit libraries -> $(CONFIGURE_PREFIX)/lib/$(MACH64)
+* CC_FOR_BUILD is included in CONFIGURE_ENV by default to ensure that 32-bit
+  and 64-bit host detection works as expected for autoconf-based components by
+  specifying the exact compiler and relevant $(CC_BITS) for the current build.
+  It can be set to "" to omit it from CONFIGURE_ENV.
+* CONFIGURE_CPPFLAGS contains the default set of CPPFLAGS to be included in
+  CONFIGURE_ENV.  It can be set to "" to omit it from CONFIGURE_ENV.
 * CONFIGURE_DEFAULT_DIRS should be "yes" or "no".  A value of "yes" (the
   default) will trigger the following being passed to CONFIGURE_OPTIONS as
   parameters to corresponding options.
-  * CONFIGURE_BINDIR is the value for the --bindir= option.
-  * CONFIGURE_LIBDIR is the value for the --libdir= option.
-  * CONFIGURE_MANDIR is the value for the --mandir= option.
-  * CONFIGURE_SBINDIR is the value for the --sbindir= option.
+  * CONFIGURE_BINDIR.$(BITS) is the value for the --bindir= option.
+  * CONFIGURE_LIBDIR.$(BITS) is the value for the --libdir= option.
+  * CONFIGURE_MANDIR.$(BITS) is the value for the --mandir= option.
+  * CONFIGURE_SBINDIR.$(BITS) is the value for the --sbindir= option.
 * CONFIGURE_ENV is mainly used for passing CFLAGS and other common Makefile
   variables to configure.  When should this be used as opposed to
   CONFIGURE_OPTIONS and COMPONENT_BUILD_{ARGS,ENV}?  In general, you want
@@ -151,10 +176,36 @@ that need to be applied to the test output for just this component.
 * CONFIGURE_SCRIPT should be set if the default "$(SOURCE_DIR)/configure" is
   unsuitable for whatever reason.
 
+To override or otherwise modify the default compilation flags used for
+components, the following macros are provided:
+
+* CFLAGS by default contains the preferred set of compilation flags for most
+  components, which usually includes optimization flags, language mode,
+  alignment flags, and multi-threading flags for the current COMPILER.
+  CFLAGS.$(COMPILER) and CFLAGS.$(COMPILERS).$(BITS) versions are also
+  available for specifying additional flags or overriding the default.
+* CXXFLAGS by default contains the preferred set of compilation flags for most
+  C++ components, which usually includes optimization flags, language mode,
+  alignment flags, and multi-threading flags for the current COMPILER.
+  CXXFLAGS.$(COMPILER) and CXXFLAGS.$(COMPILERS).$(BITS) versions are also
+  available for specifying additional flags or overriding the default.
+* gcc_OPT has a default value of "-O3".  Bugs in the optimizer have been found
+  which have required altering this to "-O2".
 * studio_OPT has a default value of "-xO4".  Occasional bugs in the optimizer
-  have been found which have required altering this to "-xO3".  There are also
-  studio_OPT.$(MACH).$(BITS) versions of this available if greater specificity
-  is needed.
+  have been found which have required altering this to "-xO3".
+* There are also gcc_OPT.$(MACH).$(BITS) and studio_OPT.$(MACH).$(BITS)
+  versions of the above available if greater specificity is needed.
+
+For components that use pkg-config, the following macros are provided:
+
+* PKG_CONFIG_PATH contains the default system paths to use when looking for
+  pkg-config configuration files.  To specify additional paths to be searched,
+  use PKG_CONFIG_PATHS as follows:
+
+  PKG_CONFIG_PATHS += /path/to/pc/files
+
+Finally, for control of packaging-related operations and values used during
+publication, the following macros are available:
 
 * TPNO is the Third Party number (i.e., a numeric value): the License
   Technology from the Product Lifecycle Suite tool.  This should be used

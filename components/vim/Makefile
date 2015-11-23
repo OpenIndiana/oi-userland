@@ -75,9 +75,6 @@ CC +=			$(CC_BITS)
 # Put all the binaries directly in /usr/bin, not in /usr/bin/64.
 CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/bin
 
-# Use the 64-bit versions of pkg-config files (or GTK+ will add -R/usr/lib)
-CONFIGURE_ENV +=	PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
-
 # Necessary to pass 64-bit flags to the compilation stage.
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	--with-features=huge

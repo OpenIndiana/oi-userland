@@ -61,7 +61,6 @@ LDFLAGS =	-lpthread -lposix4 -lrt
 CONFIGURE_OPTIONS  +=	--localstatedir=/var
 CONFIGURE_OPTIONS  +=	--with-pic
 
-CONFIGURE_ENV  +=   CC="$(CC)"
 CONFIGURE_ENV  +=   LD="$(CC) $(CFLAGS) $(LDFLAGS)"
 CONFIGURE_ENV  +=   CFLAGS="$(CFLAGS)"
 CONFIGURE_ENV  +=   CPPFLAGS="$(CPPFLAGS)"

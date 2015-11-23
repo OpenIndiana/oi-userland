@@ -75,6 +75,11 @@ FIPS_BUILD_DIR_32 = $(shell echo $(BUILD_DIR_32) | \
 FIPS_BUILD_DIR_64 = $(shell echo $(BUILD_DIR_64) | \
     sed -e 's/openssl-fips-140/openssl-fips/g' )
 
+# Ignore default CC_FOR_BUILD, CC, and CXX in CONFIGURE_ENV.
+CONFIGURE_ENV += CC_FOR_BUILD=
+CONFIGURE_ENV += CC=
+CONFIGURE_ENV += CXX=
+
 CONFIGURE_OPTIONS =  -DSOLARIS_OPENSSL -DNO_WINDOWS_BRAINDEATH
 CONFIGURE_OPTIONS += --openssldir=/etc/openssl
 CONFIGURE_OPTIONS += --prefix=/usr

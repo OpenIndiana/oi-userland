@@ -55,20 +55,14 @@ LD_B_DIRECT=
 
 CONFIGURE_PREFIX =	/usr/gcc/3.4
 
-# we need to override CONFIGURE_OPTIONS because GCC uses a configure that
-# can't deal with CC as an argument
-CONFIGURE_OPTIONS =	 --prefix=$(CONFIGURE_PREFIX)
-CONFIGURE_OPTIONS +=	 --mandir=$(CONFIGURE_MANDIR)
-CONFIGURE_OPTIONS +=	 --infodir=$(CONFIGURE_PREFIX)/share/info
+CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_PREFIX)/share/info
 CONFIGURE_OPTIONS +=	--without-gnu-ld --with-ld=/usr/bin/ld
 CONFIGURE_OPTIONS +=	--enable-languages='c,c++,f77,objc'
 CONFIGURE_OPTIONS +=	--enable-shared
 # sparc and x86 use different assemblers
 CONFIGURE_OPTIONS.sparc +=	--without-gnu-as --with-as=/usr/bin/as
 CONFIGURE_OPTIONS.i386 +=	--with-gnu-as --with-as=/usr/gnu/bin/as
-CONFIGURE_OPTIONS +=	$(CONFIGURE_OPTIONS.$(MACH))
 
-CONFIGURE_ENV += 	CC="$(CC)"
 CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
 
 COMPONENT_BUILD_ENV += STAGE1_CFLAGS="$(CFLAGS)"

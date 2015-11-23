@@ -90,8 +90,6 @@ GSED = /usr/bin/gsed
 # libgmpxx.so.4 always gets built with unnecessary paths in RUNPATH/RPATH
 ELFEDIT = /usr/bin/elfedit
 
-CONFIGURE_ENV += CC="$(CC)"
-CONFIGURE_ENV += CXX="$(CXX)"
 CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_ENV += CXXFLAGS="$(CC_BITS) $(CXXFLAGS)"

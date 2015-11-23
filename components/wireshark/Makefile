@@ -61,9 +61,6 @@ CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	PATH="/usr/perl5/bin:/usr/gnu/bin:$(PATH)"
 CONFIGURE_OPTIONS +=	PKG_CONFIG_PATH=/usr/lib/$(MACH64)/pkgconfig/gnutls-3
 
-# Use the 64-bit versions of pkg-config files
-CONFIGURE_ENV +=	PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
-
 # We need to avoid RPATH=/usr/lib in Wireshark libraries so that we can
 # create successfully IPS package of different Wireshark branch than is
 # installed on build system without dependency errors.

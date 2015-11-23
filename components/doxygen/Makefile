@@ -20,6 +20,7 @@
 #
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+BITS=64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		doxygen
@@ -41,6 +42,8 @@ COMPONENT_ARCHIVE_URL_1 =	ftp://ftp.stack.nl/pub/users/dimitri/$(COMPONENT_ARCHI
 TPNO=			21549
 
 include $(WS_MAKE_RULES)/prep.mk
+# Omit directory options that break doxygen's configure script.
+CONFIGURE_DEFAULT_DIRS=no
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
@@ -57,11 +60,8 @@ endif
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
 
-# Need to override default options since configure doesn't
-# understand CC, CXX, etc.
-CONFIGURE_OPTIONS =	--platform solaris-g++
-CONFIGURE_OPTIONS +=	--prefix /usr
-CONFIGURE_OPTIONS +=	--enable-langs am,ar,br,ca,cn,cz,de,dk,en,eo,es,fa,fi,fr,gr,hr,hu,id,it,je,jp,ke,kr,lt,lv,mk,nl,no,pl,pt,ro,ru,sc,si,sk,sr,sv,tr,tw,ua,vi,za
+CONFIGURE_OPTIONS +=	--platform solaris-g++
+CONFIGURE_OPTIONS +=	--enable-langs=am,ar,br,ca,cn,cz,de,dk,en,eo,es,fa,fi,fr,gr,hr,hu,id,it,je,jp,ke,kr,lt,lv,mk,nl,no,pl,pt,ro,ru,sc,si,sk,sr,sv,tr,tw,ua,vi,za
 
 # Tests not available from the top-level Makefile, nor via a standard target.
 # We need to add /usr/gnu/bin to the front of the PATH environment variable

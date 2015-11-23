@@ -42,9 +42,6 @@ include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 include $(WS_MAKE_RULES)/lint-libraries.mk
 
-PKG_CONFIG_PATH_32 = /usr/lib/pkgconfig
-PKG_CONFIG_PATH_64 = /usr/lib/$(MACH64)/pkgconfig
-
 PATCH_LEVEL = 0
 
 CFLAGS += $(CPP_LARGEFILES)
@@ -56,7 +53,6 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 
 CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
-CONFIGURE_ENV += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH_$(BITS))"
 
 CONFIGURE_OPTIONS  +=           --includedir=$(CONFIGURE_INCLUDEDIR)/gd2
 CONFIGURE_OPTIONS  +=           --disable-static

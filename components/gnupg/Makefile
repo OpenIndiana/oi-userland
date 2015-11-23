@@ -20,6 +20,7 @@
 #
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+BITS=64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnupg
@@ -119,8 +120,6 @@ CONFIGURE_OPTIONS  +=		--with-libintl-prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS  +=		--with-zlib=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS  +=		--with-bzip2=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS  +=		--with-readline=$(CONFIGURE_PREFIX)
-CONFIGURE_BINDIR.64 =   $(CONFIGURE_PREFIX)/bin
-CONFIGURE_SBINDIR.64 =  $(CONFIGURE_PREFIX)/sbin
 
 LIBKSBA_MANIFEST = 	manifest-$(MACH)-libksba.depend
 LIBASSUAN_MANIFEST =	manifest-$(MACH)-libassuan.depend

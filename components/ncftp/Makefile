@@ -23,6 +23,7 @@
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
+BITS=64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ncftp
@@ -44,11 +45,8 @@ include $(WS_MAKE_RULES)/ips.mk
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_ENV += CC="$(CC)"
-CONFIGURE_ENV += CXX="$(CXX)"
 CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
 
-CONFIGURE_OPTIONS = --prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --srcdir=$(BUILD_DIR_64) 
 
 ASLR_MODE = $(ASLR_ENABLE)

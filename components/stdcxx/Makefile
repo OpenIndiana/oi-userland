@@ -172,8 +172,6 @@ LD_OPTIONS += -lpthread -lumem -lm -lc -s -z ignore
 # a whitespace.
 BUILD_NLSPATH = :%N.cat:/usr/lib/locale/%L/%N.cat:/usr/share/locale/%L/%N.cat:$(BUILD_DIR_$(BITS))/lib/rwstderr.cat
 
-CONFIGURE_ENV = 	CC="$(CC)"
-CONFIGURE_ENV +=	CXX="$(CXX)"
 CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_ENV +=	CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_ENV +=	CXXFLAGS="$(CXXFLAGS)"

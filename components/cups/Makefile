@@ -45,8 +45,11 @@ CXX +=	$(studio_NORUNPATH)
 # don't use LD_Z_IGNORE: causes linker problems
 LD_Z_IGNORE=
 
-CONFIGURE_OPTIONS +=	--prefix=/usr
-CONFIGURE_OPTIONS +=	--mandir=/usr/share/man
+# cups has an unusual hybrid-build system to support 32-bit and 64-bit
+# libraries in a single build; avoid confusing it by omitting default configure
+# CPPFLAGS.
+CONFIGURE_CPPFLAGS=
+
 CONFIGURE_OPTIONS +=	--localedir=$(USRSHARELOCALEDIR)
 CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS +=	--localstatedir=/var

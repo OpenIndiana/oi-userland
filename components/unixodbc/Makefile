@@ -62,9 +62,6 @@ GSED = /usr/gnu/bin/sed
 X11LIB.32 = $(CONFIGURE_PREFIX)/lib
 X11LIB.64 = $(CONFIGURE_PREFIX)/lib/$(MACH64)
 
-PKG_CONFIG_PATH_32 = /usr/lib/pkgconfig
-PKG_CONFIG_PATH_64 = /usr/lib/$(MACH64)/pkgconfig
-
 LD_OPTIONS += -lsocket -lresolv -lnsl -lgen
 
 CONFIGURE_OPTIONS  +=	--includedir=$(CONFIGURE_PREFIX)/include/odbc
@@ -94,12 +91,10 @@ CONFIGURE_OPTIONS  +=	--with-libiconv-prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS  +=	--disable-ltdl-install
 CONFIGURE_OPTIONS  +=	--with-pic
 
-CONFIGURE_ENV  +=   CC="$(CC)"
 CONFIGURE_ENV  +=   LD="$(CC) $(CFLAGS) $(LDFLAGS)"
 CONFIGURE_ENV  +=   CFLAGS="$(CFLAGS)"
 CONFIGURE_ENV  +=   LDFLAGS="$(LDFLAGS)"
 CONFIGURE_ENV  +=   INSTALL="$(INSTALL)"
-CONFIGURE_ENV  +=   PKG_CONFIG_PATH="$(PKG_CONFIG_PATH_$(BITS))"
 
 PROTOPKGCONFIGDIR32 = $(PROTOUSRLIBDIR)/pkgconfig
 PROTOPKGCONFIGDIR64 = $(PROTOUSRLIBDIR64)/pkgconfig

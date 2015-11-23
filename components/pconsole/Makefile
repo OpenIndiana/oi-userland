@@ -23,6 +23,7 @@
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
+BITS=64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pconsole
@@ -38,6 +39,8 @@ COMPONENT_BUGDB=	utility/pconsole
 TPNO=			9270
 
 include $(WS_MAKE_RULES)/prep.mk
+# DESTDIR doesn't work correctly; omit default directories.
+CONFIGURE_DEFAULT_DIRS=no
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
@@ -45,15 +48,10 @@ include $(WS_MAKE_RULES)/ips.mk
 COMPONENT_PRE_CONFIGURE_ACTION = \
         ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-# -I argument needed to find the generated config.h file.
-# CC_BITS needed to ensure -m64 is used for 64-bit compile
+# -I argument needed to find the generated config.h file.  Also, pconsole
+# configure.in forcibly overrides CFLAGS, so we override the compiler to
+# specify required flags.
 CONFIGURE_ENV += "CC=$(CC) -I. $(CC_BITS)"
-
-# If the configure options are not explicitly set, then configure fails with:
-# configure: warning: CC=/ws/onnv-tools/SUNWspro/sunstudio12.1/bin/cc: invalid host type
-# configure: warning: CXX=/ws/onnv-tools/SUNWspro/sunstudio12.1/bin/CC: invalid host type
-# configure: error: can only configure for one host and one target at a time
-CONFIGURE_OPTIONS = --prefix=$(CONFIGURE_PREFIX)
 
 ASLR_MODE = $(ASLR_ENABLE)
 
