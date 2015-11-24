@@ -58,12 +58,14 @@ COMPONENT_PREP_ACTION = \
 # Needed to get libpurple to link properly.
 LIBS += -lresolv
 CONFIGURE_ENV +=	LIBS="$(LIBS)"
+CONFIGURE_ENV +=	PKG_CONFIG_PATH=/usr/lib/pkgconfig/gnutls-3
 
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	--disable-binreloc
-CONFIGURE_OPTIONS +=	--enable-gnutls=no
-CONFIGURE_OPTIONS +=	--with-nss-includes=/usr/include/mps
-CONFIGURE_OPTIONS +=	--with-nss-libs=/usr/lib/mps
+CONFIGURE_OPTIONS +=	--enable-nss=no
+CONFIGURE_OPTIONS +=	--enable-gnutls=yes
+CONFIGURE_OPTIONS +=	--with-gnutls-includes=/usr/include/gnutls-3
+CONFIGURE_OPTIONS +=	--with-gnutls-libs=/usr/lib/gnutls-3
 CONFIGURE_OPTIONS +=	--with-nspr-includes=/usr/include/mps
 CONFIGURE_OPTIONS +=	--with-nspr-libs=/usr/lib/mps
 CONFIGURE_OPTIONS +=	--enable-gnome-keyring
@@ -100,11 +102,11 @@ REQUIRED_PACKAGES += library/desktop/gtkspell
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/gnome/gnome-keyring
+REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/libidn
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/nspr
 REQUIRED_PACKAGES += library/python/python-dbus-27
-REQUIRED_PACKAGES += library/security/nss
 REQUIRED_PACKAGES += runtime/perl-512
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/tcl-8
