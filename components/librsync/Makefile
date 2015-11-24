@@ -38,8 +38,8 @@ COMPONENT_BUGDB=	library/librsync
 # The files there are not in an easily downloadable format so a local
 # archive has been created for them.
 COMPONENT_NAME_1=	librsync-docs
-COMPONENT_SRC_1=	$(COMPONENT_NAME_1)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE_1=	$(COMPONENT_SRC_1).tar.gz
+COMPONENT_SRC_1=	$(COMPONENT_NAME_1)
+COMPONENT_ARCHIVE_1=	$(COMPONENT_NAME_1)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH_1=	\
     sha256:e805819272f71b06823ee13f2dd7ddb92e75d75de18c33b7fd32133847c52afe
 COMPONENT_ARCHIVE_URL_1=	http://dlc.openindiana.org/oi-build/source-archives/$(COMPONENT_ARCHIVE_1)
