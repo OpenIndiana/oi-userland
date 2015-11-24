@@ -23,10 +23,11 @@
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
+include ../../../make-rules/shared-macros.mk
+
 # Samba does not work properly on i386 when built by studio with -xO3+.
 ifeq ($(MACH), sparc)
-# parallelize up to 64 concurent tasks for sparc
-WAFOPT1 = -j64
+# standard options
 else
 # Both SPRO_VROOT and studio_OPT vars must use the override keyword otherwise
 # Userland will ignore it and use its default value.
@@ -34,14 +35,10 @@ else
 # the following line.
 #override SPRO_VROOT = $(SPRO_ROOT)/solarisstudio12.3
 override studio_OPT = -xO1
-# parallelize up to 16 concurent tasks for i386
-WAFOPT1 = -j16
 endif
 
 # parfait seems to spin on us
 export PARFAIT_BUILD=no
-
-include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		samba
 COMPONENT_VERSION=	4.1.17
@@ -74,9 +71,9 @@ PKG_PROTO_DIRS += $(COMPONENT_DIR)
 
 # Oracle HSM is not supported on 12.0 yet but the libsam.so target should rather be commented out than removed
 # (note) change compiler bitness here when Samba became 64bits
-#$(PROTO_DIR)/opt/SUNWsamfs/lib/libsam.so: Solaris/libsam.c
+#$(PROTO_DIR)/opt/SUNWsamfs/lib/$(MACH64)/libsam.so: Solaris/libsam.c
 #	$(MKDIR) $(@D)
-#	$(CC.studio.32) -m32 -G $(studio_PIC) -hlibsam.so Solaris/libsam.c \
+#	$(CC.studio.64) -m64 -G $(studio_PIC) -hlibsam.so Solaris/libsam.c \
 #		-I$(COMPONENT_DIR)/Solaris/include \
 #		-o $@
 
@@ -112,22 +109,19 @@ $(PROTO_DIR)/usr/bin/krb5-config:	Solaris/krb5-config
 CFLAGS.studio	+=	$(studio_C99_ENABLE)
 
 LIBS +=		-lrt -lsec -lcrypt -lmd5 -lsocket -lnsl
-# libavahi and libgamin libraries are not available for 64bits
-LIBS32 =	-lsendfile -lavahi-common -lavahi-core
+# More libs needed by smbd (libavahi, libgamin, ...)
+LIBS4SMBD =	-lsendfile -lavahi-common -lavahi-core
 
 #CPPFLAGS +=	-DSAMBA_VERSION_VENDOR_SUFFIX=\\\"Placeholder_for_vendor_suffix\\\"
 CPPFLAGS +=	$(CPP_LARGEFILES)
 CPPFLAGS +=	$(CPP_XPG6MODE)
 CPPFLAGS +=	-I/usr/include/openldap
 
-LDFLAGS.32 +=	-R/usr/lib/samba
-LDFLAGS.32 +=	-R/usr/lib/samba/private
-LDFLAGS.32 +=	$(LIBS) $(LIBS32)
-
-LDFLAGS.64 +=	-m64
-LDFLAGS.64 +=	-R/usr/lib/samba/$(MACH64)
-LDFLAGS.64 +=	-R/usr/lib/samba/private/$(MACH64)
-LDFLAGS.64 +=	$(LIBS)
+LDFLAGS +=	-m$(BITS)
+LDFLAGS +=	-R/usr/lib/samba$(MACHLIBDIR)
+LDFLAGS +=	-R/usr/lib/samba/private$(MACHLIBDIR)
+LDFLAGS +=	$(LIBS)
+$(BUILD_DIR_SMB)/.configured:	LDFLAGS +=	$(LIBS4SMBD)
 
 ASLR_MODE =	$(ASLR_ENABLE)
 LD_OPTIONS += 	-B direct
@@ -136,13 +130,10 @@ LD_OPTIONS += 	-B direct
 CONFIGURE_OPTIONS =	--exec-prefix=/usr
 CONFIGURE_OPTIONS +=	--bindir=/usr/lib/samba/bin
 CONFIGURE_OPTIONS +=	--sbindir=/usr/lib/samba/sbin
-CONFIGURE_OPTIONS.32 +=	--libdir=/usr/lib/samba
-CONFIGURE_OPTIONS.64 +=	--libdir=/usr/lib/samba/$(MACH64)
-CONFIGURE_OPTIONS.32 +=	--with-privatelibdir=/usr/lib/samba/private
-CONFIGURE_OPTIONS.64 +=	--with-privatelibdir=/usr/lib/samba/private/$(MACH64)
+CONFIGURE_OPTIONS +=	--libdir=/usr/lib/samba$(MACHLIBDIR)
+CONFIGURE_OPTIONS +=	--with-privatelibdir=/usr/lib/samba/private$(MACHLIBDIR)
 CONFIGURE_OPTIONS +=	--sysconfdir=/etc/samba
-CONFIGURE_OPTIONS.32 +=	--with-pammodulesdir=/usr/lib/samba/security
-CONFIGURE_OPTIONS.64 +=	--with-pammodulesdir=/usr/lib/samba/security/$(MACH64)
+CONFIGURE_OPTIONS +=	--with-pammodulesdir=/usr/lib/samba/security$(MACHLIBDIR)
 CONFIGURE_OPTIONS +=	--datarootdir=/usr/lib/samba
 CONFIGURE_OPTIONS +=	--mandir=/usr/share/man
 CONFIGURE_OPTIONS +=	--htmldir=/usr/share/samba/swat/help
@@ -154,8 +145,10 @@ CONFIGURE_OPTIONS +=	--sharedstatedir=/var/samba/com
 CONFIGURE_OPTIONS +=	--libexecdir=/usr/lib/samba
 
 CONFIGURE_OPTIONS +=	--with-static-modules=
-CONFIGURE_OPTIONS.32 +=	--with-shared-modules=vfs_worm,vfs_zfsacl,vfs_prealloc,vfs_cacheprime,vfs_commit,idmap_ldap,idmap_tdb2,idmap_rid,idmap_ad,idmap_hash,idmap_adex,vfs_solarisacl
-CONFIGURE_OPTIONS.64 +=	--with-shared-modules=idmap_ldap,idmap_tdb2,idmap_rid,idmap_ad,idmap_hash,idmap_adex
+$(BUILD_DIR_SMB)/.configured:	CONFIGURE_OPTIONS += \
+	--with-shared-modules=vfs_worm,vfs_zfsacl,vfs_prealloc,vfs_cacheprime,vfs_commit,idmap_ldap,idmap_tdb2,idmap_rid,idmap_ad,idmap_hash,idmap_adex,vfs_solarisacl
+$(BUILD_DIR_WINB)/.configured:	CONFIGURE_OPTIONS += \
+	--with-shared-modules=idmap_ldap,idmap_tdb2,idmap_rid,idmap_ad,idmap_hash,idmap_adex
 CONFIGURE_OPTIONS +=	--with-ads
 CONFIGURE_OPTIONS +=	--with-winbind
 CONFIGURE_OPTIONS +=	--enable-nss-wrapper
@@ -170,7 +163,7 @@ CONFIGURE_OPTIONS +=	--disable-rpath
 CONFIGURE_OPTIONS +=	--disable-gnutls
 CONFIGURE_OPTIONS +=	--bundled-libraries=ALL
 
-#CONFIGURE_OPTIONS.32 +=	--with-samfs=$(PROTO_DIR)/opt/SUNWsamfs/lib
+#$(BUILD_DIR_SMB)/.configured:	CONFIGURE_OPTIONS +=	--with-samfs=$(PROTO_DIR)/opt/SUNWsamfs/lib
 
 CONFIGURE_ENV += 	CC="$(CC)"
 CONFIGURE_ENV += 	CPP="$(CC) -E"
@@ -180,10 +173,8 @@ CONFIGURE_ENV += 	PYTHONDIR="$(PYTHON_VENDOR_PACKAGES)"
 CONFIGURE_ENV += 	PYTHONARCHDIR="$(PYTHON_VENDOR_PACKAGES)/samba"
 CONFIGURE_ENV += 	LD="$(LD)"
 CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_ENV.32 +=	CPPFLAGS="$(CPPFLAGS) -I$(PROTO_DIR)/usr/include -I$(COMPONENT_DIR)/Solaris/include"
-CONFIGURE_ENV.64 +=	CPPFLAGS="$(CPPFLAGS) -I$(PROTO_DIR)/usr/include"
-CONFIGURE_ENV.32 +=	LINKFLAGS="$(LDFLAGS.32)"
-CONFIGURE_ENV.64 +=	LINKFLAGS="$(LDFLAGS.64)"
+CONFIGURE_ENV +=	CPPFLAGS="$(CPPFLAGS) -I$(PROTO_DIR)/usr/include -I$(COMPONENT_DIR)/Solaris/include"
+CONFIGURE_ENV +=	LINKFLAGS="$(LD_OPTIONS) $(LDFLAGS)"
 CONFIGURE_ENV.64 +=	MACH64="$(MACH64)"
 CONFIGURE_ENV +=	LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS)"
 CONFIGURE_ENV +=	CUPS_CONFIG=$(USRBINDIR)/cups-config
@@ -215,9 +206,9 @@ $(BUILD_DIR_SMB)/.BDprep:	$(SOURCE_DIR)/.prep $(PROTO_DIR)/usr/include/gssapi/gs
 	$(TOUCH) $@
 
 # Configure of Samba + Winbind.
-$(BUILD_DIR_SMB)/.configured:	$(BUILD_DIR_SMB)/.BDprep $(PROTO_DIR)/usr/lib/samba/libgssapi_krb5.so
-	(cd $(@D) ; $(ENV) $(WAF_PATH) $(CONFIGURE_ENV) \
-		$(CONFIGURE_ENV.32) waf configure $(WAFOPT1) $(CONFIGURE_OPTIONS) $(CONFIGURE_OPTIONS.32) )
+$(BUILD_DIR_SMB)/.configured:	$(BUILD_DIR_SMB)/.BDprep $(PROTO_DIR)/usr/lib/samba/$(MACH64)/libgssapi_krb5.so
+	(cd $(@D) ; $(ENV) $(WAF_PATH) $(CONFIGURE_ENV) $(CONFIGURE_ENV.$(BITS)) \
+		waf configure $(WAFOPT1) $(CONFIGURE_OPTIONS) $(CONFIGURE_OPTIONS.$(BITS)) )
 	$(TOUCH) $@
 
 # Build of Samba + Winbind.
@@ -243,9 +234,9 @@ $(BUILD_DIR_WINB)/.BDprep:	$(SOURCE_DIR)/.prep $(PROTO_DIR)/usr/include/gssapi/g
 	$(TOUCH) $@
 
 # Configure of Winbind (without Samba) for different bitness.
-$(BUILD_DIR_WINB)/.configured:	$(BUILD_DIR_WINB)/.BDprep $(PROTO_DIR)/usr/lib/samba/$(MACH64)/libgssapi_krb5.so
-	(cd $(@D) ; $(ENV) $(WAF_PATH) $(CONFIGURE_ENV) \
-		$(CONFIGURE_ENV.64) waf configure $(WAFOPT1) $(CONFIGURE_OPTIONS) $(CONFIGURE_OPTIONS.64) )
+$(BUILD_DIR_WINB)/.configured:	$(BUILD_DIR_WINB)/.BDprep $(PROTO_DIR)/usr/lib/samba/libgssapi_krb5.so
+	(cd $(@D) ; $(ENV) $(WAF_PATH) $(CONFIGURE_ENV) $(CONFIGURE_ENV.$(BITS)) \
+		waf configure $(WAFOPT1) $(CONFIGURE_OPTIONS) $(CONFIGURE_OPTIONS.$(BITS)) )
 	$(TOUCH) $@
 
 # Build of Winbind (without Samba) for different bitness.
@@ -257,17 +248,21 @@ $(BUILD_DIR_WINB)/.built:	$(BUILD_DIR_WINB)/.configured
 
 # Installf Winbind (without Samba) for different bitness.
 $(BUILD_DIR_WINB)/.installed:	$(BUILD_DIR_WINB)/.built
-	(cd $(@D) ; \
-	    $(INSTALL) -d $(PROTO_DIR)/usr/lib/samba/$(MACH64) ; \
-	    $(INSTALL) -m 0555 -t $(PROTO_DIR)/usr/lib/samba/$(MACH64) bin/shared/*.so* ; \
-	    $(INSTALL) -d $(PROTO_DIR)/usr/lib/samba/private/$(MACH64) ; \
-	    $(INSTALL) -m 0555 -t $(PROTO_DIR)/usr/lib/samba/private/$(MACH64) bin/shared/private/*.so* \
-	)
+	/bin/sh -c "cd $(@D) ; \
+	    $(INSTALL) -d $(PROTO_DIR)/usr/lib/samba$(MACHLIBDIR) ; \
+	    $(INSTALL) -m 0555 -t $(PROTO_DIR)/usr/lib/samba$(MACHLIBDIR) bin/shared/!(pam_*).so* ; \
+	    $(INSTALL) -d $(PROTO_DIR)/usr/lib/samba/security$(MACHLIBDIR) ; \
+	    $(INSTALL) -m 0555 -t $(PROTO_DIR)/usr/lib/samba/security$(MACHLIBDIR) bin/shared/pam_*.so* ; \
+	    $(INSTALL) -d $(PROTO_DIR)/usr/lib/samba/private$(MACHLIBDIR) ; \
+	    $(INSTALL) -m 0555 -t $(PROTO_DIR)/usr/lib/samba/private$(MACHLIBDIR) bin/shared/private/*.so* \
+	"
 	$(TOUCH) $@
 
 # Set appropriate bitnesses for Samba + Winbind / Winbind (without Samba).
-$(BUILD_DIR_SMB)/.configured:	BITS=32
-$(BUILD_DIR_WINB)/.configured:	BITS=64
+$(BUILD_DIR_SMB)/.configured:	BITS=64
+$(BUILD_DIR_SMB)/.configured:	MACHLIBDIR=/$(MACH64)	
+$(BUILD_DIR_WINB)/.configured:	BITS=32
+$(BUILD_DIR_WINB)/.configured $(BUILD_DIR_WINB)/.installed:	MACHLIBDIR=
 
 # common targets
 build:		$(BUILD_DIR_SMB)/.built $(BUILD_DIR_WINB)/.built
@@ -283,47 +278,18 @@ system-test:    $(NO_TESTS)
 clean::
 	$(RM) -r $(BUILD_DIR)
 
-
-REQUIRED_PACKAGES += archiver/gnu-tar
-REQUIRED_PACKAGES += compress/bzip2
-REQUIRED_PACKAGES += compress/gzip
-REQUIRED_PACKAGES += compress/p7zip
-REQUIRED_PACKAGES += compress/unzip
-REQUIRED_PACKAGES += compress/xz
-REQUIRED_PACKAGES += data/xml-common
-REQUIRED_PACKAGES += developer/build/gnu-make
-REQUIRED_PACKAGES += developer/build/make
-REQUIRED_PACKAGES += developer/java/jdk
-REQUIRED_PACKAGES += developer/java/jdk-7
-REQUIRED_PACKAGES += developer/versioning/mercurial
-REQUIRED_PACKAGES += file/gnu-findutils
 REQUIRED_PACKAGES += library/file-monitor/gamin
-REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/openldap
-REQUIRED_PACKAGES += library/popt
 REQUIRED_PACKAGES += library/print/cups-libs
-REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += package/pkg
-REQUIRED_PACKAGES += runtime/perl-512
 REQUIRED_PACKAGES += runtime/perl-520
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += runtime/ruby
-REQUIRED_PACKAGES += security/sudo
 REQUIRED_PACKAGES += service/security/kerberos-5
-REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/gcc-3-runtime
-REQUIRED_PACKAGES += system/library/gcc-45-runtime
-REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
 REQUIRED_PACKAGES += system/library/security/crypto
 REQUIRED_PACKAGES += system/library/security/gss
+REQUIRED_PACKAGES += system/linker
 REQUIRED_PACKAGES += system/network
 REQUIRED_PACKAGES += system/network/avahi
-REQUIRED_PACKAGES += text/gawk
-REQUIRED_PACKAGES += text/gnu-grep
-REQUIRED_PACKAGES += text/gnu-patch
-REQUIRED_PACKAGES += text/gnu-sed
-

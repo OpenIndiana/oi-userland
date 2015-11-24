@@ -35,6 +35,7 @@
 <transform dir file link path=opt.* -> drop>
 <transform dir path=usr$ -> drop>
 <transform dir path=usr/bin$ -> drop>
+<transform dir file path=usr/include/gssapi.* -> drop>
 <transform dir path=usr/lib$ -> drop>
 <transform dir path=usr/share$ -> drop>
 <transform dir path=usr/share/doc$ -> drop>
@@ -45,29 +46,14 @@
 <transform file path=usr/bin/krb5-config -> drop>
 
 # Remove the named files with strange deps breaking the pkglint
-<transform file path=usr/lib/python2.7/vendor-packages/samba/samba/external/subunit/run.py -> drop>
-<transform file path=usr/lib/python2.7/vendor-packages/samba/samba/external/subunit/run.pyc -> drop>
-<transform file path=usr/lib/python2.7/vendor-packages/samba/samba/external/subunit/tests/sample-script.py -> drop>
-<transform file path=usr/lib/python2.7/vendor-packages/samba/samba/external/subunit/tests/sample-script.pyc -> drop>
+<transform file path=usr/lib/python2.7/vendor-packages/64/samba/samba/external/subunit/run.py -> drop>
+<transform file path=usr/lib/python2.7/vendor-packages/64/samba/samba/external/subunit/run.pyc -> drop>
+<transform file path=usr/lib/python2.7/vendor-packages/64/samba/samba/external/subunit/tests/sample-script.py -> drop>
+<transform file path=usr/lib/python2.7/vendor-packages/64/samba/samba/external/subunit/tests/sample-script.pyc -> drop>
 
 # Oracle HSM (SAMFS) is not yet supported on 12.0
 #<transform file path=usr/lib/samba/vfs/samfs.so -> default pkg.depend.bypass-generate .*>
 #<transform file path=usr/lib/samba/vfs/samfs.so -> default pkg.linted.userland.action001.3 true>
-
-# Private API libgssapi_krb5.so.1 is not yet available in lint cache.
-# Drop-In project will fix it
-<transform file path=usr/lib/samba/$(MACH64)/libgensec.so.0 -> default pkg.depend.bypass-generate .*>
-<transform file path=usr/lib/samba/$(MACH64)/libgensec.so.0 -> default pkg.linted.userland.action001.3 true>
-<transform file path=usr/lib/samba/$(MACH64)/libsamba-credentials.so.0 -> default pkg.depend.bypass-generate .*>
-<transform file path=usr/lib/samba/$(MACH64)/libsamba-credentials.so.0 -> default pkg.linted.userland.action001.3 true>
-<transform file path=usr/lib/samba/libgensec.so.0.0.1 -> default pkg.depend.bypass-generate .*>
-<transform file path=usr/lib/samba/libgensec.so.0.0.1 -> default pkg.linted.userland.action001.3 true>
-<transform file path=usr/lib/samba/libsamba-credentials.so.0.0.1 -> default pkg.depend.bypass-generate .*>
-<transform file path=usr/lib/samba/libsamba-credentials.so.0.0.1 -> default pkg.linted.userland.action001.3 true>
-<transform file path=usr/lib/samba/private/libads.so -> default pkg.depend.bypass-generate .*>
-<transform file path=usr/lib/samba/private/libads.so -> default pkg.linted.userland.action001.3 true>
-<transform file path=usr/lib/samba/private/libgse.so -> default pkg.depend.bypass-generate .*>
-<transform file path=usr/lib/samba/private/libgse.so -> default pkg.linted.userland.action001.3 true>
 
 # mediated links macros to switch between Samba 3 and 4
 <transform link target=.*/lib/samba/samba36/(s)?bin/.+ -> default mediator samba >
@@ -88,10 +74,8 @@
 <transform link target=.*/samba/($(MACH64)/)?nss_.+\.so.* -> default mediator samba >
 <transform link target=.*/samba/($(MACH64)/)?nss_.+\.so.* -> default mediator-implementation 4 >
 
-<transform link target=.*/samba/$(MACH64)/pam_.+\.so -> default mediator samba >
-<transform link target=.*/samba/security/pam_.+\.so -> default mediator samba >
-<transform link target=.*/samba/$(MACH64)/pam_.+\.so -> default mediator-implementation 4 >
-<transform link target=.*/samba/security/pam_.+\.so -> default mediator-implementation 4 >
+<transform link target=.*/samba/security/($(MACH64)/)?pam_.+\.so -> default mediator samba >
+<transform link target=.*/samba/security/($(MACH64)/)?pam_.+\.so -> default mediator-implementation 4 >
 
 # SMF services import (for .xml manifests)
 <transform file path=lib/svc/manifest/.+\.xml -> default restart_fmri svc:/system/manifest-import:default >
@@ -107,4 +91,4 @@ dir  path=var/spool/samba mode=1777
 
 # Samba can be used in Asian multibyte language envs. so we need this
 $(SOLARIS_12_ONLY)depend type=require fmri=pkg:/system/library/iconv
-$(SOLARIS_11_ONLY)depend type=require fmri=pkg:/system/library/iconv/unicode
+$(SOLARIS_11_ONLY)depend type=require fmri=pkg:/system/library/iconv/extra
