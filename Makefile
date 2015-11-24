@@ -26,6 +26,8 @@ include make-rules/shared-macros.mk
 SUBDIRS += components
 
 download:	TARGET = download
+unpack:	TARGET = unpack
+patch:		TARGET = patch
 prep:		TARGET = prep
 build:		TARGET = build
 install:	TARGET = install
@@ -40,7 +42,7 @@ component-hook:		TARGET = component-hook
 .DEFAULT:	publish
 
 download setup prep build install publish validate clean clobber \
-test component-hook: $(SUBDIRS)
+test component-hook unpack patch: $(SUBDIRS)
 
 $(SUBDIRS):	FORCE
 	@+echo "$(TARGET) $@" ; $(GMAKE) -C $@ $(TARGET)
