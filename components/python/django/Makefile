@@ -56,11 +56,13 @@ COMPONENT_POST_INSTALL_ACTION = \
 # locale/__init__.py
 PUBLISH_TRANSFORMS += $(COMPONENT_DIR)/django-locale-transform
 
-# reset the test environment to only contain PATH and PYTHONPATH
+# reset the test environment to only contain PATH, PYTHONPATH, and LC_ALL
+# (because many tests need to be able to access non-ASCII codepoints).
 COMPONENT_TEST_DIR=     $(SOURCE_DIR)/tests
 COMPONENT_TEST_ARGS +=  --settings test_sqlite
 COMPONENT_TEST_ENV=     PYTHONPATH=$(SOURCE_DIR)
 COMPONENT_TEST_ENV +=   PATH=$(PATH)
+COMPONENT_TEST_ENV +=   LC_ALL=en_US.UTF-8
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
