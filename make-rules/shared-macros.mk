@@ -70,6 +70,9 @@ publish:	SHELLOPTS=pipefail
 
 SHELL=	/bin/bash
 
+# This can be overridden to avoid rebuilding when you touch a Makefile
+MAKEFILE_PREREQ =	Makefile
+
 CONSOLIDATION =	userland
 PUBLISHER ?=	$(CONSOLIDATION)
 PUBLISHER_LOCALIZABLE ?=	$(CONSOLIDATION)-localizable
