@@ -26,8 +26,6 @@ include make-rules/shared-macros.mk
 SUBDIRS += components
 
 download:	TARGET = download
-unpack:	TARGET = unpack
-patch:		TARGET = patch
 prep:		TARGET = prep
 build:		TARGET = build
 install:	TARGET = install

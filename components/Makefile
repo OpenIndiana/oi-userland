@@ -54,8 +54,6 @@ $(WS_TOP)/components/$(ENCUMBERED)depends.mk:     $(WS_TOP)/components/$(ENCUMBE
 
 
 download:		TARGET = download
-unpack:		TARGET = unpack
-patch:			TARGET = patch
 prep:			TARGET = prep
 build:			TARGET = build
 install:		TARGET = install
@@ -78,7 +76,7 @@ build install publish test: $(COMPONENT_DIRS)
 
 COMPONENT_DIRS.nosetup =	$(COMPONENT_DIRS:%=%.nosetup)
 
-download unpack patch prep:	$(COMPONENT_DIRS.nosetup)
+download prep:	$(COMPONENT_DIRS.nosetup)
 
 component-hook:	$(COMPONENT_DIRS.nosetup)
 
