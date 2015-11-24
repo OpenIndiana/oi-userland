@@ -31,7 +31,6 @@ COMPONENT_PROJECT_URL = http://www.oasis-open.org/docbook/
 UNPACK_ARGS+=-r $(COMPONENT_SRC)
 
 PATCH_EACH_ARCHIVE=1
-PATCHDIR_PATCHES = patches/docbook-dtds-01-30-sgml-1.0.catalog.patch
 
 COMPONENT_SRC_1=    3.1-sgml
 COMPONENT_ARCHIVE_1=    docbk31.zip
