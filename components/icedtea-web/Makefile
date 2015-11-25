@@ -16,12 +16,12 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	icedtea-web
-COMPONENT_VERSION= 	1.5.2
+COMPONENT_VERSION= 	1.5.3
 COMPONENT_SUMMARY= 	Java browser plugin and Web Start launcher
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-   sha256:b29e8ff2533cc6521a6509a002001f4c97c80a004460063156d003898da13bf3
+   sha256:9b4b4477711930cb1d40bde752b17492fe8462a9c0cbd89bfe2c361b64d466b9
 COMPONENT_ARCHIVE_URL= \
    http://icedtea.wildebeest.org/download/source/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://icedtea.classpath.org/wiki/Main_Page
