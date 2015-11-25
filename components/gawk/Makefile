@@ -23,12 +23,12 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gawk
-COMPONENT_VERSION=	4.0.2
+COMPONENT_VERSION=	4.1.3
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/gawk/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:21e1f28c51b5160f0a4bf1a735c6109b46a3bd6a43de808eabc21c17bb026d13
+    sha256:e3cf55e91e31ea2845f8338bedd91e40671fc30e4d82ea147d220e687abda625
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/gawk/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gawk
 
@@ -38,6 +38,8 @@ include ../../make-rules/ips.mk
 
 CONFIGURE_OPTIONS	+=	--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS	+=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
+
+COMPONENT_TEST_TRANSFORMS += '-e "/\/usr\/gnu\/bin\/make/d"' 
 
 # common targets
 build:		$(BUILD_32)
