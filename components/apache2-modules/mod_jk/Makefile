@@ -51,9 +51,9 @@ CONFIGURE_OPTIONS += --with-apxs=$(APXS)
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-configure:	$(CONFIGURE_32_and_64)
+configure:	$(MODULES_CONFIGURE)
 
-build: $(BUILD_32_and_64)
+build: $(MODULES_BUILD)
 
 test: $(NO_TESTS)
 

@@ -98,8 +98,9 @@ COMPONENT_BUILD_TARGETS = all swig-py swig-pl javahl
 COMPONENT_INSTALL_TARGETS = install install-lib \
 			    install-swig-pl install-swig-py \
 			    install-javahl install-javahl-lib \
-			    install-mods-shared \
 			    install-bin install-docs
+
+$(BUILD_DIR)/$(MACH64)/.installed: COMPONENT_INSTALL_TARGETS += install-mods-shared
 
 CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
 CONFIGURE_ENV += CXXFLAGS="$(CXXFLAGS)"
@@ -118,14 +119,12 @@ APR-CONFIG.32 = /usr/apr/$(APR_VERSION)/bin/apr-1-config
 APR-CONFIG.64 = /usr/apr/$(APR_VERSION)/bin/$(MACH64)/apr-1-config
 APU-CONFIG.32 = /usr/apr-util/$(APR_UTIL_VERSION)/bin/apu-1-config
 APU-CONFIG.64 = /usr/apr-util/$(APR_UTIL_VERSION)/bin/$(MACH64)/apu-1-config
-APXS.32 = /usr/apache2/2.2/bin/apxs
+APXS.32 = no
 APXS.64 = /usr/apache2/2.4/bin/apxs
 APR-CONFIG-RPATH.32 = /usr/apr/$(APR_VERSION)/lib
 APR-CONFIG-RPATH.64 = /usr/apr/$(APR_VERSION)/lib/$(MACH64)
 APU-CONFIG-RPATH.32 = /usr/apr-util/$(APR_VERSION)/lib
 APU-CONFIG-RPATH.64 = /usr/apr-util/$(APR_VERSION)/lib/$(MACH64)
-APACHE_LIBEXECDIR.32 = `$(APXS.32) -q libexecdir`
-APACHE_LIBEXECDIR.64 = `$(APXS.64) -q libexecdir`
 
 LDFLAGS += -R$(CONFIGURE_LIBDIR.$(BITS)) -R$(APR-CONFIG-RPATH.$(BITS)) \
 	   -R$(APU-CONFIG-RPATH.$(BITS))

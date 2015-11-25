@@ -44,7 +44,6 @@ PATCH_LEVEL=0
 
 $(BUILD_DIR)/$(MACH64)/.built: PERL=/usr/perl5/5.20/bin/perl
 
-$(BUILD_DIR)/$(MACH32)/.built: APACHE_USR_PREFIX=/usr/apache2/2.2
 $(BUILD_DIR)/$(MACH64)/.built: APACHE_USR_PREFIX=/usr/apache2/2.4
 
 AP_PERL5LIB=$(APACHE_USR_PREFIX)/lib/perl
@@ -92,19 +91,17 @@ COMPONENT_TEST_TRANSFORMS += \
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-build: $(BUILD_32_and_64)
+build: $(BUILD_64)
 
-install: $(INSTALL_32_and_64)
+install: $(INSTALL_64)
 
-test: $(TEST_32_and_64)
+test: $(TEST_64)
 
-system-test:    $(BUILD_32_and_64) $(SYSTEM_TEST_32_and_64)
+system-test:    $(BUILD_64) $(SYSTEM_TEST_64)
 
 REQUIRED_PACKAGES += library/apr-15
 REQUIRED_PACKAGES += library/apr-util-15
-REQUIRED_PACKAGES += runtime/perl-512
 REQUIRED_PACKAGES += runtime/perl-520
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += web/server/apache-22
 REQUIRED_PACKAGES += web/server/apache-24

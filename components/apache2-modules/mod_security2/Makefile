@@ -55,11 +55,11 @@ COMPONENT_TEST_ARGS += CFLAGS="$(CFLAGS) -DMSC_TEST"
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-configure:	$(CONFIGURE_32_and_64)
+configure:	$(MODULES_CONFIGURE)
 
-build: $(BUILD_32_and_64)
+build: $(MODULES_BUILD)
 
-test: $(TEST_32_and_64)
+test: $(MODULES_TEST)
 
 system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 

@@ -44,7 +44,7 @@ ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 clean::
 	$(RM) $(SOURCE_DIR)/.prep
 
-build: $(BUILD_32_and_64)
+build: $(MODULES_BUILD)
 
 test: $(NO_TESTS)
 

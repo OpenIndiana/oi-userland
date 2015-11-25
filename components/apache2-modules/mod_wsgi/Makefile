@@ -45,22 +45,14 @@ include ../modules.mk
 
 APACHE_USR_PREFIX = /usr/apache2/
 
-VARIANT_AP_22_PY27 = $(BUILD_DIR)/apache22-python27
-VARIANT_AP_22_PY34 = $(BUILD_DIR)/apache22-python34
 VARIANT_AP_24_PY27 = $(BUILD_DIR)/apache24-python27
 VARIANT_AP_24_PY34 = $(BUILD_DIR)/apache24-python34
 
-VARIANTS_32 = $(VARIANT_AP_22_PY26) $(VARIANT_AP_22_PY27)
-VARIANTS_64 = $(VARIANT_AP_22_PY26) $(VARIANT_AP_22_PY27) $(VARIANT_AP_22_PY34) \
-              $(VARIANT_AP_24_PY26) $(VARIANT_AP_24_PY27) $(VARIANT_AP_24_PY34)
+VARIANTS_64 = $(VARIANT_AP_24_PY27) $(VARIANT_AP_24_PY34)
 
-$(BUILD_DIR)/apache22-%/$(MACH32)/.configured: APXS=$(APACHE_USR_PREFIX)/2.2/bin/apxs
-$(BUILD_DIR)/apache22-%/$(MACH64)/.configured: APXS=$(APACHE_USR_PREFIX)/2.2/bin/$(MACH64)/apxs
 $(BUILD_DIR)/apache24-%/$(MACH64)/.configured: APXS=$(APACHE_USR_PREFIX)/2.4/bin/apxs
 
-$(BUILD_DIR)/apache2%-python27/$(MACH32)/.configured: PYTHON=$(PYTHON.2.7.32)
 $(BUILD_DIR)/apache2%-python27/$(MACH64)/.configured: PYTHON=$(PYTHON.2.7.64)
-$(BUILD_DIR)/apache2%-python34/$(MACH32)/.configured: PYTHON=$(PYTHON.3.4.32)
 $(BUILD_DIR)/apache2%-python34/$(MACH64)/.configured: PYTHON=$(PYTHON.3.4.64)
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
@@ -72,11 +64,11 @@ CONFIGURE_OPTIONS += --with-apxs=$(APXS)
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # common targets
-configure:	$(CONFIGURE_32_and_64)
+configure:	$(MODULES_CONFIGURE)
 
-build:		$(BUILD_32_and_64)
+build:		$(MODULES_BUILD)
 
-install:	$(INSTALL_32_and_64)
+install:	$(MODULES_INSTALL)
 
 system-test:	$(NO_TESTS)
 

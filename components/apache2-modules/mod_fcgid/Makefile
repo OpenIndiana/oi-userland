@@ -45,9 +45,9 @@ COMPONENT_PRE_BUILD_ACTION= ( cd $(@D); APXS=$(APXS) ./configure.apxs )
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-build: $(BUILD_32_and_64)
+build: $(MODULES_BUILD)
 
-install: $(INSTALL_32_and_64)
+install: $(MODULES_INSTALL)
 
 test: $(NO_TESTS)
 
