@@ -1,0 +1,42 @@
+Generate shared libraries rather than a library archive.
+
+This patch should be sent upstream, but needs to be adjusted
+to be something that will be properly accepted (probably via
+a --enable-shared  option from the configure script).
+
+--- yasm-1.3.0/configure.ac.orig	2015-07-08 11:36:32.537084287 -0700
++++ yasm-1.3.0/configure.ac	2015-07-08 11:38:18.439233048 -0700
+@@ -73,9 +73,11 @@
+ AC_PROG_CC_STDC
+ AC_PROG_INSTALL
+ AC_PROG_LN_S
+-#automake default ARFLAGS to "cru"
+-AC_CHECK_TOOLS(AR,[$AR ar],[ar])
+-AC_PROG_RANLIB
++
++# Build shared libraries.
++AC_ENABLE_SHARED
++AC_DISABLE_STATIC
++LT_INIT
+ 
+ # REQUIRE a standard (ANSI/ISO) C compiler
+ if test "$ac_cv_prog_cc_stdc" = no; then
+--- yasm-1.3.0/Makefile.am.orig	2015-07-08 11:00:30.653026790 -0700
++++ yasm-1.3.0/Makefile.am	2015-07-08 11:00:23.376352265 -0700
+@@ -42,9 +42,13 @@
+ include tools/Makefile.inc
+ 
+ YASM_MODULES = 
+-lib_LIBRARIES = libyasm.a
+-libyasm_a_SOURCES =
+-nodist_libyasm_a_SOURCES =
++lib_LTLIBRARIES = libyasm.la
++libyasm_la_SOURCES =
++nodist_libyasm_la_SOURCES =
++libyasm_la_CFLAGS=-fPIC
++libyasm_la_CPPFLAGS=-fPIC
++libyasm_la_CXXFLAGS=-fPIC
++libyasm_la_LDFLAGS= -shared -fPIC -version-info 0:0:0
+ include modules/Makefile.inc
+ 
+ include libyasm/Makefile.inc
