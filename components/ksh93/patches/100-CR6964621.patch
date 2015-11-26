@@ -1,6 +1,7 @@
-diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/include/io.h INIT.2011-02-08/src/cmd/ksh93/include/io.h
---- INIT.2011-02-08.clean/src/cmd/ksh93/include/io.h	2012-05-02 03:16:17.383778774 -0700
-+++ INIT.2011-02-08/src/cmd/ksh93/include/io.h	2012-05-02 03:17:53.562408338 -0700
+# This patch has been developed inhouse. This fixes a Solaris specific
+# issue and has not been submitted to the community.
+--- INIT.2012-08-01.old/src/cmd/ksh93/include/io.h	2015-02-24 13:25:19.331558350 -0800
++++ INIT.2012-08-01/src/cmd/ksh93/include/io.h	2015-03-04 13:27:49.205782578 -0800
 @@ -23,6 +23,9 @@
   *	David Korn
   *
@@ -11,7 +12,7 @@ diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/include/io.h INIT.2011-02-08/src/
  
  #include	<ast.h>
  #include	<sfio.h>
-@@ -84,6 +87,12 @@ extern int	sh_devtofd(const char*);
+@@ -87,6 +90,12 @@ extern int	sh_devtofd(const char*);
  extern int	sh_isdevfd(const char*);
  extern int	sh_source(Shell_t*, Sfio_t*, const char*);
  
@@ -24,16 +25,15 @@ diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/include/io.h INIT.2011-02-08/src/
  /* the following are readonly */
  extern const char	e_pexists[];
  extern const char	e_query[];
-@@ -123,4 +132,5 @@ extern const char	e_bash_profile[];
+@@ -126,4 +135,5 @@ extern const char	e_bash_profile[];
  extern const char	e_stdprompt[];
  extern const char	e_supprompt[];
  extern const char	e_ambiguous[];
 +
  #endif /* KSHELL */
-diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/io.c INIT.2011-02-08/src/cmd/ksh93/sh/io.c
---- INIT.2011-02-08.clean/src/cmd/ksh93/sh/io.c	2012-05-02 03:16:17.389917698 -0700
-+++ INIT.2011-02-08/src/cmd/ksh93/sh/io.c	2012-05-02 03:19:12.669621809 -0700
-@@ -596,8 +596,10 @@ static void io_preserve(Shell_t* shp, re
+--- INIT.2012-08-01.old/src/cmd/ksh93/sh/io.c	2015-02-24 13:25:19.362427732 -0800
++++ INIT.2012-08-01/src/cmd/ksh93/sh/io.c	2015-03-04 14:04:54.981280201 -0800
+@@ -605,8 +605,10 @@ static void io_preserve(Shell_t* shp, re
  		((struct checkpt*)shp->jmplist)->mode = SH_JMPERREXIT;
  		errormsg(SH_DICT,ERROR_system(1),e_toomany);
  	}
@@ -46,7 +46,7 @@ diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/io.c INIT.2011-02-08/src/cmd/k
  	if(shp->fdptrs[fd]=shp->fdptrs[f2])
  	{
  		if(f2==job.fd)
-@@ -623,7 +625,12 @@ static void io_preserve(Shell_t* shp, re
+@@ -632,7 +634,12 @@ static void io_preserve(Shell_t* shp, re
   */
  int sh_iorenumber(Shell_t *shp, register int f1,register int f2)
  {
@@ -60,7 +60,7 @@ diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/io.c INIT.2011-02-08/src/cmd/k
  	if(f1!=f2)
  	{
  		/* see whether file descriptor is in use */
-@@ -663,8 +670,7 @@ int sh_iorenumber(Shell_t *shp, register
+@@ -672,8 +679,7 @@ int sh_iorenumber(Shell_t *shp, register
  		if(f2<=2)
  			sfset(sp,SF_SHARE|SF_PUBLIC,1);
  	}
@@ -70,7 +70,7 @@ diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/io.c INIT.2011-02-08/src/cmd/k
  	return(f2);
  }
  
-@@ -678,8 +684,9 @@ int sh_close(register int fd)
+@@ -687,8 +693,9 @@ int sh_close(register int fd)
  	register int r = 0;
  	if(fd<0)
  		return(-1);
@@ -81,18 +81,18 @@ diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/io.c INIT.2011-02-08/src/cmd/k
 +
  	if(!(sp=shp->sftable[fd]) || sfclose(sp) < 0)
  	{
- 		if(fdnotify)
-@@ -835,6 +842,9 @@ int sh_open(register const char *path, i
+ 		int err=errno;
+@@ -846,8 +853,7 @@ int sh_open(register const char *path, i
  		mode = (IOREAD|IOWRITE);
  	else
  		mode = IOREAD;
-+
+-	if(fd >= shp->gd->lim.open_max)
+-		sh_iovalidfd(shp,fd);
 +	VALIDATE_FD(shp, fd);
-+
  	shp->fdstatus[fd] = mode;
  	return(fd);
  }
-@@ -861,6 +871,8 @@ int sh_iomovefd(register int fdold)
+@@ -876,6 +882,8 @@ int sh_iomovefd(register int fdold)
  	if(fdold<0 || fdold>2)
  		return(fdold);
  	fdnew = sh_iomovefd(dup(fdold));
@@ -101,7 +101,7 @@ diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/io.c INIT.2011-02-08/src/cmd/k
  	shp->fdstatus[fdnew] = (shp->fdstatus[fdold]&~IOCLEX);
  	close(fdold);
  	shp->fdstatus[fdold] = IOCLOSE;
-@@ -897,6 +909,9 @@ int	sh_pipe(register int pv[])
+@@ -936,6 +944,9 @@ int	sh_pipe(register int pv[])
  		sh_close(fd);
  	else
  		pv[out] = sh_iomovefd(fd);
@@ -111,7 +111,7 @@ diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/io.c INIT.2011-02-08/src/cmd/k
  	if(fcntl(pv[out],F_SETFD,FD_CLOEXEC) >=0)
  		shp->fdstatus[pv[out]] |= IOCLEX;
  	shp->fdstatus[pv[out]] = (out?IOWRITE:IOREAD);
-@@ -929,6 +944,9 @@ int	sh_pipe(register int pv[])
+@@ -968,6 +979,9 @@ int	sh_pipe(register int pv[])
  		errormsg(SH_DICT,ERROR_system(1),e_pipe);
  	}
  	fcntl(pv[out],F_SETFD,FD_CLOEXEC);
@@ -121,7 +121,7 @@ diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/io.c INIT.2011-02-08/src/cmd/k
  	shp->fdstatus[pv[out]] |= IOCLEX;
  	pv[1-out] = -1;
  	pv[2] = port;
-@@ -958,9 +976,13 @@ static int pat_line(const regex_t* rp, c
+@@ -997,9 +1011,13 @@ static int pat_line(const regex_t* rp, c
  static int io_patseek(Shell_t *shp, regex_t *rp, Sfio_t* sp, int flags)
  {
  	char	*cp, *match;
@@ -136,7 +136,7 @@ diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/io.c INIT.2011-02-08/src/cmd/k
  	shp->fdstatus[sffileno(sp)] |= IOCLEX;
  	if(fd==0)
  		was_share = sfset(sp,SF_SHARE,1);
-@@ -994,12 +1016,17 @@ static int io_patseek(Shell_t *shp, rege
+@@ -1033,12 +1051,17 @@ static int io_patseek(Shell_t *shp, rege
  
  static Sfoff_t	file_offset(Shell_t *shp, int fn, char *fname)
  {
@@ -155,7 +155,7 @@ diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/io.c INIT.2011-02-08/src/cmd/k
  	memset(&endf,0,sizeof(struct Eof));
  	endf.fd = fn;
  	endf.hdr.disc = &EOF_disc;
-@@ -1169,7 +1196,7 @@ int	sh_redirect(Shell_t *shp,struct iono
+@@ -1216,7 +1239,7 @@ int	sh_redirect(Shell_t *shp,struct iono
  			if((iof&IOLSEEK) || ((iof&IOMOV) && *fname=='-'))
  				fn = nv_getnum(np);
  		}
@@ -164,7 +164,7 @@ diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/io.c INIT.2011-02-08/src/cmd/k
  			errormsg(SH_DICT,ERROR_system(1),e_file+4);
  		if(iof&IOLSEEK)
  		{
-@@ -1212,6 +1239,7 @@ int	sh_redirect(Shell_t *shp,struct iono
+@@ -1259,6 +1282,7 @@ int	sh_redirect(Shell_t *shp,struct iono
  						message = e_file;
  						goto fail;
  					}
@@ -172,7 +172,7 @@ diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/io.c INIT.2011-02-08/src/cmd/k
  					if(shp->subshell && dupfd==1)
  					{
  						if(sfset(sfstdout,0,0)&SF_STRING)
-@@ -1248,8 +1276,7 @@ int	sh_redirect(Shell_t *shp,struct iono
+@@ -1295,8 +1319,7 @@ int	sh_redirect(Shell_t *shp,struct iono
  					goto traceit;
  				if((fd=sh_fcntl(dupfd,F_DUPFD,3))<0)
  					goto fail;
@@ -182,7 +182,7 @@ diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/io.c INIT.2011-02-08/src/cmd/k
  				sh_iocheckfd(shp,dupfd);
  				shp->fdstatus[fd] = (shp->fdstatus[dupfd]&~IOCLEX);
  				if(toclose<0 && shp->fdstatus[fd]&IOREAD)
-@@ -1362,7 +1389,11 @@ int	sh_redirect(Shell_t *shp,struct iono
+@@ -1410,7 +1433,11 @@ int	sh_redirect(Shell_t *shp,struct iono
  			}
  			if(iof&IOLSEEK)
  			{
@@ -195,7 +195,7 @@ diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/io.c INIT.2011-02-08/src/cmd/k
  				r = shp->fdstatus[fn];
  				if(!(r&(IOSEEK|IONOSEEK)))
  					r = sh_iocheckfd(shp,fn);
-@@ -1443,6 +1474,7 @@ int	sh_redirect(Shell_t *shp,struct iono
+@@ -1491,6 +1518,7 @@ int	sh_redirect(Shell_t *shp,struct iono
  			}
  			if(fd<0)
  			{
@@ -203,16 +203,16 @@ diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/io.c INIT.2011-02-08/src/cmd/k
  				if(sh_inuse(shp,fn) || (fn && fn==shp->infd))
  				{
  					if(fn>9 || !(shp->inuse_bits&(1<<fn)))
-@@ -1462,7 +1494,7 @@ int	sh_redirect(Shell_t *shp,struct iono
+@@ -1510,7 +1538,7 @@ int	sh_redirect(Shell_t *shp,struct iono
  					{
  						if((fn=fcntl(fd,F_DUPFD,10)) < 0)
  							goto fail;
 -						if(fn>=shp->gd->lim.open_max && !sh_iovalidfd(shp,fn))
 +						if (!VALIDATE_FD(shp, fn))
  							goto fail;
- 						shp->fdstatus[fn] = shp->fdstatus[fd];
- 						sh_close(fd);
-@@ -1622,7 +1654,12 @@ void sh_iosave(Shell_t *shp, register in
+ 						if(flag!=2 || shp->subshell)
+ 							sh_iosave(shp,fn,indx|0x10000,tname?fname:(trunc?Empty:0));
+@@ -1701,7 +1729,12 @@ void sh_iosave(Shell_t *shp, register in
  	filemap[shp->topfd++].save_fd = savefd;
  	if(savefd >=0)
  	{
@@ -226,7 +226,7 @@ diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/io.c INIT.2011-02-08/src/cmd/k
  		/* make saved file close-on-exec */
  		sh_fcntl(savefd,F_SETFD,FD_CLOEXEC);
  		if(origfd==job.fd)
-@@ -1655,6 +1692,7 @@ void	sh_iounsave(Shell_t* shp)
+@@ -1734,6 +1767,7 @@ void	sh_iounsave(Shell_t* shp)
  			filemap[newfd++] = filemap[fd];
  		else
  		{
@@ -234,7 +234,7 @@ diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/io.c INIT.2011-02-08/src/cmd/k
  			shp->sftable[savefd] = 0;
  			sh_close(savefd);
  		}
-@@ -1678,16 +1716,19 @@ void	sh_iorestore(Shell_t *shp, int last
+@@ -1757,16 +1791,19 @@ void	sh_iorestore(Shell_t *shp, int last
  		{
  			if ((savefd = filemap[fd].save_fd) >= 0)
  			{
@@ -254,7 +254,7 @@ diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/io.c INIT.2011-02-08/src/cmd/k
  			shp->sftable[savefd] = 0;
  			sh_close(savefd);
  			return;
-@@ -1699,6 +1740,7 @@ void	sh_iorestore(Shell_t *shp, int last
+@@ -1778,6 +1815,7 @@ void	sh_iorestore(Shell_t *shp, int last
  		sh_close(origfd);
  		if ((savefd = filemap[fd].save_fd) >= 0)
  		{
@@ -262,7 +262,7 @@ diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/io.c INIT.2011-02-08/src/cmd/k
  			sh_fcntl(savefd, F_DUPFD, origfd);
  			if(savefd==job.fd)
  				job.fd=origfd;
-@@ -1954,6 +1996,9 @@ static ssize_t slowread(Sfio_t *iop,void
+@@ -2035,6 +2073,9 @@ static ssize_t slowread(Sfio_t *iop,void
  int sh_iocheckfd(Shell_t *shp, register int fd)
  {
  	register int flags, n;
@@ -272,16 +272,16 @@ diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/io.c INIT.2011-02-08/src/cmd/k
  	if((n=shp->fdstatus[fd])&IOCLOSE)
  		return(n);
  	if(!(n&(IOREAD|IOWRITE)))
-@@ -2145,7 +2190,7 @@ static void	sftrack(Sfio_t* sp, int flag
+@@ -2226,7 +2267,7 @@ static void	sftrack(Sfio_t* sp, int flag
  		return;
  	}
  #endif
--	if(fd<0 || (fd>=shp->gd->lim.open_max && !sh_iovalidfd(shp,fd)))
-+	if (fd < 0 || !VALIDATE_FD(shp, fd))
+-	if(fd<0 || fd==PSEUDOFD || (fd>=shp->gd->lim.open_max && !sh_iovalidfd(shp,fd)))
++	if(fd<0 || fd==PSEUDOFD || !VALIDATE_FD(shp, fd))
  		return;
  	if(sh_isstate(SH_NOTRACK))
  		return;
-@@ -2413,6 +2458,8 @@ ssize_t sh_read(register int fd, void* b
+@@ -2495,6 +2536,8 @@ ssize_t sh_read(register int fd, void* b
  {
  	Shell_t *shp = sh_getinterp();
  	register Sfio_t *sp;
@@ -290,7 +290,7 @@ diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/io.c INIT.2011-02-08/src/cmd/k
  	if(sp=shp->sftable[fd])
  		return(sfread(sp,buff,n));
  	else
-@@ -2427,6 +2474,8 @@ ssize_t sh_write(register int fd, const 
+@@ -2509,6 +2552,8 @@ ssize_t sh_write(register int fd, const
  {
  	Shell_t *shp = sh_getinterp();
  	register Sfio_t *sp;
@@ -299,7 +299,7 @@ diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/io.c INIT.2011-02-08/src/cmd/k
  	if(sp=shp->sftable[fd])
  		return(sfwrite(sp,buff,n));
  	else
-@@ -2441,6 +2490,8 @@ off_t sh_seek(register int fd, off_t off
+@@ -2523,6 +2568,8 @@ off_t sh_seek(register int fd, off_t off
  {
  	Shell_t *shp = sh_getinterp();
  	register Sfio_t *sp;
@@ -308,7 +308,7 @@ diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/io.c INIT.2011-02-08/src/cmd/k
  	if((sp=shp->sftable[fd]) && (sfset(sp,0,0)&(SF_READ|SF_WRITE)))
  		return(sfseek(sp,offset,whence));
  	else
-@@ -2452,6 +2503,9 @@ int sh_dup(register int old)
+@@ -2534,6 +2581,9 @@ int sh_dup(register int old)
  {
  	Shell_t *shp = sh_getinterp();
  	register int fd = dup(old);
@@ -318,7 +318,7 @@ diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/io.c INIT.2011-02-08/src/cmd/k
  	if(fd>=0)
  	{
  		if(shp->fdstatus[old] == IOCLOSE)
-@@ -2473,13 +2527,15 @@ int sh_fcntl(register int fd, int op, ..
+@@ -2555,13 +2605,15 @@ int sh_fcntl(register int fd, int op, ..
  	arg =  va_arg(ap, int) ;
  	va_end(ap);
  	newfd = fcntl(fd,op,arg);
@@ -336,7 +336,7 @@ diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/io.c INIT.2011-02-08/src/cmd/k
  		shp->fdstatus[newfd] = (shp->fdstatus[fd]&~IOCLEX);
  		if(fdnotify)
  			(*fdnotify)(fd,newfd);
-@@ -2548,6 +2604,7 @@ Sfio_t *sh_iogetiop(int fd, int mode)
+@@ -2630,6 +2682,7 @@ Sfio_t *sh_iogetiop(int fd, int mode)
  		return(iop);
  	if(mode==SF_READ && !(n&IOREAD))
  		return(iop);
@@ -344,7 +344,7 @@ diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/io.c INIT.2011-02-08/src/cmd/k
  	if(!(iop = shp->sftable[fd]))
  		iop=sh_iostream(shp,fd);
  	return(iop);
-@@ -2567,7 +2624,10 @@ Sfio_t	*sh_fd2sfio(int fd)
+@@ -2649,7 +2702,10 @@ Sfio_t	*sh_fd2sfio(int fd)
  {
  	Shell_t	*shp = sh_getinterp();
  	register int status;
@@ -356,9 +356,8 @@ diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/io.c INIT.2011-02-08/src/cmd/k
  	if(!sp  && (status = sh_iocheckfd(shp,fd))!=IOCLOSE)
  	{
  		register int flags=0;
-diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/lex.c INIT.2011-02-08/src/cmd/ksh93/sh/lex.c
---- INIT.2011-02-08.clean/src/cmd/ksh93/sh/lex.c	2012-05-02 03:16:17.388010187 -0700
-+++ INIT.2011-02-08/src/cmd/ksh93/sh/lex.c	2012-05-02 03:17:53.567785551 -0700
+--- INIT.2012-08-01.old/src/cmd/ksh93/sh/lex.c	2015-02-24 13:25:19.370183959 -0800
++++ INIT.2012-08-01/src/cmd/ksh93/sh/lex.c	2015-03-04 13:27:49.211457345 -0800
 @@ -25,6 +25,9 @@
   * AT&T Labs
   *
@@ -369,7 +368,7 @@ diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/lex.c INIT.2011-02-08/src/cmd/
  
  #include	<ast.h>
  #include	<stak.h>
-@@ -2053,6 +2056,7 @@ void	sh_syntax(Lex_t *lp)
+@@ -2122,6 +2125,7 @@ void	sh_syntax(Lex_t *lp)
  	else
  		lp->lastline = shp->inlineno;
  	tokstr = fmttoken(lp,tok,tokbuf);
@@ -377,10 +376,9 @@ diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/lex.c INIT.2011-02-08/src/cmd/
  	if((sp=fcfile()) || (shp->infd>=0 && (sp=shp->sftable[shp->infd])))
  	{
  		/* clear out any pending input */
-diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/macro.c INIT.2011-02-08/src/cmd/ksh93/sh/macro.c
---- INIT.2011-02-08.clean/src/cmd/ksh93/sh/macro.c	2012-05-02 03:16:26.100861446 -0700
-+++ INIT.2011-02-08/src/cmd/ksh93/sh/macro.c	2012-05-02 03:17:53.569195199 -0700
-@@ -2086,6 +2086,7 @@ static void comsubst(Mac_t *mp,register 
+--- INIT.2012-08-01.old/src/cmd/ksh93/sh/macro.c	2015-02-24 13:25:19.363200741 -0800
++++ INIT.2012-08-01/src/cmd/ksh93/sh/macro.c	2015-03-04 13:27:49.212566247 -0800
+@@ -2121,6 +2121,7 @@ static void comsubst(Mac_t *mp,register
  			sh_popcontext(mp->shp,&buff);
  			if(r==0 && ip && (ip->iofile&IOLSEEK))
  			{
@@ -388,9 +386,8 @@ diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/macro.c INIT.2011-02-08/src/cm
  				if(sp=mp->shp->sftable[fd])
  					num = sftell(sp);
  				else
-diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/main.c INIT.2011-02-08/src/cmd/ksh93/sh/main.c
---- INIT.2011-02-08.clean/src/cmd/ksh93/sh/main.c	2012-05-02 03:16:17.389138504 -0700
-+++ INIT.2011-02-08/src/cmd/ksh93/sh/main.c	2012-05-02 03:17:53.570027033 -0700
+--- INIT.2012-08-01.old/src/cmd/ksh93/sh/main.c	2015-02-24 13:25:19.364162232 -0800
++++ INIT.2012-08-01/src/cmd/ksh93/sh/main.c	2015-03-04 13:27:49.213386462 -0800
 @@ -26,6 +26,9 @@
   * AT&T Labs
   *
@@ -401,7 +398,7 @@ diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/main.c INIT.2011-02-08/src/cmd
  
  #include	<ast.h>
  #include	<sfio.h>
-@@ -396,8 +399,10 @@ static void	exfile(register Shell_t *shp
+@@ -376,8 +379,10 @@ static void	exfile(register Shell_t *shp
  		if(fno > 0)
  		{
  			int r;
@@ -412,9 +409,8 @@ diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/main.c INIT.2011-02-08/src/cmd
  				shp->fdstatus[r] = shp->fdstatus[fno];
  				sh_close(fno);
  				fno = r;
-diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/path.c INIT.2011-02-08/src/cmd/ksh93/sh/path.c
---- INIT.2011-02-08.clean/src/cmd/ksh93/sh/path.c	2012-05-02 03:16:20.752378905 -0700
-+++ INIT.2011-02-08/src/cmd/ksh93/sh/path.c	2012-05-02 03:17:53.571078341 -0700
+--- INIT.2012-08-01.old/src/cmd/ksh93/sh/path.c	2015-02-24 13:25:19.360898415 -0800
++++ INIT.2012-08-01/src/cmd/ksh93/sh/path.c	2015-03-04 13:27:49.214381188 -0800
 @@ -23,6 +23,9 @@
   * AT&T Labs
   *
@@ -425,7 +421,7 @@ diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/path.c INIT.2011-02-08/src/cmd
  
  #include	"defs.h"
  #include	<fcin.h>
-@@ -1239,6 +1242,7 @@ static void exscript(Shell_t *shp,regist
+@@ -1272,6 +1275,7 @@ static void exscript(Shell_t *shp,regist
  	if(sp=fcfile())
  		while(sfstack(sp,SF_POPSTACK));
  	job_clear();
@@ -433,10 +429,9 @@ diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/path.c INIT.2011-02-08/src/cmd
  	if(shp->infd>0 && (shp->fdstatus[shp->infd]&IOCLEX))
  		sh_close(shp->infd);
  	sh_setstate(sh_state(SH_FORKED));
-diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/subshell.c INIT.2011-02-08/src/cmd/ksh93/sh/subshell.c
---- INIT.2011-02-08.clean/src/cmd/ksh93/sh/subshell.c	2012-05-02 03:16:25.241021529 -0700
-+++ INIT.2011-02-08/src/cmd/ksh93/sh/subshell.c	2012-05-02 03:17:53.571942019 -0700
-@@ -115,6 +115,7 @@ void	sh_subtmpfile(Shell_t *shp)
+--- INIT.2012-08-01.old/src/cmd/ksh93/sh/subshell.c	2015-02-24 13:25:19.363479570 -0800
++++ INIT.2012-08-01/src/cmd/ksh93/sh/subshell.c	2015-03-04 14:05:03.665801329 -0800
+@@ -125,6 +125,7 @@ void	sh_subtmpfile(Shell_t *shp)
  		if((sp->tmpfd = fd = fcntl(1,F_DUPFD,10)) >= 0)
  		{
  			fcntl(fd,F_SETFD,FD_CLOEXEC);
@@ -444,7 +439,7 @@ diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/subshell.c INIT.2011-02-08/src
  			shp->fdstatus[fd] = shp->fdstatus[1]|IOCLEX;
  			close(1);
  		}
-@@ -141,6 +142,7 @@ void	sh_subtmpfile(Shell_t *shp)
+@@ -151,6 +152,7 @@ void	sh_subtmpfile(Shell_t *shp)
  		}
  		else
  		{
@@ -452,35 +447,36 @@ diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/subshell.c INIT.2011-02-08/src
  			shp->fdstatus[fd] = IOREAD|IOWRITE;
  			sfsync(sfstdout);
  			if(fd==1)
-@@ -627,6 +629,7 @@ Sfio_t *sh_subshell(Shell_t *shp,Shnode_
+@@ -679,8 +681,7 @@ Sfio_t *sh_subshell(Shell_t *shp,Shnode_
  					((struct checkpt*)shp->jmplist)->mode = SH_JMPERREXIT;
  					errormsg(SH_DICT,ERROR_system(1),e_toomany);
  				}
+-				if(fd >= shp->gd->lim.open_max)
+-					sh_iovalidfd(shp,fd);
 +				VALIDATE_FD(shp, fd);
  				shp->sftable[fd] = iop;
  				fcntl(fd,F_SETFD,FD_CLOEXEC);
  				shp->fdstatus[fd] = (shp->fdstatus[1]|IOCLEX);
-diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/xec.c INIT.2011-02-08/src/cmd/ksh93/sh/xec.c
---- INIT.2011-02-08.clean/src/cmd/ksh93/sh/xec.c	2012-05-02 03:16:17.393286735 -0700
-+++ INIT.2011-02-08/src/cmd/ksh93/sh/xec.c	2012-05-02 03:17:53.574535124 -0700
-@@ -94,6 +94,8 @@ static void iousepipe(Shell_t *shp)
+--- INIT.2012-08-01.old/src/cmd/ksh93/sh/xec.c	2015-02-24 13:25:19.365424099 -0800
++++ INIT.2012-08-01/src/cmd/ksh93/sh/xec.c	2015-03-04 14:05:12.823587666 -0800
+@@ -117,6 +117,8 @@ static int iousepipe(Shell_t *shp)
  	usepipe++;
  	fcntl(subpipe[0],F_SETFD,FD_CLOEXEC);
  	subpipe[2] = fcntl(1,F_DUPFD,10);
 +	VALIDATE_FD(shp, subpipe[1]);
-+	VALIDATE_FD(shp, subpipe[2]);
++	VALIDATE_FD(shp, subpipe[2]);	
+ 	fcntl(subpipe[2],F_SETFD,FD_CLOEXEC);
  	shp->fdstatus[subpipe[2]] = shp->fdstatus[1];
  	close(1);
- 	fcntl(subpipe[1],F_DUPFD,1);
-@@ -117,6 +119,7 @@ static void iounpipe(Shell_t *shp)
- 	usepipe = 0;
+@@ -141,6 +143,7 @@ static void iounpipe(Shell_t *shp)
+ 	char buff[SF_BUFSIZE];
  	close(1);
  	fcntl(subpipe[2], F_DUPFD, 1);
 +	VALIDATE_FD(shp, subpipe[2]);
  	shp->fdstatus[1] = shp->fdstatus[subpipe[2]];
+ 	--usepipe;
  	if(subdup) for(n=0; n < 10; n++)
- 	{
-@@ -844,6 +847,7 @@ static int sh_coexec(Shell_t *shp,const 
+@@ -886,6 +889,7 @@ static int sh_coexec(Shell_t *shp,const
  			if(filt > 2)
  			{
  				shp->coutpipe = shp->inpipe[1];
@@ -488,7 +484,7 @@ diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/xec.c INIT.2011-02-08/src/cmd/
  				shp->fdptrs[shp->coutpipe] = &shp->coutpipe;
  			}
  		}
-@@ -1487,6 +1491,7 @@ int sh_exec(register const Shnode_t *t, 
+@@ -1646,6 +1650,7 @@ int sh_exec(register const Shnode_t *t,
  						if(shp->cpipe[0]<0 || shp->cpipe[1] < 0)
  						{
  							sh_copipe(shp,shp->outpipe=shp->cpipe,0);
@@ -496,7 +492,7 @@ diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/xec.c INIT.2011-02-08/src/cmd/
  							shp->fdptrs[shp->cpipe[0]] = shp->cpipe;
  						}
  						sh_copipe(shp,shp->inpipe=pipes,0);
-@@ -3419,6 +3424,8 @@ static void coproc_init(Shell_t *shp, in
+@@ -3623,6 +3628,8 @@ static void coproc_init(Shell_t *shp, in
  		if((outfd=shp->cpipe[1]) < 10) 
  		{
  		        int fd=fcntl(shp->cpipe[1],F_DUPFD,10);
@@ -505,7 +501,7 @@ diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/xec.c INIT.2011-02-08/src/cmd/
  			if(fd>=10)
  			{
  			        shp->fdstatus[fd] = (shp->fdstatus[outfd]&~IOCLEX);
-@@ -3427,6 +3434,9 @@ static void coproc_init(Shell_t *shp, in
+@@ -3631,6 +3638,9 @@ static void coproc_init(Shell_t *shp, in
  				shp->cpipe[1] = fd;
  			}
  		}
@@ -515,7 +511,7 @@ diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/xec.c INIT.2011-02-08/src/cmd/
  		if(fcntl(*shp->cpipe,F_SETFD,FD_CLOEXEC)>=0)
  			shp->fdstatus[shp->cpipe[0]] |= IOCLEX;
  		shp->fdptrs[shp->cpipe[0]] = shp->cpipe;
-@@ -3437,7 +3447,9 @@ static void coproc_init(Shell_t *shp, in
+@@ -3641,7 +3651,9 @@ static void coproc_init(Shell_t *shp, in
  	shp->outpipe = shp->cpipe;
  	sh_pipe(shp->inpipe=pipes);
  	shp->coutpipe = shp->inpipe[1];
@@ -525,23 +521,23 @@ diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/xec.c INIT.2011-02-08/src/cmd/
  	if(fcntl(shp->outpipe[0],F_SETFD,FD_CLOEXEC)>=0)
  		shp->fdstatus[shp->outpipe[0]] |= IOCLEX;
  }
-@@ -3608,6 +3620,7 @@ static pid_t sh_ntfork(Shell_t *shp,cons
+@@ -3812,6 +3824,7 @@ static pid_t sh_ntfork(Shell_t *shp,cons
  				int fd = shp->inpipe[1];
- 				sh_iosave(shp,0,buff.topfd,(char*)0);
+ 				sh_iosave(shp,0,buffp->topfd,(char*)0);
  				sh_iorenumber(shp,shp->inpipe[0],0);
 +				VALIDATE_FD(shp, fd);
  				if(fd>=0 && (!(otype&FPOU) || (otype&FCOOP)) && fcntl(fd,F_SETFD,FD_CLOEXEC)>=0)
  					shp->fdstatus[fd] |= IOCLEX;
  			}
-@@ -3619,6 +3632,7 @@ static pid_t sh_ntfork(Shell_t *shp,cons
+@@ -3823,6 +3836,7 @@ static pid_t sh_ntfork(Shell_t *shp,cons
  #endif /* SHOPT_COSHELL */
- 				sh_iosave(shp,1,buff.topfd,(char*)0);
+ 				sh_iosave(shp,1,buffp->topfd,(char*)0);
  				sh_iorenumber(shp,sh_dup(shp->outpipe[1]),1);
 +				VALIDATE_FD(shp, shp->outpipe[0]);
  				if(fcntl(shp->outpipe[0],F_SETFD,FD_CLOEXEC)>=0)
  					shp->fdstatus[shp->outpipe[0]] |= IOCLEX;
  			}
-@@ -3658,6 +3672,7 @@ static pid_t sh_ntfork(Shell_t *shp,cons
+@@ -3862,6 +3876,7 @@ static pid_t sh_ntfork(Shell_t *shp,cons
  			signal(SIGQUIT,sh_fault);
  			signal(SIGINT,sh_fault);
  		}

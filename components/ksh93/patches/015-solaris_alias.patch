@@ -1,3 +1,6 @@
+# This patch has been developed inhouse and has not been submitted
+# to the community. This is a Solaris specific patch which is needed
+# to implement the /usr/bin/alias Solaris functionality.
 diff -rupN b/lib/package/ast-base.pkg a/lib/package/ast-base.pkg
 --- b/lib/package/ast-base.pkg	2009-09-21 20:35:51.000000000 +0000
 +++ a/lib/package/ast-base.pkg	2011-11-10 16:24:52.515495613 +0000
@@ -5,15 +8,15 @@ diff -rupN b/lib/package/ast-base.pkg a/lib/package/ast-base.pkg
  		libdll libexpr libodelta librecsort libsum libuu libvdelta \
  		libbz libz tests 3d coshell cpp cs mam msgcc nmake probe ss \
  		libcoshell libcs libmam libpp libcodex paxlib codexlib \
--		libdss libpz dsslib
-+		libdss libpz dsslib alias
+-		libdss libpz dsslib libtaso
++		libdss libpz dsslib libtaso alias
  
  :COVERS: ast-make ast-ksh ast-ast
  
 diff -rupN b/src/cmd/alias/alias.c a/src/cmd/alias/alias.c
 --- b/src/cmd/alias/alias.c	1970-01-01 00:00:00.000000000 +0000
 +++ a/src/cmd/alias/alias.c	2011-11-10 16:24:28.356925339 +0000
-@@ -0,0 +1,255 @@
+@@ -0,0 +1,256 @@
 +/*
 + * CDDL HEADER START
 + *
@@ -36,7 +39,7 @@ diff -rupN b/src/cmd/alias/alias.c a/src/cmd/alias/alias.c
 + */
 +
 +/*
-+ * Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
++ * Copyright (c) 2009, 2015, Oracle and/or its affiliates. All rights reserved.
 + */
 +
 +/*
@@ -53,7 +56,7 @@ diff -rupN b/src/cmd/alias/alias.c a/src/cmd/alias/alias.c
 +
 +typedef struct {
 +	const char *name;
-+	int (* func)(int, char **, void *);
++	int (* func)(int, char **, Shbltin_t *);
 +} bfastpathrec;
 +
 +/*
@@ -128,8 +131,9 @@ diff -rupN b/src/cmd/alias/alias.c a/src/cmd/alias/alias.c
 +	{ "tty",	b_tty		},
 +	{ "uname",	b_uname		},
 +	{ "uniq",	b_uniq		},
++	{ "vmstate",	b_vmstate		},
 +	{ "wc",		b_wc		},
-+	{ NULL, 	(int (*)(int, char **, void *))NULL }
++	{ NULL, 	(int (*)(int, char **, Shbltin_t *))NULL }
 +};
 +
 +static inline
@@ -272,86 +276,87 @@ diff -rupN b/src/cmd/alias/alias.c a/src/cmd/alias/alias.c
 diff -rupN b/src/cmd/alias/alias.h a/src/cmd/alias/alias.h
 --- b/src/cmd/alias/alias.h	1970-01-01 00:00:00.000000000 +0000
 +++ a/src/cmd/alias/alias.h	2011-11-10 16:24:28.357387725 +0000
-@@ -0,0 +1,79 @@
+@@ -0,0 +1,67 @@
 +/***********************************************************************
 +*                                                                      *
 +*               This software is part of the ast package               *
-+*          Copyright (c) 1992-2011 AT&T Intellectual Property          *
++*          Copyright (c) 1982-2012 AT&T Intellectual Property          *
 +*                      and is licensed under the                       *
-+*                  Common Public License, Version 1.0                  *
++*                 Eclipse Public License, Version 1.0                  *
 +*                    by AT&T Intellectual Property                     *
 +*                                                                      *
 +*                A copy of the License is available at                 *
-+*            http://www.opensource.org/licenses/cpl1.0.txt             *
-+*         (with md5 checksum 059e8cd6165cb4c31e351f2b69388fd9)         *
++*          http://www.eclipse.org/org/documents/epl-v10.html           *
++*         (with md5 checksum b35adb5213ca9657e911e9befb180842)         *
 +*                                                                      *
 +*              Information and Software Systems Research               *
 +*                            AT&T Research                             *
 +*                           Florham Park NJ                            *
 +*                                                                      *
-+*                 Glenn Fowler <gsf@research.att.com>                  *
 +*                  David Korn <dgk@research.att.com>                   *
 +*                                                                      *
 +***********************************************************************/
 +
-+extern int b_asa (int, char**, void *);
-+extern int b_basename (int, char**, void *);
-+extern int b_cat (int, char**, void *);
-+extern int b_chgrp (int, char**, void *);
-+extern int b_chmod (int, char**, void *);
-+extern int b_chown (int, char**, void *);
-+extern int b_cksum (int, char**, void *);
-+extern int b_cmp (int, char**, void *);
-+extern int b_comm (int, char**, void *);
-+extern int b_cp (int, char**, void *);
-+extern int b_cut (int, char**, void *);
-+extern int b_date (int, char**, void *);
-+extern int b_dirname (int, char**, void *);
-+extern int b_egrep (int, char**, void *);
-+extern int b_expr (int, char**, void *);
-+extern int b_fds (int, char**, void *);
-+extern int b_fgrep (int, char**, void *);
-+extern int b_find (int, char**, void *);
-+extern int b_fmt (int, char**, void *);
-+extern int b_fold (int, char**, void *);
-+extern int b_getconf (int, char**, void *);
-+extern int b_grep (int, char**, void *);
-+extern int b_head (int, char**, void *);
-+extern int b_id (int, char**, void *);
-+extern int b_join (int, char**, void *);
-+extern int b_line (int, char**, void *);
-+extern int b_ln (int, char**, void *);
-+extern int b_logname (int, char**, void *);
-+extern int b_ls (int, char**, void *);
-+extern int b_md5sum (int, char**, void *);
-+extern int b_mkdir (int, char**, void *);
-+extern int b_mkfifo (int, char**, void *);
-+extern int b_mktemp (int, char**, void *);
-+extern int b_mv (int, char**, void *);
-+extern int b_paste (int, char**, void *);
-+extern int b_od (int, char**, void *);
-+extern int b_pathchk (int, char**, void *);
-+extern int b_pids (int, char**, void *);
-+extern int b_pr (int, char**, void *);
-+extern int b_rev (int, char**, void *);
-+extern int b_readlink (int, char**, void *);
-+extern int b_rm (int, char**, void *);
-+extern int b_rmdir (int, char**, void *);
-+extern int b_stty (int, char**, void *);
-+extern int b_sum (int, char**, void *);
-+extern int b_sync (int, char**, void *);
-+extern int b_strings (int, char**, void *);
-+extern int b_tail (int, char**, void *);
-+extern int b_tee (int, char**, void *);
-+extern int b_tr (int, char**, void *);
-+extern int b_tty (int, char**, void *);
-+extern int b_uname (int, char**, void *);
-+extern int b_uniq (int, char**, void *);
-+extern int b_vmstate (int, char**, void *);
-+extern int b_wc (int, char**, void *);
-+extern int b_who (int, char**, void *);
-+extern int b_xgrep (int, char**, void *);
-+extern int b_xargs (int, char**, void *);
++#include <shcmd.h>
++
++extern int b_asa (int, char**, Shbltin_t *);
++extern int b_basename (int, char**, Shbltin_t *);
++extern int b_cat (int, char**, Shbltin_t *);
++extern int b_chgrp (int, char**, Shbltin_t *);
++extern int b_chmod (int, char**, Shbltin_t *);
++extern int b_chown (int, char**, Shbltin_t *);
++extern int b_cksum (int, char**, Shbltin_t *);
++extern int b_cmp (int, char**, Shbltin_t *);
++extern int b_comm (int, char**, Shbltin_t *);
++extern int b_cp (int, char**, Shbltin_t *);
++extern int b_cut (int, char**, Shbltin_t *);
++extern int b_date (int, char**, Shbltin_t *);
++extern int b_dirname (int, char**, Shbltin_t *);
++extern int b_egrep (int, char**, Shbltin_t *);
++extern int b_expr (int, char**, Shbltin_t *);
++extern int b_fds (int, char**, Shbltin_t *);
++extern int b_fgrep (int, char**, Shbltin_t *);
++extern int b_find (int, char**, Shbltin_t *);
++extern int b_fmt (int, char**, Shbltin_t *);
++extern int b_fold (int, char**, Shbltin_t *);
++extern int b_getconf (int, char**, Shbltin_t *);
++extern int b_grep (int, char**, Shbltin_t *);
++extern int b_head (int, char**, Shbltin_t *);
++extern int b_id (int, char**, Shbltin_t *);
++extern int b_join (int, char**, Shbltin_t *);
++extern int b_line (int, char**, Shbltin_t *);
++extern int b_ln (int, char**, Shbltin_t *);
++extern int b_logname (int, char**, Shbltin_t *);
++extern int b_ls (int, char**, Shbltin_t *);
++extern int b_md5sum (int, char**, Shbltin_t *);
++extern int b_mkdir (int, char**, Shbltin_t *);
++extern int b_mkfifo (int, char**, Shbltin_t *);
++extern int b_mktemp (int, char**, Shbltin_t *);
++extern int b_mv (int, char**, Shbltin_t *);
++extern int b_paste (int, char**, Shbltin_t *);
++extern int b_od (int, char**, Shbltin_t *);
++extern int b_pathchk (int, char**, Shbltin_t *);
++extern int b_pids (int, char**, Shbltin_t *);
++extern int b_pr (int, char**, Shbltin_t *);
++extern int b_rev (int, char**, Shbltin_t *);
++extern int b_readlink (int, char**, Shbltin_t *);
++extern int b_rm (int, char**, Shbltin_t *);
++extern int b_rmdir (int, char**, Shbltin_t *);
++extern int b_stty (int, char**, Shbltin_t *);
++extern int b_sum (int, char**, Shbltin_t *);
++extern int b_sync (int, char**, Shbltin_t *);
++extern int b_strings (int, char**, Shbltin_t *);
++extern int b_tail (int, char**, Shbltin_t *);
++extern int b_tee (int, char**, Shbltin_t *);
++extern int b_tr (int, char**, Shbltin_t *);
++extern int b_tty (int, char**, Shbltin_t *);
++extern int b_uname (int, char**, Shbltin_t *);
++extern int b_uniq (int, char**, Shbltin_t *);
++extern int b_vmstate (int, char**, Shbltin_t *);
++extern int b_wc (int, char**, Shbltin_t *);
++extern int b_who (int, char**, Shbltin_t *);
++extern int b_xgrep (int, char**, Shbltin_t *);
++extern int b_xargs (int, char**, Shbltin_t *);
 diff -rupN b/src/cmd/alias/Makefile a/src/cmd/alias/Makefile
 --- b/src/cmd/alias/Makefile	1970-01-01 00:00:00.000000000 +0000
 +++ a/src/cmd/alias/Makefile	2011-11-10 16:24:28.357746164 +0000
