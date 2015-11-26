@@ -21,6 +21,9 @@
 # Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
+# the parfait build fails strangely (22276647)
+export PARFAIT_BUILD=no
+
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_BUGDB=    utility/ksh93
