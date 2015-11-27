@@ -1,0 +1,16 @@
+# date:2015-05-19 owner:rohini type:bug bugdb:20231104
+# Bug 20231104 disable SSLv3 in pidgin to avoid "POODLE" vulnerability
+#
+# These changes should be submitted upstream.
+
+--- pidgin-2.10.11/libpurple/plugins/ssl/ssl-gnutls.c.orig	2015-05-19 15:11:42.975647130 +0530
++++ pidgin-2.10.11/libpurple/plugins/ssl/ssl-gnutls.c	2015-05-19 15:14:12.846033693 +0530
+@@ -166,7 +166,7 @@
+ 		if (gnutls_priority_init(&default_priority, "NORMAL:%SSL3_RECORD_VERSION", NULL)) {
+ 			/* See comment above about memory leak */
+ 			gnutls_free(default_priority);
+-			gnutls_priority_init(&default_priority, "NORMAL", NULL);
++			gnutls_priority_init(&default_priority, "NORMAL:!VERS-SSL3.0:!VERS-TLS1.0", NULL);		  
+ 		}
+ 	}
+ #endif /* HAVE_GNUTLS_PRIORITY_FUNCS */

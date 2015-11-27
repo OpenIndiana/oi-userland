@@ -15,14 +15,13 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pidgin
-COMPONENT_VERSION=	2.10.8
-COMPONENT_REVISION=	3
+COMPONENT_VERSION=	2.10.11
 COMPONENT_PROJECT_URL=	http://www.pidgin.im
 COMPONENT_SUMMARY=	Multiprotocol Instant Messaging Client
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:b633367e3588ff3e615d68e812302dfdbe32e73693cbe42a0d827b7aed7a8227
+    sha256:f2ae211341fc77efb9945d40e9932aa535cdf3a6c8993fe7919fca8cc1c04007
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/$(COMPONENT_NAME)/files/Pidgin/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 
 include $(WS_TOP)/make-rules/prep.mk
