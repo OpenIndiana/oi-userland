@@ -1,0 +1,50 @@
+https://bugzilla.gnome.org/show_bug.cgi?id=638312
+Patch is borrowed from Ubuntu
+
+--- evince-2.32.0.orig/configure.ac
++++ evince-2.32.0/configure.ac
+@@ -505,6 +505,7 @@ if test "x$enable_pdf" = "xyes"; then
+ 	    AC_CHECK_FUNCS(poppler_page_get_text_layout)
+ 	    AC_CHECK_FUNCS(poppler_page_get_selected_text)
+ 	    AC_CHECK_FUNCS(poppler_page_add_annot)
++	    AC_CHECK_FUNCS(poppler_document_is_linearized)
+ 	    LIBS=$evince_save_LIBS
+ 	    PKG_CHECK_MODULES(CAIRO_PDF, cairo-pdf, enable_cairo_pdf=yes, enable_cairo_pdf=no)
+ 	    if test x$enable_cairo_pdf = xyes; then
+--- evince-2.32.0.orig/backend/pdf/ev-poppler.cc
++++ evince-2.32.0/backend/pdf/ev-poppler.cc
+@@ -640,7 +640,9 @@ pdf_document_get_info (EvDocument *docum
+ 	PopplerPermissions permissions;
+ 	EvPage *page;
+ 	char *metadata;
+-
++#ifdef HAVE_POPPLER_DOCUMENT_IS_LINEARIZED
++gboolean linearized;
++#endif
+ 	info = g_new0 (EvDocumentInfo, 1);
+ 
+ 	info->fields_mask = EV_DOCUMENT_INFO_TITLE |
+@@ -676,7 +678,11 @@ pdf_document_get_info (EvDocument *docum
+ 		      "producer", &(info->producer),
+ 		      "creation-date", &(info->creation_date),
+ 		      "mod-date", &(info->modified_date),
++#ifdef HAVE_POPPLER_DOCUMENT_IS_LINEARIZED
++                      "linearized", &linearized,
++#else
+ 		      "linearized", &(info->linearized),
++#endif
+ 		      "metadata", &metadata,
+ 		      NULL);
+ 
+@@ -782,6 +788,11 @@ pdf_document_get_info (EvDocument *docum
+ 		info->security = g_strdup (_("No"));
+ 	}
+ 
++#ifdef HAVE_POPPLER_DOCUMENT_IS_LINEARIZED
++	info->linearized = linearized ? g_strdup (_("Yes")) : g_strdup (_("No"));
++#endif
++
++
+ 	return info;
+ }
+ 
