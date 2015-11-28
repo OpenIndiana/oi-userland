@@ -10,20 +10,20 @@
 #
 
 #
-# Copyright 2013 Alexander Pyhalov.  All rights reserved.
+# Copyright 2015 OpenSXCE.org Martin Bochnig <opensxce@mail.ru>
+# Copyright 2013-2015 Alexander Pyhalov
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	firefox
-COMPONENT_VERSION= 	24.8.1esr
-COMPONENT_REVISION=	3
-IPS_COMPONENT_VERSION=	24.8.1
+COMPONENT_VERSION= 	43.0b7
+IPS_COMPONENT_VERSION=	43.0.0.7
 COMPONENT_SUMMARY= 	Mozilla Firefox Web browser
-COMPONENT_SRC= 		mozilla-esr24
-COMPONENT_ARCHIVE= 	$(COMPONENT_NAME)-$(COMPONENT_VERSION).source.tar.bz2
+COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE= 	$(COMPONENT_NAME)-$(COMPONENT_VERSION).source.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:53db5f6d52e4669bf2650b1dd9d480b31eb1cc42c107ed741a65fb5bcacc8932
+  sha256:4ee0779c3c18f89b0c5bdf46c10b0de17811926bb1d7659afba8a43cf106e56b
 COMPONENT_ARCHIVE_URL= \
   https://ftp.mozilla.org/pub/firefox/releases/$(COMPONENT_VERSION)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.mozilla.com/en-US/firefox/
@@ -35,46 +35,34 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D) )
+COMPONENT_PRE_CONFIGURE_ACTION = (cp $(COMPONENT_DIR)/files/gld-wrapper  $(BUILD_DIR); chmod +x $(BUILD_DIR)/gld-wrapper )
 
 PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
 
-CONFIGURE_OPTIONS =	--disable-alsa
-CONFIGURE_OPTIONS +=	--enable-gnomevfs
-CONFIGURE_OPTIONS +=	--enable-dbus
-CONFIGURE_OPTIONS +=	--enable-gnomeui
-CONFIGURE_OPTIONS +=	--enable-libnotify
-CONFIGURE_OPTIONS +=	--enable-libxul
-CONFIGURE_OPTIONS +=	--enable-extensions=gnomevfs
-CONFIGURE_OPTIONS +=	--disable-jemalloc
-CONFIGURE_OPTIONS +=	--disable-debug
-CONFIGURE_OPTIONS +=    --disable-tests
-#CONFIGURE_OPTIONS +=	--enable-debug
-CONFIGURE_OPTIONS +=	--disable-debug-symbols
-#CONFIGURE_OPTIONS +=	--enable-debug-symbols
-CONFIGURE_OPTIONS +=	--enable-install-strip
-CONFIGURE_OPTIONS +=	--enable-optimize=-O2
-CONFIGURE_OPTIONS +=	--disable-webrtc
-CONFIGURE_OPTIONS +=	--enable-dtrace
+CONFIGURE_OPTIONS =	--enable-application=browser
 CONFIGURE_OPTIONS +=	--enable-official-branding
 CONFIGURE_OPTIONS +=	--disable-updater
-CONFIGURE_OPTIONS +=	--enable-ipc
-CONFIGURE_OPTIONS +=	--enable-system-ffi
-CONFIGURE_OPTIONS +=	--enable-system-sqlite
-CONFIGURE_OPTIONS +=	--with-system-libevent
-CONFIGURE_OPTIONS +=	--with-system-zlib
-CONFIGURE_OPTIONS +=	--with-system-bz2
+CONFIGURE_OPTIONS +=	--enable-debug-symbols=no
+CONFIGURE_OPTIONS +=	--enable-update-channel=esr
+CONFIGURE_OPTIONS +=	--disable-tests
+CONFIGURE_OPTIONS +=	--enable-jemalloc
+CONFIGURE_OPTIONS +=	--disable-dtrace
+CONFIGURE_OPTIONS +=    --disable-xinerama
 CONFIGURE_OPTIONS +=	--disable-crashreporter
-CONFIGURE_OPTIONS +=	--disable-necko-wifi
-CONFIGURE_OPTIONS +=	--enable-startup-notification
-CONFIGURE_OPTIONS +=	--enable-application=browser
+CONFIGURE_OPTIONS +=	--disable-pulseaudio
+CONFIGURE_OPTIONS +=	--disable-gstreamer
+CONFIGURE_OPTIONS +=	--with-intl-api
+CONFIGURE_OPTIONS +=	--disable-debug
+CONFIGURE_OPTIONS +=	--enable-ipc
+CONFIGURE_OPTIONS +=	--enable-default-toolkit=cairo-gtk2
 CONFIGURE_OPTIONS +=	--prefix=/usr
 CONFIGURE_OPTIONS +=	--libdir=/usr/lib
 
 ENV +=	CC=$(CC)
+ENV +=	GLD_WRAPPER=$(BUILD_DIR)/gld-wrapper
 ENV +=	CXX=$(CXX)
 ENV +=	MOZILLA_OFFICIAL=1
-ENV +=	MOZ_PKG_FORMAT=BZ2
+ENV +=	MOZ_PKG_FORMAT=XZ
 ENV +=	PKG_SKIP_STRIP=1
 ENV +=	MOZILLA_PKG_NAME=firefox
 ENV +=	SHELL="/bin/bash"
@@ -95,6 +83,7 @@ build: $(BUILD_32)
 
 COMPONENT_POST_INSTALL_ACTION  = ( \
     for file in $(PROTO_DIR)/usr/lib/firefox/browser/components/libbrowsercomps.so \
+          $(PROTO_DIR)/usr/lib/firefox/sdk/lib/libxul.so \
           $(PROTO_DIR)/usr/lib/firefox/sdk/bin/xpcshell ; do \
         /usr/bin/elfedit -e 'dyn:value -s  RPATH "/usr/lib:/usr/lib/firefox:$$ORIGIN:$$ORIGIN/.."'  \
         $$file ;\
