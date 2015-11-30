@@ -26,16 +26,16 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sox
-COMPONENT_VERSION=	14.4.0
+COMPONENT_VERSION=	14.4.2
 COMPONENT_PROJECT_URL=	http://sox.sourceforge.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:3ee34b14dd267de378e8a117aae81ec4cae330772342e6a55bbf6520a0a88aa3
+	sha256:b45f598643ffbd8e363ff24d61166ccec4836fea6d3888881b8df53e3bb55f6c
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/$(COMPONENT_NAME)/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/sox
 
-TPNO=			9040
+TPNO=		 	25632	
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -66,3 +66,4 @@ REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/library/openmp
