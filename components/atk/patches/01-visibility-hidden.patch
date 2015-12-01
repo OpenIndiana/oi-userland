@@ -1,0 +1,22 @@
+--- atk-2.18.0/configure.ac.1	2015-12-01 20:17:58.556558772 +0300
++++ atk-2.18.0/configure.ac	2015-12-01 20:23:44.103767862 +0300
+@@ -216,7 +216,10 @@
+ AC_SUBST(REBUILD)
+ 
+ # Check for the visibility flags
+-ATK_HIDDEN_VISIBILITY_CFLAGS=""
++AC_ARG_ENABLE(fvisibility_hidden,
++              [AS_HELP_STRING([--disable-fvisibility-hidden],
++                              [unconditionally disable check for -fvisibility=hidden flag])],
++	       ATK_HIDDEN_VISIBILITY_CFLAGS="",[
+ case "$host" in
+   *-*-mingw*)
+     dnl on mingw32 we do -fvisibility=hidden and __declspec(dllexport)
+@@ -243,6 +247,7 @@
+     ])
+     ;;
+ esac
++])
+ AC_SUBST(ATK_HIDDEN_VISIBILITY_CFLAGS)
+ 
+ AC_CONFIG_FILES([

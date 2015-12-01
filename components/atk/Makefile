@@ -16,15 +16,14 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= atk
-COMPONENT_VERSION= 1.32.0
-COMPONENT_REVISION= 2
+COMPONENT_VERSION= 2.18.0
 COMPONENT_SUMMARY= GNOME accesibility toolkit libraries
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:e9a3e598f75c4db1af914f8b052dd9f7e89e920a96cc187c18eb06b8339cb16e
+  sha256:ce6c48d77bf951083029d5a396dd552d836fff3c1715d3a7022e917e46d0c92b
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/1.32/$(COMPONENT_ARCHIVE)
+  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.18/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gnome.org
 COMPONENT_FMRI= library/desktop/atk
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
@@ -35,11 +34,13 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f -i)
+COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f)
 
 gcc_OPT = -O2
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
+# breaks gir-scanner
+CONFIGURE_OPTIONS += --disable-fvisibility-hidden
 
 # CFLAGS are not passed to compiler when g-ir-scanner is used
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
