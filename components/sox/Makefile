@@ -42,7 +42,7 @@ include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS  +=	--disable-static
-CONFIGURE_OPTIONS  +=	--disable-gomp
+CONFIGURE_OPTIONS  += 	--disable-openmp
 CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
 
 # common targets
