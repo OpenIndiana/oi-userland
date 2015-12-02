@@ -87,6 +87,7 @@ CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_PREFIX)/share/info
 CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_PREFIX)/lib
 CONFIGURE_OPTIONS +=	--enable-languages="c,c++,fortran,objc"
 CONFIGURE_OPTIONS +=	--enable-shared
+CONFIGURE_OPTIONS +=	--with-build-config=no
 CONFIGURE_OPTIONS +=	--with-gmp-include=/usr/include/gmp
 CONFIGURE_OPTIONS +=	--with-mpfr-include=/usr/include/mpfr
 CONFIGURE_OPTIONS +=	--without-gnu-ld --with-ld=/usr/bin/ld
