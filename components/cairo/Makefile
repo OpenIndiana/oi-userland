@@ -17,6 +17,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= cairo
 COMPONENT_VERSION= 1.14.2
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Vector graphics library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -50,6 +51,7 @@ CONFIGURE_SCRIPT = $(@D)/configure
 CFLAGS += -D_POSIX_PTHREAD_SEMANTICS
 
 CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --enable-xcb-shm=no
 CONFIGURE_OPTIONS += --enable-gl=yes
 CONFIGURE_OPTIONS += --enable-xlib-xcb
 CONFIGURE_OPTIONS += --enable-xml
