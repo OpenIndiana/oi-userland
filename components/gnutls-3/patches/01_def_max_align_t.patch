@@ -2,26 +2,25 @@ Source:
 Internal
 
 Info:
-This patch check to see if _MAX_ALIGN_T has been defined.
+This patch checks to see if _MAX_ALIGN_T has been defined.
 
-Status:
-Need to determine if this patch has been sent upstream.
+Status: This patch is Solaris specific. It will not be sent upstream.
 
---- ORIGINAL/src/gl/stddef.in.h	2015-07-24 17:04:37.414430921 -0700
-+++ gnutls-3.4.1/src/gl/stddef.in.h	2015-07-24 16:58:31.925282844 -0700
-@@ -83,6 +83,7 @@
- 
- /* Some platforms lack max_align_t.  */
- #if !@HAVE_MAX_ALIGN_T@
-+ #ifndef _MAX_ALIGN_T
+--- ORIGINAL/src/gl/stddef.in.h		Sat Sep 26 05:02:10 2015
++++ gnutls-3.4.1/src/gl/stddef.in.h	Wed Nov  4 14:17:07 2015
+@@ -94,6 +94,7 @@
+ # else
+ #  define _GL_STDDEF_ALIGNAS(type) /* */
+ # endif
++#ifndef	_MAX_ALIGN_T
  typedef union
  {
-   char *__p;
-@@ -90,6 +91,7 @@
-   long double __ld;
-   long int __i;
+   char *__p _GL_STDDEF_ALIGNAS (char *);
+@@ -101,6 +102,7 @@
+   long double __ld _GL_STDDEF_ALIGNAS (long double);
+   long int __i _GL_STDDEF_ALIGNAS (long int);
  } max_align_t;
-+ #endif /* #ifndef _MAX_ALIGN_T */
++#endif /* #ifndef _MAX_ALIGN_T */
  #endif
  
  #  endif /* _@GUARD_PREFIX@_STDDEF_H */

@@ -1,0 +1,19 @@
+Source: Internal
+
+Info: This patch fixes the issue of pkcs11_common(NULL) being called
+when PKCS11 is not enabled.
+
+Status: This patch has been submitted to upstream, not yet accepted.
+
+--- gnutls-3.4.6/src/tpmtool.c	Tue Jul 21 02:42:08 2015
++++ gnutls-3.4.6/src/tpmtool.c	Thu Nov 19 13:43:02 2015
+@@ -184,7 +184,9 @@
+ 	gnutls_datum_t data, sig = {NULL, 0};
+ 	int pk;
+ 
++#ifdef ENABLE_PKCS11
+ 	pkcs11_common(NULL);
++#endif
+ 
+ 	data.data = (void*)TEST_DATA;
+ 	data.size = sizeof(TEST_DATA)-1;

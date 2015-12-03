@@ -26,16 +26,16 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnutls
-COMPONENT_VERSION=	3.4.1
+COMPONENT_VERSION=	3.4.6
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  ftp://ftp.gnutls.org/gcrypt/gnutls/v3.4
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-     sha256:e9b5f58becf34756464216056cd5abbf04315eda80a374d02699dee83f80b12e
+    sha256:feb559ed7fffa24d5aa40527054fae5cb7f7b66e9f2bebc2383a781dfa4d20ec
 COMPONENT_ARCHIVE_URL=  ftp://ftp.gnutls.org/gcrypt/gnutls/v3.4/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/gnutls
 
-TPNO=			22096
+TPNO=			25396
 
 COMPONENT_BUILD_TARGETS = all info
 

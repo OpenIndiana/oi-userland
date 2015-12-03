@@ -5,8 +5,7 @@ Info:
 This patch makes the changes necessary to remove all usage of elliptical curve 
 code in this library.
 
-Status:
-Need to determine if this patch has been sent upstream.
+Status: This patch is Solaris specific. This will not be sent upstream.
 
 --- ORIGINAL/./lib/auth/ecdhe.h	2015-07-24 15:17:22.747625209 -0700
 +++ gnutls-3.4.1/./lib/auth/ecdhe.h	2015-07-24 15:19:55.707550982 -0700
@@ -101,8 +100,8 @@ Need to determine if this patch has been sent upstream.
  }
 +#endif
  
- static int
- proc_dhe_psk_server_kx(gnutls_session_t session, uint8_t * data,
+ static int copy_hint(gnutls_session_t session, gnutls_datum_t *hint)
+ {
 @@ -440,6 +454,7 @@
  	return 0;
  }
