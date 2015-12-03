@@ -45,14 +45,19 @@ COMPONENT_BUILD_ARGS    += -Dversion-status=""
 COMPONENT_BUILD_ARGS    += -Dadditionalparam="-Xdoclint:none"
 COMPONENT_BUILD_TARGETS  = populate-dist
 
+COMPONENT_PRE_BUILD_ACTION =	$(MKDIR) $(@D)/tmp
+COMPONENT_BUILD_ENV +=	"_JAVA_OPTIONS=-Djava.io.tmpdir=$(BUILD_DIR_32)/tmp"
+
 # We patched in test-build into build.xml which is a copy of
 # dist but without the depends=populate-dist
 # because userland infrasture will handle the build and we
 # need to build tests which are also part of the overall softare build.
 COMPONENT_TEST_ARGS	+= $(COMPONENT_BUILD_ARGS)
+COMPONENT_TEST_ENV	+= "_JAVA_OPTIONS=-Djava.io.tmpdir=$(BUILD_DIR_32)/tmp"
 COMPONENT_TEST_TARGETS	 = test-build
 
 COMPONENT_SYSTEM_TEST_ARGS	+= -Dsystem-binjar=/usr/share/lib/java/$(COMPONENT_NAME).jar
+COMPONENT_SYSTEM_TEST_ENV	+= "_JAVA_OPTIONS=-Djava.io.tmpdir=$(BUILD_DIR_32)/tmp"
 COMPONENT_SYSTEM_TEST_TARGETS	 = test
 
 # Test transforms
@@ -65,8 +70,8 @@ COMPONENT_TEST_TRANSFORMS += \
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 build:		$(BUILD_32)
-	
-install:	build	
+
+install:	build
 
 # Another test is:
 # To test after you have installed the resulting package do:
@@ -80,5 +85,5 @@ install:	build
 test:		$(TEST_32)
 
 system-test:    build $(SYSTEM_TEST_32)
-		
+
 REQUIRED_PACKAGES += runtime/java/jre-8
