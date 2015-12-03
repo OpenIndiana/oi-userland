@@ -78,6 +78,7 @@ CONFIGURE_OPTIONS +=    --enable-gold=no
 CONFIGURE_OPTIONS +=    --enable-plugins=yes
 CONFIGURE_OPTIONS +=    --enable-nls=yes
 CONFIGURE_OPTIONS +=    --enable-host-shared=yes
+CONFIGURE_OPTIONS +=    --enable-deterministic-archives=yes
 CONFIGURE_OPTIONS +=    --disable-libtool-lock
 CONFIGURE_OPTIONS +=    --enable-largefile=yes
 
