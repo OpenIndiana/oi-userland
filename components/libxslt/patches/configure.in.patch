@@ -1,6 +1,28 @@
---- libxslt-1.1.26/configure.in.orig	Mon Mar 21 13:06:53 2011
-+++ libxslt-1.1.26/configure.in	Mon Mar 21 13:08:28 2011
-@@ -348,6 +348,10 @@
+Our Userland Makefile replaces the upstream link-editor version script with a
+Solaris-specific version 2 mapfile which is incompatible with the
+ld --version-script option. Remove the upstream configure test that prefers
+to use --version-script if available, and force the use of -M.
+
+If PYTHON_VENDOR_PACKAGES is defined, set PYTHON_SITE_PACKAGES to the
+same value.
+
+--- libxslt-1.1.28/configure.in.orig	2012-11-21 00:10:58.000000000 -0700
++++ libxslt-1.1.28/configure.in	2015-12-02 15:32:07.243853314 -0700
+@@ -131,12 +131,8 @@
+ dnl then add it
+ dnl
+ AC_MSG_CHECKING([how to pass version script to the linker ($LD)])
+-VERSION_SCRIPT_FLAGS=none
+-if $LD --help 2>&1 | grep "version-script" >/dev/null 2>/dev/null; then
+-    VERSION_SCRIPT_FLAGS=-Wl,--version-script=
+-elif $LD --help 2>&1 | grep "M mapfile" >/dev/null 2>/dev/null; then
+     VERSION_SCRIPT_FLAGS="-Wl,-M -Wl,"
+-fi
++
+ AC_MSG_RESULT([$VERSION_SCRIPT_FLAGS])
+ AC_SUBST(VERSION_SCRIPT_FLAGS)
+ AM_CONDITIONAL([USE_VERSION_SCRIPT], [test "$VERSION_SCRIPT_FLAGS" != none])
+@@ -364,6 +360,10 @@
      else
          pythondir='$(libdir)/python$(PYTHON_VERSION)/site-packages'
      fi
