@@ -15,18 +15,17 @@
 
 include ../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= at-spi
-COMPONENT_VERSION= 1.32.0
-COMPONENT_REVISION= 1
+COMPONENT_NAME= at-spi2-atk
+COMPONENT_VERSION= 2.18.1
 COMPONENT_SUMMARY= Assistive Technology Service Provider Interface
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:cc841dea746413eebadf0710dabec741450b37a06821c34526f505fe9d027039
+  sha256:c4b15f9386d34d464ddad5f6cc85669742c016df87141ceee93513245979c12d
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/1.32/$(COMPONENT_ARCHIVE)
+  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.18/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gnome.org
-COMPONENT_FMRI= gnome/accessibility/at-spi
+COMPONENT_FMRI= gnome/accessibility/at-spi2-atk
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
 COMPONENT_LICENSE = LGPLv2
 COMPONENT_LICENSE_FILE = COPYING
@@ -37,18 +36,13 @@ include ../../make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
-					libtoolize --copy --force &&\
-					aclocal -I.  &&\
-					automake -c -f -a &&\
-					autoconf )
-
-
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS += --enable-xevie=no
 
 CONFIGURE_ENV += PYTHON=$(PYTHON)
+
+COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 $(INSTALL_32):	$(INSTALL_64)
 
@@ -56,4 +50,5 @@ build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
 
+# Tests rely on dbus running, which is not true in zones
 test: $(NO_TESTS)
