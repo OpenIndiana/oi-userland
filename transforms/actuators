@@ -47,6 +47,28 @@
 <transform file path=usr/share/applications/.*\.desktop$ -> \
     default restart_fmri svc:/application/desktop-cache/desktop-mime-cache:default>
 
+# GNOME/XDG icons
+<transform file path=usr/share/icons/.*$ -> \
+    default restart_fmri svc:/application/desktop-cache/icon-cache:default>
+
+# GNOME/XDG mime-types
+<transform file path=usr/share/mime/packages/.*\.xml$ -> \
+    default restart_fmri svc:/application/desktop-cache/mime-types-cache:default>
+
+# GNOME gtk Input Method modules
+<transform file path=usr/lib.*/gtk-.*/.*/immodules/.*.so$ -> \
+    default restart_fmri svc:/application/desktop-cache/input-method-cache:default>
+
+# GNOME gdk-pixbuf image loader modules
+<transform file path=usr/lib.*/gdk-pixbuf-.*/.*/loaders/.*.so$ -> \
+    default restart_fmri svc:/application/desktop-cache/pixbuf-loaders-installer:default>
+
+# GNOME gconf schemas
+<transform file path=etc/gconf/.* ->  \
+    default restart_fmri svc:/application/desktop-cache/gconf-cache:default>
+<transform file path=usr/share/glib-2.0/schemas/.* ->  \
+    default restart_fmri svc:/application/desktop-cache/gconf-cache:default>
+
 # RAD
 <transform file path=usr/lib/rad/.* -> add restart_fmri \
     svc:/system/rad:local>
