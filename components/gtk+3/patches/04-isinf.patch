@@ -1,0 +1,26 @@
+--- gtk+-3.19.3/gdk/fallback-c89.c.~1~	2014-11-27 05:54:55.000000000 +0300
++++ gtk+-3.19.3/gdk/fallback-c89.c	2015-12-01 09:21:31.606107396 +0300
+@@ -17,6 +17,7 @@
+  * License along with this library. If not, see <http://www.gnu.org/licenses/>.
+  */
+ 
++#include <math.h>
+ #include <float.h>
+ 
+ #ifndef HAVE_DECL_ISNAN
+@@ -31,6 +32,7 @@
+ }
+ #endif
+ 
++#if 0
+ #ifndef HAVE_DECL_ISINF
+ /* Unfortunately MSVC does not have finite()
+  * but it does have _finite() which is the same
+@@ -42,6 +44,7 @@
+   return (!_finite (x) && !_isnan (x));
+ }
+ #endif
++#endif
+ 
+ /* Workaround for round() for non-GCC/non-C99 compilers */
+ #ifndef HAVE_ROUND
