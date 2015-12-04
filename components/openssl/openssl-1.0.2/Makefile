@@ -25,15 +25,15 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME =	openssl
 # When new version of OpenSSL comes in, you must update both COMPONENT_VERSION
 # and IPS_COMPONENT_VERSION.
-COMPONENT_VERSION =	1.0.2d
+COMPONENT_VERSION =	1.0.2e
 # Version for IPS. It is easier to do it manually than convert the letter to a
 # number while taking into account that there might be no letter at all.
-IPS_COMPONENT_VERSION = 1.0.2.4
+IPS_COMPONENT_VERSION = 1.0.2.5
 COMPONENT_PROJECT_URL=	http://www.openssl.org/
 COMPONENT_SRC =		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:671c36487785628a703374c652ad2cebea45fa920ae5681515df25d9f2c9a8c8
+    sha256:e23ccafdb75cfcde782da0151731aa2185195ac745eea3846133f2e05c0e0bff
 COMPONENT_ARCHIVE_URL =	$(COMPONENT_PROJECT_URL)source/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/openssl
 
@@ -140,6 +140,8 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 COMPONENT_PRE_BUILD_ACTION = \
     ( echo "Cloning engines..."; \
       $(LN) -fs $(COMPONENT_DIR)/engines/pkcs11/*.[ch]		$(@D)/engines; )
+
+COMPONENT_BUILD_TARGETS= depend all
 
 # Build openssl-0.9.8 if not yet built.
 $(COMPONENT_DIR)/../openssl-0.9.8/build/$(MACH32)/.built \

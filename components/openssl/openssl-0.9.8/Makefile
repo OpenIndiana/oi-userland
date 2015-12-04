@@ -15,13 +15,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openssl
-COMPONENT_VERSION=	0.9.8zg
+COMPONENT_VERSION=	0.9.8zh
 COMPONENT_PROJECT_URL=	http://openssl.org
 COMPONENT_SUMMARY=	Toolkit for SSL/TLS and general purpose cryptographic library.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:06500060639930e471050474f537fcd28ec934af92ee282d78b52460fbe8f580
+	sha256:f1d9f3ed1b85a82ecf80d0e2d389e1fda3fca9a4dba0bf07adbf231e1a5e2fd6
     
 COMPONENT_ARCHIVE_URL=	https://www.openssl.org/source/$(COMPONENT_ARCHIVE)
 
@@ -83,6 +83,7 @@ COMPONENT_PRE_BUILD_ACTION = \
       $(LN) -fs $(COMPONENT_DIR)/engines/devcrypto/*.[ch]	$(@D)/engines; )
 
 COMPONENT_BUILD_ARGS=
+COMPONENT_BUILD_TARGETS= depend all
 
 # common targets
 build:		$(BUILD_32_and_64)
