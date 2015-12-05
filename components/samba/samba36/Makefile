@@ -54,6 +54,14 @@ BUILD_DIR_32 = $(BUILD_DIR)/$(MACH32)/$(SRC_OFFSET)
 BUILD_DIR_64 = $(BUILD_DIR)/$(MACH64)/$(SRC_OFFSET)
 
 include $(WS_MAKE_RULES)/configure.mk
+
+# Depends on Samba 4 which has S12-only dependencies.
+ifeq ($(BUILD_TYPE), evaluation)
+BUILD_32_and_64=
+INSTALL_32_and_64=
+PUBLISH_STAMP=
+endif
+
 include $(WS_MAKE_RULES)/ips.mk
 
 # dirs to search for "include" in samba.p5m
