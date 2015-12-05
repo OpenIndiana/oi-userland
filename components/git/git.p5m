@@ -249,6 +249,10 @@ file path=usr/perl5/$(PERL_VERSION)/man/man3/Git::SVN::Prompt.3
 file path=usr/perl5/$(PERL_VERSION)/man/man3/Git::SVN::Ra.3
 file path=usr/perl5/$(PERL_VERSION)/man/man3/Git::SVN::Utils.3
 file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/auto/Git/.packlist
+# perl/Makefile.PL installs this file if and only if 'require Error' fails.
+# Thus if git is installed, it succeeds, and the file is not installed.  So
+# ignore that and just pull from the source.
+file perl/private-Error.pm path=usr/perl5/vendor_perl/$(PERL_VERSION)/Error.pm
 file path=usr/perl5/vendor_perl/$(PERL_VERSION)/Git.pm
 file path=usr/perl5/vendor_perl/$(PERL_VERSION)/Git/I18N.pm
 file path=usr/perl5/vendor_perl/$(PERL_VERSION)/Git/IndexInfo.pm
@@ -340,7 +344,7 @@ file path=usr/share/gitk/lib/msgs/pt_br.msg
 file path=usr/share/gitk/lib/msgs/ru.msg
 file path=usr/share/gitk/lib/msgs/sv.msg
 file path=usr/share/gitk/lib/msgs/vi.msg
-file path=usr/share/gitweb/gitweb.cgi
+file path=usr/share/gitweb/gitweb.cgi mode=0555
 file path=usr/share/gitweb/static/git-favicon.png
 file path=usr/share/gitweb/static/git-logo.png
 file path=usr/share/gitweb/static/gitweb.css
