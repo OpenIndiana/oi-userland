@@ -34,6 +34,8 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2012/335
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+link path=etc/ssh/moduli target=moduli.openssh mediator=ssh \
+    mediator-implementation=openssh mediator-priority=vendor
 link path=usr/bin/scp target=../lib/openssh/bin/scp mediator=ssh \
     mediator-implementation=openssh mediator-priority=vendor
 link path=usr/bin/sftp target=../lib/openssh/bin/sftp mediator=ssh \
@@ -48,6 +50,7 @@ link path=usr/bin/ssh-keygen target=../lib/openssh/bin/ssh-keygen mediator=ssh \
     mediator-implementation=openssh mediator-priority=vendor
 link path=usr/bin/ssh-keyscan target=../lib/openssh/bin/ssh-keyscan \
     mediator=ssh mediator-implementation=openssh mediator-priority=vendor
+file etc/ssh/moduli path=etc/ssh/moduli.openssh preserve=true
 file usr/lib/dtrace/sftp.d path=usr/lib/dtrace/sftp.d mode=0555
 file usr/bin/scp path=usr/lib/openssh/bin/scp mode=0555
 file usr/bin/sftp path=usr/lib/openssh/bin/sftp mode=0555
