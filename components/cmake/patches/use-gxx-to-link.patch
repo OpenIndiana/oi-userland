@@ -1,0 +1,40 @@
+https://cmake.org/Bug/view.php?id=15673
+https://cmake.org/gitweb?p=cmake.git;a=patch;h=60fe4b54
+
+From 60fe4b540b40330e050dbd755204cecbc62d6a37 Mon Sep 17 00:00:00 2001
+From: Brad King <brad.king@kitware.com>
+Date: Thu, 30 Jul 2015 13:57:22 -0400
+Subject: [PATCH] SunOS: Drop special case for linking C++ shared libraries
+ with gcc (#15673)
+
+Since commit v2.4.0~4325 (...use gcc -shared, even for C++ libraries,
+2003-03-13) we use the C compiler "gcc" to link C++ shared libraries
+compiled with "g++".  At the time "g++" did not know how to link shared
+libraries correctly.  This has long since been fixed so simply drop the
+special case.
+---
+ Modules/Platform/SunOS.cmake |    8 --------
+ 1 file changed, 8 deletions(-)
+
+diff --git a/Modules/Platform/SunOS.cmake b/Modules/Platform/SunOS.cmake
+index aaa79c4..77946f2 100644
+--- a/Modules/Platform/SunOS.cmake
++++ b/Modules/Platform/SunOS.cmake
+@@ -7,14 +7,6 @@ if(CMAKE_SYSTEM MATCHES "SunOS-4")
+    set(CMAKE_SHARED_LIBRARY_RUNTIME_C_FLAG_SEP ":")
+ endif()
+ 
+-if(CMAKE_COMPILER_IS_GNUCXX)
+-  if(CMAKE_COMPILER_IS_GNUCC)
+-    set(CMAKE_CXX_CREATE_SHARED_LIBRARY
+-        "<CMAKE_C_COMPILER> <CMAKE_SHARED_LIBRARY_CXX_FLAGS> <LINK_FLAGS> <CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS>  <SONAME_FLAG><TARGET_SONAME> -o <TARGET> <OBJECTS> <LINK_LIBRARIES>")
+-  else()
+-    # Take default rule from CMakeDefaultMakeRuleVariables.cmake.
+-  endif()
+-endif()
+ include(Platform/UnixPaths)
+ 
+ # Add the compiler's implicit link directories.
+-- 
+1.7.10.4
+
