@@ -23,16 +23,16 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =        curl
-COMPONENT_VERSION=      7.43.0
+COMPONENT_VERSION=      7.45.0
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  http://curl.haxx.se/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:1a084da1edbfc3bd632861358b26af45ba91aaadfb15d6482de55748b8dfc693
+    sha256:02c78c8060d587422e2826f622c729189b56084bba365140f13af3d402b6cb6b
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/curl
 
-TPNO=			23337
+TPNO=			25724
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -87,7 +87,7 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|\(^/bin/bash ../../libtool\).*|\1|" ' \
 	'-e "s|\(^libtool: link:\).*|\1|" ' \
 	'-e "s|remaining: ..:..|remaining: xx:xx|" ' \
-	'-e "s|\(^TESTDONE: 988 tests were considered during\).*|\1|" ' \
+	'-e "s|\(^TESTDONE: 994 tests were considered during\).*|\1|" ' \
 	'-e "s|\(^\* curl $(COMPONENT_VERSION)\).*|\1|" ' \
 	'-e "s|\(^\* Host:\).*|\1|" ' \
 	'-e "s|\(^\* System: SunOS\).*|\1|" ' \
@@ -97,10 +97,6 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|\(^Failed publickey for\).*|\1|" ' \
 	'-e "/^debug.:/d" ' \
 	'-e "/^monitor debug.:/d" '
-
-# master test results are not entirely clean, so not
-# appropriate to run at top level
-$(SKIP_TEST_AT_TOP_LEVEL)
 
 ASLR_MODE = $(ASLR_ENABLE)
 
