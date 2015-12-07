@@ -24,6 +24,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libsndfile
 COMPONENT_VERSION=	1.0.25
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.mega-nerd.com/libsndfile/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
