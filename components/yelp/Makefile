@@ -24,7 +24,7 @@ COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:8c49dffecdc07dfe1e1b03f6ec3c32c523650802b6aebaf0b232aaa1af5e9f88
 COMPONENT_ARCHIVE_URL= \
-  ftp://ftp.se.FreeBSD.org/pub/FreeBSD/ports/local-distfiles/kwm/$(COMPONENT_ARCHIVE)
+  http://distcache.freebsd.org/ports-distfiles/gnome2/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gnome.org
 
 include ../../make-rules/prep.mk
