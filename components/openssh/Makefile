@@ -70,6 +70,9 @@ CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 # libraries that it needs.
 LDFLAGS += -B direct -z nolazyload
 
+# Enable nxheap and nxstack security extensions
+LDFLAGS += -z nxheap=enable -z nxstack=enable
+
 # Just $(BUILD_64) option was not propogating the 64 bit flags to all the
 # necessary places. Hence the -m64 option is added to LDFLAGS for
 # CONFIGURE_OPTIONS.64.
