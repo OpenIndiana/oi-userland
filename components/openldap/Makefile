@@ -23,8 +23,6 @@
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
-
-
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openldap
@@ -92,6 +90,7 @@ CONFIGURE_OPTIONS += --enable-null
 CONFIGURE_OPTIONS += --enable-passwd	 
 CONFIGURE_OPTIONS += --enable-shell
 CONFIGURE_OPTIONS += --enable-ldap
+CONFIGURE_OPTIONS += --enable-meta
 CONFIGURE_OPTIONS += --with-cyrus-sasl
 CONFIGURE_OPTIONS += --with-threads
 CONFIGURE_OPTIONS += --with-tls=openssl
