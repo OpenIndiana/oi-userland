@@ -4,23 +4,22 @@ is a workaround for build peculiarities and to meet Studio's requirement
 that the profiling options be used at all steps of the build -- not just
 compilation.  As it is Solaris-specific, it is not suitable for upstream.
 
---- Python-2.7.9/Makefile.pre.in.~2~	2014-12-11 09:26:43.160400840 -0800
-+++ Python-2.7.9/Makefile.pre.in	2014-12-11 09:26:43.287536256 -0800
-@@ -416,28 +416,37 @@
- profile-opt:
- 	@echo "Building with support for profile generation:"
- 	$(MAKE) clean
-+	$(MAKE) profile-removal
- 	$(MAKE) build_all_generate_profile
- 	@echo "Running benchmark to generate profile data:"
--	$(MAKE) profile-removal
- 	$(MAKE) run_profile_task
- 	@echo "Rebuilding with profile guided optimizations:"
- 	$(MAKE) clean
- 	$(MAKE) build_all_use_profile
+--- Python-2.7.11rc1/Makefile.pre.in.~2~	2015-12-03 14:13:57.531760204 -0800
++++ Python-2.7.11rc1/Makefile.pre.in	2015-12-03 14:13:57.632627371 -0800
+@@ -209,7 +209,7 @@
+ TCLTK_LIBS=	@TCLTK_LIBS@
+ 
+ # The task to run while instrument when building the profile-opt target
+-PROFILE_TASK=-m test.regrtest --pgo
++PROFILE_TASK=	$(srcdir)/Tools/pybench/pybench.py -n 2 --with-gc --with-syscheck
+ 
+ # === Definitions added by makesetup ===
+ 
+@@ -447,22 +447,31 @@
+ 	$(MAKE) profile-removal
  
  build_all_generate_profile:
--	$(MAKE) all CFLAGS="$(CFLAGS) -fprofile-generate" LIBS="$(LIBS) -lgcov"
+-	$(MAKE) all CFLAGS="$(CFLAGS) $(PGO_PROF_GEN_FLAG)" LDFLAGS="$(LDFLAGS) $(PGO_PROF_GEN_FLAG)" LIBS="$(LIBS)"
 +	$(MAKE) all CC="$(CC) -xprofile=collect:$(XPROFILE_DIR)" \
 +	    CFLAGS="$(CFLAGS) -xprofile=collect:$(XPROFILE_DIR)" \
 +	    LDFLAGS="$(LDFLAGS) -xprofile=collect:$(XPROFILE_DIR)" \
@@ -28,11 +27,14 @@ compilation.  As it is Solaris-specific, it is not suitable for upstream.
  
  run_profile_task:
  	: # FIXME: can't run for a cross build
--	./$(BUILDPYTHON) $(PROFILE_TASK)
+-	$(LLVM_PROF_FILE) ./$(BUILDPYTHON) $(PROFILE_TASK) || true
 +	LD_LIBRARY_PATH=. ./$(BUILDPYTHON) $(PROFILE_TASK)
  
+ build_all_merge_profile:
+ 	$(LLVM_PROF_MERGER)
+ 
  build_all_use_profile:
--	$(MAKE) all CFLAGS="$(CFLAGS) -fprofile-use"
+-	$(MAKE) all CFLAGS="$(CFLAGS) $(PGO_PROF_USE_FLAG)"
 +	$(MAKE) all CC="$(CC) -xprofile=use:$(XPROFILE_DIR)" \
 +	    CFLAGS="$(CFLAGS) -xprofile=use:$(XPROFILE_DIR)" \
 +	    LDFLAGS="$(LDFLAGS) -xprofile=use:$(XPROFILE_DIR)" \
@@ -49,11 +51,12 @@ compilation.  As it is Solaris-specific, it is not suitable for upstream.
  
  
  # Build the interpreter
-@@ -1331,7 +1340,7 @@
- 	-rm -f Lib/lib2to3/*Grammar*.pickle
+@@ -1362,8 +1371,7 @@
+ 	-rm -rf build
  
  profile-removal:
 -	find . -name '*.gc??' -exec rm -f {} ';'
+-	find . -name '*.profclang?' -exec rm -f {} ';'
 +	find . -name '.profile' -exec rm -rf {} ';'
  
  clobber: clean profile-removal
