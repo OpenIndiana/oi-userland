@@ -1013,7 +1013,7 @@ new file mode 100755
 +
 --- Python-3.5.0a4/Lib/test/test_sys.py.~1~	2015-04-20 00:37:52.000000000 -0700
 +++ Python-3.5.0a4/Lib/test/test_sys.py	2015-04-20 12:38:22.235939749 -0700
-@@ -829,6 +829,7 @@
+@@ -868,6 +868,7 @@
          self.assertEqual(sys.getsizeof(True, -1), size('') + self.longdigit)
  
      def test_objecttypes(self):
@@ -1021,7 +1021,7 @@ new file mode 100755
          # check all types defined in Objects/
          size = test.support.calcobjsize
          vsize = test.support.calcvobjsize
-@@ -857,13 +858,17 @@
+@@ -896,13 +897,17 @@
              return inner
          check(get_cell().__closure__[0], size('P'))
          # code
@@ -1042,9 +1042,9 @@ new file mode 100755
          # complex
          check(complex(0,1), size('2d'))
          # method_descriptor (descriptor object)
---- Python-3.5.0rc2/Makefile.pre.in.~1~	2015-08-25 10:19:13.000000000 -0700
-+++ Python-3.5.0rc2/Makefile.pre.in	2015-09-02 11:27:31.510492090 -0700
-@@ -52,6 +52,13 @@
+--- Python-3.5.1rc1/Makefile.pre.in.~1~	2015-11-22 22:19:07.000000000 -0800
++++ Python-3.5.1rc1/Makefile.pre.in	2015-12-04 07:32:55.999196503 -0800
+@@ -57,6 +57,13 @@
  # Use this to make a link between python$(VERSION) and python in $(BINDIR)
  LN=		@LN@
  
@@ -1058,7 +1058,7 @@ new file mode 100755
  # Portable install script (configure doesn't always guess right)
  INSTALL=	@INSTALL@
  INSTALL_PROGRAM=@INSTALL_PROGRAM@
-@@ -596,7 +603,7 @@
+@@ -611,7 +618,7 @@
  	$(AR) $(ARFLAGS) $@ $(MODOBJS)
  	$(RANLIB) $@
  
@@ -1067,7 +1067,7 @@ new file mode 100755
  	if test $(INSTSONAME) != $(LDLIBRARY); then \
  		$(BLDSHARED) -Wl,-h$(INSTSONAME) -o $(INSTSONAME) $(LIBRARY_OBJS) $(MODLIBS) $(SHLIBS) $(LIBC) $(LIBM) $(LDLAST); \
  		$(LN) -f $(INSTSONAME) $@; \
-@@ -607,9 +614,8 @@
+@@ -622,9 +629,8 @@
  libpython3.so:	libpython$(LDVERSION).so
  	$(BLDSHARED) $(NO_AS_NEEDED) -o $@ -Wl,-h$@ $^
  
@@ -1079,7 +1079,7 @@ new file mode 100755
  
  libpython$(VERSION).sl: $(LIBRARY_OBJS)
  	$(LDSHARED) -o $@ $(LIBRARY_OBJS) $(MODLIBS) $(SHLIBS) $(LIBC) $(LIBM) $(LDLAST)
-@@ -714,12 +720,18 @@
+@@ -729,12 +735,18 @@
  		$(MODULE_OBJS) \
  		$(SIGNAL_OBJS) \
  		$(MODOBJS) \
@@ -1098,7 +1098,7 @@ new file mode 100755
  
  Modules/getpath.o: $(srcdir)/Modules/getpath.c Makefile
  	$(CC) -c $(PY_CORE_CFLAGS) -DPYTHONPATH='"$(PYTHONPATH)"' \
-@@ -853,6 +865,46 @@
+@@ -868,6 +880,46 @@
  Objects/typeslots.inc: $(srcdir)/Include/typeslots.h $(srcdir)/Objects/typeslots.py
  	$(PYTHON) $(srcdir)/Objects/typeslots.py < $(srcdir)/Include/typeslots.h > Objects/typeslots.inc
  
@@ -1145,7 +1145,7 @@ new file mode 100755
  ############################################################################
  # Header files
  
-@@ -1567,6 +1619,11 @@
+@@ -1582,6 +1634,11 @@
  	find build -name '*.py[co]' -exec rm -f {} ';' || true
  	-rm -f pybuilddir.txt
  	-rm -f Lib/lib2to3/*Grammar*.pickle
@@ -1155,9 +1155,9 @@ new file mode 100755
 +	rm -f Modules/gcmodule.o.ts_dtrace
 +	rm -f Objects/typeobject.o.ts_dtrace
  	-rm -f Programs/_testembed Programs/_freeze_importlib
+ 	-rm -rf build
  
- profile-removal:
-@@ -1598,6 +1655,11 @@
+@@ -1615,6 +1672,11 @@
  				     -o -name '*.orig' -o -name '*.rej' \
  				     -o -name '*.bak' ')' \
  				     -exec rm -f {} ';'
@@ -1619,7 +1619,7 @@ new file mode 100755
          switch (opcode) {
  
          /* BEWARE!
-@@ -3569,6 +3644,10 @@
+@@ -3573,6 +3648,10 @@
  
      /* pop frame */
  exit_eval_frame:
@@ -1630,7 +1630,7 @@ new file mode 100755
      Py_LeaveRecursiveCall();
      f->f_executing = 0;
      tstate->frame = f->f_back;
-@@ -4319,6 +4398,57 @@
+@@ -4323,6 +4402,57 @@
      return result;
  }
  
@@ -1688,7 +1688,7 @@ new file mode 100755
  PyObject *
  _PyEval_CallTracing(PyObject *func, PyObject *args)
  {
-@@ -4336,6 +4466,51 @@
+@@ -4340,6 +4470,51 @@
      return result;
  }
  
@@ -1754,7 +1754,7 @@ new file mode 100755
  THREADOBJ
  LDLAST
  USE_THREAD_MODULE
-@@ -818,6 +823,7 @@
+@@ -824,6 +829,7 @@
  with_tsc
  with_pymalloc
  with_valgrind
@@ -1762,7 +1762,7 @@ new file mode 100755
  with_fpectl
  with_libm
  with_libc
-@@ -1506,6 +1512,7 @@
+@@ -1512,6 +1518,7 @@
    --with(out)-tsc         enable/disable timestamp counter profile
    --with(out)-pymalloc    disable/enable specialized mallocs
    --with-valgrind         Enable Valgrind support
@@ -1770,7 +1770,7 @@ new file mode 100755
    --with-fpectl           enable SIGFPE catching
    --with-libm=STRING      math library
    --with-libc=STRING      C library
-@@ -10786,6 +10793,174 @@
+@@ -10866,6 +10873,174 @@
      OPT="-DDYNAMIC_ANNOTATIONS_ENABLED=1 $OPT"
  fi
  
@@ -1947,7 +1947,7 @@ new file mode 100755
  DLINCLDIR=.
 --- Python-3.5.0a4/configure.ac.~1~	2015-04-20 00:37:53.000000000 -0700
 +++ Python-3.5.0a4/configure.ac	2015-04-20 12:59:58.383305870 -0700
-@@ -3086,6 +3086,62 @@
+@@ -3129,6 +3129,62 @@
      OPT="-DDYNAMIC_ANNOTATIONS_ENABLED=1 $OPT"
  fi
  
@@ -2012,7 +2012,7 @@ new file mode 100755
  DLINCLDIR=.
 --- Python-3.5.0a4/pyconfig.h.in.~1~	2015-04-20 00:37:53.000000000 -0700
 +++ Python-3.5.0a4/pyconfig.h.in	2015-04-20 13:00:52.054987861 -0700
-@@ -1355,6 +1355,9 @@
+@@ -1358,6 +1358,9 @@
  /* Define if you want documentation strings in extension modules */
  #undef WITH_DOC_STRINGS
  
