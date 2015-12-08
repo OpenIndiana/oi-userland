@@ -23,7 +23,7 @@ COMPONENT_SUMMARY=	Apache OpenOffice Suite
 COMPONENT_SRC=		aoo-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	apache-openoffice-$(COMPONENT_VERSION)-r1617669-src.tar.bz2
 COMPONENT_ARCHIVE_HASH=	sha256:bb89a6d2324ddfe4c475e5484fde0dea316078f6b8ff4d8a4ebc801d17f3ff9f
-COMPONENT_ARCHIVE_URL=	http://mirrors.koehn.com/apache/openoffice/$(COMPONENT_VERSION)/source/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	https://archive.apache.org/dist/openoffice/$(COMPONENT_VERSION)/source/$(COMPONENT_ARCHIVE)
 
 COMPONENT_ARCHIVE_1=0168229624cfac409e766913506961a8-ucpp-1.3.2.tar.gz
 COMPONENT_ARCHIVE_HASH_1=md5:0168229624cfac409e766913506961a8
@@ -107,11 +107,11 @@ COMPONENT_ARCHIVE_URL_20=http://archive.apache.org/dist/tomcat/tomcat-5/v5.5.36/
 
 COMPONENT_ARCHIVE_21=80143f96b3f6ce45d2e4947da21a5e9-stax-src-1.2.0.zip
 COMPONENT_ARCHIVE_HASH_21=md5:980143f96b3f6ce45d2e4947da21a5e9
-COMPONENT_ARCHIVE_URL_21=http://dist.codehaus.org/stax/distributions/stax-src-1.2.0.zip
+COMPONENT_ARCHIVE_URL_21=http://distfiles.gentoo.org/distfiles/stax-src-1.2.0.zip
 
 COMPONENT_ARCHIVE_22=99d94103662a8d0b571e247a77432ac5-rhino1_7R3.zip
 COMPONENT_ARCHIVE_HASH_22=md5:99d94103662a8d0b571e247a77432ac5
-COMPONENT_ARCHIVE_URL_22=ftp://ftp.mozilla.org/pub/mozilla.org/js/rhino1_7R3.zip
+COMPONENT_ARCHIVE_URL_22=http://ftp.mozilla.org/pub/mozilla.org/js/rhino1_7R3.zip
 
 COMPONENT_ARCHIVE_23=ada24d37d8d638b3d8a9985e80bc2978-source-9.0.0.7-bj.zip
 COMPONENT_ARCHIVE_HASH_23=md5:ada24d37d8d638b3d8a9985e80bc2978
