@@ -24,8 +24,8 @@ COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
   sha256:594b70825a2c24863afd7b8dd2a5bc1935807118c6726e1d98396dee44d060f4
 COMPONENT_ARCHIVE_URL= \
-  http://download.sourceforge.net/project/tigervnc/tigervnc/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.tigervnc.com/
+  ftp://tux.rainside.sk/gentoo/distfiles/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL = http://tigervnc.org/
 COMPONENT_LICENSE_FILE= LICENCE.TXT
 COMPONENT_LICENSE= GPLv2
 
