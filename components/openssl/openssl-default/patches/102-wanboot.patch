@@ -119,7 +119,7 @@
  
  void CRYPTO_set_locking_callback(void (*func) (int mode, int type,
 @@ -1104,6 +1120,12 @@
-         MessageBox(NULL, buf, _T("OpenSSL: FATAL"), MB_OK | MB_ICONSTOP);
+         MessageBox(NULL, buf, _T("OpenSSL: FATAL"), MB_OK | MB_ICONERROR);
  }
  #else
 +/*
@@ -658,15 +658,15 @@
  }
 +#endif /*!_BOOT*/
  
- int ssl_parse_clienthello_tlsext(SSL *s, unsigned char **p, unsigned char *d,
-                                  int n)
+ int ssl_parse_clienthello_tlsext(SSL *s, unsigned char **p,
+                                  unsigned char *limit)
 @@ -2486,11 +2492,13 @@
          return 0;
      }
  
 +#ifndef	_BOOT
      custom_ext_init(&s->cert->srv_ext);
-     if (ssl_scan_clienthello_custom_tlsext(s, ptmp, d + n, &al) <= 0) {
+     if (ssl_scan_clienthello_custom_tlsext(s, ptmp, limit, &al) <= 0) {
          ssl3_send_alert(s, SSL3_AL_FATAL, al);
          return 0;
      }
