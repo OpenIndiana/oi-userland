@@ -28,11 +28,11 @@ include ../../make-rules/shared-macros.mk
 COMPONENT_NAME=		rtorrent
 COMPONENT_VERSION=	0.9.4
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://libtorrent.rakshasa.no/
+COMPONENT_PROJECT_URL=	https://rakshasa.github.io/rtorrent/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:bc0a2c1ee613b68f37021beaf4e64a9252f91ed06f998c1e897897c354ce7e84
-COMPONENT_ARCHIVE_URL=	http://libtorrent.rakshasa.no/downloads/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	http://rtorrent.net/downloads/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/rtorrent
 
 include ../../make-rules/prep.mk
