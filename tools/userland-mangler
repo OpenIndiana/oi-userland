@@ -19,7 +19,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 #
 # userland-mangler - a file mangling utility
@@ -291,16 +291,28 @@ def mangle_manifest(manifest):
 			manifest.actions.remove(action)
 
 	# Check for pkg.obsolete and if found, remove any depend actions.
+	# Also remove any require dependency on the release/evalauation
+	# package for renamed packages.
 	manifest_is_obsolete = False
+	manifest_is_renamed = False
 
 	for action in manifest.gen_actions_by_type("set"):
 		if (action.attrs["name"] == "pkg.obsolete" and
 		    action.attrs["value"] == "true"):
 			manifest_is_obsolete = True
+		if (action.attrs["name"] == "pkg.renamed" and
+		    action.attrs["value"] == "true"):
+			manifest_is_renamed = True
 
 	if manifest_is_obsolete:
 		for action in manifest.gen_actions_by_type("depend"):
 			manifest.actions.remove(action)
+
+	if manifest_is_renamed:
+		for action in manifest.gen_actions_by_type("depend"):
+			if (action.attrs["type"] == "require" and
+			    action.attrs["fmri"] == "release/evaluation"):
+				manifest.actions.remove(action)
 
 def load_manifest(manifest_file):
 	manifest = pkg.manifest.Manifest()
