@@ -25,7 +25,7 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:9ba10a5b3dcdd02b81c7a138dac15903a6bc2355856f60338f3775e371472b73
-COMPONENT_ARCHIVE_URL=	http://stardict-3.googlecode.com/files/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	ftp://tux.rainside.sk/gentoo/distfiles/$(COMPONENT_ARCHIVE)
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk

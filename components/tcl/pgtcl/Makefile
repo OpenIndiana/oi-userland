@@ -21,11 +21,11 @@ COMPONENT_VERSION= 	1.9
 COMPONENT_SUMMARY= 	A Tcl client library for PostgreSQL
 COMPONENT_SRC= 		Pgtcl-$(PGTCL_COMMIT)
 PGTCL_COMMIT=		3b2b2f8e35ec3ae65d2fc295e6a6ce7afbd5e26d
-COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).zip
+COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:5c1c81a2b3874a63c7a5b25c07f2d2e562575366e803b6338262c4730696840d
+  sha256:841805001cd76bb690d75b45490bbd2be1441dd2912fcd33f11170dd0c0b043a
 COMPONENT_ARCHIVE_URL= \
-  https://github.com/flightaware/Pgtcl/archive/$(PGTCL_COMMIT).zip
+  https://github.com/flightaware/Pgtcl/archive/$(PGTCL_COMMIT).tar.gz
 COMPONENT_PROJECT_URL = http://flightaware.github.io/Pgtcl/
 
 # Don't depend on host default pg_config
