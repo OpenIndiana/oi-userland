@@ -491,8 +491,8 @@ CXX =		$(CXX.$(COMPILER).$(BITS))
 
 RUBY_VERSION =	1.9
 RUBY_LIB_VERSION =	1.9.1
-RUBY.1.8 =	/usr/ruby/1.8/bin/ruby
 RUBY.1.9 =	/usr/ruby/1.9/bin/ruby
+RUBY.2.1 =	/usr/ruby/2.1/bin/ruby
 RUBY =		$(RUBY.$(RUBY_VERSION))
 # Use the ruby lib versions to represent the RUBY_VERSIONS that
 # need to get built.  This is done because during package transformations
