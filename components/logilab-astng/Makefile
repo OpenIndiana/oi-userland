@@ -32,7 +32,7 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:2d9413fa338ccf8b3f4b86520b385e9d35e848117dc7602b3994972a3163647f
-COMPONENT_ARCHIVE_URL=	http://download.logilab.org/pub/astng/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	http://pkgs.fedoraproject.org/repo/pkgs/python-logilab-astng/$(COMPONENT_ARCHIVE)/9383047bfe2be4405af491fbe5c7f1c6/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/logilab-astng
 
 include ../../make-rules/prep.mk
