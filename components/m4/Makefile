@@ -26,16 +26,16 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		m4
-COMPONENT_VERSION=	1.4.12
+COMPONENT_VERSION=	1.4.17
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/m4/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:47e8f9a33ba06fa6710b42d6f6ded41f45027f6f4039b0a3ed887c5116bc2173
+    sha256:f0543c3beb51fa6b3337d8025331591e0e18d8ec2886ed391f1aade43477d508
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/m4/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gnu-m4
 
-TPNO=			16962
+TPNO=			25279
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -45,17 +45,19 @@ CONFIGURE_PREFIX =	/usr/gnu
 CONFIGURE_OPTIONS  +=	--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
 
-# The additional m4 specific set of transforms to be applied to the
-# test results to try to normalize them.
-COMPONENT_TEST_TRANSFORMS += \
-	'-e "s|^.*$(CC).*$$|XXX_CC_XXX|g" ' \
-	'-e "s|^.*source=.*libtool=no.*$$|XXX_CC_XXX|g" ' \
-	'-e "s|^.*DEPDIR=.deps.*$$|XXX_CC_XXX|g" ' \
-	'-e "/^XXX_CC_XXX$$/d" '
+# test failures; keep going
+COMPONENT_TEST_ARGS += -k -i
+
+# Keep only test results
+COMPONENT_TEST_TRANSFORMS += '-n' \
+	'-e /TOTAL/p' \
+	'-e /PASS/p'  \
+	'-e /SKIP/p'  \
+	'-e /FAIL/p'  \
+	'-e /ERROR/p'
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-# common targets
 configure:	$(CONFIGURE_64)
 
 build:		$(BUILD_64)
