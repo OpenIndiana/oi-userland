@@ -48,7 +48,7 @@ COMPONENT_ARCHIVE_URL_2= http://archive.apache.org/dist/commons/pool/source/$(CO
 COMPONENT_ARCHIVE_3= ecj-4.3.1.jar
 COMPONENT_ARCHIVE_HASH_3= \
     sha256:5f86314f67dc57a0a9865265a48fd7831f16ab177c0c1349eea798c2c6297295
-COMPONENT_ARCHIVE_URL_3= http://download.eclipse.org/eclipse/downloads/drops4/R-4.3.1-201309111000/$(COMPONENT_ARCHIVE_3)
+COMPONENT_ARCHIVE_URL_3= http://www.eclipse.org/downloads/download.php?file=/eclipse/downloads/drops4/R-4.3.1-201309111000/$(COMPONENT_ARCHIVE_3)
 include ../../make-rules/prep.mk
 include ../../make-rules/ant.mk
 include ../../make-rules/ips.mk

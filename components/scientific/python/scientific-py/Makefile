@@ -26,7 +26,7 @@ COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
   sha256:4de6c8d1b28526d0f2db02f30e99a28a8340ee4cc06fa0a5c0d4b20096806908
 COMPONENT_ARCHIVE_URL= \
-  https://sourcesup.renater.fr/frs/download.php/2309/$(COMPONENT_ARCHIVE)/download
+  https://sourcesup.renater.fr/frs/download.php/file/2309/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	CeCILL-C
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_SUMMARY= 	Python modules for scientific computing
