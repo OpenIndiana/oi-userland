@@ -19,12 +19,12 @@ COMPONENT_NAME= 	pg_repack
 COMPONENT_VERSION= 	1.1.8
 COMPONENT_SUMMARY= 	pg_repack - utility to reorganize PostgreSQL tables on-line
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_COMMIT)
-COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).zip
+COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
 COMPONENT_COMMIT=       7487a775d5e95f26bbdd6c555b927dc19211de53
 COMPONENT_ARCHIVE_HASH= \
-  sha256:64a67d41db74f3a9152e4bab09845fdbec8d0f03c3fcc0292dbe4426f1420daa
+  sha256:1445733482d10f361023c74583e37710cce6c85a91af4dfc44fec92eef88880a
 COMPONENT_ARCHIVE_URL= \
-  https://github.com/reorg/pg_repack/archive/$(COMPONENT_COMMIT).zip
+  https://github.com/reorg/pg_repack/archive/$(COMPONENT_COMMIT).tar.gz
 COMPONENT_PROJECT_URL = http://reorg.github.io/pg_repack/
 
 PG_VERSION=	9.3
