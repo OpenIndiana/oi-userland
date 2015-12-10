@@ -34,7 +34,7 @@ include $(WS_TOP)/make-rules/ips.mk
 PATH=/usr/mariadb/5.5/bin:/usr/gnu/bin:/usr/bin
 
 COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
-                                        autoreconf  -f )
+                                        autoreconf  -f -i )
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--enable-deprecations
