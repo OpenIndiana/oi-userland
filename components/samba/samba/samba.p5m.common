@@ -55,27 +55,18 @@
 #<transform file path=usr/lib/samba/vfs/samfs.so -> default pkg.depend.bypass-generate .*>
 #<transform file path=usr/lib/samba/vfs/samfs.so -> default pkg.linted.userland.action001.3 true>
 
-# mediated links macros to switch between Samba 3 and 4
-<transform link target=.*/lib/samba/samba36/(s)?bin/.+ -> default mediator samba >
-<transform link target=.*/lib/samba/samba36/(s)?bin/.+ -> default mediator-implementation 3 >
-<transform link target=.*/lib/samba/samba36/(s)?bin/.+ -> default mediator-priority vendor >
-
-<transform link target=.*/samba/samba36/lib/($(MACH64)/)?nss_.+\.so -> default mediator samba >
-<transform link target=.*/samba/samba36/lib/($(MACH64)/)?nss_.+\.so -> default mediator-implementation 3 >
-<transform link target=.*/samba/samba36/lib/($(MACH64)/)?nss_.+\.so -> default mediator-priority vendor >
-
-<transform link target=.*/samba/samba36/lib/($(MACH64)/)?security/pam_.+\.so -> default mediator samba >
-<transform link target=.*/samba/samba36/lib/($(MACH64)/)?security/pam_.+\.so -> default mediator-implementation 3 >
-<transform link target=.*/samba/samba36/lib/($(MACH64)/)?security/pam_.+\.so -> default mediator-priority vendor >
-
+# mediated links macros to switch between Samba 4 and and possibly any forked release
 <transform link target=.*/lib/samba/(s)?bin/.+ -> default mediator samba >
 <transform link target=.*/lib/samba/(s)?bin/.+ -> default mediator-implementation 4 >
+<transform link target=.*/lib/samba/(s)?bin/.+ -> default mediator-priority vendor >
 
 <transform link target=.*/samba/($(MACH64)/)?nss_.+\.so.* -> default mediator samba >
 <transform link target=.*/samba/($(MACH64)/)?nss_.+\.so.* -> default mediator-implementation 4 >
+<transform link target=.*/samba/($(MACH64)/)?nss_.+\.so.* -> default mediator-priority vendor >
 
 <transform link target=.*/samba/security/($(MACH64)/)?pam_.+\.so -> default mediator samba >
 <transform link target=.*/samba/security/($(MACH64)/)?pam_.+\.so -> default mediator-implementation 4 >
+<transform link target=.*/samba/security/($(MACH64)/)?pam_.+\.so -> default mediator-priority vendor >
 
 # SMF services import (for .xml manifests)
 <transform file path=lib/svc/manifest/.+\.xml -> default restart_fmri svc:/system/manifest-import:default >
