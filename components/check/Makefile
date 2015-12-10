@@ -46,6 +46,16 @@ COMPILER =      gcc
 
 CC +=		$(CC_BITS)
 
+# Override tests in m4/acx_pthread.m4 that try to set obsolete/incompatible
+# flags for linking threaded code on Solaris.
+PTHREAD_CFLAGS = -D__EXTENSIONS__
+ifeq ($(BUILD_TYPE), evaluation)
+# No longer needed on S12 due to PSARC/2014/019, but still needed on S11
+PTHREAD_CFLAGS += -D_POSIX_PTHREAD_SEMANTICS
+endif
+CONFIGURE_OPTIONS += PTHREAD_CFLAGS="$(PTHREAD_CFLAGS)"
+CONFIGURE_OPTIONS += PTHREAD_LIBS="-lc"
+
 # Master test results are the same for 32-bit and 64-bit, so override
 # here, rather than create multiple identical master files.
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
