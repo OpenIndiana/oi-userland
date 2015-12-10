@@ -441,47 +441,46 @@ class STMFDriver(ZFSVolumeDriver):
                 time.sleep(tries ** 2)
 
     def _check_target(self, target, protocol):
-        """Verify if the target exists."""
-        (out, _err) = self._execute('/usr/sbin/stmfadm', 'list-target')
-
-        for line in [l.strip() for l in out.splitlines()]:
-            if line.startswith("Target:"):
-                if target == line.split()[-1]:
+        """Verify the target and check its status."""
+        try:
+            (out, _err) = self._execute('/usr/sbin/stmfadm', 'list-target',
+                                        '-v', target)
+            tmp_protocol = None
+            status = None
+            for line in [l.strip() for l in out.splitlines()]:
+                if line.startswith("Operational"):
+                    status = line.split()[-1]
+                if line.startswith("Protocol"):
+                    tmp_protocol = line.split()[-1]
                     break
-        else:
-            LOG.debug(_("The target '%s' doesn't exist") % target)
-            return False
-
-        # Verify if the target protocol is iSCSI.
-        (out, _err) = self._execute('/usr/sbin/stmfadm', 'list-target',
-                                    '-v', target)
-
-        for line in [l.strip() for l in out.splitlines()]:
-            if line.startswith("Target:"):
-                tmp_target = line.split()[-1]
-            if line.startswith("Operational"):
-                status = line.split()[-1]
-            if line.startswith("Protocol"):
-                tmp_protocol = line.split()[-1]
-                break
-
-        return (tmp_target == target and status == 'Online' and
-                tmp_protocol == protocol)
+            if tmp_protocol == protocol:
+                return status
+            else:
+                err_msg = (_("'%s' does not match the listed protocol '%s'"
+                             " for target '%s'.")
+                           % (protocol, tmp_protocol, target))
+        except processutils.ProcessExecutionError as error:
+            if 'not found' in error.stderr:
+                LOG.debug(_("The target '%s' is not found.") % target)
+                return None
+            else:
+                err_msg = (_("Failed to list the target '%s': '%s'")
+                           % (target, error.stderr))
+        raise exception.VolumeBackendAPIException(data=err_msg)
 
     def _check_tg(self, tg):
         """Check if the target group exists."""
-        (out, _err) = self._execute('/usr/sbin/stmfadm', 'list-tg')
-        found = False
-
-        for line in [l.strip() for l in out.splitlines()]:
-            if line.startswith("Target"):
-                if tg == line.split()[-1]:
-                    found = True
-                    break
-        else:
-            LOG.debug(_("The target group '%s' doesn't exist") % tg)
-
-        return found
+        try:
+            self._execute('/usr/sbin/stmfadm', 'list-tg', tg)
+            return True
+        except processutils.ProcessExecutionError as error:
+            if 'not found' in error.stderr:
+                LOG.debug(_("The target group '%s' is not found.") % tg)
+                return False
+            else:
+                err_msg = (_("Failed to list the target group '%s': '%s'")
+                           % (tg, error.stderr))
+            raise exception.VolumeBackendAPIException(data=err_msg)
 
     def _get_luid(self, volume):
         """Get the LU corresponding to the volume."""
@@ -556,20 +555,23 @@ class ZFSISCSIDriver(STMFDriver, driver.ISCSIDriver):
 
         if not self._check_tg(target_group):
             self._stmf_execute('/usr/sbin/stmfadm', 'create-tg', target_group)
-        if self._check_target(target_name, 'iSCSI'):
+        target_status = self._check_target(target_name, 'iSCSI')
+        if target_status == 'Online':
             return
 
-        # Create and add the target into the target group
-        self._stmf_execute('/usr/sbin/itadm', 'create-target', '-n',
-                           target_name)
-        self._stmf_execute('/usr/sbin/stmfadm', 'offline-target',
-                           target_name)
-        self._stmf_execute('/usr/sbin/stmfadm', 'add-tg-member', '-g',
-                           target_group, target_name)
+        if target_status is None:
+            # Create and add the target into the target group
+            self._stmf_execute('/usr/sbin/itadm', 'create-target', '-n',
+                               target_name)
+            self._stmf_execute('/usr/sbin/stmfadm', 'offline-target',
+                               target_name)
+            self._stmf_execute('/usr/sbin/stmfadm', 'add-tg-member', '-g',
+                               target_group, target_name)
+
+        # Online the target from the 'Offline' status
         self._stmf_execute('/usr/sbin/stmfadm', 'online-target',
                            target_name)
-
-        assert self._check_target(target_name, 'iSCSI')
+        assert self._check_target(target_name, 'iSCSI') == 'Online'
 
     def create_export(self, context, volume):
         """Export the volume."""
@@ -618,7 +620,7 @@ class ZFSISCSIDriver(STMFDriver, driver.ISCSIDriver):
         target_name = '%s%s' % (self.configuration.iscsi_target_prefix,
                                 volume['name'])
 
-        if self._check_target(target_name, 'iSCSI'):
+        if self._check_target(target_name, 'iSCSI') is not None:
             self._stmf_execute('/usr/sbin/itadm', 'delete-target', '-f',
                                target_name)
 
@@ -650,7 +652,7 @@ class ZFSISCSIDriver(STMFDriver, driver.ISCSIDriver):
 
         target_name = '%s%s' % (self.configuration.iscsi_target_prefix,
                                 volume['name'])
-        if not self._check_target(target_name, 'iSCSI'):
+        if self._check_target(target_name, 'iSCSI') is None:
             target_name = '%s%s-%s-target' % \
                           (self.configuration.iscsi_target_prefix,
                            self.hostname,
@@ -871,7 +873,7 @@ class ZFSFCDriver(STMFDriver, driver.FibreChannelDriver):
 
             # Remove the target group when only one LU exists.
             if self._only_lu(luid):
-                if self._check_target(target_wwn, 'Channel'):
+                if self._check_target(target_wwn, 'Channel') == 'Online':
                     self._stmf_execute('/usr/sbin/stmfadm', 'offline-target',
                                        target_wwn)
                 if self._check_tg(target_group):
