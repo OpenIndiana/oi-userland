@@ -21,8 +21,6 @@
 # Copyright (c) 2015, Aurelien Larcher. All rights reserved.
 #
 
-include $(WS_MAKE_RULES)/shared-macros.mk
-
 MODULES_ENV=	. /etc/profile.d/modules.sh
 
 MODULE_LOAD=	module load
