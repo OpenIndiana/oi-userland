@@ -26,9 +26,9 @@ COMPONENT_NAME=		memcached
 COMPONENT_VERSION=	2.1.1
 MEMCACHED_COMMIT=	37069e18ad399a8cc03d5fe9757e1481814ecb44
 COMPONENT_SRC=		php-memcached-$(MEMCACHED_COMMIT)
-COMPONENT_ARCHIVE=	php-memcached-libmemcached-$(MEMCACHED_COMMIT).zip
-COMPONENT_ARCHIVE_HASH=	sha256:716271f233b21aaec1a00b65982667f4a52c69c84659a953a93d2ebd374860af
-COMPONENT_ARCHIVE_URL=	https://github.com/paravoid/php-memcached/archive/$(MEMCACHED_COMMIT).zip
+COMPONENT_ARCHIVE=	php-memcached-libmemcached-$(MEMCACHED_COMMIT).tar.gz
+COMPONENT_ARCHIVE_HASH=	sha256:0292011ed3ad06aae83c7bf7003b98b60ae456a68fec332c139b048b2ed6c766
+COMPONENT_ARCHIVE_URL=	https://github.com/paravoid/php-memcached/archive/$(MEMCACHED_COMMIT).tar.gz
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

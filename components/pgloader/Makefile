@@ -19,12 +19,12 @@ COMPONENT_NAME= 	pgloader
 COMPONENT_VERSION= 	2.3.1
 COMPONENT_SUMMARY= 	pgBouncer connection pooler
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_COMMIT)
-COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).zip
+COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
 COMPONENT_COMMIT=	c603221ae0948d02580e6fcfddfa90f3e6d2e6b0
 COMPONENT_ARCHIVE_HASH= \
-  sha256:acc852c9f616ca4e5e9add3a12691fc55847ef16fcf47065d13e495927f11385
+  sha256:31f1ca8a365a8fb4b2e03e688f3e416d8cacd482f19f1bc8d9a8c212d3a63f72
 COMPONENT_ARCHIVE_URL= \
-  https://github.com/dimitri/pgloader/archive/$(COMPONENT_COMMIT).zip
+  https://github.com/dimitri/pgloader/archive/$(COMPONENT_COMMIT).tar.gz
 COMPONENT_PROJECT_URL = http://tapoueh.org/pgsql/pgloader.html
 
 # Don't depend on host default pg_config
