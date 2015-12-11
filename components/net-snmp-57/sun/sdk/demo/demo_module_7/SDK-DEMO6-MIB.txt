@@ -1,0 +1,88 @@
+--
+-- Copyright (c) 2003, 2011, Oracle and/or its affiliates. All rights reserved.
+--
+-- U.S. Government Rights - Commercial software. Government users are subject to
+-- the Sun Microsystems, Inc. standard license agreement and applicable
+-- provisions of the FAR and its supplements.
+--
+--
+-- This distribution may include materials developed by third parties. Sun, Sun
+-- Microsystems, the Sun logo and Solaris are trademarks or registered
+-- trademarks of Sun Microsystems, Inc. in the U.S. and other countries.
+--
+--
+
+------------------------------------------------------------------------
+-- Systems Management Agent (SMA) SDK module DEMO-6 MIB
+------------------------------------------------------------------------
+SDK-DEMO6-MIB DEFINITIONS ::= BEGIN
+
+  IMPORTS
+        enterprises, MODULE-IDENTITY, OBJECT-TYPE, Counter64, Integer32, Unsigned32
+                FROM SNMPv2-SMI
+         OBJECT-GROUP
+                FROM SNMPv2-CONF
+         DisplayString
+               FROM SNMPv2-TC;
+
+sdkDemo6MIB MODULE-IDENTITY
+    LAST-UPDATED "0009181435Z"
+    ORGANIZATION "Sun Microsystems Inc."
+    CONTACT-INFO
+        " Sun Microsystems Inc
+          4150 Network Circle
+          Santa Clara, CA 95054
+          e-mail: service@sun.com"
+    DESCRIPTION
+	" SMA SDK MIB DEMO-6. This MIB will be used to demonstrate the
+	  implementation of modules and various module features in SMA agent."
+    ::= { demo 6 }
+
+sun          OBJECT IDENTIFIER ::= { enterprises 42 }
+products     OBJECT IDENTIFIER ::= { sun 2 }
+management   OBJECT IDENTIFIER ::= { products 2 }
+sma          OBJECT IDENTIFIER ::= { management 4 }
+demo         OBJECT IDENTIFIER ::= { sma 4 }
+
+--
+-- The "File" group contains information about some files on the system
+-- The "Multi-instance" group contains information about filesize for
+-- using SNMPv3 context strings.
+--
+ 
+me1MultiGroup OBJECT-GROUP
+        OBJECTS { me1FileSize, me1createContext, me1removeContext }
+        STATUS current
+        DESCRIPTION
+        "Multi-instance file related statistics."
+        ::= { sdkDemo6MIB 1 }
+  
+-- 
+-- Properties in the "Multi" group
+--
+
+me1FileSize OBJECT-TYPE
+    SYNTAX      Integer32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+                "Size of file in Kb."
+    ::= { me1MultiGroup 1 }
+    
+me1createContext OBJECT-TYPE
+    SYNTAX      OCTET STRING (SIZE(0..1024))
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+                "String which when set, registers a context."
+    ::= { me1MultiGroup 2 }
+    
+me1removeContext OBJECT-TYPE
+    SYNTAX      OCTET STRING (SIZE(0..1024))
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+                "String which when set, unregisters a context."
+    ::= { me1MultiGroup 3 }
+
+END

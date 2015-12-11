@@ -1,0 +1,384 @@
+--
+-- Copyright (c) 2003, 2011, Oracle and/or its affiliates. All rights reserved.
+--
+-- U.S. Government Rights - Commercial software. Government users are subject to
+-- the Sun Microsystems, Inc. standard license agreement and applicable
+-- provisions of the FAR and its supplements.
+--
+--
+-- This distribution may include materials developed by third parties. Sun, Sun
+-- Microsystems, the Sun logo and Solaris are trademarks or registered
+-- trademarks of Sun Microsystems, Inc. in the U.S. and other countries.
+--
+--
+
+----------------------------------------------------
+-- Systems Management Agent (SMA) SEA Extensions MIB
+----------------------------------------------------
+
+SUN-SEA-EXTENSIONS-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    enterprises, mgmt, NetworkAddress, IpAddress, Counter, Gauge, TimeTicks 
+        FROM RFC1155-SMI
+    DisplayString
+        FROM SNMPv2-TC
+    sunMIB
+        FROM SUN-MIB;
+
+sunSeaExtensionsMIB MODULE-IDENTITY
+    LAST-UPDATED "200309180000Z"
+    ORGANIZATION "Sun Microsystems, Inc."
+    CONTACT-INFO "Customer support"
+    DESCRIPTION
+            "The MIB that describes the sun-specific extensions to mib-2
+            "
+    ::= { sunMIB 3 }
+
+
+--  **********************************************************************
+--  SUN EXTENSIONS
+--  **********************************************************************
+
+	sunSystem	OBJECT IDENTIFIER ::= { sunSeaExtensionsMIB 1 }
+	sunInterfaces	OBJECT IDENTIFIER ::= { sunSeaExtensionsMIB 2 }
+	sunAt		OBJECT IDENTIFIER ::= { sunSeaExtensionsMIB 3 }
+	sunIp		OBJECT IDENTIFIER ::= { sunSeaExtensionsMIB 4 }
+	sunIcmp		OBJECT IDENTIFIER ::= { sunSeaExtensionsMIB 5 }
+	sunTcp		OBJECT IDENTIFIER ::= { sunSeaExtensionsMIB 6 }
+	sunUdp		OBJECT IDENTIFIER ::= { sunSeaExtensionsMIB 7 }
+	sunSnmp		OBJECT IDENTIFIER ::= { sunSeaExtensionsMIB 11 }
+	sunProcesses	OBJECT IDENTIFIER ::= { sunSeaExtensionsMIB 12 }
+	sunHostPerf	OBJECT IDENTIFIER ::= { sunSeaExtensionsMIB 13 }
+
+--  **********************************************************************
+--  SUN SYSTEM GROUP
+--  **********************************************************************
+
+	agentDescr	OBJECT-TYPE
+		SYNTAX	DisplayString (SIZE (0..255))
+		ACCESS	read-only
+		STATUS	mandatory
+		DESCRIPTION
+			"The SNMP agent's description of itself."
+		::= { sunSystem 1 }
+
+	hostID	OBJECT-TYPE
+		SYNTAX  OCTET STRING (SIZE (4))
+		ACCESS  read-only
+		STATUS	mandatory
+		DESCRIPTION
+			"The unique Sun hardware identifier.
+			The value returned is four byte binary
+			string."
+		::= { sunSystem 2 }
+
+	motd	OBJECT-TYPE
+		SYNTAX	DisplayString (SIZE (0..255))
+		ACCESS  read-only
+		STATUS	mandatory
+		DESCRIPTION
+			"The first line of /etc/motd."
+		::= { sunSystem 3 }
+
+	unixTime OBJECT-TYPE
+		SYNTAX  Counter
+		ACCESS  read-only
+		STATUS  mandatory
+		DESCRIPTION
+			"The Unix system time.  Measured in seconds
+			since January 1, 1970 GMT."
+		::= { sunSystem 4 }
+
+-- the Sun Processes group
+-- the Sun Process table table
+-- This table is lists all the processes currently
+-- in execution.
+
+	sunProcessTable OBJECT-TYPE
+		SYNTAX  SEQUENCE OF PsEntry
+		ACCESS  read-only
+		STATUS  mandatory
+		::= { sunProcesses 1 }
+
+	psEntry OBJECT-TYPE
+		SYNTAX  PsEntry
+		ACCESS  read-only
+		STATUS  mandatory
+		INDEX   { psProcessID }
+		::= { sunProcessTable 1 }
+		PsEntry ::= SEQUENCE {
+		psProcessID
+		INTEGER,
+		psParentProcessID
+		INTEGER,
+		psProcessSize
+		INTEGER,
+		psProcessCpuTime
+		INTEGER,
+		psProcessState
+		DisplayString,
+		psProcessWaitChannel
+		DisplayString,
+		psProcessTTY
+		DisplayString,
+		psProcessUserName
+		DisplayString,
+		psProcessUserID
+		INTEGER,
+		psProcessName
+		DisplayString,
+		psProcessStatus
+		INTEGER
+		}
+
+	psProcessID OBJECT-TYPE
+		SYNTAX  INTEGER
+		ACCESS  read-only
+		STATUS  mandatory
+		DESCRIPTION
+			"The process identifier for this process."
+		::= { psEntry 1 }
+
+	psParentProcessID OBJECT-TYPE
+		SYNTAX  INTEGER
+		ACCESS  read-only
+		STATUS  mandatory
+		DESCRIPTION
+			"The process identifier of this process's parent."
+		::= { psEntry 2 }
+
+	psProcessSize OBJECT-TYPE
+		SYNTAX  INTEGER
+		ACCESS  read-only
+		STATUS  mandatory
+		DESCRIPTION
+			"The combined size of the data and stack segments
+			(in kilobytes.)"
+		::= { psEntry 3 }
+
+	psProcessCpuTime OBJECT-TYPE
+		SYNTAX  INTEGER
+		ACCESS  read-only
+		STATUS  mandatory
+		DESCRIPTION
+			"The CPU time (including both user and system
+			time) consumed so far."
+		::= { psEntry 4 }
+
+	psProcessState OBJECT-TYPE
+		SYNTAX  DisplayString (SIZE (0..4))
+		ACCESS  read-only
+		STATUS  mandatory
+		DESCRIPTION
+			"The run-state of the process.
+			R - Runnable
+			T - Stopped
+			P - In page wait
+			D - Non-interruptable wait
+			S - Sleeping (less than 20 seconds)
+			I - Idle (more than 20 seconds)
+			Z - Zombie"
+		::= { psEntry 5 }
+
+	psProcessWaitChannel OBJECT-TYPE
+		SYNTAX  DisplayString (SIZE (0..16))
+		ACCESS  read-only
+		STATUS  mandatory
+		DESCRIPTION
+			"Reason process is waiting."
+		::= { psEntry 6 }
+
+	psProcessTTY OBJECT-TYPE
+		SYNTAX  DisplayString (SIZE (0..16))
+		ACCESS  read-only
+		STATUS  mandatory
+		DESCRIPTION
+			"Terminal, if any, controlling this process."
+		::= { psEntry 7 }
+
+	psProcessUserName OBJECT-TYPE
+		SYNTAX  DisplayString (SIZE (0..16))
+		ACCESS  read-only
+		STATUS  mandatory
+		DESCRIPTION
+			"Name of the user associated with this process."
+		::= { psEntry 8 }
+
+	psProcessUserID OBJECT-TYPE
+		SYNTAX  INTEGER
+		ACCESS  read-only
+		STATUS  mandatory
+		DESCRIPTION
+			"Numeric form of the name of the user associated
+			with this process."
+		::= { psEntry 9 }
+
+	psProcessName OBJECT-TYPE
+		SYNTAX  DisplayString (SIZE (0..64))
+		ACCESS  read-only
+		STATUS  mandatory
+		DESCRIPTION
+			"Command name used to invoke this process."
+		::= { psEntry 10 }
+
+	psProcessStatus OBJECT-TYPE
+		SYNTAX  INTEGER
+		ACCESS  read-write
+		STATUS  mandatory
+		DESCRIPTION
+			"Setting this variable will cause a signal
+			of the set value to be sent to the process."
+		::= { psEntry 11 }
+
+-- the Sun Hostperf group
+
+	rsUserProcessTime OBJECT-TYPE
+		SYNTAX  Counter
+		ACCESS  read-only
+		STATUS  mandatory
+		DESCRIPTION
+			"total number of timeticks used by user processes
+			since the system was last booted."
+		::=  { sunHostPerf 1 }
+
+	rsNiceModeTime OBJECT-TYPE
+		SYNTAX  Counter
+		ACCESS  read-only
+		STATUS  mandatory
+		DESCRIPTION
+			"total number of timeticks used by nice mode since
+			the system was last booted."
+		::=  { sunHostPerf 2 }
+
+	rsSystemProcessTime OBJECT-TYPE
+		SYNTAX  Counter
+		ACCESS  read-only
+		STATUS  mandatory
+		DESCRIPTION
+			"total number of timeticks used by system processes
+			since the system was last booted."
+		::=  { sunHostPerf 3 }
+
+	rsIdleModeTime OBJECT-TYPE
+		SYNTAX  Counter
+		ACCESS  read-only
+		STATUS  mandatory
+		DESCRIPTION
+			"total number of timeticks used in idle mode since
+			the system was last booted."
+		::=  { sunHostPerf 4 }
+
+	rsDiskXfer1 OBJECT-TYPE
+		SYNTAX  Counter
+		ACCESS  read-only
+		STATUS  mandatory
+		DESCRIPTION
+			""
+		::=  { sunHostPerf 5 }
+
+	rsDiskXfer2 OBJECT-TYPE
+		SYNTAX  Counter
+		ACCESS  read-only
+		STATUS  mandatory
+		DESCRIPTION
+			""
+		::=  { sunHostPerf 6 }
+
+	rsDiskXfer3 OBJECT-TYPE
+		SYNTAX  Counter
+		ACCESS  read-only
+		STATUS  mandatory
+		DESCRIPTION
+			""
+		::=  { sunHostPerf 7 }
+
+	rsDiskXfer4 OBJECT-TYPE
+		SYNTAX  Counter
+		ACCESS  read-only
+		STATUS  mandatory
+		DESCRIPTION
+			""
+		::=  { sunHostPerf 8 }
+
+	rsVPagesIn OBJECT-TYPE
+		SYNTAX  Counter
+		ACCESS  read-only
+		STATUS  mandatory
+		DESCRIPTION
+			"Number of pages read in from disk."
+		::=  { sunHostPerf 9 }
+
+	rsVPagesOut OBJECT-TYPE
+		SYNTAX  Counter
+		ACCESS  read-only
+		STATUS  mandatory
+		DESCRIPTION
+			"Number of pages written to disk."
+		::=  { sunHostPerf 10 }
+
+	rsVSwapIn OBJECT-TYPE
+		SYNTAX  Counter
+		ACCESS  read-only
+		STATUS  mandatory
+		DESCRIPTION
+		"Number of pages swapped in."
+		::=  { sunHostPerf 11 }
+
+	rsVSwapOut OBJECT-TYPE
+		SYNTAX  Counter
+		ACCESS  read-only
+		STATUS  mandatory
+		DESCRIPTION
+			"Number of pages swapped out."
+		::=  { sunHostPerf 12 }
+
+	rsVIntr OBJECT-TYPE
+		SYNTAX  Counter
+		ACCESS  read-only
+		STATUS  mandatory
+		DESCRIPTION
+		"Number of device interrupts."
+		::=  { sunHostPerf 13 }
+		
+	rsIfInPackets OBJECT-TYPE
+		SYNTAX  Counter
+		ACCESS  read-only
+		STATUS  mandatory
+		DESCRIPTION
+			"Number of input packets."
+		::=  { sunHostPerf 14 }
+
+	rsIfOutPackets OBJECT-TYPE
+		SYNTAX  Counter
+		ACCESS  read-only
+		STATUS  mandatory
+		DESCRIPTION
+			"Number of output packets."
+		::=  { sunHostPerf 15 }
+
+	rsIfInErrors OBJECT-TYPE
+		SYNTAX  Counter
+		ACCESS  read-only
+		STATUS  mandatory
+		DESCRIPTION
+			"Number of input errors."
+		::=  { sunHostPerf 16 }
+		
+	rsIfOutErrors OBJECT-TYPE
+		SYNTAX  Counter
+		ACCESS  read-only
+		STATUS  mandatory
+		DESCRIPTION
+			"Number of output errors."
+		::=  { sunHostPerf 17 }
+
+	rsIfCollisions OBJECT-TYPE
+		SYNTAX  Counter
+		ACCESS  read-only
+		STATUS  mandatory
+		DESCRIPTION
+			"Number of output collisions."
+		::=  { sunHostPerf 18 }
+
+END

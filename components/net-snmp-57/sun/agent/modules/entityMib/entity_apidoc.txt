@@ -1,0 +1,395 @@
+#
+# Copyright (c) 2003, 2011, Oracle and/or its affiliates. All rights reserved.
+#
+# U.S. Government Rights - Commercial software. Government users are subject
+# to the Sun Microsystems, Inc. standard license agreement and applicable
+# provisions of the FAR and its supplements.
+#
+#
+# This distribution may include materials developed by third parties. Sun,
+# Sun Microsystems, the Sun logo and Solaris are trademarks or registered
+# trademarks of Sun Microsystems, Inc. in the U.S. and other countries.
+#
+#
+
+List of Entity MIB APIs
+-----------------------
+
+Physical Table (entPhysicalTable)
+---------------------------------
+extern int allocPhysicalEntry(int physidx, entPhysicalEntry_t *newPhysEntry);
+
+  - Allocates an entry in the Physical Table. The physidx parameter
+    is the physical index requested. If physidx = 0, it will try to use
+    the first available index in the table.  If physidx > 0, then it will try
+    to use the slot indicated by the index.
+
+    The API returns a physical index alloted to the entry, and this may or may
+    not be the same as the requested physical index.
+
+    The memory associated with newPhysEntry can be freed. The API creates an
+    internal copy of the data.
+
+    Returns:
+    - the index allocated to the physical entry
+    - -1 for error in adding the entry
+
+    Check the log for more details.
+
+    NOTE: The physidx (other than 0) is not used in this release of the API,
+          this is present for future purposes.
+
+entPhysicalEntry_t *getPhysicalTableEntry(int index);
+
+  - This API returns the actual Physical Table entry for the
+    particular index. The caller must NOT change the values or release
+    the memory of the entry that is returned.
+
+    Returns:
+    - the entry for that index
+    - NULL on error in finding the entry or if the entry is stale
+
+extern int deletePhysicalTableEntry(int xPhysicalIndex);
+
+  - Delete the Physical Table entry associated with the xPhysicalIndex. The
+    instances of xPhysicalIndex in the Alias Mapping Table, LP Mapping Table
+    and the Physical Contains Table will also be deleted to maintain
+    integrity among the various Entity MIB tables.
+ 
+    Returns:
+    - 0 for success
+    - -1 if the xPhysicalIndex is not found
+    - -2 if a stale entry was found for xPhysicalIndex.
+
+extern int makePhysicalTableEntryStale(int xPhysicalIndex);
+
+  - Makes the Physical Table entry associated with the xPhysicalIndex stale. 
+    Stale means that the entry details are present in the agent's memory but
+    it will not be displayed during any SNMP operation. The entry can be
+    made available again with the call to the makePhysicalTableEntryLive
+    API.
+    The index allocated to a stale entry will not be allocated to another
+    entry.
+
+    The instances of xPhysicalIndex in the Alias Mapping Table, LP Mapping
+    Table and the Physical Contains Table will be deleted to maintain
+    integrity among the various Entity MIB tables.
+ 
+    Returns:
+    - 0 for success
+    - -1 if the xPhysicalIndex is not found
+    - -2 if a stale entry already exists for xPhysicalIndex.
+
+extern int makePhysicalTableEntryLive(int xPhysicalIndex);
+
+  - Makes the stale Physical Table entry associated with the xPhysicalIndex 
+    live.
+    Live means that the entry details that are present in the agent's memory 
+    will be displayed during SNMP operations. The entry can be
+    made stale with the call to the makePhysicalTableEntryStale API.
+
+    Returns:
+    - 0 for success
+    - -1 if the xPhysicalIndex is not found
+    - -2 if a live entry already exists for xPhysicalIndex.
+
+entPhysicalEntry_t *getPhysicalStaleEntry(int index);
+
+  - This API returns the stale Physical Table entry for the
+    particular index. The caller must NOT change the values or release
+    the memory of the entry that is returned.
+
+    Returns:
+    - the stale entry for that index
+    - NULL on error in finding the entry or if a live entry exists.
+
+int *getAllChildrenFromPhysicalContainedIn(int parentIndex);
+
+  - Get the indexes for all the children in the Physical Table which has
+    parentIndex as their parent (in the entPhysicalContainedIn field).
+
+    Returns:
+    - returns an array of indexes (integers) with null termination
+    - NULL if no children, or invalid index, or not enough memory when
+      allocating the array
+
+    NOTE: The array is a copy and SHOULD be freed when done
+
+Logical Table (entLogicalTable)
+-------------------------------
+
+extern int allocLogicalEntry(int logidx, entLogicalEntry_t * xnewLogicalEntry);
+
+  - Allocates an entry in the Logical Table. The logidx parameter
+    is the logical index requested. If logidx = 0, it will try to use
+    the first available index in the table.  If physidx > 0, then it will try
+    to use the slot indicated by the index.
+
+    The API returns a logical index alloted to the entry, and this may or may
+    not be the same as the requested logical index.
+
+    The memory associated with xnewLogicalEntry can be freed. The API creates
+    an internal copy of the data.
+
+    Returns:
+    - the index allocated to the logical entry
+    - -1 for error in adding the entry
+
+    Check the log for more details.
+    
+    NOTE: The logidx (other than 0) is not used in this release of the API,
+          this is present for future purposes.
+
+
+entLogicalEntry_t* getLogicalTableEntry(int xLogicalIndex);
+
+  - This API returns the actual Logical Table entry for the
+    particular index. The caller must NOT change the values or release
+    the memory of the entry that is returned.
+
+    Returns:
+    - the entry for that index
+    - NULL on error in finding the entry or if a stale entry exists.
+
+extern int deleteLogicalTableEntry(int xLogicalIndex);
+
+  - Delete the Logical Table entry associated with the xLogicalIndex. The
+    instances of xLogicalIndex in the Alias Mapping Table, and the 
+    LP Mapping Table will also be deleted to maintain integrity among the 
+    various Entity MIB tables.
+
+    Returns:
+    - 0 for success
+    - -1 if the xLogicalIndex is not found
+    - -2 if a stale entry was found for xLogicalIndex.
+
+extern int makeLogicalTableEntryStale(int xLogicalIndex);
+
+  - Makes the Logical Table entry associated with the xLogicalIndex stale.
+    Stale means that the entry details are present in the agent's memory but
+    it will not be displayed during any SNMP operation. The entry can be
+    made available again with the call to the makeLogicalTableEntryLive API.
+    The index allocated to a stale entry will not be allocated to another
+    entry.
+
+    The instances of xLogicalIndex in the Alias Mapping Table, and the 
+    LP Mapping Table will be deleted to maintain integrity among the various 
+    Entity MIB tables.
+
+    Returns:
+    - 0 for success
+    - -1 if the xPhysicalIndex is not found
+    - -2 if a stale entry already exists for xPhysicalIndex.
+
+extern int makeLogicalTableEntryLive(int xLogicalIndex);
+
+  - Makes the stale Logical Table entry associated with the xLogicalIndex
+    live.
+    Live means that the entry details that are present in the agent's memory
+    will be displayed during SNMP operations. The entry can be
+    made stale with the call to the makeLogicalTableEntryStale API.
+
+    Returns:
+    - 0 for success
+    - -1 if the xLogicalIndex is not found
+    - -2 if a live entry already exists for xLogicalIndex.
+
+entLogicalEntry_t *getLogicalStaleEntry(int index);
+
+  - This API returns the stale Logical Table entry for the
+    particular index. The caller must NOT change the values or release
+    the memory of the entry that is returned.
+
+    Returns:
+    - the stale entry for that index
+    - NULL on error in finding the entry or if a live entry exists.
+
+LP Mapping Table (entLPMappingTable)
+------------------------------------
+extern int addLPMappingTableEntry(int xentLogicalIndex, int xentPhysicalIndex);
+
+  - Adds an entry to the LP Mapping Table with the xentLogicalIndex as the
+    primary index and xentPhysicalIndex as the secondary index.
+
+    Returns:
+    - 0 for successful addition
+    - 1 if the entry for the given xentPhysicalIndex and
+      xentLogicalIndex already exists.
+    - -1 for failure
+
+extern int deleteLPMappingTableEntry(int xLogicalIndex, int xPhysicalIndex);
+
+  - Deletes the entry of the LP Mapping Table with the xLogicalIndex as 
+    the primary index and xPhysicalIndex as the secondary index.
+
+    Returns:
+    - 0 for successful deletion
+    - -1 for failure
+    - -2 for stale entry (either logical or physical index, or both)
+
+extern int deleteLPMappingLogicalIndex(int xentLogicalIndex);
+
+  - Deletes all the entries of the LP Mapping Table with the xentLogicalIndex
+    as the primary index.
+
+    Returns:
+    - number of deleted entries for successful deletion
+    - -1 for failure
+    - -2 for stale logical entry
+
+extern int deleteLPMappingPhysicalIndex(int xentPhysicalIndex);
+
+  - Deletes all the entries of the LP Mapping Table with the xentPhysicalIndex
+    as the secondary index.
+
+    Returns:
+    - number of deleted entries for successful deletion
+    - -1 if no entry was deleted.
+    - -2 for stale physical entry
+
+Alias Mapping Table (entAliasMappingTable)
+------------------------------------------
+extern int addAliasMappingTableEntry(int xentPhysicalIndex, int xentLogicalIndex, oid* xAliasMapId, int xAliasMapIdSize);
+
+  - Adds an entry to the Alias Mapping Table with xentPhysicalIndex as 
+    the primary index and xentLogicalIndex as the secondary index.
+    xAliasMapId is the alias (OID) for the entry and xAliasMapIdSize is a size
+    in bytes of xAliasMapId
+
+    Returns:
+    - 0 for successful addition
+    - 1 if the entry already exists for the given xentPhysicalIndex and
+      xentLogicalIndex already exists.
+    - -1 for failure
+
+extern int deleteAliasMappingTableEntry(int xentPhysicalIndex, int xentLogicalIndex);
+
+  - Deletes the entry of the Alias Mapping Table with xentPhysicalIndex as
+    the primary index and xentLogicalIndex as the secondary index.
+
+    Returns:
+    - 0 for successful deletion
+    - -1 for entry not found
+    - -2 for stale entry
+
+extern int deleteAliasMappingLogicalIndex(int xentLogicalIndex);
+
+  - Deletes all the entries of the Alias Mapping Table with the 
+    xentLogicalIndex as the secondary index
+
+    Returns:
+    - number of deleted entries for successful deletion
+    - -1 for entry not found
+    - -2 for stale logical entry
+
+    NOTE: This API cannot be used to delete all indexes with
+          xentLogicalIndex = 0. Use the deleteAliasMappingTableEntry API
+          to delete such entries one by one, with the appropriate
+          entPhysicalIndex specified.
+
+extern int deleteAliasMappingPhysicalIndex(int xentPhysicalIndex);
+
+  - Deletes all the entries in the Alias Mapping Table with the
+    primary index same as the given physical index
+
+    Returns:
+    - number of deleted entries for on success
+    - -1 for entry not found
+    - -2 for stale physical entry
+
+Physical Contains Table (entPhysicalContainsTable)
+--------------------------------------------------
+extern int addPhysicalContainsTableEntry(int entPhysicalIndex, int childIndex);
+
+  - Adds an entry to the Physical Contains Table for the given entPhysicalIndex
+    and childIndex. The entPhysicalContainedIn OID present in the Physical
+    Table for the childIndex will be replaced by the entPhysicalIndex if the
+    entPhysicalIndex has a lower index than the original one
+
+    Returns:
+    - 0 for successful addition
+    - 1 if the entry already exists for the given entPhysicalIndex and
+      childIndex.
+    - -1 for failure to add.
+
+
+extern int deletePhysicalContainsTableEntry(int parentIndex, int childIndex);
+
+  - Deletes the parentIndex/childIndex entry present in the Physical Contains
+    Table.
+
+    Returns:
+    - 0 for success
+    - -1 for failure
+    - -2 for stale entry (either parent or child, or both)
+
+extern int deletePhysicalContainsParentIndex(int parentIndex);
+
+  - Deletes all the entries in the Physical Contains Table where the parent
+    index = parentIndex.
+
+    Returns:
+    - number of children deleted for that parent
+    - -1 for failure
+    - -2 for stale parent entry
+
+extern int deletePhysicalContainsChildIndex(int childIndex);
+
+  - Deletes all the entries in the Physical Contains Table where the child
+    index = childIndex.
+
+    Returns:
+    - number of parents deleted for that child
+    - -1 for failure
+    - -2 for stale child entry
+
+extern int* getPhysicalContainsChildren(int parentIndex);
+
+  - Get the indexes for all the children in the Physical Contains
+    Table, given a parent.
+
+    Returns:
+    - returns an array of indexes (integers) with null termination
+    - NULL if no children, or not enough memory when allocating the array
+
+    NOTE: The array is a copy and SHOULD be freed when done
+
+Data Structures
+---------------
+The corresponding header files will be public interfaces as well, because the
+data structures are defined there. 
+
+typedef struct entPhysicalEntry_s {
+    int entPhysicalIndex;
+    char *entPhysicalDescr;
+    oid *entPhysicalVendorType;
+    int entPhysicalVendorTypeSize;
+    int entPhysicalContainedIn;
+    int entPhysicalClass;               /* see ENTPHYSICAL_CLASS_XXX */
+    int entPhysicalParentRelPos;
+    char *entPhysicalName;
+    char *entPhysicalHardwareRev;
+    char *entPhysicalFirmwareRev;
+    char *entPhysicalSoftwareRev;
+    char *entPhysicalSerialNum;
+    char *entPhysicalMfgName;
+    char *entPhysicalModelName;
+    char *entPhysicalAlias;
+    char *entPhysicalAssetID;
+    int entPhysicalIsFRU;
+    struct entPhysicalEntry_s *pNextEntry;
+} entPhysicalEntry_t;
+
+typedef struct entLogicalEntry_s {
+    int   entLogicalIndex;
+    char *entLogicalDescr;
+    oid  *entLogicalType;
+    int   entLogicalTypeSize;
+    char *entLogicalCommunity;
+    char *entLogicalTAddress;
+    oid  *entLogicalTDomain;
+    int   entLogicalTDomainSize;
+    char *entLogicalContextEngineId;
+    char *entLogicalContextName;
+    struct entLogicalEntry_s* pNextEntry;
+} entLogicalEntry_t;

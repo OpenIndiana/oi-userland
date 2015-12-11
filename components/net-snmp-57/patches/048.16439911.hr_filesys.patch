@@ -1,0 +1,145 @@
+# This fix has been submitted upstream as part of a combined patch
+# which has fixes for CR15758982(027.7118090.hr_filesys.patch) and this CR(16439911).
+# This can be found in the following location.
+# https://sourceforge.net/p/net-snmp/patches/1287/.
+# This patch has not been accepted yet.
+#
+--- a/agent/mibgroup/host/hr_filesys.c	Wed Nov 26 23:42:28 2014
++++ b/agent/mibgroup/host/hr_filesys.c	Wed Nov 26 23:43:54 2014
+@@ -751,11 +751,11 @@
+ static int 
+ load_mnttab_cache_solaris()
+ {
+-    char buf[512] = {NULL};
++    char buf[MNT_LINE_MAX] = {NULL};
+     int i = 0;
+     struct stat file_stat;
+     const char **cpp;
+-    char *ch;
++    char *ch, *token_ptr;
+     int token_flag = 0;
+     int skip_flag = 0;
+     int ignore_flag = 0;
+@@ -762,9 +762,14 @@
+     int j = 0;
+     int lines = 0;
+     int ret = 0;
++    int chk_mnt = -1;
+     HRFS_index = 0;
+ 
+-    stat(ETC_MNTTAB, &file_stat);
++    if(stat(ETC_MNTTAB, &file_stat) != 0)
++    {
++        DEBUGMSGTL(("host/hr_filesys", "stat failed for mnttab.\n"));
++        return -1;
++    }
+     if (last_access == -1 || last_access != file_stat.st_mtime) {
+         fp = fopen(ETC_MNTTAB, "r");
+         if(fp == NULL)
+@@ -784,7 +789,7 @@
+              * which determines the valid entries.
+              */
+ 
+-            ch = strtok(buf, " \t");
++            ch = strtok_r(buf, " \t", &token_ptr);
+             while (ch != NULL) {
+                 j++;
+                 if(j == 3) {
+@@ -798,7 +803,7 @@
+                 }
+                 if(token_flag)
+                     break;
+-                ch = strtok(NULL, " \t");
++                ch = strtok_r(NULL, " \t", &token_ptr);
+              }
+              if(!skip_flag)
+                  lines++;
+@@ -818,25 +823,43 @@
+             free(HRFS_list);
+             return -1;
+         }
+-
+-        while (i < fscount) {
+-            if (getmntent(fp, &HRFS_entry_struct) == 0) {
+-                 for (cpp = HRFS_ignores; *cpp != NULL; ++cpp) {
+-                     if (!strcmp(HRFS_entry_struct.HRFS_type, *cpp)) {
+-                         ignore_flag = 1;
+-                         break;
+-                     }
++        while ((chk_mnt = getmntent(fp, &HRFS_entry_struct)) != -1) {
++             if(chk_mnt != 0)
++                 continue;
++             for (cpp = HRFS_ignores; *cpp != NULL; ++cpp) {
++                 if (!strcmp(HRFS_entry_struct.mnt_fstype, *cpp)) {
++                     ignore_flag = 1;
++                     break;
+                  }
+-
+-                 if(!ignore_flag) {
+-                     HRFS_list[i].mnt_special = strdup(HRFS_entry_struct.mnt_special);
+-                     HRFS_list[i].mnt_mountp = strdup(HRFS_entry_struct.mnt_mountp);
+-                     HRFS_list[i].mnt_fstype = strdup(HRFS_entry_struct.mnt_fstype);
+-                     HRFS_list[i].mnt_mntopts = strdup(HRFS_entry_struct.mnt_mntopts);
+-                     i++;
++             }
++             if(!ignore_flag) {
++                 if(i >= fscount)
++                 {
++                    DEBUGMSGTL(("host/hr_filesys","increasing cachesize from %d to %d",fscount,i+1));
++                    HRFS_list = realloc(HRFS_list, sizeof(struct mnttab) * (i+1));
++                    fscount = i+1;
++                    if(HRFS_list == NULL)
++                    {
++                        DEBUGMSGTL(("host/hr_filesys","\nrealloc failed for mnttab cache.\n"));
++                        return -1;
++                    }
+                  }
+-
+-                 ignore_flag = 0;
++                 HRFS_list[i].mnt_special = strdup(HRFS_entry_struct.mnt_special);
++                 HRFS_list[i].mnt_mountp = strdup(HRFS_entry_struct.mnt_mountp);
++                 HRFS_list[i].mnt_fstype = strdup(HRFS_entry_struct.mnt_fstype);
++                 HRFS_list[i].mnt_mntopts = strdup(HRFS_entry_struct.mnt_mntopts);
++                 i++;
++             }
++             ignore_flag = 0;
++        }
++        if(i < fscount)
++        {
++            DEBUGMSGTL(("host/hr_filesys","\ndecreasing cachesize from %d to %d\n",fscount,i));
++            HRFS_list = realloc(HRFS_list, sizeof(struct mnttab) * i );
++            if(HRFS_list == NULL)
++            {
++                DEBUGMSGTL(("host/hr_filesys","\nrealloc failed for mnttab cache.\n"));
++                return -1;
+             }
+         }
+ 
+@@ -982,19 +1005,19 @@
+         HRFS_entry = NULL;
+     }
+ #else
+-    int i = 0;
+     if (fp != NULL)
+         fclose(fp);
+     fp = NULL;
+ 
+ #ifdef solaris2
+-while (i < fscount) {
+-    free(HRFS_list[i].mnt_special);
+-    free(HRFS_list[i].mnt_mountp);
+-    free(HRFS_list[i].mnt_fstype);
+-    free(HRFS_list[i].mnt_mntopts);
+-    i++;
+-}
++    int i = 0;
++    while (i < fscount) {
++        free(HRFS_list[i].mnt_special);
++        free(HRFS_list[i].mnt_mountp);
++        free(HRFS_list[i].mnt_fstype);
++        free(HRFS_list[i].mnt_mntopts);
++        i++;
++    }
+     if (HRFS_list != NULL)
+         free(HRFS_list);
+     last_access = -1;

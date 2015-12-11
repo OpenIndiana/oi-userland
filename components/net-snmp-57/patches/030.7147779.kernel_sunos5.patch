@@ -1,0 +1,146 @@
+--- net-snmp-5.4.1.orig/agent/mibgroup/kernel_sunos5.c	2013-01-11 11:46:28.795419820 -0800
++++ net-snmp-5.4.1/agent/mibgroup/kernel_sunos5.c	2013-01-11 11:45:51.611042099 -0800
+@@ -280,7 +280,9 @@
+     kstat_t        *ks;
+     kid_t           kid;
+     kstat_named_t  *named;
++ 
+     int             ret = -1;        /* fail unless ... */
++    int             lookup_stat = 0;	
+ 
+     if (kstat_fd == 0) {
+ 	kstat_fd = kstat_open();
+@@ -291,27 +293,88 @@
+     if ((ksc = kstat_fd) == NULL) {
+ 	goto Return;
+     }
+-    ks = kstat_lookup(ksc, classname, -1, statname);
+-    if (ks == NULL) {
+-	DEBUGMSGTL(("kernel_sunos5", "class %s, stat %s not found\n",
+-		classname ? classname : "NULL",
+-		statname ? statname : "NULL"));
+-	goto Return;
+-    }
+-    kid = kstat_read(ksc, ks, NULL);
+-    if (kid == -1) {
+-	DEBUGMSGTL(("kernel_sunos5", "cannot read class %s stats %s\n",
+-		classname ? classname : "NULL", statname ? statname : "NULL"));
+-	goto Return;
+-    }
+-    named = kstat_data_lookup(ks, varname);
+-    if (named == NULL) {
+-	DEBUGMSGTL(("kernel_sunos5", "no var %s for class %s stat %s\n",
+-		varname, classname ? classname : "NULL",
+-		statname ? statname : "NULL"));
+-	goto Return;
++   
++    if ((ks = kstat_lookup(ksc, statname, 0, "link")) != NULL)
++    {
++        kid = kstat_read(ksc, ks, NULL);
++        if (kid == -1) {
++            DEBUGMSGTL(("kernel_sunos5", "cannot read class %s stats %s\n",
++                    statname ? statname : "NULL", "link"));
++        }
++        else
++        {
++            named = kstat_data_lookup(ks, varname);
++            if (named == NULL) {
++	        DEBUGMSGTL(("kernel_sunos5", "no var %s for class %s stat %s\n",
++                        varname, statname ? statname : "NULL", "link"));
++            }
++            else {
++                    switch (named->data_type) {
++#ifdef KSTAT_DATA_INT32         /* Solaris 2.6 and up */
++                        case KSTAT_DATA_INT32:
++                            if(named->value.i32)
++                                lookup_stat = 1;
++	                    break;
++                        case KSTAT_DATA_UINT32:
++                            if(named->value.ui32)
++                                lookup_stat = 1;
++                            break;
++                        case KSTAT_DATA_INT64:
++                            if(named->value.i64)
++                                lookup_stat = 1;
++                            break;
++                        case KSTAT_DATA_UINT64:
++                            if(named->value.ui64)
++                                lookup_stat = 1;
++                            break;
++#else
++                        case KSTAT_DATA_LONG:
++                            if(named->value.l)
++                                lookup_stat = 1;
++                            break;
++                        case KSTAT_DATA_ULONG:
++                            if(named->value.ul)
++                                lookup_stat = 1;
++                            break;
++                        case KSTAT_DATA_LONGLONG:
++                            if(named->value.ll)
++                                lookup_stat = 1;
++                            break;
++                        case KSTAT_DATA_ULONGLONG:
++                            if(named->value.ull)
++                                lookup_stat = 1;
++                            break;
++#endif
++                    } 
++            }
++        }
+     }
+-
++     
++    if(!lookup_stat) 
++    {
++        ks = kstat_lookup(ksc, classname, -1, statname);
++        if (ks == NULL) {
++        DEBUGMSGTL(("kernel_sunos5", "class %s, stat %s not found\n",
++                   classname ? classname : "NULL",
++                   statname ? statname : "NULL"));
++        goto Return;
++        }
++        
++	kid = kstat_read(ksc, ks, NULL);
++        if (kid == -1) {
++            DEBUGMSGTL(("kernel_sunos5", "cannot read class %s stats %s\n",
++                   classname ? classname : "NULL", statname ? statname : "NULL"));
++            goto Return;
++        }
++        
++	named = kstat_data_lookup(ks, varname);
++        if (named == NULL) {
++            DEBUGMSGTL(("kernel_sunos5", "no var %s for class %s stat %s\n",
++                    varname, classname ? classname : "NULL",
++                    statname ? statname : "NULL"));
++            goto Return;
++        }
++    } 
+     ret = 0;                /* maybe successful */
+     switch (named->data_type) {
+ #ifdef KSTAT_DATA_INT32         /* Solaris 2.6 and up */
+@@ -428,11 +491,20 @@
+     /*
+      * Get the named statistics 
+      */
+-    if ((ks = kstat_lookup(ksc, module_name, instance, statname)) == NULL) {
+-	ret = -10;
+-	goto Return;        /* kstat errors */
+-    }
+ 
++    if ((ks = kstat_lookup(ksc, module_name, instance, statname)) == NULL)
++    {
++        /*
++         * Try to lookup the kstat module with
++         * modulename = linkname and statname = "link".
++         */
++
++        if ((ks = kstat_lookup(ksc, statname, 0, "link")) == NULL) {
++            ret = -10;
++            goto Return;    /* kstat errors */
++        }
++    }
++   		
+     if (kstat_read(ksc, ks, NULL) <= 0) {
+ 	ret = -10;
+ 	goto Return;        /* kstat errors */

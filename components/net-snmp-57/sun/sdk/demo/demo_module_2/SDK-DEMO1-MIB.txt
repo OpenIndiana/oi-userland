@@ -1,0 +1,241 @@
+--
+-- 
+-- Copyright (c) 2003, 2011, Oracle and/or its affiliates. All rights reserved.
+--
+-- U.S. Government Rights - Commercial software. Government users are
+-- subject
+-- to the Sun Microsystems, Inc. standard license agreement and applicable
+-- provisions of the FAR and its supplements.
+--
+--
+-- This distribution may include materials developed by third parties. Sun,
+-- Sun Microsystems, the Sun logo and Solaris are trademarks or registered
+-- trademarks of Sun Microsystems, Inc. in the U.S. and other countries.
+ 
+
+----------------------------------------------------------
+-- Systems Management Agent (SMA) SDK module DEMO-1 MIB
+----------------------------------------------------------
+
+SDK-DEMO1-MIB DEFINITIONS ::= BEGIN
+
+  IMPORTS
+        enterprises, MODULE-IDENTITY, OBJECT-TYPE, Counter64, Integer32, Unsigned32
+                FROM SNMPv2-SMI
+         OBJECT-GROUP
+                FROM SNMPv2-CONF
+         DisplayString
+               FROM SNMPv2-TC;
+
+sdkDemo1MIB MODULE-IDENTITY
+    LAST-UPDATED "0009181435Z"
+    ORGANIZATION "Sun Microsystems Inc."
+    CONTACT-INFO
+        " Sun Microsystems Inc
+          4150 Network Circle
+          Santa Clara, CA 95054
+          e-mail: service@sun.com"
+    DESCRIPTION
+	" SMA SDK MIB DEMO-1. This MIB will be used to demonstrate the
+	  implementation of modules and various module features in SMA agent."
+    ::= { demo 1 }
+
+sun           OBJECT IDENTIFIER ::= { enterprises 42 }
+products      OBJECT IDENTIFIER ::= { sun 2 }
+management    OBJECT IDENTIFIER ::= { products 2 }
+sma           OBJECT IDENTIFIER ::= { management 4 }
+demo          OBJECT IDENTIFIER ::= { sma 4 }
+
+--
+-- There are currently 2 Groups in the example.
+-- The "Load" group contains information about system load
+-- The "File" group contains information about some files on the system
+--
+
+me1LoadGroup OBJECT-GROUP
+        OBJECTS {  me1SystemLoadAvg1min, me1SystemLoadAvg5min, 
+		me1SystemLoadAvg15min }
+        STATUS current
+        DESCRIPTION
+        "Load related statistics."
+        ::= { sdkDemo1MIB 1 }
+
+me1FileGroup OBJECT-GROUP
+        OBJECTS { me1FileIndex, me1FileName, me1FileSize, me1FilePerm
+                }
+        STATUS current
+        DESCRIPTION
+        "File related statistics."
+        ::= { sdkDemo1MIB 2 }
+
+-- 
+-- Properties in the "Load" group
+--
+
+me1SystemLoadAvg1min OBJECT-TYPE
+    SYNTAX      DisplayString
+    UNITS       "Jobs"
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+                "Load average of the system over the last 1 minute."
+    ::= { me1LoadGroup 1 }
+
+me1SystemLoadAvg5min OBJECT-TYPE
+    SYNTAX      DisplayString
+    UNITS       "Jobs"
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+                "Load average of the system over the last 5 minutes."
+    ::= { me1LoadGroup 2 }
+
+me1SystemLoadAvg15min OBJECT-TYPE
+    SYNTAX      DisplayString
+    UNITS       "Jobs"
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+                "Load average of the system over the last 15 minutes."
+    ::= { me1LoadGroup 3 }
+
+--
+-- Objects in the "File" group
+--
+
+me1FileTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF Me1FileEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+                "Table containing information of some files on the system."
+    ::= { me1FileGroup 1 }
+
+me1FileEntry OBJECT-TYPE
+    SYNTAX      Me1FileEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+                "Information about one file on the system."
+    INDEX   { me1FileIndex }
+    ::= { me1FileTable 1 }
+
+Me1FileEntry ::=
+    SEQUENCE {
+	me1FileIndex
+		Unsigned32,
+	me1FileName
+		DisplayString,
+	me1FileSize
+		Unsigned32,
+	me1FilePerm
+		DisplayString
+    }
+
+me1FileIndex OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+                "Index of the file."
+    ::= { me1FileEntry 1 }
+
+me1FileName OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+                "Name of the file"
+    ::= { me1FileEntry 2 }
+
+me1FileSize OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+                "Size of the file in kb"
+    ::= { me1FileEntry 3 }
+
+me1FilePerm OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+                "Permissions on this file. example, 0755 "
+    ::= { me1FileEntry 4 }
+
+
+-- General table:
+
+
+me1ContactInfoTable OBJECT-TYPE
+        SYNTAX  SEQUENCE OF Me1ContactInfoEntry
+        MAX-ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION
+          "The contact information table."
+        ::= { sdkDemo1MIB 3 }
+
+
+
+me1ContactInfoEntry  OBJECT-TYPE
+        SYNTAX  Me1ContactInfoEntry
+        MAX-ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION
+          "An entry in the contact info  table."
+        INDEX   { me1FloorNumber, me1RoomNumber }
+        ::= { me1ContactInfoTable 1 }
+
+
+
+Me1ContactInfoEntry ::=
+        SEQUENCE {
+           me1FloorNumber
+                INTEGER,
+           me1RoomNumber
+                INTEGER,
+           me1Name
+                DisplayString,
+           me1Extension 
+                 INTEGER
+        }
+
+me1FloorNumber OBJECT-TYPE
+        SYNTAX  INTEGER (1..3)
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION
+          "This object combines with me1RoomNumber are
+           the identifier of the table." 
+        ::= { me1ContactInfoEntry 1 }
+
+
+me1RoomNumber OBJECT-TYPE
+        SYNTAX  INTEGER (1..100)
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION
+          "This object combines with me1FloorNumber are
+           the identifier of the table." 
+        ::= { me1ContactInfoEntry 2 }
+
+me1Name OBJECT-TYPE
+        SYNTAX  DisplayString 
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION
+          " The person loacted in the room."
+        ::= { me1ContactInfoEntry 3 }
+        
+me1Extension OBJECT-TYPE
+        SYNTAX  INTEGER 
+        MAX-ACCESS  read-only
+        STATUS  current
+        DESCRIPTION
+          "The phone number of the office."
+        ::= { me1ContactInfoEntry 4 }
+
+
+END
+

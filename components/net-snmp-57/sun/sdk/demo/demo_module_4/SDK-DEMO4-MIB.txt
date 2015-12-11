@@ -1,0 +1,143 @@
+
+--
+-- Copyright (c) 2003, 2011, Oracle and/or its affiliates. All rights reserved.
+--
+-- U.S. Government Rights - Commercial software. Government users are subject to
+-- the Sun Microsystems, Inc. standard license agreement and applicable
+-- provisions of the FAR and its supplements.
+--
+--
+-- This distribution may include materials developed by third parties. Sun, Sun
+-- Microsystems, the Sun logo and Solaris are trademarks or registered
+-- trademarks of Sun Microsystems, Inc. in the U.S. and other countries.
+--
+--
+
+----------------------------------------------------------
+-- Systems Management Agent (SMA) SDK module DEMO-4 MIB
+----------------------------------------------------------
+
+SDK-DEMO4-MIB DEFINITIONS ::= BEGIN
+
+  IMPORTS
+        enterprises, MODULE-IDENTITY, OBJECT-TYPE, Counter64, Integer32, Unsigned32
+                FROM SNMPv2-SMI
+         OBJECT-GROUP
+                FROM SNMPv2-CONF
+         DisplayString
+               FROM SNMPv2-TC;
+
+sdkDemo4MIB MODULE-IDENTITY
+    LAST-UPDATED "0009181435Z"
+    ORGANIZATION "Sun Microsystems Inc."
+    CONTACT-INFO
+        " Sun Microsystems Inc
+          4150 Network Circle
+          Santa Clara, CA 95054
+          e-mail: service@sun.com"
+    DESCRIPTION
+	" SMA SDK MIB DEMO-4. This MIB will be used to demonstrate the
+	  implementation of modules and various module features in SMA agent."
+    ::= { demo 4 }
+
+sun          OBJECT IDENTIFIER ::= { enterprises 42 }
+products     OBJECT IDENTIFIER ::= { sun 2 }
+management   OBJECT IDENTIFIER ::= { products 2 }
+sma          OBJECT IDENTIFIER ::= { management 4 }
+demo         OBJECT IDENTIFIER ::= { sma 4 }
+
+--
+-- There is currently 1 Groups in the example.
+-- The "Load" group contains information about system load
+--
+
+me4LoadGroup OBJECT-GROUP
+        OBJECTS {  me4SystemLoadAvg1min, me4SystemLoadAvg5min, 
+		me4SystemLoadAvg15min }
+        STATUS current
+        DESCRIPTION
+        "Load related statistics."
+        ::= { sdkDemo4MIB 1 }
+
+me4traps    OBJECT IDENTIFIER ::= { sdkDemo4MIB 2 }
+me4trapInfo OBJECT IDENTIFIER ::= { sdkDemo4MIB 3 }
+
+
+-- 
+-- Properties in the "Load" group
+--
+
+me4SystemLoadAvg1min OBJECT-TYPE
+    SYNTAX      DisplayString
+    UNITS       "Jobs"
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+                "Load average of the system over the last 1 minute."
+    ::= { me4LoadGroup 1 }
+
+me4SystemLoadAvg5min OBJECT-TYPE
+    SYNTAX      DisplayString
+    UNITS       "Jobs"
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+                "Load average of the system over the last 5 minutes."
+    ::= { me4LoadGroup 2 }
+
+me4SystemLoadAvg15min OBJECT-TYPE
+    SYNTAX      DisplayString
+    UNITS       "Jobs"
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+                "Load average of the system over the last 15 minutes."
+    ::= { me4LoadGroup 3 }
+
+
+--
+-- Trap Definitions for this MIB begin
+--
+
+statusChange NOTIFICATION-TYPE
+OBJECTS { hostName, moduleName, statusOID, objectStatus, eventDescription }
+STATUS current
+DESCRIPTION "A statusChange trap signifies that the status of an object has changed." ::= { me4traps 1 }
+
+hostName OBJECT-TYPE
+SYNTAX       DisplayString (SIZE (0..255))
+MAX-ACCESS accessible-for-notify
+STATUS current
+DESCRIPTION "The name of the host on which the event occurred."
+::= { me4trapInfo 1 }
+
+moduleName OBJECT-TYPE
+SYNTAX       DisplayString (SIZE (0..255))
+MAX-ACCESS accessible-for-notify
+STATUS current
+DESCRIPTION "The name of the module on which the event has occured."
+::= { me4trapInfo 2 }
+
+statusOID  OBJECT-TYPE
+SYNTAX OBJECT IDENTIFIER
+MAX-ACCESS accessible-for-notify
+STATUS current
+DESCRIPTION "The identification of the object for which the status changed."
+::= { me4trapInfo 3 }
+
+objectStatus OBJECT-TYPE
+SYNTAX       DisplayString (SIZE (0..255))
+MAX-ACCESS accessible-for-notify
+STATUS current
+DESCRIPTION "The current status of the object. One of OK, ERROR."
+::= { me4trapInfo 4 }
+
+eventDescription OBJECT-TYPE
+SYNTAX       DisplayString (SIZE (0..255))
+MAX-ACCESS accessible-for-notify
+STATUS current
+DESCRIPTION "The detailed description of the event."
+::= { me4trapInfo 5 }
+
+END
+

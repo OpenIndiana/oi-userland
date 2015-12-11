@@ -1,0 +1,117 @@
+--
+-- Copyright (c) 2003, 2011, Oracle and/or its affiliates. All rights reserved.
+--
+-- U.S. Government Rights - Commercial software. Government users are subject to
+-- the Sun Microsystems, Inc. standard license agreement and applicable
+-- provisions of the FAR and its supplements.
+--
+--
+-- This distribution may include materials developed by third parties. Sun, Sun
+-- Microsystems, the Sun logo and Solaris are trademarks or registered
+-- trademarks of Sun Microsystems, Inc. in the U.S. and other countries.
+--
+--
+
+----------------------------------------------------------
+-- Systems Management Agent (SMA) SDK module example-12 MIB
+----------------------------------------------------------
+
+EXAMPLE-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    MODULE-IDENTITY, OBJECT-TYPE, NOTIFICATION-TYPE,
+    TimeTicks, Counter32, experimental, IpAddress, 
+    Integer32, Gauge32, Counter64, Opaque 
+        FROM SNMPv2-SMI
+    DisplayString, TimeStamp
+        FROM SNMPv2-TC
+    MODULE-COMPLIANCE, OBJECT-GROUP, NOTIFICATION-GROUP
+        FROM SNMPv2-CONF;
+
+exampleMIB MODULE-IDENTITY
+    LAST-UPDATED "200303110000Z"
+    ORGANIZATION "Sun Microsystems, Inc."
+    CONTACT-INFO "None"
+    DESCRIPTION
+            "An example MIB used for source code-generating tools. 
+            "
+    ::= { experimental 3000 }
+
+scalarTypes   OBJECT IDENTIFIER ::= { exampleMIB 1 }
+tableType   OBJECT IDENTIFIER ::= { exampleMIB 2 }
+
+scalarOpaque OBJECT-TYPE
+    SYNTAX Opaque
+    MAX-ACCESS read-write
+    STATUS current
+    DESCRIPTION
+            "Scalar datatype"
+    ::= { scalarTypes 1 }
+
+scalarIpAddr OBJECT-TYPE
+    SYNTAX IpAddress
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION
+            "IP Address datatype"
+    ::= { scalarTypes 2 }
+
+
+
+rwTable OBJECT-TYPE
+    SYNTAX SEQUENCE OF rwTableEntry
+    MAX-ACCESS not-accessible
+    STATUS current
+    DESCRIPTION
+            "A conceptual row"
+    ::= { tableType 1 }
+
+rwTableEntry OBJECT-TYPE
+    SYNTAX rwTableEntry
+    MAX-ACCESS not-accessible
+    STATUS current
+    DESCRIPTION
+            "An entry (conceptual row) in the exampleTable."
+    INDEX { rwTableIndex }
+    ::= { rwTable 1 }
+
+rwTableEntry ::= SEQUENCE {
+    rwTableIndex     INTEGER,
+    rwTableOID    OBJECT IDENTIFIER,
+    rwTableDisplayString     DisplayString,
+    rwTableCounter32	Counter32
+}
+
+rwTableIndex OBJECT-TYPE
+    SYNTAX INTEGER 
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION
+            "Integer"
+    ::= { rwTableEntry 1 }
+
+rwTableOID OBJECT-TYPE
+    SYNTAX      OBJECT IDENTIFIER
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "OID"
+    ::= { rwTableEntry 2 }
+
+rwTableDisplayString OBJECT-TYPE
+    SYNTAX  DisplayString (SIZE (0..255))
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "DisplayString"
+    ::= { rwTableEntry 3 }
+
+rwTableCounter32 OBJECT-TYPE
+    SYNTAX Counter32
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION
+            "Counter32"
+    ::= { rwTableEntry 4 }
+
+END

@@ -1,0 +1,211 @@
+# Net-SNMP ifOperStatus on solaris11 VM guest domain is not correct.
+# Due to networking changes in Solaris 11 and above, we need to use dladm/dlpi calls from
+# net-snmp to fetch the interface names to be used in the kstat calls.
+#
+# Developed in-house. Bug submitted upstream
+# https://sourceforge.net/p/net-snmp/bugs/2590/
+#
+--- net-snmp-5.7.2.1/snmplib/Makefile.in	Thu Oct 30 02:07:41 2014
++++ net-snmp-5.7.2.1/snmplib/Makefile.in	Thu Oct 30 02:08:06 2014
+@@ -222,7 +222,7 @@
+ TOBJS=$(LOBJS)
+ 
+ # To satisfy -zdefs
+-LIB_LD_ADD =-lnsl -lsocket -L$(libdir)
++LIB_LD_ADD =-lnsl -lsocket -ldladm -L$(libdir)
+ 
+ FEATUREFILE     = $(top_builddir)/include/net-snmp/library/features.h
+ 
+--- net-snmp-5.4.1.old/agent/mibgroup/kernel_sunos5.c	2014-02-25 06:04:49.253524010 -0500
++++ net-snmp-5.4.1/agent/mibgroup/kernel_sunos5.c	2014-02-26 05:32:10.697219080 -0500
+@@ -60,6 +60,8 @@
+ #include <net/if.h>
+ #include <netinet/in.h>
+ 
++#include <libdladm.h>
++#include <libdllink.h>
+ /*-
+  * Includes of local application header files 
+  */
+@@ -172,7 +174,7 @@
+ set_if_info(mib2_ifEntry_t *ifp, unsigned index, char *name, uint64_t flags,
+             boolean_t flags_unknown, int mtu);
+ static int get_if_stats(mib2_ifEntry_t *ifp);
+-
++static int link_to_phydev(char *link, char *phy_devname);
+ #if defined(HAVE_IF_NAMEINDEX) && defined(NETSNMP_INCLUDE_IFTABLE_REWRITES)
+ static int _dlpi_open(const char *devname);
+ static int _dlpi_get_phys_address(int fd, char *paddr, int maxlen,
+@@ -1724,11 +1726,155 @@
+ }
+ #endif /*defined(HAVE_IF_NAMEINDEX)&&defined(NETSNMP_INCLUDE_IFTABLE_REWRITES)*/
+ 
++int link_to_phydev(char *link, char *phy_devname)
++{
++        char *key = NULL;
++        datalink_id_t linkid;
++        dladm_phys_attr_t dpa;
++        dladm_handle_t handle;
++
++        if (dladm_open(&handle, NULL) != DLADM_STATUS_OK) {
++            DEBUGMSGTL(("kernel_sunos5","dladm_open failed "
++                       "with errno=%d\n",errno));
++            return (-1);
++        }
++
++        if (dladm_name2info(handle, link, &linkid, NULL, NULL, NULL) !=
++            DLADM_STATUS_OK) {
++                DEBUGMSGTL(("kernel_sunos5","dladm_name2info failed "
++                           "with errno=%d\n",errno));
++                dladm_close(handle);
++                return (-1);
++        }
++
++        /*
++         * Get the device name of the link, which will be used as the door
++         * file name used to communicate with the driver.
++         */
++        if (dladm_phys_info(handle, linkid, &dpa, DLADM_OPT_ACTIVE) !=
++            DLADM_STATUS_OK) {
++                DEBUGMSGTL(("kernel_sunos5","dladm_phys_info failed "
++                           "with errno=%d\n",errno));
++                dladm_close(handle);
++                return (-1);
++        }
++
++        if(dpa.dp_dev == NULL) {
++            DEBUGMSGTL(("kernel_sunos5","device name from "
++                       "dladm_phys_info = NULL\n")); 
++            dladm_close(handle);
++            return -1;
++        
++        }
++        strcpy(phy_devname, dpa.dp_dev);
++        dladm_close(handle); 
++        
++        return 0;
++}
++
++
++static int getKstatIntInstance(const char *classname, int instance,
++                               const char *statname, const char *varname,
++                               int *value)
++{
++    kstat_ctl_t    *ksc;
++    kstat_t        *ks;
++    kid_t           kid;
++    kstat_named_t  *named;
++
++    int             ret = -1;        /* fail unless ... */
++    int             lookup_stat = 0;
++    
++    DEBUGMSGTL(("kernel_sunos5","\n Inside getKstatIntInstance: variable = %s",
++               varname));
++
++    if (kstat_fd == 0) {
++        kstat_fd = kstat_open();
++        if (kstat_fd == 0) {
++            snmp_log_perror("kstat_open");
++        }
++    }
++    if ((ksc = kstat_fd) == NULL) {
++        goto Return;
++    }
++
++    ks = kstat_lookup(ksc, classname, instance, statname);
++    if (ks == NULL) {
++        DEBUGMSGTL(("kernel_sunos5","\nclass %s, stat %s not found\n",
++                   classname ? classname : "NULL",
++                   statname ? statname : "NULL"));
++        goto Return;
++    }
++
++    kid = kstat_read(ksc, ks, NULL);
++    if (kid == -1) {
++        DEBUGMSGTL(("kernel_sunos5","\ncannot read class %s stats %s\n",
++                   classname ? classname : "NULL", 
++                   statname ? statname : "NULL"));
++        goto Return;
++    }
++
++    named = kstat_data_lookup(ks, varname);
++    if (named == NULL) {
++         DEBUGMSGTL(("kernel_sunos5","\nno var %s for class %s stat %s\n",
++                    varname, classname ? classname : "NULL",
++                    statname ? statname : "NULL"));
++         goto Return;
++    }
++    ret = 0;                /* maybe successful */
++    switch (named->data_type) {
++#ifdef KSTAT_DATA_INT32         /* Solaris 2.6 and up */
++    case KSTAT_DATA_INT32:
++        DEBUGMSGTL(("kernel_sunos5"," value: %d\n", named->value.i32));
++        *value = named->value.i32; 
++        break;
++    case KSTAT_DATA_UINT32:
++        DEBUGMSGTL(("kernel_sunos5"," value: %u\n", named->value.ui32));
++        *value = named->value.ui32; 
++        break;
++    case KSTAT_DATA_INT64:
++        DEBUGMSGTL(("kernel_sunos5"," value: %ld\n", named->value.i64));
++        *value = named->value.i64;
++        break;
++    case KSTAT_DATA_UINT64:
++        DEBUGMSGTL(("kernel_sunos5"," value: %llu\n", named->value.ui64));
++        *value = named->value.ui64; 
++        break;
++#else
++    case KSTAT_DATA_LONG:
++        DEBUGMSGTL(("kernel_sunos5"," value: %ld\n", named->value.l));
++        *value = named->value.l; 
++        break;
++    case KSTAT_DATA_ULONG:
++        DEBUGMSGTL(("kernel_sunos5"," value: %lu\n", named->value.ul));
++        *value = named->value.ul; 
++        break;
++    case KSTAT_DATA_LONGLONG:
++        DEBUGMSGTL(("kernel_sunos5"," value: %lld\n", (long) named->value.ll));
++        *value = (long)named->value.ll;  
++        break;
++    case KSTAT_DATA_ULONGLONG:
++        DEBUGMSGTL(("kernel_sunos5"," value: %llu\n",
++                   (unsigned long) named->value.ull));
++        *value = (unsigned long)named->value.ull;  
++        break;
++#endif
++    default:
++        ret = -1;            /* fail */
++        break;
++    }
++ Return:
++    return ret;
++}
++
+ static void
+ set_if_info(mib2_ifEntry_t *ifp, unsigned index, char *name, uint64_t flags,
+             boolean_t flags_unknown, int mtu)
+ { 
+     boolean_t havespeed = B_FALSE;
++    char phydevname[100];
++    char devbasename[100];
++    int instance = -1;
+ 
+     /*
+      * Set basic information 
+@@ -1770,6 +1916,16 @@
+         /* only UPed interfaces get correct link status - if any */
+         if (getKstatInt(NULL, name,"link_up",&i_tmp) == 0) {
+             ifp->ifOperStatus = i_tmp ? 1 : 2;
++        } else if(link_to_phydev(name, phydevname) == 0) {
++                 strcpy(devbasename, phydevname);
++                 DEBUGMSGTL(("kernel_sunos5","phydevname = %s\n", phydevname));
++                 _dlpi_parse_devname(devbasename, &instance);
++                 DEBUGMSGTL(("kernel_sunos5","devbasename = %s, "
++                            "instance= %d\n", devbasename, instance));
++                 if(getKstatIntInstance(devbasename, instance, "phys",
++                                        "link_up", &i_tmp) == 0) {
++                     ifp->ifOperStatus = i_tmp ? 1 : 2;
++                 } 
+ #ifdef IFF_FAILED
+         } else if (flags & IFF_FAILED) {
+             /*

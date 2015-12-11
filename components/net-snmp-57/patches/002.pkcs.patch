@@ -1,0 +1,37 @@
+Following patch is a fix for a bug in libnetsnmp which, under certain
+circumstances, causes a core dump during snmp_shutdown.
+
+(Upstream Bug) #2374 net-snmp is coring when stopped
+=====================================================================
+--- net-snmp-5.4.1/snmplib/pkcs.c	Tue Mar  5 17:29:50 2013
++++ net-snmp-5.4.1/snmplib/pkcs.mod.c	Tue Mar  5 17:35:30 2013
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright Copyright 2003 Sun Microsystems, Inc. All rights reserved.
++ * Copyright (c) 2003, 2013, Oracle and/or its affiliates. All rights reserved.
+  * Use is subject to license terms specified in the COPYING file
+  * distributed with the Net-SNMP package.
+  */
+@@ -105,19 +105,13 @@
+ static int
+ free_slots(int majorID, int minorID, void *serverarg, void *clientarg)
+ {
+-    int            slotcount, i;
++    (void) C_Finalize(NULL);
+ 
+     if (pSlot != NULL) {
+-        slotcount = pSlot->count;
+-        for (i = 0; i < slotcount; i++) {
+-            if (pSlot->pSession->hdl != NULL) {
+-                free(pSlot->pSession->hdl);
+-            }
+-        }
+-        free(pSlot);
++        SNMP_FREE(pSlot->pSession);
++        SNMP_FREE(pSlot);
+     }
+ 
+-    (void) C_Finalize(NULL);
+     return 0;
+ }
+ 

@@ -1,0 +1,34 @@
+# snmpd dumps core when snmpd.conf contains an incorrect logmatch param
+# Developed in-house. Bug submitted upstream
+# https://sourceforge.net/p/net-snmp/bugs/2591/
+--- net-snmp-5.7.2.1/agent/mibgroup/ucd-snmp/logmatch.c	Wed Feb 19 16:36:42 2014
++++ net-snmp-5.7.2.1/agent/mibgroup/ucd-snmp/logmatch.c	Thu Oct 30 02:17:27 2014
+@@ -435,6 +435,17 @@
+             regcomp(&(logmatchTable[logmatchCount].regexBuffer),
+                     logmatchTable[logmatchCount].regEx,
+                     REG_EXTENDED | REG_NOSUB);
++		if (logmatchTable[logmatchCount].myRegexError)
++		{
++			char regexErrorString[100];
++			regerror(logmatchTable[logmatchCount].myRegexError,
++					&(logmatchTable[logmatchCount].regexBuffer),
++					regexErrorString, 100);
++			regexErrorString[99] = '\0';
++			snmp_log(LOG_ERR, "Could not process the logmatch regex - %s," \
++					"\n since regcomp() failed with - %s\n",
++					logmatchTable[logmatchCount].regEx, regexErrorString);
++		}
+ 
+         if (logmatchTable[logmatchCount].frequency > 0) {
+             snmp_alarm_register(logmatchTable[logmatchCount].frequency,
+@@ -469,8 +480,8 @@
+      */
+ 
+     for (i = 0; i < logmatchCount; i++) {
+-
+-        regfree(&(logmatchTable[i].regexBuffer));
++        if (logmatchTable[i].myRegexError == 0)
++            regfree(&(logmatchTable[i].regexBuffer));
+     }
+     logmatchCount = 0;
+ }

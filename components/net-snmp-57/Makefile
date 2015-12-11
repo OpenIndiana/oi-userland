@@ -30,15 +30,15 @@ include ../../make-rules/shared-macros.mk
 PATH=$(SPRO_VROOT)/bin:$(GNUBIN):$(USRBINDIR)
 
 COMPONENT_NAME=		net-snmp
-COMPONENT_VERSION=	5.4.1
+COMPONENT_VERSION=	5.7.2.1
 COMPONENT_PROJECT_URL=	http://www.net-snmp.org/
 COMPONENT_ARCHIVE_HASH= \
-    sha256:0ea976722c993c87dede8eb6348e6feb059e3851bbef2de824bf18ac97cdb565
-#COMPONENT_ARCHIVE_URL=	http://ftp.ntua.gr/mirror/net-snmp/net-snmp/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_URL= http://ftp.ntua.gr/mirror/net-snmp/OldFiles/net-snmp-5.4.x/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+    sha256:35dd20a2b17849f6d5a0a6109b4f52c1a777a3e1a00c79c4a175c520d23f3497
+COMPONENT_ARCHIVE_URL=	http://ftp.ntua.gr/mirror/net-snmp/net-snmp/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+#COMPONENT_ARCHIVE_URL= http://ftp.ntua.gr/mirror/net-snmp/OldFiles/net-snmp-5.4.x/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	service/net-snmp utility/net-snmp library/net-snmp
 
-TPNO=			5702
+TPNO=			13120
 
 BUILD_32_and_64 += $(BUILD_DIR_32)/.docs
 INSTALL_TARGET= build $(INSTALL_32_and_64)
@@ -61,7 +61,7 @@ CONFIGURE_OPTIONS  +=	--enable-agentx-dom-sock-only
 CONFIGURE_OPTIONS  +=	--enable-ucd-snmp-compatibility
 CONFIGURE_OPTIONS  +=	--enable-ipv6
 CONFIGURE_OPTIONS  +=	--enable-mfd-rewrites
-CONFIGURE_OPTIONS  +=	--with-pkcs
+CONFIGURE_OPTIONS  +=	--with-openssl=/lib/openssl
 CONFIGURE_OPTIONS  +=	--with-transports="UDP TCP UDPIPv6 TCPIPv6"
 CONFIGURE_OPTIONS  +=   --sysconfdir=$(ETCDIR)/net-snmp
 
@@ -124,13 +124,13 @@ $(BUILD_DIR_32)/.docs:
 	    $(ENV) srcdir=$(@D) $(DOXYGEN) $(@D)/doxygen.conf)
 	$(TOUCH) $@
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen
+REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += $(PERL_PKG)
+REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
-REQUIRED_PACKAGES += system/library/security/pkcs11
+REQUIRED_PACKAGES += system/linker
 REQUIRED_PACKAGES += system/management/snmp/net-snmp
 REQUIRED_PACKAGES += system/network

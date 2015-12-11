@@ -1,0 +1,3388 @@
+#
+# Copyright (c) 2003, 2011, Oracle and/or its affiliates. All rights reserved.
+#
+# ident  "@(#)migration.pl	1.5 03/06/26 SMI"
+#
+# $Id: masfcnv,v 1.3 2004/01/09 14:04:14 rr144420 Exp $
+
+=head1 NAME
+
+masfcnv - SNMP configuration migration script
+
+=head1 SYNOPSIS
+
+masfcnv S<[ -cimnrs ]> S<[ -l agent|master ]> S<[ -p enable|disable|error ]>
+S<[ -t none|add ]> S<[ -u agent|master|error ]> S<[ -y agent|master|error ]>
+
+masfcnv [ -V ]
+
+masfcnv [ -? ]
+
+=head1 DESCRIPTION
+
+The masfcnv script is used to assist the system administrator in migrating an
+existing set of configuration files for the Sun SNMP Management Agent for Sun
+Fire and Netra Systems (MASF) to the Systems Management Agent (SMA).
+
+The script accepts as input the currently installed set of MASF and SMA
+configuration files and outputs a new set of SMA configuration files. Existing
+SMA configuration files are backed up by appending ".bak" to the filename. The
+administrator may choose to output the new configuration to the standard output
+instead of replacing the current configuration by specifying the -n option.
+
+The migration script must be run as the superuser and failure to do so will
+cause the script to exit with an error message. Before running the script the
+administrator should ensure that both the SMA and MASF agents are not running.
+If the agents are running they will be shut down by the script.
+
+The migration script will install a new startup script for the MASF agent in
+/etc/init.d and backup the old script. During migration, MASF will be
+configured as an AgentX subagent of SMA. All migration settings will be
+migrated to the SMA configuration file.
+
+The migration script will abort if any unrecognised directives are found in
+either the MASF configuration files or the SMA configuration files. This may
+be overridden with the -i option. If this option is selected, the behaviour is
+to retain unrecognised directives which were present in the SMA configuration,
+but remove those present in the MASF configuration.
+
+The migration script will then proceed to migrate access control and trap
+configuration. As a side-effect of running the migration script, the following
+directives may be expanded by the script into multiple directives with
+an equivalent interpretation:
+
+=over
+
+=item rwcommunity
+
+=item rocommunity
+
+=item rwuser
+
+=item rouser
+
+=item trapcommunity
+
+=item trapsink
+
+=item trap2sink
+
+=item informsink
+
+=back
+
+=head2 Access Control Migration
+
+Access control directives will be expanded into the equivalent com2sec, group,
+access and view directives. Existing group names will be renamed by prepending
+a prefix to avoid conflict with any which may already be defined in SMA.
+
+When migrating SNMPv1 or v2c access control, a conflict may occur if both MASF
+and SMA configuration files have defined access permissions for the same
+community and source address. The default behaviour is to abort with a
+message, unless the -y option specifies otherwise. If "-y agent" was specified
+then the MASF configuration will take precedence. If "-y master" was specified
+then the SMA configuration will be retained.
+
+When migrating USM configuration (SNMPv3), a conflict may occur if both SMA
+and MASF configurations define a user with the same securityName. If this
+occurs then the behaviour of the script is determined by the -u option.
+If "-u agent" has been selected then the configuration of the user defined in
+the MASF configuration files will be the one that is retained. Otherwise, if
+the "-u master" option has been selected, the one defined in the SMA
+configuration files will be retained.
+
+The migration script will by default attempt to migrate USM users from MASF to
+SMA. The script will determine whether there are any existing SNMPv3 users
+present in the SMA configuration and whether or not the default engineID has
+been overridden in the SMA configuration files. If neither of these are found to
+be the case then the any usmUser statements containing localised
+authentication keys can be migrated to SMA, along with the MASF engineID. This
+will result in the engineID of SMA master agent changing.
+
+If the script determines that there are existing SNMPv3 users or a manually
+configured engineID present in the SMA configuration, then only those users
+defined in createUser statements will be transferred. Those users which were
+defined in usmUser statements will be transferred but will have their
+passwords reset to a random value. The administrator is advised to notify
+their users of their new password and/or reset the password themselves by
+editing the newly-generated configuration file themselves.
+
+=head2 Trap/Inform Migration
+
+The migration script will perform a check to determine whether a trap
+destination defined for MASF is already specified in an existing SMA trapsink,
+trap2sink or informsink directive. If this is the case then the directive in
+the MASF configuration will be discarded to avoid duplicate traps/informs being
+received.
+
+trapsink, trap2sink and informsink directives specified in the existing SMA
+configuration are considered valid destinations for MASF traps/informs and will
+receive them from the MASF subagent after migration.
+
+If the "-t none" option was specified on the command line, then the migration
+script will carry over any remaining MASF trap/inform directives without
+modification.
+
+If the "-t add" option was specified (the default), then the migration script
+will expand any trapsink, trap2sink or informsink directives to use the
+TARGET-MIB and NOTIFICATION-MIB. The TARGET-MIB specifies targets using IP
+addresses, so it may be desirable to use the "-t none" option if, for example,
+the network allocates IP addresses to hostnames dynamically via DHCP.
+
+The expanded directives will define filters specific to the MASF agent so that
+traps from other subagents will not be received by migrated trap destinations.
+Existing filters present in the SMA configuration will by default not be
+modified and may or may not receive MASF traps depending upon the filters
+which were originally defined for them.
+
+If the -l option is specified, then any filters already defined in the
+TARGET-MIB and the NOTIFICATION-MIB for SMA will be extended to include traps
+from MASF. In the event that a trap destination is already configured in the
+TARGET-MIB with the same target address and community as an existing MASF
+trap/inform sink, a conflict will arise. 
+
+If "-l agent" was specified and a conflict arises, then the migration script
+will use the target SNMP parameters (i.e. SNMP version and choise of
+trap/inform) defined by the MASF trap/informsink directive to send traps to
+this destination. Otherwise if the "-l master" option was specified, then the
+conflict will be resolved using the target SNMP parameters specified in the
+SMA configuration.
+
+=head2 Miscellaneous
+
+If the migration script encounters any of the following directives in the MASF
+configuration file and they are either not present or differ in the SMA
+configuration, the script will log a warning message:
+
+=over
+
+=item syslocation
+
+=item syscontact
+
+=item sysname
+
+=item sysservices
+
+=item agentgroup
+
+=item agentuser
+
+=item authtrapenable
+
+=back
+
+=head1 OPTIONS
+
+=over
+
+=item B<-?>
+
+=item B<--help>
+
+Displays usage information.
+
+=item B<-c>
+
+=item B<--no-community>
+
+Do not transfer v1/v2c communities
+
+=item B<-i>
+
+=item B<--ignore-unrecognized-directives>
+
+Continue processing if unrecognised directives are present.
+
+=item B<-l> I<agent|master>
+
+=item B<--master-trap-target>=I<agent|master>
+
+If 'agent' is specified then the existing SMA trap targets will be configured
+to receive traps that were previously sent to destinations for the Sun Fire
+SNMP agent. If 'master' is specified then the targets will be configured to
+receive Sun Fire SNMP traps but existing SNMP target parameters will be used.
+
+=item B<-m>
+
+=item B<--no-usmuser>
+
+Do not transfer usm (v3) users
+
+=item B<-n>
+
+=item B<--dry-run>
+
+Run the migration without modifying any files. If any error arises then
+continue processing. This can be used to determine the likely migration issues.
+
+=item B<-p> I<enable|disable|error>
+
+=item B<--use-agent-port>=I<enable|disable|error>
+
+Indicates whether the port originally used by the Sun Fire SNMP agent should be
+used by the SMA agent after migration (if the two agents are using different
+ports). If 'enable' is specified then the port used by the Sun Fire SNMP agent
+will also be used by the SMA agent after migration. If 'disable' is specified
+then the ports used by SMA will not be updated by the migration tool.  If
+the 'error' option is specified and the SMA agent is not already using the same
+ports as those used by the original Sun Fire SNMP agent then an error will be
+reported and the migration process will be terminated. If no option is
+specified the default behaviour is equivalent to the 'error' flag.
+
+=item B<-r>
+
+=item B<--no-trap>
+
+Do not transfer trap destinations
+
+=item B<-s>
+
+=item B<--skip-user>
+
+If a user is found in the MASF configuration file that cannot be created in the
+new configuration due to a change in the engine ID, then output a message
+indicating that the user could not be migrated (needs to be manually recreated)
+and continue processing. If this option is not present then the migration tool
+will consider such a situation as an error and abort.
+
+=item B<-t> I<none|add>
+
+=item B<--trap-filter>=I<none|add>
+
+If 'none' is specified then the script will copy trap directives directly. The
+administrator may need to manually update the configuration file to ensure
+traps are only delivered to their intended destinations.  If 'add' is specifed
+then trap filters will be constructed so that traps originating from the
+original Sun Fire SNMP agent are only delivered to the destinations that
+originally received them. 'add' is the default behaviour.
+
+=item B<-u> I<agent|master|error>
+
+=item B<--select-user>=I<agent|master|error>
+
+Specifies that if a user with the same name is found in both configuration
+files that the conflict is to be resolved using the specified configuration
+file as input.  Selecting a user from a particular will also cause the group
+declaration for that user to be taken from the same file. If 'agent' is
+specified then the user will be taken from the configuration file for the Sun
+Fire SNMP Agent. If 'master' is specified then the user will be taken from the
+SMA configuration.  Otherwise if 'error' is given, the script will terminate.
+If this option is not present then the default behaviour is equivalent to
+the 'error' flag.
+
+=item B<-V>
+
+=item B<--version>
+
+Display the version of this script.
+
+=item B<-y> I<agent|master|error>
+
+=item B<--select-community>=I<agent|master|error>
+
+Specifies that if a community and source (hostname, IP addr or range of IP
+addresses) is found to be conflicting in the two configurations, which
+combination should be selected when mapping to a security name.  If 'agent' is
+specified then the community and source information will be taken from the
+configuration for the Sun Fire SNMP agent.  If 'master' is specified it will be
+taken from the SMA agent.  Otherwise if 'error' is specified an error will be
+reported and the migration will terminate.  If this option is not present then
+the default behaviour is equivalent to the 'error' flag.
+
+=back
+
+=head1 EXIT STATUS
+
+The script will exit with 0 if migration was successful, non-zero if a problem
+occurred during migration.
+
+=head1 EXAMPLES
+
+For a simple migration which will fail if there are any potential conflicts:
+
+masfcnv
+
+To migrate the MASF configuration such that it will always succeed, MASF
+settings will override in the event of a conflict with SMA and access will
+still be provided on the original MASF port:
+
+masfcnv -is -l agent -p enable -u agent -y agent
+
+To attempt a dry run and migrate the configuration such that any conflicts
+will be resolved by retaining existing SMA settings:
+
+masfcnv -l master -u master -y master
+
+=head1 FILES
+
+=over
+
+=item /etc/sma/snmp/snmpd.conf
+
+=item /var/sma_snmp/snmpd.conf
+
+SMA configuration files
+
+=back
+
+=over
+
+=item /etc/opt/SUNWmasf/conf/snmpd.conf
+
+=item /var/opt/SUNWmasf/snmpd.dat
+
+MASF configuration files
+
+=back
+
+=over
+
+=item /tmp/sma_migration.log
+
+masfcnv log file
+
+=back
+
+=cut
+
+use strict;
+
+# Text::ParseWords requires 5.005
+require 5.005;
+
+use Getopt::Long 2.17;
+use Text::ParseWords;
+use Net::hostent;
+use Socket;
+use Data::Dumper;
+use File::Copy;
+use Text::Wrap;
+
+##############################################################################
+# global defaults
+
+# storage for new lines
+%::ADDED_CONFIGS = ('prepend'=>[],
+	'append'=>[]);
+
+use vars qw ($INTERNET_OID
+    $LOG_FILE
+    $DATA_DIR
+    $FILTER_TYPE_INCLUDED
+    $FILTER_TYPE_EXCLUDED
+    $ENTITY_MIB_OID
+    $SUNPLAT_MIB_OID
+    $SNMP_UDP_DOMAIN
+    $DEFAULT_ROW_STATUS
+    $DEFAULT_STORAGE_TYPE
+    $MPMODEL_SNMPV1
+    $MPMODEL_SNMPV2C
+    $MPMODEL_SNMPV2U
+    $MPMODEL_SNMPV3
+    $SECURITY_MODEL_ANY
+    $SECURITY_MODEL_SNMPV1
+    $SECURITY_MODEL_SNMPV2C
+    $SECURITY_MODEL_USM
+    $SECURITY_LEVEL_NOAUTHNOPRIV
+    $SECURITY_LEVEL_AUTHNOPRIV
+    $SECURITY_LEVEL_AUTHPRIV
+    $NOTIFY_TYPE_TRAP
+    $NOTIFY_TYPE_INFORM);
+# location where template files, etc. are stored.
+*LOG_FILE = \"/tmp/sma_migration.log";
+*INTERNET_OID = \".1.3.6.1";
+*DATA_DIR = \"/usr/lib/net_snmp";
+*FILTER_TYPE_INCLUDED = \1;
+*FILTER_TYPE_EXCLUDED = \2;
+*ENTITY_MIB_OID = \".1.3.6.1.2.1.47";
+*SUNPLAT_MIB_OID = \".1.3.6.1.4.1.42.2.70.101";
+*SNMP_UDP_DOMAIN = \".1.3.6.1.6.1.1";
+*DEFAULT_ROW_STATUS = \1;
+*DEFAULT_STORAGE_TYPE = \3;
+*MPMODEL_SNMPV1 = \0;
+*MPMODEL_SNMPV2C = \1;
+*MPMODEL_SNMPV2U = \2;
+*MPMODEL_SNMPV3 = \3;
+*SECURITY_MODEL_ANY = \0;
+*SECURITY_MODEL_SNMPV1 = \1;
+*SECURITY_MODEL_SNMPV2C = \2;
+*SECURITY_MODEL_USM = \3;
+*SECURITY_LEVEL_NOAUTHNOPRIV = \1;
+*SECURITY_LEVEL_AUTHNOPRIV = \2;
+*SECURITY_LEVEL_AUTHPRIV = \3;
+*NOTIFY_TYPE_TRAP = \1;
+*NOTIFY_TYPE_INFORM = \2;
+
+
+##############################################################################
+# misc functions
+
+sub log_message
+{
+	my ($msg, $line) = @_;
+	if (defined $line && exists $line->{'file'} && exists
+		$line->{'lineno'}) {
+		$msg = $line->{'file'}.', line '.($line->{'lineno'} + 1).
+		    ': '.$msg;
+	}
+	$msg = wrap('', '', $msg);
+	if ($::AUTOMATED) {
+	  open (LOG, ">> $LOG_FILE") || 
+	  	die "Couldn't open log file $LOG_FILE\n";
+	  print LOG $msg;
+	  print STDERR $msg;
+	  close LOG;
+	} else {
+		print STDERR $msg;
+	}
+}
+
+sub get_backup_filename
+{
+    my ($fname) = @_;
+    if ( -e $fname.'.bak') {
+	my ($i) = 0;
+	while ( -e $fname.".bak.$i" ) {
+	    $i++;
+	}
+	return $fname.".bak.$i";
+    }
+    return $fname.".bak";
+}
+
+sub backup_files
+{
+    log_message "Backing up original files\n";
+    my ($f, $newf);
+    for $f (@::MASF_CONFIG_FILES, $::MASF_PERSISTENT_FILE, @::SMA_CONFIG_FILES,
+	    $::SMA_PERSISTENT_FILE) {
+	if (! -e $f) {
+	    next;
+	}
+	$newf = get_backup_filename($f);
+	log_message "Backing up $f to $newf\n";
+	if (0 == copy $f, $newf) {
+	    log_message "Couldn't backup $f - aborting\n";
+	    exit 1;
+	}
+    }
+}
+
+sub remove_masf_persistent_file
+{
+    if (! -e $::MASF_PERSISTENT_FILE) {
+	return;
+    }
+    log_message "Removing $::MASF_PERSISTENT_FILE\n";
+    if (0 == unlink $::MASF_PERSISTENT_FILE) {
+	log_message "Couldn't remove MASF persistent storage file\n".
+	"$::MASF_PERSISTENT_FILE - Aborting\n";
+	exit 1;
+    }
+}
+
+sub version
+{
+    my ($rev) = '$Revision: 1.3 $';
+    $rev=~s/^\$Revision: //;
+    $rev=~s/ \$$//;
+    print STDERR "$0 $rev\n".
+	"Copyright 2003 Sun Microsystems, Inc.\n".
+	"All rights reserved.\n".
+	"Use is subject to license terms.\n";
+    exit 0;
+}
+
+sub stop_sma_running
+{
+    `/etc/init.d/init.sma stop`;
+}
+
+sub stop_masf_running
+{
+    `/etc/init.d/masfd stop`;
+    if (($? >> 8) > 0) {
+	log_message "Couldn't stop the MASF agent\n";
+	exit 1;
+    }
+}
+
+sub set_umask
+{
+    # only root should be able to read the config file
+    umask 0077;
+}
+
+sub install_new_wrapper_script
+{
+    log_message "Installing new MASF startup script\n";
+
+    my $pkgInstance='SUNWmasfr';
+    my @commands=("/usr/sbin/installf $pkgInstance /etc/init.d/masfd f 744 root sys",
+    "/usr/sbin/installf $pkgInstance /etc/rc0.d/K40masfd=/etc/init.d/masfd l",
+    "/usr/sbin/installf $pkgInstance /etc/rc1.d/K40masfd=/etc/init.d/masfd l",
+    "/usr/sbin/installf $pkgInstance /etc/rc2.d/K40masfd=/etc/init.d/masfd l",
+    "/usr/sbin/installf $pkgInstance /etc/rc3.d/S90masfd=/etc/init.d/masfd l",
+    "/usr/sbin/installf $pkgInstance /etc/rcS.d/K40masfd=/etc/init.d/masfd l",
+    "/usr/sbin/install -f /etc/init.d -m 0744 -u root -g sys $DATA_DIR/masfd",
+    "/usr/sbin/installf -f $pkgInstance",
+    "/usr/sbin/removef $pkgInstance /etc/rc3.d/S80masfd",
+    "/usr/bin/rm /etc/rc3.d/S80masfd",
+    "/usr/sbin/removef -f $pkgInstance"
+    );
+    my $command;
+    for $command (@commands) {
+	`$command`;
+	if ($? >> 8) {
+	    log_message "A problem occurred whilst installing the MASF startup ".
+		"script\n";
+	    exit 1;
+	}
+    }
+}
+
+sub install_template_config_file
+{
+    if (copy($DATA_DIR.'/snmpd.conf', $::MASF_CONFIG_FILES[0]) == 0) {
+	log_message "Couldn't copy template configuration file to ".
+	    $::MASF_CONFIG_FILES[0]."\n";
+	    exit 1;
+    }
+}
+
+sub are_we_root
+{
+	if ($> != 0) {
+		log_message "You are not running this as root.\n";
+		exit 1;
+	}
+}
+
+sub sma_config_sanity_check
+{
+	my ($files, $i);
+	# check we can read the main config file
+	if ( ! -r $::SMA_CONFIG_FILES[0] ) {
+		log_message "Couldn't read SMA config file ".
+		$::SMA_CONFIG_FILES[0]."\n";
+		exit 1;
+	}
+	for ($i = 0; $i < @::SMA_CONFIG_FILES; $i++) {
+		if (! -r $::SMA_CONFIG_FILES[$i]) {
+			splice @::SMA_CONFIG_FILES, $i--, 1;
+		}
+	}
+	# check that if the persistent storage file isn't present, that there
+	# aren't any stale backups indicating it failed to update it properly
+	if ( ! -e $::SMA_PERSISTENT_FILE ) {
+		$files = `/bin/ls $::SMA_PERSISTENT_DIR/sma.*.dat 2>/dev/null`;
+		if ($files ne '') {
+			log_message "Stale SMA agent config files found. The ".
+			"SMA agent may not have been shut down cleanly.\n";
+			exit 1;
+		} else {
+			# Assume this is because the agent was never run
+			log_message "WARNING: no SMA persistent storage file found\n";
+		}
+	}
+}
+
+sub masf_config_sanity_check
+{
+    my ($files, $i);
+    # check we can read the main config file
+    if ( ! -r $::MASF_CONFIG_FILES[0] ) {
+	log_message "Couldn't read MASF config file ".
+	    $::MASF_CONFIG_FILES[0]."\n";
+	exit 1;
+    }
+    for ($i = 0; $i < @::MASF_CONFIG_FILES; $i++) {
+	if (! -r $::MASF_CONFIG_FILES[$i]) {
+	    splice @::MASF_CONFIG_FILES, $i--, 1;
+	}
+    }
+    # check that if the persistent storage file isn't present, that there
+    # aren't any stale backups indicating it failed to update it properly
+    if ( ! -e $::MASF_PERSISTENT_FILE ) {
+	$files = `/bin/ls $::MASF_PERSISTENT_DIR/snmpd.*.dat 2>/dev/null`;
+	if ($files ne '') {
+	    log_message "Stale MASF agent config files found. The MASF agent ".
+	    "may not have been shut down cleanly.\n";
+	    exit 1;
+	} else {
+	    # Assume this is because the agent was never run
+	    log_message "WARNING: no MASF persistent storage file found\n";
+	}
+    }
+}
+
+sub hostnameToUDPDomain
+{
+        my ($target) = @_;
+        my ($hostname, $port, $hostent);
+        my @dotted_decimal;
+        ($hostname, $port) = ($target=~/^([^:]+):(\d+)$/);
+        if ($port eq "") {
+                $port = 162;
+        } 
+        ($hostent) = gethostbyname($hostname);
+        @dotted_decimal = unpack ('C4', $hostent->addr_list->[0]);
+        return sprintf "0x%02x%02x%02x%02x%04x", @dotted_decimal, $port;
+
+}
+
+sub help
+{
+	my ($name) = ($0=~/([^\/]*)$/);
+        print STDERR "Usage:
+$name	[ -cimnrs ] [ -l agent|master ] [ -p enable|disable|error ] 
+	[ -t none|add  ] [ -u agent|master|error ] [ -y agent|master|error ]
+	
+$name	[ -V ]
+
+$name	[ -? ]
+
+        Migrates the configuration of the SNMP Agent for 
+        Sun Fire Servers to the SMA SNMP Agent
+
+Option  Interpretation
+
+-? 
+--help
+        Display this help message.
+
+-c
+--no-community
+        Do not transfer v1/v2c communities
+
+-i
+--ignore-unrecognized-directives
+        Continue processing if unrecognised directives are present.
+
+-l agent|master
+--master-trap-target=agent|master
+        If 'agent' is specified then the existing SMA trap targets will
+        be configured to receive traps that were previously sent to
+        destinations for the Sun Fire SNMP agent. If 'master' is
+        specified then the targets will be configured to receive Sun
+        Fire SNMP traps but existing SNMP target parameters will be used. This
+	option may not be used with the \"-t none\" option.
+
+-m
+--no-usmuser
+        Do not transfer usm (v3) users
+
+-n
+--dry-run
+        Run the migration without modifying any files. If any error 
+        arises then continue processing. This can be used to determine the
+        likely migration issues.
+
+-p enable|disable|error
+--use-agent-port=enable|disable|error
+        Indicates whether the port originally used by the Sun Fire SNMP
+        agent should be used by the SMA agent after migration (if the
+        two agents are using different ports). If 'enable' is specified
+        then the port used by the Sun Fire SNMP agent will also be used
+        by the SMA agent after migration. If 'disable' is specified then
+        the ports used by SMA will not be updated by the migration tool.
+        If the 'error' option is specified and the SMA agent is not 
+        already using the same ports as those used by the original Sun
+        Fire SNMP agent then an error will be reported and the migration
+        process will be terminated. If no option is specified the default
+        behaviour is equivalent to the 'error' flag.
+
+-r
+--no-trap
+        Do not transfer trap destinations
+
+-s
+--skip-user
+        If a user is found in the MASF configuration file that 
+        cannot be created in the new configuration due to a change
+        in the engine ID, then output a message indicating that
+        the user could not be migrated (needs to be manually
+        recreated) and continue processing. If this option is not
+        present then the migration tool will consider such a 
+        situation as an error and abort.
+
+-t none|add
+--trap-filter=none|add
+        If 'none' is specified then the script will copy trap directives
+        directly. The administrator may need to manually update the 
+        configuration file to ensure traps are only delivered to their
+        intended destinations.  If 'add' is specifed then trap filters
+        will be constructed so that traps originating from the original
+        Sun Fire SNMP agent are only delivered to the destinations that
+        originally received them. 'add' is the default behaviour.
+
+-u agent|master|error
+--select-user=agent|master|error
+        Specifies that if a user with the same name is found in both
+        configuration files that the conflict is to be resolved using
+        the specified configuration file as input.  Selecting a user
+        from a particular will also cause the group declaration for 
+        that user to be taken from the same file. If 'agent' is 
+        specified then the user will be taken from the configuration
+        file for the Sun Fire SNMP Agent. If 'master' is specified then
+        the user will be taken from the SMA configuration.  Otherwise
+        if 'error' is given, the script will terminate.  If this option
+        is not present then the default behaviour is equivalent to the
+        'error' flag.
+
+-V 
+--version
+        Display the version of this script.
+
+-y agent|master|error
+--select-community=agent|master|error
+        Specifies that if a community and source (hostname, IP addr
+        or range of IP addresses) is found to be conflicting in the
+        two configurations, which combination should be selected when
+        mapping to a security name.  If 'agent' is specified then the
+        community and source information will be taken from the 
+        configuration for the Sun Fire SNMP agent.  If 'master' is
+        specified it will be taken from the SMA agent.  Otherwise if 
+        'error' is specified an error will be reported and the 
+        migration will terminate.  If this option is not present then
+        the default behaviour is equivalent to the 'error' flag.
+
+";
+	exit 1;
+}
+
+%::SMA_CONFIGS = ();
+%::MASF_CONFIGS = ();
+sub strip_cr_nl
+{
+    # remove \r and \n
+    my ($lines, $i);
+    for $lines (values %::SMA_CONFIGS) {
+    	for ($i = 0; $i < @$lines; $i++) {
+		chomp $lines->[$i];
+	}
+    }
+    for $lines (values %::MASF_CONFIGS) {
+    	for ($i = 0; $i < @$lines; $i++) {
+		chomp $lines->[$i];
+	}
+    }
+}
+
+sub read_config_files
+{
+    my ($i, @lines);
+    for ($i = 0; $i < @::SMA_CONFIG_FILES; $i++) {
+	open (FH, '< '.$::SMA_CONFIG_FILES[$i]) || do {
+		log_message("Couldn't read config file ".
+		$::SMA_CONFIG_FILES[$i]."\n");
+		exit 1;
+	};
+	@lines=<FH>;
+	close FH;
+	$::SMA_CONFIGS{$::SMA_CONFIG_FILES[$i]} = [@lines];
+    }
+    if (-e $::SMA_PERSISTENT_FILE) {
+	open (FH, '< '.$::SMA_PERSISTENT_FILE) || do {
+	    log_message("Couldn't read config file ".$::SMA_PERSISTENT_FILE."\n");
+	    exit 1;
+	};
+	@lines=<FH>;
+	close FH;
+	$::SMA_CONFIGS{$::SMA_PERSISTENT_FILE} = [@lines];
+    }
+    for ($i = 0; $i < @::MASF_CONFIG_FILES; $i++) {
+	open (FH, '< '.$::MASF_CONFIG_FILES[$i]) || do {
+	    log_message("Couldn't read config file ".
+		    $::MASF_CONFIG_FILES[$i]."\n");
+	    exit 1;
+	};
+	@lines=<FH>;
+	close FH;
+	$::MASF_CONFIGS{$::MASF_CONFIG_FILES[$i]} = [@lines];
+    }
+    if (-e $::MASF_PERSISTENT_FILE) {
+	open (FH, '< '.$::MASF_PERSISTENT_FILE) || do {
+	    log_message("Couldn't read config file ".
+		    $::MASF_PERSISTENT_FILE."\n");
+	    exit 1;
+	};
+	@lines=<FH>;
+	close FH;
+	$::MASF_CONFIGS{$::MASF_PERSISTENT_FILE} = [@lines];
+    }
+    strip_cr_nl();
+}
+
+sub prompt_yes_no
+{
+	my ($prompt, $default) = @_;
+	my $response = '';
+	print STDOUT $prompt," [".$default."]:";
+	$response = <STDIN>;
+	chomp $response;
+	if ($response eq '') {
+		$response = $default;
+	}
+	while (uc($response)!~/^Y|N/) {
+	    print STDERR "Response must be (y)es or (n)o:";
+	    $response = <STDIN>;
+		chomp $response;
+	}
+	return $response=~/^[yY]/ ? 'yes' : 'no';
+}
+
+sub prompt
+{
+	my ($prompt, $default, $options) = @_;
+	my $response = '';
+	print STDOUT $prompt," [".$default."]:";
+	$response = <STDIN>;
+	chomp $response;
+	if ($response eq '') {
+		$response = $default;
+	}
+	while (scalar (grep $response eq $_, @$options) != 1) {
+	    print STDERR "Invalid response:";
+	    $response = <STDIN>;
+		chomp $response;
+	}
+	return $response;
+}
+
+sub parse_agentaddress
+{
+    my ($line)=@_;
+    my ($directive, $addresses)=($line=~/^\s*(agentaddress)\s+(.*\S)\s*$/);
+    my ($addr, $spec, @addrs, $has_transport_specifier);
+    @addrs=split /,/,$addresses;
+    foreach $addr (@addrs) {
+	$has_transport_specifier=($addr=~/:/);
+	if (! $has_transport_specifier) {
+	    if ($addr=~/^\//) {
+		$spec = "unix";
+	    } else {
+		$spec = "udp";
+	    }
+	    $addr = $spec.':'.$addr;
+	}
+    }
+    return @addrs;
+}
+
+sub parse_config_line
+{
+    my ($line)=@_;
+    my @words;
+    # strip whitespace
+    $line=~s/^\s*//;
+    $line=~s/\s*$//;
+    # check to see if comment
+    if ((substr $line, 0, 1) eq '#') {
+	return ('', ());
+    }
+    @words = &parse_line('\s+', 0, $line);
+    if (! defined $words[0]) {
+	$words[0] = '';
+    }
+    return @words;
+}
+
+sub sanity_check_config_files 
+{
+	my @smaTokens = (
+		'master',
+		'agentxTimeout',
+		'agentxRetries',
+		'agentxPingInterval',
+		'targetParams',
+		'targetAddr',
+		'snmpNotifyFilterProfileTable',
+		'snmpNotifyTable',
+		'snmpNotifyFilterTable'
+			);
+	my @commonTokens = (
+		'rocommunity',
+		'rwcommunity',
+		'rouser',
+		'rwuser',
+		'agentaddress',
+		'trapsink',
+		'trap2sink',
+		'informsink',
+		'trapcommunity',
+		'com2sec',
+		'group',
+		'access',
+		'view',
+		'engineID',
+		'createUser',
+		'agentgroup',
+		'agentuser',
+		'authtrapenable',
+		'syslocation',
+		'syscontact',
+		'sysname',
+		'sysservices',
+		'engineBoots',
+		'oldEngineID',
+		'usmUser'
+		  );
+	my ($file, $i, $j, $directive, @tokens, $found, $warned, $answer);
+	# check sma config files
+	$warned = 0;
+	for $file (keys %::SMA_CONFIGS) {
+	    for ($i = 0; $i < @{$::SMA_CONFIGS{$file}}; $i++) {
+		$found = 0;
+		($directive, @tokens) = parse_config_line($::SMA_CONFIGS{$file}->[$i]);
+		if ($directive eq '') {
+			next;
+		}
+		
+		for ($j = 0; $j < @smaTokens; $j++) {
+		    if ($directive eq $smaTokens[$j]) {
+			$found = 1;
+			last;
+		    }
+		}
+		if ($found) {
+		    next;
+		}
+		for ($j = 0; $j < @commonTokens; $j++) {
+		    if ($directive eq $commonTokens[$j]) {
+			$found = 1;
+			last;
+		    }
+		}
+		if ($found) {
+		    next;
+		}
+		# token was not recognised
+		log_message("WARNING: Unrecognised token ".$directive.
+		" found in file ".$file." at line ".($i + 1)."\n");
+		$warned = 1;
+	    }
+	}	
+	for $file (keys %::MASF_CONFIGS) {
+	    for ($i = 0; $i < @{$::MASF_CONFIGS{$file}}; $i++) {
+		$found = 0;
+		($directive, @tokens) = parse_config_line($::MASF_CONFIGS{$file}->[$i]);
+		if ($directive eq '') {
+			next;
+		}
+
+		for ($j = 0; $j < @commonTokens; $j++) {
+		    if ($directive eq $commonTokens[$j]) {
+			$found = 1;
+			last;
+		    }
+		}
+		if ($found) {
+		    next;
+		}
+		# token was not recognised
+		log_message("WARNING: Unrecognised token ".$directive.
+		" found in file ".$file." at line ".($i + 1)."\n");
+		$warned = 1;
+		# remove the unrecognised token
+		splice @{$::MASF_CONFIGS{$file}}, $i--, 1;
+	    }
+	}	
+	if ($warned && ! $::IGNORE_UNRECOGNIZED_DIRECTIVES) {
+		if ($::AUTOMATED) {
+		    log_message("Unrecognised tokens found in configuration ".
+		    "file(s) - aborting\n");
+		    exit 1;
+		} else {
+			$answer = prompt_yes_no("Unrecognised tokens were found. Continue?", 'n');
+			if ($answer eq 'no') {
+				exit 1;
+			}
+		}
+	}
+}
+
+sub print_line
+{
+    my ($fh, $line) = @_;
+    if (exists $line->{'orig'} && exists $line->{'new'}) {
+	if ($line->{'orig'} ne $line->{'new'}) {
+	    print $fh "# ### CHANGED BY $0 ###\n";
+	    print $fh '# ',$line->{'orig'},"\n";
+	    if (exists $line->{'comment'}) {
+		print $fh $line->{'comment'},"\n";
+	    }
+	    print $fh $line->{'new'},"\n";
+	} else {
+	    print $fh $line->{'orig'},"\n";
+	}
+    } elsif (exists $line->{'new'}) {
+	if (exists $line->{'comment'}) {
+	    print $fh $line->{'comment'},"\n";
+	}
+	print $fh $line->{'new'},"\n";
+    }
+    
+}
+
+@::SMA_PERSISTENT_FILE_TOKENS = (
+	'targetParams', 'targetAddr',
+	'snmpNotifyFilterProfileTable', 'snmpNotifyTable',
+	'snmpNotifyFilterTable', 'engineBoots', 'usmUser', 'oldEngineID',
+	'createUser');
+
+# extract those directives destined for persistent storage
+sub dump_persistent_storage
+{
+    my ($file, $persistent_file, $config) = @_;
+    #list of tokens which should be in persistent storage
+    my ($f, $l, $lines);
+    for $f (keys %$config) {
+	print $file "# ### IMPORTED FROM $f ###\n\n";
+	for $l (@{$config->{$f}}) {
+	    if (! exists $l->{'new'}) {
+		next;
+	    }
+	    my ($directive, @toks) = parse_config_line($l->{'new'});
+	    if ($directive) {
+		my (@match) = grep ($_ eq $directive, @::SMA_PERSISTENT_FILE_TOKENS);
+		if (@match == 0) {
+		    # skip this line
+		    next;
+		}
+	    } elsif ($f ne $persistent_file) {
+		# skip all comments/blank lines which are not in the persistent
+		# storage file
+		next;
+	    }
+	    print_line($file, $l);
+	}
+    }
+}
+
+sub dump_config
+{
+    my ($file, $persistent_file, $config) = @_;
+    #list of tokens which should be in persistent storage
+    my ($f, $l, $lines);
+    for $f (keys %$config) {
+	print $file "# ### IMPORTED FROM $f ###\n\n";
+	for $l (@{$config->{$f}}) {
+	    if (! exists $l->{'new'}) {
+		next;
+	    }
+	    my ($directive, @toks) = parse_config_line($l->{'new'});
+	    if ($directive) {
+		my (@match) = grep ($_ eq $directive, @::SMA_PERSISTENT_FILE_TOKENS);
+		if (@match > 0) {
+		    if ($f ne $persistent_file && exists $l->{'orig'}) {
+			print $file "# moved to $::SMA_PERSISTENT_FILE >>> ".
+			$l->{'orig'}."\n";
+		    }
+		    # skip this line
+		    next;
+		}
+	    } elsif ($f eq $persistent_file) {
+		# skip all comments/blank lines which are not in the persistent
+		# storage file
+		next;
+	    }
+	    print_line($file, $l);
+	}
+    }
+}
+
+sub set_union {
+	my ($seta, $setb) = @_;
+	my ($i, $j, $found, @out);
+	for $i (@$seta, @$setb) {
+		$found = 0;
+		for $j (@out) {
+			if ($j eq $i) {
+				$found = 1;
+			}
+		}
+		if (! $found) {
+			push @out, $i;
+		}
+	}
+	return @out;
+}
+
+sub in_addr_to_number
+{
+	my ($in_addr) = @_;
+	my ($i, $N) = (0, 0);
+	my (@n) = (unpack 'C4', $in_addr);
+	for ($i = 0; $i < @n; $i++) {
+			$N = $N << 8;
+			$N += $n[$i];
+	}
+	return $N;
+}
+
+sub splice_line
+{
+    my ($config, $line, $length, $offset, @lines) = @_;
+    my ($i, $f);
+    for $i (@lines) {
+	# mark all the lines as changed
+	$i->{'changed'} = undef;
+    }
+    for $f (values %$config) {
+	for ($i = 0; $i < @$f; $i++) {
+	    if ($f->[$i] eq $line) {
+		if (@lines) {
+		    splice @$f, $i + $offset, $length, @lines;
+		} else {
+		    splice @$f, $i + $offset, $length;
+		}
+		return;
+	    }
+	}
+    }
+}
+
+sub prepend_line {
+    my ($line) = @_;
+    $line->{'changed'} = undef;
+    push @{$::ADDED_CONFIGS{'prepend'}}, $line;
+}
+
+sub append_line {
+    my ($line) = @_;
+    $line->{'changed'} = undef;
+    push @{$::ADDED_CONFIGS{'append'}}, $line;
+}
+
+sub replace_line {
+    my ($config, $line, @lines) = @_;
+    $line->{'meta'} = $lines[0]->{'meta'};
+    if (exists $lines[0]->{'new'}) {
+	$line->{'new'} = $lines[0]->{'new'};
+    } else {
+	delete $line->{'new'};
+    }
+    $lines[0] = $line;
+    splice_line($config, $line, 1, 0, @lines);
+}
+
+sub insert_lines {
+    my ($config, $line, $after, @lines) = @_;
+    my ($offset) = ($after ? 1 : 0);
+    splice_line($config, $line, 0, $offset, @lines);
+}
+
+sub get_lines
+{
+    my ($directive, $config)=@_;
+    my ($line, $lines, @matches);
+    for $lines (values %$config) {
+	for $line (@$lines) {
+	    if (exists $line->{'meta'}->{'directive'} &&
+		$line->{'meta'}->{'directive'} eq $directive) {
+		    push @matches, $line;
+	    }
+	}
+    }
+    return @matches;
+}
+
+##############################################################################
+# Traps
+
+sub remove_trap_destinations
+{
+    my (@sinkLines) = (get_lines('trapsink', \%::MASF_CONFIGS),
+	get_lines('trap2sink', \%::MASF_CONFIGS),
+	get_lines('informsink', \%::MASF_CONFIGS));
+    my ($line);
+    for $line (@sinkLines) {
+	replace_line(\%::MASF_CONFIGS, $line, {'meta'=>{}});
+    }
+}
+
+sub get_filters
+{
+    my ($keys, $configs)=@_;
+    my ($f, $l, @filters);
+    for $f (values %$configs) {
+	for $l (@$f) {
+	    if (! exists $l->{'meta'}->{'directive'} ||
+		    ($l->{'meta'}->{'directive'} ne 'snmpNotifyFilterTable')) {
+		next;
+	    }
+	    if (exists $keys->{'profileName'} && 
+		    $l->{'meta'}->{'profileName'} ne $keys->{'profileName'})
+	    {
+		next;
+	    }
+	    push @filters, $l;
+	}
+    }
+    return @filters;
+}
+
+sub get_filterProfiles
+{
+    my ($keys, $configs)=@_;
+    my ($f, $l, @targetAddrs);
+    for $f (values %$configs) {
+	for $l (@$f) {
+	    if (! exists $l->{'meta'}->{'directive'} ||
+		    ($l->{'meta'}->{'directive'} ne 'snmpNotifyFilterProfileTable')) {
+		next;
+	    }
+	    if (exists $keys->{'paramName'} && 
+		    $l->{'meta'}->{'paramName'} ne $keys->{'paramName'}) {
+		next;
+	    }
+	    if (exists $keys->{'profileName'} && 
+		    $l->{'meta'}->{'profileName'} ne $keys->{'profileName'})
+	    {
+		next;
+	    }
+	    push @targetAddrs, $l;
+	}
+    }
+    return @targetAddrs;
+}
+
+sub tag_in_taglist
+{
+    my ($tag, $taglist) = @_;
+    my (@tags) = split /[ \t\r\n]/,$taglist;
+    my ($t);
+    for $t (@tags) {
+	if ($t eq $tag) {
+	    return 1;
+	}
+    }
+    return 0;
+}
+
+sub notifyName_exists
+{
+    my ($name) = @_;
+    my ($file, $line, $meta);
+    for $file (values %::MASF_CONFIGS, values %::SMA_CONFIGS) {
+	for $line (@$file) {
+	    $meta=$line->{'meta'};
+	    if (exists $meta->{'notifyName'} &&
+		    $meta->{'notifyName'} eq $name) {
+		return 1;
+	    }
+	}
+    }
+    return 0;
+}
+
+sub tag_exists
+{
+    my ($tag) = @_;
+    my ($file, $line, $meta);
+    for $file (values %::MASF_CONFIGS, values %::SMA_CONFIGS) {
+	for $line (@$file) {
+	    $meta = $line->{'meta'};
+	    if (exists $meta->{'tagList'} &&
+			tag_in_taglist ($tag, $meta->{'tagList'})) {
+		return 1;
+	    }
+	    if (exists $meta->{'notifyTag'} &&
+		$tag eq $meta->{'notifyTag'}) {
+		return 1;
+	    }
+	}
+    }
+    return 0;
+}
+
+sub get_new_profileName
+{
+    my ($i) = (0);
+    my ($try) = ('masfProfile'.$i);
+    while (profileName_exists($try)) {
+	$i++;
+	$try = 'masfProfile'.$i;
+    }
+    if (length $try > 32) {
+	log_message "Unable to generate unique profileName\n";
+	exit 1;
+    }
+    return $try;
+}
+
+sub generate_notify_tags
+{
+    my ($prefix) = @_;
+    my ($i) = (0);
+    while (tag_exists ($prefix.$i) ||
+	notifyName_exists ($prefix.$i)) {
+	$i++;
+    }
+    if (length ($prefix.$i) > 255) {
+	log_message "Unable to generate valid tag for prefix ".$prefix."\n";
+	exit 1;
+    }
+    return $prefix.$i;
+}
+
+sub get_new_paramName
+{
+    my ($i) = (0);
+    while (paramName_exists('masfParam'.$i)) {
+	$i++;
+    }
+    if (length 'masfParam'.$i > 32) {
+	log_message "Unable to generate unique paramName.\n";
+	exit 1;
+    }
+    return 'masfParam'.$i;
+}
+
+sub get_new_targetName
+{
+    my ($host)=@_;
+    my ($i)=(0);
+    my ($try)=('masfTarget'.$i.$host);
+    while (targetName_exists($try) || length $try > 32) {
+	if (length $try > 32) {
+	    chop $host;
+	    if (length $host == 0) {
+		log_message "Unable to generate unique targetName\n";
+		exit 1;
+	    }
+	} else {
+	    $i++;
+	}
+	$try = 'masfTarget'.$i.$host;
+    }
+    return $try;
+}
+
+sub paramName_exists
+{
+    my ($paramName) = @_;
+    my ($keys) = ({'paramName'=>$paramName});
+    my (@lines) = (get_targetParams($keys, \%::SMA_CONFIGS),
+	get_targetParams($keys, \%::MASF_CONFIGS),
+	get_targetAddrs($keys, \%::SMA_CONFIGS),
+	get_targetAddrs($keys, \%::MASF_CONFIGS));
+    if (@lines) {
+	return 1;
+    } else {
+	return 0;
+    }
+}
+
+sub profileName_exists
+{
+    my ($name) = @_;
+    my ($file, $line, $meta);
+    for $file (values %::MASF_CONFIGS, values %::SMA_CONFIGS) {
+	for $line (@$file) {
+	    $meta=$line->{'meta'};
+	    if (exists $meta->{'profileName'} &&
+		    $meta->{'profileName'} eq $name) {
+		return 1;
+	    }
+	}
+    }
+    return 0;
+}
+
+sub targetName_exists
+{
+    my ($targetName) = @_;
+    my ($keys) = ({'targetName'=>$targetName});
+    my (@lines) = (get_targetAddrs($keys, \%::SMA_CONFIGS),
+	get_targetAddrs($keys, \%::MASF_CONFIGS));
+    if (@lines) {
+	return 1;
+    } else {
+	return 0;
+    }
+}
+
+# get all target addresses with the specified keys
+sub get_targetAddrs
+{
+    my ($keys, $configs)=@_;
+    my ($f, $l, @targetAddrs);
+    for $f (values %$configs) {
+	for $l (@$f) {
+	    if (! exists $l->{'meta'}->{'directive'} ||
+		    ($l->{'meta'}->{'directive'} ne 'targetAddr')) {
+		next;
+	    }
+	    if (exists $keys->{'paramName'} && 
+		    $l->{'meta'}->{'paramName'} ne $keys->{'paramName'}) {
+		next;
+	    }
+	    if (exists $keys->{'TDomain'} && 
+		    $l->{'meta'}->{'TDomain'} ne $keys->{'TDomain'})
+	    {
+		next;
+	    }
+	    if (exists $keys->{'TAddress'} && 
+		    $l->{'meta'}->{'TAddress'} ne $keys->{'TAddress'})
+	    {
+		next;
+	    }
+	    if (exists $keys->{'targetName'} && 
+		    $l->{'meta'}->{'targetName'} ne $keys->{'targetName'})
+	    {
+		next;
+	    }
+	    push @targetAddrs, $l;
+	}
+    }
+    return @targetAddrs;
+}
+
+# get all target parameters with the specified keys
+sub get_targetParams
+{
+    my ($keys, $configs)=@_;
+    my ($f, $l, @targetParams);
+    for $f (values %$configs) {
+	for $l (@$f) {
+	    if (! exists $l->{'meta'}->{'directive'} ||
+		    ($l->{'meta'}->{'directive'} ne 'targetParams')) {
+		next;
+	    }
+	    if (exists $keys->{'paramName'} && 
+		    $l->{'meta'}->{'paramName'} ne $keys->{'paramName'}) {
+		next;
+	    }
+	    if (exists $keys->{'securityModel'} && 
+		    $l->{'meta'}->{'securityModel'} ne $keys->{'securityModel'})
+	    {
+		next;
+	    }
+	    if (exists $keys->{'securityLevel'} && 
+		    $l->{'meta'}->{'securityLevel'} ne $keys->{'securityLevel'})
+	    {
+		next;
+	    }
+	    if (exists $keys->{'securityName'} && 
+		    $l->{'meta'}->{'securityName'} ne $keys->{'securityName'})
+	    {
+		next;
+	    }
+	    push @targetParams, $l;
+	}
+    }
+    return @targetParams;
+}
+
+sub process_trapsink
+{
+    my ($sinkLine, $informTag, $trapTag) = @_;
+    my ($paramName, @paramLines, $community, @result, $secModel,
+	$MPModel, $notifyType, %profiles, $foundParams);
+    log_message "Migrating trapsink: ".$sinkLine->{'new'}."\n";
+    if ($sinkLine->{'meta'}->{'directive'} eq 'trapsink') {
+	$secModel = $SECURITY_MODEL_SNMPV1;
+	$MPModel = $MPMODEL_SNMPV1;
+    } elsif ($sinkLine->{'meta'}->{'directive'} eq 'trap2sink' ||
+	    $sinkLine->{'meta'}->{'directive'} eq 'informsink') {
+	$secModel = $SECURITY_MODEL_SNMPV2C;
+	$MPModel = $MPMODEL_SNMPV2C;
+    } 
+    if ($sinkLine->{'meta'}->{'directive'} eq 'informsink') {
+	$notifyType = $NOTIFY_TYPE_INFORM;
+    } else {
+	$notifyType = $NOTIFY_TYPE_TRAP;
+    }
+    $community = $sinkLine->{'meta'}->{'community'};
+
+    # try to find an existing target param in SMA config but don't bother if we
+    # don't care about overlap
+    if ($::EXTEND_SMA_FILTERS) {
+    @paramLines = (get_targetParams({'securityName'=>$community,
+		'securityModel'=>$SECURITY_MODEL_SNMPV2C}, \%::SMA_CONFIGS),
+	    get_targetParams({'securityName'=>$community,
+		'securityModel'=>$SECURITY_MODEL_SNMPV1}, \%::SMA_CONFIGS));
+    }
+
+    my ($smaParamLine, $smaTargetLine);
+    my ($targetName, @targetAddrs);
+    my ($host) = $sinkLine->{'meta'}->{'host'};
+    my ($port) = $sinkLine->{'meta'}->{'port'};
+
+    if (@paramLines) {
+	my ($paramLine);
+	for $paramLine (@paramLines) {
+	    $paramName = $paramLine->{'meta'}->{'paramName'};
+	    push @targetAddrs, get_targetAddrs({'TDomain'=>$SNMP_UDP_DOMAIN,
+		    'TAddress'=>hostnameToUDPDomain($host.':'.$port),
+		    'paramName'=>$paramName}, \%::SMA_CONFIGS)
+	}
+	
+	# try to use an existing targetAddr if it was defined
+	if (@targetAddrs > 0) {
+	    $smaTargetLine = $targetAddrs[0];
+	    ($smaParamLine) = get_targetParams({'paramName'=>$smaTargetLine->{'meta'}->{'paramName'}}, \%::SMA_CONFIGS);
+	    $foundParams = 1;
+	} 
+    }
+
+    if (! $foundParams || ! $::KEEP_SNMP_TARGET_PARAMS) {
+	# we need to generate a new set of params
+	$paramName = get_new_paramName();
+	push @result, {'meta'=>{'directive'=>'targetParams',
+	    'paramName'=>$paramName,
+	    'MPModel'=>$MPModel,
+	    'securityModel'=>$secModel,
+	    'securityName'=>$community,
+	    'securityLevel'=>$SECURITY_LEVEL_AUTHNOPRIV,
+	    'storageType'=>$DEFAULT_STORAGE_TYPE,
+	    'rowStatus'=>$DEFAULT_ROW_STATUS}
+	};
+    }
+
+    my (@profiles, $profileName);
+
+    if (! $foundParams) {
+	# no equivalent SMA target found - only MASF traps to be delivered
+	# generate our own targetAddr
+	my ($i) = (0);
+	$targetName = get_new_targetName($host);
+	push @result, {'meta'=>{'directive'=>'targetAddr',
+	    'targetName'=>$targetName,
+	    'TDomain'=>$SNMP_UDP_DOMAIN,
+	    'TAddress'=>hostnameToUDPDomain($host.':'.$port),
+	    'timeout'=>1500,
+	    'retryCount'=>3,
+	    'tagList'=>$notifyType == $NOTIFY_TYPE_INFORM ? $informTag :
+		$trapTag,
+	    'paramName'=>$paramName,
+	    'storageType'=>$DEFAULT_STORAGE_TYPE,
+	    'rowStatus'=>$DEFAULT_ROW_STATUS}};
+	# need to add a filter profile
+	    $profileName = get_new_profileName();
+    } elsif (! $::KEEP_SNMP_TARGET_PARAMS) {
+	# we need to change the targetAddr to refer to the new set of params 
+	$targetName = $smaTargetLine->{'meta'}->{'targetName'};
+	$smaTargetLine->{'meta'}->{'paramName'} = $paramName;
+	$smaTargetLine->{'meta'}->{'tagList'} =
+	    ($notifyType == $NOTIFY_TYPE_INFORM ? $informTag : $trapTag);
+	replace_line(\%::SMA_CONFIGS, $smaTargetLine, $smaTargetLine);
+
+	# set our params to use the new set of filter profiles
+	@profiles = get_filterProfiles(
+		{'paramName'=>$smaParamLine->{'meta'}->{'paramName'}},
+		\%::SMA_CONFIGS);
+	if (@profiles > 0) {
+	    $profileName = $profiles[0]->{'meta'}->{'profileName'};
+	} else {
+	    # no filter profiles defined
+	    return @result;
+	}
+    } else {
+	# don't change existing target specification
+	# SMA profiles already have MASF added.
+	return @result;
+    }
+
+    push @result, {'meta'=>{'directive'=>'snmpNotifyFilterProfileTable',
+	'paramName'=>$paramName,
+	'profileName'=>$profileName,
+	'storageType'=>$DEFAULT_STORAGE_TYPE,
+	'rowStatus'=>$DEFAULT_ROW_STATUS}
+    };
+
+    if ($foundParams) {
+	return @result;
+    }
+
+    # add some filters
+    push @result, 
+    {'comment'=>'# Include ENTITY-MIB and SUN-PLATFORM-MIB in profile',
+	'meta'=>{'directive'=>'snmpNotifyFilterTable',
+	    'profileName'=>$profileName,
+	    'subtree'=>$ENTITY_MIB_OID,
+	    'mask'=>'',
+	    'filterType'=>$FILTER_TYPE_INCLUDED,
+	    'storageType'=>$DEFAULT_STORAGE_TYPE,
+	    'rowStatus'=>$DEFAULT_ROW_STATUS
+	}},
+	{'meta'=>{'directive'=>'snmpNotifyFilterTable',
+		     'profileName'=>$profileName,
+		     'subtree'=>$SUNPLAT_MIB_OID,
+		     'mask'=>'',
+		     'filterType'=>$FILTER_TYPE_INCLUDED,
+		     'storageType'=>$DEFAULT_STORAGE_TYPE,
+		     'rowStatus'=>$DEFAULT_ROW_STATUS
+		 }};	
+    return @result;
+}
+
+sub process_trapsinks
+{
+    # grab all the trapsink, trap2sink and informsink lines in MASF
+    my (@sinkLines) = (get_lines('trapsink', \%::MASF_CONFIGS),
+	get_lines('trap2sink', \%::MASF_CONFIGS),
+	get_lines('informsink', \%::MASF_CONFIGS));
+    my ($sinkLine, $paramName, @paramLines, $community, @result, $secModel,
+	$MPModel, $notifyType, $informTag, $trapTag, %profiles, $foundParams);
+    %profiles=();
+    foreach $sinkLine (@sinkLines) {
+	$paramName = undef;
+	@result = ();
+	$foundParams = 0;
+	log_message "Processing trapsink: ".$sinkLine->{'new'}."\n";
+	if (!defined $informTag) {
+	    $informTag = generate_notify_tags('masfInformTag');
+	    log_message "Using tag ".$informTag." for informs\n";
+	    $trapTag = generate_notify_tags('masfTrapTag');
+	    log_message "Using tag ".$trapTag." for traps\n";
+	    push @result, {'meta'=>{'directive'=>'snmpNotifyTable',
+		'notifyName'=>$informTag,
+		'notifyTag'=>$informTag,
+		'notifyType'=>$NOTIFY_TYPE_INFORM,
+		'storageType'=>$DEFAULT_STORAGE_TYPE,
+		'rowStatus'=>$DEFAULT_ROW_STATUS
+	    }},
+	    {'meta'=>{'directive'=>'snmpNotifyTable',
+			 'notifyName'=>$trapTag,
+			 'notifyTag'=>$trapTag,
+			 'notifyType'=>$NOTIFY_TYPE_TRAP,
+			 'storageType'=>$DEFAULT_STORAGE_TYPE,
+			 'rowStatus'=>$DEFAULT_ROW_STATUS
+		     }};
+	}
+	push @result, process_trapsink($sinkLine, $informTag, $trapTag);
+	replace_line(\%::MASF_CONFIGS, $sinkLine, @result);
+    }
+}
+
+sub extend_sma_trap_filters
+{
+    my (@lines, $line);
+    @lines = get_lines('snmpNotifyFilterTable', \%::SMA_CONFIGS);
+    my (%hash);
+    foreach $line (@lines) {
+	if (!exists $hash{$line->{'meta'}->{'profileName'}}) {
+	    log_message "Adding ENTITY-MIB and SUN-PLATFORM-MIB traps to ".
+	    "trap filter profile ".$line->{'meta'}->{'profileName'}."\n";
+	    $hash{$line->{'meta'}->{'profileName'}}=undef;
+	    insert_lines(\%::SMA_CONFIGS, $line, 0,
+		{'comment'=>'# Include ENTITY-MIB and SUN-PLATFORM-MIB in profile',
+		'meta'=>{'directive'=>'snmpNotifyFilterTable',
+		    'profileName'=>$line->{'meta'}->{'profileName'},
+		    'subtree'=>$ENTITY_MIB_OID,
+		    'mask'=>'',
+		    'filterType'=>$FILTER_TYPE_INCLUDED,
+		    'storageType'=>$DEFAULT_STORAGE_TYPE,
+		    'rowStatus'=>$DEFAULT_ROW_STATUS}},
+		{'meta'=>{'directive'=>'snmpNotifyFilterTable',
+		    'profileName'=>$line->{'meta'}->{'profileName'},
+		    'subtree'=>$SUNPLAT_MIB_OID,
+		    'mask'=>'',
+		    'filterType'=>$FILTER_TYPE_INCLUDED,
+		    'storageType'=>$DEFAULT_STORAGE_TYPE,
+		    'rowStatus'=>$DEFAULT_ROW_STATUS}});
+	}	
+    }
+}
+
+sub process_trapcommunity
+{
+    my ($configs)=@_;
+    my ($i, $file, $trapcommunity, $meta);
+    $trapcommunity = 'public';
+    foreach $file (values %$configs) {
+	for ($i = 0; $i < @$file; $i++) {
+	    $meta = $file->[$i]->{'meta'};
+	    if (! exists $file->[$i]->{'meta'}->{'directive'}) {
+		next;
+	    }
+	    if ($meta->{'directive'} eq 'trapcommunity') {
+		$trapcommunity = $meta->{'community'};
+		replace_line($configs, $file->[$i], {'meta'=>{}});
+		next;
+	    }
+	    if ($meta->{'directive'} eq 'trapsink' ||
+		    $meta->{'directive'} eq 'trap2sink' ||
+		    $meta->{'directive'} eq 'informsink') {
+		if (! exists $meta->{'community'}) {
+			$meta->{'community'} = $trapcommunity;
+			replace_line($configs, $file->[$i], $file->[$i]);
+		}
+		if (! exists $meta->{'port'}) {
+		    $meta->{'port'} = 162;
+		    replace_line($configs, $file->[$i], $file->[$i]);
+		}
+	    }
+	}
+    }
+}
+
+sub check_duplicate_trap_destinations 
+{
+    my (@smaTraps) = (get_lines('informsink', \%::SMA_CONFIGS),
+	get_lines('trapsink', \%::SMA_CONFIGS),
+	get_lines('trap2sink', \%::SMA_CONFIGS));
+    my (@masfTraps) = (get_lines('informsink', \%::MASF_CONFIGS),
+	get_lines('trapsink', \%::MASF_CONFIGS),
+	get_lines('trap2sink', \%::MASF_CONFIGS));
+    my ($trap, @matches, $match);
+    for $trap (@masfTraps) {
+	@matches = grep (
+	    ($_->{'meta'}->{'community'} eq $trap->{'meta'}->{'community'} &&
+	     $_->{'meta'}->{'host'} eq $trap->{'meta'}->{'host'} &&
+	     $_->{'meta'}->{'port'} eq $trap->{'meta'}->{'port'}), @smaTraps);
+	if (@matches) {
+	    # remove this duplicate
+	    log_message "Removing duplicate ".$trap->{'meta'}->{'directive'}." directive\n", $trap;
+	    replace_line(\%::MASF_CONFIGS, $trap, {'meta'=>{}});
+	}
+    }
+}
+
+##############################################################################
+# Access control, groups and users
+
+$::SEEDED = 0;
+
+sub remove_v3_users
+{
+    my (@users) = get_securityNames({'securityModel'=>'usm'}, \%::MASF_CONFIGS);
+    my ($user, @groups, $group);
+    for $user (@users) {
+	replace_line(\%::MASF_CONFIGS, $user, {'meta'=>{}});
+	@groups = get_groups($user->{'meta'}, \%::MASF_CONFIGS);
+	for $group (@groups) {
+	    replace_line(\%::MASF_CONFIGS, $group, {'meta'=>{}});
+	}
+    }
+}
+
+sub remove_v1v2c_users
+{
+    my (@users) = get_securityNames({'securityModel'=>'v1'}, \%::MASF_CONFIGS);
+    my ($user, @groups, $group);
+    for $user (@users) {
+	replace_line(\%::MASF_CONFIGS, $user, {'meta'=>{}});
+	@groups = get_groups($user->{'meta'}, \%::MASF_CONFIGS);
+	for $group (@groups) {
+	    replace_line(\%::MASF_CONFIGS, $group, {'meta'=>{}});
+	}
+    }
+}
+
+sub generate_password
+{
+    my ($i, $r, $pwd);
+    if (! $::SEEDED) {
+	srand;
+	$::SEEDED=1;
+    }
+
+    for ($i = 0; $i < 8; $i++) {
+	do {
+	    $r = chr (int (rand 127));
+	} while ($r!~/^[a-zA-Z0-9]$/);
+	$pwd.=$r;
+    }
+    return $pwd;
+}
+
+# check to see whether MASF UsmUser directives can be transferred without
+# alteration, if not then convert to a template createUser statement
+sub process_engineIDs
+{
+    log_message "\n";
+    log_message "Checking to see if USM users defined in usmUser directives can be migrated without modification:\n";
+    my ($lines, $line, $can_migrate);
+    $can_migrate = 1;
+    # check that no v3 users have been specified in SMA
+    my (@v3_sma_users) = (get_securityNames({'securityModel'=>'usm'}, \%::SMA_CONFIGS));
+    if (@v3_sma_users > 0) {
+	log_message "V3 users were specified in SMA config - cannot migrate without modification.\n";
+	$can_migrate = 0;
+    }
+    # If the engineID was specified in MASF then we cannot migrate. Remove it
+    # from the migrated configuration
+    for $line (get_lines('engineID', \%::MASF_CONFIGS)) {
+	$can_migrate = 0;
+	log_message "engineID specified in configuration file - cannot migrate without modification.\n", $line;
+	replace_line(\%::MASF_CONFIGS, $line, {'meta'=>{}});
+    }
+    # check that engineID isn't specified anywhere in SMA config
+    for $line (get_lines('engineID', \%::SMA_CONFIGS)) {
+	log_message "engineID specified in configuration file - cannot migrate without modification.\n", $line;
+	$can_migrate = 0;
+    }
+
+    if (! $can_migrate) {
+	for $line (get_lines('usmUser', \%::MASF_CONFIGS)) {
+	    if (! $::IGNORE_ENGINEID) {
+		log_message "User with securityName ".
+		$line->{'meta'}->{'securityName'}." cannot be migrated ".
+		"because the engineID has changed - aborting.\n", $line;
+		exit 1;
+	    }
+	    log_message "\n";
+	    log_message "***************************************************************************\n";
+	    log_message 'User with securityName '.
+	    $line->{'meta'}->{'securityName'}." has had their password reset.\n";
+	    log_message "You will need to edit the configuration file after ".
+	    "this script has finished\n".
+		"in order to enable their account\n";
+	    log_message "***************************************************************************\n";
+	    replace_line(\%::MASF_CONFIGS, $line,
+		    {'comment'=>'# XXX Change the password if necessary',
+		    'meta'=>{'directive'=>'createUser',
+		    'securityModel'=>'usm',
+		    'securityName'=>$line->{'meta'}->{'securityName'},
+		    'authPassword'=>generate_password(),
+		    'authProtocol'=>'MD5'}});
+	}
+	# if we can't migrate the engineID, then remove any oldEngineID
+	# statements and engineBoots statements
+	for $line (get_lines('oldEngineID', \%::MASF_CONFIGS),
+		get_lines('engineBoots', \%::MASF_CONFIGS)) {
+	    replace_line(\%::MASF_CONFIGS, $line, {'meta'=>{}});
+	}
+	return;
+    } else {
+	log_message "OK to migrate usm users\n";
+    }
+
+    # check to see if oldEngineID or engineBoots is defined in SMA config - if
+    # so then squash it in favour of new one from MASF
+    for $line (get_lines('oldEngineID', \%::SMA_CONFIGS),
+	    get_lines('engineBoots', \%::SMA_CONFIGS)) {
+	replace_line(\%::SMA_CONFIGS, $line, {'meta'=>{}});
+    }
+}
+
+# ensure that if a createUser and usmUser directive is present for the same
+# securityName then the createUser directive takes precedence
+sub check_usm_securityNames
+{
+    my (@masfUserLines)=(get_securityNames({'securityModel'=>'usm'},
+	\%::MASF_CONFIGS));
+    my (@smaUserLines)=(get_securityNames({'securityModel'=>'usm'},
+	\%::SMA_CONFIGS));
+    my ($usmUser, $user, $config);
+    for $config (\%::MASF_CONFIGS, \%::SMA_CONFIGS) {
+	my (@userLines) = (get_securityNames({'securityModel'=>'usm'},
+	$config));
+	my (@createUsers) = (grep 'createUser' eq $_->{'meta'}->{'directive'}, @userLines);
+	for $user (@createUsers) {
+	    my (@usmUsers) = (grep (('usmUser' eq $_->{'meta'}->{'directive'}
+		&& $user->{'meta'}->{'securityName'} eq
+		$_->{'meta'}->{'securityName'}), @userLines));
+	    for $usmUser (@usmUsers) {
+		replace_line($config, $usmUser, {'meta'=>{}});
+	    }
+	}
+    }
+}
+
+sub choose_group_membership
+{
+	my ($smaSecurityName, $masfSecurityName) = @_;
+	# interactive mode
+	convert_metadata();
+	log_message "\nThis user is defined in SMA with the following configuration:\n";
+	# get the config:
+	my ($o, $n) = get_old_new_config($smaSecurityName,
+			\%::SMA_CONFIGS);
+
+	log_message "Original configuration:\n".join ("\n",@$o);
+	log_message "\n\nProposed configuration 1:\n".join ("\n",@$n);
+	($o, $n) = get_old_new_config($masfSecurityName, \%::MASF_CONFIGS);
+	log_message "\n\nIt conflicts with the following MASF configuration:\nOriginal configuration:\n".join ("\n", @$o);
+	log_message "\n\nProposed configuration 2:\n".join ("\n",@$n)."\n";
+	my ($response) = (prompt ("Please choose one of the".
+				" proposed configurations", 1, [1,2]));
+	if ($response == 1) {
+		remove_com2sec_user ({'securityName'=>$masfSecurityName}, \%::MASF_CONFIGS);
+	} else {
+		remove_com2sec_user ({'securityName'=>$smaSecurityName}, \%::SMA_CONFIGS);
+	}
+}
+
+sub process_usm_securityNames
+{
+    my ($file, $line, $fileb, $lineb, $snameLine, $sname, $conflicted);
+    for $snameLine (get_securityNames({'securityModel'=>'usm'}, \%::MASF_CONFIGS)) {
+	$sname = $snameLine->{'meta'}->{'securityName'};
+	$conflicted = undef;
+	for $file (values %::SMA_CONFIGS) {
+	    for $line (@$file) {
+		if (exists $line->{'meta'}->{'securityName'} &&
+			$line->{'meta'}->{'securityName'} eq $sname) {
+		    $conflicted=$line;
+		    last;
+		}
+	    }
+	}
+	if (defined $conflicted) {
+	    # there is a clash
+	    log_message "MASF securityName ".$sname." conflicts with one already defined in SMA\n", $snameLine;
+	    if ($::KEEP_SMA_USM_USERS) {
+		remove_com2sec_user($snameLine->{'meta'}, \%::MASF_CONFIGS);
+	    } elsif ($::KEEP_MASF_USM_USERS) {
+		remove_com2sec_user($conflicted->{'meta'}, \%::SMA_CONFIGS);
+	    } elsif ($::AUTOMATED) {
+		log_message "Conflicting securityNames found - aborting.  Please resolve these conflicts\n".
+		"manually.\n";
+		exit 1;
+	    } else {
+		choose_group_membership($conflicted->{'meta'}->{'securityName'}, $sname);
+	    }
+	}
+    }
+}
+
+sub remove_com2sec_user
+{
+    my ($keys, $config)=@_;
+    my ($securityName)=($keys->{'securityName'});
+    my ($f, $l);
+    for $l (get_securityNames($keys, $config)) {
+	replace_line ($config, $l, {'meta'=>{}});
+    }
+    for $f (values %$config) {
+	for $l (@$f) {
+	    if (exists $l->{'meta'}->{'directive'} &&
+		    $l->{'meta'}->{'directive'} eq 'group' &&
+		    $l->{'meta'}->{'securityName'} eq $securityName) {
+		replace_line($config, $l, {'meta'=>{}});
+	    }
+	}
+    }
+}
+
+# get all lines which define a security name i.e. com2sec, createUser or
+# usmUser, according to specified keys
+sub get_securityNames
+{
+	my ($keys, $configs)=@_;
+	my ($f, $l, @securityNames);
+	for $f (values %$configs) {
+		for $l (@$f) {
+			if (! exists $l->{'meta'}->{'directive'} ||
+					($l->{'meta'}->{'directive'} ne 'createUser' &&
+					$l->{'meta'}->{'directive'} ne 'usmUser' &&
+					$l->{'meta'}->{'directive'} ne 'com2sec')) {
+				next;
+			}
+			if (exists $keys->{'securityName'} && 
+					$l->{'meta'}->{'securityName'} ne $keys->{'securityName'}) {
+				next;
+			}
+			if (exists $keys->{'securityModel'}) {
+				my ($sm) = ('usm'); 
+				if ($keys->{'securityModel'} eq 'v2c' || 
+					$keys->{'securityModel'} eq 'v1') {
+					$sm = 'v1';
+				}
+				if (($sm eq 'v1' &&
+				$l->{'meta'}->{'directive'} ne 'com2sec') ||
+				($sm eq 'usm' &&
+				($l->{'meta'}->{'directive'} ne 'createUser' &&
+				$l->{'meta'}->{'directive'} ne 'usmUser'))) {
+					next;
+				}
+			}
+			push @securityNames, $l;
+		}
+	}
+	return @securityNames;
+}
+
+sub get_groups
+{
+	my ($keys, $configs)=@_;
+	my ($f, $l, @groups);
+	for $f (values %$configs) {
+		for $l (@$f) {
+			if (! exists $l->{'meta'}->{'directive'} ||
+					$l->{'meta'}->{'directive'} ne 'group') {
+				next;
+			}
+			if (exists $keys->{'securityName'} && 
+					$l->{'meta'}->{'securityName'} ne $keys->{'securityName'}) {
+				next;
+			}
+			if (exists $keys->{'securityModel'} &&
+					$l->{'meta'}->{'securityModel'} ne $keys->{'securityModel'}) {
+				next;
+			}
+			if (exists $keys->{'groupName'} &&
+				$l->{'meta'}->{'groupName'} ne $keys->{'groupName'}) {
+				next;
+			}
+			push @groups, $l
+		}
+	}
+	return @groups;
+}
+
+sub get_access {
+	my ($keys, $configs)=@_;
+	my ($f, $l, @access);
+	for $f (values %$configs) {
+		for $l (@$f) {
+			if (! exists $l->{'meta'}->{'directive'} ||
+					$l->{'meta'}->{'directive'} ne 'access') {
+				next;
+			}
+			if (exists $keys->{'groupName'} && 
+					$l->{'meta'}->{'groupName'} ne $keys->{'groupName'}) {
+				next;
+			}
+			if (exists $keys->{'viewName'} &&
+				($l->{'meta'}->{'readView'} ne $keys->{'viewName'} &&
+				$l->{'meta'}->{'writeView'} ne $keys->{'viewName'} &&
+				$l->{'meta'}->{'notifyView'} ne $keys->{'viewName'})) {
+				next;
+			}
+			push @access, $l
+		}
+	}
+	return @access;
+}
+
+sub get_views {
+	my ($keys, $configs)=@_;
+	my ($f, $l, @views);
+	if (exists $keys->{'viewName'} &&
+		$keys->{'viewName'} eq '') {
+		return ();
+	}
+	for $f (values %$configs) {
+		for $l (@$f) {
+			if (! exists $l->{'meta'}->{'directive'} ||
+					$l->{'meta'}->{'directive'} ne 'view') {
+				next;
+			}
+			if (exists $keys->{'viewName'} && 
+					$l->{'meta'}->{'viewName'} ne $keys->{'viewName'}) {
+				next;
+			}
+			push @views, $l
+		}
+	}
+	return @views;
+}
+
+sub get_old_new_config
+{
+	my ($securityName, $configs) = @_;
+	my ($line, @secNames, @groups, $group, $access, @accesses, @views, @old, @new);
+	my (@a, $keys);
+	$keys = {'securityName'=>$securityName};
+	@secNames = get_securityNames($keys, $configs);
+	@groups = get_groups ({'securityName'=>$securityName}, $configs);
+	# get other members of this group
+	if (@groups > 0) {
+		@groups = set_union([get_groups({'groupName'=>$groups[0]->{'meta'}->{'groupName'}}, $configs)], \@groups);
+	}
+	for $group (@groups) {
+		(@accesses) = (set_union(\@accesses, [get_access($group->{'meta'}, $configs)]));
+	}
+	for $access (@accesses) {
+		$keys = {'viewName'=>$access->{'meta'}->{'readView'}};
+		(@views) = (set_union(\@views, [get_views($keys, $configs)]));
+		$keys->{'viewName'}=$access->{'meta'}->{'writeView'};
+		(@views) = (set_union(\@views, [get_views($keys, $configs)]));
+		$keys->{'viewName'}=$access->{'meta'}->{'notifyView'};
+		(@views) = (set_union(\@views, [get_views($keys, $configs)]));
+	}
+	for $line (@secNames, @groups, @accesses, @views) {
+		if (exists $line->{'orig'}) {
+			push @old, $line->{'orig'};
+		} 
+		if (exists $line->{'new'}) {
+			push @new, $line->{'new'};
+		}
+	}
+	return [@old], [@new];
+}
+
+sub parse_source
+{
+	my ($line) = @_;
+	my ($source) = $line->{'meta'}->{'source'};
+	my ($hostIP, $mask, $ipSegment);
+	# was it 'default'
+	if ($source eq 'default' || $source eq '0.0.0.0') {
+		return (inet_aton('0.0.0.0'), inet_aton('0.0.0.0'));
+	}
+	# try to resolve as a plain IP address or a hostname
+	$ipSegment=$source;
+	($ipSegment, $mask) = split /\//, $source;
+	# try to resolve hostname as an IP address
+	my ($hostent) = gethostbyname($ipSegment);
+	if (defined $hostent) {
+		if ($hostent->addrtype ne AF_INET) {
+			log_message "Unsupported address family in source $source\n", $line;
+			exit 1;
+		}
+		my (@hostIPs) = @{$hostent->addr_list};
+		log_message "resolved $source to ".inet_ntoa($hostIPs[0])."\n", $line;
+		$hostIP = $hostIPs[0];
+	} else {
+		log_message "Couldn't resolve $ipSegment as a hostname or IP address\n", $line;
+		exit 1;
+	}
+	# try to resolve as subnet/mask
+	if (defined $mask && $mask ne '') {
+		my $netmask;
+		$netmask = inet_aton($mask);
+		if (! defined $netmask) {
+
+			# try to interpret as number between 0 and 32
+			my ($bit) = (0x80000000);
+			$netmask = 0;
+			if ($mask < 0 || $mask > 32) {
+				log_message "$source did not contain a valid netmask.\n", $line;
+				exit 1;
+			}
+			while ($mask > 0) {
+				$netmask |= $bit;
+				$bit = $bit >> 1;
+			}
+		}
+		my ($N, $H) = (in_addr_to_number ($netmask), in_addr_to_number
+			($hostIP));
+		if ($H & ~$N) {
+			log_message("source/mask mismatch - ".inet_ntoa($hostIP).'/'.inet_ntoa($netmask)."\n", $line);
+			exit 1;
+		}
+		return ($hostIP, $netmask);
+	} else {
+		# no netmask specified - exact match
+		return ($hostIP, inet_aton('255.255.255.255'));
+	}
+}
+		
+sub source_overlap
+{
+	my ($linea, $lineb) = @_;
+	my ($ipa, $maska) = parse_source($linea);
+	my ($ipb, $maskb) = parse_source($lineb);
+	my $mask_overlap;
+	$ipa = in_addr_to_number($ipa);
+	$ipb = in_addr_to_number($ipb);
+	$mask_overlap = in_addr_to_number($maska) & in_addr_to_number($maskb);
+	my $complement = 0xffffffff & (~$mask_overlap);
+	if (($ipa & $mask_overlap | $complement) == ($ipb & $mask_overlap | $complement)) {
+		return 1;
+	}
+	return 0;
+}
+
+sub community_conflicts
+{
+	my ($linea)=@_;
+	my ($community, $source) = ($linea->{'meta'}->{'community'}, $linea->{'meta'}->{'source'});
+	my ($lines, $line);
+	for $lines (values %::SMA_CONFIGS) {
+		for $line (@$lines) {
+			if (! exists $line->{'meta'}->{'community'} ||
+				$line->{'meta'}->{'community'} ne $community) {
+				next;
+			}
+			if (! exists $line->{'meta'}->{'source'}) {
+				next;
+			}
+			if (source_overlap ($line, $linea)) {
+				return ($line);
+			}
+		}
+	}
+	return undef;
+}
+
+sub process_com2sec
+{
+    my ($lines, $line);
+    my $conflict;
+    for $lines (values %::MASF_CONFIGS) {
+	for $line (@$lines) {
+	    if (! exists $line->{'meta'}->{'directive'} ||
+		    $line->{'meta'}->{'directive'} ne 'com2sec') {
+		next;
+	    }
+
+	    $conflict = community_conflicts($line);
+	    if (defined $conflict) {
+		log_message "MASF source ".$line->{'meta'}->{'source'}.
+		    " conflicts with SMA source ".$conflict->{'meta'}->{'source'}.
+		    " defined for community ".$line->{'meta'}->{'community'}."\n", $line;
+		if ($::KEEP_SMA_GROUPS) {
+		    # remove user from MASF config
+		    remove_com2sec_user ($line->{'meta'}, \%::MASF_CONFIGS);
+		} elsif ($::KEEP_MASF_GROUPS) {
+		    # remove user from SMA config
+		    remove_com2sec_user ($line->{'meta'}, \%::SMA_CONFIGS);
+		} elsif ($::AUTOMATED) {
+		    # didn't define what to do so stop!
+		    log_message "Conflicting source/communities found - ".
+		    "aborting. Please resolve these conflicts manually.\n";
+		    exit 1;
+		} else {
+		    choose_group_membership($conflict->{'meta'}->{'securityName'}, $line->{'meta'}->{'securityName'});
+		}
+	    }
+	}
+    }
+}
+
+sub uniquify_viewNames
+{
+    my ($prefix) = @_;
+    my %mappings=();
+    my ($lines, $line, $securityName, $i, @keys, $key, $from);
+    @keys = ('viewName', 'readView', 'writeView', 'notifyView');
+    for $lines (values %::MASF_CONFIGS) {
+	foreach $line (@$lines) {
+	    for $key (@keys) {
+		if (exists $line->{'meta'}->{$key} &&
+			$line->{'meta'}->{$key} ne '') {
+		    $from = $line->{'meta'}->{$key};
+		} else {
+		    next;
+		}
+
+		# is there already a mapping for this securityName ?
+		if (exists $mappings{$from}) {
+		    $line->{'meta'}->{$key} = $mappings{$from};
+		    replace_line(\%::MASF_CONFIGS, $line, $line);
+		    next;
+		}
+
+		# generate a new securityName
+		$i = 0;
+		while (viewName_exists($prefix.$i.$from))
+		{
+		    $i++;
+		}
+		if (length $prefix.$i.$from > 32) {
+		    log_message ("Couldn't render viewName $from unique\n", $line);
+		    exit 1;
+		}
+		$mappings{$from}=$prefix.$i.$from;
+		$line->{'meta'}->{$key} = $prefix.$i.$from;
+		replace_line(\%::MASF_CONFIGS, $line, $line);
+	    }
+	}
+    }
+    # remove redundant view names
+    my (@viewLines, @accessLines, $view, $config);
+    for $config (\%::MASF_CONFIGS, \%::SMA_CONFIGS) {
+	@viewLines = get_views({}, $config);
+	for $view (@viewLines) {
+	    @accessLines = (get_access($view->{'meta'}, \%::MASF_CONFIGS), get_access($view->{'meta'}, \%::SMA_CONFIGS));
+	    if (@accessLines == 0) {
+		replace_line($config, $view, {'meta'=>{}});
+	    }
+	}
+    }
+}
+
+sub uniquify_groupNames
+{
+    my ($prefix) = @_;
+    my %mappings=();
+    my ($lines, $line, $securityName, $i, $from);
+    for $lines (values %::MASF_CONFIGS) {
+	foreach $line (@$lines) {
+	    if (exists $line->{'meta'}->{'groupName'}) {
+		$from = $line->{'meta'}->{'groupName'};
+	    } else {
+		next;
+	    }
+
+	    # is there already a mapping for this securityName ?
+	    if (exists $mappings{$from}) {
+		$line->{'meta'}->{'groupName'} = $mappings{$from};
+		replace_line(\%::MASF_CONFIGS, $line, $line);
+		next;
+	    }
+
+	    # generate a new securityName
+	    $i = 0;
+	    while (groupName_exists($prefix.$i.$from))
+	    {
+		$i++;
+	    }
+	    if (length $prefix.$i.$from > 32) {
+		log_message ("Couldn't render groupName $from unique\n", $line);
+		exit 1;
+	    }
+	    $mappings{$from}=$prefix.$i.$from;
+	    $line->{'meta'}->{'groupName'} = $prefix.$i.$from;
+	    replace_line(\%::MASF_CONFIGS, $line, $line);
+	}
+    }
+}
+
+# remove group directives referring to undefined users
+sub clean_group_membership
+{
+    my ($config);
+    for $config (\%::MASF_CONFIGS, \%::SMA_CONFIGS) {
+	my (@groups) = get_lines('group', $config);
+	my ($group);
+	for $group (@groups) {
+	    my (@securityNames) = get_securityNames($group->{'meta'}, $config);
+	    if (@securityNames == 0) {
+		# no securityName was defined for this directive - remove the
+		# directive
+		log_message "Removing undefined user ".
+		$group->{'meta'}->{'securityName'}." from group ".
+		$group->{'meta'}->{'groupName'}."\n", $group;
+		replace_line($config, $group, {'meta'=>{}});
+	    }
+	}
+    }
+}
+
+sub uniquify_securityNames
+{
+    my ($prefix) = @_;
+    my ($to);
+    my ($lines, $line, $securityName, $i, $from, $fromLine);
+    for $fromLine (get_securityNames({'securityModel'=>'v1'},
+		\%::MASF_CONFIGS)) {
+	# generate a new securityName
+	$from = $fromLine->{'meta'}->{'securityName'};
+	$to = get_new_securityName($prefix.$from);
+	for $lines (values %::MASF_CONFIGS) {
+	    foreach $line (@$lines) {
+		if (! exists $line->{'meta'}->{'securityName'} ||
+			$line->{'meta'}->{'securityName'} ne $from) {
+		    next;
+		}
+
+		$line->{'meta'}->{'securityName'} = $to;
+		replace_line(\%::MASF_CONFIGS, $line, $line);
+	    }
+	}
+    }
+}
+
+sub check_tokens
+{
+    my ($line, $minTokens, $maxTokens, @tokens) = @_;
+    my ($directive) = $line->{'meta'}->{'directive'};
+    if (@tokens < $minTokens || @tokens > $maxTokens) {
+	log_message "Invalid number of parameters for $directive directive ".
+	"- Aborting\n", $line;
+	exit 1;
+    }
+}
+
+# convert simple array of lines into hash containing data which is what we
+# subsequently modify
+sub add_metadata
+{
+    my ($lines, $file, $line, $i, $s, $directive, @tokens);
+    my ($key, $j);
+    for $key (keys %::SMA_CONFIGS) {
+	for ($i = 0; $i < @{$::SMA_CONFIGS{$key}}; $i++) {
+	    $line = $::SMA_CONFIGS{$key}->[$i];
+	    $::SMA_CONFIGS{$key}->[$i] = {'orig'=>$line,
+		'new'=>$line,
+		# NB the 'meta' hash doesn't contain metadata, only real data...
+		'meta'=>{},
+		'lineno'=>$i,
+		'file'=>$key};
+	}
+    }
+    for $key (keys %::MASF_CONFIGS) {
+	for ($i = 0; $i < @{$::MASF_CONFIGS{$key}}; $i++) {
+	    $line = $::MASF_CONFIGS{$key}->[$i];
+	    $::MASF_CONFIGS{$key}->[$i] = {'orig'=>$line,
+		'new'=>$line,
+		'meta'=>{},
+		'lineno'=>$i,
+		'file'=>$key};
+	}
+    }
+    for $lines (values %::SMA_CONFIGS, values %::MASF_CONFIGS) {
+	for $line (@$lines) {
+	    ($directive, @tokens) = parse_config_line($line->{'new'});
+	    if ($directive ne '') {
+		$line->{'meta'}->{'directive'} = $directive;
+	    }
+	    if ($directive eq 'com2sec') {
+		check_tokens($line, 3, 3, @tokens);
+		$line->{'meta'}->{'securityName'} = $tokens[0];
+		$line->{'meta'}->{'source'} = $tokens[1];
+		$line->{'meta'}->{'community'} = $tokens[2];
+	    } elsif ($directive eq 'group') {
+		check_tokens($line, 3, 3, @tokens);
+		$line->{'meta'}->{'groupName'} = $tokens[0];
+		$line->{'meta'}->{'securityModel'} = $tokens[1];
+		$line->{'meta'}->{'securityName'} = $tokens[2];
+	    } elsif ($directive eq 'rouser' || $directive eq 'rwuser') {
+		check_tokens($line, 1, 3, @tokens);
+		$line->{'meta'}->{'securityName'} = $tokens[0];
+		if (defined $tokens[1]) {
+		    $line->{'meta'}->{'securityLevel'} = $tokens[1];
+		}
+		if (defined $tokens[2]) {
+		    $line->{'meta'}->{'oid'} = $tokens[2];
+		}
+	    } elsif ($directive eq 'createUser') {
+		check_tokens($line, 3, 5, @tokens);
+		$line->{'meta'}->{'securityName'} = $tokens[0];
+		$line->{'meta'}->{'authProtocol'} = $tokens[1];
+		$line->{'meta'}->{'authPassword'} = $tokens[2];
+		$line->{'meta'}->{'securityModel'} = 'usm';
+		if (defined $tokens[3]) {
+		    $line->{'meta'}->{'privProtocol'} = $tokens[3];
+		}
+		if (defined $tokens[4]) {
+		    $line->{'meta'}->{'privPassword'} = $tokens[4];
+		}
+	    } elsif ($directive eq 'usmUser') {
+		check_tokens($line, 11, 11, @tokens);
+		$line->{'meta'}->{'securityName'} = securityName_from_usmUser($directive, @tokens);
+		$line->{'meta'}->{'securityModel'} = 'usm';
+	    } elsif ($directive eq 'access') {
+		check_tokens($line, 8, 8, @tokens);
+		$line->{'meta'}->{'groupName'} = $tokens[0];
+		$line->{'meta'}->{'contextPrefix'} = $tokens[1];
+		$line->{'meta'}->{'securityModel'} = $tokens[2];
+		$line->{'meta'}->{'securityLevel'} = $tokens[3];
+		$line->{'meta'}->{'contextMatch'} = $tokens[4];
+		$line->{'meta'}->{'readView'} = $tokens[5];
+		$line->{'meta'}->{'writeView'} = $tokens[6];
+		$line->{'meta'}->{'notifyView'} = $tokens[7];
+	    } elsif ($directive eq 'view') {
+		check_tokens($line, 3, 4, @tokens);
+		$line->{'meta'}->{'viewName'} = $tokens[0];
+		$line->{'meta'}->{'viewType'} = $tokens[1];
+		$line->{'meta'}->{'oid'} = $tokens[2];
+		if (defined $tokens[3]) {
+		    $line->{'meta'}->{'mask'} = $tokens[3];
+		}
+	    } elsif ($directive eq 'rocommunity' || $directive eq 'rwcommunity') {
+		check_tokens($line, 1, 3, @tokens);
+		$line->{'meta'}->{'community'} = $tokens[0];
+		if (defined $tokens[1]) {
+		    $line->{'meta'}->{'source'} = $tokens[1];
+		} else {
+		    $line->{'meta'}->{'source'} = "0.0.0.0/0.0.0.0";
+		}
+		if (defined $tokens[2]) {
+		    $line->{'meta'}->{'oid'} = $tokens[2];
+		}
+	    } elsif ($directive eq 'trapcommunity') {
+		check_tokens($line, 1, 1, @tokens);
+		$line->{'meta'}->{'community'} = $tokens[0];
+	    } elsif ($directive eq 'trapsink' ||
+		    $directive eq 'trap2sink' ||
+		    $directive eq 'informsink') {
+		check_tokens($line, 1, 3, @tokens);
+		$line->{'meta'}->{'host'} = $tokens[0];
+		if (defined $tokens[1]) {
+		    $line->{'meta'}->{'community'} = $tokens[1];
+		}
+		if (defined $tokens[2]) {
+		    $line->{'meta'}->{'port'} = $tokens[2];
+		}
+	    } elsif ($directive eq 'snmpNotifyFilterTable') {
+		check_tokens($line, 6, 6, @tokens);
+		$line->{'meta'}->{'profileName'} = $tokens[0];
+		$line->{'meta'}->{'subtree'} = $tokens[1];
+		$line->{'meta'}->{'mask'} = $tokens[2];
+		$line->{'meta'}->{'filterType'} = $tokens[3];
+		$line->{'meta'}->{'storageType'} = $tokens[4];
+		$line->{'meta'}->{'rowStatus'} = $tokens[5];
+	    } elsif ($directive eq 'targetParams') {
+		check_tokens($line, 7, 7, @tokens);
+		$line->{'meta'}->{'paramName'} = $tokens[0];
+		$line->{'meta'}->{'MPModel'} = $tokens[1];
+		$line->{'meta'}->{'securityModel'} = $tokens[2];
+		$line->{'meta'}->{'securityName'} = $tokens[3];
+		$line->{'meta'}->{'securityLevel'} = $tokens[4];
+		$line->{'meta'}->{'storageType'} = $tokens[5];
+		$line->{'meta'}->{'rowStatus'} = $tokens[6];
+	    } elsif ($directive eq 'targetAddr') {
+		check_tokens($line, 9, 9, @tokens);
+		$line->{'meta'}->{'targetName'} = $tokens[0];
+		$line->{'meta'}->{'TDomain'} = $tokens[1];
+		$line->{'meta'}->{'TAddress'} = $tokens[2];
+		$line->{'meta'}->{'timeout'} = $tokens[3];
+		$line->{'meta'}->{'retryCount'} = $tokens[4];
+		$line->{'meta'}->{'tagList'} = $tokens[5];
+		$line->{'meta'}->{'paramName'} = $tokens[6];
+		$line->{'meta'}->{'storageType'} = $tokens[7];
+		$line->{'meta'}->{'rowStatus'} = $tokens[8];
+	    } elsif ($directive eq 'snmpNotifyTable') {
+		check_tokens($line, 5, 5, @tokens);
+		$line->{'meta'}->{'notifyName'} = $tokens[0];
+		$line->{'meta'}->{'notifyTag'} = $tokens[1];
+		$line->{'meta'}->{'notifyType'} = $tokens[2];
+		$line->{'meta'}->{'storageType'} = $tokens[3];
+		$line->{'meta'}->{'rowStatus'} = $tokens[4];
+	    } elsif ($directive eq 'snmpNotifyFilterProfileTable') {
+		check_tokens($line, 4, 4, @tokens);
+		$line->{'meta'}->{'paramName'} = $tokens[0];
+		$line->{'meta'}->{'profileName'} = $tokens[1];
+		$line->{'meta'}->{'storageType'} = $tokens[2];
+		$line->{'meta'}->{'rowStatus'} = $tokens[3];
+	    } elsif ($directive eq 'master') {
+		check_tokens($line, 1, 1, @tokens);
+	    	$line->{'meta'}->{'masterMode'} = $tokens[0];
+	    } elsif ($directive eq 'agentxTimeout') {
+		check_tokens($line, 1, 1, @tokens);
+		$line->{'meta'}->{'agentxTimeout'} = $tokens[0];
+	    } elsif ($directive eq 'agentxRetries') {
+		check_tokens($line, 1, 1, @tokens);
+		$line->{'meta'}->{'agentxRetries'} = $tokens[0];
+	    }
+	}
+    }
+}
+
+sub convert_metadata
+{
+    my ($line, $file, $meta, $directive);
+    my %mps = ($MPMODEL_SNMPV1=>'v1',
+	    $MPMODEL_SNMPV2C=>'v2c',
+	    $MPMODEL_SNMPV2U=>'v2u',
+	    $MPMODEL_SNMPV3=>'v3');
+    my %sms = ($SECURITY_MODEL_ANY=>'any',
+	    $SECURITY_MODEL_SNMPV1=>'v1',
+	    $SECURITY_MODEL_SNMPV2C=>'v2c',
+	    $SECURITY_MODEL_USM=>'usm');
+    my %sls = ($SECURITY_LEVEL_NOAUTHNOPRIV=>'noAuthNoPriv',
+	    $SECURITY_LEVEL_AUTHNOPRIV=>'authNoPriv',
+	    $SECURITY_LEVEL_AUTHPRIV=>'authPriv');
+    my %nts = ($NOTIFY_TYPE_TRAP=>'trap',
+	    $NOTIFY_TYPE_INFORM=>'inform');
+    for $file (values %::ADDED_CONFIGS, values %::MASF_CONFIGS, values
+	    %::SMA_CONFIGS) {
+	for $line (@$file) {
+	    $meta = $line->{'meta'};
+	    if (exists $meta->{'directive'} &&
+		    exists $line->{'changed'}) {
+		delete $line->{'changed'};
+		$directive = $meta->{'directive'};
+		if ($directive eq 'com2sec') {
+		    # don't quote securityName or community
+		    $line->{'new'} = "com2sec ".$meta->{'securityName'}.
+			' '.$meta->{'source'}.' '.$meta->{'community'};
+		} elsif ($directive eq 'group') {
+		    # don't quote groupName
+		    $line->{'new'} = 'group '.$meta->{'groupName'}.
+			' '.$meta->{'securityModel'}.' '.
+			# don't quote securityName
+			$meta->{'securityName'}.'';
+		} elsif ($directive eq 'access') {
+		my ($readView, $writeView, $notifyView) =
+		    map { $_ eq '' ? 'none' : $_ }
+		($meta->{'readView'}, $meta->{'writeView'},
+		 $meta->{'notifyView'});
+		# don't quote groupName, or viewNames 
+		$line->{'new'} = 'access '.$meta->{'groupName'}.
+		    ' "'.$meta->{'contextPrefix'}.'" '.
+		    $meta->{'securityModel'}.' '.$meta->{'securityLevel'}.
+		    ' '.$meta->{'contextMatch'}.' '.$readView.
+		    ' '.$writeView.' '.$notifyView;
+		} elsif ($directive eq 'view') {
+		# don't quote viewName
+		    $line->{'new'} = 'view '.$meta->{'viewName'}.' '.
+			$meta->{'viewType'}.' '.$meta->{'oid'};
+		    if (exists $meta->{'mask'}) {
+			$line->{'new'}.=' '.$meta->{'mask'};
+		    }
+		} elsif ($directive eq 'createUser') {
+		    $line->{'new'} = 'createUser "'.$meta->{'securityName'}.
+			'" '.$meta->{'authProtocol'}.' "'.$meta->{'authPassword'}.
+			'"';
+		    if (exists $meta->{'privProtocol'}) {
+			$line->{'new'}.=' '.$meta->{'privProtocol'};
+		    }
+		    if (exists $meta->{'privPassword'}) {
+			$line->{'new'}.=' "'.$meta->{'privPassword'}.'" ';
+		    }
+		} elsif ($directive eq 'trap2sink' ||
+			$directive eq 'trapsink' ||
+			$directive eq 'informsink') {
+		    $line->{'new'} = $directive.' '.$meta->{'host'};
+		    if (exists $meta->{'community'}) {
+			# don't quote community
+			$line->{'new'}.=' '.$meta->{'community'}.'';
+		    }
+		    if (exists $meta->{'port'}) {
+			$line->{'new'}.=' '.$meta->{'port'};
+		    }
+		} elsif ($directive eq 'snmpNotifyFilterTable') {
+		    $line->{'new'} = 'snmpNotifyFilterTable "'.
+			$meta->{'profileName'}.'" '.$meta->{'subtree'}.' "'.
+			$meta->{'mask'}.'" '.$meta->{'filterType'}.' '.
+			$meta->{'storageType'}.' '.$meta->{'rowStatus'};
+		} elsif ($directive eq 'targetParams') {
+		    $line->{'comment'} = '# targetParams '.$meta->{'paramName'}.
+		    ' '.$mps{$meta->{'MPModel'}}.' '.
+		    $sms{$meta->{'securityModel'}}.' '.$meta->{'securityName'}.
+		    ' '.$sls{$meta->{'securityLevel'}};
+		    $line->{'new'} = 'targetParams "'.$meta->{'paramName'}.'" '.
+		    $meta->{'MPModel'}.' '.$meta->{'securityModel'}.' "'.
+		    $meta->{'securityName'}.'" '.$meta->{'securityLevel'}.' '.
+		    $meta->{'storageType'}.' '.$meta->{'rowStatus'};
+		} elsif ($directive eq 'targetAddr') {
+		    $line->{'new'} = 'targetAddr "'.$meta->{'targetName'}.
+			'" '.$meta->{'TDomain'}.' '.$meta->{'TAddress'}.
+			' '.$meta->{'timeout'}.' '.$meta->{'retryCount'}.
+			' "'.$meta->{'tagList'}.'" "'.$meta->{'paramName'}.
+			'" '.$meta->{'storageType'}.' '.$meta->{'rowStatus'};
+		} elsif ($directive eq 'snmpNotifyTable') {
+		    $line->{'comment'} = '# snmpNotifyTable '.$meta->{'notifyName'}.
+		    ' '.$meta->{'notifyTag'}.' '.$nts{$meta->{'notifyType'}};
+		    $line->{'new'} = 'snmpNotifyTable "'.$meta->{'notifyName'}.
+		    '" "'.$meta->{'notifyTag'}.'" '.$meta->{'notifyType'}.
+		    ' '.$meta->{'storageType'}.' '.$meta->{'rowStatus'};
+		} elsif ($directive eq 'snmpNotifyFilterProfileTable') {
+		    $line->{'new'} = 'snmpNotifyFilterProfileTable "'.
+			$meta->{'paramName'}.'" "'.$meta->{'profileName'}.
+			'" '.$meta->{'storageType'}.' '.$meta->{'rowStatus'};
+		} elsif ($directive eq 'master') {
+		    $line->{'new'} = 'master '.$meta->{'masterMode'};
+		} elsif ($directive eq 'agentxTimeout') {
+		    $line->{'new'} = 'agentxTimeout '.$meta->{'agentxTimeout'};
+		} elsif ($directive eq 'agentxRetries') {
+		    $line->{'new'} = 'agentxRetries '.$meta->{'agentxRetries'};
+		}
+	    }
+	}
+    }
+}
+
+
+# convert all rwuser directives to rouser
+sub convert_rwusers
+{
+    my ($line, $file);
+    my ($directive, @tokens);
+    for $line (get_lines('rwuser', \%::MASF_CONFIGS)) {
+	$line->{'meta'}->{'directive'} = 'rouser';
+	replace_line(\%::MASF_CONFIGS, $line, $line);
+    }
+}
+
+# convert all rwcommunity directives to rocommunity
+sub convert_rwcommunities
+{
+    my ($line);
+    for $line (get_lines('rwcommunity', \%::MASF_CONFIGS)) {
+	$line->{'meta'}->{'directive'} = 'rocommunity';
+	replace_line(\%::MASF_CONFIGS, $line, $line);
+    }
+}
+
+sub securityName_from_usmUser
+{
+    my ($directive, @tokens) = @_;
+    my ($string);
+    $tokens[3]=~s/^0x//;
+    $string = pack 'H*', $tokens[3];
+    return unpack 'Z*', $string;
+}
+
+sub viewName_exists
+{
+    my ($viewName) = @_;
+    my ($file, $line, $meta);
+    for $file (values %::MASF_CONFIGS, values %::SMA_CONFIGS) {
+	for $line (@$file) {
+	    $meta=$line->{'meta'};
+	    if ((exists $meta->{'readView'} &&
+			$meta->{'readView'} eq $viewName) ||
+		    (exists $meta->{'writeView'} &&
+		     $meta->{'writeView'} eq $viewName) ||
+		    (exists $meta->{'notifyView'} &&
+		     $meta->{'notifyView'} eq $viewName) ||
+		    (exists $meta->{'viewName'} &&
+		     $meta->{'viewName'} eq $viewName)) {
+		return 1;
+	    }
+	}
+    }
+    return 0;
+}
+
+sub get_new_viewName
+{
+    my ($prefix)=@_;
+    my ($viewName, $i);
+    $i = 0;
+
+    do {
+	$viewName = $prefix.$i;
+	if (length $viewName > 32) {
+	    log_message("viewName $viewName was longer than 32 characters\n");
+	    exit 1;
+	}
+	$i++;
+    } while (viewName_exists($viewName));
+    return $viewName;
+}
+
+sub groupName_exists
+{
+    my ($groupName) = @_;
+    my ($file, $line, $meta);
+    for $file (values %::MASF_CONFIGS, values %::SMA_CONFIGS) {
+	for $line (@$file) {
+	    $meta=$line->{'meta'};
+	    if (exists $meta->{'groupName'} &&
+		    $meta->{'groupName'} eq $groupName) {
+		return 1;
+	    }
+	}
+    }
+    return 0;
+}
+
+sub get_new_groupName
+{
+    my ($prefix)=@_;
+    my ($groupName, $i);
+    $i = 0;
+
+    do {
+	$groupName = $prefix.$i;
+	if (length $groupName > 32) {
+	    log_message("groupName $groupName was longer than 32 characters\n");
+	    exit 1;
+	}
+	$i++;
+    } while (groupName_exists($groupName));
+    return $groupName;
+}
+
+sub securityName_exists
+{
+    my ($securityName) = @_;
+    my ($file, $line, $meta);
+    for $file (values %::MASF_CONFIGS, values %::SMA_CONFIGS) {
+	for $line (@$file) {
+	    $meta=$line->{'meta'};
+
+	    if (exists $meta->{'securityName'} &&
+		    $meta->{'securityName'} eq $securityName) {
+		return 1;
+	    }
+	}
+    }
+    return 0;
+}
+
+sub get_new_securityName
+{
+    my ($prefix)=@_;
+    my ($securityName, $i);
+    $i = 0;
+
+    do {
+	$securityName = $prefix.$i;
+	# check to see if length is more than 32 characters permitted
+	# by VACM
+	if (length $securityName > 32) {
+	    log_message("securityName $securityName was longer".
+		    " than 32 characters\n");
+	    exit 1;
+	}
+
+	$i++;
+    } while (securityName_exists($securityName));
+    return $securityName;
+}	
+
+sub expand_rouser
+{
+    my ($line, $default_oids) = @_;
+    my ($securityName, $groupName, $viewName, $secLevel, $oid);
+    my (@output, $readView, $writeView, $i);
+    @output = ($line);
+    $securityName = $line->{'meta'}->{'securityName'};
+    if (! defined $line->{'meta'}->{'securityLevel'}) {
+    	$secLevel = "auth";
+    } else {
+	$secLevel = $line->{'meta'}->{'securityLevel'};
+    }
+    if (! defined $line->{'meta'}->{'oid'}) {
+    	$oid = '';
+    } else {
+	$oid = $line->{'meta'}->{'oid'};
+    }
+
+    $groupName = get_new_groupName("Group");
+    $viewName = get_new_viewName("View");
+
+    if ($line->{'meta'}->{'directive'} eq 'rouser') {
+	$readView = $viewName;
+	$writeView = '';
+    } else {
+	$readView = $viewName;
+	$writeView = $viewName;
+    }
+
+    $output[0]->{'meta'} = {'directive'=>'group',
+	'groupName'=>$groupName,
+	'securityModel'=>'usm',
+	'securityName'=>$securityName};
+    push @output, {'meta'=>{'directive'=>'access',
+	'groupName'=>$groupName,
+	'contextPrefix'=>'',
+	'securityModel'=>'usm',
+	'securityLevel'=>$secLevel,
+	'contextMatch'=>'exact',
+	'readView'=>$readView,
+	'writeView'=>$writeView,
+	'notifyView'=>''}
+    };
+    if ($oid ne '') {
+	push @output, {'meta'=>{'directive'=>'view',
+	    'viewName'=>$viewName,
+	    'viewType'=>'included',
+	    'oid'=>$oid}};
+    } else {
+	for ($i = 0; $i < @$default_oids; $i++) {
+	    push @output,{'meta'=>{'directive'=>'view',
+		'viewName'=>$viewName,
+		'viewType'=>'included',
+		'oid'=>$default_oids->[$i]}};
+	}
+    }
+    return @output;
+}
+
+sub expand_rocommunity
+{
+    my ($line, $default_oids) = @_;
+    my ($securityName, $groupName, $viewName, $community, $source, $oid);
+    my (@output, $readView, $writeView, $i);
+    @output = ($line);
+    $community = $line->{'meta'}->{'community'};
+    $source = $line->{'meta'}->{'source'};
+    if (defined $line->{'meta'}->{'oid'}) {
+	$oid = $line->{'meta'}->{'oid'};
+    } else {
+	$oid = '';
+    }
+    	
+    $securityName = get_new_securityName("User");
+    $groupName = get_new_groupName("Group");
+    $viewName = get_new_viewName("View");
+
+    if ($line->{'meta'}->{'directive'} eq 'rocommunity') {
+		$readView = $viewName;
+		$writeView = '';
+    } else { 
+		$readView = $viewName;
+		$writeView = $viewName;
+    }
+
+    $output[0]->{'meta'} = {'directive'=>"com2sec",
+	'securityName'=>$securityName,
+	'source'=>$source,
+	'community'=>$community
+    };
+    push @output, {'meta'=>{'directive'=>'group',
+	'groupName'=>$groupName,
+	'securityModel'=>'v1',
+	'securityName'=>$securityName}
+    },
+    {'meta'=>{'directive'=>'group',
+		 'groupName'=>$groupName,
+		 'securityModel'=>'v2c',
+		 'securityName'=>$securityName}
+    },
+    {'meta'=>{'directive'=>'access',
+		 'groupName'=>$groupName,
+		 'contextPrefix'=>'',
+		 'securityModel'=>'v1',
+		 'securityLevel'=>'noauth',
+		 'contextMatch'=>'exact',
+		 'readView'=>$readView,
+		 'writeView'=>$writeView,
+		'notifyView'=>''}
+    },
+    {'meta'=>{'directive'=>'access',
+		 'groupName'=>$groupName,
+		 'contextPrefix'=>'',
+		 'securityModel'=>'v2c',
+		 'securityLevel'=>'noauth',
+		 'contextMatch'=>'exact',
+		 'readView'=>$readView,
+		 'writeView'=>$writeView,
+		 'notifyView'=>''}
+    };
+    if ($oid ne '') {
+	push @output, {'meta'=>{'directive'=>'view',
+	    'viewName'=>$viewName,
+	    'viewType'=>'included',
+	    'oid'=>$oid}};
+    } else {
+	for ($i = 0; $i < @$default_oids; $i++) {
+	    push @output, {'meta'=>{'directive'=>'view',
+		'viewName'=>$viewName,
+		'viewType'=>'included',
+		'oid'=>$default_oids->[$i]}};
+	}
+    }
+    return @output;
+}
+
+sub expand_rousers
+{
+    my ($configs, $default_oids) = @_;
+    my ($file, $lines, $i, $output, $line, $directive, @tokens);
+    my (@expanded);
+    for $file (keys %$configs) {
+	$lines = $configs->{$file};
+	$output=[];
+	for ($i = 0; $i < @$lines; $i++) {
+	    $line = $lines->[$i];
+	    if (! exists $line->{'meta'}->{'directive'}) {
+		next;
+	    }
+	    $directive = $line->{'meta'}->{'directive'};
+	    if ($directive eq 'rouser' || $directive eq 'rwuser') {
+		# expand rocommunity directive
+		@expanded = expand_rouser($line, $default_oids);
+		splice @$lines, $i, 1, @expanded;
+		$i += $#expanded;
+	    }
+	}
+    }
+}
+
+sub expand_rocommunities
+{
+    my ($configs, $default_oids)= @_;
+    my ($file, $lines, $i, $output, $line, $directive, @tokens);
+    my (@expanded);
+    for $file (keys %$configs) {
+	$lines = $configs->{$file};
+	$output=[];
+	for ($i = 0; $i < @$lines; $i++) {
+	    $line = $lines->[$i];
+	    if (! exists $line->{'meta'}->{'directive'}) {
+		next;
+	    }
+
+	    if ($line->{'meta'}->{'directive'} eq 'rocommunity' ||
+		    $line->{'meta'}->{'directive'} eq 'rwcommunity') {
+		# expand rocommunity directive
+		@expanded = expand_rocommunity($line, $default_oids);
+		splice @$lines, $i, 1, @expanded;
+		$i += $#expanded;
+	    }
+	}
+    }
+}
+
+##############################################################################
+# General configuration
+
+sub install_agentx_config
+{
+    my (@lines) = get_lines('master', \%::SMA_CONFIGS);
+    if (@lines) {
+	if (grep (($lines[0]->{'meta'}->{'masterMode'} eq $_),
+		    ('agentx', 'all', 'yes', 'on'))) {
+	    # master mode is enabled anyway
+	} else {
+	    # master mode was disabled!
+	    log_message "AgentX mastering capability has been explicitly ".
+	    "disabled in the SMA config - Aborting.\n", $lines[0];
+	    exit 1;
+	}
+    } else {
+	# master mode has not been specified, add it.
+	log_message "Enabling agentX mastering for SMA.\n";
+	prepend_line({'meta'=>{'directive'=>'master', 'masterMode'=>'agentx'}});
+    }
+    @lines = get_lines('agentxTimeout', \%::SMA_CONFIGS); 
+    if (@lines) {
+	if ($lines[0]->{'agentxTimeout'} < 2) {
+	    $lines[0]->{'agentxTimeout'} = 2;
+	    replace_line(\%::SMA_CONFIGS, $lines[0], $lines[0]);
+	}
+    } else {
+	prepend_line({'meta'=>{'directive'=>'agentxTimeout', 'agentxTimeout'=>2}});
+    }
+    @lines = get_lines('agentxRetries', \%::SMA_CONFIGS); 
+    if (@lines) {
+	if ($lines[0]->{'agentxRetries'} < 4) {
+	    $lines[0]->{'agentxRetries'} = 4;
+	    replace_line(\%::SMA_CONFIGS, $lines[0], $lines[0]);
+	}
+    } else {
+	prepend_line({'meta'=>{'directive'=>'agentxRetries', 'agentxRetries'=>4}});
+    }
+}
+
+sub check_agent_configs
+{
+    my ($directive, $line);
+    for $directive ('agentgroup', 'agentuser', 'authtrapenable') {
+	my (@masf) = get_lines($directive, \%::MASF_CONFIGS);
+	my (@sma) = get_lines($directive, \%::SMA_CONFIGS);
+	if (@masf > 0 && @sma == 0)  {
+	    log_message "The following $directive directive was found in ".
+	    "the MASF configuration but is not configured for SMA:\n";
+	    log_message $masf[0]->{'new'}."\n";
+
+	} elsif (@masf > 0 && @sma > 0 && $sma[0] ne $masf[0]) {
+	    log_message "The following $directive directive was found in ".
+	    "the MASF configuration but differs in the  SMA configuration:\n";
+	    log_message $masf[0]->{'new'}."\n";
+	}
+	for $line (@masf) {
+	    # delete the line
+	    replace_line(\%::MASF_CONFIGS, $line, {'meta'=>{}});
+	}
+    }
+}
+
+sub check_system_configs
+{
+    my ($directive, $line);
+    for $directive ('syslocation', 'syscontact', 'sysname', 'sysservices') {
+	my (@masf) = get_lines($directive, \%::MASF_CONFIGS);
+	my (@sma) = get_lines($directive, \%::SMA_CONFIGS);
+	if (@masf > 0 && @sma == 0)  {
+	    log_message "The following $directive directive was found in ".
+	    "the MASF configuration but is not configured for SMA:\n";
+	    log_message $masf[0]->{'new'}."\n";
+	    log_message "You may wish to set this parameter in the SMA ".
+	    "configuration file after this script completes migration.\n";
+
+	} elsif (@masf > 0 && @sma > 0 && $sma[0]->{'new'} ne $masf[0]->{'new'}) {
+	    log_message "The following $directive directive was found in ".
+	    "the MASF configuration but differs in the  SMA configuration:\n";
+	    log_message $masf[0]->{'new'}."\n";
+	    log_message "You may wish to set this parameter in the SMA ".
+	    "configuration file after this script completes migration.\n";
+	}
+	for $line (@masf) {
+	    # delete the line
+	    replace_line(\%::MASF_CONFIGS, $line, {'meta'=>{}});
+	}
+    }
+}
+
+sub process_agentaddress
+{
+    my ($line, $lines, @masfAgentAddress, $smaAgentAddress, $config);
+    (@masfAgentAddress) = get_lines ('agentaddress', \%::MASF_CONFIGS);
+    if (@masfAgentAddress == 0) {
+	log_message "No agentaddress directive found for MASF\n";
+	return;
+    }
+
+    # if more than one MASF agentaddress line was specified then all but the
+    # last are ignored so we should delete them
+    while (@masfAgentAddress > 1) {
+	$line = shift @masfAgentAddress;
+	replace_line (\%::MASF_CONFIGS, $line, {'meta'=>{}});
+    }
+
+    my (@smaTokens, @masfTokens);
+    ($smaAgentAddress) = get_lines ('agentaddress', \%::SMA_CONFIGS);
+    if (! defined $smaAgentAddress) {
+	log_message "SMA uses default 161 port\n";
+	@smaTokens = ('udp:161');
+    } else {
+	@smaTokens = parse_agentaddress ($smaAgentAddress->{'new'});
+    }
+
+    if (defined $smaAgentAddress) {
+	$line = $smaAgentAddress;
+	$config = \%::SMA_CONFIGS;
+    } else {
+	$line = $masfAgentAddress[0];
+	$config = \%::MASF_CONFIGS;
+    }
+
+    if ($::DISABLE_MASF_PORT && @masfAgentAddress) {
+	log_message "Disabling access via old MASF port\n";
+	delete $masfAgentAddress[0]->{'new'};
+	return;
+    }
+
+    @masfTokens = parse_agentaddress ($masfAgentAddress[0]->{'new'});
+    
+    # MASF addresses must be a subset of SMA
+    my ($i, $j, $okToMigrate);
+    $okToMigrate = 1;
+    for $i (@masfTokens) {
+	if (grep(($i eq $_), @smaTokens) == 0) {
+	    log_message "MASF port configuration for port $i conflicts with SMA\n";
+	    $okToMigrate = 0;
+	}
+    }
+    
+    if (! $okToMigrate && ! $::USE_MASF_PORT && ! $::DISABLE_MASF_PORT) {
+	log_message "Unable to resolve conflict - aborting\n";
+	exit 1;
+    }
+
+    if ($::USE_MASF_PORT) {
+	push @smaTokens, @masfTokens;
+    }
+    $line->{'new'} = 'agentaddress '.(join ',',@smaTokens);
+    replace_line($config, $line, $line);
+    return;
+}
+
+##############################################################################
+# Main section starts here
+
+# configure Getopt for CLIP compliance
+Getopt::Long::Configure('bundling', 'require_order',
+	'no_getopt_compat', 'no_auto_abbrev', 'no_ignore_case');
+
+my ($selectCommunity, $selectUser, $useAgentPort, $trapFilter,
+	$masterTrapTarget, $version, $help);
+$selectCommunity = 'error';
+$selectUser = 'error';
+$useAgentPort = 'error';
+$trapFilter = 'add';
+
+my $result = GetOptions(
+	'i|ignore-unrecognized-directives'=>\$::IGNORE_UNRECOGNIZED_DIRECTIVES,
+	's|skip-user'=>\$::IGNORE_ENGINEID,
+	'y|select-community=s'=>\$selectCommunity,
+	'u|select-user=s'=>\$selectUser,
+	'p|use-agent-port=s'=>\$useAgentPort,
+	't|trap-filter=s'=>\$trapFilter,
+	'l|master-trap-target=s'=>\$masterTrapTarget,
+	'c|no-community'=>\$::DONT_KEEP_V1V2C_USERS,
+	'r|no-trap'=>\$::DONT_KEEP_TRAP_DESTS,
+	'm|no-usmuser'=>\$::DONT_KEEP_V3_USERS,
+	'n|dry-run'=>\$::DRY_RUN,
+	'V|version'=>\$version,
+	'help|?'=>\$help);
+
+if (! $result) {
+	print STDERR "An unrecognized option was present.\n";
+	help();
+}
+
+if ($version) {
+	version();
+}
+
+# no interactive mode
+$::AUTOMATED = 1;
+
+$::KEEP_MASF_GROUPS = 0;
+$::KEEP_SMA_GROUPS = 0;
+if ($selectCommunity eq 'agent') {
+    $::KEEP_MASF_GROUPS = 1;
+} elsif ($selectCommunity eq 'master') {
+    $::KEEP_SMA_GROUPS = 1;
+} elsif ($selectCommunity ne 'error') {
+    print STDERR "Invalid --select-community option $selectCommunity".
+	" specified.\n";
+    help();
+}
+
+$::KEEP_MASF_USM_USERS = 0;
+$::KEEP_SMA_USM_USERS = 0;
+if ($selectUser eq 'agent') {
+    $::KEEP_MASF_USM_USERS = 1;
+} elsif ($selectUser eq 'master') {
+    $::KEEP_SMA_USM_USERS = 1;
+} elsif ($selectUser ne 'error') {
+    print STDERR "Invalid --select-user option $selectUser".
+	" specified.\n";
+    help();
+}
+
+$::USE_MASF_PORT = 0;
+$::DISABLE_MASF_PORT = 0;
+if ($useAgentPort eq 'enable') {
+    $::USE_MASF_PORT = 1;
+} elsif ($useAgentPort eq 'disable') {
+    $::DISABLE_MASF_PORT = 1;
+} elsif ($useAgentPort ne 'error') {
+    print STDERR "Invalid --use-agent-port option $useAgentPort specified\n";
+    help();
+}
+
+if ($trapFilter eq 'none') {
+    $::NO_TRAP_FILTERS = 1;
+} elsif ($trapFilter eq 'add') {
+    $::NO_TRAP_FILTERS = 0;
+} else {
+    print STDERR "Invalid --trap-filter option $trapFilter\n";
+    help();
+}
+	
+$::EXTEND_SMA_FILTERS = 0;
+$::KEEP_SNMP_TARGET_PARAMS = 0;
+if (defined $masterTrapTarget) {
+    if ($trapFilter eq 'none') {
+	print STDERR "--master-trap-target cannot be used with --trap-filter=none\n";
+	help();
+    }
+    if ($masterTrapTarget eq 'agent') {
+	$::EXTEND_SMA_FILTERS = 1;
+    } elsif ($masterTrapTarget eq 'master') {
+	$::KEEP_SNMP_TARGET_PARAMS = 1;
+	$::EXTEND_SMA_FILTERS = 1;
+    } else {
+	print STDERR "Invalid --master-trap-target option $masterTrapTarget specified.\n";
+	help();
+    }
+}
+
+if ($help) {
+    help();
+}
+
+# set the umask before writing to the log file
+set_umask();
+log_message "masfcnv ".localtime()."\n\n";
+are_we_root();
+stop_sma_running();
+stop_masf_running();
+
+@::MASF_CONFIG_FILES = ("/etc/opt/SUNWmasf/conf/snmpd.conf");
+$::MASF_PERSISTENT_FILE = "/var/opt/SUNWmasf/snmpd.dat";
+$::MASF_PERSISTENT_DIR = "/var/opt/SUNWmasf";
+
+@::SMA_CONFIG_FILES = ("/usr/lib/net-snmp/snmpd.conf");
+$::SMA_PERSISTENT_FILE = "/var/net-snmp/snmpd.conf";
+$::SMA_PERSISTENT_DIR = "/var/net-snmp";
+sma_config_sanity_check();
+masf_config_sanity_check();
+read_config_files();
+sanity_check_config_files();
+add_metadata();
+install_agentx_config();
+process_agentaddress();
+convert_rwcommunities();
+expand_rocommunities(\%::MASF_CONFIGS, [$ENTITY_MIB_OID, $SUNPLAT_MIB_OID]);
+expand_rocommunities(\%::SMA_CONFIGS, [$INTERNET_OID]);
+convert_rwusers();
+expand_rousers(\%::MASF_CONFIGS, [$ENTITY_MIB_OID, $SUNPLAT_MIB_OID]);
+expand_rousers(\%::SMA_CONFIGS, [$INTERNET_OID]);
+clean_group_membership();
+if (! $::DONT_KEEP_V1V2C_USERS) {
+    uniquify_securityNames('masf');
+    process_com2sec();
+} else {
+    remove_v1v2c_users();
+}
+uniquify_groupNames('masf');
+check_usm_securityNames();
+process_engineIDs();
+if (! $::DONT_KEEP_V3_USERS) {
+    process_usm_securityNames();
+} else {
+    remove_v3_users();
+}
+uniquify_viewNames('masf');
+
+process_trapcommunity(\%::MASF_CONFIGS);
+process_trapcommunity(\%::SMA_CONFIGS);
+if ($::DONT_KEEP_TRAP_DESTS) {
+    remove_trap_destinations();
+}
+check_duplicate_trap_destinations();
+if ($::NO_TRAP_FILTERS) {
+    # simplistic trap processing
+    # no further filtering
+} else {
+
+    if ($::EXTEND_SMA_FILTERS) {
+	# "master"
+	# if the administrator selects EXTEND_SMA_FILTERS and
+	# KEEP_SNMP_TARGET_PARAMS is selected then: MASF trap destinations are
+	# migrated using existing SMA targetParams, targetAddrs, filterProfiles
+	# if possible. SMA trap destinations keep existing targetParams and
+	# have filterProfiles updated to INCLUDE MASF traps. Targets present in
+	# both SMA and MASF configs end up receiving all traps with SMA params.
+	# 1. Update SMA filterProfiles to include MASF traps
+	# 2. Expand existing MASF trapsinks to targetAddrs, params, and profiles
+	# identifying overlapping trap destinations and using them where
+	# appropriate
+	
+	# "agent"
+	# if the administrator selects EXTEND_SMA_FILTERS and
+	# KEEP_SNMP_TARGET_PARAMS is not selected then: MASF trap destinations
+	# are migrated using MASF targetParams, targetAddrs, filterProfiles.
+	# All SMA trap destinations not in MASF use SMA params and have MASF
+	# traps INCLUDED.  New params are created for targets present in both
+	# SMA and MASF which use tag specifically for MASF. Targets present in
+	# both SMA and MASF configs end up receiving all traps with MASF params.
+	# 1. Update SMA filterProfiles to include MASF traps 
+	# 2. Expand existing MASF trapsinks to new targetAddrs, params,
+	# profiles, identifying overlapping trap destinations and profiles,
+	# transferring them to new SMA params and retain original profiles.
+	
+	# selecting KEEP_SNMP_TARGET_PARAMS without EXTEND_SMA_FILTERS is not an
+	# option
+	extend_sma_trap_filters();
+    }
+    # "add"
+    # if the administrator selects neither option then: All MASF trap
+    # configurations are translated to new params, targetAddrs, filters which
+    # have ONLY MASF traps included in the profile.  Targets present in both
+    # MASF and SMA may receive duplicate traps, depending upon the SMA filter
+    # profile.
+    # 1. Expand existing MASF trapsinks to new targetAddrs, params, profiles.
+    process_trapsinks();
+}
+check_system_configs();
+check_agent_configs();
+convert_metadata();
+if (! $::DRY_RUN) {
+    backup_files();
+    remove_masf_persistent_file();
+}
+if ($::DRY_RUN) {
+    print "Contents of ".$::SMA_CONFIG_FILES[0]."\n";
+    print "\n";
+    *FH = *STDOUT;
+} else {
+    open (FH, "> ".$::SMA_CONFIG_FILES[0]) || die "Couldn't open file ".$::SMA_CONFIG_FILES[0]." for writing.\n";
+}
+my ($l);
+for $l (@{$::ADDED_CONFIGS{'prepend'}}) {
+    print_line (\*FH, $l);
+}
+dump_config(\*FH, $::SMA_PERSISTENT_FILE, \%::SMA_CONFIGS);
+dump_config(\*FH, $::MASF_PERSISTENT_FILE, \%::MASF_CONFIGS);
+for $l (@{$::ADDED_CONFIGS{'append'}}) {
+    print_line (\*FH, $l);
+}
+if ($::DRY_RUN) {
+    print "=======================\n";
+    print "Contents of ".$::SMA_PERSISTENT_FILE."\n";
+    print "=======================\n";
+} else {
+    close FH;
+    open (FH, "> ".$::SMA_PERSISTENT_FILE) || die "Couldn't open file ".$::SMA_PERSISTENT_FILE." for writing.\n";
+}
+dump_persistent_storage(\*FH, $::SMA_PERSISTENT_FILE, \%::SMA_CONFIGS);
+dump_persistent_storage(\*FH, $::MASF_PERSISTENT_FILE, \%::MASF_CONFIGS);
+if (! $::DRY_RUN) {
+    close FH;
+    install_template_config_file();
+    install_new_wrapper_script();
+}

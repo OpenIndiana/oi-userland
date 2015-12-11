@@ -1,0 +1,126 @@
+-------------------------------------------------------
+-- Copyright (c) 2003, 2011, Oracle and/or its affiliates. All rights reserved.
+--
+-- U.S. Government Rights - Commercial software. Government users are
+-- subject
+-- to the Sun Microsystems, Inc. standard license agreement and applicable
+-- provisions of the FAR and its supplements.
+--
+--
+-- This distribution may include materials developed by third parties. Sun,
+-- Sun Microsystems, the Sun logo and Solaris are trademarks or registered
+-- trademarks of Sun Microsystems, Inc. in the U.S. and other countries.
+--
+----------------------------------------------------------
+-- Systems Management Agent (SMA) SDK module example-5 MIB
+----------------------------------------------------------
+
+SDK-DEMO5-MIB DEFINITIONS ::= BEGIN
+
+  IMPORTS
+        enterprises, MODULE-IDENTITY, OBJECT-TYPE, Counter64, Integer32, Unsigned32
+                FROM SNMPv2-SMI
+         OBJECT-GROUP
+                FROM SNMPv2-CONF
+         DisplayString
+               FROM SNMPv2-TC;
+
+sdkDemo5MIB MODULE-IDENTITY
+    LAST-UPDATED "0009181435Z"
+    ORGANIZATION "Sun Microsystems Inc."
+    CONTACT-INFO
+        " Sun Microsystems Inc
+          4150 Network Circle
+          Santa Clara, CA 95054
+          e-mail: service@sun.com"
+    DESCRIPTION
+	" SMA SDK MIB example-5. This MIB will be used to demonstrate the
+	  implementation of modules and various module features in SMA agent."
+    ::= { demo 5 }
+
+sun           OBJECT IDENTIFIER ::= { enterprises 42 }
+products      OBJECT IDENTIFIER ::= { sun 2 }
+management    OBJECT IDENTIFIER ::= { products 2 }
+sma           OBJECT IDENTIFIER ::= { management 4 }
+demo          OBJECT IDENTIFIER ::= { sma 4 }
+
+--
+-- There are currently 1 Groups in the example.
+-- The "File" group contains information about some files on the system
+--
+
+me5FileGroup OBJECT-GROUP
+        OBJECTS { me5FileIndex, me5FileName, me5FileSize, me5FilePerm
+                }
+        STATUS current
+        DESCRIPTION
+        "File related statistics."
+        ::= { sdkDemo5MIB 2 }
+
+--
+-- Objects in the "File" group
+--
+
+me5FileTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF Me1FileEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+                "Table containing information of some files on the system."
+    ::= { me5FileGroup 1 }
+
+me5FileEntry OBJECT-TYPE
+    SYNTAX      Me1FileEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+                "Information about one file on the system."
+    INDEX   { me5FileIndex }
+    ::= { me5FileTable 1 }
+
+Me1FileEntry ::=
+    SEQUENCE {
+	me5FileIndex
+		Unsigned32,
+	me5FileName
+		DisplayString,
+	me5FileSize
+		Unsigned32,
+	me5FilePerm
+		DisplayString
+    }
+
+me5FileIndex OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+                "Index of the file."
+    ::= { me5FileEntry 1 }
+
+me5FileName OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+                "Name of the file"
+    ::= { me5FileEntry 2 }
+
+me5FileSize OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+                "Size of the file in kb"
+    ::= { me5FileEntry 3 }
+
+me5FilePerm OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+                "Permissions on this file. example, 0755 "
+    ::= { me5FileEntry 4 }
+
+END
+

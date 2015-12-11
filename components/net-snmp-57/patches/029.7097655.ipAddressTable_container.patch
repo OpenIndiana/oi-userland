@@ -1,0 +1,27 @@
+#
+# netsnmp_access_ipaddress_container_load() can return NULL.
+# ipaddressTable_container_load() should check for the validity
+# of return value before accessing it or else it causes SEGV.
+#
+# Developed in-house. Bug submitted upstream
+# https://sourceforge.net/p/net-snmp/bugs/2589
+#
+--- net-snmp-5.7.2/agent/mibgroup/ip-mib/ipAddressTable/ipAddressTable_data_access.c	Wed Jan 30 02:01:56 2013
++++ net-snmp-5.7.2/agent/mibgroup/ip-mib/ipAddressTable/ipAddressTable_data_access.c	Wed Jan 30 02:04:46 2013
+@@ -348,6 +348,8 @@
+      * what we've already got, and make any adjustments, saving
+      * missing addresses to be deleted.
+      */
++    if(ipaddress_container != NULL)
++    {
+     tmp_ptr[0] = ipaddress_container->next;
+     tmp_ptr[1] = NULL;
+     CONTAINER_FOR_EACH(container, (netsnmp_container_obj_func *)
+@@ -395,6 +397,7 @@
+              * pop off delete list
+              */
+             CONTAINER_REMOVE(tmp_container, NULL);
++            }
+         }
+     }
+ 

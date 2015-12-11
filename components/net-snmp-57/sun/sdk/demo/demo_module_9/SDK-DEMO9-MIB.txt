@@ -1,0 +1,90 @@
+
+--
+-- Copyright (c) 2003, 2011, Oracle and/or its affiliates. All rights reserved.
+--
+-- U.S. Government Rights - Commercial software. Government users are subject to
+-- the Sun Microsystems, Inc. standard license agreement and applicable
+-- provisions of the FAR and its supplements.
+--
+--
+-- This distribution may include materials developed by third parties. Sun, Sun
+-- Microsystems, the Sun logo and Solaris are trademarks or registered
+-- trademarks of Sun Microsystems, Inc. in the U.S. and other countries.
+--
+--
+
+------------------------------------------------------------------------
+-- Systems Management Agent (SMA) SDK module DEMO-9 MIB
+------------------------------------------------------------------------
+
+SDK-DEMO9-MIB DEFINITIONS ::= BEGIN
+
+  IMPORTS
+        enterprises, MODULE-IDENTITY, OBJECT-TYPE, Counter64, Integer32, Unsigned32
+                FROM SNMPv2-SMI
+         OBJECT-GROUP
+                FROM SNMPv2-CONF
+         DisplayString
+               FROM SNMPv2-TC;
+
+sdkDemo9MIB MODULE-IDENTITY
+    LAST-UPDATED "0009181435Z"
+    ORGANIZATION "Sun Microsystems Inc."
+    CONTACT-INFO
+        " Sun Microsystems Inc
+          4150 Network Circle
+          Santa Clara, CA 95054
+          e-mail: service@sun.com"
+    DESCRIPTION
+	" SMA SDK MIB DEMO-9. This MIB will be used to demonstrate the
+	  implementation of modules and various module features in SMA agent."
+    ::= { demo 9 }
+
+sun          OBJECT IDENTIFIER ::= { enterprises 42 }
+products     OBJECT IDENTIFIER ::= { sun 2 }
+management   OBJECT IDENTIFIER ::= { products 2 }
+sma          OBJECT IDENTIFIER ::= { management 4 }
+demo         OBJECT IDENTIFIER ::= { sma 4 }
+
+--
+-- The "Multi-instance" group contains information about filesize for
+-- using SNMPv3 context strings.
+--
+ 
+scalarExampleGroup OBJECT-GROUP
+        OBJECTS { delayedInstanceOid }
+        STATUS current
+        DESCRIPTION
+        "Simple scalar integer values for examples."
+        ::= { sdkDemo9MIB 1 }
+  
+-- 
+-- Properties in the "scalarExampleGroup" group
+--
+
+
+delayedInstanceOid OBJECT-TYPE
+    SYNTAX      Integer32
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+	"This is a simple object which is a basic integer.  It's value
+	 indicates the number of seconds that the agent will take in
+	 responding to requests of this object.  This is implemented
+	 in a way which will allow the agent to keep responding to
+	 other requests while access to this object is blocked.  It is
+	 writable, and changing it's value will change the amount of
+	 time the agent will effectively wait for before returning a
+	 response when this object is manipulated.  Note that SET
+	 requests through this object will take longer, since the
+	 delay is applied to each internal transaction phase, which
+	 could result in delays of up to 4 times the value of this
+	 object.
+
+	 This example object is implemented in the
+	 demo_module_9 example module."
+    DEFVAL { 1 }
+    ::= { scalarExampleGroup 1 }
+
+
+END

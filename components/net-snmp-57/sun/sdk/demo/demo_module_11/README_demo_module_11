@@ -1,0 +1,773 @@
+
+/*
+* Copyright (c) 2003, 2011, Oracle and/or its affiliates. All rights reserved.
+*
+* U.S. Government Rights - Commercial software. Government users are subject
+* to the Sun Microsystems, Inc. standard license agreement and applicable
+* provisions of the FAR and its supplements.
+*
+*
+* This distribution may include materials developed by third parties. Sun,
+* Sun Microsystems, the Sun logo and Solaris are trademarks or registered
+* trademarks of Sun Microsystems, Inc. in the U.S. and other countries.
+*
+*/
+
+
+README for demo_module_11
+********************************************************************
+
+This code example shows how the libentity.so API functions might be used. 
+The libentity.so supports the Entity MIB.  The API is documented in  
+the Solaris System Management Agent Developer's Guide.
+
+This example assumes that you are familiar with the Entity MIB 
+RFC number 2737, available at http://www.ietf.org/rfc/rfc2737.txt. 
+
+Instructions for building and running demo_module_11 are included later in
+this README.  
+
+
+Scenario
+--------
+ This example features a system containing three boards. 
+ Two boards contain 2 CPU modules,  and 1 board contains 3 ports.  
+ There are two logical domains running and two firewall instances.
+
+ The following shows an example of how the entity MIB should be populated.
+
+   Physical entities -- entPhysicalTable:
+     1 Field-replaceable physical chassis:
+
+       entPhysicalDescr.1 ==             'Sun Chassis Model b1000'
+       entPhysicalVendorType.1 ==        sun.chassisTypes.1
+       entPhysicalContainedIn.1 ==       0
+       entPhysicalClass.1 ==             chassis(3)
+       entPhysicalParentRelPos.1 ==      -1
+       entPhysicalName.1 ==              'b1000'
+       entPhysicalHardwareRev.1 ==       'A(1.00.02)'
+       entPhysicalSoftwareRev.1 ==       ''
+       entPhysicalFirmwareRev.1 ==       ''
+       entPhysicalSerialNum.1 ==         'C100076544'
+       entPhysicalMfgName.1 ==           'Sun Microsystems'
+       entPhysicalModelName.1 ==         'CHS-1000'
+       entPhysicalAlias.1 ==             'cl-SJ17-3-006:rack1:rtr-U3'
+       entPhysicalAssetID.1 ==           '0007372293'
+       entPhysicalIsFRU.1 ==             true(1)
+
+The entPhysicalSerialNum, entPhysicalAlias and entPhysicalAssetID have
+a max access as read-write. So, it is possible to set these values using
+SNMP set operations.
+
+     3 slots within the chassis:
+       entPhysicalDescr.2 ==             'Sun Chassis Slot Type AA'
+       entPhysicalVendorType.2  ==       sun.slotTypes.1
+       entPhysicalContainedIn.2 ==       1
+       entPhysicalClass.2 ==             container(5)
+       entPhysicalParentRelPos.2 ==      1
+       entPhysicalName.2 ==              'S1'
+       entPhysicalHardwareRev.2 ==       'B(1.00.01)'
+       entPhysicalSoftwareRev.2 ==       ''
+       entPhysicalFirmwareRev.2 ==       ''
+       entPhysicalSerialNum.2 ==         ''
+       entPhysicalMfgName.2 ==           'Sun Microsystems'
+       entPhysicalModelName.2 ==         'SLT-AA97'
+       entPhysicalAlias.2 ==             ''
+       entPhysicalAssetID.2 ==           ''
+       entPhysicalIsFRU.2 ==             false(2)
+
+       entPhysicalDescr.3 ==             'Sun Chassis Slot Type AA'
+       entPhysicalVendorType.3 =         sun.slotTypes.1
+       entPhysicalContainedIn.3 ==       1
+       entPhysicalClass.3 ==             container(5)
+       entPhysicalParentRelPos.3 ==      2
+       entPhysicalName.3 ==              'S2'
+       entPhysicalHardwareRev.3 ==       '1.00.07'
+       entPhysicalSoftwareRev.3 ==       ''
+       entPhysicalFirmwareRev.3 ==       ''
+       entPhysicalSerialNum.3 ==         ''
+       entPhysicalMfgName.3 ==           'Sun Microsystems'
+       entPhysicalModelName.3 ==         'SLT-AA97'
+       entPhysicalAlias.3 ==             ''
+       entPhysicalAssetID.3 ==           ''
+       entPhysicalIsFRU.3 ==             false(2)
+
+       entPhysicalDescr.4 ==             'Sun Chassis Slot Type AA'
+       entPhysicalVendorType.4 =         sun.slotTypes.1
+       entPhysicalContainedIn.4 ==       1
+       entPhysicalClass.4 ==             container(5)
+       entPhysicalParentRelPos.4 ==      3
+       entPhysicalName.4 ==              'S3'
+       entPhysicalHardwareRev.4 ==       '1.00.07'
+       entPhysicalSoftwareRev.4 ==       ''
+       entPhysicalFirmwareRev.4 ==       ''
+       entPhysicalSerialNum.4 ==         ''
+       entPhysicalMfgName.4 ==           'Sun Microsystems'
+       entPhysicalModelName.4 ==         'SLT-AA97'
+       entPhysicalAlias.4 ==             ''
+       entPhysicalAssetID.4 ==           ''
+       entPhysicalIsFRU.4 ==             false(2)
+
+
+     3 Field-replaceable boards:
+     Slot 1 contains a board with 2 CPUs:
+       entPhysicalDescr.5 ==             'Sun CPU-100'
+       entPhysicalVendorType.5  ==       sun.moduleTypes.14
+       entPhysicalContainedIn.5 ==       2
+       entPhysicalClass.5 ==             module(9)
+       entPhysicalParentRelPos.5 ==      1
+       entPhysicalName.5 ==              'M1'
+       entPhysicalHardwareRev.5 ==       '1.00.07'
+       entPhysicalSoftwareRev.5 ==       '1.5.1'
+       entPhysicalFirmwareRev.5 ==       'A(1.1)'
+       entPhysicalSerialNum.5 ==         'C100087363'
+       entPhysicalMfgName.5 ==           'Sun Microsystems'
+       entPhysicalModelName.5 ==         'R10-FE00'
+       entPhysicalAlias.5 ==             'rtr-U3:m1:SJ17-3-eng'
+       entPhysicalAssetID.5 ==           '0007372562'
+       entPhysicalIsFRU.5 ==             true(1)
+
+       entPhysicalDescr.6 ==             'Sun Ultrasparc-III 400MHz'
+       entPhysicalVendorType.6  ==       sun.cpuTypes.2
+       entPhysicalContainedIn.6 ==       5
+       entPhysicalClass.6 ==             other(1)
+       entPhysicalParentRelPos.6 ==      1
+       entPhysicalName.6 ==              'P1'
+       entPhysicalHardwareRev.6 ==       'G(1.02)'
+       entPhysicalSoftwareRev.6 ==       ''
+       entPhysicalFirmwareRev.6 ==       '1.1'
+       entPhysicalSerialNum.6 ==         ''
+       entPhysicalMfgName.6 ==           'Sun Microsystems'
+       entPhysicalModelName.6 ==         'SFE-400M'
+       entPhysicalAlias.6 ==             ''
+       entPhysicalAssetID.6 ==           ''
+       entPhysicalIsFRU.6 ==             false(2)
+
+       entPhysicalDescr.7 ==             'Sun Ultrasparc-III 400MHz'
+       entPhysicalVendorType.7  ==       sun.cpuTypes.2
+       entPhysicalContainedIn.7 ==       5
+       entPhysicalClass.7 ==             other(1)
+       entPhysicalParentRelPos.7 ==      2
+       entPhysicalName.7 ==              'P2'
+       entPhysicalHardwareRev.7 ==       'G(1.02)'
+       entPhysicalSoftwareRev.7 ==       ''
+       entPhysicalFirmwareRev.7 ==       '1.1'
+       entPhysicalSerialNum.7 ==         ''
+       entPhysicalMfgName.7 ==           'Sun Microsystems'
+       entPhysicalModelName.7 ==         'SFE-400M'
+       entPhysicalAlias.7 ==             ''
+       entPhysicalAssetID.7 ==           ''
+       entPhysicalIsFRU.7 ==             false(2)
+
+     Slot 2 contains another 2-cpu board:
+       entPhysicalDescr.8 ==             'Sun CPU-200'
+       entPhysicalVendorType.8  ==       sun.moduleTypes.15
+       entPhysicalContainedIn.8 ==       3
+       entPhysicalClass.8 ==             module(9)
+       entPhysicalParentRelPos.8 ==      1
+       entPhysicalName.8 ==              'M2'
+       entPhysicalHardwareRev.8 ==       '2.01.00'
+       entPhysicalSoftwareRev.8 ==       '3.0.7'
+       entPhysicalFirmwareRev.8 ==       'A(1.2)'
+       entPhysicalSerialNum.8 ==         'C100098732'
+       entPhysicalMfgName.8 ==           'Sun Microsystems'
+       entPhysicalModelName.8 ==         'R10-FE0C'
+       entPhysicalAlias.8 ==             'rtr-U3:m2:SJ17-2-eng'
+       entPhysicalAssetID.8 ==           '0007373982'
+       entPhysicalIsFRU.8 ==             true(1)
+
+       entPhysicalDescr.9 ==             'Sun Ultrasparc-III 400MHz'
+       entPhysicalVendorType.9 ==        sun.cpuTypes.5
+       entPhysicalContainedIn.9 ==       8
+       entPhysicalClass.9 ==             other(1)
+       entPhysicalParentRelPos.9 ==      1
+       entPhysicalName.9 ==              'P3'
+       entPhysicalHardwareRev.9 ==       'CC(1.07)'
+       entPhysicalSoftwareRev.9 ==       '2.0.34'
+       entPhysicalFirmwareRev.9 ==       '1.1'
+       entPhysicalSerialNum.9 ==         ''
+       entPhysicalMfgName.9 ==           'Sun Microsystems'
+       entPhysicalModelName.9 ==         'SFE-400M'
+       entPhysicalAlias.9 ==             ''
+       entPhysicalAssetID.9 ==           ''
+       entPhysicalIsFRU.9 ==             false(2)
+
+       entPhysicalDescr.10 ==            'Sun Ultrasparc-III 400MHz'
+       entPhysicalVendorType.10 ==       sun.cpuTypes.2
+       entPhysicalContainedIn.10 ==      8
+       entPhysicalClass.10 ==            other(1)
+       entPhysicalParentRelPos.10 ==     2
+       entPhysicalName.10 ==             'P4'
+       entPhysicalHardwareRev.10 ==      'G(1.04)'
+       entPhysicalSoftwareRev.10 ==      ''
+       entPhysicalFirmwareRev.10 ==      '1.3'
+       entPhysicalSerialNum.10 ==        ''
+       entPhysicalMfgName.10 ==          'Sun Microsystems'
+       entPhysicalModelName.10 ==        'SFE-400M'
+       entPhysicalAlias.10 ==            ''
+       entPhysicalAssetID.10 ==          ''
+       entPhysicalIsFRU.10 ==            false(2)
+
+     Slot 3 contains board with 3 ports:
+       entPhysicalDescr.11 ==             'Sun port-200'
+       entPhysicalVendorType.11  ==       sun.moduleTypes.25
+       entPhysicalContainedIn.11 ==       4
+       entPhysicalClass.11 ==             module(9)
+       entPhysicalParentRelPos.11 ==      1
+       entPhysicalName.11 ==              'M2'
+       entPhysicalHardwareRev.11 ==       '2.01.00'
+       entPhysicalSoftwareRev.11 ==       '3.0.7'
+       entPhysicalFirmwareRev.11 ==       'A(1.2)'
+       entPhysicalSerialNum.11 ==         'C100098732'
+       entPhysicalMfgName.11 ==           'Sun Microsystems'
+       entPhysicalModelName.11 ==         'R11-C100'
+       entPhysicalAlias.11 ==             'rtr-U3:m2:SJ17-2-eng'
+       entPhysicalAssetID.11 ==           '0007373982'
+       entPhysicalIsFRU.11 ==             true(1)
+
+       entPhysicalDescr.12 ==             'Sun Ethernet-100 Port'
+       entPhysicalVendorType.12 ==        sun.portTypes.5
+       entPhysicalContainedIn.12 ==       11
+       entPhysicalClass.12 ==             port(10)
+       entPhysicalParentRelPos.12 ==      1
+       entPhysicalName.12 ==              'P3'
+       entPhysicalHardwareRev.12 ==       'CC(1.07)'
+       entPhysicalSoftwareRev.12 ==       '2.0.34'
+       entPhysicalFirmwareRev.12 ==       '1.1'
+       entPhysicalSerialNum.12 ==         ''
+       entPhysicalMfgName.12 ==           'Sun Microsystems'
+       entPhysicalModelName.12 ==         'SFE-P100'
+       entPhysicalAlias.12 ==             ''
+       entPhysicalAssetID.12 ==           ''
+       entPhysicalIsFRU.12 ==             false(2)
+
+
+       entPhysicalDescr.13 ==            'Sun Ethernet-100 Port'
+       entPhysicalVendorType.13 ==       sun.portTypes.5
+       entPhysicalContainedIn.13 ==      11
+       entPhysicalClass.13 ==            port(10)
+       entPhysicalParentRelPos.13 ==     2
+       entPhysicalName.13 ==             'Ethernet B'
+       entPhysicalHardwareRev.13 ==      'G(1.04)'
+       entPhysicalSoftwareRev.13 ==      ''
+       entPhysicalFirmwareRev.13 ==      '1.3'
+       entPhysicalSerialNum.13 ==        ''
+       entPhysicalMfgName.13 ==          'Sun Microsystems'
+       entPhysicalModelName.13 ==        'SFE-P100'
+       entPhysicalAlias.13 ==            ''
+       entPhysicalAssetID.13 ==          ''
+       entPhysicalIsFRU.13 ==            false(2)
+
+       entPhysicalDescr.14 ==            'Sun Ethernet-100 Port'
+       entPhysicalVendorType.14 ==       sun.portTypes.5
+       entPhysicalContainedIn.14 ==      11
+       entPhysicalClass.14 ==            port(10)
+       entPhysicalParentRelPos.14 ==     3
+       entPhysicalName.14 ==             'Ethernet B'
+       entPhysicalHardwareRev.14 ==      'G(1.04)'
+       entPhysicalSoftwareRev.14 ==      ''
+       entPhysicalFirmwareRev.14 ==      '1.3'
+       entPhysicalSerialNum.14 ==        ''
+       entPhysicalMfgName.14 ==          'Sun Microsystems'
+       entPhysicalModelName.14 ==        'SFE-P100'
+       entPhysicalAlias.14 ==            ''
+       entPhysicalAssetID.14 ==          ''
+       entPhysicalIsFRU.14 ==            false(2)
+
+   Logical entities -- entLogicalTable; no SNMPv3 support
+     2 Logical Domains:
+       entLogicalDescr.1 ==              'Domain A'
+       entLogicalType.1 ==               solaris
+       entLogicalCommunity.1 ==          'public-dom1'
+       entLogicalTAddress.1 ==           124.125.126.127:161
+       entLogicalTDomain.1 ==            SunExampleDomain
+       entLogicalContextEngineID.1 ==    ''
+       entLogicalContextName.1 ==        ''
+
+       entLogicalDescr.2 ==              'Domain B'
+       entLogicalType.2 ==               solaris
+       entLogicalCommunity.2 ==          'public-dom2'
+       entLogicalTAddress.2 ==           124.125.126.128:161
+       entLogicalTDomain.2 ==            SunExampleDomain
+       entLogicalContextEngineID.2 ==    ''
+       entLogicalContextName.2 ==        ''
+
+     2 Firewalls:
+       entLogicalDescr.3 ==              'Sun Firewall v2.1.1'
+       entLogicalType.3  ==              dot1dFirewall
+       entLogicalCommunity.3 ==          'public-firewall1'
+       entLogicalTAddress.3 ==           124.125.126.129:161
+       entLogicalTDomain.3 ==            SunExampleDomain
+       entLogicalContextEngineID.3 ==    ''
+       entLogicalContextName.3 ==        ''
+
+       entLogicalDescr.4 ==              'Sun Firewall v2.1.1'
+       entLogicalType.4 ==               dot1dFirewall
+       entLogicalCommunity.4 ==          'public-firewall2'
+       entLogicalTAddress.4 ==           124.125.126.130:161
+       entLogicalTDomain.4 ==            SunExampleDomain
+       entLogicalContextEngineID.4 ==    ''
+       entLogicalContextName.4 ==        ''
+
+   Logical to Physical Mappings:
+     Domain A: uses CPU board 1 and Port 1
+         entLPPhysicalIndex.1.5 ==         5
+         entLPPhysicalIndex.1.12 ==       12
+
+     Domain B: uses CPU board 2, Port 2 and 3
+         entLPPhysicalIndex.2.8 ==         8
+         entLPPhysicalIndex.2.13 ==       13
+         entLPPhysicalIndex.2.14 ==       14
+
+     1st Firewall: uses CPU 1 of CPU board 1 and Port 1
+
+         entLPPhysicalIndex.3.6 ==         6
+         entLPPhysicalIndex.3.12 ==       12
+
+     2nd Firewall: uses CPU 1 of CPU board 2, Port 2 and 3
+
+     [ Note that these mappings are included in the table since
+     firewall entity (1nd Firewall) utilizes one of the
+     ports in the board. If this were not the case, then a single mapping
+     to the board (e.g., entLPPhysicalIndex.4.11) would be
+     present instead. ]
+
+         entLPPhysicalIndex.4.9  ==        9
+         entLPPhysicalIndex.4.13 ==        13
+         entLPPhysicalIndex.4.14 ==        14
+
+   Physical to Logical to MIB Alias Mappings -- entAliasMappingTable:
+     Example 1: ifIndex values are global to all logical entities
+         entAliasMappingIdentifier.12.0 ==  ifIndex.1
+         entAliasMappingIdentifier.13.0 ==  ifIndex.2
+         entAliasMappingIdentifier.14.0 ==  ifIndex.3
+
+     Example 2: ifIndex values are not shared by all logical entities
+         entAliasMappingIdentifier.12.0 ==  ifIndex.1
+         entAliasMappingIdentifier.12.3 ==  ifIndex.101
+         entAliasMappingIdentifier.13.0 ==  ifIndex.2
+         entAliasMappingIdentifier.13.3 ==  ifIndex.102
+         entAliasMappingIdentifier.14.0 ==  ifIndex.3
+         entAliasMappingIdentifier.14.3 ==  ifIndex.103
+
+   Physical Containment Tree -- entPhysicalContainsTable
+     chassis has three slots:
+         entPhysicalChildIndex.1.2 ==      2
+         entPhysicalChildIndex.1.3 ==      3
+         entPhysicalChildIndex.1.4 ==      4
+
+     slot 1 has a board:
+         entPhysicalChildIndex.2.5 ==      5
+
+     slot 2 has a board:
+         entPhysicalChildIndex.3.8 ==      8
+
+     slot 3 has a board:
+         entPhysicalChildIndex.4.11 ==     11
+
+     board 1 has 2 cpus:
+         entPhysicalChildIndex.4.6 ==      6
+         entPhysicalChildIndex.4.7 ==      7
+
+     board 2 has 2 cpus:
+         entPhysicalChildIndex.8.9 ==      9
+         entPhysicalChildIndex.8.10 ==     10
+
+     board 3 has 3 ports:
+         entPhysicalChildIndex.11.12 ==     12
+         entPhysicalChildIndex.11.13 ==     13
+         entPhysicalChildIndex.11.14 ==     14
+
+
+
+
+How to Build the demo_module_11 Code Example
+===========================================
+
+The demo_module_11 code example includes the following files, by default 
+located in the directory /usr/demo/sma_snmp/demo_module_11.
+
+Files:
+
+o Makefile - Compiles the MyTable source code
+o MyTable.c - Source code for module
+o MyTable.h - Header file for module
+
+
+To set up your build environment for the demo:
+
+1. Copy the demo code to a directory for which you have write permission.
+   For example:
+   % cp -R /usr/demo/sma_snmp/demo_module_11  /home/username/demo
+
+
+2. Create a lib directory that you can use to store shared object libraries 
+   that you generate from demo code examples, if you have not already done so. 
+   For example:
+   % mkdir /home/username/demo/lib
+
+    
+3. Create a mibs directory that you can use to store MIB files for the demo
+   code examples, if you have not already done so. 
+   For example:
+   % mkdir /home/username/demo/mibs
+
+
+4. Set the CC environment variable to the location of the C compiler to be 
+   used.
+   For example, if you are using Sun ONE Studio:
+   % setenv CC /opt/SUNWspro/bin/cc
+
+
+5. Set your PATH environment variable to include the appropriate paths, so that
+   needed binaries can be found during the compilation process. 
+   For example, in the csh: 
+    
+   % setenv PATH .:/usr/bin:$PATH
+      
+    
+
+
+To build the example:
+
+1. Change to the directory where you copied the demo module files. 
+   For example:
+
+   % cd /home/username/demo/demo_module_11
+   
+
+2. Use the make command to generate object files.
+  
+   If you are running the 64-bit SPARC Solaris kernel, type:
+   % /usr/ccs/bin/make
+   
+   If you are running the 32-bit SPARC Solaris kernel, type:
+   % /usr/ccs/bin/make ARCH=32
+   
+   If you are running the Solaris x86 kernel, type:
+   % /usr/ccs/bin/make ARCH=32
+   
+
+3. Copy the module shared library object to the lib directory you created. 
+   For example:
+
+   % cp demo_module_11.so /home/username/demo/lib
+
+
+   
+Setting Up Agent to Run the demo_module_11 Module
+=================================================
+
+1. As root, edit the agent's configuration file /etc/sma/snmp/snmpd.conf.
+   Look for a line similar to the following:
+
+   dlmod entity /usr/lib/sparcv9/libentity.so
+   
+   This line causes the agent to load the API library that you need to use
+   the Entity MIB functions.  
+   
+   If the line is missing, insert it.  Note that if you are using a 32-bit 
+   module, you should load the 32-bit library, located in 
+   /usr/lib/libentity.so.
+   
+   
+2. After the dlmod line for the libentity.so, insert a dlmod statement for 
+   the module. This statement enables the agent to load the module.
+   For example:
+   
+   dlmod demo_module_11 /home/username/demo/lib/demo_module_11.so
+    
+    
+3. As root, start the SMA snmp agent. If the agent is already running, 
+   stop and restart it in debug mode.
+   For example:
+   
+   # /etc/init.d/init.sma stop
+   # /usr/sbin/snmpd -Ddemo_module_11
+    
+   The optional -Ddemo_module_11 argument sends debugging statements from  
+   demo_module_11 to the /var/log/snmpd.log file. You can also use the -L 
+   and -f options to send debugging statements to the screen instead.   
+
+
+Testing the Code Example 
+========================
+  
+1. As a non-root user, issue an snmpwalk command to retrieve data from 
+   the module.
+   For example:
+    
+   % snmpwalk -v 1 -c public localhost mib-2.47 
+   
+   The output should be similar to the following:
+
+   
+SNMPv2-SMI::mib-2.47.1.1.1.1.2.1 = STRING: "Sun Chassis Model b1000"
+SNMPv2-SMI::mib-2.47.1.1.1.1.2.2 = STRING: "Sun Chassis Slot Type AA"
+SNMPv2-SMI::mib-2.47.1.1.1.1.2.3 = STRING: "Sun Chassis Slot Type AA"
+SNMPv2-SMI::mib-2.47.1.1.1.1.2.4 = STRING: "Sun Chassis Slot Type AA"
+SNMPv2-SMI::mib-2.47.1.1.1.1.2.5 = STRING: "Sun CPU-100"
+SNMPv2-SMI::mib-2.47.1.1.1.1.2.6 = STRING: "Sun Ultrasparc-III 400MHz"
+SNMPv2-SMI::mib-2.47.1.1.1.1.2.7 = STRING: "Sun Ultrasparc-III 400MHz"
+SNMPv2-SMI::mib-2.47.1.1.1.1.2.8 = STRING: "Sun CPU-200"
+SNMPv2-SMI::mib-2.47.1.1.1.1.2.9 = STRING: "Sun Ultrasparc-III 400MHz"
+SNMPv2-SMI::mib-2.47.1.1.1.1.2.10 = STRING: "Sun Ultrasparc-III 400MHz"
+SNMPv2-SMI::mib-2.47.1.1.1.1.2.11 = STRING: "Sun port-200"
+SNMPv2-SMI::mib-2.47.1.1.1.1.2.12 = STRING: "Sun Ethernet-100 Port"
+SNMPv2-SMI::mib-2.47.1.1.1.1.2.13 = STRING: "Sun Ethernet-100 Port"
+SNMPv2-SMI::mib-2.47.1.1.1.1.2.14 = STRING: "Sun Ethernet-100 Port"
+SNMPv2-SMI::mib-2.47.1.1.1.1.3.1 = OID: SNMPv2-SMI::enterprises.42.200.1
+SNMPv2-SMI::mib-2.47.1.1.1.1.3.2 = OID: SNMPv2-SMI::enterprises.42.201.1
+SNMPv2-SMI::mib-2.47.1.1.1.1.3.3 = OID: SNMPv2-SMI::enterprises.42.201.1
+SNMPv2-SMI::mib-2.47.1.1.1.1.3.4 = OID: SNMPv2-SMI::enterprises.42.201.1
+SNMPv2-SMI::mib-2.47.1.1.1.1.3.5 = OID: SNMPv2-SMI::enterprises.42.202.14
+SNMPv2-SMI::mib-2.47.1.1.1.1.3.6 = OID: SNMPv2-SMI::enterprises.42.203.2
+SNMPv2-SMI::mib-2.47.1.1.1.1.3.7 = OID: SNMPv2-SMI::enterprises.42.203.2
+SNMPv2-SMI::mib-2.47.1.1.1.1.3.8 = OID: SNMPv2-SMI::enterprises.42.202.15
+SNMPv2-SMI::mib-2.47.1.1.1.1.3.9 = OID: SNMPv2-SMI::enterprises.42.203.5
+SNMPv2-SMI::mib-2.47.1.1.1.1.3.10 = OID: SNMPv2-SMI::enterprises.42.203.2
+SNMPv2-SMI::mib-2.47.1.1.1.1.3.11 = OID: SNMPv2-SMI::enterprises.42.202.25
+SNMPv2-SMI::mib-2.47.1.1.1.1.3.12 = OID: SNMPv2-SMI::enterprises.42.204.5
+SNMPv2-SMI::mib-2.47.1.1.1.1.3.13 = OID: SNMPv2-SMI::enterprises.42.204.5
+SNMPv2-SMI::mib-2.47.1.1.1.1.3.14 = OID: SNMPv2-SMI::enterprises.42.204.5
+SNMPv2-SMI::mib-2.47.1.1.1.1.4.1 = INTEGER: 0
+SNMPv2-SMI::mib-2.47.1.1.1.1.4.2 = INTEGER: 1
+SNMPv2-SMI::mib-2.47.1.1.1.1.4.3 = INTEGER: 1
+SNMPv2-SMI::mib-2.47.1.1.1.1.4.4 = INTEGER: 1
+SNMPv2-SMI::mib-2.47.1.1.1.1.4.5 = INTEGER: 2
+SNMPv2-SMI::mib-2.47.1.1.1.1.4.6 = INTEGER: 4
+SNMPv2-SMI::mib-2.47.1.1.1.1.4.7 = INTEGER: 4
+SNMPv2-SMI::mib-2.47.1.1.1.1.4.8 = INTEGER: 3
+SNMPv2-SMI::mib-2.47.1.1.1.1.4.9 = INTEGER: 8
+SNMPv2-SMI::mib-2.47.1.1.1.1.4.10 = INTEGER: 8
+SNMPv2-SMI::mib-2.47.1.1.1.1.4.11 = INTEGER: 4
+SNMPv2-SMI::mib-2.47.1.1.1.1.4.12 = INTEGER: 11
+SNMPv2-SMI::mib-2.47.1.1.1.1.4.13 = INTEGER: 11
+SNMPv2-SMI::mib-2.47.1.1.1.1.4.14 = INTEGER: 11
+SNMPv2-SMI::mib-2.47.1.1.1.1.5.1 = INTEGER: 3
+SNMPv2-SMI::mib-2.47.1.1.1.1.5.2 = INTEGER: 5
+SNMPv2-SMI::mib-2.47.1.1.1.1.5.3 = INTEGER: 5
+SNMPv2-SMI::mib-2.47.1.1.1.1.5.4 = INTEGER: 5
+SNMPv2-SMI::mib-2.47.1.1.1.1.5.5 = INTEGER: 9
+SNMPv2-SMI::mib-2.47.1.1.1.1.5.6 = INTEGER: 1
+SNMPv2-SMI::mib-2.47.1.1.1.1.5.7 = INTEGER: 1
+SNMPv2-SMI::mib-2.47.1.1.1.1.5.8 = INTEGER: 9
+SNMPv2-SMI::mib-2.47.1.1.1.1.5.9 = INTEGER: 1
+SNMPv2-SMI::mib-2.47.1.1.1.1.5.10 = INTEGER: 1
+SNMPv2-SMI::mib-2.47.1.1.1.1.5.11 = INTEGER: 9
+SNMPv2-SMI::mib-2.47.1.1.1.1.5.12 = INTEGER: 10
+SNMPv2-SMI::mib-2.47.1.1.1.1.5.13 = INTEGER: 10
+SNMPv2-SMI::mib-2.47.1.1.1.1.5.14 = INTEGER: 10
+SNMPv2-SMI::mib-2.47.1.1.1.1.6.1 = INTEGER: -1
+SNMPv2-SMI::mib-2.47.1.1.1.1.6.2 = INTEGER: 1
+SNMPv2-SMI::mib-2.47.1.1.1.1.6.3 = INTEGER: 2
+SNMPv2-SMI::mib-2.47.1.1.1.1.6.4 = INTEGER: 3
+SNMPv2-SMI::mib-2.47.1.1.1.1.6.5 = INTEGER: 1
+SNMPv2-SMI::mib-2.47.1.1.1.1.6.6 = INTEGER: 1
+SNMPv2-SMI::mib-2.47.1.1.1.1.6.7 = INTEGER: 2
+SNMPv2-SMI::mib-2.47.1.1.1.1.6.8 = INTEGER: 1
+SNMPv2-SMI::mib-2.47.1.1.1.1.6.9 = INTEGER: 1
+SNMPv2-SMI::mib-2.47.1.1.1.1.6.10 = INTEGER: 2
+SNMPv2-SMI::mib-2.47.1.1.1.1.6.11 = INTEGER: 1
+SNMPv2-SMI::mib-2.47.1.1.1.1.6.12 = INTEGER: 1
+SNMPv2-SMI::mib-2.47.1.1.1.1.6.13 = INTEGER: 2
+SNMPv2-SMI::mib-2.47.1.1.1.1.6.14 = INTEGER: 3
+SNMPv2-SMI::mib-2.47.1.1.1.1.7.1 = STRING: "b1000"
+SNMPv2-SMI::mib-2.47.1.1.1.1.7.2 = STRING: "S1"
+SNMPv2-SMI::mib-2.47.1.1.1.1.7.3 = STRING: "S2"
+SNMPv2-SMI::mib-2.47.1.1.1.1.7.4 = STRING: "S3"
+SNMPv2-SMI::mib-2.47.1.1.1.1.7.5 = STRING: "M1"
+SNMPv2-SMI::mib-2.47.1.1.1.1.7.6 = STRING: "P1"
+SNMPv2-SMI::mib-2.47.1.1.1.1.7.7 = STRING: "P2"
+SNMPv2-SMI::mib-2.47.1.1.1.1.7.8 = STRING: "M2"
+SNMPv2-SMI::mib-2.47.1.1.1.1.7.9 = STRING: "P3"
+SNMPv2-SMI::mib-2.47.1.1.1.1.7.10 = STRING: "P4"
+SNMPv2-SMI::mib-2.47.1.1.1.1.7.11 = STRING: "M2"
+SNMPv2-SMI::mib-2.47.1.1.1.1.7.12 = STRING: "P3"
+SNMPv2-SMI::mib-2.47.1.1.1.1.7.13 = STRING: "Ethernet B"
+SNMPv2-SMI::mib-2.47.1.1.1.1.7.14 = STRING: "Ethernet B"
+SNMPv2-SMI::mib-2.47.1.1.1.1.8.1 = STRING: "A(1.00.02)"
+SNMPv2-SMI::mib-2.47.1.1.1.1.8.2 = STRING: "B(1.00.01)"
+SNMPv2-SMI::mib-2.47.1.1.1.1.8.3 = STRING: "1.00.07"
+SNMPv2-SMI::mib-2.47.1.1.1.1.8.4 = STRING: "1.00.07"
+SNMPv2-SMI::mib-2.47.1.1.1.1.8.5 = STRING: "1.00.07"
+SNMPv2-SMI::mib-2.47.1.1.1.1.8.6 = STRING: "G(1.02)"
+SNMPv2-SMI::mib-2.47.1.1.1.1.8.7 = STRING: "G(1.02)"
+SNMPv2-SMI::mib-2.47.1.1.1.1.8.8 = STRING: "2.01.00"
+SNMPv2-SMI::mib-2.47.1.1.1.1.8.9 = STRING: "CC(1.07)"
+SNMPv2-SMI::mib-2.47.1.1.1.1.8.10 = STRING: "G(1.04)"
+SNMPv2-SMI::mib-2.47.1.1.1.1.8.11 = STRING: "2.01.00"
+SNMPv2-SMI::mib-2.47.1.1.1.1.8.12 = STRING: "CC(1.07)"
+SNMPv2-SMI::mib-2.47.1.1.1.1.8.13 = STRING: "G(1.04)"
+SNMPv2-SMI::mib-2.47.1.1.1.1.8.14 = STRING: "G(1.04)"
+SNMPv2-SMI::mib-2.47.1.1.1.1.9.1 = ""
+SNMPv2-SMI::mib-2.47.1.1.1.1.9.2 = ""
+SNMPv2-SMI::mib-2.47.1.1.1.1.9.3 = ""
+SNMPv2-SMI::mib-2.47.1.1.1.1.9.4 = ""
+SNMPv2-SMI::mib-2.47.1.1.1.1.9.5 = STRING: "1.5.1"
+SNMPv2-SMI::mib-2.47.1.1.1.1.9.6 = ""
+SNMPv2-SMI::mib-2.47.1.1.1.1.9.7 = ""
+SNMPv2-SMI::mib-2.47.1.1.1.1.9.8 = STRING: "3.0.7"
+SNMPv2-SMI::mib-2.47.1.1.1.1.9.9 = STRING: "2.0.34"
+SNMPv2-SMI::mib-2.47.1.1.1.1.9.10 = ""
+SNMPv2-SMI::mib-2.47.1.1.1.1.9.11 = STRING: "3.0.7"
+SNMPv2-SMI::mib-2.47.1.1.1.1.9.12 = STRING: "2.0.34"
+SNMPv2-SMI::mib-2.47.1.1.1.1.9.13 = ""
+SNMPv2-SMI::mib-2.47.1.1.1.1.9.14 = ""
+SNMPv2-SMI::mib-2.47.1.1.1.1.10.1 = ""
+SNMPv2-SMI::mib-2.47.1.1.1.1.10.2 = ""
+SNMPv2-SMI::mib-2.47.1.1.1.1.10.3 = ""
+SNMPv2-SMI::mib-2.47.1.1.1.1.10.4 = ""
+SNMPv2-SMI::mib-2.47.1.1.1.1.10.5 = STRING: "A(1.1)"
+SNMPv2-SMI::mib-2.47.1.1.1.1.10.6 = STRING: "1.1"
+SNMPv2-SMI::mib-2.47.1.1.1.1.10.7 = STRING: "1.1"
+SNMPv2-SMI::mib-2.47.1.1.1.1.10.8 = STRING: "A(1.2)"
+SNMPv2-SMI::mib-2.47.1.1.1.1.10.9 = STRING: "1.1"
+SNMPv2-SMI::mib-2.47.1.1.1.1.10.10 = STRING: "1.3"
+SNMPv2-SMI::mib-2.47.1.1.1.1.10.11 = STRING: "A(1.2)"
+SNMPv2-SMI::mib-2.47.1.1.1.1.10.12 = STRING: "1.1"
+SNMPv2-SMI::mib-2.47.1.1.1.1.10.13 = STRING: "1.3"
+SNMPv2-SMI::mib-2.47.1.1.1.1.10.14 = STRING: "1.3"
+SNMPv2-SMI::mib-2.47.1.1.1.1.11.1 = STRING: "C100076544"
+SNMPv2-SMI::mib-2.47.1.1.1.1.11.2 = ""
+SNMPv2-SMI::mib-2.47.1.1.1.1.11.3 = ""
+SNMPv2-SMI::mib-2.47.1.1.1.1.11.4 = ""
+SNMPv2-SMI::mib-2.47.1.1.1.1.11.5 = STRING: "C100087363"
+SNMPv2-SMI::mib-2.47.1.1.1.1.11.6 = ""
+SNMPv2-SMI::mib-2.47.1.1.1.1.11.7 = ""
+SNMPv2-SMI::mib-2.47.1.1.1.1.11.8 = STRING: "C100098732"
+SNMPv2-SMI::mib-2.47.1.1.1.1.11.9 = ""
+SNMPv2-SMI::mib-2.47.1.1.1.1.11.10 = ""
+SNMPv2-SMI::mib-2.47.1.1.1.1.11.11 = STRING: "C100098732"
+SNMPv2-SMI::mib-2.47.1.1.1.1.11.12 = ""
+SNMPv2-SMI::mib-2.47.1.1.1.1.11.13 = ""
+SNMPv2-SMI::mib-2.47.1.1.1.1.11.14 = ""
+SNMPv2-SMI::mib-2.47.1.1.1.1.12.1 = STRING: "Sun Microsystems"
+SNMPv2-SMI::mib-2.47.1.1.1.1.12.2 = STRING: "Sun Microsystems"
+SNMPv2-SMI::mib-2.47.1.1.1.1.12.3 = STRING: "Sun Microsystems"
+SNMPv2-SMI::mib-2.47.1.1.1.1.12.4 = STRING: "Sun Microsystems"
+SNMPv2-SMI::mib-2.47.1.1.1.1.12.5 = STRING: "Sun Microsystems"
+SNMPv2-SMI::mib-2.47.1.1.1.1.12.6 = STRING: "Sun Microsystems"
+SNMPv2-SMI::mib-2.47.1.1.1.1.12.7 = STRING: "Sun Microsystems"
+SNMPv2-SMI::mib-2.47.1.1.1.1.12.8 = STRING: "Sun Microsystems"
+SNMPv2-SMI::mib-2.47.1.1.1.1.12.9 = STRING: "Sun Microsystems"
+SNMPv2-SMI::mib-2.47.1.1.1.1.12.10 = STRING: "Sun Microsystems"
+SNMPv2-SMI::mib-2.47.1.1.1.1.12.11 = STRING: "Sun Microsystems"
+SNMPv2-SMI::mib-2.47.1.1.1.1.12.12 = STRING: "Sun Microsystems"
+SNMPv2-SMI::mib-2.47.1.1.1.1.12.13 = STRING: "Sun Microsystems"
+SNMPv2-SMI::mib-2.47.1.1.1.1.12.14 = STRING: "Sun Microsystems"
+SNMPv2-SMI::mib-2.47.1.1.1.1.13.1 = STRING: "CHS-1000"
+SNMPv2-SMI::mib-2.47.1.1.1.1.13.2 = STRING: "SLT-AA97"
+SNMPv2-SMI::mib-2.47.1.1.1.1.13.3 = STRING: "SLT-AA97"
+SNMPv2-SMI::mib-2.47.1.1.1.1.13.4 = STRING: "SLT-AA97"
+SNMPv2-SMI::mib-2.47.1.1.1.1.13.5 = STRING: "R10-FE00"
+SNMPv2-SMI::mib-2.47.1.1.1.1.13.6 = STRING: "SFE-400M"
+SNMPv2-SMI::mib-2.47.1.1.1.1.13.7 = STRING: "SFE-400M"
+SNMPv2-SMI::mib-2.47.1.1.1.1.13.8 = STRING: "R10-FE0C"
+SNMPv2-SMI::mib-2.47.1.1.1.1.13.9 = STRING: "SFE-400M"
+SNMPv2-SMI::mib-2.47.1.1.1.1.13.10 = STRING: "SFE-400M"
+SNMPv2-SMI::mib-2.47.1.1.1.1.13.11 = STRING: "R11-C100"
+SNMPv2-SMI::mib-2.47.1.1.1.1.13.12 = STRING: "SFE-P100"
+SNMPv2-SMI::mib-2.47.1.1.1.1.13.13 = STRING: "SFE-P100"
+SNMPv2-SMI::mib-2.47.1.1.1.1.13.14 = STRING: "SFE-P100"
+SNMPv2-SMI::mib-2.47.1.1.1.1.14.1 = STRING: "cl-SJ17-3-006:rack1:rtr-U3"
+SNMPv2-SMI::mib-2.47.1.1.1.1.14.2 = ""
+SNMPv2-SMI::mib-2.47.1.1.1.1.14.3 = ""
+SNMPv2-SMI::mib-2.47.1.1.1.1.14.4 = ""
+SNMPv2-SMI::mib-2.47.1.1.1.1.14.5 = STRING: "rtr-U3:m1:SJ17-3-eng"
+SNMPv2-SMI::mib-2.47.1.1.1.1.14.6 = ""
+SNMPv2-SMI::mib-2.47.1.1.1.1.14.7 = ""
+SNMPv2-SMI::mib-2.47.1.1.1.1.14.8 = STRING: "rtr-U3:m2:SJ17-2-eng"
+SNMPv2-SMI::mib-2.47.1.1.1.1.14.9 = ""
+SNMPv2-SMI::mib-2.47.1.1.1.1.14.10 = ""
+SNMPv2-SMI::mib-2.47.1.1.1.1.14.11 = STRING: "rtr-U3:m2:SJ17-2-eng"
+SNMPv2-SMI::mib-2.47.1.1.1.1.14.12 = ""
+SNMPv2-SMI::mib-2.47.1.1.1.1.14.13 = ""
+SNMPv2-SMI::mib-2.47.1.1.1.1.14.14 = ""
+SNMPv2-SMI::mib-2.47.1.1.1.1.15.1 = STRING: "0007372293"
+SNMPv2-SMI::mib-2.47.1.1.1.1.15.2 = ""
+SNMPv2-SMI::mib-2.47.1.1.1.1.15.3 = ""
+SNMPv2-SMI::mib-2.47.1.1.1.1.15.4 = ""
+SNMPv2-SMI::mib-2.47.1.1.1.1.15.5 = STRING: "0007372562"
+SNMPv2-SMI::mib-2.47.1.1.1.1.15.6 = ""
+SNMPv2-SMI::mib-2.47.1.1.1.1.15.7 = ""
+SNMPv2-SMI::mib-2.47.1.1.1.1.15.8 = STRING: "0007373982"
+SNMPv2-SMI::mib-2.47.1.1.1.1.15.9 = ""
+SNMPv2-SMI::mib-2.47.1.1.1.1.15.10 = ""
+SNMPv2-SMI::mib-2.47.1.1.1.1.15.11 = STRING: "0007373982"
+SNMPv2-SMI::mib-2.47.1.1.1.1.15.12 = ""
+SNMPv2-SMI::mib-2.47.1.1.1.1.15.13 = ""
+SNMPv2-SMI::mib-2.47.1.1.1.1.15.14 = ""
+SNMPv2-SMI::mib-2.47.1.1.1.1.16.1 = INTEGER: 1
+SNMPv2-SMI::mib-2.47.1.1.1.1.16.2 = INTEGER: 2
+SNMPv2-SMI::mib-2.47.1.1.1.1.16.3 = INTEGER: 2
+SNMPv2-SMI::mib-2.47.1.1.1.1.16.4 = INTEGER: 2
+SNMPv2-SMI::mib-2.47.1.1.1.1.16.5 = INTEGER: 1
+SNMPv2-SMI::mib-2.47.1.1.1.1.16.6 = INTEGER: 2
+SNMPv2-SMI::mib-2.47.1.1.1.1.16.7 = INTEGER: 2
+SNMPv2-SMI::mib-2.47.1.1.1.1.16.8 = INTEGER: 1
+SNMPv2-SMI::mib-2.47.1.1.1.1.16.9 = INTEGER: 2
+SNMPv2-SMI::mib-2.47.1.1.1.1.16.10 = INTEGER: 2
+SNMPv2-SMI::mib-2.47.1.1.1.1.16.11 = INTEGER: 1
+SNMPv2-SMI::mib-2.47.1.1.1.1.16.12 = INTEGER: 2
+SNMPv2-SMI::mib-2.47.1.1.1.1.16.13 = INTEGER: 2
+SNMPv2-SMI::mib-2.47.1.1.1.1.16.14 = INTEGER: 2
+SNMPv2-SMI::mib-2.47.1.2.1.1.2.1 = STRING: "Domain A"
+SNMPv2-SMI::mib-2.47.1.2.1.1.2.2 = STRING: "Domain B"
+SNMPv2-SMI::mib-2.47.1.2.1.1.2.3 = STRING: "Sun Firewall v2.1.1"
+SNMPv2-SMI::mib-2.47.1.2.1.1.2.4 = STRING: "Sun Firewall v2.1.1"
+SNMPv2-SMI::mib-2.47.1.2.1.1.3.1 = OID: SNMPv2-SMI::enterprises.42.2.1
+SNMPv2-SMI::mib-2.47.1.2.1.1.3.2 = OID: SNMPv2-SMI::enterprises.42.2.1
+SNMPv2-SMI::mib-2.47.1.2.1.1.3.3 = OID: SNMPv2-SMI::enterprises.42.2.1
+SNMPv2-SMI::mib-2.47.1.2.1.1.3.4 = OID: SNMPv2-SMI::enterprises.42.2.1
+SNMPv2-SMI::mib-2.47.1.2.1.1.4.1 = STRING: "public-dom1"
+SNMPv2-SMI::mib-2.47.1.2.1.1.4.2 = STRING: "public-dom2"
+SNMPv2-SMI::mib-2.47.1.2.1.1.4.3 = STRING: "public-firewall1"
+SNMPv2-SMI::mib-2.47.1.2.1.1.4.4 = STRING: "public-firewall2"
+SNMPv2-SMI::mib-2.47.1.2.1.1.5.1 = STRING: "124.125.126.127:161"
+SNMPv2-SMI::mib-2.47.1.2.1.1.5.2 = STRING: "124.125.126.128:161"
+SNMPv2-SMI::mib-2.47.1.2.1.1.5.3 = STRING: "124.125.126.129:161"
+SNMPv2-SMI::mib-2.47.1.2.1.1.5.4 = STRING: "124.125.126.130:161"
+SNMPv2-SMI::mib-2.47.1.2.1.1.6.1 = OID: SNMPv2-SMI::enterprises.42.1005
+SNMPv2-SMI::mib-2.47.1.2.1.1.6.2 = OID: SNMPv2-SMI::enterprises.42.1005
+SNMPv2-SMI::mib-2.47.1.2.1.1.6.3 = OID: SNMPv2-SMI::enterprises.42.1005
+SNMPv2-SMI::mib-2.47.1.2.1.1.6.4 = OID: SNMPv2-SMI::enterprises.42.1005
+SNMPv2-SMI::mib-2.47.1.2.1.1.7.1 = ""
+SNMPv2-SMI::mib-2.47.1.2.1.1.7.2 = ""
+SNMPv2-SMI::mib-2.47.1.2.1.1.7.3 = ""
+SNMPv2-SMI::mib-2.47.1.2.1.1.7.4 = ""
+SNMPv2-SMI::mib-2.47.1.2.1.1.8.1 = ""
+SNMPv2-SMI::mib-2.47.1.2.1.1.8.2 = ""
+SNMPv2-SMI::mib-2.47.1.2.1.1.8.3 = ""
+SNMPv2-SMI::mib-2.47.1.2.1.1.8.4 = ""
+SNMPv2-SMI::mib-2.47.1.3.1.1.1.1.5 = INTEGER: 5
+SNMPv2-SMI::mib-2.47.1.3.1.1.1.1.12 = INTEGER: 12
+SNMPv2-SMI::mib-2.47.1.3.1.1.1.2.8 = INTEGER: 8
+SNMPv2-SMI::mib-2.47.1.3.1.1.1.2.13 = INTEGER: 13
+SNMPv2-SMI::mib-2.47.1.3.1.1.1.2.14 = INTEGER: 14
+SNMPv2-SMI::mib-2.47.1.3.1.1.1.3.6 = INTEGER: 6
+SNMPv2-SMI::mib-2.47.1.3.1.1.1.3.12 = INTEGER: 12
+SNMPv2-SMI::mib-2.47.1.3.1.1.1.4.9 = INTEGER: 9
+SNMPv2-SMI::mib-2.47.1.3.1.1.1.4.13 = INTEGER: 13
+SNMPv2-SMI::mib-2.47.1.3.1.1.1.4.14 = INTEGER: 14
+SNMPv2-SMI::mib-2.47.1.3.2.1.2.12.0 = OID: IF-MIB::ifIndex.1
+SNMPv2-SMI::mib-2.47.1.3.2.1.2.13.0 = OID: IF-MIB::ifIndex.2
+SNMPv2-SMI::mib-2.47.1.3.2.1.2.14.0 = OID: IF-MIB::ifIndex.3
+SNMPv2-SMI::mib-2.47.1.3.3.1.1.1.2 = INTEGER: 2
+SNMPv2-SMI::mib-2.47.1.3.3.1.1.1.3 = INTEGER: 3
+SNMPv2-SMI::mib-2.47.1.3.3.1.1.1.4 = INTEGER: 4
+SNMPv2-SMI::mib-2.47.1.3.3.1.1.2.5 = INTEGER: 5
+SNMPv2-SMI::mib-2.47.1.3.3.1.1.3.8 = INTEGER: 8
+SNMPv2-SMI::mib-2.47.1.3.3.1.1.4.6 = INTEGER: 6
+SNMPv2-SMI::mib-2.47.1.3.3.1.1.4.7 = INTEGER: 7
+SNMPv2-SMI::mib-2.47.1.3.3.1.1.4.11 = INTEGER: 11
+SNMPv2-SMI::mib-2.47.1.3.3.1.1.8.9 = INTEGER: 9
+SNMPv2-SMI::mib-2.47.1.3.3.1.1.8.10 = INTEGER: 10
+SNMPv2-SMI::mib-2.47.1.3.3.1.1.11.12 = INTEGER: 12
+SNMPv2-SMI::mib-2.47.1.3.3.1.1.11.13 = INTEGER: 13
+SNMPv2-SMI::mib-2.47.1.3.3.1.1.11.14 = INTEGER: 14
+SNMPv2-SMI::mib-2.47.1.4.1.0 = Timeticks: (29) 0:00:00.29
+    
+    
+    
+   

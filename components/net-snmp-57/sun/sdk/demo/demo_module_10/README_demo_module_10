@@ -1,0 +1,247 @@
+#
+# Copyright (c) 2003, 2011, Oracle and/or its affiliates. All rights reserved.
+#
+# U.S. Government Rights - Commercial software. Government users are subject
+# to the Sun Microsystems, Inc. standard license agreement and applicable
+# provisions of the FAR and its supplements.
+#
+#
+# This distribution may include materials developed by third parties. Sun,
+# Sun Microsystems, the Sun logo and Solaris are trademarks or registered
+# trademarks of Sun Microsystems, Inc. in the U.S. and other countries.
+#
+#
+
+README for demo_module_10
+***********************************************************************
+
+This example demonstrates a module design that handles long running
+data collections so that their values can be polled by an SNMP manager.  
+The example also shows how to implement objects that normally would block 
+the agent as it waits for external events in such a way that the agent can 
+continue responding to other requests while this implementation waits.
+
+This example uses the following features of SMA:
+
+- Setting the delegated member of the requests structure to 1 to indicate to 
+  the agent that this request should be delayed.  The agent queues this request
+  to be handled later and then is available to handle other requests.  The
+  agent is not blocked by this request.
+
+- Registering an SNMP alarm to update the results at a later time. 
+
+- Use of a status variable to communicate the status of a data collection to
+  the polling SNMP manager.
+
+- Use of a refreshTime variable to return the date and time that the data 
+  collection completed.
+
+
+How to Build the demo_module_10 Code Example
+============================================
+
+The demo_module_10 code example includes the following files, by default 
+located in the directory /usr/demo/sma_snmp/demo_module_10.
+
+Files:
+
+Makefile - makefile to build the demo_module_10.so shared library file
+demo_module_10.c  - module source code
+demo_module_10.h - module header file
+SDK-DEMO10-MIB.txt - MIB file
+get_status - Script that gets the value of the status variable
+get_refreshtime - Script that gets the date and time of the current data 
+collection get_data - Script that gets the data returned by the data collection
+set_data - Script sets the value of the status variable to 0, which starts a 
+new data collection
+
+To set up your build environment for the demo:
+
+1. Copy the demo code to a directory for which you have write permission.
+   For example:
+
+   % cp -R /usr/demo/sma_snmp/demo_module_10  /home/username/demo
+
+
+2. Create a lib directory that you can use to store shared object libraries 
+   that you generate from demo code examples, if you have not already done so. 
+   For example:
+   
+   % mkdir /home/username/demo/lib
+
+    
+3. Create a mibs directory that you can use to store MIB files for the demo 
+   code examples, if you have not already done so. 
+   For example:
+
+   % mkdir /home/username/demo/mibs
+
+
+4. Set the CC environment variable to the location of the C compiler to be 
+   used.
+   For example, if you are using Sun ONE Studio:
+   
+   % setenv CC /opt/SUNWspro/bin/cc
+
+
+5. Set your PATH environment variable to include the appropriate paths, so that
+   needed binaries can be found during the compilation process. 
+   For example, in the csh: 
+    
+   % setenv PATH .:/usr/bin:$PATH
+   
+   
+To build the example:
+
+1. Change to the directory where you copied the demo module files. 
+   For example:
+
+   % cd /home/username/demo/demo_module_10
+   
+
+2. Use the make command to generate object files.
+  
+   If you are running the 64-bit SPARC Solaris kernel, type:
+   % /usr/ccs/bin/make
+   
+   If you are running the 32-bit SPARC Solaris kernel, type:
+   % /usr/ccs/bin/make ARCH=32
+   
+   If you are running the Solaris x86 kernel, type:
+   % /usr/ccs/bin/make ARCH=32
+   
+
+3. Copy the module shared library object to the lib directory you created. 
+   For example:
+
+   % cp demo_module_10.so /home/username/demo/lib
+
+   
+4. Copy SDK-DEMO10-MIB.txt to the mibs directory you created for the demos.
+   For example:
+  
+   % cp SDK-DEMO10-MIB.txt /home/username/demo/mibs
+   
+       
+
+
+Setting Up Agent to Run the demo_module_10 Module
+=================================================
+
+1. As root, edit the agent's configuration file /etc/sma/snmp/snmpd.conf,
+   and insert a dlmod statement for the module. This statement enables the 
+   agent to load the module.
+   For example:
+   
+   dlmod demo_module_10 /home/username/demo/lib/demo_module_10.so
+    
+    
+2. As root, start the SMA snmp agent. If the agent is already running, 
+   stop and restart it in debug mode.
+   For example:
+   
+   # /etc/init.d/init.sma stop
+   # /usr/sbin/snmpd -Ddemo_module_10
+    
+   The optional -Ddemo_module_10 argument sends debugging statements from 
+   demo_module_10 to the /var/log/snmpd.log file. You can also use the -L 
+   and -f options to send debugging statements to the screen instead.   
+
+
+   
+Testing the Code Example
+========================
+
+1. Set your MIBS and MIBDIRS environment variables to
+   include the appropriate paths.  
+   For example, in the csh: 
+    
+   % setenv MIBDIRS .:/home/username/demo/mibs:/etc/sma/snmp/mibs
+   % setenv MIBS +SDK-DEMO10-MIB
+   
+   Note that step 1 is not required, but it enables snmpget to access the MIB
+   to provide variable names instead of OIDs in its output.
+   
+   
+2. Run the get_status script to get the default value of 
+   the status variable.
+   
+   % get_status
+   SDK-DEMO10-MIB::status.0 = INTEGER: 2
+
+   An SNMP manager would typically poll the status variable
+   of devices that generate long running data collections, until
+   a value 2 is returned, which indicates that the collection is 
+   complete and the data is ready to get.
+
+   status has a default value of 0, which means no data collection
+   has been started, so the module starts a new collection.
+   When the collection completes, status is set to 2.
+
+
+3. Run the get_refreshtime script to get the date and time
+   of the data collection.
+   
+   % get_refreshtime
+   SDK-DEMO10-MIB::refreshTime.0 = STRING: Fri Jul 18 12:36:56 2003
+   
+   After retrieving the date and time, the SNMP manager can decide whether the
+   date of the data collection is acceptable. If the manager needs more recent
+   data, it can set the status variable to 0 to start a new collection. In this
+   example, the manager wants more recent data.
+
+
+4. Set the status variable to 0 to start a new collection, as follows:
+
+   % set_status
+   SDK-DEMO10-MIB::status.0 = INTEGER: 0
+
+   Note that SET requests through this object will take longer, 
+   since the delay is applied to each internal transaction phase,
+   which could result in delays of up to 4 times the value of this object.
+
+   For example, initially, the default value is
+   1 second. Therefore, specify a 3 second timeout value on the
+   snmpset command line.
+   
+
+5. Run the get_status script again to get the status value.
+
+   % get_status
+   SDK-DEMO10-MIB::status.0 = INTEGER: 2
+
+6. Run the get_data script to get the data resulting from
+   the data collection, for example:
+
+   % get_data
+   SDK-DEMO10-MIB::longRunScalar.0 = INTEGER: 325
+
+
+7. Open two terminal windows so you can run two scripts at the same time, as
+   follows:
+
+   In the first window, run the get_status script:
+   
+   % get_status
+   SDK-DEMO10-MIB::status.0 = INTEGER: 2
+   
+   
+   In the second window, run the walk_demo_module_10 script:
+
+   % walk_demo_module_10
+   
+   SNMPv2-MIB::sysDescr.0 = STRING: SunOS myhost 5.10 s10_35 sun4u
+   SNMPv2-MIB::sysObjectID.0 = OID: NET-SNMP-TC::solaris
+   DISMAN-EVENT-MIB::sysUpTimeInstance = Timeticks: (497128) 1:22:51.28
+   SNMPv2-MIB::sysContact.0 = STRING: "Administrator's Name"
+   SNMPv2-MIB::sysName.0 = STRING: myhost
+   SNMPv2-MIB::sysLocation.0 = STRING: My Town
+   SNMPv2-MIB::sysORLastChange.0 = Timeticks: (8) 0:00:00.08
+   SNMPv2-MIB::sysORID.1 = OID: IF-MIB::ifMIB
+   ...
+
+   This example demonstrates that the agent is not blocked and does respond to
+   the snmpwalk request, while the snmpget request executed in the first 
+   window is still pending.
+
+

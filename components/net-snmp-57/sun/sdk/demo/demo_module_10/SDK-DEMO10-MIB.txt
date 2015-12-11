@@ -1,0 +1,97 @@
+
+--
+-- Copyright (c) 2003, 2011, Oracle and/or its affiliates. All rights reserved.
+--
+-- U.S. Government Rights - Commercial software. Government users are subject to
+-- the Sun Microsystems, Inc. standard license agreement and applicable
+-- provisions of the FAR and its supplements.
+--
+--
+-- This distribution may include materials developed by third parties. Sun, Sun
+-- Microsystems, the Sun logo and Solaris are trademarks or registered
+-- trademarks of Sun Microsystems, Inc. in the U.S. and other countries.
+--
+--
+
+----------------------------------------------------------
+-- Systems Management Agent (SMA) SDK module DEMO-10 MIB
+----------------------------------------------------------
+
+SDK-DEMO10-MIB DEFINITIONS ::= BEGIN
+
+  IMPORTS
+        enterprises, MODULE-IDENTITY, OBJECT-TYPE, Counter64, Integer32, Unsigned32
+                FROM SNMPv2-SMI
+         OBJECT-GROUP
+                FROM SNMPv2-CONF
+         DisplayString
+               FROM SNMPv2-TC;
+
+sdkDemo10MIB MODULE-IDENTITY
+    LAST-UPDATED "0009181435Z"
+    ORGANIZATION "Sun Microsystems Inc."
+    CONTACT-INFO
+        " Sun Microsystems Inc
+          4150 Network Circle
+          Santa Clara, CA 95054
+          e-mail: service@sun.com"
+    DESCRIPTION
+	" SMA SDK MIB DEMO-10. This MIB will be used to demonstrate 
+	  a long running data collection."
+    ::= { demo 10 }
+
+sun          OBJECT IDENTIFIER ::= { enterprises 42 }
+products     OBJECT IDENTIFIER ::= { sun 2 }
+management   OBJECT IDENTIFIER ::= { products 2 }
+sma          OBJECT IDENTIFIER ::= { management 4 }
+demo         OBJECT IDENTIFIER ::= { sma 4 }
+
+--
+-- The "LongRun" group contains scalars to be used in getting
+-- data from long running data collections.
+--
+ 
+LongRunGroup OBJECT-GROUP
+        OBJECTS { longRunScalar, status, refreshTime }
+        STATUS current
+        DESCRIPTION
+        "Ojbects to get data from long-running data collections."
+        ::= { sdkDemo10MIB 1 }
+  
+-- 
+-- Properties in the "LongRun" group
+--
+
+longRunScalar OBJECT-TYPE
+    SYNTAX      Integer32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+                "Simple integer value returned by demo_module_10."
+    ::= { LongRunGroup 1 }
+    
+status OBJECT-TYPE
+    SYNTAX      Integer32
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+                "Status of long running data collection. The value 0
+                 indicates no collection running, the agent will start one. 
+                 The value 1 indicates the collection is running. The value
+ 		 2 indicates that the collection is complete and the data
+                 data is ready to GET. Set status to 0 to start a new data
+                 collection. Zero is the only valid valueto which you can set
+                 the status variabel."
+    DEFVAL { 0 }
+
+    ::= { LongRunGroup 2 }
+    
+refreshTime OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+                "Time stamp of data collection."
+    ::= { LongRunGroup 3 }
+
+END
