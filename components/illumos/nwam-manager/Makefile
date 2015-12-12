@@ -56,7 +56,7 @@ COMPONENT_PREP_ACTION = \
 		intltoolize --force --copy --automake && \
 		aclocal -I m4 && \
 		autoheader && \
-		automake --add-missing --copy && \
+		automake --add-missing --copy --force && \
 		autoconf)
 
 # Missing include files in build dir without this.
