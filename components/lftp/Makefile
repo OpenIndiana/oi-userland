@@ -29,11 +29,11 @@ include ../../make-rules/shared-macros.mk
 COMPONENT_NAME=		lftp
 COMPONENT_VERSION=	4.3.8
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://lftp.yar.ru/
+COMPONENT_PROJECT_URL=	http://lftp.yar.ru
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:39643be125a05eb1c316ea4f42ba4d73c331695a2e3654f4d34f85d4d63c37ad
-COMPONENT_ARCHIVE_URL=	http://lftp.cybermirror.org/old/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	http://lftp.yar.ru/ftp/old/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/lftp
 
 include ../../make-rules/prep.mk
