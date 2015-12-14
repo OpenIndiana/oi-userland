@@ -24,24 +24,6 @@
  	@-ln -fs $(LIBDYNNAME) $(LIBPREFIX).dylib
 --- ./Makefile.install.orig	2015-02-10 03:36:22.281524541 +0000
 +++ ./Makefile.install	2015-02-10 03:37:24.743697309 +0000
-@@ -4,12 +4,13 @@
- include ./Makefile.system
- 
- PREFIX ?= /opt/OpenBLAS
-+MACHDIR ?=
- 
--OPENBLAS_INCLUDE_DIR := $(PREFIX)/include
--OPENBLAS_LIBRARY_DIR := $(PREFIX)/lib
--OPENBLAS_BINARY_DIR := $(PREFIX)/bin
-+OPENBLAS_INCLUDE_DIR := $(PREFIX)/include/openblas
-+OPENBLAS_LIBRARY_DIR := $(PREFIX)/lib/$(MACHDIR)
-+OPENBLAS_BINARY_DIR := $(PREFIX)/bin/$(MACHDIR)
- OPENBLAS_BUILD_DIR := $(CURDIR)
--OPENBLAS_CMAKE_DIR := $(PREFIX)/cmake
-+OPENBLAS_CMAKE_DIR := $(PREFIX)/share/openblas-$(VERSION)
- OPENBLAS_CMAKE_CONFIG := OpenBLASConfig.cmake
- 
- .PHONY : install
 @@ -79,6 +80,11 @@
  	@cd $(DESTDIR)$(OPENBLAS_LIBRARY_DIR) ; \
  	ln -fs $(LIBSONAME) $(LIBPREFIX).so
