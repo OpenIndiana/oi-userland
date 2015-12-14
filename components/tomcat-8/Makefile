@@ -26,13 +26,13 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tomcat
-COMPONENT_VERSION=	8.0.29
+COMPONENT_VERSION=	8.0.30
 COMPONENT_PROJECT_URL=	http://tomcat.apache.org/
 COMPONENT_SRC_NAME=	apache-tomcat
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)-src
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:5cb87ae9afd145d68906e93b825a6a41303d7975bafe3d57530e9a8ec01c7c80
+    sha256:0f79b74f303cce809ea63a85586efb5d4bb67ea53622f1b44ecffff0f1aa9cf6
 COMPONENT_ARCHIVE_URL=	http://www.apache.org/dist/tomcat/tomcat-8/v$(COMPONENT_VERSION)/src/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/tomcat
 
@@ -42,7 +42,7 @@ COMPONENT_ARCHIVE_HASH_1= \
     sha256:ad3daf77ab710268f88c41fba87218dcdf502b423217a3799b5227ddf03b5858
 COMPONENT_ARCHIVE_URL_1= http://archive.eclipse.org/eclipse/downloads/drops4/R-4.4.2-201502041700/$(COMPONENT_ARCHIVE_1)
 
-TPNO=			25875
+TPNO=			25995
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ant.mk
