@@ -1,0 +1,103 @@
+commit 40a37269c52977a718e91012cfd4580b2e31ec65
+Author: He Jie Xu <soulxu@gmail.com>
+Date:   Fri Nov 7 23:29:18 2014 +0800
+
+    Set vm state error when raising unexpected exception in live migrate
+    
+    The instance stuck at migrating task_state when unexpected exception.
+    This is confuse for user, this patch set the vm_state to error.
+    
+    Change-Id: Ib1b97452bc5e777c66c4d368f71156dbe1e116b7
+    Partial-Bug: 1397153
+
+--- nova-2014.2.2/nova/conductor/manager.py.~2~	2015-12-01 04:57:58.583807338 -0800
++++ nova-2014.2.2/nova/conductor/manager.py	2015-12-01 05:00:43.319845439 -0800
+@@ -558,6 +558,19 @@ class ComputeTaskManager(base.Base):
+     def _live_migrate(self, context, instance, scheduler_hint,
+                       block_migration, disk_over_commit):
+         destination = scheduler_hint.get("host")
++
++        def _set_vm_state(context, instance, ex, vm_state=None,
++                          task_state=None):
++            request_spec = {'instance_properties': {
++                'uuid': instance['uuid'], },
++            }
++            scheduler_utils.set_vm_state_and_notify(context,
++                'compute_task', 'migrate_server',
++                dict(vm_state=vm_state,
++                     task_state=task_state,
++                     expected_task_state=task_states.MIGRATING,),
++                ex, request_spec, self.db)
++
+         try:
+             live_migrate.execute(context, instance, destination,
+                              block_migration, disk_over_commit)
+@@ -575,20 +588,14 @@ class ComputeTaskManager(base.Base):
+                 exception.LiveMigrationWithOldNovaNotSafe) as ex:
+             with excutils.save_and_reraise_exception():
+                 # TODO(johngarbutt) - eventually need instance actions here
+-                request_spec = {'instance_properties': {
+-                    'uuid': instance['uuid'], },
+-                }
+-                scheduler_utils.set_vm_state_and_notify(context,
+-                        'compute_task', 'migrate_server',
+-                        dict(vm_state=instance['vm_state'],
+-                             task_state=None,
+-                             expected_task_state=task_states.MIGRATING,),
+-                        ex, request_spec, self.db)
++                _set_vm_state(context, instance, ex, instance['vm_state'])
+         except Exception as ex:
+             LOG.error(_('Migration of instance %(instance_id)s to host'
+                        ' %(dest)s unexpectedly failed.'),
+                        {'instance_id': instance['uuid'], 'dest': destination},
+                        exc_info=True)
++            _set_vm_state(context, instance, ex, vm_states.ERROR,
++                          instance['task_state'])
+             raise exception.MigrationError(reason=six.text_type(ex))
+ 
+     def build_instances(self, context, instances, image, filter_properties,
+--- nova-2014.2.2/nova/tests/conductor/test_conductor.py.~2~	2015-12-01 04:57:58.599204982 -0800
++++ nova-2014.2.2/nova/tests/conductor/test_conductor.py	2015-12-01 05:04:39.416251458 -0800
+@@ -1704,27 +1704,28 @@ class ConductorTaskTestCase(_BaseTaskTes
+         ex = exc.LiveMigrationWithOldNovaNotSafe(server='dummy')
+         self._test_migrate_server_deals_with_expected_exceptions(ex)
+ 
+-    def test_migrate_server_deals_with_unexpected_exceptions(self):
++    @mock.patch.object(scheduler_utils, 'set_vm_state_and_notify')
++    @mock.patch.object(live_migrate, 'execute')
++    def test_migrate_server_deals_with_unexpected_exceptions(self,
++            mock_live_migrate, mock_set_state):
++        expected_ex = IOError('fake error')
++        mock_live_migrate.side_effect = expected_ex
+         instance = fake_instance.fake_db_instance()
+         inst_obj = objects.Instance._from_db_object(
+             self.context, objects.Instance(), instance, [])
+-        self.mox.StubOutWithMock(live_migrate, 'execute')
+-        self.mox.StubOutWithMock(scheduler_utils,
+-                'set_vm_state_and_notify')
+-
+-        expected_ex = IOError('fake error')
+-        live_migrate.execute(self.context, mox.IsA(objects.Instance),
+-                             'destination', 'block_migration',
+-                             'disk_over_commit').AndRaise(expected_ex)
+-        self.mox.ReplayAll()
+-
+-        self.conductor = utils.ExceptionHelper(self.conductor)
+-
+         ex = self.assertRaises(exc.MigrationError,
+             self.conductor.migrate_server, self.context, inst_obj,
+             {'host': 'destination'}, True, False, None, 'block_migration',
+             'disk_over_commit')
+-        self.assertEqual(ex.kwargs['reason'], six.text_type(expected_ex))
++        request_spec = {'instance_properties': {
++                'uuid': instance['uuid'], },
++        }
++        mock_set_state.assert_called_once_with(self.context,
++                        'compute_task', 'migrate_server',
++                        dict(vm_state=vm_states.ERROR,
++                             task_state=inst_obj.task_state,
++                             expected_task_state=task_states.MIGRATING,),
++                        expected_ex, request_spec, self.conductor.db)
+ 
+     def test_set_vm_state_and_notify(self):
+         self.mox.StubOutWithMock(scheduler_utils,

@@ -1,0 +1,208 @@
+commit 42cae28241cd0c213201d036bfbe13fb118e4bee
+Author: Cyril Roelandt <cyril.roelandt@enovance.com>
+Date:   Mon Aug 18 17:45:35 2014 +0000
+
+    libvirt: Make sure volumes are well detected during block migration
+    
+    Current implementation of live migration in libvirt incorrectly includes
+    block devices on shared storage (e.g., NFS) when computing destination
+    storage requirements. Since these volumes are already on shared storage
+    they do not need to be migrated. As a result, migration fails if the
+    amount of free space on the shared drive is less than the size of the
+    volume to be migrated. The problem is addressed by adding a
+    block_device_info parameter to check_can_live_migrate_source() to allow
+    volumes to be filtered correctly when computing migration space
+    requirements.
+    
+    This only fixes the issue on libvirt: it is unclear whether other
+    implementations suffer from the same issue.
+    
+    Thanks to Florent Flament for spotting and fixing an issue while trying out
+    this patch.
+    
+    Co-Authored-By: Florent Flament <florent.flament@cloudwatt.com>
+    Change-Id: Iac7d2cd2a70800fd89864463ca45c030c47411b0
+    Closes-Bug: #1356552
+    (cherry picked from commit 671aa9f8b7ca5274696f83bde0d4822ee431b837)
+
+--- nova-2014.2.2/nova/compute/manager.py.~3~	2015-12-01 05:07:52.781465660 -0800
++++ nova-2014.2.2/nova/compute/manager.py	2015-12-01 05:07:52.795381628 -0800
+@@ -4891,8 +4891,11 @@ class ComputeManager(manager.Manager):
+         is_volume_backed = self.compute_api.is_volume_backed_instance(ctxt,
+                                                                       instance)
+         dest_check_data['is_volume_backed'] = is_volume_backed
++        block_device_info = self._get_instance_block_device_info(
++                            ctxt, instance, refresh_conn_info=True)
+         return self.driver.check_can_live_migrate_source(ctxt, instance,
+-                                                         dest_check_data)
++                                                         dest_check_data,
++                                                         block_device_info)
+ 
+     @object_compat
+     @wrap_exception()
+--- nova-2014.2.2/nova/tests/compute/test_compute_mgr.py.~2~	2015-12-01 05:07:52.782691092 -0800
++++ nova-2014.2.2/nova/tests/compute/test_compute_mgr.py	2015-12-01 05:07:52.796520248 -0800
+@@ -1302,13 +1302,19 @@ class ComputeManagerUnitTestCase(test.No
+ 
+         self.mox.StubOutWithMock(self.compute.compute_api,
+                                  'is_volume_backed_instance')
++        self.mox.StubOutWithMock(self.compute,
++                                 '_get_instance_block_device_info')
+         self.mox.StubOutWithMock(self.compute.driver,
+                                  'check_can_live_migrate_source')
+ 
+         self.compute.compute_api.is_volume_backed_instance(
+                 self.context, instance).AndReturn(is_volume_backed)
++        self.compute._get_instance_block_device_info(
++                self.context, instance, refresh_conn_info=True
++                ).AndReturn({'block_device_mapping': 'fake'})
+         self.compute.driver.check_can_live_migrate_source(
+-                self.context, instance, expected_dest_check_data)
++                self.context, instance, expected_dest_check_data,
++                {'block_device_mapping': 'fake'})
+ 
+         self.mox.ReplayAll()
+ 
+diff --git a/nova/tests/virt/libvirt/test_driver.py b/nova/tests/virt/libvirt/test_driver.py
+index 613943b..c686b88 100644
+--- a/nova/tests/virt/libvirt/test_driver.py
++++ b/nova/tests/virt/libvirt/test_driver.py
+@@ -5323,7 +5323,7 @@ class LibvirtConnTestCase(test.TestCase):
+         self.mox.StubOutWithMock(conn, "_assert_dest_node_has_enough_disk")
+         conn._assert_dest_node_has_enough_disk(
+             self.context, instance, dest_check_data['disk_available_mb'],
+-            False)
++            False, None)
+ 
+         self.mox.ReplayAll()
+         ret = conn.check_can_live_migrate_source(self.context, instance,
+@@ -5386,8 +5386,9 @@ class LibvirtConnTestCase(test.TestCase):
+                 disk_available_mb=0)
+ 
+         self.mox.StubOutWithMock(conn, "get_instance_disk_info")
+-        conn.get_instance_disk_info(instance["name"]).AndReturn(
+-                                            '[{"virt_disk_size":2}]')
++        conn.get_instance_disk_info(instance["name"],
++                                    block_device_info=None).AndReturn(
++                                        '[{"virt_disk_size":2}]')
+ 
+         self.mox.ReplayAll()
+         self.assertRaises(exception.MigrationError,
+diff --git a/nova/virt/driver.py b/nova/virt/driver.py
+index fd483e5..20f4dd1 100644
+--- a/nova/virt/driver.py
++++ b/nova/virt/driver.py
+@@ -808,7 +808,7 @@ class ComputeDriver(object):
+         raise NotImplementedError()
+ 
+     def check_can_live_migrate_source(self, context, instance,
+-                                      dest_check_data):
++                                      dest_check_data, block_device_info=None):
+         """Check if it is possible to execute live migration.
+ 
+         This checks if the live migration can succeed, based on the
+@@ -817,6 +817,7 @@ class ComputeDriver(object):
+         :param context: security context
+         :param instance: nova.db.sqlalchemy.models.Instance
+         :param dest_check_data: result of check_can_live_migrate_destination
++        :param block_device_info: result of _get_instance_block_device_info
+         :returns: a dict containing migration info (hypervisor-dependent)
+         """
+         raise NotImplementedError()
+diff --git a/nova/virt/fake.py b/nova/virt/fake.py
+index 049c519..fe9ff1c 100644
+--- a/nova/virt/fake.py
++++ b/nova/virt/fake.py
+@@ -426,7 +426,7 @@ class FakeDriver(driver.ComputeDriver):
+         return {}
+ 
+     def check_can_live_migrate_source(self, ctxt, instance_ref,
+-                                      dest_check_data):
++                                      dest_check_data, block_device_info=None):
+         return
+ 
+     def finish_migration(self, context, migration, instance, disk_info,
+diff --git a/nova/virt/hyperv/driver.py b/nova/virt/hyperv/driver.py
+index 485aa23..fa42130 100644
+--- a/nova/virt/hyperv/driver.py
++++ b/nova/virt/hyperv/driver.py
+@@ -169,7 +169,7 @@ class HyperVDriver(driver.ComputeDriver):
+             context, dest_check_data)
+ 
+     def check_can_live_migrate_source(self, context, instance,
+-                                      dest_check_data):
++                                      dest_check_data, block_device_info=None):
+         return self._livemigrationops.check_can_live_migrate_source(
+             context, instance, dest_check_data)
+ 
+diff --git a/nova/virt/libvirt/driver.py b/nova/virt/libvirt/driver.py
+index cec2013..d420f15 100644
+--- a/nova/virt/libvirt/driver.py
++++ b/nova/virt/libvirt/driver.py
+@@ -5028,7 +5028,8 @@ class LibvirtDriver(driver.ComputeDriver):
+         self._cleanup_shared_storage_test_file(filename)
+ 
+     def check_can_live_migrate_source(self, context, instance,
+-                                      dest_check_data):
++                                      dest_check_data,
++                                      block_device_info=None):
+         """Check if it is possible to execute live migration.
+ 
+         This checks if the live migration can succeed, based on the
+@@ -5037,6 +5038,7 @@ class LibvirtDriver(driver.ComputeDriver):
+         :param context: security context
+         :param instance: nova.db.sqlalchemy.models.Instance
+         :param dest_check_data: result of check_can_live_migrate_destination
++        :param block_device_info: result of _get_instance_block_device_info
+         :returns: a dict containing migration info
+         """
+         # Checking shared storage connectivity
+@@ -5058,7 +5060,8 @@ class LibvirtDriver(driver.ComputeDriver):
+                 raise exception.InvalidLocalStorage(reason=reason, path=source)
+             self._assert_dest_node_has_enough_disk(context, instance,
+                                     dest_check_data['disk_available_mb'],
+-                                    dest_check_data['disk_over_commit'])
++                                    dest_check_data['disk_over_commit'],
++                                    block_device_info)
+ 
+         elif not (dest_check_data['is_shared_block_storage'] or
+                   dest_check_data['is_shared_instance_path']):
+@@ -5106,7 +5109,8 @@ class LibvirtDriver(driver.ComputeDriver):
+         return False
+ 
+     def _assert_dest_node_has_enough_disk(self, context, instance,
+-                                             available_mb, disk_over_commit):
++                                             available_mb, disk_over_commit,
++                                             block_device_info=None):
+         """Checks if destination has enough disk for block migration."""
+         # Libvirt supports qcow2 disk format,which is usually compressed
+         # on compute nodes.
+@@ -5122,7 +5126,8 @@ class LibvirtDriver(driver.ComputeDriver):
+         if available_mb:
+             available = available_mb * units.Mi
+ 
+-        ret = self.get_instance_disk_info(instance['name'])
++        ret = self.get_instance_disk_info(instance['name'],
++                                          block_device_info=block_device_info)
+         disk_infos = jsonutils.loads(ret)
+ 
+         necessary = 0
+--- nova-2014.2.2/nova/virt/xenapi/driver.py.~2~	2015-12-01 05:16:19.562306358 -0800
++++ nova-2014.2.2/nova/virt/xenapi/driver.py	2015-12-01 05:16:19.614403555 -0800
+@@ -501,7 +501,7 @@ class XenAPIDriver(driver.ComputeDriver)
+         pass
+ 
+     def check_can_live_migrate_source(self, context, instance,
+-                                      dest_check_data):
++                                      dest_check_data, block_device_info=None):
+         """Check if it is possible to execute live migration.
+ 
+         This checks if the live migration can succeed, based on the
+@@ -511,6 +511,7 @@ class XenAPIDriver(driver.ComputeDriver)
+         :param instance: nova.db.sqlalchemy.models.Instance
+         :param dest_check_data: result of check_can_live_migrate_destination
+                                 includes the block_migration flag
++        :param block_device_info: result of _get_instance_block_device_info
+         """
+         return self._vmops.check_can_live_migrate_source(context, instance,
+                                                          dest_check_data)

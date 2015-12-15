@@ -57,6 +57,7 @@ from nova.image import glance
 from nova.network import neutronv2
 from nova import objects
 from nova.objects import flavor as flavor_obj
+from nova.openstack.common import excutils
 from nova.openstack.common import fileutils
 from nova.openstack.common import jsonutils
 from nova.openstack.common import log as logging
@@ -78,10 +79,15 @@ solariszones_opts = [
     cfg.StrOpt('glancecache_dirname',
                default='$state_path/images',
                help='Default path to Glance cache for Solaris Zones.'),
+    cfg.StrOpt('live_migration_cipher',
+               help='Cipher to use for encryption of memory traffic during '
+                    'live migration. If not specified, a common encryption '
+                    'algorithm will be negotiated. Options include: none or '
+                    'the name of a supported OpenSSL cipher algorithm.'),
     cfg.StrOpt('solariszones_snapshots_directory',
                default='$instances_path/snapshots',
-               help='Location where solariszones driver will store snapshots '
-                    'before uploading them to the Glance image service'),
+               help='Location to store snapshots before uploading them to the '
+                    'Glance image service.'),
     cfg.StrOpt('zones_suspend_path',
                default='/var/share/zones/SYSsuspend',
                help='Default path for suspend images for Solaris Zones.'),
@@ -133,12 +139,20 @@ ZONE_BRAND_TEMPLATE = {
 }
 
 MAX_CONSOLE_BYTES = 102400
+
 VNC_CONSOLE_BASE_FMRI = 'svc:/application/openstack/nova/zone-vnc-console'
 # Required in order to create a zone VNC console SMF service instance
 VNC_SERVER_PATH = '/usr/bin/vncserver'
 XTERM_PATH = '/usr/bin/xterm'
 
 ROOTZPOOL_RESOURCE = 'rootzpool'
+
+# The underlying Solaris Zones framework does not expose a specific
+# version number, instead relying on feature tests to identify what is
+# and what is not supported. A HYPERVISOR_VERSION is defined here for
+# Nova's use but it generally should not be changed unless there is a
+# incompatible change such as concerning kernel zone live migration.
+HYPERVISOR_VERSION = '5.11'
 
 
 def lookup_resource(zone, resource):
@@ -2858,7 +2872,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
         host_stats['local_gb_used'] = host_stats['local_gb'] - free_disk_gb
 
         host_stats['hypervisor_type'] = 'solariszones'
-        host_stats['hypervisor_version'] = int(self._uname[2].replace('.', ''))
+        host_stats['hypervisor_version'] = \
+            utils.convert_version_to_int(HYPERVISOR_VERSION)
         host_stats['hypervisor_hostname'] = self._uname[1]
 
         if self._uname[4] == 'i86pc':
@@ -2920,7 +2935,22 @@ class SolarisZonesDriver(driver.ComputeDriver):
         :param disk_info: instance disk information
         :param migrate_data: implementation specific data dict.
         """
-        raise NotImplementedError()
+        return {}
+
+    def _live_migration(self, name, dest, dry_run=False):
+        """Live migration of a Solaris kernel zone to another host."""
+        zone = self._get_zone_by_name(name)
+        if zone is None:
+            raise exception.InstanceNotFound(instance_id=name)
+
+        options = []
+        live_migration_cipher = CONF.live_migration_cipher
+        if live_migration_cipher is not None:
+            options.extend(['-c', live_migration_cipher])
+        if dry_run:
+            options.append('-nq')
+        options.append('ssh://nova@' + dest)
+        zone.migrate(options)
 
     def live_migration(self, context, instance, dest,
                        post_method, recover_method, block_migration=False,
@@ -2942,7 +2972,17 @@ class SolarisZonesDriver(driver.ComputeDriver):
         :param migrate_data: implementation specific params.
 
         """
-        raise NotImplementedError()
+        name = instance['name']
+        try:
+            self._live_migration(name, dest, dry_run=False)
+        except Exception as ex:
+            with excutils.save_and_reraise_exception():
+                LOG.error(_("Unable to live migrate instance '%s' to host "
+                            "'%s' via zonemgr(3RAD): %s")
+                          % (name, dest, ex))
+                recover_method(context, instance, dest, block_migration)
+
+        post_method(context, instance, dest, block_migration, migrate_data)
 
     def rollback_live_migration_at_destination(self, context, instance,
                                                network_info,
@@ -2960,7 +3000,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
         :param migrate_data: implementation specific params
 
         """
-        raise NotImplementedError()
+        pass
 
     def post_live_migration(self, context, instance, block_device_info,
                             migrate_data=None):
@@ -2971,7 +3011,30 @@ class SolarisZonesDriver(driver.ComputeDriver):
         :block_device_info: instance block device information
         :param migrate_data: if not None, it is a dict which has data
         """
-        pass
+        try:
+            # These methods log if problems occur so no need to double log
+            # here. Just catch any stray exceptions and allow destroy to
+            # proceed.
+            if self._has_vnc_console_service(instance):
+                self._disable_vnc_console_service(instance)
+                self._delete_vnc_console_service(instance)
+        except Exception:
+            pass
+
+        name = instance['name']
+        zone = self._get_zone_by_name(name)
+        # If instance cannot be found, just return.
+        if zone is None:
+            LOG.warning(_("Unable to find instance '%s' via zonemgr(3RAD)")
+                        % name)
+            return
+
+        try:
+            self._delete_config(instance)
+        except Exception as ex:
+            LOG.error(_("Unable to delete configuration for instance '%s' via "
+                        "zonemgr(3RAD): %s") % (name, ex))
+            raise
 
     def post_live_migration_at_source(self, context, instance, network_info):
         """Unplug VIFs from networks at source.
@@ -2994,7 +3057,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
         :param network_info: instance network information
         :param block_migration: if true, post operation of block_migration.
         """
-        raise NotImplementedError()
+        pass
 
     def check_instance_shared_storage_local(self, context, instance):
         """Check if instance files located on shared storage.
@@ -3040,7 +3103,37 @@ class SolarisZonesDriver(driver.ComputeDriver):
         :param disk_over_commit: if true, allow disk over commit
         :returns: a dict containing migration info (hypervisor-dependent)
         """
-        raise NotImplementedError()
+        src_cpu_info = jsonutils.loads(src_compute_info['cpu_info'])
+        src_cpu_arch = src_cpu_info['arch']
+        dst_cpu_info = jsonutils.loads(dst_compute_info['cpu_info'])
+        dst_cpu_arch = dst_cpu_info['arch']
+        if src_cpu_arch != dst_cpu_arch:
+            reason = (_("CPU architectures between source host '%s' (%s) and "
+                        "destination host '%s' (%s) are incompatible.")
+                      % (src_compute_info['hypervisor_hostname'], src_cpu_arch,
+                         dst_compute_info['hypervisor_hostname'],
+                         dst_cpu_arch))
+            raise exception.MigrationPreCheckError(reason=reason)
+
+        extra_specs = self._get_extra_specs(instance)
+        brand = extra_specs.get('zonecfg:brand', ZONE_BRAND_SOLARIS)
+        if brand != ZONE_BRAND_SOLARIS_KZ:
+            # Only Solaris kernel zones are currently supported.
+            reason = (_("'%s' branded zones do not currently support live "
+                        "migration.") % brand)
+            raise exception.MigrationPreCheckError(reason=reason)
+
+        if block_migration:
+            reason = (_('Block migration is not currently supported.'))
+            raise exception.MigrationPreCheckError(reason=reason)
+        if disk_over_commit:
+            reason = (_('Disk overcommit is not currently supported.'))
+            raise exception.MigrationPreCheckError(reason=reason)
+
+        dest_check_data = {
+            'hypervisor_hostname': dst_compute_info['hypervisor_hostname']
+        }
+        return dest_check_data
 
     def check_can_live_migrate_destination_cleanup(self, context,
                                                    dest_check_data):
@@ -3049,10 +3142,21 @@ class SolarisZonesDriver(driver.ComputeDriver):
         :param context: security context
         :param dest_check_data: result of check_can_live_migrate_destination
         """
-        raise NotImplementedError()
+        pass
+
+    def _check_local_volumes_present(self, block_device_info):
+        """Check if local volumes are attached to the instance."""
+        bmap = block_device_info.get('block_device_mapping')
+        for entry in bmap:
+            connection_info = entry['connection_info']
+            driver_type = connection_info['driver_volume_type']
+            if driver_type == 'local':
+                reason = (_("Instances with attached '%s' volumes are not "
+                            "currently supported.") % driver_type)
+                raise exception.MigrationPreCheckError(reason=reason)
 
     def check_can_live_migrate_source(self, context, instance,
-                                      dest_check_data):
+                                      dest_check_data, block_device_info):
         """Check if it is possible to execute live migration.
 
         This checks if the live migration can succeed, based on the
@@ -3061,9 +3165,17 @@ class SolarisZonesDriver(driver.ComputeDriver):
         :param context: security context
         :param instance: nova.db.sqlalchemy.models.Instance
         :param dest_check_data: result of check_can_live_migrate_destination
+        :param block_device_info: result of _get_instance_block_device_info
         :returns: a dict containing migration info (hypervisor-dependent)
         """
-        raise NotImplementedError()
+        self._check_local_volumes_present(block_device_info)
+        name = instance['name']
+        dest = dest_check_data['hypervisor_hostname']
+        try:
+            self._live_migration(name, dest, dry_run=True)
+        except Exception as ex:
+            raise exception.MigrationPreCheckError(reason=ex)
+        return dest_check_data
 
     def get_instance_disk_info(self, instance_name,
                                block_device_info=None):
@@ -3192,7 +3304,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
         """
         # TODO(Vek): Need to pass context in for access to auth_token
-        raise NotImplementedError()
+        pass
 
     def filter_defer_apply_on(self):
         """Defer application of IPTables rules."""
@@ -3205,7 +3317,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
     def unfilter_instance(self, instance, network_info):
         """Stop filtering instance."""
         # TODO(Vek): Need to pass context in for access to auth_token
-        raise NotImplementedError()
+        pass
 
     def set_admin_password(self, instance, new_pass):
         """Set the root password on the specified instance.

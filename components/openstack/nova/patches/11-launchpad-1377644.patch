@@ -1,0 +1,62 @@
+This external patch was a follow up fix to Launchpad bug 1377644.
+While the original fix was backported to Juno 2014.2.1, the subsequent
+one was not.
+
+commit 64882d39d9fea9d6001ccc61973624949825c52f
+Author: He Jie Xu <soulxu@gmail.com>
+Date:   Fri Nov 7 23:24:12 2014 +0800
+
+    Fix circular reference error when live migration failed
+    
+    When unexpected exception raised in live migration, the MigrationError
+    carry another original exception in it. But when oslo.message
+    serialize the exception, the circular reference error happended. This
+    patch just pass the exception as unicode string into MigrationError.
+    
+    Change-Id: I4e449baae74bd9a15490ae7accbd2103bae90d57
+    Related-Bug: #1377644
+
+--- nova-2014.2.2/nova/conductor/manager.py.~1~	2015-12-01 04:52:25.839270759 -0800
++++ nova-2014.2.2/nova/conductor/manager.py	2015-12-01 04:54:08.341268026 -0800
+@@ -589,7 +589,7 @@ class ComputeTaskManager(base.Base):
+                        ' %(dest)s unexpectedly failed.'),
+                        {'instance_id': instance['uuid'], 'dest': destination},
+                        exc_info=True)
+-            raise exception.MigrationError(reason=ex)
++            raise exception.MigrationError(reason=six.text_type(ex))
+ 
+     def build_instances(self, context, instances, image, filter_properties,
+             admin_password, injected_files, requested_networks,
+--- nova-2014.2.2/nova/tests/conductor/test_conductor.py.~1~	2015-02-05 06:26:50.000000000 -0800
++++ nova-2014.2.2/nova/tests/conductor/test_conductor.py	2015-12-01 04:55:27.135695264 -0800
+@@ -20,6 +20,7 @@ import contextlib
+ import mock
+ import mox
+ from oslo import messaging
++import six
+ 
+ from nova.api.ec2 import ec2utils
+ from nova.compute import arch
+@@ -1711,18 +1712,19 @@ class ConductorTaskTestCase(_BaseTaskTes
+         self.mox.StubOutWithMock(scheduler_utils,
+                 'set_vm_state_and_notify')
+ 
+-        ex = IOError()
++        expected_ex = IOError('fake error')
+         live_migrate.execute(self.context, mox.IsA(objects.Instance),
+                              'destination', 'block_migration',
+-                             'disk_over_commit').AndRaise(ex)
++                             'disk_over_commit').AndRaise(expected_ex)
+         self.mox.ReplayAll()
+ 
+         self.conductor = utils.ExceptionHelper(self.conductor)
+ 
+-        self.assertRaises(exc.MigrationError,
++        ex = self.assertRaises(exc.MigrationError,
+             self.conductor.migrate_server, self.context, inst_obj,
+             {'host': 'destination'}, True, False, None, 'block_migration',
+             'disk_over_commit')
++        self.assertEqual(ex.kwargs['reason'], six.text_type(expected_ex))
+ 
+     def test_set_vm_state_and_notify(self):
+         self.mox.StubOutWithMock(scheduler_utils,
