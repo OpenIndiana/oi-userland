@@ -1516,7 +1516,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
             options.extend(['-c', sc_dir])
 
         try:
-            LOG.debug(_("installing instance '%s' (%s)") %
+            LOG.debug(_("Installing instance '%s' (%s)") %
                       (name, instance['display_name']))
             zone.install(options=options)
         except Exception as reason:
@@ -1524,12 +1524,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
                         "via zonemgr(3RAD): %s") % (name, reason))
             raise
 
-        LOG.debug(_("installation of instance '%s' (%s) complete") %
+        LOG.debug(_("Installation of instance '%s' (%s) complete") %
                   (name, instance['display_name']))
-
-        if os.listdir(sc_dir):
-            # remove the sc_profile temp directory
-            shutil.rmtree(sc_dir)
 
     def _power_on(self, instance):
         """Power on a Solaris Zone."""
@@ -1631,6 +1627,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
             LOG.error(_("Unable to attach root zpool volume '%s' to instance "
                         "%s: %s") % (volume['id'], instance['name'], reason))
             self._volume_api.delete(context, volume_id)
+            # remove the sc_profile temp directory
+            shutil.rmtree(sc_dir)
             raise
 
         name = instance['name']
@@ -1652,6 +1650,9 @@ class SolarisZonesDriver(driver.ComputeDriver):
                 self._volume_api.delete(context, volume_id)
             self._delete_config(instance)
             raise
+        finally:
+            # remove the sc_profile temp directory
+            shutil.rmtree(sc_dir)
 
         if connection_info:
             bdm = objects.BlockDeviceMapping(
