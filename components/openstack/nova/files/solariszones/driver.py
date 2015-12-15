@@ -83,7 +83,7 @@ solariszones_opts = [
                help='Location where solariszones driver will store snapshots '
                     'before uploading them to the Glance image service'),
     cfg.StrOpt('zones_suspend_path',
-               default='/var/share/suspend',
+               default='/var/share/zones/SYSsuspend',
                help='Default path for suspend images for Solaris Zones.'),
 ]
 

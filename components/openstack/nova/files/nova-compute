@@ -32,7 +32,7 @@ def start():
     parser.read(nova_conf)
 
     # retrieve the suspend path or just get the default
-    default_path = '/var/share/suspend'
+    default_path = '/var/share/zones/SYSsuspend'
     try:
         suspend_path = parser.get('DEFAULT', 'zones_suspend_path')
     except ConfigParser.NoOptionError:
@@ -50,7 +50,7 @@ def start():
             rpool = output.split('/')[0]
 
             # the default directory doesn't exist, create a new dataset for it
-            suspend_ds = os.path.join(rpool, 'VARSHARE/suspend')
+            suspend_ds = os.path.join(rpool, 'VARSHARE/zones/SYSsuspend')
             try:
                 check_call(['/usr/bin/pfexec', '/usr/sbin/zfs', 'create', '-p',
                             '-o', 'mountpoint=' + suspend_path, suspend_ds])
