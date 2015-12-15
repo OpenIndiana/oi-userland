@@ -17,14 +17,15 @@ include ../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/mpi-macros.mk
 
 COMPONENT_NAME =	mpich/$(COMPILER)
-COMPONENT_VERSION =	3.1.3
+COMPONENT_VERSION =	3.2
 COMPONENT_FMRI =	library/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION = Development/High Performance Computing
 COMPONENT_PROJECT_URL =	http://www.mpich.org/
 COMPONENT_SRC_NAME = mpich
 COMPONENT_SRC =		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH = \
-    sha256:afb690aa828467721e9d9ab233fe00c68cae2b7b930d744cb5f7f3eb08c8602c
+    sha256:0778679a6b693d7b7caff37ff9d2856dc2bfc51318bf8373859bfa74253da3dc
 COMPONENT_ARCHIVE_URL =	http://www.mpich.org/static/downloads/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB =	    $(COMPONENT_FMRI)
 
@@ -35,6 +36,8 @@ COMPONENT_LICENSE =	MIT
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk  
+
+PATH=/usr/gnu/bin:/usr/bin
 
 CONFIGURE_PREFIX =	$(MPI_PREFIX)
 
