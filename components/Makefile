@@ -169,6 +169,15 @@ incorporation:
 
 publish:
 	$(PKGREPO) refresh -s $(PKG_REPO)
+# The package below is obsolete in S12, but cannot yet be removed from S11
+# because runtime/python-26 has an optional dependency on it.
+ifeq ($(BUILD_TYPE),evaluation)
+ifeq ($(OS_VERSION),5.11)
+	-$(PKGREPO) remove -s $(PKG_REPO) \
+	    library/python/tkinter-26
+	$(PKGREPO) refresh -s $(PKG_REPO)
+endif
+endif
 # evaluation packages don't need to be incorporated
 ifneq ($(BUILD_TYPE), evaluation)
 	$(MAKE) incorporation
