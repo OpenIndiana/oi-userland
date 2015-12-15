@@ -1313,11 +1313,13 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
             self._verify_sysconfig(sc_dir, instance, admin_password)
 
+        LOG.debug(_("Creating zone configuration for '%s' (%s)")
+                  % (name, instance['display_name']))
         zonemanager = self.rad_connection.get_object(zonemgr.ZoneManager())
         try:
             zonemanager.create(name, None, template)
             self._set_global_properties(name, extra_specs, brand)
-            if connection_info:
+            if connection_info is not None:
                 self._set_boot_device(name, connection_info, brand)
             self._set_num_cpu(name, instance['vcpus'], brand)
             self._set_memory_cap(name, instance['memory_mb'], brand)
@@ -1611,6 +1613,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
         # c1d0 is the standard dev for for default boot device.
         # Irrelevant value for ZFS, but Cinder gets stroppy without it.
         mountpoint = "c1d0"
+        name = instance['name']
         try:
             connection_info = self._connect_boot_volume(volume, mountpoint,
                                                         context, instance)
@@ -1625,36 +1628,37 @@ class SolarisZonesDriver(driver.ComputeDriver):
         except Exception as reason:
             # Something really bad happened. Don't pass Go.
             LOG.error(_("Unable to attach root zpool volume '%s' to instance "
-                        "%s: %s") % (volume['id'], instance['name'], reason))
+                        "%s: %s") % (volume['id'], name, reason))
             self._volume_api.delete(context, volume_id)
             # remove the sc_profile temp directory
             shutil.rmtree(sc_dir)
             raise
 
-        name = instance['name']
-
-        LOG.debug(_("creating zone configuration for '%s' (%s)") %
-                  (name, instance['display_name']))
-
-        self._create_config(context, instance, network_info, connection_info,
-                            sc_dir, admin_password)
+        configured = False
+        installed = False
         try:
+            self._create_config(context, instance, network_info,
+                                connection_info, sc_dir, admin_password)
+            configured = True
             self._install(instance, image, sc_dir)
+            installed = True
             self._power_on(instance)
         except Exception as reason:
             LOG.error(_("Unable to spawn instance '%s' via zonemgr(3RAD): %s")
                       % (name, reason))
-            self._uninstall(instance)
-            if connection_info:
+            if installed:
+                self._uninstall(instance)
+            if configured:
+                self._delete_config(instance)
+            if connection_info is not None:
                 self._volume_api.detach(context, volume_id)
                 self._volume_api.delete(context, volume_id)
-            self._delete_config(instance)
             raise
         finally:
             # remove the sc_profile temp directory
             shutil.rmtree(sc_dir)
 
-        if connection_info:
+        if connection_info is not None:
             bdm = objects.BlockDeviceMapping(
                     source_type='volume',
                     destination_type='volume',
@@ -3490,7 +3494,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
         if not self._fc_wwpns:
             self._fc_wwpns = self._get_fc_wwpns()
             if not self._fc_wwpns or len(self._fc_wwpns) == 0:
-                LOG.debug(_('Could not determine Fibre channel '
+                LOG.debug(_('Could not determine Fibre Channel '
                           'World Wide Port Names'),
                           instance=instance)
 
@@ -3580,10 +3584,10 @@ class SolarisZonesDriver(driver.ComputeDriver):
         :param instance: nova.objects.instance.Instance
         :returns: True if the instance was deleted from disk, False otherwise.
         """
-        LOG.debug(_("Cleaning up for instance %s"), instance['name'])
         # Delete the zone configuration for the instance using destroy, because
         # it will simply take care of the work, and we don't need to duplicate
         # the code here.
+        LOG.debug(_("Cleaning up for instance %s"), instance['name'])
         try:
             self.destroy(None, instance, None)
         except Exception:
