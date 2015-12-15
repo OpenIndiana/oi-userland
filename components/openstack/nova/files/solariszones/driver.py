@@ -20,7 +20,6 @@ Driver for Solaris Zones (nee Containers):
 """
 
 import base64
-import errno
 import glob
 import os
 import platform
@@ -69,7 +68,6 @@ from nova.virt import driver
 from nova.virt import event as virtevent
 from nova.virt import images
 from nova.virt.solariszones import sysconfig
-from nova import volume
 from nova.volume.cinder import API
 from nova.volume.cinder import cinderclient
 from nova.volume.cinder import get_cinder_client_version
@@ -272,7 +270,7 @@ class ZoneConfig(object):
     """
     def __init__(self, zone):
         """zone is a zonemgr object representing either a kernel zone or
-        non-glboal zone.
+        non-global zone.
         """
         self.zone = zone
         self.editing = False
@@ -1024,7 +1022,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
                 # Strip off the port number (eg. 127.0.0.1:3260)
                 host = target_portal.rsplit(':', 1)
                 # Strip any enclosing '[' and ']' brackets for
-                # IPV6 addresses.
+                # IPv6 addresses.
                 target_host = host[0].strip('[]')
 
                 # Check if target_host is an IP or hostname matching the
@@ -1112,6 +1110,15 @@ class SolarisZonesDriver(driver.ComputeDriver):
         zone = self._get_zone_by_name(name)
         if zone is None:
             raise exception.InstanceNotFound(instance_id=name)
+
+        if not network_info:
+            with ZoneConfig(zone) as zc:
+                if brand == ZONE_BRAND_SOLARIS:
+                    zc.removeresources("anet",
+                                       [zonemgr.Property("linkname", "net0")])
+                else:
+                    zc.removeresources("anet", [zonemgr.Property("id", "0")])
+                return
 
         tenant_id = None
         network_plugin = neutronv2.get_client(context)
