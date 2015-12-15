@@ -796,6 +796,13 @@ class SolarisZonesDriver(driver.ComputeDriver):
         """
         raise NotImplementedError()
 
+    def _get_extra_specs(self, instance):
+        """Retrieve extra_specs of an instance."""
+        flavor = flavor_obj.Flavor.get_by_id(
+            nova_context.get_admin_context(read_deleted='yes'),
+            instance['instance_type_id'])
+        return flavor['extra_specs'].copy()
+
     def _fetch_image(self, context, instance):
         """Fetch an image using Glance given the instance's image_ref."""
         glancecache_dirname = CONF.glancecache_dirname
@@ -991,10 +998,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
                         ": %s") % (instance['name'], reason))
             raise
 
-    def _connect_boot_volume(self, volume, mountpoint, context, instance,
-                             extra_specs):
+    def _connect_boot_volume(self, volume, mountpoint, context, instance):
         """Connect a (Cinder) volume service backed boot volume"""
-        brand = extra_specs.get('zonecfg:brand', ZONE_BRAND_SOLARIS)
         instance_uuid = instance['uuid']
         volume_id = volume['id']
 
@@ -1007,6 +1012,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
         # local to this compute node. If it is, then don't use it for
         # Solaris branded zones in order to avoid a known ZFS deadlock issue
         # when using a zpool within another zpool on the same system.
+        extra_specs = self._get_extra_specs(instance)
+        brand = extra_specs.get('zonecfg:brand', ZONE_BRAND_SOLARIS)
         if brand == ZONE_BRAND_SOLARIS:
             driver_type = connection_info['driver_volume_type']
             if driver_type == 'local':
@@ -1275,11 +1282,13 @@ class SolarisZonesDriver(driver.ComputeDriver):
             sysconfig.create_sc_profile(fp, sysconfig.create_hostname(name))
 
     def _create_config(self, context, instance, network_info, connection_info,
-                       extra_specs, sc_dir, admin_password=None):
+                       sc_dir, admin_password=None):
         """Create a new Solaris Zone configuration."""
         name = instance['name']
         if self._get_zone_by_name(name) is not None:
             raise exception.InstanceExists(name=name)
+
+        extra_specs = self._get_extra_specs(instance)
 
         # If unspecified, default zone brand is ZONE_BRAND_SOLARIS
         brand = extra_specs.get('zonecfg:brand', ZONE_BRAND_SOLARIS)
@@ -1487,7 +1496,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
         except processutils.ProcessExecutionError as err:
             return False
 
-    def _install(self, instance, image, extra_specs, sc_dir):
+    def _install(self, instance, image, sc_dir):
         """Install a new Solaris Zone root file system."""
         name = instance['name']
         zone = self._get_zone_by_name(name)
@@ -1592,11 +1601,6 @@ class SolarisZonesDriver(driver.ComputeDriver):
         :param block_device_info: Information about block devices to be
                                   attached to the instance.
         """
-        inst_type = flavor_obj.Flavor.get_by_id(
-            nova_context.get_admin_context(read_deleted='yes'),
-            instance['instance_type_id'])
-        extra_specs = inst_type['extra_specs'].copy()
-
         image = self._fetch_image(context, instance)
         self._validate_image(image, instance)
 
@@ -1613,8 +1617,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
         mountpoint = "c1d0"
         try:
             connection_info = self._connect_boot_volume(volume, mountpoint,
-                                                        context, instance,
-                                                        extra_specs)
+                                                        context, instance)
         except exception.InvalidVolume as badvol:
             # This Cinder volume is not usable for ZOSS so discard it.
             # zonecfg will apply default zonepath dataset configuration
@@ -1636,9 +1639,9 @@ class SolarisZonesDriver(driver.ComputeDriver):
                   (name, instance['display_name']))
 
         self._create_config(context, instance, network_info, connection_info,
-                            extra_specs, sc_dir, admin_password)
+                            sc_dir, admin_password)
         try:
-            self._install(instance, image, extra_specs, sc_dir)
+            self._install(instance, image, sc_dir)
             self._power_on(instance)
         except Exception as reason:
             LOG.error(_("Unable to spawn instance '%s' via zonemgr(3RAD): %s")
@@ -2063,17 +2066,19 @@ class SolarisZonesDriver(driver.ComputeDriver):
                       disk_bus=None, device_type=None, encryption=None):
         """Attach the disk to the instance at mountpoint using info."""
         # TODO(npower): Apply mountpoint in a meaningful way to the zone
-        # (I don't think this is even possible for Solaris brand zones)
+        # For security reasons this is not permitted in a Solaris branded zone.
         name = instance['name']
         zone = self._get_zone_by_name(name)
         if zone is None:
             raise exception.InstanceNotFound(instance_id=name)
 
-        zprop = lookup_resource_property_value(zone, "global", "brand",
-                                               ZONE_BRAND_SOLARIS_KZ)
-        if not zprop:
-            # Only Solaris Kernel zones are currently supported.
-            raise NotImplementedError()
+        extra_specs = self._get_extra_specs(instance)
+        brand = extra_specs.get('zonecfg:brand', ZONE_BRAND_SOLARIS)
+        if brand != ZONE_BRAND_SOLARIS_KZ:
+            # Only Solaris kernel zones are currently supported.
+            reason = (_("'%s' branded zones are not currently supported")
+                      % brand)
+            raise NotImplementedError(reason)
 
         suri = self._suri_from_volume_info(connection_info)
 
@@ -2092,11 +2097,13 @@ class SolarisZonesDriver(driver.ComputeDriver):
         if zone is None:
             raise exception.InstanceNotFound(instance_id=name)
 
-        zprop = lookup_resource_property_value(zone, "global", "brand",
-                                               ZONE_BRAND_SOLARIS_KZ)
-        if not zprop:
-            # Only Solaris Kernel zones are currently supported.
-            raise NotImplementedError()
+        extra_specs = self._get_extra_specs(instance)
+        brand = extra_specs.get('zonecfg:brand', ZONE_BRAND_SOLARIS)
+        if brand != ZONE_BRAND_SOLARIS_KZ:
+            # Only Solaris kernel zones are currently supported.
+            reason = (_("'%s' branded zones are not currently supported")
+                      % brand)
+            raise NotImplementedError(reason)
 
         suri = self._suri_from_volume_info(connection_info)
 
