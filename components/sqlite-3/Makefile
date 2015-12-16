@@ -34,7 +34,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
     sha256:2721361eb4a71d5f727dfa466bd910dadd5dbeb4d2d57b8b34205f7ce7e5b7f9
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)2015/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	library/sqlite3
+COMPONENT_BUGDB=	database/sqlite3
 
 # Documentation
 DOC_VERSION=		$(TARBALL_VERSION)
@@ -80,11 +80,9 @@ CFLAGS +=	-DSQLITE_MAX_DEFAULT_PAGE_SIZE=32768
 CFLAGS +=	-I.
 
 CONFIGURE_OPTIONS +=	--enable-threadsafe
-CONFIGURE_OPTIONS +=	--enable-cross-thread-connections
-CONFIGURE_OPTIONS +=	--enable-load-extension
+CONFIGURE_OPTIONS +=	--enable-dynamic-extensions
 CONFIGURE_OPTIONS +=	--enable-shared
 CONFIGURE_OPTIONS +=	--disable-static
-CONFIGURE_OPTIONS +=	--with-tcl="/usr/lib"
 
 ASLR_MODE =	$(ASLR_ENABLE)
 
@@ -94,9 +92,9 @@ build:          $(BUILD_32_and_64)
 
 install:        $(INSTALL_32_and_64)
 
-test:           $(TEST_32_and_64)
+test:           $(NO_TESTS)
 
-system-test:	$(SYSTEM_TESTS_NOT_IMPLEMENTED)
+system-test:	$(NO_TESTS)
 
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += system/library
