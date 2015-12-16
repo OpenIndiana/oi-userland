@@ -23,15 +23,15 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bind
-COMPONENT_VERSION=	9.9.7-P3
-IPS_COMPONENT_VERSION=	9.9.7.3
+COMPONENT_VERSION=	9.9.8-P2
+IPS_COMPONENT_VERSION=	9.9.8.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	http://www.isc.org/software/bind/
 
 # hash from: sha256sum $(COMPONENT_ARCHIVE) | sed 's/\(.[^ ]*\).*/sha256:\1/'
 COMPONENT_ARCHIVE_HASH=	 \
-	sha256:cb737dce18350890f350dd7d3bc836c62ea440103dfde184c09bc18cfad8a844
+	sha256:f5841926e19637b93ec0b44b5abfbab2410e692736cf11143d461f656fbdf329
 COMPONENT_ARCHIVE_URL=	\
 	http://ftp.isc.org/isc/bind9/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	service/dns-server
@@ -39,6 +39,9 @@ COMPONENT_BUGDB=	service/dns-server
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
+
+# Missing files in build dir without this.
+COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
 
 # Build.
 #
