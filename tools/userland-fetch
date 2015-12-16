@@ -1,4 +1,4 @@
-#!/usr/bin/python2.6
+#!/usr/bin/python2.7
 #
 # CDDL HEADER START
 #
@@ -33,6 +33,7 @@ import sys
 import shutil
 from urllib import splittype
 from urllib2 import urlopen
+from urllib2 import Request
 import hashlib
 
 def printIOError(e, txt):
@@ -101,11 +102,14 @@ def validate_payload(filename, hash):
 	return validate(file, hash)
 
 
-def download(url, filename = None):
+def download(url, filename = None, user_agent_arg = None):
 	src = None
 
 	try:
-		src = urlopen(url)
+		req = Request(url)
+		if user_agent_arg != None:
+			req.add_header("User-Agent", user_agent_arg)
+		src = urlopen(req)
 	except IOError as e:
 		printIOError(e, "Can't open url " + url)
 		return None
@@ -161,7 +165,9 @@ def download_paths(search, filename, url):
 	return urls
 
 def usage():
-	print "Usage: %s [-f|--file (file)] [-l|--link] [-h|--hash (hash)] [-s|--search (search-dir)] --url (url)" % (sys.argv[0].split('/')[-1])
+	print "Usage: %s [-a|--user-agent (user-agent)] [-f|--file (file)] " \
+		"[-l|--link] [-h|--hash (hash)] [-s|--search (search-dir)] " \
+		"-u|--url (url)" % (sys.argv[0].split('/')[-1])
 	sys.exit(1)
 
 def main():
@@ -170,6 +176,7 @@ def main():
 	# FLUSH STDOUT 
 	sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 0)
 
+	user_agent_arg = None
 	file_arg = None
 	link_arg = False
 	hash_arg = None
@@ -177,14 +184,17 @@ def main():
 	search_list = list()
 
 	try:
-		opts, args = getopt.getopt(sys.argv[1:], "f:h:ls:u:",
-			["file=", "link", "hash=", "search=", "url="])
+		opts, args = getopt.getopt(sys.argv[1:], "a:f:h:ls:u:",
+			["file=", "link", "hash=", "search=", "url=",
+			"user-agent="])
 	except getopt.GetoptError, err:
 		print str(err)
 		usage()
 
 	for opt, arg in opts:
-		if opt in [ "-f", "--file" ]:
+		if opt in [ "-a", "--user-agent" ]:
+			user_agent_arg = arg
+		elif opt in [ "-f", "--file" ]:
 			file_arg = arg
 		elif opt in [ "-l", "--link" ]:
 			link_arg = True
@@ -221,7 +231,7 @@ def main():
 				pass
 		elif scheme in [ 'http', 'https', 'ftp' ]:
 			print "\n    downloading...",
-			name = download(url, file_arg)
+			name = download(url, file_arg, user_agent_arg)
 			if name == None:
 				print "failed"
 				continue
