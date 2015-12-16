@@ -51,7 +51,8 @@ $$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1)):	$(MAKEFILE_PREREQ)
 	$$(FETCH) --file $$@ \
 		$$(COMPONENT_ARCHIVE_URL$(1):%=--url %) \
 		$$(COMPONENT_ARCHIVE_HASH$(1):%=--hash %) \
-		$$(COMPONENT_SIG_URL$(1):%=--sigurl %)
+		$$(COMPONENT_SIG_URL$(1):%=--sigurl %) \
+		$$(if $$(COMPONENT_FETCH_USER_AGENT$(1)),--user-agent $$(COMPONENT_FETCH_USER_AGENT$(1)))
 	$$(TOUCH) $$@
 
 REQUIRED_PACKAGES += runtime/python-26
