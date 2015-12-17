@@ -1,0 +1,15 @@
+Upstream patches:
+https://bugzilla.redhat.com/show_bug.cgi?id=836197
+
+diff -up mrtg-2.16.2/bin/cfgmaker.orig mrtg-2.16.2/bin/cfgmaker
+--- mrtg-2.16.2/bin/cfgmaker.orig	2012-10-03 10:55:34.175356756 +0200
++++ mrtg-2.16.2/bin/cfgmaker	2012-10-03 10:56:20.213543149 +0200
+@@ -220,7 +220,7 @@ sub InterfaceInfo($$$$$) {
+ #            maximum value (4,294,967,295) and ifHighSpeed must be used
+ #            to report the interace's speed.  For a sub-layer which has
+ #            no concept of bandwidth, this object should be zero."
+-            if ( (not defined $value) || ($value == 2**32-1)) {
++            if ( (not defined $value) || ($value == 2**32-1) || ($value == 2**32-2)) {
+                 ($if, $value) = split /:/, $ifHighSpeed[$i], 2;
+ 	        $value = $value * 1000000;  # highSpeed = contador * 10^6
+                 #debug('base',"Speed: $if - $value");

@@ -1,0 +1,39 @@
+Upstream patches:
+https://bugzilla.redhat.com/show_bug.cgi?id=707188
+http://oss.oetiker.ch/mrtg-trac/changeset/359/trunk/src/src/rateup.c
+
+diff -up mrtg-2.16.2/src/rateup.c.orig mrtg-2.16.2/src/rateup.c
+--- mrtg-2.16.2/src/rateup.c.orig	2008-05-16 16:45:41.000000000 +0200
++++ mrtg-2.16.2/src/rateup.c	2012-10-01 13:22:28.064000017 +0200
+@@ -481,12 +481,20 @@ image (file, maxvi, maxvo, maxx, maxy, x
+         {
+           short_si_out = kMG;
+           kMGnumber = 0;
+-	  short_si[0] = kMG;
+           while ((short_si_out = strchr (short_si_out, ',')) != NULL)
+ 	    {
++	      short_si_out++;
++	      kMGnumber++;
++	    }
++	  short_si = calloc(kMGnumber + 1, sizeof(*short_si));
++	  short_si_out = kMG; 
++	  for (kMGnumber = 0; ; kMGnumber++)
++	    {
++	      short_si[kMGnumber] = short_si_out;
++	      short_si_out = strchr(short_si_out, ',');
++	      if (short_si_out == NULL) break;
+ 	      short_si_out[0] = '\0';
+ 	      short_si_out++;
+-              short_si[++kMGnumber] = short_si_out;
+ 	    }
+         }
+      }
+@@ -1145,6 +1153,8 @@ image (file, maxvi, maxvo, maxx, maxy, x
+   gdImageDestroy (brush_outp);
+   free (lhist);
+   free (graph_label);
++  if (kMG)
++    free(short_si);
+ 
+ }
+ 

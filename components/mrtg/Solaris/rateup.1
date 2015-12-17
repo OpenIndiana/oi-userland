@@ -1,0 +1,86 @@
+'\" te
+.\"
+.\" CDDL HEADER START
+.\"
+.\" The contents of this file are subject to the terms of the
+.\" Common Development and Distribution License (the "License").
+.\" You may not use this file except in compliance with the License.
+.\"
+.\" You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+.\" or http://www.opensolaris.org/os/licensing.
+.\" See the License for the specific language governing permissions
+.\" and limitations under the License.
+.\"
+.\" When distributing Covered Code, include this CDDL HEADER in each
+.\" file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+.\" If applicable, add the following below this CDDL HEADER, with the
+.\" fields enclosed by brackets "[]" replaced with your own identifying
+.\" information: Portions Copyright [yyyy] [name of copyright owner]
+.\"
+.\" CDDL HEADER END
+.\"
+.\" Copyright 2010 Sun Microsystems, Inc.  All rights reserved.
+.\" Use is subject to license terms.
+.\"
+.\" ident	"@(#)rateup.1	1.2	10/03/16 SMI"
+.\"
+.\" Copyright (c) 1996-2001 Tobias Oetiker and all the Contributers to MRTG.  All rights reserved.
+.\"
+.TH rateup 1 "9 Jan 2009" "SunOS 5.11" "User Commands"
+.SH NAME
+rateup \- Create graphic image files for MRTG
+.SH SYNOPSIS
+.B "rateup -f <parameter file>"
+.br
+.B "rateup directory basename [sampletime] [t sampletime]"
+.br
+.B "      [-(t)ransparent] [-(b)order]" 
+.br
+.B "      [u|a|g|h|m in out abs_max]" 
+.br
+.B "      [i/p file maxvi maxvo maxx maxy growright step bits]"
+.br
+.SH DESCRIPTION
+.sp
+rateup is a fast add-on to the great MRTG Traffic monitor. It makes 
+the database file updates much faster, and creates the graphic image
+files, ready for processing by PPMTOGIF.  It also reduces memory
+requirements by a factor of 10, and increases the speed of updates
+by a factor of at least 10.  This makes it feasible to run mrtg
+every 5 minutes.
+.sp
+rateup attempts to compensate for missed updates by repeating the last
+sample, and also tries to catch bad update times.  The .log file stores
+real history every five minutes for 31 hours, then 'compresses' the
+history into 30 minute samples for a week, then 2-hour samples for
+31 days, then daily samples for two years.  This ensures that the
+log files don't grow in size.
+.sp
+The log files are a slightly different format, but convert.perl
+will fix that for you.
+.SH AUTHOR
+.sp
+Dave Rand <dlr@bungi.com>, Alexandre Steinberg <steinberg@base.com.br>
+.SH ATTRIBUTES
+.sp
+See \fBattributes\fR(5) for descriptions of the following attributes:
+.sp
+.TS
+tab() box;
+cw(2.75i) |cw(2.75i) 
+lw(2.75i) |lw(2.75i) 
+.
+ATTRIBUTE TYPEATTRIBUTE VALUE
+_
+Availabilitydiagnostic/mrtg
+_
+Interface StabilityUncommitted
+_
+StandardSee \fBstandards\fR(5).
+.TE
+
+.SH SEE ALSO
+.sp
+\fBmrtg\fR(1), \fBmrtg-reference\fR(1), \fBmrtg-logfile\fR(1), \fBmrtg-traffic-sum\fR(1), \fBcfgmaker\fR(1), \fBindexmaker\fR(1)
+.SH NOTES
+Source for rateup is available on http://opensolaris.org.
