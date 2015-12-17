@@ -1,0 +1,778 @@
+Fixes against p0f-3.06b (updated for 3.09b) to have it compile and work
+properly under Solaris. Also integrates with Solaris 10+ SMF serices.
+Fixes licensed under the terms of MIT License.
+Copyright (c) 2011-2015 by Jim Klimov
+
+diff -Naur p0f-3.09b-orig/docs/README p0f-3.09b-jimfork/docs/README
+--- p0f-3.09b-orig/docs/README	2014-05-20 06:14:50.000000000 +0400
++++ p0f-3.09b-jimfork/docs/README	2015-06-18 03:47:00.571266864 +0300
+@@ -125,9 +125,15 @@
+ stderr. This is useful when troubleshooting problems, but that's about it.
+ 
+ The tool should compile cleanly under any reasonably new version of Linux,
+-FreeBSD, OpenBSD, MacOS X, and so forth. You can also builtdit on Windows using
+-cygwin and winpcap. I have not tested it on all possible varieties of un*x, but
+-if there are issues, they should be fairly superficial.
++Solaris, FreeBSD, OpenBSD, MacOS X, and so forth. You can also build it
++on Windows using cygwin and winpcap. I have not tested it on all possible
++varieties of un*x, but if there are issues, they should be fairly superficial.
++
++For recent Solaris in particular (Solaris 10 and later commercial and open
++sourced illumos-based distributions) you can integrate a p0f daemon as an
++SMF service, so that it is automatically started (and restarted in case of
++failures) by the OS, and the orderly startup of the daemon before its callers
++(clients) can be ensured. See p0f-daemon.xml and p0f.sh for more details.
+ 
+ Once you have the binary compiled, you should be aware of the following
+ command-line options:
+@@ -786,8 +792,8 @@
+ be gambled with some minor effort, and it's also possible to evade it altogether
+ (e.g. with excessive IP fragmentation or bad TCP checksums). Plan accordingly.
+ 
+-P0f should to be reasonably secure to operate as a daemon. That said, un*x
+-users should employ the -u option to drop privileges and chroot() when running
++P0f should be reasonably secure to operate as a daemon. That said, un*x users
++should employ the -u option to drop privileges and chroot() when running
+ the tool continuously. This greatly minimizes the consequences of any mishaps -
+ and mishaps in C just tend to happen.
+ 
+@@ -892,6 +898,7 @@
+   Matthew Dempsky
+   Jason DePriest
+   Dalibor Dukic
++  Jim Klimov
+   Mark Martinec
+   Damien Miller
+   Josh Newton
+diff -Naur p0f-3.09b-orig/alloc-inl.h p0f-3.09b-jimfork/alloc-inl.h
+--- p0f-3.09b-orig/alloc-inl.h	2012-03-28 00:05:04.000000000 +0400
++++ p0f-3.09b-jimfork/alloc-inl.h	2015-06-18 03:47:00.569491472 +0300
+@@ -473,10 +473,18 @@
+ 
+ #endif /* ^!DEBUG_BUILD */
+ 
++#ifndef snp_neg
++#ifdef SOLARIS
++#define snp_neg _len=1024
++#else
++#define snp_neg FATAL("Whoa, snprintf() fails?!")
++#endif
++#endif
++
+ #define alloc_printf(_str...) ({ \
+     u8* _tmp; \
+     s32 _len = snprintf(NULL, 0, _str); \
+-    if (_len < 0) FATAL("Whoa, snprintf() fails?!"); \
++    if (_len < 0) snp_neg; \
+     _tmp = ck_alloc(_len + 1); \
+     snprintf((char*)_tmp, _len + 1, _str); \
+     _tmp; \
+diff -Naur p0f-3.09b-orig/build.sh p0f-3.09b-jimfork/build.sh
+--- p0f-3.09b-orig/build.sh	2014-05-20 07:27:23.000000000 +0400
++++ p0f-3.09b-jimfork/build.sh	2015-06-18 03:47:00.570367498 +0300
+@@ -8,12 +8,21 @@
+ # Distributed under the terms and conditions of GNU LGPL.
+ #
+ 
++[ x"$PROGNAME" = x ] && \
+ PROGNAME="p0f"
++[ x"$VERSION" = x ] && \
+ VERSION="3.09b"
+ 
++# Disable Solaris UCB by default: it may break the build until
++# this situation is better researched and debugged
++[ x"$SOLARIS_UCB" = x ] && SOLARIS_UCB=0
++
++echo "Building $PROGNAME-$VERSION for $OSTYPE: $0 $@"
++#set
++
+ test "$CC" = "" && CC="gcc"
+ 
+-BASIC_CFLAGS="-Wall -Wno-format -I/usr/local/include/ \
++BASIC_CFLAGS="-Wall -Wno-format -I/usr/include -I/usr/local/include/ \
+               -I/opt/local/include/ -DVERSION=\"$VERSION\" $CFLAGS"
+ 
+ BASIC_LDFLAGS="-L/usr/local/lib/ -L/opt/local/lib $LDFLAGS"
+@@ -23,13 +32,42 @@
+ 
+ USE_LDFLAGS="-Wl,-z,relro -pie $BASIC_LDFLAGS"
+ 
+-if [ "$OSTYPE" = "cygwin" ]; then
+-  USE_LIBS="-lwpcap $LIBS"
+-elif [ "$OSTYPE" = "solaris" ]; then
+-  USE_LIBS="-lsocket -lnsl $LIBS"
+-else
+-  USE_LIBS="-lpcap $LIBS"
+-fi
++case "$OSTYPE" in
++  cygwin)	echo "Detected OS to tweak: CygWin"
++		USE_LIBS="-lwpcap $LIBS"
++		;;
++  solaris*)	echo "Detected OS to tweak: Solaris"
++		# In Solaris, getopt() is part of stdio.h, stdlib.h, unistd.h
++		# It is safe to skip getopt.h which is missing on Solaris 8
++		USE_CFLAGS="$USE_CFLAGS -DSOLARIS=1 -DDONT_HAVE_GETOPT_H=1"
++		BASIC_CFLAGS="$BASIC_CFLAGS -DSOLARIS=1 -DDONT_HAVE_GETOPT_H=1"
++		USE_LIBS="-lsocket -lnsl -lpcap $LIBS" 
++		if [ ! -s /usr/include/stdint.h -a -f stdint-replacement.h ]; then
++		    echo "[+] Enabling local stdint.h to substitute for one missing in the OS"
++		    [ ! -f stdint.h ] && ln -s stdint-replacement.h stdint.h
++		    BASIC_CFLAGS="$BASIC_CFLAGS -I."
++		    USE_CFLAGS="$USE_CFLAGS -I."
++		fi
++		UCBINCLUDES=""
++		if [ -f /usr/ucblib/libucb.so -a -d /usr/ucbinclude -a x"$SOLARIS_UCB" = x1 ]; then
++		    echo "[+] Enabling UCB support (very experimental, can fail the build)"
++		    USE_LIBS="-lucb $USE_LIBS"
++		    USE_CFLAGS="-I/usr/ucbinclude $USE_CFLAGS -L/usr/ucblib -DSOLARIS_UCB=1"
++		    BASIC_CFLAGS="-I/usr/ucbinclude $BASIC_CFLAGS -L/usr/ucblib -DSOLARIS_UCB=1"
++		    UCBINCLUDES="`ls -1 /usr/ucbinclude/{*,*/*}.h`"
++		fi
++		if ! grep isblank /usr/include/ctype.h \
++			/usr/include/iso/ctype*.h \
++			$UCBINCLUDES \
++			>/dev/null; \
++		then
++		    echo "[+] Overriding missing isblank() with isspace()"
++		    BASIC_CFLAGS="$BASIC_CFLAGS -Disblank=isspace"
++		    USE_CFLAGS="$USE_CFLAGS -Disblank=isspace"
++		fi
++		;;
++  *)		USE_LIBS="-lpcap $LIBS" ;;
++esac
+ 
+ OBJFILES="api.c process.c fp_tcp.c fp_mtu.c fp_http.c readfp.c"
+ 
+@@ -101,7 +137,7 @@
+ 
+ echo -n "[*] Checking for a sane build environment... "
+ 
+-if ls -ld ./ | grep -q '^d.......w'; then
++if ls -ld ./ | grep '^d.......w' >/dev/null 2>&1; then
+ 
+   echo "FAIL (bad permissions)"
+   echo
+@@ -326,6 +362,8 @@
+   echo
+   echo "Well, something went horribly wrong, sorry. Here's the output from GCC:"
+   echo
++  echo "$CC $USE_CFLAGS $USE_LDFLAGS '$PROGNAME.c' $OBJFILES -o '$PROGNAME' $USE_LIBS"
++  echo
+   cat "$TMP.log"
+   echo
+   echo "Sorry! You may want to ping <lcamtuf@coredump.cx> about this."
+diff -Naur p0f-3.09b-orig/fp_http.c p0f-3.09b-jimfork/fp_http.c
+--- p0f-3.09b-orig/fp_http.c	2012-01-17 10:06:07.000000000 +0400
++++ p0f-3.09b-jimfork/fp_http.c	2015-06-18 03:47:00.571989513 +0300
+@@ -507,14 +507,22 @@
+ 
+   u8* val;
+ 
++#ifndef snp_neg
++#ifdef SOLARIS
++#define snp_neg _len=1024
++#else
++#define snp_neg FATAL("Whoa, snprintf() fails?!")
++#endif
++#endif
++
+ #define RETF(_par...) do { \
+     s32 _len = snprintf(NULL, 0, _par); \
+-    if (_len < 0) FATAL("Whoa, snprintf() fails?!"); \
++    if (_len < 0) snp_neg; \
+     ret = DFL_ck_realloc_kb(ret, rlen + _len + 1); \
+     snprintf((char*)ret + rlen, _len + 1, _par); \
+     rlen += _len; \
+   } while (0)
+-    
++
+   RETF("%u:", hsig->http_ver);
+ 
+   for (i = 0; i < hsig->hdr_cnt; i++) {
+diff -Naur p0f-3.09b-orig/fp_tcp.c p0f-3.09b-jimfork/fp_tcp.c
+--- p0f-3.09b-orig/fp_tcp.c	2012-05-11 21:33:00.000000000 +0400
++++ p0f-3.09b-jimfork/fp_tcp.c	2015-06-18 03:47:00.572631716 +0300
+@@ -768,9 +768,17 @@
+   u32 i;
+   u8  dist = guess_dist(pk->ttl);
+ 
++#ifndef snp_neg
++#ifdef SOLARIS
++#define snp_neg _len=1024
++#else
++#define snp_neg FATAL("Whoa, snprintf() fails?!")
++#endif
++#endif
++
+ #define RETF(_par...) do { \
+     s32 _len = snprintf(NULL, 0, _par); \
+-    if (_len < 0) FATAL("Whoa, snprintf() fails?!"); \
++    if (_len < 0) snp_neg; \
+     ret = DFL_ck_realloc_kb(ret, rlen + _len + 1); \
+     snprintf((char*)ret + rlen, _len + 1, _par); \
+     rlen += _len; \
+diff -Naur p0f-3.09b-orig/p0f-daemon.xml p0f-3.09b-jimfork/p0f-daemon.xml
+--- p0f-3.09b-orig/p0f-daemon.xml	1970-01-01 03:00:00.000000000 +0300
++++ p0f-3.09b-jimfork/p0f-daemon.xml	2015-06-18 03:47:00.572998246 +0300
+@@ -0,0 +1,130 @@
++<?xml version='1.0'?>
++<!DOCTYPE service_bundle SYSTEM '/usr/share/lib/xml/dtd/service_bundle.dtd.1'>
++<!--
++	=== LICENSE
++        This manifest is distributed under the following MIT License terms:
++
++	Copyright (c) 2013 Jim Klimov, JSC COS&HT
++	Published at:
++		https://github.com/jimklimov/p0f
++
++	Permission is hereby granted, free of charge, to any person
++	obtaining a copy of this software and associated documentation
++	files (the "Software"), to deal in the Software without
++	restriction, including without limitation the rights to use,
++	copy, modify, merge, publish, distribute, sublicense, and/or sell
++	copies of the Software, and to permit persons to whom the
++	Software is furnished to do so, subject to the following
++	conditions:
++
++	The above copyright notice and this permission notice shall be
++	included in all copies or substantial portions of the Software.
++
++	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++	EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++	OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++	NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++	HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++	WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++	FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++	OTHER DEALINGS IN THE SOFTWARE.
++-->
++<!--
++	=== ABOUT
++	This file contains a service manifest for Solaris SMF (service
++	management framework in Solaris 10 and later releases, including
++	OpenSolaris and illumos/OpenIndiana distributions), which allows
++	to automate the startup of a p0f daemon and arrange its dependencies
++	on some system resources as well as ensure that its clients depend
++	on this service for orderly startup (milter-greylist in example below).
++
++	=== INSTALLATION
++	To install, fix the paths and the optional dependent services below,
++	configure the /etc/default/p0f file with variables from p0f.sh script
++	(such as the network device to use, the user to run as, and the data
++	directory for logs and the socket file), and run:
++		# svccfg import p0f-daemon.xml
++		# svcadm enable p0f-daemon
++
++	The service can also be used in local zones, with a reconfiguration
++	required for shared-IP zones (so that aliased NICs may be sniffed):
++	add the privilege set for low-level networking and delegate the shared
++	NIC's device node, for example:
++		# zonecfg -z mailin << EOF
++		set limitpriv=default,priv_net_rawaccess
++		add device
++		  set match=/dev/e1000g0
++		  end
++		verify
++		commit
++		exit
++		EOF
++
++	No reconfiguration is needed for an exclusive-IP zone nor the global
++	zone, this service manifest includes all the needed privileges for
++	the service (valid as of Solaris 10u10 release).
++-->
++<service_bundle type='manifest' name='export'>
++  <service name='network/p0f-daemon' type='service' version='0'>
++    <create_default_instance enabled='false'/>
++    <single_instance/>
++    <dependency name='fs-local' grouping='require_all' restart_on='none' type='service'>
++      <service_fmri value='svc:/system/filesystem/local'/>
++    </dependency>
++    <dependency name='net-loopback' grouping='require_all' restart_on='none' type='service'>
++      <service_fmri value='svc:/network/loopback'/>
++    </dependency>
++    <dependency name='net-physical' grouping='require_all' restart_on='none' type='service'>
++      <service_fmri value='svc:/network/physical'/>
++    </dependency>
++    <dependent name='p0f-daemon_multi-user' grouping='optional_all' restart_on='none'>
++      <service_fmri value='svc:/milestone/multi-user'/>
++    </dependent>
++<!--
++    ### The block below allows a client of p0f, such as milter-greylist, to
++    ### be started only after the p0f daemon successfully initializes, if the
++    ### p0f-daemon service is at all enabled (optional_all), otherwise this
++    ### particular client starts up unimpeded without p0f (and fails to query
++    ### the fingerprinter, but otherwise just works).
++-->
++<!--
++    <dependent name='milter-greylist' grouping='optional_all' restart_on='none'>
++      <service_fmri value='svc:/network/milter-greylist:default'/>
++    </dependent>
++-->
++    <exec_method name='start' type='method' exec='/usr/sbin/p0f.sh -d' timeout_seconds='120'>
++      <method_context>
++            <method_credential
++            user='root'
++            group='root'
++            limit_privileges=':default'
++           privileges='basic,net_icmpaccess,net_rawaccess,file_chown,file_owner,file_dac_write,proc_setid,proc_chroot'/>
++<!--   ### The set of privileges above allows the SMF-ized daemon to access
++       ### the low-level networking. Normally SMF services are prohibited
++       ### from such intimacy with the OS in order to improve security.
++       ### Note we start as "root" above and later drop privileges in script. -->
++      </method_context>
++    </exec_method>
++    <exec_method name='stop' type='method' exec=':kill' timeout_seconds='60'>
++      <method_context/>
++    </exec_method>
++    <exec_method name='refresh' type='method' exec=':kill' timeout_seconds='180'>
++      <method_context/>
++    </exec_method>
++    <property_group name='general' type='framework'>
++      <propval name='action_authorization' type='astring' value='solaris.smf.manage.milter'/>
++    </property_group>
++    <property_group name='startd' type='framework'>
++      <propval name='ignore_error' type='astring' value='core,signal'/>
++    </property_group>
++    <stability value='Unstable'/>
++    <template>
++      <common_name>
++        <loctext xml:lang='C'>p0f passive fingerprinter service</loctext>
++      </common_name>
++      <documentation>
++        <manpage title='p0f' section='8' manpath='/usr/share/man'/>
++      </documentation>
++    </template>
++  </service>
++</service_bundle>
+diff -Naur p0f-3.09b-orig/p0f.c p0f-3.09b-jimfork/p0f.c
+--- p0f-3.09b-orig/p0f.c	2014-11-08 06:55:17.000000000 +0300
++++ p0f-3.09b-jimfork/p0f.c	2015-06-18 03:47:00.573916124 +0300
+@@ -15,7 +15,9 @@
+ #include <stdlib.h>
+ #include <unistd.h>
+ #include <signal.h>
+-#include <getopt.h>
++#ifndef DONT_HAVE_GETOPT_H
++#  include <getopt.h>
++#endif
+ #include <errno.h>
+ #include <dirent.h>
+ #include <pwd.h>
+@@ -28,12 +30,31 @@
+ #include <sys/socket.h>
+ #include <arpa/inet.h>
+ #include <sys/un.h>
+-#include <sys/fcntl.h>
++#ifdef SOLARIS
++//#  warning "SOLARIS=yes"
++#  include <sys/fcntl.h>
++#  include <fcntl.h>
++#  include <sys/ioctl.h>
++#  include <sys/stream.h>
++#  include <sys/dlpi.h>
++#  include <sys/bufmod.h>
++#  include <sys/stropts.h>
++# ifdef SOLARIS_UCB
++#    include "/usr/ucbinclude/sys/file.h"
++# else
++#    include <sys/file.h>
++# endif
++   int flock(int fd, int operation);
++#else
++//#  warning "SOLARIS=no"
++#  include <sys/fcntl.h>
++#  include <sys/file.h>
++#endif /* !SOLARIS */
+ #include <sys/stat.h>
+-#include <sys/file.h>
+ #include <sys/wait.h>
+ #include <netinet/in.h>
+ 
++
+ #include <pcap.h>
+ 
+ #ifdef NET_BPF
+@@ -52,6 +72,73 @@
+ #include "fp_http.h"
+ #include "p0f.h"
+ 
++#ifdef SOLARIS
++#ifndef SOLARIS_UCB
++
++#ifndef LOCK_SH
++#define   LOCK_SH   1    /* shared lock */
++#define   LOCK_EX   2    /* exclusive lock */
++#define   LOCK_NB   4    /* don't block when locking */
++#define   LOCK_UN   8    /* unlock */
++#endif
++
++/* http://www.perkin.org.uk/posts/solaris-portability-flock.html */
++int flock(int fd, int op) {
++    int rc = 0;
++
++#if defined(F_SETLK) && defined(F_SETLKW)
++    struct flock fl = {0};
++
++    switch (op & (LOCK_EX|LOCK_SH|LOCK_UN)) {
++    case LOCK_EX:
++	fl.l_type = F_WRLCK;
++	break;
++
++    case LOCK_SH:
++	fl.l_type = F_RDLCK;
++	break;
++
++    case LOCK_UN:
++	fl.l_type = F_UNLCK;
++	break;
++
++    default:
++	errno = EINVAL;
++	return -1;
++    }
++
++    fl.l_whence = SEEK_SET;
++    rc = fcntl(fd, op & LOCK_NB ? F_SETLK : F_SETLKW, &fl);
++
++    if (rc && (errno == EAGAIN))
++	errno = EWOULDBLOCK;
++#endif
++
++    return rc;
++}
++#endif
++
++/* snatched from Solaris snoop */
++static int
++strioctl(int fd, int cmd, int timout, int len, void *dp)
++{
++        struct  strioctl        sioc;
++        int     rc;
++
++        sioc.ic_cmd = cmd;
++        sioc.ic_timout = timout;
++        sioc.ic_len = len;
++        sioc.ic_dp = dp;
++        rc = ioctl(fd, I_STR, &sioc);
++
++        if (rc < 0)
++                return (rc);
++        else
++                return (sioc.ic_len);
++}
++
++#endif
++
+ #ifndef PF_INET6
+ #  define PF_INET6          10
+ #endif /* !PF_INET6 */
+@@ -129,30 +196,28 @@
+ "Operating mode and output settings:\n"
+ "\n"
+ "  -f file   - read fingerprint database from 'file' (%s)\n"
+-"  -o file   - write information to the specified log file\n"
++"  -o file   - write information to the specified log file\n",
++    FP_FILE
++);
+ #ifndef __CYGWIN__
+-"  -s name   - answer to API queries at a named unix socket\n"
++ERRORF("  -s name   - answer to API queries at a named unix socket\n");
+ #endif /* !__CYGWIN__ */
+-"  -u user   - switch to the specified unprivileged account and chroot\n"
++ERRORF("  -u user   - switch to the specified unprivileged account and chroot\n"
+ "  -d        - fork into background (requires -o or -s)\n"
+ "\n"
+ "Performance-related options:\n"
+-"\n"
++"\n");
+ #ifndef __CYGWIN__
+-"  -S limit  - limit number of parallel API connections (%u)\n"
++ERRORF("  -S limit  - limit number of parallel API connections (%u)\n",
++    API_MAX_CONN);
+ #endif /* !__CYGWIN__ */
+-"  -t c,h    - set connection / host cache age limits (%us,%um)\n"
++ERRORF("  -t c,h    - set connection / host cache age limits (%us,%um)\n"
+ "  -m c,h    - cap the number of active connections / hosts (%u,%u)\n"
+ "\n"
+ "Optional filter expressions (man tcpdump) can be specified in the command\n"
+ "line to prevent p0f from looking at incidental network traffic.\n"
+ "\n"
+ "Problems? You can reach the author at <lcamtuf@coredump.cx>.\n",
+-
+-    FP_FILE,
+-#ifndef __CYGWIN__
+-    API_MAX_CONN,
+-#endif /* !__CYGWIN__ */
+     CONN_MAX_AGE, HOST_IDLE_LIMIT, MAX_CONN,  MAX_HOSTS);
+ 
+   exit(1);
+@@ -524,6 +589,58 @@
+ 
+     if (!pt) FATAL("pcap_open_live: %s", pcap_err);
+ 
++#if defined (SOLARIS) || defined(__sun__)
++    {
++    int temp_fd = pcap_get_selectable_fd(pt);
++/* Snatched from Solaris snoop */
++#ifdef I_PUSH
++    SAYF("[+] Trying to enable bufmod for libpcap on Solaris\n");
++    if (ioctl(temp_fd, I_PUSH, "bufmod") < 0)
++        SAYF("[-] ioctl() with I_PUSH \"bufmod\" returned an error (%d): %s\n",
++            errno, strerror(errno) );
++#endif
++/*
++ * When libpcap uses BPF we must enable "immediate mode" to
++ * receive frames right away; otherwise the system may
++ * buffer them for us. Solutions below sourced from
++ * WPA supplicant's sources: http://hostap.epitest.fi/wpa_supplicant/
++ * and nmap: http://seclists.org/nmap-dev/2008/q3/284
++ */
++#ifdef BIOCIMMEDIATE
++       {
++       uint_t on = 1;
++       SAYF("[+] Trying to enable BIOCIMMEDIATE mode for libpcap\n");
++       if (strioctl(temp_fd, BIOCIMMEDIATE, -1, sizeof (uint_t), (char*) &on) < 0)
++            SAYF("[-] ioctl() with BIOCIMMEDIATE returned an error (%d): %s\n",
++                  errno, strerror(errno) );
++       }
++#endif /* BIOCIMMEDIATE */
++/*
++ * Under Solaris, select() keeps waiting until the next packet,
++ * because it is buffered, so we have to set timeout and
++ * chunk size to zero
++ */
++       {
++       uint_t size_zero = 0;
++       struct timeval time_zero = {0, 0};
++
++#ifdef SBIOCSCHUNK
++        SAYF("[+] Trying to enable SBIOCSCHUNK mode for libpcap\n");
++        if (strioctl(temp_fd, SBIOCSCHUNK, -1, sizeof (uint_t), (char*) &size_zero) < 0)
++            SAYF("[-] ioctl() with SBIOCSCHUNK returned an error (%d): %s\n",
++                  errno, strerror(errno) );
++#endif
++
++#ifdef SBIOCSTIME
++        SAYF("[+] Trying to enable SBIOCSTIME mode for libpcap\n");
++        if (strioctl(temp_fd, SBIOCSTIME, -1, sizeof (struct timeval), (char*) &time_zero) < 0)
++            SAYF("[-] ioctl() with SBIOCSTIME returned an error (%d): %s\n",
++                  errno, strerror(errno) );
++#endif
++        }
++    }
++#endif /* __sun__ */
++
+   }
+ 
+   link_type = pcap_datalink(pt);
+@@ -942,6 +1051,13 @@
+ 
+           if (i < 0) PFATAL("read() on API socket fails despite POLLIN.");
+ 
++	  if (i == 0) {
++	    pfds[cur].revents |= POLLHUP;
++	    pfds[cur].revents |= POLLERR;
++            DEBUG("[#] API connection on fd[%d]=%d has ended: read returned zero.\n", 
++		cur, pfds[cur].fd);
++	  }
++
+           ctable[cur]->in_off += i;
+ 
+           /* Query in place? Compute response and prepare to send it back. */
+@@ -950,8 +1066,7 @@
+ 
+             handle_query(&ctable[cur]->in_data, &ctable[cur]->out_data);
+             pfds[cur].events = (POLLOUT | POLLERR | POLLHUP);
+-
+-          }
++	  }
+ 
+       }
+ 
+diff -Naur p0f-3.09b-orig/p0f.sh p0f-3.09b-jimfork/p0f.sh
+--- p0f-3.09b-orig/p0f.sh	1970-01-01 03:00:00.000000000 +0300
++++ p0f-3.09b-jimfork/p0f.sh	2015-06-18 03:47:00.574189026 +0300
+@@ -0,0 +1,88 @@
++#!/bin/bash
++
++### This script allows to run the p0f program with preset options, i.e.
++### for integration with Solaris SMF or default poking on command-line.
++### Instructions for SMF integration are in the manifest file p0f-daemon.xml.
++
++###	=== LICENSE
++###	This script is distributed under the following MIT License terms:
++###
++###	Copyright (c) 2013 Jim Klimov, JSC COS&HT
++###	Published at:
++###		https://github.com/jimklimov/p0f
++###
++###	Permission is hereby granted, free of charge, to any person
++###	obtaining a copy of this software and associated documentation
++###	files (the "Software"), to deal in the Software without
++###	restriction, including without limitation the rights to use,
++###	copy, modify, merge, publish, distribute, sublicense, and/or sell
++###	copies of the Software, and to permit persons to whom the
++###	Software is furnished to do so, subject to the following
++###	conditions:
++###
++###	The above copyright notice and this permission notice shall be
++###	included in all copies or substantial portions of the Software.
++###
++###	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++###	EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++###	OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++###	NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++###	HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++###	WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++###	FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++###	OTHER DEALINGS IN THE SOFTWARE.
++
++### Overridables (via config file)
++### OS User to run the daemon as:
++[ x"$P0F_RUNAS" = x ] && P0F_RUNAS="pof-svc"
++
++### Data directory which contains the log and UNIX-socket files (below).
++### While the default "/var/tmp" should do the trick and let the service
++### run with little hassle, it is probably insecure and should be changed
++### to a dedicated directory in a particular installation.
++[ x"$P0F_DATADIR" = x ] && P0F_DATADIR="/var/lib/p0f"
++# [ x"$P0F_DATADIR" = x ] && P0F_DATADIR="/var/tmp"
++
++### The binary to use (should be in the PATH defined below):
++[ x"$P0F_BIN" = x ] && P0F_BIN=p0f
++# [ x"$P0F_BIN" = x ] && P0F_BIN=p0f-debug
++
++### The basic set of options as provided in the package:
++P0F_OPTIONS_PKG="-u ${P0F_RUNAS} -o ${P0F_DATADIR}/p0f.log -s ${P0F_DATADIR}/p0f.sock"
++
++### The set of options and BPF filter definition for per-installation tweaking:
++# P0F_OPTIONS="-i e1000g0"
++# P0F_OPTIONS="-i /dev/net/vnic1"
++# P0F_BPF="'(src net not 192.168.0.0/16 and src net not 172.16.0.0/12 and src net not 10.0.0.0/8)'"
++P0F_OPTIONS=""
++P0F_BPF=""
++
++### Source the config file(s), unless called from a shell with P0F_OVERRIDE=no
++### (the override switch for debugging the option set, etc.). Provisions are
++### made for a distribution/site-provided default config as well as its local
++### overrides for a particular host.
++if [ x"$P0F_OVERRIDE" != xno ]; then
++	[ -s /etc/default/p0f.packaged ] && . /etc/default/p0f.packaged
++	[ -s /etc/default/p0f ] && . /etc/default/p0f
++	[ x"$P0F_CONFIG" != x ] && [ -s "$P0F_CONFIG" ] && . "$P0F_CONFIG"
++fi
++
++[ x"$DEBUG" != x ] && echo "=== Running as: `id`"
++chown -R "${P0F_RUNAS}" "${P0F_DATADIR}/" || true
++
++### This ugly block allows to use either P0F_BPF or command-line param,
++### with spaces:
++IFS="	"
++P0F_BPF="`echo "$P0F_BPF" | sed 's/	/ /g'`"
++CMD_OPT="`echo "$P0F_BIN	$P0F_OPTIONS_PKG	$P0F_OPTIONS" | sed 's/ /	/g'`"
++##############
++
++### Call the program:
++PATH="`dirname "$0"`:/usr/sbin:$PATH" \
++LD_LIBRARY_PATH=/usr/ucblib:$LD_LIBRARY_PATH \
++	$CMD_OPT "$@" $P0F_BPF
++
++### NOTE: To specify a BPF expression if one is in the config file already,
++### use the override switch, i.e.
++###	P0F_OVERRIDE=no /usr/sbin/p0f.sh 'host 4.2.2.4'
++### To daemonize use "-d"...
+diff -Naur p0f-3.09b-orig/readfp.c p0f-3.09b-jimfork/readfp.c
+--- p0f-3.09b-orig/readfp.c	2012-01-14 21:48:40.000000000 +0400
++++ p0f-3.09b-jimfork/readfp.c	2015-06-18 03:47:00.574540669 +0300
+@@ -17,7 +17,21 @@
+ #include <unistd.h>
+ #include <ctype.h>
+ 
+-#include <sys/fcntl.h>
++#ifdef SOLARIS
++//#  warning "SOLARIS=yes"
++#  include <sys/fcntl.h>
++#  include <fcntl.h>
++# ifdef SOLARIS_UCB
++#    include "/usr/ucbinclude/sys/file.h"
++# else
++#    include <sys/file.h>
++# endif
++#else
++//#  warning "SOLARIS=no"
++#  include <sys/fcntl.h>
++#  include <sys/file.h>
++#endif /* !SOLARIS */
++
+ #include <netinet/in.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
+diff -Naur p0f-3.09b-orig/stdint-replacement.h p0f-3.09b-jimfork/stdint-replacement.h
+--- p0f-3.09b-orig/stdint-replacement.h	1970-01-01 03:00:00.000000000 +0300
++++ p0f-3.09b-jimfork/stdint-replacement.h	2015-06-18 03:47:00.574787216 +0300
+@@ -0,0 +1,21 @@
++/*
++ * Copyright 2003 Sun Microsystems, Inc.  All rights reserved.
++ * Use is subject to license terms.
++ */
++
++#ifndef _SYS_STDINT_H
++#define	_SYS_STDINT_H
++
++#pragma ident	"@(#)stdint.h	1.1	03/12/04 SMI"
++
++/*
++ * This header is included by <stdint.h> which was introduced by
++ * the ISO C Standard, ISO/IEC 9899:1999 Programming language - C.
++ * The header is a subset of the <inttypes.h> header.
++ */
++
++#include <sys/int_types.h>
++#include <sys/int_limits.h>
++#include <sys/int_const.h>
++
++#endif	/* _SYS_STDINT_H */
+diff -Naur p0f-3.09b-orig/tools/Makefile p0f-3.09b-jimfork/tools/Makefile
+--- p0f-3.09b-orig/tools/Makefile	2012-01-04 13:34:28.000000000 +0400
++++ p0f-3.09b-jimfork/tools/Makefile	2015-06-18 03:47:00.575017266 +0300
+@@ -9,7 +9,7 @@
+ 
+ CC      = gcc
+ CFLAGS  = -g -ggdb -Wall -Wno-format -funsigned-char
+-LDFLAGS =
++LDFLAGS = -lsocket
+ TARGETS = p0f-client p0f-sendsyn p0f-sendsyn6
+ 
+ all: $(TARGETS)
+diff -Naur p0f-3.09b-orig/tools/p0f-client.c p0f-3.09b-jimfork/tools/p0f-client.c
+--- p0f-3.09b-orig/tools/p0f-client.c	2014-05-20 06:14:35.000000000 +0400
++++ p0f-3.09b-jimfork/tools/p0f-client.c	2015-06-18 03:47:00.575379947 +0300
+@@ -89,7 +89,7 @@
+   static struct p0f_api_query q;
+   static struct p0f_api_response r;
+ 
+-  static struct sockaddr_un sun;
++  static struct sockaddr_un p0fsockstruct;
+ 
+   s32  sock;
+   time_t ut;
+@@ -117,14 +117,14 @@
+ 
+   if (sock < 0) PFATAL("Call to socket() failed.");
+ 
+-  sun.sun_family = AF_UNIX;
++  p0fsockstruct.sun_family = AF_UNIX;
+ 
+-  if (strlen(argv[1]) >= sizeof(sun.sun_path))
++  if (strlen(argv[1]) >= sizeof(p0fsockstruct.sun_path))
+     FATAL("API socket filename is too long for sockaddr_un (blame Unix).");
+ 
+-  strcpy(sun.sun_path, argv[1]);
++  strcpy(p0fsockstruct.sun_path, argv[1]);
+ 
+-  if (connect(sock, (struct sockaddr*)&sun, sizeof(sun)))
++  if (connect(sock, (struct sockaddr*)&p0fsockstruct, sizeof(p0fsockstruct)))
+     PFATAL("Can't connect to API socket.");
+ 
+   if (write(sock, &q, sizeof(struct p0f_api_query)) !=
