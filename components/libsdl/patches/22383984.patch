@@ -1,0 +1,25 @@
+Patch origin: in-house
+Patch status: Solaris-specific; not suitable for upstream
+
+Temporary fix till 22383984 is resolved.
+
+--- SDL-1.2.14/sdl-config.in
++++ SDL-1.2.14/sdl-config.in
+@@ -49,7 +49,7 @@
+ @ENABLE_SHARED_TRUE@      ;;
+ @ENABLE_STATIC_TRUE@@ENABLE_SHARED_TRUE@    --static-libs)
+ @ENABLE_STATIC_TRUE@@ENABLE_SHARED_FALSE@    --libs|--static-libs)
+-@ENABLE_STATIC_TRUE@      echo -L@libdir@ @SDL_RLD_FLAGS@ @SDL_STATIC_LIBS@
++@ENABLE_STATIC_TRUE@      echo -L@libdir@ @SDL_RLD_FLAGS@ -lSDL  -lpthread -lposix4  -lm  -lX11 -lXext -lXrandr -lXrender -lpthread -lposix4
+ @ENABLE_STATIC_TRUE@      ;;
+     *)
+       echo "${usage}" 1>&2
+--- SDL-1.2.14/sdl.pc.in
++++ SDL-1.2.14/sdl.pc.in
+@@ -11,5 +11,5 @@
+ Requires:
+ Conflicts:
+ Libs: -L${libdir} @SDL_RLD_FLAGS@ @SDL_LIBS@
+-Libs.private: @SDL_STATIC_LIBS@
++Libs.private: -lSDL  -lpthread -lposix4  -lm  -lX11 -lXext -lXrandr -lXrender -lpthread -lposix4
+ Cflags: -I${includedir}/SDL @SDL_CFLAGS@
