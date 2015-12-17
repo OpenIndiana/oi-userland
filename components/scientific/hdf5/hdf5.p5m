@@ -1,21 +1,21 @@
 #
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL"). You may
-# only use this file in accordance with the terms of the CDDL.
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
-# source. A copy of the CDDL is also available via the Internet at
+# source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright 2014 Aurelien Larcher. All rights reserved.
+# Copyright 2015 Aurelien Larcher
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
-set name=info.classification \
-    value=org.opensolaris.category.2008:System/Libraries
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
@@ -112,8 +112,10 @@ file path=usr/include/hdf5/H5Location.h
 file path=usr/include/hdf5/H5Lpublic.h
 file path=usr/include/hdf5/H5MMpublic.h
 file path=usr/include/hdf5/H5Object.h
+file path=usr/include/hdf5/H5OcreatProp.h
 file path=usr/include/hdf5/H5Opublic.h
 file path=usr/include/hdf5/H5PLextern.h
+file path=usr/include/hdf5/H5PLpublic.h
 file path=usr/include/hdf5/H5PTpublic.h
 file path=usr/include/hdf5/H5PacketTable.h
 file path=usr/include/hdf5/H5Ppublic.h
@@ -163,54 +165,52 @@ file path=usr/include/hdf5/h5s.mod
 file path=usr/include/hdf5/h5t.mod
 file path=usr/include/hdf5/h5t_provisional.mod
 file path=usr/include/hdf5/h5tb.mod
-file path=usr/include/hdf5/h5test_kind_sizeof_mod.mod
+file path=usr/include/hdf5/h5test_kind_storage_size_mod.mod
 file path=usr/include/hdf5/h5z.mod
 file path=usr/include/hdf5/hdf5.h
 file path=usr/include/hdf5/hdf5.mod
 file path=usr/include/hdf5/hdf5_hl.h
 file path=usr/lib/$(MACH64)/libhdf5.settings
-link path=usr/lib/$(MACH64)/libhdf5.so target=libhdf5.so.8.0.2
-link path=usr/lib/$(MACH64)/libhdf5.so.8 target=libhdf5.so.8.0.2
-file path=usr/lib/$(MACH64)/libhdf5.so.8.0.2
-link path=usr/lib/$(MACH64)/libhdf5_cpp.so target=libhdf5_cpp.so.8.0.2
-link path=usr/lib/$(MACH64)/libhdf5_cpp.so.8 target=libhdf5_cpp.so.8.0.2
-file path=usr/lib/$(MACH64)/libhdf5_cpp.so.8.0.2
-link path=usr/lib/$(MACH64)/libhdf5_fortran.so \
-    target=libhdf5_fortran.so.8.0.2
-link path=usr/lib/$(MACH64)/libhdf5_fortran.so.8 \
-    target=libhdf5_fortran.so.8.0.2
-file path=usr/lib/$(MACH64)/libhdf5_fortran.so.8.0.2
-link path=usr/lib/$(MACH64)/libhdf5_hl.so target=libhdf5_hl.so.8.0.2
-link path=usr/lib/$(MACH64)/libhdf5_hl.so.8 target=libhdf5_hl.so.8.0.2
-file path=usr/lib/$(MACH64)/libhdf5_hl.so.8.0.2
-link path=usr/lib/$(MACH64)/libhdf5_hl_cpp.so target=libhdf5_hl_cpp.so.8.0.2
-link path=usr/lib/$(MACH64)/libhdf5_hl_cpp.so.8 \
-    target=libhdf5_hl_cpp.so.8.0.2
-file path=usr/lib/$(MACH64)/libhdf5_hl_cpp.so.8.0.2
+link path=usr/lib/$(MACH64)/libhdf5.so target=libhdf5.so.10.1.0
+link path=usr/lib/$(MACH64)/libhdf5.so.10 target=libhdf5.so.10.1.0
+file path=usr/lib/$(MACH64)/libhdf5.so.10.1.0
+link path=usr/lib/$(MACH64)/libhdf5_cpp.so target=libhdf5_cpp.so.11.0.0
+link path=usr/lib/$(MACH64)/libhdf5_cpp.so.11 target=libhdf5_cpp.so.11.0.0
+file path=usr/lib/$(MACH64)/libhdf5_cpp.so.11.0.0
+link path=usr/lib/$(MACH64)/libhdf5_fortran.so target=libhdf5_fortran.so.10.0.2
+link path=usr/lib/$(MACH64)/libhdf5_fortran.so.10 \
+    target=libhdf5_fortran.so.10.0.2
+file path=usr/lib/$(MACH64)/libhdf5_fortran.so.10.0.2
+link path=usr/lib/$(MACH64)/libhdf5_hl.so target=libhdf5_hl.so.10.0.2
+link path=usr/lib/$(MACH64)/libhdf5_hl.so.10 target=libhdf5_hl.so.10.0.2
+file path=usr/lib/$(MACH64)/libhdf5_hl.so.10.0.2
+link path=usr/lib/$(MACH64)/libhdf5_hl_cpp.so target=libhdf5_hl_cpp.so.11.0.0
+link path=usr/lib/$(MACH64)/libhdf5_hl_cpp.so.11 target=libhdf5_hl_cpp.so.11.0.0
+file path=usr/lib/$(MACH64)/libhdf5_hl_cpp.so.11.0.0
 link path=usr/lib/$(MACH64)/libhdf5hl_fortran.so \
-    target=libhdf5hl_fortran.so.8.0.2
-link path=usr/lib/$(MACH64)/libhdf5hl_fortran.so.8 \
-    target=libhdf5hl_fortran.so.8.0.2
-file path=usr/lib/$(MACH64)/libhdf5hl_fortran.so.8.0.2
+    target=libhdf5hl_fortran.so.10.0.2
+link path=usr/lib/$(MACH64)/libhdf5hl_fortran.so.10 \
+    target=libhdf5hl_fortran.so.10.0.2
+file path=usr/lib/$(MACH64)/libhdf5hl_fortran.so.10.0.2
 file path=usr/lib/libhdf5.settings
-link path=usr/lib/libhdf5.so target=libhdf5.so.8.0.2
-link path=usr/lib/libhdf5.so.8 target=libhdf5.so.8.0.2
-file path=usr/lib/libhdf5.so.8.0.2
-link path=usr/lib/libhdf5_cpp.so target=libhdf5_cpp.so.8.0.2
-link path=usr/lib/libhdf5_cpp.so.8 target=libhdf5_cpp.so.8.0.2
-file path=usr/lib/libhdf5_cpp.so.8.0.2
-link path=usr/lib/libhdf5_fortran.so target=libhdf5_fortran.so.8.0.2
-link path=usr/lib/libhdf5_fortran.so.8 target=libhdf5_fortran.so.8.0.2
-file path=usr/lib/libhdf5_fortran.so.8.0.2
-link path=usr/lib/libhdf5_hl.so target=libhdf5_hl.so.8.0.2
-link path=usr/lib/libhdf5_hl.so.8 target=libhdf5_hl.so.8.0.2
-file path=usr/lib/libhdf5_hl.so.8.0.2
-link path=usr/lib/libhdf5_hl_cpp.so target=libhdf5_hl_cpp.so.8.0.2
-link path=usr/lib/libhdf5_hl_cpp.so.8 target=libhdf5_hl_cpp.so.8.0.2
-file path=usr/lib/libhdf5_hl_cpp.so.8.0.2
-link path=usr/lib/libhdf5hl_fortran.so target=libhdf5hl_fortran.so.8.0.2
-link path=usr/lib/libhdf5hl_fortran.so.8 target=libhdf5hl_fortran.so.8.0.2
-file path=usr/lib/libhdf5hl_fortran.so.8.0.2
+link path=usr/lib/libhdf5.so target=libhdf5.so.10.1.0
+link path=usr/lib/libhdf5.so.10 target=libhdf5.so.10.1.0
+file path=usr/lib/libhdf5.so.10.1.0
+link path=usr/lib/libhdf5_cpp.so target=libhdf5_cpp.so.11.0.0
+link path=usr/lib/libhdf5_cpp.so.11 target=libhdf5_cpp.so.11.0.0
+file path=usr/lib/libhdf5_cpp.so.11.0.0
+link path=usr/lib/libhdf5_fortran.so target=libhdf5_fortran.so.10.0.2
+link path=usr/lib/libhdf5_fortran.so.10 target=libhdf5_fortran.so.10.0.2
+file path=usr/lib/libhdf5_fortran.so.10.0.2
+link path=usr/lib/libhdf5_hl.so target=libhdf5_hl.so.10.0.2
+link path=usr/lib/libhdf5_hl.so.10 target=libhdf5_hl.so.10.0.2
+file path=usr/lib/libhdf5_hl.so.10.0.2
+link path=usr/lib/libhdf5_hl_cpp.so target=libhdf5_hl_cpp.so.11.0.0
+link path=usr/lib/libhdf5_hl_cpp.so.11 target=libhdf5_hl_cpp.so.11.0.0
+file path=usr/lib/libhdf5_hl_cpp.so.11.0.0
+link path=usr/lib/libhdf5hl_fortran.so target=libhdf5hl_fortran.so.10.0.2
+link path=usr/lib/libhdf5hl_fortran.so.10 target=libhdf5hl_fortran.so.10.0.2
+file path=usr/lib/libhdf5hl_fortran.so.10.0.2
 file path=usr/share/hdf5/examples/README
 file path=usr/share/hdf5/examples/c++/chunks.cpp
 file path=usr/share/hdf5/examples/c++/compound.cpp
