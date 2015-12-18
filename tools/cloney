@@ -19,7 +19,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 # clone a directory to another using symlinks, in a very clunky way
 
@@ -52,5 +52,5 @@ gfind . -type f -o -type l | \
     while read i;
 do
 	rm -f "${destdir}/$i"
-	ln -s "${srcdir}/$i" "${destdir}/$i"
+	gln -r -s "${srcdir}/$i" "${destdir}/$i"
 done
