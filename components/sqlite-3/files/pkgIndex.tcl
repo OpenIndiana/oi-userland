@@ -1,1 +1,1 @@
-package ifneeded sqlite3 3.6 [list load [file join $dir [expr $::tcl_platform(wordSize) * 8] libtclsqlite3.so] sqlite3]
+package ifneeded sqlite3 3.8.8.1 [list load [file join $dir [expr $::tcl_platform(wordSize) * 8] libsqlite3.8.8.1.so] sqlite3]
