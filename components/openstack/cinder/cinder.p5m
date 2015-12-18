@@ -44,6 +44,7 @@ set name=openstack.upgrade-id reboot-needed=true value=$(COMPONENT_BE_VERSION)
 set name=org.opensolaris.arc-caseid value=PSARC/2013/350 value=PSARC/2014/054 \
     value=PSARC/2014/208 value=PSARC/2015/110
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+set name=variant.opensolaris.zone value=global value=nonglobal
 #
 dir  path=etc/cinder owner=cinder group=cinder mode=0700
 file path=etc/cinder/api-paste.ini owner=cinder group=cinder mode=0644 \
@@ -549,10 +550,12 @@ depend type=group fmri=library/python/suds-$(PYV)
 depend type=require fmri=__TBD pkg.debug.depend.file=usr/sbin/fcinfo
 
 # force a dependency on package delivering itadm(1M)
-depend type=require fmri=__TBD pkg.debug.depend.file=usr/sbin/itadm
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/sbin/itadm \
+    variant.opensolaris.zone=global
 
 # force a dependency on package delivering stmfadm(1M)
-depend type=require fmri=__TBD pkg.debug.depend.file=usr/sbin/stmfadm
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/sbin/stmfadm \
+    variant.opensolaris.zone=global
 
 # force a dependency on package delivering zfs(1M)
 depend type=require fmri=__TBD pkg.debug.depend.file=usr/sbin/zfs
