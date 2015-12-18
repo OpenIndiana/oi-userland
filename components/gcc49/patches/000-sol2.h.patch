@@ -3,10 +3,9 @@
 # Standard we are compiling for.
 # We also need to link in specific *.o's to the Language Standard
 # we are compiling for.
-# Solaris specific internal patch.
 --- gcc/config/sol2.h	2014-05-28 04:37:50.000000000 -0700
-+++ gcc/config/sol2.h	2015-11-10 16:03:47.892113304 -0800
-@@ -89,11 +89,76 @@
++++ gcc/config/sol2.h	2015-12-17 10:34:30.939353421 -0800
+@@ -89,11 +89,80 @@
  	   library.  */					\
  	if (c_dialect_cxx ())				\
  	  {						\
@@ -14,6 +13,7 @@
 +        { \
 +          builtin_define ("__STDC_VERSION__=199409L");         \
 +          builtin_define ("_XOPEN_SOURCE=500");                \
++          builtin_define ("_XPG5=1");                          \
 +        } \
 +        else if (cxx_dialect == cxx11)                         \
 +        { \
@@ -22,6 +22,7 @@
 +          builtin_define ("__C99FEATURES__=1");                \
 +          builtin_define ("__XPG7_THREAD_MODEL__=1");          \
 +          builtin_define ("_XOPEN_SOURCE=700");                \
++          builtin_define ("_XPG6=1");                          \
 +          builtin_define ("__STDC_ISO_10646__=201011L");       \
 +          builtin_define ("__STDC_MB_MIGHT_NEQ_WC__=1");       \
 +          builtin_define ("__STDCPP_STRICT_POINTER_SAFETY__=1");  \
@@ -35,16 +36,18 @@
 +          builtin_define ("__C99FEATURES__=1");                \
 +          builtin_define ("__XPG7_THREAD_MODEL__=1");          \
 +          builtin_define ("_XOPEN_SOURCE=700");                \
++          builtin_define ("_XPG7=1");                          \
 +          builtin_define ("__STDC_ISO_10646__=201011L");       \
 +          builtin_define ("__STDC_MB_MIGHT_NEQ_WC__=1");       \
 +          builtin_define ("__STDCPP_STRICT_POINTER_SAFETY__=1");  \
-+          builtin_define ("__STDC_LIB_EXT1__=201112L");         \
++          builtin_define ("__STDC_LIB_EXT1__=201112L");        \
 +          builtin_define ("__STDCPP_THREADS__=1");             \
 +        } \
 +        else \
 +        { \
  	    builtin_define ("__STDC_VERSION__=199901L");\
  	    builtin_define ("_XOPEN_SOURCE=600");	\
++            builtin_define ("_XPG6=1");                         \
 +        } \
  	    builtin_define ("_LARGEFILE_SOURCE=1");	\
  	    builtin_define ("_LARGEFILE64_SOURCE=1");	\
@@ -84,7 +87,7 @@
  	  }						\
  	TARGET_SUB_OS_CPP_BUILTINS();			\
      } while (0)
-@@ -109,7 +174,12 @@
+@@ -109,7 +178,12 @@
  #define ASM_SPEC_BASE \
  "%{v:-V} %{Qy:} %{!Qn:-Qy} %{Ym,*} -s %(asm_cpu)"
  
@@ -97,7 +100,7 @@
  
  #undef LIB_SPEC
  #define LIB_SPEC \
-@@ -127,8 +197,62 @@
+@@ -127,8 +201,62 @@
  #endif
  
  #undef STARTFILE_ARCH32_SPEC
@@ -162,7 +165,7 @@
  
  #undef STARTFILE_ARCH_SPEC
  #define STARTFILE_ARCH_SPEC STARTFILE_ARCH32_SPEC
-@@ -154,8 +278,8 @@
+@@ -154,8 +282,8 @@
    "%{G:-G} \
     %{YP,*} \
     %{R*} \
@@ -173,7 +176,7 @@
  
  #undef LINK_ARCH32_SPEC
  #define LINK_ARCH32_SPEC LINK_ARCH32_SPEC_BASE
-@@ -191,6 +315,10 @@
+@@ -191,6 +319,10 @@
  #define LINK_CLEARCAP_SPEC ""
  #endif
  
@@ -184,7 +187,7 @@
  #undef  LINK_SPEC
  #define LINK_SPEC \
    "%{h*} %{v:-V} \
-@@ -199,6 +327,8 @@
+@@ -199,6 +331,8 @@
     %{shared:-G -dy %{!mimpure-text:-z text}} " \
     LINK_LIBGCC_MAPFILE_SPEC LINK_CLEARCAP_SPEC " \
     %{symbolic:-Bsymbolic -G -dy -z text} \

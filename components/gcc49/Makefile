@@ -48,6 +48,11 @@ PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
 PATCH_LEVEL := 0
 ENABLE_CLOOG := 0
 
+ENABLE_CXA_ATEXIT=yes
+ifeq ($(OS_VERSION), 5.11)
+  ENABLE_CXA_ATEXIT=no
+endif
+
 PARCH =         $(MACH:i386=i386-pc)
 GNU_ARCH =      $(PARCH:sparc=sparc-sun)-solaris$(SOLARIS_VERSION)
 
@@ -143,7 +148,7 @@ CONFIGURE_OPTIONS +=    --enable-initfini-array=yes
 # VTable verification needs additional linker support.
 CONFIGURE_OPTIONS +=    --enable-vtable-verify=no
 CONFIGURE_OPTIONS +=    --enable-comdat=yes
-CONFIGURE_OPTIONS +=    --enable-__cxa_atexit=yes
+CONFIGURE_OPTIONS +=    --enable-__cxa_atexit=$(ENABLE_CXA_ATEXIT)
 
 # Although this is required by the C++11/C++14 standards,
 # it appears broken in 4.9.3.
@@ -211,7 +216,11 @@ COMPONENT_TEST_ARGS = -k -i
 COMPONENT_TEST_TARGETS = check check-target
 
 COMPONENT_TEST_ENV += TCL_LIBRARY="/usr/lib/tcl8.5"
-COMPONENT_TEST_ENV += DEJAGNULIBS="/usr/share/dejagnu"
+
+# We don't have DejaGNU in S11.
+ifeq ($(OS_VERSION), 5.12)
+  COMPONENT_TEST_ENV += DEJAGNULIBS="/usr/share/dejagnu"
+endif
 
 test:	$(TEST_32)
 
