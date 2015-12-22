@@ -23,7 +23,7 @@
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
-include ../../../make-rules/shared-macros.mk
+include ../../make-rules/shared-macros.mk
 
 # Samba does not work properly on i386 when built by studio with -xO3+.
 ifeq ($(MACH), sparc)
