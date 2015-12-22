@@ -1,0 +1,66 @@
+The zs serial port driver has been removed from Solaris. The zs specific code
+in the parsolaris.c and parsestreams.c file now fails to compile. This patch
+simply replaces the "ifdef sun" sections of code with a fictious define to
+prevent the zs code from being compiled. The removal of all driver specific
+code has been reported to the community as bug 2988
+(http://bugs.ntp.org/show_bug.cgi?id=2988) This patch may be removed when NTP
+is upgraded to a version that has that bug resolved.
+
+--- libparse/parsesolaris.c
++++ libparse/parsesolaris.c
+@@ -804,7 +804,7 @@ init_linemon(
+ 
+ 		pprintf(DD_INSTALL, "init_linemon: driver is \"%s\"\n", dname);
+ 
+-#ifdef sun
++#ifdef no_zs_sun
+ 		if (dname && !strcmp(dname, "zs"))
+ 		{
+ 			return init_zs_linemon(dq, q);
+@@ -833,7 +833,7 @@ close_linemon(
+ 	{
+ 		register char *dname = q->q_qinfo->qi_minfo->mi_idname;
+ 
+-#ifdef sun
++#ifdef no_zs_sun
+ 		if (dname && !strcmp(dname, "zs"))
+ 		{
+ 			close_zs_linemon(q, my_q);
+@@ -845,7 +845,7 @@ close_linemon(
+ 	pprintf(DD_INSTALL, "close_linemon: cannot find driver name\n");
+ }
+ 
+-#ifdef sun
++#ifdef no_zs_sun
+ #include <sys/tty.h>
+ #include <sys/zsdev.h>
+ #include <sys/ser_async.h>
+--- libparse/parsestreams.c
++++ libparse/parsestreams.c
+@@ -954,7 +954,7 @@ init_linemon(
+ 
+ 		parseprintf(DD_INSTALL, ("init_linemon: driver is \"%s\"\n", dname));
+ 
+-#ifdef sun
++#ifdef no_zs_sun
+ 		if (dname && !Strcmp(dname, "zs"))
+ 		{
+ 			return init_zs_linemon(dq, q);
+@@ -983,7 +983,7 @@ close_linemon(
+ 	{
+ 		register char *dname = q->q_qinfo->qi_minfo->mi_idname;
+ 
+-#ifdef sun
++#ifdef no_zs_sun
+ 		if (dname && !Strcmp(dname, "zs"))
+ 		{
+ 			close_zs_linemon(q, my_q);
+@@ -995,7 +995,7 @@ close_linemon(
+ 	parseprintf(DD_INSTALL, ("close_linemon: cannot find driver name\n"));
+ }
+ 
+-#ifdef sun
++#ifdef no_zs_sun
+ 
+ #include <sundev/zsreg.h>
+ #include <sundev/zscom.h>
