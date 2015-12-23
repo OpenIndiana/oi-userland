@@ -17,7 +17,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		metacity
 COMPONENT_VERSION=	2.30.3
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	GNOME window manager
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -32,7 +32,8 @@ include $(WS_TOP)/make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
+COMPONENT_PREP_ACTION =        ( cp $(COMPONENT_DIR)/files/*.png $(@D)/src &&\
+					cd $(@D)  &&\
 					libtoolize --copy --force &&\
 					intltoolize --force --copy &&\
 					aclocal -I . &&\
@@ -44,6 +45,9 @@ COMPONENT_PRE_CONFIGURE_ACTION =        (cp -rp $(SOURCE_DIR)/* $(@D) && \
                                         cp -r $(COMPONENT_DIR)/files/po-sun $(@D) && \
                                         cd $(@D)/po-sun && $(MAKE) all )
 
+CONFIGURE_SCRIPT = $(@D)/configure
+
+CFLAGS += -Wno-deprecated-declarations
 CFLAGS += -Icore -Iui
 CFLAGS += -I/usr/X11/include -I/usr/include/freetype2 -DANSICPP -D__EXTENSIONS__
 LDFLAGS +=  -L/usr/X11/lib -R/usr/X11/lib -lXrender

@@ -2,8 +2,8 @@ Remove groffisms from the man page.  This changes "\(dq" to a double-quote
 character ("), "\(cq" to a single-quote character ('), and eliminates the
 use of "\&" except where it's needed at the beginning of the line.
 
---- rsync-3.1.1/rsync.1.orig	2014-06-22 10:09:56.000000000 -0700
-+++ rsync-3.1.1/rsync.1	2014-08-27 11:28:09.672311426 -0700
+--- rsync-3.1.2/rsync.1.~1~	2015-12-21 23:22:41.000000000 +0300
++++ rsync-3.1.2/rsync.1	2015-12-22 21:50:50.042129186 +0300
 @@ -35,11 +35,11 @@
  destination.  Rsync is widely used for backups and mirroring and as an
  improved copy command for everyday use.
@@ -402,7 +402,7 @@ use of "\&" except where it's needed at the beginning of the line.
  .IP 
  .IP "\fB\-\-msgs2stderr\fP"
  This option changes rsync to send all its output
-@@ -681,18 +685,18 @@
+@@ -683,18 +687,18 @@
  This option affects the information that is output
  by the client at the start of a daemon transfer.  This suppresses the
  message\-of\-the\-day (MOTD) text, but it also affects the list of modules
@@ -424,7 +424,7 @@ use of "\&" except where it's needed at the beginning of the line.
  finding files that need to be transferred, changing it from the default of
  transferring files with either a changed size or a changed last\-modified
  time to just looking for files that have changed in size.  This is useful
-@@ -711,7 +715,7 @@
+@@ -713,7 +717,7 @@
  .IP "\fB\-c, \-\-checksum\fP"
  This changes the way rsync checks if the files have
  been changed and are in need of a transfer.  Without this option, rsync
@@ -433,7 +433,7 @@ use of "\&" except where it's needed at the beginning of the line.
  of last modification match between the sender and receiver.  This option
  changes this to compare a 128\-bit checksum for each file that has a
  matching size.  Generating the checksums means that both sides will expend
-@@ -722,14 +726,14 @@
+@@ -724,14 +728,14 @@
  The sending side generates its checksums while it is doing the file\-system
  scan that builds the list of the available files.  The receiver generates
  its checksums when it is scanning for changed files, and will checksum any
@@ -450,7 +450,7 @@ use of "\&" except where it's needed at the beginning of the line.
  .IP 
  For protocol 30 and beyond (first supported in 3.0.0), the checksum used is
  MD5.  For older protocols, the checksum used is MD4.
-@@ -747,14 +751,14 @@
+@@ -749,14 +753,14 @@
  .IP 
  .IP "\-\-no\-OPTION"
  You may turn off one or more implied options by prefixing
@@ -468,7 +468,7 @@ use of "\&" except where it's needed at the beginning of the line.
  \fB\-o\fP (\fB\-\-owner\fP), instead of converting \fB\-a\fP into \fB\-rlptgD\fP, you
  could specify \fB\-a \-\-no\-o\fP (or \fB\-a \-\-no\-owner\fP).
  .IP 
-@@ -810,16 +814,16 @@
+@@ -812,16 +816,16 @@
  .IP 
  then a file named /tmp/foo/bar/baz.c would be created on the remote
  machine, preserving its full path.  These extra path elements are called
@@ -488,7 +488,7 @@ use of "\&" except where it's needed at the beginning of the line.
  need to use the \fB\-\-no\-implied\-dirs\fP option.
  .IP 
  It is also possible to limit the amount of path information that is sent as
-@@ -833,7 +837,7 @@
+@@ -835,7 +839,7 @@
  
  .IP 
  That would create /tmp/bar/baz.c on the remote machine.  (Note that the
@@ -497,7 +497,7 @@ use of "\&" except where it's needed at the beginning of the line.
  For older rsync versions, you would need to use a chdir to limit the
  source path.  For example, when pushing files:
  .IP 
-@@ -843,12 +847,12 @@
+@@ -845,12 +849,12 @@
  
  .IP 
  (Note that the parens put the two commands into a sub\-shell, so that the
@@ -513,7 +513,7 @@ use of "\&" except where it's needed at the beginning of the line.
  .br 
  \f(CW       remote:bar/baz.c /tmp/\fP
  .RE
-@@ -865,13 +869,13 @@
+@@ -867,13 +871,13 @@
  the receiving side.
  .IP 
  For instance, if a command\-line arg or a files\-from entry told rsync to
@@ -533,7 +533,7 @@ use of "\&" except where it's needed at the beginning of the line.
  preservation is to use the \fB\-\-keep\-dirlinks\fP option (which will also
  affect symlinks to directories in the rest of the transfer).
  .IP 
-@@ -885,15 +889,15 @@
+@@ -887,15 +891,15 @@
  backup file goes and what (if any) suffix gets appended using the
  \fB\-\-backup\-dir\fP and \fB\-\-suffix\fP options.
  .IP 
@@ -553,7 +553,7 @@ use of "\&" except where it's needed at the beginning of the line.
  rule would never be reached).
  .IP 
  .IP "\fB\-\-backup\-dir=DIR\fP"
-@@ -906,8 +910,8 @@
+@@ -908,8 +912,8 @@
  .IP 
  Note that if you specify a relative path, the backup directory will be
  relative to the destination directory, so you probably want to specify
@@ -564,7 +564,7 @@ use of "\&" except where it's needed at the beginning of the line.
  hierarchy, so take extra care not to delete it or copy into it.
  .IP 
  .IP "\fB\-\-suffix=SUFFIX\fP"
-@@ -919,7 +923,7 @@
+@@ -921,7 +925,7 @@
  This forces rsync to skip any files which exist on
  the destination and have a modified time that is newer than the source
  file.  (If an existing destination file has a modification time equal to the
@@ -573,7 +573,7 @@ use of "\&" except where it's needed at the beginning of the line.
  .IP 
  Note that this does not affect the copying of dirs, symlinks, or other special
  files.  Also, a difference of file format between the sender and receiver
-@@ -928,8 +932,8 @@
+@@ -930,8 +934,8 @@
  where the destination has a file, the transfer would occur regardless of
  the timestamps.
  .IP 
@@ -584,7 +584,7 @@ use of "\&" except where it's needed at the beginning of the line.
  It just limits the files that the receiver requests to be transferred.
  .IP 
  .IP "\fB\-\-inplace\fP"
-@@ -945,13 +949,13 @@
+@@ -947,13 +951,13 @@
  Hard links are not broken.  This means the new data will be visible
  through other hard links to the destination file.  Moreover, attempts to
  copy differing source files onto a multiply\-linked destination file will
@@ -600,7 +600,7 @@ use of "\&" except where it's needed at the beginning of the line.
  and will be left that way if the transfer is interrupted or if an update
  fails.
  .IP o 
-@@ -959,7 +963,7 @@
+@@ -961,7 +965,7 @@
  can update any file, a normal user needs to be granted write permission for
  the open of the file for writing to be successful.
  .IP o 
@@ -609,7 +609,7 @@ use of "\&" except where it's needed at the beginning of the line.
  some data in the destination file is overwritten before it can be copied to
  a position later in the file.  This does not apply if you use \fB\-\-backup\fP,
  since rsync is smart enough to use the backup file as the basis file for the
-@@ -986,12 +990,12 @@
+@@ -988,14 +992,14 @@
  the receiving side is identical with the start of the file on the sending
  side.  If a file needs to be transferred and its size on the receiver is
  the same or longer than the size on the sender, the file is skipped.  This
@@ -622,9 +622,12 @@ use of "\&" except where it's needed at the beginning of the line.
 -file\(cq\&s length).
 +file's length).
  .IP 
- .IP "\fB\-\-append\-verify\fP"
- This works just like the \fB\-\-append\fP option, but
-@@ -1007,21 +1011,21 @@
+-The use of \fB\-\-append\fP can be dangerous if you aren\(cq\&t 100% sure that the files
++The use of \fB\-\-append\fP can be dangerous if you aren't 100% sure that the files
+ that are longer have only grown by the appending of data onto the end.  You
+ should thus use include/exclude/filter rules to ensure that such a transfer is
+ only affecting files that you know to be growing via appended data.
+@@ -1014,21 +1018,21 @@
  .IP 
  .IP "\fB\-d, \-\-dirs\fP"
  Tell the sending side to include any directories that
@@ -651,7 +654,7 @@ use of "\&" except where it's needed at the beginning of the line.
  an older rsync to list a single directory without recursing.
  .IP 
  .IP "\fB\-l, \-\-links\fP"
-@@ -1033,7 +1037,7 @@
+@@ -1040,7 +1044,7 @@
  they point to (the referent) is copied, rather than the symlink.  In older
  versions of rsync, this option also had the side\-effect of telling the
  receiving side to follow symlinks, such as symlinks to directories.  In a
@@ -660,7 +663,7 @@ use of "\&" except where it's needed at the beginning of the line.
  to get this extra behavior.  The only exception is when sending files to
  an rsync that is too old to understand \fB\-K\fP \-\- in that case, the \fB\-L\fP option
  will still have the side\-effect of \fB\-K\fP on that older receiving rsync.
-@@ -1055,11 +1059,11 @@
+@@ -1062,11 +1066,11 @@
  This option tells rsync to (1) modify all symlinks on
  the receiving side in a way that makes them unusable but recoverable (see
  below), or (2) to unmunge symlinks on the sending side that had been stored in
@@ -674,7 +677,7 @@ use of "\&" except where it's needed at the beginning of the line.
  that directory does not exist.  When this option is enabled, rsync will refuse
  to run if that path is a directory or a symlink to a directory.
  .IP 
-@@ -1068,13 +1072,13 @@
+@@ -1075,13 +1079,13 @@
  transfer, the client side is the sender.)
  .IP 
  This option has no affect on a daemon, since the daemon configures whether it
@@ -691,7 +694,7 @@ use of "\&" except where it's needed at the beginning of the line.
  they would be using \fB\-\-copy\-links\fP.
  .IP 
  Without this option, if the sending side has replaced a directory with a
-@@ -1097,20 +1101,20 @@
+@@ -1104,20 +1108,20 @@
  .IP 
  This works because rsync calls \fBlstat\fP(2) on the source arg as given, and the
  trailing slash makes \fBlstat\fP(2) follow the symlink, giving rise to a directory
@@ -719,7 +722,7 @@ use of "\&" except where it's needed at the beginning of the line.
  .IP 
  One note of caution:  if you use \fB\-\-keep\-dirlinks\fP, you must trust all
  the symlinks in the copy!  If it is possible for an untrusted user to
-@@ -1178,24 +1182,24 @@
+@@ -1185,24 +1189,24 @@
  permissions, though the \fB\-\-executability\fP option might change just
  the execute permission for the file.
  .IP o 
@@ -750,7 +753,7 @@ use of "\&" except where it's needed at the beginning of the line.
  behavior easier to type, you could define a popt alias for it, such as
  putting this line in the file ~/.popt (the following defines the \fB\-Z\fP option,
  and includes \-\-no\-g to use the default group of the destination dir):
-@@ -1213,13 +1217,13 @@
+@@ -1220,13 +1224,13 @@
  
  .IP 
  (Caveat: make sure that \fB\-a\fP does not follow \fB\-Z\fP, or it will re\-enable
@@ -767,7 +770,7 @@ use of "\&" except where it's needed at the beginning of the line.
  observance was added to the ACL patch for rsync 2.6.7, so older (or
  non\-ACL\-enabled) rsyncs use the umask even if default ACLs are present.
  (Keep in mind that it is the version of the receiving rsync that affects
-@@ -1229,17 +1233,17 @@
+@@ -1236,17 +1240,17 @@
  This option causes rsync to preserve the
  executability (or non\-executability) of regular files when \fB\-\-perms\fP is
  not enabled.  A regular file is considered to be executable if at least one
@@ -790,7 +793,7 @@ use of "\&" except where it's needed at the beginning of the line.
  .RE
  
  .IP 
-@@ -1265,19 +1269,19 @@
+@@ -1272,19 +1276,19 @@
  .IP 
  Note that this option does not copy rsyncs special xattr values (e.g. those
  used by \fB\-\-fake\-super\fP) unless you repeat the option (e.g. \-XX).  This
@@ -814,7 +817,7 @@ use of "\&" except where it's needed at the beginning of the line.
  that all directories get marked set\-gid, that no files are other\-writable,
  that both are user\-writable and group\-writable, and that both have
  consistent executability across all bits:
-@@ -1344,8 +1348,8 @@
+@@ -1351,8 +1355,8 @@
  option is not used, the optimization that excludes files that have not been
  modified cannot be effective; in other words, a missing \fB\-t\fP or \fB\-a\fP will
  cause the next transfer to behave as if it used \fB\-I\fP, causing all files to be
@@ -825,7 +828,7 @@ use of "\&" except where it's needed at the beginning of the line.
  .IP 
  .IP "\fB\-O, \-\-omit\-dir\-times\fP"
  This tells rsync to omit directories when
-@@ -1360,7 +1364,7 @@
+@@ -1367,7 +1371,7 @@
  directory right away (without having to delay that until a bunch of recursive
  copying has finished).  This early\-create idiom is not necessary if directory
  modify times are not being preserved, so it is skipped.  Since early\-create
@@ -834,7 +837,7 @@ use of "\&" except where it's needed at the beginning of the line.
  option can help when someone wants to avoid these partially\-finished
  directories.
  .IP 
-@@ -1370,12 +1374,12 @@
+@@ -1377,12 +1381,12 @@
  .IP 
  .IP "\fB\-\-super\fP"
  This tells the receiving side to attempt super\-user
@@ -850,7 +853,7 @@ use of "\&" except where it's needed at the beginning of the line.
  being run as the super\-user.  To turn off super\-user activities, the
  super\-user can use \fB\-\-no\-super\fP.
  .IP 
-@@ -1383,10 +1387,10 @@
+@@ -1390,10 +1394,10 @@
  When this option is enabled, rsync simulates
  super\-user activities by saving/restoring the privileged attributes via
  special extended attributes that are attached to each file (as needed).  This
@@ -864,7 +867,7 @@ use of "\&" except where it's needed at the beginning of the line.
  access (since the real super\-user can always access/change a file, the
  files we create can always be accessed/changed by the creating user).
  This option also handles ACLs (if \fB\-\-acls\fP was specified) and non\-user
-@@ -1412,18 +1416,18 @@
+@@ -1419,18 +1423,18 @@
  .IP 
  This option is overridden by both \fB\-\-super\fP and \fB\-\-no\-super\fP.
  .IP 
@@ -887,7 +890,7 @@ use of "\&" except where it's needed at the beginning of the line.
  glibc implementation that writes a zero byte into each block.
  .IP 
  Without this option, larger files may not be entirely contiguous on the
-@@ -1432,7 +1436,7 @@
+@@ -1439,7 +1443,7 @@
  etc.), this option may have no positive effect at all.
  .IP 
  .IP "\fB\-n, \-\-dry\-run\fP"
@@ -896,7 +899,7 @@ use of "\&" except where it's needed at the beginning of the line.
  make any changes (and produces mostly the same output as a real run).  It
  is most commonly used in combination with the \fB\-v, \-\-verbose\fP and/or
  \fB\-i, \-\-itemize\-changes\fP options to see what an rsync command is going
-@@ -1440,29 +1444,29 @@
+@@ -1447,29 +1451,29 @@
  .IP 
  The output of \fB\-\-itemize\-changes\fP is supposed to be exactly the same on a
  dry run and a subsequent real run (barring intentional trickery and system
@@ -934,7 +937,7 @@ use of "\&" except where it's needed at the beginning of the line.
  same filesystem.
  .IP 
  If this option is repeated, rsync omits all mount\-point directories from
-@@ -1482,8 +1486,8 @@
+@@ -1489,8 +1493,8 @@
  combined with the \fB\-\-ignore\-existing\fP option, no files will be updated
  (which can be useful if all you want to do is delete extraneous files).
  .IP 
@@ -945,7 +948,7 @@ use of "\&" except where it's needed at the beginning of the line.
  It just limits the files that the receiver requests to be transferred.
  .IP 
  .IP "\fB\-\-ignore\-existing\fP"
-@@ -1491,15 +1495,15 @@
+@@ -1498,15 +1502,15 @@
  already exist on the destination (this does \fInot\fP ignore existing
  directories, or nothing would get done).  See also \fB\-\-existing\fP.
  .IP 
@@ -964,7 +967,7 @@ use of "\&" except where it's needed at the beginning of the line.
  permissions on the hard\-linked files).  This does mean that this option
  is only looking at the existing files in the destination hierarchy itself.
  .IP 
-@@ -1511,24 +1515,24 @@
+@@ -1518,24 +1522,24 @@
  Note that you should only use this option on source files that are quiescent.
  If you are using this to move files that show up in a particular directory over
  to another host, make sure that the finished files get renamed into the source
@@ -999,7 +1002,7 @@ use of "\&" except where it's needed at the beginning of the line.
  also excluded from being deleted unless you use the \fB\-\-delete\-excluded\fP
  option or mark the rules as only matching on the sending side (see the
  include/exclude modifiers in the FILTER RULES section).
-@@ -1585,7 +1589,7 @@
+@@ -1592,7 +1596,7 @@
  computes the deletions in a separate pass after all updates are done).
  If the number of removed files overflows an internal buffer, a
  temporary file will be created on the receiving side to hold the names (it
@@ -1008,7 +1011,7 @@ use of "\&" except where it's needed at the beginning of the line.
  the creation of the temporary file fails, rsync will try to fall back to
  using \fB\-\-delete\-after\fP (which it cannot do if \fB\-\-recursive\fP is doing an
  incremental scan).
-@@ -1627,7 +1631,7 @@
+@@ -1634,7 +1638,7 @@
  that, this option is independent of any other type of delete processing.
  .IP 
  The missing source files are represented by special file\-list entries which
@@ -1017,7 +1020,7 @@ use of "\&" except where it's needed at the beginning of the line.
  .IP 
  .IP "\fB\-\-ignore\-errors\fP"
  Tells \fB\-\-delete\fP to go ahead and delete files
-@@ -1651,27 +1655,27 @@
+@@ -1658,27 +1662,27 @@
  .IP 
  Beginning with version 3.0.0, you may specify \fB\-\-max\-delete=0\fP to be warned
  about any extraneous files in the destination without removing any of them.
@@ -1055,7 +1058,7 @@ use of "\&" except where it's needed at the beginning of the line.
  be offset by one byte in the indicated direction.
  .IP 
  Examples: \-\-max\-size=1.5mb\-1 is 1499999 bytes, and \-\-max\-size=2g+1 is
-@@ -1689,7 +1693,7 @@
+@@ -1696,7 +1700,7 @@
  .IP 
  .IP "\fB\-B, \-\-block\-size=BLOCKSIZE\fP"
  This forces the block size used in
@@ -1064,7 +1067,7 @@ use of "\&" except where it's needed at the beginning of the line.
  the size of each file being updated.  See the technical report for details.
  .IP 
  .IP "\fB\-e, \-\-rsh=COMMAND\fP"
-@@ -1702,8 +1706,8 @@
+@@ -1709,8 +1713,8 @@
  remote shell \fICOMMAND\fP will be used to run an rsync daemon on the
  remote host, and all data will be transmitted through that remote
  shell connection, rather than through a direct socket connection to a
@@ -1075,7 +1078,7 @@ use of "\&" except where it's needed at the beginning of the line.
  .IP 
  Command\-line arguments are permitted in COMMAND provided that COMMAND is
  presented to rsync as a single argument.  You must use spaces (not tabs
-@@ -1715,9 +1719,9 @@
+@@ -1722,9 +1726,9 @@
  shell is parsing and which quotes rsync is parsing).  Some examples:
  .IP 
  .RS 
@@ -1087,7 +1090,7 @@ use of "\&" except where it's needed at the beginning of the line.
  .br 
  .RE
  
-@@ -1733,9 +1737,9 @@
+@@ -1740,9 +1744,9 @@
  .IP "\fB\-\-rsync\-path=PROGRAM\fP"
  Use this to specify what program is to be run
  on the remote machine to start\-up rsync.  Often used when rsync is not in
@@ -1099,7 +1102,7 @@ use of "\&" except where it's needed at the beginning of the line.
  not corrupt the standard\-in & standard\-out that rsync is using to
  communicate.
  .IP 
-@@ -1743,7 +1747,7 @@
+@@ -1750,7 +1754,7 @@
  machine for use with the \fB\-\-relative\fP option.  For instance:
  .IP 
  .RS 
@@ -1108,7 +1111,7 @@ use of "\&" except where it's needed at the beginning of the line.
  .RE
  
  .IP 
-@@ -1776,8 +1780,8 @@
+@@ -1783,8 +1787,8 @@
  option.  If that option is off, any spaces in your remote options will be split
  by the remote shell unless you take steps to protect them.
  .IP 
@@ -1119,7 +1122,7 @@ use of "\&" except where it's needed at the beginning of the line.
  .IP 
  Note some versions of the popt option\-parsing library have a bug in them that
  prevents you from using an adjacent arg with an equal in it next to a short
-@@ -1786,7 +1790,7 @@
+@@ -1793,7 +1797,7 @@
  .IP 
  .IP "\fB\-C, \-\-cvs\-exclude\fP"
  This is a useful shorthand for excluding a
@@ -1128,7 +1131,7 @@ use of "\&" except where it's needed at the beginning of the line.
  systems. It uses a similar algorithm to CVS to determine if
  a file should be ignored.
  .IP 
-@@ -1808,17 +1812,17 @@
+@@ -1815,17 +1819,17 @@
  .IP 
  Finally, any file is ignored if it is in the same directory as a
  \&.cvsignore file and matches one of the patterns listed therein.  Unlike
@@ -1149,7 +1152,7 @@ use of "\&" except where it's needed at the beginning of the line.
  The first option turns on the per\-directory scanning for the .cvsignore
  file.  The second option does a one\-time import of the CVS excludes
  mentioned above.
-@@ -1841,7 +1845,7 @@
+@@ -1848,7 +1852,7 @@
  your command.  The first time it is used is a shorthand for this rule:
  .IP 
  .RS 
@@ -1158,7 +1161,7 @@ use of "\&" except where it's needed at the beginning of the line.
  .RE
  
  .IP 
-@@ -1851,7 +1855,7 @@
+@@ -1858,7 +1862,7 @@
  rule:
  .IP 
  .RS 
@@ -1167,7 +1170,7 @@ use of "\&" except where it's needed at the beginning of the line.
  .RE
  
  .IP 
-@@ -1870,7 +1874,7 @@
+@@ -1877,7 +1881,7 @@
  .IP "\fB\-\-exclude\-from=FILE\fP"
  This option is related to the \fB\-\-exclude\fP
  option, but it specifies a FILE that contains exclude patterns (one per line).
@@ -1176,7 +1179,7 @@ use of "\&" except where it's needed at the beginning of the line.
  If \fIFILE\fP is \fB\-\fP, the list will be read from standard input.
  .IP 
  .IP "\fB\-\-include=PATTERN\fP"
-@@ -1883,7 +1887,7 @@
+@@ -1890,7 +1894,7 @@
  .IP "\fB\-\-include\-from=FILE\fP"
  This option is related to the \fB\-\-include\fP
  option, but it specifies a FILE that contains include patterns (one per line).
@@ -1185,7 +1188,7 @@ use of "\&" except where it's needed at the beginning of the line.
  If \fIFILE\fP is \fB\-\fP, the list will be read from standard input.
  .IP 
  .IP "\fB\-\-files\-from=FILE\fP"
-@@ -1902,7 +1906,7 @@
+@@ -1909,7 +1913,7 @@
  specified in the list on the destination rather than noisily skipping
  them (use \fB\-\-no\-dirs\fP or \fB\-\-no\-d\fP if you want to turn that off).
  .IP o 
@@ -1194,7 +1197,7 @@ use of "\&" except where it's needed at the beginning of the line.
  (\fB\-r\fP), so specify it explicitly, if you want it.
  .IP o 
  These side\-effects change the default state of rsync, so the position
-@@ -1913,7 +1917,7 @@
+@@ -1920,7 +1924,7 @@
  
  .IP 
  The filenames that are read from the FILE are all relative to the
@@ -1203,7 +1206,7 @@ use of "\&" except where it's needed at the beginning of the line.
  allowed to go higher than the source dir.  For example, take this
  command:
  .IP 
-@@ -1922,12 +1926,12 @@
+@@ -1929,12 +1933,12 @@
  .RE
  
  .IP 
@@ -1219,7 +1222,7 @@ use of "\&" except where it's needed at the beginning of the line.
  also be transferred (keep in mind that \fB\-r\fP needs to be specified
  explicitly with \fB\-\-files\-from\fP, since it is not implied by \fB\-a\fP).
  Also note
-@@ -1936,10 +1940,10 @@
+@@ -1943,10 +1947,10 @@
  force the duplication of the source\-spec path (/usr in this case).
  .IP 
  In addition, the \fB\-\-files\-from\fP file can be read from the remote host
@@ -1233,7 +1236,7 @@ use of "\&" except where it's needed at the beginning of the line.
  .IP 
  .RS 
  \f(CW   rsync \-a \-\-files\-from=:/path/file\-list src:/ /tmp/copy\fP
-@@ -1947,12 +1951,12 @@
+@@ -1954,12 +1958,12 @@
  
  .IP 
  This would copy all the files specified in the /path/file\-list file that
@@ -1249,7 +1252,7 @@ use of "\&" except where it's needed at the beginning of the line.
  .IP 
  NOTE: sorting the list of files in the \-\-files\-from input helps rsync to be
  more efficient, as it will avoid re\-visiting the path elements that are shared
-@@ -1962,7 +1966,7 @@
+@@ -1969,7 +1973,7 @@
  .IP 
  .IP "\fB\-0, \-\-from0\fP"
  This tells rsync that the rules/filenames it reads from a
@@ -1258,7 +1261,7 @@ use of "\&" except where it's needed at the beginning of the line.
  This affects \fB\-\-exclude\-from\fP, \fB\-\-include\-from\fP, \fB\-\-files\-from\fP, and any
  merged files specified in a \fB\-\-filter\fP rule.
  It does not affect \fB\-\-cvs\-exclude\fP (since all names read from a .cvsignore
-@@ -1985,7 +1989,7 @@
+@@ -1992,7 +1996,7 @@
  by default, otherwise it will be disabled by default.  Either state is
  overridden by a manually specified positive or negative version of this option
  (note that \fB\-\-no\-s\fP and \fB\-\-no\-protect\-args\fP are the negative versions).
@@ -1267,7 +1270,7 @@ use of "\&" except where it's needed at the beginning of the line.
  disabled if you ever need to interact with a remote rsync that is older than
  that.
  .IP 
-@@ -2020,9 +2024,9 @@
+@@ -2027,9 +2031,9 @@
  If you are using this option for reasons other than a shortage of disk
  space, you may wish to combine it with the \fB\-\-delay\-updates\fP option,
  which will ensure that all copied files get put into subdirectories in the
@@ -1279,7 +1282,7 @@ use of "\&" except where it's needed at the beginning of the line.
  about disk space is to use the \fB\-\-partial\-dir\fP option with a relative
  path; because this tells rsync that it is OK to stash off a copy of a
  single file in a subdir in the destination hierarchy, rsync will use the
-@@ -2050,7 +2054,7 @@
+@@ -2057,7 +2061,7 @@
  the destination machine as an additional hierarchy to compare destination
  files against doing transfers (if the files are missing in the destination
  directory).  If a file is found in \fIDIR\fP that is identical to the
@@ -1288,7 +1291,7 @@ use of "\&" except where it's needed at the beginning of the line.
  directory.  This is useful for creating a sparse backup of just files that
  have changed from an earlier backup.
  This option is typically used to copy into an empty (or newly created)
-@@ -2099,10 +2103,10 @@
+@@ -2106,10 +2110,10 @@
  .RE
  
  .IP 
@@ -1302,7 +1305,7 @@ use of "\&" except where it's needed at the beginning of the line.
  .IP 
  Beginning in version 2.6.4, multiple \fB\-\-link\-dest\fP directories may be
  provided, which will cause rsync to search the list in the order specified
-@@ -2172,11 +2176,11 @@
+@@ -2179,11 +2183,11 @@
  .IP 
  Simple character\-class matching is supported: each must consist of a list
  of letters inside the square brackets (e.g. no special classes, such as
@@ -1316,7 +1319,7 @@ use of "\&" except where it's needed at the beginning of the line.
  matches 2 suffixes):
  .IP 
  .nf 
-@@ -2234,8 +2238,8 @@
+@@ -2241,8 +2245,8 @@
  If a user or group has no name on the source system or it has no match
  on the destination system, then the numeric ID
  from the source system is used instead.  See also the comments on the
@@ -1327,7 +1330,7 @@ use of "\&" except where it's needed at the beginning of the line.
  users and groups and what you can do about it.
  .IP 
  .IP "\fB\-\-usermap=STRING, \-\-groupmap=STRING\fP"
-@@ -2245,9 +2249,9 @@
+@@ -2252,9 +2256,9 @@
  values separated by commas.  Any matching \fBFROM\fP value from the sender is
  replaced with a \fBTO\fP value from the receiver.  You may specify usernames
  or user IDs for the \fBFROM\fP and \fBTO\fP values, and the \fBFROM\fP value may
@@ -1339,7 +1342,7 @@ use of "\&" except where it's needed at the beginning of the line.
  numbers via an inclusive range: LOW\-HIGH.  For example:
  .IP 
  .nf 
-@@ -2259,15 +2263,15 @@
+@@ -2266,15 +2270,15 @@
  all your user mappings using a single \fB\-\-usermap\fP option, and/or all
  your group mappings using a single \fB\-\-groupmap\fP option.
  .IP 
@@ -1358,7 +1361,7 @@ use of "\&" except where it's needed at the beginning of the line.
  .IP 
  .nf 
    \-\-usermap=:nobody \-\-groupmap=*:nobody
-@@ -2294,8 +2298,8 @@
+@@ -2301,8 +2305,8 @@
  the omitted user/group will occur.  If GROUP is empty, the trailing colon may
  be omitted, but if USER is empty, a leading colon must be supplied.
  .IP 
@@ -1369,7 +1372,7 @@ use of "\&" except where it's needed at the beginning of the line.
  .IP 
  .IP "\fB\-\-timeout=TIMEOUT\fP"
  This option allows you to set a maximum I/O
-@@ -2345,18 +2349,18 @@
+@@ -2352,18 +2356,18 @@
  as a single letter for the mode, and use upper or lower case.
  .IP 
  The main use of this option is to change Full buffering to Line buffering
@@ -1391,7 +1394,7 @@ use of "\&" except where it's needed at the beginning of the line.
  format is like the string \fBYXcstpoguax\fP, where \fBY\fP is replaced by the
  type of update being done, \fBX\fP is replaced by the file\-type, and the
  other letters represent attributes that may be output if they are being
-@@ -2382,7 +2386,7 @@
+@@ -2389,7 +2393,7 @@
  have attributes that are being modified).
  .IP o 
  A \fB*\fP means that the rest of the itemized\-output area contains
@@ -1400,7 +1403,7 @@ use of "\&" except where it's needed at the beginning of the line.
  .RE
  
  .IP 
-@@ -2392,10 +2396,10 @@
+@@ -2399,10 +2403,10 @@
  .IP 
  The other letters in the string above are the actual letters that
  will be output if the associated attribute for the item is being updated or
@@ -1414,7 +1417,7 @@ use of "\&" except where it's needed at the beginning of the line.
  .IP 
  The attribute that is associated with each letter is as follows:
  .IP 
-@@ -2411,21 +2415,21 @@
+@@ -2418,21 +2422,21 @@
  by the file transfer.
  .IP o 
  A \fBt\fP means the modification time is different and is being updated
@@ -1441,7 +1444,7 @@ use of "\&" except where it's needed at the beginning of the line.
  .IP o 
  The \fBu\fP slot is reserved for future use.
  .IP o 
-@@ -2435,8 +2439,8 @@
+@@ -2442,8 +2446,8 @@
  .RE
  
  .IP 
@@ -1452,7 +1455,7 @@ use of "\&" except where it's needed at the beginning of the line.
  you are talking to a recent enough rsync that it logs deletions instead of
  outputting them as a verbose message).
  .IP 
-@@ -2444,10 +2448,10 @@
+@@ -2451,10 +2455,10 @@
  This allows you to specify exactly what the
  rsync client outputs to the user on a per\-update basis.  The format is a
  text string containing embedded single\-character escape sequences prefixed
@@ -1465,7 +1468,7 @@ use of "\&" except where it's needed at the beginning of the line.
  rsyncd.conf manpage.
  .IP 
  Specifying the \fB\-\-out\-format\fP option implies the \fB\-\-info=name\fP option,
-@@ -2457,11 +2461,11 @@
+@@ -2464,11 +2468,11 @@
  the string (e.g. if the \fB\-\-itemize\-changes\fP option was used), the logging
  of names increases to mention any item that is changed in any way (as long
  as the receiving side is at least 2.6.4).  See the \fB\-\-itemize\-changes\fP
@@ -1480,7 +1483,7 @@ use of "\&" except where it's needed at the beginning of the line.
  is in effect and \fB\-\-progress\fP is also specified, rsync will also output
  the name of the file being transferred prior to its progress information
  (followed, of course, by the out\-format output).
-@@ -2471,10 +2475,10 @@
+@@ -2478,10 +2482,10 @@
  to a file.  This is similar to the logging that a daemon does, but can be
  requested for the client side and/or the server side of a non\-daemon
  transfer.  If specified as a client option, transfer logging will be
@@ -1493,7 +1496,7 @@ use of "\&" except where it's needed at the beginning of the line.
  happening:
  .IP 
  .nf 
-@@ -2490,15 +2494,15 @@
+@@ -2497,15 +2501,15 @@
  per\-update logging is put into the file specified by the \fB\-\-log\-file\fP option
  (which must also be specified for this option to have any effect).  If you
  specify an empty string, updated files will not be mentioned in the log file.
@@ -1512,7 +1515,7 @@ use of "\&" except where it's needed at the beginning of the line.
  algorithm is for your data.  This option is equivalent to \fB\-\-info=stats2\fP
  if combined with 0 or 1 \fB\-v\fP options, or \fB\-\-info=stats3\fP if combined
  with 2 or more \fB\-v\fP options.
-@@ -2506,27 +2510,27 @@
+@@ -2513,27 +2517,27 @@
  The current statistics are as follows: 
  .RS 
  .IP o 
@@ -1546,7 +1549,7 @@ use of "\&" except where it's needed at the beginning of the line.
  .IP o 
  \fBTotal file size\fP is the total sum of all file sizes in the transfer.
  This does not count any size for directories or special files, but does
-@@ -2557,22 +2561,22 @@
+@@ -2564,22 +2568,22 @@
  from the client side to the server side.
  .IP o 
  \fBTotal bytes received\fP is the count of all non\-message bytes that
@@ -1574,7 +1577,7 @@ use of "\&" except where it's needed at the beginning of the line.
  escaped unless it is followed by a hash and 3 digits (0\-9).
  .IP 
  .IP "\fB\-h, \-\-human\-readable\fP"
-@@ -2594,7 +2598,7 @@
+@@ -2601,7 +2605,7 @@
  Backward compatibility note:  versions of rsync prior to 3.1.0 do not support
  human\-readable level 1, and they default to level 0.  Thus, specifying one or
  two \fB\-h\fP options will behave in a comparable manner in old and new versions
@@ -1583,7 +1586,7 @@ use of "\&" except where it's needed at the beginning of the line.
  options.  See the \fB\-\-list\-only\fP option for one difference.
  .IP 
  .IP "\fB\-\-partial\fP"
-@@ -2615,12 +2619,12 @@
+@@ -2622,12 +2626,12 @@
  Note that if \fB\-\-whole\-file\fP is specified (or implied), any partial\-dir
  file that is found for a file that is being updated will simply be removed
  (since
@@ -1599,7 +1602,7 @@ use of "\&" except where it's needed at the beginning of the line.
  remove it again when the partial file is deleted.
  .IP 
  If the partial\-dir value is not an absolute path, rsync will add an exclude
-@@ -2628,21 +2632,21 @@
+@@ -2635,21 +2639,21 @@
  sending of any partial\-dir files that may exist on the sending side, and
  will also prevent the untimely deletion of partial\-dir items on the
  receiving side.  An example: the above \fB\-\-partial\-dir\fP option would add
@@ -1627,7 +1630,7 @@ use of "\&" except where it's needed at the beginning of the line.
  .IP 
  You can also set the partial\-dir value the RSYNC_PARTIAL_DIR environment
  variable.  Setting this in the environment does not force \fB\-\-partial\fP to be
-@@ -2655,7 +2659,7 @@
+@@ -2662,7 +2666,7 @@
  specified (since \fB\-\-inplace\fP conflicts with \fB\-\-partial\-dir\fP), and (2) when
  \fB\-\-delay\-updates\fP was specified (see below).
  .IP 
@@ -1636,7 +1639,7 @@ use of "\&" except where it's needed at the beginning of the line.
  \fB\-\-partial\-dir\fP does \fInot\fP imply \fB\-\-partial\fP.  This is so that a
  refusal of the \fB\-\-partial\fP option can be used to disallow the overwriting
  of destination files with a partial transfer, while still allowing the
-@@ -2666,12 +2670,12 @@
+@@ -2673,12 +2677,12 @@
  updated file into a holding directory until the end of the
  transfer, at which time all the files are renamed into place in rapid
  succession.  This attempts to make the updating of the files a little more
@@ -1653,7 +1656,7 @@ use of "\&" except where it's needed at the beginning of the line.
  Conflicts with \fB\-\-inplace\fP and \fB\-\-append\fP.
  .IP 
  This option uses more memory on the receiving side (one bit per file
-@@ -2683,9 +2687,9 @@
+@@ -2690,9 +2694,9 @@
  the updated files will be put into a single directory if the path is
  absolute)
  and (2) there are no mount points in the hierarchy (since the
@@ -1665,7 +1668,7 @@ use of "\&" except where it's needed at the beginning of the line.
  update algorithm that is even more atomic (it uses \fB\-\-link\-dest\fP and a
  parallel hierarchy of files).
  .IP 
-@@ -2709,26 +2713,26 @@
+@@ -2716,26 +2720,26 @@
  this.
  .IP 
  You can prevent the pruning of certain empty directories from the file\-list
@@ -1699,7 +1702,7 @@ use of "\&" except where it's needed at the beginning of the line.
  in place of the hide\-filter (if that is more natural to you).
  .IP 
  .IP "\fB\-\-progress\fP"
-@@ -2737,7 +2741,7 @@
+@@ -2744,7 +2748,7 @@
  something to watch.
  With a modern rsync this is the same as specifying
  \fB\-\-info=flist2,name,progress\fP, but any user\-supplied settings for those
@@ -1708,7 +1711,7 @@ use of "\&" except where it's needed at the beginning of the line.
  .IP 
  While rsync is transferring a regular file, it updates a progress line that
  looks like this:
-@@ -2748,12 +2752,12 @@
+@@ -2755,12 +2759,12 @@
  
  .IP 
  In this example, the receiver has reconstructed 782448 bytes or 63% of the
@@ -1724,7 +1727,7 @@ use of "\&" except where it's needed at the beginning of the line.
  followed by additional data, the reported rate will probably drop
  dramatically when the receiver gets to the literal data, and the transfer
  will probably take much longer to finish than the receiver estimated as it
-@@ -2774,12 +2778,12 @@
+@@ -2781,12 +2785,12 @@
  receiver to check (to see if they are up\-to\-date or not) remaining out of
  the 396 total files in the file\-list.
  .IP 
@@ -1741,16 +1744,16 @@ use of "\&" except where it's needed at the beginning of the line.
  in the file list is still going to increase (and each time it does, the count
  of files left to check  will increase by the number of the files added to the
  list).
-@@ -2793,7 +2797,7 @@
+@@ -2800,7 +2804,7 @@
  on the whole transfer, rather than individual files.  Use this flag without
- outputting a filename (e.g. avoid \fB\-v\fP or specify \fB\-\-info=name0\fP if you
+ outputting a filename (e.g. avoid \fB\-v\fP or specify \fB\-\-info=name0\fP) if you
  want to see how the transfer is doing without scrolling the screen with a
 -lot of names.  (You don\(cq\&t need to specify the \fB\-\-progress\fP option in
 +lot of names.  (You don't need to specify the \fB\-\-progress\fP option in
  order to use \fB\-\-info=progress2\fP.)
  .IP 
  .IP "\fB\-\-password\-file=FILE\fP"
-@@ -2804,10 +2808,10 @@
+@@ -2811,10 +2815,10 @@
  readable or if a root\-run rsync command finds a non\-root\-owned file.
  .IP 
  This option does not supply a password to a remote shell transport such as
@@ -1763,7 +1766,7 @@ use of "\&" except where it's needed at the beginning of the line.
  config file).
  .IP 
  .IP "\fB\-\-list\-only\fP"
-@@ -2837,17 +2841,17 @@
+@@ -2844,17 +2848,17 @@
  Compatibility note:  when requesting a remote listing of files from an rsync
  that is version 2.6.3 or older, you may encounter an error if you ask for a
  non\-recursive listing.  This is because a file listing implies the \fB\-\-dirs\fP
@@ -1787,7 +1790,7 @@ use of "\&" except where it's needed at the beginning of the line.
  been appended).  See the \fB\-\-max\-size\fP option for a description of all the
  available suffixes. A value of zero specifies no limit.
  .IP 
-@@ -2856,7 +2860,7 @@
+@@ -2863,7 +2867,7 @@
  .IP 
  Rsync writes data over the socket in blocks, and this option both limits the
  size of the blocks that rsync writes, and tries to keep the average transfer
@@ -1796,7 +1799,7 @@ use of "\&" except where it's needed at the beginning of the line.
  out a block of data and then sleeps to bring the average rate into compliance.
  .IP 
  Due to the internal buffering of data, the \fB\-\-progress\fP option may not be an
-@@ -2867,7 +2871,7 @@
+@@ -2874,7 +2878,7 @@
  .IP 
  .IP "\fB\-\-write\-batch=FILE\fP"
  Record a file that can later be applied to
@@ -1805,7 +1808,7 @@ use of "\&" except where it's needed at the beginning of the line.
  section for details, and also the \fB\-\-only\-write\-batch\fP option.
  .IP 
  .IP "\fB\-\-only\-write\-batch=FILE\fP"
-@@ -2879,58 +2883,58 @@
+@@ -2886,58 +2890,58 @@
  Note that you can feel free to write the batch directly to some portable
  media: if this media fills to capacity before the end of the transfer, you
  can just apply that partial transfer to the destination and repeat the
@@ -1875,7 +1878,7 @@ use of "\&" except where it's needed at the beginning of the line.
  regardless of the remote charset you actually pass.  Thus, you may feel free to
  specify just the local charset for a daemon transfer (e.g. \fB\-\-iconv=utf8\fP).
  .IP 
-@@ -2947,10 +2951,10 @@
+@@ -2954,10 +2958,10 @@
  .IP "\fB\-\-checksum\-seed=NUM\fP"
  Set the checksum seed to the integer NUM.  This 4
  byte checksum seed is included in each block and MD4 file checksum calculation
@@ -1889,7 +1892,7 @@ use of "\&" except where it's needed at the beginning of the line.
  option is used to set a specific checksum seed, which is useful for
  applications that want repeatable block checksums, or in the case where the
  user wants a more random checksum seed.  Setting NUM to 0 causes rsync to use
-@@ -2980,7 +2984,7 @@
+@@ -2987,7 +2991,7 @@
  run as a daemon with the \fB\-\-daemon\fP option.  The \fB\-\-address\fP option
  allows you to specify a specific IP address (or hostname) to bind to.  This
  makes virtual hosting possible in conjunction with the \fB\-\-config\fP option.
@@ -1898,7 +1901,7 @@ use of "\&" except where it's needed at the beginning of the line.
  .IP 
  .IP "\fB\-\-bwlimit=RATE\fP"
  This option allows you to specify the maximum transfer
-@@ -2998,7 +3002,7 @@
+@@ -3005,7 +3009,7 @@
  .IP "\fB\-M, \-\-dparam=OVERRIDE\fP"
  This option can be used to set a daemon\-config
  parameter when starting up rsync in daemon mode.  It is equivalent to adding
@@ -1907,7 +1910,7 @@ use of "\&" except where it's needed at the beginning of the line.
  definition.  The parameter names can be specified without spaces, if you so
  desire.  For instance:
  .IP 
-@@ -3012,25 +3016,25 @@
+@@ -3019,25 +3023,25 @@
  rsync to not detach itself and become a background process.  This
  option is required when running as a service on Cygwin, and may also
  be useful when rsync is supervised by a program such as
@@ -1938,7 +1941,7 @@ use of "\&" except where it's needed at the beginning of the line.
  case transfer logging is turned off.
  .IP 
  .IP "\fB\-\-sockopts\fP"
-@@ -3040,15 +3044,15 @@
+@@ -3047,15 +3051,15 @@
  .IP "\fB\-v, \-\-verbose\fP"
  This option increases the amount of information the
  daemon logs during its startup phase.  After the client connects, the
@@ -1957,7 +1960,7 @@ use of "\&" except where it's needed at the beginning of the line.
  try specifying \fB\-\-ipv6\fP or \fB\-\-ipv4\fP when starting the daemon).
  .IP 
  If rsync was complied without support for IPv6, the \fB\-\-ipv6\fP option
-@@ -3087,7 +3091,7 @@
+@@ -3094,7 +3098,7 @@
  
  .PP 
  You have your choice of using either short or long RULE names, as described
@@ -1966,7 +1969,7 @@ use of "\&" except where it's needed at the beginning of the line.
  MODIFIERS is optional.  The PATTERN or FILENAME that follows (when present)
  must come after either a single space or an underscore (_).
  Here are the available rule prefixes:
-@@ -3115,15 +3119,15 @@
+@@ -3122,15 +3126,15 @@
  
  .PP 
  When rules are being read from a file, empty lines are ignored, as are
@@ -1986,7 +1989,7 @@ use of "\&" except where it's needed at the beginning of the line.
  an exclude option) were prefixed to the string.  A \fB\-\-filter\fP option, on
  the other hand, must always contain either a short or long rule name at the
  start of the rule.
-@@ -3136,8 +3140,8 @@
+@@ -3143,8 +3147,8 @@
  .SH "INCLUDE/EXCLUDE PATTERN RULES"
  
  .PP 
@@ -1997,7 +2000,7 @@ use of "\&" except where it's needed at the beginning of the line.
  The include/exclude rules each specify a pattern that is matched against
  the names of the files that are going to be transferred.  These patterns
  can take several forms:
-@@ -3147,15 +3151,15 @@
+@@ -3154,15 +3158,15 @@
  particular spot in the hierarchy of files, otherwise it is matched
  against the end of the pathname.  This is similar to a leading ^ in
  regular expressions.
@@ -2019,7 +2022,7 @@ use of "\&" except where it's needed at the beginning of the line.
  a full discussion of how to specify a pattern that matches at the root
  of the transfer.
  .IP o 
-@@ -3164,48 +3168,48 @@
+@@ -3171,48 +3175,48 @@
  .IP o 
  rsync chooses between doing a simple string match and wildcard
  matching by checking if the pattern contains one of these three wildcard
@@ -2086,7 +2089,7 @@ use of "\&" except where it's needed at the beginning of the line.
  .PP 
  .RS 
  \f(CW+ /some/path/this\-file\-will\-not\-be\-found\fP
-@@ -3217,11 +3221,11 @@
+@@ -3224,11 +3228,11 @@
  .RE
  
  .PP 
@@ -2102,7 +2105,7 @@ use of "\&" except where it's needed at the beginning of the line.
  solution is to add specific include rules for all
  the parent dirs that need to be visited.  For instance, this set of rules
  works fine:
-@@ -3243,44 +3247,44 @@
+@@ -3250,44 +3254,44 @@
  Here are some examples of exclude/include matching:
  .PP 
  .IP o 
@@ -2162,7 +2165,7 @@ use of "\&" except where it's needed at the beginning of the line.
  follow.
  .IP o 
  An \fBs\fP is used to indicate that the rule applies to the sending
-@@ -3298,7 +3302,7 @@
+@@ -3305,7 +3309,7 @@
  .IP o 
  A \fBp\fP indicates that a rule is perishable, meaning that it is
  ignored in directories that are being deleted.  For instance, the \fB\-C\fP
@@ -2171,7 +2174,7 @@ use of "\&" except where it's needed at the beginning of the line.
  marked as perishable, and will not prevent a directory that was removed
  on the source from being deleted on the destination.
  
-@@ -3310,16 +3314,16 @@
+@@ -3317,16 +3321,16 @@
  merge (.) or a dir\-merge (:) filter rule (as introduced in the FILTER RULES
  section above).
  .PP 
@@ -2192,7 +2195,7 @@ use of "\&" except where it's needed at the beginning of the line.
  below).
  .PP 
  Some examples:
-@@ -3348,27 +3352,27 @@
+@@ -3355,27 +3359,27 @@
  patterns, with no other rule\-parsing except for in\-file comments.
  .IP o 
  A \fBC\fP is a way to specify that the file should be read in a
@@ -2227,7 +2230,7 @@ use of "\&" except where it's needed at the beginning of the line.
  per\-directory rules apply only on the sending side.  If the merge rule
  specifies sides to affect (via the \fBs\fP or \fBr\fP modifier or both),
  then the rules in the file must not specify sides (via a modifier or
-@@ -3376,22 +3380,22 @@
+@@ -3383,22 +3387,22 @@
  
  .PP 
  Per\-directory rules are inherited in all subdirectories of the directory
@@ -2256,7 +2259,7 @@ use of "\&" except where it's needed at the beginning of the line.
  .PP 
  .RS 
  \f(CWmerge /home/user/.global\-filter\fP
-@@ -3408,7 +3412,7 @@
+@@ -3415,7 +3419,7 @@
  
  .PP 
  This will merge the contents of the /home/user/.global\-filter file at the
@@ -2265,7 +2268,7 @@ use of "\&" except where it's needed at the beginning of the line.
  filter file.  All rules read in prior to the start of the directory scan
  follow the global anchoring rules (i.e. a leading slash matches at the root
  of the transfer).
-@@ -3419,7 +3423,7 @@
+@@ -3426,7 +3430,7 @@
  per\-directory file.  For instance, here is a common filter (see \fB\-F\fP):
  .PP 
  .RS 
@@ -2274,7 +2277,7 @@ use of "\&" except where it's needed at the beginning of the line.
  .RE
  
  .PP 
-@@ -3427,38 +3431,38 @@
+@@ -3434,38 +3438,38 @@
  directories from the root down through the parent directory of the
  transfer prior to the start of the normal directory scan of the file in
  the directories that are sent as a part of the transfer.  (Note: for an
@@ -2324,7 +2327,7 @@ use of "\&" except where it's needed at the beginning of the line.
  .br 
  \f(CW+ foo.o\fP
  .br 
-@@ -3468,7 +3472,7 @@
+@@ -3475,7 +3479,7 @@
  .br 
  \f(CWEOT\fP
  .br 
@@ -2333,7 +2336,7 @@ use of "\&" except where it's needed at the beginning of the line.
  .br 
  .RE
  
-@@ -3479,25 +3483,25 @@
+@@ -3486,25 +3490,25 @@
  that follow the :C instead of being subservient to all your rules.  To
  affect the other CVS exclude rules (i.e. the default list of exclusions,
  the contents of $HOME/.cvsignore, and the value of $CVSIGNORE) you should
@@ -2366,7 +2369,7 @@ use of "\&" except where it's needed at the beginning of the line.
  a subtree of names that are being sent from sender to receiver, the
  transfer\-root is where the tree starts to be duplicated in the destination
  directory.  This root governs where patterns that start with a / match.
-@@ -3508,8 +3512,8 @@
+@@ -3515,8 +3519,8 @@
  changing how much of the file tree is duplicated on the destination
  host).  The following examples demonstrate this.
  .PP 
@@ -2377,7 +2380,7 @@ use of "\&" except where it's needed at the beginning of the line.
  Here is how the various command choices differ for a 2\-source transfer:
  .PP 
  .RS 
-@@ -3529,9 +3533,9 @@
+@@ -3536,9 +3540,9 @@
  .RS 
  Example cmd: rsync \-a /home/me/ /home/you/ /dest 
  .br 
@@ -2389,7 +2392,7 @@ use of "\&" except where it's needed at the beginning of the line.
  .br 
  Target file: /dest/foo/bar 
  .br 
-@@ -3570,26 +3574,26 @@
+@@ -3577,26 +3581,26 @@
  .PP 
  The easiest way to see what name you should filter is to just
  look at the output when using \fB\-\-verbose\fP and put a / in front of the name
@@ -2421,7 +2424,7 @@ use of "\&" except where it's needed at the beginning of the line.
  receiving side knows what files to exclude.  The easiest way is to include
  the per\-directory merge files in the transfer and use \fB\-\-delete\-after\fP,
  because this ensures that the receiving side gets all the same exclude
-@@ -3600,14 +3604,14 @@
+@@ -3607,14 +3611,14 @@
  .RE
  
  .PP 
@@ -2439,7 +2442,7 @@ use of "\&" except where it's needed at the beginning of the line.
     \-\-delete host:src/dir /dest
  .fi 
  
-@@ -3620,12 +3624,12 @@
+@@ -3627,12 +3631,12 @@
  In one final example, the remote side is excluding the .rsync\-filter
  files from the transfer, but we want to use our own .rsync\-filter files
  to control what gets deleted on the receiving side.  To do this we must
@@ -2454,7 +2457,7 @@ use of "\&" except where it's needed at the beginning of the line.
          host:src/dir /dest
      rsync \-avFF \-\-delete host:src/dir /dest
  .fi 
-@@ -3641,7 +3645,7 @@
+@@ -3648,7 +3652,7 @@
  hosts. In order to do this using batch mode, rsync is run with the
  write\-batch option to apply the changes made to the source tree to one
  of the destination trees.  The write\-batch option causes the rsync
@@ -2463,7 +2466,7 @@ use of "\&" except where it's needed at the beginning of the line.
  this operation against other, identical destination trees.
  .PP 
  Generating the batch file once saves having to perform the file
-@@ -3656,7 +3660,7 @@
+@@ -3663,7 +3667,7 @@
  using the information stored in the batch file.
  .PP 
  For your convenience, a script file is also created when the write\-batch
@@ -2472,7 +2475,7 @@ use of "\&" except where it's needed at the beginning of the line.
  appended.  This script file contains a command\-line suitable for updating a
  destination tree using the associated batch file. It can be executed using
  a Bourne (or Bourne\-like) shell, optionally passing in an alternate
-@@ -3685,25 +3689,25 @@
+@@ -3692,25 +3696,25 @@
  
  .PP 
  In these examples, rsync is used to update /adest/dir/ from /source/dir/
@@ -2504,7 +2507,7 @@ use of "\&" except where it's needed at the beginning of the line.
  
  .PP 
  Caveats:
-@@ -3716,7 +3720,7 @@
+@@ -3723,7 +3727,7 @@
  and then, if the file fails to verify, the update discarded with an
  error.  This means that it should be safe to re\-run a read\-batch operation
  if the command got interrupted.  If you wish to force the batched\-update to
@@ -2513,7 +2516,7 @@ use of "\&" except where it's needed at the beginning of the line.
  option (when reading the batch).
  If an error occurs, the destination tree will probably be in a
  partially updated state. In that case, rsync can
-@@ -3732,7 +3736,7 @@
+@@ -3739,7 +3743,7 @@
  older than that with newer versions will not work.)
  .PP 
  When reading a batch file, rsync will force the value of certain options
@@ -2522,7 +2525,7 @@ use of "\&" except where it's needed at the beginning of the line.
  as the batch\-writing command.  Other options can (and should) be changed.
  For instance \fB\-\-write\-batch\fP changes to \fB\-\-read\-batch\fP,
  \fB\-\-files\-from\fP is dropped, and the
-@@ -3740,13 +3744,13 @@
+@@ -3747,13 +3751,13 @@
  one of the \fB\-\-delete\fP options is specified.
  .PP 
  The code that creates the BATCH.sh file transforms any filter/include/exclude
@@ -2538,7 +2541,7 @@ use of "\&" except where it's needed at the beginning of the line.
  version uses a new implementation.
  .PP 
  .SH "SYMBOLIC LINKS"
-@@ -3756,16 +3760,16 @@
+@@ -3763,16 +3767,16 @@
  link in the source directory.
  .PP 
  By default, symbolic links are not transferred at all.  A message
@@ -2558,7 +2561,7 @@ use of "\&" except where it's needed at the beginning of the line.
  example where this might be used is a web site mirror that wishes to
  ensure that the rsync module that is copied does not include symbolic links to
  \fB/etc/passwd\fP in the public section of the site.  Using
-@@ -3775,11 +3779,11 @@
+@@ -3782,11 +3786,11 @@
  \fB\-\-links\fP for \fB\-\-safe\-links\fP to have any effect.)
  .PP 
  Symbolic links are considered unsafe if they are absolute symlinks
@@ -2573,7 +2576,7 @@ use of "\&" except where it's needed at the beginning of the line.
  use the first line that is a complete subset of your options:
  .PP 
  .IP "\fB\-\-copy\-links\fP"
-@@ -3805,8 +3809,8 @@
+@@ -3812,8 +3816,8 @@
  
  .PP 
  rsync occasionally produces error messages that may seem a little
@@ -2584,7 +2587,7 @@ use of "\&" except where it's needed at the beginning of the line.
  .PP 
  This message is usually caused by your startup scripts or remote shell
  facility producing unwanted garbage on the stream that rsync is using
-@@ -3906,13 +3910,13 @@
+@@ -3913,13 +3917,13 @@
  password allows you to run authenticated rsync connections to an rsync
  daemon without user intervention. Note that this does not supply a
  password to a remote shell transport such as ssh; to learn how to do that,
@@ -2601,7 +2604,7 @@ use of "\&" except where it's needed at the beginning of the line.
  default .cvsignore file.
  
  .PP 
-@@ -3987,7 +3991,7 @@
+@@ -3994,7 +3998,7 @@
  gone\-but\-not\-forgotten compadre, J.W. Schultz.
  .PP 
  Thanks also to Richard Brent, Brendan Mackay, Bill Waite, Stephen Rothwell
