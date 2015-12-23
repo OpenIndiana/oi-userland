@@ -26,17 +26,17 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ant
-COMPONENT_VERSION=	1.9.4
+COMPONENT_VERSION=	1.9.6
 COMPONENT_PROJECT_URL=	http://ant.apache.org/
 COMPONENT_SRC_NAME=	apache-ant
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-src.tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:ac594ff7dcd461ebb3e607493af7682f84b1ceaa0621e17ec6367b8d2c410a1c
+    sha256:2ad98dd3a4805452e546e0f5b682360370ae11692a2157fff8ec6d177c957123
 COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/ant/source/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/ant
 
-TPNO=			21446
+TPNO=			25967
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
@@ -68,6 +68,17 @@ COMPONENT_INSTALL_ENV +=	$(ANT_ENV)
 
 COMPONENT_TEST_TARGETS =	test
 COMPONENT_TEST_ENV +=		$(ANT_ENV)
+
+COMPONENT_TEST_TRANSFORMS +=  \
+	'-e "/=/d" ' \
+	'-e "s/, Time elapsed: [0-9][0-9]*\.*[0-9]* sec//" '  \
+	'-e "/propertyfilecli/d" ' \
+	'-e "/Building zip:/d" ' \
+	'-e "/Processing /d" ' \
+	'-e "/Transform time: /d" ' \
+	'-e "/Deleting: /d" ' \
+	'-e "/^Buildfile: /d" ' \
+	'-e "/^Total time: /d" '
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
