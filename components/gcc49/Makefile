@@ -177,6 +177,7 @@ else
 endif
 
 CONFIGURE_OPTIONS +=    --with-build-time-tools=/usr/gnu/bin
+CONFIGURE_OPTIONS +=    --with-build-config=bootstrap-O2
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	CXXFLAGS="$(CXXFLAGS)"
 CONFIGURE_OPTIONS +=    CPPFLAGS="$(CPPFLAGS)"
