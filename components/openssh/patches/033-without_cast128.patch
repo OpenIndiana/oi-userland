@@ -49,3 +49,60 @@ diff -pur old/myproposal.h new/myproposal.h
  	"aes192-cbc,aes256-cbc,arcfour,rijndael-cbc@lysator.liu.se"
  
  #define KEX_SERVER_MAC \
+diff -pur old/ssh.1 new/ssh.1
+--- old/ssh.1
++++ new/ssh.1
+@@ -788,7 +788,7 @@ options (see above).
+ Both protocols support similar authentication methods,
+ but protocol 2 is the default since
+ it provides additional mechanisms for confidentiality
+-(the traffic is encrypted using AES, 3DES, Blowfish, CAST128, or Arcfour)
++(the traffic is encrypted using AES, 3DES, Blowfish, or Arcfour)
+ and integrity (hmac-md5, hmac-sha1,
+ hmac-sha2-256, hmac-sha2-512,
+ umac-64, umac-128, hmac-ripemd160).
+diff -pur old/ssh_config.5 new/ssh_config.5
+--- old/ssh_config.5
++++ new/ssh_config.5
+@@ -408,8 +408,6 @@ arcfour256
+ .It
+ blowfish-cbc
+ .It
+-cast128-cbc
+-.It
+ chacha20-poly1305@openssh.com
+ .El
+ .Pp
+@@ -419,7 +417,7 @@ chacha20-poly1305@openssh.com,
+ aes128-ctr,aes192-ctr,aes256-ctr,
+ aes128-gcm@openssh.com,aes256-gcm@openssh.com,
+ arcfour256,arcfour128,
+-aes128-cbc,3des-cbc,blowfish-cbc,cast128-cbc,
++aes128-cbc,3des-cbc,blowfish-cbc,
+ aes192-cbc,aes256-cbc,arcfour
+ .Ed
+ .Pp
+diff -pur old/sshd.8 new/sshd.8
+--- old/sshd.8
++++ new/sshd.8
+@@ -307,7 +307,7 @@ For protocol 2,
+ forward security is provided through a Diffie-Hellman key agreement.
+ This key agreement results in a shared session key.
+ The rest of the session is encrypted using a symmetric cipher, currently
+-128-bit AES, Blowfish, 3DES, CAST128, Arcfour, 192-bit AES, or 256-bit AES.
++128-bit AES, Blowfish, 3DES, Arcfour, 192-bit AES, or 256-bit AES.
+ The client selects the encryption algorithm
+ to use from those offered by the server.
+ Additionally, session integrity is provided
+diff -pur old/sshd_config.5 new/sshd_config.5
+--- old/sshd_config.5
++++ new/sshd_config.5
+@@ -469,8 +469,6 @@ arcfour256
+ .It
+ blowfish-cbc
+ .It
+-cast128-cbc
+-.It
+ chacha20-poly1305@openssh.com
+ .El
+ .Pp
