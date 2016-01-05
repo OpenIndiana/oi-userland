@@ -1,0 +1,24 @@
+# This patch was taken from the upstream project mailing list and is
+# expected to be integrated in a future release.
+# http://sourceforge.net/p/pkgbuild/mailman/message/34656716/
+
+--- pkgbuild-1.3.105-dist/configure.in	2013-04-03 23:43:19.000000000 -0500
++++ pkgbuild-1.3.105/configure.in	2015-11-29 14:35:05.914960090 -0600
+@@ -23,7 +23,7 @@
+ PATCH_IS_GNU=no
+ $PATCH --version 2>/dev/null | grep 'Free Software Foundation' > /dev/null \
+        && PATCH_IS_GNU=yes
+-$PATCH --version 2>/dev/null | head -1 | grep '^patch ' > /dev/null \
++$PATCH --version 2>/dev/null | head -1 | grep '^.*patch ' > /dev/null \
+        || PATCH_IS_GNU=no
+ AC_MSG_RESULT([$PATCH_IS_GNU])
+ if test $PATCH_IS_GNU = no; then
+@@ -36,7 +36,7 @@
+ SED_IS_GNU=no
+ $GNU_SED --version 2>/dev/null | grep 'Free Software Foundation' > /dev/null \
+        && SED_IS_GNU=yes
+-$GNU_SED --version 2>/dev/null | head -1 | grep 'GNU sed ' > /dev/null \
++$GNU_SED --version 2>/dev/null | head -1 | grep 'GNU sed' > /dev/null \
+        || SED_IS_GNU=no
+ AC_MSG_RESULT([$SED_IS_GNU])
+ if test $SED_IS_GNU = no; then

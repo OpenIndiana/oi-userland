@@ -1,0 +1,72 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+set name=pkg.fmri \
+    value=pkg:/package/pkgbuild@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary \
+    value="pkgbuild - rpmbuild-like tool for building Solaris packages"
+set name=pkg.description \
+    value="pkgbuild(1) is a tool for building Solaris SVr4 or IPS packages from RPM-like spec files. It is intended to be a plug-in replacement of the rpmbuild command. Most spec file elements are implemented plus a few more. The differences from real rpm spec files are summarized in the Manual. It's implemented as a set of perl scripts and modules."
+set name=com.oracle.info.description \
+    value="A tool for building Solaris SVr4 or IPS packages from RPM-like spec files"
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value=org.opensolaris.category.2008:Development/System
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2010/138
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+file path=usr/bin/pkgbuild
+file path=usr/bin/pkgtool
+file path=usr/bin/spectool
+file path=usr/lib/pkgbuild-$(COMPONENT_VERSION)/config.pm
+file path=usr/lib/pkgbuild-$(COMPONENT_VERSION)/get_rpm_topdir
+file path=usr/lib/pkgbuild-$(COMPONENT_VERSION)/ips-dependency-generator \
+    mode=0555
+file path=usr/lib/pkgbuild-$(COMPONENT_VERSION)/ips_package.pm
+file path=usr/lib/pkgbuild-$(COMPONENT_VERSION)/ips_utils.pm
+file path=usr/lib/pkgbuild-$(COMPONENT_VERSION)/macros
+file path=usr/lib/pkgbuild-$(COMPONENT_VERSION)/packagebase.pm
+file path=usr/lib/pkgbuild-$(COMPONENT_VERSION)/pkgbuild-postprocess mode=0555
+file path=usr/lib/pkgbuild-$(COMPONENT_VERSION)/pkgbuild.pl mode=0555
+file path=usr/lib/pkgbuild-$(COMPONENT_VERSION)/pkgdb.pm
+file path=usr/lib/pkgbuild-$(COMPONENT_VERSION)/pkgdbgrep mode=0555
+file path=usr/lib/pkgbuild-$(COMPONENT_VERSION)/pkgnames
+file path=usr/lib/pkgbuild-$(COMPONENT_VERSION)/pkgtool.pl mode=0555
+file path=usr/lib/pkgbuild-$(COMPONENT_VERSION)/rpm_file.pm
+file path=usr/lib/pkgbuild-$(COMPONENT_VERSION)/rpm_package.pm
+file path=usr/lib/pkgbuild-$(COMPONENT_VERSION)/rpm_spec.pm
+file path=usr/lib/pkgbuild-$(COMPONENT_VERSION)/spectool.pl mode=0555
+file path=usr/lib/pkgbuild-$(COMPONENT_VERSION)/version-file
+file path=usr/share/man/man1/pkgbuild.1
+file path=usr/share/man/man1/pkgtool.1
+file path=usr/share/man/man1/spectool.1
+file path=usr/share/pkgbuild/spec-files.txt
+license COPYING license=GPLv2
+
+# force a dependency on the gnu-patch package
+depend type=require \
+    fmri=text/gnu-patch@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
