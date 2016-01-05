@@ -16,14 +16,14 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		check
-COMPONENT_VERSION=	0.9.14
+COMPONENT_VERSION=	0.10.0
 COMPONENT_FMRI=		developer/check
 COMPONENT_CLASSIFICATION=Development/C
 COMPONENT_PROJECT_URL=	http://check.sourceforge.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:c272624645b1b738cf57fd5d81a3e4d9b722b99d6133ee3f3c4007d4d279840a
+    sha256:f5f50766aa6f8fe5a2df752666ca01a950add45079aa06416b83765b1cf71052
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/check/files/check/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_BUGDB=	$(COMPONENT_FMRI)
 COMPONENT_LICENSE=	LGPLv2
@@ -39,8 +39,8 @@ include $(WS_MAKE_RULES)/ips.mk
 CONFIGURE_OPTIONS+=	--includedir=$(CONFIGURE_PREFIX)/include/check
 CONFIGURE_OPTIONS+=	--enable-shared
 CONFIGURE_OPTIONS+=	--disable-static
-CONFIGURE_OPTIONS+=     --enable-gcov           
-CONFIGURE_OPTIONS+=     --enable-timeout-tests
+CONFIGURE_OPTIONS+= --enable-gcov           
+CONFIGURE_OPTIONS+= --enable-timeout-tests
 
 build:		$(BUILD_32_and_64)
 
