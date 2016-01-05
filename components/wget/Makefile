@@ -18,21 +18,21 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		wget
-COMPONENT_VERSION=	1.16.3
+COMPONENT_VERSION=	1.17.1
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/wget/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:67f7b7b0f5c14db633e3b18f53172786c001e153d545cfc85d82759c5c2ffb37	
+    sha256:fe559b61eb9cc01635ac6206a14e02cb51591838c35fa83c7a4aacae0bdd97c9
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/wget/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/wget
 
-TPNO=			22235	
+TPNO=			26307
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -43,7 +43,6 @@ COMPONENT_TEST_TRANSFORMS += '-ne "/^PASS/p" '
 COMPONENT_TEST_TRANSFORMS += '-ne "/^FAIL/p" '
 COMPONENT_TEST_TRANSFORMS += '-ne "/^===/p" '
 COMPONENT_TEST_TRANSFORMS += '-ne "/^\# /p" '
-COMPONENT_TEST_TRANSFORMS += '-ne "/^Testsuite/p" '
 COMPONENT_TEST_TRANSFORMS += '-ne "/^See/p" '
 COMPONENT_TEST_TRANSFORMS += '-ne "/^Please/p" '
 
