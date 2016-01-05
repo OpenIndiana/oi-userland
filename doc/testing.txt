@@ -105,15 +105,15 @@ For example, for elinks, which just has 64-bit tests, do:
    $ gmake test
 
 At this point, you have a set of test results in
-components/elinks/test/test-64-results.
+components/elinks/build/test/$(MACH64)/test-64-results.
 
 Even better, there are a set of "global" regular expressions that are
 run on those test results to try to normalize them. The output from that
-is placed in components/elinks/test/results-64.snapshot
+is placed in components/elinks/build/test/$(MACH64)/results-64.snapshot
 
 You can now use the contents of that file as a first cut at the master results.
 
-   $ cp test/results-64.snapshot test/results-64.master
+   $ cp build/test/$(MACH64)/results-64.snapshot test/results-64.master
 
 Now run the tests again. Note that you have to get back to a clean start
 just in case the test process tries to compile any code.
@@ -123,7 +123,7 @@ just in case the test process tries to compile any code.
 
 At this point, it will again compare the test results against the master(s),
 and if there are still differences, they will be placed in
-components/elinks/test/test-64-diffs
+components/elinks/build/test/$(MACH64)/test-64-diffs
 
 Typically these differences will be for things like usernames, temporary
 filenames, timings etc. If you have some differences, then you are going

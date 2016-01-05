@@ -1,0 +1,377 @@
+Solaris-specific fixes to the tests to either explicitly use the GNU
+variants of shell utilities, or to use the utilities using arguments that
+will work with the Solaris variants.  Not suitable for upstream.
+
+--- patchutils-0.3.1/tests/U3/run-test.~1~	Wed Jul  2 04:11:08 2008
++++ patchutils-0.3.1/tests/U3/run-test	Fri Dec 18 10:36:24 2015
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ #
+ # This is an interdiff(1) test case.
+ # Test: -U3 works correctly.
+--- patchutils-0.3.1/tests/broken1/run-test.~1~	Wed Jul  2 04:11:08 2008
++++ patchutils-0.3.1/tests/broken1/run-test	Fri Dec 18 10:36:24 2015
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ 
+ . ${top_srcdir-.}/tests/common.sh
+ 
+--- patchutils-0.3.1/tests/combine1/run-test.~1~	Wed Jul  2 04:11:08 2008
++++ patchutils-0.3.1/tests/combine1/run-test	Fri Dec 18 10:36:24 2015
+@@ -96,6 +96,6 @@
+ [ -s errors ] && exit 1
+ 
+ # There should be no fuzz.
+-patch file.a-z < patches >fuzz || exit 1
+-[ -s errors ] && exit 1
++${PATCH} file.a-z < patches >fuzz || exit 1
++
+ exit 0
+--- patchutils-0.3.1/tests/common.sh.~1~	Wed Jun 11 03:01:28 2008
++++ patchutils-0.3.1/tests/common.sh	Fri Dec 18 10:36:24 2015
+@@ -1,17 +1,17 @@
+ [ -n "$VERBOSE" ] && set -x
+-rm -rf ${ARENA:=test-arena}
++rm -rf ${ARENA:='test-arena'}
+ mkdir -p $ARENA
+ top_builddir=`cd ${top_builddir-.}; pwd`
+ INTERDIFF=${top_builddir}/src/interdiff
+ REDIFF=${top_builddir}/src/rediff
+-COMBINEDIFF=${top_builddir}/src/combinediff
+-FLIPDIFF=${top_builddir}/src/flipdiff
+-LSDIFF=${top_builddir}/src/lsdiff
+-GREPDIFF=${top_builddir}/src/grepdiff
+-FILTERDIFF=${top_builddir}/src/filterdiff
++COMBINEDIFF="${top_builddir}/src/interdiff --combine"
++FLIPDIFF="${top_builddir}/src/interdiff --flip"
++LSDIFF="${top_builddir}/src/filterdiff --list"
++GREPDIFF="${top_builddir}/src/filterdiff --grep"
++FILTERDIFF="${top_builddir}/src/filterdiff --filter"
+ SELECTDIFF=${top_builddir}/src/selectdiff
+ RECOUNTDIFF=${top_builddir}/recountdiff
+ UNWRAPDIFF=${top_builddir}/unwrapdiff
+-: ${DIFF:=diff}
+-: ${PATCH:=patch -s}
++: ${DIFF:='gdiff'}
++: ${PATCH:='gpatch -s'}
+ cd $ARENA
+--- patchutils-0.3.1/tests/flip1/run-test.~1~	Wed Jul  2 04:11:08 2008
++++ patchutils-0.3.1/tests/flip1/run-test	Fri Dec 18 10:36:24 2015
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ 
+ # This is a flipdiff(1) testcase.
+ # Test: Patch2 reduces to nothing after flip.
+@@ -29,7 +29,7 @@
+ ${DIFF} -u file.orig file > patch2
+ 
+ ${FLIPDIFF} patch1 patch2 > patch-flipped || exit 1
+-sed -e "s/$(/bin/echo -ne '\t').*$//" patch-flipped > patch-cmp
++sed -e "s/$(/bin/echo '\t').*$//" patch-flipped > patch-cmp
+ cmp - patch-cmp << EOF || exit 1
+ --- file.orig
+ +++ file
+--- patchutils-0.3.1/tests/flip10/run-test.~1~	Wed Jul  2 04:11:08 2008
++++ patchutils-0.3.1/tests/flip10/run-test	Fri Dec 18 10:36:24 2015
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ 
+ # This is a flipdiff(1) testcase.
+ 
+@@ -27,7 +27,7 @@
+ EOF
+ 
+ ${FLIPDIFF} patch1 patch2 > patch-flipped || exit 1
+-sed -e "s/$(/bin/echo -ne '\t').*$//" patch-flipped > patch-cmp
++sed -e "s/$(/bin/echo '\t').*$//" patch-flipped > patch-cmp
+ cmp - patch-cmp << EOF || exit 1
+ --- file.orig
+ +++ file
+--- patchutils-0.3.1/tests/flip11/run-test.~1~	Wed Jul  2 04:11:08 2008
++++ patchutils-0.3.1/tests/flip11/run-test	Fri Dec 18 10:36:24 2015
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ 
+ # This is a flipdiff(1) testcase.
+ 
+@@ -27,7 +27,7 @@
+ EOF
+ 
+ ${FLIPDIFF} patch1 patch2 > patch-flipped || exit 1
+-sed -e "s/$(/bin/echo -ne '\t').*$//" patch-flipped > patch-cmp
++sed -e "s/$(/bin/echo '\t').*$//" patch-flipped > patch-cmp
+ cmp - patch-cmp << EOF || exit 1
+ --- file.orig
+ +++ file
+--- patchutils-0.3.1/tests/flip12/run-test.~1~	Wed Jul  2 04:11:08 2008
++++ patchutils-0.3.1/tests/flip12/run-test	Fri Dec 18 10:36:24 2015
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ 
+ # This is a flipdiff(1) testcase.
+ 
+@@ -79,7 +79,7 @@
+ ${DIFF} -u file.orig file > patch2
+ 
+ ${FLIPDIFF} patch1 patch2 > patch-flipped || exit 1
+-sed -e "s/$(/bin/echo -ne '\t').*$//" patch-flipped > patch-cmp
++sed -e "s/$(/bin/echo '\t').*$//" patch-flipped > patch-cmp
+ cmp - patch-cmp << EOF || exit 1
+ --- file.orig
+ +++ file
+--- patchutils-0.3.1/tests/flip13/run-test.~1~	Wed Jul  2 04:11:08 2008
++++ patchutils-0.3.1/tests/flip13/run-test	Fri Dec 18 10:36:24 2015
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ 
+ # This is a flipdiff(1) testcase.
+ 
+@@ -87,7 +87,7 @@
+ ${DIFF} -u file.orig file > patch2
+ 
+ ${FLIPDIFF} patch1 patch2 > patch-flipped || exit 1
+-sed -e "s/$(/bin/echo -ne '\t').*$//" patch-flipped > patch-cmp
++sed -e "s/$(/bin/echo '\t').*$//" patch-flipped > patch-cmp
+ cmp - patch-cmp << EOF || exit 1
+ --- file.orig
+ +++ file
+--- patchutils-0.3.1/tests/flip14/run-test.~1~	Wed Jul  2 04:11:08 2008
++++ patchutils-0.3.1/tests/flip14/run-test	Fri Dec 18 10:36:24 2015
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ 
+ # This is a flipdiff(1) testcase.
+ 
+@@ -32,7 +32,7 @@
+ ${DIFF} -u file.orig file > patch2
+ 
+ ${FLIPDIFF} patch1 patch2 > patch-flipped || exit 1
+-sed -e "s/$(/bin/echo -ne '\t').*$//" patch-flipped > patch-cmp
++sed -e "s/$(/bin/echo '\t').*$//" patch-flipped > patch-cmp
+ cmp - patch-cmp << EOF || exit 1
+ --- file.orig
+ +++ file
+--- patchutils-0.3.1/tests/flip15/run-test.~1~	Wed Jul  2 04:11:08 2008
++++ patchutils-0.3.1/tests/flip15/run-test	Fri Dec 18 10:36:24 2015
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ 
+ # This is a flipdiff(1) testcase.
+ 
+@@ -27,7 +27,7 @@
+ ${DIFF} -u file.orig file > patch2
+ 
+ ${FLIPDIFF} patch1 patch2 > patch-flipped || exit 1
+-sed -e "s/$(/bin/echo -ne '\t').*$//" patch-flipped > patch-cmp
++sed -e "s/$(/bin/echo '\t').*$//" patch-flipped > patch-cmp
+ cmp - patch-cmp << EOF || exit 1
+ --- file.orig
+ +++ file
+--- patchutils-0.3.1/tests/flip16/run-test.~1~	Wed Jul  2 04:11:08 2008
++++ patchutils-0.3.1/tests/flip16/run-test	Fri Dec 18 10:36:24 2015
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ 
+ # This is a flipdiff(1) testcase.
+ 
+@@ -469,7 +469,7 @@
+ ${DIFF} -u file.orig file > patch2
+ 
+ ${FLIPDIFF} patch1 patch2 > patch-flipped || exit 1
+-sed -e "s/$(/bin/echo -ne '\t').*$//" patch-flipped > patch-cmp
++sed -e "s/$(/bin/echo '\t').*$//" patch-flipped > patch-cmp
+ cmp - patch-cmp << EOF || exit 1
+ --- file.orig
+ +++ file
+--- patchutils-0.3.1/tests/flip17/run-test.~1~	Wed Jul  2 04:11:08 2008
++++ patchutils-0.3.1/tests/flip17/run-test	Fri Dec 18 10:36:24 2015
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ 
+ # This is a flipdiff(1) testcase.
+ 
+--- patchutils-0.3.1/tests/flip18/run-test.~1~	Wed Jul  2 04:11:08 2008
++++ patchutils-0.3.1/tests/flip18/run-test	Fri Dec 18 10:36:24 2015
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ 
+ # This is a flipdiff(1) testcase.
+ 
+--- patchutils-0.3.1/tests/flip19/run-test.~1~	Wed Jul  2 04:11:08 2008
++++ patchutils-0.3.1/tests/flip19/run-test	Fri Dec 18 10:36:24 2015
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ 
+ # This is a flipdiff(1) testcase.
+ # We must give an error in this case, or else complete it successfully.
+--- patchutils-0.3.1/tests/flip2/run-test.~1~	Wed Jul  2 04:11:08 2008
++++ patchutils-0.3.1/tests/flip2/run-test	Fri Dec 18 10:36:24 2015
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ 
+ # This is a flipdiff(1) testcase.
+ 
+@@ -29,7 +29,7 @@
+ ${DIFF} -u file.orig file > patch2
+ 
+ ${FLIPDIFF} patch1 patch2 > patch-flipped || exit 1
+-sed -e "s/$(/bin/echo -ne '\t').*$//" patch-flipped > patch-cmp
++sed -e "s/$(/bin/echo '\t').*$//" patch-flipped > patch-cmp
+ cmp - patch-cmp << EOF || exit 1
+ --- file.orig
+ +++ file
+--- patchutils-0.3.1/tests/flip3/run-test.~1~	Wed Jul  2 04:11:08 2008
++++ patchutils-0.3.1/tests/flip3/run-test	Fri Dec 18 10:36:24 2015
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ 
+ # This is a flipdiff(1) testcase.
+ 
+@@ -29,7 +29,7 @@
+ ${DIFF} -u file.orig file > patch2
+ 
+ ${FLIPDIFF} patch1 patch2 > patch-flipped || exit 1
+-sed -e "s/$(/bin/echo -ne '\t').*$//" patch-flipped > patch-cmp
++sed -e "s/$(/bin/echo '\t').*$//" patch-flipped > patch-cmp
+ cmp - patch-cmp << EOF || exit 1
+ --- file.orig
+ +++ file
+--- patchutils-0.3.1/tests/flip4/run-test.~1~	Wed Jul  2 04:11:08 2008
++++ patchutils-0.3.1/tests/flip4/run-test	Fri Dec 18 10:36:24 2015
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ 
+ # This is a flipdiff(1) testcase.
+ 
+@@ -53,7 +53,7 @@
+ ${DIFF} -u file.orig file > patch2
+ 
+ ${FLIPDIFF} patch1 patch2 > patch-flipped || exit 1
+-sed -e "s/$(/bin/echo -ne '\t').*$//" patch-flipped > patch-cmp
++sed -e "s/$(/bin/echo '\t').*$//" patch-flipped > patch-cmp
+ cmp - patch-cmp << EOF || exit 1
+ --- file.orig
+ +++ file
+--- patchutils-0.3.1/tests/flip5/run-test.~1~	Wed Jul  2 04:11:08 2008
++++ patchutils-0.3.1/tests/flip5/run-test	Fri Dec 18 10:36:24 2015
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ 
+ # This is a flipdiff(1) testcase.
+ 
+@@ -59,7 +59,7 @@
+ ${DIFF} -u file.orig file > patch2
+ 
+ ${FLIPDIFF} patch1 patch2 > patch-flipped || exit 1
+-sed -e "s/$(/bin/echo -ne '\t').*$//" patch-flipped > patch-cmp
++sed -e "s/$(/bin/echo '\t').*$//" patch-flipped > patch-cmp
+ cmp - patch-cmp << EOF || exit 1
+ --- file.orig
+ +++ file
+--- patchutils-0.3.1/tests/flip6/run-test.~1~	Wed Jul  2 04:11:08 2008
++++ patchutils-0.3.1/tests/flip6/run-test	Fri Dec 18 10:36:24 2015
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ 
+ # This is a flipdiff(1) testcase.
+ 
+@@ -63,7 +63,7 @@
+ ${DIFF} -u file.orig file > patch2
+ 
+ ${FLIPDIFF} patch1 patch2 > patch-flipped || exit 1
+-sed -e "s/$(/bin/echo -ne '\t').*$//" patch-flipped > patch-cmp
++sed -e "s/$(/bin/echo '\t').*$//" patch-flipped > patch-cmp
+ cmp - patch-cmp << EOF || exit 1
+ --- file.orig
+ +++ file
+--- patchutils-0.3.1/tests/flip7/run-test.~1~	Wed Jul  2 04:11:08 2008
++++ patchutils-0.3.1/tests/flip7/run-test	Fri Dec 18 10:36:24 2015
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ 
+ # This is a flipdiff(1) testcase.
+ 
+@@ -63,7 +63,7 @@
+ ${DIFF} -u file.orig file > patch2
+ 
+ ${FLIPDIFF} patch1 patch2 > patch-flipped || exit 1
+-sed -e "s/$(/bin/echo -ne '\t').*$//" patch-flipped > patch-cmp
++sed -e "s/$(/bin/echo '\t').*$//" patch-flipped > patch-cmp
+ cmp - patch-cmp << EOF || exit 1
+ --- file.orig
+ +++ file
+--- patchutils-0.3.1/tests/flip8/run-test.~1~	Wed Jul  2 04:11:08 2008
++++ patchutils-0.3.1/tests/flip8/run-test	Fri Dec 18 10:36:24 2015
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ 
+ # This is a flipdiff(1) testcase.
+ 
+@@ -109,7 +109,7 @@
+ ${DIFF} -u file.orig file > patch2
+ 
+ ${FLIPDIFF} patch1 patch2 > patch-flipped || exit 1
+-sed -e "s/$(/bin/echo -ne '\t').*$//" patch-flipped > patch-cmp
++sed -e "s/$(/bin/echo '\t').*$//" patch-flipped > patch-cmp
+ cmp - patch-cmp << EOF || exit 1
+ --- file.orig
+ +++ file
+--- patchutils-0.3.1/tests/flip9/run-test.~1~	Wed Jul  2 04:11:08 2008
++++ patchutils-0.3.1/tests/flip9/run-test	Fri Dec 18 10:36:24 2015
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ 
+ # This is a flipdiff(1) testcase.
+ 
+@@ -25,7 +25,7 @@
+ ${DIFF} -u file2.orig file2 > patch2
+ 
+ ${FLIPDIFF} patch1 patch2 > patch-flipped || exit 1
+-sed -e "s/$(/bin/echo -ne '\t').*$//" patch-flipped > patch-cmp
++sed -e "s/$(/bin/echo '\t').*$//" patch-flipped > patch-cmp
+ cmp - patch-cmp << EOF || exit 1
+ --- file2.orig
+ +++ file2
+--- patchutils-0.3.1/tests/nodate/run-test.~1~	Wed Jul  2 04:11:08 2008
++++ patchutils-0.3.1/tests/nodate/run-test	Fri Dec 18 10:36:24 2015
+@@ -20,7 +20,7 @@
+ ${INTERDIFF} -U0 patch1 patch2 2>errors > patch1-2 || exit 1
+ [ -s errors ] && exit 1
+ cat << EOF | cmp - patch1-2 || exit 1
+-diff -U0 file file
++${DIFF} -U0 file file
+ --- file
+ +++ file	Nov 27 2001
+ @@ -36 +36 @@
+--- patchutils-0.3.1/tests/unline1/run-test.~1~	Wed Jul  2 04:11:08 2008
++++ patchutils-0.3.1/tests/unline1/run-test	Fri Dec 18 10:36:24 2015
+@@ -25,7 +25,7 @@
+ [ -s errors ] && exit 1
+ 
+ cmp - patch1-2 << EOF || exit 1
+-diff -u file file
++${DIFF} -u file file
+ --- file
+ +++ file
+ @@ -1 +1 @@

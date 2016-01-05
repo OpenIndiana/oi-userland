@@ -1,0 +1,73 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
+#
+set name=pkg.fmri \
+    value=pkg:/text/patchutils@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary \
+    value="A collection of programs for manipulating patch files"
+set name=com.oracle.info.description \
+    value="This is a collection of programs that can manipulate patch files in a variety of ways, such as interpolating between two pre-patches, combining two incremental patches, fixing line numbers in hand-edited patches, and simply listing the files modified by a patch."
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value="org.opensolaris.category.2008:System/Text Tools"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream value="Tim Waugh <twaugh@redhat.com>"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2008/770
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+#
+link path=usr/bin/combinediff target=interdiff
+file path=usr/bin/dehtmldiff
+file path=usr/bin/editdiff
+file path=usr/bin/espdiff
+file path=usr/bin/filterdiff
+file path=usr/bin/fixcvsdiff
+link path=usr/bin/flipdiff target=interdiff
+link path=usr/bin/grepdiff target=filterdiff
+file path=usr/bin/interdiff
+link path=usr/bin/lsdiff target=filterdiff
+file path=usr/bin/recountdiff
+file path=usr/bin/rediff
+file path=usr/bin/splitdiff
+file path=usr/bin/unwrapdiff
+file path=usr/share/man/man1/combinediff.1
+file path=usr/share/man/man1/dehtmldiff.1
+file path=usr/share/man/man1/editdiff.1
+file path=usr/share/man/man1/espdiff.1
+file path=usr/share/man/man1/filterdiff.1
+file path=usr/share/man/man1/fixcvsdiff.1
+file path=usr/share/man/man1/flipdiff.1
+file path=usr/share/man/man1/grepdiff.1
+file path=usr/share/man/man1/interdiff.1
+file path=usr/share/man/man1/lsdiff.1
+file path=usr/share/man/man1/recountdiff.1
+file path=usr/share/man/man1/rediff.1
+file path=usr/share/man/man1/splitdiff.1
+file path=usr/share/man/man1/unwrapdiff.1
+#
+license COPYING license=GPLv2
+license patchutils.license-LGPLv2.1 license=LGPLv2.1
