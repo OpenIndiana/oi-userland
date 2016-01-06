@@ -1,0 +1,16 @@
+A change to sys/siginfo.h added a #define for si_id that breaks the vim
+build.  This is a nasty hack to undo those effects, and should not go
+upstream.  The right fix may be to get vim to stop using the "si_" prefix,
+since that appears to be "reserved for the implementation", per the
+OpenGroup specs.
+
+--- src/syntax.c	Sat Aug 10 06:00:24 2013
++++ src/syntax.c	Wed Jan  6 10:34:12 2016
+@@ -279,6 +279,7 @@
+  * When si_m_endpos.lnum is 0, the items other than si_idx are unknown.
+  * (The end positions have the column number of the next char)
+  */
++#undef si_id
+ typedef struct state_item
+ {
+     int		si_idx;			/* index of syntax pattern or
