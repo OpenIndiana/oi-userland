@@ -19,7 +19,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 #
 # userland-fetch - a file download utility
@@ -81,7 +81,7 @@ def validate_signature(path, signature):
                 print proc.stdout.read()
                 return False
         return True
-	
+
 def validate(file, hash):
 	"""Given a file-like object and a hash string, verify that the hash
 	matches the file contents."""
@@ -151,7 +151,7 @@ def validate_payload(filename, hash):
 	return validate(file, hash)
 
 
-def download(url, filename=None, quiet=False):
+def download(url, timeout, filename=None, quiet=False):
 	"""Download the content at the given URL to the given filename
 	(defaulting to the basename of the URL if not given.  If 'quiet' is
 	True, throw away any error messages.  Returns the name of the file to
@@ -160,7 +160,7 @@ def download(url, filename=None, quiet=False):
 	src = None
 
 	try:
-		src = urlopen(url)
+		src = urlopen(url=url, timeout=timeout)
 	except IOError as e:
 		if not quiet:
 			printIOError(e, "Can't open url " + url)
@@ -224,7 +224,7 @@ def download_paths(search, filename, url):
 
 	return urls
 
-def download_from_paths(search_list, file_arg, url, link_arg, quiet=False):
+def download_from_paths(search_list, file_arg, url, timeout_arg, link_arg, quiet=False):
 	"""Attempts to download a file from a number of possible locations.
 	Generates a list of paths where the file ends up on the local
 	filesystem.  This is a generator because while a download might be
@@ -258,7 +258,7 @@ def download_from_paths(search_list, file_arg, url, link_arg, quiet=False):
 		elif scheme in [ 'http', 'https', 'ftp' ]:
 			if not quiet:
 				print "\n    downloading...",
-			name = download(url, file_arg, quiet)
+			name = download(url, timeout_arg, file_arg, quiet)
 			if name == None:
 				if not quiet:
 					print "failed"
@@ -268,14 +268,15 @@ def download_from_paths(search_list, file_arg, url, link_arg, quiet=False):
 
 def usage():
 	print "Usage: %s [-f|--file (file)] [-l|--link] [-h|--hash (hash)] " \
-          "[-s|--search (search-dir)] [-S|--sigurl (signature-url)] --url (url)" % \
+          "[-s|--search (search-dir)] [-S|--sigurl (signature-url)] " \
+	  "[-t|--timeout (timeout)] --url (url)" % \
           (sys.argv[0].split('/')[-1])
 	sys.exit(1)
 
 def main():
 	import getopt
 
-	# FLUSH STDOUT 
+	# FLUSH STDOUT
 	sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 0)
 
 	file_arg = None
@@ -283,11 +284,13 @@ def main():
 	hash_arg = None
 	url_arg = None
 	sig_arg = None
+	timeout_arg = 300
 	search_list = list()
 
 	try:
-                opts, args = getopt.getopt(sys.argv[1:], "f:h:ls:S:u:",
-			["file=", "link", "hash=", "search=", "sigurl=", "url="])
+                opts, args = getopt.getopt(sys.argv[1:], "f:h:ls:S:t:u:",
+			["file=", "link", "hash=", "search=", "sigurl=",
+			"timeout=", "url="])
 	except getopt.GetoptError, err:
 		print str(err)
 		usage()
@@ -303,12 +306,24 @@ def main():
 			search_list.append(arg)
 		elif opt in [ "-S", "--sigurl" ]:
 			sig_arg = arg
+		elif opt in [ "-t", "--timeout" ]:
+			try:
+				timeout_arg = int(arg)
+			except ValueError:
+				print "Invalid argument for %s, should be a " \
+				    "number, but is %s" % (opt, arg)
+				sys.exit(1)
+			if timeout_arg < 0:
+				print "Invalid argument for %s, should be a " \
+				    "positive number, but is %s" % (opt, arg)
+				sys.exit(1)
 		elif opt in [ "-u", "--url" ]:
 			url_arg = arg
 		else:
 			assert False, "unknown option"
 
-	for name in download_from_paths(search_list, file_arg, url_arg, link_arg):
+	for name in download_from_paths(search_list, file_arg, url_arg,
+	    timeout_arg, link_arg):
 		print "\n    validating signature...",
 
 		sig_valid = False
@@ -322,7 +337,7 @@ def main():
 			    os.path.basename(sig_arg))
 			# Validate with the first signature we find.
 			for sig_file in download_from_paths(search_list, sig_file,
-			    sig_arg, link_arg, True):
+			    sig_arg, timeout_arg, link_arg, True):
 				if sig_file:
 					if validate_signature(name, sig_file):
 						print "ok"
