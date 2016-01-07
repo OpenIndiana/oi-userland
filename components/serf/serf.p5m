@@ -1,0 +1,47 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
+set name=pkg.fmri \
+    value=pkg:/library/libserf@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="high performance C-based HTTP client library"
+set name=pkg.description \
+    value="The serf library is a high performance C-based HTTP client library. It is built upon the Apache Portable Runtime (APR) library.  Features include multiplexed, asynchronous connections; SSL/TLS support; full HTTP pipelining; multiple authentication modes (Basic, Digest, Kerberos/NTLM); zero-copy support for increased throughput."
+set name=com.oracle.info.description \
+    value="the serf C-based HTTP client library"
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value="org.opensolaris.category.2008:Web Services/Application and Web Servers"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2015/152
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+file serf.h path=usr/include/serf-1/serf.h
+file serf_bucket_types.h path=usr/include/serf-1/serf_bucket_types.h
+file serf_bucket_util.h path=usr/include/serf-1/serf_bucket_util.h
+file $(MACH64)/libserf-1.so path=usr/lib/$(MACH64)/libserf-1.so
+file $(MACH64)/serf-1.pc path=usr/lib/$(MACH64)/pkgconfig/serf-1.pc
+file $(MACH32)/libserf-1.so path=usr/lib/libserf-1.so
+file $(MACH32)/serf-1.pc path=usr/lib/pkgconfig/serf-1.pc
+license serf.license license="Apache v2.0"
