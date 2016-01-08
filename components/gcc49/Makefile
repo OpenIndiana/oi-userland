@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 export PARFAIT_BUILD=no
 
@@ -149,10 +149,6 @@ CONFIGURE_OPTIONS +=    --enable-initfini-array=yes
 CONFIGURE_OPTIONS +=    --enable-vtable-verify=no
 CONFIGURE_OPTIONS +=    --enable-comdat=yes
 CONFIGURE_OPTIONS +=    --enable-__cxa_atexit=$(ENABLE_CXA_ATEXIT)
-
-# Although this is required by the C++11/C++14 standards,
-# it appears broken in 4.9.3.
-CONFIGURE_OPTIONS +=    --enable-fully-dynamic-string=yes
 CONFIGURE_OPTIONS +=    --enable-libstdcxx-debug=yes
 CONFIGURE_OPTIONS +=    --enable-libstdcxx-threads=yes
 CONFIGURE_OPTIONS +=    --enable-c99=yes

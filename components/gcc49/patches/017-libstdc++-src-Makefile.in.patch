@@ -1,8 +1,7 @@
 # Stefan Teleman <sefan.teleman@oracle.com>
 # Messy patch for libstdc++'s ./configure:
-# 1. We want -D_GLIBCXX_FULLY_DYNAMIC_STRING=1 (no COW strings in C++11)
-# 2. libtool linking on Solaris is quirky
-# 3. We want LARGEFILE enabled in the libstdc++ binary.
+# 1. libtool linking on Solaris is quirky
+# 2. We want LARGEFILE enabled in the libstdc++ binary.
 # Internal patch. Not submitted upstream yet.
 --- libstdc++-v3/src/Makefile.in	2013-08-06 20:38:59.000000000 -0700
 +++ libstdc++-v3/src/Makefile.in	2015-09-12 13:12:28.970889245 -0700
@@ -11,7 +10,7 @@
  CPP = @CPP@
  CPPFLAGS = @CPPFLAGS@
 +CPPFLAGS += -D_REENTRANT=1 -D_LARGEFILE_SOURCE=1 -D_FILE_OFFSET_BITS=64
-+CPPFLAGS += -D__EXTENSIONS__=1 -D_GLIBCXX_FULLY_DYNAMIC_STRING=1
++CPPFLAGS += -D__EXTENSIONS__=1
  CPU_DEFINES_SRCDIR = @CPU_DEFINES_SRCDIR@
  CPU_OPT_BITS_RANDOM = @CPU_OPT_BITS_RANDOM@
  CPU_OPT_EXT_RANDOM = @CPU_OPT_EXT_RANDOM@
@@ -43,7 +42,7 @@
  CPP = @CPP@
  CPPFLAGS = @CPPFLAGS@
 +CPPFLAGS += -D_REENTRANT=1 -D_LARGEFILE_SOURCE=1 -D_FILE_OFFSET_BITS=64
-+CPPFLAGS += -D__EXTENSIONS__=1 -D_GLIBCXX_FULLY_DYNAMIC_STRING=1
++CPPFLAGS += -D__EXTENSIONS__=1
  CPU_DEFINES_SRCDIR = @CPU_DEFINES_SRCDIR@
  CPU_OPT_BITS_RANDOM = @CPU_OPT_BITS_RANDOM@
  CPU_OPT_EXT_RANDOM = @CPU_OPT_EXT_RANDOM@
