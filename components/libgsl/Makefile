@@ -24,16 +24,16 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gsl
-COMPONENT_VERSION=	1.16
+COMPONENT_VERSION=	2.1
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/gsl/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:73bc2f51b90d2a780e6d266d43e487b3dbd78945dd0b04b14ca5980fe28d2f53
+    sha256:59ad06837397617f698975c494fe7b2b698739a59e2fcf830b776428938a0c66
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libgsl
 
-TPNO=			21884
+TPNO=			26006
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -42,13 +42,19 @@ include $(WS_MAKE_RULES)/ips.mk
 # By default, tests in each GSL sub-directory are linked statically against
 # a set of .la files. We don't deliver those in the GSL package, so we
 # adjust all the tests to link against the dynamic GSL library instead.
-COMPONENT_POST_UNPACK_ACTION = \
+COMPONENT_POST_UNPACK_ACTION += \
 	(cd $(COMPONENT_SRC); \
 	for f in `ls */Makefile.am` ; do \
 	    $(GSED) -i -e \
 		's|^test_LDADD.*$$|test_LDFLAGS = -L`pwd`/../.libs/ -R`pwd`/../.libs/\ntest_LDADD = -lgsl|' \
 		$$f ; \
-	done)
+	done) ;
+
+# Remove ../../cblas/libgslcblas.la from LDADD definition in
+# .../doc/examples/Makefile.am
+COMPONENT_POST_UNPACK_ACTION += \
+	$(GSED) -i -e 's|^LDADD.*$$|LDADD = ../../libgsl.la|' \
+		$(COMPONENT_SRC)/doc/examples/Makefile.am ;
 
 # Recreate configure and top-level Makefile to pickup libsunperf changes.
 COMPONENT_PREP_ACTION = \
