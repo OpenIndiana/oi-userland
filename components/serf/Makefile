@@ -53,6 +53,7 @@ SERFLIBDIR_64 =		/usr/lib/64
 
 # We have to roll our own as serf is built with scons.
 SCONS =			/usr/bin/scons
+COMPONENT_BUILD_ARGS += CC="$(CC)"
 COMPONENT_BUILD_ARGS +=	CPPFLAGS=-D__EXTENSIONS__
 COMPONENT_BUILD_ARGS +=	CFLAGS=$(CC_BITS)
 COMPONENT_BUILD_ARGS +=	LINKFLAGS="$(CC_BITS) $(SERFLIBPATH_$(BITS))"
