@@ -1,0 +1,18 @@
+This patch is used to get around a compiling problem with ntp-4.2.8p6. It is
+not needed on versions prior to that. The problem has been reported as NTP
+community bug 2994, http://bugs.ntp.org/show_bug.cgi?id=2994 and may be removed
+for versions of NTP with this bug fixed.
+
+--- ntpd/ntpd.c
++++ ntpd/ntpd.c
+@@ -159,6 +159,10 @@ int priority_done = 2;		/* 0 - Set prior
+ 
+ int listen_to_virtual_ips = TRUE;
+ 
++#if defined(HAVE_SIGNALED_IO) && defined(DEBUG_TIMING)
++# undef DEBUG_TIMING
++#endif
++
+ /*
+  * No-fork flag.  If set, we do not become a background daemon.
+  */

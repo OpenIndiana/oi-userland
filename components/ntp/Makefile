@@ -20,14 +20,14 @@
 #
 
 #
-# Copyright (c) 2010, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ntp
 COMPONENT_VERSION=	4.2.8
-COMPONENT_PATCH_VERSION=	2
+COMPONENT_PATCH_VERSION=	6
 COMPONENT_RC_VERSION=	1
 HUMAN_VERSION=		$(COMPONENT_VERSION)p$(COMPONENT_PATCH_VERSION)
 IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).$(COMPONENT_PATCH_VERSION)
@@ -36,7 +36,7 @@ COMPONENT_SRC_NAME=	ntp
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	 \
-    sha256:0d69bc0e95caad43ea04fdad410e756bae1a71e67b1c2bd799b76b55e04c9b31
+    sha256:583d0e1c573ace30a9c6afbea0fc52cae9c8c916dbc15c026e485a0dda4ba048
 COMPONENT_ARCHIVE_URL=	http://archive.ntp.org/ntp4/ntp-4.2/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB= service/ntp
 
