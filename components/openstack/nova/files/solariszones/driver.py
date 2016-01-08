@@ -1,7 +1,7 @@
 # Copyright 2011 Justin Santa Barbara
 # All Rights Reserved.
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -1778,13 +1778,10 @@ class SolarisZonesDriver(driver.ComputeDriver):
             new_rvid = instance.system_metadata.get('new_instance_volid')
             newvname = instance['display_name'] + "-" + self._rootzpool_suffix
             mount_dev = instance['root_device_name']
-            del instance.system_metadata['new_instance_volid']
             del instance.system_metadata['old_instance_volid']
 
             self._resize_disk_migration(context, instance, new_rvid, old_rvid,
                                         rgb, mount_dev)
-
-            self._volume_api.delete(context, new_rvid)
 
     def destroy(self, context, instance, network_info, block_device_info=None,
                 destroy_disks=True, migrate_data=None):
@@ -1841,7 +1838,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
         # One last point of house keeping. If we are deleting the instance
         # during a resize operation we want to make sure the cinder volumes are
-        # property cleaned up. We need to do this here, because the periodic
+        # properly cleaned up. We need to do this here, because the periodic
         # task that comes along and cleans these things up isn't nice enough to
         # pass a context in so that we could simply do the work there.  But
         # because we have access to a context, we can handle the work here and
@@ -2685,14 +2682,11 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
             del instance.system_metadata['new_instance_volid']
             del instance.system_metadata['old_instance_volid']
-
-            rootmp = instance.root_device_name
-            bmap = block_device_info.get('block_device_mapping')
-            for entry in bmap:
-                if entry['mount_device'] != rootmp:
-                    self.attach_volume(context,
-                                       entry['connection_info'], instance,
-                                       entry['mount_device'])
+        else:
+            new_rvid = instance.system_metadata['new_instance_volid']
+            if new_rvid:
+                del instance.system_metadata['new_instance_volid']
+                self._volume_api.delete(context, new_rvid)
 
         self._power_on(instance)
 
