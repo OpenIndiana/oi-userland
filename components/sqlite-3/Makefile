@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -79,6 +79,7 @@ CFLAGS +=	-DSQLITE_DEFAULT_PAGE_SIZE=32768
 CFLAGS +=	-DSQLITE_MAX_DEFAULT_PAGE_SIZE=32768
 CFLAGS +=	-I.
 
+CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	--enable-threadsafe
 CONFIGURE_OPTIONS +=	--enable-dynamic-extensions
 CONFIGURE_OPTIONS +=	--enable-shared
