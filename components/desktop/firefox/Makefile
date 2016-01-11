@@ -23,6 +23,9 @@
 # Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
+# parfait is a bit unhappy (22527218)
+export PARFAIT_BUILD=no
+
 COMPILER =	gcc
 
 include ../../../make-rules/shared-macros.mk
