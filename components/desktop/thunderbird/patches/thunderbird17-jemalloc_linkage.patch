@@ -1,0 +1,17 @@
+Fix for building on Solaris.
+This should be investigated for sending upstream.
+--- a/mail/app/Makefile.in	Mon Jan 16 15:54:09 2012
++++ b/mail/app/Makefile.in	Mon Jan 16 15:55:33 2012
+@@ -113,6 +113,12 @@
+ endif
+ endif
+ 
++ifdef MOZ_MEMORY
++ifeq ($(OS_ARCH),SunOS)
++LIBS += $(LIBXUL_LIBS)
++endif
++endif
++
+ # This switches $(INSTALL) to copy mode, like $(SYSINSTALL), so things that
+ # shouldn't get 755 perms need $(IFLAGS1) for either way of calling nsinstall.
+ NSDISTMODE = copy

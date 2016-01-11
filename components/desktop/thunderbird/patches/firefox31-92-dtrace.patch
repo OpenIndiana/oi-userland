@@ -1,0 +1,58 @@
+See Mozilla bug #702179 - dtrace probes are not installed on Solaris with
+static js lib.
+We haven't enabled dtrace. dtrace will trim the function name (too long).
+
+--- comm-esr31/mozilla//configure.orig	2015-06-04 17:42:52.277140630 -0700
++++ comm-esr31/mozilla//configure	2015-06-04 17:42:52.307036479 -0700
+@@ -6472,7 +6472,7 @@
+ MOZ_PNG_CFLAGS="-I$_objdir/dist/include" # needed for freetype compilation
+ MOZ_PNG_LIBS='$(call EXPAND_LIBNAME_PATH,mozpng,$(DEPTH)/media/libpng)'
+ 
+-MOZ_JS_STATIC_LIBS='$(call EXPAND_LIBNAME_PATH,js_static,$(LIBXUL_DIST)/lib)'
++MOZ_JS_STATIC_LIBS='$(call EXPAND_LIBNAME_PATH,js_static,$(DEPTH)/js/src)'
+ MOZ_JS_SHARED_LIBS='$(call EXPAND_LIBNAME_PATH,mozjs,$(LIBXUL_DIST)/lib)'
+ MOZ_FIX_LINK_PATHS='-Wl,-rpath-link,$(LIBXUL_DIST)/bin -Wl,-rpath-link,$(prefix)/lib'
+ XPCOM_FROZEN_LDOPTS='$(call EXPAND_LIBNAME_PATH,xul mozalloc,$(LIBXUL_DIST)/bin)'
+--- comm-esr31/mozilla/js/src/Makefile.in.orig	2015-06-04 17:42:52.285669989 -0700
++++ comm-esr31/mozilla/js/src/Makefile.in	2015-06-04 17:42:52.307164501 -0700
+@@ -20,7 +20,6 @@
+ STATIC_LIBRARY_NAME = js_static
+ LIBS		= $(NSPR_LIBS)
+ 
+-DIST_INSTALL = 1
+ 
+ ifdef JS_STANDALONE
+ SHARED_LIBRARY_LIBS += $(call EXPAND_LIBNAME_PATH,mfbt,$(DEPTH)/mfbt)
+--- comm-esr31/mozilla/js/src/jsobj.cpp.orig	2015-06-04 17:42:52.291238156 -0700
++++ comm-esr31/mozilla/js/src/jsobj.cpp	2015-06-04 17:42:52.307610718 -0700
+@@ -1324,6 +1324,8 @@
+     return fill(entry, clasp, proto.raw(), kind, obj);
+ }
+ 
++#pragma weak "__1cCjsXNewObjectWithGivenProto6Fpn0AQExclusiveContext_pkn0AFClass_n0ALTaggedProto_pnIJSObject_n0ACgcJAllocKind_n0ANNewObjectKi" = "__1cCjsXNewObjectWithGivenProto6Fpn0AQExclusiveContext_pkn0AFClass_n0ALTaggedProto_pnIJSObject_n0ACgcJAllocKind_n0ANNewObjectKind__8_"
++
+ JSObject*
+ js::NewObjectWithGivenProto(ExclusiveContext* cxArg, const js::Class* clasp,
+                             js::TaggedProto protoArg, JSObject* parentArg,
+--- comm-esr31/mozilla/js/src/vm/Interpreter.cpp.orig	2015-06-04 17:42:52.296891616 -0700
++++ comm-esr31/mozilla/js/src/vm/Interpreter.cpp	2015-06-04 17:42:52.307913120 -0700
+@@ -603,6 +603,8 @@
+     return Invoke(cx, ObjectValue(*obj), fval, argc, argv, rval);
+ }
+ 
++#pragma weak "__1cCjsNExecuteKernel6FpnJJSContext_nCJSGHandle4CpnIJSScript___rnIJSObject_rkn0CFValue_n0ALExecuteType_n0AQAbstractFramePtr_p9A" = "__1cCjsNExecuteKernel6FpnJJSContext_nCJSGHandle4CpnIJSScript___rnIJSObject_rkn0CFValue_n0ALExecuteType_n0AQAbstractFramePtr_p9A_b_"
++
+ bool
+ js::ExecuteKernel(JSContext* cx, HandleScript script, JSObject& scopeChainArg, const Value& thisv,
+                   ExecuteType type, AbstractFramePtr evalInFrame, Value* result)
+--- comm-esr31/mozilla/js/src/vm/OldDebugAPI.cpp.orig	2015-06-04 17:42:52.302287919 -0700
++++ comm-esr31/mozilla/js/src/vm/OldDebugAPI.cpp	2015-06-04 17:42:52.308077570 -0700
+@@ -237,6 +237,8 @@
+     return true;
+ }
+ 
++#pragma weak "__1cMJS_ClearTrap6FpnJJSContext_pnIJSScript_pCppF134pnCJSFValue_6_nMJSTrapStatus_7_v_" = "__1cMJS_ClearTrap6FpnJJSContext_pnIJSScript_pCppF134pnCJSFValue_6_nMJSTrapStatus_p6_v_"
++
+ JS_PUBLIC_API(void)
+ JS_ClearTrap(JSContext* cx, JSScript* script, jsbytecode* pc,
+              JSTrapHandler* handlerp, jsval* closurep)

@@ -1,0 +1,27 @@
+May be compiler specific. Can potentially send upstream with an ifdef Solaris 
+statement. 
+Investigate whether the emmintrin.h part is necessary. 
+
+--- mozilla-esr31/gfx/2d/FilterProcessingSIMD-inl.h.orig	2015-06-04 17:42:52.586368339 -0700
++++ mozilla-esr31/gfx/2d/FilterProcessingSIMD-inl.h	2015-06-04 17:42:52.594507633 -0700
+@@ -490,7 +490,7 @@
+   // int16_t rows_ra[8] == { rB, rG, rR, rA, aB, aG, aR, aA }.
+   // int32_t bias[4] == { _B, _G, _R, _A }.
+ 
+-  i32x4_t sum = bias;
++  i32x4_t sum = (i32x4_t)bias;
+ 
+   // int16_t bg[8] = { b, g, b, g, b, g, b, g };
+   i16x8_t bg = simd::ShuffleHi16<1,0,1,0>(simd::ShuffleLo16<1,0,1,0>(p));
+--- mozilla-esr31/gfx/2d/SIMD.h.orig	2015-06-04 17:42:52.591921342 -0700
++++ mozilla-esr31/gfx/2d/SIMD.h	2015-06-04 17:42:52.594674555 -0700
+@@ -10,8 +10,8 @@
+  * Consumers of this file need to #define SIMD_COMPILE_SSE2 before including it
+  * if they want access to the SSE2 functions.
+  */
+-
+ #ifdef SIMD_COMPILE_SSE2
++#include <emmintrin.h>
+ #include <xmmintrin.h>
+ #endif
+ 

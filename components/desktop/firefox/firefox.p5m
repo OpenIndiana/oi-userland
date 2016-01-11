@@ -1,0 +1,169 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+#
+
+# pkg.linted actions are needed to prevent bad RUNPATH lint errors.
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+<transform file path=usr/lib/firefox/(.+)$ -> \
+    set action.hash usr/lib/firefox-$(IPS_COMPONENT_VERSION)/%<1> >
+set name=pkg.fmri \
+    value=pkg:/web/browser/firefox@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Mozilla Firefox Web browser"
+set name=com.oracle.info.description value="Mozilla Firefox Web browser"
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value=org.opensolaris.category.2008:Applications/Internet
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2014/085
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+link path=usr/bin/firefox target=../lib/firefox/firefox
+file path=usr/lib/firefox/application.ini
+file path=usr/lib/firefox/browser/blocklist.xml
+file path=usr/lib/firefox/browser/chrome.manifest
+file path=usr/lib/firefox/browser/chrome/icons/default/default16.png
+file path=usr/lib/firefox/browser/chrome/icons/default/default32.png
+file path=usr/lib/firefox/browser/chrome/icons/default/default48.png
+file path=usr/lib/firefox/browser/components/components.manifest
+file path=usr/lib/firefox/browser/components/libbrowsercomps.so \
+    pkg.depend.bypass-generate=.* pkg.linted.userland.action001.3=true
+file path=usr/lib/firefox/browser/extensions/langpack-ar@firefox.mozilla.org.xpi
+file path=usr/lib/firefox/browser/extensions/langpack-be@firefox.mozilla.org.xpi
+file path=usr/lib/firefox/browser/extensions/langpack-bg@firefox.mozilla.org.xpi
+file path=usr/lib/firefox/browser/extensions/langpack-ca@firefox.mozilla.org.xpi
+file path=usr/lib/firefox/browser/extensions/langpack-cs@firefox.mozilla.org.xpi
+file path=usr/lib/firefox/browser/extensions/langpack-da@firefox.mozilla.org.xpi
+file path=usr/lib/firefox/browser/extensions/langpack-de@firefox.mozilla.org.xpi
+file path=usr/lib/firefox/browser/extensions/langpack-el@firefox.mozilla.org.xpi
+file path=usr/lib/firefox/browser/extensions/langpack-es-AR@firefox.mozilla.org.xpi
+file path=usr/lib/firefox/browser/extensions/langpack-es-CL@firefox.mozilla.org.xpi
+file path=usr/lib/firefox/browser/extensions/langpack-es-ES@firefox.mozilla.org.xpi
+file path=usr/lib/firefox/browser/extensions/langpack-et@firefox.mozilla.org.xpi
+file path=usr/lib/firefox/browser/extensions/langpack-fi@firefox.mozilla.org.xpi
+file path=usr/lib/firefox/browser/extensions/langpack-fr@firefox.mozilla.org.xpi
+file path=usr/lib/firefox/browser/extensions/langpack-he@firefox.mozilla.org.xpi
+file path=usr/lib/firefox/browser/extensions/langpack-hi-IN@firefox.mozilla.org.xpi
+file path=usr/lib/firefox/browser/extensions/langpack-hr@firefox.mozilla.org.xpi
+file path=usr/lib/firefox/browser/extensions/langpack-hu@firefox.mozilla.org.xpi
+file path=usr/lib/firefox/browser/extensions/langpack-id@firefox.mozilla.org.xpi
+file path=usr/lib/firefox/browser/extensions/langpack-is@firefox.mozilla.org.xpi
+file path=usr/lib/firefox/browser/extensions/langpack-it@firefox.mozilla.org.xpi
+file path=usr/lib/firefox/browser/extensions/langpack-ja@firefox.mozilla.org.xpi
+file path=usr/lib/firefox/browser/extensions/langpack-kk@firefox.mozilla.org.xpi
+file path=usr/lib/firefox/browser/extensions/langpack-ko@firefox.mozilla.org.xpi
+file path=usr/lib/firefox/browser/extensions/langpack-lt@firefox.mozilla.org.xpi
+file path=usr/lib/firefox/browser/extensions/langpack-lv@firefox.mozilla.org.xpi
+file path=usr/lib/firefox/browser/extensions/langpack-mk@firefox.mozilla.org.xpi
+file path=usr/lib/firefox/browser/extensions/langpack-nb-NO@firefox.mozilla.org.xpi
+file path=usr/lib/firefox/browser/extensions/langpack-nl@firefox.mozilla.org.xpi
+file path=usr/lib/firefox/browser/extensions/langpack-nn-NO@firefox.mozilla.org.xpi
+file path=usr/lib/firefox/browser/extensions/langpack-pl@firefox.mozilla.org.xpi
+file path=usr/lib/firefox/browser/extensions/langpack-pt-BR@firefox.mozilla.org.xpi
+file path=usr/lib/firefox/browser/extensions/langpack-pt-PT@firefox.mozilla.org.xpi
+file path=usr/lib/firefox/browser/extensions/langpack-ro@firefox.mozilla.org.xpi
+file path=usr/lib/firefox/browser/extensions/langpack-ru@firefox.mozilla.org.xpi
+file path=usr/lib/firefox/browser/extensions/langpack-sk@firefox.mozilla.org.xpi
+file path=usr/lib/firefox/browser/extensions/langpack-sl@firefox.mozilla.org.xpi
+file path=usr/lib/firefox/browser/extensions/langpack-sq@firefox.mozilla.org.xpi
+file path=usr/lib/firefox/browser/extensions/langpack-sr@firefox.mozilla.org.xpi
+file path=usr/lib/firefox/browser/extensions/langpack-sv-SE@firefox.mozilla.org.xpi
+file path=usr/lib/firefox/browser/extensions/langpack-th@firefox.mozilla.org.xpi
+file path=usr/lib/firefox/browser/extensions/langpack-tr@firefox.mozilla.org.xpi
+file path=usr/lib/firefox/browser/extensions/langpack-uk@firefox.mozilla.org.xpi
+file path=usr/lib/firefox/browser/extensions/langpack-vi@firefox.mozilla.org.xpi
+file path=usr/lib/firefox/browser/extensions/langpack-zh-CN@firefox.mozilla.org.xpi
+file path=usr/lib/firefox/browser/extensions/langpack-zh-TW@firefox.mozilla.org.xpi
+file path=usr/lib/firefox/browser/extensions/{972ce4c6-7e08-4474-a285-3208198ce6fd}/icon.png
+file path=usr/lib/firefox/browser/extensions/{972ce4c6-7e08-4474-a285-3208198ce6fd}/install.rdf
+file path=usr/lib/firefox/browser/icons/mozicon128.png
+file path=usr/lib/firefox/browser/omni.ja
+file path=usr/lib/firefox/browser/searchplugins/amazondotcom.xml
+file path=usr/lib/firefox/browser/searchplugins/bing.xml
+file path=usr/lib/firefox/browser/searchplugins/eBay.xml
+file path=usr/lib/firefox/browser/searchplugins/google.xml
+file path=usr/lib/firefox/browser/searchplugins/twitter.xml
+file path=usr/lib/firefox/browser/searchplugins/wikipedia.xml
+file path=usr/lib/firefox/browser/searchplugins/yahoo.xml
+file path=usr/lib/firefox/chrome.manifest
+file path=usr/lib/firefox/components/components.manifest
+file path=usr/lib/firefox/components/libdbusservice.so \
+    pkg.linted.userland.action001.3=true
+file path=usr/lib/firefox/components/libmozgnome.so \
+    pkg.linted.userland.action001.3=true
+file path=usr/lib/firefox/cpu/sparcv8plus/libnspr_flt4.so variant.arch=sparc
+file path=usr/lib/firefox/defaults/pref/channel-prefs.js
+file path=usr/lib/firefox/dependentlibs.list
+file path=usr/lib/firefox/firefox mode=0555 pkg.linted.userland.action001.3=true
+file path=usr/lib/firefox/firefox-bin mode=0555 \
+    pkg.linted.userland.action001.3=true
+file path=usr/lib/firefox/libfreebl3.chk variant.arch=i386
+file path=usr/lib/firefox/libfreebl3.so com.oracle.elfsign=false \
+    pkg.linted.userland.action001.3=true variant.arch=i386
+file path=usr/lib/firefox/libfreebl_32fpu_3.chk variant.arch=sparc
+file path=usr/lib/firefox/libfreebl_32fpu_3.so com.oracle.elfsign=false \
+    pkg.linted.userland.action001.3=true variant.arch=sparc
+file path=usr/lib/firefox/libfreebl_32int64_3.chk variant.arch=sparc
+file path=usr/lib/firefox/libfreebl_32int64_3.so com.oracle.elfsign=false \
+    pkg.linted.userland.action001.3=true variant.arch=sparc
+file path=usr/lib/firefox/libmozalloc.so pkg.linted.userland.action001.3=true
+file path=usr/lib/firefox/libnspr4.so
+file path=usr/lib/firefox/libnss3.so pkg.linted.userland.action001.3=true
+file path=usr/lib/firefox/libnssckbi.so pkg.linted.userland.action001.3=true
+file path=usr/lib/firefox/libnssdbm3.chk
+file path=usr/lib/firefox/libnssdbm3.so com.oracle.elfsign=false \
+    pkg.linted.userland.action001.3=true
+file path=usr/lib/firefox/libnssutil3.so pkg.linted.userland.action001.3=true
+file path=usr/lib/firefox/libplc4.so pkg.linted.userland.action001.3=true
+file path=usr/lib/firefox/libplds4.so pkg.linted.userland.action001.3=true
+file path=usr/lib/firefox/libsmime3.so pkg.linted.userland.action001.3=true
+file path=usr/lib/firefox/libsoftokn3.chk
+file path=usr/lib/firefox/libsoftokn3.so com.oracle.elfsign=false \
+    pkg.depend.bypass-generate=.* pkg.linted.userland.action001.3=true
+file path=usr/lib/firefox/libssl3.so pkg.linted.userland.action001.3=true
+file path=usr/lib/firefox/libxul.so pkg.depend.bypass-generate=.* \
+    pkg.linted.userland.action001.3=true
+file path=usr/lib/firefox/mozilla-xremote-client mode=0555 \
+    pkg.linted.userland.action001.3=true
+file path=usr/lib/firefox/omni.ja
+file path=usr/lib/firefox/platform.ini
+file path=usr/lib/firefox/plugin-container mode=0555 \
+    pkg.linted.userland.action001.3=true
+file path=usr/lib/firefox/precomplete
+file path=usr/lib/firefox/removed-files
+file path=usr/lib/firefox/run-mozilla.sh mode=0555
+file path=usr/lib/firefox/webapprt-stub mode=0555 \
+    pkg.linted.userland.action001.3=true
+file path=usr/lib/firefox/webapprt/omni.ja
+file path=usr/lib/firefox/webapprt/webapprt.ini
+file files/firefox-js.pc path=usr/lib/pkgconfig/firefox-js.pc
+file files/firefox-plugin.pc path=usr/lib/pkgconfig/firefox-plugin.pc
+file files/firefox-xpcom.pc path=usr/lib/pkgconfig/firefox-xpcom.pc
+file files/firefox.desktop path=usr/share/applications/firefox.desktop \
+    restart_fmri=svc:/application/desktop-cache/desktop-mime-cache:default
+file files/firefox.1 path=usr/share/man/man1/firefox.1
+file files/firefox-icon.png path=usr/share/pixmaps/firefox-icon.png
+license firefox.license license="Mozilla Public License v2.0"
+depend type=group fmri=system/font/truetype/dejavu
+depend type=group fmri=system/font/truetype/fonts-core
+depend type=require fmri=codec/libtheora
+depend type=require fmri=codec/ogg-vorbis
+depend type=require fmri=service/gnome/desktop-cache

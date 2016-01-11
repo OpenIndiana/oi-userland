@@ -1,0 +1,35 @@
+Adds an sp argument for the load_address() function. The sp argument is used
+in the NS_WalkStackCallback() function. This is to match a new argument 
+that was added in the function for other platforms. 
+See Mozilla bug #766579. 
+Need more followup to fully understand. 
+
+--- mozilla-esr31/xpcom/base/nsStackWalk.cpp.orig	2015-06-04 17:42:51.321202120 -0700
++++ mozilla-esr31/xpcom/base/nsStackWalk.cpp	2015-06-04 17:42:51.326394782 -0700
+@@ -891,7 +891,7 @@
+ #include <sys/regset.h>
+ #include <sys/stack.h>
+ 
+-static int    load_address ( void * pc, void * arg );
++static int    load_address ( void * pc, void * sp, void * arg );
+ static struct bucket * newbucket ( void * pc );
+ static struct frame * cs_getmyframeptr ( void );
+ static void   cs_walk_stack ( void * (*read_func)(char * address),
+@@ -966,7 +966,7 @@
+ 
+ 
+ static int
+-load_address(void * pc, void * arg)
++load_address(void * pc, void * sp, void * arg )
+ {
+     static struct bucket table[2048];
+     static mutex_t lock;
+@@ -988,7 +988,7 @@
+     if (ptr->next) {
+         mutex_unlock(&lock);
+     } else {
+-        (args->callback)(pc, args->closure);
++        (args->callback)(pc, NULL, args->closure);
+         args->numFrames++;
+         if (args->maxFrames != 0 && args->numFrames == args->maxFrames)
+           stop = 1;   // causes us to stop getting frames

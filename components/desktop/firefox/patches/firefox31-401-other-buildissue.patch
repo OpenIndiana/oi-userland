@@ -1,0 +1,97 @@
+Various ifdef Solaris fixes. 
+Recast for getpid() because it requires an int. 
+Changing default flags for compiling on SSE. We can try removing these or add
+them to the config lines in Makefile. 
+
+--- mozilla-esr31/build/gyp.mozbuild.orig	2015-06-04 17:42:52.755839292 -0700
++++ mozilla-esr31/build/gyp.mozbuild	2015-06-04 17:42:52.861350941 -0700
+@@ -38,6 +38,7 @@
+     'moz_widget_toolkit_gonk': 0,
+     'moz_webrtc_omx': 0,
+ 
++    'use_official_google_api_keys': 0,
+     # (for vp8) chromium sets to 0 also
+     'use_temporal_layers': 0,
+     # Creates AEC internal sample dump files in current directory
+--- mozilla-esr31/memory/mozalloc/VolatileBufferFallback.cpp.orig	2015-06-04 17:42:52.788896719 -0700
++++ mozilla-esr31/memory/mozalloc/VolatileBufferFallback.cpp	2015-06-04 17:42:52.862173467 -0700
+@@ -8,7 +8,7 @@
+ #include "mozilla/mozalloc.h"
+ 
+ #ifdef MOZ_MEMORY
+-int posix_memalign(void** memptr, size_t alignment, size_t size);
++extern "C" int posix_memalign(void** memptr, size_t alignment, size_t size);
+ #endif
+ 
+ namespace mozilla {
+--- mozilla-esr31/media/libsoundtouch/src/FIRFilter.cpp.orig	2015-06-04 17:42:52.816481996 -0700
++++ mozilla-esr31/media/libsoundtouch/src/FIRFilter.cpp	2015-06-04 17:42:52.863552954 -0700
+@@ -46,6 +46,10 @@
+ #include "FIRFilter.h"
+ #include "cpu_detect.h"
+ 
++#ifdef __sun
++#include <alloca.h>
++#endif
++
+ #ifdef _MSC_VER
+ #include <malloc.h>
+ #define alloca _alloca
+--- mozilla-esr31/media/libsoundtouch/src/SoundTouch.cpp.orig	2015-06-04 17:42:52.821942936 -0700
++++ mozilla-esr31/media/libsoundtouch/src/SoundTouch.cpp	2015-06-04 17:42:52.863676152 -0700
+@@ -80,6 +80,10 @@
+ #include "RateTransposer.h"
+ #include "cpu_detect.h"
+ 
++#ifdef __sun
++#include <alloca.h>
++#endif
++
+ #ifdef _MSC_VER
+ #include <malloc.h>
+ #define alloca _alloca
+--- mozilla-esr31/media/webrtc/trunk/build/common.gypi.orig	2015-06-04 17:42:52.827866736 -0700
++++ mozilla-esr31/media/webrtc/trunk/build/common.gypi	2015-06-04 17:42:52.864152685 -0700
+@@ -917,11 +917,16 @@
+     'android_app_version_name%': 'Developer Build',
+     'android_app_version_code%': 0,
+ 
+-    'sas_dll_exists': '<!(<(PYTHON) <(DEPTH)/build/dir_exists.py <(sas_dll_path))',
+-    'wix_exists': '<!(<(PYTHON) <(DEPTH)/build/dir_exists.py <(wix_path))',
++    'conditions': [
++      ['OS=="win"', {
++        'sas_dll_exists': '<!(<(PYTHON) <(DEPTH)/build/dir_exists.py <(sas_dll_path))',
++        'wix_exists': '<!(<(PYTHON) <(DEPTH)/build/dir_exists.py <(wix_path))',
++      }],
++    ],
+ 
+     'windows_sdk_default_path': '<(DEPTH)/third_party/platformsdk_win8/files',
+     'directx_sdk_default_path': '<(DEPTH)/third_party/directxsdk/files',
++    'windows_sdk_path%': 'C:/Program Files (x86)/Windows Kits/8.0',
+ 
+     'conditions': [
+       ['"<!(<(PYTHON) <(DEPTH)/build/dir_exists.py <(windows_sdk_default_path))"=="True"', {
+--- mozilla-esr31/xpcom/base/nsStatusReporterManager.cpp.orig	2015-06-04 17:42:52.846266617 -0700
++++ mozilla-esr31/xpcom/base/nsStatusReporterManager.cpp	2015-06-04 17:42:52.864489417 -0700
+@@ -142,7 +142,7 @@
+   nsresult rv;
+ 
+   nsCString filename("status-reports-");
+-  filename.AppendInt(getpid());
++  filename.AppendInt((int)getpid());
+   filename.AppendLiteral("-");
+   filename.AppendInt(number++);
+   filename.AppendLiteral(".json");
+--- mozilla-esr31//configure.orig	2015-06-04 17:42:52.849519256 -0700
++++ mozilla-esr31//configure	2015-06-04 17:42:52.867572588 -0700
+@@ -9678,8 +9678,8 @@
+        CXXFLAGS="$CXXFLAGS -xlibmieee -xbuiltin=%all -features=tmplife,tmplrefstatic,extensions,no%except -norunpath -D__FUNCTION__=__func__ -template=no%extdef"
+        LDFLAGS="-xildoff $LDFLAGS"
+        MMX_FLAGS="-xarch=mmx -xO4"
+-       SSE_FLAGS="-xarch=sse"
+-       SSE2_FLAGS="-xarch=ssei2 -xO4"
++       SSE_FLAGS="-xarch=sse -xO4"
++       SSE2_FLAGS="-xarch=sse2 -xO4"
+        if test -z "$CROSS_COMPILE" -a -f /usr/lib/ld/map.noexstk; then
+            _SAVE_LDFLAGS=$LDFLAGS
+            LDFLAGS="-M /usr/lib/ld/map.noexstk $LDFLAGS"

@@ -1,0 +1,13 @@
+The uname() function on Solaris can return a non-negative value. 
+
+--- comm-esr31/mozilla/toolkit/components/startup/nsUserInfoUnix.cpp.orig	2015-06-04 17:42:51.565111934 -0700
++++ comm-esr31/mozilla/toolkit/components/startup/nsUserInfoUnix.cpp	2015-06-04 17:42:51.567398410 -0700
+@@ -106,7 +106,7 @@
+     char *domainname = nullptr;
+ 
+     // is this portable?  that is a POSIX compliant call, but I need to check
+-    if (uname(&buf)) { 
++    if (uname(&buf) < 0) { 
+         return rv;
+     }
+ 

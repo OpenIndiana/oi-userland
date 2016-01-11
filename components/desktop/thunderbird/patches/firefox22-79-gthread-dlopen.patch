@@ -1,0 +1,11 @@
+--- comm-esr31/mozilla/xpcom/glue/standalone/nsXPCOMGlue.cpp.orig	2015-06-04 17:42:52.147539933 -0700
++++ comm-esr31/mozilla/xpcom/glue/standalone/nsXPCOMGlue.cpp	2015-06-04 17:42:52.152710273 -0700
+@@ -418,6 +418,8 @@
+         }
+     }
+ 
++    static void* gthreadso = dlopen("libgthread-2.0.so.0", RTLD_GLOBAL | RTLD_LAZY);
++
+     GetFrozenFunctionsFunc sym =
+         (GetFrozenFunctionsFunc) GetSymbol(sTop->libHandle, LEADING_UNDERSCORE "NS_GetFrozenFunctions");
+ 

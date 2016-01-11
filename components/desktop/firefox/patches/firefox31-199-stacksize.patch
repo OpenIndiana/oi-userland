@@ -1,0 +1,15 @@
+For sparc. Our function frame is very big, so on sparc we need more stack size.
+Potentially send upstream. 
+
+--- mozilla-esr31/js/src/jsapi.cpp.orig	2015-06-04 17:42:52.465842609 -0700
++++ mozilla-esr31/js/src/jsapi.cpp	2015-06-04 17:42:52.468887397 -0700
+@@ -2120,6 +2120,9 @@
+ static void
+ SetNativeStackQuota(JSRuntime* rt, StackKind kind, size_t stackSize)
+ {
++#ifdef JS_CPU_SPARC
++    stackSize = stackSize * 8 < 7 * 1024 * 1024 ? stackSize * 8 : 7 * 1024 * 1024;
++#endif
+     rt->nativeStackQuota[kind] = stackSize;
+     if (rt->nativeStackBase)
+         RecomputeStackLimit(rt, kind);

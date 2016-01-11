@@ -1,0 +1,14 @@
+Casts the value to an int since abs() only takes an integer argument. 
+May want to change this so that we use labs() instead of abs(). 
+
+--- mozilla-esr31/content/media/MediaDecoderStateMachine.cpp.orig	2015-06-04 17:42:52.361303668 -0700
++++ mozilla-esr31/content/media/MediaDecoderStateMachine.cpp	2015-06-04 17:42:52.366561967 -0700
+@@ -1227,7 +1227,7 @@
+   AssertCurrentThreadInMonitor();
+   int64_t duration = GetDuration();
+   if (aDuration != duration &&
+-      abs(aDuration - duration) > ESTIMATED_DURATION_FUZZ_FACTOR_USECS) {
++      abs((int)(aDuration - duration)) > ESTIMATED_DURATION_FUZZ_FACTOR_USECS) {
+     SetDuration(aDuration);
+     nsCOMPtr<nsIRunnable> event =
+       NS_NewRunnableMethod(mDecoder, &MediaDecoder::DurationChanged);

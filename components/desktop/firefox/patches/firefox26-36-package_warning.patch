@@ -1,0 +1,16 @@
+Disables fatal warnings. Inside package-manifest.in, there is a sparc-specific
+line that we can't ifdef out. So we want to make sure this doesn't exit on 
+an error for x86. 
+We will want to redo this patch with an ifdef for x86 vs sparc. 
+
+--- mozilla-esr31/browser/installer/Makefile.in.orig	2015-06-04 17:42:51.400825465 -0700
++++ mozilla-esr31/browser/installer/Makefile.in	2015-06-04 17:42:51.405890984 -0700
+@@ -12,7 +12,7 @@
+ MOZ_PKG_MANIFEST_P = $(srcdir)/package-manifest.in
+ # Some files have been already bundled with xulrunner
+ ifndef SYSTEM_LIBXUL
+-MOZ_PKG_FATAL_WARNINGS = 1
++#MOZ_PKG_FATAL_WARNINGS = 1
+ endif
+ 
+ DEFINES += -DAB_CD=$(AB_CD) -DMOZ_APP_NAME=$(MOZ_APP_NAME) -DPREF_DIR=$(PREF_DIR)

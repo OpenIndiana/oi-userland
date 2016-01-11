@@ -1,0 +1,26 @@
+Patch to fix an issue where the Thunderbird dictionary was not 
+being read and words were incorrectly showing up as misspelled
+on Solaris when Thunderbird is built with the GNU compilers. 
+
+diff --git a/mozilla/xpcom/glue/FileUtils.cpp b/mozilla/xpcom/glue/FileUtils.cpp
+--- a/mozilla/xpcom/glue/FileUtils.cpp
++++ b/mozilla/xpcom/glue/FileUtils.cpp
+@@ -481,17 +481,17 @@ mozilla::ReadAheadFile(mozilla::pathstr_
+   }
+   if (fd == INVALID_HANDLE_VALUE) {
+     return;
+   }
+   ReadAhead(fd, aOffset, aCount);
+   if (!aOutFd) {
+     CloseHandle(fd);
+   }
+-#elif defined(LINUX) && !defined(ANDROID) || defined(XP_MACOSX)
++#elif defined(LINUX) && !defined(ANDROID) || defined(XP_MACOSX) || defined(SOLARIS)
+   if (!aFilePath) {
+     if (aOutFd) {
+       *aOutFd = -1;
+     }
+     return;
+   }
+   int fd = open(aFilePath, O_RDONLY);
+   if (aOutFd) {

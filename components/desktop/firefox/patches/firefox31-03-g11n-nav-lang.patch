@@ -1,0 +1,14 @@
+This fixes Mozilla bug#285267 - navigator.language js property doesn't reflect 
+browser default language. It appears that this patch was previously 
+proposed upstream but not accepted. (https://bugzilla.mozilla.org/show_bug.cgi?id=285267) 
+
+diff --git a/browser/locales/en-US/firefox-l10n.js b/browser/locales/en-US/firefox-l10n.js
+index e9027aa..10bdcdb 100644
+--- a/browser/locales/en-US/firefox-l10n.js
++++ b/browser/locales/en-US/firefox-l10n.js
+@@ -36,4 +36,4 @@
+ 
+ #filter substitution
+ 
+-pref("general.useragent.locale", "@AB_CD@");
++pref("general.useragent.locale", "chrome://global/locale/intl.properties");

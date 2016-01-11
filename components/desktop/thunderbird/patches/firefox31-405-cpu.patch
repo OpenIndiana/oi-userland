@@ -1,0 +1,15 @@
+Can try removing this one since we are now using GNU compilers.
+ 
+--- comm-esr31/mozilla/js/src/assembler/assembler/MacroAssemblerX86Common.cpp.orig	2015-06-04 17:42:52.915487926 -0700
++++ comm-esr31/mozilla/js/src/assembler/assembler/MacroAssemblerX86Common.cpp	2015-06-04 17:42:52.917782337 -0700
+@@ -31,8 +31,8 @@
+ {
+     // Default the flags value to zero; if the compiler is
+     // not MSVC or GCC we will read this as SSE2 not present.
+-    int flags_edx = 0;
+-    int flags_ecx = 0;
++    volatile int flags_edx = 0;
++    volatile int flags_ecx = 0;
+ #if WTF_COMPILER_MSVC
+ #if WTF_CPU_X86_64
+     int cpuinfo[4];

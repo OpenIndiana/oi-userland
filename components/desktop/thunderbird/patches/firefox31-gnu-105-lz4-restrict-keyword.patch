@@ -1,0 +1,15 @@
+Correctly recognize the "restrict" keyword for the lz4.c file included in
+Compression.cpp
+https://gcc.gnu.org/bugzilla/show_bug.cgi?id=57025
+
+--- comm-esr31/mozilla/mfbt/lz4.c.orig	2015-06-04 11:17:03.957437771 -0700
++++ comm-esr31/mozilla/mfbt/lz4.c	2015-06-04 11:17:03.963371797 -0700
+@@ -104,7 +104,7 @@
+ /**************************************
+  Compiler Options
+ **************************************/
+-#if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L)   /* C99 */
++#if defined(__STDC_VERSION__) && !defined(__cplusplus) && (__STDC_VERSION__ >= 199901L)   /* C99 */
+ /* "restrict" is a known keyword */
+ #else
+ #  define restrict /* Disable restrict */

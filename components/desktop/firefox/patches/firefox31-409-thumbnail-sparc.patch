@@ -1,0 +1,16 @@
+Either already fixed or we can send upstream. 
+
+--- mozilla-esr31/gfx/2d/DataSurfaceHelpers.cpp.orig	2015-06-04 17:42:52.952071382 -0700
++++ mozilla-esr31/gfx/2d/DataSurfaceHelpers.cpp	2015-06-04 17:42:52.954656062 -0700
+@@ -19,11 +19,7 @@
+ 
+   for (int row = 0; row < aSize.height; ++row) {
+     for (int column = 0; column < aSize.width; ++column) {
+-#ifdef IS_BIG_ENDIAN
+-      pixel[column] |= 0x000000FF;
+-#else
+       pixel[column] |= 0xFF000000;
+-#endif
+     }
+     pixel += (aStride/4);
+   }

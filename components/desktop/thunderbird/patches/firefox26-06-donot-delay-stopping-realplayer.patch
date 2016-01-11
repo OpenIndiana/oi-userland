@@ -1,0 +1,26 @@
+See Mozilla bug #451007 - Reload page causing problems with
+RealPlayer/Helix plugin.
+We can potentially drop this patch since RealPlayer is no longer being
+supported.
+
+--- comm-esr31/mozilla/content/base/src/nsObjectLoadingContent.cpp.orig	2015-06-04 17:42:51.184423172 -0700
++++ comm-esr31/mozilla/content/base/src/nsObjectLoadingContent.cpp	2015-06-04 17:42:51.208745161 -0700
+@@ -2744,7 +2744,8 @@
+               bool aDelayedStop)
+ {
+   // Don't delay stopping QuickTime (bug 425157), Flip4Mac (bug 426524),
+-  // XStandard (bug 430219), CMISS Zinc (bug 429604).
++  // XStandard (bug 430219), CMISS Zinc (bug 429604),
++  // RealPlayer/Helix (bug 451007).
+   if (aDelayedStop
+ #if !(defined XP_WIN || defined MOZ_X11)
+       && !aInstanceOwner->MatchPluginName("QuickTime")
+@@ -2752,6 +2753,8 @@
+       && !aInstanceOwner->MatchPluginName("XStandard plugin")
+       && !aInstanceOwner->MatchPluginName("CMISS Zinc Plugin")
+ #endif
++      && !aInstanceOwner->MatchPluginName("RealPlayer")
++      && !aInstanceOwner->MatchPluginName("Helix")
+       ) {
+     nsCOMPtr<nsIRunnable> evt =
+       new nsStopPluginRunnable(aInstanceOwner, aContent);

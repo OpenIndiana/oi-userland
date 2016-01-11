@@ -1,0 +1,17 @@
+SPARC architecture specific patch. Probably cannot send upstream.  
+
+--- comm-esr31/mozilla/js/src/ctypes/libffi/src/closures.c.orig	2015-05-07 22:39:07.816379536 +0530
++++ comm-esr31/mozilla/js/src/ctypes/libffi/src/closures.c	2015-05-07 22:39:42.088095728 +0530
+@@ -608,3 +608,12 @@ ffi_closure_free (void *ptr)
+ 
+ # endif /* ! FFI_MMAP_EXEC_WRIT */
+ #endif /* FFI_CLOSURES */
++
++#ifdef __sparc
++#include <strings.h>
++int
++__ffssi2 (int x)
++{
++ffs (x);
++}
++#endif
