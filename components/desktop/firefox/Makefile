@@ -49,19 +49,18 @@ IPS_COMPONENT_VERSION =		31.8.0
 # There are a set of .xpi files (as given in the LANG_LIST definition below)
 # that we need. These are available under:
 # http://ftp.mozilla.org/pub/mozilla.org/firefox/releases/31.8.0esr/linux-i686/xpi/
-# This downloads the xpi files.
+# We could download and unpack them individually, but instead I've created
+# a compressed tarball of them, and made that available locally for download.
+# Downloading them individually can be a problem because firefox/thunderbird 
+# collide due to different files with identical .xpi names.
+COMPONENT_ARCHIVE_1 =           firefox-31.8.0esr-xpi.tar.gz
+COMPONENT_ARCHIVE_HASH_1 = \
+    sha256:f4be660e98f4bfac9e8b1a5ba39f74dc201697fe857b4f7c5dd8f3204837df54
+COMPONENT_ARCHIVE_URL_1 =       $(INTERNAL_ARCHIVE_MIRROR)/source-archives/$(COMPONENT_ARCHIVE_1)
 
 LANG_LIST = ar be bg ca cs da de el es-AR es-CL es-ES et fi \
 	fr he hi-IN hr hu id is it ja kk ko lt lv mk nb-NO nl nn-NO \
 	pl pt-BR pt-PT ro ru sk sl sq sr sv-SE th tr uk vi zh-CN zh-TW
-
-COMPONENT_PREP_ACTION += \
-        ($(MKDIR) xpi ; \
-        cd xpi ; \
-        for l in $(LANG_LIST) ; do \
-                $(WS_TOOLS)/userland-fetch --file $$l.xpi --url $(MOZILLA_FTP)/linux-i686/xpi/ ; \
-        done ; )
-
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -131,6 +130,8 @@ COMPONENT_POST_INSTALL_ACTION += \
 		$(PROTOUSRLIBDIR)/firefox-$(IPS_COMPONENT_VERSION)/precomplete ;
 
 COMPONENT_POST_INSTALL_ACTION += \
+        $(RM) -rf xpi ; \
+        /usr/bin/tar xvf $(COMPONENT_ARCHIVE_1) > /dev/null 2>&1 ; \
         list1='$(LANG_LIST)' ; for f in $$list1 ; do \
             $(CP) xpi/$$f.xpi \
                 $(PROTOUSRLIBDIR)/firefox-$(IPS_COMPONENT_VERSION)/browser/extensions/langpack-$$f@firefox.mozilla.org.xpi ; \
@@ -169,7 +170,6 @@ REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/pango
-REQUIRED_PACKAGES += library/desktop/startup-notification
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/graphics/pixman
 REQUIRED_PACKAGES += library/libevent

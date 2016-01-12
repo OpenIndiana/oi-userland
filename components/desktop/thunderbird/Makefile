@@ -47,18 +47,18 @@ TPNO=			22326
 # There are a set of .xpi files (as given in the LANG_LIST definition below)
 # that we need. These are available under:
 # http://ftp.mozilla.org/pub/mozilla.org/thunderbird/releases/31.6.0/linux-i686/xpi/
-# This downloads the xpis. 
+# We could download and unpack them individually, but instead I've created
+# a compressed tarball of them, and made that available locally for download.
+# Downloading them individually can be a problem because firefox/thunderbird 
+# collide due to different files with identical .xpi names. 
+COMPONENT_ARCHIVE_1 =   thunderbird-31.6.0-xpi.tar.gz
+COMPONENT_ARCHIVE_HASH_1 = \
+    sha256:80e9cc4b152d75f5c3887c01ad1767680aff5ca7c3aee87254bdc1574590b95e
+COMPONENT_ARCHIVE_URL_1 =       $(INTERNAL_ARCHIVE_MIRROR)/source-archives/$(COMPONENT_ARCHIVE_1)
 
 LANG_LIST = ar bg ca cs da de el es-AR es-ES et eu fi \
 	fr gl he hu id is it ja ko lt nb-NO nl nn-NO pa-IN pl \
 	pt-BR pt-PT ro ru sk sl sq sv-SE tr uk zh-CN zh-TW
-
-COMPONENT_PREP_ACTION += \
-        ($(MKDIR) xpi ; \
-        cd xpi ; \
-        for l in $(LANG_LIST) ; do \
-                $(WS_TOOLS)/userland-fetch --file $$l.xpi --url $(MOZILLA_FTP)/linux-i686/xpi/ ; \
-        done ; )
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -131,6 +131,8 @@ COMPONENT_POST_INSTALL_ACTION += \
 		$(PROTOUSRLIBDIR)/thunderbird-$(COMPONENT_VERSION)/extensions/{e2fda1a4-762b-4020-b5ad-a41df1933103} ;
 
 COMPONENT_POST_INSTALL_ACTION += \
+        $(RM) -rf xpi ; \
+        /usr/bin/tar xvf $(COMPONENT_ARCHIVE_1) > /dev/null 2>&1 ; \
         list1='$(LANG_LIST)' ; for f in $$list1 ; do \
             $(CP) xpi/$$f.xpi \
                 $(PROTOUSRLIBDIR)/thunderbird-$(COMPONENT_VERSION)/extensions/langpack-$$f@thunderbird.mozilla.org.xpi ; \
