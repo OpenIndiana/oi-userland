@@ -61,7 +61,6 @@ CONFIGURE_OPTIONS	+=	--disable-qt4
 CONFIGURE_OPTIONS	+=	--disable-mono
 CONFIGURE_OPTIONS	+=	--disable-monodoc
 CONFIGURE_OPTIONS	+=	--enable-tests
-CONFIGURE_OPTIONS	+=	--enable-expat
 CONFIGURE_OPTIONS	+=	--disable-autoipd
 CONFIGURE_OPTIONS	+=	--disable-gdbm
 CONFIGURE_OPTIONS	+=	--enable-dbm
