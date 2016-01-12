@@ -15,7 +15,7 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		transmission
-COMPONENT_VERSION=	2.52
+COMPONENT_VERSION=	2.60
 COMPONENT_PROJECT_URL=	http://www.transmissionbt.com/
 COMPONENT_SUMMARY=	GTK and console BitTorrent client
 COMPONENT_FMRI=		desktop/torrent/transmission
@@ -23,7 +23,7 @@ COMPONENT_CLASSIFICATION=	Applications/Internet
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e8f7dfb70c2039d7a868dcd4c150e88bc5628b5488d24a67287b1597206a7bdc
+    sha256:fa650166d9adebca04a2c53009e9faac1104f02707925325921728f9531fdf80
 COMPONENT_ARCHIVE_URL=	http://download.transmissionbt.com/files/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_LICENSE=	GPLv2,MIT
@@ -36,6 +36,7 @@ include $(WS_TOP)/make-rules/ips.mk
 PATH=/usr/gnu/bin:/usr/bin
 
 CONFIGURE_OPTIONS+=	--program-prefix=""
+CONFIGURE_OPTIONS+=	--with-gtk=2
 
 # common targets
 build:		$(BUILD_32)
