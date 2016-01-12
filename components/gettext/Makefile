@@ -88,7 +88,6 @@ REQUIRED_PACKAGES += library/icu
 REQUIRED_PACKAGES += library/libcroco
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/ncurses
-REQUIRED_PACKAGES += runtime/clisp
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += source/locale/localedef
 REQUIRED_PACKAGES += system/library
