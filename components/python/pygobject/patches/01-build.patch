@@ -6,19 +6,19 @@ Subject: remove references to deprecated GI_INFO_TYPE_ERROR_DOMAIN
 ---
 diff --git a/gi/pygi-info.c b/gi/pygi-info.c
 index 8729e25..007b609 100644
---- pygobject-2.21.5/gi/pygi-info.c.~1~	2010-07-12 12:34:16.000000000 +0400
-+++ pygobject-2.21.5/gi/pygi-info.c	2015-03-28 09:26:07.829346105 +0300
-@@ -200,9 +200,6 @@
+--- pygobject-2.28.6/gi/pygi-info.c.1	2016-01-12 22:51:57.670059514 +0300
++++ pygobject-2.28.6/gi/pygi-info.c	2016-01-12 22:52:19.591007825 +0300
+@@ -162,9 +162,6 @@
          case GI_INFO_TYPE_CONSTANT:
              type = &PyGIConstantInfo_Type;
              break;
 -        case GI_INFO_TYPE_ERROR_DOMAIN:
--            PyErr_SetString (PyExc_NotImplementedError, "GIErrorDomainInfo bindings not implemented");
--            return NULL;
+-            type = &PyGIErrorDomainInfo_Type;
+-            break;
          case GI_INFO_TYPE_UNION:
              type = &PyGIUnionInfo_Type;
              break;
-@@ -428,7 +425,6 @@
+@@ -481,7 +478,6 @@
                  case GI_INFO_TYPE_INVALID:
                  case GI_INFO_TYPE_FUNCTION:
                  case GI_INFO_TYPE_CONSTANT:
@@ -26,7 +26,7 @@ index 8729e25..007b609 100644
                  case GI_INFO_TYPE_VALUE:
                  case GI_INFO_TYPE_SIGNAL:
                  case GI_INFO_TYPE_PROPERTY:
-@@ -807,7 +803,6 @@
+@@ -860,7 +856,6 @@
                      case GI_INFO_TYPE_INVALID:
                      case GI_INFO_TYPE_FUNCTION:
                      case GI_INFO_TYPE_CONSTANT:
