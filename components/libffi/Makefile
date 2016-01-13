@@ -43,6 +43,16 @@ include $(WS_MAKE_RULES)/ips.mk
 
 CC +=		$(CC_BITS)
 
+COMPONENT_TEST_DIR =	$(@D)/testsuite
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s|^Test Run By.*$$|XXX_REMOVE_XXX|g" ' \
+	'-e "s|^Native configuration is.*$$|XXX_REMOVE_XXX|g" ' \
+	'-e "s|^make.*: Leaving directory.*$$|XXX_REMOVE_XXX|g" ' \
+	'-e "s|^make.*: Entering directory.*$$|XXX_REMOVE_XXX|g" ' \
+	'-e "/^XXX_REMOVE_XXX$$/d" '
+
 CFLAGS += -DFFI_MMAP_EXEC_WRIT=1
 
 CONFIGURE_OPTIONS += --enable-raw-api=no
@@ -56,7 +66,7 @@ build:          $(BUILD_32_and_64)
 
 install:        $(INSTALL_32_and_64)
 
-test:           $(NO_TESTS)
+test:           $(TEST_32_and_64)
 
 system-test:    $(NO_TESTS)
 
