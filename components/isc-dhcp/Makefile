@@ -18,13 +18,14 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		isc-dhcp
 COMPONENT_VERSION=	4.1-ESV-R7
-IPS_COMPONENT_VERSION=	4.1.0.7
+HUMAN_VERSION=		$(COMPONENT_VERSION)-P1
+IPS_COMPONENT_VERSION=	4.1.0.7.1
 COMPONENT_SRC_NAME=	dhcp
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
