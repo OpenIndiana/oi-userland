@@ -25,14 +25,19 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pcre
-COMPONENT_VERSION=	8.21
+COMPONENT_VERSION=	8.38
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:62e1116549ce5b1ad92901f04d8338d5f7b59f92abce8d15e9a17cafe0efb102
+    sha256:9883e419c336c63b0cb5202b09537c140966d585e4d0da66147dc513da13e629
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/pcre/files/pcre/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_SUMMARY=	Perl-Compatible Regular Expressions
 COMPONENT_PROJECT_URL=  http://pcre.org/
 COMPONENT_BUGDB=	library/pcre
+COMPONENT_FMRI=		library/pcre
+COMPONENT_CLASSIFICATION=	Development/C
+COMPONENT_LICENSE=	BSD
+COMPONENT_LICENSE_FILE=	LICENCE
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
@@ -90,6 +95,13 @@ COMPONENT_BUILD_ENV+=	"INSTALL=$(INSTALL)"
 COMPONENT_BUILD_ENV+=	"MAKE=$(GMAKE)"
 
 COMPONENT_BUILD_ARGS+=	-e
+
+# Master test results are the same for 32-bit and 64-bit, so override
+# here, rather than create multiple identical master files.
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s|Testsuite summary for PCRE .*|Testsuite summary for PCRE|" '
 
 ASLR_MODE = $(ASLR_ENABLE)
 

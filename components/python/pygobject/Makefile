@@ -15,15 +15,14 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pygobject
-COMPONENT_VERSION=	2.21.5
-COMPONENT_REVISION=	3
+COMPONENT_VERSION=	2.28.6
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	Python bindings for GObject
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:14dc23bd8adb3626cfbaa7b7df1070c8da260e60925ec83beac517d7155cfed8
-COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.21/$(COMPONENT_ARCHIVE)
+    sha256:d464699db159f72e41a8d629ab44b7fef6cf8d746e51f576b6fbc4ce317239d3
+COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.28/$(COMPONENT_ARCHIVE)
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
@@ -31,7 +30,7 @@ include $(WS_TOP)/make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
 
-gcc_OPT		= -O2
+COMPONENT_PREP_ACTION= (cd $(@D) && autoreconf -f -i)
 
 CFLAGS += $(gcc_C99_ENABLE)
 
