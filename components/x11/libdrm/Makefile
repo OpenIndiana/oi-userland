@@ -15,13 +15,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libdrm
-COMPONENT_VERSION=      2.4.65
+COMPONENT_VERSION=      2.4.66
 COMPONENT_PROJECT_URL=  http://dri.freedesktop.org
 COMPONENT_SUMMARY=      Userspace interface to kernel Direct Rendering Module services
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-    sha256:71960ac8bde7d710992b1bc8879935e8300a870c36bd06f22412d0447e3d96c4
+	sha256:16de414b93ab376174035bc2888725effd0bfe0e6e6fe9317636037f006096b4
+
+#     sha256:71960ac8bde7d710992b1bc8879935e8300a870c36bd06f22412d0447e3d96c4
+
 COMPONENT_ARCHIVE_URL=  http://dri.freedesktop.org/libdrm/$(COMPONENT_ARCHIVE) 
 COMPONENT_FMRI= x11/library/libdrm
 COMPONENT_CLASSIFICATION = System/X11
