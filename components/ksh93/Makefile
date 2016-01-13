@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 # the parfait build fails strangely (22276647)
@@ -148,14 +148,23 @@ IPS_PKG_NAME= ksh93
 IPS_COMPONENT_VERSION= 93.21.1.20120801
 IPS_HUMAN_VERSION= "93u+ 2012-08-01"
 
+# Exposes a bug in ON.
+ifeq ($(BUILD_TYPE), evaluation)
+BUILD_32_and_64=
+INSTALL_32_and_64=
+PUBLISH_STAMP=
+endif
+
 # common targets
 build:		$(BUILD_32_and_64)
 	
 install:	$(INSTALL_32_and_64)	
+ifneq ($(BUILD_TYPE), evaluation)
 	(for binary in msgcvt msgcpp msgget msggen ksh shcomp alias; do \
 		/usr/bin/elfedit -e 'dyn:delete RPATH' -e 'dyn:delete RUNPATH' \
 		    "$(PROTO_DIR)/$(MACH64)/bin/$$binary" ; \
 	done )
+endif
 
 test:		$(TEST_32_and_64)
 
