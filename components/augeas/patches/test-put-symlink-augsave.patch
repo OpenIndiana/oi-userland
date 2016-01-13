@@ -1,0 +1,24 @@
+Patch to account for differing output of /usr/bin/sum on Solaris. This fix has been
+integrated into Augeas in version 1.4.0. This patch should be removed when Augeas
+is upgraded.
+
+--- augeas-1.3.0/tests/test-put-symlink-augsave.sh.orig	2015-05-28 14:25:00.307497157 -0700
++++ augeas-1.3.0/tests/test-put-symlink-augsave.sh	2015-05-28 14:25:38.148551120 -0700
+@@ -17,7 +17,7 @@
+ cat <<EOF > $HOSTS
+ 127.0.0.1 localhost
+ EOF
+-HOSTS_SUM=$(sum $HOSTS)
++HOSTS_SUM=$(sum $HOSTS | cut -d ' ' -f 1)
+ 
+ touch $ATTACK_FILE
+ (cd $(dirname $HOSTS) && ln -s ../other/attack $(basename $HOSTS).augsave)
+@@ -37,7 +37,7 @@
+     exit 1
+ fi
+ 
+-if [ ! "x${HOSTS_SUM}" = "x$(sum $HOSTS_AUGSAVE)" ]; then
++if [ ! "x${HOSTS_SUM}" = "x$(sum $HOSTS_AUGSAVE | cut -d ' ' -f 1)" ]; then
+     echo "/etc/hosts.augsave has changed from the original /etc/hosts"
+     exit 1
+ fi
