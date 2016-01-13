@@ -18,8 +18,10 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+COMPILER =		gcc
+
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		aspell
@@ -48,9 +50,6 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-COMPILER =		gcc
-GCC_ROOT =		/usr/gcc/4.8
-
 ASPELL_BIN_DIR.32 =	$(PROTOUSRBINDIR)
 ASPELL_BIN_DIR.64 =	$(PROTOUSRBINDIR64)
 ASPELL_BIN_DIR =	$(ASPELL_BIN_DIR.$(BITS))
@@ -78,7 +77,6 @@ COMPONENT_POST_INSTALL_ACTION += \
 CXX +=			$(CC_BITS)
 CC +=			$(CC_BITS)
 
-LD_OPTIONS +=		-lm
 CONFIGURE_ENV +=	LD_OPTIONS="$(LD_OPTIONS)"
 
 CLEAN_PATHS +=		$(SOURCE_DIR_1)

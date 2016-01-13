@@ -18,8 +18,10 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+COMPILER =	gcc
+
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openusb
@@ -43,8 +45,6 @@ CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
         ($(CLONEY) $(SOURCE_DIR) $(@D))
-
-COMPILER =	gcc
 
 PATCH_LEVEL = 1
 

@@ -18,8 +18,10 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+COMPILER=gcc
+
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cppunit
@@ -39,8 +41,6 @@ include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 
-COMPILER=gcc
-GCC_ROOT=/usr/gcc/4.8
 export PATH=$(GCC_ROOT)/bin:/usr/gnu/bin:/usr/bin
 
 CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
