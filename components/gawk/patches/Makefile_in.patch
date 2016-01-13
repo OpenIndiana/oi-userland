@@ -1,21 +1,14 @@
-Internally produced patch to allow both test and system-test to work.
-Will offer to upstream.
+Solaris specific patch to allow both test and system-test to work.
+Has been offered upstream.
 
-
---- gawk-3.1.8/test/Makefile.in_orig	2015-08-03 15:16:05.007746388 -0700
-+++ gawk-3.1.8/test/Makefile.in	2015-08-03 15:16:57.152891167 -0700
-@@ -1187,12 +1187,12 @@
+--- gawk-4.1.3/test/Makefile.in 2015-12-08 10:50:43.203348353 -0800
++++ gawk-4.1.3/test/Makefile.in 2015-12-08 10:51:00.745983630 -0800
+@@ -1695,7 +1695,7 @@ lc_num1:
  # so this can still fail
  poundbang::
  	@echo $@
--	@sed "s;/tmp/gawk;`pwd`/$(AWKPROG);" < $(srcdir)/poundbang.awk > ./_pbd.awk
-+	@sed "s;/tmp/gawk;$(AWKPROG);" < $(srcdir)/poundbang.awk > ./_pbd.awk
+-	@sed "s;/tmp/gawk;`pwd`/$(AWKPROG);" < "$(srcdir)"/poundbang.awk > ./_pbd.awk
++	@sed "s;/tmp/gawk;$(AWKPROG);" < "$(srcdir)"/poundbang.awk > ./_pbd.awk
  	@chmod +x ./_pbd.awk
- 	@if ./_pbd.awk $(srcdir)/poundbang.awk > _`basename $@` ; \
+ 	@if ./_pbd.awk "$(srcdir)"/poundbang.awk > _`basename $@` ; \
  	then : ; \
- 	else \
--		sed "s;/tmp/gawk;../$(AWKPROG);" < $(srcdir)/poundbang.awk > ./_pbd.awk ; \
-+		sed "s;/tmp/gawk;$(AWKPROG);" < $(srcdir)/poundbang.awk > ./_pbd.awk ; \
- 		chmod +x ./_pbd.awk ; \
- 		LC_ALL=$${GAWKLOCALE:-C} LANG=$${GAWKLOCALE:-C} ./_pbd.awk $(srcdir)/poundbang.awk > _`basename $@`;  \
- 	fi

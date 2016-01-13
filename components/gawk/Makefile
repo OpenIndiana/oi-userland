@@ -23,12 +23,12 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gawk
-COMPONENT_VERSION=	3.1.8
+COMPONENT_VERSION=	4.1.3
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/gawk/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:5dbc7b2c4c328711337c2aacd09a122c7313122262e3ff034590f014067412b4
+	sha256:e3cf55e91e31ea2845f8338bedd91e40671fc30e4d82ea147d220e687abda625
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/gawk/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gawk
 
@@ -37,7 +37,7 @@ COMPONENT_BUGDB=	utility/gawk
 COMPONENT_TEST_TRANSFORMS += \
         '-e "s|\(^/usr/gnu/bin/make\).*|\1|" ' 
 
-TPNO=			6808
+TPNO=			26217	
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -66,8 +66,8 @@ test:		$(TEST_64)
 # must build tests before using
 system-test:    build $(SYSTEM_TEST_64)
 
-
 REQUIRED_PACKAGES += library/libsigsegv
+REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
