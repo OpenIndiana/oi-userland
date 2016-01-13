@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 COMPILER =	gcc
@@ -43,6 +43,11 @@ include $(WS_MAKE_RULES)/ips.mk
 
 CC +=		$(CC_BITS)
 
+CFLAGS += -DFFI_MMAP_EXEC_WRIT=1
+
+CONFIGURE_OPTIONS += --enable-raw-api=no
+CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
+
 ASLR_MODE = $(ASLR_ENABLE)
 
 configure:	$(CONFIGURE_32_and_64)
@@ -56,3 +61,4 @@ test:           $(NO_TESTS)
 system-test:    $(NO_TESTS)
 
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
