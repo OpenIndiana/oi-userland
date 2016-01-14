@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -46,6 +46,7 @@ COMPONENT_PREP_ACTION =	(cd $(@D); autoconf);
 # so we require the following line to add the -m option to CC
 #
 CC += $(CC_BITS)
+CFLAGS += -D_SYS_REGSET_H
 CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS) -DHAVE_CONFIG_H"
 CONFIGURE_OPTIONS  +=	--disable-dbus
 

@@ -1,43 +1,36 @@
-*** bison-2.3/lib/Makefile.in.orig	Thu Nov 16 13:34:32 2006
---- bison-2.3/lib/Makefile.in	Thu Nov 16 13:37:18 2006
-***************
-*** 108,113 ****
---- 108,116 ----
-  liby_a_LIBADD =
-  am_liby_a_OBJECTS = main.$(OBJEXT) yyerror.$(OBJEXT)
-  liby_a_OBJECTS = $(am_liby_a_OBJECTS)
-+ 
-+ main.o yyerror.o : CFLAGS += -DPIC -KPIC -Qoption cg -xregs=no%appl
-+ 
-  DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
-  depcomp = $(SHELL) $(top_srcdir)/build-aux/depcomp
-  am__depfiles_maybe = depfiles
-***************
-*** 248,254 ****
-  BUILT_SOURCES = $(GETOPT_H) $(STDBOOL_H) $(UNISTD_H)
-  EXTRA_DIST = getopt_.h getopt_int.h stdbool_.h
-  MOSTLYCLEANFILES = getopt.h getopt.h-t stdbool.h stdbool.h-t unistd.h
-! lib_LIBRARIES = $(YACC_LIBRARY)
-  EXTRA_LIBRARIES = liby.a
-  noinst_LIBRARIES = libbison.a
-  liby_a_SOURCES = main.c yyerror.c
---- 251,257 ----
-  BUILT_SOURCES = $(GETOPT_H) $(STDBOOL_H) $(UNISTD_H)
-  EXTRA_DIST = getopt_.h getopt_int.h stdbool_.h
-  MOSTLYCLEANFILES = getopt.h getopt.h-t stdbool.h stdbool.h-t unistd.h
-! lib_LIBRARIES = $(YACC_LIBRARY) liby.so.1
-  EXTRA_LIBRARIES = liby.a
-  noinst_LIBRARIES = libbison.a
-  liby_a_SOURCES = main.c yyerror.c
-***************
-*** 363,368 ****
---- 366,374 ----
-  	-rm -f liby.a
-  	$(liby_a_AR) liby.a $(liby_a_OBJECTS) $(liby_a_LIBADD)
-  	$(RANLIB) liby.a
-+ liby.so.1:    $(liby_a_OBJECTS) $(liby_a_DEPENDENCIES)
-+ 	-rm -f liby.so.1
-+ 	$(CC) $(CFLAGS) -G -h liby.so.1 -o liby.so.1 $(liby_a_OBJECTS)
-  
-  mostlyclean-compile:
-  	-rm -f *.$(OBJEXT)
+--- bison-3.0.4/Makefile.in.orig	Tue Oct 27 10:12:31 2015
++++ bison-3.0.4/Makefile.in	Tue Oct 27 10:13:12 2015
+@@ -473,6 +473,12 @@
+ @ENABLE_YACC_TRUE@am_lib_liby_a_OBJECTS = lib/main.$(OBJEXT) \
+ @ENABLE_YACC_TRUE@	lib/yyerror.$(OBJEXT)
+ lib_liby_a_OBJECTS = $(am_lib_liby_a_OBJECTS)
++
++# doing this for just the OBJECTS macros doesn't seeem to work
++# and we rely on the approprate xregs/no-app-regs flag already
++# being in our CFLAGS from shared-macros.mk
++lib/yyerror.o lib/main.o: CFLAGS += $(CC_PIC)
++
+ @FLEX_CXX_WORKS_TRUE@am__EXEEXT_1 = examples/calc++/calc++$(EXEEXT)
+ PROGRAMS = $(bin_PROGRAMS)
+ am__objects_2 = examples/calc++/examples_calc___calc__-calc++-driver.$(OBJEXT) \
+@@ -2501,6 +2507,9 @@
+ @ENABLE_YACC_TRUE@EXTRA_LIBRARIES = lib/liby.a
+ @ENABLE_YACC_TRUE@lib_liby_a_SOURCES = lib/main.c lib/yyerror.c
+ LDADD = lib/libbison.a $(LIBINTL)
++
++lib_LIBRARIES += lib/liby.so.1
++
+ # Prettify Automake-computed names of compiled objects.
+ src_bison_SHORTNAME = bison
+ src_bison_CFLAGS = $(AM_CFLAGS) $(WERROR_CFLAGS)
+@@ -2624,6 +2633,10 @@
+ all: $(BUILT_SOURCES)
+ 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
+ 
++lib/liby.so.1:    $(lib_liby_a_OBJECTS) $(lib_liby_a_DEPENDENCIES)
++	-rm -f lib/liby.so.1
++	$(CC) $(CFLAGS) -G -h liby.so.1 -o lib/liby.so.1 $(lib_liby_a_OBJECTS) $(lib_liby_a_LIBADD)
++
+ .SUFFIXES:
+ .SUFFIXES: .gv .eps .pdf .png .yy .stamp .c .cc .dvi .l .ll .log .o .obj .ps .sed .sin .test .test$(EXEEXT) .trs .y
+ am--refresh: Makefile

@@ -20,22 +20,25 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+
+# for the tests
+COMPILER=gcc
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bison
-COMPONENT_VERSION=	2.3
+COMPONENT_VERSION=	3.0.4
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/bison/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:52f78aa4761a74ceb7fdf770f3554dd84308c3b93c4255e3a5c17558ecda293e
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/bison/$(COMPONENT_ARCHIVE)
+    sha256:a72428c7917bdf9fa93cb8181c971b6e22834125848cf1d03ce10b1bb0716fe1
+COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/bison/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/bison
 
-TPNO=			6254
+TPNO=			24440
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -44,8 +47,21 @@ include $(WS_MAKE_RULES)/ips.mk
 CONFIGURE_LIBDIR.32 =   $(GNULIB)
 CONFIGURE_LIBDIR.64 =   $(GNULIB)/$(MACH64)
 
+COMPONENT_PRE_CONFIGURE_ACTION = \
+	($(CLONEY) $(SOURCE_DIR) $(@D))
+
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
+CONFIGURE_OPTIONS  +=		M4="/usr/gnu/bin/m4"
+CONFIGURE_OPTIONS  += 		--disable-silent-rules
+
+# the shared library we create needs to be built pic
+COMPONENT_BUILD_ARGS += CC_PIC="$(CC_PIC)"
+
+# this is cheesy but the tests don't seem to
+# get compiled with the CFLAGS we built bison
+# with, so they are 32-bit otherwise.
+CONFIGURE_OPTIONS  +=		WARN_CXXFLAGS_TEST="$(CFLAGS)"
 
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
@@ -57,6 +73,7 @@ COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_PRE_SYSTEM_TEST_ACTION= \
     (cd $(@D)/tests; mv bison bison.orig; \
         echo "\#!/bin/bash" > bison; \
+        echo "IFS=" >> bison; \
         echo "exec /usr/bin/bison \$$@" >> bison; \
         chmod +x bison; \
     )
@@ -65,6 +82,8 @@ COMPONENT_POST_SYSTEM_TEST_ACTION= \
     (cd $(@D)/tests; rm -f bison; mv bison.orig bison)
 
 # Strip compilation lines from test output
+# and strange backslash lines. and random output,
+# including rm complaints over nfs
 COMPONENT_TEST_TRANSFORMS += \
     '-e "s|^.*$(CC).*$$|XXX_CC_XXX|g" ' \
     '-e "s|^.*$(CXX).*$$|XXX_CC_XXX|g" ' \
@@ -73,6 +92,15 @@ COMPONENT_TEST_TRANSFORMS += \
     '-e "s|^config.status: .*$$|XXX_CC_XXX|g" ' \
     '-e "s|^make.*: Leaving directory.*$$|XXX_CC_XXX|g" ' \
     '-e "s|^make.*: Entering directory.*$$|XXX_CC_XXX|g" ' \
+    '-e "s|^make.*: Nothing to be done for.*$$|XXX_CC_XXX|g" ' \
+    '-e "s|^make.*: .*is up to date.*$$|XXX_CC_XXX|g" ' \
+    '-e "s|^mv -f.*$$|XXX_CC_XXX|g" ' \
+    '-e "s|^.$$|XXX_CC_XXX|g" ' \
+    '-e "s|^updating examples.*$$|XXX_CC_XXX|g" ' \
+    '-e "s|.*build-aux/ylwrap.*$$|XXX_CC_XXX|g" ' \
+    '-e "s|.*examples/calc++/calc++-parser.stamp.*$$|XXX_CC_XXX|g" ' \
+    '-e "s|.*tests/bison -o y.tab.c.*$$|XXX_CC_XXX|g" ' \
+    '-e "s|^rm:.*directory renamed.*$$|XXX_CC_XXX|g" ' \
     '-e "/^XXX_CC_XXX$$/d" '
 
 # Enable ASLR for this component

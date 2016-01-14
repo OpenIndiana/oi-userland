@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -71,8 +71,6 @@ studio_OPT.sparc.32=-xO3
 # If that changes the sed filter needs to change.
 #
 
-# That last bit re-runs bison to regenerate perly.h.
-
 CONFIGURE_SCRIPT = $(SOURCE_DIR)/Configure
 CONFIGURE_ENV += MAKE=$(GMAKE)
 CONFIGURE_ENV += PATH=$(dir $(CC)):$(PATH)
@@ -105,9 +103,7 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 	    '/^myuname=/{print $$1" localhost "$$3" "$$5" "$$6" "$$7"\047"} ; \
 	    		!/^myuname=/ {print}' config.sh_orig \
 		| \
-		sed -e 's/[^ ]*SUNWspro[^ ]*//g' > config.sh ) ; \
-	( $(RM) $(@D)/perly.act $(@D)/perly.tab $(@D)/perly.h; \
-		cd $(@D) ; $(GMAKE) regen_perly )
+		sed -e 's/[^ ]*SUNWspro[^ ]*//g' > config.sh )
 
 COMPONENT_INSTALL_ENV	+=	DESTDIR="$(PROTO_DIR)"
 #
