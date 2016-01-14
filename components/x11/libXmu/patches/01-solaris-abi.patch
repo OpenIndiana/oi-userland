@@ -1,0 +1,63 @@
+###############################################################################
+# Copyright (c) 2008, 2014, Oracle and/or its affiliates. All rights reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice (including the next
+# paragraph) shall be included in all copies or substantial portions of the
+# Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+# DEALINGS IN THE SOFTWARE.
+#
+
+diff -urp -x '*~' -x '*.orig' src/Makefile.am src/Makefile.am
+--- a/src/Makefile.am	2009-10-16 14:26:51.000000000 -0700
++++ b/src/Makefile.am	2011-02-11 16:42:34.881458929 -0800
+@@ -9,11 +9,13 @@ AM_CPPFLAGS = \
+ 
+ AM_CFLAGS = $(CWARNFLAGS) $(XMU_CFLAGS)
+ 
+-libXmu_la_LDFLAGS = -version-number 6:2:0 -no-undefined
+-libXmuu_la_LDFLAGS = -version-number 1:0:0 -no-undefined
++libXmu_la_LDFLAGS = -version-number 4:0:0 -no-undefined -Wl,-M../../../mapfile-Xmu
++libXmuu_la_LDFLAGS = -version-number 1:0:0 -no-undefined -Wl,-M../../../mapfile-Xmuu
+ 
+-libXmu_la_LIBADD = $(XMU_LIBS)
+-libXmuu_la_LIBADD = $(XMUU_LIBS)
++libXmu_la_DEPENDENCIES = libXmuu.la
++
++libXmu_la_LIBADD = $(XMU_LIBS) libXmuu.la -lX11 -lc -lm
++libXmuu_la_LIBADD = $(XMUU_LIBS) -lc
+ 
+ libXmuu_la_SOURCES = \
+ 	ClientWin.c \
+@@ -23,7 +25,8 @@ libXmuu_la_SOURCES = \
+ 	Lower.c
+ 
+ libXmu_la_SOURCES = \
+-	$(libXmuu_la_SOURCES) \
++	CmapEquiv.c \
++	VisGamma.c \
+ 	AllCmap.c \
+ 	Atoms.c \
+ 	Clip.c \
+@@ -79,7 +82,7 @@ lintlibdir = $(libdir)
+ 
+ lintlib_DATA = $(LINTLIB) $(LINTLIBUU)
+ 
+-$(LINTLIB): $(libXmu_la_SOURCES)
++$(LINTLIB): $(libXmu_la_SOURCES) $(libXmuu_la_SOURCES)
+ 	$(LINT) -y -oXmu -x $(ALL_LINT_FLAGS) $(libXmu_la_SOURCES)
+ 
+ $(LINTLIBUU): $(libXmuu_la_SOURCES)
