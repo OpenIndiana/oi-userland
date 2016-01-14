@@ -20,23 +20,23 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tcsh
-COMPONENT_VERSION=	6.18.01
-IPS_COMPONENT_VERSION=	6.18.1
+COMPONENT_VERSION=	6.19.00
+IPS_COMPONENT_VERSION=	6.19.0
 COMPONENT_PROJECT_URL=	http://www.tcsh.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:d81ca27851f3e8545666399b4bcf25433e602a195113b3f7c73886fef84c9fa8
+    sha256:12e271e0b89e4259d9d6e8d525322e77340e7244cfbd199a591e5f8146285c49
 COMPONENT_ARCHIVE_URL=	ftp://ftp.astron.com/pub/tcsh/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/tcsh
 
-TPNO=			5688
+TPNO=			24443
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -57,16 +57,20 @@ LOCALEDIR=$(PROTO_DIR)/$(CONFIGURE_LOCALEDIR)
 
 CONFIGURE_BINDIR.64 =   $(CONFIGURE_PREFIX)/bin
 
-# since we patch out AM_ICONV so we can run autoconf,
-# the new configure doesn't look for iconv(3C), so
-# we'll tell it here.
-CFLAGS += -DHAVE_ICONV -DICONV_CONST=
-
 CONFIGURE_OPTIONS  +=		--localedir=$(CONFIGURE_LOCALEDIR)
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 
 COMPONENT_TEST_ENV += PATH=/usr/gnu/bin:/usr/bin
 COMPONENT_SYSTEM_TEST_TARGETS= system-test
+
+# Strip compilation lines from test output
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s|^.*$(CC).*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^.*$(CXX).*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^make.*: Leaving directory.*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^make.*: Entering directory.*$$|XXX_CC_XXX|g" ' \
+	'-e "/^XXX_CC_XXX$$/d" '
+
 
 ASLR_MODE = $(ASLR_ENABLE)
 
