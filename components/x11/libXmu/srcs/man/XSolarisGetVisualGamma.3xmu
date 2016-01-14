@@ -1,0 +1,109 @@
+.\"
+.\" Copyright (c) 1994, 2008, Oracle and/or its affiliates. All rights reserved.
+.\"
+.\" Permission is hereby granted, free of charge, to any person obtaining a
+.\" copy of this software and associated documentation files (the "Software"),
+.\" to deal in the Software without restriction, including without limitation
+.\" the rights to use, copy, modify, merge, publish, distribute, sublicense,
+.\" and/or sell copies of the Software, and to permit persons to whom the
+.\" Software is furnished to do so, subject to the following conditions:
+.\"
+.\" The above copyright notice and this permission notice (including the next
+.\" paragraph) shall be included in all copies or substantial portions of the
+.\" Software.
+.\"
+.\" THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+.\" IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+.\" FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+.\" THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+.\" LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+.\" FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+.\" DEALINGS IN THE SOFTWARE.
+.\"
+.TH XSolarisGetVisualGamma 3Xmu "11 Jan 2008" "X Version 11" "XLIB FUNCTIONS"
+.SH NAME
+XSolarisGetVisualGamma \- obtain gamma information for a visual
+.SH SYNOPSIS
+.LP
+#include <X11/Xmu/XmuSolaris.h>
+.LP
+Status
+.br
+XSolarisGetVisualGamma\^(\^Display *\fIdisplay\f1, int \fIscreen_number\f1, 
+.br
+.in +1.75i
+Visual *\fIvisual\f1, double *\fIgamma\f1\^);
+.in -1.75i
+.SH ARGUMENTS
+.IP \fIdisplay\f1 1i
+Specifies the connection to the X server.
+.IP \fIscreen_number\f1 1i
+Specifies the number of the screen.
+.IP \fIvisual\f1 1i
+Specifies the visual.
+.IP \fIgamma\f1 1i
+Returns the gamma value for the specified visual.
+.SH DESCRIPTION
+The
+.B XSolarisGetVisualGamma
+function returns the gamma value of a specified visual.  This value is
+the exponent of the power function describing the intensity response
+of colors displayed using that visual.  This is the intensity response
+of the entire path from the frame buffer pixel store through the
+monitor.  The equation of the intensity response is:
+.PP
+.in +0.5i
+\fIIntensityOut\f1 = (\fIFramebufferColor\f1)**\fIgamma\f1
+.in -0.5i
+.PP
+(i.e. the color in the frame buffer raised to the power of gamma).
+.LP
+\fIFramebufferColor\f1 refers to the the RGB values stored in the frame buffer
+pixel store and processed by any color mapping LUTs that are in the output path.
+.LP
+Gamma correction is necessary because of the way color intensities are
+perceived by the human eye.  Without gamma correction, the eye
+interprets changes to the color intensity incorrectly.  Small changes
+to low intensity light appear to have more effect than the equivalent
+change to higher intensity light.  This distorts the appearance of
+graphical entities which depend on accurate color, such as images,
+anti-aliased lines and transparent polygons.
+.LP
+Gamma correction results in a linear mapping between color values and
+percieved intensity.  Gamma corrected visuals are also called linear
+visuals for this reason.  Linear visuals have a gamma value of 1.0.
+.LP
+Note: the term "gamma" used here refers the mapping applied along the entire
+path (that is, the value percieved by the end user), not merely the exponent
+of the gamma correction function.
+.LP
+The gamma value returned defines the color-to-intensity mapping for all
+three channels: red, green, and blue.
+.LP
+A status of \f3Success\f1
+is returned if the function was able to determine the gamma successfully.
+If a request failure occured while calling the function, a \f3BadAccess \f1
+error code is returned.  If there is an internal inconsistency (e.g. the gamma 
+value for one of the color channels is different from the others) a 
+\f3BadMatch\f1 error code is returned.  Whenever an error code is returned, 
+the argument \fIgamma\f1 is left untouched.
+.LP
+The gamma value returned represents the best information available on the
+intensity response of the visual.  Depending on the device, it may or may
+not include the actual monitor characteristics (some devices have no way
+of determining the type of monitor so they may assume a default monitor
+gamma).  As such, it represents the system's "best guess" about the intensity
+response.  Since this function gets its information from the same property
+used by Solaris color managment systems, if more accurate information on the 
+monitor response is configured or calibrated through these systems,
+this function will return a more accurate value for gamma.
+.LP
+If the intensity mapping is not a power function, the returned gamma value
+may only be approximate.  This should usually happen only when the device
+gamma correction has been incorrectly configured.
+.LP
+To use this function, an application should link with \f3libXmu\f1.
+.SH SEE ALSO
+.TZ OWPG
+.br
+(Visuals and Display Devices chapter)
