@@ -1,0 +1,21 @@
+Augeas version scripts are standard version 1 Solaris mapfiles,
+compatible with ld -M. Replace the use of --version-script with -M.
+Using --version-script requires us to set -z version-script-compat 
+and we haven't tested that yet. 
+
+--- augeas-1.3.0/configure.orig        Wed Jan 13 08:49:22 2016
++++ augeas-1.3.0/configure     Wed Jan 13 08:49:57 2016
+@@ -14951,12 +14951,7 @@
+
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking how to pass version script to the linker ($LD)" >&5
+ $as_echo_n "checking how to pass version script to the linker ($LD)... " >&6; }
+-VERSION_SCRIPT_FLAGS=none
+-if $LD --help 2>&1 | grep "version-script" >/dev/null 2>/dev/null; then
+-    VERSION_SCRIPT_FLAGS=-Wl,--version-script=
+-elif $LD --help 2>&1 | grep "M mapfile" >/dev/null 2>/dev/null; then
+-    VERSION_SCRIPT_FLAGS="-Wl,-M -Wl,"
+-fi
++VERSION_SCRIPT_FLAGS="-Wl,-M -Wl,"
+ { $as_echo "$as_me:${as_lineno-$LINENO}: result: $VERSION_SCRIPT_FLAGS" >&5
+ $as_echo "$VERSION_SCRIPT_FLAGS" >&6; }
+ 

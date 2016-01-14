@@ -52,6 +52,18 @@ CONFIGURE_OPTIONS  +=	--disable-dependency-tracking
 CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
 
 COMPONENT_TEST_ARGS = -k
+COMPONENT_TEST_TRANSFORMS += \
+        '-n ' \
+        '-e "/passed/p" ' \
+        '-e "/failed/p" ' \
+        '-e "/Checks:/p" ' \
+        '-e "/Total:/p" ' \
+        '-e "/Passed/p" ' \
+        '-e "/Failed/p" ' \
+        '-e "/Failure expected/p" ' \
+        '-e "/SKIP/p" ' \
+        '-e "/PASS/p" ' \
+        '-e "/FAIL/p" '
 
 # Fixes coredump in gnulib-test/test-localename test
 CONFIGURE_OPTIONS  +=           ac_cv_func_newlocale=no
