@@ -1,0 +1,13 @@
+--- configure.ac.0	Mi. Jan 13 15:20:04 2016
++++ configure.ac	Mi. Jan 13 15:26:07 2016
+@@ -35,8 +35,9 @@
+ AC_DEFINE_UNQUOTED([NV_PATCHLEVEL],
+                    [$(echo $PACKAGE_VERSION | sed -e 's/^[[0-9]]*\.[[0-9]]*\.\([[0-9]]*\)/\1/')],
+                    [Patch version])
++NV_DRIVER_DATE="$(git log |head -3|tail -1|tr -d '\n')"
+ AC_DEFINE_UNQUOTED([NV_DRIVER_DATE],
+-                   [$(echo -n \";git log |head -3|tail -1|tr -d '\n';echo -n \")],
++                   ["${NV_DRIVER_DATE}"],
+                    [Driver date])
+ 
+ AC_CONFIG_SRCDIR([Makefile.am])
