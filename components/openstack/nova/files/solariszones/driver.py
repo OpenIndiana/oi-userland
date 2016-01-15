@@ -27,14 +27,11 @@ import shutil
 import tempfile
 import uuid
 
+import rad.bindings.com.oracle.solaris.rad.archivemgr_1 as archivemgr
 import rad.bindings.com.oracle.solaris.rad.kstat_1 as kstat
 import rad.bindings.com.oracle.solaris.rad.zonemgr_1 as zonemgr
 import rad.client
 import rad.connect
-from solaris_install.archive.checkpoints import InstantiateUnifiedArchive
-from solaris_install.archive import LOGFILE as ARCHIVE_LOGFILE
-from solaris_install.archive import UnifiedArchive
-from solaris_install.engine import InstallEngine
 from solaris_install.target.size import Size
 
 from cinderclient import exceptions as cinder_exception
@@ -481,20 +478,19 @@ class SolarisZonesDriver(driver.ComputeDriver):
         return self._rad_connection
 
     def _init_rad(self):
-        """Connect to RAD providers for kernel statistics and Solaris
-        Zones. By connecting to the local rad(1M) service through a
-        UNIX domain socket, kernel statistics can be read via
-        kstat(3RAD) and Solaris Zones can be configured and controlled
-        via zonemgr(3RAD).
+        """Obtain required RAD objects for Solaris Zones, kernel statistics,
+        and Unified Archive management.
         """
-
         try:
+            self._zone_manager = self.rad_connection.get_object(
+                zonemgr.ZoneManager())
             self._kstat_control = self.rad_connection.get_object(
                 kstat.Control())
-        except Exception as reason:
-            msg = (_('Unable to connect to svc:/system/rad:local: %s')
-                   % reason)
-            raise exception.NovaException(msg)
+            self._archive_manager = self.rad_connection.get_object(
+                archivemgr.ArchiveManager())
+        except Exception as ex:
+            reason = _("Unable to obtain RAD object: %s") % ex
+            raise exception.NovaException(reason)
 
     def init_host(self, host):
         """Initialize anything that is necessary for the driver to function,
@@ -865,63 +861,42 @@ class SolarisZonesDriver(driver.ComputeDriver):
         return image
 
     def _validate_image(self, image, instance):
-        """Validate a glance image for compatibility with the instance"""
-        # Skip if the image was already checked and confirmed as valid
+        """Validate a glance image for compatibility with the instance."""
+        # Skip if the image was already checked and confirmed as valid.
         if instance['image_ref'] in self._validated_archives:
             return
 
-        if self._install_engine is None:
-            self._install_engine = InstallEngine(ARCHIVE_LOGFILE)
-
         try:
-            init_ua_cp = InstantiateUnifiedArchive(instance['image_ref'],
-                                                   image)
-            init_ua_cp.execute()
-        except Exception:
-            reason = (_("Image query failed. Possibly invalid or corrupt. "
-                        "Log file location: %s:%s")
-                      % (self._uname[1], ARCHIVE_LOGFILE))
-            LOG.error(reason)
+            ua = self._archive_manager.getArchive(image)
+        except Exception as ex:
+                reason = ex.get_payload().info
+                raise exception.ImageUnacceptable(
+                    image_id=instance['image_ref'],
+                    reason=reason)
+
+        # Validate the image at this point to ensure:
+        # - contains one deployable system
+        deployables = ua.getArchivedSystems()
+        if len(deployables) != 1:
+            reason = _("Image must contain only a single deployable system.")
             raise exception.ImageUnacceptable(image_id=instance['image_ref'],
                                               reason=reason)
-
-        try:
-            ua = self._install_engine.doc.volatile.get_first_child(
-                class_type=UnifiedArchive)
-            # Validate the image at this point to ensure:
-            # - contains one deployable system
-            deployables = ua.archive_objects
-            if len(deployables) != 1:
-                reason = (_('Image must contain only 1 deployable system'))
-                raise exception.ImageUnacceptable(
-                    image_id=instance['image_ref'],
-                    reason=reason)
-            # - matching architecture
-            deployable_arch = deployables[0].system.arch
-            compute_arch = platform.processor()
-            if deployable_arch != compute_arch:
-                reason = (_('Image architecture "%s" is incompatible with this'
-                          'compute host architecture: "%s"')
-                          % (deployable_arch, compute_arch))
-                raise exception.ImageUnacceptable(
-                    image_id=instance['image_ref'],
-                    reason=reason)
-            # - single root pool only
-            streams = deployables[0].zfs_streams
-            stream_pools = set(stream.zpool for stream in streams)
-            if len(stream_pools) > 1:
-                reason = (_('Image contains more than one zpool: "%s"')
-                          % (stream_pools))
-                raise exception.ImageUnacceptable(
-                    image_id=instance['image_ref'],
-                    reason=reason)
-            # - looks like it's OK
-            self._validated_archives.append(instance['image_ref'])
-        finally:
-            # Clear the reference to the UnifiedArchive object in the engine
-            # data cache to avoid collision with the next checkpoint execution.
-            self._install_engine.doc.volatile.delete_children(
-                class_type=UnifiedArchive)
+        # - matching architecture
+        deployable_arch = str(ua.isa)
+        compute_arch = platform.processor()
+        if deployable_arch.lower() != compute_arch:
+            reason = (_("Unified Archive architecture '%s' is incompatible "
+                      "with this compute host's architecture, '%s'.")
+                      % (deployable_arch, compute_arch))
+            raise exception.ImageUnacceptable(image_id=instance['image_ref'],
+                                              reason=reason)
+        # - single root pool only
+        if not deployables[0].rootOnly:
+            reason = _("Image contains more than one ZFS pool.")
+            raise exception.ImageUnacceptable(image_id=instance['image_ref'],
+                                              reason=reason)
+        # - looks like it's OK
+        self._validated_archives.append(instance['image_ref'])
 
     def _suri_from_volume_info(self, connection_info):
         """Returns a suri(5) formatted string based on connection_info
@@ -1356,9 +1331,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
         LOG.debug(_("Creating zone configuration for '%s' (%s)")
                   % (name, instance['display_name']))
-        zonemanager = self.rad_connection.get_object(zonemgr.ZoneManager())
         try:
-            zonemanager.create(name, None, template)
+            self._zone_manager.create(name, None, template)
             self._set_global_properties(name, extra_specs, brand)
             if connection_info is not None:
                 self._set_boot_device(name, connection_info, brand)
@@ -1620,9 +1594,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
         if self._get_zone_by_name(name) is None:
             raise exception.InstanceNotFound(instance_id=name)
 
-        zonemanager = self.rad_connection.get_object(zonemgr.ZoneManager())
         try:
-            zonemanager.delete(name)
+            self._zone_manager.delete(name)
         except Exception as ex:
             reason = zonemgr_strerror(ex)
             LOG.error(_("Unable to delete configuration for instance '%s' via "
