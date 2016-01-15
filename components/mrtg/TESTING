@@ -1,0 +1,19 @@
+Install snmp:
+$ pkg install system/management/snmp/net-snmp
+
+Enable snmp:
+$ svcadm enable svc:/application/management/net-snmp:default
+
+Make sure snmp works:
+$ snmpget -v2c -c public localhost sysUpTime.0
+
+Do some networking traffic:
+$ while : ; do rm -f /home/vmarek/tmp/gs ; cp /usr/bin/gs /home/vmarek/tmp; done &
+
+Test mrtg:
+$ rm -rf /var/tmp/mrtg && mkdir -p /var/tmp/mrtg
+$ cfgmaker --global "workdir: /var/tmp/mrtg" public@localhost > /var/tmp/mrtg.cfg
+$ set -x; for i in 1 2 3 4 5 6 ; do env LANG=C /usr/bin/mrtg /var/tmp/mrtg.cfg; sleep 600; done
+
+After 30 minutes display the generated html in /var/tmp/mrtg. You should see
+some data.

@@ -18,21 +18,21 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mrtg
-COMPONENT_VERSION=	2.16.2
+COMPONENT_VERSION=	2.17.4
 COMPONENT_PROJECT_URL=	http://oss.oetiker.ch/mrtg
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:ce9ec97bb6c8f94a8d8bb2d3cfa7e72b73754ed7a1081e7aca1c8cece5ce3385
+	sha256:5efa7fae8040159208472e5f889be5b41d8c8a2ea6b31616f0f75cc7f48d2365
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/pub/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/mrtg
 
-TPNO=			9225
+TPNO=			25709
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure-64.mk
