@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -50,15 +50,17 @@ COMPONENT_PREP_ACTION = \
 	automake -a -c -f ; \
 	autoconf )
 
+CONFIGURE_BINDIR.64 =   $(CONFIGURE_PREFIX)/bin
+
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-configure:	$(CONFIGURE_32)
+configure:	$(CONFIGURE_32_and_64)
 
-build:		$(BUILD_32)
+build:		$(BUILD_32_and_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
