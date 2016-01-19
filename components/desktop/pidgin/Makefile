@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -62,6 +62,7 @@ CONFIGURE_ENV +=	PKG_CONFIG_PATH=/usr/lib/pkgconfig/gnutls-3
 
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	--disable-binreloc
+CONFIGURE_OPTIONS +=	--enable-cyrus-sasl
 CONFIGURE_OPTIONS +=	--enable-nss=no
 CONFIGURE_OPTIONS +=	--enable-gnutls=yes
 CONFIGURE_OPTIONS +=	--with-gnutls-includes=/usr/include/gnutls-3
@@ -116,6 +117,7 @@ REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/libdbus-glib
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/library/security/libsasl
 REQUIRED_PACKAGES += system/network/avahi
 REQUIRED_PACKAGES += x11/library/libice
 REQUIRED_PACKAGES += x11/library/libsm
