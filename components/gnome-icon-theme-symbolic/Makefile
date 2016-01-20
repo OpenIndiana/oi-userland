@@ -17,6 +17,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnome-icon-theme-symbolic
 COMPONENT_VERSION=	3.12.0
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	GNOME Symbolic Icons
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
