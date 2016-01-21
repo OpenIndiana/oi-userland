@@ -56,6 +56,7 @@ CONFIGURE_OPTIONS	+=	--with-avahi-group=other
 CONFIGURE_OPTIONS	+=	--localstatedir=/var/avahi
 CONFIGURE_OPTIONS	+=	--with-distro=none
 CONFIGURE_OPTIONS	+=	--disable-gtk3
+CONFIGURE_OPTIONS	+=	--disable-pygtk
 CONFIGURE_OPTIONS	+=	--disable-qt3
 CONFIGURE_OPTIONS	+=	--disable-qt4
 CONFIGURE_OPTIONS	+=	--disable-mono
