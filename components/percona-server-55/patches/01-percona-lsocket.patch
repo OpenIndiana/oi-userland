@@ -28,8 +28,9 @@
  
  ADD_CUSTOM_TARGET( 
          GenServerSource
---- percona-server-5.5.36-34.2/extra/CMakeLists.txt.~1~	2014-03-25 17:10:46.000000000 +0400
-+++ percona-server-5.5.36-34.2/extra/CMakeLists.txt	2014-03-26 08:38:54.922153822 +0400
+--- percona-server-5.5.47-37.7/extra/CMakeLists.txt.~1~	2016-01-09 00:32:34.000000000 +0300
++++ percona-server-5.5.47-37.7/extra/CMakeLists.txt	2016-01-21 12:28:07.370281838 +0300
+--- percona-server-5.5.36-34.2/storage/heap/CMakeLists.txt.~1~	2014-03-26 08:50:39.649301023 +0400
 @@ -29,6 +29,7 @@
  IF(NOT CMAKE_CROSSCOMPILING)
   ADD_EXECUTABLE(comp_err comp_err.c)
@@ -55,13 +56,14 @@
  IF(CMAKE_SYSTEM_NAME STREQUAL "SunOS")
    INCLUDE(CheckFunctionExists)
    INCLUDE(CheckLibraryExists)
-@@ -69,13 +73,16 @@
+@@ -69,14 +73,17 @@
  
  MYSQL_ADD_EXECUTABLE(replace replace.c)
  TARGET_LINK_LIBRARIES(replace mysys)
 +TARGET_LINK_LIBRARIES(replace "-lsocket")
  IF(UNIX)
    MYSQL_ADD_EXECUTABLE(innochecksum innochecksum.c)
+   TARGET_LINK_LIBRARIES(innochecksum ${ZLIB_LIBRARY})
  
    MYSQL_ADD_EXECUTABLE(resolve_stack_dump resolve_stack_dump.c)
    TARGET_LINK_LIBRARIES(resolve_stack_dump mysys)
@@ -72,7 +74,6 @@
 +  TARGET_LINK_LIBRARIES(mysql_waitpid "-lsocket")
  ENDIF()
  
---- percona-server-5.5.36-34.2/storage/heap/CMakeLists.txt.~1~	2014-03-26 08:50:39.649301023 +0400
 +++ percona-server-5.5.36-34.2/storage/heap/CMakeLists.txt	2014-03-26 08:51:09.248603115 +0400
 @@ -28,6 +28,8 @@
  
