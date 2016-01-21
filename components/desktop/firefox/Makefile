@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016 Oracle and/or its affiliates. All rights reserved.
 #
 
 # parfait is a bit unhappy (22527218)
@@ -72,41 +72,43 @@ PATH =			/usr/gnu/bin:/usr/bin:/usr/sbin
 
 CLEAN_PATHS +=		$(COMPONENT_SRC)
 
+MOZCONFIG = 		$(BUILD_DIR_32)/mozconfig
+
 COMPONENT_PRE_CONFIGURE_ACTION += \
-	echo "mk_add_options BUILD_OFFICIAL=1" > .mozconfig ; \
-	echo "mk_add_options MOZILLA_OFFICIAL=1" >> .mozconfig ; \
-	echo "ac_add_options --prefix=/usr" >> .mozconfig ; \
-	echo "ac_add_options --libdir=/usr/lib" >> .mozconfig ; \
-	echo "ac_add_options --mandir=/usr/share/man" >> .mozconfig ; \
-	echo "ac_add_options --enable-official-branding" >> .mozconfig ; \
-	echo "ac_add_options --disable-updater" >> .mozconfig ; \
-	echo "ac_add_options --enable-debug-symbols=no" >> .mozconfig ; \
-	echo "ac_add_options --enable-update-packaging" >> .mozconfig ; \
-	echo "ac_add_options --enable-update-channel=esr" >> .mozconfig ; \
-	echo "ac_add_options --disable-tests" >> .mozconfig ; \
-	echo "ac_add_options --with-system-libevent" >> .mozconfig ; \
-	echo "ac_add_options --with-system-zlib" >> .mozconfig ; \
-	echo "ac_add_options --with-system-bz2" >> .mozconfig ; \
-	echo "ac_add_options --enable-system-ffi" >> .mozconfig ; \
-	echo "ac_add_options --enable-system-sqlite" >> .mozconfig ; \
-	echo "ac_add_options --enable-jemalloc" >> .mozconfig ; \
-	echo "ac_add_options --enable-xinerama" >> .mozconfig ; \
-	echo "ac_add_options --disable-crashreporter" >> .mozconfig ; \
-	echo "ac_add_options --disable-pulseaudio" >> .mozconfig ; \
-	echo "ac_add_options --enable-gstreamer" >> .mozconfig ; \
-	echo "ac_add_options --without-intl-api" >> .mozconfig ; \
-	echo "ac_add_options --enable-system-libffi" >> .mozconfig ; \
-	echo "ac_add_options --enable-ipc" >> .mozconfig ; \
-	echo "ac_add_options --enable-system-pixman" >> .mozconfig ; \
-	echo "ac_add_options --enable-startup-notification" >> .mozconfig ; \
-	echo "ac_add_options --enable-dtrace" >> .mozconfig ;
+	echo "mk_add_options BUILD_OFFICIAL=1" > $(MOZCONFIG) ; \
+	echo "mk_add_options MOZILLA_OFFICIAL=1" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --prefix=/usr" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --libdir=/usr/lib" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --mandir=/usr/share/man" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-official-branding" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --disable-updater" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-debug-symbols=no" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-update-packaging" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-update-channel=esr" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --disable-tests" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --with-system-libevent" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --with-system-zlib" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --with-system-bz2" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-system-ffi" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-system-sqlite" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-jemalloc" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-xinerama" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --disable-crashreporter" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --disable-pulseaudio" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-gstreamer" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --without-intl-api" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-system-libffi" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-ipc" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-system-pixman" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-startup-notification" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-dtrace" >> $(MOZCONFIG) ;
 
 CXXFLAGS +=		-Wno-invalid-offsetof
 
 CONFIGURE_ENV +=	PKG_CONFIG_PATH=$(CONFIGURE_LIBDIR.$(BITS))/pkgconfig
 CONFIGURE_ENV +=	OS_DEFINES="-D__USE_LEGACY_PROTOTYPES__"
 
-CONFIGURE_ENV +=	MOZCONFIG=$(shell pwd)/.mozconfig
+CONFIGURE_ENV +=	MOZCONFIG=$(MOZCONFIG)
 CONFIGURE_ENV +=	"CC=$(CC)"
 CONFIGURE_ENV +=	"CXX=$(CXX)"
 CONFIGURE_ENV +=	"CFLAGS=$(CFLAGS)"
@@ -171,6 +173,7 @@ REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/gnome/gnome-libs
 REQUIRED_PACKAGES += library/graphics/pixman
 REQUIRED_PACKAGES += library/libevent
 REQUIRED_PACKAGES += library/libffi

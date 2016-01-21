@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016 Oracle and/or its affiliates. All rights reserved.
 #
 
 # parfait is a bit unhappy (22527218)
@@ -40,7 +40,7 @@ COMPONENT_ARCHIVE_HASH= \
     sha256:ccbf8cbb740bc1b30ecf4fe39aab226607f9a41e23a07e994c508a90e8b70508
 MOZILLA_FTP = 		http://ftp.mozilla.org/pub/mozilla.org/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE_URL=	$(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	thunderbird/mailer
+COMPONENT_BUGDB=	tbird/mailer
 
 TPNO=			22326
 
@@ -67,35 +67,38 @@ include $(WS_MAKE_RULES)/ips.mk
 # /usr/sbin needed for dtrace.
 PATH =         /usr/gnu/bin:/usr/bin:/usr/sbin
 
+MOZCONFIG =	$(BUILD_DIR_32)/mozconfig
+
 COMPONENT_PRE_CONFIGURE_ACTION += \
-	echo "mk_add_options BUILD_OFFICIAL=1" > .mozconfig ; \
-	echo "mk_add_options MOZILLA_OFFICIAL=1" >> .mozconfig ; \
-	echo "ac_add_options --prefix=/usr" >> .mozconfig ; \
-	echo "ac_add_options --libdir=/usr/lib" >> .mozconfig ; \
-	echo "ac_add_options --mandir=/usr/share/man" >> .mozconfig ; \
-	echo "ac_add_options --disable-debug" >> .mozconfig ; \
-	echo "ac_add_options --enable-optimize" >> .mozconfig ; \
-	echo "ac_add_options --disable-tests" >> .mozconfig ; \
-	echo "ac_add_options --with-system-libevent" >> .mozconfig ; \
-	echo "ac_add_options --with-system-zlib" >> .mozconfig ; \
-	echo "ac_add_options --with-system-bz2" >> .mozconfig ; \
-	echo "ac_add_options --enable-system-ffi" >> .mozconfig ; \
-	echo "ac_add_options --enable-system-sqlite" >> .mozconfig ; \
-	echo "ac_add_options --enable-libxul" >> .mozconfig ; \
-	echo "ac_add_options --enable-jemalloc" >> .mozconfig ; \
-	echo "ac_add_options --enable-official-branding" >> .mozconfig ; \
-	echo "ac_add_options --disable-updater" >> .mozconfig ; \
-	echo "ac_add_options --enable-update-packaging" >> .mozconfig ; \
-	echo "ac_add_options --enable-ipc" >> .mozconfig ; \
-	echo "ac_add_options --with-system-zlib" >> .mozconfig ; \
-	echo "ac_add_options --with-system-bz2" >> .mozconfig ; \
-	echo "ac_add_options --enable-gstreamer" >> .mozconfig ; \
-	echo "ac_add_options --enable-system-pixman" >> .mozconfig ; \
-	echo "ac_add_options --without-intl-api" >> .mozconfig ; \
-	echo "ac_add_options --disable-crashreporter" >> .mozconfig ; \
-	echo "ac_add_options --enable-debug-symbols=no" >> .mozconfig ; \
-	echo "ac_add_options --enable-calendar" >> .mozconfig ; \
-	echo "ac_add_options --enable-startup-notification" >> .mozconfig ;
+	echo "mk_add_options BUILD_OFFICIAL=1" > $(MOZCONFIG) ; \
+	echo "mk_add_options MOZILLA_OFFICIAL=1" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --prefix=/usr" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --libdir=/usr/lib" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --mandir=/usr/share/man" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --disable-debug" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-optimize" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --disable-tests" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --with-system-libevent" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --with-system-zlib" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --with-system-bz2" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-system-ffi" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-system-sqlite" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-libxul" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-jemalloc" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-official-branding" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --disable-updater" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-update-packaging" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-ipc" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --with-system-zlib" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --with-system-bz2" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-gstreamer" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-system-pixman" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --without-intl-api" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --disable-crashreporter" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-debug-symbols=no" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-calendar" >> $(MOZCONFIG) ; \
+        echo 'ac_add_options --with-rpath="\\\\\\$$\\$$ORIGIN"' >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-startup-notification" >> $(MOZCONFIG) ;
 
 CXXFLAGS += 		-Wno-invalid-offsetof
 
@@ -103,7 +106,7 @@ CONFIGURE_ENV +=	PKG_CONFIG_PATH=$(CONFIGURE_LIBDIR.$(BITS))/pkgconfig
 CONFIGURE_ENV +=	OS_DEFINES="-D__USE_LEGACY_PROTOTYPES__"
 CONFIGURE_ENV +=	LDFLAGS="-z ignore"
 
-CONFIGURE_ENV +=	MOZCONFIG=$(shell pwd)/.mozconfig
+CONFIGURE_ENV +=	MOZCONFIG=$(MOZCONFIG)
 CONFIGURE_ENV +=	"CC=$(CC)"
 CONFIGURE_ENV +=	"CXX=$(CXX)"
 CONFIGURE_ENV += 	"CFLAGS=$(CFLAGS)"
