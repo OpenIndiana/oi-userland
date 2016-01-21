@@ -1,0 +1,41 @@
+From 5aa3ba8673a060345e264216650cb145de124d66 Mon Sep 17 00:00:00 2001
+From: Shenghou Ma <minux@golang.org>
+Date: Sun, 30 Aug 2015 17:22:40 -0400
+Subject: [PATCH 03/63] [release-branch.go1.5] net: add -lsendfile to cgo
+ LDFLAGS for solaris
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Fixes external linking of net/http tests (or anything that uses
+sendfile).
+
+Fixes #12390.
+
+Change-Id: Iee08998cf66e7b0ce851db138a00ebae6dc2395e
+Reviewed-on: https://go-review.googlesource.com/14072
+Reviewed-by: Dave Cheney <dave@cheney.net>
+Reviewed-by: Aram Hăvărneanu <aram@mgk.ro>
+Reviewed-on: https://go-review.googlesource.com/14246
+Run-TryBot: Chris Broadfoot <cbro@golang.org>
+Reviewed-by: Minux Ma <minux@golang.org>
+---
+ src/net/cgo_solaris.go | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/net/cgo_solaris.go b/src/net/cgo_solaris.go
+index 2d452b9..dd936dd 100644
+--- a/src/net/cgo_solaris.go
++++ b/src/net/cgo_solaris.go
+@@ -7,7 +7,7 @@
+ package net
+ 
+ /*
+-#cgo LDFLAGS: -lsocket -lnsl
++#cgo LDFLAGS: -lsocket -lnsl -lsendfile
+ #include <netdb.h>
+ */
+ import "C"
+-- 
+2.6.1
+

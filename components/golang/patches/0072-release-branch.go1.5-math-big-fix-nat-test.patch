@@ -1,0 +1,55 @@
+From 575890b1208780ae94406e3f0fa547cb7423656e Mon Sep 17 00:00:00 2001
+From: Russ Cox <rsc@golang.org>
+Date: Wed, 13 Jan 2016 13:38:17 -0500
+Subject: [PATCH 72/73] [release-branch.go1.5] math/big: fix nat test
+
+Go 1.5 does not have nat.utoa(16) but has nat.hexString().
+
+Change-Id: Iac91c8bf3c6cd404f255f75d237c2d3b84d99359
+Reviewed-on: https://go-review.googlesource.com/18613
+Run-TryBot: Russ Cox <rsc@golang.org>
+Reviewed-by: Brad Fitzpatrick <bradfitz@golang.org>
+Reviewed-by: Chris Broadfoot <cbro@golang.org>
+---
+ src/math/big/nat_test.go | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/src/math/big/nat_test.go b/src/math/big/nat_test.go
+index dce7de5..13caec4 100644
+--- a/src/math/big/nat_test.go
++++ b/src/math/big/nat_test.go
+@@ -419,11 +419,11 @@ func TestMontgomery(t *testing.T) {
+ 
+ 		if x.cmp(m) > 0 {
+ 			_, r := nat(nil).div(nil, x, m)
+-			t.Errorf("#%d: x > m (0x%s > 0x%s; use 0x%s)", i, x.utoa(16), m.utoa(16), r.utoa(16))
++			t.Errorf("#%d: x > m (0x%s > 0x%s; use 0x%s)", i, x.hexString(), m.hexString(), r.hexString())
+ 		}
+ 		if y.cmp(m) > 0 {
+ 			_, r := nat(nil).div(nil, x, m)
+-			t.Errorf("#%d: y > m (0x%s > 0x%s; use 0x%s)", i, y.utoa(16), m.utoa(16), r.utoa(16))
++			t.Errorf("#%d: y > m (0x%s > 0x%s; use 0x%s)", i, y.hexString(), m.hexString(), r.hexString())
+ 		}
+ 
+ 		var out nat
+@@ -441,7 +441,7 @@ func TestMontgomery(t *testing.T) {
+ 		mi := &Int{abs: m}
+ 		p := new(Int).Mod(new(Int).Mul(xi, new(Int).Mul(yi, new(Int).ModInverse(new(Int).Lsh(one, uint(len(m))*_W), mi))), mi)
+ 		if out.cmp(p.abs.norm()) != 0 {
+-			t.Errorf("#%d: out in table=0x%s, computed=0x%s", i, out.utoa(16), p.abs.norm().utoa(16))
++			t.Errorf("#%d: out in table=0x%s, computed=0x%s", i, out.hexString(), p.abs.norm().hexString())
+ 		}
+ 
+ 		// check k0 in table
+@@ -457,7 +457,7 @@ func TestMontgomery(t *testing.T) {
+ 		z := nat(nil).montgomery(x, y, m, k0, len(m))
+ 		z = z.norm()
+ 		if z.cmp(out) != 0 {
+-			t.Errorf("#%d: got 0x%s want 0x%s", i, z.utoa(16), out.utoa(16))
++			t.Errorf("#%d: got 0x%s want 0x%s", i, z.hexString(), out.hexString())
+ 		}
+ 	}
+ }
+-- 
+2.6.1
+

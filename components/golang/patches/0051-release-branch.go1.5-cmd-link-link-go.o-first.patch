@@ -1,0 +1,42 @@
+From aca4fa5cf5fac24b9bcb7ffab4b2bb7b9ab1fdc4 Mon Sep 17 00:00:00 2001
+From: Russ Cox <rsc@golang.org>
+Date: Mon, 16 Nov 2015 15:45:12 -0500
+Subject: [PATCH 51/63] [release-branch.go1.5] cmd/link: link go.o first
+
+Does not fix #12327 but nicer anyway.
+
+Change-Id: I4ad730a4ca833d76957b7571895b3a08a6a530d4
+Reviewed-on: https://go-review.googlesource.com/16964
+Reviewed-by: Ian Lance Taylor <iant@golang.org>
+Reviewed-on: https://go-review.googlesource.com/17126
+---
+ src/cmd/link/internal/ld/lib.go | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/cmd/link/internal/ld/lib.go b/src/cmd/link/internal/ld/lib.go
+index 8ccbec9..a9ec3d2 100644
+--- a/src/cmd/link/internal/ld/lib.go
++++ b/src/cmd/link/internal/ld/lib.go
+@@ -886,8 +886,8 @@ func archive() {
+ 
+ 	mayberemoveoutfile()
+ 	argv := []string{"ar", "-q", "-c", "-s", outfile}
+-	argv = append(argv, hostobjCopy()...)
+ 	argv = append(argv, fmt.Sprintf("%s/go.o", tmpdir))
++	argv = append(argv, hostobjCopy()...)
+ 
+ 	if Debug['v'] != 0 {
+ 		fmt.Fprintf(&Bso, "archive: %s\n", strings.Join(argv, " "))
+@@ -1012,8 +1012,8 @@ func hostlink() {
+ 		argv = append(argv, "-Qunused-arguments")
+ 	}
+ 
+-	argv = append(argv, hostobjCopy()...)
+ 	argv = append(argv, fmt.Sprintf("%s/go.o", tmpdir))
++	argv = append(argv, hostobjCopy()...)
+ 
+ 	if Linkshared {
+ 		seenDirs := make(map[string]bool)
+-- 
+2.6.1
+

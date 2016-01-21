@@ -1,0 +1,65 @@
+From 05078023963370af0faa9689373c3bd6c7d6dfe4 Mon Sep 17 00:00:00 2001
+From: Ulrich Kunitz <uli.kunitz@gmail.com>
+Date: Thu, 20 Aug 2015 18:56:18 +0200
+Subject: [PATCH 12/63] [release-branch.go1.5] cmd/compile: fix register
+ allocation for == operator
+
+The issue 12226 has been caused by the allocation of the same register
+for the equality check of two byte values. The code in cgen.go freed the
+register for the second operand before the allocation of the register
+for the first operand.
+
+Fixes #12226
+
+Change-Id: Ie4dc33a488bd48a17f8ae9b497fd63c1ae390555
+Reviewed-on: https://go-review.googlesource.com/13771
+Reviewed-by: Russ Cox <rsc@golang.org>
+Reviewed-on: https://go-review.googlesource.com/14227
+Reviewed-by: Ian Lance Taylor <iant@golang.org>
+---
+ src/cmd/compile/internal/gc/cgen.go |  2 +-
+ test/fixedbugs/issue12226.go        | 15 +++++++++++++++
+ 2 files changed, 16 insertions(+), 1 deletion(-)
+ create mode 100644 test/fixedbugs/issue12226.go
+
+diff --git a/src/cmd/compile/internal/gc/cgen.go b/src/cmd/compile/internal/gc/cgen.go
+index 4160ae9..b6a3e5b 100644
+--- a/src/cmd/compile/internal/gc/cgen.go
++++ b/src/cmd/compile/internal/gc/cgen.go
+@@ -2018,11 +2018,11 @@ func bgenx(n, res *Node, wantTrue bool, likely int, to *obj.Prog) {
+ 		Regalloc(&n2, nr.Type, nil)
+ 		Cgen(nr, &n2)
+ 		nr = &n2
+-		Regfree(&n2)
+ 
+ 		Regalloc(&n1, nl.Type, nil)
+ 		Cgen(&tmp, &n1)
+ 		Regfree(&n1)
++		Regfree(&n2)
+ 	} else {
+ 		var n1 Node
+ 		if !nl.Addable && Ctxt.Arch.Thechar == '8' {
+diff --git a/test/fixedbugs/issue12226.go b/test/fixedbugs/issue12226.go
+new file mode 100644
+index 0000000..2246711
+--- /dev/null
++++ b/test/fixedbugs/issue12226.go
+@@ -0,0 +1,15 @@
++// run
++
++// Copyright 2015 The Go Authors. All rights reserved.
++// Use of this source code is governed by a BSD-style
++// license that can be found in the LICENSE file.
++
++package main
++
++import "fmt"
++
++func main() {
++	if []byte("foo")[0] == []byte("b")[0] {
++		fmt.Println("BUG: \"foo\" and \"b\" appear to have the same first byte")
++	}
++}
+-- 
+2.6.1
+

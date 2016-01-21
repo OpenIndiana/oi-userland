@@ -1,0 +1,93 @@
+From 23c646c226e9820c30fba29ebef94d7e328ada83 Mon Sep 17 00:00:00 2001
+From: Rob Pike <r@golang.org>
+Date: Wed, 2 Sep 2015 13:11:26 -0700
+Subject: [PATCH 21/63] [release-branch.go1.5] cmd/asm: handle CMPF and CMPD on
+ ARM
+
+These instructions are special cases that were missed in the translation.
+The second argument must go into the Reg field not the To field.
+
+Fixes #12458
+
+For Go 1.5.1
+
+Change-Id: Iad57c60c7e38e3bcfafda483ed5037ce670e8816
+Reviewed-on: https://go-review.googlesource.com/14183
+Reviewed-by: Dave Cheney <dave@cheney.net>
+Reviewed-by: Russ Cox <rsc@golang.org>
+Reviewed-on: https://go-review.googlesource.com/14358
+Reviewed-by: Chris Broadfoot <cbro@golang.org>
+Reviewed-by: Rob Pike <r@golang.org>
+---
+ src/cmd/asm/internal/arch/arm.go          | 9 +++++++++
+ src/cmd/asm/internal/asm/asm.go           | 5 +++++
+ src/cmd/asm/internal/asm/testdata/arm.out | 4 +++-
+ src/cmd/asm/internal/asm/testdata/arm.s   | 4 ++++
+ 4 files changed, 21 insertions(+), 1 deletion(-)
+
+diff --git a/src/cmd/asm/internal/arch/arm.go b/src/cmd/asm/internal/arch/arm.go
+index c030214..8df994e 100644
+--- a/src/cmd/asm/internal/arch/arm.go
++++ b/src/cmd/asm/internal/arch/arm.go
+@@ -121,6 +121,15 @@ func IsARMMRC(op int) bool {
+ 	return false
+ }
+ 
++// IsARMFloatCmp reports whether the op is a floating comparison instruction.
++func IsARMFloatCmp(op int) bool {
++	switch op {
++	case arm.ACMPF, arm.ACMPD:
++		return true
++	}
++	return false
++}
++
+ // ARMMRCOffset implements the peculiar encoding of the MRC and MCR instructions.
+ // The difference between MRC and MCR is represented by a bit high in the word, not
+ // in the usual way by the opcode itself. Asm must use AMRC for both instructions, so
+diff --git a/src/cmd/asm/internal/asm/asm.go b/src/cmd/asm/internal/asm/asm.go
+index 7ac8bf4..3563c1a 100644
+--- a/src/cmd/asm/internal/asm/asm.go
++++ b/src/cmd/asm/internal/asm/asm.go
+@@ -463,6 +463,11 @@ func (p *Parser) asmInstruction(op int, cond string, a []obj.Addr) {
+ 				}
+ 				p.errorf("unrecognized addressing for %s", obj.Aconv(op))
+ 			}
++			if arch.IsARMFloatCmp(op) {
++				prog.From = a[0]
++				prog.Reg = p.getRegister(prog, op, &a[1])
++				break
++			}
+ 		} else if p.arch.Thechar == '7' && arch.IsARM64CMP(op) {
+ 			prog.From = a[0]
+ 			prog.Reg = p.getRegister(prog, op, &a[1])
+diff --git a/src/cmd/asm/internal/asm/testdata/arm.out b/src/cmd/asm/internal/asm/testdata/arm.out
+index 7501db3..1af3999 100644
+--- a/src/cmd/asm/internal/asm/testdata/arm.out
++++ b/src/cmd/asm/internal/asm/testdata/arm.out
+@@ -56,4 +56,6 @@
+ 281 00056 (testdata/arm.s:281)	CALL	foo(SB)
+ 282 00057 (testdata/arm.s:282)	JMP	foo(SB)
+ 283 00058 (testdata/arm.s:283)	CALL	foo(SB)
+-292 00059 (testdata/arm.s:292)	END
++286 00059 (testdata/arm.s:286)	CMPF	F1, F2
++287 00060 (testdata/arm.s:287)	CMPD	F1, F2
++296 00061 (testdata/arm.s:296)	END
+diff --git a/src/cmd/asm/internal/asm/testdata/arm.s b/src/cmd/asm/internal/asm/testdata/arm.s
+index b8bdfb2..95fee50 100644
+--- a/src/cmd/asm/internal/asm/testdata/arm.s
++++ b/src/cmd/asm/internal/asm/testdata/arm.s
+@@ -282,6 +282,10 @@ TEXT	foo(SB), 0, $0
+ 	JMP	foo(SB)
+ 	CALL	foo(SB)
+ 
++// CMPF and CMPD are special.
++	CMPF F1, F2
++	CMPD F1, F2
++
+ //
+ // END
+ //
+-- 
+2.6.1
+

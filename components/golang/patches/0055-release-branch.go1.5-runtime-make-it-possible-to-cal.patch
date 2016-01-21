@@ -1,0 +1,144 @@
+From 497e4a8093939f53861d48a0afc081183f7032f4 Mon Sep 17 00:00:00 2001
+From: Shenghou Ma <minux@golang.org>
+Date: Fri, 20 Nov 2015 00:23:52 -0500
+Subject: [PATCH 55/63] [release-branch.go1.5] runtime: make it possible to
+ call syscall on solaris without g
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The nosplit stack is now much bigger, so we can afford to allocate
+libcall on stack.
+
+Fix asmsysvicall6 to not update errno if g == nil.
+
+These two fixes TestCgoCallbackGC on solaris, which used to stuck
+in a loop.
+
+Change-Id: Id1b13be992dae9f059aa3d47ffffd37785300933
+Reviewed-on: https://go-review.googlesource.com/17076
+Run-TryBot: Minux Ma <minux@golang.org>
+Reviewed-by: Ian Lance Taylor <iant@golang.org>
+TryBot-Result: Gobot Gobot <gobot@golang.org>
+Reviewed-on: https://go-review.googlesource.com/17140
+Reviewed-by: Aram Hăvărneanu <aram@mgk.ro>
+---
+ src/runtime/os_solaris.go       | 28 ++++++++++++++--------------
+ src/runtime/sys_solaris_amd64.s |  4 ++++
+ 2 files changed, 18 insertions(+), 14 deletions(-)
+
+diff --git a/src/runtime/os_solaris.go b/src/runtime/os_solaris.go
+index fd20a5c..95269a7 100644
+--- a/src/runtime/os_solaris.go
++++ b/src/runtime/os_solaris.go
+@@ -15,71 +15,71 @@ func sigfwd(fn uintptr, sig uint32, info *siginfo, ctx unsafe.Pointer)
+ 
+ //go:nosplit
+ func sysvicall0(fn *libcFunc) uintptr {
+-	libcall := &getg().m.libcall
++	var libcall libcall
+ 	libcall.fn = uintptr(unsafe.Pointer(fn))
+ 	libcall.n = 0
+ 	libcall.args = uintptr(unsafe.Pointer(fn)) // it's unused but must be non-nil, otherwise crashes
+-	asmcgocall(unsafe.Pointer(&asmsysvicall6), unsafe.Pointer(libcall))
++	asmcgocall(unsafe.Pointer(&asmsysvicall6), unsafe.Pointer(&libcall))
+ 	return libcall.r1
+ }
+ 
+ //go:nosplit
+ func sysvicall1(fn *libcFunc, a1 uintptr) uintptr {
+-	libcall := &getg().m.libcall
++	var libcall libcall
+ 	libcall.fn = uintptr(unsafe.Pointer(fn))
+ 	libcall.n = 1
+ 	// TODO(rsc): Why is noescape necessary here and below?
+ 	libcall.args = uintptr(noescape(unsafe.Pointer(&a1)))
+-	asmcgocall(unsafe.Pointer(&asmsysvicall6), unsafe.Pointer(libcall))
++	asmcgocall(unsafe.Pointer(&asmsysvicall6), unsafe.Pointer(&libcall))
+ 	return libcall.r1
+ }
+ 
+ //go:nosplit
+ func sysvicall2(fn *libcFunc, a1, a2 uintptr) uintptr {
+-	libcall := &getg().m.libcall
++	var libcall libcall
+ 	libcall.fn = uintptr(unsafe.Pointer(fn))
+ 	libcall.n = 2
+ 	libcall.args = uintptr(noescape(unsafe.Pointer(&a1)))
+-	asmcgocall(unsafe.Pointer(&asmsysvicall6), unsafe.Pointer(libcall))
++	asmcgocall(unsafe.Pointer(&asmsysvicall6), unsafe.Pointer(&libcall))
+ 	return libcall.r1
+ }
+ 
+ //go:nosplit
+ func sysvicall3(fn *libcFunc, a1, a2, a3 uintptr) uintptr {
+-	libcall := &getg().m.libcall
++	var libcall libcall
+ 	libcall.fn = uintptr(unsafe.Pointer(fn))
+ 	libcall.n = 3
+ 	libcall.args = uintptr(noescape(unsafe.Pointer(&a1)))
+-	asmcgocall(unsafe.Pointer(&asmsysvicall6), unsafe.Pointer(libcall))
++	asmcgocall(unsafe.Pointer(&asmsysvicall6), unsafe.Pointer(&libcall))
+ 	return libcall.r1
+ }
+ 
+ //go:nosplit
+ func sysvicall4(fn *libcFunc, a1, a2, a3, a4 uintptr) uintptr {
+-	libcall := &getg().m.libcall
++	var libcall libcall
+ 	libcall.fn = uintptr(unsafe.Pointer(fn))
+ 	libcall.n = 4
+ 	libcall.args = uintptr(noescape(unsafe.Pointer(&a1)))
+-	asmcgocall(unsafe.Pointer(&asmsysvicall6), unsafe.Pointer(libcall))
++	asmcgocall(unsafe.Pointer(&asmsysvicall6), unsafe.Pointer(&libcall))
+ 	return libcall.r1
+ }
+ 
+ //go:nosplit
+ func sysvicall5(fn *libcFunc, a1, a2, a3, a4, a5 uintptr) uintptr {
+-	libcall := &getg().m.libcall
++	var libcall libcall
+ 	libcall.fn = uintptr(unsafe.Pointer(fn))
+ 	libcall.n = 5
+ 	libcall.args = uintptr(noescape(unsafe.Pointer(&a1)))
+-	asmcgocall(unsafe.Pointer(&asmsysvicall6), unsafe.Pointer(libcall))
++	asmcgocall(unsafe.Pointer(&asmsysvicall6), unsafe.Pointer(&libcall))
+ 	return libcall.r1
+ }
+ 
+ //go:nosplit
+ func sysvicall6(fn *libcFunc, a1, a2, a3, a4, a5, a6 uintptr) uintptr {
+-	libcall := &getg().m.libcall
++	var libcall libcall
+ 	libcall.fn = uintptr(unsafe.Pointer(fn))
+ 	libcall.n = 6
+ 	libcall.args = uintptr(noescape(unsafe.Pointer(&a1)))
+-	asmcgocall(unsafe.Pointer(&asmsysvicall6), unsafe.Pointer(libcall))
++	asmcgocall(unsafe.Pointer(&asmsysvicall6), unsafe.Pointer(&libcall))
+ 	return libcall.r1
+ }
+diff --git a/src/runtime/sys_solaris_amd64.s b/src/runtime/sys_solaris_amd64.s
+index e431564..18098d2 100644
+--- a/src/runtime/sys_solaris_amd64.s
++++ b/src/runtime/sys_solaris_amd64.s
+@@ -80,6 +80,8 @@ TEXT runtime·asmsysvicall6(SB),NOSPLIT,$0
+ 
+ 	get_tls(CX)
+ 	MOVQ	g(CX), BX
++	CMPQ	BX, $0
++	JEQ	skiperrno1
+ 	MOVQ	g_m(BX), BX
+ 	MOVQ	m_perrno(BX), DX
+ 	CMPQ	DX, $0
+@@ -108,6 +110,8 @@ skipargs:
+ 
+ 	get_tls(CX)
+ 	MOVQ	g(CX), BX
++	CMPQ	BX, $0
++	JEQ	skiperrno2
+ 	MOVQ	g_m(BX), BX
+ 	MOVQ	m_perrno(BX), AX
+ 	CMPQ	AX, $0
+-- 
+2.6.1
+

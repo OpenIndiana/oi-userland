@@ -1,0 +1,274 @@
+From d3a413569bf5c01cf08a24bc6b13fd331081b842 Mon Sep 17 00:00:00 2001
+From: Michael Hudson-Doyle <michael.hudson@canonical.com>
+Date: Tue, 22 Sep 2015 14:34:39 +1200
+Subject: [PATCH 30/63] [release-branch.go1.5] runtime: adjust the arm64
+ memmove and memclr to operate by word as much as they can
+
+Not only is this an obvious optimization:
+
+benchmark                           old MB/s     new MB/s     speedup
+BenchmarkMemmove1-4                 35.35        29.65        0.84x
+BenchmarkMemmove2-4                 63.78        52.53        0.82x
+BenchmarkMemmove3-4                 89.72        73.96        0.82x
+BenchmarkMemmove4-4                 109.94       95.73        0.87x
+BenchmarkMemmove5-4                 127.60       112.80       0.88x
+BenchmarkMemmove6-4                 143.59       126.67       0.88x
+BenchmarkMemmove7-4                 157.90       138.92       0.88x
+BenchmarkMemmove8-4                 167.18       231.81       1.39x
+BenchmarkMemmove9-4                 175.23       252.07       1.44x
+BenchmarkMemmove10-4                165.68       261.10       1.58x
+BenchmarkMemmove11-4                174.43       263.31       1.51x
+BenchmarkMemmove12-4                180.76       267.56       1.48x
+BenchmarkMemmove13-4                189.06       284.93       1.51x
+BenchmarkMemmove14-4                186.31       284.72       1.53x
+BenchmarkMemmove15-4                195.75       281.62       1.44x
+BenchmarkMemmove16-4                202.96       439.23       2.16x
+BenchmarkMemmove32-4                264.77       775.77       2.93x
+BenchmarkMemmove64-4                306.81       1209.64      3.94x
+BenchmarkMemmove128-4               357.03       1515.41      4.24x
+BenchmarkMemmove256-4               380.77       2066.01      5.43x
+BenchmarkMemmove512-4               385.05       2556.45      6.64x
+BenchmarkMemmove1024-4              381.23       2804.10      7.36x
+BenchmarkMemmove2048-4              379.06       2814.83      7.43x
+BenchmarkMemmove4096-4              387.43       3064.96      7.91x
+BenchmarkMemmoveUnaligned1-4        28.91        25.40        0.88x
+BenchmarkMemmoveUnaligned2-4        56.13        47.56        0.85x
+BenchmarkMemmoveUnaligned3-4        74.32        69.31        0.93x
+BenchmarkMemmoveUnaligned4-4        97.02        83.58        0.86x
+BenchmarkMemmoveUnaligned5-4        110.17       103.62       0.94x
+BenchmarkMemmoveUnaligned6-4        124.95       113.26       0.91x
+BenchmarkMemmoveUnaligned7-4        142.37       130.82       0.92x
+BenchmarkMemmoveUnaligned8-4        151.20       205.64       1.36x
+BenchmarkMemmoveUnaligned9-4        166.97       215.42       1.29x
+BenchmarkMemmoveUnaligned10-4       148.49       221.22       1.49x
+BenchmarkMemmoveUnaligned11-4       159.47       239.57       1.50x
+BenchmarkMemmoveUnaligned12-4       163.52       247.32       1.51x
+BenchmarkMemmoveUnaligned13-4       167.55       256.54       1.53x
+BenchmarkMemmoveUnaligned14-4       175.12       251.03       1.43x
+BenchmarkMemmoveUnaligned15-4       192.10       267.13       1.39x
+BenchmarkMemmoveUnaligned16-4       190.76       378.87       1.99x
+BenchmarkMemmoveUnaligned32-4       259.02       562.98       2.17x
+BenchmarkMemmoveUnaligned64-4       317.72       842.44       2.65x
+BenchmarkMemmoveUnaligned128-4      355.43       1274.49      3.59x
+BenchmarkMemmoveUnaligned256-4      378.17       1815.74      4.80x
+BenchmarkMemmoveUnaligned512-4      362.15       2180.81      6.02x
+BenchmarkMemmoveUnaligned1024-4     376.07       2453.58      6.52x
+BenchmarkMemmoveUnaligned2048-4     381.66       2568.32      6.73x
+BenchmarkMemmoveUnaligned4096-4     398.51       2669.36      6.70x
+BenchmarkMemclr5-4                  113.83       107.93       0.95x
+BenchmarkMemclr16-4                 223.84       389.63       1.74x
+BenchmarkMemclr64-4                 421.99       1209.58      2.87x
+BenchmarkMemclr256-4                525.94       2411.58      4.59x
+BenchmarkMemclr4096-4               581.66       4372.20      7.52x
+BenchmarkMemclr65536-4              565.84       4747.48      8.39x
+BenchmarkGoMemclr5-4                194.63       160.31       0.82x
+BenchmarkGoMemclr16-4               295.30       630.07       2.13x
+BenchmarkGoMemclr64-4               480.24       1884.03      3.92x
+BenchmarkGoMemclr256-4              540.23       2926.49      5.42x
+
+but it turns out that it's necessary to avoid the GC seeing partially written
+pointers.
+
+It's of course possible to be more sophisticated (using ldp/stp to move 16
+bytes at a time in the core loop and unrolling the tail copying loops being
+the obvious ideas) but I wanted something simple and (reasonably) obviously
+correct.
+
+Fixes #12552
+
+Change-Id: Iaeaf8a812cd06f4747ba2f792de1ded738890735
+Reviewed-on: https://go-review.googlesource.com/14813
+Reviewed-by: Austin Clements <austin@google.com>
+Reviewed-on: https://go-review.googlesource.com/16909
+Reviewed-by: Russ Cox <rsc@golang.org>
+---
+ src/runtime/memclr_arm64.s  | 29 +++++++++++++---
+ src/runtime/memmove_arm64.s | 81 +++++++++++++++++++++++++++++++++++++--------
+ src/runtime/memmove_test.go | 35 ++++++++++++++++++++
+ 3 files changed, 127 insertions(+), 18 deletions(-)
+
+diff --git a/src/runtime/memclr_arm64.s b/src/runtime/memclr_arm64.s
+index c44c123..47c6b73 100644
+--- a/src/runtime/memclr_arm64.s
++++ b/src/runtime/memclr_arm64.s
+@@ -8,11 +8,30 @@
+ TEXT runtime·memclr(SB),NOSPLIT,$0-16
+ 	MOVD	ptr+0(FP), R3
+ 	MOVD	n+8(FP), R4
+-	CMP	$0, R4
+-	BEQ	done
+-	ADD	R3, R4, R4
++	// TODO(mwhudson): this is written this way to avoid tickling
++	// warnings from addpool when written as AND $7, R4, R6 (see
++	// https://golang.org/issue/12708)
++	AND	$~7, R4, R5	// R5 is N&~7
++	SUB	R5, R4, R6	// R6 is N&7
++
++	CMP	$0, R5
++	BEQ	nowords
++
++	ADD	R3, R5, R5
++
++wordloop: // TODO: Optimize for unaligned ptr.
++	MOVD.P	$0, 8(R3)
++	CMP	R3, R5
++	BNE	wordloop
++nowords:
++        CMP	$0, R6
++        BEQ	done
++
++	ADD	R3, R6, R6
++
++byteloop:
+ 	MOVBU.P	$0, 1(R3)
+-	CMP	R3, R4
+-	BNE	-2(PC)
++	CMP	R3, R6
++	BNE	byteloop
+ done:
+ 	RET
+diff --git a/src/runtime/memmove_arm64.s b/src/runtime/memmove_arm64.s
+index 66059a7..00813d4 100644
+--- a/src/runtime/memmove_arm64.s
++++ b/src/runtime/memmove_arm64.s
+@@ -14,23 +14,78 @@ TEXT runtime·memmove(SB), NOSPLIT, $-8-24
+ 	RET
+ 
+ check:
++	AND	$~7, R5, R7	// R7 is N&~7
++	// TODO(mwhudson): this is written this way to avoid tickling
++	// warnings from addpool when written as AND $7, R5, R6 (see
++	// https://golang.org/issue/12708)
++	SUB	R7, R5, R6	// R6 is N&7
++
+ 	CMP	R3, R4
+ 	BLT	backward
+ 
+-	ADD	R3, R5
+-loop:
+-	MOVBU.P	1(R4), R6
+-	MOVBU.P	R6, 1(R3)
+-	CMP	R3, R5
+-	BNE	loop
++	// Copying forward proceeds by copying R7/8 words then copying R6 bytes.
++	// R3 and R4 are advanced as we copy.
++
++        // (There may be implementations of armv8 where copying by bytes until
++        // at least one of source or dest is word aligned is a worthwhile
++        // optimization, but the on the one tested so far (xgene) it did not
++        // make a significance difference.)
++
++	CMP	$0, R7		// Do we need to do any word-by-word copying?
++	BEQ	noforwardlarge
++
++	ADD	R3, R7, R9	// R9 points just past where we copy by word
++
++forwardlargeloop:
++	MOVD.P	8(R4), R8	// R8 is just a scratch register
++	MOVD.P	R8, 8(R3)
++	CMP	R3, R9
++	BNE	forwardlargeloop
++
++noforwardlarge:
++	CMP	$0, R6		// Do we need to do any byte-by-byte copying?
++	BNE	forwardtail
++	RET
++
++forwardtail:
++	ADD	R3, R6, R9	// R9 points just past the destination memory
++
++forwardtailloop:
++	MOVBU.P 1(R4), R8
++	MOVBU.P	R8, 1(R3)
++	CMP	R3, R9
++	BNE	forwardtailloop
+ 	RET
+ 
+ backward:
+-	ADD	R5, R4
+-	ADD	R3, R5
+-loop1:
+-	MOVBU.W	-1(R4), R6
+-	MOVBU.W	R6, -1(R5)
+-	CMP	R3, R5
+-	BNE	loop1
++	// Copying backwards proceeds by copying R6 bytes then copying R7/8 words.
++	// R3 and R4 are advanced to the end of the destination/source buffers
++	// respectively and moved back as we copy.
++
++	ADD	R4, R5, R4	// R4 points just past the last source byte
++	ADD	R3, R5, R3	// R3 points just past the last destination byte
++
++	CMP	$0, R6		// Do we need to do any byte-by-byte copying?
++	BEQ	nobackwardtail
++
++	SUB	R6, R3, R9	// R9 points at the lowest destination byte that should be copied by byte.
++backwardtailloop:
++	MOVBU.W	-1(R4), R8
++	MOVBU.W	R8, -1(R3)
++	CMP	R9, R3
++	BNE	backwardtailloop
++
++nobackwardtail:
++	CMP     $0, R7		// Do we need to do any word-by-word copying?
++	BNE	backwardlarge
++	RET
++
++backwardlarge:
++        SUB	R7, R3, R9      // R9 points at the lowest destination byte
++
++backwardlargeloop:
++	MOVD.W	-8(R4), R8
++	MOVD.W	R8, -8(R3)
++	CMP	R9, R3
++	BNE	backwardlargeloop
+ 	RET
+diff --git a/src/runtime/memmove_test.go b/src/runtime/memmove_test.go
+index 857f99b..d5a2ad8 100644
+--- a/src/runtime/memmove_test.go
++++ b/src/runtime/memmove_test.go
+@@ -116,6 +116,41 @@ func BenchmarkMemmove1024(b *testing.B) { bmMemmove(b, 1024) }
+ func BenchmarkMemmove2048(b *testing.B) { bmMemmove(b, 2048) }
+ func BenchmarkMemmove4096(b *testing.B) { bmMemmove(b, 4096) }
+ 
++func bmMemmoveUnaligned(b *testing.B, n int) {
++	x := make([]byte, n+1)
++	y := make([]byte, n)
++	b.SetBytes(int64(n))
++	for i := 0; i < b.N; i++ {
++		copy(x[1:], y)
++	}
++}
++
++func BenchmarkMemmoveUnaligned0(b *testing.B)    { bmMemmoveUnaligned(b, 0) }
++func BenchmarkMemmoveUnaligned1(b *testing.B)    { bmMemmoveUnaligned(b, 1) }
++func BenchmarkMemmoveUnaligned2(b *testing.B)    { bmMemmoveUnaligned(b, 2) }
++func BenchmarkMemmoveUnaligned3(b *testing.B)    { bmMemmoveUnaligned(b, 3) }
++func BenchmarkMemmoveUnaligned4(b *testing.B)    { bmMemmoveUnaligned(b, 4) }
++func BenchmarkMemmoveUnaligned5(b *testing.B)    { bmMemmoveUnaligned(b, 5) }
++func BenchmarkMemmoveUnaligned6(b *testing.B)    { bmMemmoveUnaligned(b, 6) }
++func BenchmarkMemmoveUnaligned7(b *testing.B)    { bmMemmoveUnaligned(b, 7) }
++func BenchmarkMemmoveUnaligned8(b *testing.B)    { bmMemmoveUnaligned(b, 8) }
++func BenchmarkMemmoveUnaligned9(b *testing.B)    { bmMemmoveUnaligned(b, 9) }
++func BenchmarkMemmoveUnaligned10(b *testing.B)   { bmMemmoveUnaligned(b, 10) }
++func BenchmarkMemmoveUnaligned11(b *testing.B)   { bmMemmoveUnaligned(b, 11) }
++func BenchmarkMemmoveUnaligned12(b *testing.B)   { bmMemmoveUnaligned(b, 12) }
++func BenchmarkMemmoveUnaligned13(b *testing.B)   { bmMemmoveUnaligned(b, 13) }
++func BenchmarkMemmoveUnaligned14(b *testing.B)   { bmMemmoveUnaligned(b, 14) }
++func BenchmarkMemmoveUnaligned15(b *testing.B)   { bmMemmoveUnaligned(b, 15) }
++func BenchmarkMemmoveUnaligned16(b *testing.B)   { bmMemmoveUnaligned(b, 16) }
++func BenchmarkMemmoveUnaligned32(b *testing.B)   { bmMemmoveUnaligned(b, 32) }
++func BenchmarkMemmoveUnaligned64(b *testing.B)   { bmMemmoveUnaligned(b, 64) }
++func BenchmarkMemmoveUnaligned128(b *testing.B)  { bmMemmoveUnaligned(b, 128) }
++func BenchmarkMemmoveUnaligned256(b *testing.B)  { bmMemmoveUnaligned(b, 256) }
++func BenchmarkMemmoveUnaligned512(b *testing.B)  { bmMemmoveUnaligned(b, 512) }
++func BenchmarkMemmoveUnaligned1024(b *testing.B) { bmMemmoveUnaligned(b, 1024) }
++func BenchmarkMemmoveUnaligned2048(b *testing.B) { bmMemmoveUnaligned(b, 2048) }
++func BenchmarkMemmoveUnaligned4096(b *testing.B) { bmMemmoveUnaligned(b, 4096) }
++
+ func TestMemclr(t *testing.T) {
+ 	size := 512
+ 	if testing.Short() {
+-- 
+2.6.1
+

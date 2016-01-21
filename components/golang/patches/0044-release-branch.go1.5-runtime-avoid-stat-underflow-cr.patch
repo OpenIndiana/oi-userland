@@ -1,0 +1,45 @@
+From e49330911f52bcb2aeb7eae4ca6df4fc8a013abe Mon Sep 17 00:00:00 2001
+From: Austin Clements <austin@google.com>
+Date: Sun, 15 Nov 2015 23:09:16 -0500
+Subject: [PATCH 44/63] [release-branch.go1.5] runtime: avoid stat underflow
+ crash
+
+If the area returned by sysReserve in mheap.sysAlloc is outside the
+usable arena, we sysFree it. We pass a fake stat pointer to sysFree
+because we haven't added the allocation to any stat at that point.
+However, we pass a 0 stat, so sysFree panics when it decrements the
+stat because the fake stat underflows.
+
+Fix this by setting the fake stat to the allocation size.
+
+Updates #13143 (this is a prerequisite to fixing that bug).
+
+Change-Id: I61a6c9be19ac1c95863cf6a8435e19790c8bfc9a
+Reviewed-on: https://go-review.googlesource.com/16926
+Reviewed-by: Ian Lance Taylor <iant@golang.org>
+Reviewed-on: https://go-review.googlesource.com/16987
+Run-TryBot: Austin Clements <austin@google.com>
+Reviewed-by: Russ Cox <rsc@golang.org>
+---
+ src/runtime/malloc.go | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/src/runtime/malloc.go b/src/runtime/malloc.go
+index 353f840..a8a5d48 100644
+--- a/src/runtime/malloc.go
++++ b/src/runtime/malloc.go
+@@ -411,7 +411,10 @@ func mHeap_SysAlloc(h *mheap, n uintptr) unsafe.Pointer {
+ 				h.arena_used = used
+ 				h.arena_reserved = reserved
+ 			} else {
+-				var stat uint64
++				// We haven't added this allocation to
++				// the stats, so subtract it from a
++				// fake stat (but avoid underflow).
++				stat := uint64(p_size)
+ 				sysFree((unsafe.Pointer)(p), p_size, &stat)
+ 			}
+ 		}
+-- 
+2.6.1
+

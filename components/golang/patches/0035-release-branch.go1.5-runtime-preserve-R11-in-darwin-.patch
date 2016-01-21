@@ -1,0 +1,77 @@
+From 6a18122614608c597511c2cc188ef771e393f1fb Mon Sep 17 00:00:00 2001
+From: David Crawshaw <crawshaw@golang.org>
+Date: Tue, 15 Sep 2015 13:40:24 -0400
+Subject: [PATCH 35/63] [release-branch.go1.5] runtime: preserve R11 in
+ darwin/arm entrypoint
+
+The _rt0_arm_darwin_lib entrypoint has to conform to the darwin ARMv7
+calling convention, which requires functions to preserve the value of
+R11. Go uses R11 as the liblink REGTMP register, so save it manually.
+
+Also avoid using R4, which is also callee-save.
+
+Fixes #12590
+
+Change-Id: I9c3b374e330f81ff8fc9c01fa20505a33ddcf39a
+Reviewed-on: https://go-review.googlesource.com/14603
+Reviewed-by: Ian Lance Taylor <iant@golang.org>
+Reviewed-on: https://go-review.googlesource.com/16968
+Run-TryBot: Austin Clements <austin@google.com>
+Reviewed-by: Russ Cox <rsc@golang.org>
+---
+ src/runtime/rt0_darwin_arm.s | 29 ++++++++++++++++++-----------
+ 1 file changed, 18 insertions(+), 11 deletions(-)
+
+diff --git a/src/runtime/rt0_darwin_arm.s b/src/runtime/rt0_darwin_arm.s
+index 95a2b17..d609850 100644
+--- a/src/runtime/rt0_darwin_arm.s
++++ b/src/runtime/rt0_darwin_arm.s
+@@ -16,27 +16,34 @@ TEXT _rt0_arm_darwin(SB),7,$-4
+ //
+ // Note that all currently shipping darwin/arm platforms require
+ // cgo and do not support c-shared.
+-TEXT _rt0_arm_darwin_lib(SB),NOSPLIT,$12
++TEXT _rt0_arm_darwin_lib(SB),NOSPLIT,$0
++	// R11 is REGTMP, reserved for liblink. It is used below to
++	// move R0/R1 into globals. However in the darwin ARMv7 calling
++	// convention, it is a callee-saved register. So we save it to a
++	// temporary register.
++	MOVW  R11, R2
+ 	MOVW  R0, _rt0_arm_darwin_lib_argc<>(SB)
+ 	MOVW  R1, _rt0_arm_darwin_lib_argv<>(SB)
+ 
+ 	// Create a new thread to do the runtime initialization and return.
+-	MOVW  _cgo_sys_thread_create(SB), R4
+-	CMP   $0, R4
++	MOVW  _cgo_sys_thread_create(SB), R3
++	CMP   $0, R3
+ 	B.EQ  nocgo
+ 	MOVW  $_rt0_arm_darwin_lib_go(SB), R0
+ 	MOVW  $0, R1
+-	BL    (R4)
++	MOVW  R2, R11
++	BL    (R3)
+ 	RET
+ nocgo:
+ 	MOVW  $0x400000, R0
+-	MOVW  $_rt0_arm_darwin_lib_go(SB), R1
+-	MOVW  $0, R2
+-	MOVW  R0,  (R13) // stacksize
+-	MOVW  R1, 4(R13) // fn
+-	MOVW  R2, 8(R13) // fnarg
+-	MOVW  $runtime·newosproc0(SB), R4
+-	BL    (R4)
++	MOVW  R0, (R13) // stacksize
++	MOVW  $_rt0_arm_darwin_lib_go(SB), R0
++	MOVW  R0, 4(R13) // fn
++	MOVW  $0, R0
++	MOVW  R0, 8(R13) // fnarg
++	MOVW  $runtime·newosproc0(SB), R3
++	MOVW  R2, R11
++	BL    (R3)
+ 	RET
+ 
+ TEXT _rt0_arm_darwin_lib_go(SB),NOSPLIT,$0
+-- 
+2.6.1
+

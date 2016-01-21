@@ -114,7 +114,11 @@ PKG_MACROS +=		SOLARIS_12_ONLY=$(SOLARIS_12_ONLY)
 PKG_MACROS +=		SOLARIS_11_ONLY=$(SOLARIS_11_ONLY)
 PKG_MACROS +=		HUMAN_VERSION=$(HUMAN_VERSION)
 PKG_MACROS +=		IPS_COMPONENT_VERSION=$(IPS_COMPONENT_VERSION)
+# IPS_COMPONENT_VERSION suitable for use in regular expressions.
+PKG_MACROS +=		IPS_COMPONENT_RE_VERSION=$(subst .,\\.,$(IPS_COMPONENT_VERSION))
 PKG_MACROS +=		COMPONENT_VERSION=$(COMPONENT_VERSION)
+# COMPONENT_VERSION suitable for use in regular expressions.
+PKG_MACROS +=		COMPONENT_RE_VERSION=$(subst .,\\.,$(COMPONENT_VERSION))
 PKG_MACROS +=		COMPONENT_PROJECT_URL=$(COMPONENT_PROJECT_URL)
 PKG_MACROS +=		COMPONENT_ARCHIVE_URL=$(COMPONENT_ARCHIVE_URL)
 PKG_MACROS +=		COMPONENT_HG_URL=$(COMPONENT_HG_URL)
@@ -124,11 +128,6 @@ PKG_MACROS +=		ARC_CASE=$(ARC_CASE)
 PKG_MACROS +=		TPNO=$(TPNO)
 PKG_MACROS +=		CONSOLIDATION_CHANGESET=$(CONSOLIDATION_CHANGESET)
 PKG_MACROS +=		CONSOLIDATION_REPOSITORY_URL=$(CONSOLIDATION_REPOSITORY_URL)
-
-# Add any TPNO_* Makefile macros to the pkgmogrify arguments.
-$(foreach macro, $(filter TPNO_%, $(.VARIABLES)), \
-    $(eval PKG_MACROS += $(macro)=$$($(macro))) \
-)
 
 PKG_MACROS +=		PYTHON_2.7_ONLY=\#
 PKG_MACROS +=		PYTHON_3.4_ONLY=\#
@@ -480,3 +479,16 @@ ifeq	($(strip $(CANONICAL_MANIFESTS)),)
 	# workspace.
 	$(error Missing canonical manifest(s))
 endif
+
+# Add component-specific variables and export to PKG_MACROS.
+COMP_SUFFIXES = $(subst COMPONENT_NAME_,, \
+		$(filter COMPONENT_NAME_%, $(.VARIABLES)))
+
+$(foreach suffix, $(COMP_SUFFIXES), \
+    $(eval COMPONENT_RE_VERSION_$(suffix) ?= $(subst .,\\.,$$(COMPONENT_VERSION_$(suffix)))) \
+    $(eval IPS_COMPONENT_VERSION_$(suffix) ?= $$(COMPONENT_VERSION_$(suffix))) \
+    $(eval IPS_COMPONENT_RE_VERSION_$(suffix) ?= $(subst .,\\.,$$(IPS_COMPONENT_VERSION_$(suffix)))) \
+    $(foreach macro, $(filter %_$(suffix), $(.VARIABLES)), \
+        $(eval PKG_MACROS += $(macro)=$$($(macro))) \
+    ) \
+)

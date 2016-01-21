@@ -1,0 +1,101 @@
+From e4e59921f1cc11e60f0096bcb4d54dd683270821 Mon Sep 17 00:00:00 2001
+From: Austin Clements <austin@google.com>
+Date: Mon, 24 Aug 2015 13:35:49 -0400
+Subject: [PATCH 09/63] [release-branch.go1.5] cmd/compile: fix uninitialized
+ memory in compare of interface value
+
+A comparison of the form l == r where l is an interface and r is
+concrete performs a type assertion on l to convert it to r's type.
+However, the compiler fails to zero the temporary where the result of
+the type assertion is written, so if the type is a pointer type and a
+stack scan occurs while in the type assertion, it may see an invalid
+pointer on the stack.
+
+Fix this by zeroing the temporary. This is equivalent to the fix for
+type switches from c4092ac.
+
+Fixes #12253.
+
+Change-Id: Iaf205d456b856c056b317b4e888ce892f0c555b9
+Reviewed-on: https://go-review.googlesource.com/13872
+Reviewed-by: Russ Cox <rsc@golang.org>
+Reviewed-on: https://go-review.googlesource.com/14242
+Reviewed-by: Austin Clements <austin@google.com>
+---
+ src/cmd/compile/internal/gc/walk.go |  5 +++++
+ src/runtime/export_test.go          |  1 +
+ src/runtime/gc_test.go              | 17 +++++++++++++++++
+ src/runtime/iface.go                |  5 +++++
+ 4 files changed, 28 insertions(+)
+
+diff --git a/src/cmd/compile/internal/gc/walk.go b/src/cmd/compile/internal/gc/walk.go
+index ce73018..af3e1cc 100644
+--- a/src/cmd/compile/internal/gc/walk.go
++++ b/src/cmd/compile/internal/gc/walk.go
+@@ -3219,6 +3219,11 @@ func walkcompare(np **Node, init **NodeList) {
+ 
+ 	if l != nil {
+ 		x := temp(r.Type)
++		if haspointers(r.Type) {
++			a := Nod(OAS, x, nil)
++			typecheck(&a, Etop)
++			*init = list(*init, a)
++		}
+ 		ok := temp(Types[TBOOL])
+ 
+ 		// l.(type(r))
+diff --git a/src/runtime/export_test.go b/src/runtime/export_test.go
+index 16d5476..f14dc30 100644
+--- a/src/runtime/export_test.go
++++ b/src/runtime/export_test.go
+@@ -154,3 +154,4 @@ func BenchSetType(n int, x interface{}) {
+ const PtrSize = ptrSize
+ 
+ var TestingAssertE2I2GC = &testingAssertE2I2GC
++var TestingAssertE2T2GC = &testingAssertE2T2GC
+diff --git a/src/runtime/gc_test.go b/src/runtime/gc_test.go
+index 636e524..6c9b314 100644
+--- a/src/runtime/gc_test.go
++++ b/src/runtime/gc_test.go
+@@ -469,3 +469,20 @@ func testAssertVar(x interface{}) error {
+ 	}
+ 	return nil
+ }
++
++func TestAssertE2T2Liveness(t *testing.T) {
++	*runtime.TestingAssertE2T2GC = true
++	defer func() {
++		*runtime.TestingAssertE2T2GC = false
++	}()
++
++	poisonStack()
++	testIfaceEqual(io.EOF)
++}
++
++func testIfaceEqual(x interface{}) {
++	if x == "abc" {
++		// Prevent inlining
++		panic("")
++	}
++}
+diff --git a/src/runtime/iface.go b/src/runtime/iface.go
+index abd7068..332b7d5 100644
+--- a/src/runtime/iface.go
++++ b/src/runtime/iface.go
+@@ -229,8 +229,13 @@ func assertE2T(t *_type, e interface{}, r unsafe.Pointer) {
+ 	}
+ }
+ 
++var testingAssertE2T2GC bool
++
+ // The compiler ensures that r is non-nil.
+ func assertE2T2(t *_type, e interface{}, r unsafe.Pointer) bool {
++	if testingAssertE2T2GC {
++		GC()
++	}
+ 	ep := (*eface)(unsafe.Pointer(&e))
+ 	if ep._type != t {
+ 		memclr(r, uintptr(t.size))
+-- 
+2.6.1
+

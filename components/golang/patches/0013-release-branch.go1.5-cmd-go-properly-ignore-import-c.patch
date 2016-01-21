@@ -1,0 +1,34 @@
+From 1d11801f40a4c1d61e1766f239e8ea908222f072 Mon Sep 17 00:00:00 2001
+From: Vincent Vanackere <vincent.vanackere@gmail.com>
+Date: Wed, 26 Aug 2015 15:55:27 +0200
+Subject: [PATCH 13/63] [release-branch.go1.5] cmd/go: properly ignore import
+ comments for vendored packages rooted at GOPATH
+
+Fixes #12232.
+
+Change-Id: Ide3fb7f5fc5ae377ae8683fbb94fd0dc01480549
+Reviewed-on: https://go-review.googlesource.com/13924
+Reviewed-by: Russ Cox <rsc@golang.org>
+Reviewed-on: https://go-review.googlesource.com/14228
+Reviewed-by: Ian Lance Taylor <iant@golang.org>
+---
+ src/cmd/go/pkg.go | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/src/cmd/go/pkg.go b/src/cmd/go/pkg.go
+index 61e3d8d..c481794 100644
+--- a/src/cmd/go/pkg.go
++++ b/src/cmd/go/pkg.go
+@@ -368,7 +368,8 @@ func loadImport(path, srcDir string, parent *Package, stk *importStack, importPo
+ 	if gobin != "" {
+ 		bp.BinDir = gobin
+ 	}
+-	if err == nil && !isLocal && bp.ImportComment != "" && bp.ImportComment != path && (!go15VendorExperiment || !strings.Contains(path, "/vendor/")) {
++	if err == nil && !isLocal && bp.ImportComment != "" && bp.ImportComment != path &&
++		(!go15VendorExperiment || (!strings.Contains(path, "/vendor/") && !strings.HasPrefix(path, "vendor/"))) {
+ 		err = fmt.Errorf("code in directory %s expects import %q", bp.Dir, bp.ImportComment)
+ 	}
+ 	p.load(stk, bp, err)
+-- 
+2.6.1
+

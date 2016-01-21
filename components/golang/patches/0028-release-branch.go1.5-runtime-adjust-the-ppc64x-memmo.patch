@@ -1,0 +1,188 @@
+From 9f59bc85a2c9932caebf0b6c6a282a0e839d62af Mon Sep 17 00:00:00 2001
+From: Michael Hudson-Doyle <michael.hudson@canonical.com>
+Date: Tue, 22 Sep 2015 22:35:52 +1200
+Subject: [PATCH 28/63] [release-branch.go1.5] runtime: adjust the ppc64x
+ memmove and memclr to copy by word as much as it can
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Issue #12552 can happen on ppc64 too, although much less frequently in my
+testing. I'm fairly sure this fixes it (2 out of 200 runs of oracle.test failed
+without this change and 0 of 200 failed with it). It's also a lot faster for
+large moves/clears:
+
+name           old speed      new speed       delta
+Memmove1-6      157MB/s ± 9%    144MB/s ± 0%    -8.20%         (p=0.004 n=10+9)
+Memmove2-6      281MB/s ± 1%    249MB/s ± 1%   -11.53%        (p=0.000 n=10+10)
+Memmove3-6      376MB/s ± 1%    328MB/s ± 1%   -12.64%        (p=0.000 n=10+10)
+Memmove4-6      475MB/s ± 4%    345MB/s ± 1%   -27.28%         (p=0.000 n=10+8)
+Memmove5-6      540MB/s ± 1%    393MB/s ± 0%   -27.21%        (p=0.000 n=10+10)
+Memmove6-6      609MB/s ± 0%    423MB/s ± 0%   -30.56%         (p=0.000 n=9+10)
+Memmove7-6      659MB/s ± 0%    468MB/s ± 0%   -28.99%         (p=0.000 n=8+10)
+Memmove8-6      705MB/s ± 0%   1295MB/s ± 1%   +83.73%          (p=0.000 n=9+9)
+Memmove9-6      740MB/s ± 1%   1241MB/s ± 1%   +67.61%         (p=0.000 n=10+8)
+Memmove10-6     780MB/s ± 0%   1162MB/s ± 1%   +48.95%         (p=0.000 n=10+9)
+Memmove11-6     811MB/s ± 0%   1180MB/s ± 0%   +45.58%          (p=0.000 n=8+9)
+Memmove12-6     820MB/s ± 1%   1073MB/s ± 1%   +30.83%         (p=0.000 n=10+9)
+Memmove13-6     849MB/s ± 0%   1068MB/s ± 1%   +25.87%        (p=0.000 n=10+10)
+Memmove14-6     877MB/s ± 0%    911MB/s ± 0%    +3.83%        (p=0.000 n=10+10)
+Memmove15-6     893MB/s ± 0%    922MB/s ± 0%    +3.25%         (p=0.000 n=10+9)
+Memmove16-6     897MB/s ± 1%   2418MB/s ± 1%  +169.67%         (p=0.000 n=10+9)
+Memmove32-6     908MB/s ± 0%   3927MB/s ± 2%  +332.64%         (p=0.000 n=10+8)
+Memmove64-6    1.11GB/s ± 0%   5.59GB/s ± 0%  +404.64%          (p=0.000 n=9+9)
+Memmove128-6   1.25GB/s ± 0%   6.71GB/s ± 2%  +437.49%         (p=0.000 n=9+10)
+Memmove256-6   1.33GB/s ± 0%   7.25GB/s ± 1%  +445.06%        (p=0.000 n=10+10)
+Memmove512-6   1.38GB/s ± 0%   8.87GB/s ± 0%  +544.43%        (p=0.000 n=10+10)
+Memmove1024-6  1.40GB/s ± 0%  10.00GB/s ± 0%  +613.80%        (p=0.000 n=10+10)
+Memmove2048-6  1.41GB/s ± 0%  10.65GB/s ± 0%  +652.95%         (p=0.000 n=9+10)
+Memmove4096-6  1.42GB/s ± 0%  11.01GB/s ± 0%  +675.37%         (p=0.000 n=8+10)
+Memclr5-6       269MB/s ± 1%    264MB/s ± 0%    -1.80%        (p=0.000 n=10+10)
+Memclr16-6      600MB/s ± 0%    887MB/s ± 1%   +47.83%        (p=0.000 n=10+10)
+Memclr64-6     1.06GB/s ± 0%   2.91GB/s ± 1%  +174.58%         (p=0.000 n=8+10)
+Memclr256-6    1.32GB/s ± 0%   6.58GB/s ± 0%  +399.86%         (p=0.000 n=9+10)
+Memclr4096-6   1.42GB/s ± 0%  10.90GB/s ± 0%  +668.03%         (p=0.000 n=8+10)
+Memclr65536-6  1.43GB/s ± 0%  11.37GB/s ± 0%  +697.83%          (p=0.000 n=9+8)
+GoMemclr5-6     359MB/s ± 0%    360MB/s ± 0%    +0.46%        (p=0.000 n=10+10)
+GoMemclr16-6    750MB/s ± 0%   1264MB/s ± 1%   +68.45%        (p=0.000 n=10+10)
+GoMemclr64-6   1.17GB/s ± 0%   3.78GB/s ± 1%  +223.58%         (p=0.000 n=10+9)
+GoMemclr256-6  1.35GB/s ± 0%   7.47GB/s ± 0%  +452.44%        (p=0.000 n=10+10)
+
+Update #12552
+
+Change-Id: I7192e9deb9684a843aed37f58a16a4e29970e893
+Reviewed-on: https://go-review.googlesource.com/14840
+Reviewed-by: Minux Ma <minux@golang.org>
+Reviewed-on: https://go-review.googlesource.com/16907
+Reviewed-by: Russ Cox <rsc@golang.org>
+---
+ src/runtime/memclr_ppc64x.s  | 17 ++++++++--
+ src/runtime/memmove_ppc64x.s | 78 +++++++++++++++++++++++++++++++++++---------
+ 2 files changed, 77 insertions(+), 18 deletions(-)
+
+diff --git a/src/runtime/memclr_ppc64x.s b/src/runtime/memclr_ppc64x.s
+index cea42cb..90e2748 100644
+--- a/src/runtime/memclr_ppc64x.s
++++ b/src/runtime/memclr_ppc64x.s
+@@ -10,11 +10,22 @@
+ TEXT runtime·memclr(SB),NOSPLIT,$0-16
+ 	MOVD	ptr+0(FP), R3
+ 	MOVD	n+8(FP), R4
+-	CMP	R4, $0
++	SRADCC	$3, R4, R6	// R6 is the number of words to zero
++	BEQ	bytes
++
++	SUB	$8, R3
++	MOVD	R6, CTR
++	MOVDU	R0, 8(R3)
++	BC	25, 0, -1(PC)	// bdnz+ $-4
++	ADD	$8, R3
++
++bytes:
++	ANDCC	$7, R4, R7	// R7 is the number of bytes to zero
+ 	BEQ	done
+ 	SUB	$1, R3
+-	MOVD	R4, CTR
++	MOVD	R7, CTR
+ 	MOVBU	R0, 1(R3)
+-	BC	25, 0, -1(PC) // bdnz+ $-4
++	BC	25, 0, -1(PC)	// bdnz+ $-4
++
+ done:
+ 	RET
+diff --git a/src/runtime/memmove_ppc64x.s b/src/runtime/memmove_ppc64x.s
+index 3ada63e..72c90de 100644
+--- a/src/runtime/memmove_ppc64x.s
++++ b/src/runtime/memmove_ppc64x.s
+@@ -16,25 +16,73 @@ TEXT runtime·memmove(SB), NOSPLIT, $-8-24
+ 	RET
+ 
+ check:
+-	CMP	R3, R4
+-	BGT	backward
++	ANDCC	$7, R5, R7	// R7 is the number of bytes to copy and CR0[EQ] is set if there are none.
++	SRAD	$3, R5, R6	// R6 is the number of words to copy
++	CMP	R6, $0, CR1	// CR1[EQ] is set if there are no words to copy.
+ 
++	CMP	R3, R4, CR2
++	BC	12, 9, backward	// I think you should be able to write this as "BGT CR2, backward"
++
++	// Copying forward proceeds by copying R6 words then copying R7 bytes.
++	// R3 and R4 are advanced as we copy. Becuase PPC64 lacks post-increment
++	// load/store, R3 and R4 point before the bytes that are to be copied.
++
++	BC	12, 6, noforwardlarge	// "BEQ CR1, noforwardlarge"
++
++	MOVD	R6, CTR
++
++	SUB	$8, R3
++	SUB	$8, R4
++
++forwardlargeloop:
++	MOVDU	8(R4), R8
++	MOVDU	R8, 8(R3)
++	BC	16, 0, forwardlargeloop // "BDNZ"
++
++	ADD	$8, R3
++	ADD	$8, R4
++
++noforwardlarge:
++	BNE	forwardtail	// Tests the bit set by ANDCC above
++	RET
++
++forwardtail:
+ 	SUB	$1, R3
+-	ADD	R3, R5
+ 	SUB	$1, R4
+-loop:
+-	MOVBU	1(R4), R6
+-	MOVBU	R6, 1(R3)
+-	CMP	R3, R5
+-	BNE	loop
++	MOVD	R7, CTR
++
++forwardtailloop:
++	MOVBZU	1(R4), R8
++	MOVBZU	R8, 1(R3)
++	BC	16, 0, forwardtailloop
+ 	RET
+ 
+ backward:
+-	ADD	R5, R4
+-	ADD	R3, R5
+-loop1:
+-	MOVBU	-1(R4), R6
+-	MOVBU	R6, -1(R5)
+-	CMP	R3, R5
+-	BNE	loop1
++	// Copying backwards proceeds by copying R7 bytes then copying R6 words.
++	// R3 and R4 are advanced to the end of the destination/source buffers
++	// respectively and moved back as we copy.
++
++	ADD	R5, R4, R4
++	ADD	R3, R5, R3
++
++	BEQ	nobackwardtail
++
++	MOVD	R7, CTR
++
++backwardtailloop:
++	MOVBZU	-1(R4), R8
++	MOVBZU	R8, -1(R3)
++	BC	16, 0, backwardtailloop
++
++nobackwardtail:
++	BC	4, 6, backwardlarge		// "BNE CR1"
++	RET
++
++backwardlarge:
++	MOVD	R6, CTR
++
++backwardlargeloop:
++	MOVDU	-8(R4), R8
++	MOVDU	R8, -8(R3)
++	BC	16, 0, backwardlargeloop	// "BDNZ"
+ 	RET
+-- 
+2.6.1
+

@@ -1,0 +1,43 @@
+From d4f13093729cac869fbec326222f7fd68e989998 Mon Sep 17 00:00:00 2001
+From: Shenghou Ma <minux@golang.org>
+Date: Tue, 1 Sep 2015 19:58:31 -0400
+Subject: [PATCH 05/63] cmd/link/internal/ld: align PE .text section to 32-byte
+ when external linking
+
+Some symbols, for example, masks requires 16-byte alignment, and
+they are placed in the text section. Before this change, the text
+section is only aligned to 4-byte, and it's making masks unaligned.
+
+Fixes #12415.
+
+Change-Id: I7767778d1b4f7d3e74c2719a02848350782a4160
+Reviewed-on: https://go-review.googlesource.com/14166
+Run-TryBot: Minux Ma <minux@golang.org>
+Reviewed-by: Alex Brainman <alex.brainman@gmail.com>
+TryBot-Result: Gobot Gobot <gobot@golang.org>
+Reviewed-by: Ian Lance Taylor <iant@golang.org>
+(cherry picked from commit 821e124c24c2b2d753be22a04a3b20b7bf579627)
+Reviewed-on: https://go-review.googlesource.com/14279
+---
+ src/cmd/link/internal/ld/pe.go | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/src/cmd/link/internal/ld/pe.go b/src/cmd/link/internal/ld/pe.go
+index d5f7e62..4a7d710 100644
+--- a/src/cmd/link/internal/ld/pe.go
++++ b/src/cmd/link/internal/ld/pe.go
+@@ -1107,6 +1107,11 @@ func Asmbpe() {
+ 
+ 	t := addpesection(".text", int(Segtext.Length), int(Segtext.Length))
+ 	t.Characteristics = IMAGE_SCN_CNT_CODE | IMAGE_SCN_CNT_INITIALIZED_DATA | IMAGE_SCN_MEM_EXECUTE | IMAGE_SCN_MEM_READ
++	if Linkmode == LinkExternal {
++		// some data symbols (e.g. masks) end up in the .text section, and they normally
++		// expect larger alignment requirement than the default text section alignment.
++		t.Characteristics |= IMAGE_SCN_ALIGN_32BYTES
++	}
+ 	chksectseg(t, &Segtext)
+ 	textsect = pensect
+ 
+-- 
+2.6.1
+

@@ -1,0 +1,65 @@
+commit 001a75a74c4a27901b0b536efe1be581612c52a9
+Author: Shawn Walker-Salas <shawn.walker@oracle.com>
+Date:   Tue Aug 18 14:13:38 2015 -0700
+
+    runtime/trace: fix tracing of blocking system calls
+    
+    The placement and invocation of traceGoSysCall when using
+    entersyscallblock() instead of entersyscall() differs enough that the
+    TestTraceSymbolize test can fail on some platforms.
+    
+    This change moves the invocation of traceGoSysCall for entersyscall() so
+    that the same number of "frames to skip" are present in the trace as when
+    entersyscallblock() is used ensuring system call traces remain identical
+    regardless of internal implementation choices.
+    
+    Fixes golang/go#12056
+    
+    Change-Id: I8361e91aa3708f5053f98263dfe9feb8c5d1d969
+    Reviewed-on: https://go-review.googlesource.com/13861
+    Run-TryBot: Dmitry Vyukov <dvyukov@google.com>
+    Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
+
+diff --git a/src/runtime/proc1.go b/src/runtime/proc1.go
+index 35d9e86..4ffe11b 100644
+--- a/src/runtime/proc1.go
++++ b/src/runtime/proc1.go
+@@ -1823,10 +1823,6 @@ func reentersyscall(pc, sp uintptr) {
+ 	// but can have inconsistent g->sched, do not let GC observe it.
+ 	_g_.m.locks++
+ 
+-	if trace.enabled {
+-		systemstack(traceGoSysCall)
+-	}
+-
+ 	// Entersyscall must not call any function that might split/grow the stack.
+ 	// (See details in comment above.)
+ 	// Catch calls that might, by replacing the stack guard with something that
+@@ -1846,6 +1842,14 @@ func reentersyscall(pc, sp uintptr) {
+ 		})
+ 	}
+ 
++	if trace.enabled {
++		systemstack(traceGoSysCall)
++		// systemstack itself clobbers g.sched.{pc,sp} and we might
++		// need them later when the G is genuinely blocked in a
++		// syscall
++		save(pc, sp)
++	}
++
+ 	if atomicload(&sched.sysmonwait) != 0 { // TODO: fast atomic
+ 		systemstack(entersyscall_sysmon)
+ 		save(pc, sp)
+diff --git a/src/runtime/trace.go b/src/runtime/trace.go
+index 29600b5..6631bc2 100644
+--- a/src/runtime/trace.go
++++ b/src/runtime/trace.go
+@@ -828,7 +828,7 @@ func traceGoUnpark(gp *g, skip int) {
+ }
+ 
+ func traceGoSysCall() {
+-	traceEvent(traceEvGoSysCall, 4)
++	traceEvent(traceEvGoSysCall, 1)
+ }
+ 
+ func traceGoSysExit(seq uint64, ts int64) {

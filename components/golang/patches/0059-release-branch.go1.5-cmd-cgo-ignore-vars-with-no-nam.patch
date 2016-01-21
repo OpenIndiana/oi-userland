@@ -1,0 +1,55 @@
+From bebbc624029d13a7c81957d971a2dce9d3bad1fb Mon Sep 17 00:00:00 2001
+From: Ian Lance Taylor <iant@golang.org>
+Date: Fri, 20 Nov 2015 13:53:18 -0800
+Subject: [PATCH 59/63] [release-branch.go1.5] cmd/cgo: ignore vars with no
+ name or type if they have a AttrSpecification
+
+Fixes #13344.
+
+Change-Id: I33c6721fd33d144c85c87840ddf27ce15aa72328
+Reviewed-on: https://go-review.googlesource.com/17151
+Run-TryBot: Ian Lance Taylor <iant@golang.org>
+TryBot-Result: Gobot Gobot <gobot@golang.org>
+Reviewed-by: Minux Ma <minux@golang.org>
+Reviewed-on: https://go-review.googlesource.com/17145
+Reviewed-by: Ian Lance Taylor <iant@golang.org>
+---
+ misc/cgo/test/issue1635.go | 5 +++++
+ src/cmd/cgo/gcc.go         | 5 +++++
+ 2 files changed, 10 insertions(+)
+
+diff --git a/misc/cgo/test/issue1635.go b/misc/cgo/test/issue1635.go
+index 6bfe110..cc4be90 100644
+--- a/misc/cgo/test/issue1635.go
++++ b/misc/cgo/test/issue1635.go
+@@ -14,6 +14,11 @@ void scatter() {
+ 	printf("scatter = %p\n", p);
+ }
+ 
++// Adding this explicit extern declaration makes this a test for
++// https://gcc.gnu.org/PR68072 aka https://golang.org/issue/13344 .
++// It used to cause a cgo error when building with GCC 6.
++extern int hola;
++
+ // this example is in issue 3253
+ int hola = 0;
+ int testHola() { return hola; }
+diff --git a/src/cmd/cgo/gcc.go b/src/cmd/cgo/gcc.go
+index b64849a..e0b89ec 100644
+--- a/src/cmd/cgo/gcc.go
++++ b/src/cmd/cgo/gcc.go
+@@ -490,6 +490,11 @@ func (p *Package) loadDWARF(f *File, names []*Name) {
+ 			name, _ := e.Val(dwarf.AttrName).(string)
+ 			typOff, _ := e.Val(dwarf.AttrType).(dwarf.Offset)
+ 			if name == "" || typOff == 0 {
++				if e.Val(dwarf.AttrSpecification) != nil {
++					// Since we are reading all the DWARF,
++					// assume we will see the variable elsewhere.
++					break
++				}
+ 				fatalf("malformed DWARF TagVariable entry")
+ 			}
+ 			if !strings.HasPrefix(name, "__cgo__") {
+-- 
+2.6.1
+

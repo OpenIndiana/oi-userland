@@ -1,0 +1,108 @@
+From c0dd2011132f179e77f7f6e1ccd88b5a0e0ee659 Mon Sep 17 00:00:00 2001
+From: Brad Fitzpatrick <bradfitz@golang.org>
+Date: Wed, 26 Aug 2015 10:53:59 -0700
+Subject: [PATCH 15/63] [release-branch.go1.5] net/http/httputil: permit nil
+ request body in ReverseProxy
+
+Accepting a request with a nil body was never explicitly supported but
+happened to work in the past.
+
+This doesn't happen in most cases because usually people pass
+a Server's incoming Request to the ReverseProxy's ServeHTTP method,
+and incoming server requests are guaranteed to have non-nil bodies.
+
+Still, it's a regression, so fix.
+
+Fixes #12344
+
+Change-Id: Id9a5a47aea3f2875d195b66c9a5f8581c4ca2aed
+Reviewed-on: https://go-review.googlesource.com/13935
+Reviewed-by: Ian Lance Taylor <iant@golang.org>
+Run-TryBot: Brad Fitzpatrick <bradfitz@golang.org>
+TryBot-Result: Gobot Gobot <gobot@golang.org>
+Reviewed-on: https://go-review.googlesource.com/14245
+---
+ src/net/http/httputil/reverseproxy.go      |  5 +++-
+ src/net/http/httputil/reverseproxy_test.go | 39 ++++++++++++++++++++++++++++++
+ 2 files changed, 43 insertions(+), 1 deletion(-)
+
+diff --git a/src/net/http/httputil/reverseproxy.go b/src/net/http/httputil/reverseproxy.go
+index 3b7a184..c8e1132 100644
+--- a/src/net/http/httputil/reverseproxy.go
++++ b/src/net/http/httputil/reverseproxy.go
+@@ -105,7 +105,7 @@ type requestCanceler interface {
+ }
+ 
+ type runOnFirstRead struct {
+-	io.Reader
++	io.Reader // optional; nil means empty body
+ 
+ 	fn func() // Run before first Read, then set to nil
+ }
+@@ -115,6 +115,9 @@ func (c *runOnFirstRead) Read(bs []byte) (int, error) {
+ 		c.fn()
+ 		c.fn = nil
+ 	}
++	if c.Reader == nil {
++		return 0, io.EOF
++	}
+ 	return c.Reader.Read(bs)
+ }
+ 
+diff --git a/src/net/http/httputil/reverseproxy_test.go b/src/net/http/httputil/reverseproxy_test.go
+index 25947e6..80a26ab 100644
+--- a/src/net/http/httputil/reverseproxy_test.go
++++ b/src/net/http/httputil/reverseproxy_test.go
+@@ -7,6 +7,7 @@
+ package httputil
+ 
+ import (
++	"bufio"
+ 	"io/ioutil"
+ 	"log"
+ 	"net/http"
+@@ -281,3 +282,41 @@ func TestReverseProxyCancellation(t *testing.T) {
+ 		t.Fatal("DefaultClient.Do() returned nil error")
+ 	}
+ }
++
++func req(t *testing.T, v string) *http.Request {
++	req, err := http.ReadRequest(bufio.NewReader(strings.NewReader(v)))
++	if err != nil {
++		t.Fatal(err)
++	}
++	return req
++}
++
++// Issue 12344
++func TestNilBody(t *testing.T) {
++	backend := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		w.Write([]byte("hi"))
++	}))
++	defer backend.Close()
++
++	frontend := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
++		backURL, _ := url.Parse(backend.URL)
++		rp := NewSingleHostReverseProxy(backURL)
++		r := req(t, "GET / HTTP/1.0\r\n\r\n")
++		r.Body = nil // this accidentally worked in Go 1.4 and below, so keep it working
++		rp.ServeHTTP(w, r)
++	}))
++	defer frontend.Close()
++
++	res, err := http.Get(frontend.URL)
++	if err != nil {
++		t.Fatal(err)
++	}
++	defer res.Body.Close()
++	slurp, err := ioutil.ReadAll(res.Body)
++	if err != nil {
++		t.Fatal(err)
++	}
++	if string(slurp) != "hi" {
++		t.Errorf("Got %q; want %q", slurp, "hi")
++	}
++}
+-- 
+2.6.1
+

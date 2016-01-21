@@ -1,0 +1,58 @@
+From a7e30ce9312e8ebfa89194bc899c8afdffa14906 Mon Sep 17 00:00:00 2001
+From: Russ Cox <rsc@golang.org>
+Date: Tue, 25 Aug 2015 11:25:46 -0400
+Subject: [PATCH 14/63] [release-branch.go1.5] net: restore LookupPort for
+ integer strings
+
+This worked in Go 1.4 but was lost in the "pure Go" lookup
+routines substituted late in the Go 1.5 cycle.
+
+Fixes #12263.
+
+Change-Id: I77ec9d97cd8e67ace99d6ac965e5bc16c151ba83
+Reviewed-on: https://go-review.googlesource.com/13915
+Reviewed-by: Brad Fitzpatrick <bradfitz@golang.org>
+Reviewed-on: https://go-review.googlesource.com/14243
+Reviewed-by: Ian Lance Taylor <iant@golang.org>
+---
+ src/net/lookup.go    | 3 +++
+ src/net/port_test.go | 2 ++
+ 2 files changed, 5 insertions(+)
+
+diff --git a/src/net/lookup.go b/src/net/lookup.go
+index a7ceee8..9008322 100644
+--- a/src/net/lookup.go
++++ b/src/net/lookup.go
+@@ -123,6 +123,9 @@ func lookupIPDeadline(host string, deadline time.Time) (addrs []IPAddr, err erro
+ 
+ // LookupPort looks up the port for the given network and service.
+ func LookupPort(network, service string) (port int, err error) {
++	if n, i, ok := dtoi(service, 0); ok && i == len(service) {
++		return n, nil
++	}
+ 	return lookupPort(network, service)
+ }
+ 
+diff --git a/src/net/port_test.go b/src/net/port_test.go
+index 2dacd97..258a5bd 100644
+--- a/src/net/port_test.go
++++ b/src/net/port_test.go
+@@ -27,6 +27,7 @@ var portTests = []struct {
+ 	{"tcp", "time", 37, true},
+ 	{"tcp", "domain", 53, true},
+ 	{"tcp", "finger", 79, true},
++	{"tcp", "42", 42, true},
+ 
+ 	{"udp", "echo", 7, true},
+ 	{"udp", "tftp", 69, true},
+@@ -36,6 +37,7 @@ var portTests = []struct {
+ 	{"udp", "ntp", 123, true},
+ 	{"udp", "snmp", 161, true},
+ 	{"udp", "syslog", 514, true},
++	{"udp", "42", 42, true},
+ 
+ 	{"--badnet--", "zzz", 0, false},
+ 	{"tcp", "--badport--", 0, false},
+-- 
+2.6.1
+

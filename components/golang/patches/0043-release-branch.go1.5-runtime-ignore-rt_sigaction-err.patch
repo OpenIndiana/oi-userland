@@ -1,0 +1,38 @@
+From 20a053611b2ac6cdd760fd3d391e4f7ae2d72a77 Mon Sep 17 00:00:00 2001
+From: Michael Hudson-Doyle <michael.hudson@canonical.com>
+Date: Fri, 13 Nov 2015 08:55:44 +1300
+Subject: [PATCH 43/63] [release-branch.go1.5] runtime: ignore rt_sigaction
+ error if it is for SIGRTMAX
+
+A forward port of https://codereview.appspot.com/124900043/ which somehow
+got lost somewhere.
+
+Fixes #13024
+
+Change-Id: Iab128899e65c51d90f6704e3e1b2fc9326e3a1c2
+Reviewed-on: https://go-review.googlesource.com/16853
+Reviewed-by: Russ Cox <rsc@golang.org>
+Reviewed-on: https://go-review.googlesource.com/16986
+Run-TryBot: Austin Clements <austin@google.com>
+Reviewed-by: Ian Lance Taylor <iant@golang.org>
+---
+ src/runtime/os1_linux.go | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/src/runtime/os1_linux.go b/src/runtime/os1_linux.go
+index c23dc30..1cad8f7 100644
+--- a/src/runtime/os1_linux.go
++++ b/src/runtime/os1_linux.go
+@@ -293,7 +293,8 @@ func setsig(i int32, fn uintptr, restart bool) {
+ 		fn = funcPC(sigtramp)
+ 	}
+ 	sa.sa_handler = fn
+-	if rt_sigaction(uintptr(i), &sa, nil, unsafe.Sizeof(sa.sa_mask)) != 0 {
++	// Qemu rejects rt_sigaction of SIGRTMAX (64).
++	if rt_sigaction(uintptr(i), &sa, nil, unsafe.Sizeof(sa.sa_mask)) != 0 && i != 64 {
+ 		throw("rt_sigaction failure")
+ 	}
+ }
+-- 
+2.6.1
+

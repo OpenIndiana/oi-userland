@@ -1,0 +1,191 @@
+From 55c62d6e3200baae9a4699cc40ed4b24da6422fd Mon Sep 17 00:00:00 2001
+From: Russ Cox <rsc@golang.org>
+Date: Wed, 18 Nov 2015 15:38:26 -0500
+Subject: [PATCH 52/63] [release-branch.go1.5] cmd/go: fix loading of buildid
+ on OS X executables
+
+This is a bit of a belt-and-suspenders fix.
+On OS X, we now parse the Mach-O file to find the __text section,
+which is arguably the more proper fix. But it's a bit worrisome to
+depend on a name like __text not changing, so we also read more
+of the initial file (now 32 kB, up from 8 kB) and scan that too.
+
+Fixes #12327.
+
+Change-Id: I3a201a3dc278d24707109bb3961c3bdd8b8a0b7b
+Reviewed-on: https://go-review.googlesource.com/17038
+Reviewed-by: Ian Lance Taylor <iant@golang.org>
+Reviewed-on: https://go-review.googlesource.com/17127
+---
+ src/cmd/dist/build.go   |  1 +
+ src/cmd/go/note.go      | 40 ++++++++++++++++++++++++++++++++++++++++
+ src/cmd/go/note_test.go | 14 ++++++++++++++
+ src/cmd/go/pkg.go       | 27 +++++++++++++++++++++++----
+ 4 files changed, 78 insertions(+), 4 deletions(-)
+
+diff --git a/src/cmd/dist/build.go b/src/cmd/dist/build.go
+index 184f973..1658e16 100644
+--- a/src/cmd/dist/build.go
++++ b/src/cmd/dist/build.go
+@@ -894,6 +894,7 @@ var buildorder = []string{
+ 	"crypto/sha1",
+ 	"debug/dwarf",
+ 	"debug/elf",
++	"debug/macho",
+ 	"cmd/go",
+ }
+ 
+diff --git a/src/cmd/go/note.go b/src/cmd/go/note.go
+index 97e1865..f8d6588 100644
+--- a/src/cmd/go/note.go
++++ b/src/cmd/go/note.go
+@@ -7,6 +7,7 @@ package main
+ import (
+ 	"bytes"
+ 	"debug/elf"
++	"debug/macho"
+ 	"encoding/binary"
+ 	"fmt"
+ 	"io"
+@@ -114,3 +115,42 @@ func readELFGoBuildID(filename string, f *os.File, data []byte) (buildid string,
+ 	// No note. Treat as successful but build ID empty.
+ 	return "", nil
+ }
++
++// The Go build ID is stored at the beginning of the Mach-O __text segment.
++// The caller has already opened filename, to get f, and read a few kB out, in data.
++// Sadly, that's not guaranteed to hold the note, because there is an arbitrary amount
++// of other junk placed in the file ahead of the main text.
++func readMachoGoBuildID(filename string, f *os.File, data []byte) (buildid string, err error) {
++	// If the data we want has already been read, don't worry about Mach-O parsing.
++	// This is both an optimization and a hedge against the Mach-O parsing failing
++	// in the future due to, for example, the name of the __text section changing.
++	if b, err := readRawGoBuildID(filename, data); b != "" && err == nil {
++		return b, err
++	}
++
++	mf, err := macho.NewFile(f)
++	if err != nil {
++		return "", &os.PathError{Path: filename, Op: "parse", Err: err}
++	}
++
++	sect := mf.Section("__text")
++	if sect == nil {
++		// Every binary has a __text section. Something is wrong.
++		return "", &os.PathError{Path: filename, Op: "parse", Err: fmt.Errorf("cannot find __text section")}
++	}
++
++	// It should be in the first few bytes, but read a lot just in case,
++	// especially given our past problems on OS X with the build ID moving.
++	// There shouldn't be much difference between reading 4kB and 32kB:
++	// the hard part is getting to the data, not transferring it.
++	n := sect.Size
++	if n > uint64(BuildIDReadSize) {
++		n = uint64(BuildIDReadSize)
++	}
++	buf := make([]byte, n)
++	if _, err := f.ReadAt(buf, int64(sect.Offset)); err != nil {
++		return "", err
++	}
++
++	return readRawGoBuildID(filename, buf)
++}
+diff --git a/src/cmd/go/note_test.go b/src/cmd/go/note_test.go
+index 3d64451..1b7a011 100644
+--- a/src/cmd/go/note_test.go
++++ b/src/cmd/go/note_test.go
+@@ -11,6 +11,20 @@ import (
+ )
+ 
+ func TestNoteReading(t *testing.T) {
++	testNoteReading(t)
++}
++
++func TestNoteReading2K(t *testing.T) {
++	// Set BuildIDReadSize to 2kB to exercise Mach-O parsing more strictly.
++	defer func(old int) {
++		main.BuildIDReadSize = old
++	}(main.BuildIDReadSize)
++	main.BuildIDReadSize = 2 * 1024
++
++	testNoteReading(t)
++}
++
++func testNoteReading(t *testing.T) {
+ 	tg := testgo(t)
+ 	defer tg.cleanup()
+ 	tg.tempFile("hello.go", `package main; func main() { print("hello, world\n") }`)
+diff --git a/src/cmd/go/pkg.go b/src/cmd/go/pkg.go
+index c481794..e1d1ed4 100644
+--- a/src/cmd/go/pkg.go
++++ b/src/cmd/go/pkg.go
+@@ -1781,8 +1781,17 @@ var (
+ 	goBuildEnd    = []byte("\"\n \xff")
+ 
+ 	elfPrefix = []byte("\x7fELF")
++
++	machoPrefixes = [][]byte{
++		{0xfe, 0xed, 0xfa, 0xce},
++		{0xfe, 0xed, 0xfa, 0xcf},
++		{0xce, 0xfa, 0xed, 0xfe},
++		{0xcf, 0xfa, 0xed, 0xfe},
++	}
+ )
+ 
++var BuildIDReadSize = 32 * 1024 // changed for testing
++
+ // ReadBuildIDFromBinary reads the build ID from a binary.
+ //
+ // ELF binaries store the build ID in a proper PT_NOTE section.
+@@ -1797,10 +1806,11 @@ func ReadBuildIDFromBinary(filename string) (id string, err error) {
+ 		return "", &os.PathError{Op: "parse", Path: filename, Err: errBuildIDUnknown}
+ 	}
+ 
+-	// Read the first 16 kB of the binary file.
++	// Read the first 32 kB of the binary file.
+ 	// That should be enough to find the build ID.
+ 	// In ELF files, the build ID is in the leading headers,
+-	// which are typically less than 4 kB, not to mention 16 kB.
++	// which are typically less than 4 kB, not to mention 32 kB.
++	// In Mach-O files, there's no limit, so we have to parse the file.
+ 	// On other systems, we're trying to read enough that
+ 	// we get the beginning of the text segment in the read.
+ 	// The offset where the text segment begins in a hello
+@@ -1808,7 +1818,6 @@ func ReadBuildIDFromBinary(filename string) (id string, err error) {
+ 	//
+ 	//	Plan 9: 0x20
+ 	//	Windows: 0x600
+-	//	Mach-O: 0x2000
+ 	//
+ 	f, err := os.Open(filename)
+ 	if err != nil {
+@@ -1816,7 +1825,7 @@ func ReadBuildIDFromBinary(filename string) (id string, err error) {
+ 	}
+ 	defer f.Close()
+ 
+-	data := make([]byte, 16*1024)
++	data := make([]byte, BuildIDReadSize)
+ 	_, err = io.ReadFull(f, data)
+ 	if err == io.ErrUnexpectedEOF {
+ 		err = nil
+@@ -1828,7 +1837,17 @@ func ReadBuildIDFromBinary(filename string) (id string, err error) {
+ 	if bytes.HasPrefix(data, elfPrefix) {
+ 		return readELFGoBuildID(filename, f, data)
+ 	}
++	for _, m := range machoPrefixes {
++		if bytes.HasPrefix(data, m) {
++			return readMachoGoBuildID(filename, f, data)
++		}
++	}
++
++	return readRawGoBuildID(filename, data)
++}
+ 
++// readRawGoBuildID finds the raw build ID stored in text segment data.
++func readRawGoBuildID(filename string, data []byte) (id string, err error) {
+ 	i := bytes.Index(data, goBuildPrefix)
+ 	if i < 0 {
+ 		// Missing. Treat as successful but build ID empty.
+-- 
+2.6.1
+

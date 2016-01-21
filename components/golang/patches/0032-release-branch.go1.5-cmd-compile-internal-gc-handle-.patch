@@ -1,0 +1,66 @@
+From 095710b39ec15e4df62eab0781a9d685dbe575a5 Mon Sep 17 00:00:00 2001
+From: Keith Randall <khr@golang.org>
+Date: Tue, 8 Sep 2015 13:41:51 -0700
+Subject: [PATCH 32/63] [release-branch.go1.5] cmd/compile/internal/gc: handle
+ weird map literals in key dedup
+
+We compute whether two keys k1 and k2 in a map literal are duplicates by
+constructing the expression OEQ(k1, k2) and calling the constant
+expression evaluator on that expression, then extracting the boolean
+result.
+
+Unfortunately, the constant expression evaluator can fail for various
+reasons.  I'm not really sure why it is dying in the case of 12536, but
+to be safe we should use the result only if we get a constant back (if
+we get a constant back, it must be boolean).  This probably isn't a
+permanent fix, but it should be good enough for 1.5.2.
+
+A permanent fix would be to ensure that the constant expression
+evaluator can always work for map literal keys, and if not the compiler
+should generate an error saying that the key isn't a constant (or isn't
+comparable to some specific other key).
+
+This patch has the effect of allowing the map literal to compile when
+constant eval of the OEQ fails.  If the keys are really equal (which the
+map impl will notice at runtime), one will overwrite the other in the
+resulting map.  Not great, but better than a compiler crash.
+
+Fixes #12536
+
+Change-Id: Ic151a5e3f131c2e8efa0c25c9218b431c55c1b30
+Reviewed-on: https://go-review.googlesource.com/14400
+Reviewed-by: Ian Lance Taylor <iant@golang.org>
+Reviewed-on: https://go-review.googlesource.com/16965
+Run-TryBot: Austin Clements <austin@google.com>
+Reviewed-by: Russ Cox <rsc@golang.org>
+---
+ src/cmd/compile/internal/gc/typecheck.go | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/src/cmd/compile/internal/gc/typecheck.go b/src/cmd/compile/internal/gc/typecheck.go
+index befe3b2..e5ae967 100644
+--- a/src/cmd/compile/internal/gc/typecheck.go
++++ b/src/cmd/compile/internal/gc/typecheck.go
+@@ -2874,12 +2874,17 @@ func keydup(n *Node, hash map[uint32][]*Node) {
+ 			if Eqtype(a.Left.Type, n.Type) {
+ 				cmp.Right = a.Left
+ 				evconst(&cmp)
+-				b = uint32(obj.Bool2int(cmp.Val().U.(bool)))
++				if cmp.Op == OLITERAL {
++					// Sometimes evconst fails.  See issue 12536.
++					b = uint32(obj.Bool2int(cmp.Val().U.(bool)))
++				}
+ 			}
+ 		} else if Eqtype(a.Type, n.Type) {
+ 			cmp.Right = a
+ 			evconst(&cmp)
+-			b = uint32(obj.Bool2int(cmp.Val().U.(bool)))
++			if cmp.Op == OLITERAL {
++				b = uint32(obj.Bool2int(cmp.Val().U.(bool)))
++			}
+ 		}
+ 
+ 		if b != 0 {
+-- 
+2.6.1
+

@@ -1,0 +1,47 @@
+From c257dfb178f00449dd344204219aad56e3e90de6 Mon Sep 17 00:00:00 2001
+From: Austin Clements <austin@google.com>
+Date: Fri, 9 Oct 2015 17:20:34 -0400
+Subject: [PATCH 26/63] [release-branch.go1.5] runtime: fix recursive GC assist
+
+If gcAssistAlloc is unable to steal or perform enough scan work, it
+calls timeSleep, which allocates. If this allocation requires
+obtaining a new span, it will in turn attempt to assist GC. Since
+there's likely still no way to satisfy the assist, it will sleep
+again, and so on, leading to potentially deep (not infinite, but also
+not bounded) recursion.
+
+Fix this by disallowing assists during the timeSleep.
+
+This same problem was fixed on master by 65aa2da. That commit built on
+several other changes and hence can't be directly cherry-picked. This
+commit implements the same idea.
+
+Fixes #12894.
+
+Change-Id: I152977eb1d0a3005c42ff3985d58778f054a86d4
+Reviewed-on: https://go-review.googlesource.com/15720
+Reviewed-by: Rick Hudson <rlh@golang.org>
+---
+ src/runtime/mgcmark.go | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/src/runtime/mgcmark.go b/src/runtime/mgcmark.go
+index 44f9512..e5dfa72 100644
+--- a/src/runtime/mgcmark.go
++++ b/src/runtime/mgcmark.go
+@@ -292,7 +292,12 @@ retry:
+ 		// more, so go around again after performing an
+ 		// interruptible sleep for 100 us (the same as the
+ 		// getfull barrier) to let other mutators run.
++
++		// timeSleep may allocate, so avoid recursive assist.
++		gcalloc := gp.gcalloc
++		gp.gcalloc = 0
+ 		timeSleep(100 * 1000)
++		gp.gcalloc = gcalloc
+ 		goto retry
+ 	}
+ }
+-- 
+2.6.1
+

@@ -1,0 +1,147 @@
+From 36fe6f2d5d242d5097b7a3f1a95e8b5457914840 Mon Sep 17 00:00:00 2001
+From: Francisco Claude <fclaude@recoded.cl>
+Date: Wed, 16 Sep 2015 12:56:06 -0300
+Subject: [PATCH 36/63] [release-branch.go1.5] multipart: fixes problem parsing
+ mime/multipart of certain lengths
+
+When parsing the multipart data, if the delimiter appears but doesn't
+finish with -- or \n or \r\n, it assumes the data can be consumed. This
+is incorrect when the peeking buffer finishes with --delimiter-
+
+Fixes #12662
+
+Change-Id: I329556a9a206407c0958289bf7a9009229120bb9
+Reviewed-on: https://go-review.googlesource.com/14652
+TryBot-Result: Gobot Gobot <gobot@golang.org>
+Reviewed-by: Brad Fitzpatrick <bradfitz@golang.org>
+Reviewed-on: https://go-review.googlesource.com/16969
+Run-TryBot: Austin Clements <austin@google.com>
+Reviewed-by: Russ Cox <rsc@golang.org>
+---
+ src/mime/multipart/multipart.go      | 16 +++++++++---
+ src/mime/multipart/multipart_test.go | 48 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 61 insertions(+), 3 deletions(-)
+
+diff --git a/src/mime/multipart/multipart.go b/src/mime/multipart/multipart.go
+index 6f65a55..eeec974 100644
+--- a/src/mime/multipart/multipart.go
++++ b/src/mime/multipart/multipart.go
+@@ -25,6 +25,11 @@ import (
+ 
+ var emptyParams = make(map[string]string)
+ 
++// This constant needs to be at least 76 for this package to work correctly.
++// This is because \r\n--separator_of_len_70- would fill the buffer and it
++// wouldn't be safe to consume a single byte from it.
++const peekBufferSize = 4096
++
+ // A Part represents a single part in a multipart body.
+ type Part struct {
+ 	// The headers of the body, if any, with the keys canonicalized
+@@ -91,7 +96,7 @@ func (p *Part) parseContentDisposition() {
+ func NewReader(r io.Reader, boundary string) *Reader {
+ 	b := []byte("\r\n--" + boundary + "--")
+ 	return &Reader{
+-		bufReader:        bufio.NewReader(r),
++		bufReader:        bufio.NewReaderSize(r, peekBufferSize),
+ 		nl:               b[:2],
+ 		nlDashBoundary:   b[:len(b)-2],
+ 		dashBoundaryDash: b[2:],
+@@ -148,7 +153,7 @@ func (pr partReader) Read(d []byte) (n int, err error) {
+ 		// the read request.  No need to parse more at the moment.
+ 		return p.buffer.Read(d)
+ 	}
+-	peek, err := p.mr.bufReader.Peek(4096) // TODO(bradfitz): add buffer size accessor
++	peek, err := p.mr.bufReader.Peek(peekBufferSize) // TODO(bradfitz): add buffer size accessor
+ 
+ 	// Look for an immediate empty part without a leading \r\n
+ 	// before the boundary separator.  Some MIME code makes empty
+@@ -229,6 +234,7 @@ func (r *Reader) NextPart() (*Part, error) {
+ 	expectNewPart := false
+ 	for {
+ 		line, err := r.bufReader.ReadSlice('\n')
++
+ 		if err == io.EOF && r.isFinalBoundary(line) {
+ 			// If the buffer ends in "--boundary--" without the
+ 			// trailing "\r\n", ReadSlice will return an error
+@@ -343,13 +349,17 @@ func (mr *Reader) peekBufferIsEmptyPart(peek []byte) bool {
+ // peekBufferSeparatorIndex returns the index of mr.nlDashBoundary in
+ // peek and whether it is a real boundary (and not a prefix of an
+ // unrelated separator). To be the end, the peek buffer must contain a
+-// newline after the boundary.
++// newline after the boundary or contain the ending boundary (--separator--).
+ func (mr *Reader) peekBufferSeparatorIndex(peek []byte) (idx int, isEnd bool) {
+ 	idx = bytes.Index(peek, mr.nlDashBoundary)
+ 	if idx == -1 {
+ 		return
+ 	}
++
+ 	peek = peek[idx+len(mr.nlDashBoundary):]
++	if len(peek) == 0 || len(peek) == 1 && peek[0] == '-' {
++		return idx, false
++	}
+ 	if len(peek) > 1 && peek[0] == '-' && peek[1] == '-' {
+ 		return idx, true
+ 	}
+diff --git a/src/mime/multipart/multipart_test.go b/src/mime/multipart/multipart_test.go
+index 30452d1..32cec57 100644
+--- a/src/mime/multipart/multipart_test.go
++++ b/src/mime/multipart/multipart_test.go
+@@ -616,6 +616,54 @@ html things
+ 			},
+ 		},
+ 	},
++	// Issue 12662: Check that we don't consume the leading \r if the peekBuffer
++	// ends in '\r\n--separator-'
++	{
++		name: "peek buffer boundary condition",
++		sep:  "00ffded004d4dd0fdf945fbdef9d9050cfd6a13a821846299b27fc71b9db",
++		in: strings.Replace(`--00ffded004d4dd0fdf945fbdef9d9050cfd6a13a821846299b27fc71b9db
++Content-Disposition: form-data; name="block"; filename="block"
++Content-Type: application/octet-stream
++
++`+strings.Repeat("A", peekBufferSize-65)+"\n--00ffded004d4dd0fdf945fbdef9d9050cfd6a13a821846299b27fc71b9db--", "\n", "\r\n", -1),
++		want: []headerBody{
++			{textproto.MIMEHeader{"Content-Type": {`application/octet-stream`}, "Content-Disposition": {`form-data; name="block"; filename="block"`}},
++				strings.Repeat("A", peekBufferSize-65),
++			},
++		},
++	},
++	// Issue 12662: Same test as above with \r\n at the end
++	{
++		name: "peek buffer boundary condition",
++		sep:  "00ffded004d4dd0fdf945fbdef9d9050cfd6a13a821846299b27fc71b9db",
++		in: strings.Replace(`--00ffded004d4dd0fdf945fbdef9d9050cfd6a13a821846299b27fc71b9db
++Content-Disposition: form-data; name="block"; filename="block"
++Content-Type: application/octet-stream
++
++`+strings.Repeat("A", peekBufferSize-65)+"\n--00ffded004d4dd0fdf945fbdef9d9050cfd6a13a821846299b27fc71b9db--\n", "\n", "\r\n", -1),
++		want: []headerBody{
++			{textproto.MIMEHeader{"Content-Type": {`application/octet-stream`}, "Content-Disposition": {`form-data; name="block"; filename="block"`}},
++				strings.Repeat("A", peekBufferSize-65),
++			},
++		},
++	},
++	// Issue 12662v2: We want to make sure that for short buffers that end with
++	// '\r\n--separator-' we always consume at least one (valid) symbol from the
++	// peekBuffer
++	{
++		name: "peek buffer boundary condition",
++		sep:  "aaaaaaaaaa00ffded004d4dd0fdf945fbdef9d9050cfd6a13a821846299b27fc71b9db",
++		in: strings.Replace(`--aaaaaaaaaa00ffded004d4dd0fdf945fbdef9d9050cfd6a13a821846299b27fc71b9db
++Content-Disposition: form-data; name="block"; filename="block"
++Content-Type: application/octet-stream
++
++`+strings.Repeat("A", peekBufferSize)+"\n--aaaaaaaaaa00ffded004d4dd0fdf945fbdef9d9050cfd6a13a821846299b27fc71b9db--", "\n", "\r\n", -1),
++		want: []headerBody{
++			{textproto.MIMEHeader{"Content-Type": {`application/octet-stream`}, "Content-Disposition": {`form-data; name="block"; filename="block"`}},
++				strings.Repeat("A", peekBufferSize),
++			},
++		},
++	},
+ 
+ 	roundTripParseTest(),
+ }
+-- 
+2.6.1
+

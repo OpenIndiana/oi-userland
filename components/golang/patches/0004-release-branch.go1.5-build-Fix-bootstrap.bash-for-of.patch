@@ -1,0 +1,43 @@
+From c20b8e145a471f242fba18f30dc830dac71ce50e Mon Sep 17 00:00:00 2001
+From: Dave Cheney <dave@cheney.net>
+Date: Fri, 4 Sep 2015 08:47:40 +1000
+Subject: [PATCH 04/63] [release-branch.go1.5] build: Fix bootstrap.bash for
+ official source tarballs
+
+At the moment, bootstrap.bash assumes it is called from a git working
+copy. Hence, it fails to complete when running in an unpacked official
+source tarball where .git and .gitignore do not exist. This fix adds a
+test for existence for .git and a -f switch for the removal of
+.gitignore.
+
+Fixes #12223
+
+Change-Id: I7f305b83b38d5115504932bd38dadb7bdeb5d487
+Reviewed-on: https://go-review.googlesource.com/13770
+Reviewed-by: Dave Cheney <dave@cheney.net>
+Reviewed-by: Andrew Gerrand <adg@golang.org>
+Reviewed-on: https://go-review.googlesource.com/14281
+---
+ src/bootstrap.bash | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/src/bootstrap.bash b/src/bootstrap.bash
+index 60d6151..1b5ba7c 100755
+--- a/src/bootstrap.bash
++++ b/src/bootstrap.bash
+@@ -35,8 +35,10 @@ cp -R "$src" "$targ"
+ cd "$targ"
+ echo
+ echo "#### Cleaning $targ"
+-rm .gitignore
+-git clean -f -d
++rm -f .gitignore
++if [ -e .git ]; then
++	git clean -f -d
++fi
+ echo
+ echo "#### Building $targ"
+ echo
+-- 
+2.6.1
+

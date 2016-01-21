@@ -1,0 +1,84 @@
+From 97ec0a816bfe1f8488355b5a6e94907a993b2cc7 Mon Sep 17 00:00:00 2001
+From: Didier Spezia <didier.06@gmail.com>
+Date: Tue, 25 Aug 2015 16:25:11 +0000
+Subject: [PATCH 07/63] [release-branch.go1.5] cmd/asm: fix potential infinite
+ loop in parser
+
+For ARM machines, the assembler supports list of registers
+operands such as [R1,R2].
+
+A list missing a ']' results in the parser issuing many errors
+and consuming all the tokens. At EOF (i.e. end of the line),
+it still loops.
+
+Normally, a counter is maintained to make sure the parser
+stops after 10 errors. However, multiple errors occuring on the
+same line are simply ignored. Only the first one is reported.
+At most one error per line is accounted.
+
+Missing ']' in a register list therefore results in an
+infinite loop.
+
+Fixed the parser by explicitly checking for ']' to interrupt
+this loops
+
+In the operand tests, also fixed a wrong entry which I think was
+not set on purpose (but still led to a successful result).
+
+Fixes #11764
+
+Change-Id: Ie87773388ee0d21b3a2a4cb941d4d911d0230ba4
+Reviewed-on: https://go-review.googlesource.com/13920
+Reviewed-by: Rob Pike <r@golang.org>
+Reviewed-on: https://go-review.googlesource.com/14225
+---
+ src/cmd/asm/internal/asm/operand_test.go | 3 ++-
+ src/cmd/asm/internal/asm/parse.go        | 9 +++++++--
+ 2 files changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/src/cmd/asm/internal/asm/operand_test.go b/src/cmd/asm/internal/asm/operand_test.go
+index b9154a9..01335ed 100644
+--- a/src/cmd/asm/internal/asm/operand_test.go
++++ b/src/cmd/asm/internal/asm/operand_test.go
+@@ -181,7 +181,7 @@ var amd64OperandTests = []operandTest{
+ 	{"x·y+8(SB)", "x.y+8(SB)"},
+ 	{"x·y+8(SP)", "x.y+8(SP)"},
+ 	{"y+56(FP)", "y+56(FP)"},
+-	{"·AddUint32(SB", "\"\".AddUint32(SB)"},
++	{"·AddUint32(SB)", "\"\".AddUint32(SB)"},
+ 	{"·callReflect(SB)", "\"\".callReflect(SB)"},
+ }
+ 
+@@ -288,6 +288,7 @@ var armOperandTests = []operandTest{
+ 	{"runtime·_sfloat2(SB)", "runtime._sfloat2(SB)"},
+ 	{"·AddUint32(SB)", "\"\".AddUint32(SB)"},
+ 	{"(R1, R3)", "(R1, R3)"},
++	{"[R0,R1,g,R15", ""}, // Issue 11764 - previously asm just hung parsing ']' missing register lists
+ }
+ 
+ var ppc64OperandTests = []operandTest{
+diff --git a/src/cmd/asm/internal/asm/parse.go b/src/cmd/asm/internal/asm/parse.go
+index c07e6f8..6cf50df 100644
+--- a/src/cmd/asm/internal/asm/parse.go
++++ b/src/cmd/asm/internal/asm/parse.go
+@@ -698,10 +698,15 @@ func (p *Parser) registerIndirect(a *obj.Addr, prefix rune) {
+ func (p *Parser) registerList(a *obj.Addr) {
+ 	// One range per loop.
+ 	var bits uint16
++ListLoop:
+ 	for {
+ 		tok := p.next()
+-		if tok.ScanToken == ']' {
+-			break
++		switch tok.ScanToken {
++		case ']':
++			break ListLoop
++		case scanner.EOF:
++			p.errorf("missing ']' in register list")
++			return
+ 		}
+ 		lo := p.registerNumber(tok.String())
+ 		hi := lo
+-- 
+2.6.1
+

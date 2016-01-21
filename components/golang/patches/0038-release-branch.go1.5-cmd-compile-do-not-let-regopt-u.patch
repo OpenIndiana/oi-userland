@@ -1,0 +1,38 @@
+From 8b3f554d869e1d6e7a0bd1574135402cfc6dc1a3 Mon Sep 17 00:00:00 2001
+From: Michael Hudson-Doyle <michael.hudson@canonical.com>
+Date: Mon, 5 Oct 2015 16:07:59 +1300
+Subject: [PATCH 38/63] [release-branch.go1.5] cmd/compile: do not let regopt
+ use REGTMP on ppc64
+
+ppc64 codegen assumes that it is OK to stomp on r31 at any time, but it is not
+excluded from the set of registers that regopt is allowed to use.
+
+Fixes #12597
+
+Change-Id: I29c7655e32abd22f3c21d88427b73e4fca055233
+Reviewed-on: https://go-review.googlesource.com/15245
+Reviewed-by: Minux Ma <minux@golang.org>
+Reviewed-on: https://go-review.googlesource.com/16981
+Run-TryBot: Austin Clements <austin@google.com>
+Reviewed-by: Ian Lance Taylor <iant@golang.org>
+Reviewed-by: Russ Cox <rsc@golang.org>
+---
+ src/cmd/compile/internal/ppc64/reg.go | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/cmd/compile/internal/ppc64/reg.go b/src/cmd/compile/internal/ppc64/reg.go
+index fa1cb71..a301836 100644
+--- a/src/cmd/compile/internal/ppc64/reg.go
++++ b/src/cmd/compile/internal/ppc64/reg.go
+@@ -111,7 +111,7 @@ func regnames(n *int) []string {
+ 
+ func excludedregs() uint64 {
+ 	// Exclude registers with fixed functions
+-	regbits := uint64(1<<0 | RtoB(ppc64.REGSP) | RtoB(ppc64.REGG) | RtoB(ppc64.REGTLS))
++	regbits := uint64(1<<0 | RtoB(ppc64.REGSP) | RtoB(ppc64.REGG) | RtoB(ppc64.REGTLS) | RtoB(ppc64.REGTMP))
+ 
+ 	// Also exclude floating point registers with fixed constants
+ 	regbits |= RtoB(ppc64.REG_F27) | RtoB(ppc64.REG_F28) | RtoB(ppc64.REG_F29) | RtoB(ppc64.REG_F30) | RtoB(ppc64.REG_F31)
+-- 
+2.6.1
+

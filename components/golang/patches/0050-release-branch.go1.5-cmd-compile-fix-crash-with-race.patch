@@ -1,0 +1,64 @@
+From 0c64370422a0aebc180881bd9ae0a69fa8116a0c Mon Sep 17 00:00:00 2001
+From: Russ Cox <rsc@golang.org>
+Date: Wed, 18 Nov 2015 14:37:12 -0500
+Subject: [PATCH 50/63] [release-branch.go1.5] cmd/compile: fix crash with
+ -race on large expr containing string->[]byte conversion
+
+The assumption is that there are no nested function calls in complex expressions.
+For the most part that assumption is true. It wasn't for these calls inserted during walk.
+Fix that.
+
+I looked through all the calls to mkcall in walk and these were the only cases
+that emitted calls, that could be part of larger expressions (like not delete),
+and that were not already handled.
+
+Fixes #12225.
+
+Change-Id: Iad380683fe2e054d480e7ae4e8faf1078cdd744c
+Reviewed-on: https://go-review.googlesource.com/17034
+Reviewed-by: Ian Lance Taylor <iant@golang.org>
+Reviewed-on: https://go-review.googlesource.com/17125
+---
+ src/cmd/compile/internal/gc/order.go         |  5 ++++-
+ src/runtime/race/testdata/issue12225_test.go | 13 +++++++++++++
+ 2 files changed, 17 insertions(+), 1 deletion(-)
+ create mode 100644 src/runtime/race/testdata/issue12225_test.go
+
+diff --git a/src/cmd/compile/internal/gc/order.go b/src/cmd/compile/internal/gc/order.go
+index 799a17e..a5cf920 100644
+--- a/src/cmd/compile/internal/gc/order.go
++++ b/src/cmd/compile/internal/gc/order.go
+@@ -1091,7 +1091,10 @@ func orderexpr(np **Node, order *Order, lhs *Node) {
+ 		OMAKESLICE,
+ 		ONEW,
+ 		OREAL,
+-		ORECOVER:
++		ORECOVER,
++		OSTRARRAYBYTE,
++		OSTRARRAYBYTETMP,
++		OSTRARRAYRUNE:
+ 		ordercall(n, order)
+ 		if lhs == nil || lhs.Op != ONAME || flag_race != 0 {
+ 			n = ordercopyexpr(n, n.Type, order, 0)
+diff --git a/src/runtime/race/testdata/issue12225_test.go b/src/runtime/race/testdata/issue12225_test.go
+new file mode 100644
+index 0000000..3b0b8ec
+--- /dev/null
++++ b/src/runtime/race/testdata/issue12225_test.go
+@@ -0,0 +1,13 @@
++// Copyright 2015 The Go Authors. All rights reserved.
++// Use of this source code is governed by a BSD-style
++// license that can be found in the LICENSE file.
++
++package race_test
++
++// golang.org/issue/12225
++// The test is that this compiles at all.
++
++func issue12225() {
++	println(*(*int)(unsafe.Pointer(&convert("")[0])))
++	println(*(*int)(unsafe.Pointer(&[]byte("")[0])))
++}
+-- 
+2.6.1
+

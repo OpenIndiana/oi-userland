@@ -1,0 +1,100 @@
+From fc0f36b2ce201142a9137fa8ea6a55e454d1213f Mon Sep 17 00:00:00 2001
+From: Austin Clements <austin@google.com>
+Date: Fri, 2 Oct 2015 18:17:54 -0400
+Subject: [PATCH 29/63] [release-branch.go1.5] runtime: use 4 byte writes in
+ amd64p32 memmove/memclr
+
+Currently, amd64p32's memmove and memclr use 8 byte writes as much as
+possible and 1 byte writes for the tail of the object. However, if an
+object ends with a 4 byte pointer at an 8 byte aligned offset, this
+may copy/zero the pointer field one byte at a time, allowing the
+garbage collector to observe a partially copied pointer.
+
+Fix this by using 4 byte writes instead of 8 byte writes.
+
+Updates #12552.
+
+Change-Id: I13324fd05756fb25ae57e812e836f0a975b5595c
+Reviewed-on: https://go-review.googlesource.com/15370
+Run-TryBot: Austin Clements <austin@google.com>
+TryBot-Result: Gobot Gobot <gobot@golang.org>
+Reviewed-by: Brad Fitzpatrick <bradfitz@golang.org>
+Reviewed-by: Keith Randall <khr@golang.org>
+Reviewed-on: https://go-review.googlesource.com/16908
+Reviewed-by: Russ Cox <rsc@golang.org>
+---
+ src/runtime/asm_amd64p32.s          |  6 +++---
+ src/runtime/memmove_nacl_amd64p32.s | 23 +++++++++++++----------
+ 2 files changed, 16 insertions(+), 13 deletions(-)
+
+diff --git a/src/runtime/asm_amd64p32.s b/src/runtime/asm_amd64p32.s
+index 6e97256..a001a76 100644
+--- a/src/runtime/asm_amd64p32.s
++++ b/src/runtime/asm_amd64p32.s
+@@ -627,12 +627,12 @@ TEXT runtime·memclr(SB),NOSPLIT,$0-8
+ 	MOVL	ptr+0(FP), DI
+ 	MOVL	n+4(FP), CX
+ 	MOVQ	CX, BX
+-	ANDQ	$7, BX
+-	SHRQ	$3, CX
++	ANDQ	$3, BX
++	SHRQ	$2, CX
+ 	MOVQ	$0, AX
+ 	CLD
+ 	REP
+-	STOSQ
++	STOSL
+ 	MOVQ	BX, CX
+ 	REP
+ 	STOSB
+diff --git a/src/runtime/memmove_nacl_amd64p32.s b/src/runtime/memmove_nacl_amd64p32.s
+index 373607a..be9e1e5 100644
+--- a/src/runtime/memmove_nacl_amd64p32.s
++++ b/src/runtime/memmove_nacl_amd64p32.s
+@@ -4,6 +4,9 @@
+ 
+ #include "textflag.h"
+ 
++// This could use MOVSQ, but we use MOVSL so that if an object ends in
++// a 4 byte pointer, we copy it as a unit instead of byte by byte.
++
+ TEXT runtime·memmove(SB), NOSPLIT, $0-12
+ 	MOVL	to+0(FP), DI
+ 	MOVL	from+4(FP), SI
+@@ -14,9 +17,9 @@ TEXT runtime·memmove(SB), NOSPLIT, $0-12
+ 
+ forward:
+ 	MOVL	BX, CX
+-	SHRL	$3, CX
+-	ANDL	$7, BX
+-	REP; MOVSQ
++	SHRL	$2, CX
++	ANDL	$3, BX
++	REP; MOVSL
+ 	MOVL	BX, CX
+ 	REP; MOVSB
+ 	RET
+@@ -32,13 +35,13 @@ back:
+ 	STD
+ 	
+ 	MOVL	BX, CX
+-	SHRL	$3, CX
+-	ANDL	$7, BX
+-	SUBL	$8, DI
+-	SUBL	$8, SI
+-	REP; MOVSQ
+-	ADDL	$7, DI
+-	ADDL	$7, SI
++	SHRL	$2, CX
++	ANDL	$3, BX
++	SUBL	$4, DI
++	SUBL	$4, SI
++	REP; MOVSL
++	ADDL	$3, DI
++	ADDL	$3, SI
+ 	MOVL	BX, CX
+ 	REP; MOVSB
+ 	CLD
+-- 
+2.6.1
+

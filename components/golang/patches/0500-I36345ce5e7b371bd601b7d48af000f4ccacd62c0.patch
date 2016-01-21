@@ -1,0 +1,60 @@
+commit d9e3d16796927ae2c5721cdff855ddb07a903d78
+Author: Shawn Walker-Salas <shawn.walker@oracle.com>
+Date:   Thu Jul 30 13:32:55 2015 -0700
+
+    runtime, syscall: remove unused bits from Solaris implementation
+    
+    CL 9184 changed the runtime and syscall packages to link Solaris binaries
+    directly instead of using dlopen/dlsym but did not remove the unused (and
+    now broken) references to dlopen, dlclose, and dlsym.
+    
+    Fixes #11923
+    
+    Change-Id: I36345ce5e7b371bd601b7d48af000f4ccacd62c0
+    Reviewed-on: https://go-review.googlesource.com/13410
+    Reviewed-by: Aram Hăvărneanu <aram@mgk.ro>
+
+diff --git a/src/runtime/syscall2_solaris.go b/src/runtime/syscall2_solaris.go
+index df72996..e19035a 100644
+--- a/src/runtime/syscall2_solaris.go
++++ b/src/runtime/syscall2_solaris.go
+@@ -9,9 +9,6 @@ import _ "unsafe" // for go:linkname
+ //go:cgo_import_dynamic libc_chdir chdir "libc.so"
+ //go:cgo_import_dynamic libc_chroot chroot "libc.so"
+ //go:cgo_import_dynamic libc_close close "libc.so"
+-//go:cgo_import_dynamic libc_dlclose dlclose "libc.so"
+-//go:cgo_import_dynamic libc_dlopen dlopen "libc.so"
+-//go:cgo_import_dynamic libc_dlsym dlsym "libc.so"
+ //go:cgo_import_dynamic libc_execve execve "libc.so"
+ //go:cgo_import_dynamic libc_fcntl fcntl "libc.so"
+ //go:cgo_import_dynamic libc_gethostname gethostname "libc.so"
+@@ -30,9 +27,6 @@ import _ "unsafe" // for go:linkname
+ //go:linkname libc_chdir libc_chdir
+ //go:linkname libc_chroot libc_chroot
+ //go:linkname libc_close libc_close
+-//go:linkname libc_dlclose libc_dlclose
+-//go:linkname libc_dlopen libc_dlopen
+-//go:linkname libc_dlsym libc_dlsym
+ //go:linkname libc_execve libc_execve
+ //go:linkname libc_fcntl libc_fcntl
+ //go:linkname libc_gethostname libc_gethostname
+diff --git a/src/syscall/asm_solaris_amd64.s b/src/syscall/asm_solaris_amd64.s
+index cc69caa..2547cdb 100644
+--- a/src/syscall/asm_solaris_amd64.s
++++ b/src/syscall/asm_solaris_amd64.s
+@@ -23,15 +23,6 @@ TEXT ·chroot1(SB),NOSPLIT,$0
+ TEXT ·close(SB),NOSPLIT,$0
+ 	JMP	runtime·syscall_close(SB)
+ 
+-TEXT ·dlopen(SB),NOSPLIT,$0
+-	JMP	runtime·syscall_dlopen(SB)
+-
+-TEXT ·dlclose(SB),NOSPLIT,$0
+-	JMP	runtime·syscall_dlclose(SB)
+-
+-TEXT ·dlsym(SB),NOSPLIT,$0
+-	JMP	runtime·syscall_dlsym(SB)
+-
+ TEXT ·execve(SB),NOSPLIT,$0
+ 	JMP	runtime·syscall_execve(SB)
+ 

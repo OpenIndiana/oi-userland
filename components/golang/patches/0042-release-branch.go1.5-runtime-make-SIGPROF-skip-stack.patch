@@ -1,0 +1,62 @@
+From a8e839bb55bdba131d5c2f72d6bb49130fac55e3 Mon Sep 17 00:00:00 2001
+From: Austin Clements <austin@google.com>
+Date: Wed, 11 Nov 2015 15:34:54 -0500
+Subject: [PATCH 42/63] [release-branch.go1.5] runtime: make SIGPROF skip
+ stacks that are being copied
+
+sigprof tracebacks the stack across systemstack switches to make
+profile tracebacks more complete. However, it does this even if the
+user stack is currently being copied, which means it may be in an
+inconsistent state that will cause the traceback to panic.
+
+One specific way this can happen is during stack shrinking. Some
+goroutine blocks for STW, then enters gchelper, which then assists
+with root marking. If that root marking happens to pick the original
+goroutine and its stack needs to be shrunk, it will begin to copy that
+stack. During this copy, the stack is generally inconsistent and, in
+particular, the actual locations of the stack barriers and their
+recorded locations are temporarily out of sync. If a SIGPROF happens
+during this inconsistency, it will walk the stack all the way back to
+the blocked goroutine and panic when it fails to unwind the stack
+barriers.
+
+Fix this by disallowing jumping to the user stack during SIGPROF if
+that user stack is in the process of being copied.
+
+Fixes #12932.
+
+Change-Id: I9ef694c2c01e3653e292ce22612418dd3daff1b4
+Reviewed-on: https://go-review.googlesource.com/16819
+Reviewed-by: Daniel Morsing <daniel.morsing@gmail.com>
+Run-TryBot: Austin Clements <austin@google.com>
+TryBot-Result: Gobot Gobot <gobot@golang.org>
+Reviewed-on: https://go-review.googlesource.com/16985
+Reviewed-by: Ian Lance Taylor <iant@golang.org>
+Reviewed-by: Russ Cox <rsc@golang.org>
+---
+ src/runtime/proc1.go | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/src/runtime/proc1.go b/src/runtime/proc1.go
+index 09cb775..55f1a24 100644
+--- a/src/runtime/proc1.go
++++ b/src/runtime/proc1.go
+@@ -2582,7 +2582,14 @@ func sigprof(pc, sp, lr uintptr, gp *g, mp *m) {
+ 		// This is especially important on windows, since all syscalls are cgo calls.
+ 		n = gentraceback(mp.curg.syscallpc, mp.curg.syscallsp, 0, mp.curg, 0, &stk[0], len(stk), nil, nil, 0)
+ 	} else if traceback {
+-		n = gentraceback(pc, sp, lr, gp, 0, &stk[0], len(stk), nil, nil, _TraceTrap|_TraceJumpStack)
++		flags := uint(_TraceTrap | _TraceJumpStack)
++		if gp.m.curg != nil && readgstatus(gp.m.curg) == _Gcopystack {
++			// We can traceback the system stack, but
++			// don't jump to the potentially inconsistent
++			// user stack.
++			flags &^= _TraceJumpStack
++		}
++		n = gentraceback(pc, sp, lr, gp, 0, &stk[0], len(stk), nil, nil, flags)
+ 	}
+ 	if !traceback || n <= 0 {
+ 		// Normal traceback is impossible or has failed.
+-- 
+2.6.1
+

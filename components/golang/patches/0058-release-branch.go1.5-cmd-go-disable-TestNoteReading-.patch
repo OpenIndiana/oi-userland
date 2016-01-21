@@ -1,0 +1,36 @@
+From 2876020ee7dc9bb927a8968c2cfd6017b85834a2 Mon Sep 17 00:00:00 2001
+From: Russ Cox <rsc@golang.org>
+Date: Sun, 22 Nov 2015 21:14:52 -0500
+Subject: [PATCH 58/63] [release-branch.go1.5] cmd/go: disable TestNoteReading
+ on dragonfly
+
+It started failing on the dragonfly builder at an unrelated commit
+(one that changed the wording in a few comments in the compiler).
+
+Created #13364 to track this.
+
+Change-Id: I462880bed8ff565a9950e7e185de97d43999c5e2
+Reviewed-on: https://go-review.googlesource.com/17143
+Reviewed-by: Russ Cox <rsc@golang.org>
+Reviewed-on: https://go-review.googlesource.com/17144
+---
+ src/cmd/go/note_test.go | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/src/cmd/go/note_test.go b/src/cmd/go/note_test.go
+index 39b79c5..31c83c7 100644
+--- a/src/cmd/go/note_test.go
++++ b/src/cmd/go/note_test.go
+@@ -28,6 +28,9 @@ func TestNoteReading2K(t *testing.T) {
+ }
+ 
+ func testNoteReading(t *testing.T) {
++	if runtime.GOOS == "dragonfly" {
++		t.Skipf("TestNoteReading is broken on dragonfly - golang.org/issue/13364", runtime.GOOS)
++	}
+ 	tg := testgo(t)
+ 	defer tg.cleanup()
+ 	tg.tempFile("hello.go", `package main; func main() { print("hello, world\n") }`)
+-- 
+2.6.1
+

@@ -1,0 +1,80 @@
+From 29a22abfc8c81be7c3676f385fb0f2caf3029543 Mon Sep 17 00:00:00 2001
+From: Russ Cox <rsc@golang.org>
+Date: Tue, 17 Nov 2015 16:34:06 -0500
+Subject: [PATCH 49/63] [release-branch.go1.5] cmd/compile: fix Val vs Opt
+ collision
+
+Fixes #12686.
+
+Change-Id: I7a9f49dbd1f60b1d0240de57787753b425f9548c
+Reviewed-on: https://go-review.googlesource.com/17031
+Reviewed-by: Ian Lance Taylor <iant@golang.org>
+Reviewed-on: https://go-review.googlesource.com/17124
+---
+ src/cmd/compile/internal/gc/const.go | 16 ++++++++++++----
+ test/fixedbugs/issue12686.go         | 16 ++++++++++++++++
+ 2 files changed, 28 insertions(+), 4 deletions(-)
+ create mode 100644 test/fixedbugs/issue12686.go
+
+diff --git a/src/cmd/compile/internal/gc/const.go b/src/cmd/compile/internal/gc/const.go
+index 9eb4983..5095e5e 100644
+--- a/src/cmd/compile/internal/gc/const.go
++++ b/src/cmd/compile/internal/gc/const.go
+@@ -1279,20 +1279,28 @@ func defaultlit(np **Node, t *Type) {
+ 	return
+ 
+ num:
++	// Note: n.Val().Ctype() can be CTxxx (not a constant) here
++	// in the case of an untyped non-constant value, like 1<<i.
++	v1 := n.Val()
+ 	if t != nil {
+ 		if Isint[t.Etype] {
+ 			t1 = t
+-			n.SetVal(toint(n.Val()))
++			v1 = toint(n.Val())
+ 		} else if Isfloat[t.Etype] {
+ 			t1 = t
+-			n.SetVal(toflt(n.Val()))
++			v1 = toflt(n.Val())
+ 		} else if Iscomplex[t.Etype] {
+ 			t1 = t
+-			n.SetVal(tocplx(n.Val()))
++			v1 = tocplx(n.Val())
++		}
++		if n.Val().Ctype() != CTxxx {
++			n.SetVal(v1)
+ 		}
+ 	}
+ 
+-	overflow(n.Val(), t1)
++	if n.Val().Ctype() != CTxxx {
++		overflow(n.Val(), t1)
++	}
+ 	Convlit(np, t1)
+ 	lineno = int32(lno)
+ 	return
+diff --git a/test/fixedbugs/issue12686.go b/test/fixedbugs/issue12686.go
+new file mode 100644
+index 0000000..5783c99
+--- /dev/null
++++ b/test/fixedbugs/issue12686.go
+@@ -0,0 +1,16 @@
++// compile
++
++// Copyright 2015 The Go Authors.  All rights reserved.
++// Use of this source code is governed by a BSD-style
++// license that can be found in the LICENSE file.
++
++// golang.org/issue/12686.
++// interesting because it's a non-constant but ideal value
++// and we used to incorrectly attach a constant Val to the Node.
++
++package p
++
++func f(i uint) uint {
++	x := []uint{1 << i}
++	return x[0]
++}
+-- 
+2.6.1
+

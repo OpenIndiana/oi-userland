@@ -1,0 +1,364 @@
+From 0b5982f08e3d897cd1db450130e0f1746b87b67d Mon Sep 17 00:00:00 2001
+From: Keith Randall <khr@golang.org>
+Date: Thu, 5 Nov 2015 12:39:56 -0800
+Subject: [PATCH 31/63] [release-branch.go1.5] runtime: memmove/memclr pointers
+ atomically
+
+Make sure that we're moving or zeroing pointers atomically.
+Anything that is a multiple of pointer size and at least
+pointer aligned might have pointers in it.  All the code looks
+ok except for the 1-pointer-sized moves.
+
+Fixes #13160
+Update #12552
+
+Change-Id: Ib97d9b918fa9f4cc5c56c67ed90255b7fdfb7b45
+Reviewed-on: https://go-review.googlesource.com/16668
+Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
+Run-TryBot: Keith Randall <khr@golang.org>
+TryBot-Result: Gobot Gobot <gobot@golang.org>
+Reviewed-on: https://go-review.googlesource.com/16910
+Reviewed-by: Russ Cox <rsc@golang.org>
+---
+ src/runtime/asm_amd64p32.s          |  3 ++
+ src/runtime/memclr_386.s            | 11 ++++--
+ src/runtime/memclr_amd64.s          |  9 +++--
+ src/runtime/memclr_plan9_386.s      | 11 ++++--
+ src/runtime/memmove_386.s           | 14 +++++---
+ src/runtime/memmove_amd64.s         | 10 ++++--
+ src/runtime/memmove_nacl_amd64p32.s |  3 ++
+ src/runtime/memmove_plan9_386.s     | 14 +++++---
+ src/runtime/memmove_plan9_amd64.s   | 10 ++++--
+ test/fixedbugs/issue13160.go        | 70 +++++++++++++++++++++++++++++++++++++
+ 10 files changed, 135 insertions(+), 20 deletions(-)
+ create mode 100644 test/fixedbugs/issue13160.go
+
+diff --git a/src/runtime/asm_amd64p32.s b/src/runtime/asm_amd64p32.s
+index a001a76..4b12f01 100644
+--- a/src/runtime/asm_amd64p32.s
++++ b/src/runtime/asm_amd64p32.s
+@@ -636,6 +636,9 @@ TEXT runtime·memclr(SB),NOSPLIT,$0-8
+ 	MOVQ	BX, CX
+ 	REP
+ 	STOSB
++	// Note: we zero only 4 bytes at a time so that the tail is at most
++	// 3 bytes.  That guarantees that we aren't zeroing pointers with STOSB.
++	// See issue 13160.
+ 	RET
+ 
+ TEXT runtime·getcallerpc(SB),NOSPLIT,$8-12
+diff --git a/src/runtime/memclr_386.s b/src/runtime/memclr_386.s
+index 3f20b69..ce962f3 100644
+--- a/src/runtime/memclr_386.s
++++ b/src/runtime/memclr_386.s
+@@ -21,7 +21,8 @@ tail:
+ 	CMPL	BX, $2
+ 	JBE	_1or2
+ 	CMPL	BX, $4
+-	JBE	_3or4
++	JB	_3
++	JE	_4
+ 	CMPL	BX, $8
+ 	JBE	_5through8
+ 	CMPL	BX, $16
+@@ -68,9 +69,13 @@ _1or2:
+ 	RET
+ _0:
+ 	RET
+-_3or4:
++_3:
+ 	MOVW	AX, (DI)
+-	MOVW	AX, -2(DI)(BX*1)
++	MOVB	AX, 2(DI)
++	RET
++_4:
++	// We need a separate case for 4 to make sure we clear pointers atomically.
++	MOVL	AX, (DI)
+ 	RET
+ _5through8:
+ 	MOVL	AX, (DI)
+diff --git a/src/runtime/memclr_amd64.s b/src/runtime/memclr_amd64.s
+index ec24f1d..3e2c4b2 100644
+--- a/src/runtime/memclr_amd64.s
++++ b/src/runtime/memclr_amd64.s
+@@ -23,7 +23,8 @@ tail:
+ 	CMPQ	BX, $4
+ 	JBE	_3or4
+ 	CMPQ	BX, $8
+-	JBE	_5through8
++	JB	_5through7
++	JE	_8
+ 	CMPQ	BX, $16
+ 	JBE	_9through16
+ 	PXOR	X0, X0
+@@ -71,10 +72,14 @@ _3or4:
+ 	MOVW	AX, (DI)
+ 	MOVW	AX, -2(DI)(BX*1)
+ 	RET
+-_5through8:
++_5through7:
+ 	MOVL	AX, (DI)
+ 	MOVL	AX, -4(DI)(BX*1)
+ 	RET
++_8:
++	// We need a separate case for 8 to make sure we clear pointers atomically.
++	MOVQ	AX, (DI)
++	RET
+ _9through16:
+ 	MOVQ	AX, (DI)
+ 	MOVQ	AX, -8(DI)(BX*1)
+diff --git a/src/runtime/memclr_plan9_386.s b/src/runtime/memclr_plan9_386.s
+index 50f327b..4707ab2 100644
+--- a/src/runtime/memclr_plan9_386.s
++++ b/src/runtime/memclr_plan9_386.s
+@@ -16,7 +16,8 @@ tail:
+ 	CMPL	BX, $2
+ 	JBE	_1or2
+ 	CMPL	BX, $4
+-	JBE	_3or4
++	JB	_3
++	JE	_4
+ 	CMPL	BX, $8
+ 	JBE	_5through8
+ 	CMPL	BX, $16
+@@ -35,9 +36,13 @@ _1or2:
+ 	RET
+ _0:
+ 	RET
+-_3or4:
++_3:
+ 	MOVW	AX, (DI)
+-	MOVW	AX, -2(DI)(BX*1)
++	MOVB	AX, 2(DI)
++	RET
++_4:
++	// We need a separate case for 4 to make sure we clear pointers atomically.
++	MOVL	AX, (DI)
+ 	RET
+ _5through8:
+ 	MOVL	AX, (DI)
+diff --git a/src/runtime/memmove_386.s b/src/runtime/memmove_386.s
+index 4c0c74c..f72a73a 100644
+--- a/src/runtime/memmove_386.s
++++ b/src/runtime/memmove_386.s
+@@ -43,7 +43,8 @@ tail:
+ 	CMPL	BX, $2
+ 	JBE	move_1or2
+ 	CMPL	BX, $4
+-	JBE	move_3or4
++	JB	move_3
++	JE	move_4
+ 	CMPL	BX, $8
+ 	JBE	move_5through8
+ 	CMPL	BX, $16
+@@ -118,11 +119,16 @@ move_1or2:
+ 	RET
+ move_0:
+ 	RET
+-move_3or4:
++move_3:
+ 	MOVW	(SI), AX
+-	MOVW	-2(SI)(BX*1), CX
++	MOVB	2(SI), CX
+ 	MOVW	AX, (DI)
+-	MOVW	CX, -2(DI)(BX*1)
++	MOVB	CX, 2(DI)
++	RET
++move_4:
++	// We need a separate case for 4 to make sure we write pointers atomically.
++	MOVL	(SI), AX
++	MOVL	AX, (DI)
+ 	RET
+ move_5through8:
+ 	MOVL	(SI), AX
+diff --git a/src/runtime/memmove_amd64.s b/src/runtime/memmove_amd64.s
+index f968435..e14614d 100644
+--- a/src/runtime/memmove_amd64.s
++++ b/src/runtime/memmove_amd64.s
+@@ -50,7 +50,8 @@ tail:
+ 	CMPQ	BX, $4
+ 	JBE	move_3or4
+ 	CMPQ	BX, $8
+-	JBE	move_5through8
++	JB	move_5through7
++	JE	move_8
+ 	CMPQ	BX, $16
+ 	JBE	move_9through16
+ 	CMPQ	BX, $32
+@@ -131,12 +132,17 @@ move_3or4:
+ 	MOVW	AX, (DI)
+ 	MOVW	CX, -2(DI)(BX*1)
+ 	RET
+-move_5through8:
++move_5through7:
+ 	MOVL	(SI), AX
+ 	MOVL	-4(SI)(BX*1), CX
+ 	MOVL	AX, (DI)
+ 	MOVL	CX, -4(DI)(BX*1)
+ 	RET
++move_8:
++	// We need a separate case for 8 to make sure we write pointers atomically.
++	MOVQ	(SI), AX
++	MOVQ	AX, (DI)
++	RET
+ move_9through16:
+ 	MOVQ	(SI), AX
+ 	MOVQ	-8(SI)(BX*1), CX
+diff --git a/src/runtime/memmove_nacl_amd64p32.s b/src/runtime/memmove_nacl_amd64p32.s
+index be9e1e5..dd7ac76 100644
+--- a/src/runtime/memmove_nacl_amd64p32.s
++++ b/src/runtime/memmove_nacl_amd64p32.s
+@@ -46,4 +46,7 @@ back:
+ 	REP; MOVSB
+ 	CLD
+ 
++	// Note: we copy only 4 bytes at a time so that the tail is at most
++	// 3 bytes.  That guarantees that we aren't copying pointers with MOVSB.
++	// See issue 13160.
+ 	RET
+diff --git a/src/runtime/memmove_plan9_386.s b/src/runtime/memmove_plan9_386.s
+index 025d4ce..3b492eb 100644
+--- a/src/runtime/memmove_plan9_386.s
++++ b/src/runtime/memmove_plan9_386.s
+@@ -39,7 +39,8 @@ tail:
+ 	CMPL	BX, $2
+ 	JBE	move_1or2
+ 	CMPL	BX, $4
+-	JBE	move_3or4
++	JB	move_3
++	JE	move_4
+ 	CMPL	BX, $8
+ 	JBE	move_5through8
+ 	CMPL	BX, $16
+@@ -104,11 +105,16 @@ move_1or2:
+ 	RET
+ move_0:
+ 	RET
+-move_3or4:
++move_3:
+ 	MOVW	(SI), AX
+-	MOVW	-2(SI)(BX*1), CX
++	MOVB	2(SI), CX
+ 	MOVW	AX, (DI)
+-	MOVW	CX, -2(DI)(BX*1)
++	MOVB	CX, 2(DI)
++	RET
++move_4:
++	// We need a separate case for 4 to make sure we write pointers atomically.
++	MOVL	(SI), AX
++	MOVL	AX, (DI)
+ 	RET
+ move_5through8:
+ 	MOVL	(SI), AX
+diff --git a/src/runtime/memmove_plan9_amd64.s b/src/runtime/memmove_plan9_amd64.s
+index 8e96b87..a1cc255 100644
+--- a/src/runtime/memmove_plan9_amd64.s
++++ b/src/runtime/memmove_plan9_amd64.s
+@@ -43,7 +43,8 @@ tail:
+ 	CMPQ	BX, $4
+ 	JBE	move_3or4
+ 	CMPQ	BX, $8
+-	JBE	move_5through8
++	JB	move_5through7
++	JE	move_8
+ 	CMPQ	BX, $16
+ 	JBE	move_9through16
+ 
+@@ -113,12 +114,17 @@ move_3or4:
+ 	MOVW	AX, (DI)
+ 	MOVW	CX, -2(DI)(BX*1)
+ 	RET
+-move_5through8:
++move_5through7:
+ 	MOVL	(SI), AX
+ 	MOVL	-4(SI)(BX*1), CX
+ 	MOVL	AX, (DI)
+ 	MOVL	CX, -4(DI)(BX*1)
+ 	RET
++move_8:
++	// We need a separate case for 8 to make sure we write pointers atomically.
++	MOVQ	(SI), AX
++	MOVQ	AX, (DI)
++	RET
+ move_9through16:
+ 	MOVQ	(SI), AX
+ 	MOVQ	-8(SI)(BX*1), CX
+diff --git a/test/fixedbugs/issue13160.go b/test/fixedbugs/issue13160.go
+new file mode 100644
+index 0000000..7eb4811
+--- /dev/null
++++ b/test/fixedbugs/issue13160.go
+@@ -0,0 +1,70 @@
++// run
++
++// Copyright 2015 The Go Authors.  All rights reserved.
++// Use of this source code is governed by a BSD-style
++// license that can be found in the LICENSE file.
++
++package main
++
++import (
++	"fmt"
++	"runtime"
++)
++
++const N = 100000
++
++func main() {
++	// Allocate more Ps than processors.  This raises
++	// the chance that we get interrupted by the OS
++	// in exactly the right (wrong!) place.
++	p := runtime.NumCPU()
++	runtime.GOMAXPROCS(2 * p)
++
++	// Allocate some pointers.
++	ptrs := make([]*int, p)
++	for i := 0; i < p; i++ {
++		ptrs[i] = new(int)
++	}
++
++	// Arena where we read and write pointers like crazy.
++	collider := make([]*int, p)
++
++	done := make(chan struct{}, 2*p)
++
++	// Start writers.  They alternately write a pointer
++	// and nil to a slot in the collider.
++	for i := 0; i < p; i++ {
++		i := i
++		go func() {
++			for j := 0; j < N; j++ {
++				// Write a pointer using memmove.
++				copy(collider[i:i+1], ptrs[i:i+1])
++				// Write nil using memclr.
++				// (This is a magic loop that gets lowered to memclr.)
++				r := collider[i : i+1]
++				for k := range r {
++					r[k] = nil
++				}
++			}
++			done <- struct{}{}
++		}()
++	}
++	// Start readers.  They read pointers from slots
++	// and make sure they are valid.
++	for i := 0; i < p; i++ {
++		i := i
++		go func() {
++			for j := 0; j < N; j++ {
++				var ptr [1]*int
++				copy(ptr[:], collider[i:i+1])
++				if ptr[0] != nil && ptr[0] != ptrs[i] {
++					panic(fmt.Sprintf("bad pointer read %p!", ptr[0]))
++				}
++			}
++			done <- struct{}{}
++		}()
++	}
++	for i := 0; i < 2*p; i++ {
++		<-done
++	}
++}
+-- 
+2.6.1
+

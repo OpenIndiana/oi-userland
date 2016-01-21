@@ -1,0 +1,81 @@
+From 71387ff53f95ddd5f0bb91d7e4c92ccdc65238e7 Mon Sep 17 00:00:00 2001
+From: Rob Pike <r@golang.org>
+Date: Sun, 23 Aug 2015 17:45:58 +1000
+Subject: [PATCH 20/63] [release-branch.go1.5] fmt: in Scanf, %c can scan a
+ space, so don't skip spaces at %c
+
+In short, %c should just give you the next rune, period.
+Apparently this is the design. I use the term loosely.
+
+Fixes #12275
+
+Change-Id: I6f30bed442c0e88eac2244d465c7d151b29cf393
+Reviewed-on: https://go-review.googlesource.com/13821
+Reviewed-by: Andrew Gerrand <adg@golang.org>
+Reviewed-on: https://go-review.googlesource.com/14395
+---
+ src/fmt/scan.go      | 13 +++++++++----
+ src/fmt/scan_test.go | 11 +++++++----
+ 2 files changed, 16 insertions(+), 8 deletions(-)
+
+diff --git a/src/fmt/scan.go b/src/fmt/scan.go
+index 5b9b516..e3e0fd0 100644
+--- a/src/fmt/scan.go
++++ b/src/fmt/scan.go
+@@ -83,6 +83,8 @@ func Scanln(a ...interface{}) (n int, err error) {
+ // the format.  It returns the number of items successfully scanned.
+ // If that is less than the number of arguments, err will report why.
+ // Newlines in the input must match newlines in the format.
++// The one exception: the verb %c always scans the next rune in the
++// input, even if it is a space (or tab etc.) or newline.
+ func Scanf(format string, a ...interface{}) (n int, err error) {
+ 	return Fscanf(os.Stdin, format, a...)
+ }
+@@ -1164,15 +1166,18 @@ func (s *ss) doScanf(format string, a []interface{}) (numProcessed int, err erro
+ 		if !widPresent {
+ 			s.maxWid = hugeWid
+ 		}
+-		s.SkipSpace()
++
++		c, w := utf8.DecodeRuneInString(format[i:])
++		i += w
++
++		if c != 'c' {
++			s.SkipSpace()
++		}
+ 		s.argLimit = s.limit
+ 		if f := s.count + s.maxWid; f < s.argLimit {
+ 			s.argLimit = f
+ 		}
+ 
+-		c, w := utf8.DecodeRuneInString(format[i:])
+-		i += w
+-
+ 		if numProcessed >= len(a) { // out of operands
+ 			s.errorString("too few operands for format %" + format[i-w:])
+ 			break
+diff --git a/src/fmt/scan_test.go b/src/fmt/scan_test.go
+index a378436..334c4a6 100644
+--- a/src/fmt/scan_test.go
++++ b/src/fmt/scan_test.go
+@@ -300,10 +300,13 @@ var scanfTests = []ScanfTest{
+ 	{"%2s", "sssss", &xVal, Xs("ss")},
+ 
+ 	// Fixed bugs
+-	{"%d\n", "27\n", &intVal, 27},  // ok
+-	{"%d\n", "28 \n", &intVal, 28}, // was: "unexpected newline"
+-	{"%v", "0", &intVal, 0},        // was: "EOF"; 0 was taken as base prefix and not counted.
+-	{"%v", "0", &uintVal, uint(0)}, // was: "EOF"; 0 was taken as base prefix and not counted.
++	{"%d\n", "27\n", &intVal, 27},      // ok
++	{"%d\n", "28 \n", &intVal, 28},     // was: "unexpected newline"
++	{"%v", "0", &intVal, 0},            // was: "EOF"; 0 was taken as base prefix and not counted.
++	{"%v", "0", &uintVal, uint(0)},     // was: "EOF"; 0 was taken as base prefix and not counted.
++	{"%c", " ", &uintVal, uint(' ')},   // %c must accept a blank.
++	{"%c", "\t", &uintVal, uint('\t')}, // %c must accept any space.
++	{"%c", "\n", &uintVal, uint('\n')}, // %c must accept any space.
+ }
+ 
+ var overflowTests = []ScanTest{
+-- 
+2.6.1
+

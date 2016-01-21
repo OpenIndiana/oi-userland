@@ -1,0 +1,92 @@
+From a89768461f20fc66f28420cc49df9ce765cf8253 Mon Sep 17 00:00:00 2001
+From: Ian Lance Taylor <iant@golang.org>
+Date: Fri, 4 Sep 2015 10:58:42 -0700
+Subject: [PATCH 34/63] [release-branch.go1.5] runtime: unblock special glibc
+ signals on each thread
+
+Glibc uses some special signals for special thread operations.  These
+signals will be used in programs that use cgo and invoke certain glibc
+functions, such as setgid.  In order for this to work, these signals
+need to not be masked by any thread.  Before this change, they were
+being masked by programs that used os/signal.Notify, because it
+carefully masks all non-thread-specific signals in all threads so that a
+dedicated thread will collect and report those signals (see ensureSigM
+in signal1_unix.go).
+
+This change adds the two glibc special signals to the set of signals
+that are unmasked in each thread.
+
+Fixes #12498.
+
+Change-Id: I797d71a099a2169c186f024185d44a2e1972d4ad
+Reviewed-on: https://go-review.googlesource.com/14297
+Reviewed-by: David Crawshaw <crawshaw@golang.org>
+Reviewed-on: https://go-review.googlesource.com/16967
+Run-TryBot: Austin Clements <austin@google.com>
+Reviewed-by: Ian Lance Taylor <iant@golang.org>
+Reviewed-by: Russ Cox <rsc@golang.org>
+---
+ misc/cgo/test/setgid_linux.go | 19 ++++++++++++++++++-
+ src/runtime/signal_linux.go   |  4 ++--
+ 2 files changed, 20 insertions(+), 3 deletions(-)
+
+diff --git a/misc/cgo/test/setgid_linux.go b/misc/cgo/test/setgid_linux.go
+index 197f01f..ca95e08 100644
+--- a/misc/cgo/test/setgid_linux.go
++++ b/misc/cgo/test/setgid_linux.go
+@@ -14,11 +14,14 @@ package cgotest
+ import "C"
+ 
+ import (
++	"os"
++	"os/signal"
++	"syscall"
+ 	"testing"
+ 	"time"
+ )
+ 
+-func testSetgid(t *testing.T) {
++func runTestSetgid() bool {
+ 	c := make(chan bool)
+ 	go func() {
+ 		C.setgid(0)
+@@ -26,7 +29,21 @@ func testSetgid(t *testing.T) {
+ 	}()
+ 	select {
+ 	case <-c:
++		return true
+ 	case <-time.After(5 * time.Second):
++		return false
++	}
++
++}
++
++func testSetgid(t *testing.T) {
++	if !runTestSetgid() {
+ 		t.Error("setgid hung")
+ 	}
++
++	// Now try it again after using signal.Notify.
++	signal.Notify(make(chan os.Signal, 1), syscall.SIGINT)
++	if !runTestSetgid() {
++		t.Error("setgid hung after signal.Notify")
++	}
+ }
+diff --git a/src/runtime/signal_linux.go b/src/runtime/signal_linux.go
+index 2f25b59..2cc76b2 100644
+--- a/src/runtime/signal_linux.go
++++ b/src/runtime/signal_linux.go
+@@ -44,8 +44,8 @@ var sigtable = [...]sigTabT{
+ 	/* 29 */ {_SigNotify, "SIGIO: i/o now possible"},
+ 	/* 30 */ {_SigNotify, "SIGPWR: power failure restart"},
+ 	/* 31 */ {_SigNotify, "SIGSYS: bad system call"},
+-	/* 32 */ {_SigSetStack, "signal 32"}, /* SIGCANCEL; see issue 6997 */
+-	/* 33 */ {_SigSetStack, "signal 33"}, /* SIGSETXID; see issue 3871, 9400 */
++	/* 32 */ {_SigSetStack + _SigUnblock, "signal 32"}, /* SIGCANCEL; see issue 6997 */
++	/* 33 */ {_SigSetStack + _SigUnblock, "signal 33"}, /* SIGSETXID; see issues 3871, 9400, 12498 */
+ 	/* 34 */ {_SigNotify, "signal 34"},
+ 	/* 35 */ {_SigNotify, "signal 35"},
+ 	/* 36 */ {_SigNotify, "signal 36"},
+-- 
+2.6.1
+

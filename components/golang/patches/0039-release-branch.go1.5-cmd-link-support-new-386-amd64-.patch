@@ -1,0 +1,164 @@
+From c0c730da28938b4ca920da67c5e143c007c505a7 Mon Sep 17 00:00:00 2001
+From: Ian Lance Taylor <iant@golang.org>
+Date: Sat, 31 Oct 2015 14:44:48 -0700
+Subject: [PATCH 39/63] [release-branch.go1.5] cmd/link: support new 386/amd64
+ relocations
+
+The GNU binutils recently picked up support for new 386/amd64
+relocations.  Add support for them in the Go linker when doing an
+internal link.
+
+The 386 relocation R_386_GOT32X was proposed in
+https://groups.google.com/forum/#!topic/ia32-abi/GbJJskkid4I .  It can
+be treated as identical to the R_386_GOT32 relocation.
+
+The amd64 relocations R_X86_64_GOTPCRELX and R_X86_64_REX_GOTPCRELX were
+proposed in
+https://groups.google.com/forum/#!topic/x86-64-abi/n9AWHogmVY0 .  They
+can both be treated as identical to the R_X86_64_GOTPCREL relocation.
+
+The purpose of the new relocations is to permit additional linker
+relaxations in some cases.  We do not attempt to support those cases.
+
+While we're at it, remove the unused and in some cases out of date
+_COUNT names from ld/elf.go.
+
+Fixes #13114.
+
+Change-Id: I34ef07f6fcd00cdd2996038ecf46bb77a49e968b
+Reviewed-on: https://go-review.googlesource.com/16529
+Reviewed-by: Minux Ma <minux@golang.org>
+Reviewed-on: https://go-review.googlesource.com/16982
+Run-TryBot: Austin Clements <austin@google.com>
+Reviewed-by: Ian Lance Taylor <iant@golang.org>
+Reviewed-by: Russ Cox <rsc@golang.org>
+---
+ src/cmd/link/internal/amd64/asm.go |  2 +-
+ src/cmd/link/internal/ld/elf.go    | 28 ++++++++++++++++++++++------
+ src/cmd/link/internal/ld/ldelf.go  |  3 +++
+ src/cmd/link/internal/x86/asm.go   |  2 +-
+ 4 files changed, 27 insertions(+), 8 deletions(-)
+
+diff --git a/src/cmd/link/internal/amd64/asm.go b/src/cmd/link/internal/amd64/asm.go
+index 74ec9dd..4eb2092 100644
+--- a/src/cmd/link/internal/amd64/asm.go
++++ b/src/cmd/link/internal/amd64/asm.go
+@@ -141,7 +141,7 @@ func adddynrel(s *ld.LSym, r *ld.Reloc) {
+ 
+ 		return
+ 
+-	case 256 + ld.R_X86_64_GOTPCREL:
++	case 256 + ld.R_X86_64_GOTPCREL, 256 + ld.R_X86_64_GOTPCRELX, 256 + ld.R_X86_64_REX_GOTPCRELX:
+ 		if targ.Type != obj.SDYNIMPORT {
+ 			// have symbol
+ 			if r.Off >= 2 && s.P[r.Off-2] == 0x8b {
+diff --git a/src/cmd/link/internal/ld/elf.go b/src/cmd/link/internal/ld/elf.go
+index 508f055..c9a5c99 100644
+--- a/src/cmd/link/internal/ld/elf.go
++++ b/src/cmd/link/internal/ld/elf.go
+@@ -348,7 +348,23 @@ const (
+ 	R_X86_64_DTPOFF32          = 21
+ 	R_X86_64_GOTTPOFF          = 22
+ 	R_X86_64_TPOFF32           = 23
+-	R_X86_64_COUNT             = 24
++	R_X86_64_PC64              = 24
++	R_X86_64_GOTOFF64          = 25
++	R_X86_64_GOTPC32           = 26
++	R_X86_64_GOT64             = 27
++	R_X86_64_GOTPCREL64        = 28
++	R_X86_64_GOTPC64           = 29
++	R_X86_64_GOTPLT64          = 30
++	R_X86_64_PLTOFF64          = 31
++	R_X86_64_SIZE32            = 32
++	R_X86_64_SIZE64            = 33
++	R_X86_64_GOTPC32_TLSDEC    = 34
++	R_X86_64_TLSDESC_CALL      = 35
++	R_X86_64_TLSDESC           = 36
++	R_X86_64_IRELATIVE         = 37
++	R_X86_64_PC32_BND          = 40
++	R_X86_64_GOTPCRELX         = 41
++	R_X86_64_REX_GOTPCRELX     = 42
+ 	R_AARCH64_ABS64            = 257
+ 	R_AARCH64_ABS32            = 258
+ 	R_AARCH64_CALL26           = 283
+@@ -382,7 +398,6 @@ const (
+ 	R_ALPHA_GLOB_DAT           = 25
+ 	R_ALPHA_JMP_SLOT           = 26
+ 	R_ALPHA_RELATIVE           = 27
+-	R_ALPHA_COUNT              = 28
+ 	R_ARM_NONE                 = 0
+ 	R_ARM_PC24                 = 1
+ 	R_ARM_ABS32                = 2
+@@ -422,7 +437,6 @@ const (
+ 	R_ARM_RABS32               = 253
+ 	R_ARM_RPC24                = 254
+ 	R_ARM_RBASE                = 255
+-	R_ARM_COUNT                = 38
+ 	R_386_NONE                 = 0
+ 	R_386_32                   = 1
+ 	R_386_PC32                 = 2
+@@ -454,7 +468,11 @@ const (
+ 	R_386_TLS_DTPMOD32         = 35
+ 	R_386_TLS_DTPOFF32         = 36
+ 	R_386_TLS_TPOFF32          = 37
+-	R_386_COUNT                = 38
++	R_386_TLS_GOTDESC          = 39
++	R_386_TLS_DESC_CALL        = 40
++	R_386_TLS_DESC             = 41
++	R_386_IRELATIVE            = 42
++	R_386_GOT32X               = 43
+ 	R_PPC_NONE                 = 0
+ 	R_PPC_ADDR32               = 1
+ 	R_PPC_ADDR24               = 2
+@@ -492,7 +510,6 @@ const (
+ 	R_PPC_SECTOFF_LO           = 34
+ 	R_PPC_SECTOFF_HI           = 35
+ 	R_PPC_SECTOFF_HA           = 36
+-	R_PPC_COUNT                = 37
+ 	R_PPC_TLS                  = 67
+ 	R_PPC_DTPMOD32             = 68
+ 	R_PPC_TPREL16              = 69
+@@ -533,7 +550,6 @@ const (
+ 	R_PPC_EMB_RELST_HA         = 114
+ 	R_PPC_EMB_BIT_FLD          = 115
+ 	R_PPC_EMB_RELSDA           = 116
+-	R_PPC_EMB_COUNT            = R_PPC_EMB_RELSDA - R_PPC_EMB_NADDR32 + 1
+ 	R_PPC64_REL24              = R_PPC_REL24
+ 	R_PPC64_JMP_SLOT           = R_PPC_JMP_SLOT
+ 	R_PPC64_ADDR64             = 38
+diff --git a/src/cmd/link/internal/ld/ldelf.go b/src/cmd/link/internal/ld/ldelf.go
+index 3efdb75..7ff37ad 100644
+--- a/src/cmd/link/internal/ld/ldelf.go
++++ b/src/cmd/link/internal/ld/ldelf.go
+@@ -1001,12 +1001,15 @@ func reltype(pn string, elftype int, siz *uint8) int {
+ 		'6' | R_X86_64_PC32<<24,
+ 		'6' | R_X86_64_PLT32<<24,
+ 		'6' | R_X86_64_GOTPCREL<<24,
++		'6' | R_X86_64_GOTPCRELX<<24,
++		'6' | R_X86_64_REX_GOTPCRELX<<24,
+ 		'8' | R_386_32<<24,
+ 		'8' | R_386_PC32<<24,
+ 		'8' | R_386_GOT32<<24,
+ 		'8' | R_386_PLT32<<24,
+ 		'8' | R_386_GOTOFF<<24,
+ 		'8' | R_386_GOTPC<<24,
++		'8' | R_386_GOT32X<<24,
+ 		'9' | R_PPC64_REL24<<24:
+ 		*siz = 4
+ 
+diff --git a/src/cmd/link/internal/x86/asm.go b/src/cmd/link/internal/x86/asm.go
+index d30bd48..6495385 100644
+--- a/src/cmd/link/internal/x86/asm.go
++++ b/src/cmd/link/internal/x86/asm.go
+@@ -78,7 +78,7 @@ func adddynrel(s *ld.LSym, r *ld.Reloc) {
+ 
+ 		return
+ 
+-	case 256 + ld.R_386_GOT32:
++	case 256 + ld.R_386_GOT32, 256 + ld.R_386_GOT32X:
+ 		if targ.Type != obj.SDYNIMPORT {
+ 			// have symbol
+ 			if r.Off >= 2 && s.P[r.Off-2] == 0x8b {
+-- 
+2.6.1
+

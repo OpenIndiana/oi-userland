@@ -1,0 +1,129 @@
+From f7d740377612142c6a08e460b5c542ebe0d758b3 Mon Sep 17 00:00:00 2001
+From: Austin Clements <austin@google.com>
+Date: Wed, 26 Aug 2015 13:54:26 -0400
+Subject: [PATCH 10/63] [release-branch.go1.5] runtime: add GODEBUG for stack
+ barriers at every frame
+
+Currently enabling the debugging mode where stack barriers are
+installed at every frame requires recompiling the runtime. However,
+this is potentially useful for field debugging and for runtime tests,
+so make this mode a GODEBUG.
+
+Updates #12238.
+
+Change-Id: I6fb128f598b19568ae723a612e099c0ed96917f5
+Reviewed-on: https://go-review.googlesource.com/13947
+Reviewed-by: Russ Cox <rsc@golang.org>
+Reviewed-on: https://go-review.googlesource.com/14240
+Reviewed-by: Austin Clements <austin@google.com>
+---
+ src/runtime/extern.go   |  3 +++
+ src/runtime/mgc.go      | 25 +++++++++++++------------
+ src/runtime/mgcmark.go  |  2 +-
+ src/runtime/runtime1.go |  6 ++++++
+ 4 files changed, 23 insertions(+), 13 deletions(-)
+
+diff --git a/src/runtime/extern.go b/src/runtime/extern.go
+index d346362..cdb66ba 100644
+--- a/src/runtime/extern.go
++++ b/src/runtime/extern.go
+@@ -47,6 +47,9 @@ It is a comma-separated list of name=val pairs setting these named variables:
+ 	that allow the garbage collector to avoid repeating a stack scan during the
+ 	mark termination phase.
+ 
++	gcstackbarrierall: setting gcstackbarrierall=1 installs stack barriers
++	in every stack frame, rather than in exponentially-spaced frames.
++
+ 	gcstoptheworld: setting gcstoptheworld=1 disables concurrent garbage collection,
+ 	making every garbage collection a stop-the-world event. Setting gcstoptheworld=2
+ 	also disables concurrent sweeping after the garbage collection finishes.
+diff --git a/src/runtime/mgc.go b/src/runtime/mgc.go
+index f7fd4e5..82b12b6 100644
+--- a/src/runtime/mgc.go
++++ b/src/runtime/mgc.go
+@@ -133,18 +133,7 @@ const (
+ 	_RootFlushCaches = 4
+ 	_RootCount       = 5
+ 
+-	// firstStackBarrierOffset is the approximate byte offset at
+-	// which to place the first stack barrier from the current SP.
+-	// This is a lower bound on how much stack will have to be
+-	// re-scanned during mark termination. Subsequent barriers are
+-	// placed at firstStackBarrierOffset * 2^n offsets.
+-	//
+-	// For debugging, this can be set to 0, which will install a
+-	// stack barrier at every frame. If you do this, you may also
+-	// have to raise _StackMin, since the stack barrier
+-	// bookkeeping will use a large amount of each stack.
+-	firstStackBarrierOffset = 1024
+-	debugStackBarrier       = false
++	debugStackBarrier = false
+ 
+ 	// sweepMinHeapDistance is a lower bound on the heap distance
+ 	// (in bytes) reserved for concurrent sweeping between GC
+@@ -152,6 +141,18 @@ const (
+ 	sweepMinHeapDistance = 1024 * 1024
+ )
+ 
++// firstStackBarrierOffset is the approximate byte offset at
++// which to place the first stack barrier from the current SP.
++// This is a lower bound on how much stack will have to be
++// re-scanned during mark termination. Subsequent barriers are
++// placed at firstStackBarrierOffset * 2^n offsets.
++//
++// For debugging, this can be set to 0, which will install a
++// stack barrier at every frame. If you do this, you may also
++// have to raise _StackMin, since the stack barrier
++// bookkeeping will use a large amount of each stack.
++var firstStackBarrierOffset = 1024
++
+ // heapminimum is the minimum heap size at which to trigger GC.
+ // For small heaps, this overrides the usual GOGC*live set rule.
+ //
+diff --git a/src/runtime/mgcmark.go b/src/runtime/mgcmark.go
+index 42aacb6..2e43830 100644
+--- a/src/runtime/mgcmark.go
++++ b/src/runtime/mgcmark.go
+@@ -341,7 +341,7 @@ func scanstack(gp *g) {
+ 	switch gcphase {
+ 	case _GCscan:
+ 		// Install stack barriers during stack scan.
+-		barrierOffset = firstStackBarrierOffset
++		barrierOffset = uintptr(firstStackBarrierOffset)
+ 		nextBarrier = sp + barrierOffset
+ 
+ 		if debug.gcstackbarrieroff > 0 {
+diff --git a/src/runtime/runtime1.go b/src/runtime/runtime1.go
+index a50e5b6..134c999 100644
+--- a/src/runtime/runtime1.go
++++ b/src/runtime/runtime1.go
+@@ -310,6 +310,7 @@ var debug struct {
+ 	gcpacertrace      int32
+ 	gcshrinkstackoff  int32
+ 	gcstackbarrieroff int32
++	gcstackbarrierall int32
+ 	gcstoptheworld    int32
+ 	gctrace           int32
+ 	invalidptr        int32
+@@ -327,6 +328,7 @@ var dbgvars = []dbgVar{
+ 	{"gcpacertrace", &debug.gcpacertrace},
+ 	{"gcshrinkstackoff", &debug.gcshrinkstackoff},
+ 	{"gcstackbarrieroff", &debug.gcstackbarrieroff},
++	{"gcstackbarrierall", &debug.gcstackbarrierall},
+ 	{"gcstoptheworld", &debug.gcstoptheworld},
+ 	{"gctrace", &debug.gctrace},
+ 	{"invalidptr", &debug.invalidptr},
+@@ -382,6 +384,10 @@ func parsedebugvars() {
+ 	if islibrary || isarchive {
+ 		traceback_cache |= 1
+ 	}
++
++	if debug.gcstackbarrierall > 0 {
++		firstStackBarrierOffset = 0
++	}
+ }
+ 
+ // Poor mans 64-bit division.
+-- 
+2.6.1
+

@@ -1,0 +1,60 @@
+From 6b26788c55d2c1e874e6321b8ce33f1a2c0270e6 Mon Sep 17 00:00:00 2001
+From: Austin Clements <austin@google.com>
+Date: Mon, 23 Nov 2015 15:03:38 -0500
+Subject: [PATCH 62/63] [release-branch.go1.5] runtime: take stack barrier lock
+ during copystack
+
+Commit bbd1a1c prevented SIGPROF from scanning stacks that were being
+copied, but it didn't prevent a stack copy (specifically a stack
+shrink) from happening while SIGPROF is scanning the stack. As a
+result, a stack copy may adjust stack barriers while SIGPROF is in the
+middle of scanning a stack, causing SIGPROF to panic when it detects
+an inconsistent stack barrier.
+
+Fix this by taking the stack barrier lock while adjusting the stack.
+In addition to preventing SIGPROF from scanning this stack, this will
+block until any in-progress SIGPROF is done scanning the stack.
+
+For 1.5.2.
+
+Fixes #13362.
+Updates #12932.
+
+Change-Id: I422219c363054410dfa56381f7b917e04690e5dd
+Reviewed-on: https://go-review.googlesource.com/17191
+Run-TryBot: Austin Clements <austin@google.com>
+Reviewed-by: Russ Cox <rsc@golang.org>
+Run-TryBot: Russ Cox <rsc@golang.org>
+TryBot-Result: Gobot Gobot <gobot@golang.org>
+Reviewed-on: https://go-review.googlesource.com/17194
+---
+ src/runtime/stack1.go | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/src/runtime/stack1.go b/src/runtime/stack1.go
+index efcb5f2..19634ef 100644
+--- a/src/runtime/stack1.go
++++ b/src/runtime/stack1.go
+@@ -609,6 +609,10 @@ func copystack(gp *g, newsize uintptr) {
+ 		print("copystack gp=", gp, " [", hex(old.lo), " ", hex(old.hi-used), " ", hex(old.hi), "]/", gp.stackAlloc, " -> [", hex(new.lo), " ", hex(new.hi-used), " ", hex(new.hi), "]/", newsize, "\n")
+ 	}
+ 
++	// Disallow sigprof scans of this stack and block if there's
++	// one in progress.
++	gcLockStackBarriers(gp)
++
+ 	// adjust pointers in the to-be-copied frames
+ 	var adjinfo adjustinfo
+ 	adjinfo.old = old
+@@ -640,6 +644,8 @@ func copystack(gp *g, newsize uintptr) {
+ 	gp.stackAlloc = newsize
+ 	gp.stkbar = newstkbar
+ 
++	gcUnlockStackBarriers(gp)
++
+ 	// free old stack
+ 	if stackPoisonCopy != 0 {
+ 		fillstack(old, 0xfc)
+-- 
+2.6.1
+

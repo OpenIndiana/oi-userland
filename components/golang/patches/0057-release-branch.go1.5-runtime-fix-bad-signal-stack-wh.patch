@@ -1,0 +1,518 @@
+From 22469232670870cfd96fd257f3b99f6b649b0b4f Mon Sep 17 00:00:00 2001
+From: Russ Cox <rsc@golang.org>
+Date: Fri, 13 Nov 2015 16:21:01 -0500
+Subject: [PATCH 57/63] [release-branch.go1.5] runtime: fix bad signal stack
+ when using cgo-created threads and async signals
+
+Cgo-created threads transition between having associated Go g's and m's and not.
+A signal arriving during the transition could think it was safe and appropriate to
+run Go signal handlers when it was in fact not.
+Avoid the race by masking all signals during the transition.
+
+Fixes #12277.
+
+Change-Id: Ie9711bc1d098391d58362492197a7e0f5b497d14
+Reviewed-on: https://go-review.googlesource.com/16915
+Reviewed-by: Ian Lance Taylor <iant@golang.org>
+Run-TryBot: Russ Cox <rsc@golang.org>
+TryBot-Result: Gobot Gobot <gobot@golang.org>
+Reviewed-on: https://go-review.googlesource.com/17141
+---
+ src/runtime/os1_darwin.go    | 17 ++++++++++++++---
+ src/runtime/os1_dragonfly.go | 16 +++++++++++++---
+ src/runtime/os1_freebsd.go   | 17 ++++++++++++++---
+ src/runtime/os1_linux.go     | 17 ++++++++++++++---
+ src/runtime/os1_nacl.go      |  9 +++++++++
+ src/runtime/os1_netbsd.go    | 18 ++++++++++++++----
+ src/runtime/os1_openbsd.go   | 17 ++++++++++++++---
+ src/runtime/os1_plan9.go     |  6 ++++++
+ src/runtime/os1_windows.go   | 10 ++++++++++
+ src/runtime/os3_solaris.go   | 18 ++++++++++++++----
+ src/runtime/proc1.go         | 22 ++++++++++++++++++----
+ 11 files changed, 140 insertions(+), 27 deletions(-)
+
+diff --git a/src/runtime/os1_darwin.go b/src/runtime/os1_darwin.go
+index e070229..c9dba15 100644
+--- a/src/runtime/os1_darwin.go
++++ b/src/runtime/os1_darwin.go
+@@ -130,6 +130,7 @@ func mpreinit(mp *m) {
+ 	mp.gsignal.m = mp
+ }
+ 
++//go:nosplit
+ func msigsave(mp *m) {
+ 	smask := (*uint32)(unsafe.Pointer(&mp.sigmask))
+ 	if unsafe.Sizeof(*smask) > unsafe.Sizeof(mp.sigmask) {
+@@ -138,6 +139,17 @@ func msigsave(mp *m) {
+ 	sigprocmask(_SIG_SETMASK, nil, smask)
+ }
+ 
++//go:nosplit
++func msigrestore(mp *m) {
++	smask := (*uint32)(unsafe.Pointer(&mp.sigmask))
++	sigprocmask(_SIG_SETMASK, smask, nil)
++}
++
++//go:nosplit
++func sigblock() {
++	sigprocmask(_SIG_SETMASK, &sigset_all, nil)
++}
++
+ // Called to initialize a new m (including the bootstrap m).
+ // Called on the new thread, can not allocate memory.
+ func minit() {
+@@ -156,10 +168,8 @@ func minit() {
+ }
+ 
+ // Called from dropm to undo the effect of an minit.
++//go:nosplit
+ func unminit() {
+-	_g_ := getg()
+-	smask := (*uint32)(unsafe.Pointer(&_g_.m.sigmask))
+-	sigprocmask(_SIG_SETMASK, smask, nil)
+ 	signalstack(nil)
+ }
+ 
+@@ -459,6 +469,7 @@ func getsig(i int32) uintptr {
+ 	return *(*uintptr)(unsafe.Pointer(&sa.__sigaction_u))
+ }
+ 
++//go:nosplit
+ func signalstack(s *stack) {
+ 	var st stackt
+ 	if s == nil {
+diff --git a/src/runtime/os1_dragonfly.go b/src/runtime/os1_dragonfly.go
+index f96c78c..da70014 100644
+--- a/src/runtime/os1_dragonfly.go
++++ b/src/runtime/os1_dragonfly.go
+@@ -119,6 +119,7 @@ func mpreinit(mp *m) {
+ 	mp.gsignal.m = mp
+ }
+ 
++//go:nosplit
+ func msigsave(mp *m) {
+ 	smask := (*sigset)(unsafe.Pointer(&mp.sigmask))
+ 	if unsafe.Sizeof(*smask) > unsafe.Sizeof(mp.sigmask) {
+@@ -127,6 +128,17 @@ func msigsave(mp *m) {
+ 	sigprocmask(_SIG_SETMASK, nil, smask)
+ }
+ 
++//go:nosplit
++func msigrestore(mp *m) {
++	smask := (*sigset)(unsafe.Pointer(&mp.sigmask))
++	sigprocmask(_SIG_SETMASK, smask, nil)
++}
++
++//go:nosplit
++func sigblock() {
++	sigprocmask(_SIG_SETMASK, &sigset_all, nil)
++}
++
+ // Called to initialize a new m (including the bootstrap m).
+ // Called on the new thread, can not allocate memory.
+ func minit() {
+@@ -150,9 +162,6 @@ func minit() {
+ 
+ // Called from dropm to undo the effect of an minit.
+ func unminit() {
+-	_g_ := getg()
+-	smask := (*sigset)(unsafe.Pointer(&_g_.m.sigmask))
+-	sigprocmask(_SIG_SETMASK, smask, nil)
+ 	signalstack(nil)
+ }
+ 
+@@ -222,6 +231,7 @@ func getsig(i int32) uintptr {
+ 	return sa.sa_sigaction
+ }
+ 
++//go:nosplit
+ func signalstack(s *stack) {
+ 	var st sigaltstackt
+ 	if s == nil {
+diff --git a/src/runtime/os1_freebsd.go b/src/runtime/os1_freebsd.go
+index f3519f3..b18e60f 100644
+--- a/src/runtime/os1_freebsd.go
++++ b/src/runtime/os1_freebsd.go
+@@ -118,6 +118,7 @@ func mpreinit(mp *m) {
+ 	mp.gsignal.m = mp
+ }
+ 
++//go:nosplit
+ func msigsave(mp *m) {
+ 	smask := (*sigset)(unsafe.Pointer(&mp.sigmask))
+ 	if unsafe.Sizeof(*smask) > unsafe.Sizeof(mp.sigmask) {
+@@ -126,6 +127,17 @@ func msigsave(mp *m) {
+ 	sigprocmask(_SIG_SETMASK, nil, smask)
+ }
+ 
++//go:nosplit
++func msigrestore(mp *m) {
++	smask := (*sigset)(unsafe.Pointer(&mp.sigmask))
++	sigprocmask(_SIG_SETMASK, smask, nil)
++}
++
++//go:nosplit
++func sigblock() {
++	sigprocmask(_SIG_SETMASK, &sigset_all, nil)
++}
++
+ // Called to initialize a new m (including the bootstrap m).
+ // Called on the new thread, can not allocate memory.
+ func minit() {
+@@ -151,10 +163,8 @@ func minit() {
+ }
+ 
+ // Called from dropm to undo the effect of an minit.
++//go:nosplit
+ func unminit() {
+-	_g_ := getg()
+-	smask := (*sigset)(unsafe.Pointer(&_g_.m.sigmask))
+-	sigprocmask(_SIG_SETMASK, smask, nil)
+ 	signalstack(nil)
+ }
+ 
+@@ -224,6 +234,7 @@ func getsig(i int32) uintptr {
+ 	return sa.sa_handler
+ }
+ 
++//go:nosplit
+ func signalstack(s *stack) {
+ 	var st stackt
+ 	if s == nil {
+diff --git a/src/runtime/os1_linux.go b/src/runtime/os1_linux.go
+index 1cad8f7..166014b 100644
+--- a/src/runtime/os1_linux.go
++++ b/src/runtime/os1_linux.go
+@@ -198,6 +198,7 @@ func mpreinit(mp *m) {
+ 	mp.gsignal.m = mp
+ }
+ 
++//go:nosplit
+ func msigsave(mp *m) {
+ 	smask := (*sigset)(unsafe.Pointer(&mp.sigmask))
+ 	if unsafe.Sizeof(*smask) > unsafe.Sizeof(mp.sigmask) {
+@@ -206,6 +207,17 @@ func msigsave(mp *m) {
+ 	rtsigprocmask(_SIG_SETMASK, nil, smask, int32(unsafe.Sizeof(*smask)))
+ }
+ 
++//go:nosplit
++func msigrestore(mp *m) {
++	smask := (*sigset)(unsafe.Pointer(&mp.sigmask))
++	rtsigprocmask(_SIG_SETMASK, smask, nil, int32(unsafe.Sizeof(*smask)))
++}
++
++//go:nosplit
++func sigblock() {
++	rtsigprocmask(_SIG_SETMASK, &sigset_all, nil, int32(unsafe.Sizeof(sigset_all)))
++}
++
+ func gettid() uint32
+ 
+ // Called to initialize a new m (including the bootstrap m).
+@@ -229,10 +241,8 @@ func minit() {
+ }
+ 
+ // Called from dropm to undo the effect of an minit.
++//go:nosplit
+ func unminit() {
+-	_g_ := getg()
+-	smask := (*sigset)(unsafe.Pointer(&_g_.m.sigmask))
+-	rtsigprocmask(_SIG_SETMASK, smask, nil, int32(unsafe.Sizeof(*smask)))
+ 	signalstack(nil)
+ }
+ 
+@@ -326,6 +336,7 @@ func getsig(i int32) uintptr {
+ 	return sa.sa_handler
+ }
+ 
++//go:nosplit
+ func signalstack(s *stack) {
+ 	var st sigaltstackt
+ 	if s == nil {
+diff --git a/src/runtime/os1_nacl.go b/src/runtime/os1_nacl.go
+index 143752a..30c3529 100644
+--- a/src/runtime/os1_nacl.go
++++ b/src/runtime/os1_nacl.go
+@@ -15,9 +15,18 @@ func mpreinit(mp *m) {
+ 
+ func sigtramp()
+ 
++//go:nosplit
+ func msigsave(mp *m) {
+ }
+ 
++//go:nosplit
++func msigrestore(mp *m) {
++}
++
++//go:nosplit
++func sigblock() {
++}
++
+ // Called to initialize a new m (including the bootstrap m).
+ // Called on the new thread, can not allocate memory.
+ func minit() {
+diff --git a/src/runtime/os1_netbsd.go b/src/runtime/os1_netbsd.go
+index cacd606..f4c5ca4 100644
+--- a/src/runtime/os1_netbsd.go
++++ b/src/runtime/os1_netbsd.go
+@@ -138,6 +138,7 @@ func mpreinit(mp *m) {
+ 	mp.gsignal.m = mp
+ }
+ 
++//go:nosplit
+ func msigsave(mp *m) {
+ 	smask := (*sigset)(unsafe.Pointer(&mp.sigmask))
+ 	if unsafe.Sizeof(*smask) > unsafe.Sizeof(mp.sigmask) {
+@@ -146,6 +147,17 @@ func msigsave(mp *m) {
+ 	sigprocmask(_SIG_SETMASK, nil, smask)
+ }
+ 
++//go:nosplit
++func msigrestore(mp *m) {
++	smask := (*sigset)(unsafe.Pointer(&mp.sigmask))
++	sigprocmask(_SIG_SETMASK, smask, nil)
++}
++
++//go:nosplit
++func sigblock() {
++	sigprocmask(_SIG_SETMASK, &sigset_all, nil)
++}
++
+ // Called to initialize a new m (including the bootstrap m).
+ // Called on the new thread, can not allocate memory.
+ func minit() {
+@@ -166,11 +178,8 @@ func minit() {
+ }
+ 
+ // Called from dropm to undo the effect of an minit.
++//go:nosplit
+ func unminit() {
+-	_g_ := getg()
+-	smask := (*sigset)(unsafe.Pointer(&_g_.m.sigmask))
+-	sigprocmask(_SIG_SETMASK, smask, nil)
+-
+ 	signalstack(nil)
+ }
+ 
+@@ -213,6 +222,7 @@ func getsig(i int32) uintptr {
+ 	return sa.sa_sigaction
+ }
+ 
++//go:nosplit
+ func signalstack(s *stack) {
+ 	var st sigaltstackt
+ 	if s == nil {
+diff --git a/src/runtime/os1_openbsd.go b/src/runtime/os1_openbsd.go
+index 24a095b..88f6aef 100644
+--- a/src/runtime/os1_openbsd.go
++++ b/src/runtime/os1_openbsd.go
+@@ -148,6 +148,7 @@ func mpreinit(mp *m) {
+ 	mp.gsignal.m = mp
+ }
+ 
++//go:nosplit
+ func msigsave(mp *m) {
+ 	smask := (*uint32)(unsafe.Pointer(&mp.sigmask))
+ 	if unsafe.Sizeof(*smask) > unsafe.Sizeof(mp.sigmask) {
+@@ -156,6 +157,17 @@ func msigsave(mp *m) {
+ 	*smask = sigprocmask(_SIG_BLOCK, 0)
+ }
+ 
++//go:nosplit
++func msigrestore(mp *m) {
++	smask := *(*uint32)(unsafe.Pointer(&mp.sigmask))
++	sigprocmask(_SIG_SETMASK, smask)
++}
++
++//go:nosplit
++func sigblock() {
++	sigprocmask(_SIG_SETMASK, sigset_all)
++}
++
+ // Called to initialize a new m (including the bootstrap m).
+ // Called on the new thread, can not allocate memory.
+ func minit() {
+@@ -178,10 +190,8 @@ func minit() {
+ }
+ 
+ // Called from dropm to undo the effect of an minit.
++//go:nosplit
+ func unminit() {
+-	_g_ := getg()
+-	smask := *(*uint32)(unsafe.Pointer(&_g_.m.sigmask))
+-	sigprocmask(_SIG_SETMASK, smask)
+ 	signalstack(nil)
+ }
+ 
+@@ -224,6 +234,7 @@ func getsig(i int32) uintptr {
+ 	return sa.sa_sigaction
+ }
+ 
++//go:nosplit
+ func signalstack(s *stack) {
+ 	var st stackt
+ 	if s == nil {
+diff --git a/src/runtime/os1_plan9.go b/src/runtime/os1_plan9.go
+index 9615b6d..38125a0 100644
+--- a/src/runtime/os1_plan9.go
++++ b/src/runtime/os1_plan9.go
+@@ -21,6 +21,12 @@ func mpreinit(mp *m) {
+ func msigsave(mp *m) {
+ }
+ 
++func msigrestore(mp *m) {
++}
++
++func sigblock() {
++}
++
+ // Called to initialize a new m (including the bootstrap m).
+ // Called on the new thread, can not allocate memory.
+ func minit() {
+diff --git a/src/runtime/os1_windows.go b/src/runtime/os1_windows.go
+index f608b4a..d012034 100644
+--- a/src/runtime/os1_windows.go
++++ b/src/runtime/os1_windows.go
+@@ -284,9 +284,18 @@ func newosproc(mp *m, stk unsafe.Pointer) {
+ func mpreinit(mp *m) {
+ }
+ 
++//go:nosplit
+ func msigsave(mp *m) {
+ }
+ 
++//go:nosplit
++func msigrestore(mp *m) {
++}
++
++//go:nosplit
++func sigblock() {
++}
++
+ // Called to initialize a new m (including the bootstrap m).
+ // Called on the new thread, can not allocate memory.
+ func minit() {
+@@ -296,6 +305,7 @@ func minit() {
+ }
+ 
+ // Called from dropm to undo the effect of an minit.
++//go:nosplit
+ func unminit() {
+ 	tp := &getg().m.thread
+ 	stdcall1(_CloseHandle, *tp)
+diff --git a/src/runtime/os3_solaris.go b/src/runtime/os3_solaris.go
+index 792188f..b27a675 100644
+--- a/src/runtime/os3_solaris.go
++++ b/src/runtime/os3_solaris.go
+@@ -192,6 +192,7 @@ func mpreinit(mp *m) {
+ 
+ func miniterrno()
+ 
++//go:nosplit
+ func msigsave(mp *m) {
+ 	smask := (*sigset)(unsafe.Pointer(&mp.sigmask))
+ 	if unsafe.Sizeof(*smask) > unsafe.Sizeof(mp.sigmask) {
+@@ -200,6 +201,17 @@ func msigsave(mp *m) {
+ 	sigprocmask(_SIG_SETMASK, nil, smask)
+ }
+ 
++//go:nosplit
++func msigrestore(mp *m) {
++	smask := (*sigset)(unsafe.Pointer(&mp.sigmask))
++	sigprocmask(_SIG_SETMASK, smask, nil)
++}
++
++//go:nosplit
++func sigblock() {
++	sigprocmask(_SIG_SETMASK, &sigset_all, nil)
++}
++
+ // Called to initialize a new m (including the bootstrap m).
+ // Called on the new thread, can not allocate memory.
+ func minit() {
+@@ -220,10 +232,6 @@ func minit() {
+ 
+ // Called from dropm to undo the effect of an minit.
+ func unminit() {
+-	_g_ := getg()
+-	smask := (*sigset)(unsafe.Pointer(&_g_.m.sigmask))
+-	sigprocmask(_SIG_SETMASK, smask, nil)
+-
+ 	signalstack(nil)
+ }
+ 
+@@ -289,6 +297,7 @@ func getsig(i int32) uintptr {
+ 	return *((*uintptr)(unsafe.Pointer(&sa._funcptr)))
+ }
+ 
++//go:nosplit
+ func signalstack(s *stack) {
+ 	var st sigaltstackt
+ 	if s == nil {
+@@ -493,6 +502,7 @@ func sigaltstack(ss *sigaltstackt, oss *sigaltstackt) /* int32 */ {
+ 	sysvicall2(&libc_sigaltstack, uintptr(unsafe.Pointer(ss)), uintptr(unsafe.Pointer(oss)))
+ }
+ 
++//go:nosplit
+ func sigprocmask(how int32, set *sigset, oset *sigset) /* int32 */ {
+ 	sysvicall3(&libc_sigprocmask, uintptr(how), uintptr(unsafe.Pointer(set)), uintptr(unsafe.Pointer(oset)))
+ }
+diff --git a/src/runtime/proc1.go b/src/runtime/proc1.go
+index 54cb3eb..72ab524 100644
+--- a/src/runtime/proc1.go
++++ b/src/runtime/proc1.go
+@@ -945,6 +945,15 @@ func needm(x byte) {
+ 	mp.needextram = mp.schedlink == 0
+ 	unlockextra(mp.schedlink.ptr())
+ 
++	// Save and block signals before installing g.
++	// Once g is installed, any incoming signals will try to execute,
++	// but we won't have the sigaltstack settings and other data
++	// set up appropriately until the end of minit, which will
++	// unblock the signals. This is the same dance as when
++	// starting a new m to run Go code via newosproc.
++	msigsave(mp)
++	sigblock()
++
+ 	// Install g (= m->g0) and set the stack bounds
+ 	// to match the current stack. We don't actually know
+ 	// how big the stack is, like we don't know how big any
+@@ -956,7 +965,6 @@ func needm(x byte) {
+ 	_g_.stack.lo = uintptr(noescape(unsafe.Pointer(&x))) - 32*1024
+ 	_g_.stackguard0 = _g_.stack.lo + _StackGuard
+ 
+-	msigsave(mp)
+ 	// Initialize this thread to use the m.
+ 	asminit()
+ 	minit()
+@@ -1027,9 +1035,6 @@ func newextram() {
+ // We may have to keep the current version on systems with cgo
+ // but without pthreads, like Windows.
+ func dropm() {
+-	// Undo whatever initialization minit did during needm.
+-	unminit()
+-
+ 	// Clear m and g, and return m to the extra list.
+ 	// After the call to setg we can only call nosplit functions
+ 	// with no pointer manipulation.
+@@ -1037,7 +1042,16 @@ func dropm() {
+ 	mnext := lockextra(true)
+ 	mp.schedlink.set(mnext)
+ 
++	// Block signals before unminit.
++	// Unminit unregisters the signal handling stack (but needs g on some systems).
++	// Setg(nil) clears g, which is the signal handler's cue not to run Go handlers.
++	// It's important not to try to handle a signal between those two steps.
++	sigblock()
++	unminit()
+ 	setg(nil)
++	msigrestore(mp)
++
++	// Commit the release of mp.
+ 	unlockextra(mp)
+ }
+ 
+-- 
+2.6.1
+

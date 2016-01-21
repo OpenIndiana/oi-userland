@@ -1,0 +1,36 @@
+From 7ab4cba9ad76f8853f11de1a72ff1db790c5ea61 Mon Sep 17 00:00:00 2001
+From: Russ Cox <rsc@golang.org>
+Date: Fri, 20 Nov 2015 14:02:33 -0500
+Subject: [PATCH 47/63] [release-branch.go1.5] runtime: fix new stack barrier
+ check
+
+During a crash showing goroutine stacks of all threads
+(with GOTRACEBACK=crash), it can be that f == nil.
+
+Only happens on Solaris; not sure why.
+
+Change-Id: Iee2c394a0cf19fa0a24f6befbc70776b9e42d25a
+Reviewed-on: https://go-review.googlesource.com/17110
+Reviewed-by: Austin Clements <austin@google.com>
+Reviewed-on: https://go-review.googlesource.com/17122
+Reviewed-by: Russ Cox <rsc@golang.org>
+---
+ src/runtime/traceback.go | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/runtime/traceback.go b/src/runtime/traceback.go
+index aed6cbd..8f27ba4 100644
+--- a/src/runtime/traceback.go
++++ b/src/runtime/traceback.go
+@@ -188,7 +188,7 @@ func gentraceback(pc0, sp0, lr0 uintptr, gp *g, skip int, pcbuf *uintptr, max in
+ 	}
+ 
+ 	f := findfunc(frame.pc)
+-	if f.entry == stackBarrierPC {
++	if f != nil && f.entry == stackBarrierPC {
+ 		// We got caught in the middle of a stack barrier
+ 		// (presumably by a signal), so stkbar may be
+ 		// inconsistent with the barriers on the stack.
+-- 
+2.6.1
+

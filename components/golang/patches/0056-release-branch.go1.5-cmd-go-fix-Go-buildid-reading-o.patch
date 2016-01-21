@@ -1,0 +1,134 @@
+From 61e1caee5b3a79f8986248541839eb15d311a3a9 Mon Sep 17 00:00:00 2001
+From: Shawn Walker-Salas <shawn.walker@oracle.com>
+Date: Wed, 26 Aug 2015 15:24:41 -0700
+Subject: [PATCH 56/63] [release-branch.go1.5] cmd/go: fix Go buildid reading
+ on Solaris
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+TestNoteReading fails on Solaris with linkmode=external due to some
+assumptions made about how ELF .note sections are written by some
+linkers.
+
+On current versions of Solaris and older derivatives, SHF_ALLOC is
+intentionally ignored for .note sections unless the .note section is
+assigned to the text segment via a mapfile.  Also, if .note sections
+are assigned to the text segment, no PT_NOTE program header will be
+created thwarting Go's attempts at attempting to quickly find the
+.note.
+
+Furthermore, Go assumes that the relevant note segment will be placed
+early in the file while the Solaris linker currently places the note
+segment last in the file, additionally thwarting Go's optimisation
+attempts that read only the first 16KB of the file to find the
+buildid.
+
+The fix is to detect when the note section is outside of the first
+16KB of the file and then fallback to additionally reading that
+section of the file.  This way, in future versions of Solaris when
+this linking behaviour is changed, the fast path will always succeed
+and we'll only be slower if it fails; likewise, any other linker that
+does this will also just work.
+
+Fixes #12178
+
+Change-Id: I61c1dc3f744ae3ad63938386d2ace8a432c0efe1
+Reviewed-on: https://go-review.googlesource.com/14210
+Run-TryBot: Aram Hăvărneanu <aram@mgk.ro>
+Reviewed-by: Aram Hăvărneanu <aram@mgk.ro>
+Reviewed-on: https://go-review.googlesource.com/17142
+Run-TryBot: Russ Cox <rsc@golang.org>
+Reviewed-by: Russ Cox <rsc@golang.org>
+---
+ src/cmd/go/note.go              | 32 ++++++++++++++++++++++++++------
+ src/cmd/go/note_test.go         |  3 ---
+ src/cmd/link/internal/ld/elf.go |  4 ----
+ 3 files changed, 26 insertions(+), 13 deletions(-)
+
+diff --git a/src/cmd/go/note.go b/src/cmd/go/note.go
+index f8d6588..c7346a5 100644
+--- a/src/cmd/go/note.go
++++ b/src/cmd/go/note.go
+@@ -70,11 +70,11 @@ func readELFNote(filename, name string, typ int32) ([]byte, error) {
+ 
+ var elfGoNote = []byte("Go\x00\x00")
+ 
+-// readELFGoBuildID the Go build ID string from an ELF binary.
+-// The Go build ID is stored in a note described by an ELF PT_NOTE prog header.
+-// The caller has already opened filename, to get f, and read the first 4 kB out, in data.
++// The Go build ID is stored in a note described by an ELF PT_NOTE prog
++// header.  The caller has already opened filename, to get f, and read
++// at least 4 kB out, in data.
+ func readELFGoBuildID(filename string, f *os.File, data []byte) (buildid string, err error) {
+-	// Assume the note content is in the first 4 kB, already read.
++	// Assume the note content is in the data, already read.
+ 	// Rewrite the ELF header to set shnum to 0, so that we can pass
+ 	// the data to elf.NewFile and it will decode the Prog list but not
+ 	// try to read the section headers and the string table from disk.
+@@ -96,11 +96,31 @@ func readELFGoBuildID(filename string, f *os.File, data []byte) (buildid string,
+ 		return "", &os.PathError{Path: filename, Op: "parse", Err: err}
+ 	}
+ 	for _, p := range ef.Progs {
+-		if p.Type != elf.PT_NOTE || p.Off >= uint64(len(data)) || p.Off+p.Filesz >= uint64(len(data)) || p.Filesz < 16 {
++		if p.Type != elf.PT_NOTE || p.Filesz < 16 {
+ 			continue
+ 		}
+ 
+-		note := data[p.Off : p.Off+p.Filesz]
++		var note []byte
++		if p.Off+p.Filesz < uint64(len(data)) {
++			note = data[p.Off : p.Off+p.Filesz]
++		} else {
++			// For some linkers, such as the Solaris linker,
++			// the buildid may not be found in data (which
++			// likely contains the first 16kB of the file)
++			// or even the first few megabytes of the file
++			// due to differences in note segment placement;
++			// in that case, extract the note data manually.
++			_, err = f.Seek(int64(p.Off), 0)
++			if err != nil {
++				return "", err
++			}
++
++			note = make([]byte, p.Filesz)
++			_, err = io.ReadFull(f, note)
++			if err != nil {
++				return "", err
++			}
++		}
+ 		nameSize := ef.ByteOrder.Uint32(note)
+ 		valSize := ef.ByteOrder.Uint32(note[4:])
+ 		tag := ef.ByteOrder.Uint32(note[8:])
+diff --git a/src/cmd/go/note_test.go b/src/cmd/go/note_test.go
+index a5ecab1..39b79c5 100644
+--- a/src/cmd/go/note_test.go
++++ b/src/cmd/go/note_test.go
+@@ -50,9 +50,6 @@ func testNoteReading(t *testing.T) {
+ 		// no external linking
+ 		t.Logf("no external linking - skipping linkmode=external test")
+ 
+-	case "solaris":
+-		t.Logf("skipping - golang.org/issue/12178")
+-
+ 	default:
+ 		tg.run("build", "-ldflags", "-buildid="+buildID+" -linkmode=external", "-o", tg.path("hello.exe"), tg.path("hello.go"))
+ 		id, err := main.ReadBuildIDFromBinary(tg.path("hello.exe"))
+diff --git a/src/cmd/link/internal/ld/elf.go b/src/cmd/link/internal/ld/elf.go
+index c9a5c99..9dedb0e 100644
+--- a/src/cmd/link/internal/ld/elf.go
++++ b/src/cmd/link/internal/ld/elf.go
+@@ -1739,10 +1739,6 @@ func doelf() {
+ 			Addstring(shstrtab, ".note.go.pkg-list")
+ 			Addstring(shstrtab, ".note.go.deps")
+ 		}
+-
+-		if buildid != "" {
+-			Addstring(shstrtab, ".note.go.buildid")
+-		}
+ 	}
+ 
+ 	hasinitarr := Linkshared
+-- 
+2.6.1
+

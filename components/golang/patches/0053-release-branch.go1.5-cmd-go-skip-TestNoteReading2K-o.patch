@@ -1,0 +1,37 @@
+From a28f3ef1c2e3cd033a0ea73f13795a450c3dc9f5 Mon Sep 17 00:00:00 2001
+From: Russ Cox <rsc@golang.org>
+Date: Thu, 19 Nov 2015 16:20:41 -0500
+Subject: [PATCH 53/63] [release-branch.go1.5] cmd/go: skip TestNoteReading2K
+ on Windows
+
+It's intended primarily as a torture test for OS X.
+Apparently Windows can't take it.
+
+Updates fix for #12327.
+
+Change-Id: If2af249ea8e2f55bff8f232dce06172e6fef9f49
+Reviewed-on: https://go-review.googlesource.com/17073
+Reviewed-by: Russ Cox <rsc@golang.org>
+Reviewed-on: https://go-review.googlesource.com/17128
+Reviewed-by: Ian Lance Taylor <iant@golang.org>
+---
+ src/cmd/go/note_test.go | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/src/cmd/go/note_test.go b/src/cmd/go/note_test.go
+index 1b7a011..a5ecab1 100644
+--- a/src/cmd/go/note_test.go
++++ b/src/cmd/go/note_test.go
+@@ -15,6 +15,9 @@ func TestNoteReading(t *testing.T) {
+ }
+ 
+ func TestNoteReading2K(t *testing.T) {
++	if runtime.GOOS == "windows" {
++		t.Skipf("2kB is not enough on %s", runtime.GOOS)
++	}
+ 	// Set BuildIDReadSize to 2kB to exercise Mach-O parsing more strictly.
+ 	defer func(old int) {
+ 		main.BuildIDReadSize = old
+-- 
+2.6.1
+

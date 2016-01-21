@@ -1,0 +1,69 @@
+commit dc6df1b07093ffa0568a581251e8ddd38f707ed6
+Author: Shawn Walker-Salas <shawn.walker@oracle.com>
+Date:   Thu Sep 17 15:47:20 2015 -0700
+
+    cmd/go: elide -rpath when not applicable and used via LDFLAGS
+    
+    Some linker flags should only be applied when performing the final
+    linking step for a shared library or executable, etc. In other
+    contexts, they're either invalid, or meaningless to apply (so should
+    not be specified).
+    
+    When an external linker is used (either directly by Go or by the
+    compiler driver used by cgo), -rpath and -rpath-link should only be
+    specified in the final linking step.  On platforms such as Solaris,
+    ld(1) will reject its use in any other scenario (such as when linking
+    relocatable objects).
+    
+    This change is necessary because Go does not currently offer a way to
+    specify LDFLAGS based on when they should be applied.
+    
+    Fixes #12115
+    
+    Change-Id: If35a18d8eee8ec7ddcca2d4ccd41ab6ffcf93b41
+    Reviewed-on: https://go-review.googlesource.com/14674
+    Reviewed-by: Minux Ma <minux@golang.org>
+    Run-TryBot: Minux Ma <minux@golang.org>
+    TryBot-Result: Gobot Gobot <gobot@golang.org>
+    Reviewed-by: Ian Lance Taylor <iant@golang.org>
+
+diff --git a/src/cmd/go/build.go b/src/cmd/go/build.go
+index df74338..0c2bc5f 100644
+--- a/src/cmd/go/build.go
++++ b/src/cmd/go/build.go
+@@ -2943,7 +2943,9 @@ func (b *builder) cgo(p *Package, cgoExe, obj string, pcCFLAGS, pcLDFLAGS, cgofi
+ 	var linkobj []string
+ 
+ 	var bareLDFLAGS []string
+-	// filter out -lsomelib, -l somelib, *.{so,dll,dylib}, and (on Darwin) -framework X
++	// When linking relocatable objects, various flags need to be
++	// filtered out as they are inapplicable and can cause some linkers
++	// to fail.
+ 	for i := 0; i < len(cgoLDFLAGS); i++ {
+ 		f := cgoLDFLAGS[i]
+ 		switch {
+@@ -2959,7 +2961,6 @@ func (b *builder) cgo(p *Package, cgoExe, obj string, pcCFLAGS, pcLDFLAGS, cgofi
+ 		case strings.HasSuffix(f, ".dylib"),
+ 			strings.HasSuffix(f, ".so"),
+ 			strings.HasSuffix(f, ".dll"):
+-			continue
+ 		// Remove any -fsanitize=foo flags.
+ 		// Otherwise the compiler driver thinks that we are doing final link
+ 		// and links sanitizer runtime into the object file. But we are not doing
+@@ -2968,6 +2969,16 @@ func (b *builder) cgo(p *Package, cgoExe, obj string, pcCFLAGS, pcLDFLAGS, cgofi
+ 		// See issue 8788 for details.
+ 		case strings.HasPrefix(f, "-fsanitize="):
+ 			continue
++		// runpath flags not applicable unless building a shared
++		// object or executable; see issue 12115 for details.  This
++		// is necessary as Go currently does not offer a way to
++		// specify the set of LDFLAGS that only apply to shared
++		// objects.
++		case strings.HasPrefix(f, "-Wl,-rpath"):
++			if f == "-Wl,-rpath" || f == "-Wl,-rpath-link" {
++				// Skip following argument to -rpath* too.
++				i++
++			}
+ 		default:
+ 			bareLDFLAGS = append(bareLDFLAGS, f)
+ 		}

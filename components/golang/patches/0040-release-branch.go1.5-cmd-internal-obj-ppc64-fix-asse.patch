@@ -1,0 +1,75 @@
+From 5dda3bc2fd0616f8789cc7f2919d2af49fc64a66 Mon Sep 17 00:00:00 2001
+From: Michael Hudson-Doyle <michael.hudson@canonical.com>
+Date: Fri, 6 Nov 2015 10:10:07 +1300
+Subject: [PATCH 40/63] [release-branch.go1.5] cmd/internal/obj/ppc64: fix
+ assembly of SRADCC with immediate
+
+sradi and sradi. hide the top bit of their immediate argument apart from the
+rest of it, but the code only handled the sradi case.
+
+I'm pretty sure this is the only instruction missing (a couple of the rotate
+instructions encode their immediate the same way but their handling looks OK).
+
+This fixes the failure of "GOARCH=amd64 ~/go/bin/go install -v runtime" as
+reported in the bug.
+
+Fixes #11987
+
+Change-Id: I0cdefcd7a04e0e8fce45827e7054ffde9a83f589
+Reviewed-on: https://go-review.googlesource.com/16710
+Reviewed-by: Minux Ma <minux@golang.org>
+Reviewed-on: https://go-review.googlesource.com/16983
+Run-TryBot: Austin Clements <austin@google.com>
+Reviewed-by: Ian Lance Taylor <iant@golang.org>
+Reviewed-by: Russ Cox <rsc@golang.org>
+---
+ src/cmd/internal/obj/ppc64/asm9.go |  2 +-
+ test/fixedbugs/issue11987.go       | 23 +++++++++++++++++++++++
+ 2 files changed, 24 insertions(+), 1 deletion(-)
+ create mode 100644 test/fixedbugs/issue11987.go
+
+diff --git a/src/cmd/internal/obj/ppc64/asm9.go b/src/cmd/internal/obj/ppc64/asm9.go
+index 2955a00..f074d90 100644
+--- a/src/cmd/internal/obj/ppc64/asm9.go
++++ b/src/cmd/internal/obj/ppc64/asm9.go
+@@ -2173,7 +2173,7 @@ func asmout(ctxt *obj.Link, p *obj.Prog, o *Optab, out []uint32) {
+ 			r = int(p.To.Reg)
+ 		}
+ 		o1 = AOP_RRR(uint32(opirr(ctxt, int(p.As))), uint32(r), uint32(p.To.Reg), uint32(v)&31)
+-		if p.As == ASRAD && (v&0x20 != 0) {
++		if (p.As == ASRAD || p.As == ASRADCC) && (v&0x20 != 0) {
+ 			o1 |= 1 << 1 /* mb[5] */
+ 		}
+ 
+diff --git a/test/fixedbugs/issue11987.go b/test/fixedbugs/issue11987.go
+new file mode 100644
+index 0000000..78fc28b
+--- /dev/null
++++ b/test/fixedbugs/issue11987.go
+@@ -0,0 +1,23 @@
++// run
++
++// Copyright 2015 The Go Authors.  All rights reserved.
++// Use of this source code is governed by a BSD-style
++// license that can be found in the LICENSE file.
++
++// Issue 11987. The ppc64 SRADCC instruction was misassembled in a way
++// lost bit 5 of the immediate so v>>32 was assembled as v>>0.  SRADCC
++// is only ever inserted by peep so it's hard to be sure when it will
++// be used. This formulation worked when the bug was fixed.
++
++package main
++
++import "fmt"
++
++var v int64 = 0x80000000
++
++func main() {
++	s := fmt.Sprintf("%v", v>>32 == 0)
++	if s != "true" {
++		fmt.Printf("BUG: v>>32 == 0 evaluated as %q\n", s)
++	}
++}
+-- 
+2.6.1
+

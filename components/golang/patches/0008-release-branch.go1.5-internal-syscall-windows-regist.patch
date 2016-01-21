@@ -1,0 +1,30 @@
+From 13d03fae63d2b357fa1ebd5c926d699b976cc718 Mon Sep 17 00:00:00 2001
+From: Alex Brainman <alex.brainman@gmail.com>
+Date: Mon, 24 Aug 2015 13:49:30 +1000
+Subject: [PATCH 08/63] [release-branch.go1.5]
+ internal/syscall/windows/registry: remove debugging dreg
+
+Change-Id: I1b9f6ad322a7f68fa160c4f09d7fb56815e505a7
+Reviewed-on: https://go-review.googlesource.com/13828
+Reviewed-by: Rob Pike <r@golang.org>
+Reviewed-on: https://go-review.googlesource.com/14244
+Reviewed-by: Alex Brainman <alex.brainman@gmail.com>
+---
+ src/internal/syscall/windows/registry/value.go | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/src/internal/syscall/windows/registry/value.go b/src/internal/syscall/windows/registry/value.go
+index bb45a23..f4bb1b3 100644
+--- a/src/internal/syscall/windows/registry/value.go
++++ b/src/internal/syscall/windows/registry/value.go
+@@ -310,7 +310,6 @@ loopItems:
+ 				break
+ 			}
+ 			if err == syscall.ERROR_MORE_DATA {
+-				println(len(buf), l)
+ 				// Double buffer size and try again.
+ 				l = uint32(2 * len(buf))
+ 				buf = make([]uint16, l)
+-- 
+2.6.1
+

@@ -1,0 +1,186 @@
+From 08ea82529a12506da7b329c2d0f6af57b714514a Mon Sep 17 00:00:00 2001
+From: Austin Clements <austin@google.com>
+Date: Wed, 18 Nov 2015 14:10:40 -0500
+Subject: [PATCH 48/63] [release-branch.go1.5] runtime: prevent sigprof during
+ all stack barrier ops
+
+A sigprof during stack barrier insertion or removal can crash if it
+detects an inconsistency between the stkbar array and the stack
+itself. Currently we protect against this when scanning another G's
+stack using stackLock, but we don't protect against it when unwinding
+stack barriers for a recover or a memmove to the stack.
+
+This commit cleans up and improves the stack locking code. It
+abstracts out the lock and unlock operations. It uses the lock
+consistently everywhere we perform stack operations, and pushes the
+lock/unlock down closer to where the stack barrier operations happen
+to make it more obvious what it's protecting. Finally, it modifies
+sigprof so that instead of spinning until it acquires the lock, it
+simply doesn't perform a traceback if it can't acquire it. This is
+necessary to prevent self-deadlock.
+
+Updates #11863, which introduced stackLock to fix some of these
+issues, but didn't go far enough.
+
+Updates #12528.
+
+Change-Id: I9d1fa88ae3744d31ba91500c96c6988ce1a3a349
+Reviewed-on: https://go-review.googlesource.com/17036
+Reviewed-by: Russ Cox <rsc@golang.org>
+Run-TryBot: Austin Clements <austin@google.com>
+TryBot-Result: Gobot Gobot <gobot@golang.org>
+Reviewed-on: https://go-review.googlesource.com/17057
+---
+ src/runtime/mgcmark.go | 33 +++++++++++++++++++++++++++++++++
+ src/runtime/proc1.go   | 25 +++++++++++++------------
+ 2 files changed, 46 insertions(+), 12 deletions(-)
+
+diff --git a/src/runtime/mgcmark.go b/src/runtime/mgcmark.go
+index 64cc1af..ac93e16 100644
+--- a/src/runtime/mgcmark.go
++++ b/src/runtime/mgcmark.go
+@@ -365,6 +365,8 @@ func scanstack(gp *g) {
+ 			throw("g already has stack barriers")
+ 		}
+ 
++		gcLockStackBarriers(gp)
++
+ 	case _GCmarktermination:
+ 		if int(gp.stkbarPos) == len(gp.stkbar) {
+ 			// gp hit all of the stack barriers (or there
+@@ -419,6 +421,9 @@ func scanstack(gp *g) {
+ 	if gcphase == _GCmarktermination {
+ 		gcw.dispose()
+ 	}
++	if gcphase == _GCscan {
++		gcUnlockStackBarriers(gp)
++	}
+ 	gp.gcscanvalid = true
+ }
+ 
+@@ -572,6 +577,8 @@ func gcRemoveStackBarriers(gp *g) {
+ 		print("hit ", gp.stkbarPos, " stack barriers, goid=", gp.goid, "\n")
+ 	}
+ 
++	gcLockStackBarriers(gp)
++
+ 	// Remove stack barriers that we didn't hit.
+ 	for _, stkbar := range gp.stkbar[gp.stkbarPos:] {
+ 		gcRemoveStackBarrier(gp, stkbar)
+@@ -581,6 +588,8 @@ func gcRemoveStackBarriers(gp *g) {
+ 	// adjust them.
+ 	gp.stkbarPos = 0
+ 	gp.stkbar = gp.stkbar[:0]
++
++	gcUnlockStackBarriers(gp)
+ }
+ 
+ // gcRemoveStackBarrier removes a single stack barrier. It is the
+@@ -627,6 +636,7 @@ func gcPrintStkbars(stkbar []stkbar) {
+ //
+ //go:nosplit
+ func gcUnwindBarriers(gp *g, sp uintptr) {
++	gcLockStackBarriers(gp)
+ 	// On LR machines, if there is a stack barrier on the return
+ 	// from the frame containing sp, this will mark it as hit even
+ 	// though it isn't, but it's okay to be conservative.
+@@ -635,6 +645,7 @@ func gcUnwindBarriers(gp *g, sp uintptr) {
+ 		gcRemoveStackBarrier(gp, gp.stkbar[gp.stkbarPos])
+ 		gp.stkbarPos++
+ 	}
++	gcUnlockStackBarriers(gp)
+ 	if debugStackBarrier && gp.stkbarPos != before {
+ 		print("skip barriers below ", hex(sp), " in goid=", gp.goid, ": ")
+ 		gcPrintStkbars(gp.stkbar[before:gp.stkbarPos])
+@@ -658,6 +669,28 @@ func setNextBarrierPC(pc uintptr) {
+ 	gp.stkbar[gp.stkbarPos].savedLRVal = pc
+ }
+ 
++// gcLockStackBarriers synchronizes with tracebacks of gp's stack
++// during sigprof for installation or removal of stack barriers. It
++// blocks until any current sigprof is done tracebacking gp's stack
++// and then disallows profiling tracebacks of gp's stack.
++//
++// This is necessary because a sigprof during barrier installation or
++// removal could observe inconsistencies between the stkbar array and
++// the stack itself and crash.
++func gcLockStackBarriers(gp *g) {
++	for !cas(&gp.stackLock, 0, 1) {
++		osyield()
++	}
++}
++
++func gcTryLockStackBarriers(gp *g) bool {
++	return cas(&gp.stackLock, 0, 1)
++}
++
++func gcUnlockStackBarriers(gp *g) {
++	atomicstore(&gp.stackLock, 0)
++}
++
+ // TODO(austin): Can we consolidate the gcDrain* functions?
+ 
+ // gcDrain scans objects in work buffers, blackening grey
+diff --git a/src/runtime/proc1.go b/src/runtime/proc1.go
+index 55f1a24..54cb3eb 100644
+--- a/src/runtime/proc1.go
++++ b/src/runtime/proc1.go
+@@ -414,13 +414,7 @@ func scang(gp *g) {
+ 			// the goroutine until we're done.
+ 			if castogscanstatus(gp, s, s|_Gscan) {
+ 				if !gp.gcscandone {
+-					// Coordinate with traceback
+-					// in sigprof.
+-					for !cas(&gp.stackLock, 0, 1) {
+-						osyield()
+-					}
+ 					scanstack(gp)
+-					atomicstore(&gp.stackLock, 0)
+ 					gp.gcscandone = true
+ 				}
+ 				restartg(gp)
+@@ -2500,11 +2494,6 @@ func sigprof(pc, sp, lr uintptr, gp *g, mp *m) {
+ 	// Profiling runs concurrently with GC, so it must not allocate.
+ 	mp.mallocing++
+ 
+-	// Coordinate with stack barrier insertion in scanstack.
+-	for !cas(&gp.stackLock, 0, 1) {
+-		osyield()
+-	}
+-
+ 	// Define that a "user g" is a user-created goroutine, and a "system g"
+ 	// is one that is m->g0 or m->gsignal.
+ 	//
+@@ -2571,8 +2560,18 @@ func sigprof(pc, sp, lr uintptr, gp *g, mp *m) {
+ 	// transition. We simply require that g and SP match and that the PC is not
+ 	// in gogo.
+ 	traceback := true
++	haveStackLock := false
+ 	if gp == nil || sp < gp.stack.lo || gp.stack.hi < sp || setsSP(pc) {
+ 		traceback = false
++	} else if gp.m.curg != nil {
++		if gcTryLockStackBarriers(gp.m.curg) {
++			haveStackLock = true
++		} else {
++			// Stack barriers are being inserted or
++			// removed, so we can't get a consistent
++			// traceback right now.
++			traceback = false
++		}
+ 	}
+ 	var stk [maxCPUProfStack]uintptr
+ 	n := 0
+@@ -2615,7 +2614,9 @@ func sigprof(pc, sp, lr uintptr, gp *g, mp *m) {
+ 			}
+ 		}
+ 	}
+-	atomicstore(&gp.stackLock, 0)
++	if haveStackLock {
++		gcUnlockStackBarriers(gp.m.curg)
++	}
+ 
+ 	if prof.hz != 0 {
+ 		// Simple cas-lock to coordinate with setcpuprofilerate.
+-- 
+2.6.1
+
