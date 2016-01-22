@@ -18,12 +18,12 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openssh
-COMPONENT_VERSION=	7.1p1
+COMPONENT_VERSION=	7.1p2
 HUMAN_VERSION=		$(COMPONENT_VERSION)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 
@@ -34,11 +34,11 @@ IPS_COMPONENT_VERSION=	7.1.0.1
 
 COMPONENT_PROJECT_URL=	http://www.openssh.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:fc0a6d2d1d063d5c66dffd952493d0cda256cad204f681de0f84ef85b2ad8428
+COMPONENT_ARCHIVE_HASH=	sha256:dd75f024dcf21e06a0d6421d582690bf987a1f6323e32ad6619392f3bfde6bbd
 COMPONENT_ARCHIVE_URL=	http://mirror.team-cymru.org/pub/OpenBSD/OpenSSH/portable/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=utility/openssh
 
-TPNO_OPENSSH=		24282
+TPNO_OPENSSH=		26419
 TPNO_GSSKEX=		20377
 
 include $(WS_MAKE_RULES)/prep.mk
