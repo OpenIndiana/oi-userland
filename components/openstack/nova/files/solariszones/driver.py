@@ -924,6 +924,13 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
         self._power_on(instance)
 
+        if admin_password:
+            # Because there is no way to make sure a zone is ready upon
+            # returning from a boot request. We must give the zone a few
+            # seconds to boot before attempting to set the admin password.
+            greenthread.sleep(15)
+            self.set_admin_password(instance, admin_password)
+
     def _get_extra_specs(self, instance):
         """Retrieve extra_specs of an instance."""
         flavor = flavor_obj.Flavor.get_by_id(
@@ -3437,7 +3444,18 @@ class SolarisZonesDriver(driver.ComputeDriver):
         :param instance: nova.objects.instance.Instance
         :param new_password: the new password
         """
-        raise NotImplementedError()
+        name = instance['name']
+        zone = self._get_zone_by_name(name)
+        if zone is None:
+            raise exception.InstanceNotFound(instance_id=name)
+
+        if zone.state == ZONE_STATE_RUNNING:
+            out, err = utils.execute('/usr/sbin/zlogin', name, 'passwd',
+                                     '-p', "'%s'" %
+                                     sha256_crypt.encrypt(new_pass))
+        else:
+            msg = (_('Unable to change root password: Instance not running'))
+            raise exception.NovaException(msg)
 
     def inject_file(self, instance, b64_path, b64_contents):
         """Writes a file on the specified instance.
