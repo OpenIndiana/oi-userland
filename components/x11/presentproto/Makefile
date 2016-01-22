@@ -27,8 +27,8 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL=  http://xorg.freedesktop.org/releases/individual/proto/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI= x11/library/presentproto
 COMPONENT_CLASSIFICATION = System/X11
-COMPONENT_LICENSE = MIT
-COMPONENT_LICENSE_FILE = 
+COMPONENT_LICENSE = individual
+COMPONENT_LICENSE_FILE = presentproto.license 
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
