@@ -41,6 +41,11 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+# keep traditional GNU semantics for inline functions so we don't lose
+# openusb_le{16|32}_to_cpu
+CFLAGS += -fgnu89-inline
+
+
 CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
