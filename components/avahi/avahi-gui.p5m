@@ -1,0 +1,71 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
+# man pages stability
+<transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
+
+# package attribs
+set name=pkg.fmri \
+    value=pkg:/system/network/avahi/gui@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Avahi client GUI libs/utils"
+set name=com.oracle.info.description \
+    value="GUI libs/utils providing discovery on a local network."
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value=org.opensolaris.category.2008:Applications/Internet
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=LSARC/2007/464
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+#
+file path=usr/bin/avahi-discover-standalone
+link path=usr/bin/bshell target=bssh
+file path=usr/bin/bssh
+link path=usr/bin/bvnc target=bssh
+#
+file path=usr/include/avahi-ui/avahi-ui.h
+#
+link path=usr/lib/$(MACH64)/libavahi-ui.so target=libavahi-ui.so.0.1.4
+link path=usr/lib/$(MACH64)/libavahi-ui.so.0 target=libavahi-ui.so.0.1.4
+file path=usr/lib/$(MACH64)/libavahi-ui.so.0.1.4
+#
+link path=usr/lib/libavahi-ui.so target=libavahi-ui.so.0.1.4
+link path=usr/lib/libavahi-ui.so.0 target=libavahi-ui.so.0.1.4
+file path=usr/lib/libavahi-ui.so.0.1.4
+#
+file path=usr/lib/pkgconfig/avahi-ui.pc
+#
+file path=usr/share/applications/bssh.desktop
+file path=usr/share/applications/bvnc.desktop
+#
+file path=usr/share/avahi/interfaces/avahi-discover.ui
+
+# Man pages can not be rebuilt because the xmltoman is missing on Solaris
+# ...current man pages are patched instead.
+file man/bssh.1 path=usr/share/man/man1/bssh.1
+link path=usr/share/man/man1/bvnc.1 target=bssh.1
+
+# license file
+license avahi.license license=$(COPYRIGHTS)
