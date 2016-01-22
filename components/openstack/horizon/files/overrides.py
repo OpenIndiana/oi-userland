@@ -1,4 +1,4 @@
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -86,8 +86,8 @@ admin_tables.AdminInstancesTable._meta.row_actions = (
     project_tables.TerminateInstance
 )
 
-# Remove 'EditInstanceSecurityGroups', 'TogglePause', 'RebuildInstance' actions
-# from Project/Compute/Instances/Actions
+# Remove 'EditInstanceSecurityGroups', 'TogglePause' actions from 
+# Project/Compute/Instances/Actions
 project_tables.InstancesTable._meta.row_actions = (
     project_tables.StartInstance,
     project_tables.ConfirmResize,
@@ -105,6 +105,7 @@ project_tables.InstancesTable._meta.row_actions = (
     project_tables.SoftRebootInstance,
     project_tables.RebootInstance,
     project_tables.StopInstance,
+    project_tables.RebuildInstance,
     project_tables.TerminateInstance
 )
 

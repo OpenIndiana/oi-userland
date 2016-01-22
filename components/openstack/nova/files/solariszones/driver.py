@@ -804,12 +804,12 @@ class SolarisZonesDriver(driver.ComputeDriver):
                 continue
 
             if not recreate:
-                self._volume_api.detach(context,
-                                        entry['connection_info']['serial'])
+                ci = jsonutils.loads(entry['connection_info'])
+                self.detach_volume(ci, instance, entry['device_name'])
 
-        if root_ci is None:
-            msg = (_("Unable to find the root device for instance %s")
-                   % instance.display_name)
+        if root_ci is None and recreate:
+            msg = (_("Unable to find the root device for instance '%s'.")
+                   % instance['name'])
             raise exception.NovaException(msg)
 
         return root_ci
@@ -854,13 +854,12 @@ class SolarisZonesDriver(driver.ComputeDriver):
         :param preserve_ephemeral: True if the default ephemeral storage
                                    partition must be preserved on rebuild
         """
-        # rebuild is not supported yet.
-        if not recreate:
-            raise NotImplementedError()
-
-        extra_specs = self._get_extra_specs(instance)
-        brand = extra_specs.get('zonecfg:brand', ZONE_BRAND_SOLARIS)
-        if recreate and brand == ZONE_BRAND_SOLARIS:
+        if recreate:
+            instance.system_metadata['evac_from'] = instance['launched_on']
+            instance.save()
+            extra_specs = self._get_extra_specs(instance)
+            brand = extra_specs.get('zonecfg:brand', ZONE_BRAND_SOLARIS)
+            if brand == ZONE_BRAND_SOLARIS:
                 msg = (_("'%s' branded zones do not currently support "
                          "evacuation.") % brand)
                 raise exception.NovaException(msg)
@@ -871,45 +870,66 @@ class SolarisZonesDriver(driver.ComputeDriver):
         root_ci = self._rebuild_block_devices(context, instance, bdms,
                                               recreate)
 
-        driver_type = root_ci['driver_volume_type']
+        if root_ci is not None:
+            driver_type = root_ci['driver_volume_type']
+        else:
+            driver_type = 'local'
+
         # If image_meta is provided then the --on-shared-storage option
         # was not used.
         if image_meta:
-            # Check to make sure that the root device is actually local.
-            # If not then raise an exception
-            if driver_type in shared_storage:
-                msg = (_("Root device is on shared storage for instance '%s'")
+            # If not then raise an exception.  But if this is a rebuild then
+            # the local storage is ok.
+            if driver_type in shared_storage and recreate:
+                msg = (_("Root device is on shared storage for instance '%s'.")
                        % instance['name'])
                 raise exception.NovaException(msg)
 
-            if recreate:
-                msg = (_("Evacuate a single host node is not supported"))
-                raise exception.NovaException(msg)
         else:
             # So the root device is not expected to be local so we can move
             # forward with building the zone.
             if driver_type not in shared_storage:
-                msg = (_("Root device is not on shared storage for instance"
-                         "'%s'") % instance['name'])
+                msg = (_("Root device is not on shared storage for instance "
+                         "'%s'.") % instance['name'])
                 raise exception.NovaException(msg)
+
+        if not recreate:
+            self.destroy(context, instance, network_info, block_device_info)
+            if root_ci is not None:
+                self._volume_api.detach(context, root_ci['serial'])
+                self._volume_api.delete(context, root_ci['serial'])
+
+                # We need to clear the block device mapping for the root device
+                bdmobj = objects.BlockDeviceMapping()
+                bdm = bdmobj.get_by_volume_id(context, root_ci['serial'])
+                bdm.destroy(context)
 
         instance.task_state = task_states.REBUILD_SPAWNING
         instance.save(
             expected_task_state=[task_states.REBUILD_BLOCK_DEVICE_MAPPING])
-        inst_type = flavor_obj.Flavor.get_by_id(
-            nova_context.get_admin_context(read_deleted='yes'),
-            instance['instance_type_id'])
-        extra_specs = inst_type['extra_specs'].copy()
 
-        self._create_config(context, instance, network_info,
-                            root_ci, extra_specs, None)
+        if recreate:
+            extra_specs = self._get_extra_specs(instance)
 
+            instance.system_metadata['rebuilding'] = False
+            self._create_config(context, instance, network_info,
+                                root_ci, extra_specs, None)
+            del instance.system_metadata['evac_from']
+            instance.save()
+        else:
+            instance.system_metadata['rebuilding'] = True
+            self.spawn(context, instance, image_meta, injected_files,
+                       admin_password, network_info, block_device_info)
+            self.power_off(instance)
+
+        del instance.system_metadata['rebuilding']
         name = instance['name']
         zone = self._get_zone_by_name(name)
         if zone is None:
             raise exception.InstanceNotFound(instance_id=name)
 
-        zone.attach(['-x', 'initialize-hostdata'])
+        if recreate:
+            zone.attach(['-x', 'initialize-hostdata'])
 
         instance_uuid = instance.uuid
         rootmp = instance['root_device_name']
@@ -924,7 +944,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
         self._power_on(instance)
 
-        if admin_password:
+        if admin_password is not None:
             # Because there is no way to make sure a zone is ready upon
             # returning from a boot request. We must give the zone a few
             # seconds to boot before attempting to set the admin password.
@@ -1414,13 +1434,13 @@ class SolarisZonesDriver(driver.ComputeDriver):
                    % (brand, name)))
             raise exception.NovaException(msg)
 
-        # XXX - Adding the REBUILDING task state, but we may want to
-        # check the sysconfig if the host is completely rebuilding.
         tstate = instance['task_state']
         if tstate not in [task_states.RESIZE_FINISH,
                           task_states.RESIZE_REVERTING,
                           task_states.RESIZE_MIGRATING,
-                          task_states.REBUILD_SPAWNING]:
+                          task_states.REBUILD_SPAWNING] or \
+            (tstate == task_states.REBUILD_SPAWNING and
+             instance.system_metadata['rebuilding']):
             sc_profile = extra_specs.get('install:sc_profile')
             if sc_profile is not None:
                 if os.path.isfile(sc_profile):
@@ -1879,6 +1899,18 @@ class SolarisZonesDriver(driver.ComputeDriver):
                 instance.system_metadata['old_vm_state'] == vm_states.RESIZED):
             self._samehost_revert_resize(context, instance, network_info,
                                          block_device_info)
+            return
+
+        # A destroy is issued for the original zone for an evac case.  If
+        # the evac fails we need to protect the zone from deletion when
+        # power comes back on.
+        evac_from = instance.system_metadata.get('evac_from')
+        if evac_from is not None and instance['task_state'] is None:
+            instance.host = evac_from
+            instance.node = evac_from
+            del instance.system_metadata['evac_from']
+            instance.save()
+
             return
 
         try:
@@ -3450,12 +3482,11 @@ class SolarisZonesDriver(driver.ComputeDriver):
             raise exception.InstanceNotFound(instance_id=name)
 
         if zone.state == ZONE_STATE_RUNNING:
-            out, err = utils.execute('/usr/sbin/zlogin', name, 'passwd',
-                                     '-p', "'%s'" %
+            out, err = utils.execute('/usr/sbin/zlogin', '-S', name,
+                                     '/usr/bin/passwd', '-p', "'%s'" %
                                      sha256_crypt.encrypt(new_pass))
         else:
-            msg = (_('Unable to change root password: Instance not running'))
-            raise exception.NovaException(msg)
+            raise exception.InstanceNotRunning(instance_id=name)
 
     def inject_file(self, instance, b64_path, b64_contents):
         """Writes a file on the specified instance.
@@ -3785,12 +3816,13 @@ class SolarisZonesDriver(driver.ComputeDriver):
             of access to instance shared disk files
         """
         bdmobj = objects.BlockDeviceMappingList
-        mappings = bdmobj.get_by_instance_uuid(
+        bdms = bdmobj.get_by_instance_uuid(
                 nova_context.get_admin_context(),
                 instance['uuid'])
 
+        root_ci = None
         rootmp = instance['root_device_name']
-        for entry in mappings:
+        for entry in bdms:
             if entry['connection_info'] is None:
                 continue
 
@@ -3799,15 +3831,12 @@ class SolarisZonesDriver(driver.ComputeDriver):
                 break
 
         if root_ci is None:
-            msg = (_("Unable to find the root device for instance %s",
-                     instance.display_name))
+            msg = (_("Unable to find the root device for instance '%s'.")
+                   % instance['name'])
             raise exception.NovaException(msg)
 
         driver_type = root_ci['driver_volume_type']
-        if driver_type in shared_storage:
-            return True
-        else:
-            return False
+        return driver_type in shared_storage
 
     def register_event_listener(self, callback):
         """Register a callback to receive events.
