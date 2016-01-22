@@ -21,19 +21,19 @@
 
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
-# Copyright (c) 2014, Alexander Pyhalov. All rights reserved.
+# Copyright 2016 Alexander Pyhalov
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		URI
-COMPONENT_VERSION=	1.60
+COMPONENT_VERSION=	1.71
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	http://search.cpan.org/~gaas/URI/
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:1f92d3dc64acb8845e9917c945e22b9a5275aeb9ff924eb7873c3b7a5c0d2377
-COMPONENT_ARCHIVE_URL=	http://search.cpan.org/CPAN/authors/id/G/GA/GAAS/$(COMPONENT_ARCHIVE)
+    sha256:9c8eca0d7f39e74bbc14706293e653b699238eeb1a7690cc9c136fb8c2644115
+COMPONENT_ARCHIVE_URL=	http://search.cpan.org/CPAN/authors/id/E/ET/ETHER/$(COMPONENT_ARCHIVE)
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/makemaker.mk
