@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=         libXrandr
 COMPONENT_VERSION=      1.4.2
 COMPONENT_PROJECT_URL=  http://www.x.org/
-COMPONENT_SUMMARY=      Userspace interface to kernel Direct Rendering Module services
+COMPONENT_SUMMARY=      X Resize, Rotate and Reflection extension library 
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
