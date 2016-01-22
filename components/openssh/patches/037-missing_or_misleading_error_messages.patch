@@ -1,0 +1,51 @@
+#
+# Add missing error() upon identity_sign() failure, fix typos in ssherr() calls.
+#
+# After OpenSSH code was refactored recently, DSA_do_sign() and RSA_sign()
+# failures no longer result in error messages printed out. This is particularly
+# inconvenient for FIPS mode, were these calls can fail due to non-compliant
+# crypto algorithm options.
+#
+# Investigating other missing error messages spotted two calls to ssherr()
+# with wrong error codes.
+#
+# Patch has been submitted upstream:
+# https://bugzilla.mindrot.org/show_bug.cgi?id=2507
+#
+# Update: patch has been accepted upstream, will be part of 7.2:
+# https://github.com/openssh/openssh-portable/commit/39736be
+#
+# On uprev to 7.2+ we will drop this patch.
+#
+diff -pur old/ssh-agent.c new/ssh-agent.c
+--- old/ssh-agent.c
++++ new/ssh-agent.c
+@@ -389,7 +389,7 @@ process_sign_request2(SocketEntry *e)
+ 	if (flags & SSH_AGENT_OLD_SIGNATURE)
+ 		compat = SSH_BUG_SIGBLOB;
+ 	if ((r = sshkey_from_blob(blob, blen, &key)) != 0) {
+-		error("%s: cannot parse key blob: %s", __func__, ssh_err(ok));
++		error("%s: cannot parse key blob: %s", __func__, ssh_err(r));
+ 		goto send;
+ 	}
+ 	if ((id = lookup_identity(key, 2)) == NULL) {
+@@ -402,7 +402,7 @@ process_sign_request2(SocketEntry *e)
+ 	}
+ 	if ((r = sshkey_sign(id->key, &signature, &slen,
+ 	    data, dlen, compat)) != 0) {
+-		error("%s: sshkey_sign: %s", __func__, ssh_err(ok));
++		error("%s: sshkey_sign: %s", __func__, ssh_err(r));
+ 		goto send;
+ 	}
+ 	/* Success */
+diff -pur old/sshconnect2.c new/sshconnect2.c
+--- old/sshconnect2.c
++++ new/sshconnect2.c
+@@ -1167,6 +1167,7 @@ sign_and_send_pubkey(Authctxt *authctxt,
+ 	ret = identity_sign(id, &signature, &slen,
+ 	    buffer_ptr(&b), buffer_len(&b), datafellows);
+ 	if (ret != 0) {
++		error("%s: signing failed: %s", __func__, ssh_err(ret));
+ 		free(blob);
+ 		buffer_free(&b);
+ 		return 0;

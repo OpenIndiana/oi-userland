@@ -1,0 +1,38 @@
+#
+# Return OpenSSL error messages in ssherr() for SSH_ERR_LIBCRYPTO_ERROR.
+#
+# After code refactoring for library-like interfaces,OpenSSL error string
+# were replaced by generic and vague "error in libcrypto" message.
+#
+# This patch returns OpenSSL error strings for SSH_ERR_LIBCRYPTO_ERROR errors.
+#
+# Patch submitted upstream:
+# https://bugzilla.mindrot.org/show_bug.cgi?id=2508
+#
+diff -pur old/ssherr.c new/ssherr.c
+--- old/ssherr.c
++++ new/ssherr.c
+@@ -17,11 +17,13 @@
+ 
+ #include <errno.h>
+ #include <string.h>
++#include <openssl/err.h>
+ #include "ssherr.h"
+ 
+ const char *
+ ssh_err(int n)
+ {
++	static char err_str[256];
+ 	switch (n) {
+ 	case SSH_ERR_SUCCESS:
+ 		return "success";
+@@ -68,7 +70,8 @@ ssh_err(int n)
+ 	case SSH_ERR_SIGNATURE_INVALID:
+ 		return "incorrect signature";
+ 	case SSH_ERR_LIBCRYPTO_ERROR:
+-		return "error in libcrypto";  /* XXX fetch and return */
++		ERR_error_string_n(ERR_get_error(), err_str, sizeof (err_str));
++		return err_str;
+ 	case SSH_ERR_UNEXPECTED_TRAILING_DATA:
+ 		return "unexpected bytes remain after decoding";
+ 	case SSH_ERR_SYSTEM_ERROR:

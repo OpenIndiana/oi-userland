@@ -1,0 +1,726 @@
+#
+# Dynamically set FIPS mode, when underlying libcrypto is FIPS capable.
+# Limit ciphers and MACs in algorithm negotiation proposal.
+#
+# This patch is unlikely to be accepted upstream.
+#
+diff -pur old/cipher.c new/cipher.c
+--- old/cipher.c
++++ new/cipher.c
+@@ -77,7 +77,34 @@ struct sshcipher {
+ #endif
+ };
+ 
++#ifdef ENABLE_OPENSSL_FIPS
++/* in FIPS mode limit ciphers to FIPS compliant only */
++#define	ciphers (ssh_FIPS_mode() ? ciphers_fips : ciphers_dflt)
++
++static const struct sshcipher ciphers_fips[] = {
++	{ "none",	SSH_CIPHER_NONE, 8, 0, 0, 0, 0, 0, EVP_enc_null },
++	{ "3des-cbc",	SSH_CIPHER_SSH2, 8, 24, 0, 0, 0, 1, EVP_des_ede3_cbc },
++	{ "aes128-cbc",	SSH_CIPHER_SSH2, 16, 16, 0, 0, 0, 1, EVP_aes_128_cbc },
++	{ "aes192-cbc",	SSH_CIPHER_SSH2, 16, 24, 0, 0, 0, 1, EVP_aes_192_cbc },
++	{ "aes256-cbc",	SSH_CIPHER_SSH2, 16, 32, 0, 0, 0, 1, EVP_aes_256_cbc },
++	{ "rijndael-cbc@lysator.liu.se",
++			SSH_CIPHER_SSH2, 16, 32, 0, 0, 0, 1, EVP_aes_256_cbc },
++	{ "aes128-ctr",	SSH_CIPHER_SSH2, 16, 16, 0, 0, 0, 0, EVP_aes_128_ctr },
++	{ "aes192-ctr",	SSH_CIPHER_SSH2, 16, 24, 0, 0, 0, 0, EVP_aes_192_ctr },
++	{ "aes256-ctr",	SSH_CIPHER_SSH2, 16, 32, 0, 0, 0, 0, EVP_aes_256_ctr },
++# ifdef OPENSSL_HAVE_EVPGCM
++	{ "aes128-gcm@openssh.com",
++			SSH_CIPHER_SSH2, 16, 16, 12, 16, 0, 0, EVP_aes_128_gcm },
++	{ "aes256-gcm@openssh.com",
++			SSH_CIPHER_SSH2, 16, 32, 12, 16, 0, 0, EVP_aes_256_gcm },
++# endif /* OPENSSL_HAVE_EVPGCM */
++	{ NULL,		SSH_CIPHER_INVALID, 0, 0, 0, 0, 0, 0, NULL }
++};
++
++static const struct sshcipher ciphers_dflt[] = {
++#else /* ENABLE_OPENSSL_FIPS */
+ static const struct sshcipher ciphers[] = {
++#endif /* ENABLE_OPENSSL_FIPS */
+ #ifdef WITH_SSH1
+ 	{ "des",	SSH_CIPHER_DES, 8, 8, 0, 0, 0, 1, EVP_des_cbc },
+ 	{ "3des",	SSH_CIPHER_3DES, 8, 16, 0, 0, 0, 1, evp_ssh1_3des },
+diff -pur old/digest-openssl.c new/digest-openssl.c
+--- old/digest-openssl.c
++++ new/digest-openssl.c
+@@ -53,8 +53,22 @@ struct ssh_digest {
+ 	const EVP_MD *(*mdfunc)(void);
+ };
+ 
++#ifdef ENABLE_OPENSSL_FIPS
+ /* NB. Indexed directly by algorithm number */
++const struct ssh_digest digests_fips[] = {
++	{ SSH_DIGEST_MD5,	"",	 	16,	NULL },
++	{ SSH_DIGEST_RIPEMD160,	"",		20,	NULL },
++	{ SSH_DIGEST_SHA1,	"SHA1",	 	20,	EVP_sha1 },
++	{ SSH_DIGEST_SHA256,	"SHA256", 	32,	EVP_sha256 },
++	{ SSH_DIGEST_SHA384,	"SHA384",	48,	EVP_sha384 },
++	{ SSH_DIGEST_SHA512,	"SHA512", 	64,	EVP_sha512 },
++	{ -1,			NULL,		0,	NULL },
++};
++/* NB. Indexed directly by algorithm number */
++const struct ssh_digest digests_dflt[] = {
++#else /* ENABLE_OPENSSL_FIPS */
+ const struct ssh_digest digests[] = {
++#endif /* ENABLE_OPENSSL_FIPS */
+ 	{ SSH_DIGEST_MD5,	"MD5",	 	16,	EVP_md5 },
+ 	{ SSH_DIGEST_RIPEMD160,	"RIPEMD160",	20,	EVP_ripemd160 },
+ 	{ SSH_DIGEST_SHA1,	"SHA1",	 	20,	EVP_sha1 },
+@@ -67,6 +81,9 @@ const struct ssh_digest digests[] = {
+ static const struct ssh_digest *
+ ssh_digest_by_alg(int alg)
+ {
++#ifdef ENABLE_OPENSSL_FIPS
++	struct ssh_digest *digests = ssh_FIPS_mode() ? digests_fips : digests_dflt;
++#endif
+ 	if (alg < 0 || alg >= SSH_DIGEST_MAX)
+ 		return NULL;
+ 	if (digests[alg].id != alg) /* sanity */
+@@ -79,6 +96,9 @@ ssh_digest_by_alg(int alg)
+ int
+ ssh_digest_alg_by_name(const char *name)
+ {
++#ifdef ENABLE_OPENSSL_FIPS
++	struct ssh_digest *digests = ssh_FIPS_mode() ? digests_fips : digests_dflt;
++#endif
+ 	int alg;
+ 
+ 	for (alg = 0; digests[alg].id != -1; alg++) {
+diff -pur old/gss-genr.c new/gss-genr.c
+--- old/gss-genr.c
++++ new/gss-genr.c
+@@ -100,6 +100,7 @@ ssh_gssapi_kex_mechs(gss_OID_set gss_sup
+ 	char deroid[2];
+ 	const EVP_MD *evp_md = EVP_md5();
+ 	EVP_MD_CTX md;
++	int fips_mode;
+ 
+ 	if (gss_enc2oid != NULL) {
+ 		for (i = 0; gss_enc2oid[i].encoded != NULL; i++)
+@@ -112,6 +113,14 @@ ssh_gssapi_kex_mechs(gss_OID_set gss_sup
+ 
+ 	buffer_init(&buf);
+ 
++#ifdef ENABLE_OPENSSL_FIPS
++	fips_mode = ssh_FIPS_mode();
++	if (fips_mode) {
++		debug3("Temporarily unsetting FIPS mode to compute MD5 for "
++		    "GSS-API key exchange method names");
++		FIPS_mode_set(0);
++	}
++#endif
+ 	oidpos = 0;
+ 	for (i = 0; i < gss_supported->count; i++) {
+ 		if (gss_supported->elements[i].length < 128 &&
+@@ -119,7 +128,6 @@ ssh_gssapi_kex_mechs(gss_OID_set gss_sup
+ 
+ 			deroid[0] = SSH_GSS_OIDTYPE;
+ 			deroid[1] = gss_supported->elements[i].length;
+-
+ 			EVP_DigestInit(&md, evp_md);
+ 			EVP_DigestUpdate(&md, deroid, 2);
+ 			EVP_DigestUpdate(&md,
+@@ -151,6 +159,12 @@ ssh_gssapi_kex_mechs(gss_OID_set gss_sup
+ 			oidpos++;
+ 		}
+ 	}
++#ifdef ENABLE_OPENSSL_FIPS
++	if (fips_mode) {
++		ssh_FIPS_mode_set_if_capable();
++		ssh_FIPS_check_status();
++	}
++#endif
+ 	gss_enc2oid[oidpos].oid = NULL;
+ 	gss_enc2oid[oidpos].encoded = NULL;
+ 
+diff -pur old/mac.c new/mac.c
+--- old/mac.c
++++ new/mac.c
+@@ -53,8 +53,33 @@ struct macalg {
+ 	int		len;		/* just for UMAC */
+ 	int		etm;		/* Encrypt-then-MAC */
+ };
++#ifdef ENABLE_OPENSSL_FIPS
++/* in FIPS mode limit macs to FIPS compliant only */
++#define	macs (ssh_FIPS_mode() ? macs_fips : macs_dflt)
+ 
++static const struct macalg macs_fips[] = {
++	/* Encrypt-and-MAC (encrypt-and-authenticate) variants */
++	{ "hmac-sha1",				SSH_DIGEST, SSH_DIGEST_SHA1, 0, 0, 0, 0 },
++	{ "hmac-sha1-96",			SSH_DIGEST, SSH_DIGEST_SHA1, 96, 0, 0, 0 },
++#ifdef HAVE_EVP_SHA256
++	{ "hmac-sha2-256",			SSH_DIGEST, SSH_DIGEST_SHA256, 0, 0, 0, 0 },
++	{ "hmac-sha2-512",			SSH_DIGEST, SSH_DIGEST_SHA512, 0, 0, 0, 0 },
++#endif
++	/* Encrypt-then-MAC variants */
++	{ "hmac-sha1-etm@openssh.com",		SSH_DIGEST, SSH_DIGEST_SHA1, 0, 0, 0, 1 },
++	{ "hmac-sha1-96-etm@openssh.com",	SSH_DIGEST, SSH_DIGEST_SHA1, 96, 0, 0, 1 },
++#ifdef HAVE_EVP_SHA256
++	{ "hmac-sha2-256-etm@openssh.com",	SSH_DIGEST, SSH_DIGEST_SHA256, 0, 0, 0, 1 },
++	{ "hmac-sha2-512-etm@openssh.com",	SSH_DIGEST, SSH_DIGEST_SHA512, 0, 0, 0, 1 },
++#endif
++
++	{ NULL,					0, 0, 0, 0, 0, 0 }
++};
++
++static const struct macalg macs_dflt[] = {
++#else /* ENABLE_OPENSSL_FIPS */
+ static const struct macalg macs[] = {
++#endif /* ENABLE_OPENSSL_FIPS */
+ 	/* Encrypt-and-MAC (encrypt-and-authenticate) variants */
+ 	{ "hmac-sha1",				SSH_DIGEST, SSH_DIGEST_SHA1, 0, 0, 0, 0 },
+ 	{ "hmac-sha1-96",			SSH_DIGEST, SSH_DIGEST_SHA1, 96, 0, 0, 0 },
+diff -pur old/misc.c new/misc.c
+--- old/misc.c
++++ new/misc.c
+@@ -38,12 +38,15 @@
+ #include <string.h>
+ #include <time.h>
+ #include <unistd.h>
++#include <dlfcn.h>
+ 
+ #include <netinet/in.h>
+ #include <netinet/in_systm.h>
+ #include <netinet/ip.h>
+ #include <netinet/tcp.h>
+ 
++#include <openssl/crypto.h>
++
+ #include <ctype.h>
+ #include <errno.h>
+ #include <fcntl.h>
+@@ -77,6 +80,60 @@ chop(char *s)
+ 
+ }
+ 
++#ifdef ENABLE_OPENSSL_FIPS
++/* is OpenSSL FIPS mode set? */
++int
++ssh_FIPS_mode()
++{
++	return FIPS_mode();
++}
++
++/* store FIPS_mode_set() err code */
++static unsigned long ssh_FIPS_err_code = 0;
++
++#define	MSGBUFSIZ	1024 /* equals log.c:MSGBUFSIZ */
++
++/*
++ * Check and display FIPS mode status. 
++ * Called after ssh_FIPS_mode_set_if_capable() and when logging facility is
++ * available.
++ * If FIPS_mode_failed for FIPS capable libcrypto, exits with 255 code.
++ */
++void 
++ssh_FIPS_check_status()
++{
++	char ebuf[MSGBUFSIZ];
++
++	if (dlsym(RTLD_DEFAULT, "FIPS_module_mode_set") != NULL) {
++		if (ssh_FIPS_mode()) {
++			debug("Running in FIPS mode.");
++		} else {
++			ERR_error_string_n(ssh_FIPS_err_code, ebuf,
++			    sizeof (ebuf));
++			fatal("Setting FIPS mode failed! %s", ebuf);
++		}
++	} else {
++		debug3("Loaded libcrypto is not FIPS capable.");
++	}
++	
++}
++
++/* if underlying libcrypto is FIPS capable, set FIPS_mode to 1 */
++int
++ssh_FIPS_mode_set_if_capable()
++{
++	/* presence of FIPS_module_mode_set indicates FIPS capable OpenSSL */
++	if (dlsym(RTLD_DEFAULT, "FIPS_module_mode_set") != NULL) {
++		/* call the API function FIPS_mode_set*/
++		if (!FIPS_mode_set(1)) {
++			ssh_FIPS_err_code = ERR_get_error();
++			return 1;
++		}
++	}
++	return 0;
++}
++#endif
++
+ /* set/unset filedescriptor to non-blocking */
+ int
+ set_nonblock(int fd)
+diff -pur old/misc.h new/misc.h
+--- old/misc.h
++++ new/misc.h
+@@ -38,6 +38,11 @@ struct ForwardOptions {
+ 
+ char	*chop(char *);
+ char	*strdelim(char **);
++#ifdef ENABLE_OPENSSL_FIPS
++int	 ssh_FIPS_mode();
++int	 ssh_FIPS_mode_set_if_capable();
++void     ssh_FIPS_check_status();
++#endif
+ int	 set_nonblock(int);
+ int	 unset_nonblock(int);
+ void	 set_nodelay(int);
+diff -pur old/myproposal.h new/myproposal.h
+--- old/myproposal.h
++++ new/myproposal.h
+@@ -131,6 +131,15 @@
+ 	CAST128 \
+ 	"aes192-cbc,aes256-cbc,arcfour,rijndael-cbc@lysator.liu.se"
+ 
++#ifdef ENABLE_OPENSSL_FIPS
++#define KEX_FIPS_SERVER_ENCRYPT \
++	"aes128-ctr,aes192-ctr,aes256-ctr" \
++	AESGCM_CIPHER_MODES
++
++#define KEX_FIPS_CLIENT_ENCRYPT KEX_FIPS_SERVER_ENCRYPT "," \
++	"aes128-cbc,3des-cbc,aes192-cbc,aes256-cbc,rijndael-cbc@lysator.liu.se"
++#endif /* ENABLE_OPENSSL_FIPS */
++
+ #define KEX_SERVER_MAC \
+ 	"umac-64-etm@openssh.com," \
+ 	"umac-128-etm@openssh.com," \
+@@ -154,6 +163,20 @@
+ 	"hmac-sha1-96," \
+ 	"hmac-md5-96"
+ 
++#ifdef ENABLE_OPENSSL_FIPS
++#define KEX_FIPS_SERVER_MAC \
++	"hmac-sha2-256-etm@openssh.com," \
++	"hmac-sha2-512-etm@openssh.com," \
++	"hmac-sha1-etm@openssh.com," \
++	"hmac-sha2-256," \
++	"hmac-sha2-512," \
++	"hmac-sha1"
++
++#define KEX_FIPS_CLIENT_MAC KEX_FIPS_SERVER_MAC "," \
++	"hmac-sha1-96-etm@openssh.com," \
++	"hmac-sha1-96"
++#endif /* ENABLE_OPENSSL_FIPS */
++
+ #else
+ 
+ #define KEX_SERVER_KEX		\
+diff -pur old/readconf.c new/readconf.c
+--- old/readconf.c
++++ new/readconf.c
+@@ -1760,6 +1760,11 @@ fill_default_options_for_canonicalizatio
+ void
+ fill_default_options(Options * options)
+ {
++#ifdef ENABLE_OPENSSL_FIPS
++	char *encs;
++	char *macs;
++#endif /* ENABLE_OPENSSL_FIPS */
++
+ 	if (options->forward_agent == -1)
+ 		options->forward_agent = 0;
+ 	if (options->forward_x11 == -1)
+@@ -1934,8 +1939,15 @@ fill_default_options(Options * options)
+ 		options->fingerprint_hash = SSH_FP_HASH_DEFAULT;
+ 	if (options->update_hostkeys == -1)
+ 		options->update_hostkeys = 0;
++#ifndef ENABLE_OPENSSL_FIPS
+ 	if (kex_assemble_names(KEX_CLIENT_ENCRYPT, &options->ciphers) != 0 ||
+ 	    kex_assemble_names(KEX_CLIENT_MAC, &options->macs) != 0 ||
++#else
++	encs = ssh_FIPS_mode() ? KEX_FIPS_CLIENT_ENCRYPT : KEX_CLIENT_ENCRYPT;
++	macs = ssh_FIPS_mode() ? KEX_FIPS_CLIENT_MAC : KEX_CLIENT_MAC;
++	if (kex_assemble_names(encs, &options->ciphers) != 0 ||
++	    kex_assemble_names(macs, &options->macs) != 0 ||
++#endif /* ENABLE_OPENSSL_FIPS */
+ 	    kex_assemble_names(KEX_CLIENT_KEX, &options->kex_algorithms) != 0 ||
+ 	    kex_assemble_names(KEX_DEFAULT_PK_ALG,
+ 	    &options->hostbased_key_types) != 0 ||
+diff -pur old/servconf.c new/servconf.c
+--- old/servconf.c
++++ new/servconf.c
+@@ -195,6 +195,10 @@ void
+ fill_default_server_options(ServerOptions *options)
+ {
+ 	int i;
++#ifdef ENABLE_OPENSSL_FIPS
++	char *encs;
++	char *macs;
++#endif /* ENABLE_OPENSSL_FIPS */
+ 
+ 	/* Portable-specific options */
+ 	if (options->use_pam == -1)
+@@ -382,8 +386,15 @@ fill_default_server_options(ServerOption
+ 	if (options->fingerprint_hash == -1)
+ 		options->fingerprint_hash = SSH_FP_HASH_DEFAULT;
+ 
++#ifndef ENABLE_OPENSSL_FIPS
+ 	if (kex_assemble_names(KEX_SERVER_ENCRYPT, &options->ciphers) != 0 ||
+ 	    kex_assemble_names(KEX_SERVER_MAC, &options->macs) != 0 ||
++#else
++	encs = ssh_FIPS_mode() ? KEX_FIPS_SERVER_ENCRYPT : KEX_SERVER_ENCRYPT;
++	macs = ssh_FIPS_mode() ? KEX_FIPS_SERVER_MAC : KEX_SERVER_MAC;
++	if (kex_assemble_names(encs, &options->ciphers) != 0 ||
++	    kex_assemble_names(macs, &options->macs) != 0 ||
++#endif /* ENABLE_OPENSSL_FIPS */
+ 	    kex_assemble_names(KEX_SERVER_KEX, &options->kex_algorithms) != 0 ||
+ 	    kex_assemble_names(KEX_DEFAULT_PK_ALG,
+ 	    &options->hostbased_key_types) != 0 ||
+diff -pur old/ssh-add.1 new/ssh-add.1
+--- old/ssh-add.1
++++ new/ssh-add.1
+@@ -114,6 +114,8 @@ and
+ .Dq sha256 .
+ The default is
+ .Dq sha256 .
++If OpenSSL is running in FIPS-140 mode, the only supported option is
++.Dq sha256 .
+ .It Fl e Ar pkcs11
+ Remove keys provided by the PKCS#11 shared library
+ .Ar pkcs11 .
+diff -pur old/ssh-add.c new/ssh-add.c
+--- old/ssh-add.c
++++ new/ssh-add.c
+@@ -493,6 +493,12 @@ main(int argc, char **argv)
+ 	__progname = ssh_get_progname(argv[0]);
+ 	seed_rng();
+ 
++#ifdef ENABLE_OPENSSL_FIPS
++	if (ssh_FIPS_mode_set_if_capable()) {
++		fprintf(stderr, "Setting FIPS mode failed!");
++		exit(1);
++	}
++#endif
+ #ifdef WITH_OPENSSL
+ 	OpenSSL_add_all_algorithms();
+ #endif
+diff -pur old/ssh-agent.1 new/ssh-agent.1
+--- old/ssh-agent.1
++++ new/ssh-agent.1
+@@ -110,6 +110,8 @@ and
+ .Dq sha256 .
+ The default is
+ .Dq sha256 .
++If OpenSSL is running in FIPS-140 mode, the only supported option is
++.Dq sha256 .
+ .It Fl k
+ Kill the current agent (given by the
+ .Ev SSH_AGENT_PID
+diff -pur old/ssh-agent.c new/ssh-agent.c
+--- old/ssh-agent.c
++++ new/ssh-agent.c
+@@ -1187,6 +1187,7 @@ main(int ac, char **av)
+ 	struct timeval *tvp = NULL;
+ 	size_t len;
+ 	mode_t prev_mask;
++	int fips_err;
+ 
+ 	/* Ensure that fds 0, 1 and 2 are open or directed to /dev/null */
+ 	sanitise_stdfd();
+@@ -1200,6 +1201,9 @@ main(int ac, char **av)
+ 	prctl(PR_SET_DUMPABLE, 0);
+ #endif
+ 
++#ifdef ENABLE_OPENSSL_FIPS
++	fips_err = ssh_FIPS_mode_set_if_capable();
++#endif
+ #ifdef WITH_OPENSSL
+ 	OpenSSL_add_all_algorithms();
+ #endif
+@@ -1330,7 +1334,18 @@ main(int ac, char **av)
+ 		printf(format, SSH_AUTHSOCKET_ENV_NAME, socket_name,
+ 		    SSH_AUTHSOCKET_ENV_NAME);
+ 		printf("echo Agent pid %ld;\n", (long)parent_pid);
++#ifdef ENABLE_OPENSSL_FIPS
++		ssh_FIPS_check_status();
++#endif
+ 		goto skip;
++#ifdef ENABLE_OPENSSL_FIPS
++	} else {
++		/* we still need to error out on FIPS_mode_set failure */
++		if (fips_err) {
++			fprintf(stderr, "Setting FIPS mode failed!");
++			cleanup_exit(1);
++		}
++#endif
+ 	}
+ 	pid = fork();
+ 	if (pid == -1) {
+diff -pur old/ssh-keygen.1 new/ssh-keygen.1
+--- old/ssh-keygen.1
++++ new/ssh-keygen.1
+@@ -268,6 +268,8 @@ and
+ .Dq sha256 .
+ The default is
+ .Dq sha256 .
++If OpenSSL is running in FIPS-140 mode, the only supported option is
++.Dq sha256 .
+ .It Fl e
+ This option will read a private or public OpenSSH key file and
+ print to stdout the key in one of the formats specified by the
+diff -pur old/ssh-keygen.c new/ssh-keygen.c
+--- old/ssh-keygen.c
++++ new/ssh-keygen.c
+@@ -2224,11 +2224,18 @@ main(int argc, char **argv)
+ 
+ 	__progname = ssh_get_progname(argv[0]);
+ 
++#ifdef ENABLE_OPENSSL_FIPS
++	ssh_FIPS_mode_set_if_capable();
++#endif
+ #ifdef WITH_OPENSSL
+ 	OpenSSL_add_all_algorithms();
+ #endif
+ 	log_init(argv[0], SYSLOG_LEVEL_INFO, SYSLOG_FACILITY_USER, 1);
+ 
++#ifdef ENABLE_OPENSSL_FIPS
++	ssh_FIPS_check_status();
++#endif
++
+ 	seed_rng();
+ 
+ 	/* we need this for the home * directory.  */
+diff -pur old/ssh-keysign.c new/ssh-keysign.c
+--- old/ssh-keysign.c
++++ new/ssh-keysign.c
+@@ -175,6 +175,7 @@ main(int argc, char **argv)
+ 	u_char *signature, *data, rver;
+ 	char *host, *fp;
+ 	size_t slen, dlen;
++	int fips_err;
+ #ifdef WITH_OPENSSL
+ 	u_int32_t rnd[256];
+ #endif
+@@ -223,6 +224,16 @@ main(int argc, char **argv)
+ 	if (found == 0)
+ 		fatal("could not open any host key");
+ 
++#ifdef ENABLE_OPENSSL_FIPS
++	fips_err = ssh_FIPS_mode_set_if_capable();
++#ifdef DEBUG_SSH_KEYSIGN
++	ssh_FIPS_check_status();
++#else
++	/* we still need to error out on FIPS_mode_set failure */
++	if (fips_err)
++		fatal("Setting FIPS mode failed!");
++#endif
++#endif
+ #ifdef WITH_OPENSSL
+ 	OpenSSL_add_all_algorithms();
+ 	arc4random_buf(rnd, sizeof(rnd));
+diff -pur old/ssh.1 new/ssh.1
+--- old/ssh.1
++++ new/ssh.1
+@@ -92,6 +92,9 @@ If
+ is specified,
+ it is executed on the remote host instead of a login shell.
+ .Pp
++If ssh links with FIPS-capable OpenSSL, ssh runs in FIPS-140 mode.
++In FIPS-140 mode non-FIPS approved ciphers, MACs and digests are disabled.
++.Pp
+ The options are as follows:
+ .Pp
+ .Bl -tag -width Ds -compact
+diff -pur old/ssh.c new/ssh.c
+--- old/ssh.c
++++ new/ssh.c
+@@ -588,6 +588,11 @@ main(int ac, char **av)
+ 	 */
+ 	initialize_options(&options);
+ 
++#ifdef ENABLE_OPENSSL_FIPS
++	/* determine FIPS mode early to limit ciphers and macs */
++	ssh_FIPS_mode_set_if_capable();
++#endif
++
+ 	/* Parse command-line arguments. */
+ 	host = NULL;
+ 	use_syslog = 0;
+@@ -997,6 +1002,10 @@ main(int ac, char **av)
+ #endif
+ 		);
+ 
++#ifdef ENABLE_OPENSSL_FIPS
++	ssh_FIPS_check_status();
++#endif
++
+ 	/* Parse the configuration files */
+ 	process_config_files(host_arg, pw, 0);
+ 
+diff -pur old/ssh_api.c new/ssh_api.c
+--- old/ssh_api.c
++++ new/ssh_api.c
+@@ -81,6 +81,10 @@ ssh_init(struct ssh **sshp, int is_serve
+ 	int r;
+ 
+ 	if (!called) {
++#ifdef ENABLE_OPENSSL_FIPS
++		ssh_FIPS_mode_set_if_capable();
++		ssh_FIPS_check_status();
++#endif
+ #ifdef WITH_OPENSSL
+ 		OpenSSL_add_all_algorithms();
+ #endif /* WITH_OPENSSL */
+diff -pur old/ssh_config.5 new/ssh_config.5
+--- old/ssh_config.5
++++ new/ssh_config.5
+@@ -423,6 +423,13 @@ aes128-cbc,3des-cbc,blowfish-cbc,cast128
+ aes192-cbc,aes256-cbc,arcfour
+ .Ed
+ .Pp
++The following ciphers are FIPS-140 approved and are supported in FIPS-140 mode:
++.Bd -literal -offset indent
++aes128-ctr,aes192-ctr,aes256-ctr,
++aes128-gcm@openssh.com,aes256-gcm@openssh.com,
++aes128-cbc,3des-cbc,aes192-cbc,aes256-cbc
++.Ed
++.Pp
+ The list of available ciphers may also be obtained using the
+ .Fl Q
+ option of
+@@ -662,6 +669,8 @@ and
+ .Dq sha256 .
+ The default is
+ .Dq sha256 .
++In FIPS-140 mode the only supported option is
++.Dq sha256 .
+ .It Cm ForwardAgent
+ Specifies whether the connection to the authentication agent (if any)
+ will be forwarded to the remote machine.
+@@ -1110,6 +1119,16 @@ hmac-md5,hmac-sha1,hmac-ripemd160,
+ hmac-sha1-96,hmac-md5-96
+ .Ed
+ .Pp
++The following MACs are FIPS-140 approved and are supported in FIPS-140 mode:
++.Bd -literal -offset indent
++hmac-sha2-256-etm@openssh.com,
++hmac-sha2-512-etm@openssh.com,
++hmac-sha2-256,hmac-sha2-512,
++hmac-sha1-etm@openssh.com,
++hmac-sha1-96-etm@openssh.com
++hmac-sha1,hmac-sha1-96
++.Ed
++.Pp
+ The list of available MAC algorithms may also be obtained using the
+ .Fl Q
+ option of
+diff -pur old/sshconnect.c new/sshconnect.c
+--- old/sshconnect.c
++++ new/sshconnect.c
+@@ -523,8 +523,14 @@ send_client_banner(int connection_out, i
+ {
+ 	/* Send our own protocol version identification. */
+ 	if (compat20) {
++#ifdef ENABLE_OPENSSL_FIPS
++		xasprintf(&client_version_string, "SSH-%d.%d-%.100s%s\r\n",
++		    PROTOCOL_MAJOR_2, PROTOCOL_MINOR_2, SSH_VERSION,
++		    ssh_FIPS_mode() ? " FIPS" : "");
++#else
+ 		xasprintf(&client_version_string, "SSH-%d.%d-%.100s\r\n",
+ 		    PROTOCOL_MAJOR_2, PROTOCOL_MINOR_2, SSH_VERSION);
++#endif
+ 	} else {
+ 		xasprintf(&client_version_string, "SSH-%d.%d-%.100s\n",
+ 		    PROTOCOL_MAJOR_1, minor1, SSH_VERSION);
+diff -pur old/sshd.8 new/sshd.8
+--- old/sshd.8
++++ new/sshd.8
+@@ -86,6 +86,9 @@ rereads its configuration file when it r
+ by executing itself with the name and options it was started with, e.g.\&
+ .Pa /usr/sbin/sshd .
+ .Pp
++If sshd links with FIPS-capable OpenSSL, sshd runs in FIPS-140 mode.
++In FIPS-140 mode non-FIPS approved ciphers, MACs and digests are disabled.
++.Pp
+ The options are as follows:
+ .Bl -tag -width Ds
+ .It Fl 4
+diff -pur old/sshd.c new/sshd.c
+--- old/sshd.c
++++ new/sshd.c
+@@ -431,10 +431,18 @@ sshd_exchange_identification(int sock_in
+ 		minor = PROTOCOL_MINOR_1;
+ 	}
+ 
++#ifdef ENABLE_OPENSSL_FIPS
++	xasprintf(&server_version_string, "SSH-%d.%d-%.100s%s%s%s%s",
++	    major, minor, SSH_VERSION,
++	    ssh_FIPS_mode() ? " FIPS" : " ",
++	    *options.version_addendum == '\0' ? "" : " ",
++	    options.version_addendum, newline);
++#else
+ 	xasprintf(&server_version_string, "SSH-%d.%d-%.100s%s%s%s",
+ 	    major, minor, SSH_VERSION,
+ 	    *options.version_addendum == '\0' ? "" : " ",
+ 	    options.version_addendum, newline);
++#endif
+ 
+ 	/* Send our protocol version identification. */
+ 	if (roaming_atomicio(vwrite, sock_out, server_version_string,
+@@ -1501,6 +1509,10 @@ main(int ac, char **av)
+ 	/* Ensure that fds 0, 1 and 2 are open or directed to /dev/null */
+ 	sanitise_stdfd();
+ 
++#ifdef ENABLE_OPENSSL_FIPS
++	ssh_FIPS_mode_set_if_capable();
++#endif
++
+ 	/* Initialize configuration options to their default values. */
+ 	initialize_server_options(&options);
+ 
+@@ -1653,6 +1665,10 @@ main(int ac, char **av)
+ 	    SYSLOG_FACILITY_AUTH : options.log_facility,
+ 	    log_stderr || !inetd_flag);
+ 
++#ifdef ENABLE_OPENSSL_FIPS
++	ssh_FIPS_check_status();
++#endif
++
+ 	/*
+ 	 * Unset KRB5CCNAME, otherwise the user's session may inherit it from
+ 	 * root's environment
+diff -pur old/sshd_config.5 new/sshd_config.5
+--- old/sshd_config.5
++++ new/sshd_config.5
+@@ -481,6 +481,13 @@ aes128-ctr,aes192-ctr,aes256-ctr,
+ aes128-gcm@openssh.com,aes256-gcm@openssh.com
+ .Ed
+ .Pp
++The following ciphers are FIPS-140 approved and are supported in FIPS-140 mode:
++.Bd -literal -offset indent
++aes128-ctr,aes192-ctr,aes256-ctr,
++aes128-gcm@openssh.com,aes256-gcm@openssh.com,
++aes128-cbc,3des-cbc,aes192-cbc,aes256-cbc
++.Ed
++.Pp
+ The list of available ciphers may also be obtained using the
+ .Fl Q
+ option of
+@@ -577,6 +584,8 @@ and
+ .Dq sha256 .
+ The default is
+ .Dq sha256 .
++In FIPS-140 mode the only supported option is
++.Dq sha256 .
+ .It Cm ForceCommand
+ Forces the execution of the command specified by
+ .Cm ForceCommand ,
+@@ -1023,6 +1032,16 @@ umac-64@openssh.com,umac-128@openssh.com
+ hmac-sha2-256,hmac-sha2-512
+ .Ed
+ .Pp
++The following MACs are FIPS-140 approved and are supported in FIPS-140 mode:
++.Bd -literal -offset indent
++hmac-sha2-256-etm@openssh.com,
++hmac-sha2-512-etm@openssh.com,
++hmac-sha2-256,hmac-sha2-512,
++hmac-sha1-etm@openssh.com,
++hmac-sha1-96-etm@openssh.com
++hmac-sha1,hmac-sha1-96
++.Ed
++.Pp
+ The list of available MAC algorithms may also be obtained using the
+ .Fl Q
+ option of
