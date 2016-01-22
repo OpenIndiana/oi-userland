@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
@@ -44,6 +44,10 @@ file etc/openssl/openssl.cnf path=etc/openssl/default/openssl.cnf group=sys \
 file path=etc/openssl/openssl.cnf group=sys mode=0644 \
     original_name=SUNWopenssl:etc/sfw/openssl/openssl.cnf preserve=true
 dir  path=etc/openssl/private group=sys mode=0700
+file files/audit_tags path=etc/security/audit_tags.d/library:security:openssl \
+    group=sys
+file files/exec_attr path=etc/security/exec_attr.d/library:security:openssl \
+    group=sys
 link path=etc/sfw/openssl target=../openssl
 link path=lib/$(MACH64)/libcrypto.so target=libcrypto.so.1.0.0
 

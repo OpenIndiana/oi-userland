@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 # Header files.
@@ -51,6 +51,12 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 # Basic directories and a configuration file.
 file etc/openssl/openssl.cnf path=etc/openssl/fips-140/openssl.cnf group=sys \
     mode=0644 preserve=true
+file files/audit_tags \
+    path=etc/security/audit_tags.d/library:security:openssl:openssl-fips-140 \
+    group=sys
+file files/exec_attr \
+    path=etc/security/exec_attr.d/library:security:openssl:openssl-fips-140 \
+    group=sys
 link path=lib/$(MACH64)/libcrypto.so.1.0.0 \
     target=../openssl/fips-140/$(MACH64)/libcrypto.so.1.0.0 mediator=openssl \
     mediator-implementation=fips-140
