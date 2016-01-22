@@ -151,6 +151,8 @@ ROOTZPOOL_RESOURCE = 'rootzpool'
 # incompatible change such as concerning kernel zone live migration.
 HYPERVISOR_VERSION = '5.11'
 
+shared_storage = ['iscsi', 'fibre_channel']
+
 
 def lookup_resource(zone, resource):
     """Lookup specified resource from specified Solaris Zone."""
@@ -444,7 +446,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
     capabilities = {
         "has_imagecache": False,
-        "supports_recreate": False,
+        "supports_recreate": True,
         }
 
     def __init__(self, virtapi):
@@ -790,6 +792,28 @@ class SolarisZonesDriver(driver.ComputeDriver):
         """
         raise NotImplementedError()
 
+    def _rebuild_block_devices(self, context, instance, bdms, recreate):
+        root_ci = None
+        rootmp = instance['root_device_name']
+        for entry in bdms:
+            if entry['connection_info'] is None:
+                continue
+
+            if entry['device_name'] == rootmp:
+                root_ci = jsonutils.loads(entry['connection_info'])
+                continue
+
+            if not recreate:
+                self._volume_api.detach(context,
+                                        entry['connection_info']['serial'])
+
+        if root_ci is None:
+            msg = (_("Unable to find the root device for instance %s")
+                   % instance.display_name)
+            raise exception.NovaException(msg)
+
+        return root_ci
+
     def rebuild(self, context, instance, image_meta, injected_files,
                 admin_password, bdms, detach_block_devices,
                 attach_block_devices, network_info=None,
@@ -830,7 +854,75 @@ class SolarisZonesDriver(driver.ComputeDriver):
         :param preserve_ephemeral: True if the default ephemeral storage
                                    partition must be preserved on rebuild
         """
-        raise NotImplementedError()
+        # rebuild is not supported yet.
+        if not recreate:
+            raise NotImplementedError()
+
+        extra_specs = self._get_extra_specs(instance)
+        brand = extra_specs.get('zonecfg:brand', ZONE_BRAND_SOLARIS)
+        if recreate and brand == ZONE_BRAND_SOLARIS:
+                msg = (_("'%s' branded zones do not currently support "
+                         "evacuation.") % brand)
+                raise exception.NovaException(msg)
+
+        instance.task_state = task_states.REBUILD_BLOCK_DEVICE_MAPPING
+        instance.save(expected_task_state=[task_states.REBUILDING])
+
+        root_ci = self._rebuild_block_devices(context, instance, bdms,
+                                              recreate)
+
+        driver_type = root_ci['driver_volume_type']
+        # If image_meta is provided then the --on-shared-storage option
+        # was not used.
+        if image_meta:
+            # Check to make sure that the root device is actually local.
+            # If not then raise an exception
+            if driver_type in shared_storage:
+                msg = (_("Root device is on shared storage for instance '%s'")
+                       % instance['name'])
+                raise exception.NovaException(msg)
+
+            if recreate:
+                msg = (_("Evacuate a single host node is not supported"))
+                raise exception.NovaException(msg)
+        else:
+            # So the root device is not expected to be local so we can move
+            # forward with building the zone.
+            if driver_type not in shared_storage:
+                msg = (_("Root device is not on shared storage for instance"
+                         "'%s'") % instance['name'])
+                raise exception.NovaException(msg)
+
+        instance.task_state = task_states.REBUILD_SPAWNING
+        instance.save(
+            expected_task_state=[task_states.REBUILD_BLOCK_DEVICE_MAPPING])
+        inst_type = flavor_obj.Flavor.get_by_id(
+            nova_context.get_admin_context(read_deleted='yes'),
+            instance['instance_type_id'])
+        extra_specs = inst_type['extra_specs'].copy()
+
+        self._create_config(context, instance, network_info,
+                            root_ci, extra_specs, None)
+
+        name = instance['name']
+        zone = self._get_zone_by_name(name)
+        if zone is None:
+            raise exception.InstanceNotFound(instance_id=name)
+
+        zone.attach(['-x', 'initialize-hostdata'])
+
+        instance_uuid = instance.uuid
+        rootmp = instance['root_device_name']
+        for entry in bdms:
+            if (entry['connection_info'] is None or
+                    rootmp == entry['device_name']):
+                continue
+
+            connection_info = jsonutils.loads(entry['connection_info'])
+            mount = entry['device_name']
+            self.attach_volume(context, connection_info, instance, mount)
+
+        self._power_on(instance)
 
     def _get_extra_specs(self, instance):
         """Retrieve extra_specs of an instance."""
@@ -1315,10 +1407,13 @@ class SolarisZonesDriver(driver.ComputeDriver):
                    % (brand, name)))
             raise exception.NovaException(msg)
 
+        # XXX - Adding the REBUILDING task state, but we may want to
+        # check the sysconfig if the host is completely rebuilding.
         tstate = instance['task_state']
         if tstate not in [task_states.RESIZE_FINISH,
                           task_states.RESIZE_REVERTING,
-                          task_states.RESIZE_MIGRATING]:
+                          task_states.RESIZE_MIGRATING,
+                          task_states.REBUILD_SPAWNING]:
             sc_profile = extra_specs.get('install:sc_profile')
             if sc_profile is not None:
                 if os.path.isfile(sc_profile):
@@ -3671,7 +3766,30 @@ class SolarisZonesDriver(driver.ComputeDriver):
             Used in rebuild for HA implementation and required for validation
             of access to instance shared disk files
         """
-        return False
+        bdmobj = objects.BlockDeviceMappingList
+        mappings = bdmobj.get_by_instance_uuid(
+                nova_context.get_admin_context(),
+                instance['uuid'])
+
+        rootmp = instance['root_device_name']
+        for entry in mappings:
+            if entry['connection_info'] is None:
+                continue
+
+            if entry['device_name'] == rootmp:
+                root_ci = jsonutils.loads(entry['connection_info'])
+                break
+
+        if root_ci is None:
+            msg = (_("Unable to find the root device for instance %s",
+                     instance.display_name))
+            raise exception.NovaException(msg)
+
+        driver_type = root_ci['driver_volume_type']
+        if driver_type in shared_storage:
+            return True
+        else:
+            return False
 
     def register_event_listener(self, callback):
         """Register a callback to receive events.
