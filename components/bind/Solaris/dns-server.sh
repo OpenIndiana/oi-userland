@@ -20,34 +20,39 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2007, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2016 Hans Rosenfeld <rosenfeld@grumpf.hope-2000.org>
 #
-
 # smf_method(5) start/stop script required for server DNS
 
 . /lib/svc/share/smf_include.sh
 
-result=${SMF_EXIT_OK}
+mount_chroot ()
+{
+    c=$1
+    shift
+    for f in $*; do
+        if [ -z "${f}" -o ! -f "${f}" -o \
+             -z "${c}" -o ! -d "${c}" ]; then
+             exit ${SMF_EXIT_ERR_CONFIG}
+        fi
 
-# Read command line arguments
-method="$1"		# %m
-instance="$2" 		# %i
+        umount ${c}/${f} >/dev/null 2>&1
+        mkdir -p `dirname ${c}/${f}`
+        touch ${c}/${f}
+        mount -Flofs ${f} ${c}/${f}
+    done
+}
 
-# Set defaults; SMF_FMRI should have been set, but just in case.
-if [ -z "$SMF_FMRI" ]; then
-    SMF_FMRI="svc:/network/dns/server:${instance}"
-fi
-server="/usr/sbin/named"
-I=`/usr/bin/basename $0`
-
-case "$method" in
-'start')
+get_config ()
+{
     configuration_file=/etc/named.conf
     rndc_config_file=/etc/rndc.conf
     rndc_key_file=/etc/rndc.key
     rndc_cmd_opts="-a"
+    libraries="/lib/openssl/engines/libpk11.so /usr/lib/security/pkcs11_kernel.so.1"
     cmdopts=""
     properties="debug_level ip_interfaces listen_on_port
-	threads chroot_dir configuration_file server"
+	threads chroot_dir configuration_file server user"
 
     for prop in $properties
     do
@@ -99,40 +104,97 @@ case "$method" in
 	    set -- `echo ${value} | /usr/bin/sed -e  's/\\\\//g'`
 	    server=$@
 	    ;;
+	'user')
+	    cmdopts="${cmdopts} -u ${value}"
+	    cmduser=${value};
+	    ;;
 	esac
     done
+
+    configuration_dir=$(sed -n -e 's,^[[:space:]]*directory.*"\(.*\)";,\1,p' \
+        ${configuration_file})
+    [ "${configuration_dir}" == "" ] && configuration_dir=/etc/namedb
+
+    configuration_files=$(sed -n -e \
+        "s,^[[:space:]]*file.*\"\(.*\)\";,${configuration_dir}/\1,p" \
+        ${configuration_file} | sort -u)
+    configuration_files="${configuration_files} ${configuration_file}"    
+}
+
+result=${SMF_EXIT_OK}
+
+# Read command line arguments
+method="$1"		# %m
+instance="$2" 		# %i
+contract="$3"		# %{restarter/contract}
+
+# Set defaults; SMF_FMRI should have been set, but just in case.
+if [ -z "$SMF_FMRI" ]; then
+    SMF_FMRI="svc:/network/dns/server:${instance}"
+fi
+server="/usr/sbin/named"
+I=`/usr/bin/basename $0`
+
+case "$method" in
+'start')
+    get_config
+
+    # Check configuration file exists.
+    if [ ! -f ${configuration_file} ]; then
+        msg="$I : Configuration file ${configuration_file} does not exist!"
+        echo ${msg} >&2
+        /usr/bin/logger -p daemon.error ${msg}
+        # dns-server should be placed in maintenance state.
+        result=${SMF_EXIT_ERR_CONFIG}
+    fi
 
     # If chroot option is set, note zones(5) are preferred, then
     # configuration file lives under chroot directory.
     if [ "${chroot_dir}" != "" ]; then
-      configuration_file=${chroot_dir}${configuration_file}
-      rndc_config_file=${chroot_dir}${rndc_config_file}
-      rndc_key_file=${chroot_dir}${rndc_key_file}
-      rndc_cmd_opts="${rndc_cmd_opts} -t ${chroot_dir}"
+        if [ "${chroot_dir}" = "/" ]; then
+            msg="$I : chroot_dir must not be /"
+            echo ${msg} >&2
+            /usr/bin/logger -p daemon.error ${msg}
+            # dns-server should be placed in maintenance state.
+            exit ${SMF_EXIT_ERR_CONFIG}
+        fi
+
+        server="env LD_NOLAZYLOAD=1 ${server}"
+
+        mkdir -p ${chroot_dir}
+
+        for dev in crypto null poll random urandom; do
+            rm -f ${chroot_dir}/dev/${dev}
+            pax -rw -H -pe /dev/${dev} ${chroot_dir}
+        done
+
+        mkdir -p ${chroot_dir}/etc/crypto
+        echo "/usr/lib/security/pkcs11_kernel.so.1" > ${chroot_dir}/etc/crypto/pkcs11.conf
+
+        mount_chroot ${chroot_dir} ${configuration_files} ${libraries}
+
+        mkdir -p ${chroot_dir}/var/run/named
+        chown ${cmduser}:${cmduser} ${chroot_dir}/var/run/named
+
+        configuration_file=${chroot_dir}${configuration_file}
+        rndc_config_file=${chroot_dir}${rndc_config_file}
+        rndc_key_file=${chroot_dir}${rndc_key_file}
+        rndc_cmd_opts="${rndc_cmd_opts} -t ${chroot_dir}"
     fi
 
     # Check if the rndc config file exists.
     if [ ! -f ${rndc_config_file} ]; then
-      # If not, check if the default rndc key file exists.
-      if [ ! -f ${rndc_key_file} ]; then
-        echo "$I: Creating default rndc key file: ${rndc_key_file}." >&2
-        /usr/sbin/rndc-confgen ${rndc_cmd_opts}
-        if [ $? -ne 0 ]; then
-          echo "$I : Warning: rndc configuration failed! Use of 'rndc' to" \
+        # If not, check if the default rndc key file exists.
+        if [ ! -f ${rndc_key_file} ]; then
+            echo "$I: Creating default rndc key file: ${rndc_key_file}." >&2
+            /usr/sbin/rndc-confgen ${rndc_cmd_opts}
+            if [ $? -ne 0 ]; then
+                echo "$I : Warning: rndc configuration failed! Use of 'rndc' to" \
 		    "control 'named' may fail and 'named' may report further error" \
 		    "messages to the system log. This is not fatal. For more" \
 		    "information see rndc(1M) and rndc-confgen(1M)." >&2
+            fi
         fi
-      fi
-    fi
-
-    # Check configuration file exists.
-    if [ ! -f ${configuration_file} ]; then
-      msg="$I : Configuration file ${configuration_file} does not exist!"
-      echo ${msg} >&2
-      /usr/bin/logger -p daemon.error ${msg}
-      # dns-server should be placed in maintenance state.
-      result=${SMF_EXIT_ERR_CONFIG}
     fi
 
     if [ ${result} = ${SMF_EXIT_OK} ]; then
@@ -140,20 +202,29 @@ case "$method" in
 	# Execute named(1M) with relevant command line options.  Note
 	# the server forks before reading named.conf(4) and so a
 	# good exit code here does not mean the service is ready.
-	${server} ${cmdopts}
+	ppriv -s EIP-sys_devices,sys_mount,file_chown_self -e ${server} ${cmdopts}
 	result=$?
 	if [ $result -ne 0 ]; then
-	  echo "$I : start failed! Check syslog for further information." >&2
+	    echo "$I : start failed! Check syslog for further information." >&2
         fi
     fi
     ;;
 'stop')
-	smf_kill_contract ${contract} TERM 1
-	[ $? -ne 0 ] && exit 1
-	;;
+    get_config
+
+    smf_kill_contract ${contract} TERM 1
+    [ $? -ne 0 ] && exit 1
+
+    if [ "${chroot_dir}" != "" -a "${chroot_dir}" != "/" ]; then
+        for file in ${configuration_files} ${libraries}; do
+            umount ${chroot_dir}/${file}
+        done
+    fi
+
+    ;;
 *)
-	echo "Usage: $I [stop|start] <instance>" >&2
-	exit 1
-	;;
+    echo "Usage: $I [stop|start] <instance>" >&2
+    exit 1
+    ;;
 esac
 exit ${result}

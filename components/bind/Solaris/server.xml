@@ -23,6 +23,7 @@ CDDL HEADER END
 <!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
 <!--
 Copyright (c) 2004, 2011, Oracle and/or its affiliates. All rights reserved.
+Copyright 2016 Hans Rosenfeld <rosenfeld@grumpf.hope-2000.org>
 -->
 
 <!-- Portions Copyright 2007 Vedran Bender -->
@@ -89,11 +90,53 @@ Copyright (c) 2004, 2011, Oracle and/or its affiliates. All rights reserved.
 	  		size).
 		proc_chroot:
 	  		Permit use of chroot(2).
+		proc_setid:
+			Permit setting of user/group ids.
+		sys_device:
+			Permit creation of devices (for chroot).
+		file_chown_self:
+			Permit giving away files.
+
 	  -->
 	  <method_credential
 	    user='root'
 	    group='root'
-	    privileges='basic,!proc_session,!proc_info,!file_link_any,net_privaddr,file_dac_read,file_dac_search,sys_resource,proc_chroot' />
+	    privileges='basic,!proc_session,!proc_info,!file_link_any,net_privaddr,file_dac_read,file_dac_search,sys_resource,proc_chroot,sys_devices,proc_setid,file_chown_self' />
+	</method_context>
+      </exec_method>
+
+      <exec_method
+	type='method'
+	name='stop'
+	exec='/lib/svc/method/dns-server %m %i %{restarter/contract}'
+	timeout_seconds='60' >
+	<method_context>
+	  <!--
+		privileges: (see privileges(5) and /etc/security/priv_names)
+		file_dac_read, file_dac_search:
+			Necessary for reading the configuration file
+			even it is restricted by the file permission.
+		net_privaddr:
+			Bind to a privileged port number.
+		sys_resource:
+			Permit the setting of resource limits (eg. stack
+			size).
+		proc_chroot:
+			Permit use of chroot(2).
+		proc_setid:
+			Permit setting of user/group ids.
+		sys_device:
+			Permit creation of devices (for chroot).
+		sys_mount:
+			Permit mounting of filessystems (for chroot).
+		file_chown_self:
+			Permit giving away files.
+
+	  -->
+	  <method_credential
+	    user='root'
+	    group='root'
+	    privileges='basic,!proc_session,!proc_info,!file_link_any,net_privaddr,file_dac_read,file_dac_search,sys_resource,proc_chroot,sys_devices,sys_mount,proc_setid,file_chown_self' />
 	</method_context>
       </exec_method>
 
@@ -171,6 +214,12 @@ Copyright (c) 2004, 2011, Oracle and/or its affiliates. All rights reserved.
 		Equivalent command line option '-t <pathname>'.
 	-->
 	<propval name='chroot_dir' type='astring' value='' />
+
+	<!--
+		user: Run bind as the specified users, using the -u
+		command line option.
+	-->
+	<propval name='user' type='astring' value='' />
 
       </property_group>
 
