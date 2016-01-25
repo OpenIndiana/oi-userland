@@ -1,0 +1,27 @@
+This patch was taken from the Desktop consolidation.
+
+As we do not ship libspectre-uninstalled.pc in our published package and
+there are absolutely no useful comments in the Desktop libspectre.spec file
+for it, I haven't a clue what it does or whether it needs to be sent upstream.
+
+diff -urN libspectre-0.2.6/configure.ac ../SUNWgnome-pdf-viewer-2.30.0.hacked-p1/libspectre-0.2.6/configure.ac
+--- libspectre-0.2.6/configure.ac	2010-06-10 12:07:18.000000000 +0100
++++ ../SUNWgnome-pdf-viewer-2.30.0.hacked-p1/libspectre-0.2.6/configure.ac	2010-06-22 11:57:59.194356931 +0100
+@@ -297,6 +297,7 @@
+ Doxyfile
+ libspectre/Makefile
+ libspectre/spectre-version.h
++libspectre-uninstalled.pc
+ test/Makefile
+ libspectre.pc
+ ])
+diff -urN libspectre-0.2.6/libspectre-uninstalled.pc.in ../SUNWgnome-pdf-viewer-2.30.0.hacked-p1/libspectre-0.2.6/libspectre-uninstalled.pc.in
+--- libspectre-0.2.6/libspectre-uninstalled.pc.in	1970-01-01 01:00:00.000000000 +0100
++++ ../SUNWgnome-pdf-viewer-2.30.0.hacked-p1/libspectre-0.2.6/libspectre-uninstalled.pc.in	2010-06-22 12:04:14.256472955 +0100
+@@ -0,0 +1,6 @@
++Name: libspectre
++Description: PS rendering library - uninstalled
++Version: @VERSION@
++
++Libs: -L${pc_top_builddir}/${pcfiledir}/libspectre/.libs -lspectre
++Cflags: -I${pc_top_builddir}/${pcfiledir}
