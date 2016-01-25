@@ -1,0 +1,219 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file path=are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file path=except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file path=and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
+set name=pkg.fmri \
+    value=pkg:/system/management/mcollective-$(RUBYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary \
+    value="MCollective - framework for building server orchestration."
+set name=pkg.description \
+    value="MCollective is a framework for building server orchestration or parallel job execution systems. Most people use it to programmatically execute administrative tasks on clusters of servers. In Solaris, we plan to use this with Puppet for managing configurations in large IT infrastructures."
+set name=com.oracle.info.description \
+    value="MCollective - framework for building server orchestration."
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value=org.opensolaris.category.2008:Development/Ruby \
+    value="org.opensolaris.category.2008:System/Administration and Configuration"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2015/291
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+file path=etc/mcollective/client.cfg overlay=allow preserve=renamenew
+file path=etc/mcollective/data-help.erb
+file path=etc/mcollective/discovery-help.erb
+file path=etc/mcollective/facts.yaml
+file path=etc/mcollective/metadata-help.erb
+file path=etc/mcollective/rpc-help.erb
+file path=etc/mcollective/server.cfg overlay=allow preserve=renamenew
+file files/mcollective.xml path=lib/svc/manifest/application/mcollective.xml
+file files/mcollective path=lib/svc/method/mcollective
+file path=usr/bin/mco
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/agent.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/agent/discovery.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/agent/rpcutil.ddl
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/agent/rpcutil.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/agents.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/aggregate.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/aggregate/average.ddl
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/aggregate/average.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/aggregate/base.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/aggregate/result.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/aggregate/result/base.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/aggregate/result/collection_result.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/aggregate/result/numeric_result.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/aggregate/sum.ddl
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/aggregate/sum.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/aggregate/summary.ddl
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/aggregate/summary.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/application.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/application/completion.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/application/facts.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/application/find.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/application/help.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/application/inventory.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/application/ping.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/application/plugin.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/application/rpc.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/applications.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/audit/logfile.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/cache.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/client.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/config.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/connector.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/connector/activemq.ddl
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/connector/activemq.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/connector/base.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/connector/rabbitmq.ddl
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/connector/rabbitmq.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/data.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/data/agent_data.ddl
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/data/agent_data.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/data/base.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/data/collective_data.ddl
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/data/collective_data.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/data/fact_data.ddl
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/data/fact_data.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/data/fstat_data.ddl
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/data/fstat_data.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/data/result.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/ddl.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/ddl/agentddl.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/ddl/base.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/ddl/dataddl.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/ddl/discoveryddl.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/ddl/validatorddl.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/discovery.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/discovery/flatfile.ddl
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/discovery/flatfile.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/discovery/mc.ddl
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/discovery/mc.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/discovery/stdin.ddl
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/discovery/stdin.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/exceptions.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/facts.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/facts/base.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/facts/yaml_facts.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/generators.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/generators/agent_generator.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/generators/base.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/generators/data_generator.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/generators/templates/action_snippet.erb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/generators/templates/data_input_snippet.erb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/generators/templates/ddl.erb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/generators/templates/plugin.erb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/log.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/logger.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/logger/base.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/logger/console_logger.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/logger/file_logger.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/logger/syslog_logger.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/matcher.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/matcher/parser.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/matcher/scanner.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/message.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/monkey_patches.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/optionparser.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/pluginmanager.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/pluginpackager.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/pluginpackager/agent_definition.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/pluginpackager/debpackage_packager.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/pluginpackager/modulepackage_packager.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/pluginpackager/ospackage_packager.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/pluginpackager/rpmpackage_packager.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/pluginpackager/standard_definition.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/pluginpackager/templates/debian/Makefile.erb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/pluginpackager/templates/debian/changelog.erb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/pluginpackager/templates/debian/compat.erb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/pluginpackager/templates/debian/control.erb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/pluginpackager/templates/debian/copyright.erb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/pluginpackager/templates/debian/rules.erb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/pluginpackager/templates/module/Modulefile.erb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/pluginpackager/templates/module/README.md.erb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/pluginpackager/templates/module/_manifest.pp.erb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/pluginpackager/templates/redhat/rpm_spec.erb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/registration.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/registration/agentlist.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/registration/base.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/rpc.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/rpc/actionrunner.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/rpc/agent.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/rpc/audit.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/rpc/client.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/rpc/helpers.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/rpc/progress.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/rpc/reply.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/rpc/request.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/rpc/result.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/rpc/stats.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/runner.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/runnerstats.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/security.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/security/aes_security.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/security/base.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/security/psk.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/security/ssl.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/shell.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/ssl.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/unix_daemon.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/util.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/validator.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/validator/array_validator.ddl
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/validator/array_validator.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/validator/ipv4address_validator.ddl
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/validator/ipv4address_validator.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/validator/ipv6address_validator.ddl
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/validator/ipv6address_validator.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/validator/length_validator.ddl
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/validator/length_validator.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/validator/regex_validator.ddl
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/validator/regex_validator.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/validator/shellsafe_validator.ddl
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/validator/shellsafe_validator.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/validator/typecheck_validator.ddl
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/validator/typecheck_validator.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/vendor.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/vendor/load_systemu.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/vendor/require_vendored.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/vendor/systemu/LICENSE
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/vendor/systemu/README
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/vendor/systemu/README.erb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/vendor/systemu/Rakefile
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/vendor/systemu/lib/systemu.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/vendor/systemu/samples/a.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/vendor/systemu/samples/b.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/vendor/systemu/samples/c.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/vendor/systemu/samples/d.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/vendor/systemu/samples/e.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/vendor/systemu/samples/f.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/vendor/systemu/systemu.gemspec
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/mcollective/windows_daemon.rb
+file path=usr/ruby/$(RUBY_VERSION)/sbin/mcollectived
+
+# Make mcollectived available in /usr/sbin
+link path=usr/sbin/mcollectived \
+    target=../ruby/$(RUBY_VERSION)/sbin/mcollectived mediator=ruby \
+    mediator-version=$(RUBY_VERSION)
+license mcollective.license license="Apache v2.0"
+

@@ -1,0 +1,37 @@
+Changes needed in client.cfg, mainly :
+    Making use of RabbitMQ (default is ActiveMQ)
+    The default port used to connect to RabbiMQ is 61613
+    Default user : 'mcollective' & passwd : 'changeme'
+
+NOTE : This patch is developed in-house (and Solaris specific)
+
+--- mcollective-2.8.2/etc/client.cfg.dist.orig      2015-05-14 08:50:32.000000000 -0700
++++ mcollective-2.8.2/etc/client.cfg.dist       2015-11-19 12:01:30.945604310 -0800
+@@ -1,6 +1,6 @@
+ main_collective = mcollective
+ collectives = mcollective
+-libdir = /usr/libexec/mcollective
++libdir = /usr/share/mcollective
+ logger_type = console
+ loglevel = warn
+
+@@ -8,12 +8,13 @@ loglevel = warn
+ securityprovider = psk
+ plugin.psk = unset
+
+-connector = activemq
+-plugin.activemq.pool.size = 1
+-plugin.activemq.pool.1.host = stomp1
+-plugin.activemq.pool.1.port = 6163
+-plugin.activemq.pool.1.user = mcollective
+-plugin.activemq.pool.1.password = marionette
++connector = rabbitmq
++plugin.rabbitmq.vhost = /mco
++plugin.rabbitmq.pool.size = 1
++plugin.rabbitmq.pool.1.host = localhost
++plugin.rabbitmq.pool.1.port = 61613
++plugin.rabbitmq.pool.1.user = mcollective
++plugin.rabbitmq.pool.1.password = changeme
+
+ # Facts
+ factsource = yaml
