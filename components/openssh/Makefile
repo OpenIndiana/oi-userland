@@ -24,6 +24,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openssh
 COMPONENT_VERSION=	7.1p2
+COMPONENT_REVISION=	1
 HUMAN_VERSION=		$(COMPONENT_VERSION)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 
@@ -73,8 +74,9 @@ CONFIGURE_OPTIONS += --with-audit=solaris
 CONFIGURE_OPTIONS += --with-libedit
 CONFIGURE_OPTIONS += --with-kerberos5
 CONFIGURE_OPTIONS += --with-pam
-CONFIGURE_OPTIONS += --with-sandbox=no
+CONFIGURE_OPTIONS += --with-sandbox=solaris
 CONFIGURE_OPTIONS += --with-solaris-contracts
+CONFIGURE_OPTIONS += --with-solaris-privs
 CONFIGURE_OPTIONS += --with-tcp-wrappers
 CONFIGURE_OPTIONS += --with-4in6
 CONFIGURE_OPTIONS += --with-xauth=/usr/bin/xauth

@@ -1,7 +1,7 @@
-From 6d74600c9a8d52d7b03fd4274a415e980b77d4b6 Mon Sep 17 00:00:00 2001
+From b60fe491735349ba901b371dc8a0d1cd5ab163da Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:37:01 -0700
-Subject: [PATCH 14/30] Solaris Auditing support
+Subject: [PATCH 15/36] Solaris Auditing support
 
 #
 # Add Solaris Auditing configuration (--with-audit=solaris) to openssh-6.5p1.
@@ -70,10 +70,10 @@ index cbbb2df..765d4aa 100644
  --with-pam enables PAM support. If PAM support is compiled in, it must
  also be enabled in sshd_config (refer to the UsePAM directive).
 diff --git a/Makefile.in b/Makefile.in
-index 5bf2a06..e19c665 100644
+index 121a261..62e6a84 100644
 --- a/Makefile.in
 +++ b/Makefile.in
-@@ -100,7 +100,7 @@ SSHOBJS= ssh.o readconf.o clientloop.o sshtty.o \
+@@ -101,7 +101,7 @@ SSHOBJS= ssh.o readconf.o clientloop.o sshtty.o \
  	roaming_common.o roaming_client.o
  
  SSHDOBJS=sshd.o auth-rhosts.o auth-passwd.o auth-rsa.o auth-rh-rsa.o \
@@ -676,10 +676,10 @@ index 0000000..abf870c
 +}
 +#endif	/* USE_SOLARIS_AUDIT */
 diff --git a/configure.ac b/configure.ac
-index 81edc01..27b95cb 100644
+index 2985819..b38b1b3 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -1518,7 +1518,7 @@ AC_ARG_WITH([libedit],
+@@ -1547,7 +1547,7 @@ AC_ARG_WITH([libedit],
  
  AUDIT_MODULE=none
  AC_ARG_WITH([audit],
@@ -688,7 +688,7 @@ index 81edc01..27b95cb 100644
  	[
  	  AC_MSG_CHECKING([for supported audit module])
  	  case "$withval" in
-@@ -1555,6 +1555,13 @@ AC_ARG_WITH([audit],
+@@ -1584,6 +1584,13 @@ AC_ARG_WITH([audit],
  		SSHDLIBS="$SSHDLIBS -laudit"
  		AC_DEFINE([USE_LINUX_AUDIT], [1], [Use Linux audit module])
  		;;
@@ -719,10 +719,10 @@ index fa0ccba..f2c1678 100644
  #  define __func__ __FUNCTION__
  #elif !defined(HAVE___func__)
 diff --git a/sshd.c b/sshd.c
-index 5a00ae2..f577f75 100644
+index 7e519d4..87032ec 100644
 --- a/sshd.c
 +++ b/sshd.c
-@@ -2228,7 +2228,9 @@ main(int ac, char **av)
+@@ -2234,7 +2234,9 @@ main(int ac, char **av)
  	}
  
  #ifdef SSH_AUDIT_EVENTS
@@ -732,7 +732,7 @@ index 5a00ae2..f577f75 100644
  #endif
  
  #ifdef GSSAPI
-@@ -2258,6 +2260,10 @@ main(int ac, char **av)
+@@ -2264,6 +2266,10 @@ main(int ac, char **av)
  		do_pam_session();
  	}
  #endif
@@ -744,5 +744,5 @@ index 5a00ae2..f577f75 100644
  	/*
  	 * In privilege separation, we fork another child and prepare
 -- 
-2.3.2 (Apple Git-55)
+2.5.4 (Apple Git-61)
 

@@ -1,0 +1,36 @@
+From 8a430bc35d1ee437ce913eefeca1d04d759fc145 Mon Sep 17 00:00:00 2001
+From: "djm@openbsd.org" <djm@openbsd.org>
+Date: Mon, 21 Sep 2015 04:31:00 +0000
+Subject: [PATCH 01/36] upstream commit
+
+fix possible hang on closed output; bz#2469 reported by Tomas
+ Kuthan ok markus@
+
+Upstream-ID: f7afd41810f8540f524284f1be6b970859f94fe3
+---
+ packet.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/packet.c b/packet.c
+index 7b5c419..11fe25c 100644
+--- a/packet.c
++++ b/packet.c
+@@ -1,4 +1,4 @@
+-/* $OpenBSD: packet.c,v 1.214 2015/08/20 22:32:42 deraadt Exp $ */
++/* $OpenBSD: packet.c,v 1.215 2015/09/21 04:31:00 djm Exp $ */
+ /*
+  * Author: Tatu Ylonen <ylo@cs.hut.fi>
+  * Copyright (c) 1995 Tatu Ylonen <ylo@cs.hut.fi>, Espoo, Finland
+@@ -2041,7 +2041,8 @@ ssh_packet_write_wait(struct ssh *ssh)
+ 	    NFDBITS), sizeof(fd_mask));
+ 	if (setp == NULL)
+ 		return SSH_ERR_ALLOC_FAIL;
+-	ssh_packet_write_poll(ssh);
++	if ((r = ssh_packet_write_poll(ssh)) != 0)
++		return r;
+ 	while (ssh_packet_have_data_to_write(ssh)) {
+ 		memset(setp, 0, howmany(state->connection_out + 1,
+ 		    NFDBITS) * sizeof(fd_mask));
+-- 
+2.5.4 (Apple Git-61)
+

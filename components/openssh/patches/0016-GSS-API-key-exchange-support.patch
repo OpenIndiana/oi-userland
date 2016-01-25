@@ -1,7 +1,7 @@
-From d78a5081159638c0ab4a4ae655ba5c6773ec5298 Mon Sep 17 00:00:00 2001
+From d49f189d9549a316d9213a441323d72b8f40cccf Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:37:24 -0700
-Subject: [PATCH 15/30] GSS-API key exchange support
+Subject: [PATCH 16/36] GSS-API key exchange support
 
 ---
  Makefile.in    |   3 +-
@@ -35,7 +35,7 @@ Subject: [PATCH 15/30] GSS-API key exchange support
  create mode 100644 kexgsss.c
 
 diff --git a/Makefile.in b/Makefile.in
-index e19c665..29dc088 100644
+index 62e6a84..0148742 100644
 --- a/Makefile.in
 +++ b/Makefile.in
 @@ -87,6 +87,7 @@ LIBSSH_OBJS=${LIBOPENSSH_OBJS} \
@@ -46,7 +46,7 @@ index e19c665..29dc088 100644
  	ssh-pkcs11.o smult_curve25519_ref.o \
  	poly1305.o chacha.o cipher-chachapoly.o \
  	ssh-ed25519.o digest-openssl.o digest-libc.o hmac.o \
-@@ -107,7 +108,7 @@ SSHDOBJS=sshd.o auth-rhosts.o auth-passwd.o auth-rsa.o auth-rh-rsa.o \
+@@ -108,7 +109,7 @@ SSHDOBJS=sshd.o auth-rhosts.o auth-passwd.o auth-rsa.o auth-rh-rsa.o \
  	auth-skey.o auth-bsdauth.o auth2-hostbased.o auth2-kbdint.o \
  	auth2-none.o auth2-passwd.o auth2-pubkey.o \
  	monitor_mm.o monitor.o monitor_wrap.o auth-krb5.o \
@@ -449,7 +449,7 @@ index 209ffe8..a45d8fd 100644
 -
  #endif
 diff --git a/kex.c b/kex.c
-index 5100c66..2683b11 100644
+index b777b7d..ad0598e 100644
 --- a/kex.c
 +++ b/kex.c
 @@ -55,6 +55,10 @@
@@ -1398,7 +1398,7 @@ index de4a08f..5c9b2b7 100644
  
  #ifdef USE_PAM
 diff --git a/readconf.c b/readconf.c
-index 0b48134..002b781 100644
+index db37809..50254b6 100644
 --- a/readconf.c
 +++ b/readconf.c
 @@ -147,6 +147,7 @@ typedef enum {
@@ -1798,10 +1798,10 @@ index 95593b9..54ddccb 100644
  
  int
 diff --git a/sshd.c b/sshd.c
-index f577f75..1e99488 100644
+index 87032ec..6215b2c 100644
 --- a/sshd.c
 +++ b/sshd.c
-@@ -1827,10 +1827,13 @@ main(int ac, char **av)
+@@ -1833,10 +1833,13 @@ main(int ac, char **av)
  		logit("Disabling protocol version 1. Could not load host key");
  		options.protocol &= ~SSH_PROTO_1;
  	}
@@ -1815,7 +1815,7 @@ index f577f75..1e99488 100644
  	if (!(options.protocol & (SSH_PROTO_1|SSH_PROTO_2))) {
  		logit("sshd: no hostkeys available -- exiting.");
  		exit(1);
-@@ -2588,6 +2591,48 @@ do_ssh2_kex(void)
+@@ -2594,6 +2597,48 @@ do_ssh2_kex(void)
  	myproposal[PROPOSAL_SERVER_HOST_KEY_ALGS] = compat_pkalg_proposal(
  	    list_hostkey_types());
  
@@ -1864,7 +1864,7 @@ index f577f75..1e99488 100644
  	/* start key exchange */
  	if ((r = kex_setup(active_state, myproposal)) != 0)
  		fatal("kex_setup: %s", ssh_err(r));
-@@ -2602,6 +2647,13 @@ do_ssh2_kex(void)
+@@ -2608,6 +2653,13 @@ do_ssh2_kex(void)
  # endif
  #endif
  	kex->kex[KEX_C25519_SHA256] = kexc25519_server;
@@ -1937,5 +1937,5 @@ index c8d3cdd..47bd017 100644
  };
  
 -- 
-2.3.2 (Apple Git-55)
+2.5.4 (Apple Git-61)
 

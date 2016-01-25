@@ -1,7 +1,7 @@
-From 0b784f8f36fc30f8722e784777fe012062beb0d3 Mon Sep 17 00:00:00 2001
+From 310f67442b9faf22eb3a30a614202cdd04f99119 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:34:55 -0700
-Subject: [PATCH 04/30] Reorganise man pages into Illumos numbering, adjust
+Subject: [PATCH 06/36] Reorganise man pages into Illumos numbering, adjust
  text
 
 ---
@@ -10,6 +10,7 @@ Subject: [PATCH 04/30] Reorganise man pages into Illumos numbering, adjust
  moduli.5             |  127 ----
  sftp-server.1m       |  170 +++++
  sftp-server.8        |  170 -----
+ ssh-keygen.1         |    6 +-
  ssh-keysign.1m       |   93 +++
  ssh-keysign.8        |   93 ---
  ssh-pkcs11-helper.1m |   43 ++
@@ -20,7 +21,7 @@ Subject: [PATCH 04/30] Reorganise man pages into Illumos numbering, adjust
  sshd.8               |  971 ----------------------------
  sshd_config.4        | 1736 ++++++++++++++++++++++++++++++++++++++++++++++++++
  sshd_config.5        | 1736 --------------------------------------------------
- 15 files changed, 4877 insertions(+), 4877 deletions(-)
+ 16 files changed, 4879 insertions(+), 4881 deletions(-)
  create mode 100644 moduli.4
  delete mode 100644 moduli.5
  create mode 100644 sftp-server.1m
@@ -37,12 +38,12 @@ Subject: [PATCH 04/30] Reorganise man pages into Illumos numbering, adjust
  delete mode 100644 sshd_config.5
 
 diff --git a/Makefile.in b/Makefile.in
-index 8e52bca..0dd46b1 100644
+index bc4660f..9f953e1 100644
 --- a/Makefile.in
 +++ b/Makefile.in
-@@ -112,8 +112,8 @@ SSHDOBJS=sshd.o auth-rhosts.o auth-passwd.o auth-rsa.o auth-rh-rsa.o \
+@@ -113,8 +113,8 @@ SSHDOBJS=sshd.o auth-rhosts.o auth-passwd.o auth-rsa.o auth-rh-rsa.o \
  	sandbox-null.o sandbox-rlimit.o sandbox-systrace.o sandbox-darwin.o \
- 	sandbox-seccomp-filter.o sandbox-capsicum.o
+ 	sandbox-seccomp-filter.o sandbox-capsicum.o sandbox-solaris.o
  
 -MANPAGES	= moduli.5.out scp.1.out ssh-add.1.out ssh-agent.1.out ssh-keygen.1.out ssh-keyscan.1.out ssh.1.out sshd.8.out sftp-server.8.out sftp.1.out ssh-keysign.8.out ssh-pkcs11-helper.8.out sshd_config.5.out ssh_config.5.out
 -MANPAGES_IN	= moduli.5 scp.1 ssh-add.1 ssh-agent.1 ssh-keygen.1 ssh-keyscan.1 ssh.1 sshd.8 sftp-server.8 sftp.1 ssh-keysign.8 ssh-pkcs11-helper.8 sshd_config.5 ssh_config.5
@@ -51,7 +52,7 @@ index 8e52bca..0dd46b1 100644
  MANTYPE		= @MANTYPE@
  
  CONFIGFILES=sshd_config.out ssh_config.out moduli.out
-@@ -307,8 +307,8 @@ install-files:
+@@ -308,8 +308,8 @@ install-files:
  	$(srcdir)/mkinstalldirs $(DESTDIR)$(sbindir)
  	$(srcdir)/mkinstalldirs $(DESTDIR)$(mandir)
  	$(srcdir)/mkinstalldirs $(DESTDIR)$(mandir)/$(mansubdir)1
@@ -62,7 +63,7 @@ index 8e52bca..0dd46b1 100644
  	$(srcdir)/mkinstalldirs $(DESTDIR)$(libexecdir)
  	(umask 022 ; $(srcdir)/mkinstalldirs $(DESTDIR)$(PRIVSEP_PATH))
  	$(INSTALL) -m 0755 $(STRIP_OPT) ssh$(EXEEXT) $(DESTDIR)$(bindir)/ssh$(EXEEXT)
-@@ -328,14 +328,14 @@ install-files:
+@@ -329,14 +329,14 @@ install-files:
  	$(INSTALL) -m 644 ssh-agent.1.out $(DESTDIR)$(mandir)/$(mansubdir)1/ssh-agent.1
  	$(INSTALL) -m 644 ssh-keygen.1.out $(DESTDIR)$(mandir)/$(mansubdir)1/ssh-keygen.1
  	$(INSTALL) -m 644 ssh-keyscan.1.out $(DESTDIR)$(mandir)/$(mansubdir)1/ssh-keyscan.1
@@ -702,6 +703,30 @@ index c117398..0000000
 -.Ox 2.8 .
 -.Sh AUTHORS
 -.An Markus Friedl Aq Mt markus@openbsd.org
+diff --git a/ssh-keygen.1 b/ssh-keygen.1
+index ed17a08..9616030 100644
+--- a/ssh-keygen.1
++++ b/ssh-keygen.1
+@@ -174,9 +174,7 @@ key in
+ .Pa ~/.ssh/id_ed25519
+ or
+ .Pa ~/.ssh/id_rsa .
+-Additionally, the system administrator may use this to generate host keys,
+-as seen in
+-.Pa /etc/rc .
++Additionally, the system administrator may use this to generate host keys.
+ .Pp
+ Normally this program generates the key and asks for a file in which
+ to store the private key.
+@@ -224,7 +222,7 @@ for which host keys
+ do not exist, generate the host keys with the default key file path,
+ an empty passphrase, default bits for the key type, and default comment.
+ This is used by
+-.Pa /etc/rc
++.Pa /lib/svc/method/sshd
+ to generate new host keys.
+ .It Fl a Ar rounds
+ When saving a new-format private key (i.e. an ed25519 key or any SSH protocol
 diff --git a/ssh-keysign.1m b/ssh-keysign.1m
 new file mode 100644
 index 0000000..60c96ad
@@ -4464,7 +4489,7 @@ index a47f3ca..0000000
 -protocol versions 1.5 and 2.0.
 diff --git a/sshd.1m b/sshd.1m
 new file mode 100644
-index 0000000..967a753
+index 0000000..ada4f25
 --- /dev/null
 +++ b/sshd.1m
 @@ -0,0 +1,971 @@
@@ -4536,8 +4561,8 @@ index 0000000..967a753
 +.Pp
 +.Nm
 +listens for connections from clients.
-+It is normally started at boot from
-+.Pa /etc/rc .
++It is normally started at boot by
++.Xr smf 5 .
 +It forks a new
 +daemon for each incoming connection.
 +The forked daemons handle
@@ -9901,5 +9926,5 @@ index 476f71c..0000000
 -Niels Provos and Markus Friedl contributed support
 -for privilege separation.
 -- 
-2.3.2 (Apple Git-55)
+2.5.4 (Apple Git-61)
 
