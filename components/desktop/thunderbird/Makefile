@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016 Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 # parfait is a bit unhappy (22527218)
@@ -100,7 +100,9 @@ COMPONENT_PRE_CONFIGURE_ACTION += \
         echo 'ac_add_options --with-rpath="\\\\\\$$\\$$ORIGIN"' >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-startup-notification" >> $(MOZCONFIG) ;
 
-CXXFLAGS += 		-Wno-invalid-offsetof
+CXXFLAGS += 		-Wno-invalid-offsetof -fpermissive
+CC +=		$(CC_BITS)
+CXX +=		$(CC_BITS)
 
 CONFIGURE_ENV +=	PKG_CONFIG_PATH=$(CONFIGURE_LIBDIR.$(BITS))/pkgconfig
 CONFIGURE_ENV +=	OS_DEFINES="-D__USE_LEGACY_PROTOTYPES__"
