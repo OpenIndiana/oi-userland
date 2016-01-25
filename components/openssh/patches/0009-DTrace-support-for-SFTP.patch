@@ -1,27 +1,21 @@
-From 0a936beb16a78da0cf9f075b16c412cdaa375e43 Mon Sep 17 00:00:00 2001
+From df6b82f10e53d43cfbc4cb3f52aa7e1751998fa1 Mon Sep 17 00:00:00 2001
 From: oracle <solaris@oracle.com>
 Date: Mon, 3 Aug 2015 14:35:43 -0700
-Subject: [PATCH 07/30] DTrace support for SFTP
+Subject: [PATCH 09/36] DTrace support for SFTP
 
-#
-# This patch is to provide a SFTP DTrace provider which offers an administrator
-# some observability of SFTP data transfer. This was developed in-house.
-# Because this is Solaris-specific and not suitable for upstream, we will not
-# contribute the changes to the upstream community.
-#
 ---
- Makefile.in          | 20 +++++++++++---
- sftp-server.c        | 27 ++++++++++++++++---
+ Makefile.in          | 25 +++++++++++++++---
+ sftp-server.c        | 25 ++++++++++++++++--
  sftp64.d             | 56 ++++++++++++++++++++++++++++++++++++++++
  sftp_provider.d      | 61 +++++++++++++++++++++++++++++++++++++++++++
  sftp_provider_impl.h | 73 ++++++++++++++++++++++++++++++++++++++++++++++++++++
- 5 files changed, 230 insertions(+), 7 deletions(-)
+ 5 files changed, 234 insertions(+), 6 deletions(-)
  create mode 100644 sftp64.d
  create mode 100644 sftp_provider.d
  create mode 100644 sftp_provider_impl.h
 
 diff --git a/Makefile.in b/Makefile.in
-index 0dd46b1..5bf2a06 100644
+index 9f953e1..121a261 100644
 --- a/Makefile.in
 +++ b/Makefile.in
 @@ -26,6 +26,7 @@ ASKPASS_PROGRAM=$(libexecdir)/ssh-askpass
@@ -40,16 +34,17 @@ index 0dd46b1..5bf2a06 100644
  	ssh-pkcs11.o smult_curve25519_ref.o \
  	poly1305.o chacha.o cipher-chachapoly.o \
  	ssh-ed25519.o digest-openssl.o digest-libc.o hmac.o \
-@@ -110,7 +112,7 @@ SSHDOBJS=sshd.o auth-rhosts.o auth-passwd.o auth-rsa.o auth-rh-rsa.o \
+@@ -111,7 +113,8 @@ SSHDOBJS=sshd.o auth-rhosts.o auth-passwd.o auth-rsa.o auth-rh-rsa.o \
  	sftp-server.o sftp-common.o \
  	roaming_common.o roaming_serv.o \
  	sandbox-null.o sandbox-rlimit.o sandbox-systrace.o sandbox-darwin.o \
--	sandbox-seccomp-filter.o sandbox-capsicum.o
-+	sandbox-seccomp-filter.o sandbox-capsicum.o sftp_provider.o
+-	sandbox-seccomp-filter.o sandbox-capsicum.o sandbox-solaris.o
++	sandbox-seccomp-filter.o sandbox-capsicum.o sandbox-solaris.o \
++	sftp_provider.o
  
  MANPAGES	= moduli.4.out scp.1.out ssh-add.1.out ssh-agent.1.out ssh-keygen.1.out ssh-keyscan.1.out ssh.1.out sshd.1m.out sftp-server.1m.out sftp.1.out ssh-keysign.1m.out ssh-pkcs11-helper.1m.out sshd_config.4.out ssh_config.4.out
  MANPAGES_IN	= moduli.4 scp.1 ssh-add.1 ssh-agent.1 ssh-keygen.1 ssh-keyscan.1 ssh.1 sshd.1m sftp-server.1m sftp.1 ssh-keysign.1m ssh-pkcs11-helper.1m sshd_config.4 ssh_config.4
-@@ -187,8 +189,8 @@ ssh-pkcs11-helper$(EXEEXT): $(LIBCOMPAT) libssh.a ssh-pkcs11-helper.o ssh-pkcs11
+@@ -188,8 +191,8 @@ ssh-pkcs11-helper$(EXEEXT): $(LIBCOMPAT) libssh.a ssh-pkcs11-helper.o ssh-pkcs11
  ssh-keyscan$(EXEEXT): $(LIBCOMPAT) libssh.a ssh-keyscan.o roaming_dummy.o
  	$(LD) -o $@ ssh-keyscan.o roaming_dummy.o $(LDFLAGS) -lssh -lopenbsd-compat -lssh $(LIBS)
  
@@ -60,7 +55,7 @@ index 0dd46b1..5bf2a06 100644
  
  sftp$(EXEEXT): $(LIBCOMPAT) libssh.a sftp.o sftp-client.o sftp-common.o sftp-glob.o progressmeter.o
  	$(LD) -o $@ progressmeter.o sftp.o sftp-client.o sftp-common.o sftp-glob.o $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS) $(LIBEDIT)
-@@ -225,9 +227,18 @@ umac128.o:	umac.c
+@@ -226,9 +229,22 @@ umac128.o:	umac.c
  	    -Dumac_update=umac128_update -Dumac_final=umac128_final \
  	    -Dumac_delete=umac128_delete
  
@@ -73,6 +68,10 @@ index 0dd46b1..5bf2a06 100644
 +	/usr/sbin/dtrace -G -64 -xnolibs -s $(srcdir)/sftp_provider.d \
 +	    sftp-server.o -o sftp_provider.o
 +
++# special case for sftp-server.o, it includes sftp_provider.h
++sftp-server.o: sftp_provider.h sftp-server.c
++	$(CC) $(CFLAGS) $(CPPFLAGS) -o $@ -c $(srcdir)/sftp-server.c
++
  clean:	regressclean
  	rm -f *.o *.a $(TARGETS) logintest config.cache config.log
 -	rm -f *.out core survey
@@ -80,7 +79,7 @@ index 0dd46b1..5bf2a06 100644
  	rm -f regress/unittests/test_helper/*.a
  	rm -f regress/unittests/test_helper/*.o
  	rm -f regress/unittests/sshbuf/*.o
-@@ -340,6 +351,7 @@ install-files:
+@@ -341,6 +357,7 @@ install-files:
  	ln -s ./ssh$(EXEEXT) $(DESTDIR)$(bindir)/slogin
  	-rm -f $(DESTDIR)$(mandir)/$(mansubdir)1/slogin.1
  	ln -s ./ssh.1 $(DESTDIR)$(mandir)/$(mansubdir)1/slogin.1
@@ -89,7 +88,7 @@ index 0dd46b1..5bf2a06 100644
  install-sysconf:
  	if [ ! -d $(DESTDIR)$(sysconfdir) ]; then \
 diff --git a/sftp-server.c b/sftp-server.c
-index eac11d7..71aa996 100644
+index 3877c03..772a7c3 100644
 --- a/sftp-server.c
 +++ b/sftp-server.c
 @@ -54,6 +54,9 @@
@@ -113,11 +112,10 @@ index eac11d7..71aa996 100644
  	    (r = sshbuf_get_u32(iqueue, &len)) != 0)
  		fatal("%s: buffer error: %s", __func__, ssh_err(r));
  
--	debug("request %u: read \"%s\" (handle %d) off %llu len %d",
--	    id, handle_to_name(handle), handle, (unsigned long long)off, len);
 +	fpath = handle_to_name(handle);
-+ 
-+ 	debug("request %u: read \"%s\" (handle %d) off %llu len %d",
++
+ 	debug("request %u: read \"%s\" (handle %d) off %llu len %d",
+-	    id, handle_to_name(handle), handle, (unsigned long long)off, len);
 +	    id, fpath, handle, (unsigned long long)off, len);
  	if (len > sizeof buf) {
  		len = sizeof buf;
@@ -127,11 +125,11 @@ index eac11d7..71aa996 100644
  			status = errno_to_portable(errno);
  		} else {
 +#ifdef DTRACE_SFTP
-+		        SFTP_TRANSFER_START_OP("read", fd, fpath, len);
++			SFTP_TRANSFER_START_OP("read", fd, fpath, len);
 +#endif
  			ret = read(fd, buf, len);
 +#ifdef DTRACE_SFTP
-+                        SFTP_TRANSFER_DONE_OP("read", fd, fpath, ret);
++			SFTP_TRANSFER_DONE_OP("read", fd, fpath, ret);
 +#endif
  			if (ret < 0) {
  				status = errno_to_portable(errno);
@@ -159,7 +157,7 @@ index eac11d7..71aa996 100644
  		} else {
  /* XXX ATOMICIO ? */
 +#ifdef DTRACE_SFTP
-+		        SFTP_TRANSFER_START_OP("write", fd, fpath, len);
++			SFTP_TRANSFER_START_OP("write", fd, fpath, len);
 +#endif
  			ret = write(fd, data, len);
 +#ifdef DTRACE_SFTP
@@ -300,7 +298,7 @@ index 0000000..99e9920
 +#pragma D attributes Evolving/Evolving/ISA provider sftp args
 diff --git a/sftp_provider_impl.h b/sftp_provider_impl.h
 new file mode 100644
-index 0000000..8c988b0
+index 0000000..4b18e6e
 --- /dev/null
 +++ b/sftp_provider_impl.h
 @@ -0,0 +1,73 @@
@@ -370,7 +368,7 @@ index 0000000..8c988b0
 +		SFTP_TRANSFER_DONE(&proto); \
 +	} \
 +
-+#include <sftp_provider.h>
++#include "sftp_provider.h"
 +
 +#ifdef	__cplusplus
 +}
@@ -378,5 +376,5 @@ index 0000000..8c988b0
 +
 +#endif /* _SFTP_PROVIDER_IMPL_H */
 -- 
-2.3.2 (Apple Git-55)
+2.5.4 (Apple Git-61)
 

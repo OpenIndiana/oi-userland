@@ -1,33 +1,34 @@
-From f568c53be03ac709ca490be5c5106e970973e6dc Mon Sep 17 00:00:00 2001
+From 3940b5d3e954d472b52da4aed4f8e6f3725411d2 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Mon, 3 Aug 2015 16:27:44 -0700
-Subject: [PATCH 19/30] PubKeyPlugin support
+Subject: [PATCH 21/36] PubKeyPlugin support
 
 This adds the PubKeyPlugin directive and associated code from
 SunSSH, allowing an in-process shared library to be called
 into to check public keys for authentication.
 ---
- auth2-pubkey.c | 111 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- servconf.c     |  15 ++++++++
+ auth2-pubkey.c | 139 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ servconf.c     |  15 +++++++
  servconf.h     |   1 +
- 3 files changed, 127 insertions(+)
+ 3 files changed, 155 insertions(+)
 
 diff --git a/auth2-pubkey.c b/auth2-pubkey.c
-index 5aa319c..f37b983 100644
+index 5aa319c..77b00f7 100644
 --- a/auth2-pubkey.c
 +++ b/auth2-pubkey.c
-@@ -22,6 +22,10 @@
+@@ -22,6 +22,11 @@
   * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
   * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   */
 +/*
 + * Copyright 2008 Sun Microsystems, Inc.  All rights reserved.
++ * Copyright 2015 Joyent, Inc.
 + * Use is subject to license terms.
 + */
  
  #include "includes.h"
  
-@@ -42,11 +46,13 @@
+@@ -42,11 +47,13 @@
  #include <time.h>
  #include <unistd.h>
  #include <limits.h>
@@ -41,7 +42,7 @@ index 5aa319c..f37b983 100644
  #include "buffer.h"
  #include "log.h"
  #include "misc.h"
-@@ -74,6 +80,11 @@ extern ServerOptions options;
+@@ -74,6 +81,15 @@ extern ServerOptions options;
  extern u_char *session_id2;
  extern u_int session_id2_len;
  
@@ -50,10 +51,14 @@ index 5aa319c..f37b983 100644
 +typedef int (*RSA_SYM)(struct passwd *, RSA *, const char *);
 +typedef int (*ECDSA_SYM)(struct passwd *, EC_KEY *, const char *);
 +
++static const char *UNIV_SYM_NAME = "sshd_user_key_allowed";
++typedef int (*UNIV_SYM)(struct passwd *, const char *,
++    const u_char *, size_t);
++
  static int
  userauth_pubkey(Authctxt *authctxt)
  {
-@@ -1030,6 +1041,102 @@ user_key_command_allowed2(struct passwd *user_pw, Key *key)
+@@ -1030,6 +1046,125 @@ user_key_command_allowed2(struct passwd *user_pw, Key *key)
  	return found_key;
  }
  
@@ -75,6 +80,7 @@ index 5aa319c..f37b983 100644
 +{
 +	RSA_SYM rsa_sym = NULL;
 +	ECDSA_SYM ecdsa_sym = NULL;
++	UNIV_SYM univ_sym = NULL;
 +	char *fp = NULL;
 +	char *argfp = NULL;
 +	void *handle = NULL;
@@ -92,6 +98,27 @@ index 5aa319c..f37b983 100644
 +		goto out;
 +	}
 +
++	/*
++	 * If we have the new-style universal symbol for checking keys, use
++	 * that instead of the old-style per-key-type symbols.
++	 */
++	univ_sym = (UNIV_SYM)dlsym(handle, UNIV_SYM_NAME);
++	if (univ_sym != NULL) {
++		u_char *blob;
++		const char *type = sshkey_type(key);
++		size_t len = 0;
++		if (sshkey_to_blob(key, &blob, &len) != 0) {
++			debug("failed to convert key to rfc4253 format");
++			goto out;
++		}
++		debug("Invoking %s from %s", UNIV_SYM_NAME,
++		    options.pubkey_plugin);
++		success = (*univ_sym)(pw, type, blob, len);
++		debug("pubkeyplugin returned: %d", success);
++		goto out;
++	}
++
++	/* Otherwise, continue with the old-style fingerprint symbols. */
 +	fp = sshkey_fingerprint(key, SSH_DIGEST_MD5, SSH_FP_HEX);
 +	if (fp == NULL) {
 +		debug("failed to generate fingerprint");
@@ -132,13 +159,14 @@ index 5aa319c..f37b983 100644
 +		debug2("user_key_plugins only support RSA and ECDSA keys");
 +	}
 +
-+	debug("sshd_plugin returned: %d", success);
++	debug("pubkeyplugin returned: %d", success);
 +
 +out:
 +	if (handle != NULL) {
 +		dlclose(handle);
 +		ecdsa_sym = NULL;
 +		rsa_sym = NULL;
++		univ_sym = NULL;
 +		handle = NULL;
 +	}
 +
@@ -156,7 +184,7 @@ index 5aa319c..f37b983 100644
  /*
   * Check whether key authenticates and authorises the user.
   */
-@@ -1048,6 +1155,10 @@ user_key_allowed(struct passwd *pw, Key *key, int auth_attempt)
+@@ -1048,6 +1183,10 @@ user_key_allowed(struct passwd *pw, Key *key, int auth_attempt)
  	if (success)
  		return success;
  
@@ -227,5 +255,5 @@ index 2175645..80e152f 100644
  
  /* Information about the incoming connection as used by Match */
 -- 
-2.3.2 (Apple Git-55)
+2.5.4 (Apple Git-61)
 

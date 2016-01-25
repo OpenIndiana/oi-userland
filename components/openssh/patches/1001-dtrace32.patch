@@ -11,7 +11,7 @@ index 623b887..6a89a22 100644
  PRIVSEP_PATH=@PRIVSEP_PATH@
  SSH_PRIVSEP_USER=@SSH_PRIVSEP_USER@
  STRIP_OPT=@STRIP_OPT@
-@@ -234,7 +234,7 @@
+@@ -236,7 +236,7 @@
  	    -o $(srcdir)/sftp_provider.h
  
  sftp_provider.o: sftp_provider.d sftp_provider.h sftp-server.o
@@ -19,8 +19,8 @@ index 623b887..6a89a22 100644
 +	/usr/sbin/dtrace -G -xnolibs -s $(srcdir)/sftp_provider.d \
  	    sftp-server.o -o sftp_provider.o
  
- clean:	regressclean
-@@ -352,7 +352,7 @@
+ # special case for sftp-server.o, it includes sftp_provider.h
+@@ -358,7 +358,7 @@
  	ln -s ./ssh$(EXEEXT) $(DESTDIR)$(bindir)/slogin
  	-rm -f $(DESTDIR)$(mandir)/$(mansubdir)1/slogin.1
  	ln -s ./ssh.1 $(DESTDIR)$(mandir)/$(mansubdir)1/slogin.1

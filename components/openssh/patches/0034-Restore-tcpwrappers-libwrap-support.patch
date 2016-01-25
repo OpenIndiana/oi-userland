@@ -1,7 +1,7 @@
-From 8d3481f1e914b2dc1ff888f72f3f27cbface90c3 Mon Sep 17 00:00:00 2001
+From 38fc11d61103a3fa75e72b111abaab812dac8061 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Wed, 16 Sep 2015 10:54:13 -0700
-Subject: [PATCH 34/34] Restore tcpwrappers/libwrap support
+Subject: [PATCH 34/36] Restore tcpwrappers/libwrap support
 
 This reverts commit f9696566fb41320820f3b257ab564fa321bb3751
 and commit f2719b7c2b8a3b14d778d8a6d8dc729b5174b054.
@@ -12,10 +12,10 @@ and commit f2719b7c2b8a3b14d778d8a6d8dc729b5174b054.
  3 files changed, 89 insertions(+)
 
 diff --git a/configure.ac b/configure.ac
-index d9b6ce1..03ac8b0 100644
+index e251f9b..0097431 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -1427,6 +1427,62 @@ AC_ARG_WITH([skey],
+@@ -1456,6 +1456,62 @@ AC_ARG_WITH([skey],
  	]
  )
  
@@ -78,7 +78,7 @@ index d9b6ce1..03ac8b0 100644
  # Check whether user wants to use ldns
  LDNS_MSG="no"
  AC_ARG_WITH(ldns,
-@@ -4960,6 +5016,7 @@ echo "                 KerberosV support: $KRB5_MSG"
+@@ -4993,6 +5049,7 @@ echo "                 KerberosV support: $KRB5_MSG"
  echo "                   SELinux support: $SELINUX_MSG"
  echo "                 Smartcard support: $SCARD_MSG"
  echo "                     S/KEY support: $SKEY_MSG"
@@ -87,7 +87,7 @@ index d9b6ce1..03ac8b0 100644
  echo "                   libedit support: $LIBEDIT_MSG"
  echo "  Solaris process contract support: $SPC_MSG"
 diff --git a/sshd.1m b/sshd.1m
-index d67efd7..2bbf05a 100644
+index 3753f90..345c08f 100644
 --- a/sshd.1m
 +++ b/sshd.1m
 @@ -850,6 +850,12 @@ the user's home directory becomes accessible.
@@ -112,10 +112,10 @@ index d67efd7..2bbf05a 100644
  .Xr moduli 4 ,
  .Xr sshd_config 4 ,
 diff --git a/sshd.c b/sshd.c
-index 5d20431..2591f07 100644
+index f19b398..c32c078 100644
 --- a/sshd.c
 +++ b/sshd.c
-@@ -127,6 +127,13 @@
+@@ -126,6 +126,13 @@
  #include "version.h"
  #include "ssherr.h"
  
@@ -129,7 +129,7 @@ index 5d20431..2591f07 100644
  #ifndef O_NOCTTY
  #define O_NOCTTY	0
  #endif
-@@ -2182,6 +2189,24 @@ main(int ac, char **av)
+@@ -2166,6 +2173,24 @@ main(int ac, char **av)
  #ifdef SSH_AUDIT_EVENTS
  	audit_connection_from(remote_ip, remote_port);
  #endif
@@ -155,5 +155,5 @@ index 5d20431..2591f07 100644
  	/* Log the connection. */
  	laddr = get_local_ipaddr(sock_in);
 -- 
-2.3.2 (Apple Git-55)
+2.5.4 (Apple Git-61)
 
