@@ -18,13 +18,9 @@
 #
 # CDDL HEADER END
 #
-# Copyright 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/ips.mk
-include $(WS_MAKE_RULES)/gem.mk
-
 
 COMPONENT_NAME=		stomp
 COMPONENT_VERSION=	1.3.4
@@ -41,6 +37,10 @@ TPNO=                   23495
 # No gemspec is shipped with the gem. Create one
 COMPONENT_POST_UNPACK_ACTION= \
     $(GEM) spec $(COMPONENT_ARCHIVE) > $(SOURCE_DIR)/$(GEMSPEC)
+
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/gem.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
