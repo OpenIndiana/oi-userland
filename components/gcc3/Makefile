@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -46,6 +46,10 @@ PARCH =		$(MACH:i386=i386-pc)
 GNU_ARCH =	$(PARCH:sparc=sparc-sun)-solaris$(SOLARIS_VERSION)
 
 PKG_MACROS +=	GNU_ARCH="$(GNU_ARCH)"
+
+# Make sure to pass -m32/64 any time the installed GCC is used 
+CC += -m$(BITS)
+CXX += -m$(BITS)
 
 # CC_BITS may get in the way
 CC_BITS=

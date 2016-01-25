@@ -66,6 +66,10 @@ PKG_MACROS +=	GCC_BASEDIR=usr/gcc/$(GCC_VERSION)
 
 GNU_SECTIONS_MAPFILE = $(COMPONENT_DIR)/Solaris/map.gnu-sections
 
+# Make sure to pass -m32/64 any time the installed GCC is used 
+CC += $(CC_BITS)
+CXX += $(CC_BITS)
+
 CFLAGS.i386 = -mtune=opteron -march=opteron -fno-strict-aliasing
 CFLAGS.sparc = -mtune=ultrasparc3 -mcpu=ultrasparc3 -mvis2 \
   -mno-unaligned-doubles -mhard-float -fno-strict-aliasing
