@@ -16,6 +16,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		SDL
 COMPONENT_VERSION=	1.2.15
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.libsdl.org/
 COMPONENT_SUMMARY=	libsdl - Simple DirectMedia Layer
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -41,7 +42,6 @@ COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 
 CONFIGURE_OPTIONS +=	--sysconfdir=/etc
 CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
-CONFIGURE_OPTIONS +=	--with-esd-prefix=/usr
 CONFIGURE_OPTIONS +=	--disable-static
 CONFIGURE_OPTIONS +=	--disable-assembly
 
