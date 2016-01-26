@@ -1,0 +1,25 @@
+--- cinder-2014.2.2/cinder/volume/drivers/zfssa/zfssaiscsi.py.~1~	2015-02-05 08:03:26.000000000 -0800
++++ cinder-2014.2.2/cinder/volume/drivers/zfssa/zfssaiscsi.py	2015-11-08 21:59:29.027424535 -0800
+@@ -290,7 +290,9 @@
+         data["storage_protocol"] = self.protocol
+ 
+         lcfg = self.configuration
+-        (avail, total) = self.zfssa.get_pool_stats(lcfg.zfssa_pool)
++        total = self.zfssa.get_pool_stats(lcfg.zfssa_pool)
++        avail = self.zfssa.get_project_stats(lcfg.zfssa_pool,
++                                             lcfg.zfssa_project)
+         if avail is None or total is None:
+             return
+ 
+@@ -334,9 +336,8 @@
+                                           '')
+ 
+     def ensure_export(self, context, volume):
+-        """Driver entry point to get the export info for an existing volume."""
+-        LOG.debug('ensure_export: volume name: %s' % volume['name'])
+-        return self._export_volume(volume)
++        """Synchronously recreates an export for a volume."""
++        pass
+ 
+     def copy_image_to_volume(self, context, volume, image_service, image_id):
+         self.ensure_export(context, volume)
