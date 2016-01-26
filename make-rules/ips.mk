@@ -129,6 +129,11 @@ PKG_MACROS +=		TPNO=$(TPNO)
 PKG_MACROS +=		CONSOLIDATION_CHANGESET=$(CONSOLIDATION_CHANGESET)
 PKG_MACROS +=		CONSOLIDATION_REPOSITORY_URL=$(CONSOLIDATION_REPOSITORY_URL)
 
+# Add any TPNO_* Makefile macros to the pkgmogrify arguments.
+$(foreach macro, $(filter TPNO_%, $(.VARIABLES)), \
+    $(eval PKG_MACROS += $(macro)=$$($(macro))) \
+)
+
 PKG_MACROS +=		PYTHON_2.7_ONLY=\#
 PKG_MACROS +=		PYTHON_3.4_ONLY=\#
 PKG_MACROS +=		PYTHON_3.5_ONLY=\#
@@ -485,13 +490,14 @@ COMP_SUFFIXES = $(subst COMPONENT_NAME_,, \
 		$(filter COMPONENT_NAME_%, $(.VARIABLES)))
 
 # The filtering out of specific variables below is to avoid component variables
-# that have spaces in their values.  PKG_MACROS with spaces in their values
-# remain unsupported for now.
+# that have spaces in their values or that have already been processed above.
+# PKG_MACROS with spaces in their values remain unsupported for now.
 $(foreach suffix, $(COMP_SUFFIXES), \
     $(eval COMPONENT_RE_VERSION_$(suffix) ?= $(subst .,\\.,$$(COMPONENT_VERSION_$(suffix)))) \
     $(eval IPS_COMPONENT_VERSION_$(suffix) ?= $$(COMPONENT_VERSION_$(suffix))) \
     $(eval IPS_COMPONENT_RE_VERSION_$(suffix) ?= $(subst .,\\.,$$(IPS_COMPONENT_VERSION_$(suffix)))) \
-    $(eval COMP_VARS=$(filter-out COMPONENT_POST_UNPACK_%, $(.VARIABLES))) \
+    $(eval COMP_VARS=$(filter-out TPNO_%, $(.VARIABLES))) \
+    $(eval COMP_VARS=$(filter-out COMPONENT_POST_UNPACK_%, $(COMP_VARS))) \
     $(eval COMP_VARS=$(filter-out UNPACK_ARGS_%, $(COMP_VARS))) \
     $(foreach macro, $(filter %_$(suffix), $(COMP_VARS)), \
         $(eval PKG_MACROS += $(macro)=$$($(macro))) \
