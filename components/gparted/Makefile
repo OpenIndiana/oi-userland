@@ -40,6 +40,7 @@ TPNO=			7497
 # we're i386-only
 ifeq ($(MACH), sparc)
 PUBLISH_STAMP=
+INSTALL_32=
 endif
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -85,4 +86,6 @@ REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/c++-runtime
+ifneq ($(MACH), sparc)
 REQUIRED_PACKAGES += system/storage/parted
+endif
