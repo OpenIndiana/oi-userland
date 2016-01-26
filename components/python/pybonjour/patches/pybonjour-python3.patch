@@ -3,6 +3,11 @@ as the community appears to have gone dormant.
 
 --- pybonjour-1.1.1/pybonjour.py-orig	2013-02-13 04:39:03.391680773 -0600
 +++ pybonjour-1.1.1/pybonjour.py	2013-02-13 04:39:15.452208372 -0600
+@@ -63,1 +63,4 @@
++if sys.version[:3] > '3':
++    unicode = str
++    basestring = str
+
 @@ -804,7 +804,7 @@ def _create_function_bindings():
          }
  
@@ -12,3 +17,41 @@ as the community appears to have gone dormant.
          prototype = _CFunc(restype, *argtypes)
  
          paramflags = [1] * len(argtypes)
+@@ -848,14 +848,16 @@
+
+ def _string_to_length_and_void_p(string):
+     if isinstance(string, TXTRecord):
+-        string = str(string)
++        string = str(string).encode('utf-8')
++    elif isinstance(string, str):
++        string = string.encode('utf-8')
+     void_p = ctypes.cast(ctypes.c_char_p(string), ctypes.c_void_p)
+     return len(string), void_p
+
+
+ def _length_and_void_p_to_string(length, void_p):
+     char_p = ctypes.cast(void_p, ctypes.POINTER(ctypes.c_char))
+-    return ''.join(char_p[i] for i in xrange(length))
++    return ''.join(char_p[i].decode('utf-8') for i in range(length))
+ 
+ 
+ 
+@@ -1942,7 +1942,7 @@ def __init__(self, items={}, strict=True):
+         self._names = []
+         self._items = {}
+ 
+-        for name, value in items.iteritems():
++        for name, value in items.items():
+             self[name] = value
+ 
+     def __contains__(self, name):
+@@ -2023,8 +2023,8 @@ def __setitem__(self, name, value):
+ 
+         if value is not None:
+-            if isinstance(value, unicode):
++            if sys.version[:3] < '3' and isinstance(value, unicode):
+                 value = value.encode('utf-8')
+             else:
+                 value = str(value)
+             length += 1 + len(value)
+
