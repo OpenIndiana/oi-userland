@@ -21,7 +21,7 @@
 #
 
 #
-# Copyright (c) 2010, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 # Some userland consolidation specific lint checks
@@ -72,7 +72,9 @@ class UserlandActionChecker(base.ActionChecker):
                         "i86pc-solaris-thread-multi-64", # perl path
                         "sun4-solaris-thread-multi-64", # perl path
 			"amd64-solaris" + solaris_ver,	# ruby path
-			"sparcv9-solaris" + solaris_ver	# ruby path
+			"sparcv9-solaris" + solaris_ver,# ruby path
+			"sparcv9-sun-solaris" + solaris_ver,# ruby path
+			"x86_64-pc-solaris" + solaris_ver  # GCC path
 		]
 		self.runpath_re = [
 			re.compile('^/lib(/.*)?$'),
@@ -91,8 +93,12 @@ class UserlandActionChecker(base.ActionChecker):
                                 # perl path
 			re.compile('^.*/amd64-solaris2\.[0-9]+(/.*)?$'),
 				# ruby path
-			re.compile('^.*/sparcv9-solaris2\.[0-9]+(/.*)?$')
+			re.compile('^.*/sparcv9-solaris2\.[0-9]+(/.*)?$'),
 				# ruby path
+			re.compile('^.*/sparcv9-sun-solaris2\.[0-9]+(/.*)?$'),
+				# GCC path
+			re.compile('^.*/x86_64-sun-solaris2\.[0-9]+(/.*)?$')
+				# GCC path
 		]
 		self.initscript_re = re.compile("^etc/(rc.|init)\.d")
 
