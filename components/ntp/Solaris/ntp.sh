@@ -21,7 +21,7 @@
 #
 
 #
-# Copyright (c) 2009, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2009, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 # Standard prolog
@@ -101,14 +101,11 @@ deb=`svcprop -c -p config/debuglevel $SMF_FMRI`
 # If slew_always is set to true, then the large offset after a reboot
 # might take a very long time to correct the clock. Optionally allow
 # a step once after a reboot if slew_always is set when allow_step_at_boot
-# is also set. Unfortunately ntpd in ntpdate mode is a little too 
-# chatty, so direct the log to /dev/null. And since the offset might be
-# more than 17 minutes, allow larger steps with the "-g".
-#
+# is also set. 
 val=`svcprop -c -p config/allow_step_at_boot $SMF_FMRI`
 if [ "$val" = "true" ] && [ "$slew_always" = "true" ] && \
     [ ! -f /var/run/ntp.pid ]; then
-	/usr/lib/inet/ntpd -q -l /dev/null -g
+	set -- "$@" -G
 fi
 
 # Start the daemon. If debugging is requested, put it in the background, 
