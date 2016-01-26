@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 # OFED only builds with GCC
@@ -49,7 +49,7 @@ include $(WS_MAKE_RULES)/shared-targets.mk
 LIBS +=         -lsocket -lnsl -lkstat -lrdmacm -libverbs -libumad -libmad
 
 LDFLAGS +=	-L$(PROTO_DIR)/$(CONFIGURE_LIBDIR.$(BITS))
-CFLAGS +=	$(SHARED_INCLUDES)
+CFLAGS +=	$(SHARED_INCLUDES) -fgnu89-inline
 
 CONFIGURE_OPTIONS +=	--bindir=$(USRBINDIR)
 

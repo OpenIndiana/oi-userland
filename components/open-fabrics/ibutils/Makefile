@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 # OFED only builds with GCC
@@ -47,7 +47,7 @@ DISABLE_LIBCHECK=
 
 CONFIGURE_ENV +=	INSTALL_DATA="$(INSTALL) -m 644"
 
-CONFIGURE_OPTIONS +=	CXXFLAGS="$(CXXFLAGS)"
+CONFIGURE_OPTIONS +=	CXXFLAGS="$(CC_BITS)"
 CONFIGURE_OPTIONS +=	--with-osm=$(PROTO_DIR)/usr
 CONFIGURE_OPTIONS +=	--bindir=$(USRSBINDIR)
 
