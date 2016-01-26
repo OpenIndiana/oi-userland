@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -105,21 +105,22 @@ COMPONENT_PRE_SYSTEM_TEST_ACTION = \
 COMPONENT_TEST_ENV_CMD =	ulimit -Ss 32768 ; $(ENV)
 COMPONENT_SYSTEM_TEST_ENV_CMD =	ulimit -Ss 32768 ; $(ENV)
 
-# Master test results are different between x86 and SPARC.
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
 COMPONENT_TEST_TRANSFORMS += \
 	'-n ' \
 	'-e "/^Testing examples for package /p" ' \
-	'-e "/^  comparing /p" ' \
 	'-e "/^running /p" ' \
-	'-e "/^  expect some differences/p" '
+	'-e "/^  expect some differences/p" ' \
+	'-e "/comparing.*datetime.Rout/d" ' \
+	'-e "/comparing.*reg-examples3.Rout/d" ' \
+	'-e "/^  comparing /p" '
 
 ASLR_MODE = $(ASLR_ENABLE)
 
 # Use the installed version of R, not the one in the build area.
 # These definitions override those found in .../test/Makefile.
-COMPONENT_SYSTEM_TEST_ARGS += R="LANGUAGE=en LC_ALL=C SRCDIR=$(srcdir) R_DEFAULT_PACKAGES= /usr/bin/R --vanilla"
+COMPONENT_SYSTEM_TEST_ARGS += R="LANGUAGE=en LC_ALL=C SRCDIR=$(BUILD_DIR_64)/tests R_DEFAULT_PACKAGES= /usr/bin/R --vanilla"
 COMPONENT_SYSTEM_TEST_ARGS += R2="R_DEFAULT_PACKAGES= /usr/bin/R --vanilla"
 COMPONENT_SYSTEM_TEST_ARGS += R3="/usr/bin/R CMD check"
 COMPONENT_SYSTEM_TEST_ARGS += RDIFF="/usr/bin/R CMD Rdiff"
