@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2010, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 #
@@ -484,11 +484,16 @@ endif
 COMP_SUFFIXES = $(subst COMPONENT_NAME_,, \
 		$(filter COMPONENT_NAME_%, $(.VARIABLES)))
 
+# The filtering out of specific variables below is to avoid component variables
+# that have spaces in their values.  PKG_MACROS with spaces in their values
+# remain unsupported for now.
 $(foreach suffix, $(COMP_SUFFIXES), \
     $(eval COMPONENT_RE_VERSION_$(suffix) ?= $(subst .,\\.,$$(COMPONENT_VERSION_$(suffix)))) \
     $(eval IPS_COMPONENT_VERSION_$(suffix) ?= $$(COMPONENT_VERSION_$(suffix))) \
     $(eval IPS_COMPONENT_RE_VERSION_$(suffix) ?= $(subst .,\\.,$$(IPS_COMPONENT_VERSION_$(suffix)))) \
-    $(foreach macro, $(filter %_$(suffix), $(.VARIABLES)), \
+    $(eval COMP_VARS=$(filter-out COMPONENT_POST_UNPACK_%, $(.VARIABLES))) \
+    $(eval COMP_VARS=$(filter-out UNPACK_ARGS_%, $(COMP_VARS))) \
+    $(foreach macro, $(filter %_$(suffix), $(COMP_VARS)), \
         $(eval PKG_MACROS += $(macro)=$$($(macro))) \
     ) \
 )
