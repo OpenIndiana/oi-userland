@@ -18,13 +18,14 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 VENDOR_RUBY = /usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)
 
 # default user executable binaries to /usr/bin
 INSTALL_RB_BINDIR =	$(USRBINDIR)
+INSTALL_RB_SBINDIR =	$(USRSBINDIR)
 
 # install.rb scripts do not have any concept of 'build' so make this a
 # no-op
@@ -41,6 +42,7 @@ $(BUILD_DIR)/%/.installed:      $(BUILD_DIR)/%/.built
                 ./install.rb --destdir=$(PROTO_DIR) \
                 --ruby=$(RUBY) \
                 --bindir=$(INSTALL_RB_BINDIR) \
+                --sbindir=$(INSTALL_RB_SBINDIR) \
                 --sitelibdir=$(VENDOR_RUBY) \
                 --mandir=$(USRSHAREMANDIR))
 	$(COMPONENT_POST_INSTALL_ACTION)

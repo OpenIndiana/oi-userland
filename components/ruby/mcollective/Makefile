@@ -22,6 +22,10 @@
 #
 include ../../../make-rules/shared-macros.mk
 
+RUBY_VERSION=       2.1
+RUBY_LIB_VERSION=   2.1.0
+RUBY_VERSIONS=      2.1.0
+
 COMPONENT_NAME=		mcollective
 COMPONENT_VERSION=	2.8.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -51,5 +55,5 @@ test:		$(NO_TESTS)
 system-test:    $(NO_TESTS)
 
 
-REQUIRED_PACKAGES += runtime/ruby-19
+REQUIRED_PACKAGES += runtime/ruby-21
 REQUIRED_PACKAGES += system/core-os

@@ -22,6 +22,14 @@
 #
 include ../../../make-rules/shared-macros.mk
 
+#
+# Override the inherited RUBY values in shared-macros.mk to be
+# a later release.
+# 
+RUBY_VERSION=       2.1
+RUBY_LIB_VERSION=   2.1.0
+RUBY_VERSIONS=      2.1.0
+
 COMPONENT_NAME=		stomp
 COMPONENT_VERSION=	1.3.4
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -36,7 +44,7 @@ TPNO=                   23495
 
 # No gemspec is shipped with the gem. Create one
 COMPONENT_POST_UNPACK_ACTION= \
-    $(GEM) spec $(COMPONENT_ARCHIVE) > $(SOURCE_DIR)/$(GEMSPEC)
+    $(GEM) spec --ruby $(COMPONENT_ARCHIVE) > $(SOURCE_DIR)/$(GEMSPEC)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
@@ -55,5 +63,5 @@ system-test:    $(NO_TESTS)
 
 
 REQUIRED_PACKAGES += network/amqp/rabbitmq
-REQUIRED_PACKAGES += runtime/ruby-19
+REQUIRED_PACKAGES += runtime/ruby-21
 REQUIRED_PACKAGES += system/core-os
