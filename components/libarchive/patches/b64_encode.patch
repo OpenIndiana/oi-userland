@@ -1,0 +1,47 @@
+solaris now provides its own b64_encode which
+conflicts with our private one.
+
+--- libarchive-3.1.2/libarchive/archive_write_add_filter_b64encode.c.orig	Sun Jan 24 10:08:09 2016
++++ libarchive-3.1.2/libarchive/archive_write_add_filter_b64encode.c	Sun Jan 24 10:08:54 2016
+@@ -60,7 +60,7 @@
+     const void *, size_t);
+ static int archive_filter_b64encode_close(struct archive_write_filter *);
+ static int archive_filter_b64encode_free(struct archive_write_filter *);
+-static void b64_encode(struct archive_string *, const unsigned char *, size_t);
++static void archive_private_b64_encode(struct archive_string *, const unsigned char *, size_t);
+ static int64_t atol8(const char *, size_t);
+ 
+ static const char base64[] = {
+@@ -180,7 +180,7 @@
+ }
+ 
+ static void
+-b64_encode(struct archive_string *as, const unsigned char *p, size_t len)
++archive_private_b64_encode(struct archive_string *as, const unsigned char *p, size_t len)
+ {
+ 	int c;
+ 
+@@ -234,12 +234,12 @@
+ 		}
+ 		if (state->hold_len < LBYTES)
+ 			return (ret);
+-		b64_encode(&state->encoded_buff, state->hold, LBYTES);
++		archive_private_b64_encode(&state->encoded_buff, state->hold, LBYTES);
+ 		state->hold_len = 0;
+ 	}
+ 
+ 	for (; length >= LBYTES; length -= LBYTES, p += LBYTES)
+-		b64_encode(&state->encoded_buff, p, LBYTES);
++		archive_private_b64_encode(&state->encoded_buff, p, LBYTES);
+ 
+ 	/* Save remaining bytes. */
+ 	if (length > 0) {
+@@ -270,7 +270,7 @@
+ 
+ 	/* Flush remaining bytes. */
+ 	if (state->hold_len != 0)
+-		b64_encode(&state->encoded_buff, state->hold, state->hold_len);
++		archive_private_b64_encode(&state->encoded_buff, state->hold, state->hold_len);
+ 	archive_string_sprintf(&state->encoded_buff, "====\n");
+ 	/* Write the last block */
+ 	archive_write_set_bytes_in_last_block(f->archive, 1);

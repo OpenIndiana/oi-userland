@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -58,6 +58,7 @@ COMPONENT_BUILD_ARGS +=	COMMON_CFLAGS=''
 COMPONENT_BUILD_ARGS +=	CFLAGS="$(CFLAGS)"
 COMPONENT_TEST_ARGS +=	COMMON_CFLAGS=''
 COMPONENT_TEST_ARGS +=	CFLAGS="$(CFLAGS)"
+COMPONENT_TEST_ENV +=	TMPDIR="$(COMPONENT_TEST_BUILD_DIR)"
 
 # We need GNU awk for the following to work; hence the PATH tweak.
 # We then convert BSD-style section numbers in the libarchive man pages to
@@ -77,11 +78,16 @@ ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_TRANSFORMS += \
-	'-e "s|/tmp/.*_test.*|\\$$(TESTDIR)|g"' \
+	'-e "s|$(COMPONENT_TEST_BUILD_DIR).*$$|build/test|g"' \
 	'-e "s|^.*$(CC).*$$|XXX_CC_XXX|"' \
 	'-e "s/ld: warning: symbol .* has differing sizes:$$/XXX_CC_XXX/"' \
 	'-e "s/.*value=0x[0-9a-f]\+.*$$/XXX_CC_XXX/"' \
 	'-e "s/.* definition taken$$/XXX_CC_XXX/"' \
+	'-e "s|.*Assertions checked:.*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^make.*: Leaving directory.*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^make.*: Entering directory.*$$|XXX_CC_XXX|g" ' \
+	'-e "s|.*recipe for target.*failed$$|XXX_CC_XXX|g" ' \
+	'-e "s|^make.*\*\*\*.*Error.*$$|XXX_CC_XXX|g" ' \
 	'-e "/^XXX_CC_XXX$$/d"'
 
 configure:	$(CONFIGURE_32_and_64)
