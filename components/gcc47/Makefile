@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -52,6 +52,9 @@ PKG_MACROS +=	GCC_VERSION=$(GCC_VERSION)
 PKG_MACROS +=	GCC_V=$(word 1,$(VERSION_NUMBERS))$(word 2,$(VERSION_NUMBERS))
 PKG_MACROS +=	GCC_BASEDIR=usr/gcc/$(GCC_VERSION)
 
+# Make sure to pass -m32/64 any time the installed GCC is used
+CC += $(CC_BITS)
+CXX += $(CC_BITS)
 
 # This product bootstraps itself.  The gcc flags are not the same
 # as Studio flags. -O2 means different things for the two compilers
@@ -84,6 +87,8 @@ CONFIGURE_OPTIONS +=	--enable-shared
 CONFIGURE_OPTIONS +=	--with-gmp-include=/usr/include/gmp
 CONFIGURE_OPTIONS +=	--with-mpfr-include=/usr/include/mpfr
 CONFIGURE_OPTIONS +=	--without-gnu-ld --with-ld=/usr/bin/ld
+CONFIGURE_OPTIONS +=	--with-isl=no
+CONFIGURE_OPTIONS +=	--with-cloog=no
 
 CONFIGURE_ENV     += PYTHON="$(PYTHON)"
 

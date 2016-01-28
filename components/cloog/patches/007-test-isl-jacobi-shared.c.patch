@@ -1,0 +1,16 @@
+# This is a secmantically insignificant patch to the test harness.
+# However, and without it, for this specific version of CLooG,
+# this test will fail.
+# No need to send upstream, they already know about it.
+# Also see 008-test-reservoir-QR.c.patch in this directory
+--- test/isl/jacobi-shared.c	2014-12-08 05:05:37.000000000 -0500
++++ test/isl/jacobi-shared.c	2015-07-23 14:31:33.978548894 -0400
+@@ -3,7 +3,7 @@
+   if ((16*floord(t0-1,16) >= -N+g1+t0+1) && (16*floord(g1+t0-3,16) >= -N+g1+t0+1) && (32*floord(t1-1,32) >= -N+g2+t1+1) && (32*floord(g2+t1-3,32) >= t1-32)) {
+     for (c0=max(-16*floord(t0-1,16)+t0,-16*floord(g1+t0-3,16)+t0);c0<=min(32,N-g1-1);c0+=16) {
+       for (c1=-32*floord(t1-1,32)+t1;c1<=min(32,N-g2-1);c1+=32) {
+-        if (c1 >= 1) {
++        if ((c1 >= 1) && (c1 <= 32)) {
+           S1((c0+g1-1),(c1+g2-1));
+         }
+       }

@@ -1,0 +1,125 @@
+# 'magic' environment variable needs to be set so that the
+# CLooG Test Harness runs correctly. The CLooG tests depend
+# on this environment variable being set sometimes, or not
+# being set at other times.
+# LD_LIBRARY_PATH environment variable must be set, but
+# must also be empty.  The CLooG tests depend on this
+# being set this way.
+--- test/check_c.sh	2014-12-08 02:05:37.000000000 -0800
++++ test/check_c.sh	2015-07-23 10:00:26.562570533 -0700
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash --noprofile
+ #
+ #   /**-------------------------------------------------------------------**
+ #    **                              CLooG                                **
+@@ -35,4 +35,11 @@
+ # *                                                                           *
+ # *****************************************************************************/
+ 
++set -o posix
++export PATH="/usr/gnu/bin:/usr/bin:.:/usr/sbin"
++export LD_LIBRARY_PATH=""
++
++export libtool_install_magic='not set'
++export libtool_execute_magic='not set'
++
+ $CHECKER "C" "$CLOOGTEST_C" "" "cloog" "c" "${1:-generate}"
+--- test/check_fortran.sh	2014-12-08 02:05:37.000000000 -0800
++++ test/check_fortran.sh	2015-07-23 10:00:41.949114951 -0700
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash --noprofile
+ #
+ #   /**-------------------------------------------------------------------**
+ #    **                              CLooG                                **
+@@ -35,4 +35,11 @@
+ # *                                                                           *
+ # *****************************************************************************/
+ 
++set -o posix
++export PATH="/usr/gnu/bin:/usr/bin:.:/usr/sbin"
++export LD_LIBRARY_PATH=""
++
++export libtool_install_magic='not set'
++export libtool_execute_magic='not set'
++
+ $CHECKER "FORTRAN" "$CLOOGTEST_FORTRAN" "" "cloog" "f" "${1:-generate}"
+--- test/check_openscop.sh	2014-12-08 02:05:37.000000000 -0800
++++ test/check_openscop.sh	2015-07-23 10:00:51.413181462 -0700
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash --noprofile
+ #
+ #   /**-------------------------------------------------------------------**
+ #    **                              CLooG                                **
+@@ -35,4 +35,8 @@
+ # *                                                                           *
+ # *****************************************************************************/
+ 
++set -o posix
++export PATH="/usr/gnu/bin:/usr/bin:.:/usr/sbin"
++export LD_LIBRARY_PATH=""
++
+ $CHECKER "OPENSCOP" "$CLOOGTEST_OPENSCOP" "-openscop" "scop" "c" "${1:-generate}"
+--- test/check_run.sh	2014-12-08 02:05:37.000000000 -0800
++++ test/check_run.sh	2015-07-23 10:01:04.599143341 -0700
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash --noprofile
+ #
+ #   /**-------------------------------------------------------------------**
+ #    **                              CLooG                                **
+@@ -35,6 +35,10 @@
+ # *                                                                           *
+ # *****************************************************************************/
+ 
++set -o posix
++export PATH="/usr/gnu/bin:/usr/bin:.:/usr/sbin"
++export LD_LIBRARY_PATH=""
++
+ # Refactor $SPECIAL_OPTIONS list to remove quotes and to replace spaces in
+ # individual tests with %, e.g., "'file1 -f -1' 'file2'" becomes
+ # "file1%-f%-1 file2".
+--- test/check_special.sh	2014-12-08 02:05:37.000000000 -0800
++++ test/check_special.sh	2015-07-23 10:01:18.603448457 -0700
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash --noprofile
+ #
+ #   /**-------------------------------------------------------------------**
+ #    **                              CLooG                                **
+@@ -35,6 +35,13 @@
+ # *                                                                           *
+ # *****************************************************************************/
+ 
++set -o posix
++export PATH="/usr/gnu/bin:/usr/bin:.:/usr/sbin"
++export LD_LIBRARY_PATH=""
++
++export libtool_install_magic='not set'
++export libtool_execute_magic='not set'
++
+ # Refactor $SPECIAL_OPTIONS list to remove quotes and to replace spaces in
+ # individual tests with %, e.g., "'file1 -f -1' 'file2'" becomes
+ # "file1%-f%-1 file2".
+--- test/check_strided.sh	2014-12-08 02:05:37.000000000 -0800
++++ test/check_strided.sh	2015-07-23 10:14:06.874535127 -0700
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash --noprofile
+ #
+ #   /**-------------------------------------------------------------------**
+ #    **                              CLooG                                **
+@@ -35,4 +35,11 @@
+ # *                                                                           *
+ # *****************************************************************************/
+ 
++set -o posix
++export PATH="/usr/gnu/bin:/usr/bin:.:/usr/sbin"
++export LD_LIBRARY_PATH=""
++
++export libtool_install_magic='not set'
++export libtool_execute_magic='not set'
++
+ $CHECKER "STRIDED" "$CLOOGTEST_STRIDED" "-strides 1" "cloog" "c" "${1:-generate}"

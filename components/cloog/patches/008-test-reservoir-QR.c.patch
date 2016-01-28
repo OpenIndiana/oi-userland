@@ -1,0 +1,32 @@
+# Known - and irrelevant - bug:
+# https://groups.google.com/forum/?hl=en#!topic/cloog-development/6I0SAXhIr8s
+# No need to send upstream, they already know about it.
+# Internal patch.
+--- test/reservoir/QR.c	2014-12-08 05:05:37.000000000 -0500
++++ test/reservoir/QR.c	2015-07-23 14:34:54.994624981 -0400
+@@ -1,12 +1,6 @@
+ /* Generated from ./reservoir/QR.cloog by CLooG 0.18.1-2-g43fc508 gmp bits in 0.07s. */
+ if (N >= 1) {
+   S1(0);
+-  if ((M <= 0) && (N >= 2)) {
+-    S3(0);
+-    S10(0);
+-    S1(1);
+-    S5(0);
+-  }
+   if ((M >= 1) && (N == 1)) {
+     for (c4=0;c4<=M-1;c4++) {
+       S2(0,c4);
+@@ -34,6 +28,12 @@
+     S10(0);
+     S1(1);
+     S5(0);
++  }
++  if ((M <= 0) && (N >= 2)) {
++    S3(0);
++    S10(0);
++    S1(1);
++    S5(0);
+   }
+   for (c2=2;c2<=min(M,N-1);c2++) {
+     for (c4=c2-1;c4<=N-1;c4++) {

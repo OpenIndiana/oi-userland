@@ -1,0 +1,53 @@
+# -O3 makes GCC do loopy things. So, don't use -O3, use -O2 instead.
+# Not for upstream.
+--- configure	2014-12-08 05:42:51.000000000 -0800
++++ configure	2016-01-20 08:22:03.089548131 -0800
+@@ -11879,14 +11879,14 @@
+ { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ax_check_compiler_flags" >&5
+ $as_echo "$ax_check_compiler_flags" >&6; }
+ if test "x$ax_check_compiler_flags" = xyes; then
+-	CFLAGS="-O3 -qansialias -w $xlc_opt"
++	CFLAGS="-O2 -qansialias -w $xlc_opt"
+ else
+-	CFLAGS="-O3 -qansialias -w"
++	CFLAGS="-O2 -qansialias -w"
+                 echo "******************************************************"
+                 echo "*  You seem to have the IBM  C compiler.  It is      *"
+                 echo "*  recommended for best performance that you use:    *"
+                 echo "*                                                    *"
+-                echo "*    CFLAGS=-O3 -qarch=xxx -qtune=xxx -qansialias -w *"
++                echo "*    CFLAGS=-O2 -qarch=xxx -qtune=xxx -qansialias -w *"
+                 echo "*                      ^^^        ^^^                *"
+                 echo "*  where xxx is pwr2, pwr3, 604, or whatever kind of *"
+                 echo "*  CPU you have.  (Set the CFLAGS environment var.   *"
+@@ -11896,7 +11896,7 @@
+ 
+          ;;
+ 
+-    intel) CFLAGS="-O3 -ansi_alias"
++    intel) CFLAGS="-O2 -ansi_alias"
+ 	if test "x$acx_maxopt_portable" = xno; then
+ 	  icc_archflag=unknown
+ 	  icc_flags=""
+@@ -12069,7 +12069,7 @@
+ 
+     gnu)
+      # default optimization flags for gcc on all systems
+-     CFLAGS="-O3 -fomit-frame-pointer"
++     CFLAGS="-O2 -fno-omit-frame-pointer"
+ 
+      # -malign-double for x86 systems
+       { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether C compiler accepts -malign-double" >&5
+@@ -12590,10 +12590,10 @@
+ 	echo "********************************************************"
+         echo "* WARNING: Don't know the best CFLAGS for this system  *"
+         echo "* Use ./configure CFLAGS=... to specify your own flags *"
+-	echo "* (otherwise, a default of CFLAGS=-O3 will be used)    *"
++	echo "* (otherwise, a default of CFLAGS=-O2 will be used)    *"
+ 	echo "********************************************************"
+ 	echo ""
+-        CFLAGS="-O3"
++        CFLAGS="-O2"
+   fi
+ 
+    { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether C compiler accepts $CFLAGS" >&5

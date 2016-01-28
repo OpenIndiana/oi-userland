@@ -1,0 +1,41 @@
+# These environment avariables must be explicitly set to be
+# empty, otherwise the CLooG test harness does not run correctly.
+--- test/checker.sh	2014-12-08 02:05:37.000000000 -0800
++++ test/checker.sh	2015-07-23 10:01:46.415187505 -0700
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash --noprofile
+ #
+ #   /**-------------------------------------------------------------------**
+ #    **                              CLooG                                **
+@@ -35,6 +35,20 @@
+ # *                                                                           *
+ # *****************************************************************************/
+ 
++set -o posix
++export PATH="/usr/gnu/bin:/usr/bin:.:/usr/sbin"
++#
++# Avoid "unbound variable" error messages from bash.
++#
++export EXEEXT=""
++export TEST_NAME=""
++export TEST_FILES=""
++export TEST_GLOBAL_OPTIONS=""
++export TEST_INPUT_EXTENSION=""
++export TEST_OUTPUT_EXTENSION=""
++export TEST_TYPE=""
++export LD_LIBRARY_PATH=""
++
+ # This is the main test script of CLooG. It checks that CLooG generates
+ # a convenient output for an input set of tests, according to some
+ # parameters (see below). Two checking policies are possible: simply
+@@ -67,6 +81,9 @@
+                            ## - "run" if the checking policy is to generate,
+                            ##   compile and run, generate only otherwise
+ 
++export TEST_NAME TEST_FILES TEST_GLOBAL_OPTIONS TEST_INPUT_EXTENSION \
++  TEST_OUTPUT_EXTENSION TEST_TYPE
++
+ failedtest=0;
+ cloog=$top_builddir/cloog$EXEEXT
+ echo "             /*-----------------------------------------------*"

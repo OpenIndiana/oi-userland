@@ -229,7 +229,7 @@ system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
 ifeq ($(ENABLE_CLOOG), 1)
   REQUIRED_PACKAGES += library/isl
-  REQUIRED_PACKAGES += developer/cloog
+  REQUIRED_PACKAGES += library/cloog
 endif
 
 REQUIRED_PACKAGES += library/gmp

@@ -95,6 +95,8 @@ CONFIGURE_OPTIONS +=	--with-build-config=no
 CONFIGURE_OPTIONS +=	--with-gmp-include=/usr/include/gmp
 CONFIGURE_OPTIONS +=	--with-mpfr-include=/usr/include/mpfr
 CONFIGURE_OPTIONS +=	--without-gnu-ld --with-ld=/usr/bin/ld
+CONFIGURE_OPTIONS +=   --with-isl=no
+CONFIGURE_OPTIONS +=   --with-cloog=no
 
 CONFIGURE_ENV     += PYTHON="$(PYTHON)"
 
