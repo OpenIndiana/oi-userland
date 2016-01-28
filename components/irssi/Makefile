@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -46,16 +46,29 @@ ASLR_MODE = $(ASLR_ENABLE)
 # Part of the build just runs "cc" (not the path that configure finds).
 COMPONENT_BUILD_ENV +=  PATH=$(dir $(CC)):$(PATH)
 
+# Need 64-bit perl.
+PERL_VERSION = 5.20
+
+CONFIGURE_ENV += "ac_cv_path_perlpath=/usr/perl5/$(PERL_VERSION)/bin/perl"
+
+# Architecture specific perl subdirectory.
+PERL_ARCH_i386 = i86pc
+PERL_ARCH_sparc = sun4
+PERL_ARCH = $(PERL_ARCH_$(MACH))-solaris-thread-multi-64
+
+CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
+
+CONFIGURE_OPTIONS +=	--bindir=/usr/bin
 CONFIGURE_OPTIONS +=    --sysconfdir=/etc
 CONFIGURE_OPTIONS +=    --with-perl=yes
 CONFIGURE_OPTIONS +=    --with-proxy
 CONFIGURE_OPTIONS +=    --with-perl-lib=/usr/perl5/vendor_perl/$(PERL_VERSION)
 
-configure:	$(CONFIGURE_32)
+configure:	$(CONFIGURE_64)
 
-build:          $(BUILD_32)
+build:          $(BUILD_64)
 
-install:        $(INSTALL_32)
+install:        $(INSTALL_64)
 
 test:           $(NO_TESTS)
 
@@ -64,5 +77,5 @@ system-test:    $(NO_TESTS)
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/security/openssl
-REQUIRED_PACKAGES += runtime/perl-512
+REQUIRED_PACKAGES += runtime/perl-520
 REQUIRED_PACKAGES += system/library
