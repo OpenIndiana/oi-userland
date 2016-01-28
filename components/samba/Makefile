@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -41,13 +41,13 @@ endif
 export PARFAIT_BUILD=no
 
 COMPONENT_NAME=		samba
-COMPONENT_VERSION=	4.1.17
-TPNO=			20605
+COMPONENT_VERSION=	4.1.22
+TPNO=			26541
+COMPONENT_ARCHIVE_HASH= sha256:5563a1c94a2dac837ccffd1f0821bb25e097affaa7389fef186f9cfb3486cfe5
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.samba.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:7aeb5d09e9c84bbeeb4b98d33404e9dbc4d99c54e64a447cc9c4d57e9255cb1d
-COMPONENT_ARCHIVE_URL=	http://us1.samba.org/samba/ftp/stable/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	https://download.samba.org/pub/samba/stable/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/samba
 
 include $(WS_MAKE_RULES)/prep.mk
