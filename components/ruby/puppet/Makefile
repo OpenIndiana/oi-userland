@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -48,7 +48,10 @@ COMPONENT_INSTALL_ENV	+= RUBYLIB="$(COMPONENT_DIR)/../facter/build/$(MACH64)/lib
 	(cd ../hiera ; $(GMAKE) install)
 
 # set the bindir to /usr/sbin
-INSTALL_RB_BINDIR =	$(USRSBINDIR)
+INSTALL_RB_BINDIR_OPTION =	--bindir=$(USRSBINDIR)
+
+# --sbindir option not supported by Puppet install.rb
+INSTALL_RB_SBINDIR_OPTION =
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 

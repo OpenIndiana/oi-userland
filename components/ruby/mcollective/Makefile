@@ -43,6 +43,9 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/install.rb.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+# --mandir option not supported by mcollective install.rb
+INSTALL_RB_MANDIR_OPTION =
+
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # common targets

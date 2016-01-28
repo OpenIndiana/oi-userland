@@ -23,9 +23,27 @@
 
 VENDOR_RUBY = /usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)
 
-# default user executable binaries to /usr/bin
-INSTALL_RB_BINDIR =	$(USRBINDIR)
-INSTALL_RB_SBINDIR =	$(USRSBINDIR)
+# install into proto area
+INSTALL_RB_DESTDIR_OPTION = --destdir=$(PROTO_DIR)
+# use correct version of Ruby rather than the one calling install.rb
+INSTALL_RB_RUBY_OPTION = --ruby=$(RUBY)
+# ensure the bin dir is not a
+# Ruby-version-specific directory
+INSTALL_RB_BINDIR_OPTION = --bindir=$(USRBINDIR)
+# install into vendor_ruby instead of site_ruby
+INSTALL_RB_SITELIBDIR_OPTION = --sitelibdir=$(VENDOR_RUBY)
+# install into standard man directory
+INSTALL_RB_MANDIR_OPTION = --mandir=$(USRSHAREMANDIR)
+# ensure the sbin dir is not a
+# Ruby-version-specific directory
+INSTALL_RB_SBINDIR_OPTION = --sbindir=$(USRSBINDIR)
+
+INSTALL_RB_OPTIONS += $(INSTALL_RB_DESTDIR_OPTION)
+INSTALL_RB_OPTIONS += $(INSTALL_RB_RUBY_OPTION)
+INSTALL_RB_OPTIONS += $(INSTALL_RB_BINDIR_OPTION)
+INSTALL_RB_OPTIONS += $(INSTALL_RB_SITELIBDIR_OPTION)
+INSTALL_RB_OPTIONS += $(INSTALL_RB_MANDIR_OPTION)
+INSTALL_RB_OPTIONS += $(INSTALL_RB_SBINDIR_OPTION)
 
 # install.rb scripts do not have any concept of 'build' so make this a
 # no-op
@@ -39,12 +57,7 @@ $(BUILD_DIR)/%/.built:  $(SOURCE_DIR)/.prep
 $(BUILD_DIR)/%/.installed:      $(BUILD_DIR)/%/.built
 	$(COMPONENT_PRE_INSTALL_ACTION)
 	(cd $(SOURCE_DIR) ; $(ENV) $(COMPONENT_INSTALL_ENV) \
-                ./install.rb --destdir=$(PROTO_DIR) \
-                --ruby=$(RUBY) \
-                --bindir=$(INSTALL_RB_BINDIR) \
-                --sbindir=$(INSTALL_RB_SBINDIR) \
-                --sitelibdir=$(VENDOR_RUBY) \
-                --mandir=$(USRSHAREMANDIR))
+                ./install.rb $(INSTALL_RB_OPTIONS) )
 	$(COMPONENT_POST_INSTALL_ACTION)
 	$(TOUCH) $@
 
