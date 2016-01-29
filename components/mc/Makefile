@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mc
-COMPONENT_VERSION=	4.8.13
+COMPONENT_VERSION=	4.8.15
 COMPONENT_PROJECT_URL=	http://www.midnight-commander.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:22e1b809edba957eb9a392138bf87fea3877f7ca0b7463b7cc2eb94afa6f3e49
+    sha256:f74e3da70410975cdeb27ee9a66d1dd812250b6d3ede364bca728dd5a48e5471
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)downloads/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/mc
 
-TPNO=			20604
+TPNO=			26430
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -49,7 +49,6 @@ CONFIGURE_OPTIONS += --with-x
 CONFIGURE_OPTIONS += --enable-charset
 CONFIGURE_OPTIONS += --without-ext2undel
 CONFIGURE_OPTIONS += --with-screen=slang
-CONFIGURE_OPTIONS += --enable-vfs-sftp=no
 CONFIGURE_OPTIONS += "mc_cv_nroff_tascii="
 CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 
@@ -65,10 +64,11 @@ install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
-system-test:    $(NO_TESTS)
+system-test:	$(NO_TESTS)
 
 
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/libssh2
 REQUIRED_PACKAGES += library/slang
 REQUIRED_PACKAGES += runtime/perl-512
 REQUIRED_PACKAGES += runtime/perl-520
