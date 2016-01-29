@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -28,19 +28,19 @@ COMPONENT_NAME =	openssl
 # When upgrading OpenSSL, please, DON'T FORGET TO TEST WANBOOT too. 
 # For more information about wanboot-openssl testing, please refer to
 # ../README.
-COMPONENT_VERSION =	1.0.2e
+COMPONENT_VERSION =	1.0.2f
 # Version for IPS. It is easier to do it manually than convert the letter to a
 # number while taking into account that there might be no letter at all.
-IPS_COMPONENT_VERSION = 1.0.2.5
+IPS_COMPONENT_VERSION = 1.0.2.6
 COMPONENT_PROJECT_URL=	http://www.openssl.org/
 COMPONENT_SRC =		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e23ccafdb75cfcde782da0151731aa2185195ac745eea3846133f2e05c0e0bff
+    sha256:932b4ee4def2b434f85435d9e3e19ca8ba99ce9a065a61524b429a9d5e9b2e9c
 COMPONENT_ARCHIVE_URL =	$(COMPONENT_PROJECT_URL)source/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/openssl
 
-TPNO=			25900
+TPNO=			26527
 
 # Clone the patch files to the patches-all dir.
 # COPY_COMMON_FILES is there so that rsync is called as soon as
