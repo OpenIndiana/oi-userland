@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -99,6 +99,7 @@ CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_ENV +=	LDFLAGS="$(LDFLAGS)"
 CONFIGURE_ENV +=	INSTALL="$(INSTALL)"
 
+CONFIGURE_OPTIONS  +=		--bindir=/usr/bin
 CONFIGURE_OPTIONS  +=		--includedir=/usr/include/idn
 CONFIGURE_OPTIONS  +=		--localstatedir=/var
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
