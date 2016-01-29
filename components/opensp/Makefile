@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -48,6 +48,7 @@ COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CXX +=			$(studio_NORUNPATH)
 
+CONFIGURE_OPTIONS +=	--bindir=/usr/bin
 CONFIGURE_OPTIONS +=	--disable-http
 CONFIGURE_OPTIONS +=	--disable-nls
 CONFIGURE_OPTIONS +=	--enable-default-catalog="CATALOG:/etc/sgml/catalog:/usr/share/sgml/CATALOG"
