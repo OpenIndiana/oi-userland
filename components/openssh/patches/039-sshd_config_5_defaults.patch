@@ -1,0 +1,22 @@
+#
+# hmac-sha1 is heavily used in the world, and customers updating openssh should 
+# not be afraid that updating will make hmac-sha1 become non-default
+# without notice to them when in fact it is still enabled for sshd by default.
+#
+# This patch will be submitted upstream.  If the omission was deliberate, as
+# part of a deprecation process, then we can decide at that time how to 
+# notify customers of the upcoming deprecation.
+# 
+
+diff -rupN old/sshd_config.5 new/sshd_config.5
+--- old/sshd_config.5	2016-01-28 13:47:34.630632408 -0800
++++ new/sshd_config.5	2016-01-28 13:48:34.129479936 -0800
+@@ -1018,7 +1018,7 @@ The default is:
+ umac-64-etm@openssh.com,umac-128-etm@openssh.com,
+ hmac-sha2-256-etm@openssh.com,hmac-sha2-512-etm@openssh.com,
+ umac-64@openssh.com,umac-128@openssh.com,
+-hmac-sha2-256,hmac-sha2-512
++hmac-sha2-256,hmac-sha2-512,hmac-sha1
+ .Ed
+ .Pp
+ The list of available MAC algorithms may also be obtained using the
