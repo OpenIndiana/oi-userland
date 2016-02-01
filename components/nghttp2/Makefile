@@ -31,7 +31,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
     sha256:c88012e87b80c055ddd2412efd7e96b9e8cfe0652c4b21083f2cb89b2f0d3a26
 COMPONENT_ARCHIVE_URL=	https://github.com/tatsuhiro-t/nghttp2/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	library/libmicrohttpd
+COMPONENT_BUGDB=	library/nghttp2
 
 TPNO = 26335
 
