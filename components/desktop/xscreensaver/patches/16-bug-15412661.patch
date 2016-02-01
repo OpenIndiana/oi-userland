@@ -1,0 +1,26 @@
+15412661 SUNBT6585644 xscreensaver can cause KeyPress event loop between
+	 	      itself and xscreensaver-lock.
+
+Upstream status unknown - suspect to be specific to our GTK unlock dialog.
+---
+ driver/timers.c |    7 +++++++
+ 1 files changed, 7 insertions(+), 0 deletions(-)
+
+diff --git a/driver/timers.c b/driver/timers.c
+--- a/driver/timers.c
++++ b/driver/timers.c
+@@ -131,6 +131,13 @@ notice_events (saver_info *si, Window window, Bool top_p)
+   unsigned int nkids;
+   int screen_no;
+ 
++  if ((si->pw_data->got_windowid) && (window == si->passwd_dialog))
++    {
++      if (p->verbose_p)
++	fprintf (stderr, "--> notice_events() breaking out of loop!\n");
++      return;
++    }
++
+   if (XtWindowToWidget (si->dpy, window))
+     /* If it's one of ours, don't mess up its event mask. */
+     return;
+

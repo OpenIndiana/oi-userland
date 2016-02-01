@@ -1,0 +1,48 @@
+15706879 SUNBT7033508 Xscreensaver "Black Screen Only" module shows
+	 	      portions of display when session is locked
+
+Upstream applicability & status unknown.
+---
+ driver/lock.c         |    4 ++--
+ driver/xscreensaver.c |    1 -
+ 2 files changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/driver/lock.c b/driver/lock.c
+--- a/driver/lock.c
++++ b/driver/lock.c
+@@ -918,6 +918,7 @@ new_passwd_window (saver_info *si)
+                blurb(), pw->prompt_screen->number);
+   }
+ 
++#ifdef CR7033508
+   /* Before mapping the window, save a pixmap of the current screen.
+      When we lower the window, we restore these bits.  This works,
+      because the running screenhack has already been sent SIGSTOP, so
+@@ -939,6 +940,7 @@ new_passwd_window (saver_info *si)
+ 	       0, 0);
+     XFreeGC (si->dpy, gc);
+   }
++#endif /*CR7033508*/
+ 
+   si->pw_data = pw;
+   return 0;
+@@ -3108,8 +3110,6 @@ unlock_p (saver_info *si)
+       return False;
+     }
+ 
+-  raise_window (si, True, True, True);
+-
+   xss_authenticate(si, p->verbose_p);
+ 
+   return (si->unlock_state == ul_success);
+diff --git a/driver/xscreensaver.c b/driver/xscreensaver.c
+--- a/driver/xscreensaver.c
++++ b/driver/xscreensaver.c
+@@ -1276,7 +1276,6 @@ main_loop (saver_info *si)
+       for (i = 0; i < si->nscreens; i++)
+         kill_screenhack (&si->screens[i]);
+ 
+-      raise_window (si, True, True, False);
+       if (si->throttled_p || getuid () == 0)
+         fprintf (stderr, "%s: not launching hack (throttled.)\n", blurb());
+       else

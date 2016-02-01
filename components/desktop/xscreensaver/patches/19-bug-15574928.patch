@@ -1,0 +1,32 @@
+Bug 15574928 - SUNBT6859039
+
+Upstream applicability & status unknown.
+---
+ driver/prefs.c |   14 ++++++++++++++
+ 1 files changed, 14 insertions(+), 0 deletions(-)
+
+diff --git a/driver/prefs.c b/driver/prefs.c
+--- a/driver/prefs.c
++++ b/driver/prefs.c
+@@ -378,7 +378,21 @@ parse_init_file (saver_preferences *p)
+       return 0;
+     }
+ 
++  /*
++   * 6859039: unprivileged local users can use xscreensaver to show
++   * contents of files they don't have permission to read.
++   */
++
++  /* Drop Privilege before opening .xscreensaver file */
++  uid_t idorg = geteuid ();
++  if (seteuid (getuid ()) != 0)
++    return 0;
++
+   in = fopen(name, "r");
++
++  /* Restore Privilege */
++  seteuid (idorg);
++
+   if (!in)
+     {
+       char *buf = (char *) malloc(1024 + strlen(name));

@@ -1,0 +1,26 @@
+15411287 SUNBT6583181 SCREENSAVER_STATUS needs to be set up correctly at startup
+
+Upstream applicability & status unknown.
+---
+ driver/xscreensaver.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+
+diff --git a/driver/xscreensaver.c b/driver/xscreensaver.c
+--- a/driver/xscreensaver.c
++++ b/driver/xscreensaver.c
+@@ -1577,6 +1577,7 @@ main (int argc, char **argv)
+       if (ssi->real_screen_p)
+         if (ensure_no_screensaver_running (si->dpy, si->screens[i].screen))
+           exit (1);
++      ssi->current_hack = -1; /* otherwise initialize hacks to no hack */
+     }
+ 
+   lock_initialization (si, &argc, argv);
+@@ -1611,6 +1612,7 @@ main (int argc, char **argv)
+ 
+   make_splash_dialog (si);
+ 
++  store_saver_status(si); /* set window property for SCREENSAVER_STATUS */
+   main_loop (si);		/* doesn't return */
+   return 0;
+ }

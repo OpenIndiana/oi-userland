@@ -1,0 +1,19 @@
+15411306 SUNBT6583247 JDS session is accessible for a while before
+	 	      xscreensaver lock is displayed on hotdesking
+
+Upstream applicability & status unknown.
+---
+ driver/windows.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/driver/windows.c b/driver/windows.c
+--- a/driver/windows.c
++++ b/driver/windows.c
+@@ -1580,6 +1580,7 @@ raise_window (saver_info *si,
+ 	  if (!dont_clear || ssi->stderr_overlay_window)
+ 	    clear_stderr (ssi);
+ 	  XMapRaised (si->dpy, ssi->screensaver_window);
++	  XSync(si->dpy,False); /* make sure window is raised now. */
+ #ifdef HAVE_MIT_SAVER_EXTENSION
+ 	  if (ssi->server_mit_saver_window &&
+ 	      window_exists_p (si->dpy, ssi->server_mit_saver_window))

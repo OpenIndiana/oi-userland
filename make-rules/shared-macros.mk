@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 PATH=/usr/bin:/usr/gnu/bin
@@ -567,6 +567,7 @@ PERL.5.12-mt =	/usr/perl5/5.12/bin/perl-threaded
 PERL.5.20 =     /usr/perl5/5.20/bin/perl
 
 PERL =          $(PERL.$(PERL_VERSION))
+PERL_PKG =	$(PERL_VERSION:5.%=runtime/perl-5%)
 
 PERL_ARCH :=	$(shell $(PERL) -e 'use Config; print $$Config{archname}')
 PERL_ARCH_FUNC=	$(shell $(1) -e 'use Config; print $$Config{archname}')

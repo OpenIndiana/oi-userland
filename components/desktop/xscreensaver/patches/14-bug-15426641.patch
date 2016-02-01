@@ -1,0 +1,26 @@
+15426641 SUNBT6610282 On-Screen Keyboard application and desktop shown
+	 	      without unlocking xscreensaver lock screen
+
+Upstream status unknown - suspect to be specific to our GTK unlock dialog.
+---
+ driver/xscreensaver.c |    7 +++++++
+ 1 files changed, 7 insertions(+), 0 deletions(-)
+
+diff --git a/driver/xscreensaver.c b/driver/xscreensaver.c
+--- a/driver/xscreensaver.c
++++ b/driver/xscreensaver.c
+@@ -420,7 +420,14 @@ saver_ehandler (Display *dpy, XErrorEvent *error)
+    "\n"
+    "\n");
+ 
++/**
++  6610282(P1) On-Screen Keyboard application and desktop shown
++         with out unlocking xscreensaver lock screen
++  The screen is still locked and it needs to cover all conditions,
++  including AT services, such as GOK, only GOK-COMPOSE should
++  be supported(others should not), there is no need to invoke
+ 	  saver_exit (si, -1, 0);
++**/
+ 	}
+     }
+ 
