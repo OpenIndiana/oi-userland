@@ -41,6 +41,14 @@ TPNO=			7879
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
+
+# Depends on a Python module from Desktop that is only available 32-bit in S11.
+ifeq ($(BUILD_TYPE), evaluation)
+BUILD_32_and_64=
+INSTALL_32_and_64=
+PUBLISH_STAMP=
+endif
+
 include $(WS_MAKE_RULES)/ips.mk
 
 # Set the pkg... path to search files in ./files/ dir (mainly the SMF manifests are there)
