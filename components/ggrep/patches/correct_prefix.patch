@@ -3,12 +3,11 @@ upstream. This is because it implements Solaris oddity - having the binaries
 available both without prefix and with 'g' prefix at the same time, only in
 different paths.
 
---- grep-2.20/src/egrep.sh	2015-06-29 16:48:08.536062429 +0200
-+++ grep-2.20/src/egrep.sh	2015-06-29 16:47:57.380731794 +0200
-@@ -1,11 +1,29 @@
+--- grep-2.22-orig/src/egrep.sh	Wed Oct 21 22:00:20 2015
++++ grep-2.22/src/egrep.sh	Tue Jan 19 14:42:27 2016
+@@ -1,2 +1,29 @@
  #!@SHELL@
--grep=grep
--case $0 in
+-exec @grep@ @option@ "$@"
 +# The script is a wrapper to GNU grep to be called with apropriate (-E or -F)
 +# command line option. We can't just run 'ggrep' as the path may not contain
 +# '/usr/bin' and we can't just use 'grep' as the PATH may not contain
@@ -25,12 +24,7 @@ different paths.
 +fi
 +
 +case "$0" in
-   */*)
--    dir=${0%/*}
--    if test -x "$dir/@grep@"; then
--      PATH=$dir:$PATH
--      grep=@grep@
--    fi;;
++  */*)
 +    dir="${0%/*}"
 +    if test -x "$dir/$grep"; then
 +      PATH="$dir:$PATH"
@@ -39,7 +33,6 @@ different paths.
 +  *)
 +    PATH="@prefix@/bin:$PATH"
 +    ;;
- esac
--exec $grep @option@ "$@"
++esac
 +
 +exec "$grep" @option@ "$@"

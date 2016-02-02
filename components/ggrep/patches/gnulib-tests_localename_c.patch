@@ -1,18 +1,16 @@
-# This patch fixes the core dump and locale issues previously seen in
-# the test-mbrtowc3.sh, test-mbrtowc4.sh and test-mbsrtowcs4.sh tests. 
+# This patch fixes a test failure in gnulib-tests/test-localename
 # __getlocalename_l is an Oracle private interface. 
 # Do not send this patch upstream.
 
-diff -rup grep-2.20-orig/gnulib-tests/localename.c grep-2.20/gnulib-tests/localename.c
---- grep-2.20-orig/gnulib-tests/localename.c	2014-01-01 17:36:42.000000000 -0800
-+++ grep-2.20/gnulib-tests/localename.c	2015-05-28 14:48:57.639643024 -0700
-@@ -2644,6 +2644,9 @@ gl_locale_name_thread_unsafe (int catego
-             return "";
-           }
-         return querylocale (mask, thread_locale);
+--- grep-2.22-orig/gnulib-tests/localename.c	2015-10-24 13:07:13.000000000 -0700
++++ grep-2.22/gnulib-tests/localename.c	2016-01-19 17:18:20.049731748 -0800
+@@ -2732,6 +2732,9 @@ gl_locale_name_thread_unsafe (int catego
+ #  elif defined __sun && HAVE_GETLOCALENAME_L
+         /* Solaris >= 12.  */
+         return getlocalename_l (category, thread_locale);
 +#  elif defined(sun) || defined(__sun) || defined(__sun__)
 +        extern char * __getlocalename_l(int, locale_t);
 +        return __getlocalename_l (category, thread_locale);
+ #  elif defined __ANDROID__
+         return MB_CUR_MAX == 4 ? "C.UTF-8" : "C";
  #  endif
-       }
-   }
