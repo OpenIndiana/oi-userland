@@ -20,37 +20,53 @@
 #
 
 #
-# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		parallel
-COMPONENT_VERSION=	20121122
+COMPONENT_VERSION=	20151222
 # A leading "0." is included to make it easier to upgrade the package, should
 # the maintainers decide to go to a more standard version numbering system.
-IPS_COMPONENT_VERSION=  0.2012.11.22
+IPS_COMPONENT_VERSION=  0.2015.12.22
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/parallel/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:0315336141612ba2ec1f76e6c8c58a72f4531777c96b79b91ef64b3980be584f
+    sha256:ae927c260fb86c24e0a2717d3b214996a9547d1a2be4ff3bfebd9f23b5bd9f0d
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/parallel
 
-TPNO=			8651
+TPNO=			26424
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-# Set PATH to find /usr/perl5/bin/pod2man, so that the man pages can be
+# Version of Perl to use in the Perl scripts in the parallel package.
+PERL_VERSION =	5.20
+
+# Set PATH to find the correct pod2man, so that the man pages can be
 # automatically generated
-COMPONENT_BUILD_ENV +=    PATH="/usr/bin:/usr/gnu/bin:/usr/perl5/bin"
+COMPONENT_BUILD_ENV += \
+	PATH="/usr/bin:/usr/gnu/bin:/usr/perl5/$(PERL_VERSION)/bin"
+
+# Adjust the '#!/usr/bin/env perl' and '#!/usr/bin/perl' at the beginning of
+# the Perl scripts to use '#!/usr/perl5/$(PERL_VERSION)/bin/perl'
+COMPONENT_POST_INSTALL_ACTION += \
+	$(GSED) -i -e 's?/usr/bin/perl?/usr/perl5/$(PERL_VERSION)/bin/perl?' \
+		$(PROTOUSRBINDIR64)/niceload;
+COMPONENT_POST_INSTALL_ACTION += \
+	$(GSED) -i -e \
+		's?/usr/bin/env perl?/usr/perl5/$(PERL_VERSION)/bin/perl?' \
+		$(PROTOUSRBINDIR64)/parallel;
+COMPONENT_POST_INSTALL_ACTION += \
+	$(GSED) -i -e 's?/usr/bin/perl?/usr/perl5/$(PERL_VERSION)/bin/perl?' \
+		$(PROTOUSRBINDIR64)/sql;
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-# common targets
 configure:	$(CONFIGURE_64)
 
 build:		$(BUILD_64)
@@ -62,6 +78,6 @@ test:		$(NO_TESTS)
 system-test:    $(NO_TESTS)
 
 
-REQUIRED_PACKAGES += runtime/perl-512
 REQUIRED_PACKAGES += runtime/perl-520
 REQUIRED_PACKAGES += shell/which
+REQUIRED_PACKAGES += system/core-os
