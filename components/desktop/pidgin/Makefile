@@ -37,6 +37,14 @@ TPNO=			21690
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
+
+# Cyrus SASL is S12-only (at least for evaluation builds).
+ifeq ($(BUILD_TYPE), evaluation)
+BUILD_32=
+INSTALL_32=
+PUBLISH_STAMP=
+endif
+
 include $(WS_MAKE_RULES)/ips.mk
 
 # Need to pick up the Studio compiler as some Makefiles just use "cc".
