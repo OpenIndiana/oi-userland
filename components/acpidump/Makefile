@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 COMPILER =	gcc
@@ -50,10 +50,11 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PKG_PROTO_DIRS += $(BUILD_DIR_32)
+PKG_PROTO_DIRS += $(BUILD_DIR_64)
 
-COMPONENT_BUILD_ENV  +=		CC=$(CC)
+CC +=	$(CC_BITS)
 
+COMPONENT_BUILD_ENV +=	CC="$(CC)"
 
 # common targets. we're i386-only so we have to
 # be slightly tricky.
@@ -61,7 +62,9 @@ COMPONENT_BUILD_ENV  +=		CC=$(CC)
 build_sparc:
 	@echo "Not available."
 
-build_i386:	$(BUILD_32)
+ASLR_MODE =	$(ASLR_ENABLE)
+
+build_i386:	$(BUILD_64)
 
 build:		build_$(MACH)
 
