@@ -419,4 +419,5 @@ system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
 
 REQUIRED_PACKAGES += developer/build/makedepend
+REQUIRED_PACKAGES += network/rsync
 REQUIRED_PACKAGES += system/library
