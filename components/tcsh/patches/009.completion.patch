@@ -1,0 +1,19 @@
+this is from upstream. described by:
+
+http://mx.gw.com/pipermail/tcsh-bugs/2015-September/000978.html
+
+and fixed by:
+
+https://github.com/tcsh-org/tcsh/commit/86f1ca6000f81be5b3401a2ec102521cb612a518
+
+--- tcsh-6.19.00/tw.comp.c.orig	Wed Feb  3 14:07:50 2016
++++ tcsh-6.19.00/tw.comp.c	Wed Feb  3 14:08:18 2016
+@@ -251,7 +251,7 @@
+ tw_match(const Char *str, const Char *pat, int exact)
+ {
+     const Char *estr;
+-    int rv = exact ? Gmatch(str, pat) : Gnmatch(str, pat, &estr);
++    int rv = exact ? Gmatch(estr = str, pat) : Gnmatch(str, pat, &estr);
+ #ifdef TDEBUG
+     xprintf("G%smatch(%s, ", exact ? "" : "n", short2str(str));
+     xprintf("%s, ", short2str(pat));
