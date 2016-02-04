@@ -1,5 +1,11 @@
---- binutils-2.23.1/gold/output.cc	2012-11-09 01:21:28.000000000 -0700
-+++ binutils-2.23.1/gold/output.cc	2013-01-01 01:45:50.721203685 -0700
+# Solaris posix_fallocate(3C) will fail if len == 0. Try using
+# posix_fallocate(3C) first, and if it fails, fallback to
+# ftruncate(3C).
+# We aren't building the Gold Linker anyway. This is just for
+# those of us who are building and working on the Gold Linker.
+# This patch has been submitted to the community.
+--- a/gold/output.cc	2014-10-14 00:32:04.000000000 -0700
++++ b/gold/output.cc	2015-08-04 11:57:17.805271241 -0700
 @@ -22,6 +22,7 @@
  
  #include "gold.h"
