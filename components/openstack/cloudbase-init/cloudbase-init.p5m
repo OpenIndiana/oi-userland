@@ -1,0 +1,178 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
+set name=pkg.fmri \
+    value=pkg:/system/management/cloudbase-init@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Portable OpenStack Cloud Initialization Service"
+set name=pkg.description \
+    value="The cloudbase-init service brings the benefits of cloud-init to guests running a wide range of OSs though the modular and decoupled architecture of the service it provides. The features available include HTTP and ConfigDriveV2 metadata services and plugins for: hostname, user creation, group membership, static networking, SSH user's public keys, and user_data custom scripts running in various shells."
+set name=com.oracle.info.description value="the cloudbase-init service"
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value="org.opensolaris.category.2008:System/Administration and Configuration"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream \
+    value="Alessandro Pilotti <apilotti@cloudbasesolutions.com>"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2016/010
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+file files/cloudbase-init.conf path=etc/cloudbase-init.conf
+file files/cloudbase-init.xml \
+    path=lib/svc/manifest/application/cloudbase-init.xml
+file path=usr/bin/cloudbase-init
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbase_init-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbase_init-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbase_init-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbase_init-$(COMPONENT_VERSION)-py$(PYVER).egg-info/entry_points.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbase_init-$(COMPONENT_VERSION)-py$(PYVER).egg-info/not-zip-safe
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbase_init-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbase_init-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/exception.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/init.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/metadata/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/metadata/factory.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/metadata/services/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/metadata/services/base.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/metadata/services/baseopenstackservice.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/metadata/services/cloudstack.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/metadata/services/configdrive.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/metadata/services/ec2service.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/metadata/services/httpservice.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/metadata/services/maasservice.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/metadata/services/opennebulaservice.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/metadata/services/osconfigdrive/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/metadata/services/osconfigdrive/base.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/metadata/services/osconfigdrive/factory.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/metadata/services/osconfigdrive/windows.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/osutils/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/osutils/base.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/osutils/factory.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/osutils/posix.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/osutils/windows.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/plugins/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/plugins/common/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/plugins/common/base.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/plugins/common/constants.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/plugins/common/createuser.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/plugins/common/execcmd.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/plugins/common/fileexecutils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/plugins/common/localscripts.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/plugins/common/mtu.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/plugins/common/networkconfig.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/plugins/common/ntpclient.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/plugins/common/sethostname.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/plugins/common/setuserpassword.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/plugins/common/sshpublickeys.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/plugins/common/userdata.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/plugins/common/userdataplugins/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/plugins/common/userdataplugins/base.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/plugins/common/userdataplugins/cloudboothook.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/plugins/common/userdataplugins/cloudconfig.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/plugins/common/userdataplugins/cloudconfigplugins/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/plugins/common/userdataplugins/cloudconfigplugins/base.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/plugins/common/userdataplugins/cloudconfigplugins/factory.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/plugins/common/userdataplugins/cloudconfigplugins/set_hostname.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/plugins/common/userdataplugins/cloudconfigplugins/set_timezone.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/plugins/common/userdataplugins/cloudconfigplugins/write_files.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/plugins/common/userdataplugins/factory.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/plugins/common/userdataplugins/heat.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/plugins/common/userdataplugins/multipartmixed.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/plugins/common/userdataplugins/parthandler.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/plugins/common/userdataplugins/shellscript.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/plugins/common/userdatautils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/plugins/factory.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/plugins/windows/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/plugins/windows/createuser.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/plugins/windows/extendvolumes.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/plugins/windows/licensing.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/plugins/windows/ntpclient.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/plugins/windows/winrmcertificateauth.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/plugins/windows/winrmlistener.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/shell.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/utils/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/utils/classloader.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/utils/crypt.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/utils/debiface.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/utils/dhcp.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/utils/encoding.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/utils/hostname.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/utils/log.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/utils/network.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/utils/windows/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/utils/windows/cryptoapi.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/utils/windows/disk.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/utils/windows/iphlpapi.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/utils/windows/kernel32.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/utils/windows/network.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/utils/windows/privilege.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/utils/windows/security.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/utils/windows/storage/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/utils/windows/storage/base.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/utils/windows/storage/factory.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/utils/windows/storage/vds_storage_manager.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/utils/windows/storage/wsm_storage_manager.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/utils/windows/timezone.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/utils/windows/vds.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/utils/windows/vfat.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/utils/windows/winrmconfig.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/utils/windows/ws2_32.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/utils/windows/x509.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/utils/x509constants.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cloudbaseinit/version.py
+#
+license LICENSE license="Apache v2.0"
+
+# force a group dependency on the optional netaddr; pkgdepend work is needed to
+# flush this out.
+depend type=group fmri=library/python/netaddr-$(PYV)
+
+# force a dependency on babel; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/babel-$(PYV)
+
+# force a dependency on eventlet; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/eventlet-$(PYV)
+
+# force a dependency on iso8601; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/iso8601-$(PYV)
+
+# force a dependency on netifaces; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/netifaces-$(PYV)
+
+# force a dependency on oauth; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/oauthlib-$(PYV)
+
+# force a dependency on oslo.config; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/oslo.config-$(PYV)
+
+# force a dependency on oslo.log; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/oslo.log-$(PYV)
+
+# force a dependency on pyyaml; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/pyyaml-$(PYV)
+
+# force a dependency on six; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/six-$(PYV)
+
