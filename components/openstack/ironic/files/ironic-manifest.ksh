@@ -1,6 +1,6 @@
 #!/bin/ksh93
 
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -400,7 +400,7 @@ if [[ -n "$ARCHIVE_URI" ]]; then
     /usr/bin/aimanifest add $file/credentials/http_auth_token $AUTH_TOKEN
   fi
   inspath=$(/usr/bin/aimanifest add -r $swpath/software_data@action install)
-  /usr/bin/aimanifest add $inspath/name global
+  /usr/bin/aimanifest add $inspath/name "*"
 fi
 
 if [[ -n "$PUBLISHERS" || -n "$FMRI" ]]; then

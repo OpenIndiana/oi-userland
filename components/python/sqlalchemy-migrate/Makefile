@@ -18,21 +18,21 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sqlalchemy-migrate
-COMPONENT_VERSION=	0.9.1
+COMPONENT_VERSION=	0.9.6
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:16e327c9642ca4c99a70dcac3b39aeb821edaf5214834b47fb0a89bac44af23b
+    sha256:c2c73d8dbeb29a96459d8622e3bac2e97cf6f74ed0564469486fe7ffe0ef3d97
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	http://code.google.com/p/sqlalchemy-migrate/
+COMPONENT_PROJECT_URL=	https://github.com/stackforge/sqlalchemy-migrate
 COMPONENT_BUGDB=	python-mod/sqlalchemy-mig
 
-TPNO=			21740
+TPNO=			25760
 
 # Syntax issues: not Python 3 ready.
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)

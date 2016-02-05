@@ -20,25 +20,25 @@
 #
 
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ironic
-COMPONENT_CODENAME=	juno
-COMPONENT_VERSION=	2014.2.1
-COMPONENT_BE_VERSION=	2014.2
+COMPONENT_CODENAME=	kilo
+COMPONENT_VERSION=	2015.1.2
+COMPONENT_BE_VERSION=	2015.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:9dae1e5e030741382e75f6da9ec34af1b8e8d50940d158fb14f4d427a01c0bff
+    sha256:fd85246f7c9b0976a27b863de328f1240d43d4633511cd832e8d6904f6f4b06c
 COMPONENT_ARCHIVE_URL=	http://launchpad.net/$(COMPONENT_NAME)/$(COMPONENT_CODENAME)/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://www.openstack.org/
 COMPONENT_BUGDB=	service/ironic
 IPS_COMPONENT_VERSION=	0.$(COMPONENT_VERSION)
 
-TPNO=			22203
+TPNO=			25789
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -55,8 +55,9 @@ PKG_MACROS +=		PYVER=$(PYTHON_VERSIONS)
 PKG_MACROS +=		PYV=$(shell echo $(PYTHON_VERSIONS) | tr -d .)
 
 #
-# ironic-api and ironic-conductor depend on ironic-db so copy all of the
-# service manifests into the proto directory for pkgdepend(1) to find.
+# ironic-api and ironic-conductor depend on ironic-db and ironic-upgrade so
+# copy all of the service manifests into the proto directory for
+# pkgdepend(1) to find.
 #
 COMPONENT_POST_INSTALL_ACTION += \
 	($(MKDIR) $(PROTO_DIR)/lib/svc/manifest/application/openstack; \
@@ -64,6 +65,7 @@ COMPONENT_POST_INSTALL_ACTION += \
 	     files/ironic-api.xml \
 	     files/ironic-conductor.xml \
 	     files/ironic-db.xml \
+	     files/ironic-upgrade.xml \
 	     $(PROTO_DIR)/lib/svc/manifest/application/openstack/; \
 	 $(MKDIR) $(PROTO_DIR)$(PYTHON_LIB)/ironic/drivers/modules; \
 	 $(CP) \
@@ -89,6 +91,8 @@ install:	$(INSTALL_NO_ARCH)
 test:		$(NO_TESTS)
 
 
+REQUIRED_PACKAGES += cloud/openstack/openstack-common
+REQUIRED_PACKAGES += library/python/sqlalchemy-27
 REQUIRED_PACKAGES += install/installadm
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os

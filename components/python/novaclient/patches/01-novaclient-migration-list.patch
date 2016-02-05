@@ -1,14 +1,15 @@
 # Patch to prevent nova migration-list from generating an error.
 # This patch has not yet been submitted upstream. 
 
---- python-novaclient-2.20.0/novaclient/base.py.~1~	2014-09-20 15:12:42.000000000 -0700
-+++ python-novaclient-2.20.0/novaclient/base.py	2014-12-13 14:26:17.459463436 -0800
-@@ -76,7 +76,7 @@ class Manager(utils.HookableMixin):
+--- python-novaclient-2.23.0/novaclient/base.py.~1~	2015-05-08 13:53:27.607540246 -0600
++++ python-novaclient-2.23.0/novaclient/base.py	2015-05-08 13:53:50.138620241 -0600
+@@ -73,7 +73,7 @@ class Manager(base.HookableMixin):
              try:
                  data = data['values']
              except KeyError:
 -                pass
 +                data = []
  
-         self._clear_completion_cache_for_class(obj_class)
- 
+         with self.completion_cache('human_id', obj_class, mode="w"):
+             with self.completion_cache('uuid', obj_class, mode="w"):
+

@@ -1,6 +1,6 @@
 #!/usr/bin/python2.7
 
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -27,41 +27,10 @@ import sqlalchemy
 from openstack_common import alter_mysql_tables, create_backups, modify_conf, \
     move_conf
 
-
 HEAT_CONF_MAPPINGS = {
     # Deprecated group/name
-    ('DEFAULT', 'stack_user_domain'): ('DEFAULT', 'stack_user_domain_id'),
-    ('DEFAULT', 'rabbit_durable_queues'): ('DEFAULT', 'amqp_durable_queues'),
-    ('rpc_notifier2', 'topics'): ('DEFAULT', 'notification_topics'),
-    ('DEFAULT', 'log_config'): ('DEFAULT', 'log_config_append'),
-    ('DEFAULT', 'logfile'): ('DEFAULT', 'log_file'),
-    ('DEFAULT', 'logdir'): ('DEFAULT', 'log_dir'),
-    ('DEFAULT', 'db_backend'): ('database', 'backend'),
-    ('DEFAULT', 'sql_connection'): ('database', 'connection'),
-    ('DATABASE', 'sql_connection'): ('database', 'connection'),
-    ('sql', 'connection'): ('database', 'connection'),
-    ('DEFAULT', 'sql_idle_timeout'): ('database', 'idle_timeout'),
-    ('DATABASE', 'sql_idle_timeout'): ('database', 'idle_timeout'),
-    ('sql', 'idle_timeout'): ('database', 'idle_timeout'),
-    ('DEFAULT', 'sql_min_pool_size'): ('database', 'min_pool_size'),
-    ('DATABASE', 'sql_min_pool_size'): ('database', 'min_pool_size'),
-    ('DEFAULT', 'sql_max_pool_size'): ('database', 'max_pool_size'),
-    ('DATABASE', 'sql_max_pool_size'): ('database', 'max_pool_size'),
-    ('DEFAULT', 'sql_max_retries'): ('database', 'max_retries'),
-    ('DATABASE', 'sql_max_retries'): ('database', 'max_retries'),
-    ('DEFAULT', 'sql_retry_interval'): ('database', 'retry_interval'),
-    ('DATABASE', 'reconnect_interval'): ('database', 'retry_interval'),
-    ('DEFAULT', 'sql_max_overflow'): ('database', 'max_overflow'),
-    ('DATABASE', 'sqlalchemy_max_overflow'): ('database', 'max_overflow'),
-    ('DEFAULT', 'sql_connection_debug'): ('database', 'connection_debug'),
-    ('DEFAULT', 'sql_connection_trace'): ('database', 'connection_trace'),
-    ('DATABASE', 'sqlalchemy_pool_timeout'): ('database', 'pool_timeout'),
-    ('DEFAULT', 'memcache_servers'):
-        ('keystone_authtoken', 'memcached_servers'),
-    ('DEFAULT', 'matchmaker_ringfile'): ('matchmaker_ring', 'ringfile'),
-    # No longer referenced by the service or causes a DeprecationWarning
-    ('DEFAULT', 'instance_user'): (None, None),
-    ('DEFAULT', 'onready'): (None, None),
+    ('DEFAULT', 'log-format'): (None, None),
+    ('DEFAULT', 'use-sylog'): (None, None),
     ('DEFAULT', 'list_notifier_drivers'): (None, None),
 }
 
@@ -74,17 +43,6 @@ HEAT_CONF_EXCEPTIONS = [
     ('keystone_authtoken', 'admin_tenant_name'),
     ('keystone_authtoken', 'signing_dir'),
 ]
-
-HEAT_MOVE_CONFIG = {
-    ('filter:authtoken', 'auth_uri'): ('keystone_authtoken', 'auth_uri'),
-    ('filter:authtoken', 'identity_uri'):
-        ('keystone_authtoken', 'identity_uri'),
-    ('filter:authtoken', 'admin_tenant_name'):
-        ('keystone_authtoken', 'admin_tenant_name'),
-    ('filter:authtoken', 'admin_user'): ('keystone_authtoken', 'admin_user'),
-    ('filter:authtoken', 'admin_password'):
-        ('keystone_authtoken', 'admin_password'),
-}
 
 
 def start():
@@ -114,11 +72,6 @@ def start():
         create_backups('/etc/heat')
 
         modify_conf('/etc/heat/api-paste.ini')
-
-        # before modifying heat.conf, move the [filter:authtoken] entries from
-        # the updated api-paste.ini to the old heat.conf
-        move_conf('/etc/heat/api-paste.ini', '/etc/heat/heat.conf',
-                  HEAT_MOVE_CONFIG)
 
         modify_conf('/etc/heat/heat.conf', HEAT_CONF_MAPPINGS,
                     HEAT_CONF_EXCEPTIONS)

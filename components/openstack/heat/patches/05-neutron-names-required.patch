@@ -2,20 +2,20 @@ In-house patch to change the name of Neutron objects to use underscores
 instead of hyphens on Solaris.  This patch has not yet been submitted
 upstream.
 
---- heat-2014.2.2/heat/engine/resources/neutron/neutron.py.orig     2014-07-22 18:07:26.583195123 -0600
-+++ heat-2014.2.2/heat/engine/resources/neutron/neutron.py  2014-07-22 18:08:49.115350165 -0600
-@@ -11,6 +11,7 @@
- #    License for the specific language governing permissions and limitations
- #    under the License.
+--- heat-2015.1.0/heat/engine/resources/openstack/neutron/neutron.py.orig	2015-05-05 11:16:07.369538369 -0600
++++ heat-2015.1.0/heat/engine/resources/openstack/neutron/neutron.py	2015-05-05 11:17:11.789570983 -0600
+@@ -13,6 +13,7 @@
+ from oslo_utils import uuidutils
+ import six
 
 +import platform
  import warnings
 
  from heat.common import exception
 @@ -188,3 +189,10 @@ class NeutronResource(resource.Resource)
-     def check_delete_complete(self, delete_task):
-         # if the resource was already deleted, delete_task will be None
-         return delete_task is None or delete_task.step()
+             return True
+
+         return self._not_found_in_call(self._show_resource)
 +
 +    def physical_resource_name(self):
 +        name = super(NeutronResource, self).physical_resource_name()

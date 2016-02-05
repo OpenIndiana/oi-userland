@@ -20,26 +20,26 @@
 #
 
 #
-# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		keystone
-COMPONENT_CODENAME=	juno
-COMPONENT_VERSION=	2014.2.2
-COMPONENT_BE_VERSION=	2014.2
+COMPONENT_CODENAME=	kilo
+COMPONENT_VERSION=	2015.1.2
+COMPONENT_BE_VERSION=	2015.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:5674c1ae0aa7203cca0aba634e939bcfb7e1e0f60f62a6d6fceeb05efb84980e
+    sha256:af63a89ca1cebfff593e35c24105c1442ab50f760871d756a48cfc120a7a8ddb
 COMPONENT_ARCHIVE_URL=	http://launchpad.net/$(COMPONENT_NAME)/$(COMPONENT_CODENAME)/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_PROJECT_URL=	http://www.openstack.org/
 COMPONENT_BUGDB=	service/keystone
 IPS_COMPONENT_VERSION=	0.$(COMPONENT_VERSION)
 
-TPNO=			21823
+TPNO=			25790
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -64,7 +64,10 @@ COMPONENT_POST_INSTALL_ACTION += \
 	 $(CP) \
 	     files/keystone.xml \
 	     files/keystone-upgrade.xml \
-	     $(PROTO_DIR)/lib/svc/manifest/application/openstack;)
+	     $(PROTO_DIR)/lib/svc/manifest/application/openstack; \
+	 $(MKDIR) $(PROTO_DIR)$(PYTHON_LIB)/keystone/httpd; \
+	 $(CP) $(SOURCE_DIR)/httpd/keystone.py $(PROTO_DIR)$(PYTHON_LIB)/keystone/httpd); \
+	 $(PYTHON) -m compileall $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES)
 
 # common targets
 build:		$(BUILD_NO_ARCH)

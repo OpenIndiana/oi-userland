@@ -20,10 +20,11 @@ import os
 import platform
 import time
 
+from oslo_concurrency import processutils as putils
+from oslo_log import log as logging
+
 from cinder.brick import exception
 from cinder.openstack.common.gettextutils import _
-from cinder.openstack.common import log as logging
-from cinder.openstack.common import processutils as putils
 
 LOG = logging.getLogger(__name__)
 

@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		python-saharaclient
-COMPONENT_VERSION=	0.7.6
+COMPONENT_VERSION=	0.8.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:9013b57a70c30c4ef6e799f11755495343106528ee42bbeb8a40b5e8fad825c2
+    sha256:cd212b85811118eb45ab5b2ade0a8cbf5418d5d6b9f4e7425b5026c293effb39
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://launchpad.net/python-saharaclient
 COMPONENT_BUGDB=	service/sahara
 
-TPNO=			21636
+TPNO=			25757
 
 # Depends on keystoneclient which is not Python 3 ready.
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)

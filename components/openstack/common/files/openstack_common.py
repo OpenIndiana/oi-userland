@@ -153,10 +153,10 @@ def modify_conf(old_file, mapping=None, exception_list=None):
                 new_section, new_key = old_section, old_key
 
             # Look for exceptions
-            if exception_list is not None:
+            if exception_list:
                 if (new_section, new_key) in exception_list:
                     if (new_section != 'DEFAULT' and
-                        not new.has_section(new_section)):
+                            not new.has_section(new_section)):
                         new.add_section(new_section)
                     print "Preserving [%s] %s = %s" % \
                         (new_section, new_key, value)

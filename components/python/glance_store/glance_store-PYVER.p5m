@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
@@ -46,6 +46,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/glance_store-$(COMPONENT_VERSIO
 file path=usr/lib/python$(PYVER)/vendor-packages/glance_store-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/glance_store-$(COMPONENT_VERSION)-py$(PYVER).egg-info/entry_points.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/glance_store-$(COMPONENT_VERSION)-py$(PYVER).egg-info/not-zip-safe
+file path=usr/lib/python$(PYVER)/vendor-packages/glance_store-$(COMPONENT_VERSION)-py$(PYVER).egg-info/pbr.json
 file path=usr/lib/python$(PYVER)/vendor-packages/glance_store-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/glance_store-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/glance_store/__init__.py
@@ -62,6 +63,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/glance_store/_drivers/swift/sto
 file path=usr/lib/python$(PYVER)/vendor-packages/glance_store/_drivers/swift/utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance_store/_drivers/vmware_datastore.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance_store/backend.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance_store/capabilities.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance_store/common/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance_store/common/auth.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance_store/common/config.py
@@ -69,14 +71,14 @@ file path=usr/lib/python$(PYVER)/vendor-packages/glance_store/common/utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance_store/driver.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance_store/exceptions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance_store/i18n.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance_store/locale/glance_store-log-critical.pot
+file path=usr/lib/python$(PYVER)/vendor-packages/glance_store/locale/glance_store-log-error.pot
+file path=usr/lib/python$(PYVER)/vendor-packages/glance_store/locale/glance_store-log-info.pot
+file path=usr/lib/python$(PYVER)/vendor-packages/glance_store/locale/glance_store-log-warning.pot
+file path=usr/lib/python$(PYVER)/vendor-packages/glance_store/locale/glance_store.pot
 file path=usr/lib/python$(PYVER)/vendor-packages/glance_store/location.py
-file path=usr/lib/python$(PYVER)/vendor-packages/glance_store/openstack/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/glance_store/openstack/common/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/glance_store/openstack/common/_i18n.py
-file path=usr/lib/python$(PYVER)/vendor-packages/glance_store/openstack/common/context.py
-file path=usr/lib/python$(PYVER)/vendor-packages/glance_store/openstack/common/processutils.py
 #
-license LICENSE license="Apache v2.0"
+license glance_store.license license="Apache v2.0"
 
 # force a group dependency on the optional boto; pkgdepend work is needed to
 # flush this out.
@@ -98,6 +100,9 @@ depend type=group fmri=library/python/swiftclient-$(PYV)
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
     pkg.debug.depend.path=usr/bin
 
+# force a dependency on enum; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/enum-$(PYV)
+
 # force a dependency on eventlet; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/eventlet-$(PYV)
 
@@ -108,8 +113,14 @@ depend type=require \
 # force a dependency on httplib2; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/httplib2-$(PYV)
 
+# force a dependency on jsonschema; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/jsonschema-$(PYV)
+
 # force a dependency on ordereddict; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/ordereddict-$(PYV)
+
+# force a dependency on oslo.concurrency; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/oslo.concurrency-$(PYV)
 
 # force a dependency on oslo.config; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/oslo.config-$(PYV)

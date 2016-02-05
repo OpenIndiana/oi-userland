@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <!DOCTYPE service_bundle SYSTEM '/usr/share/lib/xml/dtd/service_bundle.dtd.1'>
 <!--
- Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+ Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 
  Licensed under the Apache License, Version 2.0 (the "License"); you may
  not use this file except in compliance with the License. You may obtain
@@ -59,7 +59,7 @@
     <logfile_attributes permissions='600'/>
 
     <exec_method timeout_seconds="60" type="method" name="start"
-      exec="/lib/svc/method/neutron-l3-agent %m %{config/config_path} %{config/l3_config_path}">
+      exec="/lib/svc/method/neutron-l3-agent %m %{config/config_path} %{config/l3_config_path} %{config/vpn_config_path}">
       <method_context>
         <!-- sys_ip_config is required to set 'hostmodel' ipadm property -->
         <method_credential user='neutron' group='neutron' privileges='basic,sys_ip_config' />
@@ -87,6 +87,8 @@
           value='/etc/neutron/neutron.conf'/>
         <propval name='l3_config_path' type='astring'
           value='/etc/neutron/l3_agent.ini'/>
+        <propval name='vpn_config_path' type='astring'
+          value='/etc/neutron/vpn_agent.ini'/>
       </property_group>
     </instance>
 
@@ -117,6 +119,14 @@
           <common_name>
             <loctext xml:lang='C'>
               Filesystem path to Neutron L3 .ini file
+            </loctext>
+          </common_name>
+        </prop_pattern>
+        <prop_pattern name='vpn_config_path' type='astring'
+          required='true'>
+          <common_name>
+            <loctext xml:lang='C'>
+              Filesystem path to Neutron VPNaaS .ini file
             </loctext>
           </common_name>
         </prop_pattern>

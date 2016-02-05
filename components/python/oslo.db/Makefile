@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		oslo.db
-COMPONENT_VERSION=	1.0.3
+COMPONENT_VERSION=	1.7.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:b75c9e496329ff20f20e70f076718b71878f6802a24f4ff684fd7de12a509331
+    sha256:e10b1bc9b128aaeae652809e1659ec2d2f64e2d1a143b9c9c66eb9cfef66c02c
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://launchpad.net/oslo.db
 COMPONENT_BUGDB=	python-mod/oslo.db
 
-TPNO=			21627
+TPNO=			25740
 
 # Depends on sqlalchemy-migrate which is not Python3 ready.
 PYTHON_VERSIONS =	$(PYTHON2_VERSIONS)

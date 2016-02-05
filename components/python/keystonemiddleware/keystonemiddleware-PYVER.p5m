@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
@@ -50,20 +50,28 @@ file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware-$(COMPONENT_
 file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware/_memcache_crypt.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware/_memcache_pool.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware/audit.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware/auth_token.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware/auth_token/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware/auth_token/_auth.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware/auth_token/_base.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware/auth_token/_cache.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware/auth_token/_exceptions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware/auth_token/_identity.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware/auth_token/_memcache_crypt.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware/auth_token/_revocations.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware/auth_token/_signing_dir.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware/auth_token/_user_plugin.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware/auth_token/_utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware/ec2_token.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware/i18n.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware/openstack/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware/openstack/common/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware/openstack/common/context.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware/openstack/common/memorycache.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware/opts.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystonemiddleware/s3_token.py
 #
-license LICENSE license="Apache v2.0"
+license keystonemiddleware.license license="Apache v2.0"
 
 # force a group dependency on the optional m2crypto; pkgdepend work is needed to
 # flush this out.
@@ -92,6 +100,9 @@ depend type=require \
 # force a dependency on oslo.config; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/oslo.config-$(PYV)
 
+# force a dependency on oslo.context; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/oslo.context-$(PYV)
+
 # force a dependency on oslo.i18n; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/oslo.i18n-$(PYV)
 
@@ -101,6 +112,9 @@ depend type=require fmri=library/python/oslo.serialization-$(PYV)
 
 # force a dependency on oslo.utils; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/oslo.utils-$(PYV)
+
+# force a dependency on pbr; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/pbr-$(PYV)
 
 # force a dependency on pycadf; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/pycadf-$(PYV)

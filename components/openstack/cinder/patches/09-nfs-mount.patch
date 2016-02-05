@@ -1,0 +1,59 @@
+In-house patch to adapt Linux specific rootwrap setup to Solaris.
+Remove check for Linux specific mount.nfs command.
+
+Patch may be suitable for pushing upsteam.
+
+--- cinder-2014.2.2/cinder/volume/drivers/nfs.py.orig	2015-10-12 16:43:35.188157478 -0700
++++ cinder-2014.2.2/cinder/volume/drivers/nfs.py	2015-10-13 09:35:07.871595794 -0700
+@@ -15,6 +15,7 @@
+ 
+ import errno
+ import os
++import platform
+ import time
+ 
+ from oslo_concurrency import processutils as putils
+@@ -86,7 +87,10 @@ class NfsDriver(remotefs.RemoteFSDriver)
+         self._remotefsclient = None
+         super(NfsDriver, self).__init__(*args, **kwargs)
+         self.configuration.append_config_values(nfs_opts)
+-        root_helper = utils.get_root_helper()
++        if platform.system() == "SunOS":
++            root_helper = None
++        else:
++            root_helper = utils.get_root_helper()
+         # base bound to instance is used in RemoteFsConnector.
+         self.base = getattr(self.configuration,
+                             'nfs_mount_point_base',
+@@ -144,18 +148,19 @@ class NfsDriver(remotefs.RemoteFSDriver)
+ 
+         self.shares = {}  # address : options
+ 
+-        # Check if mount.nfs is installed on this system; note that we don't
+-        # need to be root to see if the package is installed.
+-        package = 'mount.nfs'
+-        try:
+-            self._execute(package, check_exit_code=False,
+-                          run_as_root=False)
+-        except OSError as exc:
+-            if exc.errno == errno.ENOENT:
+-                msg = _('%s is not installed') % package
+-                raise exception.NfsException(msg)
+-            else:
+-                raise exc
++        if platform.system() != "SunOS":
++            # Check if mount.nfs is installed on this system; note that we don't
++            # need to be root to see if the package is installed.
++            package = 'mount.nfs'
++            try:
++                self._execute(package, check_exit_code=False,
++                              run_as_root=False)
++            except OSError as exc:
++                if exc.errno == errno.ENOENT:
++                    msg = _('%s is not installed') % package
++                    raise exception.NfsException(msg)
++                else:
++                    raise exc
+ 
+         # Now that all configuration data has been loaded (shares),
+         # we can "set" our final NAS file security options.

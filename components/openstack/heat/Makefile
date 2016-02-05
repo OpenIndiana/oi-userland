@@ -20,26 +20,26 @@
 #
 
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		heat
-COMPONENT_CODENAME=	juno
-COMPONENT_VERSION=	2014.2.2
-COMPONENT_BE_VERSION=	2014.2
+COMPONENT_CODENAME=	kilo
+COMPONENT_VERSION=	2015.1.2
+COMPONENT_BE_VERSION=	2015.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:ac9ad74d9571ec2441d2eec22dbe3ef9f39f7378f62238ad70911e26435d516f
+    sha256:5cf5dab1496304d81b060f1ce58f0c2d36a91c5a3305a4f91ec3057ac229d6ae
 COMPONENT_ARCHIVE_URL=	http://launchpad.net/$(COMPONENT_NAME)/$(COMPONENT_CODENAME)/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_PROJECT_URL=	http://www.openstack.org/
 COMPONENT_BUGDB=	service/heat
 IPS_COMPONENT_VERSION=	0.$(COMPONENT_VERSION)
 
-TPNO=			21821
+TPNO=			25786
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -61,15 +61,15 @@ PKG_MACROS +=		PYV=$(shell echo $(PYTHON_VERSIONS) | tr -d .)
 # into the proto directory for pkgdepend(1) to find.
 #
 COMPONENT_POST_INSTALL_ACTION += \
-        ($(MKDIR) $(PROTO_DIR)/lib/svc/manifest/application/openstack; \
-         $(CP) \
-             files/heat-api-cfn.xml \
-             files/heat-api-cloudwatch.xml \
-             files/heat-api.xml \
-             files/heat-db.xml \
-             files/heat-engine.xml \
-             files/heat-upgrade.xml \
-             $(PROTO_DIR)/lib/svc/manifest/application/openstack)
+    ($(MKDIR) $(PROTO_DIR)/lib/svc/manifest/application/openstack; \
+     $(CP) \
+	 files/heat-api-cfn.xml \
+	 files/heat-api-cloudwatch.xml \
+	 files/heat-api.xml \
+	 files/heat-db.xml \
+	 files/heat-engine.xml \
+	 files/heat-upgrade.xml \
+	 $(PROTO_DIR)/lib/svc/manifest/application/openstack)
 
 # common targets
 build:		$(BUILD_NO_ARCH)
@@ -88,10 +88,9 @@ REQUIRED_PACKAGES += cloud/openstack/openstack-common
 REQUIRED_PACKAGES += library/python/eventlet-27
 REQUIRED_PACKAGES += library/python/iniparse-27
 REQUIRED_PACKAGES += library/python/oslo.config-27
-REQUIRED_PACKAGES += library/python/python-mysql-27
+REQUIRED_PACKAGES += library/python/oslo.i18n-27
 REQUIRED_PACKAGES += library/python/setuptools-27
 REQUIRED_PACKAGES += library/python/six-27
 REQUIRED_PACKAGES += library/python/sqlalchemy-27
 REQUIRED_PACKAGES += library/python/sqlalchemy-migrate-27
-REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += system/core-os

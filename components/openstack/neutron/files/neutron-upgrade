@@ -1,6 +1,6 @@
 #!/usr/bin/python2.7
 
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -29,15 +29,18 @@ from openstack_common import alter_mysql_tables, create_backups, modify_conf
 
 NEUTRON_CONF_MAPPINGS = {
     # Deprecated group/name
-    ('DEFAULT', 'rabbit_durable_queues'): ('DEFAULT', 'amqp_durable_queues'),
-    ('rpc_notifier2', 'topics'): ('DEFAULT', 'notification_topics'),
-    ('DEFAULT', 'matchmaker_ringfile'): ('matchmaker_ring', 'ringfile'),
-    # As of Juno, EVS now uses the standard quota driver
-    ('quotas', 'quota_driver'): (None, None),
+    ('DEFAULT', 'nova_api_insecure'): ('nova', 'insecure'),
+    ('DEFAULT', 'nova_ca_certificates_file'): ('nova', 'cafile'),
+    ('DEFAULT', 'nova_region_name'): ('nova', 'region_name'),
+    ('DEFAULT', 'max_request_body_size'):
+        ('oslo_middleware', 'max_request_body_size'),
+    ('DEFAULT', 'use-syslog'): (None, None),
+    ('DEFAULT', 'log-format'): (None, None),
+    ('DEFAULT', 'log_format'): (None, None),
 }
 
 NEUTRON_CONF_EXCEPTIONS = [
-    ('DEFAULT', 'lockpath'),
+    ('database', 'connection'),
     ('keystone_authtoken', 'auth_uri'),
     ('keystone_authtoken', 'identity_uri'),
     ('keystone_authtoken', 'admin_tenant_name'),
@@ -46,20 +49,7 @@ NEUTRON_CONF_EXCEPTIONS = [
     ('keystone_authtoken', 'signing_dir'),
 ]
 
-
-DHCP_AGENT_MAPPINGS = {
-    # Deprecated group/name
-    ('DEFAULT', 'dnsmasq_dns_server'): ('DEFAULT', 'dnsmasq_dns_servers'),
-}
-
-EVS_PLUGIN_MAPPINGS = {
-    # No longer referenced by the service
-    ('DATABASE', 'sql_connection'): (None, None),
-}
-
-L3_AGENT_EXCEPTIONS = [
-    ('DEFAULT', 'enable_metadata_proxy'),
-]
+L3_AGENT_EXCEPTIONS = []
 
 METADATA_AGENT_EXCEPTIONS = [
     ('DEFAULT', 'auth_url'),
@@ -92,14 +82,6 @@ def start():
     # look for any .new files
     db_connection = None
     if glob.glob('/etc/neutron/*.new'):
-        # extract sql_connection from evs_plugin.ini
-        db_connection = 'sqlite:////var/lib/neutron/neutron.sqlite'
-        evs_ini = iniparse.RawConfigParser()
-        evs_ini.read('/etc/neutron/plugins/evs/evs_plugin.ini')
-        if evs_ini.has_section('DATABASE'):
-            if evs_ini.has_option('DATABASE', 'sql_connection'):
-                db_connection = evs_ini.get('DATABASE', 'sql_connection')
-
         # the versions are different, so perform an upgrade
         # modify the configuration files
 
@@ -107,50 +89,22 @@ def start():
         create_backups('/etc/neutron')
 
         modify_conf('/etc/neutron/api-paste.ini')
-        modify_conf('/etc/neutron/dhcp_agent.ini', DHCP_AGENT_MAPPINGS)
+        modify_conf('/etc/neutron/dhcp_agent.ini')
         modify_conf('/etc/neutron/l3_agent.ini', None, L3_AGENT_EXCEPTIONS)
         modify_conf('/etc/neutron/neutron.conf', NEUTRON_CONF_MAPPINGS,
                     NEUTRON_CONF_EXCEPTIONS)
-        modify_conf('/etc/neutron/plugins/evs/evs_plugin.ini',
-                    EVS_PLUGIN_MAPPINGS)
         modify_conf('/etc/neutron/metadata_agent.ini', None,
                     METADATA_AGENT_EXCEPTIONS)
 
     config = iniparse.RawConfigParser()
     config.read('/etc/neutron/neutron.conf')
-    # In certain cases the database section does not exist and the
-    # default database chosen is sqlite.
     if config.has_section('database'):
-        if db_connection:
-            config.set('database', 'connection', db_connection)
-            with open('/etc/neutron/neutron.conf', 'wb+') as fh:
-                config.write(fh)
-            if 'sqlite' in db_connection:
-                print "WARNING: Neutron database is on sqlite"
-                print "which is not a supported backend for"
-                print "Solaris Openstack. Please make sure"
-                print "to migrate to MySQL after upgrade to Juno"
-        # Need this else part because this code path is exercised
-        # during fresh install of Juno, when the
-        # [database].connection is set to default mysql
-        else:
-            db_connection = config.get('database', 'connection')
-
+        db_connection = config.get('database', 'connection')
         engine = sqlalchemy.create_engine(db_connection)
-
-        # migrate EVS to Neutron db
         if engine.url.username != '%SERVICE_USER%':
-            check_call(['/usr/lib/neutron/evs-neutron-migration'])
-            print "EVS to Neutron migration complete"
-
-            if engine.url.drivername == 'mysql':
-                alter_mysql_tables(engine)
-                print "altered character set to utf8 in neutron tables"
-
             check_call(['/usr/bin/neutron-db-manage', '--config-file',
-                        '/etc/neutron/neutron.conf', '--config-file',
-                        '/etc/neutron/plugins/evs/evs_plugin.ini', 'stamp',
-                        'juno'])
+                        '/etc/neutron/neutron.conf', 'stamp', 'kilo'])
+            check_call(['/usr/lib/neutron/neutron-kilo-migration'])
 
     # update the current version
     check_call(['/usr/sbin/svccfg', '-s', os.environ['SMF_FMRI'], 'setprop',

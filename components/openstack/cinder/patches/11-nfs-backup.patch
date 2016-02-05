@@ -1,0 +1,31 @@
+In-house patch to cleanup backup container directories when empty.
+
+Patch may be suitable for pushing upsteam.
+
+--- cinder-2015.1.0/cinder/backup/drivers/nfs.py.orig	2015-11-24 11:49:37.670852276 -0700
++++ cinder-2015.1.0/cinder/backup/drivers/nfs.py	2015-11-24 13:31:57.282595085 -0700
+@@ -137,9 +137,21 @@ class NFSBackupDriver(chunkeddriver.Chun
+         return open(path, 'r')
+ 
+     def delete_object(self, container, object_name):
+-        # TODO(tbarron):  clean up the container path if it is empty
+-        path = os.path.join(self.backup_path, container, object_name)
+-        os.remove(path)
++        obj_path = os.path.join(self.backup_path, container, object_name)
++        cpath = os.path.join(self.backup_path, container)
++        os.remove(obj_path)
++
++        # Cleanup container path if it is empty.
++        if not os.listdir(cpath):
++            start = os.getcwd()
++            os.chdir(self.backup_path)
++            try:
++                # Try to remove all the component dirs
++                # in container path.  os.removedirs will
++                # stop if the directory is not empty.
++                os.removedirs(container)
++            finally:
++                os.chdir(start)
+ 
+     def _generate_object_name_prefix(self, backup):
+         return 'backup'

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
@@ -52,6 +52,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/common/clientmana
 file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/common/command.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/common/constants.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/common/exceptions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/common/extension.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/common/serializer.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/common/utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/common/validators.py
@@ -61,6 +62,8 @@ file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/neutron/client.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/neutron/v2_0/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/neutron/v2_0/agent.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/neutron/v2_0/agentscheduler.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/neutron/v2_0/contrib/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/neutron/v2_0/contrib/_fox_sockets.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/neutron/v2_0/credential.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/neutron/v2_0/extension.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/neutron/v2_0/floatingip.py
@@ -72,6 +75,12 @@ file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/neutron/v2_0/lb/_
 file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/neutron/v2_0/lb/healthmonitor.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/neutron/v2_0/lb/member.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/neutron/v2_0/lb/pool.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/neutron/v2_0/lb/v2/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/neutron/v2_0/lb/v2/healthmonitor.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/neutron/v2_0/lb/v2/listener.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/neutron/v2_0/lb/v2/loadbalancer.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/neutron/v2_0/lb/v2/member.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/neutron/v2_0/lb/v2/pool.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/neutron/v2_0/lb/vip.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/neutron/v2_0/metering.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/neutron/v2_0/nec/__init__.py
@@ -89,6 +98,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/neutron/v2_0/rout
 file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/neutron/v2_0/securitygroup.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/neutron/v2_0/servicetype.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/neutron/v2_0/subnet.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/neutron/v2_0/subnetpool.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/neutron/v2_0/vpn/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/neutron/v2_0/vpn/ikepolicy.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutronclient/neutron/v2_0/vpn/ipsec_site_connection.py
@@ -104,6 +114,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/python_neutronclient-$(COMPONEN
 file path=usr/lib/python$(PYVER)/vendor-packages/python_neutronclient-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/python_neutronclient-$(COMPONENT_VERSION)-py$(PYVER).egg-info/entry_points.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/python_neutronclient-$(COMPONENT_VERSION)-py$(PYVER).egg-info/not-zip-safe
+file path=usr/lib/python$(PYVER)/vendor-packages/python_neutronclient-$(COMPONENT_VERSION)-py$(PYVER).egg-info/pbr.json
 file path=usr/lib/python$(PYVER)/vendor-packages/python_neutronclient-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/python_neutronclient-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
 #
@@ -114,6 +125,9 @@ depend type=require fmri=library/python/argparse-$(PYV)
 
 # force a dependency on cliff; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/cliff-$(PYV)
+
+# force a dependency on iso8601; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/iso8601-$(PYV)
 
 # force a dependency on keystoneclient; pkgdepend work is needed to flush this
 # out.
@@ -141,6 +155,9 @@ depend type=require fmri=library/python/pbr-$(PYV)
 
 # force a dependency on requests; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/requests-$(PYV)
+
+# force a dependency on simplejson; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/simplejson-$(PYV)
 
 # force a dependency on six; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/six-$(PYV)

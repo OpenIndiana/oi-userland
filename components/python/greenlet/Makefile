@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 COMPILER =	gcc
@@ -28,16 +28,16 @@ COMPILER =	gcc
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		greenlet
-COMPONENT_VERSION=	0.4.5
+COMPONENT_VERSION=	0.4.9
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).zip
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:b990f00f120c4cfb6672eec2acd32210990a2c7b70b815c034d1d8cbf08e2dbe
+    sha256:58b2f3a2e7075c655616bf95e82868db4980f3bb6661db70ad02a51e4ddd2252
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://github.com/python-greenlet/greenlet
 COMPONENT_BUGDB=	python-mod/greenlet
 
-TPNO=			21721
+TPNO=			26538
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk

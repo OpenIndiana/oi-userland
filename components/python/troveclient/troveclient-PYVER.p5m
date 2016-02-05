@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
@@ -50,9 +50,11 @@ file path=usr/lib/python$(PYVER)/vendor-packages/python_troveclient-$(COMPONENT_
 file path=usr/lib/python$(PYVER)/vendor-packages/python_troveclient-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/python_troveclient-$(COMPONENT_VERSION)-py$(PYVER).egg-info/entry_points.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/python_troveclient-$(COMPONENT_VERSION)-py$(PYVER).egg-info/not-zip-safe
+file path=usr/lib/python$(PYVER)/vendor-packages/python_troveclient-$(COMPONENT_VERSION)-py$(PYVER).egg-info/pbr.json
 file path=usr/lib/python$(PYVER)/vendor-packages/python_troveclient-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/python_troveclient-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/troveclient/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/troveclient/auth_plugin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/troveclient/base.py
 file path=usr/lib/python$(PYVER)/vendor-packages/troveclient/client.py
 file path=usr/lib/python$(PYVER)/vendor-packages/troveclient/common.py
@@ -68,6 +70,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/troveclient/compat/utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/troveclient/compat/versions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/troveclient/exceptions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/troveclient/extension.py
+file path=usr/lib/python$(PYVER)/vendor-packages/troveclient/i18n.py
 file path=usr/lib/python$(PYVER)/vendor-packages/troveclient/openstack/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/troveclient/openstack/common/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/troveclient/openstack/common/apiclient/__init__.py
@@ -122,6 +125,9 @@ depend type=require fmri=library/python/httplib2-$(PYV)
 # force a dependency on keystoneclient; pkgdepend work is needed to flush this
 # out.
 depend type=require fmri=library/python/keystoneclient-$(PYV)
+
+# force a dependency on oslo.utils; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/oslo.utils-$(PYV)
 
 # force a dependency on pbr; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/pbr-$(PYV)

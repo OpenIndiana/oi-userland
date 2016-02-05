@@ -20,21 +20,21 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		python-cinderclient
-COMPONENT_VERSION=	1.1.1
+COMPONENT_VERSION=	1.3.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:107ff53c9bb9403c4e751b9a949cb84eff483d3378007415066d0c7727a6e37e
+    sha256:59ae1fbeeda7a12ac8635a7cce9bdc5e8bd080707e2dc12d858857713db1d233
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://launchpad.net/python-cinderclient
 COMPONENT_BUGDB=	service/cinder
 
-TPNO=			21728
+TPNO=			25750
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -52,8 +52,8 @@ install:	$(INSTALL_NO_ARCH)
 
 #
 # Tests require:
-# pyflakes, flake8, hacking, discover, fixtures, python-subunit,
-# sphinx, testtools, testrepository
+# pyflakes, flake8, hacking, discover, mock, python-subunit,
+# sphinx, testrepository
 # which haven't been integrated yet.
 #
 test:		$(NO_TESTS)

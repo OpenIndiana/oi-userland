@@ -1,6 +1,6 @@
 #!/usr/bin/python2.7
 
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -22,6 +22,10 @@ import netaddr
 import smf_include
 
 from subprocess import CalledProcessError, Popen, PIPE, check_call
+from neutron_vpnaas.services.vpn.device_drivers.solaris_ipsec import \
+    get_vpn_interfaces
+from neutron_vpnaas.services.vpn.device_drivers.solaris_ipsec import \
+    shutdown_vpn
 
 
 def set_hostmodel(value):
@@ -46,7 +50,7 @@ def set_hostmodel(value):
 
 def start():
     # verify paths are valid
-    for f in sys.argv[2:4]:
+    for f in sys.argv[2:5]:
         if not os.path.exists(f) or not os.access(f, os.R_OK):
             print '%s does not exist or is not readable' % f
             return smf_include.SMF_EXIT_ERR_CONFIG
@@ -76,13 +80,32 @@ def start():
               "enabled before enabling neutron-l3-agent"
         return smf_include.SMF_EXIT_ERR_CONFIG
 
+    cmd = "/usr/lib/neutron/neutron-l3-agent --config-file %s " \
+        "--config-file %s --config-file %s" % tuple(sys.argv[2:5])
+
+    # The VPNaaS shutdown should unplumb all IP tunnels it created. But
+    # be paranoid and check for lingering tunnels created by OpenStack
+    # that may have been left behind if the OpenStack device driver exits
+    # unexpectedly. OpenStack VPN configuration is created when the service
+    # starts. Errors will occur if old IP tunnels still exist.
+
+    vpn_ifs = get_vpn_interfaces()
+    if vpn_ifs:
+        print "Error: Found existing IP tunnel interface(s)."
+        print "Use ipadm(1M) and dladm(1M) to remove it/them."
+        print "Then use svcadm(1M) to clear the service."
+        print "Use the following commands to remove:"
+        for interface in vpn_ifs:
+            ifn = interface.group(0)
+            print "\t# ipadm delete-ip %s; dladm delete-iptun %s" % (ifn, ifn)
+
+        return smf_include.SMF_EXIT_ERR_CONFIG
+
     # set the hostmodel property if necessary
     if not set_hostmodel("src-priority"):
         return smf_include.SMF_EXIT_ERR_FATAL
 
-    cmd = "/usr/lib/neutron/neutron-l3-agent --config-file %s " \
-        "--config-file %s" % tuple(sys.argv[2:4])
-    smf_include.smf_subprocess(cmd)
+    return smf_include.smf_subprocess(cmd)
 
 
 def remove_ipfilter_rules(version):
@@ -131,12 +154,12 @@ def remove_ipfilter_rules(version):
 
 
 def stop():
+    shutdown_vpn()
     try:
         # first kill the SMF contract
         check_call(["/usr/bin/pkill", "-c", sys.argv[2]])
     except CalledProcessError as err:
         print "failed to kill the SMF contract: %s" % (err)
-        return smf_include.SMF_EXIT_ERR_FATAL
 
     # We need to first remove the IP filter rules and then remove
     # the IP interfaces on which the rules were applied.

@@ -1,6 +1,6 @@
 #!/usr/bin/python2.7
 
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -29,57 +29,36 @@ from openstack_common import alter_mysql_tables, create_backups, modify_conf
 
 GLANCE_API_MAPPINGS = {
     # Deprecated group/name
-    ('DEFAULT', 'db_backend'): ('database', 'backend'),
-    ('DEFAULT', 'sql_connection'): ('database', 'connection'),
-    ('DATABASE', 'sql_connection'): ('database', 'connection'),
-    ('sql', 'connection'): ('database', 'connection'),
-    ('DEFAULT', 'sql_idle_timeout'): ('database', 'idle_timeout'),
-    ('DATABASE', 'sql_idle_timeout'): ('database', 'idle_timeout'),
-    ('sql', 'idle_timeout'): ('database', 'idle_timeout'),
-    ('DEFAULT', 'sql_min_pool_size'): ('database', 'min_pool_size'),
-    ('DATABASE', 'sql_min_pool_size'): ('database', 'min_pool_size'),
-    ('DEFAULT', 'sql_max_pool_size'): ('database', 'max_pool_size'),
-    ('DATABASE', 'sql_max_pool_size'): ('database', 'max_pool_size'),
-    ('DEFAULT', 'sql_max_retries'): ('database', 'max_retries'),
-    ('DATABASE', 'sql_max_retries'): ('database', 'max_retries'),
-    ('DEFAULT', 'sql_retry_interval'): ('database', 'retry_interval'),
-    ('DATABASE', 'reconnect_interval'): ('database', 'retry_interval'),
-    ('DEFAULT', 'sql_max_overflow'): ('database', 'max_overflow'),
-    ('DATABASE', 'sqlalchemy_max_overflow'): ('database', 'max_overflow'),
-    ('DEFAULT', 'sql_connection_debug'): ('database', 'connection_debug'),
-    ('DEFAULT', 'sql_connection_trace'): ('database', 'connection_trace'),
-    ('DATABASE', 'sqlalchemy_pool_timeout'): ('database', 'pool_timeout'),
-    ('DEFAULT', 'filesystem_store_datadir'):
-        ('glance_store', 'filesystem_store_datadir'),
-    ('DEFAULT', 'swift_store_auth_version'):
-         ('glance_store', 'swift_store_auth_version'),
-    ('DEFAULT', 'swift_store_auth_address'):
-         ('glance_store', 'swift_store_auth_address'),
-    ('DEFAULT', 'swift_store_user'): ('glance_store', 'swift_store_user'),
-    ('DEFAULT', 'swift_store_key'): ('glance_store', 'swift_store_key'),
-    ('DEFAULT', 'swift_store_container'):
-         ('glance_store', 'swift_store_container'),
-    ('DEFAULT', 'swift_store_create_container_on_put'):
-         ('glance_store', 'swift_store_create_container_on_put'),
-    ('DEFAULT', 'swift_store_large_object_size'):
-         ('glance_store', 'swift_store_large_object_size'),
-    ('DEFAULT', 'swift_store_large_object_chunk_size'):
-         ('glance_store', 'swift_store_large_object_chunk_size'),
-    ('DEFAULT', 'swift_enable_snet'): ('glance_store', 'swift_enable_snet'),
-    ('DEFAULT', 's3_store_host'): ('glance_store', 's3_store_host'),
-    ('DEFAULT', 's3_store_access_key'):
-         ('glance_store', 's3_store_access_key'),
-    ('DEFAULT', 's3_store_secret_key'):
-         ('glance_store', 's3_store_secret_key'),
-    ('DEFAULT', 's3_store_bucket'): ('glance_store', 's3_store_bucket'),
-    ('DEFAULT', 's3_store_create_bucket_on_put'):
-         ('glance_store', 's3_store_create_bucket_on_put'),
-    ('DEFAULT', 'sheepdog_store_address'):
-         ('glance_store', 'sheepdog_store_address'),
-    ('DEFAULT', 'sheepdog_store_port'):
-         ('glance_store', 'sheepdog_store_port'),
-    ('DEFAULT', 'sheepdog_store_chunk_size'):
-         ('glance_store', 'sheepdog_store_chunk_size'),
+    ('DEFAULT', 'container_formats'): ('image_format', 'container_formats'),
+    ('DEFAULT', 'disk_formats'): ('image_format', 'disk_formats'),
+    ('DEFAULT', 'matchmaker_ringfile'): ('matchmaker_ring', 'ringfile'),
+    ('DEFAULT', 'rabbit_durable_queues'): ('oslo_messaging_qpid',
+                                           'amqp_durable_queues'),
+    ('DEFAULT', 'qpid_hostname'): ('oslo_messaging_qpid', 'qpid_hostname'),
+    ('DEFAULT', 'qpid_port'): ('oslo_messaging_qpid', 'qpid_port'),
+    ('DEFAULT', 'qpid_username'): ('oslo_messaging_qpid', 'qpid_username'),
+    ('DEFAULT', 'qpid_password'): ('oslo_messaging_qpid', 'qpid_password'),
+    ('DEFAULT', 'qpid_sasl_mechanisms'): ('oslo_messaging_qpid',
+                                          'qpid_sasl_mechanisms'),
+    ('DEFAULT', 'qpid_heartbeat'): ('oslo_messaging_qpid', 'qpid_heartbeat'),
+    ('DEFAULT', 'qpid_protocol'): ('oslo_messaging_qpid', 'qpid_protocol'),
+    ('DEFAULT', 'qpid_tcp_nodelay'): ('oslo_messaging_qpid',
+                                      'qpid_tcp_nodelay'),
+    ('DEFAULT', 'rabbit_host'): ('oslo_messaging_rabbit', 'rabbit_host'),
+    ('DEFAULT', 'rabbit_port'): ('oslo_messaging_rabbit', 'rabbit_port'),
+    ('DEFAULT', 'rabbit_use_ssl'): ('oslo_messaging_rabbit', 'rabbit_use_ssl'),
+    ('DEFAULT', 'rabbit_userid'): ('oslo_messaging_rabbit', 'rabbit_userid'),
+    ('DEFAULT', 'rabbit_password'): ('oslo_messaging_rabbit',
+                                     'rabbit_password'),
+    ('DEFAULT', 'rabbit_virtual_host'): ('oslo_messaging_rabbit',
+                                         'rabbit_virtual_host'),
+    ('task', 'eventlet_executor_pool_size'):
+        ('taskflow_executor', 'max_workers'),
+    ('DEFAULT', 'log-format'): (None, None),
+    ('DEFAULT', 'log_format'): (None, None),
+    ('DEFAULT', 'use-syslog'): (None, None),
+    ('glance_store', 'vmware_datacenter_path'): (None, None),
+    ('glance_store', 'vmware_datastore_name'): (None, None),
 }
 
 GLANCE_API_EXCEPTIONS = [
@@ -91,43 +70,18 @@ GLANCE_API_EXCEPTIONS = [
     ('DEFAULT', 'registry_host'),
     ('DEFAULT', 'registry_port'),
     ('DEFAULT', 'registry_client_protocol'),
-    ('DEFAULT', 'rabbit_host'),
-    ('DEFAULT', 'rabbit_port'),
-    ('DEFAULT', 'rabbit_use_ssl'),
-    ('DEFAULT', 'rabbit_userid'),
-    ('DEFAULT', 'rabbit_password'),
-    ('DEFAULT', 'rabbit_virtual_host'),
-    ('DEFAULT', 'rabbit_notification_exchange'),
-    ('DEFAULT', 'rabbit_notification_topic'),
-    ('DEFAULT', 'rabbit_durable_queues'),
-    ('DEFAULT', 'qpid_notification_exchange'),
-    ('DEFAULT', 'qpid_notification_topic'),
-    ('DEFAULT', 'qpid_hostname'),
-    ('DEFAULT', 'qpid_port'),
-    ('DEFAULT', 'qpid_usernamd'),
-    ('DEFAULT', 'qpid_password'),
-    ('DEFAULT', 'qpid_sasl_mechanisms'),
-    ('DEFAULT', 'qpid_reconnect_timeout'),
-    ('DEFAULT', 'qpid_reconnect_limit'),
-    ('DEFAULT', 'qpid_reconnect_interval_min'),
-    ('DEFAULT', 'qpid_reconnect_interval_max'),
-    ('DEFAULT', 'qpid_reconnect_interval'),
-    ('DEFAULT', 'qpid_heartbeat'),
-    ('DEFAULT', 'qpid_protocol'),
-    ('DEFAULT', 'qpid_tcp_nodelay'),
     ('DEFAULT', 'delayed_delete'),
     ('DEFAULT', 'scrub_time'),
     ('DEFAULT', 'scrubber_datadir'),
     ('DEFAULT', 'image_cache_dir'),
     ('database', 'connection'),
+    ('paste_deploy', 'flavor'),
     ('keystone_authtoken', 'auth_uri'),
     ('keystone_authtoken', 'identity_uri'),
     ('keystone_authtoken', 'admin_tenant_name'),
     ('keystone_authtoken', 'admin_user'),
     ('keystone_authtoken', 'admin_password'),
     ('keystone_authtoken', 'revocation_cache_time'),
-    ('keystone_authtoken', 'signing_dir'),
-    ('paste_deploy', 'flavor'),
     ('glance_store', 'filesystem_store_datadir'),
     ('glance_store', 'swift_store_auth_version'),
     ('glance_store', 'swift_store_auth_address'),
@@ -137,15 +91,35 @@ GLANCE_API_EXCEPTIONS = [
     ('glance_store', 'swift_store_create_container_on_put'),
     ('glance_store', 'swift_store_large_object_size'),
     ('glance_store', 'swift_store_large_object_chunk_size'),
-    ('glance_store', 'swift_enable_snet'),
     ('glance_store', 's3_store_host'),
-    ('glance_store', 's3_store_access_key'),
-    ('glance_store', 's3_store_secret_key'),
-    ('glance_store', 's3_store_bucket'),
     ('glance_store', 's3_store_create_bucket_on_put'),
     ('glance_store', 'sheepdog_store_address'),
     ('glance_store', 'sheepdog_store_port'),
     ('glance_store', 'sheepdog_store_chunk_size'),
+    ('oslo_messaging_rabbit', 'rabbit_host'),
+    ('oslo_messaging_rabbit', 'rabbit_port'),
+    ('oslo_messaging_rabbit', 'rabbit_use_ssl'),
+    ('oslo_messaging_rabbit', 'rabbit_userid'),
+    ('oslo_messaging_rabbit', 'rabbit_password'),
+    ('oslo_messaging_rabbit', 'rabbit_virtual_host'),
+    ('oslo_messaging_rabbit', 'rabbit_notification_exchange'),
+    ('oslo_messaging_rabbit', 'rabbit_notification_topic'),
+    ('oslo_messaging_rabbit', 'rabbit_durable_queues'),
+    ('oslo_messaging_qpid', 'qpid_notification_exchange'),
+    ('oslo_messaging_qpid', 'qpid_notification_topic'),
+    ('oslo_messaging_qpid', 'qpid_hostname'),
+    ('oslo_messaging_qpid', 'qpid_port'),
+    ('oslo_messaging_qpid', 'qpid_usernamd'),
+    ('oslo_messaging_qpid', 'qpid_password'),
+    ('oslo_messaging_qpid', 'qpid_sasl_mechanisms'),
+    ('oslo_messaging_qpid', 'qpid_reconnect_timeout'),
+    ('oslo_messaging_qpid', 'qpid_reconnect_limit'),
+    ('oslo_messaging_qpid', 'qpid_reconnect_interval_min'),
+    ('oslo_messaging_qpid', 'qpid_reconnect_interval_max'),
+    ('oslo_messaging_qpid', 'qpid_reconnect_interval'),
+    ('oslo_messaging_qpid', 'qpid_heartbeat'),
+    ('oslo_messaging_qpid', 'qpid_protocol'),
+    ('oslo_messaging_qpid', 'qpid_tcp_nodelay'),
 ]
 
 GLANCE_CACHE_EXCEPTIONS = [
@@ -160,78 +134,39 @@ GLANCE_CACHE_EXCEPTIONS = [
     ('DEFAULT', 'admin_user'),
     ('DEFAULT', 'admin_password'),
     ('DEFAULT', 'filesystem_store_datadir'),
-    ('DEFAULT', 'swift_store_auth_version'),
-    ('DEFAULT', 'swift_store_auth_address'),
-    ('DEFAULT', 'swift_store_user'),
-    ('DEFAULT', 'swift_store_key'),
-    ('DEFAULT', 'swift_store_container'),
-    ('DEFAULT', 'swift_store_create_container_on_put'),
-    ('DEFAULT', 'swift_store_large_object_size'),
-    ('DEFAULT', 'swift_store_large_object_chunk_size'),
-    ('DEFAULT', 'swift_enable_snet'),
-    ('DEFAULT', 's3_store_host'),
-    ('DEFAULT', 's3_store_access_key'),
-    ('DEFAULT', 's3_store_secret_key'),
-    ('DEFAULT', 's3_store_bucket'),
-    ('DEFAULT', 's3_store_create_bucket_on_put'),
 ]
 
 GLANCE_REGISTRY_MAPPINGS = {
-    # Deprecated group/name
-    ('DEFAULT', 'db_backend'): ('database', 'backend'),
-    ('DEFAULT', 'sql_connection'): ('database', 'connection'),
-    ('DATABASE', 'sql_connection'): ('database', 'connection'),
-    ('sql', 'connection'): ('database', 'connection'),
-    ('DEFAULT', 'sql_idle_timeout'): ('database', 'idle_timeout'),
-    ('DATABASE', 'sql_idle_timeout'): ('database', 'idle_timeout'),
-    ('sql', 'idle_timeout'): ('database', 'idle_timeout'),
-    ('DEFAULT', 'sql_min_pool_size'): ('database', 'min_pool_size'),
-    ('DATABASE', 'sql_min_pool_size'): ('database', 'min_pool_size'),
-    ('DEFAULT', 'sql_max_pool_size'): ('database', 'max_pool_size'),
-    ('DATABASE', 'sql_max_pool_size'): ('database', 'max_pool_size'),
-    ('DEFAULT', 'sql_max_retries'): ('database', 'max_retries'),
-    ('DATABASE', 'sql_max_retries'): ('database', 'max_retries'),
-    ('DEFAULT', 'sql_retry_interval'): ('database', 'retry_interval'),
-    ('DATABASE', 'reconnect_interval'): ('database', 'retry_interval'),
-    ('DEFAULT', 'sql_max_overflow'): ('database', 'max_overflow'),
-    ('DATABASE', 'sqlalchemy_max_overflow'): ('database', 'max_overflow'),
-    ('DEFAULT', 'sql_connection_debug'): ('database', 'connection_debug'),
-    ('DEFAULT', 'sql_connection_trace'): ('database', 'connection_trace'),
-    ('DATABASE', 'sqlalchemy_pool_timeout'): ('database', 'pool_timeout'),
+    # Deprecate group/name
+    ('DEFAULT', 'rabbit_durable_queues'): ('oslo_messaging_qpid',
+                                           'rabbit_durable_queues'),
+    ('DEFAULT', 'qpid_hostname'): ('oslo_messaging_qpid', 'qpid_hostname'),
+    ('DEFAULT', 'qpid_port'): ('oslo_messaging_qpid', 'qpid_port'),
+    ('DEFAULT', 'qpid_username'): ('oslo_messaging_qpid', 'qpid_username'),
+    ('DEFAULT', 'qpid_password'): ('oslo_messaging_qpid', 'qpid_password'),
+    ('DEFAULT', 'qpid_sasl_mechanisms'): ('oslo_messaging_qpid',
+                                          'qpid_sasl_mechanisms'),
+    ('DEFAULT', 'qpid_heartbeat'): ('oslo_messaging_qpid', 'qpid_heartbeat'),
+    ('DEFAULT', 'qpid_protocol'): ('oslo_messaging_qpid', 'qpid_protocol'),
+    ('DEFAULT', 'qpid_tcp_nodelay'): ('oslo_messaging_qpid',
+                                      'qpid_tcp_nodelay'),
+    ('DEFAULT', 'rabbit_host'): ('oslo_messaging_rabbit', 'rabbit_host'),
+    ('DEFAULT', 'rabbit_port'): ('oslo_messaging_rabbit', 'rabbit_port'),
+    ('DEFAULT', 'rabbit_use_ssl'): ('oslo_messaging_rabbit', 'rabbit_use_ssl'),
+    ('DEFAULT', 'rabbit_userid'): ('oslo_messaging_rabbit', 'rabbit_userid'),
+    ('DEFAULT', 'rabbit_password'): ('oslo_messaging_rabbit',
+                                     'rabbit_password'),
+    ('DEFAULT', 'rabbit_virtual_host'): ('oslo_messaging_rabbit',
+                                         'rabbit_virtual_host'),
 }
 
 GLANCE_REGISTRY_EXCEPTIONS = [
     ('DEFAULT', 'bind_host'),
-    ('DEFAULT', 'bind_host'),
+    ('DEFAULT', 'bind_port'),
     ('DEFAULT', 'log_file'),
     ('DEFAULT', 'backlog'),
     ('DEFAULT', 'workers'),
-    ('DEFAULT', 'api_limit_max'),
     ('DEFAULT', 'limit_param_default'),
-    ('DEFAULT', 'rabbit_host'),
-    ('DEFAULT', 'rabbit_port'),
-    ('DEFAULT', 'rabbit_use_ssl'),
-    ('DEFAULT', 'rabbit_userid'),
-    ('DEFAULT', 'rabbit_password'),
-    ('DEFAULT', 'rabbit_virtual_host'),
-    ('DEFAULT', 'rabbit_notification_exchange'),
-    ('DEFAULT', 'rabbit_notification_topic'),
-    ('DEFAULT', 'rabbit_durable_queues'),
-    ('DEFAULT', 'qpid_notification_exchange'),
-    ('DEFAULT', 'qpid_notification_topic'),
-    ('DEFAULT', 'qpid_hostname'),
-    ('DEFAULT', 'qpid_port'),
-    ('DEFAULT', 'qpid_usernamd'),
-    ('DEFAULT', 'qpid_password'),
-    ('DEFAULT', 'qpid_sasl_mechanisms'),
-    ('DEFAULT', 'qpid_reconnect_timeout'),
-    ('DEFAULT', 'qpid_reconnect_limit'),
-    ('DEFAULT', 'qpid_reconnect_interval_min'),
-    ('DEFAULT', 'qpid_reconnect_interval_max'),
-    ('DEFAULT', 'qpid_reconnect_interval'),
-    ('DEFAULT', 'qpid_heartbeat'),
-    ('DEFAULT', 'qpid_protocol'),
-    ('DEFAULT', 'qpid_tcp_nodelay'),
     ('database', 'connection'),
     ('keystone_authtoken', 'auth_uri'),
     ('keystone_authtoken', 'identity_uri'),
@@ -239,14 +174,35 @@ GLANCE_REGISTRY_EXCEPTIONS = [
     ('keystone_authtoken', 'admin_user'),
     ('keystone_authtoken', 'admin_password'),
     ('keystone_authtoken', 'signing_dir'),
+    ('oslo_messaging_rabbit', 'rabbit_host'),
+    ('oslo_messaging_rabbit', 'rabbit_port'),
+    ('oslo_messaging_rabbit', 'rabbit_use_ssl'),
+    ('oslo_messaging_rabbit', 'rabbit_userid'),
+    ('oslo_messaging_rabbit', 'rabbit_password'),
+    ('oslo_messaging_rabbit', 'rabbit_virtual_host'),
+    ('oslo_messaging_rabbit', 'rabbit_notification_exchange'),
+    ('oslo_messaging_rabbit', 'rabbit_notification_topic'),
+    ('oslo_messaging_rabbit', 'rabbit_durable_queues'),
+    ('oslo_messaging_qpid', 'qpid_notification_exchange'),
+    ('oslo_messaging_qpid', 'qpid_notification_topic'),
+    ('oslo_messaging_qpid', 'qpid_hostname'),
+    ('oslo_messaging_qpid', 'qpid_port'),
+    ('oslo_messaging_qpid', 'qpid_usernamd'),
+    ('oslo_messaging_qpid', 'qpid_password'),
+    ('oslo_messaging_qpid', 'qpid_sasl_mechanisms'),
+    ('oslo_messaging_qpid', 'qpid_reconnect_timeout'),
+    ('oslo_messaging_qpid', 'qpid_reconnect_limit'),
+    ('oslo_messaging_qpid', 'qpid_reconnect_interval_min'),
+    ('oslo_messaging_qpid', 'qpid_reconnect_interval_max'),
+    ('oslo_messaging_qpid', 'qpid_reconnect_interval'),
+    ('oslo_messaging_qpid', 'qpid_heartbeat'),
+    ('oslo_messaging_qpid', 'qpid_protocol'),
+    ('oslo_messaging_qpid', 'qpid_tcp_nodelay'),
     ('paste_deploy', 'flavor'),
 ]
 
-GLANCE_SCRUBBER_MAPPINGS = {
-    # Deprecated group/name
-    ('DEFAULT', 'filesystem_store_datadir'):
-        ('glance_store', 'filesystem_store_datadir'),
-}
+# TODO: Add mappings?
+# GLANCE_SCRUBBER_MAPPINGS
 
 GLANCE_SCRUBBER_EXCEPTIONS = [
     ('DEFAULT', 'log_file'),
@@ -261,7 +217,6 @@ GLANCE_SCRUBBER_EXCEPTIONS = [
     ('DEFAULT', 'admin_user'),
     ('DEFAULT', 'admin_password'),
     ('database', 'connection'),
-    ('glance_store', 'filesystem_store_datadir'),
 ]
 
 
@@ -298,12 +253,10 @@ def start():
                     exception_list=GLANCE_CACHE_EXCEPTIONS)
         modify_conf('/etc/glance/glance-registry.conf',
                     GLANCE_REGISTRY_MAPPINGS,
-                    GLANCE_REGISTRY_EXCEPTIONS)
+                    exception_list=GLANCE_REGISTRY_EXCEPTIONS)
         modify_conf('/etc/glance/glance-registry-paste.ini')
         modify_conf('/etc/glance/glance-scrubber.conf',
-                    GLANCE_SCRUBBER_MAPPINGS,
-                    GLANCE_SCRUBBER_EXCEPTIONS)
-        modify_conf('/etc/glance/logging.conf')
+                    exception_list=GLANCE_SCRUBBER_EXCEPTIONS)
 
     config = iniparse.RawConfigParser()
     config.read('/etc/glance/glance-api.conf')

@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		oslo.utils
-COMPONENT_VERSION=	1.2.1
+COMPONENT_VERSION=	1.4.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:9cd8bcde345554582fd12c6daab81a7327a90c72861aa644e8b7b3fbfed5deba
+    sha256:f90e1d52542225031bc7e3d9bdc1b1270a80388e30285532124586e45e9317f6
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://launchpad.net/oslo.utils
 COMPONENT_BUGDB=	python-mod/oslo.utils
 
-TPNO=			21631
+TPNO=			25744
 
 # Depends on netaddr which is not Python 3 ready.
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)

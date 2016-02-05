@@ -20,44 +20,34 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 include ../../../make-rules/shared-targets.mk
 
-PATCH_EACH_ARCHIVE = 1
-
 COMPONENT_NAME=		horizon
-COMPONENT_CODENAME=	juno
-COMPONENT_VERSION=	2014.2.2
-COMPONENT_BE_VERSION=	2014.2
+COMPONENT_CODENAME=	kilo
+COMPONENT_VERSION=	2015.1.2
+COMPONENT_BE_VERSION=	2015.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:f639cdb8fc7fd26725d689d42c426f09bbd5a77554910800b1315f182879558e
+    sha256:c51029340c953a7355c48a106eb93407287b26f01bed6a64de695d4bda361c07
 COMPONENT_ARCHIVE_URL=	http://launchpad.net/$(COMPONENT_NAME)/$(COMPONENT_CODENAME)/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_PROJECT_URL=	http://www.openstack.org/
 COMPONENT_BUGDB=	service/horizon
 IPS_COMPONENT_VERSION=	0.$(COMPONENT_VERSION)
-COMPONENT_PATCHES=	\
-	01-osprofiler.patch \
-	02-change-angular-imports.patch \
-	03-remove-qunit.patch \
-	04-remove-jasmine.patch \
-	05-disable-unsupported-bootsource.patch \
-	06-remove-security-groups.patch \
-	07-remove-image-source.patch \
-	08-_get_reachable_subnets.patch \
-	11-requirements.patch
 
-TPNO_HORIZON=		21822
+TPNO_HORIZON=		25787
 TPNO_ANGULAR=		21640
+TPNO_ANGULAR_BOOTSTRAP=	23154
+TPNO_ANGULAR_LR_DND=	23155
 TPNO_BOOTSTRAP_DP=	20670
 TPNO_BOOTSTRAP_SCSS=	20671
 TPNO_D3=		20822
-TPNO_FONT_AWESOME=	21641
+TPNO_FONT_AWESOME=	25763
 TPNO_HOGAN=		21827
 TPNO_JQUERY=		21642
 TPNO_JQUERY_MIGRATE=	13315
@@ -65,8 +55,13 @@ TPNO_JQUERY_UI=		18416
 TPNO_JQUERY_QUICKSEARCH=20396
 TPNO_JQUERY_TABLESORTER=20824
 TPNO_JSENCRYPT=		20397
+TPNO_MAGIC_SEARCH=	25994
 TPNO_RICKSHAW=		20673
+TPNO_SMART_TABLE=	23157
 TPNO_SPIN=		20674
+TPNO_TERM_JS=		23158
+
+NUM_EXTRA_ARCHIVES=	1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20
 
 #
 # Starting with Juno, Horizon depends on a number of XStatic modules
@@ -124,11 +119,11 @@ COMPONENT_ARCHIVE_URL_5 = $(call pypi_url,5)
 PKG_MACROS +=		VERSION_D3=$(VERSION_D3)
 
 COMPONENT_NAME_6 =	XStatic-Font-Awesome
-VERSION_FONT_AWESOME =	4.2.0.0
+VERSION_FONT_AWESOME =	4.3.0.0
 COMPONENT_SRC_6 =	XStatic-Font-Awesome-$(VERSION_FONT_AWESOME)
 COMPONENT_ARCHIVE_6 =	$(COMPONENT_SRC_6).tar.gz
 COMPONENT_ARCHIVE_HASH_6 = \
-	sha256:b7fdbf1ed316f3a207eeb9ee1c052820e55b4e31d247d81c8ea059e21f555a73
+	sha256:d2c0548990a22744ad20013e1d095de8ba1ea56b1878d8393a721205b03885c3
 COMPONENT_ARCHIVE_URL_6 = $(call pypi_url,6)
 PKG_MACROS +=		VERSION_FONT_AWESOME=$(VERSION_FONT_AWESOME)
 
@@ -213,6 +208,51 @@ COMPONENT_ARCHIVE_HASH_15 = \
 COMPONENT_ARCHIVE_URL_15 = $(call pypi_url,15)
 PKG_MACROS +=		VERSION_SPIN=$(VERSION_SPIN)
 
+COMPONENT_NAME_16 =	XStatic-Angular-lrdragndrop
+VERSION_LR_DND =	1.0.2.2
+COMPONENT_SRC_16 =	XStatic-Angular-lrdragndrop-$(VERSION_LR_DND)
+COMPONENT_ARCHIVE_16 =	XStatic-Angular-lrdragndrop-$(VERSION_LR_DND).tar.gz
+COMPONENT_ARCHIVE_HASH_16 = \
+	sha256:1cf04495981db5dfd5536441e17ec69bb18d624f847ddc203f3259d81b10a77e
+COMPONENT_ARCHIVE_URL_16 = $(call pypi_url,16)
+PKG_MACROS +=		VERSION_ANGULAR_LR_DND=$(VERSION_LR_DND)
+
+COMPONENT_NAME_17 =	XStatic-Magic-Search
+VERSION_MAGIC_SEARCH =	0.2.5.1
+COMPONENT_SRC_17 =	XStatic-Magic-Search-$(VERSION_MAGIC_SEARCH)
+COMPONENT_ARCHIVE_17 =	XStatic-Magic-Search-$(VERSION_MAGIC_SEARCH).tar.gz
+COMPONENT_ARCHIVE_HASH_17 = \
+	sha256:9b2f35a5792f4e763e6dc319036e3676f3e18f46153096f3ab5e507177ec007e
+COMPONENT_ARCHIVE_URL_17 = $(call pypi_url,17)
+PKG_MACROS +=		VERSION_MAGIC_SEARCH=$(VERSION_MAGIC_SEARCH)
+
+COMPONENT_NAME_18 =	XStatic-smart-table
+VERSION_SMART_TABLE =	1.4.5.3
+COMPONENT_SRC_18 =	XStatic-smart-table-$(VERSION_SMART_TABLE)
+COMPONENT_ARCHIVE_18 =	XStatic-smart-table-$(VERSION_SMART_TABLE).tar.gz
+COMPONENT_ARCHIVE_HASH_18 = \
+	sha256:573bdff0b1ec88dd81b7f92c1b46fda4dd1b92cde94817837d61e62c9b20a8b6
+COMPONENT_ARCHIVE_URL_18 = $(call pypi_url,18)
+PKG_MACROS +=		VERSION_SMART_TABLE=$(VERSION_SMART_TABLE)
+
+COMPONENT_NAME_19 =	XStatic-term.js
+VERSION_TERM_JS =	0.0.4.2
+COMPONENT_SRC_19 =	XStatic-term.js-$(VERSION_TERM_JS)
+COMPONENT_ARCHIVE_19 =	XStatic-term.js-$(VERSION_TERM_JS).tar.gz
+COMPONENT_ARCHIVE_HASH_19 = \
+	sha256:1ed5c1cd4de60d6f290a032bfc7cdc4261d8d36cb7788b2b0a610551bbda15ec
+COMPONENT_ARCHIVE_URL_19 = $(call pypi_url,19)
+PKG_MACROS +=		VERSION_TERM_JS=$(VERSION_TERM_JS)
+
+COMPONENT_NAME_20 =	XStatic-Angular-Bootstrap
+VERSION_ANGULAR_BS =	0.11.0.2
+COMPONENT_SRC_20 =	XStatic-Angular-Bootstrap-$(VERSION_ANGULAR_BS)
+COMPONENT_ARCHIVE_20 =	XStatic-Angular-Bootstrap-$(VERSION_ANGULAR_BS).tar.gz
+COMPONENT_ARCHIVE_HASH_20 = \
+	sha256:cbe428bf04c000460776b521f6ace0455e9f3f20135499e9aa2f4af693dc7b3e
+COMPONENT_ARCHIVE_URL_20 = $(call pypi_url,20)
+PKG_MACROS +=		VERSION_ANGULAR_BS=$(VERSION_ANGULAR_BS)
+
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
 include $(WS_MAKE_RULES)/ips.mk
@@ -230,9 +270,12 @@ PKG_MACROS +=		PYV=$(shell echo $(PYTHON_VERSIONS) | tr -d .)
 PROTO_PYTHON_LIB =	$(PROTO_DIR)$(PYTHON_LIB)
 
 # Copy the Oracle branding files and Django app customizations into place
+
 COMPONENT_POST_INSTALL_ACTION += \
 	($(MKDIR) $(PROTO_PYTHON_LIB)/openstack_dashboard/templates/solaris; \
-	 $(CP) files/branding/css/solaris.css \
+	 $(MKDIR) \
+	     $(PROTO_PYTHON_LIB)/openstack_dashboard/static/dashboard/css; \
+	 $(CP) files/branding/css/* \
 	     $(PROTO_PYTHON_LIB)/openstack_dashboard/static/dashboard/css; \
 	 $(CP) files/branding/img/* \
 	     $(PROTO_PYTHON_LIB)/openstack_dashboard/static/dashboard/img; \
@@ -251,14 +294,17 @@ COMPONENT_POST_INSTALL_ACTION += \
 	 $(TOUCH) $(PROTO_PYTHON_LIB)/xstatic/__init__.py; \
 	 $(TOUCH) $(PROTO_PYTHON_LIB)/xstatic/pkg/__init__.py; \
 	 cd $(PROTO_PYTHON_LIB)/openstack_dashboard; \
+	 cp $(SOURCE_DIR)/openstack_dashboard/local/local_settings.py.example \
+	     $(PROTO_PYTHON_LIB)/openstack_dashboard/local/local_settings.py; \
+	 echo "WEBROOT = '/horizon/'\nSTATIC_ROOT = 'static'\n" >> \
+	     $(PROTO_PYTHON_LIB)/openstack_dashboard/local/local_settings.py; \
 	 $(ENV) PYTHONPATH=$(PROTO_PYTHON_LIB) ./manage.py \
 	     collectstatic --noinput; \
 	 $(ENV) PYTHONPATH=$(PROTO_PYTHON_LIB) ./manage.py compress --force; \
-	 $(CP) -R $(PROTO_PYTHON_LIB)/static \
-	     $(PROTO_PYTHON_LIB)/openstack_dashboard; \
 	 $(RM) -r \
 	     $(PROTO_PYTHON_LIB)/XStatic* \
 	     $(PROTO_PYTHON_LIB)/openstack_dashboard/local/.secret_key_store \
+	     $(PROTO_PYTHON_LIB)/openstack_dashboard/local/local_settings.py \
 	     $(PROTO_PYTHON_LIB)/openstack_dashboard/manage.py \
 	     $(PROTO_PYTHON_LIB)/static \
 	     $(PROTO_PYTHON_LIB)/xstatic); (( $$? )) && exit 1;
@@ -329,6 +375,7 @@ REQUIRED_PACKAGES += library/python/keystoneclient-27
 REQUIRED_PACKAGES += library/python/lockfile-27
 REQUIRED_PACKAGES += library/python/neutronclient-27
 REQUIRED_PACKAGES += library/python/novaclient-27
+REQUIRED_PACKAGES += library/python/oslo.concurrency-27
 REQUIRED_PACKAGES += library/python/oslo.config-27
 REQUIRED_PACKAGES += library/python/requests-27
 REQUIRED_PACKAGES += library/python/saharaclient-27

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
@@ -28,7 +28,7 @@ set name=pkg.fmri \
 set name=pkg.summary value=OpenStack
 set name=pkg.description \
     value="OpenStack is a cloud operating system that controls large pools of compute, storage, and networking resources throughout a data center, all managed through a dashboard that gives administrators control while empowering their users to provision resources through a web interface."
-set name=pkg.human-version value="Juno $(COMPONENT_VERSION)"
+set name=pkg.human-version value="Kilo $(COMPONENT_VERSION)"
 set name=info.classification \
     value="org.opensolaris.category.2008:Meta Packages/Group Packages" \
     value="org.opensolaris.category.2008:System/Administration and Configuration" \
@@ -59,9 +59,13 @@ depend type=group fmri=library/python/ironicclient
 depend type=group fmri=library/python/keystoneclient
 depend type=group fmri=library/python/neutronclient
 depend type=group fmri=library/python/novaclient
+depend type=group fmri=library/python/openstackclient
 depend type=group fmri=library/python/python-mysql
 depend type=group fmri=library/python/saharaclient
 depend type=group fmri=library/python/swiftclient
 depend type=group fmri=library/python/troveclient
 depend type=group fmri=network/amqp/rabbitmq
 depend type=group fmri=system/management/rad/module/rad-evs-controller
+
+# To upgrade to Kilo version, Juno version of the package must be on the system
+depend type=origin fmri=pkg:/cloud/openstack@0.2014.2.2 root-image=true

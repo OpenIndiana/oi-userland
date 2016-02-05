@@ -2,7 +2,7 @@
 # Copyright (c) 2012 OpenStack LLC.
 # All Rights Reserved.
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -22,20 +22,27 @@ Drivers for Solaris ZFS operations in local and iSCSI modes
 import abc
 import fcntl
 import os
-import socket
 import subprocess
 import time
 
-from oslo.config import cfg
+from oslo_concurrency import processutils
+from oslo_config import cfg
+from oslo_log import log as logging
 import paramiko
 
 from cinder import exception
-from cinder.i18n import _
+from cinder.i18n import _, _LE, _LI
 from cinder.image import image_utils
-from cinder.openstack.common import log as logging
-from cinder.openstack.common import processutils
 from cinder.volume import driver
 from cinder.volume.drivers.san.san import SanDriver
+
+from eventlet.green import socket
+from eventlet.green.OpenSSL import SSL
+
+import rad.client as radc
+import rad.connect as radcon
+import rad.bindings.com.oracle.solaris.rad.zfsmgr_1 as zfsmgr
+import rad.auth as rada
 
 from solaris_install.target.size import Size
 
@@ -53,8 +60,53 @@ solaris_zfs_opts = [
 FLAGS.register_opts(solaris_zfs_opts)
 
 
+def connect_tls(host, port=12302, locale=None, ca_certs=None):
+    """Connect to a RAD instance over TLS.
+
+    Arguments:
+    host     string, target host
+    port     int, target port (RAD_PORT_TLS = 12302)
+    locale   string, locale
+    ca_certs string, path to file containing CA certificates
+
+    Returns:
+    RadConnection: a connection to RAD
+    """
+    # We don't want SSL 2.0, SSL 3.0 nor TLS 1.0 in RAD
+    context = SSL.Context(SSL.SSLv23_METHOD)
+    context.set_options(SSL.OP_NO_SSLv2)
+    context.set_options(SSL.OP_NO_SSLv3)
+    context.set_options(SSL.OP_NO_TLSv1)
+
+    if ca_certs is not None:
+        context.set_verify(SSL.VERIFY_PEER, _tls_verify_cb)
+        context.load_verify_locations(ca_certs)
+
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock = SSL.Connection(context, sock)
+    sock.connect((host, port))
+    sock.do_handshake()
+
+    return radcon.RadConnection(sock, locale=locale)
+
+
 class ZFSVolumeDriver(SanDriver):
-    """Local ZFS volume operations."""
+    """OpenStack Cinder ZFS volume driver for generic ZFS volumes.
+
+    Version history:
+        1.0.0 - Initial driver with basic functionalities in Havana
+        1.1.0 - Support SAN for the remote storage nodes access in Juno
+        1.1.1 - Add support for the volume backup
+        1.1.2 - Add support for the volume migration
+        1.2.0 - Add support for the volume management in Kilo
+        1.2.1 - Enable the connect_tls by importing eventlet.green.socket
+        1.2.2 - Introduce the ZFS RAD for volume migration enhancement
+        1.2.3 - Replace volume-specific targets with one shared target in
+                the ZFSISCSIDriver
+
+    """
+
+    version = "1.2.3"
     protocol = 'local'
 
     def __init__(self, *args, **kwargs):
@@ -202,7 +254,7 @@ class ZFSVolumeDriver(SanDriver):
         """Callback for volume attached to instance or host."""
         pass
 
-    def detach_volume(self, context, volume):
+    def detach_volume(self, context, volume, attachment):
         """ Callback for volume detached."""
         pass
 
@@ -214,14 +266,6 @@ class ZFSVolumeDriver(SanDriver):
 
         return self._stats
 
-    def copy_image_to_volume(self, context, volume, image_service, image_id):
-        """Fetch the image from image_service and write it to the volume."""
-        raise NotImplementedError()
-
-    def copy_volume_to_image(self, context, volume, image_service, image_meta):
-        """Copy the volume to the specified image."""
-        raise NotImplementedError()
-
     def _get_zfs_property(self, prop, dataset):
         """Get the value of property for the dataset."""
         try:
@@ -229,8 +273,8 @@ class ZFSVolumeDriver(SanDriver):
                                         'value', prop, dataset)
             return out.rstrip()
         except processutils.ProcessExecutionError:
-            LOG.info(_("Failed to get the property '%s' of the dataset '%s'") %
-                     (prop, dataset))
+            LOG.info(_LI("Failed to get the property '%s' of the dataset '%s'")
+                     % (prop, dataset))
             return None
 
     def _get_zfs_snap_name(self, snapshot):
@@ -273,7 +317,7 @@ class ZFSVolumeDriver(SanDriver):
             p1 = subprocess.Popen(cmd1, stdout=subprocess.PIPE,
                                   stderr=subprocess.PIPE)
         except:
-            LOG.error(_("_piped_execute '%s' failed.") % (cmd1))
+            LOG.error(_LE("_piped_execute '%s' failed.") % (cmd1))
             raise
 
         # Set the pipe to be blocking because evenlet.green.subprocess uses
@@ -308,7 +352,7 @@ class ZFSVolumeDriver(SanDriver):
         cmd2 = ['/usr/sbin/zfs', 'receive', dst]
         # Due to pipe injection protection in the ssh utils method,
         # cinder.utils.check_ssh_injection(), the piped commands must be passed
-        # through via paramiko.  These commands take no user defined input
+        # through via paramiko. These commands take no user defined input
         # other than the names of the zfs datasets which are already protected
         # against the special characters of concern.
         if not self.run_local:
@@ -325,6 +369,90 @@ class ZFSVolumeDriver(SanDriver):
         cmd = ['/usr/sbin/zfs', 'destroy', dst_snapshot_name]
         self._execute(*cmd)
 
+    def _get_rc_connect(self, san_info=None):
+        """Connect the RAD server."""
+        if san_info is not None:
+            san_ip = san_info.split(';')[0]
+            san_login = san_info.split(';')[1]
+            san_password = san_info.split(';')[2]
+        else:
+            san_ip = self.configuration.san_ip
+            san_login = self.configuration.san_login
+            san_password = self.configuration.san_password
+
+        rc = connect_tls(san_ip)
+        auth = rada.RadAuth(rc)
+        auth.pam_login(san_login, san_password)
+
+        return rc
+
+    def _rad_zfs_send_recv(self, src, dst, dst_san_info=None):
+        """Replicate the ZFS dataset stream."""
+        src_snapshot = {'volume_name': src['name'],
+                        'name': 'tmp-send-snapshot-%s' % src['id']}
+        src_snapshot_name = self._get_zfs_snap_name(src_snapshot)
+        prop_type = self._get_zfs_property('type', src_snapshot_name)
+        # Delete the temporary snapshot if it already exists
+        if prop_type == 'snapshot':
+            self.delete_snapshot(src_snapshot)
+        # Create the temporary snapshot of src volume
+        self.create_snapshot(src_snapshot)
+
+        src_rc = self._get_rc_connect()
+        dst_rc = self._get_rc_connect(dst_san_info)
+
+        src_pat = self._get_zfs_volume_name(src['name'])
+        src_vol_obj = src_rc.get_object(zfsmgr.ZfsDataset(),
+                                        radc.ADRGlobPattern({"name": src_pat}))
+        dst_pat = dst.rsplit('/', 1)[0]
+        dst_vol_obj = dst_rc.get_object(zfsmgr.ZfsDataset(),
+                                        radc.ADRGlobPattern({"name": dst_pat}))
+
+        send_sock_info = src_vol_obj.get_send_socket(
+            name=src_snapshot_name, socket_type=zfsmgr.SocketType.AF_INET)
+        send_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        send_sock.connect((self.hostname, int(send_sock_info.socket)))
+
+        dst_san_ip = dst_san_info.split(';')[0]
+        remote_host, alias, addresslist = socket.gethostbyaddr(dst_san_ip)
+
+        recv_sock_info = dst_vol_obj.get_receive_socket(
+            name=dst, socket_type=zfsmgr.SocketType.AF_INET,
+            name_options=zfsmgr.ZfsRecvNameOptions.use_provided_name)
+        recv_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        recv_sock.connect((remote_host, int(recv_sock_info.socket)))
+
+        # Set 4mb buffer size
+        buf_size = 4194304
+        while True:
+            # Read the data from the send stream
+            buf = send_sock.recv(buf_size)
+            if not buf:
+                break
+            # Write the data to the receive steam
+            recv_sock.send(buf)
+
+        recv_sock.close()
+        send_sock.close()
+        time.sleep(1)
+
+        # Delete the temporary dst snapshot
+        pat = radc.ADRGlobPattern({"name": dst})
+        dst_zvol_obj = dst_rc.get_object(zfsmgr.ZfsDataset(), pat)
+        snapshot_list = dst_zvol_obj.get_snapshots()
+        for snap in snapshot_list:
+            if 'tmp-send-snapshot'in snap:
+                dst_zvol_obj.destroy_snapshot(snap)
+                break
+
+        # Delete the temporary src snapshot
+        self.delete_snapshot(src_snapshot)
+        LOG.debug(("Transfered src stream'%s' to dst'%s' on the host'%s'") %
+                  (src_snapshot_name, dst, self.hostname))
+
+        src_rc.close()
+        dst_rc.close()
+
     def _get_zvol_path(self, volume):
         """Get the ZFS volume path."""
         return "/dev/zvol/rdsk/%s" % self._get_zfs_volume_name(volume['name'])
@@ -337,7 +465,7 @@ class ZFSVolumeDriver(SanDriver):
         backend_name = self.configuration.safe_get('volume_backend_name')
         stats["volume_backend_name"] = backend_name or self.__class__.__name__
         stats["storage_protocol"] = self.protocol
-        stats["driver_version"] = '1.0'
+        stats["driver_version"] = self.version
         stats["vendor_name"] = 'Oracle'
         stats['QoS_support'] = False
 
@@ -348,8 +476,9 @@ class ZFSVolumeDriver(SanDriver):
             (Size(used_size) + Size(avail_size)).get(Size.gb_units)
         stats['free_capacity_gb'] = Size(avail_size).get(Size.gb_units)
         stats['reserved_percentage'] = self.configuration.reserved_percentage
+
         stats['location_info'] =\
-            ('ZFSVolumeDriver:%(hostname)s:%(zfs_volume_base)s' %
+            ('ZFSVolumeDriver:%(hostname)s:%(zfs_volume_base)s:local' %
              {'hostname': self.hostname,
               'zfs_volume_base': self.configuration.zfs_volume_base})
 
@@ -373,14 +502,67 @@ class ZFSVolumeDriver(SanDriver):
 
         LOG.debug(_("Rename the volume '%s' to '%s'") % (src, dst))
 
-    def migrate_volume(self, context, volume, host):
-        """Migrate the volume among different backends on the same server.
+    def _get_existing_volume_ref_name(self, existing_ref):
+        """Returns the volume name of an existing reference.
+        And Check if an existing volume reference has a source-name
+        """
+        if 'source-name' in existing_ref:
+            vol_name = existing_ref['source-name']
+            return vol_name
+        else:
+            reason = _("Reference must contain source-name.")
+            raise exception.ManageExistingInvalidReference(
+                existing_ref=existing_ref,
+                reason=reason)
 
-        The volume migration can only run locally by calling zfs send/recv
-        cmds and the specified host needs to be on the same server with the
-        host. But, one exception is when the src and dst volume are located
-        under the same zpool locally or remotely, the migration will be done
-        by just renaming the volume.
+    def manage_existing_get_size(self, volume, existing_ref):
+        """Return size of volume to be managed by manage_existing.
+        existing_ref is a dictionary of the form:
+        {'source-name': <name of the volume>}
+        """
+        target_vol_name = self._get_existing_volume_ref_name(existing_ref)
+        volsize = self._get_zfs_property('volsize', target_vol_name)
+
+        return Size(volsize).get(Size.gb_units)
+
+    def manage_existing(self, volume, existing_ref):
+        """Brings an existing zfs volume object under Cinder management.
+
+        :param volume:       Cinder volume to manage
+        :param existing_ref: Driver-specific information used to identify a
+        volume
+        """
+        # Check the existence of the ZFS volume
+        target_vol_name = self._get_existing_volume_ref_name(existing_ref)
+        prop_type = self._get_zfs_property('type', target_vol_name)
+        if prop_type != 'volume':
+            msg = (_("Failed to identify the volume '%s'.")
+                   % target_vol_name)
+            raise exception.InvalidInput(reason=msg)
+
+        if volume['name']:
+            volume_name = volume['name']
+        else:
+            volume_name = 'new_zvol'
+
+        # rename the volume
+        dst_volume = "%s/%s" % (self.configuration.zfs_volume_base,
+                                volume_name)
+        self.rename_volume(target_vol_name, dst_volume)
+
+    def unmanage(self, volume):
+        """Removes the specified volume from Cinder management."""
+        # Rename the volume's name to cinder-unm-* format.
+        volume_name = self._get_zfs_volume_name(volume['name'])
+        tmp_volume_name = "cinder-unm-%s" % volume['name']
+        new_volume_name = "%s/%s" % (self.configuration.zfs_volume_base,
+                                     tmp_volume_name)
+        self.rename_volume(volume_name, new_volume_name)
+
+    def migrate_volume(self, context, volume, host):
+        """Migrate the volume from one backend to another one.
+        The backends should be in the same volume type.
+
         :param context: context
         :param volume: a dictionary describing the volume to migrate
         :param host: a dictionary describing the host to migrate to
@@ -391,27 +573,28 @@ class ZFSVolumeDriver(SanDriver):
                       (volume['name'], volume['status']))
             return false_ret
 
-        if 'capabilities' not in host or \
-           'location_info' not in host['capabilities']:
-            LOG.debug(_("No location_info or capabilities are in host info"))
+        if 'capabilities' not in host:
+            LOG.debug(("No 'capabilities' is reported in the host'%s'") %
+                      host['host'])
+            return false_ret
+
+        if 'location_info' not in host['capabilities']:
+            LOG.debug(("No 'location_info' is reported in the host'%s'") %
+                      host['host'])
             return false_ret
 
         info = host['capabilities']['location_info']
-        if (self.hostname != info.split(':')[1]):
-            LOG.debug(_("Migration between two different servers '%s' and "
-                      "'%s' is not supported yet.") %
-                      (self.hostname, info.split(':')[1]))
-            return false_ret
-
-        dst_volume = "%s/%s" % (info.split(':')[-1], volume['name'])
+        dst_volume = "%s/%s" % (info.split(':')[2], volume['name'])
         src_volume = self._get_zfs_volume_name(volume['name'])
+
         # check if the src and dst volume are under the same zpool
-        if (src_volume.split('/')[0] == dst_volume.split('/')[0]):
-            self.rename_volume(src_volume, dst_volume)
-        else:
+        dst_san_info = info.split(':')[3]
+        if dst_san_info == 'local':
             self._zfs_send_recv(volume, dst_volume)
-            # delete the source volume
-            self.delete_volume(volume)
+        else:
+            self._rad_zfs_send_recv(volume, dst_volume, dst_san_info)
+        # delete the source volume
+        self.delete_volume(volume)
 
         provider_location = {}
         return (True, provider_location)
@@ -544,6 +727,29 @@ class ZFSISCSIDriver(STMFDriver, driver.ISCSIDriver):
 
     def __init__(self, *args, **kwargs):
         super(ZFSISCSIDriver, self).__init__(*args, **kwargs)
+        if not self.configuration.san_is_local:
+            self.hostname, alias, addresslist = \
+                socket.gethostbyaddr(self.configuration.san_ip)
+
+    def get_volume_stats(self, refresh=False):
+        """Get volume status."""
+        status = super(ZFSISCSIDriver, self).get_volume_stats(refresh)
+        status["storage_protocol"] = self.protocol
+        backend_name = self.configuration.safe_get('volume_backend_name')
+        status["volume_backend_name"] = backend_name or self.__class__.__name__
+
+        if not self.configuration.san_is_local:
+            san_info = "%s;%s;%s" % (self.configuration.san_ip,
+                                     self.configuration.san_login,
+                                     self.configuration.san_password)
+            status['location_info'] = \
+                ('ZFSISCSIDriver:%(hostname)s:%(zfs_volume_base)s:'
+                 '%(san_info)s' %
+                 {'hostname': self.hostname,
+                  'zfs_volume_base': self.configuration.zfs_volume_base,
+                  'san_info': san_info})
+
+        return status
 
     def do_setup(self, context):
         """Setup the target and target group."""
@@ -735,6 +941,29 @@ class ZFSFCDriver(STMFDriver, driver.FibreChannelDriver):
 
     def __init__(self, *args, **kwargs):
         super(ZFSFCDriver, self).__init__(*args, **kwargs)
+        if not self.configuration.san_is_local:
+            self.hostname, alias, addresslist = \
+                socket.gethostbyaddr(self.configuration.san_ip)
+
+    def get_volume_stats(self, refresh=False):
+        """Get volume status."""
+        status = super(ZFSFCDriver, self).get_volume_stats(refresh)
+        status["storage_protocol"] = self.protocol
+        backend_name = self.configuration.safe_get('volume_backend_name')
+        status["volume_backend_name"] = backend_name or self.__class__.__name__
+
+        if not self.configuration.san_is_local:
+            san_info = "%s;%s;%s" % (self.configuration.san_ip,
+                                     self.configuration.san_login,
+                                     self.configuration.san_password)
+            status['location_info'] = \
+                ('ZFSFCDriver:%(hostname)s:%(zfs_volume_base)s:'
+                 '%(san_info)s' %
+                 {'hostname': self.hostname,
+                  'zfs_volume_base': self.configuration.zfs_volume_base,
+                  'san_info': san_info})
+
+        return status
 
     def check_for_setup_error(self):
         """Check the setup error."""
@@ -847,15 +1076,15 @@ class ZFSFCDriver(STMFDriver, driver.FibreChannelDriver):
                                'wwn.%s' % wwn)
             self._stmf_execute('/usr/sbin/stmfadm', 'add-tg-member', '-g',
                                target_group, 'wwn.%s' % wwn)
-            self._stmf_execute('/usr/sbin/stmfadm', 'online-target',
-                               'wwn.%s' % wwn)
-        assert self._target_in_tg(wwn, target_group)
 
         # Add a logical unit view entry
         # TODO(Strony): replace the auto assigned LUN with '-n' option
         if luid is not None:
             self._stmf_execute('/usr/sbin/stmfadm', 'add-view', '-t',
                                target_group, luid)
+            self._stmf_execute('/usr/sbin/stmfadm', 'online-target',
+                               'wwn.%s' % wwn)
+        assert self._target_in_tg(wwn, target_group)
 
     def remove_export(self, context, volume):
         """Remove an export for a volume."""

@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		python-novaclient
-COMPONENT_VERSION=	2.20.0
+COMPONENT_VERSION=	2.23.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:73fc8169d58e910340aae1ac5370c3b63a9943f748e2a20e4a1dfd7277525c86
+    sha256:730cb006395b2df336bbfd75aa2f459375594726a50fe3b9126212ed487fcf98
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://launchpad.net/python-novaclient
 COMPONENT_BUGDB=	service/nova
 
-TPNO=			21735
+TPNO=			25756
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk

@@ -1,0 +1,93 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
+set name=pkg.fmri \
+    value=pkg:/library/python/trollius-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary \
+    value="Port of the Tulip project (asyncio module, PEP 3156) on Python 2"
+set name=pkg.description \
+    value="Trollius provides infrastructure for writing single-threaded concurrent code using coroutines, multiplexing I/O access over sockets and other resources, running network clients and servers, and other related primitives. Here is a more detailed list of the package contents: 1) a pluggable event loop with various system-specific implentations; 2) transport and protocol abstractions (similar to thos in Twisted); 3) concrete support for TCP, UDP, SSL, subprocess pipes, delayed calls, and others (some may be system-dependent); 4) a ``Future`` class that mimics the one in the ``concurrent.futures`` module, but adapted for use with the event loop; 5) coroutines and tasks based on generators (``yield``), to thelp write concurrent code in a sequential fashion; 6) cancellation support for ``Future``\s and coroutines; 7) synchronization primitives for use between coroutines in a single thread, mimicking those in the ``threading`` module; 8) an interface for passing work off to a theadpool, for times when you absolutely, positively have to use a library that makes blocking I/O calls."
+set name=com.oracle.info.description \
+    value="Port of the Tulip Project on Python 2"
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value=org.opensolaris.category.2008:Development/Python
+set name=info.source-url value="Victor Stinner <victor.stinner@gmail.com>"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2015/474
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+#
+file path=usr/lib/python$(PYVER)/vendor-packages/trollius-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
+file path=usr/lib/python$(PYVER)/vendor-packages/trollius-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/trollius-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
+$(PYTHON_2.7_ONLY)file path=usr/lib/python$(PYVER)/vendor-packages/trollius-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/trollius-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/trollius/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/trollius/base_events.py
+file path=usr/lib/python$(PYVER)/vendor-packages/trollius/base_subprocess.py
+file path=usr/lib/python$(PYVER)/vendor-packages/trollius/compat.py
+file path=usr/lib/python$(PYVER)/vendor-packages/trollius/constants.py
+file path=usr/lib/python$(PYVER)/vendor-packages/trollius/coroutines.py
+file path=usr/lib/python$(PYVER)/vendor-packages/trollius/events.py
+file path=usr/lib/python$(PYVER)/vendor-packages/trollius/executor.py
+file path=usr/lib/python$(PYVER)/vendor-packages/trollius/futures.py
+file path=usr/lib/python$(PYVER)/vendor-packages/trollius/locks.py
+file path=usr/lib/python$(PYVER)/vendor-packages/trollius/log.py
+file path=usr/lib/python$(PYVER)/vendor-packages/trollius/proactor_events.py
+file path=usr/lib/python$(PYVER)/vendor-packages/trollius/protocols.py
+file path=usr/lib/python$(PYVER)/vendor-packages/trollius/py27_weakrefset.py
+file path=usr/lib/python$(PYVER)/vendor-packages/trollius/py33_exceptions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/trollius/py33_winapi.py
+file path=usr/lib/python$(PYVER)/vendor-packages/trollius/py3_ssl.py
+file path=usr/lib/python$(PYVER)/vendor-packages/trollius/queues.py
+file path=usr/lib/python$(PYVER)/vendor-packages/trollius/selector_events.py
+file path=usr/lib/python$(PYVER)/vendor-packages/trollius/selectors.py
+file path=usr/lib/python$(PYVER)/vendor-packages/trollius/sslproto.py
+file path=usr/lib/python$(PYVER)/vendor-packages/trollius/streams.py
+file path=usr/lib/python$(PYVER)/vendor-packages/trollius/subprocess.py
+file path=usr/lib/python$(PYVER)/vendor-packages/trollius/tasks.py
+file path=usr/lib/python$(PYVER)/vendor-packages/trollius/test_support.py
+file path=usr/lib/python$(PYVER)/vendor-packages/trollius/test_utils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/trollius/time_monotonic.py
+file path=usr/lib/python$(PYVER)/vendor-packages/trollius/transports.py
+file path=usr/lib/python$(PYVER)/vendor-packages/trollius/unix_events.py
+file path=usr/lib/python$(PYVER)/vendor-packages/trollius/windows_events.py
+file path=usr/lib/python$(PYVER)/vendor-packages/trollius/windows_utils.py
+#
+license COPYING license="Apache 2.0"
+
+# force a dependency on futures; pkgdepend work is needed to flush this out.
+depend type=group fmri=library/python/futures-$(PYV)
+
+# force a dependency on the Python runtime
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# force a dependency on ordereddict; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/ordereddict-$(PYV)
+
+# force a dependency on the trollius package
+depend type=require \
+    fmri=library/python/trollius@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)

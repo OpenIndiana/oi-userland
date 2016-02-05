@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		keystonemiddleware
-COMPONENT_VERSION=	1.3.1
+COMPONENT_VERSION=	1.5.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:0daaa16673bd664c8deeb58b3885ed8ae43dec07464c08f4e886c724cbd5c075
+	sha256:5f443162157946d2f33c4729d0bde55291f12963b0f1ee553984aedd8a509d51
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://launchpad.net/keystonemiddleware
 COMPONENT_BUGDB=	python-mod/keystonemiddle
 
-TPNO=			21624
+TPNO=			25737
 
 # Depends on keystoneclient which is not Python 3 ready.
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)

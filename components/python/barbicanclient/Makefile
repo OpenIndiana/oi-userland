@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		python-barbicanclient
-COMPONENT_VERSION=	3.0.1
+COMPONENT_VERSION=	3.0.3
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:d298ee0fc9e785d44148d4590ac0d9eef05d560e379e98f75a7cb35ed6bfc7c8
+    sha256:959aca2ce3af2eed0f57e2fa9f0f9a484e40adc6b371e2c0fcc588aae9ca2b18
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://launchpad.net/python-barbicanclient
 COMPONENT_BUGDB=	service/barbican
 
-TPNO=			21635
+TPNO=			25748
 
 # Depends on keystoneclient which is not Python 3 ready.
 PYTHON_VERSIONS =	$(PYTHON2_VERSIONS)

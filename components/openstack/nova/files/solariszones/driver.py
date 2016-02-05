@@ -35,9 +35,16 @@ import rad.connect
 from solaris_install.target.size import Size
 
 from cinderclient import exceptions as cinder_exception
+from cinderclient.v1 import client as v1_client
 from eventlet import greenthread
+from keystoneclient import exceptions as keystone_exception
 from lxml import etree
+from oslo_concurrency import processutils
 from oslo_config import cfg
+from oslo_log import log as logging
+from oslo_serialization import jsonutils
+from oslo_utils import excutils
+from oslo_utils import strutils
 from passlib.hash import sha256_crypt
 
 from nova.api.metadata import password
@@ -49,21 +56,16 @@ from nova import conductor
 from nova import context as nova_context
 from nova import crypto
 from nova import exception
-from nova.i18n import _
+from nova.i18n import _, _LE, _LI
 from nova.image import glance
-from nova.network import neutronv2
+from nova.network.neutronv2 import api as neutronv2_api
 from nova import objects
 from nova.objects import flavor as flavor_obj
-from nova.openstack.common import excutils
 from nova.openstack.common import fileutils
-from nova.openstack.common import jsonutils
-from nova.openstack.common import log as logging
-from nova.openstack.common import loopingcall
-from nova.openstack.common import processutils
-from nova.openstack.common import strutils
 from nova import utils
 from nova.virt import driver
 from nova.virt import event as virtevent
+from nova.virt import hardware
 from nova.virt import images
 from nova.virt.solariszones import sysconfig
 from nova.volume.cinder import API
@@ -242,6 +244,8 @@ class SolarisVolumeAPI(API):
 
         Returns a volume object
         """
+        client = cinderclient(context)
+
         if snapshot is not None:
             snapshot_id = snapshot['id']
         else:
@@ -261,11 +265,10 @@ class SolarisVolumeAPI(API):
                       imageRef=image_id,
                       source_volid=source_volid)
 
-        version = get_cinder_client_version(context)
-        if version == '1':
+        if isinstance(client, v1_client.Client):
             kwargs['display_name'] = name
             kwargs['display_description'] = description
-        elif version == '2':
+        else:
             kwargs['name'] = name
             kwargs['description'] = description
 
@@ -274,8 +277,9 @@ class SolarisVolumeAPI(API):
             return _untranslate_volume_summary_view(context, item)
         except cinder_exception.OverLimit:
             raise exception.OverQuota(overs='volumes')
-        except cinder_exception.BadRequest as err:
-            raise exception.InvalidInput(reason=unicode(err))
+        except (cinder_exception.BadRequest,
+                keystone_exception.BadRequest) as reason:
+            raise exception.InvalidInput(reason=reason)
 
     @translate_volume_exception
     def update(self, context, volume_id, fields):
@@ -704,26 +708,18 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
         :param instance: nova.objects.instance.Instance object
 
-        Returns a dict containing:
-
-        :state:           the running state, one of the power_state codes
-        :max_mem:         (int) the maximum memory in KBytes allowed
-        :mem:             (int) the memory in KBytes used by the domain
-        :num_cpu:         (int) the number of virtual CPUs for the domain
-        :cpu_time:        (int) the CPU time used in nanoseconds
+        Returns a InstanceInfo object
         """
         # TODO(Vek): Need to pass context in for access to auth_token
         name = instance['name']
         zone = self._get_zone_by_name(name)
         if zone is None:
             raise exception.InstanceNotFound(instance_id=name)
-        return {
-            'state':    self._get_state(zone),
-            'max_mem':  self._get_max_mem(zone),
-            'mem':      self._get_mem(zone),
-            'num_cpu':  self._get_num_cpu(zone),
-            'cpu_time': self._get_cpu_time(zone)
-        }
+        return hardware.InstanceInfo(state=self._get_state(zone),
+                                     max_mem_kb=self._get_max_mem(zone),
+                                     mem_kb=self._get_mem(zone),
+                                     num_cpu=self._get_num_cpu(zone),
+                                     cpu_time_ns=self._get_cpu_time(zone))
 
     def get_num_instances(self):
         """Return the total number of virtual machines.
@@ -891,6 +887,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
             if driver_type not in shared_storage:
                 msg = (_("Root device is not on shared storage for instance "
                          "'%s'.") % instance['name'])
+
                 raise exception.NovaException(msg)
 
         if not recreate:
@@ -898,11 +895,6 @@ class SolarisZonesDriver(driver.ComputeDriver):
             if root_ci is not None:
                 self._volume_api.detach(context, root_ci['serial'])
                 self._volume_api.delete(context, root_ci['serial'])
-
-                # We need to clear the block device mapping for the root device
-                bdmobj = objects.BlockDeviceMapping()
-                bdm = bdmobj.get_by_volume_id(context, root_ci['serial'])
-                bdm.destroy(context)
 
         instance.task_state = task_states.REBUILD_SPAWNING
         instance.save(
@@ -988,10 +980,10 @@ class SolarisZonesDriver(driver.ComputeDriver):
         try:
             ua = self._archive_manager.getArchive(image)
         except Exception as ex:
-                reason = ex.get_payload().info
-                raise exception.ImageUnacceptable(
-                    image_id=instance['image_ref'],
-                    reason=reason)
+            reason = ex.get_payload().info
+            raise exception.ImageUnacceptable(
+                image_id=instance['image_ref'],
+                reason=reason)
 
         # Validate the image at this point to ensure:
         # - contains one deployable system
@@ -1018,11 +1010,12 @@ class SolarisZonesDriver(driver.ComputeDriver):
         self._validated_archives.append(instance['image_ref'])
 
     def _suri_from_volume_info(self, connection_info):
-        """Returns a suri(5) formatted string based on connection_info
-        Currently supports local ZFS volume and iSCSI driver types.
+        """Returns a suri(5) formatted string based on connection_info.
+        Currently supports local ZFS volume, NFS, Fibre Channel and iSCSI
+        driver types.
         """
         driver_type = connection_info['driver_volume_type']
-        if driver_type not in ['iscsi', 'fibre_channel', 'local']:
+        if driver_type not in ['iscsi', 'fibre_channel', 'local', 'nfs']:
             raise exception.VolumeDriverNotFound(driver_type=driver_type)
         if driver_type == 'local':
             suri = 'dev:/dev/zvol/dsk/%s' % connection_info['volume_path']
@@ -1038,6 +1031,13 @@ class SolarisZonesDriver(driver.ComputeDriver):
                                                     data['target_iqn'],
                                                     data['target_lun'])
             # TODO(npower): need to handle CHAP authentication also
+        elif driver_type == 'nfs':
+            data = connection_info['data']
+            suri = (
+                'nfs://cinder:cinder@%s/%s' %
+                (data['export'].replace(':', ''), data['name'])
+            )
+
         elif driver_type == 'fibre_channel':
             data = connection_info['data']
             target_wwn = data['target_wwn']
@@ -1263,7 +1263,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
                 return
 
         tenant_id = None
-        network_plugin = neutronv2.get_client(context)
+        network_plugin = neutronv2_api.get_client(context)
         for netid, network in enumerate(network_info):
             if tenant_id is None:
                 tenant_id = network['network']['meta']['tenant_id']
@@ -1638,8 +1638,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
         console_fmri = VNC_CONSOLE_BASE_FMRI + ':' + name
         # TODO(npower): investigate using RAD instead of CLI invocation
         try:
-            utils.execute('/usr/bin/svcs', '-H', '-o', 'state',
-                          console_fmri)
+            utils.execute('/usr/bin/svcs', '-H', '-o', 'state', console_fmri)
             return True
         except Exception:
             return False
@@ -1809,16 +1808,19 @@ class SolarisZonesDriver(driver.ComputeDriver):
             shutil.rmtree(sc_dir)
 
         if connection_info is not None:
-            bdm = objects.BlockDeviceMapping(
-                    source_type='volume',
-                    destination_type='volume',
-                    instance_uuid=instance.uuid,
-                    volume_id=volume_id,
-                    connection_info=jsonutils.dumps(connection_info),
-                    device_name=mountpoint,
-                    delete_on_termination=True,
-                    volume_size=instance['root_gb'])
-            bdm.create(context)
+            bdm_obj = objects.BlockDeviceMappingList()
+            # there's only one bdm for this instance at this point
+            bdm = bdm_obj.get_by_instance_uuid(context,
+                                               instance.uuid).objects[0]
+
+            # update the required attributes
+            bdm['connection_info'] = jsonutils.dumps(connection_info)
+            bdm['source_type'] = 'volume'
+            bdm['destination_type'] = 'volume'
+            bdm['device_name'] = mountpoint
+            bdm['delete_on_termination'] = True
+            bdm['volume_id'] = volume_id
+            bdm['volume_size'] = instance['root_gb']
             bdm.save()
 
     def _power_off(self, instance, halt_type):
@@ -1853,21 +1855,15 @@ class SolarisZonesDriver(driver.ComputeDriver):
         """
         self.power_off(instance)
 
-        inst_type = flavor_obj.Flavor.get_by_id(
-            nova_context.get_admin_context(read_deleted='yes'),
-            instance['instance_type_id'])
-        extra_specs = inst_type['extra_specs'].copy()
+        extra_specs = self._get_extra_specs(instance)
         brand = extra_specs.get('zonecfg:brand', ZONE_BRAND_SOLARIS)
 
         name = instance['name']
 
-        cpu = int(instance.system_metadata['old_instance_type_vcpus'])
-        mem = int(instance.system_metadata['old_instance_type_memory_mb'])
+        self._set_num_cpu(name, instance.vcpus, brand)
+        self._set_memory_cap(name, instance.memory_mb, brand)
 
-        self._set_num_cpu(name, cpu, brand)
-        self._set_memory_cap(name, mem, brand)
-
-        rgb = int(instance.system_metadata['new_instance_type_root_gb'])
+        rgb = instance.root_gb
         old_rvid = instance.system_metadata.get('old_instance_volid')
         if old_rvid:
             new_rvid = instance.system_metadata.get('new_instance_volid')
@@ -1897,8 +1893,6 @@ class SolarisZonesDriver(driver.ComputeDriver):
         """
         if (instance['task_state'] == task_states.RESIZE_REVERTING and
                 instance.system_metadata['old_vm_state'] == vm_states.RESIZED):
-            self._samehost_revert_resize(context, instance, network_info,
-                                         block_device_info)
             return
 
         # A destroy is issued for the original zone for an evac case.  If
@@ -2341,10 +2335,10 @@ class SolarisZonesDriver(driver.ComputeDriver):
         LOG.debug("Starting migrate_disk_and_power_off", instance=instance)
 
         samehost = (dest == self.get_host_ip_addr())
-        inst_type = flavor_obj.Flavor.get_by_id(
-            nova_context.get_admin_context(read_deleted='yes'),
-            instance['instance_type_id'])
-        extra_specs = inst_type['extra_specs'].copy()
+        if samehost:
+            instance.system_metadata['resize_samehost'] = samehost
+
+        extra_specs = self._get_extra_specs(instance)
         brand = extra_specs.get('zonecfg:brand', ZONE_BRAND_SOLARIS)
         if brand != ZONE_BRAND_SOLARIS_KZ and not samehost:
             reason = (_("'%s' branded zones do not currently support resize "
@@ -2356,7 +2350,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
             raise exception.MigrationPreCheckError(reason=reason)
 
         orgb = instance['root_gb']
-        nrgb = int(instance.system_metadata['new_instance_type_root_gb'])
+        nrgb = flavor.root_gb
         if orgb > nrgb:
             msg = (_("Unable to resize to a smaller boot volume."))
             raise exception.ResizeError(reason=msg)
@@ -2451,6 +2445,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
                 'image_state': 'available',
                 'owner_id': instance['project_id'],
                 'instance_uuid': instance['uuid'],
+                'image_type': snapshot['properties']['image_type'],
             }
         }
         # Match architecture, hypervisor_type and vm_mode properties to base
@@ -2461,7 +2456,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
                 metadata['properties'][prop] = base_prop
 
         # Set generic container and disk formats initially in case the glance
-        # service rejects unified archives (uar) and zfs in metadata
+        # service rejects Unified Archives (uar) and ZFS in metadata.
         metadata['container_format'] = 'ovf'
         metadata['disk_format'] = 'raw'
 
@@ -2580,10 +2575,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
         if samehost:
             instance.system_metadata['old_vm_state'] = vm_states.RESIZED
 
-        inst_type = flavor_obj.Flavor.get_by_id(
-            nova_context.get_admin_context(read_deleted='yes'),
-            instance['instance_type_id'])
-        extra_specs = inst_type['extra_specs'].copy()
+        extra_specs = self._get_extra_specs(instance)
         brand = extra_specs.get('zonecfg:brand', ZONE_BRAND_SOLARIS)
         name = instance['name']
 
@@ -2598,18 +2590,15 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
         try:
             if samehost:
-                metadstr = 'new_instance_type_vcpus'
-                cpu = int(instance.system_metadata[metadstr])
-                metadstr = 'new_instance_type_memory_mb'
-                mem = int(instance.system_metadata[metadstr])
+                cpu = instance.vcpus
+                mem = instance.memory_mb
                 self._set_num_cpu(name, cpu, brand)
                 self._set_memory_cap(name, mem, brand)
 
                 # Add the new disk to the volume if the size of the disk
                 # changed
                 if disk_info:
-                    metadstr = 'new_instance_type_root_gb'
-                    rgb = int(instance.system_metadata[metadstr])
+                    rgb = instance.root_gb
                     self._resize_disk_migration(context, instance,
                                                 root_ci['serial'],
                                                 disk_info['id'],
@@ -2688,6 +2677,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
         if not samehost:
             self.destroy(context, instance, network_info)
+        else:
+            del instance.system_metadata['resize_samehost']
 
     def _resize_disk_migration(self, context, instance, configured,
                                replacement, newvolumesz, mountdev,
@@ -2764,8 +2755,14 @@ class SolarisZonesDriver(driver.ComputeDriver):
                          otherwise
         """
         # If this is not a samehost migration then we need to re-attach the
-        # original volume to the instance.  If this was processed in the
-        # initial revert handling this work has already been done.
+        # original volume to the instance. Otherwise we need to update the
+        # original zone configuration.
+        samehost = instance.system_metadata.get('resize_samehost')
+        if samehost:
+            self._samehost_revert_resize(context, instance, network_info,
+                                         block_device_info)
+            del instance.system_metadata['resize_samehost']
+
         old_rvid = instance.system_metadata.get('old_instance_volid')
         if old_rvid:
             connector = self.get_volume_connector(instance)
@@ -2813,12 +2810,12 @@ class SolarisZonesDriver(driver.ComputeDriver):
         # TODO(Vek): Need to pass context in for access to auth_token
         raise NotImplementedError()
 
-    def suspend(self, instance):
+    def suspend(self, context, instance):
         """suspend the specified instance.
 
+        :param context: the context for the suspend
         :param instance: nova.objects.instance.Instance
         """
-        # TODO(Vek): Need to pass context in for access to auth_token
         name = instance['name']
         zone = self._get_zone_by_name(name)
         if zone is None:
@@ -3216,7 +3213,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
         back to the source host to check the results.
 
         :param context: security context
-        :param instance: nova.db.sqlalchemy.models.Instance
+        :param instance: nova.objects.instance.Instance object
         """
         raise NotImplementedError()
 
@@ -3306,7 +3303,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
                 raise exception.MigrationPreCheckError(reason=reason)
 
     def check_can_live_migrate_source(self, context, instance,
-                                      dest_check_data, block_device_info):
+                                      dest_check_data, block_device_info=None):
         """Check if it is possible to execute live migration.
 
         This checks if the live migration can succeed, based on the
@@ -3328,12 +3325,11 @@ class SolarisZonesDriver(driver.ComputeDriver):
             raise exception.MigrationPreCheckError(reason=reason)
         return dest_check_data
 
-    def get_instance_disk_info(self, instance_name,
+    def get_instance_disk_info(self, instance,
                                block_device_info=None):
         """Retrieve information about actual disk sizes of an instance.
 
-        :param instance_name:
-            name of a nova instance as returned by list_instances()
+        :param instance: nova.objects.Instance
         :param block_device_info:
             Optional; Can be used to filter out devices which are
             actually volumes.
@@ -3474,7 +3470,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
         """Set the root password on the specified instance.
 
         :param instance: nova.objects.instance.Instance
-        :param new_password: the new password
+        :param new_pass: the new password
         """
         name = instance['name']
         zone = self._get_zone_by_name(name)
@@ -3483,8 +3479,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
         if zone.state == ZONE_STATE_RUNNING:
             out, err = utils.execute('/usr/sbin/zlogin', '-S', name,
-                                     '/usr/bin/passwd', '-p', "'%s'" %
-                                     sha256_crypt.encrypt(new_pass))
+                                     '/usr/bin/passwd', '-p',
+                                     "'%s'" % sha256_crypt.encrypt(new_pass))
         else:
             raise exception.InstanceNotRunning(instance_id=name)
 
@@ -3532,7 +3528,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
         # TODO(Vek): Need to pass context in for access to auth_token
         raise NotImplementedError()
 
-    def host_power_action(self, host, action):
+    def host_power_action(self, action):
         """Reboots, shuts down or powers up the host."""
         raise NotImplementedError()
 
@@ -3542,12 +3538,12 @@ class SolarisZonesDriver(driver.ComputeDriver):
         """
         raise NotImplementedError()
 
-    def set_host_enabled(self, host, enabled):
+    def set_host_enabled(self, enabled):
         """Sets the specified host's ability to accept new instances."""
         # TODO(Vek): Need to pass context in for access to auth_token
         raise NotImplementedError()
 
-    def get_host_uptime(self, host):
+    def get_host_uptime(self):
         """Returns the result of calling "uptime" on the target host."""
         # TODO(Vek): Need to pass context in for access to auth_token
         return utils.execute('/usr/bin/uptime')[0]
@@ -3566,23 +3562,6 @@ class SolarisZonesDriver(driver.ComputeDriver):
         :param instance: nova.objects.instance.Instance
         """
         raise NotImplementedError()
-
-    def get_host_stats(self, refresh=False):
-        """Return currently known host stats.
-
-        If the hypervisor supports pci passthrough, the returned
-        dictionary includes a key-value pair for it.
-        The key of pci passthrough device is "pci_passthrough_devices"
-        and the value is a json string for the list of assignable
-        pci devices. Each device is a dictionary, with mandatory
-        keys of 'address', 'vendor_id', 'product_id', 'dev_type',
-        'dev_id', 'label' and other optional device specific information.
-
-        Refer to the objects/pci_device.py for more idea of these keys.
-        """
-        if refresh or not self._host_stats:
-            self._update_host_stats()
-        return self._host_stats
 
     def get_host_cpu_stats(self):
         """Get the currently known host CPU stats.
@@ -3606,32 +3585,13 @@ class SolarisZonesDriver(driver.ComputeDriver):
         """
         raise NotImplementedError()
 
-    def block_stats(self, instance_name, disk_id):
+    def block_stats(self, instance, disk_id):
         """Return performance counters associated with the given disk_id on the
-        given instance_name.  These are returned as [rd_req, rd_bytes, wr_req,
+        given instance.  These are returned as [rd_req, rd_bytes, wr_req,
         wr_bytes, errs], where rd indicates read, wr indicates write, req is
         the total number of I/O requests made, bytes is the total number of
         bytes transferred, and errs is the number of requests held up due to a
         full pipeline.
-
-        All counters are long integers.
-
-        This method is optional.  On some platforms (e.g. XenAPI) performance
-        statistics can be retrieved directly in aggregate form, without Nova
-        having to do the aggregation.  On those platforms, this method is
-        unused.
-
-        Note that this function takes an instance ID.
-        """
-        raise NotImplementedError()
-
-    def interface_stats(self, instance_name, iface_id):
-        """Return performance counters associated with the given iface_id
-        on the given instance_id.  These are returned as [rx_bytes, rx_packets,
-        rx_errs, rx_drop, tx_bytes, tx_packets, tx_errs, tx_drop], where rx
-        indicates receive, tx indicates transmit, bytes and packets indicate
-        the total number of bytes or packets transferred, and errs and dropped
-        is the total number of packets failed / dropped.
 
         All counters are long integers.
 
@@ -3701,7 +3661,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
              |    ]
 
         """
-        pass
+        return None
 
     def manage_image_cache(self, context, all_instances):
         """Manage the driver's local image cache.
@@ -3711,7 +3671,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
         related to other calls into the driver. The prime example is to clean
         the cache and remove images which are no longer of interest.
 
-        :param instances: nova.objects.instance.InstanceList
+        :param all_instances: nova.objects.instance.InstanceList
         """
         pass
 
@@ -3784,7 +3744,9 @@ class SolarisZonesDriver(driver.ComputeDriver):
         by the service. Otherwise, this method should return
         [hypervisor_hostname].
         """
-        stats = self.get_host_stats(refresh=refresh)
+        if refresh or not self._host_stats:
+            self._update_host_stats()
+        stats = self._host_stats
         if not isinstance(stats, list):
             stats = [stats]
         return [s['hypervisor_hostname'] for s in stats]
@@ -3869,7 +3831,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
             LOG.debug("Emitting event %s", str(event))
             self._compute_event_callback(event)
         except Exception as ex:
-            LOG.error(_("Exception dispatching event %(event)s: %(ex)s"),
+            LOG.error(_LE("Exception dispatching event %(event)s: %(ex)s"),
                       {'event': event, 'ex': ex})
 
     def delete_instance_files(self, instance):
@@ -3951,3 +3913,33 @@ class SolarisZonesDriver(driver.ComputeDriver):
         #                 type and implement this function at their
         #                 virt layer.
         return False
+
+    def quiesce(self, context, instance, image_meta):
+        """Quiesce the specified instance to prepare for snapshots.
+
+        If the specified instance doesn't support quiescing,
+        InstanceQuiesceNotSupported is raised. When it fails to quiesce by
+        other errors (e.g. agent timeout), NovaException is raised.
+
+        :param context:  request context
+        :param instance: nova.objects.instance.Instance to be quiesced
+        :param image_meta: image object returned by nova.image.glance that
+                           defines the image from which this instance
+                           was created
+        """
+        raise NotImplementedError()
+
+    def unquiesce(self, context, instance, image_meta):
+        """Unquiesce the specified instance after snapshots.
+
+        If the specified instance doesn't support quiescing,
+        InstanceQuiesceNotSupported is raised. When it fails to quiesce by
+        other errors (e.g. agent timeout), NovaException is raised.
+
+        :param context:  request context
+        :param instance: nova.objects.instance.Instance to be unquiesced
+        :param image_meta: image object returned by nova.image.glance that
+                           defines the image from which this instance
+                           was created
+        """
+        raise NotImplementedError()

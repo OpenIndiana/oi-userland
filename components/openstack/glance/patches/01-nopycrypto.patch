@@ -4,31 +4,24 @@ Solaris-specific and not suitable for upstream.
 Convert urlsafe_encrypt() and urlsafe_decrypt() to use M2Crypto instead
 of PyCrypto.
 
---- glance-2014.2.2/glance/common/crypt.py.~1~	2014-08-07 12:01:58.000000000 -0700
-+++ glance-2014.2.2/glance/common/crypt.py	2014-08-09 21:36:53.351345980 -0700
-@@ -3,6 +3,8 @@
- # Copyright 2011 OpenStack Foundation
- # All Rights Reserved.
- #
-+# Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
-+#
- #    Licensed under the Apache License, Version 2.0 (the "License"); you may
- #    not use this file except in compliance with the License. You may obtain
- #    a copy of the License at
-@@ -20,10 +22,26 @@
+--- glance-2015.1.2/glance/common/crypt.py.~1~	2015-10-13 09:38:23.000000000 -0700
++++ glance-2015.1.2/glance/common/crypt.py	2016-01-24 16:48:24.788282369 -0800
+@@ -20,14 +20,30 @@ Routines for URL-safe encrypting/decrypt
  """
  
  import base64
 +import os
-+
-+from M2Crypto.EVP import Cipher
-+
-+from glance.common import exception
-+
  
 -from Crypto.Cipher import AES
 -from Crypto import Random
 -from Crypto.Random import random
++from glance.common import exception
++
++from M2Crypto.EVP import Cipher
+ # NOTE(jokke): simplified transition to py3, behaves like py2 xrange
+ from six.moves import range
+ 
+ 
 +def _key_to_alg(key):
 +    """Return a M2Crypto-compatible AES-CBC algorithm name given a key."""
 +    aes_algs = {
@@ -42,10 +35,12 @@ of PyCrypto.
 +        msg = ('Invalid AES key length, %d bits') % keylen
 +        raise exception.Invalid(msg)
 +    return aes_algs[keylen]
- 
- 
++
++
  def urlsafe_encrypt(key, plaintext, blocksize=16):
-@@ -35,20 +53,12 @@
+     """
+     Encrypts plaintext. Resulting ciphertext will contain URL-safe characters
+@@ -37,20 +53,12 @@ def urlsafe_encrypt(key, plaintext, bloc
  
      :returns : Resulting ciphertext
      """
@@ -70,7 +65,7 @@ of PyCrypto.
      return base64.urlsafe_b64encode(init_vector + padded)
  
  
-@@ -62,6 +72,7 @@
+@@ -64,6 +72,7 @@ def urlsafe_decrypt(key, ciphertext):
      """
      # Cast from unicode
      ciphertext = base64.urlsafe_b64decode(str(ciphertext))

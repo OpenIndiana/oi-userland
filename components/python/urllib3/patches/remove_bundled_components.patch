@@ -1,0 +1,102 @@
+In-house patch to remove the imports of local copies of six and ordered_dict.
+
+--- urllib3-1.10.4/urllib3/_collections.py.orig     2015-05-08 13:09:35.593680366 -0600
++++ urllib3-1.10.4/urllib3/_collections.py     2015-05-08 13:10:02.486402310 -0600
+@@ -10,11 +10,8 @@ except ImportError:  # Platform-specific
+             pass
+
+
+-try:  # Python 2.7+
+-    from collections import OrderedDict
+-except ImportError:
+-    from .packages.ordered_dict import OrderedDict
+-from .packages.six import iterkeys, itervalues, PY3
++from collections import OrderedDict
++from six import iterkeys, itervalues, PY3
+
+
+ __all__ = ['RecentlyUsedContainer', 'HTTPHeaderDict']
+
+--- urllib3-1.10.4/urllib3/connection.py.orig   2015-05-08 13:10:42.386855243 -0600
++++ urllib3-1.10.4/urllib3/connection.py       2015-05-08 13:11:00.210452150 -0600
+@@ -3,7 +3,7 @@ import sys
+ import socket
+ from socket import timeout as SocketTimeout
+ import warnings
+-from .packages import six
++import six
+
+ try:  # Python 3
+     from http.client import HTTPConnection as _HTTPConnection, HTTPException
+
+--- urllib3-1.10.4/urllib3/connectionpool.py.orig       2015-05-08 13:12:22.805384141 -0600
++++ urllib3-1.10.4/urllib3/connectionpool.py   2015-05-08 13:12:36.558475524 -0600
+@@ -27,7 +27,7 @@ from .exceptions import (
+     InsecureRequestWarning,
+ )
+ from .packages.ssl_match_hostname import CertificateError
+-from .packages import six
++import six
+ from .connection import (
+     port_by_scheme,
+     DummyConnection,
+
+--- urllib3-1.10.4/urllib3/fields.py.orig       2015-05-08 13:17:35.832547496 -0600
++++ urllib3-1.10.4/urllib3/fields.py   2015-05-08 13:17:46.167925955 -0600
+@@ -1,7 +1,7 @@
+ import email.utils
+ import mimetypes
+
+-from .packages import six
++import six
+
+
+ def guess_content_type(filename, default='application/octet-stream'):
+
+--- urllib3-1.10.4/urllib3/filepost.py.orig 2015-05-08 13:14:01.703344284 -0600
++++ urllib3-1.10.4/urllib3/filepost.py 2015-05-08 13:14:16.319642917 -0600
+@@ -3,8 +3,8 @@ import codecs
+ from uuid import uuid4
+ from io import BytesIO
+
+-from .packages import six
+-from .packages.six import b
++import six
++from six import b
+ from .fields import RequestField
+
+ writer = codecs.lookup('utf-8')[3]
+
+--- urllib3-1.10.4/urllib3/response.py.orig 2015-05-08 13:14:46.148251904 -0600
++++ urllib3-1.10.4/urllib3/response.py 2015-05-08 13:14:58.056078256 -0600
+@@ -10,7 +10,7 @@ from ._collections import HTTPHeaderDict
+ from .exceptions import (
+     ProtocolError, DecodeError, ReadTimeoutError, ResponseNotChunked
+ )
+-from .packages.six import string_types as basestring, binary_type, PY3
++from six import string_types as basestring, binary_type, PY3
+ from .connection import HTTPException, BaseSSLError
+ from .util.response import is_fp_closed
+
+--- urllib3-1.10.4/urllib3/util/request.py.orig  2015-05-08 13:15:36.877580798 -0600
++++ urllib3-1.10.4/urllib3/util/request.py  2015-05-08 13:15:43.538499579 -0600
+@@ -1,6 +1,6 @@
+ from base64 import b64encode
+
+-from ..packages.six import b
++from six import b
+
+ ACCEPT_ENCODING = 'gzip,deflate'
+
+
+--- urllib3-1.10.4/urllib3/util/retry.py.orig  2015-05-08 13:16:14.384622856 -0600
++++ urllib3-1.10.4/urllib3/util/retry.py    2015-05-08 13:16:22.531096314 -0600
+@@ -8,7 +8,7 @@ from ..exceptions import (
+     ReadTimeoutError,
+     ResponseError,
+ )
+-from ..packages import six
++import six
+
+
+ log = logging.getLogger(__name__)

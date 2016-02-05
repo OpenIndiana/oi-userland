@@ -10,17 +10,20 @@ returned.
 Upstream bug logged against trunk:
   https://bugs.launchpad.net/ironic/+bug/1391598
 
---- ORIGINAL/ironic/conductor/manager.py	2015-02-20 18:03:18.051557776 +0000
-+++ ironic-2014.2.1/ironic/conductor/manager.py	2015-02-20 18:08:33.001316709 +0000
-@@ -1380,4 +1380,4 @@
+--- ORIGINAL/ironic/conductor/manager.py	2015-05-05 22:41:35.764613395 +0100
++++ ironic-2015.1.0/ironic/conductor/manager.py	2015-05-05 22:47:23.046291559 +0100
+@@ -1615,7 +1615,7 @@
              if not getattr(task.driver, 'management', None):
                  raise exception.UnsupportedDriverExtension(
                              driver=task.node.driver, extension='management')
 -            return task.driver.management.get_supported_boot_devices()
 +            return task.driver.management.get_supported_boot_devices(task)
---- ORIGINAL/ironic/drivers/base.py	2015-02-20 18:03:18.037072121 +0000
-+++ ironic-2014.2.1/ironic/drivers/base.py	2015-02-20 18:09:58.769898691 +0000
-@@ -436,9 +436,10 @@
+ 
+     @messaging.expected_exceptions(exception.NoFreeConductorWorker,
+                                    exception.NodeLocked,
+--- ORIGINAL/ironic/drivers/base.py	2015-05-05 22:41:35.780975517 +0100
++++ ironic-2015.1.0/ironic/drivers/base.py	2015-05-05 22:48:01.342155003 +0100
+@@ -629,9 +629,10 @@
          """
  
      @abc.abstractmethod

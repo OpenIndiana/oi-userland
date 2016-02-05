@@ -1,27 +1,20 @@
-This patch is to replace the linux-specific codes with the solaris
-codes to support the cinder backup on the Solaris.
+This patch is to replace Linux-specific code with conditional checks in
+the Cinder Brick code to support Cinder backup on Solaris. Patch has
+not yet been submitted upstream.
 
---- cinder-2014.2.2/cinder/brick/initiator/connector.py.~1~	2015-02-05 08:03:26.000000000 -0800
-+++ cinder-2014.2.2/cinder/brick/initiator/connector.py	2015-04-20 21:05:25.881159722 -0700
-@@ -15,6 +15,7 @@
- 
- import os
- import socket
-+import sys
- import time
- 
- from cinder.brick import exception
-@@ -22,6 +23,8 @@
- from cinder.brick.initiator import host_driver
+--- cinder-2015.1.2/cinder/brick/initiator/connector.py.~1~	2015-10-13 09:27:35.000000000 -0700
++++ cinder-2015.1.2/cinder/brick/initiator/connector.py	2016-01-31 00:12:30.729547660 -0800
+@@ -32,6 +32,8 @@ from cinder.brick.initiator import host_
  from cinder.brick.initiator import linuxfc
  from cinder.brick.initiator import linuxscsi
+ from cinder.brick.remotefs import remotefs
 +from cinder.brick.initiator import solarisfc
 +from cinder.brick.initiator import solarisiscsi
- from cinder.brick.remotefs import remotefs
- from cinder.i18n import _
- from cinder.openstack.common import lockutils
-@@ -39,7 +42,10 @@
-     """Get the connection properties for all protocols."""
+ from cinder.i18n import _, _LE, _LW
+ from cinder.openstack.common import loopingcall
+ 
+@@ -72,7 +74,10 @@ def get_connector_properties(root_helper
+     """
  
      iscsi = ISCSIConnector(root_helper=root_helper)
 -    fc = linuxfc.LinuxFibreChannel(root_helper=root_helper)
@@ -32,21 +25,21 @@ codes to support the cinder backup on the Solaris.
  
      props = {}
      props['ip'] = my_ip
-@@ -134,8 +140,11 @@
+@@ -188,8 +193,11 @@ class InitiatorConnector(executor.Execut
                 'of=/dev/null', 'count=1')
          out, info = None, None
          try:
--            out, info = self._execute(*cmd, run_as_root=True,
+-            out, info = self._execute(*cmd, run_as_root=run_as_root,
 -                                      root_helper=self._root_helper)
 +            if sys.platform == 'sunos5':
 +                out, info = self._execute(*cmd)
 +            else:
-+                out, info = self._execute(*cmd, run_as_root=True,
++                out, info = self._execute(*cmd, run_as_root=run_as_root,
 +                                          root_helper=self._root_helper)
          except putils.ProcessExecutionError as e:
-             LOG.error(_("Failed to access the device on the path "
-                         "%(path)s: %(error)s %(info)s.") %
-@@ -171,7 +180,10 @@
+             LOG.error(_LE("Failed to access the device on the path "
+                           "%(path)s: %(error)s %(info)s.") %
+@@ -225,7 +233,10 @@ class ISCSIConnector(InitiatorConnector)
                   execute=putils.execute, use_multipath=False,
                   device_scan_attempts=DEVICE_SCAN_ATTEMPTS_DEFAULT,
                   *args, **kwargs):
@@ -58,7 +51,7 @@ codes to support the cinder backup on the Solaris.
          super(ISCSIConnector, self).__init__(root_helper, driver=driver,
                                               execute=execute,
                                               device_scan_attempts=
-@@ -181,6 +193,8 @@
+@@ -235,6 +246,8 @@ class ISCSIConnector(InitiatorConnector)
  
      def set_execute(self, execute):
          super(ISCSIConnector, self).set_execute(execute)
@@ -66,28 +59,27 @@ codes to support the cinder backup on the Solaris.
 +            return
          self._linuxscsi.set_execute(execute)
  
-     @synchronized('connect_volume')
-@@ -192,6 +206,9 @@
-         target_iqn - iSCSI Qualified Name
-         target_lun - LUN id of the volume
+     def _iterate_all_targets(self, connection_properties):
+@@ -289,6 +302,9 @@ class ISCSIConnector(InitiatorConnector)
+         Note that plural keys may be used when use_multipath=True
          """
+ 
 +        if sys.platform == 'sunos5':
 +            return self._solarisiscsi.connect_volume(connection_properties,
 +                                                     self.device_scan_attempts)
- 
          device_info = {'type': 'block'}
  
-@@ -262,6 +279,9 @@
-         target_iqn - iSCSI Qualified Name
-         target_lun - LUN id of the volume
+         if self.use_multipath:
+@@ -365,6 +381,8 @@ class ISCSIConnector(InitiatorConnector)
+         target_iqn(s) - iSCSI Qualified Name
+         target_lun(s) - LUN id of the volume
          """
 +        if sys.platform == 'sunos5':
 +            return
-+
          # Moved _rescan_iscsi and _rescan_multipath
          # from _disconnect_volume_multipath_iscsi to here.
          # Otherwise, if we do rescan after _linuxscsi.remove_multipath_device
-@@ -306,6 +326,9 @@
+@@ -431,6 +449,9 @@ class ISCSIConnector(InitiatorConnector)
  
      def get_initiator(self):
          """Secure helper to read file as root."""
@@ -97,7 +89,7 @@ codes to support the cinder backup on the Solaris.
          file_path = '/etc/iscsi/initiatorname.iscsi'
          try:
              lines, _err = self._execute('cat', file_path, run_as_root=True,
-@@ -555,8 +578,11 @@
+@@ -674,8 +695,11 @@ class FibreChannelConnector(InitiatorCon
                   execute=putils.execute, use_multipath=False,
                   device_scan_attempts=DEVICE_SCAN_ATTEMPTS_DEFAULT,
                   *args, **kwargs):
@@ -111,7 +103,7 @@ codes to support the cinder backup on the Solaris.
          super(FibreChannelConnector, self).__init__(root_helper, driver=driver,
                                                      execute=execute,
                                                      device_scan_attempts=
-@@ -566,6 +592,8 @@
+@@ -685,6 +709,8 @@ class FibreChannelConnector(InitiatorCon
  
      def set_execute(self, execute):
          super(FibreChannelConnector, self).set_execute(execute)
@@ -120,7 +112,7 @@ codes to support the cinder backup on the Solaris.
          self._linuxscsi.set_execute(execute)
          self._linuxfc.set_execute(execute)
  
-@@ -578,6 +606,10 @@
+@@ -697,6 +723,10 @@ class FibreChannelConnector(InitiatorCon
          target_iqn - iSCSI Qualified Name
          target_lun - LUN id of the volume
          """
@@ -131,7 +123,7 @@ codes to support the cinder backup on the Solaris.
          LOG.debug("execute = %s" % self._execute)
          device_info = {'type': 'block'}
  
-@@ -686,6 +718,13 @@
+@@ -830,6 +860,13 @@ class FibreChannelConnector(InitiatorCon
          target_wwn - iSCSI Qualified Name
          target_lun - LUN id of the volume
          """
@@ -145,12 +137,10 @@ codes to support the cinder backup on the Solaris.
          devices = device_info['devices']
  
          # If this is a multipath device, we need to search again
-
-
---- cinder-2014.2.2/cinder/utils.py.~1~ 2015-02-05 08:03:26.000000000 -0800
-+++ cinder-2014.2.2/cinder/utils.py     2015-04-20 20:46:27.658908715 -0700
-@@ -137,8 +137,12 @@
-
+--- cinder-2015.1.2/cinder/utils.py.~1~	2015-10-13 09:27:35.000000000 -0700
++++ cinder-2015.1.2/cinder/utils.py	2016-01-31 00:12:30.730160694 -0800
+@@ -138,8 +138,12 @@ def check_exclusive_options(**kwargs):
+ 
  def execute(*cmd, **kwargs):
      """Convenience wrapper around oslo's execute() method."""
 -    if 'run_as_root' in kwargs and 'root_helper' not in kwargs:
@@ -162,5 +152,5 @@ codes to support the cinder backup on the Solaris.
 +        if 'run_as_root' in kwargs and 'root_helper' not in kwargs:
 +            kwargs['root_helper'] = get_root_helper()
      return processutils.execute(*cmd, **kwargs)
-
-
+ 
+ 

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 # As an earlier Python 3 version of oslo.config was published, we
@@ -71,11 +71,15 @@ file path=usr/lib/python$(PYVER)/vendor-packages/oslo_config/generator.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_config/iniparser.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_config/types.py
 #
-license LICENSE license="Apache v2.0"
+license oslo.config.license license="Apache v2.0"
 
 # force the rename with an optional dependency on the old name
 depend type=optional \
     fmri=library/python-2/oslo.config-$(PYV)@1.2.1,5.12-5.12.0.0.0.44.0
+
+# force a dependency on the Python runtime
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
 
 # force a dependency on argparse; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/argparse-$(PYV)

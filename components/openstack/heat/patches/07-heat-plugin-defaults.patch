@@ -1,15 +1,17 @@
-In-house patch to remove /usr/lib64/heat from the default list of
-plugin directories searched by Heat.  This patch is Solaris specific
-and not suitable for upstream contribution.
+In-house patch to remove /usr/lib64/heat, /usr/local/lib/heat, and
+/usr/local/lib64/heat from the default list of plugin directories
+searched by Heat. This patch is Solaris specific and not suitable for
+upstream contribution.
 
---- heat-2014.2.2/heat/common/config.py.~1~	2014-12-04 21:02:30.000000000 -0800
-+++ heat-2014.2.2/heat/common/config.py	2014-12-13 13:31:30.350162153 -0800
-@@ -94,7 +94,7 @@ engine_opts = [
-                default='heat.engine.nova',
-                help='Driver to use for controlling instances.'),
+--- heat-2015.1.2/heat/common/config.py.~1~	2015-10-13 09:51:53.000000000 -0700
++++ heat-2015.1.2/heat/common/config.py	2016-01-28 01:27:19.707862313 -0800
+@@ -97,8 +97,7 @@ engine_opts = [
+                       "with your cloud image (for OS::Nova::Server) or "
+                       "'ec2-user' (for AWS::EC2::Instance).")),
      cfg.ListOpt('plugin_dirs',
--                default=['/usr/lib64/heat', '/usr/lib/heat'],
+-                default=['/usr/lib64/heat', '/usr/lib/heat',
+-                         '/usr/local/lib/heat', '/usr/local/lib64/heat'],
 +                default=['/usr/lib/heat'],
-                 help='List of directories to search for plug-ins.'),
+                 help=_('List of directories to search for plug-ins.')),
      cfg.StrOpt('environment_dir',
                 default='/etc/heat/environment.d',

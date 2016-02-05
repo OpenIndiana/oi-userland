@@ -20,25 +20,25 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		swift
 COMPONENT_CODENAME=	kilo
-COMPONENT_VERSION=	2.2.2
-COMPONENT_BE_VERSION=	2014.2
+COMPONENT_VERSION=	2.3.0
+COMPONENT_BE_VERSION=	2015.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:d97ff8e3c1381611ca2f9cd3eb13000e3339166e06d67ec079ce9ec958d1a088
+    sha256:7225061f92597e7eaf6196c9336c5e590c7626b7e84126c51e8ca5bf5b7bdae1
 COMPONENT_ARCHIVE_URL=	http://launchpad.net/$(COMPONENT_NAME)/$(COMPONENT_CODENAME)/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_PROJECT_URL=	http://www.openstack.org/
 COMPONENT_BUGDB=	service/swift
 
-TPNO=			21826
+TPNO=			25793
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk

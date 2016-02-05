@@ -61,6 +61,11 @@ create_instance.LaunchInstance.default_steps = (
     create_instance.SetNetwork
 )
 
+# Disable 'Security Groups' in Project/Instances/Launch Instance/Access &
+# Security. Note that this is unchecked by default.
+groups_widget = create_instance.SetAccessControlsAction.base_fields['groups']
+groups_widget.widget.attrs['disabled'] = True
+
 # Remove 'UpdateInstanceSecurityGroups' from
 # Project/Compute/Instances/Actions/Edit Instance
 update_instance.UpdateInstance.default_steps = (
@@ -86,7 +91,7 @@ admin_tables.AdminInstancesTable._meta.row_actions = (
     project_tables.TerminateInstance
 )
 
-# Remove 'EditInstanceSecurityGroups', 'TogglePause' actions from 
+# Remove 'EditInstanceSecurityGroups', 'TogglePause' actions from
 # Project/Compute/Instances/Actions
 project_tables.InstancesTable._meta.row_actions = (
     project_tables.StartInstance,

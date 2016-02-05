@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		python-ironicclient
-COMPONENT_VERSION=	0.3.3
+COMPONENT_VERSION=	0.5.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:224b6c2ed2ee3b358684640f83ab1c7425a1d030e39a96a78d06c499adbe586e
+    sha256:91dca5039ca06d6dcd74a132a261db1d85ebf6dcdfb9d7cee4efff657f6729d6
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://launchpad.net/python-ironicclient
 COMPONENT_BUGDB=	service/ironic
 
-TPNO=			22204
+TPNO=			25753
 
 # Depends on keystoneclient which is not Python 3 ready.
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)

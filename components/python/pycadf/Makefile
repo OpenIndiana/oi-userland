@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pycadf
-COMPONENT_VERSION=	0.6.0
+COMPONENT_VERSION=	0.8.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:9ba1e9ac52ee2a2d6d9cc89847323559cc2ffe7b4d80b703944a0a1f75c7093f
+    sha256:240d7775682a0f49fb580310dd6459e8a8b5f5619dfdc687f043c3fe21b48ba1
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://launchpad.net/pycadf
 COMPONENT_BUGDB=	python-mod/pycadf
 
-TPNO=			19271
+TPNO=			25747
 
 # Depends on oslo.messaging which is not Python 3 ready.
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)

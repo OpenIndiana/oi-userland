@@ -30,6 +30,11 @@
       <service_fmri value='svc:/milestone/multi-user:default' />
     </dependency>
 
+    <dependency name='upgrade' grouping='require_all' restart_on='none'
+      type='service'>
+      <service_fmri value='svc:/application/openstack/ironic/ironic-upgrade' />
+    </dependency>
+
     <!-- create a dependency on the ironic-db service ensuring the database
          is created/synced for all other services. -->
     <dependency name='ironic_db' grouping='optional_all' restart_on='error'

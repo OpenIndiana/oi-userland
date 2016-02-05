@@ -1,6 +1,6 @@
 #!/usr/bin/python2.7
 
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -27,74 +27,25 @@ import sqlalchemy
 from openstack_common import alter_mysql_tables, create_backups, modify_conf, \
     move_conf
 
-
 NOVA_CONF_MAPPINGS = {
-    # Deprecated group/name
-    ('DEFAULT', 'rabbit_durable_queues'): ('DEFAULT', 'amqp_durable_queues'),
-    ('rpc_notifier2', 'topics'): ('DEFAULT', 'notification_topics'),
-    ('DEFAULT', 'quota_injected_file_path_bytes'):
-        ('DEFAULT', 'quota_injected_file_path_length'),
-    ('DEFAULT', 'log_config'): ('DEFAULT', 'log_config_append'),
-    ('DEFAULT', 'logfile'): ('DEFAULT', 'log_file'),
-    ('DEFAULT', 'logdir'): ('DEFAULT', 'log_dir'),
-    ('DEFAULT', 'cinder_catalog_info'): ('cinder', 'catalog_info'),
-    ('DEFAULT', 'cinder_endpoint_template'): ('cinder', 'endpoint_template'),
-    ('DEFAULT', 'os_region_name'): ('cinder', 'os_region_name'),
-    ('DEFAULT', 'cinder_ca_certificates_file'):
-        ('cinder', 'ca_certificates_file'),
-    ('DEFAULT', 'cinder_http_retries'): ('cinder', 'http_retries'),
-    ('DEFAULT', 'cinder_http_timeout'): ('cinder', 'http_timeout'),
-    ('DEFAULT', 'cinder_api_insecure'): ('cinder', 'api_insecure'),
-    ('DEFAULT', 'cinder_cross_az_attach'): ('cinder', 'cross_az_attach'),
-    ('DEFAULT', 'db_backend'): ('database', 'backend'),
-    ('DEFAULT', 'sql_connection'): ('database', 'connection'),
-    ('sql', 'connection'): ('database', 'connection'),
-    ('DEFAULT', 'sql_idle_timeout'): ('database', 'idle_timeout'),
-    ('DATABASE', 'sql_idle_timeout'): ('database', 'idle_timeout'),
-    ('sql', 'idle_timeout'): ('database', 'idle_timeout'),
-    ('DEFAULT', 'sql_min_pool_size'): ('database', 'min_pool_size'),
-    ('DATABASE', 'sql_min_pool_size'): ('database', 'min_pool_size'),
-    ('DEFAULT', 'sql_max_pool_size'): ('database', 'max_pool_size'),
-    ('DATABASE', 'sql_max_pool_size'): ('database', 'max_pool_size'),
-    ('DEFAULT', 'sql_max_retries'): ('database', 'max_retries'),
-    ('DATABASE', 'sql_max_retries'): ('database', 'max_retries'),
-    ('DEFAULT', 'sql_retry_interval'): ('database', 'retry_interval'),
-    ('DATABASE', 'reconnect_interval'): ('database', 'retry_interval'),
-    ('DEFAULT', 'sql_max_overflow'): ('database', 'max_overflow'),
-    ('DATABASE', 'sqlalchemy_max_overflow'): ('database', 'max_overflow'),
-    ('DEFAULT', 'sql_connection_debug'): ('database', 'connection_debug'),
-    ('DEFAULT', 'sql_connection_trace'): ('database', 'connection_trace'),
-    ('DATABASE', 'sqlalchemy_pool_timeout'): ('database', 'pool_timeout'),
-    ('DEFAULT', 'glance_host'): ('glance', 'host'),
-    ('DEFAULT', 'glance_port'): ('glance', 'port'),
-    ('DEFAULT', 'glance_protocol'): ('glance', 'protocol'),
-    ('DEFAULT', 'glance_api_servers'): ('glance', 'api_servers'),
-    ('DEFAULT', 'glance_api_insecure'): ('glance', 'api_insecure'),
-    ('DEFAULT', 'glance_num_retries'): ('glance', 'num_retries'),
-    ('DEFAULT', 'memcache_servers'):
-        ('keystone_authtoken', 'memcached_servers'),
-    ('DEFAULT', 'matchmaker_ringfile'): ('matchmaker_ring', 'ringfile'),
-    ('DEFAULT', 'service_neutron_metadata_proxy'):
-        ('neutron', 'service_metadata_proxy'),
-    ('DEFAULT', 'neutron_metadata_proxy_shared_secret'):
-        ('neutron', 'metadata_proxy_shared_secret'),
-    ('DEFAULT', 'neutron_url'): ('neutron', 'url'),
-    ('DEFAULT', 'neutron_url_timeout'): ('neutron', 'url_timeout'),
-    ('DEFAULT', 'neutron_admin_username'): ('neutron', 'admin_username'),
-    ('DEFAULT', 'neutron_admin_password'): ('neutron', 'admin_password'),
-    ('DEFAULT', 'neutron_admin_tenant_id'): ('neutron', 'admin_tenant_id'),
-    ('DEFAULT', 'neutron_admin_tenant_name'): ('neutron', 'admin_tenant_name'),
-    ('DEFAULT', 'neutron_region_name'): ('neutron', 'region_name'),
-    ('DEFAULT', 'neutron_admin_auth_url'): ('neutron', 'admin_auth_url'),
-    ('DEFAULT', 'neutron_api_insecure'): ('neutron', 'api_insecure'),
-    ('DEFAULT', 'neutron_auth_strategy'): ('neutron', 'auth_strategy'),
-    ('DEFAULT', 'neutron_ovs_bridge'): ('neutron', 'ovs_bridge'),
-    ('DEFAULT', 'neutron_extension_sync_interval'):
-        ('neutron', 'extension_sync_interval'),
-    ('DEFAULT', 'neutron_ca_certificates_file'):
-        ('neutron', 'ca_certificates_file'),
-    ('DEFAULT', 'spicehtml5proxy_host'): ('spice', 'html5proxy_host'),
-    ('DEFAULT', 'spicehtml5proxy_port'): ('spice', 'html5proxy_port'),
+    # Deprecated group/name for Kilo
+    ('DEFAULT', 'network_device_mtu'): (None, None),
+    ('DEFAULT', 'log-format'): (None, None),
+    ('DEFAULT', 'use-syslog'): (None, None),
+    ('cinder', 'http_timeout'): ('cinder', 'timeout'),
+    ('ironic', 'client_log_level'): (None, None),
+    ('DEFAULT', 'osapi_max_request_body_size'):
+        ('oslo_middleware', 'max_request_body_size'),
+    ('neutron', 'ca_certificates_file'): ('neutron', 'cafile'),
+    ('neutron', 'admin_user_id'): (None, None),
+    ('neutron', 'admin_tenant_id'): (None, None),
+    ('DEFAULT', 'log_format'): (None, None),
+    ('cinder', 'api_insecure'): ('cinder', 'insecure'),
+    ('DEFAULT', 'share_dhcp_address'): (None, None),
+    ('neutron', 'api_insecure'): ('neutron', 'insecure'),
+    ('cinder', 'ca_certificates_file'): ('cinder', 'cafile'),
+    ('neutron', 'url_timeout'): ('neutron', 'timeout'),
+    ('neutron', 'allow_duplicate_networks'): (None, None),
 }
 
 NOVA_CONF_EXCEPTIONS = [
@@ -113,20 +64,6 @@ NOVA_CONF_EXCEPTIONS = [
     ('keystone_authtoken', 'admin_tenant_name'),
     ('neutron', 'service_metadata_proxy'),
 ]
-
-NOVA_MOVE_CONFIG = {
-    ('filter:authtoken', 'auth_uri'): ('keystone_authtoken', 'auth_uri'),
-    ('filter:authtoken', 'identity_uri'):
-        ('keystone_authtoken', 'identity_uri'),
-    ('filter:authtoken', 'admin_tenant_name'):
-        ('keystone_authtoken', 'admin_tenant_name'),
-    ('filter:authtoken', 'admin_user'): ('keystone_authtoken', 'admin_user'),
-    ('filter:authtoken', 'admin_password'):
-        ('keystone_authtoken', 'admin_password'),
-    ('filter:authtoken', 'signing_dir'): ('keystone_authtoken', 'signing_dir'),
-    ('filter:authtoken', 'auth_version'):
-        ('keystone_authtoken', 'auth_version'),
-}
 
 
 def start():
@@ -179,7 +116,7 @@ def start():
                 ('DEFAULT', 'sql_connection')
             ]
             test = lambda x: old.has_section(x[0]) and \
-                    old.has_option(x[0], x[1])
+                old.has_option(x[0], x[1])
 
             if not any(map(test, options)):
                 if old.has_option('DEFAULT', 'state_path'):
@@ -197,11 +134,6 @@ def start():
 
                 with open('/etc/nova/nova.conf.new', 'w+') as fh:
                     new.write(fh)
-
-        # before modifying nova.conf, move the [filter:authtoken] entries from
-        # the updated api-paste.ini to the old nova.conf
-        move_conf('/etc/nova/api-paste.ini', '/etc/nova/nova.conf',
-                  NOVA_MOVE_CONFIG)
 
         modify_conf('/etc/nova/nova.conf', NOVA_CONF_MAPPINGS,
                     NOVA_CONF_EXCEPTIONS)

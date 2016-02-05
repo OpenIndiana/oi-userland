@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		oslo.vmware
-COMPONENT_VERSION=	0.8.0
+COMPONENT_VERSION=	0.11.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:b216eda661a95b185028c4e6316c3f9fa44c4785751cc93b6dcaac8ed22ffc86
+    sha256:036cf0ad6ab0d4defd743678999851d570c2ca1ff34eba916920ce54d9a5d348
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://launchpad.net/oslo.vmware
 COMPONENT_BUGDB=	python-mod/oslo.vmware
 
-TPNO=			21632
+TPNO=			25745
 
 # Depends on netaddr & suds which are not Python 3 ready.
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)

@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		python-ceilometerclient
-COMPONENT_VERSION=	1.0.12
+COMPONENT_VERSION=	1.1.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:6a90d1f057ab35584c319f19ef31f49ea8c1bb25278dafdf4b6d64aa37604a8e
+    sha256:f48e2d9ecef25ab784510fa0b299d0d73aa8f41652abf9f28393a93612416a29
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://launchpad.net/python-ceilometerclient
 COMPONENT_BUGDB=	service/ceilometer
 
-TPNO=			21727
+TPNO=			25749
 
 # Depends on keystoneclient which is not Python 3 ready.
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)

@@ -2,15 +2,15 @@ Internal patch to disable the image_source (Create Volume -> Volume Source -> im
 because copy_volume_from_image is not supported yet.
 This patch will not be committed upstream.
 
---- horizon-2014.2.2/openstack_dashboard/dashboards/project/volumes/volumes/forms.py.orig	2015-03-06 00:02:20.754192323 -0800
-+++ horizon-2014.2.2/openstack_dashboard/dashboards/project/volumes/volumes/forms.py	2015-03-06 00:04:15.272654086 -0800
-@@ -203,6 +203,9 @@
+--- horizon-2015.1.2/openstack_dashboard/dashboards/project/volumes/volumes/forms.py.orig	2015-12-12 16:00:05.464623742 -0500
++++ horizon-2015.1.2/openstack_dashboard/dashboards/project/volumes/volumes/forms.py	2015-12-12 16:08:30.652433673 -0500
+@@ -233,6 +233,9 @@
  
-             images = utils.get_available_images(request,
-                                           request.user.tenant_id)
-+            # Disable the image_source on Solaris
-+            images = False
-+
-             if images:
-                 source_type_choices.append(("image_source", _("Image")))
-                 choices = [('', _("Choose an image"))]
+         images = utils.get_available_images(request,
+                                             request.user.tenant_id)
++        # Disable the image source on Solaris
++        images = False
++        
+         if images:
+             source_type_choices.append(("image_source", _("Image")))
+             choices = [('', _("Choose an image"))]

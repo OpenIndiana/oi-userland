@@ -20,21 +20,21 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		python-swiftclient
-COMPONENT_VERSION=	2.3.1
+COMPONENT_VERSION=	2.4.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:20a9d81dc0d948740a188a0c42e7f7fcc9c81a185bfbdf180f68580ea49309a6
+    sha256:e865553b3afc63a9952cfa30f155a604564cae31a40275fa2ce94c80d7affd4b
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://launchpad.net/python-swiftclient
 COMPONENT_BUGDB=	service/swift
 
-TPNO=			21736
+TPNO=			25758
 
 # depends on keystoneclient which is not Python 3 ready
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)

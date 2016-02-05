@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		django_openstack_auth
-COMPONENT_VERSION=	1.1.9
+COMPONENT_VERSION=	1.2.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:650b3fd528d179a36cf629aa7dad53e03aed6cf9300ea4a337260887e71e9b53
+    sha256:5ad78e5c92502f1abfb10fd101c023adf74a3e728bd42ed19ffea2185680f9a6
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://www.openstack.org/
 COMPONENT_BUGDB=	python-mod/openstack-auth
 
-TPNO=			21746
+TPNO=			25734
 
 # Depends on django, which is not Python 3 ready.
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)

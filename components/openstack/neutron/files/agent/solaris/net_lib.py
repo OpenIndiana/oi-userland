@@ -196,7 +196,8 @@ class Datalink(CommandBase):
             cmd = ['/usr/sbin/dladm', 'show-linkprop', '-co', 'value',
                    '-p', 'default_tag', lower_link]
             stdout = utils.execute(cmd)
-            if stdout.splitlines()[0].strip() == vid:
+            default_tag = stdout.splitlines()[0].strip()
+            if default_tag == vid or (vid == '1' and default_tag == '0'):
                 vid = '0'
         else:
             vid = '0'

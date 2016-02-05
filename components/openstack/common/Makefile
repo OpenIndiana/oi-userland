@@ -20,13 +20,13 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openstack
-COMPONENT_VERSION=	2014.2.2
+COMPONENT_VERSION=	2015.1.2
 COMPONENT_PROJECT_URL=	http://www.openstack.org/
 COMPONENT_BUGDB=	service/nova
 IPS_COMPONENT_VERSION=	0.$(COMPONENT_VERSION)

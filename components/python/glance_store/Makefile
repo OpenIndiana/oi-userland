@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		glance_store
-COMPONENT_VERSION=	0.1.10
+COMPONENT_VERSION=	0.4.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:b390fea864f1398f79ab66ce99c3b868b86ac1bf97dbe89ba4498506e2af7d02
+    sha256:cd15e9f9a08dc8d3eeaa452682c8e53423f848eaadf064c0ee8068583aa31154
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://github.com/openstack/glance_store
 COMPONENT_BUGDB=	python-mod/glance_store
 
-TPNO=			21623
+TPNO=			25736
 
 # Depends on oslo.vmware which is not Python 3 ready.
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
@@ -51,8 +51,9 @@ file path=usr/lib/python$(PYVER)/vendor-packages/oslo/serialization/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo/serialization/jsonutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_serialization/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_serialization/jsonutils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/oslo_serialization/msgpackutils.py
 #
-license LICENSE license="Apache v2.0"
+license oslo.serialization.license license="Apache v2.0"
 
 # force a group dependency on the optional anyjson; pkgdepend work is needed to
 # flush this out.
@@ -66,12 +67,21 @@ depend type=group fmri=library/python/simplejson-$(PYV)
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
     pkg.debug.depend.path=usr/bin
 
+# force a dependency on msgpack; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/msgpack-$(PYV)
+
 # force a dependency on the oslo.serialization package
 depend type=require \
     fmri=library/python/oslo.serialization@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 
 # force a dependency on oslo.utils; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/oslo.utils-$(PYV)
+
+# force a dependency on pbr; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/pbr-$(PYV)
+
+# force a dependency on pytz; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/pytz-$(PYV)
 
 # force a dependency on six; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/six-$(PYV)

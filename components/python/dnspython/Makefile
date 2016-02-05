@@ -20,21 +20,21 @@
 #
 
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		dnspython
-COMPONENT_VERSION=	1.11.1
+COMPONENT_VERSION=	1.12.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).zip
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:fd0fc7a656679a6fd1f83d980fc05776c76e70d66f6ee2aab12a3558fa10a206
+    sha256:63bd1fae61809eedb91f84b2185816fac1270ae51494fbdd36ea25f904a8502f
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://pypi.python.org/pypi/dnspython
 COMPONENT_BUGDB=	python-mod/dnspython
 
-TPNO=			17630
+TPNO=			26537
 
 # dnspython is not Python3 ready.  dnspython3 should be used for
 # Python3

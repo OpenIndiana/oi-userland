@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
@@ -28,7 +28,7 @@ set name=pkg.fmri \
 set name=pkg.summary value="OpenStack Heat (Orchestration Service)"
 set name=pkg.description \
     value="OpenStack Heat is a service to orchestrate multiple composite cloud applications using templates, through both an OpenStack-native ReST API and a CloudFormation-compatible Query API."
-set name=pkg.human-version value="Juno $(COMPONENT_VERSION)"
+set name=pkg.human-version value="Kilo $(COMPONENT_VERSION)"
 set name=com.oracle.info.description \
     value="Heat, the OpenStack orchestration service"
 set name=com.oracle.info.tpno value=$(TPNO)
@@ -42,7 +42,7 @@ set name=info.upstream value="OpenStack <openstack-dev@lists.openstack.org>"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=openstack.upgrade-id reboot-needed=true value=$(COMPONENT_BE_VERSION)
 set name=org.opensolaris.arc-caseid value=PSARC/2013/350 value=PSARC/2014/236 \
-    value=PSARC/2015/110
+    value=PSARC/2015/110 value=PSARC/2015/535
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 #
 dir  path=etc/heat owner=heat group=heat mode=0700
@@ -74,12 +74,14 @@ file path=lib/svc/manifest/application/openstack/heat-upgrade.xml
 file files/heat-smf-method path=lib/svc/method/heat-smf-method
 file files/heat-upgrade path=lib/svc/method/heat-upgrade
 file path=usr/bin/heat-manage
-file usr/bin/heat-keystone-setup \
-    path=usr/demo/openstack/keystone/heat-keystone-setup mode=0555
-file usr/bin/heat-api path=usr/lib/heat/heat-api mode=0555
-file usr/bin/heat-api-cfn path=usr/lib/heat/heat-api-cfn mode=0555
-file usr/bin/heat-api-cloudwatch path=usr/lib/heat/heat-api-cloudwatch mode=0555
-file usr/bin/heat-engine path=usr/lib/heat/heat-engine mode=0555
+file usr/bin/heat-api path=usr/lib/heat/heat-api mode=0555 \
+    pkg.depend.bypass-generate=.*/oslo_log.*
+file usr/bin/heat-api-cfn path=usr/lib/heat/heat-api-cfn mode=0555 \
+    pkg.depend.bypass-generate=.*/oslo_log.*
+file usr/bin/heat-api-cloudwatch path=usr/lib/heat/heat-api-cloudwatch \
+    mode=0555 pkg.depend.bypass-generate=.*/oslo_log.*
+file usr/bin/heat-engine path=usr/lib/heat/heat-engine mode=0555 \
+    pkg.depend.bypass-generate=.*/oslo_log.*
 file path=usr/lib/python$(PYVER)/vendor-packages/heat-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
 file path=usr/lib/python$(PYVER)/vendor-packages/heat-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/heat-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
@@ -112,6 +114,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/heat/api/openstack/v1/actions.p
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/api/openstack/v1/build_info.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/api/openstack/v1/events.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/api/openstack/v1/resources.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/api/openstack/v1/services.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/api/openstack/v1/software_configs.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/api/openstack/v1/software_deployments.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/api/openstack/v1/stacks.py
@@ -136,6 +139,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/heat/common/crypt.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/common/custom_backend_auth.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/common/environment_format.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/common/exception.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/common/grouputils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/common/heat_keystoneclient.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/common/i18n.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/common/identifier.py
@@ -144,7 +148,9 @@ file path=usr/lib/python$(PYVER)/vendor-packages/heat/common/messaging.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/common/param_utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/common/plugin_loader.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/common/policy.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/common/profiler.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/common/serializers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/common/service_utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/common/short_id.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/common/template_format.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/common/timeutils.py
@@ -191,12 +197,27 @@ file path=usr/lib/python$(PYVER)/vendor-packages/heat/db/sqlalchemy/migrate_repo
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/db/sqlalchemy/migrate_repo/versions/044_snapshots.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/db/sqlalchemy/migrate_repo/versions/045_stack_backup.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/db/sqlalchemy/migrate_repo/versions/046_properties_data.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/db/sqlalchemy/migrate_repo/versions/047_stack_nested_depth.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/db/sqlalchemy/migrate_repo/versions/048_resource_id_server_default_none_psql.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/db/sqlalchemy/migrate_repo/versions/049_user_creds_region_name.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/db/sqlalchemy/migrate_repo/versions/050_stack_tags.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/db/sqlalchemy/migrate_repo/versions/051_service.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/db/sqlalchemy/migrate_repo/versions/052_convergence_flag.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/db/sqlalchemy/migrate_repo/versions/053_stack_name_tenant_indexes.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/db/sqlalchemy/migrate_repo/versions/054_stack_tags_table.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/db/sqlalchemy/migrate_repo/versions/055_stack_convg_data.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/db/sqlalchemy/migrate_repo/versions/056_convergence_parameter_storage.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/db/sqlalchemy/migrate_repo/versions/057_resource_uuid_to_id.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/db/sqlalchemy/migrate_repo/versions/058_resource_engine_id.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/db/sqlalchemy/migrate_repo/versions/059_sync_point.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/db/sqlalchemy/migrate_repo/versions/060_resource_convg_data.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/db/sqlalchemy/migrate_repo/versions/061_status_reason_longtext.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/db/sqlalchemy/migrate_repo/versions/062_parent_resource.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/db/sqlalchemy/migrate_repo/versions/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/db/sqlalchemy/migration.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/db/sqlalchemy/models.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/db/sqlalchemy/mutable.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/db/sqlalchemy/types.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/db/sync.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/db/sqlalchemy/utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/db/utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/api.py
@@ -226,10 +247,12 @@ file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/hot/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/hot/functions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/hot/parameters.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/hot/template.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/iso_8601.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/lifecycle_plugin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/notification/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/notification/autoscaling.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/notification/stack.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/nova_utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/parameter_groups.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/parameters.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/parser.py
@@ -237,139 +260,157 @@ file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/plugin_manager.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/properties.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resource.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/autoscaling.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/aws/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/aws/launch_config.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/aws/scaling_policy.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/ceilometer/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/ceilometer/alarm.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/cloud_watch.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/eip.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/glance_image.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/instance.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/internet_gateway.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/iso_8601.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/loadbalancer.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/network_interface.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/neutron/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/neutron/firewall.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/neutron/floatingip.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/neutron/loadbalancer.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/neutron/metering.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/neutron/net.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/neutron/network_gateway.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/neutron/neutron.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/neutron/port.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/neutron/provider_net.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/neutron/router.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/neutron/security_group.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/neutron/subnet.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/neutron/vpnservice.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/nova_floatingip.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/nova_keypair.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/nova_servergroup.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/nova_utils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/aws/autoscaling/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/aws/autoscaling/autoscaling_group.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/aws/autoscaling/launch_config.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/aws/autoscaling/scaling_policy.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/aws/cfn/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/aws/cfn/stack.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/aws/cfn/wait_condition.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/aws/cfn/wait_condition_handle.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/aws/ec2/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/aws/ec2/eip.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/aws/ec2/instance.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/aws/ec2/internet_gateway.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/aws/ec2/network_interface.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/aws/ec2/route_table.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/aws/ec2/security_group.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/aws/ec2/subnet.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/aws/ec2/volume.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/aws/ec2/vpc.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/aws/iam/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/aws/iam/user.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/aws/lb/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/aws/lb/loadbalancer.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/aws/s3/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/aws/s3/s3.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/scaling_policy.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/os_database.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/random_string.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/resource_group.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/route_table.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/s3.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/sahara_cluster.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/sahara_templates.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/security_group.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/server.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/software_config/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/software_config/cloud_config.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/software_config/multi_part.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/software_config/software_component.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/software_config/software_config.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/software_config/software_deployment.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/software_config/structured_config.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/stack.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/subnet.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/swift.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/swiftsignal.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/ceilometer/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/ceilometer/alarm.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/cinder/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/cinder/volume.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/glance/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/glance/glance_image.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/heat/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/heat/access_policy.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/heat/autoscaling_group.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/heat/cloud_config.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/heat/cloud_watch.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/heat/ha_restarter.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/heat/instance_group.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/heat/multi_part.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/heat/random_string.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/heat/remote_stack.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/heat/resource_group.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/heat/scaling_policy.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/heat/software_component.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/heat/software_config.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/heat/software_deployment.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/heat/structured_config.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/heat/swiftsignal.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/heat/wait_condition.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/heat/wait_condition_handle.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/neutron/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/neutron/firewall.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/neutron/floatingip.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/neutron/loadbalancer.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/neutron/metering.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/neutron/net.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/neutron/network_gateway.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/neutron/neutron.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/neutron/port.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/neutron/provider_net.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/neutron/router.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/neutron/security_group.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/neutron/subnet.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/neutron/vpnservice.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/nova/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/nova/nova_floatingip.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/nova/nova_keypair.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/nova/nova_servergroup.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/nova/server.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/sahara/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/sahara/sahara_cluster.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/sahara/sahara_templates.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/swift/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/swift/swift.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/trove/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/trove/os_database.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/openstack/trove/trove_cluster.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/scheduler_hints.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/signal_responder.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/stack_resource.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/stack_user.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/template_resource.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/user.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/volume.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/vpc.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/resources/wait_condition.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/rsrc_defn.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/scheduler.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/service.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/signal_responder.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/service_software_config.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/service_stack_watch.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/stack.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/stack_lock.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/stack_resource.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/stack_user.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/support.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/template.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/timestamp.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/update.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/volume_tasks.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/watchrule.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/engine/worker.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/objects/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/objects/event.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/objects/fields.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/objects/raw_template.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/objects/resource.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/objects/resource_data.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/objects/service.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/objects/snapshot.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/objects/software_config.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/objects/software_deployment.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/objects/stack.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/objects/stack_lock.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/objects/stack_tag.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/objects/sync_point.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/objects/user_creds.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/objects/watch_data.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/objects/watch_rule.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/openstack/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/openstack/common/README
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/openstack/common/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/openstack/common/config/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/openstack/common/config/generator.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/openstack/common/context.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/openstack/common/_i18n.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/openstack/common/crypto/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/openstack/common/crypto/utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/openstack/common/eventlet_backdoor.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/openstack/common/excutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/openstack/common/fileutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/openstack/common/gettextutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/openstack/common/importutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/openstack/common/jsonutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/openstack/common/local.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/openstack/common/lockutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/openstack/common/log.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/openstack/common/loopingcall.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/openstack/common/middleware/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/openstack/common/middleware/base.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/openstack/common/middleware/request_id.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/openstack/common/policy.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/openstack/common/processutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/openstack/common/service.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/openstack/common/sslutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/openstack/common/strutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/openstack/common/systemd.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/openstack/common/threadgroup.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/openstack/common/timeutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heat/openstack/common/uuidutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/openstack/common/versionutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/rpc/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/rpc/api.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/rpc/client.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/rpc/worker_api.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/rpc/worker_client.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/scaling/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/scaling/cooldown.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heat/scaling/lbutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/scaling/template.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heat/version.py
 dir  path=var/lib/heat owner=heat group=heat mode=0700
 dir  path=var/log/heat owner=heat group=heat mode=0700
-#
 group groupname=heat gid=87
 user username=heat ftpuser=false gcos-field="OpenStack Heat" group=heat \
     home-dir=/var/lib/heat uid=87
 #
 license heat.license license="Apache v2.0"
 
-# force a group dependency on the optional anyjson; pkgdepend work is needed to
-# flush this out.
-depend type=group fmri=library/python/anyjson-$(PYV)
-
-# force a group dependency on the optional netaddr; pkgdepend work is needed to
-# flush this out.
-depend type=group fmri=library/python/netaddr-$(PYV)
-
-# force a group dependency on the optional simplejson; pkgdepend work is needed
-# to flush this out.
-depend type=group fmri=library/python/simplejson-$(PYV)
-
-# force a dependency on babel; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/babel-$(PYV)
+# To upgrade to Kilo version, Juno version of the package must be on the system
+depend type=origin fmri=cloud/openstack/heat@0.2014.2.2 root-image=true
 
 # force a dependency on ceilometerclient; pkgdepend work is needed to flush this
 # out.
@@ -412,15 +453,27 @@ depend type=require fmri=library/python/neutronclient-$(PYV)
 # force a dependency on novaclient; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/novaclient-$(PYV)
 
+# force a dependency on oslo.concurrency; pkgdepend work is needed to flush this
+# out.
+depend type=require fmri=library/python/oslo.concurrency-$(PYV)
+
+# force a dependency on oslo.context; pkgdepend work is needed to flush this
+# out.
+depend type=require fmri=library/python/oslo.context-$(PYV)
+
 # force a dependency on oslo.db; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/oslo.db-$(PYV)
 
-# force a dependency on oslo.i18n; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/oslo.i18n-$(PYV)
+# force a dependency on oslo.log; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/oslo.log-$(PYV)
 
 # force a dependency on oslo.messaging; pkgdepend work is needed to flush this
 # out.
 depend type=require fmri=library/python/oslo.messaging-$(PYV)
+
+# force a dependency on oslo.middleware; pkgdepend work is needed to flush this
+# out.
+depend type=require fmri=library/python/oslo.middleware-$(PYV)
 
 # force a dependency on oslo.serialization; pkgdepend work is needed to flush
 # this out.
@@ -429,15 +482,19 @@ depend type=require fmri=library/python/oslo.serialization-$(PYV)
 # force a dependency on oslo.utils; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/oslo.utils-$(PYV)
 
+# force a dependency on oslo.versionedobjects; pkgdepend work is needed to flush
+# this out.
+depend type=require fmri=library/python/oslo.versionedobjects-$(PYV)
+
+# force a dependency on osprofiler; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/osprofiler-$(PYV)
+
 # force a dependency on paste.deploy; pkgdepend work is needed to flush this
 # out.
 depend type=require fmri=library/python/paste.deploy-$(PYV)
 
 # force a dependency on pbr; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/pbr-$(PYV)
-
-# force a dependency on posix_ipc; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/posix_ipc-$(PYV)
 
 # force a dependency on pyyaml; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/pyyaml-$(PYV)

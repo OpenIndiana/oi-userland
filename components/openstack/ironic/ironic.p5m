@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
@@ -28,7 +28,7 @@ set name=pkg.fmri \
 set name=pkg.summary value="OpenStack Ironic"
 set name=pkg.description \
     value="Provisioning of bare metal instances in OpenStack."
-set name=pkg.human-version value="Juno $(COMPONENT_VERSION)"
+set name=pkg.human-version value="Kilo $(COMPONENT_VERSION)"
 set name=com.oracle.info.description \
     value="Ironic, the OpenStack bare metal provisioning service"
 set name=com.oracle.info.tpno value=$(TPNO)
@@ -41,7 +41,8 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream value="OpenStack <openstack-dev@lists.openstack.org>"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=openstack.upgrade-id reboot-needed=true value=$(COMPONENT_BE_VERSION)
-set name=org.opensolaris.arc-caseid value=PSARC/2013/350 value=PSARC/2015/172
+set name=org.opensolaris.arc-caseid value=PSARC/2013/350 value=PSARC/2015/172 \
+    value=PSARC/2015/535
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 #
 dir  path=etc/ironic owner=ironic group=ironic mode=0700
@@ -60,12 +61,12 @@ file files/ironic.user_attr path=etc/user_attr.d/cloud:openstack:ironic \
 file path=lib/svc/manifest/application/openstack/ironic-api.xml
 file path=lib/svc/manifest/application/openstack/ironic-conductor.xml
 file path=lib/svc/manifest/application/openstack/ironic-db.xml
+file path=lib/svc/manifest/application/openstack/ironic-upgrade.xml
 file files/ironic-api path=lib/svc/method/ironic-api
 file files/ironic-conductor path=lib/svc/method/ironic-conductor
 file files/ironic-db path=lib/svc/method/ironic-db
+file files/ironic-upgrade path=lib/svc/method/ironic-upgrade
 file path=usr/bin/ironic-dbsync
-file files/ironic-keystone-setup.sh \
-    path=usr/demo/openstack/keystone/ironic-keystone-setup.sh mode=0555
 file usr/bin/ironic-api path=usr/lib/ironic/ironic-api mode=0555
 file usr/bin/ironic-conductor path=usr/lib/ironic/ironic-conductor mode=0555
 file files/ironic-manifest.ksh path=usr/lib/ironic/ironic-manifest.ksh mode=0555
@@ -96,6 +97,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/ironic/api/controllers/v1/port.
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/api/controllers/v1/state.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/api/controllers/v1/types.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/api/controllers/v1/utils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ironic/api/expose.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/api/hooks.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/api/middleware/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/api/middleware/auth_token.py
@@ -112,6 +114,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/ironic/common/dhcp_factory.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/common/disk_partitioner.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/common/driver_factory.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/common/exception.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ironic/common/fsm.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/common/glance_service/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/common/glance_service/base_image_service.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/common/glance_service/service.py
@@ -120,6 +123,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/ironic/common/glance_service/v1
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/common/glance_service/v1/image_service.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/common/glance_service/v2/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/common/glance_service/v2/image_service.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ironic/common/grub_conf.template
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/common/hash_ring.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/common/i18n.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/common/image_service.py
@@ -149,12 +153,19 @@ file path=usr/lib/python$(PYVER)/vendor-packages/ironic/db/sqlalchemy/alembic.in
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/db/sqlalchemy/alembic/README
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/db/sqlalchemy/alembic/env.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/db/sqlalchemy/alembic/script.py.mako
+file path=usr/lib/python$(PYVER)/vendor-packages/ironic/db/sqlalchemy/alembic/versions/1e1d5ace7dc6_add_inspection_started_at_and_.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/db/sqlalchemy/alembic/versions/21b331f883ef_add_provision_updated_at.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ironic/db/sqlalchemy/alembic/versions/242cc6a923b3_add_node_maintenance_reason.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/db/sqlalchemy/alembic/versions/2581ebaf0cb2_initial_migration.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ironic/db/sqlalchemy/alembic/versions/2fb93ffd2af1_increase_node_name_length.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/db/sqlalchemy/alembic/versions/31baaf680d2b_add_node_instance_info.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ironic/db/sqlalchemy/alembic/versions/3ae36a5f5131_add_logical_name.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/db/sqlalchemy/alembic/versions/3bea56f25597_add_unique_constraint_to_instance_uuid.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/db/sqlalchemy/alembic/versions/3cb628139ea4_nodes_add_console_enabled.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/db/sqlalchemy/alembic/versions/487deb87cc9d_add_conductor_affinity_and_online.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ironic/db/sqlalchemy/alembic/versions/4f399b21ae71_add_node_clean_step.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ironic/db/sqlalchemy/alembic/versions/5674c57409b9_replace_nostate_with_available.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ironic/db/sqlalchemy/alembic/versions/bb59b63f55a_add_node_driver_internal_info.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/db/sqlalchemy/api.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/db/sqlalchemy/migration.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/db/sqlalchemy/models.py
@@ -170,11 +181,19 @@ file path=usr/lib/python$(PYVER)/vendor-packages/ironic/drivers/fake.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/drivers/ilo.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/drivers/modules/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/drivers/modules/agent.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ironic/drivers/modules/agent_base_vendor.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/drivers/modules/agent_client.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/drivers/modules/agent_config.template
+file path=usr/lib/python$(PYVER)/vendor-packages/ironic/drivers/modules/amt/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ironic/drivers/modules/amt/common.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ironic/drivers/modules/amt/management.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ironic/drivers/modules/amt/power.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ironic/drivers/modules/amt/resource_uris.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ironic/drivers/modules/amt/vendor.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/drivers/modules/boot.ipxe
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/drivers/modules/console_utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/drivers/modules/deploy_utils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ironic/drivers/modules/discoverd.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/drivers/modules/drac/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/drivers/modules/drac/client.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/drivers/modules/drac/common.py
@@ -187,11 +206,17 @@ file path=usr/lib/python$(PYVER)/vendor-packages/ironic/drivers/modules/iboot.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/drivers/modules/ilo/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/drivers/modules/ilo/common.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/drivers/modules/ilo/deploy.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ironic/drivers/modules/ilo/inspect.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ironic/drivers/modules/ilo/management.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/drivers/modules/ilo/power.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/drivers/modules/image_cache.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/drivers/modules/ipminative.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/drivers/modules/ipmitool.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/drivers/modules/ipxe_config.template
+file path=usr/lib/python$(PYVER)/vendor-packages/ironic/drivers/modules/irmc/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ironic/drivers/modules/irmc/common.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ironic/drivers/modules/irmc/management.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ironic/drivers/modules/irmc/power.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/drivers/modules/iscsi_deploy.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/drivers/modules/pxe.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/drivers/modules/pxe_config.template
@@ -199,13 +224,10 @@ file path=usr/lib/python$(PYVER)/vendor-packages/ironic/drivers/modules/seamicro
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/drivers/modules/snmp.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/drivers/modules/solaris_ipmitool.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/drivers/modules/ssh.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ironic/drivers/modules/virtualbox.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/drivers/pxe.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/drivers/solaris.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/drivers/utils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/ironic/migrate_nova/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/ironic/migrate_nova/migrate_db.py
-file path=usr/lib/python$(PYVER)/vendor-packages/ironic/migrate_nova/nova_baremetal_states.py
-file path=usr/lib/python$(PYVER)/vendor-packages/ironic/migrate_nova/nova_models.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/netconf.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/nova/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/nova/compute/__init__.py
@@ -224,37 +246,21 @@ file path=usr/lib/python$(PYVER)/vendor-packages/ironic/objects/port.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/objects/utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/openstack/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/openstack/common/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/ironic/openstack/common/apiclient/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/ironic/openstack/common/apiclient/auth.py
-file path=usr/lib/python$(PYVER)/vendor-packages/ironic/openstack/common/apiclient/base.py
-file path=usr/lib/python$(PYVER)/vendor-packages/ironic/openstack/common/apiclient/client.py
-file path=usr/lib/python$(PYVER)/vendor-packages/ironic/openstack/common/apiclient/exceptions.py
-file path=usr/lib/python$(PYVER)/vendor-packages/ironic/openstack/common/apiclient/fake_client.py
-file path=usr/lib/python$(PYVER)/vendor-packages/ironic/openstack/common/cliutils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ironic/openstack/common/_i18n.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/openstack/common/config/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/openstack/common/config/generator.py
-file path=usr/lib/python$(PYVER)/vendor-packages/ironic/openstack/common/context.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/openstack/common/eventlet_backdoor.py
-file path=usr/lib/python$(PYVER)/vendor-packages/ironic/openstack/common/excutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/openstack/common/fileutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/openstack/common/gettextutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/openstack/common/imageutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/openstack/common/importutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/ironic/openstack/common/jsonutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/openstack/common/local.py
-file path=usr/lib/python$(PYVER)/vendor-packages/ironic/openstack/common/lockutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/openstack/common/log.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/openstack/common/loopingcall.py
-file path=usr/lib/python$(PYVER)/vendor-packages/ironic/openstack/common/network_utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/openstack/common/periodic_task.py
-file path=usr/lib/python$(PYVER)/vendor-packages/ironic/openstack/common/policy.py
-file path=usr/lib/python$(PYVER)/vendor-packages/ironic/openstack/common/processutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/openstack/common/service.py
-file path=usr/lib/python$(PYVER)/vendor-packages/ironic/openstack/common/strutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/openstack/common/systemd.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/openstack/common/threadgroup.py
-file path=usr/lib/python$(PYVER)/vendor-packages/ironic/openstack/common/timeutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/ironic/openstack/common/uuidutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/openstack/common/versionutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ironic/version.py
 dir  path=var/lib/ironic owner=ironic group=ironic mode=0700
@@ -263,7 +269,7 @@ group groupname=ironic gid=91
 user username=ironic ftpuser=false gcos-field="OpenStack Ironic" group=ironic \
     home-dir=/var/lib/ironic password=NP uid=91
 #
-license LICENSE license="Apache 2.0"
+license ironic.license license="Apache 2.0"
 
 # force a group dependency on the optional anyjson; pkgdepend work is needed to
 # flush this out.
@@ -334,8 +340,16 @@ depend type=require fmri=library/python/netaddr-$(PYV)
 # out.
 depend type=require fmri=library/python/neutronclient-$(PYV)
 
+# force a dependency on oslo.concurrency; pkgdepend work is needed to flush
+# this out.
+depend type=require fmri=library/python/oslo.concurrency-$(PYV)
+
 # force a dependency on oslo.config; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/oslo.config-$(PYV)
+
+# force a dependency on oslo.context; pkgdepend work is needed to flush this
+# out.
+depend type=require fmri=library/python/oslo.context-$(PYV)
 
 # force a dependency on oslo.db; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/oslo.db-$(PYV)
@@ -346,6 +360,14 @@ depend type=require fmri=library/python/oslo.i18n-$(PYV)
 # force a dependency on oslo.messaging; pkgdepend work is needed to flush this
 # out.
 depend type=require fmri=library/python/oslo.messaging-$(PYV)
+
+# force a dependency on oslo.policy; pkgdepend work is needed to flush this
+# out.
+depend type=require fmri=library/python/oslo.policy-$(PYV)
+
+# force a dependency on oslo.serialization; pkgdepend work is needed to flush
+# this out.
+depend type=require fmri=library/python/oslo.serialization-$(PYV)
 
 # force a dependency on oslo.utils; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/oslo.utils-$(PYV)
@@ -361,9 +383,6 @@ depend type=require fmri=library/python/pecan-$(PYV)
 
 # force a dependency on posix_ipc; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/posix_ipc-$(PYV)
-
-# force a dependency on prettytable; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/prettytable-$(PYV)
 
 # force a dependency on pysendfile; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/pysendfile-$(PYV)
@@ -382,9 +401,6 @@ depend type=require fmri=library/python/setuptools-$(PYV)
 
 # force a dependency on six; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/six-$(PYV)
-
-# force a dependency on sqlalchemy; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/sqlalchemy-$(PYV)
 
 # force a dependency on stevedore; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/stevedore-$(PYV)

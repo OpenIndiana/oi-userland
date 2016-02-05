@@ -1,6 +1,6 @@
 #!/usr/bin/python2.7
 
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -29,58 +29,32 @@ from openstack_common import alter_mysql_tables, create_backups, modify_conf
 
 KEYSTONE_CONF_MAPPINGS = {
     # Deprecated group/name
-    ('DEFAULT', 'rabbit_durable_queues'): ('DEFAULT', 'amqp_durable_queues'),
-    ('rpc_notifier2', 'topics'): ('DEFAULT', 'notification_topics'),
-    ('DEFAULT', 'log_config'): ('DEFAULT', 'log_config_append'),
-    ('DEFAULT', 'logfile'): ('DEFAULT', 'log_file'),
-    ('DEFAULT', 'logdir'): ('DEFAULT', 'log_dir'),
-    ('DEFAULT', 'db_backend'): ('database', 'backend'),
-    ('DEFAULT', 'sql_connection'): ('database', 'connection'),
-    ('DATABASE', 'sql_connection'): ('database', 'connection'),
-    ('sql', 'connection'): ('database', 'connection'),
-    ('DEFAULT', 'sql_idle_timeout'): ('database', 'idle_timeout'),
-    ('DATABASE', 'sql_idle_timeout'): ('database', 'idle_timeout'),
-    ('sql', 'idle_timeout'): ('database', 'idle_timeout'),
-    ('DEFAULT', 'sql_min_pool_size'): ('database', 'min_pool_size'),
-    ('DATABASE', 'sql_min_pool_size'): ('database', 'min_pool_size'),
-    ('DEFAULT', 'sql_max_pool_size'): ('database', 'max_pool_size'),
-    ('DATABASE', 'sql_max_pool_size'): ('database', 'max_pool_size'),
-    ('DEFAULT', 'sql_max_retries'): ('database', 'max_retries'),
-    ('DATABASE', 'sql_max_retries'): ('database', 'max_retries'),
-    ('DEFAULT', 'sql_retry_interval'): ('database', 'retry_interval'),
-    ('DATABASE', 'reconnect_interval'): ('database', 'retry_interval'),
-    ('DEFAULT', 'sql_max_overflow'): ('database', 'max_overflow'),
-    ('DATABASE', 'sqlalchemy_max_overflow'): ('database', 'max_overflow'),
-    ('DEFAULT', 'sql_connection_debug'): ('database', 'connection_debug'),
-    ('DEFAULT', 'sql_connection_trace'): ('database', 'connection_trace'),
-    ('DATABASE', 'sqlalchemy_pool_timeout'): ('database', 'pool_timeout'),
-    ('ldap', 'tenant_tree_dn'): ('ldap', 'project_tree_dn'),
-    ('ldap', 'tenant_filter'): ('ldap', 'project_filter'),
-    ('ldap', 'tenant_objectclass'): ('ldap', 'project_objectclass'),
-    ('ldap', 'tenant_id_attribute'): ('ldap', 'project_id_attribute'),
-    ('ldap', 'tenant_member_attribute'): ('ldap', 'project_member_attribute'),
-    ('ldap', 'tenant_name_attribute'): ('ldap', 'project_name_attribute'),
-    ('ldap', 'tenant_desc_attribute'): ('ldap', 'project_desc_attribute'),
-    ('ldap', 'tenant_enabled_attribute'):
-        ('ldap', 'project_enabled_attribute'),
-    ('ldap', 'tenant_domain_id_attribute'):
-        ('ldap', 'project_domain_id_attribute'),
-    ('ldap', 'tenant_attribute_ignore'): ('ldap', 'project_attribute_ignore'),
-    ('ldap', 'tenant_allow_create'): ('ldap', 'project_allow_create'),
-    ('ldap', 'tenant_allow_update'): ('ldap', 'project_allow_update'),
-    ('ldap', 'tenant_allow_delete'): ('ldap', 'project_allow_delete'),
-    ('ldap', 'tenant_enabled_emulation'):
-        ('ldap', 'project_enabled_emulation'),
-    ('ldap', 'tenant_enabled_emulation_dn'):
-        ('ldap', 'project_enabled_emulation_dn'),
-    ('ldap', 'tenant_additional_attribute_mapping'):
-        ('ldap', 'project_additional_attribute_mapping'),
-    ('DEFAULT', 'matchmaker_ringfile'): ('matchmaker_ring', 'ringfile'),
+    ('DEFAULT', 'admin_bind_host'): ('eventlet_server', 'admin_bind_host'),
+    ('DEFAULT', 'admin_workers'): ('eventlet_server', 'admin_workers'),
+    ('DEFAULT', 'admin_port'): ('eventlet_server', 'admin_port'),
+    ('DEFAULT', 'tcp_keepidle'): ('eventlet_server', 'tcp_keepidle'),
+    ('ssl', 'cert_required'): ('eventlet_server_ssl', 'cert_required'),
+    ('DEFAULT', 'public_port'): ('eventlet_server', 'public_port'),
+    ('DEFAULT', 'public_bind_host'): ('eventlet_server', 'public_bind_host'),
+    ('DEFAULT', 'tcp_keepalive'): ('eventlet_server', 'tcp_keepalive'),
+    ('DEFAULT', 'public_workers'): ('eventlet_server', 'public_workers'),
+    ('ssl', 'keyfile'): ('eventlet_server_ssl', 'keyfile'),
+    ('ssl', 'ca_certs'): ('eventlet_server_ssl', 'ca_certs'),
+    ('ssl', 'enable'): ('eventlet_server_ssl', 'enable'),
+    ('ssl', 'certfile'): ('eventlet_server_ssl', 'certfile'),
+    ('DEFAULT', 'max_request_body_size'):
+        ('oslo_middleware', 'max_request_body_size'),
+    ('assignment', 'list_limit'): ('resource', 'list_limit'),
+    ('assignment', 'caching'): ('resource', 'caching'),
+    ('assignment', 'cache_time'): ('resource', 'cache_time'),
+    ('token', 'revocation_cache_time'): ('revoke', 'cache_time'),
+    ('DEFAULT', 'log-format'): (None, None),
+    ('DEFAULT', 'use-syslog'): (None, None),
 }
 
 KEYSTONE_CONF_EXCEPTIONS = [
-    ('DEFAULT', 'public_workers'),
-    ('DEFAULT', 'admin_workers'),
+    ('eventlet_server', 'public_workers'),
+    ('eventlet_server', 'admin_workers'),
     ('database', 'connection'),
 ]
 

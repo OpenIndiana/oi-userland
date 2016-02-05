@@ -1,0 +1,35 @@
+#
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+#    Licensed under the Apache License, Version 2.0 (the "License"); you may
+#    not use this file except in compliance with the License. You may obtain
+#    a copy of the License at
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+#    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+#    License for the specific language governing permissions and limitations
+#    under the License.
+#
+#    IKE Configuration for vpn-service "{{vpnservice.id}}"
+{% for ipsec_site_connection in vpnservice.ipsec_site_connections if ipsec_site_connection.admin_state_up
+%}
+{
+	# From "{{ipsec_site_connection.name}}"
+	label "{{ipsec_site_connection.id}}"
+	local_addr {{vpnservice.external_ip}}
+	remote_addr {{ipsec_site_connection.peer_address}}
+	local_id IP = "{{vpnservice.external_ip}}"
+	remote_id IP = "{{ipsec_site_connection.peer_address}}"
+	childsa_pfs {{ipsec_site_connection.ikepolicy.pfs}}
+	auth_method preshared
+
+	ikesa_xform {
+		oakley_group {{ipsec_site_connection.ikepolicy.pfs}}
+		auth_alg {{ipsec_site_connection.ikepolicy.auth_algorithm}}
+		encr_alg {{ipsec_site_connection.ikepolicy.encryption_algorithm}}
+	}
+}
+{% endfor %}

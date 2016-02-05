@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
@@ -63,7 +63,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/oslo_i18n/_translate.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_i18n/fixture.py
 file path=usr/lib/python$(PYVER)/vendor-packages/oslo_i18n/log.py
 #
-license LICENSE license="Apache v2.0"
+license oslo.i18n.license license="Apache v2.0"
 
 # force a dependency on the Python runtime
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
@@ -75,6 +75,9 @@ depend type=require fmri=library/python/babel-$(PYV)
 # force a dependency on the oslo.i18n package
 depend type=require \
     fmri=library/python/oslo.i18n@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+
+# force a dependency on pbr; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/pbr-$(PYV)
 
 # force a dependency on six; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/six-$(PYV)

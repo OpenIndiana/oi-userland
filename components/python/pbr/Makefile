@@ -20,28 +20,30 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pbr
-COMPONENT_VERSION=	0.8.1
+COMPONENT_VERSION=	0.11.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:aad1f8296aa6c5379c3ccb07cf7819a7482bb39a835b70d7e5faa4a00fa0876a
+    sha256:d7f0d69aef367a764d69a4728afd966025ce9394d6029a924ef838ecdf592f6d
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://pypi.python.org/pypi/pbr/
 COMPONENT_BUGDB=	python-mod/pbr
 
-TPNO=			17860
+TPNO=			25746
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+COMPONENT_POST_INSTALL_ACTION = \
+	(cd $(PROTO_DIR)/usr/bin ; $(MV) -f pbr pbr-$(PYTHON_VERSION))
 
 COMPONENT_TEST_DIR =	$(SOURCE_DIR)
 COMPONENT_TEST_ARGS =	setup.py test

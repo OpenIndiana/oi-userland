@@ -1,8 +1,8 @@
 In-house removal of PyCrypto dependency in Cinder. This patch is
 Solaris-specific and not suitable for upstream.
 
---- cinder-2014.2.2/cinder/volume/utils.py.orig	2014-10-16 06:26:26.000000000 -0700
-+++ cinder-2014.2.2/cinder/volume/utils.py	2014-11-23 15:13:26.412114890 -0800
+--- cinder-2015.1.2/cinder/volume/utils.py.orig	2015-10-13 09:27:35.000000000 -0700
++++ cinder-2015.1.2/cinder/volume/utils.py	2016-01-30 23:52:30.088107306 -0800
 @@ -16,8 +16,8 @@
  
  
@@ -10,10 +10,10 @@ Solaris-specific and not suitable for upstream.
 +from random import SystemRandom
  
 -from Crypto.Random import random
- from oslo.config import cfg
- 
- from cinder.brick.local_dev import lvm as brick_lvm
-@@ -429,6 +429,7 @@ def generate_password(length=20, symbolg
+ from oslo_concurrency import processutils
+ from oslo_config import cfg
+ from oslo_log import log as logging
+@@ -419,6 +419,7 @@ def generate_password(length=16, symbolg
      # NOTE(jerdfelt): Some password policies require at least one character
      # from each group of symbols, so start off with one random character
      # from each symbol group

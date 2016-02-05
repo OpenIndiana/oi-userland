@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		eventlet
-COMPONENT_VERSION=	0.15.2
+COMPONENT_VERSION=	0.17.4
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:eaec368ce7b819f8615dcb51f63dcb5c910538cdedc99e4bba4c90ed0bf70fdc
+    sha256:8721e9714eaff8d20f2407e0d3a80069db6b57c9226c26ee9db25c541d06556d
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://eventlet.net/
 COMPONENT_BUGDB=	python-mod/eventlet
 
-TPNO=			21720
+TPNO=			25735
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk

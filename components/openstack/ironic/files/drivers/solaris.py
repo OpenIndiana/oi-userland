@@ -41,4 +41,5 @@ class SolarisAndIPMIToolDriver(base.BaseDriver):
         self.console = None   # Not implemented yet
         self.rescue = None    # Not implemented yet
         self.management = solaris_ipmitool.SolarisManagement()
+        self.inspect = solaris_ipmitool.SolarisInspect()
         self.vendor = None    # No VendorSpecific methods yet

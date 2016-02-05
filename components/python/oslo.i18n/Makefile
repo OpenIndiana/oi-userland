@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		oslo.i18n
-COMPONENT_VERSION=	1.3.1
+COMPONENT_VERSION=	1.5.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:8e1b9b3f87cea9e43a2414bb02d8c79b0a688c916afa1f1453f6a0a65ffd85f6
+    sha256:cd09da0780e45737b784bdc026ea705ad006e3c003aa5dfeab83f269b4ea0e70
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://launchpad.net/oslo.i18n
 COMPONENT_BUGDB=	python-mod/oslo.i18n
 
-TPNO=			21628
+TPNO=			25741
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk

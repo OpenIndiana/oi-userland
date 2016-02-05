@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
@@ -28,10 +28,7 @@ set name=pkg.fmri \
 set name=pkg.summary value="OpenStack Neutron (Networking Service)"
 set name=pkg.description \
     value="Neutron provides an API to dynamically request and configure virtual networks. These networks connect 'interfaces' from other OpenStack services (e.g., VNICs from Nova VMs). The Neutron API supports extensions to provide advanced network capabilities (e.g., QoS, ACLs, network monitoring, etc)."
-set name=pkg.human-version value="Juno $(COMPONENT_VERSION)"
-set name=com.oracle.info.description \
-    value="Neutron, the OpenStack virtual network service"
-set name=com.oracle.info.tpno value=$(TPNO)
+set name=pkg.human-version value="Kilo $(COMPONENT_VERSION)"
 set name=info.classification \
     value="org.opensolaris.category.2008:System/Administration and Configuration" \
     value="org.opensolaris.category.2008:System/Enterprise Management" \
@@ -42,7 +39,7 @@ set name=info.upstream value="OpenStack <openstack-dev@lists.openstack.org>"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=openstack.upgrade-id reboot-needed=true value=$(COMPONENT_BE_VERSION)
 set name=org.opensolaris.arc-caseid value=PSARC/2013/350 value=PSARC/2014/059 \
-    value=PSARC/2015/110
+    value=PSARC/2015/110 value=PSARC/2015/535
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 #
 dir  path=etc/neutron owner=neutron group=neutron mode=0700
@@ -54,17 +51,51 @@ file files/l3_agent.ini path=etc/neutron/l3_agent.ini owner=neutron \
     group=neutron mode=0644 overlay=allow preserve=renamenew
 file files/metadata_agent.ini path=etc/neutron/metadata_agent.ini \
     owner=neutron group=neutron mode=0644 overlay=allow preserve=renamenew
+file etc/metering_agent.ini path=etc/neutron/metering_agent.ini owner=neutron \
+    group=neutron mode=0644 overlay=allow preserve=renamenew
 file files/neutron.conf path=etc/neutron/neutron.conf owner=neutron \
     group=neutron mode=0644 \
     original_name=cloud/openstack/neutron:etc/neutron/quantum.conf \
     overlay=allow preserve=renamenew
+file path=etc/neutron/neutron_vpnaas.conf owner=neutron group=neutron \
+    mode=0644 overlay=allow preserve=renamenew
+file path=etc/neutron/plugins/bigswitch/restproxy.ini owner=neutron \
+    group=neutron mode=0644 overlay=allow preserve=renamenew
+file path=etc/neutron/plugins/bigswitch/ssl/ca_certs/README
+file path=etc/neutron/plugins/bigswitch/ssl/host_certs/README
+file path=etc/neutron/plugins/brocade/brocade.ini owner=neutron group=neutron \
+    mode=0644 overlay=allow preserve=renamenew
+file path=etc/neutron/plugins/brocade/brocade_mlx.ini owner=neutron \
+    group=neutron mode=0644 overlay=allow preserve=renamenew
+file path=etc/neutron/plugins/brocade/vyatta/vrouter.ini owner=neutron \
+    group=neutron mode=0644 overlay=allow preserve=renamenew
+file path=etc/neutron/plugins/cisco/cisco_cfg_agent.ini owner=neutron \
+    group=neutron mode=0644 overlay=allow preserve=renamenew
+file path=etc/neutron/plugins/cisco/cisco_plugins.ini owner=neutron \
+    group=neutron mode=0644 overlay=allow preserve=renamenew
+file path=etc/neutron/plugins/cisco/cisco_router_plugin.ini owner=neutron \
+    group=neutron mode=0644 overlay=allow preserve=renamenew
+file path=etc/neutron/plugins/cisco/cisco_vpn_agent.ini owner=neutron \
+    group=neutron mode=0644 overlay=allow preserve=renamenew
+file path=etc/neutron/plugins/embrane/heleos_conf.ini owner=neutron \
+    group=neutron mode=0644 overlay=allow preserve=renamenew
 file files/evs_plugin.ini path=etc/neutron/plugins/evs/evs_plugin.ini \
     owner=neutron group=neutron mode=0644 overlay=allow preserve=renamenew
+file path=etc/neutron/plugins/ibm/sdnve_neutron_plugin.ini owner=neutron \
+    group=neutron mode=0644 overlay=allow preserve=renamenew
+file path=etc/neutron/plugins/linuxbridge/linuxbridge_conf.ini owner=neutron \
+    group=neutron mode=0644 overlay=allow preserve=renamenew
+file path=etc/neutron/plugins/metaplugin/metaplugin.ini owner=neutron \
+    group=neutron mode=0644 overlay=allow preserve=renamenew
+file path=etc/neutron/plugins/midonet/midonet.ini owner=neutron group=neutron \
+    mode=0644 overlay=allow preserve=renamenew
 file path=etc/neutron/plugins/ml2/ml2_conf.ini owner=neutron group=neutron \
     mode=0644 overlay=allow preserve=renamenew
 file path=etc/neutron/plugins/ml2/ml2_conf_arista.ini owner=neutron \
     group=neutron mode=0644 overlay=allow preserve=renamenew
 file path=etc/neutron/plugins/ml2/ml2_conf_brocade.ini owner=neutron \
+    group=neutron mode=0644 overlay=allow preserve=renamenew
+file path=etc/neutron/plugins/ml2/ml2_conf_brocade_fi_ni.ini owner=neutron \
     group=neutron mode=0644 overlay=allow preserve=renamenew
 file path=etc/neutron/plugins/ml2/ml2_conf_cisco.ini owner=neutron \
     group=neutron mode=0644 overlay=allow preserve=renamenew
@@ -74,20 +105,32 @@ file path=etc/neutron/plugins/ml2/ml2_conf_mlnx.ini owner=neutron \
     group=neutron mode=0644 overlay=allow preserve=renamenew
 file path=etc/neutron/plugins/ml2/ml2_conf_ncs.ini owner=neutron group=neutron \
     mode=0644 overlay=allow preserve=renamenew
-file path=etc/neutron/plugins/ml2/ml2_conf_odl.ini owner=neutron group=neutron \
-    mode=0644 overlay=allow preserve=renamenew
 file path=etc/neutron/plugins/ml2/ml2_conf_ofa.ini owner=neutron group=neutron \
     mode=0644 overlay=allow preserve=renamenew
 file path=etc/neutron/plugins/ml2/ml2_conf_sriov.ini owner=neutron \
     group=neutron mode=0644 overlay=allow preserve=renamenew
-file etc/neutron/plugins/nuage/nuage_plugin.ini \
-    path=etc/neutron/plugins/ml2/nuage_plugin.ini owner=neutron group=neutron \
+file path=etc/neutron/plugins/mlnx/mlnx_conf.ini owner=neutron group=neutron \
     mode=0644 overlay=allow preserve=renamenew
-file etc/neutron/plugins/bigswitch/restproxy.ini \
-    path=etc/neutron/plugins/ml2/restproxy.ini owner=neutron group=neutron \
+file path=etc/neutron/plugins/nec/nec.ini owner=neutron group=neutron \
+    mode=0644 overlay=allow preserve=renamenew
+file path=etc/neutron/plugins/nuage/nuage_plugin.ini owner=neutron \
+    group=neutron mode=0644 overlay=allow preserve=renamenew
+file path=etc/neutron/plugins/oneconvergence/nvsdplugin.ini owner=neutron \
+    group=neutron mode=0644 overlay=allow preserve=renamenew
+file path=etc/neutron/plugins/opencontrail/contrailplugin.ini owner=neutron \
+    group=neutron mode=0644 overlay=allow preserve=renamenew
+file path=etc/neutron/plugins/openvswitch/ovs_neutron_plugin.ini owner=neutron \
+    group=neutron mode=0644 overlay=allow preserve=renamenew
+file path=etc/neutron/plugins/ovsvapp/ovsvapp_agent.ini owner=neutron \
+    group=neutron mode=0644 overlay=allow preserve=renamenew
+file path=etc/neutron/plugins/plumgrid/plumgrid.ini owner=neutron \
+    group=neutron mode=0644 overlay=allow preserve=renamenew
+file path=etc/neutron/plugins/vmware/nsx.ini owner=neutron group=neutron \
     mode=0644 overlay=allow preserve=renamenew
 file etc/policy.json path=etc/neutron/policy.json owner=neutron group=neutron \
     mode=0644 overlay=allow preserve=renamenew
+file files/vpn_agent.ini path=etc/neutron/vpn_agent.ini owner=neutron \
+    group=neutron mode=0644 overlay=allow preserve=renamenew
 link path=etc/quantum target=./neutron
 file files/neutron.auth_attr \
     path=etc/security/auth_attr.d/cloud:openstack:neutron group=sys
@@ -111,6 +154,7 @@ file path=usr/bin/neutron-db-manage
 file path=usr/lib/neutron/evs-neutron-migration mode=0555
 file usr/bin/neutron-dhcp-agent path=usr/lib/neutron/neutron-dhcp-agent \
     mode=0555
+file path=usr/lib/neutron/neutron-kilo-migration mode=0555
 file usr/bin/neutron-l3-agent path=usr/lib/neutron/neutron-l3-agent mode=0555
 file usr/bin/neutron-metadata-agent \
     path=usr/lib/neutron/neutron-metadata-agent mode=0555
@@ -130,21 +174,47 @@ file path=usr/lib/python$(PYVER)/vendor-packages/neutron-$(COMPONENT_VERSION)-py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/common/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/common/base_polling.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/common/config.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/common/ovs_lib.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/common/polling.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/common/utils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/dhcp/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/dhcp/agent.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/dhcp/config.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/dhcp_agent.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/evs_l3_agent.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/firewall.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/l2population_rpc.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/l3/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/l3/agent.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/l3/config.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/l3/dvr.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/l3/dvr_fip_ns.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/l3/dvr_router.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/l3/dvr_snat_ns.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/l3/ha.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/l3/ha_router.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/l3/keepalived_state_change.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/l3/legacy_router.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/l3/link_local_allocator.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/l3/namespace_manager.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/l3/namespaces.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/l3/router_info.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/l3/router_processing_queue.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/l3_agent.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/l3_ha_agent.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/linux/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/linux/async_process.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/linux/bridge_lib.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/linux/daemon.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/linux/dhcp.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/linux/external_process.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/linux/interface.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/linux/ip_lib.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/linux/ip_link_support.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/linux/ip_monitor.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/linux/ipset_manager.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/linux/iptables_comments.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/linux/iptables_firewall.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/linux/iptables_manager.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/linux/keepalived.py
@@ -155,9 +225,18 @@ file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/linux/ra.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/linux/utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/metadata/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/metadata/agent.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/metadata/config.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/metadata/driver.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/metadata/namespace_proxy.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/netns_cleanup_util.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/ovs_cleanup_util.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/metadata_agent.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/ovsdb/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/ovsdb/api.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/ovsdb/impl_idl.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/ovsdb/impl_vsctl.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/ovsdb/native/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/ovsdb/native/commands.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/ovsdb/native/connection.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/ovsdb/native/idlutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/rpc.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/securitygroups_rpc.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/solaris/__init__.py
@@ -166,6 +245,9 @@ file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/solaris/interface
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/solaris/ipfilters_manager.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/solaris/net_lib.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/solaris/ra.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/windows/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/windows/polling.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/windows/utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/api/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/api/api_common.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/api/extensions.py
@@ -178,6 +260,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/neutron/api/rpc/handlers/__init
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/api/rpc/handlers/dhcp_rpc.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/api/rpc/handlers/dvr_rpc.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/api/rpc/handlers/l3_rpc.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/api/rpc/handlers/metadata_rpc.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/api/rpc/handlers/securitygroups_rpc.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/api/v2/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/api/v2/attributes.py
@@ -189,7 +272,31 @@ file path=usr/lib/python$(PYVER)/vendor-packages/neutron/api/versions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/api/views/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/api/views/versions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/auth.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/callbacks/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/callbacks/events.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/callbacks/exceptions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/callbacks/manager.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/callbacks/registry.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/callbacks/resources.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/cmd/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/cmd/eventlet/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/cmd/eventlet/agents/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/cmd/eventlet/agents/dhcp.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/cmd/eventlet/agents/l3.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/cmd/eventlet/agents/metadata.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/cmd/eventlet/agents/metadata_proxy.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/cmd/eventlet/plugins/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/cmd/eventlet/plugins/hyperv_neutron_agent.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/cmd/eventlet/plugins/mlnx_neutron_agent.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/cmd/eventlet/plugins/nec_neutron_agent.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/cmd/eventlet/plugins/ovs_neutron_agent.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/cmd/eventlet/plugins/ovsvapp_neutron_agent.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/cmd/eventlet/server/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/cmd/eventlet/services/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/cmd/eventlet/services/metering_agent.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/cmd/keepalived_state_change.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/cmd/netns_cleanup.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/cmd/ovs_cleanup.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/cmd/sanity/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/cmd/sanity/checks.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/cmd/sanity_check.py
@@ -197,9 +304,11 @@ file path=usr/lib/python$(PYVER)/vendor-packages/neutron/cmd/usage_audit.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/common/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/common/config.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/common/constants.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/common/eventlet_utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/common/exceptions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/common/ipv6_utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/common/log.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/common/repos.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/common/rpc.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/common/test_lib.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/common/topics.py
@@ -216,8 +325,6 @@ file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/dvr_mac_db.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/external_net_db.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/extradhcpopt_db.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/extraroute_db.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/firewall/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/firewall/firewall_db.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/l3_agentschedulers_db.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/l3_attrs_db.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/l3_db.py
@@ -226,8 +333,6 @@ file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/l3_dvrscheduler_db.p
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/l3_gwmode_db.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/l3_hamode_db.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/l3_hascheduler_db.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/loadbalancer/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/loadbalancer/loadbalancer_db.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/metering/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/metering/metering_db.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/metering/metering_rpc.py
@@ -256,23 +361,37 @@ file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_mi
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/ryu_init_ops.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/script.py.mako
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/secgroup_init_ops.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/034883111f_remove_subnetpool_allow_overlap.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/10cd28e692e9_nuage_extraroute.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/117643811bca_nec_delete_ofc_mapping.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/1421183d533f_nsx_dhcp_metadata.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/14be42f3d0a5_default_sec_group_table.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/157a5d299379_ml2_binding_profile.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/1680e1f0c4dc_remove_cisco_nexus_plugin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/16a27a58e093_ext_l3_ha_mode.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/16cdf118d31d_extra_dhcp_options_ipv6_support.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/19180cf98af6_nsx_gw_devices.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/1955efc66455_weight_scheduler.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/1b2580001654_nsx_sec_group_mappin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/1b837a7125a9_cisco_apic_driver.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/1d6ee1ae5da5_db_healing.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/1e5dd1d09b22_set_not_null_fields_lb_stats.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/1f71e54a85e7_ml2_net_seg_model.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/1fcfc149aca4_agents_unique_by_type_and_host.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/2026156eab2f_l2_dvr_models.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/20b99fd19d4f_cisco_ucs_manager_mechanism_driver.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/20c469a5f920_add_index_for_port.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/236b90af57ab_ml2_refactor_for_dynamic_segments.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/2447ad0e9585_add_ipv6_mode_props.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/24c7ea5160d7_cisco_csr_vpnaas.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/268fb5e99aa2_subnetpool_allocation.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/26b54cf9024d_add_index_on_allocated.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/27cc183af192_ml2_vnic_type.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/28a09af858a8_subnetpool_quotas.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/28c0ffb8ebbd_remove_mlnx_plugin.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/2a1ee2fb59e0_add_mac_address_unique_constraint.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/2b801560a332_remove_hypervneutronplugin_tables.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/2d2a8a565438_hierarchical_binding.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/2db5203cb7a9_nuage_floatingip.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/2eeaf963a447_floatingip_status.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/31d7f831a591_add_constraint_for_routerid.py
@@ -280,23 +399,36 @@ file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_mi
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/32f3915891fd_cisco_apic_driver_update.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/33c3db036fe4_set_length_of_description_field_metering.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/33dd0a9fa487_embrane_lbaas_driver.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/341ee8a4ccb5_sync_with_cisco_repo.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/35a0f3365720_add_port_security_in_ml2.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/37f322991f59_nuage_removing_mapping_tables.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/38495dc99731_ml2_tunnel_endpoints_table.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/3927f7f7c456_l3_extension_distributed_mode.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/3b85b693a95f_remove_service_tables.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/3c346828361e_metering_label_shared.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/3d2585038b95_vmware_nsx.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/3d3cb89d84ee_nsx_switch_mappings.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/408cfbf6923c_remove_ryu_plugin.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/4119216b7365_add_tenant_id_idx.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/41662e32bce2_l3_dvr_snat_mapping.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/43763a9618fd_add_mtu_attributes_to_network.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/44621190bc02_add_uniqueconstraint_ipavailability_ranges.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/492a106273f8_brocade_ml2_mech_dri.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/4ca36cfc898c_nsx_router_mappings.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/4dbe243cd84d_nsxv.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/4eba2f05c2f4_correct_vxlan_endpoint_primary_key.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/4eca4a84f08a_remove_ml2_cisco_cred_db.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/50d5ba354c23_ml2_binding_vif_details.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/50e86cb2637a_nsx_mappings.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/51c54792158e_subnetpools.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/538732fa21e1_nec_rename_quantum_id_to_neutron_id.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/544673ac99ab_add_router_port_table.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/5446f2a45467_set_server_default.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/54f7549a0e5f_set_not_null_peer_address.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/5589aa32bf80_l3_dvr_scheduler.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/57086602ca0a_scrap_nsx_adv_svcs_models.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/57dd745253a6_nuage_kilo_migrate.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/589f9237ca0e_cisco_n1kv_ml2_driver_tables.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/58fe87a01143_cisco_csr_routing.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/5ac1c354a051_n1kv_segment_alloc.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/6be312499f9_set_not_null_vlan_id_cisco.py
@@ -308,12 +440,15 @@ file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_mi
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/aae5706a396_nuage_provider_networks.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/abc88c33f74f_lb_stats_needs_bigint.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/b65aa907aec_set_length_of_protocol_field.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/bebba223288_add_vlan_transparent_property_to_network.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/d06e871c0d5_set_admin_state_up_not_null_ml2.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/e197124d4b9_add_unique_constrain.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/e766b19a3bb_nuage_initial.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/f15b1fb526dd_cascade_floatingip.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/havana_initial.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/icehouse_release.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/juno_release.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/versions/kilo_release.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/vmware_init_ops.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/alembic_migrations/vpn_init_ops.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/cli.py
@@ -323,19 +458,17 @@ file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/models/fro
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/migration/models/head.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/model_base.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/models_v2.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/netmtu_db.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/portbindings_base.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/portbindings_db.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/portsecurity_db.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/portsecurity_db_common.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/quota_db.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/routedserviceinsertion_db.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/routerservicetype_db.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/securitygroups_db.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/securitygroups_rpc_base.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/servicetype_db.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/sqlalchemyutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/vpn/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/vpn/vpn_db.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/vpn/vpn_validator.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/db/vlantransparent_db.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/debug/README
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/debug/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/debug/commands.py
@@ -349,91 +482,66 @@ file path=usr/lib/python$(PYVER)/vendor-packages/neutron/extensions/dvr.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/extensions/external_net.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/extensions/extra_dhcp_opt.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/extensions/extraroute.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/extensions/firewall.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/extensions/flavor.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/extensions/l3.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/extensions/l3_ext_gw_mode.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/extensions/l3_ext_ha_mode.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/extensions/l3agentscheduler.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/extensions/lbaas_agentscheduler.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/extensions/loadbalancer.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/extensions/metering.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/extensions/multiprovidernet.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/extensions/netmtu.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/extensions/portbindings.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/extensions/portsecurity.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/extensions/providernet.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/extensions/quotasv2.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/extensions/routedserviceinsertion.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/extensions/routerservicetype.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/extensions/securitygroup.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/extensions/servicetype.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/extensions/vpnaas.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/extensions/subnetallocation.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/extensions/vlantransparent.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/hacking/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/hacking/checks.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/hooks.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/i18n.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/ipam/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/ipam/driver.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/ipam/subnet_alloc.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/manager.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/neutron_plugin_base_v2.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/notifiers/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/notifiers/batch_notifier.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/notifiers/nova.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/openstack/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/openstack/common/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/openstack/common/_i18n.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/openstack/common/cache/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/openstack/common/cache/_backends/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/openstack/common/cache/_backends/memory.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/openstack/common/cache/backends.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/openstack/common/cache/cache.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/openstack/common/context.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/openstack/common/eventlet_backdoor.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/openstack/common/excutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/openstack/common/fileutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/openstack/common/fixture/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/openstack/common/fixture/config.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/openstack/common/fixture/lockutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/openstack/common/fixture/mockpatch.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/openstack/common/fixture/moxstubout.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/openstack/common/gettextutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/openstack/common/importutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/openstack/common/jsonutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/openstack/common/local.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/openstack/common/lockutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/openstack/common/log.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/openstack/common/loopingcall.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/openstack/common/middleware/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/openstack/common/middleware/base.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/openstack/common/middleware/catch_errors.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/openstack/common/middleware/correlation_id.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/openstack/common/middleware/debug.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/openstack/common/middleware/request_id.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/openstack/common/middleware/sizelimit.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/openstack/common/network_utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/openstack/common/periodic_task.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/openstack/common/policy.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/openstack/common/processutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/openstack/common/service.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/openstack/common/sslutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/openstack/common/strutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/openstack/common/systemd.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/openstack/common/threadgroup.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/openstack/common/timeutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/openstack/common/uuidutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/openstack/common/versionutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/bigswitch/README
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/bigswitch/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/bigswitch/agent/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/bigswitch/agent/restproxy_agent.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/bigswitch/config.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/bigswitch/db/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/bigswitch/db/consistency_db.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/bigswitch/db/porttracker_db.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/bigswitch/extensions/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/bigswitch/extensions/routerrule.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/bigswitch/l3_router_plugin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/bigswitch/plugin.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/bigswitch/requirements.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/bigswitch/routerrule_db.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/bigswitch/servermanager.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/bigswitch/vcsversion.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/bigswitch/version.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/brocade/NeutronPlugin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/brocade/README.md
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/brocade/__init__.py
@@ -446,19 +554,6 @@ file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/brocade/nos/nos
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/brocade/vlanbm.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/README
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/cfg_agent/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/cfg_agent/cfg_agent.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/cfg_agent/cfg_exceptions.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/cfg_agent/device_drivers/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/cfg_agent/device_drivers/csr1kv/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/cfg_agent/device_drivers/csr1kv/cisco_csr1kv_snippets.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/cfg_agent/device_drivers/csr1kv/csr1kv_routing_driver.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/cfg_agent/device_drivers/devicedriver_api.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/cfg_agent/device_drivers/driver_mgr.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/cfg_agent/device_drivers/dummy_driver.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/cfg_agent/device_status.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/cfg_agent/service_helpers/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/cfg_agent/service_helpers/routing_svc_helper.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/common/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/common/cisco_constants.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/common/cisco_credentials_v2.py
@@ -467,9 +562,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/common/ci
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/common/config.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/db/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/db/l3/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/db/l3/device_handling_db.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/db/l3/l3_models.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/db/l3/l3_router_appliance_db.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/db/n1kv_db_v2.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/db/n1kv_models_v2.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/db/network_db_v2.py
@@ -483,18 +576,6 @@ file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/extension
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/extensions/policy_profile.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/extensions/qos.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/l2device_plugin_base.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/l3/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/l3/configdrive_templates/csr1kv_cfg_template
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/l3/hosting_device_drivers/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/l3/hosting_device_drivers/csr1kv_hd_driver.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/l3/plugging_drivers/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/l3/plugging_drivers/n1kv_plugging_constants.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/l3/plugging_drivers/n1kv_trunking_driver.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/l3/rpc/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/l3/rpc/devices_cfgagent_rpc_cb.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/l3/rpc/l3_router_cfgagent_rpc_cb.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/l3/rpc/l3_router_rpc_joint_agent_api.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/l3/service_vm_lib.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/models/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/models/virt_phy_sw_v2.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/n1kv/__init__.py
@@ -503,6 +584,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/n1kv/n1kv
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/network_plugin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/service_plugins/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/service_plugins/cisco_router_plugin.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/cisco/service_plugins/requirements.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/common/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/common/constants.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/common/utils.py
@@ -537,18 +619,9 @@ file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/evs/migrate/hav
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/evs/plugin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/hyperv/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/hyperv/agent/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/hyperv/agent/hyperv_neutron_agent.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/hyperv/agent/config.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/hyperv/agent/l2_agent.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/hyperv/agent/security_groups_driver.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/hyperv/agent/utils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/hyperv/agent/utilsfactory.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/hyperv/agent/utilsv2.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/hyperv/agent_notifier_api.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/hyperv/common/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/hyperv/common/constants.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/hyperv/db.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/hyperv/hyperv_neutron_plugin.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/hyperv/model.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/hyperv/rpc_callbacks.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ibm/README
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ibm/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ibm/agent/__init__.py
@@ -563,7 +636,11 @@ file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ibm/sdnve_neutr
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/linuxbridge/README
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/linuxbridge/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/linuxbridge/agent/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/linuxbridge/agent/arp_protect.py
+file \
+    path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/linuxbridge/agent/linuxbridge_neutron_agent.py \
+    pkg.depend.bypass-generate=.*/oslo_log.* \
+    pkg.depend.bypass-generate=.*/oslo_messaging.*
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/linuxbridge/common/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/linuxbridge/common/config.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/linuxbridge/common/constants.py
@@ -573,18 +650,12 @@ file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/metaplugin/READ
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/metaplugin/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/metaplugin/common/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/metaplugin/common/config.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/metaplugin/meta_db_v2.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/metaplugin/meta_models_v2.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/metaplugin/meta_neutron_plugin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/metaplugin/proxy_neutron_plugin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/midonet/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/midonet/agent/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/midonet/agent/midonet_driver.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/midonet/common/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/midonet/common/config.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/midonet/common/net_util.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/midonet/midonet_lib.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/midonet/plugin.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/midonet/requirements.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/README
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/common/__init__.py
@@ -593,23 +664,22 @@ file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/config.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/db.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/driver_api.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/driver_context.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/README.odl
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/arista/README
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/arista/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/arista/arista_l3_driver.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/arista/config.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/arista/db.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/arista/exceptions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/arista/mechanism_arista.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/arista/requirements.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/brocade/README.md
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/brocade/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/brocade/db/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/brocade/db/models.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/brocade/fi_ni/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/brocade/fi_ni/mechanism_brocade_fi_ni.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/brocade/mechanism_brocade.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/brocade/nos/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/brocade/nos/nctemplates.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/brocade/nos/nosdriver.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/brocade/requirements.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/cisco/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/cisco/apic/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/cisco/apic/apic_model.py
@@ -617,21 +687,34 @@ file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/cis
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/cisco/apic/apic_topology.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/cisco/apic/config.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/cisco/apic/mechanism_apic.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/cisco/nexus/README
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/cisco/n1kv/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/cisco/n1kv/extensions/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/cisco/n1kv/extensions/n1kv.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/cisco/n1kv/mech_cisco_n1kv.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/cisco/n1kv/n1kv_ext_driver.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/cisco/n1kv/n1kv_models.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/cisco/ncs/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/cisco/ncs/driver.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/cisco/nexus/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/cisco/nexus/config.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/cisco/nexus/constants.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/cisco/nexus/exceptions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/cisco/nexus/mech_cisco_nexus.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/cisco/nexus/nexus_db_v2.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/cisco/nexus/nexus_models_v2.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/cisco/nexus/nexus_network_driver.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/cisco/nexus/nexus_snippets.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/cisco/nexus/requirements.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/cisco/nexus/type_nexus_vxlan.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/cisco/requirements.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/cisco/ucsm/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/cisco/ucsm/mech_cisco_ucsm.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/cisco/ucsm/ucsm_model.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/freescale/README.fslsdn
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/freescale/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/freescale/config.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/freescale/mechanism_fslsdn.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/helpers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/hyperv/README
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/hyperv/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/hyperv/mech_hyperv.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/hyperv/requirements.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/ibm/mechanism_sdnve.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/ibm/requirements.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/l2pop/README
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/l2pop/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/l2pop/config.py
@@ -642,99 +725,57 @@ file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/l2p
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/mech_agent.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/mech_bigswitch/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/mech_bigswitch/driver.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/mech_hyperv.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/mech_bigswitch/requirements.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/mech_linuxbridge.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/mech_nuage/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/mech_nuage/driver.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/mech_ofagent.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/mech_openvswitch.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/mech_sriov/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/mech_sriov/exceptions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/mech_sriov/mech_driver.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/mechanism_ncs.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/mechanism_odl.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/mlnx/README
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/mlnx/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/mlnx/agent/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/mlnx/agent/config.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/mlnx/agent/eswitch_neutron_agent.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/mlnx/config.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/mlnx/mech_mlnx.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/mlnx/requirements.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/ofagent/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/ofagent/driver.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/ofagent/requirements.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/opendaylight/README
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/opendaylight/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/opendaylight/driver.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/opendaylight/requirements.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/ovsvapp/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/ovsvapp/mech_driver.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/ovsvapp/requirements.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/type_flat.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/type_gre.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/type_local.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/type_tunnel.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/type_vlan.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/drivers/type_vxlan.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/extensions/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/extensions/port_security.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/managers.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/models.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/plugin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ml2/rpc.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/mlnx/README
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/mlnx/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/mlnx/agent/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/mlnx/agent/eswitch_neutron_agent.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/mlnx/agent/utils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/mlnx/agent_notify_api.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/mlnx/common/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/mlnx/common/comm_utils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/mlnx/common/config.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/mlnx/common/constants.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/mlnx/common/exceptions.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/mlnx/db/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/mlnx/db/mlnx_db_v2.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/mlnx/db/mlnx_models_v2.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/mlnx/mlnx_plugin.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/mlnx/rpc_callbacks.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/nec/README
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/nec/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/nec/agent/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/nec/agent/nec_neutron_agent.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/nec/common/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/nec/common/config.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/nec/common/constants.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/nec/common/exceptions.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/nec/common/ofc_client.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/nec/common/utils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/nec/config.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/nec/db/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/nec/db/api.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/nec/db/models.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/nec/db/packetfilter.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/nec/db/router.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/nec/drivers/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/nec/drivers/pfc.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/nec/drivers/trema.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/nec/extensions/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/nec/extensions/packetfilter.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/nec/extensions/router_provider.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/nec/nec_plugin.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/nec/nec_router.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/nec/ofc_driver_base.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/nec/ofc_manager.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/nec/packet_filter.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/nec/router_drivers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/nec/requirements.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/nuage/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/nuage/common/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/nuage/common/config.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/nuage/common/constants.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/nuage/common/exceptions.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/nuage/extensions/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/nuage/extensions/netpartition.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/nuage/extensions/nuage_router.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/nuage/extensions/nuage_subnet.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/nuage/nuage_models.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/nuage/nuagedb.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/nuage/plugin.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/nuage/syncmanager.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ofagent/README
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ofagent/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ofagent/agent/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ofagent/agent/arp_lib.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ofagent/agent/constants.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ofagent/agent/flows.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ofagent/agent/main.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ofagent/agent/metadata.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ofagent/agent/ofa_neutron_agent.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ofagent/agent/ofswitch.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ofagent/agent/ports.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ofagent/agent/tables.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ofagent/common/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ofagent/common/config.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/oneconvergence/README
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/oneconvergence/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/oneconvergence/agent/__init__.py
@@ -754,7 +795,10 @@ file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/openvswitch/REA
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/openvswitch/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/openvswitch/agent/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/openvswitch/agent/ovs_dvr_neutron_agent.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/openvswitch/agent/ovs_neutron_agent.py
+file \
+    path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/openvswitch/agent/ovs_neutron_agent.py \
+    pkg.depend.bypass-generate=.*/oslo_log.* \
+    pkg.depend.bypass-generate=.*/oslo_messaging.*
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/openvswitch/agent/xenapi/README
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/openvswitch/agent/xenapi/contrib/build-rpm.sh
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/openvswitch/agent/xenapi/contrib/rpmbuild/SPECS/openstack-quantum-xen-plugins.spec
@@ -767,26 +811,9 @@ file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/openvswitch/com
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/openvswitch/ovs_models_v2.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/plumgrid/README
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/plumgrid/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/plumgrid/common/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/plumgrid/common/exceptions.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/plumgrid/drivers/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/plumgrid/drivers/fake_plumlib.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/plumgrid/drivers/plumlib.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/plumgrid/plumgrid_plugin/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/plumgrid/plumgrid_plugin/plugin_ver.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/plumgrid/plumgrid_plugin/plumgrid_plugin.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ryu/README
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ryu/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ryu/agent/__init__.py
-file \
-    path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ryu/agent/ryu_neutron_agent.py \
-    pkg.depend.bypass-generate=.*/ryu.*
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ryu/common/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ryu/common/config.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ryu/db/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ryu/db/api_v2.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ryu/db/models_v2.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/ryu/ryu_neutron_plugin.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/plumgrid/requirements.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/sriovnicagent/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/sriovnicagent/common/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/sriovnicagent/common/config.py
@@ -794,84 +821,34 @@ file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/sriovnicagent/c
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/sriovnicagent/eswitch_manager.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/sriovnicagent/pci_lib.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/sriovnicagent/sriov_nic_agent.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/README
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/api_client/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/api_client/base.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/api_client/client.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/api_client/eventlet_client.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/api_client/eventlet_request.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/api_client/exception.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/api_client/request.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/api_client/version.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/check_nsx_config.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/common/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/common/config.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/common/exceptions.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/common/nsx_utils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/common/securitygroups.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/common/sync.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/common/utils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/common/nsxv_constants.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/dbexts/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/dbexts/db.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/dbexts/lsn_db.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/dbexts/maclearning.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/dbexts/models.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/dbexts/networkgw_db.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/dbexts/qos_db.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/dbexts/servicerouter.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/dbexts/vcns_db.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/dbexts/nsx_models.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/dbexts/nsxv_models.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/dbexts/vcns_models.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/dhcp_meta/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/dhcp_meta/combined.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/dhcp_meta/constants.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/dhcp_meta/lsnmanager.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/dhcp_meta/migration.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/dhcp_meta/nsx.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/dhcp_meta/rpc.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/dhcpmeta_modes.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/extensions/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/extensions/distributedrouter.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/extensions/advancedserviceproviders.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/extensions/lsn.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/extensions/maclearning.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/extensions/networkgw.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/extensions/nvp_qos.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/extensions/qos.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/extensions/servicerouter.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/nsx_cluster.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/nsxlib/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/nsxlib/l2gateway.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/nsxlib/lsn.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/nsxlib/queue.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/nsxlib/router.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/nsxlib/secgroup.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/nsxlib/switch.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/nsxlib/versioning.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/extensions/routertype.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/extensions/vnicindex.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/plugin.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/plugins/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/plugins/base.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/plugins/service.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/shell/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/shell/commands.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/vshield/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/vshield/common/VcnsApiClient.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/vshield/common/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/vshield/common/constants.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/vshield/common/exceptions.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/vshield/edge_appliance_driver.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/vshield/edge_firewall_driver.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/vshield/edge_ipsecvpn_driver.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/vshield/edge_loadbalancer_driver.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/vshield/tasks/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/vshield/tasks/constants.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/vshield/tasks/tasks.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/vshield/vcns.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/vshield/vcns_driver.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/plugins/vmware/requirements.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/policy.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/quota.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/scheduler/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/scheduler/base_resource_filter.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/scheduler/base_scheduler.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/scheduler/dhcp_agent_scheduler.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/scheduler/l3_agent_scheduler.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/server/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/server/__init__.py \
+    pkg.depend.bypass-generate=.*/oslo_log.*
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/service.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/firewall/__init__.py
@@ -879,65 +856,20 @@ file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/firewall/agent
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/firewall/agents/firewall_agent_api.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/firewall/agents/l3reference/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/firewall/agents/l3reference/firewall_l3_agent.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/firewall/agents/varmour/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/firewall/agents/varmour/varmour_api.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/firewall/agents/varmour/varmour_router.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/firewall/agents/varmour/varmour_utils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/firewall/drivers/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/firewall/drivers/fwaas_base.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/firewall/drivers/linux/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/firewall/drivers/linux/iptables_fwaas.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/firewall/drivers/varmour/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/firewall/drivers/varmour/varmour_fwaas.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/firewall/fwaas_plugin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/l3_router/README
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/l3_router/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/l3_router/brocade/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/l3_router/brocade/l3_router_plugin.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/l3_router/brocade/mlx/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/l3_router/brocade/mlx/l3_router_plugin.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/l3_router/brocade/requirements.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/l3_router/brocade/vyatta/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/l3_router/brocade/vyatta/vrouter_neutron_plugin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/l3_router/l3_apic.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/l3_router/l3_arista.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/l3_router/l3_router_plugin.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/l3_router/l3_sdnve.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/loadbalancer/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/loadbalancer/agent/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/loadbalancer/agent/agent.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/loadbalancer/agent/agent_api.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/loadbalancer/agent/agent_device_driver.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/loadbalancer/agent/agent_manager.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/loadbalancer/agent_scheduler.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/loadbalancer/constants.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/loadbalancer/drivers/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/loadbalancer/drivers/a10networks/README.txt
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/loadbalancer/drivers/a10networks/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/loadbalancer/drivers/a10networks/driver_v1.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/loadbalancer/drivers/abstract_driver.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/loadbalancer/drivers/common/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/loadbalancer/drivers/common/agent_driver_base.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/loadbalancer/drivers/driver_base.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/loadbalancer/drivers/driver_mixins.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/loadbalancer/drivers/embrane/README
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/loadbalancer/drivers/embrane/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/loadbalancer/drivers/embrane/agent/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/loadbalancer/drivers/embrane/agent/dispatcher.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/loadbalancer/drivers/embrane/agent/lb_operations.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/loadbalancer/drivers/embrane/config.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/loadbalancer/drivers/embrane/constants.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/loadbalancer/drivers/embrane/db.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/loadbalancer/drivers/embrane/driver.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/loadbalancer/drivers/embrane/models.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/loadbalancer/drivers/embrane/poller.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/loadbalancer/drivers/haproxy/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/loadbalancer/drivers/haproxy/cfg.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/loadbalancer/drivers/haproxy/namespace_driver.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/loadbalancer/drivers/haproxy/plugin_driver.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/loadbalancer/drivers/logging_noop/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/loadbalancer/drivers/logging_noop/driver.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/loadbalancer/drivers/netscaler/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/loadbalancer/drivers/netscaler/ncc_client.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/loadbalancer/drivers/netscaler/netscaler_driver.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/loadbalancer/drivers/radware/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/loadbalancer/drivers/radware/driver.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/loadbalancer/drivers/radware/exceptions.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/loadbalancer/plugin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/metering/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/metering/agents/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/metering/agents/metering_agent.py
@@ -951,24 +883,66 @@ file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/metering/meter
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/provider_configuration.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/service_base.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/vpn/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/vpn/agent.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/vpn/common/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/vpn/common/topics.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/vpn/device_drivers/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/vpn/device_drivers/cisco_csr_rest_client.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/vpn/device_drivers/cisco_ipsec.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/vpn/device_drivers/ipsec.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/vpn/device_drivers/template/openswan/ipsec.conf.template
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/vpn/device_drivers/template/openswan/ipsec.secret.template
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/vpn/plugin.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/vpn/service_drivers/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/vpn/service_drivers/cisco_cfg_loader.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/vpn/service_drivers/cisco_csr_db.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/vpn/service_drivers/cisco_ipsec.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/vpn/service_drivers/cisco_validator.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/services/vpn/service_drivers/ipsec.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/version.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/wsgi.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/cmd/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/cmd/eventlet/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/cmd/eventlet/agent.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/cmd/eventlet/vyatta_agent.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/db/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/db/migration/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/db/migration/alembic.ini
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/db/migration/alembic_migrations/README
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/db/migration/alembic_migrations/env.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/db/migration/alembic_migrations/script.py.mako
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/db/migration/alembic_migrations/versions/3ea02b2a773e_add_index_tenant_id.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/db/migration/alembic_migrations/versions/HEAD
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/db/migration/alembic_migrations/versions/kilo_release.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/db/migration/alembic_migrations/versions/start_neutron_vpnaas.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/db/vpn/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/db/vpn/vpn_db.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/db/vpn/vpn_validator.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/extensions/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/extensions/vpnaas.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/services/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/services/vpn/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/services/vpn/agent.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/services/vpn/common/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/services/vpn/common/netns_wrapper.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/services/vpn/common/topics.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/services/vpn/device_drivers/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/services/vpn/device_drivers/cisco_csr_rest_client.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/services/vpn/device_drivers/cisco_ipsec.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/services/vpn/device_drivers/fedora_strongswan_ipsec.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/services/vpn/device_drivers/ipsec.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/services/vpn/device_drivers/libreswan_ipsec.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/services/vpn/device_drivers/solaris_ipsec.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/services/vpn/device_drivers/strongswan_ipsec.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/services/vpn/device_drivers/template/openswan/ipsec.conf.template
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/services/vpn/device_drivers/template/openswan/ipsec.secret.template
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/services/vpn/device_drivers/template/solaris/ike.secret.template
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/services/vpn/device_drivers/template/solaris/ike.template
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/services/vpn/device_drivers/template/solaris/ikev2.secret.template
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/services/vpn/device_drivers/template/solaris/ikev2.template
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/services/vpn/device_drivers/template/solaris/ipsecinit.conf.template
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/services/vpn/device_drivers/template/strongswan/ipsec.conf.template
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/services/vpn/device_drivers/template/strongswan/ipsec.secret.template
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/services/vpn/device_drivers/template/strongswan/strongswan.conf.template
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/services/vpn/device_drivers/vyatta_ipsec.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/services/vpn/plugin.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/services/vpn/service_drivers/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/services/vpn/service_drivers/base_ipsec.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/services/vpn/service_drivers/cisco_csr_db.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/services/vpn/service_drivers/cisco_ipsec.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/services/vpn/service_drivers/cisco_validator.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/services/vpn/service_drivers/ipsec.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/services/vpn/service_drivers/vyatta_ipsec.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/services/vpn/vpn_service.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/services/vpn/vyatta_agent.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/services/vpn/vyatta_vpn_service.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron_vpnaas/version.py
+#
 dir  path=var/lib/neutron owner=neutron group=neutron mode=0700
 link path=var/lib/quantum target=neutron
 #
@@ -976,11 +950,18 @@ group groupname=neutron gid=84
 user username=neutron ftpuser=false gcos-field="OpenStack Neutron" \
     group=neutron home-dir=/var/lib/neutron uid=84
 #
-license neutron.license license="Apache v2.0"
+license neutron.license license="Apache v2.0" \
+    com.oracle.info.description="Neutron, the OpenStack virtual network service" \
+    com.oracle.info.name=$(COMPONENT_NAME) com.oracle.info.tpno=$(TPNO) \
+    com.oracle.info.version=$(COMPONENT_VERSION)
+license neutron-vpnaas.license license="Apache v2.0 (neutron-vpnaas)" \
+    com.oracle.info.description="a VPNaaS plugin for Neutron" \
+    com.oracle.info.name=$(COMPONENT_NAME_1) \
+    com.oracle.info.tpno=$(TPNO_VPNAAS) \
+    com.oracle.info.version=$(COMPONENT_VERSION)
 
-# force a group dependency on the optional anyjson; pkgdepend work is needed to
-# flush this out.
-depend type=group fmri=library/python/anyjson-$(PYV)
+# To upgrade to Kilo version, Juno version of the package must be on the system
+depend type=origin fmri=cloud/openstack/neutron@0.2014.2.2 root-image=true
 
 # force a dependency on package delivering dnsmasq(8)
 depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/inet/dnsmasq
@@ -1006,12 +987,6 @@ depend type=require fmri=__TBD pkg.debug.depend.file=usr/sbin/ipnat
 # force a dependency on package delivering ippool(1M)
 depend type=require fmri=__TBD pkg.debug.depend.file=usr/sbin/ippool
 
-# force a dependency on alembic; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/alembic-$(PYV)
-
-# force a dependency on babel; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/babel-$(PYV)
-
 # force a dependency on cliff; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/cliff-$(PYV)
 
@@ -1021,14 +996,8 @@ depend type=require fmri=library/python/greenlet-$(PYV)
 # force a dependency on httplib2; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/httplib2-$(PYV)
 
-# force a dependency on iso8601; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/iso8601-$(PYV)
-
 # force a dependency on jinja2; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/jinja2-$(PYV)
-
-# force a dependency on jsonrpclib; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/jsonrpclib-$(PYV)
 
 # force a dependency on keystoneclient; pkgdepend work is needed to flush this
 # out.
@@ -1044,9 +1013,34 @@ depend type=require fmri=library/python/neutronclient-$(PYV)
 # force a dependency on novaclient; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/novaclient-$(PYV)
 
+# force a dependency on oslo.concurrency; pkgdepend work is needed to flush this
+# out.
+depend type=require fmri=library/python/oslo.concurrency-$(PYV)
+
+# force a dependency on oslo.context; pkgdepend work is needed to flush this
+# out.
+depend type=require fmri=library/python/oslo.context-$(PYV)
+
+# force a dependency on oslo.i18n; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/oslo.i18n-$(PYV)
+
+# force a dependency on oslo.log; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/oslo.log-$(PYV)
+
 # force a dependency on oslo.messaging; pkgdepend work is needed to flush this
 # out.
 depend type=require fmri=library/python/oslo.messaging-$(PYV)
+
+# force a dependency on oslo.middleware; pkgdepend work is needed to flush this
+# out.
+depend type=require fmri=library/python/oslo.middleware-$(PYV)
+
+# force a dependency on oslo.serialization; pkgdepend work is needed to flush
+# this out.
+depend type=require fmri=library/python/oslo.serialization-$(PYV)
+
+# force a dependency on oslo.utils; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/oslo.utils-$(PYV)
 
 # force a dependency on paste.deploy; pkgdepend work is needed to flush this
 # out.
@@ -1057,6 +1051,9 @@ depend type=require fmri=library/python/pbr-$(PYV)
 
 # force a dependency on requests; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/requests-$(PYV)
+
+# force a dependency on retrying; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/retrying-$(PYV)
 
 # force a dependency on routes; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/routes-$(PYV)

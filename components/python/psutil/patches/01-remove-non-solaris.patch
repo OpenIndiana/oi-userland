@@ -1,0 +1,84 @@
+Patch to remove imports from non-Solaris platforms.  This patch will
+not be submitted upstream.
+
+--- psutil-1.2.1/psutil/__init__.py.orig 2015-03-30 13:46:25.317089988 -0600
++++ psutil-1.2.1/psutil/__init__.py 2015-03-30 13:47:05.416389522 -0600
+@@ -84,76 +84,8 @@ from psutil._common import (CONN_ESTABLI
+                             CONN_CLOSING,
+                             CONN_NONE)
+
+-if sys.platform.startswith("linux"):
+-    import psutil._pslinux as _psplatform
+-    from psutil._pslinux import (phymem_buffers,
+-                                 cached_phymem)
+-
+-    from psutil._pslinux import (IOPRIO_CLASS_NONE,
+-                                 IOPRIO_CLASS_RT,
+-                                 IOPRIO_CLASS_BE,
+-                                 IOPRIO_CLASS_IDLE)
+-    # Linux >= 2.6.36
+-    if _psplatform.HAS_PRLIMIT:
+-        from psutil._pslinux import (RLIM_INFINITY,
+-                                     RLIMIT_AS,
+-                                     RLIMIT_CORE,
+-                                     RLIMIT_CPU,
+-                                     RLIMIT_DATA,
+-                                     RLIMIT_FSIZE,
+-                                     RLIMIT_LOCKS,
+-                                     RLIMIT_MEMLOCK,
+-                                     RLIMIT_NOFILE,
+-                                     RLIMIT_NPROC,
+-                                     RLIMIT_RSS,
+-                                     RLIMIT_STACK)
+-        # Kinda ugly but considerably faster than using hasattr() and
+-        # setattr() against the module object (we are at import time
+-        # and we demand speed).
+-        try:
+-            RLIMIT_MSGQUEUE = _psplatform.RLIMIT_MSGQUEUE
+-        except AttributeError:
+-            pass
+-        try:
+-            RLIMIT_NICE = _psplatform.RLIMIT_NICE
+-        except AttributeError:
+-            pass
+-        try:
+-            RLIMIT_RTPRIO = _psplatform.RLIMIT_RTPRIO
+-        except AttributeError:
+-            pass
+-        try:
+-            RLIMIT_RTTIME = _psplatform.RLIMIT_RTTIME
+-        except AttributeError:
+-            pass
+-        try:
+-            RLIMIT_SIGPENDING = _psplatform.RLIMIT_SIGPENDING
+-        except AttributeError:
+-            pass
+-
+-elif sys.platform.startswith("win32"):
+-    import psutil._psmswindows as _psplatform
+-    from psutil._psmswindows import (ABOVE_NORMAL_PRIORITY_CLASS,
+-                                     BELOW_NORMAL_PRIORITY_CLASS,
+-                                     HIGH_PRIORITY_CLASS,
+-                                     IDLE_PRIORITY_CLASS,
+-                                     NORMAL_PRIORITY_CLASS,
+-                                     REALTIME_PRIORITY_CLASS,
+-                                     CONN_DELETE_TCB)
+-
+-elif sys.platform.startswith("darwin"):
+-    import psutil._psosx as _psplatform
+-
+-elif sys.platform.startswith("freebsd"):
+-    import psutil._psbsd as _psplatform
+-
+-elif sys.platform.startswith("sunos"):
+-    import psutil._pssunos as _psplatform
+-    from psutil._pssunos import (CONN_IDLE,
+-                                 CONN_BOUND)
+-
+-else:
+-    raise NotImplementedError('platform %s is not supported' % sys.platform)
++import psutil._pssunos as _psplatform
++from psutil._pssunos import (CONN_IDLE, CONN_BOUND)
+
+ __all__.extend(_psplatform.__extra__all__)
+

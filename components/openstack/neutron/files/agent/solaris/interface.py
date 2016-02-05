@@ -14,16 +14,17 @@
 #
 # @author: Girish Moodalbail, Oracle, Inc.
 
-import rad.bindings.com.oracle.solaris.rad.evscntl_1 as evsbind
+
 import rad.client as radcli
 import rad.connect as radcon
+import rad.bindings.com.oracle.solaris.rad.evscntl_1 as evsbind
 
-from oslo.config import cfg
+from oslo_config import cfg
+from oslo_log import log as logging
 
 from neutron.agent.linux import utils
 from neutron.agent.solaris import net_lib
 from neutron.common import exceptions
-from neutron.openstack.common import log as logging
 
 
 LOG = logging.getLogger(__name__)

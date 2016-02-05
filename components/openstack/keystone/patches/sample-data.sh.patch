@@ -1,28 +1,53 @@
-In-house patch to the sample_data.sh script installed in
-/usr/demo/openstack/keystone in order to support all of the standard
-services and to allow customization of the individual service
-endpoints.  Solaris-specific patch and is not suitable for upstream
+Update the upstream sample-data.sh script for Solaris shell tools,
+additional OpenStack components, and the deprecation of keystone(1) in
+lieu of openstack(1) in Kilo.
 
-It also includes a change to use the standard Solaris tr(1) rather than
-GNU sed.
-
---- keystone-2014.2.rc1/tools/sample_data.sh.~1~	2014-09-30 00:14:14.000000000 -0700
-+++ keystone-2014.2.rc1/tools/sample_data.sh	2014-10-13 00:53:30.614564163 -0700
+This patch is Solaris-specific and not suitable for upstream
+contribution.
+--- keystone-2015.1.2/tools/sample_data.sh.orig	2016-01-12 14:41:47.118476961 -0500
++++ keystone-2015.1.2/tools/sample_data.sh	2016-01-12 14:49:03.317361531 -0500
 @@ -2,6 +2,8 @@
  
  # Copyright 2013 OpenStack Foundation
  #
-+# Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
++# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 +#
  # Licensed under the Apache License, Version 2.0 (the "License"); you may
  # not use this file except in compliance with the License. You may obtain
  # a copy of the License at
-@@ -36,22 +38,47 @@
- # service              nova      admin
- # service              ec2       admin
- # service              swift     admin
-+# service              cinder    admin
-+# service              neutron   admin
+@@ -19,8 +21,8 @@
+ # This script is based on the original DevStack keystone_data.sh script.
+ #
+ # It demonstrates how to bootstrap Keystone with an administrative user
+-# using the OS_SERVICE_TOKEN and OS_SERVICE_ENDPOINT environment variables
+-# and the administrative API.  It will get the admin_token (OS_SERVICE_TOKEN)
++# using the OS_TOKEN and OS_URL environment variables
++# and the administrative API.  It will get the admin_token (OS_TOKEN)
+ # and admin_port from keystone.conf if available.
+ #
+ # Disable creation of endpoints by setting DISABLE_ENDPOINTS environment variable.
+@@ -29,29 +31,67 @@
+ # A EC2-compatible credential is created for the admin user and
+ # placed in etc/ec2rc.
+ #
+-# Tenant               User      Roles
+-# -------------------------------------------------------
+-# demo                 admin     admin
+-# service              glance    admin
+-# service              nova      admin
+-# service              ec2       admin
+-# service              swift     admin
++# Tenant               User       Roles
++# --------------------------------------------------------
++# demo                 admin      admin
++# service              glance     admin
++# service              nova       admin
++# service              ec2        admin
++# service              swift      admin
++# service              cinder     admin
++# service              neutron    admin
++# service              heat       admin
++# service              ironic     admin
  
  # By default, passwords used are those in the OpenStack Install and Deploy Manual.
  # One can override these (publicly known, and hence, insecure) passwords by setting the appropriate
@@ -39,6 +64,8 @@ GNU sed.
 +SWIFT_PASSWORD=${SWIFT_PASSWORD:-${SERVICE_PASSWORD:-swift}}
 +CINDER_PASSWORD=${CINDER_PASSWORD:-${SERVICE_PASSWORD:-cinder}}
 +NEUTRON_PASSWORD=${NEUTRON_PASSWORD:-${SERVICE_PASSWORD:-neutron}}
++HEAT_PASSWORD=${HEAT_PASSWORD:-${SERVICE_PASSWORD:-heat}}
++IRONIC_PASSWORD=${IRONIC_PASSWORD:-${SERVICE_PASSWORD:-ironic}}
  
  CONTROLLER_PUBLIC_ADDRESS=${CONTROLLER_PUBLIC_ADDRESS:-localhost}
  CONTROLLER_ADMIN_ADDRESS=${CONTROLLER_ADMIN_ADDRESS:-localhost}
@@ -62,138 +89,352 @@ GNU sed.
 +NEUTRON_PUBLIC_ADDRESS=${NEUTRON_PUBLIC_ADDRESS:-$CONTROLLER_PUBLIC_ADDRESS}
 +NEUTRON_ADMIN_ADDRESS=${NEUTRON_ADMIN_ADDRESS:-$CONTROLLER_ADMIN_ADDRESS}
 +NEUTRON_INTERNAL_ADDRESS=${NEUTRON_INTERNAL_ADDRESS:-$CONTROLLER_INTERNAL_ADDRESS}
++IRONIC_PUBLIC_ADDRESS=${IRONIC_PUBLIC_ADDRESS:-$CONTROLLER_PUBLIC_ADDRESS}
++IRONIC_ADMIN_ADDRESS=${IRONIC_ADMIN_ADDRESS:-$CONTROLLER_ADMIN_ADDRESS}
++IRONIC_INTERNAL_ADDRESS=${IRONIC_INTERNAL_ADDRESS:-$CONTROLLER_INTERNAL_ADDRESS}
++HEAT_CFN_PUBLIC_ADDRESS=${HEAT_CFN_PUBLIC_ADDRESS:-$CONTROLLER_PUBLIC_ADDRESS}
++HEAT_CFN_ADMIN_ADDRESS=${HEAT_CFN_ADMIN_ADDRESS:-$CONTROLLER_ADMIN_ADDRESS}
++HEAT_CFN_INTERNAL_ADDRESS=${HEAT_CFN_INTERNAL_ADDRESS:-$CONTROLLER_INTERNAL_ADDRESS}
++HEAT_PUBLIC_ADDRESS=${HEAT_PUBLIC_ADDRESS:-$CONTROLLER_PUBLIC_ADDRESS}
++HEAT_ADMIN_ADDRESS=${HEAT_ADMIN_ADDRESS:-$CONTROLLER_ADMIN_ADDRESS}
++HEAT_INTERNAL_ADDRESS=${HEAT_INTERNAL_ADDRESS:-$CONTROLLER_INTERNAL_ADDRESS}
 +
  TOOLS_DIR=$(cd $(dirname "$0") && pwd)
  KEYSTONE_CONF=${KEYSTONE_CONF:-/etc/keystone/keystone.conf}
  if [[ -r "$KEYSTONE_CONF" ]]; then
-@@ -67,8 +94,8 @@ fi
+@@ -67,169 +107,221 @@
  
  # Extract some info from Keystone's configuration file
  if [[ -r "$KEYSTONE_CONF" ]]; then
 -    CONFIG_SERVICE_TOKEN=$(sed 's/[[:space:]]//g' $KEYSTONE_CONF | grep ^admin_token= | cut -d'=' -f2)
+-    if [[ -z "${CONFIG_SERVICE_TOKEN}" ]]; then
+-        # default config options are commented out, so lets try those
+-        CONFIG_SERVICE_TOKEN=$(sed 's/[[:space:]]//g' $KEYSTONE_CONF | grep ^\#admin_token= | cut -d'=' -f2)
+-    fi
 -    CONFIG_ADMIN_PORT=$(sed 's/[[:space:]]//g' $KEYSTONE_CONF | grep ^admin_port= | cut -d'=' -f2)
+-    if [[ -z "${CONFIG_ADMIN_PORT}" ]]; then
+-        # default config options are commented out, so lets try those
+-        CONFIG_ADMIN_PORT=$(sed 's/[[:space:]]//g' $KEYSTONE_CONF | grep ^\#admin_port= | cut -d'=' -f2)
+-    fi
+-fi
+-
+-export OS_SERVICE_TOKEN=${OS_SERVICE_TOKEN:-$CONFIG_SERVICE_TOKEN}
+-if [[ -z "$OS_SERVICE_TOKEN" ]]; then
+-    echo "No service token found."
+-    echo "Set OS_SERVICE_TOKEN manually from keystone.conf admin_token."
+-    exit 1
 +    CONFIG_SERVICE_TOKEN=$(tr -d '[\t ]' < $KEYSTONE_CONF | grep ^admin_token= | cut -d'=' -f2)
 +    CONFIG_ADMIN_PORT=$(tr -d '[\t ]' < $KEYSTONE_CONF | grep ^admin_port= | cut -d'=' -f2)
  fi
  
- export OS_SERVICE_TOKEN=${OS_SERVICE_TOKEN:-$CONFIG_SERVICE_TOKEN}
-@@ -136,6 +163,22 @@ keystone user-role-add --user-id $SWIFT_
-                        --role-id $ADMIN_ROLE \
-                        --tenant-id $SERVICE_TENANT
+-export OS_SERVICE_ENDPOINT=${OS_SERVICE_ENDPOINT:-http://$CONTROLLER_PUBLIC_ADDRESS:${CONFIG_ADMIN_PORT:-35357}/v2.0}
++export OS_TOKEN=${OS_TOKEN:-$CONFIG_SERVICE_TOKEN}
++if [[ -z "$OS_TOKEN" ]]; then
++    echo "No authentication token found."
++    echo "Set OS_TOKEN manually from keystone.conf admin_token."
++    exit 1
++fi
  
-+CINDER_USER=$(get_id keystone user-create --name=cinder \
-+                                          --pass="${CINDER_PASSWORD}" \
-+                                          --tenant-id $SERVICE_TENANT)
+-function get_id () {
+-    echo `"$@" | grep ' id ' | awk '{print $4}'`
+-}
++export OS_URL=${OS_URL:-http://$CONTROLLER_PUBLIC_ADDRESS:${CONFIG_ADMIN_PORT:-35357}/v2.0}
+ 
+ #
+ # Default tenant
+ #
+-DEMO_TENANT=$(get_id keystone tenant-create --name=demo \
+-                                            --description "Default Tenant")
+-
+-ADMIN_USER=$(get_id keystone user-create --name=admin \
+-                                         --pass="${ADMIN_PASSWORD}")
++openstack project create --description "Default Tenant" demo
+ 
+-ADMIN_ROLE=$(get_id keystone role-create --name=admin)
+-
+-keystone user-role-add --user-id $ADMIN_USER \
+-                       --role-id $ADMIN_ROLE \
+-                       --tenant-id $DEMO_TENANT
++# Admin user/role
++openstack user create --project demo --password "${ADMIN_PASSWORD}" admin
++openstack role create admin
++openstack role add --user admin --project demo admin
+ 
+ #
+ # Service tenant
+ #
+-SERVICE_TENANT=$(get_id keystone tenant-create --name=service \
+-                                               --description "Service Tenant")
+-
+-GLANCE_USER=$(get_id keystone user-create --name=glance \
+-                                          --pass="${GLANCE_PASSWORD}")
++openstack project create --description "Service Tenant" service
+ 
+-keystone user-role-add --user-id $GLANCE_USER \
+-                       --role-id $ADMIN_ROLE \
+-                       --tenant-id $SERVICE_TENANT
+-
+-NOVA_USER=$(get_id keystone user-create --name=nova \
+-                                        --pass="${NOVA_PASSWORD}" \
+-                                        --tenant-id $SERVICE_TENANT)
+-
+-keystone user-role-add --user-id $NOVA_USER \
+-                       --role-id $ADMIN_ROLE \
+-                       --tenant-id $SERVICE_TENANT
+-
+-EC2_USER=$(get_id keystone user-create --name=ec2 \
+-                                       --pass="${EC2_PASSWORD}" \
+-                                       --tenant-id $SERVICE_TENANT)
+-
+-keystone user-role-add --user-id $EC2_USER \
+-                       --role-id $ADMIN_ROLE \
+-                       --tenant-id $SERVICE_TENANT
+-
+-SWIFT_USER=$(get_id keystone user-create --name=swift \
+-                                         --pass="${SWIFT_PASSWORD}" \
+-                                         --tenant-id $SERVICE_TENANT)
+-
+-keystone user-role-add --user-id $SWIFT_USER \
+-                       --role-id $ADMIN_ROLE \
+-                       --tenant-id $SERVICE_TENANT
++# Glance user
++openstack user create --project service --password "${GLANCE_PASSWORD}" glance
++openstack role add --user glance --project service admin
 +
-+keystone user-role-add --user-id $CINDER_USER \
-+                       --role-id $ADMIN_ROLE \
-+                       --tenant-id $SERVICE_TENANT
++# Nova user
++openstack user create --project service --password "${NOVA_PASSWORD}" nova
++openstack role add --user nova --project service admin
 +
-+NEUTRON_USER=$(get_id keystone user-create --name=neutron \
-+                                           --pass="${NEUTRON_PASSWORD}" \
-+                                           --tenant-id $SERVICE_TENANT)
++# EC2 user
++openstack user create --project service --password "${EC2_PASSWORD}" ec2
++openstack role add --user ec2 --project service admin
 +
-+keystone user-role-add --user-id $NEUTRON_USER \
-+                       --role-id $ADMIN_ROLE \
-+                       --tenant-id $SERVICE_TENANT
++# Swift user
++openstack user create --project service --password "${SWIFT_PASSWORD}" swift
++openstack role add --user swift --project service admin
 +
++# Cinder user
++openstack user create --project service --password "${CINDER_PASSWORD}"  cinder
++openstack role add --user cinder --project service admin
++
++# Neutron user
++openstack user create --project service --password "${NEUTRON_PASSWORD}" neutron
++openstack role add --user neutron --project service admin
++
++# Ironic user
++openstack user create --project service --password "${IRONIC_PASSWORD}" ironic
++openstack role add --user ironic --project service admin
++
++# Heat user
++openstack user create --project service --password "${HEAT_PASSWORD}" heat
++openstack role add --user heat --project service admin
+ 
  #
  # Keystone service
  #
-@@ -159,23 +202,23 @@ keystone service-create --name=nova \
-                         --description="Nova Compute Service")
+-KEYSTONE_SERVICE=$(get_id \
+-keystone service-create --name=keystone \
+-                        --type=identity \
+-                        --description="Keystone Identity Service")
++openstack service create --name keystone \
++                         --description "Keystone Identity Service" \
++                        identity
  if [[ -z "$DISABLE_ENDPOINTS" ]]; then
-     keystone endpoint-create --region RegionOne --service-id $NOVA_SERVICE \
+-    keystone endpoint-create --region RegionOne --service-id $KEYSTONE_SERVICE \
++    openstack endpoint create --region RegionOne \
+         --publicurl "http://$CONTROLLER_PUBLIC_ADDRESS:\$(public_port)s/v2.0" \
+         --adminurl "http://$CONTROLLER_ADMIN_ADDRESS:\$(admin_port)s/v2.0" \
+-        --internalurl "http://$CONTROLLER_INTERNAL_ADDRESS:\$(public_port)s/v2.0"
++        --internalurl "http://$CONTROLLER_INTERNAL_ADDRESS:\$(public_port)s/v2.0" \
++       keystone
+ fi
+ 
++
+ #
+ # Nova service
+ #
+-NOVA_SERVICE=$(get_id \
+-keystone service-create --name=nova \
+-                        --type=compute \
+-                        --description="Nova Compute Service")
++openstack service create --name nova \
++                         --description="Nova Compute Service" \
++                         compute
+ if [[ -z "$DISABLE_ENDPOINTS" ]]; then
+-    keystone endpoint-create --region RegionOne --service-id $NOVA_SERVICE \
 -        --publicurl "http://$CONTROLLER_PUBLIC_ADDRESS:8774/v2/\$(tenant_id)s" \
 -        --adminurl "http://$CONTROLLER_ADMIN_ADDRESS:8774/v2/\$(tenant_id)s" \
 -        --internalurl "http://$CONTROLLER_INTERNAL_ADDRESS:8774/v2/\$(tenant_id)s"
++    openstack endpoint create --region RegionOne \
 +        --publicurl "http://$NOVA_PUBLIC_ADDRESS:8774/v2/\$(tenant_id)s" \
 +        --adminurl "http://$NOVA_ADMIN_ADDRESS:8774/v2/\$(tenant_id)s" \
-+        --internalurl "http://$NOVA_INTERNAL_ADDRESS:8774/v2/\$(tenant_id)s"
++        --internalurl "http://$NOVA_INTERNAL_ADDRESS:8774/v2/\$(tenant_id)s" \
++       nova
  fi
  
++
  #
- # Volume service
+-# Volume service
++# Volume service - v1 and v2
  #
- VOLUME_SERVICE=$(get_id \
+-VOLUME_SERVICE=$(get_id \
 -keystone service-create --name=volume \
-+keystone service-create --name=cinder \
-                         --type=volume \
+-                        --type=volume \
 -                        --description="Nova Volume Service")
-+                        --description="Cinder Volume Service")
++openstack service create --name cinder \
++                         --description "Cinder Volume Service" \
++                        volume
++openstack service create --name cinderv2 \
++                         --description "Cinder Volume Service version 2" \
++                        volumev2
  if [[ -z "$DISABLE_ENDPOINTS" ]]; then
-     keystone endpoint-create --region RegionOne --service-id $VOLUME_SERVICE \
+-    keystone endpoint-create --region RegionOne --service-id $VOLUME_SERVICE \
 -        --publicurl "http://$CONTROLLER_PUBLIC_ADDRESS:8776/v1/\$(tenant_id)s" \
 -        --adminurl "http://$CONTROLLER_ADMIN_ADDRESS:8776/v1/\$(tenant_id)s" \
 -        --internalurl "http://$CONTROLLER_INTERNAL_ADDRESS:8776/v1/\$(tenant_id)s"
++    openstack endpoint create --region RegionOne \
 +        --publicurl "http://$CINDER_PUBLIC_ADDRESS:8776/v1/\$(tenant_id)s" \
 +        --adminurl "http://$CINDER_ADMIN_ADDRESS:8776/v1/\$(tenant_id)s" \
-+        --internalurl "http://$CINDER_INTERNAL_ADDRESS:8776/v1/\$(tenant_id)s"
++        --internalurl "http://$CINDER_INTERNAL_ADDRESS:8776/v1/\$(tenant_id)s" \
++       cinder
  fi
++if [[ -z "$DISABLE_ENDPOINTS" ]]; then
++    openstack endpoint create --region RegionOne \
++        --publicurl "http://$CINDER_PUBLIC_ADDRESS:8776/v2/\$(tenant_id)s" \
++        --adminurl "http://$CINDER_ADMIN_ADDRESS:8776/v2/\$(tenant_id)s" \
++        --internalurl "http://$CINDER_INTERNAL_ADDRESS:8776/v2/\$(tenant_id)s" \
++       cinderv2
++fi
++
  
  #
-@@ -187,9 +230,9 @@ keystone service-create --name=glance \
-                         --description="Glance Image Service")
- if [[ -z "$DISABLE_ENDPOINTS" ]]; then
-     keystone endpoint-create --region RegionOne --service-id $GLANCE_SERVICE \
+ # Image service
+ #
+-GLANCE_SERVICE=$(get_id \
+-keystone service-create --name=glance \
+-                        --type=image \
+-                        --description="Glance Image Service")
+-if [[ -z "$DISABLE_ENDPOINTS" ]]; then
+-    keystone endpoint-create --region RegionOne --service-id $GLANCE_SERVICE \
 -        --publicurl "http://$CONTROLLER_PUBLIC_ADDRESS:9292" \
 -        --adminurl "http://$CONTROLLER_ADMIN_ADDRESS:9292" \
 -        --internalurl "http://$CONTROLLER_INTERNAL_ADDRESS:9292"
++openstack service create --name glance \
++                         --description "Glance Image Service" \
++                        image
++if [[ -z "$DISABLE_ENDPOINTS" ]]; then
++    openstack endpoint create --region RegionOne \
 +        --publicurl "http://$GLANCE_PUBLIC_ADDRESS:9292" \
 +        --adminurl "http://$GLANCE_ADMIN_ADDRESS:9292" \
-+        --internalurl "http://$GLANCE_INTERNAL_ADDRESS:9292"
++        --internalurl "http://$GLANCE_INTERNAL_ADDRESS:9292" \
++       glance
  fi
  
++
  #
-@@ -201,9 +244,9 @@ keystone service-create --name=ec2 \
-                         --description="EC2 Compatibility Layer")
- if [[ -z "$DISABLE_ENDPOINTS" ]]; then
-     keystone endpoint-create --region RegionOne --service-id $EC2_SERVICE \
+ # EC2 service
+ #
+-EC2_SERVICE=$(get_id \
+-keystone service-create --name=ec2 \
+-                        --type=ec2 \
+-                        --description="EC2 Compatibility Layer")
+-if [[ -z "$DISABLE_ENDPOINTS" ]]; then
+-    keystone endpoint-create --region RegionOne --service-id $EC2_SERVICE \
 -        --publicurl "http://$CONTROLLER_PUBLIC_ADDRESS:8773/services/Cloud" \
 -        --adminurl "http://$CONTROLLER_ADMIN_ADDRESS:8773/services/Admin" \
 -        --internalurl "http://$CONTROLLER_INTERNAL_ADDRESS:8773/services/Cloud"
++openstack service create --name ec2 \
++                         --description "EC2 Compatibility Layer" \
++                        ec2
++if [[ -z "$DISABLE_ENDPOINTS" ]]; then
++    openstack endpoint create --region RegionOne \
 +        --publicurl "http://$EC2_PUBLIC_ADDRESS:8773/services/Cloud" \
 +        --adminurl "http://$EC2_ADMIN_ADDRESS:8773/services/Admin" \
-+        --internalurl "http://$EC2_INTERNAL_ADDRESS:8773/services/Cloud"
++        --internalurl "http://$EC2_INTERNAL_ADDRESS:8773/services/Cloud" \
++       ec2
  fi
  
++
  #
-@@ -212,15 +255,34 @@ fi
- SWIFT_SERVICE=$(get_id \
- keystone service-create --name=swift \
-                         --type="object-store" \
+ # Swift service
+ #
+-SWIFT_SERVICE=$(get_id \
+-keystone service-create --name=swift \
+-                        --type="object-store" \
 -                        --description="Swift Service")
-+                        --description="Swift Object Store Service")
- if [[ -z "$DISABLE_ENDPOINTS" ]]; then
-     keystone endpoint-create --region RegionOne --service-id $SWIFT_SERVICE \
+-if [[ -z "$DISABLE_ENDPOINTS" ]]; then
+-    keystone endpoint-create --region RegionOne --service-id $SWIFT_SERVICE \
 -        --publicurl   "http://$CONTROLLER_PUBLIC_ADDRESS:8080/v1/AUTH_\$(tenant_id)s" \
 -        --adminurl    "http://$CONTROLLER_ADMIN_ADDRESS:8080/v1" \
 -        --internalurl "http://$CONTROLLER_INTERNAL_ADDRESS:8080/v1/AUTH_\$(tenant_id)s"
++openstack service create --name swift \
++                         --description "Swift Object Store Service" \
++                        object-store
++if [[ -z "$DISABLE_ENDPOINTS" ]]; then
++    openstack endpoint create --region RegionOne \
 +        --publicurl "http://$SWIFT_PUBLIC_ADDRESS:8080/v1/AUTH_\$(tenant_id)s" \
 +        --adminurl "http://$SWIFT_ADMIN_ADDRESS:8080/v1" \
-+        --internalurl "http://$SWIFT_INTERNAL_ADDRESS:8080/v1/AUTH_\$(tenant_id)s"
++        --internalurl "http://$SWIFT_INTERNAL_ADDRESS:8080/v1/AUTH_\$(tenant_id)s" \
++       swift
 +fi
++
 +
 +#
 +# Neutron service
 +#
-+NEUTRON_SERVICE=$(get_id \
-+keystone service-create --name=neutron \
-+                        --type=network \
-+                        --description="Neutron Network Service")
++openstack service create --name neutron \
++                         --description "Neutron Network Service" \
++                        network
 +if [[ -z "$DISABLE_ENDPOINTS" ]]; then
-+    keystone endpoint-create --region RegionOne --service-id $NEUTRON_SERVICE \
++    openstack endpoint create --region RegionOne \
 +        --publicurl "http://$NEUTRON_PUBLIC_ADDRESS:9696/" \
 +        --adminurl "http://$NEUTRON_ADMIN_ADDRESS:9696/" \
-+        --internalurl "http://$NEUTRON_INTERNAL_ADDRESS:9696/"
++        --internalurl "http://$NEUTRON_INTERNAL_ADDRESS:9696/" \
++       neutron
++fi
++
++#
++# Ironic service
++#
++openstack service create --name ironic \
++                        --description "Bare Metal Provisioning Service" \
++                        baremetal
++if [[ -z "$DISABLE_ENDPOINTS" ]]; then
++    openstack endpoint create --region RegionOne \
++        --publicurl "http://$IRONIC_PUBLIC_ADDRESS:6385/" \
++        --adminurl "http://$IRONIC_ADMIN_ADDRESS:6385/" \
++        --internalurl "http://$IRONIC_INTERNAL_ADDRESS:6385/" \
++       ironic
++fi
++
++#
++# Heat services
++#
++openstack service create --name heat-cfn \
++                        --description "Heat CloudFormation API" \
++                        cloudformation
++
++openstack service create --name heat \
++                        --description "Heat API" \
++                        orchestration
++
++if [[ -z "$DISABLE_ENDPOINTS" ]]; then
++    openstack endpoint create --region RegionOne \
++        --publicurl "http://$HEAT_CFN_PUBLIC_ADDRESS:8000/v1" \
++        --adminurl "http://$HEAT_CFN_ADMIN_ADDRESS:8000/v1" \
++        --internalurl "http://$HEAT_CFN_INTERNAL_ADDRESS:8000/v1" \
++       heat-cfn
++
++    openstack endpoint create --region RegionOne \
++        --publicurl "http://$HEAT_PUBLIC_ADDRESS:8004/v1/\$(tenant_id)s" \
++        --adminurl "http://$HEAT_ADMIN_ADDRESS:8004/v1/\$(tenant_id)s" \
++        --internalurl "http://$HEAT_INTERNAL_ADDRESS:8004/v1/\$(tenant_id)s" \
++       heat
  fi
  
  # create ec2 creds and parse the secret and access key returned
-+unset SERVICE_ENDPOINT SERVICE_TOKEN
-+export OS_AUTH_URL=http://localhost:5000/v2.0
-+export OS_PASSWORD="${ADMIN_PASSWORD}"
-+export OS_TENANT_NAME=demo
-+export OS_USERNAME=admin
- RESULT=$(keystone ec2-credentials-create --tenant-id=$SERVICE_TENANT --user-id=$ADMIN_USER)
+-RESULT=$(keystone ec2-credentials-create --tenant-id=$SERVICE_TENANT --user-id=$ADMIN_USER)
++RESULT=$(openstack ec2 credentials create --project service --user admin)
  ADMIN_ACCESS=`echo "$RESULT" | grep access | awk '{print $4}'`
  ADMIN_SECRET=`echo "$RESULT" | grep secret | awk '{print $4}'`
+ 

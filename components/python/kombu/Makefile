@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		kombu
-COMPONENT_VERSION=	3.0.7
+COMPONENT_VERSION=	3.0.32
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:1aed91b4e58c5114069b9432d229a6b8564f63000f50b03de1c514f2bdd42f1b
+    sha256:d3edda02076ae04fa62d128007756f4c4298fe479119ca070a47a22afe867660
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://kombu.readthedocs.org/
 COMPONENT_BUGDB=	python-mod/kombu
 
-TPNO=			21722
+TPNO=			26421
 
 # Depends on pyrabbit which depends on httplib2 which has its own dependency
 # issues (see its Makefile for details).  So don't build for Python 3 until

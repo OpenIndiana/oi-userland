@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		python-glanceclient
-COMPONENT_VERSION=	0.15.0
+COMPONENT_VERSION=	0.17.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:491805e7ef2f35aaafd124af6f49347a440c4e8fa5f4fb0dd61f0666eee360d0
+    sha256:56ca8fe2c4f33d9dd9b045073bdd0dba09b1f6ef7af978175966d262678ecd0e
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://launchpad.net/python-glanceclient
 COMPONENT_BUGDB=	service/glance
 
-TPNO=			21731
+TPNO=			25751
 
 # Depends on keystoneclient & oslo.utils which are not Python 3 ready.
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)

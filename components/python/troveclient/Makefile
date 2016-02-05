@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		python-troveclient
-COMPONENT_VERSION=	1.0.8
+COMPONENT_VERSION=	1.0.9
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:613adcd3aac54b57f3347b21d36bf22e4092170e434535e91aadb2e46a67536d
+    sha256:ed9fad408c249a37e779a305cadb5cdecc656891eed27bc34b9d99f425a3fd69
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://launchpad.net/python-troveclient
 COMPONENT_BUGDB=	service/trove
 
-TPNO=			21737
+TPNO=			25759
 
 # Depends on keystoneclient which is not Python 3 ready.
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)

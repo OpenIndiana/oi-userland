@@ -1,9 +1,9 @@
 In-house patch to fix a long standing "TODO" for adding the context
 argument to the confirm_migration() function.
 
---- ./nova/virt/driver.py.~1~	2015-07-06 14:54:33.047120275 -0700
-+++ ./nova/virt/driver.py	2015-07-06 14:54:38.753366130 -0700
-@@ -532,7 +532,7 @@ class ComputeDriver(object):
+--- ./nova/virt/driver.py.~1~	2015-04-30 05:26:32.000000000 -0600
++++ ./nova/virt/driver.py		2015-09-28 11:18:42.678804501 -0600
+@@ -526,7 +526,7 @@ class ComputeDriver(object):
          """
          raise NotImplementedError()
  
@@ -12,9 +12,9 @@ argument to the confirm_migration() function.
          """Confirms a resize, destroying the source VM.
  
          :param instance: nova.objects.instance.Instance
---- ./nova/virt/hyperv/driver.py.~1~	2015-07-06 14:54:08.762060896 -0700
-+++ ./nova/virt/hyperv/driver.py	2015-07-06 14:54:15.312335765 -0700
-@@ -205,7 +205,7 @@ class HyperVDriver(driver.ComputeDriver)
+--- ./nova/virt/hyperv/driver.py.~1~	2015-04-30 05:26:19.000000000 -0600
++++ ./nova/virt/hyperv/driver.py		2015-09-28 11:18:42.679315474 -0600
+@@ -213,7 +213,7 @@ class HyperVDriver(driver.ComputeDriver)
                                                               timeout,
                                                               retry_interval)
  
@@ -23,9 +23,9 @@ argument to the confirm_migration() function.
          self._migrationops.confirm_migration(migration, instance, network_info)
  
      def finish_revert_migration(self, context, instance, network_info,
---- ./nova/virt/hyperv/migrationops.py.~1~	2015-07-06 14:54:01.054149365 -0700
-+++ ./nova/virt/hyperv/migrationops.py	2015-07-06 14:54:07.641370995 -0700
-@@ -134,7 +134,7 @@ class MigrationOps(object):
+--- ./nova/virt/hyperv/migrationops.py.~1~	2015-04-30 05:26:19.000000000 -0600
++++ ./nova/virt/hyperv/migrationops.py		2015-09-28 11:18:42.679774671 -0600
+@@ -133,7 +133,7 @@ class MigrationOps(object):
          # disk_info is not used
          return ""
  
@@ -33,32 +33,32 @@ argument to the confirm_migration() function.
 +    def confirm_migration(self, context, migration, instance, network_info):
          LOG.debug("confirm_migration called", instance=instance)
  
-         self._pathutils.get_instance_migr_revert_dir(instance['name'],
---- ./nova/virt/vmwareapi/driver.py.~1~	2015-07-06 14:54:25.357745275 -0700
-+++ ./nova/virt/vmwareapi/driver.py	2015-07-06 14:54:31.960294652 -0700
-@@ -240,7 +240,7 @@ class VMwareVCDriver(driver.ComputeDrive
-         return _vmops.migrate_disk_and_power_off(context, instance,
-                                                  dest, flavor)
+         self._pathutils.get_instance_migr_revert_dir(instance.name,
+--- ./nova/virt/vmwareapi/driver.py.~1~	2015-04-30 05:26:32.000000000 -0600
++++ ./nova/virt/vmwareapi/driver.py	2015-09-28 11:18:42.680389230 -0600
+@@ -280,7 +280,7 @@ class VMwareVCDriver(driver.ComputeDrive
+         return self._vmops.migrate_disk_and_power_off(context, instance,
+                                                       dest, flavor)
  
 -    def confirm_migration(self, migration, instance, network_info):
 +    def confirm_migration(self, context, migration, instance, network_info):
          """Confirms a resize, destroying the source VM."""
-         _vmops = self._get_vmops_for_compute_node(instance['node'])
-         _vmops.confirm_migration(migration, instance, network_info)
---- ./nova/virt/vmwareapi/vmops.py.~1~	2015-07-06 14:54:16.425639034 -0700
-+++ ./nova/virt/vmwareapi/vmops.py	2015-07-06 14:54:24.242155495 -0700
-@@ -1038,7 +1038,7 @@ class VMwareVMOps(object):
-                                        step=3,
+         self._vmops.confirm_migration(migration, instance, network_info)
+ 
+--- ./nova/virt/vmwareapi/vmops.py.~1~	2015-04-30 05:26:32.000000000 -0600
++++ ./nova/virt/vmwareapi/vmops.py	2015-09-28 11:18:42.681486983 -0600
+@@ -1198,7 +1198,7 @@ class VMwareVMOps(object):
+                                        step=4,
                                         total_steps=RESIZE_TOTAL_STEPS)
  
 -    def confirm_migration(self, migration, instance, network_info):
 +    def confirm_migration(self, context, migration, instance, network_info):
          """Confirms a resize, destroying the source VM."""
-         # Destroy the original VM. The vm_ref needs to be searched using the
-         # instance.uuid + self._migrate_suffix as the identifier. We will
---- ./nova/virt/xenapi/driver.py.~1~	2015-07-06 14:54:39.888243081 -0700
-+++ ./nova/virt/xenapi/driver.py	2015-07-06 14:54:57.800183720 -0700
-@@ -203,9 +203,8 @@ class XenAPIDriver(driver.ComputeDriver)
+         vm_ref = vm_util.get_vm_ref(self._session, instance)
+         vmdk = vm_util.get_vmdk_info(self._session, vm_ref,
+--- ./nova/virt/xenapi/driver.py.~1~	2015-04-30 05:26:19.000000000 -0600
++++ ./nova/virt/xenapi/driver.py		2015-09-28 11:18:42.682013351 -0600
+@@ -191,9 +191,8 @@ class XenAPIDriver(driver.ComputeDriver)
          self._vmops.spawn(context, instance, image_meta, injected_files,
                            admin_password, network_info, block_device_info)
  
@@ -69,8 +69,8 @@ argument to the confirm_migration() function.
          self._vmops.confirm_migration(migration, instance, network_info)
  
      def finish_revert_migration(self, context, instance, network_info,
---- ./nova/virt/xenapi/vmops.py.~1~	2015-07-06 14:54:59.066221974 -0700
-+++ ./nova/virt/xenapi/vmops.py	2015-07-06 14:55:06.185514152 -0700
+--- ./nova/virt/xenapi/vmops.py.~1~	2015-04-30 05:26:19.000000000 -0600
++++ ./nova/virt/xenapi/vmops.py		2015-09-28 11:18:42.682852646 -0600
 @@ -203,7 +203,7 @@ class VMOps(object):
                  nova_uuids.append(nova_uuid)
          return nova_uuids
@@ -80,9 +80,9 @@ argument to the confirm_migration() function.
          self._destroy_orig_vm(instance, network_info)
  
      def _destroy_orig_vm(self, instance, network_info):
---- ./nova/virt/fake.py.~1~	2015-07-06 14:53:48.635021003 -0700
-+++ ./nova/virt/fake.py	2015-07-06 14:53:59.952265943 -0700
-@@ -434,7 +434,7 @@ class FakeDriver(driver.ComputeDriver):
+--- ./nova/virt/fake.py.~1~	2015-04-30 05:26:32.000000000 -0600
++++ ./nova/virt/fake.py		2015-09-28 11:18:42.683360500 -0600
+@@ -488,7 +488,7 @@ class FakeDriver(driver.ComputeDriver):
                           block_device_info=None, power_on=True):
          return
  
@@ -90,10 +90,10 @@ argument to the confirm_migration() function.
 +    def confirm_migration(self, context, migration, instance, network_info):
          return
  
-     def pre_live_migration(self, context, instance_ref, block_device_info,
---- ./nova/virt/libvirt/driver.py.~1~	2015-07-06 14:55:07.301721887 -0700
-+++ ./nova/virt/libvirt/driver.py	2015-07-06 14:55:13.513983532 -0700
-@@ -6095,7 +6095,7 @@ class LibvirtDriver(driver.ComputeDriver
+     def pre_live_migration(self, context, instance, block_device_info,
+--- ./nova/virt/libvirt/driver.py.~1~	2015-04-30 05:26:32.000000000 -0600
++++ ./nova/virt/libvirt/driver.py		2015-09-28 11:18:42.685306371 -0600
+@@ -6517,7 +6517,7 @@ class LibvirtDriver(driver.ComputeDriver
                                                      instance)
              timer.start(interval=0.5).wait()
  
@@ -102,9 +102,9 @@ argument to the confirm_migration() function.
          """Confirms a resize, destroying the source VM."""
          self._cleanup_resize(instance, network_info)
  
---- ./nova/compute/manager.py.~1~	2015-07-06 14:56:34.328028956 -0700
-+++ ./nova/compute/manager.py	2015-07-06 14:56:48.919044192 -0700
-@@ -3431,7 +3431,7 @@ class ComputeManager(manager.Manager):
+--- ./nova/compute/manager.py.~1~	2015-04-30 05:26:32.000000000 -0600
++++ ./nova/compute/manager.py	2015-09-28 11:18:42.687005117 -0600
+@@ -3700,7 +3700,7 @@ class ComputeManager(manager.Manager):
                                 migration.source_compute, teardown=True)
  
              network_info = self._get_instance_nw_info(context, instance)

@@ -19,20 +19,41 @@ import sys
 
 import smf_include
 
-from subprocess import CalledProcessError, check_call
+from subprocess import CalledProcessError, check_call, Popen
+
+
+def httpd(cmd):
+    cmd = ['/usr/apache2/2.4/bin/httpd', '-f',
+           '/var/lib/keystone/keystone.httpd.conf', '-k', cmd]
+    try:
+        Popen(cmd, stdout=sys.stdout, stderr=sys.stderr)
+    except CalledProcessError as err:
+        print >> sys.stderr, 'Error executing %s: %s' % (cmd, err)
+        sys.exit(smf_include.SMF_EXIT_ERR_FATAL)
+
+    sys.exit(smf_include.SMF_EXIT_OK)
 
 
 def start():
     # sync the database to make sure it's ready
-    cmd = ["/usr/bin/keystone-manage", "db_sync"]
+    cmd = ['/usr/bin/keystone-manage', 'db_sync']
     try:
         check_call(cmd)
     except CalledProcessError as err:
-        print "Unable to create database for Keystone:  %s" % err
+        print 'Unable to create database for Keystone:  %s' % err
         sys.exit(smf_include.SMF_EXIT_ERR_CONFIG)
 
-    smf_include.smf_subprocess("/usr/lib/keystone/keystone-all")
+    httpd('start')
 
-if __name__ == "__main__":
-    os.putenv("LC_ALL", "C")
+
+def stop():
+    httpd('stop')
+
+
+def restart():
+    httpd('restart')
+
+
+if __name__ == '__main__':
+    os.putenv('LC_ALL', 'C')
     smf_include.smf_main()

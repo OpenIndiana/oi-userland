@@ -1,70 +1,77 @@
-*** neutron-2014.2.2/neutron/agent/l3_agent.py	2015-02-05 07:45:33.000000000 -0800
---- NEW/neutron/agent/l3_agent.py	2015-02-06 11:10:53.164349168 -0800
-***************
-*** 1,5 ****
---- 1,7 ----
-  # Copyright 2012 VMware, Inc.  All rights reserved.
-  #
-+ # Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
-+ #
-  #    Licensed under the Apache License, Version 2.0 (the "License"); you may
-  #    not use this file except in compliance with the License. You may obtain
-  #    a copy of the License at
-***************
-*** 13,18 ****
---- 15,21 ----
-  #    under the License.
-  #
-  
-+ import platform
-  import sys
-  
-  import datetime
-***************
-*** 33,38 ****
---- 36,42 ----
-  from neutron.agent.linux import iptables_manager
-  from neutron.agent.linux import ra
-  from neutron.agent import rpc as agent_rpc
-+ from neutron.agent.solaris import ipfilters_manager
-  from neutron.common import config as common_config
-  from neutron.common import constants as l3_constants
-  from neutron.common import ipv6_utils
-***************
-*** 257,266 ****
-          # Invoke the setter for establishing initial SNAT action
-          self.router = router
-          self.ns_name = NS_PREFIX + router_id if use_namespaces else None
-!         self.iptables_manager = iptables_manager.IptablesManager(
-!             root_helper=root_helper,
-!             use_ipv6=use_ipv6,
-!             namespace=self.ns_name)
-          self.snat_iptables_manager = None
-          self.routes = []
-          # DVR Data
---- 261,274 ----
-          # Invoke the setter for establishing initial SNAT action
-          self.router = router
-          self.ns_name = NS_PREFIX + router_id if use_namespaces else None
-!         if platform.system() == "SunOS":
-!             self.ipfilters_manager = ipfilters_manager.IPfiltersManager()
-!             self.iptables_manager = None
-!         else:
-!             self.iptables_manager = iptables_manager.IptablesManager(
-!                 root_helper=root_helper,
-!                 use_ipv6=use_ipv6,
-!                 namespace=self.ns_name)
-          self.snat_iptables_manager = None
-          self.routes = []
-          # DVR Data
-***************
-*** 2049,2054 ****
---- 2057,2064 ----
-      _register_opts(cfg.CONF)
-      common_config.init(sys.argv[1:])
-      config.setup_logging()
-+     if platform.system() == "SunOS":
-+         manager = 'neutron.agent.evs_l3_agent.EVSL3NATAgent'
-      server = neutron_service.Service.create(
-          binary='neutron-l3-agent',
-          topic=topics.L3_AGENT,
+Changes to the Neutron L3 agent to port it to Solaris. These changes
+will eventually be proposed upstream.
+
+--- neutron-2015.1.2/neutron/agent/l3_agent.py.~1~	2015-10-13 10:35:16.000000000 -0700
++++ neutron-2015.1.2/neutron/agent/l3_agent.py	2016-01-28 23:07:42.233773807 -0800
+@@ -14,6 +14,7 @@
+ #    License for the specific language governing permissions and limitations
+ #    under the License.
+ 
++import platform
+ import sys
+ 
+ from oslo_config import cfg
+@@ -46,6 +47,8 @@ def main(manager='neutron.agent.l3.agent
+     register_opts(cfg.CONF)
+     common_config.init(sys.argv[1:])
+     config.setup_logging()
++    if platform.system() == "SunOS":
++        manager = 'neutron.agent.evs_l3_agent.EVSL3NATAgent'
+     server = neutron_service.Service.create(
+         binary='neutron-l3-agent',
+         topic=topics.L3_AGENT,
+--- neutron-2015.1.2/neutron/agent/linux/daemon.py.~1~	2015-10-13 10:35:16.000000000 -0700
++++ neutron-2015.1.2/neutron/agent/linux/daemon.py	2016-01-28 23:07:42.234372590 -0800
+@@ -18,12 +18,14 @@ import grp
+ import logging as std_logging
+ from logging import handlers
+ import os
++import platform
+ import pwd
+ import signal
+ import sys
+ 
+ from oslo_log import log as logging
+ 
++from neutron.agent.linux import utils
+ from neutron.common import exceptions
+ from neutron.i18n import _LE, _LI
+ 
+@@ -140,6 +142,15 @@ class Pidfile(object):
+         if not pid:
+             return False
+ 
++        if platform.system() == "SunOS":
++            cmd = ['/usr/bin/pargs', pid]
++            try:
++                exec_out = utils.execute(cmd)
++            except RuntimeError:
++                return False
++            return self.procname in exec_out and (not self.uuid or
++                                                  self.uuid in exec_out)
++
+         cmdline = '/proc/%s/cmdline' % pid
+         try:
+             with open(cmdline, "r") as f:
+--- neutron-2015.1.2/neutron/common/ipv6_utils.py.~1~	2015-10-13 10:35:16.000000000 -0700
++++ neutron-2015.1.2/neutron/common/ipv6_utils.py	2016-01-28 23:28:34.771113032 -0800
+@@ -17,6 +17,7 @@
+ IPv6-related utilities and helper functions.
+ """
+ import os
++import platform
+ 
+ import netaddr
+ from oslo_log import log
+@@ -51,6 +52,11 @@ def get_ipv6_addr_by_EUI64(prefix, mac):
+ def is_enabled():
+     global _IS_IPV6_ENABLED
+ 
++    if platform.system() == "SunOS":
++        if _IS_IPV6_ENABLED is None:
++            _IS_IPV6_ENABLED = True
++        return _IS_IPV6_ENABLED
++
+     if _IS_IPV6_ENABLED is None:
+         disabled_ipv6_path = "/proc/sys/net/ipv6/conf/default/disable_ipv6"
+         if os.path.exists(disabled_ipv6_path):

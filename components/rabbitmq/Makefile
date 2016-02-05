@@ -20,22 +20,24 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 
+PATH=/usr/gnu/bin:/usr/bin:/usr/sbin
+
 COMPONENT_NAME=		rabbitmq-server
-COMPONENT_VERSION=	3.1.3
+COMPONENT_VERSION=	3.5.6
 COMPONENT_PROJECT_URL=	http://www.rabbitmq.com/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:ebb8b0dba8ef82e5523194072f465f2abe451783e09255bf1474c560667a67a5
+    sha256:24be1433234112db391e0c5ef32bfb2ca111e51b2e57998cc0f3d97ba361671f
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/releases/$(COMPONENT_NAME)/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	service/rabbitmq
 
-TPNO=			14503
+TPNO=			25764
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
@@ -47,6 +49,10 @@ COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 PKG_PROTO_DIRS += $(BUILD_DIR)/$(MACH32)
 
+COMPONENT_INSTALL_ENV +=	TARGET_DIR=$(PROTO_DIR)
+COMPONENT_INSTALL_ENV +=	SBIN_DIR=$(PROTO_DIR)/usr/sbin
+COMPONENT_INSTALL_ENV +=	MAN_DIR=$(PROTO_DIR)/usr/share/man
+
 # We delegate the running of the tests to a script because it's easier to find
 # and use unique free ports in a single process, and it's easier to make sure
 # that we don't leave any servers running if the tests themselves fail.
@@ -57,8 +63,7 @@ COMPONENT_TEST_TARGETS =	test.py $(TEST_32)
 # common targets
 build:		$(BUILD_32)
 
-# The install target in the rabbitmq makefile isn't useful to us.
-install:
+install:	$(INSTALL_32)
 
 test:		$(TEST_32)
 
@@ -68,4 +73,5 @@ PKG_PROTO_DIRS +=	$(COMPONENT_DIR)/files
 
 
 REQUIRED_PACKAGES += runtime/erlang
+REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93

@@ -37,13 +37,14 @@ import urllib2
 from urlparse import urlparse
 
 from lockfile import LockFile, LockTimeout
+from oslo_concurrency import processutils
 from oslo.config import cfg
-
+from oslo_utils import excutils
 from scp import SCPClient
 
 from ironic.common import boot_devices, exception, images, keystone, states, \
     utils
-from ironic.common.i18n import _, _LE, _LW
+from ironic.common.i18n import _, _LE, _LI, _LW
 from ironic.conductor import task_manager
 from ironic.conductor import utils as manager_utils
 from ironic.db import api as dbapi
@@ -51,7 +52,7 @@ from ironic.drivers import base
 from ironic.drivers.modules import ipmitool
 from ironic.drivers import utils as driver_utils
 from ironic.openstack.common import log as logging
-from ironic.openstack.common import loopingcall, processutils
+from ironic.openstack.common import loopingcall
 
 PLATFORM = platform.system()
 if PLATFORM != "SunOS":
@@ -171,6 +172,20 @@ OPTIONAL_PROPERTIES = {
 
 COMMON_PROPERTIES = REQUIRED_PROPERTIES.copy()
 COMMON_PROPERTIES.update(OPTIONAL_PROPERTIES)
+
+IPMI_PROPERTIES = [
+    ('mac', '/System/host_primary_mac_address'),
+    ('serial', '/System/serial_number'),
+    ('model', '/System/model'),
+    ('cpu_arch', '/System/Processors/architecture'),
+    ('memory_mb', '/System/Memory/installed_memory'),
+    ('cpus', '/System/Processors/installed_cpus'),
+    ('datalinks', '/System/Networking/installed_eth_nics'),
+    ('disks', '/System/Storage/installed_disks'),
+    ('local_gb', '/System/Storage/installed_disk_size')
+]
+
+CPU_LOCATION = '/System/Processors/CPUs/CPU_%d/total_cores'
 
 LAST_CMD_TIME = {}
 TIMING_SUPPORT = None
@@ -336,9 +351,8 @@ def _exec_ipmitool(driver_info, command):
             'lanplus',
             '-H',
             driver_info['address'],
-            '-L', driver_info.get('priv_level')
+            '-L', driver_info['priv_level']
             ]
-
     if driver_info['username']:
         args.append('-U')
         args.append(driver_info['username'])
@@ -349,34 +363,68 @@ def _exec_ipmitool(driver_info, command):
             args.append(driver_info[name])
 
     # specify retry timing more precisely, if supported
+    num_tries = max(
+        (CONF.ipmi.retry_timeout // CONF.ipmi.min_command_interval), 1)
+
     if ipmitool._is_option_supported('timing'):
-        num_tries = max(
-            (CONF.ipmi.retry_timeout // CONF.ipmi.min_command_interval), 1)
         args.append('-R')
         args.append(str(num_tries))
 
         args.append('-N')
         args.append(str(CONF.ipmi.min_command_interval))
 
-    # 'ipmitool' command will prompt password if there is no '-f' option,
-    # we set it to '\0' to write a password file to support empty password
-    with ipmitool._make_password_file(driver_info['password'] or '\0') \
-            as pw_file:
-        args.append('-f')
-        args.append(pw_file)
-        args = args + list(command)  # Append as a list don't split(" ")
+    end_time = (time.time() + CONF.ipmi.retry_timeout)
 
+    while True:
+        num_tries = num_tries - 1
         # NOTE(deva): ensure that no communications are sent to a BMC more
         #             often than once every min_command_interval seconds.
         time_till_next_poll = CONF.ipmi.min_command_interval - (
-            time.time() - LAST_CMD_TIME.get(driver_info['address'], 0))
+                time.time() - LAST_CMD_TIME.get(driver_info['address'], 0))
         if time_till_next_poll > 0:
             time.sleep(time_till_next_poll)
-        try:
-            out, err = utils.execute(*args)
-        finally:
-            LAST_CMD_TIME[driver_info['address']] = time.time()
-        return out, err
+        # Resetting the list that will be utilized so the password arguments
+        # from any previous execution are preserved.
+        cmd_args = args[:]
+        # 'ipmitool' command will prompt password if there is no '-f'
+        # option, we set it to '\0' to write a password file to support
+        # empty password
+        with ipmitool._make_password_file(
+                    driver_info['password'] or '\0'
+                ) as pw_file:
+            cmd_args.append('-f')
+            cmd_args.append(pw_file)
+            cmd_args = cmd_args + list(command)  # Append list, don't split
+            try:
+                out, err = utils.execute(*cmd_args)
+                return out, err
+            except processutils.ProcessExecutionError as e:
+                with excutils.save_and_reraise_exception() as ctxt:
+                    err_list = [x for x in ipmitool.IPMITOOL_RETRYABLE_FAILURES
+                                if x in e.message]
+                    if ((time.time() > end_time) or
+                        (num_tries == 0) or
+                            not err_list):
+                        LOG.error(_LE('IPMI Error while attempting '
+                                      '"%(cmd)s" for node %(node)s. '
+                                      'Error: %(error)s'),
+                                  {
+                                      'node': driver_info['uuid'],
+                                      'cmd': e.cmd,
+                                      'error': e
+                                  })
+                    else:
+                        ctxt.reraise = False
+                        LOG.warning(_LW('IPMI Error encountered, retrying '
+                                        '"%(cmd)s" for node %(node)s. '
+                                        'Error: %(error)s'),
+                                    {
+                                        'node': driver_info['uuid'],
+                                        'cmd': e.cmd,
+                                        'error': e
+                                    })
+            finally:
+                LAST_CMD_TIME[driver_info['address']] = time.time()
 
 
 def _get_node_architecture(node):
@@ -387,23 +435,35 @@ def _get_node_architecture(node):
     :raises: IPMIFailure if ipmitool command fails
     """
     LOG.debug("SolarisDeploy._get_node_architecture")
-    ipmi_cmd_args = ['sunoem', 'getval', '/System/Processors/architecture']
-    driver_info = _parse_driver_info(node)
-    try:
-        out, _err = _exec_ipmitool(driver_info, ipmi_cmd_args)
-    except Exception as err:
-        LOG.error(_LE("Failed to get node architecture from IPMI : %s" %
-                  (err)))
-        raise exception.IPMIFailure(cmd=err)
+    cpu_arch = node.properties.get('cpu_arch', None)
+    if cpu_arch is None:
+        LOG.info(_LI("Inspection not performed, retrieving architecture via "
+                     "IPMI for node: %s"), node.uuid)
+        ipmi_cmd_args = ['sunoem', 'getval', '/System/Processors/architecture']
+        driver_info = _parse_driver_info(node)
+        try:
+            cpu_arch, _err = _exec_ipmitool(driver_info, ipmi_cmd_args)
+        except Exception as err:
+            LOG.error(_LE("Failed to get node architecture from IPMI : %s" %
+                      (err)))
+            raise exception.IPMIFailure(cmd=err)
 
-    LOG.debug("SolarisDeploy._get_node_architecture: arch: '%s'" % (out))
+        propdict = {'cpu_arch': cpu_arch}
+        node_properties = node.properties
+        node_properties.update(propdict)
+        node.properties = node_properties
+        node.save()
 
-    if 'SPARC' in out:
+        LOG.debug("SolarisDeploy._get_node_architecture: cpu_arch: '%s'"
+                  % (cpu_arch))
+
+    if 'SPARC' in cpu_arch:
         return 'SPARC'
-    elif 'x86' in out:
+    elif 'x86' in cpu_arch:
         return 'x86'
     else:
-        raise SolarisIPMIError(msg="Unknown node architecture: %s" % (out))
+        raise SolarisIPMIError(msg="Unknown node architecture: %s"
+                               % (cpu_arch))
 
 
 def _check_deploy_state(task, node_uuid, deploy_thread):
@@ -442,7 +502,7 @@ def _check_deploy_state(task, node_uuid, deploy_thread):
             if task.node:
                 task.node.provision_state = states.DEPLOYFAIL
                 task.node.last_error = "Failed to find node."
-                task.node.target_provision_state = states.NOSTATE
+                task.node.target_provision_state = states.AVAILABLE
                 task.node.save()
         raise loopingcall.LoopingCallDone()
     except Exception as err:
@@ -456,12 +516,14 @@ def _check_deploy_state(task, node_uuid, deploy_thread):
             if task.node:
                 task.node.last_error = "Failed to find node."
                 task.node.provision_state = states.DEPLOYFAIL
-                task.node.target_provision_state = states.NOSTATE
+                task.node.target_provision_state = states.AVAILABLE
                 task.node.save()
         raise loopingcall.LoopingCallDone()
 
     LOG.debug("_check_deploy_state().cur_node.target_provision_state: %s" %
               (cur_node.target_provision_state))
+    LOG.debug("_check_deploy_state().cur_node.provision_state: %s" %
+              (cur_node.provision_state))
 
     if deploy_thread.state not in [states.DEPLOYING, states.DEPLOYWAIT]:
         LOG.debug("_check_deploy_state().done: %s" % (deploy_thread.state))
@@ -479,7 +541,7 @@ def _check_deploy_state(task, node_uuid, deploy_thread):
             cur_node.provision_state = deploy_thread.state
         else:
             cur_node.provision_state = deploy_thread.state
-        cur_node.target_provision_state = states.NOSTATE
+        cur_node.target_provision_state = states.AVAILABLE
         cur_node.save()
 
         # Raise LoopincCallDone to terminate deployment checking.
@@ -493,10 +555,18 @@ def _check_deploy_state(task, node_uuid, deploy_thread):
         cur_node.provision_state = states.DEPLOYING
         cur_node.save()
 
-    elif cur_node.target_provision_state == states.NOSTATE:
+    elif cur_node.target_provision_state == states.AVAILABLE or \
+            cur_node.target_provision_state == states.NOSTATE:
         # Node was most likely deleted so end deployment completion checking
         LOG.debug("_check_deploy_state().deleted: %s" %
                   (cur_node.target_provision_state))
+        deploy_thread.stop()
+        raise loopingcall.LoopingCallDone()
+
+    elif cur_node.provision_state == states.DEPLOYFAIL:
+        # Node deployment as for some reason failed already, exist thread
+        LOG.debug("_check_deploy_state().deploy_failed: %s" %
+                  (cur_node.provision_state))
         deploy_thread.stop()
         raise loopingcall.LoopingCallDone()
 
@@ -611,6 +681,7 @@ def _image_refcount_adjust(image_path, count, release=True):
             except OSError as err:
                 if err.errno != errno.ENOENT:
                     raise
+
         else:
             fp.seek(0)
             fp.write(ref_count)
@@ -808,14 +879,13 @@ def _mount_archive(task, archive_uri):
     return mount_dir, temp_uar
 
 
-def _umount_archive(mount_dir, temp_uar):
+def _umount_archive(mount_dir):
     """ Unmount archive and remove mount point directory
 
     :param mount_dir: Path to mounted archive
     :param temp_uar: Path to glance local uar to remove
     """
-    LOG.debug("SolarisDeploy._umount_archive:mount_dir: '%s', temp_uar: %s" %
-              (mount_dir, temp_uar))
+    LOG.debug("SolarisDeploy._umount_archive:mount_dir: '%s'" % (mount_dir))
 
     cmd = ["/usr/sbin/umount", mount_dir]
     pc = Popen(cmd, stdout=PIPE, stderr=PIPE)
@@ -842,9 +912,9 @@ def _get_archive_uuid(task):
         try:
             _iso, uuid = _get_archive_iso_and_uuid(mount_dir)
         except:
-            _umount_archive(mount_dir, temp_uar)
+            _umount_archive(mount_dir)
             raise
-        _umount_archive(mount_dir, temp_uar)
+        _umount_archive(mount_dir)
     else:
         temp_uar = _fetch_uri(task, archive_uri)
         try:
@@ -1355,7 +1425,7 @@ class SolarisDeploy(base.DeployInterface):
 
         # Validate IPMI credentials by getting node architecture
         try:
-            _arch = _get_node_architecture(task.node)
+            _cpu_arch = _get_node_architecture(task.node)
         except Exception as err:
             raise exception.InvalidParameterValue(_(err))
 
@@ -1443,9 +1513,9 @@ class SolarisDeploy(base.DeployInterface):
         # Try to get the URL of the Ironic API
         try:
             CONF.conductor.api_url or keystone.get_service_url()
-        except (exception.CatalogFailure,
-                exception.CatalogNotFound,
-                exception.CatalogUnauthorized):
+        except (exception.KeystoneFailure,
+                exception.KeystoneUnauthorized,
+                exception.CatalogNotFound):
             raise exception.InvalidParameterValue(_(
                 "Couldn't get the URL of the Ironic API service from the "
                 "configuration file or Keystone catalog."))
@@ -1472,18 +1542,18 @@ class SolarisDeploy(base.DeployInterface):
         """
         LOG.debug("SolarisDeploy.deploy()")
 
-        arch = _get_node_architecture(task.node)
+        cpu_arch = _get_node_architecture(task.node)
 
         # Ensure persistence is false so net boot only occurs once
-        if arch == 'x86':
+        if cpu_arch == 'x86':
             # Set boot device to PXE network boot
             dev_cmd = 'pxe'
-        elif arch == 'SPARC':
+        elif cpu_arch == 'SPARC':
             # Set bootmode script to network DHCP
             dev_cmd = 'wanboot'
         else:
             raise exception.InvalidParameterValue(
-                _("Invalid node architecture of '%s'.") % (arch))
+                _("Invalid node architecture of '%s'.") % (cpu_arch))
 
         manager_utils.node_set_boot_device(task, dev_cmd,
                                            persistent=False)
@@ -1543,7 +1613,7 @@ class SolarisDeploy(base.DeployInterface):
 
         ai_manifest = task.node.driver_info.get('ai_manifest', None)
         ai_service = task.node.driver_info.get('ai_service', None)
-        arch = _get_node_architecture(task.node)
+        cpu_arch = _get_node_architecture(task.node)
         archive_uri = task.node.driver_info.get('archive_uri', None)
         fmri = task.node.driver_info.get('fmri', None)
         install_profiles = task.node.driver_info.get('install_profiles', None)
@@ -1577,13 +1647,13 @@ class SolarisDeploy(base.DeployInterface):
             aiservice = AIService(task, ai_service)
         else:
             # IPS Install, ensure default architecture service exists
-            if arch == "x86":
+            if cpu_arch == "x86":
                 ai_service = "default-i386"
-            elif arch == 'SPARC':
+            elif cpu_arch == 'SPARC':
                 ai_service = "default-sparc"
             else:
                 raise exception.InvalidParameterValue(
-                    _("Invalid node architecture of '%s'.") % (arch))
+                    _("Invalid node architecture of '%s'.") % (cpu_arch))
 
             # Instantiate AIService object for this node/service
             aiservice = AIService(task, ai_service)
@@ -1636,7 +1706,7 @@ class SolarisDeploy(base.DeployInterface):
 
             # Recreate new ai client for this mac address
             new_uri, auth_token = _format_archive_uri(task, archive_uri)
-            aiservice.create_client(mac, arch, new_uri, auth_token,
+            aiservice.create_client(mac, cpu_arch, new_uri, auth_token,
                                     publishers, fmri)
 
             # 3. (Re)Create AI Manifest for each port/Mac specified for this
@@ -1732,7 +1802,7 @@ class SolarisDeploy(base.DeployInterface):
         LOG.debug("SolarisDeploy.clean_up()")
 
         ai_service = task.node.driver_info.get('ai_service', None)
-        arch = _get_node_architecture(task.node)
+        cpu_arch = _get_node_architecture(task.node)
         archive_uri = task.node.driver_info.get('archive_uri', None)
 
         # Instantiate AIService object for this node/service
@@ -1741,13 +1811,13 @@ class SolarisDeploy(base.DeployInterface):
         elif ai_service:
             aiservice = AIService(task, ai_service)
         else:
-            if arch == "x86":
+            if cpu_arch == "x86":
                 ai_service = "default-i386"
-            elif arch == 'SPARC':
+            elif cpu_arch == 'SPARC':
                 ai_service = "default-sparc"
             else:
                 raise exception.InvalidParameterValue(
-                    _("Invalid node architecture of '%s'.") % (arch))
+                    _("Invalid node architecture of '%s'.") % (cpu_arch))
             aiservice = AIService(task, ai_service)
 
         # Check if AI Service exists, log message if already removed
@@ -1835,16 +1905,16 @@ class SolarisManagement(base.ManagementInterface):
                     boot_devices.BIOS, boot_devices.SAFE]
         else:
             # Get architecture of node and return supported boot devices
-            arch = _get_node_architecture(task.node)
-            if arch == 'x86':
+            cpu_arch = _get_node_architecture(task.node)
+            if cpu_arch == 'x86':
                 return [boot_devices.PXE, boot_devices.DISK,
                         boot_devices.CDROM, boot_devices.BIOS,
                         boot_devices.SAFE]
-            elif arch == 'SPARC':
+            elif cpu_arch == 'SPARC':
                 return [boot_devices.DISK, 'wanboot']
             else:
                 raise exception.InvalidParameterValue(
-                    _("Invalid node architecture of '%s'.") % (arch))
+                    _("Invalid node architecture of '%s'.") % (cpu_arch))
 
     @task_manager.require_exclusive_lock
     def set_boot_device(self, task, device, persistent=False):
@@ -1865,19 +1935,19 @@ class SolarisManagement(base.ManagementInterface):
         """
         LOG.debug("SolarisManagement.set_boot_device: %s" % device)
 
-        arch = _get_node_architecture(task.node)
+        cpu_arch = _get_node_architecture(task.node)
         archive_uri = task.node.driver_info.get('archive_uri')
         publishers = task.node.driver_info.get('publishers')
         fmri = task.node.driver_info.get('fmri')
 
-        if arch == 'x86':
+        if cpu_arch == 'x86':
             if device not in self.get_supported_boot_devices(task=task):
                 raise exception.InvalidParameterValue(_(
                     "Invalid boot device %s specified.") % device)
             cmd = ["chassis", "bootdev", device]
             if persistent:
                 cmd.append("options=persistent")
-        elif arch == 'SPARC':
+        elif cpu_arch == 'SPARC':
             # Set bootmode script to network DHCP or disk
             if device == 'wanboot':
                 boot_cmd = 'set /HOST/bootmode script="'
@@ -1912,7 +1982,7 @@ class SolarisManagement(base.ManagementInterface):
                         " %s") % script_str)
                 boot_cmd += script_str + '"'
                 cmd = ['sunoem', 'cli', boot_cmd]
-            elif device == 'disk':
+            elif device == boot_devices.DISK:
                 cmd = ['sunoem', 'cli',
                        'set /HOST/bootmode script=""']
             else:
@@ -1920,7 +1990,7 @@ class SolarisManagement(base.ManagementInterface):
                     "Invalid boot device %s specified.") % (device))
         else:
             raise exception.InvalidParameterValue(
-                _("Invalid node architecture of '%s'.") % (arch))
+                _("Invalid node architecture of '%s'.") % (cpu_arch))
 
         driver_info = _parse_driver_info(task.node)
         try:
@@ -1953,17 +2023,17 @@ class SolarisManagement(base.ManagementInterface):
 
         """
         LOG.debug("SolarisManagement.get_boot_device")
-        arch = _get_node_architecture(task.node)
+        cpu_arch = _get_node_architecture(task.node)
         driver_info = _parse_driver_info(task.node)
         response = {'boot_device': None, 'persistent': None}
 
-        if arch == 'x86':
+        if cpu_arch == 'x86':
             cmd = ["chassis", "bootparam", "get", "5"]
-        elif arch == 'SPARC':
+        elif cpu_arch == 'SPARC':
             cmd = ['sunoem', 'getval', '/HOST/bootmode/script']
         else:
             raise exception.InvalidParameterValue(
-                _("Invalid node architecture of '%s'.") % (arch))
+                _("Invalid node architecture of '%s'.") % (cpu_arch))
 
         try:
             out, _err = _exec_ipmitool(driver_info, cmd)
@@ -1976,7 +2046,7 @@ class SolarisManagement(base.ManagementInterface):
                          'cmd': cmd, 'error': err})
             raise exception.IPMIFailure(cmd=cmd)
 
-        if arch == 'x86':
+        if cpu_arch == 'x86':
             re_obj = re.search('Boot Device Selector : (.+)?\n', out)
             if re_obj:
                 boot_selector = re_obj.groups('')[0]
@@ -1993,11 +2063,11 @@ class SolarisManagement(base.ManagementInterface):
                     response['boot_device'] = boot_devices.CDROM
 
             response['persistent'] = 'Options apply to all future boots' in out
-        elif arch == 'SPARC':
+        elif cpu_arch == 'SPARC':
             if "net:dhcp" in out:
                 response['boot_device'] = 'wanboot'
             else:
-                response['boot_device'] = 'disk'
+                response['boot_device'] = boot_devices.DISK
         LOG.debug(response)
         return response
 
@@ -2015,7 +2085,7 @@ class SolarisManagement(base.ManagementInterface):
         driver_info = _parse_driver_info(task.node)
         # with '-v' option, we can get the entire sensor data including the
         # extended sensor informations
-        cmd = ["sdr", "-v"]
+        cmd = ['sdr', '-v']
         try:
             out, _err = _exec_ipmitool(driver_info, cmd)
         except (exception.PasswordFileFailedToCreate,
@@ -2024,6 +2094,141 @@ class SolarisManagement(base.ManagementInterface):
                                                   error=err)
 
         return ipmitool._parse_ipmi_sensors_data(task.node, out)
+
+
+class SolarisInspect(base.InspectInterface):
+    """Inspect class for solaris nodes."""
+
+    def get_properties(self):
+        """Return Solaris driver properties"""
+        return COMMON_PROPERTIES
+
+    def validate(self, task):
+        """Validate driver_info containts IPMI credentials.
+
+        Ensure 'driver_info' containers the required IPMI
+        properties used to access a nodes properties.
+
+        :param task: a TaskManager instance
+        :raises: InvalidParameterValue if required IPMI parameters
+            are missing.
+        :raises: MissingParameterValue if a required parameter is missing.
+        """
+        _parse_driver_info(task.node)
+
+    def inspect_hardware(self, task):
+        """Inspect hardware to get the hardware properties.
+
+        Inspects hardware to get the defined IPMI_PROPERTIES.
+        Failure occures if any of the defined IPMI_PROPERTIES are not
+        determinable from the node.
+
+        :param task: a TaskManager instance
+        :raises: HardwareInspectionFailure if properties could
+                 not be retrieved successfully.
+        :returns: the resulting state of inspection.
+        """
+        LOG.debug("SolarisInspect.inspect_hardware")
+
+        ipmi_props = self._get_ipmi_properties(task)
+
+        keys, _none = zip(*IPMI_PROPERTIES)
+        vallist = [line.split(': ')[1]
+                   for line in ipmi_props.strip().splitlines()]
+        propdict = dict(zip(keys, vallist))
+
+        # Installed memory size is returned in GB, Nova assumes this is MB
+        # so convert if returned in GB
+        memsize, memtype = propdict['memory_mb'].split(' ')
+        if memtype == 'GB':
+            propdict['memory_mb'] = int(memsize) * 1024
+        else:
+            propdict['memory_mb'] = int(memsize)
+
+        cpu_props = self._get_cpu_cores(task, propdict['cpus'])
+
+        vallist = [line.split(': ')[1]
+                   for line in cpu_props.strip().splitlines()]
+        total_cores = sum(map(int, vallist))
+        propdict['cores'] = total_cores
+
+        node_properties = task.node.properties
+        node_properties.update(propdict)
+        task.node.properties = node_properties
+        task.node.save()
+
+        self._create_port_if_not_exist(task.node, node_properties['mac'])
+        LOG.info(_LI("Node %s inspected."), task.node.uuid)
+        return states.MANAGEABLE
+
+    def _get_ipmi_properties(self, task):
+        """Retrieve IPMI_PROPERTIES from node
+        :param task: a TaskManager instance.
+        :returns: ipmitool retrieved property values
+        """
+        fh = tempfile.NamedTemporaryFile()
+        for _none, prop in IPMI_PROPERTIES:
+            fh.write('sunoem getval %s\n' % prop)
+        fh.seek(0)
+        cmd = ["exec", fh.name]
+        driver_info = _parse_driver_info(task.node)
+
+        try:
+            out, _err = _exec_ipmitool(driver_info, cmd)
+        except (exception.PasswordFileFailedToCreate,
+                processutils.ProcessExecutionError) as err:
+            LOG.warning(_LW('IPMI inspect properties failed for node %(node)s '
+                            'when executing "ipmitool %(cmd)s". '
+                            'Error: %(error)s'),
+                        {'node': task.node.uuid,
+                         'cmd': cmd, 'error': err})
+            raise exception.IPMIFailure(cmd=cmd)
+        fh.close()
+
+        return out
+
+    def _get_cpu_cores(self, task, cpus):
+        """Retrieve IPMI_PROPERTIES from node
+        :param task: a TaskManager instance.
+        :param cpus: CPU numbers to use.
+        :returns: ipmitool retrieved property values
+        """
+        fh = tempfile.NamedTemporaryFile()
+        for i in range(int(cpus)):
+            fh.write('sunoem getval %s\n' % (CPU_LOCATION % i))
+        fh.seek(0)
+        cmd = ["exec", fh.name]
+        driver_info = _parse_driver_info(task.node)
+
+        try:
+            out, _err = _exec_ipmitool(driver_info, cmd)
+        except (exception.PasswordFileFailedToCreate,
+                processutils.ProcessExecutionError) as err:
+            LOG.warning(_LW('IPMI CPU inspection failed for node %(node)s '
+                            'when executing "ipmitool %(cmd)s". '
+                            'Error: %(error)s'),
+                        {'node': task.node.uuid,
+                         'cmd': cmd, 'error': err})
+            raise exception.IPMIFailure(cmd=cmd)
+        fh.close()
+        return out
+
+    def _create_port_if_not_exist(self, node, mac):
+        """Create ironic port if not existing for this MAC
+        :param task: Node to creaate port for.
+        :param mac: MAC address to use for port.
+        """
+        node_id = node.id
+        port_dict = {'address': mac, 'node_id': node_id}
+        mydbapi = dbapi.get_instance()
+        try:
+            mydbapi.create_port(port_dict)
+            LOG.info(_LI("Port created for MAC address %(mac)s for node "
+                         "%(node)s."), {'mac': mac, 'node': node.uuid})
+        except exception.MACAlreadyExists:
+            LOG.warn(_LW("Port already exists for MAC address %(mac)s "
+                         "for node %(node)s."),
+                     {'mac': mac, 'node': node.uuid})
 
 
 class AIService():
@@ -2131,7 +2336,7 @@ class AIService():
             self.copy_remote_file(iso, remote_iso)
         except:
             if PLATFORM == "SunOS":
-                _umount_archive(mount_dir, temp_uar)
+                _umount_archive(mount_dir)
                 if urlparse(archive_uri).scheme == "glance":
                     _image_refcount_adjust(temp_uar, -1)
             else:
@@ -2157,7 +2362,7 @@ class AIService():
         except Exception as _err:
             self.delete_remote_file(remote_iso)
             if PLATFORM == "SunOS":
-                _umount_archive(mount_dir, temp_uar)
+                _umount_archive(mount_dir)
             else:
                 _image_refcount_adjust(temp_uar, -1)
             raise AICreateServiceFail(
@@ -2168,7 +2373,7 @@ class AIService():
 
         if PLATFORM == "SunOS":
             # 5. Unmount UAR
-            _umount_archive(mount_dir, temp_uar)
+            _umount_archive(mount_dir)
 
         # 6. Decrement reference count for image
         if temp_uar is not None:
@@ -2186,12 +2391,12 @@ class AIService():
             raise AIDeleteServiceFail(
                 _("Failed to delete AI Service %s") % (self.name))
 
-    def create_client(self, mac, arch, archive_uri, auth_token,
+    def create_client(self, mac, cpu_arch, archive_uri, auth_token,
                       publishers, fmri):
         """Create a client associated with this service
 
         :param mac: MAC Address of client to create
-        :param arch: Machine architecture for this node
+        :param cpu_arch: Machine architecture for this node
         :param archive_uri: URI of archive to install node from
         :param auth_token: Authorization token for glance UAR retrieval
         :param publishers: IPS publishers list in name@origin format
@@ -2203,7 +2408,7 @@ class AIService():
             mac + " -n " + self.name
 
         # Add specific boot arguments for 'x86' clients only
-        if arch == 'x86':
+        if cpu_arch == 'x86':
             ai_cmd += " -b install=true,console=ttya"
 
             if archive_uri:
@@ -2228,8 +2433,8 @@ class AIService():
             raise AICreateClientFail(_("Failed to create AI Client %s") %
                                      (mac))
 
-        # If arch x86 customize grub reducing grub menu timeout to 0
-        if arch == 'x86':
+        # If cpu_arch x86 customize grub reducing grub menu timeout to 0
+        if cpu_arch == 'x86':
             custom_grub = "/tmp/%s.grub" % (mac)
             ai_cmd = "/usr/bin/pfexec /usr/sbin/installadm export -e " + \
                 mac + " -G | /usr/bin/sed -e 's/timeout=30/timeout=0/'" + \

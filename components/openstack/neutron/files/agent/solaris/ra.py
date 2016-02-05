@@ -19,12 +19,12 @@
 
 import jinja2
 import netaddr
-from oslo.config import cfg
+from oslo_config import cfg
+from oslo_log import log as logging
 import six
 
 from neutron.agent.linux import utils
 from neutron.common import constants
-from neutron.openstack.common import log as logging
 
 
 LOG = logging.getLogger(__name__)
@@ -60,54 +60,63 @@ CONFIG_TEMPLATE = jinja2.Template(
     """ {% endif %} """)
 
 
-def _generate_ndpd_conf(router_id, router_ports, dev_name_helper):
-    ndpd_conf = utils.get_conf_file_name(cfg.CONF.ra_confs, router_id,
-                                         'ndpd.conf', True)
-    buf = six.StringIO()
-    for p in router_ports:
-        prefix = p['subnet']['cidr']
-        if netaddr.IPNetwork(prefix).version == 6:
-            interface_name = dev_name_helper(p['id'])
-            ra_mode = p['subnet']['ipv6_ra_mode']
-            buf.write('%s\n' % CONFIG_TEMPLATE.render(
-                ra_mode=ra_mode,
-                interface_name=interface_name,
-                prefix=prefix,
-                constants=constants))
+class NDPD(object):
+    """Manage the data and state of Solaris in.ndpd daemon"""
 
-    utils.replace_file(ndpd_conf, buf.getvalue())
-    return ndpd_conf
+    def __init__(self, router_id, dev_name_helper):
+        self._router_id = router_id
+        self._dev_name_helper = dev_name_helper
 
+    def _generate_ndpd_conf(self, router_ports):
+        ndpd_conf = utils.get_conf_file_name(cfg.CONF.ra_confs,
+                                             self._router_id,
+                                             'ndpd.conf', True)
+        buf = six.StringIO()
+        for p in router_ports:
+            prefix = p['subnets'][0]['cidr']
+            if netaddr.IPNetwork(prefix).version == 6:
+                interface_name = self._dev_name_helper(p['id'])
+                ra_mode = p['subnets'][0]['ipv6_ra_mode']
+                buf.write('%s\n' % CONFIG_TEMPLATE.render(
+                    ra_mode=ra_mode,
+                    interface_name=interface_name,
+                    prefix=prefix,
+                    constants=constants))
 
-def _refresh_ndpd(ndpd_conf):
-    cmd = ['/usr/sbin/svccfg', '-s', NDP_SMF_FMRI, 'setprop',
-           'routing/config_file', '=', ndpd_conf]
-    utils.execute(cmd)
-    # this is needed to reflect the routing/config_file property
-    # in svcprop output
-    cmd = ['/usr/sbin/svccfg', '-s', NDP_SMF_FMRI, 'refresh']
-    utils.execute(cmd)
-    # ndpd SMF service doesn't support refresh method, so we
-    # need to restart
-    cmd = ['/usr/sbin/svcadm', 'restart', NDP_SMF_FMRI]
-    utils.execute(cmd)
-    LOG.debug(_("ndpd daemon has been refreshed to re-read the "
-                "configuration file"))
+        utils.replace_file(ndpd_conf, buf.getvalue())
+        return ndpd_conf
 
+    def _refresh_ndpd(self, ndpd_conf):
+        cmd = ['/usr/sbin/svccfg', '-s', NDP_SMF_FMRI, 'setprop',
+               'routing/config_file', '=', ndpd_conf]
+        utils.execute(cmd)
+        cmd = ['/usr/sbin/svccfg', '-s', NDP_SMF_FMRI, 'refresh']
+        utils.execute(cmd)
+        # ndpd SMF service doesn't support refresh method, so we
+        # need to restart
+        cmd = ['/usr/sbin/svcadm', 'restart', NDP_SMF_FMRI]
+        utils.execute(cmd)
+        LOG.debug(_("ndpd daemon has been refreshed to re-read the "
+                    "configuration file"))
 
-def enable_ipv6_ra(router_id, router_ports, dev_name_helper):
-    for p in router_ports:
-        if netaddr.IPNetwork(p['subnet']['cidr']).version == 6:
-            break
-    else:
-        disable_ipv6_ra(router_id)
-        return
-    LOG.debug("enabling ndpd for router %s", router_id)
-    ndpd_conf = _generate_ndpd_conf(router_id, router_ports, dev_name_helper)
-    _refresh_ndpd(ndpd_conf)
+    def enable(self, router_ports):
+        for p in router_ports:
+            if netaddr.IPNetwork(p['subnets'][0]['cidr']).version == 6:
+                break
+        else:
+            self.disable()
+            return
+        LOG.debug("enabling ndpd for router %s", self._router_id)
+        ndpd_conf = self._generate_ndpd_conf(router_ports)
+        self._refresh_ndpd(ndpd_conf)
 
+    def disable(self):
+        LOG.debug("disabling ndpd for router %s", self._router_id)
+        utils.remove_conf_files(cfg.CONF.ra_confs, self._router_id)
+        self._refresh_ndpd("")
 
-def disable_ipv6_ra(router_id):
-    LOG.debug("disabling ndpd for router %s", router_id)
-    utils.remove_conf_files(cfg.CONF.ra_confs, router_id)
-    _refresh_ndpd("")
+    @property
+    def enabled(self):
+        cmd = ['/usr/bin/svcs', '-H', '-o', 'state', NDP_SMF_FMRI]
+        stdout = utils.execute(cmd)
+        return 'online' in stdout

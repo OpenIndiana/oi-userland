@@ -1,6 +1,6 @@
 # vim: tabstop=4 shiftwidth=4 softtabstop=4
 
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -16,15 +16,15 @@
 #
 # @author: Girish Moodalbail, Oracle, Inc.
 
-import time
-
 import rad.client as radcli
 import rad.connect as radcon
 import rad.bindings.com.oracle.solaris.rad.evscntl_1 as evsbind
 
-from oslo.config import cfg
-from oslo.db import exception as os_db_exc
-from sqlalchemy import exc as sqla_exc
+from oslo_concurrency import lockutils
+from oslo_config import cfg
+from oslo_db import api as oslo_db_api
+from oslo_log import log as logging
+from oslo_utils import importutils
 
 from neutron.api.rpc.agentnotifiers import dhcp_rpc_agent_api
 from neutron.api.rpc.agentnotifiers import l3_rpc_agent_api
@@ -40,20 +40,34 @@ from neutron.db import agentschedulers_db
 from neutron.db import api as db
 from neutron.db import db_base_plugin_v2
 from neutron.db import external_net_db
+from neutron.db import l3_agentschedulers_db
+from neutron.db import l3_attrs_db
 from neutron.db import l3_gwmode_db
 from neutron.db import model_base
 from neutron.db import models_v2
+from neutron.db import portbindings_db
 from neutron.db import quota_db
+from neutron.db import securitygroups_db
 from neutron.extensions import external_net
 from neutron.extensions import providernet
-from neutron.openstack.common import importutils
-from neutron.openstack.common import lockutils
-from neutron.openstack.common import log as logging
 from neutron.plugins.common import constants as svc_constants
+from neutron.plugins.ml2 import models
 
 LOG = logging.getLogger(__name__)
-MAX_RETRIES = 10
-RETRY_INTERVAL = 2
+# Only import the vpn server code if it exists.
+try:
+    sp = cfg.CONF.service_plugins
+    vpns = 'vpnaas'
+    if vpns in sp:
+        try:
+            from neutron_vpnaas.db.vpn import vpn_db
+            LOG.debug("Loading VPNaaS service driver.")
+        except ImportError:
+            pass
+    else:
+        LOG.debug("vpnaas service_plugin not configured")
+except:
+    pass
 
 evs_controller_opts = [
     cfg.StrOpt('evs_controller', default='ssh://evsuser@localhost',
@@ -84,6 +98,7 @@ class EVSNotFound(exceptions.NeutronException):
 class EVSNeutronPluginV2(db_base_plugin_v2.NeutronDbPluginV2,
                          agentschedulers_db.DhcpAgentSchedulerDbMixin,
                          external_net_db.External_net_db_mixin,
+                         l3_agentschedulers_db.L3AgentSchedulerDbMixin,
                          l3_gwmode_db.L3_NAT_db_mixin):
     """Implements v2 Neutron Plug-in API specification.
 
@@ -148,6 +163,7 @@ class EVSNeutronPluginV2(db_base_plugin_v2.NeutronDbPluginV2,
 
     _supported_extension_aliases = ["provider", "external-net", "router",
                                     "ext-gw-mode", "quotas", "agent",
+                                    "l3_agent_scheduler",
                                     "dhcp_agent_scheduler"]
 
     def __init__(self):
@@ -157,7 +173,9 @@ class EVSNeutronPluginV2(db_base_plugin_v2.NeutronDbPluginV2,
         self.network_scheduler = importutils.import_object(
             cfg.CONF.network_scheduler_driver
         )
-
+        self.router_scheduler = importutils.import_object(
+            cfg.CONF.router_scheduler_driver
+        )
         self._setup_rpc()
         self._rad_connection = None
 
@@ -573,7 +591,24 @@ class EVSNeutronPluginV2(db_base_plugin_v2.NeutronDbPluginV2,
             raise EVSControllerError(oe.get_payload().errmsg)
         return vport
 
-    def _create_port_db(self, context, port):
+    @oslo_db_api.wrap_db_retry(max_retries=db.MAX_RETRIES,
+                               retry_on_request=True,
+                               retry_on_deadlock=True)
+    def create_port(self, context, port):
+        """Creates a port(VPort) for a given network(EVS).
+
+         A VPort represents the point of attachment between the VNIC and an
+         EVS. It encapsulates various network configuration parameters such as
+             -- SLAs (maxbw, cos, and priority)
+             -- IP address and
+             -- MAC address, et al
+         This configuration is inherited by the VNIC when it connects to the
+         VPort.
+        """
+        if port['port']['admin_state_up'] is False:
+            raise EVSOpNotSupported(_("setting admin_state_up=False for a "
+                                      "port not supported"))
+
         with context.session.begin(subtransactions=True):
             # for external gateway ports and floating ips, tenant_id
             # is not set, but EVS does not like it.
@@ -605,43 +640,7 @@ class EVSNeutronPluginV2(db_base_plugin_v2.NeutronDbPluginV2,
 
             self._evs_controller_addVPort(tenantname, evs_id, vportname,
                                           ",".join(proplist))
-
         return db_port
-
-    def create_port(self, context, port):
-        """Creates a port(VPort) for a given network(EVS).
-
-         A VPort represents the point of attachment between the VNIC and an
-         EVS. It encapsulates various network configuration parameters such as
-             -- SLAs (maxbw, cos, and priority)
-             -- IP address and
-             -- MAC address, et al
-         This configuration is inherited by the VNIC when it connects to the
-         VPort.
-        """
-        if port['port']['admin_state_up'] is False:
-            raise EVSOpNotSupported(_("setting admin_state_up=False for a "
-                                      "port not supported"))
-
-        exc = None
-        for attempt in xrange(1, MAX_RETRIES):
-            try:
-                return self._create_port_db(context, port)
-            except os_db_exc.DBDeadlock as exc:
-                LOG.debug(_("Found %s. Restarting the transaction. "
-                            "Attempt: %s") % (exc, attempt))
-                time.sleep(RETRY_INTERVAL)
-            except sqla_exc.OperationalError as exc:
-                if ('timeout' in exc.message.lower() or
-                        'restart' in exc.message.lower()):
-                    LOG.debug(_("Found %s. Restarting the transaction. "
-                                "Attempt: %s") % (exc, attempt))
-                    time.sleep(RETRY_INTERVAL)
-                    continue
-                raise
-        else:
-            assert exc is not None
-            raise exc
 
     def update_port(self, context, id, port):
         # EVS does not allow updating certain attributes, so check for it
@@ -664,7 +663,6 @@ class EVSNeutronPluginV2(db_base_plugin_v2.NeutronDbPluginV2,
         LOG.debug(_("Updating port %s with %s") % (id, port))
         db_port = super(EVSNeutronPluginV2, self).update_port(context,
                                                               id, port)
-
         return db_port
 
     def get_port(self, context, id, fields=None):

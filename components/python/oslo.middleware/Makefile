@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		oslo.middleware
-COMPONENT_VERSION=	0.4.0
+COMPONENT_VERSION=	1.0.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:d300f8342b5faaf712890d58da111789740aebb4b46874e41b45110b704719cb
+    sha256:5ccf160ae5ce23f3f59b86535352e3b5a9fa35dab0edc4ede8b17438da559995
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://launchpad.net/oslo.middleware
 COMPONENT_BUGDB=	python-mod/oslo.middlewar
 
-TPNO=			21629
+TPNO=			25765
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk

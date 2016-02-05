@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		python-heatclient
-COMPONENT_VERSION=	0.2.12
+COMPONENT_VERSION=	0.4.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e9d5b74206b322ce30184a1b132a78b8be1806be85c77361fb72a966c4c48afe
+    sha256:1b71e2bb5c380ac6b2e1f07b48b7b3e82e7364cc43255ed696c795ab5f8d5a1d
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://launchpad.net/python-heatclient
 COMPONENT_BUGDB=	service/heat
 
-TPNO=			21733
+TPNO=			25752
 
 # Depends on keystoneclient which is not Python 3 ready.
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)

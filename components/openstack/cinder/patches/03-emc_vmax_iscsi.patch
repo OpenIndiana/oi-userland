@@ -1,29 +1,28 @@
 In-house patch to adopt EMC driver to use Solaris' iscsiadm(1M) rather
-than that from Linux.  Patch has not yet been submitted upstream.
+than that from Linux. Patch has not yet been submitted upstream.
 
---- cinder-2014.2.2/cinder/volume/drivers/emc/emc_vmax_iscsi.py.orig	2014-10-16 06:26:26.000000000 -0700
-+++ cinder-2014.2.2/cinder/volume/drivers/emc/emc_vmax_iscsi.py	2014-10-27 00:12:22.034201865 -0700
-@@ -16,6 +16,8 @@
- ISCSI Drivers for EMC VMAX arrays based on SMI-S.
+--- cinder-2015.1.2/cinder/volume/drivers/emc/emc_vmax_iscsi.py.~1~	2016-01-30 23:55:52.360305136 -0800
++++ cinder-2015.1.2/cinder/volume/drivers/emc/emc_vmax_iscsi.py	2016-01-31 00:03:10.160731018 -0800
+@@ -17,6 +17,7 @@ ISCSI Drivers for EMC VMAX arrays based
  
  """
+ import os
 +import sys
-+
+ 
+ from oslo_log import log as logging
  import six
- 
- from cinder import context
-@@ -155,17 +157,43 @@ class EMCVMAXISCSIDriver(driver.ISCSIDri
- 
-         LOG.info(_("ISCSI provider_location not stored, using discovery."))
+@@ -162,17 +163,43 @@ class EMCVMAXISCSIDriver(driver.ISCSIDri
+             LOG.error(_LE(
+                 "You must set your iscsi_ip_address in cinder.conf."))
  
 -        (out, _err) = self._execute('iscsiadm', '-m', 'discovery',
 -                                    '-t', 'sendtargets', '-p',
 -                                    self.configuration.iscsi_ip_address,
 -                                    run_as_root=True)
 -
--        LOG.info(_(
--            "smis_do_iscsi_discovery is: %(out)s")
--            % {'out': out})
+-        LOG.info(_LI(
+-            "smis_do_iscsi_discovery is: %(out)s."),
+-            {'out': out})
          targets = []
 -        for target in out.splitlines():
 -            targets.append(target)
@@ -58,9 +57,9 @@ than that from Linux.  Patch has not yet been submitted upstream.
 +                                        self.configuration.iscsi_ip_address,
 +                                        run_as_root=True)
 +
-+            LOG.info(_(
-+                "smis_do_iscsi_discovery is: %(out)s")
-+                % {'out': out})
++            LOG.info(_LI(
++                "smis_do_iscsi_discovery is: %(out)s."),
++                {'out': out})
 +            for target in out.splitlines():
 +                targets.append(target)
  

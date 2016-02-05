@@ -1,0 +1,33 @@
+This works around a l3-agent bug which causes an exception if l3-agent is
+started and no VPN's have been defined. This function gets called with
+kwargs being NULL.
+
+This patch is Solaris-specific and not suitable for upstream
+contribution.
+
+--- vendor-packages/neutron_vpnaas/db/vpn/vpn_db.py	Fri Dec 11 09:16:02 2015
++++ new/usr/lib/python2.7/vendor-packages/neutron_vpnaas/db/vpn/vpn_db.py	Fri Dec 11 09:13:02 2015
+@@ -699,15 +699,20 @@
+             resource_id = kwargs.get('subnet_id')
+         check_func(context, resource_id)
+ 
+ 
+ def migration_callback(resource, event, trigger, **kwargs):
+-    context = kwargs['context']
+-    router = kwargs['router']
++    try:
++        context = kwargs['context']
++        router = kwargs['router']
++    except:
++        context = []
++        pass
++
+     vpnservice = manager.NeutronManager.get_service_plugins().get(
+         constants.VPN)
+-    if vpnservice:
++    if vpnservice and context:
+         vpnservice.check_router_in_use(context, router['id'])
+     return True
+ 
+ 
+ def subscribe():

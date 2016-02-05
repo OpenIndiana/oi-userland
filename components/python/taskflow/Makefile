@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		taskflow
-COMPONENT_VERSION=	0.6.1
+COMPONENT_VERSION=	0.7.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:5dc4a6e62ebea2f5cebb9ca4d8b3c21b97738065a881f3235ace0c070fa3185f
+    sha256:bf1f833184c12787d09ab1b587b41d4feec631f2b9d7fc55e63ef3098e74ad5b
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://wiki.openstack.org/wiki/TaskFlow
 COMPONENT_BUGDB=	python-mod/taskflow
 
-TPNO=			21638
+TPNO=			25762
 
 # Depends on networkx which is not Python 3 ready.
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)

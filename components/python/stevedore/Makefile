@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		stevedore
-COMPONENT_VERSION=	1.2.0
+COMPONENT_VERSION=	1.3.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:3f70db9052c26e66dac61cb73d8c6f5211373983d39872addab617c759db4b45
+    sha256:beab2b7f91966d259796392c39ed6f260b32851861561dd9f3b9be2fd0c426a5
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://github.com/dreamhost/stevedore
 COMPONENT_BUGDB=	python-mod/stevedore
 
-TPNO=			21742
+TPNO=			25761
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk

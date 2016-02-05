@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		oslo.serialization
-COMPONENT_VERSION=	1.2.0
+COMPONENT_VERSION=	1.4.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:073f25ef4b7138e28ecb75bab413582c4dc1a54ab63b540a1702edee7c0a0557
+    sha256:082dca272f0a941e1cdca1dc02849c5ddac65fa7d19604096be54cd41e7b4317
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://launchpad.net/oslo.serialization
 COMPONENT_BUGDB=	python-mod/oslo.serial
 
-TPNO=			21630
+TPNO=			25743
 
 # Depends on oslo.utils which is not Python 3 ready.
 PYTHON_VERSIONS =	$(PYTHON2_VERSIONS)

@@ -1,0 +1,32 @@
+In-house patch to use supported sed flags and to remove gzipping of man pages
+
+--- rabbitmq-server-3.5.6/Makefile.orig  2015-11-09 11:32:32.297343560 -0700
++++ rabbitmq-server-3.5.6/Makefile    2015-11-09 11:33:27.169056719 -0700
+@@ -75,7 +75,7 @@ $(shell awk 'BEGIN {
+ }')
+ endef
+
+-ERTS_VER = $(shell erl -version 2>&1 | sed -E 's/.* version //')
++ERTS_VER = $(shell erl -version 2>&1 | sed -e 's/.* version //')
+ USE_SPECS_MIN_ERTS_VER = 5.11
+ ifeq ($(call compare_version,$(ERTS_VER),$(USE_SPECS_MIN_ERTS_VER),>=),true)
+ ERLC_OPTS += -Duse_specs
+@@ -348,8 +348,7 @@ distclean: clean
+ %.gz: %.xml $(DOCS_DIR)/examples-to-end.xsl
+	xmlto --version | grep -E '^xmlto version 0\.0\.([0-9]|1[1-8])$$' >/dev/null || opt='--stringparam man.indent.verbatims=0' ; \
+	    xsltproc --novalid $(DOCS_DIR)/examples-to-end.xsl $< > $<.tmp && \
+-	    xmlto -o $(DOCS_DIR) $$opt man $<.tmp && \
+-	    gzip -f $(DOCS_DIR)/`basename $< .xml`
++	    xmlto -o $(DOCS_DIR) $$opt man $<.tmp
+	rm -f $<.tmp
+
+ # Use tmp files rather than a pipeline so that we get meaningful errors
+@@ -393,7 +392,7 @@ install_bin: all install_dirs
+ install_docs: docs_all install_dirs
+	for section in 1 5; do \
+		mkdir -p $(MAN_DIR)/man$$section; \
+-		for manpage in $(DOCS_DIR)/*.$$section.gz; do \
++		for manpage in $(DOCS_DIR)/*.$$section; do \
+			cp $$manpage $(MAN_DIR)/man$$section; \
+		done; \
+	done

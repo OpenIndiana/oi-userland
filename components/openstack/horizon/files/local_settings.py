@@ -7,6 +7,11 @@ from openstack_dashboard import exceptions
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
+# WEBROOT is the location relative to Webserver root and should end with a
+# slash.
+WEBROOT = '/horizon/'
+STATIC_ROOT = '/usr/lib/python2.7/vendor-packages/openstack_dashboard/static'
+
 # Required for Django 1.5.
 # If horizon is running in production (DEBUG is False), set this
 # with the list of host/domain names that the application can serve.
@@ -26,14 +31,6 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTOCOL', 'https')
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 
-# Default configuration uses /horizon as the application root.  Configure auth
-# redirects here accordingly.
-LOGIN_URL = '/horizon/auth/login/'
-LOGOUT_URL = '/horizon/auth/logout/'
-LOGIN_REDIRECT_URL = '/horizon'
-
-STATIC_ROOT = '/usr/lib/python2.7/vendor-packages/openstack_dashboard/static'
-
 # Enable Solaris theme
 TEMPLATE_DIRS = (
     '/usr/lib/python2.7/vendor-packages/openstack_dashboard/templates/solaris',
@@ -44,32 +41,31 @@ COMPRESS_OFFLINE = True
 
 # Overrides for OpenStack API versions. Use this setting to force the
 # OpenStack dashboard to use a specific API version for a given service API.
+# Versions specified here should be integers or floats, not strings.
 # NOTE: The version should be formatted as it appears in the URL for the
 # service API. For example, The identity service APIs have inconsistent
-# use of the decimal point, so valid options would be "2.0" or "3".
-# OPENSTACK_API_VERSIONS = {
-#     "data_processing": 1.1,
-#     "identity": 3,
-#     "volume": 2
-# }
+# use of the decimal point, so valid options would be 2.0 or 3.
+#OPENSTACK_API_VERSIONS = {
+#    "data-processing": 1.1,
+#    "identity": 3,
+#    "volume": 2,
+#}
 
 # Set this to True if running on multi-domain model. When this is enabled, it
 # will require user to enter the Domain name in addition to username for login.
-# OPENSTACK_KEYSTONE_MULTIDOMAIN_SUPPORT = False
+#OPENSTACK_KEYSTONE_MULTIDOMAIN_SUPPORT = False
 
 # Overrides the default domain used when running on single-domain model
 # with Keystone V3. All entities will be created in the default domain.
-# OPENSTACK_KEYSTONE_DEFAULT_DOMAIN = 'Default'
+#OPENSTACK_KEYSTONE_DEFAULT_DOMAIN = 'Default'
 
 # Set Console type:
-# valid options would be "AUTO"(default), "VNC", "SPICE", "RDP" or None
+# valid options would be "AUTO"(default), "VNC", "SPICE", "RDP", "SERIAL" or None
 # Set to None explicitly if you want to deactivate the console.
-# CONSOLE_TYPE = "AUTO"
+#CONSOLE_TYPE = "AUTO"
 
 # Default OpenStack Dashboard configuration.
 HORIZON_CONFIG = {
-    'dashboards': ('project', 'admin', 'settings',),
-    'default_dashboard': 'project',
     'user_home': 'openstack_dashboard.views.get_user_home',
     'ajax_queue_limit': 10,
     'auto_fade_alerts': {
@@ -81,24 +77,26 @@ HORIZON_CONFIG = {
     'exceptions': {'recoverable': exceptions.RECOVERABLE,
                    'not_found': exceptions.NOT_FOUND,
                    'unauthorized': exceptions.UNAUTHORIZED},
-    'angular_modules': [],
-    'js_files': [],
     'customization_module': 'openstack_dashboard.overrides',
 }
 
 # Specify a regular expression to validate user passwords.
-# HORIZON_CONFIG["password_validator"] = {
-#     "regex": '.*',
-#     "help_text": _("Your password does not meet the requirements.")
-# }
+#HORIZON_CONFIG["password_validator"] = {
+#    "regex": '.*',
+#    "help_text": _("Your password does not meet the requirements."),
+#}
 
 # Disable simplified floating IP address management for deployments with
 # multiple floating IP pools or complex network requirements.
-# HORIZON_CONFIG["simple_ip_management"] = False
+#HORIZON_CONFIG["simple_ip_management"] = False
 
 # Turn off browser autocompletion for forms including the login form and
 # the database creation workflow if so desired.
-# HORIZON_CONFIG["password_autocomplete"] = "off"
+#HORIZON_CONFIG["password_autocomplete"] = "off"
+
+# Setting this to True will disable the reveal button for password fields,
+# including on the login form.
+#HORIZON_CONFIG["disable_password_reveal"] = False
 
 LOCAL_PATH = '/var/lib/openstack_dashboard'
 
@@ -118,7 +116,7 @@ SECRET_KEY = secret_key.generate_or_read_from_file(
 # We recommend you use memcached for development; otherwise after every reload
 # of the django development server, you will have to login again. To use
 # memcached set CACHES to something like
-# CACHES = {
+#CACHES = {
 #    'default': {
 #        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
 #        'LOCATION': '127.0.0.1:11211',
@@ -127,7 +125,7 @@ SECRET_KEY = secret_key.generate_or_read_from_file(
 
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
     }
 }
 
@@ -137,26 +135,42 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 #EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
 
 # Configure these for your outgoing email host
-# EMAIL_HOST = 'smtp.my-company.com'
-# EMAIL_PORT = 25
-# EMAIL_HOST_USER = 'djangomail'
-# EMAIL_HOST_PASSWORD = 'top-secret!'
+#EMAIL_HOST = 'smtp.my-company.com'
+#EMAIL_PORT = 25
+#EMAIL_HOST_USER = 'djangomail'
+#EMAIL_HOST_PASSWORD = 'top-secret!'
 
 # For multiple regions uncomment this configuration, and add (endpoint, title).
-# AVAILABLE_REGIONS = [
-#     ('http://cluster1.example.com:5000/v2.0', 'cluster1'),
-#     ('http://cluster2.example.com:5000/v2.0', 'cluster2'),
-# ]
+#AVAILABLE_REGIONS = [
+#    ('http://cluster1.example.com:5000/v2.0', 'cluster1'),
+#    ('http://cluster2.example.com:5000/v2.0', 'cluster2'),
+#]
 
 OPENSTACK_HOST = "127.0.0.1"
 OPENSTACK_KEYSTONE_URL = "http://%s:5000/v2.0" % OPENSTACK_HOST
 OPENSTACK_KEYSTONE_DEFAULT_ROLE = "_member_"
 
+# Enables keystone web single-sign-on if set to True.
+#WEBSSO_ENABLED = False
+
+# Determines which authentication choice to show as default.
+#WEBSSO_INITIAL_CHOICE = "credentials"
+
+# The list of authentication mechanisms
+# which include keystone federation protocols.
+# Current supported protocol IDs are 'saml2' and 'oidc'
+# which represent SAML 2.0, OpenID Connect respectively.
+# Do not remove the mandatory credentials mechanism.
+#WEBSSO_CHOICES = (
+#    ("credentials", _("Keystone Credentials")),
+#    ("oidc", _("OpenID Connect")),
+#    ("saml2", _("Security Assertion Markup Language")))
+
 # Disable SSL certificate checks (useful for self-signed certificates):
-# OPENSTACK_SSL_NO_VERIFY = True
+#OPENSTACK_SSL_NO_VERIFY = True
 
 # The CA certificate to use to verify SSL connections
-# OPENSTACK_SSL_CACERT = '/path/to/cacert.pem'
+#OPENSTACK_SSL_CACERT = '/path/to/cacert.pem'
 
 # The OPENSTACK_KEYSTONE_BACKEND settings can be used to identify the
 # capabilities of the auth backend for Keystone.
@@ -170,12 +184,26 @@ OPENSTACK_KEYSTONE_BACKEND = {
     'can_edit_group': True,
     'can_edit_project': True,
     'can_edit_domain': True,
-    'can_edit_role': True
+    'can_edit_role': True,
 }
 
 #Setting this to True, will add a new "Retrieve Password" action on instance,
 #allowing Admin session password retrieval/decryption.
 OPENSTACK_ENABLE_PASSWORD_RETRIEVE = True
+
+# The Launch Instance user experience has been significantly enhanced.
+# You can choose whether to enable the new launch instance experience,
+# the legacy experience, or both. The legacy experience will be removed
+# in a future release, but is available as a temporary backup setting to ensure
+# compatibility with existing deployments. Further development will not be
+# done on the legacy experience. Please report any problems with the new
+# experience via the Launchpad tracking system.
+#
+# Toggle LAUNCH_INSTANCE_LEGACY_ENABLED and LAUNCH_INSTANCE_NG_ENABLED to
+# determine the experience to enable.  Set them both to true to enable
+# both.
+#LAUNCH_INSTANCE_LEGACY_ENABLED = True
+#LAUNCH_INSTANCE_NG_ENABLED = False
 
 # The Xen Hypervisor has the ability to set the mount point for volumes
 # attached to instances (other Hypervisors currently do not). Setting
@@ -189,7 +217,7 @@ OPENSTACK_HYPERVISOR_FEATURES = {
 # The OPENSTACK_CINDER_FEATURES settings can be used to enable optional
 # services provided by cinder that is not exposed by its extension API.
 OPENSTACK_CINDER_FEATURES = {
-    'enable_backup': False,
+    'enable_backup': True,
 }
 
 # The OPENSTACK_NEUTRON_NETWORK settings can be used to enable optional
@@ -203,35 +231,44 @@ OPENSTACK_NEUTRON_NETWORK = {
     'enable_ha_router': False,
     'enable_lb': False,
     'enable_firewall': False,
-    'enable_vpn': False,
+    'enable_vpn': True,
+
     # The profile_support option is used to detect if an external router can be
     # configured via the dashboard. When using specific plugins the
     # profile_support can be turned on if needed.
     'profile_support': None,
     #'profile_support': 'cisco',
+
     # Set which provider network types are supported. Only the network types
     # in this list will be available to choose from when creating a network.
     # Network types include local, flat, vlan, gre, and vxlan.
     'supported_provider_types': ['*'],
+
+    # Set which VNIC types are supported for port binding. Only the VNIC
+    # types in this list will be available to choose from when creating a
+    # port.
+    # VNIC types include 'normal', 'macvtap' and 'direct'.
+    'supported_vnic_types': ['*']
 }
 
 # The OPENSTACK_IMAGE_BACKEND settings can be used to customize features
 # in the OpenStack Dashboard related to the Image service, such as the list
 # of supported image formats.
-# OPENSTACK_IMAGE_BACKEND = {
-#     'image_formats': [
-#         ('', _('Select format')),
-#         ('aki', _('AKI - Amazon Kernel Image')),
-#         ('ami', _('AMI - Amazon Machine Image')),
-#         ('ari', _('ARI - Amazon Ramdisk Image')),
-#         ('iso', _('ISO - Optical Disk Image')),
-#         ('qcow2', _('QCOW2 - QEMU Emulator')),
-#         ('raw', _('Raw')),
-#         ('vdi', _('VDI')),
-#         ('vhd', _('VHD')),
-#         ('vmdk', _('VMDK'))
-#     ]
-# }
+#OPENSTACK_IMAGE_BACKEND = {
+#    'image_formats': [
+#        ('', _('Select format')),
+#        ('aki', _('AKI - Amazon Kernel Image')),
+#        ('ami', _('AMI - Amazon Machine Image')),
+#        ('ari', _('ARI - Amazon Ramdisk Image')),
+#        ('iso', _('ISO - Optical Disk Image')),
+#        ('ova', _('OVA - Open Virtual Appliance')),
+#        ('qcow2', _('QCOW2 - QEMU Emulator')),
+#        ('raw', _('Raw')),
+#        ('vdi', _('VDI - Virtual Disk Image')),
+#        ('vhd', ('VHD - Virtual Hard Disk')),
+#        ('vmdk', _('VMDK - Virtual Machine Disk')),
+#    ]
+#}
 
 # The IMAGE_CUSTOM_PROPERTY_TITLES settings is used to customize the titles for
 # image custom property attributes that appear on image detail pages.
@@ -241,7 +278,7 @@ IMAGE_CUSTOM_PROPERTY_TITLES = {
     "ramdisk_id": _("Ramdisk ID"),
     "image_state": _("Euca2ools state"),
     "project_id": _("Project ID"),
-    "image_type": _("Image Type")
+    "image_type": _("Image Type"),
 }
 
 # The IMAGE_RESERVED_CUSTOM_PROPERTIES setting is used to specify which image
@@ -267,6 +304,12 @@ IMAGE_RESERVED_CUSTOM_PROPERTIES = []
 API_RESULT_LIMIT = 1000
 API_RESULT_PAGE_SIZE = 20
 
+# The size of chunk in bytes for downloading objects from Swift
+SWIFT_FILE_TRANSFER_CHUNK_SIZE = 512 * 1024
+
+# Specify a maximum number of items to display in a dropdown.
+DROPDOWN_MAX_ITEMS = 30
+
 # The timezone of the server. This should correspond with the timezone
 # of your entire OpenStack installation, and hopefully be in UTC.
 TIME_ZONE = "UTC"
@@ -277,12 +320,24 @@ TIME_ZONE = "UTC"
 # can provide a custom callback method to use for sorting. You can also provide
 # a flag for reverse sort. For more info, see
 # http://docs.python.org/2/library/functions.html#sorted
-# CREATE_INSTANCE_FLAVOR_SORT = {
-#     'key': 'name',
-#      # or
-#     'key': my_awesome_callback_method,
-#     'reverse': False,
-# }
+#CREATE_INSTANCE_FLAVOR_SORT = {
+#    'key': 'name',
+#     # or
+#    'key': my_awesome_callback_method,
+#    'reverse': False,
+#}
+
+# Set this to True to display an 'Admin Password' field on the Change Password
+# form to verify that it is indeed the admin logged-in who wants to change
+# the password.
+#ENFORCE_PASSWORD_CHECK = False
+
+# Modules that provide /auth routes that can be used to handle different types
+# of user authentication. Add auth plugins that require extra route handling to
+# this list.
+#AUTHENTICATION_URLS = [
+#    'openstack_auth.urls',
+#]
 
 # The Horizon Policy Enforcement engine uses these values to load per service
 # policy rule files. The content of these files should match the files the
@@ -299,14 +354,19 @@ TIME_ZONE = "UTC"
 #    'image': 'glance_policy.json',
 #    'orchestration': 'heat_policy.json',
 #    'network': 'neutron_policy.json',
+#    'telemetry': 'ceilometer_policy.json',
 #}
 
 # Trove user and database extension support. By default support for
 # creating users and databases on database instances is turned on.
 # To disable these extensions set the permission here to something
 # unusable such as ["!"].
-# TROVE_ADD_USER_PERMS = []
-# TROVE_ADD_DATABASE_PERMS = []
+#TROVE_ADD_USER_PERMS = []
+#TROVE_ADD_DATABASE_PERMS = []
+
+# Change this patch to the appropriate static directory containing
+# two files: _variables.scss and _styles.scss
+#CUSTOM_THEME_PATH = 'static/themes/default'
 
 LOGGING = {
     'version': 1,
@@ -315,6 +375,12 @@ LOGGING = {
     # if nothing is specified here and disable_existing_loggers is True,
     # django.db.backends will still log unless it is disabled explicitly.
     'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(asctime)s %(process)d %(levelname)s %(name)s '
+                      '%(message)s'
+        },
+    },
     'handlers': {
         'null': {
             'level': 'DEBUG',
@@ -324,6 +390,12 @@ LOGGING = {
             # Set the level to "DEBUG" for verbose output logging.
             'level': 'INFO',
             'class': 'logging.StreamHandler',
+        },
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': '/var/log/openstack_dashboard/horizon.log',
+            'formatter': 'verbose',
         },
     },
     'loggers': {
@@ -545,11 +617,31 @@ SECURITY_GROUP_RULES = {
 # pool for use in their cluster.  False by default.  You would want
 # to set this to True if you were running Nova Networking with
 # auto_assign_floating_ip = True.
-# SAHARA_AUTO_IP_ALLOCATION_ENABLED = False
+#SAHARA_AUTO_IP_ALLOCATION_ENABLED = False
 
 # The hash algorithm to use for authentication tokens. This must
 # match the hash algorithm that the identity server and the
 # auth_token middleware are using. Allowed values are the
 # algorithms supported by Python's hashlib library.
-# OPENSTACK_TOKEN_HASH_ALGORITHM = 'md5'
+#OPENSTACK_TOKEN_HASH_ALGORITHM = 'md5'
 
+# AngularJS requires some settings to be made available to
+# the client side. Some settings are required by in-tree / built-in horizon
+# features. These settings must be added to REST_API_REQUIRED_SETTINGS in the
+# form of ['SETTING_1','SETTING_2'], etc.
+#
+# You may remove settings from this list for security purposes, but do so at
+# the risk of breaking a built-in horizon feature. These settings are required
+# for horizon to function properly. Only remove them if you know what you
+# are doing. These settings may in the future be moved to be defined within
+# the enabled panel configuration.
+# You should not add settings to this list for out of tree extensions.
+# See: https://wiki.openstack.org/wiki/Horizon/RESTAPI
+REST_API_REQUIRED_SETTINGS = ['OPENSTACK_HYPERVISOR_FEATURES']
+
+# Additional settings can be made available to the client side for
+# extensibility by specifying them in REST_API_ADDITIONAL_SETTINGS
+# !! Please use extreme caution as the settings are transferred via HTTP/S
+# and are not encrypted on the browser. This is an experimental API and
+# may be deprecated in the future without notice.
+#REST_API_ADDITIONAL_SETTINGS = []

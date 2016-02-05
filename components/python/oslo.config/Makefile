@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		oslo.config
-COMPONENT_VERSION=	1.6.0
+COMPONENT_VERSION=	1.9.3
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:a88cf1af696b4d9cae783a4c8c6898e6fb4abd176f9c9906ba388e7eac5eab17
+    sha256:ab54e67776d9bbee86ba8cce9393ba3186e6e63de926e9797598dc35fe790140
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://launchpad.net/oslo.config
 COMPONENT_BUGDB=	python-mod/oslo.config
 
-TPNO=			21726
+TPNO=			25738
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk

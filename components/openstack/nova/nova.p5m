@@ -28,7 +28,7 @@ set name=pkg.fmri \
 set name=pkg.summary value="OpenStack Nova (Compute Service)"
 set name=pkg.description \
     value="OpenStack Nova provides a cloud computing fabric controller, supporting a wide variety of virtualization technologies. In addition to its native API, it includes compatibility with the commonly encountered Amazon EC2 and S3 APIs."
-set name=pkg.human-version value="Juno $(COMPONENT_VERSION)"
+set name=pkg.human-version value="Kilo $(COMPONENT_VERSION)"
 set name=com.oracle.info.description value="Nova, the OpenStack compute service"
 set name=com.oracle.info.tpno value=$(TPNO)
 set name=info.classification \
@@ -41,7 +41,8 @@ set name=info.upstream value="OpenStack <openstack-dev@lists.openstack.org>"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=openstack.upgrade-id reboot-needed=true value=$(COMPONENT_BE_VERSION)
 set name=org.opensolaris.arc-caseid value=PSARC/2013/350 value=PSARC/2014/049 \
-    value=PSARC/2014/210 value=PSARC/2015/110
+    value=PSARC/2014/210 value=PSARC/2015/110 value=PSARC/2015/324 \
+    value=PSARC/2015/357 value=PSARC/2015/535
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 dir  path=etc/nova owner=nova group=nova mode=0700
 #
@@ -130,6 +131,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/metadata/handler.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/metadata/password.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/metadata/vendordata_json.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/api_version_request.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/auth.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/common.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/__init__.py
@@ -212,6 +214,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/cont
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/contrib/server_groups.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/contrib/server_list_multi_status.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/contrib/server_password.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/contrib/server_sort_keys.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/contrib/server_start_stop.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/contrib/server_usage.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/contrib/services.py
@@ -237,29 +240,39 @@ file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plug
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/admin_password.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/agents.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/aggregates.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/assisted_volume_snapshots.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/attach_interfaces.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/availability_zone.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/baremetal_nodes.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/block_device_mapping.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/block_device_mapping_v1.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/cells.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/certificates.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/cloudpipe.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/config_drive.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/console_auth_tokens.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/console_output.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/consoles.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/create_backup.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/deferred_delete.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/disk_config.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/evacuate.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/extended_availability_zone.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/extended_server_attributes.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/extended_status.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/extended_volumes.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/extension_info.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/fixed_ips.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/flavor_access.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/flavor_manage.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/flavor_rxtx.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/flavors.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/flavors_extraspecs.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/floating_ip_dns.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/floating_ip_pools.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/floating_ips.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/floating_ips_bulk.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/fping.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/hide_server_addresses.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/hosts.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/hypervisors.py
@@ -267,6 +280,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plug
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/image_size.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/images.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/instance_actions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/instance_usage_audit_log.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/ips.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/keypairs.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/limits.py
@@ -275,12 +289,18 @@ file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plug
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/migrations.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/multinic.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/multiple_create.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/networks.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/networks_associate.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/pause_server.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/pci.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/personality.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/preserve_ephemeral_rebuild.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/quota_classes.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/quota_sets.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/remote_consoles.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/rescue.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/scheduler_hints.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/security_group_default_rules.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/security_groups.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/server_diagnostics.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/server_external_events.py
@@ -293,58 +313,62 @@ file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plug
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/shelve.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/simple_tenant_usage.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/suspend_server.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/tenant_networks.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/used_limits.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/user_data.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/versions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/virtual_interfaces.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/plugins/v3/volumes.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/atom-link.rng
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/atom.rng
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v1.1/addresses.rng
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v1.1/extension.rng
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v1.1/extensions.rng
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v1.1/flavor.rng
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v1.1/flavors.rng
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v1.1/flavors_index.rng
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v1.1/image.rng
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v1.1/images.rng
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v1.1/images_index.rng
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v1.1/limits.rng
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v1.1/metadata.rng
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v1.1/server.rng
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v1.1/servers.rng
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v1.1/servers_index.rng
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v1.1/version.rng
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v1.1/versions.rng
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/access_ips.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/admin_password.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/agents.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/aggregates.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/assisted_volume_snapshots.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/attach_interfaces.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/availability_zone.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/block_device_mapping.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/block_device_mapping_v1.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/cells.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/cloudpipe.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/config_drive.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/console_output.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/create_backup.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/disk_config.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/evacuate.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/extended_volumes.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/fixed_ips.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/flavor_access.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/flavor_manage.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/flavors_extraspecs.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/floating_ip_dns.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/floating_ips.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/floating_ips_bulk.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/hosts.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/image_metadata.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/keypairs.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/migrate_server.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/multinic.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/multiple_create.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/networks.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/networks_associate.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/personality.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/preserve_ephemeral_rebuild.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/quota_classes.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/quota_sets.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/remote_consoles.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/rescue.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/reset_server_state.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/scheduler_hints.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/security_groups.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/server_external_events.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/server_groups.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/server_metadata.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/servers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/services.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/tenant_networks.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/user_data.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/schemas/v3/volumes.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/server_metadata.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/servers.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/versions.py
@@ -356,9 +380,10 @@ file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/view
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/views/servers.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/compute/views/versions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/extensions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/rest_api_version_history.rst
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/urlmap.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/versioned_method.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/wsgi.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/openstack/xmlutil.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/sizelimit.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/validation/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/api/validation/parameter_types.py
@@ -397,8 +422,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/nova/cmd/api.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/cmd/api_ec2.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/cmd/api_metadata.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/cmd/api_os_compute.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/cmd/baremetal_deploy_helper.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/cmd/baremetal_manage.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/cmd/baseproxy.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/cmd/cells.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/cmd/cert.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/cmd/compute.py
@@ -419,11 +443,12 @@ file path=usr/lib/python$(PYVER)/vendor-packages/nova/cmd/xvpvncproxy.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/compute/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/compute/api.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/compute/arch.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/compute/build_results.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/compute/cells_api.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/compute/claims.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/compute/fakevirtinstance.xml
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/compute/cpumodel.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/compute/flavors.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/compute/hvtype.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/compute/hv_type.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/compute/instance_actions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/compute/manager.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/compute/monitors/__init__.py
@@ -455,13 +480,14 @@ file path=usr/lib/python$(PYVER)/vendor-packages/nova/console/manager.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/console/rpcapi.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/console/serial.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/console/type.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/console/vmrc.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/console/vmrc_manager.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/console/websocketproxy.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/console/xvp.conf.template
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/console/xvp.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/consoleauth/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/consoleauth/manager.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/consoleauth/manager.py \
+    pkg.depend.bypass-generate=.*/oslo_log.* \
+    pkg.depend.bypass-generate=.*/oslo_messaging.*
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/consoleauth/rpcapi.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/context.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/crypto.py
@@ -471,6 +497,14 @@ file path=usr/lib/python$(PYVER)/vendor-packages/nova/db/base.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/db/migration.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/db/sqlalchemy/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/db/sqlalchemy/api.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/db/sqlalchemy/api_migrations/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/db/sqlalchemy/api_migrations/migrate_repo/README
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/db/sqlalchemy/api_migrations/migrate_repo/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/db/sqlalchemy/api_migrations/migrate_repo/migrate.cfg
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/db/sqlalchemy/api_migrations/migrate_repo/versions/001_cell_mapping.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/db/sqlalchemy/api_migrations/migrate_repo/versions/002_instance_mapping.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/db/sqlalchemy/api_migrations/migrate_repo/versions/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/db/sqlalchemy/api_models.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/db/sqlalchemy/migrate_repo/README
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/db/sqlalchemy/migrate_repo/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/db/sqlalchemy/migrate_repo/manage.py
@@ -516,6 +550,32 @@ file path=usr/lib/python$(PYVER)/vendor-packages/nova/db/sqlalchemy/migrate_repo
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/db/sqlalchemy/migrate_repo/versions/252_add_instance_extra_table.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/db/sqlalchemy/migrate_repo/versions/253_add_pci_requests_to_instance_extra_table.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/db/sqlalchemy/migrate_repo/versions/254_add_request_id_in_pci_devices.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/db/sqlalchemy/migrate_repo/versions/255_placeholder.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/db/sqlalchemy/migrate_repo/versions/256_placeholder.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/db/sqlalchemy/migrate_repo/versions/257_placeholder.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/db/sqlalchemy/migrate_repo/versions/258_placeholder.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/db/sqlalchemy/migrate_repo/versions/259_placeholder.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/db/sqlalchemy/migrate_repo/versions/260_placeholder.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/db/sqlalchemy/migrate_repo/versions/261_placeholder.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/db/sqlalchemy/migrate_repo/versions/262_placeholder.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/db/sqlalchemy/migrate_repo/versions/263_placeholder.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/db/sqlalchemy/migrate_repo/versions/264_placeholder.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/db/sqlalchemy/migrate_repo/versions/265_remove_duplicated_index.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/db/sqlalchemy/migrate_repo/versions/266_add_instance_tags.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/db/sqlalchemy/migrate_repo/versions/267_instance_uuid_non_nullable.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/db/sqlalchemy/migrate_repo/versions/268_add_host_in_compute_node.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/db/sqlalchemy/migrate_repo/versions/269_add_numa_node_column.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/db/sqlalchemy/migrate_repo/versions/270_flavor_data_in_extra.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/db/sqlalchemy/migrate_repo/versions/271_sqlite_postgresql_indexes.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/db/sqlalchemy/migrate_repo/versions/272_add_keypair_type.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/db/sqlalchemy/migrate_repo/versions/273_sqlite_foreign_keys.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/db/sqlalchemy/migrate_repo/versions/274_update_instances_project_id_index.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/db/sqlalchemy/migrate_repo/versions/275_add_keypair_type.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/db/sqlalchemy/migrate_repo/versions/276_vcpu_model.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/db/sqlalchemy/migrate_repo/versions/277_add_fixed_ip_updated_index.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/db/sqlalchemy/migrate_repo/versions/278_remove_service_fk_in_compute_nodes.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/db/sqlalchemy/migrate_repo/versions/279_fix_unique_constraint_for_compute_node.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/db/sqlalchemy/migrate_repo/versions/280_add_nullable_false_to_keypairs_name.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/db/sqlalchemy/migrate_repo/versions/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/db/sqlalchemy/migration.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/db/sqlalchemy/models.py
@@ -540,6 +600,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/nova/ipv6/account_identifier.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/ipv6/api.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/ipv6/rfc2462.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/keymgr/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/keymgr/barbican.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/keymgr/conf_key_mgr.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/keymgr/key.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/keymgr/key_mgr.py
@@ -565,7 +626,6 @@ file path=usr/lib/python$(PYVER)/vendor-packages/nova/network/neutronv2/__init__
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/network/neutronv2/api.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/network/neutronv2/constants.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/network/noop_dns_driver.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/network/nova_ipam_lib.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/network/rpcapi.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/network/security_group/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/network/security_group/neutron_driver.py
@@ -579,6 +639,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/nova/objects/aggregate.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/objects/bandwidth_usage.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/objects/base.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/objects/block_device.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/objects/cell_mapping.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/objects/compute_node.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/objects/dns_domain.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/objects/ec2.py
@@ -587,66 +648,60 @@ file path=usr/lib/python$(PYVER)/vendor-packages/nova/objects/fields.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/objects/fixed_ip.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/objects/flavor.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/objects/floating_ip.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/objects/hv_spec.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/objects/instance.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/objects/instance_action.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/objects/instance_fault.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/objects/instance_group.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/objects/instance_info_cache.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/objects/instance_mapping.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/objects/instance_numa_topology.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/objects/instance_pci_requests.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/objects/keypair.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/objects/migration.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/objects/network.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/objects/network_request.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/objects/numa.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/objects/pci_device.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/objects/pci_device_pool.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/objects/quotas.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/objects/security_group.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/objects/security_group_rule.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/objects/service.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/objects/tag.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/objects/vcpu_model.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/objects/virt_cpu_topology.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/objects/virtual_interface.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/objectstore/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/objectstore/s3server.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/README
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/_i18n.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/cliutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/config/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/config/generator.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/context.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/eventlet_backdoor.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/excutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/fileutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/fixture/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/fixture/config.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/fixture/lockutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/fixture/logging.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/fixture/mockpatch.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/fixture/moxstubout.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/gettextutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/imageutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/importutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/jsonutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/local.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/lockutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/log.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/loopingcall.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/memorycache.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/middleware/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/middleware/base.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/middleware/request_id.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/network_utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/periodic_task.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/policy.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/processutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/report/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/report/generators/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/report/generators/conf.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/report/generators/process.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/report/generators/threading.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/report/generators/version.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/report/guru_meditation_report.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/report/models/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/report/models/base.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/report/models/conf.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/report/models/process.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/report/models/threading.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/report/models/version.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/report/models/with_default_views.py
@@ -659,36 +714,30 @@ file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/report/vi
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/report/views/text/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/report/views/text/generic.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/report/views/text/header.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/report/views/text/process.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/report/views/text/threading.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/report/views/xml/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/report/views/xml/generic.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/service.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/sslutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/strutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/systemd.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/threadgroup.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/timeutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/units.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/uuidutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/versionutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/openstack/common/xmlutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/paths.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/pci/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/pci/pci_device.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/pci/pci_devspec.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/pci/pci_manager.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/pci/pci_request.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/pci/pci_stats.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/pci/pci_utils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/pci/pci_whitelist.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/pci/device.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/pci/devspec.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/pci/manager.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/pci/request.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/pci/stats.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/pci/utils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/pci/whitelist.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/policy.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/quota.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/rdp/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/rpc.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/safe_utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/scheduler/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/scheduler/baremetal_host_manager.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/scheduler/base_baremetal_host_manager.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/scheduler/caching_scheduler.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/scheduler/chance.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/scheduler/client/__init__.py
@@ -731,12 +780,14 @@ file path=usr/lib/python$(PYVER)/vendor-packages/nova/scheduler/rpcapi.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/scheduler/scheduler_options.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/scheduler/utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/scheduler/weights/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/scheduler/weights/io_ops.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/scheduler/weights/metrics.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/scheduler/weights/ram.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/service.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/servicegroup/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/servicegroup/api.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/servicegroup/drivers/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/servicegroup/drivers/base.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/servicegroup/drivers/db.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/servicegroup/drivers/mc.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/servicegroup/drivers/zk.py
@@ -747,47 +798,6 @@ file path=usr/lib/python$(PYVER)/vendor-packages/nova/test.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/version.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/baremetal/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/baremetal/baremetal_states.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/baremetal/base.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/baremetal/common.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/baremetal/db/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/baremetal/db/api.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/baremetal/db/migration.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/baremetal/db/sqlalchemy/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/baremetal/db/sqlalchemy/api.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/baremetal/db/sqlalchemy/migrate_repo/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/baremetal/db/sqlalchemy/migrate_repo/migrate.cfg
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/baremetal/db/sqlalchemy/migrate_repo/versions/001_init.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/baremetal/db/sqlalchemy/migrate_repo/versions/002_drop_bm_deployments.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/baremetal/db/sqlalchemy/migrate_repo/versions/003_add_uuid_to_bm_nodes.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/baremetal/db/sqlalchemy/migrate_repo/versions/004_add_instance_name_to_bm_nodes.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/baremetal/db/sqlalchemy/migrate_repo/versions/005_drop_unused_columns_from_nodes.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/baremetal/db/sqlalchemy/migrate_repo/versions/006_move_prov_mac_address.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/baremetal/db/sqlalchemy/migrate_repo/versions/007_drop_prov_mac_address.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/baremetal/db/sqlalchemy/migrate_repo/versions/008_remove_bm_pxe_ips_table.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/baremetal/db/sqlalchemy/migrate_repo/versions/009_add_ephemeral_mb_to_bm_nodes.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/baremetal/db/sqlalchemy/migrate_repo/versions/010_add_preserve_ephemeral.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/baremetal/db/sqlalchemy/migrate_repo/versions/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/baremetal/db/sqlalchemy/migration.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/baremetal/db/sqlalchemy/models.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/baremetal/db/sqlalchemy/session.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/baremetal/doc/README.rst
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/baremetal/driver.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/baremetal/fake.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/baremetal/iboot_pdu.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/baremetal/ipmi.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/baremetal/net-dhcp.ubuntu.template
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/baremetal/net-static.ubuntu.template
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/baremetal/pxe.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/baremetal/pxe_config.template
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/baremetal/tilera.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/baremetal/tilera_pdu.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/baremetal/utils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/baremetal/vif_driver.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/baremetal/virtual_power_driver.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/baremetal/virtual_power_driver_settings.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/baremetal/volume_driver.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/block_device.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/configdrive.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/diagnostics.py
@@ -816,15 +826,20 @@ file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/ironic/ironic_states.
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/ironic/patcher.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/libvirt/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/libvirt/blockinfo.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/libvirt/compat.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/libvirt/config.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/libvirt/designer.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/libvirt/dmcrypt.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/libvirt/driver.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/libvirt/firewall.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/libvirt/host.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/libvirt/imagebackend.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/libvirt/imagecache.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/libvirt/instancejobtracker.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/libvirt/lvm.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/libvirt/quobyte.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/libvirt/rbd_utils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/libvirt/remotefs.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/libvirt/utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/libvirt/vif.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/libvirt/volume.py
@@ -837,7 +852,8 @@ file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/virtapi.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/volumeutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/virt/watchdog_actions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/vnc/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/nova/vnc/xvp_proxy.py
+file path=usr/lib/python$(PYVER)/vendor-packages/nova/vnc/xvp_proxy.py \
+    pkg.depend.bypass-generate=.*/oslo_log.*
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/volume/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/volume/cinder.py
 file path=usr/lib/python$(PYVER)/vendor-packages/nova/volume/encryptors/__init__.py
@@ -874,10 +890,6 @@ depend type=group fmri=__TBD pkg.debug.depend.file=usr/bin/xterm
 # force a group dependency on package delivering the optional xwininfo(1)
 depend type=group fmri=__TBD pkg.debug.depend.file=usr/bin/xwininfo
 
-# force a group dependency on the optional anyjson; pkgdepend work is needed to
-# flush this out.
-depend type=group fmri=library/python/anyjson-$(PYV)
-
 # force a group dependency on the optional python-ldap; pkgdepend work is needed
 # to flush this out.
 depend type=group fmri=library/python/python-ldap-$(PYV)
@@ -886,16 +898,15 @@ depend type=group fmri=library/python/python-ldap-$(PYV)
 # needed to flush this out.
 depend type=group fmri=library/python/python-memcached-$(PYV)
 
-# force a group dependency on the optional simplejson; pkgdepend work is needed
-# to flush this out.
-depend type=group fmri=library/python/simplejson-$(PYV)
-
 # force a group dependency on package delivering the optional solaris(5) brand
 depend type=group fmri=system/zones/brand/brand-solaris
 
 # force a group dependency on package delivering the optional solaris-kz(5)
 # brand
 depend type=group fmri=system/zones/brand/brand-solaris-kz
+
+# To upgrade to Kilo version, Juno version of the package must be on the system
+depend type=origin fmri=cloud/openstack/nova@0.2014.2.2 root-image=true
 
 # force a dependency on package delivering archiveadm(1M)
 depend type=require fmri=__TBD pkg.debug.depend.file=usr/sbin/archiveadm
@@ -919,8 +930,9 @@ depend type=require fmri=__TBD pkg.debug.depend.file=usr/sbin/zpool
 depend type=require fmri=__TBD \
     pkg.debug.depend.file=usr/share/novnc/vnc_auto.html
 
-# force a dependency on babel; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/babel-$(PYV)
+# force a dependency on barbicanclient; pkgdepend work is needed to flush this
+# out.
+depend type=require fmri=library/python/barbicanclient-$(PYV)
 
 # force a dependency on boto; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/boto-$(PYV)
@@ -948,6 +960,10 @@ depend type=require fmri=library/python/jinja2-$(PYV)
 # force a dependency on jsonschema; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/jsonschema-$(PYV)
 
+# force a dependency on keystoneclient; pkgdepend work is needed to flush this
+# out.
+depend type=require fmri=library/python/keystoneclient-$(PYV)
+
 # force a dependency on keystonemiddleware; used via a paste.deploy filter
 depend type=require fmri=library/python/keystonemiddleware-$(PYV)
 
@@ -957,9 +973,20 @@ depend type=require fmri=library/python/lxml-$(PYV)
 # force a dependency on netaddr; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/netaddr-$(PYV)
 
+# force a dependency on netifaces; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/netifaces-$(PYV)
+
 # force a dependency on neutronclient; pkgdepend work is needed to flush this
 # out.
 depend type=require fmri=library/python/neutronclient-$(PYV)
+
+# force a dependency on oslo.concurrency; pkgdepend work is needed to flush this
+# out.
+depend type=require fmri=library/python/oslo.concurrency-$(PYV)
+
+# force a dependency on oslo.context; pkgdepend work is needed to flush this
+# out.
+depend type=require fmri=library/python/oslo.context-$(PYV)
 
 # force a dependency on oslo.db; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/oslo.db-$(PYV)
@@ -967,9 +994,16 @@ depend type=require fmri=library/python/oslo.db-$(PYV)
 # force a dependency on oslo.i18n; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/oslo.i18n-$(PYV)
 
+# force a dependency on oslo.log; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/oslo.log-$(PYV)
+
 # force a dependency on oslo.messaging; pkgdepend work is needed to flush this
 # out.
 depend type=require fmri=library/python/oslo.messaging-$(PYV)
+
+# force a dependency on oslo.middleware; pkgdepend work is needed to flush this
+# out.
+depend type=require fmri=library/python/oslo.middleware-$(PYV)
 
 # force a dependency on oslo.utils; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/oslo.utils-$(PYV)
@@ -987,11 +1021,20 @@ depend type=require fmri=library/python/paste.deploy-$(PYV)
 # force a dependency on pbr; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/pbr-$(PYV)
 
+# force a dependency on prettytable; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/prettytable-$(PYV)
+
+# force a dependency on psutil; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/psutil-$(PYV)
+
 # force a dependency on pyasn1; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/pyasn1-$(PYV)
 
 # force a dependency on requests; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/requests-$(PYV)
+
+# force a dependency on retrying; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/retrying-$(PYV)
 
 # force a dependency on rfc3986; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/rfc3986-$(PYV)
@@ -1023,7 +1066,7 @@ depend type=require fmri=system/library/install
 depend type=require fmri=system/management/rad/client/rad-python
 
 # force a dependency on rad-archivemgr
-depend type=require fmri=system/management/rad/module/rad-archivemgr
+#depend type=require fmri=system/management/rad/module/rad-archivemgr
 
 # force a dependency on rad-kstat
 depend type=require fmri=system/management/rad/module/rad-kstat

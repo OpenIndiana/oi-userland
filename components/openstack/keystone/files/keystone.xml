@@ -53,14 +53,31 @@
 
     <logfile_attributes permissions='600'/>
 
-    <exec_method timeout_seconds="600" type="method" name="start"
+    <exec_method timeout_seconds="60" type="method" name="start"
+      exec="/lib/svc/method/keystone %m">
+      <method_context>
+        <method_credential user='keystone' group='keystone'
+          privileges='basic,{zone}:/system/volatile/keystone_wsgi_*'/>
+      </method_context>
+    </exec_method>
+
+    <exec_method timeout_seconds="60" type="method" name="stop"
+      exec="/lib/svc/method/keystone %m">
+      <method_context>
+        <method_credential user='keystone' group='keystone'/>
+      </method_context>
+    </exec_method>
+
+    <exec_method timeout_seconds="60" type="method" name="restart"
       exec="/lib/svc/method/keystone %m">
       <method_context>
         <method_credential user='keystone' group='keystone' />
       </method_context>
     </exec_method>
-    <exec_method timeout_seconds="60" type="method" name="stop"
-      exec=":kill"/>
+
+    <property_group type="framework" name="startd">
+      <propval type="astring" name="ignore_error" value="core,signal"/>
+    </property_group>
 
     <instance name='default' enabled='false'>
       <!-- to start/stop/refresh the service -->
@@ -69,6 +86,25 @@
                  value='solaris.smf.manage.keystone' />
         <propval name='value_authorization' type='astring'
                  value='solaris.smf.value.keystone' />
+      </property_group>
+
+      <property_group name='keystone_stencil' type='configfile'>
+        <propval name='path' type='astring'
+          value='/var/lib/keystone/keystone.httpd.conf'/>
+        <propval name='stencil' type='astring' value='keystone.stencil'/>
+        <propval name='mode' type='astring' value='0444'/>
+        <propval name='owner' type='astring' value='keystone'/>
+        <propval name='group' type='astring' value='keystone'/>
+      </property_group>
+
+      <property_group name='config' type='application'>
+        <propval name='admin_port' type='count' value='35357'/>
+        <propval name='access_log' type='astring'
+          value='/var/log/keystone/keystone_access.log'/>
+        <propval name='error_log' type='astring'
+          value='/var/log/keystone/keystone_error.log'/>
+        <propval name='public_port' type='count' value='5000'/>
+        <propval name='use_tls' type='boolean' value='false'/>
       </property_group>
     </instance>
 
@@ -85,6 +121,75 @@
           services for OpenStack.
         </loctext>
       </description>
+
+      <pg_pattern required='true' type='application' name='config'>
+        <prop_pattern required='true' type='count' name='admin_port'>
+          <description>
+            <loctext xml:lang='C'>
+              The port for admin requests.  Default value is 35357.
+            </loctext>
+          </description>
+        </prop_pattern>
+
+        <prop_pattern required='true' type='astring' name='access_log'>
+          <description>
+            <loctext xml:lang='C'>
+              The absolute path for the Apache access log file.  Defaults to
+              /var/log/keystone/keystone_access.log
+            </loctext>
+          </description>
+        </prop_pattern>
+
+        <prop_pattern required='true' type='astring' name='error_log'>
+          <description>
+            <loctext xml:lang='C'>
+              The absolute path for the Apache error log file.  Defaults to
+              /var/log/keystone/keystone_error.log
+            </loctext>
+          </description>
+        </prop_pattern>
+
+        <prop_pattern required='true' type='count' name='public_port'>
+          <description>
+            <loctext xml:lang='C'>
+              The port for public requests.  Default value is 5000.
+            </loctext>
+          </description>
+        </prop_pattern>
+
+        <prop_pattern required='false' type='astring' name='ssl_cert_file'>
+          <description>
+            <loctext xml:lang='C'>
+              Server PEM-encoded X.509 Certificate file.
+            </loctext>
+          </description>
+        </prop_pattern>
+
+        <prop_pattern required='false' type='astring' name='ssl_ca_cert_file'>
+          <description>
+            <loctext xml:lang='C'>
+              File of concatenated PEM-encoded CA Certificates for Client Auth.
+            </loctext>
+          </description>
+        </prop_pattern>
+
+        <prop_pattern required='false' type='astring' name='ssl_cert_key_file'>
+          <description>
+            <loctext xml:lang='C'>
+              Server PEM-encoded Private Key file.
+            </loctext>
+          </description>
+        </prop_pattern>
+
+        <prop_pattern required='true' type='boolean' name='use_tls'>
+          <description>
+            <loctext xml:lang='C'>
+              Boolean property to indicate usage of TLS.  Defaults to 'false'.
+            </loctext>
+          </description>
+        </prop_pattern>
+
+      </pg_pattern>
     </template>
   </service>
 

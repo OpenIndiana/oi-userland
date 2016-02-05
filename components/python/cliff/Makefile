@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cliff
-COMPONENT_VERSION=	1.9.0
+COMPONENT_VERSION=	1.10.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:38f731fd585975f4a3aa8025d3be564bb8439fc1e0f96b6b1e442a9e0dc4d1ce
+    sha256:ddfec39bf0de7b53666045c946d495ca070e538e5f92dc19588596c9bcc52c6e
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://pypi.python.org/pypi/cliff
 COMPONENT_BUGDB=	python-mod/cliff
 
-TPNO=			21717
+TPNO=			25733
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk

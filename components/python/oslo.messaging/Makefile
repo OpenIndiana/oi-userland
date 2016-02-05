@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		oslo.messaging
-COMPONENT_VERSION=	1.4.1
+COMPONENT_VERSION=	1.8.3
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:28243db5fb84287016d6f58fa485a71496c825bcfca3ae806035017700a11945
+    sha256:149d325431e2c4415edd5bdaec0cff4e9109c02e8f428382610cfa1a238692ea
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://launchpad.net/oslo.messaging
 COMPONENT_BUGDB=	python-mod/oslo.messaging
 
-TPNO=			20378
+TPNO=			25742
 
 # Depends on oslo.utils which is not Python 3 ready.
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
@@ -45,11 +45,6 @@ include $(WS_MAKE_RULES)/setup.py.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
-COMPONENT_POST_INSTALL_ACTION = \
-	(cd $(PROTO_DIR)/usr/bin ; \
-	 $(MV) -f oslo-messaging-zmq-receiver \
-	 oslo-messaging-zmq-receiver-$(PYTHON_VERSION))
 
 # common targets
 build:		$(BUILD_NO_ARCH)

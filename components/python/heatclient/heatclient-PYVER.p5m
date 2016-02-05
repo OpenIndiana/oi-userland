@@ -48,6 +48,7 @@ file path=usr/bin/heat-$(PYVER)
 file path=usr/lib/python$(PYVER)/vendor-packages/heatclient/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heatclient/client.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heatclient/common/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heatclient/common/deployment_utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heatclient/common/environment_format.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heatclient/common/http.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heatclient/common/template_format.py
@@ -56,19 +57,15 @@ file path=usr/lib/python$(PYVER)/vendor-packages/heatclient/common/utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heatclient/exc.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heatclient/openstack/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heatclient/openstack/common/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heatclient/openstack/common/_i18n.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heatclient/openstack/common/apiclient/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heatclient/openstack/common/apiclient/auth.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heatclient/openstack/common/apiclient/base.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heatclient/openstack/common/apiclient/client.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heatclient/openstack/common/apiclient/exceptions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heatclient/openstack/common/apiclient/fake_client.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heatclient/openstack/common/apiclient/utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heatclient/openstack/common/cliutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heatclient/openstack/common/gettextutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heatclient/openstack/common/importutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heatclient/openstack/common/jsonutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heatclient/openstack/common/strutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heatclient/openstack/common/timeutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/heatclient/openstack/common/uuidutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heatclient/shell.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heatclient/v1/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heatclient/v1/actions.py
@@ -77,6 +74,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/heatclient/v1/client.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heatclient/v1/events.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heatclient/v1/resource_types.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heatclient/v1/resources.py
+file path=usr/lib/python$(PYVER)/vendor-packages/heatclient/v1/services.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heatclient/v1/shell.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heatclient/v1/software_configs.py
 file path=usr/lib/python$(PYVER)/vendor-packages/heatclient/v1/software_deployments.py
@@ -86,14 +84,11 @@ file path=usr/lib/python$(PYVER)/vendor-packages/python_heatclient-$(COMPONENT_V
 file path=usr/lib/python$(PYVER)/vendor-packages/python_heatclient-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/python_heatclient-$(COMPONENT_VERSION)-py$(PYVER).egg-info/entry_points.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/python_heatclient-$(COMPONENT_VERSION)-py$(PYVER).egg-info/not-zip-safe
+file path=usr/lib/python$(PYVER)/vendor-packages/python_heatclient-$(COMPONENT_VERSION)-py$(PYVER).egg-info/pbr.json
 file path=usr/lib/python$(PYVER)/vendor-packages/python_heatclient-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/python_heatclient-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
 #
 license LICENSE license="Apache v2.0"
-
-# force a group dependency on the optional anyjson; pkgdepend work is needed to
-# flush this out.
-depend type=group fmri=library/python/anyjson-$(PYV)
 
 # force a group dependency on the optional simplejson; pkgdepend work is needed
 # to flush this out.
@@ -101,9 +96,6 @@ depend type=group fmri=library/python/simplejson-$(PYV)
 
 # force a dependency on argparse; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/argparse-$(PYV)
-
-# force a dependency on babel; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/babel-$(PYV)
 
 # force a dependency on the heatclient package
 depend type=require \
@@ -116,14 +108,20 @@ depend type=require fmri=library/python/iso8601-$(PYV)
 # out.
 depend type=require fmri=library/python/keystoneclient-$(PYV)
 
+# force a dependency on oslo.i18n; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/oslo.i18n-$(PYV)
+
+# force a dependency on oslo.serialization; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/oslo.serialization-$(PYV)
+
+# force a dependency on oslo.utils; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/oslo.utils-$(PYV)
+
 # force a dependency on pbr; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/pbr-$(PYV)
 
 # force a dependency on prettytable; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/prettytable-$(PYV)
-
-# force a dependency on pyyaml; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/pyyaml-$(PYV)
 
 # force a dependency on requests; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/requests-$(PYV)
@@ -133,3 +131,8 @@ depend type=require fmri=library/python/six-$(PYV)
 
 # force a dependency on stevedore; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/stevedore-$(PYV)
+
+# force a dependency on swiftclient; pkgdepend work is needed to flush this
+# out.
+depend type=require fmri=library/python/swiftclient-$(PYV)
+

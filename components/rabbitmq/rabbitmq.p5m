@@ -18,12 +18,12 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
+
+#
+# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
-# XXX web/server/ejabberd is a similar kind of program; should that move here?
-
-<transform path=usr/lib/rabbitmq/bin/(.*) -> set action.hash scripts/%<1>>
+<transform path=usr/lib/rabbitmq/bin/(.*) -> set action.hash sbin/%<1>>
 <transform path=usr/lib/rabbitmq/ebin/(.*) -> set action.hash ebin/%<1>>
 <transform path=usr/lib/rabbitmq/include/(.*) -> set action.hash include/%<1>>
 <transform path=usr/lib/rabbitmq/plugins/(.*) -> set action.hash plugins/%<1>>
@@ -44,11 +44,13 @@ set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2013/175
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 #
-dir  path=etc/rabbitmq
-#
-file rabbitmq.xml path=lib/svc/manifest/application/rabbitmq.xml
-file svc-rabbitmq path=lib/svc/method/rabbitmq
-file rmq-mplex path=usr/bin/rabbitmq-plugins
+file files/rabbitmq-env.conf path=etc/rabbitmq/rabbitmq-env.conf mode=0644 \
+    overlay=allow preserve=renamenew
+file files/rabbitmq.config path=etc/rabbitmq/rabbitmq.config mode=0644 \
+    overlay=allow preserve=renamenew
+file files/rabbitmq.xml path=lib/svc/manifest/application/rabbitmq.xml
+file files/svc-rabbitmq path=lib/svc/method/rabbitmq
+file files/rmq-mplex path=usr/bin/rabbitmq-plugins
 link path=usr/bin/rabbitmq-server target=rabbitmq-plugins
 link path=usr/bin/rabbitmqctl target=rabbitmq-plugins
 file path=usr/lib/rabbitmq/bin/rabbitmq-defaults
@@ -63,15 +65,13 @@ file path=usr/lib/rabbitmq/ebin/delegate.beam
 file path=usr/lib/rabbitmq/ebin/delegate_sup.beam
 file path=usr/lib/rabbitmq/ebin/dtree.beam
 file path=usr/lib/rabbitmq/ebin/file_handle_cache.beam
+file path=usr/lib/rabbitmq/ebin/file_handle_cache_stats.beam
 file path=usr/lib/rabbitmq/ebin/gatherer.beam
 file path=usr/lib/rabbitmq/ebin/gen_server2.beam
 file path=usr/lib/rabbitmq/ebin/gm.beam
-file path=usr/lib/rabbitmq/ebin/gm_soak_test.beam
-file path=usr/lib/rabbitmq/ebin/gm_speed_test.beam
-file path=usr/lib/rabbitmq/ebin/gm_tests.beam
 file path=usr/lib/rabbitmq/ebin/lqueue.beam
 file path=usr/lib/rabbitmq/ebin/mirrored_supervisor.beam
-file path=usr/lib/rabbitmq/ebin/mirrored_supervisor_tests.beam
+file path=usr/lib/rabbitmq/ebin/mirrored_supervisor_sups.beam
 file path=usr/lib/rabbitmq/ebin/mnesia_sync.beam
 file path=usr/lib/rabbitmq/ebin/mochijson2.beam
 file path=usr/lib/rabbitmq/ebin/mochinum.beam
@@ -86,30 +86,38 @@ file path=usr/lib/rabbitmq/ebin/rabbit_alarm.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_amqqueue.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_amqqueue_process.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_amqqueue_sup.beam
+file path=usr/lib/rabbitmq/ebin/rabbit_amqqueue_sup_sup.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_app.in
-file path=usr/lib/rabbitmq/ebin/rabbit_auth_backend.beam
+file path=usr/lib/rabbitmq/ebin/rabbit_auth_backend_dummy.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_auth_backend_internal.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_auth_mechanism.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_auth_mechanism_amqplain.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_auth_mechanism_cr_demo.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_auth_mechanism_plain.beam
+file path=usr/lib/rabbitmq/ebin/rabbit_authn_backend.beam
+file path=usr/lib/rabbitmq/ebin/rabbit_authz_backend.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_autoheal.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_backing_queue.beam
-file path=usr/lib/rabbitmq/ebin/rabbit_backing_queue_qc.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_basic.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_binary_generator.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_binary_parser.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_binding.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_channel.beam
+file path=usr/lib/rabbitmq/ebin/rabbit_channel_interceptor.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_channel_sup.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_channel_sup_sup.beam
+file path=usr/lib/rabbitmq/ebin/rabbit_cli.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_client_sup.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_command_assembler.beam
+file path=usr/lib/rabbitmq/ebin/rabbit_connection_helper_sup.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_connection_sup.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_control_main.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_ctl_usage.beam
+file path=usr/lib/rabbitmq/ebin/rabbit_dead_letter.beam
+file path=usr/lib/rabbitmq/ebin/rabbit_diagnostics.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_direct.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_disk_monitor.beam
+file path=usr/lib/rabbitmq/ebin/rabbit_epmd_monitor.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_error_logger.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_error_logger_file_h.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_event.beam
@@ -138,10 +146,10 @@ file path=usr/lib/rabbitmq/ebin/rabbit_mirror_queue_mode_all.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_mirror_queue_mode_exactly.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_mirror_queue_mode_nodes.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_mirror_queue_slave.beam
-file path=usr/lib/rabbitmq/ebin/rabbit_mirror_queue_slave_sup.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_mirror_queue_sync.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_misc.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_mnesia.beam
+file path=usr/lib/rabbitmq/ebin/rabbit_mnesia_rename.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_msg_file.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_msg_store.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_msg_store_ets_index.beam
@@ -155,24 +163,27 @@ file path=usr/lib/rabbitmq/ebin/rabbit_parameter_validation.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_plugins.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_plugins_main.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_plugins_usage.beam
+file path=usr/lib/rabbitmq/ebin/rabbit_policies.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_policy.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_policy_validator.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_prelaunch.beam
+file path=usr/lib/rabbitmq/ebin/rabbit_prequeue.beam
+file path=usr/lib/rabbitmq/ebin/rabbit_priority_queue.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_queue_collector.beam
+file path=usr/lib/rabbitmq/ebin/rabbit_queue_consumers.beam
+file path=usr/lib/rabbitmq/ebin/rabbit_queue_decorator.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_queue_index.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_reader.beam
+file path=usr/lib/rabbitmq/ebin/rabbit_recovery_terms.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_registry.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_restartable_sup.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_router.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_runtime_parameter.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_runtime_parameters.beam
-file path=usr/lib/rabbitmq/ebin/rabbit_runtime_parameters_test.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_sasl_report_file_h.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_ssl.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_sup.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_table.beam
-file path=usr/lib/rabbitmq/ebin/rabbit_tests.beam
-file path=usr/lib/rabbitmq/ebin/rabbit_tests_event_receiver.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_trace.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_types.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_upgrade.beam
@@ -182,53 +193,53 @@ file path=usr/lib/rabbitmq/ebin/rabbit_version.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_vhost.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_vm.beam
 file path=usr/lib/rabbitmq/ebin/rabbit_writer.beam
+file path=usr/lib/rabbitmq/ebin/ssl_compat.beam
+file path=usr/lib/rabbitmq/ebin/supervised_lifecycle.beam
 file path=usr/lib/rabbitmq/ebin/supervisor2.beam
-file path=usr/lib/rabbitmq/ebin/supervisor2_tests.beam
 file path=usr/lib/rabbitmq/ebin/tcp_acceptor.beam
 file path=usr/lib/rabbitmq/ebin/tcp_acceptor_sup.beam
 file path=usr/lib/rabbitmq/ebin/tcp_listener.beam
 file path=usr/lib/rabbitmq/ebin/tcp_listener_sup.beam
-file path=usr/lib/rabbitmq/ebin/test_sup.beam
+file path=usr/lib/rabbitmq/ebin/time_compat.beam
+file path=usr/lib/rabbitmq/ebin/truncate.beam
 file path=usr/lib/rabbitmq/ebin/vm_memory_monitor.beam
 file path=usr/lib/rabbitmq/ebin/worker_pool.beam
 file path=usr/lib/rabbitmq/ebin/worker_pool_sup.beam
 file path=usr/lib/rabbitmq/ebin/worker_pool_worker.beam
 file path=usr/lib/rabbitmq/include/gm_specs.hrl
 file path=usr/lib/rabbitmq/include/rabbit.hrl
+file path=usr/lib/rabbitmq/include/rabbit_cli.hrl
 file path=usr/lib/rabbitmq/include/rabbit_framing.hrl
 file path=usr/lib/rabbitmq/include/rabbit_msg_store.hrl
 file path=usr/lib/rabbitmq/plugins/README
-file path=usr/lib/rabbitmq/plugins/amqp_client-0.0.0.ez
-file path=usr/lib/rabbitmq/plugins/cowboy-0.5.0-rmq0.0.0-git4b93c2d.ez
-file path=usr/lib/rabbitmq/plugins/eldap-0.0.0-gite309de4.ez
-file path=usr/lib/rabbitmq/plugins/mochiweb-2.3.1-rmq0.0.0-gitd541e9a.ez
-file path=usr/lib/rabbitmq/plugins/rabbitmq_amqp1_0-0.0.0.ez
-file path=usr/lib/rabbitmq/plugins/rabbitmq_auth_backend_ldap-0.0.0.ez
-file path=usr/lib/rabbitmq/plugins/rabbitmq_auth_mechanism_ssl-0.0.0.ez
-file path=usr/lib/rabbitmq/plugins/rabbitmq_consistent_hash_exchange-0.0.0.ez
-file path=usr/lib/rabbitmq/plugins/rabbitmq_federation-0.0.0.ez
-file path=usr/lib/rabbitmq/plugins/rabbitmq_federation_management-0.0.0.ez
-file path=usr/lib/rabbitmq/plugins/rabbitmq_jsonrpc-0.0.0.ez
-file path=usr/lib/rabbitmq/plugins/rabbitmq_jsonrpc_channel-0.0.0.ez
-file path=usr/lib/rabbitmq/plugins/rabbitmq_jsonrpc_channel_examples-0.0.0.ez
-file path=usr/lib/rabbitmq/plugins/rabbitmq_management-0.0.0.ez
-file path=usr/lib/rabbitmq/plugins/rabbitmq_management_agent-0.0.0.ez
-file path=usr/lib/rabbitmq/plugins/rabbitmq_management_visualiser-0.0.0.ez
-file path=usr/lib/rabbitmq/plugins/rabbitmq_mqtt-0.0.0.ez
-file path=usr/lib/rabbitmq/plugins/rabbitmq_shovel-0.0.0.ez
-file path=usr/lib/rabbitmq/plugins/rabbitmq_shovel_management-0.0.0.ez
-file path=usr/lib/rabbitmq/plugins/rabbitmq_stomp-0.0.0.ez
-file path=usr/lib/rabbitmq/plugins/rabbitmq_tracing-0.0.0.ez
-file path=usr/lib/rabbitmq/plugins/rabbitmq_web_dispatch-0.0.0.ez
-file path=usr/lib/rabbitmq/plugins/rabbitmq_web_stomp-0.0.0.ez
-file path=usr/lib/rabbitmq/plugins/rabbitmq_web_stomp_examples-0.0.0.ez
-file path=usr/lib/rabbitmq/plugins/rfc4627_jsonrpc-0.0.0-git7ab174b.ez
-file path=usr/lib/rabbitmq/plugins/sockjs-0.3.4-rmq0.0.0-git3132eb9.ez
-file path=usr/lib/rabbitmq/plugins/webmachine-1.9.1-rmq0.0.0-git52e62bc.ez
-file rabbitmq-plugins.1 path=usr/share/man/man1/rabbitmq-plugins.1
-file rabbitmq-server.1 path=usr/share/man/man1/rabbitmq-server.1
-file rabbitmqctl.1 path=usr/share/man/man1/rabbitmqctl.1
-file rabbitmq-env.conf.5 path=usr/share/man/man5/rabbitmq-env.conf.5
+file path=usr/lib/rabbitmq/plugins/amqp_client-$(COMPONENT_VERSION).ez
+file path=usr/lib/rabbitmq/plugins/cowboy-0.5.0-rmq$(COMPONENT_VERSION)-git4b93c2d.ez
+file path=usr/lib/rabbitmq/plugins/eldap-$(COMPONENT_VERSION)-gite309de4.ez
+file path=usr/lib/rabbitmq/plugins/mochiweb-2.7.0-rmq$(COMPONENT_VERSION)-git680dba8.ez
+file path=usr/lib/rabbitmq/plugins/rabbitmq_amqp1_0-$(COMPONENT_VERSION).ez
+file path=usr/lib/rabbitmq/plugins/rabbitmq_auth_backend_ldap-$(COMPONENT_VERSION).ez
+file path=usr/lib/rabbitmq/plugins/rabbitmq_auth_mechanism_ssl-$(COMPONENT_VERSION).ez
+file path=usr/lib/rabbitmq/plugins/rabbitmq_consistent_hash_exchange-$(COMPONENT_VERSION).ez
+file path=usr/lib/rabbitmq/plugins/rabbitmq_federation-$(COMPONENT_VERSION).ez
+file path=usr/lib/rabbitmq/plugins/rabbitmq_federation_management-$(COMPONENT_VERSION).ez
+file path=usr/lib/rabbitmq/plugins/rabbitmq_management-$(COMPONENT_VERSION).ez
+file path=usr/lib/rabbitmq/plugins/rabbitmq_management_agent-$(COMPONENT_VERSION).ez
+file path=usr/lib/rabbitmq/plugins/rabbitmq_management_visualiser-$(COMPONENT_VERSION).ez
+file path=usr/lib/rabbitmq/plugins/rabbitmq_mqtt-$(COMPONENT_VERSION).ez
+file path=usr/lib/rabbitmq/plugins/rabbitmq_shovel-$(COMPONENT_VERSION).ez
+file path=usr/lib/rabbitmq/plugins/rabbitmq_shovel_management-$(COMPONENT_VERSION).ez
+file path=usr/lib/rabbitmq/plugins/rabbitmq_stomp-$(COMPONENT_VERSION).ez
+file path=usr/lib/rabbitmq/plugins/rabbitmq_test-$(COMPONENT_VERSION).ez
+file path=usr/lib/rabbitmq/plugins/rabbitmq_tracing-$(COMPONENT_VERSION).ez
+file path=usr/lib/rabbitmq/plugins/rabbitmq_web_dispatch-$(COMPONENT_VERSION).ez
+file path=usr/lib/rabbitmq/plugins/rabbitmq_web_stomp-$(COMPONENT_VERSION).ez
+file path=usr/lib/rabbitmq/plugins/rabbitmq_web_stomp_examples-$(COMPONENT_VERSION).ez
+file path=usr/lib/rabbitmq/plugins/sockjs-0.3.4-rmq$(COMPONENT_VERSION)-git3132eb9.ez
+file path=usr/lib/rabbitmq/plugins/webmachine-1.10.3-rmq$(COMPONENT_VERSION)-gite9359c7.ez
+file path=usr/share/man/man1/rabbitmq-plugins.1
+file path=usr/share/man/man1/rabbitmq-server.1
+file path=usr/share/man/man1/rabbitmqctl.1
+file path=usr/share/man/man5/rabbitmq-env.conf.5
 dir  path=var/lib/rabbitmq owner=rabbitmq
 dir  path=var/log/rabbitmq owner=rabbitmq
 #
