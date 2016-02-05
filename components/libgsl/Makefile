@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -38,6 +38,19 @@ TPNO=			26006
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
+
+# NOTE:
+# The libgsl package on Solaris is getting GSL CBLAS routines from
+# libsunperf.so. Programs wishing to use this functionality should use the
+# /usr/include/sunperf.h header file for the associated definitions and
+# function prototypes and link against -lsunperf.
+#
+# To retain compatibility with libgsl on other platforms, and to require
+# no changes to FOSS software being ported to Solaris, the libgsl package
+# manifest will also include the /usr/include/gsl/gsl_cblas.h header file
+# and provide links from /usr/lib/libgslcblas.so and
+# /usr/lib/$(MACH64)/libgslcblas.so to their equivalent libsunperf.so
+# library files.
 
 # By default, tests in each GSL sub-directory are linked statically against
 # a set of .la files. We don't deliver those in the GSL package, so we
