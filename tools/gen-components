@@ -19,7 +19,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 #
 # gen_components
@@ -30,6 +30,8 @@
 import getopt
 import os
 import sys
+
+from subprocess import Popen, PIPE
 
 debug = False
 
@@ -101,6 +103,30 @@ postamble = """
 </html>
 """
 
+# Get a complete list of package names for the repo associated with this
+# Userland workspace.
+def get_package_list(repo, build_version):
+    names = []
+    cmd = "pkgrepo list -H -s %s" % repo
+
+    if debug:
+        print >> sys.stderr, "get_package_list: command: `%s`" % cmd
+    lines = os.popen(cmd).readlines()
+
+    for line in lines:
+        tokens = line.split()
+        if tokens[2] != 'o' and tokens[2] != 'r':
+            n = tokens[2].find(build_version)
+            name = tokens[1] + "@" + tokens[2][:n]
+            if debug:
+                print >> sys.stderr, "get_package_list: name: ", name
+            names.append(name)
+
+    if debug:
+        print >> sys.stderr, "get_package_list: names: ", names
+
+    return names
+
 # Return a hashtable of RE's, RM's and Teams keyed by component path.
 def read_owners(owners_file):
     if debug:
@@ -126,6 +152,8 @@ def find_p5m_dirs(workspace):
     p5m_dirs = []
     for dir, _, files in os.walk(workspace + "/components"):
         for file in files:
+            if dir.endswith("meta-packages/developer-opensolaris-userland"):
+                continue;
             if dir.endswith("meta-packages/history"):
                 continue;
             if file.endswith(".p5m"):
@@ -154,7 +182,7 @@ def get_owner(p5m_dir):
     if debug:
         print >> sys.stderr, "Component path: ", component_path,
         print >> sys.stderr, "RE, RM, Team: ", result
-    
+
     return result
 
 # Generate an HTML table entry for all the information for the component
@@ -177,6 +205,48 @@ def gen_reports(workspace, component_dir):
     if debug:
         print >> sys.stderr, "gen_reports: command: `%s`" % cmd
     lines = os.popen(cmd).readlines()
+
+# The package name(s) in the component-report files will be incorrectly
+# generated if there was a <whatever>VER.p5m file in the component
+# directory. For those components we've got to use the package names
+# from the repo associated with this Userland workspace.
+def fix_reports(p5m_dirs, package_names):
+    for p5m_dir in p5m_dirs:
+        cmd = "ls %s/*VER.p5m" % p5m_dir
+        p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE,
+                  close_fds=True)
+        output = p.stdout.read()
+        if output.find(".p5m") == -1:
+            continue
+
+        report = "%s/build/component-report" % p5m_dir
+        with open(report, 'r') as fin:
+            lines = fin.readlines()
+
+        fixed = False
+        td_count = 0
+        report = "%s/build/component-report" % p5m_dir
+        fout = open(report, 'w')
+        for line in lines:
+            if not fixed and td_count == 4 and line.startswith("</td>"):
+                fixed = True
+            elif not fixed and td_count == 4:
+                n = line.rfind("-@")
+                if n != -1:
+                    if debug:
+                        print >> sys.stderr, "FIX: %s" % line
+                    broken_pkg_name = line[:n]
+                    for package_name in package_names:
+                        if package_name.startswith(broken_pkg_name):
+                            line = "%s<br>\n" % package_name
+                            fout.write(line)
+                else:
+                    fout.write(line)
+                continue
+            elif line.startswith("<td>"):
+                td_count += 1
+            fout.write(line)
+        fout.close()
 
 # Collect all the .../build/component-report files and write them to stdout.
 def write_reports(p5m_dirs, owners_file):
@@ -201,14 +271,20 @@ def write_postamble():
 def usage():
     print  >> sys.stderr, \
 """
-Usage: 
+Usage:
       gen-components [OPTION...]
+
+-b, --build-version
+      Build version script to look for (and strip off) from package FMRIs.
 
 -d, --debug
       Turn on debugging
 
 -o, --owners
       Location of a file containing a list of RE's /RM's per component
+
+-r, --repo
+      Repo containing the packages associated with this Userland workspace
 
 -w --workspace
       Location of the Userland workspace
@@ -220,29 +296,37 @@ Usage:
 if __name__ == "__main__":
     workspace = os.getenv('WS_TOP')
     owners_file = "/net/userland.us.oracle.com/gates/private/RE-RM-list.txt"
+    repo = "http://userland.us.oracle.com:10004/"
+    build_version = "-5.12.0.0.0"
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "do:w:",
-            [ "debug", "owners=", "workspace=" ])
+        opts, args = getopt.getopt(sys.argv[1:], "b:do:r:w:",
+            [ "build-version=", "debug", "owners=", "repo=", "workspace=" ])
     except getopt.GetoptError, err:
         print str(err)
         usage()
 
     for opt, arg in opts:
-        if opt in [ "-d", "--debug" ]:
+        if opt in [ "-b", "--build-version" ]:
+            build_version = arg
+        elif opt in [ "-d", "--debug" ]:
             debug = True
         elif opt in [ "-o", "--owners" ]:
             owners_file = arg
+        elif opt in [ "-r", "--repo" ]:
+            repo = arg
         elif opt in [ "-w", "--workspace" ]:
             workspace = arg
         else:
             assert False, "unknown option"
- 
+
+    package_names = get_package_list(repo, build_version)
     owners = read_owners(owners_file)
     write_preamble()
     p5m_dirs = find_p5m_dirs(workspace)
     for p5m_dir in p5m_dirs:
         gen_reports(workspace, p5m_dir)
+    fix_reports(p5m_dirs, package_names)
     write_reports(p5m_dirs, owners_file)
     write_postamble()
     sys.exit(0)
