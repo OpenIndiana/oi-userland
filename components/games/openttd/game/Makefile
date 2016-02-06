@@ -10,18 +10,19 @@
 
 #
 # Copyright 2014 Josef 'Jeff' Sipek <jeffpc@josefsipek.net>
+# Copyright 2016 Jim Klimov <jimklimov@gmail.com>
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openttd
-COMPONENT_VERSION=	1.5.1
+COMPONENT_VERSION=	1.5.3
 COMPONENT_PROJECT_URL=	http://www.openttd.org/en/
-COMPONENT_FMRI=		games/openttd
+COMPONENT_FMRI=		games/openttd/openttd-core
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-source.tar.gz
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-source.tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:d856e9c3947955ef0eabaa1793d0829c8bb2e43b8f5942fa328473f9e113419d
+	sha256:d8b9a7aaca7c9f3ff69b1d210daf1e2658402941bb9b30cb2789a9df73d1ba63
 COMPONENT_ARCHIVE_URL=	https://binaries.openttd.org/releases/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
@@ -30,9 +31,9 @@ COMPONENT_CLASSIFICATION="Applications/Games"
 
 CONFIGURE_DEFAULT_DIRS=no
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/configure.mk
+include $(WS_TOP)/make-rules/ips.mk
 
 CONFIGURE_OPTIONS += --prefix-dir=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --binary-dir=bin
@@ -64,4 +65,4 @@ test:		$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_TOP)/make-rules/depend.mk
