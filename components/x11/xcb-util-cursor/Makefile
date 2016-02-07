@@ -25,6 +25,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		xcb-util-cursor
 COMPONENT_VERSION=	0.1.2
 COMPONENT_FMRI=     	x11/library/xcb-util-cursor
+COMPONENT_CLASSIFICATION= Development/X11
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://xcb.freedesktop.org/XcbUtil
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
@@ -48,3 +49,8 @@ BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
 include $(WS_TOP)/make-rules/depend.mk
 
+
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += x11/library/libxcb
+REQUIRED_PACKAGES += x11/library/xcb-util-image
+REQUIRED_PACKAGES += x11/library/xcb-util-renderutil
