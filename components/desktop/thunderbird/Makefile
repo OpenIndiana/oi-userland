@@ -62,6 +62,15 @@ LANG_LIST = ar bg ca cs da de el es-AR es-ES et eu fi \
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
+
+# Depends on libsmbclient but samba is on the do-not-publish list, so this
+# must be too.
+ifeq ($(BUILD_TYPE), evaluation)
+BUILD_32=
+INSTALL_32=
+PUBLISH_STAMP=
+endif
+
 include $(WS_MAKE_RULES)/ips.mk
 
 # /usr/sbin needed for dtrace.
