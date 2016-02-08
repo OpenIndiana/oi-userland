@@ -45,9 +45,6 @@ include $(WS_MAKE_RULES)/ips.mk
 # The GNU compiler wants the GNU utilities.
 PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
 
-# since we are patching inclhack.def, we want to regenerate fixincl.x
-COMPONENT_PREP_ACTION = (cd $(@D)/fixincludes ; ./genfixes)
-
 PARCH =         $(MACH64:amd64=x86_64-pc)
 GNU_ARCH =      $(PARCH:sparc=sparcv9-sun)-solaris$(SOLARIS_VERSION)
 

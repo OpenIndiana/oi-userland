@@ -1,16 +1,10 @@
 #
 # We have made several changes to headers in Solaris 11/12 so that we no
-# longer need to "fix" them.  These changes limit what we keep.
+# longer need to "fix" them.  This patch limits what we fix and keep.
 #
-# GCC now defines __STDC_VERSION__ by default, which doesn't appear to have
-# been contemplated in sys/feature_tests.h.  We need to carefully evaluate
-# changes to the Solaris system headers:
-#
-#     22602861 header assumptions may need a revisit.
-#
-# For now we want to compensate when __GNUC__ >= 5
-#
-# This is not ready for upstream.
+# We will want to spend time going through inclhack.def to make sure that
+# it only targets those things that we want "fixed" in S12 and later before
+# we submit anything upstream.
 #
 --- gcc-5.3.0.orig/fixincludes/fixinc.in	Sun Oct 28 14:42:48 2012
 +++ gcc-5.3.0/fixincludes/fixinc.in	Fri Jan 22 23:13:39 2016
@@ -18,9 +12,9 @@
  # DOS/Windows filesystems.
  find . -name '[Dd][Oo][Nn][Ee]' -exec rm -f '{}' ';'
  
-+# We only want limits.h, syslimits.h, and sys/feature_tests.h fixed on Solaris
++# We only want limits.h and syslimits.h fixed on Solaris
 +for file in `find . -type f | \
-+             egrep -v './(limits.h|syslimits.h|sys/feature_tests.h)'` ; do
++             egrep -v './(limits.h|syslimits.h)'` ; do
 +  echo Removing $file
 +  rm -f $file
 +done
@@ -28,25 +22,3 @@
  if test $VERBOSE -gt 1
  then echo 'Cleaning up unneeded directories:' ; fi
  cd $LIB
---- gcc-5.3.0/fixincludes/inclhack.def.orig	Fri Aug 14 04:34:26 2015
-+++ gcc-5.3.0/fixincludes/inclhack.def	Wed Jan 20 23:29:04 2016
-@@ -3352,6 +3352,19 @@
- };
- 
- /*
-+ *  Solaris 12 <sys/feature_tests.h> tests.
-+ */
-+fix = {
-+    hackname  = solaris_12_invalid;
-+    mach      = "*-*-solaris2*";
-+    files     = sys/feature_tests.h;
-+    select    = "#if.*_STDC_C99.*__XOPEN_OR_POSIX.*_XPG6.*";
-+    c_fix     = format;
-+    c_fix_arg = "%0 && \\\n\t(__GNUC__ - 0 < 5)";
-+    test_text = "#define __GNUC__ 5";
-+};
-+
-+/*
-  * Solaris 10+ complex.h defines _Complex_I and _Imaginary_I in terms of
-  * themselves, which are Sun Studio compiler intrinsics.  Remove _Imaginary_I
-  * and imaginary definitions which are not supported by GCC.
