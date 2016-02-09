@@ -100,43 +100,39 @@ ifeq ($(BUILD_TYPE),evaluation)
 PUBLISH_TRANSFORMS += $(WS_TOP)/transforms/evaluation
 endif
 
-PKG_MACROS +=		MACH=$(MACH)
-PKG_MACROS +=		MACH32=$(MACH32)
-PKG_MACROS +=		MACH64=$(MACH64)
-PKG_MACROS +=		PUBLISHER=$(PUBLISHER)
-PKG_MACROS +=		PUBLISHER_LOCALIZABLE=$(PUBLISHER_LOCALIZABLE)
-PKG_MACROS +=		CONSOLIDATION=$(CONSOLIDATION)
-PKG_MACROS +=		BUILD_VERSION=$(BUILD_VERSION)
-PKG_MACROS +=		SOLARIS_VERSION=$(SOLARIS_VERSION)
-PKG_MACROS +=		OS_VERSION=$(OS_VERSION)
-PKG_MACROS +=		PKG_SOLARIS_VERSION=$(PKG_SOLARIS_VERSION)
-PKG_MACROS +=		SOLARIS_12_ONLY=$(SOLARIS_12_ONLY)
-PKG_MACROS +=		SOLARIS_11_ONLY=$(SOLARIS_11_ONLY)
-PKG_MACROS +=		HUMAN_VERSION=$(HUMAN_VERSION)
-PKG_MACROS +=		IPS_COMPONENT_VERSION=$(IPS_COMPONENT_VERSION)
+# For items defined as variables or that may contain whitespace, add
+# them to a list to be expanded into PKG_OPTIONS later.
+PKG_VARS += ARC_CASE TPNO
+PKG_VARS += BUILD_VERSION OS_VERSION SOLARIS_VERSION PKG_SOLARIS_VERSION
+PKG_VARS += CONSOLIDATION CONSOLIDATION_CHANGESET CONSOLIDATION_REPOSITORY_URL
+PKG_VARS += COMPONENT_VERSION IPS_COMPONENT_VERSION HUMAN_VERSION
+PKG_VARS += COMPONENT_ARCHIVE_URL COMPONENT_PROJECT_URL COMPONENT_NAME
+PKG_VARS += HG_REPO HG_REV HG_URL
+PKG_VARS += MACH MACH32 MACH64
+PKG_VARS += PUBLISHER PUBLISHER_LOCALIZABLE
+PKG_VARS += SOLARIS_11_ONLY SOLARIS_12_ONLY
+
+# Include TPNO_* Makefile variables in PKG_VARS.
+$(foreach macro, $(filter TPNO_%, $(.VARIABLES)), \
+    $(eval PKG_VARS += $(macro)) \
+)
+
+# For items that need special definition, add them to PKG_MACROS.
 # IPS_COMPONENT_VERSION suitable for use in regular expressions.
 PKG_MACROS +=		IPS_COMPONENT_RE_VERSION=$(subst .,\\.,$(IPS_COMPONENT_VERSION))
-PKG_MACROS +=		COMPONENT_VERSION=$(COMPONENT_VERSION)
 # COMPONENT_VERSION suitable for use in regular expressions.
 PKG_MACROS +=		COMPONENT_RE_VERSION=$(subst .,\\.,$(COMPONENT_VERSION))
-PKG_MACROS +=		COMPONENT_PROJECT_URL=$(COMPONENT_PROJECT_URL)
-PKG_MACROS +=		COMPONENT_ARCHIVE_URL=$(COMPONENT_ARCHIVE_URL)
-PKG_MACROS +=		COMPONENT_HG_URL=$(COMPONENT_HG_URL)
-PKG_MACROS +=		COMPONENT_HG_REV=$(COMPONENT_HG_REV)
-PKG_MACROS +=		COMPONENT_NAME=$(COMPONENT_NAME)
-PKG_MACROS +=		ARC_CASE=$(ARC_CASE)
-PKG_MACROS +=		TPNO=$(TPNO)
-PKG_MACROS +=		CONSOLIDATION_CHANGESET=$(CONSOLIDATION_CHANGESET)
-PKG_MACROS +=		CONSOLIDATION_REPOSITORY_URL=$(CONSOLIDATION_REPOSITORY_URL)
-
-# Add any TPNO_* Makefile macros to the pkgmogrify arguments.
-$(foreach macro, $(filter TPNO_%, $(.VARIABLES)), \
-    $(eval PKG_MACROS += $(macro)=$$($(macro))) \
-)
 
 PKG_MACROS +=		PYTHON_2.7_ONLY=\#
 PKG_MACROS +=		PYTHON_3.4_ONLY=\#
 PKG_MACROS +=		PYTHON_3.5_ONLY=\#
+
+# Convenience macros for quoting in manifests; necessary because pkgfmt will
+# drop literal quotes in attribute values if they do not contain whitespace
+# since the action parsing in pkg will drop them during action stringification.
+PKG_MACROS +=		SQ=\'
+PKG_MACROS +=		DQ=\"
+PKG_MACROS +=		Q=\"
 
 PKG_OPTIONS +=		$(PKG_MACROS:%=-D %)
 
@@ -250,7 +246,9 @@ $(MANIFEST_BASE)-%-$(shell echo $(1) | tr -d .).mogrified: PKG_MACROS += PYTHON_
 $(MANIFEST_BASE)-%-$(shell echo $(1) | tr -d .).p5m: %-PYVER.p5m
 	if [ -f $$*-$(shell echo $(1) | tr -d .)GENFRAG.p5m ]; then cat $$*-$(shell echo $(1) | tr -d .)GENFRAG.p5m >> $$@; fi
 	$(PKGFMT) $(PKGFMT_CHECK_ARGS) $(CANONICAL_MANIFESTS)
-	$(PKGMOGRIFY) -D PYVER=$(1) -D PYV=$(shell echo $(1) | tr -d .) $$< > $$@
+	$(PKGMOGRIFY) -D PYVER=$(1) -D MAYBE_PYVER_SPACE="$(1) " \
+		-D MAYBE_SPACE_PYVER=" $(1)" \
+		-D PYV=$(shell echo $(1) | tr -d .) $$< > $$@
 endef
 $(foreach ver,$(PYTHON_VERSIONS),$(eval $(call python-manifest-rule,$(ver))))
 
@@ -274,7 +272,8 @@ $(BUILD_DIR)/mkgeneric-python: $(WS_MAKE_RULES)/shared-macros.mk
 # sticking with something known to work.
 $(MANIFEST_BASE)-%.p5m: %-PYVER.p5m $(BUILD_DIR)/mkgeneric-python
 	$(PKGFMT) $(PKGFMT_CHECK_ARGS) $(CANONICAL_MANIFESTS)
-	$(PKGMOGRIFY) -D PYV=###PYV### $(BUILD_DIR)/mkgeneric-python \
+	$(PKGMOGRIFY) -D PYV=###PYV### -D MAYBE_PYVER_SPACE= \
+		-D MAYBE_SPACE_PYVER= $(BUILD_DIR)/mkgeneric-python \
 		$(WS_TOP)/transforms/mkgeneric $< > $@
 	if [ -f $*-GENFRAG.p5m ]; then cat $*-GENFRAG.p5m >> $@; fi
 
@@ -283,7 +282,9 @@ $(MANIFEST_BASE)-%.p5m: %-PYVER.p5m $(BUILD_DIR)/mkgeneric-python
 define perl-manifest-rule
 $(MANIFEST_BASE)-%-$(shell echo $(1) | tr -d .).p5m: %-PERLVER.p5m
 	$(PKGFMT) $(PKGFMT_CHECK_ARGS) $$<
-	$(PKGMOGRIFY) -D PERLVER=$(1) -D PLV=$(shell echo $(1) | tr -d .) \
+	$(PKGMOGRIFY) -D PERLVER=$(1) -D MAYBE_PERLVER_SPACE="$(1) " \
+		-D MAYBE_SPACE_PERLVER=" $(1)" \
+		-D PLV=$(shell echo $(1) | tr -d .) \
 		-D PERL_ARCH=$(call PERL_ARCH_FUNC,$(PERL.$(1))) $$< > $$@
 endef
 $(foreach ver,$(PERL_VERSIONS),$(eval $(call perl-manifest-rule,$(ver))))
@@ -302,7 +303,8 @@ $(BUILD_DIR)/mkgeneric-perl: $(WS_MAKE_RULES)/shared-macros.mk
 # though this is for Perl rather than Python.
 $(MANIFEST_BASE)-%.p5m: %-PERLVER.p5m $(BUILD_DIR)/mkgeneric-perl
 	$(PKGFMT) $(PKGFMT_CHECK_ARGS) $(CANONICAL_MANIFESTS)
-	$(PKGMOGRIFY) -D PLV=###PYV### $(BUILD_DIR)/mkgeneric-perl \
+	$(PKGMOGRIFY) -D PLV=###PYV### -D MAYBE_PERLVER_SPACE= \
+		-D MAYBE_SPACE_PERLVER= $(BUILD_DIR)/mkgeneric-perl \
 		$(WS_TOP)/transforms/mkgeneric $< > $@
 	if [ -f $*-GENFRAG.p5m ]; then cat $*-GENFRAG.p5m >> $@; fi
 
@@ -321,6 +323,8 @@ $(MANIFEST_BASE)-%-$(shell echo $(1) | tr -d .).p5m: %-RUBYVER.p5m
 	fi
 	$(PKGFMT) $(PKGFMT_CHECK_ARGS) $(CANONICAL_MANIFESTS)
 	$(PKGMOGRIFY) -D RUBY_VERSION=$(1) -D RUBY_LIB_VERSION=$(2) \
+	    -D MAYBE_RUBY_VERSION_SPACE="$(1) " \
+	    -D MAYBE_SPACE_RUBY_VERSION=" $(1)" \
 	    -D RUBYV=$(shell echo $(1) | tr -d .) $$< > $$@
 endef
 $(foreach ver,$(RUBY_VERSIONS),\
@@ -344,7 +348,8 @@ $(BUILD_DIR)/mkgeneric-ruby: $(WS_MAKE_RULES)/shared-macros.mk
 # though this is for Ruby rather than Python.
 $(MANIFEST_BASE)-%.p5m: %-RUBYVER.p5m $(BUILD_DIR)/mkgeneric-ruby
 	$(PKGFMT) $(PKGFMT_CHECK_ARGS) $(CANONICAL_MANIFESTS)
-	$(PKGMOGRIFY) -D RUBYV=###PYV### $(BUILD_DIR)/mkgeneric-ruby \
+	$(PKGMOGRIFY) -D RUBYV=###PYV### -D MAYBE_RUBY_VERSION_SPACE= \
+		-D MAYBE_SPACE_RUBY_VERSION= $(BUILD_DIR)/mkgeneric-ruby \
 		$(WS_TOP)/transforms/mkgeneric $< > $@
 	if [ -f $*-GENFRAG.p5m ]; then cat $*-GENFRAG.p5m >> $@; fi
 
@@ -485,21 +490,31 @@ ifeq	($(strip $(CANONICAL_MANIFESTS)),)
 	$(error Missing canonical manifest(s))
 endif
 
-# Add component-specific variables and export to PKG_MACROS.
+# Add component-specific variables and export to PKG_OPTIONS.
 COMP_SUFFIXES = $(subst COMPONENT_NAME_,, \
 		$(filter COMPONENT_NAME_%, $(.VARIABLES)))
 
-# The filtering out of specific variables below is to avoid component variables
-# that have spaces in their values or that have already been processed above.
-# PKG_MACROS with spaces in their values remain unsupported for now.
+# Component variables are expanded directly to PKG_OPTIONS instead of via
+# PKG_MACROS since the values may contain whitespace.
+mkdefine = -D $(1)="$(2)"
+
+# Expand PKG_VARS into defines via PKG_OPTIONS.
+$(foreach var, $(PKG_VARS), \
+    $(eval PKG_OPTIONS += $(call mkdefine,$(var),$$($(var)))) \
+)
+
+# Expand any variables ending in component _$(suffix) via PKG_OPTIONS excluding
+# variables known to always be irrelevant and TPNO_% variables as those have
+# already been processed.
 $(foreach suffix, $(COMP_SUFFIXES), \
     $(eval COMPONENT_RE_VERSION_$(suffix) ?= $(subst .,\\.,$$(COMPONENT_VERSION_$(suffix)))) \
     $(eval IPS_COMPONENT_VERSION_$(suffix) ?= $$(COMPONENT_VERSION_$(suffix))) \
     $(eval IPS_COMPONENT_RE_VERSION_$(suffix) ?= $(subst .,\\.,$$(IPS_COMPONENT_VERSION_$(suffix)))) \
-    $(eval COMP_VARS=$(filter-out TPNO_%, $(.VARIABLES))) \
+    $(eval COMP_VARS=$(filter %_$(suffix), $(.VARIABLES))) \
     $(eval COMP_VARS=$(filter-out COMPONENT_POST_UNPACK_%, $(COMP_VARS))) \
+    $(eval COMP_VARS=$(filter-out TPNO_%, $(COMP_VARS))) \
     $(eval COMP_VARS=$(filter-out UNPACK_ARGS_%, $(COMP_VARS))) \
-    $(foreach macro, $(filter %_$(suffix), $(COMP_VARS)), \
-        $(eval PKG_MACROS += $(macro)=$$($(macro))) \
+    $(foreach macro, $(COMP_VARS), \
+        $(eval PKG_OPTIONS += $(call mkdefine,$(macro),$$($(macro)))) \
     ) \
 )

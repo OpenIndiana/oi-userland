@@ -55,10 +55,6 @@ INSTALL_RB_SBINDIR_OPTION =
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-# pass Ruby values onto the package manfiest
-PKG_MACROS +=	RUBY_VERSION=$(RUBY_VERSION)
-PKG_MACROS +=	RUBY_LIB_VERSION=$(RUBY_LIB_VERSION)
-
 # common targets
 build:		$(BUILD_64)
 	# Ruby extension for auditing

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -49,8 +49,6 @@ include $(WS_MAKE_RULES)/ips.mk
 PATCH_LEVEL =	0
 
 PKG_MACROS +=	VIMVER=vim74
-PKG_MACROS +=	HG_REPO=$(HG_REPO)
-PKG_MACROS +=	HG_REV=$(HG_REV)
 
 ASLR_MODE =	$(ASLR_ENABLE)
 

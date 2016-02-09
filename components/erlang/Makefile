@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 # Built in SFW with gcc and builds cleanly now only with gcc
@@ -82,9 +82,6 @@ CONFIGURE_BINDIR.64 =   $(CONFIGURE_PREFIX)/bin
 
 CONFIGURE_OPTIONS.64 += LDFLAGS="$(LDFLAGS) -m64"
 CONFIGURE_OPTIONS.64 += LIBS="-m64"
-
-# Needed for 'set name=info.source-url' action in erlang-doc.p5m
-PKG_MACROS += COMPONENT_ARCHIVE_URL_2=$(COMPONENT_ARCHIVE_URL_2)
 
 # Use cp(1) instead of cloney because erlang's 'install' target uses 'tar'
 # to copy files and our tar doesn't handle long links by default.  Between

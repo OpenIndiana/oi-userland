@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -86,8 +86,6 @@ CONFIGURE_OPTIONS.64  +=	--without-perl-modules
 CONFIGURE_OPTIONS	+=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS	+=	CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_OPTIONS	+=	CC="$(CC)"
-
-PKG_MACROS +=	BUILD_DIR=$(BUILD_DIR)
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D); $(CLONEY) $(COMPONENT_DIR)/sun $(@D)/sun)

@@ -18,14 +18,15 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         cdrtools
 COMPONENT_VERSION=      3.01
-IPS_COMPONENT_VERSION=  3.1 # Zero not allowed in front of number
+# Zero not allowed in front of number
+IPS_COMPONENT_VERSION=  3.1
 COMPONENT_SUBVERSION=   a22
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL= 	http://cdrecord.berlios.de/private/cdrecord.html 

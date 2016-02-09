@@ -205,18 +205,62 @@ For components that use pkg-config, the following macros are provided:
   PKG_CONFIG_PATHS += /path/to/pc/files
 
 Finally, for control of packaging-related operations and values used during
-publication, the following macros are available:
+publication, the following variables are available:
+
+* All variables named after the pattern COMPONENT_%(COMPONENT_NAME_%), such
+  as COMPONENT_ARCHIVE_URL, COMPONENT_ARCHIVE_URL_1, etc.  Refer to ips.mk
+  PKG_MACROS and PKG_VARS for a complete list.
+
+* DQ, SQ, Q: a set of convenience macros that expand to ", ', and "
+  respectively; $(Q) (or $Q) is simply the default quote with a short name
+  for convenience.  For use with values in package manifests where the
+  substituted value may contain whitespace.  For example:
+
+  set name=pkg.human-version value=$(DQ)$(HUMAN_VERSION)$(DQ)
+
+* PKG_MACROS: the list of makefile macros that should be exported as defines
+  for use in package manifests and pkgmogrify transform files.  Whitespace is
+  NOT supported; use of PKG_VARS is strongly preferred for this reason.  The
+  expected form each of entry is a key-value pair as follows:
+
+     PKG_MACROS += NAME=NO-WHITESPACE-VALUE
+
+* PKG_VARS: the list of variables that should be exported as defines for use in
+  package manifests and pkgmogrify transform files.  This list should generally
+  only be added to, not redefined, as follows:
+
+     PKG_VARS += VARIABLE_NAME
+
+  Variable values may contain whitespace, although the value must be quoted
+  appropriately in the package manifest if they do.  Variables must be assigned
+  before the inclusion of ips.mk.  Values containing whitespace should not be
+  quoted when declared in the Makefile; they should only be quoted using the
+  appropriate macros in the package manifest.  Values cannot currently contain
+  any characters that require shell escaping such as ", ', or *.
+
+* PYVER is defined when processing package manifest files whose name end in
+  -PYVER.p5m.  The package manifest will be processed for each version found in
+  PYTHON_VERSIONS.  MAYBE_PYVER_SPACE (e.g. '2.7 ') and MAYBE_SPACE_PYVER
+  (e.g. ' 2.7') are derived from PYVER if defined.  If PYVER is not defined
+  (such as when a generic unversioned Python package manifest is being
+  created), these are defined as ''.  perl and ruby follow the same pattern
+  and define PERLVER, PERL_VERSIONS, MAYBE_SPACE_PERLVER, MAYBE_PERLVER_SPACE
+  and RUBY_VERSION, RUBY_VERSIONS, MAYBE_RUBY_VERSION_SPACE,
+  MAYBE_SPACE_RUBY_VERSION respectively.
 
 * TPNO is the Third Party number (i.e., a numeric value): the License
   Technology from the Product Lifecycle Suite tool.  This should be used
   in the common case when there is just one TPNO for a component.  We
   recommend that this be near the top of any Makefile, just below the
   various COMPONENT_foo definitions.
+
 * TPNO_foo is for the rare case (~3% of components) when a component has
   more than one TPNO.  Each one should have a separate short but descriptive
   name substituted for "foo".  This likewise should be near the top of any
   Makefile, just below the various COMPONENT_foo definitions, and it must
-  also be before the inclusion of ips.mk .
+  also be before the inclusion of ips.mk.  All variables named after the
+  pattern TPNO_% are automatically available for use in package manifests
+  and pkgmogrify transform files.
 
 ---
 

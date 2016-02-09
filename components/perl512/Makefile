@@ -111,7 +111,7 @@ COMPONENT_INSTALL_ENV	+=	DESTDIR="$(PROTO_DIR)"
 # "arch" command.  So we must package that way also.
 #
 PKG_MACROS		+=	PERL_ARCH=$(shell arch)
-PKG_MACROS		+=	PERL_VERSION=$(PERL_VERSION)
+
 #
 # Put studio compilers in PATH so we can tell Configure and gmake just
 # use cc.  Trying to avoid the full path so it doesn't end up in
