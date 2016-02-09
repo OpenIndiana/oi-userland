@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 # The golang build process just doesn't work with Parfait.
@@ -32,7 +32,7 @@ PATCH_EACH_ARCHIVE= 1
 
 COMPONENT_NAME=		golang
 COMPONENT_VERSION=	1.5
-COMPONENT_MAJOR_VERSION=	$(shell echo $(COMPONENT_VERSION) | gsed -e 's/\([0-9]\+\.[0-9]\+\).*/\1/')
+COMPONENT_MAJOR_VERSION=	$(shell echo $(COMPONENT_VERSION) | $(GSED) -e 's/\([0-9]\+\.[0-9]\+\).*/\1/')
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://golang.org/
 COMPONENT_ARCHIVE=	go$(COMPONENT_VERSION).src.tar.gz
@@ -123,9 +123,16 @@ COMPONENT_ARCHIVE_HASH_tour=	\
 # Go package imports for lint are found in github directory.
 COMPONENT_IMPORT_SRC_lint=	github.com/golang
 
+# Go's "not well-formed" elf objects confuse elfsign, which then causes
+# problems for RE.  For now, we workaround this by adding the
+# 'com.oracle.elfsign=false' tag to every elf object.
+NO_ELFSIGN_MOG=		$(BUILD_DIR)/no-elfsign.mog
+
 # We're x86-only for now.
 ifeq ($(MACH), sparc)
 PUBLISH_STAMP=
+else
+PUBLISH_STAMP= $(NO_ELFSIGN_MOG) $(BUILD_DIR)/.published-$(MACH)
 endif
 
 # Bake in where Go package will be installed.
@@ -172,6 +179,14 @@ PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/publish-cleanup
 ifeq ($(BUILD_TYPE),evaluation)
 	PUBLISH_TRANSFORMS += $(WS_TOP)/transforms/evaluation
 endif
+
+$(NO_ELFSIGN_MOG): install
+	cd $(PROTO_DIR); \
+	find . -type f -exec elffile {} + | grep 'ELF [36]' | \
+	    $(GSED) -e 's/^..\(.*\):.*$$/<transform file path=\1$$ -> \\\
+	        default com.oracle.elfsign false>/' > $@
+
+PUBLISH_TRANSFORMS +=	$(NO_ELFSIGN_MOG)
 
 # Building go from the source repository version requires that we set an
 # effective version and add some sort of unique identifier (in the case of
@@ -262,7 +277,8 @@ define COMPONENT_INSTALL_ACTION=
 	(cd $(BUILD_DIR_64) && $(CP) -r bin $(COMPONENT_TARGET_DIR)/); \
 	(cd $(BUILD_DIR_64) && $(CP) -r pkg $(COMPONENT_TARGET_DIR)/); \
 	($(MKDIR) $(PROTOUSRSHAREMAN1DIR)); \
-	($(CP) $(BUILD_DIR)/man1/go.1 $(PROTOUSRSHAREMAN1DIR)/)
+	($(CP) $(BUILD_DIR)/man1/go.1 $(PROTOUSRSHAREMAN1DIR)/); \
+	($(RM) $(NO_ELFSIGN_MOG))
 endef
 
 INSTALL_amd64= $(INSTALL_64)
@@ -321,6 +337,9 @@ test:		$(TEST_$(MACH64))
 # Go's test suite is currently designed to be run from the build area.
 system-test:	$(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
+# Used in this Makefile.
+REQUIRED_PACKAGES += file/gnu-findutils
+REQUIRED_PACKAGES += text/gnu-sed
 # Required to build man pages.
 REQUIRED_PACKAGES += developer/documentation-tool/xml2roff
 # There's a single test script which requires perl.
