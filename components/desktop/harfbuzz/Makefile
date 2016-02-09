@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, 2016 Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -39,6 +39,15 @@ TPNO=			25623
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure-32_and_64.mk
+
+# Requires newer version of gobject-introspection from Desktop, available in
+# S12 but not 11.3, so do not publish.
+ifeq ($(BUILD_TYPE), evaluation)
+BUILD_32_and_64=
+INSTALL_32_and_64=
+PUBLISH_STAMP=
+endif
+
 include $(WS_MAKE_RULES)/common-32_and_64.mk
 
 # For now, all things built for C++11 require gcc.
