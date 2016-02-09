@@ -21,16 +21,16 @@
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=         gnu-gs-fonts-other
+COMPONENT_NAME=         gnu-gs-fonts-std
 COMPONENT_VERSION=      6.0
 COMPONENT_PROJECT_URL=	http://sourceforge.net/projects/gs-fonts/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:8146cccc4699fe9dab841446bdd17039f4769c903eceb54409188b920754aab3
-COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)files/gs-fonts/6.0%20%28misc%2C%20GPL%29/$(COMPONENT_ARCHIVE)/download
+    sha256:4cef38d05aa958dfee4dabb8d1599b8ad2b2347413b7895c94d8882c8a0fb9d3
+COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)files/gs-fonts/6.0%20%28base%2035%2C%20GPL%29/$(COMPONENT_ARCHIVE)/download
 COMPONENT_BUGDB=	utility/ghostscript
 
 # set relocate_to option while unpacking the tar ball
@@ -38,11 +38,11 @@ UNPACK_ARGS= -r $(COMPONENT_SRC)
 
 PROTOGSSHAREDIR=$(PROTOUSRSHAREDIR)/ghostscript
 
-include ../../make-rules/prep.mk
-include ../../make-rules/ips.mk
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/ips.mk
 
 # untar the tar ball and apply the patches
-build:		$(SOURCE_DIR)/.prep
+build:  $(SOURCE_DIR)/.prep
 
 install: build
 	$(MKDIR) $(PROTO_DIR)
@@ -54,4 +54,4 @@ test:	$(NO_TESTS)
 clean::
 	$(RM) -r $(BUILD_DIR)
 
-include ../../make-rules/depend.mk
+include $(WS_TOP)/make-rules/depend.mk
