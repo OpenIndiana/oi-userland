@@ -1,4 +1,4 @@
-# Copyright (c) 2006, 2009, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2007, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -18,33 +18,19 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 # DEALINGS IN THE SOFTWARE.
+
+Add Sun's old "bitstream" font module & IA & xtsol extension modules to the
+list of obsolete modules to ignore in xorg.conf files.
+
 diff --git a/hw/xfree86/common/xf86Config.c b/hw/xfree86/common/xf86Config.c
-index ab9a37a..891623d 100644
+index af8a89e..ab9a37a 100644
 --- a/hw/xfree86/common/xf86Config.c
 +++ b/hw/xfree86/common/xf86Config.c
-@@ -533,6 +533,25 @@ fixup_video_driver_list(char **drivers)
-             }
-         }
-     }
-+    /*
-+     * Since the nvidia kernel driver interferes with the nv Xorg driver,
-+     * make sure to prefer nvidia if it's installed
-+     */
-+    for (drv = drivers; drv != end; drv++) {
-+	char **nv, **nvidia;
-+        if (!strcmp(*drv, "nv")) {
-+            nv = drv;
-+            for (drv = nv; drv != end; drv++) {
-+                if (!strcmp(*drv, "nvidia")) {
-+                    nvidia = drv;
-+                    x = *nvidia; *nvidia = *nv; *nv = x;
-+		    break;
-+                }
-+            }
-+            /* if we get here, nvidia was already ahead of nv */
-+            break;
-+        }
-+    }
- }
+@@ -245,6 +245,7 @@ xf86ModulelistFromConfig(pointer **optlist)
  
- static char **
+     const char *ignore[] = { "GLcore", "speedo", "bitmap", "drm",
+         "freetype", "type1",
++        "bitstream", "ia", "xtsol",
+         NULL
+     };
+     pointer *optarray;
