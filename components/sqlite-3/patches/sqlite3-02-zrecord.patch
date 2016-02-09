@@ -2,13 +2,13 @@
 # Bug 15705787 for details.
 # Need to determine if these changes are still applicable to the latest version,
 # and if so, then submit them upstream. 
---- a/Makefile.am.orig	2011-03-29 15:44:46.468935251 +0800
-+++ b/Makefile.am	2011-03-29 15:50:12.071188848 +0800
-@@ -8,6 +8,7 @@
+--- sqlite-autoconf-3090200/Makefile.am.orig	2015-12-21 15:35:19.261166407 +0530
++++ sqlite-autoconf-3090200/Makefile.am	2015-12-21 15:36:15.587286651 +0530
+@@ -8,6 +8,7 @@ libsqlite3_la_LDFLAGS = -no-undefined -v
  bin_PROGRAMS = sqlite3
- sqlite3_SOURCES = shell.c sqlite3.h
- sqlite3_LDADD = $(top_builddir)/libsqlite3.la @READLINE_LIBS@
+ sqlite3_SOURCES = shell.c sqlite3.c sqlite3.h
+ sqlite3_LDADD = @READLINE_LIBS@
 +sqlite3_LDFLAGS = -Wl,-zrecord
- sqlite3_DEPENDENCIES = $(top_builddir)/libsqlite3.la
+ sqlite3_CFLAGS = $(AM_CFLAGS)
  
  include_HEADERS = sqlite3.h sqlite3ext.h
