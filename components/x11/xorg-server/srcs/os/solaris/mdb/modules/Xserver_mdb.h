@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2015, Oracle and/or its affiliates. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -35,6 +35,7 @@
 /* include/regionstr.h */
 #define REGIONSTRUCT_H
 typedef struct pixman_region16 RegionRec, *RegionPtr;
+typedef struct pixman_box16 BoxRec;
 /* include/callback.h */
 #define CALLBACK_H
 typedef void (*CallbackProcPtr) (void *, void *, void *);

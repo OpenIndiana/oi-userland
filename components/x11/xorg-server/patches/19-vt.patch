@@ -1,5 +1,5 @@
 diff --git a/dix/main.c b/dix/main.c
-index 0eaa6aa..f466c25 100644
+index 0fb2a18..68d5263 100644
 --- a/dix/main.c
 +++ b/dix/main.c
 @@ -78,6 +78,8 @@ Equipment Corporation.
@@ -11,12 +11,13 @@ index 0eaa6aa..f466c25 100644
  #include <X11/X.h>
  #include <X11/Xos.h>            /* for unistd.h  */
  #include <X11/Xproto.h>
-@@ -123,6 +125,30 @@ extern void DtloginCloseDown(void);
+@@ -123,6 +125,36 @@ extern void DtloginCloseDown(void);
  
  extern void Dispatch(void);
  
 +#if defined(sun) 
 +extern const char * GetAuthFilename(void);
++static char sym_authfile[40];
 +
 +#define LOCK_PREFIX	"/var/xauth/"
 +
@@ -28,7 +29,6 @@ index 0eaa6aa..f466c25 100644
 +SetupXauthFile(char *filename)
 +{
 +        struct stat buf;
-+        char sym_authfile[40];
 +
 +        snprintf(sym_authfile, 40, LOCK_PREFIX "%s", display);
 +
@@ -37,12 +37,18 @@ index 0eaa6aa..f466c25 100644
 +        remove(sym_authfile);
 +        symlink(filename, sym_authfile);
 +}
++
++void
++RemoveXauthSymFile(void)
++{
++        remove(sym_authfile);
++}
 +#endif
 +
  #ifdef XQUARTZ
  #include <pthread.h>
  
-@@ -141,6 +167,9 @@ main(int argc, char *argv[], char *envp[])
+@@ -137,6 +169,9 @@ dix_main(int argc, char *argv[], char *envp[])
  {
      int i;
      HWEventQueueType alwaysCheckForInput[2];
@@ -52,7 +58,7 @@ index 0eaa6aa..f466c25 100644
  
      display = "0";
  
-@@ -154,6 +183,12 @@ main(int argc, char *argv[], char *envp[])
+@@ -150,6 +185,12 @@ dix_main(int argc, char *argv[], char *envp[])
  
      ProcessCommandLine(argc, argv);
  
@@ -66,10 +72,10 @@ index 0eaa6aa..f466c25 100644
      alwaysCheckForInput[1] = 1;
      while (1) {
 diff --git a/hw/xfree86/os-support/solaris/sun_init.c b/hw/xfree86/os-support/solaris/sun_init.c
-index 4b75a98..3113186 100644
+index 15e5645..7c5dc25 100644
 --- a/hw/xfree86/os-support/solaris/sun_init.c
 +++ b/hw/xfree86/os-support/solaris/sun_init.c
-@@ -45,6 +45,9 @@
+@@ -46,6 +46,9 @@
  #define	CONSOLE_VTNO	1
  #define	SOL_CONSOLE_DEV	"/dev/console"
  
@@ -77,9 +83,9 @@ index 4b75a98..3113186 100644
 +extern int xf86ConsoleFd;
 +
  static Bool KeepTty = FALSE;
- static Bool Protect0 = FALSE;
  static Bool UseConsole = FALSE;
-@@ -240,6 +243,8 @@ xf86OpenConsole(void)
+ 
+@@ -232,6 +235,8 @@ xf86OpenConsole(void)
  
              if (ioctl(xf86Info.consoleFd, VT_SETDISPINFO, atoi(display)) < 0)
                  xf86Msg(X_WARNING, "xf86OpenConsole: VT_SETDISPINFO failed\n");
@@ -88,3 +94,28 @@ index 4b75a98..3113186 100644
          }
  #endif
  
+diff --git a/os/log.c b/os/log.c
+index 3db5c53..258c09f 100644
+--- a/os/log.c
++++ b/os/log.c
+@@ -107,6 +107,10 @@ OR PERFORMANCE OF THIS SOFTWARE.
+ void (*OsVendorVErrorFProc) (const char *, va_list args) = NULL;
+ #endif
+ 
++#ifdef sun
++extern void RemoveXauthSymFile(void);
++#endif
++
+ static FILE *logFile = NULL;
+ static int logFileFd = -1;
+ static Bool logFlush = FALSE;
+@@ -937,6 +941,9 @@ FatalError(const char *f, ...)
+     VErrorFSigSafe(f, args);
+     va_end(args);
+     ErrorFSigSafe("\n");
++#ifdef sun
++    RemoveXauthSymFile();
++#endif
+     if (!beenhere)
+         OsVendorFatalError(f, args2);
+     va_end(args2);

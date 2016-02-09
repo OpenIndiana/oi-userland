@@ -17,6 +17,10 @@
 #ifndef _XORG_SERVER_H_
 #define _XORG_SERVER_H_
 
+#ifdef HAVE_XORG_CONFIG_H
+#error Include xorg-config.h when building the X server
+#endif
+
 /* Support BigRequests extension */
 #define BIGREQS 1
 
@@ -28,6 +32,9 @@
 
 /* Build DPMS extension */
 #define DPMSExtension 1
+
+/* Build DRI3 extension */
+#define DRI3 1
 
 /* Build GLX extension */
 #define GLXEXT 1
@@ -141,7 +148,7 @@
 /* #undef XORG_RELEASE */
 
 /* Current Xorg version */
-#define XORG_VERSION_CURRENT (((1) * 10000000) + ((14) * 100000) + ((7) * 1000) + 0)
+#define XORG_VERSION_CURRENT (((1) * 10000000) + ((18) * 100000) + ((3) * 1000) + 0)
 
 /* Build Xv Extension */
 #define XvExtension 1
@@ -168,7 +175,7 @@
 /* #undef _POSIX_SOURCE */
 
 /* X/Open-compliant source */
-/* #undef _XOPEN_SOURCE */
+#define _XOPEN_SOURCE 600
 
 /* Vendor web address for support */
 #define __VENDORDWEBSUPPORT__ "http://openindiana.org"
@@ -213,5 +220,17 @@
 #ifdef _LP64
 #define _XSERVER64 1
 #endif
+
+/* Have support for X shared memory fence library (xshmfence) */
+#define HAVE_XSHMFENCE 1
+
+/* Use XTrans FD passing support */
+#define XTRANS_SEND_FDS 1
+
+/* Ask fontsproto to make font path element names const */
+#define FONT_PATH_ELEMENT_NAME_CONST    1
+
+/* byte order */
+#define X_BYTE_ORDER X_LITTLE_ENDIAN
 
 #endif /* _XORG_SERVER_H_ */

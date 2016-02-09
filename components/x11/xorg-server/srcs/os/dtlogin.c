@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1996, 2015, Oracle and/or its affiliates. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -110,8 +110,8 @@ static struct dmdata *dmHandlerData;
 static struct dmuser originalUser; /* user to switch back to in CloseDown */
 
 static Bool DtloginCloseScreen(ScreenPtr pScreen);
-static void DtloginBlockHandler(pointer, struct timeval **, pointer);
-static void DtloginWakeupHandler(pointer, int, pointer);
+static void DtloginBlockHandler(void *, struct timeval **, void *);
+static void DtloginWakeupHandler(void *, int, void *);
 static int  dtlogin_create_pipe(int, struct dmdata *);
 static void dtlogin_receive_packet(struct dmdata *);
 static int  dtlogin_parse_packet(struct dmdata *, char *);
@@ -146,7 +146,7 @@ DtloginInit(void)
     dmd = calloc(1, sizeof(struct dmdata));
     if (dmd == NULL) {
 	DtloginError("Failed to allocate %d bytes for display manager pipe",
-		     sizeof(struct dmdata));
+		     (int) sizeof(struct dmdata));
 	return;
     }
 
@@ -167,7 +167,7 @@ DtloginInit(void)
 
     RegisterBlockAndWakeupHandlers (DtloginBlockHandler,
 				    DtloginWakeupHandler,
-				    (pointer) dmd);
+				    (void *) dmd);
 }
 
 /*
@@ -209,9 +209,9 @@ DtloginCloseScreen (ScreenPtr pScreen)
 
 static void
 DtloginBlockHandler(
-    pointer         data,
+    void         *data,
     struct timeval  **wt, /* unused */
-    pointer         pReadmask)
+    void         *pReadmask)
 {
     struct dmdata *dmd = (struct dmdata *) data;
     fd_set *LastSelectMask = (fd_set*)pReadmask;
@@ -221,9 +221,9 @@ DtloginBlockHandler(
 
 static void
 DtloginWakeupHandler(
-    pointer data,   /* unused */
+    void   *data,   /* unused */
     int     i,
-    pointer pReadmask)
+    void   *pReadmask)
 {
     struct dmdata *dmd = (struct dmdata *) data;
     fd_set* LastSelectMask = (fd_set*)pReadmask;
@@ -569,7 +569,7 @@ dtlogin_process(struct dmuser *user, int user_logged_in)
 		    } else {
 			DtloginError("Failed to allocate %d bytes"
 				     " for uid reset info",
-				     sizeof(struct dmScreenPriv));
+				     (int) sizeof(struct dmScreenPriv));
 		    }
 		}
 	    } else {

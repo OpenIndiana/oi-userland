@@ -1,10 +1,11 @@
 diff --git a/man/Xserver.man b/man/Xserver.man
-index b103551..82e5370 100644
+index ba65c9e..53c7912 100644
 --- a/man/Xserver.man
 +++ b/man/Xserver.man
-@@ -1,3 +1,25 @@
+@@ -1,4 +1,26 @@
+ '\" t
 +.\" 
-+.\" Copyright (c) 2007, 2011, Oracle and/or its affiliates. All rights reserved.
++.\" Copyright (c) 2007, 2015, Oracle and/or its affiliates. All rights reserved.
 +.\" 
 +.\" Permission is hereby granted, free of charge, to any person obtaining a
 +.\" copy of this software and associated documentation files (the "Software"),
@@ -25,9 +26,9 @@ index b103551..82e5370 100644
 +.\" FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 +.\" DEALINGS IN THE SOFTWARE.
 +.\"
- .\" $Xorg: Xserver.man,v 1.4 2001/02/09 02:04:07 xorgcvs Exp $
- .\" $XdotOrg: xserver/xorg/doc/Xserver.man.pre,v 1.4 2005/12/23 20:11:12 alanc Exp $
+ .\"
  .\" Copyright 1984 - 1991, 1993, 1994, 1998  The Open Group
+ .\"
 @@ -32,14 +54,22 @@ Xserver \- X Window System display server
  .SH SYNOPSIS
  .B X
@@ -48,26 +49,29 @@ index b103551..82e5370 100644
 -The X server is usually started from the X Display Manager program
 -\fIxdm\fP(1) or a similar display manager program.
 +On __distroname__, the X server is usually started from the GNOME
-+Display Manager program \fIgdm\fP(1m).   This role may also be performed
++Display Manager program \fIgdm\fP(__adminmansuffix__).   This role may also be performed
 +by the X Display Manager program \fIxdm\fP(1), or another display manager. 
  This utility is run from the system boot files and takes care of keeping
  the server running, prompting for usernames and passwords, and starting up
  the user sessions.
-@@ -195,6 +225,13 @@ with
+@@ -205,13 +235,14 @@ with
  .BR "\-nolisten tcp" .
  This option may be issued multiple times to disable listening to different
  transport types.
+-Supported transport types are platform dependent, but commonly include:
 +The current transport names supported on __distroname__ are as follows: 
-+.sp
-+.nf 
-+tcp     TCP over IPv4 or IPv6
+ .TS
+ l l.
+ tcp     TCP over IPv4 or IPv6
+ inet    TCP over IPv4 only
+ inet6   TCP over IPv6 only
+-unix    UNIX Domain Sockets
 +unix    UNIX Domain Sockets (/tmp/.X11-unix/X\fIn\fP)
 +pipe    Named pipes (/tmp/.X11-pipe/X\fIn\fP)
-+.fi
+ local   Platform preferred local connection method
+ .TE
  .TP 8
- .B \-noreset
- prevents a server reset when the last client connection is closed.  This
-@@ -392,7 +429,7 @@ located in the XKB base directory or a subdirectory, and specified as the
+@@ -417,7 +448,7 @@ located in the XKB base directory or a subdirectory, and specified as the
  relative path from the XKB base directory.  The default XKB base directory is
  .IR __projectroot__/lib/X11/xkb .
  .TP 8
@@ -76,7 +80,7 @@ index b103551..82e5370 100644
  enables(+) or disables(-) AccessX key sequences.
  .TP 8
  .B \-xkbdir \fIdirectory\fP
-@@ -548,6 +585,110 @@ the following font path:
+@@ -572,6 +603,110 @@ the following font path:
      /usr/share/fonts/default/Type1,
      /usr/share/fonts/default/ghostscript
  .fi
@@ -90,7 +94,7 @@ index b103551..82e5370 100644
 +.nf
 +svc:/application/x11/x11-server
 +.fi
-+Use \fBsvccfg\fR(1M) to make configuration changes and to view configuration 
++Use \fBsvccfg\fR(__adminmansuffix__) to make configuration changes and to view configuration
 +information for this service\&. 
 +.PP
 +\fB/usr/bin/Xserver\fP will look for configuration options in the 
@@ -154,7 +158,7 @@ index b103551..82e5370 100644
 +.TP
 +.B options/display_0_on_console
 +(Type boolean) Setting this to true starts the X server with a DISPLAY ":0.0"
-+on "/dev/console" rather than the first available "/dev/vt/#", see vt(7i),
++on "/dev/console" rather than the first available "/dev/vt/#", see vt(4i),
 +this preserves backward compatibility with programs such as "xterm -C"
 +that expect have access to "/dev/console".  X servers with any other DISPLAY
 +are not affected. The default is false.
@@ -187,7 +191,7 @@ index b103551..82e5370 100644
  
  .SH FILES
  .TP 30
-@@ -563,8 +704,12 @@ Outline font directories
+@@ -587,8 +722,12 @@ Outline font directories
  .I /tmp/.X11-unix/X\fBn\fP
  Unix domain socket for display number \fBn\fP
  .TP 30
@@ -198,11 +202,11 @@ index b103551..82e5370 100644
 +.TP 30
 +.I /var/log/gdm/:\fBn\fP.log
 +Default error log file for display number \fBn\fP if the server is run 
-+from \fIgdm\fP(1m)
++from \fIgdm\fP(__adminmansuffix__)
  .TP 30
  .I __projectroot__/lib/X11/xdm/xdm-errors
  Default error log file if the server is run from \fIxdm\fP(1)
-@@ -586,14 +731,22 @@ Security: \fIXsecurity\fP(__miscmansuffix__), \fIxauth\fP(1), \fIXau\fP(1),
+@@ -610,14 +749,21 @@ Security: \fIXsecurity\fP(__miscmansuffix__), \fIxauth\fP(1), \fIXau\fP(1),
  \fIxdm\fP(1), \fIxhost\fP(1), \fIxfwp\fP(1),
  .I "Security Extension Specification"
  .PP
@@ -211,16 +215,15 @@ index b103551..82e5370 100644
  .PP
  Controlling the server once started: \fIxset\fP(1), \fIxsetroot\fP(1),
  \fIxhost\fP(1), \fIxinput\fP(1), \fIxrandr\fP(1)
-+.\" Only list the servers shipped on OpenIndiana
++.\" Only list the servers shipped on Solaris
  .PP
  Server-specific man pages:
 -\fIXorg\fP(1), \fIXdmx\fP(1), \fIXephyr\fP(1), \fIXnest\fP(1),
 -\fIXvfb\fP(1), \fIXquartz\fP(1), \fIXWin\fP(1).
-+\fIXorg\fP(1), \fIXdmx\fP(1), \fIXephyr\fP(1), \fIXvfb\fP(1), \fIXvnc\fP(1),
-+\fIXnewt\fP(1M).
++\fIXorg\fP(1), \fIXdmx\fP(1), \fIXephyr\fP(1), \fIXvfb\fP(1), \fIXvnc\fP(1).
 +.PP
 +Service management framework:
-+\fIsmf\fP(5), \fIsvcadm\fP(1M), \fIsvccfg\fP(1M)
++\fIsmf\fP(__miscmansuffix__), \fIsvcadm\fP(__adminmansuffix__), \fIsvccfg\fP(__adminmansuffix__)
 +.PP
 +Dtrace probes:
 +\fI/usr/share/doc/Xserver/Xserver-DTrace.html\fP,
