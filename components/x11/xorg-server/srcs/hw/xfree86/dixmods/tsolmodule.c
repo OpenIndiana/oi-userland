@@ -1,4 +1,4 @@
-/* Copyright (c) 2005, 2007, Oracle and/or its affiliates. All rights reserved.
+/* Copyright (c) 2005, 2015, Oracle and/or its affiliates. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -34,11 +34,13 @@
 static MODULESETUPPROTO(xtsolSetup);
 extern void TsolExtensionInit(INITARGS);
 
-ExtensionModule xtsolExt = {
+extern void LoadExtensionList();
+
+static const ExtensionModule xtsolExt[] = {{
     TsolExtensionInit,
     "SUN_TSOL",
     NULL
-};
+}};
 
 static XF86ModuleVersionInfo VersRec =
 {
@@ -59,11 +61,11 @@ static XF86ModuleVersionInfo VersRec =
  */
 _X_EXPORT XF86ModuleData xtsolModuleData = { &VersRec, xtsolSetup, NULL };
 
-static pointer
-xtsolSetup(pointer module, pointer opts, int *errmaj, int *errmin)
+static void *
+xtsolSetup(void *module, void *opts, int *errmaj, int *errmin)
 {
-    LoadExtension(&xtsolExt, FALSE);
+    LoadExtensionList(xtsolExt, ARRAY_SIZE(xtsolExt), FALSE);
 
     /* Need a non-NULL return value to indicate success */
-    return (pointer)1;
+    return (void *)1;
 }

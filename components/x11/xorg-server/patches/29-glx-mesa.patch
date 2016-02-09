@@ -1,0 +1,37 @@
+# Remove this patch once Mesa is updated to the latest release
+--- a/glx/glxdricommon.c	Fri Dec 13 16:15:57 2013
++++ b/glx/glxdricommon.c	Fri Dec 13 16:22:22 2013
+@@ -209,6 +209,7 @@
+ 
+ static const char dri_driver_path[] = DRI_DRIVER_PATH;
+ 
++#if 0
+ /* Temporary define to allow building without a dri_interface.h from
+  * updated Mesa.  Some day when we don't care about Mesa that old any
+  * more this can be removed.
+@@ -216,6 +217,7 @@
+ #ifndef __DRI_DRIVER_GET_EXTENSIONS
+ #define __DRI_DRIVER_GET_EXTENSIONS "__driDriverGetExtensions"
+ #endif
++#endif
+ 
+ void *
+ glxProbeDriver(const char *driverName,
+@@ -238,6 +240,7 @@
+         goto cleanup_failure;
+     }
+ 
++#if 0
+     if (asprintf(&get_extensions_name, "%s_%s",
+                  __DRI_DRIVER_GET_EXTENSIONS, driverName) != -1) {
+         const __DRIextension **(*get_extensions)(void);
+@@ -249,7 +252,8 @@
+     }
+ 
+     if (!extensions)
+-        extensions = dlsym(driver, __DRI_DRIVER_EXTENSIONS);
++#endif
++    extensions = dlsym(driver, __DRI_DRIVER_EXTENSIONS);
+     if (extensions == NULL) {
+         LogMessage(X_ERROR, "AIGLX error: %s exports no extensions (%s)\n",
+                    driverName, dlerror());

@@ -1,4 +1,4 @@
-# Copyright (c) 2006, 2009, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2006, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -18,9 +18,10 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 # DEALINGS IN THE SOFTWARE.
---- xorg-server-1.17.2/hw/xfree86/loader/loadmod.c.~1~	2015-06-16 16:55:48.000000000 +0300
-+++ xorg-server-1.17.2/hw/xfree86/loader/loadmod.c	2015-09-18 16:22:08.378581607 +0300
-@@ -162,6 +162,13 @@
+
+--- a/hw/xfree86/loader/loadmod.c	Wed Sep 12 10:49:02 2012
++++ b/hw/xfree86/loader/loadmod.c	Wed Sep 12 10:52:48 2012
+@@ -166,6 +166,12 @@
                  list[n][len - 1] = '/';
                  list[n][len] = '\0';
              }
@@ -30,11 +31,10 @@
 +                    list[n][len - 6] = '\0';
 +            }
 +#endif
-+            
              n++;
          }
          elem = strtok(NULL, ",");
-@@ -392,6 +399,18 @@
+@@ -397,6 +403,24 @@
      char *ret = NULL, tmpBuf[PATH_MAX];
      struct stat stat_buf;
  
@@ -48,12 +48,18 @@
 +       in_64_dir = TRUE;
 +# endif
 +    }
++    /* After the 32-bit EOF, all modules under /usr/lib/xorg are 64-bit,
++       but legacy modules under /usr/X11/lib are still split into 32-bit
++       and 64-bit versions. Not in OpenIndiana */
++    //if (strncmp(dirpath, "/usr/X11/lib/modules/", 21) != 0) {
++    //    in_64_dir = TRUE;
++    //}
 +#endif
 +
      dir = opendir(dirpath);
      if (!dir)
          return NULL;
-@@ -399,6 +418,13 @@
+@@ -404,6 +428,12 @@
      while ((direntry = readdir(dir))) {
          if (direntry->d_name[0] == '.')
              continue;
@@ -63,11 +69,10 @@
 +        if (strcmp(direntry->d_name, "amd64") == 0)
 +            continue;
 +#endif
-+
          snprintf(tmpBuf, PATH_MAX, "%s%s/", dirpath, direntry->d_name);
          /* the stat with the appended / fails for normal files,
             and works for sub dirs fine, looks a bit strange in strace
-@@ -409,6 +435,12 @@
+@@ -414,6 +444,12 @@
              continue;
          }
  

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -173,7 +173,7 @@ OSAudit (ClientPtr pClient, int event_id, int status, int reason)
 
 /* Called when new client connects or existing client disconnects */
 static void
-OSAuditClientStateChange(CallbackListPtr *pcbl, pointer nulldata, pointer calldata)
+OSAuditClientStateChange(CallbackListPtr *pcbl, void *nulldata, void *calldata)
 {
     NewClientInfoRec *pci = (NewClientInfoRec *)calldata;
     ClientPtr pClient = pci->client;

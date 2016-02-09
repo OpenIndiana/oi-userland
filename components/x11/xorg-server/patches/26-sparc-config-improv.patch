@@ -1,0 +1,137 @@
+--- a/hw/xfree86/os-support/solaris/sun_init.c	Fri Jun  5 12:41:14 2015
++++ b/hw/xfree86/os-support/solaris/sun_init.c	Fri Jun  5 12:48:06 2015
+@@ -2,6 +2,7 @@
+  * Copyright 1990,91 by Thomas Roell, Dinkelscherben, Germany
+  * Copyright 1993 by David Wexelblat <dwex@goblin.org>
+  * Copyright 1999 by David Holland <davidh@iquest.net>
++ * Copyright (c) 2013 Oracle and/or its affiliates. All Rights Reserved.
+  *
+  * Permission to use, copy, modify, distribute, and sell this software and its
+  * documentation for any purpose is hereby granted without fee, provided that
+@@ -64,6 +65,11 @@
+    Used by hw/xfree86/common/xf86AutoConfig.c for VIS_GETIDENTIFIER */
+ _X_HIDDEN char xf86SolarisFbDev[PATH_MAX] = "/dev/fb";
+ 
++#if (defined(__sparc__) || defined(__sparc))
++static void GetFbDevFromProbe(void);
++static Bool xf86SolarisFbDevIsSet =  FALSE;
++#endif
++
+ static void
+ switch_to(int vt, const char *from)
+ {
+@@ -97,6 +103,16 @@
+         if (geteuid() != 0)
+             FatalError("xf86OpenConsole: Server must be suid root\n");
+ 
++#if (defined(__sparc__) || defined(__sparc))
++        {
++            struct stat buf;
++
++            if (!xf86SolarisFbDevIsSet && (stat("/dev/fb", &buf) != 0) &&
++                (xf86NumDrivers == 1))
++                GetFbDevFromProbe();
++        }
++#endif
++
+ #ifdef HAS_USL_VTS
+ 
+         /*
+@@ -376,6 +392,9 @@
+     if ((i + 1) < argc) {
+         if (!strcmp(argv[i], "-dev")) {
+             strlcpy(xf86SolarisFbDev, argv[i + 1], sizeof(xf86SolarisFbDev));
++#if (defined(__sparc__) || defined(__sparc))
++           xf86SolarisFbDevIsSet = TRUE;
++#endif
+             return 2;
+         }
+     }
+@@ -383,6 +402,87 @@
+     return 0;
+ }
+ 
++#if (defined(__sparc__) || defined(__sparc))
++static void
++GetFbDevFromProbe(void) {
++    unsigned numDevs;
++    GDevPtr *devList;
++
++    numDevs = xf86MatchDevice(xf86DriverList[0]->driverName, &devList);
++
++    if (numDevs != 1)
++        return;
++    else {
++        struct pci_device_iterator *iter;
++        unsigned device_id;
++        const struct pci_id_match *const devices =
++                xf86DriverList[0]->supported_devices;
++        int i;
++        Bool found = FALSE;
++        struct pci_device *pPci;
++        struct sol_device_private {
++            struct pci_device  base;
++            const char * device_string;
++        };
++#define DEV_PATH(dev)    (((struct sol_device_private *) dev)->device_string)
++#define END_OF_MATCHES(m) \
++        (((m).vendor_id == 0) && ((m).device_id == 0) && ((m).subvendor_id == 0))
++
++        /* Find the pciVideoRec associated with this device section.
++         */
++        iter = pci_id_match_iterator_create(NULL);
++        while ((pPci = pci_device_next(iter)) != NULL) {
++            if (devList[0]->busID && *devList[0]->busID) {
++                if (xf86ComparePciBusString(devList[0]->busID,
++                                        ((pPci->domain << 8)
++                                        | pPci->bus),
++                                        pPci->dev, pPci->func)) {
++                    break;
++                }
++            }
++            else if (xf86IsPrimaryPci(pPci)) {
++                break;
++            }
++        }
++
++        pci_iterator_destroy(iter);
++
++        if (pPci == NULL)
++            return;
++
++        /* If driver provides supported_devices, then check if this
++           device is on the list. Otherwise skip check.
++         */
++        if (!devices)
++            found = TRUE;
++        else {
++            device_id = (devList[0]->chipID > 0)
++                ? devList[0]->chipID : pPci->device_id;
++
++            /* Once the pciVideoRec is found, determine if the device is supported
++             * by the driver.
++             */
++            for (i = 0; !END_OF_MATCHES(devices[i]); i++) {
++                if (PCI_ID_COMPARE(devices[i].vendor_id, pPci->vendor_id)
++                        && PCI_ID_COMPARE(devices[i].device_id, device_id)
++                        && ((devices[i].device_class_mask & pPci->device_class)
++                        == devices[i].device_class)) {
++
++                    found = TRUE;
++                    break;
++                }
++            }
++        }
++        if (found) {
++            strcpy(xf86SolarisFbDev, "/devices");
++            strcat(xf86SolarisFbDev, DEV_PATH(pPci));
++            xf86Msg(X_INFO, "Got xf86SolarisFbDev From Probe: %s\n", xf86SolarisFbDev);
++        }
++
++    }
++}
++#endif
++
+ void
+ xf86UseMsg(void)
+ {

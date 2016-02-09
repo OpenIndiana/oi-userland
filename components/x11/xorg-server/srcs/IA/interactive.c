@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1993, 2015, Oracle and/or its affiliates. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -74,8 +74,8 @@ static int SProcIAGetProcessInfo(ClientPtr client);
 static int ProcIAQueryVersion(ClientPtr client);
 static int SProcIAQueryVersion(ClientPtr client);
 static void IACloseDown(ExtensionEntry *ext);
-static void IAClientStateChange(CallbackListPtr *pcbl, pointer nulldata,
-				pointer calldata);
+static void IAClientStateChange(CallbackListPtr *pcbl, void *nulldata,
+				void *calldata);
 
 static int InitializeClass(void);
 static void SetIAPrivate(int *);
@@ -92,7 +92,7 @@ static int PidSetEqual(ClientProcessPtr, ClientProcessPtr);
 static int IAWrapProcVectors(void);
 static int IAUnwrapProcVectors(void);
 
-static CARD32 IAInitTimerCall(OsTimerPtr timer, CARD32 now, pointer arg);
+static CARD32 IAInitTimerCall(OsTimerPtr timer, CARD32 now, void *arg);
 
 static iaclass_t 	IAClass;
 static id_t		TScid;
@@ -208,7 +208,7 @@ IAInitClientPrivate(ClientPtr pClient)
 
 /* Called when we first hit WaitForSomething to initialize serverClient */
 static CARD32
-IAInitTimerCall(OsTimerPtr timer, CARD32 now, pointer arg)
+IAInitTimerCall(OsTimerPtr timer, CARD32 now, void *arg)
 {
     ConnectionPidRec serverPid;
 
@@ -226,7 +226,7 @@ IAInitTimerCall(OsTimerPtr timer, CARD32 now, pointer arg)
 
 /* Called when new client connects or existing client disconnects */
 static void
-IAClientStateChange(CallbackListPtr *pcbl, pointer nulldata, pointer calldata)
+IAClientStateChange(CallbackListPtr *pcbl, void *nulldata, void *calldata)
 {
     NewClientInfoRec *pci = (NewClientInfoRec *)calldata;
     ClientPtr pClient = pci->client;
@@ -606,7 +606,7 @@ SetPriority(const ClientProcessPtr cpp, int cmd)
 		  case SET_INTERACTIVE:	cmdmsg = "SET_INTERACTIVE"; 	break;
 		  default:		cmdmsg = "UNKNOWN_CMD!!!"; 	break;
 		}
-		LogMessage(X_INFO, "SolarisIA: SetPriority(%ld, %s): %s\n",
+		LogMessage(X_INFO, "SolarisIA: SetPriority(%d, %s): %s\n",
 			   pid, cmdmsg,
 			   (ret == Success) ? "succeeeded" : "failed");
 	    });
