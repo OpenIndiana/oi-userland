@@ -1,0 +1,42 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016 Alexander Pyhalov
+#
+
+include ../../../make-rules/shared-macros.mk
+
+COMPONENT_NAME=		baekmuk-ttf
+COMPONENT_VERSION=	2.2
+COMPONENT_PROJECT_URL=	http://kldp.net/projects/baekmuk/
+COMPONENT_SUMMARY=	Baekmuk family Korean TrueType fonts
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= \
+    sha256:08ab7dffb55d5887cc942ce370f5e33b756a55fbb4eaf0b90f244070e8d51882
+COMPONENT_ARCHIVE_URL=	http://kldp.net/download.php/1429/
+COMPONENT_FMRI=		system/font/baekmuk-ttf
+COMPONENT_LICENSE_FILE=	COPYRIGHT
+COMPONENT_LICENSE=	BSD
+COMPONENT_CLASSIFICATION=	System/Fonts
+
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/justmake.mk
+include $(WS_TOP)/make-rules/ips.mk
+
+COMPONENT_PREP_ACTION =	( cp $(COMPONENT_DIR)/files/Makefile $(@D))
+
+build: $(BUILD_32)
+
+install: $(INSTALL_32)
+
+test: $(NO_TESTS)
