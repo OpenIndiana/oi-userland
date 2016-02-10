@@ -905,7 +905,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
             instance.system_metadata['rebuilding'] = False
             self._create_config(context, instance, network_info,
-                                root_ci, extra_specs, None)
+                                root_ci, None)
             del instance.system_metadata['evac_from']
             instance.save()
         else:
@@ -1305,11 +1305,14 @@ class SolarisZonesDriver(driver.ComputeDriver):
                     linkname = 'net%s' % id
 
             # create the required sysconfig file (or skip if this is part of a
-            # resize process)
+            # resize or evacuate process)
             tstate = instance['task_state']
             if tstate not in [task_states.RESIZE_FINISH,
                               task_states.RESIZE_REVERTING,
-                              task_states.RESIZE_MIGRATING]:
+                              task_states.RESIZE_MIGRATING,
+                              task_states.REBUILD_SPAWNING] or \
+                (tstate == task_states.REBUILD_SPAWNING and
+                 instance.system_metadata['rebuilding']):
                 subnet_uuid = port['fixed_ips'][0]['subnet_id']
                 subnet = network_plugin.show_subnet(subnet_uuid)['subnet']
 
@@ -2617,7 +2620,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
                                                               samehost)
 
                 self._create_config(context, instance, network_info,
-                                    connection_info, extra_specs, None)
+                                    connection_info, None)
 
                 zone = self._get_zone_by_name(name)
                 if zone is None:
