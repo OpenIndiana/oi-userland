@@ -70,6 +70,8 @@ INSTALL_RB_SBINDIR_OPTION =
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
+PKG_OPTIONS +=	-I $(BUILD_DIR)
+
 # common targets
 build::		$(BUILD_64)
 
