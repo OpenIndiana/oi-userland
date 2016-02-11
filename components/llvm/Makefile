@@ -328,9 +328,11 @@ REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += system/core-os
 REQUIRED_PACKAGES += system/header
-REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/gcc/gcc-runtime-49
 REQUIRED_PACKAGES += system/library/gcc/gcc-c++-runtime-49
-REQUIRED_PACKAGES += system/library/gcc/gcc-gobjcc-runtime-49
+REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime-49
+REQUIRED_PACKAGES += system/library/gcc/gcc-gobjc-runtime-49
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/linker
 
