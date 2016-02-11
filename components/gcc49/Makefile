@@ -46,7 +46,7 @@ include $(WS_MAKE_RULES)/ips.mk
 PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
 
 PATCH_LEVEL := 0
-ENABLE_CLOOG := 0
+ENABLE_CLOOG := 1
 
 ENABLE_CXA_ATEXIT=yes
 ifeq ($(OS_VERSION), 5.11)
