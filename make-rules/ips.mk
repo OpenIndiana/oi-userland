@@ -446,7 +446,17 @@ PKGSEND_PUBLISH_OPTIONS += --no-catalog
 PKGSEND_PUBLISH_OPTIONS += $(PKG_PROTO_DIRS:%=-d %)
 PKGSEND_PUBLISH_OPTIONS += -T \*.py
 
+# PKGREPO_REMOVE_BEFORE_PUBLISH remove previously published versions of this package
+# before publishing the new build
+PKGREPO_REMOVE_BEFORE_PUBLISH ?= no
+
 $(MANIFEST_BASE)-%.published:	$(MANIFEST_BASE)-%.depend.res $(BUILD_DIR)/.linted-$(MACH)
+ifeq ($(PKGREPO_REMOVE_BEFORE_PUBLISH),yes)
+	-$(PKGREPO) -s $(PKG_REPO) remove \
+			$(shell $(CAT) $< $(WS_TOP)/transforms/print-pkgs | \
+				$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 | \
+				sed -e '/^$$/d' -e '/^#.*$$/d' | sort -u)
+endif
 	$(PKGSEND) $(PKGSEND_PUBLISH_OPTIONS) $<
 	$(PKGFMT) <$< >$@
 

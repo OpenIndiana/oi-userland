@@ -1,4 +1,4 @@
-
+#
 # CDDL HEADER START
 #
 # The contents of this file are subject to the terms of the
@@ -24,42 +24,50 @@ include ../../../make-rules/shared-macros.mk
 RUBY_VERSION=2.1
 RUBY_LIB_VERSION=2.1.0
 RUBY_VERSIONS=2.1.0
+RUBY=/usr/ruby/$(RUBY_VERSION)/bin/ruby
 
-COMPONENT_NAME=		facter
-COMPONENT_VERSION=	2.1.0
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).gem
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:f4c5573d309520fed49651f36d5a0366bf40609a0ff04a34266a01d263704f17
-COMPONENT_ARCHIVE_URL=	http://rubygems.org/gems/$(COMPONENT_SRC).gem
-COMPONENT_PROJECT_URL=  http://puppetlabs.com/facter
+COMPONENT_NAME=		puppet-solaris
+COMPONENT_VERSION=	$(PKG_SOLARIS_VERSION)
 COMPONENT_BUGDB=	utility/puppet
 
-TPNO=                   18642
-
-# No gemspec is shipped with the gem. Create one
-COMPONENT_POST_UNPACK_ACTION= \
-    $(GEM) spec $(COMPONENT_ARCHIVE) --ruby > $(SOURCE_DIR)/$(GEMSPEC)
-
 include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/ips.mk
-include $(WS_MAKE_RULES)/gem.mk
 include $(WS_MAKE_RULES)/ruby.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+
+# Not implemented by any make rules we are loading
+$(BUILD_64): ext/PuppetAudit.so $(BUILD_DIR)
+	$(MKDIR) $(dir $@)
+	$(TOUCH) $@
+
+# Not implemented by any make rules we are loading
+$(INSTALL_64): $(BUILD_64)
+	$(TOUCH) $@
 
 # common targets
-build:		$(BUILD_64)
+build: $(BUILD_64)
 
-install:	$(INSTALL_64)
+INSTALL_DIR=$(BUILD_DIR)/prototype/$(MACH)
+SECURITY_FILES=$(addprefix files/,auth_attr exec_attr prof_attr)
+ETC_FILES=$(addprefix files/,user_attr)
 
-# facter requires the installation of the following rubygems to run
-# the unittests:  rspec rspec-expectations mocha rake rack hiera
-# Disable the tests until these rubygems are available.
+ext/PuppetAudit.so:
+	# Ruby extension for auditing
+	(cd ext; $(RUBY) extconf.rb; $(GMAKE))
+
+clean::
+	@if [ -f ext/Makefile ]; then \
+		(cd ext; $(GMAKE) clean; $(RM) Makefile) \
+	fi
+
 test:		$(NO_TESTS)
 
 system-test:    $(NO_TESTS)
 
-
 REQUIRED_PACKAGES += runtime/ruby-21
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/network

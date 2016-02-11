@@ -21,9 +21,6 @@
 # Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
-RUBY_VERSION=2.1
-RUBY_LIB_VERSION=2.1.0
-RUBY_VERSIONS=2.1.0
 
 COMPONENT_NAME=		puppet
 COMPONENT_VERSION=	3.6.2
@@ -40,27 +37,15 @@ TPNO=			18128
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/install.rb.mk
 include $(WS_MAKE_RULES)/ips.mk
-include $(WS_MAKE_RULES)/ruby.mk
 
 # puppet requires facter and hiera as part of the install phase 
-FACTER_LIB=$(WS_TOP)/components/ruby/facter/build/$(MACH64)/lib
-HIERA_LIB=$(WS_TOP)/components/ruby/hiera/build/$(MACH64)/lib
-COMPONENT_INSTALL_ENV	+= RUBYLIB="$(FACTER_LIB):$(HIERA_LIB)"
+COMPONENT_INSTALL_ENV	+= RUBYLIB="$(COMPONENT_DIR)/../facter/build/$(MACH64)/lib:$(COMPONENT_DIR)/../hiera/build/$(MACH64)/lib"
 
 ../facter/build/%/.installed:
 	(cd ../facter ; $(GMAKE) install)
 
 ../hiera/build/%/.installed:
 	(cd ../hiera ; $(GMAKE) install)
-
-
-# Collect puppet module manifests for inclusion of puppet modules in group depends
-# declare a prereq on all manifests to update depend file as needed
-PUPPET_MODULE_MANIFESTS = $(wildcard $(WS_TOP)/components/ruby/puppet-modules/*-*/*.p5m)
-$(BUILD_DIR)/puppet-modules.depend: $(PUPPET_MODULE_MANIFESTS) $(BUILD_DIR)
-	$(PKGMOGRIFY) -i -O /dev/null -P $@ $(WS_TRANSFORMS)/group-dependency $(PUPPET_MODULE_MANIFESTS)
-build:: $(BUILD_DIR)/puppet-modules.depend
-
 
 # set the bindir to /usr/sbin
 INSTALL_RB_BINDIR_OPTION =	--bindir=$(USRSBINDIR)
@@ -71,12 +56,17 @@ INSTALL_RB_SBINDIR_OPTION =
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # common targets
-build::		$(BUILD_64)
+build:		$(BUILD_64)
+	# Ruby extension for auditing
+	(cd ext; $(RUBY) extconf.rb; $(GMAKE))
 
 # make sure facter and hiera are installed first
 install:	../facter/build/$(MACH64)/.installed ../hiera/build/$(MACH64)/.installed $(INSTALL_64)
 
 clean::
+	@if [ -f ext/Makefile ]; then \
+		(cd ext; $(GMAKE) clean; $(RM) Makefile) \
+	fi
 
 # puppet requires the installation of the following rubygems to run
 # the unittests:  rspec rspec-expectations mocha rack rgen
@@ -85,6 +75,11 @@ test:		$(NO_TESTS)
 
 system-test:    $(NO_TESTS)
 
-REQUIRED_PACKAGES += runtime/ruby-21
-REQUIRED_PACKAGES += library/ruby/hiera
-REQUIRED_PACKAGES += system/management/facter
+
+REQUIRED_PACKAGES += runtime/ruby-19
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/core-os
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/network

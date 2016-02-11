@@ -1,0 +1,227 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
+set name=pkg.fmri \
+    value=pkg:/library/ruby/hiera@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Ruby hierarchical data store"
+set name=pkg.description \
+    value="Hiera is a key/value lookup tool for configuration data. By default, Hiera supports a backend datastore using YAML or JSON."
+set name=com.oracle.info.description \
+    value="Hiera, a Ruby hierarchical data store"
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value=org.opensolaris.category.2008:Development/Ruby \
+    value=org.opensolaris.category.2008:System/Databases
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2014/275 value=PSARC/2016/016
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+# Add a configuration file
+file files/hiera.yaml path=etc/hiera.yaml mode=0644 overlay=allow preserve=true
+
+# Make hiera available in /usr/bin
+link path=usr/bin/hiera \
+    target=../ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/gems/hiera-$(COMPONENT_VERSION)/bin/hiera
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/bin/hiera
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/cache/hiera-$(COMPONENT_VERSION).gem
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/Hiera.html
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/Hiera/Backend.html
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/Hiera/Backend/Json_backend.html
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/Hiera/Backend/Yaml_backend.html
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/Hiera/Config.html
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/Hiera/Console_logger.html
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/Hiera/Error.html
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/Hiera/FallbackLogger.html
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/Hiera/Filecache.html
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/Hiera/Interpolate.html
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/Hiera/InterpolationLoop.html
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/Hiera/InvalidConfigurationError.html
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/Hiera/Noop_logger.html
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/Hiera/Puppet_logger.html
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/Hiera/RecursiveGuard.html
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/Hiera/Util.html
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/fonts.css
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/fonts/Lato-Light.ttf
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/fonts/Lato-LightItalic.ttf
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/fonts/Lato-Regular.ttf
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/fonts/Lato-RegularItalic.ttf
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/fonts/SourceCodePro-Bold.ttf
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/fonts/SourceCodePro-Regular.ttf
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/images/add.png
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/images/arrow_up.png
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/images/brick.png
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/images/brick_link.png
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/images/bug.png
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/images/bullet_black.png
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/images/bullet_toggle_minus.png
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/images/bullet_toggle_plus.png
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/images/date.png
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/images/delete.png
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/images/find.png
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/images/loadingAnimation.gif
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/images/macFFBgHack.png
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/images/package.png
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/images/page_green.png
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/images/page_white_text.png
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/images/page_white_width.png
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/images/plugin.png
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/images/ruby.png
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/images/tag_blue.png
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/images/tag_green.png
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/images/transparent.png
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/images/wrench.png
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/images/wrench_orange.png
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/images/zoom.png
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/index.html
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/js/darkfish.js
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/js/jquery.js
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/js/navigation.js
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/js/search.js
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/js/search_index.js
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/js/searcher.js
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/rdoc.css
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/rdoc/table_of_contents.html
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Backend/Json_backend/cdesc-Json_backend.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Backend/Json_backend/lookup-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Backend/Json_backend/new-c.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Backend/Yaml_backend/cdesc-Yaml_backend.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Backend/Yaml_backend/file_exists%3f-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Backend/Yaml_backend/lookup-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Backend/Yaml_backend/new-c.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Backend/cdesc-Backend.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Backend/clear%21-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Backend/datadir-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Backend/datafile-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Backend/datafile_in-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Backend/datasourcefiles-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Backend/datasources-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Backend/lookup-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Backend/merge_answer-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Backend/parse_answer-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Backend/parse_string-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Backend/resolve_answer-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Config/%5b%5d-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Config/cdesc-Config.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Config/include%3f-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Config/load-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Config/load_backends-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Config/validate%21-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Config/yaml_load_file-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Console_logger/cdesc-Console_logger.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Console_logger/debug-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Console_logger/warn-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Error/cdesc-Error.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/FallbackLogger/cdesc-FallbackLogger.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/FallbackLogger/debug-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/FallbackLogger/new-c.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/FallbackLogger/warn-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Filecache/cdesc-Filecache.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Filecache/new-c.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Filecache/path_metadata-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Filecache/read-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Filecache/read_file-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Filecache/stale%3f-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Interpolate/cdesc-Interpolate.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Interpolate/do_interpolation-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Interpolate/get_interpolation_method_and_key-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Interpolate/hiera_interpolate-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Interpolate/interpolate-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Interpolate/scope_interpolate-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/InterpolationLoop/cdesc-InterpolationLoop.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/InvalidConfigurationError/cdesc-InvalidConfigurationError.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Noop_logger/cdesc-Noop_logger.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Noop_logger/debug-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Noop_logger/warn-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Puppet_logger/cdesc-Puppet_logger.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Puppet_logger/debug-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Puppet_logger/suitable%3f-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Puppet_logger/warn-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/RecursiveGuard/cdesc-RecursiveGuard.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/RecursiveGuard/check-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/RecursiveGuard/new-c.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Util/cdesc-Util.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Util/common_appdata-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Util/config_dir-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Util/file_alt_separator-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Util/microsoft_windows%3f-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Util/posix%3f-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/Util/var_dir-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/cdesc-Hiera.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/config-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/debug-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/logger%3d-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/logger-c.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/lookup-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/new-c.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/options-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/read_version_file-c.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/version%3d-c.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/version-c.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/Hiera/warn-i.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/doc/hiera-$(COMPONENT_VERSION)/ri/cache.ri
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/gems/hiera-$(COMPONENT_VERSION)/COPYING
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/gems/hiera-$(COMPONENT_VERSION)/LICENSE
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/gems/hiera-$(COMPONENT_VERSION)/README.md
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/gems/hiera-$(COMPONENT_VERSION)/bin/hiera
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/gems/hiera-$(COMPONENT_VERSION)/lib/hiera.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/gems/hiera-$(COMPONENT_VERSION)/lib/hiera/backend.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/gems/hiera-$(COMPONENT_VERSION)/lib/hiera/backend/json_backend.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/gems/hiera-$(COMPONENT_VERSION)/lib/hiera/backend/yaml_backend.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/gems/hiera-$(COMPONENT_VERSION)/lib/hiera/config.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/gems/hiera-$(COMPONENT_VERSION)/lib/hiera/console_logger.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/gems/hiera-$(COMPONENT_VERSION)/lib/hiera/error.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/gems/hiera-$(COMPONENT_VERSION)/lib/hiera/fallback_logger.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/gems/hiera-$(COMPONENT_VERSION)/lib/hiera/filecache.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/gems/hiera-$(COMPONENT_VERSION)/lib/hiera/interpolate.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/gems/hiera-$(COMPONENT_VERSION)/lib/hiera/noop_logger.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/gems/hiera-$(COMPONENT_VERSION)/lib/hiera/puppet_logger.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/gems/hiera-$(COMPONENT_VERSION)/lib/hiera/recursive_guard.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/gems/hiera-$(COMPONENT_VERSION)/lib/hiera/util.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/gems/hiera-$(COMPONENT_VERSION)/lib/hiera/version.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/gems/hiera-$(COMPONENT_VERSION)/spec/spec_helper.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/gems/hiera-$(COMPONENT_VERSION)/spec/unit/backend/json_backend_spec.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/gems/hiera-$(COMPONENT_VERSION)/spec/unit/backend/yaml_backend_spec.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/gems/hiera-$(COMPONENT_VERSION)/spec/unit/backend_spec.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/gems/hiera-$(COMPONENT_VERSION)/spec/unit/config_spec.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/gems/hiera-$(COMPONENT_VERSION)/spec/unit/console_logger_spec.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/gems/hiera-$(COMPONENT_VERSION)/spec/unit/fallback_logger_spec.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/gems/hiera-$(COMPONENT_VERSION)/spec/unit/filecache_spec.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/gems/hiera-$(COMPONENT_VERSION)/spec/unit/hiera_spec.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/gems/hiera-$(COMPONENT_VERSION)/spec/unit/puppet_logger_spec.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/gems/hiera-$(COMPONENT_VERSION)/spec/unit/util_spec.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/gems/hiera-$(COMPONENT_VERSION)/spec/unit/version_spec.rb
+file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/gems/$(RUBY_LIB_VERSION)/specifications/hiera-$(COMPONENT_VERSION).gemspec
+
+# Add man page
+file files/hiera.1 path=usr/share/man/man1/hiera.1
+
+# Add entry for the default dataset directory as specified in the hiera.yaml file
+dir  path=var/lib/hiera
+license hiera.license license="Apache v2.0"
+# Renamed Package
+depend type=optional fmri=library/ruby/hiera-19@1.3.4-5.12.0.0.0.93.0

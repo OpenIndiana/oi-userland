@@ -32,11 +32,16 @@ GEMSPEC=$(COMPONENT_NAME).gemspec
 # Some gems projects have to be built using rake
 # Allow GEM build/install commands to be overwritten
 # to account for possible differences
-GEM_BUILD_ACTION=(cd $(@D); $(GEM) build $(GEMSPEC))
+GEM_BUILD_ACTION=(cd $(@D); $(GEM) build $(GEM_BUILD_ARGS) $(GEMSPEC))
+
+ifeq ($(firstword $(subst .,$(space),$(RUBY_VERSION))),2)
+# gem install 2.x does docs differently. Continue to generate both types
+GEM_INSTALL_ARGS=--document rdoc,ri
+endif
 
 GEM_INSTALL_ACTION=\
 	$(GEM) install -V --local --install-dir $(PROTO_DIR)/$(VENDOR_GEM_DIR) \
-	     --bindir $(PROTO_DIR)/$(VENDOR_GEM_DIR)/bin --force \
+	     --bindir $(PROTO_DIR)/$(VENDOR_GEM_DIR)/bin --force $(GEM_INSTALL_ARGS) \
 	     $(@D)/$(COMPONENT_ARCHIVE)
 
 $(BUILD_DIR)/%/.built:  $(SOURCE_DIR)/.prep

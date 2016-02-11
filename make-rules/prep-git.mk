@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 GIT =		/usr/bin/git
@@ -32,10 +32,22 @@ GIT_SUFFIXES = $(subst GIT_REPO_,, $(filter GIT_REPO_%, $(.VARIABLES)))
 
 define git-rules
 ifdef GIT_REPO$(1)
-ifdef GIT_COMMIT_ID$(1)
+ifeq ("",$(strip $(or $(GIT_BRANCH$(1)),$(GIT_COMMIT_ID$(1)))))
+  $$(error GIT_BRANCH$(1) and/or GIT_COMMIT_ID$(1) must be defined)
+else
 
-COMPONENT_SRC$(1) ?= $$(COMPONENT_NAME$(1))-$$(GIT_COMMIT_ID$(1))
+ifdef GIT_BRANCH$(1)
+  GIT_BRANCH_ARG$(1) = -b $$(GIT_BRANCH$(1))
+else
+  GIT_BRANCH_ARG$(1) = -b master
+endif
+
+COMPONENT_SRC$(1) ?= $$(COMPONENT_NAME$(1))$$(GIT_BRANCH$(1):%=-%)$$(GIT_COMMIT_ID$(1):%=-%)
 COMPONENT_ARCHIVE$(1) ?= $$(COMPONENT_SRC$(1)).tar.gz
+# If the source is github attempt to generate an archive url
+ifeq (github,$(findstring github,$(GIT_REPO$(1))))
+  COMPONENT_ARCHIVE_URL$(1) ?= $(GIT_REPO$(1))/tarball/$(GIT_BRANCH$(1))
+endif
 
 CLEAN_PATHS += $$(COMPONENT_SRC$(1))
 CLOBBER_PATHS += $$(COMPONENT_ARCHIVE$(1))
@@ -44,23 +56,32 @@ SOURCE_DIR$(1) = $$(COMPONENT_DIR)/$(COMPONENT_SRC$(1))
 download::	$$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1))
 
 # First attempt to download a cached archive of the SCM repo at the proper
-# changeset ID.  If that fails, create an archive by cloning the SCM repo,
+# changeset ID, If COMPONENT_ARCHIVE_URL is defined try that as well.
+# If that fails, create an archive by cloning the SCM repo,
 # updating to the selected changeset, archiving that directory, and cleaning up
 # when complete.
+#
+# GIT CLONE ARGS
+# --depth=1 arg to git clone takes only the top level (named) commits on any
+# branches or tags. Attempts to use other commit IDs will fail.
 $$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1)):	$(MAKEFILE_PREREQ)
-	$$(FETCH) --file $$@ $$(GIT_HASH$(1):%=--hash %) || \
+	$$(FETCH) --file $$@ \
+		$$(GIT_HASH$(1):%=--hash %) || \
+		( \
+	$$(FETCH) --file $$@ \
+		$$(COMPONENT_ARCHIVE_URL$(1):%=--url %) || \
 	(TMP_REPO=$$$$(mktemp --directory) && \
-	 $(GIT) clone $$(GIT_REPO$(1)) $$$${TMP_REPO} && \
-	 (cd $$$${TMP_REPO} ; $(GIT) checkout \
-		 $$(GIT_COMMIT_ID$(1))) && \
-	 (cd $$$${TMP_REPO} ; $(GIT) archive --format tar.gz \
+	$(GIT) clone --depth=1 $$(GIT_REPO$(1)) $$(GIT_BRANCH_ARG$(1)) $$$${TMP_REPO} && \
+	(cd $$$${TMP_REPO} ; $(GIT) checkout \
+	$$(GIT_COMMIT_ID$(1))) && \
+	(cd $$$${TMP_REPO} ; $(GIT) archive --format tar.gz \
 		--prefix $$(COMPONENT_SRC$(1))/ \
-		$$(GIT_COMMIT_ID$(1))) > $$@ && \
-	 $(RM) -r $$$${TMP_REPO} && \
-	 GIT_HASH=$$$$(digest -a sha256 $$@) && \
-	 $(GSED) -i \
+		$$(or $$(GIT_COMMIT_ID$(1)),$$(GIT_BRANCH$(1)))) > $$@ && \
+	$(RM) -r $$$${TMP_REPO} ) && \
+	( GIT_HASH=$$$$(digest -a sha256 $$@) && \
+	$(GSED) -i \
 		-e "s/^GIT_HASH$(1)=.*/GIT_HASH$(1)=  sha256:$$$${GIT_HASH}/" \
-		Makefile)
+		Makefile ))
 
 
 REQUIRED_PACKAGES += developer/versioning/git

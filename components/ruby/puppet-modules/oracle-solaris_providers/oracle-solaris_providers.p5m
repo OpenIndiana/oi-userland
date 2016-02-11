@@ -1,0 +1,59 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+#
+#
+<transform file dir -> default owner puppet>
+<transform file dir -> default group puppet>
+<transform file -> default mode 0444>
+<transform dir -> default mode 0755>
+# Ingest pkgsend more easily as we expect to be doing it frequently
+<transform file dir -> edit path solaris_providers etc/puppet/modules/solaris_providers>
+# Include the files we are still providing locally
+<include oracle-solaris_providers-local.frag>
+# Include the files delivered from the archive. This should probably
+# be included here directly after the migration is complete.
+<include oracle-solaris_providers-github.frag>
+set name=pkg.fmri \
+    value=pkg:/system/management/puppet/oracle-solaris_providers@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Oracle Solaris Providers Puppet Module"
+set name=pkg.description \
+    value="The Oracle Solaris puppet module contains multiple types and providers for managing Solaris"
+set name=com.oracle.info.description \
+    value="Oracle Solaris Providers Puppet Module"
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value="org.opensolaris.category.2008:System/Administration and Configuration"
+set name=info.repository-url \
+    value=https://github.com/oraclesolaris/puppet-module
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream value=Oracle
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2013/005 value=PSARC/2013/218 \
+    value=PSARC/2013/221 value=PSARC/2013/288 value=PSARC/2013/426 \
+    value=PSARC/2016/016
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+license puppet.license license="Apache v2.0"
+
+# require puppet
+depend type=require fmri=system/management/puppet

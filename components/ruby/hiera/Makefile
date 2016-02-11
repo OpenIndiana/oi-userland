@@ -18,9 +18,12 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
+RUBY_VERSION=2.1
+RUBY_LIB_VERSION=2.1.0
+RUBY_VERSIONS=2.1.0
 
 COMPONENT_NAME=		hiera
 COMPONENT_VERSION=	1.3.4
@@ -36,11 +39,12 @@ TPNO=                   18210
 
 # No gemspec is shipped with the gem. Create one
 COMPONENT_POST_UNPACK_ACTION= \
-    $(GEM) spec $(COMPONENT_ARCHIVE) > $(SOURCE_DIR)/$(GEMSPEC)
+    $(GEM) spec $(COMPONENT_ARCHIVE) --ruby > $(SOURCE_DIR)/$(GEMSPEC)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
 include $(WS_MAKE_RULES)/gem.mk
+include $(WS_MAKE_RULES)/ruby.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
@@ -53,5 +57,5 @@ test:		$(NO_TESTS)
 system-test:    $(NO_TESTS)
 
 
-REQUIRED_PACKAGES += runtime/ruby-19
+REQUIRED_PACKAGES += runtime/ruby-21
 REQUIRED_PACKAGES += system/core-os
