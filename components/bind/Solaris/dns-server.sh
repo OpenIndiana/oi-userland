@@ -43,6 +43,15 @@ mount_chroot ()
     done
 }
 
+umount_chroot ()
+{
+    c=$1
+    shift
+    for f in $*; do
+        umount ${c}/${f} >/dev/null 2>&1
+    done
+}
+
 get_config ()
 {
     configuration_file=/etc/named.conf
@@ -51,6 +60,7 @@ get_config ()
     rndc_cmd_opts="-a"
     libraries="/lib/openssl/engines/libpk11.so /usr/lib/security/pkcs11_kernel.so.1"
     cmdopts=""
+    checkopts=""
     properties="debug_level ip_interfaces listen_on_port
 	threads chroot_dir configuration_file server user"
 
@@ -94,10 +104,12 @@ get_config ()
 	    ;;
 	'chroot_dir')
 	    cmdopts="${cmdopts} -t ${value}"
+	    checkopts="${checkopts} -t ${value}"
 	    chroot_dir=${value};
 	    ;;
 	'configuration_file')
 	    cmdopts="${cmdopts} -c ${value}"
+	    checkopts="${checkopts} ${value}"
 	    configuration_file=${value};
 	    ;;
 	'server')
@@ -133,6 +145,7 @@ if [ -z "$SMF_FMRI" ]; then
     SMF_FMRI="svc:/network/dns/server:${instance}"
 fi
 server="/usr/sbin/named"
+checkconf="/usr/sbin/named-checkconf"
 I=`/usr/bin/basename $0`
 
 case "$method" in
@@ -141,7 +154,7 @@ case "$method" in
 
     # Check configuration file exists.
     if [ ! -f ${configuration_file} ]; then
-        msg="$I : Configuration file ${configuration_file} does not exist!"
+        msg="$I: Configuration file ${configuration_file} does not exist!"
         echo ${msg} >&2
         /usr/bin/logger -p daemon.error ${msg}
         # dns-server should be placed in maintenance state.
@@ -152,7 +165,7 @@ case "$method" in
     # configuration file lives under chroot directory.
     if [ "${chroot_dir}" != "" ]; then
         if [ "${chroot_dir}" = "/" ]; then
-            msg="$I : chroot_dir must not be /"
+            msg="$I: chroot_dir must not be /"
             echo ${msg} >&2
             /usr/bin/logger -p daemon.error ${msg}
             # dns-server should be placed in maintenance state.
@@ -160,13 +173,31 @@ case "$method" in
         fi
 
         server="env LD_NOLAZYLOAD=1 ${server}"
+	checkconf="env LD_NOLAZYLOAD=1 ${checkconf}"
 
         mkdir -p ${chroot_dir}
 
+        if [ "${SMF_ZONENAME}" = "global" ]; then
+            for dev in crypto log null poll random urandom; do
+                rm -f ${chroot_dir}/dev/${dev}
+                pax -rw -H -pe /dev/${dev} ${chroot_dir}
+            done
+        fi
+
+        missing=""
         for dev in crypto null poll random urandom; do
-            rm -f ${chroot_dir}/dev/${dev}
-            pax -rw -H -pe /dev/${dev} ${chroot_dir}
+            if [ ! -c ${chroot_dir}/dev/${dev} ]; then
+                missing="${missing} ${dev}"
+            fi
         done
+
+        if [ ! -z "${missing}" ]; then
+            msg="$I: missing device nodes in ${chroot_dir}: ${missing}"
+            echo ${msg} >&2
+            /usr/bin/logger -p daemon.error ${msg}
+            # dns-server should be placed in maintenance state.
+            exit ${SMF_EXIT_ERR_CONFIG}
+        fi
 
         mkdir -p ${chroot_dir}/etc/crypto
         echo "/usr/lib/security/pkcs11_kernel.so.1" > ${chroot_dir}/etc/crypto/pkcs11.conf
@@ -198,11 +229,26 @@ case "$method" in
     fi
 
     if [ ${result} = ${SMF_EXIT_OK} ]; then
+	${checkconf} -z ${checkopts}
+	result=$?
+	if [ $result -ne 0 ]; then
+            msg="$I: named-checkconf failed to verify configuration"
+            echo ${msg} >&2
+            /usr/bin/logger -p daemon.error ${msg}
+            if [ "${chroot_dir}" != "" -a "${chroot_dir}" != "/" ]; then
+                umount_chroot ${chroot_dir} ${configuration_files} ${libraries}
+            fi
+            # dns-server should be placed in maintenance state.
+            exit ${SMF_EXIT_ERR_CONFIG}
+	fi
+    fi
+
+    if [ ${result} = ${SMF_EXIT_OK} ]; then
 	echo "$I: Executing: ${server} ${cmdopts}"
 	# Execute named(1M) with relevant command line options.  Note
 	# the server forks before reading named.conf(4) and so a
 	# good exit code here does not mean the service is ready.
-	ppriv -s EIP-sys_devices,sys_mount,file_chown_self -e ${server} ${cmdopts}
+	ppriv -s A-all -s A+basic,net_privaddr,file_dac_read,file_dac_search,sys_resource,proc_chroot,proc_setid -e ${server} ${cmdopts}
 	result=$?
 	if [ $result -ne 0 ]; then
 	    echo "$I : start failed! Check syslog for further information." >&2
@@ -216,9 +262,7 @@ case "$method" in
     [ $? -ne 0 ] && exit 1
 
     if [ "${chroot_dir}" != "" -a "${chroot_dir}" != "/" ]; then
-        for file in ${configuration_files} ${libraries}; do
-            umount ${chroot_dir}/${file}
-        done
+        umount_chroot ${chroot_dir} ${configuration_files} ${libraries}
     fi
 
     ;;
