@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -33,11 +33,6 @@ endif
 
 COMPONENT_NAME=		cyrus-sasl
 
-# Prepending $(PKG_SOLARIS_VERSION) to version in package manifest due to
-# historical versioning, which will also be needed in any possible backports.
-# This will be changed to $(COMPONENT_VERSION) if the pkg name changes.
-# openldap.p5m must also be changed if this version format changes.
-IPS_COMPONENT_VERSION= $(PKG_SOLARIS_VERSION).$(COMPONENT_VERSION)
 
 #
 # If you update the COMPONENT_VERSION, you should make a corresponding change

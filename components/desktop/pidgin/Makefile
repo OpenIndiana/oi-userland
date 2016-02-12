@@ -126,6 +126,7 @@ REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/libdbus-glib
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/security/libsasl
+REQUIRED_PACKAGES += system/library/security/libsasl2
 REQUIRED_PACKAGES += system/network/avahi
 REQUIRED_PACKAGES += x11/library/libice
 REQUIRED_PACKAGES += x11/library/libsm

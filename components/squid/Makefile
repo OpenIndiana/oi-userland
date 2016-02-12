@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 COMPILER =	gcc
@@ -163,5 +163,6 @@ REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/security/crypto
 REQUIRED_PACKAGES += system/library/security/gss
 REQUIRED_PACKAGES += system/library/security/libsasl
+REQUIRED_PACKAGES += system/library/security/libsasl2
 REQUIRED_PACKAGES += system/network
 REQUIRED_PACKAGES += service/security/kerberos-5 

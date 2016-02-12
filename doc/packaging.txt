@@ -191,26 +191,37 @@ Renames
 
     All of the library/python-2/FOO modules that we had in Userland at the
     time were renamed to library/python/FOO in s12_41.  This involved:
+
     * changing the FMRI to drop the "-2"
+
     * adding an optional dependency on the old name at the version and build
-      in which the rename occurred; this forces the rename
-      * depend type=optional fmri=library/python-2/FOO-$(PYV)@VERSION,BUILD
+      in which the rename occurred; this forces the rename.
+
+    * depend type=optional fmri=library/python-2/FOO-$(PYV)@VERSION,BUILD
       where FOO is the component name (e.g., "alembic", "amqp", etc.),
       "$(PYV)" is that literal string, VERSION was the expanded value of
-      COMPONENT_VERSION from each component's Makefile (e.g., "0.6.0"
-      for alembic, "1.0.12" for amqp, etc.), and BUILD was set to
-      "5.12-5.12.0.0.0.41.0".  Note that BUILD needs to be set to
-      the value of the build you are integrating into.
+      COMPONENT_VERSION from each component's Makefile (e.g., "0.6.0" for
+      alembic, "1.0.12" for amqp, etc.), and BUILD was set to
+      "5.12-5.12.0.0.0.41.0".  Note that BUILD needs to be set to the value of
+      the build you are integrating into.
+
     * creation of the file "history" (or adding to it if it already exists)
-      in each affected component directory; one or more new lines should be
-      added (typically one for the versionless package, plus one for each
-      versioned instance of the package) with syntax:
-      OLD-NAME@VERSION,BUILD NEW-NAME
-      for renames and:
-      OLD-NAME@VERSION,BUILD
-      for obsoletions, where FOO, VERSION and BUILD are all as above.  Most
-      Python modules, including the two mentioned above, have such files
-      which can serve as examples.
+      in each affected component directory (see NOTE 2 below); one or more
+      new lines should be added (in the case of python or other language
+      component, one for the versionless package plus one for each versioned
+      instance of the package; for an example of a less complicated
+      component that does not have a 'versionless' package like python, see
+      components/subversion)
+      
+      with syntax:
+
+	  renames:      OLD-NAME@VERSION,BUILD NEW-NAME
+	  obsoletions:  OLD-NAME@VERSION,BUILD
+
+      where e.g. OLD-NAME was library/python-2/FOO, NEW-NAME was
+      library/python/FOO, VERSION and BUILD are all as above.  Most Python
+      modules, including the two mentioned above, have such files which can
+      serve as examples.
 
     So far, not too bad.  This gets slightly more complicated when back-
     porting in that BUILD needs to be set to the back-port build (e.g.,
@@ -226,7 +237,49 @@ Renames
     branch.  Otherwise the audits from Release Engineering will complain and
     our gatekeeper will make you do a follow-up push to fix this.
 
-# vi:set fdm=marker expandtab ts=4:
+    In addition, during the transition period before all CBE machines have
+    the new package, the REQUIRED_PACKAGES in the Makefiles of any components
+    that depend on your package must include both your old and new package
+    names.  This is because those names are actually the limit set, to speed
+    up processing, rather than a true required list.
+    
+    If you tell pkgdepend it can look for the the component dependencies in
+    either the old package name or the new name, then it will find them and
+    be happy.  If only one of your package names is listed and it doesn't
+    happen to be the one installed on the build system, the dependencies will
+    be unsatisifed and the build will break.
+
+    Until the new package name is available for installation, "gmake
+    system-check" will fail because it attempts to install all the packages
+    listed in REQUIRED_PACKAGES.  This can be ignored, but should be noted
+    in a flag-day so that people are aware they can ignore it.  Once the new
+    package name can be installed (even simply after running "gmake publish"
+    for the missing component and having your workspace publisher enabled on
+    the test system), this is no longer an issue, so there is no urgency in
+    removing the old name from the list.
+
+    NOTE:  The package version for the old name must be in the format shown
+    on in pkg contents -m output (before the colon) and not in the format
+    seen in the output of pkg list or pkg info, e.g.:
+
+    So, if contents -m library/python-2/subversion showed this:
+
+    set name=pkg.fmri value=pkg://solaris/library/python-2/subversion@1.7.5,5.12-5.12.0.0.0.41.0:20140130T085214Z
+
+    they used this:
+        library/python-2/subversion@1.7.20,5.12-5.12.0.0.0.41.0
+
+    not this:
+        library/python-2/subversion@1.7.20-5.12.0.0.0.41.0
+
+    NOTE 2: The generic package renaming directions in Solaris documentation,
+    which call for preserving a 'rename' package (containing only metadata and
+    dependencies on the new package names) is not applicable when using the
+    Userland history file method.  The 'rename' package is created by
+    the Userland consolidation build, using the data in the history file.
+    So simply rename and edit the manifest (p5m file) to the new name instead
+    of creating an additional file.
+
 
 =============================
 Component EOF (End Of Feature) 
@@ -304,3 +357,5 @@ system.
 For languages and anything else that has modules or is otherwise part of the
 Userland build environment you will need to do a full build, of both ISAs, on
 the test machines you just updated.
+
+# vi:set fdm=marker expandtab ts=4:
