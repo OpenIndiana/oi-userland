@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -45,6 +45,11 @@ ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 COMPONENT_TEST_DIR =	$(COMPONENT_SRC)
 COMPONENT_TEST_ARGS =	test_pybonjour.py
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
+# Use nawk to extract just the sections that summarizes the test results.
+COMPONENT_TEST_TRANSFORMER = $(NAWK)
+COMPONENT_TEST_TRANSFORMS = "'/^Ran .+ / { sub(\" tests in .+s\", \" tests in\"); print }; /!NF/ { print }; /^OK/ { print };'"
 
 # common targets
 build:		$(BUILD_NO_ARCH)
@@ -52,6 +57,8 @@ build:		$(BUILD_NO_ARCH)
 install:	$(INSTALL_NO_ARCH)
 
 # svc:/network/dns/multicast:default needs to be online for tests to run
+$(SKIP_TEST_AT_TOP_LEVEL)
+# test_enumerate_domains is skipped
 test:		$(TEST_NO_ARCH)
 
 system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
