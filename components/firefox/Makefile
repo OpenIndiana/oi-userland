@@ -68,6 +68,7 @@ ENV +=	SHELL="/bin/bash"
 
 CONFIGURE_ENV =	$(ENV)
 COMPONENT_BUILD_ENV =	$(ENV)
+COMPONENT_INSTALL_ENV += HOME=/tmp
 
 LANG_FILES=$(addsuffix .xpi,$(LANG_LIST))
 
