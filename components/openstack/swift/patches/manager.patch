@@ -1,24 +1,24 @@
-We want to put the swift server executables in /usr/lib/swift, which means
+We want to put the Swift server executables in /usr/lib/swift, which means
 that we need to be able to call them from there.  We do so by using the
 "executable" keyword argument to subprocess.Popen() (and allow for it to be
 mocked out during testing).
 
 This patch is not suitable for pushing upstream.
 
---- swift-2.2.0/swift/common/manager.py.~1~	2014-10-16 05:05:21.000000000 -0700
-+++ swift-2.2.0/swift/common/manager.py	2014-12-13 21:29:46.790264480 -0800
-@@ -576,7 +576,8 @@ class Server(object):
+--- swift-2.3.0/swift/common/manager.py.~1~	2015-04-30 06:57:49.000000000 -0700
++++ swift-2.3.0/swift/common/manager.py	2016-02-08 00:46:36.615826872 -0800
+@@ -577,7 +577,8 @@ class Server(object):
                  re_out = subprocess.PIPE
              else:
                  re_out = open(os.devnull, 'w+b')
 -        proc = subprocess.Popen(args, stdout=re_out, stderr=re_err)
 +        proc = subprocess.Popen(args, stdout=re_out, stderr=re_err,
-+            executable='/usr/lib/swift/' + self.cmd)
++                                executable='/usr/lib/swift/' + self.cmd)
          pid_file = self.get_pid_file_name(conf_file)
          write_file(pid_file, proc.pid)
          self.procs.append(proc)
---- swift-2.2.0/test/unit/common/test_manager.py.~1~	2014-10-16 05:05:21.000000000 -0700
-+++ swift-2.2.0/test/unit/common/test_manager.py	2014-12-13 21:30:06.746265266 -0800
+--- swift-2.3.0/test/unit/common/test_manager.py.~1~	2015-04-30 06:57:49.000000000 -0700
++++ swift-2.3.0/test/unit/common/test_manager.py	2016-02-08 00:45:32.431081803 -0800
 @@ -955,7 +955,7 @@ class TestServer(unittest.TestCase):
          class MockProc(object):
  

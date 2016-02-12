@@ -7,9 +7,9 @@ For the time being, just ignore the use of RLIMIT_NPROC.  This might be
 appropriate for upstream (but has not been submitted), depending on whether
 RLIMIT_NPROC is unavailable on any platforms other than Solaris.
 
---- swift-2.2.0/swift/common/manager.py
-+++ swift-2.2.0/swift/common/manager.py
-@@ -75,6 +75,8 @@
+--- swift-2.3.0/swift/common/manager.py.~2~	2016-02-08 01:15:05.393368607 -0800
++++ swift-2.3.0/swift/common/manager.py	2016-02-08 01:15:05.487373162 -0800
+@@ -76,6 +76,8 @@ def setup_env():
      except ValueError:
          print _("WARNING: Unable to modify max process limit.  "
                  "Running as non-root?")
@@ -18,9 +18,9 @@ RLIMIT_NPROC is unavailable on any platforms other than Solaris.
  
      # Set PYTHON_EGG_CACHE if it isn't already set
      os.environ.setdefault('PYTHON_EGG_CACHE', '/tmp')
---- swift-2.2.0/test/unit/common/test_manager.py
-+++ swift-2.2.0/test/unit/common/test_manager.py
-@@ -105,9 +105,10 @@
+--- swift-2.3.0/test/unit/common/test_manager.py.~2~	2016-02-08 01:15:05.394490747 -0800
++++ swift-2.3.0/test/unit/common/test_manager.py	2016-02-08 01:20:25.280013617 -0800
+@@ -105,9 +105,10 @@ class TestManagerModule(unittest.TestCas
                                            manager.MAX_DESCRIPTORS)),
                  (resource.RLIMIT_DATA, (manager.MAX_MEMORY,
                                          manager.MAX_MEMORY)),
@@ -28,8 +28,8 @@ RLIMIT_NPROC is unavailable on any platforms other than Solaris.
 -                                         manager.MAX_PROCS)),
              ]
 +            if getattr(resource, "RLIMIT_NPROC", None):
-+                expected.append((resource.RLIMIT_NPROC, (manager.MAX_PROCS,
-+                                         manager.MAX_PROCS)))
++                expected.append((resource.RLIMIT_NPROC,
++                                 (manager.MAX_PROCS, manager.MAX_PROCS)))
              self.assertEquals(manager.resource.called_with_args, expected)
              self.assertTrue(
                  manager.os.environ['PYTHON_EGG_CACHE'].startswith('/tmp'))

@@ -2,21 +2,22 @@ Move recon's locks to /var/run/swift and caches to /var/lib/swift/recon-cache.
 Change some of the ways we gather information, since those are normally
 Linux-specific.  Make the tests acknowledge these changes.
 
---- swift-2.2.2/bin/swift-recon-cron.~1~	2015-02-01 23:44:11.000000000 -0800
-+++ swift-2.2.2/bin/swift-recon-cron	2015-02-26 16:49:51.937806748 -0800
-@@ -57,8 +57,8 @@ def main():
+--- swift-2.3.0/bin/swift-recon-cron.~1~	2015-04-30 06:57:42.000000000 -0700
++++ swift-2.3.0/bin/swift-recon-cron	2016-02-08 00:58:57.095754838 -0800
+@@ -57,8 +57,9 @@ def main():
          sys.exit(1)
      conf = dict(c.items('filter:recon'))
      device_dir = conf.get('devices', '/srv/node')
 -    recon_cache_path = conf.get('recon_cache_path', '/var/cache/swift')
 -    recon_lock_path = conf.get('recon_lock_path', '/var/lock')
-+    recon_cache_path = conf.get('recon_cache_path', '/var/lib/swift/recon-cache')
++    recon_cache_path = conf.get('recon_cache_path',
++                                '/var/lib/swift/recon-cache')
 +    recon_lock_path = conf.get('recon_lock_path', '/var/run/swift')
      cache_file = os.path.join(recon_cache_path, "object.recon")
      lock_dir = os.path.join(recon_lock_path, "swift-recon-object-cron")
      conf['log_name'] = conf.get('log_name', 'recon-cron')
---- swift-2.2.2/etc/account-server.conf-sample.~1~	2015-02-01 23:44:11.000000000 -0800
-+++ swift-2.2.2/etc/account-server.conf-sample	2015-02-26 16:49:51.938107313 -0800
+--- swift-2.3.0/etc/account-server.conf-sample.~1~	2015-04-30 06:57:42.000000000 -0700
++++ swift-2.3.0/etc/account-server.conf-sample	2016-02-08 00:56:36.131898549 -0800
 @@ -81,7 +81,7 @@ use = egg:swift#healthcheck
  
  [filter:recon]
@@ -44,8 +45,8 @@ Linux-specific.  Make the tests acknowledge these changes.
  
  [account-reaper]
  # You can override the default log routing for this app here (don't use set!):
---- swift-2.2.2/etc/container-server.conf-sample.~1~	2015-02-01 23:44:11.000000000 -0800
-+++ swift-2.2.2/etc/container-server.conf-sample	2015-02-26 16:49:51.938374963 -0800
+--- swift-2.3.0/etc/container-server.conf-sample.~1~	2015-04-30 06:57:42.000000000 -0700
++++ swift-2.3.0/etc/container-server.conf-sample	2016-02-08 00:56:36.132407941 -0800
 @@ -90,7 +90,7 @@ use = egg:swift#healthcheck
  
  [filter:recon]
@@ -82,8 +83,8 @@ Linux-specific.  Make the tests acknowledge these changes.
  
  [container-sync]
  # You can override the default log routing for this app here (don't use set!):
---- swift-2.2.2/etc/drive-audit.conf-sample.~1~	2015-02-01 23:44:11.000000000 -0800
-+++ swift-2.2.2/etc/drive-audit.conf-sample	2015-02-26 17:03:18.476812691 -0800
+--- swift-2.3.0/etc/drive-audit.conf-sample.~1~	2015-04-30 06:57:42.000000000 -0700
++++ swift-2.3.0/etc/drive-audit.conf-sample	2016-02-08 00:56:36.132840827 -0800
 @@ -8,7 +8,7 @@
  # log_max_line_length = 0
  # minutes = 60
@@ -93,8 +94,8 @@ Linux-specific.  Make the tests acknowledge these changes.
  # unmount_failed_device = True
  #
  # By default, drive-audit logs only to syslog. Setting this option True
---- swift-2.2.2/etc/object-expirer.conf-sample.~1~	2015-02-01 23:44:11.000000000 -0800
-+++ swift-2.2.2/etc/object-expirer.conf-sample	2015-02-26 17:03:28.102759740 -0800
+--- swift-2.3.0/etc/object-expirer.conf-sample.~1~	2015-04-30 06:57:42.000000000 -0700
++++ swift-2.3.0/etc/object-expirer.conf-sample	2016-02-08 00:56:36.133283025 -0800
 @@ -50,7 +50,7 @@
  # up to reclaim_age seconds before it gives up and deletes the entry in the
  # queue.
@@ -104,8 +105,8 @@ Linux-specific.  Make the tests acknowledge these changes.
  
  [pipeline:main]
  pipeline = catch_errors proxy-logging cache proxy-server
---- swift-2.2.2/etc/object-server.conf-sample.~1~	2015-02-01 23:44:11.000000000 -0800
-+++ swift-2.2.2/etc/object-server.conf-sample	2015-02-26 16:49:51.938657130 -0800
+--- swift-2.3.0/etc/object-server.conf-sample.~1~	2015-04-30 06:57:42.000000000 -0700
++++ swift-2.3.0/etc/object-server.conf-sample	2016-02-08 00:56:36.133858983 -0800
 @@ -143,8 +143,8 @@ use = egg:swift#healthcheck
  
  [filter:recon]
@@ -126,7 +127,7 @@ Linux-specific.  Make the tests acknowledge these changes.
  #
  # limits how long rsync error log lines are
  # 0 means to log the entire line
-@@ -224,7 +224,7 @@ use = egg:swift#recon
+@@ -247,7 +247,7 @@ use = egg:swift#recon
  # slowdown will sleep that amount between objects
  # slowdown = 0.01
  #
@@ -135,7 +136,7 @@ Linux-specific.  Make the tests acknowledge these changes.
  
  [object-auditor]
  # You can override the default log routing for this app here (don't use set!):
-@@ -241,7 +241,7 @@ use = egg:swift#recon
+@@ -264,7 +264,7 @@ use = egg:swift#recon
  # bytes_per_second = 10000000
  # log_time = 3600
  # zero_byte_files_per_second = 50
@@ -144,8 +145,8 @@ Linux-specific.  Make the tests acknowledge these changes.
  
  # Takes a comma separated list of ints. If set, the object auditor will
  # increment a counter for every object whose size is <= to the given break
---- swift-2.2.2/swift/account/auditor.py.~1~	2015-02-01 23:44:11.000000000 -0800
-+++ swift-2.2.2/swift/account/auditor.py	2015-02-26 16:49:51.938879416 -0800
+--- swift-2.3.0/swift/account/auditor.py.~1~	2015-04-30 06:57:42.000000000 -0700
++++ swift-2.3.0/swift/account/auditor.py	2016-02-08 00:56:36.134366990 -0800
 @@ -46,7 +46,7 @@ class AccountAuditor(Daemon):
          swift.common.db.DB_PREALLOCATION = \
              config_true_value(conf.get('db_preallocation', 'f'))
@@ -155,9 +156,9 @@ Linux-specific.  Make the tests acknowledge these changes.
          self.rcache = os.path.join(self.recon_cache_path, "account.recon")
  
      def _one_audit_pass(self, reported):
---- swift-2.2.2/swift/common/db_replicator.py.~1~	2015-02-01 23:44:11.000000000 -0800
-+++ swift-2.2.2/swift/common/db_replicator.py	2015-02-26 16:49:51.939223420 -0800
-@@ -171,7 +171,7 @@ class Replicator(Daemon):
+--- swift-2.3.0/swift/common/db_replicator.py.~1~	2015-04-30 06:57:42.000000000 -0700
++++ swift-2.3.0/swift/common/db_replicator.py	2016-02-08 00:56:36.135027676 -0800
+@@ -172,7 +172,7 @@ class Replicator(Daemon):
              config_true_value(conf.get('db_preallocation', 'f'))
          self._zero_stats()
          self.recon_cache_path = conf.get('recon_cache_path',
@@ -166,8 +167,8 @@ Linux-specific.  Make the tests acknowledge these changes.
          self.recon_replicator = '%s.recon' % self.server_type
          self.rcache = os.path.join(self.recon_cache_path,
                                     self.recon_replicator)
---- swift-2.2.2/swift/common/middleware/recon.py.~1~	2015-02-01 23:44:11.000000000 -0800
-+++ swift-2.2.2/swift/common/middleware/recon.py	2015-02-26 16:49:51.939514933 -0800
+--- swift-2.3.0/swift/common/middleware/recon.py.~1~	2015-04-30 06:57:42.000000000 -0700
++++ swift-2.3.0/swift/common/middleware/recon.py	2016-02-08 00:59:32.515208787 -0800
 @@ -15,6 +15,7 @@
  
  import errno
@@ -185,7 +186,7 @@ Linux-specific.  Make the tests acknowledge these changes.
          self.object_recon_cache = os.path.join(self.recon_cache_path,
                                                 'object.recon')
          self.container_recon_cache = os.path.join(self.recon_cache_path,
-@@ -90,28 +91,43 @@ class ReconMiddleware(object):
+@@ -92,28 +93,44 @@ class ReconMiddleware(object):
      def get_mounted(self, openr=open):
          """get ALL mounted fs from /proc/mounts"""
          mounts = []
@@ -212,7 +213,8 @@ Linux-specific.  Make the tests acknowledge these changes.
 +            onemin, fivemin, ftmin = os.getloadavg()
 +        else:
 +            with openr('/proc/loadavg', 'r') as f:
-+                onemin, fivemin, ftmin, tasks, procs = f.read().rstrip().split()
++                onemin, fivemin, ftmin, tasks, procs = \
++                    f.read().rstrip().split()
          loadavg['1m'] = float(onemin)
          loadavg['5m'] = float(fivemin)
          loadavg['15m'] = float(ftmin)
@@ -236,8 +238,8 @@ Linux-specific.  Make the tests acknowledge these changes.
          meminfo = {}
          with openr('/proc/meminfo', 'r') as memlines:
              for i in memlines:
---- swift-2.2.2/swift/container/auditor.py.~1~	2015-02-01 23:44:11.000000000 -0800
-+++ swift-2.2.2/swift/container/auditor.py	2015-02-26 16:49:51.939751504 -0800
+--- swift-2.3.0/swift/container/auditor.py.~1~	2015-04-30 06:57:42.000000000 -0700
++++ swift-2.3.0/swift/container/auditor.py	2016-02-08 00:56:36.136109394 -0800
 @@ -44,7 +44,7 @@ class ContainerAuditor(Daemon):
          swift.common.db.DB_PREALLOCATION = \
              config_true_value(conf.get('db_preallocation', 'f'))
@@ -247,8 +249,8 @@ Linux-specific.  Make the tests acknowledge these changes.
          self.rcache = os.path.join(self.recon_cache_path, "container.recon")
  
      def _one_audit_pass(self, reported):
---- swift-2.2.2/swift/container/updater.py.~1~	2015-02-01 23:44:11.000000000 -0800
-+++ swift-2.2.2/swift/container/updater.py	2015-02-26 16:49:51.939968905 -0800
+--- swift-2.3.0/swift/container/updater.py.~1~	2015-04-30 06:57:42.000000000 -0700
++++ swift-2.3.0/swift/container/updater.py	2016-02-08 00:56:36.136593440 -0800
 @@ -60,7 +60,7 @@ class ContainerUpdater(Daemon):
          swift.common.db.DB_PREALLOCATION = \
              config_true_value(conf.get('db_preallocation', 'f'))
@@ -258,8 +260,8 @@ Linux-specific.  Make the tests acknowledge these changes.
          self.rcache = os.path.join(self.recon_cache_path, "container.recon")
          self.user_agent = 'container-updater %s' % os.getpid()
  
---- swift-2.2.2/swift/obj/auditor.py.~1~	2015-02-01 23:44:11.000000000 -0800
-+++ swift-2.2.2/swift/obj/auditor.py	2015-02-26 16:49:51.940188415 -0800
+--- swift-2.3.0/swift/obj/auditor.py.~1~	2015-04-30 06:57:42.000000000 -0700
++++ swift-2.3.0/swift/obj/auditor.py	2016-02-08 00:56:36.137103648 -0800
 @@ -227,7 +227,7 @@ class ObjectAuditor(Daemon):
          self.conf_zero_byte_fps = int(
              conf.get('zero_byte_files_per_second', 50))
@@ -269,8 +271,8 @@ Linux-specific.  Make the tests acknowledge these changes.
          self.rcache = os.path.join(self.recon_cache_path, "object.recon")
  
      def _sleep(self):
---- swift-2.2.2/swift/obj/expirer.py.~1~	2015-02-01 23:44:11.000000000 -0800
-+++ swift-2.2.2/swift/obj/expirer.py	2015-02-26 16:49:51.940400670 -0800
+--- swift-2.3.0/swift/obj/expirer.py.~1~	2015-04-30 06:57:42.000000000 -0700
++++ swift-2.3.0/swift/obj/expirer.py	2016-02-08 00:56:36.137585778 -0800
 @@ -57,7 +57,7 @@ class ObjectExpirer(Daemon):
          self.report_first_time = self.report_last_time = time()
          self.report_objects = 0
@@ -280,9 +282,9 @@ Linux-specific.  Make the tests acknowledge these changes.
          self.rcache = join(self.recon_cache_path, 'object.recon')
          self.concurrency = int(conf.get('concurrency', 1))
          if self.concurrency < 1:
---- swift-2.2.2/swift/obj/replicator.py.~1~	2015-02-01 23:44:11.000000000 -0800
-+++ swift-2.2.2/swift/obj/replicator.py	2015-02-26 16:49:51.940644907 -0800
-@@ -77,7 +77,7 @@ class ObjectReplicator(Daemon):
+--- swift-2.3.0/swift/obj/replicator.py.~1~	2015-04-30 06:57:42.000000000 -0700
++++ swift-2.3.0/swift/obj/replicator.py	2016-02-08 00:56:36.138119411 -0800
+@@ -79,7 +79,7 @@ class ObjectReplicator(Daemon):
          self.http_timeout = int(conf.get('http_timeout', 60))
          self.lockup_timeout = int(conf.get('lockup_timeout', 1800))
          self.recon_cache_path = conf.get('recon_cache_path',
@@ -291,9 +293,9 @@ Linux-specific.  Make the tests acknowledge these changes.
          self.rcache = os.path.join(self.recon_cache_path, "object.recon")
          self.conn_timeout = float(conf.get('conn_timeout', 0.5))
          self.node_timeout = float(conf.get('node_timeout', 10))
---- swift-2.2.2/swift/obj/updater.py.~1~	2015-02-01 23:44:11.000000000 -0800
-+++ swift-2.2.2/swift/obj/updater.py	2015-02-26 16:49:51.940853387 -0800
-@@ -52,7 +52,7 @@ class ObjectUpdater(Daemon):
+--- swift-2.3.0/swift/obj/updater.py.~1~	2015-04-30 06:57:42.000000000 -0700
++++ swift-2.3.0/swift/obj/updater.py	2016-02-08 00:56:36.138592637 -0800
+@@ -53,7 +53,7 @@ class ObjectUpdater(Daemon):
          self.successes = 0
          self.failures = 0
          self.recon_cache_path = conf.get('recon_cache_path',
@@ -302,8 +304,8 @@ Linux-specific.  Make the tests acknowledge these changes.
          self.rcache = os.path.join(self.recon_cache_path, 'object.recon')
  
      def _listdir(self, path):
---- swift-2.2.2/test/unit/common/middleware/test_recon.py.~1~	2015-02-01 23:44:11.000000000 -0800
-+++ swift-2.2.2/test/unit/common/middleware/test_recon.py	2015-02-26 16:49:51.941363136 -0800
+--- swift-2.3.0/test/unit/common/middleware/test_recon.py.~1~	2015-04-30 06:57:42.000000000 -0700
++++ swift-2.3.0/test/unit/common/middleware/test_recon.py	2016-02-08 01:01:12.393031484 -0800
 @@ -21,7 +21,9 @@ import array
  from swift.common import ring, utils
  from shutil import rmtree
@@ -314,7 +316,7 @@ Linux-specific.  Make the tests acknowledge these changes.
  
  from swift import __version__ as swiftver
  from swift.common.swob import Request
-@@ -384,10 +386,12 @@ class TestReconSuccess(TestCase):
+@@ -387,10 +389,12 @@ class TestReconSuccess(TestCase):
              {'device': 'none', 'path': '/proc/fs/vmblock/mountPoint'}]
          oart = OpenAndReadTester(mounts_content)
          rv = self.app.get_mounted(openr=oart.open)
@@ -328,7 +330,7 @@ Linux-specific.  Make the tests acknowledge these changes.
          oart = OpenAndReadTester(['0.03 0.03 0.00 1/220 16306'])
          rv = self.app.get_load(openr=oart.open)
          self.assertEquals(oart.read_calls, [((), {})])
-@@ -397,6 +401,8 @@ class TestReconSuccess(TestCase):
+@@ -400,6 +404,8 @@ class TestReconSuccess(TestCase):
                                 '1m': 0.029999999999999999})
  
      def test_get_mem(self):
@@ -337,25 +339,27 @@ Linux-specific.  Make the tests acknowledge these changes.
          meminfo_content = ['MemTotal:         505840 kB',
                             'MemFree:           26588 kB',
                             'Buffers:           44948 kB',
-@@ -508,7 +514,7 @@ class TestReconSuccess(TestCase):
+@@ -514,7 +520,8 @@ class TestReconSuccess(TestCase):
          self.assertEquals(self.fakecache.fakeout_calls,
                            [((['replication_time', 'replication_stats',
                                'replication_last'],
 -                              '/var/cache/swift/account.recon'), {})])
-+                              '/var/lib/swift/recon-cache/account.recon'), {})])
++                              '/var/lib/swift/recon-cache/account.recon'),
++                              {})])
          self.assertEquals(rv, {
              "replication_stats": {
                  "attempted": 1, "diff": 0,
-@@ -539,7 +545,7 @@ class TestReconSuccess(TestCase):
+@@ -545,7 +552,8 @@ class TestReconSuccess(TestCase):
          self.assertEquals(self.fakecache.fakeout_calls,
                            [((['replication_time', 'replication_stats',
                                'replication_last'],
 -                              '/var/cache/swift/container.recon'), {})])
-+                              '/var/lib/swift/recon-cache/container.recon'), {})])
++                              '/var/lib/swift/recon-cache/container.recon'),
++                              {})])
          self.assertEquals(rv, {
              "replication_time": 200.0,
              "replication_stats": {
-@@ -561,7 +567,7 @@ class TestReconSuccess(TestCase):
+@@ -567,7 +575,7 @@ class TestReconSuccess(TestCase):
          self.assertEquals(self.fakecache.fakeout_calls,
                            [((['object_replication_time',
                                'object_replication_last'],
@@ -364,16 +368,17 @@ Linux-specific.  Make the tests acknowledge these changes.
          self.assertEquals(rv, {'object_replication_time': 200.0,
                                 'object_replication_last': 1357962809.15})
  
-@@ -572,7 +578,7 @@ class TestReconSuccess(TestCase):
+@@ -578,7 +586,8 @@ class TestReconSuccess(TestCase):
          rv = self.app.get_updater_info('container')
          self.assertEquals(self.fakecache.fakeout_calls,
                            [((['container_updater_sweep'],
 -                             '/var/cache/swift/container.recon'), {})])
-+                             '/var/lib/swift/recon-cache/container.recon'), {})])
++                              '/var/lib/swift/recon-cache/container.recon'),
++                              {})])
          self.assertEquals(rv, {"container_updater_sweep": 18.476239919662476})
  
      def test_get_updater_info_object(self):
-@@ -582,7 +588,7 @@ class TestReconSuccess(TestCase):
+@@ -588,7 +597,7 @@ class TestReconSuccess(TestCase):
          rv = self.app.get_updater_info('object')
          self.assertEquals(self.fakecache.fakeout_calls,
                            [((['object_updater_sweep'],
@@ -381,26 +386,28 @@ Linux-specific.  Make the tests acknowledge these changes.
 +                             '/var/lib/swift/recon-cache/object.recon'), {})])
          self.assertEquals(rv, {"object_updater_sweep": 0.79848217964172363})
  
-     def test_get_auditor_info_account(self):
-@@ -598,7 +604,7 @@ class TestReconSuccess(TestCase):
+     def test_get_expirer_info_object(self):
+@@ -615,7 +624,8 @@ class TestReconSuccess(TestCase):
                                'account_auditor_pass_completed',
                                'account_audits_since',
                                'account_audits_failed'],
 -                              '/var/cache/swift/account.recon'), {})])
-+                              '/var/lib/swift/recon-cache/account.recon'), {})])
++                              '/var/lib/swift/recon-cache/account.recon'),
++                              {})])
          self.assertEquals(rv, {"account_auditor_pass_completed": 0.24,
                                 "account_audits_failed": 0,
                                 "account_audits_passed": 6,
-@@ -617,7 +623,7 @@ class TestReconSuccess(TestCase):
+@@ -634,7 +644,8 @@ class TestReconSuccess(TestCase):
                                'container_auditor_pass_completed',
                                'container_audits_since',
                                'container_audits_failed'],
 -                              '/var/cache/swift/container.recon'), {})])
-+                              '/var/lib/swift/recon-cache/container.recon'), {})])
++                              '/var/lib/swift/recon-cache/container.recon'),
++                              {})])
          self.assertEquals(rv, {"container_auditor_pass_completed": 0.24,
                                 "container_audits_failed": 0,
                                 "container_audits_passed": 6,
-@@ -645,7 +651,7 @@ class TestReconSuccess(TestCase):
+@@ -662,7 +673,7 @@ class TestReconSuccess(TestCase):
          self.assertEquals(self.fakecache.fakeout_calls,
                            [((['object_auditor_stats_ALL',
                                'object_auditor_stats_ZBF'],
@@ -409,7 +416,7 @@ Linux-specific.  Make the tests acknowledge these changes.
          self.assertEquals(rv, {
              "object_auditor_stats_ALL": {
                  "audit_time": 115.14418768882751,
-@@ -692,7 +698,7 @@ class TestReconSuccess(TestCase):
+@@ -709,7 +720,7 @@ class TestReconSuccess(TestCase):
          self.assertEquals(self.fakecache.fakeout_calls,
                            [((['object_auditor_stats_ALL',
                                'object_auditor_stats_ZBF'],

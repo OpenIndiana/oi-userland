@@ -1,21 +1,20 @@
 Convert the calls to ps in swift-orphans to calls that will work on
 Solaris.
 
-diff --git a/bin/swift-orphans b/bin/swift-orphans
---- a/bin/swift-orphans
-+++ b/bin/swift-orphans
+--- swift-2.3.0/bin/swift-orphans.~1~	2015-04-30 06:57:42.000000000 -0700
++++ swift-2.3.0/bin/swift-orphans	2016-02-08 00:54:16.772518488 -0800
 @@ -54,12 +54,12 @@ Example (sends SIGTERM to all orphaned S
              if name.endswith('.pid'):
                  pids.append(open(os.path.join(root, name)).read().strip())
                  pids.extend(subprocess.Popen(
 -                    ['ps', '--ppid', pids[-1], '-o', 'pid', '--no-headers'],
-+                    ['pgrep', '-P', pids[-1]],
++                    ['/usr/bin/pgrep', '-P', pids[-1]],
                      stdout=subprocess.PIPE).communicate()[0].split())
  
      listing = []
      for line in subprocess.Popen(
 -            ['ps', '-eo', 'etime,pid,args', '--no-headers'],
-+            ['ps', '-eo', 'etime=', '-o' 'pid=', '-o' 'args='],
++            ['/usr/bin/ps', '-eo', 'etime=', '-o' 'pid=', '-o' 'args='],
              stdout=subprocess.PIPE).communicate()[0].split('\n'):
          if not line:
              continue
