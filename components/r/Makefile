@@ -50,7 +50,6 @@ LDFLAGS += $(studio_NORUNPATH)
 LDFLAGS += $(CC_BITS)
 
 LDFLAGS += $(studio_PIC)
-LDFLAGS += $(LD_Z_TEXT)
 LDFLAGS += $(LD_DEF_LIBS)
 
 STUDIO_LIBS_PATH =	/usr/lib/studio/64
@@ -67,13 +66,18 @@ CONFIGURE_ENV += FC="$(F95) $(CC_BITS)"
 
 CONFIGURE_ENV += CPICFLAGS="$(studio_PIC)"
 CONFIGURE_ENV += CFLAGS="-xO3 -xc99 -xlibmieee $(CC_BITS)"
-CONFIGURE_ENV += CXXFLAGS="-xO3 $(CC_BITS)"
+# Needed to successfully compile R packages using C++ code.
+CONFIGURE_ENV += CXXFLAGS="-xO3 $(CC_BITS) -std=c++03"
+CONFIGURE_ENV += CXX1FLAGS="-xO3 $(CC_BITS) -std=c++11"
 CONFIGURE_ENV += FPICFLAGS="$(studio_PIC)"
 CONFIGURE_ENV += FFLAGS="-xO3 $(CC_BITS)"
 CONFIGURE_ENV += FCFLAGS="-xO3 $(CC_BITS)"
 CONFIGURE_ENV += FCLIBS="-lsunperf -lfsu -lsunmath"
 CONFIGURE_ENV += FLIBS="-lsunperf -lfsu -lsunmath"
 CONFIGURE_ENV += LDFLAGS="$(LDFLAGS) -L$(R_LIBS_PATH) -R$(R_LIBS_PATH)"
+# Needed so that R packages using C++ code can link against the standard
+# C++ libraries.
+CONFIGURE_ENV += SHLIB_CXXLDFLAGS="-G -lstdc++ -lgcc_s -lCrunG3 -lrt -lm -lc"
 
 # Set the various Java variables otherwise it auto-detects the 32-bit ones.
 CONFIGURE_ENV += JAVA_CPPFLAGS="-I$(JAVA8_HOME)/jre/../include -I$(JAVA8_HOME)/jre/../include/solaris"
