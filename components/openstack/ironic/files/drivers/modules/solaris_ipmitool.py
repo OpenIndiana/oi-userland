@@ -5,7 +5,7 @@
 # Copyright 2014 International Business Machines Corporation
 # All Rights Reserved.
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -64,14 +64,14 @@ else:
 
 AI_OPTS = [
     cfg.StrOpt('server',
-               default='None',
                help='Host name for AI Server.'),
     cfg.StrOpt('username',
-               default='None',
                help='Username to ssh to AI Server.'),
     cfg.StrOpt('password',
-               default='None',
-               help='Password for user to ssh to AI Server.'),
+               help='Password for user to ssh to AI Server. If ssh_key_file '
+                    'or ssh_key_contents are set, this config setting is used '
+                    'to provide the passphrase if required. If an encrypted '
+                    'key is used, set this to the passphrase.'),
     cfg.StrOpt('port',
                default='22',
                help='SSH port to use.'),
@@ -85,10 +85,8 @@ AI_OPTS = [
                default='file:///usr/lib/ironic/ironic-manifest.ksh',
                help='Derived Manifest used for deployment.'),
     cfg.StrOpt('ssh_key_file',
-               default='None',
                help='SSH Filename to use.'),
     cfg.StrOpt('ssh_key_contents',
-               default='None',
                help='Actual SSH Key contents to use.')
     ]
 

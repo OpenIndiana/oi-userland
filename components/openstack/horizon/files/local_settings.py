@@ -7,10 +7,19 @@ from openstack_dashboard import exceptions
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
-# WEBROOT is the location relative to Webserver root and should end with a
-# slash.
+
+# WEBROOT is the location relative to Webserver root
+# should end with a slash.
 WEBROOT = '/horizon/'
 STATIC_ROOT = '/usr/lib/python2.7/vendor-packages/openstack_dashboard/static'
+# LOGIN_URL = WEBROOT + 'auth/login/'
+# LOGOUT_URL = WEBROOT + 'auth/logout/'
+#
+# LOGIN_REDIRECT_URL can be used as an alternative for
+# HORIZON_CONFIG.user_home, if user_home is not set.
+# Do not set it to '/home/', as this will cause circular redirect loop
+# LOGIN_REDIRECT_URL = WEBROOT
+
 
 # Required for Django 1.5.
 # If horizon is running in production (DEBUG is False), set this
@@ -60,8 +69,8 @@ COMPRESS_OFFLINE = True
 #OPENSTACK_KEYSTONE_DEFAULT_DOMAIN = 'Default'
 
 # Set Console type:
-# valid options would be "AUTO"(default), "VNC", "SPICE", "RDP", "SERIAL" or None
-# Set to None explicitly if you want to deactivate the console.
+# valid options would be "AUTO"(default), "VNC", "SPICE", "RDP", "SERIAL" or
+# None. Set to None explicitly if you want to deactivate the console.
 #CONSOLE_TYPE = "AUTO"
 
 # Default OpenStack Dashboard configuration.
@@ -187,8 +196,8 @@ OPENSTACK_KEYSTONE_BACKEND = {
     'can_edit_role': True,
 }
 
-#Setting this to True, will add a new "Retrieve Password" action on instance,
-#allowing Admin session password retrieval/decryption.
+# Setting this to True, will add a new "Retrieve Password" action on instance,
+# allowing Admin session password retrieval/decryption.
 OPENSTACK_ENABLE_PASSWORD_RETRIEVE = True
 
 # The Launch Instance user experience has been significantly enhanced.
@@ -330,7 +339,7 @@ TIME_ZONE = "UTC"
 # Set this to True to display an 'Admin Password' field on the Change Password
 # form to verify that it is indeed the admin logged-in who wants to change
 # the password.
-#ENFORCE_PASSWORD_CHECK = False
+# ENFORCE_PASSWORD_CHECK = False
 
 # Modules that provide /auth routes that can be used to handle different types
 # of user authentication. Add auth plugins that require extra route handling to
@@ -361,8 +370,8 @@ TIME_ZONE = "UTC"
 # creating users and databases on database instances is turned on.
 # To disable these extensions set the permission here to something
 # unusable such as ["!"].
-#TROVE_ADD_USER_PERMS = []
-#TROVE_ADD_DATABASE_PERMS = []
+# TROVE_ADD_USER_PERMS = []
+# TROVE_ADD_DATABASE_PERMS = []
 
 # Change this patch to the appropriate static directory containing
 # two files: _variables.scss and _styles.scss
