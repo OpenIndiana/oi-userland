@@ -361,7 +361,7 @@ clean::
 	    -exec rm -r {} \;
 
 
-# Packages required by Django's manage.py during the Horizon build
+# Includes packages required by Django's manage.py during the Horizon build
 REQUIRED_PACKAGES += library/python/babel-27
 REQUIRED_PACKAGES += library/python/ceilometerclient-27
 REQUIRED_PACKAGES += library/python/cinderclient-27
@@ -373,13 +373,22 @@ REQUIRED_PACKAGES += library/python/glanceclient-27
 REQUIRED_PACKAGES += library/python/heatclient-27
 REQUIRED_PACKAGES += library/python/iso8601-27
 REQUIRED_PACKAGES += library/python/keystoneclient-27
-REQUIRED_PACKAGES += library/python/lockfile-27
+REQUIRED_PACKAGES += library/python/netaddr-27
 REQUIRED_PACKAGES += library/python/neutronclient-27
 REQUIRED_PACKAGES += library/python/novaclient-27
 REQUIRED_PACKAGES += library/python/oslo.concurrency-27
 REQUIRED_PACKAGES += library/python/oslo.config-27
+REQUIRED_PACKAGES += library/python/oslo.i18n-27
+REQUIRED_PACKAGES += library/python/oslo.serialization-27
+REQUIRED_PACKAGES += library/python/oslo.utils-27
+REQUIRED_PACKAGES += library/python/pbr-27
+REQUIRED_PACKAGES += library/python/pytz-27
+REQUIRED_PACKAGES += library/python/pyyaml-27
 REQUIRED_PACKAGES += library/python/requests-27
 REQUIRED_PACKAGES += library/python/saharaclient-27
 REQUIRED_PACKAGES += library/python/six-27
 REQUIRED_PACKAGES += library/python/swiftclient-27
 REQUIRED_PACKAGES += library/python/troveclient-27
+REQUIRED_PACKAGES += web/server/apache-24
+REQUIRED_PACKAGES += web/server/apache-24/module/apache-ssl
+REQUIRED_PACKAGES += web/server/apache-24/module/apache-wsgi-27

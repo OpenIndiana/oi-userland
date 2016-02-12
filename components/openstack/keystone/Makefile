@@ -61,14 +61,15 @@ PKG_MACROS +=		PYV=$(shell echo $(PYTHON_VERSIONS) | tr -d .)
 # manifests into the proto directory for pkgdepend(1) to find.
 #
 COMPONENT_POST_INSTALL_ACTION += \
-	($(MKDIR) $(PROTO_DIR)/lib/svc/manifest/application/openstack; \
-	 $(CP) \
-	     files/keystone.xml \
-	     files/keystone-upgrade.xml \
-	     $(PROTO_DIR)/lib/svc/manifest/application/openstack; \
-	 $(MKDIR) $(PROTO_DIR)$(PYTHON_LIB)/keystone/httpd; \
-	 $(CP) $(SOURCE_DIR)/httpd/keystone.py $(PROTO_DIR)$(PYTHON_LIB)/keystone/httpd); \
-	 $(PYTHON) -m compileall $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES)
+    ($(MKDIR) $(PROTO_DIR)/lib/svc/manifest/application/openstack; \
+     $(CP) \
+         files/keystone.xml \
+         files/keystone-upgrade.xml \
+         $(PROTO_DIR)/lib/svc/manifest/application/openstack; \
+     $(MKDIR) $(PROTO_DIR)$(PYTHON_LIB)/keystone/httpd; \
+     $(CP) $(SOURCE_DIR)/httpd/keystone.py \
+         $(PROTO_DIR)$(PYTHON_LIB)/keystone/httpd); \
+     $(PYTHON) -m compileall $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES)
 
 # common targets
 build:		$(BUILD_NO_ARCH)
@@ -82,10 +83,10 @@ system-test:    $(NO_TESTS)
 
 REQUIRED_PACKAGES += cloud/openstack/openstack-common
 REQUIRED_PACKAGES += library/python/iniparse-27
-REQUIRED_PACKAGES += library/python/oslo.config-27
-REQUIRED_PACKAGES += library/python/pbr-27
-REQUIRED_PACKAGES += library/python/python-mysql-27
 REQUIRED_PACKAGES += library/python/sqlalchemy-27
 REQUIRED_PACKAGES += library/python/sqlalchemy-migrate-27
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += system/core-os
+REQUIRED_PACKAGES += web/server/apache-24
+REQUIRED_PACKAGES += web/server/apache-24/module/apache-ssl
+REQUIRED_PACKAGES += web/server/apache-24/module/apache-wsgi-27

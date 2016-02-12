@@ -2435,14 +2435,6 @@ license font-awesome.license license="MIT, OFL (font-awesome)" \
     com.oracle.info.tpno=$(TPNO_FONT_AWESOME) \
     com.oracle.info.version=$(VERSION_FONT_AWESOME)
 
-# force a group dependency on the optional anyjson; pkgdepend work is needed to
-# flush this out.
-depend type=group fmri=library/python/anyjson-$(PYV)
-
-# force a group dependency on the optional simplejson; pkgdepend work is needed
-# to flush this out.
-depend type=group fmri=library/python/simplejson-$(PYV)
-
 # To upgrade to Kilo version, Juno version of the package must be on the system
 depend type=origin fmri=cloud/openstack/horizon@0.2014.2.2 root-image=true
 
@@ -2450,17 +2442,29 @@ depend type=origin fmri=cloud/openstack/horizon@0.2014.2.2 root-image=true
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
     pkg.debug.depend.path=usr/bin
 
-# force a dependency on babel; pkgdepend work is needed to flush this out
+# force a dependency on package delivering httpd(8)
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/apache2/2.4/bin/httpd
+
+# force a dependency on package delivering non-FIPS mod_ssl module
+depend type=require fmri=__TBD \
+    pkg.debug.depend.file=usr/apache2/2.4/libexec/mod_ssl.so
+
+# force a dependency on package delivering mod_wsgi module
+depend type=require fmri=__TBD \
+    pkg.debug.depend.file=usr/apache2/2.4/libexec/mod_wsgi-$(PYVER).so
+
+# force a dependency on babel; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/babel-$(PYV)
 
 # force a dependency on ceilometerclient; pkgdepend work is needed to flush this
-# out
+# out.
 depend type=require fmri=library/python/ceilometerclient-$(PYV)
 
-# force a dependency on cinderclient; pkgdepend work is needed to flush this out
+# force a dependency on cinderclient; pkgdepend work is needed to flush this
+# out.
 depend type=require fmri=library/python/cinderclient-$(PYV)
 
-# force a dependency on django; pkgdepend work is needed to flush this out
+# force a dependency on django; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/django-$(PYV)
 
 # force a dependency on django-pyscss; one of the applications defined in
@@ -2472,71 +2476,74 @@ depend type=require fmri=library/python/django-pyscss-$(PYV)
 depend type=require fmri=library/python/django_compressor-$(PYV)
 
 # force a dependency on django_openstack_auth; pkgdepend work is needed to flush
-# this out
+# this out.
 depend type=require fmri=library/python/django_openstack_auth-$(PYV)
 
-# force a dependency on glanceclient; pkgdepend work is needed to flush this out
+# force a dependency on glanceclient; pkgdepend work is needed to flush this
+# out.
 depend type=require fmri=library/python/glanceclient-$(PYV)
 
-# force a dependency on heatclient; pkgdepend work is needed to flush this out
+# force a dependency on heatclient; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/heatclient-$(PYV)
 
-# force a dependency on httplib2; pkgdepend work is needed to flush this out
-depend type=require fmri=library/python/httplib2-$(PYV)
-
-# force a dependency on iso8601; pkgdepend work is needed to flush this out
+# force a dependency on iso8601; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/iso8601-$(PYV)
 
 # force a dependency on keystoneclient; pkgdepend work is needed to flush this
-# out
+# out.
 depend type=require fmri=library/python/keystoneclient-$(PYV)
 
-# force a dependency on lockfile; pkgdepend work is needed to flush this out
-depend type=require fmri=library/python/lockfile-$(PYV)
-
-# force a dependency on netaddr; pkgdepend work is needed to flush this out
+# force a dependency on netaddr; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/netaddr-$(PYV)
 
 # force a dependency on neutronclient; pkgdepend work is needed to flush this
-# out
+# out.
 depend type=require fmri=library/python/neutronclient-$(PYV)
 
-# force a dependency on novaclient; pkgdepend work is needed to flush this out
+# force a dependency on novaclient; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/novaclient-$(PYV)
 
-# force a dependency on oslo.config; pkgdepend work is needed to flush this out
+# force a dependency on oslo.concurrency; pkgdepend work is needed to flush this
+# out.
+depend type=require fmri=library/python/oslo.concurrency-$(PYV)
+
+# force a dependency on oslo.config; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/oslo.config-$(PYV)
 
-# force a dependency on pbr; pkgdepend work is needed to flush this out
+# force a dependency on oslo.i18n; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/oslo.i18n-$(PYV)
+
+# force a dependency on oslo.serialization; pkgdepend work is needed to flush
+# this out.
+depend type=require fmri=library/python/oslo.serialization-$(PYV)
+
+# force a dependency on oslo.utils; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/oslo.utils-$(PYV)
+
+# force a dependency on pbr; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/pbr-$(PYV)
 
-# force a dependency on pint; pkgdepend work is needed to flush this out
+# force a dependency on pint; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/pint-$(PYV)
 
-# force a dependency on pytz; pkgdepend work is needed to flush this out
+# force a dependency on pytz; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/pytz-$(PYV)
 
-# force a dependency on requests; pkgdepend work is needed to flush this out
+# force a dependency on pyyaml; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/pyyaml-$(PYV)
+
+# force a dependency on requests; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/requests-$(PYV)
 
-# force a dependency on saharaclient; pkgdepend work is needed to flush this out
+# force a dependency on saharaclient; pkgdepend work is needed to flush this
+# out.
 depend type=require fmri=library/python/saharaclient-$(PYV)
 
-# force a dependency on six; pkgdepend work is needed to flush this out
+# force a dependency on six; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/six-$(PYV)
 
-# force a dependency on swiftclient; pkgdepend work is needed to flush this out
+# force a dependency on swiftclient; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/swiftclient-$(PYV)
 
-# force a dependency on troveclient; pkgdepend work is needed to flush this
-# out
+# force a dependency on troveclient; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/troveclient-$(PYV)
-
-# force a dependency on the Apache web server
-depend type=require fmri=web/server/apache-24
-
-# force a dependency on the mod_ssl module
-depend type=require fmri=web/server/apache-24/module/apache-ssl
-
-# force a dependency on the mod_wsgi module
-depend type=require fmri=web/server/apache-24/module/apache-wsgi-$(PYV)

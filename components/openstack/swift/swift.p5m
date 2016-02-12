@@ -292,8 +292,14 @@ license swift.license license="Apache v2.0"
 # To upgrade to Kilo version, Juno version of the package must be on the system
 depend type=origin fmri=cloud/openstack/swift@2.2.2 root-image=true
 
+# force a dependency on package delivering rsync(1)
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/rsync
+
 # force a dependency on dnspython; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/dnspython-$(PYV)
+
+# force a dependency on greenlet; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/greenlet-$(PYV)
 
 # force a dependency on keystonemiddleware; used via a paste.deploy filter
 depend type=require fmri=library/python/keystonemiddleware-$(PYV)
@@ -305,11 +311,11 @@ depend type=require fmri=library/python/netifaces-$(PYV)
 # out.
 depend type=require fmri=library/python/paste.deploy-$(PYV)
 
+# force a dependency on pbr; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/pbr-$(PYV)
+
 # force a dependency on setuptools; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/setuptools-$(PYV)
 
 # force a dependency on xattr; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/xattr-$(PYV)
-
-# force a dependency on rsync; required for replicator service.
-depend type=require fmri=network/rsync

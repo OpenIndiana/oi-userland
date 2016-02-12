@@ -271,13 +271,8 @@ user username=ironic ftpuser=false gcos-field="OpenStack Ironic" group=ironic \
 #
 license ironic.license license="Apache 2.0"
 
-# force a group dependency on the optional anyjson; pkgdepend work is needed to
-# flush this out.
-depend type=group fmri=library/python/anyjson-$(PYV)
-
-# force a group dependency on the optional simplejson; pkgdepend work is needed
-# to flush this out.
-depend type=group fmri=library/python/simplejson-$(PYV)
+# force a dependency on package delivering aimanifest(1M)
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/aimanifest
 
 # force a dependency on package delivering curl(1)
 depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/curl
@@ -380,9 +375,6 @@ depend type=require fmri=library/python/pbr-$(PYV)
 
 # force a dependency on pecan; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/pecan-$(PYV)
-
-# force a dependency on posix_ipc; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/posix_ipc-$(PYV)
 
 # force a dependency on pysendfile; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/pysendfile-$(PYV)

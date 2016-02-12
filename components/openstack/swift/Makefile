@@ -56,21 +56,22 @@ PKG_MACROS +=		PYVER=$(PYTHON_VERSIONS)
 PKG_MACROS +=		PYV=$(shell echo $(PYTHON_VERSIONS) | tr -d .)
 
 #
-# All of the swift SMF manifests depend on swift-upgrade so copy it
+# All of the swift SMF manifests depend on swift-upgrade so copy them
 # into the proto directory for pkgdepend(1) to find.
 #
 COMPONENT_POST_INSTALL_ACTION += \
-	($(MKDIR) $(PROTO_DIR)/lib/svc/manifest/application/openstack; \
-	 $(CP) \
-	     files/swift-*.xml \
-	     $(PROTO_DIR)/lib/svc/manifest/application/openstack;)
+    ($(MKDIR) $(PROTO_DIR)/lib/svc/manifest/application/openstack; \
+     $(CP) \
+         files/swift-*.xml \
+         $(PROTO_DIR)/lib/svc/manifest/application/openstack)
 
 COMPONENT_TEST_DIR =	$(SOURCE_DIR)
 COMPONENT_TEST_CMD =	nosetests
 COMPONENT_TEST_ENV +=	SWIFT_TEST_CONFIG_FILE=$(SWIFT_TEST_CONFIG_FILE)
-COMPONENT_TEST_ARGS =	--with-xunit \
-			--xunit-file=$(BUILD_DIR)/nosetests-$(MACH).xml
-COMPONENT_TEST_ARGS +=	test/unit
+COMPONENT_TEST_ARGS =	\
+    --with-xunit \
+    --xunit-file=$(BUILD_DIR)/nosetests-$(MACH).xml \
+    test/unit
 
 # common targets
 build:		$(BUILD_NO_ARCH)
@@ -84,8 +85,8 @@ system-test:	$(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
 REQUIRED_PACKAGES += cloud/openstack/openstack-common
 REQUIRED_PACKAGES += library/python/eventlet-27
-REQUIRED_PACKAGES += library/python/iniparse-27
 REQUIRED_PACKAGES += library/python/simplejson-27
 REQUIRED_PACKAGES += library/python/swiftclient-27
+REQUIRED_PACKAGES += network/rsync
 REQUIRED_PACKAGES += service/memcached
 REQUIRED_PACKAGES += system/core-os

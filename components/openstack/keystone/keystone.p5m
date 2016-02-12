@@ -413,12 +413,24 @@ user username=keystone ftpuser=false gcos-field="OpenStack Keystone" \
 license keystone.license license="Apache v2.0"
 
 # To upgrade to Kilo version, Juno version of the package must be on the system
-depend type=origin fmri=pkg:/cloud/openstack/keystone@0.2014.2.2 root-image=true
+depend type=origin fmri=cloud/openstack/keystone@0.2014.2.2 root-image=true
+
+# force a dependency on package delivering httpd(8)
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/apache2/2.4/bin/httpd
+
+# force a dependency on package delivering non-FIPS mod_ssl module
+depend type=require fmri=__TBD \
+    pkg.debug.depend.file=usr/apache2/2.4/libexec/mod_ssl.so
+
+# force a dependency on package delivering mod_wsgi module
+depend type=require fmri=__TBD \
+    pkg.debug.depend.file=usr/apache2/2.4/libexec/mod_wsgi-$(PYVER).so
 
 # force a dependency on package delivering openssl(1OPENSSL)
 depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/openssl
 
-# force a dependency on cryptography; pkgdepend work is needed to flush this out.
+# force a dependency on cryptography; pkgdepend work is needed to flush this
+# out.
 depend type=require fmri=library/python/cryptography-$(PYV)
 
 # force a dependency on dogpile.cache; pkgdepend work is needed to flush this
@@ -435,9 +447,6 @@ depend type=require fmri=library/python/eventlet-$(PYV)
 # force a dependency on greenlet; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/greenlet-$(PYV)
 
-# force a dependency on iso8601; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/iso8601-$(PYV)
-
 # force a dependency on jsonschema; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/jsonschema-$(PYV)
 
@@ -452,20 +461,22 @@ depend type=require fmri=library/python/keystonemiddleware-$(PYV)
 # force a dependency on ldappool; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/ldappool-$(PYV)
 
-# force a dependency on lxml; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/lxml-$(PYV)
-
 # force a dependency on msgpack; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/msgpack-$(PYV)
 
 # force a dependency on oauthlib; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/oauthlib-$(PYV)
 
-# force a dependency on the openstackclient module
+# force a dependency on openstackclient; pkgdepend work is needed to flush this
+# out.
 depend type=require fmri=library/python/openstackclient-$(PYV)
 
-# force a dependency on oslo.concurrency; pkgdepend work is needed to flush this out.
+# force a dependency on oslo.concurrency; pkgdepend work is needed to flush this
+# out.
 depend type=require fmri=library/python/oslo.concurrency-$(PYV)
+
+# force a dependency on oslo.config; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/oslo.config-$(PYV)
 
 # force a dependency on oslo.db; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/oslo.db-$(PYV)
@@ -480,13 +491,15 @@ depend type=require fmri=library/python/oslo.log-$(PYV)
 # out.
 depend type=require fmri=library/python/oslo.messaging-$(PYV)
 
-# force a dependency on oslo.middleware; pkgdepend work is needed to flush this out.
+# force a dependency on oslo.middleware; pkgdepend work is needed to flush this
+# out.
 depend type=require fmri=library/python/oslo.middleware-$(PYV)
 
 # force a dependency on oslo.policy; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/oslo.policy-$(PYV)
 
-# force a dependency on oslo.serialization; pkgdepend work is needed to flush this out.
+# force a dependency on oslo.serialization; pkgdepend work is needed to flush
+# this out.
 depend type=require fmri=library/python/oslo.serialization-$(PYV)
 
 # force a dependency on oslo.utils; pkgdepend work is needed to flush this out.
@@ -503,7 +516,7 @@ depend type=require fmri=library/python/paste.deploy-$(PYV)
 depend type=require fmri=library/python/pbr-$(PYV)
 
 # force a dependency on pycadf; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/pycadf-$(PYV)@0.8.0,$(BUILD_VERSION)
+depend type=require fmri=library/python/pycadf-$(PYV)
 
 # force a dependency on python-ldap; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/python-ldap-$(PYV)
@@ -521,16 +534,5 @@ depend type=require fmri=library/python/setuptools-$(PYV)
 # force a dependency on six; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/six-$(PYV)
 
-# force a dependency on stevedore; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/stevedore-$(PYV)
-
 # force a dependency on webob; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/webob-$(PYV)
-# force a dependency on the Apache web server
-depend type=require fmri=web/server/apache-24
-
-# force a dependency on the mod_ssl module
-depend type=require fmri=web/server/apache-24/module/apache-ssl
-
-# force a dependency on the mod_wsgi module
-depend type=require fmri=web/server/apache-24/module/apache-wsgi-$(PYV)

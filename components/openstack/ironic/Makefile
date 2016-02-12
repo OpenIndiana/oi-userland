@@ -61,21 +61,21 @@ PKG_MACROS +=		PYV=$(shell echo $(PYTHON_VERSIONS) | tr -d .)
 # pkgdepend(1) to find.
 #
 COMPONENT_POST_INSTALL_ACTION += \
-	($(MKDIR) $(PROTO_DIR)/lib/svc/manifest/application/openstack; \
-	 $(CP) \
-	     files/ironic-api.xml \
-	     files/ironic-conductor.xml \
-	     files/ironic-db.xml \
-	     files/ironic-upgrade.xml \
-	     $(PROTO_DIR)/lib/svc/manifest/application/openstack/; \
-	 $(MKDIR) $(PROTO_DIR)$(PYTHON_LIB)/ironic/drivers/modules; \
-	 $(CP) \
-	     files/drivers/solaris.py \
-	     $(PROTO_DIR)$(PYTHON_LIB)/ironic/drivers/; \
-	 $(CP) \
-	     files/drivers/modules/solaris_ipmitool.py \
-	     $(PROTO_DIR)$(PYTHON_LIB)/ironic/drivers/modules/; \
-	 $(PYTHON) -m compileall $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES))
+    ($(MKDIR) $(PROTO_DIR)/lib/svc/manifest/application/openstack; \
+     $(CP) \
+	 files/ironic-api.xml \
+	 files/ironic-conductor.xml \
+	 files/ironic-db.xml \
+	 files/ironic-upgrade.xml \
+	 $(PROTO_DIR)/lib/svc/manifest/application/openstack/; \
+     $(MKDIR) $(PROTO_DIR)$(PYTHON_LIB)/ironic/drivers/modules; \
+     $(CP) \
+	 files/drivers/solaris.py \
+	 $(PROTO_DIR)$(PYTHON_LIB)/ironic/drivers/; \
+     $(CP) \
+	 files/drivers/modules/solaris_ipmitool.py \
+	 $(PROTO_DIR)$(PYTHON_LIB)/ironic/drivers/modules/; \
+     $(PYTHON) -m compileall $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES))
 
 # common targets
 build:		$(BUILD_NO_ARCH)
@@ -93,11 +93,12 @@ test:		$(NO_TESTS)
 
 
 REQUIRED_PACKAGES += cloud/openstack/openstack-common
-REQUIRED_PACKAGES += library/python/sqlalchemy-27
 REQUIRED_PACKAGES += install/installadm
+REQUIRED_PACKAGES += library/python/sqlalchemy-27
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
 REQUIRED_PACKAGES += system/file-system/uafs
 REQUIRED_PACKAGES += system/file-system/uvfs
+REQUIRED_PACKAGES += system/install/auto-install/auto-install-common
 REQUIRED_PACKAGES += system/management/ipmitool
 REQUIRED_PACKAGES += web/curl
