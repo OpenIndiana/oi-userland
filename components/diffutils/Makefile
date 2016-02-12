@@ -20,10 +20,10 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
-COMPILER=		gnu
+COMPILER=		gcc
 
 include ../../make-rules/shared-macros.mk
 
@@ -81,4 +81,5 @@ test:		$(TEST_64)
 system-test:    configure $(SYSTEM_TEST_64)
 
 
+REQUIRED_PACKAGES += library/libsigsegv
 REQUIRED_PACKAGES += system/library
