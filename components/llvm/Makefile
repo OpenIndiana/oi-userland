@@ -74,6 +74,15 @@ COMPONENT_POST_INSTALL_ACTION = \
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
+
+# Depends on S12-only changes in gcc; might be able to deal with later,
+# but avoid publishing while this is under investigation.
+ifeq ($(BUILD_TYPE), evaluation)
+BUILD_64=
+INSTALL_64=
+PUBLISH_STAMP=
+endif
+
 include $(WS_MAKE_RULES)/ips.mk
 
 PATCH_LEVEL := 0
