@@ -19,7 +19,7 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -44,27 +44,62 @@ include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 include $(WS_MAKE_RULES)/lint-libraries.mk
 
+MCS = mcs
+STRIP = strip
+
+# We need to build an extra static version of this library for
+# GRUB/Wanboot support.
+
+ifeq ($(MACH),i386)
+
+WANBOOT_CONFIGURE = $(BUILD_DIR)/wanboot-amd64/.configured
+WANBOOT_BUILD = $(BUILD_DIR)/wanboot-amd64/.built
+WANBOOT_INSTALL = $(BUILD_DIR)/wanboot-amd64/.installed
+
+CONFIGURE_32_and_64 += $(WANBOOT_CONFIGURE)
+BUILD_32_and_64 += $(WANBOOT_BUILD)
+INSTALL_32_and_64 += $(WANBOOT_INSTALL)
+
+endif
+
 PATCH_LEVEL = 0
 
 CLEAN_PATHS += libgmp.pc libgmpxx.pc
 
-CFLAGS += -features=extinl,extensions
-CFLAGS += -xustr=ascii_utf16_ushort -xcsi
+CFLAGS.shared += -features=extinl,extensions
+CFLAGS.shared += -xustr=ascii_utf16_ushort -xcsi
 # -xthreadvar=%all: allow thread-local storage via __thread
 #  qualifier for all types of variables (global, static and dynamic)
-CFLAGS += -xthreadvar=%all $(CPP_C99_EXTENDED_MATH)
-CFLAGS += $(studio_C99_ENABLE) $(CPP_XPG6MODE)
-CFLAGS += $(studio_PIC)
-CXXFLAGS = -mt -features=anachronisms,except,rtti,export,extensions,nestedaccess,tmplife,tmplrefstatic
-CXXFLAGS += -instances=global -template=geninlinefuncs
-CXXFLAGS += -xbuiltin=%none -xinline=%auto -xlibmil
-CXXFLAGS += -xustr=ascii_utf16_ushort -xlibmopt
-CXXFLAGS += $(studio_cplusplus_C99_ENABLE) $(studio_PIC)
-CXXFLAGS += $(CPP_XPG5MODE)
+CFLAGS.shared += -xthreadvar=%all $(CPP_C99_EXTENDED_MATH)
+CFLAGS.shared += $(studio_C99_ENABLE) $(CPP_XPG6MODE)
+CFLAGS.shared += $(studio_PIC)
+
+# Set the wanboot CFLAGS as needed for the wanboot compilation
+
+CFLAGS.wanboot += -D_BOOT
+CFLAGS.wanboot += -g
+CFLAGS.wanboot += -falign-jumps=1
+CFLAGS.wanboot += -falign-loops=1
+CFLAGS.wanboot += -falign-functions
+CFLAGS.wanboot += -mno-mmx
+CFLAGS.wanboot += -mno-3dnow
+CFLAGS.wanboot += -fno-dwarf2-cfi-asm
+CFLAGS.wanboot += -fno-asynchronous-unwind-tables
+CFLAGS.wanboot += -fno-common
+CFLAGS.wanboot += -mcmodel=large
+CFLAGS.wanboot += -fno-stack-protector
+CFLAGS.wanboot += -mno-stack-arg-probe
+
+CXXFLAGS.shared = -mt -features=anachronisms,except,rtti,export,extensions,nestedaccess,tmplife,tmplrefstatic
+CXXFLAGS.shared += -instances=global -template=geninlinefuncs
+CXXFLAGS.shared += -xbuiltin=%none -xinline=%auto -xlibmil
+CXXFLAGS.shared += -xustr=ascii_utf16_ushort -xlibmopt
+CXXFLAGS.shared += $(studio_cplusplus_C99_ENABLE) $(studio_PIC)
+CXXFLAGS.shared += $(CPP_XPG5MODE)
 # -Qoption ccfe -features=zla: allow VLA/ZLA in C++ (like in C99)
-CXXFLAGS += -Qoption ccfe -features=zla
-CXXFLAGS += -xF=%none -xthreadvar=%all
-CPPFLAGS += $(CPP_POSIX) $(CPP_LARGEFILES)
+CXXFLAGS.shared += -Qoption ccfe -features=zla
+CXXFLAGS.shared += -xF=%none -xthreadvar=%all
+CPPFLAGS.shared += $(CPP_POSIX) $(CPP_LARGEFILES)
 LDFLAGS += $(LD_Z_REDLOCSYM) $(LD_Z_RESCAN_NOW)
 
 COMPONENT_TEST_TRANSFORMS += \
@@ -108,15 +143,28 @@ CONFIGURE_ENV += "MPN_PATH=$(MPN_$(BITS))"
 
 CONFIGURE_OPTIONS += --includedir=/usr/include/gmp
 CONFIGURE_OPTIONS += --localstatedir=/var
-CONFIGURE_OPTIONS += --enable-shared
-CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS.shared += --enable-shared
+CONFIGURE_OPTIONS.shared += --disable-static
 CONFIGURE_OPTIONS += --disable-libtool-lock
 CONFIGURE_OPTIONS += --disable-alloca
-CONFIGURE_OPTIONS += --enable-cxx
+CONFIGURE_OPTIONS.shared += --enable-cxx
 CONFIGURE_OPTIONS += --enable-fft
 CONFIGURE_OPTIONS += --enable-mpbsd
 CONFIGURE_OPTIONS += --disable-fat
-CONFIGURE_OPTIONS += --with-pic
+CONFIGURE_OPTIONS.shared += --with-pic
+
+# Set the wanboot configure options as needed for wanboot
+
+CONFIGURE_OPTIONS.wanboot += --disable-assert
+CONFIGURE_OPTIONS.wanboot += --disable-cxx
+CONFIGURE_OPTIONS.wanboot += --disable-nails
+CONFIGURE_OPTIONS.wanboot += --disable-profiling
+CONFIGURE_OPTIONS.wanboot += --disable-minithres
+CONFIGURE_OPTIONS.wanboot += --disable-shared
+CONFIGURE_OPTIONS.wanboot += --enable-static
+CONFIGURE_OPTIONS.wanboot += --disable-libtool-lock
+CONFIGURE_OPTIONS.wanboot += --without-readline
+CONFIGURE_OPTIONS.wanboot += --without-pic
 
 PROTOUSRSHAREINFODIR = $(PROTOUSRSHAREDIR)/info
 PROTOUSRSHAREHTMLDIR = $(PROTOUSRSHAREDIR)/doc/gmp/html
@@ -125,7 +173,7 @@ PROTOUSRINCLUDEDIR = $(PROTOUSRDIR)/include
 PROTOPKGCONFIGDIR = $(PROTOUSRLIBDIR)/pkgconfig
 PROTOPKGCONFIGDIR64 = $(PROTOUSRLIBDIR64)/pkgconfig
 
-COMPONENT_POST_INSTALL_ACTION = \
+COMPONENT_POST_INSTALL_ACTION.shared = \
     ( $(MKDIR) $(PROTOUSRSHAREHTMLDIR) ; \
       $(MKDIR) $(PROTOUSRSHAREMAN3DIR) ; \
       $(MKDIR) $(PROTOPKGCONFIGDIR) ; \
@@ -158,6 +206,13 @@ COMPONENT_POST_INSTALL_ACTION = \
       $(INSTALL) -m 0644 $(COMPONENT_DIR)/Solaris/libgmp.3 \
 	$(PROTOUSRSHAREMAN3DIR)/ )
 
+COMPONENT_POST_INSTALL_ACTION.wanboot = \
+      ( $(MKDIR) $(PROTO_DIR)/usr/lib/grub/wanboot; \
+	$(MV) $(PROTO_DIR)/usr/lib/amd64/libgmp.a $(PROTO_DIR)/usr/lib/grub/wanboot/libgmp.a; \
+	$(STRIP) -x $(PROTO_DIR)/usr/lib/grub/wanboot/libgmp.a; \
+	$(MCS) -d $(PROTO_DIR)/usr/lib/grub/wanboot/libgmp.a; \
+	$(AR) ts $(PROTO_DIR)/usr/lib/grub/wanboot/libgmp.a )
+
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 #Skipping this during automated tests since it hangs sometimes
@@ -166,9 +221,28 @@ $(SKIP_TEST_AT_TOP_LEVEL)
 # common targets
 configure:	$(CONFIGURE_32_and_64)
 
+$(BUILD_DIR)/$(MACH32)/.configured: CPPFLAGS += $(CPPFLAGS.shared)
+$(BUILD_DIR)/$(MACH32)/.configured: CFLAGS += $(CFLAGS.shared)
+$(BUILD_DIR)/$(MACH32)/.configured: CXXFLAGS += $(CXXFLAGS.shared)
+$(BUILD_DIR)/$(MACH32)/.configured: CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.shared)
+$(BUILD_DIR)/$(MACH64)/.configured: CPPFLAGS += $(CPPFLAGS.shared)
+$(BUILD_DIR)/$(MACH64)/.configured: CFLAGS += $(CFLAGS.shared)
+$(BUILD_DIR)/$(MACH64)/.configured: CXXFLAGS += $(CXXFLAGS.shared)
+$(BUILD_DIR)/$(MACH64)/.configured: CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.shared)
+$(BUILD_DIR)/wanboot-amd64/.configured: BITS=64
+$(BUILD_DIR)/wanboot-amd64/.configured: COMPILER=gcc
+$(BUILD_DIR)/wanboot-amd64/.configured: CPPFLAGS += $(CPPFLAGS.wanboot)
+$(BUILD_DIR)/wanboot-amd64/.configured: CFLAGS += $(CFLAGS.wanboot)
+$(BUILD_DIR)/wanboot-amd64/.configured: CXXFLAGS += $(CXXFLAGS.wanboot)
+$(BUILD_DIR)/wanboot-amd64/.configured: CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.wanboot)
+
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
+
+$(BUILD_DIR)/$(MACH32)/.installed: COMPONENT_POST_INSTALL_ACTION = $(COMPONENT_POST_INSTALL_ACTION.shared)
+$(BUILD_DIR)/$(MACH64)/.installed: COMPONENT_POST_INSTALL_ACTION = $(COMPONENT_POST_INSTALL_ACTION.shared)
+$(BUILD_DIR)/wanboot-amd64/.installed: COMPONENT_POST_INSTALL_ACTION = $(COMPONENT_POST_INSTALL_ACTION.wanboot)
 
 test: $(TEST_32_and_64)
 
