@@ -18,14 +18,14 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		openindiana-welcome
 COMPONENT_SRC=		$(COMPONENT_NAME)
 COMPONENT_VERSION=	1.0
+COMPONENT_LICENSE=	GPLv2
+COMPONENT_LICENSE_FILE=	COPYING
 
 COMPONENT_REVISION=$(shell cd $(COMPONENT_SRC); git rev-list HEAD --count)
 
 COMPONENT_SUMMARY=	OpenIndiana Welcome Document
 COMPONENT_FMRI= release/os-welcome
 COMPONENT_CLASSIFICATION= System/Text Tools
-COMPONENT_LICENSE=	GPLv2
-COMPONENT_LICENSE_FILE= COPYING
 
 PKG_MACROS+=	GIT_REPO="$(GIT_REPO)"
 
@@ -63,10 +63,12 @@ COMPONENT_BUILD_TARGETS = all
 
 $(SOURCE_DIR)/.prep: $(SOURCE_DIR)/.downloaded Makefile
 	cd $(@D) &&\
+		touch config.rpath src/config.h.in&&\
 		libtoolize --force &&\
-		aclocal  &&\
+		aclocal -Im4  &&\
 		intltoolize --copy --force --automake &&\
-		autoreconf -Im4 -f
+		automake --add-missing -f -i &&\
+		autoconf -f
 	touch $(SOURCE_DIR)/.prep
 
 build: $(BUILD_32)
