@@ -12,6 +12,9 @@ sudo -V | grep version
 
 # Test digest feature
 
+# Make sure that the following line is commented out in /etc/sudoers:
+# ALL    ALL=(ALL) NOPASSWD: ALL
+
 openssl dgst -sha224 /usr/bin/ls # make note of the hash
 
 # Add this line to sudoers (replace UID by your user ID and HASH by the ls
@@ -118,3 +121,31 @@ sudo dtrace -l -n 'syscall::b*:entry'
 > 11282    syscall                                                 brk entry
 > 11550    syscall                                            brandsys entry
 > 11642    syscall                                                bind entry
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+# Test noexec
+
+# Verify the following works
+
+$ sudo /usr/perl5/5.12/bin/perl -e 'print "before\n"; system("id -a"); print "after\n"'
+before
+uid=0(root) gid=0(root) groups=0(root),1(other),2(bin),3(sys),4(adm),6(mail),7(tty),8(lp),12(daemon)
+after
+
+# Add the following to sudoers
+
+ALL     ALL = NOPASSWD: NOEXEC: /usr/perl5/5.12/bin/perl
+
+# Now Perl should be prevent to run further commands, so the output is
+
+$ sudo /usr/perl5/5.12/bin/perl -e 'print "before\n"; system("id -a"); print "after\n"'
+before
+after
+
+# Perl itself works as expected
+
+$ /usr/perl5/5.12/bin/perl -e 'print "before\n"; system("id -a"); print "after\n"'
+before
+uid=101(rimmer) gid=10(staff) groups=10(staff)
+after

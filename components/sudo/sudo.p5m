@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
@@ -41,11 +41,15 @@ file path=usr/bin/sudo mode=4511
 link path=usr/bin/sudoedit target=sudo
 file path=usr/bin/sudoreplay mode=0511
 file path=usr/include/sudo_plugin.h
-# pkglint complains about sudoers.so since it thinks that it is 64bit library
-# in 32bit path. But since this is sudo module rather than generic *.so library
-# we are free to have it there. We just need to silence the warning.
-file path=usr/lib/sudo/sudoers.so pkg.linted.userland.action001.2=true
+file path=usr/lib/$(MACH64)/sudo/group_file.so
+link path=usr/lib/$(MACH64)/sudo/libsudo_util.so target=libsudo_util.so.0.0.0
+link path=usr/lib/$(MACH64)/sudo/libsudo_util.so.0 target=libsudo_util.so.0.0.0
+file path=usr/lib/$(MACH64)/sudo/libsudo_util.so.0.0.0
+file path=usr/lib/$(MACH64)/sudo/sudo_noexec.so
+file path=usr/lib/$(MACH64)/sudo/sudoers.so
+file path=usr/lib/$(MACH64)/sudo/system_group.so
 file path=usr/sbin/visudo mode=0511
+file path=usr/share/doc/sudo/CONTRIBUTORS
 file path=usr/share/doc/sudo/ChangeLog
 file path=usr/share/doc/sudo/HISTORY
 file path=usr/share/doc/sudo/LICENSE
@@ -54,45 +58,97 @@ file path=usr/share/doc/sudo/README
 file path=usr/share/doc/sudo/README.LDAP
 file path=usr/share/doc/sudo/TROUBLESHOOTING
 file path=usr/share/doc/sudo/UPGRADE
-file path=usr/share/doc/sudo/sample.sudo.conf
-file path=usr/share/doc/sudo/sample.sudoers
-file path=usr/share/doc/sudo/sample.syslog.conf
+file path=usr/share/doc/sudo/examples/pam.conf
+file path=usr/share/doc/sudo/examples/sudo.conf
+file path=usr/share/doc/sudo/examples/sudoers
+file path=usr/share/doc/sudo/examples/syslog.conf
 file path=usr/share/doc/sudo/schema.ActiveDirectory
 file path=usr/share/doc/sudo/schema.OpenLDAP
 file path=usr/share/doc/sudo/schema.iPlanet
 file path=usr/share/doc/sudo/sudoers2ldif
+link path=usr/share/locale/ca.UTF-8 target=ca
+file path=usr/share/locale/ca/LC_MESSAGES/sudo.mo
+file path=usr/share/locale/ca/LC_MESSAGES/sudoers.mo
+link path=usr/share/locale/cs.UTF-8 target=cs
+file path=usr/share/locale/cs/LC_MESSAGES/sudo.mo
+file path=usr/share/locale/cs/LC_MESSAGES/sudoers.mo
+link path=usr/share/locale/da.UTF-8 target=da
 file path=usr/share/locale/da/LC_MESSAGES/sudo.mo
 file path=usr/share/locale/da/LC_MESSAGES/sudoers.mo
+link path=usr/share/locale/de.UTF-8 target=de
 file path=usr/share/locale/de/LC_MESSAGES/sudo.mo
+file path=usr/share/locale/de/LC_MESSAGES/sudoers.mo
+link path=usr/share/locale/el.UTF-8 target=el
+file path=usr/share/locale/el/LC_MESSAGES/sudoers.mo
+link path=usr/share/locale/eo.UTF-8 target=eo
 file path=usr/share/locale/eo/LC_MESSAGES/sudo.mo
 file path=usr/share/locale/eo/LC_MESSAGES/sudoers.mo
+link path=usr/share/locale/es.UTF-8 target=es
 file path=usr/share/locale/es/LC_MESSAGES/sudo.mo
+link path=usr/share/locale/eu.UTF-8 target=eu
 file path=usr/share/locale/eu/LC_MESSAGES/sudo.mo
 file path=usr/share/locale/eu/LC_MESSAGES/sudoers.mo
+link path=usr/share/locale/fi.UTF-8 target=fi
 file path=usr/share/locale/fi/LC_MESSAGES/sudo.mo
 file path=usr/share/locale/fi/LC_MESSAGES/sudoers.mo
+link path=usr/share/locale/fr.UTF-8 target=fr
+file path=usr/share/locale/fr/LC_MESSAGES/sudo.mo
+file path=usr/share/locale/fr/LC_MESSAGES/sudoers.mo
+link path=usr/share/locale/gl.UTF-8 target=gl
 file path=usr/share/locale/gl/LC_MESSAGES/sudo.mo
+link path=usr/share/locale/hr.UTF-8 target=hr
 file path=usr/share/locale/hr/LC_MESSAGES/sudo.mo
 file path=usr/share/locale/hr/LC_MESSAGES/sudoers.mo
+link path=usr/share/locale/hu.UTF-8 target=hu
+file path=usr/share/locale/hu/LC_MESSAGES/sudoers.mo
+link path=usr/share/locale/it.UTF-8 target=it
 file path=usr/share/locale/it/LC_MESSAGES/sudo.mo
 file path=usr/share/locale/it/LC_MESSAGES/sudoers.mo
+link path=usr/share/locale/ja.UTF-8 target=ja
 file path=usr/share/locale/ja/LC_MESSAGES/sudo.mo
 file path=usr/share/locale/ja/LC_MESSAGES/sudoers.mo
+link path=usr/share/locale/lt.UTF-8 target=lt
 file path=usr/share/locale/lt/LC_MESSAGES/sudoers.mo
+link path=usr/share/locale/nb.UTF-8 target=nb
+file path=usr/share/locale/nb/LC_MESSAGES/sudo.mo
+file path=usr/share/locale/nb/LC_MESSAGES/sudoers.mo
+link path=usr/share/locale/nl.UTF-8 target=nl
+file path=usr/share/locale/nl/LC_MESSAGES/sudo.mo
+file path=usr/share/locale/nl/LC_MESSAGES/sudoers.mo
+link path=usr/share/locale/pl.UTF-8 target=pl
 file path=usr/share/locale/pl/LC_MESSAGES/sudo.mo
 file path=usr/share/locale/pl/LC_MESSAGES/sudoers.mo
+link path=usr/share/locale/pt_BR.UTF-8 target=pt_BR
+file path=usr/share/locale/pt_BR/LC_MESSAGES/sudo.mo
+file path=usr/share/locale/pt_BR/LC_MESSAGES/sudoers.mo
+link path=usr/share/locale/ru.UTF-8 target=ru
 file path=usr/share/locale/ru/LC_MESSAGES/sudo.mo
+file path=usr/share/locale/ru/LC_MESSAGES/sudoers.mo
+link path=usr/share/locale/sk.UTF-8 target=sk
+file path=usr/share/locale/sk/LC_MESSAGES/sudo.mo
+file path=usr/share/locale/sk/LC_MESSAGES/sudoers.mo
+link path=usr/share/locale/sl.UTF-8 target=sl
 file path=usr/share/locale/sl/LC_MESSAGES/sudo.mo
 file path=usr/share/locale/sl/LC_MESSAGES/sudoers.mo
+link path=usr/share/locale/sr.UTF-8 target=sr
 file path=usr/share/locale/sr/LC_MESSAGES/sudo.mo
+file path=usr/share/locale/sr/LC_MESSAGES/sudoers.mo
+link path=usr/share/locale/sv.UTF-8 target=sv
 file path=usr/share/locale/sv/LC_MESSAGES/sudo.mo
 file path=usr/share/locale/sv/LC_MESSAGES/sudoers.mo
+link path=usr/share/locale/tr.UTF-8 target=tr
+file path=usr/share/locale/tr/LC_MESSAGES/sudo.mo
+file path=usr/share/locale/tr/LC_MESSAGES/sudoers.mo
+link path=usr/share/locale/uk.UTF-8 target=uk
 file path=usr/share/locale/uk/LC_MESSAGES/sudo.mo
 file path=usr/share/locale/uk/LC_MESSAGES/sudoers.mo
+link path=usr/share/locale/vi.UTF-8 target=vi
 file path=usr/share/locale/vi/LC_MESSAGES/sudo.mo
 file path=usr/share/locale/vi/LC_MESSAGES/sudoers.mo
+link path=usr/share/locale/zh_CN.UTF-8 target=zh_CN
 file path=usr/share/locale/zh_CN/LC_MESSAGES/sudo.mo
 file path=usr/share/locale/zh_CN/LC_MESSAGES/sudoers.mo
+file path=usr/share/man/man5/sudo.conf.5
 file path=usr/share/man/man5/sudoers.5
 file path=usr/share/man/man5/sudoers.ldap.5
 file path=usr/share/man/man8/sudo.8
