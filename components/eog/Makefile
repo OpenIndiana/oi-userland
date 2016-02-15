@@ -16,6 +16,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		eog
 COMPONENT_VERSION=	2.32.1
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Apps/EyeOfGnome
 COMPONENT_SUMMARY=	GNOME image viewer
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
