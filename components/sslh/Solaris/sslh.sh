@@ -36,8 +36,8 @@ fi
 #
 # Is sslh configured?
 #
-if [ ! -f /etc/sslh.conf ]; then
-	echo "Error: Configuration file '/etc/sslh.conf' not found." \
+if [ ! -f /etc/sslh.cfg ]; then
+	echo "Error: Configuration file '/etc/sslh.cfg' not found." \
 	    "  See sslh(8)."
 	exit $SMF_EXIT_ERR_CONFIG
 fi
@@ -49,5 +49,6 @@ shift $#
 set -- -P /var/run/sslh.pid
 
 /usr/sbin/sslh -F /etc/sslh.cfg "$@"
+
 
 exit $SMF_EXIT_OK
