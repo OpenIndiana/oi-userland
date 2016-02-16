@@ -1,0 +1,15 @@
+diff --git a/lib/intel_os.c b/lib/intel_os.c
+index 2851dba..feca225 100644
+--- a/lib/intel_os.c
++++ b/lib/intel_os.c
+@@ -44,6 +44,10 @@
+ #ifdef HAVE_STRUCT_SYSINFO_TOTALRAM
+ #include <sys/sysinfo.h>
+ #elif defined(HAVE_SWAPCTL) /* Solaris */
++#if !defined(_LP64) && _FILE_OFFSET_BITS == 64
++#  undef _FILE_OFFSET_BITS
++#  undef _LARGEFILE64_SOURCE
++#endif
+ #include <sys/swap.h>
+ #endif
+ 

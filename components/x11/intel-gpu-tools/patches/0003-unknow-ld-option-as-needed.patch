@@ -1,0 +1,26 @@
+diff --git a/tools/Makefile.am b/tools/Makefile.am
+index 90a8ec1..21452db 100644
+--- a/tools/Makefile.am
++++ b/tools/Makefile.am
+@@ -5,7 +5,7 @@ SUBDIRS = null_state_gen registers
+ AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/lib
+ AM_CFLAGS = $(DEBUG_CFLAGS) $(DRM_CFLAGS) $(PCIACCESS_CFLAGS) $(CWARNFLAGS) $(CAIRO_CFLAGS) $(LIBUNWIND_CFLAGS) -DPKGDATADIR=\"$(pkgdatadir)\"
+ LDADD = $(top_builddir)/lib/libintel_tools.la $(DRM_LIBS) $(PCIACCESS_LIBS) $(CAIRO_LIBS) $(LIBUDEV_LIBS) $(LIBUNWIND_LIBS) -lm
+-AM_LDFLAGS = -Wl,--as-needed
++AM_LDFLAGS = 
+ 
+ 
+ # aubdumper
+diff --git a/tests/Makefile.am b/tests/Makefile.am
+index f72f7c0..ff645d3 100644
+--- a/tests/Makefile.am
++++ b/tests/Makefile.am
+@@ -60,7 +60,7 @@ LDADD = ../lib/libintel_tools.la $(PCIACCESS_LIBS) $(DRM_LIBS) $(LIBUNWIND_LIBS)
+ 
+ LDADD += $(CAIRO_LIBS) $(LIBUDEV_LIBS) $(GLIB_LIBS) -lm
+ AM_CFLAGS += $(CAIRO_CFLAGS) $(LIBUDEV_CFLAGS) $(GLIB_CFLAGS)
+-AM_LDFLAGS = -Wl,--as-needed
++AM_LDFLAGS = 
+ 
+ drm_import_export_CFLAGS = $(AM_CFLAGS) $(THREAD_CFLAGS)
+ drm_import_export_LDADD = $(LDADD) -lpthread

@@ -1,0 +1,40 @@
+diff --git a/tools/aubdump.c b/tools/aubdump.c
+index e7f63e7..a4807f9 100644
+--- a/tools/aubdump.c
++++ b/tools/aubdump.c
+@@ -39,10 +39,23 @@
+ #include <sys/mman.h>
+ #include <dlfcn.h>
+ #include <i915_drm.h>
++#ifndef __linux__
++#include <sys/mkdev.h> 
++#endif
+ 
+ #include "intel_aub.h"
+ #include "intel_chipset.h"
+ 
++#ifndef __linux__
++/* from asm-generic/ioctl.h */
++#define _IOC_NRBITS    8
++#define _IOC_TYPEBITS  8
++#define _IOC_TYPEMASK  ((1 << _IOC_TYPEBITS)-1)
++#define _IOC_NRSHIFT   0
++/* #define _IOC_TYPESHIFT      (_IOC_NRSHIFT+_IOC_NRBITS) already in drm.h */
++#define _IOC_TYPE(nr)          (((nr) >> _IOC_TYPESHIFT) & _IOC_TYPEMASK)
++#endif
++
+ static int close_init_helper(int fd);
+ static int ioctl_init_helper(int fd, unsigned long request, ...);
+ 
+@@ -423,7 +436,11 @@ close(int fd)
+ }
+ 
+ int
++#ifdef __linux__
+ ioctl(int fd, unsigned long request, ...)
++#else
++ioctl(int fd, int request, ...)
++#endif
+ {
+ 	va_list args;
+ 	void *argp;
