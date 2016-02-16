@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 
@@ -33,14 +33,13 @@
 # General dirs generated in sample-manifest but with bad attribs.
 <transform dir path=etc$ -> drop>
 <transform dir file link path=opt.* -> drop>
-<transform dir path=usr$ -> drop>
-<transform dir path=usr/bin$ -> drop>
-<transform dir file path=usr/include/gssapi.* -> drop>
-<transform dir path=usr/lib$ -> drop>
-<transform dir path=usr/share$ -> drop>
-<transform dir path=usr/share/doc$ -> drop>
+<transform dir path=usr.* -> drop>
+<transform file path=usr/include/gssapi.* -> drop>
 <transform dir path=var$ -> drop>
 <transform dir path=var/lib$ -> drop>
+
+# Unit test suite testtools is now the python package
+<transform file path=usr/lib/python2.7/vendor-packages/64/samba/samba/external/testtools.* -> drop>
 
 # Samba customized krb5-config
 <transform file path=usr/bin/krb5-config -> drop>
