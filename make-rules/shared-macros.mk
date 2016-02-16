@@ -489,9 +489,8 @@ endif
 CC =		$(CC.$(COMPILER).$(BITS))
 CXX =		$(CXX.$(COMPILER).$(BITS))
 
-RUBY_VERSION =	1.9
-RUBY_LIB_VERSION =	1.9.1
-RUBY.1.9 =	/usr/ruby/1.9/bin/ruby
+RUBY_VERSION =	2.1
+RUBY_LIB_VERSION =	2.1.0
 RUBY.2.1 =	/usr/ruby/2.1/bin/ruby
 RUBY =		$(RUBY.$(RUBY_VERSION))
 # Use the ruby lib versions to represent the RUBY_VERSIONS that

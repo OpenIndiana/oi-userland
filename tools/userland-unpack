@@ -19,7 +19,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 #
 # unpack.py - an archive unpack utility
@@ -49,7 +49,8 @@ def uncompress_unpack_commands(filename, verbose=False):
 	elif (re.search("(\.zip)$", filename) != None):
 		uncompress = "/usr/bin/unzip -qo"
 	elif (re.search("(\.gem)$", filename) != None):
-		uncompress = "/usr/bin/gem unpack"
+                ruby_ver = os.getenv('RUBY_VERSION', '')
+		uncompress = "/usr/ruby/" + ruby_ver + "/bin/gem unpack"
 
 	unpack = " | gtar -xf -"
 
