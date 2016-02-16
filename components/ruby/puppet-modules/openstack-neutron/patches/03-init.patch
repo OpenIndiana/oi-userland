@@ -1,0 +1,55 @@
+In-house patch to add support for Solaris 11.3 and 12.0.  This patch
+has not yet been submitted upstream due to requirements for 3rd party
+CI testing.
+
+--- openstack-neutron-6.1.0/manifests/init.pp.orig     2015-08-10 10:15:41.992660410 -0700
++++ openstack-neutron-6.1.0/manifests/init.pp     2015-08-10 10:16:24.401836047 -0700
+@@ -235,7 +235,7 @@ class neutron (
+   $allow_sorting               = false,
+   $allow_overlapping_ips       = false,
+   $api_extensions_path         = undef,
+-  $root_helper                 = 'sudo neutron-rootwrap /etc/neutron/rootwrap.conf',
++  $root_helper                 = undef,
+   $report_interval             = '30',
+   $memcache_servers            = false,
+   $control_exchange            = 'neutron',
+@@ -312,18 +312,6 @@ class neutron (
+     validate_array($memcache_servers)
+   }
+
+-  File {
+-    require => Package['neutron'],
+-    owner   => 'root',
+-    group   => 'neutron',
+-  }
+-
+-  file { '/etc/neutron':
+-    ensure => directory,
+-  }
+-
+-  file { '/etc/neutron/neutron.conf': }
+-
+   package { 'neutron':
+     ensure => $package_ensure,
+     name   => $::neutron::params::package_name,
+@@ -351,7 +339,6 @@ class neutron (
+     'DEFAULT/api_extensions_path':     value => $api_extensions_path;
+     'DEFAULT/state_path':              value => $state_path;
+     'DEFAULT/lock_path':               value => $lock_path;
+-    'agent/root_helper':               value => $root_helper;
+     'agent/report_interval':           value => $report_interval;
+   }
+
+@@ -374,6 +361,12 @@ class neutron (
+     }
+   }
+
++  if $root_helper {
++    neutron_config {
++      'agent/root_helper':               value => $root_helper;
++    }
++  }
++
+   if $network_device_mtu {
+     neutron_config {
+       'DEFAULT/network_device_mtu':           value => $network_device_mtu;

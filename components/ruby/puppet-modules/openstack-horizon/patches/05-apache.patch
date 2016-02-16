@@ -1,0 +1,75 @@
+In-house patch to add support for Solaris 11.3 and 12.0.  This patch
+has not yet been submitted upstream due to requirements for 3rd party
+CI testing.
+
+--- openstack-horizon-6.1.0/manifests/wsgi/apache.pp.orig       2015-08-10 09:59:25.006128695 -0700
++++ openstack-horizon-6.1.0/manifests/wsgi/apache.pp   2015-08-10 10:01:46.943370519 -0700
+@@ -56,6 +56,14 @@
+ #   (Optional) Description
+ #   Defaults to 'horizon_ssl_vhost'.
+ #
++# [*docroot*]
++#   (Optional) The DocumentRoot setting
++#   Defaults to '/var/www'
++#
++# [*static_alias*]
++#   (Optional) The path to alias to /static
++#   Defaults to '/usr/share/openstack-dashboard/static'
++#
+ # [*extra_params*]
+ #   (optional) A hash of extra paramaters for apache::wsgi class.
+ #   Defaults to {}
+@@ -74,6 +82,8 @@ class horizon::wsgi::apache (
+   $priority            = '15',
+   $vhost_conf_name     = 'horizon_vhost',
+   $vhost_ssl_conf_name = 'horizon_ssl_vhost',
++  $docroot             = '/var/www',
++  $static_alias        = '/usr/share/openstack-dashboard/static',
+   $extra_params        = {},
+ ) {
+
+@@ -132,7 +142,11 @@ class horizon::wsgi::apache (
+     $redirect_url   = $::horizon::params::root_url
+   }
+
+-  Package['horizon'] -> Package[$::horizon::params::http_service]
++  if $::osfamily == 'Solaris' {
++    Package[$::horizon::params::package_name] -> Package['web/server/apache-24']
++  } else {
++    Package['horizon'] -> Package[$::horizon::params::http_service]
++  }
+   File[$::horizon::params::config_file] ~> Service[$::horizon::params::http_service]
+
+   $unix_user = $::osfamily ? {
+@@ -150,7 +164,7 @@ class horizon::wsgi::apache (
+     group   => $unix_group,
+     before  => Service[$::horizon::params::http_service],
+     mode    => '0751',
+-    require => Package['horizon'],
++    require => Package[$::horizon::params::package_name],
+   }
+
+   file { "${::horizon::params::logdir}/horizon.log":
+@@ -159,19 +173,19 @@ class horizon::wsgi::apache (
+     group   => $unix_group,
+     before  => Service[$::horizon::params::http_service],
+     mode    => '0640',
+-    require => [ File[$::horizon::params::logdir], Package['horizon'] ],
++    require => [ File[$::horizon::params::logdir], Package[$::horizon::params::package_name] ],
+   }
+
+   $default_vhost_conf_no_ip = {
+     servername                  => $servername,
+     serveraliases               => os_any2array($final_server_aliases),
+-    docroot                     => '/var/www/',
++    docroot                     => $docroot,
+     access_log_file             => 'horizon_access.log',
+     error_log_file              => 'horizon_error.log',
+     priority                    => $priority,
+     aliases                     => [{
+       alias => "${$::horizon::params::root_url}/static",
+-      path  => '/usr/share/openstack-dashboard/static',
++      path  => $static_alias,
+     }],
+     port                        => 80,
+     ssl_cert                    => $horizon_cert,

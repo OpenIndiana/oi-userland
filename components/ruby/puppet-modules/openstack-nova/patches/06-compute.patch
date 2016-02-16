@@ -1,0 +1,17 @@
+In-house patch to add support for Solaris 11.3 and 12.0.  This patch
+has not yet been submitted upstream due to requirements for 3rd party
+CI testing.
+
+--- openstack-nova-6.1.0/manifests/compute.pp.orig	2015-06-02 17:00:39.019478510 -0600
++++ openstack-nova-6.1.0/manifests/compute.pp	2015-06-02 17:00:45.549532867 -0600
+@@ -207,10 +207,6 @@ class nova::compute (
+     }
+   }
+ 
+-  package { 'pm-utils':
+-    ensure => present,
+-  }
+-
+   nova_config {
+     'DEFAULT/force_raw_images': value => $force_raw_images;
+   }

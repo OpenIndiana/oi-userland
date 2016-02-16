@@ -1,0 +1,37 @@
+In-house patch to add support for Solaris 11.3 and 12.0.  This patch
+has been submitted and is in new versions of this module.
+
+--- openstack-heat-6.1.0/manifests/init.pp.orig	2015-05-29 10:15:21.653268994 -0600
++++ openstack-heat-6.1.0/manifests/init.pp	2015-05-29 10:15:55.528819621 -0600
+@@ -265,30 +265,12 @@ class heat(
+     require => Package['heat-common'],
+   }
+ 
+-  group { 'heat':
+-    name    => 'heat',
+-    require => Package['heat-common'],
+-  }
+-
+-  user { 'heat':
+-    name    => 'heat',
+-    gid     => 'heat',
+-    groups  => ['heat'],
+-    system  => true,
+-    require => Package['heat-common'],
+-  }
+-
+   file { '/etc/heat/':
+     ensure => directory,
+-    owner  => 'heat',
+-    group  => 'heat',
+-    mode   => '0750',
+   }
+ 
+   file { '/etc/heat/heat.conf':
+-    owner => 'heat',
+-    group => 'heat',
+-    mode  => '0640',
++    ensure => present,
+   }
+ 
+   package { 'heat-common':

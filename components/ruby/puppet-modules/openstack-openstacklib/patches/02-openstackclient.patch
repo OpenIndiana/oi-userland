@@ -1,0 +1,27 @@
+In-house patch to add support for Solaris 11.3 and 12.0.  This patch
+has not yet been submitted upstream due to requirements for 3rd party
+CI testing.
+
+--- openstack-openstacklib-6.1.0/manifests/openstackclient.pp.orig	2015-06-05 16:06:39.223700269 -0600
++++ openstack-openstacklib-6.1.0/manifests/openstackclient.pp	2015-06-05 16:08:35.218161669 -0600
+@@ -10,9 +10,16 @@
+ #
+ class openstacklib::openstackclient(
+   $package_ensure = 'present',
+-){
+-  package { 'python-openstackclient':
+-    ensure => $package_ensure,
+-    tag    => 'openstack',
++) {
++  if $::osfamily == 'Solaris' {
++    package { 'library/python/openstackclient':
++      ensure => $package_ensure,
++      tag    => 'openstack',
++    }
++  } else {
++    package { 'python-openstackclient':
++      ensure => $package_ensure,
++      tag    => 'openstack',
++    }
+   }
+ }

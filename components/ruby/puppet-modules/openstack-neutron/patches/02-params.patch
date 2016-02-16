@@ -1,0 +1,63 @@
+In-house patch to add support for Solaris 11.3 and 12.0.  This patch
+has not yet been submitted upstream due to requirements for 3rd party
+CI testing.
+
+--- openstack-neutron-6.1.0/manifests/params.pp.orig	2015-05-29 10:42:11.939016221 -0600
++++ openstack-neutron-6.1.0/manifests/params.pp	2015-05-29 10:55:54.281048159 -0600
+@@ -153,6 +153,56 @@ class neutron::params {
+     $cliff_package      = 'python-cliff'
+     $kernel_headers     = "linux-headers-${::kernelrelease}"
+ 
++  } elsif($::osfamily == 'Solaris') {
++    $nobody_user_group   = 'nobody'
++    $package_name        = 'cloud/openstack/neutron'
++    $server_service      = 'application/openstack/neutron/neutron-server:default'
++    $client_package      = 'library/python/neutronclient'
++    $ml2_server_package  = false
++    $ovs_agent_package   = false
++    $ovs_agent_service   = false
++    $ovs_server_package  = false
++    $ovs_cleanup_service = false
++    $ovs_package         = false
++    $libnl_package       = false
++    $package_provider    = 'pkg'
++
++    $linuxbridge_agent_package  = false
++    $linuxbridge_agent_service  = false
++    $linuxbridge_server_package = false
++    $linuxbridge_config_file    = false
++
++    $cisco_server_package  = false
++    $cisco_config_file     = false
++    $cisco_ml2_config_file = false
++
++    $nvp_server_package = false
++
++    $dhcp_agent_package = false
++    $dhcp_agent_service = 'application/openstack/neutron/neutron-dhcp-agent:default'
++
++    $dnsmasq_packages   = 'service/network/dnsmasq'
++
++    $lbaas_agent_package = false
++    $lbaas_agent_service = false
++
++    $haproxy_package   = false
++
++    $metering_agent_package = false
++    $metering_agent_service = false
++
++    $vpnaas_agent_package = false
++    $vpnaas_agent_service = false
++    $openswan_package     = false
++
++    $l3_agent_package   = false
++    $l3_agent_service   = 'application/openstack/neutron/neutron-l3-agent:default'
++
++    $metadata_agent_service = 'application/openstack/neutron/neutron-metadata-agent:default'
++
++    $cliff_package      = 'library/python/cliff'
++
++    $kernel_headers     = false
+   } else {
+ 
+     fail("Unsupported osfamily ${::osfamily}")

@@ -1,0 +1,32 @@
+In-house patch to add support for Solaris 11.3 and 12.0.  This patch
+has not yet been submitted upstream due to requirements for 3rd party
+CI testing.
+
+--- openstack-heat-6.1.0/manifests/params.pp.orig	2015-05-29 10:14:14.918710769 -0600
++++ openstack-heat-6.1.0/manifests/params.pp	2015-05-29 10:14:53.068950697 -0600
+@@ -45,10 +45,24 @@ class heat::params {
+         }
+       }
+     }
++    'Solaris': {
++      # package names
++      $api_package_name = 'cloud/openstack/heat'
++      $api_cloudwatch_package_name = 'cloud/openstack/heat'
++      $api_cfn_package_name = 'cloud/openstack/heat'
++      $engine_package_name = 'cloud/openstack/heat'
++      $client_package_name = 'library/python/heatclient'
++      $common_package_name = 'cloud/openstack/heat'
++      # service names
++      $api_service_name = 'application/openstack/heat/heat-api'
++      $api_cloudwatch_service_name = 'application/openstack/heat/heat-api-cloudwatch'
++      $api_cfn_service_name = 'application/openstack/heat/heat-api-cfn'
++      $engine_service_name = 'application/openstack/heat/heat-engine'
++    }
+     default: {
+       fail("Unsupported osfamily: ${::osfamily} operatingsystem: \
+ ${::operatingsystem}, module ${module_name} only support osfamily \
+-RedHat and Debian")
++Solaris, RedHat, and Debian")
+     }
+   }
+ }

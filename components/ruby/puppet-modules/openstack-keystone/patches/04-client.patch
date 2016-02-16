@@ -1,0 +1,25 @@
+In-house patch to add support for Solaris 11.3 and 12.0.  This patch
+has not yet been submitted upstream due to requirements for 3rd party
+CI testing.
+
+--- openstack-keystone-6.1.0/manifests/client.pp.orig	2015-11-02 08:01:00.540540751 -0800
++++ openstack-keystone-6.1.0/manifests/client.pp	2015-11-02 08:05:26.947491915 -0800
+@@ -12,8 +12,15 @@ class keystone::client (
+   $ensure = 'present'
+ ) {
+ 
+-  package { 'python-keystoneclient':
+-    ensure => $ensure,
+-    tag    => 'openstack',
++  if $::osfamily == 'Solaris' {
++    package { 'library/python/keystoneclient':
++      ensure => $ensure,
++      tag    => 'openstack',
++    }
++  } else {
++    package { 'python-keystoneclient':
++      ensure => $ensure,
++      tag    => 'openstack',
++    }
+   }
+ }

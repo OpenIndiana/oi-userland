@@ -1,0 +1,69 @@
+In-house patch to add support for Solaris 11.3 and 12.0.  This patch
+has not yet been submitted upstream due to requirements for 3rd party
+CI testing.
+
+--- openstack-swift-6.1.0/manifests/ringserver.pp.orig 2015-10-15 08:03:54.000000000 -0700
++++ openstack-swift-6.1.0/manifests/ringserver.pp       2015-11-02 09:49:22.778783205 -0800
+@@ -32,20 +32,9 @@ class swift::ringserver(
+
+   Class['swift::ringbuilder'] -> Class['swift::ringserver']
+
+-  if !defined(Class['rsync::server']) {
+-    class { '::rsync::server':
+-      use_xinetd => true,
+-      address    => $local_net_ip,
+-      use_chroot => 'no',
++  if !defined(Service['application/openstack/swift/swift-replicator-rsync']) {
++    service { 'application/openstack/swift/swift-replicator-rsync':
++      ensure   => 'running',
+     }
+   }
+-
+-  rsync::server::module { 'swift_server':
+-    path            => '/etc/swift',
+-    lock_file       => '/var/lock/swift_server.lock',
+-    uid             => 'swift',
+-    gid             => 'swift',
+-    max_connections => $max_connections,
+-    read_only       => true,
+-  }
+ }
+
+--- openstack-swift-6.1.0/manifests/storage.pp.orig    2015-10-15 08:03:54.000000000 -0700
++++ openstack-swift-6.1.0/manifests/storage.pp  2015-11-02 09:46:53.798720245 -0800
+@@ -23,11 +23,9 @@ class swift::storage(
+   $storage_local_net_ip
+ ) {
+
+-  if !defined(Class['rsync::server']){
+-    class{ '::rsync::server':
+-      use_xinetd => true,
+-      address    => $storage_local_net_ip,
+-      use_chroot => 'no',
++  if !defined(Service['application/openstack/swift/swift-replicator-rsync']) {
++    service { 'application/openstack/swift/swift-replicator-rsync':
++      ensure   => 'running',
+     }
+   }
+ }
+
+--- openstack-swift-6.1.0/manifests/storage/server.pp.orig       2015-11-02 09:51:04.785489361 -0800
++++ openstack-swift-6.1.0/manifests/storage/server.pp   2015-11-02 09:51:16.912645480 -0800
+@@ -165,17 +165,6 @@ define swift::storage::server(
+
+   $bind_port = $name
+
+-  rsync::server::module { $type:
+-    path            => $devices,
+-    lock_file       => "/var/lock/${type}.lock",
+-    uid             => $owner,
+-    gid             => $group,
+-    incoming_chmod  => $incoming_chmod,
+-    outgoing_chmod  => $outgoing_chmod,
+-    max_connections => $max_connections,
+-    read_only       => false,
+-  }
+-
+   concat { "/etc/swift/${config_file_path}":
+     owner   => $owner,
+     group   => $group,

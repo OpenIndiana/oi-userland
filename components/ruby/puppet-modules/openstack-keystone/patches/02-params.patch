@@ -1,0 +1,40 @@
+In-house patch to add support for Solaris 11.3 and 12.0.  This patch
+has not yet been submitted upstream due to requirements for 3rd party
+CI testing.
+--- openstack-keystone-6.1.0/manifests/params.pp.~1~	2015-05-20 15:52:29.000000000 -0600
++++ openstack-keystone-6.1.0/manifests/params.pp	2015-06-01 13:41:27.577020809 -0600
+@@ -2,10 +2,10 @@
+ # This class contains the platform differences for keystone
+ #
+ class keystone::params {
+-  $client_package_name = 'python-keystone'
+ 
+   case $::osfamily {
+     'Debian': {
++      $client_package_name          = 'python-keystone'
+       $package_name                 = 'keystone'
+       $service_name                 = 'keystone'
+       $keystone_wsgi_script_path    = '/usr/lib/cgi-bin/keystone'
+@@ -26,6 +26,7 @@ class keystone::params {
+       }
+     }
+     'RedHat': {
++      $client_package_name          = 'python-keystone'
+       $package_name                 = 'openstack-keystone'
+       $service_name                 = 'openstack-keystone'
+       $keystone_wsgi_script_path    = '/var/www/cgi-bin/keystone'
+@@ -34,5 +35,14 @@ class keystone::params {
+       $keystone_wsgi_script_source  = '/usr/share/keystone/keystone.wsgi'
+       $paste_config                 = '/usr/share/keystone/keystone-dist-paste.ini'
+     }
++    'Solaris': {
++      $client_package_name          = 'library/python/keystoneclient'
++      $package_name                 = 'cloud/openstack/keystone'
++      $service_name                 = 'application/openstack/keystone:default'
++      $keystone_wsgi_script_path    = undef
++      $python_memcache_package_name = 'python-memcached'
++      $service_provider             = undef
++      $paste_config                 = undef
++    }
+   }
+ }

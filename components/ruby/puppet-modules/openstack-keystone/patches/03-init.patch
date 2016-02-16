@@ -1,0 +1,25 @@
+In-house patch to add support for Solaris 11.3 and 12.0.  This patch
+has not yet been submitted upstream due to requirements for 3rd party
+CI testing.
+
+--- openstack-keystone-6.1.0/manifests/init.pp.orig     2015-08-10 10:07:52.618276233 -0700
++++ openstack-keystone-6.1.0/manifests/init.pp     2015-08-10 10:08:50.923010629 -0700
+@@ -544,18 +544,12 @@ class keystone(
+
+   file { ['/etc/keystone', '/var/log/keystone', '/var/lib/keystone']:
+     ensure  => directory,
+-    mode    => '0750',
+-    owner   => 'keystone',
+-    group   => 'keystone',
+     require => Package['keystone'],
+     notify  => Service[$service_name],
+   }
+
+   file { '/etc/keystone/keystone.conf':
+     ensure  => present,
+-    mode    => '0600',
+-    owner   => 'keystone',
+-    group   => 'keystone',
+     require => Package['keystone'],
+     notify  => Service[$service_name],
+   }

@@ -1,0 +1,55 @@
+In-house patch to add support for Solaris 11.3 and 12.0.  This patch
+has not yet been submitted upstream due to requirements for 3rd party
+CI testing.
+
+--- openstack-glance-6.1.0/manifests/params.pp.orig     2015-08-10 09:37:49.703015029 -0700
++++ openstack-glance-6.1.0/manifests/params.pp   2015-08-10 09:38:51.370489635 -0700
+@@ -1,14 +1,11 @@
+ # these parameters need to be accessed from several locations and
+ # should be considered to be constant
+ class glance::params {
+-
+-  $client_package_name = 'python-glanceclient'
+-
+-  $cache_cleaner_command = 'glance-cache-cleaner'
+-  $cache_pruner_command  = 'glance-cache-pruner'
+-
+   case $::osfamily {
+     'RedHat': {
++      $client_package_name   = 'python-glanceclient'
++      $cache_cleaner_command = 'glance-cache-cleaner'
++      $cache_pruner_command  = 'glance-cache-pruner'
+       $api_package_name      = 'openstack-glance'
+       $registry_package_name = 'openstack-glance'
+       $api_service_name      = 'openstack-glance-api'
+@@ -21,6 +18,9 @@ class glance::params {
+       }
+     }
+     'Debian': {
++      $client_package_name   = 'python-glanceclient'
++      $cache_cleaner_command = 'glance-cache-cleaner'
++      $cache_pruner_command  = 'glance-cache-pruner'
+       $api_package_name      = 'glance-api'
+       $registry_package_name = 'glance-registry'
+       $api_service_name      = 'glance-api'
+@@ -28,8 +28,19 @@ class glance::params {
+       $db_sync_command       = 'glance-manage --config-file=/etc/glance/glance-registry.conf db_sync'
+       $pyceph_package_name   = 'python-ceph'
+     }
++    'Solaris': {
++      $client_package_name   = 'library/python/glanceclient'
++      $pyceph_package_name   = undef
++      $cache_cleaner_command = '/usr/lib/glance/glance-cache-cleaner'
++      $cache_pruner_command  = '/usr/lib/glance/glance-cache-pruner'
++      $api_package_name      = 'cloud/openstack/glance'
++      $registry_package_name = 'cloud/openstack/glance'
++      $api_service_name      = 'application/openstack/glance/glance-api'
++      $registry_service_name = 'application/openstack/glance/glance-registry'
++      $db_sync_command       = undef
++    }
+     default: {
+-      fail("Unsupported osfamily: ${::osfamily} operatingsystem: ${::operatingsystem}, module ${module_name} only support osfamily RedHat and Debian")
++      fail("Unsupported osfamily: ${::osfamily} operatingsystem: ${::operatingsystem}, module ${module_name} only support osfamily Solaris, RedHat, and Debian")
+     }
+   }
+

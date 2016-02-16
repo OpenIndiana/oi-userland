@@ -1,0 +1,57 @@
+In-house patch to add support for Solaris 11.3 and 12.0.  This patch
+has not yet been submitted upstream due to requirements for 3rd party
+CI testing.
+
+--- openstack-horizon-6.1.0/manifests/params.pp.orig	2015-04-23 15:14:49.613879625 -0600
++++ openstack-horizon-6.1.0/manifests/params.pp	2015-04-23 15:18:41.786048628 -0600
+@@ -2,12 +2,11 @@
+ # should be considered to be constant
+ class horizon::params {
+
+-  $logdir      = '/var/log/horizon'
+-  $django_wsgi = '/usr/share/openstack-dashboard/openstack_dashboard/wsgi/django.wsgi'
+-  $manage_py   = '/usr/share/openstack-dashboard/manage.py'
+-
+   case $::osfamily {
+     'RedHat': {
++      $logdir                      = '/var/log/horizon'
++      $django_wsgi                 = '/usr/share/openstack-dashboard/openstack_dashboard/wsgi/django.wsgi'
++      $manage_py                   = '/usr/share/openstack-dashboard/manage.py'
+       $http_service                = 'httpd'
+       $http_modwsgi                = 'mod_wsgi'
+       $package_name                = 'openstack-dashboard'
+@@ -21,6 +20,9 @@ class horizon::params {
+       $wsgi_group                  = 'dashboard'
+     }
+     'Debian': {
++      $logdir                      = '/var/log/horizon'
++      $django_wsgi                 = '/usr/share/openstack-dashboard/openstack_dashboard/wsgi/django.wsgi'
++      $manage_py                   = '/usr/share/openstack-dashboard/manage.py'
+       $http_service                = 'apache2'
+       $config_file                 = '/etc/openstack-dashboard/local_settings.py'
+       $httpd_listen_config_file    = '/etc/apache2/ports.conf'
+@@ -40,8 +42,23 @@ class horizon::params {
+         }
+       }
+     }
++    'Solaris': {
++      $logdir                      = '/var/lib/openstack_dashboard'
++      $django_wsgi                 = '/usr/lib/python2.7/vendor-packages/openstack_dashboard/wsgi/django.wsgi'
++      $manage_py                   = undef
++      $http_service                = 'network/http:apache24'
++      $config_file                 = '/etc/openstack_dashboard/local_settings.py'
++      $httpd_config_file           = '/etc/apache2/2.4/samples-conf.d/openstack-dashboard-http.conf'
++      $httpd_listen_config_file    = '/etc/apache2/2.4/httpd.conf'
++      $root_url                    = '/horizon'
++      $apache_user                 = 'webservd'
++      $apache_group                = 'webservd'
++      $wsgi_user                   = 'webservd'
++      $wsgi_group                  = 'webservd'
++      $package_name                = 'cloud/openstack/horizon'
++    }
+     default: {
+-      fail("Unsupported osfamily: ${::osfamily} operatingsystem: ${::operatingsystem}, module ${module_name} only support osfamily RedHat and Debian")
++      fail("Unsupported osfamily: ${::osfamily} operatingsystem: ${::operatingsystem}, module ${module_name} only support osfamily Solaris, RedHat, and Debian")
+     }
+   }
+ }

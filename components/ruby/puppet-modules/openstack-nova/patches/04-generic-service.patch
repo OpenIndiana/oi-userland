@@ -1,0 +1,15 @@
+In-house patch to add support for Solaris 11.3 and 12.0.  This patch
+has not yet been submitted upstream due to requirements for 3rd party
+CI testing.
+
+--- openstack-nova-6.1.0/manifests/generic_service.pp.orig	2015-07-07 12:28:25.529079509 -0700
++++ openstack-nova-6.1.0/manifests/generic_service.pp	2015-07-07 12:29:11.890950696 -0700
+@@ -79,7 +79,7 @@ define nova::generic_service(
+       }
+     }
+
+-    service { $nova_title:
++    service { $service_name:
+       ensure    => $service_ensure,
+       name      => $service_name,
+       enable    => $enabled,

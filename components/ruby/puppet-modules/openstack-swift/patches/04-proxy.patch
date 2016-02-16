@@ -1,0 +1,32 @@
+In-house patch to add support for Solaris 11.3 and 12.0.  This patch
+has not yet been submitted upstream due to requirements for 3rd party
+CI testing.
+
+--- openstack-swift-6.1.0/manifests/proxy.pp.orig	2015-09-14 13:10:38.379095262 +0100
++++ openstack-swift-6.1.0/manifests/proxy.pp	2015-09-14 13:11:32.939063467 +0100
+@@ -167,17 +167,20 @@
+     fail ('log_udp_port requires log_udp_host to be set')
+   }
+ 
+-  package { 'swift-proxy':
+-    ensure => $package_ensure,
+-    name   => $::swift::params::proxy_package_name,
+-    tag    => 'openstack',
++  if ( $swift::params::proxy_package_name != $swift::params::package_name ) {
++    ensure_packages([$swift::params::proxy_package_name],
++      {
++        ensure => $package_ensure,
++        name   => $::swift::params::proxy_package_name,
++        tag    => 'openstack',
++      }
++    )
+   }
+ 
+   concat { '/etc/swift/proxy-server.conf':
+     owner   => 'swift',
+     group   => 'swift',
+     mode    => '0660',
+-    require => Package['swift-proxy'],
+   }
+ 
+   $required_classes = split(

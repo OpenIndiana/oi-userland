@@ -1,0 +1,32 @@
+In-house patch to add support for Solaris 11.3 and 12.0.  This patch
+has not yet been submitted upstream due to requirements for 3rd party
+CI testing.
+
+--- openstack-cinder-6.1.0/manifests/params.pp.orig	2015-10-15 09:42:47.576607396 -0600
++++ openstack-cinder-6.1.0/manifests/params.pp	2015-10-15 09:43:48.776845153 -0600
+@@ -51,7 +51,24 @@ class cinder::params {
+       }
+     }
+
++  } elsif($::osfamily == 'Solaris') {
++    $package_name       = 'cloud/openstack/cinder'
++    $client_package     = 'library/python/cinderclient'
++    $api_package        = undef
++    $api_service        = 'application/openstack/cinder/cinder-api:default'
++    $backup_package     = undef
++    $backup_service     = 'application/openstack/cinder/cinder-backup:default'
++    $scheduler_package  = undef
++    $scheduler_service  = 'application/openstack/cinder/cinder-scheduler:default'
++    $volume_package     = undef
++    $volume_service     = 'application/openstack/cinder/cinder-volume:default'
++    $db_sync_command    = 'cinder-manage db sync'
++    $tgt_package_name   = undef
++    $tgt_service_name   = undef
++    $ceph_init_override = undef
++    $iscsi_helper       = undef
++    $lio_package_name   = undef
+   } else {
+-    fail("unsupported osfamily ${::osfamily}, currently Debian and Redhat are the only supported platforms")
++    fail("unsupported osfamily ${::osfamily}, currently Solaris, Debian, and Redhat are the only supported platforms")
+   }
+ }

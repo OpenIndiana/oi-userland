@@ -1,0 +1,21 @@
+In-house patch to add support for Solaris 11.3 and 12.0.  This patch
+has not yet been submitted upstream due to requirements for 3rd party
+CI testing.
+
+--- openstack-ironic-6.1.0/manifests/params.pp.orig	2015-06-03 09:47:53.207517414 -0600
++++ openstack-ironic-6.1.0/manifests/params.pp	2015-06-03 09:49:30.640143302 -0600
+@@ -40,6 +40,14 @@ class ironic::params {
+       $conductor_package   = 'ironic-conductor'
+       $client_package      = 'python-ironicclient'
+     }
++    'Solaris': {
++      $common_package_name = 'cloud/openstack/ironic'
++      $api_service         = 'application/openstack/ironic/ironic-api:default'
++      $api_package         = undef
++      $conductor_service   = 'application/openstack/ironic/ironic-conductor:default'
++      $conductor_package   = undef
++      $client_package      = 'library/python/ironicclient'
++    }
+     default: {
+       fail("Unsupported osfamily ${::osfamily}")
+     }

@@ -1,0 +1,50 @@
+Patch to change /bin/grep to /bin/ggrep as the module uses flags
+/bin/grep doesn't understand.
+
+The patch is not suitable for upstream and can be removed when
+/bin/grep enters this century.  See bug 22742880 for more information.
+
+--- openstack-cinder-6.1.0/spec/defines/cinder_type_set_spec.rb.orig	Fri Jan 15 11:57:08 2016
++++ openstack-cinder-6.1.0/spec/defines/cinder_type_set_spec.rb	Fri Jan 15 11:57:13 2016
+@@ -19,7 +19,7 @@
+   it 'should have its execs' do
+     is_expected.to contain_exec('cinder type-key sith set monchichi=hippo').with(
+       :command => 'cinder type-key sith set monchichi=hippo',
+-      :unless  => "cinder extra-specs-list | grep -Eq '\\bsith\\b.*\\bmonchichi\\b.*\\bhippo\\b'",
++      :unless  => "cinder extra-specs-list | ggrep -Eq '\\bsith\\b.*\\bmonchichi\\b.*\\bhippo\\b'",
+       :environment => [
+         'OS_TENANT_NAME=admin',
+         'OS_USERNAME=admin',
+--- openstack-cinder-6.1.0/spec/defines/cinder_type_spec.rb.orig	Fri Jan 15 11:57:13 2016
++++ openstack-cinder-6.1.0/spec/defines/cinder_type_spec.rb	Fri Jan 15 11:57:19 2016
+@@ -24,7 +24,7 @@
+         'OS_USERNAME=admin',
+         'OS_PASSWORD=asdf',
+         'OS_AUTH_URL=http://127.127.127.1:5000/v2.0/'],
+-      :unless  => "cinder type-list | grep -qP '\\bhippo\\b'",
++      :unless  => "cinder type-list | ggrep -qP '\\bhippo\\b'",
+       :require => 'Package[python-cinderclient]')
+     is_expected.to contain_exec('cinder type-key hippo set volume_backend_name=name1')
+     is_expected.to contain_exec('cinder type-key hippo set volume_backend_name=name2')
+--- openstack-cinder-6.1.0/manifests/type_set.pp.orig	Fri Jan 15 11:57:19 2016
++++ openstack-cinder-6.1.0/manifests/type_set.pp	Fri Jan 15 11:57:21 2016
+@@ -58,7 +58,7 @@
+   exec {"cinder type-key ${type} set ${key}=${name}":
+     path        => ['/usr/bin', '/bin'],
+     command     => "cinder type-key ${type} set ${key}=${name}",
+-    unless      => "cinder extra-specs-list | grep -Eq '\\b${type}\\b.*\\b${key}\\b.*\\b${name}\\b'",
++    unless      => "cinder extra-specs-list | ggrep -Eq '\\b${type}\\b.*\\b${key}\\b.*\\b${name}\\b'",
+     environment => concat($cinder_env, $region_env),
+     require     => Package['python-cinderclient']
+   }
+--- openstack-cinder-6.1.0/manifests/type.pp.orig	Fri Jan 15 11:57:21 2016
++++ openstack-cinder-6.1.0/manifests/type.pp	Fri Jan 15 11:57:27 2016
+@@ -66,7 +66,7 @@
+ 
+   exec {"cinder type-create ${volume_name}":
+     command     => "cinder type-create ${volume_name}",
+-    unless      => "cinder type-list | grep -qP '\\b${volume_name}\\b'",
++    unless      => "cinder type-list | ggrep -qP '\\b${volume_name}\\b'",
+     environment => concat($cinder_env, $region_env),
+     require     => Package['python-cinderclient'],
+     path        => ['/usr/bin', '/bin'],

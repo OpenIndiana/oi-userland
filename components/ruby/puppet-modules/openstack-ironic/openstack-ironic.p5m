@@ -1,0 +1,96 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+#
+
+set name=pkg.fmri \
+    value=pkg:/system/management/puppet/openstack-ironic@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="OpenStack Ironic Puppet Module"
+set name=pkg.description \
+    value="The ironic module is a thorough attempt to make Puppet capable of managing the entirety of ironic."
+set name=com.oracle.info.description value="Ironic Puppet Module"
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value="org.opensolaris.category.2008:System/Administration and Configuration" \
+    value="org.opensolaris.category.2008:System/Enterprise Management"
+set name=info.upstream value="OpenStack <openstack-dev@lists.openstack.org>"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2016/001
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+#
+file path=etc/puppet/modules/ironic/CHANGELOG.md
+file path=etc/puppet/modules/ironic/Gemfile
+file path=etc/puppet/modules/ironic/LICENSE
+file path=etc/puppet/modules/ironic/README.md
+file path=etc/puppet/modules/ironic/Rakefile
+file path=etc/puppet/modules/ironic/checksums.json
+file path=etc/puppet/modules/ironic/examples/ironic.pp
+file path=etc/puppet/modules/ironic/lib/puppet/provider/ironic.rb
+file path=etc/puppet/modules/ironic/lib/puppet/provider/ironic_config/ini_setting.rb
+file path=etc/puppet/modules/ironic/lib/puppet/type/ironic_config.rb
+file path=etc/puppet/modules/ironic/manifests/api.pp
+file path=etc/puppet/modules/ironic/manifests/client.pp
+file path=etc/puppet/modules/ironic/manifests/conductor.pp
+file path=etc/puppet/modules/ironic/manifests/db/mysql.pp
+file path=etc/puppet/modules/ironic/manifests/db/postgresql.pp
+file path=etc/puppet/modules/ironic/manifests/drivers/ipmi.pp
+file path=etc/puppet/modules/ironic/manifests/drivers/pxe.pp
+file files/solaris_ipmitool.pp \
+    path=etc/puppet/modules/ironic/manifests/drivers/solaris_ipmitool.pp
+file path=etc/puppet/modules/ironic/manifests/init.pp
+file path=etc/puppet/modules/ironic/manifests/keystone/auth.pp
+file path=etc/puppet/modules/ironic/manifests/params.pp
+file path=etc/puppet/modules/ironic/manifests/policy.pp
+file path=etc/puppet/modules/ironic/metadata.json
+file path=etc/puppet/modules/ironic/spec/acceptance/basic_ironic_spec.rb
+file path=etc/puppet/modules/ironic/spec/acceptance/nodesets/default.yml
+file path=etc/puppet/modules/ironic/spec/acceptance/nodesets/nodepool-centos7.yml
+file path=etc/puppet/modules/ironic/spec/acceptance/nodesets/nodepool-trusty.yml
+file path=etc/puppet/modules/ironic/spec/classes/ironic_api_spec.rb
+file path=etc/puppet/modules/ironic/spec/classes/ironic_client_spec.rb
+file path=etc/puppet/modules/ironic/spec/classes/ironic_conductor_spec.rb
+file path=etc/puppet/modules/ironic/spec/classes/ironic_db_mysql_spec.rb
+file path=etc/puppet/modules/ironic/spec/classes/ironic_db_postgresql_spec.rb
+file path=etc/puppet/modules/ironic/spec/classes/ironic_drivers_ipmi_spec.rb
+file path=etc/puppet/modules/ironic/spec/classes/ironic_drivers_pxe_spec.rb
+file path=etc/puppet/modules/ironic/spec/classes/ironic_init_spec.rb
+file path=etc/puppet/modules/ironic/spec/classes/ironic_keystone_auth_spec.rb
+file path=etc/puppet/modules/ironic/spec/classes/ironic_policy_spec.rb
+file path=etc/puppet/modules/ironic/spec/shared_examples.rb
+file path=etc/puppet/modules/ironic/spec/spec_helper.rb
+file path=etc/puppet/modules/ironic/spec/spec_helper_acceptance.rb
+file path=etc/puppet/modules/ironic/spec/unit/provider/ironic_spec.rb
+#
+license openstack-ironic.license license="Apache v2.0"
+
+# force a dependency on openstack-keystone
+depend type=require fmri=system/management/puppet/openstack-keystone
+
+# force a dependency on openstack-openstacklib
+depend type=require fmri=system/management/puppet/openstack-openstacklib
+
+# force a dependency on puppetlabs-inifile
+depend type=require fmri=system/management/puppet/puppetlabs-inifile
+
+# force a dependency on puppetlabs-stdlib
+depend type=require fmri=system/management/puppet/puppetlabs-stdlib

@@ -1,0 +1,94 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+#
+
+set name=pkg.fmri \
+    value=pkg:/system/management/puppet/openstack-openstacklib@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Openstacklib Puppet Module"
+set name=pkg.description \
+    value="The openstacklib module is a library module for other Openstack modules to utilize."
+set name=com.oracle.info.description value="Openstacklib Puppet Module"
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value="org.opensolaris.category.2008:System/Administration and Configuration"
+set name=info.upstream value="OpenStack <openstack-dev@lists.openstack.org>"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2016/001
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+#
+file path=etc/puppet/modules/openstacklib/CHANGELOG.md
+file path=etc/puppet/modules/openstacklib/Gemfile
+file path=etc/puppet/modules/openstacklib/LICENSE
+file path=etc/puppet/modules/openstacklib/README.md
+file path=etc/puppet/modules/openstacklib/Rakefile
+file path=etc/puppet/modules/openstacklib/checksums.json
+file path=etc/puppet/modules/openstacklib/lib/puppet/parser/functions/os_database_connection.rb
+file path=etc/puppet/modules/openstacklib/lib/puppet/provider/openstack.rb
+file path=etc/puppet/modules/openstacklib/lib/puppet/provider/openstack/auth.rb
+file path=etc/puppet/modules/openstacklib/lib/puppet/provider/openstack/credentials.rb
+file path=etc/puppet/modules/openstacklib/manifests/db/mysql.pp
+file path=etc/puppet/modules/openstacklib/manifests/db/mysql/host_access.pp
+file path=etc/puppet/modules/openstacklib/manifests/db/postgresql.pp
+file path=etc/puppet/modules/openstacklib/manifests/messaging/rabbitmq.pp
+file path=etc/puppet/modules/openstacklib/manifests/openstackclient.pp
+file path=etc/puppet/modules/openstacklib/manifests/policy.pp
+file path=etc/puppet/modules/openstacklib/manifests/policy/base.pp
+file path=etc/puppet/modules/openstacklib/manifests/service_validation.pp
+file path=etc/puppet/modules/openstacklib/manifests/wsgi/apache.pp
+file path=etc/puppet/modules/openstacklib/metadata.json
+file path=etc/puppet/modules/openstacklib/spec/acceptance/mysql_spec.rb
+file path=etc/puppet/modules/openstacklib/spec/acceptance/nodesets/default.yml
+file path=etc/puppet/modules/openstacklib/spec/acceptance/nodesets/nodepool-centos7.yml
+file path=etc/puppet/modules/openstacklib/spec/acceptance/nodesets/nodepool-trusty.yml
+file path=etc/puppet/modules/openstacklib/spec/acceptance/rabbitmq_spec.rb
+file path=etc/puppet/modules/openstacklib/spec/classes/init_spec.rb
+file path=etc/puppet/modules/openstacklib/spec/classes/openstacklib_policy_spec.rb
+file path=etc/puppet/modules/openstacklib/spec/defines/openstacklib_db_mysql_host_access_spec.rb
+file path=etc/puppet/modules/openstacklib/spec/defines/openstacklib_db_mysql_spec.rb
+file path=etc/puppet/modules/openstacklib/spec/defines/openstacklib_db_postgresql_spec.rb
+file path=etc/puppet/modules/openstacklib/spec/defines/openstacklib_messaging_rabbitmq_spec.rb
+file path=etc/puppet/modules/openstacklib/spec/defines/openstacklib_policy_spec.rb
+file path=etc/puppet/modules/openstacklib/spec/defines/openstacklib_service_validation_spec.rb
+file path=etc/puppet/modules/openstacklib/spec/defines/openstacklib_wsgi_apache_spec.rb
+file path=etc/puppet/modules/openstacklib/spec/functions/os_database_connection_spec.rb
+file path=etc/puppet/modules/openstacklib/spec/shared_examples.rb
+file path=etc/puppet/modules/openstacklib/spec/spec_helper.rb
+file path=etc/puppet/modules/openstacklib/spec/spec_helper_acceptance.rb
+file path=etc/puppet/modules/openstacklib/spec/unit/provider/openstack/auth_spec.rb
+file path=etc/puppet/modules/openstacklib/spec/unit/provider/openstack/credentials_spec.rb
+file path=etc/puppet/modules/openstacklib/spec/unit/provider/openstack_spec.rb
+#
+license openstack-openstacklib.license license="Apache v2.0"
+
+# for a dependency on python/openstackclient
+depend type=require fmri=library/python/openstackclient
+
+# force a dependency on puppetlabs-mysql
+depend type=require fmri=system/management/puppet/puppetlabs-mysql
+
+# force a dependency on puppetlabs-rabbitmq
+depend type=require fmri=system/management/puppet/puppetlabs-rabbitmq
+
+# force a dependency on puppetlabs-stdlib
+depend type=require fmri=system/management/puppet/puppetlabs-stdlib

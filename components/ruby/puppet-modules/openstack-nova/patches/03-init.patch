@@ -1,0 +1,54 @@
+In-house patch to add support for Solaris 11.3 and 12.0.  This patch
+has not yet been submitted upstream due to requirements for 3rd party
+CI testing.
+
+--- openstack-nova-6.1.0/manifests/init.pp.orig     2015-08-10 11:07:11.797692743 -0700
++++ openstack-nova-6.1.0/manifests/init.pp     2015-08-10 11:08:05.453328148 -0700
+@@ -397,12 +397,6 @@ class nova(
+   Package['nova-common'] -> Nova_config<| |> -> File['/etc/nova/nova.conf']
+   Nova_config<| |> ~> Exec['post-nova_config']
+
+-  # TODO - see if these packages can be removed
+-  # they should be handled as package deps by the OS
+-  package { 'python-greenlet':
+-    ensure  => present,
+-  }
+-
+   if $install_utilities {
+     class { '::nova::utilities': }
+   }
+@@ -411,23 +405,14 @@ class nova(
+   # allowing a resource to serve as a point where the configuration of nova begins
+   anchor { 'nova-start': }
+
+-  package { 'python-nova':
+-    ensure  => $ensure_package,
+-    require => Package['python-greenlet'],
+-    tag     => ['openstack'],
+-  }
+-
+   package { 'nova-common':
+     ensure  => $ensure_package,
+     name    => $::nova::params::common_package_name,
+-    require => [Package['python-nova'], Anchor['nova-start']],
++    require => Anchor['nova-start'],
+     tag     => ['openstack'],
+   }
+
+   file { '/etc/nova/nova.conf':
+-    mode    => '0640',
+-    owner   => 'nova',
+-    group   => 'nova',
+     require => Package['nova-common'],
+   }
+
+@@ -576,9 +561,6 @@ class nova(
+   if $log_dir {
+     file { $log_dir:
+       ensure  => directory,
+-      mode    => '0750',
+-      owner   => 'nova',
+-      group   => $::nova::params::nova_log_group,
+       require => Package['nova-common'],
+     }
+     nova_config { 'DEFAULT/log_dir': value => $log_dir;}

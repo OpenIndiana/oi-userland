@@ -1,0 +1,96 @@
+In-house patch to add support for Solaris 11.3 and 12.0.  This patch
+has not yet been submitted upstream due to requirements for 3rd party
+CI testing.
+
+--- openstack-swift-6.1.0/manifests/storage/account.pp.orig	2015-11-01 07:14:14.938361224 -0800
++++ openstack-swift-6.1.0/manifests/storage/account.pp	2015-11-01 07:14:28.358271152 -0800
+@@ -43,7 +43,6 @@ class swift::storage::account(
+     name     => $::swift::params::account_reaper_service_name,
+     enable   => $enabled,
+     provider => $::swift::params::service_provider,
+-    require  => Package['swift-account'],
+   }
+ 
+   service { 'swift-account-auditor':
+@@ -51,6 +50,5 @@ class swift::storage::account(
+     name     => $::swift::params::account_auditor_service_name,
+     enable   => $enabled,
+     provider => $::swift::params::service_provider,
+-    require  => Package['swift-account'],
+   }
+ }
+--- openstack-swift-6.1.0/manifests/storage/container.pp.orig	2015-11-01 07:15:34.539750559 -0800
++++ openstack-swift-6.1.0/manifests/storage/container.pp	2015-11-01 07:15:55.927391806 -0800
+@@ -48,7 +48,6 @@ class swift::storage::container(
+     name     => $::swift::params::container_updater_service_name,
+     enable   => $enabled,
+     provider => $::swift::params::service_provider,
+-    require  => Package['swift-container'],
+   }
+ 
+   service { 'swift-container-auditor':
+@@ -56,7 +55,6 @@ class swift::storage::container(
+     name     => $::swift::params::container_auditor_service_name,
+     enable   => $enabled,
+     provider => $::swift::params::service_provider,
+-    require  => Package['swift-container'],
+   }
+ 
+   if $::operatingsystem == 'Ubuntu' {
+--- openstack-swift-6.1.0/manifests/storage/object.pp.orig	2015-11-01 07:16:23.265853901 -0800
++++ openstack-swift-6.1.0/manifests/storage/object.pp	2015-11-01 07:16:37.685187620 -0800
+@@ -43,7 +43,6 @@ class swift::storage::object(
+     name     => $::swift::params::object_updater_service_name,
+     enable   => $enabled,
+     provider => $::swift::params::service_provider,
+-    require  => Package['swift-object'],
+   }
+ 
+   service { 'swift-object-auditor':
+@@ -51,6 +50,5 @@ class swift::storage::object(
+     name     => $::swift::params::object_auditor_service_name,
+     enable   => $enabled,
+     provider => $::swift::params::service_provider,
+-    require  => Package['swift-object'],
+   }
+ }
+--- openstack-swift-6.1.0/manifests/storage/generic.pp.orig	2015-11-01 07:17:15.132929299 -0800
++++ openstack-swift-6.1.0/manifests/storage/generic.pp	2015-11-01 07:17:33.210237904 -0800
+@@ -42,21 +42,6 @@ define swift::storage::generic(
+ 
+   validate_re($name, '^object|container|account$')
+ 
+-  package { "swift-${name}":
+-    ensure => $package_ensure,
+-    # this is a way to dynamically build the variables to lookup
+-    # sorry its so ugly :(
+-    name   => inline_template("<%= scope.lookupvar('::swift::params::${name}_package_name') %>"),
+-    tag    => 'openstack',
+-    before => Service["swift-${name}", "swift-${name}-replicator"],
+-  }
+-
+-  file { "/etc/swift/${name}-server/":
+-    ensure => directory,
+-    owner  => 'swift',
+-    group  => 'swift',
+-  }
+-
+   if $manage_service {
+     if $enabled {
+       $service_ensure = 'running'
+@@ -71,7 +56,6 @@ define swift::storage::generic(
+     enable    => $enabled,
+     hasstatus => true,
+     provider  => $service_provider,
+-    subscribe => Package["swift-${name}"],
+   }
+ 
+   service { "swift-${name}-replicator":
+@@ -80,7 +64,6 @@ define swift::storage::generic(
+     enable    => $enabled,
+     hasstatus => true,
+     provider  => $service_provider,
+-    subscribe => Package["swift-${name}"],
+   }
+ 
+ }

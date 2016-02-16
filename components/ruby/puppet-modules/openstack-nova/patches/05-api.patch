@@ -1,0 +1,17 @@
+In-house patch to add support for Solaris 11.3 and 12.0.  This patch
+has not yet been submitted upstream due to requirements for 3rd party
+CI testing.
+
+--- openstack-nova-6.1.0/manifests/api.pp.orig	2015-06-02 16:38:11.660665302 -0600
++++ openstack-nova-6.1.0/manifests/api.pp	2015-06-02 16:39:18.786748191 -0600
+@@ -195,8 +195,8 @@ class nova::api(
+ 
+   Nova_paste_api_ini<| |> ~> Exec['post-nova_config']
+ 
+-  Nova_paste_api_ini<| |> ~> Service['nova-api']
+-  Class['nova::policy'] ~> Service['nova-api']
++  Nova_paste_api_ini<| |> ~> Service[$::nova::params::api_service_name]
++  Class['nova::policy'] ~> Service[$::nova::params::api_service_name]
+ 
+   if $conductor_workers {
+     warning('The conductor_workers parameter is deprecated and has no effect. Use workers parameter of nova::conductor class instead.')

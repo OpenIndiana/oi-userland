@@ -1,0 +1,20 @@
+In-house patch to add support for Solaris 11.3 and 12.0.  This patch
+has not yet been submitted upstream due to requirements for 3rd party
+CI testing.
+
+--- openstack-glance-6.1.0/manifests/init.pp.orig     2015-08-10 09:39:41.906630428 -0700
++++ openstack-glance-6.1.0/manifests/init.pp     2015-08-10 09:40:10.746985189 -0700
+@@ -15,13 +15,6 @@ class glance(
+
+   include ::glance::params
+
+-  file { '/etc/glance/':
+-    ensure => directory,
+-    owner  => 'glance',
+-    group  => 'root',
+-    mode   => '0770',
+-  }
+-
+   if ( $glance::params::api_package_name == $glance::params::registry_package_name ) {
+     package { $glance::params::api_package_name :
+       ensure => $package_ensure,

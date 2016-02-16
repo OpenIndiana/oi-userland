@@ -1,0 +1,98 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+#
+
+set name=pkg.fmri \
+    value=pkg:/system/management/puppet/openstack-heat@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="OpenStack Heat Puppet Module"
+set name=pkg.description \
+    value="The heat module is an attempt to make Puppet capable of managing the entirety of heat."
+set name=com.oracle.info.description value="Heat Puppet Module"
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value="org.opensolaris.category.2008:System/Administration and Configuration" \
+    value="org.opensolaris.category.2008:System/Enterprise Management"
+set name=info.upstream value="OpenStack <openstack-dev@lists.openstack.org>"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2016/001
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+#
+file path=etc/puppet/modules/heat/CHANGELOG.md
+file path=etc/puppet/modules/heat/Gemfile
+file path=etc/puppet/modules/heat/LICENSE
+file path=etc/puppet/modules/heat/README.md
+file path=etc/puppet/modules/heat/Rakefile
+file path=etc/puppet/modules/heat/checksums.json
+file path=etc/puppet/modules/heat/examples/site.pp
+file path=etc/puppet/modules/heat/lib/puppet/provider/heat_config/ini_setting.rb
+file path=etc/puppet/modules/heat/lib/puppet/type/heat_config.rb
+file path=etc/puppet/modules/heat/manifests/api.pp
+file path=etc/puppet/modules/heat/manifests/api_cfn.pp
+file path=etc/puppet/modules/heat/manifests/api_cloudwatch.pp
+file path=etc/puppet/modules/heat/manifests/client.pp
+file path=etc/puppet/modules/heat/manifests/db/mysql.pp
+file path=etc/puppet/modules/heat/manifests/db/postgresql.pp
+file path=etc/puppet/modules/heat/manifests/engine.pp
+file path=etc/puppet/modules/heat/manifests/init.pp
+file path=etc/puppet/modules/heat/manifests/keystone/auth.pp
+file path=etc/puppet/modules/heat/manifests/keystone/auth_cfn.pp
+file path=etc/puppet/modules/heat/manifests/keystone/domain.pp
+file path=etc/puppet/modules/heat/manifests/logging.pp
+file path=etc/puppet/modules/heat/manifests/params.pp
+file path=etc/puppet/modules/heat/manifests/policy.pp
+file path=etc/puppet/modules/heat/metadata.json
+file path=etc/puppet/modules/heat/spec/acceptance/basic_heat_spec.rb
+file path=etc/puppet/modules/heat/spec/acceptance/nodesets/default.yml
+file path=etc/puppet/modules/heat/spec/acceptance/nodesets/nodepool-centos7.yml
+file path=etc/puppet/modules/heat/spec/acceptance/nodesets/nodepool-trusty.yml
+file path=etc/puppet/modules/heat/spec/classes/heat_api_cfn_spec.rb
+file path=etc/puppet/modules/heat/spec/classes/heat_api_cloudwatch_spec.rb
+file path=etc/puppet/modules/heat/spec/classes/heat_api_spec.rb
+file path=etc/puppet/modules/heat/spec/classes/heat_client_spec.rb
+file path=etc/puppet/modules/heat/spec/classes/heat_db_mysql_spec.rb
+file path=etc/puppet/modules/heat/spec/classes/heat_db_postgresql_spec.rb
+file path=etc/puppet/modules/heat/spec/classes/heat_engine_spec.rb
+file path=etc/puppet/modules/heat/spec/classes/heat_init_spec.rb
+file path=etc/puppet/modules/heat/spec/classes/heat_keystone_auth_cfn_spec.rb
+file path=etc/puppet/modules/heat/spec/classes/heat_keystone_auth_spec.rb
+file path=etc/puppet/modules/heat/spec/classes/heat_keystone_domain_spec.rb
+file path=etc/puppet/modules/heat/spec/classes/heat_logging_spec.rb
+file path=etc/puppet/modules/heat/spec/classes/heat_policy_spec.rb
+file path=etc/puppet/modules/heat/spec/shared_examples.rb
+file path=etc/puppet/modules/heat/spec/spec_helper.rb
+file path=etc/puppet/modules/heat/spec/spec_helper_acceptance.rb
+#
+license openstack-heat.license license="Apache v2.0"
+
+# force a dependency on openstack-keystone
+depend type=require fmri=system/management/puppet/openstack-keystone
+
+# force a dependency on openstack-openstacklib
+depend type=require fmri=system/management/puppet/openstack-openstacklib
+
+# force a dependency on puppetlabs-inifile
+depend type=require fmri=system/management/puppet/puppetlabs-inifile
+
+# force a dependency on puppetlabs-stdlib
+depend type=require fmri=system/management/puppet/puppetlabs-stdlib

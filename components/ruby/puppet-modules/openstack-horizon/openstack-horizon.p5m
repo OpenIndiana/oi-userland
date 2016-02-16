@@ -1,0 +1,77 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+#
+
+set name=pkg.fmri \
+    value=pkg:/system/management/puppet/openstack-horizon@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="OpenStack Horizon Puppet Module"
+set name=pkg.description \
+    value="The horizon module is a thorough attempt to make Puppet capable of managing the entirety of horizon.  Horizon is a fairly classic django application, which results in a fairly simply Puppet module."
+set name=com.oracle.info.description value="Horizon Puppet Module"
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value="org.opensolaris.category.2008:System/Administration and Configuration" \
+    value="org.opensolaris.category.2008:System/Enterprise Management"
+set name=info.upstream value="OpenStack <openstack-dev@lists.openstack.org>"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2016/001
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+#
+file path=etc/puppet/modules/horizon/CHANGELOG.md
+file path=etc/puppet/modules/horizon/Gemfile
+file path=etc/puppet/modules/horizon/LICENSE
+file path=etc/puppet/modules/horizon/README.md
+file path=etc/puppet/modules/horizon/Rakefile
+file path=etc/puppet/modules/horizon/checksums.json
+file path=etc/puppet/modules/horizon/lib/puppet/parser/functions/os_any2array.rb
+file path=etc/puppet/modules/horizon/manifests/init.pp
+file path=etc/puppet/modules/horizon/manifests/params.pp
+file path=etc/puppet/modules/horizon/manifests/wsgi/apache.pp
+file path=etc/puppet/modules/horizon/metadata.json
+file path=etc/puppet/modules/horizon/spec/acceptance/horizon_with_apache_spec.rb
+file path=etc/puppet/modules/horizon/spec/acceptance/nodesets/default.yml
+file path=etc/puppet/modules/horizon/spec/acceptance/nodesets/nodepool-centos7.yml
+file path=etc/puppet/modules/horizon/spec/acceptance/nodesets/nodepool-trusty.yml
+file path=etc/puppet/modules/horizon/spec/classes/horizon_init_spec.rb
+file path=etc/puppet/modules/horizon/spec/classes/horizon_wsgi_apache_spec.rb
+file path=etc/puppet/modules/horizon/spec/fixtures/override_local_settings.py.erb
+file path=etc/puppet/modules/horizon/spec/shared_examples.rb
+file path=etc/puppet/modules/horizon/spec/spec_helper.rb
+file path=etc/puppet/modules/horizon/spec/spec_helper_acceptance.rb
+file path=etc/puppet/modules/horizon/spec/unit/puppet/parser/functions/os_any2array_spec.rb
+file path=etc/puppet/modules/horizon/templates/local_settings.py.erb
+#
+license openstack-horizon.license license="Apache v2.0"
+
+# force a dependency on puppetlabs-apache
+depend type=require fmri=system/management/puppet/puppetlabs-apache
+
+# force a dependency on puppetlabs-concat
+depend type=require fmri=system/management/puppet/puppetlabs-concat
+
+# force a dependency on puppet-stdlib
+depend type=require fmri=system/management/puppet/puppetlabs-stdlib
+
+# force a dependency on puppet-memcached
+depend type=require fmri=system/management/puppet/saz-memcached

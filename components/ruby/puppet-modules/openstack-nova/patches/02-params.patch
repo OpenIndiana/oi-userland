@@ -1,0 +1,47 @@
+In-house patch to add support for Solaris 11.3 and 12.0.  This patch
+has not yet been submitted upstream due to requirements for 3rd party
+CI testing.
+
+--- openstack-nova-6.1.0/manifests/params.pp.orig	2015-07-07 12:24:18.609643411 -0700
++++ openstack-nova-6.1.0/manifests/params.pp	2015-07-07 12:24:51.583277575 -0700
+@@ -116,8 +116,39 @@ class nova::params {
+         }
+       }
+     }
++    'Solaris': {
++      # package names
++      $api_package_name             = 'cloud/openstack/nova'
++      $cells_package_name           = 'cloud/openstack/nova'
++      $cert_package_name            = 'cloud/openstack/nova'
++      $common_package_name          = 'cloud/openstack/nova'
++      $compute_package_name         = 'cloud/openstack/nova'
++      $conductor_package_name       = 'cloud/openstack/nova'
++      $consoleauth_package_name     = 'cloud/openstack/nova'
++      $doc_package_name             = 'cloud/openstack/nova'
++      $network_package_name         = 'cloud/openstack/nova'
++      $numpy_package_name           = 'python-extra-27'
++      $objectstore_package_name     = 'cloud/openstack/nova'
++      $scheduler_package_name       = 'cloud/openstack/nova'
++      $tgt_package_name             = 'system/storage/iscsi/iscsi-target'
++      $vncproxy_package_name        = 'cloud/openstack/nova'
++      $spicehtml5proxy_package_name = undef
++      # service names
++      $api_service_name             = 'application/openstack/nova/nova-api-osapi-compute:default'
++      $cells_service_name           = undef
++      $cert_service_name            = 'application/openstack/nova/nova-cert:default'
++      $compute_service_name         = 'application/openstack/nova/nova-compute:default'
++      $conductor_service_name       = 'application/openstack/nova/nova-conductor:default'
++      $consoleauth_service_name     = 'application/openstack/nova/nova-consoleauth:default'
++      $network_service_name         = undef
++      $objectstore_service_name     = 'application/openstack/nova/nova-objectstore:default'
++      $scheduler_service_name       = 'application/openstack/nova/nova-scheduler:default'
++      $tgt_service_name             = 'network/iscsi/target:default'
++      $vncproxy_service_name        = 'application/openstack/nova/nova-novncproxy:default'
++      $spicehtml5proxy_service_name = undef
++    }
+     default: {
+-      fail("Unsupported osfamily: ${::osfamily} operatingsystem: ${::operatingsystem}, module ${module_name} only support osfamily RedHat and Debian")
++      fail("Unsupported osfamily: ${::osfamily} operatingsystem: ${::operatingsystem}, module ${module_name} only support osfamily Solaris, RedHat, and Debian")
+     }
+   }
+

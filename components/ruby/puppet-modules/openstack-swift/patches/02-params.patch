@@ -1,0 +1,36 @@
+In-house patch to add support for Solaris 11.3 and 12.0.  This patch
+has not yet been submitted upstream due to requirements for 3rd party
+CI testing.
+
+--- openstack-swift-6.1.0/manifests/params.pp.orig	2015-05-29 11:36:03.646990312 -0600
++++ openstack-swift-6.1.0/manifests/params.pp	2015-05-29 11:36:37.616190956 -0600
+@@ -52,6 +52,29 @@ class swift::params {
+       $service_provider                  = undef
+       $swift3                            = 'openstack-swift-plugin-swift3'
+     }
++    'Solaris': {
++      $package_name                      = 'cloud/openstack/swift'
++      $client_package                    = 'library/python/swiftclient'
++      $proxy_package_name                = 'cloud/openstack/swift'
++      $proxy_service_name                = 'application/openstack/swift/swift-proxy-server:default'
++      $object_package_name               = 'cloud/openstack/swift'
++      $object_service_name               = 'application/openstack/swift/swift-object-server:default'
++      $object_auditor_service_name       = 'application/openstack/swift/swift-object-auditor:default'
++      $object_replicator_service_name    = 'application/openstack/swift/swift-object-replicator:default'
++      $object_updater_service_name       = 'application/openstack/swift/swift-object-updater:default'
++      $container_package_name            = 'cloud/openstack/swift'
++      $container_service_name            = 'application/openstack/swift/swift-container-server:default'
++      $container_auditor_service_name    = 'application/openstack/swift/swift-container-auditor:default'
++      $container_replicator_service_name = 'application/openstack/swift/swift-container-replicator:default'
++      $container_updater_service_name    = 'application/openstack/swift/swift-container-updater:default'
++      $account_package_name              = 'cloud/openstack/swift'
++      $account_service_name              = 'application/openstack/swift/swift-account-server:default'
++      $account_auditor_service_name      = 'application/openstack/swift/swift-account-auditor:default'
++      $account_reaper_service_name       = 'application/openstack/swift/swift-account-reaper:default'
++      $account_replicator_service_name   = 'application/openstack/swift/swift-account-replicator:default'
++      $service_provider                  = 'smf'
++      $swift3                            = undef
++    }
+     default: {
+         fail("Unsupported osfamily: ${::osfamily} for os ${::operatingsystem}")
+     }
