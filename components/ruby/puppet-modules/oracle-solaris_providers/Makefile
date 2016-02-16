@@ -49,6 +49,8 @@ MODULE_NAME =	solaris_providers
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
+PKG_OPTIONS +=	-I $(COMPONENT_DIR)
+
 # generate manifest for files supplied from git repo on demand
 oracle-solaris_providers-github.frag: install
 	$(PKGSEND) generate $(PROTO_DIR)/etc/puppet/modules/ | \
