@@ -12,7 +12,8 @@ $ModLoad imsolaris	# for Solaris kernel logging
 $IncludeConfig /etc/rsyslog.d/
 
 # High priority messages to the console
-*.err;kern.notice;auth.notice			/dev/sysmsg
+*.err;auth.notice				/dev/sysmsg
+
 # Next highest priority to the messages file
 *.err;kern.debug;daemon.notice;mail.crit	/var/adm/messages
 
@@ -23,9 +24,10 @@ $IncludeConfig /etc/rsyslog.d/
 # Log anything (except auth, cron, daemon & mail) of level info or higher.
 *.info;mail.none;auth.none;cron.none		-/var/log/misc.log
 
-# Log all the auth, daemon & mail messages in one place.
+# Log all the auth, daemon, kern & mail messages in one place.
 auth.*						-/var/log/auth.log
 daemon.*					-/var/log/daemon.log
+kern.*						-/var/log/kern.log
 mail.*						-/var/log/mail.log
 
 # Everybody gets emergency messages

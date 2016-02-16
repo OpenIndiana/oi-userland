@@ -45,8 +45,10 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 file rsyslog.conf-solaris path=etc/rsyslog.conf owner=root group=sys mode=0644 \
     overlay=allow preserve=true
 dir  path=etc/rsyslog.d
-file rsyslog.xml path=lib/svc/manifest/system/rsyslog.xml
-file rsyslog path=lib/svc/method/rsyslog
+file prof_attr path=etc/security/prof_attr.d/system:rsyslog
+file system-log.xml path=lib/svc/manifest/system/system-log.xml \
+    restart_fmri=svc:/system/system-log:default
+file system-log path=lib/svc/method/system-log
 file path=usr/lib/rsyslog/imgssapi.so
 file path=usr/lib/rsyslog/immark.so
 file path=usr/lib/rsyslog/imsolaris.so
