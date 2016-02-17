@@ -1,0 +1,60 @@
+#!/bin/sh
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License, Version 1.0 only
+# (the "License").  You may not use this file except in compliance
+# with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+#
+# Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
+# Use is subject to license terms.
+#
+
+XRDB=/usr/bin/xrdb
+
+if [ -x $DT_BINPATH/dtsession_res ] ; then
+  $DT_BINPATH/dtsession_res -load -system
+  $DT_BINPATH/dtsession_res -merge -tty
+fi
+
+case $DESKTOP_SESSION in
+gnome|GNOME|JDS|tgnome|TGNOME|tjds|TJDS|TrustedJDS)
+  $XRDB -merge << EOF
+! Default CDE resources
+*WindowColor:           #8A008A008A00
+!*WindowForeground:     #FF0000000000
+!*DataBackground:       #0000FF000000
+*DataForeground:        #FF0000000000
+*WorkspaceColor:        #8A008A008A00
+*Color.Background:      #FF000000FF00
+!*Color.Foreground:     #0000FF000000
+*foreground:            #000000000000
+! Hack for Dtmail
+*XmText*background: seashell
+*XmTextField*background: seashell
+*Message_List*background: seashell
+*background:            #AE00B200C300
+Dthello*string:         Welcome to GNOME
+EOF
+;;
+esac
+
+if [ -f $HOME/.Xdefaults ]; then
+    $XRDB -merge $HOME/.Xdefaults    # Load Users X11 resource database
+fi
+

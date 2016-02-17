@@ -1,0 +1,86 @@
+#!/bin/bash
+#
+# Script for starting a desktop session
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License, Version 1.0 only
+# (the "License").  You may not use this file except in compliance
+# with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+#
+# Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
+# Use is subject to license terms.
+#
+
+MYNAME=$(basename $0)
+
+usage() {
+    echo "Usage: $0 session_name"
+    echo "    This script loads scripts in /etc/X11/xinit/xinitrc.d"
+    echo "    and runs a session manager."
+    echo "    session_name is gnome, twm or xdm"
+}
+
+if [ $# -ne 1 ]; then
+    usage
+    exit 1
+fi
+
+case "$1" in
+    -h|--help|-\?)
+        usage
+        exit 0
+    ;;
+esac
+
+SESSION_NAME="$1"
+shift
+
+case "$SESSION_NAME" in
+gdm|GDM|gnome|GNOME|jds|JDS)
+     SESSION_MANAGER=/usr/bin/gnome-session ;;
+tjds|TJDS|TrustedJDS|tgnome|TGNOME)
+     SESSION_MANAGER='/usr/bin/gnome-session --trusted-session';;
+twm|TWM) SESSION_MANAGER=/usr/X11/bin/twm ;;
+xdm|XDM) SESSION_MANAGER=/usr/openwin/lib/X11/xdm/Xsession ;;
+console) exit 0 ;;
+*)
+    if [ "x$SESSION_NAME" != x ] ; then
+        SESSION_MANAGER=$SESSION_NAME
+    fi
+    if [ ! -x $SESSION_NAME ] ; then
+        echo "Could not find session startup for $SESSION_NAME"
+        SESSION_MANAGER=/usr/X11/bin/twm
+    fi
+
+esac
+
+# GDM slave sets DESKTOP_SESSION environment from .desktop file.
+export DESKTOP_SESSION=$SESSION_NAME
+
+# run all system xinitrc shell scripts.
+if [ -d /etc/X11/xinit/xinitrc.d ]; then
+    for i in /etc/X11/xinit/xinitrc.d/* ; do
+        if [ -x "$i" ]; then
+        . "$i"
+        fi
+    done
+fi
+
+exec $SESSION_MANAGER $@
+
