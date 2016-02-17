@@ -31,18 +31,25 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:18739792eb463d73525d7aea9b0a48b14106fae1cfec09aedc668d8c1079adf1
 COMPONENT_ARCHIVE_URL=	https://github.com/hyperrealm/libconfig/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libconfig
+COMPONENT_FMRI=		library/libconfig
+COMPONENT_SUMMARY=	C/C++ library for processing configuration files
+COMPONENT_CLASSIFICATION= System/Libraries
+
+COMPONENT_LICENSE_FILE= LICENSE
+COMPONENT_LICENSE=	GPLv2
+
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
 # Missing files in build dir for configure without this.
-COMPONENT_PRE_CONFIGURE_ACTION =        (rm $(SOURCE_DIR)/lib/scanner.{c,h} && $(CLONEY) $(SOURCE_DIR) $(@D) )
+COMPONENT_PRE_CONFIGURE_ACTION =        (rm -f $(SOURCE_DIR)/lib/scanner.{c,h} && $(CLONEY) $(SOURCE_DIR) $(@D) )
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_32_and_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
