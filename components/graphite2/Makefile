@@ -17,6 +17,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		graphite2
 COMPONENT_VERSION=	1.2.4
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		library/c++/graphite2
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_PROJECT_URL=	http://sourceforge.net/projects/silgraphite
@@ -38,6 +39,9 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATCH_LEVEL=0
 
+# need this to use abs(float)
+LDFLAGS += -lm
+
 CMAKE_OPTIONS+=		-DCMAKE_BUILD_TYPE=Release
 CMAKE_OPTIONS+=		-DGRAPHITE2_ASAN=OFF
 CMAKE_OPTIONS+=		-DGRAPHITE2_COMPARE_RENDERER=OFF
@@ -49,18 +53,14 @@ CMAKE_OPTIONS+=		-DGRAPHITE2_TELEMETRY=OFF
 CMAKE_OPTIONS+=		-DGRAPHITE2_VM_TYPE=auto
 #CMAKE_OPTIONS+=	-DLATEX=/usr/bin/latex
 
-CONFIGURE_OPTIONS=$(CMAKE_OPTIONS)
+COMPONENT_TEST_CMD = ctest
+COMPONENT_TEST_TARGETS =
 
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-# Failure of linebreak test is a false positive, due to compilation issue:
-# undefined symbol __fabsf
-# Recompiling in tests/examples makesall tests pass.
-test:		$(BUILD_32_and_64)
-	cd $(BUILD_DIR_32) && ctest;
-	cd $(BUILD_DIR_64) && ctest;
+test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
