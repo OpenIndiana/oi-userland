@@ -16,7 +16,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		evolution-data-server
 COMPONENT_VERSION=	2.32.3
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_PROJECT_URL=	https://projects.gnome.org/evolution/developer.shtml
 COMPONENT_SUMMARY=	Backend library for Evolution
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
