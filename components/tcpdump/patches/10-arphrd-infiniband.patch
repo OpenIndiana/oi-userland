@@ -2,17 +2,8 @@ InfiniBand support for tcpdump.
 This is an in-house patch. Sent upstream for potential inclusion in future 
 versions of tcpdump.
 
-diff -rupN tcpdump-4.7.4-orig/interface.h tcpdump-4.7.4/interface.h
---- tcpdump-4.7.4-orig/interface.h	2015-05-26 14:13:17.000000000 -0700
-+++ tcpdump-4.7.4/interface.h	2015-03-09 12:07:00.000000000 -0700
-@@ -162,6 +162,7 @@ extern uint16_t create_osi_cksum(const u
- 
- extern char *smb_errstr(int, int);
- extern const char *nt_errstr(uint32_t);
-+extern u_int ipoib_if_print(const struct pcap_pkthdr *, const u_char *);
- 
- #ifdef INET6
- extern int mask62plen(const u_char *);
+Using DLT value 162 is Solaris specific.
+
 diff -rupN tcpdump-4.7.4-orig/Makefile.in tcpdump-4.7.4/Makefile.in
 --- tcpdump-4.7.4-orig/Makefile.in	2015-05-26 14:13:17.000000000 -0700
 +++ tcpdump-4.7.4/Makefile.in	2015-05-26 15:12:05.727800640 -0700
@@ -27,11 +18,12 @@ diff -rupN tcpdump-4.7.4-orig/Makefile.in tcpdump-4.7.4/Makefile.in
 diff -rupN tcpdump-4.7.4-orig/netdissect.h tcpdump-4.7.4/netdissect.h
 --- tcpdump-4.7.4-orig/netdissect.h	2015-05-26 14:13:17.000000000 -0700
 +++ tcpdump-4.7.4/netdissect.h	2015-04-22 13:32:16.000000000 -0700
-@@ -395,6 +395,7 @@ extern void ether_print(netdissect_optio
+@@ -395,6 +395,8 @@ extern void ether_print(netdissect_optio
  
  extern u_int ether_if_print(netdissect_options *,
                              const struct pcap_pkthdr *,const u_char *);
-+extern u_int ipoib_if_print(const struct pcap_pkthdr *, const u_char *);
++extern u_int ipoib_if_print(netdissect_options *,
++                            const struct pcap_pkthdr *, const u_char *);
  extern u_int netanalyzer_if_print(netdissect_options *,
                                    const struct pcap_pkthdr *,const u_char *);
  extern u_int netanalyzer_transparent_if_print(netdissect_options *,
@@ -80,7 +72,7 @@ diff -rupN tcpdump-4.7.4-orig/print-ipoib.c tcpdump-4.7.4/print-ipoib.c
 + * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 + */
 +/*
-+ * Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
++ * Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 + */
 +#ifndef lint
 +static const char rcsid[] _U_ =
@@ -177,7 +169,7 @@ diff -rupN tcpdump-4.7.4-orig/print-ipoib.c tcpdump-4.7.4/print-ipoib.c
 + * is the number of bytes actually captured.
 + */
 +u_int
-+ipoib_if_print(const struct pcap_pkthdr *h, const u_char *p)
++ipoib_if_print(netdissect_options *ndo, const struct pcap_pkthdr *h, const u_char *p)
 +{
 +	ipoib_print(p, h->len, h->caplen, NULL, NULL);
 +
@@ -193,11 +185,15 @@ diff -rupN tcpdump-4.7.4-orig/print-ipoib.c tcpdump-4.7.4/print-ipoib.c
 diff -rupN tcpdump-4.7.4-orig/tcpdump.c tcpdump-4.7.4/tcpdump.c
 --- tcpdump-4.7.4-orig/tcpdump.c	2015-05-26 14:13:17.000000000 -0700
 +++ tcpdump-4.7.4/tcpdump.c	2015-05-26 15:17:43.298240116 -0700
-@@ -264,6 +264,9 @@ static const struct ndo_printer ndo_prin
+@@ -264,6 +264,13 @@ static const struct ndo_printer ndo_prin
  #ifdef DLT_IPV6
  	{ raw_if_print,		DLT_IPV6 },
  #endif
 +#ifdef DLT_IPOIB
++	{ ipoib_if_print, 	DLT_IPOIB },
++	/* Following record is temporary at least till following bug is fixed in
++	   all relevant releases:
++	   22741013 - wrong value for DLT_IPOIB in dlt.h as in ON */
 +	{ ipoib_if_print, 	162 },
 +#endif
  #ifdef HAVE_PCAP_USB_H
