@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -114,6 +114,8 @@ CONFIGURE_OPTIONS  +=		--without-gcc
 CONFIGURE_OPTIONS  +=		--without-ensurepip
 CONFIGURE_OPTIONS  +=		--enable-ipv6
 CONFIGURE_OPTIONS  +=		--bindir=/usr/bin
+CONFIGURE_OPTIONS  +=		"ac_cv_func_forkpty=no"
+CONFIGURE_OPTIONS  +=		"ac_cv_func_openpty=no"
 CONFIGURE_OPTIONS  +=		CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_OPTIONS  +=		LDFLAGS="$(LDFLAGS)"
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
