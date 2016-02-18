@@ -1,0 +1,28 @@
+Bug 22706313 - xscreensaver calls to pam_setcred with the wrong flag
+
+Need to resync with current upstream release before submitting upstream.
+
+diff --git a/driver/passwd-pam.c b/driver/passwd-pam.c
+index 46f1347..607f214 100644
+--- a/driver/passwd-pam.c
++++ b/driver/passwd-pam.c
+@@ -549,13 +549,18 @@ pam_try_unlock(saver_info *si, Bool verbose_p,
+       /* Each time we successfully authenticate, refresh credentials,
+          for Kerberos/AFS/DCE/etc.  If this fails, just ignore that
+          failure and blunder along; it shouldn't matter.
+-
++      */
++#ifdef __linux__
++      /*
+          Note: this used to be PAM_REFRESH_CRED instead of
+          PAM_REINITIALIZE_CRED, but Jason Heiss <jheiss@ee.washington.edu>
+          says that the Linux PAM library ignores that one, and only refreshes
+          credentials when using PAM_REINITIALIZE_CRED.
+        */
+       setcred_rc = pam_setcred (pamh, PAM_REINITIALIZE_CRED);
++#else
++      setcred_rc = pam_setcred (pamh, PAM_REFRESH_CRED);
++#endif
+       if (verbose_p)
+         fprintf (stderr, "%s:   pam_setcred (...) ==> %d (%s)\n",
+                  blurb(), setcred_rc, PAM_STRERROR(pamh, setcred_rc));
