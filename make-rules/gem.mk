@@ -34,15 +34,21 @@ GEMSPEC=$(COMPONENT_NAME).gemspec
 # to account for possible differences
 GEM_BUILD_ACTION=(cd $(@D); $(GEM) build $(GEM_BUILD_ARGS) $(GEMSPEC))
 
+# Build install args in a more readable fashion
 ifeq ($(firstword $(subst .,$(space),$(RUBY_VERSION))),2)
 # gem install 2.x does docs differently. Continue to generate both types
-GEM_INSTALL_ARGS=--document rdoc,ri
+GEM_INSTALL_ARGS += --document rdoc,ri
 endif
 
-GEM_INSTALL_ACTION=\
-	$(GEM) install -V --local --install-dir $(PROTO_DIR)/$(VENDOR_GEM_DIR) \
-	     --bindir $(PROTO_DIR)/$(VENDOR_GEM_DIR)/bin --force $(GEM_INSTALL_ARGS) \
-	     $(@D)/$(COMPONENT_ARCHIVE)
+GEM_INSTALL_ARGS += -V --local --force
+GEM_INSTALL_ARGS += --install-dir $(PROTO_DIR)/$(VENDOR_GEM_DIR)
+GEM_INSTALL_ARGS += --bindir $(PROTO_DIR)/$(VENDOR_GEM_DIR)/bin
+
+# cd into build directory
+# gem 2.2.3 uses .gem from the cwd ignoring command line .gem file
+# gem 1.8.23.2 uses command line .gem file OR .gem from cwd
+GEM_INSTALL_ACTION= (cd $(@D); $(GEM) install $(GEM_INSTALL_ARGS) $(COMPONENT_NAME))
+
 
 $(BUILD_DIR)/%/.built:  $(SOURCE_DIR)/.prep
 	$(RM) -r $(@D) ; $(MKDIR) $(@D)
