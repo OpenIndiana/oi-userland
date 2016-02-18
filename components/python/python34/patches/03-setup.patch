@@ -48,11 +48,13 @@ As it is Solaris-specific, it is not suitable for upstream.
          # Detect SSL support for the socket module (via _ssl)
          search_for_ssl_incs_in = [
                                '/usr/local/ssl/include',
-@@ -1295,6 +1306,8 @@
+@@ -1295,6 +1306,10 @@
              curses_defines.append(('_XOPEN_SOURCE_EXTENDED', '1'))
  
          if curses_library.startswith('ncurses'):
 +            if host_platform == 'sunos5':
++                curses_defines.append(('HAVE_NCURSESW', '1'))
++                curses_defines.append(('_XOPEN_SOURCE_EXTENDED', '1'))
 +                curses_includes.append('/usr/include/ncurses')
              curses_libs = [curses_library]
              exts.append( Extension('_curses', ['_cursesmodule.c'],
