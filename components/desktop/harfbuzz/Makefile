@@ -54,6 +54,9 @@ include $(WS_MAKE_RULES)/common-32_and_64.mk
 COMPILER = gcc
 CXXFLAGS += -std=c++11
 
+# For components using gobject-introspection, don't cache results in $HOME
+COMPONENT_BUILD_ENV += GI_SCANNER_DISABLE_CACHE=yes
+
 CONFIGURE_ENV += CC="$(CC) $(CC_BITS)"
 CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
