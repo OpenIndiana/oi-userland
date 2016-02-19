@@ -1,0 +1,23 @@
+Not suitable for upstream submission.
+
+This is official way of linking against system sqlite.so instead of statically
+linking with SQLite sources included in DBD-SQLite archive. See the comments
+just above the change.
+
+--- DBD-SQLite-1.48/Makefile.PL	2016-02-10 06:40:01.627805164 -0800
++++ DBD-SQLite-1.48/Makefile.PL	2016-02-10 06:40:04.583883621 -0800
+@@ -126,13 +126,13 @@
+ # Note to Downstream Packagers:
+ # This block is if ( 0 ) to discourage casual users building against
+ # the system SQLite. We expect that anyone sophisticated enough to use
+ # a system sqlite is also sophisticated enough to have a patching system
+ # that can change the if ( 0 ) to if ( 1 )
+ my ($sqlite_local, $sqlite_base, $sqlite_lib, $sqlite_inc);
+-if ( 0 ) {
++if ( 1 ) {
+ 	require File::Spec;
+ 	if ( $sqlite_base = (grep(/SQLITE_LOCATION=.*/, @ARGV))[0] ) {
+ 		$sqlite_base =~ /=(.*)/;
+ 		$sqlite_base = $1;
+ 		$sqlite_lib = File::Spec->catdir( $sqlite_base, 'lib'     );
+ 		$sqlite_inc = File::Spec->catdir( $sqlite_base, 'include' );

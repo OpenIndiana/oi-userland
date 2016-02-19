@@ -1,0 +1,47 @@
+Quick and dirty check that the module works (use actual
+perl version instead of XXX)
+
+-------------------------------8<------------------------
+P='/usr/perl5/XXX/bin/perl -MDBD::SQLite'
+DB=/var/tmp/db.sql
+C="\$dbh=DBI->connect('dbi:SQLite:$DB');"
+FILE=/usr/bin/ls
+
+rm -f "$DB"
+$P -e "$C"
+if [ ! -e "$DB" ]; then
+        echo "Fail - database not created"
+        exit 1
+fi
+$P -e "$C"'
+        $dbh->do("CREATE TABLE mytable( Bindata BLOB, date DATE)");
+        $dbh->do("CREATE TRIGGER insert_blob_date AFTER INSERT ON mytable BEGIN UPDATE mytable SET date = DATETIME(\"NOW\"); END ;");
+'
+
+$P -e "$C"'
+      my $blob = `cat '"$FILE"'`;
+      my $sth = $dbh->prepare("INSERT INTO mytable VALUES (?, NULL)");
+      $sth->bind_param(1, $blob, {TYPE => DBD::SQL_BLOB}
+);
+      $sth->execute();
+'
+
+$P -MDigest::MD5 -e "$C"'
+      $sth = $dbh->prepare("SELECT Bindata FROM mytable");
+      $sth->execute();
+      my $row = $sth->fetch;
+      my $blobo = $row->[0];
+      print Digest::MD5::md5_hex($blobo), "\n";
+'
+
+
+md5sum "$FILE"
+echo '.schema' | sqlite3 "$DB"
+echo 'select date from mytable;' | sqlite3 "$DB"
+-------------------------------8<------------------------
+
+
+It should print
+ - two equal MD5 hashes
+ - database description (mytable and trigger insert_blob_date)
+ - current date and time
