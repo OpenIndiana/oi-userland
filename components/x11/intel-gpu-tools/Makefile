@@ -14,6 +14,7 @@ COMPONENT_SUMMARY = Intel graphics driver debug tools
 COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
 COMPONENT_ARCHIVE_URL = https://cgit.freedesktop.org/xorg/app/intel-gpu-tools/
 COMPONENT_FMRI = x11/diagnostic/$(COMPONENT_NAME)
+COMPONENT_LICENSE = MIT
 COMPONENT_LICENSE_FILE = COPYING
 COMPONENT_CLASSIFICATION = Applications/System Utilities
 COMPONENT_AUTOGEN_MANIFEST = yes
@@ -62,7 +63,7 @@ COMPONENT_PREP_ACTION =        ( cd $(@D) && \
                                         autoconf )
 
 # Command line options to GNU autoconf configure script
-# CPPFLAGS  += -D__EXTENSIONS__
+# CPPFLAGS  += -g
 CONFIGURE_ENV+= CPPFLAGS="$(CPPFLAGS)"
 
 LIBEXECSUBDIR.64 = /$(MACH64)
@@ -83,10 +84,3 @@ build: $(BUILD_32_and_64)
 install: $(INSTALL_32_and_64)
 
 download:: $(SOURCE_DIR)/.downloaded
-
-show-vars:
-	@echo "SOURCE_DIR: $(SOURCE_DIR)"
-	@echo "COMPONENT_DIR: $(COMPONENT_DIR)"
-	@echo "COMPONENT_NAME: $(COMPONENT_NAME)"
-	@echo "BITS: $(BITS)"
-	@echo "MACH: $(MACH)"
