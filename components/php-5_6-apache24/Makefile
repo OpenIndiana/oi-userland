@@ -14,11 +14,11 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		php
-COMPONENT_VERSION=	5.6.15
+COMPONENT_VERSION=	5.6.17
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:bb2d4c226a4897b7c3659c2538a87aef7ec104f58f5ae930a263dd77fb8ebc40
-COMPONENT_ARCHIVE_URL=	http://ru2.php.net/get/$(COMPONENT_ARCHIVE)/from/this/mirror
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE_HASH=	sha256:77b45f56a1e63e75bb22b42cfb8b438ec4083c59ce774b4d7c1685544b7add3b
+COMPONENT_ARCHIVE_URL=	http://uk1.php.net/get/$(COMPONENT_ARCHIVE)/from/this/mirror
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

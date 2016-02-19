@@ -16,14 +16,15 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnome-icon-theme-symbolic
-COMPONENT_VERSION=	2.31.0
+COMPONENT_VERSION=	3.12.0
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	GNOME Symbolic Icons
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:5fa028e7263e15ef58ab21963303becd6ecd6321c3e3e570820fa434203191bd 
-COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.31/$(COMPONENT_ARCHIVE)
+    sha256:851a4c9d8e8cb0000c9e5e78259ab8b8e67c5334e4250ebcc8dfdaa33520068b
+COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/3.12/$(COMPONENT_ARCHIVE)
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk

@@ -1,5 +1,5 @@
---- firefox-43.0b3/media/libstagefright/moz.build.1	2015-11-18 16:47:18.582639607 +0300
-+++ firefox-43.0b3/media/libstagefright/moz.build	2015-11-18 16:47:58.545387599 +0300
+--- firefox-44.0/media/libstagefright/moz.build.1	2016-01-28 11:27:57.499853402 +0300
++++ firefox-44.0/media/libstagefright/moz.build	2016-01-28 11:28:04.015635089 +0300
 @@ -7,9 +7,6 @@
  DEFINES['ANDROID_SMP'] = 0
  DEFINES['LOG_NDEBUG'] = 1
@@ -10,18 +10,3 @@
  if CONFIG['OS_TARGET'] == 'WINNT':
      if CONFIG['_MSC_VER']:
          DEFINES['ssize_t'] = 'intptr_t'
---- firefox-43.0b3/media/libstagefright/frameworks/av/media/libstagefright/id3/ID3.cpp.1	2015-11-18 22:21:36.117009454 +0300
-+++ firefox-43.0b3/media/libstagefright/frameworks/av/media/libstagefright/id3/ID3.cpp	2015-11-18 22:25:00.973546535 +0300
-@@ -25,7 +25,12 @@
- #include <media/stagefright/DataSource.h>
- #include <media/stagefright/Utils.h>
- #include <utils/String8.h>
-+#ifdef __sun
-+#include <sys/byteorder.h>
-+#define bswap_16(x) BSWAP_16(x)
-+#else 
- #include <byteswap.h>
-+#endif
- 
- namespace stagefright {
- 

@@ -1,0 +1,676 @@
+From 8aa9debff40660ed691f984b805e513f3f54334b Mon Sep 17 00:00:00 2001
+From: oracle <solaris@oracle.com>
+Date: Mon, 3 Aug 2015 14:36:19 -0700
+Subject: [PATCH 12/36] PAM enhancements for Solaris
+
+#
+# This patch contains a couple of PAM enhancements:
+#   1) Each SSHv2 userauth method has its own PAM service name so that PAM can
+#      be used to control what userauth methods are allowed.
+#   2) The PAMServiceName and PAMServicePrefix options.
+#
+# We have contributed back this feature to the OpenSSH upstream community.
+# For more information, see https://bugzilla.mindrot.org/show_bug.cgi?id=2246
+# In the future, if these enhancements are accepted by the upsteam in a
+# later release, we will remove this patch when we upgrade to that release.
+#
+---
+ auth-pam.c     | 119 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ auth.h         |   3 ++
+ auth2.c        |  61 ++++++++++++++++++++++++++++-
+ monitor.c      |  63 ++++++++++++++++++++++++++++++
+ monitor.h      |   3 ++
+ monitor_wrap.c |  18 +++++++++
+ servconf.c     |  56 +++++++++++++++++++++++++++
+ servconf.h     |  10 +++++
+ sshd.1m        |  27 +++++++++++++
+ sshd.c         |   5 +++
+ sshd_config.4  |  18 ++++++++-
+ 11 files changed, 379 insertions(+), 4 deletions(-)
+
+diff --git a/auth-pam.c b/auth-pam.c
+index b941991..7bdee5c 100644
+--- a/auth-pam.c
++++ b/auth-pam.c
+@@ -617,6 +617,72 @@ sshpam_cleanup(void)
+ 	sshpam_handle = NULL;
+ }
+ 
++#ifdef PAM_ENHANCEMENT
++char *
++derive_pam_service_name(Authctxt *authctxt)
++{
++	char *svcname = xmalloc(BUFSIZ);
++
++	/*
++	 * If PamServiceName is set we use that for everything, including
++	 * SSHv1
++	 */
++	if (options.pam_service_name != NULL) {
++		(void) strlcpy(svcname, options.pam_service_name, BUFSIZ);
++		return (svcname);
++	}
++
++	if (compat20) {
++		char *method_name = authctxt->authmethod_name;
++
++		if (!method_name)
++			fatal("Userauth method unknown while starting PAM");
++
++		/*
++		 * For SSHv2 we use "sshd-<userauth name>
++		 * The "sshd" prefix can be changed via the PAMServicePrefix
++		 * sshd_config option.
++		 */
++		if (strcmp(method_name, "none") == 0) {
++			snprintf(svcname, BUFSIZ, "%s-none",
++			    options.pam_service_prefix);
++		}
++		if (strcmp(method_name, "password") == 0) {
++			snprintf(svcname, BUFSIZ, "%s-password",
++			    options.pam_service_prefix);
++		}
++		if (strcmp(method_name, "keyboard-interactive") == 0) {
++			/* "keyboard-interactive" is too long, shorten it */
++			snprintf(svcname, BUFSIZ, "%s-kbdint",
++			    options.pam_service_prefix);
++		}
++		if (strcmp(method_name, "publickey") == 0) {
++			/* "publickey" is too long, shorten it */
++			snprintf(svcname, BUFSIZ, "%s-pubkey",
++			    options.pam_service_prefix);
++		}
++		if (strcmp(method_name, "hostbased") == 0) {
++			snprintf(svcname, BUFSIZ, "%s-hostbased",
++			    options.pam_service_prefix);
++		}
++		if (strncmp(method_name, "gssapi-", 7) == 0) {
++		        /*
++			 * Although OpenSSH only supports "gssapi-with-mic"
++			 * for now. We will still map any userauth method
++                         * prefixed with "gssapi-" to the gssapi PAM service.
++			 */ 
++			snprintf(svcname, BUFSIZ, "%s-gssapi",
++			    options.pam_service_prefix);
++		}
++		return svcname;
++	} else {
++		/* SSHv1 doesn't get to be so cool */
++	        snprintf(svcname, BUFSIZ, "sshd-v1");
++	}
++	return svcname;
++}
++#endif /* PAM_ENHANCEMENT */
++
+ static int
+ sshpam_init(Authctxt *authctxt)
+ {
+@@ -624,18 +690,71 @@ sshpam_init(Authctxt *authctxt)
+ 	const char *pam_rhost, *pam_user, *user = authctxt->user;
+ 	const char **ptr_pam_user = &pam_user;
+ 
++#ifdef PAM_ENHANCEMENT
++	const char *pam_service;
++        const char **ptr_pam_service = &pam_service;
++	char *svc = NULL;
++
++	svc = derive_pam_service_name(authctxt);
++        debug3("PAM service is %s", svc);
++#endif
++
+ 	if (sshpam_handle != NULL) {
++#ifdef PAM_ENHANCEMENT
++	        /* get the pam service name */
++		sshpam_err = pam_get_item(sshpam_handle,
++		    PAM_SERVICE, (sshpam_const void **)ptr_pam_service);
++                if (sshpam_err != PAM_SUCCESS) 
++		    fatal("Failed to get the PAM service name");
++		debug3("Previous pam_service is %s", pam_service ?
++                    pam_service : "NULL");
++
++		/* get the pam user name */
++		sshpam_err = pam_get_item(sshpam_handle,
++		    PAM_USER, (sshpam_const void **)ptr_pam_user);
++
++		/*
++		 * only need to re-start if either user or service is 
++                 * different.
++                 */
++		if (sshpam_err == PAM_SUCCESS && strcmp(user, pam_user) == 0
++		    && strncmp(svc, pam_service, strlen(svc)) == 0) {
++		        free(svc);
++			return (0);
++                }
++
++		/*
++		 * Clean up previous PAM state.  No need to clean up session 
++		 * and creds.
++		 */
++                sshpam_authenticated = 0;
++                sshpam_account_status = -1;
++
++		sshpam_err = pam_set_item(sshpam_handle, PAM_CONV, NULL);
++         	if (sshpam_err != PAM_SUCCESS)
++		        debug3("Cannot remove PAM conv"); /* a warning only */
++#else /* Original */
+ 		/* We already have a PAM context; check if the user matches */
+ 		sshpam_err = pam_get_item(sshpam_handle,
+ 		    PAM_USER, (sshpam_const void **)ptr_pam_user);
+ 		if (sshpam_err == PAM_SUCCESS && strcmp(user, pam_user) == 0)
+ 			return (0);
++#endif /* PAM_ENHANCEMENT */
+ 		pam_end(sshpam_handle, sshpam_err);
+ 		sshpam_handle = NULL;
+ 	}
+ 	debug("PAM: initializing for \"%s\"", user);
++
++#ifdef PAM_ENHANCEMENT
++        debug3("Starting PAM service %s for user %s method %s", svc, user,
++            authctxt->authmethod_name);
++	sshpam_err =
++	    pam_start(svc, user, &store_conv, &sshpam_handle);
++	free(svc);
++#else /* Original */
+ 	sshpam_err =
+ 	    pam_start(SSHD_PAM_SERVICE, user, &store_conv, &sshpam_handle);
++#endif
+ 	sshpam_authctxt = authctxt;
+ 
+ 	if (sshpam_err != PAM_SUCCESS) {
+diff --git a/auth.h b/auth.h
+index 8b27575..a0e41a4 100644
+--- a/auth.h
++++ b/auth.h
+@@ -81,6 +81,9 @@ struct Authctxt {
+ 
+ 	struct sshkey	**prev_userkeys;
+ 	u_int		 nprev_userkeys;
++#ifdef PAM_ENHANCEMENT
++        char            *authmethod_name;
++#endif 
+ };
+ /*
+  * Every authentication method has to handle authentication requests for
+diff --git a/auth2.c b/auth2.c
+index 7177962..32ba663 100644
+--- a/auth2.c
++++ b/auth2.c
+@@ -243,10 +243,21 @@ input_userauth_request(int type, u_int32_t seq, void *ctxt)
+ 			PRIVSEP(audit_event(SSH_INVALID_USER));
+ #endif
+ 		}
++
++
+ #ifdef USE_PAM
++#ifdef PAM_ENHANCEMENT
++		/*
++		 * Start PAM here and once only, if each userauth does not
++		 * has its own PAM service.
++		 */
++	        if (options.use_pam && !options.pam_service_per_authmethod)
++			PRIVSEP(start_pam(authctxt));
++#else
+ 		if (options.use_pam)
+ 			PRIVSEP(start_pam(authctxt));
+ #endif
++#endif
+ 		setproctitle("%s%s", authctxt->valid ? user : "unknown",
+ 		    use_privsep ? " [net]" : "");
+ 		authctxt->service = xstrdup(service);
+@@ -277,6 +288,18 @@ input_userauth_request(int type, u_int32_t seq, void *ctxt)
+ 	/* try to authenticate user */
+ 	m = authmethod_lookup(authctxt, method);
+ 	if (m != NULL && authctxt->failures < options.max_authtries) {
++
++#if defined(USE_PAM) && defined(PAM_ENHANCEMENT)
++		/* start PAM service for each userauth */
++                if (options.use_pam && options.pam_service_per_authmethod) {
++       		        if (authctxt->authmethod_name != NULL)
++		                free(authctxt->authmethod_name);
++                        authctxt->authmethod_name = xstrdup(method);
++                        if (use_privsep)
++                                mm_inform_authmethod(method);
++		        PRIVSEP(start_pam(authctxt));
++		}
++#endif
+ 		debug2("input_userauth_request: try method %s", method);
+ 		authenticated =	m->userauth(authctxt);
+ 	}
+@@ -295,6 +318,10 @@ userauth_finish(Authctxt *authctxt, int authenticated, const char *method,
+ 	char *methods;
+ 	int partial = 0;
+ 
++#ifdef  PAM_ENHANCEMENT
++        debug3("%s: entering", __func__);
++#endif
++
+ 	if (!authctxt->valid && authenticated)
+ 		fatal("INTERNAL ERROR: authenticated invalid user %s",
+ 		    authctxt->user);
+@@ -311,6 +338,25 @@ userauth_finish(Authctxt *authctxt, int authenticated, const char *method,
+ 	}
+ 
+ 	if (authenticated && options.num_auth_methods != 0) {
++
++#if defined(USE_PAM) && defined(PAM_ENHANCEMENT)
++                /*
++                 * If each userauth has its own PAM service, then PAM need to 
++                 * perform account check for this service.
++                 */
++                if (options.use_pam && options.pam_service_per_authmethod &&
++                    !PRIVSEP(do_pam_account())) {
++                        /* if PAM returned a message, send it to the user */
++                        if (buffer_len(&loginmsg) > 0) {
++                                buffer_append(&loginmsg, "\0", 1);
++                                userauth_send_banner(buffer_ptr(&loginmsg));
++                                packet_write_wait();
++                        }
++
++                        fatal("Access denied for user %s by PAM account "
++                            "configuration", authctxt->user);
++                }
++#endif
+ 		if (!auth2_update_methods_lists(authctxt, method, submethod)) {
+ 			authenticated = 0;
+ 			partial = 1;
+@@ -324,7 +370,20 @@ userauth_finish(Authctxt *authctxt, int authenticated, const char *method,
+ 		return;
+ 
+ #ifdef USE_PAM
++
++#ifdef PAM_ENHANCEMENT
++        /*
++         * PAM needs to perform account checks after auth. However, if each
++         * userauth has its own PAM service and options.num_auth_methods != 0,
++         * then no need to perform account checking, because it was done 
++         * already.
++         */
++        if (options.use_pam && authenticated && 
++            !(options.num_auth_methods != 0 &&
++            options.pam_service_per_authmethod)){
++#else
+ 	if (options.use_pam && authenticated) {
++#endif
+ 		if (!PRIVSEP(do_pam_account())) {
+ 			/* if PAM returned a message, send it to the user */
+ 			if (buffer_len(&loginmsg) > 0) {
+@@ -615,5 +674,3 @@ auth2_update_methods_lists(Authctxt *authctxt, const char *method,
+ 		fatal("%s: method not in AuthenticationMethods", __func__);
+ 	return 0;
+ }
+-
+-
+diff --git a/monitor.c b/monitor.c
+index a914209..b3efbb0 100644
+--- a/monitor.c
++++ b/monitor.c
+@@ -127,6 +127,9 @@ int mm_answer_sign(int, Buffer *);
+ int mm_answer_pwnamallow(int, Buffer *);
+ int mm_answer_auth2_read_banner(int, Buffer *);
+ int mm_answer_authserv(int, Buffer *);
++#ifdef PAM_ENHANCEMENT
++int mm_answer_authmethod(int, Buffer *);
++#endif
+ int mm_answer_authpassword(int, Buffer *);
+ int mm_answer_bsdauthquery(int, Buffer *);
+ int mm_answer_bsdauthrespond(int, Buffer *);
+@@ -206,10 +209,17 @@ struct mon_table mon_dispatch_proto20[] = {
+     {MONITOR_REQ_SIGN, MON_ONCE, mm_answer_sign},
+     {MONITOR_REQ_PWNAM, MON_ONCE, mm_answer_pwnamallow},
+     {MONITOR_REQ_AUTHSERV, MON_ONCE, mm_answer_authserv},
++#ifdef PAM_ENHANCEMENT
++    {MONITOR_REQ_AUTHMETHOD, MON_ISAUTH, mm_answer_authmethod},
++#endif
+     {MONITOR_REQ_AUTH2_READ_BANNER, MON_ONCE, mm_answer_auth2_read_banner},
+     {MONITOR_REQ_AUTHPASSWORD, MON_AUTH, mm_answer_authpassword},
+ #ifdef USE_PAM
++#ifdef PAM_ENHANCEMENT
++    {MONITOR_REQ_PAM_START, MON_ISAUTH, mm_answer_pam_start},
++#else
+     {MONITOR_REQ_PAM_START, MON_ONCE, mm_answer_pam_start},
++#endif
+     {MONITOR_REQ_PAM_ACCOUNT, 0, mm_answer_pam_account},
+     {MONITOR_REQ_PAM_INIT_CTX, MON_ISAUTH, mm_answer_pam_init_ctx},
+     {MONITOR_REQ_PAM_QUERY, MON_ISAUTH, mm_answer_pam_query},
+@@ -371,6 +381,24 @@ monitor_child_preauth(Authctxt *_authctxt, struct monitor *pmonitor)
+ 			if (!compat20)
+ 				fatal("AuthenticationMethods is not supported"
+ 				    "with SSH protocol 1");
++
++#if defined(USE_PAM) && defined(PAM_ENHANCEMENT)
++                        /* 
++                         * If each userauth has its own PAM service, then PAM
++                         * need to perform account check for this service.
++                         */
++                        if (options.use_pam && authenticated &&
++                            options.pam_service_per_authmethod) {
++                                Buffer m;
++
++                                buffer_init(&m);
++                                mm_request_receive_expect(pmonitor->m_sendfd,
++                                    MONITOR_REQ_PAM_ACCOUNT, &m);
++                                authenticated = 
++                                    mm_answer_pam_account(pmonitor->m_sendfd, &m);
++                                buffer_free(&m);
++                         }
++#endif
+ 			if (authenticated &&
+ 			    !auth2_update_methods_lists(authctxt,
+ 			    auth_method, auth_submethod)) {
+@@ -389,8 +417,21 @@ monitor_child_preauth(Authctxt *_authctxt, struct monitor *pmonitor)
+ 			    !auth_root_allowed(auth_method))
+ 				authenticated = 0;
+ #ifdef USE_PAM
++#ifdef PAM_ENHANCEMENT
++                        /*
++                         * PAM needs to perform account checks after auth.
++                         * However, if each userauth has its own PAM service
++                         * and options.num_auth_methods != 0, then no need to
++                         * perform account checking, because it was done 
++                         * already.
++                         */
++                        if (options.use_pam && authenticated &&
++                            !(options.num_auth_methods != 0 &&
++                            options.pam_service_per_authmethod)) {
++#else
+ 			/* PAM needs to perform account checks after auth */
+ 			if (options.use_pam && authenticated) {
++#endif
+ 				Buffer m;
+ 
+ 				buffer_init(&m);
+@@ -863,6 +904,10 @@ mm_answer_pwnamallow(int sock, Buffer *m)
+ 		/* Allow service/style information on the auth context */
+ 		monitor_permit(mon_dispatch, MONITOR_REQ_AUTHSERV, 1);
+ 		monitor_permit(mon_dispatch, MONITOR_REQ_AUTH2_READ_BANNER, 1);
++#ifdef PAM_ENHANCEMENT
++                /* Allow authmethod information on the auth context */
++		monitor_permit(mon_dispatch, MONITOR_REQ_AUTHMETHOD, 1);
++#endif
+ 	}
+ #ifdef USE_PAM
+ 	if (options.use_pam)
+@@ -903,6 +948,24 @@ mm_answer_authserv(int sock, Buffer *m)
+ 	return (0);
+ }
+ 
++#ifdef PAM_ENHANCEMENT
++int
++mm_answer_authmethod(int sock, Buffer *m)
++{
++	monitor_permit_authentications(1);
++
++	authctxt->authmethod_name = buffer_get_string(m, NULL);
++	debug3("%s: authmethod_name=%s", __func__, authctxt->authmethod_name);
++
++	if (strlen(authctxt->authmethod_name) == 0) {
++		free(authctxt->authmethod_name);
++		authctxt->authmethod_name = NULL;
++	}
++
++	return (0);
++}
++#endif
++
+ int
+ mm_answer_authpassword(int sock, Buffer *m)
+ {
+diff --git a/monitor.h b/monitor.h
+index 93b8b66..da63e7d 100644
+--- a/monitor.h
++++ b/monitor.h
+@@ -65,6 +65,9 @@ enum monitor_reqtype {
+ 	MONITOR_REQ_PAM_FREE_CTX = 110, MONITOR_ANS_PAM_FREE_CTX = 111,
+ 	MONITOR_REQ_AUDIT_EVENT = 112, MONITOR_REQ_AUDIT_COMMAND = 113,
+ 
++#ifdef PAM_ENHANCEMENT
++        MONITOR_REQ_AUTHMETHOD = 114,
++#endif        
+ };
+ 
+ struct mm_master;
+diff --git a/monitor_wrap.c b/monitor_wrap.c
+index eac421b..95231a3 100644
+--- a/monitor_wrap.c
++++ b/monitor_wrap.c
+@@ -345,6 +345,24 @@ mm_inform_authserv(char *service, char *style)
+ 	buffer_free(&m);
+ }
+ 
++#ifdef PAM_ENHANCEMENT
++/* Inform the privileged process about the authentication method */
++void
++mm_inform_authmethod(char *authmethod)
++{
++	Buffer m;
++
++	debug3("%s entering", __func__);
++
++	buffer_init(&m);
++	buffer_put_cstring(&m, authmethod);
++
++	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_AUTHMETHOD, &m);
++
++	buffer_free(&m);
++}
++#endif
++
+ /* Do the password authentication */
+ int
+ mm_auth_password(Authctxt *authctxt, char *password)
+diff --git a/servconf.c b/servconf.c
+index ad884ec..d0ca777 100644
+--- a/servconf.c
++++ b/servconf.c
+@@ -169,6 +169,18 @@ initialize_server_options(ServerOptions *options)
+ 	options->ip_qos_bulk = -1;
+ 	options->version_addendum = NULL;
+ 	options->fingerprint_hash = -1;
++#ifdef PAM_ENHANCEMENT
++	options->pam_service_name = NULL;
++	options->pam_service_prefix = NULL;
++
++	/* 
++	 * Each user method will have its own PAM service by default.
++	 * However, if PAMServiceName is specified or the protocal version
++	 * is not compat20, then there will be only one PAM service for the
++	 * entire user authentication.
++	 */
++	options->pam_service_per_authmethod = 1;
++#endif
+ }
+ 
+ /* Returns 1 if a string option is unset or set to "none" or 0 otherwise. */
+@@ -340,6 +352,12 @@ fill_default_server_options(ServerOptions *options)
+ 		options->ip_qos_bulk = IPTOS_THROUGHPUT;
+ 	if (options->version_addendum == NULL)
+ 		options->version_addendum = xstrdup("");
++
++#ifdef PAM_ENHANCEMENT
++	if (options->pam_service_prefix == NULL)
++		options->pam_service_prefix = _SSH_PAM_SERVICE_PREFIX;
++#endif
++
+ 	if (options->fwd_opts.streamlocal_bind_mask == (mode_t)-1)
+ 		options->fwd_opts.streamlocal_bind_mask = 0177;
+ 	if (options->fwd_opts.streamlocal_bind_unlink == -1)
+@@ -421,6 +439,9 @@ typedef enum {
+ 	sMatch, sPermitOpen, sForceCommand, sChrootDirectory,
+ 	sUsePrivilegeSeparation, sAllowAgentForwarding,
+ 	sHostCertificate,
++#ifdef PAM_ENHANCEMENT
++	sPAMServicePrefix, sPAMServiceName,
++#endif
+ 	sRevokedKeys, sTrustedUserCAKeys, sAuthorizedPrincipalsFile,
+ 	sAuthorizedPrincipalsCommand, sAuthorizedPrincipalsCommandUser,
+ 	sKexAlgorithms, sIPQoS, sVersionAddendum,
+@@ -559,6 +580,10 @@ static struct {
+ 	{ "forcecommand", sForceCommand, SSHCFG_ALL },
+ 	{ "chrootdirectory", sChrootDirectory, SSHCFG_ALL },
+ 	{ "hostcertificate", sHostCertificate, SSHCFG_GLOBAL },
++#ifdef PAM_ENHANCEMENT
++	{ "pamserviceprefix", sPAMServicePrefix, SSHCFG_GLOBAL },
++	{ "pamservicename", sPAMServiceName, SSHCFG_GLOBAL },
++#endif
+ 	{ "revokedkeys", sRevokedKeys, SSHCFG_ALL },
+ 	{ "trustedusercakeys", sTrustedUserCAKeys, SSHCFG_ALL },
+ 	{ "authorizedprincipalsfile", sAuthorizedPrincipalsFile, SSHCFG_ALL },
+@@ -1865,6 +1890,37 @@ process_server_config_line(ServerOptions *options, char *line,
+ 			options->fingerprint_hash = value;
+ 		break;
+ 
++	case sPAMServicePrefix:
++		arg = strdelim(&cp);
++		if (!arg || *arg == '\0')
++			fatal("%s line %d: Missing argument.",
++			    filename, linenum);
++		if (options->pam_service_name != NULL)
++			fatal("%s line %d: PAMServiceName and PAMServicePrefix"
++			    " are mutually exclusive.", filename, linenum);
++		if (options->pam_service_prefix == NULL)
++			options->pam_service_prefix = xstrdup(arg);
++		break;
++
++	case sPAMServiceName:
++		arg = strdelim(&cp);
++		if (!arg || *arg == '\0')
++			fatal("%s line %d: Missing argument.",
++			    filename, linenum);
++		if (options->pam_service_prefix != NULL)
++			fatal("%s line %d: PAMServiceName and PAMServicePrefix"
++			    " are mutually exclusive.", filename, linenum);
++		if (options->pam_service_name == NULL) {
++			options->pam_service_name = xstrdup(arg);
++
++			/*
++			 * When this option is specified, we will not have
++			 * PAM service for each auth method.
++                         */
++			options->pam_service_per_authmethod = 0;
++		}
++		break;
++
+ 	case sDeprecated:
+ 		logit("%s line %d: Deprecated option %s",
+ 		    filename, linenum, arg);
+diff --git a/servconf.h b/servconf.h
+index f4137af..8c86b57 100644
+--- a/servconf.h
++++ b/servconf.h
+@@ -54,6 +54,10 @@
+ /* Magic name for internal sftp-server */
+ #define INTERNAL_SFTP_NAME	"internal-sftp"
+ 
++#ifdef PAM_ENHANCEMENT
++#define _SSH_PAM_SERVICE_PREFIX "sshd"
++#endif
++
+ typedef struct {
+ 	u_int	num_ports;
+ 	u_int	ports_from_cmdline;
+@@ -194,6 +198,12 @@ typedef struct {
+ 	u_int	num_auth_methods;
+ 	char   *auth_methods[MAX_AUTH_METHODS];
+ 
++#ifdef PAM_ENHANCEMENT
++	char   *pam_service_prefix;
++	char   *pam_service_name;
++	int	pam_service_per_authmethod;
++#endif
++        
+ 	int	fingerprint_hash;
+ }       ServerOptions;
+ 
+diff --git a/sshd.1m b/sshd.1m
+index ada4f25..3753f90 100644
+--- a/sshd.1m
++++ b/sshd.1m
+@@ -944,6 +944,33 @@ concurrently for different ports, this contains the process ID of the one
+ started last).
+ The content of this file is not sensitive; it can be world-readable.
+ .El
++
++.Sh SECURITY
++sshd uses pam(3PAM) for password and keyboard-interactive methods as well as 
++for account management, session management, and the password management for all
++authentication methods.
++.Pp
++Each SSHv2 userauth type has its own PAM service name:
++
++.Bd -literal -offset 3n
++
++-----------------------------------------------
++| SSHv2 Userauth       | PAM Service Name     |
++-----------------------------------------------
++| none                 | sshd-none            |
++-----------------------------------------------
++| password             | sshd-password        |
++-----------------------------------------------
++| keyboard-interactive | sshd-kbdint          |
++-----------------------------------------------
++| pubkey               | sshd-pubkey          |
++-----------------------------------------------
++| hostbased            | sshd-hostbased       |
++-----------------------------------------------
++| gssapi-with-mic      | sshd-gssapi          |
++-----------------------------------------------
++.Ed
++
+ .Sh SEE ALSO
+ .Xr scp 1 ,
+ .Xr sftp 1 ,
+diff --git a/sshd.c b/sshd.c
+index 84e1dee..7e519d4 100644
+--- a/sshd.c
++++ b/sshd.c
+@@ -2165,6 +2165,11 @@ main(int ac, char **av)
+ 
+ 	sshd_exchange_identification(sock_in, sock_out);
+ 
++#ifdef PAM_ENHANCEMENT
++	if (!compat20)
++	        options.pam_service_per_authmethod = 0;
++#endif
++
+ 	/* In inetd mode, generate ephemeral key only for proto 1 connections */
+ 	if (!compat20 && inetd_flag && sensitive_data.server_key == NULL)
+ 		generate_ephemeral_server_key();
+diff --git a/sshd_config.4 b/sshd_config.4
+index ba4d79a..263175b 100644
+--- a/sshd_config.4
++++ b/sshd_config.4
+@@ -1160,6 +1160,21 @@ The probability increases linearly and all connection attempts
+ are refused if the number of unauthenticated connections reaches
+ .Dq full
+ (60).
++.It Cm PAMServiceName
++Specifies the PAM service name for the PAM session. The PAMServiceName and 
++PAMServicePrefix options are mutually exclusive and if both set, sshd does not
++start. If this option is set the service name is the same for all user 
++authentication methods. The option has no default value. See PAMServicePrefix 
++for more information.
++.It Cm PAMServicePrefix
++Specifies the PAM service name prefix for service names used for individual 
++user authentication methods. The default is sshd. The PAMServiceName and 
++PAMServicePrefix options are mutually exclusive and if both set, sshd does not 
++start.
++.Pp
++For example, if this option is set to admincli, the service name for the 
++keyboard-interactive authentication method is admincli-kbdint instead of the 
++default sshd-kbdint.
+ .It Cm PasswordAuthentication
+ Specifies whether password authentication is allowed.
+ The default is
+@@ -1573,8 +1588,7 @@ If
+ is enabled, you will not be able to run
+ .Xr sshd 1M
+ as a non-root user.
+-The default is
+-.Dq no .
++On Solaris, the option is always enabled.
+ .It Cm UsePrivilegeSeparation
+ Specifies whether
+ .Xr sshd 1M
+-- 
+2.5.4 (Apple Git-61)
+

@@ -23,20 +23,20 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openssh
-COMPONENT_VERSION=	7.1p1
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	7.1p2
+COMPONENT_REVISION=	1
 HUMAN_VERSION=		$(COMPONENT_VERSION)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 
 # Version for IPS.  The encoding rules are:
 #   OpenSSH <x>.<y>p<n>     => IPS <x>.<y>.0.<n>
 #   OpenSSH <x>.<y>.<z>p<n> => IPS <x>.<y>.<z>.<n>
-IPS_COMPONENT_VERSION=	7.1.0.1
+IPS_COMPONENT_VERSION=	7.1.0.2
 
 COMPONENT_PROJECT_URL=	http://www.openssh.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:fc0a6d2d1d063d5c66dffd952493d0cda256cad204f681de0f84ef85b2ad8428
-COMPONENT_ARCHIVE_URL=	http://mirror.team-cymru.org/pub/OpenBSD/OpenSSH/portable/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:dd75f024dcf21e06a0d6421d582690bf987a1f6323e32ad6619392f3bfde6bbd
+COMPONENT_ARCHIVE_URL=	http://mirrors.nycbug.org/pub/OpenBSD/OpenSSH/portable/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=utility/openssh
 
 TPNO_OPENSSH=		21980
@@ -74,8 +74,9 @@ CONFIGURE_OPTIONS += --with-audit=solaris
 CONFIGURE_OPTIONS += --with-libedit
 CONFIGURE_OPTIONS += --with-kerberos5
 CONFIGURE_OPTIONS += --with-pam
-CONFIGURE_OPTIONS += --with-sandbox=no
+CONFIGURE_OPTIONS += --with-sandbox=solaris
 CONFIGURE_OPTIONS += --with-solaris-contracts
+CONFIGURE_OPTIONS += --with-solaris-privs
 CONFIGURE_OPTIONS += --with-tcp-wrappers
 CONFIGURE_OPTIONS += --with-4in6
 CONFIGURE_OPTIONS += --with-xauth=/usr/bin/xauth

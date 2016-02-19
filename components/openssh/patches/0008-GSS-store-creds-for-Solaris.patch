@@ -1,0 +1,178 @@
+From 96ebc88bdb00bcf381a700049ad324ad0b0064b0 Mon Sep 17 00:00:00 2001
+From: oracle <solaris@oracle.com>
+Date: Mon, 3 Aug 2015 14:35:34 -0700
+Subject: [PATCH 08/36] GSS store creds for Solaris
+
+---
+ configure.ac    |  3 +++
+ gss-serv-krb5.c |  7 ++++++-
+ gss-serv.c      | 44 ++++++++++++++++++++++++++++++++++++++++++++
+ servconf.c      |  4 ++++
+ sshd.c          | 14 ++++++++++++++
+ 5 files changed, 71 insertions(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index b06cede..2985819 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -939,6 +939,9 @@ mips-sony-bsd|mips-sony-newsos4)
+ 		],
+ 	)
+ 	TEST_SHELL=$SHELL	# let configure find us a capable shell
++	AC_DEFINE([USE_GSS_STORE_CRED], [1], [Use the Solaris-style GSS cred store])
++	AC_DEFINE([GSSAPI_STORECREDS_NEEDS_RUID], [1], [GSSAPI storecreds needs ruid])
++	AC_DEFINE([HAVE_PAM_AUSER], [1], [pam_auser])
+ 	;;
+ *-*-sunos4*)
+ 	CPPFLAGS="$CPPFLAGS -DSUNOS4"
+diff --git a/gss-serv-krb5.c b/gss-serv-krb5.c
+index 795992d..6e6cff7 100644
+--- a/gss-serv-krb5.c
++++ b/gss-serv-krb5.c
+@@ -110,7 +110,7 @@ ssh_gssapi_krb5_userok(ssh_gssapi_client *client, char *name)
+ 	return retval;
+ }
+ 
+-
++#ifndef USE_GSS_STORE_CRED
+ /* This writes out any forwarded credentials from the structure populated
+  * during userauth. Called after we have setuid to the user */
+ 
+@@ -196,6 +196,7 @@ ssh_gssapi_krb5_storecreds(ssh_gssapi_client *client)
+ 
+ 	return;
+ }
++#endif /* #ifndef USE_GSS_STORE_CRED */
+ 
+ ssh_gssapi_mech gssapi_kerberos_mech = {
+ 	"toWM5Slw5Ew8Mqkay+al2g==",
+@@ -204,7 +205,11 @@ ssh_gssapi_mech gssapi_kerberos_mech = {
+ 	NULL,
+ 	&ssh_gssapi_krb5_userok,
+ 	NULL,
++#ifdef USE_GSS_STORE_CRED
++	NULL
++#else
+ 	&ssh_gssapi_krb5_storecreds
++#endif
+ };
+ 
+ #endif /* KRB5 */
+diff --git a/gss-serv.c b/gss-serv.c
+index 53993d6..209ffe8 100644
+--- a/gss-serv.c
++++ b/gss-serv.c
+@@ -320,22 +320,66 @@ ssh_gssapi_getclient(Gssctxt *ctx, ssh_gssapi_client *client)
+ void
+ ssh_gssapi_cleanup_creds(void)
+ {
++#ifdef USE_GSS_STORE_CRED
++	debug("removing gssapi cred file not implemented");
++#else
+ 	if (gssapi_client.store.filename != NULL) {
+ 		/* Unlink probably isn't sufficient */
+ 		debug("removing gssapi cred file\"%s\"",
+ 		    gssapi_client.store.filename);
+ 		unlink(gssapi_client.store.filename);
+ 	}
++#endif /* USE_GSS_STORE_CRED */
+ }
+ 
+ /* As user */
+ void
+ ssh_gssapi_storecreds(void)
+ {
++#ifdef USE_GSS_STORE_CRED
++	OM_uint32 maj_status, min_status;
++
++	if (gssapi_client.creds == NULL) {
++		debug("No credentials stored");
++		return;
++	}
++
++	maj_status = gss_store_cred(&min_status, gssapi_client.creds,
++	    GSS_C_INITIATE, &gssapi_client.mech->oid, 1, 1, NULL, NULL);
++
++	if (GSS_ERROR(maj_status)) {
++		Buffer b;
++		gss_buffer_desc msg;
++		OM_uint32 lmin;
++		OM_uint32 more = 0;
++		buffer_init(&b);
++		/* GSS-API error */
++		do {
++			gss_display_status(&lmin, maj_status, GSS_C_GSS_CODE,
++			    GSS_C_NULL_OID, &more, &msg);
++			buffer_append(&b, msg.value, msg.length);
++			buffer_put_char(&b, '\n');
++			gss_release_buffer(&lmin, &msg);
++		} while (more != 0);
++		/* Mechanism specific error */
++		do {
++			gss_display_status(&lmin, min_status, GSS_C_MECH_CODE,
++			    &gssapi_client.mech->oid, &more, &msg);
++			buffer_append(&b, msg.value, msg.length);
++			buffer_put_char(&b, '\n');
++			gss_release_buffer(&lmin, &msg);
++		} while (more != 0);
++		buffer_put_char(&b, '\0');
++		error("GSS-API error while storing delegated credentials: %s",
++		    buffer_ptr(&b));
++		buffer_free(&b);
++	}
++#else	/* #ifdef USE_GSS_STORE_CRED */
+ 	if (gssapi_client.mech && gssapi_client.mech->storecreds) {
+ 		(*gssapi_client.mech->storecreds)(&gssapi_client);
+ 	} else
+ 		debug("ssh_gssapi_storecreds: Not a GSSAPI mechanism");
++#endif	/* #ifdef USE_GSS_STORE_CRED */
+ }
+ 
+ /* This allows GSSAPI methods to do things to the childs environment based
+diff --git a/servconf.c b/servconf.c
+index 4ec6b57..ad884ec 100644
+--- a/servconf.c
++++ b/servconf.c
+@@ -489,7 +489,11 @@ static struct {
+ 	{ "afstokenpassing", sUnsupported, SSHCFG_GLOBAL },
+ #ifdef GSSAPI
+ 	{ "gssapiauthentication", sGssAuthentication, SSHCFG_ALL },
++#ifdef USE_GSS_STORE_CRED
++	{ "gssapicleanupcredentials", sUnsupported, SSHCFG_GLOBAL },
++#else /* USE_GSS_STORE_CRED */
+ 	{ "gssapicleanupcredentials", sGssCleanupCreds, SSHCFG_GLOBAL },
++#endif /* USE_GSS_STORE_CRED */
+ 	{ "gssapistrictacceptorcheck", sGssStrictAcceptor, SSHCFG_GLOBAL },
+ #else
+ 	{ "gssapiauthentication", sUnsupported, SSHCFG_ALL },
+diff --git a/sshd.c b/sshd.c
+index 43d4650..84e1dee 100644
+--- a/sshd.c
++++ b/sshd.c
+@@ -2234,9 +2234,23 @@ main(int ac, char **av)
+ 
+ #ifdef GSSAPI
+ 	if (options.gss_authentication) {
++#ifdef GSSAPI_STORECREDS_NEEDS_RUID
++		if (setreuid(authctxt->pw->pw_uid, -1) != 0) {
++			debug("setreuid %u: %.100s",
++			    (u_int) authctxt->pw->pw_uid, strerror(errno));
++			goto bail_storecred;
++		}
++#endif
+ 		temporarily_use_uid(authctxt->pw);
+ 		ssh_gssapi_storecreds();
+ 		restore_uid();
++#ifdef GSSAPI_STORECREDS_NEEDS_RUID
++		if (setuid(geteuid()) != 0) {
++			fatal("setuid %u: %.100s", (u_int) geteuid(),
++			    strerror(errno));
++		}
++ bail_storecred: ;
++#endif
+ 	}
+ #endif
+ #ifdef USE_PAM
+-- 
+2.5.4 (Apple Git-61)
+

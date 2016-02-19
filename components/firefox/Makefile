@@ -17,12 +17,12 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	firefox
-COMPONENT_VERSION= 	43.0.4
+COMPONENT_VERSION= 	44.0.2
 COMPONENT_SUMMARY= 	Mozilla Firefox Web browser
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_NAME)-$(COMPONENT_VERSION).source.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:76cfa99285d49dede4097096ab3e7ee4bdedb64084b1fc23f2de216884245a76
+  sha256:0bb28841a9268c50cbb239f759f16f55b3a624f679c68965158beaa0a83a2d9e
 COMPONENT_ARCHIVE_URL= \
   https://ftp.mozilla.org/pub/firefox/releases/$(COMPONENT_VERSION)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.mozilla.com/en-US/firefox/
@@ -68,6 +68,7 @@ ENV +=	SHELL="/bin/bash"
 
 CONFIGURE_ENV =	$(ENV)
 COMPONENT_BUILD_ENV =	$(ENV)
+COMPONENT_INSTALL_ENV += HOME=/tmp
 
 LANG_FILES=$(addsuffix .xpi,$(LANG_LIST))
 

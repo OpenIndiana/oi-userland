@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
+
+<!-- Service import/configuration script for the Coherence Upnp server (http://coherence.beebits.net/) -->
+<service_bundle type="manifest" name="coherence">
+
+	<!-- Define the name under which the service should appear (e.g. in the service manager). -->
+  <service name="application/upnp/coherence" type="service" version="1">
+  
+    <!-- Define dependencies: all file systems must be mounted and network interfaces must be initialized. -->
+    <dependency name="system" grouping="require_all" restart_on="none" type="service"> 
+      <service_fmri value="svc:/milestone/network:default" /> 
+    </dependency>
+    <dependency name='filesystem-local' grouping='require_all' restart_on='none' type='service'>
+      <service_fmri value='svc:/system/filesystem/local:default' />
+    </dependency> 
+    <dependency name='dbus-plugin' grouping='require_all' restart_on='none' type='service'>
+      <service_fmri value='svc:/system/dbus:default' />
+    </dependency>
+
+    <!-- Define dependencies: The start/stop script as well as the config file must exist at the place they are expected. -->
+    <dependency name="config_data" grouping="require_all" restart_on="restart" type="path">
+      <service_fmri value="file://localhost/var/coherence/coherence.conf" /> 
+    </dependency>
+    <dependency name="init_script" grouping="require_all" restart_on="none" type="path">
+      <service_fmri value="file://localhost/lib/svc/method/coherence" /> 
+    </dependency>
+
+    <!-- Next are the control methods for the service. There is an external script which helps us here. -->
+    <exec_method type="method" name="start" exec="/lib/svc/method/coherence start" timeout_seconds='30' />
+    <exec_method type="method" name="stop" exec="/lib/svc/method/coherence stop" timeout_seconds="2" />
+    <exec_method type="method" name="restart" exec="/lib/svc/method/coherence restart" timeout_seconds="30" />
+
+    <!-- Next we need an instance of the service, which describes some context and properties. -->
+    <instance name="default" enabled="false">
+      <method_context>
+        <method_credential user="upnp" group="upnp" /> 
+      </method_context>
+      <property_group name="coherence" type="application">
+        <propval name="config" type="astring" value="/var/coherence/coherence.conf" />
+        <propval name="data" type="astring" value="/var/coherence" />
+        <propval name='action_authorization' type='astring' value='solaris.smf.manage.coherence' />
+        <propval name='value_authorization' type='astring' value='solaris.smf.value.coherence' />
+      </property_group>
+      <property_group name='general' type='framework'>
+        <propval name='action_authorization' type='astring' value='solaris.smf.manage.coherence' />
+        <propval name='value_authorization' type='astring' value='solaris.smf.value.coherence' />
+      </property_group>
+    </instance>
+
+    <!-- Finally some additional meta info about the service itself. -->
+    <stability value="Evolving" />
+    <template>
+      <common_name>
+        <loctext xml:lang="C">Coherence UPNP/DLNA media server</loctext>
+      </common_name>
+      <documentation>
+        <manpage title="coherence" section="1" />
+        <doc_link name="Coherence Documentation" uri="http://coherence.beebits.net/wiki/DocumentationDepartment" />
+      </documentation>
+    </template>
+  </service>
+</service_bundle>

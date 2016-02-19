@@ -1,8 +1,8 @@
-From e47c600f563b6acdcfc5c5fb5751d85335f2225a Mon Sep 17 00:00:00 2001
+From 71b520b3fdbd211fc92f455903a3c218250f44b8 Mon Sep 17 00:00:00 2001
 From: Alex Wilson <alex.wilson@joyent.com>
 Date: Fri, 4 Sep 2015 11:04:30 -0700
-Subject: [PATCH] Accept LANG and LC_* environment variables from clients by
- default
+Subject: [PATCH 32/36] Accept LANG and LC_* environment variables from clients
+ by default
 
 This preserves most of the old SunSSH locale negotiation
 behaviour (at least the parts that are most commonly used).
@@ -78,10 +78,10 @@ index f8122aa..245f2fd 100644
  			dst->n[dst->num_n] = xstrdup(src->n[dst->num_n]); \
  	} \
 diff --git a/session.c b/session.c
-index 5a64715..57f179d 100644
+index ab0ac1c..88cd9f0 100644
 --- a/session.c
 +++ b/session.c
-@@ -1010,6 +1010,18 @@ child_set_env(char ***envp, u_int *envsizep, const char *name,
+@@ -1019,6 +1019,18 @@ child_set_env(char ***envp, u_int *envsizep, const char *name,
  }
  
  /*
@@ -100,7 +100,7 @@ index 5a64715..57f179d 100644
   * Reads environment variables from the given file and adds/overrides them
   * into the environment.  If the file does not exist, this does nothing.
   * Otherwise, it must consist of empty lines, comments (line starts with '#')
-@@ -1171,6 +1183,16 @@ do_setup_env(Session *s, const char *shell)
+@@ -1180,6 +1192,16 @@ do_setup_env(Session *s, const char *shell)
  	ssh_gssapi_do_child(&env, &envsize);
  #endif
  
@@ -117,7 +117,7 @@ index 5a64715..57f179d 100644
  	if (!options.use_login) {
  		/* Set basic environment. */
  		for (i = 0; i < s->num_env; i++)
-@@ -1215,8 +1237,8 @@ do_setup_env(Session *s, const char *shell)
+@@ -1224,8 +1246,8 @@ do_setup_env(Session *s, const char *shell)
  		/* Normal systems set SHELL by default. */
  		child_set_env(&env, &envsize, "SHELL", shell);
  	}
@@ -126,8 +126,8 @@ index 5a64715..57f179d 100644
 +
 +	child_inherit_env(&env, &envsize, "TZ");
  
- 	/* Set custom environment options from RSA authentication. */
- 	if (!options.use_login) {
+ #ifdef PER_SESSION_XAUTHFILE
+         if (s->auth_file != NULL)
 diff --git a/sshd_config b/sshd_config
 index 0048f98..bbdc6ae 100644
 --- a/sshd_config
@@ -168,5 +168,5 @@ index cce3a5a..913f528 100644
  Specifies which address family should be used by
  .Xr sshd 1M .
 -- 
-2.3.2 (Apple Git-55)
+2.5.4 (Apple Git-61)
 

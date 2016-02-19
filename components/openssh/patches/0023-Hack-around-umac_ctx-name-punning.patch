@@ -1,0 +1,35 @@
+From a568c15ab17ad86878c2260ff8d4f8f6c64924d5 Mon Sep 17 00:00:00 2001
+From: Alex Wilson <alex.wilson@joyent.com>
+Date: Wed, 5 Aug 2015 10:57:08 -0700
+Subject: [PATCH 23/36] Hack around umac_ctx name-punning
+
+OpenSSH builds the file umac.c twice, once as is, and once using
+the preprocessor to rename everything to umac128_*.
+
+Unfortunately, it does not rename the struct umac_ctx, which ends
+up being used by both .o files to talk about completely different
+structs (the preprocessor macros change its size).
+
+This only matters if you care about DWARF/CTF type information,
+which we do, so we add an extra -D to rename the struct in the
+second build of umac.c.
+---
+ Makefile.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile.in b/Makefile.in
+index 0148742..66c4585 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -228,7 +228,7 @@ umac128.o:	umac.c
+ 	$(CC) $(CFLAGS) $(CPPFLAGS) -o umac128.o -c $(srcdir)/umac.c \
+ 	    -DUMAC_OUTPUT_LEN=16 -Dumac_new=umac128_new \
+ 	    -Dumac_update=umac128_update -Dumac_final=umac128_final \
+-	    -Dumac_delete=umac128_delete
++	    -Dumac_delete=umac128_delete -Dumac_ctx=umac128_ctx
+ 
+ # dtrace sftp
+ sftp_provider.h: $(srcdir)/sftp_provider.d
+-- 
+2.5.4 (Apple Git-61)
+
