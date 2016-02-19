@@ -1,0 +1,18 @@
+Patch to disable openpty function in expect.
+This bug originated in-house. This is a temporary
+fix until 22706805 is fixed and expect is modified
+to use openpty correctly on Solaris and thus
+will not be submitted upstream. (see bug 22742744)
+
+
+--- expect5.45/configure.in.orig	2010-08-27 14:51:53.000000000 -0700
++++ expect5.45/configure.in	2016-02-17 17:25:12.678863161 -0800
+@@ -207,7 +207,7 @@
+ 
+ ######################################################################
+ # Check for FreeBSD/NetBSD openpty()
+-unset ac_cv_func_openpty
++ac_cv_func_openpty=no
+ 
+ AC_CHECK_FUNC(openpty, AC_DEFINE(HAVE_OPENPTY) openpty=1 , openpty=0)
+ if test $openpty -eq 0 ; then

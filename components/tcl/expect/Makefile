@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -44,6 +44,7 @@ include $(WS_MAKE_RULES)/ips.mk
 SCRIPTS = timed-run timed-read ftp-rfc autopasswd lpunlock weather \
           passmass rftp kibitz rlogin-cwd xpstat tkpasswd dislocate xkibitz \
           tknewsbiff unbuffer mkpasswd cryptdir decryptdir autoexpect multixterm
+COMPONENT_PREP_ACTION += (cd $(@D); autoreconf -fiv); 
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
