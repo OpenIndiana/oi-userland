@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
+<!--
+
+   
+    Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
+
+    NOTE:  This service manifest is not editable; its contents will
+    be overwritten by package or patch operations, including
+    operating system upgrade.  Make customizations in a different
+    file.
+-->
+
+<service_bundle type='manifest' name='system/rsyslog:rsyslog'>
+
+<service
+	name='system/system-log'
+	type='service'
+	version='1'>
+
+	<instance name='rsyslog' enabled='false'>
+
+		<exec_method
+			type='method'
+			name='start'
+			exec='/lib/svc/method/rsyslog'
+			timeout_seconds='600'>
+			<method_context>
+			<method_credential
+			  user='root' group='root'
+			  privileges='basic,net_privaddr' />
+			</method_context>
+		</exec_method>
+
+		<template>
+			<common_name>
+				<loctext xml:lang='C'>
+				reliable and extended system log daemon
+				</loctext>
+			</common_name>
+			<documentation>
+				<manpage title='rsyslogd' section='8'
+				    manpath='/usr/share/man' />
+			</documentation>
+		</template>
+
+	</instance>
+
+</service>
+
+</service_bundle>

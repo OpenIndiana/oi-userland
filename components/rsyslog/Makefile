@@ -124,5 +124,4 @@ REQUIRED_PACKAGES += library/libestr
 REQUIRED_PACKAGES += library/liblogging
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/core-os
 REQUIRED_PACKAGES += system/library
