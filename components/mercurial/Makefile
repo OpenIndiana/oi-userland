@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -28,17 +28,17 @@ include ../../make-rules/shared-macros.mk
 PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
 
 COMPONENT_NAME=		mercurial
-COMPONENT_VERSION=	3.4
+COMPONENT_VERSION=	3.7.1
 COMPONENT_PROJECT_URL=	http://mercurial.selenic.com/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:ff1da0545cdd46ebcf473176d55937a22bb55fff51cdff9d4c2f900fc80baf10
+    sha256:96d37d1f444a032295e190318b3166e9d05abb55916d2b3adb618a8f16c5cfed
 COMPONENT_ARCHIVE_URL=	http://www.selenic.com/mercurial/release/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_BUGDB=	utility/hg
 
-TPNO=			22534
+TPNO=			26646
 
 # Mercurial does not yet support Python 3.
 PYTHON_VERSIONS = $(PYTHON2_VERSIONS)
@@ -58,13 +58,21 @@ PKG_PROTO_DIRS +=	$(COMPONENT_SRC)/doc
 # tests which try to check all the code in the userland gate.  And finally,
 # test the bits from the proto area, rather than rebuilding.  Given the way the
 # test suite works, the hg executable must be named "hg".
+TEST_BLACKLIST = \
+	test-check-code.t \
+	test-check-config.t \
+	test-hghave.t \
+	test-module-imports.t \
+	test-run-tests.t
 COMPONENT_PRE_TEST_ACTION = \
 	(cd $(BUILD_DIR); rm -f sh; ln -s /bin/bash sh; \
-	echo "test-check-code-hg.t\ntest-module-imports.t" > blacklist); \
+	printf "%s\n" $(TEST_BLACKLIST) > blacklist); \
 	(cd $(PROTOUSRBINDIR); rm -f hg; ln -s hg-$(PYTHON_VERSION) hg)
 
 COMPONENT_TEST_DIR =	$(COMPONENT_SRC)/tests
-COMPONENT_TEST_ENV =	PYTHONPATH=$(PROTO_DIR)/$(PYTHON_LIB) TERM=dumb
+COMPONENT_TEST_ENV =	PYTHONPATH=$(PROTO_DIR)/$(PYTHON_LIB)
+COMPONENT_TEST_ENV +=	TERM=dumb
+COMPONENT_TEST_ENV +=	HGTEST_JOBS=$(or $(HGTEST_JOBS),1)
 COMPONENT_TEST_ARGS =	./run-tests.py \
 			--shell $(BUILD_DIR)/sh \
 			--with-hg $(PROTOUSRBINDIR)/hg \
@@ -78,7 +86,12 @@ ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 # patched with the older manpages.patch or against a fresh tarball.  Eventually
 # we'll have docutils in the CBE and we'll be able to regenerate the manpages
 # as part of the build, rather than patching them.
-patches/manpages.patch:
+#
+# Only build this target if it doesn't already exist, since this recipe is just
+# for the component maintainer's benefit.
+patches/manpages.patch: $(SOURCE_DIR)/.unpacked \
+    $(SOURCE_DIR)/.patched-rst.patch $(SOURCE_DIR)/.patched-hgmanpage.patch
+	if [[ -f $@ ]]; then exit 0; fi; \
 	if [[ -f $(COMPONENT_SRC)/doc/hg.1.~1~ ]]; then \
 		cd $(COMPONENT_SRC)/doc; gmake man || true; cd ../..; \
 		for f in hg.1 hgignore.5 hgrc.5; do \
