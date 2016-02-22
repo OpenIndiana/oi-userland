@@ -27,7 +27,6 @@
 # .py files as it installs
 <transform file path=usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)/puppet/provider/package/.*\.py$ -> default pkg.tmp.autopyc false>
 <transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
-<include puppet-modules.depend>
 set name=pkg.fmri \
     value=pkg:/system/management/puppet@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="Puppet - configuration management toolkit"
@@ -1134,6 +1133,14 @@ dir  path=var/lib/puppet owner=puppet group=puppet mode=0755
 dir  path=var/log/puppet owner=puppet group=puppet mode=0755
 license puppet.license license="Apache v2.0"
 
+# globally applicable low level puppet modules we provide
+depend type=group fmri=system/management/puppet/nanliu-staging
+depend type=group fmri=system/management/puppet/puppetlabs-concat
+depend type=group fmri=system/management/puppet/puppetlabs-inifile
+depend type=group fmri=system/management/puppet/puppetlabs-ntp
+depend type=group fmri=system/management/puppet/puppetlabs-rsync
+depend type=group fmri=system/management/puppet/puppetlabs-stdlib
+
 # Depend on renamed versions to pull them forward
 depend type=optional fmri=library/ruby/hiera@1.3.4-5.12.0.0.0.93.0
 depend type=optional fmri=system/management/facter@2.1.0-5.12.0.0.0.93.0
@@ -1143,4 +1150,5 @@ depend type=optional fmri=system/management/puppet-19@3.6.2-5.12.0.0.0.93.0
 # Puppet Dependencies
 depend type=require fmri=library/ruby/hiera
 depend type=require fmri=system/management/facter
+depend type=require fmri=system/management/puppet/oracle-solaris_providers
 depend type=require fmri=system/management/puppet/puppet-solaris

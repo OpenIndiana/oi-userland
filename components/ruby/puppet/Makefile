@@ -54,12 +54,11 @@ COMPONENT_INSTALL_ENV	+= RUBYLIB="$(FACTER_LIB):$(HIERA_LIB)"
 	(cd ../hiera ; $(GMAKE) install)
 
 
-# Collect puppet module manifests for inclusion of puppet modules in group depends
-# declare a prereq on all manifests to update depend file as needed
-PUPPET_MODULE_MANIFESTS = $(wildcard $(WS_TOP)/components/ruby/puppet-modules/*-*/*.p5m)
-$(BUILD_DIR)/puppet-modules.depend: $(PUPPET_MODULE_MANIFESTS) $(BUILD_DIR)
-	$(PKGMOGRIFY) -i -O /dev/null -P $@ $(WS_TRANSFORMS)/group-dependency $(PUPPET_MODULE_MANIFESTS)
-build:: $(BUILD_DIR)/puppet-modules.depend
+# Collect and print puppet module manifests for cherry picking into group
+# dependencies as a helper for the package maintainer
+PUPPET_MODULE_MANIFESTS = $(sort $(wildcard $(WS_TOP)/components/ruby/puppet-modules/*-*/*.p5m))
+print-modules: $(PUPPET_MODULE_MANIFESTS)
+	$(PKGMOGRIFY) -i -O /dev/null $(WS_TRANSFORMS)/group-dependency $(PUPPET_MODULE_MANIFESTS)
 
 
 # set the bindir to /usr/sbin
