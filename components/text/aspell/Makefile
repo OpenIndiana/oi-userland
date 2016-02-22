@@ -31,9 +31,9 @@ COMPONENT_ARCHIVE_HASH=	sha256:f52583a83a63633701c5f71db3dc40aab87b7f76b29723aeb
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 
 
-include ../../../make-rules/prep.mk
-include ../../../make-rules/configure.mk
-include ../../../make-rules/ips.mk
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/configure.mk
+include $(WS_TOP)/make-rules/ips.mk
 
 CXXFLAGS+=-I/usr/include/ncurses
 
@@ -52,8 +52,6 @@ CONFIGURE_OPTIONS.32+=	LDFLAGS="$(LDFLAGS.32)"
 CONFIGURE_OPTIONS.64+=	LDFLAGS="$(LDFLAGS.64)"
 
 build:		$(BUILD_32_and_64)
-
-include ../../../make-rules/shared-targets.mk
 
 install:	$(INSTALL_32_and_64)
 

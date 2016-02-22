@@ -13,7 +13,7 @@
 # Copyright 2013 Alexander Pyhalov.  All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	asciidoc
 COMPONENT_VERSION= 	8.6.8

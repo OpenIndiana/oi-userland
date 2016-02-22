@@ -20,19 +20,19 @@
 #
 # Copyright 2013 Alexander Pyhalov
 #
-include ../../../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		aspell-ru
-COMPONENT_VERSION=	0.99f7-1
-COMPONENT_SRC=		aspell6-ru-$(COMPONENT_VERSION)
+COMPONENT_NAME=		aspell-en
+COMPONENT_VERSION=	7.1-0
+COMPONENT_SRC=		aspell6-en-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:5c29b6ccce57bc3f7c4fb0510d330446b9c769e59c92bdfede27333808b6e646
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/aspell/dict/ru/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:ff9df3c2e8c5bb19c6a66078b36a0ef4c4dfb0fcb969e29f7b5345e26d748d0a
+COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/aspell/dict/en/$(COMPONENT_ARCHIVE)
 
 
-include ../../../../make-rules/prep.mk
-include ../../../../make-rules/configure.mk
-include ../../../../make-rules/ips.mk
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/configure.mk
+include $(WS_TOP)/make-rules/ips.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION += cp -r $(SOURCE_DIR)/* $(@D)
 
@@ -40,7 +40,4 @@ CONFIGURE_OPTIONS =
 
 build:		$(BUILD_32)
 
-include ../../../../make-rules/shared-targets.mk
-
 install:	$(INSTALL_32)
-
