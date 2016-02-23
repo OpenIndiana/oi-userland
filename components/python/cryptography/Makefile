@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cryptography
-COMPONENT_VERSION=	0.8.2
+COMPONENT_VERSION=	1.2.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:1c9a022ab3decaf152093e2ef2d5ee4258c72c7d429446c86bd68ff8c0929db6
+    sha256:a13217a03a47e743d26edff7299e4be7358c2fd12a223ac5d6de3229690b6ee5
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://cryptography.io/
 COMPONENT_BUGDB=	python-mod/cryptography
 
-TPNO=			22524
+TPNO=			26388
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -56,11 +56,16 @@ build:		$(BUILD_32_and_64)
 install:	$(INSTALL_32_and_64)
 
 #
-# tests require cryptography_vectors, iso8601, pretend, pytest, and six,
-# some of which have not yet integrated.
+# tests require cryptography_vectors, iso8601, pretend, pytest>= 2.8.7,
+# hypothesis>=1.11.4 and pyasn1_modules, some of which have not yet integrated.
+# On a i386 kernel zone with the test dependencies installed, test results are:
+# Python2.7: 74000 passed, 6136 skipped
+# Python3.4: 74000 passed, 6136 skipped
+# Python3.5: 74000 passed, 6136 skipped
 #
 test:		$(NO_TESTS)
 
+system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
 REQUIRED_PACKAGES += library/python/cffi
 REQUIRED_PACKAGES += library/security/openssl

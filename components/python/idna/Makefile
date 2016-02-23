@@ -18,43 +18,46 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		pyasn1
-COMPONENT_VERSION=	0.1.9
+COMPONENT_NAME=		idna
+COMPONENT_VERSION=	2.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:853cacd96d1f701ddd67aa03ecc05f51890135b7262e922710112f12a2ed2a7f
+    sha256:16199aad938b290f5be1057c0e1efc6546229391c23cea61ca940c115f7d3d3b
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	http://pyasn1.sourceforge.net/
-COMPONENT_BUGDB=	python-mod/pyasn1
+COMPONENT_PROJECT_URL=	https://github.com/kjd/idna
+COMPONENT_BUGDB=	python-mod/idna
 
-TPNO=			26348
+TPNO=			25771
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-COMPONENT_TEST_DIR =    $(SOURCE_DIR)
-COMPONENT_TEST_ARGS =   setup.py test
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+
+COMPONENT_TEST_DIR = $(SOURCE_DIR)/tests
+COMPONENT_TEST_ARGS = -m unittest discover --pattern=*.py
 
 # The test output contains arbitrary output. Use nawk to extract just the
 # sections that summarizes the test result.
+# Most of the test cases skipped in Python 2.7 because 'Test requires Python 
+# wide Unicode support'.
 COMPONENT_TEST_TRANSFORMER = $(NAWK)
 COMPONENT_TEST_TRANSFORMS = "'/^Ran .+ / { sub(\" tests in .+s\", \" tests in\"); print }; /!NF/ { print }; /^OK/ { print };'"
 
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
 # common targets
-build:		$(BUILD_NO_ARCH)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_NO_ARCH)
+install:	$(INSTALL_64)
 
-test:		$(TEST_NO_ARCH)
+test:		$(TEST_64)
 
 system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-

@@ -18,22 +18,23 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		setuptools
-COMPONENT_VERSION=	0.9.6
+COMPONENT_VERSION=	19.2
 IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION)
 
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:d3c46aff70a246c21b957a60dff39645f643999b9693dfabf04c0639c12fa399
-COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/source/s/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+    sha256:f90ed8eb70b14b0594ba74e9de4ffca040c0ec8ee505cbf3570499467859f71a
+COMPONENT_ARCHIVE_URL=	$(call pypi_url)
+COMPONENT_PROJECT_URL=	https://bitbucket.org/pypa/setuptools
 COMPONENT_BUGDB=	python-mod/setuptools
 
-TPNO=			17692
+TPNO=			26352
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
@@ -46,6 +47,7 @@ build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
+# requires pytest >= 2.8, which has not been upgraded yet
 test:		$(NO_TESTS)
 
 system-test:    $(NO_TESTS)

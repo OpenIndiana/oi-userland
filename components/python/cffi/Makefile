@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cffi
-COMPONENT_VERSION=	1.1.2
+COMPONENT_VERSION=	1.4.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:390970b602708c91ddc73953bb6929e56291c18a4d80f360afa00fad8b6f3339
+    sha256:8f1d177d364ea35900415ae24ca3e471be3d5334ed0419294068c49f45913998
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://cffi.readthedocs.org/
 COMPONENT_BUGDB=	python-mod/cffi
 
-TPNO=			24051
+TPNO=			26350
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk

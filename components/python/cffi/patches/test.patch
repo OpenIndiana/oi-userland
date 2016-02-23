@@ -15,8 +15,12 @@ The testsuite makes some incorrect assumptions:
 
   - There is one test helper in test_recompiler where we suddenly try to do C++
     but without changing the compiler executable. This works in gcc but not with
-    Studio. Furthermore, this test seems to be still in debugging mode since it
-    is part of an "if 1:" loop.
+    Studio.
+
+  - test_recompiler has some test cases work in gcc or clang but not with Studio:
+    test_some_float_type and test_some_float_invalid_3 raise an error "non-constant
+    initializer involving a cast".
+    test_restrict_fields uses the __restrict keyword, which seems to require gcc.
 
   - Don't force the use of gcc when compiling a test shared object; get
     that passed in from the makefile.
@@ -128,15 +132,34 @@ The testsuite makes some incorrect assumptions:
          p = ffi.new("char[]", ffi.sizeof("struct array0") + 7 * SIZE_OF_SHORT)
 --- cffi-1.1.2/testing/cffi1/test_recompiler.py	2015-06-09 03:04:10.000000000 -0700
 +++ cffi-1.1.2/testing/cffi1/test_recompiler.py	2015-08-11 11:08:16.757848317 -0700
-@@ -20,7 +20,7 @@
+@@ -22,10 +22,14 @@
      kwds.setdefault('undef_macros', ['NDEBUG'])
      module_name = '_CFFI_' + module_name
      ffi.set_source(module_name, source)
--    if 1:     # test the .cpp mode too
-+    if 0:     # test the .cpp mode too
+-    if not os.environ.get('NO_CPP'):     # test the .cpp mode too
++    if sys.platform == 'sunos5':
++        kwds['extra_compile_args'] = (kwds.get('extra_compile_args', []) +
++            ["-errtags=yes", "-errwarn=E_ASSIGNMENT_TYPE_MISMATCH,"
++            "E_RETURN_VALUE_TYPE_MISMATCH"])
++    elif not os.environ.get('NO_CPP'):     # test the .cpp mode too
          kwds.setdefault('source_extension', '.cpp')
          source = 'extern "C" {\n%s\n}' % (source,)
+     else:
+         kwds['extra_compile_args'] = (kwds.get('extra_compile_args', []) +
+                                       ['-Werror'])
      return recompiler._verify(ffi, module_name, source, *args, **kwds)
+@@ -1076,2 +1076,3 @@
+ def test_some_float_type():
++    py.test.skip("needs GCC or Clang")
+     ffi = FFI()
+@@ -1111,2 +1111,3 @@
+ def test_some_float_invalid_3():
++    py.test.skip("needs GCC or Clang")
+     ffi = FFI()
+@@ -1225,2 +1225,3 @@
+ def test_restrict_fields():
++    py.test.skip("needs GCC or Clang")
+     ffi = FFI()
 --- cffi-1.1.2/testing/cffi1/test_verify1.py	2015-06-09 03:04:07.000000000 -0700
 +++ cffi-1.1.2/testing/cffi1/test_verify1.py	2015-08-12 15:02:07.774160223 -0700
 @@ -18,6 +18,9 @@
@@ -145,7 +168,7 @@ The testsuite makes some incorrect assumptions:
          extra_compile_args.append('-Qunused-arguments')
 +    elif (sys.platform == 'sunos5'):
 +        extra_compile_args = ["-errtags=yes",
-+            "-errwarn=E_ASSIGNMENT_TYPE_MISMATCH,E_RETURN_VALUE_TYPE_MISMATCH"]        
++            "-errwarn=E_ASSIGNMENT_TYPE_MISMATCH,E_RETURN_VALUE_TYPE_MISMATCH"]
      else:
          # assume a standard gcc
          extra_compile_args = ['-Werror', '-Wall', '-Wextra', '-Wconversion']

@@ -18,36 +18,40 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		pyasn1
-COMPONENT_VERSION=	0.1.9
+COMPONENT_NAME=		ipaddress
+COMPONENT_VERSION=	1.0.14
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:853cacd96d1f701ddd67aa03ecc05f51890135b7262e922710112f12a2ed2a7f
+    sha256:226f4be44c6cb64055e23060848266f51f329813baae28b53dc50e93488b3b3e
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
-COMPONENT_PROJECT_URL=	http://pyasn1.sourceforge.net/
-COMPONENT_BUGDB=	python-mod/pyasn1
+COMPONENT_PROJECT_URL=  https://github.com/phihag/ipaddress
+COMPONENT_BUGDB=	python-mod/ipaddress
 
-TPNO=			26348
+TPNO=			26070
+
+# ipaddress is superfluous in Python 3.4
+PYTHON_VERSIONS =	$(PYTHON2_VERSIONS)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-COMPONENT_TEST_DIR =    $(SOURCE_DIR)
-COMPONENT_TEST_ARGS =   setup.py test
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+
+COMPONENT_TEST_DIR = $(SOURCE_DIR)
+COMPONENT_TEST_ARGS = test_ipaddress.py
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
-# The test output contains arbitrary output. Use nawk to extract just the
-# sections that summarizes the test result.
-COMPONENT_TEST_TRANSFORMER = $(NAWK)
-COMPONENT_TEST_TRANSFORMS = "'/^Ran .+ / { sub(\" tests in .+s\", \" tests in\"); print }; /!NF/ { print }; /^OK/ { print };'"
-
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s|\(^Ran [0-9]\+ tests in\).*|\1|" '
 
 # common targets
 build:		$(BUILD_NO_ARCH)
@@ -57,4 +61,3 @@ install:	$(INSTALL_NO_ARCH)
 test:		$(TEST_NO_ARCH)
 
 system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
