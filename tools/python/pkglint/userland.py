@@ -496,7 +496,6 @@ class UserlandManifestChecker(base.ManifestChecker):
 		"license actions and ARC information are required if you deliver files.")
 
 	def publisher_in_fmri(self, manifest, engine, pkglint_id="002"):
-			lint_id = "%s%s" % (self.name, pkglint_id)
 			allowed_pubs = engine.get_param(
 				"%s.allowed_pubs" % self.name).split(" ") 
 	
