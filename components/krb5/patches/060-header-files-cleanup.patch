@@ -1,0 +1,41 @@
+#
+# This patch addresses two issues:
+#
+# 1. gssapi.hin modification will address redefinition errors when compiling
+#    ON gate using userland kerberos package.
+#
+# 2. admin.h modification was requested by AK team to avoid extern declaration
+#    of kadm5_get_master().
+#
+# NOTE: These two modifications are solaris specific changes and will not be
+#       pushed upstream. We will maintain them as patch.
+# Patch source: in-house
+#
+diff -Naru old/src/lib/gssapi/generic/gssapi.hin new/src/lib/gssapi/generic/gssapi.hin
+--- old/src/lib/gssapi/generic/gssapi.hin	2015-10-15 16:48:36.022390540 -0700
++++ new/src/lib/gssapi/generic/gssapi.hin	2015-10-15 16:43:04.812546338 -0700
+@@ -55,11 +55,6 @@
+ #include <stdint.h>
+ 
+ /*
+- * First, include stddef.h to get size_t defined.
+- */
+-#include <stddef.h>
+-
+-/*
+  * POSIX says that sys/types.h is where size_t is defined.
+  */
+ #include <sys/types.h>
+diff -Naru old/src/lib/kadm5/admin.h new/src/lib/kadm5/admin.h
+--- old/src/lib/kadm5/admin.h	2015-10-15 16:48:35.974641703 -0700
++++ new/src/lib/kadm5/admin.h	2015-10-16 11:24:09.072080201 -0700
+@@ -547,6 +547,9 @@
+                                   krb5_string_attr *strings,
+                                   int count);
+ 
++kadm5_ret_t    kadm5_get_master(krb5_context context, const char *realm,
++                                char **master);
++
+ KADM5INT_END_DECLS
+ 
+ #endif /* __KADM5_ADMIN_H__ */

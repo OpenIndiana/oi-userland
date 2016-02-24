@@ -1,0 +1,178 @@
+'\" te
+.\" Copyright (c) 2008, Sun Microsystems, Inc. All Rights Reserved
+.TH krb5envvar 5 "2008 年 2 月 13 日" "SunOS 5.12" "标准、环境和宏"
+.SH 名称
+krb5envvar \- Kerberos 环境变量
+.SH 描述
+.sp
+.LP
+Kerberos 机制提供了许多环境变量，可配置不同行为来满足应用程序的需求。Kerberos 机制中使用的环境变量包括：
+.sp
+.ne 2
+.mk
+.na
+\fB\fBKRB5_KTNAME\fR\fR
+.ad
+.sp .6
+.RS 4n
+由机制用于指定密钥表文件的位置。该变量可设置为以下值：
+.sp
+.in +2
+.nf
+[[\fI<kt type>\fR:]\fI<file name>\fR]
+.fi
+.in -2
+
+其中 \fI<kt type>\fR 可以为 \fBFILE\fR 或 \fBWRFILE\fR。\fBFILE\fR 表示读取操作；\fBWRFILE\fR 表示写入操作。\fI<file name>\fR 是 \fBkeytab\fR 文件的位置。
+.sp
+r
+.sp
+如果未定义 \fBKRB5_KTNAME\fR，缺省值为：
+.sp
+.in +2
+.nf
+FILE:/etc/krb5/krb5.keytab
+.fi
+.in -2
+
+\fBkeytab\fR 文件用于永久存储凭证并且通常用于服务守护进程。
+.sp
+指定 \fBFILE\fR 类型即假设对关联文件的后续操作可由调用进程读取。务必小心确保文件仅可供需要检索未加密密钥的主体集读取。
+.sp
+\fBWRFILE\fR 类型由 \fBkadmin\fR(1M) 命令使用。指定此类型可允许管理员指定要写入的替代 \fBkeytab\fR 文件，而无需对文件位置使用其他命令行参数。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBKRB5CCNAME\fR\fR
+.ad
+.sp .6
+.RS 4n
+由机制用于指定凭证高速缓存的位置。该变量可设置为以下值：
+.sp
+.in +2
+.nf
+[[\fI<cc type>\fR:]\fI<file name>\fR]
+.fi
+.in -2
+
+其中，\fI<cc type>\fR 可以是 \fBFILE\fR 或 \fBMEMORY\fR。\fI<file name>\fR 是主体的凭证高速缓存的位置。
+.sp
+如果未定义 \fBKRB5CCNAME\fR，缺省值为：
+.sp
+.in +2
+.nf
+FILE:/tmp/krb5cc_\fI<uid>\fR
+.fi
+.in -2
+
+其中，\fI<uid>\fR 是创建高速缓存文件的进程的用户 ID。
+.sp
+凭证高速缓存文件用于存储已授予主体的票证。
+.sp
+指定 \fBFILE\fR 类型即假设对关联文件的后续操作可由调用进程读取和写入。务必小心确保文件仅可供需要访问凭证的主体集访问。如果凭证文件位于其他用户拥有写入访问权的目录中，则需要设置该目录的 Sticky 位（请参见 \fBchmod\fR(1)）。
+.sp
+\fBMEMORY\fR 凭证高速缓存类型仅在特殊情况下使用，如为调用进程的生命周期创建临时高速缓存时。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBKRB5RCNAME\fR\fR
+.ad
+.sp .6
+.RS 4n
+由机制用于指定重放高速缓存的类型和位置。该变量可设置为以下值：
+.sp
+.in +2
+.nf
+[[\fI<rc type>\fR:]\fI<file name>\fR]
+.fi
+.in -2
+
+其中，\fI<rc type>\fR 可以是 \fBFILE\fR、\fBMEMORY\fR 或 \fBNONE\fR。\fI<file name>\fR 仅在指定重放高速缓存文件类型时相关。
+.sp
+如果未定义，缺省值为：
+.sp
+.in +2
+.nf
+FILE:/var/krb5/rcache/root/rc_\fI<service>\fR
+.fi
+.in -2
+
+\&...如果进程的所有者为 root，或：
+.sp
+.in +2
+.nf
+FILE:/var/krb5/rcache/rc_\fI<service>\fR
+.fi
+.in -2
+
+\&...如果进程的所有者为 root 以外的用户。\fI<service>\fR 是与重放高速缓存文件相关联的服务进程名称。
+.sp
+重放高速缓存由 Kerberos 用于检测验证数据的重放。这可防止在网络上捕捉验证消息的人员通过重新发送这些消息来针对服务器进行验证。
+.sp
+当指定 \fBFILE\fR 重放高速缓存类型时，必须小心防止其他用户删除重放高速缓存文件。请确保重放高速缓存路径中的每个目录仅可由重放高速缓存的所有者写入，或者其他人具有写入权限的重放高速缓存路径中每个目录上均已设置 Sticky 位 ("\fBt\fR")。
+.sp
+当指定 \fBMEMORY\fR 重放高速缓存类型时，您需要在性能与使用非持久性高速缓存产生的轻度安全风险之间进行权衡。系统重新引导期间发生以下状况即会产生风险：
+.RS +4
+.TP
+.ie t \(bu
+.el o
+从重新引导前上次写入重放高速缓存到 Kerberos 服务器应用程序运行时的持续时间少于 Kerberos 时钟相位差（请参见 \fBkrb5.conf\fR(4)）。
+.RE
+当指定 \fBNONE\fR 重放高速缓存时间时，您需要了解这将会禁用重放高速缓存及其所带来的全部安全性风险。这包括手册页的此部分中所述的全部风险。
+.sp
+在此状况下，服务器应用程序可接受重放 Kerberos 验证数据（直到上次写入时与时钟相位差之间的差异为止）。通常，这是一小段时间而已。如果服务器应用程序开始接受连接所花的时间比时钟相位差长，则没有重放风险。
+.sp
+如果重放高速缓存位于 swap 文件系统（如 \fB/tmp\fR 和 \fB/var/run\fR）中时使用 \fBFILE\fR 重放高速缓存类型，仍存在上述风险。
+.sp
+通过 \fBFILE\fR 类型的 \fBMEMORY\fR 重放高速缓存类型性能改进得益于无需磁盘 I/O。即使 \fBFILE\fR 重放高速缓存位于内存备份文件系统上仍是如此，如 swap（\fB/tmp\fR 和 \fB/var/run\fR）。
+.sp
+请注意，\fBMEMORY\fR 类型高速缓存是每进程高速缓存，因此必须谨慎使用这些类型的高速缓存。\fBMEMORY\fR 类型高速缓存可能产生问题的示例之一即是应用程序使用多个进程来建立安全上下文。在此情况下，内存重放高速缓存不会在进程中共享，从而使重放攻击成为可能。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fBKRB5_CONFIG\fR
+.ad
+.sp .6
+.RS 4n
+允许您更改 \fB/etc/krb5/krb5.conf\fR 文件的缺省位置，以使 Kerberos 库代码从 KRB5_CONFIG 指定的其他文件中读取配置参数。例如（使用 \fBksh\fR(1) 的 kinit）：
+.sp
+.in +2
+.nf
+ KRB5_CONFIG=/var/tmp/krb5.conf kinit
+.fi
+.in -2
+
+.RE
+
+.SH 属性
+.sp
+.LP
+有关以下属性的说明，请参见 \fBattributes\fR(5)：
+.sp
+
+.sp
+.TS
+tab() box;
+cw(2.75i) |cw(2.75i) 
+lw(2.75i) |lw(2.75i) 
+.
+属性类型\fB\fR属性值\fB\fR
+_
+可用性system/security/kerberos-5
+_
+接口稳定性Uncommitted（未确定）
+.TE
+
+.SH 另请参见
+.sp
+.LP
+\fBchmod\fR(1)、\fBkinit\fR(1)、\fBklist\fR(1)、\fBksh\fR(1)、\fBkadmin\fR(1M)、\fBkadmind\fR(1M)、\fBkrb5.conf\fR(4)、\fBattributes\fR(5)、\fBkerberos\fR(5)

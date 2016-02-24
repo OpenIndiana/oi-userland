@@ -1,0 +1,23 @@
+#
+# Automatically load localauth_gsscred plugin.
+#
+# To preserve long standing Solaris Kerberos behavior with respect to
+# gsscred we always load the localauth_gsscred plugin delivered from ON gate.
+#
+# This is a Solaris specific patch, it is not meant for upstream contribution.
+# Patch source: in-house
+#
+diff -pur old/src/lib/krb5/os/localauth.c new/src/lib/krb5/os/localauth.c
+--- old/src/lib/krb5/os/localauth.c
++++ new/src/lib/krb5/os/localauth.c
+@@ -133,6 +133,10 @@ get_modules(krb5_context context, krb5_p
+     if (ret)
+         return ret;
+ 
++    ret = k5_plugin_register_dyn(context, intf, "gsscred", "localauth");
++    if (ret)
++        return ret;
++
+     ret = k5_plugin_load_all(context, intf, modules_out);
+     if (ret)
+         return ret;

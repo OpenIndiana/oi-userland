@@ -1,0 +1,59 @@
+#
+# Replace MD5 use in rcache with SHA1.
+#
+# rcache uses an unkeyed MD5 hash of the authenticator to distinguish 
+# between different request with equal client principal, server principal 
+# and microsecond time. When OpenSSL crypto provider is used and 
+# underlying OpenSSL is run in FIPS mode, MD5 algorithm is disabled and 
+# gss_accept_sec_context() results in an abort in rcache processing
+#
+# This patch effectively implements a different rcache extension.
+# The new extension identifier is 'SHA1:' (instead of 'HASH:')
+# and the checksum type is CKSUMTYPE_NIST_SHA (instead of CKSUMTYPE_RSA_MD5).
+#
+# This change has been brought for discussion with upstream:
+# http://mailman.mit.edu/pipermail/krbdev/2015-December/012508.html
+# Patch source: in-house
+#
+diff -pur old/src/lib/krb5/rcache/rc_conv.c new/src/lib/krb5/rcache/rc_conv.c
+--- old/src/lib/krb5/rcache/rc_conv.c
++++ new/src/lib/krb5/rcache/rc_conv.c
+@@ -55,7 +55,7 @@ krb5_rc_hash_message(krb5_context contex
+     *out = NULL;
+ 
+     /* Calculate the binary checksum. */
+-    retval = krb5_c_make_checksum(context, CKSUMTYPE_RSA_MD5, 0, 0,
++    retval = krb5_c_make_checksum(context, CKSUMTYPE_NIST_SHA, 0, 0,
+                                   message, &cksum);
+     if (retval)
+         return retval;
+diff -pur old/src/lib/krb5/rcache/rc_dfl.c new/src/lib/krb5/rcache/rc_dfl.c
+--- old/src/lib/krb5/rcache/rc_dfl.c
++++ new/src/lib/krb5/rcache/rc_dfl.c
+@@ -391,7 +391,7 @@ parse_counted_string(char **strptr, char
+ /*
+  * Hash extension records have the format:
+  *  client = <empty string>
+- *  server = HASH:<msghash> <clientlen>:<client> <serverlen>:<server>
++ *  server = SHA1:<msghash> <clientlen>:<client> <serverlen>:<server>
+  * Spaces in the client and server string are represented with
+  * with backslashes.  Client and server lengths are represented in
+  * ASCII decimal (which is different from the 32-bit binary we use
+@@ -408,7 +408,7 @@ check_hash_extension(krb5_donot_replay *
+     /* Check if this appears to match the hash extension format. */
+     if (*rep->client)
+         return 0;
+-    if (strncmp(rep->server, "HASH:", 5) != 0)
++    if (strncmp(rep->server, "SHA1:", 5) != 0)
+         return 0;
+ 
+     /* Parse out the message hash. */
+@@ -664,7 +664,7 @@ krb5_rc_io_store(krb5_context context, s
+ 
+         /* Format the extension value so we know its length. */
+         k5_buf_init_dynamic(&extbuf);
+-        k5_buf_add_fmt(&extbuf, "HASH:%s %lu:%s %lu:%s", rep->msghash,
++        k5_buf_add_fmt(&extbuf, "SHA1:%s %lu:%s %lu:%s", rep->msghash,
+                        (unsigned long)clientlen, rep->client,
+                        (unsigned long)serverlen, rep->server);
+         if (k5_buf_status(&extbuf) != 0)

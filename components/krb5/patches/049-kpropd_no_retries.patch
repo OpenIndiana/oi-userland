@@ -1,0 +1,37 @@
+#
+# Disable retrying in kpropd, when kadm5 interface cannot be initialized.
+#
+# When MIT kpropd cannot contact master KDC, it keeps retrying indefinitely.
+# This doesn't play well with SMF; krb5_prop service is reported as online,
+# while the daemon really just keeps failing to connect.
+#
+# This patch changes kpropd, so that it exits with error immediately.
+#
+# This is a Solaris specific change, it will not be contributed upstream.
+# Patch source: in-house
+#
+diff -pur old/src/slave/kpropd.c new/src/slave/kpropd.c
+--- old/src/slave/kpropd.c	2015-06-26 05:26:18.093175489 -0700
++++ new/src/slave/kpropd.c	2015-07-07 05:33:21.888052914 -0700
+@@ -730,18 +730,10 @@ reinit:
+ 
+                 usage();
+             }
+-            reinit_cnt++;
+             com_err(progname, retval,
+-                    _("while initializing %s interface, retrying"),
+-                    progname);
+-            backoff_time = backoff_from_master(&reinit_cnt);
+-            if (debug) {
+-                fprintf(stderr, _("Sleeping %d seconds to re-initialize "
+-                                  "kadm5 (krb5kdc not running?)\n"),
+-                        backoff_time);
+-            }
+-            sleep(backoff_time);
+-            goto reinit;
++                    _("while initializing %s interface for %s, exiting."),
++                    progname, iprop_svc_princstr);
++	    exit(1);
+         }
+     }
+ 

@@ -1,0 +1,30 @@
+#
+# Patch to make des-cbc-md5 equivalent to des-cbc-crc when the KDC is deciding
+# to issue a des session key for a service princ.  This maintains existing
+# Solaris behavior that MIT does not intend on adopting given that single des
+# is on the way out.
+# Patch source: in-house
+#
+
+diff -r -u krb5-1.13.2/src/kdc/kdc_util.c krb5-1.13.2.des-md5-fix/src/kdc/kdc_util.c
+--- krb5-1.13.2/src/kdc/kdc_util.c
++++ krb5-1.13.2.des-md5-fix/src/kdc/kdc_util.c
+@@ -912,16 +912,11 @@
+     free(etypes);
+ 
+     /* If configured to, assume every server without a session_enctypes
+-     * attribute supports DES_CBC_CRC. */
++     * attribute supports DES_CBC_CRC or DES_CBC_MD5. */
+     if (kdc_active_realm->realm_assume_des_crc_sess &&
+-        enctype == ENCTYPE_DES_CBC_CRC)
++        (enctype == ENCTYPE_DES_CBC_CRC || enctype == ENCTYPE_DES_CBC_MD5))
+         return TRUE;
+ 
+-    /* Due to an ancient interop problem, assume nothing supports des-cbc-md5
+-     * unless there's a session_enctypes explicitly saying that it does. */
+-    if (enctype == ENCTYPE_DES_CBC_MD5)
+-        return FALSE;
+-
+     /* Assume the server supports any enctype it has a long-term key for. */
+     return !krb5_dbe_find_enctype(kdc_context, server, enctype, -1, 0, &datap);
+ }

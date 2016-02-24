@@ -1,0 +1,151 @@
+#
+# This patch is to provide additional Solaris krb5.conf parameter support 
+# for kinit command:
+#
+#	forwardable = [true | false]
+#	proxiable = [true | false]
+#	renewable = [true | false]
+#	noaddresses = [true | false]
+#
+# Confirmed with MIT dev team. They won't accept this patch as enhancement.
+# We will maintain it as patch.
+# Patch source: in-house
+#
+--- ORIGINAL/src/clients/kinit/kinit.c	2015-04-30 13:46:57.411641188 -0700
++++ MODIFIED/src/clients/kinit/kinit.c	2015-05-12 11:22:49.905473473 -0700
+@@ -36,6 +36,7 @@
+ #include <errno.h>
+ #include <com_err.h>
+ #include <kerberosv5/private/ktwarn.h>
++#include "../../lib/krb5/prof_solaris.h"
+ 
+ #ifdef GETOPT_LONG
+ #include <getopt.h>
+@@ -135,6 +136,34 @@ struct k_opts
+     int enterprise;
+ };
+ 
++int	forwardable_flag = 0;
++int	renewable_flag = 0;
++int	proxiable_flag = 0;
++int	no_address_flag = 0;
++profile_options_boolean	config_option[] = {
++	{ "forwardable",	&forwardable_flag,	0 },
++	{ "renewable",		&renewable_flag,	0 },
++	{ "proxiable",		&proxiable_flag,	0 },
++	{ "no_addresses",	&no_address_flag,	0 },
++	{ NULL,			NULL,			0 }
++};
++
++char	*renew_timeval=NULL;
++char	*life_timeval=NULL;
++int	lifetime_specified;
++int	renewtime_specified;
++
++profile_option_strings	config_times[] = {
++	{ "ticket_lifetime",	&life_timeval,	0 },
++	{ "renew_lifetime",	&renew_timeval,	0 },
++	{ NULL,			NULL,		0 }
++};
++
++char	*realmdef[] = { "realms", NULL, "kinit", NULL };
++char	*appdef[] = { "appdefaults", "kinit", NULL };
++
++#define	krb_realm		(*(realmdef + 1))
++
+ struct k5_data
+ {
+     krb5_context ctx;
+@@ -720,6 +749,8 @@ k5_kinit(opts, k5)
+     krb5_error_code code = 0;
+     krb5_get_init_creds_opt *options = NULL;
+     int i;
++    krb5_timestamp now;
++    krb5_deltat lifetime = 0, rlife = 0, krb5_max_duration;
+ 
+     memset(&my_creds, 0, sizeof(my_creds));
+ 
+@@ -728,6 +759,83 @@ k5_kinit(opts, k5)
+         goto cleanup;
+ 
+     /*
++     * If either tkt life or renew life weren't set earlier take common steps to
++     * get the krb5.conf parameter values.
++     * Also, check krb5.conf for proxiable/forwardable/renewable/no_address
++     * parameter values.
++     */
++    if ((code = krb5_timeofday(k5->ctx, &now))) {
++        com_err(progname, code, gettext("while getting time of day"));
++        exit(1);
++    }
++    krb5_max_duration = KRB5_KDB_EXPIRATION - now - 60*60;
++
++    if (opts->lifetime == 0 || opts->rlife == 0) {
++
++	krb_realm = krb5_princ_realm(k5->ctx, k5->me)->data;
++	/* realm params take precedence */
++	profile_get_options_string(k5->ctx->profile, realmdef, config_times);
++	profile_get_options_string(k5->ctx->profile, appdef, config_times);
++
++	/* if the input opts doesn't have lifetime set and the krb5.conf
++	 * parameter has been set, use that.
++	 */
++	if (opts->lifetime == 0 && life_timeval != NULL) {
++	    code = krb5_string_to_deltat(life_timeval, &lifetime);
++	    if (code != 0 || lifetime == 0 || lifetime > krb5_max_duration) {
++		fprintf(stderr, gettext("Bad max_life "
++			    "value in Kerberos config file %s\n"),
++			life_timeval);
++		exit(1);
++	    }
++	    opts->lifetime = lifetime;
++	}
++	if (opts->rlife == 0 && renew_timeval != NULL) {
++	    code = krb5_string_to_deltat(renew_timeval, &rlife);
++	    if (code != 0 || rlife == 0 || rlife > krb5_max_duration) {
++		fprintf(stderr, gettext("Bad max_renewable_life "
++			    "value in Kerberos config file %s\n"),
++			renew_timeval);
++		exit(1);
++	    }
++	    opts->rlife = rlife;
++	}
++    }
++
++    /*
++     * If lifetime is not set on the cmdline or in the krb5.conf
++     * file, default to max.
++     */
++    if (opts->lifetime == 0)
++        opts->lifetime = krb5_max_duration;
++
++
++    profile_get_options_boolean(k5->ctx->profile, 
++				realmdef, config_option); 
++    profile_get_options_boolean(k5->ctx->profile, 
++				appdef, config_option); 
++
++
++    /* cmdline opts take precedence over krb5.conf file values */
++    if (!opts->not_proxiable && proxiable_flag) {
++        krb5_get_init_creds_opt_set_proxiable(options, 1);
++    }
++    if (!opts->not_forwardable && forwardable_flag) {
++        krb5_get_init_creds_opt_set_forwardable(options, 1);
++    }
++    if (renewable_flag) {
++        /*
++         * If this flag is set in krb5.conf, but rlife is 0, then
++         * set it to the max (and let the KDC sort it out).
++         */
++        opts->rlife = opts->rlife ? opts->rlife : krb5_max_duration;
++    }
++    if (no_address_flag) {
++        /* cmdline opts will overwrite this below if needbe */
++        krb5_get_init_creds_opt_set_address_list(options, NULL);
++    }
++
++    /*
+       From this point on, we can goto cleanup because my_creds is
+       initialized.
+     */

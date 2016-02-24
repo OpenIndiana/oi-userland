@@ -1,0 +1,26 @@
+# Fix a potential but unlikely to occur double free() in a couple places in ipropd_svc.c.
+# This has been reported to MIT who will be fixing this via pull request
+# https://github.com/krb5/krb5/pull/396 .
+# Patch source: in-house
+
+diff -ur krb5-1.13.3/src/kadmin/server/ipropd_svc.c krb5-1.13.3.memleak/src/kadmin/server/ipropd_svc.c
+--- krb5-1.13.3/src/kadmin/server/ipropd_svc.c
++++ krb5-1.13.3.memleak/src/kadmin/server/ipropd_svc.c
+@@ -160,8 +160,6 @@
+ 	client_name = buf_to_string(&client_desc);
+ 	service_name = buf_to_string(&service_desc);
+ 	if (client_name == NULL || service_name == NULL) {
+-	    free(client_name);
+-	    free(service_name);
+ 	    krb5_klog_syslog(LOG_ERR,
+ 			     _("%s: out of memory recording principal names"),
+ 			     whoami);
+@@ -288,8 +286,6 @@
+ 	client_name = buf_to_string(&client_desc);
+ 	service_name = buf_to_string(&service_desc);
+ 	if (client_name == NULL || service_name == NULL) {
+-	    free(client_name);
+-	    free(service_name);
+ 	    DPRINT("%s: out of memory\n", whoami);
+ 	    krb5_klog_syslog(LOG_ERR,
+ 			     _("%s: out of memory recording principal names"),

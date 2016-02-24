@@ -1,0 +1,259 @@
+#
+# Since we will not migrate kwarn code to useland, we created a libkwarn in
+# ON gate. This patch is to let kinit, kdestroy and GSSAPI utilize libkwarn
+# functionality.
+#
+# This patch will not be pushed upstream, since it's Solaris specific feature.
+# Patch source: in-house
+#
+
+diff -Napur ORIGINAL/src/clients/kdestroy/Makefile.in krb5-1.13.1/src/clients/kdestroy/Makefile.in
+--- ORIGINAL/src/clients/kdestroy/Makefile.in	2015-02-11 19:16:43.000000000 -0800
++++ krb5-1.13.1/src/clients/kdestroy/Makefile.in	2015-04-22 09:11:09.523911895 -0700
+@@ -19,7 +19,7 @@ all-unix:: kdestroy
+ ##WIN32##all-windows:: $(KDESTROY)
+ 
+ kdestroy: kdestroy.o $(KRB5_BASE_DEPLIBS)
+-	$(CC_LINK) -o $@ kdestroy.o $(KRB5_BASE_LIBS)
++	$(CC_LINK) -o $@ kdestroy.o $(KRB5_BASE_LIBS) -lkwarn
+ 
+ ##WIN32##$(KDESTROY): $(OUTPRE)kdestroy.obj $(BUILDTOP)\util\windows\$(OUTPRE)getopt.obj $(KLIB) $(CLIB) $(EXERES)
+ ##WIN32##	link $(EXE_LINKOPTS) -out:$@ $**
+diff -Napur ORIGINAL/src/clients/kdestroy/kdestroy.c krb5-1.13.1/src/clients/kdestroy/kdestroy.c
+--- ORIGINAL/src/clients/kdestroy/kdestroy.c	2015-02-11 19:16:43.000000000 -0800
++++ krb5-1.13.1/src/clients/kdestroy/kdestroy.c	2015-04-22 14:52:01.310510058 -0700
+@@ -24,6 +24,12 @@
+  * or implied warranty.
+  */
+ 
++/* Solaris Kerberos */
++#include <rpc/types.h>
++#include <rpc/rpcsys.h>
++#include <rpc/rpcsec_gss.h>
++#include <kerberosv5/private/ktwarn.h>
++
+ #include "k5-platform.h"
+ #include <krb5.h>
+ #include <com_err.h>
+@@ -46,6 +52,13 @@
+ extern int optind;
+ extern char *optarg;
+ 
++/* 
++ * We add _rpcsys extern declariation because that ON build suppresses warning
++ * of implicit declarition, while MIT kerberos build treats the warning
++ * as an error.
++ */
++extern int _rpcsys(int, void *);
++
+ #ifndef _WIN32
+ #define GET_PROGNAME(x) (strrchr((x), '/') ? strrchr((x), '/')+1 : (x))
+ #else
+@@ -82,6 +95,13 @@
+     int quiet = 0;
+     int all = 0;
+ 
++    /* Solaris Kerberos */
++    krb5_principal me = NULL;
++    char *client_name = NULL;
++    struct krpc_revauth desarg;
++    static  rpc_gss_OID_desc oid = {9, "\052\206\110\206\367\022\001\002\002"};
++    static  rpc_gss_OID krb5_mech_type = &oid;
++
+     setlocale(LC_ALL, "");
+     progname = GET_PROGNAME(argv[0]);
+ 
+@@ -165,6 +185,49 @@
+         }
+     }
+ 
++    /*
++     *  Solaris Kerberos
++     *  Let us destroy the kernel cache first.
++     */
++    desarg.version = 1;
++    desarg.uid_1 = geteuid();
++    desarg.rpcsec_flavor_1 = RPCSEC_GSS;
++    desarg.flavor_data_1 = (void *) krb5_mech_type;
++    code = _rpcsys(KRPC_REVAUTH, (void *)&desarg);
++    if (code != 0) {
++        fprintf(stderr, _("%s: kernel creds cache error %d \n"),
++            progname, code);
++    }
++
++    if (cache_name) {
++        code = krb5_cc_resolve (kcontext, cache_name, &cache);
++        if (code != 0) {
++            com_err (progname, code, _("while resolving %s"), cache_name);
++            exit(1);
++        }
++    } else {
++        code = krb5_cc_default(kcontext, &cache);
++        if (code) {
++            com_err(progname, code, _("while getting default ccache"));
++            exit(1);
++        }
++    }
++
++    /*
++     * Solaris Kerberos
++     * Get client name for ktkt_warnd(1M) msg.
++     */
++    code = krb5_cc_get_principal(kcontext, cache, &me);
++    if (code != 0)
++        fprintf(stderr,
++            _("%s: Could not obtain principal name from cache\n"),
++                progname);
++    else
++         if ((code = krb5_unparse_name(kcontext, me, &client_name)))
++             fprintf(stderr,
++                 _("%s: Could not unparse principal name found in cache\n"),
++                     progname);
++
+     code = krb5_cc_destroy (kcontext, cache);
+     if (code != 0) {
+         com_err (progname, code, _("while destroying cache"));
+@@ -178,5 +241,17 @@
+             errflg = 1;
+         }
+     }
++
++    /* Solaris Kerberos - Delete ktkt_warnd(1M) entry. */
++    if (!errflg && client_name)
++        kwarn_del_warning(client_name);
++    else
++        fprintf(stderr, _("%s: TGT expire warning NOT deleted\n"),
++            progname);
++
++    /* Solaris Kerberos */
++    free(client_name);
++    krb5_free_principal(kcontext, me);
++
+     return errflg;
+ }
+diff -Napur ORIGINAL/src/clients/kinit/Makefile.in krb5-1.13.1/src/clients/kinit/Makefile.in
+--- ORIGINAL/src/clients/kinit/Makefile.in	2015-02-11 19:16:43.000000000 -0800
++++ krb5-1.13.1/src/clients/kinit/Makefile.in	2015-04-22 09:11:09.525770418 -0700
+@@ -20,7 +20,7 @@ all-unix:: kinit
+ ##WIN32##all-windows:: $(KINIT)
+ 
+ kinit: kinit.o kinit_kdb.o $(KRB5_BASE_DEPLIBS) $(KADMSRV_DEPLIBS)
+-	$(CC_LINK) -o $@ kinit.o kinit_kdb.o $(KADMSRV_LIBS) $(KRB5_BASE_LIBS)
++	$(CC_LINK) -o $@ kinit.o kinit_kdb.o $(KADMSRV_LIBS) $(KRB5_BASE_LIBS) -lkwarn
+ 
+ ##WIN32##$(KINIT): $(OUTPRE)kinit.obj $(BUILDTOP)\util\windows\$(OUTPRE)getopt.lib $(KLIB) $(CLIB) $(EXERES)
+ ##WIN32##	link $(EXE_LINKOPTS) -out:$@ $** advapi32.lib
+diff -Napur ORIGINAL/src/clients/kinit/kinit.c krb5-1.13.1/src/clients/kinit/kinit.c
+--- ORIGINAL/src/clients/kinit/kinit.c	2015-02-11 19:16:43.000000000 -0800
++++ krb5-1.13.1/src/clients/kinit/kinit.c	2015-04-22 14:17:16.415936121 -0700
+@@ -35,6 +35,7 @@
+ #include <time.h>
+ #include <errno.h>
+ #include <com_err.h>
++#include <kerberosv5/private/ktwarn.h>
+ 
+ #ifdef GETOPT_LONG
+ #include <getopt.h>
+@@ -94,6 +95,9 @@ char * get_name_from_os()
+ 
+ static char *progname;
+ 
++static void _kwarnd_add_warning(char *, char *, time_t);
++static void _kwarnd_del_warning(char *, char *);
++
+ typedef enum { INIT_PW, INIT_KT, RENEW, VALIDATE } action_type;
+ 
+ struct k_opts
+@@ -883,6 +887,15 @@ k5_kinit(opts, k5)
+         if (opts->verbose)
+             fprintf(stderr, _("Stored credentials\n"));
+     }
++
++    /* Solaris Kerberos: support our ktkt_warnd */
++    if (opts->action == RENEW) {
++        _kwarnd_del_warning(progname, opts->principal_name);
++        _kwarnd_add_warning(progname, opts->principal_name, my_creds.times.endtime);
++    } else if ((opts->action == INIT_KT) || (opts->action == INIT_PW)) { 
++        _kwarnd_add_warning(progname, opts->principal_name, my_creds.times.endtime);
++    }
++
+     notix = 0;
+ 
+     if (k5->switch_to_cache) {
+@@ -951,3 +964,25 @@ main(argc, argv)
+         exit(1);
+     return 0;
+ }
++
++/* Solaris Kerberos start */
++
++static void 
++_kwarnd_add_warning(char *progname, char *me, time_t endtime) 
++{ 
++    if (kwarn_add_warning(me, endtime) != 0) 
++        fprintf(stderr, gettext(
++            "%s:  no ktkt_warnd warning possible\n"), progname); 
++    return; 
++}
++
++static void 
++_kwarnd_del_warning(char *progname, char *me) 
++{
++    if (kwarn_del_warning(me) != 0)
++        fprintf(stderr, gettext( 
++            "%s:  unable to delete ktkt_warnd message for %s\n"), 
++            progname, me); 
++    return; 
++}
++/* Solaris Kerberos end */
+diff -Napur ORIGINAL/src/lib/gssapi/Makefile.in krb5-1.13.1/src/lib/gssapi/Makefile.in
+--- ORIGINAL/src/lib/gssapi/Makefile.in	2015-02-11 19:16:43.000000000 -0800
++++ krb5-1.13.1/src/lib/gssapi/Makefile.in	2015-04-22 09:11:09.527753282 -0700
+@@ -27,7 +27,7 @@ STOBJLISTS=OBJS.ST generic/OBJS.ST mechg
+ SUBDIROBJLISTS=generic/OBJS.ST mechglue/OBJS.ST krb5/OBJS.ST spnego/OBJS.ST
+ SHLIB_EXPDEPS=\
+ 	$(KRB5_DEPLIB) $(CRYPTO_DEPLIB) $(SUPPORT_DEPLIB) $(COM_ERR_DEPLIB)
+-SHLIB_EXPLIBS=-lkrb5 -lk5crypto -lcom_err $(SUPPORT_LIB) $(DL_LIB) $(LIBS)
++SHLIB_EXPLIBS=-lkrb5 -lk5crypto -lcom_err -lkwarn $(SUPPORT_LIB) $(DL_LIB) $(LIBS)
+ RELDIR=gssapi
+ 
+ all-unix:: all-liblinks @MAINT@ verify-calling-conventions-gssapi
+diff -Napur ORIGINAL/src/lib/gssapi/krb5/store_cred.c krb5-1.13.1/src/lib/gssapi/krb5/store_cred.c
+--- ORIGINAL/src/lib/gssapi/krb5/store_cred.c	2015-04-22 08:37:33.146728757 -0700
++++ krb5-1.13.1/src/lib/gssapi/krb5/store_cred.c	2015-04-22 14:19:34.769508399 -0700
+@@ -26,6 +26,9 @@
+ 
+ #include "k5-int.h"
+ #include "gssapiP_krb5.h"
++#include <syslog.h>
++#include <kerberosv5/private/ktwarn.h>
++
+ 
+ static int
+ has_unexpired_creds(krb5_gss_cred_id_t kcred,
+@@ -71,6 +74,7 @@ copy_initiator_creds(OM_uint32 *minor_st
+     krb5_context context = NULL;
+     krb5_ccache ccache = NULL;
+     const char *ccache_name;
++    char *client_name = NULL;
+ 
+     *minor_status = 0;
+ 
+@@ -162,6 +166,17 @@ copy_initiator_creds(OM_uint32 *minor_st
+     *minor_status = 0;
+     major_status = GSS_S_COMPLETE;
+ 
++    /* Alert ktkt_warnd(1M) */
++    major_status = krb5_unparse_name(context, kcred->name->princ, &client_name);
++    if (GSS_ERROR(major_status))
++        goto cleanup;
++    (void) kwarn_del_warning(client_name);
++    if (kwarn_add_warning(client_name, kcred->expire) != 0) {
++        syslog(LOG_AUTH|LOG_NOTICE, "store_cred: kwarn_add_warning"
++            " failed: ktkt_warnd(1M) down? ");
++    }
++    free(client_name);
++
+ cleanup:
+     if (kcred != NULL)
+         k5_mutex_unlock(&kcred->lock);

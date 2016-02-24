@@ -1,0 +1,26 @@
+#
+# This patch fixes the following bug that was found in Solaris and relevant to
+# MIT:
+#
+#	15699628 SUNBT7023055 mech_krb5.so.1`gsserrmap_destroy+0x4f coredump
+#
+# Note: Given that this bug is relevant to MIT source, this delta should be
+# contributed upstream.
+# Patch source: in-house
+#
+diff -pur old/src/lib/gssapi/krb5/disp_status.c new/src/lib/gssapi/krb5/disp_status.c
+--- old/src/lib/gssapi/krb5/disp_status.c	2015-06-07 23:15:18.753872790 -0600
++++ new/src/lib/gssapi/krb5/disp_status.c	2015-06-08 00:04:51.457635593 -0600
+@@ -98,6 +98,12 @@ static int save_error_string_nocopy(OM_u
+         }
+     }
+     ret = gsserrmap_replace_or_insert(p, minor_code, msg);
++    if (ret) {
++	gsserrmap_destroy(p);
++	free(p);
++	p = NULL;
++	(void) k5_setspecific(K5_KEY_GSS_KRB5_ERROR_MESSAGE, NULL);
++    }
+ fail:
+ #ifdef DEBUG
+     fprintf(stderr, " p=%p %s\n", (void *)p, ret ? "FAIL" : "SUCCESS");

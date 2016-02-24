@@ -1,0 +1,25 @@
+#
+# This provides padding for the krb5_keyblock struct so its size will be the
+# same as it was in ON krb to avoid ABI issues that may be caused by the
+# difference.  This difference was a result of modifying ON krb to use the
+# Crytpo Framework/libpkcs11 API as the crypto provider.  This patch is not
+# intended for upstream contribution to MIT.
+# Patch source: in-house
+#
+
+--- original/src/include/krb5/krb5.hin	2014-08-11 04:19:59.000000000 -0500
++++ krb5-1.13.mockup/src/include/krb5/krb5.hin	2014-08-15 14:56:23.511193392 -0500
+@@ -347,6 +347,13 @@
+     krb5_enctype enctype;
+     unsigned int length;
+     krb5_octet *contents;
++    /*
++     * Solaris Kerberos: for backwards ABI compatibility.  The following fields
++     * are not used by the MIT code:
++     */
++    int   *dk_list; /* krb5_dk_node */
++    unsigned long hKey; /* CK_OBJECT_HANDLE */
++    int pid;
+ } krb5_keyblock;
+ 
+ struct krb5_key_st;

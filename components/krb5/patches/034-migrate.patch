@@ -1,0 +1,276 @@
+#
+# This patch provides an authorization scheme for kadmind when used to
+# auto-migrate UNIX based users to Kerberos.  This is required to support
+# the auto-migrate module, pam_krb5_migrate(5).
+#
+# Note: MIT will unlikely want the pam_krb5_migrate kadmind authorization
+# functionality as this is specific to a 3rd party migration design.
+# Patch source: in-house
+#
+diff -pur old/src/kadmin/server/Makefile.in new/src/kadmin/server/Makefile.in
+--- old/src/kadmin/server/Makefile.in	2015-04-30 01:12:10.540747993 -0600
++++ new/src/kadmin/server/Makefile.in	2015-05-20 21:20:31.285698636 -0600
+@@ -13,7 +13,7 @@ SRCS = kadm_rpc_svc.c server_stubs.c ovs
+ all:: $(PROG)
+ 
+ $(PROG): $(OBJS) $(KADMSRV_DEPLIBS) $(KRB5_BASE_DEPLIBS) $(APPUTILS_DEPLIB) $(VERTO_DEPLIB)
+-	$(CC_LINK) -o $(PROG) $(OBJS) $(APPUTILS_LIB) $(KADMSRV_LIBS) $(KDB_DEP_LIB) $(KRB5_BASE_LIBS) $(VERTO_LIBS)
++	$(CC_LINK) -o $(PROG) $(OBJS) $(APPUTILS_LIB) $(KADMSRV_LIBS) $(KDB_DEP_LIB) $(KRB5_BASE_LIBS) $(VERTO_LIBS) -lpam
+ 
+ install::
+ 	$(INSTALL_PROGRAM) $(PROG) ${DESTDIR}$(SERVER_BINDIR)/$(PROG)
+diff -pur old/src/kadmin/server/server_stubs.c new/src/kadmin/server/server_stubs.c
+--- old/src/kadmin/server/server_stubs.c	2015-04-30 01:12:10.540973547 -0600
++++ new/src/kadmin/server/server_stubs.c	2015-05-20 21:16:21.635418741 -0600
+@@ -16,6 +16,7 @@
+ #include <syslog.h>
+ #include <adm_proto.h>  /* krb5_klog_syslog */
+ #include "misc.h"
++#include <security/pam_appl.h>
+ 
+ extern gss_name_t                       gss_changepw_name;
+ extern gss_name_t                       gss_oldchangepw_name;
+@@ -352,6 +353,80 @@ log_done(
+                             client_addr(rqstp->rq_xprt));
+ }
+ 
++/*
++ * This routine primarily validates the username and password
++ * of the principal to be created, if a prior acl check for
++ * the 'u' privilege succeeds. Validation is done using
++ * the PAM `k5migrate' service. k5migrate normally stacks
++ * pam_unix_auth.so and pam_unix_account.so in its auth and
++ * account stacks respectively.
++ *
++ * Returns 1 (true), if validation is successful,
++ * else returns 0 (false).
++ */
++int
++verify_pam_pw(char *userdata, char *pwd)
++{
++	pam_handle_t *pamh;
++	int err = 0;
++	int result = 1;
++	char *user = NULL;
++	char *ptr = NULL;
++
++	ptr = strchr(userdata, '@');
++	if (ptr != NULL) {
++		user = (char *)malloc(ptr - userdata + 1);
++		if (user == NULL)
++			return (0);
++		(void) strlcpy(user, userdata, (ptr - userdata) + 1);
++	} else {
++		user = (char *)strdup(userdata);
++		if (user == NULL)
++			return (0);
++	}
++
++	err = pam_start("k5migrate", user, NULL, &pamh);
++	if (err != PAM_SUCCESS) {
++		syslog(LOG_ERR, "verify_pam_pw: pam_start() failed, %s\n",
++				pam_strerror(pamh, err));
++		free(user);
++		return (0);
++	}
++
++	err = pam_set_item(pamh, PAM_AUTHTOK, (void *)pwd);
++	if (err != PAM_SUCCESS) {
++		syslog(LOG_ERR, "verify_pam_pw: pam_set_item() failed, %s\n",
++				pam_strerror(pamh, err));
++		free(user);
++		(void) pam_end(pamh, err);
++		return (0);
++	}
++
++	err = pam_authenticate(pamh, PAM_SILENT);
++	if (err != PAM_SUCCESS) {
++		syslog(LOG_ERR, "verify_pam_pw: pam_authenticate() failed for "
++				"user=%s, %s\n", user,
++				pam_strerror(pamh, err));
++		free(user);
++		(void) pam_end(pamh, err);
++		return (0);
++	}
++
++	err = pam_acct_mgmt(pamh, PAM_SILENT);
++	if (err != PAM_SUCCESS) {
++		syslog(LOG_ERR, "verify_pam_pw: pam_acct_mgmt() failed for "
++				"user=%s, %s\n", user,
++				pam_strerror(pamh, err));
++		free(user);
++		(void) pam_end(pamh, err);
++		return (0);
++	}
++
++	free(user);
++	(void) pam_end(pamh, PAM_SUCCESS);
++	return (result);
++}
++
+ generic_ret *
+ create_principal_2_svc(cprinc_arg *arg, struct svc_req *rqstp)
+ {
+@@ -363,6 +438,8 @@ create_principal_2_svc(cprinc_arg *arg,
+     restriction_t               *rp;
+     const char                  *errmsg = NULL;
+     gss_name_t                  name = NULL;
++    int				policy_migrate = 0;
++    kadm5_ret_t			retval;
+ 
+     xdr_free(xdr_generic_ret, (char *) &ret);
+ 
+@@ -387,9 +464,17 @@ create_principal_2_svc(cprinc_arg *arg,
+         ret.code = KADM5_FAILURE;
+         goto exit_func;
+     }
++
++    if (kadm5int_acl_check(handle->context, name, ACL_MIGRATE,
++	arg->rec.principal, &rp) &&
++	verify_pam_pw(prime_arg, arg->passwd)) {
++	policy_migrate = 1;
++    }
++
+     if (CHANGEPW_SERVICE(rqstp)
+-        || !kadm5int_acl_check(handle->context, name, ACL_ADD,
+-                               arg->rec.principal, &rp)
++        || (!kadm5int_acl_check(handle->context, name, ACL_ADD,
++                               arg->rec.principal, &rp) &&
++		!(policy_migrate))
+         || kadm5int_acl_impose_restrictions(handle->context,
+                                             &arg->rec, &arg->mask, rp)) {
+         ret.code = KADM5_AUTH_ADD;
+@@ -408,6 +493,25 @@ create_principal_2_svc(cprinc_arg *arg,
+ 
+         if (errmsg != NULL)
+             krb5_free_error_message(handle->context, errmsg);
++
++	if (policy_migrate && (ret.code == 0)) {
++		arg->rec.policy = strdup("default");
++		if ((arg->mask & KADM5_PW_EXPIRATION)) {
++			arg->mask = 0;
++			arg->mask |= KADM5_POLICY;
++			arg->mask |= KADM5_PW_EXPIRATION;
++		} else {
++			arg->mask = 0;
++			arg->mask |= KADM5_POLICY;
++		}
++
++		retval = kadm5_modify_principal((void *)handle,
++				&arg->rec, arg->mask);
++		log_done("kadm5_modify_principal",
++			prime_arg, ((retval == 0) ? "success" :
++			error_message(retval)), &client_name,
++			&service_name, rqstp);
++	}
+     }
+     free(prime_arg);
+     gss_release_buffer(&minor_stat, &client_name);
+@@ -431,6 +535,8 @@ create_principal3_2_svc(cprinc3_arg *arg
+     restriction_t               *rp;
+     const char                  *errmsg = NULL;
+     gss_name_t                  name = NULL;
++    int				policy_migrate = 0;
++    kadm5_ret_t			retval;
+ 
+     xdr_free(xdr_generic_ret, (char *) &ret);
+ 
+@@ -455,9 +561,17 @@ create_principal3_2_svc(cprinc3_arg *arg
+         ret.code = KADM5_FAILURE;
+         goto exit_func;
+     }
++
++    if (kadm5int_acl_check(handle->context, name, ACL_MIGRATE,
++	arg->rec.principal, &rp) &&
++	verify_pam_pw(prime_arg, arg->passwd)) {
++	policy_migrate = 1;
++    }
++
+     if (CHANGEPW_SERVICE(rqstp)
+-        || !kadm5int_acl_check(handle->context, name, ACL_ADD,
+-                               arg->rec.principal, &rp)
++        || (!kadm5int_acl_check(handle->context, name, ACL_ADD,
++                               arg->rec.principal, &rp) &&
++	    !(policy_migrate))
+         || kadm5int_acl_impose_restrictions(handle->context,
+                                             &arg->rec, &arg->mask, rp)) {
+         ret.code = KADM5_AUTH_ADD;
+@@ -477,6 +591,24 @@ create_principal3_2_svc(cprinc3_arg *arg
+ 
+         if (errmsg != NULL)
+             krb5_free_error_message(handle->context, errmsg);
++
++	if (policy_migrate && (ret.code == 0)) {
++	 	arg->rec.policy = strdup("default");
++	 	if ((arg->mask & KADM5_PW_EXPIRATION)) {
++	 		arg->mask = 0;
++	 		arg->mask |= KADM5_POLICY;
++	 		arg->mask |= KADM5_PW_EXPIRATION;
++	 	} else {
++	 		arg->mask = 0;
++	 		arg->mask |= KADM5_POLICY;
++	 	}
++
++		retval = kadm5_modify_principal((void *)handle,
++					   &arg->rec, arg->mask);
++		log_done("kadm5_modify_principal", prime_arg,
++			((retval == 0) ? "success" : error_message(retval)),
++			&client_name, &service_name, rqstp);
++	 }
+     }
+     free(prime_arg);
+     gss_release_buffer(&minor_stat, &client_name);
+diff -pur old/src/lib/kadm5/srv/server_acl.c new/src/lib/kadm5/srv/server_acl.c
+--- old/src/lib/kadm5/srv/server_acl.c	2015-04-30 01:12:10.576699515 -0600
++++ new/src/lib/kadm5/srv/server_acl.c	2015-05-20 21:00:21.476861745 -0600
+@@ -24,6 +24,10 @@
+  * or implied warranty.
+  */
+ 
++/*
++ * Copyright (c) 2002, 2015, Oracle and/or its affiliates. All rights reserved.
++ */
++
+ #include "k5-int.h"
+ #include <syslog.h>
+ #include <sys/param.h>
+@@ -63,6 +67,7 @@ static const aop_t acl_op_table[] = {
+     { 'l',      ACL_LIST },
+     { 'p',      ACL_IPROP },
+     { 's',      ACL_SETKEY },
++    { 'u',	ACL_MIGRATE },
+     { 'x',      ACL_ALL_MASK },
+     { '*',      ACL_ALL_MASK },
+     { '\0',     0 }
+diff -pur old/src/lib/kadm5/srv/server_acl.h new/src/lib/kadm5/srv/server_acl.h
+--- old/src/lib/kadm5/srv/server_acl.h	2015-04-30 01:12:10.575948391 -0600
++++ new/src/lib/kadm5/srv/server_acl.h	2015-05-20 21:00:26.742448675 -0600
+@@ -24,6 +24,10 @@
+  * or implied warranty.
+  */
+ 
++/*
++ * Copyright (c) 1997, 2015, Oracle and/or its affiliates. All rights reserved.
++ */
++
+ #ifndef SERVER_ACL_H__
+ #define SERVER_ACL_H__
+ 
+@@ -59,6 +63,7 @@
+ #define ACL_SETKEY              256
+ #define ACL_IPROP               512
+ #define ACL_RENAME              (ACL_ADD+ACL_DELETE)
++#define	ACL_MIGRATE		1024
+ 
+ #define ACL_ALL_MASK            (ACL_ADD        |       \
+                                  ACL_DELETE     |       \
+@@ -67,7 +72,8 @@
+                                  ACL_INQUIRE    |       \
+                                  ACL_LIST       |       \
+                                  ACL_IPROP      |       \
+-                                 ACL_SETKEY)
++                                 ACL_SETKEY	|	\
++				 ACL_MIGRATE)
+ 
+ typedef struct _restriction {
+     long                mask;

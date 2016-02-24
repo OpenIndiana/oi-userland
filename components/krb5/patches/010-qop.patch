@@ -1,0 +1,93 @@
+#
+# This patch patches in g_utils.c with /etc/gss/qop related interfaces.
+#
+# These functions were removed from MIT code, but are referenced by Solaris
+# rpcsec_gss wrappers.
+#
+# This is a Solaris specific patch not intended for upstream contribution.
+# Patch source: in-house
+#
+diff -ur old/src/lib/gssapi/libgssapi_krb5.exports new/src/lib/gssapi/libgssapi_krb5.exports
+--- old/src/lib/gssapi/libgssapi_krb5.exports	2014-08-11 02:19:59.000000000 -0700
++++ new/src/lib/gssapi/libgssapi_krb5.exports	2014-09-05 08:22:03.879817432 -0700
+@@ -36,6 +36,9 @@
+ GSS_C_MA_PFS
+ GSS_C_MA_COMPRESS
+ GSS_C_MA_CTX_TRANS
++gssint_qop_to_num
++gssint_num_to_qop
++gssint_get_mech_info
+ gss_accept_sec_context
+ gss_acquire_cred
+ gss_acquire_cred_with_password
+Only in new/src/lib/gssapi: libgssapi_krb5.exports.orig
+Only in new/src/lib/gssapi: libgssapi_krb5.exports.rej
+diff -ur old/src/lib/gssapi/mechglue/Makefile.in new/src/lib/gssapi/mechglue/Makefile.in
+--- old/src/lib/gssapi/mechglue/Makefile.in	2014-08-11 02:19:59.000000000 -0700
++++ new/src/lib/gssapi/mechglue/Makefile.in	2014-09-05 08:20:06.987333578 -0700
+@@ -66,6 +66,7 @@
+ 	$(srcdir)/g_sign.c \
+ 	$(srcdir)/g_store_cred.c \
+ 	$(srcdir)/g_unseal.c \
++	$(srcdir)/g_utils.c \
+ 	$(srcdir)/g_unwrap_aead.c \
+ 	$(srcdir)/g_unwrap_iov.c \
+ 	$(srcdir)/g_verify.c \
+@@ -130,6 +131,7 @@
+ 	$(OUTPRE)g_sign.$(OBJEXT) \
+ 	$(OUTPRE)g_store_cred.$(OBJEXT) \
+ 	$(OUTPRE)g_unseal.$(OBJEXT) \
++	$(OUTPRE)g_utils.$(OBJEXT) \
+ 	$(OUTPRE)g_unwrap_aead.$(OBJEXT) \
+ 	$(OUTPRE)g_unwrap_iov.$(OBJEXT) \
+ 	$(OUTPRE)g_verify.$(OBJEXT) \
+@@ -194,6 +196,7 @@
+ 	g_sign.o \
+ 	g_store_cred.o \
+ 	g_unseal.o \
++	g_utils.o \
+ 	g_unwrap_aead.o \
+ 	g_unwrap_iov.o \
+ 	g_verify.o \
+diff -ur old/src/lib/gssapi/mechglue/mglueP.h new/src/lib/gssapi/mechglue/mglueP.h
+--- old/src/lib/gssapi/mechglue/mglueP.h	2014-08-11 02:19:59.000000000 -0700
++++ new/src/lib/gssapi/mechglue/mglueP.h	2014-09-05 08:20:06.987586085 -0700
+@@ -66,6 +66,38 @@
+ } gss_union_cred_desc, *gss_union_cred_t;
+ 
+ /*
++ * qop configuration file handling.
++ */
++#define	MAX_QOP_NUM_PAIRS	128
++#define	MAX_QOPS_PER_MECH	128
++
++typedef struct _qop_num {
++	char *qop;
++	OM_uint32 num;
++	char *mech;
++} qop_num;
++
++OM_uint32
++gssint_qop_to_num(
++	char		*qop,		/* input qop string */
++	char		*mech,		/* input mech string */
++	OM_uint32	*num		/* output qop num */
++);
++
++OM_uint32
++gssint_num_to_qop(
++	char		*mech,		/* input mech string */
++	OM_uint32	num,		/* input qop num */
++	char		**qop		/* output qop name */
++);
++
++OM_uint32
++gssint_get_mech_info(
++	char		*mech,		/* input mech string */
++	char		**qops		/* buffer for return qops */
++);
++
++/*
+  * Rudimentary pointer validation macro to check whether the
+  * "loopback" field of an opaque struct points back to itself.  This
+  * field also catches some programming errors where an opaque pointer

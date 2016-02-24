@@ -1,0 +1,31 @@
+#
+# This patch allows a successful dump of the kdb for full-resyncs when kadmind
+# prompts for a master key, rather than gleaning one from a stash file.
+#
+# Original BugID is:
+# 15401154 SUNBT6564718-SOLARIS_11 kdb5_util dump doesn't create a "dump ok"...
+#
+# Note: An MIT ticket has been submitted: #8042.  MIT will fix this differently
+# than what is currently in this patch, but will not be fixed in the immediate
+# future.  Not having this fix will cause noticable regression with dependent
+# customers.
+# Patch source: in-house
+#
+--- old/src/kadmin/dbutil/kdb5_util.c	Wed Oct 15 17:55:10 2014
++++ new/src/kadmin/dbutil/kdb5_util.c	Sat Jan 10 22:00:39 2015
+@@ -478,7 +478,14 @@
+                                          0, &master_keyblock))) {
+             com_err(progname, retval, _("while reading master key"));
+             com_err(progname, 0, _("Warning: proceeding without master key"));
+-            exit_status++;
++	    /*
++	     * Solaris Kerberos: We don't want to count as an error if for
++	     * instance the stash file is not present and we are trying to
++	     * automate propagation, which really doesn't need a master key to
++	     * do so.
++	     */
++	    if (retval != KRB5_KDB_CANTREAD_STORED)
++		exit_status++;
+             return(0);
+         }
+     }

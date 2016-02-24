@@ -1,0 +1,34 @@
+#
+# Fixes a memory leak in libverto:vfree.
+#
+# Symbol vfree is defined as a macro vresize(X,0) and eventually realloc(X,0)
+# gets called. According to realloc(3C), realloc with size=0 can return either
+# NULL or a pointer that can be passed to free. This free-able pointer never
+# gets freed in current code and leaks 8 B of memory on every event deletion.
+#
+# This patch replaces realloc(X,0) with free().
+#
+# Reported by security/krb5api testsuite and libumem.
+#
+# This patch has been contributed to MIT in
+#    https://github.com/krb5/krb5/pull/294
+#
+# MIT requested this issue be reported to libverto project:
+#    https://fedorahosted.org/libverto/ticket/13
+# Patch source: in-house
+#
+diff -pur old/src/util/verto/verto.c new/src/util/verto/verto.c
+--- old/src/util/verto/verto.c	2015-05-08 16:27:02.000000000 -0700
++++ new/src/util/verto/verto.c	2015-07-03 08:35:24.868287391 -0700
+@@ -132,6 +132,11 @@ vresize(void *mem, size_t size)
+ {
+     if (!resize_cb)
+         resize_cb = &realloc;
++    if (size == 0 && resize_cb == &realloc) {
++        /* avoid memleak as realloc(X,0) can return a free-able pointer */
++        free(mem);
++        return (NULL);
++    }
+     return (*resize_cb)(mem, size);
+ }
+ 

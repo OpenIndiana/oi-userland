@@ -1,0 +1,117 @@
+'\" te
+.\"  Copyright (c) 2008, Sun Microsystems, Inc. All Rights Reserved
+.TH kerberos 5 "2008 年 10 月 1 日" "SunOS 5.12" "標準、環境、マクロ"
+.SH 名前
+kerberos \- Solaris Kerberos 実装の概要
+.SH 機能説明
+.sp
+.LP
+Solaris Kerberos の実装 (以降、「Kerberos」と短縮する場合もあり) によって、ネットワーク環境内のクライアントが認証されるため、セキュアなトランザクションが可能になります。(クライアントはユーザーまたはネットワークサービスです。)Kerberos では、クライアントの同一性および転送されたデータの信頼性が検証されます。Kerberos は「\fIシングルサインオン\fR」システムです。つまり、ユーザーはセッションの開始時にのみ、パスワードを入力する必要があります。Solaris Kerberos は、\fBMIT\fR で開発された Kerberos(TM) システムに基づいて実装され、異機種混在ネットワーク上で Kerberos V5 システムとの互換性があります。
+.sp
+.LP
+Kerberos は、クライアントを一意に識別し、有効期間に限りがある\fIチケット\fRをクライアントに付与することによって動作します。チケットを所有するクライアントは、権限が付与されているネットワークサービスについて自動的に検証されます。たとえば、有効な Kerberos チケットを持つユーザーは、自分自身の身元を証明しなくても、Kerberos が動作している別のマシンに rlogin できます。各クライアントは一意のチケットを持っているため、身元が保証されます。
+.sp
+.LP
+チケットを入手するには、まずクライアントは \fBkinit\fR(1) コマンドまたは \fBPAM\fR モジュールを使用して、Kerberos セッションを初期化する必要があります。(\fBpam_krb5\fR(5) を参照)。\fBkinit\fR によってパスワードを求めるプロンプトが表示され、\fIKey Distribution Center\fR (\fBKDC\fR) との通信が行なわれます。\fBKDC\fR によって、\fIチケット認可チケット\fR (\fBTGT\fR) が返され、パスワードの確認を求めるプロンプトが表示されます。クライアントがパスワードを確認すると、チケット認可チケットを使用して、特定のネットワークサービスのチケットを取得できます。チケットは透過的に付与されるため、ユーザーが管理について心配する必要はありません。\fBklist\fR(1) コマンドを使用すると、現在のチケットを表示できます。
+.sp
+.LP
+チケットは、インストール時に設定されたシステム\fIポリシー\fRに従って有効になります。たとえば、チケットには有効なデフォルトの有効期間があります。root に属するチケットなどの特権チケットの有効期間が非常に短くなるように、ポリシーに追加指示することもできます。ポリシーでは、いくつかのデフォルトルールを上書きできます。たとえば、クライアントは、デフォルトよりも有効期間が長いまたは短いチケットをリクエストできます。
+.sp
+.LP
+\fBkinit\fR を使用すると、チケットを更新できます。チケットは\fI転送可能\fRでもあるため、あるマシン上で付与されたチケットを別のホスト上で使用できます。\fBkdestroy\fR(1) を使用すると、チケットを破棄できます。\fB\&.logout\fR ファイルに \fBkdestroy\fR への呼び出しを含めることをお勧めします。
+.sp
+.LP
+Kerberos では、クライアントは\fI主体\fRと呼ばれます。主体の形式は次のとおりです: 
+.sp
+.in +2
+.nf
+primary/instance@REALM
+.fi
+.in -2
+.sp
+
+.sp
+.ne 2
+.mk
+.na
+\fBプライマリノード\fR
+.ad
+.RS 28n
+.rt  
+ユーザー、ホスト、またはサービス。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fBインスタンス\fR
+.ad
+.RS 28n
+.rt  
+プライマリの資格です。プライマリがキーワード \fBhost\fR で指定されたホストの場合、インスタンスはそのホストの完全指定ドメイン名です。プライマリがユーザーまたはサービスの場合、インスタンスはオプションです。\fBadmin\fR や \fBroot\fR などの一部のインスタンスは特権です。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fBレルム\fR
+.ad
+.RS 28n
+.rt  
+Kerberos で、ドメインに相当するものです。実際に、ほとんどの場合でレルムは \fBDNS\fR ドメイン名に直接マップされています。Kerberos レルムでは大文字のみが使用されます。主体名の例については、「使用例」を参照してください。
+.RE
+
+.sp
+.LP
+Kerberos では、ユーザー認証以外にも、General Security Services \fBAPI\fR (\fBGSS-API\fR) を利用した 2 種類のセキュリティーサービスが提供されます: 転送されたデータの有効性を認証する \fIintegrity\fR と、転送されたデータを暗号化する \fIprivacy\fR。開発者は RPCSEC_GSS \fBAPI\fR インタフェースを使用することによって、\fBGSS-API\fR を利用できます (\fBrpcsec_gss\fR(3NSL) を参照)。 
+.SH 使用例
+.LP
+\fB例 1 \fR有効な主体名の例
+.sp
+.LP
+次に、有効な主体名の例を示します:
+
+.sp
+.in +2
+.nf
+	joe
+	joe/admin
+	joe@ENG.ACME.COM
+	joe/admin@ENG.ACME.COM
+	rlogin/bigmachine.eng.acme.com@ENG.ACME.COM
+	host/bigmachine.eng.acme.com@ENG.ACME.COM
+.fi
+.in -2
+.sp
+
+.sp
+.LP
+最初の 4 つのケースは\fIユーザー主体\fRです。最初の 2 つのケースでは、ユーザー \fBjoe\fR がクライアントと同じレルム内にあるため、レルムが指定されていないことが想定されます。\fBjoe\fR と \fBjoe/admin\fR は、同じユーザーに使用されている場合でも、別々の主体であることに注意してください。\fBjoe/admin\fR は、\fBjoe\fR とは別の特権を持っています。5 番目のケースは \fIサービス主体\fR、最後のケースは\fIホスト主体\fRです。ホスト主体には、\fBhost\fR という語が必要です。ホスト主体では、インスタンスは完全指定ホスト名です。\fBadmin\fR および \fBhost\fR という語は予約済みのキーワードであることに注意してください。
+
+.SH 関連項目
+.sp
+.LP
+\fBkdestroy\fR(1)、\fBkinit\fR(1)、\fBklist\fR(1)、\fBkpasswd\fR(1)、\fBkrb5.conf\fR(4)、\fBkrb5envvar\fR(5)
+.sp
+.LP
+\fI『System Administration Guide: Security Services 』\fR
+.SH 注意事項
+.sp
+.LP
+以前のリリースの Solaris オペレーティングシステムでは、Solaris Kerberos の実装は「SEAM (Sun Enterprise Authentication Mechanism)」と呼ばれていました。
+.sp
+.LP
+ユーザー名を入力し、\fBkinit\fR が次のメッセージを返した場合: 
+.sp
+.in +2
+.nf
+Principal unknown (kerberos)
+.fi
+.in -2
+.sp
+
+.sp
+.LP
+Kerberos ユーザーとして登録されていません。システム管理者に問い合わせるか、\fI『System Administration Guide: Security Services』\fRを参照してください。 

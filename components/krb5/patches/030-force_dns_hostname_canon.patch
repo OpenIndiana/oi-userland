@@ -1,0 +1,148 @@
+#
+# Force DNS name resolution when canonicalizing hostbased principal names.
+#
+# This patch is to preserve old standing Solaris Kerberos behavior,
+# where hostbased principal names are canonicalized exclusively using DNS
+# lookups. NIS has been known to cause issues with hostname canonicalization.
+#
+# This patch is not meant for upstream contribution.
+# Patch source: in-house
+#
+diff -pur old/src/lib/krb5/os/sn2princ.c new/src/lib/krb5/os/sn2princ.c
+--- old/src/lib/krb5/os/sn2princ.c	2015-02-11 19:16:43.000000000 -0800
++++ new/src/lib/krb5/os/sn2princ.c	2015-05-12 04:14:40.341673659 -0700
+@@ -39,6 +39,14 @@
+ #define DEFAULT_RDNS_LOOKUP 1
+ #endif
+ 
++/*
++ * The following prototypes are needed because these are
++ * private interfaces that do not have prototypes in any .h
++ */
++extern struct hostent   *res_getipnodebyname(const char *, int, int, int *);
++extern struct hostent   *res_getipnodebyaddr(const void *, size_t, int, int *);
++extern void             res_freehostent(struct hostent *);
++
+ static krb5_boolean
+ use_reverse_dns(krb5_context context)
+ {
+@@ -53,6 +61,26 @@ use_reverse_dns(krb5_context context)
+     return value;
+ }
+ 
++/*
++ * Translate getipnodeby* error codes to strings for coherent error messaging.
++ */
++static const char *
++get_host_error(int err)
++{
++    switch(err) {
++    case HOST_NOT_FOUND:
++        return "host not found";
++    case NO_DATA:
++        return "no data record of requested type";
++    case NO_RECOVERY:
++        return "non-recoverable error";
++    case TRY_AGAIN:
++        return "host name lookup failure";
++    default:
++        return "error unknown";
++    }
++}
++
+ /* Set *name_out to the canonicalized form of name, obeying relevant
+  * configuration settings.  The caller must free the result. */
+ static krb5_error_code
+@@ -63,11 +91,15 @@ canon_hostname(krb5_context context, krb
+     char namebuf[NI_MAXHOST], *copy, *p;
+     int err;
+     const char *canonhost;
++    struct hostent *hp = NULL;
++    struct hostent *hp2 = NULL;
++    int addr_family;
+ 
+     *canonhost_out = NULL;
+ 
+     canonhost = host;
+     if (type == KRB5_NT_SRV_HST && context->dns_canonicalize_hostname) {
++#if 0
+         /* Try a forward lookup of the hostname. */
+         memset(&hint, 0, sizeof(hint));
+         hint.ai_flags = AI_CANONNAME;
+@@ -86,6 +118,31 @@ canon_hostname(krb5_context context, krb
+             if (!err)
+                 canonhost = namebuf;
+         }
++#endif
++        /* using res_getipnodebyname to force dns name resolution*/
++        addr_family = AF_INET;
++try_getipnodebyname_again:
++        hp = res_getipnodebyname(host, addr_family, 0, &err);
++        if (hp == NULL) {
++            if (addr_family == AF_INET) {
++                /* Just in case it's an IPv6-only name.  */
++                addr_family = AF_INET6;
++                goto try_getipnodebyname_again;
++            }
++            k5_setmsg(context, KRB5_ERR_BAD_HOSTNAME,
++                      _("Hostname cannot be canonicalized for '%s': %s"),
++                      host, get_host_error(err));
++            return KRB5_ERR_BAD_HOSTNAME;
++        }
++        canonhost = hp->h_name;
++
++        if (use_reverse_dns(context)) {
++            /* Try a reverse lookup of the address. */
++            hp2 = res_getipnodebyaddr(hp->h_addr, hp->h_length,
++                                      hp->h_addrtype, &err);
++            if (hp2 != NULL)
++                canonhost = hp2->h_name;
++        }
+     }
+ 
+     copy = strdup(canonhost);
+@@ -110,9 +167,12 @@ canon_hostname(krb5_context context, krb
+     *canonhost_out = copy;
+ 
+ cleanup:
+-    /* We only return success or ENOMEM. */
+     if (ai != NULL)
+         freeaddrinfo(ai);
++    if (hp != NULL)
++        res_freehostent(hp);
++    if (hp2 != NULL)
++        res_freehostent(hp2);
+     return (*canonhost_out == NULL) ? ENOMEM : 0;
+ }
+ 
+diff -pur old/src/util/k5test.py new/src/util/k5test.py
+--- old/src/util/k5test.py	2015-04-28 08:02:39.179471813 -0700
++++ new/src/util/k5test.py	2015-05-13 06:36:54.073414866 -0700
+@@ -353,6 +353,7 @@ import string
+ import subprocess
+ import sys
+ import imp
++import re
+ 
+ # Used when most things go wrong (other than programming errors) so
+ # that the user sees an error message rather than a Python traceback,
+@@ -460,7 +461,19 @@ def _find_srctop():
+ # because it explicitly prefers results containing periods and
+ # krb5_sname_to_principal doesn't care.
+ def _get_hostname():
++    # in Solaris, we always canonicalize using FQDN by forcing DNS lookup
+     hostname = socket.gethostname()
++    # dig for fqdn, only output answer section
++    answer = subprocess.check_output(['/usr/sbin/dig', '+search', '+noall', '+answer', hostname]);
++    for line in answer.split("\n"):
++        # find A record
++        if re.search(r"\bA\b", line):
++            # only cut out the NAME part
++            return re.sub(r'\.?[ \t].*','',line)
++
++    fail('Local hostname "%s" does not resolve: %s.' % (hostname, errstr))
++
++    # unreachable:
+     try:
+         ai = socket.getaddrinfo(hostname, None, 0, 0, 0, socket.AI_CANONNAME)
+     except socket.gaierror, (error, errstr):

@@ -1,0 +1,28 @@
+#
+# copy_initiator_creds fails, if ccache file is not present.
+# This patch in that case initializes the ccache to create the missing file
+# and retries credentials copy.
+# This was required for SunSSH credential delegation code.
+# We will try to push the patch upstream.
+# Patch source: in-house
+#
+diff -ur old/src/lib/gssapi/krb5/store_cred.c new/src/lib/gssapi/krb5/store_cred.c
+--- old/src/lib/gssapi/krb5/store_cred.c	2014-01-21 01:38:26.331798328 -0800
++++ new/src/lib/gssapi/krb5/store_cred.c	2014-01-21 02:31:35.858882999 -0800
+@@ -145,6 +145,16 @@
+     }
+ 
+     code = krb5_cc_copy_creds(context, kcred->ccache, ccache);
++    if (code == KRB5_FCC_NOFILE) {
++        /* default ccache file does not exists => initialize ccache */
++        code = krb5_cc_initialize(context, ccache, kcred->name->princ);
++        if (code != 0) {
++            *minor_status = code;
++            major_status = GSS_S_CRED_UNAVAIL;
++            goto cleanup;
++        }
++        code = krb5_cc_copy_creds(context, kcred->ccache, ccache);
++    }
+     if (code != 0) {
+         *minor_status = code;
+         major_status = GSS_S_FAILURE;

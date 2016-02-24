@@ -1,0 +1,300 @@
+#
+# This patch allows for backwards compatability with the rcache interface.
+# Solaris currently supports the deprecated interface for specifying the rcache
+# file; KRB5RCNAME.  Which is defined as:
+#
+#    KRB5RCNAME=[FILE|MEMORY|NONE]:<rcache name>
+#    with: FILE:/var/krb5/rcache/<service_name>_<euid> as the default setting.
+# This patch keeps this interface as well as preserve the existing interface
+# with MIT through various environment variables:
+#    KRB5RCACHETYPE=[dfl|none]
+#    KRB5RCACHENAME=<rcache name>
+#    KRB5RCACHEDIR=<rcache directory>
+#    where the default configuration, dfl:/var/tmp/<service name>_<euid>,
+#    is transformed to dfl:/var/krb5/rcache/<service_name>_<euid> in Solaris
+#    where dfl is a file based replay cache
+#
+# The following CRs are fixed with this patch, in sequence:
+#
+# 15299709 SUNBT6355096-SOLARIS_11 rcache name value is now expected to be...
+# 15184486 SUNBT4950986 caching behavior of the Kerberos 5 replay cache is...
+# 15291109 SUNBT6334655-SOLARIS_11 with <rc type>=MEMORY as said in...
+# 15299707 SUNBT6355094-SOLARIS_11 Some parts of the krb mem rcache should...
+# 15731568 SUNBT7071883 mech_krb5.so.1`krb5_rc_dfl_close_no_free+0x21...
+#
+# Note: An MIT ticket will subsequently be filed, but the solution may differ
+# from what we currently offer in Solaris, because they may not want a memory
+# replay cache, because of the known limitations of this type of cache and may
+# integrate features that don't require replay caches in the the future.
+# Patch source: in-house
+#
+diff -pur old/src/lib/krb5/krb/srv_rcache.c new/src/lib/krb5/krb/srv_rcache.c
+--- old/src/lib/krb5/krb/srv_rcache.c	2015-04-09 18:09:27.385483632 -0600
++++ new/src/lib/krb5/krb/srv_rcache.c	2015-04-15 23:30:38.449049210 -0600
+@@ -39,6 +39,7 @@ krb5_get_server_rcache(krb5_context cont
+     krb5_error_code retval;
+     unsigned int i;
+     struct k5buf buf = EMPTY_K5BUF;
++    char *def_env;
+ #ifdef HAVE_GETEUID
+     unsigned long uid = geteuid();
+ #endif
+@@ -49,19 +50,30 @@ krb5_get_server_rcache(krb5_context cont
+     cachetype = krb5_rc_default_type(context);
+ 
+     k5_buf_init_dynamic(&buf);
+-    k5_buf_add(&buf, cachetype);
+-    k5_buf_add(&buf, ":");
+-    for (i = 0; i < piece->length; i++) {
+-        if (piece->data[i] == '-')
+-            k5_buf_add(&buf, "--");
+-        else if (!isvalidrcname((int) piece->data[i]))
+-            k5_buf_add_fmt(&buf, "-%03o", piece->data[i]);
++    if ((def_env = krb5_rc_default_name(context)) != 0) {
++        /*
++         * We expect to have the fully qualified rcache name (<type>:<name>),
++         * so we populate the default type here if the type is missing.
++         */
++        if (strchr(def_env, ':') == NULL)
++            k5_buf_add_fmt(&buf, "%s:%s", cachetype, def_env);
+         else
+-            k5_buf_add_len(&buf, &piece->data[i], 1);
+-    }
++            k5_buf_add(&buf, def_env);
++    } else {
++	k5_buf_add(&buf, cachetype);
++	k5_buf_add(&buf, ":");
++	for (i = 0; i < piece->length; i++) {
++	    if (piece->data[i] == '-')
++		k5_buf_add(&buf, "--");
++	    else if (!isvalidrcname((int) piece->data[i]))
++		k5_buf_add_fmt(&buf, "-%03o", piece->data[i]);
++	    else
++		k5_buf_add_len(&buf, &piece->data[i], 1);
++	}
+ #ifdef HAVE_GETEUID
+     k5_buf_add_fmt(&buf, "_%lu", uid);
+ #endif
++    }
+ 
+     if (k5_buf_status(&buf) != 0)
+         return ENOMEM;
+diff -pur old/src/lib/krb5/rcache/Makefile.in new/src/lib/krb5/rcache/Makefile.in
+--- old/src/lib/krb5/rcache/Makefile.in	2015-04-09 18:09:27.382173687 -0600
++++ new/src/lib/krb5/rcache/Makefile.in	2015-04-09 18:04:39.621940187 -0600
+@@ -13,7 +13,8 @@ STLIBOBJS = \
+ 	rc_none.o	\
+ 	rc_conv.o	\
+ 	ser_rc.o	\
+-	rcfns.o
++	rcfns.o		\
++	rc_mem.o
+ 
+ OBJS=	\
+ 	$(OUTPRE)rc_base.$(OBJEXT)	\
+@@ -23,7 +24,8 @@ OBJS=	\
+ 	$(OUTPRE)rc_none.$(OBJEXT)	\
+ 	$(OUTPRE)rc_conv.$(OBJEXT)	\
+ 	$(OUTPRE)ser_rc.$(OBJEXT)	\
+-	$(OUTPRE)rcfns.$(OBJEXT)
++	$(OUTPRE)rcfns.$(OBJEXT)	\
++	$(OUTPRE)rc_mem.$(OBJEXT)
+ 
+ SRCS=	\
+ 	$(srcdir)/rc_base.c	\
+@@ -34,7 +36,8 @@ SRCS=	\
+ 	$(srcdir)/rc_conv.c	\
+ 	$(srcdir)/ser_rc.c	\
+ 	$(srcdir)/rcfns.c	\
+-	$(srcdir)/t_replay.c
++	$(srcdir)/t_replay.c	\
++	$(srcdir)/rc_mem.c
+ 
+ ##DOS##LIBOBJS = $(OBJS)
+ 
+diff -pur old/src/lib/krb5/rcache/rc_base.c new/src/lib/krb5/rcache/rc_base.c
+--- old/src/lib/krb5/rcache/rc_base.c	2015-04-09 18:09:27.381750522 -0600
++++ new/src/lib/krb5/rcache/rc_base.c	2015-04-16 16:29:05.785483477 -0600
+@@ -13,19 +13,35 @@
+ #include "rc_base.h"
+ #include "rc-int.h"
+ #include "k5-thread.h"
++#include "rc_mem.h"
+ 
+ struct krb5_rc_typelist {
+     const krb5_rc_ops *ops;
+     struct krb5_rc_typelist *next;
+ };
+ static struct krb5_rc_typelist none = { &krb5_rc_none_ops, 0 };
+-static struct krb5_rc_typelist krb5_rc_typelist_dfl = { &krb5_rc_dfl_ops, &none };
++static struct krb5_rc_typelist mem = { &krb5_rc_mem_ops, &none };
++static struct krb5_rc_typelist
++    krb5_rc_typelist_dfl = { &krb5_rc_dfl_ops, &mem };
+ static struct krb5_rc_typelist *typehead = &krb5_rc_typelist_dfl;
+ static k5_mutex_t rc_typelist_lock = K5_MUTEX_PARTIAL_INITIALIZER;
+ 
++struct authlist
++{
++    krb5_donot_replay rep;
++    struct authlist *na;
++    struct authlist *nh;
++};
++
+ int
+ krb5int_rc_finish_init(void)
+ {
++    int retval;
++
++    retval = k5_mutex_finish_init(&grcache.lock);
++    if (retval)
++	return (retval);
++
+     return k5_mutex_finish_init(&rc_typelist_lock);
+ }
+ 
+@@ -33,6 +49,28 @@ void
+ krb5int_rc_terminate(void)
+ {
+     struct krb5_rc_typelist *t, *t_next;
++    struct mem_data *tgr = (struct mem_data *)grcache.data;
++    struct authlist *q, *qt;
++    int i;
++
++    k5_mutex_destroy(&grcache.lock);
++
++    if (tgr != NULL) {
++	if (tgr->name)
++	    free(tgr->name);
++	for (i = 0; i < tgr->hsize; i++) {
++	    for (q = tgr->h[i]; q; q = qt) {
++		qt = q->nh;
++		free(q->rep.server);
++		free(q->rep.client);
++		free(q);
++	    }
++	    if (tgr->h)
++		free(tgr->h);
++	    free(tgr);
++	}
++    }
++
+     k5_mutex_destroy(&rc_typelist_lock);
+     for (t = typehead; t != &krb5_rc_typelist_dfl; t = t_next) {
+         t_next = t->next;
+@@ -106,21 +144,38 @@ char * krb5_rc_get_type(krb5_context con
+ char *
+ krb5_rc_default_type(krb5_context context)
+ {
+-    char *s;
++    char *s, *residual;
++    unsigned int diff;
++
+     if ((s = getenv("KRB5RCACHETYPE")))
+         return s;
+-    else
+-        return "dfl";
++    else if ((s = getenv("KRB5RCNAME")) && (residual = strchr(s, ':'))) {
++	diff = (residual - s) + 1;
++	if (strncmp(s, "FILE:", diff) == 0)
++	    return "dfl";
++	else if (strncmp(s, "NONE:", diff) == 0)
++	    return "none";
++	else if (strncmp(s, "MEMORY:", diff) == 0)
++	    return "MEMORY";
++    }
++
++    return "dfl";
+ }
+ 
+ char *
+ krb5_rc_default_name(krb5_context context)
+ {
+-    char *s;
++    char *s, *residual;
++
+     if ((s = getenv("KRB5RCACHENAME")))
+         return s;
+-    else
+-        return (char *) 0;
++    else if ((s = getenv("KRB5RCNAME"))) {
++	if (residual = strchr(s, ':'))
++	    return (residual + 1);
++	else
++	    return s;
++    } else
++	return (char *) 0;
+ }
+ 
+ krb5_error_code
+diff -pur old/src/lib/krb5/rcache/rc_dfl.c new/src/lib/krb5/rcache/rc_dfl.c
+--- old/src/lib/krb5/rcache/rc_dfl.c	2015-04-09 18:09:27.382459743 -0600
++++ new/src/lib/krb5/rcache/rc_dfl.c	2015-04-09 21:01:56.063638506 -0600
+@@ -249,6 +249,9 @@ krb5_rc_dfl_close_no_free(krb5_context c
+     struct dfl_data *t = (struct dfl_data *)id->data;
+     struct authlist *q;
+ 
++    if (id->data == NULL)
++	return 0;
++
+     free(t->h);
+     if (t->name)
+         free(t->name);
+@@ -265,6 +268,7 @@ krb5_rc_dfl_close_no_free(krb5_context c
+     (void) krb5_rc_io_close(context, &t->d);
+ #endif
+     free(t);
++    id->data = NULL;
+     return 0;
+ }
+ 
+@@ -329,6 +333,7 @@ cleanup:
+         if (t->h)
+             free(t->h);
+         free(t);
++	id->data = NULL;
+     }
+     return retval;
+ }
+diff -pur old/src/lib/krb5/rcache/rc_io.c new/src/lib/krb5/rcache/rc_io.c
+--- old/src/lib/krb5/rcache/rc_io.c	2015-04-09 18:09:27.382337387 -0600
++++ new/src/lib/krb5/rcache/rc_io.c	2015-04-15 02:51:37.858253777 -0600
+@@ -56,7 +56,10 @@ getdir(void)
+ #else
+         if (!(dir = getenv("TMPDIR"))) {
+ #ifdef RCTMPDIR
+-            dir = RCTMPDIR;
++	    if (geteuid() == 0)
++		dir = RCTMPDIR "/root";
++	    else
++		dir = RCTMPDIR;
+ #else
+             dir = "/tmp";
+ #endif
+@@ -164,6 +167,8 @@ krb5_rc_io_creat(krb5_context context, k
+ 
+     GETDIR;
+     if (fn && *fn) {
++	if (strncmp(*fn, PATH_SEPARATOR, sizeof(PATH_SEPARATOR) - 1) == 0)
++	    dir = "";
+         if (asprintf(&d->fn, "%s%s%s", dir, PATH_SEPARATOR, *fn) < 0)
+             return KRB5_RC_IO_MALLOC;
+         d->fd = -1;
+@@ -227,6 +232,8 @@ krb5_rc_io_open_internal(krb5_context co
+     char *dir;
+ 
+     dir = getdir();
++    if (fn && (strncmp(fn, PATH_SEPARATOR, sizeof(PATH_SEPARATOR) - 1) == 0))
++	dir = "";
+     if (full_pathname) {
+         if (!(d->fn = strdup(full_pathname)))
+             return KRB5_RC_IO_MALLOC;
+diff -pur old/src/lib/krb5/rcache/rc-int.h new/src/lib/krb5/rcache/rc-int.h
+--- old/src/lib/krb5/rcache/rc-int.h	2015-04-09 18:09:27.381858138 -0600
++++ new/src/lib/krb5/rcache/rc-int.h	2015-04-09 18:04:39.622200717 -0600
+@@ -87,5 +87,6 @@ krb5_error_code krb5_rc_register_type(kr
+ 
+ extern const krb5_rc_ops krb5_rc_dfl_ops;
+ extern const krb5_rc_ops krb5_rc_none_ops;
++extern const krb5_rc_ops krb5_rc_mem_ops;
+ 
+ #endif /* __KRB5_RCACHE_INT_H__ */

@@ -1,0 +1,244 @@
+#
+# This patch fixes a number of issues with MIT regression tests caused by the
+# fact that Solaris Kerberos fully qualifies DNS names when constructing service
+# princpals names with the introduction of 030-force_dns_hostname_canon.patch.
+#
+# Note: Given that the changes made are to fix issues caused by a Solaris only
+# feature that this patch is not intended to be contributed upstream.
+# Patch source: in-house
+#
+diff -pur old/src/lib/kadm5/unit-test/api.current/init-v2.exp new/src/lib/kadm5/unit-test/api.current/init-v2.exp
+--- old/src/lib/kadm5/unit-test/api.current/init-v2.exp	2015-06-21 00:18:20.230303372 -0600
++++ new/src/lib/kadm5/unit-test/api.current/init-v2.exp	2015-06-22 17:04:49.232411015 -0600
+@@ -14,7 +14,7 @@ proc get_hostname { } {
+ 	return 1
+     }
+ 
+-    catch "exec $RESOLVE -q >myname" exec_output
++    catch "exec $RESOLVE -d >myname" exec_output
+     if ![string match "" $exec_output] {
+ 	send_log "$exec_output\n"
+ 	verbose $exec_output
+diff -pur old/src/lib/kadm5/unit-test/api.current/init.exp new/src/lib/kadm5/unit-test/api.current/init.exp
+--- old/src/lib/kadm5/unit-test/api.current/init.exp	2015-06-21 00:18:20.230782385 -0600
++++ new/src/lib/kadm5/unit-test/api.current/init.exp	2015-06-22 17:32:38.659298951 -0600
+@@ -9,6 +9,39 @@ load_lib lib.t
+ 
+ api_exit
+ api_start
++
++if ![info exists RESOLVE] {
++    set RESOLVE [findfile $objdir/../../../tests/resolve/resolve]
++}
++proc get_hostname { } {
++    global RESOLVE
++    global hostname
++
++    if {[info exists hostname]} {
++	return 1
++    }
++
++    catch "exec $RESOLVE -d >myname" exec_output
++    if ![string match "" $exec_output] {
++	send_log "$exec_output\n"
++	verbose $exec_output
++	send_error "ERROR: can't get hostname\n"
++	return 0
++    }
++    set file [open myname r]
++    if { [ gets $file hostname ] == -1 } {
++	send_error "ERROR: no output from hostname\n"
++	return 0
++    }
++    close $file
++    catch "exec rm -f myname" exec_output
++
++    set hostname [string tolower $hostname]
++    verbose "hostname: $hostname"
++
++    return 1
++}
++
+ test "init 1"
+ 
+ one_line_fail_test_nochk \
+@@ -686,6 +719,10 @@ proc test45_46 {service} {
+ }
+ 
+ if {$RPC} {
++    global hostname
++
++    get_hostname
++
+     test "init 45"
+ 
+     test45_46 ovsec_adm/admin
+@@ -697,8 +734,8 @@ if {$RPC} {
+     # re-extract the keytab so it is right
+     exec rm $env(K5ROOT)/ovsec_adm.srvtab
+     exec $env(MAKE_KEYTAB) -princ ovsec_adm/admin -princ ovsec_adm/changepw \
+-	    -princ kadmin/[exec $env(QUALNAME)] \
+-	    -princ changepw/[exec $env(QUALNAME)] $env(K5ROOT)/ovsec_adm.srvtab
++	    -princ kadmin/$hostname -princ changepw/$hostname \
++	    $env(K5ROOT)/ovsec_adm.srvtab
+ }
+ 
+ return ""
+diff -pur old/src/tests/dejagnu/config/default.exp new/src/tests/dejagnu/config/default.exp
+--- old/src/tests/dejagnu/config/default.exp	2015-06-21 00:18:20.155115365 -0600
++++ new/src/tests/dejagnu/config/default.exp	2015-06-22 02:55:13.011533167 -0600
+@@ -682,7 +682,7 @@ proc get_hostname { } {
+ 
+     envstack_push
+     setup_runtime_env
+-    catch "exec $RESOLVE -q >$tmppwd/hostname" exec_output
++    catch "exec $RESOLVE -d >$tmppwd/hostname" exec_output
+     envstack_pop
+     if ![string match "" $exec_output] {
+ 	verbose -log $exec_output
+diff -pur old/src/tests/resolve/Makefile.in new/src/tests/resolve/Makefile.in
+--- old/src/tests/resolve/Makefile.in	2015-06-21 00:18:20.152133289 -0600
++++ new/src/tests/resolve/Makefile.in	2015-06-22 02:54:28.986659244 -0600
+@@ -8,7 +8,7 @@ SRCS=$(srcdir)/resolve.c $(srcdir)/addri
+ all:: resolve addrinfo-test fake-addrinfo-test
+ 
+ resolve: resolve.o
+-	$(CC_LINK) -o $@ resolve.o $(LIBS)
++	$(CC_LINK) -o $@ resolve.o -lresolv $(LIBS)
+ 
+ addrinfo-test: addrinfo-test.o
+ 	$(CC_LINK) -o $@ addrinfo-test.o $(SUPPORT_LIB) $(LIBS)
+diff -pur old/src/tests/resolve/resolve.c new/src/tests/resolve/resolve.c
+--- old/src/tests/resolve/resolve.c	2015-06-21 00:18:20.151976156 -0600
++++ new/src/tests/resolve/resolve.c	2015-06-22 17:03:19.772488031 -0600
+@@ -73,6 +73,94 @@ char *strchr();
+ #include <netinet/in.h>
+ #include <netdb.h>
+ 
++#include <sys/types.h>
++#include <arpa/nameser.h>
++#include <resolv.h>
++
++int
++resolve_dns(char *hostname)
++{
++    unsigned char answer[NS_MAXMSG], *ansp = NULL, *end;
++    char name[NS_MAXDNAME];
++    int anslen, len = 0, nq, na, hostlen, found = 0, type, class, ttl, size;
++    struct __res_state stat;
++    HEADER *h;
++
++    (void) strncpy(name, hostname, NS_MAXDNAME);
++
++    (void) memset(&stat, 0, sizeof (stat));
++    if (res_ninit(&stat) == -1)
++	return 1;
++    anslen = sizeof (answer);
++
++    len = res_nsearch(&stat, name, C_IN, T_A, answer, anslen);
++    if (len < sizeof (HEADER)) {
++	res_ndestroy(&stat);
++	return 2;
++    }
++
++    ansp = answer;
++    end = ansp + anslen;
++
++    h = (HEADER *)answer;
++    nq = ntohs(h->qdcount);
++    na = ntohs(h->ancount);
++    ansp += HFIXEDSZ;
++
++    if (nq != 1 || na < 1) {
++	res_ndestroy(&stat);
++	return 3;
++    }
++    
++    hostlen = sizeof (name);
++    len = dn_expand(answer, end, ansp, name, hostlen);
++    if (len < 0) {
++	res_ndestroy(&stat);
++	return 4;
++    }
++
++    ansp += len + QFIXEDSZ;
++
++    if (ansp > end) {
++	res_ndestroy(&stat);
++	return 5;
++    }
++
++    while (na-- > 0 && ansp < end) {
++	len = dn_expand(answer, end, ansp, name, hostlen);
++
++	if (len < 0)
++	    continue;
++
++	ansp += len;			/* name */
++	NS_GET16(type, ansp);		/* type */
++	NS_GET16(class, ansp);		/* class */
++	NS_GET32(ttl, ansp);		/* ttl */
++	NS_GET16(size, ansp);		/* size */
++
++	if ((ansp + size) > end) {
++	    res_ndestroy(&stat);
++	    return 6;
++	}
++
++	ansp += len;
++	if (type == T_A && class == C_IN) {
++	    found = 1;
++	    break;
++	}
++    }
++
++    if (found != 1) {
++	res_ndestroy(&stat);
++	return 7;
++    }
++
++    (void) printf("%s\n", name);
++    res_ndestroy(&stat);
++
++    return 0;
++}
++
+ int
+ main(argc, argv)
+     int argc;
+@@ -82,14 +170,16 @@ main(argc, argv)
+     char *ptr, *fqdn;
+     struct in_addr addrcopy;
+     struct hostent *host;
+-    int quiet = 0;
++    int ret, quiet = 0, dns = 0;
+ 
+     argc--; argv++;
+     while (argc) {
+         if ((strcmp(*argv, "--quiet") == 0) ||
+             (strcmp(*argv, "-q") == 0)) {
+             quiet++;
+-        } else
++        } else if (strcmp(*argv, "-d") == 0)
++	    dns++;
++	else
+             break;
+         argc--; argv++;
+     }
+@@ -105,6 +195,16 @@ main(argc, argv)
+ 
+     myname[MAXHOSTNAMELEN] = '\0';  /* for safety */
+ 
++    if (dns) {
++	if (ret = resolve_dns(myname)) {
++	    fprintf(stderr,
++		"Could not resolve hostname ('%s') through DNS - fatal: %d\n",
++                myname, ret);
++	    exit(2);
++	}
++        exit(0);
++    }
++
+     /* Look up the address... */
+     if (!quiet)
+         printf("Hostname:  %s\n", myname);

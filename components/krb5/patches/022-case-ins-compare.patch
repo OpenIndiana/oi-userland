@@ -1,0 +1,39 @@
+#
+# This change allows for case insenstive comparisons of principals in the keytab
+# file.  This is necessary in order to interoperate with old Windows clients
+# that use upper case host name components in service principals.
+#
+# Original BugID is:
+# 15592543 SUNBT6885980 Need case-insensitive keytab lookups for MS interop
+#
+# Note: In the future, the depedent code (SMB), should construct an acceptor
+# name that does not contain the host name component in order perform keytab.
+# Refer to the 1.10 feature here:
+# 	http://k5wiki.kerberos.org/wiki/Projects/Acceptor_Names
+# Patch source: in-house
+#
+--- old/src/lib/krb5/keytab/kt_file.c	Wed Oct 15 17:55:10 2014
++++ new/src/lib/krb5/keytab/kt_file.c	Tue Jan 13 23:56:40 2015
+@@ -310,7 +310,21 @@
+         /* if the principal isn't the one requested, free new_entry
+            and continue to the next. */
+ 
+-        if (!krb5_principal_compare(context, principal, new_entry.principal)) {
++	/*
++	 * Solaris Kerberos: MS Interop requires that case insensitive
++	 * comparisons of service and host components are performed for key
++	 * table lookup, etc. Only called if the private environment variable
++	 * MS_INTEROP is defined.
++	 */
++	if (getenv("MS_INTEROP")) {
++	    if (!krb5_principal_compare_flags(context, principal,
++					      new_entry.principal,
++					KRB5_PRINCIPAL_COMPARE_CASEFOLD)) {
++		krb5_kt_free_entry(context, &new_entry);
++		continue;
++	    }
++	} else if (!krb5_principal_compare(context, principal,
++					   new_entry.principal)) {
+             krb5_kt_free_entry(context, &new_entry);
+             continue;
+         }

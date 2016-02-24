@@ -1,0 +1,83 @@
+#
+# This patch disables reverse DNS IP address look-ups that MIT does by default.
+# Solaris krb has never done reverse look-ups so this makes MIT krb behave like
+# Solaris in this regard.  MIT will not take this change upstream.
+# Patch source: in-house
+#
+diff -ur krb5-1.13.2/src/lib/krb5/os/sn2princ.c krb5-1.13.2.rev-dns-disable/src/lib/krb5/os/sn2princ.c
+--- krb5-1.13.2/src/lib/krb5/os/sn2princ.c
++++ krb5-1.13.2.rev-dns-disable/src/lib/krb5/os/sn2princ.c
+@@ -36,7 +36,7 @@
+ #endif
+ 
+ #if !defined(DEFAULT_RDNS_LOOKUP)
+-#define DEFAULT_RDNS_LOOKUP 1
++#define DEFAULT_RDNS_LOOKUP 0
+ #endif
+ 
+ /*
+diff -ur krb5-1.13.2/src/man/krb5.conf.man krb5-1.13.2.rev-dns-disable/src/man/krb5.conf.man
+--- krb5-1.13.2/src/man/krb5.conf.man
++++ krb5-1.13.2.rev-dns-disable/src/man/krb5.conf.man
+@@ -463,7 +463,7 @@
+ If this flag is true, reverse name lookup will be used in addition
+ to forward name lookup to canonicalizing hostnames for use in
+ service principal names.  If \fBdns_canonicalize_hostname\fP is set
+-to false, this flag has no effect.  The default value is true.
++to false, this flag has no effect.  The default value is false.
+ .TP
+ .B \fBrealm_try_domains\fP
+ Indicate whether a host\(aqs domain components should be used to
+diff -ur krb5-1.13.2/src/tests/t_sn2princ.py krb5-1.13.2.rev-dns-disable/src/tests/t_sn2princ.py
+--- krb5-1.13.2/src/tests/t_sn2princ.py
++++ krb5-1.13.2.rev-dns-disable/src/tests/t_sn2princ.py
+@@ -6,10 +6,12 @@
+ conf = {'domain_realm': {'kerberos.org': 'R1',
+                          'example.com': 'R2',
+                          'mit.edu': 'R3'}}
++rdns_conf = {'libdefaults': {'rdns': 'true'}}
+ no_rdns_conf = {'libdefaults': {'rdns': 'false'}}
+ no_canon_conf = {'libdefaults': {'dns_canonicalize_hostname': 'false'}}
+ 
+ realm = K5Realm(create_kdb=False, krb5_conf=conf)
++rdns = realm.special_env('rdns', False, krb5_conf=rdns_conf)
+ no_rdns = realm.special_env('no_rdns', False, krb5_conf=no_rdns_conf)
+ no_canon = realm.special_env('no_canon', False, krb5_conf=no_canon_conf)
+ 
+@@ -30,6 +32,10 @@
+     # Test with the host-based name type with canonicalization disabled.
+     testbase(host, 'srv-hst', princhost, princrealm, env=no_canon)
+ 
++def testr(host, princhost, princrealm):
++    # Test with the host-based name type with reverse lookup enabled.
++    testbase(host, 'srv-hst', princhost, princrealm, env=rdns)
++
+ def testnr(host, princhost, princrealm):
+     # Test with the host-based name type with reverse lookup disabled.
+     testbase(host, 'srv-hst', princhost, princrealm, env=no_rdns)
+@@ -89,6 +95,11 @@
+ testnr(oname + ':123', fname + ':123', 'R1')
+ testnr(oname + ':xyZ', fname + ':xyZ', 'R1')
+ 
++# Test forward+reverse lookup canonicalization (rdns=true).
++testr(oname, rname, 'R3')
++testr(oname + ':123', rname + ':123', 'R3')
++testr(oname + ':xyZ', rname + ':xyZ', 'R3')
++
+ # Verify reverse resolution before testing for it.
+ try:
+     names = socket.getnameinfo(sockaddr, socket.NI_NAMEREQD)
+@@ -97,9 +108,9 @@
+ if names[0].lower() != rname:
+     skip_rest('%s reverse resolves to %s, not %s' % (oname, names[0], rname))
+ 
+-# Test default canonicalization (forward and reverse lookup).
+-test(oname, rname, 'R3')
+-test(oname + ':123', rname + ':123', 'R3')
+-test(oname + ':xyZ', rname + ':xyZ', 'R3')
++# Test default canonicalization (forward lookup).
++test(oname, fname, 'R1')
++test(oname + ':123', fname + ':123', 'R1')
++test(oname + ':xyZ', fname + ':xyZ', 'R1')
+ 
+ success('krb5_sname_to_principal tests')

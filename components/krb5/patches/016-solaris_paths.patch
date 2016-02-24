@@ -1,0 +1,103 @@
+#
+# Solaris specific paths
+#     - configuration in /etc/krb5/krb5.conf
+#     - database in /var/krb5
+#     - rcache in /var/krb5/rcache
+#
+# The patch is Solaris specific and not intended for upstream contribution.
+# Note, that MIT may end up taking the change for DEF_SERVICE_PASSWD_FILE below
+# so that may require modification of this patch in a future update.
+# Patch source: in-house
+#
+diff -pur old/src/include/osconf.hin new/src/include/osconf.hin
+--- old/src/include/osconf.hin
++++ new/src/include/osconf.hin
+@@ -40,6 +40,8 @@
+ # include <TargetConditionals.h>
+ #endif
+ 
++#define	KRB5_DIR		"/etc/krb5"
++
+ #if defined(_WIN32)
+ #define DEFAULT_PROFILE_FILENAME "krb5.ini"
+ #else /* !_WINDOWS */
+@@ -50,7 +52,7 @@
+ #define KDB5_PLUGIN_BUNDLE_DIR       "/System/Library/KerberosPlugins/KerberosDatabasePlugins"
+ #define KRB5_AUTHDATA_PLUGIN_BUNDLE_DIR  "/System/Library/KerberosPlugins/KerberosAuthDataPlugins"
+ #else
+-#define DEFAULT_SECURE_PROFILE_PATH     "/etc/krb5.conf@SYSCONFCONF"
++#define DEFAULT_SECURE_PROFILE_PATH     KRB5_DIR "/krb5.conf"
+ #define DEFAULT_PROFILE_PATH        DEFAULT_SECURE_PROFILE_PATH
+ #endif
+ #endif /* _WINDOWS  */
+@@ -58,7 +60,7 @@
+ #define DEFAULT_PLUGIN_BASE_DIR "@LIBDIR/krb5/plugins"
+ #define PLUGIN_EXT              "@DYNOBJEXT"
+ 
+-#define KDC_DIR                 "@LOCALSTATEDIR/krb5kdc"
++#define KDC_DIR                 "@LOCALSTATEDIR/krb5"
+ #define KDC_RUN_DIR             "@RUNSTATEDIR/krb5kdc"
+ #define DEFAULT_KDB_FILE        KDC_DIR "/principal"
+ #define DEFAULT_KEYFILE_STUB    KDC_DIR "/.k5."
+@@ -67,7 +69,7 @@
+ #define DEFAULT_ADMIN_ACL       KDC_DIR "/kadm_old.acl"
+ 
+ /* Location of KDC profile */
+-#define DEFAULT_KDC_PROFILE     KDC_DIR "/kdc.conf"
++#define DEFAULT_KDC_PROFILE     KRB5_DIR "/kdc.conf"
+ #define KDC_PROFILE_ENV         "KRB5_KDC_PROFILE"
+ 
+ #if TARGET_OS_MAC
+@@ -95,8 +97,8 @@
+ /*
+  * Defaults for the KADM5 admin system.
+  */
+-#define DEFAULT_KADM5_KEYTAB    KDC_DIR "/kadm5.keytab"
+-#define DEFAULT_KADM5_ACL_FILE  KDC_DIR "/kadm5.acl"
++#define DEFAULT_KADM5_KEYTAB    KRB5_DIR "/kadm5.keytab"
++#define DEFAULT_KADM5_ACL_FILE  KRB5_DIR "/kadm5.acl"
+ #define DEFAULT_KADM5_PORT      749 /* assigned by IANA */
+ 
+ #define KRB5_DEFAULT_SUPPORTED_ENCTYPES                 \
+@@ -106,7 +108,7 @@
+ 
+ #define MAX_DGRAM_SIZE  65536
+ 
+-#define RCTMPDIR        "@KRB5RCTMPDIR" /* directory to store replay caches */
++#define RCTMPDIR KDC_DIR "/rcache" /* directory to store replay caches */
+ 
+ #define KRB5_PATH_TTY   "/dev/tty"
+ #define KRB5_PATH_LOGIN "@SBINDIR/login.krb5"
+@@ -123,7 +125,7 @@
+ #define KPROPD_DEFAULT_KDB5_UTIL "@SBINDIR/kdb5_util"
+ #define KPROPD_DEFAULT_KPROP "@SBINDIR/kprop"
+ #define KPROPD_DEFAULT_KRB_DB DEFAULT_KDB_FILE
+-#define KPROPD_ACL_FILE KDC_DIR "/kpropd.acl"
++#define KPROPD_ACL_FILE KRB5_DIR "/kpropd.acl"
+ 
+ /*
+  * GSS mechglue
+diff -pur old/src/kadmin/cli/k5srvutil.sh new/src/kadmin/cli/k5srvutil.sh
+--- old/src/kadmin/cli/k5srvutil.sh
++++ new/src/kadmin/cli/k5srvutil.sh
+@@ -73,7 +73,7 @@ delete_keys() {
+     }
+ 
+ 
+-keytab=/etc/krb5.keytab
++keytab=/etc/krb5/krb5.keytab
+ interactive=0
+ keysalts=""
+ 
+diff -r -u krb5-1.13.2/src/plugins/kdb/ldap/ldap_util/kdb5_ldap_services.h krb5-1.13.2.srv-passwd-file/src/plugins/kdb/ldap/ldap_util/kdb5_ldap_services.h
+--- krb5-1.13.2/src/plugins/kdb/ldap/ldap_util/kdb5_ldap_services.h
++++ krb5-1.13.2.srv-passwd-file/src/plugins/kdb/ldap/ldap_util/kdb5_ldap_services.h
+@@ -32,7 +32,7 @@
+ #define MAX_LEN                 1024
+ #define MAX_SERVICE_PASSWD_LEN  256
+ 
+-#define DEF_SERVICE_PASSWD_FILE "/usr/local/var/service_passwd"
++#define DEF_SERVICE_PASSWD_FILE KDC_DIR "/service_passwd"
+ 
+ extern int tohex(krb5_data, krb5_data *);
+ 

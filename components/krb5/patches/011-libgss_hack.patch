@@ -1,0 +1,194 @@
+#
+# This patches the following interfaces back in MIT sources:
+#     gssint_mech_to_oid
+#     gssint_oid_to_mech
+#     gssint_get_mechanisms
+#     gssint_get_kmodName
+# (These functions were originally Sun donated, but later removed.)
+#
+# This patch is not inteded for upstream contribution.
+# Patch source: in-house
+#
+diff -ur old/src/lib/gssapi/mechglue/g_initialize.c new/src/lib/gssapi/mechglue/g_initialize.c
+--- old/src/lib/gssapi/mechglue/g_initialize.c	2014-08-06 19:07:58.000000000 +0200
++++ new/src/lib/gssapi/mechglue/g_initialize.c	2014-08-06 19:28:42.310006486 +0200
+@@ -444,6 +444,145 @@
+ }
+ 
+ /*
++ * given a mechanism string return the mechanism oid
++ */
++OM_uint32
++gssint_mech_to_oid(const char *mechStr, gss_OID* oid)
++{
++	gss_mech_info aMech;
++
++	if (oid == NULL)
++		return (GSS_S_CALL_INACCESSIBLE_WRITE);
++
++	*oid = GSS_C_NULL_OID;
++
++	if (gssint_mechglue_initialize_library() != 0)
++		return (GSS_S_FAILURE);
++
++	if ((mechStr == NULL) || (strlen(mechStr) == 0) ||
++		(strcasecmp(mechStr, M_DEFAULT) == 0))
++		return (GSS_S_COMPLETE);
++
++	/* ensure we have fresh data */
++	k5_mutex_lock(&g_mechListLock);
++	updateMechList();
++	(void) k5_mutex_unlock(&g_mechListLock);
++
++	aMech = g_mechList;
++
++	/* no lock required - only looking at fields that are not updated */
++	while (aMech != NULL) {
++		if ((aMech->mechNameStr) &&
++			strcmp(aMech->mechNameStr, mechStr) == 0) {
++			*oid = aMech->mech_type;
++			return (GSS_S_COMPLETE);
++		}
++		aMech = aMech->next;
++	}
++	return (GSS_S_FAILURE);
++} /* gssint_mech_to_oid */
++
++
++/*
++ * Given the mechanism oid, return the readable mechanism name
++ * associated with that oid from the mech config file
++ * (/etc/gss/mech).
++ */
++const char *
++gssint_oid_to_mech(const gss_OID oid)
++{
++	gss_mech_info aMech;
++
++	if (oid == GSS_C_NULL_OID)
++		return (M_DEFAULT);
++
++	if (gssint_mechglue_initialize_library() != 0)
++		return (NULL);
++
++	/* ensure we have fresh data */
++	k5_mutex_lock(&g_mechListLock);
++	updateMechList();
++	aMech = searchMechList(oid);
++	(void) k5_mutex_unlock(&g_mechListLock);
++
++	if (aMech == NULL)
++		return (NULL);
++
++	return (aMech->mechNameStr);
++} /* gssint_oid_to_mech */
++
++
++/*
++ * return a list of mechanism strings supported
++ * upon return the array is terminated with a NULL entry
++ */
++OM_uint32
++gssint_get_mechanisms(char *mechArray[], int arrayLen)
++{
++	gss_mech_info aMech;
++	int i;
++
++	if (mechArray == NULL || arrayLen < 1)
++		return (GSS_S_CALL_INACCESSIBLE_WRITE);
++
++	if (gssint_mechglue_initialize_library() != 0)
++		return (GSS_S_FAILURE);
++
++	/* ensure we have fresh data */
++	k5_mutex_lock(&g_mechListLock);
++	updateMechList();
++	(void) k5_mutex_unlock(&g_mechListLock);
++
++	aMech = g_mechList;
++
++	/* no lock required - only looking at fields that are not updated */
++	for (i = 1; i < arrayLen; i++) {
++		if (aMech != NULL) {
++			*mechArray = aMech->mechNameStr;
++			mechArray++;
++			aMech = aMech->next;
++		} else
++			break;
++	}
++	*mechArray = NULL;
++	return (GSS_S_COMPLETE);
++} /* gss_get_mechanisms */
++
++/*
++ * this function has been added for use by gssd.
++ * It will return the kernel module name for a specified mechanism.
++ * caller is responsible for freeing the memory
++ */
++char *
++gssint_get_kmodName(oid)
++const gss_OID oid;
++{
++	gss_mech_info aMech;
++	char *kmodName = NULL;
++
++	/* make sure we have fresh data */
++	(void) k5_mutex_lock(&g_mechListLock);
++	updateMechList();
++	(void) k5_mutex_unlock(&g_mechListLock);
++
++	/* searching the list does not require a lock */
++	if ((aMech = searchMechList(oid)) == NULL || aMech->kmodName == NULL) {
++		return (NULL);
++	}
++
++	/*
++	 * need to obtain a lock on this structure in case someone else
++	 * will try to update it during the copy
++	 */
++	(void) k5_mutex_lock(&g_mechListLock);
++	if (aMech->kmodName)
++		kmodName = strdup(aMech->kmodName);
++	(void) k5_mutex_unlock(&g_mechListLock);
++
++	return (kmodName);
++} /* gssint_get_kmodName */
++
++/*
+  * determines if the mechList needs to be updated from file
+  * and performs the update.
+  * this functions must be called with a lock of g_mechListLock
+Only in new/src/lib/gssapi/mechglue: g_initialize.c.orig
+diff -ur old/src/lib/gssapi/mechglue/mglueP.h new/src/lib/gssapi/mechglue/mglueP.h
+--- old/src/lib/gssapi/mechglue/mglueP.h	2014-08-06 19:07:58.000000000 +0200
++++ new/src/lib/gssapi/mechglue/mglueP.h	2014-08-06 19:25:49.488232250 +0200
+@@ -793,6 +793,28 @@
+  * Sun extensions to GSS-API v2
+  */
+ 
++OM_uint32
++gssint_mech_to_oid(
++	const char *mech,		/* mechanism string name */
++	gss_OID *oid			/* mechanism oid */
++);
++
++const char *
++gssint_oid_to_mech(
++	const gss_OID oid		/* mechanism oid */
++);
++
++OM_uint32
++gssint_get_mechanisms(
++	char *mechArray[],		/* array to populate with mechs */
++	int arrayLen			/* length of passed in array */
++);
++
++char *
++gssint_get_kmodName(
++	const gss_OID oid		/* mechanism oid */
++);
++
+ int
+ gssint_get_der_length(
+ 	unsigned char **,	/* buf */
+Only in new/src/lib/gssapi/mechglue: mglueP.h.orig

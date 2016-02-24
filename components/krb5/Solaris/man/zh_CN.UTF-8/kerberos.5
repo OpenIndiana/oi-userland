@@ -1,0 +1,117 @@
+'\" te
+.\"  Copyright (c) 2008, Sun Microsystems, Inc. All Rights Reserved
+.TH kerberos 5 "2008 年 10 月 1 日" "SunOS 5.12" "标准、环境和宏"
+.SH 名称
+kerberos \- Solaris Kerberos 实现概述
+.SH 描述
+.sp
+.LP
+Solaris Kerberos 实现（后文有时简称为 "Kerberos"）会验证网络环境中的客户机，从而实现安全事务。（客户机可以是用户或网络服务。）Kerberos 会验证客户机的身份以及所传输数据的真实性。Kerberos 是\fIsingle-sign-on\fR系统，意味着用户仅需要在会话开始时提供口令。Solaris Kerberos 实现是基于 \fBMIT\fR 开发的 Kerberos(TM) 系统，并与异构网络上的 Kerberos V5 系统兼容。
+.sp
+.LP
+Kerberos 通过授予客户机\fI票证\fR发挥作用，票证可唯一地标识客户机并具有有限生命周期。将针对票证所属网络服务自动验证拥有票证的客户机；例如，具有有效 Kerberos 票证的用户可登录运行 Kerberos 的其他计算机，而无需标识自身。由于每个客户机均具有唯一的票证，因此可保证其身份。
+.sp
+.LP
+要获得票证，客户机必须首先使用 \fBkinit\fR(1) 命令或 \fBPAM\fR 模块初始化 Kerberos 会话。（请参见 \fBpam_krb5\fR(5)）。\fBkinit\fR 提示输入口令，然后与密钥分发中心 (\fIKey Distribution Center\fR, \fBKDC\fR) 通信。\fBKDC\fR 返回票证授予票证 (\fITicket-Granting Ticket\fR, \fBTGT\fR) 并提示输入确认口令。如果客户机确认口令，则它可以使用票证授予票证来获得特定网络服务的票证。因为以透明方式授予票证，所以用户无需担心票证管理。可使用 \fBklist\fR(1) 命令查看当前票证。
+.sp
+.LP
+票证的有效性取决于安装时设置的系统\fI策略\fR。例如，票证具有缺省的有效生命周期。策略可以进一步指示特权票证（如属于 root 的票证）具有很短的生命周期。策略还可以允许覆盖某些缺省值；例如，客户机可以请求生命周期大于或小于缺省值的票证。
+.sp
+.LP
+可使用 \fBkinit\fR 更新票证。票证也是\fI可转发的\fR，允许您将一台计算机上授予的票证用在其他主机上。可使用 \fBkdestroy\fR(1) 销毁票证。在 \fB\&.logout\fR 文件中包含 \fBkdestroy\fR 调用是个不错的选择。
+.sp
+.LP
+在 Kerberos 中，客户机称为\fI主体\fR。主体的格式如下： 
+.sp
+.in +2
+.nf
+primary/instance@REALM
+.fi
+.in -2
+.sp
+
+.sp
+.ne 2
+.mk
+.na
+\fBprimary\fR
+.ad
+.RS 12n
+.rt  
+用户、主机或服务。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fBinstance\fR
+.ad
+.RS 12n
+.rt  
+主体的限定。如果主体为主机（由关键字 \fBhost\fR 表示），则实例是该主机的完全限定域名。如果主体是用户或服务，则实例是可选项。某些实例具有特权，如 \fBadmin\fR 或 \fBroot\fR。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fBrealm\fR
+.ad
+.RS 12n
+.rt  
+域的 Kerberos 等效项；事实上，在大部分情况下领域直接映射到 \fBDNS\fR 域名。提供的 Kerberos 领域仅可为大写。有关主体名称的示例，请参见“示例”。
+.RE
+
+.sp
+.LP
+通过利用一般安全服务 \fBAPI\fR (General Security Services API, \fBGSS-API\fR)，Kerberos 还提供用户验证以外的其他两种类型的安全服务：\fI完整性\fR（验证所传输数据的有效性）以及\fI保密性\fR（加密所传输的数据）。开发人员可通过使用 RPCSEC_GSS \fBAPI\fR 接口来利用 \fBGSS-API\fR（请参见 \fBrpcsec_gss\fR(3NSL)）。 
+.SH 示例
+.LP
+\fB示例 1 \fR有效主体名称的示例
+.sp
+.LP
+以下是有效的主体名称示例：
+
+.sp
+.in +2
+.nf
+	joe
+	joe/admin
+	joe@ENG.ACME.COM
+	joe/admin@ENG.ACME.COM
+	rlogin/bigmachine.eng.acme.com@ENG.ACME.COM
+	host/bigmachine.eng.acme.com@ENG.ACME.COM
+.fi
+.in -2
+.sp
+
+.sp
+.LP
+前四个例子是\fI用户主体\fR。在前两个例子中，假设用户 \fBjoe\fR 与客户机处于相同领域，所以未指定领域。请注意，即使同一用户在使用 \fBjoe\fR 和 \fBjoe/admin\fR，它们仍是不同的主体；\fBjoe/admin\fR 拥有与 \fBjoe\fR 不同的特权。第五个例子是\fI服务主体\fR，而最后一个例子是\fI主机主体\fR。对于主机主体，需要 \fBhost\fR 这一单词。有了主机主体，实例即是完全限定主机名。请注意，单词 \fBadmin\fR 和 \fBhost\fR 是保留关键字。
+
+.SH 另请参见
+.sp
+.LP
+\fBkdestroy\fR(1)、\fBkinit\fR(1)、\fBklist\fR(1)、\fBkpasswd\fR(1)、\fBkrb5.conf\fR(4)、\fBkrb5envvar\fR(5)
+.sp
+.LP
+《\fI《系统管理指南：安全服务》\fR》
+.SH 附注
+.sp
+.LP
+在以前版本的 Solaris 操作系统中，Solaris Kerberos 实现称为“Sun Enterprise 验证机制”(Sun Enterprise Authentication Mechanism, SEAM)。
+.sp
+.LP
+如果输入您的用户名，\fBkinit\fR 会以下面的消息响应： 
+.sp
+.in +2
+.nf
+Principal unknown (kerberos)
+.fi
+.in -2
+.sp
+
+.sp
+.LP
+您尚未注册为 Kerberos 用户。请与您的系统管理员联系或请参见《\fI《系统管理指南：安全性服务》\fR》。 

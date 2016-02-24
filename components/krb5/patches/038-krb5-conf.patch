@@ -1,0 +1,208 @@
+#
+# This patch provides support for Solaris interfaces in krb5.conf and kdc.conf
+# files for auth_to_local_realm and kdc_max_tcp_connections.
+#
+# Note: MIT may be interested in these configuration options though they may
+# want a more dynamic solution for handling maximum RPC and TCP connections
+# through kdc_max_tcp_connections.
+# Patch source: in-house
+#
+diff -pur old/src/include/k5-int.h new/src/include/k5-int.h
+--- old/src/include/k5-int.h	2015-06-03 16:56:30.904839037 -0600
++++ new/src/include/k5-int.h	2015-06-07 21:27:29.766113292 -0600
+@@ -263,6 +263,7 @@ typedef unsigned char   u_char;
+ #define KRB5_CONF_MASTER_KEY_TYPE              "master_key_type"
+ #define KRB5_CONF_MAX_LIFE                     "max_life"
+ #define KRB5_CONF_MAX_RENEWABLE_LIFE           "max_renewable_life"
++#define KRB5_CONF_MAX_TCP_CONNECTIONS          "kdc_max_tcp_connections"
+ #define KRB5_CONF_MODULE                       "module"
+ #define KRB5_CONF_NOADDRESSES                  "noaddresses"
+ #define KRB5_CONF_NO_HOST_REFERRAL             "no_host_referral"
+diff -pur old/src/include/net-server.h new/src/include/net-server.h
+--- old/src/include/net-server.h	2015-06-03 16:56:30.911020661 -0600
++++ new/src/include/net-server.h	2015-06-07 00:39:54.939610507 -0600
+@@ -52,6 +52,7 @@ krb5_error_code loop_setup_network(verto
+ krb5_error_code loop_setup_signals(verto_ctx *ctx, void *handle,
+                                    void (*reset)());
+ void loop_free(verto_ctx *ctx);
++void setup_kdc_options(krb5_int32);
+ 
+ /* to be supplied by the server application */
+ 
+diff -pur old/src/include/osconf.hin new/src/include/osconf.hin
+--- old/src/include/osconf.hin	2015-06-03 16:56:30.905987490 -0600
++++ new/src/include/osconf.hin	2015-06-06 00:24:02.109378599 -0600
+@@ -94,6 +94,10 @@
+ #define DEFAULT_KDC_UDP_PORTLIST "88,750"
+ #define DEFAULT_KDC_TCP_PORTLIST "88"
+ 
++/* control # of kdc tcp connection */
++#define DEFAULT_KDC_TCP_CONNECTIONS     45
++#define MIN_KDC_TCP_CONNECTIONS         10
++
+ /*
+  * Defaults for the KADM5 admin system.
+  */
+diff -pur old/src/kdc/main.c new/src/kdc/main.c
+--- old/src/kdc/main.c	2015-06-03 16:56:30.884798447 -0600
++++ new/src/kdc/main.c	2015-06-07 00:42:33.937821705 -0600
+@@ -203,7 +203,8 @@ static krb5_error_code
+ init_realm(kdc_realm_t *rdp, krb5_pointer aprof, char *realm, char *def_mpname,
+            krb5_enctype def_enctype, char *def_udp_ports, char *def_tcp_ports,
+            krb5_boolean def_manual, krb5_boolean def_restrict_anon,
+-           char **db_args, char *no_referral, char *hostbased)
++           char **db_args, char *no_referral, char *hostbased,
++	   krb5_int32 def_max_tcp)
+ {
+     krb5_error_code     kret;
+     krb5_boolean        manual;
+@@ -260,6 +261,8 @@ init_realm(kdc_realm_t *rdp, krb5_pointe
+         kret = ENOMEM;
+         goto whoops;
+     }
++    rdp->realm_max_tcp = def_max_tcp;
++
+     /* Handle stash file */
+     hierarchy[2] = KRB5_CONF_KEY_STASH_FILE;
+     if (krb5_aprof_get_string(aprof, hierarchy, TRUE, &rdp->realm_stash))
+@@ -621,6 +624,7 @@ initialize_realms(krb5_context kcontext,
+     char                *hostbased = NULL;
+     int                  db_args_size = 0;
+     char                **db_args = NULL;
++    krb5_int32		default_max_tcp;
+ 
+     extern char *optarg;
+ 
+@@ -633,6 +637,13 @@ initialize_realms(krb5_context kcontext,
+         hierarchy[1] = KRB5_CONF_KDC_TCP_PORTS;
+         if (krb5_aprof_get_string(aprof, hierarchy, TRUE, &default_tcp_ports))
+             default_tcp_ports = 0;
++	hierarchy[1] = KRB5_CONF_MAX_TCP_CONNECTIONS;
++        if (krb5_aprof_get_int32(aprof, hierarchy, TRUE,
++                                 &default_max_tcp)) {
++            default_max_tcp = DEFAULT_KDC_TCP_CONNECTIONS;
++        } else if (default_max_tcp < MIN_KDC_TCP_CONNECTIONS) {
++            default_max_tcp = DEFAULT_KDC_TCP_CONNECTIONS;
++        }
+         hierarchy[1] = KRB5_CONF_KDC_MAX_DGRAM_REPLY_SIZE;
+         if (krb5_aprof_get_int32(aprof, hierarchy, TRUE, &max_dgram_reply_size))
+             max_dgram_reply_size = MAX_DGRAM_SIZE;
+@@ -694,7 +705,8 @@ initialize_realms(krb5_context kcontext,
+                                         menctype, default_udp_ports,
+                                         default_tcp_ports, manual,
+                                         def_restrict_anon, db_args,
+-                                        no_referral, hostbased);
++                                        no_referral, hostbased,
++					default_max_tcp);
+                     if (retval) {
+                         fprintf(stderr, _("%s: cannot initialize realm %s - "
+                                           "see log file for details\n"),
+@@ -811,7 +823,7 @@ initialize_realms(krb5_context kcontext,
+             retval = init_realm(rdatap, aprof, lrealm, mkey_name, menctype,
+                                 default_udp_ports, default_tcp_ports, manual,
+                                 def_restrict_anon, db_args, no_referral,
+-                                hostbased);
++                                hostbased, default_max_tcp);
+             if (retval) {
+                 fprintf(stderr, _("%s: cannot initialize realm %s - see log "
+                                   "file for details\n"), argv[0], lrealm);
+@@ -967,6 +979,9 @@ int main(int argc, char **argv)
+         return 1;
+     }
+ 
++    /* Guaranteed to have at least one realm, which is fed the def options */
++    setup_kdc_options(shandle.kdc_realmlist[0]->realm_max_tcp);
++
+     /* Handle each realm's ports */
+     for (i=0; i< shandle.kdc_numrealms; i++) {
+         char *cp = shandle.kdc_realmlist[i]->realm_ports;
+diff -pur old/src/kdc/realm_data.h new/src/kdc/realm_data.h
+--- old/src/kdc/realm_data.h	2015-06-03 16:56:30.885907080 -0600
++++ new/src/kdc/realm_data.h	2015-06-06 22:52:44.710060227 -0600
+@@ -66,6 +66,7 @@ typedef struct __kdc_realm_data {
+      */
+     char                *realm_ports;   /* Per-realm KDC UDP port */
+     char                *realm_tcp_ports; /* Per-realm KDC TCP port */
++    krb5_int32		realm_max_tcp;	/* Maximum TCP connections allowed */
+     /*
+      * Per-realm parameters.
+      */
+diff -pur old/src/lib/apputils/net-server.c new/src/lib/apputils/net-server.c
+--- old/src/lib/apputils/net-server.c	2015-06-03 16:56:31.835537747 -0600
++++ new/src/lib/apputils/net-server.c	2015-06-07 01:17:20.123103672 -0600
+@@ -345,6 +345,12 @@ loop_add_tcp_port(int port)
+     return 0;
+ }
+ 
++void
++setup_kdc_options(krb5_int32 max_tcp)
++{
++    max_tcp_or_rpc_data_connections = max_tcp;
++}
++
+ krb5_error_code
+ loop_add_rpc_service(int port, u_long prognum,
+                      u_long versnum, void (*dispatchfn)())
+diff -pur old/src/lib/krb5/os/localauth.c new/src/lib/krb5/os/localauth.c
+--- old/src/lib/krb5/os/localauth.c	2015-06-03 16:56:31.860283075 -0600
++++ new/src/lib/krb5/os/localauth.c	2015-06-03 22:18:21.968345429 -0600
+@@ -258,6 +258,49 @@ parse_mapping_value(const char *value, c
+     return 0;
+ }
+ 
++/*
++ * Return true (1) if the princ's realm matches any of the
++ * 'auth_to_local_realm' relations in the default realm section.
++ */
++static int
++an_to_ln_realm_chk(
++    krb5_context context,
++    krb5_const_principal aname,
++    char *def_realm)
++{
++    char **values, **cpp;
++    const char *realm_names[4];
++    krb5_error_code retval;
++    unsigned int realm_length = krb5_princ_realm(context, aname)->length;
++
++    realm_names[0] = "realms";
++    realm_names[1] = def_realm;
++    realm_names[2] = "auth_to_local_realm";
++    realm_names[3] = 0;
++
++    if (context->profile == 0)
++        return (0);
++
++    retval = profile_get_values(context->profile, realm_names,
++                                &values);
++    if (retval)
++        return (0);
++
++    for (cpp = values; *cpp; cpp++) {
++
++        if (((size_t) realm_length == strlen(*cpp)) &&
++            (memcmp(*cpp, krb5_princ_realm(context, aname)->data,
++                    realm_length) == 0)) {
++
++            profile_free_list(values);
++            return (1); /* success */
++        }
++    }
++
++    profile_free_list(values);
++    return (0);
++}
++
+ /* Apply the default an2ln method, which translates name@defaultrealm or
+  * name/defaultrealm@defaultrealm to name. */
+ static krb5_error_code
+@@ -274,7 +317,8 @@ an2ln_default(krb5_context context, krb5
+     if (ret)
+         return KRB5_LNAME_NOTRANS;
+ 
+-    if (!data_eq_string(aname->realm, def_realm)) {
++    if (!data_eq_string(aname->realm, def_realm) && !an_to_ln_realm_chk(context,
++	aname, def_realm)) {
+         ret = KRB5_LNAME_NOTRANS;
+     } else if (aname->length == 2) {
+         /* Allow a second component if it is the local realm. */

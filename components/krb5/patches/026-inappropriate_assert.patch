@@ -1,0 +1,22 @@
+#
+# This patch removes an inapropriate assert.
+#
+# This assert is inappropriate, because the length of the exported name
+# object may be smaller than input_name_buffer->value. This has caused
+# aborts in RPCSEC_GSS.
+#
+# This patch is to accomodate Solaris RPC implementation and is not suitable
+# upstream contribution.
+# Patch source: in-house
+#
+diff -pur old/src/lib/gssapi/krb5/import_name.c new/src/lib/gssapi/krb5/import_name.c
+--- old/src/lib/gssapi/krb5/import_name.c	2014-10-15 16:55:10.000000000 -0700
++++ new/src/lib/gssapi/krb5/import_name.c	2014-12-16 04:49:23.593542458 -0800
+@@ -288,7 +288,6 @@ krb5_gss_import_name(minor_status, input
+                     goto fail_name;
+                 cp += length;
+             }
+-            assert(cp == end);
+         } else {
+             status = GSS_S_BAD_NAMETYPE;
+             goto cleanup;

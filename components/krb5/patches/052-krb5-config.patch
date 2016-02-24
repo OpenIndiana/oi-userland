@@ -1,0 +1,52 @@
+#
+# Fixes krb5-config to produce correct output on Solaris.
+#
+# The krb5-config generated in Userland gate produces some superfluous
+# output, that can even break some consumers:
+#
+#   $ /usr/bin/krb5-config --libs krb5
+#   -L/usr/lib/amd64 -R/usr/lib/amd64 -lc -z defs -lkrb5 -lk5crypto -lcom_err
+#
+# - default library path and runpath are not required
+# - explicit paths are 64-bit specific
+# - explicit linking with libc is not required for shared libraries
+# - '-z defs' can break samba modules
+#
+# Note that we are adding -lc to LDFLAGS in component Makefile, because
+# Solaris Studio 12.3 and newer no longer auto-adds it for shared objects.
+# We need -lc for krb5 libs and plugins, but we shouldn't add -lc to 
+# krb5-config output.
+#
+# Also note, that we are adding -z defs to LDFLAGS, to achieve complete
+# dependency closure of krb5 plugins, so that they can be used with RTLD_GROUP.
+# Using RTLD_GROUP is motivated by symbol clashes avoidance; using direct
+# bindings is not possible, because we support plugins from outside of Solaris.
+#
+# The patch is not intended for upstream contribution.
+# Patch source: in-house
+#
+diff -pur old/src/build-tools/krb5-config.in new/src/build-tools/krb5-config.in
+--- old/src/build-tools/krb5-config.in	2015-08-14 08:08:25.045131098 -0700
++++ new/src/build-tools/krb5-config.in	2015-08-19 01:45:24.697166086 -0700
+@@ -30,10 +30,11 @@ version_string="Kerberos 5 release @KRB5
+ prefix=@prefix@
+ exec_prefix=@exec_prefix@
+ includedir=@includedir@
+-libdir=@libdir@
++libdir=/usr/lib
+ CC_LINK='@CC_LINK@'
+ KDB5_DB_LIB=@KDB5_DB_LIB@
+-LDFLAGS='@LDFLAGS@'
++# explicitly emptying LDFLAGS
++LDFLAGS=
+ RPATH_FLAG='@RPATH_FLAG@'
+ PROG_RPATH_FLAGS='@PROG_RPATH_FLAGS@'
+ PTHREAD_CFLAGS='@PTHREAD_CFLAGS@'
+@@ -207,6 +208,7 @@ if test -n "$do_libs"; then
+     # Assumes /usr/lib is the standard library directory everywhere...
+     if test "$libdir" = /usr/lib; then
+ 	libdirarg=
++	PROG_RPATH_FLAGS=
+     else
+ 	libdirarg="-L$libdir"
+     fi

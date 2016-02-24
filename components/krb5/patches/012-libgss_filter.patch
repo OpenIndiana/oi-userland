@@ -1,0 +1,47 @@
+#
+# This patch handles building libgss_stubs.o for libgss filter library,
+# which contains the following wrappers:
+#     __gss_mech_to_oid -> gssint_mech_to_oid
+#     __gss_oid_to_mech -> gssint_oid_to_mech
+#     __gss_get_mechanisms -> gssint_get_mechanisms
+#     __gss_get_kmodName -> gssint_get_kmodName
+#     __gss_get_mechanism -> gssint_get_mechanism
+#     __gss_get_modOptions -> gssint_get_modOptions
+#     __gss_userok -> gss_authorize_localname
+#
+# This patch is for backward compatibility with applications linked against
+# Solaris Kerberos libraries and is not intended for upstream contribution.
+# Patch source: in-house
+#
+diff -ru old/src/lib/gssapi/mechglue/Makefile.in new/src/lib/gssapi/mechglue/Makefile.in
+--- old/src/lib/gssapi/mechglue/Makefile.in	2013-12-06 06:13:39.120432302 -0800
++++ new/src/lib/gssapi/mechglue/Makefile.in	2013-12-19 03:23:30.589779644 -0800
+@@ -72,7 +72,8 @@
+ 	$(srcdir)/g_verify.c \
+ 	$(srcdir)/g_wrap_aead.c \
+ 	$(srcdir)/g_wrap_iov.c \
+-	$(srcdir)/gssd_pname_to_uid.c
++	$(srcdir)/gssd_pname_to_uid.c \
++	$(srcdir)/libgss_stubs.c
+ 
+ OBJS = \
+ 	$(OUTPRE)g_accept_sec_context.$(OBJEXT) \
+@@ -137,7 +138,8 @@
+ 	$(OUTPRE)g_verify.$(OBJEXT) \
+ 	$(OUTPRE)g_wrap_aead.$(OBJEXT) \
+ 	$(OUTPRE)g_wrap_iov.$(OBJEXT) \
+-	$(OUTPRE)gssd_pname_to_uid.$(OBJEXT)
++	$(OUTPRE)gssd_pname_to_uid.$(OBJEXT) \
++	$(OUTPRE)libgss_stubs.$(OBJEXT)
+ 
+ STLIBOBJS = \
+ 	g_accept_sec_context.o \
+@@ -209,7 +211,7 @@
+ 
+ $(OBJS): $(EXPORTED_HEADERS)
+ 
+-all-unix:: all-libobjs
++all-unix:: all-libobjs libgss_stubs.o
+ 
+ ##DOS##LIBOBJS = $(OBJS)
+ 

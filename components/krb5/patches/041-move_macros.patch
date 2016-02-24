@@ -1,0 +1,86 @@
+#
+# Defines several macros in a public header.
+#
+# MIT defines g_OID_equal, g_OID_copy and GSS_EMPTY_BUFFER in private header
+# files. Solaris testsuite usr/ontest/lib/libgss/gss_api references them.
+#
+# This patch is unlikely to be accepted upstream.
+# Patch source: in-house
+#
+diff -pur old/src/lib/gssapi/generic/gssapiP_generic.h new/src/lib/gssapi/generic/gssapiP_generic.h
+--- old/src/lib/gssapi/generic/gssapiP_generic.h	2015-05-08 16:27:02.000000000 -0700
++++ new/src/lib/gssapi/generic/gssapiP_generic.h	2015-06-11 12:39:09.937906716 -0700
+@@ -49,10 +49,11 @@
+ #include "k5-buf.h"
+ 
+ /** helper macros **/
+-
++#ifndef g_OID_equal
+ #define g_OID_equal(o1, o2)                                             \
+         (((o1)->length == (o2)->length) &&                              \
+         (memcmp((o1)->elements, (o2)->elements, (o1)->length) == 0))
++#endif
+ 
+ /* this code knows that an int on the wire is 32 bits.  The type of
+    num should be at least this big, or the extra shifts may do weird
+diff -pur old/src/lib/gssapi/generic/gssapi_ext.h new/src/lib/gssapi/generic/gssapi_ext.h
+--- old/src/lib/gssapi/generic/gssapi_ext.h	2015-05-08 16:27:02.000000000 -0700
++++ new/src/lib/gssapi/generic/gssapi_ext.h	2015-06-11 12:40:45.859478118 -0700
+@@ -43,6 +43,26 @@ gss_pname_to_uid
+ 	 uid_t *uidOut);
+ #endif
+ 
++
++#ifndef GSS_EMPTY_BUFFER
++#define GSS_EMPTY_BUFFER(buf)   ((buf) == NULL ||                       \
++                                 (buf)->value == NULL || (buf)->length == 0)
++#endif
++
++#ifndef g_OID_equal
++#define g_OID_equal(o1, o2)                                             \
++        (((o1)->length == (o2)->length) &&                              \
++        (memcmp((o1)->elements, (o2)->elements, (o1)->length) == 0))
++#endif
++
++#ifndef g_OID_copy
++#define	g_OID_copy(o1, o2)					\
++do {								\
++	memcpy((o1)->elements, (o2)->elements, (o2)->length);	\
++	(o1)->length = (o2)->length;				\
++} while (0)
++#endif
++
+ /**
+  * Provides a platform-specific name for a GSSAPI name as interpreted by a
+  * given mechanism.
+diff -pur old/src/lib/gssapi/generic/gssapi_generic.h new/src/lib/gssapi/generic/gssapi_generic.h
+--- old/src/lib/gssapi/generic/gssapi_generic.h	2015-05-08 16:27:02.000000000 -0700
++++ new/src/lib/gssapi/generic/gssapi_generic.h	2015-06-11 12:35:47.817578844 -0700
+@@ -38,8 +38,10 @@
+ #define GSSAPIGENERIC_END_DECLS
+ #endif
+ 
++#ifndef GSS_EMPTY_BUFFER
+ #define GSS_EMPTY_BUFFER(buf)   ((buf) == NULL ||                       \
+                                  (buf)->value == NULL || (buf)->length == 0)
++#endif
+ 
+ GSSAPIGENERIC_BEGIN_DECLS
+ 
+diff -pur old/src/lib/gssapi/mechglue/mglueP.h new/src/lib/gssapi/mechglue/mglueP.h
+--- old/src/lib/gssapi/mechglue/mglueP.h	2015-06-11 12:28:43.196963587 -0700
++++ new/src/lib/gssapi/mechglue/mglueP.h	2015-06-11 12:40:27.690166071 -0700
+@@ -14,11 +14,13 @@
+ #include "mechglue.h"
+ #include "gssapiP_generic.h"
+ 
++#ifndef g_OID_copy
+ #define	g_OID_copy(o1, o2)					\
+ do {								\
+ 	memcpy((o1)->elements, (o2)->elements, (o2)->length);	\
+ 	(o1)->length = (o2)->length;				\
+ } while (0)
++#endif
+ 
+ /*
+  * Array of context IDs typed by mechanism OID

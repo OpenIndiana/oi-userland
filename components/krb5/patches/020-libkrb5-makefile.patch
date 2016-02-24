@@ -1,0 +1,100 @@
+#
+# This patch provides Solaris specific private interfaces to satisfy run time
+# dependencies for Kerberos related components in ON:
+#
+# kt_*                      *contracted with SMB team*
+# k5_profile_*              *contracted with SMB team*
+# mit_des_fixup_key_parity
+# krb5_os_init_context
+# krb5_privacy_allowed
+# profile_get_options_string
+# profile_get_options_boolean
+#
+# NOTE:
+#
+# 1. This patch is Solaris specific. No need to contribute upstream.
+#
+# 2. prof_solaris.c has a change to fix profile_iterator issue
+#    which has not been integrated into current Solaris code yet.
+# Patch source: in-house
+#
+--- ORIGINAL/src/lib/krb5/Makefile.in	2015-01-26 14:13:03.864453694 -0800
++++ krb5-1.13/src/lib/krb5/Makefile.in	2015-01-28 16:00:48.949645899 -0800
+@@ -1,6 +1,6 @@
+ mydir=lib$(S)krb5
+ BUILDTOP=$(REL)..$(S)..
+-LOCALINCLUDES = -I$(srcdir)/ccache -I$(srcdir)/keytab -I$(srcdir)/rcache -I$(srcdir)/os -I$(srcdir)/unicode
++LOCALINCLUDES = -I$(srcdir)/ccache -I$(srcdir)/keytab -I$(srcdir)/rcache -I$(srcdir)/os -I$(srcdir)/unicode -I$(srcdir)/../crypto/builtin/
+ SUBDIRS= error_tables asn.1 ccache keytab krb os rcache unicode
+ WINSUBDIRS= $(SUBDIRS) posix
+ DEFINES=-DLOCALEDIR=\"$(KRB5_LOCALEDIR)\"
+@@ -15,7 +15,8 @@
+ 
+ TST=if test -n "`cat DONE`" ; then
+ 
+-STLIBOBJS=krb5_libinit.o
++STLIBOBJS=krb5_libinit.o \
++	prof_solaris.o
+ 
+ LIBBASE=krb5
+ LIBMAJOR=3
+@@ -47,10 +48,16 @@
+ 	$(BUILDTOP)/util/profile/OBJS.ST
+ 
+ OBJS=\
+-	$(OUTPRE)krb5_libinit.$(OBJEXT)
++	$(OUTPRE)krb5_libinit.$(OBJEXT) \
++	$(OUTPRE)missing_interfaces.$(OBJEXT) \
++	$(OUTPRE)privacy_allowed.$(OBJEXT) \
++	$(OUTPRE)prof_solaris.$(OBJEXT)
+ 
+ SRCS=\
+-	$(srcdir)/krb5_libinit.c
++	$(srcdir)/krb5_libinit.c \
++	$(srcdir)/missing_interfaces.c \
++	$(srcdir)/privacy_allowed.c \
++	$(srcdir)/prof_solaris.c
+ 
+ RELDIR=krb5
+ SHLIB_EXPDEPS = \
+@@ -58,7 +65,7 @@
+ 	$(COM_ERR_DEPLIB) $(SUPPORT_DEPLIB)
+ SHLIB_EXPLIBS=-lk5crypto -lcom_err $(SUPPORT_LIB) @GEN_LIB@ $(LIBS)
+ 
+-all-unix:: all-liblinks
++all-unix:: all-liblinks missing_interfaces.o privacy_allowed.o
+ 
+ all-windows::
+ 
+--- ORIGINAL/src/lib/krb5/keytab/Makefile.in	2014-12-01 16:58:27.760415842 -0800
++++ krb5-1.13/src/lib/krb5/keytab/Makefile.in	2014-12-01 16:59:34.026881356 -0800
+@@ -15,7 +15,8 @@
+ 	kt_file.o	\
+ 	kt_memory.o	\
+ 	kt_srvtab.o	\
+-	read_servi.o
++	read_servi.o	\
++	kt_solaris.o
+ 
+ OBJS=	\
+ 	$(OUTPRE)ktadd.$(OBJEXT)		\
+@@ -27,7 +28,8 @@
+ 	$(OUTPRE)kt_file.$(OBJEXT)	\
+ 	$(OUTPRE)kt_memory.$(OBJEXT)	\
+ 	$(OUTPRE)kt_srvtab.$(OBJEXT)	\
+-	$(OUTPRE)read_servi.$(OBJEXT)
++	$(OUTPRE)read_servi.$(OBJEXT)	\
++	$(OUTPRE)kt_solaris.$(OBJEXT)
+ 
+ SRCS=	\
+ 	$(srcdir)/ktadd.c	\
+@@ -39,7 +41,8 @@
+ 	$(srcdir)/kt_file.c	\
+ 	$(srcdir)/kt_memory.c	\
+ 	$(srcdir)/kt_srvtab.c	\
+-	$(srcdir)/read_servi.c
++	$(srcdir)/read_servi.c	\
++	$(srcdir)/kt_solaris.c
+ 
+ EXTRADEPSRCS= \
+ 	$(srcdir)/t_keytab.c 
