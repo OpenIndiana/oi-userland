@@ -59,7 +59,13 @@ JAVA_LIBS_PATH =	$(JAVA8_HOME)/jre/lib/$(MACH64)/server
 LDFLAGS += -L$(STUDIO_LIBS_PATH) -R$(STUDIO_LIBS_PATH) \
 		-lsunperf -lfsu -lmtsk -lpicl -lkstat
 
-F95 =			$(SPRO_VROOT)/bin/f95
+# Augment the PATH and set CC/CXX/F95 such that the build environment doesn't
+# leak into usr/lib/64/etc/Makeconf and force consumers to have a setup like
+# our build environment to build R modules.
+export PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
+CC =		cc
+CXX =		CC
+F95 =		f95
 
 CONFIGURE_ENV += F77="$(F95) $(CC_BITS)"
 CONFIGURE_ENV += FC="$(F95) $(CC_BITS)"
@@ -67,8 +73,8 @@ CONFIGURE_ENV += FC="$(F95) $(CC_BITS)"
 CONFIGURE_ENV += CPICFLAGS="$(studio_PIC)"
 CONFIGURE_ENV += CFLAGS="-xO3 -xc99 -xlibmieee $(CC_BITS)"
 # Needed to successfully compile R packages using C++ code.
-CONFIGURE_ENV += CXXFLAGS="-xO3 $(CC_BITS) -std=c++03"
-CONFIGURE_ENV += CXX1FLAGS="-xO3 $(CC_BITS) -std=c++11"
+CONFIGURE_ENV += CXX="$(CXX) -std=c++11"
+CONFIGURE_ENV += CXXFLAGS="$(CC_BITS) -std=c++11"
 CONFIGURE_ENV += FPICFLAGS="$(studio_PIC)"
 CONFIGURE_ENV += FFLAGS="-xO3 $(CC_BITS)"
 CONFIGURE_ENV += FCFLAGS="-xO3 $(CC_BITS)"
@@ -77,7 +83,7 @@ CONFIGURE_ENV += FLIBS="-lsunperf -lfsu -lsunmath"
 CONFIGURE_ENV += LDFLAGS="$(LDFLAGS) -L$(R_LIBS_PATH) -R$(R_LIBS_PATH)"
 # Needed so that R packages using C++ code can link against the standard
 # C++ libraries.
-CONFIGURE_ENV += SHLIB_CXXLDFLAGS="-G -lstdc++ -lgcc_s -lCrunG3 -lrt -lm -lc"
+CONFIGURE_ENV += SHLIB_CXXLDFLAGS="-lCrunG3"
 
 # Set the various Java variables otherwise it auto-detects the 32-bit ones.
 CONFIGURE_ENV += JAVA_CPPFLAGS="-I$(JAVA8_HOME)/jre/../include -I$(JAVA8_HOME)/jre/../include/solaris"
