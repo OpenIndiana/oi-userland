@@ -619,11 +619,16 @@ done:
 int
 solaris_init_rad()
 {
+	rc_uri_t *rc_uri;
+
 	if (rad_conn == NULL) {
-		rad_conn = rc_connect_unix(NULL, NULL);
-		if (rad_conn == NULL) {
+		if ((rc_uri = rc_alloc_uri("unix://", RCS_UNIX)) == NULL)
 			return (ENODEV); /* Not sure what to return */
-		}
+
+		rad_conn = rc_connect_uri(rc_uri, NULL);
+		rc_free_uri(rc_uri);
+		if (rad_conn == NULL)
+			return (ENODEV); /* Not sure what to return */
 	}
 	return (0);
 }
