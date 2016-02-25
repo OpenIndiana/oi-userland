@@ -39,6 +39,14 @@ TPNO=	26018
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
+
+# Depends on S12-only header file in ON.
+ifeq ($(BUILD_TYPE), evaluation)
+BUILD_32_and_64=
+INSTALL_32_and_64=
+PUBLISH_STAMP=
+endif
+
 include $(WS_MAKE_RULES)/ips.mk
 
 # Encoding rules for IPS: MIT KerberosV5 <x>.<y>[.<z>] => IPS <x>.<y>.[<z>|0].0
