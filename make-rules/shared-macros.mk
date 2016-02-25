@@ -434,7 +434,6 @@ SPRO_VROOT =	$(SPRO_ROOT)/solarisstudio12.4
 
 PARFAIT_ROOT =	$(BUILD_TOOLS)/parfait/parfait-tools-1.7.1
 PARFAIT_TOOLS=	$(WS_TOOLS)/$(MACH)/parfait
-PARFAIT_TOOLS_GCC3=	$(PARFAIT_TOOLS)/gcc3
 PARFAIT= $(PARFAIT_ROOT)/bin/parfait
 export PARFAIT_NATIVESUNCC=$(SPRO_VROOT)/bin/cc
 export PARFAIT_NATIVESUNCXX=$(SPRO_VROOT)/bin/CC
@@ -442,7 +441,6 @@ export PARFAIT_NATIVEGCC=$(GCC_ROOT)/bin/gcc
 export PARFAIT_NATIVEGXX=$(GCC_ROOT)/bin/g++
 
 GCC_ROOT =	/usr/gcc/4.8
-GCC3_ROOT =	/usr/gcc/3.4
 
 CC.studio.32 =	$(SPRO_VROOT)/bin/cc
 CXX.studio.32 =	$(SPRO_VROOT)/bin/CC
@@ -456,12 +454,6 @@ CXX.gcc.32 =	$(GCC_ROOT)/bin/g++
 
 CC.gcc.64 =	$(GCC_ROOT)/bin/gcc
 CXX.gcc.64 =	$(GCC_ROOT)/bin/g++
-
-CC.gcc3.32 =	$(GCC3_ROOT)/bin/gcc
-CXX.gcc3.32 =	$(GCC3_ROOT)/bin/g++
-
-CC.gcc3.64 =	$(GCC3_ROOT)/bin/gcc
-CXX.gcc3.64 =	$(GCC3_ROOT)/bin/g++
 
 lint.32 =	$(SPRO_VROOT)/bin/lint -m32
 lint.64 =	$(SPRO_VROOT)/bin/lint -m64
@@ -479,10 +471,6 @@ CC.gcc.32 =	$(PARFAIT_TOOLS)/gcc
 CXX.gcc.32 =	$(PARFAIT_TOOLS)/g++
 CC.gcc.64 =	$(PARFAIT_TOOLS)/gcc
 CXX.gcc.64 =	$(PARFAIT_TOOLS)/g++
-CC.gcc3.32 =	$(PARFAIT_TOOLS_GCC3)/gcc
-CXX.gcc3.32 =	$(PARFAIT_TOOLS_GCC3)/g++
-CC.gcc3.64 =	$(PARFAIT_TOOLS_GCC3)/gcc
-CXX.gcc3.64 =	$(PARFAIT_TOOLS_GCC3)/g++
 LD =		$(PARFAIT_TOOLS)/ld
 endif
 
@@ -823,8 +811,6 @@ CC_PIC =	$($(COMPILER)_PIC)
 # configure environment.
 CFLAGS.gcc +=	$(gcc_OPT)
 CFLAGS.gcc +=	$(gcc_XREGS)
-CFLAGS.gcc3 +=	$(gcc_OPT)
-CFLAGS.gcc3 +=	$(gcc_XREGS)
 
 # Default GNU C++ compiler flags.  Add the required feature to your Makefile
 # with CXXFLAGS += $(FEATURE_MACRO) and add to the component build with
@@ -833,8 +819,6 @@ CFLAGS.gcc3 +=	$(gcc_XREGS)
 # configure environment.
 CXXFLAGS.gcc +=		$(gcc_OPT)
 CXXFLAGS.gcc +=		$(gcc_XREGS)
-CXXFLAGS.gcc3 +=	$(gcc_OPT)
-CXXFLAGS.gcc3 +=	$(gcc_XREGS)
 
 # Build 32 or 64 bit objects.
 CFLAGS +=	$(CC_BITS)
@@ -1008,9 +992,6 @@ CLOBBER_PATHS +=	$(PROTO_DIR)
 #
 REQUIRED_PACKAGES += developer/build/gnu-make
 REQUIRED_PACKAGES += developer/build/make
-ifeq ($(COMPILER),gcc3)
-REQUIRED_PACKAGES += developer/gcc-3
-endif
 ifeq ($(COMPILER),gcc)
 REQUIRED_PACKAGES += developer/gcc-48
 endif

@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../make-rules/shared-macros.mk
@@ -44,14 +44,6 @@ links:
 		echo "exec" $(PARFAIT_ROOT)/$(MACH)/parfait-$$i '$$*' >> $(PARFAIT_TOOLS)/$$i ; \
 		chmod +x $(PARFAIT_TOOLS)/$$i ; \
 	done
-	@$(MKDIR) $(PARFAIT_TOOLS_GCC3)
-	@for i in cc CC gcc g++ ld ; do \
-		$(RM) $(PARFAIT_TOOLS_GCC3)/$$i ; \
-		sed \
-		    -e "s,$(GCC_ROOT),$(GCC3_ROOT)," < $(PARFAIT_TOOLS)/$$i \
-		    > $(PARFAIT_TOOLS_GCC3)/$$i ; \
-		chmod +x $(PARFAIT_TOOLS_GCC3)/$$i ; \
-	done
 
 pkglint:
 	@rm -f pkglint
@@ -76,5 +68,5 @@ clean:
 
 clobber:	clean
 	@$(RM) time-*.so python/pkglint/*.pyc
-	@$(RM) -r $(PARFAIT_TOOLS) $(PARFAIT_TOOLS_GCC3) $(MACH)
+	@$(RM) -r $(PARFAIT_TOOLS) $(MACH)
 
