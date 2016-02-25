@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
  */
 
 #include <config.h>
@@ -620,7 +620,7 @@ int
 solaris_init_rad()
 {
 	if (rad_conn == NULL) {
-		rad_conn = rc_connect_unix(NULL, B_TRUE, NULL);
+		rad_conn = rc_connect_unix(NULL, NULL);
 		if (rad_conn == NULL) {
 			return (ENODEV); /* Not sure what to return */
 		}
