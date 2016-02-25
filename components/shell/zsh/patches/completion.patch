@@ -1,0 +1,935 @@
+--- zsh-5.0.5/Completion/Solaris/Command/_dladm	Wed Nov 27 11:00:18 2013
++++ zsh-5.0.5/Completion/Solaris/Command/_dladm	Fri Mar 28 16:00:53 2014
+@@ -1,5 +1,5 @@
+ #compdef dladm
+-# Synced with the S11U1 build 19 man page
++# Synced with the S11U2 build 34 man page
+ 
+ _dladm_links() {
+ 	compadd "$@" - $(dladm show-link -p -o link)
+@@ -61,15 +61,19 @@
+ 	compadd "$@" - $(dladm show-ib -p -o link)
+ }
+ 
++_dladm_eoiblinks() {
++	compadd "$@" - $(dladm show-eoib -p -o link)
++}
++
+ _dladm() {
+ 	local context state line expl
+ 	typeset -A opt_args
+ 	local -a subcmds
+ 	local -a linkprops linkprops_general linkprops_nonvlanvnic linkprops_wifi
+-	local -a linkprops_ether linkprops_ib linkprops_iptun
+-	local -a link_properties link_stats_properties vnic_properties
+-	local -a aggr_properties aggr_lacp_properties aggr_ext_properties
+-	local -a vlan_properties wifi_properties wifi_connect_properties
++	local -a linkprops_ether linkprops_ib linkprops_iptun linkprops_aggr
++	local -a phys_properties link_properties vnic_properties
++	local -a aggr_properties aggr_lacp_properties aggr_dlmp_properties aggr_ext_properties
++	local -a vlan_properties wifi_properties wifi_connect_properties eoib_properties
+ 	local -a ether_properties linkprop_properties secobj_properties
+ 	local -a bridge_properties bridge_stats_properties bridge_link_properties
+ 	local -a bridge_link_stats_properties bridge_fwd_properties
+@@ -81,7 +85,7 @@
+ 	# TODO: some subcommands may take different arguments based on options
+ 
+ 	subcmds=(
+-		"help" "show-ether" "show-ib" "show-usage"
++		"help" "show-ether"
+ 		{"rename","show"}"-link"
+ 		{"add","create","delete","modify","remove","show"}"-aggr"
+ 		{"connect","disconnect","scan","show"}"-wifi"
+@@ -94,6 +98,7 @@
+ 		{"create","modify","delete","add","remove","show"}"-bridge"
+ 		{"create","modify","delete","show"}"-iptun"
+ 		{"create","delete","show"}"-part"
++		{"create","delete","show"}"-eoib" "show-ib"
+ 	)
+ 
+ 	if [[ $service == "dladm" ]]; then
+@@ -110,10 +115,12 @@
+ 	fi
+ 
+ 	link_properties=( "link" "zone" "class" "mtu" "state" "over" )
+-	link_stats_properties=( "link" "ipackets" "rbytes" "ierrors" "opackets" "obytes" "oerrors" )
+ 
++	phys_properties=( "link" "media" "state" "speed" "duplex" "device" "vfs-avail" "vfs-inuse" "flags" )
++
+ 	aggr_properties=( "link" "policy" "addrpolicy" "lacpactivity" "lacptimer" "mode" "flags" )
+ 	aggr_lacp_properties=( "link" "port" "aggregatable" "sync" "coll" "dist" "defaulted" "expired" )
++	aggr_dlmp_properties=( "link" "port" "flags" "state" "targets" "xtargets" )
+ 	aggr_ext_properties=( "link" "port" "speed" "duplex" "state" "address" "portstate" )
+ 
+ 	vlan_properties=( "link" "vid" "over" "flags" )
+@@ -123,11 +130,12 @@
+ 
+ 	ether_properties=( "link" "ptype" "state" "auto" "speed-duplex" "pause" "rem_fault" )
+ 
+-	linkprop_properties=( "link" "property" "value" "default" "possible" )
++	linkprop_properties=( "link" "property" "value" "effective" "default" "possible" )
+ 
+ 	secobj_properties=( "object" "class" )
+ 
+-	vnic_properties=( "link" "over" "speed" "macaddr" "macaddrtype" )
++	vnic_properties=( "link" "over" "speed" "macaddr" "macaddrtype" "macaddrtypes" 
++		"vid" "vids" "evs" "vport" "tenant" "vfs-assigned" )
+ 
+ 	bridge_properties=( "bridge"  "address" "priority" "bmaxage" "bhellotime" "bfwddelay" 
+ 		"forceproto" "tctime" "tccount" "tchange" "desroot" "rootcost" "rootport"
+@@ -144,23 +152,21 @@
+ 
+ 	part_properties=( "link" "pkey" "over" "state" "flags" )
+ 
+-	ib_properties=( "link" "hcaguid" "portguid" "port" "state" "pkeys" )
++	ib_properties=( "link" "hcaguid" "portguid" "port" "state" "gwname" "gwport" "gwid" "gwflags" "pkeys" )
++	eoib_properties=( "link" "gwname" "gwport" "gwid" "speed" "macaddress" "over" "flags" )
+ 
+ 	linkprops_general=(
+ 		"autopush:streams modules:"
+ 		"cos:value:(0 1 2 3 4 5 6 7)"
+ 		"cpus:processors:"
+-		"cpus-effective"
+ 		"etsbw-lcl:percentage:"
+ 		"etsbw-lcl-advice"
+-		"etsbw-lcl-effective"
+-		"etsbw-rmt-effective"
++		"etsbw-rmt-advice"
++		"iov:value:(auto inherit on off)"
+ 		"lro:value:(off on auto)"
+-		"lro-effective"
+ 		"mac-address:MAC address:"
+ 		"maxbw:bandwith:"
+ 		"pool:pools:"
+-		"pool-effective"
+ 		"priority:priority:(high medium low)"
+ 		"rxringsavail"
+ 		"rxrings:value:"
+@@ -176,13 +182,10 @@
+ 		"stp_mcheck:value:(0 1)"
+ 		"protection:value:(mac-nospoof ip-nospoof dhcp-nospoof restricted)"
+ 		"vsi-mgrid:IPv6 address:"
+-		"vsi-mgrid-effective"
+ 		"vsi-mgrid-enc:encoding:(oracle_v1 none)"
+-		"vsi-mgrid-enc-effective"
+ 		"vsi-typeid:value:"
+-		"vsi-typeid-effective"
+ 		"vsi-vers:value:"
+-		"vsi-vers-effective"
++		"vswitching:value:(local remote auto)"
+ 		"zone:value:_zones"
+ 	)
+ 	linkprops_nonvlanvnic=(
+@@ -190,7 +193,6 @@
+ 		"learn_decay:value:"
+ 		"learn_limit:value:"
+ 		"rxfanout:value:"
+-		"rxfanout-effective:value:"
+ 		"stp:value:(0 1)"
+ 	)
+ 	linkprops_wifi=(
+@@ -218,13 +220,11 @@
+ 		"en_10fdx_cap:value:(0 1)"
+ 		"en_10hdx_cap:value:(0 1)"
+ 		"flowctrl:value:(auto no rx tx pfc bi)"
+-		"flowctrl-effective"
+ 		"gvrp-timeout:value:"
+ 		"mtu:value:"
+ 		"ntcs"
+ 		"pfcmap:value:"
+-		"pfcmap-lcl-effective"
+-		"pfcmap-rmt-effective"
++		"pfcmap-rmt"
+ 		"speed"
+ 		"tagmode:value:(normal vlanonly)"
+ 		"vlan-announce:value:(off gvrp)"
+@@ -236,9 +236,14 @@
+ 		"hoplimit:value:"
+ 		"encaplimit:value:"
+ 	)
++	linkprops_aggr=(
++		"probe-enabled:value:(true false)"
++		"probe-ip:value:"
++		"probe-fdt"
++	)
+ 	linkprops=(
+ 		$linkprops_general $linkprops_wifi $linkprops_ether
+-		$linkprops_ib $linkprops_iptun
++		$linkprops_ib $linkprops_iptun $linkprops_aggr
+ 	)
+ 
+ 	case $service in
+@@ -252,12 +257,7 @@
+ 			'(-p --parseable)'{-p,--parseable}'[Parseable output]' \
+ 			'-Z[Display ZONE column in output]' \
+ 			'-z[zone]:zonename:_values -s , "zone" $(zoneadm list)' \
+-			- set1 \
+ 			'(-o --output)'{-o,--output}'[Properties to display]:property:_values -s , "property" $link_properties' \
+-			- set2 \
+-			'(-s --statistics)'{-s,--statistics}'[Display link statistics]' \
+-			'(-i --interval)'{-i,--interval}'[Specify an interval]:interval:' \
+-			'(-o --output)'{-o,--output}'[Properties to display]:property:_values -s , "property" $link_stats_properties' \
+ 			':link name:_dladm_links'
+ 		;;
+ 
+@@ -273,14 +273,15 @@
+ 			'-D[Show Data Center Bridging information]:featureset:(ets pfc)' \
+ 			'-H[Show hardware resource usage]' \
+ 			'-L[Display location information]' \
++			'-l[For ETS DCB, show additional local information]' \
++			'-r[For ETS DCB, show additional remote information]' \
+ 			'(-P --persistent)'{-P,--persistent}'[Display persistent link configuration]' \
+ 			'(-p --parseable)'{-p,--parseable}'[Parseable output]' \
+ 			'-m[Display MAC address information]' \
++			'-V[Display SR-IOV information]' \
+ 			'-Z[Display ZONE column in output]' \
+ 			'-z[zone]:zonename:_values -s , "zone" $(zoneadm list)' \
+-			'(-s --statistics)'{-s,--statistics}'[Display link statistics]' \
+-			'(-i --interval)'{-i,--interval}'[Specify an interval]:interval:' \
+-			'(-o --output)'{-o,--output}'[Properties to display]:property:_values -s , "property" link media state speed duplex device' \
++			'(-o --output)'{-o,--output}'[Properties to display]:property:_values -s , "property" $phys_properties' \
+ 			':physical link name:_dladm_devs'
+ 		;;
+ 
+@@ -304,7 +305,7 @@
+ 
+ 	("modify-aggr")
+ 		_arguments -A "-*" \
+-			'(-t --temporary)'{-t,--temporary}'[Aggregation should be temporary]' \
++			'(-t --temporary)'{-t,--temporary}'[Modifications should be temporary]' \
+ 			'(-R --root)'{-R,--root}'[Root directory]:directory:_path_files -/' \
+ 			'(-l --link)'{-l,--link}'[Component link]:link:_dladm_links' \
+ 			'(-m --mode)'{-m,--mode}'[Aggregation mode]:mode:(dlmp trunk)' \
+@@ -324,7 +325,7 @@
+ 
+ 	("add-aggr")
+ 		_arguments -A "-*" \
+-			'(-t --temporary)'{-t,--temporary}'[Aggregation should be temporary]' \
++			'(-t --temporary)'{-t,--temporary}'[Additions should be temporary]' \
+ 			'(-R --root)'{-R,--root}'[Root directory]:directory:_path_files -/' \
+ 			'(-l --link)'{-l,--link}'[Component link]:link:_dladm_links' \
+ 			':aggregate link name:_dladm_aggrs'
+@@ -332,7 +333,7 @@
+ 
+ 	("remove-aggr")
+ 		_arguments -A "-*" \
+-			'(-t --temporary)'{-t,--temporary}'[Aggregation should be temporary]' \
++			'(-t --temporary)'{-t,--temporary}'[Removals should be temporary]' \
+ 			'(-R --root)'{-R,--root}'[Root directory]:directory:_path_files -/' \
+ 			'(-l --link)'{-l,--link}'[Component link]:link:_dladm_aggr_ports' \
+ 			':aggregate link name:_dladm_aggrs'
+@@ -342,8 +343,6 @@
+ 		_arguments -A "-*" \
+ 			'(-P --persistent)'{-P,--persistent}'[Display persistent link configuration]' \
+ 			'(-p --parseable)'{-p,--parseable}'[Parseable output]' \
+-			'(-s --statistics)'{-s,--statistics}'[Display link statistics]' \
+-			'(-i --interval)'{-i,--interval}'[Specify an interval]:interval:' \
+ 			'-Z[Display ZONE column in output]' \
+ 			'-z[zone]:zonename:_values -s , "zone" $(zoneadm list)' \
+ 			':aggregate link name:_dladm_links' \
+@@ -352,6 +351,9 @@
+ 			- lacp \
+ 			'(-L --lacp)'{-L,--lacp}'[LACP information]' \
+ 			'(-o --output)'{-o,--output}'[Properties to display]:property:_values -s , "property" $aggr_lacp_properties' \
++			- dlmp \
++			'-S[Display detailed probe information]' \
++			'(-o --output)'{-o,--output}'[Properties to display]:property:_values -s , "property" $aggr_dlmp_properties' \
+ 			- extended \
+ 			'(-x --extended)'{-x,--extended}'[Extended information]' \
+ 			'(-o --output)'{-o,--output}'[Properties to display]:property:_values -s , "property" $aggr_ext_properties'
+@@ -376,7 +378,7 @@
+ 
+ 	("modify-vlan")
+ 		_arguments -A "-*" \
+-			'(-t --temporary)'{-t,--temporary}'[VLAN should be temporary]' \
++			'(-t --temporary)'{-t,--temporary}'[Modifications should be temporary]' \
+ 			'(-f --force)'{-f,--force}'[Force VLAN creation]' \
+ 			'(-R --root-dir)'{-R,--root-dir}'[Root directory]:directory:_path_files -/' \
+ 			'(-l --link)'{-l,--link}'[Component link]:link:_dladm_links' \
+@@ -474,7 +476,7 @@
+ 
+ 	("create-secobj")
+ 		_arguments -A "-*" \
+-			'(-t --temporary)'{-t,--temporary}'[Creation should be temporary]' \
++			'(-t --temporary)'{-t,--temporary}'[Object should be temporary]' \
+ 			'(-R --root)'{-R,--root}'[Root directory]:directory:_path_files -/' \
+ 			'(-c --class)'{-c,--class}'[Class]:class:(wep wpa)' \
+ 			'(-f --file)'{-f,--file}'[File containing object value]:file:_path_files' \
+@@ -499,12 +501,17 @@
+ 	("create-vnic")
+ 		# TODO: MAC address completion could be richer
+ 		_arguments -A "-*" \
+-			'(-t --temporary)'{-t,--temporary}'[Creation should be temporary]' \
++			'(-t --temporary)'{-t,--temporary}'[VNIC should be temporary]' \
++			- nonEVS \
+ 			'(-R --root)'{-R,--root}'[Root directory]:directory:_path_files -/' \
+ 			'(-l --link)'{-l,--link}'[Component link]:link:_dladm_links' \
+ 			'(-m --mac-address)'{-m,--mac-address}'[MAC address]:address:(factory random auto vrrp)' \
+ 			'-v[VLAN ID]:id:' \
+ 			'(-p --prop)'{-p,--prop}'[Property values]:value:_values -s , "property" ${(M)linkprops_general\:#*\:*}' \
++			':VNIC name:' \
++			- EVS \
++			'(-c --connect)'{-c,--connect}'[Elastic Virtual Switch name]:evs name: ' \
++			'(-T --tenant)'{-T,--tenant}'[Tenant name]:tenant: ' \
+ 			':VNIC name:'
+ 		;;
+ 
+@@ -518,7 +525,7 @@
+ 	("modify-vnic")
+ 		# TODO: MAC address completion could be richer
+ 		_arguments -A "-*" \
+-			'(-t --temporary)'{-t,--temporary}'[Creation should be temporary]' \
++			'(-t --temporary)'{-t,--temporary}'[Modifications should be temporary]' \
+ 			'(-R --root)'{-R,--root}'[Root directory]:directory:_path_files -/' \
+ 			'(-l --link)'{-l,--link}'[Component link]:link:_dladm_links' \
+ 			'(-m --mac-address)'{-m,--mac-address}'[MAC address]:address:(factory random auto vrrp)' \
+@@ -536,8 +543,8 @@
+ 			'(-p --parseable)'{-p,--parseable}'[Parseable output]' \
+ 			'(-o --output)'{-o,--output}'[Properties to display]:property:_values -s , "property" $vnic_properties' \
+ 			'(-l --link)'{-l,--link}'[Limit to VNICs on link]:link:_dladm_links' \
+-			'(-s --statistics)'{-s,--statistics}'[Display VNIC statistics]' \
+-			'(-i --interval)'{-i,--interval}'[Specify an interval]:interval:' \
++			'-c[Display EVS information]' \
++			'-V[Display SR-IOV information]' \
+ 			'-Z[Display ZONE column in output]' \
+ 			'-z[zone]:zonename:_values -s , "zone" $(zoneadm list)' \
+ 			':VNIC name:_dladm_vnics'
+@@ -545,7 +552,7 @@
+ 
+ 	("create-etherstub")
+ 		_arguments -A "-*" \
+-			'(-t --temporary)'{-t,--temporary}'[Creation should be temporary]' \
++			'(-t --temporary)'{-t,--temporary}'[Etherstub should be temporary]' \
+ 			'(-R --root)'{-R,--root}'[Root directory]:directory:_path_files -/' \
+ 			':etherstub name:'
+ 		;;
+@@ -564,16 +571,6 @@
+ 			':etherstub name:_dladm_etherstubs'
+ 		;;
+ 
+-	("show-usage")
+-		_arguments -A "-*" \
+-			'(-f --file)'{-f,--file}'[Read records from file]:file:_path_files' \
+-			'(-F --format)'{-F,--format}'[Plotfile format]:plotfile format:(gnuplot)' \
+-			'(-p --plot)'{-p,--plot}'[Write plot to file]:' \
+-			'(-e --start)'{-e,--start}'[Start time]:date/time (MM/DD/YYYY,hh\:mm\:ss)' \
+-			'(-s --stop)'{-s,--stop}'[Stop time]:date/time (MM/DD/YYYY,hh\:mm\:ss)' \
+-			':link name:_dladm_links'
+-		;;
+-
+ 	("create-bridge")
+ 		_arguments -A "-*" \
+ 			'(-P --protect)'{-P,--protect}'[Specify a protection method]:protection method:(stp trill)' \
+@@ -587,7 +584,6 @@
+ 			':bridge name:'
+ 		;;
+ 
+-
+ 	("modify-bridge")
+ 		_arguments -A "-*" \
+ 			'(-P --protect)'{-P,--protect}'[Specify a protection method]:protection method:(stp trill)' \
+@@ -600,7 +596,6 @@
+ 			':bridge name:_dladm_bridges'
+ 		;;
+ 
+-
+ 	("delete-bridge")
+ 		_arguments -A "-*" \
+ 			'(-R --root)'{-R,--root}'[Root directory]:directory:_path_files -/' \
+@@ -607,7 +602,6 @@
+ 			':bridge name:_dladm_bridges'
+ 		;;
+ 
+-
+ 	("add-bridge"|"remove-bridge")
+ 		_arguments -A "-*" \
+ 			'(-R --root)'{-R,--root}'[Root directory]:directory:_path_files -/' \
+@@ -615,7 +609,6 @@
+ 			':bridge name:_dladm_bridges'
+ 		;;
+ 
+-
+ 	("show-bridge")
+ 		# XXX $bridge_stats_properties get added into -o completions for set1
+ 		# XXX $bridge_link_stats_properties get added into -o completions for set3
+@@ -644,10 +637,9 @@
+ 			':bridge name:_dladm_bridges'
+ 		;;
+ 
+-
+ 	("create-iptun")
+ 		_arguments -A "-*" \
+-			'(-t --temporary)'{-t,--temporary}'[Temporary tunnel]' \
++			'(-t --temporary)'{-t,--temporary}'[Tunnel should be temporary]' \
+ 			'(-R --root)'{-R,--root}'[Root directory]:directory:_path_files -/' \
+ 			'(-T --type)'{-T,--type}'[Tunnel type]:tunnel type:(ipv4 ipv6 6to4)' \
+ 			'(-a --address)'{-a,--address}'[Endpoint addresses]:address/host:_values -s , "address/host" $tunnel_values' \
+@@ -656,7 +648,7 @@
+ 
+ 	("modify-iptun")
+ 		_arguments -A "-*" \
+-			'(-t --temporary)'{-t,--temporary}'[Temporary modification]' \
++			'(-t --temporary)'{-t,--temporary}'[Modifications should be temporary]' \
+ 			'(-R --root)'{-R,--root}'[Root directory]:directory:_path_files -/' \
+ 			'(-a --address)'{-a,--address}'[Endpoint addresses]:address/host:_values -s , "address/host" $tunnel_values' \
+ 			':tunnel name:_dladm_iptuns'
+@@ -664,7 +656,7 @@
+ 
+ 	("delete-iptun")
+ 		_arguments -A "-*" \
+-			'(-t --temporary)'{-t,--temporary}'[Temporary deletion]' \
++			'(-t --temporary)'{-t,--temporary}'[Deletion should be temporary]' \
+ 			'(-R --root)'{-R,--root}'[Root directory]:directory:_path_files -/' \
+ 			':tunnel name:_dladm_iptuns'
+ 		;;
+@@ -681,7 +673,7 @@
+ 
+ 	("create-part")
+ 		_arguments -A "-*" \
+-			'(-t --temporary)'{-t,--temporary}'[Temporary partition]' \
++			'(-t --temporary)'{-t,--temporary}'[Partition should be temporary]' \
+ 			'(-R --root)'{-R,--root}'[Root directory]:directory:_path_files -/' \
+ 			'(-f --force)'{-f,--force}'[Force partition creation]' \
+ 			'(-l --link)'{-l,--link}'[IP-over-IB physical link name]:IB link:_dladm_iblinks' \
+@@ -692,7 +684,7 @@
+ 
+ 	("delete-part")
+ 		_arguments -A "-*" \
+-			'(-t --temporary)'{-t,--temporary}'[Temporary deletion]' \
++			'(-t --temporary)'{-t,--temporary}'[Deletion should be temporary]' \
+ 			'(-R --root)'{-R,--root}'[Root directory]:directory:_path_files -/' \
+ 			':link name:_dladm_parts'
+ 		;;
+@@ -714,6 +706,35 @@
+ 			':IB link name:_dladm_iblinks'
+ 		;;
+ 
++	("create-eoib")
++		_arguments -A "-*" \
++			'(-t --temporary)'{-t,--temporary}'[EoIB Link should be temporary]' \
++			'(-R --root)'{-R,--root}'[Root directory]:directory:_path_files -/' \
++			'(-l --link)'{-l,--link}'[InfiniBand link]:IB link:_dladm_iblinks' \
++			'(-g --gateway)'{-g,--gateway}'[Gateway name]:gateway name: ' \
++			'-c[Gateway ethernet port]:gateway port: ' \
++			':EoIB link name:'
++		;;
++
++	("delete-eoib")
++		_arguments -A "-*" \
++			'(-t --temporary)'{-t,--temporary}'[Deletion should be temporary]' \
++			'(-R --root)'{-R,--root}'[Root directory]:directory:_path_files -/' \
++			':EoIB link name:_dladm_eoiblinks'
++		;;
++
++	("show-eoib")
++		_arguments -A "-*" \
++			'(-P --persistent)'{-P,--persistent}'[Display persistent link configuration]' \
++			'(-p --parseable)'{-p,--parseable}'[Parseable output]' \
++			'(-o --output)'{-o,--output}'[Properties to display]:property:_values -s , "property" $eoib_properties' \
++			'(-g --gateway)'{-g,--gateway}'[Gateway name]:gateway name: ' \
++			'(-l --link)'{-l,--link}'[InfiniBand link]:IB link:_dladm_iblinks' \
++			'-Z[Display ZONE column in output]' \
++			'-z[zone]:zonename:_values -s , "zone" $(zoneadm list)' \
++			':EoIB link name:_dladm_eoiblinks'
++		;;
++
+ 	(*)
+ 		_message "unknown dladm subcommand: $service"
+ 		;;
+--- zsh-5.0.5/Completion/Solaris/Command/_flowadm	Wed Nov 27 11:00:18 2013
++++ zsh-5.0.5/Completion/Solaris/Command/_flowadm	Fri Mar 28 11:07:23 2014
+@@ -1,5 +1,5 @@
+ #compdef flowadm
+-# Synced with the S11U1 build 19 man page
++# Synced with the S11U2 build 34 man page
+ 
+ _flowadm() {
+ 
+@@ -35,6 +35,8 @@
+ 
+ props=(
+ 	"maxbw"
++	"priority"
++	"hwflow"
+ )
+ 
+ if [[ $service == "flowadm" ]]; then
+@@ -56,7 +58,7 @@
+ 
+ 	("show-flow")
+ 	_arguments -A "-*" \
+-		'-o[specify field to display]:field:(flow link ipaddr proto port dsfield)' \
++		'-o[specify field to display]:field:(flow link proto laddr lport raddr rport port dsfield pid)' \
+ 		'-p[parsable output]' \
+ 		'-P[persistent flow property information]' \
+ 		- set1 \
+--- zsh-5.0.5/Completion/Solaris/Command/_ipadm	Wed Nov 27 11:00:18 2013
++++ zsh-5.0.5/Completion/Solaris/Command/_ipadm	Fri Mar 28 16:02:55 2014
+@@ -1,5 +1,5 @@
+ #compdef ipadm
+-# Synced with the S11U1 build 19 man page
++# Synced with the S11U2 build 34 man page
+ 
+ _ipadm_ifs() {
+ 	local -a extra
+@@ -122,11 +122,13 @@
+ 
+ 	addrobj_properties=(
+ 		"addrobj" "type" "state" "current" "persistent" "addr"
+-		"cid-type" "cid-value" "begin" "expire" "renew"
++		"cid-type" "cid-value" "begin" "expire" "renew" "vrrp-router"
+ 	)
+ 
+-	proto_ipv4_properties=( "hostmodel" "ttl" "forwarding" )
+-	proto_ipv6_properties=( "hostmodel" "hoplimit" "forwarding" )
++	proto_ipv4_properties=( "arp_publish_count" "arp_publish_interval" "hostmodel"
++		"ttl" "forwarding" "ndp_unsolicit_count" "ndp_unsolicit_interval" "send_redirects" )
++	proto_ipv6_properties=( "arp_publish_count" "arp_publish_interval" "hostmodel"
++		"hoplimit" "forwarding" "ndp_unsolicit_count" "ndp_unsolicit_interval" "send_redirects" )
+ 	proto_tcp_properties=( "cong_default" "cong_enabled" "ecn" "extra_priv_ports" "max_buf" "recv_buf"
+ 		"send_buf" "sack" "smallest_anon_port" "largest_anon_port" "smallest_nonpriv_port" )
+ 	proto_udp_properties=( "extra_priv_ports" "max_buf" "recv_buf" "send_buf" "smallest_anon_port"
+@@ -265,7 +267,7 @@
+ 			case ${opt_args[-T]#-T:} in
+ 			("static:"*)
+ 				local -a addrthingsv4
+-				addrthingsv4=( "local:address: " "remote:address: ")
++				addrthingsv4=( "local:address: " "remote:address: " )
+ 				_arguments -A "-*" \
+ 				'(-d --down)'{-d,--down}'[Address should be marked down]' \
+ 				'(-a --address)'{-a,--address}'[Address specification]:address:_values -s , "address" $addrthingsv4' \
+@@ -281,7 +283,7 @@
+ 
+ 			("addrconf:"*)
+ 				local -a addrthingsv6 statefulness
+-				addrthingsv6=( "local:interface id: " "remote:interface id: ")
++				addrthingsv6=( "local:interface id: " "remote:interface id: " )
+ 				statefulness=( "stateful:statefulness:(yes no)" "stateless:statelessness:(yes no)" )
+ 				_arguments -A "-*" \
+ 				'(-i --interface-id)'{-i,--interface-id}'[Interface ID]:address:_values -s , "interface id" $addrthingsv6' \
+@@ -288,6 +290,16 @@
+ 				'(-p --prop)'{-p,--prop}'[Statefulness configuration]:statefulness configuration:_values -s , "statefulness" $statefulness' \
+ 				':address object name:_ipadm_addrobjs_or_ifs'
+ 				;;
++
++			("vrrp:"*)
++				local -a addrthingsvrrp
++				addrthingsvrrp=( "local:address: " )
++				_arguments -A "-*" \
++				'(-a --address)'{-a,--address}'[Address specification]:address:_values -s , "address" $addrthingsvrrp' \
++				'-n[VRRP router name]:router name: ' \
++				':address object name:_ipadm_addrobjs_or_ifs'
++				;;
++
+ 			(*)
+ 				_wanted commands expl "address type" compadd static dhcp addrconf
+ 				;;
+--- zsh-5.0.5/Completion/Solaris/Command/_netstat	Wed Nov 27 11:00:18 2013
++++ zsh-5.0.5/Completion/Solaris/Command/_netstat	Fri Mar 28 10:12:57 2014
+@@ -1,4 +1,5 @@
+ #compdef netstat
++# Synced with the S11U2 build 34 man page
+ 
+ _netstat() {
+ 	local -a f_rules
+@@ -18,6 +19,7 @@
+ 		'-v[verbose]' \
+ 		'-f[specify address family]:address family:(inet inet6 unix)' \
+ 		'-P[specify protocol]:protocol:(ip ipv6 icmp icmpv6 igmp udp tcp rawip)' \
++		'-u[show user, pid, and program owning the network endpoint]' \
+ 		- set2 \
+ 		'-r[show routing table]' \
+ 		'-f[filter routing table]:rule:(($f_rules))' \
+--- zsh-5.0.5/Completion/Solaris/Command/_svcadm	Thu Jan  2 14:23:56 2014
++++ zsh-5.0.5/Completion/Solaris/Command/_svcadm	Tue Jan  7 16:11:20 2014
+@@ -23,8 +23,8 @@
+ 	(enable)
+ 		_arguments -A "-*" \
+ 			'-r[Recursively enable dependencies]' \
+-			'-s[Wait for service to come online]' \
+-			'-T[Timeout for -s]:seconds:' \
++			'-s[Synchronous mode: wait for service to come online]' \
++			'-T[Timeout for synchronous mode]:seconds:' \
+ 			'-t[State change is temporary]' \
+ 			'*:instance FMRI:_svcs_fmri -i'
+ 		;;
+@@ -31,8 +31,8 @@
+ 
+ 	(disable)
+ 		_arguments -A "-*" \
+-			'-s[Wait for service to become disabled]' \
+-			'-T[Timeout for -s]:seconds:' \
++			'-s[Synchronous mode: wait for service to become disabled]' \
++			'-T[Timeout for synchronous mode]:seconds:' \
+ 			'-t[State change is temporary]' \
+ 			'*:instance FMRI:_svcs_fmri -i'
+ 		;;
+@@ -40,8 +40,8 @@
+ 	(mark)
+ 		_arguments -A "-*" \
+ 			'-I[Change state immediately]' \
+-			"-s[Wait for service to reach the new state]" \
+-			'-T[Timeout for -s]:seconds:' \
++			"-s[Synchronous mode: wait for service to reach the new state]" \
++			'-T[Timeout for synchronous mode]:seconds:' \
+ 			'-t[State change is temporary]' \
+ 			':state:(degraded maintenance)' \
+ 			':instance FMRI:_svcs_fmri -i'
+@@ -49,15 +49,15 @@
+ 
+ 	(restart|refresh|clear)
+ 		_arguments \
+-			"-s[Wait for service to $service]" \
+-			'-T[Timeout for -s]:seconds:' \
++			"-s[Synchronous mode: wait for service to $service]" \
++			'-T[Timeout for synchronous mode]:seconds:' \
+ 			'*:instance FMRI:_svcs_fmri -i'
+ 		;;
+ 
+ 	(delegate)
+ 		_arguments -A "-*" \
+-			'-s[Wait for instances to come online]' \
+-			'-T[Timeout for -s]:seconds:' \
++			'-s[Synchronous mode: wait for instances to come online]' \
++			'-T[Timeout for synchronous mode]:seconds:' \
+ 			':restarter FMRI:_svcs_fmri -r' \
+ 			'*:FMRI:_svcs_fmri -i'
+ 		;;
+@@ -65,8 +65,8 @@
+ 	(milestone)
+ 		_arguments -A "-*" \
+ 			'-d[Make milestone the default]' \
+-			'-s[Wait for the transition to the new milestone]' \
+-			'-T[Timeout for -s]:seconds:' \
++			'-s[Synchronous mode: wait for the transition to the new milestone]' \
++			'-T[Timeout for synchronous mode]:seconds:' \
+ 			'*:milestone FMRI:_svcs_fmri -m'
+ 		;;
+ 
+--- zsh-5.0.5/Completion/Solaris/Command/_svcs	Wed Nov 27 11:00:18 2013
++++ zsh-5.0.5/Completion/Solaris/Command/_svcs	Fri Mar 28 10:10:24 2014
+@@ -1,4 +1,5 @@
+ #compdef svcs
++# Synced with the S11U2 build 34 man page
+ 
+ _svcs() {
+ 	local -a cols
+@@ -11,19 +12,20 @@
+ 	)
+ 
+ 	_arguments -s \
+-		'(-l -x -d -D)-a[list all instances]' \
+-		'(-l -x -D -a -R)-d[list dependencies]' \
+-		'(-l -x -d -a -R)-D[list dependents]' \
+-		'(-l -x)-H[suppress header line]' \
++		'(-l -L -x -d -D)-a[list all instances]' \
++		'(-l -L -x -D -a -R)-d[list dependencies]' \
++		'(-l -L -x -d -a -R)-D[list dependents]' \
++		'(-l -L -x)-H[suppress header line]' \
+ 		'(-x -d -D -a -R -s)-l[print detailed status about services and instances]' \
+-		'(-l -x)-o[display specific columns]:column:_values -s , "column" ${^cols/\:/[}\]' \
+-		'(-l -x)-p[list processes]' \
+-		'(-l -x -d -D)-R[list services with the given restarter]:instance FMRI:_svcs_fmri -i' \
+-		'(-l -x)-s[sort by a column]:column:(($cols))' \
+-		'(-l -x)-S[reverse sort by a column]:column:(($cols))' \
++		'(-a -d -D -H -l -o -p -R -s -S)-L[print path to service logfile]' \
++		'(-l -L -x)-o[display specific columns]:column:_values -s , "column" ${^cols/\:/[}\]' \
++		'(-l -L -x)-p[list processes]' \
++		'(-l -L -x -d -D)-R[list services with the given restarter]:instance FMRI:_svcs_fmri -i' \
++		'(-l -L -x)-s[sort by a column]:column:(($cols))' \
++		'(-l -L -x)-S[reverse sort by a column]:column:(($cols))' \
+ 		'-v[verbose columns]' \
+ 		'(-l)-x[display explanation for service states]' \
+-		'(-l -x)-\?[print help]' \
++		'(-l -L -x)-\?[print help]' \
+ 		'*:FMRI or pattern:_svcs_fmri -i'
+ }
+ 
+--- zsh-5.0.5/Completion/Solaris/Command/_zlogin	Wed Nov 27 11:00:18 2013
++++ zsh-5.0.5/Completion/Solaris/Command/_zlogin	Fri Mar 28 10:06:07 2014
+@@ -1,5 +1,5 @@
+ #compdef zlogin
+-# Synced with the Nevada build 162 man page
++# Synced with the S11U2 build 34 man page
+ 
+ _zlogin() {
+ 	_arguments -s \
+@@ -6,6 +6,8 @@
+ 		'-E[Disable escape character]' \
+ 		'-e[Specify escape character]:character:' \
+ 		'-l[Specify username]:username:_users' \
++		'-T[Enter immutable zone as a "Trusted Path Domain" member]' \
++		'-U[Like -T, but "unsafe"]' \
+ 		':zonename:_zones' \
+ 		- set1 \
+ 		'-C[Connect to zone console]' \
+--- zsh-5.0.5/Completion/Solaris/Command/_zoneadm	Thu Jan  2 14:23:56 2014
++++ zsh-5.0.5/Completion/Solaris/Command/_zoneadm	Sat Mar 29 11:19:44 2014
+@@ -1,20 +1,22 @@
+ #compdef zoneadm
+-# Synced with the S11U1 man page
++# Synced with the S11U2 build 34 man page
+ 
+ _zoneadm_bootargs() {
+ 	# This is a subset of the arguments to kernel(1M)
+ 	_arguments -A "-*" \
+-		'-i[Alternate init]:path:_path_files' \
+ 		'-m[SMF options]:option:_values "SMF option" debug milestone= quiet verbose' \
+-		'-s[Boot single user]'
++		'-s[Boot single user]' \
++		'-L[List available boot environments]' \
++		'-Z[Boot a named environment]:boot environment: '
+ }
+ 
+ _zoneadm() {
+ 	local context state line expl
+ 	typeset -A opt_args
+-	local -a subcmds fields
+-	local -a solaris_attach solaris_install
+-	local -a solaris10_attach solaris10_install
++	local -a subcmds subcmds_solariskz fields
++	local -a solaris_attach solaris_clone solaris_install
++	local -a solariskz_attach solariskz_clone solariskz_install
++	local -a solaris10_attach solaris10_clone solaris10_install
+ 	local -a extended_create_options extended_destroy_options
+ 	local brand brand_args
+ 
+@@ -22,11 +24,19 @@
+ 		attach boot clone detach halt help install list mark move
+ 		ready reboot uninstall verify
+ 	)
++	subcmds_solariskz=(
++		savecore suspend
++	)
+ 
+ 	extended_create_options=(
++		"cert:certificate:_path_files"
++		"cacert:CA certificate:_path_files"
++		"force-takeover"
+ 		"force-zpool-import"
+ 		"force-zpool-create:ZFS pool: "
+ 		"force-zpool-create-all"
++		"initialize-hostdata"
++		"key:key:_path_files"
+ 	)
+ 
+ 	extended_destroy_options=(
+@@ -35,28 +45,44 @@
+ 	)
+ 
+ 	solaris_attach=(
+-		'(-d)-a[Path to archive]:path:_path_files'
+-		'(-a)-d[Path to zonepath]:directory:_path_files -/'
++		'-c[Specify configuration profile]:path:_files -g \*.xml'
++		'-U[Update all packages to latest versions]'
++		'-z[Attach existing zone boot environment]:zone boot environment: '
+ 	)
++	solaris_clone=(
++		'-c[Specify configuration profile]:path:_files -g \*.xml'
++	)
+ 	solaris_install=(
++		'-c[Specify configuration profile]:path:_files -g \*.xml'
+ 		- set1
+-		'-c[Path to certificate]:path:_path_files'
+-		'*-e[Additional package]:package:'
+-		'-k[Path to key]:path:_path_files'
+-		'-P[Publisher/URI mapping]:publisher:'
++		'-m[Specify install (AI) manifest]:path:_files -g \*.xml'
+ 		- set2
+ 		'(-d)-a[Path to archive]:path:_path_files'
+-		'(-a)-d[Path to installed zone root]:directory:path_files -/'
++		'(-a -z)-d[Path to installed zone root]:directory:path_files -/'
+ 		'-p[Preserve system configuration]'
+ 		'-s[Install silently]'
+ 		'-u[Unconfigure after installation]'
+ 		'-v[Verbose]'
++		'(-d)-z[Name of zone in unified archive]:zone: '
+ 	)
+ 
++	solariskz_attach=()
++	solariskz_clone=( $solaris_clone )
++	solariskz_install=(
++		'-a(-m)[Specify unified archive]:path:_path_files'
++		'-b[Specify boot media]:path:_path_files'
++		'-c[Specify configuration profile]:path:_path_files'
++		'-m(-a)[Specify install (AI) manifest]:path:_path_files'
++		'-S[Specify root filesystem size]:size: '
++		'-v[Verbose]'
++		'-z[Name of zone in unified archive]:zone: '
++	)
++
+ 	solaris10_attach=(
+ 		'(-d)-a[Path to archive]:path:_path_files'
+ 		'(-a)-d[Path to zonepath]:directory:_path_files -/'
+ 	)
++	solaris10_clone=()
+ 	solaris10_install=(
+ 		'(-d)-a[Path to archive]:path:_path_files'
+ 		'(-a)-d[Path to installed zone root]:directory:path_files -/'
+@@ -70,9 +96,15 @@
+ 		_arguments -C -A "-*" \
+ 			'-R[Alternate root]:alternate root:_path_files -/' \
+ 			'-u[Zone UUID]:zone UUID: ' \
+-			'-z[Zone name]:zone name:_zones' \
++			'-z[Zone name]:zone name:_zones -t c' \
+ 			'*::command:->subcmd' && return 0
+ 
++		if [[ -n $opt_args[-z] ]]; then
++			brand=${${"${(@s,:,)$(zoneadm -z $opt_args[-z] list -p)}"[6]}//-/}
++			brand_args=subcmds_${brand}
++			subcmds=( ${(P)brand_args} $subcmds )
++		fi
++
+ 		if (( CURRENT == 1 )); then
+ 			_wanted commands expl "zoneadm subcommand" compadd -a subcmds
+ 			return
+@@ -85,6 +117,7 @@
+ 	("boot")
+ 		# Completion of boot arguments after -- is kinda hacky.
+ 		_arguments -S -A "-*" \
++			'-R[Force new boot instead of resume]' \
+ 			'-w[Force writable root]' \
+ 			'-W[Boot in transient r/w mode]' \
+ 			'*:boot options:_zoneadm_bootargs'
+@@ -91,16 +124,21 @@
+ 		;;
+ 
+ 	("clone")
++		if [[ -n $opt_args[-z] ]]; then
++			brand=${${"${(@s,:,)$(zoneadm -z $opt_args[-z] list -p)}"[6]}//-/}
++			brand_args=${brand}_clone
++		fi
+ 		_arguments -A "-*" \
+ 			'-m[Clone mode]:mode:_values "mode" copy' \
+ 			'-s[Source snapshot]:snapshot:_zfs_dataset -t snap' \
+ 			'-x[Extended options]:extended option:_values -w "extended option" $extended_create_options' \
+-			':source zone:_zones'
++			${(P)brand_args} \
++			':source zone:_zones -t i'
+ 		;;
+ 
+ 	("attach")
+ 		if [[ -n $opt_args[-z] ]]; then
+-			brand=${"${(@s,:,)$(zoneadm -z $opt_args[-z] list -p)}"[6]}
++			brand=${${"${(@s,:,)$(zoneadm -z $opt_args[-z] list -p)}"[6]}//-/}
+ 			brand_args=${brand}_attach
+ 		fi
+ 		_arguments -A "-*" \
+@@ -116,7 +154,7 @@
+ 			'-n[Dry run]'
+ 		;;
+ 
+-	("halt"|"ready"|"reboot"|"verify")
++	("halt"|"ready"|"reboot"|"verify"|"suspend")
+ 		;;
+ 
+ 
+@@ -126,7 +164,7 @@
+ 
+ 	("install")
+ 		if [[ -n $opt_args[-z] ]]; then
+-			brand=${"${(@s,:,)$(zoneadm -z $opt_args[-z] list -p)}"[6]}
++			brand=${${"${(@s,:,)$(zoneadm -z $opt_args[-z] list -p)}"[6]}//-/}
+ 			brand_args=${brand}_install
+ 		fi
+ 		_arguments -A "-*" \
+@@ -152,6 +190,12 @@
+ 			':new zone path:_path_files -/'
+ 		;;
+ 
++	("savecore")
++		_arguments -A "-*" \
++			"-L[Don't pause zone]" \
++			'-f[Path to dumpfile]:path:_path_files'
++		;;
++
+ 	("uninstall")
+ 		_arguments -A "-*" \
+ 			'-F[Force]' \
+--- zsh-5.0.5/Completion/Unix/Command/_zfs	Thu Jan  2 14:23:56 2014
++++ zsh-5.0.5/Completion/Unix/Command/_zfs	Sat Mar 29 11:35:15 2014
+@@ -1,5 +1,5 @@
+ #compdef zfs
+-# Synced with the S11U1 man page
++# Synced with the S11U2 build 34 man page
+ 
+ _zfs() {
+ 	local context state line expl
+@@ -121,7 +121,7 @@
+ 
+ 	share_rw_properties=(
+ 		"share.desc:description:"
+-		"share.noauto:value:(on off)"
++		"share.auto:value:(on off)"
+ 		"share.path:path:"
+ 		$share_nfs_rw_properties
+ 		$share_smb_rw_properties
+@@ -306,8 +306,8 @@
+ 			'-d[Depth]:value:' \
+ 			'-H[Scripting mode]' \
+ 			'-p[Display numbers exactly]' \
+-			'-s[Specify sources]:source:_values -s , "source" local default inherited temporary none' \
+-			'-o[Specify fields]:field:_values -s , "field" name property value source' \
++			'-s[Specify sources]:source:_values -s , "source" local default inherited received temporary none' \
++			'-o[Specify fields]:field:_values -s , "field" name property received value source' \
+ 			':property:_values -s , "property" $ro_properties $rw_propnames all' \
+ 			'*:filesystem/volume/snapshot:_zfs_dataset'
+ 		;;
+@@ -381,11 +381,13 @@
+ 
+ 	("send")
+ 		_arguments -A "-*" \
+-			'-b' \
++			'-b[Send only received property values]' \
+ 			'-i[Generate an incremental stream]:snapshot:_zfs_dataset -t snap' \
+ 			'-D[Perform dedup processing]' \
++			"-n[Don't send the stream]" \
+ 			'-p[Send properties]' \
+-			'-v[Verbose]' \
++			'(-v)-s[Specifies information to be sent to stderr]:token:(streamsize)' \
++			'(-s)-v[Verbose]' \
+ 			- set1 \
+ 			'-I[Generate an incremental stream with intermediary snapshots]:snapshot:_zfs_dataset -t snap' \
+ 			'-R[Generate a replication stream package]' \
+--- zsh-5.0.5/Completion/Unix/Command/_zpool	Thu Jan  2 14:23:56 2014
++++ zsh-5.0.5/Completion/Unix/Command/_zpool	Fri Mar 28 13:56:56 2014
+@@ -1,5 +1,5 @@
+ #compdef zpool
+-# Synced with the S11U1 man page
++# Synced with the S11U2 build 34 man page
+ 
+ _zpool() {
+ 	local context state line expl
+@@ -105,7 +105,7 @@
+ 			':command/property:($subcmds ${fields%%\[*} properties)' \
+ 			- set2 \
+ 			'-l[Display property information]' \
+-			': :(properties)'
++			':help topics:(properties)'
+ 		;;
+ 
+ 	(clear)
+@@ -126,8 +126,10 @@
+ 			'-f[Force use of in-use devices]' \
+ 			'-l[Display configuration in /dev/chassis location form]' \
+ 			'-n[Display configuration without creating pool]' \
++			"-N[Create pool but don't mount or share]" \
+ 			'-R[Use alternate root]:alternate root:_files -/' \
+ 			'-m[Set mountpoint for root dataset]:mountpoint:' \
++			'-t[Use a temporary pool name]:pool name: ' \
+ 			':pool name:' \
+ 			'*:virtual device:_files'
+ 		;;
+@@ -237,11 +239,11 @@
+ 			'-n[With -F; do not perform input]' \
+ 			'-R[Alternate root]:alternate root:_files -/' \
+ 			'-o[Set pool or dataset property]:property:_values -s , "property" $create_properties_dataset $rw_props' \
++			'-t[Use a temporary pool name]:pool name: ' \
+ 			- set1 \
+ 			'*:pool name or id:_zfs_pool' \
+ 			'::new pool name:' \
+ 			- set2 \
+-			'-N[Do not mount any filesystems]' \
+ 			'-a[All pools]'
+ 		;;
+ 
