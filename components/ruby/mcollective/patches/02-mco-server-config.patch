@@ -4,22 +4,23 @@ Changes needed in server.cfg, mainly :
     Default user : 'mcollective' & passwd : 'changeme'
 NOTE : This patch is developed in-house (and Solaris specific)
 
---- mcollective-2.8.2/etc/server.cfg.dist.orig	2015-05-14 08:50:32.000000000 -0700
-+++ mcollective-2.8.2/etc/server.cfg.dist	2015-05-14 08:50:32.000000000 -0700
-@@ -1,7 +1,7 @@
+--- ORIG/etc/server.cfg.dist	2016-02-23 13:46:36.467260235 +0000
++++ mcollective-2.8.2/etc/server.cfg.dist	2016-02-24 17:17:34.551817568 +0000
+@@ -1,7 +1,8 @@
  main_collective = mcollective
  collectives = mcollective
 -libdir = /usr/libexec/mcollective
 -logfile = /var/log/mcollective.log
 +libdir = /usr/share/mcollective
-+logfile = /var/log/mcollective/mcollective.log
++logger_type = file
++logfile = /dev/stderr       # Send output to SMF service log
  loglevel = info
  daemonize = 1
-
-@@ -9,12 +9,13 @@ daemonize = 1
+ 
+@@ -9,12 +10,13 @@
  securityprovider = psk
  plugin.psk = unset
-
+ 
 -connector = activemq
 -plugin.activemq.pool.size = 1
 -plugin.activemq.pool.1.host = stomp1
@@ -33,6 +34,6 @@ NOTE : This patch is developed in-house (and Solaris specific)
 +plugin.rabbitmq.pool.1.port = 61613
 +plugin.rabbitmq.pool.1.user = mcollective
 +plugin.rabbitmq.pool.1.password = changeme
-
+ 
  # Facts
  factsource = yaml

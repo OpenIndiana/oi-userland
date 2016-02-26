@@ -5,20 +5,22 @@ Changes needed in client.cfg, mainly :
 
 NOTE : This patch is developed in-house (and Solaris specific)
 
---- mcollective-2.8.2/etc/client.cfg.dist.orig      2015-05-14 08:50:32.000000000 -0700
-+++ mcollective-2.8.2/etc/client.cfg.dist       2015-11-19 12:01:30.945604310 -0800
-@@ -1,6 +1,6 @@
+--- ORIG/etc/client.cfg.dist	2016-02-23 13:46:36.467073673 +0000
++++ mcollective-2.8.2/etc/client.cfg.dist	2016-02-24 17:18:00.911791673 +0000
+@@ -1,19 +1,21 @@
  main_collective = mcollective
  collectives = mcollective
 -libdir = /usr/libexec/mcollective
+-logger_type = console
 +libdir = /usr/share/mcollective
- logger_type = console
++logger_type = file
++logfile = /dev/stderr           # Send output to SMF service log
  loglevel = warn
-
-@@ -8,12 +8,13 @@ loglevel = warn
+ 
+ # Plugins
  securityprovider = psk
  plugin.psk = unset
-
+ 
 -connector = activemq
 -plugin.activemq.pool.size = 1
 -plugin.activemq.pool.1.host = stomp1
@@ -32,6 +34,6 @@ NOTE : This patch is developed in-house (and Solaris specific)
 +plugin.rabbitmq.pool.1.port = 61613
 +plugin.rabbitmq.pool.1.user = mcollective
 +plugin.rabbitmq.pool.1.password = changeme
-
+ 
  # Facts
  factsource = yaml
