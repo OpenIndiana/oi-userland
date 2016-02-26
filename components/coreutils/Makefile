@@ -18,21 +18,21 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		coreutils
-COMPONENT_VERSION=	8.24
+COMPONENT_VERSION=	8.25
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/coreutils/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:a2d75286a4b9ef3a13039c2da3868a61be4ee9f17d8ae380a35a97e506972170
+    sha256:31e67c057a5b32a582f26408c789e11c2e8d676593324849dcf5779296cdce87
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/coreutils/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gnu-coreutils
 
-TPNO=			25903
+TPNO=			27001
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -81,6 +81,11 @@ COMPONENT_TEST_DIR =	$(@D)/tests
 
 # Always show the build and link lines for easier debugging.
 COMPONENT_TEST_ARGS +=	V=1
+
+# Master test results are different between x86 and SPARC (different # of
+# tests run).
+COMPONENT_TEST_MASTER = \
+	$(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
 
 COMPONENT_TEST_TRANSFORMS += \
 	'-n ' \

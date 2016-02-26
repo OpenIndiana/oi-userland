@@ -113,9 +113,10 @@ PASS: tests/misc/comm.pl
 PASS: tests/misc/csplit.sh
 PASS: tests/misc/csplit-1000.sh
 PASS: tests/misc/csplit-heap.sh
+SKIP: tests/misc/csplit-io-err.sh
 PASS: tests/misc/csplit-suppress-matched.pl
 PASS: tests/misc/date-sec.sh
-PASS: tests/misc/dircolors.pl
+FAIL: tests/misc/dircolors.pl
 PASS: tests/misc/dirname.pl
 PASS: tests/misc/env-null.sh
 PASS: tests/misc/expand.pl
@@ -129,6 +130,7 @@ PASS: tests/misc/groups-version.sh
 PASS: tests/misc/head-c.sh
 PASS: tests/misc/head-pos.sh
 SKIP: tests/misc/head-write-error.sh
+PASS: tests/misc/kill.sh
 PASS: tests/misc/md5sum.pl
 PASS: tests/misc/md5sum-bsd.sh
 PASS: tests/misc/md5sum-newline.pl
@@ -152,6 +154,7 @@ PASS: tests/misc/printf.sh
 PASS: tests/misc/printf-cov.pl
 PASS: tests/misc/printf-hex.sh
 PASS: tests/misc/printf-surprise.sh
+PASS: tests/misc/printf-quote.sh
 PASS: tests/misc/pwd-long.sh
 PASS: tests/misc/readlink-fp-loop.sh
 PASS: tests/misc/readlink-root.sh
@@ -279,11 +282,10 @@ PASS: tests/cp/deref-slink.sh
 PASS: tests/cp/dir-rm-dest.sh
 PASS: tests/cp/dir-slash.sh
 PASS: tests/cp/dir-vs-file.sh
-PASS: tests/cp/duplicate-sources.sh
 PASS: tests/cp/existing-perm-dir.sh
 PASS: tests/cp/existing-perm-race.sh
 PASS: tests/cp/fail-perm.sh
-SKIP: tests/cp/fiemap-empty.sh
+SKIP: tests/cp/fiemap-extents.sh
 SKIP: tests/cp/fiemap-FMR.sh
 SKIP: tests/cp/fiemap-perf.sh
 SKIP: tests/cp/fiemap-2.sh
@@ -343,7 +345,7 @@ PASS: tests/dd/stderr.sh
 PASS: tests/dd/unblock.pl
 PASS: tests/dd/unblock-sync.sh
 PASS: tests/dd/stats.sh
-PASS: tests/df/total-verify.sh
+SKIP: tests/df/total-verify.sh
 SKIP: tests/du/2g.sh
 PASS: tests/du/8gb.sh
 PASS: tests/du/basic.sh
@@ -375,7 +377,6 @@ SKIP: tests/id/gnu-zero-uids.sh
 SKIP: tests/id/no-context.sh
 SKIP: tests/id/context.sh
 PASS: tests/id/uid.sh
-SKIP: tests/id/setgid.sh
 PASS: tests/id/zero.sh
 SKIP: tests/id/smack.sh
 PASS: tests/install/basic-1.sh
@@ -408,6 +409,7 @@ PASS: tests/ls/hex-option.sh
 PASS: tests/ls/infloop.sh
 PASS: tests/ls/inode.sh
 PASS: tests/ls/m-option.sh
+PASS: tests/ls/w-option.sh
 PASS: tests/ls/multihardlink.sh
 PASS: tests/ls/no-arg.sh
 SKIP: tests/ls/no-cap.sh
@@ -439,7 +441,6 @@ SKIP: tests/mkdir/restorecon.sh
 PASS: tests/mkdir/special-1.sh
 PASS: tests/mkdir/t-slash.sh
 SKIP: tests/mkdir/smack-no-root.sh
-SKIP: tests/mkdir/smack-root.sh
 SKIP: tests/mv/acl.sh
 SKIP: tests/mv/atomic.sh
 SKIP: tests/mv/atomic2.sh
@@ -522,6 +523,7 @@ SKIP: tests/df/problematic-chars.sh
 SKIP: tests/df/over-mount-device.sh
 SKIP: tests/du/bind-mount-dir-cycle.sh
 SKIP: tests/du/bind-mount-dir-cycle-v2.sh
+SKIP: tests/id/setgid.sh
 SKIP: tests/install/install-C-root.sh
 SKIP: tests/ls/capability.sh
 SKIP: tests/ls/nameless-uid.sh
@@ -530,6 +532,7 @@ SKIP: tests/misc/chroot-credentials.sh
 SKIP: tests/misc/selinux.sh
 SKIP: tests/misc/truncate-owned-by-other.sh
 SKIP: tests/mkdir/writable-under-readonly.sh
+SKIP: tests/mkdir/smack-root.sh
 SKIP: tests/mv/hardlink-case.sh
 SKIP: tests/mv/sticky-to-xpart.sh
 SKIP: tests/rm/fail-2eperm.sh
@@ -575,10 +578,297 @@ SKIP: tests/factor/t33.sh
 SKIP: tests/factor/t34.sh
 SKIP: tests/factor/t35.sh
 SKIP: tests/factor/t36.sh
-# TOTAL: 579
+# TOTAL: 580
 # PASS:  440
 # SKIP:  139
 # XFAIL: 0
-# FAIL:  0
+# FAIL:  1
+# XPASS: 0
+# ERROR: 0
+SKIP: tests/tail-2/inotify-race
+SKIP tests/tail-2/inotify-race.sh (exit status: 77)
+SKIP: tests/tail-2/inotify-race2
+SKIP tests/tail-2/inotify-race2.sh (exit status: 77)
+SKIP: tests/rm/ext3-perf
+SKIP tests/rm/ext3-perf.sh (exit status: 77)
+SKIP: tests/cp/link-heap
+SKIP tests/cp/link-heap.sh (exit status: 77)
+SKIP: tests/cp/no-ctx
+SKIP tests/cp/no-ctx.sh (exit status: 77)
+SKIP: tests/misc/tty-eof
+SKIP tests/misc/tty-eof.pl (exit status: 77)
+SKIP: tests/tail-2/inotify-rotate
+SKIP tests/tail-2/inotify-rotate.sh (exit status: 77)
+SKIP: tests/tail-2/inotify-rotate-resources
+SKIP tests/tail-2/inotify-rotate-resources.sh (exit status: 77)
+SKIP: tests/rm/hash
+SKIP tests/rm/hash.sh (exit status: 77)
+SKIP: tests/rm/r-root
+SKIP tests/rm/r-root.sh (exit status: 77)
+SKIP: tests/rm/many-dir-entries-vs-OOM
+SKIP tests/rm/many-dir-entries-vs-OOM.sh (exit status: 77)
+SKIP: tests/misc/seq-long-double
+SKIP tests/misc/seq-long-double.sh (exit status: 77)
+SKIP: tests/tail-2/tail-n0f
+SKIP tests/tail-2/tail-n0f.sh (exit status: 77)
+SKIP: tests/misc/arch
+SKIP tests/misc/arch.sh (exit status: 77)
+SKIP: tests/misc/coreutils
+SKIP tests/misc/coreutils.sh (exit status: 77)
+SKIP: tests/misc/wc-parallel
+SKIP tests/misc/wc-parallel.sh (exit status: 77)
+SKIP: tests/misc/cat-proc
+SKIP tests/misc/cat-proc.sh (exit status: 77)
+SKIP: tests/misc/csplit-io-err
+SKIP tests/misc/csplit-io-err.sh (exit status: 77)
+FAIL: tests/misc/dircolors
+FAIL tests/misc/dircolors.pl (exit status: 1)
+SKIP: tests/misc/head-write-error
+SKIP tests/misc/head-write-error.sh (exit status: 77)
+SKIP: tests/misc/md5sum-parallel
+SKIP tests/misc/md5sum-parallel.sh (exit status: 77)
+SKIP: tests/misc/shuf-reservoir
+SKIP tests/misc/shuf-reservoir.sh (exit status: 77)
+SKIP: tests/misc/sort-benchmark-random
+SKIP tests/misc/sort-benchmark-random.sh (exit status: 77)
+SKIP: tests/misc/sort-compress-hang
+SKIP tests/misc/sort-compress-hang.sh (exit status: 77)
+SKIP: tests/misc/sort-compress-proc
+SKIP tests/misc/sort-compress-proc.sh (exit status: 77)
+SKIP: tests/misc/sort-month
+SKIP tests/misc/sort-month.sh (exit status: 77)
+SKIP: tests/misc/sort-spinlock-abuse
+SKIP tests/misc/sort-spinlock-abuse.sh (exit status: 77)
+SKIP: tests/misc/sort-stale-thread-mem
+SKIP tests/misc/sort-stale-thread-mem.sh (exit status: 77)
+SKIP: tests/misc/sort-u-FMR
+SKIP tests/misc/sort-u-FMR.sh (exit status: 77)
+SKIP: tests/misc/stty-pairs
+SKIP tests/misc/stty-pairs.sh (exit status: 77)
+SKIP: tests/misc/tac-continue
+SKIP tests/misc/tac-continue.sh (exit status: 77)
+SKIP: tests/misc/timeout-group
+SKIP tests/misc/timeout-group.sh (exit status: 77)
+SKIP: tests/misc/xattr
+SKIP tests/misc/xattr.sh (exit status: 77)
+SKIP: tests/chown/separator
+SKIP tests/chown/separator.sh (exit status: 77)
+SKIP: tests/cp/acl
+SKIP tests/cp/acl.sh (exit status: 77)
+SKIP: tests/cp/fiemap-extents
+SKIP tests/cp/fiemap-extents.sh (exit status: 77)
+SKIP: tests/cp/fiemap-FMR
+SKIP tests/cp/fiemap-FMR.sh (exit status: 77)
+SKIP: tests/cp/fiemap-perf
+SKIP tests/cp/fiemap-perf.sh (exit status: 77)
+SKIP: tests/cp/fiemap-2
+SKIP tests/cp/fiemap-2.sh (exit status: 77)
+SKIP: tests/cp/nfs-removal-race
+SKIP tests/cp/nfs-removal-race.sh (exit status: 77)
+SKIP: tests/cp/perm
+SKIP tests/cp/perm.sh (exit status: 77)
+SKIP: tests/cp/proc-short-read
+SKIP tests/cp/proc-short-read.sh (exit status: 77)
+SKIP: tests/df/df-symlink
+SKIP tests/df/df-symlink.sh (exit status: 77)
+SKIP: tests/df/no-mtab-status
+SKIP tests/df/no-mtab-status.sh (exit status: 77)
+SKIP: tests/df/skip-duplicates
+SKIP tests/df/skip-duplicates.sh (exit status: 77)
+SKIP: tests/df/skip-rootfs
+SKIP tests/df/skip-rootfs.sh (exit status: 77)
+SKIP: tests/dd/direct
+SKIP tests/dd/direct.sh (exit status: 77)
+SKIP: tests/df/total-verify
+SKIP tests/df/total-verify.sh (exit status: 77)
+SKIP: tests/du/2g
+SKIP tests/du/2g.sh (exit status: 77)
+SKIP: tests/du/fd-leak
+SKIP tests/du/fd-leak.sh (exit status: 77)
+SKIP: tests/du/move-dir-while-traversing
+SKIP tests/du/move-dir-while-traversing.sh (exit status: 77)
+SKIP: tests/du/threshold
+SKIP tests/du/threshold.sh (exit status: 77)
+SKIP: tests/id/gnu-zero-uids
+SKIP tests/id/gnu-zero-uids.sh (exit status: 77)
+SKIP: tests/id/no-context
+SKIP tests/id/no-context.sh (exit status: 77)
+SKIP: tests/id/context
+SKIP tests/id/context.sh (exit status: 77)
+SKIP: tests/id/smack
+SKIP tests/id/smack.sh (exit status: 77)
+SKIP: tests/install/install-C-selinux
+SKIP tests/install/install-C-selinux.sh (exit status: 77)
+SKIP: tests/ls/getxattr-speedup
+SKIP tests/ls/getxattr-speedup.sh (exit status: 77)
+SKIP: tests/ls/no-cap
+SKIP tests/ls/no-cap.sh (exit status: 77)
+SKIP: tests/ls/slink-acl
+SKIP tests/ls/slink-acl.sh (exit status: 77)
+SKIP: tests/ls/stat-dtype
+SKIP tests/ls/stat-dtype.sh (exit status: 77)
+SKIP: tests/ls/stat-free-color
+SKIP tests/ls/stat-free-color.sh (exit status: 77)
+SKIP: tests/ls/stat-free-symlinks
+SKIP tests/ls/stat-free-symlinks.sh (exit status: 77)
+SKIP: tests/mkdir/p-acl
+SKIP tests/mkdir/p-acl.sh (exit status: 77)
+SKIP: tests/mkdir/selinux
+SKIP tests/mkdir/selinux.sh (exit status: 77)
+SKIP: tests/mkdir/restorecon
+SKIP tests/mkdir/restorecon.sh (exit status: 77)
+SKIP: tests/mkdir/smack-no-root
+SKIP tests/mkdir/smack-no-root.sh (exit status: 77)
+SKIP: tests/mv/acl
+SKIP tests/mv/acl.sh (exit status: 77)
+SKIP: tests/mv/atomic
+SKIP tests/mv/atomic.sh (exit status: 77)
+SKIP: tests/mv/atomic2
+SKIP tests/mv/atomic2.sh (exit status: 77)
+SKIP: tests/mv/leak-fd
+SKIP tests/mv/leak-fd.sh (exit status: 77)
+SKIP: tests/mv/symlink-onto-hardlink-to-self
+SKIP tests/mv/symlink-onto-hardlink-to-self.sh (exit status: 77)
+SKIP: tests/tail-2/big-4gb
+SKIP tests/tail-2/big-4gb.sh (exit status: 77)
+SKIP: tests/chown/basic
+SKIP tests/chown/basic.sh (exit status: 77)
+SKIP: tests/cp/cp-a-selinux
+SKIP tests/cp/cp-a-selinux.sh (exit status: 77)
+SKIP: tests/cp/preserve-gid
+SKIP tests/cp/preserve-gid.sh (exit status: 77)
+SKIP: tests/cp/special-bits
+SKIP tests/cp/special-bits.sh (exit status: 77)
+SKIP: tests/cp/cp-mv-enotsup-xattr
+SKIP tests/cp/cp-mv-enotsup-xattr.sh (exit status: 77)
+SKIP: tests/cp/capability
+SKIP tests/cp/capability.sh (exit status: 77)
+SKIP: tests/cp/sparse-fiemap
+SKIP tests/cp/sparse-fiemap.sh (exit status: 77)
+SKIP: tests/dd/skip-seek-past-dev
+SKIP tests/dd/skip-seek-past-dev.sh (exit status: 77)
+SKIP: tests/df/problematic-chars
+SKIP tests/df/problematic-chars.sh (exit status: 77)
+SKIP: tests/df/over-mount-device
+SKIP tests/df/over-mount-device.sh (exit status: 77)
+SKIP: tests/du/bind-mount-dir-cycle
+SKIP tests/du/bind-mount-dir-cycle.sh (exit status: 77)
+SKIP: tests/du/bind-mount-dir-cycle-v2
+SKIP tests/du/bind-mount-dir-cycle-v2.sh (exit status: 77)
+SKIP: tests/id/setgid
+SKIP tests/id/setgid.sh (exit status: 77)
+SKIP: tests/install/install-C-root
+SKIP tests/install/install-C-root.sh (exit status: 77)
+SKIP: tests/ls/capability
+SKIP tests/ls/capability.sh (exit status: 77)
+SKIP: tests/ls/nameless-uid
+SKIP tests/ls/nameless-uid.sh (exit status: 77)
+SKIP: tests/misc/chcon
+SKIP tests/misc/chcon.sh (exit status: 77)
+SKIP: tests/misc/chroot-credentials
+SKIP tests/misc/chroot-credentials.sh (exit status: 77)
+SKIP: tests/misc/selinux
+SKIP tests/misc/selinux.sh (exit status: 77)
+SKIP: tests/misc/truncate-owned-by-other
+SKIP tests/misc/truncate-owned-by-other.sh (exit status: 77)
+SKIP: tests/mkdir/writable-under-readonly
+SKIP tests/mkdir/writable-under-readonly.sh (exit status: 77)
+SKIP: tests/mkdir/smack-root
+SKIP tests/mkdir/smack-root.sh (exit status: 77)
+SKIP: tests/mv/hardlink-case
+SKIP tests/mv/hardlink-case.sh (exit status: 77)
+SKIP: tests/mv/sticky-to-xpart
+SKIP tests/mv/sticky-to-xpart.sh (exit status: 77)
+SKIP: tests/rm/fail-2eperm
+SKIP tests/rm/fail-2eperm.sh (exit status: 77)
+SKIP: tests/rm/no-give-up
+SKIP tests/rm/no-give-up.sh (exit status: 77)
+SKIP: tests/rm/one-file-system
+SKIP tests/rm/one-file-system.sh (exit status: 77)
+SKIP: tests/rm/read-only
+SKIP tests/rm/read-only.sh (exit status: 77)
+SKIP: tests/tail-2/append-only
+SKIP tests/tail-2/append-only.sh (exit status: 77)
+SKIP: tests/touch/now-owned-by-other
+SKIP tests/touch/now-owned-by-other.sh (exit status: 77)
+SKIP: tests/factor/t00
+SKIP tests/factor/t00.sh (exit status: 77)
+SKIP: tests/factor/t01
+SKIP tests/factor/t01.sh (exit status: 77)
+SKIP: tests/factor/t02
+SKIP tests/factor/t02.sh (exit status: 77)
+SKIP: tests/factor/t03
+SKIP tests/factor/t03.sh (exit status: 77)
+SKIP: tests/factor/t04
+SKIP tests/factor/t04.sh (exit status: 77)
+SKIP: tests/factor/t05
+SKIP tests/factor/t05.sh (exit status: 77)
+SKIP: tests/factor/t06
+SKIP tests/factor/t06.sh (exit status: 77)
+SKIP: tests/factor/t07
+SKIP tests/factor/t07.sh (exit status: 77)
+SKIP: tests/factor/t08
+SKIP tests/factor/t08.sh (exit status: 77)
+SKIP: tests/factor/t09
+SKIP tests/factor/t09.sh (exit status: 77)
+SKIP: tests/factor/t10
+SKIP tests/factor/t10.sh (exit status: 77)
+SKIP: tests/factor/t11
+SKIP tests/factor/t11.sh (exit status: 77)
+SKIP: tests/factor/t12
+SKIP tests/factor/t12.sh (exit status: 77)
+SKIP: tests/factor/t13
+SKIP tests/factor/t13.sh (exit status: 77)
+SKIP: tests/factor/t14
+SKIP tests/factor/t14.sh (exit status: 77)
+SKIP: tests/factor/t15
+SKIP tests/factor/t15.sh (exit status: 77)
+SKIP: tests/factor/t16
+SKIP tests/factor/t16.sh (exit status: 77)
+SKIP: tests/factor/t17
+SKIP tests/factor/t17.sh (exit status: 77)
+SKIP: tests/factor/t18
+SKIP tests/factor/t18.sh (exit status: 77)
+SKIP: tests/factor/t19
+SKIP tests/factor/t19.sh (exit status: 77)
+SKIP: tests/factor/t20
+SKIP tests/factor/t20.sh (exit status: 77)
+SKIP: tests/factor/t21
+SKIP tests/factor/t21.sh (exit status: 77)
+SKIP: tests/factor/t22
+SKIP tests/factor/t22.sh (exit status: 77)
+SKIP: tests/factor/t23
+SKIP tests/factor/t23.sh (exit status: 77)
+SKIP: tests/factor/t24
+SKIP tests/factor/t24.sh (exit status: 77)
+SKIP: tests/factor/t25
+SKIP tests/factor/t25.sh (exit status: 77)
+SKIP: tests/factor/t26
+SKIP tests/factor/t26.sh (exit status: 77)
+SKIP: tests/factor/t27
+SKIP tests/factor/t27.sh (exit status: 77)
+SKIP: tests/factor/t28
+SKIP tests/factor/t28.sh (exit status: 77)
+SKIP: tests/factor/t29
+SKIP tests/factor/t29.sh (exit status: 77)
+SKIP: tests/factor/t30
+SKIP tests/factor/t30.sh (exit status: 77)
+SKIP: tests/factor/t31
+SKIP tests/factor/t31.sh (exit status: 77)
+SKIP: tests/factor/t32
+SKIP tests/factor/t32.sh (exit status: 77)
+SKIP: tests/factor/t33
+SKIP tests/factor/t33.sh (exit status: 77)
+SKIP: tests/factor/t34
+SKIP tests/factor/t34.sh (exit status: 77)
+SKIP: tests/factor/t35
+SKIP tests/factor/t35.sh (exit status: 77)
+SKIP: tests/factor/t36
+SKIP tests/factor/t36.sh (exit status: 77)
+# TOTAL: 580
+# PASS:  440
+# SKIP:  139
+# XFAIL: 0
+# FAIL:  1
 # XPASS: 0
 # ERROR: 0
