@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -129,6 +129,13 @@ COMPONENT_TEST_TRANSFORMS += \
         '-e "s|\(^Skip\).*|\1|" ' \
 	'-e "s|\(^u=\).*|\1|" ' \
 	'-e "s|\(^cc\).*|\1|" '
+
+# Perl escapes certain chracters to protect them from shell. See function
+# 'quote()' in Makefile.SH. This escaped path shows in test results, so we have
+# to take it into account.
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s|$(subst -,\\\\\\\\-,$(@D))|\\$$(@D)|g" '
+
 
 #
 # perl's install path for sparc is based off the value of the
