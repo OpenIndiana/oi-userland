@@ -43,6 +43,15 @@ TPNO_GSSKEX=		20377
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
+
+# 11.3 has conflicts with ON's SunSSH package, which had not yet added
+# mediated links, thus cannot be updated to.
+ifeq ($(BUILD_TYPE), evaluation)
+BUILD_64=
+INSTALL_64=
+PUBLISH_STAMP=
+endif
+
 include $(WS_MAKE_RULES)/ips.mk
 
 # Enable ASLR for this component
