@@ -443,7 +443,7 @@ def _get_node_architecture(node):
             cpu_arch, _err = _exec_ipmitool(driver_info, ipmi_cmd_args)
         except Exception as err:
             LOG.error(_LE("Failed to get node architecture from IPMI : %s" %
-                      (err)))
+                          (err)))
             raise exception.IPMIFailure(cmd=err)
 
         propdict = {'cpu_arch': cpu_arch}
@@ -499,8 +499,10 @@ def _check_deploy_state(task, node_uuid, deploy_thread):
             # Update node with done/fail state
             if task.node:
                 task.node.provision_state = states.DEPLOYFAIL
-                task.node.last_error = "Failed to find node."
-                task.node.target_provision_state = states.AVAILABLE
+                task.node.last_error = "Failed to find node whilst " + \
+                                       "transitioning to '%s' state." % \
+                                       (task.node.target_provision_state)
+                task.node.target_provision_state = states.NOSTATE
                 task.node.save()
         raise loopingcall.LoopingCallDone()
     except Exception as err:
@@ -512,9 +514,11 @@ def _check_deploy_state(task, node_uuid, deploy_thread):
         if deploy_thread.state in [states.DEPLOYING, states.DEPLOYWAIT]:
             # Update node with done/fail state
             if task.node:
-                task.node.last_error = "Failed to find node."
+                task.node.last_error = "Failed to find node whilst " + \
+                                       "transitioning to '%s' state." % \
+                                       (task.node.target_provision_state)
                 task.node.provision_state = states.DEPLOYFAIL
-                task.node.target_provision_state = states.AVAILABLE
+                task.node.target_provision_state = states.NOSTATE
                 task.node.save()
         raise loopingcall.LoopingCallDone()
 
@@ -539,7 +543,7 @@ def _check_deploy_state(task, node_uuid, deploy_thread):
             cur_node.provision_state = deploy_thread.state
         else:
             cur_node.provision_state = deploy_thread.state
-        cur_node.target_provision_state = states.AVAILABLE
+        cur_node.target_provision_state = states.NOSTATE
         cur_node.save()
 
         # Raise LoopincCallDone to terminate deployment checking.
