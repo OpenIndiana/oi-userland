@@ -66,17 +66,22 @@ COMPONENT_PREP_ACTION = \
 # Needed to get libpurple to link properly.
 LIBS += -lresolv
 CONFIGURE_ENV +=	LIBS="$(LIBS)"
-CONFIGURE_ENV +=	PKG_CONFIG_PATH=/usr/lib/pkgconfig/gnutls-3
+CONFIGURE_ENV +=	PKG_CONFIG_PATH=/usr/lib/64/pkgconfig/gnutls-3
+
+# Version of Perl to use.
+PERL_VERSION =  5.20
+
+CONFIGURE_ENV += "ac_cv_path_perlpath=/usr/perl5/$(PERL_VERSION)/bin/perl"
+
+CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/bin
 
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	--disable-binreloc
 CONFIGURE_OPTIONS +=	--enable-cyrus-sasl
-CONFIGURE_OPTIONS +=	--enable-nss=no
-CONFIGURE_OPTIONS +=	--enable-gnutls=yes
+CONFIGURE_OPTIONS +=	--disable-nss
+CONFIGURE_OPTIONS +=	--enable-gnutls
 CONFIGURE_OPTIONS +=	--with-gnutls-includes=/usr/include/gnutls-3
-CONFIGURE_OPTIONS +=	--with-gnutls-libs=/usr/lib/gnutls-3
-CONFIGURE_OPTIONS +=	--with-nspr-includes=/usr/include/mps
-CONFIGURE_OPTIONS +=	--with-nspr-libs=/usr/lib/mps
+CONFIGURE_OPTIONS +=	--with-gnutls-libs=/usr/lib/64/gnutls-3
 CONFIGURE_OPTIONS +=	--enable-gnome-keyring
 CONFIGURE_OPTIONS +=	--disable-gevolution
 CONFIGURE_OPTIONS +=	--enable-cap
@@ -91,11 +96,11 @@ COMPONENT_BUILD_ARGS +=	V=1
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-configure:	$(CONFIGURE_32)
+configure:	$(CONFIGURE_64)
 
-build:          $(BUILD_32)
+build:          $(BUILD_64)
 
-install:        $(INSTALL_32)
+install:        $(INSTALL_64)
 
 test:           $(NO_TESTS)
 
@@ -114,9 +119,8 @@ REQUIRED_PACKAGES += library/gnome/gnome-keyring
 REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/libidn
 REQUIRED_PACKAGES += library/libxml2
-REQUIRED_PACKAGES += library/nspr
 REQUIRED_PACKAGES += library/python/python-dbus-27
-REQUIRED_PACKAGES += runtime/perl-512
+REQUIRED_PACKAGES += runtime/perl-520
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += runtime/tk-8
@@ -125,7 +129,6 @@ REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/libdbus-glib
 REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += system/library/security/libsasl
 REQUIRED_PACKAGES += system/library/security/libsasl2
 REQUIRED_PACKAGES += system/network/avahi
 REQUIRED_PACKAGES += x11/library/libice
