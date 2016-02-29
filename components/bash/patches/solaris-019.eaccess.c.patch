@@ -1,3 +1,7 @@
+# Fix for CVE-2012-3410.
+# Solaris-specific. There are no threads in bash, therefore
+# no concurrency issues on accessing a static buffer.
+# Not for upstream, their fix is too Linux-specific
 --- lib/sh/eaccess.c	2012-10-09 12:45:17.924274300 -0700
 +++ lib/sh/eaccess.c	2012-10-09 12:44:21.930979200 -0700
 @@ -40,6 +40,10 @@

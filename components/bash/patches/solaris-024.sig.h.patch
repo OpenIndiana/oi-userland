@@ -1,0 +1,13 @@
+# We want to include <signal.h> in Solaris, because it is useful.
+# We should send this upstream.
+--- sig.h	2013-02-27 07:17:20.000000000 -0800
++++ sig.h	2015-04-02 10:36:29.259132282 -0700
+@@ -25,7 +25,7 @@
+ 
+ #include "stdc.h"
+ 
+-#if !defined (SIG_DFL)
++#if !defined(SIG_DFL) || defined(SOLARIS)
+ #  include <signal.h>		/* for sig_atomic_t */
+ #endif
+ 

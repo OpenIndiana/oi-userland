@@ -18,21 +18,21 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bash
-COMPONENT_VERSION=	4.2
+COMPONENT_VERSION=	4.3
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/bash/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH = \
-    sha256:a27a1179ec9c0830c65c6aa5d7dab60f7ce1a2a608618570f96bfa72e95ab3d8
+    sha256:afc687a28e0e24dc21b988fa159ff9dbcf6b7caa92ade8645cc6d5605cd024d4
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/bash/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/bash
 
-TPNO=			7265
+TPNO=			21712
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -61,8 +61,8 @@ CFLAGS += -xinline=%auto
 CFLAGS += -xbuiltin=%none
 
 CFLAGS += $(XPG6MODE)
-CFLAGS += $(CPP_POSIX)
 CFLAGS += $(CPP_C99_EXTENDED_MATH)
+CFLAGS += -I/usr/include/ncurses
 
 # configure checks for some functions, but doesn't seem to want to link in
 # the required libraries for them. We avoid linking with libthread.so.1
@@ -72,18 +72,27 @@ LIBS =	-lc -lsocket -lgen
 # -z redlocsym -- let's shrink the SHT_SYMTAB as much as we can
 LDFLAGS =	$(LD_Z_REDLOCSYM)
 
+# Results output is slightly different on Intel vs. SPARC.
+COMPONENT_TEST_MASTER = \
+	$(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
+
 # Do not change the order of these regexp transforms.
 COMPONENT_TEST_TRANSFORMS += \
      '-e "/^</d"' \
      '-e "/^>/d"' \
      '-e "/^---/d"' \
+     '-e "/^Testing/d"' \
+     '-e "/m64/d"' \
+     '-e "/DPROGRAM/d"' \
+     '-e "/^rm -f/d"' \
+     '-e "/^ls -l/d"' \
+     '-e "/text/d"' \
+     '-e "/size/d"' \
+     '-e "/bash$$/d"' \
+     '-e "/warning/d"' \
      '-e "s/^[0-9]\{1,\}[a-z]\{1,\}[0-9]\{1,\}//g"' \
      '-e "s/^[0-9]\{1,\},[0-9]\{1,\}[a-z]\{1,\}[0-9]\{1,\},[0-9]\{1,\}//g"' \
-     '-e "/^$$/d"' \
-     '-e "s/i386-pc-//g"' \
-     '-e "s/i386//g"' \
-     '-e "s/sparc-sun-//g"' \
-     '-e "s/sparc//g"'
+     '-e "/^$$/d"'
 
 # The bash test harness needs the GNU userland utilities
 TEST_PATH = "PATH=$(BUILD_DIR_64):$(GNUBIN):$(USRBINDIR)"
@@ -96,50 +105,50 @@ CONFIGURE_OPTIONS  +=		--localstatedir=/var
 CONFIGURE_OPTIONS  += 		--enable-alias
 CONFIGURE_OPTIONS  += 		--enable-arith-for-command
 CONFIGURE_OPTIONS  += 		--enable-array-variables
-CONFIGURE_OPTIONS  += 		--enable-bang-history	
-CONFIGURE_OPTIONS  += 		--enable-brace-expansion	
-CONFIGURE_OPTIONS  += 		--enable-casemod-attributes	
-CONFIGURE_OPTIONS  += 		--enable-casemod-expansions	
-CONFIGURE_OPTIONS  += 		--enable-command-timing	
-CONFIGURE_OPTIONS  += 		--enable-cond-command	
-CONFIGURE_OPTIONS  += 		--enable-cond-regexp	
-CONFIGURE_OPTIONS  += 		--enable-coprocesses	
-CONFIGURE_OPTIONS  += 		--enable-debugger	
-CONFIGURE_OPTIONS  += 		--enable-directory-stack	
-CONFIGURE_OPTIONS  += 		--enable-disabled-builtins	
-CONFIGURE_OPTIONS  += 		--enable-dparen-arithmetic	
-CONFIGURE_OPTIONS  += 		--enable-extended-glob	
-CONFIGURE_OPTIONS  += 		--enable-help-builtin	
-CONFIGURE_OPTIONS  += 		--enable-history	
-CONFIGURE_OPTIONS  += 		--enable-job-control	
-CONFIGURE_OPTIONS  += 		--enable-multibyte	
-CONFIGURE_OPTIONS  += 		--enable-net-redirections	
-CONFIGURE_OPTIONS  += 		--enable-process-substitution	
-CONFIGURE_OPTIONS  += 		--enable-progcomp	
-CONFIGURE_OPTIONS  += 		--enable-prompt-string-decoding	
-CONFIGURE_OPTIONS  += 		--enable-readline	
-CONFIGURE_OPTIONS  += 		--enable-restricted	
-CONFIGURE_OPTIONS  += 		--enable-select	
-CONFIGURE_OPTIONS  += 		--enable-separate-helpfiles	
-CONFIGURE_OPTIONS  += 		--enable-single-help-strings	
-CONFIGURE_OPTIONS  += 		--disable-strict-posix-default	
+CONFIGURE_OPTIONS  += 		--enable-bang-history
+CONFIGURE_OPTIONS  += 		--enable-brace-expansion
+CONFIGURE_OPTIONS  += 		--enable-casemod-attributes
+CONFIGURE_OPTIONS  += 		--enable-casemod-expansions
+CONFIGURE_OPTIONS  += 		--enable-command-timing
+CONFIGURE_OPTIONS  += 		--enable-cond-command
+CONFIGURE_OPTIONS  += 		--enable-cond-regexp
+CONFIGURE_OPTIONS  += 		--enable-coprocesses
+CONFIGURE_OPTIONS  += 		--enable-debugger
+CONFIGURE_OPTIONS  += 		--enable-directory-stack
+CONFIGURE_OPTIONS  += 		--enable-disabled-builtins
+CONFIGURE_OPTIONS  += 		--enable-dparen-arithmetic
+CONFIGURE_OPTIONS  += 		--enable-extended-glob
+CONFIGURE_OPTIONS  += 		--enable-help-builtin
+CONFIGURE_OPTIONS  += 		--enable-history
+CONFIGURE_OPTIONS  += 		--enable-job-control
+CONFIGURE_OPTIONS  += 		--enable-multibyte
+CONFIGURE_OPTIONS  += 		--enable-net-redirections
+CONFIGURE_OPTIONS  += 		--enable-process-substitution
+CONFIGURE_OPTIONS  += 		--enable-progcomp
+CONFIGURE_OPTIONS  += 		--enable-prompt-string-decoding
+CONFIGURE_OPTIONS  += 		--enable-readline
+CONFIGURE_OPTIONS  += 		--enable-restricted
+CONFIGURE_OPTIONS  += 		--enable-select
+CONFIGURE_OPTIONS  += 		--enable-separate-helpfiles
+CONFIGURE_OPTIONS  += 		--enable-single-help-strings
+CONFIGURE_OPTIONS  += 		--disable-strict-posix-default
 CONFIGURE_OPTIONS  += 		--enable-usg-echo-default=yes
 CONFIGURE_OPTIONS  += 		--enable-xpg-echo-default=yes
-CONFIGURE_OPTIONS  += 		--enable-mem-scramble	
-CONFIGURE_OPTIONS  += 		--disable-profiling	
-CONFIGURE_OPTIONS  += 		--enable-static-link	
+CONFIGURE_OPTIONS  += 		--enable-mem-scramble
+CONFIGURE_OPTIONS  += 		--disable-profiling
+CONFIGURE_OPTIONS  += 		--enable-static-link
 CONFIGURE_OPTIONS  += 		--enable-largefile
-CONFIGURE_OPTIONS  += 		--enable-nls	
+CONFIGURE_OPTIONS  += 		--enable-nls
 CONFIGURE_OPTIONS  += 		--with-bash-malloc=yes
-CONFIGURE_OPTIONS  += 		--with-curses	
-CONFIGURE_OPTIONS  += 		--with-installed-readline=no	
+CONFIGURE_OPTIONS  += 		--with-curses
+CONFIGURE_OPTIONS  += 		--with-installed-readline=no
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 
 COMPONENT_TEST_DIR =		$(BUILD_DIR_64)
 COMPONENT_TEST_ENV =		- $(TEST_PATH)
 
 # The tests use /tmp/xx, and there can only be one user running
-# the them at a time. Need to remove /tmp/xx after testing to 
+# the them at a time. Need to remove /tmp/xx after testing to
 # avoid permission issues for other users running these tests
 COMPONENT_POST_TEST_ACTION =	rm -f /tmp/xx
 
@@ -159,5 +168,7 @@ test:	$(TEST_64)
 
 system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
+REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
+
