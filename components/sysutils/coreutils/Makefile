@@ -18,23 +18,29 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		coreutils
-COMPONENT_VERSION=	8.22
+COMPONENT_VERSION=	8.25
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/coreutils/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:5b3e94998152c017e6c75d56b9b994188eb71bf46d4038a642cb9141f6ff1212
+    sha256:31e67c057a5b32a582f26408c789e11c2e8d676593324849dcf5779296cdce87
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/coreutils/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gnu-coreutils
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/configure.mk
+include $(WS_TOP)/make-rules/ips.mk
+
+
+# We need the GNU grep command to configure/build.
+PATH=/usr/gnu/bin:/usr/bin
+
+PATCH_LEVEL=		0
 
 CONFIGURE_PREFIX	 =	/usr/gnu
 CONFIGURE_OPTIONS	+=	--libdir=/usr/lib
@@ -64,12 +70,10 @@ unexport SHELLOPTS
 COMPONENT_TEST_ENV +=   PATH=$(PROTOUSRSBINDIR):/usr/bin
 
 # Currently 2 tests fail
-#   test-localename uses internal gl_locale_name_thread_unsafe, which doesn't
-#      support illumos
-#   test-getlogin is a bit tricky when run under su, as it compares
-#      $USER or $LOGIN and getlogin()
+#   dircolors.pl
+#   printf-quote.sh
 test:		install $(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_TOP)/make-rules/depend.mk
