@@ -76,7 +76,6 @@ CONFIGURE_ENV += "ac_cv_path_perlpath=/usr/perl5/$(PERL_VERSION)/bin/perl"
 CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/bin
 
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS +=	--disable-binreloc
 CONFIGURE_OPTIONS +=	--enable-cyrus-sasl
 CONFIGURE_OPTIONS +=	--disable-nss
 CONFIGURE_OPTIONS +=	--enable-gnutls
@@ -89,7 +88,6 @@ CONFIGURE_OPTIONS +=	--disable-meanwhile
 CONFIGURE_OPTIONS +=	--disable-nm
 CONFIGURE_OPTIONS +=	--disable-consoleui
 CONFIGURE_OPTIONS +=	--disable-vv
-CONFIGURE_OPTIONS +=	--with-perl-lib=vendor
 
 # Always show the build and link lines for easier debugging.
 COMPONENT_BUILD_ARGS +=	V=1
