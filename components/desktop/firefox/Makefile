@@ -31,20 +31,20 @@ COMPILER =	gcc
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		firefox
-COMPONENT_VERSION =		31.8.0esr
+COMPONENT_VERSION =		38.5.0esr
 COMPONENT_PROJECT_URL =		http://www.mozilla.com/firefox
-COMPONENT_SRC =			mozilla-esr31
+COMPONENT_SRC =			mozilla-esr38
 COMPONENT_SRC_NAME =		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =		$(COMPONENT_SRC_NAME).source.tar.bz2
 COMPONENT_ARCHIVE_HASH = \
-    sha256:4c14021637ba61690ac2b52eff31c9bb96e4a04d334bf934d33932c9c382c50c
+	sha256:2a1f90cfe390ab20be88fed38cb9f61a18281cfbee47505c67e0254d339cdb20
 MOZILLA_FTP = 		        http://ftp.mozilla.org/pub/mozilla.org/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE_URL =		$(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB =		firefox/browser
 
-TPNO=				23616	
+TPNO=				26828	
 
-IPS_COMPONENT_VERSION =		31.8.0
+IPS_COMPONENT_VERSION =		38.5.0
 
 # There are a set of .xpi files (as given in the LANG_LIST definition below)
 # that we need. These are available under:
@@ -53,9 +53,9 @@ IPS_COMPONENT_VERSION =		31.8.0
 # a compressed tarball of them, and made that available locally for download.
 # Downloading them individually can be a problem because firefox/thunderbird 
 # collide due to different files with identical .xpi names.
-COMPONENT_ARCHIVE_1 =           firefox-31.8.0esr-xpi.tar.gz
+COMPONENT_ARCHIVE_1 =           $(COMPONENT_SRC_NAME)-xpi.tar.gz
 COMPONENT_ARCHIVE_HASH_1 = \
-    sha256:f4be660e98f4bfac9e8b1a5ba39f74dc201697fe857b4f7c5dd8f3204837df54
+	sha256:1fe09d5540167cbda3029f4e02640498fbb98ad7b47cdb6b8872e6dcf522a3e1
 COMPONENT_ARCHIVE_URL_1 =       $(INTERNAL_ARCHIVE_MIRROR)/source-archives/$(COMPONENT_ARCHIVE_1)
 
 LANG_LIST = ar be bg ca cs da de el es-AR es-CL es-ES et fi \
@@ -101,15 +101,20 @@ COMPONENT_PRE_CONFIGURE_ACTION += \
 	echo "ac_add_options --enable-ipc" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-system-pixman" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-startup-notification" >> $(MOZCONFIG) ; \
-	echo "ac_add_options --enable-dtrace" >> $(MOZCONFIG) ;
+	echo "ac_add_options --enable-dtrace" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --enable-replace-malloc" >> $(MOZCONFIG) ;
 
-CXXFLAGS +=	-Wno-invalid-offsetof -fpermissive
-CC +=		$(CC_BITS)
-CXX +=		$(CC_BITS)
-
+CXXFLAGS +=     -Wno-invalid-offsetof -fpermissive
+CC +=           $(CC_BITS)
+CXX +=          $(CC_BITS)
 
 CONFIGURE_ENV +=	PKG_CONFIG_PATH=$(CONFIGURE_LIBDIR.$(BITS))/pkgconfig
 CONFIGURE_ENV +=	OS_DEFINES="-D__USE_LEGACY_PROTOTYPES__"
+CONFIGURE_ENV +=        CXXFLAGS='-xlibmil -xlibmopt -lCrun -lCstd -features=tmplrefstatic,no%except -D_XOPEN_SOURCE=500 -D__EXTENSIONS__ -template=no%extdef'
+# -L.../dist/lib needs to be set otherwise it will report missing libnss3.so, 
+# libssl3.so, etc, while linking.
+CONFIGURE_ENV +=        LDFLAGS="-z ignore -z interpose -B nodirect -L$(BUILD_DIR_32)/dist/lib"
+
 
 CONFIGURE_ENV +=	MOZCONFIG=$(MOZCONFIG)
 CONFIGURE_ENV +=	"CC=$(CC)"
@@ -180,6 +185,7 @@ REQUIRED_PACKAGES += library/gnome/gnome-libs
 REQUIRED_PACKAGES += library/graphics/pixman
 REQUIRED_PACKAGES += library/libevent
 REQUIRED_PACKAGES += library/libffi
+REQUIRED_PACKAGES += library/nspr
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
@@ -192,4 +198,4 @@ REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxrender
-REQUIRED_PACKAGES += x11/library/toolkit/libxt 
+REQUIRED_PACKAGES += x11/library/toolkit/libxt

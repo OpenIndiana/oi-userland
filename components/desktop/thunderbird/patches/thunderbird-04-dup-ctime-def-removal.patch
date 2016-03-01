@@ -1,0 +1,29 @@
+In S12, ctime_r only takes 2 arguments. Fix for Solaris.
+In S11, ctime_r still takes 3 arguments. We should eventually look into
+modifying this patch with an ifdef for SOLARIS_11 since this will not work
+on S11. 
+This should be investigated for sending upstream.
+
+--- comm-esr38/ldap/sdks/c-sdk/ldap/libraries/libldap/tmplout.c.orig	2015-04-15 14:18:18.428844179 +0530
++++ comm-esr38/ldap/sdks/c-sdk/ldap/libraries/libldap/tmplout.c	2015-04-15 14:20:02.153860191 +0530
+@@ -48,11 +48,6 @@
+ #endif
+ 
+ 
+-/* This is totally lame, since it should be coming from time.h, but isn't. */
+-#if defined(SOLARIS) 
+-char *ctime_r(const time_t *, char *, int);
+-#endif
+-
+ static int do_entry2text( LDAP *ld, char *buf, char *base, LDAPMessage *entry,
+ 	struct ldap_disptmpl *tmpl, char **defattrs, char ***defvals,
+ 	writeptype writeproc, void *writeparm, char *eol, int rdncount,
+@@ -962,7 +957,7 @@ time2text( char *ldtimestr, int dateonly
+     }
+ 
+     gmttime = gtime( &t );
+-    timestr = NSLDAPI_CTIME( &gmttime, buf, sizeof(buf) );
++    timestr = ctime_r( &gmttime, buf);
+ 
+     timestr[ strlen( timestr ) - 1 ] = zone;	/* replace trailing newline */
+     if ( dateonly ) {
