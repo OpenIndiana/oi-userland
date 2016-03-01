@@ -80,10 +80,15 @@ export LC_ALL=C
 SHELL=	/bin/bash
 
 # We want "nightly" as our publisher, to match other consolidations and
-# facilitate migrations.  G11N wants $(CONSOLIDATION)-localizable for
+# facilitate migrations (except for evaluation builds, which need to use
+# "solaris" as the publisher).  G11N wants $(CONSOLIDATION)-localizable for
 # the localizable publisher.
 CONSOLIDATION =	userland
+ifeq ($(BUILD_TYPE),evaluation)
+PUBLISHER ?=	solaris
+else
 PUBLISHER ?=	nightly
+endif
 PUBLISHER_LOCALIZABLE ?=	$(CONSOLIDATION)-localizable
 
 # Defines $(space) as a single blank space, so we can use it to convert
