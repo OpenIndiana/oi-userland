@@ -16,30 +16,23 @@ include ../../../make-rules/shared-macros.mk
 
 PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
 
-COMPONENT_NAME=		Coherence
-COMPONENT_VERSION=	0.6.6.2
-COMPONENT_REVISION=	1
-COMPONENT_PROJECT_URL=	http://coherence.beebits.net
+COMPONENT_NAME=		netifaces
+COMPONENT_VERSION=	0.10.4
+COMPONENT_PROJECT_URL=	https://pypi.python.org/pypi/netifaces
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:0b54a6ba88c1ff6274aadb68ff37b8a3961b4c6acf5ded291c5dea936a311ba4
-COMPONENT_ARCHIVE_URL=	http://coherence.beebits.net/download/$(COMPONENT_ARCHIVE)
+    sha256:9656a169cb83da34d732b0eb72b39373d48774aee009a3d1272b7ea2ce109cde
+COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/source/n/netifaces/$(COMPONENT_ARCHIVE)
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk
 
 # common targets
-build:		$(BUILD_NO_ARCH)
+build:		$(BUILD_32)
 
-install:	$(INSTALL_NO_ARCH)
-
-COMPONENT_POST_INSTALL_ACTION = \
-        (cd $(PROTO_DIR) ; \
-                $(MV) usr/bin/coherence usr/bin/coherence-$(PYTHON_VERSION); \
-		$(GSED) -i -e "s:/usr/bin/env python:$(PYTHON.$(PYTHON_VERSION).32):" usr/lib/python*/vendor-packages/coherence/extern/youtubedl/youtubedl.py )
-
+install:	$(INSTALL_32)
 
 test:           $(NO_TEST)
 
