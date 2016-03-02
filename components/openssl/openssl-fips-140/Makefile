@@ -29,20 +29,22 @@ PATH=$(PARFAIT_TOOLS):$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin:/usr/perl5/bin
 endif
 
 COMPONENT_NAME =	openssl-fips-140
-# Note that this is the OpenSSL version that is used to build FIPS-140 certified
-# libraries. However, we use the FIPS canister version for the IPS package.
-COMPONENT_VERSION =	1.0.2f
+# Note: COMPONENT_VERSION is the core OpenSSL version, and IPS_COMPONENT_VERSION
+# is the FIPS module version. The COMPONENT_VERSION changes with the core
+# OpenSSL version, but the IPS_COMPONENT_VERSION is purposely only to change if
+# the FIPS module version changes.
+COMPONENT_VERSION =	1.0.2g
 IPS_COMPONENT_VERSION = 2.0.6
 COMPONENT_PROJECT_URL=	http://www.openssl.org/
 COMPONENT_SRC_NAME =	openssl
 COMPONENT_SRC =		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:932b4ee4def2b434f85435d9e3e19ca8ba99ce9a065a61524b429a9d5e9b2e9c
+    sha256:b784b1b3907ce39abf4098702dade6365522a253ad1552e267a9a0e89594aa33
 COMPONENT_ARCHIVE_URL =	$(COMPONENT_PROJECT_URL)source/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/openssl
 
-TPNO=			26527
+TPNO=			27085
 
 # Clone the patch files to the patches-all dir.
 # COPY_COMMON_FILES is there so that rsync is called as soon as

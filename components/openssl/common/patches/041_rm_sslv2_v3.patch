@@ -155,70 +155,48 @@
  flagged with SSLv3. No new ciphers were added by TLSv1.1.
  
  =item Kx=<key exchange>
---- openssl-1.0.1/doc/ssl/SSL_CTX_new.pod	Tue Jan 20 04:33:36 2015
-+++ openssl-1.0.1/doc/ssl/SSL_CTX_new.pod.new	Tue May 26 11:37:24 2015
-@@ -25,19 +25,12 @@
+--- openssl-1.x/doc/ssl/SSL_CTX_new.pod	Tue Jan 20 04:33:36 2015
++++ openssl-1.x/doc/ssl/SSL_CTX_new.pod.new	Tue May 26 11:37:24 2015
+@@ -8,7 +8,6 @@
+ TLSv1_1_method, TLSv1_1_server_method, TLSv1_1_client_method,
+ TLSv1_method, TLSv1_server_method, TLSv1_client_method,
+ SSLv3_method, SSLv3_server_method, SSLv3_client_method,
+-SSLv2_method, SSLv2_server_method, SSLv2_client_method,
+ DTLS_method, DTLS_server_method, DTLS_client_method,
+ DTLSv1_2_method, DTLSv1_2_server_method, DTLSv1_2_client_method,
+ DTLSv1_method, DTLSv1_server_method, DTLSv1_client_method -
+@@ -70,7 +69,7 @@
+ These are the general-purpose I<version-flexible> SSL/TLS methods.
+ The actual protocol version used will be negotiated to the highest version
+ mutually supported by the client and the server.
+-The supported protocols are SSLv2, SSLv3, TLSv1, TLSv1.1 and TLSv1.2.
++The supported protocols are TLSv1, TLSv1.1 and TLSv1.2.
+ Most applications should use these method, and avoid the version specific
+ methods described below.
  
- =item SSLv2_method(void), SSLv2_server_method(void), SSLv2_client_method(void)
- 
--A TLS/SSL connection established with these methods will only understand
--the SSLv2 protocol. A client will send out SSLv2 client hello messages
--and will also indicate that it only understand SSLv2. A server will only
--understand SSLv2 client hello messages.
-+These functions are deprecated.
- 
- =item SSLv3_method(void), SSLv3_server_method(void), SSLv3_client_method(void)
+@@ -116,20 +115,11 @@
+ =item SSLv3_method(), SSLv3_server_method(), SSLv3_client_method()
  
  A TLS/SSL connection established with these methods will only understand the
--SSLv3 protocol. A client will send out SSLv3 client hello messages
--and will indicate that it only understands SSLv3. A server will only understand
--SSLv3 client hello messages. This especially means, that it will
--not understand SSLv2 client hello messages which are widely used for
--compatibility reasons, see SSLv23_*_method().
+-SSLv3 protocol.  A client will send out SSLv3 client hello messages and will
+-indicate that it only understands SSLv3.  A server will only understand SSLv3
+-client hello messages.  The SSLv3 protocol is deprecated and should not be
+-used.
 +SSLv3 protocol. However, SSLv3 is not supported by this relese of OpenSSL.
  
- =item TLSv1_method(void), TLSv1_server_method(void), TLSv1_client_method(void)
+ =item SSLv2_method(), SSLv2_server_method(), SSLv2_client_method()
  
-@@ -51,34 +44,24 @@
+-A TLS/SSL connection established with these methods will only understand the
+-SSLv2 protocol.  A client will send out SSLv2 client hello messages and will
+-also indicate that it only understand SSLv2.  A server will only understand
+-SSLv2 client hello messages.  The SSLv2 protocol offers little to no security
+-and should not be used.
+-As of OpenSSL 1.0.2g, EXPORT ciphers and 56-bit DES are no longer available
+-with SSLv2.
++These functions are deprecated.
  
- =item SSLv23_method(void), SSLv23_server_method(void), SSLv23_client_method(void)
+ =item DTLS_method(), DTLS_server_method(), DTLS_client_method()
  
--A TLS/SSL connection established with these methods may understand the SSLv2,
--SSLv3, TLSv1, TLSv1.1 and TLSv1.2 protocols.
-+A TLS/SSL connection established with these methods may understand the
-+TLSv1, TLSv1.1 and TLSv1.2 protocols.
- 
--If the cipher list does not contain any SSLv2 ciphersuites (the default
--cipher list does not) or extensions are required (for example server name)
-+If extensions are required (for example server name)
- a client will send out TLSv1 client hello messages including extensions and
- will indicate that it also understands TLSv1.1, TLSv1.2 and permits a
- fallback to SSLv3. A server will support SSLv3, TLSv1, TLSv1.1 and TLSv1.2
- protocols. This is the best choice when compatibility is a concern.
- 
--If any SSLv2 ciphersuites are included in the cipher list and no extensions
--are required then SSLv2 compatible client hellos will be used by clients and
--SSLv2 will be accepted by servers. This is B<not> recommended due to the
--insecurity of SSLv2 and the limited nature of the SSLv2 client hello
--prohibiting the use of extensions.
--
- =back
- 
--The list of protocols available can later be limited using the SSL_OP_NO_SSLv2,
--SSL_OP_NO_SSLv3, SSL_OP_NO_TLSv1, SSL_OP_NO_TLSv1_1 and SSL_OP_NO_TLSv1_2
-+The list of protocols available can later be limited using the 
-+SSL_OP_NO_TLSv1, SSL_OP_NO_TLSv1_1 and SSL_OP_NO_TLSv1_2
- options of the SSL_CTX_set_options() or SSL_set_options() functions.
- Using these options it is possible to choose e.g. SSLv23_server_method() and
- be able to negotiate with all possible clients, but to only allow newer
- protocols like TLSv1, TLSv1.1 or TLS v1.2.
- 
--Applications which never want to support SSLv2 (even is the cipher string
--is configured to use SSLv2 ciphersuites) can set SSL_OP_NO_SSLv2.
--
- SSL_CTX_new() initializes the list of ciphers, the session cache setting,
- the callbacks, the keys and certificates and the options to its default
- values.
 --- openssl-1.0.1/doc/ssl/SSL_CTX_set_cipher_list.pod	Thu Mar 19 06:37:10 2015
 +++ openssl-1.0.1/doc/ssl/SSL_CTX_set_cipher_list.pod.new	Tue May 26 11:38:09 2015
 @@ -54,10 +54,6 @@
@@ -406,26 +384,26 @@
  I<Usually you don't have to include it explicitly because
  it's already included by ssl.h>.
  
-@@ -132,15 +131,15 @@
+@@ -201,15 +200,15 @@
+ =item const SSL_METHOD *B<SSLv2_method>(void);
+ 
+ Constructor for the SSLv2 SSL_METHOD structure for clients, servers
+-or both.
++or both. (deprecated)
  
  =item const SSL_METHOD *B<SSLv2_client_method>(void);
  
--Constructor for the SSLv2 SSL_METHOD structure for a dedicated client.
-+Constructor for the SSLv2 SSL_METHOD structure for a dedicated client. (deprecated)
+-Constructor for the SSLv2 SSL_METHOD structure for clients.
++Constructor for the SSLv2 SSL_METHOD structure for clients. (deprecated)
  
  =item const SSL_METHOD *B<SSLv2_server_method>(void);
  
--Constructor for the SSLv2 SSL_METHOD structure for a dedicated server.
-+Constructor for the SSLv2 SSL_METHOD structure for a dedicated server. (deprecated)
+-Constructor for the SSLv2 SSL_METHOD structure for servers.
++Constructor for the SSLv2 SSL_METHOD structure for servers. (deprecated)
  
- =item const SSL_METHOD *B<SSLv2_method>(void);
+ =back
  
--Constructor for the SSLv2 SSL_METHOD structure for combined client and server.
-+Constructor for the SSLv2 SSL_METHOD structure for combined client and server. (deprecated)
- 
- =item const SSL_METHOD *B<SSLv3_client_method>(void);
- 
-@@ -189,12 +188,12 @@
+@@ -234,12 +233,12 @@
  =item const char *B<SSL_CIPHER_get_name>(SSL_CIPHER *cipher);
  
  Return the internal name of I<cipher> as a string. These are the various
@@ -442,16 +420,7 @@
  
 --- openssl-1.0.1/doc/apps/ciphers.pod	Thu Mar 19 06:37:10 2015
 +++ openssl-1.0.1/doc/apps/ciphers.pod.new	Tue May 26 12:07:35 2015
-@@ -9,8 +9,6 @@
- B<openssl> B<ciphers>
- [B<-v>]
- [B<-V>]
--[B<-ssl2>]
--[B<-ssl3>]
- [B<-tls1>]
- [B<cipherlist>]
- 
-@@ -26,26 +24,14 @@
+@@ -26,26 +24,18 @@
  
  =item B<-v>
  
@@ -470,41 +439,31 @@
  
  Like B<-v>, but include cipher suite codes in output (hex format).
  
--=item B<-ssl3>
--
--only include SSL v3 ciphers.
--
+-=item B<-ssl3>, B<-tls1>
++=item B<-tls1>
+ 
+-This lists ciphers compatible with any of SSLv3, TLSv1, TLSv1.1 or TLSv1.2.
++This lists ciphers compatible with any of TLSv1, TLSv1.1 or TLSv1.2.
+ 
 -=item B<-ssl2>
 -
--only include SSL v2 ciphers.
+-Only include SSLv2 ciphers.
 -
- =item B<-tls1>
+ =item B<-h>, B<-?>
  
- only include TLS v1 ciphers.
-@@ -246,9 +232,9 @@
- ciphers suites using FORTEZZA key exchange, authentication, encryption or all
- FORTEZZA algorithms. Not implemented.
- 
--=item B<TLSv1.2>, B<TLSv1>, B<SSLv3>, B<SSLv2>
-+=item B<TLSv1.2>, B<TLSv1>
- 
--TLS v1.2, TLS v1.0, SSL v3.0 or SSL v2.0 cipher suites respectively. Note:
-+TLS v1.2 or TLS v1.0 cipher suites respectively. Note:
- there are no ciphersuites specific to TLS v1.1.
- 
- =item B<AES128>, B<AES256>, B<AES>
-@@ -579,16 +565,6 @@
+ Print a brief usage message.
+@@ -588,16 +580,6 @@
   TLS_PSK_WITH_AES_128_CBC_SHA              PSK-AES128-CBC-SHA
   TLS_PSK_WITH_AES_256_CBC_SHA              PSK-AES256-CBC-SHA
  
 -=head2 Deprecated SSL v2.0 cipher suites.
 -
 - SSL_CK_RC4_128_WITH_MD5                 RC4-MD5
-- SSL_CK_RC4_128_EXPORT40_WITH_MD5        EXP-RC4-MD5
-- SSL_CK_RC2_128_CBC_WITH_MD5             RC2-MD5
-- SSL_CK_RC2_128_CBC_EXPORT40_WITH_MD5    EXP-RC2-MD5
+- SSL_CK_RC4_128_EXPORT40_WITH_MD5        Not implemented.
+- SSL_CK_RC2_128_CBC_WITH_MD5             RC2-CBC-MD5
+- SSL_CK_RC2_128_CBC_EXPORT40_WITH_MD5    Not implemented.
 - SSL_CK_IDEA_128_CBC_WITH_MD5            IDEA-CBC-MD5
-- SSL_CK_DES_64_CBC_WITH_MD5              DES-CBC-MD5
+- SSL_CK_DES_64_CBC_WITH_MD5              Not implemented.
 - SSL_CK_DES_192_EDE3_CBC_WITH_MD5        DES-CBC3-MD5
 -
  =head1 NOTES
@@ -526,21 +485,18 @@
  [B<-no_tls1>]
  [B<-no_tls1_1>]
  [B<-no_tls1_2>]
-@@ -201,11 +199,11 @@
+@@ -201,9 +199,9 @@
  given as a hexadecimal number without leading 0x, for example -psk
  1a2b3c4d.
  
--=item B<-ssl2>, B<-ssl3>, B<-tls1>, B<-no_ssl2>, B<-no_ssl3>, B<-no_tls1>, B<-no_tls1_1>, B<-no_tls1_2>
+-=item B<-ssl2>, B<-ssl3>, B<-tls1>, B<-tls1_1>, B<-tls1_2>, B<-no_ssl2>, B<-no_ssl3>, B<-no_tls1>, B<-no_tls1_1>, B<-no_tls1_2>
 +=item B<-tls1>, B<-tls1_1>, B<-tls1_2>, B<-no_tls1>, B<-no_tls1_1>, B<-no_tls1_2>
  
--these options disable the use of certain SSL or TLS protocols. By default
-+these options disable the use of certain TLS protocols. By default
- the initial handshake uses a method which should be compatible with all
--servers and permit them to use SSL v3, SSL v2 or TLS as appropriate.
-+servers.
+-These options require or disable the use of the specified SSL or TLS protocols.
++These options require or disable the use of the specified TLS protocols.
+ By default the initial handshake uses a I<version-flexible> method which will
+ negotiate the highest mutually supported protocol version.
  
- Unfortunately there are still ancient and broken servers in use which
- cannot handle this technique and will fail to connect. Some servers only
 @@ -227,10 +225,6 @@
  supported cipher in the list sent by the client. See the B<ciphers>
  command for more information.
@@ -593,19 +549,17 @@
  [B<-no_dhe>]
  [B<-bugs>]
  [B<-hack>]
-@@ -217,11 +217,11 @@
+@@ -217,9 +217,9 @@
  given as a hexadecimal number without leading 0x, for example -psk
  1a2b3c4d.
  
--=item B<-ssl2>, B<-ssl3>, B<-tls1>, B<-no_ssl2>, B<-no_ssl3>, B<-no_tls1>
+-=item B<-ssl2>, B<-ssl3>, B<-tls1>, B<-tls1_1>, B<-tls1_2>, B<-no_ssl2>, B<-no_ssl3>, B<-no_tls1>, B<-no_tls1_1>, B<-no_tls1_2>
 +=item B<-tls1>, B<-tls1_1>, B<-tls1_2>, B<-no_tls1>, B<-no_tls1_1>, B<-no_tls1_2>
  
- these options disable the use of certain SSL or TLS protocols. By default
- the initial handshake uses a method which should be compatible with all
--servers and permit them to use SSL v3, SSL v2 or TLS as appropriate.
-+servers.
- 
- =item B<-bugs>
+-These options require or disable the use of the specified SSL or TLS protocols.
++These options require or disable the use of the specified TLS protocols.
+ By default the initial handshake uses a I<version-flexible> method which will
+ negotiate the highest mutually supported protocol version.
  
 --- openssl-1.0.1/doc/apps/s_time.pod	Thu Jan 15 06:43:49 2015
 +++ openssl-1.0.1/doc/apps/s_time.pod.new	Tue May 26 12:20:09 2015
