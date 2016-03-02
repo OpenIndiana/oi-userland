@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
+<!--
+ CDDL HEADER START
+
+ The contents of this file are subject to the terms of the
+ Common Development and Distribution License (the "License").
+ You may not use this file except in compliance with the License.
+
+ You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+ or http://www.opensolaris.org/os/licensing.
+ See the License for the specific language governing permissions
+ and limitations under the License.
+
+ When distributing Covered Code, include this CDDL HEADER in each
+ file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+ If applicable, add the following below this CDDL HEADER, with the
+ fields enclosed by brackets "[]" replaced with your own identifying
+ information: Portions Copyright [yyyy] [name of copyright owner]
+
+ CDDL HEADER END
+
+	NOTE:  This service manifest is not editable; its contents will
+	be overwritten by package or patch operations, including
+	operating system upgrade.  Make customizations in a different
+	file.
+
+	Service manifest for the DNSCrypt proxy service.
+-->
+<!--
+    Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+    Copyright 2016 Alexander Pyhalov
+-->
+<service_bundle type='manifest' name='dnscrypt-proxy'>
+
+<service name='network/dns/dnscrypt-proxy' type='service' version='1'>
+
+        <dependency name='multi-user'
+                grouping='require_all'
+                restart_on='refresh'
+                type='service'>
+                <service_fmri value='svc:/milestone/multi-user'/>
+        </dependency>
+
+        <instance name='default' enabled='true' >
+		<exec_method type='method' name='start' 
+			exec='/usr/sbin/dnscrypt-proxy -d -R %{options/dnsprovider} -a %{options/local_address}' timeout_seconds='60'>
+			<method_context>
+				<method_credential
+					user='dnscrypt' group='dnscrypt' 
+					privileges='basic,net_privaddr'
+				/>
+			</method_context>
+		</exec_method>
+	
+		<exec_method type='method' name='stop' exec=':kill' 
+			timeout_seconds='60'/>
+	
+		<exec_method type='method' name='refresh' exec=':kill -HUP' 
+			timeout_seconds='60'/>
+	
+		<property_group name='general' type='framework'>
+			<!-- to start stop dnscrypt-proxy services -->
+			<propval name='action_authorization' type='astring'
+				value='solaris.smf.manage.dnscrypt-proxy' />
+			<propval name='value_authorization' type='astring'
+				value='solaris.smf.manage.dnscrypt-proxy' />
+		</property_group>
+	
+	        <!-- Default property settings for dnscrypt proxy instance. -->
+	        <property_group name='options' type='application'>
+	                <propval name='dnsprovider' type='astring' value='dnscrypt.org-fr' />
+	        </property_group>
+	        <property_group name='options' type='application'>
+	                <propval name='local_address' type='astring' value='127.0.0.1:53' />
+	        </property_group>
+	</instance>
+
+	<template>
+		<common_name>
+			<loctext xml:lang='C'>
+				DNSCrypt client
+			</loctext>
+		</common_name>
+		<description>
+			<loctext xml:lang='C'>
+				DNSCrypt client
+			</loctext>
+		</description>
+		<documentation>
+			<manpage title='dnscrypt-proxy' section='8'
+				manpath='/usr/share/man'/>
+		</documentation>
+	</template>
+</service>
+
+</service_bundle>
