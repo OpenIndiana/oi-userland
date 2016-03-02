@@ -980,7 +980,10 @@ class SolarisZonesDriver(driver.ComputeDriver):
         try:
             ua = self._archive_manager.getArchive(image)
         except Exception as ex:
-            reason = ex.get_payload().info
+            if isinstance(ex, rad.client.ObjectError):
+                reason = ex.get_payload().info
+            else:
+                reason = str(ex)
             raise exception.ImageUnacceptable(
                 image_id=instance['image_ref'],
                 reason=reason)
