@@ -40,8 +40,8 @@ include $(WS_MAKE_RULES)/configure.mk
 
 # Cyrus SASL is S12-only (at least for evaluation builds).
 ifeq ($(BUILD_TYPE), evaluation)
-BUILD_32=
-INSTALL_32=
+BUILD_64=
+INSTALL_64=
 PUBLISH_STAMP=
 endif
 
