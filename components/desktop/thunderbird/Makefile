@@ -69,12 +69,17 @@ LANG_LIST = ar bg ca cs da de el es-AR es-ES et eu fi \
 	pt-BR pt-PT ro ru sk sl sq sv-SE tr uk zh-CN zh-TW
 
 # Firefox and Thunderbird share the same firefox*.patch patches. Copy these 
-# patches from the Firefox patches directory, except for patches 42 and 46, 
+# patches from the Firefox patches directory and the Thunderbird patches to a 
+# directory of all files (patches-all), except for Firefox patches 42 and 46, 
 # which don't get applied in Thunderbird.
-COMPONENT_POST_UNPACK_ACTION += \
-	rm -f patches/firefox*.patch ; \
-	cp ../firefox/patches/*.patch patches/ ; \
-	rm -f patches/firefox*42*.patch patches/firefox*46*.patch;
+PATCH_DIR=patches-all
+CLEAN_PATHS += $(PATCH_DIR)
+COPY_COMMON_FILES_1:= $(shell mkdir -p $(PATCH_DIR))
+COPY_COMMON_FILES_2:=  \
+    $(shell /usr/bin/rsync -ac patches/* ../firefox/patches/* $(PATCH_DIR))
+COPY_COMMON_FILES_3:= \
+    $(shell /usr/bin/rm -f $(PATCH_DIR)/firefox*42*.patch $(PATCH_DIR)/firefox*46*.patch)
+
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 
@@ -196,7 +201,7 @@ COMPONENT_TEST_TARGETS=check-jit-test
 COMPONENT_TEST_TRANSFORMS += \
         '-e "/\(^TEST-PASS\).*/d" '
 
-$(SOURCE_DIR)/.patched-firefox38-%: GPATCH_FLAGS += -d $(@D)/mozilla
+$(SOURCE_DIR)/.patched-firefox-%: GPATCH_FLAGS += -d $(@D)/mozilla
 
 configure:	$(CONFIGURE_32)
 
