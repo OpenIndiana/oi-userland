@@ -23,16 +23,16 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		wireshark
-COMPONENT_VERSION=	1.12.9
+COMPONENT_VERSION=	2.0.2
 COMPONENT_PROJECT_URL=	http://www.wireshark.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:fca9c8365a3839f2411e67dddbfd17e87e906dfeb1cb9f91727013e1f2179e80
+    sha256:e921fb072085a5654d899949bb561d0687f4819f7b63ba35777bb949a9b6b9c1
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/src/all-versions/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/wireshark
 
-TPNO=			26265
+TPNO=			27086
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -52,6 +52,7 @@ COMPONENT_PREP_ACTION += ( cd $(@D) ; $(CONFIG_SHELL) autogen.sh );
 
 CONFIGURE_OPTIONS +=	--bindir=/usr/sbin
 CONFIGURE_OPTIONS +=	--disable-usr-local
+CONFIGURE_OPTIONS +=	--disable-androiddump
 CONFIGURE_OPTIONS +=	--disable-randpkt
 CONFIGURE_OPTIONS +=	--disable-dftest
 CONFIGURE_OPTIONS +=	--with-krb5
