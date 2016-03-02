@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 COMPILER =	gcc
@@ -44,6 +44,7 @@ include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
+CC += $(CC_BITS)
 
 # Create the Makefile before we build
 COMPONENT_PRE_BUILD_ACTION = (cd $(@D) ; CC="$(CC)" $(GMAKE) make.fil)
@@ -58,7 +59,7 @@ COMPONENT_BUILD_TARGETS = bcc86 as86 ld86 ar86
 
 
 # common targets
-install build:		$(BUILD_32)
+install build:		$(BUILD_64)
 
 test:		$(NO_TESTS)
 
