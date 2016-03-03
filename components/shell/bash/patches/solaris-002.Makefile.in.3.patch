@@ -1,0 +1,55 @@
+# We need $(CFLAGS) appended to SYSTEM_FLAGS. Otherwise things
+# end up being built with different CFLAGS.
+# Solaris-specific patch. Not for upstream.
+--- Makefile.in	2014-01-25 13:27:30.000000000 -0800
++++ Makefile.in	2015-04-02 11:18:58.143893640 -0700
+@@ -135,13 +135,14 @@
+ LOCALE_DEFS = -DLOCALEDIR='"$(localedir)"' -DPACKAGE='"$(PACKAGE)"'
+ 
+ LOCAL_LIBS = @LOCAL_LIBS@
+-LIBS = $(BUILTINS_LIB) $(LIBRARIES) @LIBS@
++LOCAL_LIBS += -lncurses
++LIBS = $(BUILTINS_LIB) $(LIBRARIES) @LIBS@ @LOCAL_LIBS@
+ LIBS_FOR_BUILD = 
+ 
+ STATIC_LD = @STATIC_LD@
+ LOCAL_LDFLAGS = @LOCAL_LDFLAGS@
+ 
+-SYSTEM_FLAGS = -DPROGRAM='"$(Program)"' -DCONF_HOSTTYPE='"$(Machine)"' -DCONF_OSTYPE='"$(OS)"' -DCONF_MACHTYPE='"$(MACHTYPE)"' -DCONF_VENDOR='"$(VENDOR)"' $(LOCALE_DEFS)
++SYSTEM_FLAGS = -DPROGRAM='"$(Program)"' -DCONF_HOSTTYPE='"$(Machine)"' -DCONF_OSTYPE='"$(OS)"' -DCONF_MACHTYPE='"$(MACHTYPE)"' -DCONF_VENDOR='"$(VENDOR)"' $(LOCALE_DEFS) $(CFLAGS)
+ 
+ BASE_CCFLAGS = $(PROFILE_FLAGS) $(SYSTEM_FLAGS) $(LOCAL_DEFS) \
+ 	  $(DEFS) $(LOCAL_CFLAGS) $(INCLUDES)
+@@ -551,7 +552,7 @@
+ 
+ $(Program):  .build $(OBJECTS) $(BUILTINS_DEP) $(LIBDEP)
+ 	$(RM) $@
+-	$(PURIFY) $(CC) $(BUILTINS_LDFLAGS) $(LIBRARY_LDFLAGS) $(LDFLAGS) -o $(Program) $(OBJECTS) $(LIBS)
++	$(PURIFY) $(CC) $(CFLAGS) $(BUILTINS_LDFLAGS) $(LIBRARY_LDFLAGS) $(LDFLAGS) -o $(Program) $(OBJECTS) $(LIBS)
+ 	ls -l $(Program)
+ 	-$(SIZE) $(Program)
+ 
+@@ -565,10 +566,10 @@
+ 	@echo
+ 
+ bashbug: $(SUPPORT_SRC)bashbug.sh config.h Makefile $(VERSPROG)
+-	@sed -e "s%!MACHINE!%$(Machine)%" -e "s%!OS!%$(OS)%" \
+-	     -e "s%!CFLAGS!%$(CCFLAGS)%" -e "s%!CC!%$(CC)%" \
+-	     -e "s%!RELEASE!%$(Version)%" -e "s%!PATCHLEVEL!%$(PatchLevel)%" \
+-	     -e "s%!MACHTYPE!%$(MACHTYPE)%" -e "s%!RELSTATUS!%$(RELSTATUS)%" \
++	@sed -e "s^!MACHINE!^$(Machine)^" -e "s^!OS!^$(OS)^" \
++	    -e "s^!CFLAGS!^$(CCFLAGS)^" -e "s^!CC!^$(CC)^" \
++	    -e "s^!RELEASE!^$(Version)^" -e "s^!PATCHLEVEL!^$(PatchLevel)^" \
++	    -e "s^!MACHTYPE!^$(MACHTYPE)^" -e "s^!RELSTATUS!^$(RELSTATUS)^" \
+ 	     $(SUPPORT_SRC)bashbug.sh > $@
+ 	@chmod a+rx bashbug
+ 
+@@ -863,7 +864,7 @@
+ 	@-test -d tests || mkdir tests
+ 	@cp $(TESTS_SUPPORT) tests
+ 	@( cd $(srcdir)/tests && \
+-		PATH=$(BUILD_DIR)/tests:$$PATH THIS_SH=$(THIS_SH) $(SHELL) ${TESTSCRIPT} )
++	    PATH=/usr/gnu/bin:$(BUILD_DIR)/tests:$$PATH THIS_SH=$(THIS_SH) $(SHELL) ${TESTSCRIPT} )
+ 
+ symlinks:
+ 	$(SHELL) $(SUPPORT_SRC)fixlinks -s $(srcdir)
