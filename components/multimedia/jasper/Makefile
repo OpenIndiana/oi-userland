@@ -13,10 +13,11 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= jasper
 COMPONENT_VERSION= 1.900.1
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= A free software-based reference implementation of the JPEG-2000 Part-1 CODEC
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).zip
@@ -26,12 +27,13 @@ COMPONENT_ARCHIVE_URL= \
   http://www.ece.uvic.ca/~frodo/jasper/software/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.ece.uvic.ca/~frodo/jasper/
 COMPONENT_FMRI = codec/jasper
+COMPONENT_CLASSIFICATION = System/Multimedia Libraries
 COMPONENT_LICENSE = BSD-like
 COMPONENT_LICENSE_FILE = LICENSE
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/configure.mk
+include $(WS_TOP)/make-rules/ips.mk
 
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-shared
