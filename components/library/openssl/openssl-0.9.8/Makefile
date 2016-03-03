@@ -12,7 +12,7 @@
 # Copyright (c) 2014 Alexander Pyhalov. All rights reserved
 #
 
-include ../../../make-rules/shared-macros.mk
+include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openssl
 COMPONENT_VERSION=	0.9.8zh
