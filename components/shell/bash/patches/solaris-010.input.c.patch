@@ -1,0 +1,16 @@
+# libreadline needs to include <sys/filio.h> (FIONREAD) on Solaris.
+# Solaris-specific patch.
+# Not for upstream.
+--- lib/readline/input.c	2009-04-19 10:12:03.000000000 -0700
++++ lib/readline/input.c	2010-09-01 10:46:23.386144948 -0700
+@@ -51,6 +51,10 @@
+ #  include <sys/ioctl.h>
+ #endif
+ 
++#if defined(SOLARIS)
++#  include <sys/filio.h>
++#endif
++
+ #include <stdio.h>
+ #include <errno.h>
+ 

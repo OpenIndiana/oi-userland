@@ -1,0 +1,37 @@
+# Test for a /tmp/xx leftover from running the giant bash
+# test harness. This can happen in the test harness run is
+# interrupted with ^C.
+# Without this test, the test harness will start failing
+# for no real reason.
+# Solaris-specific. Not for upstream.
+--- tests/run-all	1999-10-08 08:07:46.000000000 -0700
++++ tests/run-all	2012-10-10 10:06:33.558822000 -0700
+@@ -1,4 +1,4 @@
+-#! /bin/sh
++#!/bin/bash
+ 
+ PATH=.:$PATH	# just to get recho/zecho/printenv if not run via `make tests'
+ export PATH
+@@ -15,6 +15,11 @@
+ 
+ rm -f /tmp/xx
+ 
++if [ -f /tmp/xx ] ; then
++    echo "someone left a /tmp/xx around. I can't test." 
++    exit 1
++fi
++
+ echo Any output from any test, unless otherwise noted, indicates a possible anomaly
+ 
+ for x in run-*
+@@ -22,8 +27,9 @@
+ 	case $x in
+ 	$0|run-minimal|run-gprof)	;;
+ 	*.orig|*~) ;;
+-	*)	echo $x ; sh $x ;;
++	*) 	echo $x ; ${THIS_SH} $x ;;
+ 	esac
+ done
+ 
+ exit 0
++

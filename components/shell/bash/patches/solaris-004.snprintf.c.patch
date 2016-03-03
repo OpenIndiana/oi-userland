@@ -1,0 +1,14 @@
+# We need to include <math.h> for bash's own implementation
+# of snprintf.
+# Solaris-specific patch. Not for upstream.
+--- lib/sh/snprintf.c	2010-05-30 15:34:52.000000000 -0700
++++ lib/sh/snprintf.c	2011-11-29 09:31:46.751983149 -0800
+@@ -120,6 +120,8 @@
+ #  include <locale.h>
+ #endif
+ 
++#include <math.h>
++
+ #include "stdc.h"
+ #include <shmbutil.h>
+ 
