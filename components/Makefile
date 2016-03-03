@@ -130,6 +130,7 @@ $(COMPONENT_DIRS):	$(WS_LOGS) setup FORCE
 			 $(@:%=--component %) --make $(TARGET) $(LOG)
 
 incorporation:
+	$(eval COMPONENT_REVISION := $(shell git rev-list HEAD --count))
 	$(WS_TOOLS)/userland-incorporator --repository $(PKG_REPO) \
 	  --version=0.$(OS_VERSION),$(BUILD_VERSION) -p $(PUBLISHER) \
 	  -c $(CONSOLIDATION) --destdir=$(WS_MACH) $(INCORPORATE_WERROR)
