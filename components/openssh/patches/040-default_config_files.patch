@@ -1,0 +1,231 @@
+#
+# This patch contains changes to the default SSH system configurations for
+# /etc/ssh/sshd_config and /etc/ssh/ssh_config on Solaris.
+#
+# This is a Solaris specific patch and will not be contributed back to tge
+# upstream community.
+#
+--- orig/ssh_config	Wed Feb 10 16:52:14 2016
++++ new/ssh_config	Wed Feb 10 18:32:20 2016
+@@ -24,8 +24,9 @@
+ #   RSAAuthentication yes
+ #   PasswordAuthentication yes
+ #   HostbasedAuthentication no
+-#   GSSAPIAuthentication no
++#   GSSAPIAuthentication yes
+ #   GSSAPIDelegateCredentials no
++#   GSSAPIKeyExchange yes
+ #   BatchMode no
+ #   CheckHostIP yes
+ #   AddressFamily any
+@@ -46,3 +47,7 @@
+ #   VisualHostKey no
+ #   ProxyCommand ssh -q -W %h:%p gateway.example.com
+ #   RekeyLimit 1G 1h
++
++# Send the LANG and LC_* environment variables to server.
++SendEnv LANG
++SendEnv LC_*
+--- orig/sshd_config	Wed Feb 10 16:52:20 2016
++++ new/sshd_config	Tue Feb 23 16:40:15 2016
+@@ -2,132 +2,95 @@
+ 
+ # This is the sshd server system-wide configuration file.  See
+ # sshd_config(5) for more information.
++#
+ 
+-# This sshd was compiled with PATH=/usr/bin:/bin:/usr/sbin:/sbin
+-
+-# The strategy used for options in the default sshd_config shipped with
+-# OpenSSH is to specify options with their default value where
+-# possible, but leave them commented.  Uncommented options override the
+-# default value.
+-
++# Listen port (the IANA registered port number for ssh is 22)
+ #Port 22
++
++# The default listen address is all interfaces, this may need to be changed
++# if you wish to restrict the interfaces sshd listens on for a multi homed host.
++# Multiple ListenAddress entries are allowed.
+ #AddressFamily any
+ #ListenAddress 0.0.0.0
+ #ListenAddress ::
+ 
+-# The default requires explicit activation of protocol 1
+-#Protocol 2
++# If port forwarding is enabled (default), specify if the server can bind to
++# INADDR_ANY. 
++# This allows the local port forwarding to work when connections are received
++# from any remote host.
++#GatewayPorts no
+ 
+-# HostKey for protocol version 1
+-#HostKey /etc/ssh/ssh_host_key
+-# HostKeys for protocol version 2
+-#HostKey /etc/ssh/ssh_host_rsa_key
+-#HostKey /etc/ssh/ssh_host_dsa_key
+-#HostKey /etc/ssh/ssh_host_ecdsa_key
+-#HostKey /etc/ssh/ssh_host_ed25519_key
++# X11 tunneling options
++#X11DisplayOffset 10
++#X11UseLocalhost yes
++X11Forwarding yes
+ 
+-# Lifetime and size of ephemeral version 1 server key
+-#KeyRegenerationInterval 1h
+-#ServerKeyBits 1024
++# The maximum number of concurrent unauthenticated connections to sshd.
++# start:rate:full see sshd(1) for more information.
++#MaxStartups 10:30:100
+ 
+-# Ciphers and keying
+-#RekeyLimit default none
++# Banner to be printed before authentication starts.
++Banner /etc/issue
+ 
+-# Logging
+-# obsoletes QuietMode and FascistLogging
+-#SyslogFacility AUTH
+-#LogLevel INFO
++# Should sshd print the /etc/motd file and check for mail.
++# On Solaris it is assumed that the login shell will do these (eg /etc/profile).
++PrintMotd no
+ 
+-# Authentication:
++# KeepAlive specifies whether keep alive messages are sent to the client.
++# See sshd(1) for detailed description of what this means.
++# Note that the client may also be sending keep alive messages to the server.
++#KeepAlive yes
+ 
+-#LoginGraceTime 2m
+-#PermitRootLogin prohibit-password
+-#StrictModes yes
+-#MaxAuthTries 6
+-#MaxSessions 10
++# Syslog facility and level 
++#SyslogFacility auth
++#LogLevel info
+ 
+-#RSAAuthentication yes
+-#PubkeyAuthentication yes
++#
++# Authentication configuration
++# 
+ 
+-# The default is to check both .ssh/authorized_keys and .ssh/authorized_keys2
+-# but this is overridden so installations will only check .ssh/authorized_keys
+-AuthorizedKeysFile	.ssh/authorized_keys
++# Host private key files
++# Must be on a local disk and readable only by the root user (root:sys 600).
++HostKey /etc/ssh/ssh_host_rsa_key
++HostKey /etc/ssh/ssh_host_dsa_key
+ 
+-#AuthorizedPrincipalsFile none
++# sshd regenerates the key every KeyRegenerationInterval seconds.
++# The key is never stored anywhere except the memory of sshd.
++# The default is 1 hour (3600 seconds).
++#KeyRegenerationInterval 3600
+ 
+-#AuthorizedKeysCommand none
+-#AuthorizedKeysCommandUser nobody
++# Ensure secure permissions on users .ssh directory.
++#StrictModes yes
+ 
+-# For this to work you will also need host keys in /etc/ssh/ssh_known_hosts
+-#RhostsRSAAuthentication no
+-# similar for protocol version 2
+-#HostbasedAuthentication no
+-# Change to yes if you don't trust ~/.ssh/known_hosts for
+-# RhostsRSAAuthentication and HostbasedAuthentication
+-#IgnoreUserKnownHosts no
+-# Don't read the user's ~/.rhosts and ~/.shosts files
+-#IgnoreRhosts yes
++# Length of time in seconds before a client that hasn't completed
++# authentication is disconnected.
++# Default is 120 seconds. 0 means no time limit.
++#LoginGraceTime 120
+ 
+-# To disable tunneled clear text passwords, change to no here!
+-#PasswordAuthentication yes
++# Maximum number of retries for authentication
++# Default is 6.
++#MaxAuthTries	6
++
++# Are logins to accounts with empty passwords allowed.
++# If PermitEmptyPasswords is no, pass PAM_DISALLOW_NULL_AUTHTOK 
++# to pam_authenticate(3PAM).
+ #PermitEmptyPasswords no
+ 
+-# Change to no to disable s/key passwords
+-#ChallengeResponseAuthentication yes
++# To disable tunneled clear text passwords, change PasswordAuthentication to no.
++#PasswordAuthentication yes
+ 
+-# Kerberos options
+-#KerberosAuthentication no
+-#KerberosOrLocalPasswd yes
+-#KerberosTicketCleanup yes
+-#KerberosGetAFSToken no
++# Are root logins permitted using sshd.
++# Note that sshd uses pam_authenticate(3PAM) so the root (or any other) user
++# maybe denied access by a PAM module regardless of this setting.
++# Valid options are yes, without-password, no.
++PermitRootLogin no
+ 
+-# GSSAPI options
+-#GSSAPIAuthentication no
+-#GSSAPICleanupCredentials yes
++# sftp subsystem
++Subsystem	sftp	internal-sftp
+ 
+-# Set this to 'yes' to enable PAM authentication, account processing,
+-# and session processing. If this is enabled, PAM authentication will
+-# be allowed through the ChallengeResponseAuthentication and
+-# PasswordAuthentication.  Depending on your PAM configuration,
+-# PAM authentication via ChallengeResponseAuthentication may bypass
+-# the setting of "PermitRootLogin without-password".
+-# If you just want the PAM account and session checks to run without
+-# PAM authentication, then enable this but set PasswordAuthentication
+-# and ChallengeResponseAuthentication to 'no'.
+-#UsePAM no
++# Uncomment if you don't trust ~/.ssh/known_hosts for RhostsRSAAuthentication.
++#IgnoreUserKnownHosts yes
+ 
+-#AllowAgentForwarding yes
+-#AllowTcpForwarding yes
+-#GatewayPorts no
+-#X11Forwarding no
+-#X11DisplayOffset 10
+-#X11UseLocalhost yes
+-#PermitTTY yes
+-#PrintMotd yes
+-#PrintLastLog yes
+-#TCPKeepAlive yes
+-#UseLogin no
+-UsePrivilegeSeparation sandbox		# Default for new installations.
+-#PermitUserEnvironment no
+-#Compression delayed
+-#ClientAliveInterval 0
+-#ClientAliveCountMax 3
+-#UseDNS no
+-#PidFile /var/run/sshd.pid
+-#MaxStartups 10:30:100
+-#PermitTunnel no
+-#ChrootDirectory none
+-#VersionAddendum none
+-
+-# no default banner path
+-#Banner none
+-
+-# override default of no subsystems
+-Subsystem	sftp	/usr/libexec/sftp-server
+-
+-# Example of overriding settings on a per-user basis
+-#Match User anoncvs
+-#	X11Forwarding no
+-#	AllowTcpForwarding no
+-#	PermitTTY no
+-#	ForceCommand cvs server
++# Accept the LANG and LC_* environment variables sent by the client.
++AcceptEnv LANG
++AcceptEnv LC_*

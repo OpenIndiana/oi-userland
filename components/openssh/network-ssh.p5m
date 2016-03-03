@@ -1,0 +1,72 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+<transform file path=usr.*/man/.+ -> default mangler.man.stability "Pass-through Uncommitted">
+set name=pkg.fmri \
+    value=pkg:/network/ssh@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="OpenSSH client and associated utilities"
+set name=pkg.description \
+    value="OpenSSH provides end-to-end encrypted replacement of applications such as telnet, rlogin, and ftp. Unlike these legacy applications, OpenSSH never passes anything (including user name and password) over the wire in unencrypted form. OpenSSH provides the SSH known host mechanism which verifies that the system you connect to is really the one you intended to. OpenSSH provides secure tunneling capabilities and several authentication methods. It also supports forwarding X11 connections and arbitrary TCP ports over the secure channel."
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=info.classification \
+    value=org.opensolaris.category.2008:Applications/Internet \
+    value=org.opensolaris.category.2008:System/Security
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2012/335
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+file path=etc/ssh/ssh_config group=sys mode=0644 \
+    original_name=SUNWssh:etc/ssh/ssh_config overlay=true preserve=renamenew
+file path=usr/bin/scp mode=0555
+file path=usr/bin/sftp mode=0555
+file path=usr/bin/ssh mode=0555
+file path=usr/bin/ssh-add mode=0555
+file path=usr/bin/ssh-agent mode=2555
+file path=usr/bin/ssh-keygen mode=0555
+file path=usr/bin/ssh-keyscan mode=0555
+file path=usr/share/man/man1/scp.1 mode=0444
+file path=usr/share/man/man1/sftp.1 mode=0444
+file path=usr/share/man/man1/ssh-add.1 mode=0444
+file path=usr/share/man/man1/ssh-agent.1 mode=0444
+file path=usr/share/man/man1/ssh-keygen.1 mode=0444
+file path=usr/share/man/man1/ssh-keyscan.1 mode=0444
+file path=usr/share/man/man1/ssh.1 mode=0444
+file path=usr/share/man/man5/ssh_config.5
+legacy pkg=SUNWsshcu desc="Secure Shell protocol common Utilities" \
+    name="SSH Common, (Usr)"
+legacy pkg=SUNWsshr \
+    desc="Secure Shell protocol Client and associated Utilities" \
+    name="SSH Client and utilities, (Root)"
+legacy pkg=SUNWsshu \
+    desc="Secure Shell protocol Client and associated Utilities" \
+    name="SSH Client and utilities, (Usr)"
+license openssh.license license="BSD, BSD-like (OpenSSH)" \
+    com.oracle.info.description="OpenSSH, a suite of tools that help secure network connections" \
+    com.oracle.info.name=openssh com.oracle.info.tpno=$(TPNO_OPENSSH) \
+    com.oracle.info.version=$(COMPONENT_VERSION)
+license openssh.license license="BSD, BSD-like (gsskex)" \
+    com.oracle.info.description="GSS-API authenticated key exchange" \
+    com.oracle.info.name=gsskex com.oracle.info.tpno=$(TPNO_GSSKEX) \
+    com.oracle.info.version=5.7p1
+depend type=conditional fmri=pkg:/x11/session/xauth \
+    predicate=pkg:/x11/library/libxau
+depend type=optional fmri=network/openssh@7.1.0.1-5.12.0.0.0.95.0

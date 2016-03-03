@@ -18,43 +18,35 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
 #
 <transform file path=usr.*/man/.+ -> default mangler.man.stability "Pass-through Uncommitted">
 set name=pkg.fmri \
-    value=pkg:/network/openssh@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value=OpenSSH
+    value=pkg:/service/network/ssh@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="OpenSSH servers and SSH (Secure Shell) services"
 set name=pkg.description \
-    value="OpenSSH provides end-to-end encrypted replacement of applications such as telnet, rlogin, and ftp. Unlike these legacy applications, OpenSSH never passes anything (including user name and password) over the wire in unencrypted form. OpenSSH provides the SSH known host mechanism which verifies that the system you connect to is really the one you intended to. OpenSSH provides secure tunneling capabilities and several authentication methods. It also supports forwarding X11 connections and arbitrary TCP ports over the secure channel."
+    value="Provides OpenSSH server support for the Secure Shell (SSH) service which creates RSA and DSA host keys if they are not available and start or stop the sshd (Secure Shell daemon)."
 set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=info.classification \
     value=org.opensolaris.category.2008:Applications/Internet \
     value=org.opensolaris.category.2008:System/Security
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid value=PSARC/2012/335
+set name=org.opensolaris.arc-caseid value=PSARC/2015/227
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-file path=usr/bin/scp mode=0555
-file path=usr/bin/sftp mode=0555
-file path=usr/bin/ssh mode=0555
-file path=usr/bin/ssh-add mode=0555
-file path=usr/bin/ssh-agent mode=2555
-file path=usr/bin/ssh-keygen mode=0555
-file path=usr/bin/ssh-keyscan mode=0555
-file usr/lib/dtrace/64/sftp64.d path=usr/lib/dtrace/sftp.d mode=0555
+file path=etc/ssh/moduli group=sys mode=0644 overlay=true preserve=renamenew
+file path=etc/ssh/sshd_config group=sys mode=0644 \
+    original_name=SUNWsshd:etc/ssh/sshd_config overlay=true preserve=renamenew
+file sources/ssh.xml path=lib/svc/manifest/network/ssh.xml group=sys mode=0444 \
+    overlay=true preserve=true
+file sources/sshd.sh path=lib/svc/method/sshd mode=0555 overlay=true \
+    preserve=true
+file usr/lib/dtrace/64/sftp64.d path=usr/lib/dtrace/sftp.d
 file path=usr/lib/ssh/sftp-server mode=0555
 file path=usr/lib/ssh/ssh-keysign mode=4555
 file path=usr/lib/ssh/ssh-pkcs11-helper mode=0555
 file path=usr/lib/ssh/sshd mode=0555
-file path=usr/share/man/man1/scp.1 mode=0444
-file path=usr/share/man/man1/sftp.1 mode=0444
-file path=usr/share/man/man1/ssh-add.1 mode=0444
-file path=usr/share/man/man1/ssh-agent.1 mode=0444
-file path=usr/share/man/man1/ssh-keygen.1 mode=0444
-file path=usr/share/man/man1/ssh-keyscan.1 mode=0444
-file path=usr/share/man/man1/ssh.1 mode=0444
 file path=usr/share/man/man5/moduli.5
-file path=usr/share/man/man5/ssh_config.5
 file path=usr/share/man/man5/sshd_config.5
 file path=usr/share/man/man8/sftp-server.8
 file path=usr/share/man/man8/ssh-keysign.8
@@ -74,4 +66,3 @@ license openssh.license license="BSD, BSD-like (gsskex)" \
     com.oracle.info.version=5.7p1
 depend type=conditional fmri=pkg:/x11/session/xauth \
     predicate=pkg:/x11/library/libxau
-depend type=require fmri=service/network/ssh-common

@@ -920,17 +920,6 @@ diff -pur old/ssh-gss.h new/ssh-gss.h
  #endif /* GSSAPI */
  
  #endif /* _SSH_GSS_H */
-diff -pur old/ssh_config new/ssh_config
---- old/ssh_config
-+++ new/ssh_config
-@@ -26,6 +26,7 @@
- #   HostbasedAuthentication no
- #   GSSAPIAuthentication no
- #   GSSAPIDelegateCredentials no
-+#   GSSAPIKeyExchange yes
- #   BatchMode no
- #   CheckHostIP yes
- #   AddressFamily any
 diff -pur old/ssh_config.5 new/ssh_config.5
 --- old/ssh_config.5
 +++ new/ssh_config.5
@@ -1202,20 +1191,6 @@ diff -pur old/sshd.c new/sshd.c
  	kex->server = 1;
  	kex->client_version_string=client_version_string;
  	kex->server_version_string=server_version_string;
-diff -pur old/sshd_config new/sshd_config
---- old/sshd_config
-+++ new/sshd_config
-@@ -82,8 +82,9 @@ AuthorizedKeysFile	.ssh/authorized_keys
- #KerberosGetAFSToken no
- 
- # GSSAPI options
--#GSSAPIAuthentication no
-+#GSSAPIAuthentication yes
- #GSSAPICleanupCredentials yes
-+#GSSAPIKeyExchange yes
- 
- # Set this to 'yes' to enable PAM authentication, account processing,
- # and session processing. If this is enabled, PAM authentication will
 diff -pur old/sshd_config.5 new/sshd_config.5
 --- old/sshd_config.5
 +++ new/sshd_config.5
