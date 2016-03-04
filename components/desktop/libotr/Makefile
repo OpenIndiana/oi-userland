@@ -37,6 +37,15 @@ TPNO=			21688
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
+
+# Pidgin is on the do-not-publish list (depends on S12-only changes in ON &
+# Desktop), so no point publishing this without that.
+ifeq ($(BUILD_TYPE), evaluation)
+BUILD_32_and_64=
+INSTALL_32_and_64=
+PUBLISH_STAMP=
+endif
+
 include $(WS_MAKE_RULES)/ips.mk
 
 CFLAGS +=	-I $(SOURCE_DIR)/src
