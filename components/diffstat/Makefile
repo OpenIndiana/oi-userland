@@ -18,21 +18,21 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		diffstat
-COMPONENT_VERSION=	1.59
+COMPONENT_VERSION=	1.61
 COMPONENT_PROJECT_URL=	http://invisible-island.net/diffstat/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:267d1441b8889cbefbb7ca7dfd4a17f6c8bc73bc114904c74ecad945a3dbf270
+    sha256:25359e0c27183f997b36c9202583b5dc2df390c20e22a92606af4bf7856a55ee
 COMPONENT_ARCHIVE_URL=	ftp://invisible-island.net/diffstat/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/diffstat
 
-TPNO=			21548
+TPNO=			27077
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -68,4 +68,3 @@ test:		$(TEST_64)
 system-test:    $(SYSTEM_TEST_64)
 
 REQUIRED_PACKAGES += system/library
-
