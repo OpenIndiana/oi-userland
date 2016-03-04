@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         mlocate
-COMPONENT_VERSION=      0.25
+COMPONENT_VERSION=      0.26
 COMPONENT_PROJECT_URL=  https://fedorahosted.org/mlocate
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:ab95c111f9dba35b5690896180dd0a7639dbf07d70b862fcb0731264d9273951
+    sha256:3063df79fe198fb9618e180c54baf3105b33d88fe602ff2d8570aaf944f1263e
 COMPONENT_ARCHIVE_URL=  https://fedorahosted.org/releases/m/l/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/mlocate
 
-TPNO=			10233
+TPNO=			27159
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
