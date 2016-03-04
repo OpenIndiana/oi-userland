@@ -12,11 +12,11 @@
 # Copyright (c) 2014 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libgksu
 COMPONENT_VERSION=	2.0.12
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_PROJECT_URL=	http://www.nongnu.org/gksu/
 COMPONENT_SUMMARY=	Simple API for embedded_su, pfexec and sudo (optional)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
