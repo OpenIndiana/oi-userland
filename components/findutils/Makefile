@@ -20,22 +20,22 @@
 #
 
 #
-# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		findutils
-COMPONENT_VERSION=	4.5.14
+COMPONENT_VERSION=	4.6.0
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/findutils/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:0de3cf625a5c9f154eee3171e072515ffdde405244dd00502af617ac57b73ae2
-COMPONENT_ARCHIVE_URL=	http://alpha.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+    sha256:ded4c9f73731cd48fec3b6bdaccce896473b6d8e337e9612e16cf1431bb1169d
+COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gnu-findutils
 
-TPNO=			19655
+TPNO=			27155
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -58,13 +58,13 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|^.*$(CC).*$$|XXX_CC_XXX|g" ' \
 	'-e "s|^.*source=.*libtool=no.*$$|XXX_CC_XXX|g" ' \
 	'-e "s|^.*DEPDIR=.deps.*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^.*(core dumped).*$$|XXX_CC_XXX|g" ' \
 	'-e "/^XXX_CC_XXX$$/d" ' \
 	'-e "s|\(Test Run By\).*|\1|" ' \
 	'-e "s|\(Native configuration is\).*|\1|" '
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-# common targets
 configure:	$(CONFIGURE_64)
 
 build:          $(BUILD_64)
