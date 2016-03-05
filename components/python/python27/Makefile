@@ -182,9 +182,9 @@ COMPONENT_TEST_TARGETS = test
 # The test output contains details from each test, in whatever order they
 # complete.  The default _TRANSFORMER is not powerful enough to deal with
 # this; we need heavier artillery.  Extract just the sections that start
-# with "tests OK." and end with "make: " for comparison.
+# with "tests OK." and end with "Makefile: " for comparison.
 COMPONENT_TEST_TRANSFORMER =	$(NAWK)
-COMPONENT_TEST_TRANSFORMS =	"'/tests OK./ {results = 1}; /make: / {results = 0} {if (results) print $0 } '"
+COMPONENT_TEST_TRANSFORMS =	"'/tests OK./ {results = 1}; /Makefile:/ {results = 0} {if (results) print $0 } '"
 
 test:				$(TEST_32_and_64)
 

@@ -1,0 +1,90 @@
+This comes from upstream: http://bugs.python.org/issue10528
+It was fixed in 3.2 but not backported to 2.7.
+
+--- Python-2.7.11/Lib/argparse.py.orig	Fri Mar  4 11:03:19 2016
++++ Python-2.7.11/Lib/argparse.py	Fri Mar  4 11:13:09 2016
+@@ -1082,8 +1082,9 @@
+         try:
+             parser = self._name_parser_map[parser_name]
+         except KeyError:
+-            tup = parser_name, ', '.join(self._name_parser_map)
+-            msg = _('unknown parser %r (choices: %s)') % tup
++            args = {'parser_name': parser_name,
++                    'choices': ', '.join(self._name_parser_map)}
++            msg = _('unknown parser %(parser_name)r (choices: %(choices)s)') % args
+             raise ArgumentError(self, msg)
+ 
+         # parse all the remaining options into the namespace
+@@ -1138,8 +1139,9 @@
+         try:
+             return open(string, self._mode, self._bufsize)
+         except IOError as e:
+-            message = _("can't open '%s': %s")
+-            raise ArgumentTypeError(message % (string, e))
++            args = {'filename' : string, 'error': e}
++            message = _("can't open '%(filename)': %(error)")
++            raise ArgumentTypeError(message % args)
+ 
+     def __repr__(self):
+         args = self._mode, self._bufsize
+@@ -1404,10 +1406,11 @@
+         for option_string in args:
+             # error on strings that don't start with an appropriate prefix
+             if not option_string[0] in self.prefix_chars:
+-                msg = _('invalid option string %r: '
+-                        'must start with a character %r')
+-                tup = option_string, self.prefix_chars
+-                raise ValueError(msg % tup)
++                args = {'option': option_string,
++                        'prefix_chars': self.prefix_chars}
++                msg = _('invalid option string %(option)r: '
++                        'must start with a character %(prefix_chars)r')
++                raise ValueError(msg % args)
+ 
+             # strings starting with two prefix characters are long options
+             option_strings.append(option_string)
+@@ -2085,8 +2088,9 @@
+         if len(option_tuples) > 1:
+             options = ', '.join([option_string
+                 for action, option_string, explicit_arg in option_tuples])
+-            tup = arg_string, options
+-            self.error(_('ambiguous option: %s could match %s') % tup)
++            args = {'option': arg_string, 'matches': options}
++            msg = _('ambiguous option: %(option)s could match %(matches)s')
++            self.error(msg % args)
+ 
+         # if exactly one action matched, this segmentation is good,
+         # so return the parsed action
+@@ -2268,8 +2272,9 @@
+         # TypeErrors or ValueErrors also indicate errors
+         except (TypeError, ValueError):
+             name = getattr(action.type, '__name__', repr(action.type))
+-            msg = _('invalid %s value: %r')
+-            raise ArgumentError(action, msg % (name, arg_string))
++            args = {'type': name, 'value': arg_string}
++            msg = _('invalid %(type)s value: %(value)r')
++            raise ArgumentError(action, msg % args)
+ 
+         # return the converted value
+         return result
+@@ -2277,9 +2282,10 @@
+     def _check_value(self, action, value):
+         # converted value must be one of the choices (if specified)
+         if action.choices is not None and value not in action.choices:
+-            tup = value, ', '.join(map(repr, action.choices))
+-            msg = _('invalid choice: %r (choose from %s)') % tup
+-            raise ArgumentError(action, msg)
++            args = {'value': value,
++                    'choices': ', '.join(map(repr, action.choices))}
++            msg = _('invalid choice: %(value)r (choose from %(choices)s)')
++            raise ArgumentError(action, msg % args)
+ 
+     # =======================
+     # Help-formatting methods
+@@ -2371,4 +2377,5 @@
+         should either exit or raise an exception.
+         """
+         self.print_usage(_sys.stderr)
+-        self.exit(2, _('%s: error: %s\n') % (self.prog, message))
++        args = {'prog': self.prog, 'message': message}
++        self.exit(2, _('%(prog)s: error: %(message)s\n') % args)
