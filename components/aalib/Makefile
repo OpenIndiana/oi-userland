@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -55,7 +55,9 @@ COMPONENT_PREP_ACTION += (cd $(@D); autoreconf -fiv)
 CONFIGURE_OPTIONS	+= --infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS	+= --enable-shared
 CONFIGURE_OPTIONS	+= --disable-static
-CONFIGURE_OPTIONS	+= --x-includes=/usr/include
+CONFIGURE_OPTIONS       += --with-curses-driver
+CONFIGURE_OPTIONS       += --without-slang-driver
+CONFIGURE_OPTIONS	+= --x-includes=$(USRINCDIR)
 CONFIGURE_OPTIONS	+= --x-libraries=$(CONFIGURE_LIBDIR.$(BITS))
 
 CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
@@ -87,7 +89,7 @@ test:		$(TEST_32_and_64)
 system-test:	$(SYSTEM_TEST_32_and_64)
 
 
-REQUIRED_PACKAGES += library/slang
+REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
