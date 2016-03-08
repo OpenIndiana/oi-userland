@@ -2,8 +2,8 @@
 .\" Copyright (c) 1998-2003 Sendmail, Inc. and its suppliers. All rights reserved.
 .\" Copyright (c) 1983, 1997 Eric P. Allman. All rights reserved.
 .\" Copyright (c) 1988, 1991, 1993 The Regents of the University of California. All rights reserved.
-.\" Portions Copyright (c) 1998, 2015, Oracle and/or its affiliates. All    rights reserved.
-.TH sendmail 1M "4 Feb 2015" "SunOS 5.12" "System Administration Commands"
+.\" Portions Copyright (c) 1998, 2016, Oracle and/or its affiliates. All rights reserved.
+.TH sendmail 8 "8 Mar 2016" "SunOS 5.12" "System Administration Commands"
 .SH NAME
 sendmail \- send mail over the internet
 .SH SYNOPSIS
@@ -31,7 +31,7 @@ The \fBsendmail\fR utility sends a message to one or more people, routing the me
 With no flags, \fBsendmail\fR reads its standard input up to an EOF, or a line with a single dot, and sends a copy of the letter found there to all of the addresses listed. It determines the network to use based on the syntax and contents of the addresses.
 .sp
 .LP
-Local addresses are looked up in the local \fBaliases\fR(4) file, or in a name service as defined by the \fBnsswitch.conf\fR(4) file, and aliased appropriately. In addition, if there is a \fB\&.forward\fR file in a recipient's home directory, \fBsendmail\fR forwards a copy of each message to the list of recipients that file contains. Refer to the \fBNOTES\fR section for more information about \fB\&.forward\fR files. Aliasing can be prevented by preceding the address with a backslash. 
+Local addresses are looked up in the local \fBaliases\fR(5) file, or in a name service as defined by the \fBnsswitch.conf\fR(5) file, and aliased appropriately. In addition, if there is a \fB\&.forward\fR file in a recipient's home directory, \fBsendmail\fR forwards a copy of each message to the list of recipients that file contains. Refer to the \fBNOTES\fR section for more information about \fB\&.forward\fR files. Aliasing can be prevented by preceding the address with a backslash. 
 .sp
 .LP
 There are several conditions under which the expected behavior is for the alias database to be either built or rebuilt. This cannot occur under any circumstances unless root owns \fBand\fR has exclusive write permission to the \fB/etc/mail/aliases*\fR files.
@@ -41,7 +41,7 @@ If a message is found to be undeliverable, it is returned to the sender with dia
 .SS "Service Management"
 .sp
 .LP
-The \fBsendmail\fR service is managed by the service management facility, \fBsmf\fR(5), under the service identifiers:
+The \fBsendmail\fR service is managed by the service management facility, \fBsmf\fR(7), under the service identifiers:
 .sp
 .in +2
 .nf
@@ -54,7 +54,7 @@ svc:/network/sendmail-client:default
 
 .sp
 .LP
-Administrative actions on these services, such as enabling, disabling, or requesting restart, can be performed using \fBsvcadm\fR(1M). The services' status can be queried using the \fBsvcs\fR(1) command.
+Administrative actions on these services, such as enabling, disabling, or requesting restart, can be performed using \fBsvcadm\fR(8). The services' status can be queried using the \fBsvcs\fR(1) command.
 .sp
 .LP
 These are separate services rather than instances of the same service so that other services can properly express any dependencies. In particular, here are some guidelines about which service/instance should be depended on for which purposes:
@@ -82,7 +82,7 @@ For the last two, note the difference, as the latter has the \fB":sendmail"\fR i
 .SS "Enabling Access to Remote Clients"
 .sp
 .LP
-On an unmodified system, access to \fBsendmail\fR by remote clients is enabled and disabled through the service management facility (see \fBsmf\fR(5)). In particular, remote access is determined by the value of the \fBlocal_only\fR SMF property:
+On an unmodified system, access to \fBsendmail\fR by remote clients is enabled and disabled through the service management facility (see \fBsmf\fR(7)). In particular, remote access is determined by the value of the \fBlocal_only\fR SMF property:
 .sp
 .in +2
 .nf
@@ -108,22 +108,22 @@ The following example shows the sequence of SMF commands used to enable \fBsendm
 
 .sp
 .LP
-See \fBsvcadm\fR(1M) and \fBsvccfg\fR(1M).
+See \fBsvcadm\fR(8) and \fBsvccfg\fR(8).
 .sp
 .LP
-Note, however, on a system where any of the \fBsendmail\fR(4) files have been customized, setting this property might not have the intended effect. See \fBsendmail\fR(4) for details.
+Note, however, on a system where any of the \fBsendmail\fR(5) files have been customized, setting this property might not have the intended effect. See \fBsendmail\fR(5) for details.
 .SS "Automated Rebuilding of Configuration Files"
 .sp
 .LP
-See \fBsendmail\fR(4) for details on which service properties can be set to automate (re)building of configuration files when the service is started.
+See \fBsendmail\fR(5) for details on which service properties can be set to automate (re)building of configuration files when the service is started.
 .SS "Restricting Host Access"
 .sp
 .LP
-\fBsendmail\fR uses TCP Wrappers to restrict access to hosts. It uses the service name of \fBsendmail\fR for \fBhosts_access()\fR. For more information on TCP Wrappers, see \fBtcpd\fR(1M) and \fBhosts_access\fR(4) in the \fBsecurity/tcp-wrapper\fR package. \fBtcpd\fR(1M) and \fBhosts_access\fR(4) are not part of the Solaris man pages.
+\fBsendmail\fR uses TCP Wrappers to restrict access to hosts. It uses the service name of \fBsendmail\fR for \fBhosts_access()\fR. For more information on TCP Wrappers, see \fBtcpd\fR(8) and \fBhosts_access\fR(5) in the \fBsecurity/tcp-wrapper\fR package. \fBtcpd\fR(8) and \fBhosts_access\fR(5) are not part of the Solaris man pages.
 .SS "Startup Options"
 .sp
 .LP
-The \fB/etc/default/sendmail\fR file stores startup options for \fBsendmail\fR so that the options are not removed when a host is upgraded. See also \fBsendmail\fR(4) for details on which service properties can be set to automate (re)building of configuration files when the service is started.
+The \fB/etc/default/sendmail\fR file stores startup options for \fBsendmail\fR so that the options are not removed when a host is upgraded. See also \fBsendmail\fR(5) for details on which service properties can be set to automate (re)building of configuration files when the service is started.
 .sp
 .LP
 You can use the following variables in the \fB/etc/default/sendmail\fR startup file:
@@ -157,7 +157,7 @@ Similar to the \fBQUEUEINTERVAL\fR option, \fBCLIENTQUEUEINTERVAL\fR sets the ti
 .ad
 .sp .6
 .RS 4n
-Enables an SMTP client and server to interact immediately without waiting for the queue run intervals, which are periodic. The server can immediately deliver the portion of its queue that goes to the specified hosts. For more information, refer to the \fBetrn\fR(1M) man page.
+Enables an SMTP client and server to interact immediately without waiting for the queue run intervals, which are periodic. The server can immediately deliver the portion of its queue that goes to the specified hosts. For more information, refer to the \fBetrn\fR(8) man page.
 .RE
 
 .sp
@@ -275,7 +275,7 @@ Runs as a daemon in the foreground, waiting for incoming SMTP connections.
 .ad
 .sp .6
 .RS 4n
-Initializes the \fBaliases\fR(4) database. Root must own \fIand\fR have exclusive write permission to the \fB/etc/mail/aliases*\fR files for successful use of this option.
+Initializes the \fBaliases\fR(5) database. Root must own \fIand\fR have exclusive write permission to the \fB/etc/mail/aliases*\fR files for successful use of this option.
 .RE
 
 .sp
@@ -738,7 +738,7 @@ Specifies possible alias files.
 .ad
 .sp .6
 .RS 4n
-If set, waits up to \fIN\fR minutes for an "@:@" entry to exist in the \fBaliases\fR(4) database before starting up. If it does not appear in \fIN\fR minutes, issues a warning. Defaults to 10 minutes.
+If set, waits up to \fIN\fR minutes for an "@:@" entry to exist in the \fBaliases\fR(5) database before starting up. If it does not appear in \fIN\fR minutes, issues a warning. Defaults to 10 minutes.
 .RE
 
 .sp
@@ -804,7 +804,7 @@ Path to directory with certs of CAs.
 .ad
 .sp .6
 .RS 4n
-Validates the RHS of aliases when rebuilding the \fBaliases\fR(4) database.
+Validates the RHS of aliases when rebuilding the \fBaliases\fR(5) database.
 .RE
 
 .sp
@@ -3129,7 +3129,7 @@ Message could not be sent immediately, but was queued.
 .SH ENVIRONMENT VARIABLES
 .sp
 .LP
-No environment variables are used. However, sendmail's start-up script, invoked by \fBsvcadm\fR(1M), reads \fB/etc/default/sendmail\fR. In this file, if the variable \fBETRN_HOSTS\fR is set, the start-up script parses this variable and invokes \fBetrn\fR(1M) appropriately. \fBETRN_HOSTS\fR should be of the form:
+No environment variables are used. However, sendmail's start-up script, invoked by \fBsvcadm\fR(8), reads \fB/etc/default/sendmail\fR. In this file, if the variable \fBETRN_HOSTS\fR is set, the start-up script parses this variable and invokes \fBetrn\fR(8) appropriately. \fBETRN_HOSTS\fR should be of the form:
 .sp
 .in +2
 .nf
@@ -3249,7 +3249,7 @@ Defines environment for MSP
 .ad
 .sp .6
 .RS 4n
-Lists users that are "trusted", that is, able to set their envelope from address using \fB-f\fR without generating a warning message. Note that this file is consulted by the default \fBsendmail.cf\fR, but not by the default \fBsubmit.cf\fR, in which the line referring to \fB/etc/mail/trusted-users\fR is commented out. See \fBsendmail\fR(4) for instructions on making changes to \fBsubmit.cf\fR and \fBsendmail.cf\fR.
+Lists users that are "trusted", that is, able to set their envelope from address using \fB-f\fR without generating a warning message. Note that this file is consulted by the default \fBsendmail.cf\fR, but not by the default \fBsubmit.cf\fR, in which the line referring to \fB/etc/mail/trusted-users\fR is commented out. See \fBsendmail\fR(5) for instructions on making changes to \fBsubmit.cf\fR and \fBsendmail.cf\fR.
 .RE
 
 .sp
@@ -3299,7 +3299,7 @@ Describes the steps needed to compile and run a filter
 .SH ATTRIBUTES
 .sp
 .LP
-See \fBattributes\fR(5) for descriptions of the following attributes:
+See \fBattributes\fR(7) for descriptions of the following attributes:
 .sp
 
 .sp
@@ -3316,10 +3316,11 @@ Availabilityservice/network/smtp/sendmail
 .SH SEE ALSO
 .sp
 .LP
-\fBsvcs\fR(1), \fBmail\fR(1), \fBmailq\fR(1), \fBmailx\fR(1), \fBnice\fR(1), \fBcheck-hostname\fR(1M), \fBcheck-permissions\fR(1M), \fBetrn\fR(1M), \fBnewaliases\fR(1M), \fBsvcadm\fR(1M), \fBsvccfg\fR(1M), \fBfork\fR(2), \fBgetpwnam\fR(3C), \fBgetusershell\fR(3C), \fBresolver\fR(3RESOLV), \fBaliases\fR(4), \fBhosts\fR(4), \fBsendmail\fR(4), \fBshells\fR(4), \fBattributes\fR(5), \fBsmf\fR(5), \fBrandom\fR(7D )
+\fBsvcs\fR(1), \fBmail\fR(1), \fBmailq\fR(1), \fBmailx\fR(1), \fBnice\fR(1), \fBfork\fR(2), \fBgetpwnam\fR(3C), \fBgetusershell\fR(3C), \fBresolver\fR(3RESOLV),
+\fBrandom\fR(4D), \fBaliases\fR(5), \fBhosts\fR(5), \fBsendmail\fR(5), \fBshells\fR(5), \fBattributes\fR(7), \fBsmf\fR(7), \fBcheck-hostname\fR(8), \fBcheck-permissions\fR(8), \fBetrn\fR(8), \fBnewaliases\fR(8), \fBsvcadm\fR(8), \fBsvccfg\fR(8)
 .sp
 .LP
-\fBtcpd\fR(1M), \fBhosts_access\fR(4) in the \fBsecurity/tcp-wrapper\fR package.
+\fBhosts_access\fR(5), \fBtcpd\fR(8) in the \fBsecurity/tcp-wrapper\fR package.
 .sp
 .LP
 \fBRFC\fR 2821 \fISimple Mail Transfer Protocol\fR, John Klensin, April 2001.
@@ -3338,7 +3339,7 @@ http://www.milter.org
 .SH NOTES
 .sp
 .LP
-The \fBsendmail\fR program requires a fully qualified host name when starting. A script has been included to help verify if the host name is defined properly (see \fBcheck-hostname\fR(1M)).
+The \fBsendmail\fR program requires a fully qualified host name when starting. A script has been included to help verify if the host name is defined properly (see \fBcheck-hostname\fR(8)).
 .sp
 .LP
 The permissions and the ownership of several directories have been changed in order to increase security. In particular, access to \fB/etc/mail\fR and \fB/var/spool/mqueue\fR has been restricted.
@@ -3347,7 +3348,7 @@ The permissions and the ownership of several directories have been changed in or
 Security restrictions have been placed users using \fB\&.forward\fR files to pipe mail to a program or redirect mail to a file. The default shell (as listed in \fB/etc/passwd\fR) of these users must be listed in \fB/etc/shells\fR. This restriction does not affect mail that is being redirected to another alias.
 .sp
 .LP
-Additional restrictions have been put in place on \fB\&.forward\fR and \fB:include:\fR files. These files and the directory structure that they are placed in cannot be group- or world-writable. See \fBcheck-permissions\fR(1M). 
+Additional restrictions have been put in place on \fB\&.forward\fR and \fB:include:\fR files. These files and the directory structure that they are placed in cannot be group- or world-writable. See \fBcheck-permissions\fR(8). 
 .sp
 .LP
 If you have interfaces that map to domains that have MX records that point to non-local destinations, you might need to enable the \fBDontProbeInterfaces\fR option to enable delivery to those destinations. In its default startup behavior, \fBsendmail\fR probes each interface and adds an interface's \fBIP\fR addresses, as well as any domains that those addresses map to, to its list of domains that are considered local. For domains thus added, being on the list of local domains is equivalent to having a 0-preference MX record, with \fBlocalhost\fR as the MX value. If this is not the result you want, enable \fBDontProbeInterfaces\fR.

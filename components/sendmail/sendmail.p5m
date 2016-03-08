@@ -192,20 +192,22 @@ link path=usr/share/man/man1/mailq.1 target=sendmail-mailq.1 mediator=sendmail \
 file path=usr/share/man/man1/mailstats.1
 file path=usr/share/man/man1/praliases.1
 file path=usr/share/man/man1/sendmail-mailq.1
-file path=usr/share/man/man1m/check-hostname.1m
-file path=usr/share/man/man1m/check-permissions.1m
-file path=usr/share/man/man1m/editmap.1m
-file path=usr/share/man/man1m/etrn.1m
-file path=usr/share/man/man1m/makemap.1m
-file path=usr/share/man/man1m/newaliases.1m
-file path=usr/share/man/man1m/sendmail.1m
-file path=usr/share/man/man1m/smrsh.1m
-file path=usr/share/man/man4/addresses.4
-file path=usr/share/man/man4/aliases.4
-file path=usr/share/man/man4/forward.4
-file path=usr/share/man/man4/sendmail.4
-file path=usr/share/man/man4/sendmail.cf.4
-file path=usr/share/man/man4/submit.cf.4
+file path=usr/share/man/man5/addresses.5
+link path=usr/share/man/man5/aliases.5 target=sendmail-aliases.5 \
+    mediator=sendmail mediator-implementation=sendmail mediator-priority=vendor
+file path=usr/share/man/man5/forward.5
+file path=usr/share/man/man5/sendmail-aliases.5
+file path=usr/share/man/man5/sendmail.5
+file path=usr/share/man/man5/sendmail.cf.5
+file path=usr/share/man/man5/submit.cf.5
+file path=usr/share/man/man8/check-hostname.8
+file path=usr/share/man/man8/check-permissions.8
+file path=usr/share/man/man8/editmap.8
+file path=usr/share/man/man8/etrn.8
+file path=usr/share/man/man8/makemap.8
+file path=usr/share/man/man8/newaliases.8
+file path=usr/share/man/man8/sendmail.8
+file path=usr/share/man/man8/smrsh.8
 dir  path=var/adm/sm.bin group=sys
 dir  path=var/spool/clientmqueue owner=smmsp group=smmsp mode=0770
 dir  path=var/spool/mqueue mode=0750
@@ -219,5 +221,8 @@ license LICENSE license=sendmail
 # sendmail's default LDA is mail.local, so specify a dependency on its
 # package, but not at any particular version.
 depend type=group fmri=pkg:/mail/mail.local
+# If postfix is installed, make sure it is at the version where aliases.5
+# became a mediated link; otherwise, conflict.
+depend type=optional fmri=service/network/smtp/postfix@2.11.3-5.12.0.0.0.95
 depend type=require \
     fmri=pkg:/library/libmilter@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
