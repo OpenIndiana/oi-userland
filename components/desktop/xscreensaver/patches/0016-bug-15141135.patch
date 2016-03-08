@@ -1,14 +1,20 @@
+From 442f0560a7d26caa8434eba5bec6fecd5f5acb4a Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Sat, 2 Jan 2016 23:04:08 -0800
+Subject: [PATCH] bug 15141135
+
 15141135 SUNBT4802301 xscreensaver should not tell root to "xhost +localhost"
 
 Upstream's opinion differs from our requirements here.
 ---
- driver/demo-Gtk.c |   11 +----------
- 1 files changed, 1 insertions(+), 10 deletions(-)
+ driver/demo-Gtk.c | 11 +----------
+ 1 file changed, 1 insertion(+), 10 deletions(-)
 
 diff --git a/driver/demo-Gtk.c b/driver/demo-Gtk.c
+index 3a4ab09..bfc0bd5 100644
 --- a/driver/demo-Gtk.c
 +++ b/driver/demo-Gtk.c
-@@ -1058,16 +1058,7 @@ await_xscreensaver (state *s)
+@@ -1054,16 +1054,7 @@ await_xscreensaver (state *s)
          strcat (buf, STFU
  	  _("You are running as root.  This usually means that xscreensaver\n"
              "was unable to contact your X server because access control is\n"
@@ -26,3 +32,6 @@ diff --git a/driver/demo-Gtk.c b/driver/demo-Gtk.c
              "\n"
              "You shouldn't run X as root. Instead, you should log in as a\n"
              "normal user, and `su' as necessary."));
+-- 
+2.6.1
+

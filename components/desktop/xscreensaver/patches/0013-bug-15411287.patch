@@ -1,14 +1,20 @@
+From 4ac5532cc951b30058a1b271a7756391cd02a7a8 Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Sat, 2 Jan 2016 22:54:22 -0800
+Subject: [PATCH] bug 15411287
+
 15411287 SUNBT6583181 SCREENSAVER_STATUS needs to be set up correctly at startup
 
 Upstream applicability & status unknown.
 ---
- driver/xscreensaver.c |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
+ driver/xscreensaver.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/driver/xscreensaver.c b/driver/xscreensaver.c
+index 5f4ecb2..926fc63 100644
 --- a/driver/xscreensaver.c
 +++ b/driver/xscreensaver.c
-@@ -1577,6 +1577,7 @@ main (int argc, char **argv)
+@@ -1669,6 +1669,7 @@ main (int argc, char **argv)
        if (ssi->real_screen_p)
          if (ensure_no_screensaver_running (si->dpy, si->screens[i].screen))
            exit (1);
@@ -16,7 +22,7 @@ diff --git a/driver/xscreensaver.c b/driver/xscreensaver.c
      }
  
    lock_initialization (si, &argc, argv);
-@@ -1611,6 +1612,7 @@ main (int argc, char **argv)
+@@ -1700,6 +1701,7 @@ main (int argc, char **argv)
  
    make_splash_dialog (si);
  
@@ -24,3 +30,6 @@ diff --git a/driver/xscreensaver.c b/driver/xscreensaver.c
    main_loop (si);		/* doesn't return */
    return 0;
  }
+-- 
+2.6.1
+

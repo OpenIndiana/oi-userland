@@ -1,15 +1,21 @@
+From 31822e934b170581ecab2ffe79ce7e6ed5a189d9 Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Sat, 2 Jan 2016 22:58:56 -0800
+Subject: [PATCH] bug 15411306
+
 15411306 SUNBT6583247 JDS session is accessible for a while before
 	 	      xscreensaver lock is displayed on hotdesking
 
 Upstream applicability & status unknown.
 ---
- driver/windows.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+ driver/windows.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/driver/windows.c b/driver/windows.c
+index 51e4c6a..4545ad7 100644
 --- a/driver/windows.c
 +++ b/driver/windows.c
-@@ -1580,6 +1580,7 @@ raise_window (saver_info *si,
+@@ -1581,6 +1581,7 @@ raise_window (saver_info *si,
  	  if (!dont_clear || ssi->stderr_overlay_window)
  	    clear_stderr (ssi);
  	  XMapRaised (si->dpy, ssi->screensaver_window);
@@ -17,3 +23,6 @@ diff --git a/driver/windows.c b/driver/windows.c
  #ifdef HAVE_MIT_SAVER_EXTENSION
  	  if (ssi->server_mit_saver_window &&
  	      window_exists_p (si->dpy, ssi->server_mit_saver_window))
+-- 
+2.6.1
+

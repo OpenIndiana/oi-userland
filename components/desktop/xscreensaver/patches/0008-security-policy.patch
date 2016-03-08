@@ -1,7 +1,12 @@
+From 65b6bdc8096ef4ac5b3bd41a0f2d38afe12c75ee Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Sat, 2 Jan 2016 22:23:10 -0800
+Subject: [PATCH] security-policy
+
 Bug 15284497 SUNBT6317441 Allow admins to remove user-configurability from
                           screensaver
 
-- Upstream rejected as "I will never implement that, because it's stupid and 
+- Upstream rejected as "I will never implement that, because it's stupid and
   unenforcible."  Unfortunately, we're stuck with Common Criteria requirements,
   which do not allow for common sense.
 
@@ -9,35 +14,21 @@ Bug 15779180 SUNBT7154101 Not able to unlock screen after xlock after su to a
                           role
 
 - specific to Solaris RBAC
-
 ---
- driver/Makefile.in              |    2 +-
- driver/demo-Gtk.c               |   95 +++++++++++++++++++++++++++++++++++----
- driver/lock-Gtk.c               |    5 ++-
- driver/prefs.c                  |   37 +++++++++++++++
- driver/subprocs.c               |   24 ++++++++++
- driver/types.h                  |    3 ++
- driver/xscreensaver-demo.glade2 |    2 +-
- driver/xscreensaver.c           |   36 +++++++++++++--
- driver/xscreensaver.h           |    2 +
- 9 files changed, 192 insertions(+), 14 deletions(-)
+ driver/demo-Gtk.c                  | 79 ++++++++++++++++++++++++++++++++++----
+ driver/prefs.c                     | 32 +++++++++++++++
+ driver/subprocs.c                  | 24 ++++++++++++
+ driver/types.h                     |  3 ++
+ driver/xscreensaver-demo.glade2.in |  2 +-
+ driver/xscreensaver.c              | 32 +++++++++++++--
+ driver/xscreensaver.h              |  2 +
+ 7 files changed, 163 insertions(+), 11 deletions(-)
 
-diff --git a/driver/Makefile.in b/driver/Makefile.in
---- a/driver/Makefile.in
-+++ b/driver/Makefile.in
-@@ -802,7 +802,7 @@ XScreenSaver_Xm_ad.h: XScreenSaver-Xm.ad
- #
- xscreensaver: $(SAVER_OBJS)
- 	$(CC) $(LDFLAGS) -o $@ $(SAVER_OBJS) $(SAVER_LIBS) \
--	-lgconf-2 -lgobject-2.0
-+	-lgconf-2 -lgobject-2.0 -lglib-2.0
- 
- xscreensaver-command: $(CMD_OBJS)
- 	$(CC) $(LDFLAGS) -o $@ $(CMD_OBJS) $(CMD_LIBS)
 diff --git a/driver/demo-Gtk.c b/driver/demo-Gtk.c
+index 3d86087..3a4ab09 100644
 --- a/driver/demo-Gtk.c
 +++ b/driver/demo-Gtk.c
-@@ -136,6 +136,7 @@
+@@ -131,6 +131,7 @@
  #include <stdio.h>
  #include <string.h>
  #include <ctype.h>
@@ -45,23 +36,7 @@ diff --git a/driver/demo-Gtk.c b/driver/demo-Gtk.c
  
  #ifdef HAVE_GTK2
  enum {
-@@ -687,6 +688,7 @@ run_cmd (state *s, Atom command, int arg)
-   char *err = 0;
-   int status;
- 
-+  #if 0
-   if (getuid () == 0)
-     {
-       char buf [255];
-@@ -694,6 +696,7 @@ run_cmd (state *s, Atom command, int arg)
-       warning_dialog (s->toplevel_widget, buf, False, 100);
-       return;
-     }
-+  #endif
- 
-   flush_dialog_changes_and_save (s);
-   status = xscreensaver_command (GDK_DISPLAY(), command, arg, False, &err);
-@@ -1691,9 +1694,10 @@ flush_dialog_changes_and_save (state *s)
+@@ -1701,9 +1702,10 @@ flush_dialog_changes_and_save (state *s)
  # undef COPY
  
  # define COPYSTR(FIELD,NAME) \
@@ -74,7 +49,7 @@ diff --git a/driver/demo-Gtk.c b/driver/demo-Gtk.c
      { \
        changed = True; \
        if (s->debug_p) \
-@@ -2754,6 +2758,79 @@ update_list_sensitivity (state *s)
+@@ -2765,6 +2767,70 @@ update_list_sensitivity (state *s)
  #endif /* !HAVE_GTK2 */
  }
  
@@ -90,15 +65,7 @@ diff --git a/driver/demo-Gtk.c b/driver/demo-Gtk.c
 +  char *idletime = NULL;
 +  int timeout = 0;
 +  char *idlecmd = NULL;
-+  
-+  if (getenv("TRUSTED_SESSION")) /* trusted_lock */
-+    {
-+      HIDEWIDGET("doc_menu");
-+      SENSITIZE("restart", 0);
-+      SENSITIZE("kill_menu", 0);
-+      timeout = 15 ; /* if IDLECMD is missing in security policy file default timeout is 15 min*/
-+    }
-+  
++
 +  if (((idletime = getuserattruid(getuid(),
 +	  USERATTR_IDLETIME_KW, NULL, NULL)) != NULL) &&
 +	  ((timeout = atoi(idletime)) != 0) || timeout)
@@ -116,14 +83,11 @@ diff --git a/driver/demo-Gtk.c b/driver/demo-Gtk.c
 +              USERATTR_IDLECMD_KW, NULL, NULL)) == NULL)
 +        idlecmd = strdup(USERATTR_IDLECMD_LOCK_KW);
 +
-+      if (!idletime && getenv("TRUSTED_SESSION")) 
-+        {
-+          idlecmd = strdup(USERATTR_IDLECMD_LOGOUT_KW);
-+        }
-+      
 +      if (idlecmd && strcasecmp(idlecmd, USERATTR_IDLECMD_LOGOUT_KW) == 0)
 +        {
-+          gtk_label_set_text_with_mnemonic(name_to_widget(s, "timeout_label"), "_Logout After");
++          gtk_label_set_text_with_mnemonic(
++              GTK_LABEL (name_to_widget (s, "timeout_label")),
++              "_Logout After");
 +
 +          HIDEWIDGET("cycle_label");
 +          HIDEWIDGET("cycle_spinbutton");
@@ -134,10 +98,12 @@ diff --git a/driver/demo-Gtk.c b/driver/demo-Gtk.c
 +          HIDEWIDGET("pwd_mlabel");
 +          HIDEWIDGET("pwd_button_eventbox");
 +
-+        } 
++        }
 +      else
 +        {
-+          gtk_label_set_text_with_mnemonic(name_to_widget(s, "timeout_label"), "_Lock Screen After");
++          gtk_label_set_text_with_mnemonic(
++              GTK_LABEL (name_to_widget(s, "timeout_label")),
++              "_Lock Screen After");
 +        }
 +      SENSITIZE("lock_spinbutton", 0);
 +      SENSITIZE("lock_mlabel", 0);
@@ -154,7 +120,7 @@ diff --git a/driver/demo-Gtk.c b/driver/demo-Gtk.c
  
  static void
  populate_prefs_page (state *s)
-@@ -2910,10 +2987,6 @@ populate_prefs_page (state *s)
+@@ -2921,10 +2987,6 @@ populate_prefs_page (state *s)
      }
  #endif /* HAVE_DPMS_EXTENSION */
  
@@ -165,7 +131,7 @@ diff --git a/driver/demo-Gtk.c b/driver/demo-Gtk.c
      /* Blanking and Locking
       */
      /* bugid 5077081 */
-@@ -2953,10 +3026,13 @@ dpms_supported=1;
+@@ -2964,10 +3026,13 @@ dpms_supported=1;
      SENSITIZE ("fade_spinbutton", (fading_possible &&
                                     (p->fade_p || p->unfade_p)));
  
@@ -180,32 +146,8 @@ diff --git a/driver/demo-Gtk.c b/driver/demo-Gtk.c
  
  static void
  populate_popup_window (state *s)
-@@ -3040,6 +3116,9 @@ sensitize_menu_items (state *s, Bool force_p)
- 
-   for (i = 0; i < countof(names); i++)
-     {
-+      if (getenv ("TRUSTED_SESSION") && 2==i)
-+        continue;
-+
-       GtkWidget *w = name_to_widget (s, names[i]);
-       gtk_widget_set_sensitive (GTK_WIDGET(w), running_p);
-     }
-diff --git a/driver/lock-Gtk.c b/driver/lock-Gtk.c
---- a/driver/lock-Gtk.c
-+++ b/driver/lock-Gtk.c
-@@ -151,7 +151,10 @@ load_unlock_logo_image (void)
-   const char *logofile;
-   struct stat statbuf;
- 
--  logofile = DEFAULT_ICONDIR "/unlock-logo.png";
-+  if (getenv("TRUSTED_SESSION"))
-+    logofile = DEFAULT_ICONDIR "/trusted-logo.png";
-+  else
-+    logofile = DEFAULT_ICONDIR "/unlock-logo.png";
- 
-   if (stat (logofile, &statbuf) != 0)
-     {
 diff --git a/driver/prefs.c b/driver/prefs.c
+index 52538a8..20f3a4a 100644
 --- a/driver/prefs.c
 +++ b/driver/prefs.c
 @@ -37,6 +37,7 @@
@@ -216,7 +158,7 @@ diff --git a/driver/prefs.c b/driver/prefs.c
  
  /* This file doesn't need the Xt headers, so stub these types out... */
  #undef XtPointer
-@@ -1181,6 +1182,42 @@ load_init_file (Display *dpy, saver_preferences *p)
+@@ -1186,6 +1187,37 @@ load_init_file (Display *dpy, saver_preferences *p)
      if (s) free (s);
    }
  
@@ -231,11 +173,11 @@ diff --git a/driver/prefs.c b/driver/prefs.c
 +
 +      p->lock_timeout = 0;
 +      if (p->timeout > timeout)
-+	p->timeout = timeout;
++        p->timeout = timeout;
 +
 +      /* always lock or logout and do not show blank screen */
 +      if (p->mode == DONT_BLANK)
-+	p->mode = BLANK_ONLY;
++        p->mode = BLANK_ONLY;
 +
 +      p->forcedlock_p = p->lock_p = True;
 +
@@ -245,12 +187,7 @@ diff --git a/driver/prefs.c b/driver/prefs.c
 +            idlecmd = strdup(USERATTR_IDLECMD_LOCK_KW);
 +
 +      if (idlecmd && strcasecmp(idlecmd, USERATTR_IDLECMD_LOGOUT_KW) == 0)
-+	p->forcedlogout_p = True;
-+    }
-+  else if (getenv("TRUSTED_SESSION"))
-+    {
-+      p->forcedlogout_p = p->forcedlock_p = p->lock_p = True; 
-+      p->timeout = 15 * 60 * 1000; /* if security policy not defined, forced logout in 15 mins */
++        p->forcedlogout_p = True;
 +    }
 +
 +  free(idletime); /* free works on a NULL value */
@@ -260,9 +197,10 @@ diff --git a/driver/prefs.c b/driver/prefs.c
      {
        merge_system_screenhacks (dpy, p, system_default_screenhacks,
 diff --git a/driver/subprocs.c b/driver/subprocs.c
+index c975813..ffc435b 100644
 --- a/driver/subprocs.c
 +++ b/driver/subprocs.c
-@@ -932,6 +932,30 @@ check_if_hacks_dir_exists(Bool verbose_p)
+@@ -940,6 +940,30 @@ check_if_hacks_dir_exists(Bool verbose_p)
      }
  }
  
@@ -294,9 +232,10 @@ diff --git a/driver/subprocs.c b/driver/subprocs.c
  spawn_screenhack (saver_screen_info *ssi)
  {
 diff --git a/driver/types.h b/driver/types.h
+index b428f73..adee51f 100644
 --- a/driver/types.h
 +++ b/driver/types.h
-@@ -77,6 +77,9 @@ struct saver_preferences {
+@@ -97,6 +97,9 @@ struct saver_preferences {
    Bool xsync_p;			/* whether XSynchronize has been called */
  
    Bool lock_p;			/* whether to lock as well as save */
@@ -306,9 +245,10 @@ diff --git a/driver/types.h b/driver/types.h
    Bool unlock_timeout_p;	/* whether to timeout unlock dialog */
                                  /* bugid 5077981 */
  
-diff --git a/driver/xscreensaver-demo.glade2 b/driver/xscreensaver-demo.glade2
---- a/driver/xscreensaver-demo.glade2
-+++ b/driver/xscreensaver-demo.glade2
+diff --git a/driver/xscreensaver-demo.glade2.in b/driver/xscreensaver-demo.glade2.in
+index a7a06a6..85b8069 100644
+--- a/driver/xscreensaver-demo.glade2.in
++++ b/driver/xscreensaver-demo.glade2.in
 @@ -478,7 +478,7 @@
  			  <property name="update_policy">GTK_UPDATE_ALWAYS</property>
  			  <property name="snap_to_ticks">True</property>
@@ -319,18 +259,18 @@ diff --git a/driver/xscreensaver-demo.glade2 b/driver/xscreensaver-demo.glade2
  			    <atkrelation target="pwd_button" type="controlled-by"/>
  			    <atkrelation target="pwd_button" type="labelled-by"/>
 diff --git a/driver/xscreensaver.c b/driver/xscreensaver.c
+index f357281..e502f01 100644
 --- a/driver/xscreensaver.c
 +++ b/driver/xscreensaver.c
-@@ -142,6 +142,8 @@
+@@ -150,6 +150,7 @@
  
  #include <stdio.h>
  #include <ctype.h>
-+#include <zone.h>
 +#include <user_attr.h>
  #include <X11/Xlib.h>
  
  #ifdef ENABLE_NLS
-@@ -1183,6 +1185,9 @@ main_loop (saver_info *si)
+@@ -1242,6 +1243,9 @@ main_loop (saver_info *si)
  
        maybe_reload_init_file (si);
  
@@ -340,7 +280,7 @@ diff --git a/driver/xscreensaver.c b/driver/xscreensaver.c
        if (p->mode == DONT_BLANK)
          {
            if (p->verbose_p)
-@@ -1466,6 +1471,20 @@ DONE:
+@@ -1532,6 +1536,20 @@ DONE:
  static void analyze_display (saver_info *si);
  static void fix_fds (void);
  
@@ -361,13 +301,10 @@ diff --git a/driver/xscreensaver.c b/driver/xscreensaver.c
  int
  main (int argc, char **argv)
  {
-@@ -1476,6 +1495,17 @@ main (int argc, char **argv)
+@@ -1542,6 +1560,14 @@ main (int argc, char **argv)
    struct passwd *spasswd;
    int i;
  
-+  if (getenv ("TRUSTED_SESSION") && (getzoneid () != 0))
-+    exit (1);
-+
 +  uid_t uid = getuid();
 +  if (uid == 0 && isRoleAttached(uid))
 +    {
@@ -379,7 +316,7 @@ diff --git a/driver/xscreensaver.c b/driver/xscreensaver.c
    /* It turns out that if we do setlocale (LC_ALL, "") here, people
       running in Japanese locales get font craziness on the password
       dialog, presumably because it is displaying Japanese characters
-@@ -1973,7 +2003,7 @@ handle_clientmessage (saver_info *si, XEvent *event, Bool until_idle_p)
+@@ -2054,7 +2080,7 @@ handle_clientmessage (saver_info *si, XEvent *event, Bool until_idle_p)
    else if (type == XA_EXIT)
      {
        /* Ignore EXIT message if the screen is locked. */
@@ -388,7 +325,7 @@ diff --git a/driver/xscreensaver.c b/driver/xscreensaver.c
  	{
  	  clientmessage_response (si, window, False,
  				  "EXIT ClientMessage received.",
-@@ -1990,8 +2020,8 @@ handle_clientmessage (saver_info *si, XEvent *event, Bool until_idle_p)
+@@ -2071,8 +2097,8 @@ handle_clientmessage (saver_info *si, XEvent *event, Bool until_idle_p)
  	}
        else
  	clientmessage_response (si, window, True,
@@ -400,6 +337,7 @@ diff --git a/driver/xscreensaver.c b/driver/xscreensaver.c
    else if (type == XA_RESTART)
      {
 diff --git a/driver/xscreensaver.h b/driver/xscreensaver.h
+index a52ba63..e688531 100644
 --- a/driver/xscreensaver.h
 +++ b/driver/xscreensaver.h
 @@ -170,6 +170,8 @@ extern struct screenhack_job *make_job (pid_t pid, int screen,
@@ -411,5 +349,6 @@ diff --git a/driver/xscreensaver.h b/driver/xscreensaver.h
  /* =======================================================================
     subprocs diagnostics
     ======================================================================= */
-1.7.9.2
+-- 
+2.6.1
 

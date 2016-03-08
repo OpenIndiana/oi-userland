@@ -1,24 +1,29 @@
+From 37f1a55c40ce9aaf136f1512068b04f6a5c36d48 Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Sat, 2 Jan 2016 22:02:23 -0800
+Subject: [PATCH] passwdTimeout pref
+
 Bug 15220000 SUNBT5077981 There should be an option to extend/disable lockout
                           timer
 aka http://bugzilla.gnome.org/show_bug.cgi?id=147579
- 
+
 Bug 15231258 SUNBT6176524 passwdTimeoutEnable for disabled user
 
 Upstream status unknown.
-
 ---
- driver/XScreenSaver.ad.in       |    1 +
- driver/demo-Gtk.c               |   13 +++++
- driver/lock.c                   |    8 +++
- driver/prefs.c                  |    6 ++
- driver/types.h                  |    2 +
- driver/xscreensaver-demo.glade2 |   98 ++++++++++++++++++++++++++++++++++++++-
- 6 files changed, 127 insertions(+), 1 deletions(-)
+ driver/XScreenSaver.ad.in          |  1 +
+ driver/demo-Gtk.c                  | 13 +++++
+ driver/lock.c                      |  8 ++++
+ driver/prefs.c                     |  6 +++
+ driver/types.h                     |  2 +
+ driver/xscreensaver-demo.glade2.in | 98 +++++++++++++++++++++++++++++++++++++-
+ 6 files changed, 127 insertions(+), 1 deletion(-)
 
 diff --git a/driver/XScreenSaver.ad.in b/driver/XScreenSaver.ad.in
+index 3e1ff8a..0a0ccf8 100644
 --- a/driver/XScreenSaver.ad.in
 +++ b/driver/XScreenSaver.ad.in
-@@ -34,6 +34,7 @@
+@@ -33,6 +33,7 @@
  *cycle:			0:10:00
  *lockTimeout:		0:00:00
  *passwdTimeout:		0:02:00
@@ -27,9 +32,10 @@ diff --git a/driver/XScreenSaver.ad.in b/driver/XScreenSaver.ad.in
  *dpmsQuickoffEnabled:	False
  *dpmsStandby:		0:10:00
 diff --git a/driver/demo-Gtk.c b/driver/demo-Gtk.c
+index d4cc4a5..3d86087 100644
 --- a/driver/demo-Gtk.c
 +++ b/driver/demo-Gtk.c
-@@ -1558,6 +1558,8 @@ flush_dialog_changes_and_save (state *s)
+@@ -1566,6 +1566,8 @@ flush_dialog_changes_and_save (state *s)
  
    MINUTES  (&p2->timeout,         "timeout_spinbutton");
    MINUTES  (&p2->cycle,           "cycle_spinbutton");
@@ -38,7 +44,7 @@ diff --git a/driver/demo-Gtk.c b/driver/demo-Gtk.c
    CHECKBOX (p2->lock_p,           "lock_button");
    MINUTES  (&p2->lock_timeout,    "lock_spinbutton");
  
-@@ -1660,6 +1662,8 @@ flush_dialog_changes_and_save (state *s)
+@@ -1670,6 +1672,8 @@ flush_dialog_changes_and_save (state *s)
    COPY(cycle,          "cycle");
    COPY(lock_p,         "lock_p");
    COPY(lock_timeout,   "lock_timeout");
@@ -47,7 +53,7 @@ diff --git a/driver/demo-Gtk.c b/driver/demo-Gtk.c
  
    COPY(dpms_enabled_p,  "dpms_enabled_p");
    COPY(dpms_quickoff_p, "dpms_quickoff_enabled_p");
-@@ -2791,6 +2795,9 @@ populate_prefs_page (state *s)
+@@ -2802,6 +2806,9 @@ populate_prefs_page (state *s)
    FMT_MINUTES ("timeout_spinbutton",      p->timeout);
    FMT_MINUTES ("cycle_spinbutton",        p->cycle);
    FMT_MINUTES ("lock_spinbutton",         p->lock_timeout);
@@ -57,7 +63,7 @@ diff --git a/driver/demo-Gtk.c b/driver/demo-Gtk.c
    FMT_MINUTES ("dpms_standby_spinbutton", p->dpms_standby);
    FMT_MINUTES ("dpms_suspend_spinbutton", p->dpms_suspend);
    FMT_MINUTES ("dpms_off_spinbutton",     p->dpms_off);
-@@ -2803,6 +2810,7 @@ populate_prefs_page (state *s)
+@@ -2814,6 +2821,7 @@ populate_prefs_page (state *s)
    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (name_to_widget (s,(NAME))),\
                                  (ACTIVEP))
  
@@ -65,7 +71,7 @@ diff --git a/driver/demo-Gtk.c b/driver/demo-Gtk.c
    TOGGLE_ACTIVE ("lock_button",       p->lock_p);
  #if 0
    TOGGLE_ACTIVE ("verbose_button",    p->verbose_p);
-@@ -2908,6 +2916,10 @@ populate_prefs_page (state *s)
+@@ -2919,6 +2927,10 @@ populate_prefs_page (state *s)
  
      /* Blanking and Locking
       */
@@ -76,7 +82,7 @@ diff --git a/driver/demo-Gtk.c b/driver/demo-Gtk.c
      SENSITIZE ("lock_button",     can_lock_p);
      SENSITIZE ("lock_spinbutton", can_lock_p && p->lock_p);
      SENSITIZE ("lock_mlabel",     can_lock_p && p->lock_p);
-@@ -3082,6 +3094,7 @@ fix_text_entry_sizes (state *s)
+@@ -3093,6 +3105,7 @@ fix_text_entry_sizes (state *s)
  # if 0   /* appears no longer necessary with Gtk 1.2.10 */
    const char * const spinbuttons[] = {
      "timeout_spinbutton", "cycle_spinbutton", "lock_spinbutton",
@@ -85,9 +91,10 @@ diff --git a/driver/demo-Gtk.c b/driver/demo-Gtk.c
      "dpms_off_spinbutton",
      "-fade_spinbutton" };
 diff --git a/driver/lock.c b/driver/lock.c
+index becf85b..08f0f98 100644
 --- a/driver/lock.c
 +++ b/driver/lock.c
-@@ -1646,6 +1646,10 @@ update_passwd_window (saver_info *si, const char *printed_passwd, float ratio)
+@@ -1651,6 +1651,10 @@ update_passwd_window (saver_info *si, const char *printed_passwd, float ratio)
        event.xclient.data.l[1] = 0;
        event.xclient.data.l[2] = 0;
  
@@ -98,7 +105,7 @@ diff --git a/driver/lock.c b/driver/lock.c
        if (!safe_XSendEvent (si->dpy, si->passwd_dialog, False, 0L, &event))
          fprintf (stderr, "%s: error sending ratio to lock dialog\n", blurb ());
      }
-@@ -2349,6 +2353,10 @@ passwd_animate_timer (XtPointer closure, XtIntervalId *id)
+@@ -2358,6 +2362,10 @@ passwd_animate_timer (XtPointer closure, XtIntervalId *id)
  
    if (!pw) return;
  
@@ -110,9 +117,10 @@ diff --git a/driver/lock.c b/driver/lock.c
    /* We want to make sure dialog is up before we update countdown timer */
    if (!si->passwd_dialog)
 diff --git a/driver/prefs.c b/driver/prefs.c
+index 55bac7b..52538a8 100644
 --- a/driver/prefs.c
 +++ b/driver/prefs.c
-@@ -251,6 +251,7 @@ static const char * const prefs[] = {
+@@ -252,6 +252,7 @@ static const char * const prefs[] = {
    "lockVTs",			/* not saved */
    "lockTimeout",
    "passwdTimeout",
@@ -120,7 +128,7 @@ diff --git a/driver/prefs.c b/driver/prefs.c
    "visualID",
    "installColormap",
    "verbose",
-@@ -784,6 +785,9 @@ write_init_file (Display *dpy,
+@@ -786,6 +787,9 @@ write_init_file (Display *dpy,
        CHECK("lockVTs")		continue;  /* don't save, unused */
        CHECK("lockTimeout")	type = pref_time, t = p->lock_timeout;
        CHECK("passwdTimeout")	type = pref_time, t = p->passwd_timeout;
@@ -130,7 +138,7 @@ diff --git a/driver/prefs.c b/driver/prefs.c
        CHECK("visualID")		type = pref_str,  s =    visual_name;
        CHECK("installColormap")	type = pref_bool, b = p->install_cmap_p;
        CHECK("verbose")		type = pref_bool, b = p->verbose_p;
-@@ -1068,6 +1072,8 @@ load_init_file (Display *dpy, saver_preferences *p)
+@@ -1071,6 +1075,8 @@ load_init_file (Display *dpy, saver_preferences *p)
    p->lock_timeout    = 1000 * get_minutes_resource (dpy, "lockTimeout", "Time");
    p->cycle           = 1000 * get_minutes_resource (dpy, "cycle", "Time");
    p->passwd_timeout  = 1000 * get_seconds_resource (dpy, "passwdTimeout", "Time");
@@ -140,9 +148,10 @@ diff --git a/driver/prefs.c b/driver/prefs.c
    p->pointer_hysteresis = get_integer_resource (dpy, "pointerHysteresis","Integer");
    p->notice_events_timeout = 1000*get_seconds_resource(dpy,
 diff --git a/driver/types.h b/driver/types.h
+index c77ee3f..b428f73 100644
 --- a/driver/types.h
 +++ b/driver/types.h
-@@ -77,6 +77,8 @@ struct saver_preferences {
+@@ -97,6 +97,8 @@ struct saver_preferences {
    Bool xsync_p;			/* whether XSynchronize has been called */
  
    Bool lock_p;			/* whether to lock as well as save */
@@ -151,9 +160,10 @@ diff --git a/driver/types.h b/driver/types.h
  
    Bool fade_p;			/* whether to fade to black, if possible */
    Bool unfade_p;		/* whether to fade from black, if possible */
-diff --git a/driver/xscreensaver-demo.glade2 b/driver/xscreensaver-demo.glade2
---- a/driver/xscreensaver-demo.glade2
-+++ b/driver/xscreensaver-demo.glade2
+diff --git a/driver/xscreensaver-demo.glade2.in b/driver/xscreensaver-demo.glade2.in
+index 40e47f6..a7a06a6 100644
+--- a/driver/xscreensaver-demo.glade2.in
++++ b/driver/xscreensaver-demo.glade2.in
 @@ -165,7 +165,7 @@
  		  <child>
  		    <widget class="GtkTable" id="blanking_table">
@@ -266,3 +276,6 @@ diff --git a/driver/xscreensaver-demo.glade2 b/driver/xscreensaver-demo.glade2
  		    </widget>
  		    <packing>
  		      <property name="left_attach">0</property>
+-- 
+2.6.1
+

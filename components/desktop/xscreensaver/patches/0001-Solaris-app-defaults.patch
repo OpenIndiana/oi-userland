@@ -1,6 +1,11 @@
+From ed0b348f926a4bb5df19f59a6a86ab0030891b04 Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Sat, 2 Jan 2016 19:40:40 -0800
+Subject: [PATCH] Solaris app-defaults
+
 Various settings to meet Solaris policies/preferences, including:
 
-   -     enable screen lock by default, disable splash screen
+   -     enable screen lock by default, disable splash screen by default
    -     disable using screen grabs in hacks to avoid security leaks
    -     set default mode to screen blank
    -     disable bsod by default to avoid confusion in shops with real NT boxes
@@ -13,12 +18,12 @@ Various settings to meet Solaris policies/preferences, including:
 
 Not suitable for upstream as these represent our differences of opinion or
 differences of requirements with upstreams.
-
 ---
- driver/XScreenSaver.ad.in |   68 ++++++++++++++++++++++-----------------------
- 1 files changed, 33 insertions(+), 35 deletions(-)
+ driver/XScreenSaver.ad.in | 66 +++++++++++++++++++++++------------------------
+ 1 file changed, 32 insertions(+), 34 deletions(-)
 
 diff --git a/driver/XScreenSaver.ad.in b/driver/XScreenSaver.ad.in
+index 1c1850f..22d5bcb 100644
 --- a/driver/XScreenSaver.ad.in
 +++ b/driver/XScreenSaver.ad.in
 @@ -28,42 +28,43 @@
@@ -26,8 +31,7 @@ diff --git a/driver/XScreenSaver.ad.in b/driver/XScreenSaver.ad.in
  ! /* (xrdb prevention kludge: whole file)
  
 -*mode:			random
-+! We want the default mode to be just blank the screen
-+*mode:	      	      	blank
++*mode:			blank
  *timeout:		0:10:00
  *cycle:			0:10:00
  *lockTimeout:		0:00:00
@@ -65,17 +69,17 @@ diff --git a/driver/XScreenSaver.ad.in b/driver/XScreenSaver.ad.in
  *visualID:		default
  *captureStderr: 	True
  *ignoreUninstalledPrograms: False
+ *authWarningSlack:	20
  
 -*textMode:		file
 +*textMode:		date
  *textLiteral:		XScreenSaver
  *textFile:		@DEFAULT_TEXT_FILE@
 -*textProgram:		fortune
--*textURL:		http://twitter.com/statuses/public_timeline.atom
--!*textURL:		http://www.livejournal.com/stats/latest-rss.bml
+-*textURL:		https://en.wikipedia.org/w/index.php?title=Special:NewPages&feed=rss
 +*textProgram:		date
-+*textURL:		http://blogs.oracle.com/observatory/en_US/feed/entries/atom
-+!*textURL:		http://twitter.com/statuses/public_timeline.atom
++!*textURL:		https://en.wikipedia.org/w/index.php?title=Special:NewPages&feed=rss
++*textURL:		https://blogs.oracle.com/observatory/en_US/feed/entries/atom
  
  *overlayTextForeground:	#FFFF00
  *overlayTextBackground:	#000000
@@ -88,7 +92,7 @@ diff --git a/driver/XScreenSaver.ad.in b/driver/XScreenSaver.ad.in
  
  ! Set this to True if you are experiencing longstanding XFree86 bug #421
  ! (xscreensaver not covering the whole screen)
-@@ -160,23 +161,23 @@ GetViewPortIsFullOfLies: False
+@@ -162,23 +163,23 @@ GetViewPortIsFullOfLies: False
  @GL_KLUDGE@ GL: 				superquadrics -root			    \n\
  				attraction -root			    \n\
  				blitspin -root				    \n\
@@ -118,7 +122,7 @@ diff --git a/driver/XScreenSaver.ad.in b/driver/XScreenSaver.ad.in
  				deco -root				    \n\
  				drift -root				    \n\
  -				fadeplot -root				    \n\
-@@ -185,13 +186,13 @@ GetViewPortIsFullOfLies: False
+@@ -187,13 +188,13 @@ GetViewPortIsFullOfLies: False
  				grav -root				    \n\
  				ifs -root				    \n\
  @GL_KLUDGE@ GL: 				jigsaw -root				    \n\
@@ -135,7 +139,7 @@ diff --git a/driver/XScreenSaver.ad.in b/driver/XScreenSaver.ad.in
  				penrose -root				    \n\
  @GL_KLUDGE@ GL: 				pipes -root				    \n\
  				rd-bomb -root				    \n\
-@@ -206,7 +207,7 @@ GetViewPortIsFullOfLies: False
+@@ -208,7 +209,7 @@ GetViewPortIsFullOfLies: False
  				xjack -root				    \n\
  				xlyap -root				    \n\
  @GL_KLUDGE@ GL: 				atlantis -root				    \n\
@@ -144,7 +148,7 @@ diff --git a/driver/XScreenSaver.ad.in b/driver/XScreenSaver.ad.in
  @GL_KLUDGE@ GL: 				bubble3d -root				    \n\
  @GL_KLUDGE@ GL: 				cage -root				    \n\
  -				crystal -root				    \n\
-@@ -219,7 +220,7 @@ GetViewPortIsFullOfLies: False
+@@ -221,7 +222,7 @@ GetViewPortIsFullOfLies: False
  				interference -root			    \n\
  				kumppa -root				    \n\
  @GL_KLUDGE@ GL: 				lament -root				    \n\
@@ -153,7 +157,7 @@ diff --git a/driver/XScreenSaver.ad.in b/driver/XScreenSaver.ad.in
  @GL_KLUDGE@ GL: 				sonar -root				    \n\
  @GL_KLUDGE@ GL: 				stairs -root				    \n\
  				truchet -root				    \n\
-@@ -227,9 +228,9 @@ GetViewPortIsFullOfLies: False
+@@ -229,9 +230,9 @@ GetViewPortIsFullOfLies: False
  				blaster -root				    \n\
  				bumps -root				    \n\
  				ccurve -root				    \n\
@@ -165,7 +169,7 @@ diff --git a/driver/XScreenSaver.ad.in b/driver/XScreenSaver.ad.in
  @GLE_KLUDGE@ GL: 				extrusion -root				    \n\
  -				loop -root				    \n\
  				penetrate -root				    \n\
-@@ -243,7 +244,7 @@ GetViewPortIsFullOfLies: False
+@@ -245,7 +246,7 @@ GetViewPortIsFullOfLies: False
  				squiral -root				    \n\
  				wander -root				    \n\
  -				webcollage -root			    \n\
@@ -174,7 +178,7 @@ diff --git a/driver/XScreenSaver.ad.in b/driver/XScreenSaver.ad.in
  				xmatrix -root				    \n\
  @GL_KLUDGE@ GL: 				gflux -root				    \n\
  -				nerverot -root				    \n\
-@@ -258,14 +259,14 @@ GetViewPortIsFullOfLies: False
+@@ -260,14 +261,14 @@ GetViewPortIsFullOfLies: False
  @GL_KLUDGE@ GL: 				menger -root				    \n\
  @GL_KLUDGE@ GL: 				molecule -root				    \n\
  				rotzoomer -root				    \n\
@@ -191,7 +195,7 @@ diff --git a/driver/XScreenSaver.ad.in b/driver/XScreenSaver.ad.in
  @GL_KLUDGE@ GL: 				boxed -root				    \n\
  @GL_KLUDGE@ GL: 				cubenetic -root				    \n\
  @GL_KLUDGE@ GL: 				endgame -root				    \n\
-@@ -294,12 +295,11 @@ GetViewPortIsFullOfLies: False
+@@ -296,12 +297,11 @@ GetViewPortIsFullOfLies: False
  @GL_KLUDGE@ GL: 				cubestorm -root				    \n\
  				eruption -root				    \n\
  @GL_KLUDGE@ GL: 				flipflop -root				    \n\
@@ -205,7 +209,7 @@ diff --git a/driver/XScreenSaver.ad.in b/driver/XScreenSaver.ad.in
  @GL_KLUDGE@ GL: 				hypertorus -root			    \n\
  - GL: 				jigglypuff -root			    \n\
  				metaballs -root				    \n\
-@@ -319,7 +319,6 @@ GetViewPortIsFullOfLies: False
+@@ -321,7 +321,6 @@ GetViewPortIsFullOfLies: False
  				intermomentary -root			    \n\
  				memscroller -root			    \n\
  @GL_KLUDGE@ GL: 				noof -root				    \n\
@@ -213,12 +217,14 @@ diff --git a/driver/XScreenSaver.ad.in b/driver/XScreenSaver.ad.in
  @GL_KLUDGE@ GL: 				pinion -root				    \n\
  @GL_KLUDGE@ GL: 				polyhedra -root				    \n\
  - GL: 				providence -root			    \n\
-@@ -451,7 +450,6 @@ XScreenSaver.bourneShell:		/bin/sh
+@@ -468,7 +467,6 @@ XScreenSaver.bourneShell:		/bin/sh
  *hacks.flipscreen3d.name:   FlipScreen3D
  *hacks.fliptext.name:       FlipText
  *hacks.fluidballs.name:     FluidBalls
 -*hacks.flyingtoasters.name: FlyingToasters
  *hacks.fontglide.name:      FontGlide
  *hacks.fuzzyflakes.name:    FuzzyFlakes
- *hacks.gflux.name:          GFlux
+ *hacks.geodesicgears.name:  GeodesicGears
+-- 
+2.6.1
 

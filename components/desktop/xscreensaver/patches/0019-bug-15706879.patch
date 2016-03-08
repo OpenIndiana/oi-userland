@@ -1,13 +1,19 @@
+From 404ef6681b57a43c006b92358ff7794867e01239 Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Sat, 2 Jan 2016 23:13:46 -0800
+Subject: [PATCH] bug 15706879
+
 15706879 SUNBT7033508 Xscreensaver "Black Screen Only" module shows
 	 	      portions of display when session is locked
 
 Upstream applicability & status unknown.
 ---
- driver/lock.c         |    4 ++--
- driver/xscreensaver.c |    1 -
+ driver/lock.c         | 4 ++--
+ driver/xscreensaver.c | 1 -
  2 files changed, 2 insertions(+), 3 deletions(-)
 
 diff --git a/driver/lock.c b/driver/lock.c
+index 08f0f98..dc40ca4 100644
 --- a/driver/lock.c
 +++ b/driver/lock.c
 @@ -918,6 +918,7 @@ new_passwd_window (saver_info *si)
@@ -26,7 +32,7 @@ diff --git a/driver/lock.c b/driver/lock.c
  
    si->pw_data = pw;
    return 0;
-@@ -3108,8 +3110,6 @@ unlock_p (saver_info *si)
+@@ -3125,8 +3127,6 @@ unlock_p (saver_info *si)
        return False;
      }
  
@@ -36,9 +42,10 @@ diff --git a/driver/lock.c b/driver/lock.c
  
    return (si->unlock_state == ul_success);
 diff --git a/driver/xscreensaver.c b/driver/xscreensaver.c
+index 926fc63..7ac855f 100644
 --- a/driver/xscreensaver.c
 +++ b/driver/xscreensaver.c
-@@ -1276,7 +1276,6 @@ main_loop (saver_info *si)
+@@ -1349,7 +1349,6 @@ main_loop (saver_info *si)
        for (i = 0; i < si->nscreens; i++)
          kill_screenhack (&si->screens[i]);
  
@@ -46,3 +53,6 @@ diff --git a/driver/xscreensaver.c b/driver/xscreensaver.c
        if (si->throttled_p || getuid () == 0)
          fprintf (stderr, "%s: not launching hack (throttled.)\n", blurb());
        else
+-- 
+2.6.1
+

@@ -1,3 +1,8 @@
+From 7420325ce7eb36c5441094463f1f7ebe6623d222 Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Sat, 2 Jan 2016 20:36:57 -0800
+Subject: [PATCH] gtk-lock
+
 Solaris uses the gtk unlock dialog program originally written by
 Ximian & Wipro, in order to provide a dialog box that works with
 the GNOME accessibility framework.   This was done as a fork of
@@ -63,32 +68,37 @@ This patch also contains fixes for:
 15568147 SUNBT6849124 xscreensaver leaves a dialog that cannot be moved/closed
 	 	      after password change warning
 15573881 SUNBT6857559 Nevada build was broken because of 6849124
+15652522 SUNBT6964562 xscreensaver dumps core whenever it unlocks in svn-142
+15700093 SUNBT7023648 xscreensaver does not allow user to enter password
+	 	      and login w/ sv_SE.ISO8859-01/-15
+22706313 xscreensaver calls to pam_setcred with the wrong flag
 ---
  config.h.in           |    3 +
- configure.in          |   23 +-
- driver/Makefile.in    |   59 +++-
+ configure.in          |   27 +-
+ driver/Makefile.in    |   59 ++-
  driver/auth.h         |    4 +
  driver/demo-Gtk.c     |   18 +
  driver/dialog-data.h  |  131 ++++++
- driver/lock-Gtk.c     |  955 +++++++++++++++++++++++++++++++++++++++++++
- driver/lock.c         | 1083 ++++++++++++++++++++++++++++++++++++++++++++-----
- driver/passwd-pam.c   |  207 +++++++++-
+ driver/lock-Gtk.c     |  968 +++++++++++++++++++++++++++++++++++++++++++
+ driver/lock.c         | 1085 ++++++++++++++++++++++++++++++++++++++++++++-----
+ driver/passwd-pam.c   |  228 +++++++++--
  driver/passwd.c       |    1 +
  driver/setuid.c       |    5 +-
- driver/subprocs.c     |   35 ++-
- driver/timers.c       |  110 +++++-
+ driver/subprocs.c     |   35 +-
+ driver/timers.c       |  110 ++++-
  driver/types.h        |   18 +
  driver/windows.c      |   21 +-
- driver/xscreensaver.c |  131 ++++++-
+ driver/xscreensaver.c |  130 +++++-
  driver/xscreensaver.h |    6 +
- 17 files changed, 2663 insertions(+), 147 deletions(-)
+ 17 files changed, 2687 insertions(+), 162 deletions(-)
  create mode 100644 driver/dialog-data.h
  create mode 100644 driver/lock-Gtk.c
 
 diff --git a/config.h.in b/config.h.in
+index 3524ec4..6b6d077 100644
 --- a/config.h.in
 +++ b/config.h.in
-@@ -384,6 +384,9 @@
+@@ -360,6 +360,9 @@
     make use of this if it is available. */
  #undef HAVE_XPM
  
@@ -99,28 +109,33 @@ diff --git a/config.h.in b/config.h.in
  #undef HAVE_XSHM_EXTENSION
  
 diff --git a/configure.in b/configure.in
+index 4c4dee5..873299e 100644
 --- a/configure.in
 +++ b/configure.in
-@@ -2531,6 +2531,8 @@ if test "$with_gtk" = yes; then
+@@ -2666,6 +2666,7 @@ if test "$with_gtk" = yes; then
    pkg_check_version        libglade-2.0  1.99.0
    pkg_check_version      gdk-pixbuf-2.0  2.0.0
    pkg_check_version gdk-pixbuf-xlib-2.0  2.0.0
 +  pkg_check_version           gconf-2.0  2.6.1
-+  pkg_check_version  libloginhelper-1.0  1.0
    have_gtk="$ok"
  
    if test "$have_gtk" = no; then
-@@ -2546,6 +2548,9 @@ if test "$with_gtk" = yes; then
+@@ -2681,6 +2682,14 @@ if test "$with_gtk" = yes; then
    fi
  
    if test "$have_gtk" = yes; then
 +#--- Begin SUNW addition
++    PKG_CHECK_MODULES([LOGINHELPER], [libloginhelper-1.0 >= 1.0],
++        [pkgs="$pkgs libloginhelper-1.0"
++         AC_DEFINE([HAVE_LOGINHELPER],[],
++                   [Define this to use libloginhelper (atk 1.x only)])],
++        [true])
 +    AC_DEFINE(HAVE_XSCREENSAVER_LOCK,[],[Define this to build the external lock dialog])
 +#--- End SUNW addition
      AC_CACHE_CHECK([for Gtk includes], ac_cv_gtk_config_cflags,
                     [ac_cv_gtk_config_cflags=`$pkg_config --cflags $pkgs`])
      AC_CACHE_CHECK([for Gtk libs], ac_cv_gtk_config_libs,
-@@ -3642,6 +3647,16 @@ if test "$have_gtk" = yes; then
+@@ -3933,6 +3942,16 @@ if test "$have_gtk" = yes; then
    ALL_DEMO_PROGRAMS="$PREFERRED_DEMO_PROGRAM $ALL_DEMO_PROGRAMS"
  fi
  
@@ -137,7 +152,7 @@ diff --git a/configure.in b/configure.in
  
  if test "$have_kerberos" = yes; then
    PASSWD_SRCS="$PASSWD_SRCS \$(KERBEROS_SRCS)"
-@@ -3781,6 +3796,11 @@ AC_SUBST(INCLUDES)
+@@ -4077,6 +4096,11 @@ AC_SUBST(INCLUDES)
  
  AC_SUBST(PREFERRED_DEMO_PROGRAM)
  AC_SUBST(ALL_DEMO_PROGRAMS)
@@ -149,7 +164,7 @@ diff --git a/configure.in b/configure.in
  AC_SUBST(SAVER_LIBS)
  AC_SUBST(MOTIF_LIBS)
  AC_SUBST(GTK_LIBS)
-@@ -4260,7 +4280,8 @@ HACK_CONF_DIR=`echo "${HACK_CONF_DIR}" | sed 's@/$@@;s@//*@/@g'`
+@@ -4598,7 +4622,8 @@ HACK_CONF_DIR=`echo "${HACK_CONF_DIR}" | sed 's@/$@@;s@//*@/@g'`
  
  
  # Sanity check the hackdir
@@ -160,6 +175,7 @@ diff --git a/configure.in b/configure.in
      echo ""
      AC_MSG_ERROR([\"--with-hackdir=${bindir}/${bad_choice}\" won't work.
 diff --git a/driver/Makefile.in b/driver/Makefile.in
+index 90ef1d2..a44e312 100644
 --- a/driver/Makefile.in
 +++ b/driver/Makefile.in
 @@ -29,6 +29,7 @@ GTK_APPDIR	= $(GTK_DATADIR)/applications
@@ -178,16 +194,16 @@ diff --git a/driver/Makefile.in b/driver/Makefile.in
  
  LIBS		= @LIBS@
  INTL_LIBS	= @INTLLIBS@
-@@ -100,6 +102,8 @@ GTK_SRCS	= demo-Gtk.c demo-Gtk-conf.c \
- 		  demo-Gtk-widgets.c demo-Gtk-support.c
- GTK_EXTRA_OBJS  = demo-Gtk-widgets.o demo-Gtk-support.o
+@@ -98,6 +100,8 @@ MOTIF_OBJS	= demo-Xm.o demo-Xm-widgets.o
+ 
+ GTK_SRCS	= demo-Gtk.c demo-Gtk-conf.c
  GTK_OBJS	= demo-Gtk.o demo-Gtk-conf.o @GTK_EXTRA_OBJS@
 +GTK_LOCK_SRCS	= lock-Gtk.c atoms.c remote.c
 +GTK_LOCK_OBJS	= lock-Gtk.o atoms.o remote.o
  
  PWENT_SRCS	= passwd-pwent.c
  PWENT_OBJS	= passwd-pwent.o
-@@ -219,8 +223,8 @@ GETIMG_LIBS	= $(LIBS) $(X_LIBS) $(XPM_LIBS) $(JPEG_LIBS) \
+@@ -217,8 +221,8 @@ GETIMG_LIBS	= $(LIBS) $(X_LIBS) $(XPM_LIBS) $(JPEG_LIBS) \
  		  $(X_PRE_LIBS) -lXt -lX11 $(XMU_LIBS) -lXext $(X_EXTRA_LIBS)
  
  EXES		= xscreensaver xscreensaver-command xscreensaver-demo \
@@ -198,7 +214,7 @@ diff --git a/driver/Makefile.in b/driver/Makefile.in
  EXES_OSX	= pdf2jpeg
  
  SCRIPTS_1	= xscreensaver-getimage-file xscreensaver-getimage-video \
-@@ -250,7 +254,7 @@ VMSFILES	= compile_axp.com compile_decc.com link_axp.com link_decc.com \
+@@ -247,7 +251,7 @@ VMSFILES	= compile_axp.com compile_decc.com link_axp.com link_decc.com \
  		  vms-getpwnam.c vms-pwd.h vms-hpwd.c vms-validate.c \
  		  vms_axp.opt vms_axp_12.opt vms_decc.opt vms_decc_12.opt
  
@@ -207,7 +223,7 @@ diff --git a/driver/Makefile.in b/driver/Makefile.in
  		  $(MOTIF_SRCS) $(GTK_SRCS) $(PWENT_SRCS) $(PWHELPER_SRCS) \
  		  $(KERBEROS_SRCS) $(PAM_SRCS) $(LOCK_SRCS_1) $(DEMO_SRCS_1) \
  		  $(CMD_SRCS) $(GETIMG_SRCS_1) $(PDF2JPEG_SRCS) $(HDRS) \
-@@ -263,7 +267,7 @@ all: $(EXES) $(EXES2)
+@@ -260,7 +264,7 @@ all: $(EXES) $(EXES2)
  tests: $(TEST_EXES)
  
  install:   install-program   install-ad    install-scripts \
@@ -216,7 +232,7 @@ diff --git a/driver/Makefile.in b/driver/Makefile.in
  uninstall: uninstall-program uninstall-ad  \
  	   uninstall-gnome   uninstall-man uninstall-xml  
  
-@@ -275,6 +279,9 @@ install-program: $(EXES)
+@@ -272,6 +276,9 @@ install-program: $(EXES)
  	@if [ ! -d $(install_prefix)$(bindir) ]; then			\
  	  $(INSTALL_DIRS) $(install_prefix)$(bindir) ;			\
  	 fi
@@ -226,7 +242,7 @@ diff --git a/driver/Makefile.in b/driver/Makefile.in
  	@inst="$(INSTALL_PROGRAM)" ;					\
  	if [ @NEED_SETUID@ = yes ]; then				\
  	   me=`PATH="$$PATH:/usr/ucb" whoami` ;				\
-@@ -303,6 +310,12 @@ install-program: $(EXES)
+@@ -300,6 +307,12 @@ install-program: $(EXES)
  	  echo $(INSTALL_PROGRAM) $$exe $(install_prefix)$(bindir)/$$exe ; \
  	       $(INSTALL_PROGRAM) $$exe $(install_prefix)$(bindir)/$$exe ; \
  	 done
@@ -239,17 +255,17 @@ diff --git a/driver/Makefile.in b/driver/Makefile.in
  
  install-ad: XScreenSaver.ad
  	@if [ ! -d $(install_prefix)$(AD_DIR) ]; then			      \
-@@ -738,7 +751,7 @@ $(SAVER_UTIL_OBJS):
+@@ -736,7 +749,7 @@ $(SAVER_UTIL_OBJS):
  
  # How we build object files in this directory.
  .c.o:
--	$(CC) -c $(INCLUDES) $(DEFS) $(CFLAGS) $(X_CFLAGS) $<
-+	$(CC) -c $(INCLUDES) $(DEFS) $(INTL_DEFS) $(CFLAGS) $(X_CFLAGS) $<
+-	$(CC) -c $(INCLUDES) $(DEFS) $(CPPFLAGS) $(CFLAGS) $(X_CFLAGS) $<
++	$(CC) -c $(INCLUDES) $(DEFS) $(CPPFLAGS) $(INTL_DEFS) $(CFLAGS) $(X_CFLAGS) $<
  
  .m.o:
- 	$(OBJCC) -c $(INCLUDES) $(DEFS) $(CFLAGS) $(X_CFLAGS) $<
-@@ -764,6 +777,16 @@ demo-Gtk-conf.o: demo-Gtk-conf.c
- 	$(CC) -c $(INCLUDES) $(CONF_DEFS) $(GTK_DEFS) $(CFLAGS) $(X_CFLAGS) \
+ 	$(OBJCC) -c $(INCLUDES) $(DEFS) $(CPPFLAGS) $(CFLAGS) $(X_CFLAGS) $<
+@@ -762,6 +775,16 @@ demo-Gtk-conf.o: demo-Gtk-conf.c
+ 	$(CC) -c $(INCLUDES) $(CONF_DEFS) $(GTK_DEFS) $(CPPFLAGS) $(CFLAGS) $(X_CFLAGS) \
  	  $(srcdir)/demo-Gtk-conf.c
  
 +# lock takes an extra -D option.
@@ -265,17 +281,17 @@ diff --git a/driver/Makefile.in b/driver/Makefile.in
  
  # How we build the default app-defaults file into the program.
  #
-@@ -778,7 +801,8 @@ XScreenSaver_Xm_ad.h: XScreenSaver-Xm.ad
+@@ -776,7 +799,8 @@ XScreenSaver_Xm_ad.h: XScreenSaver-Xm.ad
  # The executables linked in this directory.
  #
  xscreensaver: $(SAVER_OBJS)
--	$(CC) $(LDFLAGS) -o $@ $(SAVER_OBJS) $(SAVER_LIBS)
-+	$(CC) $(LDFLAGS) -o $@ $(SAVER_OBJS) $(SAVER_LIBS) \
-+	-lgconf-2 -lgobject-2.0
+-	$(CC) $(LDFLAGS) -o $@ $(SAVER_OBJS) $(SAVER_LIBS) $(INTL_LIBS)
++	$(CC) $(LDFLAGS) -o $@ $(SAVER_OBJS) $(SAVER_LIBS) $(INTL_LIBS) \
++	-lgconf-2 -lgobject-2.0 -lglib-2.0
  
  xscreensaver-command: $(CMD_OBJS)
  	$(CC) $(LDFLAGS) -o $@ $(CMD_OBJS) $(CMD_LIBS)
-@@ -794,6 +818,15 @@ xscreensaver-demo: @PREFERRED_DEMO_PROGRAM@
+@@ -792,6 +816,15 @@ xscreensaver-demo: @PREFERRED_DEMO_PROGRAM@
  	       cp -p @PREFERRED_DEMO_PROGRAM@@EXEEXT@ $@@EXEEXT@      ;	\
  	fi
  
@@ -291,7 +307,7 @@ diff --git a/driver/Makefile.in b/driver/Makefile.in
  xscreensaver-demo-Xm: $(DEMO_OBJS) $(MOTIF_OBJS)
  	$(CC) $(LDFLAGS) -o $@ $(DEMO_OBJS) $(MOTIF_OBJS) $(LIBS) $(X_LIBS) \
  	$(MOTIF_LIBS) $(INTL_LIBS) $(X_PRE_LIBS) -lXt -lX11 \
-@@ -817,7 +850,7 @@ pdf2jpeg: $(PDF2JPEG_OBJS)
+@@ -815,7 +848,7 @@ pdf2jpeg: $(PDF2JPEG_OBJS)
  
  
  TEST_PASSWD_OBJS = test-passwd.o $(LOCK_OBJS_1) $(PASSWD_OBJS) \
@@ -300,7 +316,7 @@ diff --git a/driver/Makefile.in b/driver/Makefile.in
  	$(SAVER_UTIL_OBJS)
  test-passwd.o: XScreenSaver_ad.h
  
-@@ -907,8 +940,14 @@ dpms.o: $(srcdir)/types.h
+@@ -897,8 +930,14 @@ dpms.o: $(srcdir)/types.h
  dpms.o: $(srcdir)/xscreensaver.h
  exec.o: ../config.h
  exec.o: $(srcdir)/exec.h
@@ -315,7 +331,7 @@ diff --git a/driver/Makefile.in b/driver/Makefile.in
  lock.o: $(srcdir)/mlstring.h
  lock.o: $(srcdir)/prefs.h
  lock.o: $(srcdir)/types.h
-@@ -917,6 +956,8 @@ lock.o: $(srcdir)/xscreensaver.h
+@@ -907,6 +946,8 @@ lock.o: $(srcdir)/xscreensaver.h
  mlstring.o: $(srcdir)/mlstring.h
  passwd.o: $(srcdir)/auth.h
  passwd.o: ../config.h
@@ -324,7 +340,7 @@ diff --git a/driver/Makefile.in b/driver/Makefile.in
  passwd.o: $(srcdir)/prefs.h
  passwd.o: $(srcdir)/types.h
  passwd.o: $(srcdir)/xscreensaver.h
-@@ -984,6 +1025,8 @@ test-vp.o: ../config.h
+@@ -975,6 +1016,8 @@ test-vp.o: ../config.h
  test-xdpms.o: ../config.h
  test-xinerama.o: ../config.h
  timers.o: ../config.h
@@ -333,7 +349,7 @@ diff --git a/driver/Makefile.in b/driver/Makefile.in
  timers.o: $(srcdir)/prefs.h
  timers.o: $(srcdir)/types.h
  timers.o: $(srcdir)/xscreensaver.h
-@@ -1011,6 +1054,8 @@ xscreensaver-getimage.o: $(UTILS_SRC)/yarandom.h
+@@ -1002,6 +1045,8 @@ xscreensaver-getimage.o: $(UTILS_SRC)/yarandom.h
  xscreensaver.o: XScreenSaver_ad.h
  xscreensaver.o: $(srcdir)/auth.h
  xscreensaver.o: ../config.h
@@ -343,6 +359,7 @@ diff --git a/driver/Makefile.in b/driver/Makefile.in
  xscreensaver.o: $(srcdir)/types.h
  xscreensaver.o: $(UTILS_SRC)/resources.h
 diff --git a/driver/auth.h b/driver/auth.h
+index 65e00f3..4fcbb34 100644
 --- a/driver/auth.h
 +++ b/driver/auth.h
 @@ -51,4 +51,8 @@ xss_authenticate(saver_info *si, Bool verbose_p);
@@ -355,6 +372,7 @@ diff --git a/driver/auth.h b/driver/auth.h
 +
  #endif
 diff --git a/driver/demo-Gtk.c b/driver/demo-Gtk.c
+index 3fa27c3..ece3c44 100644
 --- a/driver/demo-Gtk.c
 +++ b/driver/demo-Gtk.c
 @@ -98,6 +98,8 @@
@@ -366,7 +384,7 @@ diff --git a/driver/demo-Gtk.c b/driver/demo-Gtk.c
  #if defined(DEFAULT_ICONDIR) && !defined(GLADE_DIR)
  # define GLADE_DIR DEFAULT_ICONDIR
  #endif
-@@ -5024,6 +5026,22 @@ main (int argc, char **argv)
+@@ -5042,6 +5044,22 @@ main (int argc, char **argv)
    load_init_file (dpy, p);
    initialize_sort_map (s);
  
@@ -391,6 +409,7 @@ diff --git a/driver/demo-Gtk.c b/driver/demo-Gtk.c
       reality.
 diff --git a/driver/dialog-data.h b/driver/dialog-data.h
 new file mode 100644
+index 0000000..1a6a965
 --- /dev/null
 +++ b/driver/dialog-data.h
 @@ -0,0 +1,131 @@
@@ -427,7 +446,7 @@ new file mode 100644
 +   */
 +  char typed_passwd [MAX_PASSWD_CHARS * MAX_BYTES_PER_CHAR];
 +  char typed_passwd_char_size [MAX_PASSWD_CHARS];
-+  
++
 +  XtIntervalId timer;
 +  int i_beam;
 +
@@ -527,9 +546,10 @@ new file mode 100644
 +#endif /* __DIALOG_DATA_H__ */
 diff --git a/driver/lock-Gtk.c b/driver/lock-Gtk.c
 new file mode 100644
+index 0000000..13e0213
 --- /dev/null
 +++ b/driver/lock-Gtk.c
-@@ -0,0 +1,955 @@
+@@ -0,0 +1,968 @@
 +/* lock-Gtk.c -- a GTK+ password dialog for xscreensaver
 + * xscreensaver, Copyright (c) 1993-1998 Jamie Zawinski <jwz@jwz.org>
 + *
@@ -598,8 +618,10 @@ new file mode 100644
 +#include <X11/Xmu/WinUtil.h>
 +
 +#include <gconf/gconf-client.h>
++#ifdef HAVE_LOGINHELPER
 +#include <libbonobo.h>
 +#include <login-helper/Accessibility_LoginHelper.h>
++#endif
 +#include <atk/atkobject.h>
 +
 +#include "remote.h"
@@ -761,7 +783,7 @@ new file mode 100644
 +
 +  /* frame */
 +  frame1 = g_object_new (GTK_TYPE_FRAME,
-+                         "shadow", GTK_SHADOW_OUT,
++                         "shadow-type", GTK_SHADOW_OUT,
 +                         NULL);
 +  gtk_container_add (GTK_CONTAINER (dialog), frame1);
 +  /* AT role = panel */
@@ -779,7 +801,7 @@ new file mode 100644
 +
 +  /* image frame */
 +  frame2 = g_object_new (GTK_TYPE_FRAME,
-+                         "shadow", GTK_SHADOW_ETCHED_IN,
++                         "shadow-type", GTK_SHADOW_ETCHED_IN,
 +                         NULL);
 +  gtk_box_pack_start (GTK_BOX (hbox1), frame2,
 +                      TRUE, TRUE, 0);
@@ -1168,13 +1190,16 @@ new file mode 100644
 +  GConfClient *client;
 +  const char *modulesptr = NULL;
 +  int i;
++  const char *locale = NULL;
 +
 +  gboolean  at_enable  = FALSE; /* accessibility mode enabled ? */
++#ifdef HAVE_LOGINHELPER
 +  Bonobo_ServerInfoList *server_list = NULL;
 +  CORBA_Environment ev;
 +  Accessibility_LoginHelper helper;
 +  Accessibility_LoginHelper *helper_list = NULL;
 +  CORBA_boolean safe;
++#endif
 +  gboolean center_position = TRUE; /* center dialog on screen? */
 +
 +#ifdef ENABLE_NLS
@@ -1239,6 +1264,7 @@ new file mode 100644
 +      if (!modulesptr || modulesptr [0] == '\0')
 +        putenv ("GTK_MODULES=gail:atk-bridge");
 +
++#ifdef HAVE_LOGINHELPER
 +      CORBA_exception_init (&ev);
 +      if (!bonobo_init (&argc, argv))
 +        {
@@ -1266,6 +1292,7 @@ new file mode 100644
 +       */
 +      if (server_list && server_list->_length)
 +        center_position = FALSE;
++#endif
 +    } /* accessibility enabled */
 +
 +  pwd = make_dialog (center_position);
@@ -1280,6 +1307,7 @@ new file mode 100644
 +  gdk_window_add_filter (GET_WINDOW (pwd->dialog), dialog_filter_func, pwd);
 +  write_windowid ("dialog_win", GDK_WINDOW_XID (GET_WINDOW (pwd->dialog)));
 +
++#ifdef HAVE_LOGINHELPER
 +  if (server_list && server_list->_length)
 +    {
 +      /* debug only
@@ -1451,6 +1479,7 @@ new file mode 100644
 +            }
 +        }
 +    } /* accessibility helpers active */
++#endif
 +
 +  /* Flush dialog window ids & any messages about login helpers to parent */
 +  write_to_parent(NULL, NULL, TRUE);
@@ -1458,10 +1487,13 @@ new file mode 100644
 +  gtk_widget_grab_focus (pwd->user_input_entry);
 +
 +  ioc = g_io_channel_unix_new (0);
++  g_get_charset (&locale);
++  g_io_channel_set_encoding(ioc, locale, NULL);
 +  g_io_add_watch (ioc, G_IO_IN | G_IO_HUP, handle_input, pwd);
 +
 +  gtk_main ();
 +
++#ifdef LOGIN_HELPER
 +  /* Reset accessibility helpers back to non-safe mode now that we're done */
 +  if (server_list)
 +    {
@@ -1481,11 +1513,13 @@ new file mode 100644
 +      CORBA_free (server_list);
 +      bonobo_debug_shutdown ();
 +    }
++#endif
 +
 +  return 0;
 +}
 +#endif /* HAVE_GTK2 */
 diff --git a/driver/lock.c b/driver/lock.c
+index 7c92be6..becf85b 100644
 --- a/driver/lock.c
 +++ b/driver/lock.c
 @@ -21,8 +21,13 @@
@@ -2323,7 +2357,7 @@ diff --git a/driver/lock.c b/driver/lock.c
    screen = pw->prompt_screen->screen;
    cmap = DefaultColormapOfScreen (screen);
  
-@@ -716,11 +1263,13 @@ make_passwd_window (saver_info *si,
+@@ -721,11 +1268,13 @@ make_passwd_window (saver_info *si,
    if (cmap)
      XInstallColormap (si->dpy, cmap);
    draw_passwd_window (si);
@@ -2337,7 +2371,7 @@ diff --git a/driver/lock.c b/driver/lock.c
  static void
  draw_passwd_window (saver_info *si)
  {
-@@ -1066,17 +1615,48 @@ draw_button(Display *dpy,
+@@ -1071,17 +1620,48 @@ draw_button(Display *dpy,
    draw_shaded_rectangle(dpy, dialog, x, y, width, height,
  			shadow_width, shadow_light, shadow_dark);
  }
@@ -2386,7 +2420,7 @@ diff --git a/driver/lock.c b/driver/lock.c
    gcv.foreground = pw->passwd_foreground;
    gcv.font = pw->passwd_font->fid;
    gc1 = XCreateGC (si->dpy, si->passwd_dialog, GCForeground|GCFont, &gcv);
-@@ -1221,6 +1801,7 @@ update_passwd_window (saver_info *si, const char *printed_passwd, float ratio)
+@@ -1226,6 +1806,7 @@ update_passwd_window (saver_info *si, const char *printed_passwd, float ratio)
    XFreeGC (si->dpy, gc1);
    XFreeGC (si->dpy, gc2);
    XSync (si->dpy, False);
@@ -2394,7 +2428,7 @@ diff --git a/driver/lock.c b/driver/lock.c
  }
  
  
-@@ -1252,6 +1833,9 @@ cleanup_passwd_window (saver_info *si)
+@@ -1257,6 +1838,9 @@ cleanup_passwd_window (saver_info *si)
  {
    passwd_dialog_data *pw;
  
@@ -2404,7 +2438,7 @@ diff --git a/driver/lock.c b/driver/lock.c
    if (!(pw = si->pw_data))
      return;
  
-@@ -1269,7 +1853,13 @@ cleanup_passwd_window (saver_info *si)
+@@ -1274,7 +1858,13 @@ cleanup_passwd_window (saver_info *si)
  
    memset (pw->typed_passwd, 0, sizeof(pw->typed_passwd));
    memset (pw->typed_passwd_char_size, 0, sizeof(pw->typed_passwd_char_size));
@@ -2419,7 +2453,7 @@ diff --git a/driver/lock.c b/driver/lock.c
  
    if (pw->timer)
      {
-@@ -1292,8 +1882,10 @@ destroy_passwd_window (saver_info *si)
+@@ -1297,8 +1887,10 @@ destroy_passwd_window (saver_info *si)
    passwd_dialog_data *pw = si->pw_data;
    saver_screen_info *ssi = pw->prompt_screen;
    Colormap cmap = DefaultColormapOfScreen (ssi->screen);
@@ -2430,7 +2464,7 @@ diff --git a/driver/lock.c b/driver/lock.c
    XEvent event;
  
    cleanup_passwd_window (si);
-@@ -1309,6 +1901,81 @@ destroy_passwd_window (saver_info *si)
+@@ -1314,6 +1906,81 @@ destroy_passwd_window (saver_info *si)
        si->cached_passwd = NULL;
      }
  
@@ -2512,7 +2546,7 @@ diff --git a/driver/lock.c b/driver/lock.c
    move_mouse_grab (si, RootWindowOfScreen (ssi->screen),
                     ssi->cursor, ssi->number);
  
-@@ -1343,7 +2010,14 @@ destroy_passwd_window (saver_info *si)
+@@ -1348,7 +2015,14 @@ destroy_passwd_window (saver_info *si)
          fprintf (stderr, "%s: %d: destroying password dialog.\n",
                   blurb(), pw->prompt_screen->number);
  
@@ -2527,7 +2561,7 @@ diff --git a/driver/lock.c b/driver/lock.c
        si->passwd_dialog = 0;
      }
    
-@@ -1354,6 +2028,7 @@ destroy_passwd_window (saver_info *si)
+@@ -1359,6 +2033,7 @@ destroy_passwd_window (saver_info *si)
        pw->save_under = 0;
      }
  
@@ -2535,7 +2569,7 @@ diff --git a/driver/lock.c b/driver/lock.c
    if (pw->heading_label) free (pw->heading_label);
    if (pw->body_label)    free (pw->body_label);
    if (pw->user_label)    free (pw->user_label);
-@@ -1404,6 +2079,7 @@ destroy_passwd_window (saver_info *si)
+@@ -1409,6 +2084,7 @@ destroy_passwd_window (saver_info *si)
        pw->logo_pixels = 0;
        pw->logo_npixels = 0;
      }
@@ -2543,7 +2577,7 @@ diff --git a/driver/lock.c b/driver/lock.c
  
    if (pw->save_under)
      XFreePixmap (si->dpy, pw->save_under);
-@@ -1411,9 +2087,12 @@ destroy_passwd_window (saver_info *si)
+@@ -1416,9 +2092,12 @@ destroy_passwd_window (saver_info *si)
    if (cmap)
      XInstallColormap (si->dpy, cmap);
  
@@ -2556,9 +2590,9 @@ diff --git a/driver/lock.c b/driver/lock.c
  }
  
  
-@@ -1426,6 +2105,49 @@ ignore_all_errors_ehandler (Display *dpy, XErrorEvent *error)
-   return 0;
- }
+@@ -1435,6 +2114,49 @@ ignore_all_errors_ehandler (Display *dpy, XErrorEvent *error)
+ 
+ #endif /* HAVE_XF86MISCSETGRABKEYSSTATE || HAVE_XF86VMODE */
  
 +#ifdef HAVE_XSCREENSAVER_LOCK
 +/* Catch errors from XRestackWindows, since there's an inherent race
@@ -2606,7 +2640,7 @@ diff --git a/driver/lock.c b/driver/lock.c
  
  #ifdef HAVE_XHPDISABLERESET
  /* This function enables and disables the C-Sh-Reset hot-key, which
-@@ -1627,6 +2349,17 @@ passwd_animate_timer (XtPointer closure, XtIntervalId *id)
+@@ -1636,6 +2358,17 @@ passwd_animate_timer (XtPointer closure, XtIntervalId *id)
  
    if (!pw) return;
  
@@ -2624,7 +2658,7 @@ diff --git a/driver/lock.c b/driver/lock.c
    pw->ratio -= (1.0 / ((double) si->prefs.passwd_timeout / (double) tick));
    if (pw->ratio < 0)
      {
-@@ -1646,6 +2379,7 @@ passwd_animate_timer (XtPointer closure, XtIntervalId *id)
+@@ -1655,6 +2388,7 @@ passwd_animate_timer (XtPointer closure, XtIntervalId *id)
    idle_timer ((XtPointer) si, 0);
  }
  
@@ -2632,7 +2666,7 @@ diff --git a/driver/lock.c b/driver/lock.c
  
  static XComposeStatus *compose_status;
  
-@@ -1723,6 +2457,7 @@ finished_typing_passwd (saver_info *si, passwd_dialog_data *pw)
+@@ -1732,6 +2466,7 @@ finished_typing_passwd (saver_info *si, passwd_dialog_data *pw)
        update_passwd_window (si, "", pw->ratio);
      }
  }
@@ -2640,7 +2674,7 @@ diff --git a/driver/lock.c b/driver/lock.c
  
  static void
  handle_passwd_key (saver_info *si, XKeyEvent *event)
-@@ -1730,7 +2465,8 @@ handle_passwd_key (saver_info *si, XKeyEvent *event)
+@@ -1739,7 +2474,8 @@ handle_passwd_key (saver_info *si, XKeyEvent *event)
    passwd_dialog_data *pw = si->pw_data;
    unsigned char decoded [MAX_BYTES_PER_CHAR * 10]; /* leave some slack */
    KeySym keysym = 0;
@@ -2650,7 +2684,7 @@ diff --git a/driver/lock.c b/driver/lock.c
    /* XLookupString may return more than one character via XRebindKeysym;
       and on some systems it returns multi-byte UTF-8 characters (contrary
       to its documentation, which says it returns only Latin1.)
-@@ -1764,11 +2500,40 @@ handle_passwd_key (saver_info *si, XKeyEvent *event)
+@@ -1773,11 +2509,40 @@ handle_passwd_key (saver_info *si, XKeyEvent *event)
  
    decoded[decoded_size] = 0;
    pw->passwd_changed_p = True;
@@ -2691,7 +2725,7 @@ diff --git a/driver/lock.c b/driver/lock.c
    if (decoded_size == 1)		/* Handle single-char commands */
      {
        switch (*decoded)
-@@ -1858,6 +2623,7 @@ handle_passwd_key (saver_info *si, XKeyEvent *event)
+@@ -1867,6 +2632,7 @@ handle_passwd_key (saver_info *si, XKeyEvent *event)
      {
        update_passwd_window (si, "", pw->ratio);
      }
@@ -2699,9 +2733,9 @@ diff --git a/driver/lock.c b/driver/lock.c
  }
  
  
-@@ -1880,7 +2646,9 @@ passwd_event_loop (saver_info *si)
- 
+@@ -1890,7 +2656,9 @@ passwd_event_loop (saver_info *si)
    passwd_animate_timer ((XtPointer) si, 0);
+   reset_watchdog_timer (si, False);	/* Disable watchdog while dialog up */
  
 -  while (si->unlock_state == ul_read)
 +  si->pw_data->got_passwd = FALSE;
@@ -2710,7 +2744,7 @@ diff --git a/driver/lock.c b/driver/lock.c
      {
        XtAppNextEvent (si->app, &event.x_event);
  
-@@ -1921,12 +2689,17 @@ passwd_event_loop (saver_info *si)
+@@ -1931,12 +2699,17 @@ passwd_event_loop (saver_info *si)
  
        if (event.x_event.xany.window == si->passwd_dialog && 
            event.x_event.xany.type == Expose)
@@ -2728,7 +2762,7 @@ diff --git a/driver/lock.c b/driver/lock.c
        else if (event.x_event.xany.type == ButtonPress || 
                 event.x_event.xany.type == ButtonRelease)
  	{
-@@ -1935,6 +2708,82 @@ passwd_event_loop (saver_info *si)
+@@ -1945,6 +2718,82 @@ passwd_event_loop (saver_info *si)
  	  if (si->pw_data->login_button_p)
  	    handle_login_button (si, &event.x_event);
  	}
@@ -2811,7 +2845,7 @@ diff --git a/driver/lock.c b/driver/lock.c
        else
  	XtDispatchEvent (&event.x_event);
      }
-@@ -1960,8 +2809,13 @@ passwd_event_loop (saver_info *si)
+@@ -1970,8 +2819,13 @@ passwd_event_loop (saver_info *si)
  
    if (msg)
      {
@@ -2825,7 +2859,7 @@ diff --git a/driver/lock.c b/driver/lock.c
        XSync (si->dpy, False);
  
        /* Swallow all pending KeyPress/KeyRelease events. */
-@@ -1977,6 +2831,10 @@ passwd_event_loop (saver_info *si)
+@@ -1989,6 +2843,10 @@ passwd_event_loop (saver_info *si)
  static void
  handle_typeahead (saver_info *si)
  {
@@ -2836,7 +2870,7 @@ diff --git a/driver/lock.c b/driver/lock.c
    passwd_dialog_data *pw = si->pw_data;
    int i;
    if (!si->unlock_typeahead)
-@@ -2004,6 +2862,7 @@ handle_typeahead (saver_info *si)
+@@ -2016,6 +2874,7 @@ handle_typeahead (saver_info *si)
  
    free (si->unlock_typeahead);
    si->unlock_typeahead = 0;
@@ -2844,7 +2878,7 @@ diff --git a/driver/lock.c b/driver/lock.c
  }
  
  
-@@ -2109,9 +2968,11 @@ gui_auth_conv(int num_msg,
+@@ -2121,9 +2980,11 @@ gui_auth_conv(int num_msg,
  	  free(prompt_trimmed);
        }
  
@@ -2856,7 +2890,7 @@ diff --git a/driver/lock.c b/driver/lock.c
  
        si->unlock_state = ul_read;
  
-@@ -2121,7 +2982,14 @@ gui_auth_conv(int num_msg,
+@@ -2133,7 +2994,14 @@ gui_auth_conv(int num_msg,
        if (si->unlock_state == ul_cancel)
  	goto fail;
  
@@ -2871,7 +2905,7 @@ diff --git a/driver/lock.c b/driver/lock.c
  
        /* Cache the first response to a PROMPT_NOECHO to save prompting for
         * each auth mechanism. */
-@@ -2129,8 +2997,10 @@ gui_auth_conv(int num_msg,
+@@ -2141,8 +3009,10 @@ gui_auth_conv(int num_msg,
  	  auth_msgs[i].type == AUTH_MSGTYPE_PROMPT_NOECHO)
  	si->cached_passwd = strdup(responses[i].response);
  
@@ -2882,7 +2916,7 @@ diff --git a/driver/lock.c b/driver/lock.c
      }
  
    *resp = responses;
-@@ -2138,9 +3008,11 @@ gui_auth_conv(int num_msg,
+@@ -2150,9 +3020,11 @@ gui_auth_conv(int num_msg,
    return (si->unlock_state == ul_finished) ? 0 : -1;
  
  fail:
@@ -2894,7 +2928,7 @@ diff --git a/driver/lock.c b/driver/lock.c
  
    if (responses)
      {
-@@ -2196,11 +3068,14 @@ auth_finished_cb (saver_info *si)
+@@ -2213,11 +3085,14 @@ auth_finished_cb (saver_info *si)
        if (XPending (si->dpy))
          {
            XNextEvent (si->dpy, &event);
@@ -2911,7 +2945,17 @@ diff --git a/driver/lock.c b/driver/lock.c
              break;
            XSync (si->dpy, False);
          }
+@@ -2226,7 +3101,7 @@ auth_finished_cb (saver_info *si)
+   }
+ 
+  END:
+-  if (si->pw_data)
++  if (si->pw_data && si->pw_data->prompt_screen)
+     destroy_passwd_window (si);
+ }
+ 
 diff --git a/driver/passwd-pam.c b/driver/passwd-pam.c
+index 0c60d50..93c73f1 100644
 --- a/driver/passwd-pam.c
 +++ b/driver/passwd-pam.c
 @@ -39,10 +39,16 @@
@@ -3031,7 +3075,7 @@ diff --git a/driver/passwd-pam.c b/driver/passwd-pam.c
  
    /* Try to authenticate as the current user.
       We must turn off our SIGCHLD handler for the duration of the call to
-@@ -243,43 +300,102 @@ pam_try_unlock(saver_info *si, Bool verbose_p,
+@@ -243,56 +300,102 @@ pam_try_unlock(saver_info *si, Bool verbose_p,
    timeout.tv_sec = 0;
    timeout.tv_nsec = 1;
    set = block_sigchld();
@@ -3043,10 +3087,19 @@ diff --git a/driver/passwd-pam.c b/driver/passwd-pam.c
  # endif /* HAVE_SIGTIMEDWAIT */
    unblock_sigchld();
  
+-  if (verbose_p)
+-    fprintf (stderr, "%s:   pam_authenticate (...) ==> %d (%s)\n",
+-             blurb(), status, PAM_STRERROR(pamh, status));
+-
+-  if (status == PAM_SUCCESS)  /* Win! */
 +#ifdef HAVE_XSCREENSAVER_LOCK
 +  /* Send status message to unlock dialog */
 +  if (pam_auth_status == PAM_SUCCESS)
-+    {
+     {
+-      int status2;
+-
+-      /* On most systems, it doesn't matter whether the account modules
+-         are run, or whether they fail or succeed.
 +      if (verbose_p)
 +        write_to_child (si, "ul_ok", PAM_STRERROR (pamh, pam_auth_status));
 +    }
@@ -3057,26 +3110,30 @@ diff --git a/driver/passwd-pam.c b/driver/passwd-pam.c
 +  if (verbose_p)
 +    sleep (1);
 +#endif
-+
+ 
+-         On some systems, the account modules fail, because they were
+-         never configured properly, but it's necessary to run them anyway
+-         because certain PAM modules depend on side effects of the account
+-         modules having been run.
 +  if (verbose_p)
 +      fprintf (stderr, "after calling pam_authenticate state is: %s\n",
 +               si->unlock_state == ul_success ? "ul_success" : "ul_fail");
-+
-   if (verbose_p)
-     fprintf (stderr, "%s:   pam_authenticate (...) ==> %d (%s)\n",
--             blurb(), status, PAM_STRERROR(pamh, status));
+ 
+-         And on still other systems, the account modules are actually
+-         used, and failures in them should be considered to be true!
++  if (verbose_p)
++    fprintf (stderr, "%s:   pam_authenticate (...) ==> %d (%s)\n",
 +             blurb(), pam_auth_status, PAM_STRERROR(pamh, pam_auth_status));
  
--  if (status == PAM_SUCCESS)  /* Win! */
+-         So:
+-         - We run the account modules on all systems.
+-         - Whether we ignore them is a configure option.
 +  if (pam_auth_status == PAM_SUCCESS)  /* Win! */
-     {
--      int status2;
++    {
 +      /* perform PAM account validation procedures for login user only */
 +      acct_rc   = pam_acct_mgmt(pamh, pam_flags);
  
--      /* We don't actually care if the account modules fail or succeed,
--       * but we need to run them anyway because certain pam modules
--       * depend on side effects of the account modules getting run.
+-         It's all kind of a mess.
 -       */
 -      status2 = pam_acct_mgmt (pamh, 0);
 +      /******************************************************************
@@ -3147,13 +3204,25 @@ diff --git a/driver/passwd-pam.c b/driver/passwd-pam.c
 +          goto DONE;
          }
  
+       /* If 'configure' requested that we believe the results of PAM
+@@ -306,30 +409,68 @@ pam_try_unlock(saver_info *si, Bool verbose_p,
        /* Each time we successfully authenticate, refresh credentials,
-@@ -291,24 +406,57 @@ pam_try_unlock(saver_info *si, Bool verbose_p,
+          for Kerberos/AFS/DCE/etc.  If this fails, just ignore that
+          failure and blunder along; it shouldn't matter.
+-
++      */
++#ifdef __linux__
++      /*
+          Note: this used to be PAM_REFRESH_CRED instead of
+          PAM_REINITIALIZE_CRED, but Jason Heiss <jheiss@ee.washington.edu>
           says that the Linux PAM library ignores that one, and only refreshes
           credentials when using PAM_REINITIALIZE_CRED.
         */
 -      status2 = pam_setcred (pamh, PAM_REINITIALIZE_CRED);
 +      setcred_rc = pam_setcred (pamh, PAM_REINITIALIZE_CRED);
++#else
++      setcred_rc = pam_setcred (pamh, PAM_REFRESH_CRED);
++#endif
        if (verbose_p)
          fprintf (stderr, "%s:   pam_setcred (...) ==> %d (%s)\n",
 -                 blurb(), status2, PAM_STRERROR(pamh, status2));
@@ -3211,7 +3280,7 @@ diff --git a/driver/passwd-pam.c b/driver/passwd-pam.c
      si->unlock_state = ul_success;	     /* yay */
    else if (si->unlock_state == ul_cancel ||
             si->unlock_state == ul_time)
-@@ -334,6 +482,13 @@ pam_priv_init (int argc, char **argv, Bool verbose_p)
+@@ -355,6 +496,13 @@ pam_priv_init (int argc, char **argv, Bool verbose_p)
    const char file2[] = "/etc/pam.conf";
    struct stat st;
  
@@ -3225,7 +3294,7 @@ diff --git a/driver/passwd-pam.c b/driver/passwd-pam.c
  # ifndef S_ISDIR
  #  define S_ISDIR(mode) (((mode) & S_IFMT) == S_IFDIR)
  # endif
-@@ -360,6 +515,8 @@ pam_priv_init (int argc, char **argv, Bool verbose_p)
+@@ -381,6 +529,8 @@ pam_priv_init (int argc, char **argv, Bool verbose_p)
                  break;
                }
            fclose (f);
@@ -3234,7 +3303,7 @@ diff --git a/driver/passwd-pam.c b/driver/passwd-pam.c
            if (!ok)
              {
                fprintf (stderr,
-@@ -367,9 +524,11 @@ pam_priv_init (int argc, char **argv, Bool verbose_p)
+@@ -388,9 +538,11 @@ pam_priv_init (int argc, char **argv, Bool verbose_p)
                    "%s: password authentication via PAM is unlikely to work.\n",
                         blurb(), file2, PAM_SERVICE_NAME, blurb());
              }
@@ -3246,7 +3315,7 @@ diff --git a/driver/passwd-pam.c b/driver/passwd-pam.c
    else
      {
        fprintf (stderr,
-@@ -377,15 +536,19 @@ pam_priv_init (int argc, char **argv, Bool verbose_p)
+@@ -398,15 +550,19 @@ pam_priv_init (int argc, char **argv, Bool verbose_p)
                 "%s: password authentication via PAM is unlikely to work.\n",
                 blurb(), file2, file, blurb());
      }
@@ -3269,9 +3338,10 @@ diff --git a/driver/passwd-pam.c b/driver/passwd-pam.c
  		  void *vsaver_info)
  {
 diff --git a/driver/passwd.c b/driver/passwd.c
+index ac5a3f0..0618642 100644
 --- a/driver/passwd.c
 +++ b/driver/passwd.c
-@@ -35,6 +35,7 @@
+@@ -37,6 +37,7 @@
  
  #include <X11/Intrinsic.h>
  
@@ -3280,6 +3350,7 @@ diff --git a/driver/passwd.c b/driver/passwd.c
  #include "auth.h"
  
 diff --git a/driver/setuid.c b/driver/setuid.c
+index 3ac78e4..a17194a 100644
 --- a/driver/setuid.c
 +++ b/driver/setuid.c
 @@ -145,7 +145,10 @@ set_ids_by_number (uid_t uid, gid_t gid, char **message_ret)
@@ -3295,6 +3366,7 @@ diff --git a/driver/setuid.c b/driver/setuid.c
  
    if (uid_errno == 0 && gid_errno == 0 && sgs_errno == 0)
 diff --git a/driver/subprocs.c b/driver/subprocs.c
+index 9414df1..a244f36 100644
 --- a/driver/subprocs.c
 +++ b/driver/subprocs.c
 @@ -243,7 +243,11 @@ show_job_list (void)
@@ -3309,7 +3381,7 @@ diff --git a/driver/subprocs.c b/driver/subprocs.c
  make_job (pid_t pid, int screen, const char *cmd)
  {
    struct screenhack_job *job = (struct screenhack_job *) malloc (sizeof(*job));
-@@ -407,7 +411,11 @@ unblock_sigchld (void)
+@@ -413,7 +417,11 @@ unblock_sigchld (void)
    block_sigchld_handler--;
  }
  
@@ -3321,7 +3393,7 @@ diff --git a/driver/subprocs.c b/driver/subprocs.c
  kill_job (saver_info *si, pid_t pid, int signal)
  {
    saver_preferences *p = &si->prefs;
-@@ -590,9 +598,14 @@ describe_dead_child (saver_info *si, pid_t kid, int wait_status)
+@@ -598,9 +606,14 @@ describe_dead_child (saver_info *si, pid_t kid, int wait_status)
  	 mention them) if we've just killed the subprocess.  But mention them
  	 if they happen on their own.
         */
@@ -3339,7 +3411,7 @@ diff --git a/driver/subprocs.c b/driver/subprocs.c
          {
            /* Don't call fprintf() from signal handlers, as it might malloc.
  	  fprintf (stderr,
-@@ -632,8 +645,12 @@ describe_dead_child (saver_info *si, pid_t kid, int wait_status)
+@@ -640,8 +653,12 @@ describe_dead_child (saver_info *si, pid_t kid, int wait_status)
    else if (WIFSIGNALED (wait_status))
      {
        if (p->verbose_p ||
@@ -3354,7 +3426,7 @@ diff --git a/driver/subprocs.c b/driver/subprocs.c
  	  WTERMSIG (wait_status) != SIGTERM)
          {
            /* Don't call fprintf() from signal handlers, as it might malloc.
-@@ -701,12 +718,20 @@ describe_dead_child (saver_info *si, pid_t kid, int wait_status)
+@@ -709,12 +726,20 @@ describe_dead_child (saver_info *si, pid_t kid, int wait_status)
    /* Clear out the pid so that screenhack_running_p() knows it's dead.
     */
    if (!job || job->status == job_dead)
@@ -3376,6 +3448,7 @@ diff --git a/driver/subprocs.c b/driver/subprocs.c
  
  #else  /* VMS */
 diff --git a/driver/timers.c b/driver/timers.c
+index 81c8adb..9afc752 100644
 --- a/driver/timers.c
 +++ b/driver/timers.c
 @@ -47,6 +47,8 @@
@@ -3399,7 +3472,7 @@ diff --git a/driver/timers.c b/driver/timers.c
  
  
  void
-@@ -255,7 +262,11 @@ cycle_timer (XtPointer closure, XtIntervalId *id)
+@@ -257,7 +264,11 @@ cycle_timer (XtPointer closure, XtIntervalId *id)
         crash.  So, restart the thing once an hour. */
      how_long = 1000 * 60 * 60;
  
@@ -3411,7 +3484,7 @@ diff --git a/driver/timers.c b/driver/timers.c
      {
        if (p->verbose_p)
  	fprintf (stderr, "%s: dialog box up; delaying hack change.\n",
-@@ -308,7 +319,28 @@ activate_lock_timer (XtPointer closure, XtIntervalId *id)
+@@ -310,7 +321,28 @@ activate_lock_timer (XtPointer closure, XtIntervalId *id)
  
    if (p->verbose_p)
      fprintf (stderr, "%s: timed out; activating lock.\n", blurb());
@@ -3441,7 +3514,7 @@ diff --git a/driver/timers.c b/driver/timers.c
  }
  
  
-@@ -587,14 +619,30 @@ dispatch_event (saver_info *si, XEvent *event)
+@@ -616,14 +648,30 @@ dispatch_event (saver_info *si, XEvent *event)
  }
  
  
@@ -3472,7 +3545,7 @@ diff --git a/driver/timers.c b/driver/timers.c
  
    event = *e;
  
-@@ -607,10 +655,12 @@ swallow_unlock_typeahead_events (saver_info *si, XEvent *e)
+@@ -636,10 +684,12 @@ swallow_unlock_typeahead_events (saver_info *si, XEvent *e)
            if (size != 1) continue;
            switch (*s)
              {
@@ -3485,7 +3558,7 @@ diff --git a/driver/timers.c b/driver/timers.c
              case '\012': case '\015':			/* Enter */
              case '\033':				/* ESC */
                i = 0;
-@@ -620,7 +670,17 @@ swallow_unlock_typeahead_events (saver_info *si, XEvent *e)
+@@ -649,7 +699,17 @@ swallow_unlock_typeahead_events (saver_info *si, XEvent *e)
                  break;  /* ignore space at beginning of line */
                /* else, fall through */
              default:
@@ -3503,7 +3576,7 @@ diff --git a/driver/timers.c b/driver/timers.c
                break;
              }
          }
-@@ -628,6 +688,7 @@ swallow_unlock_typeahead_events (saver_info *si, XEvent *e)
+@@ -657,6 +717,7 @@ swallow_unlock_typeahead_events (saver_info *si, XEvent *e)
      } while (i < sizeof(buf)-1 &&
               XCheckMaskEvent (si->dpy, KeyPressMask, &event));
  
@@ -3511,7 +3584,7 @@ diff --git a/driver/timers.c b/driver/timers.c
    buf[i] = 0;
  
    if (si->unlock_typeahead)
-@@ -642,6 +703,7 @@ swallow_unlock_typeahead_events (saver_info *si, XEvent *e)
+@@ -671,6 +732,7 @@ swallow_unlock_typeahead_events (saver_info *si, XEvent *e)
      si->unlock_typeahead = 0;
  
    memset (buf, 0, sizeof(buf));
@@ -3519,7 +3592,7 @@ diff --git a/driver/timers.c b/driver/timers.c
  }
  
  
-@@ -824,6 +886,7 @@ sleep_until_idle (saver_info *si, Bool until_idle_p)
+@@ -854,6 +916,7 @@ sleep_until_idle (saver_info *si, Bool until_idle_p)
  	if (handle_clientmessage (si, &event.x_event, until_idle_p))
            {
              why = "ClientMessage";
@@ -3527,7 +3600,7 @@ diff --git a/driver/timers.c b/driver/timers.c
              goto DONE;
            }
  	break;
-@@ -838,6 +901,47 @@ sleep_until_idle (saver_info *si, Bool until_idle_p)
+@@ -868,6 +931,47 @@ sleep_until_idle (saver_info *si, Bool until_idle_p)
  	  }
  	break;
  
@@ -3575,7 +3648,7 @@ diff --git a/driver/timers.c b/driver/timers.c
        case KeyPress:
        case ButtonPress:
        /* Ignore release events so that hitting ESC at the password dialog
-@@ -1457,7 +1561,11 @@ watchdog_timer (XtPointer closure, XtIntervalId *id)
+@@ -1565,7 +1669,11 @@ watchdog_timer (XtPointer closure, XtIntervalId *id)
      {
        Bool running_p = screenhack_running_p (si);
  
@@ -3588,12 +3661,13 @@ diff --git a/driver/timers.c b/driver/timers.c
            if (si->prefs.debug_p)
              fprintf (stderr, "%s: dialog box is up: not raising screen.\n",
 diff --git a/driver/types.h b/driver/types.h
+index f1630b0..c77ee3f 100644
 --- a/driver/types.h
 +++ b/driver/types.h
-@@ -250,12 +250,30 @@ struct saver_info {
- 
+@@ -275,12 +275,30 @@ struct saver_info {
    int unlock_failures;		/* Counts failed login attempts while the
  				   screen is locked. */
+   time_t unlock_failure_time;	/* Time of first failed login attempt. */
 +#ifdef HAVE_XSCREENSAVER_LOCK
 +  Window *raise_wins;		/* List of windows to raise above the	*/
 +  int num_raise_wins;		/*  virtual root/hack display, such as	*/
@@ -3622,9 +3696,10 @@ diff --git a/driver/types.h b/driver/types.h
    char *user;			/* The user whose session is locked. */
    char *cached_passwd;		/* Cached password, used to avoid multiple
 diff --git a/driver/windows.c b/driver/windows.c
+index 6acaddb..51e4c6a 100644
 --- a/driver/windows.c
 +++ b/driver/windows.c
-@@ -1081,8 +1081,12 @@ safe_XConfigureWindow (Display *dpy, Window window,
+@@ -1082,8 +1082,12 @@ safe_XConfigureWindow (Display *dpy, Window window,
    return (!error_handler_hit_p);
  }
  
@@ -3637,7 +3712,7 @@ diff --git a/driver/windows.c b/driver/windows.c
  safe_XDestroyWindow (Display *dpy, Window window)
  {
    XErrorHandler old_handler;
-@@ -1096,6 +1100,14 @@ safe_XDestroyWindow (Display *dpy, Window window)
+@@ -1097,6 +1101,14 @@ safe_XDestroyWindow (Display *dpy, Window window)
    XSetErrorHandler (old_handler);
    XSync (dpy, False);
  
@@ -3652,7 +3727,7 @@ diff --git a/driver/windows.c b/driver/windows.c
    return (!error_handler_hit_p);
  }
  
-@@ -1210,6 +1222,7 @@ initialize_screensaver_window_1 (saver_screen_info *ssi)
+@@ -1211,6 +1223,7 @@ initialize_screensaver_window_1 (saver_screen_info *ssi)
     */
    attrs.event_mask = (KeyPressMask | KeyReleaseMask |
  		      ButtonPressMask | ButtonReleaseMask |
@@ -3660,7 +3735,7 @@ diff --git a/driver/windows.c b/driver/windows.c
  		      PointerMotionMask);
  
    attrs.backing_store = NotUseful;
-@@ -1481,6 +1494,9 @@ raise_window (saver_info *si,
+@@ -1482,6 +1495,9 @@ raise_window (saver_info *si,
    saver_preferences *p = &si->prefs;
    int i;
  
@@ -3670,7 +3745,7 @@ diff --git a/driver/windows.c b/driver/windows.c
    if (si->demoing_p)
      inhibit_fade = True;
  
-@@ -1695,6 +1711,9 @@ unblank_screen (saver_info *si)
+@@ -1696,6 +1712,9 @@ unblank_screen (saver_info *si)
    Bool unfade_p = (si->fading_possible_p && p->unfade_p);
    int i;
  
@@ -3680,7 +3755,7 @@ diff --git a/driver/windows.c b/driver/windows.c
    monitor_power_on (si, True);
    reset_watchdog_timer (si, False);
  
-@@ -1983,7 +2002,7 @@ select_visual (saver_screen_info *ssi, const char *visual_name)
+@@ -1984,7 +2003,7 @@ select_visual (saver_screen_info *ssi, const char *visual_name)
        maybe_transfer_grabs (ssi, old_w, ssi->screensaver_window, ssi->number);
  
        /* Now we can destroy the old window without horking our grabs. */
@@ -3690,9 +3765,10 @@ diff --git a/driver/windows.c b/driver/windows.c
        if (p->verbose_p)
  	fprintf (stderr, "%s: %d: destroyed old saver window 0x%lx.\n",
 diff --git a/driver/xscreensaver.c b/driver/xscreensaver.c
+index 06f5c13..33d357a 100644
 --- a/driver/xscreensaver.c
 +++ b/driver/xscreensaver.c
-@@ -156,6 +156,8 @@
+@@ -164,6 +164,8 @@
  #include <X11/StringDefs.h>
  #include <X11/Shell.h>
  #include <X11/Xos.h>
@@ -3701,7 +3777,7 @@ diff --git a/driver/xscreensaver.c b/driver/xscreensaver.c
  #include <time.h>
  #include <sys/time.h>
  #include <netdb.h>	/* for gethostbyname() */
-@@ -217,6 +219,7 @@
+@@ -225,6 +227,7 @@
  #endif /* HAVE_RANDR */
  
  
@@ -3709,7 +3785,7 @@ diff --git a/driver/xscreensaver.c b/driver/xscreensaver.c
  #include "xscreensaver.h"
  #include "version.h"
  #include "yarandom.h"
-@@ -228,11 +231,28 @@
+@@ -236,11 +239,28 @@
  
  saver_info *global_si_kludge = 0;	/* I hate C so much... */
  
@@ -3738,17 +3814,17 @@ diff --git a/driver/xscreensaver.c b/driver/xscreensaver.c
  
  static XrmOptionDescRec options [] = {
  
-@@ -630,6 +650,9 @@ connect_to_server (saver_info *si, int *argc, char **argv)
- 	{ &XA_XSETROOT_ID, "_XSETROOT_ID" },
+@@ -670,6 +690,9 @@ connect_to_server (saver_info *si, int *argc, char **argv)
  	{ &XA_ESETROOT_PMAP_ID, "ESETROOT_PMAP_ID" },
  	{ &XA_XROOTPMAP_ID, "_XROOTPMAP_ID" },
+ 	{ &XA_NET_WM_USER_TIME, "_NET_WM_USER_TIME" },
 +#ifdef HAVE_XSCREENSAVER_LOCK
 +	{ &XA_UNLOCK_RATIO, "UNLOCK_RATIO" },
 +#endif
  	{ NULL, NULL } /* Must be last to terminate list */
        };
      const struct atom_request *atom_lists[3] = { NULL, NULL, NULL };
-@@ -1105,8 +1128,36 @@ static void
+@@ -1164,8 +1187,36 @@ static void
  main_loop (saver_info *si)
  {
    saver_preferences *p = &si->prefs;
@@ -3786,7 +3862,7 @@ diff --git a/driver/xscreensaver.c b/driver/xscreensaver.c
  
    while (1)
      {
-@@ -1137,6 +1188,17 @@ main_loop (saver_info *si)
+@@ -1196,6 +1247,17 @@ main_loop (saver_info *si)
              fprintf (stderr, "%s: idle with blanking disabled at %s.\n",
                       blurb(), timestring());
  
@@ -3804,15 +3880,15 @@ diff --git a/driver/xscreensaver.c b/driver/xscreensaver.c
            /* Go around the loop and wait for the next bout of idleness,
               or for the init file to change, or for a remote command to
               come in, or something.
-@@ -1198,6 +1260,7 @@ main_loop (saver_info *si)
-                        blurb());
+@@ -1267,6 +1329,7 @@ main_loop (saver_info *si)
+                 set_locked_p (si, False);
  
                schedule_wakeup_event (si, retry, p->debug_p);
 +              set_locked_p(si, False);
                continue;
              }
          }
-@@ -1263,7 +1326,17 @@ main_loop (saver_info *si)
+@@ -1329,7 +1392,17 @@ main_loop (saver_info *si)
              p->lock_p &&                /* and locking is enabled */
              !si->locking_disabled_p &&  /* and locking is possible */
              lock_timeout == 0)          /* and locking is not timer-deferred */
@@ -3831,7 +3907,7 @@ diff --git a/driver/xscreensaver.c b/driver/xscreensaver.c
  
          /* locked_p might be true already because of the above, or because of
             the LOCK ClientMessage.  But if not, and if we're supposed to lock
-@@ -1278,10 +1351,7 @@ main_loop (saver_info *si)
+@@ -1344,10 +1417,7 @@ main_loop (saver_info *si)
        }
  #endif /* !NO_LOCKING */
  
@@ -3842,7 +3918,7 @@ diff --git a/driver/xscreensaver.c b/driver/xscreensaver.c
          check_for_leaks ("blanked A");
  	sleep_until_idle (si, False);		/* until not idle */
          check_for_leaks ("blanked B");
-@@ -1291,6 +1361,13 @@ main_loop (saver_info *si)
+@@ -1357,6 +1427,13 @@ main_loop (saver_info *si)
  #ifndef NO_LOCKING
          /* Maybe unlock the screen.
           */
@@ -3856,7 +3932,7 @@ diff --git a/driver/xscreensaver.c b/driver/xscreensaver.c
  	if (si->locked_p)
  	  {
  	    saver_screen_info *ssi = si->default_screen;
-@@ -1302,7 +1379,20 @@ main_loop (saver_info *si)
+@@ -1368,7 +1445,20 @@ main_loop (saver_info *si)
                suspend_screenhack (&si->screens[i], True);	  /* suspend */
  	    XUndefineCursor (si->dpy, ssi->screensaver_window);
  
@@ -3877,7 +3953,7 @@ diff --git a/driver/xscreensaver.c b/driver/xscreensaver.c
  
  	    si->dbox_up_p = False;
  	    XDefineCursor (si->dpy, ssi->screensaver_window, ssi->cursor);
-@@ -1327,6 +1417,7 @@ main_loop (saver_info *si)
+@@ -1393,6 +1483,7 @@ main_loop (saver_info *si)
  
  	} while (!ok_to_unblank);
  
@@ -3885,7 +3961,7 @@ diff --git a/driver/xscreensaver.c b/driver/xscreensaver.c
  
        if (p->verbose_p)
  	fprintf (stderr, "%s: unblanking screen at %s.\n",
-@@ -1411,7 +1502,19 @@ main (int argc, char **argv)
+@@ -1477,7 +1568,19 @@ main (int argc, char **argv)
    textdomain (GETTEXT_PACKAGE);
  #endif /* ENABLE_NLS */
  
@@ -3905,7 +3981,7 @@ diff --git a/driver/xscreensaver.c b/driver/xscreensaver.c
    global_si_kludge = si;	/* I hate C so much... */
  
    fix_fds();
-@@ -1421,7 +1524,9 @@ main (int argc, char **argv)
+@@ -1487,7 +1590,9 @@ main (int argc, char **argv)
  
    save_argv (argc, argv);
    set_version_string (si, &argc, argv);
@@ -3915,7 +3991,7 @@ diff --git a/driver/xscreensaver.c b/driver/xscreensaver.c
    hack_environment (si);
  
    spasswd = getpwuid(getuid());
-@@ -1444,6 +1549,10 @@ main (int argc, char **argv)
+@@ -1510,6 +1615,10 @@ main (int argc, char **argv)
    print_banner (si);
  
    load_init_file(si->dpy, p); /* must be before initialize_per_screen_info() */
@@ -3926,7 +4002,7 @@ diff --git a/driver/xscreensaver.c b/driver/xscreensaver.c
    blurb_timestamp_p = p->timestamp_p;  /* kludge */
    initialize_per_screen_info (si, shell); /* also sets si->fading_possible_p */
  
-@@ -1695,8 +1804,12 @@ handle_clientmessage (saver_info *si, XEvent *event, Bool until_idle_p)
+@@ -1762,8 +1871,12 @@ handle_clientmessage (saver_info *si, XEvent *event, Bool until_idle_p)
    Atom type = 0;
    Window window = event->xclient.window;
  
@@ -3939,16 +4015,22 @@ diff --git a/driver/xscreensaver.c b/driver/xscreensaver.c
  
    if (event->xclient.message_type != XA_SCREENSAVER ||
        event->xclient.format != 32)
-@@ -1969,10 +2082,18 @@ handle_clientmessage (saver_info *si, XEvent *event, Bool until_idle_p)
- 			    : "locking.");
+@@ -2055,10 +2168,14 @@ handle_clientmessage (saver_info *si, XEvent *event, Bool until_idle_p)
  	  sprintf (buf, "LOCK ClientMessage received; %s", response);
  	  clientmessage_response (si, window, False, buf, response);
-+
+ 
 +	  if (p->verbose_p)
 +	    fprintf(stderr, "going to lock screen A\n");
 +
+           /* Note that this leaves things in a slightly inconsistent state:
+              we are blanked but not locked.  And blanking might actually
+              fail if we can't get the grab. */
  	  set_locked_p (si, True);
 +	  si->emergency_lock_p = True;
+ 
+            /* Have to set the time or xscreensaver-command doesn't
+               report the LOCK state change. */
+@@ -2067,6 +2184,9 @@ handle_clientmessage (saver_info *si, XEvent *event, Bool until_idle_p)
  	  si->selection_mode = 0;
  	  si->demoing_p = False;
  
@@ -3959,6 +4041,7 @@ diff --git a/driver/xscreensaver.c b/driver/xscreensaver.c
  	    {
  	      XtRemoveTimeOut (si->lock_id);
 diff --git a/driver/xscreensaver.h b/driver/xscreensaver.h
+index 064e9c4..a52ba63 100644
 --- a/driver/xscreensaver.h
 +++ b/driver/xscreensaver.h
 @@ -164,6 +164,12 @@ extern Bool select_visual (saver_screen_info *ssi, const char *visual_name);
@@ -3974,3 +4057,6 @@ diff --git a/driver/xscreensaver.h b/driver/xscreensaver.h
  /* =======================================================================
     subprocs diagnostics
     ======================================================================= */
+-- 
+2.6.1
+

@@ -1,0 +1,45 @@
+From 441a8b986e5a1d24e9930fdfd1129804d29775db Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Thu, 4 Feb 2016 13:32:28 -0800
+Subject: [PATCH] forkpty
+
+Fix builds on s12_91 & later, since configure picks up that libc has forkpty()
+but doesn't realize we stuck the required definitions in <sys/termios.h>
+instead of <pty.h> or <util.h>
+
+Sent upstream on 05 Feb 2016, no response yet.
+---
+ configure.in       | 2 +-
+ utils/textclient.c | 3 +++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/configure.in b/configure.in
+index 873299e..f8f746b 100644
+--- a/configure.in
++++ b/configure.in
+@@ -3547,7 +3547,7 @@ fi
+ ###############################################################################
+ 
+ PTY_LIBS=
+-AC_CHECK_HEADERS(pty.h util.h)
++AC_CHECK_HEADERS(pty.h util.h sys/termios.h)
+ AC_CHECK_X_LIB(util, forkpty,
+                [PTY_LIBS="-lutil"
+                 ac_have_forkpty=yes
+diff --git a/utils/textclient.c b/utils/textclient.c
+index abb6f11..bff816e 100644
+--- a/utils/textclient.c
++++ b/utils/textclient.c
+@@ -50,6 +50,9 @@
+ # ifdef HAVE_UTIL_H
+ #  include <util.h>
+ # endif
++# ifdef HAVE_SYS_TERMIOS_H
++#  include <sys/termios.h>
++# endif
+ #endif /* HAVE_FORKPTY */
+ 
+ #undef DEBUG
+-- 
+2.6.1
+

@@ -1,3 +1,8 @@
+From ff65f319d40fdc0d5f9d316b9c5d48d7cdebc6b6 Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Sat, 2 Jan 2016 22:38:35 -0800
+Subject: [PATCH] pam audit
+
 Fixes for bugs:
 15201967 SUNBT5015296 xscreensaver doesn't audit
 15326852 SUNBT6417168 xscreensaver loops while trying to unlock a session
@@ -11,15 +16,16 @@ to fallback to direct use of getpwent(), which isn't audited
 
 Upstream status unknown.
 ---
- driver/Makefile.in  |    2 +-
- driver/passwd-pam.c |  158 ++++++++++++++++++++++++++++++++++++++++++++++++++-
- driver/passwd.c     |    4 +
+ driver/Makefile.in  |   2 +-
+ driver/passwd-pam.c | 158 +++++++++++++++++++++++++++++++++++++++++++++++++++-
+ driver/passwd.c     |   4 ++
  3 files changed, 161 insertions(+), 3 deletions(-)
 
 diff --git a/driver/Makefile.in b/driver/Makefile.in
+index a44e312..7aec6d9 100644
 --- a/driver/Makefile.in
 +++ b/driver/Makefile.in
-@@ -214,7 +214,7 @@ PDF2JPEG_LIBS	= -framework Cocoa
+@@ -212,7 +212,7 @@ PDF2JPEG_LIBS	= -framework Cocoa
  SAVER_LIBS	= $(LIBS) $(X_LIBS) $(XMU_LIBS) @SAVER_LIBS@ \
  		  $(XDPMS_LIBS) $(XINERAMA_LIBS) $(GL_LIBS) $(X_PRE_LIBS) \
  		  -lXt -lX11 -lXext $(X_EXTRA_LIBS) \
@@ -29,6 +35,7 @@ diff --git a/driver/Makefile.in b/driver/Makefile.in
  CMD_LIBS	= $(LIBS) $(X_LIBS) \
  		  $(X_PRE_LIBS) -lX11 -lXext $(X_EXTRA_LIBS)
 diff --git a/driver/passwd-pam.c b/driver/passwd-pam.c
+index 93c73f1..4d24ac3 100644
 --- a/driver/passwd-pam.c
 +++ b/driver/passwd-pam.c
 @@ -47,6 +47,8 @@
@@ -219,7 +226,7 @@ diff --git a/driver/passwd-pam.c b/driver/passwd-pam.c
        if (verbose_p)
          sleep (1);
  #endif
-@@ -383,6 +527,10 @@ pam_try_unlock(saver_info *si, Bool verbose_p,
+@@ -384,6 +528,10 @@ pam_try_unlock(saver_info *si, Bool verbose_p,
              fprintf (stderr, "%s: pam_chauthtok (...) ==> %d (%s)\n",
                       blurb(), chauth_rc, PAM_STRERROR(pamh, chauth_rc));
  
@@ -230,7 +237,7 @@ diff --git a/driver/passwd-pam.c b/driver/passwd-pam.c
            if (chauth_rc != PAM_SUCCESS)
              {
                pam_auth_status = chauth_rc;
-@@ -419,7 +567,13 @@ pam_try_unlock(saver_info *si, Bool verbose_p,
+@@ -433,7 +581,13 @@ pam_try_unlock(saver_info *si, Bool verbose_p,
              write_to_child (si, "ul_setcred_ok", PAM_STRERROR(pamh, setcred_rc));
          }
        else
@@ -246,9 +253,10 @@ diff --git a/driver/passwd-pam.c b/driver/passwd-pam.c
          sleep (1);
  #endif
 diff --git a/driver/passwd.c b/driver/passwd.c
+index 0618642..350dc4d 100644
 --- a/driver/passwd.c
 +++ b/driver/passwd.c
-@@ -79,9 +79,11 @@ extern void pam_try_unlock (saver_info *si, Bool verbose_p,
+@@ -81,9 +81,11 @@ extern void pam_try_unlock (saver_info *si, Bool verbose_p,
  extern Bool ext_priv_init (int argc, char **argv, Bool verbose_p);
  extern Bool ext_passwd_valid_p (const char *typed_passwd, Bool verbose_p);
  #endif
@@ -260,7 +268,7 @@ diff --git a/driver/passwd.c b/driver/passwd.c
  
  Bool lock_priv_init (int argc, char **argv, Bool verbose_p);
  Bool lock_init (int argc, char **argv, Bool verbose_p);
-@@ -105,8 +107,10 @@ struct auth_methods methods[] = {
+@@ -107,8 +109,10 @@ struct auth_methods methods[] = {
    { "external",		0, ext_priv_init, ext_passwd_valid_p, 0,
    			False, False },
  # endif
@@ -271,4 +279,6 @@ diff --git a/driver/passwd.c b/driver/passwd.c
  };
  
  
+-- 
+2.6.1
 

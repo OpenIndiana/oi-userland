@@ -1,12 +1,18 @@
+From 57558315b40a1159a14aa05b6420d6b601e3318b Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Sat, 2 Jan 2016 22:55:58 -0800
+Subject: [PATCH] bug 15412661
+
 15412661 SUNBT6585644 xscreensaver can cause KeyPress event loop between
 	 	      itself and xscreensaver-lock.
 
 Upstream status unknown - suspect to be specific to our GTK unlock dialog.
 ---
- driver/timers.c |    7 +++++++
- 1 files changed, 7 insertions(+), 0 deletions(-)
+ driver/timers.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
 diff --git a/driver/timers.c b/driver/timers.c
+index 32728a0..825c2d9 100644
 --- a/driver/timers.c
 +++ b/driver/timers.c
 @@ -131,6 +131,13 @@ notice_events (saver_info *si, Window window, Bool top_p)
@@ -23,4 +29,6 @@ diff --git a/driver/timers.c b/driver/timers.c
    if (XtWindowToWidget (si->dpy, window))
      /* If it's one of ours, don't mess up its event mask. */
      return;
+-- 
+2.6.1
 

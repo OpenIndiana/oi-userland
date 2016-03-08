@@ -1,3 +1,8 @@
+From 53a079ae5ba815381fd94cace1a56cd2841e09ed Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Sat, 2 Jan 2016 20:56:50 -0800
+Subject: [PATCH] allow root
+
 Fix for: Bug 15155994 - SUNBT4849641 xscreensaver won't run as root
 
 Let root lock the screen, but don't launch the hacks for root.
@@ -8,33 +13,19 @@ our customers to stop doing.
 
 See http://www.jwz.org/xscreensaver/faq.html#root-lock for his side.
 ---
- driver/demo-Gtk.c     |   26 ++++++++++++++++++++++++++
- driver/exec.c         |    2 ++
- driver/setuid.c       |   12 ++++++++++++
- driver/subprocs.c     |    3 +++
- driver/timers.c       |    2 +-
- driver/xscreensaver.c |    7 ++++---
- 6 files changed, 48 insertions(+), 4 deletions(-)
+ driver/demo-Gtk.c     | 18 ++++++++++++++++++
+ driver/exec.c         |  2 ++
+ driver/setuid.c       | 12 ++++++++++++
+ driver/subprocs.c     |  3 +++
+ driver/timers.c       |  2 +-
+ driver/xscreensaver.c |  7 ++++---
+ 6 files changed, 40 insertions(+), 4 deletions(-)
 
 diff --git a/driver/demo-Gtk.c b/driver/demo-Gtk.c
+index ece3c44..d4cc4a5 100644
 --- a/driver/demo-Gtk.c
 +++ b/driver/demo-Gtk.c
-@@ -687,6 +687,14 @@ run_cmd (state *s, Atom command, int arg)
-   char *err = 0;
-   int status;
- 
-+  if (getuid () == 0)
-+    {
-+      char buf [255];
-+      strlcpy (buf, _("Can not run hacks if logged in as root!"), sizeof(buf));
-+      warning_dialog (s->toplevel_widget, buf, False, 100);
-+      return;
-+    }
-+
-   flush_dialog_changes_and_save (s);
-   status = xscreensaver_command (GDK_DISPLAY(), command, arg, False, &err);
- 
-@@ -717,6 +725,14 @@ run_hack (state *s, int list_elt, Bool report_errors_p)
+@@ -713,6 +713,14 @@ run_hack (state *s, int list_elt, Bool report_errors_p)
    char *err = 0;
    int status;
  
@@ -49,7 +40,7 @@ diff --git a/driver/demo-Gtk.c b/driver/demo-Gtk.c
    if (list_elt < 0) return;
    hack_number = s->list_elt_to_hack_number[list_elt];
  
-@@ -5155,6 +5171,15 @@ main (int argc, char **argv)
+@@ -5173,6 +5181,15 @@ main (int argc, char **argv)
      GtkMenu *menu = GTK_MENU (gtk_option_menu_get_menu (opt));
      GList *kids = gtk_container_children (GTK_CONTAINER (menu));
      int i;
@@ -65,7 +56,7 @@ diff --git a/driver/demo-Gtk.c b/driver/demo-Gtk.c
      for (i = 0; kids; kids = kids->next, i++)
        {
          gtk_signal_connect (GTK_OBJECT (kids->data), "activate",
-@@ -5168,6 +5193,7 @@ main (int argc, char **argv)
+@@ -5186,6 +5203,7 @@ main (int argc, char **argv)
              mode_menu_order[i] == RANDOM_HACKS_SAME)
            gtk_widget_hide (GTK_WIDGET (kids->data));
        }
@@ -74,6 +65,7 @@ diff --git a/driver/demo-Gtk.c b/driver/demo-Gtk.c
      if (s->nscreens <= 1)   /* recompute option-menu size */
        {
 diff --git a/driver/exec.c b/driver/exec.c
+index 38ca88a..b68089e 100644
 --- a/driver/exec.c
 +++ b/driver/exec.c
 @@ -186,6 +186,7 @@ exec_command (const char *shell, const char *command, int nice_level)
@@ -93,6 +85,7 @@ diff --git a/driver/exec.c b/driver/exec.c
    if (hairy_p)
      /* If it contains any shell metacharacters, do it the hard way,
 diff --git a/driver/setuid.c b/driver/setuid.c
+index a17194a..e3aa78d 100644
 --- a/driver/setuid.c
 +++ b/driver/setuid.c
 @@ -121,6 +121,10 @@ set_ids_by_number (uid_t uid, gid_t gid, char **message_ret)
@@ -149,9 +142,10 @@ diff --git a/driver/setuid.c b/driver/setuid.c
        }
    }
 diff --git a/driver/subprocs.c b/driver/subprocs.c
+index a244f36..c975813 100644
 --- a/driver/subprocs.c
 +++ b/driver/subprocs.c
-@@ -939,6 +939,9 @@ spawn_screenhack (saver_screen_info *ssi)
+@@ -947,6 +947,9 @@ spawn_screenhack (saver_screen_info *ssi)
    saver_preferences *p = &si->prefs;
    char* complete_hack_command;
  
@@ -162,9 +156,10 @@ diff --git a/driver/subprocs.c b/driver/subprocs.c
     fprintf(stderr, "--> spawn_screenhack()\n");
  
 diff --git a/driver/timers.c b/driver/timers.c
+index 9afc752..32728a0 100644
 --- a/driver/timers.c
 +++ b/driver/timers.c
-@@ -282,7 +282,7 @@ cycle_timer (XtPointer closure, XtIntervalId *id)
+@@ -284,7 +284,7 @@ cycle_timer (XtPointer closure, XtIntervalId *id)
  
        raise_window (si, True, True, False);
  
@@ -174,9 +169,10 @@ diff --git a/driver/timers.c b/driver/timers.c
            spawn_screenhack (&si->screens[i]);
        else
 diff --git a/driver/xscreensaver.c b/driver/xscreensaver.c
+index 33d357a..f357281 100644
 --- a/driver/xscreensaver.c
 +++ b/driver/xscreensaver.c
-@@ -458,6 +458,7 @@ startup_ehandler (String name, String type, String class,
+@@ -487,6 +487,7 @@ startup_ehandler (String name, String type, String class,
  
    describe_uids (si, stderr);
  
@@ -184,7 +180,7 @@ diff --git a/driver/xscreensaver.c b/driver/xscreensaver.c
    if (si->orig_uid && !strncmp (si->orig_uid, "root/", 5))
      {
        fprintf (stderr, "\n"
-@@ -471,11 +472,11 @@ startup_ehandler (String name, String type, String class,
+@@ -500,11 +501,11 @@ startup_ehandler (String name, String type, String class,
                 blurb());
      }
    else
@@ -198,7 +194,7 @@ diff --git a/driver/xscreensaver.c b/driver/xscreensaver.c
             blurb());
      }
  
-@@ -1269,7 +1270,7 @@ main_loop (saver_info *si)
+@@ -1338,7 +1339,7 @@ main_loop (saver_info *si)
          kill_screenhack (&si->screens[i]);
  
        raise_window (si, True, True, False);
@@ -207,3 +203,6 @@ diff --git a/driver/xscreensaver.c b/driver/xscreensaver.c
          fprintf (stderr, "%s: not launching hack (throttled.)\n", blurb());
        else
          for (i = 0; i < si->nscreens; i++)
+-- 
+2.6.1
+

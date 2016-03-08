@@ -1,3 +1,8 @@
+From 9bf12ae3168aa6f9234304a8a376d47962f0d589 Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Sat, 2 Jan 2016 20:11:05 -0800
+Subject: [PATCH] atoms
+
 Centralize atom handling and use XInternAtoms to get the atoms from
 the server in one round trip instead of a separate synchronous/blocking
 round trip for each XInternAtom individual call.
@@ -8,26 +13,26 @@ Was offered upstream in 2011 - jwz responded with:
   driver I'm a firm believer in "don't fix what ain't broke"...
 
 Need to find some time to actually measure that someday (dtrace?).
-
 ---
- driver/Makefile.in            |   14 +++---
- driver/atoms.c                |  113 +++++++++++++++++++++++++++++++++++++++++
- driver/atoms.h                |   33 ++++++++++++
- driver/demo-Gtk.c             |   26 ++-------
- driver/demo-Xm.c              |   25 ++-------
- driver/remote.c               |    4 +-
- driver/windows.c              |    4 +-
- driver/xscreensaver-command.c |   35 ++-----------
- driver/xscreensaver.c         |   45 ++++++-----------
- driver/xscreensaver.h         |    3 -
- 10 files changed, 188 insertions(+), 114 deletions(-)
+ driver/Makefile.in            |  14 +++---
+ driver/atoms.c                | 113 ++++++++++++++++++++++++++++++++++++++++++
+ driver/atoms.h                |  33 ++++++++++++
+ driver/demo-Gtk.c             |  26 +++-------
+ driver/demo-Xm.c              |  25 +++-------
+ driver/remote.c               |   4 +-
+ driver/windows.c              |   3 +-
+ driver/xscreensaver-command.c |  35 +++----------
+ driver/xscreensaver.c         |  47 ++++++------------
+ driver/xscreensaver.h         |   3 --
+ 10 files changed, 189 insertions(+), 114 deletions(-)
  create mode 100644 driver/atoms.c
  create mode 100644 driver/atoms.h
 
 diff --git a/driver/Makefile.in b/driver/Makefile.in
+index a5b94bf..90ef1d2 100644
 --- a/driver/Makefile.in
 +++ b/driver/Makefile.in
-@@ -190,18 +190,18 @@ SAVER_OBJS_1	= xscreensaver.o windows.o screens.o timers.o subprocs.o \
+@@ -188,18 +188,18 @@ SAVER_OBJS_1	= xscreensaver.o windows.o screens.o timers.o subprocs.o \
  		  exec.o xset.o splash.o setuid.o stderr.o mlstring.o
  
  SAVER_SRCS	= $(SAVER_SRCS_1) prefs.c dpms.c $(LOCK_SRCS) \
@@ -52,10 +57,10 @@ diff --git a/driver/Makefile.in b/driver/Makefile.in
  
  PDF2JPEG_SRCS	= pdf2jpeg.m
  PDF2JPEG_OBJS	= pdf2jpeg.o
-@@ -231,7 +231,7 @@ SCRIPTS		= $(SCRIPTS_1) @SCRIPTS_OSX@
+@@ -228,7 +228,7 @@ SCRIPTS		= $(SCRIPTS_1) @SCRIPTS_OSX@
+ 
  HDRS		= XScreenSaver_ad.h XScreenSaver_Xm_ad.h \
  		  xscreensaver.h prefs.h remote.h exec.h \
- 		  demo-Gtk-widgets.h demo-Gtk-stubs.h demo-Gtk-support.h \
 -		  demo-Gtk-conf.h auth.h mlstring.h types.h
 +		  demo-Gtk-conf.h auth.h mlstring.h types.h atoms.h
  MEN_1		= xscreensaver.man xscreensaver-demo.man \
@@ -63,6 +68,7 @@ diff --git a/driver/Makefile.in b/driver/Makefile.in
  		  xscreensaver-text.man \
 diff --git a/driver/atoms.c b/driver/atoms.c
 new file mode 100644
+index 0000000..d50bc57
 --- /dev/null
 +++ b/driver/atoms.c
 @@ -0,0 +1,113 @@
@@ -181,6 +187,7 @@ new file mode 100644
 +}
 diff --git a/driver/atoms.h b/driver/atoms.h
 new file mode 100644
+index 0000000..09e78f3
 --- /dev/null
 +++ b/driver/atoms.h
 @@ -0,0 +1,33 @@
@@ -218,6 +225,7 @@ new file mode 100644
 +
 +#endif /* _XSCREENSAVER_ATOMS_H_ */
 diff --git a/driver/demo-Gtk.c b/driver/demo-Gtk.c
+index 6c449f2..3fa27c3 100644
 --- a/driver/demo-Gtk.c
 +++ b/driver/demo-Gtk.c
 @@ -118,6 +118,7 @@
@@ -228,7 +236,7 @@ diff --git a/driver/demo-Gtk.c b/driver/demo-Gtk.c
  #include "usleep.h"
  
  #include "logo-50.xpm"
-@@ -252,12 +253,6 @@ typedef struct {
+@@ -247,12 +248,6 @@ typedef struct {
     a closure object of our own down into the various widget callbacks. */
  static state *global_state_kludge;
  
@@ -241,7 +249,7 @@ diff --git a/driver/demo-Gtk.c b/driver/demo-Gtk.c
  static void populate_demo_window (state *, int list_elt);
  static void populate_prefs_page (state *);
  static void populate_popup_window (state *);
-@@ -5050,20 +5045,11 @@ main (int argc, char **argv)
+@@ -5068,20 +5063,11 @@ main (int argc, char **argv)
  
    /* Intern the atoms that xscreensaver_command() needs.
     */
@@ -268,6 +276,7 @@ diff --git a/driver/demo-Gtk.c b/driver/demo-Gtk.c
    /* Create the window and all its widgets.
     */
 diff --git a/driver/demo-Xm.c b/driver/demo-Xm.c
+index 56d1aac..a3e6567 100644
 --- a/driver/demo-Xm.c
 +++ b/driver/demo-Xm.c
 @@ -82,6 +82,7 @@
@@ -317,6 +326,7 @@ diff --git a/driver/demo-Xm.c b/driver/demo-Xm.c
    /* Create the window and all its widgets.
     */
 diff --git a/driver/remote.c b/driver/remote.c
+index 775036a..59e30c1 100644
 --- a/driver/remote.c
 +++ b/driver/remote.c
 @@ -34,15 +34,13 @@
@@ -337,9 +347,10 @@ diff --git a/driver/remote.c b/driver/remote.c
  
  static XErrorHandler old_handler = 0;
 diff --git a/driver/windows.c b/driver/windows.c
+index d33f251..6acaddb 100644
 --- a/driver/windows.c
 +++ b/driver/windows.c
-@@ -69,14 +69,12 @@ typedef long PROP32;
+@@ -69,14 +69,13 @@ typedef long PROP32;
  #include "xscreensaver.h"
  #include "visual.h"
  #include "fade.h"
@@ -349,13 +360,14 @@ diff --git a/driver/windows.c b/driver/windows.c
  extern int kill (pid_t, int);		/* signal() is in sys/signal.h... */
  
  Atom XA_VROOT, XA_XSETROOT_ID, XA_ESETROOT_PMAP_ID, XA_XROOTPMAP_ID;
+ Atom XA_NET_WM_USER_TIME;
 -Atom XA_SCREENSAVER, XA_SCREENSAVER_VERSION, XA_SCREENSAVER_ID;
 -Atom XA_SCREENSAVER_STATUS;
--
  
  extern saver_info *global_si_kludge;	/* I hate C so much... */
  
 diff --git a/driver/xscreensaver-command.c b/driver/xscreensaver-command.c
+index 0057438..80b2813 100644
 --- a/driver/xscreensaver-command.c
 +++ b/driver/xscreensaver-command.c
 @@ -40,6 +40,7 @@
@@ -380,7 +392,7 @@ diff --git a/driver/xscreensaver-command.c b/driver/xscreensaver-command.c
  static char *screensaver_version;
  # ifdef __GNUC__
    __extension__   /* don't warn about "string length is greater than the
-@@ -285,28 +279,11 @@ main (int argc, char **argv)
+@@ -292,28 +286,11 @@ main (int argc, char **argv)
        exit (1);
      }
  
@@ -415,9 +427,10 @@ diff --git a/driver/xscreensaver-command.c b/driver/xscreensaver-command.c
    if (cmd == &XA_WATCH)
      {
 diff --git a/driver/xscreensaver.c b/driver/xscreensaver.c
+index 45f0f0c..06f5c13 100644
 --- a/driver/xscreensaver.c
 +++ b/driver/xscreensaver.c
-@@ -224,6 +224,7 @@
+@@ -232,6 +232,7 @@
  #include "visual.h"
  #include "usleep.h"
  #include "auth.h"
@@ -425,7 +438,7 @@ diff --git a/driver/xscreensaver.c b/driver/xscreensaver.c
  
  saver_info *global_si_kludge = 0;	/* I hate C so much... */
  
-@@ -232,12 +233,6 @@ char *progclass = 0;
+@@ -240,12 +241,6 @@ char *progclass = 0;
  XrmDatabase db = 0;
  
  
@@ -438,7 +451,7 @@ diff --git a/driver/xscreensaver.c b/driver/xscreensaver.c
  
  static XrmOptionDescRec options [] = {
  
-@@ -628,30 +623,20 @@ connect_to_server (saver_info *si, int *argc, char **argv)
+@@ -667,31 +662,21 @@ connect_to_server (saver_info *si, int *argc, char **argv)
  
    db = si->prefs.db;	/* resources.c needs this */
  
@@ -452,6 +465,7 @@ diff --git a/driver/xscreensaver.c b/driver/xscreensaver.c
 -  XA_XSETROOT_ID = XInternAtom (si->dpy, "_XSETROOT_ID", False);
 -  XA_ESETROOT_PMAP_ID = XInternAtom (si->dpy, "ESETROOT_PMAP_ID", False);
 -  XA_XROOTPMAP_ID = XInternAtom (si->dpy, "_XROOTPMAP_ID", False);
+-  XA_NET_WM_USER_TIME = XInternAtom (si->dpy, "_NET_WM_USER_TIME", False);
 -  XA_ACTIVATE = XInternAtom (si->dpy, "ACTIVATE", False);
 -  XA_DEACTIVATE = XInternAtom (si->dpy, "DEACTIVATE", False);
 -  XA_RESTART = XInternAtom (si->dpy, "RESTART", False);
@@ -473,6 +487,7 @@ diff --git a/driver/xscreensaver.c b/driver/xscreensaver.c
 +	{ &XA_XSETROOT_ID, "_XSETROOT_ID" },
 +	{ &XA_ESETROOT_PMAP_ID, "ESETROOT_PMAP_ID" },
 +	{ &XA_XROOTPMAP_ID, "_XROOTPMAP_ID" },
++	{ &XA_NET_WM_USER_TIME, "_NET_WM_USER_TIME" },
 +	{ NULL, NULL } /* Must be last to terminate list */
 +      };
 +    const struct atom_request *atom_lists[3] = { NULL, NULL, NULL };
@@ -484,15 +499,18 @@ diff --git a/driver/xscreensaver.c b/driver/xscreensaver.c
    return toplevel_shell;
  }
 diff --git a/driver/xscreensaver.h b/driver/xscreensaver.h
+index d67966e..064e9c4 100644
 --- a/driver/xscreensaver.h
 +++ b/driver/xscreensaver.h
-@@ -200,8 +200,5 @@ Bool safe_XF86VidModeGetViewPort (Display *, int, int *, int *);
- #endif /* HAVE_XF86VMODE */
+@@ -202,8 +202,5 @@ Bool safe_XF86VidModeGetViewPort (Display *, int, int *, int *);
  
  extern Atom XA_VROOT, XA_XSETROOT_ID, XA_ESETROOT_PMAP_ID, XA_XROOTPMAP_ID;
+ extern Atom XA_NET_WM_USER_TIME;
 -extern Atom XA_SCREENSAVER, XA_SCREENSAVER_VERSION, XA_SCREENSAVER_ID;
 -extern Atom XA_SCREENSAVER_STATUS, XA_LOCK, XA_BLANK;
 -extern Atom XA_DEMO, XA_PREFS;
  
  #endif /* __XSCREENSAVER_H__ */
+-- 
+2.6.1
 

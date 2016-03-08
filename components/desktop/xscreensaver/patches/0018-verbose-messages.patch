@@ -1,16 +1,22 @@
+From 178bbcab5659a1090e323cf8bf7468098fa153a1 Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Sat, 2 Jan 2016 23:12:27 -0800
+Subject: [PATCH] verbose messages
+
 Bug 16559 - xscreensaver shows extra messages
 https://defect.opensolaris.org/bz/show_bug.cgi?id=16559
 
 Make messages that annoy users only appear when verbose is set.
 (Upstream wasn't showing these until we started capturing stderr.)
 ---
- driver/passwd.c |   12 +++++++++---
- 1 files changed, 9 insertions(+), 3 deletions(-)
+ driver/passwd.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
 diff --git a/driver/passwd.c b/driver/passwd.c
+index 350dc4d..765741d 100644
 --- a/driver/passwd.c
 +++ b/driver/passwd.c
-@@ -283,8 +283,11 @@ xss_authenticate(saver_info *si, Bool verbose_p)
+@@ -285,8 +285,11 @@ xss_authenticate(saver_info *si, Bool verbose_p)
            si->cached_passwd &&
            !*si->cached_passwd)
          {
@@ -24,7 +30,7 @@ diff --git a/driver/passwd.c b/driver/passwd.c
            si->unlock_state = ul_cancel;
          }
  
-@@ -313,11 +316,14 @@ xss_authenticate(saver_info *si, Bool verbose_p)
+@@ -315,11 +318,14 @@ xss_authenticate(saver_info *si, Bool verbose_p)
          {
            /* If any auth method gets a cancel or timeout, don't try the
               next auth method!  We're done! */
@@ -40,4 +46,6 @@ diff --git a/driver/passwd.c b/driver/passwd.c
            goto DONE;
          }
      }
+-- 
+2.6.1
 

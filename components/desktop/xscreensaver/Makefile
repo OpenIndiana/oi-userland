@@ -26,19 +26,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xscreensaver
-COMPONENT_VERSION=	5.15
+COMPONENT_VERSION=	5.34
 COMPONENT_PROJECT_URL=	https://www.jwz.org/xscreensaver/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:4f6d1f1e4c15dbb74e2296f8fe57a73d47d602515178c248bbc838f779d5082d
-#COMPONENT_ARCHIVE_URL=	https://www.jwz.org/xscreensaver/$(COMPONENT_ARCHIVE)
-# jwz removes older tarballs, and 5.15 is no longer on his site, so borrow
-# Fedora's archive until we update
-COMPONENT_ARCHIVE_URL=	http://pkgs.fedoraproject.org/repo/pkgs/xscreensaver/xscreensaver-5.15.tar.gz/c0b8b2c817a9a7371f51a82e80602d10/$(COMPONENT_ARCHIVE)
+    sha256:6fff7ec4be743e5c042647ea9687dd0cdf48d1dd5e8e15098e5018bbd02e5e27
+COMPONENT_ARCHIVE_URL=	https://www.jwz.org/xscreensaver/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=        gnome/screensaver
 
-TPNO=			9370
+TPNO=			26341
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure-64.mk
