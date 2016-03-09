@@ -39,7 +39,7 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/ant.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-COMPONENT_BUILD_ARGS +=	-Ddist-dir=${PROTO_DIR}
+COMPONENT_BUILD_ARGS =		-Ddist-dir=${PROTO_DIR}
 COMPONENT_BUILD_ARGS +=	-Djavadoc-dir=${PROTO_DIR}
 COMPONENT_BUILD_TARGETS +=	dist 
 
