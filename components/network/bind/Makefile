@@ -20,26 +20,25 @@
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bind
-COMPONENT_VERSION=	9.10.3-P3
-COMPONENT_REVISION=	2
-IPS_COMPONENT_VERSION=	9.10.3.3
+COMPONENT_VERSION=	9.10.3-P4
+IPS_COMPONENT_VERSION=	9.10.3.4
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	http://www.isc.org/software/bind/
 
 # hash from: sha256sum $(COMPONENT_ARCHIVE) | sed 's/\(.[^ ]*\).*/sha256:\1/'
 COMPONENT_ARCHIVE_HASH=	 \
-	sha256:690810d1fbb72afa629e74638d19cd44e28d2b2e5eb63f55c705ad85d1a4cb83
+	sha256:2ac044b5fbdf45fb45107af0df961b3b7cb5262a3bf1948ed3fe7a170dd13e3e
 COMPONENT_ARCHIVE_URL=	\
 	http://ftp.isc.org/isc/bind9/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	service/dns-server
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/configure.mk
+include $(WS_TOP)/make-rules/ips.mk
 
 # Missing files in build dir without this.
 COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -76,7 +75,7 @@ ASLR_MODE = $(ASLR_ENABLE)
 .PHONY: build
 build:		$(BUILD_32)
 
-include ../../make-rules/shared-targets.mk
+include $(WS_TOP)/make-rules/shared-targets.mk
 
 # Install.
 #
@@ -164,4 +163,4 @@ test-clean:
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_TOP)/make-rules/depend.mk
