@@ -26,16 +26,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cryptography
-COMPONENT_VERSION=	1.2.1
+COMPONENT_VERSION=	1.2.3
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:a13217a03a47e743d26edff7299e4be7358c2fd12a223ac5d6de3229690b6ee5
+    sha256:8eb11c77dd8e73f48df6b2f7a7e16173fe0fe8fdfe266232832e88477e08454e
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://cryptography.io/
 COMPONENT_BUGDB=	python-mod/cryptography
 
-TPNO=			26388
+TPNO=			27254
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/setup.py.mk
