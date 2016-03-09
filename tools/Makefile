@@ -24,8 +24,7 @@
 include ../make-rules/shared-macros.mk
 
 download setup prep build install publish \
-validate:	links pkglint time-$(MACH32).so time-$(MACH64).so \
-		proxy_cvs
+validate:	links pkglint time-$(MACH32).so time-$(MACH64).so
 
 # generate wrappers for parfait. we need to generate them
 # with the correct compiler variables from the common makefiles because
@@ -53,9 +52,6 @@ pkglint:
 	    > pkglint
 	@chmod +x pkglint
 
-proxy_cvs:
-	@cp proxy_cvs.sh proxy_cvs
-	@chmod +x proxy_cvs
 
 time-$(MACH64).o:			BITS=64
 time-$(MACH32).o time-$(MACH64).o:	CFLAGS += -Kpic
@@ -69,7 +65,6 @@ time-%.so:	time-%.o
 clean:
 	@$(RM) time-*.o time*.bc
 	@$(RM) pkglint
-	@$(RM) proxy_cvs
 
 clobber:	clean
 	@$(RM) time-*.so python/pkglint/*.pyc

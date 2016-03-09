@@ -20,14 +20,13 @@
 #
 
 #
-# Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 include $(WS_MAKE_RULES)/prep-download.mk
 include $(WS_MAKE_RULES)/prep-hg.mk
 include $(WS_MAKE_RULES)/prep-git.mk
 include $(WS_MAKE_RULES)/prep-svn.mk
-include $(WS_MAKE_RULES)/prep-cvs.mk
 include $(WS_MAKE_RULES)/prep-unpack.mk
 include $(WS_MAKE_RULES)/prep-patch.mk
 
