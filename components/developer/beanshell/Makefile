@@ -20,29 +20,24 @@
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		beanshell
-COMPONENT_VERSION=	2.0b4
+COMPONENT_VERSION=	2.0b6
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.beanshell.org/
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE=	$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:a6f02b46796ed6b6a212cfc2d17e4797212db3206e21a3f4959adb60bddfff5f
-# This should come from http://www.beanshell.org/ however they do not
-# maintain previous versions of archives there anymore.  When/if this
-# component is upgraded the download location should revert back to
-# beanshell.org if possible.  Note also a fork of beanshell is receiving
-# more attention at the google code repository of late.
-COMPONENT_ARCHIVE_URL=	$(EXTERNAL_ARCHIVE_MIRROR)/$(SOURCE_ARCHIVE)
+    sha256:dbcd8296a0aa81b5edc80a5421841b968d031332ffcebf3b2c877969669f5cad
+COMPONENT_ARCHIVE_URL=	https://github.com/beanshell/beanshell/archive/$(COMPONENT_ARCHIVE)
 
 COMPONENT_BUGDB=	utility/beanshell
 
 IPS_COMPONENT_VERSION=	2.0
 
-include ../../make-rules/prep.mk
-include ../../make-rules/ant.mk
-include ../../make-rules/ips.mk
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/ant.mk
+include $(WS_TOP)/make-rules/ips.mk
 
 COMPONENT_BUILD_ARGS +=	-Ddist-dir=${PROTO_DIR}
 COMPONENT_BUILD_ARGS +=	-Djavadoc-dir=${PROTO_DIR}
@@ -66,4 +61,4 @@ test:	$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_TOP)/make-rules/depend.mk
