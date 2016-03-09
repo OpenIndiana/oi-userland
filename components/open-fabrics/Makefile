@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 LD_Z_IGNORE =
@@ -27,7 +27,7 @@ COMPONENT_NAME=	open-fabrics
 COMPONENT_VERSION=1.5.3
 
 COMPONENT_PROJECT_URL=	http://www.openfabrics.org/
-COMPONENT_BUGDB=	library/ofuv_lib utility/ofuv_tools
+COMPONENT_BUGDB=	library/ofuv_lib utility/ofuv_tools library/ofuv_psif
 
 TPNO_OPEN_FABRICS=	3369
 TPNO_IBUTILS=		5084
@@ -104,6 +104,7 @@ libibmad:		libibumad
 opensm:			libibumad libibmad
 ibutils:		opensm
 infiniband-diags:	libibverbs opensm
+libsif: 		libibverbs
 
 FORCE:
 
