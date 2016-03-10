@@ -23,24 +23,24 @@
 # Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gdb
-COMPONENT_VERSION=	7.6.2
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	7.10.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:17f7bcda1b24336aadcb1c5e703c355551e59467e221c6f4353b720dffad73a7
+     sha256:ff14f8050e6484508c73cbfa63731e57901478490ca1672dc0b5e2b03f6af622
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/gdb/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL =	http://www.gnu.org/software/gdb/
 COMPONENT_BUGDB=	utility/gdb
 
 TPNO=			17258
+CONFIGURE_DEFAULT_DIRS=no
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # GDB wants the GNU utilities
 PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
@@ -83,6 +83,7 @@ CONFIGURE_OPTIONS += --without-auto-load-safe-path
 CONFIGURE_OPTIONS += --with-python=yes
 CONFIGURE_OPTIONS += --with-libexpat-prefix=/usr/lib
 CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_OPTIONS.32 += --disable-largefile
 
 COMPONENT_BUILD_ENV += $(CONFIGURE_ENV)
 
@@ -90,7 +91,7 @@ COMPONENT_BUILD_ENV += $(CONFIGURE_ENV)
 # register tables which weren't there by default.
 COMPONENT_PRE_CONFIGURE_ACTION = \
   ( cd  $(SOURCE_DIR)/gdb/features ; \
-    $(GMAKE) all ; \
+    $(GMAKE) all; \
     cd $(SOURCE_DIR)/readline/ ; \
     autoconf )
 
@@ -144,4 +145,4 @@ test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

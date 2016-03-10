@@ -1,0 +1,28 @@
+--- gdb-7.10.1/gdb/thread.c.orig	Sat Feb 27 06:04:53 2016
++++ gdb-7.10.1/gdb/thread.c	Sat Feb 27 06:34:03 2016
+@@ -67,6 +67,7 @@
+ static void info_threads_command (char *, int);
+ static void thread_apply_command (char *, int);
+ static void restore_current_thread (ptid_t);
++int is_alive (ptid_t ptid);
+ 
+ /* Data to cleanup thread array.  */
+ 
+@@ -846,6 +847,17 @@
+   return tp->executing;
+ }
+ 
++int
++is_alive (ptid_t ptid)
++{
++  struct thread_info *tp;
++
++  tp = find_thread_ptid (ptid);
++  if (tp == NULL)
++    return 0;
++  return thread_alive (tp);
++}
++
+ void
+ set_executing (ptid_t ptid, int executing)
+ {
