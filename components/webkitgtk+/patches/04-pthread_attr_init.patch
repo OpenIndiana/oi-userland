@@ -1,0 +1,31 @@
+--- webkitgtk-2.10.4/Source/JavaScriptCore/heap/MachineStackMarker.cpp.~1~	2015-11-11 10:42:50.000000000 +0300
++++ webkitgtk-2.10.4/Source/JavaScriptCore/heap/MachineStackMarker.cpp	2015-12-07 10:30:43.164210672 +0300
+@@ -51,6 +51,7 @@
+ 
+ #if OS(SOLARIS)
+ #include <thread.h>
++#include <ucontext.h>
+ #else
+ #include <pthread.h>
+ #endif
+@@ -422,6 +423,8 @@
+     // e.g. on FreeBSD 5.4, neundorf@kde.org
+     pthread_attr_get_np(platformThread, &regs);
+ #endif
++#elif OS(SOLARIS)
++    /* do nothing */
+ #else
+     // FIXME: this function is non-portable; other POSIX systems may have different np alternatives
+     pthread_getattr_np(platformThread, &regs);
+@@ -489,6 +492,11 @@
+     int rc = pthread_stackseg_np(pthread_self(), &ss);
+     stackBase = (void*)((size_t) ss.ss_sp - ss.ss_size);
+     stackSize = ss.ss_size;
++#elif OS(SOLARIS)
++    ucontext_t contxt;
++    int rc = getcontext(&contxt);
++    stackBase=(void*)((size_t)contxt.uc_stack.ss_sp-contxt.uc_stack.ss_size);
++    stackSize= contxt.uc_stack.ss_size;
+ #else
+     int rc = pthread_attr_getstack(&regs, &stackBase, &stackSize);
+ #endif

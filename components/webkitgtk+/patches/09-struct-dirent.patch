@@ -1,0 +1,63 @@
+--- webkitgtk-2.10.4/Source/WebKit2/NetworkProcess/cache/NetworkCacheFileSystem.cpp.1	2015-12-11 19:29:52.280675942 +0300
++++ webkitgtk-2.10.4/Source/WebKit2/NetworkProcess/cache/NetworkCacheFileSystem.cpp	2015-12-11 19:48:17.318741301 +0300
+@@ -30,8 +30,11 @@
+ 
+ #include <WebCore/FileSystem.h>
+ #include <dirent.h>
++#include <limits.h>
++#include <strings.h>
+ #include <sys/stat.h>
+ #include <sys/time.h>
++#include <sys/types.h>
+ #include <wtf/text/CString.h>
+ 
+ #if USE(SOUP)
+@@ -42,19 +45,6 @@
+ namespace WebKit {
+ namespace NetworkCache {
+ 
+-static DirectoryEntryType directoryEntryType(uint8_t dtype)
+-{
+-    switch (dtype) {
+-    case DT_DIR:
+-        return DirectoryEntryType::Directory;
+-    case DT_REG:
+-        return DirectoryEntryType::File;
+-    default:
+-        ASSERT_NOT_REACHED();
+-        return DirectoryEntryType::File;
+-    }
+-}
+-
+ void traverseDirectory(const String& path, const std::function<void (const String&, DirectoryEntryType)>& function)
+ {
+     DIR* dir = opendir(WebCore::fileSystemRepresentation(path).data());
+@@ -62,15 +52,25 @@
+         return;
+     dirent* dp;
+     while ((dp = readdir(dir))) {
+-        if (dp->d_type != DT_DIR && dp->d_type != DT_REG)
+-            continue;
++        char filename [PATH_MAX+1];
++        struct stat st;
++
+         const char* name = dp->d_name;
++	bzero(filename,PATH_MAX+1);
++        sprintf(filename,"%s/%s",WebCore::fileSystemRepresentation(path).data(),dp->d_name);
++        stat(filename,&st);
++        
++        if (!S_ISDIR(st.st_mode) && !S_ISREG(st.st_mode))
++            continue;
+         if (!strcmp(name, ".") || !strcmp(name, ".."))
+             continue;
+         auto nameString = String::fromUTF8(name);
+         if (nameString.isNull())
+             continue;
+-        function(nameString, directoryEntryType(dp->d_type));
++	if (S_ISDIR(st.st_mode))
++            function(nameString, DirectoryEntryType::Directory);
++        else
++            function(nameString, DirectoryEntryType::File);
+     }
+     closedir(dir);
+ }

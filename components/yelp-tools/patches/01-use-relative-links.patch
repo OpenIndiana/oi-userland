@@ -1,0 +1,14 @@
+--- yelp-tools-3.18.0/tools/yelp.m4	2015-01-27 17:53:56.000000000 +0300
++++ yelp-tools-3.18.0/tools/yelp.m4	2015-12-06 01:37:24.963643473 +0300
+@@ -179,8 +179,9 @@
+ 	      $(INSTALL_DATA) "$$d$$lc/$$f" "$$helpdir$$f" || exit 1; \
+ 	    elif test "x$$lc" != "xC"; then \
+ 	      if test "x$(YELP_LC_MEDIA_LINKS)" != "x"; then \
+-	        echo "$(LN_S) -f $(HELP_DIR)/C/$(HELP_ID)/$$f $$helpdir$$f"; \
+-	        $(LN_S) -f "$(HELP_DIR)/C/$(HELP_ID)/$$f" "$$helpdir$$f" || exit 1; \
++		TARGET=$$(printf import\ os\\nprint\ os.path.relpath\(\"%s/C/%s/%s\",\ \"%s\"\) "$(DESTDIR)$(HELP_DIR)" "$(HELP_ID)" "$$f" $$(dirname "$$helpdir/$$f") | python2.6); \
++	        echo "$(LN_S) -f $$TARGET $$helpdir$$f"; \
++	        $(LN_S) -f "$$TARGET" "$$helpdir$$f" || exit 1; \
+ 	      fi; \
+ 	    fi; \
+ 	  done; \

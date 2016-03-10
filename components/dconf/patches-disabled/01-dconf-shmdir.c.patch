@@ -1,0 +1,46 @@
+--- dconf-0.6/common/dconf-shmdir.c.~1~	2010-11-02 18:18:16.000000000 +0300
++++ dconf-0.6/common/dconf-shmdir.c	2015-02-23 02:49:15.744917039 +0300
+@@ -21,10 +21,11 @@
+ 
+ #include "dconf-shmdir.h"
+ 
+-#include <sys/statfs.h>
+-#include <sys/vfs.h>
++#include <sys/stat.h>
+ #include <sys/param.h>
+ #include <sys/mount.h>
++#include <sys/mntent.h>
++#include <strings.h>
+ #include <errno.h>
+ 
+ #ifndef NFS_SUPER_MAGIC
+@@ -34,11 +35,11 @@
+ static gboolean
+ is_local (const gchar *filename)
+ {
+-  struct statfs buf;
++  struct stat buf;
+   gint s;
+ 
+   do
+-    s = statfs (filename, &buf);
++    s = stat (filename, &buf);
+   while (s < 0 && errno == EINTR);
+ 
+   if (s < 0 && errno == ENOENT)
+@@ -46,11 +47,13 @@
+       g_mkdir_with_parents (filename, 0700);
+ 
+       do
+-        s = statfs (filename, &buf);
++        s = stat (filename, &buf);
+       while (s < 0 && errno == EINTR);
+     }
+ 
+-  return s == 0 && buf.f_type != NFS_SUPER_MAGIC;
++  return s == 0 && strncmp(buf.st_fstype,MNTTYPE_NFS,_ST_FSTYPSZ) && \
++	strncmp(buf.st_fstype,MNTTYPE_NFS3,_ST_FSTYPSZ) &&\
++	strncmp(buf.st_fstype,MNTTYPE_NFS4,_ST_FSTYPSZ);
+ }
+ 
+ gchar *
