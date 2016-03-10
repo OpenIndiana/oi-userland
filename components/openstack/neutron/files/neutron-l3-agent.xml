@@ -36,9 +36,9 @@
         value='svc:/application/openstack/neutron/neutron-upgrade' />
     </dependency>
 
-    <dependency name='ipfilter' grouping='require_all' restart_on='error'
+    <dependency name='firewall' grouping='require_all' restart_on='error'
       type='service'>
-      <service_fmri value='svc:/network/ipfilter:default' />
+      <service_fmri value='svc:/network/firewall:default' />
     </dependency>
 
     <dependency name='ntp' grouping='optional_all' restart_on='none'
@@ -61,15 +61,13 @@
     <exec_method timeout_seconds="60" type="method" name="start"
       exec="/lib/svc/method/neutron-l3-agent %m %{config/config_path} %{config/l3_config_path} %{config/vpn_config_path}">
       <method_context>
-        <!-- sys_ip_config is required to set 'hostmodel' ipadm property -->
-        <method_credential user='neutron' group='neutron' privileges='basic,sys_ip_config' />
+        <method_credential user='neutron' group='neutron' />
       </method_context>
     </exec_method>
     <exec_method timeout_seconds="600" type="method" name="stop"
       exec="/lib/svc/method/neutron-l3-agent %m %{restarter/contract}">
       <method_context>
-        <!-- sys_ip_config is required to set 'hostmodel' ipadm property -->
-        <method_credential user='neutron' group='neutron' privileges='basic,sys_ip_config' />
+        <method_credential user='neutron' group='neutron' />
       </method_context>
     </exec_method>
 

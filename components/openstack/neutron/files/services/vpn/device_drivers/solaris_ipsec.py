@@ -107,7 +107,7 @@ from oslo.config import cfg
 from oslo import messaging
 from oslo_concurrency import lockutils, processutils
 from netaddr import IPNetwork
-from neutron.agent.solaris import interface, net_lib, ra, ipfilters_manager
+from neutron.agent.solaris import packetfilter
 from neutron.agent.linux import ip_lib, utils
 from neutron.common import rpc as n_rpc
 from neutron_vpnaas.db.vpn import vpn_db
@@ -181,8 +181,8 @@ solaris_opts = [
         'packet_logging', default=False,
         help=_('IPsec policy failure logging')),
     cfg.StrOpt(
-         'logger_level', default='message+packet',
-         help=_('IPsec policy log level'))
+        'logger_level', default='message+packet',
+        help=_('IPsec policy log level'))
 ]
 cfg.CONF.register_opts(solaris_defaults, 'solaris')
 cfg.CONF.register_opts(solaris_opts, 'solaris')
@@ -241,29 +241,29 @@ def disable_services():
     LOG.info(
         "Disabling IPsec policy service: \"svc:/%s\"" % ipsec_svc)
     instance = rad_connection.get_object(
-       smfb.Instance(),
-       rad.client.ADRGlobPattern({'service': ipsec_svc,
-                                 'instance': 'default'}))
+        smfb.Instance(),
+        rad.client.ADRGlobPattern({'service': ipsec_svc,
+                                   'instance': 'default'}))
     instance.disable(False)
 
     instance = rad_connection.get_object(
-       smfb.Instance(),
-       rad.client.ADRGlobPattern({'service': ipsec_svc,
-                                 'instance': 'logger'}))
+        smfb.Instance(),
+        rad.client.ADRGlobPattern({'service': ipsec_svc,
+                                   'instance': 'logger'}))
     instance.disable(False)
 
     LOG.info("Disabling IKE service: \"svc:/%s:default\"" % ike_svc)
     instance = rad_connection.get_object(
-       smfb.Instance(),
-       rad.client.ADRGlobPattern({'service': ike_svc,
-                                 'instance': 'default'}))
+        smfb.Instance(),
+        rad.client.ADRGlobPattern({'service': ike_svc,
+                                   'instance': 'default'}))
     instance.disable(False)
 
     LOG.info("Disabling IKE service: \"svc:/%s:ikev2\"" % ike_svc)
     instance = rad_connection.get_object(
-       smfb.Instance(),
-       rad.client.ADRGlobPattern({'service': ike_svc,
-                                 'instance': 'ikev2'}))
+        smfb.Instance(),
+        rad.client.ADRGlobPattern({'service': ike_svc,
+                                   'instance': 'ikev2'}))
     instance.disable(False)
 
     rad_connection.close()
@@ -355,7 +355,7 @@ def delete_tunnels():
        is the tunnel name. See comment in sync() for a description
        of tunnel names.
 
-       Also remove any IPF bypass rules. We don't need
+       Also remove any PF bypass rules. We don't need
        to delete the routes added by our evil twin add_tunnels()
        because these get whacked when the tunnel is removed.
        We are not really interested in any errors at this point, the
@@ -366,8 +366,6 @@ def delete_tunnels():
     if not existing_tunnels:
         LOG.info("VPNaaS has just started, no tunnels to whack.")
         return
-
-    ipfilters_manager = net_lib.IPfilterCommand()
 
     for idstr in existing_tunnels:
         cmd = ['/usr/bin/pfexec', 'ipadm', 'delete-ip', idstr]
@@ -381,20 +379,23 @@ def delete_tunnels():
         except processutils.ProcessExecutionError as stderr:
             LOG.debug("\"%s\"" % stderr)
 
-    cmd = ['/usr/sbin/ipfstat', '-i']
-    p = Popen(cmd, stdout=PIPE, stderr=PIPE)
-    output, error = p.communicate()
-    if p.returncode != 0:
-        print "failed to retrieve IP interface names"
-    ifnames = output.splitlines()
-    LOG.debug("ifnames %s" % ifnames)
-    pass_in_rule = re.compile('pass in quick on')
-    for ifname in ifnames:
-        if not pass_in_rule.search(ifname):
+    # Remove all the VPN bypass rules that were added for local subnet
+    # going out to remote subnet. These rules are all captured inside of
+    # a anchor whose name is of the form vpn_{peer_cidr}
+    pf = packetfilter.PacketFilter('_auto/neutron:l3:agent')
+    anchors = pf.list_anchors()
+    LOG.debug("All anchors under _auto/neutron:l3:agent: %s" % anchors)
+    for anchor in anchors:
+        if 'l3i' not in anchor:
             continue
-        ipf_cmd = ['%s' % ifname]
-        LOG.info("Deleting IPF bypass: \"%s\"" % ipf_cmd)
-        ipfilters_manager.remove_rules(ipf_cmd, 4)
+        subanchors = anchor.split('/')[2:]
+        l3i_anchors = pf.list_anchors(subanchors)
+        LOG.debug("All anchors under %s: %s" % (anchor, l3i_anchors))
+        for l3i_anchor in l3i_anchors:
+            if 'vpn_' not in l3i_anchor:
+                continue
+            l3i_subanchors = l3i_anchor.split('/')[2:]
+            pf.remove_anchor(l3i_subanchors)
 
     existing_tunnels = []
 
@@ -659,11 +660,12 @@ class BaseSolaris():
             status_changed_vpn_services)
 
     def get_connection_status(self):
-	"""Update the status of the ipsec-site-connection
+        """Update the status of the ipsec-site-connection
            based on the output of ikeadm(1m). See get_status()
            for further comments. Any connections that ended up
            on the badboys list will be marked as state DOWN.
         """
+        LOG.debug("Getting Connection Status")
         global being_shutdown
         global restarting
 
@@ -782,7 +784,7 @@ class SolarisIPsecProcess(BaseSolaris):
         self.ike_version = ""
         self.agent_rpc = IPsecVpnDriverApi(topics.IPSEC_DRIVER_TOPIC)
         self.context = context.get_admin_context_without_session()
-        self.ipfilters_manager = net_lib.IPfilterCommand()
+        self.pf = packetfilter.PacketFilter('_auto/neutron:l3:agent')
         LOG.info("Solaris IPsec/IKE Configuration manager loaded.")
 
     def ensure_configs(self):
@@ -878,8 +880,8 @@ class SolarisIPsecProcess(BaseSolaris):
                 stdout, stderr = processutils.execute(*cmd)
             except processutils.ProcessExecutionError as stderr:
                 if re.search('Interface already exists', str(stderr)):
-                    LOG.warn(
-                       "Tunnel interface: %s already exists." % tun_name)
+                    LOG.warn("Tunnel interface: '%s' already exists." %
+                             tun_name)
                 else:
                     LOG.warn("Error creating tunnel")
                     LOG.warn("\"%s\"" % stderr)
@@ -910,11 +912,16 @@ class SolarisIPsecProcess(BaseSolaris):
                     self.badboys.append(site)
                     continue
 
-            # Now for some Policy Based Routing (PBR) voodoo. When the EVS
-            # adds a virtual network, it adds a PBR rule that looks like this:
+            # Now for some Policy Based Routing (PBR) voodoo. When a Neutron
+            # subnet is added to a Neutron router, it adds a PBR rule that
+            # looks like this:
             #
-            # pass in on l3ia18d6189_8_0 to l3e2d9b3c1c_8_0:10.132.148.1
-            #     from any to !192.168.80.0/24
+            #    anchor "l3ia18d6189_8_0/*" on l3ia18d6189_8_0 all {
+            #      anchor "pbr" all {
+            #        pass in inet from any to ! 192.168.80.0/24
+            #          route-to 10.132.148.1.1@l3e88c2027b_9_0
+            #        }
+            #    }
             #
             # What this does is to pass all packets leaving interface
             # "l3ia18d6189_8_0" directly to interface/address
@@ -928,30 +935,38 @@ class SolarisIPsecProcess(BaseSolaris):
             # To make this happen, we find the interface associated with our
             # network and add a bypass rule. The rule looks like this:
             #
-            # pass in quick on l3ia18d6189_8_0 from any to 192.168.100.0/24
+            # pass in quick on l3ia18d6189_8_0 from any to 192.168.80.0/24
             #
             # There will be one of these pass rules for each remote network.
             # The "quick" keyword ensures it matches *BEFORE* the PBR rule.
 
-            cmd = ['/usr/sbin/ipfstat', '-i']
+            # Find the interfaces names that start with 'l3i and have the IP
+            # address that matches the Inner Source IP address of an IP tunnel
+            # added by VPNaaS. Add a bypass rule to the sub-anchor for this
+            # interface
+            cmd = ['/usr/sbin/ipadm', 'show-addr', '-po', 'addrobj,addr']
             p = Popen(cmd, stdout=PIPE, stderr=PIPE)
             output, error = p.communicate()
-            if p.returncode != 0:
-                print "failed to retrieve IP interface names"
-            ifnames = output.splitlines()
-            far_subnet = re.compile(subnet['cidr'])
-            for ifname in ifnames:
-                if not ifname.startswith('pass in on'):
-                    continue
-                if far_subnet.search(ifname):
-                    rule_args = ifname.split(' ')
-                    ifa = rule_args[3]
-                    LOG.debug("Found interface for VPN subnet: \"%s\"" % ifa)
+            ifname = None
+            if p.returncode == 0:
+                for addrobj_addr in output.strip().splitlines():
+                    if ((i_local + '/') in addrobj_addr and
+                            addrobj_addr.startswith('l3i')):
+                        addrobj = addrobj_addr.split(':')[0]
+                        ifname = addrobj.split('/')[0]
+                        break
+            if not ifname:
+                LOG.warn("Failed to find IP interface corresponding to "
+                         "VPN subnet: %s. Skipping bypass rule for '%s'" %
+                         (subnet['cidr'], tun_name))
+                continue
 
-            ipf_cmd = ['pass in quick on %s from any to %s' % (ifa, peer_cidr)]
-            LOG.info("No PBR for: \"%s\"" % peer_cidr)
-            LOG.debug("Adding PBR bypass rule: \"%s\"" % ipf_cmd)
-            self.ipfilters_manager.add_rules(ipf_cmd, 4)
+            label = 'vpn_%s_%s' % (ifname, peer_cidr.replace('/', '_'))
+            bypass_rule = 'pass in quick from any to %s label %s' % \
+                (peer_cidr, label)
+            anchor_name = 'vpn_%s' % (peer_cidr.replace('/', '_'))
+            self.pf.add_rules([bypass_rule], [ifname, anchor_name])
+            LOG.debug("Added PBR bypass rule: '%s'" % bypass_rule)
 
     def get_status(self):
         """Check to see if IKE is configured and running.
@@ -1067,18 +1082,18 @@ class SolarisIPsecProcess(BaseSolaris):
         LOG.info(
             "Setting IPsec policy config file to: \"%s\"" % self.config_file)
         instance = rad_connection.get_object(
-           smfb.Instance(),
-           rad.client.ADRGlobPattern({'service': self.ipsec_svc,
-                                     'instance': 'default'}))
+            smfb.Instance(),
+            rad.client.ADRGlobPattern({'service': self.ipsec_svc,
+                                       'instance': 'default'}))
         instance.writeProperty('config/config_file', smfb.PropertyType.ASTRING,
                                [self.config_file])
         instance.refresh()
 
         LOG.info("Setting IKEv1 config file to: \"%s\"" % self.ike_config_file)
         instance = rad_connection.get_object(
-           smfb.Instance(),
-           rad.client.ADRGlobPattern({'service': self.ike_svc,
-                                     'instance': 'default'}))
+            smfb.Instance(),
+            rad.client.ADRGlobPattern({'service': self.ike_svc,
+                                       'instance': 'default'}))
         instance.writeProperty('config/config_file', smfb.PropertyType.ASTRING,
                                [self.ike_config_file])
 
@@ -1090,9 +1105,9 @@ class SolarisIPsecProcess(BaseSolaris):
         LOG.info(
             "Setting IKEv2 config file to: \"%s\"" % self.ikev2_config_file)
         instance = rad_connection.get_object(
-           smfb.Instance(),
-           rad.client.ADRGlobPattern({'service': self.ike_svc,
-                                     'instance': 'ikev2'}))
+            smfb.Instance(),
+            rad.client.ADRGlobPattern({'service': self.ike_svc,
+                                       'instance': 'ikev2'}))
         instance.writeProperty('config/config_file', smfb.PropertyType.ASTRING,
                                [self.ikev2_config_file])
 
@@ -1106,9 +1121,9 @@ class SolarisIPsecProcess(BaseSolaris):
             LOG.info(
                 "Setting IPsec policy logger to: \"%s\"" % self.logging_level)
             instance = rad_connection.get_object(
-               smfb.Instance(),
-               rad.client.ADRGlobPattern({'service': self.ipsec_svc,
-                                         'instance': 'logger'}))
+                smfb.Instance(),
+                rad.client.ADRGlobPattern({'service': self.ipsec_svc,
+                                           'instance': 'logger'}))
             instance.writeProperty('config/log_level',
                                    smfb.PropertyType.ASTRING,
                                    [self.logging_level])
@@ -1122,24 +1137,24 @@ class SolarisIPsecProcess(BaseSolaris):
         LOG.info("Enabling IPsec policy.")
         rad_connection = rad.connect.connect_unix()
         instance = rad_connection.get_object(
-           smfb.Instance(),
-           rad.client.ADRGlobPattern({'service': self.ipsec_svc,
-                                     'instance': 'default'}))
+            smfb.Instance(),
+            rad.client.ADRGlobPattern({'service': self.ipsec_svc,
+                                       'instance': 'default'}))
         instance.enable(True)
 
         LOG.info("Enabling IKE version \"%s\"" % self.ike_version)
         instance = rad_connection.get_object(
-           smfb.Instance(),
-           rad.client.ADRGlobPattern({'service': self.ike_svc,
-                                     'instance': self.ike_version}))
+            smfb.Instance(),
+            rad.client.ADRGlobPattern({'service': self.ike_svc,
+                                       'instance': self.ike_version}))
         instance.enable(True)
 
         if self.packet_logging:
             LOG.warn("Enabling IPsec packet logger.")
             instance = rad_connection.get_object(
-               smfb.Instance(),
-               rad.client.ADRGlobPattern({'service': self.ipsec_svc,
-                                         'instance': 'logger'}))
+                smfb.Instance(),
+                rad.client.ADRGlobPattern({'service': self.ipsec_svc,
+                                           'instance': 'logger'}))
             instance.enable(True)
 
         rad_connection.close()
@@ -1388,12 +1403,12 @@ class IPsecDriver(device_drivers.DeviceDriver):
 
             for new_ipsec_site_conn in process.connection_ids:
                 if ipsec_site_conn == new_ipsec_site_conn:
-                    LOG.debug(
-                        "Found entry for ID: \"%s\"" % new_ipsec_site_conn)
+                    LOG.debug("Found entry for ID: '%s'" %
+                              new_ipsec_site_conn)
                     found_previous_connection = True
             if not found_previous_connection:
-                LOG.debug(
-                   "Unable to find entry for ID: \"%s\"" % ipsec_site_conn)
+                LOG.debug("Unable to find entry for ID: '%s'" %
+                          ipsec_site_conn)
                 return True
             continue
 

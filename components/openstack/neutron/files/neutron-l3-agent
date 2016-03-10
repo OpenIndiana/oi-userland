@@ -16,12 +16,14 @@
 
 import os
 import re
+from subprocess import CalledProcessError, Popen, PIPE, check_call
 import sys
 
 import netaddr
 import smf_include
 
-from subprocess import CalledProcessError, Popen, PIPE, check_call
+
+from neutron.agent.solaris import packetfilter
 from neutron_vpnaas.services.vpn.device_drivers.solaris_ipsec import \
     get_vpn_interfaces
 from neutron_vpnaas.services.vpn.device_drivers.solaris_ipsec import \
@@ -38,8 +40,8 @@ def set_hostmodel(value):
         return False
     if output.strip() == value:
         return True
-    cmd = ["/usr/sbin/ipadm", "set-prop", "-t", "-p", "hostmodel=%s" % value,
-           "ipv4"]
+    cmd = ["/usr/bin/pfexec", "/usr/sbin/ipadm", "set-prop", "-t", "-p",
+           "hostmodel=%s" % value, "ipv4"]
     p = Popen(cmd, stdout=PIPE, stderr=PIPE)
     output, error = p.communicate()
     if p.returncode != 0:
@@ -80,8 +82,13 @@ def start():
               "enabled before enabling neutron-l3-agent"
         return smf_include.SMF_EXIT_ERR_CONFIG
 
-    cmd = "/usr/lib/neutron/neutron-l3-agent --config-file %s " \
-        "--config-file %s --config-file %s" % tuple(sys.argv[2:5])
+    # remove any stale PF rules under _auto/neutron:l3:agent anchor
+    pf = packetfilter.PacketFilter('_auto/neutron:l3:agent')
+    pf.remove_anchor_recursively()
+
+    cmd = "/usr/bin/pfexec /usr/lib/neutron/neutron-l3-agent " \
+        "--config-file %s --config-file %s --config-file %s" % \
+        tuple(sys.argv[2:5])
 
     # The VPNaaS shutdown should unplumb all IP tunnels it created. But
     # be paranoid and check for lingering tunnels created by OpenStack
@@ -108,51 +115,6 @@ def start():
     return smf_include.smf_subprocess(cmd)
 
 
-def remove_ipfilter_rules(version):
-    # remove IP Filter rules added by neutron-l3-agent
-    cmd = ["/usr/bin/pfexec", "/usr/sbin/ipfstat", "-io"]
-    if version == 6:
-        cmd.insert(2, "-6")
-    p = Popen(cmd, stdout=PIPE, stderr=PIPE)
-    output, error = p.communicate()
-    if p.returncode != 0:
-        print "failed to retrieve IP Filter rules"
-        return smf_include.SMF_EXIT_ERR_FATAL
-
-    ipfilters = output.splitlines()
-    # L3 agent IP Filter rules are of the form
-    # block in quick on l3i64cbb496_a_0 from ... to pool/15417332
-    prog = re.compile('on l3i[0-9A-Fa-f\_]{10}_0')
-    ippool_names = []
-    for ipf in ipfilters:
-        if not prog.search(ipf):
-            continue
-        # capture the IP pool name
-        if 'pool/' in ipf:
-            ippool_names.append(ipf.split('pool/')[1])
-
-        try:
-            # remove the IP Filter rule
-            p = Popen(["echo", ipf], stdout=PIPE)
-            cmd = ["/usr/bin/pfexec", "/usr/sbin/ipf", "-r", "-f", "-"]
-            if version == 6:
-                cmd.insert(2, "-6")
-            check_call(cmd, stdin=p.stdout)
-        except CalledProcessError as err:
-            print "failed to remove IP Filter rule %s: %s" % (ipf, err)
-            return smf_include.SMF_EXIT_ERR_FATAL
-
-    # remove IP Pools added by neutron-l3-agent
-    for ippool_name in ippool_names:
-        try:
-            check_call(["/usr/bin/pfexec", "/usr/sbin/ippool", "-R",
-                        "-m", ippool_name, "-t", "tree"])
-        except CalledProcessError as err:
-            print "failed to remove IP Pool %s: %s" % (ippool_name, err)
-            return smf_include.SMF_EXIT_ERR_FATAL
-    return smf_include.SMF_EXIT_OK
-
-
 def stop():
     shutdown_vpn()
     try:
@@ -161,43 +123,10 @@ def stop():
     except CalledProcessError as err:
         print "failed to kill the SMF contract: %s" % (err)
 
-    # We need to first remove the IP filter rules and then remove
-    # the IP interfaces on which the rules were applied.
-
-    # remove IPv4 Filter rules added by neutron-l3-agent
-    rv = remove_ipfilter_rules(4)
-    if rv != smf_include.SMF_EXIT_OK:
-        return rv
-
-    # remove IPv6 Filter rules added by neutron-l3-agent
-    rv = remove_ipfilter_rules(6)
-    if rv != smf_include.SMF_EXIT_OK:
-        return rv
-
-    # remove IP NAT rules added by neutron-l3-agent
-    cmd = ["/usr/bin/pfexec", "/usr/sbin/ipnat", "-lR"]
-    p = Popen(cmd, stdout=PIPE, stderr=PIPE)
-    output, error = p.communicate()
-    if p.returncode != 0:
-        print "failed to retrieve IP NAT rules"
-        return smf_include.SMF_EXIT_ERR_FATAL
-
-    ipnat_rules = output.splitlines()
-    # L3 agent IP NAT rules are of the form
-    # bimap l3e64ccc496_a_0 .... OR
-    # rdr l3iedf345cc96_a_0 ....
-    prog = re.compile('l3[ie][0-9A-Fa-f\_]{10}_0')
-    for ipnat_rule in ipnat_rules:
-        if not prog.search(ipnat_rule):
-            continue
-        # remove the IP NAT rule
-        try:
-            p = Popen(["echo", ipnat_rule], stdout=PIPE)
-            check_call(["/usr/bin/pfexec", "/usr/sbin/ipnat", "-r", "-f", "-"],
-                       stdin=p.stdout)
-        except CalledProcessError as err:
-            print "failed to remove IP NAT rule %s: %s" % (ipnat_rule, err)
-            return smf_include.SMF_EXIT_ERR_FATAL
+    # We need to first remove the PF rules added under _auto/neutron:l3:agent
+    # anchor and then remove the IP interfaces on which the rules were applied.
+    pf = packetfilter.PacketFilter('_auto/neutron:l3:agent')
+    pf.remove_anchor_recursively()
 
     # remove VNICs associated with L3 agent
     cmd = ["/usr/sbin/ipadm", "show-if", "-p", "-o", "ifname"]

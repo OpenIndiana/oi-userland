@@ -39,7 +39,7 @@ set name=info.upstream value="OpenStack <openstack-dev@lists.openstack.org>"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=openstack.upgrade-id reboot-needed=true value=$(COMPONENT_BE_VERSION)
 set name=org.opensolaris.arc-caseid value=PSARC/2013/350 value=PSARC/2014/059 \
-    value=PSARC/2015/110 value=PSARC/2015/535
+    value=PSARC/2015/110 value=PSARC/2015/535 value=PSARC/2016/116
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 #
 dir  path=etc/neutron owner=neutron group=neutron mode=0700
@@ -242,8 +242,8 @@ file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/securitygroups_rp
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/solaris/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/solaris/dhcp.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/solaris/interface.py
-file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/solaris/ipfilters_manager.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/solaris/net_lib.py
+file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/solaris/packetfilter.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/solaris/ra.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/windows/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/neutron/agent/windows/polling.py
@@ -975,17 +975,8 @@ depend type=require fmri=__TBD pkg.debug.depend.file=usr/sbin/evsadm
 # force a dependency on package delivering ipadm(1M)
 depend type=require fmri=__TBD pkg.debug.depend.file=usr/sbin/ipadm
 
-# force a dependency on package delivering ipf(1M)
-depend type=require fmri=__TBD pkg.debug.depend.file=usr/sbin/ipf
-
-# force a dependency on package delivering ipfstat(1M)
-depend type=require fmri=__TBD pkg.debug.depend.file=usr/sbin/ipfstat
-
-# force a dependency on package delivering ipnat(1M)
-depend type=require fmri=__TBD pkg.debug.depend.file=usr/sbin/ipnat
-
-# force a dependency on package delivering ippool(1M)
-depend type=require fmri=__TBD pkg.debug.depend.file=usr/sbin/ippool
+# force a dependency on package delivering pfctl(1M)
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/sbin/pfctl
 
 # force a dependency on cliff; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/cliff-$(PYV)

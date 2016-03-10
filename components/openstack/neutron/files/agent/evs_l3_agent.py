@@ -31,8 +31,8 @@ from neutron.agent.l3 import agent as l3_agent
 from neutron.agent.l3 import router_info as router
 from neutron.agent.linux import utils
 from neutron.agent.solaris import interface
-from neutron.agent.solaris import ipfilters_manager
 from neutron.agent.solaris import net_lib
+from neutron.agent.solaris import packetfilter
 from neutron.agent.solaris import ra
 from neutron.callbacks import events
 from neutron.callbacks import registry
@@ -59,7 +59,7 @@ class SolarisRouterInfo(router.RouterInfo):
                  use_ipv6=False):
         super(SolarisRouterInfo, self).__init__(router_id, router, agent_conf,
                                                 interface_driver, use_ipv6)
-        self.ipfilters_manager = ipfilters_manager.IPfiltersManager()
+        self.pf = packetfilter.PacketFilter("_auto/neutron:l3:agent")
         self.iptables_manager = None
         self.remove_route = False
 
@@ -96,7 +96,7 @@ class SolarisRouterInfo(router.RouterInfo):
         pass
 
     def _get_existing_devices(self):
-        return net_lib.Datalink.show_vnic()
+        return net_lib.Datalink.show_link()
 
     def internal_network_added(self, port):
         internal_dlname = self.get_internal_device_name(port['id'])
@@ -107,14 +107,9 @@ class SolarisRouterInfo(router.RouterInfo):
         self.driver.init_l3(internal_dlname, ip_cidrs)
 
         # Since we support shared router model, we need to block the new
-        # internal port from reaching other tenant's ports
-        block_pname = self._get_ippool_name(port['mac_address'])
-        self.ipfilters_manager.add_ippool(block_pname, None)
-        if self.agent_conf.allow_forwarding_between_networks:
-            # If allow_forwarding_between_networks is set, then we need to
-            # allow forwarding of packets between same tenant's ports.
-            allow_pname = self._get_ippool_name(port['mac_address'], '0')
-            self.ipfilters_manager.add_ippool(allow_pname, None)
+        # internal port from reaching other tenant's ports. However, if
+        # allow_forwarding_between_networks is set, then we need to
+        # allow forwarding of packets between same tenant's ports.
 
         # walk through the other internal ports and retrieve their
         # cidrs and at the same time add the new internal port's
@@ -123,103 +118,113 @@ class SolarisRouterInfo(router.RouterInfo):
         block_subnets = []
         allow_subnets = []
         for internal_port in self.internal_ports:
+            # skip the port being added
             if internal_port['mac_address'] == port['mac_address']:
                 continue
+            internal_port_dlname = \
+                self.get_internal_device_name(internal_port['id'])
             if (self.agent_conf.allow_forwarding_between_networks and
                     internal_port['tenant_id'] == port['tenant_id']):
                 allow_subnets.append(internal_port['subnets'][0]['cidr'])
                 # we need to add the port's subnet to this internal_port's
-                # allowed_subnet_pool
-                iport_allow_pname = \
-                    self._get_ippool_name(internal_port['mac_address'], '0')
-                self.ipfilters_manager.add_ippool(iport_allow_pname,
-                                                  [port_subnet])
+                # allowed_subnet_table
+                iport_allow_tblname = 'allow_' + internal_port_dlname
+                self.pf.add_table_entry(iport_allow_tblname, [port_subnet],
+                                        [internal_port_dlname, 'normal'])
             else:
                 block_subnets.append(internal_port['subnets'][0]['cidr'])
-                iport_block_pname = \
-                    self._get_ippool_name(internal_port['mac_address'])
-                self.ipfilters_manager.add_ippool(iport_block_pname,
-                                                  [port_subnet])
-        # update the new port's pool with other ports' subnet
-        self.ipfilters_manager.add_ippool(block_pname, block_subnets)
-        if self.agent_conf.allow_forwarding_between_networks:
-            self.ipfilters_manager.add_ippool(allow_pname, allow_subnets)
+                iport_block_tblname = 'block_' + internal_port_dlname
+                self.pf.add_table_entry(iport_block_tblname, [port_subnet],
+                                        [internal_port_dlname, 'normal'])
 
-        # now setup the IPF rules
-        rules = ['block in quick on %s from %s to pool/%d' %
-                 (internal_dlname, port_subnet, block_pname)]
+        # update the new port's table with other ports' subnet
+        block_tblname = 'block_' + internal_dlname
+        self.pf.add_table_entry(block_tblname, block_subnets,
+                                [internal_dlname, 'normal'])
+        if self.agent_conf.allow_forwarding_between_networks:
+            allow_tblname = 'allow_' + internal_dlname
+            self.pf.add_table_entry(allow_tblname, allow_subnets,
+                                    [internal_dlname, 'normal'])
+
+        # now setup the PF rules
+        label = 'block_%s' % internal_dlname
+        rules = ['block in quick from %s to <%s> label %s' %
+                 (port_subnet, block_tblname, label)]
         # pass in packets between networks that belong to same tenant
         if self.agent_conf.allow_forwarding_between_networks:
-            rules.append('pass in quick on %s from %s to pool/%d' %
-                         (internal_dlname, port_subnet, allow_pname))
+            label = 'allow_%s' % internal_dlname
+            rules.append('pass in quick from %s to <%s> label %s' %
+                         (port_subnet, allow_tblname, label))
+
+        # if metadata is enabled, then we need to redirect all the packets
+        # arriving at 169.254.169.254:80 to neutron-metadata-proxy server
+        # listening at self.agent_conf.metadata_port
+        ipversion = netaddr.IPNetwork(port_subnet).version
+        if self.agent_conf.enable_metadata_proxy and ipversion == 4:
+            fixed_ip_address = port['fixed_ips'][0]['ip_address']
+            label = 'metadata_%s' % fixed_ip_address
+            rules.append('pass in quick proto tcp to 169.254.169.254/32 '
+                         'port 80 rdr-to %s port %s label %s' %
+                         (fixed_ip_address, self.agent_conf.metadata_port,
+                          label))
+        # finally add all the rules in one shot
+        anchor_option = "on %s" % internal_dlname
+        self.pf.add_nested_anchor_rule(None, internal_dlname, anchor_option)
+        self.pf.add_rules(rules, [internal_dlname, 'normal'])
+
+        ex_gw_port = self.ex_gw_port
+        if not ex_gw_port:
+            return
+
+        ex_gw_ip = ex_gw_port['subnets'][0]['gateway_ip']
+        if not ex_gw_ip:
+            return
+
+        if netaddr.IPAddress(ex_gw_ip).version != 4 or ipversion != 4:
+            return
+
         # if the external gateway is already setup for the shared router,
         # then we need to add Policy Based Routing (PBR) for this internal
         # network
-        ex_gw_port = self.ex_gw_port
-        ex_gw_ip = (ex_gw_port['subnets'][0]['gateway_ip']
-                    if ex_gw_port else None)
-        if ex_gw_ip:
-            external_dlname = self.get_external_device_name(ex_gw_port['id'])
-            rules.append('pass in on %s to %s:%s from any to !%s' %
-                         (internal_dlname, external_dlname, ex_gw_ip,
-                          port_subnet))
+        external_dlname = self.get_external_device_name(ex_gw_port['id'])
+        label = 'pbr_%s' % port_subnet.replace('/', '_')
+        # don't forward broadcast packets out of the internal subnet
+        pbr_rules = ['pass in quick to 255.255.255.255 label %s_bcast' %
+                     label]
+        pbr_rules.append('pass in to !%s route-to {(%s %s)} label %s' %
+                         (port_subnet, external_dlname, ex_gw_ip, label))
 
-        ipversion = netaddr.IPNetwork(port_subnet).version
-        self.ipfilters_manager.add_ipf_rules(rules, ipversion)
-        if self.agent_conf.enable_metadata_proxy and ipversion == 4:
-            rdr_rule = ['rdr %s 169.254.169.254/32 port 80 -> %s port %d tcp' %
-                        (internal_dlname, port['fixed_ips'][0]['ip_address'],
-                         self.agent_conf.metadata_port)]
-            self.ipfilters_manager.add_nat_rules(rdr_rule)
+        self.pf.add_rules(pbr_rules, [internal_dlname, 'pbr'])
+        if self._snat_enabled:
+            ex_gw_ip_cidrs = \
+                common_utils.fixed_ip_cidrs(ex_gw_port['fixed_ips'])
+            snat_rule = 'pass out from %s to any nat-to %s' % \
+                (ip_cidrs[0], ex_gw_ip_cidrs[0])
+            self.pf.add_rules([snat_rule],
+                              [external_dlname, '%s' % internal_dlname])
 
     def internal_network_removed(self, port):
         internal_dlname = self.get_internal_device_name(port['id'])
         port_subnet = port['subnets'][0]['cidr']
-        # remove all the IP filter rules that we added during
-        # internal network addition
-        block_pname = self._get_ippool_name(port['mac_address'])
-        rules = ['block in quick on %s from %s to pool/%d' %
-                 (internal_dlname, port_subnet, block_pname)]
-        if self.agent_conf.allow_forwarding_between_networks:
-            allow_pname = self._get_ippool_name(port['mac_address'], '0')
-            rules.append('pass in quick on %s from %s to pool/%d' %
-                         (internal_dlname, port_subnet, allow_pname))
-
-        # remove all the IP filter rules that we added during
-        # external network addition
-        ex_gw_port = self.ex_gw_port
-        ex_gw_ip = (ex_gw_port['subnets'][0]['gateway_ip']
-                    if ex_gw_port else None)
-        if ex_gw_ip:
-            external_dlname = self.get_external_device_name(ex_gw_port['id'])
-            rules.append('pass in on %s to %s:%s from any to !%s' %
-                         (internal_dlname, external_dlname, ex_gw_ip,
-                          port_subnet))
-        ipversion = netaddr.IPNetwork(port['subnets'][0]['cidr']).version
-        self.ipfilters_manager.remove_ipf_rules(rules, ipversion)
-
-        # remove the ippool
-        self.ipfilters_manager.remove_ippool(block_pname, None)
-        if self.agent_conf.allow_forwarding_between_networks:
-            self.ipfilters_manager.remove_ippool(allow_pname, None)
 
         for internal_port in self.internal_ports:
+            internal_port_dlname = \
+                self.get_internal_device_name(internal_port['id'])
             if (self.agent_conf.allow_forwarding_between_networks and
                     internal_port['tenant_id'] == port['tenant_id']):
-                iport_allow_pname = \
-                    self._get_ippool_name(internal_port['mac_address'], '0')
-                self.ipfilters_manager.remove_ippool(iport_allow_pname,
-                                                     [port_subnet])
+                iport_allow_tblname = 'allow_' + internal_port_dlname
+                self.pf.remove_table_entry(iport_allow_tblname, [port_subnet],
+                                           [internal_port_dlname, 'normal'])
             else:
-                iport_block_pname = \
-                    self._get_ippool_name(internal_port['mac_address'])
-                self.ipfilters_manager.remove_ippool(iport_block_pname,
-                                                     [port_subnet])
-        if self.agent_conf.enable_metadata_proxy and ipversion == 4:
-            rdr_rule = ['rdr %s 169.254.169.254/32 port 80 -> %s port %d tcp' %
-                        (internal_dlname, port['fixed_ips'][0]['ip_address'],
-                         self.agent_conf.metadata_port)]
-            self.ipfilters_manager.remove_nat_rules(rdr_rule)
+                iport_block_tblname = 'block_' + internal_port_dlname
+                self.pf.remove_table_entry(iport_block_tblname, [port_subnet],
+                                           [internal_port_dlname, 'normal'])
+
+        # remove the nested anchors rule from neutron:l3:agent
+        self.pf.remove_nested_anchor_rule(None, internal_dlname)
+
+        # remove the anchor and tables associated with this internal port
+        self.pf.remove_anchor_recursively([internal_dlname])
 
         if net_lib.Datalink.datalink_exists(internal_dlname):
             self.driver.fini_l3(internal_dlname)
@@ -278,15 +283,6 @@ class SolarisRouterInfo(router.RouterInfo):
             self.driver.fini_l3(stale_dev)
             self.driver.unplug(stale_dev)
 
-    def _get_ippool_name(self, mac_address, suffix=None):
-        # Generate a unique-name for ippool(1m) from that last 3
-        # bytes of mac-address. It is called pool name, but it is
-        # actually a 32 bit integer
-        name = mac_address.split(':')[3:]
-        if suffix:
-            name.append(suffix)
-        return int("".join(name), 16)
-
     def process_floating_ip_addresses(self, interface_name):
         """Configure IP addresses on router's external gateway interface.
 
@@ -306,10 +302,6 @@ class SolarisRouterInfo(router.RouterInfo):
         existing_cidrs = set(ipaddr_list)
         new_cidrs = set()
 
-        existing_nat_rules = [nat_rule for nat_rule in
-                              self.ipfilters_manager.ipv4['nat']]
-        new_nat_rules = []
-
         floating_ips = self.get_floating_ips()
         # Loop once to ensure that floating ips are configured.
         for fip in floating_ips:
@@ -317,42 +309,40 @@ class SolarisRouterInfo(router.RouterInfo):
             fip_cidr = str(fip_ip) + FLOATING_IP_CIDR_SUFFIX
             new_cidrs.add(fip_cidr)
             fixed_cidr = str(fip['fixed_ip_address']) + '/32'
-            nat_rule = 'bimap %s %s -> %s' % (interface_name, fixed_cidr,
-                                              fip_cidr)
+            label = 'fip_%s' % fip_cidr.replace('/', '_')
+            binat_rule = 'pass quick from %s to any binat-to %s label %s' % \
+                (fixed_cidr, fip_cidr, label)
 
             if fip_cidr not in existing_cidrs:
                 try:
                     ipintf.create_address(fip_cidr)
-                    self.ipfilters_manager.add_nat_rules([nat_rule])
+                    self.pf.add_rules([binat_rule], [interface_name,
+                                                     fip_cidr.split('/')[0]])
                 except Exception as err:
-                    # TODO(gmoodalb): If we fail in add_nat_rules(), then
-                    # we need to remove the fip_cidr address
-
                     # any exception occurred here should cause the floating IP
                     # to be set in error state
                     fip_statuses[fip['id']] = (
                         l3_constants.FLOATINGIP_STATUS_ERROR)
                     LOG.warn(_("Unable to configure IP address for "
                                "floating IP: %s: %s") % (fip['id'], err))
+                    # remove the fip_cidr address if it was added
+                    try:
+                        ipintf.delete_address(fip_cidr)
+                    except:
+                        pass
                     continue
             fip_statuses[fip['id']] = (
                 l3_constants.FLOATINGIP_STATUS_ACTIVE)
+
             LOG.debug("Floating ip %(id)s added, status %(status)s",
                       {'id': fip['id'],
                        'status': fip_statuses.get(fip['id'])})
 
-            new_nat_rules.append(nat_rule)
-
-        # remove all the old NAT rules
-        old_nat_rules = list(set(existing_nat_rules) - set(new_nat_rules))
-        # Filter out 'bimap' NAT rules as we don't want to remove NAT rules
-        # that were added for Metadata server
-        old_nat_rules = [rule for rule in old_nat_rules if "bimap" in rule]
-        self.ipfilters_manager.remove_nat_rules(old_nat_rules)
-
-        # Clean up addresses that no longer belong on the gateway interface.
+        # Clean up addresses that no longer belong on the gateway interface and
+        # remove the binat-to PF rule associated with them
         for ip_cidr in existing_cidrs - new_cidrs:
             if ip_cidr.endswith(FLOATING_IP_CIDR_SUFFIX):
+                self.pf.remove_anchor([interface_name, ip_cidr.split('/')[0]])
                 ipintf.delete_address(ip_cidr)
         return fip_statuses
 
@@ -398,6 +388,10 @@ class SolarisRouterInfo(router.RouterInfo):
         ip_cidrs = common_utils.fixed_ip_cidrs(ex_gw_port['fixed_ips'])
         self.driver.init_l3(external_dlname, ip_cidrs)
 
+        # add nested anchor rule first
+        anchor_option = "on %s" % external_dlname
+        self.pf.add_nested_anchor_rule(None, external_dlname, anchor_option)
+
         gw_ip = ex_gw_port['subnets'][0]['gateway_ip']
         if gw_ip:
             cmd = ['/usr/bin/pfexec', '/usr/sbin/route', 'add', 'default',
@@ -406,33 +400,37 @@ class SolarisRouterInfo(router.RouterInfo):
             if 'entry exists' not in stdout:
                 self.remove_route = True
 
-            # for each of the internal ports, add Policy Based
-            # Routing (PBR) rule
+            # for each of the internal ports, add Policy Based Routing (PBR)
+            # rule iff ex_gw_ip is IPv4 and the internal port is IPv4
+            if netaddr.IPAddress(gw_ip).version != 4:
+                return
             for port in self.internal_ports:
+                port_subnet = port['subnets'][0]['cidr']
+                if netaddr.IPNetwork(port_subnet).version != 4:
+                    continue
                 internal_dlname = self.get_internal_device_name(port['id'])
-                rules = ['pass in on %s to %s:%s from any to !%s' %
-                         (internal_dlname, external_dlname, gw_ip,
-                          port['subnets'][0]['cidr'])]
-                ipversion = \
-                    netaddr.IPNetwork(port['subnets'][0]['cidr']).version
-                self.ipfilters_manager.add_ipf_rules(rules, ipversion)
+                label = 'pbr_%s' % port_subnet.replace('/', '_')
+                pbr_rules = ['pass in quick to 255.255.255.255 '
+                             'label %s_bcast' % label]
+                pbr_rules.append('pass in to !%s route-to {(%s %s)} '
+                                 'label %s' % (port_subnet, external_dlname,
+                                               gw_ip, label))
+                self.pf.add_rules(pbr_rules, [internal_dlname, 'pbr'])
 
     def external_gateway_updated(self, ex_gw_port, external_dlname):
         # There is nothing to do on Solaris
         pass
 
     def external_gateway_removed(self, ex_gw_port, external_dlname):
+        # remove nested anchor rule first
+        self.pf.remove_nested_anchor_rule(None, external_dlname)
+
         gw_ip = ex_gw_port['subnets'][0]['gateway_ip']
         if gw_ip:
             # remove PBR rules
             for port in self.internal_ports:
                 internal_dlname = self.get_internal_device_name(port['id'])
-                rules = ['pass in on %s to %s:%s from any to !%s' %
-                         (internal_dlname, external_dlname, gw_ip,
-                          port['subnets'][0]['cidr'])]
-                ipversion = \
-                    netaddr.IPNetwork(port['subnets'][0]['cidr']).version
-                self.ipfilters_manager.remove_ipf_rules(rules, ipversion)
+                self.pf.remove_anchor([internal_dlname, 'pbr'])
 
             if self.remove_route:
                 cmd = ['/usr/bin/pfexec', '/usr/sbin/route', 'delete',
@@ -484,28 +482,27 @@ class SolarisRouterInfo(router.RouterInfo):
         self.perform_snat_action(self._handle_router_snat_rules,
                                  interface_name)
 
-    def external_gateway_snat_rules(self, ex_gw_ip, interface_name):
-        rules = []
-        ip_cidrs = []
+    def external_gateway_snat_rules(self, ex_gw_ip, external_dlname):
+        rules = {}
         for port in self.internal_ports:
             if netaddr.IPNetwork(port['subnets'][0]['cidr']).version == 4:
-                ip_cidrs.extend(common_utils.fixed_ip_cidrs(port['fixed_ips']))
+                ip_cidrs = common_utils.fixed_ip_cidrs(port['fixed_ips'])
+                label = 'snat_%s' % ip_cidrs[0].replace('/', '_')
+                rule = 'pass out from %s to any nat-to %s label %s' % \
+                    (ip_cidrs[0], ex_gw_ip, label)
+                rules[port['id']] = [rule]
 
-        for ip_cidr in ip_cidrs:
-            rules.append('map %s %s -> %s/32' %
-                         (interface_name, ip_cidr, ex_gw_ip))
         return rules
 
-    def _handle_router_snat_rules(self, ex_gw_port, interface_name, action):
+    def _handle_router_snat_rules(self, ex_gw_port, external_dlname, action):
         # Remove all the old SNAT rules
         # This is safe because if use_namespaces is set as False
         # then the agent can only configure one router, otherwise
         # each router's SNAT rules will be in their own namespace
 
-        # get only the SNAT rules
-        old_snat_rules = [rule for rule in self.ipfilters_manager.ipv4['nat']
-                          if rule.startswith('map')]
-        self.ipfilters_manager.remove_nat_rules(old_snat_rules)
+        for port in self.internal_ports:
+            internal_dlname = self.get_internal_device_name(port['id'])
+            self.pf.remove_anchor([external_dlname, internal_dlname])
 
         # And add them back if the action is add_rules
         if action == 'add_rules' and ex_gw_port:
@@ -514,9 +511,14 @@ class SolarisRouterInfo(router.RouterInfo):
                 ex_gw_ip = ip_addr['ip_address']
                 if netaddr.IPAddress(ex_gw_ip).version == 4:
                     rules = self.external_gateway_snat_rules(ex_gw_ip,
-                                                             interface_name)
-                    self.ipfilters_manager.add_nat_rules(rules)
-                    break
+                                                             external_dlname)
+                    if not rules:
+                        continue
+                    for port_id, rule in rules.iteritems():
+                        internal_dlname = \
+                            self.get_internal_device_name(port_id)
+                        self.pf.add_rules(rule, [external_dlname,
+                                                 internal_dlname])
 
     def process_external(self, agent):
         existing_floating_ips = self.floating_ips

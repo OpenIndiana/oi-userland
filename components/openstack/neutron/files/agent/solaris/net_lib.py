@@ -1,6 +1,6 @@
 # vim: tabstop=4 shiftwidth=4 softtabstop=4
 
-# Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -42,11 +42,12 @@ class IPInterface(CommandBase):
 
     @classmethod
     def ifname_exists(cls, ifname):
-
-        cmd = ['/usr/sbin/ipadm', 'show-if', '-po', 'ifname']
-        stdout = cls.execute(cmd)
-
-        return ifname in stdout
+        try:
+            cmd = ['/usr/sbin/ipadm', 'show-if', '-po', 'ifname', ifname]
+            cls.execute(cmd, log_fail_as_error=False)
+        except Exception:
+            return False
+        return True
 
     @classmethod
     def ipaddr_exists(cls, ifname, ipaddr):
@@ -167,11 +168,12 @@ class Datalink(CommandBase):
 
     @classmethod
     def datalink_exists(cls, dlname):
-
-        cmd = ['/usr/sbin/dladm', 'show-link', '-po', 'link']
-        stdout = utils.execute(cmd)
-
-        return dlname in stdout
+        try:
+            cmd = ['/usr/sbin/dladm', 'show-link', '-po', 'link', dlname]
+            utils.execute(cmd, log_fail_as_error=False)
+        except Exception:
+            return False
+        return True
 
     def connect_vnic(self, evsvport, tenantname=None, temp=True):
         if self.datalink_exists(self._dlname):
@@ -216,128 +218,8 @@ class Datalink(CommandBase):
         self.execute_with_pfexec(cmd)
 
     @classmethod
-    def show_vnic(cls):
-        cmd = ['/usr/sbin/dladm', 'show-vnic', '-po', 'link']
+    def show_link(cls):
+        cmd = ['/usr/sbin/dladm', 'show-link', '-po', 'link']
         stdout = utils.execute(cmd)
 
         return stdout.splitlines()
-
-
-class IPpoolCommand(CommandBase):
-    '''Wrapper around Solaris ippool(1m) command'''
-
-    def __init__(self, pool_name, role='ipf', pool_type='tree'):
-        self._pool_name = pool_name
-        self._role = role
-        self._pool_type = pool_type
-
-    def pool_exists(self):
-        cmd = ['/usr/sbin/ippool', '-l', '-m', self._pool_name,
-               '-t', self._pool_type]
-        stdout = self.execute_with_pfexec(cmd)
-        return str(self._pool_name) in stdout
-
-    def pool_split_nodes(self, ip_cidrs):
-        cmd = ['/usr/sbin/ippool', '-l', '-m', self._pool_name,
-               '-t', self._pool_type]
-        stdout = self.execute_with_pfexec(cmd)
-        existing_nodes = []
-        non_existing_nodes = []
-        for ip_cidr in ip_cidrs:
-            if ip_cidr in stdout:
-                existing_nodes.append(ip_cidr)
-            else:
-                non_existing_nodes.append(ip_cidr)
-        return existing_nodes, non_existing_nodes
-
-    def add_pool_nodes(self, ip_cidrs):
-        ip_cidrs = self.pool_split_nodes(ip_cidrs)[1]
-
-        for ip_cidr in ip_cidrs:
-            cmd = ['/usr/sbin/ippool', '-a', '-m', self._pool_name,
-                   '-i', ip_cidr]
-            self.execute_with_pfexec(cmd)
-
-    def remove_pool_nodes(self, ip_cidrs):
-        ip_cidrs = self.pool_split_nodes(ip_cidrs)[0]
-
-        for ip_cidr in ip_cidrs:
-            cmd = ['/usr/sbin/ippool', '-r', '-m', self._pool_name,
-                   '-i', ip_cidr]
-            self.execute_with_pfexec(cmd)
-
-    def add_pool(self):
-        if self.pool_exists():
-            return
-
-        cmd = ['/usr/sbin/ippool', '-A', '-m', self._pool_name,
-               '-o', self._role, '-t', self._pool_type]
-        self.execute_with_pfexec(cmd)
-
-    def remove_pool(self):
-        if not self.pool_exists():
-            return
-
-        # This command will fail if ippool is in use by ipf, so the
-        # caller has to ensure that it's not being used in an ipf rule
-        cmd = ['/usr/sbin/ippool', '-R', '-m', self._pool_name,
-               '-o', self._role, '-t', self._pool_type]
-        self.execute_with_pfexec(cmd)
-
-
-class IPfilterCommand(CommandBase):
-    '''Wrapper around Solaris ipf(1m) command'''
-
-    def _split_rules(self, rules, version):
-        # assumes that rules are inbound!
-        cmd = ['/usr/sbin/ipfstat', '-i']
-        if version == 6:
-            cmd.insert(1, '-6')
-        stdout = self.execute_with_pfexec(cmd)
-        existing_rules = []
-        non_existing_rules = []
-        for rule in rules:
-            if rule in stdout:
-                existing_rules.append(rule)
-            else:
-                non_existing_rules.append(rule)
-
-        return existing_rules, non_existing_rules
-
-    def add_rules(self, rules, version=4):
-        rules = self._split_rules(rules, version)[1]
-        if not rules:
-            return
-        process_input = '\n'.join(rules) + '\n'
-        cmd = ['/usr/sbin/ipf', '-f', '-']
-        if version == 6:
-            cmd.insert(1, '-6')
-        self.execute_with_pfexec(cmd, process_input=process_input)
-
-    def remove_rules(self, rules, version=4):
-        rules = self._split_rules(rules, version)[0]
-        if not rules:
-            return
-        process_input = '\n'.join(rules) + '\n'
-        cmd = ['/usr/sbin/ipf', '-r', '-f', '-']
-        if version == 6:
-            cmd.insert(1, '-6')
-        self.execute_with_pfexec(cmd, process_input=process_input)
-
-
-class IPnatCommand(CommandBase):
-    '''Wrapper around Solaris ipnat(1m) command'''
-
-    def add_rules(self, rules):
-        if not rules:
-            return
-        process_input = '\n'.join(rules) + '\n'
-        cmd = ['/usr/sbin/ipnat', '-f', '-']
-        self.execute_with_pfexec(cmd, process_input=process_input)
-
-    def remove_rules(self, rules):
-        if not rules:
-            return
-        process_input = '\n'.join(rules) + '\n'
-        cmd = ['/usr/sbin/ipnat', '-r', '-f', '-']
-        self.execute_with_pfexec(cmd, process_input=process_input)

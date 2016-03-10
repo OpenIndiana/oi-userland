@@ -106,8 +106,8 @@ COMPONENT_POST_BUILD_ACTION += \
 	 files/agent/solaris/__init__.py \
 	 files/agent/solaris/dhcp.py \
 	 files/agent/solaris/interface.py \
-	 files/agent/solaris/ipfilters_manager.py \
 	 files/agent/solaris/net_lib.py \
+	 files/agent/solaris/packetfilter.py \
 	 files/agent/solaris/ra.py \
 	 $(PROTO_DIR)/$(PYTHON_LIB)/neutron/agent/solaris; \
     $(MKDIR) $(PROTO_DIR)/$(PYTHON_LIB)/neutron/plugins/evs; \
@@ -152,7 +152,7 @@ REQUIRED_PACKAGES += library/python/oslo.db-27
 REQUIRED_PACKAGES += library/python/simplejson-27
 REQUIRED_PACKAGES += library/python/six-27
 REQUIRED_PACKAGES += library/python/sqlalchemy-27
-REQUIRED_PACKAGES += network/ipfilter
+REQUIRED_PACKAGES += network/firewall
 REQUIRED_PACKAGES += service/network/dnsmasq
 REQUIRED_PACKAGES += service/network/evs
 REQUIRED_PACKAGES += system/core-os
