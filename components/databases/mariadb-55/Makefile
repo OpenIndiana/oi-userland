@@ -10,9 +10,9 @@
 
 #
 # Copyright 2011-2013, EveryCity Ltd. All rights reserved.
-# 
+#
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 CMAKE= cmake
 
@@ -25,9 +25,9 @@ COMPONENT_PROJECT_URL=	http://www.mariadb.org/
 COMPONENT_ARCHIVE_HASH=	sha256:62b9378677433461d2a79b1ebe3182ba249994eb0cff2054ae8de8f646364209
 COMPONENT_ARCHIVE_URL=	http://mirrors.coreix.net/$(COMPONENT_NAME)/$(COMPONENT_SRC)/source/$(COMPONENT_ARCHIVE)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/configure.mk
+include $(WS_TOP)/make-rules/ips.mk
 
 
 CONFIGURE_PREFIX=/usr/mariadb/5.5
