@@ -10,24 +10,24 @@
 #
 
 #
-# Copyright 2016 Alexander Pyhalov
+# Copyright 2013 Alexander Pyhalov.  All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	pg_repack
-COMPONENT_VERSION= 	1.3.2
+COMPONENT_VERSION= 	1.1.8
 COMPONENT_SUMMARY= 	pg_repack - utility to reorganize PostgreSQL tables on-line
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_COMMIT)
-COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).zip
-COMPONENT_COMMIT=       b0be609adf2579f81e86d77802710211e63e72dc
+COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
+COMPONENT_COMMIT=       7487a775d5e95f26bbdd6c555b927dc19211de53
 COMPONENT_ARCHIVE_HASH= \
-  sha256:82edbacf7ace9ebefccecaa04150e763a1f16675fd5a566f97bd7e810a12d41c
+  sha256:1445733482d10f361023c74583e37710cce6c85a91af4dfc44fec92eef88880a
 COMPONENT_ARCHIVE_URL= \
-  https://github.com/reorg/pg_repack/archive/$(COMPONENT_COMMIT).zip
+  https://github.com/reorg/pg_repack/archive/$(COMPONENT_COMMIT).tar.gz
 COMPONENT_PROJECT_URL = http://reorg.github.io/pg_repack/
 
-PG_VERSION=	9.5
+PG_VERSION=	9.3
 # Don't depend on host default pg_config
 PATH=		$(PG_BINDIR.$(BITS)):/usr/sbin:/usr/bin
 
