@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -51,4 +51,7 @@ test:		$(NO_TESTS)
 system-test:    $(NO_TESTS)
 
 
+REQUIRED_PACKAGES += runtime/perl-512
+REQUIRED_PACKAGES += runtime/perl-520
+REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += system/core-os

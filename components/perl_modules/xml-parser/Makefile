@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 #
@@ -41,6 +41,12 @@ COMPONENT_BUGDB=	perl-mod/xml-parser
 
 TPNO=			9386
 
+###
+### Fix these IPS manifests once 5.12-mt is gone, 22909338
+###
+### Add forced IPS dependencies to all manifests: 22909291
+###
+
 # build threaded 5.12 support too
 PERL_VERSIONS += 5.12-mt
 
@@ -56,10 +62,8 @@ COMPONENT_INSTALL_ENV += INSTALLVENDORMAN3DIR=$(USRSHAREMAN3DIR)
 COMPONENT_TEST_TARGETS = test
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_TRANSFORMS += \
-        '-e "s|\(^Files=\).*|\1|" ' \
-	'-e "s|\(^PERL_DL_NONLAZY=\).*|\1|" ' \
-	'-e "/\(^Running Mkbootstrap for XML::Parser::Expat ()\).*/d" ' \
-	'-e "/\(^chmod 644 Expat.bs\).*/d" '
+	'-e "1,/^PERL_DL_NONLAZY/d" ' \
+        '-e "s|\(^Files=\).*|\1|" '
 
 PKG_MACROS +=	PERL_A=$(shell arch)
 
@@ -73,4 +77,7 @@ system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
 
 REQUIRED_PACKAGES += library/expat
+REQUIRED_PACKAGES += runtime/perl-512
+REQUIRED_PACKAGES += runtime/perl-520
+REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += system/library

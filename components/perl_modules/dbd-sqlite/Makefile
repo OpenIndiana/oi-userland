@@ -34,6 +34,9 @@ COMPONENT_BUGDB=	perl-mod/dbd-sqlite
 
 TPNO=			24450
 
+# Limit packaging to only these perls.
+PERL_VERSIONS=5.12 5.20
+
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
 include $(WS_MAKE_RULES)/makemaker.mk
@@ -61,11 +64,15 @@ ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 $(LICENSE): $(LICENSE).template
 	$(PERL) -pe 's/COMPONENT_VERSION/$(COMPONENT_VERSION)/g' "$<" > "$@"
 
-build:		$(BUILD_DIR)/$(MACH32)-5.12/.built $(BUILD_DIR)/$(MACH64)-5.20/.built $(LICENSE)
+build:		$(BUILD_DIR)/$(MACH32)-5.12/.built \
+		$(BUILD_DIR)/$(MACH64)-5.20/.built \
+		$(LICENSE)
 
-install:	$(BUILD_DIR)/$(MACH32)-5.12/.installed $(BUILD_DIR)/$(MACH64)-5.20/.installed
+install:	$(BUILD_DIR)/$(MACH32)-5.12/.installed \
+		$(BUILD_DIR)/$(MACH64)-5.20/.installed
 
-test:		$(BUILD_DIR)/$(MACH32)-5.12/.tested-and-compared $(BUILD_DIR)/$(MACH64)-5.20/.tested-and-compared
+test:		$(BUILD_DIR)/$(MACH32)-5.12/.tested-and-compared \
+		$(BUILD_DIR)/$(MACH64)-5.20/.tested-and-compared
 
 system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
