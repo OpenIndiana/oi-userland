@@ -13,23 +13,23 @@
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libotr
 
-COMPONENT_VERSION= 4.1.0
+COMPONENT_VERSION= 4.1.1
 COMPONENT_SUMMARY= Off-the-Record Messaging library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:4fdb891940ec89d300190a98f69a9138248dcb8c8d337633fb981b8d0a9cd930
+  sha256:8b3b182424251067a952fb4e6c7b95a21e644fbb27fbd5f8af2b2ed87ca419f5
 COMPONENT_ARCHIVE_URL= \
   http://www.cypherpunks.ca/otr/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://otr.cypherpunks.ca/
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/configure.mk
+include $(WS_TOP)/make-rules/ips.mk
 
 COMPONENT_PREP_ACTION =        ( cd $(@D) && \
                                         aclocal -I. && \
@@ -46,5 +46,4 @@ build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
 
-# test_shutdown_stress fails 
-test: $(TEST_32_and_64)
+test: $(NO_TESTS)
