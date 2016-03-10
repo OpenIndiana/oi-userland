@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../make-rules/shared-macros.mk
@@ -159,9 +159,14 @@ $(COMPONENT_DIRS):	$(WS_LOGS) setup FORCE
 INCORPORATE_WERROR ?= --Werror
 
 incorporation:
-	$(WS_TOOLS)/userland-incorporator --repository $(PKG_REPO) \
-          --version=0.$(OS_VERSION),$(BUILD_VERSION) -p $(PUBLISHER) \
-	  -c $(CONSOLIDATION) --destdir=$(WS_MACH) $(INCORPORATE_WERROR)
+	$(WS_TOOLS)/userland-incorporator \
+		--repository $(PKG_REPO) \
+		--version $(OS_VERSION),$(BUILD_VERSION) \
+		--publisher $(PUBLISHER) \
+		--consolidation $(CONSOLIDATION) \
+		--destdir $(WS_MACH) \
+		--static-content-file $(WS_COMPONENTS)/meta-packages/incorporation-cache \
+		$(INCORPORATE_WERROR)
 	for incorporation in $(WS_MACH)/*.p5m ; do \
 	    $(PKGSEND) -s $(PKG_REPO) publish --fmri-in-manifest \
 	               $${incorporation} ; \

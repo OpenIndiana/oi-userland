@@ -19,7 +19,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 #
 # incorporator - an utility to incorporate packages in a repo
@@ -84,17 +84,48 @@ set name=pkg.description value="This incorporation constrains packages from the 
 # a stable and less complicated interface to gathering information from the
 # manifests in the package repo.
 #
-def get_incorporations(repository, publisher, inc_version='5.12'):
-    tmp = subprocess.Popen(["/usr/bin/pkgrepo", "list", "-F", "json",
-                                                        "-s", repository,
-                                                        "-p", publisher],
-                           stdout=subprocess.PIPE)
+def get_incorporations(repository, publisher, inc_version='5.12',
+		       static_file=None):
+    packages = {}
     incorporations = {}
-    packages = json.load(tmp.stdout)
+    versions = {}
 
+    #
+    # if a static file was provided, prime the cache with the contents of
+    # that file.
+    #
+    if static_file:
+        with open(static_file, 'r') as fp:
+          for line in fp:
+            line = line.partition('#')[0]
+            line = line.rstrip()
+
+            try:
+                (incorporation, package, version) = re.split(':|@', line)
+            except ValueError:
+                pass
+            else:
+                if incorporation not in incorporations:
+                    incorporations[incorporation] = Incorporation(incorporation, inc_version)
+                # find the incorporation and add the package
+                tmp = incorporations[incorporation]
+                tmp.add_package(package, version)
+                versions[package] = version
+
+    #
+    # Load the repository for packages to incorporate.
+    #
+    if repository:
+        tmp = subprocess.Popen(["/usr/bin/pkgrepo", "list", "-F", "json",
+                                                            "-s", repository,
+                                                            "-p", publisher],
+                               stdout=subprocess.PIPE)
+        packages = json.load(tmp.stdout)
+
+    #
     # Check for multiple versions of packages in the repo, but keep track of
     # the latest one.
-    versions = {}
+    #
     for package in packages:
         pkg_name = package['name']
         pkg_version = package['version']
@@ -104,6 +135,9 @@ def get_incorporations(repository, publisher, inc_version='5.12'):
             pkg_version = max(pkg_version, versions[pkg_name])
         versions[pkg_name] = pkg_version
 
+    #
+    # Add published packages to the incorporation lists
+    #
     for package in packages:
         pkg_name = package['name']
         pkg_version = package['version']
@@ -122,18 +156,21 @@ def get_incorporations(repository, publisher, inc_version='5.12'):
             # find the incorporation and add the package
             tmp = incorporations[inc_name]
             tmp.add_package(pkg_name, pkg_version)
+
     return incorporations
 
 def main_func():
     global Werror
 
     try: 
-        opts, pargs = getopt.getopt(sys.argv[1:], "c:s:p:v:d:w",
+        opts, pargs = getopt.getopt(sys.argv[1:], "S:c:s:p:v:d:w",
                                     ["repository=", "publisher=", "version=",
-                                     "consolidation=", "destdir=", "Werror"])
+                                     "consolidation=", "destdir=", "Werror",
+				     "static-content-file="])
     except getopt.GetoptError, e:
         usage(_("illegal option: %s") % e.opt)
 
+    static_file = None
     repository = None
     publisher = None
     version = None
@@ -141,7 +178,9 @@ def main_func():
     consolidation = None
 
     for opt, arg in opts:
-        if opt in ("-s", "--repository"):
+        if opt in ("-S", "--static-content-file"):
+            static_file = arg
+        elif opt in ("-s", "--repository"):
             repository = arg
         elif opt in ("-p", "--publisher"):
             publisher = arg
@@ -154,7 +193,8 @@ def main_func():
         elif opt in ("-w", "--Werror"):
             Werror = True
 
-    incorporations = get_incorporations(repository, publisher, version)
+    incorporations = get_incorporations(repository, publisher, version,
+                                        static_file)
 
     for incorporation_name in incorporations.keys():
         filename = ''

@@ -17,12 +17,21 @@
     continue
   }
   printf "set name=pkg.fmri value=pkg:/%s\n", fmri
+  if ($NF ~ /^incorporate=/) {
+    incorporate=$NF;
+    NF--;
+  }
   if (NF == 2) {
     print "set name=pkg.renamed value=true"
     printf "depend type=require fmri=%s\n", $2
   } else {
     print "set name=pkg.obsolete value=true"
   }
-  print "set name=org.opensolaris.consolidation value=$(CONSOLIDATION)"
+  if (incorporate) {
+    printf "set name=org.opensolaris.consolidation %s value=$(CONSOLIDATION)\n",
+      incorporate
+  } else {
+    print "set name=org.opensolaris.consolidation value=$(CONSOLIDATION)"
+  }
   exit 0 # We're done; no point continuing.
 }
