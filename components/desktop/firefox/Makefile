@@ -64,6 +64,14 @@ LANG_LIST = ar be bg ca cs da de el es-AR es-CL es-ES et fi \
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
+
+# Alignment issues on sparc: do not publish until resolved.
+ifeq ($(BUILD_TYPE), evaluation)
+BUILD_32=
+INSTALL_32=
+PUBLISH_STAMP=
+endif
+
 include $(WS_MAKE_RULES)/ips.mk
 
 # /usr/gnu/bin needed to pick up the GNU version of tail and readelf.
