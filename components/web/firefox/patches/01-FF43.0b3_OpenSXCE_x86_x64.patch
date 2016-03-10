@@ -36,8 +36,8 @@ diff -Nurb firefox-43.0b3/config/system-headers firefox-43.0b3/config/system-hea
  sys/sysmp.h
  sys/syssgi.h
 diff -Nurb firefox-43.0b3/dom/canvas/WebGLFormats.cpp firefox-43.0b3/dom/canvas/WebGLFormats.cpp
---- firefox-43.0b3/dom/canvas/WebGLFormats.cpp	2015-11-09 23:56:01.000000000 +0100
-+++ firefox-43.0b3/dom/canvas/WebGLFormats.cpp	2015-11-11 04:44:41.436550983 +0100
+--- firefox-45.0/dom/canvas/WebGLFormats.cpp.~1~	2016-03-04 00:47:56.000000000 +0300
++++ firefox-45.0/dom/canvas/WebGLFormats.cpp	2016-03-10 07:30:56.683108597 +0300
 @@ -1,3 +1,7 @@
 +/*
 + * Copyright 2015 OpenSXCE.org Martin Bochnig <opensxce@mail.ru>
@@ -46,26 +46,26 @@ diff -Nurb firefox-43.0b3/dom/canvas/WebGLFormats.cpp firefox-43.0b3/dom/canvas/
  /* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
  /* This Source Code Form is subject to the terms of the Mozilla Public
   * License, v. 2.0. If a copy of the MPL was not distributed with this
-@@ -136,7 +140,7 @@
-     case UnsizedFormat::S:
+@@ -156,7 +160,7 @@
          hasStencil = true;
          break;
+ 
 -    case UnsizedFormat::DS:
 +    case UnsizedFormat::XDS:
          hasDepth = true;
          hasStencil = true;
          break;
-@@ -224,8 +228,8 @@
-     AddFormatInfo(FOO(DEPTH_COMPONENT16 ), 2, UnsizedFormat::D , ComponentType::None);
-     AddFormatInfo(FOO(DEPTH_COMPONENT24 ), 3, UnsizedFormat::D , ComponentType::None);
-     AddFormatInfo(FOO(DEPTH_COMPONENT32F), 4, UnsizedFormat::D , ComponentType::None);
--    AddFormatInfo(FOO(DEPTH24_STENCIL8  ), 4, UnsizedFormat::DS, ComponentType::None);
--    AddFormatInfo(FOO(DEPTH32F_STENCIL8 ), 5, UnsizedFormat::DS, ComponentType::None);
-+    AddFormatInfo(FOO(DEPTH24_STENCIL8  ), 4, UnsizedFormat::XDS, ComponentType::None);
-+    AddFormatInfo(FOO(DEPTH32F_STENCIL8 ), 5, UnsizedFormat::XDS, ComponentType::None);
+@@ -241,8 +245,8 @@
+     AddFormatInfo(FOO(DEPTH_COMPONENT16 ), 2, UnsizedFormat::D , false, ComponentType::NormUInt);
+     AddFormatInfo(FOO(DEPTH_COMPONENT24 ), 3, UnsizedFormat::D , false, ComponentType::NormUInt);
+     AddFormatInfo(FOO(DEPTH_COMPONENT32F), 4, UnsizedFormat::D , false, ComponentType::Float);
+-    AddFormatInfo(FOO(DEPTH24_STENCIL8  ), 4, UnsizedFormat::DS, false, ComponentType::Special);
+-    AddFormatInfo(FOO(DEPTH32F_STENCIL8 ), 5, UnsizedFormat::DS, false, ComponentType::Special);
++    AddFormatInfo(FOO(DEPTH24_STENCIL8  ), 4, UnsizedFormat::XDS, false, ComponentType::Special);
++    AddFormatInfo(FOO(DEPTH32F_STENCIL8 ), 5, UnsizedFormat::XDS, false, ComponentType::Special);
  
      // GLES 3.0.4, p205-206, "Required Renderbuffer Formats"
-     AddFormatInfo(FOO(STENCIL_INDEX8), 1, UnsizedFormat::S, ComponentType::None);
+     AddFormatInfo(FOO(STENCIL_INDEX8), 1, UnsizedFormat::S, false, ComponentType::UInt);
 diff -Nurb firefox-43.0b3/dom/canvas/WebGLFormats.h firefox-43.0b3/dom/canvas/WebGLFormats.h
 --- firefox-43.0b3/dom/canvas/WebGLFormats.h	2015-11-09 23:56:01.000000000 +0100
 +++ firefox-43.0b3/dom/canvas/WebGLFormats.h	2015-11-11 04:44:14.706470478 +0100
