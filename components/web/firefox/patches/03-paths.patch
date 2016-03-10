@@ -1,5 +1,5 @@
---- firefox-43.0b3/config/baseconfig.mk.~1~	2015-11-19 07:46:38.345836474 +0300
-+++ firefox-43.0b3/config/baseconfig.mk	2015-11-19 07:48:18.347710951 +0300
+--- firefox-45.0/config/baseconfig.mk.~1~	2016-03-10 07:34:04.763049707 +0300
++++ firefox-45.0/config/baseconfig.mk	2016-03-10 07:36:55.634015648 +0300
 @@ -2,10 +2,10 @@
  # directly in python/mozbuild/mozbuild/base.py for gmake validation.
  # We thus use INCLUDED_AUTOCONF_MK to enable/disable some parts depending
@@ -12,6 +12,6 @@
 +idldir = $(datadir)/idl/${MOZILLA_PKG_NAME}
 +installdir = $(libdir)/${MOZILLA_PKG_NAME}
 +sdkdir = $(libdir)/${MOZILLA_PKG_NAME}
- ifndef TOP_DIST
- TOP_DIST = dist
- endif
+ ifeq (.,$(DEPTH))
+ DIST = dist
+ else
