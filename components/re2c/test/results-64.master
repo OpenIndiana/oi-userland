@@ -1,27 +1,37 @@
-make[1]: Entering directory `$(@D)'
-/usr/gnu/bin/make  check-am
-make[2]: Entering directory `$(@D)'
+make[1]: Entering directory '$(@D)'
+Reconfigure to rebuild docs: ./configure --enable-docs
+/usr/gnu/bin/make  testrange testston32unsafe
+make[2]: Entering directory '$(@D)'
+  CXX      src/test/range/test.o
+In file included from ./src/util/range.h:10:0,
+                 from ./src/test/range/test-impl.h:5,
+                 from src/test/range/test.cc:4:
+./src/util/free_list.h: In instantiation of 'class re2c::free_list<re2c::Range*>':
+./src/util/range.h:37:12:   required from here
+./src/util/free_list.h:10:7: warning: base class 'class std::set<re2c::Range*, std::less<re2c::Range*>, std::allocator<re2c::Range*> >' has a non-virtual destructor [-Weffc++]
+ class free_list: protected std::set<_Ty>
+       ^
+  CXXLD    testrange
+  CXX      src/test/s_to_n32_unsafe/test.o
+  CXXLD    testston32unsafe
+make[2]: Leaving directory '$(@D)'
 /usr/gnu/bin/make  check-TESTS
-make[3]: Entering directory `$(@D)'
-make[4]: Entering directory `$(@D)'
+make[2]: Entering directory '$(@D)'
+make[3]: Entering directory '$(@D)'
 PASS: run_tests.sh
-make[5]: Entering directory `$(@D)'
-/usr/gnu/bin/make  all-am
-make[6]: Entering directory `$(@D)'
-make[6]: Leaving directory `$(@D)'
-make[5]: Leaving directory `$(@D)'
+PASS: testrange
+PASS: testston32unsafe
 ============================================================================
-Testsuite summary for re2c 0.14.2
+Testsuite summary for re2c 0.16
 ============================================================================
-# TOTAL: 1
-# PASS:  1
+# TOTAL: 3
+# PASS:  3
 # SKIP:  0
 # XFAIL: 0
 # FAIL:  0
 # XPASS: 0
 # ERROR: 0
 ============================================================================
-make[4]: Leaving directory `$(@D)'
-make[3]: Leaving directory `$(@D)'
-make[2]: Leaving directory `$(@D)'
-make[1]: Leaving directory `$(@D)'
+make[3]: Leaving directory '$(@D)'
+make[2]: Leaving directory '$(@D)'
+make[1]: Leaving directory '$(@D)'

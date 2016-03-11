@@ -4,23 +4,23 @@ to specify an alternate re2c binary when running system tests.
 
 This patch should be sent upstream.
 
---- re2c-0.14.2/run_tests.sh.in.orig	2015-10-13 06:22:20.787156312 -0700
-+++ re2c-0.14.2/run_tests.sh.in	2015-10-13 06:33:42.229167381 -0700
-@@ -14,7 +14,7 @@
- if uname|grep -q -i 'CYGWIN' && test -x "@WINBUILDDIR@/re2c.exe"; then
- re2c='@WINBUILDDIR@/re2c.exe'
- else
--re2c='@builddir@/re2c'
+--- re2c-0.16/run_tests.sh.in.orig	2016-03-08 06:11:49.073497153 -0800
++++ re2c-0.16/run_tests.sh.in	2016-03-08 13:59:57.512468231 -0800
+@@ -28,7 +28,7 @@
+ skeleton=0
+ keep_tmp_files=0
+ wine=""
+-re2c="./re2c"
 +re2c="${RE2C_BIN:-@builddir@/re2c}"
+ threads=`detect_cpu_count; echo $CPUS`
+ tests=()
+ for arg in $*
+@@ -57,7 +57,7 @@
+ test_srcdir=""
+ if [ ${#tests[@]} -eq 0 ]
+ then
+-    test_srcdir="@top_srcdir@/test"
++    test_srcdir="./test"
+     tests=(`find $test_srcdir -name '*.re' | sort`)
  fi
- if test ! -x "${re2c}"; then
-   echo "Cannot find re2c executable (${re2c})."
-@@ -33,7 +33,7 @@
- fi
- echo "Diffing: ${diff}"
- if test $# = 0; then
--tests=`for i in test lessons; do find @top_srcdir@/$i -name '*.re'; done|sort`
-+tests=`for i in test lessons; do find ./$i -name '*.re'; done|sort`
- else
- tests="$@"
- fi;
+ test_blddir="test_"`date +%y%m%d%H%M%S`
