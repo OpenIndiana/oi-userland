@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 COMPILER =	gcc
@@ -28,17 +28,17 @@ COMPILER =	gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		webalizer
-COMPONENT_VERSION=	2.21.2
-HUMAN_VERSION=		2.21-02
+COMPONENT_VERSION=	2.23.8
+HUMAN_VERSION=		2.23-08
 COMPONENT_PROJECT_URL=	http://www.mrunix.net/webalizer/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-src.tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:f2663d67f5820644a0b1c0b7dee4a5c764d829166fa28d5880442c28886729d9
+    sha256:b37524fbd98e97052a80d59f75e69f857468752cf74cc0eb0972e5fab02eb6f7
 COMPONENT_ARCHIVE_URL=	ftp://ftp.mrunix.net/pub/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/webalizer
 
-TPNO=			9201
+TPNO=			27276
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -49,7 +49,7 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 
 # Adjust the log file pathname in the sample configuration file.
 COMPONENT_PRE_BUILD_ACTION += \
-	$(GSED) -i -e 's?lib/httpd/logs/?apache2/2.2/logs/?' \
+	$(GSED) -i -e 's?lib/httpd/logs/?apache2/2.4/logs/?' \
 		$(SOURCE_DIR)/sample.conf
 
 CONFIGURE_OPTIONS +=	--enable-dns
