@@ -74,7 +74,16 @@ CONFIGURE_ENV += CPICFLAGS="$(studio_PIC)"
 CONFIGURE_ENV += CFLAGS="-xO3 -xc99 -xlibmieee $(CC_BITS)"
 # Needed to successfully compile R packages using C++ code.
 CONFIGURE_ENV += CXX="$(CXX) -std=c++11"
-CONFIGURE_ENV += CXXFLAGS="$(CC_BITS) -std=c++11"
+
+# We (the Userland) team don't need -D__MATHERR_RENAME_EXCEPTION for the
+# creation of the R packages we provide in Solaris. It would be needed by
+# our customers that try to install R packages that use C++. And they would
+# be using the version of the Studio compilers on their machine(s) to do this.
+# Studio 12.5 will hopefully automatically provide this definition when C++
+# code is compiled with "-std=c++11". When that version of the Studio
+# compilers is released, we should encourage customers to install it, but
+# for those still using Studio 12.4, this definition will continue to be needed.
+CONFIGURE_ENV += CXXFLAGS="$(CC_BITS) -std=c++11 -D__MATHERR_RENAME_EXCEPTION"
 CONFIGURE_ENV += FPICFLAGS="$(studio_PIC)"
 CONFIGURE_ENV += FFLAGS="-xO3 $(CC_BITS)"
 CONFIGURE_ENV += FCFLAGS="-xO3 $(CC_BITS)"
