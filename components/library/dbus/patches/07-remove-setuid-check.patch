@@ -1,6 +1,6 @@
---- dbus-1.7.10/dbus/dbus-sysdeps-unix.c.orig	2014-04-12 07:56:22.661445479 +0200
-+++ dbus-1.7.10/dbus/dbus-sysdeps-unix.c	2014-04-12 07:58:27.181873854 +0200
-@@ -3482,12 +3482,6 @@
+--- dbus-1.10.8/dbus/dbus-sysdeps-unix.c.~3~	2016-03-11 00:31:50.889350240 +0300
++++ dbus-1.10.8/dbus/dbus-sysdeps-unix.c	2016-03-11 00:31:50.934772968 +0300
+@@ -3678,12 +3678,6 @@
    DBusString uuid;
    dbus_bool_t retval;
  
@@ -13,7 +13,7 @@
  
    _DBUS_ASSERT_ERROR_IS_CLEAR (error);
    retval = FALSE;
-@@ -3609,12 +3603,6 @@
+@@ -3837,12 +3831,6 @@
  
    _DBUS_ASSERT_ERROR_IS_CLEAR (error);
  
@@ -26,7 +26,7 @@
  
    i = 0;
    argv[i] = "launchctl";
-@@ -3656,12 +3644,6 @@
+@@ -3884,12 +3872,6 @@
    dbus_bool_t valid_socket;
    DBusString socket_path;
  
@@ -39,7 +39,7 @@
  
    if (!_dbus_string_init (&socket_path))
      {
-@@ -3990,61 +3972,6 @@
+@@ -4296,61 +4278,6 @@
  }
  
  /**
@@ -125,16 +125,16 @@
    return getenv (varname);
  }
  
---- dbus-1.7.10/dbus/dbus-sysdeps.h.orig	2013-10-08 19:40:40.000000000 +0200
-+++ dbus-1.7.10/dbus/dbus-sysdeps.h	2014-04-12 07:59:14.812881901 +0200
-@@ -87,7 +87,6 @@
+--- dbus-1.10.8/dbus/dbus-sysdeps.h.~1~	2016-03-11 00:28:53.528206776 +0300
++++ dbus-1.10.8/dbus/dbus-sysdeps.h	2016-03-11 00:30:52.009252410 +0300
+@@ -94,7 +94,6 @@
  
  void _dbus_abort (void) _DBUS_GNUC_NORETURN;
  
 -dbus_bool_t _dbus_check_setuid (void);
+ DBUS_PRIVATE_EXPORT
  const char* _dbus_getenv (const char *varname);
- dbus_bool_t _dbus_clearenv (void);
- char **     _dbus_get_environment (void);
+ DBUS_PRIVATE_EXPORT
 --- dbus-1.8.0/dbus/dbus-keyring.c	2013-10-08 19:40:39.000000000 +0200
 +++ dbus-1.8.0/dbus/dbus-keyring.c	2014-04-12 08:07:28.729170059 +0200
 @@ -718,13 +718,6 @@

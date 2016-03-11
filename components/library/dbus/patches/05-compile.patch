@@ -1,14 +1,3 @@
---- dbus-1.4.14/dbus/sd-daemon.c-orig	2011-09-13 16:27:09.321997939 -0500
-+++ dbus-1.4.14/dbus/sd-daemon.c	2011-09-13 16:30:20.044351351 -0500
-@@ -24,6 +24,8 @@
-   SOFTWARE.
- ***/
- 
-+#define __EXTENSIONS__
-+
- #ifndef _GNU_SOURCE
- #  define _GNU_SOURCE
- #endif
 --- dbus-1.4.14/Makefile.am-orig	2011-09-13 16:36:40.967786680 -0500
 +++ dbus-1.4.14/Makefile.am	2011-09-13 16:36:45.644929457 -0500
 @@ -1,4 +1,4 @@
@@ -27,17 +16,6 @@
  
  #ifdef HAVE_ERRNO_H
  #include <errno.h>
---- dbus-1.7.0/dbus/Makefile.am.orig	2013-04-19 14:37:15.141587811 +0530
-+++ dbus-1.7.0/dbus/Makefile.am	2013-04-19 14:36:20.893589767 +0530
-@@ -277,7 +277,7 @@
- 	$(AM_CPPFLAGS) \
- 	-Ddbus_1_EXPORTS \
- 	$(NULL)
--libdbus_1_la_LIBADD= $(LIBDBUS_LIBS)
-+libdbus_1_la_LIBADD= $(LIBDBUS_LIBS) $(X_EXTRA_LIBS) 
- libdbus_1_la_LDFLAGS = \
- 	$(AM_LDFLAGS) \
- 	$(export_symbols) \
 --- dbus-1.7.0/bus/Makefile.am.orig	Mon Apr 22 10:57:39 2013
 +++ dbus-1.7.0/bus/Makefile.am	Mon Apr 22 11:13:30 2013
 @@ -7,6 +7,7 @@
@@ -56,3 +34,25 @@
  	$(NULL)
  
  AM_CPPFLAGS = \
+--- dbus-1.10.0/dbus/dbus-sysdeps-util-unix.c.orig	Fri Jan 30 18:16:24 2015
++++ dbus-1.10.0/dbus/dbus-sysdeps-util-unix.c	Mon Oct 26 14:18:30 2015
+@@ -522,7 +522,7 @@
+ #ifdef HAVE_SYSLOG_H
+   int logopts = LOG_PID;
+ 
+-#if HAVE_DECL_LOG_PERROR
++#if LOG_PERROR
+ #ifdef HAVE_SYSTEMD
+   if (!is_daemon || sd_booted () <= 0)
+ #endif
+--- dbus-1.10.0/dbus/Makefile.am.orig	Mon Oct 26 14:29:01 2015
++++ dbus-1.10.0/dbus/Makefile.am	Mon Oct 26 14:33:56 2015
+@@ -291,7 +291,7 @@
+ SYMBOL_EXPORT_LDFLAGS=
+ endif
+ 
+-libdbus_1_la_LIBADD= $(LIBDBUS_LIBS)
++libdbus_1_la_LIBADD= $(LIBDBUS_LIBS) $(X_EXTRA_LIBS)
+ libdbus_1_la_LDFLAGS = \
+ 	$(AM_LDFLAGS) \
+ 	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) \
