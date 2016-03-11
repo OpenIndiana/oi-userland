@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 export PARFAIT_BUILD=no
@@ -26,26 +26,33 @@ export PARFAIT_BUILD=no
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME        = mysql
-COMPONENT_VERSION     = 5.5.43
+COMPONENT_VERSION     = 5.5.48
 COMPONENT_SRC         = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE     = $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:43d3df79e5c839a2749deb6e056a4589e49c903e09034c18653ec56e6e4774cd
-COMPONENT_ARCHIVE_URL = http://downloads.mysql.com/archives/mysql-5.5/$(COMPONENT_ARCHIVE)
+    sha256:cc3f8745879eee0508de1a70fc2d267a2d06b7433faa8bb07a787768dcfed781
+COMPONENT_ARCHIVE_URL = http://cdn.mysql.com/Downloads/MySQL-5.5/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://dev.mysql.com/ 
 COMPONENT_BUGDB       = database/mysql
 
+# MySQL doesn't like cloning
+CLONEY = echo
+COMPONENT_PRE_BUILD_ACTION += \
+  $(CP) -rp $(SOURCE_DIR)/* $(@D);
+
 include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/cmake.mk
+
+# Remove "-z ignore" to avoid link problem, missing C++ runtime
+# references in libmysqlclient.so
+LD_Z_IGNORE =
 
 # Enable ASLR for this component
 ASLR_MODE           = $(ASLR_ENABLE)
 
-
 # This component uses cmake to generate Makefiles and thus does not
 # run any configure script
-CMAKE               = $(shell which cmake)
 CMAKE_PREFIX        = /usr/mysql/5.5
 CONFDIR             = /etc/mysql/5.5
 DATA_PREFIX         = /var/mysql/5.5
@@ -82,18 +89,11 @@ CMAKE_OPTIONS += -DWITH_BLACKHOLE_STORAGE_ENGINE=1
 CMAKE_OPTIONS += -DWITH_EXAMPLE_STORAGE_ENGINE=1
 CMAKE_OPTIONS += -DWITH_FEDERATED_STORAGE_ENGINE=1
 CMAKE_OPTIONS += -DWITH_INNOBASE_STORAGE_ENGINE=1
-CMAKE_OPTIONS += -DCMAKE_CXX_COMPILER=$(CXX) 
-CMAKE_OPTIONS += -DCMAKE_C_COMPILER=$(CC)
 CMAKE_OPTIONS += -DCMAKE_EXE_LINKER_FLAGS="-norunpath"
 CMAKE_OPTIONS += -DCMAKE_C_FLAGS=$(CMAKE_CFLAGS.$(BITS))
 CMAKE_OPTIONS += -DCMAKE_CXX_FLAGS=$(CMAKE_CXXFLAGS.$(BITS))
 CMAKE_OPTIONS += '-DCOMPILATION_COMMENT=MySQL Community Server (GPL)'
 CMAKE_OPTIONS += -DFEATURE_SET=community
-
-COMPONENT_PRE_BUILD_ACTION += cd $(@D);
-COMPONENT_PRE_BUILD_ACTION += export LDFLAGS=$(CMAKE_CXXFLAGS.$(BITS));
-COMPONENT_PRE_BUILD_ACTION += echo Running cmake with $(CMAKE_OPTIONS);
-COMPONENT_PRE_BUILD_ACTION += $(CMAKE) . $(CMAKE_OPTIONS);
 
 build: $(BUILD_32_and_64)
 
@@ -101,16 +101,13 @@ install: $(INSTALL_32_and_64)
 
 test: $(NO_TESTS)
 
-system-test:    $(NO_TESTS)
+system-test: $(NO_TESTS)
 
-
-REQUIRED_PACKAGES += developer/build/cmake
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += runtime/perl-512
 REQUIRED_PACKAGES += runtime/perl-520
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/c++-runtime
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/network
