@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	brasero
 COMPONENT_VERSION=	2.32.1
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	https://projects.gnome.org/brasero/
 COMPONENT_SUMMARY=	Gnome CD/DVD burner
 COMPONENT_SRC=	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
