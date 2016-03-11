@@ -18,22 +18,22 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		procps-ng
-COMPONENT_VERSION=	3.3.10
+COMPONENT_VERSION=	3.3.11
 COMPONENT_PROJECT_URL=	http://sourceforge.net/projects/procps-ng/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:a02e6f98974dfceab79884df902ca3df30b0e9bad6d76aee0fb5dce17f267f04
+    sha256:e9493169a2d2adc0bc045538707310c8e877b385e4e296143b62607d2bb044ed
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)files/Production/$(COMPONENT_ARCHIVE)/download
 COMPONENT_BUGDB=	utility/watch
 
-TPNO=			20559
+TPNO=			27264
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -49,7 +49,7 @@ CONFIGURE_ENV +=		"CFLAGS=$(CFLAGS)"
 COMPONENT_BUILD_ARGS +=		V=1
 
 # Don't try to link watch with .../proc/libprocps.la as it's not needed.
-COMPONENT_BUILD_ARGS +=		AM_LDFLAGS=
+COMPONENT_BUILD_ARGS +=		LDADD=
 
 COMPONENT_BUILD_TARGETS =	watch
 
@@ -57,7 +57,6 @@ PKG_PROTO_DIRS += $(BUILD_DIR_64)
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-# common targets
 build:		$(BUILD_64)
 
 # Nothing to install.
