@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -95,6 +95,48 @@ COMPONENT_BUILD_ARGS += CCOPTS="$(CCOPTS)"
 COMPONENT_BUILD_ARGS += CCLINK="$(CC)"
 COMPONENT_BUILD_ARGS += CC_PIC="$(CC_PIC)"
 COMPONENT_BUILD_ARGS += LDOPTS="$(CC_BITS)"
+
+$(SOURCE_DIR)/.prep:	$(SOURCE_DIR)/devtools/Site/site.config.m4
+
+# Sendmail looks for its build configuration in various per-OS config files
+# in its devtools/Site sub-dir, with site.config.m4 being the fallback.  So
+# create that file as part of the 'prep' phase.
+#
+# To build debug:
+# * Uncomment the following line:
+#   COMPONENT_BUILD_ENV += studio_OPT=""
+# * Uncomment the 'confOPTIMIZE' line in the recipe below, and move it
+#   before the 'endef' line:
+
+define SITE_CONFIG_M4
+APPENDDEF(`conf_sendmail_ENVDEF', `-DSUN_EXTENSIONS')
+APPENDDEF(`conf_sendmail_ENVDEF', `-DVENDOR_DEFAULT=VENDOR_SUN')
+APPENDDEF(`conf_sendmail_ENVDEF', `-DSUN_INIT_DOMAIN')
+APPENDDEF(`conf_sendmail_ENVDEF', `-DSUN_SIMPLIFIED_LDAP')
+APPENDDEF(`conf_sendmail_ENVDEF', `-DTCPWRAPPERS')
+APPENDDEF(`conf_sendmail_ENVDEF', `-DSTARTTLS')
+APPENDDEF(`conf_sendmail_ENVDEF', `-D_FFR_LOCAL_DAEMON')
+APPENDDEF(`conf_sendmail_ENVDEF', `-D_FFR_MAIL_MACRO')
+APPENDDEF(`conf_sendmail_ENVDEF', `-DIPV6_FULL=0')
+APPENDDEF(`conf_sendmail_LIBS', `-lsldap')
+APPENDDEF(`conf_sendmail_LIBS', `-lwrap')
+APPENDDEF(`conf_sendmail_LIBS', `-lumem')
+APPENDDEF(`conf_sendmail_LIBS', `-lssl')
+APPENDDEF(`conf_sendmail_LIBS', `-lcrypto')
+APPENDDEF(`confMAPDEF', `-DLDAPMAP')
+APPENDDEF(`confLIBS', `-lldap_r-2.4 -llber-2.4 -lc')
+define(`confDEPEND_TYPE', `Solaris')
+define(`confINCDIRS', `-I/usr/include/openldap')
+define(`confMKDIR', `/usr/bin/mkdir')
+define(`confMTCFLAGS', `$(CC_PIC)')
+define(`sendmailTARGET_LINKS', `')
+endef
+#define(\`confOPTIMIZE', \`-g')
+
+export SITE_CONFIG_M4
+
+$(SOURCE_DIR)/devtools/Site/site.config.m4:	unpack
+	$(file > $@,$(SITE_CONFIG_M4))
 
 # mailq's Makefile doesn't grok the 32- and 64-bit build. We just want 64.
 # So we clean before we build, and the last build (64) wins, which is what
