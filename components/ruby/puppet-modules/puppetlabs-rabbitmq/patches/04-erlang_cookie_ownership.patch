@@ -1,0 +1,21 @@
+In-house patch to touch /var/lib/rabbitmq/.erlang.cookie with the
+proper ownership before starting rabbitmq.  This patch is not suitable
+for upstream.
+
+--- ORIG/manifests/init.pp	2016-01-22 18:14:21.976458350 +0000
++++ puppetlabs-rabbitmq-5.3.1/manifests/init.pp	2016-01-22 18:14:59.495828828 +0000
+@@ -233,7 +233,13 @@
+   anchor { 'rabbitmq::begin': }
+   anchor { 'rabbitmq::end': }
+ 
+-  Anchor['rabbitmq::begin'] -> Class['::rabbitmq::install']
++  file { 'cookie_owner':
++    path => '/var/lib/rabbitmq/.erlang.cookie',
++    owner => 'rabbitmq',
++    group => 'daemon',
++  }
++
++  Anchor['rabbitmq::begin'] -> Class['::rabbitmq::install'] -> File['cookie_owner']
+     -> Class['::rabbitmq::config'] ~> Class['::rabbitmq::service']
+     -> Class['::rabbitmq::management'] -> Anchor['rabbitmq::end']
+ 

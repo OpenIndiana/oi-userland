@@ -1,0 +1,56 @@
+In-house patch to have the rabbitmq providers look in /usr/bin for
+rabbitmqadmin instead of /usr/local/bin
+
+--- puppetlabs-rabbitmq-5.3.1/lib/puppet/provider/rabbitmq_binding/rabbitmqadmin.rb.orig  2015-11-20 07:01:01.498398940 -0800
++++ puppetlabs-rabbitmq-5.3.1/lib/puppet/provider/rabbitmq_binding/rabbitmqadmin.rb    2015-11-20 07:01:14.230495648 -0800
+@@ -4,12 +4,12 @@ Puppet::Type.type(:rabbitmq_binding).pro
+
+   if Puppet::PUPPETVERSION.to_f < 3
+     commands :rabbitmqctl   => 'rabbitmqctl'
+-    commands :rabbitmqadmin => '/usr/local/bin/rabbitmqadmin'
++    commands :rabbitmqadmin => '/usr/bin/rabbitmqadmin'
+   else
+     has_command(:rabbitmqctl, 'rabbitmqctl') do
+       environment :HOME => "/tmp"
+     end
+-    has_command(:rabbitmqadmin, '/usr/local/bin/rabbitmqadmin') do
++    has_command(:rabbitmqadmin, '/usr/bin/rabbitmqadmin') do
+       environment :HOME => "/tmp"
+     end
+   end
+
+--- puppetlabs-rabbitmq-5.3.1/lib/puppet/provider/rabbitmq_exchange/rabbitmqadmin.rb.orig  2015-11-20 07:29:19.574821579 -0800
++++ puppetlabs-rabbitmq-5.3.1/lib/puppet/provider/rabbitmq_exchange/rabbitmqadmin.rb    2015-11-20 07:29:25.845150783 -0800
+@@ -4,12 +4,12 @@ Puppet::Type.type(:rabbitmq_exchange).pr
+
+   if Puppet::PUPPETVERSION.to_f < 3
+     commands :rabbitmqctl   => 'rabbitmqctl'
+-    commands :rabbitmqadmin => '/usr/local/bin/rabbitmqadmin'
++    commands :rabbitmqadmin => '/usr/bin/rabbitmqadmin'
+   else
+     has_command(:rabbitmqctl, 'rabbitmqctl') do
+       environment :HOME => "/tmp"
+     end
+-    has_command(:rabbitmqadmin, '/usr/local/bin/rabbitmqadmin') do
++    has_command(:rabbitmqadmin, '/usr/bin/rabbitmqadmin') do
+       environment :HOME => "/tmp"
+     end
+   end
+
+--- puppetlabs-rabbitmq-5.3.1/lib/puppet/provider/rabbitmq_queue/rabbitmqadmin.rb.orig  2015-11-20 07:30:21.622578483 -0800
++++ puppetlabs-rabbitmq-5.3.1/lib/puppet/provider/rabbitmq_queue/rabbitmqadmin.rb    2015-11-20 07:30:26.940673078 -0800
+@@ -4,12 +4,12 @@ Puppet::Type.type(:rabbitmq_queue).provi
+
+   if Puppet::PUPPETVERSION.to_f < 3
+     commands :rabbitmqctl   => 'rabbitmqctl'
+-    commands :rabbitmqadmin => '/usr/local/bin/rabbitmqadmin'
++    commands :rabbitmqadmin => '/usr/bin/rabbitmqadmin'
+   else
+     has_command(:rabbitmqctl, 'rabbitmqctl') do
+       environment :HOME => "/tmp"
+     end
+-    has_command(:rabbitmqadmin, '/usr/local/bin/rabbitmqadmin') do
++    has_command(:rabbitmqadmin, '/usr/bin/rabbitmqadmin') do
+       environment :HOME => "/tmp"
+     end
+   end

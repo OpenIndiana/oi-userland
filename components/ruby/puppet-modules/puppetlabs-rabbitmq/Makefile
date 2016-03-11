@@ -26,16 +26,16 @@
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		puppetlabs-rabbitmq
-COMPONENT_VERSION=	3.1.0
+COMPONENT_VERSION=	5.3.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:bd79e605a032374508677847d7751c94ac4652e4ee4117e118d02c5030eb0966
+    sha256:1952877141ac8b0deb868ca3f501e1a26ab4de8fd54ad780d20cd9aa6172bde9
 COMPONENT_ARCHIVE_URL=	http://forgeapi.puppetlabs.com/v3/files/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://www.openstack.org/
 COMPONENT_BUGDB=	utility/puppet
 
-TPNO=			24144
+TPNO=			27089
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/puppetmodule.mk
