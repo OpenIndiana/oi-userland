@@ -13,15 +13,15 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= dbus
-COMPONENT_VERSION= 1.8.16
+COMPONENT_VERSION= 1.10.8
 COMPONENT_SUMMARY= Simple IPC library based on messages
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:7f795268efd343ff0498786acb35097564390d40b1b6158daf1b4f742b522b07
+  sha256:baf3d22baa26d3bdd9edc587736cd5562196ce67996d65b82103bedbe1f0c014
 COMPONENT_ARCHIVE_URL= \
   http://dbus.freedesktop.org/releases/dbus/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.freedesktop.org/wiki/Software_2fdbus
@@ -29,9 +29,9 @@ COMPONENT_LICENSE_FILE = COPYING
 COMPONENT_LICENSE = GPLv2,AFLv2.1
 COMPONENT_CLASSIFICATION = System/Libraries
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/configure.mk
+include $(WS_TOP)/make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
