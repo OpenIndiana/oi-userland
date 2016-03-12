@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 #
@@ -76,8 +76,8 @@ COMPONENT_BUILD_ENV += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
 
 REQUIRED_PACKAGES += developer/build/cmake
 REQUIRED_PACKAGES += developer/build/pkg-config
+REQUIRED_PACKAGES += developer/gnome/gettext
 REQUIRED_PACKAGES += developer/gnu-binutils
-REQUIRED_PACKAGES += developer/intltool
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/linker
 # Most cmake-based components expect GNU versions of these.
