@@ -22,11 +22,11 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:7c2f0605fd1e3c0650ed6ae5ae09361324de5cf197ff755fd51e13e356e16d9c
-COMPONENT_ARCHIVE_URL=	https://github.com/mate-desktop/mate-common/archive/v$(COMPONENT_VERSION).tar.gz
+COMPONENT_ARCHIVE_URL=	https://github.com/mate-desktop/$(COMPONENT_NAME)/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_LICENSE= GPLv3
 COMPONENT_LICENSE_FILE= COPYING
 COMPONENT_CLASSIFICATION = System/Libraries
-COMPONENT_FMRI = mate/mate-common
+COMPONENT_FMRI = library/desktop/mate/$(COMPONENT_NAME)
 
 
 include $(WS_TOP)/make-rules/prep.mk

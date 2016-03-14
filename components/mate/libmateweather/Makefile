@@ -14,17 +14,17 @@
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		mate-desktop
+COMPONENT_NAME=		libmateweather
 COMPONENT_VERSION=	1.12.1
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
 COMPONENT_SUMMARY=	Mate Desktop Library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:94780f6ac1800d06eac5288151aeb21c353433dfb78d711ef77056db21c96830
+    sha256:dec70d2e3d754ab59ed788579a59016b233bdf7137daa59b896f923a919917a5
 COMPONENT_ARCHIVE_URL=	https://github.com/mate-desktop/$(COMPONENT_NAME)/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_LICENSE= GPLv2, LGPLv2, FDLv1.1
-COMPONENT_LICENSE_FILE= mate-desktop.license
+COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 COMPONENT_CLASSIFICATION = System/Libraries
 COMPONENT_FMRI = library/desktop/mate/$(COMPONENT_NAME)
 
@@ -36,11 +36,11 @@ PATH=/usr/gnu/bin:/usr/bin
 
 COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 					libtoolize --copy --force &&\
-					gtkdocize&&\
-					mate-doc-common &&\
-					glib-gettextize -f &&\
-					intltoolize --force --copy &&\
 					aclocal -I m4 &&\
+					gtkdocize&&\
+                                        mate-doc-common &&\
+					glib-gettextize -f &&\
+                                        intltoolize --force --copy &&\
 					autoconf &&\
 					autoheader &&\
 					automake -c -f -a )
