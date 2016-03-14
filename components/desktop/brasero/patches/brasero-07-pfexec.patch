@@ -1,0 +1,21 @@
+--- brasero-2.32.1/data/brasero.desktop.in.in.1	2016-03-11 12:24:09.229107340 +0300
++++ brasero-2.32.1/data/brasero.desktop.in.in	2016-03-11 12:24:17.433689393 +0300
+@@ -4,7 +4,7 @@
+ _Comment=Create and copy CDs and DVDs
+ Categories=GNOME;AudioVideo;DiscBurning;
+ MimeType=application/x-cd-image;application/x-cdrdao-toc;application/x-cue;application/x-toc;audio/x-scpls;audio/x-ms-asx;audio/x-mp3-playlist;audio/x-mpegurl;application/x-brasero;x-content/audio-cdda;x-content/video-dvd;x-content/video-vcd;x-content/video-svcd;x-content/image-picturecd;
+-Exec=brasero %U
++Exec=pfexec brasero %U
+ Icon=brasero
+ StartupNotify=true
+ Terminal=false
+--- brasero-2.32.1/plugins/cdrtools/burn-cdrecord.c.1	2016-03-12 00:58:29.631084390 +0300
++++ brasero-2.32.1/plugins/cdrtools/burn-cdrecord.c	2016-03-12 00:59:25.020019591 +0300
+@@ -1064,6 +1064,7 @@
+ 	if (action == BRASERO_JOB_ACTION_SIZE)
+ 		return BRASERO_BURN_NOT_SUPPORTED;
+ 
++	g_ptr_array_add (argv, g_strdup ("pfexec"));
+ 	g_ptr_array_add (argv, g_strdup ("cdrecord"));
+ 	g_ptr_array_add (argv, g_strdup ("-v"));
+ 

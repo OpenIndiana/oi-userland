@@ -1,0 +1,19 @@
+https://www.illumos.org/issues/6728
+https://www.illumos.org/issues/5633
+
+Glib function g_check_setuid() uses issetugid() to determine if application
+is setuid. If it is setuid, dbus launcher is not executed.
+But this check also fires when we use pfexec. So we revert to uid/euid comparison
+here to allow applications using glib to work with dbus.
+
+--- glib-2.43.4/glib/gutils.c.~1~	2014-12-20 00:49:48.000000000 +0300
++++ glib-2.43.4/glib/gutils.c	2016-03-11 12:10:49.771305540 +0300
+@@ -2330,7 +2334,7 @@
+     extern int __libc_enable_secure;
+     return __libc_enable_secure;
+   }
+-#elif defined(HAVE_ISSETUGID) && !defined(__BIONIC__)
++#elif defined(HAVE_ISSETUGID) && !defined(__BIONIC__) && !defined(sun)
+   /* BSD: http://www.freebsd.org/cgi/man.cgi?query=issetugid&sektion=2 */
+ 
+   /* Android had it in older versions but the new 64 bit ABI does not
