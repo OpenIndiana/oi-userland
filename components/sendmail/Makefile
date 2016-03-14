@@ -40,6 +40,8 @@ include $(WS_MAKE_RULES)/justmake.mk
 
 # Mostly but not completely migrated from ON in S12.
 ifeq ($(BUILD_TYPE), evaluation)
+BUILD_32_and_64=
+INSTALL_32_and_64=
 PUBLISH_STAMP=
 endif
 
