@@ -1,0 +1,46 @@
+Source:
+  Slightly fixes the original patch:
+   https://www.cups.org/strfiles.php/3253/cups-lpd-hugh-jobs.patch
+  from: https://www.cups.org/str.php?L4351
+   ...to work on both (LP32 and LP64) program bitnesses by not using an obscure data types.
+
+Community promotion: promoted back on https://www.cups.org/str.php?L4351
+
+--- scheduler/cups-lpd.c	2016-02-15 16:56:40.890845828 -0800
++++ scheduler/cups-lpd.c	2016-02-15 17:13:16.665739315 -0800
+@@ -912,6 +912,7 @@
+ {
+   http_t	*http;			/* HTTP connection */
+   int		i;			/* Looping var */
++  long long	ll;			/* Looping var for hugh loops */
+   int		status;			/* Command status */
+   int		fd;			/* Temporary file */
+   FILE		*fp;			/* File pointer */
+@@ -984,6 +985,7 @@
+   status   = 0;
+   num_data = 0;
+   fd       = -1;
++  bytes    = 0;
+ 
+   control[0] = '\0';
+ 
+@@ -1099,13 +1101,16 @@
+    /*
+     * Copy the data or control file from the client...
+     */
++    /* 
++     * syslog(LOG_INFO, "count=%s lcount=%lld sizeof_line %d", id, count, atol(count), sizeof(line)); 
++     */
+ 
+-    for (i = atoi(count); i > 0; i -= bytes)
++    for (ll = atoll(count); ll > 0; ll -= bytes)
+     {
+-      if (i > sizeof(line))
++      if (ll > sizeof(line))
+         bytes = sizeof(line);
+       else
+-        bytes = i;
++        bytes = (long long) ll;
+ 
+       if ((bytes = fread(line, 1, bytes, stdin)) > 0)
+         bytes = write(fd, line, bytes);
