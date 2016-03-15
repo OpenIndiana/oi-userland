@@ -2815,7 +2815,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
             del instance.system_metadata['new_instance_volid']
             del instance.system_metadata['old_instance_volid']
         else:
-            new_rvid = instance.system_metadata['new_instance_volid']
+            new_rvid = instance.system_metadata.get('new_instance_volid')
             if new_rvid:
                 del instance.system_metadata['new_instance_volid']
                 self._volume_api.delete(context, new_rvid)
