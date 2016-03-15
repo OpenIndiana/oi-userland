@@ -12,22 +12,22 @@
 # Copyright 2011-2013, EveryCity Ltd. All rights reserved.
 # 
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 CMAKE= cmake
 
 COMPONENT_NAME=		percona-server
-COMPONENT_VERSION=	5.6.28-76.1
-IPS_COMPONENT_VERSION=	5.6.28.76.1
+COMPONENT_VERSION=	5.6.29-76.2
+IPS_COMPONENT_VERSION=	5.6.29.76.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	http://www.percona.com/
-COMPONENT_ARCHIVE_HASH=	sha256:ab8ab794a58a82132645ae84b74de91c7f9a5bcf81f2162628ce8976a00a4fd4
+COMPONENT_ARCHIVE_HASH=	sha256:23217feafc92222f313aeeb6e1806d110c35e50cf0b5f74510a9f8babe22e4b9
 COMPONENT_ARCHIVE_URL=	http://www.percona.com/downloads/Percona-Server-5.6/Percona-Server-$(COMPONENT_VERSION)/source/tarball/$(COMPONENT_ARCHIVE)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/configure.mk
+include $(WS_TOP)/make-rules/ips.mk
 
 
 CONFIGURE_PREFIX=/usr/percona-server/5.6
