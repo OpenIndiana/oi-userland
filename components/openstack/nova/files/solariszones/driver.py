@@ -2254,7 +2254,16 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
         # apply the configuration to the running zone
         if zone.state == ZONE_STATE_RUNNING:
-            zone.apply()
+            try:
+                zone.apply()
+            except Exception as ex:
+                reason = zonemgr_strerror(ex)
+                LOG.error(_("Unable to attach '%s' to instance '%s' via "
+                            "zonemgr(3RAD): %s") % (suri, name, reason))
+                with ZoneConfig(zone) as zc:
+                    zc.removeresources("device", [zonemgr.Property("storage",
+                                                  suri)])
+                raise
 
     def detach_volume(self, connection_info, instance, mountpoint,
                       encryption=None):
