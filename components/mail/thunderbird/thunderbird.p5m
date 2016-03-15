@@ -1,0 +1,141 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2014 Alexander Pyhalov.  All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/mail/thunderbird@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="org.opensolaris.category.2008:Applications/Internet"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license thunderbird.license license="MPL v2.0"
+
+<transform file path=usr/bin/+ -> default mode 0555>
+<transform file path=.*\.py$ -> default pkg.tmp.autopyc false>
+# Firefox libraries are searched using $ORIGIN, I don't see anything bad in this
+<transform file path=.* -> default pkg.linted.userland.action001.3 true >
+<transform file path=usr/lib/thunderbird/(.+)$ -> \
+    set action.hash usr/lib/thunderbird-$(IPS_COMPONENT_VERSION)/%<1> >
+
+# This optionally updates lightning if it is installed
+depend type=conditional fmri=mail/thunderbird/plugin/thunderbird-lightning@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) predicate=mail/thunderbird/plugin/thunderbird-lightning
+
+file files/thunderbird.desktop path=usr/share/applications/thunderbird.desktop
+file usr/lib/thunderbird-$(IPS_COMPONENT_VERSION)/chrome/icons/default/default48.png path=usr/share/pixmaps/thunderbird-icon.png
+
+link path=usr/bin/thunderbird target=../lib/thunderbird/thunderbird mediator=thunderbird mediator-version=38
+
+dir path=usr/lib/thunderbird
+# Generated section (include only usr/lib/thunderbird/*, don't include dictionaries/en-US* or usr/bin/thunderbird ):
+file path=usr/lib/thunderbird/application.ini
+file path=usr/lib/thunderbird/blocklist.xml
+file path=usr/lib/thunderbird/chrome.manifest
+file path=usr/lib/thunderbird/chrome/icons/default/default16.png
+file path=usr/lib/thunderbird/chrome/icons/default/default22.png
+file path=usr/lib/thunderbird/chrome/icons/default/default24.png
+file path=usr/lib/thunderbird/chrome/icons/default/default256.png
+file path=usr/lib/thunderbird/chrome/icons/default/default32.png
+file path=usr/lib/thunderbird/chrome/icons/default/default48.png
+file path=usr/lib/thunderbird/components/components.manifest
+file path=usr/lib/thunderbird/components/libdbusservice.so
+file path=usr/lib/thunderbird/components/libmozgnome.so
+file path=usr/lib/thunderbird/defaults/messenger/mailViews.dat
+file path=usr/lib/thunderbird/defaults/pref/channel-prefs.js
+file path=usr/lib/thunderbird/dependentlibs.list
+#file path=usr/lib/thunderbird/dictionaries/en-US.aff
+#file path=usr/lib/thunderbird/dictionaries/en-US.dic
+file path=usr/lib/thunderbird/extensions/langpack-ar@thunderbird.mozilla.org.xpi
+file path=usr/lib/thunderbird/extensions/langpack-be@thunderbird.mozilla.org.xpi
+file path=usr/lib/thunderbird/extensions/langpack-bg@thunderbird.mozilla.org.xpi
+file path=usr/lib/thunderbird/extensions/langpack-ca@thunderbird.mozilla.org.xpi
+file path=usr/lib/thunderbird/extensions/langpack-cs@thunderbird.mozilla.org.xpi
+file path=usr/lib/thunderbird/extensions/langpack-da@thunderbird.mozilla.org.xpi
+file path=usr/lib/thunderbird/extensions/langpack-de@thunderbird.mozilla.org.xpi
+file path=usr/lib/thunderbird/extensions/langpack-el@thunderbird.mozilla.org.xpi
+file path=usr/lib/thunderbird/extensions/langpack-es-AR@thunderbird.mozilla.org.xpi
+file path=usr/lib/thunderbird/extensions/langpack-es-ES@thunderbird.mozilla.org.xpi
+file path=usr/lib/thunderbird/extensions/langpack-et@thunderbird.mozilla.org.xpi
+file path=usr/lib/thunderbird/extensions/langpack-fi@thunderbird.mozilla.org.xpi
+file path=usr/lib/thunderbird/extensions/langpack-fr@thunderbird.mozilla.org.xpi
+file path=usr/lib/thunderbird/extensions/langpack-he@thunderbird.mozilla.org.xpi
+file path=usr/lib/thunderbird/extensions/langpack-hr@thunderbird.mozilla.org.xpi
+file path=usr/lib/thunderbird/extensions/langpack-hu@thunderbird.mozilla.org.xpi
+file path=usr/lib/thunderbird/extensions/langpack-id@thunderbird.mozilla.org.xpi
+file path=usr/lib/thunderbird/extensions/langpack-is@thunderbird.mozilla.org.xpi
+file path=usr/lib/thunderbird/extensions/langpack-it@thunderbird.mozilla.org.xpi
+file path=usr/lib/thunderbird/extensions/langpack-ja@thunderbird.mozilla.org.xpi
+file path=usr/lib/thunderbird/extensions/langpack-ko@thunderbird.mozilla.org.xpi
+file path=usr/lib/thunderbird/extensions/langpack-lt@thunderbird.mozilla.org.xpi
+file path=usr/lib/thunderbird/extensions/langpack-nl@thunderbird.mozilla.org.xpi
+file path=usr/lib/thunderbird/extensions/langpack-nn-NO@thunderbird.mozilla.org.xpi
+file path=usr/lib/thunderbird/extensions/langpack-pl@thunderbird.mozilla.org.xpi
+file path=usr/lib/thunderbird/extensions/langpack-pt-BR@thunderbird.mozilla.org.xpi
+file path=usr/lib/thunderbird/extensions/langpack-pt-PT@thunderbird.mozilla.org.xpi
+file path=usr/lib/thunderbird/extensions/langpack-ro@thunderbird.mozilla.org.xpi
+file path=usr/lib/thunderbird/extensions/langpack-ru@thunderbird.mozilla.org.xpi
+file path=usr/lib/thunderbird/extensions/langpack-sk@thunderbird.mozilla.org.xpi
+file path=usr/lib/thunderbird/extensions/langpack-sl@thunderbird.mozilla.org.xpi
+file path=usr/lib/thunderbird/extensions/langpack-sq@thunderbird.mozilla.org.xpi
+file path=usr/lib/thunderbird/extensions/langpack-sr@thunderbird.mozilla.org.xpi
+file path=usr/lib/thunderbird/extensions/langpack-sv-SE@thunderbird.mozilla.org.xpi
+file path=usr/lib/thunderbird/extensions/langpack-tr@thunderbird.mozilla.org.xpi
+file path=usr/lib/thunderbird/extensions/langpack-uk@thunderbird.mozilla.org.xpi
+file path=usr/lib/thunderbird/extensions/langpack-vi@thunderbird.mozilla.org.xpi
+file path=usr/lib/thunderbird/extensions/langpack-zh-CN@thunderbird.mozilla.org.xpi
+file path=usr/lib/thunderbird/extensions/langpack-zh-TW@thunderbird.mozilla.org.xpi
+file path=usr/lib/thunderbird/extensions/{972ce4c6-7e08-4474-a285-3208198ce6fd}/icon.png
+file path=usr/lib/thunderbird/extensions/{972ce4c6-7e08-4474-a285-3208198ce6fd}/icon64.png
+file path=usr/lib/thunderbird/extensions/{972ce4c6-7e08-4474-a285-3208198ce6fd}/install.rdf
+file path=usr/lib/thunderbird/isp/Bogofilter.sfd
+file path=usr/lib/thunderbird/isp/DSPAM.sfd
+file path=usr/lib/thunderbird/isp/POPFile.sfd
+file path=usr/lib/thunderbird/isp/SpamAssassin.sfd
+file path=usr/lib/thunderbird/isp/SpamPal.sfd
+file path=usr/lib/thunderbird/isp/movemail.rdf
+file path=usr/lib/thunderbird/isp/rss.rdf
+file path=usr/lib/thunderbird/libfreebl3.chk
+file path=usr/lib/thunderbird/libfreebl3.so
+file path=usr/lib/thunderbird/libldap60.so
+file path=usr/lib/thunderbird/libldif60.so
+file path=usr/lib/thunderbird/libmozalloc.so
+file path=usr/lib/thunderbird/libmozjs.so
+file path=usr/lib/thunderbird/libnspr4.so
+file path=usr/lib/thunderbird/libnss3.so
+file path=usr/lib/thunderbird/libnssckbi.so
+file path=usr/lib/thunderbird/libnssdbm3.chk
+file path=usr/lib/thunderbird/libnssdbm3.so
+file path=usr/lib/thunderbird/libnssutil3.so
+file path=usr/lib/thunderbird/libplc4.so
+file path=usr/lib/thunderbird/libplds4.so
+file path=usr/lib/thunderbird/libprldap60.so
+file path=usr/lib/thunderbird/libsmime3.so
+file path=usr/lib/thunderbird/libsoftokn3.chk
+file path=usr/lib/thunderbird/libsoftokn3.so
+file path=usr/lib/thunderbird/libssl3.so
+file path=usr/lib/thunderbird/libxul.so
+file path=usr/lib/thunderbird/omni.ja
+file path=usr/lib/thunderbird/platform.ini
+file path=usr/lib/thunderbird/plugin-container mode=0555
+file path=usr/lib/thunderbird/removed-files
+file path=usr/lib/thunderbird/run-mozilla.sh mode=0555
+file path=usr/lib/thunderbird/searchplugins/amazondotcom.xml
+file path=usr/lib/thunderbird/searchplugins/aol-web-search.xml
+file path=usr/lib/thunderbird/searchplugins/bing.xml
+file path=usr/lib/thunderbird/searchplugins/eBay.xml
+file path=usr/lib/thunderbird/searchplugins/twitter.xml
+file path=usr/lib/thunderbird/searchplugins/wikipedia.xml
+file path=usr/lib/thunderbird/searchplugins/yahoo.xml
+file path=usr/lib/thunderbird/thunderbird mode=0555
+file path=usr/lib/thunderbird/thunderbird-bin mode=0555

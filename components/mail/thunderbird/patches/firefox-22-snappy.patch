@@ -1,0 +1,25 @@
+Defined Endians.
+Can potentially go upstream.
+
+diff --git a/configure b/configure
+--- a/configure
++++ b/configure
+@@ -9620,6 +9620,18 @@
+ #define SOLARIS 1
+ EOF
+ 
++    if test "$CPU_ARCH" = "sparc"; then
++ cat >> confdefs.pytmp <<\EOF
++  (''' WORDS_BIGENDIAN ''', ' 1 ')
++  (''' IS_BIG_ENDIAN ''', ' 1 ')
++EOF
++cat >> confdefs.h <<\EOF
++#define WORDS_BIGENDIAN 1
++#define IS_BIG_ENDIAN 1
++EOF
++
++    fi
++
+     TARGET_NSPR_MDCPUCFG='\"md/_solaris.cfg\"'
+     MOZ_FIX_LINK_PATHS=
+     # $ORIGIN/.. is for shared libraries under components/ to locate shared

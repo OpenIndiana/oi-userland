@@ -1,0 +1,34 @@
+Add necessary flags for DSO_LDOPTS. 
+Do not plan to send upstream.
+
+--- a/ldap/sdks/c-sdk/config/SunOS5.mk  2015-10-13 23:37:03.388273000 +0800
++++ b/ldap/sdks/c-sdk/config/SunOS5.mk  2015-10-13 23:37:18.652330000 +0800
+@@ -217,5 +217,5 @@
+ ifeq ($(OS_TEST),sun4u)
+ ULTRASPARC_LIBRARY = ultrasparc
+ ULTRASPARC_FILTER_LIBRARY = libatomic.so
+-DSO_LDOPTS		+= -f $(ULTRASPARC_FILTER_LIBRARY)
++DSO_LDOPTS		+= -Wl,-f -Wl,$(ULTRASPARC_FILTER_LIBRARY)
+ endif
+--- a/ldap/sdks/c-sdk/configure 2015-10-14 06:51:22.319008000 +0800
++++ b/ldap/sdks/c-sdk/configure 2015-10-14 06:52:01.010674000 +0800
+@@ -5600,7 +5600,7 @@
+         if test -z "$USE_64"; then
+             ULTRASPARC_LIBRARY=ultrasparc
+             ULTRASPARC_FILTER_LIBRARY=libatomic.so
+-            DSO_LDOPTS="$DSO_LDOPTS -f "'$(ULTRASPARC_FILTER_LIBRARY)'
++            DSO_LDOPTS="$DSO_LDOPTS -Wl,-f -Wl,"'$(ULTRASPARC_FILTER_LIBRARY)'
+         fi
+     fi
+     ;;
+--- a/ldap/sdks/c-sdk/configure Wed Oct 14 23:38:04 2015
++++ b/ldap/sdks/c-sdk/configure Wed Oct 14 23:38:47 2015
+@@ -5503,7 +5503,7 @@
+             CXX="$CXX -m64"
+         fi
+         LD='$(CC)'
+-        DSO_LDOPTS='-shared -Wl,-soname -Wl,$(notdir $@)'
++        DSO_LDOPTS='-shared -Wl,-h -Wl,$(notdir $@)'
+         DSO_CFLAGS=-fPIC
+         CFLAGS="$CFLAGS -Wall"
+         CXXFLAGS="$CXXFLAGS -Wall"

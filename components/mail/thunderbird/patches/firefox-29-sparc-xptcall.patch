@@ -1,0 +1,55 @@
+See Mozilla bug #1153707 - [JavaScript Error: "invalid 'in' operand
+aLivemarkInfo"] when calling method: [mozIAsyncLivemarks::getLivemark].
+Has been sent upstream in the past but does not seem to have been accepted.
+
+diff --git a/js/xpconnect/src/XPCWrappedJSClass.cpp b/js/xpconnect/src/XPCWrappedJSClass.cpp
+--- a/js/xpconnect/src/XPCWrappedJSClass.cpp
++++ b/js/xpconnect/src/XPCWrappedJSClass.cpp
+@@ -1295,21 +1295,9 @@
+                 break;
+         }
+ 
+-// see bug #961488
+-#if (defined(XP_UNIX) && !defined(XP_MACOSX) && !defined(_AIX)) && \
+-    ((defined(__sparc) && !defined(__sparcv9) && !defined(__sparcv9__)) || \
+-    (defined(__powerpc__) && !defined (__powerpc64__)))
+-        if (type_tag == nsXPTType::T_JSVAL) {
+-            if (!XPCConvert::JSData2Native(*(void**)(&pv->val), val, type,
+-                                           &param_iid, nullptr))
+-                break;
+-        } else
+-#endif
+-        {
+-            if (!XPCConvert::JSData2Native(&pv->val, val, type,
+-                                           &param_iid, nullptr))
+-                break;
+-        }
++        if (!XPCConvert::JSData2Native(&pv->val, val, type,
++                                       &param_iid, nullptr))
++            break;
+     }
+ 
+     // if any params were dependent, then we must iterate again to convert them.
+diff --git a/xpcom/reflect/xptcall/md/unix/xptcstubs_sparc_solaris.cpp b/xpcom/reflect/xptcall/md/unix/xptcstubs_sparc_solaris.cpp
+--- a/xpcom/reflect/xptcall/md/unix/xptcstubs_sparc_solaris.cpp
++++ b/xpcom/reflect/xptcall/md/unix/xptcstubs_sparc_solaris.cpp
+@@ -52,13 +52,17 @@
+
+         if(param.IsOut() || !type.IsArithmetic())
+         {
+-            dp->val.p = (void*) *ap;
++            if (type == nsXPTType::T_JSVAL)
++                dp->val.p = *((void**)*ap);
++            else
++                dp->val.p = (void*) *ap;
++
+             continue;
+         }
+         // else
+         switch(type)
+         {
+-        case nsXPTType::T_I8     : dp->val.i8  = *((int32_t*)  ap);       break;
++        case nsXPTType::T_I8     : dp->val.i8  = *((int32_t*) ap);       break;
+         case nsXPTType::T_I16    : dp->val.i16 = *((int32_t*) ap);       break;
+         case nsXPTType::T_I32    : dp->val.i32 = *((int32_t*) ap);       break;
+         case nsXPTType::T_DOUBLE :
