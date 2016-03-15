@@ -21,6 +21,28 @@ from subprocess import CalledProcessError, Popen, PIPE, check_call
 import smf_include
 
 
+def _create_dataset(path, poolname):
+    # get the root pool name
+    cmd = ['/usr/sbin/zfs', 'list', '-Ho', 'name', '/']
+    p = Popen(cmd, stdout=PIPE, stderr=PIPE)
+    output, error = p.communicate()
+    if p.returncode != 0:
+        print "unable to determine root pool name: %s" % (error)
+        return smf_include.SMF_EXIT_ERR_CONFIG
+    rpool = output.split('/')[0]
+
+    # the default directory doesn't exist, create a new dataset for it
+    ds = os.path.join(rpool, poolname)
+    try:
+        check_call(['/usr/bin/pfexec', '/usr/sbin/zfs', 'create', '-p',
+                    '-o', 'mountpoint=' + path, ds])
+    except CalledProcessError as err:
+        print "unable to create %s: %s" % (ds, err)
+        return smf_include.SMF_EXIT_ERR_CONFIG
+
+    return smf_include.SMF_EXIT_OK
+
+
 def start():
     # retrieve dataset path for suspend images
     nova_conf = "/etc/nova/nova.conf"
@@ -32,35 +54,37 @@ def start():
     parser.read(nova_conf)
 
     # retrieve the suspend path or just get the default
-    default_path = '/var/share/zones/SYSsuspend'
+    suspend_default_path = '/var/share/zones/SYSsuspend'
     try:
         suspend_path = parser.get('DEFAULT', 'zones_suspend_path')
     except ConfigParser.NoOptionError:
-        suspend_path = default_path
+        suspend_path = suspend_default_path
 
     if not os.path.exists(suspend_path):
-        if suspend_path == default_path:
-            # get the root pool name
-            cmd = ['/usr/sbin/zfs', 'list', '-Ho', 'name', '/']
-            p = Popen(cmd, stdout=PIPE, stderr=PIPE)
-            output, error = p.communicate()
-            if p.returncode != 0:
-                print "unable to determine root pool name: %s" % (error)
-                return smf_include.SMF_EXIT_ERR_CONFIG
-            rpool = output.split('/')[0]
-
-            # the default directory doesn't exist, create a new dataset for it
-            suspend_ds = os.path.join(rpool, 'VARSHARE/zones/SYSsuspend')
-            try:
-                check_call(['/usr/bin/pfexec', '/usr/sbin/zfs', 'create', '-p',
-                            '-o', 'mountpoint=' + suspend_path, suspend_ds])
-            except CalledProcessError as err:
-                print "unable to create %s: %s" % (suspend_ds, err)
-                return smf_include.SMF_EXIT_ERR_CONFIG
+        if suspend_path == suspend_default_path:
+            ret = _create_dataset(suspend_path, 'VARSHARE/zones/SYSsuspend')
+            if ret != smf_include.SMF_EXIT_OK:
+                return ret
         else:
             # the user specified a path, but it doesn't exist
             print "Zones suspend path %s does not exist" % (suspend_path)
             return smf_include.SMF_EXIT_ERR_CONFIG
+
+    # retrieve the image cache path or just get the default
+    imagecache_default_path = '/var/share/nova/images'
+    try:
+        imagecache_path = parser.get('DEFAULT', 'glancecache_dirname')
+    except ConfigParser.NoOptionError:
+        imagecache_path = imagecache_default_path
+
+    if not os.path.exists(imagecache_path):
+        if imagecache_path == imagecache_default_path:
+            ret = _create_dataset(imagecache_path, 'VARSHARE/nova/images')
+            if ret != smf_include.SMF_EXIT_OK:
+                return ret
+
+            check_call(['/usr/bin/pfexec', '/usr/bin/chown', 'nova:nova',
+                        imagecache_path])
 
     smf_include.smf_subprocess("/usr/bin/pfexec /usr/lib/nova/nova-compute")
 

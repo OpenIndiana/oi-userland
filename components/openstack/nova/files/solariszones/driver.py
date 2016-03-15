@@ -77,7 +77,7 @@ from nova.volume.cinder import _untranslate_volume_summary_view
 
 solariszones_opts = [
     cfg.StrOpt('glancecache_dirname',
-               default='$state_path/images',
+               default='/var/share/nova/images',
                help='Default path to Glance cache for Solaris Zones.'),
     cfg.StrOpt('live_migration_cipher',
                help='Cipher to use for encryption of memory traffic during '
