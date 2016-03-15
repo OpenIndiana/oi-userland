@@ -34,7 +34,7 @@ COMPONENT_NAME =	openssl-fips-140
 # OpenSSL version, but the IPS_COMPONENT_VERSION is purposely only to change if
 # the FIPS module version changes.
 COMPONENT_VERSION =	1.0.2g
-IPS_COMPONENT_VERSION = 2.0.6
+IPS_COMPONENT_VERSION = 2.0.12
 COMPONENT_PROJECT_URL=	http://www.openssl.org/
 COMPONENT_SRC_NAME =	openssl
 COMPONENT_SRC =		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
