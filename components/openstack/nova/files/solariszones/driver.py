@@ -57,6 +57,7 @@ from nova import context as nova_context
 from nova import crypto
 from nova import exception
 from nova.i18n import _, _LE, _LI
+from nova.image import API as glance_api
 from nova.image import glance
 from nova.network.neutronv2 import api as neutronv2_api
 from nova import objects
@@ -971,7 +972,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
             raise
         return image
 
-    def _validate_image(self, image, instance):
+    def _validate_image(self, context, image, instance):
         """Validate a glance image for compatibility with the instance."""
         # Skip if the image was already checked and confirmed as valid.
         if instance['image_ref'] in self._validated_archives:
@@ -1002,6 +1003,18 @@ class SolarisZonesDriver(driver.ComputeDriver):
             reason = (_("Unified Archive architecture '%s' is incompatible "
                       "with this compute host's architecture, '%s'.")
                       % (deployable_arch, compute_arch))
+
+            # For some reason we have gotten the wrong architecture image,
+            # which should have been filtered by the scheduler. One reason this
+            # could happen is because the images architecture type is
+            # incorrectly set. Check for this and report a better reason.
+            glanceapi = glance_api()
+            image_meta = glanceapi.get(context, instance['image_ref'])
+            image_properties = image_meta.get('properties')
+            if image_properties.get('architecture') is None:
+                reason = reason + (_(" The 'architecture' property is not set "
+                                     "on the Glance image."))
+
             raise exception.ImageUnacceptable(image_id=instance['image_ref'],
                                               reason=reason)
         # - single root pool only
@@ -1754,7 +1767,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
                                   attached to the instance.
         """
         image = self._fetch_image(context, instance)
-        self._validate_image(image, instance)
+        self._validate_image(context, image, instance)
 
         # create a new directory for SC profiles
         sc_dir = tempfile.mkdtemp(prefix="nova-sysconfig-",
