@@ -456,6 +456,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
     def __init__(self, virtapi):
         self.virtapi = virtapi
+        self._archive_manager = None
         self._compute_event_callback = None
         self._conductor_api = conductor.API()
         self._fc_hbas = None
@@ -464,12 +465,14 @@ class SolarisZonesDriver(driver.ComputeDriver):
         self._host_stats = {}
         self._initiator = None
         self._install_engine = None
+        self._kstat_control = None
         self._pagesize = os.sysconf('SC_PAGESIZE')
         self._rad_connection = None
+        self._rootzpool_suffix = ROOTZPOOL_RESOURCE
         self._uname = os.uname()
         self._validated_archives = list()
         self._volume_api = SolarisVolumeAPI()
-        self._rootzpool_suffix = ROOTZPOOL_RESOURCE
+        self._zone_manager = None
 
     @property
     def rad_connection(self):
@@ -484,27 +487,51 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
         return self._rad_connection
 
-    def _init_rad(self):
-        """Obtain required RAD objects for Solaris Zones, kernel statistics,
-        and Unified Archive management.
-        """
+    @property
+    def zone_manager(self):
         try:
-            self._zone_manager = self.rad_connection.get_object(
-                zonemgr.ZoneManager())
-            self._kstat_control = self.rad_connection.get_object(
-                kstat.Control())
-            self._archive_manager = self.rad_connection.get_object(
-                archivemgr.ArchiveManager())
+            if (self._zone_manager is None or
+                    self._zone_manager._conn._closed is not None):
+                self._zone_manager = self.rad_connection.get_object(
+                    zonemgr.ZoneManager())
         except Exception as ex:
             reason = _("Unable to obtain RAD object: %s") % ex
             raise exception.NovaException(reason)
+
+        return self._zone_manager
+
+    @property
+    def kstat_control(self):
+        try:
+            if (self._kstat_control is None or
+                    self._kstat_control._conn._closed is not None):
+                self._kstat_control = self.rad_connection.get_object(
+                    kstat.Control())
+        except Exception as ex:
+            reason = _("Unable to obtain RAD object: %s") % ex
+            raise exception.NovaException(reason)
+
+        return self._kstat_control
+
+    @property
+    def archive_manager(self):
+        try:
+            if (self._archive_manager is None or
+                    self._archive_manager._conn._closed is not None):
+                self._archive_manager = self.rad_connection.get_object(
+                    archivemgr.ArchiveManager())
+        except Exception as ex:
+            reason = _("Unable to obtain RAD object: %s") % ex
+            raise exception.NovaException(reason)
+
+        return self._archive_manager
 
     def init_host(self, host):
         """Initialize anything that is necessary for the driver to function,
         including catching up with currently running VM's on the given host.
         """
         # TODO(Vek): Need to pass context in for access to auth_token
-        self._init_rad()
+        pass
 
     def cleanup_host(self, host):
         """Clean up anything that is necessary for the driver gracefully stop,
@@ -677,7 +704,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
             'name':     name
         }
         try:
-            self._kstat_control.update()
+            self.kstat_control.update()
             kstat_object = self.rad_connection.get_object(
                 kstat.Kstat(), rad.client.ADRGlobPattern(pattern))
         except Exception as reason:
@@ -979,7 +1006,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
             return
 
         try:
-            ua = self._archive_manager.getArchive(image)
+            ua = self.archive_manager.getArchive(image)
         except Exception as ex:
             if isinstance(ex, rad.client.ObjectError):
                 reason = ex.get_payload().info
@@ -1473,7 +1500,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
         LOG.debug(_("Creating zone configuration for '%s' (%s)")
                   % (name, instance['display_name']))
         try:
-            self._zone_manager.create(name, None, template)
+            self.zone_manager.create(name, None, template)
             self._set_global_properties(name, extra_specs, brand)
             if connection_info is not None:
                 self._set_boot_device(name, connection_info, brand)
@@ -1735,7 +1762,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
             raise exception.InstanceNotFound(instance_id=name)
 
         try:
-            self._zone_manager.delete(name)
+            self.zone_manager.delete(name)
         except Exception as ex:
             reason = zonemgr_strerror(ex)
             LOG.error(_("Unable to delete configuration for instance '%s' via "
