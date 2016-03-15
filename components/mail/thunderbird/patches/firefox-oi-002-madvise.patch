@@ -1,0 +1,41 @@
+--- mozilla/mfbt/Poison.cpp.1	2016-03-13 12:18:43.745092044 +0300
++++ mozilla/mfbt/Poison.cpp	2016-03-13 12:22:58.553898780 +0300
+@@ -25,7 +25,6 @@
+ #  endif
+ # endif
+ #endif
+-extern "C" int madvise(caddr_t, size_t, int);
+ 
+ extern "C" {
+ uintptr_t gMozillaPoisonValue;
+@@ -130,7 +129,7 @@
+ static bool
+ ProbeRegion(uintptr_t aRegion, uintptr_t aSize)
+ {
+-  if (madvise(reinterpret_cast<char*>(aRegion), aSize, MADV_NORMAL)) {
++  if (posix_madvise(reinterpret_cast<void*>(aRegion), aSize, MADV_NORMAL)) {
+     return true;
+   } else {
+     return false;
+--- mozilla/js/src/gc/Memory.cpp.~1~	2016-02-12 00:29:45.000000000 +0300
++++ mozilla/js/src/gc/Memory.cpp	2016-03-13 12:17:27.438207999 +0300
+@@ -604,7 +526,7 @@
+         return false;
+ 
+     MOZ_ASSERT(OffsetFromAligned(p, pageSize) == 0);
+-    int result = madvise((caddr_t)p, size, MADV_DONTNEED);
++    int result = posix_madvise((caddr_t)p, size, MADV_DONTNEED);
+     return result != -1;
+ }
+ 
+--- mozilla/modules/libjar/nsZipArchive.cpp.1	2016-03-13 12:27:19.426442554 +0300
++++ mozilla/modules/libjar/nsZipArchive.cpp	2016-03-13 12:27:50.681647902 +0300
+@@ -613,7 +613,7 @@
+     uint32_t readaheadLength = xtolong(startp);
+     if (readaheadLength) {
+ #if defined(XP_UNIX)
+-      madvise((caddr_t)const_cast<uint8_t*>(startp), readaheadLength, MADV_WILLNEED);
++      posix_madvise((caddr_t)const_cast<uint8_t*>(startp), readaheadLength, MADV_WILLNEED);
+ #elif defined(XP_WIN)
+       if (aFd) {
+         HANDLE hFile = (HANDLE) PR_FileDesc2NativeHandle(aFd);
