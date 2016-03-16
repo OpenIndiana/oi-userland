@@ -1,0 +1,18 @@
+The /usr/lib/64/R/include/R_ext/Print.h makes the assumption that
+__SUNPRO_CC == stlport which is incorrect in the way we deliver R in
+the version that's in Solaris.
+
+This problem has been reported upstream at:
+https://bugs.r-project.org/bugzilla/show_bug.cgi?id=16767
+
+--- R-3.2.3/src/include/R_ext/Print.h.orig	2016-03-16 06:31:42.210416076 -0700
++++ R-3.2.3/src/include/R_ext/Print.h	2016-03-16 06:52:39.625133958 -0700
+@@ -27,7 +27,7 @@
+    defined in namespace std. */
+ # ifdef R_USE_C99_IN_CXX
+ #  include <cstdarg>
+-#  ifdef __SUNPRO_CC
++#  if defined(__SUNPRO_CC) && defined(_STLP_VENDOR_CSTD)
+ using _STLP_VENDOR_CSTD::va_list;
+ #  endif
+ # endif
