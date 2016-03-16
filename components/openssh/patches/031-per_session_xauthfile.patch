@@ -7,8 +7,9 @@
 # In the future, if this fix is accepted by the upsteam in a later release, we
 # will remove this patch when we upgrade to that release.
 #
---- orig/session.c	Thu Jul 30 10:35:15 2015
-+++ new/session.c	Tue Aug  4 11:29:22 2015
+diff -pur old/session.c new/session.c
+--- old/session.c
++++ new/session.c
 @@ -62,6 +62,10 @@
  #include <unistd.h>
  #include <limits.h>
@@ -56,7 +57,7 @@
  	if (s->auth_proto != NULL || s->auth_data != NULL) {
  		error("session_x11_req: session %d: "
  		    "x11 forwarding already active", s->self);
-@@ -2188,6 +2207,48 @@
+@@ -2188,6 +2207,50 @@
  		s->auth_proto = NULL;
  		s->auth_data = NULL;
  	}
@@ -69,6 +70,7 @@
 +	 * means that we won't set XAUTHORITY variable in child's environment
 +	 * and xauth(1) will use the default location for the authority file.
 +	 */
++	temporarily_use_uid(s->pw);
 +	if (mkdtemp(xauthdir) != NULL) {
 +		s->auth_file = xmalloc(MAXPATHLEN);
 +		snprintf(s->auth_file, MAXPATHLEN, "%s/xauthfile",
@@ -101,11 +103,12 @@
 +		    "authority file: %.100s; will use the default xauth file",
 +		    strerror(errno));
 +	}
++	restore_uid();
 +#endif
  	return success;
  }
  
-@@ -2378,6 +2439,50 @@
+@@ -2378,6 +2441,50 @@
  	PRIVSEP(session_pty_cleanup2(s));
  }
  
@@ -156,7 +159,7 @@
  static char *
  sig2name(int sig)
  {
-@@ -2512,6 +2617,9 @@
+@@ -2512,6 +2619,9 @@
  	free(s->auth_display);
  	free(s->auth_data);
  	free(s->auth_proto);
@@ -166,7 +169,7 @@
  	free(s->subsys);
  	if (s->env != NULL) {
  		for (i = 0; i < s->num_env; i++) {
-@@ -2763,6 +2871,10 @@
+@@ -2763,6 +2873,10 @@
  	/* remove agent socket */
  	auth_sock_cleanup_proc(authctxt->pw);
  
@@ -177,8 +180,9 @@
  	/*
  	 * Cleanup ptys/utmp only if privsep is disabled,
  	 * or if running in monitor.
---- orig/session.h	Thu Jul 30 10:35:12 2015
-+++ new/session.h	Tue Aug  4 11:30:04 2015
+diff -pur old/session.h new/session.h
+--- old/session.h
++++ new/session.h
 @@ -49,6 +49,9 @@
  	char	*auth_display;
  	char	*auth_proto;
