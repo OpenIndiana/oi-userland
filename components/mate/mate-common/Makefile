@@ -10,6 +10,7 @@
 
 #
 # Copyright 2015 Alexander Pyhalov
+# Copyright 2016 Till Wegmueller
 #
 
 include ../../../make-rules/shared-macros.mk
