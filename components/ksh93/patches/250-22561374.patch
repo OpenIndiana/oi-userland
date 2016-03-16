@@ -1,0 +1,15 @@
+This fix has been developed inhouse. Patch has been submitted upstream but 
+has not been accepted yet. The details can be found at
+https://github.com/att/ast/issues/7
+--- INIT.2012-08-01.old/src/cmd/ksh93/sh/subshell.c	2016-03-01 04:01:06.513890578 -0800
++++ INIT.2012-08-01/src/cmd/ksh93/shsubshell.c	2016-03-01 04:02:43.617872391 -0800
+@@ -260,9 +260,6 @@
+ 	shp = sp->shp;
+ 	dp = shp->var_tree;
+ 
+-	/* don't bother to save if in newer scope */
+-	if(sp->var!=shp->var_tree && sp->var!=shp->var_base && shp->last_root==shp->var_tree)
+-		return(np);
+ 	if((ap=nv_arrayptr(np)) && (mp=nv_opensub(np)))
+ 	{
+ 		shp->last_root = ap->table;

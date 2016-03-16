@@ -1,0 +1,48 @@
+This fix has been developed inhouse. Patch has been submitted upstream but 
+has not been accepted yet. The details can be found at
+https://github.com/att/ast/issues/6
+--- INIT.2012-08-01.old/src/cmd/ksh93/edit/emacs.c	2016-01-18 03:52:58.380801240 -0800
++++ INIT.2012-08-01/src/cmd/ksh93/edit/emacs.c	2016-02-05 01:39:08.350312914 -0800
+@@ -90,6 +90,7 @@
+     static int	print(int);
+     static int	_isword(int);
+ #   define  isword(c)	_isword(out[c])
++#   define digit(c)	((c&~STRIP)==0 && isdigit(c))
+ 
+ #else
+ #   define gencpy(a,b)	strcpy((char*)(a),(char*)(b))
+@@ -97,6 +98,7 @@
+ #   define genlen(str)	strlen(str)
+ #   define print(c)	isprint(c)
+ #   define isword(c)	(isalnum(out[c]) || (out[c]=='_'))
++#   define digit(c)	isdigit(c)
+ #endif /*SHOPT_MULTIBYTE */
+ 
+ typedef struct _emacs_
+@@ -317,7 +319,7 @@
+ 			count = 1;
+ 		adjust = -1;
+ 		i = cur;
+-		if(c!='\t' && c!=ESC && !isdigit(c))
++		if(c!='\t' && c!=ESC && !digit(c))
+ 			ep->ed->e_tabcount = 0;
+ 		switch(c)
+ 		{
+@@ -775,7 +777,7 @@
+ 	int digit,ch;
+ 	digit = 0;
+ 	value = 0;
+-	while ((i=ed_getchar(ep->ed,0)),isdigit(i))
++	while ((i=ed_getchar(ep->ed,0)),digit(i))
+ 	{
+ 		value *= 10;
+ 		value += (i - '0');
+@@ -1013,7 +1015,7 @@
+ 				{
+ 					i=ed_getchar(ep->ed,0);
+ 					ed_ungetchar(ep->ed,i);
+-					if(isdigit(i))
++					if(digit(i))
+ 						ed_ungetchar(ep->ed,ESC);
+ 				}
+ 			}
