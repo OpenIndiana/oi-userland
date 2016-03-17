@@ -22,7 +22,7 @@
 # Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tree
 COMPONENT_VERSION=	1.7.0
@@ -36,9 +36,9 @@ COMPONENT_BUGDB=	file/tree
 
 TPNO=			27186
 
-include ../../make-rules/prep.mk
-include ../../make-rules/justmake.mk
-include ../../make-rules/ips.mk
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/justmake.mk
+include $(WS_TOP)/make-rules/ips.mk
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
@@ -61,4 +61,4 @@ test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_TOP)/make-rules/depend.mk
