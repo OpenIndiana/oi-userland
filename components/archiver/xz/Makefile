@@ -18,36 +18,48 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xz
-COMPONENT_VERSION=	5.2.1
+COMPONENT_VERSION=	5.2.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://tukaani.org/xz/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:b918b6648076e74f8d7ae19db5ee663df800049e187259faf5eb997a7b974681
+    sha256:73df4d5d34f0468bd57d09f2d8af363e95ed6cc3a4a86129d2f2c366259902a2   
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/xz
-
-COMPONENT_AUTOGEN_MANIFEST=	yes
 COMPONENT_FMRI=		compress/xz
 COMPONENT_SUMMARY=	'XZ Utils - loss-less file compression application and library.'
 COMPONENT_LICENSE=	LGPLv2.1
 COMPONENT_LICENSE_FILE=	COPYING.LGPLv2.1
+COMPONENT_CLASSIFICATION= Applications/System Utilities
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-ASLR_MODE = $(ASLR_ENABLE)
+COMPONENT_TEST_DIR =            $(@D)/tests
+
+# Master test results are the same for 32-bit and 64-bit, so override
+# here, rather than create multiple identical master files.
+COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
+
+# The additional xz specific set of transforms to be applied to the
+# test results to try to normalize them.
+COMPONENT_TEST_TRANSFORMS += \
+        '-e "s|^.*$(CC).*$$|XXX_CC_XXX|g" ' \
+        '-e "s|^.*source=.*libtool=no.*$$|XXX_CC_XXX|g" ' \
+        '-e "s|^.*DEPDIR=.deps.*$$|XXX_CC_XXX|g" ' \
+        '-e "/^XXX_CC_XXX$$/d" ' \
+	'-e "/^make/d" ' \
+	'-e "/^mv -f/d" '
 
 # common targets
 build:		$(BUILD_32_and_64)
 
-include ../../make-rules/shared-targets.mk
+include $(WS_MAKE_RULES)/shared-targets.mk
 
 install:	$(INSTALL_32_and_64)
 
@@ -55,5 +67,5 @@ test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk
 
