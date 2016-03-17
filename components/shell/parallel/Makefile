@@ -23,7 +23,7 @@
 # Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		parallel
 COMPONENT_VERSION=	20160222
@@ -42,9 +42,9 @@ COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_LICENSE=	GPLv3
 COMPONENT_CLASSIFICATION=	System/Shells
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/configure.mk
+include $(WS_TOP)/make-rules/ips.mk
 
 # Set PATH to find /usr/perl5/bin/pod2man, so that the man pages can be
 # automatically generated
@@ -57,4 +57,4 @@ install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
-include ../../make-rules/depend.mk
+include $(WS_TOP)/make-rules/depend.mk
