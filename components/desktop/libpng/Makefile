@@ -85,15 +85,6 @@ INSTALL_64 += $(BUILD_PNG10_DIR_64)/.installed
 $(BUILD_DIR_32)/.installed:     $(BUILD_PNG10_DIR_32)/.installed
 $(BUILD_DIR_64)/.installed:     $(BUILD_PNG10_DIR_64)/.installed
 
-# we need to prep this version too (this should be handled in prep.mk)
-$(SOURCE_DIR_2)/.unpacked:        download $(MAKEFILE_PREREQ) $(PATCHES)
-	$(RM) -r $(SOURCE_DIR_2)
-	$(UNPACK) $(UNPACK_ARGS) $(COMPONENT_ARCHIVE_2)
-	$(TOUCH) $@
-
-$(SOURCE_DIR_2)/.prep:        $(SOURCE_DIR_2)/.unpacked
-	$(TOUCH) $@
-
 # ------------------------ libpng12 ----------------------------
 
 # Macros to configure, build, and install the libpng12 files.
@@ -114,21 +105,7 @@ INSTALL_64 += $(BUILD_PNG12_DIR_64)/.installed
 $(BUILD_DIR_32)/.installed:     $(BUILD_PNG12_DIR_32)/.installed
 $(BUILD_DIR_64)/.installed:     $(BUILD_PNG12_DIR_64)/.installed
 
-# we need to prep this version too (this should be handled in prep.mk)
-$(SOURCE_DIR_1)/.unpacked:        download $(MAKEFILE_PREREQ) $(PATCHES)
-	$(RM) -r $(SOURCE_DIR_1)
-	$(UNPACK) $(UNPACK_ARGS) $(COMPONENT_ARCHIVE_1)
-	$(TOUCH) $@
-
-# prep the two older versions first
-$(SOURCE_DIR)/.prep:    $(SOURCE_DIR_1)/.prep $(SOURCE_DIR_2)/.prep
-
-$(SOURCE_DIR_1)/.prep:        $(SOURCE_DIR_1)/.unpacked
-	$(TOUCH) $@
-
 # -----------------------------------------------------------------
-
-prep::		$(SOURCE_DIR_1)/.prep $(SOURCE_DIR_2)/.prep
 
 CLEAN_PATHS +=	$(SOURCE_DIR_1)
 CLEAN_PATHS +=	$(SOURCE_DIR_2)
