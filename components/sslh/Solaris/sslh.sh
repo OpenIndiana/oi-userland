@@ -1,37 +1,23 @@
 #!/sbin/sh
 #
-# CDDL HEADER START
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"). You may
+# only use this file in accordance with the terms of the CDDL.
 #
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright (c) 2009, 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2016 John Smith. All rights reserved.
+#
 #
 
 # Standard prolog
 #
 . /lib/svc/share/smf_include.sh
-
-if [ -z $SMF_FMRI ]; then
-        echo "SMF framework variables are not initialized."
-        exit $SMF_EXIT_ERR
-fi
 
 #
 # Is sslh configured?
@@ -42,13 +28,42 @@ if [ ! -f /etc/sslh.cfg ]; then
 	exit $SMF_EXIT_ERR_CONFIG
 fi
 
-#
-# Build the command line flags
-#
-shift $#
-set -- -P /var/run/sslh.pid
+PIDFILE=$(grep -i pid /etc/sslh.cfg | cut -d'"' -f2)
 
-/usr/sbin/sslh -F /etc/sslh.cfg "$@"
+_start() {
+   if [ -f $PIDFILE ]; then
+      echo "Error: Already running or pid file still present."
+      exit $SMF_EXIT_ERR_FATAL
+   fi
+   /usr/sbin/sslh -F/etc/sslh.cfg
+}
 
+_stop() {
+   if [ -f $PIDFILE ]; then
+      SSLHPID=$(cat $PIDFILE)
+      echo "PID: $SSLHPID"
+      pkill -TERM -P $SSLHPID
+      kill -TERM "$SSLHPID"
+      [ $? = 0 ] && rm -f "$PIDFILE"
+   else
+      exit $SMF_EXIT_ERR_FATAL
+   fi
+}
 
+case "$1" in
+'start')
+   _start
+   ;;
+'stop')
+   _stop
+   ;;
+'refresh')
+   _stop
+   _start
+   ;;
+*)
+   echo $"Usage: $0 {start|stop|refresh}"
+   exit 1
+   ;;
+esac
 exit $SMF_EXIT_OK
