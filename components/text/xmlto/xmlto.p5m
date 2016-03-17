@@ -22,7 +22,15 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license xmlto.license license="GPLv2"
 
-depend fmri=shell/gnu-getopt type=require 
+# xmlto script dependencies that aren't automatically found:
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/lynx
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/xmllint
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/xsltproc
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/gnu/bin/find
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/gnu/bin/getopt
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/gnu/bin/grep
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/gnu/bin/tail
+
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 <transform file path=usr/share/xmlto/format/docbook/man -> delete facet.doc.man all>
