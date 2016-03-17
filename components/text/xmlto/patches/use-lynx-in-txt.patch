@@ -1,0 +1,33 @@
+Adjusted two files in the xmlto package to always use lynx to convert to
+text (rather than w3m).
+
+This patch will not be sent upstream.
+
+--- xmlto-0.0.26/format/docbook/txt.orig	2015-09-22 07:24:15.113641794 -0700
++++ xmlto-0.0.26/format/docbook/txt	2015-09-22 07:24:47.569354480 -0700
+@@ -1,10 +1,6 @@
+ case "$USE_BACKEND" in
+ DEFAULT|DBLATEX)
+-	if [ -n "`type -t $W3M_PATH`" ]
+-	then
+-	  CONVERT="$W3M_PATH"
+-	  ARGS="-T text/html -dump"
+-	elif [ -n "`type -t $LYNX_PATH`" ]
++	if [ -n "`type -t $LYNX_PATH`" ]
+ 	then
+ 	  CONVERT="$LYNX_PATH"
+ 	  ARGS="-force_html -dump -nolist -width=72"
+--- xmlto-0.0.26/format/xhtml1/txt.orig	2015-09-22 07:29:23.866130037 -0700
++++ xmlto-0.0.26/format/xhtml1/txt	2015-09-22 07:29:42.989011718 -0700
+@@ -1,10 +1,6 @@
+ case "$USE_BACKEND" in
+ DEFAULT|DBLATEX)
+-  if [ -n "`type -t $W3M_PATH`" ]
+-  then
+-    CONVERT="$W3M_PATH"
+-    ARGS="-T text/html -dump"
+-  elif [ -n "`type -t $LYNX_PATH`" ]
++  if [ -n "`type -t $LYNX_PATH`" ]
+   then
+     CONVERT="$LYNX_PATH"
+     ARGS="-force_html -dump -nolist -width=72"
