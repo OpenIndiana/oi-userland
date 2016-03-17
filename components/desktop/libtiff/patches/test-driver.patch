@@ -1,0 +1,23 @@
+internal patch; not suitable for upstream
+
+--- tiff-4.0.4/config/test-driver~	2012-08-19 09:57:23.000000000 -0700
++++ tiff-4.0.4/config/test-driver	2015-07-13 00:47:17.600616189 -0700
+@@ -1,7 +1,7 @@
+ #! /bin/sh
+ # test-driver - basic driver script for the 'parallel-tests' mode.
+ 
+-scriptversion=2012-06-27.10; # UTC
++scriptversion=2015-07-13.07; # UTC
+ 
+ # Copyright (C) 2011-2012 Free Software Foundation, Inc.
+ #
+@@ -29,7 +29,8 @@
+ 
+ # Make unconditional expansion of undefined variables an error.  This
+ # helps a lot in preventing typo-related bugs.
+-set -u
++# ... but breaks libtool's wrapper scripts.
++set +u
+ 
+ usage_error ()
+ {

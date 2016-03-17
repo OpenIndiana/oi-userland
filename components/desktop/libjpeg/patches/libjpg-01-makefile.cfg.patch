@@ -1,0 +1,22 @@
+Internal patch, not suitable for upstream
+
+--- jpeg-6b/makefile.cfg.orig	2015-07-14 09:52:32.223048157 -0700
++++ jpeg-6b/makefile.cfg	2015-07-14 09:53:18.063812769 -0700
+@@ -17,7 +17,7 @@
+ binprefix =
+ manprefix =
+ manext = 1
+-mandir = $(prefix)/man/man$(manext)
++mandir = $(prefix)/share/man/man$(manext)
+ 
+ # The name of your C compiler:
+ CC= @CC@
+@@ -168,7 +168,7 @@
+ 
+ # with libtool:
+ libjpeg.la: @A2K_DEPS@ $(LIBOBJECTS)
+-	$(LIBTOOL) --mode=link $(CC) -o libjpeg.la $(LIBOBJECTS) \
++	$(LIBTOOL) --mode=link $(CC) $(LDFLAGS) -o libjpeg.la $(LIBOBJECTS) \
+ 		-rpath $(libdir) -version-info $(JPEG_LIB_VERSION)
+ 
+ # sample programs:

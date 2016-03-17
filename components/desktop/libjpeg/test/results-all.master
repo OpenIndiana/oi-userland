@@ -1,0 +1,15 @@
+make[1]: Entering directory '$(@D)'
+rm -f testout*
+./djpeg -dct int -ppm -outfile testout.ppm  $(SOURCE_DIR)/testorig.jpg
+./djpeg -dct int -bmp -colors 256 -outfile testout.bmp  $(SOURCE_DIR)/testorig.jpg
+./cjpeg -dct int -outfile testout.jpg  $(SOURCE_DIR)/testimg.ppm
+./djpeg -dct int -ppm -outfile testoutp.ppm $(SOURCE_DIR)/testprog.jpg
+./cjpeg -dct int -progressive -opt -outfile testoutp.jpg $(SOURCE_DIR)/testimg.ppm
+./jpegtran -outfile testoutt.jpg $(SOURCE_DIR)/testprog.jpg
+cmp $(SOURCE_DIR)/testimg.ppm testout.ppm
+cmp $(SOURCE_DIR)/testimg.bmp testout.bmp
+cmp $(SOURCE_DIR)/testimg.jpg testout.jpg
+cmp $(SOURCE_DIR)/testimg.ppm testoutp.ppm
+cmp $(SOURCE_DIR)/testimgp.jpg testoutp.jpg
+cmp $(SOURCE_DIR)/testorig.jpg testoutt.jpg
+make[1]: Leaving directory '$(@D)'
