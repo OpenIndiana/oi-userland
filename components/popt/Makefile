@@ -20,20 +20,19 @@
 #
 
 #
-# Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		popt
-COMPONENT_VERSION=	1.7
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	1.16
 COMPONENT_PROJECT_URL=	http://freecode.com/projects/popt/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:4e75cb28793f0d44134f71fae53057d5f250805e6268fbd9c9780654b73b0dc1
-COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/cross-stuff/files/cross-stuff/1.0/$(COMPONENT_ARCHIVE)/download
+    sha256:e728ed296fe9f069a0e005003c3d6b2dde3d9cad453422a10d6558616d304cc8
+COMPONENT_ARCHIVE_URL=	https://launchpad.net/$(COMPONENT_NAME)/head/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/popt
 
 include ../../make-rules/prep.mk
@@ -42,11 +41,7 @@ include ../../make-rules/ips.mk
 
 COMPONENT_PREP_ACTION = \
         (cd $(@D) && \
-	$(TOUCH) config.rpath && \
-	libtoolize -f && \
-	aclocal -I . && \
-	automake -a -c -f && \
-	autoconf )
+	$(TOUCH) config.rpath ) ;
 
 # Needed to get "gmake test" to work.
 COMPONENT_PRE_CONFIGURE_ACTION = \
@@ -59,11 +54,13 @@ CONFIGURE_OPTIONS +=	--disable-nls
 
 PKG_PROTO_DIRS +=	$(COMPONENT_DIR)/files
 
-# common targets
 build:          $(BUILD_32_and_64)
 
 install:        $(INSTALL_32_and_64)
 
+# api-sanity-autotest.pl is part of the API Sanity Checker
+# http://ispras.linuxbase.org/index.php/API_Sanity_Autotest
+# (which we don't have in Solaris), so expect that test to fail.
 test:           $(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
