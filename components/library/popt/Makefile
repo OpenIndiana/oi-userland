@@ -23,7 +23,7 @@
 # Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		popt
 COMPONENT_VERSION=	1.16
@@ -35,9 +35,9 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL=	https://launchpad.net/$(COMPONENT_NAME)/head/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/popt
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/configure.mk
+include $(WS_TOP)/make-rules/ips.mk
 
 COMPONENT_PREP_ACTION = \
         (cd $(@D) && \
@@ -65,4 +65,4 @@ test:           $(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_TOP)/make-rules/depend.mk
