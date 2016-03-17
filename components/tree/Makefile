@@ -19,22 +19,22 @@
 # CDDL HEADER END
 
 #
-# Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tree
-COMPONENT_VERSION=	1.5.3
+COMPONENT_VERSION=	1.7.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:1128755ea9455615188212bb04319cf103114fb78f687aa887ce29ef184ffb8d
+    sha256:6957c20e82561ac4231638996e74f4cfa4e6faabc5a2f511f0b4e3940e8f7b12
 COMPONENT_PROJECT_URL=	http://mama.indstate.edu/users/ice/tree/
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)src/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	file/tree
 
-TPNO=			9095
+TPNO=			27186
 
 include ../../make-rules/prep.mk
 include ../../make-rules/justmake.mk
@@ -52,8 +52,6 @@ COMPONENT_BUILD_ARGS += CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ARGS += LDFLAGS="$(LDFLAGS)"
 COMPONENT_INSTALL_ARGS += BINDIR=$(PROTOUSRBINDIR)
 COMPONENT_INSTALL_ARGS += MANDIR=$(PROTOUSRSHAREMAN1DIR)
-
-# common targets
 
 build:		$(BUILD_32)
 
