@@ -14,14 +14,14 @@
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		
+COMPONENT_NAME=		mate-settings-daemon
 COMPONENT_VERSION=	1.12.1
 COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
-COMPONENT_SUMMARY=	
+COMPONENT_SUMMARY=	fork of gnome-settings-deamon
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:da82291956295bc728537c35a000ded7a4a8924027d8dda864c70f5d53357542
+    sha256:caf990a2c202467d563c07f41efceec289e7740ef52d98bcd8e4c1fad0814c02
 COMPONENT_ARCHIVE_URL=	https://github.com/mate-desktop/$(COMPONENT_NAME)/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_LICENSE= GPLv2, LGPLv2, FDLv1.1
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
@@ -48,9 +48,9 @@ COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 # common targets
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_32)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
