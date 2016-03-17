@@ -1,0 +1,1582 @@
+# This patch comes from Oracle. It turns the component into
+# a well-behaving SMF service. It adds code manipulating service
+# properties, service instances, and also provides security in
+# cooperation with the service manifest (especially, extra
+# privileges are dropped when not needed).
+#
+# This patch is not going to upstream, the changes are Solaris-specific.
+
+diff -Naur ftp-proxy-OPENBSD_5_5-OPENBSD_5_5.pre-smf/Makefile ftp-proxy-OPENBSD_5_5-OPENBSD_5_5/Makefile
+--- ftp-proxy-OPENBSD_5_5-OPENBSD_5_5.pre-smf/Makefile	2016-02-10 04:21:21.337202150 -0800
++++ ftp-proxy-OPENBSD_5_5-OPENBSD_5_5/Makefile	2016-02-10 04:59:25.999134460 -0800
+@@ -3,7 +3,7 @@
+ CFLAGS+= -m64 -errwarn
+ 
+ PROG=	ftp-proxy
+-SRCS=	ftp-proxy.c filter.c
++SRCS=	ftp-proxy.c filter.c smf-config.c
+ OBJS=$(SRCS:.c=.o)
+ MAN=	ftp-proxy.8
+ 
+diff -Naur ftp-proxy-OPENBSD_5_5-OPENBSD_5_5.pre-smf/filter.c ftp-proxy-OPENBSD_5_5-OPENBSD_5_5/filter.c
+--- ftp-proxy-OPENBSD_5_5-OPENBSD_5_5.pre-smf/filter.c	2016-02-10 04:24:03.599069704 -0800
++++ ftp-proxy-OPENBSD_5_5-OPENBSD_5_5/filter.c	2016-02-02 03:05:13.156044052 -0800
+@@ -53,6 +53,10 @@
+ static int dev, rule_log;
+ static char *qname, *tagname;
+ 
++#ifdef _SOLARIS_
++char *FTP_PROXY_ANCHOR;
++#endif /* _SOLARIS_ */
++
+ int
+ add_addr(struct sockaddr *addr, struct pf_pool *pfp)
+ {
+diff -Naur ftp-proxy-OPENBSD_5_5-OPENBSD_5_5.pre-smf/filter.h ftp-proxy-OPENBSD_5_5-OPENBSD_5_5/filter.h
+--- ftp-proxy-OPENBSD_5_5-OPENBSD_5_5.pre-smf/filter.h	2016-02-10 04:25:34.896131457 -0800
++++ ftp-proxy-OPENBSD_5_5-OPENBSD_5_5/filter.h	2016-02-08 23:45:38.805421033 -0800
+@@ -16,7 +16,11 @@
+  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+  */
+ 
++#ifdef _SOLARIS_
++extern char* FTP_PROXY_ANCHOR;
++#else /* !_SOLARIS_ */
+ #define	FTP_PROXY_ANCHOR "ftp-proxy"
++#endif /* _SOLARIS_ */
+ 
+ int add_nat(u_int32_t, struct sockaddr *, int, struct sockaddr *, u_int16_t,
+     struct sockaddr *, u_int16_t, u_int16_t);
+diff -Naur ftp-proxy-OPENBSD_5_5-OPENBSD_5_5.pre-smf/ftp-proxy.8 ftp-proxy-OPENBSD_5_5-OPENBSD_5_5/ftp-proxy.8
+--- ftp-proxy-OPENBSD_5_5-OPENBSD_5_5.pre-smf/ftp-proxy.8	2016-02-24 06:31:17.792565815 -0800
++++ ftp-proxy-OPENBSD_5_5-OPENBSD_5_5/ftp-proxy.8	2016-03-14 08:05:39.671773194 -0700
+@@ -23,7 +23,7 @@
+ .Sh SYNOPSIS
+ .Nm
+ .Bk -words
+-.Op Fl 6Adrv
++.Op Fl A Cm on | off
+ .Op Fl a Ar address
+ .Op Fl b Ar address
+ .Op Fl D Ar level
+@@ -31,8 +31,10 @@
+ .Op Fl P Ar port
+ .Op Fl p Ar port
+ .Op Fl R Ar address
++.Op Fl r Cm on | off
+ .Op Fl T Ar tag
+ .Op Fl t Ar timeout
++.Op Fl v Cm all | on | off
+ .Ek
+ .Sh DESCRIPTION
+ .Nm
+@@ -83,6 +85,9 @@
+ .It Fl A
+ Only permit anonymous FTP connections.
+ Either user "ftp" or user "anonymous" is allowed.
++Solaris Note: you need to specify
++.Cm on | off
++to enable/disable anonymous-only mode.
+ .It Fl a Ar address
+ The proxy will use this as the source address for the control
+ connection to a server.
+@@ -93,9 +98,6 @@
+ Debug level, ranging from 0 to 7.
+ Higher is more verbose.
+ The default is 5.
+-.It Fl d
+-Do not daemonize.
+-The process will stay in the foreground, logging to standard error.
+ .It Fl m Ar maxsessions
+ Maximum number of concurrent FTP sessions.
+ When the proxy reaches this limit, new connections are denied.
+@@ -118,6 +120,9 @@
+ .It Fl r
+ Rewrite sourceport to 20 in active mode to suit ancient clients that insist
+ on this RFC property.
++Solaris Note: you need to specify
++.Cm on | off
++to enable/disable RFC compliant mode.
+ .It Fl T Ar tag
+ The filter rules will add tag
+ .Ar tag
+@@ -147,6 +152,20 @@
+ .Sq log all
+ flag.
+ The pf rules do not log by default.
++Solaris Note: the option is tri-state.
++You need to specify one of the values below:
++.Bl -tag -width "all" -offset 3n -compact
++.It off
++nothing is logged
++.It on
++log only packets, which create state for data session (equivalent to
++.Fl v
++on OpenBSD)
++.It all
++log all packets, which belong to data session (equivalent to
++.Fl vv
++on OpenBSD)
++.El
+ .El
+ .Sh CONFIGURATION
+ To make use of the proxy,
+@@ -156,10 +175,18 @@
+ last rule explicitly allowing FTP sessions from the proxy may not be
+ necessary.
+ .Bd -literal -offset 2n
+-anchor "ftp-proxy/*"
++anchor "_auto/network:firewall:ftp-proxy:YOUR_INSTANCE_NAME/*"
+ pass in quick inet proto tcp to port ftp rdr-to 127.0.0.1 port 8021
+ pass out inet proto tcp from (self) to any port ftp
+ .Ed
++.Sh SOLARIS
++.Nm
++must be started as an
++.Xr smf 5
++service:
++.Bd -literal -offset indent
++svc:/network/firewall/ftp-proxy
++.Ed
+ .Pp
+ To run
+ .Nm
+@@ -168,8 +195,157 @@
+ svc:/network/socket-filter:pf_divert
+ .Ed
+ instance must be online in the global zone.
++.Pp
++The options described in DESCRIPTION section are set using smf properties.
++Properties processed by
++.Nm
++enable
++.Xr smf_method 5
++in order to configure the
++.Nm
++daemon are listed below.
++.Bl -tag -width "ftp-proxy/always-use-ftp-data-port" -offset 3n -compact
++.It ftp-proxy/anonymous-only
++If set to
++.Cm on
++the proxy is started with the
++.Fl A
++option, which allows anonymous FTP logins only.
++The value
++.Cm off
++is used as default.
++.It ftp-proxy/proxy-NAT-address
++This property sets the
++.Fl a
++option, the source IP address the proxy uses
++to connect to a server.
++.It ftp-proxy/proxy-listen-address
++This property sets the
++.Fl b
++option, which is the address, where the proxy accepts a connection from
++a client.
++.It ftp-proxy/proxy-listen-port
++This property sets the
++.Fl p
++option which is the port number, where the proxy accepts
++a connection from a client.
++.It ftp-proxy/debug-level
++This property sets the
++.Fl D
++option, which is a debug level (0-7).
++If not set, the default value 5 is used.
++.It ftp-proxy/max-sessions
++This property sets the
++.Fl m
++option, which is the maximum of concurrent FTP sessions served by
++the proxy.
++The valid range is from 1 to 500.
++If not specified the value 100 is used by default.
++.It ftp-proxy/reverse-mode-address
++This property sets the
++.Fl R
++option.
++It is the fixed server address, which is typically used to access
++a FTP server behind NAT.
++.It ftp-proxy/reverse-mode-port
++This property sets the
++.Fl P
++option, which is the port number used by a FTP server behind NAT.
++The default value is 21.
++.It ftp-proxy/always-use-ftp-data-port
++This property sets the
++.Fl r
++option, the value 
++.Cm off
++is used as default.
++If set to
++.Cm on
++the proxy will always use port 20 for active data connections.
++.It ftp-proxy/tag
++This property sets the
++.Fl T
++option, which tags data connection packets with the desired tag.
++.It ftp-proxy/timeout
++This property sets the
++.Fl t
++option, which specifies the number of seconds a FTP command session
++may remain idle.
++The maximum value is 86400 seconds (1 day).
++.It ftp-proxy/log
++This property sets the
++.Fl v
++option.
++There are three possible values.
++For
++.Cm off ,
++no log action will be added to FTP data connection rules created
++by the proxy.
++The value
++.Cm on
++adds the log action.
++Specifying the value
++.Cm all
++adds the
++.Sq log all
++action.
++.El
++.Pp
++.Nm
++on Solaris comes with two extra options, which make service configuration easier.
++.Bl -tag -offset 3n -compact
++.It Fl c Ar smf-instance
++Shows/changes settings kept in
++.Xr smf 5
++repository for the specified
++.Ar smf-instance
++of the
++.Nm
++service.
++.It Fl C Ar smf-instance
++Creates a new instance of the
++.Nm
++service and uses
++.Ar smf-instance
++for its name.
++.El
++.Pp
++To tell proxy service to bind the listen socket to 192.168.1.2 address,
++one has to use the command below:
++.Bd -literal -offset indent
++ftp-proxy -c default -b 192.168.1.2
++.Ed
++.Pp 
++To create anonymous-only proxy listening to port 8821, bound to
++192.168.1.2, one uses the command as follows:
++.Bd -literal -offset indent
++ftp-proxy -C anonymous -b 192.168.1.2 -p 8821 -A on
++.Ed
++.Pp
++To switch the anonymous instance created above to the regular mode (disable
++anonymous-only), one uses the command like this:
++.Bd -literal -offset indent
++ftp-proxy -c anonymous -A off
++.Ed
++.Pp
++To display the anonymous instance configuration use the command as follows:
++.Bd -literal -offset indent
++ftp-proxy -c anonymous
++.Ed
++To manage the service, you need the
++.Sy solaris.smf.manage.network.firewall
++authorization.
++To configure service instances, you need the
++.Sy solaris.smf.value.network.firewall
++authorization.
++Both these authorizations are granted through the Network Firewall Management
++profile.
++To create new service instances, you need the
++.Sy solaris.smf.modify
++authorization.
+ .Sh SEE ALSO
+-.Xr pf.conf 5
++.Xr pf.conf 5 ,
++.Xr smf 5 ,
++.Xr svccfg (1M)
+ .Sh CAVEATS
+ .Pp
+ Negotiated data connection ports below 1024 are not allowed.
+@@ -177,3 +353,8 @@
+ The negotiated IP address for active modes is ignored for security
+ reasons.
+ This makes third party file transfers impossible.
++.Pp
++.Nm
++runs as the
++.Dq daemon
++user.
+diff -Naur ftp-proxy-OPENBSD_5_5-OPENBSD_5_5.pre-smf/ftp-proxy.c ftp-proxy-OPENBSD_5_5-OPENBSD_5_5/ftp-proxy.c
+--- ftp-proxy-OPENBSD_5_5-OPENBSD_5_5.pre-smf/ftp-proxy.c	2016-02-10 04:12:16.600723376 -0800
++++ ftp-proxy-OPENBSD_5_5-OPENBSD_5_5/ftp-proxy.c	2016-02-24 06:58:52.001603474 -0800
+@@ -46,6 +46,7 @@
+ #include <sys/random.h>
+ #include <inttypes.h>
+ #include <priv.h>
++#include "smf-config.h"
+ #endif	/* _SOLARIS_ */
+ #include <syslog.h>
+ #include <unistd.h>
+@@ -62,8 +63,10 @@
+ #define NTOP_BUFS	3
+ #define TCP_BACKLOG	10
+ 
++#ifndef _SOLARIS_
+ #define CHROOT_DIR	"/var/empty"
+ #define NOPRIV_USER	"proxy"
++#endif	/* !_SOLARIS_ */
+ 
+ /* pfctl standard NAT range. */
+ #define PF_NAT_PROXY_PORT_LOW	50001
+@@ -97,6 +100,28 @@
+ #define	DIVERT_MODULE_NAME "pf_divertf"
+ #endif	/* _SOLARIS_ */
+ 
++#ifdef	_SOLARIS_
++#define	FTP_PROXY_GETOPTSTR	"A:a:b:D:dm:P:p:R:r:T:t:v:c:C:X:"
++#define	SET_CFGFLAG(_set_, _f_)	(_set_)	|= (_f_)
++#define	SKIP_CHK(_x_)	((_x_) == NULL)
++
++#define DROP_PRIV(priv)						\
++	do {							\
++		if (priv_set(PRIV_OFF, PRIV_PERMITTED, (priv),	\
++		    NULL) != 0) {				\
++			fprintf(stderr,				\
++			    "Unable to drop privileges.\n");	\
++			exit (-1);				\
++		}						\
++	} while (0)
++#else /* !_SOLARIS_ */
++#define	FTP_PROXY_GETOPTSTR	"6Aa:b:D:dm:P:p:q:R:rT:t:v"
++#define	SET_CFGFLAG(_set_, _f_)
++#define	SKIP_CHK(_x_)	(1)
++
++#define DROP_PRIV(priv)
++#endif	/* _SOLARIS_ */
++
+ enum { CMD_NONE = 0, CMD_PORT, CMD_EPRT, CMD_PASV, CMD_EPSV };
+ 
+ struct session {
+@@ -127,7 +152,9 @@
+ int	client_parse_anon(struct session *s);
+ int	client_parse_cmd(struct session *s);
+ void	client_read(struct bufferevent *, void *);
++#ifndef _SOLARIS_
+ int	drop_privs(void);
++#endif /* !_SOLARIS_ */
+ void	end_session(struct session *);
+ void	exit_daemon(void);
+ int	get_line(char *, size_t *);
+@@ -348,6 +375,7 @@
+ 	} while (read == buf_avail);
+ }
+ 
++#ifndef _SOLARIS_
+ int
+ drop_privs(void)
+ {
+@@ -363,9 +391,9 @@
+ 	    setresgid(pw->pw_gid, pw->pw_gid, pw->pw_gid) != 0 ||
+ 	    setresuid(pw->pw_uid, pw->pw_uid, pw->pw_uid) != 0)
+ 		return (0);
+-
+ 	return (1);
+ }
++#endif /* !_SOLARIS_ */
+ 
+ void
+ end_session(struct session *s)
+@@ -561,9 +589,6 @@
+ 	logmsg(LOG_DEBUG, "#%d accepted connection from %s", s->id,
+ 	    sock_ntop(client_sa));
+ 
+-	/*
+-	 * Find out the real server and port that the client wanted.
+-	 */
+ 	len = sizeof(struct sockaddr_storage);
+ 	if (getsockname(s->client_fd, server_sa, &len) < 0) {
+ 		logmsg(LOG_CRIT, "#%d getsockname failed: %s", s->id,
+@@ -770,6 +795,13 @@
+ 	struct event ev_sighup, ev_sigint, ev_sigterm;
+ 	int ch, error, listenfd, on;
+ 	const char *errstr;
++#ifdef	_SOLARIS_
++	const char	*smf_instance = NULL;
++	int	smf_create = 0;
++	int	cfg_flags = 0;
++#endif	/* _SOLARIS_ */
++
++	DROP_PRIV(PRIV_PROC_EXEC);
+ 
+ 	/* Defaults. */
+ 	anonymous_only	= 0;
+@@ -792,7 +824,8 @@
+ 	id_count	= 1;
+ 	session_count	= 0;
+ 
+-	while ((ch = getopt(argc, argv, "6Aa:b:D:dm:P:p:q:R:rT:t:v")) != -1) {
++	while ((ch = getopt(argc, argv,
++	    FTP_PROXY_GETOPTSTR)) != -1) {
+ 		switch (ch) {
+ #ifndef	_SOLARIS_
+ 		case '6':
+@@ -800,33 +833,49 @@
+ 			break;
+ #endif	/* !_SOLARIS_ */
+ 		case 'A':
++#ifdef	_SOLARIS_
++			if (strcasecmp(optarg, "off") == 0) {
++				anonymous_only = 0;
++			} else {
++				anonymous_only = 1;
++			}
++#else /* !_SOLARIS_ */
+ 			anonymous_only = 1;
++#endif	/* _SOLARIS_ */
++			SET_CFGFLAG(cfg_flags, SMF_CFG_ANON_SET);
+ 			break;
+ 		case 'a':
+ 			fixed_proxy = optarg;
++			SET_CFGFLAG(cfg_flags, SMF_CFG_FIXED_PROXY_SET);
+ 			break;
+ 		case 'b':
+ 			listen_ip = optarg;
++			SET_CFGFLAG(cfg_flags, SMF_CFG_LISTEN_ADDR_SET);
+ 			break;
+ 		case 'D':
+ 			loglevel = strtonum(optarg, LOG_EMERG, LOG_DEBUG,
+ 			    &errstr);
+ 			if (errstr)
+ 				errx(1, "loglevel %s", errstr);
++			SET_CFGFLAG(cfg_flags, SMF_CFG_DEBUG_LEVEL_SET);
+ 			break;
+ 		case 'd':
+ 			daemonize = 0;
++			DROP_PRIV(PRIV_PROC_FORK);
+ 			break;
+ 		case 'm':
+ 			max_sessions = strtonum(optarg, 1, 500, &errstr);
+ 			if (errstr)
+ 				errx(1, "max sessions %s", errstr);
++			SET_CFGFLAG(cfg_flags, SMF_CFG_MAX_SESSION_SET);
+ 			break;
+ 		case 'P':
+ 			fixed_server_port = optarg;
++			SET_CFGFLAG(cfg_flags, SMF_CFG_FIXED_SERVER_PORT_SET);
+ 			break;
+ 		case 'p':
+ 			listen_port = optarg;
++			SET_CFGFLAG(cfg_flags, SMF_CFG_LISTEN_PORT_SET);
+ 			break;
+ #ifndef	_SOLARIS_
+ 		case 'q':
+@@ -837,40 +886,83 @@
+ #endif	/* !_SOLARIS_ */
+ 		case 'R':
+ 			fixed_server = optarg;
++			SET_CFGFLAG(cfg_flags, SMF_CFG_FIXED_SERVER_SET);
+ 			break;
+ 		case 'r':
++#ifdef	_SOLARIS_
++			if (strcasecmp(optarg, "off") == 0) {
++				rfc_mode = 0;
++			} else {
++				rfc_mode = 1;
++			}
++			SET_CFGFLAG(cfg_flags, SMF_CFG_RFC_MODE_SET);
++#else /* !_SOLARIS_ */
+ 			rfc_mode = 1;
++#endif	/* _SOLARIS_ */
+ 			break;
+ 		case 'T':
+ 			if (strlen(optarg) >= PF_TAG_NAME_SIZE)
+ 				errx(1, "tagname too long");
+ 			tagname = optarg;
++			SET_CFGFLAG(cfg_flags, SMF_CFG_TAG_SET);
+ 			break;
+ 		case 't':
+ 			timeout = strtonum(optarg, 0, 86400, &errstr);
+ 			if (errstr)
+ 				errx(1, "timeout %s", errstr);
++			SET_CFGFLAG(cfg_flags, SMF_CFG_TIMEOUT_SET);
+ 			break;
+ 		case 'v':
++#ifdef	_SOLARIS_
++			if (strcasecmp(optarg, "all") == 0) {
++				verbose = 2;
++			} else if (strcasecmp(optarg, "on") == 0) {
++				verbose = 1;
++			} else {
++				verbose = 0;
++			}
++			SET_CFGFLAG(cfg_flags, SMF_CFG_LOG_SET);
++#else /* !_SOLARIS_ */
+ 			verbose++;
+ 			if (verbose > 2)
+ 				usage();
++#endif /* _SOLARIS_ */
++			break;
++#ifdef	_SOLARIS_
++		case 'C':
++			smf_create = 1;
++			/* FALLTHRU */
++		case 'c':
++			smf_instance = optarg;
++			break;
++		case 'X':
++			FTP_PROXY_ANCHOR = optarg;
+ 			break;
++#endif	/* _SOLARIS_ */
+ 		default:
+ 			usage();
+ 		}
+ 	}
+ 
++#ifdef _SOLARIS_
++	if ((FTP_PROXY_ANCHOR == NULL) && (smf_instance == NULL)) {
++		fprintf(stderr, "The ftp-proxy can be started only via SMF.\n");
++		exit (-1);
++	}
++#endif /* _SOLARIS_ */
++
+ 	if (listen_ip == NULL)
+ 		listen_ip = ipv6_mode ? "::1" : "127.0.0.1";
+ 
++#ifndef	_SOLARIS_
+ 	/* Check for root to save the user from cryptic failure messages. */
+ 	if (getuid() != 0)
+ 		errx(1, "needs to start as root");
++#endif	/* !_SOLARIS_ */
+ 
+ 	/* Raise max. open files limit to satisfy max. sessions. */
+ 	rlp.rlim_cur = rlp.rlim_max = (2 * max_sessions) + 10;
+-	if (setrlimit(RLIMIT_NOFILE, &rlp) == -1)
++	if (SKIP_CHK(smf_instance) && (setrlimit(RLIMIT_NOFILE, &rlp) == -1))
+ 		err(1, "setrlimit");
+ 
+ 	if (fixed_proxy) {
+@@ -895,7 +987,12 @@
+ 		freeaddrinfo(res);
+ 	}
+ 
++#ifdef _SOLARIS_
++	/* Steps not needed when we are just working with SMF. */
++	if (fixed_server && (smf_instance == NULL)) {
++#else /* !_SOLARIS_ */
+ 	if (fixed_server) {
++#endif /* _SOLARIS_ */
+ 		memset(&hints, 0, sizeof hints);
+ 		hints.ai_family = ipv6_mode ? AF_INET6 : AF_INET;
+ 		hints.ai_socktype = SOCK_STREAM;
+@@ -917,6 +1014,61 @@
+ 		freeaddrinfo(res);
+ 	}
+ 
++#ifdef	_SOLARIS_
++	if (smf_instance != NULL) {
++		/*
++		 * If we are creating new instance, we will use default
++		 * values for properties.
++		 */
++		if (smf_create == 1) {
++			cfg_flags = -1;
++		}
++
++		if (cfg_flags == 0) {
++			if (smf_print_ftpcfg(smf_instance) != 0) {
++				exit (-1);
++			}
++			exit(0);
++		} else {
++			smf_ftp_cfg.cfg_set = cfg_flags;
++			smf_ftp_cfg.cfg_anonymous_only = anonymous_only;
++			smf_ftp_cfg.cfg_listen_addr = SMF_COPY_STR(listen_ip);
++			smf_ftp_cfg.cfg_listen_port = strtonum(listen_port, 1,
++			    65535, NULL);
++			if (smf_ftp_cfg.cfg_listen_port == 0) {
++				fprintf(stderr,
++				    "Invalid listen port specified.\n");
++				exit (-1);
++			}
++			smf_ftp_cfg.cfg_debug_level = loglevel;
++			smf_ftp_cfg.cfg_max_sessions = max_sessions;
++			smf_ftp_cfg.cfg_fixed_server =
++			    SMF_COPY_STR(fixed_server);
++			smf_ftp_cfg.cfg_fixed_server_port = strtonum(
++			    fixed_server_port, 1, 65535, NULL);
++			if (smf_ftp_cfg.cfg_fixed_server_port == 0) {
++				fprintf(stderr,
++				    "Invalid fixed server port specified.\n");
++				exit (-1);
++			}
++			smf_ftp_cfg.cfg_rfc_mode = rfc_mode;
++			smf_ftp_cfg.cfg_tag = SMF_COPY_STR(tagname);
++			smf_ftp_cfg.cfg_timeout = timeout;
++			smf_ftp_cfg.cfg_log = verbose;
++			smf_ftp_cfg.cfg_fixed_proxy = SMF_COPY_STR(fixed_proxy);
++			if (smf_write_ftpcfg(smf_instance, smf_create) == -1) {
++				err(1, "...Giving up");
++			} else {
++				printf("configuration for\n\t%s (%s:%s)\nhas been saved\n",
++				    smf_instance,
++				    BASE_FMRI,
++				    smf_instance);
++			}
++			exit(0);
++		}
++	}
++#endif	/* _SOLARIS_ */
++
+ 	/* Setup listener. */
+ 	memset(&hints, 0, sizeof hints);
+ 	hints.ai_flags = AI_NUMERICHOST | AI_PASSIVE;
+@@ -946,19 +1098,21 @@
+ 
+ 	/* Initialize pf. */
+ 	init_filter(qname, tagname, verbose);
+-
+ 	if (daemonize) {
+ 		if (daemon(0, 0) == -1)
+ 			err(1, "cannot daemonize");
++		DROP_PRIV(PRIV_PROC_FORK);
+ 		openlog(__progname, LOG_PID | LOG_NDELAY, LOG_DAEMON);
+ 	}
+ 
+ 	/* Use logmsg for output from here on. */
+ 
++#ifndef _SOLARIS_
+ 	if (!drop_privs()) {
+ 		logmsg(LOG_ERR, "cannot drop privileges: %s", strerror(errno));
+ 		exit(1);
+ 	}
++#endif /* !_SOLARIS_ */
+ 	
+ 	event_init();
+ 
+@@ -1327,9 +1481,16 @@
+ void
+ usage(void)
+ {
++#ifdef _SOLARIS_
++	fprintf(stderr, "usage: %s [-A on | off] [-a address] [-b address]"
++	    " [{-c | -C} instance] [-D level] [-m maxsessions]\n                 [-P port]"
++	    " [-p port] [-R address] [-r on | off] [-T tag]\n"
++            "                 [-t timeout] [-v all | on | off]\n", __progname);
++#else /* !_SOLARIS_ */
+ 	fprintf(stderr, "usage: %s [-6Adrv] [-a address] [-b address]"
+ 	    " [-D level] [-m maxsessions]\n                 [-P port]"
+ 	    " [-p port] [-q queue] [-R address] [-T tag]\n"
+ 	    "                 [-t timeout]\n", __progname);
++#endif /* _SOLARIS_ */
+ 	exit(1);
+ }
+diff -Naur ftp-proxy-OPENBSD_5_5-OPENBSD_5_5.pre-smf/smf-config.c ftp-proxy-OPENBSD_5_5-OPENBSD_5_5/smf-config.c
+--- ftp-proxy-OPENBSD_5_5-OPENBSD_5_5.pre-smf/smf-config.c	1969-12-31 16:00:00.000000000 -0800
++++ ftp-proxy-OPENBSD_5_5-OPENBSD_5_5/smf-config.c	2016-02-24 08:45:36.636917450 -0800
+@@ -0,0 +1,822 @@
++/*
++ * CDDL HEADER START
++ *
++ * The contents of this file are subject to the terms of the
++ * Common Development and Distribution License (the "License").
++ * You may not use this file except in compliance with the License.
++ *
++ * You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
++ * or http://www.opensolaris.org/os/licensing.
++ * See the License for the specific language governing permissions
++ * and limitations under the License.
++ *
++ * When distributing Covered Code, include this CDDL HEADER in each
++ * file and include the License file at usr/src/OPENSOLARIS.LICENSE.
++ * If applicable, add the following below this CDDL HEADER, with the
++ * fields enclosed by brackets "[]" replaced with your own identifying
++ * information: Portions Copyright [yyyy] [name of copyright owner]
++ *
++ * CDDL HEADER END
++ *
++ */
++
++/*
++ * Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
++ */
++
++#include <string.h>
++#include <strings.h>
++#include <stdlib.h>
++#include <err.h>
++#include <stdarg.h>
++#include <stdio.h>
++#include <libscf.h>
++#include <stddef.h>
++#include <libscf_priv.h>
++
++#include "smf-config.h"
++
++/* #include <net/pfvar.h> */
++
++#define	FTP_PROXY_PG	"ftp-proxy"
++#define FTP_PROXY_PROP_VALUE_AUTH	"value_authorization"
++#define FTP_PROXY_PROP_ACTION_AUTH	"action_authorization"
++#define FTP_PROXY_VALUE_AUTH	"solaris.smf.value.network.firewall"
++#define FTP_PROXY_MANAGE_AUTH	"solaris.smf.manage.network.firewall"
++
++/*
++ * CHKASCIIZ()
++ * Macro checks if _s_ is ASCIIZ (not NULL, not empty), if _s_ is not empty
++ * string, then _p_ is returned.
++ *
++ * Arguments:
++ *	_s_	- ASCIIZ string to be tested
++ *	_p_	- string to be returned when _s_ is not NULL or empty
++ *
++ * Returns:
++ *	_p_ if _s_ is not NULL/empty, otherwise the empty string is returned.
++ */
++#define	CHKASCIIZ(_s_, _p_)	\
++	((((_s_) == NULL) || (_s_[0] == '\0')) ? "" : (_p_))
++
++#define	SKIP_PROP(_pv_)		\
++	((strcmp((_pv_)->pv_prop, "action_authorization") == 0) || \
++	(strcmp((_pv_)->pv_prop, "value_authorization") == 0))
++
++#define	STRIP_SVC(_x_)	((_x_) + (sizeof ("svc:/") - 1))
++
++/*
++ * smf_ftp_cfg
++ * FTP proxy configuration container.
++ */
++smf_ftppx_cfg_t	smf_ftp_cfg;
++
++#define	SMF_OPT_OPTIONAL	0
++#define	SMF_OPT_MANDATORY	1
++/*
++ * X-macro table.
++ * Columns are as follows:
++ * 	value key/index 
++ *	smf(5) property name name
++ *	member in smf_ftppx_cfg_t structure
++ *	function which converts ASCIIZ to member type in smf_ftppx_cfg_t
++ *	function which converts member in smf_ftppx_cfg_t to ASCIIZ
++ *	optional/mandatory status
++ *	property type
++ */
++#define	X_CFG_PROPS	\
++	X(SMF_ANON, "anonymous-only", cfg_anonymous_only, on_to_one,	\
++	    one_to_on, SMF_OPT_OPTIONAL, SCF_TYPE_ASTRING)		\
++	X(SMF_FIXED_PROXY, "proxy-NAT-address",	cfg_fixed_proxy,	\
++	    nop_in, nop_out, SMF_OPT_MANDATORY, SCF_TYPE_ASTRING)	\
++	X(SMF_LISTEN_ADDR, "proxy-listen-address", cfg_listen_addr,	\
++	    nop_in, nop_out, SMF_OPT_MANDATORY, SCF_TYPE_ASTRING)	\
++	X(SMF_LISTEN_PORT, "listen-port",	cfg_listen_port,	\
++	    int_in, int_out, SMF_OPT_OPTIONAL, SCF_TYPE_INTEGER)	\
++	X(SMF_DEBUG_LEVEL, "debug-level", cfg_debug_level, int_in,	\
++	    int_out, SMF_OPT_OPTIONAL, SCF_TYPE_INTEGER)		\
++	X(SMF_MAX_SESSIONS, "maxsessions", cfg_max_sessions,		\
++	    int_in, int_out, SMF_OPT_OPTIONAL,				\
++	    SCF_TYPE_INTEGER)						\
++	X(SMF_RFC_MODE, "always-use-ftp-data-port", cfg_rfc_mode,	\
++	    on_to_one, one_to_on, SMF_OPT_OPTIONAL, SCF_TYPE_ASTRING)	\
++	X(SMF_FIXED_SERVER_PORT, "reverse-mode-port", 			\
++	    cfg_fixed_server_port, int_in, int_out, SMF_OPT_OPTIONAL,	\
++	    SCF_TYPE_INTEGER)						\
++	X(SMF_FIXED_SERVER, "reverse-mode-address", cfg_fixed_server,	\
++	    nop_in, nop_out, SMF_OPT_OPTIONAL, SCF_TYPE_ASTRING)	\
++	X(SMF_TAG, "tag", cfg_tag, nop_in, nop_out, SMF_OPT_OPTIONAL,	\
++	    SCF_TYPE_ASTRING)						\
++	X(SMF_TIMEOUT, "timeout", cfg_timeout, int_in, int_out,		\
++	    SMF_OPT_OPTIONAL, SCF_TYPE_INTEGER)				\
++	X(SMF_LOG, "log", cfg_log, log_to_int, int_to_log,		\
++	    SMF_OPT_OPTIONAL, SCF_TYPE_ASTRING)
++
++static void nop_in(void *, void *);
++static void nop_out(void *, void *);
++static void int_in(void *, void *);
++static void int_out(void *, void *);
++static void on_to_one(void *, void *);
++static void one_to_on(void *, void *);
++static void str_to_int(void *, void *);
++static void int_to_str(void *, void *);
++static void str_to_uint(void *, void *);
++static void uint_to_str(void *, void *);
++static void log_to_int(void *, void *);
++static void int_to_log(void *, void *);
++
++/*
++ * smf_keys
++ * Keys (indexes) to `smf_propnames` dictionary.
++ */
++#define	X(_const_, _propname_, _decl_, _conv_in_, _conv_out_, _mandatory_, \
++    _type_) _const_,
++enum smf_keys {
++	X_CFG_PROPS
++	SMF_CFG_PROP_COUNT
++};
++#undef	X
++
++/*
++ * smf_propnames
++ * It's an array (dictionary), which translates property code (SMF_*) to
++ * property value name found `ftp-proxy` property group.
++ */
++#define	X(_const_, _propname_, _decl_, _conv_in_, _conv_out_, _mandatory_, \
++    _type_) _propname_,
++static const char *smf_propnames[] = {
++	X_CFG_PROPS
++	NULL
++};
++#undef	X
++
++/*
++ * smf_cfg_offsets
++ * Table of smf_ftppx_cfg_t members.
++ */
++#define	X(_const_, _propname_, _decl_, _conv_in_, _conv_out_, _mandatory_, \
++    _type_) offsetof(smf_ftppx_cfg_t, _decl_),
++static size_t smf_cfg_offsets[] = {
++	X_CFG_PROPS
++	sizeof (smf_ftppx_cfg_t)
++};
++#undef	X
++
++typedef void(*conv_in_f)(void *, void *);
++typedef void(*conv_out_f)(void *, void *);
++/*
++ * smf_convert_in
++ * Table of conversion functions, which convert particular smf_ftppx_cfg_t
++ * member into ASCIIZ.
++ */
++#define	X(_const_, _propname_, _decl_, _conv_in_, _conv_out_, _mandatory_, \
++    _type_) _conv_in_,
++static conv_in_f smf_conv_in[] = {
++	X_CFG_PROPS
++	NULL
++};
++#undef	X
++
++/*
++ * smf_conv_out
++ * Table of conversion functions, which convert ASCIIZ fetched from smf(5)
++ * repository to member of smf_ftppx_cfg_t structure.
++ */
++#define	X(_const_, _propname_, _decl_, _conv_in_, _conv_out_, _mandatory_, \
++    _type_) _conv_out_,
++static conv_out_f smf_conv_out[] = {
++	X_CFG_PROPS
++	NULL
++};
++#undef	X
++
++/*
++ * smf_mandatory
++ * Table marks configuration parameters, which must be defined by admin,
++ * before the service is enabled for the first time.
++ */
++#define	X(_const_, _propname_, _decl_, _conv_in_, _conv_out_, _mandatory_, \
++    _type_) _mandatory_,
++static int smf_mandatory[] = {
++	X_CFG_PROPS
++	0
++};
++#undef	X
++
++/*
++ * smf_type
++ * Table of types of SMF properties.
++ */
++#define	X(_const_, _propname_, _decl_, _conv_in_, _conv_out_, _mandatory_, \
++    _type_) _type_,
++static int smf_type[] = {
++	X_CFG_PROPS
++	0
++};
++#undef	X
++
++/*
++ * ftp-proxy property group properties
++ * +1 for NULL termination.
++ * +1 for value_authorization
++ */
++static scf_propvec_t	prop_vec[SMF_CFG_PROP_COUNT + 1 + 1];
++
++/*
++ * general property group properties
++ * +1 for NULL termination.
++ * +2 for value_authorization/action_authorization
++ */
++static scf_propvec_t	gen_prop_vec[1 + 2];
++
++static int atexit_set = 0;
++
++/*
++ * Conversion routines from smf_ftp_cfg structure to prop_vec member and vice
++ * versa.
++ */
++
++/*
++ * nop_in()
++ * Dummy conversion ASCIIZ to ASCIIZ, no allocation happens. Used when
++ * configuration is from smf(5).
++ */
++static void
++nop_in(void *asciiz, void *result)
++{
++	*((char **)result) = asciiz;
++}
++
++/*
++ * nop_out()
++ * Dummy conversion ASCIIZ to ASCIIZ, function allocates memory for result by
++ * strdup(3C). Used when configuration is written to smf(5) repository.
++ */
++static void
++nop_out(void *asciiz, void *val)
++{
++	*((char **)asciiz) = strdup(*(char **)val);
++}
++
++/*
++ * int_in()
++ * Dummy conversion of int64_t. No allocation happens. Used when reading
++ * values from smf.
++ */
++static void
++int_in(void *in, void *out) {
++	*((int64_t *)out) = *((int64_t *)in);
++}
++
++/*
++ * int_out()
++ * Dummy conversion of int64_t, storing into a newly allocated memory.
++ * Used when storing values to smf repository.
++ */
++static void
++int_out(void *out, void *in) {
++	int64_t **out_ = (int64_t **)out;
++
++	*out_ = malloc(sizeof (int64_t));
++	if (*out_ != NULL)
++		**out_ = *((int64_t *)in);
++}
++
++/*
++ * on_to_one()
++ * Function converts ASCIIZ value "on" to 1. Anything else yeilds a 0. Used to
++ * read configuration from smf(5).
++ */
++static void
++on_to_one(void *asciiz, void *result)
++{
++	*((int *)result) = ((strcasecmp((char *)asciiz, "on") == 0) ? 1 : 0);
++}
++
++/*
++ * one_to_on()
++ * Function converts 0 to ASCIIZ string "off", anything else than 0 yeilds to
++ * "on". Used when configuration ie being written to smf(5). Function also
++ * allocates memory for resulting string using strdup(3C).
++ */
++static void
++one_to_on(void *asciiz, void *val)
++{
++	if (*((int *)val) == 0) {
++		*((char **)asciiz) = strdup("off");
++	} else {
++		*((char **)asciiz) = strdup("on");
++	}
++}
++
++/*
++ * str_to_int()
++ * Function converts integer represented as ASCIIZ to int using atoi(3C).  Used
++ * when configuration is read from smf(5).
++ */
++static void
++str_to_int(void *asciiz, void *result)
++{
++	*((int *)result) = atoi((char *)asciiz);
++}
++
++/*
++ * int_to_str()
++ * Function converts integer number to ASCIIZ using asprintf(3C). Used when
++ * configuration is being stored to smf(5). Memory for results get allocated by
++ * asprintf(3C).
++ */
++static void
++int_to_str(void *asciiz, void *val)
++{
++	(void) asprintf((char **)asciiz, "%d", *((int *)val));
++}
++
++/*
++ * str_to_uint()
++ * Function converts unsigned integer represented as ASCIIZ to int using
++ * atoi(3C). Used when configuration is being read from smf(5) repository.
++ */
++static void
++str_to_uint(void *asciiz, void *result)
++{
++	*((unsigned int *)result) = (unsigned int) atoi((char *)asciiz);
++}
++
++/*
++ * uint_to_str()
++ * Function converts unsigned integer to ASCIIZ using asprintf(3C).  Used when
++ * configuration is written to smf(5). Memory for result is allocated by
++ * asprintf(3C).
++ */
++static void
++uint_to_str(void *asciiz, void *val)
++{
++	(void) asprintf((char **)asciiz, "%u", *((int *)val));
++}
++
++/*
++ * log_to_int()
++ * Function encodes ASCIIZ value for log property to numeric code.  String
++ * "all" gets converted to 2, string "on" to 1, anything else yeilds to 0.
++ * It's used when configuration is being read from smf(5) repository.
++ */
++static void
++log_to_int(void *asciiz, void *result)
++{
++	if (strcasecmp((char *)asciiz, "all") == 0) {
++		*((int *)result) = 2;
++	} else if (strcasecmp((char *)asciiz, "on") == 0) {
++		*((int *)result) = 1;
++	} else {
++		*((int *)result) = 0;
++	}
++}
++
++/*
++ * int_to_log()
++ * Function encodes value of log property to its numeric representation.  2
++ * gets encoded to "all", 1 results to "on", anything else results to off.
++ * The memory for result is allocated by strdup(3C).
++ */
++static void
++int_to_log(void *asciiz, void *val)
++{
++	switch (*((int *)val)) {
++	case	2:
++		*((char **)asciiz) = strdup("all");
++		break;
++	case	1:
++		*((char **)asciiz) = strdup("on");
++		break;
++	default:
++		*((char **)asciiz) = strdup("off");
++	}
++}
++
++static void
++clear_prop_vec2(scf_propvec_t *prop_vec_ptr, int count)
++{
++	while (count--) {
++		prop_vec_ptr->pv_prop = NULL;
++		prop_vec_ptr->pv_desc = NULL;
++		prop_vec_ptr->pv_type = 0;
++		prop_vec_ptr->pv_aux = 0;
++		prop_vec_ptr->pv_mval = 0;
++
++		if (prop_vec_ptr->pv_ptr != NULL) {
++			free(prop_vec_ptr->pv_ptr);
++			prop_vec_ptr->pv_ptr = NULL;
++		}
++
++		prop_vec_ptr++;
++	}
++}
++
++/*
++ * clear_prop_vec()
++ * Function clears global variables `prop_vec` and `gen_prop_vec`,
++ * which are vectors of properties.
++ */
++static void
++clear_prop_vec()
++{
++	clear_prop_vec2(prop_vec,
++	    sizeof (prop_vec) / sizeof (scf_propvec_t));
++	clear_prop_vec2(gen_prop_vec,
++	    sizeof (gen_prop_vec) / sizeof (scf_propvec_t));
++}
++
++/*
++ * cfg_to_prop_vec()
++ * Function converts smf_ftp_cfg global variable, which holds configuration
++ * parsed from command line arguments, to prop_vec, which is a smf(5) friendly
++ * representation of proxy configuration.
++ *
++ * Additionally, it populates gen_prop_vec to specify needed authorizations.
++ *
++ * Returns 0 on success, -1 on out of memory error.
++ */
++static int
++cfg_to_prop_vec(void)
++{
++	int		cfg_bit = 1;
++	int		i;
++	scf_propvec_t	*prop_vec_ptr = prop_vec;
++	conv_out_f	conv_func;
++
++	clear_prop_vec();
++
++	for (i = 0; i < SMF_CFG_PROP_COUNT; i++) {
++		if ((smf_ftp_cfg.cfg_set & cfg_bit) != 0) {
++			prop_vec_ptr->pv_prop = smf_propnames[i];
++			conv_func = smf_conv_out[i];
++
++			conv_func(&prop_vec_ptr->pv_ptr,
++			    ((char *)&smf_ftp_cfg + smf_cfg_offsets[i]));
++			if (prop_vec_ptr->pv_ptr == NULL)
++				return (-1);
++			prop_vec_ptr->pv_type = smf_type[i];
++			prop_vec_ptr++;
++		}
++		cfg_bit = cfg_bit << 1;
++	}
++	prop_vec_ptr->pv_type = SCF_TYPE_ASTRING;
++	prop_vec_ptr->pv_prop = FTP_PROXY_PROP_VALUE_AUTH;
++	prop_vec_ptr->pv_ptr = strdup(FTP_PROXY_VALUE_AUTH);
++	prop_vec_ptr++;
++
++	gen_prop_vec[0].pv_type = SCF_TYPE_ASTRING;
++	gen_prop_vec[0].pv_prop = FTP_PROXY_PROP_VALUE_AUTH;
++	gen_prop_vec[0].pv_ptr = strdup(FTP_PROXY_MANAGE_AUTH);
++	gen_prop_vec[1].pv_type = SCF_TYPE_ASTRING;
++	gen_prop_vec[1].pv_prop = FTP_PROXY_PROP_ACTION_AUTH;
++	gen_prop_vec[1].pv_ptr = strdup(FTP_PROXY_MANAGE_AUTH);
++
++	return (0);
++}
++
++/*
++ * prop_vec_to_cfg()
++ * Converts global variable `prop_vec` to `smf_ftp_cfg` global variable,
++ * which is understood by main().
++ */
++static void
++prop_vec_to_cfg(void)
++{
++	int		i;
++	scf_propvec_t	*prop_vec_ptr = prop_vec;
++	conv_in_f	conv_func;
++
++	for (i = 0; i < SMF_CFG_PROP_COUNT; i++, prop_vec_ptr++) {
++		if (SKIP_PROP(prop_vec_ptr)) {
++			/*
++			 * We have `hidden` properties: action/value smf
++			 * authorization. Those two are not kept in
++			 * smf_ftp_cfg.
++			 *
++			 * So we must to skip to next property in vector
++			 * without letting for loop to advance its counter, so
++			 * we compensate here by doing `i--`.
++			 */
++			i--;
++			continue;
++		};
++		conv_func = smf_conv_in[i];
++		conv_func(prop_vec_ptr->pv_ptr,
++		    ((char *)&smf_ftp_cfg + smf_cfg_offsets[i]));
++	}
++}
++
++/*
++ * smf_print_ftpcfg()
++ * Function loads ftpcfg from smf(5) repository and prints configuration to
++ * standard output. We use `scf_simple_prop_get(3SCF)`.
++ *
++ * Returns 0 on success, -1 on error..
++ */
++int
++smf_print_ftpcfg(const char *smf_instance)
++{
++	scf_simple_prop_t	*prop;
++	int			i;
++	scf_propvec_t		*prop_vec_ptr = prop_vec;
++	int			cfg_incomplete = 0;
++	char			*fmri;
++
++	if (atexit_set == 0) {
++		atexit(clear_prop_vec);
++		bzero(&smf_ftp_cfg, sizeof (smf_ftppx_cfg_t));
++		atexit_set = 1;
++	}
++
++	(void) asprintf(&fmri, "%s:%s", BASE_FMRI, smf_instance);
++	if (fmri == NULL) {
++		fprintf(stderr, "Out of memory.\n");
++		return (-1);
++	}
++
++	clear_prop_vec();
++
++	for (i = 0; i < SMF_CFG_PROP_COUNT; i++) {
++		prop = scf_simple_prop_get(NULL, fmri, FTP_PROXY_PG,
++		    smf_propnames[i]);
++		prop_vec_ptr->pv_prop = smf_propnames[i];
++		prop_vec_ptr->pv_type = scf_simple_prop_type(prop);
++		if (prop_vec_ptr->pv_type == -1) {
++			free(fmri);
++			fprintf(stderr, "Failed to get property type.\n");
++			return (-1);
++		}
++		if (prop_vec_ptr->pv_type != smf_type[i]) {
++			free(fmri);
++			fprintf(stderr, "Property %s has unexpected type.\n",
++			    smf_propnames[i]);
++			return (-1);
++		}
++		if (prop == NULL) {
++			/*
++			 * Property not defined, so we create a kind of
++			 * 'placeholder' with empty value.
++			 *
++			 * calloc() works well for both astring and integer.
++			 */
++			prop_vec_ptr->pv_ptr = calloc(1, sizeof (int64_t));
++			cfg_incomplete |= smf_mandatory[i];
++		} else {
++			if (smf_type[i] == SCF_TYPE_ASTRING) {
++				char	*propval;
++				propval = scf_simple_prop_next_astring(prop);
++				if (propval == NULL) {
++					propval = "";
++				}
++				prop_vec_ptr->pv_ptr = strdup(propval);
++
++				if (propval[0] == 0) {
++					cfg_incomplete |= smf_mandatory[i];
++				}
++			} else {
++				/* smf_type[i] == SCF_TYPE_INTEGER */
++				int64_t	*propval;
++				int64_t propval_;
++
++				propval = scf_simple_prop_next_integer(prop);
++				propval_ = (propval == NULL) ? (0) : (*propval);
++
++				prop_vec_ptr->pv_ptr = malloc(sizeof (int64_t));
++				if (prop_vec_ptr->pv_ptr != NULL) {
++					*((int64_t *)prop_vec_ptr->pv_ptr) =
++					    propval_;
++				}
++				if (propval_ == 0) {
++					cfg_incomplete |= smf_mandatory[i];
++				}
++			}
++			scf_simple_prop_free(prop);
++		}
++		if (prop_vec_ptr->pv_ptr == NULL) {
++			free(fmri);
++			fprintf(stderr, "Out of memory.\n");
++			return (-1);
++		}
++
++		prop_vec_ptr++;
++	}
++
++	printf("PF FTP proxy configuration:\n");
++
++	prop_vec_ptr = prop_vec;
++	for (i = 0; i < SMF_CFG_PROP_COUNT; i++) {
++		if (smf_type[i] == SCF_TYPE_ASTRING) {
++			const char *val = (const char *)prop_vec_ptr->pv_ptr;
++			printf("\t- %s:\n\t\t%s\n", prop_vec_ptr->pv_prop,
++			    ((val[0] == '\0') ?  "?? undefined ??" : val));
++		} else {
++			/* smf_type[i] == SCF_TYPE_INTEGER */
++			int64_t val = *((int64_t *)prop_vec_ptr->pv_ptr);
++			if (val == 0) {
++				printf("\t- %s:\n\t\t%s\n", prop_vec_ptr->pv_prop,
++			    	    "?? undefined ??");
++			} else {
++				printf("\t- %s:\n\t\t%d\n", prop_vec_ptr->pv_prop,
++			    	    (int)val);
++			}
++		}
++		prop_vec_ptr++;
++	}
++	if (cfg_incomplete) {
++		printf("\n\nConfiguration for %s is incomplete."
++		    " Service will not run.\n\n", fmri);
++	} else {
++		prop_vec_to_cfg();
++		printf(
++		    "\n\n%s service is being launched using cmd line below\n\n",
++		    fmri);
++		printf("ftp-proxy "
++		    "%s -a %s -b %s -p "
++		    "%d -D %d -m %d -t %d %s %s %s %.d %s %s %s %s\n",
++		    ((smf_ftp_cfg.cfg_anonymous_only == 1) ? "-A on" : ""),
++		    smf_ftp_cfg.cfg_fixed_proxy,
++		    smf_ftp_cfg.cfg_listen_addr,
++		    (int)smf_ftp_cfg.cfg_listen_port,
++		    (int)smf_ftp_cfg.cfg_debug_level,
++		    (int)smf_ftp_cfg.cfg_max_sessions,
++		    (int)smf_ftp_cfg.cfg_timeout,
++		    CHKASCIIZ(smf_ftp_cfg.cfg_fixed_server, "-R"),
++		    CHKASCIIZ(smf_ftp_cfg.cfg_fixed_server,
++			smf_ftp_cfg.cfg_fixed_server),
++		    (smf_ftp_cfg.cfg_fixed_server_port == 0) ? ("") : ("-P"),
++		    (int)smf_ftp_cfg.cfg_fixed_server_port,
++		    ((smf_ftp_cfg.cfg_rfc_mode != 0) ? "-r on" : ""),
++		    CHKASCIIZ(smf_ftp_cfg.cfg_tag, "-T"),
++		    CHKASCIIZ(smf_ftp_cfg.cfg_tag, smf_ftp_cfg.cfg_tag),
++		    ((smf_ftp_cfg.cfg_log == 2) ? "-vv" :
++			((smf_ftp_cfg.cfg_log == 1) ? "-v" : "")));
++	}
++
++	free(fmri);
++
++	return (0);
++}
++
++/*
++ * smf_create_ftp_instance()
++ * Function creates a new instance in smf(5) repository.
++ */
++static int
++smf_create_ftp_instance(const char *smf_instance)
++{
++	scf_handle_t	*h_scf = NULL;
++	scf_scope_t	*scp_scf = NULL;
++	scf_service_t	*svc_scf = NULL;
++	scf_instance_t	*sin_scf = NULL;
++	int	rv = -1;
++
++ 	h_scf = scf_handle_create(SCF_VERSION);
++	if ((h_scf == NULL) || (scf_handle_bind(h_scf) == -1)) {
++		(void) fprintf(stderr, "scf_handle_bind() failed - %s\n",
++		    scf_strerror(scf_error()));
++		if (h_scf != NULL) {
++			scf_handle_destroy(h_scf);
++		}
++		return (-1);
++	}
++
++	if ((scp_scf = scf_scope_create(h_scf)) == NULL) {
++		(void) fprintf(stderr, "could not create scope - %s\n",
++		    scf_strerror(scf_error()));
++		goto unbind;
++	}
++
++	if (scf_handle_get_local_scope(h_scf, scp_scf) != 0) {
++		(void) fprintf(stderr, "could not get scope - %s\n",
++		    scf_strerror(scf_error()));
++		goto scope_destroy;
++	}
++
++	if ((svc_scf = scf_service_create(h_scf)) == NULL) {
++		(void) fprintf(stderr, "could not create service - %s\n",
++		    scf_strerror(scf_error()));
++		goto scope_destroy;
++	}
++
++	if ((sin_scf = scf_instance_create(h_scf)) == NULL) {
++		(void) fprintf(stderr, "could not get instance handle - %s\n",
++		    scf_strerror(scf_error()));
++		goto service_destroy;
++	}
++
++	if (scf_scope_get_service(scp_scf, STRIP_SVC(BASE_FMRI), svc_scf) !=
++	    SCF_SUCCESS) {
++		(void) fprintf(stderr, "could not select service (%s)\n",
++		    scf_strerror(scf_error()));
++		goto instance_destroy;
++	}
++
++	if (scf_service_add_instance(svc_scf, smf_instance, sin_scf) != 0) {
++		(void) fprintf(stderr, "could not add %s instance - %s\n",
++		    smf_instance, scf_strerror(scf_error()));
++		goto instance_destroy;
++	}
++
++	if (scf_instance_add_pg(sin_scf, "general", "framework", 0,
++	    NULL) != SCF_SUCCESS) {
++		(void) fprintf(stderr,
++		    "could not create property group - %s\n",
++		    scf_strerror(scf_error()));
++		goto instance_delete;
++	}
++
++	if (scf_instance_add_pg(sin_scf, FTP_PROXY_PG, "application", 0,
++	    NULL) != SCF_SUCCESS) {
++		(void) fprintf(stderr,
++		    "could not create property group - %s\n",
++		    scf_strerror(scf_error()));
++		goto instance_delete;
++	}
++
++	rv = 0;
++	goto instance_destroy;
++
++instance_delete:
++	if (scf_instance_delete(sin_scf) != 0) {
++		fprintf(stderr, "Can't delete the newly created instance:");
++		fprintf(stderr, "\t%s\n", scf_strerror(scf_error()));
++	}
++instance_destroy:
++	scf_instance_destroy(sin_scf);
++service_destroy:
++	scf_service_destroy(svc_scf);
++scope_destroy:
++	scf_scope_destroy(scp_scf);
++unbind:
++	scf_handle_unbind(h_scf);
++	scf_handle_destroy(h_scf);
++
++	return (rv);
++}
++
++/*
++ * smf_write_ftpcfg()
++ * Function writes proxy configuration to smf(5) repostiory.
++ */
++int
++smf_write_ftpcfg(const char *smf_instance, int create)
++{
++	int	i;
++	scf_propvec_t
++		*bad_prop_vec = NULL;
++	char	*fmri;
++
++	if (atexit_set == 0) {
++		atexit(clear_prop_vec);
++		bzero(prop_vec, sizeof (prop_vec));
++		atexit_set = 1;
++	}
++
++	if (cfg_to_prop_vec() != 0) {
++		fprintf(stderr, "Out of memory.\n");
++		return (-1);
++	}
++
++	(void) asprintf(&fmri, "%s:%s", BASE_FMRI, smf_instance);
++	if (fmri == NULL) {
++		fprintf(stderr, "Out of memory.\n");
++		return (-1);
++	}
++
++	if (create) {
++		if (smf_create_ftp_instance(smf_instance) != 0) {
++			free(fmri);
++			return (-1);
++		}
++	}
++
++	if (create && (scf_write_propvec(fmri, "general", gen_prop_vec,
++	    &bad_prop_vec) != SCF_SUCCESS)) {
++		fprintf(stderr, "Can't update %s configuration:", fmri);
++		fprintf(stderr, "\t%s\n", scf_strerror(scf_error()));
++		if (bad_prop_vec != NULL) {
++			fprintf(stderr, "Could not set %s\n",
++			    bad_prop_vec->pv_prop);
++		}
++		free(fmri);
++		exit(1);
++	}
++
++	bad_prop_vec = NULL;
++	if (scf_write_propvec(fmri, FTP_PROXY_PG, prop_vec, &bad_prop_vec)
++	    != SCF_SUCCESS) {
++		fprintf(stderr, "Can't update %s configuration:", fmri);
++		fprintf(stderr, "\t%s\n", scf_strerror(scf_error()));
++		if (bad_prop_vec != NULL) {
++			fprintf(stderr, "Could not set %s\n",
++			    bad_prop_vec->pv_prop);
++		}
++		free(fmri);
++		exit(1);
++	}
++
++	free(fmri);
++	return (0);
++}
+diff -Naur ftp-proxy-OPENBSD_5_5-OPENBSD_5_5.pre-smf/smf-config.h ftp-proxy-OPENBSD_5_5-OPENBSD_5_5/smf-config.h
+--- ftp-proxy-OPENBSD_5_5-OPENBSD_5_5.pre-smf/smf-config.h	1969-12-31 16:00:00.000000000 -0800
++++ ftp-proxy-OPENBSD_5_5-OPENBSD_5_5/smf-config.h	2016-02-19 06:43:15.097134373 -0800
+@@ -0,0 +1,77 @@
++/*
++ * CDDL HEADER START
++ *
++ * The contents of this file are subject to the terms of the
++ * Common Development and Distribution License (the "License").
++ * You may not use this file except in compliance with the License.
++ *
++ * You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
++ * or http://www.opensolaris.org/os/licensing.
++ * See the License for the specific language governing permissions
++ * and limitations under the License.
++ *
++ * When distributing Covered Code, include this CDDL HEADER in each
++ * file and include the License file at usr/src/OPENSOLARIS.LICENSE.
++ * If applicable, add the following below this CDDL HEADER, with the
++ * fields enclosed by brackets "[]" replaced with your own identifying
++ * information: Portions Copyright [yyyy] [name of copyright owner]
++ *
++ * CDDL HEADER END
++ *
++ */
++
++/*
++ * Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
++ */
++
++#ifndef	_SMF_CONFIG_H_
++#define	_SMF_CONFIG_H_
++
++#include <string.h>
++
++#define	BASE_FMRI		"svc:/network/firewall/ftp-proxy"
++#define	DEFAULT_INSTANCE	"default"
++
++#define	SMF_CFG_ANON_SET	0x00000001
++#define	SMF_CFG_FIXED_PROXY_SET	0x00000002
++#define	SMF_CFG_LISTEN_ADDR_SET	0x00000004
++#define	SMF_CFG_LISTEN_PORT_SET	0x00000008
++#define	SMF_CFG_DEBUG_LEVEL_SET	0x00000010
++#define	SMF_CFG_MAX_SESSION_SET	0x00000020
++#define	SMF_CFG_RFC_MODE_SET	0x00000040
++#define	SMF_CFG_FIXED_SERVER_PORT_SET	\
++				0x00000080
++#define	SMF_CFG_FIXED_SERVER_SET	\
++				0x00000100
++#define	SMF_CFG_TAG_SET		0x00000200
++#define	SMF_CFG_TIMEOUT_SET	0x00000400
++#define	SMF_CFG_LOG_SET		0x00000800
++
++#define	SMF_CFG_LOG_OFF	0
++#define	SMF_CFG_LOG_ON	1
++#define	SMF_CFG_LOG_ALL	2
++
++#define	SMF_COPY_STR(_x_)	(((_x_) == NULL) ? strdup("") : strdup((_x_)))
++
++typedef struct smf_ftppx_cfg {
++	unsigned int	cfg_set;	/* SMF_CFG_*_SET bit field */
++	int		cfg_anonymous_only;
++	char 		*cfg_fixed_proxy;
++	char 		*cfg_listen_addr;
++	int64_t		cfg_listen_port;
++	int64_t		cfg_debug_level;
++	int64_t		cfg_max_sessions;
++	char		*cfg_fixed_server;
++	int64_t		cfg_fixed_server_port;
++	int		cfg_rfc_mode;
++	char		*cfg_tag;
++	int64_t		cfg_timeout;
++	int		cfg_log;
++} smf_ftppx_cfg_t;
++
++extern smf_ftppx_cfg_t	smf_ftp_cfg;
++
++extern int smf_print_ftpcfg(const char *);
++extern int smf_write_ftpcfg(const char *, int);
++
++#endif	/* !_SMF_CONFIG_H_ */

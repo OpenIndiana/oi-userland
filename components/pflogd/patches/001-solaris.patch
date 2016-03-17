@@ -1,0 +1,589 @@
+# This patch comes from Oracle. It fixes issues preventing pflogd
+# from building and running on Solaris. Especially, we:
+# - make it read packets from Solaris-specific capture links instead
+#   of OpenBSD's pflog interfaces
+# - introduce our own pcap_pkthdr structure as the one used by
+#   upstream would result in corrupted packet dump files on Solaris
+# - use Solaris-specific random number generator
+#
+# This patch is not going to upstream, the changes are Solaris-specific.
+
+diff -Naur ORIGINAL/Makefile pflogd-OPENBSD_5_5-OPENBSD_5_5.pre-smf/Makefile
+--- ORIGINAL/Makefile	2013-06-18 20:51:30.000000000 -0700
++++ pflogd-OPENBSD_5_5-OPENBSD_5_5.pre-smf/Makefile	2016-02-17 02:08:53.410106245 -0800
+@@ -1,15 +1,28 @@
+ #	$OpenBSD: Makefile,v 1.9 2013/06/19 03:51:30 lteo Exp $
+ 
+-CFLAGS+=-Wall -Wmissing-prototypes -Wshadow
++CFLAGS+= -m64 -errwarn
+ 
+-# for pcap-int.h
+-CFLAGS+=-I${.CURDIR}/../../lib/libpcap
++PROG=pflogd
++SRCS=pflogd.c privsep.c privsep_fdpass.c
++OBJS=$(SRCS:.c=.o)
++MAN=pflogd.8
+ 
+-LDADD+= -lpcap
+-DPADD+=	${LIBPCAP}
++LDADD+=-lpcap -ldladm -luutil
+ 
+-PROG=	pflogd
+-SRCS=	pflogd.c privsep.c privsep_fdpass.c
+-MAN=	pflogd.8
++all:	$(SRCS) $(PROG)
+ 
+-.include <bsd.prog.mk>
++install: $(PROG)
++	$(INSTALL) -d $(PREFIX)/sbin
++	$(INSTALL) -m 755 $(PROG) $(PREFIX)/sbin
++	$(INSTALL) -d $(MANDIR)/man8
++	$(INSTALL) -m 644 $(MAN) $(MANDIR)/man8
++
++$(PROG):	$(OBJS)
++	$(CC) $(CFLAGS) $(OBJS) -o $@ $(LDADD)
++
++.c.o:
++	$(CC) $(CFLAGS) -c -o $@ $<
++
++clean:
++	rm -rf *.o
++	rm -rf $(PROG)
+diff -Naur ORIGINAL/pflogd.8 pflogd-OPENBSD_5_5-OPENBSD_5_5.pre-smf/pflogd.8
+--- ORIGINAL/pflogd.8	2014-01-20 19:15:45.000000000 -0800
++++ pflogd-OPENBSD_5_5-OPENBSD_5_5.pre-smf/pflogd.8	2016-02-17 02:32:29.857912548 -0800
+@@ -44,15 +44,15 @@
+ .Nm
+ is a background daemon which reads packets logged by
+ .Xr pf 4
+-to a
+-.Xr pflog 4
+-interface, normally
++to a dedicated capture link interface (see
++.Xr dladm 1M
++for details), normally
+ .Pa pflog0 ,
+ and writes the packets to a logfile (normally
+-.Pa /var/log/pflog )
+-in
+-.Xr tcpdump 8
+-binary format.
++.Pa /var/log/firewall/pflog/pflog0.pkt )
++in libpcap format (see
++.Xr PCAP 3pcap
++for details).
+ These logs can be reviewed later using the
+ .Fl r
+ option of
+@@ -63,9 +63,7 @@
+ .Nm
+ closes and then re-opens the log file when it receives
+ .Dv SIGHUP ,
+-permitting
+-.Xr newsyslog 8
+-to rotate logfiles automatically.
++permitting convenient log rotation.
+ .Dv SIGALRM
+ causes
+ .Nm
+@@ -96,7 +94,7 @@
+ .Pp
+ .Nm
+ will also log the pcap statistics for the
+-.Xr pflog 4
++capture link
+ interface to syslog when a
+ .Dv SIGUSR1
+ is received.
+@@ -113,12 +111,8 @@
+ If not specified, the default is 60 seconds.
+ .It Fl f Ar filename
+ Log output filename.
+-Default is
+-.Pa /var/log/pflog .
+ .It Fl i Ar interface
+-Specifies the
+-.Xr pflog 4
+-interface to use.
++Specifies the capture link interface to use.
+ By default,
+ .Nm
+ will use
+@@ -172,7 +166,7 @@
+ .El
+ .Sh FILES
+ .Bl -tag -width /var/run/pflogd.pid -compact
+-.It Pa /var/log/pflog
++.It Pa /var/log/firewall/pflog/pflog0.pkt
+ Default log file.
+ .El
+ .Sh EXAMPLES
+@@ -185,7 +179,7 @@
+ .Ed
+ .Pp
+ Log from another
+-.Xr pflog 4
++capture link
+ interface, excluding specific packets:
+ .Bd -literal -offset indent
+ # pflogd -i pflog3 -f network3.log "not (tcp and port 23)"
+@@ -193,7 +187,7 @@
+ .Pp
+ Display binary logs:
+ .Bd -literal -offset indent
+-# tcpdump -n -e -ttt -r /var/log/pflog
++# tcpdump -n -e -ttt -r /var/log/firewall/pflog/pflog3.pkt
+ .Ed
+ .Pp
+ Display the logs in real time (this does not interfere with the
+@@ -210,16 +204,18 @@
+ .Ed
+ .Sh SEE ALSO
+ .Xr pcap 3 ,
+-.Xr pf 4 ,
+-.Xr pflog 4 ,
+ .Xr pf.conf 5 ,
+-.Xr newsyslog 8 ,
++.Xr privileges 5 ,
++.Xr smf 5 ,
+ .Xr tcpdump 8
+ .Sh HISTORY
+ The
+ .Nm
+ command appeared in
+ .Ox 3.0 .
++The Solaris version is based on
++.Nm
++found in OpenBSD 5.5.
+ .Sh AUTHORS
+ .Nm
+ was written by
+diff -Naur ORIGINAL/pflogd.c pflogd-OPENBSD_5_5-OPENBSD_5_5.pre-smf/pflogd.c
+--- ORIGINAL/pflogd.c	2012-11-05 18:50:47.000000000 -0800
++++ pflogd-OPENBSD_5_5-OPENBSD_5_5.pre-smf/pflogd.c	2016-02-18 12:05:03.256562087 -0800
+@@ -48,7 +48,15 @@
+ #include <errno.h>
+ #include <stdarg.h>
+ #include <fcntl.h>
++#ifdef	_SOLARIS_
++#include <libdladm.h>
++#include <libnetcfg.h>
++#include <strings.h>
++#include <zone.h>
++#include <libuutil.h>
++#else /* !_SOLARIS_ */
+ #include <util.h>
++#endif	/* _SOLARIS_ */
+ #include "pflogd.h"
+ 
+ pcap_t *hpcap;
+@@ -88,6 +96,34 @@
+ void  sig_hup(int);
+ void  usage(void);
+ 
++#ifdef	_SOLARIS_
++/*
++ * setproctitle() is found in libc on OpenBSD. It allows program to update its
++ * process name. It will be an empty macro on Solaris.
++ */
++#define	setproctitle(...)
++
++/*
++ * __dead attribute will be an empty macro on Solaris.
++ */
++#define	__dead
++
++/*
++ * We must define our own pcap_pkthdr to ensure timeval structure will be
++ * defined in 32-bit version. Not doing so will result in corrupted packet dump
++ * file produced by pflogd on Solaris.
++ */
++typedef struct pcap_pkthdr_file {
++	struct {
++		uint32_t	tv_sec;
++		uint32_t	tv_usec;
++	} ts;
++	uint32_t	caplen;
++	uint32_t	len;
++} pcap_pkthdr_file_t;
++
++#endif	/* _SOLARIS_ */
++
+ static int try_reset_dump(int);
+ 
+ /* buffer must always be greater than snaplen */
+@@ -191,11 +227,13 @@
+ {
+ 	struct bpf_program bprog;
+ 
+-	if (pcap_compile(hpcap, &bprog, filter, PCAP_OPT_FIL, 0) < 0)
++	if (pcap_compile(hpcap, &bprog, filter, PCAP_OPT_FIL, 0) < 0) {
+ 		logmsg(LOG_WARNING, "%s", pcap_geterr(hpcap));
+-	else {
++		logmsg(LOG_WARNING, "for filter:\n\t%s\nNo filter set.\n", filter);
++	} else {
+ 		if (pcap_setfilter(hpcap, &bprog) < 0)
+-			logmsg(LOG_WARNING, "%s", pcap_geterr(hpcap));
++			logmsg(LOG_WARNING, "%s\nNo filter set.\n",
++			    pcap_geterr(hpcap));
+ 		pcap_freecode(&bprog);
+ 	}
+ }
+@@ -203,6 +241,31 @@
+ int
+ if_exists(char *ifname)
+ {
++#ifdef	_SOLARIS_
++	dladm_handle_t	dlh;
++	datalink_id_t	linkid;
++	zoneid_t	zid = getzoneid();
++	dladm_status_t	dls;
++	int		rv = 0;
++
++	if (!dladm_valid_linkname(ifname) ||
++	    (dladm_open(&dlh) != DLADM_STATUS_OK)) {
++		errno = ENXIO;
++		return (rv);
++	}
++
++	dls = dladm_apply_linknamefilters(dlh, ifname, &linkid, 1, &zid,
++	    DLADM_OPT_ACTIVE, zid, NULL);
++	if ((dls == DLADM_STATUS_OK) && (linkid != DATALINK_INVALID_LINKID)) {
++		rv = 1;
++	}
++
++	dladm_close(dlh);
++
++	errno = (rv == 1) ? 0 : ENXIO;
++
++	return (rv);
++#else /* !_SOLARIS_ */
+ 	int s, ret = 1;
+ 	struct ifreq ifr;
+ 	struct if_data ifrdat;
+@@ -220,6 +283,7 @@
+ 		err(1, "close");
+ 
+ 	return (ret);
++#endif	/* _SOLARIS_ */
+ }
+ 
+ int
+@@ -243,10 +307,15 @@
+ 	cur_snaplen = snaplen = pcap_snapshot(hpcap);
+ 
+ 	/* lock */
++/*
++ * BIOCLOCK operation is not implmented on Solaris. 
++ */
++#ifndef	_SOLARIS_
+ 	if (ioctl(pcap_fileno(hpcap), BIOCLOCK) < 0) {
+ 		logmsg(LOG_ERR, "BIOCLOCK: %s", strerror(errno));
+ 		return (-1);
+ 	}
++#endif	/* !_SOLARIS_ */
+ 
+ 	return (0);
+ }
+@@ -371,7 +440,11 @@
+ scan_dump(FILE *fp, off_t size)
+ {
+ 	struct pcap_file_header hdr;
++#ifdef	_SOLARIS_
++	struct pcap_pkthdr_file	ph;
++#else /* !_SOLARIS_ */
+ 	struct pcap_pkthdr ph;
++#endif	/* _SOLARIS_ */
+ 	off_t pos;
+ 
+ 	/*
+@@ -440,13 +513,26 @@
+ dump_packet_nobuf(u_char *user, const struct pcap_pkthdr *h, const u_char *sp)
+ {
+ 	FILE *f = (FILE *)user;
++#ifdef	_SOLARIS_
++	struct pcap_pkthdr_file	h_file;
++#endif	/* _SOLARIS_ */
+ 
+ 	if (suspended) {
+ 		packets_dropped++;
+ 		return;
+ 	}
+ 
+-	if (fwrite((char *)h, sizeof(*h), 1, f) != 1) {
++#ifdef	_SOLARIS_
++	h_file.ts.tv_sec = (uint32_t)h->ts.tv_sec;
++	h_file.ts.tv_usec = (uint32_t)h->ts.tv_usec;
++	h_file.caplen = h->caplen;
++	h_file.len = h->len;
++	if (fwrite((char *)&h_file, sizeof (h_file), 1, f) != 1)
++#else	/* !_SOLARIS_ */
++	if (fwrite((char *)h, sizeof(*h), 1, f) != 1)
++#endif	/* _SOLARIS_ */
++
++	{
+ 		off_t pos = ftello(f);
+ 
+ 		/* try to undo header to prevent corruption */
+@@ -520,9 +606,32 @@
+ dump_packet(u_char *user, const struct pcap_pkthdr *h, const u_char *sp)
+ {
+ 	FILE *f = (FILE *)user;
++#ifdef	_SOLARIS_
++	struct pcap_pkthdr_file	h_file;
++	size_t len = sizeof (h_file) + h->caplen;
++#else	/* !_SOLARIS_ */
+ 	size_t len = sizeof(*h) + h->caplen;
++#endif	/* _SOLARIS_ */
+ 
+-	if (len < sizeof(*h) || h->caplen > (size_t)cur_snaplen) {
++#ifdef	_SOLARIS_
++	/*
++	 * Member ts is struct timeval defined in sys/time.h. Solaris uses
++	 * 64-bit version for tv_sec, tv_usec. 64-bit members are not
++	 * compatible with pcap file format, hence we must convert them to
++	 * 32-bits.
++	 */
++	h_file.ts.tv_sec = (uint32_t)h->ts.tv_sec;
++	h_file.ts.tv_usec = (uint32_t)h->ts.tv_usec;
++	h_file.caplen = h->caplen;
++	h_file.len = h->len;
++#endif	/* _SOLARIS_ */
++
++#ifdef	_SOLARIS_
++	if (len < sizeof(h_file) || h_file.caplen > (size_t)cur_snaplen)
++#else	/* !_SOLARIS_ */
++	if (len < sizeof(*h) || h->caplen > (size_t)cur_snaplen)
++#endif	/* _SOLARIS_ */
++	{
+ 		logmsg(LOG_NOTICE, "invalid size %zu (%d/%d), packet dropped",
+ 		       len, cur_snaplen, snaplen);
+ 		packets_dropped++;
+@@ -548,8 +657,13 @@
+ 	}
+ 
+  append:
++#ifdef	_SOLARIS_
++	(void) memcpy(bufpos, &h_file, sizeof (h_file));
++	(void) memcpy(bufpos + sizeof (h_file), sp, h->caplen);
++#else	/* !_SOLARIS_ */
+ 	memcpy(bufpos, h, sizeof(*h));
+ 	memcpy(bufpos + sizeof(*h), sp, h->caplen);
++#endif	/* _SOLARIS_ */
+ 
+ 	bufpos += len;
+ 	bufleft -= len;
+@@ -611,7 +725,6 @@
+ 		default:
+ 			usage();
+ 		}
+-
+ 	}
+ 
+ 	log_debug = Debug;
+@@ -658,12 +771,25 @@
+ 
+ 	setproctitle("[initializing]");
+ 	/* Process is now unprivileged and inside a chroot */
++#ifdef	_SOLARIS_
++	/*
++	 * We have to use sigset() on Solaris, since signal() resets sig.
++	 * handler to default as soon as particular signal is delivered.
++	 */
++	sigset(SIGTERM, sig_close);
++	sigset(SIGINT, sig_close);
++	sigset(SIGQUIT, sig_close);
++	sigset(SIGALRM, sig_alrm);
++	sigset(SIGUSR1, sig_usr1);
++	sigset(SIGHUP, sig_hup);
++#else /* !_SOLARIS_ */
+ 	signal(SIGTERM, sig_close);
+ 	signal(SIGINT, sig_close);
+ 	signal(SIGQUIT, sig_close);
+ 	signal(SIGALRM, sig_alrm);
+ 	signal(SIGUSR1, sig_usr1);
+ 	signal(SIGHUP, sig_hup);
++#endif	/* _SOLARIS_ */
+ 	alarm(delay);
+ 
+ 	buffer = malloc(PFLOGD_BUFSIZE);
+@@ -696,7 +822,7 @@
+ 				ret = -1;
+ 				break;
+ 			}
+-			logmsg(LOG_NOTICE, "%s", pcap_geterr(hpcap));
++			logmsg(LOG_NOTICE, "pcap says: %s", pcap_geterr(hpcap));
+ 		}
+ 
+ 		if (gotsig_close)
+diff -Naur ORIGINAL/pflogd.h pflogd-OPENBSD_5_5-OPENBSD_5_5.pre-smf/pflogd.h
+--- ORIGINAL/pflogd.h	2010-09-20 22:56:58.000000000 -0700
++++ pflogd-OPENBSD_5_5-OPENBSD_5_5.pre-smf/pflogd.h	2016-02-18 12:08:42.414919276 -0800
+@@ -16,7 +16,11 @@
+  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+  */
+ 
++#ifdef	_SOLARIS_
++#include <limits.h>
++#else /* !_SOLARIS_ */
+ #include <sys/limits.h>
++#endif	/* _SOLARIS_ */
+ #include <pcap.h>
+ 
+ #define DEF_SNAPLEN 160		/* pfloghdr + ip hdr + proto hdr fit usually */
+@@ -25,7 +29,12 @@
+ #define PCAP_OPT_FIL 1		/* filter optimization */
+ #define FLUSH_DELAY 60		/* flush delay */
+ 
++#ifdef	_SOLARIS_
++#define	PFLOGD_LOG_DIR		"/var/log/firewall/pflog"
++#define PFLOGD_LOG_FILE		"pflog.pkt"
++#else /* !_SOLARIS_ */
+ #define PFLOGD_LOG_FILE		"/var/log/pflog"
++#endif	/* _SOLARIS_ */
+ #define PFLOGD_DEFAULT_IF	"pflog0"
+ 
+ #define PFLOGD_MAXSNAPLEN	INT_MAX
+diff -Naur ORIGINAL/privsep.c pflogd-OPENBSD_5_5-OPENBSD_5_5.pre-smf/privsep.c
+--- ORIGINAL/privsep.c	2013-09-13 01:49:17.000000000 -0700
++++ pflogd-OPENBSD_5_5-OPENBSD_5_5.pre-smf/privsep.c	2016-02-18 12:07:34.219667793 -0800
+@@ -28,8 +28,6 @@
+ #include <errno.h>
+ #include <fcntl.h>
+ #include <limits.h>
+-#include <pcap.h>
+-#include <pcap-int.h>
+ #include <pwd.h>
+ #include <signal.h>
+ #include <stdio.h>
+@@ -38,6 +36,34 @@
+ #include <syslog.h>
+ #include <unistd.h>
+ #include "pflogd.h"
++#ifdef	_SOLARIS_
++#include <priv.h>
++#include <stdlib.h>
++#include <sys/types.h>
++#include <time.h>
++#include <sys/random.h>
++#endif	/* _SOLARIS_ */
++/*
++ * It's better to include these after other header files.
++ * pcap-int.h defines strlcpy() as macro if it is undefined.
++ * In our case strlcpy() comes from string.h.
++ */
++#define	HAVE_SNPRINTF	1
++#include <pcap.h>
++#include <pcap-int.h>
++
++#ifdef	_SOLARIS_
++#define	_NSIG	27
++
++/*
++ * setproctitle() is found in libc on OpenBSD. It allows program to update its
++ * process name. It will empty macro on Solaris.
++ */
++#define	setproctitle(...)
++
++#else /* !_SOLARIS_ */
++#define	PFLOGD_USER	"_pflogd"
++#endif	/* _SOLARIS_ */
+ 
+ enum cmd_types {
+ 	PRIV_SET_SNAPLEN,	/* set the snaplength */
+@@ -67,7 +93,9 @@
+ {
+ 	int i, fd, socks[2], cmd;
+ 	int snaplen, ret, olderrno;
++#ifndef	_SOLARIS_
+ 	struct passwd *pw;
++#endif	/* !_SOLARIS_ */
+ 
+ 	for (i = 1; i < _NSIG; i++)
+ 		signal(i, SIG_DFL);
+@@ -76,16 +104,19 @@
+ 	if (socketpair(AF_LOCAL, SOCK_STREAM, PF_UNSPEC, socks) == -1)
+ 		err(1, "socketpair() failed");
+ 
++#ifndef	_SOLARIS_
+ 	pw = getpwnam("_pflogd");
+ 	if (pw == NULL)
+ 		errx(1, "unknown user _pflogd");
+ 	endpwent();
++#endif	/* !_SOLARIS_ */
+ 
+ 	child_pid = fork();
+ 	if (child_pid < 0)
+ 		err(1, "fork() failed");
+ 
+ 	if (!child_pid) {
++#ifndef	_SOLARIS_
+ 		gid_t gidset[1];
+ 
+ 		/* Child - drop privileges and return */
+@@ -101,6 +132,8 @@
+ 			err(1, "setgroups() failed");
+ 		if (setresuid(pw->pw_uid, pw->pw_uid, pw->pw_uid) == -1)
+ 			err(1, "setresuid() failed");
++#endif	/* !_SOLARIS_ */
++
+ 		close(socks[0]);
+ 		priv_fd = socks[1];
+ 		return 0;
+@@ -108,19 +141,34 @@
+ 
+ 	/* Father */
+ 	/* Pass ALRM/TERM/HUP/INT/QUIT through to child, and accept CHLD */
++#ifdef	_SOLARIS_
++	/*
++	 * We have to use sigset() on Solaris, since signal() resets sig.
++	 * handler to default as soon as particular signal is delivered.
++	 */
++	sigset(SIGALRM, sig_pass_to_chld);
++	sigset(SIGTERM, sig_pass_to_chld);
++	sigset(SIGHUP,  sig_pass_to_chld);
++	sigset(SIGINT,  sig_pass_to_chld);
++	sigset(SIGQUIT,  sig_pass_to_chld);
++	sigset(SIGCHLD, sig_chld);
++#else /* !_SOLARIS_ */
+ 	signal(SIGALRM, sig_pass_to_chld);
+ 	signal(SIGTERM, sig_pass_to_chld);
+ 	signal(SIGHUP,  sig_pass_to_chld);
+ 	signal(SIGINT,  sig_pass_to_chld);
+ 	signal(SIGQUIT,  sig_pass_to_chld);
+ 	signal(SIGCHLD, sig_chld);
++#endif	/* _SOLARIS_ */
+ 
+ 	setproctitle("[priv]");
+ 	close(socks[1]);
+ 
+ 	while (!gotsig_chld) {
+-		if (may_read(socks[0], &cmd, sizeof(int)))
++		if (may_read(socks[0], &cmd, sizeof(int))) {
++			logmsg(LOG_ERR, "may_read: fails\n");
+ 			break;
++		}
+ 		switch (cmd) {
+ 		case PRIV_SET_SNAPLEN:
+ 			logmsg(LOG_DEBUG,
+@@ -192,9 +240,20 @@
+ 
+ 	for (;;) {
+ 		int fd;
++#ifdef _SOLARIS_
++		uint32_t rand;
+ 
++		if (getrandom(&rand, sizeof (rand), GRND_NONBLOCK) !=
++		    sizeof (rand)) {
++			logmsg(LOG_ERR, "getrandom() failed");
++			return 1;
++		}
++		len = snprintf(ren, sizeof(ren), "%s.bad.%08x",
++		    name, rand);
++#else /* !_SOLARIS_ */
+ 		len = snprintf(ren, sizeof(ren), "%s.bad.%08x",
+ 		    name, arc4random());
++#endif /* _SOLARIS_ */
+ 		if (len >= sizeof(ren)) {
+ 			logmsg(LOG_ERR, "[priv] new name too long");
+ 			return (1);

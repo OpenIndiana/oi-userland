@@ -1,0 +1,113 @@
+#!/sbin/sh
+#
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+#
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
+. /lib/svc/share/smf_include.sh
+
+PATH=$PATH:/usr/sbin
+
+# Retrieve an unescaped property value from a method token.
+# Arguments:
+# - raw method token value
+# Outputs:
+# - unescaped property value
+# Returns:
+# - 0 on succes
+# - 1 when unescaping failed
+# - 2 when the value is empty
+function get_property
+{
+	VALUE="$(echo "$1" | /usr/bin/sed 's/\\\(.\)/\1/g')"
+
+	if [[ $? -ne 0 ]]; then
+		exit 1
+	fi
+
+	echo "$VALUE"
+}
+
+function failure
+{
+	echo "An unknown error occurred. Probably either /usr/bin/sed is"
+	echo "missing or system resources are exhausted."
+	exit $SMF_EXIT_ERR_FATAL
+}
+
+# store and unescape property values
+PFLOGD_LOGFILE="$(get_property "$2")" || failure
+PFLOGD_SNAPLEN="$(get_property "$3")" || failure
+PFLOGD_IFACE="$(get_property "$4")" || failure
+PFLOGD_DELAY="$(get_property "$5")" || failure
+PFLOGD_FILTER="$(get_property "$6")" || failure
+
+# check property values for emptiness (pflog/filter may be empty)
+if [[ -z $PFLOGD_LOGFILE ]]; then
+	echo "The pflog/logfile property cannot be empty."
+	exit $SMF_EXIT_ERR_FATAL
+fi
+if [[ -z $PFLOGD_SNAPLEN ]]; then
+	echo "The pflog/snaplen property cannot be empty."
+	exit $SMF_EXIT_ERR_FATAL
+fi
+if [[ -z $PFLOGD_IFACE ]]; then
+	echo "The pflog/interface property cannot be empty."
+	exit $SMF_EXIT_ERR_FATAL
+fi
+if [[ -z $PFLOGD_DELAY ]]; then
+	echo "The pflog/delay property cannot be empty."
+	exit $SMF_EXIT_ERR_FATAL
+fi
+
+case "$1" in
+	start)
+		# Create non-persistent capture link if it does not exist.
+		echo "Checking if capture link exists.."
+		dladm show-cap "$PFLOGD_IFACE"
+		if [[ $? -ne 0 ]] ; then
+			echo "Creating a temporary capture link.."
+			dladm create-cap -t "$PFLOGD_IFACE"
+			if [ $? -ne 0 ] ; then
+				exit $SMF_EXIT_ERR_FATAL
+			fi
+		fi
+
+		# Start the daemon.
+		smf_clear_env
+		pflogd -i "$PFLOGD_IFACE" -s "$PFLOGD_SNAPLEN" \
+		    -f "$PFLOGD_LOGFILE" -d "$PFLOGD_DELAY" "$PFLOGD_FILTER"
+		if [[ $? -ne 0 ]] ; then
+			exit $SMF_EXIT_ERR_FATAL
+		fi
+		;;
+
+	*)
+		echo "Usage: $0 \c" >&2
+		echo "(start)" >&2
+		exit 1
+		;;
+
+esac
+
+exit $SMF_EXIT_OK

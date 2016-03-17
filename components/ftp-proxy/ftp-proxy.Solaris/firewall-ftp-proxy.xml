@@ -1,0 +1,203 @@
+<?xml version="1.0"?>
+<!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
+<!--
+
+ CDDL HEADER START
+
+ The contents of this file are subject to the terms of the
+ Common Development and Distribution License (the "License").
+ You may not use this file except in compliance with the License.
+
+ You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+ or http://www.opensolaris.org/os/licensing.
+ See the License for the specific language governing permissions
+ and limitations under the License.
+
+ When distributing Covered Code, include this CDDL HEADER in each
+ file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+ If applicable, add the following below this CDDL HEADER, with the
+ fields enclosed by brackets "[]" replaced with your own identifying
+ information: Portions Copyright [yyyy] [name of copyright owner]
+
+ CDDL HEADER END
+
+ Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
+
+    NOTE:  This service manifest is not editable; its contents will
+    be overwritten by package or patch operations, including
+    operating system upgrade.  Make customizations in a different
+    file.
+-->
+
+<service_bundle type='manifest' name='network/firewall/ftp-proxy' >
+
+<service
+    name='network/firewall/ftp-proxy'
+    type='service'
+    version='1'>
+	<dependency
+	    name='firewall'
+	    grouping='require_all'
+	    restart_on='restart'
+	    type='service'>
+		<service_fmri value='svc:/network/firewall:default'/>
+	</dependency>
+
+	<method_context>
+		<method_credential
+		    user='daemon'
+		    group='daemon'
+		    privileges='basic,!file_write,!file_link_any,!proc_info,!proc_session,sys_ip_config'
+		/>
+	</method_context>
+
+	<exec_method 
+	    type='method' 
+	    name='start'
+	    exec='/lib/svc/method/ftp-proxy start "%{ftp-proxy/anonymous-only}" "%{ftp-proxy/proxy-NAT-address}" "%{ftp-proxy/proxy-listen-address}" "%{ftp-proxy/debug-level}" "%{ftp-proxy/maxsessions}" "%{ftp-proxy/listen-port}" "%{ftp-proxy/reverse-mode-address}" "%{ftp-proxy/reverse-mode-port}" "%{ftp-proxy/always-use-ftp-data-port}" "%{ftp-proxy/tag}" "%{ftp-proxy/timeout}" "%{ftp-proxy/log}"'
+	    timeout_seconds='30'>
+	</exec_method>
+
+	<exec_method 
+	    type='method' 
+	    name='stop'
+	    exec=':kill'
+	    timeout_seconds='60'>
+	</exec_method>
+
+	<exec_method
+	    type='method'
+	    name='refresh'
+	    exec=':kill'
+	    timeout_seconds='5'>
+	</exec_method>
+
+	<instance name='default' enabled='false' complete='true'>
+		<property_group name="general" type="framework">
+			<propval
+			    name='action_authorization'
+			    type='astring'
+			    value='solaris.smf.manage.network.firewall' />
+			<propval
+			    name='value_authorization'
+			    type='astring'
+			    value='solaris.smf.manage.network.firewall' />
+		</property_group>
+		<property_group name='ftp-proxy' type='application'>
+			<propval name='anonymous-only' type='astring' value='off' />
+			<propval name='proxy-NAT-address' type='astring' value='' />
+			<propval
+			    name='proxy-listen-address'
+			    type='astring'
+			    value='127.0.0.1' />
+			<propval name='debug-level' type='integer' value='5' />
+			<propval
+			    name='maxsessions'
+			    type='integer'
+			    value='100' />
+			<propval
+			    name='listen-port'
+			    type='integer'
+			    value='8021' />
+			<propval
+			    name='reverse-mode-address'
+			    type='astring'
+			    value='' />
+			<propval name='reverse-mode-port' type='integer' value='21' />
+			<propval
+			    name='always-use-ftp-data-port'
+			    type='astring'
+			    value='off' />
+			<propval name='tag' type='astring' value=''/>
+			<propval name='timeout' type='integer' value='86400' />
+			<propval name='log' type='astring' value='off' />
+			<propval
+			    name='value_authorization'
+			    type='astring'
+			    value='solaris.smf.value.network.firewall' />
+		</property_group>
+	</instance>
+
+	<stability value='Unstable' />
+
+	<template>
+		<common_name>
+			<loctext xml:lang='C'>
+			ftp-proxy - FTP proxy daemon for PF
+			</loctext>      
+		</common_name>
+		<documentation>
+			<manpage title='ftp-proxy' section='1M' manpath='/usr/share/man' />
+		</documentation>
+		<pg_pattern name="ftp-proxy" type="application" target="instance" required="true">
+			<prop_pattern name="anonymous-only" type="astring" required="true">
+				<cardinality min="1" max="1"/>
+				<constraints>
+					<value name="on"/>
+					<value name="off"/>
+				</constraints>
+			</prop_pattern>
+			<prop_pattern name="proxy-NAT-address" type="astring" required="true">
+				<cardinality min="1" max="1"/>
+			</prop_pattern>
+			<prop_pattern name="proxy-listen-address" type="astring" required="true">
+				<cardinality min="1" max="1"/>
+			</prop_pattern>
+			<prop_pattern name="debug-level" type="integer" required="true">
+				<cardinality min="1" max="1"/>
+				<constraints>
+					<range min="0" max="7"/>
+				</constraints>
+			</prop_pattern>
+			<prop_pattern name="maxsessions" type="integer" required="true">
+				<cardinality min="1" max="1"/>
+				<constraints>
+					<range min="1" max="500"/>
+				</constraints>
+			</prop_pattern>
+			<prop_pattern name="listen-port" type="integer" required="true">
+				<cardinality min="1" max="1"/>
+				<constraints>
+					<range min="0" max="65535"/>
+				</constraints>
+			</prop_pattern>
+			<prop_pattern name="reverse-mode-address" type="astring" required="true">
+				<cardinality min="0" max="1"/>
+			</prop_pattern>
+			<prop_pattern name="reverse-mode-port" type="integer" required="true">
+				<cardinality min="0" max="1"/>
+				<constraints>
+					<range min="0" max="65535"/>
+				</constraints>
+			</prop_pattern>
+			<prop_pattern name="always-use-ftp-data-port" type="astring" required="true">
+				<cardinality min="1" max="1"/>
+				<constraints>
+					<value name="on"/>
+					<value name="off"/>
+				</constraints>
+			</prop_pattern>
+			<prop_pattern name="tag" type="astring" required="true">
+				<cardinality min="0" max="1"/>
+			</prop_pattern>
+			<prop_pattern name="timeout" type="integer" required="true">
+				<cardinality min="1" max="1"/>
+				<constraints>
+					<range min="0" max="86400"/>
+				</constraints>
+			</prop_pattern>
+			<prop_pattern name="log" type="astring" required="true">
+				<cardinality min="1" max="1"/>
+				<constraints>
+					<value name="on"/>
+					<value name="off"/>
+					<value name="all"/>
+				</constraints>
+			</prop_pattern>
+			<prop_pattern name="value_authorization" type="astring">
+			</prop_pattern>
+		</pg_pattern>
+	</template>
+</service>
+
+</service_bundle>

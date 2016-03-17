@@ -1,0 +1,642 @@
+# This patch comes from Oracle. It fixes issues preventing ftp-proxy
+# from building and running on Solaris. Especially, we:
+# - disabled features missing support on Solaris (queuing, rtable..)
+#   where adding such support is not reasonable
+# - used workarounds to deal with missing pieces on Solaris (missing
+#   structure members in sockaddr, PF not supporting divert-to,
+#   using Solaris-specific random number generator) 
+#
+# These changes are not going to upstream, they are Solaris-specific.
+
+diff -Naur ORIGINAL/Makefile ftp-proxy-OPENBSD_5_5-OPENBSD_5_5.pre-smf/Makefile
+--- ORIGINAL/Makefile	2006-11-26 03:31:13.000000000 -0800
++++ ftp-proxy-OPENBSD_5_5-OPENBSD_5_5.pre-smf/Makefile	2016-02-10 04:21:21.337202150 -0800
+@@ -1,13 +1,29 @@
+ #	$OpenBSD: Makefile,v 1.3 2006/11/26 11:31:13 deraadt Exp $
+ 
++CFLAGS+= -m64 -errwarn
++
+ PROG=	ftp-proxy
+ SRCS=	ftp-proxy.c filter.c
++OBJS=$(SRCS:.c=.o)
+ MAN=	ftp-proxy.8
+ 
+-CFLAGS+= -I${.CURDIR}
+-CFLAGS+= -Wall -Wstrict-prototypes -Wmissing-prototypes -Wpointer-arith \
+-         -Wno-uninitialized
+-LDADD+=	-levent
+-DPADD+= ${LIBEVENT}
++LDADD+=	-levent -luutil
++LDFLAGS+=	-z nolazyload
++
++all:	$(SRCS) $(PROG)
++
++install: $(PROG)
++	$(INSTALL) -d $(PREFIX)/sbin
++	$(INSTALL) -m 755 $(PROG) $(PREFIX)/sbin
++	$(INSTALL) -d $(MANDIR)/man8
++	$(INSTALL) -m 644 $(MAN) $(MANDIR)/man8
++
++$(PROG):	$(OBJS)
++	$(CC) $(CFLAGS) $(OBJS) -o $@ $(LDFLAGS) $(LDADD)
++
++.c.o:
++	$(CC) $(CFLAGS) -c -o $@ $<
+ 
+-.include <bsd.prog.mk>
++clean:
++	rm -rf *.o
++	rm -rf $(PROG)
+diff -Naur ORIGINAL/filter.c ftp-proxy-OPENBSD_5_5-OPENBSD_5_5.pre-smf/filter.c
+--- ORIGINAL/filter.c	2012-09-18 03:11:53.000000000 -0700
++++ ftp-proxy-OPENBSD_5_5-OPENBSD_5_5.pre-smf/filter.c	2016-02-10 04:24:03.599069704 -0800
+@@ -32,6 +32,10 @@
+ #include <stdio.h>
+ #include <string.h>
+ #include <unistd.h>
++#ifdef _SOLARIS_
++/* we need _IOWR */
++#include <sys/ioccom.h>
++#endif	/* _SOLARIS_ */
+ 
+ #include "filter.h"
+ 
+diff -Naur ORIGINAL/ftp-proxy.8 ftp-proxy-OPENBSD_5_5-OPENBSD_5_5.pre-smf/ftp-proxy.8
+--- ORIGINAL/ftp-proxy.8	2012-06-25 04:49:19.000000000 -0700
++++ ftp-proxy-OPENBSD_5_5-OPENBSD_5_5.pre-smf/ftp-proxy.8	2016-02-24 06:31:17.792565815 -0800
+@@ -30,17 +30,16 @@
+ .Op Fl m Ar maxsessions
+ .Op Fl P Ar port
+ .Op Fl p Ar port
+-.Op Fl q Ar queue
+ .Op Fl R Ar address
+ .Op Fl T Ar tag
+ .Op Fl t Ar timeout
+ .Ek
+ .Sh DESCRIPTION
+ .Nm
+-is a proxy for the Internet File Transfer Protocol.
+-FTP control connections should be redirected into the proxy using the
+-.Xr pf 4
+-.Ar divert-to
++is a proxy for the Internet File Transfer Protocol making connections
++over IPv4 NAT possible.
++FTP control connections should be redirected into the proxy using the PF
++.Ar rdr-to
+ command, after which the proxy connects to the server on behalf of
+ the client.
+ .Pp
+@@ -51,22 +50,20 @@
+ Consequently, all connections from the server to the proxy have
+ their destination address rewritten, so they are redirected to the
+ client.
+-The proxy uses the
+-.Xr pf 4
++The proxy uses the PF
+ .Ar anchor
+ facility for this.
+ .Pp
+ Assuming the FTP control connection is from $client to $server, the
+-proxy connected to the server using the $proxy source address, and
+-$port is negotiated, then
++proxy is connected to the server using the $proxy source address, and
++$port is negotiated, the
+ .Nm
+ adds the following rules to the anchor.
+ $server and $orig_server are the same unless
+ .Fl R
+ is used to force a different $server address for all connections.
+-(These example rules use inet, but the proxy also supports inet6.)
+ .Pp
+-In case of active mode (PORT or EPRT):
++In case of active mode (PORT):
+ .Bd -literal -offset 2n
+ pass in from $server to $proxy port $proxy_port \e
+     rdr-to $client port $port
+@@ -74,7 +71,7 @@
+     nat-to $orig_server port $natport
+ .Ed
+ .Pp
+-In case of passive mode (PASV or EPSV):
++In case of passive mode (PASV):
+ .Bd -literal -offset 2n
+ pass in from $client to $orig_server port $proxy_port \e
+     rdr-to $server port $port
+@@ -83,11 +80,6 @@
+ .Pp
+ The options are as follows:
+ .Bl -tag -width Ds
+-.It Fl 6
+-IPv6 mode.
+-The proxy will expect and use IPv6 addresses for all communication.
+-Only the extended FTP modes EPSV and EPRT are allowed with IPv6.
+-The proxy is in IPv4 mode by default.
+ .It Fl A
+ Only permit anonymous FTP connections.
+ Either user "ftp" or user "anonymous" is allowed.
+@@ -96,14 +88,11 @@
+ connection to a server.
+ .It Fl b Ar address
+ Address where the proxy will listen for redirected control connections.
+-The default is 127.0.0.1, or ::1 in IPv6 mode.
++The default is 127.0.0.1.
+ .It Fl D Ar level
+ Debug level, ranging from 0 to 7.
+ Higher is more verbose.
+ The default is 5.
+-(These levels correspond to the
+-.Xr syslog 3
+-levels.)
+ .It Fl d
+ Do not daemonize.
+ The process will stay in the foreground, logging to standard error.
+@@ -120,10 +109,6 @@
+ .It Fl p Ar port
+ Port where the proxy will listen for redirected connections.
+ The default is port 8021.
+-.It Fl q Ar queue
+-Create rules with queue
+-.Ar queue
+-appended, so that data connections can be queued.
+ .It Fl R Ar address
+ Fixed server address, also known as reverse mode.
+ The proxy will always connect to the same server, regardless of
+@@ -142,9 +127,8 @@
+ keyword can be implemented following the
+ .Nm
+ anchor.
+-These rules can use special
+-.Xr pf 4
+-features like route-to, reply-to, label, rtable, overload, etc. that
++These rules can use special PF
++features like route-to, reply-to, label, overload, etc. that
+ .Nm
+ does not implement itself.
+ There must be a matching pass rule after the
+@@ -159,7 +143,9 @@
+ .It Fl v
+ Set the 'log' flag on pf rules committed by
+ .Nm .
+-Use twice to set the 'log all' flag.
++Use twice to set the
++.Sq log all
++flag.
+ The pf rules do not log by default.
+ .El
+ .Sh CONFIGURATION
+@@ -171,27 +157,23 @@
+ necessary.
+ .Bd -literal -offset 2n
+ anchor "ftp-proxy/*"
+-pass in quick inet proto tcp to port ftp divert-to 127.0.0.1 port 8021
++pass in quick inet proto tcp to port ftp rdr-to 127.0.0.1 port 8021
+ pass out inet proto tcp from (self) to any port ftp
+ .Ed
++.Pp
++To run
++.Nm
++in a non-global zone, the
++.Bd -literal -offset indent
++svc:/network/socket-filter:pf_divert
++.Ed
++instance must be online in the global zone.
+ .Sh SEE ALSO
+-.Xr ftp 1 ,
+-.Xr pf 4 ,
+ .Xr pf.conf 5
+ .Sh CAVEATS
+-.Xr pf 4
+-does not allow the ruleset to be modified if the system is running at a
+-.Xr securelevel 7
+-higher than 1.
+-At that level
+-.Nm
+-cannot add rules to the anchors and FTP data connections may get blocked.
+ .Pp
+ Negotiated data connection ports below 1024 are not allowed.
+ .Pp
+ The negotiated IP address for active modes is ignored for security
+ reasons.
+ This makes third party file transfers impossible.
+-.Pp
+-.Nm
+-chroots to "/var/empty" and changes to user "proxy" to drop privileges.
+diff -Naur ORIGINAL/ftp-proxy.c ftp-proxy-OPENBSD_5_5-OPENBSD_5_5.pre-smf/ftp-proxy.c
+--- ORIGINAL/ftp-proxy.c	2013-03-15 06:31:27.000000000 -0700
++++ ftp-proxy-OPENBSD_5_5-OPENBSD_5_5.pre-smf/ftp-proxy.c	2016-02-10 04:12:16.600723376 -0800
+@@ -38,9 +38,20 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
++#ifdef _SOLARIS_
++#include <strings.h>
++#include <sys/types.h>
++#include <time.h>
++#include <libuutil.h>
++#include <sys/random.h>
++#include <inttypes.h>
++#include <priv.h>
++#endif	/* _SOLARIS_ */
+ #include <syslog.h>
+ #include <unistd.h>
++#ifndef _SOLARIS_
+ #include <vis.h>
++#endif	/* !_SOLARIS_ */
+ 
+ #include "filter.h"
+ 
+@@ -60,6 +71,32 @@
+ 
+ #define	sstosa(ss)	((struct sockaddr *)(ss))
+ 
++#ifdef _SOLARIS_
++/*
++ * These constants are used as a range used by pick_proxy_port(). The ftp-proxy
++ * never binds these ports. They are used only within proxy_reply() and add_rdr()
++ * to be put into a FTP-protocol message and to construct the rule to be loaded
++ * into PF, respectively.
++ *
++ * OpenBSD adheres to a convention where these port numbers are reserved for
++ * connections that want to bypass a firewall. Surely, it depends on how the
++ * administrator configures the firewall, too. Let's stick to that convention
++ * here. The idea probably is "if the admin uses this convention, these ports
++ * are not filtered and thus we are not going to clash with current firewall
++ * rules".
++ */
++#define IPPORT_HIFIRSTAUTO	49152
++#define IPPORT_HILASTAUTO	65535
++
++#define getrtable() 0
++
++#ifndef LIST_END
++#define LIST_END(x) NULL
++#endif	/* !LIST_END */
++
++#define	DIVERT_MODULE_NAME "pf_divertf"
++#endif	/* _SOLARIS_ */
++
+ enum { CMD_NONE = 0, CMD_PORT, CMD_EPRT, CMD_PASV, CMD_EPSV };
+ 
+ struct session {
+@@ -115,12 +152,59 @@
+ 
+ struct event listen_ev, pause_accept_ev;
+ struct sockaddr_storage fixed_server_ss, fixed_proxy_ss;
++#ifdef _SOLARIS_
++static socklen_t fixed_server_ss_len;
++static socklen_t fixed_proxy_ss_len;
++#endif	/* _SOLARIS_ */
+ char *fixed_server, *fixed_server_port, *fixed_proxy, *listen_ip, *listen_port,
+     *qname, *tagname;
+ int anonymous_only, daemonize, id_count, ipv6_mode, loglevel, max_sessions,
+     rfc_mode, session_count, timeout, verbose;
+ extern char *__progname;
+ 
++#ifdef	_SOLARIS_
++/*
++ * fake_arc4random_uniform()
++ * This is a fake implementation of arc4random_uniform(). The wrapper
++ * provides so called uniform calculation of pseudo random number with
++ * respect to upper bound.
++ *
++ * Function calculates random numbers until it finds one outside
++ * <0, 2^32 % upper_bound) range. Once random number, `rand`, is selected,
++ * function returns rand % upper_bound.
++ *
++ * Arguments:
++ *	upper_bound	- random number is picked up in range <0, upper_bound)
++ *
++ * Returns:
++ *	random number, uniform with respect to upper bound.
++ *      Returns UINT32_MAX on error.
++ */
++static u_int32_t
++fake_arc4random_uniform(u_int32_t upper_bound)
++{
++	u_int32_t	rand, min;
++
++	if (upper_bound < 2)
++		return (0);
++
++	/*
++	 * 2**32 % x == (2**32 - x) % x
++	 * (Trick comes from OpenBSD, arc4random_uniform.c)
++	 */
++	min = -upper_bound % upper_bound;
++	for (;;) {
++		if (getrandom(&rand, sizeof (rand), GRND_NONBLOCK) !=
++		    sizeof (rand))
++			return (UINT32_MAX);
++		if (rand >= min)
++			break;
++	}
++
++	return (rand % upper_bound);
++}
++#endif	/* _SOLARIS_ */
++
+ void
+ client_error(struct bufferevent *bufev, short what, void *arg)
+ {
+@@ -220,6 +304,12 @@
+ 			return (0);
+ 		}
+ 		s->proxy_port = pick_proxy_port();
++#ifdef _SOLARIS_
++		if (s->proxy_port == UINT16_MAX) {
++			logmsg(LOG_CRIT, "pick_proxy_port() failed");
++			return (0);
++		}
++#endif /* _SOLARIS_ */
+ 		proxy_reply(s->cmd, sstosa(&s->proxy_ss), s->proxy_port);
+ 		logmsg(LOG_DEBUG, "#%d proxy: %s", s->id, linebuf);
+ 	}
+@@ -378,13 +468,30 @@
+ 	struct sockaddr *proxy_to_server_sa;
+ 	struct session *s;
+ 	socklen_t len;
++#ifdef _SOLARIS_
++	socklen_t client_sa_len, server_sa_len;
++	int one = 1; /* parameter for setsockopt */
++#endif	/* _SOLARIS_ */
+ 	int client_fd, fc, on;
+-
++	/*
++	 * We experienced big problems when event_add() was called
++	 * before accepting the incoming connection - for some reason,
++	 * a new event was fired immediately and ftp-proxy was hanged
++	 * trying to accept another client that was not there yet.
++	 * Moving event_add() call a few lines below resolved this
++	 * problem.
++	 */
++#ifndef _SOLARIS_
+ 	event_add(&listen_ev, NULL);
++#endif	/* !_SOLARIS_ */
+ 
+-	if ((event & EV_TIMEOUT))
++	if ((event & EV_TIMEOUT)) {
++#ifdef _SOLARIS_
++		event_add(&listen_ev, NULL);
++#endif	/* _SOLARIS_ */
+ 		/* accept() is no longer paused. */
+ 		return;
++	}
+ 
+ 	/*
+ 	 * We _must_ accept the connection, otherwise libevent will keep
+@@ -393,6 +500,9 @@
+ 	client_sa = sstosa(&tmp_ss);
+ 	len = sizeof(struct sockaddr_storage);
+ 	if ((client_fd = accept(listen_fd, client_sa, &len)) < 0) {
++#ifdef _SOLARIS_
++		event_add(&listen_ev, NULL);
++#endif	/* _SOLARIS_ */
+ 		logmsg(LOG_CRIT, "accept() failed: %s", strerror(errno));
+ 
+ 		/*
+@@ -410,6 +520,16 @@
+ 		return;
+ 	}
+ 
++#ifdef _SOLARIS_
++	event_add(&listen_ev, NULL);
++
++	/*
++	 * Struct sockaddr does not contain sa_len field on Solaris,
++	 * we use client_sa_len instead.
++	 */
++	client_sa_len = len;
++#endif	/* _SOLARIS_ */
++
+ 	/* Refuse connection if the maximum is reached. */
+ 	if (session_count >= max_sessions) {
+ 		logmsg(LOG_ERR, "client limit (%d) reached, refusing "
+@@ -426,8 +546,11 @@
+ 		return;
+ 	}
+ 	s->client_fd = client_fd;
++#ifdef _SOLARIS_
++	memcpy(sstosa(&s->client_ss), client_sa, client_sa_len);
++#else /* !_SOLARIS_ */
+ 	memcpy(sstosa(&s->client_ss), client_sa, client_sa->sa_len);
+-
++#endif	/* _SOLARIS_ */
+ 	/* Cast it once, and be done with it. */
+ 	client_sa = sstosa(&s->client_ss);
+ 	server_sa = sstosa(&s->server_ss);
+@@ -447,6 +570,17 @@
+ 		    strerror(errno));
+ 		goto fail;
+ 	}
++#ifdef _SOLARIS_
++	/*
++	 * Struct sockaddr does not contain sa_len field on Solaris,
++	 * we use server_sa_len instead.
++	 */
++	server_sa_len = len;
++#endif	/* _SOLARIS_ */
++/* SO_RTABLE not defined on Solaris */
++#ifdef _SOLARIS_
++	s->client_rd = 0;
++#else /* !_SOLARIS_ */
+ 	len = sizeof(s->client_rd);
+ 	if (getsockopt(s->client_fd, SOL_SOCKET, SO_RTABLE, &s->client_rd,
+ 	    &len) && errno != ENOPROTOOPT) {
+@@ -454,10 +588,18 @@
+ 		    strerror(errno));
+ 		goto fail;
+ 	}
++#endif	/* _SOLARIS_ */
+ 	if (fixed_server) {
++#ifdef _SOLARIS_
++		memcpy(sstosa(&s->orig_server_ss), server_sa,
++		    server_sa_len);
++		memcpy(server_sa, fixed_server_sa, fixed_server_ss_len);
++		server_sa_len = fixed_server_ss_len; /* update the length */
++#else /* !_SOLARIS_ */
+ 		memcpy(sstosa(&s->orig_server_ss), server_sa,
+ 		    server_sa->sa_len);
+ 		memcpy(server_sa, fixed_server_sa, fixed_server_sa->sa_len);
++#endif	/* _SOLARIS_ */
+ 	}
+ 
+ 	/* XXX: check we are not connecting to ourself. */
+@@ -471,8 +613,14 @@
+ 		    strerror(errno));
+ 		goto fail;
+ 	}
++#ifdef	_SOLARIS_
+ 	if (fixed_proxy && bind(s->server_fd, sstosa(&fixed_proxy_ss),
+-	    fixed_proxy_ss.ss_len) != 0) {
++	    fixed_proxy_ss_len) != 0)
++#else /* !_SOLARIS_ */
++	if (fixed_proxy && bind(s->server_fd, sstosa(&fixed_proxy_ss),
++	    fixed_proxy_ss.ss_len) != 0)
++#endif	/* _SOLARIS_ */
++	{
+ 		logmsg(LOG_CRIT, "#%d cannot bind fixed proxy address: %s",
+ 		    s->id, strerror(errno));
+ 		goto fail;
+@@ -485,8 +633,14 @@
+ 		    s->id, strerror(errno));
+ 		goto fail;
+ 	}
++#ifdef _SOLARIS_
++	if (connect(s->server_fd, server_sa, server_sa_len) < 0 &&
++	    errno != EINPROGRESS)
++#else /* !_SOLARIS_ */
+ 	if (connect(s->server_fd, server_sa, server_sa->sa_len) < 0 &&
+-	    errno != EINPROGRESS) {
++	    errno != EINPROGRESS)
++#endif	/* _SOLARIS_ */
++	{
+ 		logmsg(LOG_CRIT, "#%d proxy cannot connect to server %s: %s",
+ 		    s->id, sock_ntop(server_sa), strerror(errno));
+ 		goto fail;
+@@ -592,6 +746,9 @@
+ 		/* syslog does its own vissing. */
+ 		vsyslog(pri, message, ap);
+ 	else {
++#ifdef _SOLARIS_
++		vsyslog(pri, message, ap);
++#else /* !_SOLARIS_ */
+ 		char buf[MAX_LOGLINE];
+ 		char visbuf[2 * MAX_LOGLINE];
+ 
+@@ -599,6 +756,7 @@
+ 		vsnprintf(buf, sizeof buf, message, ap);
+ 		strnvis(visbuf, buf, sizeof visbuf, VIS_CSTYLE | VIS_NL);
+ 		fprintf(stderr, "%s\n", visbuf);
++#endif	/* _SOLARIS_ */
+ 	}
+ 
+ 	va_end(ap);
+@@ -636,9 +794,11 @@
+ 
+ 	while ((ch = getopt(argc, argv, "6Aa:b:D:dm:P:p:q:R:rT:t:v")) != -1) {
+ 		switch (ch) {
++#ifndef	_SOLARIS_
+ 		case '6':
+ 			ipv6_mode = 1;
+ 			break;
++#endif	/* !_SOLARIS_ */
+ 		case 'A':
+ 			anonymous_only = 1;
+ 			break;
+@@ -668,11 +828,13 @@
+ 		case 'p':
+ 			listen_port = optarg;
+ 			break;
++#ifndef	_SOLARIS_
+ 		case 'q':
+ 			if (strlen(optarg) >= PF_QNAME_SIZE)
+ 				errx(1, "queuename too long");
+ 			qname = optarg;
+ 			break;
++#endif	/* !_SOLARIS_ */
+ 		case 'R':
+ 			fixed_server = optarg;
+ 			break;
+@@ -718,9 +880,16 @@
+ 		hints.ai_socktype = SOCK_STREAM;
+ 		error = getaddrinfo(fixed_proxy, NULL, &hints, &res);
+ 		if (error)
+-			errx(1, "getaddrinfo fixed proxy address failed: %s",
++			errx(1, "getaddrinfo fixed proxy address (%s) failed: %s", fixed_proxy,
+ 			    gai_strerror(error));
+ 		memcpy(&fixed_proxy_ss, res->ai_addr, res->ai_addrlen);
++#ifdef _SOLARIS_
++		/*
++		 * struct sockaddr_storage does not have the member
++		 * ss_len on Solaris, thus we use a global variable.
++		 */
++		fixed_proxy_ss_len = res->ai_addrlen;
++#endif	/* _SOLARIS_ */
+ 		logmsg(LOG_INFO, "using %s to connect to servers",
+ 		    sock_ntop(sstosa(&fixed_proxy_ss)));
+ 		freeaddrinfo(res);
+@@ -736,6 +905,13 @@
+ 			errx(1, "getaddrinfo fixed server address failed: %s",
+ 			    gai_strerror(error));
+ 		memcpy(&fixed_server_ss, res->ai_addr, res->ai_addrlen);
++#ifdef _SOLARIS_
++		/*
++		 * struct sockaddr_storage does not have the member
++		 * ss_len on Solaris, thus we use a global variable.
++		 */
++		fixed_server_ss_len = res->ai_addrlen;
++#endif	/* _SOLARIS_ */
+ 		logmsg(LOG_INFO, "using fixed server %s",
+ 		    sock_ntop(sstosa(&fixed_server_ss)));
+ 		freeaddrinfo(res);
+@@ -752,6 +928,11 @@
+ 		    gai_strerror(error));
+ 	if ((listenfd = socket(res->ai_family, SOCK_STREAM, IPPROTO_TCP)) == -1)
+ 		errx(1, "socket failed");
++#ifdef _SOLARIS_
++	if (setsockopt(listenfd, SOL_FILTER, FIL_ATTACH, DIVERT_MODULE_NAME,
++	    (strlen(DIVERT_MODULE_NAME)+1)) != 0)
++		err(1, "setsockopt failed - unable to attach filter");
++#endif /* _SOLARIS_ */
+ 	on = 1;
+ 	if (setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, (void *)&on,
+ 	    sizeof on) != 0)
+@@ -782,7 +963,11 @@
+ 	event_init();
+ 
+ 	/* Setup signal handler. */
++#ifdef	_SOLARIS_
++	sigset(SIGPIPE, SIG_IGN);
++#else /* !_SOLARIS_ */
+ 	signal(SIGPIPE, SIG_IGN);
++#endif	/* _SOLARIS_ */
+ 	signal_set(&ev_sighup, SIGHUP, handle_signal, NULL);
+ 	signal_set(&ev_sigint, SIGINT, handle_signal, NULL);
+ 	signal_set(&ev_sigterm, SIGTERM, handle_signal, NULL);
+@@ -857,12 +1042,25 @@
+ 	return (0);
+ }
+ 
++/*
++ * On Solaris, fake_arc4random_uniform() can fail. We return UINT16_MAX
++ * on error.
++ */
+ u_int16_t
+ pick_proxy_port(void)
+ {
++#ifdef _SOLARIS_
++	u_int32_t shift;
++
++	shift = fake_arc4random_uniform(IPPORT_HILASTAUTO - IPPORT_HIFIRSTAUTO);
++	if (shift == UINT32_MAX)
++		return UINT16_MAX;
++	return (IPPORT_HIFIRSTAUTO + shift);
++#else /* !_SOLARIS_ */
+ 	/* Random should be good enough for avoiding port collisions. */
+ 	return (IPPORT_HIFIRSTAUTO +
+ 	    arc4random_uniform(IPPORT_HILASTAUTO - IPPORT_HIFIRSTAUTO));
++#endif /* _SOLARIS_ */
+ }
+ 
+ void
+@@ -985,6 +1183,12 @@
+ 			return (0);
+ 		}
+ 		s->proxy_port = pick_proxy_port();
++#ifdef _SOLARIS_
++		if (s->proxy_port == UINT16_MAX) {
++			logmsg(LOG_CRIT, "pick_proxy_port() failed");
++			return (0);
++		}
++#endif /* _SOLARIS_ */
+ 		logmsg(LOG_INFO, "#%d passive: client to server port %d"
+ 		    " via port %d", s->id, s->port, s->proxy_port);
+ 
+@@ -1126,6 +1330,6 @@
+ 	fprintf(stderr, "usage: %s [-6Adrv] [-a address] [-b address]"
+ 	    " [-D level] [-m maxsessions]\n                 [-P port]"
+ 	    " [-p port] [-q queue] [-R address] [-T tag]\n"
+-            "                 [-t timeout]\n", __progname);
++	    "                 [-t timeout]\n", __progname);
+ 	exit(1);
+ }
