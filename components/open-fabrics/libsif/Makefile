@@ -31,6 +31,7 @@ COMPONENT_ARCHIVE_HASH= \
 	sha256:501858b4b9d45ebe163d9136f7fb4d08708aaf91cc97c40059ae2a1b4737239d
 COMPONENT_SERVER=      download.oracle.com
 COMPONENT_ARCHIVE_URL= http://$(COMPONENT_SERVER)/otn-pub/oss/networking/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	library/ofuv_psif
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk

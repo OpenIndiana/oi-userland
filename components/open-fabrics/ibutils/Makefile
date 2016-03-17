@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:8db2fcb20102c37e7037826c58b899092df034aac870d3d50a13263746f17f18
 COMPONENT_ARCHIVE_URL=	http://www.openfabrics.org/downloads/ibutils/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/ofuv_tools
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk

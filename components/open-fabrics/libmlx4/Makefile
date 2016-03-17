@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 # OFED only builds with GCC
@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-1.18.gb810a27.tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:ac3aa335d5749a8edc471630b1f5049122c8b7b66bab88c299e255122028e19c
 COMPONENT_ARCHIVE_URL=	http://www.openfabrics.org/downloads/libmlx4/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	library/ofuv_lib
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk

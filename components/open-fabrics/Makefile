@@ -27,7 +27,7 @@ COMPONENT_NAME=	open-fabrics
 COMPONENT_VERSION=1.5.3
 
 COMPONENT_PROJECT_URL=	http://www.openfabrics.org/
-COMPONENT_BUGDB=	library/ofuv_lib utility/ofuv_tools library/ofuv_psif
+COMPONENT_BUGDB=	library/ofuv_lib
 
 TPNO_OPEN_FABRICS=	3369
 TPNO_IBUTILS=		5084
