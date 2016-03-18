@@ -16,6 +16,14 @@
 Solaris-specific customizations for Horizon
 """
 
+from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
+
+from horizon import exceptions
+from horizon import forms
+from horizon import workflows
+
+from openstack_dashboard import api
 from openstack_dashboard.dashboards.admin.instances.forms import \
     LiveMigrateForm
 from openstack_dashboard.dashboards.admin.instances import tables \
@@ -50,7 +58,50 @@ from openstack_dashboard.dashboards.project.networks.tables import \
 from openstack_dashboard.dashboards.project.networks.tables import \
     NetworksTable as projectNetworksTable
 from openstack_dashboard.dashboards.project.networks.workflows import \
-    CreateNetworkInfoAction, CreateSubnetDetailAction, CreateSubnetInfoAction
+    CreateNetworkInfoAction, CreateSubnetDetailAction
+
+# Bootargs feature:
+# Add bootargs feature to 'SetAdvanced' workflow action.
+# Part of Project/Compute/Instances/Launch Instance
+class SolarisSetAdvancedAction(create_instance.SetAdvancedAction):
+    if getattr(settings, 'SOLARIS_BOOTARGS', True):
+        boot_options = forms.CharField(
+            label=_("Instance Boot Options"), required=False, max_length=255,
+            help_text=_("Solaris kernel(8) and boot(8) options."))
+
+        bootargs_persist = forms.BooleanField(
+            label=_("Make Instance Boot Options Persistent"),
+            required=False,
+            help_text=_("Instance Boot Options are retained and used for each "
+                        "subsequent boot."))
+
+    def __init__(self, request, context, *args, **kwargs):
+        super(SolarisSetAdvancedAction, self).__init__(request, context,
+                                                       *args, **kwargs)
+        try:
+            if context.get('workflow_slug') != 'launch_instance' and \
+                    getattr(settings, 'SOLARIS_BOOTARGS', True):
+                self.fields.pop('boot_options', None)
+                self.fields.pop('bootargs_persist', None)
+            self.fields.pop('disk_config', None)
+            self.fields.pop('config_drive', None)
+        except Exception:
+            exceptions.handle(request, _('Unable to retrieve extensions '
+                                         'information.'))
+
+    class Meta(object):
+        name = _("Advanced Options")
+        help_text_template = ("project/instances/"
+                              "_launch_advanced_help.html")
+
+# Bootargs feature:
+# If locally configured to do so add bootargs metadata vars
+# to Project/Compute/Instances/Launch Instance/Advanced Options
+if getattr(settings, 'SOLARIS_BOOTARGS', True):
+    create_instance.SetAdvanced.action_class = SolarisSetAdvancedAction
+    create_instance.SetAdvanced.contributes += (
+        'boot_options', 'bootargs_persist',
+    )
 
 # Remove 'PostCreationStep', 'SetAdvanced' from
 # Project/Compute/Instances/Launch Instance
@@ -61,16 +112,79 @@ create_instance.LaunchInstance.default_steps = (
     create_instance.SetNetwork
 )
 
+# Bootargs feature:
+# if locally configured to do so add back 'SetAdvanced'
+# to Project/Compute/Instances/Launch Instance
+if getattr(settings, 'SOLARIS_BOOTARGS', True):
+    create_instance.LaunchInstance.default_steps += (
+        create_instance.SetAdvanced,
+    )
+
 # Disable 'Security Groups' in Project/Instances/Launch Instance/Access &
 # Security. Note that this is unchecked by default.
 groups_widget = create_instance.SetAccessControlsAction.base_fields['groups']
 groups_widget.widget.attrs['disabled'] = True
+
+
+# Bootargs feature:
+# Add bootargs feature to 'UpdateInstance' workflow action class.
+# Part of Project/Compute/Instances/Actions/Edit Instance
+class UpdateInstanceBootargAction(workflows.Action):
+    bootargs = forms.CharField(
+        label=_("Instance Boot Options"), required=False, max_length=255,
+        help_text=_("Solaris kernel(8) and boot(8) options."))
+
+    bootargs_persist = forms.BooleanField(
+        label=_("Make Instance Boot Options Persistent"),
+        required=False,
+        help_text=_("Instance Boot Options are retained and used for each "
+                    "subsequent boot."))
+
+    def handle(self, request, data):
+        if data is None:
+            return True
+        metadata = {'bootargs': data['bootargs'].strip()}
+        if metadata['bootargs']:
+            metadata['bootargs_persist'] = str(data['bootargs_persist'])
+        else:
+            metadata['bootargs_persist'] = "False"
+        try:
+            api.nova.server_set_meta(request,
+                                     data['instance_id'],
+                                     metadata)
+        except Exception:
+            exceptions.handle(request, ignore=True)
+            return False
+        return True
+
+    class Meta(object):
+        name = _("Instance Boot Options")
+        slug = 'instance_bootargs'
+        help_text = _("Edit Instance Boot Options.")
+
+
+# Bootargs feature:
+# Add bootargs To the action class for UpdateInstance
+# contained in Project/Compute/Instances/Actions/Edit Instance
+class UpdateInstanceBootarg(workflows.Step):
+    action_class = UpdateInstanceBootargAction
+    depends_on = ("instance_id",)
+    contributes = ("bootargs", "bootargs_persist",)
+
 
 # Remove 'UpdateInstanceSecurityGroups' from
 # Project/Compute/Instances/Actions/Edit Instance
 update_instance.UpdateInstance.default_steps = (
     update_instance.UpdateInstanceInfo,
 )
+
+# Bootargs feature:
+# if locally configured to do so add UpdateInstanceBootarg
+# to Project/Compute/Instances/Actions/Edit Instance
+if getattr(settings, 'SOLARIS_BOOTARGS', True):
+    update_instance.UpdateInstance.default_steps += (
+        UpdateInstanceBootarg,
+    )
 
 # Remove 'SecurityGroupsTab' tab from Project/Compute/Access & Security
 AccessAndSecurityTabs.tabs = (KeypairsTab, FloatingIPsTab, APIAccessTab)
@@ -113,6 +227,19 @@ project_tables.InstancesTable._meta.row_actions = (
     project_tables.RebuildInstance,
     project_tables.TerminateInstance
 )
+
+# Bootargs feature:
+# If locally configured to do so add 'EditBootargs' to
+# Project/Compute/Instances/Actions
+if getattr(settings, 'SOLARIS_BOOTARGS', True):
+    project_tables_row_actions = project_tables.InstancesTable._meta.row_actions
+    pos = project_tables.InstancesTable._meta.row_actions.index(
+        project_tables.ConsoleLink
+    )
+    project_tables.InstancesTable._meta.row_actions = (
+        project_tables_row_actions[:pos] + (project_tables.EditBootargs,) +
+        project_tables_row_actions[pos:]
+    )
 
 # Disable 'disk_over_commit', 'block_migration' in
 # Admin/System/Instances/Actions/Live Migrate Instance. Note that this is

@@ -71,7 +71,6 @@ from nova.virt import images
 from nova.virt.solariszones import sysconfig
 from nova.volume.cinder import API
 from nova.volume.cinder import cinderclient
-from nova.volume.cinder import get_cinder_client_version
 from nova.volume.cinder import translate_volume_exception
 from nova.volume.cinder import _untranslate_volume_summary_view
 
@@ -91,6 +90,10 @@ solariszones_opts = [
     cfg.StrOpt('zones_suspend_path',
                default='/var/share/zones/SYSsuspend',
                help='Default path for suspend images for Solaris Zones.'),
+    cfg.BoolOpt('solariszones_boot_options',
+                default=True,
+                help='Allow kernel boot options to be set in instance '
+                     'metadata.'),
 ]
 
 CONF = cfg.CONF
@@ -415,6 +418,20 @@ class ZoneConfig(object):
             LOG.error(_("Unable to remove resource '%s' for instance '%s' via "
                         "zonemgr(3RAD): %s")
                       % (resource, self.zone.name, reason))
+            raise
+
+    def clear_resource_props(self, resource, props):
+        """Clear property values of a given resource
+        """
+
+        try:
+            self.zone.clearResourceProperties(zonemgr.Resource(resource, None),
+                                              props)
+        except rad.client.ObjectError as ex:
+            reason = zonemgr_strerror(ex)
+            LOG.error(_("Unable to clear '%s' property on '%s' resource for "
+                        "instance '%s' via zonemgr(3RAD): %s")
+                      % (props, resource, self.zone.name, reason))
             raise
 
 
@@ -951,7 +968,6 @@ class SolarisZonesDriver(driver.ComputeDriver):
         if recreate:
             zone.attach(['-x', 'initialize-hostdata'])
 
-        instance_uuid = instance.uuid
         rootmp = instance['root_device_name']
         for entry in bdms:
             if (entry['connection_info'] is None or
@@ -1728,13 +1744,47 @@ class SolarisZonesDriver(driver.ComputeDriver):
         if zone is None:
             raise exception.InstanceNotFound(instance_id=name)
 
+        bootargs = []
+        if CONF.solariszones_boot_options:
+            reset_bootargs = False
+            persistent = 'False'
+
+            # Get any bootargs already set in the zone
+            cur_bootargs = lookup_resource_property(zone, 'global', 'bootargs')
+
+            # Get any bootargs set in the instance metadata by the user
+            meta_bootargs = instance.metadata.get('bootargs')
+
+            if meta_bootargs:
+                bootargs = ['--', str(meta_bootargs)]
+                persistent = str(instance.metadata.get('bootargs_persist',
+                                                       'False'))
+                if cur_bootargs is not None and meta_bootargs != cur_bootargs:
+                    with ZoneConfig(zone) as zc:
+                        reset_bootargs = True
+                        # Temporarily clear bootargs in zone config
+                        zc.clear_resource_props('global', ['bootargs'])
+
         try:
-            zone.boot()
+            zone.boot(bootargs)
         except Exception as ex:
             reason = zonemgr_strerror(ex)
             LOG.error(_("Unable to power on instance '%s' via zonemgr(3RAD): "
                         "%s") % (name, reason))
             raise exception.InstancePowerOnFailure(reason=reason)
+        finally:
+            if CONF.solariszones_boot_options:
+                if meta_bootargs and persistent.lower() == 'false':
+                    # We have consumed the metadata bootargs and
+                    # the user asked for them not to be persistent so
+                    # clear them out now.
+                    instance.metadata.pop('bootargs', None)
+                    instance.metadata.pop('bootargs_persist', None)
+
+                if reset_bootargs:
+                    with ZoneConfig(zone) as zc:
+                        # restore original boot args in zone config
+                        zc.setprop('global', 'bootargs', cur_bootargs)
 
     def _uninstall(self, instance):
         """Uninstall an existing Solaris Zone root file system."""
@@ -1913,7 +1963,6 @@ class SolarisZonesDriver(driver.ComputeDriver):
         old_rvid = instance.system_metadata.get('old_instance_volid')
         if old_rvid:
             new_rvid = instance.system_metadata.get('new_instance_volid')
-            newvname = instance['display_name'] + "-" + self._rootzpool_suffix
             mount_dev = instance['root_device_name']
             del instance.system_metadata['old_instance_volid']
 
@@ -2055,16 +2104,51 @@ class SolarisZonesDriver(driver.ComputeDriver):
             self._power_on(instance)
             return
 
+        bootargs = []
+        if CONF.solariszones_boot_options:
+            reset_bootargs = False
+            persistent = 'False'
+
+            # Get any bootargs already set in the zone
+            cur_bootargs = lookup_resource_property(zone, 'global', 'bootargs')
+
+            # Get any bootargs set in the instance metadata by the user
+            meta_bootargs = instance.metadata.get('bootargs')
+
+            if meta_bootargs:
+                bootargs = ['--', str(meta_bootargs)]
+                persistent = str(instance.metadata.get('bootargs_persist',
+                                                       'False'))
+                if cur_bootargs is not None and meta_bootargs != cur_bootargs:
+                    with ZoneConfig(zone) as zc:
+                        reset_bootargs = True
+                        # Temporarily clear bootargs in zone config
+                        zc.clear_resource_props('global', ['bootargs'])
+
         try:
             if reboot_type == 'SOFT':
-                zone.shutdown(['-r'])
+                bootargs.insert(0, '-r')
+                zone.shutdown(bootargs)
             else:
-                zone.reboot()
+                zone.reboot(bootargs)
         except Exception as ex:
             reason = zonemgr_strerror(ex)
             LOG.error(_("Unable to reboot instance '%s' via zonemgr(3RAD): %s")
                       % (name, reason))
             raise exception.InstanceRebootFailure(reason=reason)
+        finally:
+            if CONF.solariszones_boot_options:
+                if meta_bootargs and persistent.lower() == 'false':
+                    # We have consumed the metadata bootargs and
+                    # the user asked for them not to be persistent so
+                    # clear them out now.
+                    instance.metadata.pop('bootargs', None)
+                    instance.metadata.pop('bootargs_persist', None)
+
+                if reset_bootargs:
+                    with ZoneConfig(zone) as zc:
+                        # restore original boot args in zone config
+                        zc.setprop('global', 'bootargs', cur_bootargs)
 
     def get_console_pool_info(self, console_type):
         # TODO(Vek): Need to pass context in for access to auth_token
@@ -2581,7 +2665,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
             if old_rvid:
                 connector = self.get_volume_connector(instance)
                 connection_info = self._volume_api.initialize_connection(
-                                    context, old_rvid, connector)
+                    context, old_rvid, connector)
 
                 new_rvid = instance.system_metadata['new_instance_volid']
 
@@ -3834,8 +3918,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
         """
         bdmobj = objects.BlockDeviceMappingList
         bdms = bdmobj.get_by_instance_uuid(
-                nova_context.get_admin_context(),
-                instance['uuid'])
+            nova_context.get_admin_context(),
+            instance['uuid'])
 
         root_ci = None
         rootmp = instance['root_device_name']

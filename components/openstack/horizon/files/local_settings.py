@@ -654,3 +654,9 @@ REST_API_REQUIRED_SETTINGS = ['OPENSTACK_HYPERVISOR_FEATURES']
 # and are not encrypted on the browser. This is an experimental API and
 # may be deprecated in the future without notice.
 #REST_API_ADDITIONAL_SETTINGS = []
+
+# Solaris kernel(8) and boot(8) options exposed in instances panel.
+# Allows a user to set boot options during instance launch and allows a user
+# to edit boot options post instance creation. If you want this disabled set
+# to False.
+SOLARIS_BOOTARGS = True
