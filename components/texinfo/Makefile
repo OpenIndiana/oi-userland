@@ -18,21 +18,25 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+
+# using gcc makes parfait happy.
+COMPILER=gcc
+
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		texinfo
-COMPONENT_VERSION=	4.13
+COMPONENT_VERSION=	6.0
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/texinfo/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:1303e91a1c752b69a32666a407e9fbdd6e936def4b09bc7de30f416301530d68
+    sha256:11ba4358696e8be3b3c7cfc88b89cf69525791aeabf0ee0a59ca58ebbd3471e4
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/texinfo/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/texinfo
 
-TPNO_TEXINFO=		7876
+TPNO_TEXINFO=		26645
 TPNO_TEXI2HTML=		9089
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -47,9 +51,21 @@ INFOPATH := $(INFOPATH):.
 
 CPPFLAGS += -DDEFAULT_INFOPATH=\\\"$(INFOPATH)\\\"
 
+CONFIGURE_BINDIR.64 =   $(CONFIGURE_PREFIX)/bin
+
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=		CPPFLAGS="$(CPPFLAGS)"
+
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s|^.*$(CC).*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^.*$(CXX).*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^DEPDIR.*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^mv.*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^make.*: Nothing to be.*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^make.*: Leaving directory.*$$|XXX_CC_XXX|g" ' \
+	'-e "s|^make.*: Entering directory.*$$|XXX_CC_XXX|g" ' \
+	'-e "/^XXX_CC_XXX$$/d" '
 
 ASLR_MODE = $(ASLR_ENABLE)
 
@@ -60,7 +76,7 @@ build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
 
-test:		$(NO_TESTS)
+test:		$(TEST_64)
 
 system-test:    $(NO_TESTS)
 
