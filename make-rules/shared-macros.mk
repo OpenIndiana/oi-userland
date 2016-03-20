@@ -419,6 +419,9 @@ PYTHON.2.6.64 =	/usr/bin/$(MACH64)/python2.6
 PYTHON.2.7.32 =	/usr/bin/python2.7
 PYTHON.2.7.64 =	/usr/bin/$(MACH64)/python2.7
 
+PYTHON.3.4.32 =	/usr/bin/python3.4
+PYTHON.3.4.64 =	/usr/bin/$(MACH64)/python3.4
+
 PYTHON.32 =	$(PYTHON.$(PYTHON_VERSION).32)
 PYTHON.64 =	$(PYTHON.$(PYTHON_VERSION).64)
 PYTHON =	$(PYTHON.$(PYTHON_VERSION).$(BITS))
