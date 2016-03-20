@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ruby
 COMPONENT_VERSION=	2.2.3
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.ruby-lang.org/
 COMPONENT_SRC=	\
 	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -40,6 +41,8 @@ COMPONENT_BUGDB=	utility/ruby
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/ips.mk
 include $(WS_TOP)/make-rules/configure.mk
+
+PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
 
 # COMPONENT_VERSION <major>.<minor>.<teeny>
 # is transformed into <major>.<minor> for RUBY_VER.
@@ -94,6 +97,7 @@ CONFIGURE_PREFIX =	$(USRDIR)/$(COMPONENT_NAME)/$(RUBY_VER)
 CONFIGURE_OPTIONS +=	--with-rubylibprefix=$(CONFIGURE_LIBDIR.32)/ruby
 CONFIGURE_OPTIONS +=	--enable-shared
 CONFIGURE_OPTIONS +=	--enable-rpath
+CONFIGURE_OPTIONS +=	--enable-dtrace
 # Don't need docs for ruby C source files
 CONFIGURE_OPTIONS +=	--disable-install-capi
 CONFIGURE_OPTIONS +=	--disable-option-checking
