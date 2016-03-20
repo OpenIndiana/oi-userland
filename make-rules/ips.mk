@@ -47,6 +47,9 @@ PKGLINT =	${WS_TOOLS}/pkglint
 endif
 PKGMANGLE =	$(WS_TOOLS)/userland-mangler
 
+GENERATE_HISTORY= $(WS_TOOLS)/generate-history
+HISTORY=	history
+
 # Package headers should all pretty much follow the same format
 METADATA_TEMPLATE =		$(WS_TOP)/transforms/manifest-metadata-template
 COPYRIGHT_TEMPLATE =		$(WS_TOP)/transforms/copyright-template
@@ -115,6 +118,9 @@ PKG_PROTO_DIRS += $(MANGLED_DIR) $(PROTO_DIR) $(@D) $(COMPONENT_DIR) $(COMPONENT
 MANIFEST_BASE =		$(BUILD_DIR)/manifest-$(MACH)
 
 CANONICAL_MANIFESTS =	$(wildcard *.p5m)
+ifneq ($(wildcard $(HISTORY)),)
+HISTORICAL_MANIFESTS = $(shell $(NAWK) -v FUNCTION=name -f $(GENERATE_HISTORY) < $(HISTORY))
+endif
 
 # Look for manifests which need to be duplicated for each version of python.
 ifeq ($(findstring -PYVER,$(CANONICAL_MANIFESTS)),-PYVER)
@@ -157,7 +163,7 @@ VERSIONED_MANIFESTS = \
 	$(PYV_MANIFESTS) $(PYNV_MANIFESTS) \
 	$(PERLV_MANIFESTS) $(PERLNV_MANIFESTS) \
 	$(RUBYV_MANIFESTS) $(RUBYNV_MANIFESTS) \
-	$(NORUBY_MANIFESTS)
+	$(NORUBY_MANIFESTS) $(HISTORICAL_MANIFESTS)
 
 GENERATED =		$(MANIFEST_BASE)-generated
 COMBINED =		$(MANIFEST_BASE)-combined
@@ -248,6 +254,14 @@ $(MANIFEST_BASE)-%.p5m: %-PERLVER.p5m $(WS_TOP)/transforms/mkgeneric-perl
 	$(PKGMOGRIFY) -D PLV=### $(WS_TOP)/transforms/mkgeneric-perl \
 		$(WS_TOP)/transforms/mkgeneric $< > $@
 	if [ -f $*-GENFRAG.p5m ]; then cat $*-GENFRAG.p5m >> $@; fi
+
+# Rule to generate historical manifests from the $(HISTORY) file.
+define history-manifest-rule
+$(MANIFEST_BASE)-$(1): $(HISTORY) $(BUILD_DIR)
+	$(NAWK) -v TARGET=$(1) -v FUNCTION=manifest -f $(GENERATE_HISTORY) < \
+	    $(HISTORY) > $$@
+endef
+$(foreach mfst,$(HISTORICAL_MANIFESTS),$(eval $(call history-manifest-rule,$(mfst))))
 
 # Define and execute a macro that generates a rule to create a manifest for a
 # ruby module specific to a particular version of the ruby runtime.

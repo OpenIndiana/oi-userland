@@ -1,0 +1,64 @@
+--- a/Makefile.orig	2015-05-26 01:13:50.000000000 +0000
++++ b/Makefile
+@@ -75,10 +75,6 @@ clean:
+ 	@echo Cleaning completed
+ 
+ 
+-#------------------------------------------------------------------------
+-#make install is validated only for Linux, OSX, kFreeBSD and Hurd targets
+-ifneq (,$(filter $(shell uname),Linux Darwin GNU/kFreeBSD GNU))
+-
+ install:
+ 	@cd $(LZ4DIR); $(MAKE) -e install
+ 	@cd $(PRGDIR); $(MAKE) -e install
+@@ -123,4 +119,3 @@ streaming-examples:
+ prg-travis:
+ 	@cd $(PRGDIR); $(MAKE) -e test-travis
+ 
+-endif
+--- lz4-r131/programs/Makefile.1	2016-03-18 16:43:45.664993244 +0300
++++ lz4-r131/programs/Makefile	2016-03-18 16:44:20.121420355 +0300
+@@ -114,7 +114,6 @@
+ 
+ #------------------------------------------------------------------------
+ #make install is validated only for Linux, OSX, kFreeBSD and Hurd targets
+-ifneq (,$(filter $(shell uname),Linux Darwin GNU/kFreeBSD GNU))
+ 
+ install: lz4 lz4c
+ 	@echo Installing binaries
+@@ -306,5 +305,3 @@
+ 
+ test-mem32: lz4c32 datagen
+ # unfortunately, valgrind doesn't seem to work with non-native binary. If someone knows how to do a valgrind-test on a 32-bits exe with a 64-bits system...
+-
+-endif
+--- lz4-r131/lib/Makefile.~1~	2015-06-29 12:48:37.000000000 +0300
++++ lz4-r131/lib/Makefile	2016-03-18 17:08:54.637732099 +0300
+@@ -81,8 +81,6 @@
+ 
+ #------------------------------------------------------------------------
+ #make install is validated only for Linux, OSX, kFreeBSD and Hurd targets
+-ifneq (,$(filter $(shell uname),Linux Darwin GNU/kFreeBSD GNU))
+-
+ liblz4.pc: liblz4.pc.in Makefile
+ 	@echo creating pkgconfig
+ 	@sed -e 's|@PREFIX@|$(PREFIX)|' \
+@@ -94,9 +92,9 @@
+ install: liblz4 liblz4.pc
+ 	@install -d -m 755 $(DESTDIR)$(LIBDIR)/pkgconfig/ $(DESTDIR)$(INCLUDEDIR)/
+ 	@install -m 755 liblz4.$(SHARED_EXT_VER) $(DESTDIR)$(LIBDIR)/liblz4.$(SHARED_EXT_VER)
+-	@cp -a liblz4.$(SHARED_EXT_MAJOR) $(DESTDIR)$(LIBDIR)
+-	@cp -a liblz4.$(SHARED_EXT) $(DESTDIR)$(LIBDIR)
+-	@cp -a liblz4.pc $(DESTDIR)$(LIBDIR)/pkgconfig/
++	@install -m 755 liblz4.$(SHARED_EXT_MAJOR) $(DESTDIR)$(LIBDIR)
++	@install -m 755 liblz4.$(SHARED_EXT) $(DESTDIR)$(LIBDIR)
++	@install -m 644 liblz4.pc $(DESTDIR)$(LIBDIR)/pkgconfig/
+ 	@install -m 644 liblz4.a $(DESTDIR)$(LIBDIR)/liblz4.a
+ 	@install -m 644 lz4.h $(DESTDIR)$(INCLUDEDIR)/lz4.h
+ 	@install -m 644 lz4hc.h $(DESTDIR)$(INCLUDEDIR)/lz4hc.h
+@@ -113,5 +111,3 @@
+ 	@[ -f $(DESTDIR)$(INCLUDEDIR)/lz4hc.h ] && rm -f $(DESTDIR)$(INCLUDEDIR)/lz4hc.h
+ 	@[ -f $(DESTDIR)$(INCLUDEDIR)/lz4frame.h ] && rm -f $(DESTDIR)$(INCLUDEDIR)/lz4frame.h
+ 	@echo lz4 libraries successfully uninstalled
+-
+-endif
