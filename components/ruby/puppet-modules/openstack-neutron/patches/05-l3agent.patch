@@ -1,0 +1,30 @@
+In-house patch for Solaris L3 agent driver configuration variables.
+This patch is not currently suitable for upstream contribution.
+
+--- openstack-neutron-6.1.0/manifests/agents/l3.pp.orig	Fri Mar 11 15:26:19 2016
++++ openstack-neutron-6.1.0/manifests/agents/l3.pp	Fri Mar 11 15:27:59 2016
+@@ -99,6 +99,14 @@
+ #   'dvr_snat': enable DVR with centralized SNAT support (DVR for single-host, for testing only)
+ #   Defaults to 'legacy'
+ #
++# [*ra_confs*]
++#   (optional) Path to store IPv6 RA config files.
++#   Defaults to undef
++#
++# [*allow_forwarding*]
++#   (optional) For the Solaris l3 agent, allow forwarding between tenant's networks.
++#   Defaults to undef
++#
+ # [*allow_automatic_l3agent_failover*]
+ #   DEPRECATED: Has no effect in this class. Use the same parameter in neutron::server instead.
+ #
+@@ -161,6 +169,9 @@
+     'DEFAULT/enable_metadata_proxy':            value => $enable_metadata_proxy;
+     'DEFAULT/router_delete_namespaces':         value => $router_delete_namespaces;
+     'DEFAULT/agent_mode':                       value => $agent_mode;
++    'DEFAULT/ra_confs':                         value => $ra_confs;
++    'DEFAULT/allow_forwarding_between_networks':
++                                                value => $allow_forwarding;
+   }
+ 
+   if $network_device_mtu {

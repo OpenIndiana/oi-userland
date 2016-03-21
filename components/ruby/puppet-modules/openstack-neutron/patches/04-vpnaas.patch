@@ -1,0 +1,45 @@
+In-house patch to allow the vpnaas agent to configure the Solaris driver properties
+Currently unsuitable for upsteam contribution.
+
+--- openstack-neutron-6.1.0/manifests/agents/vpnaas.pp.orig	Thu Oct 15 08:03:13 2015
++++ openstack-neutron-6.1.0/manifests/agents/vpnaas.pp	Fri Mar 11 14:46:06 2016
+@@ -43,6 +43,12 @@
+ # [*ipsec_status_check_interval*]
+ #   (optional) Status check interval. Defaults to '60'.
+ #
++# [*packet_logging*]
++#   (optional) For the Solaris driver, enable logging discarded packets.
++#
++# [*logger_level*]
++#   (optional) For the Solaris driver, the level at which to log discarded packets.
++#
+ class neutron::agents::vpnaas (
+   $package_ensure              = present,
+   $enabled                     = true,
+@@ -50,7 +56,9 @@
+   $vpn_device_driver           = 'neutron.services.vpn.device_drivers.ipsec.OpenSwanDriver',
+   $interface_driver            = 'neutron.agent.linux.interface.OVSInterfaceDriver',
+   $external_network_bridge     = undef,
+-  $ipsec_status_check_interval = '60'
++  $ipsec_status_check_interval = '60',
++  $packet_logging              = undef,
++  $logger_level                = undef
+ ) {
+ 
+   include ::neutron::params
+@@ -66,6 +74,15 @@
+         name   => $::neutron::params::openswan_package,
+       }
+     }
++
++    /\.SolarisIPsecDriver$/ {
++      neutron_vpnaas_agent_config {
++        'solaris/ipsec_status_check_interval': value => $ipsec_status_check_interval;
++        'solaris/packet_logging':              value => $packet_logging;
++        'solaris/logger_level':                value => $logger_level;
++      }
++    }
++
+     default: {
+       fail("Unsupported vpn_device_driver ${vpn_device_driver}")
+     }
