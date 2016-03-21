@@ -203,23 +203,24 @@ existing_tunnels = []
 
 def get_vpn_interfaces():
     # OpenStack-created tunnel names use the convention of starting with
-    # "ost" followed by a number.
+    # "vpn" followed by a number.
+
+    vpn_tunnels = []
 
     cmd = ["/usr/sbin/ipadm", "show-if", "-p", "-o", "ifname"]
     p = Popen(cmd, stdout=PIPE, stderr=PIPE)
     output, error = p.communicate()
     if p.returncode != 0:
-        print "failed to retrieve IP interface names"
-        return smf_include.SMF_EXIT_ERR_FATAL
+        return vpn_tunnels
 
     ifnames = output.splitlines()
-    prog = re.compile('^ost\d+_\d+')
+    prog = re.compile('^vpn_\d+_site_\d+')
     for ifname in ifnames:
         if prog.search(ifname):
-            if ifname not in existing_tunnels:
-                existing_tunnels.append(ifname)
+            if ifname not in vpn_tunnels:
+                vpn_tunnels.append(ifname)
 
-    return filter(bool, existing_tunnels)
+    return vpn_tunnels
 
 
 def disable_services():
@@ -229,17 +230,14 @@ def disable_services():
     ipsec_svc = "network/ipsec/policy"
     global restarting
     restarting = True
-    LOG.info("Flushing IPsec SAs.")
     cmd = ['/usr/bin/pfexec', '/usr/sbin/ipseckey', 'flush']
     try:
         stdout, stderr = processutils.execute(*cmd)
     except processutils.ProcessExecutionError as stderr:
-        LOG.debug("\"%s\"" % stderr)
+        pass
 
     rad_connection = rad.connect.connect_unix()
 
-    LOG.info(
-        "Disabling IPsec policy service: \"svc:/%s\"" % ipsec_svc)
     instance = rad_connection.get_object(
         smfb.Instance(),
         rad.client.ADRGlobPattern({'service': ipsec_svc,
@@ -252,14 +250,12 @@ def disable_services():
                                    'instance': 'logger'}))
     instance.disable(False)
 
-    LOG.info("Disabling IKE service: \"svc:/%s:default\"" % ike_svc)
     instance = rad_connection.get_object(
         smfb.Instance(),
         rad.client.ADRGlobPattern({'service': ike_svc,
                                    'instance': 'default'}))
     instance.disable(False)
 
-    LOG.info("Disabling IKE service: \"svc:/%s:ikev2\"" % ike_svc)
     instance = rad_connection.get_object(
         smfb.Instance(),
         rad.client.ADRGlobPattern({'service': ike_svc,
@@ -273,39 +269,27 @@ def shutdown_vpn():
     # Check to see if the VPN device_driver has been configured
     # by looking in the config file. If it has we may have to give the
     # driver a little more time to gracefully shutdown.
+    # This method is called from the smf(5) stop method. Suppress LOG
+    # output while shutting down.
     config = iniparse.RawConfigParser()
-    try:
-        config.read('/etc/neutron/vpn_agent.ini')
-    except:
-        LOG.warn("Unable to parse: vpn_agent.ini")
-        return
+    config.read('/etc/neutron/vpn_agent.ini')
 
     if config.has_section('vpnagent'):
         # If we have a VPNaaS device driver, we still can't tell if its been
         # configured or not. The easiest way to determine if VPNaaS is
         # configured is to check if there are any IP tunnels configured.
-        vpn_driver = []
-        try:
-            vpn_driver = config.get('vpnagent', 'vpn_device_driver')
-            LOG.info("The following VPNaaS device_driver is configured:")
-            LOG.info("vpn_device_driver = %s" % vpn_driver)
-            if get_vpn_interfaces():
-                LOG.warn("Shutting Down VPNaaS")
-                whack_ike_rules()
-                disable_services()
-                delete_tunnels()
-        except:
-            # There is no vpn_device_driver.
-            pass
+        ifs = get_vpn_interfaces()
+        if ifs:
+            whack_ike_rules()
+            disable_services()
+            delete_tunnels(ifs, False)
 
 
 def whack_ike_rules():
-        LOG.debug("Looking for IKE rules.")
         cmd = ['/usr/bin/pfexec', '/usr/sbin/ikeadm', '-n', 'dump', 'rule']
         try:
             status, stderr = processutils.execute(*cmd)
         except processutils.ProcessExecutionError as stderr:
-            LOG.warn("IKE daemon does not appear to be running.")
             return
 
         connection_ids = []
@@ -315,7 +299,6 @@ def whack_ike_rules():
                 continue
             m = line.split('\'')
             connection_id = m[1]
-            LOG.debug("Active IKE rule found for: \"%s\"" % connection_id)
             connection_ids.append(connection_id)
 
         if not connection_ids:
@@ -344,7 +327,7 @@ def _get_template(template_file):
     return JINJA_ENV.get_template(template_file)
 
 
-def delete_tunnels():
+def delete_tunnels(tunnels, chatty=True):
     """Delete tunnel interfaces using dladm(1m)/ipadm(1m).
 
        Tunneling in Solaris is done with actual tunnel interfaces, not
@@ -362,42 +345,46 @@ def delete_tunnels():
        tunnels are being deleted because we are shutting down, or
        we have new config.
     """
-    global existing_tunnels
-    if not existing_tunnels:
-        LOG.info("VPNaaS has just started, no tunnels to whack.")
+    if not tunnels:
+        if chatty:
+            LOG.info("VPNaaS has just started, no tunnels to whack.")
         return
 
-    for idstr in existing_tunnels:
+    for idstr in tunnels:
+        if chatty:
+            LOG.debug("Removing tunnel: \"%s\"" % idstr)
         cmd = ['/usr/bin/pfexec', 'ipadm', 'delete-ip', idstr]
         try:
             stdout, stderr = processutils.execute(*cmd)
         except processutils.ProcessExecutionError as stderr:
-            LOG.debug("\"%s\"" % stderr)
+            if chatty:
+                LOG.debug("\"%s\"" % stderr)
         cmd = ['/usr/bin/pfexec', 'dladm', 'delete-iptun', idstr]
         try:
             stdout, stderr = processutils.execute(*cmd)
         except processutils.ProcessExecutionError as stderr:
-            LOG.debug("\"%s\"" % stderr)
+            if chatty:
+                LOG.debug("\"%s\"" % stderr)
 
     # Remove all the VPN bypass rules that were added for local subnet
     # going out to remote subnet. These rules are all captured inside of
     # a anchor whose name is of the form vpn_{peer_cidr}
     pf = packetfilter.PacketFilter('_auto/neutron:l3:agent')
     anchors = pf.list_anchors()
-    LOG.debug("All anchors under _auto/neutron:l3:agent: %s" % anchors)
+    if chatty:
+        LOG.debug("All anchors under _auto/neutron:l3:agent: %s" % anchors)
     for anchor in anchors:
         if 'l3i' not in anchor:
             continue
         subanchors = anchor.split('/')[2:]
         l3i_anchors = pf.list_anchors(subanchors)
-        LOG.debug("All anchors under %s: %s" % (anchor, l3i_anchors))
+        if chatty:
+            LOG.debug("All anchors under %s: %s" % (anchor, l3i_anchors))
         for l3i_anchor in l3i_anchors:
             if 'vpn_' not in l3i_anchor:
                 continue
             l3i_subanchors = l3i_anchor.split('/')[2:]
             pf.remove_anchor(l3i_subanchors)
-
-    existing_tunnels = []
 
 
 @six.add_metaclass(abc.ABCMeta)
@@ -1060,6 +1047,7 @@ class SolarisIPsecProcess(BaseSolaris):
         self.get_status()
         self.flush_sas()
         self.mark_connections(constants.DOWN)
+        LOG.debug("Disable IPsec policy and IKE SMF(5) services")
         disable_services()
 
     def flush_sas(self):
@@ -1514,11 +1502,31 @@ class IPsecDriver(device_drivers.DeviceDriver):
            tunnel is created between any pair of addresses, the tunnel name
            is constructed as follows:
 
-           ost[S]_[D]
+           vpn_x_site_y
 
-           Where S is the outer source address, represented as a decimal
-           number and D is the outer destination address represented as a
-           decimal number. The same convention is used for IPsec policy.
+           Where x is a decimal index number which is unique for each local
+           external IP address used as the outer source for a tunnel. Typically
+           this will only be a single IP address as each neutron router only
+           has a single external IP address. But this could change in the
+           future.
+
+           The decimal index y is unique per IKE peer. There may be more than
+           one set of inner addresses on each tunnel.
+
+           The output below shows the tunnels for a setup that has a local site
+           with two virtual subnets and two remote sites. One of the remote
+           sites has two remote subnets. The combination of two local subnets
+           and three remote subnets results in six ipsec-site-connections
+           and six tunnels on two data-link tunnels.
+
+           vpn_0_site_1      ip         ok   --  --
+              vpn_0_site_1/v4 static    ok   -- 192.168.90.1->192.168.40.1
+              vpn_0_site_1/v4a static   ok   -- 192.168.80.1->192.168.40.1
+           vpn_0_site_2      ip         ok   -- --
+              vpn_0_site_2/v4 static    ok   -- 192.168.90.1->192.168.100.1
+              vpn_0_site_2/v4a static   ok   -- 192.168.90.1->192.168.101.1
+              vpn_0_site_2/v4b static   ok   -- 192.168.80.1->192.168.100.1
+              vpn_0_site_2/v4c static   ok   -- 192.168.80.1->192.168.101.1
         """
         LOG.warn("Neutron: Syncing VPN configuration.")
         try:
@@ -1529,9 +1537,10 @@ class IPsecDriver(device_drivers.DeviceDriver):
             return
 
         router_ids = [vpnservice['router_id'] for vpnservice in vpnservices]
-        delete_tunnels()
-
         global existing_tunnels
+        delete_tunnels(existing_tunnels)
+        existing_tunnels = []
+
         # This is a list of one or more vpn-service objects.
         vpnservices = self.agent_rpc.get_vpn_services_on_host(
             context, self.host)
@@ -1544,15 +1553,30 @@ class IPsecDriver(device_drivers.DeviceDriver):
             pass
 
         # Add tunnel_id's
+        local_ips = {}
+        remote_ips = {}
+        vpn_cnt = 0
+        site_cnt = 0
+
         for vpnservice in vpnservices:
+            ex_ip = vpnservice['external_ip']
+            l_id = local_ips.get(ex_ip)
+
+            if not l_id:
+                l_id = "vpn_%d" % vpn_cnt
+                vpn_cnt += 1
+                local_ips[ex_ip] = l_id
+
             for ipsec_site_conn in vpnservice['ipsec_site_connections']:
-                local = vpnservice['external_ip']
-                remote = ipsec_site_conn['peer_address']
-                packedIP = socket.inet_aton(local)
-                l = struct.unpack("!L", packedIP)[0]
-                packedIP = socket.inet_aton(remote)
-                r = struct.unpack("!L", packedIP)[0]
-                tun_name = "ost%s_%s" % (l, r)
+                peer_ip = ipsec_site_conn['peer_address']
+                r_id = remote_ips.get(peer_ip)
+
+                if not r_id:
+                    site_cnt += 1
+                    r_id = "site_%d" % site_cnt
+                    remote_ips[peer_ip] = r_id
+
+                tun_name = "%s_%s" % (l_id, r_id)
                 ipsec_site_conn['tunnel_id'] = tun_name
                 LOG.debug("Added tunnel \"%s\" to vpn-service: %s" %
                           (tun_name, vpnservice['id']))

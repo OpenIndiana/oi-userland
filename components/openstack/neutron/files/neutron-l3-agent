@@ -102,8 +102,7 @@ def start():
         print "Use ipadm(1M) and dladm(1M) to remove it/them."
         print "Then use svcadm(1M) to clear the service."
         print "Use the following commands to remove:"
-        for interface in vpn_ifs:
-            ifn = interface.group(0)
+        for ifn in vpn_ifs:
             print "\t# ipadm delete-ip %s; dladm delete-iptun %s" % (ifn, ifn)
 
         return smf_include.SMF_EXIT_ERR_CONFIG
