@@ -549,7 +549,7 @@ JAVA_HOME = $(JAVA8_HOME)
 
 # This is the default BUILD version of perl
 # Not necessarily the system's default version, i.e. /usr/bin/perl
-PERL_VERSION ?=  5.12
+PERL_VERSION ?= 5.22
 
 PERL_VERSIONS = 5.12 5.20 5.22
 

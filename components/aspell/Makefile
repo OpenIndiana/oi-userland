@@ -93,7 +93,7 @@ install:	$(INSTALL_32_and_64)
 test:		$(NO_TESTS)
 
 REQUIRED_PACKAGES += library/ncurses
-REQUIRED_PACKAGES += runtime/perl-512
+REQUIRED_PACKAGES += $(PERL_PKG)
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/gcc/gcc-c++-runtime

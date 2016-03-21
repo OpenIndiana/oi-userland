@@ -44,9 +44,6 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-# Version of Perl to use in the Perl scripts in the parallel package.
-PERL_VERSION =	5.20
-
 # Set PATH to find the correct pod2man, so that the man pages can be
 # automatically generated
 COMPONENT_BUILD_ENV += \
@@ -78,6 +75,6 @@ test:		$(NO_TESTS)
 system-test:    $(NO_TESTS)
 
 
-REQUIRED_PACKAGES += runtime/perl-520
+REQUIRED_PACKAGES += $(PERL_PKG)
 REQUIRED_PACKAGES += shell/which
 REQUIRED_PACKAGES += system/core-os

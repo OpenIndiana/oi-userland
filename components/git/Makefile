@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -112,7 +112,7 @@ REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/perl-512
+REQUIRED_PACKAGES += $(PERL_PKG)
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93

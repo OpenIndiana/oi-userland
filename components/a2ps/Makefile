@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2010, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -80,8 +80,7 @@ system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
 REQUIRED_PACKAGES += developer/gperf
 REQUIRED_PACKAGES += editor/gnu-emacs
-REQUIRED_PACKAGES += runtime/perl-512
-REQUIRED_PACKAGES += runtime/perl-520
+REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

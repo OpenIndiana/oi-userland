@@ -19,7 +19,7 @@
 # CDDL HEADER END
 
 #
-# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 COMPILER =	gcc
@@ -44,16 +44,12 @@ CFLAGS+=		-DOSCAP_THREAD_SAFE
 
 PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
 
-PERL_VERSIONS = 5.20
+PERL_VERSIONS = $(PERL_VERSION)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PERL_VERSION.64 = 5.20
-PERL_VERSION = $(PERL_VERSION.$(BITS))
-PERL = $(PERL.$(PERL_VERSION))
-PKG_MACROS		+=	P_ARCH=$(shell arch)
 CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/bin
 CPPFLAGS +=	-I/usr/include/openldap
 
@@ -93,10 +89,8 @@ CONFIGURE_OPTIONS +=	LIBS="$(EXTRA_LIBS)"
 
 DOCS_DIR = $(PROTO_DIR)/usr/share/doc/openscap/html/
 
-# Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
 
-# common targets
 configure:	$(CONFIGURE_64)
 
 build:		$(BUILD_64)
@@ -117,7 +111,7 @@ REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/pcre
-REQUIRED_PACKAGES += runtime/perl-520
+REQUIRED_PACKAGES += $(PERL_PKG)
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += security/compliance/openscap
 REQUIRED_PACKAGES += system/library

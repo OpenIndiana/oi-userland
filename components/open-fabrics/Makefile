@@ -108,8 +108,7 @@ libsif: 		libibverbs
 
 FORCE:
 
-REQUIRED_PACKAGES += runtime/perl-512
-REQUIRED_PACKAGES += runtime/perl-520
+REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93

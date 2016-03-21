@@ -74,14 +74,13 @@ CONFIGURE_OPTIONS  +=	--with-mib-modules="$(MIB_MODULES)"
 PYTHON_ARGS =		--basedir=/usr/bin
 CONFIGURE_OPTIONS  +=	--with-python-modules="$(PYTHON_ARGS)"
 
-# Only build 32 bit Perl support
+# Only build 64 bit Perl support
 PERL_ARGS =			DESTDIR=$(PROTO_DIR) INSTALLDIRS=vendor
-CONFIGURE_OPTIONS.32  +=	PERLPROG="$(PERL)"
-CONFIGURE_OPTIONS.32  +=	--with-perl-modules="$(PERL_ARGS)"
-CONFIGURE_OPTIONS.32  +=	--disable-perl-cc-checks
-
-CONFIGURE_OPTIONS.64  +=	--disable-embedded-perl
-CONFIGURE_OPTIONS.64  +=	--without-perl-modules
+CONFIGURE_OPTIONS.32  +=	--disable-embedded-perl
+CONFIGURE_OPTIONS.32  +=	--without-perl-modules
+CONFIGURE_OPTIONS.64  +=	PERLPROG="$(PERL)"
+CONFIGURE_OPTIONS.64  +=	--with-perl-modules="$(PERL_ARGS)"
+CONFIGURE_OPTIONS.64  +=	--disable-perl-cc-checks
 
 CONFIGURE_OPTIONS	+=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS	+=	CPPFLAGS="$(CPPFLAGS)"
@@ -100,6 +99,9 @@ CCSMAKE_ARGS +=	CFGLIB=/usr/lib ARCH=$(ARCH) ROOT=$(PROTO_DIR)
 COMPONENT_TEST_DIR =		$(COMPONENT_DIR)
 COMPONENT_TEST_CMD =		$(KSH93)
 COMPONENT_TEST_TARGETS =	./run-tests $(BUILD_DIR) $(MACH32) $(MACH64)
+
+# perl man pages hiding here in 64-bit PROTO_DIR
+PKG_PROTO_DIRS += $(BUILD_DIR)/prototype/$(MACH64)
 
 $(BUILD_32): COMPONENT_POST_BUILD_ACTION= \
 	(cd $(BUILD_DIR)/$(MACH32)/sun ; ls agent; $(CCSMAKE) -e $(CCSMAKE_ARGS))
@@ -137,7 +139,7 @@ $(BUILD_DIR_32)/.docs:
 	$(TOUCH) $@
 
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen
-REQUIRED_PACKAGES += runtime/perl-512
+REQUIRED_PACKAGES += $(PERL_PKG)
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -52,8 +52,8 @@ IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).$(COMPONENT_SUBVERSION)
 COMPONENT_POST_UNPACK_ACTION= ( $(MV) $(COMPONENT_SRC)-$(COMPONENT_SUBVERSION) \
     $(COMPONENT_SRC))
 
-# To get the Perl modules built it is necessary to copy the PerlMagick directory
-# to the build directory
+# To get the Perl modules built it is necessary to copy the PerlMagick
+# directory to the build directory
 COMPONENT_PRE_CONFIGURE_ACTION= ($(CP) -R $(SOURCE_DIR)/PerlMagick $(@D))
 
 ifeq ($(OS_VERSION),5.11)
@@ -86,9 +86,9 @@ CONFIGURE_OPTIONS+= --with-fontconfig=no
 # might not have ghostscript fonts installed.
 CONFIGURE_OPTIONS+= --with-gs-font-dir="/usr/share/ghostscript/fonts"
 CONFIGURE_OPTIONS+= --x-libraries=$(CONFIGURE_LIBDIR.$(BITS)) 
-CONFIGURE_OPTIONS.32+= --with-perl=$(PERL)
-CONFIGURE_OPTIONS.32+= --with-perl-options="INSTALLDIRS=vendor"
-CONFIGURE_OPTIONS.64+= --without-perl
+CONFIGURE_OPTIONS.32+= --without-perl
+CONFIGURE_OPTIONS.64+= --with-perl=$(PERL)
+CONFIGURE_OPTIONS.64+= --with-perl-options="INSTALLDIRS=vendor"
 
 # Needed for "gmake test" to work successfully.  If SHELLOPTS is exported (as
 # it is by the Userland Makefiles), then all shell options get exported to

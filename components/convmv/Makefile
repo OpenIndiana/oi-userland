@@ -43,9 +43,6 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATCH_LEVEL=0
 
-# Version of Perl to use in the convmv script.
-PERL_VERSION =	5.20
-
 COMPONENT_TEST_TRANSFORMS += \
 	'-e "s/ in [0-9][0-9]*\.*[0-9]* seconds.//" ' \
 	'-e "/^unimplemented function: utime.*$$/d" '
@@ -57,7 +54,7 @@ COMPONENT_SYSTEM_TEST_ENV=	CONVMV=/usr/bin/convmv
 # Adjust the '#!/usr/bin/perl' at the beginning of the convmv script to use
 # '#!/usr/perl5/$(PERL_VERSION)/bin/perl'
 COMPONENT_POST_INSTALL_ACTION += \
-	$(GSED) -i -e 's?/usr/bin/perl?/usr/perl5/$(PERL_VERSION)/bin/perl?' \
+	$(GSED) -i -e 's?/usr/bin/perl?$(PERL)?' \
 		$(PROTOUSRBINDIR)/convmv;
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
@@ -70,4 +67,4 @@ test:		$(TEST_64)
 
 system-test:    $(SYSTEM_TEST_64)
 
-REQUIRED_PACKAGES += runtime/perl-520
+REQUIRED_PACKAGES += $(PERL_PKG)

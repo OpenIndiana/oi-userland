@@ -167,6 +167,7 @@ COMPONENT_POST_INSTALL_ACTION += \
 	    $(GNUCP) -rpd vendor-packages-32/svn vendor-packages/ ; \
 	fi ; )
 
+PKG_MACROS += PERL_ARCH_12="$(PERL_ARCH_12)"
 PKG_MACROS += PERL_ARCH_16="$(PERL_ARCH_16)"
 PKG_MACROS += PYVER=$(PYTHON_VERSION)
 

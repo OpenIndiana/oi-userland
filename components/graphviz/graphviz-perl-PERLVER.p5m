@@ -18,15 +18,16 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
 set name=pkg.fmri \
-    value=pkg:/image/graphviz/graphviz-perl-520@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="Perl 5.20 bindings for Graphviz"
+    value=pkg:/image/graphviz/graphviz-perl-$(PLV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Perl $(MAYBE_PERLVER_SPACE)bindings for Graphviz"
 set name=pkg.linted.pkglint.dupaction001.1 value=true
-set name=com.oracle.info.description value="Perl 5.20 bindings for Graphviz"
+set name=com.oracle.info.description \
+    value="Perl $(MAYBE_PERLVER_SPACE)bindings for Graphviz"
 set name=com.oracle.info.tpno value=$(TPNO)
 set name=info.classification \
     value="org.opensolaris.category.2008:Applications/System Utilities"
@@ -37,9 +38,9 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 file path=usr/lib/$(MACH64)/graphviz/perl/gv.pm
 link path=usr/lib/$(MACH64)/graphviz/perl/gv.so target=libgv_perl.so
 file path=usr/lib/$(MACH64)/graphviz/perl/libgv_perl.so
-link path=usr/perl5/vendor_perl/5.20/$(PERL_ARCH)/gv.pm \
+link path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/gv.pm \
     target=../../../../lib/$(MACH64)/graphviz/perl/gv.pm
-link path=usr/perl5/vendor_perl/5.20/$(PERL_ARCH)/gv.so \
+link path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/gv.so \
     target=../../../../lib/$(MACH64)/graphviz/perl/libgv_perl.so
 file path=usr/share/graphviz/demo/modgraph.pl
 file usr/share/man/man3/gv.3perl path=usr/share/man/man3/gv-perl.3

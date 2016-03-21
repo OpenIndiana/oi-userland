@@ -1,0 +1,18 @@
+Perl 5.22 complaining about:
+Unescaped left brace in regex is deprecated, passed through in regex;
+marked by <-- HERE in m/\${ <-- HERE ([^ \t=:+{}]+)}/ at
+/builds/userland/automake/automake-1.11.2/build/i386/bin/automake line 393
+
+Should send this upstream.
+
+--- automake-1.11.2/automake.in_orig	2016-03-16 10:45:17.884191948 -0700
++++ automake-1.11.2/automake.in	2016-03-16 10:46:39.539918802 -0700
+@@ -4150,7 +4150,7 @@
+ sub substitute_ac_subst_variables ($)
+ {
+   my ($text) = @_;
+-  $text =~ s/\${([^ \t=:+{}]+)}/&substitute_ac_subst_variables_worker ($1)/ge;
++  $text =~ s/\$\{([^ \t=:+{}]+)}/&substitute_ac_subst_variables_worker ($1)/ge;
+   return $text;
+ }
+ 
