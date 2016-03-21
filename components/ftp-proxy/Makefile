@@ -43,6 +43,14 @@ COMPONENT_BUILD_ARGS +=	CC="$(CC)"
 
 include ../../make-rules/prep.mk
 include ../../make-rules/justmake.mk
+
+# Depends on S12-only changes in ON.
+ifeq ($(BUILD_TYPE), evaluation)
+BUILD_64=
+INSTALL_64=
+PUBLISH_STAMP=
+endif
+
 include ../../make-rules/ips.mk
 
 COMPONENT_INSTALL_ARGS +=	PREFIX=$(PROTOUSRDIR)
