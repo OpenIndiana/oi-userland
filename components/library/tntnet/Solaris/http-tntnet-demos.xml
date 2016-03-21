@@ -1,0 +1,187 @@
+<?xml version="1.0"?>
+<!--
+CDDL HEADER START
+
+This file and its contents are supplied under the terms of the
+Common Development and Distribution License ("CDDL"), version 1.0.
+You may only use this file in accordance with the terms of version
+1.0 of the CDDL.
+
+A full copy of the text of the CDDL should have accompanied this
+source.  A copy of the CDDL is also available via the Internet at
+http://www.illumos.org/license/CDDL.
+
+CDDL HEADER END
+-->
+
+<!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
+<!--
+    Copyright (c) 2007, 2011, Oracle and/or its affiliates. All rights reserved.
+    Copyright 2011 EveryCity Ltd. All rights reserved.
+    Copyright (c) 2016 Jim Klimov
+-->
+
+<service_bundle type='manifest' name='tntnet'>
+
+<service
+	name='network/http'
+	type='service'
+	version='1'>
+
+	<!--
+	  Because we may have multiple instances of network/http
+	  provided by different implementations, we keep dependencies
+	  and methods within the instance.
+	  Also, in case of tntnet in particular, it is likely to have
+	  different webapps served by different service instances with
+	  their customized configuration files, access rights, etc.
+	  The provided default configuration is mostly an illustrative
+	  example to help new tntnet webapp developers get started.
+	-->
+
+	<instance name='tntnet-demos' enabled='false'>
+		<!--
+		  Wait for network interfaces to be initialized.
+		-->
+		<dependency name='network'
+		    grouping='require_all'
+		    restart_on='error'
+		    type='service'>
+		    <service_fmri value='svc:/milestone/network:default'/>
+		</dependency>
+
+		<!--
+		  Wait for all local filesystems to be mounted.
+		-->
+		<dependency name='filesystem-local'
+		    grouping='require_all'
+		    restart_on='none'
+		    type='service'>
+		    <service_fmri
+			value='svc:/system/filesystem/local:default'/>
+		</dependency>
+
+		<!--
+		  Wait for automounting to be available, as we may be
+		  serving data from home directories or other remote
+		  filesystems.
+		-->
+		<dependency name='autofs'
+		    grouping='optional_all'
+		    restart_on='error'
+		    type='service'>
+		    <service_fmri
+			value='svc:/system/filesystem/autofs:default'/>
+		</dependency>
+
+		<!--
+		  Wait for database to be available if enabled, as this is
+		  a web-appplication server. They usually need databases ;)
+		  NOTE: In actual deployment, you'd likely need to tune this.
+		-->
+<!--
+		<dependency name='database'
+		    grouping='optional_all'
+		    restart_on='refresh'
+		    type='service'>
+		    <service_fmri
+			value='svc:/application/database/postgresql_93:default_32bit'/>
+		    <service_fmri
+			value='svc:/application/database/postgresql_93:default_64bit'/>
+		    <service_fmri
+			value='svc:/application/database/mariadb:version_55'/>
+		</dependency>
+-->
+
+		<!--
+		  Note: alas, SMF method macros like %{httpd/instance_config} are not
+		  supported in this dependency context. So if we want to depend on the
+		  config file, we must list its path explicitly.
+		-->
+		<dependency name='config_file'
+		    grouping='require_all'
+		    restart_on='refresh'
+		    type='path'>
+		    <service_fmri
+			value='file://localhost/etc/tntnet/tntnet-demos.xml'/>
+		</dependency>
+
+		<!--
+		  Note: webapps are linked dynamically as .so libraries built
+		  with the tntnet toolkit. Bitness of binary objects matters!
+		  So if you need 64-bit, take care to both compile your objects
+		  and make a service instance that runs /usr/bin/$(MACH64)/tntnet.
+		-->
+		<exec_method
+			type='method'
+			name='start'
+			exec='/usr/bin/tntnet %{httpd/startup_options} -c %{httpd/instance_config}'
+			timeout_seconds='60' >
+				<method_context>
+					<method_credential privileges="basic,net_privaddr"
+						group="webservd" user="webservd"/>
+				</method_context>
+		</exec_method>
+
+		<exec_method
+			type='method'
+			name='stop'
+			exec=':kill -TERM'
+			timeout_seconds='60' >
+				<method_context>
+					<method_credential group="webservd" user="webservd"/>
+				</method_context>
+		</exec_method>
+
+		<exec_method
+			type='method'
+			name='refresh'
+			exec=':kill -HUP'
+			timeout_seconds='60' >
+				<method_context>
+					<method_credential privileges="basic,net_privaddr"
+						group="webservd" user="webservd"/>
+				</method_context>
+		</exec_method>
+
+		<property_group name='httpd' type='application'>
+			<stability value='Evolving' />
+			<propval name='instance_config' type='astring' value='/etc/tntnet/tntnet-demos.xml' />
+			<propval name='startup_options' type='astring' value='' />
+			<propval name='value_authorization' type='astring' value='solaris.smf.value.http/tntnet' />
+		</property_group>
+
+		<property_group name='general' type='framework'>
+			<propval name='action_authorization' type='astring' value='solaris.smf.manage.http/tntnet' />
+			<propval name='value_authorization' type='astring' value='solaris.smf.value.http/tntnet' />
+		</property_group>
+
+		<property_group name='startd' type='framework'>
+			<!-- sub-process core dumps shouldn't restart
+				session -->
+			<propval name='ignore_error' type='astring'
+				value='core,signal' />
+		</property_group>
+
+		<template>
+			<common_name>
+				<loctext xml:lang='C'>
+					Tntnet C++ Application Server
+				</loctext>
+			</common_name>
+
+			<documentation>
+				<manpage title='tntnet' section='8'
+					manpath='/usr/share/man' />
+				<doc_link name='tntnet.org'
+					uri='http://www.tntnet.org' />
+			</documentation>
+		</template>
+
+	</instance>
+
+	<stability value='Evolving' />
+
+</service>
+
+</service_bundle>

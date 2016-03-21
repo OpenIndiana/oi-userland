@@ -1,0 +1,103 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016 Jim Klimov
+#
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)/developer@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY) - headers and developer tools"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file path=usr/include/tnt/object.h
+file path=usr/include/tnt/component.h
+file path=usr/include/tnt/unzipfile.h
+file path=usr/include/tnt/httpreply.h
+file path=usr/include/tnt/contentdisposition.h
+file path=usr/include/tnt/messageheader.h
+file path=usr/include/tnt/sessionscope.h
+file path=usr/include/tnt/sessionunlocker.h
+file path=usr/include/tnt/compident.h
+file path=usr/include/tnt/urlmapper.h
+file path=usr/include/tnt/encoding.h
+file path=usr/include/tnt/job.h
+file path=usr/include/tnt/httperror.h
+file path=usr/include/tnt/http.h
+file path=usr/include/tnt/componentfactory.h
+file path=usr/include/tnt/httpparser.h
+file path=usr/include/tnt/configurator.h
+file path=usr/include/tnt/maptarget.h
+file path=usr/include/tnt/applicationunlocker.h
+file path=usr/include/tnt/savepoint.h
+file path=usr/include/tnt/scope.h
+file path=usr/include/tnt/messageattribute.h
+file path=usr/include/tnt/mimedb.h
+file path=usr/include/tnt/convert.h
+file path=usr/include/tnt/data.h
+file path=usr/include/tnt/cmd.h
+file path=usr/include/tnt/mbcomponent.h
+file path=usr/include/tnt/httpmessage.h
+file path=usr/include/tnt/httprequest.h
+file path=usr/include/tnt/tntnet.h
+file path=usr/include/tnt/worker.h
+file path=usr/include/tnt/parser.h
+file path=usr/include/tnt/backgroundworker.h
+file path=usr/include/tnt/httpheader.h
+file path=usr/include/tnt/stringlessignorecase.h
+file path=usr/include/tnt/query_params.h
+file path=usr/include/tnt/poller.h
+file path=usr/include/tnt/deflatestream.h
+file path=usr/include/tnt/socketif.h
+file path=usr/include/tnt/cookie.h
+file path=usr/include/tnt/langlib.h
+file path=usr/include/tnt/ecpp.h
+file path=usr/include/tnt/htmlescostream.h
+file path=usr/include/tnt/multipart.h
+file path=usr/include/tnt/comploader.h
+file path=usr/include/tnt/dispatcher.h
+file path=usr/include/tnt/process.h
+file path=usr/include/tnt/threadcontext.h
+file path=usr/include/tnt/urlescostream.h
+file path=usr/include/tnt/messageheaderparser.h
+file path=usr/include/tnt/scopemanager.h
+file path=usr/include/tnt/tntconfig.h
+file path=usr/include/tnt/zdata.h
+file path=usr/include/tnt/contenttype.h
+
+file path=usr/bin/$(MACH64)/tntnet-config
+file path=usr/bin/$(MACH64)/ecppc
+file path=usr/bin/$(MACH64)/ecppl
+file path=usr/bin/$(MACH64)/ecppll
+file path=usr/bin/tntnet-config
+file path=usr/bin/ecppc
+file path=usr/bin/ecppl
+file path=usr/bin/ecppll
+
+file path=usr/lib/$(MACH64)/libtntnet_sdk.so.12.0.0
+link path=usr/lib/$(MACH64)/libtntnet_sdk.so target=libtntnet_sdk.so.12.0.0
+link path=usr/lib/$(MACH64)/libtntnet_sdk.so.12 target=libtntnet_sdk.so.12.0.0
+
+file path=usr/lib/libtntnet_sdk.so.12.0.0
+link path=usr/lib/libtntnet_sdk.so.12 target=libtntnet_sdk.so.12.0.0
+link path=usr/lib/libtntnet_sdk.so target=libtntnet_sdk.so.12.0.0
+
+file path=usr/share/man/man1/tntnet-config.1
+file path=usr/share/man/man1/ecppl.1
+file path=usr/share/man/man1/ecppll.1
+file path=usr/share/man/man1/ecppc.1
+file path=usr/share/man/man7/ecpp.7

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tntnet>
+  <mappings>
+<!--
+ //  This file is a sample tntnet.xml configuration based on
+ //  the demo installation. In the mapurl blocks you can see
+ //  various static or regex ways to map URLs to servlets that
+ //  would process them, and optionally other needed keywords.
+ // -->
+<!--
+    <mapurl>
+      <target>redirect@tntnet</target>
+      <url>^/demos/controls$</url>
+      <pathinfo>/demos/controls/</pathinfo>
+    </mapurl>
+    <mapurl>
+      <target>$1@controls</target>
+      <url>^/demos/controls/(.+)\..*</url>
+    </mapurl>
+    <mapurl>
+      <target>index@controls</target>
+      <url>^/demos/controls/$</url>
+      <pathinfo>index</pathinfo>
+    </mapurl>
+    <mapurl>
+      <target>index@controls</target>
+      <url>^/demos/controls/(.+)</url>
+      <pathinfo>$1</pathinfo>
+    </mapurl>
+    <mapurl>
+      <target>$1@$1</target>
+      <url>^/demos/(.+)\..*</url>
+      <pathinfo>$1</pathinfo>
+    </mapurl>
+    <mapurl>
+      <target>$1@$1</target>
+      <url>^/demos/(.+)</url>
+    </mapurl>
+    <mapurl>
+      <target>tntnet@hello</target>
+      <url>^/demos/tntnet.jpg</url>
+    </mapurl>
+    <mapurl>
+      <target>static@tntnet</target>
+      <url>(.*)/$</url>
+      <pathinfo>/$1/index.html</pathinfo>
+    </mapurl>
+    <mapurl>
+      <target>static@tntnet</target>
+      <url>^/(.*)$</url>
+      <pathinfo>/$1</pathinfo>
+    </mapurl>
+-->
+  </mappings>
+
+  <listeners>
+    <listener>
+      <ip></ip>
+      <port>80</port>
+    </listener>
+  </listeners>
+
+  <daemon>1</daemon>
+  <user>webservd</user>
+  <group>webservd</group>
+  <pidFile>/var/run/tntnet.pid</pidFile>
+  <documentRoot>/var/www</documentRoot>
+  <compPath>
+    <entry>/usr/lib/tntnet</entry>
+  </compPath>
+  <logging>
+    <rootlogger>INFO</rootlogger>
+    <loggers>
+      <logger>
+        <category>tntnet</category>
+        <level>INFO</level>
+      </logger>
+    </loggers>
+    <file>/var/log/tntnet/tntnet.log</file>
+    <maxfilesize>1MB</maxfilesize>
+    <maxbackupindex>2</maxbackupindex>
+    <!-- <host>localhost:1234</host> --> <!--  # send log-messages with udp -->
+  </logging>
+</tntnet>

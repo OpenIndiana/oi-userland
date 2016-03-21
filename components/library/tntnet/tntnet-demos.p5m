@@ -1,0 +1,153 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016 Jim Klimov
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)/demos@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY) - demo appserver instance on port 8079"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+depend fmri=$(COMPONENT_FMRI)/server@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)     type=require
+depend fmri=$(COMPONENT_FMRI)/developer@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)  type=require
+
+file path=etc/tntnet/tntnet-demos.xml preserve=true
+file Solaris/http-tntnet-demos.xml path=lib/svc/manifest/network/http-tntnet-demos.xml
+
+file path=usr/lib/$(MACH64)/tntnet/upload.so.0.0.0
+file path=usr/lib/$(MACH64)/tntnet/calcajax.so.0.0.0
+file path=usr/lib/$(MACH64)/tntnet/extlib.so.0.0.0
+file path=usr/lib/$(MACH64)/tntnet/tntnet.so.12.0.0
+file path=usr/lib/$(MACH64)/tntnet/alldemos.so.0.0.0
+file path=usr/lib/$(MACH64)/tntnet/calc.so.0.0.0
+file path=usr/lib/$(MACH64)/tntnet/strings.so.0.0.0
+file path=usr/lib/$(MACH64)/tntnet/backgroundjob.so.0.0.0
+file path=usr/lib/$(MACH64)/tntnet/controls.so.0.0.0
+file path=usr/lib/$(MACH64)/tntnet/config.so.0.0.0
+file path=usr/lib/$(MACH64)/tntnet/chat.so.0.0.0
+file path=usr/lib/$(MACH64)/tntnet/sprintf.so.0.0.0
+file path=usr/lib/$(MACH64)/tntnet/message.so.0.0.0
+file path=usr/lib/$(MACH64)/tntnet/hello.so.0.0.0
+file path=usr/lib/$(MACH64)/tntnet/session.so.0.0.0
+file path=usr/lib/$(MACH64)/tntnet/savepoint.so.0.0.0
+file path=usr/lib/$(MACH64)/tntnet/calci18n.so.0.0.0
+file path=usr/lib/$(MACH64)/tntnet/calcmvc.so.0.0.0
+file path=usr/lib/$(MACH64)/tntnet/cookie.so.0.0.0
+file path=usr/lib/$(MACH64)/tntnet/comp.so.0.0.0
+
+file path=usr/lib/tntnet/calcmvc.so.0.0.0
+file path=usr/lib/tntnet/calcajax.so.0.0.0
+file path=usr/lib/tntnet/comp.so.0.0.0
+file path=usr/lib/tntnet/alldemos.so.0.0.0
+file path=usr/lib/tntnet/message.so.0.0.0
+file path=usr/lib/tntnet/sprintf.so.0.0.0
+file path=usr/lib/tntnet/controls.so.0.0.0
+file path=usr/lib/tntnet/cookie.so.0.0.0
+file path=usr/lib/tntnet/session.so.0.0.0
+file path=usr/lib/tntnet/chat.so.0.0.0
+file path=usr/lib/tntnet/upload.so.0.0.0
+file path=usr/lib/tntnet/extlib.so.0.0.0
+file path=usr/lib/tntnet/hello.so.0.0.0
+file path=usr/lib/tntnet/calc.so.0.0.0
+file path=usr/lib/tntnet/savepoint.so.0.0.0
+file path=usr/lib/tntnet/calci18n.so.0.0.0
+file path=usr/lib/tntnet/config.so.0.0.0
+file path=usr/lib/tntnet/tntnet.so.12.0.0
+file path=usr/lib/tntnet/strings.so.0.0.0
+file path=usr/lib/tntnet/backgroundjob.so.0.0.0
+
+link path=usr/lib/$(MACH64)/tntnet/savepoint.so target=savepoint.so.0.0.0
+link path=usr/lib/$(MACH64)/tntnet/message.so target=message.so.0.0.0
+link path=usr/lib/$(MACH64)/tntnet/upload.so target=upload.so.0.0.0
+link path=usr/lib/$(MACH64)/tntnet/sprintf.so target=sprintf.so.0.0.0
+link path=usr/lib/$(MACH64)/tntnet/calcajax.so target=calcajax.so.0.0.0
+link path=usr/lib/$(MACH64)/tntnet/sprintf.so.0 target=sprintf.so.0.0.0
+link path=usr/lib/$(MACH64)/tntnet/comp.so target=comp.so.0.0.0
+link path=usr/lib/$(MACH64)/tntnet/config.so target=config.so.0.0.0
+link path=usr/lib/$(MACH64)/tntnet/calci18n.so target=calci18n.so.0.0.0
+link path=usr/lib/$(MACH64)/tntnet/controls.so target=controls.so.0.0.0
+link path=usr/lib/$(MACH64)/tntnet/extlib.so target=extlib.so.0.0.0
+link path=usr/lib/$(MACH64)/tntnet/hello.so target=hello.so.0.0.0
+link path=usr/lib/$(MACH64)/tntnet/backgroundjob.so.0 target=backgroundjob.so.0.0.0
+link path=usr/lib/$(MACH64)/tntnet/calci18n.so.0 target=calci18n.so.0.0.0
+link path=usr/lib/$(MACH64)/tntnet/chat.so target=chat.so.0.0.0
+link path=usr/lib/$(MACH64)/tntnet/cookie.so.0 target=cookie.so.0.0.0
+link path=usr/lib/$(MACH64)/tntnet/comp.so.0 target=comp.so.0.0.0
+link path=usr/lib/$(MACH64)/tntnet/alldemos.so.0 target=alldemos.so.0.0.0
+link path=usr/lib/$(MACH64)/tntnet/calcmvc.so.0 target=calcmvc.so.0.0.0
+link path=usr/lib/$(MACH64)/tntnet/cookie.so target=cookie.so.0.0.0
+link path=usr/lib/$(MACH64)/tntnet/calc.so.0 target=calc.so.0.0.0
+link path=usr/lib/$(MACH64)/tntnet/controls.so.0 target=controls.so.0.0.0
+link path=usr/lib/$(MACH64)/tntnet/strings.so target=strings.so.0.0.0
+link path=usr/lib/$(MACH64)/tntnet/extlib.so.0 target=extlib.so.0.0.0
+link path=usr/lib/$(MACH64)/tntnet/tntnet.so.12 target=tntnet.so.12.0.0
+link path=usr/lib/$(MACH64)/tntnet/upload.so.0 target=upload.so.0.0.0
+link path=usr/lib/$(MACH64)/tntnet/hello.so.0 target=hello.so.0.0.0
+link path=usr/lib/$(MACH64)/tntnet/session.so target=session.so.0.0.0
+link path=usr/lib/$(MACH64)/tntnet/calcmvc.so target=calcmvc.so.0.0.0
+link path=usr/lib/$(MACH64)/tntnet/message.so.0 target=message.so.0.0.0
+link path=usr/lib/$(MACH64)/tntnet/session.so.0 target=session.so.0.0.0
+link path=usr/lib/$(MACH64)/tntnet/tntnet.so target=tntnet.so.12.0.0
+link path=usr/lib/$(MACH64)/tntnet/strings.so.0 target=strings.so.0.0.0
+link path=usr/lib/$(MACH64)/tntnet/config.so.0 target=config.so.0.0.0
+link path=usr/lib/$(MACH64)/tntnet/alldemos.so target=alldemos.so.0.0.0
+link path=usr/lib/$(MACH64)/tntnet/calcajax.so.0 target=calcajax.so.0.0.0
+link path=usr/lib/$(MACH64)/tntnet/savepoint.so.0 target=savepoint.so.0.0.0
+link path=usr/lib/$(MACH64)/tntnet/backgroundjob.so target=backgroundjob.so.0.0.0
+link path=usr/lib/$(MACH64)/tntnet/calc.so target=calc.so.0.0.0
+link path=usr/lib/$(MACH64)/tntnet/chat.so.0 target=chat.so.0.0.0
+
+link path=usr/lib/tntnet/comp.so.0 target=comp.so.0.0.0
+link path=usr/lib/tntnet/cookie.so.0 target=cookie.so.0.0.0
+link path=usr/lib/tntnet/session.so.0 target=session.so.0.0.0
+link path=usr/lib/tntnet/calcajax.so.0 target=calcajax.so.0.0.0
+link path=usr/lib/tntnet/message.so.0 target=message.so.0.0.0
+link path=usr/lib/tntnet/cookie.so target=cookie.so.0.0.0
+link path=usr/lib/tntnet/calc.so.0 target=calc.so.0.0.0
+link path=usr/lib/tntnet/strings.so.0 target=strings.so.0.0.0
+link path=usr/lib/tntnet/hello.so.0 target=hello.so.0.0.0
+link path=usr/lib/tntnet/session.so target=session.so.0.0.0
+link path=usr/lib/tntnet/backgroundjob.so.0 target=backgroundjob.so.0.0.0
+link path=usr/lib/tntnet/backgroundjob.so target=backgroundjob.so.0.0.0
+link path=usr/lib/tntnet/calcmvc.so target=calcmvc.so.0.0.0
+link path=usr/lib/tntnet/calcajax.so target=calcajax.so.0.0.0
+link path=usr/lib/tntnet/upload.so target=upload.so.0.0.0
+link path=usr/lib/tntnet/extlib.so target=extlib.so.0.0.0
+link path=usr/lib/tntnet/config.so target=config.so.0.0.0
+link path=usr/lib/tntnet/calci18n.so target=calci18n.so.0.0.0
+link path=usr/lib/tntnet/calc.so target=calc.so.0.0.0
+link path=usr/lib/tntnet/tntnet.so.12 target=tntnet.so.12.0.0
+link path=usr/lib/tntnet/controls.so target=controls.so.0.0.0
+link path=usr/lib/tntnet/message.so target=message.so.0.0.0
+link path=usr/lib/tntnet/controls.so.0 target=controls.so.0.0.0
+link path=usr/lib/tntnet/sprintf.so target=sprintf.so.0.0.0
+link path=usr/lib/tntnet/config.so.0 target=config.so.0.0.0
+link path=usr/lib/tntnet/chat.so.0 target=chat.so.0.0.0
+link path=usr/lib/tntnet/alldemos.so.0 target=alldemos.so.0.0.0
+link path=usr/lib/tntnet/alldemos.so target=alldemos.so.0.0.0
+link path=usr/lib/tntnet/calci18n.so.0 target=calci18n.so.0.0.0
+link path=usr/lib/tntnet/comp.so target=comp.so.0.0.0
+link path=usr/lib/tntnet/calcmvc.so.0 target=calcmvc.so.0.0.0
+link path=usr/lib/tntnet/tntnet.so target=tntnet.so.12.0.0
+link path=usr/lib/tntnet/chat.so target=chat.so.0.0.0
+link path=usr/lib/tntnet/sprintf.so.0 target=sprintf.so.0.0.0
+link path=usr/lib/tntnet/savepoint.so target=savepoint.so.0.0.0
+link path=usr/lib/tntnet/extlib.so.0 target=extlib.so.0.0.0
+link path=usr/lib/tntnet/upload.so.0 target=upload.so.0.0.0
+link path=usr/lib/tntnet/strings.so target=strings.so.0.0.0
+link path=usr/lib/tntnet/savepoint.so.0 target=savepoint.so.0.0.0
+link path=usr/lib/tntnet/hello.so target=hello.so.0.0.0
