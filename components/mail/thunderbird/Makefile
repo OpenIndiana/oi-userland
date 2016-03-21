@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	thunderbird
 COMPONENT_VERSION= 	38.6.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY= 	Mozilla Thunderbird Email/Newsgroup Client
 COMPONENT_SRC= 		comm-esr38
 COMPONENT_ARCHIVE= 	$(COMPONENT_NAME)-$(COMPONENT_VERSION).source.tar.bz2
