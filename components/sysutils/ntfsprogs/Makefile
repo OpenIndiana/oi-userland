@@ -13,22 +13,22 @@
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= ntfs-3g_ntfsprogs
-COMPONENT_VERSION= 2015.3.14
+COMPONENT_VERSION= 2016.2.22
 COMPONENT_SUMMARY= ntfsprogs - Utilities that provide access to NTFS
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:97f996015d8316d4a272bd2629978e5e97072dd3cc148ce39802f8037c6538f2
+  sha256:d7b72c05e4b3493e6095be789a760c9f5f2b141812d5b885f3190c98802f1ea0
 COMPONENT_ARCHIVE_URL= \
   http://tuxera.com/opensource/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.tuxera.com/community/ntfs-3g-download/
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/configure.mk
+include $(WS_TOP)/make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
