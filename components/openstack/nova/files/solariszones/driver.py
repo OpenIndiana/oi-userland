@@ -1878,23 +1878,31 @@ class SolarisZonesDriver(driver.ComputeDriver):
             shutil.rmtree(sc_dir)
             raise
 
-        configured = False
-        installed = False
         try:
             self._create_config(context, instance, network_info,
                                 connection_info, sc_dir, admin_password)
-            configured = True
             self._install(instance, image, sc_dir)
-            installed = True
             self._power_on(instance)
         except Exception as ex:
             reason = zonemgr_strerror(ex)
             LOG.error(_("Unable to spawn instance '%s' via zonemgr(3RAD): %s")
                       % (name, reason))
-            if installed:
+            # At least attempt to uninstall the instance, depending on where
+            # the installation got to there could be things left behind that
+            # need to be cleaned up, e.g a root zpool etc.
+            try:
                 self._uninstall(instance)
-            if configured:
+            except Exception as ex:
+                reason = zonemgr_strerr(ex)
+                LOG.debug(_("Unable to uninstall instance '%s' via "
+                            "zonemgr(3RAD): %s") % (name, reason))
+            try:
                 self._delete_config(instance)
+            except Exception as ex:
+                reason = zonemgr_strerr(ex)
+                LOG.debug(_("Unable to unconfigure instance '%s' via "
+                            "zonemgr(3RAD): %s") % (name, reason))
+
             if connection_info is not None:
                 self._volume_api.detach(context, volume_id)
                 self._volume_api.delete(context, volume_id)
