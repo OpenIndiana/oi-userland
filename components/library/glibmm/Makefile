@@ -13,7 +13,7 @@
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= glibmm
 
@@ -28,11 +28,11 @@ COMPONENT_ARCHIVE_URL= \
   http://ftp.gnome.org/pub/GNOME/sources/glibmm/2.28/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gtkmm.org/
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/configure.mk
+include $(WS_TOP)/make-rules/ips.mk
 
-COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f)
+COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f -i)
 
 PATH=/usr/gnu/bin:/usr/bin
 

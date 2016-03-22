@@ -13,7 +13,7 @@
 # Copyright (c) 2014 Ken Mays
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gnome-themes
 COMPONENT_VERSION=      2.32.1
@@ -33,7 +33,7 @@ include $(WS_TOP)/make-rules/ips.mk
 PATH=/usr/gnu/bin:/usr/bin
 
 COMPONENT_PREP_ACTION =        ( cd $(@D) &&\
-                                        autoreconf -f )
+                                        autoreconf -f -i)
 
 COMPONENT_PRE_CONFIGURE_ACTION = ( cp -a $(COMPONENT_DIR)/files/* $(BUILD_DIR_$(BITS)) )
 
