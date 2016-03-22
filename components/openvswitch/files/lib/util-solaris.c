@@ -3727,6 +3727,7 @@ solaris_is_uplink_class(const char *class)
 	    strcmp("aggr", class) == 0 ||
 	    strcmp("etherstub", class) == 0 ||
 	    strcmp("vxlan", class) == 0 ||
+	    strcmp("veth", class) == 0 ||
 	    strcmp("simnet", class) == 0);
 }
 
