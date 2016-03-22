@@ -12,10 +12,11 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gtkimageview
 COMPONENT_VERSION=	1.6.4
+COMPONENT_REVISON=	1
 COMPONENT_PROJECT_URL=	http://trac.bjourne.webfactional.com
 COMPONENT_SUMMARY=	A simple image viewer widget for GTK+
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -35,11 +36,14 @@ include $(WS_TOP)/make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
+COMPONENT_PREP_ACTION =        ( cp files/* $(@D)/src && cd $(@D)  && \
 					libtoolize --copy --force &&\
 					aclocal -I . &&\
 					automake -c -f -a &&\
 					autoconf )
+
+# Missing files in build dir for configure without this.
+COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
