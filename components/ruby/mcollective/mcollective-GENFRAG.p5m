@@ -29,6 +29,10 @@ depend type=require fmri=pkg:/network/amqp/rabbitmq
 # force a dependency on the unversioned mcollective package
 depend type=require \
     fmri=pkg:/system/management/mcollective@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+
+# MCollective agents depend on puppet module, thus force dependency on puppet
+# package
+depend type=require fmri=pkg:/system/management/puppet
 # Only Ruby 2.1 mcollective packages are currently available
 depend type=require-any fmri=pkg:/library/ruby/stomp-21
 depend type=require-any fmri=pkg:/runtime/ruby-21

@@ -21,10 +21,12 @@
 # Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-targets.mk
 
 RUBY_VERSION=       2.1
 RUBY_LIB_VERSION=   2.1.0
 RUBY_VERSIONS=      2.1.0
+PATCH_EACH_ARCHIVE = 1
 
 COMPONENT_NAME=		mcollective
 COMPONENT_VERSION=	2.8.2
@@ -36,8 +38,35 @@ COMPONENT_ARCHIVE_URL=	https://downloads.puppetlabs.com/mcollective/$(COMPONENT_
 COMPONENT_PROJECT_URL=  https://puppetlabs.com/mcollective
 COMPONENT_BUGDB=	utility/mcollective
 
-TPNO=                   23491
+TPNO_FRMWK=        23491
+TPNO_PKG_AGENT=    26722
+TPNO_PPT_AGENT=    26719
+TPNO_FCT_AGENT=    26723
+TPNO_SVC_AGENT=    26724
 
+COMPONENT_NAME_1=  mcollective-puppet-agent
+VERSION_PPT_AGENT= 1.10.0
+GIT_REPO_1=        https://github.com/puppetlabs/$(COMPONENT_NAME_1)
+GIT_COMMIT_ID_1=   cfa4b5e4a9752f6b631f0231b25051c3c16e89d8
+PKG_PROTO_DIRS +=  $(COMPONENT_NAME_1)-$(GIT_COMMIT_ID_1)
+
+COMPONENT_NAME_2=  mcollective-package-agent
+VERSION_PKG_AGENT= 4.4.0
+GIT_REPO_2=        https://github.com/puppetlabs/$(COMPONENT_NAME_2)
+GIT_COMMIT_ID_2=   8520f756cbe4ce8a1e0fc416ed4d79ee774bcb71
+PKG_PROTO_DIRS +=  $(COMPONENT_NAME_2)-$(GIT_COMMIT_ID_2)
+
+COMPONENT_NAME_3=  mcollective-service-agent
+VERSION_SVC_AGENT= 3.3.1
+GIT_REPO_3=        https://github.com/puppetlabs/$(COMPONENT_NAME_3)
+GIT_COMMIT_ID_3=   75478ac81f80bfd5ebaab05fe5dc5b92d90af815
+PKG_PROTO_DIRS +=  $(COMPONENT_NAME_3)-$(GIT_COMMIT_ID_3)
+
+COMPONENT_NAME_4=  mcollective-facter-facts
+VERSION_FCT_AGENT= 1.0.0
+GIT_REPO_4=        https://github.com/puppetlabs/$(COMPONENT_NAME_4)
+GIT_COMMIT_ID_4=   30adc0e50bc38fc261cae437e84a1b69a08fdae3
+PKG_PROTO_DIRS +=  $(COMPONENT_NAME_4)-$(GIT_COMMIT_ID_4)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/install.rb.mk
@@ -47,6 +76,12 @@ include $(WS_MAKE_RULES)/ips.mk
 INSTALL_RB_MANDIR_OPTION =
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+
+COMPONENT_POST_UNPACK_ACTION_3 += \
+  $(GPATCH) -d \
+      $(COMPONENT_DIR)/$(COMPONENT_NAME_3)-$(GIT_COMMIT_ID_3) \
+      $(GPATCH_FLAGS) \
+      < patches/03-mco-service-name
 
 # common targets
 build:		$(BUILD_64)

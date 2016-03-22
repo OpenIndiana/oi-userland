@@ -31,7 +31,6 @@ set name=pkg.description \
     value="MCollective is a framework for building server orchestration or parallel job execution systems. Most people use it to programmatically execute administrative tasks on clusters of servers. In Solaris, we plan to use this with Puppet for managing configurations in large IT infrastructures."
 set name=com.oracle.info.description \
     value="MCollective - framework for building server orchestration."
-set name=com.oracle.info.tpno value=$(TPNO)
 set name=info.classification \
     value=org.opensolaris.category.2008:Development/Ruby \
     value="org.opensolaris.category.2008:System/Administration and Configuration"
@@ -215,5 +214,107 @@ file usr/sbin/mcollectived path=usr/ruby/$(RUBY_VERSION)/sbin/mcollectived
 link path=usr/sbin/mcollectived \
     target=../ruby/$(RUBY_VERSION)/sbin/mcollectived mediator=ruby \
     mediator-version=$(RUBY_VERSION)
-license mcollective.license license="Apache v2.0"
+file agent/package.ddl path=usr/share/mcollective/mcollective/agent/package.ddl
+file agent/package.rb path=usr/share/mcollective/mcollective/agent/package.rb
+file agent/puppet.ddl path=usr/share/mcollective/mcollective/agent/puppet.ddl
+file agent/puppet.rb path=usr/share/mcollective/mcollective/agent/puppet.rb
+file agent/service.ddl path=usr/share/mcollective/mcollective/agent/service.ddl
+file agent/service.rb path=usr/share/mcollective/mcollective/agent/service.rb
+file aggregate/boolean_summary.ddl \
+    path=usr/share/mcollective/mcollective/aggregate/boolean_summary.ddl
+file aggregate/boolean_summary.rb \
+    path=usr/share/mcollective/mcollective/aggregate/boolean_summary.rb
+file application/package.rb \
+    path=usr/share/mcollective/mcollective/application/package.rb
+file application/puppet.rb \
+    path=usr/share/mcollective/mcollective/application/puppet.rb
+file application/service.rb \
+    path=usr/share/mcollective/mcollective/application/service.rb
+file data/puppet_data.ddl \
+    path=usr/share/mcollective/mcollective/data/puppet_data.ddl
+file data/puppet_data.rb \
+    path=usr/share/mcollective/mcollective/data/puppet_data.rb
+file data/resource_data.ddl \
+    path=usr/share/mcollective/mcollective/data/resource_data.ddl
+file data/resource_data.rb \
+    path=usr/share/mcollective/mcollective/data/resource_data.rb
+file data/service_data.ddl \
+    path=usr/share/mcollective/mcollective/data/service_data.ddl
+file data/service_data.rb \
+    path=usr/share/mcollective/mcollective/data/service_data.rb
+file facts/facter_facts.ddl \
+    path=usr/share/mcollective/mcollective/facts/facter_facts.ddl
+file facts/facter_facts.rb \
+    path=usr/share/mcollective/mcollective/facts/facter_facts.rb
+file util/package/base.rb \
+    path=usr/share/mcollective/mcollective/util/package/base.rb
+file util/package/packagehelpers.rb \
+    path=usr/share/mcollective/mcollective/util/package/packagehelpers.rb
+file util/package/puppetpackage.rb \
+    path=usr/share/mcollective/mcollective/util/package/puppetpackage.rb
+file util/package/yumHelper.py \
+    path=usr/share/mcollective/mcollective/util/package/yumHelper.py
+file util/package/yumpackage.rb \
+    path=usr/share/mcollective/mcollective/util/package/yumpackage.rb
+file util/puppet_agent_mgr.rb \
+    path=usr/share/mcollective/mcollective/util/puppet_agent_mgr.rb
+file util/puppet_agent_mgr/mgr_v2.rb \
+    path=usr/share/mcollective/mcollective/util/puppet_agent_mgr/mgr_v2.rb
+file util/puppet_agent_mgr/mgr_v3.rb \
+    path=usr/share/mcollective/mcollective/util/puppet_agent_mgr/mgr_v3.rb
+file util/puppet_agent_mgr/mgr_windows.rb \
+    path=usr/share/mcollective/mcollective/util/puppet_agent_mgr/mgr_windows.rb
+file util/puppet_server_address_validation.rb \
+    path=usr/share/mcollective/mcollective/util/puppet_server_address_validation.rb
+file util/puppetrunner.rb \
+    path=usr/share/mcollective/mcollective/util/puppetrunner.rb
+file util/service/base.rb \
+    path=usr/share/mcollective/mcollective/util/service/base.rb
+file util/service/puppetservice.rb \
+    path=usr/share/mcollective/mcollective/util/service/puppetservice.rb
+file validator/puppet_resource_validator.ddl \
+    path=usr/share/mcollective/mcollective/validator/puppet_resource_validator.ddl
+file validator/puppet_resource_validator.rb \
+    path=usr/share/mcollective/mcollective/validator/puppet_resource_validator.rb
+file validator/puppet_server_address_validator.ddl \
+    path=usr/share/mcollective/mcollective/validator/puppet_server_address_validator.ddl
+file validator/puppet_server_address_validator.rb \
+    path=usr/share/mcollective/mcollective/validator/puppet_server_address_validator.rb
+file validator/puppet_tags_validator.ddl \
+    path=usr/share/mcollective/mcollective/validator/puppet_tags_validator.ddl
+file validator/puppet_tags_validator.rb \
+    path=usr/share/mcollective/mcollective/validator/puppet_tags_validator.rb
+file validator/puppet_variable_validator.ddl \
+    path=usr/share/mcollective/mcollective/validator/puppet_variable_validator.ddl
+file validator/puppet_variable_validator.rb \
+    path=usr/share/mcollective/mcollective/validator/puppet_variable_validator.rb
+file validator/service_name.ddl \
+    path=usr/share/mcollective/mcollective/validator/service_name.ddl
+file validator/service_name.rb \
+    path=usr/share/mcollective/mcollective/validator/service_name.rb
 
+# License & TPNOs
+license mcollective.license license="Apache v2.0" \
+    com.oracle.info.description="MCollective framework for building server orchestration" \
+    com.oracle.info.name=$(COMPONENT_NAME) com.oracle.info.tpno=$(TPNO_FRMWK) \
+    com.oracle.info.version=$(IPS_COMPONENT_VERSION)
+license mcollective.license license="Apache v2.0 (facter agent)" \
+    com.oracle.info.description="MCollective facter agent" \
+    com.oracle.info.name=$(COMPONENT_NAME_4) \
+    com.oracle.info.tpno=$(TPNO_FCT_AGENT) \
+    com.oracle.info.version=$(VERSION_FCT_AGENT)
+license mcollective.license license="Apache v2.0 (package agent)" \
+    com.oracle.info.description="MCollective package agent" \
+    com.oracle.info.name=$(COMPONENT_NAME_2) \
+    com.oracle.info.tpno=$(TPNO_PKG_AGENT) \
+    com.oracle.info.version=$(VERSION_PKG_AGENT)
+license mcollective.license license="Apache v2.0 (puppet agent)" \
+    com.oracle.info.description="MCollective puppet agent" \
+    com.oracle.info.name=$(COMPONENT_NAME_1) \
+    com.oracle.info.tpno=$(TPNO_PPT_AGENT) \
+    com.oracle.info.version=$(VERSION_PPT_AGENT)
+license mcollective.license license="Apache v2.0 (service agent)" \
+    com.oracle.info.description="MCollective service agent" \
+    com.oracle.info.name=$(COMPONENT_NAME_3) \
+    com.oracle.info.tpno=$(TPNO_SVC_AGENT) \
+    com.oracle.info.version=$(VERSION_SVC_AGENT)
