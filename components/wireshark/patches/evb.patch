@@ -13,13 +13,13 @@ Index: epan/oui.h
  #define OUI_ATHEROS         0x00037F    /* Atheros Communications */
 +#define OUI_ORACLE          0x0003BA    /* Oracle */
  #define OUI_SONY_ERICSSON   0x000AD9    /* Sony Ericsson Mobile Communications AB */
+ #define OUI_ARUBA           0x000B86    /* Aruba Networks */
  #define OUI_SONY_ERICSSON_2 0x000E07    /* Sony Ericsson Mobile Communications AB */
- #define OUI_PROFINET        0x000ECF    /* PROFIBUS Nutzerorganisation e.V. */
 Index: epan/etypes.h
 ===================================================================
 --- epan/etypes.h	(revision 41973)
 +++ epan/etypes.h	(working copy)
-@@ -526,6 +526,10 @@
+@@ -538,6 +538,10 @@
  #define ETHERTYPE_HSR			0x892F  /* High-availability Seamless Redundancy (IEC62439 Part 3) */
  #endif
  
@@ -34,7 +34,7 @@ Index: epan/dissectors/packet-ecp.c
 ===================================================================
 --- epan/dissectors/packet-ecp.c	(revision 0)
 +++ epan/dissectors/packet-ecp.c	(revision 0)
-@@ -0,0 +1,619 @@
+@@ -0,0 +1,624 @@
 +/* packet-ecp.c
 + * Routines for Solaris ECP/VDP dissection based on IEEE 802.1Qbg Draft 2.1
 + *
@@ -64,6 +64,7 @@ Index: epan/dissectors/packet-ecp.c
 +#include <stdio.h>
 +#include <epan/packet.h>
 +#include <epan/etypes.h>
++#include <epan/to_str.h>
 +#include <epan/oui.h>
 +
 +static int proto_ecp = -1;
@@ -78,9 +79,11 @@ Index: epan/dissectors/packet-ecp.c
 +static int hf_vdp_tlv_len_invalid = -1;
 +static int hf_vdp_tlv_assoc_reason = -1;
 +static int hf_vdp_tlv_org_oui = -1;
++static int hf_vdp_vidstr = -1;
 +static int hf_vdp_vsitypeid = -1;
 +static int hf_vdp_vsiversion = -1;
 +static int hf_vdp_vsiid_format = -1;
++static int hf_vdp_vsiid = -1;
 +static int hf_vdp_filter_format = -1;
 +
 +static int hf_oui_oracle_subtype = -1;
@@ -227,7 +230,7 @@ Index: epan/dissectors/packet-ecp.c
 +	vid = val & 0x0FFF;
 +	if (tree) {
 +		if (ti == NULL)
-+			proto_tree_add_text(tree, tvb, offset, 2,
++			proto_tree_add_bytes_format_value(tree, hf_vdp_vidstr, tvb, offset, 2, NULL,
 +			    "PS %u, PCP %u, VID %u", ps, pcp, vid);
 +		else
 +			proto_item_append_text(ti,
@@ -247,13 +250,11 @@ Index: epan/dissectors/packet-ecp.c
 +
 +	if (tree) {
 +		if (tlvtype == VDP_TLV_ASSOC)
-+			ti = proto_tree_add_text(tree, tvb, offset, 2,
-+			    "VDP Associate");
++			vdp_tlv_assoc_tree = proto_tree_add_subtree(tree, tvb, offset, 2,
++			    ett_vdp_tlv_assoc, &ti, "VDP Associate");
 +		else
-+			ti = proto_tree_add_text(tree, tvb, offset, 2,
-+			    "VDP DeAssociate");
-+		vdp_tlv_assoc_tree = proto_item_add_subtree(ti,
-+		    ett_vdp_tlv_assoc);
++			vdp_tlv_assoc_tree = proto_tree_add_subtree(tree, tvb, offset, 2,
++			    ett_vdp_tlv_assoc, &ti, "VDP DeAssociate");
 +	}
 +
 +	tlvhdr = tvb_get_ntohs(tvb, offset);
@@ -316,9 +317,9 @@ Index: epan/dissectors/packet-ecp.c
 +		offset++;
 +
 +		/* VSIID */
-+		str = tvb_bytes_to_ep_str_punct(tvb, offset, 16, ':');
-+		proto_tree_add_text(vdp_tlv_assoc_tree, tvb, offset, 16,
-+		    "VSIID: %s", str);
++		str = tvb_bytes_to_str_punct(wmem_packet_scope(), tvb, offset, 16, ':');
++		proto_tree_add_string(vdp_tlv_assoc_tree, hf_vdp_vsiid, tvb, offset, 16,
++		     str);
 +		offset += 16;
 +
 +		/* Filter Format */
@@ -334,8 +335,8 @@ Index: epan/dissectors/packet-ecp.c
 +			break;
 +		case VDP_FILTER_MACVID:
 +			str = tvb_ether_to_str(tvb, offset);
-+			ti = proto_tree_add_text(vdp_tlv_assoc_tree, tvb,
-+			    offset, 6, "MAC %s. ", str);
++			proto_tree_add_subtree_format(vdp_tlv_assoc_tree, tvb,
++			    offset, 6, ett_vdp_tlv_assoc, &ti, "MAC %s. ", str);
 +			offset += 6;
 +			vdp_add_vidstr(tvb, vdp_tlv_assoc_tree, offset, ti);
 +			offset += 2;
@@ -358,10 +359,8 @@ Index: epan/dissectors/packet-ecp.c
 +	const char *str;
 +
 +	if (tree) {
-+		ti = proto_tree_add_text(tree, tvb, offset, 2,
-+		    "%s", "VDP Manager ID");
-+		vdp_tlv_mgrid_tree = proto_item_add_subtree(ti,
-+		    ett_vdp_tlv_mgrid);
++		vdp_tlv_mgrid_tree = proto_tree_add_subtree(tree, tvb, offset, 2,
++		    ett_vdp_tlv_mgrid, &ti, "VDP Manager ID");
 +	}
 +
 +	tlvhdr = tvb_get_ntohs(tvb, offset);
@@ -428,7 +427,7 @@ Index: epan/dissectors/packet-ecp.c
 +	offset++;
 +
 +	if (tree) {
-+		proto_tree_add_text(tree, tvb, offset, 0, "%s - %s",
++		proto_tree_add_subtree_format(tree, tvb, offset, 0, ett_vdp_tlv_org, NULL, "%s - %s",
 +		    ouistr, subtypestr);
 +		/* XXX create a org tlv tree if neccessary */
 +	}
@@ -459,9 +458,8 @@ Index: epan/dissectors/packet-ecp.c
 +		if (tlvtype == 0) /* XXX most likely it's padding */
 +			break;
 +		if (tree) {
-+			ti = proto_tree_add_text(tree, tvb, offset, tlvlen + 2,
-+			    "VDP TLV");
-+			vdp_tlv_tree = proto_item_add_subtree(ti, ett_vdp_tlv);
++			vdp_tlv_tree = proto_tree_add_subtree(tree, tvb, offset,
++			    tlvlen + 2, ett_vdp_tlv, &ti, "VDP TLV");
 +			proto_tree_add_item(vdp_tlv_tree, hf_vdp_tlv_type, tvb,
 +			    offset, 2, ENC_BIG_ENDIAN);
 +			proto_tree_add_item(vdp_tlv_tree, hf_vdp_tlv_len, tvb,
@@ -608,6 +606,13 @@ Index: epan/dissectors/packet-ecp.c
 +		{ "VDP Filter Format ", "vdp.filterformat", FT_UINT8,
 +		    	BASE_HEX, VALS(vdp_filter_format_vals), 0x0,
 +			NULL, HFILL}},
++		{ &hf_vdp_vsiid,
++		{ "VSIID", "vdp.VSIID", FT_STRING, BASE_NONE,
++			NULL, 0x0, NULL, HFILL }},
++		{ &hf_vdp_vidstr,
++		{ "VIDSTR", "vdp.vidstr", FT_BYTES, BASE_NONE,
++			NULL, 0x0, NULL, HFILL }},
++
 +		
 +	};
 +		
@@ -658,11 +663,11 @@ Index: epan/dissectors/Makefile.common
 ===================================================================
 --- epan/dissectors/Makefile.common	(revision 41973)
 +++ epan/dissectors/Makefile.common	(working copy)
-@@ -118,6 +118,7 @@
+@@ -114,6 +114,7 @@
  	packet-dop.c	\
  	packet-dsp.c	\
  	packet-ess.c	\
 +	packet-ecp.c	\
  	packet-ftam.c	\
  	packet-goose.c	\
- 	packet-HI2Operations.c	\
+ 	packet-gsm_map.c	\
