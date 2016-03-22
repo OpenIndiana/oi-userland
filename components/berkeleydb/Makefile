@@ -20,12 +20,12 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 
-PATH=$(SPRO_VROOT)/bin:$(JAVA_HOME)/bin:/usr/bin
+PATH=$(SPRO_VROOT)/bin:/usr/bin
 
 COMPONENT_NAME=		berkeleydb
 COMPONENT_VERSION=	5.3.21
@@ -76,17 +76,16 @@ CXXFLAGS += $(CPP_LARGEFILES)
 CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
 CONFIGURE_ENV += CXXFLAGS="$(CXXFLAGS)"
 
-JAVA_HOME = $(JAVA7_HOME)
-CONFIGURE_ENV += JAVA_HOME="$(JAVA_HOME)"
+# BerkeleyDB < 6 does not support Java 8. Java 7 is EOL & removed.
+CONFIGURE_OPTIONS += --disable-java
+CONFIGURE_OPTIONS += --disable-jdbc 
 
 CONFIGURE_OPTIONS += --includedir=/usr/include
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-cxx
-CONFIGURE_OPTIONS += --enable-java
 CONFIGURE_OPTIONS += --enable-sql
 CONFIGURE_OPTIONS += --enable-sql_codegen
-CONFIGURE_OPTIONS += --enable-jdbc
 CONFIGURE_OPTIONS += --enable-tcl
 CONFIGURE_OPTIONS += --with-tcl=/usr/lib
 CONFIGURE_OPTIONS += --enable-dbm
