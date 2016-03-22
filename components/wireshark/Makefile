@@ -36,6 +36,14 @@ TPNO=			27086
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
+
+# Depends on S12-only changes in ON.
+ifeq ($(BUILD_TYPE), evaluation)
+BUILD_64=
+INSTALL_64=
+PUBLISH_STAMP=
+endif
+
 include $(WS_MAKE_RULES)/ips.mk
 
 # Micro version for easy libraries packaging
