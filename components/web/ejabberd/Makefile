@@ -20,35 +20,44 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
-PATH=/usr/xpg4/bin:/usr/bin
+# for ginstall and tail -n
+PATH=/usr/gnu/bin:/usr/bin
 
 COMPONENT_NAME=		ejabberd
-COMPONENT_VERSION=	2.1.8
+COMPONENT_VERSION=	2.1.13
 COMPONENT_PROJECT_URL=	http://www.ejabberd.im/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:dedf7684f9e96efbbc12f08f175096ef50b3f75b284bd27d172eaf75cecded7f
+    sha256:a80d1c72e435da31758261cb0c04fe750ac71fc3e33a3b606123efd3b3abc86d
 COMPONENT_ARCHIVE_URL=	http://www.process-one.net/downloads/ejabberd/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	service/ejabberd
 
-include ../../make-rules/prep.mk
+include ../../../make-rules/prep.mk
 
 SRC_OFFSET =	src
 # Now we override paths to .built
 BUILD_DIR_32 = $(BUILD_DIR)/$(MACH32)/$(SRC_OFFSET)
 
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+COMPONENT_PREP_ACTION = \
+       (cd $(@D)/src ; PATH=$(PATH) $(AUTORECONF) -fiv)
+
+
+include $(WS_TOP)/make-rules/configure.mk
+include $(WS_TOP)/make-rules/ips.mk
 
 COMPONENT_BUILD_ENV += "HOME=/tmp"
 CONFIGURE_ENV += "HOME=/tmp"
 COMPONENT_INSTALL_ENV += "HOME=/tmp"
+
+CONFIGURE_SCRIPT = $(SOURCE_DIR)/src/configure
+COMPONENT_PRE_CONFIGURE_ACTION = \
+	($(CLONEY) $(SOURCE_DIR) $(BUILD_DIR)/$(MACH32))
 
 # tail with -n is needed
 CONFIGURE_ENV += "PATH=/usr/xpg4/bin:/usr/bin"
@@ -56,11 +65,9 @@ CONFIGURE_ENV += "PATH=/usr/xpg4/bin:/usr/bin"
 CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS +=	--with-erlang=$(USRBINDIR)
 CONFIGURE_OPTIONS +=	--localstatedir=/var
+CONFIGURE_OPTIONS +=	--enable-odbc
 
-COMPONENT_PRE_CONFIGURE_ACTION = \
-	($(CLONEY) $(SOURCE_DIR) $(BUILD_DIR)/$(MACH32))
-
-CONFIGURE_SCRIPT = ./configure
+COMPONENT_BUILD_TARGETS = all
 
 build:	$(BUILD_32)
 
@@ -70,4 +77,4 @@ test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_TOP)/make-rules/depend.mk
