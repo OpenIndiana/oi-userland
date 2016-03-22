@@ -12,16 +12,16 @@
 # Copyright (c) 2014 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pidgin-otr
-COMPONENT_VERSION=	4.0.1
+COMPONENT_VERSION=	4.0.2
 COMPONENT_PROJECT_URL=	http://www.cypherpunks.ca/otr/
 COMPONENT_SUMMARY=	Off-the-Record (OTR) Messaging plugin for Pidgin
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:1b781f48c27bcc9de3136c0674810df23f7d6b44c727dbf4dfb24067909bf30a
+    sha256:f4b59eef4a94b1d29dbe0c106dd00cdc630e47f18619fc754e5afbf5724ebac4
 COMPONENT_ARCHIVE_URL=	http://www.cypherpunks.ca/otr/$(COMPONENT_ARCHIVE)
 
 include $(WS_TOP)/make-rules/prep.mk
