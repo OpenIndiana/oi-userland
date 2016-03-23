@@ -4,7 +4,6 @@
 #
 
 . /lib/svc/share/smf_include.sh
-. /lib/svc/share/ipf_include.sh
 
 SSHDIR=/etc/ssh
 KEYGEN="/usr/bin/ssh-keygen -q"
@@ -42,24 +41,6 @@ create_key()
 			fi
 		fi
 	fi
-}
-
-create_ipf_rules()
-{
-	FMRI=$1
-	ipf_file=`fmri_to_file ${FMRI} $IPF_SUFFIX`
-	policy=`get_policy ${FMRI}`
-
-	#
-	# Get port from /etc/ssh/sshd_config
-	#
-	tports=`grep "^Port" /etc/ssh/sshd_config 2>/dev/null | \
-	    awk '{print $2}'`
-
-	echo "# $FMRI" >$ipf_file
-	for port in $tports; do
-		generate_rules $FMRI $policy "tcp" "any" $port $ipf_file
-	done
 }
 
 remove_key()
@@ -165,10 +146,6 @@ case $1 in
 	;;
 
 	# SMF arguments (start and restart [really "refresh"])
-
-'ipfilter')
-	create_ipf_rules $2
-	;;
 
 'start')
 	#
