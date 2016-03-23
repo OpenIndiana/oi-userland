@@ -58,6 +58,12 @@ CONFIGURE_ENV += $(COMPONENT_COMMON_ENV)
 COMPONENT_BUILD_ENV += $(COMPONENT_COMMON_ENV)
 COMPONENT_INSTALL_ENV += $(COMPONENT_COMMON_ENV)
 
+CONFIGURE_OPTIONS =  --sysconfdir=/etc
+CONFIGURE_OPTIONS += --with-mysql=yes
+CONFIGURE_OPTIONS += --with-postgresql=yes
+CONFIGURE_OPTIONS += --with-replicate=yes
+CONFIGURE_OPTIONS += --with-oracle=no
+
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
