@@ -37,7 +37,8 @@ set name=org.opensolaris.arc-caseid value=PSARC/2011/269
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 file path=usr/lib/$(MACH64)/graphviz/perl/gv.pm
 link path=usr/lib/$(MACH64)/graphviz/perl/gv.so target=libgv_perl.so
-file path=usr/lib/$(MACH64)/graphviz/perl/libgv_perl.so
+file path=usr/lib/$(MACH64)/graphviz/perl/libgv_perl.so \
+    pkg.linted.userland.action001.3=true
 link path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/gv.pm \
     target=../../../../lib/$(MACH64)/graphviz/perl/gv.pm
 link path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/gv.so \
@@ -51,3 +52,6 @@ license graphviz.license.extra license="Other Notices"
 # least the migrated version if installed.
 depend type=optional \
     fmri=image/graphviz/graphviz-perl-512@2.28.0,5.12-5.12.0.0.0.87.0
+# perl 5.20 is EOF.  Make sure this package goes away.
+depend type=optional \
+    fmri=image/graphviz/graphviz-perl-520@2.28.0,5.12-5.12.0.0.0.96.0
