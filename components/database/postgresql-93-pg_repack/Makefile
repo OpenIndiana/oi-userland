@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	pg_repack
 COMPONENT_VERSION= 	1.1.8
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY= 	pg_repack - utility to reorganize PostgreSQL tables on-line
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_COMMIT)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
