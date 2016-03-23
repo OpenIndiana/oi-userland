@@ -44,7 +44,7 @@ include $(WS_TOP)/make-rules/ips.mk
 BINSUBDIR.32=bin
 BINSUBDIR.64=bin/$(MACH64)
 
-COMPONENT_COMMON_ENV +=	PATH=/usr/bin:/usr/sfw/bin:/usr/ccs/bin:/usr/sbin:/usr/gnu/bin:$(USRDIR)/mariadb/5.5/$(BINSUBDIR.$(BITS)):$(USRDIR)/percona-server/5.5/$(BINSUBDIR.$(BITS)):$(USRDIR)/percona-server/5.6/$(BINSUBDIR.$(BITS))
+COMPONENT_COMMON_ENV +=	PATH=/usr/bin:/usr/sfw/bin:/usr/ccs/bin:/usr/sbin:/usr/gnu/bin:$(USRDIR)/mariadb/5.5/$(BINSUBDIR.$(BITS)):$(USRDIR)/percona-server/5.5/$(BINSUBDIR.$(BITS)):$(USRDIR)/percona-server/5.6/$(BINSUBDIR.$(BITS)):$(USRDIR)/percona-server/5.7/$(BINSUBDIR.$(BITS))
 COMPONENT_COMMON_ENV += CC=$(CC)
 COMPONENT_COMMON_ENV += CXX=$(CXX)
 COMPONENT_COMMON_ENV += CXXFLAGS="$(CXXFLAGS)"
