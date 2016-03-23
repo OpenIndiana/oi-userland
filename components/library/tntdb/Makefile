@@ -38,14 +38,19 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
+CXXFLAGS.32=-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
+CFLAGS.32=-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
+CXXFLAGS+=$(CXXFLAGS.$(BITS))
+CFLAGS+=$(CFLAGS.$(BITS))
+
 # Using the /usr/bin/{$MACH64} directory here is important, to find the
 # variant of pg_config and mysql_config (mediated links) with proper $BITS.
 BINSUBDIR.32=bin
 BINSUBDIR.64=bin/$(MACH64)
 
 COMPONENT_COMMON_ENV +=	PATH=$(USRDIR)/$(BINSUBDIR.$(BITS)):/usr/bin:/usr/sfw/bin:/usr/ccs/bin:/usr/sbin:/usr/gnu/bin
-COMPONENT_COMMON_ENV += CC=$(CC)
-COMPONENT_COMMON_ENV += CXX=$(CXX)
+COMPONENT_COMMON_ENV += CC="$(CC)"
+COMPONENT_COMMON_ENV += CXX="$(CXX)"
 COMPONENT_COMMON_ENV += CXXFLAGS="$(CXXFLAGS)"
 COMPONENT_COMMON_ENV += LDFLAGS="$(LDFLAGS)"
 
