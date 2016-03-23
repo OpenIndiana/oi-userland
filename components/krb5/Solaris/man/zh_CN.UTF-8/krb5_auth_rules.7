@@ -1,0 +1,90 @@
+'\" te
+.\" Copyright (c) 2006， 2013， Oracle and/or its affiliates。All rights reserved.
+.TH krb5_auth_rules 5 "2012 年 6 月 5 日" "{ENT：release}" "{ENT：man5}"
+.SH 名称
+krb5_auth_rules \- Kerberos V5 授权概述
+.SH 描述
+.sp
+.LP
+当 \fBftp\fR、\fBrcp\fR、\fBrlogin\fR、\fBrsh\fR、\fBssh\fR、\fBtelnet\fR 或 \fBssh\fR 客户机的 Kerberos 版本用于连接到服务器时，发起方用户的身份必须针对 Kerberos V5 验证系统进行验证。如果适当的条目存在于 \fB~/.k5login\fR 文件、\fBgsscred\fR 表中，或如果缺省 GSS/Kerberos 验证规则成功将 Kerberos 主体名称映射到 Unix 登录名，则可授权帐户访问权。
+.sp
+.LP
+要避免安全问题，\fB~/.k5login\fR 文件必须由客户机尝试访问的服务器上的远程用户所有。文件应该包含专用授权列表，其中包含格式为 \fIprincipal/instance\fR@\fIrealm\fR 的 Kerberos 主体名称。\fI/instance\fR 变量在 Kerberos 主体名称中是可选项。例如，\fBjdb@ENG.ACME.COM\fR 和 \fBjdb/happy.eng.acme.com@ENG.ACME.COM\fR 之类的不同主体名称均是合法的 Kerberos 主体（虽然并不等效）。如果 \fB~/.k5login\fR 文件位于远程用户帐户的登录目录中且可以针对文件中指定的某个主体验证发起方用户，则可以授予客户机访问权限。有关 Kerberos 主体名称的更多信息，请参见 \fBkadm5.acl\fR(4)。
+.sp
+.LP
+当远程用户的登录帐户中找不到 \fB~/.k5login\fR 文件时，会针对 \fBgsscred\fR 表检查与发起方用户相关联的 Kerberos V5 主体名称。如果 \fBgsscred\fR 表存在且主体名称在表中有匹配项目，并且表中列出的 Unix 用户 ID 对应于客户机尝试访问的用户帐户，则会授予访问权。如果 Unix 用户 ID 不匹配，则会拒绝访问权。请参见 \fBgsscred\fR(1M)。
+.sp
+.LP
+例如，如果 \fB23154\fR 也是用户帐户数据库中列出的 \fBjdb-user\fR 的 \fBuid\fR，则会授予 \fBgsscred\fR 表中列出的具有主体名称 \fBjdb@ENG.ACME.COM\fR 和 \fBuid\fR  \fB23154\fR 的发起方用户对 \fBjdb-user\fR 帐户的访问权。请参见 \fBpasswd\fR(4)。
+.sp
+.LP
+最后，如果不存在 \fB~/.k5login\fR 文件且发起方用户的 Kerberos V5 身份不在 \fBgsscred\fR 表中，或 \fBgsscred\fR 表不存在，则在以下情况下会授予客户机对帐户的访问权（缺省 GSS/Kerberos 验证规则）：
+.RS +4
+.TP
+.ie t \(bu
+.el o
+经过验证的主体名称的用户部分与客户机指定的 Unix 帐户名相同。
+
+.RE
+.RS +4
+.TP
+.ie t \(bu
+.el o
+客户机和服务器的领域部分相同，除非 \fBkrb5.conf\fR(4)  \fIauth_to_local_realm\fR 参数用于创建等效项。
+
+.RE
+.RS +4
+.TP
+.ie t \(bu
+.el o
+Unix 帐户名存在于服务器上。
+
+.RE
+.sp
+.LP
+例如，如果发起方用户的主体名称为 \fBjdb@ENG.ACME.COM\fR 且服务器位于 \fBSALES.ACME.COM\fR 领域中，则即使 \fBjdb\fR 是服务器上有效的帐户名也会拒绝客户机的访问权。这是因为领域 \fBSALES.ACME.COM\fR 和 \fBENG.ACME.COM\fR 不同。
+.sp
+.LP
+\fBkrb5.conf\fR(4)  \fIauth_to_local_realm\fR 参数也会影响授权。非缺省领域可等效于经过验证的 \fBname-to-local name\fR 映射的缺省领域。
+.SH 文件
+.sp
+.ne 2
+.mk
+.na
+\fB\fB~/.k5login\fR\fR
+.ad
+.RS 15n
+.rt
+每用户帐户的授权文件。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/etc/passwd\fR\fR
+.ad
+.RS 15n
+.rt
+系统帐户文件。此信息也可在目录服务中。请参见 \fBpasswd\fR(4)。
+.RE
+
+.SH 属性
+.sp
+.LP
+有关以下属性的说明，请参见 \fBattributes\fR(5)：
+.sp
+.TS
+tab() box;
+cw(2.75i) |cw(2.75i) 
+lw(2.75i) |lw(2.75i) 
+.
+属性类型属性值
+_
+接口稳定性Committed（已确定）
+.TE
+.sp
+.SH 另请参见
+.sp
+.LP
+\fBftp\fR(1)、\fBrcp\fR(1)、\fBrsh\fR(1)、\fBtelnet\fR(1)、\fBgsscred\fR(1M)、\fBkadm5.acl\fR(4)、\fBkrb5.conf\fR(4)、\fBpasswd\fR(4)、\fBattributes\fR(5)、\fBgss_auth_rules\fR(5)

@@ -140,7 +140,6 @@ $(BUILD_32): COMPONENT_POST_BUILD_ACTION= \
 	$(CC) -m32 -o $(BUILD_DIR)/$(MACH32)/lib/libgss.so.1 \
 	    -hlibgss.so.1 $(FILTLIBFLAGS) -lc \
 	    -M$(COMPONENT_DIR)/Solaris/libgss.mapfile-vers \
-	    -R$(USRLIBDIR)/krb5 \
 	    -z discard-unused=dependencies \
 	    -L $(BUILD_DIR)/$(MACH32)/lib -lkrb5support \
 	    $(BUILD_DIR)/$(MACH32)/lib/gssapi/mechglue/libgss_stubs.o && \
@@ -157,7 +156,6 @@ $(BUILD_64): COMPONENT_POST_BUILD_ACTION= \
 	$(CC) -m64 -o $(BUILD_DIR)/$(MACH64)/lib/libgss.so.1 \
 	    -hlibgss.so.1 $(FILTLIBFLAGS) -lc \
 	    -M$(COMPONENT_DIR)/Solaris/libgss.mapfile-vers \
-	    -R$(USRLIBDIR)/krb5/$(MACH64) \
 	    -z discard-unused=dependencies \
 	    -L $(BUILD_DIR)/$(MACH64)/lib -lkrb5support \
 	    $(BUILD_DIR)/$(MACH64)/lib/gssapi/mechglue/libgss_stubs.o && \
