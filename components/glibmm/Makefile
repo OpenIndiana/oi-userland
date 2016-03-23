@@ -11,28 +11,30 @@
 
 #
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright 2016 Till Wegmueller
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= glibmm
 
-COMPONENT_VERSION= 2.28.2
+COMPONENT_VERSION= 2.43.3
 COMPONENT_REVISION= 3
 COMPONENT_SUMMARY= glibmm - C++ Wrapper for the Glib2 Library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:f84e99858d9674705316ec40cb3f03c34129293ebd370a7d63df6d959644cbe3
+  sha256:db5b040222685387349f8095b609bfa785be2e6d0d61b75e59b86a6812e10caa
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/glibmm/2.28/$(COMPONENT_ARCHIVE)
+  http://ftp.gnome.org/pub/GNOME/sources/glibmm/2.43/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gtkmm.org/
+COMPONENT_LICENSE= LGPLv2
+COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
+COMPONENT_FMRI = library/desktop/c++/$(COMPONENT_NAME)
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
-
-COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f)
 
 PATH=/usr/gnu/bin:/usr/bin
 
