@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
@@ -35,7 +35,10 @@ set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid \
     value=PSARC/2000/488
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-file usr/bin/tar path=usr/gnu/bin/tar
+
+hardlink path=usr/gnu/bin/tar target=../../lib/isaexec pkg.linted.userland.action002.0=true
+
+file usr/bin/tar path=usr/gnu/bin/$(MACH32)/tar
 file usr/bin/$(MACH64)/tar path=usr/gnu/bin/$(MACH64)/tar
 file path=usr/share/info/tar.info
 file path=usr/share/info/tar.info-1
@@ -72,13 +75,14 @@ file path=usr/share/locale/ro/LC_MESSAGES/tar.mo
 file path=usr/share/locale/ru/LC_MESSAGES/tar.mo
 file path=usr/share/locale/sk/LC_MESSAGES/tar.mo
 file path=usr/share/locale/sl/LC_MESSAGES/tar.mo
+file path=usr/share/locale/sr/LC_MESSAGES/tar.mo
 file path=usr/share/locale/sv/LC_MESSAGES/tar.mo
 file path=usr/share/locale/tr/LC_MESSAGES/tar.mo
 file path=usr/share/locale/uk/LC_MESSAGES/tar.mo
 file path=usr/share/locale/vi/LC_MESSAGES/tar.mo
 file path=usr/share/locale/zh_CN/LC_MESSAGES/tar.mo
 file path=usr/share/locale/zh_TW/LC_MESSAGES/tar.mo
-file gtar.1.sunman path=usr/gnu/share/man/man1/tar.1
+file usr/share/man/man1/tar.1 path=usr/gnu/share/man/man1/tar.1
 
 depend fmri=__TBD pkg.debug.depend.file=usr/bin/bzip2 type=require
 depend fmri=__TBD pkg.debug.depend.file=usr/bin/compress type=require
@@ -86,7 +90,7 @@ depend fmri=__TBD pkg.debug.depend.file=usr/bin/gzip type=require
 depend fmri=__TBD pkg.debug.depend.file=usr/bin/ssh type=require
 
 legacy pkg=SUNWgtar \
-    desc="GNU tar - A utility used to store, backup, and transport files (gtar) 1.25" \
+    desc="GNU tar - A utility used to store, backup, and transport files (gtar)" \
     name="gtar - GNU tar"
 
 license gtar.license license="GPLv3, FDLv1.3"
