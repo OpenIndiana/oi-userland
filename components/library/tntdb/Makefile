@@ -38,13 +38,12 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-# Sorry, this listing of our possible mysql implementations (in this repo)
-# is explicit for now, since none of them has mediator links for the common
-# /usr/bin items like e.g. postgresql* packages have. Fix there, then here.
+# Using the /usr/bin/{$MACH64} directory here is important, to find the
+# variant of pg_config and mysql_config (mediated links) with proper $BITS.
 BINSUBDIR.32=bin
 BINSUBDIR.64=bin/$(MACH64)
 
-COMPONENT_COMMON_ENV +=	PATH=/usr/bin:/usr/sfw/bin:/usr/ccs/bin:/usr/sbin:/usr/gnu/bin:$(USRDIR)/mariadb/5.5/$(BINSUBDIR.$(BITS)):$(USRDIR)/percona-server/5.5/$(BINSUBDIR.$(BITS)):$(USRDIR)/percona-server/5.6/$(BINSUBDIR.$(BITS)):$(USRDIR)/percona-server/5.7/$(BINSUBDIR.$(BITS))
+COMPONENT_COMMON_ENV +=	PATH=$(USRDIR)/$(BINSUBDIR.$(BITS)):/usr/bin:/usr/sfw/bin:/usr/ccs/bin:/usr/sbin:/usr/gnu/bin
 COMPONENT_COMMON_ENV += CC=$(CC)
 COMPONENT_COMMON_ENV += CXX=$(CXX)
 COMPONENT_COMMON_ENV += CXXFLAGS="$(CXXFLAGS)"
