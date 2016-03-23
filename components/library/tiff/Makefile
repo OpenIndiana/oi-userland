@@ -13,10 +13,11 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= tiff
 COMPONENT_VERSION= 4.0.3
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= libtiff - library for reading and writing TIFF
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -30,9 +31,9 @@ COMPONENT_LICENSE = BSD-like
 COMPONENT_FMRI = image/library/libtiff
 COMPONENT_CLASSIFICATION = System/Multimedia Libraries
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/configure.mk
+include $(WS_TOP)/make-rules/ips.mk
 
 CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS += --disable-cxx
