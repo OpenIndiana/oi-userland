@@ -11,21 +11,22 @@
 
 #
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright 2016 Till Wegmueller
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gtkmm
 
-COMPONENT_VERSION= 2.20.3
+COMPONENT_VERSION= 2.99.8
 COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= gtkmm - C++ Wrapper for the Gtk+ Library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:311d2156f15cdbdce22cb2af6e606a3f621d7dfebea6f7b1be0132e81af90585
+  sha256:0ee2283d5aa27c1ebf3fd8bae36d9345f9625590ac9f07212e1c97626440d144
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/gtkmm/2.20/$(COMPONENT_ARCHIVE)
+  http://ftp.gnome.org/pub/GNOME/sources/gtkmm/2.99/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gtkmm.org/
 
 include ../../make-rules/prep.mk
