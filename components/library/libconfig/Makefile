@@ -35,8 +35,12 @@ include ../../../make-rules/prep.mk
 include ../../../make-rules/configure.mk
 include ../../../make-rules/ips.mk
 
+COMPONENT_PREP_ACTION = ( cd $(@D)  && \
+				rm -f lib/scanner.{c,h} &&\
+				autoreconf -f -i)
+
 # Missing files in build dir for configure without this.
-COMPONENT_PRE_CONFIGURE_ACTION =        (rm -f $(SOURCE_DIR)/lib/scanner.{c,h} && $(CLONEY) $(SOURCE_DIR) $(@D) )
+COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D) )
 
 # common targets
 build:		$(BUILD_32_and_64)
