@@ -13,10 +13,11 @@
 # Copyright 2016 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= liblouis
 COMPONENT_VERSION= 2.1.1
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Support for contracted braille
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_NAME)_2_1_1
 COMPONENT_ARCHIVE= $(COMPONENT_NAME)_2_1_1.tar.gz
@@ -30,11 +31,13 @@ COMPONENT_FMRI = library/liblouis
 COMPONENT_LICENSE = LGPLv3,GPLv3
 COMPONENT_LICENSE_FILE = liblouis.license
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/configure.mk
+include $(WS_TOP)/make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
+
+COMPONENT_BUILD_ARGS =
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f -i ) 
 
