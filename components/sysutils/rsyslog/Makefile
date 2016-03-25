@@ -20,11 +20,11 @@
 #
 # Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rsyslog
 COMPONENT_VERSION=	7.4.10
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://rsyslog.com/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -32,12 +32,12 @@ COMPONENT_ARCHIVE_HASH=	sha256:ab1d26da2bfd38db34dd991a9c5d93034ef1373d01f9d5a09
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)files/download/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	service/rsyslog
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/configure.mk
+include $(WS_TOP)/make-rules/ips.mk
 
 COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
-                                        autoreconf)
+                                        autoreconf -f -i)
 
 CONFIGURE_OPTIONS +=    --enable-imsolaris
 CONFIGURE_OPTIONS +=    --enable-cached-man-pages
@@ -60,4 +60,4 @@ BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 PKG_PROTO_DIRS +=	$(COMPONENT_DIR)/files
 
-include ../../make-rules/depend.mk
+include $(WS_TOP)/make-rules/depend.mk
