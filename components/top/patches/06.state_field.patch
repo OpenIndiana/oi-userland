@@ -1,0 +1,42 @@
+#
+# This patch was added for
+#    15706228 SUNBT7032615 top thinks that systems have 99 or fewer CPUs
+#
+--- top-3.8beta1/machine/m_sunos5.c.orig	2016-03-23 10:33:23.778848582 -0700
++++ top-3.8beta1/machine/m_sunos5.c	2016-03-23 10:33:37.697844284 -0700
+@@ -436,14 +436,22 @@
+     if (pp->px_state == SONPROC && cpucount > 1)
+     {
+ 	/* large #s may overflow colums */
+-	if (pp->px_onpro < 100)
++	if (pp->px_onpro < 1000)
+ 	{
+-	    return snprintf(buf, sz, "cpu/%-2d", pp->px_onpro);
++	    return snprintf(buf, sz, "cpu/%-3d", pp->px_onpro);
+ 	}
+-	return snprintf(buf, sz, "cpu/**");
++	if (pp->px_onpro < 10000)
++	{
++	    return snprintf(buf, sz, "cp/%-4d", pp->px_onpro);
++	}
++	if (pp->px_onpro < 100000)
++	{
++	    return snprintf(buf, sz, "c/%-5d", pp->px_onpro);
++	}
++	return snprintf(buf, sz, "cpu/***");
+     }
+ 
+-    return snprintf(buf, sz, "%-6s", state_abbrev[(int)pp->px_state]);
++    return snprintf(buf, sz, "%-7s", state_abbrev[(int)pp->px_state]);
+ }
+ 
+ int
+@@ -488,7 +496,7 @@
+     { "NICE", 4, 1, 0, fmt_nice },
+     { "SIZE", 5, 1, 0, fmt_size },
+     { "RES", 5, 1, 0, fmt_res },
+-    { "STATE", 6, 0, 0, fmt_state },
++    { "STATE", 7, 0, 0, fmt_state },
+     { "TIME", 6, 1, 0, fmt_time },
+     { "CPU", 6, 1, 0, fmt_cpu },
+     { "COMMAND", 7, 0, 0, fmt_command },
