@@ -12,10 +12,11 @@
 # Copyright (c) 2015 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xdg-user-dirs
 COMPONENT_VERSION=	0.15
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://freedesktop.org/wiki/
 COMPONENT_SUMMARY=	Tool to help manage user directories
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -35,7 +36,7 @@ include $(WS_TOP)/make-rules/ips.mk
 PATH=/usr/gnu/bin:/usr/bin
 
 COMPONENT_PREP_ACTION =       ( cd $(@D)  && \
-					autoreconf -f )
+					autoreconf -f -i )
 
 COMPONENT_PRE_CONFIGURE_ACTION =        (cp -rp $(SOURCE_DIR)/* $(@D) && \
                                         cp -r $(COMPONENT_DIR)/files/po-sun $(@D) && \
