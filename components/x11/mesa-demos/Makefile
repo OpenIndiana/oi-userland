@@ -30,6 +30,8 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
+COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf -f -i)
+
 CONFIGURE_ENV += GLEW_CFLAGS="-I-have-no-GLEW-"
 CONFIGURE_ENV += GLEW_LIBS="-I-have-no-GLEW-"
 

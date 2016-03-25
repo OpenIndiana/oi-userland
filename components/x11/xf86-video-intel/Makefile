@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= xf86-video-intel
 COMPONENT_VERSION= 2.99.917
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= xf86-video-intel - Intel integrated graphics chipset driver for the Xorg X server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -35,6 +35,8 @@ include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
 PATCH_LEVEL=0
+
+LDFLAGS += -lsocket
 
 COMPONENT_PREP_ACTION =        ( cd $(@D) && \
                                         libtoolize --automake --copy --force && \

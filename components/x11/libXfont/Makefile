@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libXfont
 COMPONENT_VERSION= 1.4.9
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= libXfont - library for X servers and utilities to access font files
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -34,6 +34,8 @@ COMPONENT_LICENSE_FILE = COPYING
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
+
+COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf -f -i)
 
 LD_OPTIONS += -M $(COMPONENT_DIR)/mapfile-vers
 

@@ -9,37 +9,47 @@
 #
 
 #
-# Copyright (c) 2013 Alexander Pyhalov
+# Copyright (c) 2014 Alexander Pyhalov
 #
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		gnome-python-extras
-COMPONENT_VERSION=	2.25.3
-COMPONENT_REVISION=	1
-COMPONENT_PROJECT_URL=	http://www.gnome.org
-COMPONENT_SUMMARY=	Supplemental Python bindings for GNOME
+COMPONENT_NAME=		xchat
+COMPONENT_VERSION=	2.8.8
+COMPONENT_REVISION=	3
+COMPONENT_PROJECT_URL=	http://xchat.org
+COMPONENT_SUMMARY=	XChat IRC Client
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:ca346264e00e193f0866cabd8801d3b7ce70dae7b8b296e41e5b3a45c9b0275c
-COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.25/$(COMPONENT_ARCHIVE)
+    sha256:0d6d69437b5e1e45f3e66270fe369344943de8a1190e498fafa5296315a27db0
+COMPONENT_ARCHIVE_URL=	http://www.xchat.org/files/source/2.8/$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.bz2
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
 
-COMPONENT_PREP_ACTION = \
-	( cd $(@D) ; \
-		autoreconf -i -f )
+COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
+					glib-gettextize -f &&\
+					libtoolize --copy --force &&\
+					aclocal &&\
+					$(TOUCH) NEWS &&\
+					automake -c -f && \
+					autoconf )
 
-# Missing files in build dir for configure without this.
+# Missing files in build dir without this.
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
+CONFIGURE_SCRIPT=       $(@D)/configure
+
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_ENV+=		PYTHON=$(PYTHON)
+CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib
+CONFIGURE_OPTIONS+=	--enable-dbus
+CONFIGURE_OPTIONS+=	--enable-ipv6
+
+CONFIGURE_ENV+=	perlpath=$(PERL)
 
 # common targets
 build:		$(BUILD_32)
@@ -47,5 +57,7 @@ build:		$(BUILD_32)
 install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
+
+BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
 include $(WS_TOP)/make-rules/depend.mk
