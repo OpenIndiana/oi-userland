@@ -16,6 +16,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libbonobo
 COMPONENT_VERSION=	2.32.1
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	Bonobo Base Library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
