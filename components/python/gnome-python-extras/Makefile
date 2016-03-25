@@ -31,14 +31,9 @@ include $(WS_TOP)/make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-gcc_OPT		= -O2
-
 COMPONENT_PREP_ACTION = \
 	( cd $(@D) ; \
-		libtoolize --force --copy &&\
-		aclocal -I .  &&\
-		autoheader &&\
-		autoconf )
+		autoreconf -i -f )
 
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
