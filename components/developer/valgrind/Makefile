@@ -23,11 +23,11 @@
 # Copyright (c) 2015 Aurelien Larcher. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		valgrind
 COMPONENT_VERSION=	3.11.0
-COMPONENT_REVISION=	0
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=	developer/debug/valgrind
 COMPONENT_CLASSIFICATION=Development/System
 COMPONENT_SRC=		iraisr-valgrind-solaris-9f9e059c22b3
@@ -42,9 +42,9 @@ COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/configure.mk
+include $(WS_TOP)/make-rules/ips.mk
 
 # Use GNU utilities
 PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
@@ -74,4 +74,4 @@ test:		$(TEST_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_TOP)/make-rules/depend.mk

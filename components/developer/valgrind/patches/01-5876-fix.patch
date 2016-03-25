@@ -1,0 +1,31 @@
+--- iraisr-valgrind-solaris-9f9e059c22b3/configure.ac.1	2016-03-25 20:52:19.792192804 +0300
++++ iraisr-valgrind-solaris-9f9e059c22b3/configure.ac	2016-03-25 20:57:12.152664676 +0300
+@@ -1582,6 +1582,14 @@
+             [Define to 1 if <sys/user.h> defines struct user_regs_struct])
+ fi
+ 
++AC_CHECK_TYPE([struct _fpchip_state],[have__fpchip_state=yes],[have__fpchip_state=no],[[#include <sys/mcontext.h>]])
++
++if test "$have__fpchip_state" = "yes"; then
++  AC_DEFINE(HAVE__FPCHIP_STATE, 1,
++            [Define to 1 if <sys/mcontext.h> defines struct _fpchip_state])
++fi
++
++
+ 
+ #----------------------------------------------------------------------------
+ # Checking for supported compiler flags.
+--- iraisr-valgrind-solaris-9f9e059c22b3/include/vki/vki-solaris.h.1	2016-03-25 21:14:28.244908996 +0300
++++ iraisr-valgrind-solaris-9f9e059c22b3/include/vki/vki-solaris.h	2016-03-25 21:15:15.238785090 +0300
+@@ -1400,7 +1400,11 @@
+ #error "Unknown platform"
+ #endif
+ 
++#ifdef HAVE__FPCHIP_STATE
++#define vki_fpchip_state _fpchip_state
++#else
+ #define vki_fpchip_state fpchip_state
++#endif
+ 
+ #define VKI_GETCONTEXT GETCONTEXT
+ #define VKI_SETCONTEXT SETCONTEXT
