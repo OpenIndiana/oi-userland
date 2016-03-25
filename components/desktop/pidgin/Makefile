@@ -12,10 +12,11 @@
 # Copyright (c) 2014 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pidgin
 COMPONENT_VERSION=	2.10.11
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.pidgin.im
 COMPONENT_SUMMARY=	Multiprotocol Instant Messaging Client
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
