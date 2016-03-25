@@ -13,12 +13,13 @@
 # Copyright 2013 Alexander Pyhalov.  All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= oppenjdk-7
 
 OPENJDK_BUILD_NUMBER=80
 COMPONENT_VERSION=1.7.$(OPENJDK_BUILD_NUMBER)
+COMPONENT_REVISION=1
 COMPONENT_SUMMARY= Open-source implementation of the Java Platform, Standard Edition
 COMPONENT_SRC= openjdk
 COMPONENT_ARCHIVE= openjdk-$(COMPONENT_VERSION)-20150609.tar.xz
@@ -43,8 +44,8 @@ COMPONENT_ARCHIVE_URL_2=http://ftp.mozilla.org/pub/mozilla.org/js/$(COMPONENT_AR
 COMPONENT_ARCHIVE_HASH_2=sha256:885b46e24fe5af23ad3712c5e08e8d97d6d92a4b89e1be860e8fe88e4a3dacd1
 CLEAN_PATHS += $(RHINO)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/ips.mk
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/ips.mk
 
 PATCH_LEVEL=0
 
