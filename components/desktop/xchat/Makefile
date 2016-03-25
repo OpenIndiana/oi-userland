@@ -12,11 +12,11 @@
 # Copyright (c) 2014 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xchat
 COMPONENT_VERSION=	2.8.8
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_PROJECT_URL=	http://xchat.org
 COMPONENT_SUMMARY=	XChat IRC Client
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
