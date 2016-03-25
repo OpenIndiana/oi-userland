@@ -26,6 +26,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libusb
 COMPONENT_VERSION=	1.0.20
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= sha256:cb057190ba0a961768224e4dc6883104c6f945b2bf2ef90d7da39e7c1834f7ff
@@ -41,8 +42,6 @@ include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS  +=	--enable-static=no
 CONFIGURE_OPTIONS  +=   --enable-log
-# .get_timerfd_clockid() is not defined for SunOS
-CONFIGURE_OPTIONS  +=   --disable-timerfd
 
 COMPONENT_BUILD_ARGS+=	"LDFLAGS=$(LDFLAGS)"
 COMPONENT_BUILD_ARGS+=	"INSTALL=$(INSTALL)"
