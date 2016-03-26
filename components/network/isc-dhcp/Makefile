@@ -20,10 +20,11 @@
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		isc-dhcp
 COMPONENT_VERSION=	4.3.3-P1
+COMPONENT_REVISION=	1
 IPS_COMPONENT_VERSION=	4.3.3.1
 COMPONENT_SRC_NAME=	dhcp
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
@@ -35,9 +36,12 @@ COMPONENT_ARCHIVE_HASH= \
     sha256:c11e896dffa1bfbc49462965d3f6dec45534e34068603546d9a236f2aa669921
 COMPONENT_BUGDB=	service/dhcp-server
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/configure.mk
+include $(WS_TOP)/make-rules/ips.mk
+
+# Parallel build fails
+COMPONENT_BUILD_ARGS =
 
 CONFIGURE_SCRIPT	= $(@D)/configure
 COMPONENT_PRE_CONFIGURE_ACTION+=	$(CP) -R $(SOURCE_DIR)/* $(@D)/
@@ -66,4 +70,4 @@ test:	$(TEST_32)
 $(PROTO_DIR)/dhcpd.leases:	$(INSTALL_32)
 	$(TOUCH) $@
 
-include ../../make-rules/depend.mk
+include $(WS_TOP)/make-rules/depend.mk
