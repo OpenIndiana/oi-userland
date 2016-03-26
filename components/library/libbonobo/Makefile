@@ -12,7 +12,7 @@
 # Copyright (c) 2014 Alexander Pyhalov. All rights reserved
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libbonobo
 COMPONENT_VERSION=	2.32.1
