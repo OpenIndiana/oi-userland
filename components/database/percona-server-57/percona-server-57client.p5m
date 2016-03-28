@@ -28,13 +28,14 @@ license COPYING license=GPLv2
 
 <transform file -> default mangler.man.stability committed>
 
-depend type=require fmri=database/mysql-common
+link path=usr/bin/$(MACH64)/mysql target=../../percona-server/5.7/bin/$(MACH64)/mysql mediator=mysql mediator-version=5.7 mediator-implementation=percona-server
+link path=usr/bin/mysql target=../percona-server/5.7/bin/mysql mediator=mysql mediator-version=5.7 mediator-implementation=percona-server
+link path=usr/bin/$(MACH64)/mysql_config target=../../percona-server/5.7/bin/$(MACH64)/mysql_config mediator=mysql mediator-version=5.7 mediator-implementation=percona-server
+link path=usr/bin/mysql_config target=../percona-server/5.7/bin/mysql_config mediator=mysql mediator-version=5.7 mediator-implementation=percona-server
+link path=usr/share/man/man1/mysql.1 target=../../../percona-server/5.7/man/man1/mysql.1 mediator=mysql mediator-version=5.7 mediator-implementation=percona-server
+link path=usr/share/man/man1/mysql_config.1 target=../../../percona-server/5.7/man/man1/mysql_config.1 mediator=mysql mediator-version=5.7 mediator-implementation=percona-server
 
-link path=usr/bin/mysql target=../percona-server/5.7/bin/mysql mediator=mysql \
-    mediator-implementation=percona-server mediator-version=5.7
-link path=usr/share/man/man1/mysql.1 \
-    target=../../../percona-server/5.7/man/man1/mysql.1 mediator=mysql \
-    mediator-implementation=percona-server mediator-version=5.7
+depend type=require fmri=database/mysql-common
 
 file path=usr/percona-server/5.7/bin/$(MACH64)/mysql
 file path=usr/percona-server/5.7/bin/$(MACH64)/mysql_config
