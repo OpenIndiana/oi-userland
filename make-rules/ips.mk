@@ -248,6 +248,7 @@ $(MANIFEST_BASE)-%-$(shell echo $(1) | tr -d .).p5m: %-PYVER.p5m
 	$(PKGFMT) $(PKGFMT_CHECK_ARGS) $(CANONICAL_MANIFESTS)
 	$(PKGMOGRIFY) -D PYVER=$(1) -D MAYBE_PYVER_SPACE="$(1) " \
 		-D MAYBE_SPACE_PYVER=" $(1)" \
+		-D SOLARIS_11_ONLY="$(SOLARIS_11_ONLY)" \
 		-D PYV=$(shell echo $(1) | tr -d .) $$< > $$@
 endef
 $(foreach ver,$(PYTHON_VERSIONS),$(eval $(call python-manifest-rule,$(ver))))
@@ -273,6 +274,7 @@ $(BUILD_DIR)/mkgeneric-python: $(WS_MAKE_RULES)/shared-macros.mk
 $(MANIFEST_BASE)-%.p5m: %-PYVER.p5m $(BUILD_DIR)/mkgeneric-python
 	$(PKGFMT) $(PKGFMT_CHECK_ARGS) $(CANONICAL_MANIFESTS)
 	$(PKGMOGRIFY) -D PYV=###PYV### -D MAYBE_PYVER_SPACE= \
+		-D SOLARIS_11_ONLY="$(SOLARIS_11_ONLY)" \
 		-D MAYBE_SPACE_PYVER= $(BUILD_DIR)/mkgeneric-python \
 		$(WS_TOP)/transforms/mkgeneric $< > $@
 	if [ -f $*-GENFRAG.p5m ]; then cat $*-GENFRAG.p5m >> $@; fi
