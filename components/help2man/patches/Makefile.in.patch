@@ -1,0 +1,17 @@
+The build process uses a nasty preload hack to allow message catalogs to be
+read from the build tree. Now that we've adjusted help2man to use a 64-bit
+only version of Perl, we need to adjust the LD_PRELOAD to be LD_PRELOAD_64.
+
+This change will be reported upstream.
+
+--- help2man-1.47.3/Makefile.in.orig	2016-03-16 10:36:34.427067785 -0700
++++ help2man-1.47.3/Makefile.in	2016-03-16 10:36:54.322893757 -0700
+@@ -168,7 +168,7 @@
+ 	lang=$(patsubst $(target).%.1,%,$@); \
+ 	$(MAKE) $(target) $(preload).so \
+ 	    localetmp/$$lang/LC_MESSAGES/$(target).mo $(target).$$lang.h2m; \
+-	LD_PRELOAD=./$(preload).so LOCALEDIR=localetmp TEXTDOMAIN=help2man \
++	LD_PRELOAD_64=./$(preload).so LOCALEDIR=localetmp TEXTDOMAIN=help2man \
+ 	    ./$(target) --include=$$($(FIND_VPATH) $(target).$$lang.h2m) \
+ 		--output=$@ ./$(target)
+ 
