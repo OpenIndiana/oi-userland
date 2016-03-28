@@ -28,13 +28,13 @@ COMPILER =		gcc
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libpng
-COMPONENT_VERSION=	1.4.11
+COMPONENT_VERSION=	1.4.19
 COMPONENT_PROJECT_URL=	http://www.libpng.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:28f5254d7cb28fe090d04b45619670fa05c7ad3d44da1c60eee59ce39a315537
-COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/libpng/files/libpng14/older-releases/1.4.11/$(COMPONENT_ARCHIVE)
+	sha256:b73b7f0aec1f4d89fb6a587d4174dede493af8a3c04bb6eb87b0d10a8623bd7f
+COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/libpng/files/libpng14/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libpng
 
 COMPONENT_VERSION_1 =   1.2.49
@@ -54,7 +54,7 @@ COMPONENT_ARCHIVE_HASH_2 = \
 COMPONENT_ARCHIVE_URL_2= https://sourceforge.net/projects/libpng/files/libpng10/older-releases/1.0.59/$(COMPONENT_ARCHIVE_2)
 SOURCE_DIR_2 =          $(COMPONENT_DIR)/$(COMPONENT_SRC_2)
 
-TPNO=		11954
+TPNO=		27311
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -120,6 +120,9 @@ COMPONENT_TEST_TRANSFORMS += \
         '-e "/PASS/p" ' \
         '-e "/ERROR:/p" '
 
+# for pngtest to run
+COMPONENT_TEST_ENV +=   libtool_install_magic='%%%MAGIC variable%%%'
+COMPONENT_TEST_ENV +=   libtool_execute_magic='%%%MAGIC variable%%%'
 
 ASLR_MODE =	$(ASLR_ENABLE)
 
