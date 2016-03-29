@@ -47,9 +47,9 @@ LIBS +=	-lsocket -lnsl -lopensm -losmvendor -losmcomp -libumad -libmad -libverbs
 COMPONENT_PREP_ACTION = \
         cp solaris_set_nodedesc.c $(@D)/src
 
-COMPONENT_INSTALL_ENV +=	PERL=$(PERL)
+COMPONENT_INSTALL_ENV +=	PERL=$(PERL.5.12)
 
-CONFIGURE_ENV +=	PERL=$(PERL)
+CONFIGURE_ENV +=	PERL=$(PERL.5.12)
 
 CONFIGURE_OPTIONS +=	--sbindir=$(USRSBINDIR)
 
