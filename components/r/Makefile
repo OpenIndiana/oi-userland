@@ -66,6 +66,10 @@ export PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
 CC =		cc
 CXX =		CC
 F95 =		f95
+ifeq   ($(strip $(PARFAIT_BUILD)),yes)
+export PATH=$(PARFAIT_TOOLS):$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
+endif
+
 
 CONFIGURE_ENV += F77="$(F95) $(CC_BITS)"
 CONFIGURE_ENV += FC="$(F95) $(CC_BITS)"

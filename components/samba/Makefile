@@ -37,9 +37,6 @@ else
 override studio_OPT = -xO1
 endif
 
-# parfait seems to spin on us
-export PARFAIT_BUILD=no
-
 COMPONENT_NAME=		samba
 COMPONENT_VERSION=	4.1.22
 TPNO=			26541
