@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 # As Solaris always has a 64-bit kernel, and 64-bit emacs can handle larger
@@ -109,7 +109,18 @@ CONFIGURE_OPTIONS +=	--without-gsettings --without-dbus
 # code, which requires every execution to have the same mappings. Since
 # emacs is not network facing, or run with elevated privileges, this is
 # not a security concern.
-ASLR_MODE = $(ASLR_DISABLE)
+#
+# As with ASLR, ADIHEAP should be explicitly disabled for emacs, as the
+# dumped emacs cannot work with ADI. Recognizing that ASLR_MODE could really
+# be SX_MODE, and generalized to handle all the sxadm extensions, redefine
+# it here to handle both cases. It is expected that in due course, the
+# Userland framework will evolve in this direction.
+#
+ifeq ($(OS_VERSION), 5.11)
+ASLR_MODE =	$(ASLR_DISABLE)
+else
+ASLR_MODE =	-z sx=aslr=disable,adiheap=disable
+endif
 
 # variant specific configure options
 $(BUILD_DIR)/%-nox/.configured: CONFIGURE_OPTIONS += --without-all --without-x
