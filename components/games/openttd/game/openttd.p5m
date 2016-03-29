@@ -24,9 +24,11 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 # Install the game binaries
-depend fmri=games/openttd/openttd-core	type=require
+depend fmri=games/openttd/openttd-core@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=require
 
 # Preinstall the opensource media files so the game is instantly usable ;)
+# NOTE: These media components are built separately, and sources last changed
+# a few years ago, so we impose no hard revision (none known in this Makefile)
 depend fmri=games/openttd/openmsx type=require
 depend fmri=games/openttd/opensfx type=require
 depend fmri=games/openttd/opengfx type=require
