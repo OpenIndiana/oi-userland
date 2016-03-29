@@ -26,16 +26,16 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gparted
-COMPONENT_VERSION=	0.4.5
-COMPONENT_PROJECT_URL=	http://gparted.sourceforge.net/
+COMPONENT_VERSION=	0.25.0
+COMPONENT_PROJECT_URL=	http://gparted.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:a0a102ee51c1d70fa1c786c77a613111179ce81efccb637bd04aef525199b93f
+    sha256:2d996d5f4921d49eae850a1824acb8ab1299b1ea9bbb9c607248cd6c8cdc94ae
 COMPONENT_ARCHIVE_URL=	http://prdownloads.sourceforge.net/gparted/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gparted
 
-TPNO=			7497
+TPNO=			27500
 
 # we're i386-only
 ifeq ($(MACH), sparc)
@@ -70,7 +70,7 @@ build_i386:	$(BUILD_32)
 
 build:		build_$(MACH)
 
-install:	$(INSTALL_32) 
+install:	$(INSTALL_32)
 
 test:           $(NO_TESTS)
 
@@ -87,6 +87,7 @@ REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/c++-runtime
+REQUIRED_PACKAGES += system/library/math
 ifneq ($(MACH), sparc)
 REQUIRED_PACKAGES += system/storage/parted
 endif
