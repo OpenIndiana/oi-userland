@@ -1,0 +1,385 @@
+make[1]: Entering directory '$(@D)'
+status=0; \
+(cd bin/tests && /usr/gnu/bin/make  test) || status=1; \
+(test -f unit/unittest.sh && /bin/bash unit/unittest.sh) || status=1; \
+exit $status
+make[2]: Entering directory '$(@D)/bin/tests'
+make[3]: Entering directory '$(@D)/bin/tests/db'
+S:$(@D)/bin/tests/db/.libs/t_db:
+T:dns_db_load:1:A
+A:A call to dns_db_load(db, filename) loads the contents of the database in filename into db.
+R:PASS
+T:dns_db_iscache:2:A
+A:When the database db has cache semantics, a call to dns_db_iscache(db) returns ISC_TRUE.
+R:PASS
+T:dns_db_iscache:3:A
+A:When the database db has zone semantics, a call to dns_db_iscache(db) returns ISC_FALSE.
+R:PASS
+T:dns_db_iszone:4:A
+A:When the database db has zone semantics, a call to dns_db_iszone(db) returns ISC_TRUE.
+R:PASS
+T:dns_db_iszone:5:A
+A:When the database db has cache semantics, a call to dns_db_iszone(db) returns ISC_FALSE.
+R:PASS
+T:dns_db_origin:6:A
+A:A call to dns_db_origin(db) returns the origin of the database.
+R:PASS
+T:dns_db_class:7:A
+A:A call to dns_db_class(db) returns the class of the database.
+R:PASS
+T:dns_db_currentversion:8:A
+A:A call to dns_db_currentversion() opens the current version for reading.
+R:PASS
+T:dns_db_newversion:9:A
+A:A call to dns_db_newversion() opens a new version for reading and writing.
+R:PASS
+T:dns_db_closeversion:10:A
+A:When versionp points to a read-write version and commit is ISC_TRUE, a call to dns_db_closeversion(db, versionp, commit) causes all changes made in the version to take effect, and returns ISC_R_SUCCESS.
+R:PASS
+T:dns_db_closeversion:11:A
+A:When versionp points to a read-write version and commit is ISC_FALSE, a call to dns_db_closeversion(db, versionp, commit) causes all changes made in the version to to be rolled back, and returns ISC_R_SUCCESS.
+R:PASS
+T:dns_db_expirenode:12:A
+A:A call to dns_db_expirenode() marks as stale all records at node  which expire at or before 'now'. If 'now' is zero, then the current  time will be used.
+R:PASS
+T:dns_db_findnode:13:A
+A:If the node name exists, then a call to dns_db_findnode(db, name, ISC_FALSE, nodep) initializes nodep to point to the node and returns ISC_R_SUCCESS, otherwise it returns ISC_R_NOTFOUND.
+R:PASS
+T:dns_db_findnode:14:A
+A:If the node name does not exist and create is ISC_TRUE, then a call to dns_db_findnode(db, name, create, nodep) creates the node, initializes nodep to point to the node, and returns ISC_R_SUCCESS.
+R:PASS
+T:dns_db_find:15:A
+A:A call to dns_db_find(db, name, version, type, options, now, ...)  finds the best match for 'name' and 'type' in version 'version' of 'db'.
+R:PASS
+T:dns_db_find:16:A
+A:When the desired node and type were found, but are glue, and the DNS_DBFIND_GLUEOK option is set, a call to dns_db_find(db, name, version, type, options, now, ...)  returns DNS_R_GLUE.
+R:PASS
+T:dns_db_find:17:A
+A:A call to dns_db_find() returns DNS_R_DELEGATION when the data requested is beneath a zone cut.
+R:PASS
+T:dns_db_find:18:A
+A:A call to dns_db_find() returns DNS_R_DELEGATION when type is dns_rdatatype_any and the desired node is a zone cut.
+R:PASS
+T:dns_db_find:19:A
+A:A call to dns_db_find() returns DNS_R_DNAME when the data requested is beneath a DNAME.
+R:PASS
+T:dns_db_find:20:A
+A:A call to dns_db_find() returns DNS_R_CNAME when the requested rdataset was not found but there is a CNAME at the desired name.
+R:PASS
+T:dns_db_find:21:A
+A:A call to dns_db_find() returns DNS_R_NXDOMAIN when name does not exist.
+R:PASS
+T:dns_db_find:22:A
+A:A call to dns_db_find() returns DNS_R_NXRRSET when the desired name exists, but the desired type does not.
+R:PASS
+T:dns_db_find:23:A
+A:When db is a cache database, a call to dns_db_find() returns ISC_R_NOTFOUND when the desired name does not exist, and no delegation could be found.
+R:PASS
+T:dns_db_find:24:A
+A:When db is a cache database, an rdataset will be found only if at least one rdataset at the found node expires after 'now'.
+R:PASS
+T:dns_db_load:25:A
+A:A call to dns_db_load(db, filename) returns DNS_R_NOTZONETOP when the zone data contains a SOA not at the zone apex.
+R:PASS
+E:$(@D)/bin/tests/db/.libs/t_db:
+make[3]: Leaving directory '$(@D)/bin/tests/db'
+make[3]: Entering directory '$(@D)/bin/tests/dst'
+../genrandom 100 randomfile
+S:$(@D)/bin/tests/dst/.libs/t_dst:
+T:dst:1:A
+A:the dst module provides the capability to generate, store and retrieve public and private keys, sign and verify data using the RSA, DSA and MD5 algorithms, and compute Diffie-Hellman shared secrets.
+R:PASS
+T:dst:2:A
+A:the dst module provides the capability to verify data signed with the RSA and DSA algorithms
+$(SOURCE_DIR)/lib/dns/dst_api.c:217: fatal error: RUNTIME_CHECK(dst_initialized == isc_boolean_true) failed
+R:UNRESOLVED
+E:$(@D)/bin/tests/dst/.libs/t_dst:
+make[3]: Leaving directory '$(@D)/bin/tests/dst'
+make[3]: Entering directory '$(@D)/bin/tests/master'
+S:$(@D)/bin/tests/master/.libs/t_master:
+T:dns_master_loadfile:1:A
+A:dns_master_loadfile loads a valid master file and returns ISC_R_SUCCESS
+R:PASS
+T:dns_master_loadfile:2:A
+A:dns_master_loadfile returns ISC_R_UNEXPECTEDEND when the masterfile input ends unexpectedly
+dns_rdata_fromtext: master2.data:8: unexpected end of input
+R:PASS
+T:dns_master_loadfile:3:A
+A:dns_master_loadfile returns DNS_R_NOOWNER when the an ownername is not specified
+master3.data:2: no current owner name
+R:PASS
+T:dns_master_loadfile:4:A
+A:dns_master_loadfile accepts broken zone files where the first record has an undefined TTL, as long as it is a SOA
+master4.data:2: no TTL specified; using SOA MINTTL instead
+R:PASS
+T:dns_master_loadfile:5:A
+A:dns_master_loadfile returns DNS_R_BADCLASS when the the record class did not match the zone class
+master5.data:8: class 'ANY' != zone class 'IN'
+R:PASS
+T:dns_master_loadfile:6:A
+A:dns_master_loadfile understands DNSKEY RR specifications containing key material
+R:PASS
+T:dns_master_loadfile:7:A
+A:dns_master_loadfile understands DNSKEY RR specifications containing no key material
+R:PASS
+T:dns_master_loadfile:8:A
+A:dns_master_loadfile understands $INCLUDE
+R:PASS
+T:dns_master_loadfile:9:A
+A:dns_master_loadfile understands $INCLUDE with failure
+master5.data:8: class 'ANY' != zone class 'IN'
+R:PASS
+T:dns_master_loadfile:10:A
+A:dns_master_loadfile non-empty blank lines
+R:PASS
+T:dns_master_loadfile:11:A
+A:dns_master_loadfile allow leading zeros in SOA
+R:PASS
+E:$(@D)/bin/tests/master/.libs/t_master:
+make[3]: Leaving directory '$(@D)/bin/tests/master'
+make[3]: Entering directory '$(@D)/bin/tests/mem'
+S:$(@D)/bin/tests/mem/.libs/t_mem:
+T:mem:1:A
+A:the memory module supports the creation of memory contexts and the management of memory pools.
+R:PASS
+E:$(@D)/bin/tests/mem/.libs/t_mem:
+make[3]: Leaving directory '$(@D)/bin/tests/mem'
+make[3]: Entering directory '$(@D)/bin/tests/hashes'
+S:$(@D)/bin/tests/hashes/.libs/t_hashes:
+R:PASS
+E:$(@D)/bin/tests/hashes/.libs/t_hashes:
+make[3]: Leaving directory '$(@D)/bin/tests/hashes'
+make[3]: Entering directory '$(@D)/bin/tests/names'
+S:$(@D)/bin/tests/names/.libs/t_names:
+T:dns_name_init:1:A
+A:dns_name_init initializes 'name' to the empty name
+R:PASS
+T:dns_name_invalidate:1:A
+A:dns_name_invalidate invalidates 'name'
+R:PASS
+T:dns_name_setbuffer:1:A
+A:dns_name_setbuffer dedicates a buffer for use with 'name'
+R:PASS
+T:dns_name_hasbuffer:1:A
+A:dns_name_hasbuffer returns ISC_TRUE if 'name' has a dedicated buffer, otherwise it returns ISC_FALSE
+R:PASS
+T:dns_name_isabsolute:1:A
+A:dns_name_isabsolute returns ISC_TRUE if 'name' ends in the root label
+R:PASS
+R:PASS
+R:PASS
+T:dns_name_hash:1:A
+A:dns_name_hash(name, case_sensitive) returns a hash of 'name' which is case_sensitive if case_sensitive is true
+R:PASS
+T:dns_name_fullcompare:1:A
+A:dns_name_fullcompare(name1, name2, orderp, nlabelsp) returns the DNSSEC ordering relationship between name1 and name2, sets orderp to -1 if name1 < name2, to 0 if name1 == name2, or to 1 if name1 > name2, sets nlabelsp to the number of labels name1 and name2 have in common, and sets nbitsp to the number of bits name1 and name2 have in common
+R:PASS
+R:PASS
+T:dns_name_compare:1:A
+A:dns_name_compare(name1, name2) returns information about the relative ordering under the DNSSEC ordering relationship of name1 and name2
+R:PASS
+R:PASS
+R:PASS
+T:dns_name_rdatacompare:1:A
+A:dns_name_rdatacompare(name1, name2) returns information about the relative ordering of name1 and name2 as if they are part of rdata in DNSSEC canonical form
+R:PASS
+R:PASS
+R:PASS
+T:dns_name_issubdomain:1:A
+A:when name1 is a subdomain of name2, dns_name_issubdomain(name1, name2) returns true, otherwise it returns false.
+R:PASS
+R:PASS
+R:PASS
+T:dns_name_countlabels:1:A
+A:dns_name_countlabels(name) returns the number of labels in name
+R:PASS
+R:PASS
+R:PASS
+R:PASS
+R:PASS
+T:dns_name_getlabel:1:A
+A:when n is less than the number of labels in name, dns_name_getlabel(name, n, labelp) initializes labelp to point to the nth label in name
+R:PASS
+R:PASS
+R:PASS
+T:dns_name_getlabelsequence:1:A
+A:when source contains at least first + n labels, dns_name_getlabelsequence(source, first, n, target) initializes target to point to the n label sequence of labels in source starting with first
+R:PASS
+R:PASS
+R:PASS
+T:dns_name_fromregion:1:A
+A:dns_name_fromregion(name, region) converts a DNS name from a region representation to a name representation
+R:PASS
+R:PASS
+R:PASS
+R:PASS
+T:dns_name_toregion:1:A
+A:dns_name_toregion(name, region) converts a DNS name from a region representation to a name representation
+R:PASS
+R:PASS
+R:PASS
+T:dns_name_fromwire:1:A
+A:dns_name_fromwire(name, source, dctx, downcase, target) converts the possibly compressed DNS name 'name' in wire format to canonicalized form at target, performing upper to lower case conversion if downcase is true, and returns ISC_R_SUCCESS
+R:PASS
+T:dns_name_fromwire:4:A
+A:when a name length is invalid, dns_name_fromwire() returns DNS_R_FORMERR
+R:PASS
+T:dns_name_fromwire:5:A
+A:when a compression type is invalid, dns_name_fromwire() returns DNS_R_DISALLOWED
+R:PASS
+T:dns_name_fromwire:6:A
+A:when a bad compression pointer is encountered, dns_name_fromwire() returns DNS_R_BADPOINTER
+R:PASS
+T:dns_name_fromwire:7:A
+A:when input ends unexpected, dns_name_fromwire() returns ISC_R_UNEXPECTEDEND
+R:PASS
+T:dns_name_fromwire:9:A
+A:when there is not enough space in target, dns_name_fromwire(name, source, dcts, downcase, target) returns ISC_R_NOSPACE
+R:PASS
+T:dns_name_towire:1:A
+A:dns_name_towire(name, cctx, target) converts the DNS name 'name' into wire format, compresses it as specified by the compression context cctx, stores the result in target and returns DNS_SUCCESS
+R:PASS
+T:dns_name_towire:2:A
+A:when not enough space exists in target, dns_name_towire(name, cctx, target) returns ISC_R_NOSPACE
+R:PASS
+T:dns_name_fromtext:1:A
+A:dns_name_fromtext(name, source, origin, downcase, target) converts the textual representation of a DNS name at source into uncompressed wire form at target, appending origin to the converted name if origin is non-NULL and converting upper case to lower case during conversion if downcase is true.
+R:PASS
+R:PASS
+R:PASS
+R:PASS
+T:dns_name_totext:1:A
+A:dns_name_totext(name, omit_final_dot, target) converts the DNS name 'name' in wire format to textual format at target, and adds a final '.' to the name if omit_final_dot is false
+R:PASS
+R:PASS
+R:PASS
+R:PASS
+E:$(@D)/bin/tests/names/.libs/t_names:
+make[3]: Leaving directory '$(@D)/bin/tests/names'
+make[3]: Entering directory '$(@D)/bin/tests/net'
+S:net:
+T:isc_netaddr_ismulticast:1:A
+A:Checking to see if multicast addresses are detected properly
+R:PASS
+T:isc_sockaddr_ismulticast:2:A
+A:Checking to see if multicast addresses are detected properly
+R:PASS
+E:net:
+make[3]: Leaving directory '$(@D)/bin/tests/net'
+make[3]: Entering directory '$(@D)/bin/tests/rbt'
+S:$(@D)/bin/tests/rbt/.libs/t_rbt:
+T:dns_rbt_create:1:A
+A:dns_rbt_create creates a rbt and returns ISC_R_SUCCESS on success
+R:PASS
+T:dns_rbt_addname:2:A
+A:dns_rbt_addname adds a name to a database and returns ISC_R_SUCCESS on success
+R:PASS
+T:dns_rbt_addname:3:A
+A:when name already exists, dns_rbt_addname() returns ISC_R_EXISTS
+R:PASS
+T:dns_rbt_deletename:4:A
+A:when name exists, dns_rbt_deletename() returns ISC_R_SUCCESS
+R:PASS
+T:dns_rbt_deletename:5:A
+A:when name does not exist, dns_rbt_deletename() returns ISC_R_NOTFOUND
+R:PASS
+T:dns_rbt_findname:6:A
+A:when name exists and exactly matches the search name dns_rbt_findname() returns ISC_R_SUCCESS
+R:PASS
+T:dns_rbt_findname:7:A
+A:when a name does not exist, dns_rbt_findname returns ISC_R_NOTFOUND
+R:PASS
+T:dns_rbt_findname:8:A
+A:when a superdomain is found with data matching name, dns_rbt_findname returns DNS_R_PARTIALMATCH
+R:PASS
+T:dns_rbtnodechain_init:9:A
+A:a call to dns_rbtnodechain_init(chain, mctx) initializes chain
+R:PASS
+T:dns_rbtnodechain_first:10:A
+A:a call to dns_rbtnodechain_first(chain, rbt, name, origin) sets name to point to the root of the tree, origin to point to the origin, and returns DNS_R_NEWORIGIN
+R:PASS
+T:dns_rbtnodechain_last:11:A
+A:a call to dns_rbtnodechain_last(chain, rbt, name, origin) sets name to point to the last node of the megatree, origin to the name of the level above it, and returns DNS_R_NEWORIGIN
+R:PASS
+T:dns_rbtnodechain_next:12:A
+A:a call to dns_rbtnodechain_next(chain, name, origin) sets name to point to the next node of the tree and returns ISC_R_SUCCESS or DNS_R_NEWORIGIN on success
+R:PASS
+T:dns_rbtnodechain_prev:13:A
+A:a call to dns_rbtnodechain_prev(chain, name, origin) sets name to point to the previous node of the tree and returns ISC_R_SUCCESS or DNS_R_NEWORIGIN on success
+R:PASS
+E:$(@D)/bin/tests/rbt/.libs/t_rbt:
+make[3]: Leaving directory '$(@D)/bin/tests/rbt'
+make[3]: Entering directory '$(@D)/bin/tests/sockaddr'
+S:$(@D)/bin/tests/sockaddr/.libs/t_sockaddr:
+T:isc_sockaddr_eqaddrprefix:1:A
+A:isc_sockaddr_eqaddrprefix() returns ISC_TRUE when prefixes of a and b are equal, and ISC_FALSE when they are not equal
+R:PASS
+T:isc_netaddr_masktoprefixlen:1:A
+A:isc_netaddr_masktoprefixlen() calculates correct prefix lengths 
+R:PASS
+E:$(@D)/bin/tests/sockaddr/.libs/t_sockaddr:
+make[3]: Leaving directory '$(@D)/bin/tests/sockaddr'
+make[3]: Entering directory '$(@D)/bin/tests/tasks'
+S:$(@D)/bin/tests/tasks/.libs/t_tasks:
+T:tasks:1:A
+A:The task subsystem can create and manage tasks
+R:PASS
+T:tasks:2:A
+A:The task subsystem can create ISC_TASKS_MIN tasks
+R:PASS
+T:tasks:3:A
+A:When isc_task_shutdown() is called, any shutdown events that have been requested via prior isc_task_onshutdown() calls are posted in LIFO order.
+R:PASS
+T:tasks:4:A
+A:After isc_task_shutdown() has been called, any call to isc_task_onshutdown() will return ISC_R_SHUTTINGDOWN.
+R:PASS
+T:tasks:7:A
+A:A call to isc_task_create() creates a task that can receive events.
+R:PASS
+T:tasks:10:A
+A:A call to isc_task_purge(task, sender, type, tag) purges all events of type 'type' and with tag 'tag' not marked as unpurgable from sender from the task's queue and returns the number of events purged.
+R:PASS
+T:tasks:11:A
+A:When the event is marked as purgable, a call to isc_task_purgeevent(task, event) purges the event 'event' from the task's queue and returns ISC_TRUE.
+R:PASS
+T:tasks:12:A
+A:When the event is not marked as purgable, a call to isc_task_purgeevent(task, event) does not purge the event 'event' from the task's queue and returns ISC_FALSE.
+R:PASS
+T:tasks:13:A
+A:A call to isc_event_purgerange(task, sender, first, last, tag) purges all events not marked unpurgable from sender 'sender' and of type within the range 'first' to 'last' inclusive from the task's event queue and returns the number of tasks purged.
+R:PASS
+T:tasks:14:A
+A:isc_task_beginexclusive() gets exclusive access
+R:PASS
+E:$(@D)/bin/tests/tasks/.libs/t_tasks:
+make[3]: Leaving directory '$(@D)/bin/tests/tasks'
+make[3]: Entering directory '$(@D)/bin/tests/timers'
+S:$(@D)/bin/tests/timers/.libs/t_timers:
+T:isc_timer_create:1:A
+A:When type is isc_timertype_ticker, a call to isc_timer_create() creates a timer that posts an ISC_TIMEREVENT_TICK event to the specified task every 'interval' seconds and returns ISC_R_SUCCESS.
+R:PASS
+T:isc_timer_create:2:A
+A:When type is isc_timertype_once, a call to isc_timer_create() creates a timer that posts an ISC_TIMEEVENT_LIFE event to the specified task when the current time reaches or exceeds the time specified by 'expires'.
+R:PASS
+T:isc_timer_create:3:A
+A:When type is isc_timertype_once, a call to isc_timer_create() creates a timer that posts an ISC_TIMEEVENT_IDLE event to the specified task when the timer has been idle for 'interval' seconds.
+R:PASS
+T:isc_timer_reset:4:A
+A:A call to isc_timer_reset() changes the timer's type, expires and interval values to the given values.
+R:PASS
+T:isc_timer_reset:5:A
+A:When 'purge' is TRUE, a call to isc_timer_reset() purges any pending events from 'timer' from the task's event queue.
+R:PASS
+E:$(@D)/bin/tests/timers/.libs/t_timers:
+make[3]: Leaving directory '$(@D)/bin/tests/timers'
+make[3]: Entering directory '$(@D)/bin/tests/system'
+making all in $(@D)/bin/tests/system/lwresd
+make[4]: Entering directory '$(@D)/bin/tests/system/lwresd'
+make[4]: Leaving directory '$(@D)/bin/tests/system/lwresd'
+making all in $(@D)/bin/tests/system/tkey
+make[4]: Entering directory '$(@D)/bin/tests/system/tkey'
+make[4]: Leaving directory '$(@D)/bin/tests/system/tkey'
+if test -f ./runall.sh; then sh ./runall.sh; fi
+make[3]: Leaving directory '$(@D)/bin/tests/system'
+make[2]: Leaving directory '$(@D)/bin/tests'
+make[1]: Leaving directory '$(@D)'
