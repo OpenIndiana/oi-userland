@@ -18,34 +18,31 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 BITS=64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		doxygen
-COMPONENT_VERSION=	1.8.9
+COMPONENT_VERSION=	1.8.11
 COMPONENT_PROJECT_URL=	http://www.stack.nl/~dimitri/doxygen/index.html
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).src.tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:f0dd662fb98c394c20deed5b00b29d73d9bee8ea1a52f7a687dd9b70f5444fc6
+    sha256:65d08b46e48bd97186aef562dc366681045b119e00f83c5b61d05d37ea154049
 COMPONENT_ARCHIVE_URL=	http://ftp.stack.nl/pub/users/dimitri/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/doxygen
 
 # Download the manual so that we don't have to keep updating it in the gate.
 COMPONENT_ARCHIVE_1 =	$(COMPONENT_NAME)_manual-$(COMPONENT_VERSION).pdf.zip
 COMPONENT_ARCHIVE_HASH_1 =	\
-    sha256:33b12961db131c5cfea1b3d045a38b8f222bdd07bb04d1cd60f791ee86949b70
+    sha256:e7a6a0c853c715157070514bd29992315a7d14131dca5947110a18b0b3e8e61c
 COMPONENT_ARCHIVE_URL_1 =	ftp://ftp.stack.nl/pub/users/dimitri/$(COMPONENT_ARCHIVE_1)
 
-TPNO=			21549
+TPNO=			27457
 
-include $(WS_MAKE_RULES)/prep.mk
-# Omit directory options that break doxygen's configure script.
-CONFIGURE_DEFAULT_DIRS=no
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/cmake.mk
+include $(WS_MAKE_RULES)/common-64.mk
 
 # Necessary to find the right gcc during build
 PATH=$(GCC_ROOT)/bin:/usr/bin
@@ -76,6 +73,7 @@ COMPONENT_TEST_TARGETS =	tests
 # The additional doxygen specific set of transforms to be applied to the
 # test results to try to normalize them.
 COMPONENT_TEST_TRANSFORMS += \
+	'-e "/^Scanning dependencies$$/d" ' \
         '-e "s|\(error opening bib\).*|\1|" ' \
         '-e "s|\(test_output_012/indexpage.xml\).*|\1|" ' \
         '-e "s|\(012/indexpage.xml\).*|\1|" ' \
@@ -94,16 +92,8 @@ COMPONENT_SYSTEM_TEST_TARGETS =
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
 install:	$(INSTALL_64)
 	cd $(PROTO_DIR) ; $(UNPACK) ../../../$(COMPONENT_ARCHIVE_1)
-
-test:		$(TEST_64)
-
-system-test:    $(SYSTEM_TEST_64)
 
 
 REQUIRED_PACKAGES += developer/lexer/flex

@@ -1,8 +1,6 @@
 Changes needed to get doxygen to configure and build with the GNU compilers
 on Solaris.
 
-The second part of these changes will be sent upstream.
-
 --- doxygen-1.8.9/doc/Doxyfile.orig	2015-03-02 18:48:16.796824973 -0800
 +++ doxygen-1.8.9/doc/Doxyfile	2015-03-02 18:47:58.404324590 -0800
 @@ -23,7 +23,7 @@
@@ -14,31 +12,3 @@ The second part of these changes will be sent upstream.
  GENERATE_HTML     = YES
  GENERATE_HTMLHELP = NO
  GENERATE_RTF      = NO
---- doxygen-1.8.9/tmake/lib/solaris-g++/tmake.conf.orig	2015-03-02 18:45:51.095061314 -0800
-+++ doxygen-1.8.9/tmake/lib/solaris-g++/tmake.conf	2015-03-02 19:55:43.793869862 -0800
-@@ -8,7 +8,7 @@
- CONFIG			= qt warn_on release
- 
- TMAKE_CC		= gcc
--TMAKE_CFLAGS		=
-+TMAKE_CFLAGS		= -m64
- TMAKE_CFLAGS_WARN_ON	= -Wall -W
- TMAKE_CFLAGS_WARN_OFF	=
- TMAKE_CFLAGS_RELEASE	= -O2
-@@ -36,14 +36,14 @@
- 
- TMAKE_LINK		= g++
- TMAKE_LINK_SHLIB	= g++
--TMAKE_LFLAGS		=
-+TMAKE_LFLAGS		= -m64
- TMAKE_LFLAGS_RELEASE	=
- TMAKE_LFLAGS_DEBUG	=
- TMAKE_LFLAGS_SHAPP	= -shared
- TMAKE_LFLAGS_SHLIB	= -shared -h $(TARGET1)
- TMAKE_LFLAGS_SONAME	=
- 
--TMAKE_LIBS		= -liconv
-+TMAKE_LIBS		=
- TMAKE_LIBS_X11		= -lXext -lX11 -lm
- TMAKE_LIBS_QT		= -lqt
- TMAKE_LIBS_QT_MT	= -lqt-mt
