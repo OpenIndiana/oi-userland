@@ -14,15 +14,15 @@
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		mate-settings-daemon
-COMPONENT_VERSION=	1.12.1
-COMPONENT_PROJECT_URL=	http://www.mate-desktop.org
-COMPONENT_SUMMARY=	fork of gnome-settings-deamon
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_NAME=		mint-menu
+COMPONENT_VERSION=	5.5.2
+COMPONENT_PROJECT_URL=	http://www.linuxmint.com
+COMPONENT_SUMMARY=	Advanced MATE menu
+COMPONENT_SRC=		mintmenu-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:caf990a2c202467d563c07f41efceec289e7740ef52d98bcd8e4c1fad0814c02
-COMPONENT_ARCHIVE_URL=	https://github.com/mate-desktop/$(COMPONENT_NAME)/archive/v$(COMPONENT_VERSION).tar.gz
+    sha256:1ba7cb9f280760df49f55d55a9633f1e40d72cae7144aec9f90369ca55f4ac71
+COMPONENT_ARCHIVE_URL= https://github.com/linuxmint/mintmenu/archive/$(COMPONENT_VERSION).tar.gz
 COMPONENT_LICENSE= GPLv2, LGPLv2, FDLv1.1
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 COMPONENT_CLASSIFICATION = System/Libraries
@@ -34,19 +34,11 @@ include $(WS_TOP)/make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-COMPONENT_PREP_ACTION=	cd $(@D)  && ./autogen.sh --help
-
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--disable-static
-CONFIGURE_OPTIONS+=	--disable-scrollkeeper
-CONFIGURE_OPTIONS+=	--localstatedir=/var/lib
-CONFIGURE_OPTIONS+=	--with-gnome-distributor="The OpenIndiana Project"
-CONFIGURE_OPTIONS+=     --libexecdir=/usr/lib/$(COMPONENT_NAME)
-
-CONFIGURE_ENV+= PYTHON="$(PYTHON)"
-
-COMPONENT_BUILD_ENV += CC="$(CC)"
-COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
+COMPONENT_PREP_ACTION =  $(CP) $(WS_TOP)/make-rules/cp-install.mk $(SOURCE_DIR)/Makefile&&
+COMPONENT_PREP_ACTION += touch $(SOURCE_DIR)/configure
+COMPONENT_PRE_CONFIGURE_ACTION = $(CLONEY) $(SOURCE_DIR) $(@D)
+COMPONENT_INSTALL_ENV += SOURCE_DIR=$(SOURCE_DIR)
+COMPONENT_INSTALL_ENV += PROTO_DIR=$(PROTO_DIR)
 
 # common targets
 build:		$(BUILD_32)
