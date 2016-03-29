@@ -10,34 +10,34 @@
 #
 
 #
-# Copyright (c) 2015 Jim Klimov
+# Copyright (c) 2015-2016 Jim Klimov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ccache
-COMPONENT_VERSION=	3.2.3
+COMPONENT_VERSION=	3.2.4
 COMPONENT_PROJECT_URL=	http://ccache.samba.org/
 COMPONENT_DOWNLOAD_URL=	http://samba.org/ftp/$(COMPONENT_NAME)/
 COMPONENT_DOCUMENTATION_URL =	http://ccache.samba.org/manual.html
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:b07165d4949d107d17f2f84b90b52953617bf1abbf249d5cc20636f43337c98c
+    sha256:ffeb967edb549e67da0bd5f44f729a2022de9fdde65dfd80d2a7204d7f75332e
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_DOWNLOAD_URL)/$(COMPONENT_ARCHIVE)
 COMPONENT_SUMMARY=	ccache - cacher of GCC-compiled files to avoid doing the same job twice
 COMPONENT_FMRI=		developer/ccache
 COMPONENT_CLASSIFICATION=	Development/C
 COMPONENT_LICENSE=	"GPLv3,murmurhash,papowell/jhweiss,PostgreSQL,Python,zlib"
-COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
+COMPONENT_LICENSE_FILE=	LICENSE.txt
 
 CFLAGS  +=			-D_GNU_SOURCE -D__EXTENSIONS__
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/configure.mk
+include $(WS_TOP)/make-rules/ips.mk
 
-CONFIGURE_OPTIONS  +=           --sysconfdir=/etc
+CONFIGURE_OPTIONS +=	--sysconfdir=/etc
 
 # common targets
 build:          $(BUILD_32_and_64)
@@ -46,6 +46,6 @@ install:        $(INSTALL_32_and_64)
 
 test:           $(NO_TESTS)
 
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
+BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_TOP)/make-rules/depend.mk
