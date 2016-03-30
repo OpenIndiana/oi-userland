@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= docbook
 COMPONENT_VERSION= 2.30.0
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= docbook SGML and XML stylesheets
 
 include ../../../make-rules/ips.mk
