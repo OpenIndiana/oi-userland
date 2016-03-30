@@ -13,16 +13,16 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= cairo
-COMPONENT_VERSION= 1.14.2
+COMPONENT_VERSION= 1.14.6
 COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Vector graphics library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:c919d999ddb1bbbecd4bbe65299ca2abd2079c7e13d224577895afa7005ecceb
+  sha256:613cb38447b76a93ff7235e17acd55a78b52ea84a9df128c3f2257f8eaa7b252
 COMPONENT_ARCHIVE_URL= \
   http://cairographics.org/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://cairographics.org/
@@ -31,9 +31,9 @@ COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
 COMPONENT_LICENSE = LGPLv2.1
 COMPONENT_LICENSE_FILE = COPYING-LGPL-2.1
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/configure.mk
+include $(WS_TOP)/make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
