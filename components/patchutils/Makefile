@@ -22,32 +22,21 @@
 #
 # Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		patchutils
 COMPONENT_VERSION=	0.3.1
 IPS_PKG_NAME=		text/patchutils
 COMPONENT_PROJECT_URL=	http://cyberelk.net/tim/patchutils/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:48d28d4a6fd9922e15ecfd8a152ba5aef6673842c8303337fcaa6b3bb2d129a2
 COMPONENT_ARCHIVE_URL=	http://cyberelk.net/tim/data/patchutils/stable/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/patchutils
 
 TPNO=			9269
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
-
-# Commands go under /usr/bin so set bindir correctly.
-CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/bin
-
-ASLR_MODE = $(ASLR_ENABLE)
+include $(WS_MAKE_RULES)/common.mk
 
 # A couple of tests dump core, and the message contains the pid
 # A number of failing tests operate on randomly named files
@@ -58,21 +47,9 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "1,/^for test in/{N;d}"' \
 	'-e "/^===/{N;N;q}"'
 
-# common targets
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
 # Note that the gendiff tests will fail on Solaris, because the gendiff utility
 # is missing; this is delivered by rpm.
-test:		$(TEST_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
 
 REQUIRED_PACKAGES += runtime/perl-512
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += text/gnu-diffutils
 REQUIRED_PACKAGES += text/gnu-patch

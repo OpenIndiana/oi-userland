@@ -18,11 +18,14 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		php-common
+COMPONENT_SRC=
 # This version # based on the version # of Solaris
 COMPONENT_VERSION=	11.1
 COMPONENT_PROJECT_URL=	http://www.php.net/

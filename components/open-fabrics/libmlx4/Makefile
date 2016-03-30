@@ -18,36 +18,27 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
-# OFED only builds with GCC
-COMPILER=gcc
-
-include ../../../make-rules/shared-macros.mk
+BUILD_BITS= 64_and_32
+include ../ofed-component-macros.mk
 
 COMPONENT_NAME=		libmlx4
 COMPONENT_VERSION=	1.0.1
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-1.18.gb810a27.tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:ac3aa335d5749a8edc471630b1f5049122c8b7b66bab88c299e255122028e19c
-COMPONENT_ARCHIVE_URL=	http://www.openfabrics.org/downloads/libmlx4/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/ofuv_lib
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include ../ofed.mk
+include ../ofed-component.mk
 
 # --disable-libcheck is not a supported option for this component
 DISABLE_LIBCHECK=
 
-LIBS +=	-libverbs
+LIBS=	-libverbs
 LDFLAGS +=	-L$(PROTO_DIR)/$(CONFIGURE_LIBDIR.$(BITS))
-
-CONFIGURE_ENV +=	CPPFLAGS="$(CPPFLAGS)"
-
-CONFIGURE_OPTIONS +=	LDFLAGS="$(LDFLAGS)"
 
 # requires an older automake to reconfigure
 COMPONENT_PREP_ACTION += (if [ x$(MACH) = "xi386" ]; then \
@@ -64,15 +55,4 @@ COMPONENT_PREP_ACTION += (if [ x$(MACH) = "xi386" ]; then \
 COMPONENT_POST_INSTALL_ACTION =\
 	$(RM) $(PROTO_DIR)/$(CONFIGURE_LIBDIR.32)/$(COMPONENT_NAME).la;\
 	$(RM) $(PROTO_DIR)/$(CONFIGURE_LIBDIR.64)/$(COMPONENT_NAME).la;\
-
-# common targets
-configure:	$(CONFIGURE_32_and_64)
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
 

@@ -18,32 +18,26 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64
 # Because the Studio compiler generates thousands of lines of warnings.
-COMPILER =		gcc
-
+COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		links
 COMPONENT_VERSION=	2.12
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://links.twibright.com/
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:2e3da6193de9d6ee71bc4beab17169ecc58d7cbf2e20192a3f518ed9f7f22e33
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/links
 
 TPNO=			27168
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-# Needed to generate a 64-bit executable.
-CC +=			$(CC_BITS)
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL =		0
 
@@ -51,23 +45,9 @@ PATCH_LEVEL =		0
 # new configure for it to configure and build properly.
 COMPONENT_PREP_ACTION=	(cd $(@D) ; autoconf)
 
-ASLR_MODE = $(ASLR_ENABLE)
-
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
-
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += library/libevent
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/security/openssl/openssl-fips-140
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += system/library

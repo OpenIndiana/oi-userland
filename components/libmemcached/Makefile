@@ -19,15 +19,13 @@
 # CDDL HEADER END
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmemcached
 COMPONENT_VERSION=	0.16
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:d4fb3a64dc592c104caa4e98bc11f209fcb97eecdeb7f506797320dea75b9459
 COMPONENT_ARCHIVE_URL= http://launchpadlibrarian.net/33299595/${COMPONENT_ARCHIVE}
@@ -36,19 +34,16 @@ COMPONENT_BUGDB=	database/memcached
 
 TPNO=			5582
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS += -xstrconst
+
+ifeq ($(OS_VERSION),5.11)
 LDFLAGS += -lsocket -lnsl
+endif
 
 CONFIGURE_ENV +=	MAKE=$(GMAKE)
 
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS +=	CXXFLAGS="$(CXXFLAGS)"
-CONFIGURE_OPTIONS +=	LDFLAGS="$(LDFLAGS)"
-CONFIGURE_OPTIONS +=    --bindir=$(USRBINDIR) 
 CONFIGURE_OPTIONS +=	--includedir=$(CONFIGURE_INCLUDEDIR)
 
 # need some files in $(SOURCE_DIR)/docs during build
@@ -69,9 +64,7 @@ COMPONENT_BUILD_ARGS +=	CFLAGS="$(CFLAGS)"
 
 # Similarly, set pkglibdir in the arguments to gmake; otherwise
 # the Makefile sets runpath to a non-existent /usr/lib/libmemcached directory.
-COMPONENT_BUILD_ARGS +=	pkglibdir=/usr/lib
-
-ASLR_MODE = $(ASLR_ENABLE)
+COMPONENT_BUILD_ARGS +=	pkglibdir=$(USRLIBDIR)
 
 COMPONENT_INSTALL_ENV +=	DESTDIR=$(PROTO_DIR)
 
@@ -85,16 +78,4 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|^make.*: Entering directory.*$$|XXX_REMOVE_XXX|g" ' \
 	'-e "/^XXX_REMOVE_XXX$$/d" '
 
-configure:	$(CONFIGURE_32_and_64)
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
 # Tests fail, probably because memcached is not running.
-test:		$(TEST_32_and_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
-
-REQUIRED_PACKAGES += system/library

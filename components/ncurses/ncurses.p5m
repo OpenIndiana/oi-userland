@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
@@ -51,17 +51,18 @@ link path=usr/bin/gtic target=../gnu/bin/tic facet.compat.gnulinks=true
 link path=usr/bin/gtoe target=../gnu/bin/toe facet.compat.gnulinks=true
 link path=usr/bin/gtput target=../gnu/bin/tput facet.compat.gnulinks=true
 link path=usr/bin/gtset target=../gnu/bin/tset facet.compat.gnulinks=true
-file path=usr/gnu/bin/$(MACH64)/ncurses5-config
+# ncurses5-config contains embedded paths, so swap these around.
+file usr/gnu/bin/ncurses5-config path=usr/gnu/bin/$(MACH64)/ncurses5-config
 link path=usr/gnu/bin/captoinfo target=tic
-file usr/gnu/bin/$(MACH64)/clear path=usr/gnu/bin/clear
-file usr/gnu/bin/$(MACH64)/infocmp path=usr/gnu/bin/infocmp
+file path=usr/gnu/bin/clear
+file path=usr/gnu/bin/infocmp
 link path=usr/gnu/bin/infotocap target=tic
-file path=usr/gnu/bin/ncurses5-config
+file usr/gnu/bin/$(MACH32)/ncurses5-config path=usr/gnu/bin/ncurses5-config
 link path=usr/gnu/bin/reset target=tset
-file usr/gnu/bin/$(MACH64)/tic path=usr/gnu/bin/tic
-file usr/gnu/bin/$(MACH64)/toe path=usr/gnu/bin/toe
-file usr/gnu/bin/$(MACH64)/tput path=usr/gnu/bin/tput
-file usr/gnu/bin/$(MACH64)/tset path=usr/gnu/bin/tset
+file path=usr/gnu/bin/tic
+file path=usr/gnu/bin/toe
+file path=usr/gnu/bin/tput
+file path=usr/gnu/bin/tset
 link path=usr/gnu/lib/$(MACH64)/libform.so target=libform.so.5
 link path=usr/gnu/lib/$(MACH64)/libform.so.5 target=libform.so.5.7
 file path=usr/gnu/lib/$(MACH64)/libform.so.5.7

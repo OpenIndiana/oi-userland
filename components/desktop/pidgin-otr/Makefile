@@ -18,16 +18,16 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pidgin-otr
 COMPONENT_VERSION=	4.0.2
 COMPONENT_PROJECT_URL=	http://www.cypherpunks.ca/otr/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
     sha256:f4b59eef4a94b1d29dbe0c106dd00cdc630e47f18619fc754e5afbf5724ebac4
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
@@ -35,39 +35,22 @@ COMPONENT_BUGDB=        utility/pidgin
 
 TPNO=			27403
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-
 # Pidgin is on the do-not-publish list (depends on S12-only changes in ON &
 # Desktop), so no point publishing this without that.
 ifeq ($(BUILD_TYPE), evaluation)
-BUILD_32_and_64=
-INSTALL_32_and_64=
+BUILD_64=
+INSTALL_64=
 PUBLISH_STAMP=
 endif
 
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # Need to pick up the GNU version of xgettext.
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(GNUBIN):$(USRBINDIR)
 
 CFLAGS +=		-DG_IMPLEMENT_INLINES -DG_HAVE_ISO_VARARGS
 
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
-
-ASLR_MODE = $(ASLR_ENABLE)
-
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
-
-system-test:	$(NO_TESTS)
-
 REQUIRED_PACKAGES += communication/im/libotr
 REQUIRED_PACKAGES += communication/im/pidgin
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/libgcrypt

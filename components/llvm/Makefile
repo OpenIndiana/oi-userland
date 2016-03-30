@@ -23,18 +23,15 @@
 # Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 export PARFAIT_BUILD=no
-COMPILER=gcc
-
+BUILD_BITS= 64
+COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		llvm
 COMPONENT_VERSION=	3.6.2
 COMPONENT_PROJECT_URL=	http://llvm.org/
-COMPONENT_SRC=		$(COMPONENT_NAME)
-COMPONENT_BUGDB=	utility/llvm
-
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_SRC_NAME=	$(COMPONENT_SRC).src
+COMPONENT_SRC_NAME =	$(COMPONENT_SRC).src
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC_NAME).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:f60dc158bfda6822de167e87275848969f0558b3134892ff54fced87e4667b94
@@ -72,9 +69,6 @@ COMPONENT_POST_INSTALL_ACTION = \
 	$(GMAKE) -C $(COMPONENT_DIR)/cxa_finalize install ; \
 	fi;
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-
 # Depends on S12-only changes in gcc; might be able to deal with later,
 # but avoid publishing while this is under investigation.
 ifeq ($(BUILD_TYPE), evaluation)
@@ -83,21 +77,22 @@ INSTALL_64=
 PUBLISH_STAMP=
 endif
 
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=
+include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL := 0
 DEBUG_BUILD := 0
 GCC_VERSION := 4.9
 
 # We need GCC version 4.9, and not another version.
-CC=/usr/gcc/$(GCC_VERSION)/bin/gcc
-CXX=/usr/gcc/$(GCC_VERSION)/bin/g++
+CC=$(USRDIR)/gcc/$(GCC_VERSION)/bin/gcc
+CXX=$(USRDIR)/gcc/$(GCC_VERSION)/bin/g++
 
 # We need the specific C++ runtime that clang/llvm was built and
 # linked with, and not some random and incompatible stuff from
 # /usr/lib.
-LLVM_RUNPATH_32 = /usr/gcc/$(GCC_VERSION)/lib
-LLVM_RUNPATH_64 = /usr/gcc/$(GCC_VERSION)/lib/$(MACH64)
+LLVM_RUNPATH_32 = $(USRDIR)/gcc/$(GCC_VERSION)/lib
+LLVM_RUNPATH_64 = $(USRDIR)/gcc/$(GCC_VERSION)/lib/$(MACH64)
 LLVM_RUNPATH = $(LLVM_RUNPATH_$(BITS))
 
 # -O0 for now. Ideally we want -O2.
@@ -109,7 +104,7 @@ ifeq ($(DEBUG_BUILD), 1)
   GFLAG="-g3"
 endif
 
-export PATH=/usr/gnu/bin:/usr/xpg4/bin:/usr/bin:/usr/perl5/5.16/bin
+export PATH=$(GNUBIN):$(USRDIR)/xpg4/bin:$(USRBINDIR):$(USRDIR)/perl5/5.16/bin
 
 # Because LLVM's install target doesn't install everything that
 # needs to be installed.
@@ -230,7 +225,7 @@ CXXFLAGS += -Wl,-z -Wl,relax=transtls -Wl,-R -Wl,$(LLVM_RUNPATH)
 CXXFLAGS.sparc += -mptr$(BITS)
 CXXFLAGS += $(CFLAGS.$(MACH))
 
-CPPFLAGS = -D_GNU_SOURCE -DLLVM_SOLARIS -I/usr/gnu/include
+CPPFLAGS = -D_GNU_SOURCE -DLLVM_SOLARIS -I$(USRGNUDIR)/include
 
 ifeq ($(DEBUG_BUILD), 1)
   CPPFLAGS += -D_DEBUG
@@ -245,68 +240,56 @@ CPPFLAGS.i386 = -DLLVM_INTEL
 CPPFLAGS.sparc = -DLLVM_SPARC
 CPPFLAGS += $(CPPFLAGS.$(MACH))
 
-LLVM_LIBDIR_32 = /usr/lib
-LLVM_LIBDIR_64 = /usr/lib/$(MACH64)
-LLVM_LIBDIR = $(LLVM_LIBDIR_$(BITS))
-
-LLVM_LIBEXECDIR_32 = /usr/libexec
-LLVM_LIBEXECDIR_64 = /usr/libexec/$(MACH64)
+LLVM_LIBEXECDIR_32 = $(USRDIR)/libexec
+LLVM_LIBEXECDIR_64 = $(USRDIR)/libexec/$(MACH64)
 LLVM_LIBEXECDIR = $(LLVM_LIBEXECDIR_$(BITS))
 
-CONFIGURE_SCRIPT = $(SOURCE_DIR)/configure
-CONFIGURE_OPTIONS += CC="$(CC)"
-CONFIGURE_OPTIONS += CXX="$(CXX)"
-CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS += CPPFLAGS="$(CPPFLAGS)"
-CONFIGURE_OPTIONS += CXXFLAGS="$(CXXFLAGS)"
-CONFIGURE_OPTIONS += --libdir=$(LLVM_LIBDIR)
 CONFIGURE_OPTIONS += --libexecdir=$(LLVM_LIBEXECDIR)
 CONFIGURE_OPTIONS += --sharedstatedir=/tmp
-CONFIGURE_OPTIONS += --localstatedir=/var
-CONFIGURE_OPTIONS += --enable-compiler-version-checks=yes
-CONFIGURE_OPTIONS += --enable-clang-static-analyzer=yes
+CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
+CONFIGURE_OPTIONS += --enable-compiler-version-checks
+CONFIGURE_OPTIONS += --enable-clang-static-analyzer
 
 ifeq ($(DEBUG_BUILD), 1)
-  CONFIGURE_OPTIONS += --enable-assertions=yes
-  CONFIGURE_OPTIONS += --enable-optimized=no
-  CONFIGURE_OPTIONS += --enable-expensive-checks=yes
-  CONFIGURE_OPTIONS += --enable-debug-runtime=yes
-  CONFIGURE_OPTIONS += --enable-debug-symbols=yes
+  CONFIGURE_OPTIONS += --enable-assertions
+  CONFIGURE_OPTIONS += --disable-optimized
+  CONFIGURE_OPTIONS += --enable-expensive-checks
+  CONFIGURE_OPTIONS += --enable-debug-runtime
+  CONFIGURE_OPTIONS += --enable-debug-symbols
 else
-  CONFIGURE_OPTIONS += --enable-assertions=no
-  CONFIGURE_OPTIONS += --enable-optimized=yes
-  CONFIGURE_OPTIONS += --enable-expensive-checks=no
-  CONFIGURE_OPTIONS += --enable-debug-runtime=no
-  CONFIGURE_OPTIONS += --enable-debug-symbols=no
+  CONFIGURE_OPTIONS += --disable-assertions
+  CONFIGURE_OPTIONS += --enable-optimized
+  CONFIGURE_OPTIONS += --disable-expensive-checks
+  CONFIGURE_OPTIONS += --disable-debug-runtime
+  CONFIGURE_OPTIONS += --disable-debug-symbols
 endif
 
-CONFIGURE_OPTIONS += --enable-keep-symbols=yes
-CONFIGURE_OPTIONS += --enable-jit=yes
+CONFIGURE_OPTIONS += --enable-keep-symbols
+CONFIGURE_OPTIONS += --enable-jit
 CONFIGURE_OPTIONS += --disable-docs
 CONFIGURE_OPTIONS += --disable-doxygen
-CONFIGURE_OPTIONS += --enable-threads=yes
-CONFIGURE_OPTIONS += --enable-pthreads=yes
-CONFIGURE_OPTIONS += --enable-shared=yes
-CONFIGURE_OPTIONS += --enable-zlib=yes
-CONFIGURE_OPTIONS += --enable-pic=yes
+CONFIGURE_OPTIONS += --enable-threads
+CONFIGURE_OPTIONS += --enable-pthreads
+CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --enable-zlib
+CONFIGURE_OPTIONS += --enable-pic
 CONFIGURE_OPTIONS += --enable-timestamps
 CONFIGURE_OPTIONS += --enable-backtraces
 CONFIGURE_OPTIONS += --enable-bindings=auto
-CONFIGURE_OPTIONS += --enable-libffi=yes
-CONFIGURE_OPTIONS += --enable-terminfo=yes
-CONFIGURE_OPTIONS += --enable-ltdl-install=no
+CONFIGURE_OPTIONS += --enable-libffi
+CONFIGURE_OPTIONS += --enable-terminfo
+CONFIGURE_OPTIONS += --disable-ltdl-install
 CONFIGURE_OPTIONS += --with-python=$(PYTHON)
 
 ifeq ($(MACH),sparc)
   CONFIGURE_OPTIONS += --with-extra-ld-options='-lkstat'
 endif
-CONFIGURE_OPTIONS += --with-gcc-toolchain=/usr/gcc/$(GCC_VERSION)
+CONFIGURE_OPTIONS += --with-gcc-toolchain=$(USRDIR)/gcc/$(GCC_VERSION)
 CONFIGURE_OPTIONS += --with-optimize-option="$(OFLAG) $(GFLAG)"
 
 # Enable the cross-compiler in 3.8.X.
 CONFIGURE_OPTIONS.i386 += --enable-targets="x86"
 CONFIGURE_OPTIONS.sparc += --enable-targets="sparc"
-CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(MACH))
 
 # Put this here for now until the gpatch problems are resolved.
 COMPONENT_BUILD_ARGS += -j8
@@ -316,17 +299,9 @@ COMPONENT_BUILD_ARGS += -j8
 COMPONENT_INSTALL_ARGS += SHELL=/bin/bash
 
 # common targets
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
 # There are no master test results yet. TBDL in 3.8.X.
 test:
 	@echo "Tests not yet implemented (wait for 3.8.X)."
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
 REQUIRED_PACKAGES += developer/gcc-4/gcc-common-49
 REQUIRED_PACKAGES += developer/gnu-binutils
@@ -342,6 +317,4 @@ REQUIRED_PACKAGES += system/library/gcc/gcc-c++-runtime-49
 REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime-49
 REQUIRED_PACKAGES += system/library/gcc/gcc-gobjc-runtime-49
 REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/linker
-

@@ -22,30 +22,23 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64
+COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pv
 COMPONENT_VERSION=	1.6.0
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.ivarch.com/programs/pv.shtml
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:9dd45391806b0ed215abee4c5ac1597d018c386fe9c1f5afd2f6bc3b07fd82c3
 COMPONENT_ARCHIVE_URL=	http://www.ivarch.com/programs/sources/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/pv
 
 TPNO=			27247
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+SYSTEM_TEST_TARGET= $(SYSTEM_TEST_64)
+include $(WS_MAKE_RULES)/common.mk
 
 PKG_PROTO_DIRS += $(BUILD_DIR_64)
-
-CONFIGURE_OPTIONS  +=   CFLAGS="$(CFLAGS)"
-
-COMPILER =	gcc
 
 COMPONENT_TEST_ENV +=  PATH="$(GNUBIN):$(PATH)"
 
@@ -57,19 +50,5 @@ COMPONENT_TEST_TRANSFORMS += \
 
 COMPONENT_SYSTEM_TEST_ENV +=	PATH="$(GNUBIN):$(PATH)"
 COMPONENT_SYSTEM_TEST_CMD =	sh $(SOURCE_DIR)/autoconf/scripts/run-test.sh
-COMPONENT_SYSTEM_TEST_ARGS =	/usr/bin/pv $(SOURCE_DIR)
+COMPONENT_SYSTEM_TEST_ARGS =	$(USRBINDIR)/pv $(SOURCE_DIR)
 COMPONENT_SYSTEM_TEST_TARGETS =
-
-ASLR_MODE = $(ASLR_ENABLE)
-
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
-
-system-test:    $(SYSTEM_TEST_64)
-
-REQUIRED_PACKAGES += system/library

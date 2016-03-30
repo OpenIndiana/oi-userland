@@ -20,16 +20,13 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		getopt
 COMPONENT_VERSION=	1.1.6
 COMPONENT_PROJECT_URL=	http://frodo.looijaard.name/project/getopt/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:d0bf1dc642a993e7388a1cddfb9409bed375c21d5278056ccca3a0acd09dc5fe
 COMPONENT_ARCHIVE_URL=	http://frodo.looijaard.name/system/files/software/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
@@ -37,20 +34,21 @@ COMPONENT_BUGDB=	utility/gnu-getopt
 
 TPNO=			21550
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+BUILD_STYLE= justmake
+SYSTEM_TEST_TARGET= $(SYSTEM_TEST_64)
+include $(WS_MAKE_RULES)/common.mk
 
 # getopt doesn't use configure, override the hard-wired values in the Makefile.
-CC += "$(CC_BITS)"
 COMPONENT_BUILD_ARGS+=	CC="$(CC)"
 COMPONENT_BUILD_ARGS+=	CFLAGS="$(CFLAGS)"
+COMPONENT_BUILD_ARGS+=	LDFLAGS="$(LDFLAGS)"
 COMPONENT_BUILD_ARGS+=	LIBCGETOPT=0
 
-COMPONENT_INSTALL_ARGS+=	prefix=/usr/gnu
-COMPONENT_INSTALL_ARGS+=	mandir=/usr/gnu/share/man
+COMPONENT_INSTALL_ARGS+=	prefix="$(USRGNUDIR)"
+COMPONENT_INSTALL_ARGS+=	mandir="$(GNUSHAREMAN)"
 COMPONENT_INSTALL_ARGS+=	CC="$(CC)"
 COMPONENT_INSTALL_ARGS+=	CFLAGS="$(CFLAGS)"
+COMPONENT_INSTALL_ARGS+=	LDFLAGS="$(LDFLAGS)"
 
 # Stupid source tarball distribution contains two .o files.
 COMPONENT_POST_UNPACK_ACTION= \
@@ -65,23 +63,10 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|^make\[1\].*$$|XXX_CC_XXX|g" ' \
 	'-e "/^XXX_CC_XXX$$/d" '
 
-COMPONENT_TEST_ENV +=		PATH=$(BUILD_DIR_$(BITS)):$(GNUBIN):/usr/bin
+COMPONENT_TEST_ENV +=		PATH=$(BUILD_DIR_$(BITS)):$(GNUBIN):$(USRBINDIR)
 COMPONENT_TEST_TARGETS =	test
 
-COMPONENT_SYSTEM_TEST_ENV +=	PATH=$(GNUBIN):/usr/bin/
+COMPONENT_SYSTEM_TEST_ENV +=	PATH=$(GNUBIN):$(USRBINDIR)
 COMPONENT_SYSTEM_TEST_CMD =	./run-tests
-COMPONENT_SYSTEM_TEST_ARGS =	/usr/gnu/bin/getopt
+COMPONENT_SYSTEM_TEST_ARGS =	$(GNUBIN)/getopt
 COMPONENT_SYSTEM_TEST_TARGETS =
-
-ASLR_MODE = $(ASLR_ENABLE)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
-
-system-test:    $(SYSTEM_TEST_64)
-
-
-REQUIRED_PACKAGES += system/library

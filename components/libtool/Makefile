@@ -20,19 +20,16 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+# libtool only delivers scripts that embed paths, so prefer 32-bit.
+BUILD_BITS= 32_and_64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libtool
 COMPONENT_VERSION=	2.4.2
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/libtool/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:b38de44862a987293cd3d8dfae1c409d514b6c4e794ebc93648febf9afc38918
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/libtool
 
 TPNO=			9088
@@ -48,13 +45,12 @@ COMPONENT_ARCHIVE_HASH_1 = \
 COMPONENT_ARCHIVE_URL_1 = http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE_1)
 SOURCE_DIR_1 =		$(COMPONENT_DIR)/$(COMPONENT_SRC_1)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+BUILD_TARGET=
+INSTALL_TARGET=
+include $(WS_MAKE_RULES)/gnu-component.mk
 
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		--disable-static
-CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=		PERL="$(PERL)"
 
 # requires an older automake to reconfigure.
@@ -64,12 +60,10 @@ COMPONENT_PREP_ACTION = \
 # Remove the hard-wired compiler locations in the LTCC and two CC lines
 # in the two versions of the libtool script.
 COMPONENT_POST_INSTALL_ACTION = \
-	(for dir in $(PROTOUSRBINDIR) $(PROTOUSRBINDIR)/$(MACH64) ; do \
-		cd $$dir; \
-		/usr/gnu/bin/sed -i \
-			-e 's|^LTCC="/.*$$|LTCC="cc"|' \
-			-e 's|^CC="/.*$$|CC="cc"|' libtool ; \
-	done)
+	cd $(PROTO_DIR)$(USRBIN.$(BITS)); \
+	$(GSED) -i \
+		-e 's|^LTCC="/.*$$|LTCC="cc"|' \
+		-e 's|^CC="/.*$$|CC="cc"|' libtool ; \
 
 # Macros to configure, build, and install the old version for the time being.
 BUILD_OLD_DIR_32 = $(COMPONENT_DIR)/build/$(COMPONENT_VERSION_1)-$(MACH32)
@@ -101,21 +95,13 @@ COMPONENT_TEST_TRANSFORMS += \
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-configure:	$(CONFIGURE_32_and_64)
-
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
 
 REQUIRED_PACKAGES += developer/base-developer-utilities
 REQUIRED_PACKAGES += file/gnu-coreutils
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += text/gnu-grep
 REQUIRED_PACKAGES += text/gnu-sed

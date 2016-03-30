@@ -34,8 +34,9 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2012/202
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-file path=usr/bin/$(MACH64)/dnet-config
-file path=usr/bin/dnet-config
+# dnet-config contains embedded paths, so swap these around.
+file usr/bin/dnet-config path=usr/bin/$(MACH64)/dnet-config
+file usr/bin/$(MACH32)/dnet-config path=usr/bin/dnet-config
 file path=usr/include/dnet.h
 file path=usr/include/dnet/addr.h
 file path=usr/include/dnet/arp.h
@@ -64,7 +65,7 @@ file usr/lib/python2.7/site-packages/dnet-$(COMPONENT_VERSION)-py2.7.egg-info \
     path=usr/lib/python2.7/vendor-packages/dnet-$(COMPONENT_VERSION)-py2.7.egg-info
 file $(MACH32)/python/build/lib.solaris-$(SOLARIS_VERSION)-$(MACHINE).32bit-2.7/dnet.so \
     path=usr/lib/python2.7/vendor-packages/dnet.so
-file usr/sbin/$(MACH64)/dnet path=usr/sbin/dnet
+file path=usr/sbin/dnet
 file path=usr/share/man/man3/dnet.3
 file path=usr/share/man/man8/dnet.8
 license libdnet.license license="libdnet license"

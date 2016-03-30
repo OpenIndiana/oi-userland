@@ -22,14 +22,12 @@
 #
 # Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		poppler
 COMPONENT_VERSION=	0.14.4
 COMPONENT_PROJECT_URL=	http://poppler.freedesktop.org/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
     sha256:97c394144802e733eaec2682e06bddc4939c71ede58df045127aa94bd244c713
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
@@ -45,9 +43,8 @@ COMPONENT_ARCHIVE_HASH_1= \
 COMPONENT_ARCHIVE_URL_1= $(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE_1)
 TPNO_POPPLER_DATA=	7744
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = \
 	(cd $(@D) ; \
@@ -58,10 +55,6 @@ COMPONENT_PREP_ACTION = \
 	autoconf )
 
 CXX +=			$(studio_NORUNPATH)
-
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS +=	CXXFLAGS="$(CXXFLAGS)"
-CONFIGURE_OPTIONS +=    LDFLAGS="$(LDFLAGS)"
 
 # Reduce build time dependencies since we don't ship this and can't run as an
 # automated test.
@@ -83,16 +76,6 @@ COMPONENT_BUILD_ARGS += V=1
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-configure:	$(CONFIGURE_32_and_64)
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
-
-system-test:	$(NO_TESTS)
-
 REQUIRED_PACKAGES += image/library/libjpeg
 REQUIRED_PACKAGES += image/library/libpng
 REQUIRED_PACKAGES += library/desktop/cairo
@@ -102,7 +85,6 @@ REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/lcms
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/c++-runtime
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2

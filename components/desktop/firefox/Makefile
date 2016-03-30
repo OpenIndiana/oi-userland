@@ -121,7 +121,7 @@ CONFIGURE_ENV +=	OS_DEFINES="-D__USE_LEGACY_PROTOTYPES__"
 CONFIGURE_ENV +=        CXXFLAGS='-xlibmil -xlibmopt -lCrun -lCstd -features=tmplrefstatic,no%except -D_XOPEN_SOURCE=500 -D__EXTENSIONS__ -template=no%extdef'
 # -L.../dist/lib needs to be set otherwise it will report missing libnss3.so, 
 # libssl3.so, etc, while linking.
-CONFIGURE_ENV +=        LDFLAGS="-z ignore -z interpose -B nodirect -L$(BUILD_DIR_32)/dist/lib"
+CONFIGURE_ENV +=        LDFLAGS="$(LD_Z_IGNORE) -z interpose -B nodirect -L$(BUILD_DIR_32)/dist/lib"
 
 
 CONFIGURE_ENV +=	MOZCONFIG=$(MOZCONFIG)

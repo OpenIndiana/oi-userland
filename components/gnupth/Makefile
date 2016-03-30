@@ -18,25 +18,23 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+# gnupth only delivers scripts that embed paths, so prefer 32-bit.
+BUILD_BITS= 32_and_64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pth
 COMPONENT_VERSION=	2.0.7
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/pth/
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:72353660c5a2caafd601b20e12e75d865fd88f6cf1a088b306a3963f0bc77232
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/pth/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/pth
 
 TPNO=			8899
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/gnu-component.mk
 
 PATCH_LEVEL = 0
 
@@ -58,32 +56,15 @@ CPPFLAGS += $(CPP_LARGEFILES) $(CPP_POSIX)
 
 LDFLAGS =	-lpthread -lposix4 -lrt
 
-CONFIGURE_OPTIONS  +=	--localstatedir=/var
+CONFIGURE_OPTIONS  +=	--localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS  +=	--with-pic
 
-CONFIGURE_ENV  +=   LD="$(CC) $(CFLAGS) $(LDFLAGS)"
-CONFIGURE_ENV  +=   CFLAGS="$(CFLAGS)"
-CONFIGURE_ENV  +=   CPPFLAGS="$(CPPFLAGS)"
-CONFIGURE_ENV  +=   CPP="$(CC) $(CPPFLAGS) $(CFLAGS) -E"
-CONFIGURE_ENV  +=   LDFLAGS="$(LDFLAGS)"
-CONFIGURE_ENV +=    INSTALL="$(INSTALL)"
+CONFIGURE_ENV += LD="$(CC) $(CFLAGS) $(LDFLAGS)"
+CONFIGURE_ENV += CPP="$(CC) $(CPPFLAGS) $(CFLAGS) -E"
+CONFIGURE_ENV += INSTALL="$(INSTALL)"
 
 COMPONENT_TEST_MASTER =	$(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|\(^Pth:\).*|\1|" '
 
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
-configure:	$(CONFIGURE_32_and_64)
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
-
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library

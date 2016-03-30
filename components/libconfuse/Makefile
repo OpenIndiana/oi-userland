@@ -18,16 +18,17 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libconfuse
 COMPONENT_VERSION=	2.6
 COMPONENT_SRC_NAME=	confuse
-COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.nongnu.org/confuse/
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:e8d653159b152f3850a7224b3eb604955795dbd3fd6603816ee46411ea53e84a
 COMPONENT_ARCHIVE_URL=	http://bzero.se/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
@@ -35,13 +36,12 @@ COMPONENT_BUGDB=	library/libconfuse
 
 TPNO=			6306
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= install $(TEST_32_and_64)
+SYSTEM_TEST_TARGET= configure $(SYSTEM_TEST_32_and_64)
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS +=	--disable-static
 CONFIGURE_OPTIONS +=	--enable-shared
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 
 # This is really only needed to get the test target to pass.
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -71,15 +71,3 @@ TEST_LIBPATH.64 =       $(PROTOUSRLIBDIR64)
 COMPONENT_TEST_ENV +=   LD_LIBRARY_PATH=$(TEST_LIBPATH.$(BITS))
 
 ASLR_MODE = $(ASLR_ENABLE)
-
-configure:	$(CONFIGURE_32_and_64)
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		install $(TEST_32_and_64)
-
-system-test:    configure $(SYSTEM_TEST_32_and_64)
-
-REQUIRED_PACKAGES += system/library

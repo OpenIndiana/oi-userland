@@ -18,52 +18,34 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		screen
 COMPONENT_VERSION=	4.3.1
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/screen/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:fa4049f8aee283de62e283d427f2cfd35d6c369b40f7f45f947dbfd915699d63
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/screen/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/screen
 
 TPNO=			23486	
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/gnu-component.mk
+
+# Fix 64-bit linking via compiler.
+LDFLAGS += $(CC_BITS)
 
 CONFIGURE_OPTIONS +=	--enable-colors256
-CONFIGURE_OPTIONS +=	--with-sys-screenrc=/etc/screenrc
+CONFIGURE_OPTIONS +=	--with-sys-screenrc=$(ETCDIR)/screenrc
 CONFIGURE_OPTIONS +=	--disable-socket-dir
 CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
-# We need to add CC_BITS or we get ld: fatal: wrong ELF class: ELFCLASS64
-COMPONENT_BUILD_ARGS += LDFLAGS="$(CC_BITS)"
 
-PROTOTERMINFODIR=$(PROTOUSRSHAREDIR)/lib/terminfo
+PROTOTERMINFODIR=$(PROTOUSRSHARELIBDIR)/terminfo
 
 $(PROTOTERMINFODIR):
 	$(MKDIR) $@
 
 $(INSTALL_64):	$(PROTOTERMINFODIR)
-
-ASLR_MODE = $(ASLR_ENABLE)
-
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
-
-REQUIRED_PACKAGES += system/library

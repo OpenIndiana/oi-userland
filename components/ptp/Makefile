@@ -18,19 +18,17 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
-
-COMPILER =      gcc
-
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 64
+COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ptpd
 COMPONENT_VERSION=	2.2.0
-IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://ptpd.sourceforge.net/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:f2266a22db84318d8b9ce266ea83772c03438c31f4993fa9643fa675a07c26b4
 COMPONENT_ARCHIVE_URL= \
@@ -40,30 +38,13 @@ COMPONENT_BUGDB=	service/ptp
 TPNO_PTP=		12665
 TPNO_SOLARFLARE=	15817
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-PATCH_LEVEL =	1
+BUILD_STYLE= justmake
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PKG_PROTO_DIRS += $(BUILD_DIR_64)
 
-COMPONENT_BUILD_ENV  +=         CC=$(CC)
-
-# Enable ASLR for this component
-ASLR_MODE = $(ASLR_ENABLE)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
-
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libv12n
 REQUIRED_PACKAGES += system/library/math

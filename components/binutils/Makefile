@@ -18,28 +18,27 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
-
-COMPILER=gcc
-
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+# At the moment, we build both 32-bit and 64-bit versions of binutils, but only
+# deliver the 32-bit binaries and libraries.
+BUILD_BITS= 32_and_64
+COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		binutils
 COMPONENT_VERSION=	2.25.1
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/binutils/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:b5b14added7d78a8d1ca70b5cb75fef57ce2197264f4f5835326b0df22ac9f22
 COMPONENT_BUGDB=	utility/gnu-binutils
 
 TPNO=			23923
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(TEST_32)
+include $(WS_MAKE_RULES)/gnu-component.mk
 
 PATCH_LEVEL := 0
 
@@ -60,12 +59,8 @@ CXXFLAGS += $(CFLAGS.$(MACH))
 CXXFLAGS += -D_REENTRANT $(CPP_LARGEFILES) $(CPP_POSIX)
 CPPFLAGS += -D_REENTRANT $(CPP_LARGEFILES) $(CPP_POSIX)
 
-CONFIGURE_PREFIX =	/usr/gnu
+CONFIGURE_PREFIX =	$(USRDIR)/gnu
 
-CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_ENV +=	CXXFLAGS="$(CXXFLAGS)"
-CONFIGURE_ENV +=	CPPFLAGS="$(CPPFLAGS)"
-CONFIGURE_ENV +=	LDFLAGS="$(LDFLAGS)"
 CONFIGURE_ENV +=	LD_OPTIONS="$(LD_OPTIONS)"
 CONFIGURE_ENV +=	CCLD="$(CC) $(CFLAGS) $(LDFLAGS)"
 CONFIGURE_ENV +=	LIBS="$(LIBS)"
@@ -73,37 +68,15 @@ CONFIGURE_ENV +=	PATH="$(PATH)"
 
 CONFIGURE_OPTIONS +=	--mandir=$(CONFIGURE_MANDIR)
 CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS +=	--enable-64-bit-bfd=yes
-CONFIGURE_OPTIONS +=    --enable-gold=no
-CONFIGURE_OPTIONS +=    --enable-plugins=yes
-CONFIGURE_OPTIONS +=    --enable-nls=yes
-CONFIGURE_OPTIONS +=    --enable-host-shared=yes
-CONFIGURE_OPTIONS +=    --enable-deterministic-archives=yes
+CONFIGURE_OPTIONS +=    --disable-gold
 CONFIGURE_OPTIONS +=    --disable-libtool-lock
-CONFIGURE_OPTIONS +=    --enable-largefile=yes
-
-
-CONFIGURE_OPTIONS +=	CC="$(CC)"
-CONFIGURE_OPTIONS +=	CXX="$(CXX)"
-CONFIGURE_OPTIONS +=    CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS +=    CXXFLAGS="$(CXXFLAGS)"
-CONFIGURE_OPTIONS +=    CPPFLAGS="$(CPPFLAGS)"
-CONFIGURE_OPTIONS +=    LDFLAGS="$(LDFLAGS)"
-CONFIGURE_OPTIONS +=    LD_OPTIONS="$(LD_OPTIONS)"
-
-# common targets
-configure:	$(CONFIGURE_32_and_64)
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test: $(TEST_32)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
+CONFIGURE_OPTIONS +=	--enable-64-bit-bfd
+CONFIGURE_OPTIONS +=    --enable-deterministic-archives
+CONFIGURE_OPTIONS +=    --enable-host-shared
+CONFIGURE_OPTIONS +=    --enable-largefile
+CONFIGURE_OPTIONS +=    --enable-nls
+CONFIGURE_OPTIONS +=    --enable-plugins
 
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/flex-runtime

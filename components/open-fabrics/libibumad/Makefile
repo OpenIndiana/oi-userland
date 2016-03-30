@@ -18,77 +18,60 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
-# OFED only builds with GCC
-COMPILER=gcc
-
-include ../../../make-rules/shared-macros.mk
+BUILD_BITS= 64_and_32
+include ../ofed-component-macros.mk
 
 COMPONENT_NAME=		libibumad
 COMPONENT_VERSION=	1.3.7
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:4999cb9ff5c7243027d8a154d6b27d1efffaa4359b84447731c5ef545fb72229
 COMPONENT_ARCHIVE_URL=	http://www.openfabrics.org/downloads/management/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/ofuv_lib
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include ../ofed.mk
+include ../ofed-component.mk
 
-LIBS +=	-lsocket -lnsl -libverbs
+LIBS +=	-libverbs
 
-CLEANUP_FILES = $(PROTO_DIR)/$(CONFIGURE_MANDIR)/man3/umad_free.3 \
-	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man3/umad_done.3 \
-	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man3/umad_send.3 \
-	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man3/umad_recv.3 \
-	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man3/umad_init.3 \
-	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man3/umad_dump.3 \
-	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man3/umad_poll.3 \
-	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man3/umad_size.3 \
-	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man3/umad_debug.3 \
-	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man3/umad_alloc.3 \
-	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man3/umad_get_ca.3 \
-	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man3/umad_get_fd.3 \
-	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man3/umad_status.3 \
-	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man3/umad_get_mad.3 \
-	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man3/umad_set_grh.3 \
-	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man3/umad_set_addr.3 \
-	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man3/umad_get_pkey.3 \
-	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man3/umad_get_port.3 \
-	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man3/umad_set_pkey.3 \
-	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man3/umad_register.3 \
-	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man3/umad_addr_dump.3 \
-	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man3/umad_open_port.3 \
-	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man3/umad_release_ca.3 \
-	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man3/umad_close_port.3 \
-	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man3/umad_unregister.3 \
-	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man3/umad_set_grh_net.3 \
-	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man3/umad_get_mad_addr.3 \
-	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man3/umad_set_addr_net.3 \
-	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man3/umad_release_port.3 \
-	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man3/umad_register_oui.3 \
-	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man3/umad_get_cas_names.3 \
-	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man3/umad_get_issm_path.3 \
-	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man3/umad_get_ca_portguids.3
+CLEANUP_FILES = $(PROTOUSRSHAREMAN3DIR)/umad_free.3 \
+	$(PROTOUSRSHAREMAN3DIR)/umad_done.3 \
+	$(PROTOUSRSHAREMAN3DIR)/umad_send.3 \
+	$(PROTOUSRSHAREMAN3DIR)/umad_recv.3 \
+	$(PROTOUSRSHAREMAN3DIR)/umad_init.3 \
+	$(PROTOUSRSHAREMAN3DIR)/umad_dump.3 \
+	$(PROTOUSRSHAREMAN3DIR)/umad_poll.3 \
+	$(PROTOUSRSHAREMAN3DIR)/umad_size.3 \
+	$(PROTOUSRSHAREMAN3DIR)/umad_debug.3 \
+	$(PROTOUSRSHAREMAN3DIR)/umad_alloc.3 \
+	$(PROTOUSRSHAREMAN3DIR)/umad_get_ca.3 \
+	$(PROTOUSRSHAREMAN3DIR)/umad_get_fd.3 \
+	$(PROTOUSRSHAREMAN3DIR)/umad_status.3 \
+	$(PROTOUSRSHAREMAN3DIR)/umad_get_mad.3 \
+	$(PROTOUSRSHAREMAN3DIR)/umad_set_grh.3 \
+	$(PROTOUSRSHAREMAN3DIR)/umad_set_addr.3 \
+	$(PROTOUSRSHAREMAN3DIR)/umad_get_pkey.3 \
+	$(PROTOUSRSHAREMAN3DIR)/umad_get_port.3 \
+	$(PROTOUSRSHAREMAN3DIR)/umad_set_pkey.3 \
+	$(PROTOUSRSHAREMAN3DIR)/umad_register.3 \
+	$(PROTOUSRSHAREMAN3DIR)/umad_addr_dump.3 \
+	$(PROTOUSRSHAREMAN3DIR)/umad_open_port.3 \
+	$(PROTOUSRSHAREMAN3DIR)/umad_release_ca.3 \
+	$(PROTOUSRSHAREMAN3DIR)/umad_close_port.3 \
+	$(PROTOUSRSHAREMAN3DIR)/umad_unregister.3 \
+	$(PROTOUSRSHAREMAN3DIR)/umad_set_grh_net.3 \
+	$(PROTOUSRSHAREMAN3DIR)/umad_get_mad_addr.3 \
+	$(PROTOUSRSHAREMAN3DIR)/umad_set_addr_net.3 \
+	$(PROTOUSRSHAREMAN3DIR)/umad_release_port.3 \
+	$(PROTOUSRSHAREMAN3DIR)/umad_register_oui.3 \
+	$(PROTOUSRSHAREMAN3DIR)/umad_get_cas_names.3 \
+	$(PROTOUSRSHAREMAN3DIR)/umad_get_issm_path.3 \
+	$(PROTOUSRSHAREMAN3DIR)/umad_get_ca_portguids.3
 
 COMPONENT_POST_INSTALL_ACTION = \
 	$(RM) $(PROTO_DIR)/$(CONFIGURE_LIBDIR.32)/$(COMPONENT_NAME).la;\
 	$(RM) $(PROTO_DIR)/$(CONFIGURE_LIBDIR.64)/$(COMPONENT_NAME).la;\
 	$(RM) $(CLEANUP_FILES)
-
-
-# common targets
-configure:	$(CONFIGURE_32_and_64)
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
 

@@ -18,40 +18,31 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-BITS=64
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		grep
 COMPONENT_VERSION=	2.22
-COMPONENT_PROJECT_URL=	http://gnu.org/software/grep/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-
 COMPONENT_ARCHIVE_HASH=	\
     sha256:ca91d22f017bfcb503d4bc3b44295491c89a33a3df0c3d8b8614f2d3831836eb
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/grep/$(COMPONENT_ARCHIVE)
-
 COMPONENT_BUGDB=	utility/ggrep
 
 TPNO=			26437
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+SYSTEM_TEST_TARGET= $(SOURCE_DIR)/.system-test-patched configure $(SYSTEM_TEST_64)
+include $(WS_MAKE_RULES)/gnu-component.mk
 
 # We need to be able to return from void functions
-CFLAGS	+=			$(studio_FEATURES_EXTENSIONS)
+CFLAGS += $(studio_FEATURES_EXTENSIONS)
 
-# 64-bit only components are delivered to the "32-bit" locations since we don't
-# need both versions.
-CONFIGURE_BINDIR.32 = $(CONFIGURE_PREFIX)/gnu/bin
-
-CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
-
-# Enable aslr for this component
-ASLR_MODE = $(ASLR_ENABLE)
+CONFIGURE_PREFIX   = $(USRGNUDIR)
+CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_OPTIONS += --localedir=$(USRSHARELOCALEDIR)
 
 # Needed for "gmake test" to work.
 # SHELLOPTS is exported via make-rules/shared-macros.mk,
@@ -88,24 +79,11 @@ $(SOURCE_DIR)/.system-test-patched: $(SOURCE_DIR)/.prep
 
 # if we previously patched the source for the system-test target,
 # ensure we rebuild without that patch
-test-check:
+COMPONENT_PRE_TEST_ACTION += \
 	if [ -e $(SOURCE_DIR)/.system-test-patched ]; then \
 	   cd $(COMPONENT_DIR); \
 	   $(GMAKE) clean build; \
 	fi
 
-# common targets
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		test-check $(TEST_64)
-
-system-test:    $(SOURCE_DIR)/.system-test-patched configure $(SYSTEM_TEST_64)
-
-
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += shell/bash
-REQUIRED_PACKAGES += system/library

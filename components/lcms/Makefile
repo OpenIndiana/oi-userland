@@ -18,26 +18,23 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =        lcms
 COMPONENT_VERSION=      1.19
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  http://www.littlecms.com/
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
     sha256:80ae32cb9f568af4dc7ee4d3c05a4c31fc513fc3e31730fed0ce7378237273a9
 COMPONENT_ARCHIVE_URL=  http://sourceforge.net/projects/lcms/files/lcms/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/lcms
 
 TPNO=			9072
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-include $(WS_MAKE_RULES)/lint-libraries.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL = 0
 
@@ -61,12 +58,10 @@ COMPONENT_TEST_TRANSFORMS += \
 CXXFLAGS += -features=extensions,nestedaccess,tmplrefstatic
 CXXFLAGS += -template=geninlinefuncs
 
-CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
-CONFIGURE_ENV += CXXFLAGS="$(CXXFLAGS)"
 CONFIGURE_ENV += PYTHON="$(PYTHON)"
 CONFIGURE_ENV += PYTHONMODULEDIR="$(PYTHON_VENDOR_PACKAGES)"
 
-CONFIGURE_OPTIONS  +=           --includedir=/usr/include/lcms
+CONFIGURE_OPTIONS  +=           --includedir=$(USRINCDIR)/lcms
 CONFIGURE_OPTIONS  +=           --enable-shared
 CONFIGURE_OPTIONS  +=           --disable-static
 CONFIGURE_OPTIONS  +=           --with-jpeg
@@ -74,8 +69,6 @@ CONFIGURE_OPTIONS  +=           --with-tiff
 CONFIGURE_OPTIONS  +=           --with-zlib
 CONFIGURE_OPTIONS  +=           --with-python
 CONFIGURE_OPTIONS  +=           --with-pic
-
-PKG_PROTO_DIRS +=	$(COMPONENT_SRC)
 
 # in order to run the tests, we need to use cloney
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -88,22 +81,12 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 
 LINT_FLAGS += -I$(COMPONENT_DIR)/$(COMPONENT_SRC)/include
 
-configure:	$(CONFIGURE_32_and_64)
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-	$(PYTHON.2.7.32) -m compileall $(PROTO_DIR)/usr/lib/python2.7/vendor-packages
-
-
-test: $(TEST_32_and_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+COMPONENT_POST_INSTALL_ACTION += \
+	$(PYTHON.2.7.32) -m compileall $(PROTOUSRLIBDIR)/python2.7/vendor-packages
 
 REQUIRED_PACKAGES += image/library/libjpeg
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += library/lcms
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/c++-runtime
 REQUIRED_PACKAGES += system/library/math

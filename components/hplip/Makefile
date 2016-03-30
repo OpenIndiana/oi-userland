@@ -19,34 +19,31 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         hplip
 COMPONENT_VERSION=      3.15.7
 TPNO=			24589
 COMPONENT_ARCHIVE_HASH= sha256:d310903048f3600f93422e5a8c39ddd682511e0849cd9abc5e943f9a10bdd49d
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	http://prdownloads.sourceforge.net/hplip/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://hplipopensource.com/hplip-web/index.html
-COMPONENT_BUGDB=	utility/hplip
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+COMMON_TARGETS= no
+include $(WS_MAKE_RULES)/common.mk
 
 PKG_OPTIONS += -I $(COMPONENT_DIR)
 
-# Enable ASLR for this component
-ASLR_MODE = $(ASLR_ENABLE)
-
 # We need to be able to return from void functions
-CC += $(studio_FEATURES_EXTENSIONS)
-CXX += $(studio_FEATURES_EXTENSIONS) $(studio_NORUNPATH) $(studio_CXXLIB_CSTD) 
+CFLAGS.studio += $(studio_FEATURES_EXTENSIONS)
+CXXFLAGS.studio += $(studio_FEATURES_EXTENSIONS) 
+CXXFLAGS.studio += $(studio_CXXLIB_CSTD) 
 
-ROOTPPDCACHE =  $(PROTO_DIR)/usr/lib/lp/caches/SUNWhpijs.cache
+ROOTPPDCACHE =  $(PROTOUSRLIBDIR)/lp/caches/SUNWhpijs.cache
 
 # common configure options
 CONFIGURE_OPTIONS +=	--localedir=$(CONFIGURE_LOCALEDIR)
@@ -56,7 +53,9 @@ CONFIGURE_OPTIONS +=	--disable-qt4
 CONFIGURE_OPTIONS +=	am_cv_python_pythondir="$(PYTHON_VENDOR_PACKAGES)"
 CONFIGURE_OPTIONS +=	am_cv_python_pyexecdir="$(PYTHON_VENDOR_PACKAGES)"
 
-CONFIGURE_ENV +=	LDFLAGS=" -lnsl"
+ifeq ($(OS_VERSION),5.11)
+LDFLAGS += -lnsl
+endif
 
 HPLIP_VARIANT = $(BUILD_DIR)/$(MACH32)-hplip
 HPIJS_VARIANT = $(BUILD_DIR)/$(MACH32)-hpijs
@@ -67,7 +66,7 @@ VARIANTS = $(HPLIP_VARIANT) $(HPIJS_VARIANT)
 # and for the HPIJS only support
 
 # use these options for the CUPS/SANE support
-$(HPLIP_VARIANT)/.configured: CONFIGURE_OPTIONS += --with-hpppddir=/usr/share/cups/model/SUNWhplip
+$(HPLIP_VARIANT)/.configured: CONFIGURE_OPTIONS += --with-hpppddir=$(USRSHAREDIR)/cups/model/SUNWhplip
 $(HPLIP_VARIANT)/.configured: CONFIGURE_OPTIONS += --enable-libusb01_build
 $(HPLIP_VARIANT)/.configured: CONFIGURE_OPTIONS += --enable-fax-build
 $(HPLIP_VARIANT)/.configured: CONFIGURE_OPTIONS += --enable-hpcups-install
@@ -76,7 +75,7 @@ $(HPLIP_VARIANT)/.configured: CONFIGURE_OPTIONS += --enable-cups-drv-install
 
 # use these options for the HPIJS only support
 $(HPIJS_VARIANT)/.configured: CONFIGURE_OPTIONS += --enable-foomatic-ppd-install
-$(HPIJS_VARIANT)/.configured: CONFIGURE_OPTIONS += --with-hpppddir=/usr/share/ppd/SUNWhpijs/HP
+$(HPIJS_VARIANT)/.configured: CONFIGURE_OPTIONS += --with-hpppddir=$(USRSHAREDIR)/ppd/SUNWhpijs/HP
 $(HPIJS_VARIANT)/.configured: CONFIGURE_OPTIONS += --disable-cups-drv-install
 $(HPIJS_VARIANT)/.configured: CONFIGURE_OPTIONS += --disable-hpcups-install
 $(HPIJS_VARIANT)/.configured: CONFIGURE_OPTIONS += --disable-doc-build
@@ -91,8 +90,6 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 # Generate configuration scripts
 $(HPLIP_VARIANT)/.built: COMPONENT_PREP_ACTION = \
 		(cd $(@D) ; autoconf )
-
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
 
 $(BUILD_DIR)/.allvariantsinstalled: $(VARIANTS:%=%/.installed)
 	$(RM) $(ROOTPPDCACHE)
@@ -142,7 +139,6 @@ REQUIRED_PACKAGES += print/cups
 REQUIRED_PACKAGES += image/scanner/xsane/sane-backends
 REQUIRED_PACKAGES += runtime/perl-512
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/c++-runtime
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/math

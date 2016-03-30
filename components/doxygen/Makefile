@@ -18,20 +18,21 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-BITS=64
+BUILD_BITS= 64
+COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		doxygen
 COMPONENT_VERSION=	1.8.11
 COMPONENT_PROJECT_URL=	http://www.stack.nl/~dimitri/doxygen/index.html
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).src.tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:65d08b46e48bd97186aef562dc366681045b119e00f83c5b61d05d37ea154049
 COMPONENT_ARCHIVE_URL=	http://ftp.stack.nl/pub/users/dimitri/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/doxygen
 
 # Download the manual so that we don't have to keep updating it in the gate.
 COMPONENT_ARCHIVE_1 =	$(COMPONENT_NAME)_manual-$(COMPONENT_VERSION).pdf.zip
@@ -41,16 +42,15 @@ COMPONENT_ARCHIVE_URL_1 =	ftp://ftp.stack.nl/pub/users/dimitri/$(COMPONENT_ARCHI
 
 TPNO=			27457
 
-include $(WS_MAKE_RULES)/cmake.mk
-include $(WS_MAKE_RULES)/common-64.mk
-
-# Necessary to find the right gcc during build
-PATH=$(GCC_ROOT)/bin:/usr/bin
-
-COMPILER =		gcc
+BUILD_STYLE= cmake
+SYSTEM_TEST_TARGET= $(SYSTEM_TEST_64)
+include $(WS_MAKE_RULES)/common.mk
 
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)
-PATH=$(PARFAIT_TOOLS):$(GCC_ROOT)/bin:/usr/bin
+PATH=$(PARFAIT_TOOLS):$(GCC_ROOT)/bin:$(USRBINDIR)
+else
+# Necessary to find the right gcc during build
+PATH=$(GCC_ROOT)/bin:$(USRBINDIR)
 endif
 
 
@@ -90,15 +90,11 @@ COMPONENT_SYSTEM_TEST_CMD =	perl
 COMPONENT_SYSTEM_TEST_ARGS =	runtests.pl --doxygen /usr/bin/doxygen
 COMPONENT_SYSTEM_TEST_TARGETS =
 
-ASLR_MODE = $(ASLR_ENABLE)
-
-install:	$(INSTALL_64)
+COMPONENT_POST_INSTALL_ACTION += \
 	cd $(PROTO_DIR) ; $(UNPACK) ../../../$(COMPONENT_ARCHIVE_1)
-
 
 REQUIRED_PACKAGES += developer/lexer/flex
 REQUIRED_PACKAGES += developer/parser/bison
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/gcc/gcc-c++-runtime
 REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
 REQUIRED_PACKAGES += system/library/math

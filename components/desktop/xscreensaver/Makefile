@@ -22,14 +22,16 @@
 #
 # Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS=64
+# While the tree currently builds with Studio, we need to make sure it also
+# builds with gcc when submitting patches upstream, and having both sets of
+# options in the CFLAGS below makes it easy to switch when needed.
+# COMPILER=gcc
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xscreensaver
 COMPONENT_VERSION=	5.34
 COMPONENT_PROJECT_URL=	https://www.jwz.org/xscreensaver/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:6fff7ec4be743e5c042647ea9687dd0cdf48d1dd5e8e15098e5018bbd02e5e27
 COMPONENT_ARCHIVE_URL=	https://www.jwz.org/xscreensaver/$(COMPONENT_ARCHIVE)
@@ -37,15 +39,8 @@ COMPONENT_BUGDB=        gnome/screensaver
 
 TPNO=			26341
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure-64.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-# While the tree currently builds with Studio, we need to make sure it also
-# builds with gcc when submitting patches upstream, and having both sets of
-# options in the CFLAGS below makes it easy to switch when needed.
-# COMPILER=gcc
-CC += $(CC_BITS)
+TEST_TARGET = $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # Enable additional warnings, since we've modified this code a lot
 CFLAGS.studio += -v
@@ -57,11 +52,19 @@ CFLAGS.gcc    += -Wall
 CFLAGS.studio += -fsimple=2 -nofstore -xlibmil -xprefetch
 CFLAGS.gcc    += -funsafe-math-optimizations
 
-# Regenerate configure after patches modify configure.in
-COMPONENT_PREP_ACTION += ( cd $(@D); autoreconf -fiv);
+# Fix 64-bit linking; compiler is used for the linking.
+LDFLAGS += $(CC_BITS)
+
+# Regenerate configure after patches modify configure.in; the automake -af
+# forces the update of the standard automake files that autoreconf will not
+# update because Makefile.am does not exist.  This is needed to ensure we have
+# a recent version of config.guess, etc. used for configure; the | true is
+# because automake will exit with an error because Makefile.am does not exist,
+# but it will update the required files.
+COMPONENT_PREP_ACTION += (cd $(@D); autoreconf -fiv; automake -af | true)
 
 # Need to pick up the GNU version of xgettext.
-PATH=$(GNUBIN):/usr/bin
+PATH=$(GNUBIN):$(USRBINDIR)
 
 # Libraries & programs to depend on
 CONFIGURE_OPTIONS += --with-gl=$(USRDIR)
@@ -95,7 +98,6 @@ CONFIGURE_OPTIONS += --without-kerberos
 # Paths to install to
 APP_DEFAULTS_DIR  = $(CONFIGURE_PREFIX)/share/X11/app-defaults
 XSS_LIBDIR 	  = $(CONFIGURE_PREFIX)/lib/xscreensaver
-CONFIGURE_OPTIONS += --bindir=$(CONFIGURE_BINDIR.32)
 CONFIGURE_OPTIONS += --libexecdir=$(XSS_LIBDIR)/bin
 CONFIGURE_OPTIONS += --with-hackdir=$(XSS_LIBDIR)/hacks
 CONFIGURE_OPTIONS += --with-configdir=$(XSS_LIBDIR)/config/control-center-2.0
@@ -135,15 +137,6 @@ done ; \
 rm -f $(PROTO_DIR)$(XSS_LIBDIR)/hacks/webcollage-helper );
 
 
-ASLR_MODE = $(ASLR_ENABLE)
-
-configure:      $(CONFIGURE_64)
-build:          $(BUILD_64)
-install:        $(INSTALL_64)
-test:           $(NO_TESTS)
-system-test:    $(NO_TESTS)
-
-
 REQUIRED_PACKAGES += gnome/accessibility/gnome-a11y-libs
 REQUIRED_PACKAGES += gnome/config/gconf
 REQUIRED_PACKAGES += image/library/libjpeg
@@ -157,7 +150,6 @@ REQUIRED_PACKAGES += library/gnome/gnome-component
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/perl-5/xml-parser
 REQUIRED_PACKAGES += runtime/perl-512
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxext

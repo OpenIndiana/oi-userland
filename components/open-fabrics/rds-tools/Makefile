@@ -18,33 +18,25 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
-# OFED only builds with GCC
-COMPILER=gcc
-
-include ../../../make-rules/shared-macros.mk
+BUILD_BITS= 64
+include ../ofed-component-macros.mk
 
 COMPONENT_NAME=		rds-tools
 COMPONENT_VERSION=	2.0.4
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:31b5924f73bed59e513470586c69ebe92eeb708fcc61a0519045fcf7954233a3
-COMPONENT_ARCHIVE_URL=	http://www.openfabrics.org/downloads/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/ofuv_tools
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include ../ofed.mk
+include ../ofed-component.mk
 
-CPPFLAGS +=	-I$(PROTO_DIR)/usr/include
+CPPFLAGS +=	-I$(PROTOUSRINCDIR)
 CFLAGS +=	-O2 -Wall -D_XOPEN_SOURCE=500 -D__EXTENSIONS__ $(CPPFLAGS)
 
-LIBS +=	-lsocket -lnsl -llgrp -lkstat -libverbs
-
-CONFIGURE_OPTIONS +=	--bindir=$(USRBINDIR)
+LIBS +=	-llgrp -lkstat -libverbs
 
 COMPONENT_PREP_ACTION = \
 	cp rds-vendor.c $(@D)/
@@ -63,15 +55,4 @@ COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_INSTALL_ENV += INSTALL=$(INSTALL)
 
 COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
-
-# common targets
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
 

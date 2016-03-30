@@ -22,15 +22,14 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+# Prefer 32-bit as default fastcgi target matters.
+BUILD_BITS= 32_and_64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fastcgi
 COMPONENT_VERSION=	2.4.0
 COMPONENT_PROJECT_URL=	http://www.fastcgi.com/
 COMPONENT_SRC_NAME=	fcgi
-COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:66fc45c6b36a21bf2fbbb68e90f780cc21a9da1fffbae75e76d2b4402d3f05b9
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)dist/$(COMPONENT_ARCHIVE)
@@ -38,33 +37,14 @@ COMPONENT_BUGDB=	library/fcgi
 
 TPNO=			8415
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-include $(WS_MAKE_RULES)/lint-libraries.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS += --bindir=/usr/bin
+CONFIGURE_OPTIONS += --bindir=$(USRBINDIR)
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --with-pic
 CONFIGURE_OPTIONS += --includedir=$(CONFIGURE_INCLUDEDIR)/fastcgi
-CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS += CXXFLAGS="$(CFLAGS) $(studio_XREGS)"
-
-CXX += $(studio_NORUNPATH)
 
 COMPONENT_PREP_ACTION = (cd $(@D) ; touch NEWS AUTHORS ChangeLog ; autoreconf -if)
 
-# common targets
-configure:	$(CONFIGURE_32_and_64)
-
-build:     $(BUILD_32_and_64)
-
-install:        $(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
-
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/c++-runtime

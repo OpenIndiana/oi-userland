@@ -18,28 +18,21 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+BUILD_BITS= 64_and_32
+include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nettle
 COMPONENT_VERSION=	3.1.1
 COMPONENT_PROJECT_URL=	http://www.lysator.liu.se/~nisse/nettle/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:5fd4d25d64d8ddcb85d0d897572af73b05b4d163c6cc49438a5bfbb8ff293d4c
-COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/nettle/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/nettle
 
 TPNO=	23793
-
-include ../../make-rules/shared-macros.mk
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-MCS = mcs
-STRIP = strip
 
 # We need to build an extra static version of these libraries for
 # GRUB/Wanboot support.
@@ -55,6 +48,11 @@ BUILD_32_and_64 += $(WANBOOT_BUILD)
 INSTALL_32_and_64 += $(WANBOOT_INSTALL)
 
 endif
+
+include $(WS_MAKE_RULES)/gnu-component.mk
+
+MCS = mcs
+STRIP = strip
 
 # Set the wanboot CFLAGS as needed for the wanboot compilation
 
@@ -75,11 +73,7 @@ CFLAGS.wanboot += -mno-stack-arg-probe
 
 CONFIGURE_OPTIONS  += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS  += --infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS  += --with-include-path=/usr/include/gmp
-CONFIGURE_OPTIONS  += CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS  += CXXFLAGS="$(CXXFLAGS)"
-CONFIGURE_OPTIONS  += LDFLAGS="$(LDFLAGS)"
-CONFIGURE_OPTIONS  += CC_FOR_BUILD="$(CC) $(CC_BITS)"
+CONFIGURE_OPTIONS  += --with-include-path=$(USRINCDIR)/gmp
 CONFIGURE_OPTIONS  += --disable-elliptic-curves
 CONFIGURE_OPTIONS  += --disable-knuth-lfib
 
@@ -109,9 +103,6 @@ COMPONENT_PREP_ACTION = \
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-# common targets
-configure:      $(CONFIGURE_32_and_64)
-
 $(BUILD_DIR)/$(MACH32)/.configured: CFLAGS += $(CFLAGS.shared)
 $(BUILD_DIR)/$(MACH32)/.configured: CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.shared)
 $(BUILD_DIR)/$(MACH64)/.configured: CFLAGS += $(CFLAGS.shared)
@@ -120,10 +111,6 @@ $(BUILD_DIR)/wanboot-amd64/.configured: BITS=64
 $(BUILD_DIR)/wanboot-amd64/.configured: COMPILER=gcc
 $(BUILD_DIR)/wanboot-amd64/.configured: CFLAGS += $(CFLAGS.wanboot)
 $(BUILD_DIR)/wanboot-amd64/.configured: CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.wanboot)
-
-build:          $(BUILD_32_and_64)
-
-install:        $(INSTALL_32_and_64)
 
 $(BUILD_DIR)/wanboot-amd64/.installed: \
 	COMPONENT_POST_INSTALL_ACTION += \
@@ -153,9 +140,7 @@ $(BUILD_DIR)/wanboot-amd64/.installed: \
 	COMPONENT_POST_INSTALL_ACTION += \
 	$(AR) ts $(PROTO_DIR)/usr/lib/grub/wanboot/libhogweed.a;
 
-test:           $(TEST_32_and_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+# Required by this Makefile.
+REQUIRED_PACKAGES += developer/build/automake-111
 
 REQUIRED_PACKAGES += library/gmp
-REQUIRED_PACKAGES += system/library

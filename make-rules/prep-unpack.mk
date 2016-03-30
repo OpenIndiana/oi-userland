@@ -18,6 +18,8 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
@@ -32,8 +34,8 @@ PCK_SUFFIXES = $(subst COMPONENT_ARCHIVE_,, \
 
 # Template for unpacking rules.
 define unpack-rules
-ifdef COMPONENT_ARCHIVE$(1)
-ifdef COMPONENT_SRC$(1)
+ifneq ($(strip $(COMPONENT_ARCHIVE$(1))),)
+ifneq ($(strip $(COMPONENT_SRC$(1))),)
 
 CLEAN_PATHS += $$(COMPONENT_SRC$(1))
 SOURCE_DIR$(1) = $$(COMPONENT_DIR)/$(COMPONENT_SRC$(1))

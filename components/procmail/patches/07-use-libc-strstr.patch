@@ -1,0 +1,17 @@
+Avoid procmail's benchmark-based selection between private strstr and libc
+strstr which can change based on "benchmark" performance during build.
+
+A bug should be filed upstream to suggest that this check be removed or that
+some way to override it be provided for reproducible builds.
+diff -ru procmail-3.22/src/autoconf procmail-3.22/src/autoconf
+--- procmail-3.22/src/autoconf	2016-02-17 11:40:24.573974151 -0800
++++ procmail-3.22/src/autoconf	2016-02-17 11:39:46.707737313 -0800
+@@ -1228,7 +1228,7 @@
+ 	 syscnt>=iter?"SLOW":"FAST");
+ 	if(syscnt>iter+iter/16)		  /* if at least 1.0625 times slower */
+ 	   printf("\
+-#define SLOWstrstr\t\t\t      /* using my substitute instead */\n");
++/* #define SLOWstrstr */\t\t\t      /* NOT using my substitute instead */\n");
+       }
+      else
+ 	printf("/* Insufficient memory to perform the benchmark! */\n");

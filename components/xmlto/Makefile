@@ -22,32 +22,26 @@
 #
 # Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xmlto
 COMPONENT_VERSION=	0.0.28
 COMPONENT_PROJECT_URL=	https://fedorahosted.org/xmlto/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
     sha256:2f986b7c9a0e9ac6728147668e776d405465284e13c74d4146c9cbc51fd8aad3
 COMPONENT_ARCHIVE_URL=	 https://fedorahosted.org/releases/x/m/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/xmlto
 
 TPNO=			27193
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+SYSTEM_TEST_TARGET= configure $(SYSTEM_TEST_64)
+include $(WS_MAKE_RULES)/common.mk
 
 # These will be used by the xmlto script.
-CONFIGURE_ENV += FIND="/usr/gnu/bin/find"
-CONFIGURE_ENV += GETOPT="/usr/gnu/bin/getopt"
-CONFIGURE_ENV += GREP="/usr/gnu/bin/grep"
-CONFIGURE_ENV += TAIL="/usr/gnu/bin/tail"
-
-CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
+CONFIGURE_ENV += FIND="$(GNUBIN)/find"
+CONFIGURE_ENV += GETOPT="$(GNUBIN)/getopt"
+CONFIGURE_ENV += GREP="$(GNUBIN)/grep"
+CONFIGURE_ENV += TAIL="$(GNUBIN)/tail"
 
 # Strip compilation lines from test output
 COMPONENT_TEST_TRANSFORMS += \
@@ -65,18 +59,8 @@ COMPONENT_PRE_SYSTEM_TEST_ACTION += \
 	$(GSED) -i -e "s|^XMLIF=.*$$|XMLIF=/usr/bin/xmlif|" \
 	$(SOURCE_DIR)/xmlif/test/run-test
 
-ASLR_MODE = $(ASLR_ENABLE)
-
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
-
-system-test:    configure $(SYSTEM_TEST_64)
-
+# Used by this Makefile.
+REQUIRED_PACKAGES += text/gnu-sed
 
 REQUIRED_PACKAGES += file/gnu-coreutils
 REQUIRED_PACKAGES += file/gnu-findutils
@@ -84,6 +68,5 @@ REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/gnu-getopt
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += text/gnu-grep
 REQUIRED_PACKAGES += web/browser/lynx

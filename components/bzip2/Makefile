@@ -20,16 +20,14 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bzip2
 COMPONENT_VERSION=	1.0.6
 COMPONENT_PROJECT_URL=	http://www.bzip.org/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:a2848f34fcd5d6cf47def00461fcb528a0484d8edef8208d6d2e2909dc61d9cd
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
@@ -37,13 +35,10 @@ COMPONENT_BUGDB=	utility/bzip
 
 TPNO=			5547
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
-include $(WS_MAKE_RULES)/lint-libraries.mk
-
-# Enable ASLR for this component
-ASLR_MODE = $(ASLR_ENABLE)
+BUILD_STYLE= justmake
+# build does this always
+SYSTEM_TEST_TARGET= $(SYSTEM_TEST_32_and_64)
+include $(WS_MAKE_RULES)/common.mk
 
 LINT_FLAGS +=	-I.
 
@@ -55,7 +50,7 @@ COMPONENT_BUILD_ARGS += CC="$(CC)"
 COMPONENT_BUILD_ARGS += CFLAGS="$(CFLAGS)"
 COMPONENT_INSTALL_ARGS += PREFIX=$(PROTOUSRDIR)
 
-COMPONENT_PRE_BUILD_ACTION= \
+COMPONENT_PRE_BUILD_ACTION += \
 	(cd $(@D) ; \
 	    cp ../../oldapi.c . )
 
@@ -73,23 +68,14 @@ COMPONENT_TEST_TRANSFORMS += \
     '-e "/^XXX_CC_XXX$$/d" '
 
 # common targets
-build:		$(BUILD_32_and_64)
+COMPONENT_POST_INSTALL_ACTION.32 += \
+	($(INSTALL) $(BUILD_DIR_32)/libbz2.so.1 $(PROTOUSRLIBDIR); \
+	cd $(PROTOUSRLIBDIR); rm -f libbz2.so; ln -s libbz2.so.1 libbz2.so);
 
-# override the 64 bit install and have it make a directory for the lint lib
-COMPONENT_POST_INSTALL_ACTION = $(MKDIR) $(PROTOUSRLIBDIR64)
+COMPONENT_PRE_INSTALL_ACTION.64 += $(MKDIR) $(PROTOUSRLIBDIR64);
 
-install:	build $(INSTALL_32_and_64)
-	$(INSTALL) $(BUILD_DIR_32)/libbz2.so.1 $(PROTOUSRLIBDIR)
-	cd $(PROTOUSRLIBDIR); rm -f libbz2.so; ln -s libbz2.so.1 libbz2.so
-	$(INSTALL) $(BUILD_DIR_64)/libbz2.so.1 $(PROTOUSRLIBDIR64)
-	cd $(PROTOUSRLIBDIR64); rm -f libbz2.so; ln -s libbz2.so.1 libbz2.so
-	$(INSTALL) $(BUILD_DIR_64)/llib-lbz2.ln $(PROTOUSRLIBDIR64)
-
-# build does this always
-test:		$(TEST_32_and_64)
-
-system-test:	$(SYSTEM_TEST_32_and_64)
-
+COMPONENT_POST_INSTALL_ACTION.64 += \
+	($(INSTALL) $(BUILD_DIR_64)/libbz2.so.1 $(PROTOUSRLIBDIR64); \
+	cd $(PROTOUSRLIBDIR64); rm -f libbz2.so; ln -s libbz2.so.1 libbz2.so;);
 
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library

@@ -20,16 +20,15 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		zlib
 COMPONENT_VERSION=	1.2.8
 COMPONENT_PROJECT_URL=	http://www.zlib.net/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:36658cb768a54c1d4dec43c3116c27ed893e88b02ecfcb44f2166f9c0b7f2a0d
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/libpng/zlib/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
@@ -37,12 +36,9 @@ COMPONENT_BUGDB=	library/libz
 
 TPNO=			17611
 
-include $(WS_MAKE_RULES)/prep.mk
 # Omit directory options that cause zlib's CMake-based build to fail.
 CONFIGURE_DEFAULT_DIRS=no
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-include $(WS_MAKE_RULES)/lint-libraries.mk
+include $(WS_MAKE_RULES)/common.mk
 
 #
 # We want to build hardware specific versions of the longest_match()
@@ -88,10 +84,11 @@ CFLAGS += $(CFLAGS_EXTRA)
 
 # We need to reset configure options here because zlib is confused with
 # CC and CFLAGS definitions as configure parameters.
-CONFIGURE_OPTIONS	+=  --shared
-CONFIGURE_OPTIONS.64	+= --libdir=/usr/lib/$(MACH64)
+CONFIGURE_OPTIONS	+= --shared
+CONFIGURE_OPTIONS.64	+= --libdir=$(USRLIBDIR64)
 
-CONFIGURE_ENV += CFLAGS="$(CFLAGS) -xalias_level=basic -xdepend"
+CFLAGS.studio += -xalias_level=basic -xdepend
+
 CONFIGURE_ENV += LDSHARED="$(CC) $(CFLAGS) -G"
 
 # This LDSHARED definitions is forced to get all required options plus
@@ -111,18 +108,7 @@ COMPONENT_TEST_TRANSFORMS += '-e "/^zlib version/s/0x..$$/0xXX/" '
 
 COMPONENT_SYSTEM_TEST_TARGETS= test SYSTEM_TEST=1
 
-configure:	$(CONFIGURE_32_and_64)
+CLEAN_PATHS += $(PROTO_DIR) capabilities/*/*/*.o capabilities/*/$(MACH32)/*.s
 
-build:		$(BUILD_32_and_64)
+system-test: build $(SYSTEM_TEST_32_and_64)
 
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-
-system-test:    $(BUILD_32_and_64) $(SYSTEM_TEST_32_and_64)
-
-clean::
-	$(RM) -r $(BUILD_DIR) $(PROTO_DIR) capabilities/*/*/*.o capabilities/*/$(MACH32)/*.s
-
-
-REQUIRED_PACKAGES += system/library

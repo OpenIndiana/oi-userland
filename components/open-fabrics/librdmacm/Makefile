@@ -18,59 +18,39 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
-# OFED only builds with GCC
-COMPILER=gcc
-
-include ../../../make-rules/shared-macros.mk
+BUILD_BITS= 64_and_32
+include ../ofed-component-macros.mk
 
 COMPONENT_NAME=		librdmacm
 COMPONENT_VERSION=	1.0.14.1
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:b74d367415b4f294f3821955428f3e362b91f779042c88970f99941216c13a7c
 COMPONENT_ARCHIVE_URL=	http://www.openfabrics.org/downloads/rdmacm/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/ofuv_lib
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include ../ofed.mk
+include ../ofed-component.mk
 
-LIBS += -libverbs -lsocket -lnsl
+LIBS += -libverbs
 
 CLEANUP_FILES =\
 	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man1/rdma_server.1\
 	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man1/rdma_client.1\
 	$(PROTOUSRBINDIR)/rdma_server\
 	$(PROTOUSRBINDIR)/rdma_client\
-	$(PROTOUSRBINDIR)/$(MACH64)/rdma_server\
-	$(PROTOUSRBINDIR)/$(MACH64)/rdma_client\
+	$(PROTOUSRBINDIR)/$(MACH32)/rdma_server\
+	$(PROTOUSRBINDIR)/$(MACH32)/rdma_client\
 	$(PROTOUSRINCDIR)/infiniband/ib.h\
 	$(PROTOUSRINCDIR)/rdma/rdma_cma_abi.h\
-	$(PROTO_DIR)/$(CONFIGURE_LIBDIR.32)/$(COMPONENT_NAME).la\
-	$(PROTO_DIR)/$(CONFIGURE_LIBDIR.64)/$(COMPONENT_NAME).la
+	$(PROTOUSRLIBDIR)/$(COMPONENT_NAME).la\
+	$(PROTOUSRLIBDIR64)/$(COMPONENT_NAME).la
 	
 COMPONENT_PREP_ACTION = \
 	$(TOUCH) $(COMPONENT_SRC)/Makefile.in
 
-CONFIGURE_OPTIONS +=	--bindir=$(USRBINDIR)
-
 COMPONENT_POST_INSTALL_ACTION = \
 	$(RM) $(CLEANUP_FILES);
-
-#COMPONENT_PRE_CONFIGURE_ACTION
-
-# common targets
-configure:	$(CONFIGURE_32_and_64)
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
 

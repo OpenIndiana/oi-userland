@@ -18,17 +18,18 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
-PATH = /usr/gnu/bin:/usr/bin
+PATH = $(GNUBIN):$(USRBINDIR)
 
 COMPONENT_NAME=		pinentry
 COMPONENT_VERSION=	0.7.6
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.gnupg.org/related_software/pinentry/
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:14670c18f4a042ffcbd7a937aa3f15de392816c56b472588383d8378f65b42ab
 COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/pinentry/$(COMPONENT_ARCHIVE)
@@ -36,9 +37,9 @@ COMPONENT_BUGDB=	utility/gnupg
 
 TPNO=			8850
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+INSTALL_TARGET=
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL = 0
 
@@ -46,30 +47,34 @@ PATCH_LEVEL = 0
 studio_C99MODE = -Xc $(studio_C99_ENABLE)
 
 # -xinline=%auto -- we like inlining where appropriate
-CFLAGS += -xinline=%auto
+CFLAGS.studio += -xinline=%auto
 
 # -xbuiltin=%none -- builtins have been known to be buggy
-CFLAGS += -xbuiltin=%none
+CFLAGS.studio += -xbuiltin=%none
 
 # void function cannot return value, unless it's GNU C
-CFLAGS += -features=extinl,extensions
+CFLAGS.studio += -features=extinl,extensions
 
 CFLAGS += $(CPP_LARGEFILES)
 CFLAGS += $(XPG6MODE)
 CFLAGS += $(CPP_POSIX)
 CFLAGS += $(CPP_C99_EXTENDED_MATH)
-CFLAGS += $(studio_PIC)
+CFLAGS += $(CC_PIC)
 
 # prevent libtool from removing these
-LDFLAGS += -lsocket -lnsl -lpkcs11
-LIBS = -lsocket -lnsl -lpkcs11
+ifeq ($(OS_VERSION),5.11)
+LDFLAGS += -lsocket -lnsl
+LIBS += -lsocket -lnsl
+endif
 
-CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_ENV +=	LDFLAGS="$(LDFLAGS)"
+LDFLAGS += -lpkcs11
+LIBS += -lpkcs11
+
+
 CONFIGURE_ENV +=	INSTALL="$(INSTALL)"
 CONFIGURE_ENV +=	LIBS="$(LIBS)"
 
-CONFIGURE_OPTIONS  +=		--localstatedir=/var
+CONFIGURE_OPTIONS  +=		--localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		--enable-pinentry-curses
 CONFIGURE_OPTIONS  +=		--enable-pinentry-gtk2
@@ -79,13 +84,6 @@ CONFIGURE_OPTIONS  +=		--enable-threading
 CONFIGURE_OPTIONS  +=		--disable-pinentry-gtk
 CONFIGURE_OPTIONS  +=		--disable-pinentry-qt
 CONFIGURE_OPTIONS  +=		--disable-ncurses
-CONFIGURE_BINDIR.64 =   $(CONFIGURE_PREFIX)/bin
-
-ASLR_MODE = $(ASLR_ENABLE)
-
-configure:	$(CONFIGURE_64)
-
-build: $(BUILD_64)
 
 install: $(INSTALL_64)
 	$(MKDIR) $(PROTOUSRLIBDIR)
@@ -95,13 +93,7 @@ install: $(INSTALL_64)
 	$(MV) $(PROTOUSRBINDIR)/pinentry-gtk-2 $(PROTOUSRLIBDIR)/ ; fi
 	cd $(PROTOUSRLIBDIR) && ln -sf pinentry-gtk-2 pinentry
 
-test: $(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
-
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libx11

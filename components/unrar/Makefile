@@ -20,12 +20,12 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
-PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin:/usr/sbin
+PATH=$(SPRO_VROOT)/bin:$(USRBINDIR):$(GNUBIN):$(USRSBINDIR)
 
 COMPONENT_NAME=		unrar
 COMPONENT_VERSION=	4.2.4
@@ -35,46 +35,31 @@ COMPONENT_ARCHIVE=	$(COMPONENT_NAME)src-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:9432bf798e5f7123f3060f37b75b7c07f36f0091305f46473dcae9154f8cd686
 COMPONENT_ARCHIVE_URL=	http://www.rarlab.com/rar/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/unrar
 
 TPNO=			18537
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-
 # We need this before the default PKG_PROTO_DIRS, so set it before we include
-# ips.mk, which will append the default set.
+# common.mk, which will append the default set.
 PKG_PROTO_DIRS = $(BUILD_DIR_64)
 
-include $(WS_MAKE_RULES)/ips.mk
+BUILD_STYLE= justmake
+INSTALL_TARGET= build
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL =	0
-
 
 # Needed by .../unrar/os.hpp to correctly define platform endianness.
 CXXFLAGS.i386 = -DLITTLE_ENDIAN
 CXXFLAGS.sparc = -DBIG_ENDIAN
-CXXFLAGS += $(CXXFLAGS.$(MACH))
-CXXFLAGS += "-erroff=wvarhidemem"
-COMPONENT_BUILD_ENV += CXX="$(CXX)"
-COMPONENT_BUILD_ENV += CXXFLAGS="$(CXXFLAGS)"
-COMPONENT_BUILD_ENV += LDFLAGS="$(studio_NORUNPATH) -m64"
+CXXFLAGS.studio += "-erroff=wvarhidemem"
+
+LDFLAGS += $(CC_BITS) $(studio_NORUNPATH)
+
 COMPONENT_BUILD_ENV += DEFINES="$(CPP_LARGEFILES)"
 
 COMPONENT_BUILD_ARGS += -f makefile.unix
 COMPONENT_BUILD_ARGS += STRIP="/bin/true"
 
-ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
-build:		$(BUILD_64)
-
-install:	$(BUILD_64)
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/c++-runtime
 REQUIRED_PACKAGES += system/library/math

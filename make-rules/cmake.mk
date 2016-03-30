@@ -18,6 +18,8 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
@@ -25,7 +27,6 @@
 # This file sets up the default options and base requirements for GNOME
 # components.
 #
-include $(WS_MAKE_RULES)/prep.mk
 # Most cmake-based components require intltools.
 include $(WS_MAKE_RULES)/intltool.mk
 # cmake components don't generally use autoconf.
@@ -38,6 +39,9 @@ LDFLAGS += "$(CC_BITS)"
 CMAKE = $(shell which cmake)
 CMAKE_BUILD_TYPE ?= RelWithDebInfo
 
+# Layout configuration.
+CMAKE_PREFIX ?= $(USRDIR)
+
 CMAKE_OPTIONS += -DCMAKE_CXX_COMPILER="$(CXX)"
 CMAKE_OPTIONS += -DCMAKE_CXX_FLAGS="$(CXXFLAGS)"
 CMAKE_OPTIONS += -DCMAKE_C_COMPILER="$(CC)"
@@ -46,7 +50,7 @@ CMAKE_OPTIONS += -DCMAKE_EXE_LINKER_FLAGS="$(LDFLAGS)"
 
 # Must start install paths with a leading '/' or files will be installed into
 # wrong location!
-CMAKE_OPTIONS += -DCMAKE_INSTALL_PREFIX="$(USRDIR)"
+CMAKE_OPTIONS += -DCMAKE_INSTALL_PREFIX="$(CMAKE_PREFIX)"
 CMAKE_OPTIONS += -DCMAKE_MODULE_LINKER_FLAGS="$(LDFLAGS)"
 CMAKE_OPTIONS += -DCMAKE_SHARED_LINKER_FLAGS="$(LDFLAGS)"
 CMAKE_OPTIONS += -DGETTEXT_MSGFMT_EXECUTABLE="$(GNUBIN)/msgfmt"

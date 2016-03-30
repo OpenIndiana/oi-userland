@@ -20,28 +20,22 @@
 #
 
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ruby
 COMPONENT_VERSION=	2.1.6
 COMPONENT_PROJECT_URL=	http://www.ruby-lang.org/
-COMPONENT_SRC=	\
-	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:1e1362ae7427c91fa53dc9c05aee4ee200e2d7d8970a891c5bd76bee28d28be4
 COMPONENT_ARCHIVE_URL=	\
 	http://cache.ruby-lang.org/pub/ruby/2.1/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/ruby
 
 TPNO=			22307
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/ips.mk
-include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # COMPONENT_VERSION <major>.<minor>.<teeny>
 # is transformed into <major>.<minor> for RUBY_VER.
@@ -52,7 +46,7 @@ RUBY_VER=$(word 1,$(RUBY_VER_WORDS)).$(word 2,$(RUBY_VER_WORDS))
 # the library-compatible version
 RUBY_LIB_VER=2.1.0
 
-PROTORUBYDIR=$(PROTO_DIR)/usr/ruby/$(RUBY_VER)
+PROTORUBYDIR=$(PROTOUSRDIR)/ruby/$(RUBY_VER)
 PROTO_RBCONFIG_FILE=$(PROTORUBYDIR)/lib/ruby/$(RUBY_LIB_VER)/$(MACH64)-solaris$(SOLARIS_VERSION)/rbconfig.rb
 
 # these macros are used in the package manifest
@@ -112,13 +106,6 @@ studio_OPT.sparc.64 = -xO2
 studio_XBITS.i386.64 += -D__amd64
 
 CONFIGURE_PREFIX =	$(USRDIR)/$(COMPONENT_NAME)/$(RUBY_VER)
-# change CONFIGURE_BINDIR.64 because this path will be embedded in
-# the header for ruby scripts; we are only building 64-bit,
-# so the real path for ruby will not have $(MACH64) in it
-CONFIGURE_BINDIR.64 =   $(CONFIGURE_BINDIR.32)
-# not strictly needed, since ruby doesn't use sbin, but
-# change this as well, for consistency with BINDIR
-CONFIGURE_SBINDIR.64 =   $(CONFIGURE_SBINDIR.32)
 
 # we are building 64-bit, but most of the ruby libraries (*.rb files)
 # are non-bit-specfic text files, so don't put them under lib/$(MACH64).
@@ -136,10 +123,9 @@ CONFIGURE_OPTIONS +=	--with-openssl
 # problems with gems compiled with gcc.  Studio compiler doesn't 
 # report an error for __builtin_setjmp, but gcc would.
 CONFIGURE_OPTIONS +=	--with-setjmp-type=_setjmp
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS +=	DTRACE="/usr/sbin/dtrace"
+CONFIGURE_OPTIONS +=	DTRACE="$(USRSBINDIR)/dtrace"
 # ensure we use the 64-bit configuration file, not the 32-bit one
-CONFIGURE_OPTIONS +=	--with-tclConfig-file=/usr/lib/64/tclConfig.sh
+CONFIGURE_OPTIONS +=	--with-tclConfig-file=$(USRLIBDIR)/64/tclConfig.sh
 
 # fiddle.so (ext/fiddle) links to libffi, which does not define
 # ffi_raw_size(), although its prototype is in libffi's 
@@ -197,16 +183,6 @@ COMPONENT_TEST_TRANSFORMS += \
 # appropriate to run at top level
 $(SKIP_TEST_AT_TOP_LEVEL)
 
-# common targets
-
-build:		$(BUILD_64)
-
-install:	build $(INSTALL_64)
-
-test:	$(TEST_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
 REQUIRED_PACKAGES += library/database/gdbm
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += library/ncurses
@@ -216,6 +192,5 @@ REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += runtime/tk-8
 REQUIRED_PACKAGES += system/core-os
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11

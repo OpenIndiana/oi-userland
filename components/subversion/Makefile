@@ -22,16 +22,14 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
-PATH=$(dir $(CC)):$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
+PATH=$(dir $(CC)):$(SPRO_VROOT)/bin:$(USRBINDIR):$(GNUBIN)
 
 COMPONENT_NAME=		subversion
 COMPONENT_VERSION=	1.7.20
 COMPONENT_PROJECT_URL=	http://subversion.apache.org/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:2bdb01eb3f3df5c9370af98580e1892822d6e75f2077ce97fc81749f316ef25a
 COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/subversion/$(COMPONENT_ARCHIVE)
@@ -39,9 +37,7 @@ COMPONENT_BUGDB=	utility/svn
 
 TPNO=			22298
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL = 0
 PYMODS = client core delta fs ra repos wc
@@ -51,7 +47,7 @@ PERL_VERSION.32 = 5.12
 PERL_VERSION.64 = 5.16
 PERL_VERSION = $(PERL_VERSION.$(BITS))
 PERL = $(PERL.$(PERL_VERSION))
-GNUCP = /usr/gnu/bin/cp
+GNUCP = $(GNUBIN)/cp
 
 # because we can't seem to get -norunpath to the java bindings build any
 # other way.
@@ -102,8 +98,6 @@ COMPONENT_INSTALL_TARGETS = install install-lib \
 
 $(BUILD_DIR)/$(MACH64)/.installed: COMPONENT_INSTALL_TARGETS += install-mods-shared
 
-CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
-CONFIGURE_ENV += CXXFLAGS="$(CXXFLAGS)"
 CONFIGURE_ENV += PYTHON="$(PYTHON.$(BITS))"
 CONFIGURE_ENV += PYMODS="$(PYMODS)"
 CONFIGURE_ENV += PYTHONPATH="$(PYTHON_VENDOR_PACKAGES.$(BITS))"
@@ -115,23 +109,21 @@ CONFIGURE_ENV += LD_OPTIONS="$(LD_OPTIONS)"
 CONFIGURE_LIBDIR.32 = $(CONFIGURE_PREFIX)/lib/svn
 CONFIGURE_LIBDIR.64 = $(CONFIGURE_PREFIX)/lib/svn/$(MACH64)
 
-APR-CONFIG.32 = /usr/apr/$(APR_VERSION)/bin/apr-1-config
-APR-CONFIG.64 = /usr/apr/$(APR_VERSION)/bin/$(MACH64)/apr-1-config
-APU-CONFIG.32 = /usr/apr-util/$(APR_UTIL_VERSION)/bin/apu-1-config
-APU-CONFIG.64 = /usr/apr-util/$(APR_UTIL_VERSION)/bin/$(MACH64)/apu-1-config
+APR-CONFIG.32 = $(USRDIR)/apr/$(APR_VERSION)/bin/apr-1-config
+APR-CONFIG.64 = $(USRDIR)/apr/$(APR_VERSION)/bin/$(MACH64)/apr-1-config
+APU-CONFIG.32 = $(USRDIR)/apr-util/$(APR_UTIL_VERSION)/bin/apu-1-config
+APU-CONFIG.64 = $(USRDIR)/apr-util/$(APR_UTIL_VERSION)/bin/$(MACH64)/apu-1-config
 APXS.32 = no
-APXS.64 = /usr/apache2/2.4/bin/apxs
-APR-CONFIG-RPATH.32 = /usr/apr/$(APR_VERSION)/lib
-APR-CONFIG-RPATH.64 = /usr/apr/$(APR_VERSION)/lib/$(MACH64)
-APU-CONFIG-RPATH.32 = /usr/apr-util/$(APR_VERSION)/lib
-APU-CONFIG-RPATH.64 = /usr/apr-util/$(APR_VERSION)/lib/$(MACH64)
+APXS.64 = $(USRDIR)/apache2/2.4/bin/apxs
+APR-CONFIG-RPATH.32 = $(USRDIR)/apr/$(APR_VERSION)/lib
+APR-CONFIG-RPATH.64 = $(USRDIR)/apr/$(APR_VERSION)/lib/$(MACH64)
+APU-CONFIG-RPATH.32 = $(USRDIR)/apr-util/$(APR_VERSION)/lib
+APU-CONFIG-RPATH.64 = $(USRDIR)/apr-util/$(APR_VERSION)/lib/$(MACH64)
 
 LDFLAGS += -R$(CONFIGURE_LIBDIR.$(BITS)) -R$(APR-CONFIG-RPATH.$(BITS)) \
 	   -R$(APU-CONFIG-RPATH.$(BITS))
 
-CONFIGURE_ENV += LDFLAGS="$(LDFLAGS)"
-
-CONFIGURE_OPTIONS += --localstatedir=/var
+CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS += --enable-shared 
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --disable-libtool-lock 
@@ -141,8 +133,8 @@ CONFIGURE_OPTIONS += --with-apxs=$(APXS.$(BITS))
 CONFIGURE_OPTIONS += --with-ssl 
 CONFIGURE_OPTIONS += --with-zlib=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --with-jdk=$(JAVA_ROOT)
-CONFIGURE_OPTIONS += --with-apr=/usr/apr/$(APR_VERSION)
-CONFIGURE_OPTIONS += --with-apr-util=/usr/apr-util/$(APR_UTIL_VERSION)
+CONFIGURE_OPTIONS += --with-apr=$(USRDIR)/apr/$(APR_VERSION)
+CONFIGURE_OPTIONS += --with-apr-util=$(USRDIR)/apr-util/$(APR_UTIL_VERSION)
 CONFIGURE_OPTIONS += --enable-nls
 CONFIGURE_OPTIONS += --disable-mod-activation
 CONFIGURE_OPTIONS += --enable-javahl
@@ -171,18 +163,6 @@ PKG_MACROS += PERL_ARCH_12="$(PERL_ARCH_12)"
 PKG_MACROS += PERL_ARCH_16="$(PERL_ARCH_16)"
 PKG_MACROS += PYVER=$(PYTHON_VERSION)
 
-ASLR_MODE=$(ASLR_ENABLE)
-
-configure:	$(CONFIGURE_32_and_64)
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += developer/versioning/subversion
 REQUIRED_PACKAGES += library/apr-15
@@ -190,7 +170,6 @@ REQUIRED_PACKAGES += library/apr-util-15
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/neon
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/c++-runtime
 REQUIRED_PACKAGES += system/library/security/gss
 REQUIRED_PACKAGES += system/library/security/libsasl

@@ -18,49 +18,35 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         xorriso
 COMPONENT_VERSION=      0.6.0
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  http://scdbackup.sourceforge.net/xorriso/
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:1f26880eaacf7bd806520a458963d2374ad6bf90353e08ed0de271b6d45c5b8a
 COMPONENT_ARCHIVE_URL=  http://scdbackup.sourceforge.net/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/xorriso
 
 TPNO=			3504
 
 CPPFLAGS+=		-I./test
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS  +=           --enable-shared
 CONFIGURE_OPTIONS  +=           --disable-static
-CONFIGURE_OPTIONS  +=           --sysconfdir=/etc/gnu
+CONFIGURE_OPTIONS  +=           --sysconfdir=$(ETCDIR)/gnu
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS  +=		CPPFLAGS="$(CPPFLAGS)"
 
 # The tarball for this version already has a config.status file so remove it.
 COMPONENT_PREP_ACTION = \
 	 (cd $(@D) ; test -f config.status && rm config.status)
 
-configure:	$(CONFIGURE_32)
-
-build:          $(BUILD_32)
-
-install:        $(INSTALL_32)
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
-
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += system/library

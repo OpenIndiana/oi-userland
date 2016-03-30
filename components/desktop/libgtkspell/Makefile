@@ -18,25 +18,22 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gtkspell
 COMPONENT_VERSION=	2.0.16
 COMPONENT_PROJECT_URL=	http://gtkspell.sourceforge.net/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
     sha256:8fc7dc560167b2cb7193e76aca625a152dc19b0ebf49816b78539cbb90d80d02
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/download/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/gtkspell
 
 TPNO=			11953
-
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
 
 # Was not version-lock'd in Desktop, so cannot be upgraded to.
 ifeq ($(BUILD_TYPE), evaluation)
@@ -45,10 +42,11 @@ INSTALL_32_and_64=
 PUBLISH_STAMP=
 endif
 
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # Needed to pick up the GNU version of xgettext.
-PATH =		/usr/gnu/bin:/usr/bin
+PATH =		$(GNUBIN):$(USRBINDIR)
 
 COMPONENT_PREP_ACTION = \
 	(cd $(@D) ; \
@@ -59,21 +57,8 @@ COMPONENT_PREP_ACTION = \
 	automake -a -c -f ; \
 	autoconf )
 
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
-
 ASLR_MODE =	$(ASLR_ENABLE)
-
-configure:	$(CONFIGURE_32_and_64)
-
-build:          $(BUILD_32_and_64)
-
-install:        $(INSTALL_32_and_64)
-
-test:           $(NO_TESTS)
-
-system-test:	$(NO_TESTS)
 
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/spell-checking/enchant
-REQUIRED_PACKAGES += system/library

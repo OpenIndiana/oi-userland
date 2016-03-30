@@ -19,18 +19,17 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2005, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2005, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= NO_ARCH
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	timezone
-
 COMPONENT_VERSION=    	2015.7
-
-COMPONENT_BUGDB=	utility/timezone
-
+COMPONENT_SRC=
 HUMAN_VERSION=		2015g
-
 TPNO=			24870
 
 # Build info part of pkg(5) FMRI dropped ",$(OS_VERSION)" between 11 and 12;
@@ -47,14 +46,15 @@ TZFILES= africa antarctica asia australasia etcetera europe \
 	 factory northamerica pacificnew \
 	 southamerica backward
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/ips.mk
+BUILD_STYLE= archive
+COMMON_TARGETS= no
+include $(WS_MAKE_RULES)/common.mk
 
 PKG_MACROS +=		OS_META_VERSION=$(OS_META_VERSION)
 
 POFILE=zoneinfo.po
 
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+CLEAN_PATHS += $(POFILE)
 
 build:
 	@/bin/sh ./do_pofile.sh > $(POFILE)
@@ -67,5 +67,3 @@ test:	$(NO_TESTS)
 
 system-test:    $(NO_TESTS)
 
-clean::
-	$(RM) -r $(BUILD_DIR) $(POFILE)

@@ -22,24 +22,21 @@
 #
 # Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pbzip2
 COMPONENT_VERSION=	1.1.13
 COMPONENT_PROJECT_URL=	http://compression.ca/pbzip2/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:8fd13eaaa266f7ee91f85c1ea97c86d9c9cc985969db9059cdebcb1e1b7bdbe6
 COMPONENT_ARCHIVE_URL=	https://launchpad.net/pbzip2/1.1/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/pbzip2
 
 TPNO=			27242
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+BUILD_STYLE= justmake
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # pbzip2 Solaris Sun Studio build uses a non-standard Makefile
 COMPONENT_BUILD_ARGS +=		CC="$(CXX)"
@@ -47,19 +44,6 @@ COMPONENT_BUILD_ARGS +=		-f Makefile.solaris.sunstudio
 COMPONENT_INSTALL_ARGS +=	-f Makefile.solaris.sunstudio
 COMPONENT_INSTALL_ARGS +=	PREFIX=$(PROTOUSRDIR)
 
-ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
-
 REQUIRED_PACKAGES += compress/bzip2
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/c++-runtime
 REQUIRED_PACKAGES += system/library/math

@@ -18,8 +18,11 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sendmail
@@ -31,12 +34,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:24f94b5fd76705f15897a78932a5f2439a32b1a2fdc35769bb1a5f5d9b4db439
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sig
-COMPONENT_BUGDB=	utility/sendmail
 
 TPNO=			23958
-
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
 
 # Mostly but not completely migrated from ON in S12.
 ifeq ($(BUILD_TYPE), evaluation)
@@ -45,15 +44,15 @@ INSTALL_32_and_64=
 PUBLISH_STAMP=
 endif
 
-include $(WS_MAKE_RULES)/ips.mk
-include $(WS_MAKE_RULES)/lint-libraries.mk
+BUILD_STYLE= justmake
+INSTALL_TARGET=
+include $(WS_MAKE_RULES)/common.mk
 
 # Although we build 32_and_64, everything except libmilter just wants 64,
 # which is why the macros just below only have values for 64.  libmilter
 # is dealt with further below.
 PKG_PROTO_DIRS += $(BUILD_DIR_64)
 PKG_PROTO_DIRS += $(BUILD_DIR_64)/obj.SunOS.$(OS_VERSION).$(ARCH)
-PKG_PROTO_DIRS += $(COMPONENT_DIR)/files
 PKG_PROTO_DIRS += $(COMPONENT_DIR)/files/man
 
 # Userland default includes -mt which links with libthread which we don't need.
@@ -174,7 +173,7 @@ COMPONENT_TEST_ARGS += CCLINK="$(CC)"
 COMPONENT_TEST_ARGS += CC_PIC="$(CC_PIC)"
 COMPONENT_TEST_ARGS += LDOPTS="$(CC_BITS)"
 
-COMPONENT_TEST_ENV +=	PATH=/usr/gnu/bin:/usr/bin
+COMPONENT_TEST_ENV +=	PATH=$(GNUBIN):$(USRBINDIR)
 
 # The transforms below abstract out the 32- or 64-bit specific parts of
 # the results, so we can use a common "all" master file.
@@ -187,18 +186,10 @@ COMPONENT_TEST_TRANSFORMS += \
     '-e "s|^$(CC).*$$|XXX_CC_XXX|g" ' \
     '-e "/^XXX_CC_XXX\\$$/d" '
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 INSTALL_64=
 
 # common targets
-build:		$(BUILD_32_and_64)
-
 install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
 REQUIRED_PACKAGES += database/berkeleydb-5
 REQUIRED_PACKAGES += library/libmilter
@@ -207,5 +198,4 @@ REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += runtime/perl-512
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/network

@@ -18,28 +18,28 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
-#
 
+#
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		patch
 COMPONENT_VERSION=	2.7.5
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/patch/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:7436f5a19f93c3ca83153ce9c5cbe4847e97c5d956e57a220121e741f6e7968f
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/patch/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gpatch
 
 TPNO=			22293
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
+# Although system-test doesn't run against the built bits, the tests
+# require the bits are built.  Using build as a pre-requisite
+# to system-test separates the compilation output from the
+# test output, so the master test results will be consistent between
+# test and system-test targets.
+SYSTEM_TEST_TARGET= build $(SYSTEM_TEST_64)
+include $(WS_MAKE_RULES)/gnu-component.mk
 
 # Needed for "gmake test" to work successfully.
 # If SHELLOPTS is exported (as it is by the userland makefiles),
@@ -50,25 +50,4 @@ unexport SHELLOPTS
 
 COMPONENT_INSTALL_ARGS += bindir=$(USRBINDIR)
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 COMPONENT_SYSTEM_TEST_ENV += PATCH=$(GPATCH)
-
-# common targets
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
-
-# Although system-test doesn't run against the built bits, the tests
-# require the bits are built.  Using BUILD_64 as a pre-requisite
-# to system-test separates the compilation output from the
-# test output, so the master test results will be consistent between
-# test and system-test targets.
-system-test:    $(BUILD_64) $(SYSTEM_TEST_64)
-
-
-REQUIRED_PACKAGES += system/library

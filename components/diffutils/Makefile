@@ -22,31 +22,27 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
-COMPILER=		gcc
-
+BUILD_BITS= 64
+COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		diffutils
 COMPONENT_VERSION=	3.3
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/diffutils/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:a25e89a8ab65fded1731e4186be1bb25cda967834b6df973599cdcd5abdfc19c
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/diffutils/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gnu-diffutils
 
 TPNO=			21995
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+SYSTEM_TEST_TARGET= configure $(SYSTEM_TEST_64)
+include $(WS_MAKE_RULES)/gnu-component.mk
 
 COMPONENT_PREP_ACTION =		(cd $(@D) ; autoreconf -f)
 
+CONFIGURE_PREFIX= $(USRGNUDIR)
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
+CONFIGURE_OPTIONS  +=		--localedir=$(USRSHARELOCALEDIR)
 
 # Needed for "gmake test" to work successfully.
 # If SHELLOPTS is exported (as it is by the userland makefiles),
@@ -67,19 +63,6 @@ COMPONENT_TEST_TRANSFORMS += \
 
 COMPONENT_SYSTEM_TEST_DIR =	$(@D)/tests
 COMPONENT_SYSTEM_TEST_ENV +=	PATH="$(GNUBIN):$(PATH)"
-
-ASLR_MODE = $(ASLR_ENABLE)
-
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
-
-system-test:    configure $(SYSTEM_TEST_64)
-
 
 REQUIRED_PACKAGES += library/libsigsegv
 REQUIRED_PACKAGES += system/library

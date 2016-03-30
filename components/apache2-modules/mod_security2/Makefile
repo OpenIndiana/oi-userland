@@ -18,8 +18,11 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mod_security2
@@ -27,46 +30,28 @@ COMPONENT_VERSION=	2.8.0
 COMPONENT_PROJECT_URL=	http://www.modsecurity.org/
 COMPONENT_SRC_NAME=	modsecurity-apache
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)_$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:95de6ec30982e5bde7981929ba89be89488e9f237ee8c4236e064b074bbb6f28
 COMPONENT_ARCHIVE_URL= \
     $(COMPONENT_PROJECT_URL)tarball/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/apache
 
 TPNO=			18233
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+MODULES_INSTALL=
 include ../modules.mk
 
 COMPONENT_POST_UNPACK_ACTION += \
   (cd $(SOURCE_DIR); \
   $(CP) modsecurity.conf-recommended modsecurity-24.conf-recommended)
 
-CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS += LTFLAGS="--silent --tag=CC"
-CONFIGURE_OPTIONS += --with-apxs=$(APXS)
 CONFIGURE_OPTIONS += --with-apr=`$(APXS) -q APR_CONFIG`
 CONFIGURE_OPTIONS += --with-apu=`$(APXS) -q APU_CONFIG`
 
 COMPONENT_TEST_ARGS += CFLAGS="$(CFLAGS) -DMSC_TEST"
-
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
-configure:	$(MODULES_CONFIGURE)
-
-build: $(MODULES_BUILD)
-
-test: $(MODULES_TEST)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
 
 REQUIRED_PACKAGES += library/apr-15
 REQUIRED_PACKAGES += library/apr-util-15
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += runtime/lua
-REQUIRED_PACKAGES += system/library

@@ -21,31 +21,21 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
-PATH=$(dir $(CC)):/usr/bin:/usr/gnu/bin
+PATH=$(dir $(CC)):$(USRBINDIR):$(GNUBIN)
 
 COMPONENT_NAME=		gnump
 COMPONENT_VERSION=      4.3.2
 COMPONENT_PROJECT_URL=	http://gmplib.org/
 COMPONENT_SRC_NAME=	gmp
-COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
     sha256:7be3ad1641b99b17f6a8be6a976f1f954e997c41e919ad7e0c418fe848c13c97
 COMPONENT_ARCHIVE_URL=  http://ftp.gnu.org/gnu/gmp/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/gnump
 
 TPNO=			16955
-
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-include $(WS_MAKE_RULES)/lint-libraries.mk
-
-MCS = mcs
-STRIP = strip
 
 # We need to build an extra static version of this library for
 # GRUB/Wanboot support.
@@ -61,6 +51,14 @@ BUILD_32_and_64 += $(WANBOOT_BUILD)
 INSTALL_32_and_64 += $(WANBOOT_INSTALL)
 
 endif
+
+CONFIGURE_TARGET=
+BUILD_TARGET=
+INSTALL_TARGET=
+include $(WS_MAKE_RULES)/gnu-component.mk
+
+MCS = mcs
+STRIP = strip
 
 PATCH_LEVEL = 0
 
@@ -121,15 +119,8 @@ MPN64_sparc = sparc64 generic
 MPN_32 = $(MPN32_$(MACH))
 MPN_64 = $(MPN64_$(MACH))
 GM4 = /usr/bin/gm4
-GSED = /usr/bin/gsed
-# libgmpxx.so.4 always gets built with unnecessary paths in RUNPATH/RPATH
-ELFEDIT = /usr/bin/elfedit
 
-CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
-CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
-CONFIGURE_ENV += CXXFLAGS="$(CC_BITS) $(CXXFLAGS)"
 CONFIGURE_ENV += LD="$(CC) $(CFLAGS) $(LDFLAGS)"
-CONFIGURE_ENV += LDFLAGS="$(LDFLAGS)"
 CONFIGURE_ENV += CXXLD="$(CXX) $(CC_BITS) $(CXXFLAGS) $(LDFLAGS)"
 CONFIGURE_ENV += CPP="$(CC) $(CPPFLAGS) $(CFLAGS) -E"
 CONFIGURE_ENV += CPP_FOR_BUILD="$(CC) $(CPPFLAGS) $(CFLAGS) -E"
@@ -141,8 +132,8 @@ CONFIGURE_ENV += SED="$(GSED)"
 CONFIGURE_ENV += ABI="$(BITS)"
 CONFIGURE_ENV += "MPN_PATH=$(MPN_$(BITS))"
 
-CONFIGURE_OPTIONS += --includedir=/usr/include/gmp
-CONFIGURE_OPTIONS += --localstatedir=/var
+CONFIGURE_OPTIONS += --includedir=$(USRINCDIR)/gmp
+CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS.shared += --enable-shared
 CONFIGURE_OPTIONS.shared += --disable-static
 CONFIGURE_OPTIONS += --disable-libtool-lock
@@ -166,13 +157,9 @@ CONFIGURE_OPTIONS.wanboot += --disable-libtool-lock
 CONFIGURE_OPTIONS.wanboot += --without-readline
 CONFIGURE_OPTIONS.wanboot += --without-pic
 
-PROTOUSRSHAREINFODIR = $(PROTOUSRSHAREDIR)/info
 PROTOUSRSHAREHTMLDIR = $(PROTOUSRSHAREDIR)/doc/gmp/html
-PROTOUSRSHAREMAN3DIR = $(PROTOUSRSHAREDIR)/man/man3
-PROTOUSRINCLUDEDIR = $(PROTOUSRDIR)/include
-PROTOPKGCONFIGDIR = $(PROTOUSRLIBDIR)/pkgconfig
-PROTOPKGCONFIGDIR64 = $(PROTOUSRLIBDIR64)/pkgconfig
 
+# libgmpxx.so.4 always gets built with unnecessary paths in RUNPATH/RPATH
 COMPONENT_POST_INSTALL_ACTION.shared = \
     ( $(MKDIR) $(PROTOUSRSHAREHTMLDIR) ; \
       $(MKDIR) $(PROTOUSRSHAREMAN3DIR) ; \
@@ -191,8 +178,8 @@ COMPONENT_POST_INSTALL_ACTION.shared = \
       $(GSED) -e "s/MACH64/$(MACH64)/g" \
 	$(COMPONENT_DIR)/Solaris/libgmpxx-64.pc > \
 	    $(COMPONENT_DIR)/libgmpxx.pc ; \
-      $(MV) $(PROTOUSRINCLUDEDIR)/gmp.h $(PROTOUSRINCLUDEDIR)/gmp/ ; \
-      $(MV) $(PROTOUSRINCLUDEDIR)/mp.h $(PROTOUSRINCLUDEDIR)/gmp/ ; \
+      $(MV) $(PROTOUSRINCDIR)/gmp.h $(PROTOUSRINCDIR)/gmp/ ; \
+      $(MV) $(PROTOUSRINCDIR)/mp.h $(PROTOUSRINCDIR)/gmp/ ; \
       $(INSTALL) -m 0644 $(COMPONENT_DIR)/Solaris/index.html \
 	$(PROTOUSRSHAREHTMLDIR)/ ; \
       $(INSTALL) -m 0644 $(COMPONENT_DIR)/Solaris/libgmp.pc \
@@ -207,15 +194,13 @@ COMPONENT_POST_INSTALL_ACTION.shared = \
 	$(PROTOUSRSHAREMAN3DIR)/ )
 
 COMPONENT_POST_INSTALL_ACTION.wanboot = \
-      ( $(MKDIR) $(PROTO_DIR)/usr/lib/grub/wanboot; \
-	$(MV) $(PROTO_DIR)/usr/lib/amd64/libgmp.a $(PROTO_DIR)/usr/lib/grub/wanboot/libgmp.a; \
-	$(STRIP) -x $(PROTO_DIR)/usr/lib/grub/wanboot/libgmp.a; \
-	$(MCS) -d $(PROTO_DIR)/usr/lib/grub/wanboot/libgmp.a; \
-	$(AR) ts $(PROTO_DIR)/usr/lib/grub/wanboot/libgmp.a )
+      ( $(MKDIR) $(PROTOUSRLIBDIR)/grub/wanboot; \
+	$(MV) $(PROTOUSRLIBDIR64)/libgmp.a $(PROTO_DIR)/usr/lib/grub/wanboot/libgmp.a; \
+	$(STRIP) -x $(PROTOUSRLIBDIR)/grub/wanboot/libgmp.a; \
+	$(MCS) -d $(PROTOUSRLIBDIR)/grub/wanboot/libgmp.a; \
+	$(AR) ts $(PROTOUSRLIBDIR)/grub/wanboot/libgmp.a )
 
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
-#Skipping this during automated tests since it hangs sometimes
+# Skipping this during automated tests since it hangs sometimes
 $(SKIP_TEST_AT_TOP_LEVEL)
 
 # common targets
@@ -244,9 +229,4 @@ $(BUILD_DIR)/$(MACH32)/.installed: COMPONENT_POST_INSTALL_ACTION = $(COMPONENT_P
 $(BUILD_DIR)/$(MACH64)/.installed: COMPONENT_POST_INSTALL_ACTION = $(COMPONENT_POST_INSTALL_ACTION.shared)
 $(BUILD_DIR)/wanboot-amd64/.installed: COMPONENT_POST_INSTALL_ACTION = $(COMPONENT_POST_INSTALL_ACTION.wanboot)
 
-test: $(TEST_32_and_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/c++-runtime

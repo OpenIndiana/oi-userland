@@ -20,16 +20,14 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libxml2
 COMPONENT_VERSION=	2.9.3
 COMPONENT_PROJECT_URL=	http://xmlsoft.org/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:4de9e31f46b44d34871c22f54bfc54398ef124d6f7cafb1f4a5958fbcd3ba12d
 COMPONENT_ARCHIVE_URL=	ftp://xmlsoft.org/libxml2/$(COMPONENT_ARCHIVE)
@@ -43,10 +41,8 @@ COMPONENT_ARCHIVE_URL_1= http://www.w3.org/XML/Test/$(COMPONENT_ARCHIVE_1)
 
 TPNO=			25711
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-include $(WS_MAKE_RULES)/lint-libraries.mk
+SYSTEM_TEST_TARGET= configure $(SYSTEM_TEST_32_and_64)
+include $(WS_MAKE_RULES)/common.mk
 
 ASLR_MODE = $(ASLR_ENABLE)
 
@@ -58,10 +54,8 @@ CONFIGURE_OPTIONS += --with-pic
 CONFIGURE_OPTIONS += --with-threads
 CONFIGURE_OPTIONS += --with-python=$(PYTHON.$(BITS))
 CONFIGURE_OPTIONS += --with-python-install-dir=$(PYTHON_VENDOR_PACKAGES)
-# Cannot link to lzma since it's not in /lib.
+# Cannot link to lzma since it's not in /lib and install media still has separate /usr.
 CONFIGURE_OPTIONS += --without-lzma
-CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS += LDFLAGS="$(LDFLAGS)"
 
 COMPONENT_PREP_ACTION += (cd $(@D) ; cp ../mapfile libxml2.syms ; autoreconf -if)
 
@@ -78,7 +72,7 @@ COMPONENT_PREP_ACTION += (cd $(@D) ; cp ../mapfile libxml2.syms ; autoreconf -if
 # to correct for the .so file being installed there instead of the 64-bit path
 # where it belongs.  Further, Python 3.4 needs an extra 'm' on the link and
 # include paths, plus a tweak to the binary path; see PEP 3149 for details.
-COMPONENT_POST_CONFIGURE_ACTION = \
+COMPONENT_POST_CONFIGURE_ACTION += \
     (cd $(@D) ; cp -rp python python3.4 ; \
     $(GSED) -i -e 's|-lpython2[.]7|-lpython3.4m|' \
      -e 's|usr/bin/$(MACH64)/python2[.]7|usr/bin/python3.4m|' \
@@ -87,18 +81,8 @@ COMPONENT_POST_CONFIGURE_ACTION = \
      `find python3.4 -name Makefile` ; \
 )
 
-# After we have built/installed libxml2, build/install the python
-# support for python 3.4
-COMPONENT_POST_INSTALL_ACTION = \
-    ( if [ $(BITS) -eq 64 ]; then \
-	cd $(@D)/python3.4 ; \
-	$(GMAKE) $(COMPONENT_INSTALL_ARGS) install ; \
-     else \
-	true ; \
-     fi )
-
 # It's also nice to test python 3.4 modules.
-COMPONENT_POST_TEST_ACTION = \
+COMPONENT_POST_TEST_ACTION += \
     ( if [ $(BITS) -eq 64 ]; then \
 	cd $(@D)/python3.4 ; \
 	$(GMAKE) $(COMPONENT_TEST_ARGS) test ; \
@@ -127,26 +111,21 @@ COMPONENT_TEST_TRANSFORMS = \
         '-e "/.*/d" '
 
 COMPONENT_SYSTEM_TEST_TARGETS = system-test 
-COMPONENT_PRE_SYSTEM_TEST_ACTION = $(COMPONENT_PRE_TEST_ACTION)
+COMPONENT_PRE_SYSTEM_TEST_ACTION += $(COMPONENT_PRE_TEST_ACTION)
 
-# common targets
-configure:	$(CONFIGURE_32_and_64)
+COMPONENT_POST_INSTALL_ACTION.32 += \
+	$(PYTHON.2.7.32) -m compileall $(PROTOUSRLIBDIR)/python2.7/vendor-packages;
 
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-	$(PYTHON.2.7.32) -m compileall $(PROTO_DIR)/usr/lib/python2.7/vendor-packages
-	$(PYTHON.3.4.64) -m compileall $(PROTO_DIR)/usr/lib/python3.4/vendor-packages
-
-test:		$(TEST_32_and_64)
-
-system-test:    $(CONFIGURE_32_and_64) $(SYSTEM_TEST_32_and_64)
-
+# After we have built/installed libxml2, build/install the python
+# support for python 3.4
+COMPONENT_POST_INSTALL_ACTION.64 += \
+	cd $(@D)/python3.4 ; \
+	$(GMAKE) $(COMPONENT_INSTALL_ARGS) install ; \
+	$(PYTHON.3.4.64) -m compileall $(PROTOUSRLIBDIR)/python3.4/vendor-packages;
 
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-34
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

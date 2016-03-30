@@ -20,9 +20,9 @@
 #
 
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 include $(WS_COMPONENTS)/php/php-metadata.mk
@@ -35,41 +35,36 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=\
     sha256:0af0045745d61eeb74a3ea744529a2481b27cb689da720e6c0250675043724e4
 COMPONENT_ARCHIVE_URL=	http://php.net/get/$(COMPONENT_ARCHIVE)/from/this/mirror
-COMPONENT_BUGDB=	utility/php
 TPNO=			22435
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
+include $(WS_MAKE_RULES)/common.mk
 include $(PHP_TOP_DIR)/php.mk
 
 # We patch configure.in to allow building just modules (no SAPI's), e.g. intl.
 # Since we are sharing the source, regenerate configure here.
-COMPONENT_PREP_ACTION += (cd $(SOURCE_DIR) ; autoconf) ;
-
-ASLR_MODE = $(ASLR_ENABLE)
+COMPONENT_PREP_ACTION += (cd $(SOURCE_DIR) ; autoreconf) ;
 
 include enable-extensions.mk
 
 CONFIGURE_OPTIONS += --enable-dtrace
-REQUIRED_PACKAGES += system/dtrace
-COMPONENT_BUILD_ENV += PATH="$$PATH:/usr/sbin"
+COMPONENT_BUILD_ENV += PATH="$(PATH):$(USRSBINDIR)"
 
+ETCPHPDIR= $(ETCDIR)/php/$(UL_PHP_MINOR_VERSION)
+VARPHPDIR= $(VARDIR)/php/$(UL_PHP_MINOR_VERSION)
 # .conf files go under /etc, not /usr
-CONFIGURE_OPTIONS +=	--sysconfdir=/etc/php/$(UL_PHP_MINOR_VERSION)
+CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCPHPDIR)
 # var doesn't go under /usr either!
-CONFIGURE_OPTIONS +=	--localstatedir=/var/php/$(UL_PHP_MINOR_VERSION)
+CONFIGURE_OPTIONS +=	--localstatedir=$(VARPHPDIR)
 # Nor does php.ini and its friends.
-CONFIGURE_OPTIONS +=	--with-config-file-path=/etc/php/$(UL_PHP_MINOR_VERSION)
-CONFIGURE_OPTIONS +=	--with-config-file-scan-dir=/etc/php/$(UL_PHP_MINOR_VERSION)/conf.d
+CONFIGURE_OPTIONS +=	--with-config-file-path=$(ETCPHPDIR)
+CONFIGURE_OPTIONS +=	--with-config-file-scan-dir=$(ETCPHPDIR)/conf.d
 # Nor does PEAR (default: $PREFIX/lib/php)
-CONFIGURE_OPTIONS +=	--with-pear=/var/php/$(UL_PHP_MINOR_VERSION)/pear
+CONFIGURE_OPTIONS +=	--with-pear=$(VARPHPDIR)/pear
 
 # Use openldap
 # This is good enough to fool configure
-CONFIGURE_OPTIONS += CPPFLAGS="$(CPPFLAGS) -I/usr/include/openldap" \
-	LDFLAGS="$(LDFLAGS) -lldap_r"
+CPPFLAGS += -I$(USRINCDIR)/openldap
+LDFLAGS += -lldap_r
 # but ensure "make" gets the point
 COMPONENT_BUILD_ARGS += LDAP_SHARED_LIBADD="-lldap_r"
 
@@ -112,20 +107,12 @@ COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH)-$(BITS).ma
 
 CLEAN_PATHS += proto-scripts
 
-# For picking up php.ini-development and -production
-PKG_PROTO_DIRS +=      $(COMPONENT_SRC)
-
-configure:		$(CONFIGURE_64)
-build:			$(BUILD_64)
-install:		$(INSTALL_64)
-
 # The test results are unstable between runs
 $(SKIP_TEST_AT_TOP_LEVEL)
-test:			$(TEST_64)
 
 REQUIRED_PACKAGES += developer/icu
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/security/openssl
-REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/dtrace
 REQUIRED_PACKAGES += system/library/math

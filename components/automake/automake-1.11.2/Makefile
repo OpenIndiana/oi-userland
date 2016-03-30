@@ -22,42 +22,21 @@
 #
 # Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= NO_ARCH
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		automake
 COMPONENT_MAJMIN_VERS=	1.11
 COMPONENT_VERSION=	1.11.2
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:c339e3871d6595620760725da61de02cf1c293af8a05b14592d6587ac39ce546
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/automake/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/automake
 
 TPNO=			7253
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/gnu-component.mk
 
-CONFIGURE_OPTIONS  +=	--infodir=/usr/share/$(COMPONENT_NAME)-$(COMPONENT_MAJMIN_VERS)/info
-CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS  +=	PERL="$(PERL)"
-
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
-# common targets
-configure:	$(CONFIGURE_NO_ARCH)
-
-build:		$(BUILD_NO_ARCH)
-
-install:	$(INSTALL_NO_ARCH)
-
-test:		$(TEST_NO_ARCH)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
+CONFIGURE_OPTIONS  += --infodir=$(USRSHAREDIR)/$(COMPONENT_NAME)-$(COMPONENT_MAJMIN_VERS)/info
+CONFIGURE_OPTIONS  += PERL="$(PERL)"
 
 REQUIRED_PACKAGES += $(PERL_PKG)
 REQUIRED_PACKAGES += shell/ksh93

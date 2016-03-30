@@ -18,28 +18,24 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xz
 COMPONENT_VERSION=	5.2.2
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://tukaani.org/xz/
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:73df4d5d34f0468bd57d09f2d8af363e95ed6cc3a4a86129d2f2c366259902a2
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/xz
 
 TPNO=			27216
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-CONFIGURE_OPTIONS +=		CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS +=		--bindir=$(USRBINDIR)
+SYSTEM_TEST_TARGET= configure $(SYSTEM_TEST_32_and_64)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_TEST_DIR =		$(@D)/tests
 
@@ -60,25 +56,12 @@ COMPONENT_PRE_SYSTEM_TEST_ACTION += \
 	(cd $(@D)/src/liblzma ; $(GMAKE) liblzma.la )
 
 COMPONENT_SYSTEM_TEST_DIR =	$(@D)/tests
-COMPONENT_SYSTEM_TEST_ENV +=	XZ_SCRIPT=/usr/bin/xz
-COMPONENT_SYSTEM_TEST_ENV +=	XZDEC_SCRIPT=/usr/bin/xzdec
-COMPONENT_SYSTEM_TEST_ENV +=	XZDIFF_SCRIPT=/usr/bin/xzdiff
-COMPONENT_SYSTEM_TEST_ENV +=	XZGREP_SCRIPT=/usr/bin/xzgrep
-
-ASLR_MODE = $(ASLR_ENABLE)
-
-configure:	$(CONFIGURE_32_and_64)
-
-build:		$(BUILD_32_and_64)
+COMPONENT_SYSTEM_TEST_ENV +=	XZ_SCRIPT=$(USRBINDIR)/xz
+COMPONENT_SYSTEM_TEST_ENV +=	XZDEC_SCRIPT=$(USRBINDIR)/xzdec
+COMPONENT_SYSTEM_TEST_ENV +=	XZDIFF_SCRIPT=$(USRBINDIR)/xzdiff
+COMPONENT_SYSTEM_TEST_ENV +=	XZGREP_SCRIPT=$(USRBINDIR)/xzgrep
 
 include $(WS_MAKE_RULES)/shared-targets.mk
 
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-
-system-test:    configure $(SYSTEM_TEST_32_and_64)
-
 REQUIRED_PACKAGES += shell/bash
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/crypto

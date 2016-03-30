@@ -22,34 +22,26 @@
 #
 # Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		a2ps
 COMPONENT_VERSION=	4.14
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/a2ps/
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:f3ae8d3d4564a41b6e2a21f237d2f2b104f48108591e8b83497500182a3ab3a4
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/a2ps/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/a2ps
 
 TPNO=			4517
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/gnu-component.mk
 
 # don't use LD_Z_IGNORE: causes linker problems
 LD_Z_IGNORE=
 
 CONFIGURE_OPTIONS  +=		--enable-shared
 CONFIGURE_OPTIONS  +=		--disable-static
-CONFIGURE_OPTIONS  +=		--sysconfdir=/etc/gnu
+CONFIGURE_OPTIONS  +=		--sysconfdir=$(ETCDIR)/gnu
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		--with-medium=letter
-CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 
 # because viewpathing isn't quite right in this version of a2ps
 COMPONENT_PREP_ACTION = \
@@ -63,24 +55,8 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 	     ln -s $$sheet ; \
 	 done)
 
-# Enable ASLR for this component
-ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
-configure:	$(CONFIGURE_32)
-
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(TEST_32)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
-
 REQUIRED_PACKAGES += developer/gperf
 REQUIRED_PACKAGES += editor/gnu-emacs
 REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

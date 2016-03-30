@@ -18,26 +18,24 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gsl
 COMPONENT_VERSION=	2.1
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/gsl/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:59ad06837397617f698975c494fe7b2b698739a59e2fcf830b776428938a0c66
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libgsl
 
 TPNO=			26006
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET=
+SYSTEM_TEST_TARGET=
+include $(WS_MAKE_RULES)/gnu-component.mk
 
 # NOTE:
 # The libgsl package on Solaris is getting GSL CBLAS routines from
@@ -80,19 +78,14 @@ LDFLAGS += $(LD_Z_TEXT)
 LDFLAGS += $(LD_Z_DEFS)
 LDFLAGS += $(LD_DEF_LIBS)
 
-STUDIO_LIBS_PATH.32 =	/usr/lib/studio
-STUDIO_LIBS_PATH.64 =	/usr/lib/studio/64
+STUDIO_LIBS_PATH.32 =	$(USRLIBDIR)/studio
+STUDIO_LIBS_PATH.64 =	$(USRLIBDIR)/studio/64
 
 LDFLAGS += -L$(STUDIO_LIBS_PATH.$(BITS)) -R$(STUDIO_LIBS_PATH.$(BITS)) \
 		-lsunperf -lfsu -lmtsk -lpicl -lkstat
 
-CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
-CONFIGURE_ENV += LDFLAGS="$(LDFLAGS)"
-
 COMPONENT_BUILD_ARGS += CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ARGS += LDFLAGS="$(LDFLAGS)"
-
-CC += $(CC_BITS)
 
 COMPONENT_TEST_ARGS =		-k -i
 COMPONENT_SYSTEM_TEST_ARGS =	-k -i
@@ -128,12 +121,6 @@ unexport SHELLOPTS
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-configure:	$(CONFIGURE_32_and_64)
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
 # There are known problems in libsunperf that are causing GSL test failures
 # in Solaris 12 with Studio 12.4 just on the x86 platform:
 # linalg: FAIL:   LQ_update m(5,3) [88]                             (32-bit)
@@ -145,7 +132,6 @@ test:		install $(TEST_32_and_64)
 system-test:    build $(SYSTEM_TEST_32_and_64)
 
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/openmp
 REQUIRED_PACKAGES += system/library/sunperf

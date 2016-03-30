@@ -20,9 +20,9 @@
 #
 
 #
-# Copyright (c) 2010, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 #libreadline.so needs libcurses.so, but -z ignore will not leave a dependency.
 LD_Z_IGNORE=
@@ -41,32 +41,13 @@ TPNO=			8452
 
 COMPONENT_BUILD_TARGETS = all info
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS  += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
-CONFIGURE_OPTIONS  += --sysconfdir=/etc/gnu
+CONFIGURE_OPTIONS  += --sysconfdir=$(ETCDIR)/gnu
 CONFIGURE_OPTIONS  += --infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  += --x-libraries=$(CONFIGURE_LIBDIR.$(BITS))
-CONFIGURE_OPTIONS  += CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS  += CXXFLAGS="$(CXXFLAGS)"
-CONFIGURE_OPTIONS  += LDFLAGS="$(LDFLAGS)"
-CONFIGURE_OPTIONS  += WX_CONFIG="/usr/bin/$(MACH64)/wx-config"
-
-# Enable aslr for this component
-ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+CONFIGURE_OPTIONS  += WX_CONFIG="$(USRBINDIR64)/wx-config"
 
 REQUIRED_PACKAGES += image/library/libjpeg
 REQUIRED_PACKAGES += image/library/libpng
@@ -86,7 +67,6 @@ REQUIRED_PACKAGES += runtime/lua
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/font/truetype/liberation
 REQUIRED_PACKAGES += system/font/xorg/xorg-core
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/c++-runtime
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2

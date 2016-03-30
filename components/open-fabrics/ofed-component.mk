@@ -22,15 +22,29 @@
 #
 
 #
-# This file sets up the default options and base requirements for components
-# that should be built for 32-bit and 64-bit.
+# This file sets up the standard, default options and base requirements for
+# openfabrics userland components.
 #
-include $(WS_MAKE_RULES)/ips.mk
+COMPONENT_PROJECT_URL ?=	http://www.openfabrics.org/
+COMPONENT_ARCHIVE_URL ?=	http://www.openfabrics.org/downloads/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 
-ASLR_MODE= $(ASLR_ENABLE)
+# component default overrides
+TEST_TARGET=
+SYSTEM_TEST_TARGET=
+include $(WS_MAKE_RULES)/common.mk
+include ../ofed.mk
+
+# None of the components have yet been tested with ASLR.
+ASLR_MODE= $(ASLR_DISABLE)
+
+# Almost every component requires these before Solaris 12.  Those that do not
+# can simply override.
+ifeq ($(OS_VERSION),5.11)
+LIBS +=	-lsocket -lnsl
+endif
 
 # common targets
-build:          $(BUILD_32_and_64)
-install:        $(INSTALL_32_and_64)
-test:           $(TEST_32_and_64)
-system-test:    $(SYSTEM_TEST_32_and_64)
+test:		$(NO_TESTS)
+
+system-test:    $(NO_TESTS)
+

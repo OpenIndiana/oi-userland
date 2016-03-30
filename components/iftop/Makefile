@@ -20,26 +20,22 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		iftop
 COMPONENT_VERSION=	0.17
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.ex-parrot.com/~pdw/iftop/
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:d032547c708307159ff5fd0df23ebd3cfa7799c31536fa0aea1820318a8e0eac
 COMPONENT_ARCHIVE_URL=	http://www.ex-parrot.com/~pdw/iftop/download/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/iftop
 
 TPNO=			9256
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
     ($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -51,28 +47,10 @@ PATCH_LEVEL=	0
 # "happily", as this is simpler)
 studio_ALIGN.sparc.64=	-xmemalign=1i
 
-
-IFTOP_LIBDIR=	/usr/gnu/lib
+IFTOP_LIBDIR=	$(USRGNUDIR)/lib
 LDFLAGS +=	-L$(IFTOP_LIBDIR) -R$(IFTOP_LIBDIR)
-CPPFLAGS +=	-I/usr/gnu/include -I/usr/include/ncurses
-CONFIGURE_OPTIONS  +=	LDFLAGS="$(LDFLAGS)"
-CONFIGURE_OPTIONS  +=	CPPFLAGS="$(CPPFLAGS)"
-CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
-
-
-# common targets
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
+CPPFLAGS +=	-I$(USRGNUDIR)/include -I$(USRINCDIR)/ncurses
 
 REQUIRED_PACKAGES += library/ncurses
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libpcap
 REQUIRED_PACKAGES += system/library/math

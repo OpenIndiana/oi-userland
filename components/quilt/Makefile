@@ -22,26 +22,22 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
-PATH = /usr/gnu/bin:/usr/bin
+PATH = $(GNUBIN):$(USRBINDIR)
 
 COMPONENT_NAME=		quilt
 COMPONENT_VERSION=	0.64
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://savannah.nongnu.org/projects/quilt/
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:c4bfd3282214a288e8d3e921ae4d52e73e24c4fead72b5446752adee99a7affd
 COMPONENT_ARCHIVE_URL=	http://download.savannah.gnu.org/releases/quilt/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/quilt
 
 TPNO=			21555
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+SYSTEM_TEST_TARGET= configure $(SYSTEM_TEST_64)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
     ($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -55,23 +51,23 @@ PATCH_LEVEL=	0
 # generated README and man pages.
 COMPONENT_BUILD_ARGS+=	--no-print-directory
 
-CONFIGURE_OPTIONS += --with-column=/usr/bin/column
-CONFIGURE_OPTIONS += --with-cp=/usr/gnu/bin/cp
-CONFIGURE_OPTIONS += --with-date=/usr/gnu/bin/date
-CONFIGURE_OPTIONS += --with-getopt=/usr/gnu/bin/getopt
-CONFIGURE_OPTIONS += --with-grep=/usr/gnu/bin/grep
-CONFIGURE_OPTIONS += --with-tail=/usr/gnu/bin/tail
-CONFIGURE_OPTIONS += --with-tr=/usr/gnu/bin/tr
-CONFIGURE_OPTIONS += --with-sed=/usr/gnu/bin/sed
-CONFIGURE_OPTIONS += --with-diff=/usr/gnu/bin/diff
-CONFIGURE_OPTIONS += --with-find=/usr/gnu/bin/find
-CONFIGURE_OPTIONS += --with-patch=/usr/gnu/bin/patch
-CONFIGURE_OPTIONS += --with-perl=/usr/perl5/$(PERL_VERSION)/bin/perl
-CONFIGURE_OPTIONS += --with-pod2man=/usr/perl5/$(PERL_VERSION)/bin/pod2man
-CONFIGURE_OPTIONS += --with-xgettext=/usr/bin/gxgettext
-CONFIGURE_OPTIONS += --with-msgfmt=/usr/bin/gmsgfmt
+PERLBINDIR= $(USRDIR)/perl5/$(PERL_VERSION)/bin
 
-CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
+CONFIGURE_OPTIONS += --with-column=$(USRBINDIR)/column
+CONFIGURE_OPTIONS += --with-cp=$(GNUBIN)/cp
+CONFIGURE_OPTIONS += --with-date=$(GNUBIN)/date
+CONFIGURE_OPTIONS += --with-getopt=$(GNUBIN)/getopt
+CONFIGURE_OPTIONS += --with-grep=$(GNUBIN)/grep
+CONFIGURE_OPTIONS += --with-tail=$(GNUBIN)/tail
+CONFIGURE_OPTIONS += --with-tr=$(GNUBIN)/tr
+CONFIGURE_OPTIONS += --with-sed=$(GNUBIN)/sed
+CONFIGURE_OPTIONS += --with-diff=$(GNUBIN)/diff
+CONFIGURE_OPTIONS += --with-find=$(GNUBIN)/find
+CONFIGURE_OPTIONS += --with-patch=$(GNUBIN)/patch
+CONFIGURE_OPTIONS += --with-perl=$(PERLBINDIR)/perl
+CONFIGURE_OPTIONS += --with-pod2man=$(PERLBINDIR)/pod2man
+CONFIGURE_OPTIONS += --with-xgettext=$(USRBINDIR)/gxgettext
+CONFIGURE_OPTIONS += --with-msgfmt=$(USRBINDIR)/gmsgfmt
 
 COMPONENT_INSTALL_ARGS +=	BUILD_ROOT=$(PROTO_DIR)
 
@@ -83,17 +79,6 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/^XXX_REMOVE_XXX$$/d" '
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
-
-system-test:    configure $(SYSTEM_TEST_64)
-
 
 REQUIRED_PACKAGES += archiver/gnu-tar
 REQUIRED_PACKAGES += file/gnu-coreutils

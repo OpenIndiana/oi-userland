@@ -18,8 +18,11 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		junit
@@ -30,13 +33,21 @@ COMPONENT_ARCHIVE=	r$(COMPONENT_VERSION).zip
 COMPONENT_ARCHIVE_HASH=	\
     sha256:3048cb3f2b07fada9d85b2c042bbedb93892ef70c1dcfe0594124850418f9ffb
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/junit
 
 TPNO=                   9070
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/ant.mk
-include $(WS_MAKE_RULES)/ips.mk
+BUILD_STYLE= ant
+
+# Another test is:
+# To test after you have installed the resulting package do:
+# $ java -cp /usr/share/lib/java/junit.jar:/usr/share/doc/junit/samples/org \
+#       junit/samples/money/MoneyTest
+# ......................
+# Time: 0.003
+#
+# OK (22 tests)
+SYSTEM_TEST_TARGET= build $(SYSTEM_TEST_32)
+include $(WS_MAKE_RULES)/common.mk
 
 # These ARGS override what is set in build.xml
 COMPONENT_BUILD_ARGS 	+= -Ddist=${PROTO_DIR}
@@ -56,7 +67,7 @@ COMPONENT_TEST_ARGS	+= $(COMPONENT_BUILD_ARGS)
 COMPONENT_TEST_ENV	+= "_JAVA_OPTIONS=-Djava.io.tmpdir=$(BUILD_DIR_32)/tmp"
 COMPONENT_TEST_TARGETS	 = test-build
 
-COMPONENT_SYSTEM_TEST_ARGS	+= -Dsystem-binjar=/usr/share/lib/java/$(COMPONENT_NAME).jar
+COMPONENT_SYSTEM_TEST_ARGS	+= -Dsystem-binjar=$(USRSHARELIBDIR)/java/$(COMPONENT_NAME).jar
 COMPONENT_SYSTEM_TEST_ENV	+= "_JAVA_OPTIONS=-Djava.io.tmpdir=$(BUILD_DIR_32)/tmp"
 COMPONENT_SYSTEM_TEST_TARGETS	 = test
 
@@ -66,24 +77,5 @@ COMPONENT_SYSTEM_TEST_TARGETS	 = test
 COMPONENT_TEST_TRANSFORMS += \
 	'-e "1,/^test/d"' \
 	'-e "s/.*[Tt]ime.*$$//"'
-
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
-build:		$(BUILD_32)
-
-install:	build
-
-# Another test is:
-# To test after you have installed the resulting package do:
-# $ java -cp /usr/share/lib/java/junit.jar:/usr/share/doc/junit/samples/org \
-#       junit/samples/money/MoneyTest
-# ......................
-# Time: 0.003
-#
-# OK (22 tests)
-
-test:		$(TEST_32)
-
-system-test:    build $(SYSTEM_TEST_32)
 
 REQUIRED_PACKAGES += runtime/java/jre-8

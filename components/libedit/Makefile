@@ -18,16 +18,17 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libedit
 COMPONENT_VERSION=	20150325-3.1
 IPS_COMPONENT_VERSION=  3.1
 COMPONENT_PROJECT_URL=	http://www.thrysoee.dk/editline/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:c88a5e4af83c5f40dda8455886ac98923a9c33125699742603a88a0253fcc8c5
 COMPONENT_ARCHIVE_URL=	http://www.thrysoee.dk/editline/$(COMPONENT_ARCHIVE)
@@ -35,27 +36,8 @@ COMPONENT_BUGDB=	library/libedit
 
 TPNO=			22295
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS +=    CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=   --enable-shared
 CONFIGURE_OPTIONS +=   --disable-static
-
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
-# common targets
-configure:	$(CONFIGURE_32_and_64)
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
-
-
-REQUIRED_PACKAGES += system/library

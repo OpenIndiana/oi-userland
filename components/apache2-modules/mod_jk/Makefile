@@ -18,8 +18,11 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mod_jk
@@ -27,37 +30,16 @@ COMPONENT_VERSION=	1.2.41
 COMPONENT_PROJECT_URL=	http://tomcat.apache.org/connectors-doc/
 COMPONENT_SRC_NAME=	tomcat-connectors
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)-src
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:f193b02aeec71daab13fc5bbb99f13eca9d916b79a024f8035a65f39559bc7fd
 COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/tomcat/tomcat-connectors/jk/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/apache
 
 TPNO=			24206
 
 CONFIGURE_DEFAULT_DIRS=no
-DEFAULT_COMPILER=no
-
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+MODULES_INSTALL=
 include ../modules.mk
 
 PATCH_LEVEL=0
 
 CONFIGURE_SCRIPT = $(SOURCE_DIR)/native/configure
-
-CONFIGURE_OPTIONS += --with-apxs=$(APXS)
-
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
-configure:	$(MODULES_CONFIGURE)
-
-build: $(MODULES_BUILD)
-
-test: $(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
-
-REQUIRED_PACKAGES += system/library

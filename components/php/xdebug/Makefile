@@ -20,15 +20,14 @@
 #
 
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 include $(WS_COMPONENTS)/php/php-metadata.mk
 
 COMPONENT_NAME=		xdebug
 COMPONENT_VERSION=	2.3.2
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH= \
 	sha256:f875d0f8c4e96fa7c698a461a14faa6331694be231e2ddc4f3de0733322fc6d0
@@ -37,18 +36,10 @@ COMPONENT_PROJECT_URL=	http://xdebug.org/
 
 TPNO=			22429
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 include $(PHP_TOP_DIR)/phpize.mk
 
 CONFIGURE_OPTIONS +=	--enable-xdebug
 
-configure: $(CONFIGURE_64)
-build: $(BUILD_64)
-install: $(INSTALL_64)
-test: $(NO_TESTS)
-
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

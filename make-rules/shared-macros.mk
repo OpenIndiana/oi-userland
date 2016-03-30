@@ -18,6 +18,8 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
@@ -123,13 +125,45 @@ endif
 include $(WS_MAKE_RULES)/ips-buildinfo.mk
 
 COMPILER ?=		studio
-BITS ?=			32
 
 # The values of BITS changes during the build process for components that
 # are built 32-bit and 64-bit.  This macro makes it possible to determine
 # which components are only built 64-bit and allow other make-rules files
-# to adjust accordingly.
-INITIAL_BITS=		$(BITS)
+# to adjust accordingly.  Possible values are: '32', '64', '32_and_64',
+# '64_and_32', and 'NO_ARCH' (the orderings specify build preference).
+BUILD_BITS ?=$(BITS)
+ifeq ($(strip $(BUILD_BITS)),64)
+BITS ?=			64
+else
+BITS ?=			32
+endif
+
+# Based on BUILD_BITS, determine which binaries are preferred for a build.
+# This macro is for the convenience of other make-rules files and should not be
+# overridden by developers.
+ifeq ($(strip $(BUILD_BITS)),64)
+PREFERRED_BITS=64
+endif
+ifeq ($(strip $(BUILD_BITS)),64_and_32)
+PREFERRED_BITS=64
+endif
+PREFERRED_BITS ?= 32
+
+# Map target build to macro/variable naming conventions.  This macro is for the
+# convenience of other make-rules files and should not be overridden by
+# developers.
+ifeq ($(BUILD_BITS),64_and_32)
+MK_BITS=32_and_64
+else
+MK_BITS=$(strip $(BUILD_BITS))
+endif
+
+# Do not assume a default build style for compatibility with older component
+# Makefiles.  If explicitly set, common.mk will automatically include relevant
+# make-rules files.  Possible values are: 'ant', 'archive', 'attpackagemake',
+# 'cmake', 'configure', 'gnu-component', 'justmake', 'pkg', and 'setup.py'. See
+# corresponding file in make-rules for details.
+# BUILD_STYLE=
 
 # The default version should go last.
 PYTHON_VERSION =	2.7
@@ -146,6 +180,10 @@ CONFIG_SHELL =	/bin/bash
 PKG_REPO =	file:$(WS_REPO)
 
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)
+COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+# Assume a component is categorized as a utility by default.
+COMPONENT_BUGDB=	utility/$(COMPONENT_NAME)
 
 COMPONENT_DIR :=	$(shell pwd)
 SOURCE_DIR =	$(COMPONENT_DIR)/$(COMPONENT_SRC)
@@ -154,6 +192,7 @@ PROTO_DIR =	$(BUILD_DIR)/prototype/$(MACH)
 
 ETCDIR =	/etc
 USRDIR =	/usr
+USRGNUDIR =	$(USRDIR)/gnu
 BINDIR =	/bin
 SBINDIR =	/sbin
 LIBDIR =	/lib
@@ -175,60 +214,46 @@ USRSHAREMAN1MDIR =	$(USRSHAREMANDIR)/man1m
 USRSHAREMAN3DIR =	$(USRSHAREMANDIR)/man3
 USRSHAREMAN4DIR =	$(USRSHAREMANDIR)/man4
 USRSHAREMAN5DIR =	$(USRSHAREMANDIR)/man5
+USRSHAREMAN8DIR =	$(USRSHAREMANDIR)/man8
 USRLIBDIR64 =	$(USRDIR)/lib/$(MACH64)
-PROTOBINDIR =	$(PROTO_DIR)/$(BINDIR)
-PROTOETCDIR =	$(PROTO_DIR)/$(ETCDIR)
-PROTOETCSECDIR = $(PROTO_DIR)/$(ETCDIR)/security
-PROTOUSRDIR =	$(PROTO_DIR)/$(USRDIR)
-PROTOLIBDIR =	$(PROTO_DIR)/$(LIBDIR)
+PROTOBINDIR =	$(PROTO_DIR)$(BINDIR)
+PROTOETCDIR =	$(PROTO_DIR)$(ETCDIR)
+PROTOETCSECDIR = $(PROTO_DIR)$(ETCDIR)/security
+PROTOUSRDIR =	$(PROTO_DIR)$(USRDIR)
+PROTOLIBDIR =	$(PROTO_DIR)$(LIBDIR)
 PROTOSVCMANIFESTDIR =	$(PROTOLIBDIR)/svc/manifest
 PROTOSVCMETHODDIR =	$(PROTOLIBDIR)/svc/method
-PROTOUSRBINDIR =	$(PROTO_DIR)/$(USRBINDIR)
-PROTOUSRBINDIR64 =	$(PROTO_DIR)/$(USRBINDIR64)
-PROTOUSRSBINDIR =	$(PROTO_DIR)/$(USRSBINDIR)
-PROTOUSRLIBDIR =	$(PROTO_DIR)/$(USRLIBDIR)
-PROTOUSRLIBDIR64 =	$(PROTO_DIR)/$(USRLIBDIR64)
+PROTOUSRBINDIR =	$(PROTO_DIR)$(USRBINDIR)
+PROTOUSRBINDIR64 =	$(PROTO_DIR)$(USRBINDIR64)
+PROTOUSRSBINDIR =	$(PROTO_DIR)$(USRSBINDIR)
+PROTOUSRLIBDIR =	$(PROTO_DIR)$(USRLIBDIR)
+PROTOUSRLIBDIR64 =	$(PROTO_DIR)$(USRLIBDIR64)
 PROTOPKGCONFIGDIR = 	$(PROTOUSRLIBDIR)/pkgconfig
 PROTOPKGCONFIGDIR64 =	$(PROTOUSRLIBDIR64)/pkgconfig
-PROTOUSRINCDIR =	$(PROTO_DIR)/$(USRINCDIR)
-PROTOUSRSHAREDIR =	$(PROTO_DIR)/$(USRSHAREDIR)
-PROTOUSRSHARELIBDIR =	$(PROTO_DIR)/$(USRSHARELIBDIR)
-PROTOUSRSHAREDOCDIR =	$(PROTO_DIR)/$(USRSHAREDOCDIR)
+PROTOUSRINCDIR =	$(PROTO_DIR)$(USRINCDIR)
+PROTOUSRSHAREDIR =	$(PROTO_DIR)$(USRSHAREDIR)
+PROTOUSRSHARELIBDIR =	$(PROTO_DIR)$(USRSHARELIBDIR)
+PROTOUSRSHAREDOCDIR =	$(PROTO_DIR)$(USRSHAREDOCDIR)
 PROTOUSRSHAREINFODIR =	$(PROTOUSRSHAREDIR)/info
-PROTOUSRSHAREMANDIR =	$(PROTO_DIR)/$(USRSHAREMANDIR)
-PROTOUSRSHAREMAN1DIR =	$(PROTO_DIR)/$(USRSHAREMAN1DIR)
-PROTOUSRSHAREMAN1MDIR =	$(PROTO_DIR)/$(USRSHAREMAN1MDIR)
-PROTOUSRSHAREMAN3DIR =	$(PROTO_DIR)/$(USRSHAREMAN3DIR)
-PROTOUSRSHAREMAN4DIR =	$(PROTO_DIR)/$(USRSHAREMAN4DIR)
-PROTOUSRSHAREMAN5DIR =	$(PROTO_DIR)/$(USRSHAREMAN5DIR)
-PROTOUSRSHARELOCALEDIR =	$(PROTO_DIR)/$(USRSHARELOCALEDIR)
+PROTOUSRSHAREMANDIR =	$(PROTO_DIR)$(USRSHAREMANDIR)
+PROTOUSRSHAREMAN1DIR =	$(PROTO_DIR)$(USRSHAREMAN1DIR)
+PROTOUSRSHAREMAN1MDIR =	$(PROTO_DIR)$(USRSHAREMAN1MDIR)
+PROTOUSRSHAREMAN3DIR =	$(PROTO_DIR)$(USRSHAREMAN3DIR)
+PROTOUSRSHAREMAN4DIR =	$(PROTO_DIR)$(USRSHAREMAN4DIR)
+PROTOUSRSHAREMAN5DIR =	$(PROTO_DIR)$(USRSHAREMAN5DIR)
+PROTOUSRSHAREMAN8DIR =	$(PROTO_DIR)$(USRSHAREMAN8DIR)
+PROTOUSRSHARELOCALEDIR =	$(PROTO_DIR)$(USRSHARELOCALEDIR)
 
-
-SFWBIN =	/usr/sfw/bin
-SFWINCLUDE =	/usr/sfw/include
-SFWLIB =	/usr/sfw/lib
-SFWLIB64 =	/usr/sfw/lib/$(MACH64)
-SFWSHARE =	/usr/sfw/share
-SFWSHAREMAN =	/usr/sfw/share/man
-SFWSHAREMAN1 =	/usr/sfw/share/man/man1
-PROTOSFWBIN =	$(PROTO_DIR)/$(SFWBIN)
-PROTOSFWLIB =	$(PROTO_DIR)/$(SFWLIB)
-PROTOSFWLIB64 =	$(PROTO_DIR)/$(SFWLIB64)
-PROTOSFWSHARE =	$(PROTO_DIR)/$(SFWSHARE)
-PROTOSFWSHAREMAN =	$(PROTO_DIR)/$(SFWSHAREMAN)
-PROTOSFWSHAREMAN1 =	$(PROTO_DIR)/$(SFWSHAREMAN1)
-PROTOSFWINCLUDE =	$(PROTO_DIR)/$(SFWINCLUDE)
-
-GNUBIN =	/usr/gnu/bin
-GNULIB =	/usr/gnu/lib
-GNULIB64 =	/usr/gnu/lib/$(MACH64)
-GNUSHARE =	/usr/gnu/share
-GNUSHAREMAN =	/usr/gnu/share/man
-GNUSHAREMAN1 =	/usr/gnu/share/man/man1
-PROTOGNUBIN =	$(PROTO_DIR)/$(GNUBIN)
-PROTOGNUSHARE =	$(PROTO_DIR)/$(GNUSHARE)
-PROTOGNUSHAREMAN =	$(PROTO_DIR)/$(GNUSHAREMAN)
-PROTOGNUSHAREMAN1 =	$(PROTO_DIR)/$(GNUSHAREMAN1)
+GNUBIN =	$(USRGNUDIR)/bin
+GNULIB =	$(USRGNUDIR)/lib
+GNULIB64 =	$(USRGNUDIR)/lib/$(MACH64)
+GNUSHARE =	$(USRGNUDIR)/share
+GNUSHAREMAN =	$(USRGNUDIR)/share/man
+GNUSHAREMAN1 =	$(USRGNUDIR)/share/man/man1
+PROTOGNUBIN =	$(PROTO_DIR)$(GNUBIN)
+PROTOGNUSHARE =	$(PROTO_DIR)$(GNUSHARE)
+PROTOGNUSHAREMAN =	$(PROTO_DIR)$(GNUSHAREMAN)
+PROTOGNUSHAREMAN1 =	$(PROTO_DIR)$(GNUSHAREMAN1)
 
 # work around _TIME, _DATE, embedded date chatter in component builds
 # to use, set TIME_CONSTANT in the component Makefile and add $(CONSTANT_TIME)
@@ -583,6 +608,8 @@ TCLSH.8.5.sparc.64 =	/usr/bin/sparcv9/tclsh8.5
 TCLSH =		$(TCLSH.$(TCL_VERSION).$(MACH).$(BITS))
 
 CCSMAKE =	/usr/ccs/bin/make
+DOXYGEN =	/usr/bin/doxygen
+ELFEDIT =	/usr/bin/elfedit
 GMAKE =		/usr/gnu/bin/make
 GPATCH =	/usr/gnu/bin/patch
 PATCH_LEVEL =	1
@@ -615,10 +642,12 @@ LN =		/bin/ln
 CAT =		/bin/cat
 SYMLINK =	/bin/ln -s
 ENV =		/usr/bin/env
+FIND =		/usr/bin/find
 INSTALL =	/usr/bin/ginstall
 GNU_GREP =	/usr/gnu/bin/grep
 CHMOD =		/usr/bin/chmod
 NAWK =		/usr/bin/nawk
+TAR =		/usr/bin/tar
 TEE =		/usr/bin/tee
 
 INS.dir=        $(INSTALL) -d $@
@@ -831,6 +860,8 @@ CFLAGS +=	$(CC_BITS)
 # Add compiler-specific 'default' features
 CFLAGS +=	$(CFLAGS.$(COMPILER))
 CFLAGS +=	$(CFLAGS.$(COMPILER).$(BITS))
+CFLAGS +=	$(CFLAGS.$(COMPILER).$(MACH))
+CFLAGS +=	$(CFLAGS.$(COMPILER).$(MACH).$(BITS))
 
 # Studio C++ requires -norunpath to avoid adding its location into the RUNPATH
 # to C++ applications.
@@ -850,10 +881,6 @@ studio_CXXLIB_CSTD =	-library=Cstd,Crun
 # link C++ with the Studio  C++ Runtime and Apache Standard C++ library
 studio_CXXLIB_APACHE =	-library=stdcxx4,Crun
 
-# Add the C++ ABI compatibility flags for older ABI compatibility.  The default
-# is "standard mode" (-compat=5)
-studio_COMPAT_VERSION_4 =	-compat=4
-
 # Tell the compiler that we don't want the studio runpath added to the
 # linker flags.  We never want the Studio location added to the RUNPATH.
 CXXFLAGS +=	$($(COMPILER)_NORUNPATH)
@@ -864,6 +891,11 @@ CXXFLAGS +=	$(CC_BITS)
 # Add compiler-specific 'default' features
 CXXFLAGS +=	$(CXXFLAGS.$(COMPILER))
 CXXFLAGS +=	$(CXXFLAGS.$(COMPILER).$(BITS))
+CXXFLAGS +=	$(CXXFLAGS.$(COMPILER).$(MACH))
+CXXFLAGS +=	$(CXXFLAGS.$(COMPILER).$(MACH).$(BITS))
+
+# Add mach-specific 'default' features
+CXXFLAGS +=	$(CXXFLAGS.$(MACH))
 
 #
 # Solaris linker flag sets to ease feature selection.  Add the required
@@ -874,38 +906,47 @@ CXXFLAGS +=	$(CXXFLAGS.$(COMPILER).$(BITS))
 # set the bittedness that we want to link
 LD_BITS =	-$(BITS)
 
+# Note that spaces are not used after the '-z' below so that these macros can
+# be used in arguments to the compiler of the form -Wl,$(LD_Z_*).
+
 # Reduce the symbol table size, effectively conflicting with -g.  We should
 # get linker guidance here.
-LD_Z_REDLOCSYM =	-z redlocsym
+LD_Z_REDLOCSYM =	-zredlocsym
 
 # Cause the linker to rescan archive libraries and resolve remaining unresolved
 # symbols recursively until all symbols are resolved.  Components should be
 # linking in the libraries they need, in the required order.  This should
 # only be required if the component's native build is horribly broken.
-LD_Z_RESCAN_NOW =	-z rescan-now
+LD_Z_RESCAN_NOW =	-zrescan-now
 
-LD_Z_TEXT =		-z text
+LD_Z_TEXT =		-ztext
 
 # make sure that -lc is always present when building shared objects.
 LD_DEF_LIBS +=		-lc
 
 # make sure all symbols are defined.
-LD_Z_DEFS =		-z defs
+LD_Z_DEFS =		-zdefs
 
 # eliminate unreferenced dynamic dependencies
-LD_Z_IGNORE =		-z ignore
+LD_Z_IGNORE =		-zignore
 
 # eliminate comments
-LD_Z_STRIP_CLASS =	-z strip-class=comment
+LD_Z_STRIP_CLASS =	-zstrip-class=comment
 
 # use direct binding
 LD_B_DIRECT =		-Bdirect
 
 # use generic macro names for enabling/disabling ASLR
-ASLR_ENABLE = 		-z aslr=enable
-ASLR_DISABLE = 		-z aslr=disable
-ASLR_NOT_APPLICABLE = 	-z aslr=disable
-ASLR_MODE = 		$(ASLR_DISABLE)
+ASLR_ENABLE = 		-zaslr=enable
+ASLR_DISABLE = 		-zaslr=disable
+ASLR_NOT_APPLICABLE = 	-zaslr=disable
+
+# Disable ASLR by default unless target build is NO_ARCH.
+ifeq ($(strip $(BUILD_BITS)),NO_ARCH)
+ASLR_MODE= $(ASLR_NOT_APPLICABLE)
+else
+ASLR_MODE= $(ASLR_DISABLE)
+endif
 
 # by default, turn off Address Space Layout Randomization for ELF executables;
 # to explicitly enable ASLR, set ASLR_MODE = $(ASLR_ENABLE)
@@ -924,13 +965,14 @@ LD_MAP_NOEXSTK.i386 =	-M /usr/lib/ld/map.noexstk
 LD_MAP_NOEXSTK.sparc =	-M /usr/lib/ld/map.noexstk
 
 # Create a non-executable bss segment when linking.
-LD_MAP_NOEXBSS =	-M /usr/lib/ld/map.noexbss
+LD_MAP_NOEXBSS.i386 =	-M /usr/lib/ld/map.noexbss
+LD_MAP_NOEXBSS.sparc =	-M /usr/lib/ld/map.noexbss
 
 # Create a non-executable data segment when linking.  Due to PLT needs, the
 # data segment must be executable on sparc, but the bss does not.
 # see mapfile comments for more information
 LD_MAP_NOEXDATA.i386 =	-M /usr/lib/ld/map.noexdata
-LD_MAP_NOEXDATA.sparc =	$(LD_MAP_NOEXBSS)
+LD_MAP_NOEXDATA.sparc =	$(LD_MAP_NOEXBSS.$(MACH))
 
 # Page alignment
 LD_MAP_PAGEALIGN =	-M /usr/lib/ld/map.pagealign
@@ -964,7 +1006,7 @@ COMPONENT_INSTALL_ENV += $(COMPONENT_INSTALL_ENV.$(BITS))
 COMPONENT_INSTALL_ARGS += $(COMPONENT_INSTALL_ARGS.$(BITS))
 
 # declare these phony so that we avoid filesystem conflicts.
-.PHONY:	prep build install publish test clean clobber parfait
+.PHONY:	prep build install publish test system-test clean clobber parfait
 
 # If there are no tests to execute
 NO_TESTS =	test-nothing
@@ -1023,6 +1065,11 @@ REQUIRED_PACKAGES += text/gnu-grep
 REQUIRED_PACKAGES += text/gnu-sed
 REQUIRED_PACKAGES += developer/java/jdk-8
 REQUIRED_PACKAGES += security/sudo
+
+# Only a default dependency if component being built produces binaries.
+ifneq ($(strip $(BUILD_BITS)),NO_ARCH)
+REQUIRED_PACKAGES += system/library
+endif
 
 include $(WS_MAKE_RULES)/environment.mk
 

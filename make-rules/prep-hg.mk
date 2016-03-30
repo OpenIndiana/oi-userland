@@ -18,7 +18,9 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2015, Oracle and/or its affiliates. All rights reserved.
+
+#
+# Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 HG =		/usr/bin/hg
@@ -36,6 +38,7 @@ ifdef HG_REV$(1)
 
 COMPONENT_SRC$(1) = $$(COMPONENT_NAME$(1))-$(COMPONENT_VERSION)-$$(HG_REV$(1))
 COMPONENT_ARCHIVE$(1) = $$(COMPONENT_SRC$(1)).tar.bz2
+COMPONENT_ARCHIVE_SRC$(1) = hg
 
 CLEAN_PATHS += $$(COMPONENT_SRC$(1))
 CLOBBER_PATHS += $$(COMPONENT_ARCHIVE$(1))

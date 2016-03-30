@@ -18,16 +18,17 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gd2
 COMPONENT_VERSION=      2.0.35
 COMPONENT_SRC_NAME=	gd
-COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  http://www.libgd.org/
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 # this is the hash of the payload because it appears to be re-compressed
 # periodically causing it to have a new hash value.
 COMPONENT_ARCHIVE_HASH= \
@@ -37,10 +38,7 @@ COMPONENT_BUGDB=	library/gd2
 
 TPNO=			8786
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-include $(WS_MAKE_RULES)/lint-libraries.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL = 0
 
@@ -51,9 +49,6 @@ CPPFLAGS += $(CPP_LARGEFILES)
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
-CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
-
 CONFIGURE_OPTIONS  +=           --includedir=$(CONFIGURE_INCLUDEDIR)/gd2
 CONFIGURE_OPTIONS  +=           --disable-static
 CONFIGURE_OPTIONS  +=           --disable-rpath
@@ -61,6 +56,11 @@ CONFIGURE_OPTIONS  +=           --with-x
 CONFIGURE_OPTIONS  +=           --with-pic
 
 COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -if)
+
+# We only deliver 64-bit binaries and in /usr/bin.
+COMPONENT_POST_INSTALL_ACTION.32 += \
+	$(GSED) -i -e 's|$(USRBINDIR)/$(MACH32)|$(USRBINDIR)|' \
+		$(PROTOUSRBINDIR)/$(MACH32)/gdlib-config;
 
 COMPONENT_TEST_CMD = \
 	cmake -DBUILD_TEST=1 .; \
@@ -78,23 +78,10 @@ COMPONENT_TEST_TRANSFORMS += \
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-configure:	$(CONFIGURE_32_and_64)
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test:	$(TEST_32_and_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
-
-
 REQUIRED_PACKAGES += image/library/libjpeg
 REQUIRED_PACKAGES += image/library/libpng
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
 REQUIRED_PACKAGES += system/library/math

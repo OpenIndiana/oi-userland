@@ -18,11 +18,11 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
-COMPILER=gcc
-
+COMPILER= gcc
 include ../../../make-rules/shared-macros.mk
 
 include $(WS_MAKE_RULES)/prep.mk
@@ -120,9 +120,7 @@ install: build
 	     fi ; \
 	     done
 
-test:
-	echo "No tests."
+test: $(NO_TESTS)
 
-system-test:
-	echo "No system tests."
+system-test: $(NO_TESTS)
 

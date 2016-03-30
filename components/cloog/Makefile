@@ -18,18 +18,17 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
-COMPILER=gcc
-
+BUILD_BITS= 64_and_32
+COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cloog
 COMPONENT_VERSION=	0.18.3
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.cloog.org/
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:460c6c740acb8cdfbfbb387156b627cf731b3837605f2ec0001d079d89c69734
 COMPONENT_ARCHIVE_URL=	http://www.bastoul.net/cloog/pages/download/$(COMPONENT_ARCHIVE)
@@ -37,13 +36,11 @@ COMPONENT_BUGDB=	library/cloog
 
 TPNO=			23800
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL := 0
 PKG_PROTO_DIRS += $(COMPONENT_DIR)/Solaris
-PATH="/usr/gnu/bin:/usr/perl5/bin:/usr/bin:/usr/sbin"
+PATH="$(GNUBIN):$(USRDIR)/perl5/bin:$(USRBINDIR):$(USRSBINDIR)"
 
 # Don't use SSE3 or SSSE3 on Intel, because it's not completely portable.
 # Do not tell GCC to assume strictly correct pointer aliasing. CLooG
@@ -79,10 +76,6 @@ CPPFLAGS += `pkg-config --cflags libgmp`
 CPPFLAGS += `pkg-config --cflags libmpfr`
 CPPFLAGS += `pkg-config --cflags isl`
 
-CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_ENV +=	CXXFLAGS="$(CXXFLAGS)"
-CONFIGURE_ENV +=	CPPFLAGS="$(CPPFLAGS)"
-CONFIGURE_ENV +=	LDFLAGS="$(LDFLAGS)"
 CONFIGURE_ENV +=	LD_OPTIONS="$(LD_OPTIONS)"
 CONFIGURE_ENV +=	CCLD="$(CC) $(CFLAGS) $(LDFLAGS)"
 CONFIGURE_ENV +=	LIBS="$(LIBS)"
@@ -90,7 +83,7 @@ CONFIGURE_ENV +=	PATH="$(PATH)"
 
 COMPONENT_BUILD_ENV += LD_OPTIONS="$(LD_OPTIONS)"
 
-CONFIGURE_OPTIONS  +=		--localstatedir=/var
+CONFIGURE_OPTIONS  +=		--localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		--enable-shared
 CONFIGURE_OPTIONS  +=		--disable-silent-rules
@@ -118,8 +111,6 @@ COMPONENT_TEST_ENV +=   libtool_install_magic='%%%MAGIC variable%%%'
 COMPONENT_TEST_ENV +=   libtool_execute_magic='%%%MAGIC variable%%%'
 COMPONENT_TEST_ENV +=	$(TEST_PATH)
 COMPONENT_TEST_ENV +=	$(TARGET_ENV)
-
-ASLR_MDOE=$(ASLR_NOT_APPLICABLE)
 
 COMPONENT_TEST_MASTER = \
         $(COMPONENT_TEST_RESULTS_DIR)/results-cloog.master
@@ -153,16 +144,6 @@ COMPONENT_TEST_TRANSFORMS += \
      '-e "s/copied $$/copied/g"'  \
      '-e "s/copied [0-9]\{1,\}\./copied/g"'
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
-
-system-test:	$(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
 REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += library/mpfr
 REQUIRED_PACKAGES += library/isl
-REQUIRED_PACKAGES += system/library
-

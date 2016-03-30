@@ -18,15 +18,16 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =        curl
 COMPONENT_VERSION=      7.45.0
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  http://curl.haxx.se/
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
     sha256:02c78c8060d587422e2826f622c729189b56084bba365140f13af3d402b6cb6b
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
@@ -34,24 +35,16 @@ COMPONENT_BUGDB=	library/curl
 
 TPNO=			25724
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-include $(WS_MAKE_RULES)/lint-libraries.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL = 0
-
-GSSAPI_LIBDIR_32 = /usr/lib
-GSSAPI_LIBDIR_64 = /usr/lib/$(MACH64)
 
 CFLAGS += $(CPP_LARGEFILES)
 CFLAGS += `pkg-config --cflags libidn`
 CPPFLAGS += `pkg-config --cflags libidn`
+CPPFLAGS += "-I/usr/include/openldap"
 
-CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
-CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS) -I/usr/include/openldap"
-
-CONFIGURE_OPTIONS += --localstatedir=/var --enable-shared --disable-static
+CONFIGURE_OPTIONS += --localstatedir=$(VARDIR) --enable-shared --disable-static
 CONFIGURE_OPTIONS += --enable-http --enable-ftp
 CONFIGURE_OPTIONS += --enable-file --enable-dict
 CONFIGURE_OPTIONS += --enable-manual --disable-libgcc
@@ -66,11 +59,11 @@ CONFIGURE_OPTIONS += --disable-soname-bump
 CONFIGURE_OPTIONS += --enable-ldap --with-random=/dev/urandom
 CONFIGURE_OPTIONS += --with-ssl --with-ldap-lib=ldap_r-2.4
 CONFIGURE_OPTIONS += --with-lber-lib=lber-2.4
-CONFIGURE_OPTIONS += --with-gssapi-includes=/usr/include/gssapi
-CONFIGURE_OPTIONS += --with-gssapi-libs=$(GSSAPI_LIBDIR_$(BITS))
-CONFIGURE_OPTIONS += --with-gssapi=/usr --without-ca-bundle
-CONFIGURE_OPTIONS += --with-ca-path=/etc/openssl/certs
-CONFIGURE_OPTIONS += --with-zlib=/usr --with-libidn=/usr
+CONFIGURE_OPTIONS += --with-gssapi-includes=$(USRINCDIR)/gssapi
+CONFIGURE_OPTIONS += --with-gssapi-libs=$(USRLIB)
+CONFIGURE_OPTIONS += --with-gssapi=$(USRDIR) --without-ca-bundle
+CONFIGURE_OPTIONS += --with-ca-path=$(ETCDIR)/openssl/certs
+CONFIGURE_OPTIONS += --with-zlib=$(USRDIR) --with-libidn=$(USRDIR)
 CONFIGURE_OPTIONS += --with-pic
 CONFIGURE_OPTIONS += --with-libssh2
 CONFIGURE_OPTIONS += --without-nghttp2
@@ -104,22 +97,10 @@ COMPONENT_TEST_TRANSFORMS += \
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-configure:	$(CONFIGURE_32_and_64)
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
-
 REQUIRED_PACKAGES += library/libidn
 REQUIRED_PACKAGES += library/libssh2
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/gss

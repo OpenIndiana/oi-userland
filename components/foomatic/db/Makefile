@@ -18,14 +18,15 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		foomatic-db
 COMPONENT_VERSION=	20080903
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:a404d1243a313259490a6a29238498c438b6e8638dafeb980ab98de347957414
 COMPONENT_ARCHIVE_URL=	$(EXTERNAL_ARCHIVE_MIRROR)/$(COMPONENT_ARCHIVE)
@@ -34,9 +35,8 @@ COMPONENT_BUGDB=	utility/foomatic
 
 TPNO=			6398
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = $(CLONEY) $(SOURCE_DIR) $(@D)
 
@@ -46,15 +46,3 @@ COMPONENT_POST_INSTALL_ACTION = \
   > $(PROTO_DIR)/usr/share/foomatic/db/source/PPD/Oce/Others/IM8530_1.ppd.gz
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
-# common targets
-configure:	$(CONFIGURE_32)
-
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-

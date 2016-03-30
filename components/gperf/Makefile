@@ -18,34 +18,26 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gperf
 COMPONENT_VERSION=	3.0.3
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/gperf/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:63287527c8d9e27e801cf0804436f3494bd569db05d49dcdd2a942ae72fa9055
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/gperf/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/gperf
 
 TPNO=			8589
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/bin
+# must build tests before use
+SYSTEM_TEST_TARGET= build $(SYSTEM_TEST_64)
+include $(WS_MAKE_RULES)/gnu-component.mk
 
 CONFIGURE_OPTIONS  +=	--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS  +=	--docdir=/usr/share/doc/gperf
-CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS  +=	CXXFLAGS="$(CXXFLAGS)"
-
-ASLR_MODE = $(ASLR_ENABLE)
+CONFIGURE_OPTIONS  +=	--docdir=$(USRSHAREDOCDIR)/gperf
 
 # test/system-test is tricky.
 #    Reason being is this component bundles! test results
@@ -65,7 +57,7 @@ COMPONENT_PRE_SYSTEM_TEST_ACTION = \
 	($(GSED) -i -e "s|../src/gperf|/usr/bin/gperf|" \
 		$(SOURCE_DIR)/tests/*.exp)
 
-COMPONENT_SYSTEM_TEST_ARGS = GPERF=/usr/bin/gperf
+COMPONENT_SYSTEM_TEST_ARGS = GPERF=$(USRBINDIR)/gperf
 
 # normalize the name of gperf
 # remove compilation lines
@@ -75,19 +67,5 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|^.*$(CC).*$$|XXX_CC_XXX|g" ' \
 	'-e "/^XXX_CC_XXX$$/d" '
 
-
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
-
-# must build tests before use
-system-test:    build $(SYSTEM_TEST_64)
-
-
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/c++-runtime
 REQUIRED_PACKAGES += system/library/math

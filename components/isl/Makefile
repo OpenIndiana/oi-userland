@@ -18,13 +18,15 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         isl
 COMPONENT_VERSION=      0.12.2
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  http://freecode.com/projects/isl
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
@@ -34,9 +36,7 @@ COMPONENT_BUGDB=        utility/gnu-compiler
 
 TPNO=			23799
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # For the DEBUG_BUILD macro please see RFE/Bug 22185118:
 # https://bug.oraclecorp.com/pls/bug/webbug_edit.edit_info_top?rptno=22185118
@@ -50,7 +50,7 @@ COMPILER = gcc
 
 PATCH_LEVEL = 0
 DEBUG_BUILD := 0
-PATH="/usr/gnu/bin:/usr/perl5/bin:/usr/bin:/usr/sbin"
+PATH="$(GNUBIN):/usr/perl5/bin:$(USRBINDIR):$(USRSBINDIR)"
 
 ISL_GCC_ARCH_i386 = -mtune=opteron -march=opteron
 ISL_GCC_ARCH_i386 += -fno-strict-aliasing -fno-omit-frame-pointer
@@ -82,16 +82,12 @@ CPPFLAGS += $(CPP_POSIX)
 CPPFLAGS += `pkg-config --cflags libgmp`
 CPPFLAGS += `pkg-config --cflags libmpfr`
 
-CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_ENV +=	CXXFLAGS="$(CXXFLAGS)"
-CONFIGURE_ENV +=	CPPFLAGS="$(CPPFLAGS)"
-CONFIGURE_ENV +=	LDFLAGS="$(LDFLAGS)"
 CONFIGURE_ENV +=	LD_OPTIONS="$(LD_OPTIONS)"
 CONFIGURE_ENV +=	CCLD="$(CC) $(CFLAGS) $(LDFLAGS)"
 CONFIGURE_ENV +=	LIBS="$(LIBS)"
 CONFIGURE_ENV +=	PATH="$(PATH)"
 
-CONFIGURE_OPTIONS  +=		--localstatedir=/var
+CONFIGURE_OPTIONS  +=		--localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		--disable-option-checking
 CONFIGURE_OPTIONS  +=		--disable-silent-rules
@@ -158,16 +154,4 @@ COMPONENT_TEST_TRANSFORMS += \
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-configure:	$(CONFIGURE_32_and_64)
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
 REQUIRED_PACKAGES += library/gmp
-REQUIRED_PACKAGES += system/library
-

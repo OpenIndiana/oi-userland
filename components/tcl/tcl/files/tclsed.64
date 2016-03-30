@@ -18,12 +18,25 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
-#
 
 #
-# This file sets up the default options and base requirements for
-# autoconf-based components that should be built for 32-bit and 64-bit.
+# Copyright (c) 2007, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-include $(WS_MAKE_RULES)/configure.mk
-configure:      $(CONFIGURE_32_and_64)
+/^TCL_CC=/c\
+TCL_CC='/opt/SUNWspro/bin/cc'
+
+/^TCL_BUILD_LIB_SPEC=/c\
+TCL_BUILD_LIB_SPEC='-ltcl8.5${TCL_DBGX}'
+
+/^TCL_SRC_DIR=/c\
+TCL_SRC_DIR=
+
+/^TCL_BUILD_STUB_LIB_SPEC=/c\
+TCL_BUILD_STUB_LIB_SPEC='-ltclstub8.5${TCL_DBGX}'
+
+/^TCL_BUILD_STUB_LIB_PATH=/c\
+TCL_BUILD_STUB_LIB_PATH='/usr/lib/64/libtclstub8.5${TCL_DBGX}.a'
+
+s,-lsunmath,,
+s,-L/usr/lib/amd64 ,,
+s,-L/usr/lib/sparcv9 ,,

@@ -18,42 +18,30 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nano
 COMPONENT_VERSION=	2.0.9
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.nano-editor.org/
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:6d212385680d29dcda35dda7801da19c80182a8bc6bc6d5cf7533034c853d37f
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)dist/v2.0/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/nano
 
 TPNO=			9253
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-CFLAGS +=		-I/usr/include/ncurses
+# Ensure ancient autoconf scripts are overwritten with fixed versions that
+# properly detect SunOS 5.x hosts.
+COMPONENT_PREP_ACTION += (cd $(@D); autoreconf -fiv)
 
-CONFIGURE_OPTIONS +=	--bindir=/usr/bin
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
-
-ASLR_MODE = $(ASLR_ENABLE)
-
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
+CPPFLAGS += -I$(USRINCDIR)/ncurses
+CFLAGS += -I$(USRINCDIR)/ncurses
 
 REQUIRED_PACKAGES += library/ncurses
-REQUIRED_PACKAGES += system/library

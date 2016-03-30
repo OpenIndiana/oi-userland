@@ -20,27 +20,22 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gettext
 COMPONENT_VERSION=	0.19.3
 IPS_PKG_NAME=		text/gnu-gettext
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/gettext/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:f6fdb29c9ee8ce85c7e574f60ff64fa91cf0f4f018437dfe800227d15595db46
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/gettext/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gnu-gettext
 
 TPNO=			20141
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/gnu-component.mk
 
 CONFIGURE_OPTIONS  +=		--disable-java
 CONFIGURE_OPTIONS  +=		--disable-libasprintf
@@ -48,13 +43,9 @@ CONFIGURE_OPTIONS  +=		--without-emacs
 CONFIGURE_OPTIONS  +=		--disable-openmp
 CONFIGURE_OPTIONS  +=		--disable-static
 CONFIGURE_OPTIONS  +=		--disable-shared
-CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 
 # Fixes coredump in gnulib-test/test-localename test
 CONFIGURE_OPTIONS  +=		ac_cv_func_newlocale=no
-
-# Commands go under /usr/bin so set bindir correctly.
-CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/bin
 
 # Tests should run in a clean environment
 COMPONENT_TEST_ENV =	-i
@@ -67,20 +58,6 @@ COMPONENT_TEST_TRANSFORMS += \
     '-e "s|^.*DEPDIR=.deps.*$$|XXX_CC_XXX|g" ' \
     '-e "/^XXX_CC_XXX$$/d" '
 
-ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
-
 REQUIRED_PACKAGES += developer/icu
 REQUIRED_PACKAGES += developer/vala
 REQUIRED_PACKAGES += library/expat
@@ -90,6 +67,5 @@ REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += source/locale/localedef
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/locale/extra

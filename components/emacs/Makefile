@@ -18,29 +18,27 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
 # As Solaris always has a 64-bit kernel, and 64-bit emacs can handle larger
 # files, we only build and deliver 64-bit binaries. 
-BITS=64
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		emacs
 COMPONENT_VERSION=	24.5
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/emacs/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:2737a6622fb2d9982e9c47fb6f2fb297bda42674e09db40fc9bcc0db4297c3b6
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/emacs/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/emacs
 
 TPNO=			23457
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+INSTALL_TARGET=
+# The upstream emacs distribution does not have tests to be run
+# from this target.
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/gnu-component.mk
 
 # We patch the configure.ac file. Get the new configure generated during prep.
 COMPONENT_PREP_ACTION = (cd $(@D) ; aclocal -I m4; autoconf )
@@ -72,12 +70,9 @@ LD_MAP_NOEXDATA.sparc=
 #
 #CONFIGURE_PREFIX =	$(PROTO_DIR)/usr
 
-# configure env common to all variants of emacs that we want to build.
-CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
-
 # The configure script runs the pkg-config command. This allows it to
 # find the non-default GnuTLS v3 library.
-CONFIGURE_ENV +=	PKG_CONFIG_PATH=/usr/lib/$(MACH64)/pkgconfig/gnutls-3
+CONFIGURE_ENV +=	PKG_CONFIG_PATH=$(PKG_CONFIG_PATH.64)/gnutls-3
 
 # Never use xmkmf to find X11 libraries from autoconf. They are all available
 # from standard system locations, and we don't want the ld -L option that
@@ -215,17 +210,7 @@ COMPONENT_POST_INSTALL_ACTION += $(GUNZIP) \
 	$(PROTO_DIR)/usr/share/man/man1/*.gz ;
 
 # common targets
-configure:	$(CONFIGURE_64)
-
-build:          $(BUILD_64)
-
 install:	$(BUILD_64) $(BUILD_DIR)/$(MACH64)-x/.installed 
-
-# The upstream emacs distribution does not have tests to be run
-# from this target.
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
 
 # Desktop packages differ slightly between S11 & S12: list union to allow
 # for BUILD_TYPE=evaluation and normal builds.
@@ -251,7 +236,6 @@ REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/perl-512
 REQUIRED_PACKAGES += runtime/perl-520
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
 REQUIRED_PACKAGES += system/library/math

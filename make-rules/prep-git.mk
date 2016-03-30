@@ -18,6 +18,8 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
@@ -47,6 +49,8 @@ COMPONENT_ARCHIVE$(1) ?= $$(COMPONENT_SRC$(1)).tar.gz
 # If the source is github attempt to generate an archive url
 ifeq (github,$(findstring github,$(GIT_REPO$(1))))
   COMPONENT_ARCHIVE_URL$(1) ?= $(GIT_REPO$(1))/tarball/$(GIT_BRANCH$(1))
+else
+  COMPONENT_ARCHIVE_SRC$(1) = git
 endif
 
 CLEAN_PATHS += $$(COMPONENT_SRC$(1))

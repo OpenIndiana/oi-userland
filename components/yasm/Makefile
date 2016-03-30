@@ -18,32 +18,26 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_ARCH= i386
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		yasm
 COMPONENT_VERSION=	1.3.0
 COMPONENT_PROJECT_URL=	http://yasm.tortall.net/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:3dce6601b495f5b3d45b59f7d2492a340ee7e84b5beca17e48f862502bd5603f
 COMPONENT_ARCHIVE_URL=	http://www.tortall.net/projects/$(COMPONENT_NAME)/releases/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/yasm
 
 TPNO=			23620
 
-# We're i386-only
-ifeq ($(MACH), sparc)
-PUBLISH_STAMP= 
-endif
-
 PYTHON_VERSIONS= 2.7
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure-32_and_64.mk
-include $(WS_MAKE_RULES)/common-32_and_64.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # Adjust all the source files in all the Makefile.inc files to generate
 # shared libraries rather than a library archive.
@@ -63,10 +57,6 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 	autoheader ; \
 	automake --add-missing --copy ; \
 	autoconf)
-
-CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
-CONFIGURE_ENV += CXXFLAGS="$(CXXFLAGS)"
-CONFIGURE_ENV += LDFLAGS="$(LDFLAGS)"
 
 CONFIGURE_ENV += am_cv_python_pythondir=$(PYTHON_VENDOR_PACKAGES)
 CONFIGURE_ENV += am_cv_python_pyexecdir=$(PYTHON_VENDOR_PACKAGES)
@@ -95,8 +85,5 @@ COMPONENT_TEST_TRANSFORMS += \
 
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
 # Required for man pages.
 REQUIRED_PACKAGES += developer/documentation-tool/xmlto
-REQUIRED_PACKAGES += system/library

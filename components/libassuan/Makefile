@@ -18,13 +18,16 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+# Prefer 32-bit as only "binary" delivered is a script with embedded paths.
+BUILD_BITS= 32_and_64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libassuan
 COMPONENT_VERSION=	2.2.0
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.gnupg.org/related_software/libassuan/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
@@ -34,9 +37,7 @@ COMPONENT_BUGDB=	utility/gnupg
 
 TPNO=			22290
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # Enable C99 mode + -Xc for its additional warnings.
 studio_C99MODE = -Xc $(studio_C99_ENABLE)
@@ -64,7 +65,7 @@ COMPONENT_TEST_TRANSFORMS += \
 CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_ENV +=	INSTALL="$(INSTALL)"
 
-CONFIGURE_OPTIONS  +=		--localstatedir=/var
+CONFIGURE_OPTIONS  +=		--localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		--enable-shared
 CONFIGURE_OPTIONS  +=		--disable-static
@@ -74,18 +75,5 @@ CONFIGURE_OPTIONS  +=		--with-pic
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-configure:	$(CONFIGURE_32_and_64)
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
-
 REQUIRED_PACKAGES += library/security/libgpg-error
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library

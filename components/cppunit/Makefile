@@ -18,48 +18,33 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-COMPILER=gcc
-
+COMPILER= gcc
+# Prefer 32-bit as only "binary" delivered is a script with embedded paths.
+BUILD_BITS= 32_and_64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cppunit
 COMPONENT_VERSION=	1.13.2
 COMPONENT_PROJECT_URL=	http://freedesktop.org/wiki/Software/cppunit/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:3f47d246e3346f2ba4d7c9e882db3ad9ebd3fcbd2e8b732f946e0e3eeb9f429f
 COMPONENT_ARCHIVE_URL=	http://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/cppunit
 
 TPNO=			20676
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 
-export PATH=$(GCC_ROOT)/bin:/usr/gnu/bin:/usr/bin
+export PATH=$(GCC_ROOT)/bin:$(GNUBIN):$(USRBINDIR)
 
-CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS  +=	CXXFLAGS="$(CXXFLAGS)"
 CONFIGURE_OPTIONS  +=	--disable-static
 
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
-ASLR_MODE = $(ASLR_ENABLE)
-
-configure:	$(CONFIGURE_32_and_64)
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/gcc/gcc-c++-runtime
 REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime

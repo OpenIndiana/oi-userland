@@ -20,16 +20,14 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libtorrent
 COMPONENT_VERSION=	0.12.2
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://libtorrent.rakshasa.no/
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:cf9d2cd667fd6939a3e0bd27e48d0c7f35d9ab2f7affbb3214da03fd2c1360a8
 COMPONENT_ARCHIVE_URL=	http://libtorrent.rakshasa.no/downloads/$(COMPONENT_ARCHIVE)
@@ -37,9 +35,8 @@ COMPONENT_BUGDB=	utility/rtorrent
 
 TPNO=			9038
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -56,34 +53,18 @@ CXX+=   $(studio_NORUNPATH)
 # this is needed or we can't compile the rak headers
 CC=$(CXX)
 
-CXXFLAGS +=	$(studio_OPT)
-CXXFLAGS +=	-i
-CXXFLAGS +=	$(studio_XREGS)
+CXXFLAGS.studio +=	-i
 
 CONFIGURE_OPTIONS  +=	--enable-shared
 CONFIGURE_OPTIONS  +=	--disable-debug
 CONFIGURE_OPTIONS  +=	--disable-static
 CONFIGURE_OPTIONS  +=	--with-ports
 CONFIGURE_OPTIONS  +=	--disable-libtool-lock
-CONFIGURE_OPTIONS.32 +=	--srcdir=$(BUILD_DIR_32)
-CONFIGURE_OPTIONS.64 +=	--srcdir=$(BUILD_DIR_64)
-CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS  +=	CXXFLAGS="$(CXXFLAGS)"
+CONFIGURE_OPTIONS  +=	--srcdir=$(BUILD_DIR_$(BITS))
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-# common targets
-configure:	$(CONFIGURE_32_and_64)
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
+REQUIRED_PACKAGES += developer/build/automake-111
 REQUIRED_PACKAGES += library/c++/sigcpp
 REQUIRED_PACKAGES += library/security/openssl
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/c++-runtime

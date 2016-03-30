@@ -22,13 +22,15 @@
 #
 # Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+# Prefer 32-bit over 64-bit for now.
+BUILD_BITS=32_and_64
+# For now, all things built for C++11 require gcc.
+COMPILER= gcc
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		harfbuzz
 COMPONENT_VERSION=	1.0.6
 COMPONENT_PROJECT_URL=	http://www.freedesktop.org/wiki/Software/HarfBuzz/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:f616a7fbdc78a627043f9029000bf08c0c71df59cde4143fc92a014f6a993b26
@@ -36,9 +38,6 @@ COMPONENT_ARCHIVE_URL=	http://www.freedesktop.org/software/harfbuzz/release/$(CO
 COMPONENT_BUGDB=	library/harfbuzz
 
 TPNO=			25623
-
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure-32_and_64.mk
 
 # Requires newer version of gobject-introspection from Desktop, available in
 # S12 but not 11.3, so do not publish.
@@ -48,19 +47,14 @@ INSTALL_32_and_64=
 PUBLISH_STAMP=
 endif
 
-include $(WS_MAKE_RULES)/common-32_and_64.mk
+include $(WS_MAKE_RULES)/common.mk
 
-# For now, all things built for C++11 require gcc.
-COMPILER = gcc
 CXXFLAGS += -std=c++11
 
 # For components using gobject-introspection, don't cache results in $HOME
 COMPONENT_BUILD_ENV += GI_SCANNER_DISABLE_CACHE=yes
 
 CONFIGURE_ENV += CC="$(CC) $(CC_BITS)"
-CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
-CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
-CONFIGURE_ENV += CXXFLAGS="$(CXXFLAGS)"
 # Required by other components.
 CONFIGURE_OPTIONS += --enable-introspection
 # Required by other components.
@@ -71,8 +65,6 @@ CONFIGURE_OPTIONS += --with-gobject
 CONFIGURE_OPTIONS += --with-icu
 # build the API documentation
 CONFIGURE_OPTIONS += --enable-gtk-doc
-
-CONFIGURE_BINDIR.64 =   $(CONFIGURE_PREFIX)/bin
 
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_ARGS =   -k -i
@@ -86,16 +78,6 @@ COMPONENT_TEST_TRANSFORMS += \
         '-e "/XERROR:/p" ' \
         '-e "/ERROR:/p" '
 
-configure:      $(CONFIGURE_32_and_64)
-
-build:          $(BUILD_32_and_64)
-
-install:        $(INSTALL_32_and_64)
-
-test:           $(TEST_32_and_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
 REQUIRED_PACKAGES += developer/build/autoconf
 REQUIRED_PACKAGES += developer/build/automake
 REQUIRED_PACKAGES += developer/build/gnu-make
@@ -105,7 +87,6 @@ REQUIRED_PACKAGES += developer/icu
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/icu
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/freetype-2
 REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
 REQUIRED_PACKAGES += system/library/gcc/gcc-c++-runtime

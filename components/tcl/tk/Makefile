@@ -20,9 +20,9 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tk
@@ -37,31 +37,24 @@ COMPONENT_BUGDB=	library/libtk
 
 TPNO=			16968
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = \
-	(cd $(@D)/unix ; autoreconf -f)
+	(cd $(@D)/unix ; autoreconf -fi)
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
-#This macro will help to look for the configure 
-#file at the pointed location 
 CONFIGURE_SCRIPT = $(SOURCE_DIR)/unix/configure
 
-CFLAGS += $(studio_XREGS) -xstrconst $(XPG6MODE) $(studio_C99_ENABLE)
-LDFLAGS += $(CC_BITS)
+CFLAGS.studio += -xstrconst $(XPG6MODE) $(studio_C99_ENABLE)
 
-CONFIGURE_OPTIONS 	+= CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS 	+= LDFLAGS="$(LDFLAGS)"
-CONFIGURE_OPTIONS	+= --enable-shared
-CONFIGURE_OPTIONS	+= --enable-man-symlinks
-CONFIGURE_OPTIONS	+= --enable-threads
-CONFIGURE_OPTIONS.32	+= --with-tcl="$(COMPONENT_DIR)/../tcl/build/$(MACH32)"
-CONFIGURE_OPTIONS.64	+= --with-tcl="$(COMPONENT_DIR)/../tcl/build/$(MACH64)"
-CONFIGURE_OPTIONS.64	+= --enable-64bit
+CONFIGURE_OPTIONS +=		--enable-shared
+CONFIGURE_OPTIONS +=		--enable-man-symlinks
+CONFIGURE_OPTIONS +=		--enable-threads
+CONFIGURE_OPTIONS +=		--with-tcl="$(COMPONENT_DIR)/../tcl/build/$(MACH$(BITS))"
+CONFIGURE_OPTIONS.64 +=		--enable-64bit
+CONFIGURE_OPTIONS.sparc.64 +=	--enable-64bit-vis
 
 COMPONENT_TEST_TARGETS = test
 COMPONENT_TEST_TRANSFORMS += \
@@ -75,22 +68,13 @@ COMPONENT_TEST_TRANSFORMS += \
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-# common targets
-configure:	$(CONFIGURE_32_and_64)
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64) $(PROTOUSRLIBDIR)/tkConfig.sh 
-
-$(PROTOUSRLIBDIR)/tkConfig.sh:  $(INSTALL_32)  
-				sed -f $(COMPONENT_DIR)/files/tksed $(PROTOUSRLIBDIR)/tkConfig.sh > \
-					$(PROTOUSRLIBDIR)/tkConfig.sh.new
-				$(MV) $(PROTOUSRLIBDIR)/tkConfig.sh.new $(PROTOUSRLIBDIR)/tkConfig.sh
-				$(CHMOD) 555 $(PROTOUSRLIBDIR)/tkConfig.sh
-
-test: 		$(TEST_32_and_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+COMPONENT_POST_INSTALL_ACTION += \
+	sed -f $(COMPONENT_DIR)/files/tksed.$(BITS) \
+		$(PROTO_DIR)$(USRLIB.$(BITS))/tkConfig.sh > \
+		$(PROTO_DIR)$(USRLIB.$(BITS))/tkConfig.sh.new; \
+	$(MV) $(PROTO_DIR)$(USRLIB.$(BITS))/tkConfig.sh.new \
+		$(PROTO_DIR)$(USRLIB.$(BITS))/tkConfig.sh; \
+	$(CHMOD) 555 $(PROTO_DIR)$(USRLIB.$(BITS))/tkConfig.sh
 
 # special targets due to tcl internals dependencies
 ../tcl/build/%/.built:
@@ -100,7 +84,6 @@ $(CONFIGURE_32):	../tcl/build/$(MACH32)/.built
 $(CONFIGURE_64):	../tcl/build/$(MACH64)/.built
 
 REQUIRED_PACKAGES += runtime/tcl-8
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxext

@@ -18,24 +18,22 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		wireshark
 COMPONENT_VERSION=	2.0.2
 COMPONENT_PROJECT_URL=	http://www.wireshark.org/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:e921fb072085a5654d899949bb561d0687f4819f7b63ba35777bb949a9b6b9c1
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/src/all-versions/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/wireshark
 
 TPNO=			27086
-
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
 
 # Depends on S12-only changes in ON.
 ifeq ($(BUILD_TYPE), evaluation)
@@ -44,21 +42,20 @@ INSTALL_64=
 PUBLISH_STAMP=
 endif
 
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # Micro version for easy libraries packaging
 MICRO_VERSION:= $(shell echo $(COMPONENT_VERSION) | awk -F. '{ print $$3 }')
 PKG_MACROS+= MICRO_VERSION=$(MICRO_VERSION)
-
-# Enable ASLR for this component
-ASLR_MODE = $(ASLR_ENABLE)
 
 PATCH_LEVEL=0
 
 # We don't have automake 1.14 yet. Thus need to reconfigure with older one.
 COMPONENT_PREP_ACTION += ( cd $(@D) ; $(CONFIG_SHELL) autogen.sh );
 
-CONFIGURE_OPTIONS +=	--bindir=/usr/sbin
+CONFIGURE_BINDIR.64= $(CONFIGURE_SBINDIR.64)
+
 CONFIGURE_OPTIONS +=	--disable-usr-local
 CONFIGURE_OPTIONS +=	--disable-androiddump
 CONFIGURE_OPTIONS +=	--disable-randpkt
@@ -66,9 +63,8 @@ CONFIGURE_OPTIONS +=	--disable-dftest
 CONFIGURE_OPTIONS +=	--with-krb5
 CONFIGURE_OPTIONS +=	--with-qt=no
 CONFIGURE_OPTIONS +=	--with-gtk2=yes
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)" 
-CONFIGURE_OPTIONS +=	PATH="/usr/perl5/bin:/usr/gnu/bin:$(PATH)"
-CONFIGURE_OPTIONS +=	PKG_CONFIG_PATH=/usr/lib/$(MACH64)/pkgconfig/gnutls-3
+CONFIGURE_OPTIONS +=	PATH="$(USRDIR)/perl5/bin:$(GNUBIN):$(PATH)"
+CONFIGURE_OPTIONS +=	PKG_CONFIG_PATH=$(PKG_CONFIG_PATH.64)/gnutls-3
 
 # We need to avoid RPATH=/usr/lib in Wireshark libraries so that we can
 # create successfully IPS package of different Wireshark branch than is
@@ -83,16 +79,6 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 	chmod 755 config.status; \
 	./config.status)
 
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
 REQUIRED_PACKAGES += developer/lexer/flex
 REQUIRED_PACKAGES += developer/parser/bison
 REQUIRED_PACKAGES += diagnostic/wireshark/wireshark-common
@@ -106,7 +92,6 @@ REQUIRED_PACKAGES += library/security/libgpg-error
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/lua
 REQUIRED_PACKAGES += service/security/kerberos-5
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libpcap
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/security/libgcrypt

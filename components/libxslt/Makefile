@@ -20,16 +20,14 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libxslt
 COMPONENT_VERSION=	1.1.28
 COMPONENT_PROJECT_URL=	http://xmlsoft.org/XSLT/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:5fc7151a57b89c03d7b825df5a0fae0a8d5f05674c0e7cf2937ecec4d54a028c
 COMPONENT_ARCHIVE_URL=	ftp://xmlsoft.org/libxslt/$(COMPONENT_ARCHIVE)
@@ -37,14 +35,12 @@ COMPONENT_BUGDB=	library/libxslt
 
 TPNO=			17982
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-include $(WS_MAKE_RULES)/lint-libraries.mk
+SYSTEM_TEST_TARGET= build $(SYSTEM_TEST_32_and_64)
+include $(WS_MAKE_RULES)/common.mk
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-LINT_FLAGS +=	-I/usr/include/libxml2 
+LINT_FLAGS +=	-I$(USRINCDIR)/libxml2 
 
 CFLAGS +=	$(CPP_LARGEFILES)
 LDFLAGS +=	$(LD_Z_DEFS) $(LD_Z_TEXT) -lpthread
@@ -53,10 +49,8 @@ CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --with-pic
 CONFIGURE_OPTIONS += --with-python=$(PYTHON.$(BITS))
 CONFIGURE_OPTIONS += --without-crypto
-CONFIGURE_OPTIONS += --with-html-dir=/usr/share/lib/xslt/doc
+CONFIGURE_OPTIONS += --with-html-dir=$(USRSHARELIBDIR)/xslt/doc
 CONFIGURE_OPTIONS += --with-html-subdir=html
-CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS += LDFLAGS="$(LDFLAGS)"
 CONFIGURE_OPTIONS += PYTHON_VENDOR_PACKAGES=$(PYTHON_VENDOR_PACKAGES)
 
 COMPONENT_PREP_ACTION = \
@@ -75,18 +69,8 @@ COMPONENT_TEST_TRANSFORMS += '-e "/http:\/\//d"'
 # system-test should really use system version library
 COMPONENT_PRE_SYSTEM_TEST_ACTION = ($(RM) $(@D)/libxslt/.libs/*)
 
-# common targets
-configure:	$(CONFIGURE_32_and_64)
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-	$(PYTHON.2.7.32) -m compileall $(PROTO_DIR)/usr/lib/python2.7/vendor-packages
-
-test:		$(TEST_32_and_64)
-
-system-test:    $(BUILD_32_and_64) $(SYSTEM_TEST_32_and_64)
-
+COMPONENT_POST_INSTALL_ACTION += \
+	$(PYTHON.2.7.32) -m compileall $(PROTOUSRLIBDIR)/python2.7/vendor-packages
 
 REQUIRED_PACKAGES += data/xml-common
 REQUIRED_PACKAGES += developer/build/automake-111
@@ -94,5 +78,4 @@ REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

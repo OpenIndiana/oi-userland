@@ -18,19 +18,18 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 export PARFAIT_BUILD=no
-
-COMPILER=gcc
-
+BUILD_BITS= 32
+COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gcc
 COMPONENT_VERSION=	4.9.3
 COMPONENT_PROJECT_URL=	http://gcc.gnu.org/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
     sha256:e6c63b40877bc756cc7cfe6ca98013eb15f02ec6c8c2cf68e24533ad1203aaba
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/gcc/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
@@ -38,19 +37,18 @@ COMPONENT_BUGDB=        utility/gnu-compiler
 
 TPNO=			24017
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # The GNU compiler wants the GNU utilities.
-PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
+PATH=$(GNUBIN):$(USRBINDIR):$(USRDIR)/perl5/bin
 
 PATCH_LEVEL := 0
 ENABLE_CLOOG := 1
 
-ENABLE_CXA_ATEXIT=yes
 ifeq ($(OS_VERSION), 5.11)
   ENABLE_CXA_ATEXIT=no
+else
+  ENABLE_CXA_ATEXIT=yes
 endif
 
 PARCH =         $(MACH:i386=i386-pc)
@@ -122,42 +120,43 @@ COMPONENT_BUILD_ENV += SHELL=$(CONFIG_SHELL)
 COMPONENT_BUILD_ENV += MAKESHELL=$(MAKESHELL)
 COMPONENT_BUILD_ENV += LD_OPTIONS="$(LD_OPTIONS)"
 
-CONFIGURE_PREFIX = /usr/gcc/$(GCC_VERSION)
+CONFIGURE_PREFIX =	/usr/gcc/$(GCC_VERSION)
+CONFIGURE_INFODIR =	$(CONFIGURE_PREFIX)/share/info
 
-CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_PREFIX)/share/info
+CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_PREFIX)/lib
 CONFIGURE_OPTIONS +=	--enable-languages="c,c++,fortran,objc,lto"
 CONFIGURE_OPTIONS +=	--enable-shared
-CONFIGURE_OPTIONS +=	--enable-ssp=yes
-CONFIGURE_OPTIONS +=	--enable-nls=yes
+CONFIGURE_OPTIONS +=	--enable-ssp
+CONFIGURE_OPTIONS +=	--enable-nls
 
 # --enable-largefile=yes gets canceled or reset several times by
 #  several different ./configure's. We have to re-enable it via
 #  several different patches.
-CONFIGURE_OPTIONS +=	--enable-largefile=yes
-CONFIGURE_OPTIONS +=	--with-gmp-include=/usr/include/gmp
-CONFIGURE_OPTIONS +=	--with-mpfr-include=/usr/include/mpfr
-CONFIGURE_OPTIONS +=	--with-gnu-as --with-as=/usr/gnu/bin/as
-CONFIGURE_OPTIONS +=	--without-gnu-ld --with-ld=/usr/bin/ld
-CONFIGURE_OPTIONS +=    --enable-multilib=yes
+CONFIGURE_OPTIONS +=	--enable-largefile
+CONFIGURE_OPTIONS +=	--with-gmp-include=$(USRINCDIR)/gmp
+CONFIGURE_OPTIONS +=	--with-mpfr-include=$(USRINCDIR)/mpfr
+CONFIGURE_OPTIONS +=	--with-gnu-as --with-as=$(GNUBIN)/as
+CONFIGURE_OPTIONS +=	--without-gnu-ld --with-ld=$(USRBINDIR)/ld
+CONFIGURE_OPTIONS +=    --enable-multilib
 CONFIGURE_OPTIONS +=    --enable-threads=posix
-CONFIGURE_OPTIONS +=    --enable-tls=yes
-CONFIGURE_OPTIONS +=    --enable-libstdcxx-threads=yes
-CONFIGURE_OPTIONS +=    --enable-libstdcxx-pch=no
-CONFIGURE_OPTIONS +=    --enable-libstdcxx-visibility=no
+CONFIGURE_OPTIONS +=    --enable-tls
+CONFIGURE_OPTIONS +=    --enable-libstdcxx-threads
+CONFIGURE_OPTIONS +=    --disable-libstdcxx-pch
+CONFIGURE_OPTIONS +=    --disable-libstdcxx-visibility
 
 # This needs additional linker support.
-CONFIGURE_OPTIONS +=    --enable-initfini-array=yes
+CONFIGURE_OPTIONS +=    --enable-initfini-array
 
 # VTable verification needs additional linker support.
-CONFIGURE_OPTIONS +=    --enable-vtable-verify=no
-CONFIGURE_OPTIONS +=    --enable-comdat=yes
+CONFIGURE_OPTIONS +=    --disable-vtable-verify
+CONFIGURE_OPTIONS +=    --enable-comdat
 CONFIGURE_OPTIONS +=    --enable-__cxa_atexit=$(ENABLE_CXA_ATEXIT)
-CONFIGURE_OPTIONS +=    --enable-libstdcxx-debug=yes
-CONFIGURE_OPTIONS +=    --enable-libstdcxx-threads=yes
-CONFIGURE_OPTIONS +=    --enable-c99=yes
-CONFIGURE_OPTIONS +=    --enable-long-long=yes
-CONFIGURE_OPTIONS +=    --enable-wchar_t=yes
+CONFIGURE_OPTIONS +=    --enable-libstdcxx-debug
+CONFIGURE_OPTIONS +=    --enable-libstdcxx-threads
+CONFIGURE_OPTIONS +=    --enable-c99
+CONFIGURE_OPTIONS +=    --enable-long-long
+CONFIGURE_OPTIONS +=    --enable-wchar_t
 CONFIGURE_OPTIONS +=    --with-system-zlib
 
 # We'll enable ISL and CLooG as soon as CLooG integrates and is
@@ -172,15 +171,12 @@ ifeq ($(ENABLE_CLOOG), 1)
   CONFIGURE_OPTIONS +=    --with-cloog-include=$(CLOOGINCLUDE)
   CONFIGURE_OPTIONS +=    --with-cloog-lib=$(CLOOGLIB)
 else
-  CONFIGURE_OPTIONS +=    --with-isl=no
-  CONFIGURE_OPTIONS +=    --with-cloog=no
+  CONFIGURE_OPTIONS +=    --without-isl
+  CONFIGURE_OPTIONS +=    --without-cloog
 endif
 
-CONFIGURE_OPTIONS +=    --with-build-time-tools=/usr/gnu/bin
+CONFIGURE_OPTIONS +=    --with-build-time-tools=$(GNUBIN)
 CONFIGURE_OPTIONS +=    --with-build-config=bootstrap-O2
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS +=	CXXFLAGS="$(CXXFLAGS)"
-CONFIGURE_OPTIONS +=    CPPFLAGS="$(CPPFLAGS)"
 
 CONFIGURE_ENV     += PYTHON="$(PYTHON)"
 
@@ -200,12 +196,6 @@ COMPONENT_POST_INSTALL_ACTION += ; \
 # Disable ASLR for now.
 ASLR_MODE=$(ASLR_DISABLE)
 
-configure:	$(CONFIGURE_32)
-
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
 # To ensure that all tests that are expected to pass actually
 # pass, we have to increase the stacksize limit to at least
 # 16MB. Otherwise we'll get spurious failures in the test
@@ -216,16 +206,12 @@ COMPONENT_PRE_TEST_ACTION = ulimit -Ss 16384
 COMPONENT_TEST_ARGS = -k -i
 COMPONENT_TEST_TARGETS = check check-target
 
-COMPONENT_TEST_ENV += TCL_LIBRARY="/usr/lib/tcl8.5"
+COMPONENT_TEST_ENV += TCL_LIBRARY="$(USRLIBDIR)/tcl8.5"
 
 # We don't have DejaGNU in S11.
 ifeq ($(OS_VERSION), 5.12)
-  COMPONENT_TEST_ENV += DEJAGNULIBS="/usr/share/dejagnu"
+  COMPONENT_TEST_ENV += DEJAGNULIBS="$(USRSHAREDIR)/dejagnu"
 endif
-
-test:	$(TEST_32)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
 ifeq ($(ENABLE_CLOOG), 1)
   REQUIRED_PACKAGES += library/isl
@@ -238,8 +224,6 @@ REQUIRED_PACKAGES += library/mpfr
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/linker
-

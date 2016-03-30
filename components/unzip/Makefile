@@ -17,11 +17,12 @@
 # information: Portions Copyright [yyyy] [name of copyright owner]
 #
 # CDDL HEADER END
-
-#
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
+#
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		unzip
@@ -36,9 +37,9 @@ COMPONENT_BUGDB=	utility/zip
 
 TPNO=			16388
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+BUILD_STYLE= justmake
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # remove the unwanted file.
 COMPONENT_PREP_ACTION = $(RM) $(SOURCE_DIR)/crc_i386.S
@@ -56,19 +57,4 @@ COMPONENT_INSTALL_ARGS += -f unix/Makefile
 COMPONENT_INSTALL_ARGS += BINDIR=$(PROTOUSRBINDIR)
 COMPONENT_INSTALL_ARGS += MANDIR=$(PROTOUSRSHAREMAN1DIR)
 
-# Enable ASLR for this component
-ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
-
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library

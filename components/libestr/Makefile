@@ -18,43 +18,26 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
-#
 
+#
+# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libestr
 COMPONENT_VERSION=	0.1.9
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://libestr.adiscon.com/
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:822c6e2d01eaca1e72201f403a2ca01f3e86410b880e508e5204e3c2694d751a
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)files/download/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	service/rsyslog
 TPNO=			20531
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+# No longer seems to have tests
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # Userland default includes -mt which links with libthread which we don't need.
 studio_MT =
 
-# This is needed for the 64-bit library to be built correctly.
-CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
-
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
-# common targets
-configure:	$(CONFIGURE_32_and_64)
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-# No longer seems to have tests
-test:		$(NO_TESTS)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
-REQUIRED_PACKAGES += system/library

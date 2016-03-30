@@ -1,4 +1,4 @@
-
+#
 # CDDL HEADER START
 #
 # The contents of this file are subject to the terms of the
@@ -20,16 +20,14 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
-BITS=64
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ncftp
 COMPONENT_VERSION=	3.2.5
 COMPONENT_PROJECT_URL=	http://www.ncftp.com/ncftp/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-src.tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:b4ebe2415761a5137cd1d313c8fc1352f26d8963cc9e9e354e29720aa2089d42
@@ -38,28 +36,10 @@ COMPONENT_BUGDB=	utility/ncftp-client
 
 TPNO=			24893
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
-
 CONFIGURE_OPTIONS += --srcdir=$(BUILD_DIR_64) 
-
-ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:	$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
-REQUIRED_PACKAGES += system/library

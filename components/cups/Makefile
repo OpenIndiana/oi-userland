@@ -20,44 +20,45 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+BUILD_BITS= 32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cups
 COMPONENT_VERSION=	1.4.5
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.cups.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-source.tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:0450d6d8e6e8af225d2a3319c848737d76473a6c7579cf97c52086d0371c0efe
 COMPONENT_ARCHIVE_URL=	http://ftp.easysw.com/pub/cups/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/cups
 
 TPNO=			17705
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-CXX +=	$(studio_NORUNPATH)
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # don't use LD_Z_IGNORE: causes linker problems
 LD_Z_IGNORE=
 
 # cups has an unusual hybrid-build system to support 32-bit and 64-bit
-# libraries in a single build; avoid confusing it by omitting default configure
-# CPPFLAGS.
-CONFIGURE_CPPFLAGS=
+# libraries in a single build; avoid confusing it by stripping $(CC_BITS) from
+# all related flag variables.
+CONFIGURE_CPPFLAGS.stripped := $(patsubst -m32,,$(CONFIGURE_CPPFLAGS))
+CONFIGURE_CPPFLAGS= $(CONFIGURE_CPPFLAGS.stripped)
+CFLAGS.stripped := $(patsubst -m32,,$(CFLAGS))
+CFLAGS= $(CFLAGS.stripped)
+CXXFLAGS.stripped := $(patsubst -m32,,$(CXXFLAGS))
+CXXFLAGS= $(CXXFLAGS.stripped)
 
 CONFIGURE_OPTIONS +=	--localedir=$(USRSHARELOCALEDIR)
 CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
-CONFIGURE_OPTIONS +=	--localstatedir=/var
+CONFIGURE_OPTIONS +=	--localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS +=	--with-fontpath=/usr/openwin/lib
-CONFIGURE_OPTIONS +=	--with-logdir=/var/log/cups
-CONFIGURE_OPTIONS +=	--with-domainsocket=/var/run/cups-socket
-CONFIGURE_OPTIONS +=	--with-smfmanifestdir=/lib/svc/manifest/application
-CONFIGURE_OPTIONS +=	--with-printcap=/etc/printers.conf
+CONFIGURE_OPTIONS +=	--with-logdir=$(VARDIR)/log/cups
+CONFIGURE_OPTIONS +=	--with-domainsocket=$(VARDIR)/run/cups-socket
+CONFIGURE_OPTIONS +=	--with-smfmanifestdir=$(LIBDIR)/svc/manifest/application
+CONFIGURE_OPTIONS +=	--with-printcap=$(ETCDIR)/printers.conf
 CONFIGURE_OPTIONS +=	--with-cups-user=lp
 CONFIGURE_OPTIONS +=	--with-cups-group=lp
 CONFIGURE_OPTIONS +=	--disable-static
@@ -90,18 +91,6 @@ COMPONENT_POST_INSTALL_ACTION = \
 	$(TOUCH) $(PROTOETCDIR)/cups/command.types ; \
 	$(MV) $(PROTOUSRLIBDIR)/64 $(PROTOUSRLIBDIR)/$(MACH64)
 
-# common targets
-configure:	$(CONFIGURE_32)
-
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
-
 REQUIRED_PACKAGES += driver/parallel/ecpp
 REQUIRED_PACKAGES += image/library/libjpeg
 REQUIRED_PACKAGES += image/library/libpng
@@ -114,7 +103,6 @@ REQUIRED_PACKAGES += service/network/slp
 REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/c++-runtime
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/math

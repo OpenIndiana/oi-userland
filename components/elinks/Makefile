@@ -18,29 +18,27 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
-
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+#
 # Because the Studio compiler generates thousands of lines of warnings.
-COMPILER=gcc
-
+COMPILER= gcc
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		elinks
 COMPONENT_VERSION=	0.11.7
 COMPONENT_PROJECT_URL=	http://elinks.or.cz/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:456db6f704c591b1298b0cd80105f459ff8a1fc07a0ec1156a36c4da6f898979
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/elinks
 
 TPNO=			8340
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+SYSTEM_TEST_TARGET= $(SYSTEM_TEST_64)
+include $(WS_MAKE_RULES)/common.mk
 
 # Always show the build and link lines for easier debugging.
 COMPONENT_BUILD_ARGS +=		V=1
@@ -53,7 +51,6 @@ LD_Z_IGNORE=
 CONFIGURE_OPTIONS  +=		--enable-bittorrent
 CONFIGURE_OPTIONS  +=		--enable-html-highlight
 CONFIGURE_OPTIONS  +=		--enable-256-colors
-CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 
 # Use the HTML and CSS styling external test suite as referenced at
 # http://www.w3.org/2005/MWI/Tests/
@@ -74,23 +71,8 @@ COMPONENT_SYSTEM_TEST_ARGS = -dump \
 	http://www.cameronmoll.com/mobile/mkp/pg4.html
 COMPONENT_SYSTEM_TEST_TARGETS =
 
-ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
-
-system-test:    $(SYSTEM_TEST_64)
-
-
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libx11

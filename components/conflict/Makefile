@@ -22,31 +22,29 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
-BITS=64
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		conflict
 COMPONENT_VERSION=	20150705
 IPS_COMPONENT_VERSION=	0.2015.7.5
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_PROJECT_URL=	http://invisible-island.net/conflict/conflict.html
 COMPONENT_ARCHIVE_HASH=	\
     sha256:30e14808768a938df139a1b76f8f7397e1b3bf46a18ceabcc8b1b1a70d5ea8a9
 COMPONENT_ARCHIVE_URL=	ftp://invisible-island.net/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/conflict
 
 TPNO=			27130
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+# We really do need to build conflict so that it can use the files in the
+# build directory. We are using the installed conflict binary to do this
+# though when we run the system tests.
+SYSTEM_TEST_TARGET= build $(SYSTEM_TEST_64)
+include $(WS_MAKE_RULES)/common.mk
 
 # Required to configure correctly.
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
-CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
 
 COMPONENT_TEST_DIR =	$(BUILD_DIR_64)
 COMPONENT_TEST_CMD =	./run_test.sh
@@ -64,21 +62,3 @@ COMPONENT_SYSTEM_TEST_DIR =	$(BUILD_DIR_64)
 COMPONENT_SYSTEM_TEST_ENV =	CONFLICT_BIN=/usr/bin/conflict
 COMPONENT_SYSTEM_TEST_CMD =	./run_test.sh
 COMPONENT_SYSTEM_TEST_TARGETS =
-
-ASLR_MODE = $(ASLR_ENABLE)
-
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
-
-# We really do need to build conflict so that it can use the files in the
-# build directory. We are using the installed conflict binary to do this
-# though when we run the system tests.
-system-test:    build $(SYSTEM_TEST_64)
-
-
-REQUIRED_PACKAGES += system/library

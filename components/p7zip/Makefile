@@ -20,14 +20,15 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
-PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)
-PATH=$(PARFAIT_TOOLS):$(SPRO_VROOT)/bin:/usr/bin
+PATH=$(PARFAIT_TOOLS):$(SPRO_VROOT)/bin:$(USRBINDIR)
+else
+PATH=$(SPRO_VROOT)/bin:$(USRBINDIR):$(GNUBIN)
 endif
 
 COMPONENT_NAME=		p7zip
@@ -38,13 +39,12 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC)_src_all.tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:49557e7ffca08100f9fc687f4dfc5aea703ca207640c76d9dee7b66f03cb4782
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/p7zip/p7zip/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/p7zip
 
 TPNO=			20368
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+BUILD_STYLE= justmake
+INSTALL_TARGET=
+include $(WS_MAKE_RULES)/common.mk
 
 # the tests fail horribly with -Bdirect
 LD_B_DIRECT=
@@ -55,7 +55,7 @@ COMPONENT_TEST_TARGETS =	test test_7z test_7zr
 
 COMPONENT_PREP_ACTION = (cd $(@D); cp ../makefile.solaris makefile.machine)
 COMPONENT_BUILD_TARGETS = all3
-COMPONENT_INSTALL_ARGS += DEST_HOME=/usr DEST_DIR=$(PROTO_DIR)
+COMPONENT_INSTALL_ARGS += DEST_HOME=$(USRDIR) DEST_DIR=$(PROTO_DIR)
 
 $(SOURCE_DIR)/DOCS/copying.txt $(SOURCE_DIR)/DOCS/unRarLicense.txt: prep
 
@@ -65,11 +65,7 @@ $(BUILD_DIR)/%: $(SOURCE_DIR)/DOCS/%
 $(BUILD_DIR)/copying.txt: $(SOURCE_DIR)/DOCS/copying.txt
 	$(CP) $(SOURCE_DIR)/DOCS/copying.txt $@
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 # common targets
-build:		$(BUILD_64)
-
 EXTRATARGETS = \
 	$(BUILD_DIR)/copying.txt $(BUILD_DIR)/unRarLicense.txt
 
@@ -81,13 +77,6 @@ COMPONENT_POST_INSTALL_ACTION += $(CHMOD) -R u+w $(PROTO_DIR);
 # 7zr.1 is in DOS format for some reason, and geqn can't handle it.
 COMPONENT_POST_INSTALL_ACTION += $(GSED) -i -e 's/\r//' $(PROTO_DIR)/usr/man/man1/7zr.1
 
-# build does this always
-test:	$(TEST_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
-
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/c++-runtime
 REQUIRED_PACKAGES += system/library/math

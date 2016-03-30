@@ -18,18 +18,18 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-COMPILER =	gcc
-
+BUILD_BITS= 64_and_32
+COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openusb
 COMPONENT_VERSION=	1.0.1
 COMPONENT_SRC_NAME=	libopenusb
-COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://openusb.sourceforge.net/
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:031098c376f16f6030c4dbd553266e107b39d1f7b3fc366f8f7fd412d3d7c3ad
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/openusb/files/$(COMPONENT_NAME)/libopenusb%201.0.1/$(COMPONENT_ARCHIVE)/download
@@ -37,41 +37,22 @@ COMPONENT_BUGDB=	library/libopenusb
 
 TPNO=			8843
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # keep traditional GNU semantics for inline functions so we don't lose
 # openusb_le{16|32}_to_cpu
-CFLAGS += -fgnu89-inline
-
-
-CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
+CFLAGS.gcc += -fgnu89-inline
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
         ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-PATCH_LEVEL = 1
-
 COMPONENT_POST_BUILD_ACTION = \
 	(cd $(@D)/src; $(MAKE) install-sunos-backend)
-
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
-configure:	$(CONFIGURE_32_and_64)
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
-
-system-test:    $(NO_TESTS)
 
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/hal
 REQUIRED_PACKAGES += system/io/usb
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
 REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/libdbus-glib

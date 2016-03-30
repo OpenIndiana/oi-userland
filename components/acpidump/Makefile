@@ -22,9 +22,9 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
-COMPILER =	gcc
-
+COMPILER= gcc
+BUILD_ARCH= i386
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		acpidump
@@ -32,47 +32,15 @@ COMPONENT_VERSION=	20071116
 IPS_COMPONENT_VERSION=	0.2007.11.16
 COMPONENT_PROJECT_URL=	http://www.lesswatts.org/projects/acpi/utilities.php
 COMPONENT_SRC_NAME=	pmtools
-COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:91751774976e39f6237efd0326eb35196a9346220b92ad35894a33283e872748
 COMPONENT_ARCHIVE_URL=	http://www.lesswatts.org/patches/linux_acpi/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/acpidump
 
 TPNO=			8848
 
-# we're i386-only
-ifeq ($(MACH), sparc)
-PUBLISH_STAMP= 
-endif
+BUILD_STYLE= justmake
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-PKG_PROTO_DIRS += $(BUILD_DIR_64)
-
-CC +=	$(CC_BITS)
-
-COMPONENT_BUILD_ENV +=	CC="$(CC)"
-
-# common targets. we're i386-only so we have to
-# be slightly tricky.
-
-build_sparc:
-	@echo "Not available."
-
-ASLR_MODE =	$(ASLR_ENABLE)
-
-build_i386:	$(BUILD_64)
-
-build:		build_$(MACH)
-
-install:	build
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
-
-REQUIRED_PACKAGES += system/library
+COMPONENT_PRE_INSTALL_ACTION += $(MKDIR) $(PROTOUSRBINDIR)
+COMPONENT_INSTALL_ARGS += DESTDIR=$(PROTOUSRBINDIR)

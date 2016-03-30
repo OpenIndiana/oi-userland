@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		meta-packages/group-feature
 COMPONENT_VERSION=	$(PKG_SOLARIS_VERSION)
+COMPONENT_SRC=
 COMPONENT_PROJECT_URL=	http://solaris-userland.java.net/
 COMPONENT_ARCHIVE_URL=	http://hg.java.net/solaris-userland-gate/
 COMPONENT_BUGDB=	gate-stuff/userland

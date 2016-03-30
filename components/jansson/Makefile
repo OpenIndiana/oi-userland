@@ -18,15 +18,16 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		jansson
 COMPONENT_VERSION=	2.7
 COMPONENT_PROJECT_URL=	http://www.digip.org/jansson
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:7905e6590fb316c0ff943df3dc6a21cd81a59cff7a6d12514054c359d04d78d7
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/releases/$(COMPONENT_ARCHIVE)
@@ -34,31 +35,13 @@ COMPONENT_BUGDB=	library/jansson
 
 TPNO=	19403
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-include $(WS_MAKE_RULES)/lint-libraries.mk
+include $(WS_MAKE_RULES)/common.mk
 
 LINT_FLAGS += -I$(PROTOUSRINCDIR)
 
-CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS += --includedir=$(USRINCDIR)/jansson
 
 # The test/suites/api/check-exports uses nm and expects it to be the GNU kind.
-COMPONENT_TEST_ENV += PATH=/usr/gnu/bin:$(PATH)
+COMPONENT_TEST_ENV += PATH=$(GNUBIN):$(PATH)
 
 ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
-configure:	$(CONFIGURE_32_and_64)
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
-
-REQUIRED_PACKAGES += system/library

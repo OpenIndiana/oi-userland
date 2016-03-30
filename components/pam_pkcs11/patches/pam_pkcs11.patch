@@ -806,28 +806,44 @@
   {
     return h->slots[h->current_slot].label;
   }
-*** pam_pkcs11-0.6.0-ORIG/src/pam_pkcs11/Makefile.in	Wed Jun  6 02:23:27 2007
---- pam_pkcs11-WS/src/pam_pkcs11/Makefile.in	Mon Sep 28 16:06:48 2009
+*** pam_pkcs11-0.6.0-ORIG/src/pam_pkcs11/Makefile.am	Mon May 21 02:46:19 2007
+--- pam_pkcs11-WS/src/pam_pkcs11/Makefile.am	Wed Dec  9 13:47:15 2015
 ***************
-*** 234,241 ****
-  top_builddir = @top_builddir@
-  top_srcdir = @top_srcdir@
+*** 2,9 ****
+  
   MAINTAINERCLEANFILES = Makefile.in
+  
 ! AM_CFLAGS = -Wall -fno-strict-aliasing $(CRYPTO_CFLAGS)
 ! AM_CPPFLAGS = -Wall -fno-strict-aliasing $(CRYPTO_CFLAGS)
+  
   lib_LTLIBRARIES = pam_pkcs11.la
-  pam_pkcs11_la_SOURCES = pam_pkcs11.c  \
-  			mapper_mgr.c mapper_mgr.h \
---- 234,241 ----
-  top_builddir = @top_builddir@
-  top_srcdir = @top_srcdir@
+  
+--- 2,9 ----
+  
   MAINTAINERCLEANFILES = Makefile.in
+  
 ! AM_CFLAGS = $(CRYPTO_CFLAGS)
 ! AM_CPPFLAGS = $(CRYPTO_CFLAGS)
+  
   lib_LTLIBRARIES = pam_pkcs11.la
-  pam_pkcs11_la_SOURCES = pam_pkcs11.c  \
-  			mapper_mgr.c mapper_mgr.h \
-*** pam_pkcs11-0.6.0-ORIG/src/pam_pkcs11/pam_config.h	Wed Jun  6 02:55:02 2007
+  
+***************
+*** 15,21 ****
+  
+  install:       
+  	$(mkinstalldirs) $(DESTDIR)/$(libdir)/security
+! 	$(libLTLIBRARIES_INSTALL) $(top_builddir)/src/pam_pkcs11/.libs/pam_pkcs11.so $(DESTDIR)/$(libdir)/security
+  
+  format:
+  	indent *.c *.h
+--- 15,21 ----
+  
+  install:       
+  	$(mkinstalldirs) $(DESTDIR)/$(libdir)/security
+! 	$(INSTALL) $(top_builddir)/src/pam_pkcs11/.libs/pam_pkcs11.so $(DESTDIR)/$(libdir)/security
+  
+  format:
+  	indent *.c *.h*** pam_pkcs11-0.6.0-ORIG/src/pam_pkcs11/pam_config.h	Wed Jun  6 02:55:02 2007
 --- pam_pkcs11-WS/src/pam_pkcs11/pam_config.h	Mon Sep 28 16:06:48 2009
 ***************
 *** 13,19 ****

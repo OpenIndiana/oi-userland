@@ -20,17 +20,15 @@
 #
 
 #
-# Copyright (c) 2006, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2006, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		quagga
 COMPONENT_VERSION=	0.99.19
 IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.quagga.net/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:bc5052d285af6e7aac42984741e74261637c57c4a02032bf05de7a5ea3a1afe0
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
@@ -49,22 +47,20 @@ studio_ALIGN.sparc.32=  -xmemalign=8i
 
 studio_OPT = -xO3
 
-LDFLAGS +=-lumem
+LDFLAGS += -lumem
 CFGLOCALSTATEDIR=/system/volatile/quagga
 CFGSYSCONFDIR=  $(ETCDIR)/quagga
 
-CFLAGS += -xspace -Xa
-CFLAGS += -g -xdebugformat=dwarf -O
-CFLAGS += -errtags=yes -xc99=%all
-CFLAGS += -erroff=E_TRAILING_COMMA_IN_ENUM
-CFLAGS += -erroff=E_STATEMENT_NOT_REACHED
-CFLAGS += -erroff=E_EMPTY_TRANSLATION_UNIT
+CFLAGS.studio += -xspace -Xa
+CFLAGS.studio += -g -xdebugformat=dwarf -O
+CFLAGS.studio += -errtags=yes -xc99=%all
+CFLAGS.studio += -erroff=E_TRAILING_COMMA_IN_ENUM
+CFLAGS.studio += -erroff=E_STATEMENT_NOT_REACHED
+CFLAGS.studio += -erroff=E_EMPTY_TRANSLATION_UNIT
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS +=	--with-cflags="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	--enable-opaque-lsa
 CONFIGURE_OPTIONS +=	--localstatedir=$(CFGLOCALSTATEDIR)
 CONFIGURE_OPTIONS +=	--sysconfdir=$(CFGSYSCONFDIR)
@@ -79,17 +75,7 @@ CONFIGURE_OPTIONS +=	--enable-user=root
 CONFIGURE_OPTIONS +=	--enable-group=root
 CONFIGURE_OPTIONS +=	--enable-solaris
 
-configure:	$(CONFIGURE_32)
-
-build:		$(BUILD_32)
-install:	$(INSTALL_32)
-test:	$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
-
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/network

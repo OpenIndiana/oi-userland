@@ -18,34 +18,36 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         cdrtools
 COMPONENT_VERSION=      3.01
 # Zero not allowed in front of number
 IPS_COMPONENT_VERSION=  3.1
+HUMAN_VERSION=          $(COMPONENT_VERSION)
 COMPONENT_SUBVERSION=   a22
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL= 	http://cdrecord.berlios.de/private/cdrecord.html 
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC)$(COMPONENT_SUBVERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:facd40dc66f1499dfe936e647b694bee7a12cd63afd901a35bec855d9e3600a5
 COMPONENT_ARCHIVE_URL=  ftp://ftp.berlios.de/pub/cdrecord/alpha/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/cdrtools
 
 TPNO=			6305
 
-PATH=			$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)
-PATH=$(PARFAIT_TOOLS):$(SPRO_VROOT)/bin:/usr/bin
+PATH=$(PARFAIT_TOOLS):$(SPRO_VROOT)/bin:$(USRBINDIR)
+else
+PATH=$(SPRO_VROOT)/bin:$(USRBINDIR):$(GNUBIN)
 endif
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+BUILD_STYLE= justmake
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_INSTALL_ARGS +=  GMAKE_NOWARN=true
 COMPONENT_INSTALL_ARGS +=  CCOM=cc64
@@ -58,17 +60,4 @@ COMPONENT_BUILD_ARGS += CCOM=cc64
 # cdrtools doesn't work with gmake for sparc 64-bit compile.
 GMAKE = $(CCSMAKE)
 
-# Enable ASLR for this component
-ASLR_MODE =    $(ASLR_ENABLE)
-
-build:          $(BUILD_64)
-
-install:        $(INSTALL_64)
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
-
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library

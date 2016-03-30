@@ -20,18 +20,17 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 # for ginstall and tail -n
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(GNUBIN):$(USRBINDIR)
 
 COMPONENT_NAME=		ejabberd
 COMPONENT_VERSION=	2.1.13
 COMPONENT_PROJECT_URL=	http://www.ejabberd.im/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:a80d1c72e435da31758261cb0c04fe750ac71fc3e33a3b606123efd3b3abc86d
@@ -39,51 +38,29 @@ COMPONENT_ARCHIVE_URL=	http://www.process-one.net/downloads/ejabberd/$(COMPONENT
 COMPONENT_BUGDB=	service/ejabberd
 TPNO=                   21408
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+BUILD_DIR_64= $(BUILD_DIR)/$(MACH64)/src
+CONFIGURE_SCRIPT= $(SOURCE_DIR)/src/configure
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = \
 	(cd $(@D)/src ; PATH=$(PATH) $(AUTORECONF) -fiv)
 
-CONFIGURE_SCRIPT = $(SOURCE_DIR)/src/configure
-BUILD_DIR_64 =	$(BUILD_DIR)/$(MACH64)/src
-$(BUILD_DIR_64)/.configured:	BITS=64
-$(BUILD_DIR_64)/.built:		BITS=64
-$(BUILD_DIR_64)/.installed:	BITS=64
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(BUILD_DIR)/$(MACH64))
 
-CONFIGURE_BINDIR.64 = $(CONFIGURE_BINDIR.32)
-CONFIGURE_SBINDIR.64 = $(CONFIGURE_SBINDIR.32)
-
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS +=	LDFLAGS="$(LDFLAGS)"
 CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS +=	--with-erlang=$(USRBINDIR)
-CONFIGURE_OPTIONS +=	--localstatedir=/var
+CONFIGURE_OPTIONS +=	--localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS +=	--enable-odbc
 
 COMPONENT_BUILD_TARGETS = all
 
-
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
-configure:	$(CONFIGURE_64)
-
-build:	$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
 
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/network

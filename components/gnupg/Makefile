@@ -18,26 +18,24 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
-BITS=64
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnupg
 COMPONENT_VERSION=	2.0.27
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.gnupg.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:57646d3e4b919fa1e5c8f1c0cf5fe1215333041c493a5ebc4b8f2978dbe930f2
 COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/gnupg/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/gnupg
 
 TPNO=			22246
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # Enable C99 mode + -Xc for its additional warnings.
 studio_C99MODE = -Xc $(studio_C99_ENABLE)
@@ -57,8 +55,8 @@ CFLAGS += $(studio_PIC)
 # If we pass -lc, -mt won't link with -lthread
 # (which is what it does by default, and we don't
 # want that, because we use POSIX threads).
-LDFLAGS += -lc -z defs
-LD_OPTIONS += -z defs
+LDFLAGS += -lc $(LD_Z_DEFS)
+LD_OPTIONS += $(LD_Z_DEFS)
 
 COMPONENT_TEST_TRANSFORMS += \
      '-e "/libtool/d"' \
@@ -93,18 +91,16 @@ COMPONENT_TEST_TRANSFORMS += \
      '-e "s/copied $$/copied/g"'  \
      '-e "s/copied [0-9]\{1,\}\./copied/g"'
 
-CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_ENV +=	LDFLAGS="$(LDFLAGS)"
 CONFIGURE_ENV +=	INSTALL="$(INSTALL)"
 
 # Without this GnuPG's ./configure will complain that we're not using
 # GNU make. But we are.
 CONFIGURE_ENV +=	MAKE="$(GMAKE)"
 
-CONFIGURE_OPTIONS  +=		--localstatedir=/var
+CONFIGURE_OPTIONS  +=		--localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS  +=		--libexecdir=$(USRBINDIR)
 CONFIGURE_OPTIONS  +=		--datadir=$(CONFIGURE_PREFIX)/share
-CONFIGURE_OPTIONS  +=		--sysconfdir=/etc
+CONFIGURE_OPTIONS  +=		--sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		--enable-nls
 CONFIGURE_OPTIONS  +=		--enable-largefile
@@ -140,21 +136,9 @@ PKG_PROTO_DIRS += $(WS_TOP)/components/pinentry
 
 MAN8LIST = addgnupghome applygnupgdefaults
 
-ASLR_MODE = $(ASLR_ENABLE)
-
-configure:	$(CONFIGURE_64)
-
-build: $(BUILD_64)
-
-install: $(INSTALL_64)
+COMPONENT_POST_INSTALL_ACTION += \
 	( cd $(PROTOUSRSHARELOCALEDIR) ; \
 	    $(CP) -R 'en@boldquot' en )
-
-test: $(TEST_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
-BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += library/desktop/gtk2
@@ -168,7 +152,6 @@ REQUIRED_PACKAGES += library/security/libksba
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += security/pinentry
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/libgcrypt
 REQUIRED_PACKAGES += system/library/usb/libusb
 REQUIRED_PACKAGES += web/curl

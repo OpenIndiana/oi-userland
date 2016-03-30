@@ -18,15 +18,17 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+# Prefer 32-bit as only "binary" delivered is a script with embedded paths.
+BUILD_BITS= 32_and_64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libpcap
 COMPONENT_VERSION=	1.7.4
 COMPONENT_PROJECT_URL=	http://www.tcpdump.org/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:7ad3112187e88328b85e46dce7a9b949632af18ee74d97ffc3f2b41fe7f448b0
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)release/$(COMPONENT_ARCHIVE)
@@ -34,36 +36,19 @@ COMPONENT_BUGDB=	library/libpcap
 
 TPNO=			23891
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # Rebuild the configure script so the man pages are normalized.
 COMPONENT_PREP_ACTION =	(cd $(@D); autoconf);
 
-#
-# libpcap Makefile does not use CFLAGS when building shared library
-# so we require the following line to add the -m option to CC
-#
-CC += $(CC_BITS)
+# libpcap Makefile does not use CFLAGS when building shared library.
+LDFLAGS += $(CC_BITS)
+
 CFLAGS += -D_SYS_REGSET_H
-CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS) -DHAVE_CONFIG_H"
+CFLAGS += -DHAVE_CONFIG_H
 CONFIGURE_OPTIONS  +=	--disable-dbus
-
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
-configure:	$(CONFIGURE_32_and_64)
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:	$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
 
 REQUIRED_PACKAGES += developer/lexer/flex
 REQUIRED_PACKAGES += developer/parser/bison
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library

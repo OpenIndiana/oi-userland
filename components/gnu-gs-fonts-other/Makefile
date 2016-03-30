@@ -19,15 +19,16 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= NO_ARCH
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gnu-gs-fonts-other
 COMPONENT_VERSION=      6.0
 COMPONENT_PROJECT_URL=	http://sourceforge.net/projects/gs-fonts/
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
     sha256:8146cccc4699fe9dab841446bdd17039f4769c903eceb54409188b920754aab3
 COMPONENT_ARCHIVE_URL=  http://softlayer.dl.sourceforge.net/sourceforge/gs-fonts/$(COMPONENT_ARCHIVE)
@@ -40,10 +41,8 @@ UNPACK_ARGS= -r $(COMPONENT_SRC)
 
 PROTOGSSHAREDIR=$(PROTOUSRSHAREDIR)/ghostscript
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+BUILD_STYLE= archive
+include $(WS_MAKE_RULES)/common.mk
 
 # untar the tar ball and apply the patches
 build:		$(SOURCE_DIR)/.prep
@@ -56,7 +55,4 @@ install: build
 test:	$(NO_TESTS)
 
 system-test:    $(NO_TESTS)
-
-clean::
-	$(RM) -r $(BUILD_DIR)
 

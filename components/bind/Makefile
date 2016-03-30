@@ -18,16 +18,17 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bind
 COMPONENT_VERSION=	9.6-ESV-R11
 HUMAN_VERSION=		$(COMPONENT_VERSION)-P6
 IPS_COMPONENT_VERSION=	9.6.3.11.6
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	http://www.isc.org/software/bind/
 
 # hash from: sha256sum $(COMPONENT_ARCHIVE) | sed 's/\(.[^ ]*\).*/sha256:\1/'
@@ -39,9 +40,7 @@ COMPONENT_BUGDB=	service/dns-server
 
 TPNO=			25905
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # Specify "configure" options and features.
 # FYI, The configure options are displayed by 'named -V'.
@@ -53,9 +52,9 @@ CONFIGURE_OPTIONS +=	--with-openssl
 CONFIGURE_OPTIONS +=	--disable-openssl-version-check
 CONFIGURE_OPTIONS +=	--with-pkcs11
 # - Use xml2-config found uder /usr without checking its version.
-CONFIGURE_OPTIONS +=	--with-libxml2=/usr
-CONFIGURE_OPTIONS +=	--enable-threads=yes
-CONFIGURE_OPTIONS +=	--enable-devpoll=yes
+CONFIGURE_OPTIONS +=	--with-libxml2=$(USRDIR)
+CONFIGURE_OPTIONS +=	--enable-threads
+CONFIGURE_OPTIONS +=	--enable-devpoll
 # - Enabled fixed [order] resource-record sets for backward compatibility.
 # - Requires more memory to store the sets so is not the default.
 CONFIGURE_OPTIONS +=	--enable-fixed-rrset
@@ -68,18 +67,14 @@ CONFIGURE_LIBDIR.64 =	$(CONFIGURE_PREFIX)/lib/dns/$(MACH64)
 CONFIGURE_BINDIR.32 =	$(CONFIGURE_SBINDIR.32)
 CONFIGURE_BINDIR.64 =	$(CONFIGURE_SBINDIR.32)
 CONFIGURE_SBINDIR.64 =	$(CONFIGURE_SBINDIR.32)
-CONFIGURE_OPTIONS +=	--sysconfdir=/etc
-CONFIGURE_OPTIONS +=	--localstatedir=/var
+CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS +=	--localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS +=	--with-randomdev=/dev/random
-CONFIGURE_OPTIONS +=	--with-gssapi=/usr
+CONFIGURE_OPTIONS +=	--with-gssapi=$(USRDIR)
 
 # Compiler and compiler options:
 # - configure will add "-mt" to CC which is already set in CFLAGS, so override.
 CONFIGURE_OPTIONS +=	CC="$(CC)"
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
-
-# Enable ASLR for this component
-ASLR_MODE = $(ASLR_ENABLE)
 
 # Test configuration / helper targets:
 COMPONENT_TEST_MASTER = \
@@ -167,16 +162,6 @@ test-clean:
 # Common Command line targets
 .PHONY: configure build install test system-test
 
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
-
-system-test:	$(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
 # Package dependencies
 # Created by 'gmake REQUIRED_PACKAGES', manually verified.
 REQUIRED_PACKAGES += library/libxml2
@@ -186,5 +171,4 @@ REQUIRED_PACKAGES += network/dns/bind
 REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/gss

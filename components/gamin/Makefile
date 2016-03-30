@@ -20,16 +20,14 @@
 #
 
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME         = gamin
 COMPONENT_VERSION      = 0.1.10
 COMPONENT_PROJECT_URL  = http://www.gnome.org/~veillard/gamin/
-COMPONENT_SRC          = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE      = $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH = \
     sha256:28085f0ae8be10eab582ff186af4fb0be92cc6c62b5cc19cd09b295c7c2899a1
 COMPONENT_ARCHIVE_URL  = https://people.gnome.org/~veillard/gamin/sources/gamin-0.1.10.tar.gz
@@ -37,11 +35,7 @@ COMPONENT_BUGDB        = library/gamin
 
 TPNO                   = 9483
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-ASLR_MODE = $(ASLR_ENABLE)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -if; bzip2 NEWS; bzip2 ChangeLog; bzip2 COPYING)
 
@@ -71,9 +65,6 @@ COMPONENT_TEST_TRANSFORMS += '-e "/^!/d"'
 # Where the gam_server will be located
 CONFIGURE_OPTIONS    +=      --libexecdir="$(USRLIBDIR)"
 
-# Needed for 64 bit build - adds -m64
-CONFIGURE_OPTIONS    +=      CFLAGS="$(CFLAGS)"
-
 # Direct the python packages to vendor-packages dir instead of site-packages
 COMPONENT_BUILD_ARGS +=      PYTHON_SITE_PACKAGES=$(PYTHON_VENDOR_PACKAGES)
 
@@ -91,14 +82,5 @@ $(BUILD_DIR_64)/.built: COMPONENT_POST_BUILD_ACTION = ( \
 	cp _gamin.so 64 \
 )
 
-configure:	$(CONFIGURE_32_and_64)
-
-build:          $(BUILD_32_and_64)
-
-install:        $(INSTALL_32_and_64)
-
-test:           $(TEST_32_and_64)
-
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += system/library

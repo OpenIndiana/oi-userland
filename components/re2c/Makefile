@@ -18,35 +18,30 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-COMPILER =		gcc
-
+BUILD_BITS= 64
+COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		re2c
 COMPONENT_VERSION=	0.16
 COMPONENT_PROJECT_URL=	http://re2c.org/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:48c12564297641cceb5ff05aead57f28118db6277f31e2262437feba89069e84
 COMPONENT_ARCHIVE_URL=	https://github.com/skvadrik/$(COMPONENT_NAME)/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/re2c
 
 TPNO =			27272
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+SYSTEM_TEST_TARGET= build $(SYSTEM_TEST_64)
+include $(WS_MAKE_RULES)/common.mk
 
-export PATH=$(GCC_ROOT)/bin:/usr/gnu/bin:/usr/bin
+export PATH=$(GCC_ROOT)/bin:$(GNUBIN):$(USRBINDIR)
 
 # Needed to get the tests to run successfully.
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
-
-CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS  +=	CXXFLAGS="$(CXXFLAGS)"
 
 # Needed for "gmake test" to work successfully.
 # If SHELLOPTS is exported (as it is by the userland makefiles),
@@ -56,20 +51,7 @@ CONFIGURE_OPTIONS  +=	CXXFLAGS="$(CXXFLAGS)"
 # diffs failing due to script tracing in output files.
 unexport SHELLOPTS
 
-COMPONENT_SYSTEM_TEST_ENV +=	RE2C_BIN=/usr/bin/re2c
+COMPONENT_SYSTEM_TEST_ENV +=	RE2C_BIN=$(USRBINDIR)/re2c
 
-ASLR_MODE = $(ASLR_ENABLE)
-
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
-
-system-test:	build $(SYSTEM_TEST_64)
-
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/gcc/gcc-c++-runtime
 REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime

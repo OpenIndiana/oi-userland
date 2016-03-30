@@ -18,18 +18,18 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
-
+BUILD_BITS= 32
 # Build gcc with gcc
-COMPILER =	gcc
+COMPILER= gcc
+include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gcc
 COMPONENT_VERSION=	3.4.3
 COMPONENT_PROJECT_URL=	http://gcc.gnu.org/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 # unfortunately we have our own "special" tarball and not the community version, so use that.
 COMPONENT_ARCHIVE_HASH=	\
     sha256:3ab488fe2df01bf54a57acd70e745266e19232edacf77512f77655296748e7a0
@@ -38,9 +38,8 @@ COMPONENT_BUGDB=	utility/gnu-compiler
 
 TPNO=			17028
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+INSTALL_TARGET=
+include $(WS_MAKE_RULES)/gnu-component.mk
 
 PARCH =		$(MACH:i386=i386-pc)
 GNU_ARCH =	$(PARCH:sparc=sparc-sun)-solaris$(SOLARIS_VERSION)
@@ -58,16 +57,15 @@ CC_BITS=
 LD_B_DIRECT=
 
 CONFIGURE_PREFIX =	/usr/gcc/3.4
+CONFIGURE_INFODIR =	$(CONFIGURE_PREFIX)/share/info
 
-CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_PREFIX)/share/info
-CONFIGURE_OPTIONS +=	--without-gnu-ld --with-ld=/usr/bin/ld
+CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_OPTIONS +=	--without-gnu-ld --with-ld=$(LD)
 CONFIGURE_OPTIONS +=	--enable-languages='c,c++,f77,objc'
 CONFIGURE_OPTIONS +=	--enable-shared
 # sparc and x86 use different assemblers
-CONFIGURE_OPTIONS.sparc +=	--without-gnu-as --with-as=/usr/bin/as
-CONFIGURE_OPTIONS.i386 +=	--with-gnu-as --with-as=/usr/gnu/bin/as
-
-CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
+CONFIGURE_OPTIONS.sparc +=	--without-gnu-as --with-as=$(USRBINDIR)/as
+CONFIGURE_OPTIONS.i386 +=	--with-gnu-as --with-as=$(GNUBIN)/as
 
 COMPONENT_BUILD_ENV += STAGE1_CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ENV += CFLAGS_FOR_TARGET="$(CFLAGS)"
@@ -75,10 +73,6 @@ COMPONENT_BUILD_ENV += SHELL=$(CONFIG_SHELL)
 COMPONENT_BUILD_TARGETS = bootstrap
 
 # common targets
-configure:	$(CONFIGURE_32)
-
-build:		$(BUILD_32)
-
 $(PROTO_DIR)/.sedded:	$(INSTALL_32)
 	(cd $(@D) ; for file in libstdc++.la libsupc++.la ; do \
 		$(MV) usr/gcc/3.4/lib/$$file usr/gcc/3.4/lib/$$file.orig ; \
@@ -90,16 +84,11 @@ $(PROTO_DIR)/.sedded:	$(INSTALL_32)
 
 install:	$(PROTO_DIR)/.sedded
 
-test: $(TEST_32)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
 
 REQUIRED_PACKAGES += developer/assembler
 REQUIRED_PACKAGES += developer/gnu-binutils
 REQUIRED_PACKAGES += developer/lexer/flex
 REQUIRED_PACKAGES += developer/parser/bison
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/gcc-3-runtime
 REQUIRED_PACKAGES += system/library/math

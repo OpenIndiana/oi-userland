@@ -18,15 +18,16 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libssh2
 COMPONENT_VERSION=	1.4.2
 COMPONENT_PROJECT_URL=	http://www.libssh2.org/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:418c09061fb9c3c26fec391a35a062780b21b3199885e3b27054619582469bd3
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
@@ -34,11 +35,9 @@ COMPONENT_BUGDB=	library/libssh2
 
 TPNO=			11357
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+SYSTEM_TEST_TARGET= configure $(SYSTEM_TEST_32_and_64)
+include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS +=    CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=   --enable-shared
 CONFIGURE_OPTIONS +=   --disable-static
 
@@ -79,18 +78,5 @@ COMPONENT_SYSTEM_TEST_ENV = \
 	AM_MAKEFLAGS="-f $(BUILD_DIR_$(BITS))/tests/Makefile-system-test"
 COMPONENT_SYSTEM_TEST_ARGS = -f $(BUILD_DIR_$(BITS))/tests/Makefile-system-test
 
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
-configure:	$(CONFIGURE_32_and_64)
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-
-system-test:    configure $(SYSTEM_TEST_32_and_64)
-
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += system/library

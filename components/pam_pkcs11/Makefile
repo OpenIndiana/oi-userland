@@ -18,15 +18,18 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+# For this component, prefer 32-bit over 64-bit for now until sufficient
+# testing has been performed.
+BUILD_BITS= 32_and_64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pam_pkcs11
 COMPONENT_VERSION=	0.6.0
 COMPONENT_PROJECT_URL=	http://www.opensc-project.org/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:170db26eb9610dde5d3307771ed0e0e14cc0778aaacd3b3d4e71240ccb61cec6
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)files/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
@@ -34,28 +37,26 @@ COMPONENT_BUGDB=	library/pam-pkcs11
 
 TPNO=			17173
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
+# Force regeneration of ancient autoconf scripts to fix 64-bit build detection
+# and due to patches to autoconf and automake files.
+COMPONENT_PREP_ACTION += (cd $(@D); autoreconf -fiv)
+
+OPENSSL_LIBS= -lssl -lcrypto
+ifeq ($(OS_VERSION),5.11)
+OPENSSL_LIBS +=	-lsocket -lnsl
+endif
+
+CONFIGURE_BINDIR.32= $(USRLIB.32)/pam_pkcs11
+CONFIGURE_BINDIR.64= $(USRLIB.64)/pam_pkcs11
+CONFIGURE_OPTIONS += --datarootdir=$(ETCDIR)/security
 CONFIGURE_OPTIONS += --with-pcsclite=no
-CONFIGURE_OPTIONS += --with-included-gettext=yes
-CONFIGURE_OPTIONS += --localstatedir=/var
-CONFIGURE_OPTIONS += OPENSSL_LIBS="-lssl -lcrypto -lsocket -lnsl"
-
-# common targets
-configure:	$(CONFIGURE_32_and_64)
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
+CONFIGURE_OPTIONS += --localedir=$(USRSHARELOCALEDIR)
+CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS += OPENSSL_LIBS="$(OPENSSL_LIBS)"
 
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += shell/bash
-REQUIRED_PACKAGES += system/library

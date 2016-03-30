@@ -18,11 +18,14 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
-PATH = /usr/gnu/bin:/usr/bin
+PATH= $(GNUBIN):$(USRBINDIR)
 
 COMPONENT_NAME=		gpgme
 COMPONENT_VERSION=	1.5.3
@@ -36,9 +39,14 @@ COMPONENT_BUGDB=	utility/gnupg
 
 TPNO=			21167
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+# Although building and running the GpgME tests is enabled, GpgME's
+# Test Harness is not suitable for running in an automated test
+# environment. The GpgME tests require interactive, manual input
+# from the tty as well as system configuration changes.
+# The GpgME Test Harness can only be run manually, and interactively
+# from a terminal.
+TEST_TARGET= $(SKIP_TEST)
+include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL = 0
 
@@ -57,10 +65,9 @@ CFLAGS += $(CPP_POSIX)
 CFLAGS += $(CPP_C99_EXTENDED_MATH)
 CFLAGS += $(studio_PIC)
 
-CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_ENV +=	INSTALL="$(INSTALL)"
 
-CONFIGURE_OPTIONS  +=		--localstatedir=/var
+CONFIGURE_OPTIONS  +=		--localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		--enable-shared
 CONFIGURE_OPTIONS  +=		--disable-static
@@ -74,25 +81,6 @@ CONFIGURE_OPTIONS  +=		--with-libgpg-error-prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS  +=		--with-libassuan-prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS  +=		--with-pic
 
-ASLR_MODE = $(ASLR_ENABLE)
-
-configure:	$(CONFIGURE_32_and_64)
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-# Although building and running the GpgME tests is enabled, GpgME's
-# Test Harness is not suitable for running in an automated test
-# environment. The GpgME tests require interactive, manual input
-# from the tty as well as system configuration changes.
-# The GpgME Test Harness can only be run manually, and interactively
-# from a terminal.
-test: $(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
 REQUIRED_PACKAGES += library/security/libgpg-error
 REQUIRED_PACKAGES += library/security/libassuan
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library

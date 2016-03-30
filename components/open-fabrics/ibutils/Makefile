@@ -18,41 +18,33 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
-# OFED only builds with GCC
-COMPILER=gcc
-
-include ../../../make-rules/shared-macros.mk
+BUILD_BITS= 64_and_32
+include ../ofed-component-macros.mk
 
 COMPONENT_NAME=		ibutils
 COMPONENT_VERSION=	1.5.7
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:8db2fcb20102c37e7037826c58b899092df034aac870d3d50a13263746f17f18
-COMPONENT_ARCHIVE_URL=	http://www.openfabrics.org/downloads/ibutils/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/ofuv_tools
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include ../ofed.mk
+include ../ofed-component.mk
 
-LIBS +=	-lsocket -lnsl -lopensm -losmvendor -losmcomp -libumad -libmad
+LIBS +=	-lopensm -losmvendor -losmcomp -libumad -libmad
 
-LDFLAGS.64 +=	-L $(PROTO_DIR)/usr/lib/$(MACH64)
+LDFLAGS.64 +=	-L $(PROTOUSRLIBDIR64)
 
 # we want to use the libcheck here
 DISABLE_LIBCHECK=
 
 CONFIGURE_ENV +=	INSTALL_DATA="$(INSTALL) -m 644"
 
+CONFIGURE_BINDIR.64= $(USRSBINDIR)
 CONFIGURE_OPTIONS +=	CXXFLAGS="$(CC_BITS)"
-CONFIGURE_OPTIONS +=	--with-osm=$(PROTO_DIR)/usr
-CONFIGURE_OPTIONS +=	--bindir=$(USRSBINDIR)
-
-PROTOMAN =	$(PROTO_DIR)/$(CONFIGURE_MANDIR)
+CONFIGURE_OPTIONS +=	--with-osm=$(PROTOUSRDIR)
 
 CLEANUP_FILES =\
 	$(PROTOUSRLIBDIR)/libibdm.la\
@@ -78,20 +70,20 @@ CLEANUP_FILES =\
 	$(PROTOUSRBINDIR)/ibdiagui* \
 	$(PROTOUSRBINDIR)/ibnlparse*\
 	$(PROTOUSRBINDIR)/ibdiagpath* \
-	$(PROTOMAN)/man1//ibdmsh.1 \
-	$(PROTOMAN)/man1//ibdmtr.1\
-	$(PROTOMAN)/man1//ibdmchk.1\
-	$(PROTOMAN)/man1//ibdiagui.1 \
-	$(PROTOMAN)/man1//ibdiagpath.1\
-	$(PROTOMAN)/man1//ibtopodiff.1 \
-	$(PROTOMAN)/man1//ibdm-ibnl-file.1\
-	$(PROTOMAN)/man1//ibdm-topo-file.1 \
-	$(PROTOMAN)/man3//ibnd_discover_fabric.3\
-	$(PROTOMAN)/man3//ibnd_find_node_dr.3 \
-	$(PROTOMAN)/man3//ibnd_find_node_guid.3\
-	$(PROTOMAN)/man3//ibnd_iter_nodes.3 \
-	$(PROTOMAN)/man3//ibnd_iter_nodes_type.3\
-	$(PROTOMAN)/man3//ibnd_show_progress.3 \
+	$(PROTOUSRSHAREMAN1DIR)/ibdmsh.1 \
+	$(PROTOUSRSHAREMAN1DIR)/ibdmtr.1\
+	$(PROTOUSRSHAREMAN1DIR)/ibdmchk.1\
+	$(PROTOUSRSHAREMAN1DIR)/ibdiagui.1 \
+	$(PROTOUSRSHAREMAN1DIR)/ibdiagpath.1\
+	$(PROTOUSRSHAREMAN1DIR)/ibtopodiff.1 \
+	$(PROTOUSRSHAREMAN1DIR)/ibdm-ibnl-file.1\
+	$(PROTOUSRSHAREMAN1DIR)/ibdm-topo-file.1 \
+	$(PROTOUSRSHAREMAN3DIR)/ibnd_discover_fabric.3\
+	$(PROTOUSRSHAREMAN3DIR)/ibnd_find_node_dr.3 \
+	$(PROTOUSRSHAREMAN3DIR)/ibnd_find_node_guid.3\
+	$(PROTOUSRSHAREMAN3DIR)/ibnd_iter_nodes.3 \
+	$(PROTOUSRSHAREMAN3DIR)/ibnd_iter_nodes_type.3\
+	$(PROTOUSRSHAREMAN3DIR)/ibnd_show_progress.3 \
 
 CLEANUP_DIRS=\
 	$(PROTOUSRINCDIR)/ibdm\
@@ -101,15 +93,4 @@ CLEANUP_DIRS=\
 COMPONENT_POST_INSTALL_ACTION=\
 	$(RM) $(CLEANUP_FILES);\
 	$(RM) -r $(CLEANUP_DIRS)
-
-# common targets
-configure:	$(CONFIGURE_32_and_64)
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
 

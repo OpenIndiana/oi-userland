@@ -18,44 +18,40 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
-#
 
+#
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 64
 # parfait fails to compile us (21334808)
 export PARFAIT_BUILD=no
-
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tar
 COMPONENT_VERSION=	1.28
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/tar/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:60e4bfe0602fef34cd908d91cf638e17eeb09394d7b98c2487217dc4d3147562
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/tar/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gtar
 
 TPNO=			23088
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+SYSTEM_TEST_TARGET= build $(SYSTEM_TEST_64)
+include $(WS_MAKE_RULES)/gnu-component.mk
 
 PATCH_LEVEL=0
 
 # tests (ttyemu.c) requires c99
 studio_C99MODE = $(studio_C99_ENABLE)
 
-# Enforce tar binary to standard path
-CONFIGURE_BINDIR.64 = $(CONFIGURE_PREFIX)/bin
-
 # Use ssh (rather than rsh) for remote commands.
 CONFIGURE_ENV += "RSH=/usr/bin/ssh"
 
-CONFIGURE_OPTIONS +=	--with-rmt=/usr/sbin/rmt
-CONFIGURE_OPTIONS +=	--libexecdir=/usr/sbin
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)" 
+CONFIGURE_BINDIR.64=	$(GNUBIN)
+CONFIGURE_MANDIR=	$(GNUSHAREMAN)
+
+CONFIGURE_OPTIONS +=	--with-rmt=$(USRSBINDIR)/rmt
+CONFIGURE_OPTIONS +=	--libexecdir=$(USRSBINDIR)
 
 COMPONENT_SYSTEM_TEST_DIR = $(BUILD_DIR_64)/tests
 COMPONENT_SYSTEM_TEST_TARGETS =  installcheck-local
@@ -65,22 +61,8 @@ COMPONENT_TEST_TRANSFORMS = \
 	'-e "/^\#\# ----/,/tests were skipped\./p" ' \
 	'-e "/.*/d" '
 
-ASLR_MODE = $(ASLR_ENABLE)
-
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
-
-system-test:    $(BUILD_64) $(SYSTEM_TEST_64)
-
-
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/gzip
 REQUIRED_PACKAGES += network/ssh
 REQUIRED_PACKAGES += network/openssh
 REQUIRED_PACKAGES += system/core-os
-REQUIRED_PACKAGES += system/library

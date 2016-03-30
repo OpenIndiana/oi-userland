@@ -18,16 +18,16 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nghttp2
 COMPONENT_VERSION=	1.6.0
 COMPONENT_PROJECT_URL=	https://nghttp2.org/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
     sha256:c88012e87b80c055ddd2412efd7e96b9e8cfe0652c4b21083f2cb89b2f0d3a26
 COMPONENT_ARCHIVE_URL=	https://github.com/tatsuhiro-t/nghttp2/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
@@ -35,25 +35,10 @@ COMPONENT_BUGDB=	library/nghttp2
 
 TPNO = 26335
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
-CONFIGURE_ENV += CXXFLAGS="$(CXXFLAGS)"
-CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS += --disable-hpack-tools
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += ZLIB_LIBS=-lz
 CONFIGURE_OPTIONS += ZLIB_CFLAGS=
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
-REQUIRED_PACKAGES += system/library

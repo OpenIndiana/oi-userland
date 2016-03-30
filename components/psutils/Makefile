@@ -18,8 +18,11 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+BUILD_BITS= 32
 include ../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/shared-targets.mk
 
@@ -31,17 +34,16 @@ COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:3853eb79584ba8fbe27a815425b65a9f7f15b258e0d43a05a856bdb75d588ae4
 COMPONENT_ARCHIVE_URL= http://gd.tuwien.ac.at/publishing/tex/tex-utils/psutils/$(COMPONENT_ARCHIVE)
+HUMAN_VERSION=		$(COMPONENT_VERSION)
 #COMPONENT_ARCHIVE_URL= ftp://ftp.knackered.org/pub/psutils/psutils.tar.gz
 # Official ftp sources are currently unavailable, so I'm using mirror I found.
 # I made sure that the tarball is equal to the one present in SFW
 
-COMPONENT_BUGDB=	utility/psutils
-
 TPNO=			9004
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+BUILD_STYLE= justmake
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # Can't use 'p17' since that is not accepted by pkg. And homepage
 # http://knackered.knackered.org/angus/psutils/ states that development version
@@ -51,18 +53,16 @@ IPS_COMPONENT_VERSION=1.17
 # to stay compatible with nevada settings, letter is default paper size
 CFLAGS += -DPAPER=\\\"letter\\\" -DUNIX
 
-COMPONENT_BUILD_ENV += CC=$(CC)
-COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
-COMPONENT_BUILD_ENV += INCLUDEDIR=$(PROTO_DIR)/usr/share/psutils
+COMPONENT_BUILD_ENV += INCLUDEDIR=$(PROTOUSRSHAREDIR)/psutils
 COMPONENT_BUILD_ENV += PERL=$(PERL)
 
 # slightly hacky, since COMPONENT_BUILD_TARGETS are just arguments passed to
 # make
 COMPONENT_BUILD_ARGS = -e -f Makefile.unix
 
-COMPONENT_INSTALL_ENV += BINDIR=$(PROTO_DIR)/usr/bin
-COMPONENT_INSTALL_ENV += INCLUDEDIR=$(PROTO_DIR)/usr/share/psutils
-COMPONENT_INSTALL_ENV += MANDIR=$(PROTO_DIR)/usr/share/man/man1
+COMPONENT_INSTALL_ENV += BINDIR=$(PROTOUSRBINDIR)
+COMPONENT_INSTALL_ENV += INCLUDEDIR=$(PROTOUSRSHAREDIR)/psutils
+COMPONENT_INSTALL_ENV += MANDIR=$(PROTOUSRSHAREMAN1DIR)
 COMPONENT_INSTALL_ENV += PERL=$(PERL)
 COMPONENT_INSTALL_ENV += INSTALL="$(INSTALL) -m 0555"
 COMPONENT_INSTALL_ENV += INSTALLMAN="$(INSTALL) -m 0444"
@@ -71,16 +71,7 @@ COMPONENT_INSTALL_ENV += INSTALLMAN="$(INSTALL) -m 0444"
 # make
 COMPONENT_INSTALL_ARGS = -e -f Makefile.unix
 
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
 $(INSTALL_32):	$(PROTOUSRSHAREMAN1DIR) $(PROTOUSRBIN)
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
 
 REQUIRED_PACKAGES += $(PERL_PKG)
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library

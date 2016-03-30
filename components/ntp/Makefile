@@ -22,7 +22,7 @@
 #
 # Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ntp
@@ -34,7 +34,6 @@ IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).$(COMPONENT_PATCH_VERSION)
 COMPONENT_PROJECT_URL=	http://www.ntp.org/
 COMPONENT_SRC_NAME=	ntp
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(HUMAN_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	 \
     sha256:583d0e1c573ace30a9c6afbea0fc52cae9c8c916dbc15c026e485a0dda4ba048
 COMPONENT_ARCHIVE_URL=	http://archive.ntp.org/ntp4/ntp-4.2/$(COMPONENT_ARCHIVE)
@@ -44,21 +43,19 @@ TPNO=			20866
 
 PATCH_LEVEL = 0
 
-ASLR_MODE= $(ASLR_ENABLE)
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+CFLAGS +=	 -D_XOPEN_SOURCE=600 -D__EXTENSIONS__
 
-CFLAGS +=	$(studio_C99_ENABLE) -D_XOPEN_SOURCE=600 -D__EXTENSIONS__
-CFLAGS.i386 =	-preserve_argvalues=complete
-CFLAGS +=	$(CFLAGS.$(MACH))
+studio_C99MODE= $(studio_C99_ENABLE)
+CFLAGS.studio.i386 =	-preserve_argvalues=complete
 
-CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS +=	--bindir=/usr/sbin
+CONFIGURE_BINDIR.32 = $(USRSBINDIR)
+
 CONFIGURE_OPTIONS +=	--with-binsubdir=sbin
-CONFIGURE_OPTIONS +=	--libexecdir=/usr/lib/inet
-CONFIGURE_OPTIONS +=	--sysconfdir=/etc/inet
+CONFIGURE_OPTIONS +=	--libexecdir=$(USRLIBDIR)/inet
+CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)/inet
 CONFIGURE_OPTIONS +=	--enable-all-clocks
 CONFIGURE_OPTIONS +=	--enable-debugging
 CONFIGURE_OPTIONS +=	--enable-debug-timing
@@ -66,16 +63,7 @@ CONFIGURE_OPTIONS +=	--disable-optional-args
 CONFIGURE_OPTIONS +=	--enable-parse-clocks
 CONFIGURE_OPTIONS +=	--enable-ignore-dns-errors
 CONFIGURE_OPTIONS +=	--without-ntpsnmpd
-CONFIGURE_OPTIONS +=	--with-openssl-libdir=/lib
-
-configure:	$(CONFIGURE_32)
-
-build:		$(BUILD_32)
-install:	$(INSTALL_32)
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
+CONFIGURE_OPTIONS +=	--with-openssl-libdir=$(LIBDIR)
 
 REQUIRED_PACKAGES += library/libedit
 REQUIRED_PACKAGES += library/security/openssl
@@ -84,6 +72,5 @@ REQUIRED_PACKAGES += runtime/perl-520
 REQUIRED_PACKAGES += service/network/dns/mdns
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/security/crypto

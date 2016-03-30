@@ -18,8 +18,11 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libtecla
@@ -34,29 +37,13 @@ COMPONENT_BUGDB=	library/libtecla
 
 TPNO=			8740
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-include $(WS_MAKE_RULES)/lint-libraries.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # Userland default includes -mt which links with libthread which we don't need.
 studio_MT =
-
-# This is needed for the 64-bit library to be built correctly.
-CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
 
 # We have our own pre-Solarified man pages.
 CONFIGURE_OPTIONS +=	--without-man-pages
 
 ASLR_MODE =	$(ASLR_ENABLE)
-
-configure:	$(CONFIGURE_32_and_64)
-build:		$(BUILD_32_and_64)
-install:	$(INSTALL_32_and_64)
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
-PKG_PROTO_DIRS +=	$(COMPONENT_DIR)/files
-
-REQUIRED_PACKAGES += system/library

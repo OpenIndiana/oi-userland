@@ -18,9 +18,11 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
-#
 
+#
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		text-utilities
@@ -31,13 +33,12 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:e0457f715b73f4a349e1acb08cb410bf0edc9a74a3f75c357070f31f70e33cd6
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/v2.25/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/text-utilities
 
 TPNO=			21750
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= install $(TEST_64)
+SYSTEM_TEST_TARGET= configure $(SYSTEM_TEST_64)
+include $(WS_MAKE_RULES)/common.mk
 
 # We currently only want some of the text-utils text utilities from this
 # component, so enumerate it in a macro that we can use for build and install.
@@ -50,9 +51,6 @@ PROGRAMS +=	test_sysinfo
 # Limit translations to the text utilities (and lib/* and include/* ) only.
 COMPONENT_PRE_INSTALL_ACTION = \
 	(cd $(@D)/po ; $(GMAKE) text-utilities.pot-update)
-
-CONFIGURE_OPTIONS +=		CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS +=		--bindir=$(CONFIGURE_BINDIR.32)
 
 # We don't need the Python bindings built.
 CONFIGURE_OPTIONS +=		--without-python
@@ -76,12 +74,10 @@ COMPONENT_INSTALL_TARGETS =	install-man install-binPROGRAMS
 COMPONENT_POST_INSTALL_ACTION = \
 	(cd $(@D)/po ; $(GMAKE) $(COMPONENT_INSTALL_ARGS) install)
 
-ASLR_MODE = $(ASLR_ENABLE)
-
-COMPONENT_TEST_ENV +=	TS_CMD_COLRM=$(PROTO_DIR)/usr/bin/colrm
-COMPONENT_TEST_ENV +=	TS_CMD_COLUMN=$(PROTO_DIR)/usr/bin/column
-COMPONENT_TEST_ENV +=	TS_CMD_HEXDUMP=$(PROTO_DIR)/usr/bin/hexdump
-COMPONENT_TEST_ENV +=	TS_CMD_TAILF=$(PROTO_DIR)/usr/bin/tailf
+COMPONENT_TEST_ENV +=	TS_CMD_COLRM=$(PROTOUSRBINDIR)/colrm
+COMPONENT_TEST_ENV +=	TS_CMD_COLUMN=$(PROTOUSRBINDIR)/column
+COMPONENT_TEST_ENV +=	TS_CMD_HEXDUMP=$(PROTOUSRBINDIR)/hexdump
+COMPONENT_TEST_ENV +=	TS_CMD_TAILF=$(PROTOUSRBINDIR)/tailf
 COMPONENT_TEST_ENV +=	PATH="$(GNUBIN):$(PATH)"
 COMPONENT_TEST_DIR =	$(COMPONENT_SRC)/tests
 
@@ -93,10 +89,10 @@ COMPONENT_TEST_CMD =		./run.sh
 COMPONENT_TEST_ARGS =		--verbose
 COMPONENT_TEST_TARGETS =	colrm column hexdump tailf
 
-COMPONENT_SYSTEM_TEST_ENV +=   TS_CMD_COLRM=/usr/bin/colrm
-COMPONENT_SYSTEM_TEST_ENV +=   TS_CMD_COLUMN=/usr/bin/column
-COMPONENT_SYSTEM_TEST_ENV +=   TS_CMD_HEXDUMP=/usr/bin/hexdump
-COMPONENT_SYSTEM_TEST_ENV +=   TS_CMD_TAILF=/usr/bin/tailf
+COMPONENT_SYSTEM_TEST_ENV +=   TS_CMD_COLRM=$(USRBINDIR)/colrm
+COMPONENT_SYSTEM_TEST_ENV +=   TS_CMD_COLUMN=$(USRBINDIR)/column
+COMPONENT_SYSTEM_TEST_ENV +=   TS_CMD_HEXDUMP=$(USRBINDIR)/hexdump
+COMPONENT_SYSTEM_TEST_ENV +=   TS_CMD_TAILF=$(USRBINDIR)/tailf
 COMPONENT_SYSTEM_TEST_ENV +=   PATH="$(GNUBIN):$(PATH)"
 COMPONENT_SYSTEM_TEST_DIR =    $(COMPONENT_SRC)/tests
 
@@ -109,15 +105,3 @@ COMPONENT_PRE_SYSTEM_TEST_ACTION = \
 COMPONENT_SYSTEM_TEST_CMD =	./run.sh
 COMPONENT_SYSTEM_TEST_ARGS =	--verbose
 COMPONENT_SYSTEM_TEST_TARGETS =	colrm column hexdump tailf
-
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		install $(TEST_64)
-
-system-test: 	configure $(SYSTEM_TEST_64)
-
-REQUIRED_PACKAGES += system/library

@@ -20,56 +20,44 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		asciidoc
 COMPONENT_VERSION=	8.6.8
 COMPONENT_PROJECT_URL=	http://www.methods.co.nz/asciidoc/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
     sha256:ffb67f59dccaf6f15db72fcd04fdf21a2f9b703d31f94fcd0c49a424a9fcfbc4
 COMPONENT_ARCHIVE_URL=	 http://downloads.sourceforge.net/project/$(COMPONENT_NAME)/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/asciidoc
 
 TPNO=			14505
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+SYSTEM_TEST_TARGET= configure $(SYSTEM_TEST_64)
+include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL = 0
 
 # AsciiDoc configuration and data files belong in /usr/share, not /etc based
 # on discussion from ARC pre-review.
 #
-CONFIGURE_OPTIONS +=    --sysconfdir=/usr/share
+CONFIGURE_OPTIONS +=    --sysconfdir=$(USRSHAREDIR)
 
 # pkgdepend doesn't like the first line of a Python script to be:
 # '#!/usr/bin/env python' so turn it into '#!/usr/bin/python$(PYTHON_VERSION)'
 #
 COMPONENT_POST_INSTALL_ACTION += \
         $(GSED) -i -e 's?env python?python$(PYTHON_VERSION)?' \
-                $(PROTOUSRBINDIR64)/asciidoc.py;
+                $(PROTOUSRBINDIR)/asciidoc.py;
 COMPONENT_POST_INSTALL_ACTION += \
         $(GSED) -i -e 's?env python?python$(PYTHON_VERSION)?' \
-                $(PROTOUSRBINDIR64)/a2x.py;
+                $(PROTOUSRBINDIR)/a2x.py;
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
         ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 # common targets
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
 # Tests require image/graphviz to be installed.  Some tests also want to run
 # programs which are not automatically available on Solaris (latex, abc2ly
 # and lilypad), so these tests will output messages of the form:
@@ -115,10 +103,6 @@ COMPONENT_SYSTEM_TEST_CMD =    \
 	python$(PYTHON_VERSION) ./testasciidoc.py update; \
 	python$(PYTHON_VERSION) ./testasciidoc.py run
 COMPONENT_SYSTEM_TEST_TARGETS =
-
-test:           $(TEST_64)
-
-system-test:    configure $(SYSTEM_TEST_64)
 
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt

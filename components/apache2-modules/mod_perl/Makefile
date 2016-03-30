@@ -18,15 +18,16 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mod_perl
 COMPONENT_VERSION=	2.0.9
 COMPONENT_PROJECT_URL=	http://perl.apache.org/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:0260f26ab771c1c95fadc67544b3400e420bb30b8a77565d2d02ad05498ef52b
 COMPONENT_ARCHIVE_URL=	http://www.apache.org/dist/perl/$(COMPONENT_ARCHIVE)
@@ -34,11 +35,10 @@ COMPONENT_BUGDB=	utility/apache
 
 TPNO=			23900
 
-CONFIGURE_DEFAULT_DIRS=no
-
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+BUILD_STYLE= justmake
+CONFIGURE_DEFAULT_DIRS= no
+SYSTEM_TEST_TARGET= build $(SYSTEM_TEST_64)
+include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL=0
 
@@ -67,9 +67,10 @@ COMPONENT_PRE_BUILD_ACTION= ( \
 COMPONENT_TEST_TARGETS=	test
 COMPONENT_SYSTEM_TEST_TARGETS=	system_test
 
-PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)
-PATH=$(PARFAIT_TOOLS):$(SPRO_VROOT)/bin:/usr/bin
+PATH=$(PARFAIT_TOOLS):$(SPRO_VROOT)/bin:$(USRBINDIR)
+else
+PATH=$(SPRO_VROOT)/bin:$(USRBINDIR):$(GNUBIN)
 endif
 
 COMPONENT_TEST_TRANSFORMS += \
@@ -91,17 +92,8 @@ COMPONENT_TEST_TRANSFORMS += \
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-build: $(BUILD_64)
-
-install: $(INSTALL_64)
-
-test: $(TEST_64)
-
-system-test:    $(BUILD_64) $(SYSTEM_TEST_64)
-
 REQUIRED_PACKAGES += library/apr-15
 REQUIRED_PACKAGES += library/apr-util-15
 REQUIRED_PACKAGES += runtime/perl-520
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += web/server/apache-24

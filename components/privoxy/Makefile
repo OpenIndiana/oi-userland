@@ -20,9 +20,9 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		privoxy
@@ -33,13 +33,14 @@ COMPONENT_PROJECT_URL=	http://www.privoxy.org/
 COMPONENT_ARCHIVE_HASH=	\
     sha256:b75f6b8b8409ed7ac6c3a00dcd608a45180f07bfa46658c836d5c6ffc4dc25c4
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/ijbswa/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/privoxy
 
 TPNO=		 22977	
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
+
+# Fix 64-bit linking via compiler.
+LDFLAGS += $(CC_BITS)
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -49,22 +50,14 @@ COMPONENT_PREP_ACTION = \
             autoheader; \
             autoconf )
 
-CC += $(CC_BITS)
-
 # Needed to installed most of the files into the proto area.
-CONFIGURE_OPTIONS +=	--sysconfdir=/etc
-CONFIGURE_OPTIONS +=	--localstatedir=/var
+CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS +=	--localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS +=	--sbindir=$(CONFIGURE_PREFIX)/lib
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 # common targets
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-	$(CP) $(BUILD_DIR_64)/templates/* $(PROTOETCDIR)/templates
+COMPONENT_POST_INSTALL_ACTION += \
+	($(CP) $(BUILD_DIR_64)/templates/* $(PROTOETCDIR)/templates)
 
 # Regression tests exist for privoxy in tools/privoxy-regression-test.pl,
 # however these are not applicable to us since they violate the company policy
@@ -79,14 +72,8 @@ install:	$(INSTALL_64)
 # You may need to set the forward address in /etc/privoxy/config to the 
 # Oracle proxy to access pages in your web browser with privoxy running. 
 
-test: 		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
-
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/network

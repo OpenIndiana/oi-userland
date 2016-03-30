@@ -22,24 +22,20 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		expect
 COMPONENT_VERSION=	5.45
 COMPONENT_PROJECT_URL=	http://expect.nist.gov/
 COMPONENT_SRC=		$(COMPONENT_NAME)$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:b28dca90428a3b30e650525cdc16255d76bb6ccd65d448be53e620d95d5cc040
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/expect/files/Expect/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
-COMPONENT_BUGDB=	utility/expect
 
 TPNO=			5552
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 SCRIPTS = timed-run timed-read ftp-rfc autopasswd lpunlock weather \
           passmass rftp kibitz rlogin-cwd xpstat tkpasswd dislocate xkibitz \
@@ -51,28 +47,19 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 
 COMPONENT_BUILD_TARGETS = all ${SCRIPTS}
 
-LDFLAGS +=		$(CC_BITS)
-
-CONFIGURE_OPTIONS 	+= CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS	+= LDFLAGS="$(LDFLAGS)"
-CONFIGURE_OPTIONS 	+= --enable-shared
-CONFIGURE_OPTIONS 	+= --with-tcl="$(COMPONENT_DIR)/../tcl/build/$(MACH$(BITS))"
-CONFIGURE_OPTIONS 	+= --with-tclinclude="$(COMPONENT_DIR)/../tcl/build/$(MACH$(BITS))/generic"
+# 64-bit executables should also be delivered to relevant MACH subdirectory.
+CONFIGURE_BINDIR.64= $(USRBINDIR64)
+CONFIGURE_OPTIONS +=		--enable-shared
+CONFIGURE_OPTIONS +=		--with-tcl="$(COMPONENT_DIR)/../tcl/build/$(MACH$(BITS))"
+CONFIGURE_OPTIONS +=		--with-tclinclude="$(COMPONENT_DIR)/../tcl/build/$(MACH$(BITS))/generic"
+CONFIGURE_OPTIONS.64 += 	-enable-64bit
+CONFIGURE_OPTIONS.sparc.64 +=	--enable-64bit-vis
 
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_TARGETS = test
 COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|$(WS_TOP)|\\$$(WS_TOP)|g"' \
 	'-e "s|tcl/build/$(MACH$(BITS))|\\$$(TCLBUILD)|g"'
-
-ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
-configure:	$(CONFIGURE_32_and_64)
-build:		$(BUILD_32_and_64)
-install:	$(INSTALL_32_and_64) 
-test: 		$(TEST_32_and_64)
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
 # special targets due to tcl internals dependencies
 ../tcl/build/%/.built:
@@ -83,5 +70,4 @@ $(CONFIGURE_64):	../tcl/build/$(MACH64)/.built
 
 REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

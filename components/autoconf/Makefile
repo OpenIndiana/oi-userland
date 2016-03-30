@@ -22,45 +22,25 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= NO_ARCH
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		autoconf
 COMPONENT_VERSION=	2.69
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/autoconf/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:64ebcec9f8ac5b2487125a86a7760d2591ac9e1d3dbd59489633f9de62a57684
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/autoconf/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/autoconf
 
 TPNO=			22294
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/gnu-component.mk
 
 # with ksh93 as the configure shell, all tests pass
-CONFIG_SHELL=/bin/ksh93
+CONFIG_SHELL=$(BINDIR)/ksh93
 
-CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS  +=		PERL="$(PERL)"
-CONFIGURE_OPTIONS  +=		M4=/usr/gnu/bin/m4
-
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
-# common targets
-configure:	$(CONFIGURE_NO_ARCH)
-
-build:		$(BUILD_NO_ARCH)
-
-install:	$(INSTALL_NO_ARCH)
-
-test:		$(TEST_NO_ARCH)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
+CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_OPTIONS += PERL="$(PERL)"
+CONFIGURE_OPTIONS += M4="$(GNUBIN)/m4"
 
 REQUIRED_PACKAGES += developer/macro/gnu-m4
 REQUIRED_PACKAGES += $(PERL_PKG)

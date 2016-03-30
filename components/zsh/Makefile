@@ -22,48 +22,47 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/shared-targets.mk
 
 COMPONENT_NAME=		zsh
 COMPONENT_VERSION=	5.2
 COMPONENT_PROJECT_URL=	http://www.zsh.org/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:f17916320ffaa844bbd7ce48ceeb5945fc5f3eff64b149b4229bbfbdf3795a9d
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/zsh/zsh/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/zsh
 
 TPNO=			26447
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+BUILD_TARGET=
+INSTALL_TARGET=
+include $(WS_MAKE_RULES)/common.mk
+
+CONFIGURE_LIBDIR.64= $(CONFIGURE_LIBDIR.32)
 
 CONFIGURE_OPTIONS += -n
-CONFIGURE_OPTIONS += --bindir=/usr/bin
-CONFIGURE_OPTIONS += --libdir=/usr/lib
 CONFIGURE_OPTIONS += --enable-cppflags="$(CPP_LARGEFILES)"
 CONFIGURE_OPTIONS += --enable-dynamic
-CONFIGURE_OPTIONS += --enable-etcdir=/etc
+CONFIGURE_OPTIONS += --enable-etcdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --enable-function-subdirs
 # Zsh uses the compiler to link, so we need to pass CC_BITS, not LD_BITS.
 CONFIGURE_OPTIONS += --enable-ldflags="$(CC_BITS) -zignore"
+ifeq ($(OS_VERSION),5.11)
 CONFIGURE_OPTIONS += --enable-libs="-lnsl"
+endif
 CONFIGURE_OPTIONS += --enable-maildir-support
 CONFIGURE_OPTIONS += --enable-multibyte
 CONFIGURE_OPTIONS += --enable-pcre
 CONFIGURE_OPTIONS += --with-tcsetpgrp
 CONFIGURE_OPTIONS += --disable-gdbm
-CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 
-# pcre-config --libs unnecessarily emits "-R/usr/lib"; we remove it so that it
+# pcre-config --libs unnecessarily emits "-R$(USRLIBDIR64)"; we remove it so that it
 # doesn't end up in the binaries.
 COMPONENT_POST_CONFIGURE_ACTION = \
 	(cd $(@D); \
-	sed -e 's,-R/usr/lib,,' \
+	sed -e "s,-R$(USRLIBDIR64),," \
 		config.status > config.status.new; \
 	mv config.status.new config.status; \
 	chmod 755 config.status; \
@@ -98,21 +97,11 @@ license: $(COMPONENT_SRC)/LICENCE
 
 CLEAN_PATHS += license
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 # common targets
-configure:	$(CONFIGURE_64)
-
 build:		$(BUILD_64) $(COMPOVERRIDES:%=$(COMPONENT_SRC)/%)
 
 install:	build $(INSTALL_64) $(PROTOETCDIR)/zprofile $(PROTOETCDIR)/zshrc license
 
-# build does this always
-test:		$(TEST_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/pcre
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

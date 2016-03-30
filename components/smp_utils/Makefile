@@ -20,15 +20,14 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		smp_utils
 COMPONENT_VERSION=	0.97
 COMPONENT_PROJECT_URL= http://sg.danny.cz/sg/smp_utils.html
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH= \
     sha256:0e10d304cfa8789bcf16537e8f72d9afdf8838fca20ae68103c317432d00915b
@@ -37,8 +36,6 @@ COMPONENT_BUGDB=	utility/smputils
 
 TPNO=			11065
 
-include $(WS_MAKE_RULES)/prep.mk
-
 # Needs header file from ON only available in S12.
 ifeq ($(BUILD_TYPE), evaluation)
 BUILD_64=
@@ -46,18 +43,10 @@ INSTALL_64=
 PUBLISH_STAMP=
 endif
 
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-
-CC += $(CC_BITS)
-LDFLAGS += $(CC_BITS)
-COMPONENT_BUILD_ARGS += CC="$(CC)"
-COMPONENT_BUILD_ARGS += LDFLAGS="$(LDFLAGS)"
+include $(WS_MAKE_RULES)/common.mk
 
 CPPFLAGS += -I$(COMPONENT_DIR)/$(COMPONENT_SRC)/include
 CONFIGURE_OPTIONS +=	--disable-static
-CONFIGURE_OPTIONS += CPPFLAGS="$(CPPFLAGS)"
 
 # Don't use rpath!
 COMPONENT_POST_CONFIGURE_ACTION = \
@@ -65,58 +54,40 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 	$(GSED) -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool ; \
 	$(GSED) -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool)
 
-PKG_PROTO_DIRS += $(COMPONENT_DIR)/files
-
 COMPONENT_INSTALL_ARGS += INSTALL=$(INSTALL)
 COMPONENT_INSTALL_ARGS += INSTALL_TOP=$(PROTOUSRDIR) 
 $(INSTALL_64):  COMPONENT_INSTALL_ARGS += INSTALL_LIB=$(PROTOUSRLIBDIR64)
-$(INSTALL_64):  COMPONENT_INSTALL_ARGS += INSTALL_SBIN=$(PROTOUSRBINDIR64)
+$(INSTALL_64):  COMPONENT_INSTALL_ARGS += INSTALL_SBIN=$(PROTOUSRBINDIR)
 
 COMPONENT_TEST_ENV +=	LD_LIBRARY_PATH=$(PROTOUSRLIBDIR64)
 COMPONENT_TEST_CMD =	\
-		$(PROTOUSRDIR)/sbin/$(MACH64)/smp_conf_general -V; \
-		$(PROTOUSRDIR)/sbin/$(MACH64)/smp_conf_phy_event -V; \
-		$(PROTOUSRDIR)/sbin/$(MACH64)/smp_conf_route_info -V; \
-		$(PROTOUSRDIR)/sbin/$(MACH64)/smp_conf_zone_man_pass -V; \
-		$(PROTOUSRDIR)/sbin/$(MACH64)/smp_conf_zone_perm_tbl -V; \
-		$(PROTOUSRDIR)/sbin/$(MACH64)/smp_conf_zone_phy_info -V; \
-		$(PROTOUSRDIR)/sbin/$(MACH64)/smp_discover -V; \
-		$(PROTOUSRDIR)/sbin/$(MACH64)/smp_discover_list -V; \
-		$(PROTOUSRDIR)/sbin/$(MACH64)/smp_ena_dis_zoning -V; \
-		$(PROTOUSRDIR)/sbin/$(MACH64)/smp_phy_control -V; \
-		$(PROTOUSRDIR)/sbin/$(MACH64)/smp_phy_test -V; \
-		$(PROTOUSRDIR)/sbin/$(MACH64)/smp_read_gpio -V; \
-		$(PROTOUSRDIR)/sbin/$(MACH64)/smp_rep_broadcast -V; \
-		$(PROTOUSRDIR)/sbin/$(MACH64)/smp_rep_exp_route_tbl -V; \
-		$(PROTOUSRDIR)/sbin/$(MACH64)/smp_rep_general -V; \
-		$(PROTOUSRDIR)/sbin/$(MACH64)/smp_rep_manufacturer -V; \
-		$(PROTOUSRDIR)/sbin/$(MACH64)/smp_rep_phy_err_log -V; \
-		$(PROTOUSRDIR)/sbin/$(MACH64)/smp_rep_phy_event -V; \
-		$(PROTOUSRDIR)/sbin/$(MACH64)/smp_rep_phy_event_list -V; \
-		$(PROTOUSRDIR)/sbin/$(MACH64)/smp_rep_phy_sata -V; \
-		$(PROTOUSRDIR)/sbin/$(MACH64)/smp_rep_route_info -V; \
-		$(PROTOUSRDIR)/sbin/$(MACH64)/smp_rep_self_conf_stat -V; \
-		$(PROTOUSRDIR)/sbin/$(MACH64)/smp_rep_zone_man_pass -V; \
-		$(PROTOUSRDIR)/sbin/$(MACH64)/smp_rep_zone_perm_tbl -V; \
-		$(PROTOUSRDIR)/sbin/$(MACH64)/smp_write_gpio -V; \
-		$(PROTOUSRDIR)/sbin/$(MACH64)/smp_zone_activate -V; \
-		$(PROTOUSRDIR)/sbin/$(MACH64)/smp_zone_lock -V; \
-		$(PROTOUSRDIR)/sbin/$(MACH64)/smp_zone_unlock -V; \
-		$(PROTOUSRDIR)/sbin/$(MACH64)/smp_zoned_broadcast -V
+		$(PROTOUSRBINDIR)/smp_conf_general -V; \
+		$(PROTOUSRBINDIR)/smp_conf_phy_event -V; \
+		$(PROTOUSRBINDIR)/smp_conf_route_info -V; \
+		$(PROTOUSRBINDIR)/smp_conf_zone_man_pass -V; \
+		$(PROTOUSRBINDIR)/smp_conf_zone_perm_tbl -V; \
+		$(PROTOUSRBINDIR)/smp_conf_zone_phy_info -V; \
+		$(PROTOUSRBINDIR)/smp_discover -V; \
+		$(PROTOUSRBINDIR)/smp_discover_list -V; \
+		$(PROTOUSRBINDIR)/smp_ena_dis_zoning -V; \
+		$(PROTOUSRBINDIR)/smp_phy_control -V; \
+		$(PROTOUSRBINDIR)/smp_phy_test -V; \
+		$(PROTOUSRBINDIR)/smp_read_gpio -V; \
+		$(PROTOUSRBINDIR)/smp_rep_broadcast -V; \
+		$(PROTOUSRBINDIR)/smp_rep_exp_route_tbl -V; \
+		$(PROTOUSRBINDIR)/smp_rep_general -V; \
+		$(PROTOUSRBINDIR)/smp_rep_manufacturer -V; \
+		$(PROTOUSRBINDIR)/smp_rep_phy_err_log -V; \
+		$(PROTOUSRBINDIR)/smp_rep_phy_event -V; \
+		$(PROTOUSRBINDIR)/smp_rep_phy_event_list -V; \
+		$(PROTOUSRBINDIR)/smp_rep_phy_sata -V; \
+		$(PROTOUSRBINDIR)/smp_rep_route_info -V; \
+		$(PROTOUSRBINDIR)/smp_rep_self_conf_stat -V; \
+		$(PROTOUSRBINDIR)/smp_rep_zone_man_pass -V; \
+		$(PROTOUSRBINDIR)/smp_rep_zone_perm_tbl -V; \
+		$(PROTOUSRBINDIR)/smp_write_gpio -V; \
+		$(PROTOUSRBINDIR)/smp_zone_activate -V; \
+		$(PROTOUSRBINDIR)/smp_zone_lock -V; \
+		$(PROTOUSRBINDIR)/smp_zone_unlock -V; \
+		$(PROTOUSRBINDIR)/smp_zoned_broadcast -V
 
-ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
-configure:	$(CONFIGURE_64)
-
-build:          $(BUILD_64)
-
-install:        $(INSTALL_64)
-
-test:           install $(TEST_64)
-
-# Add install dependency as above after system-test targets are implemented.
-system-test:	$(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
-
-REQUIRED_PACKAGES += system/library

@@ -18,41 +18,36 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
-BITS=64
+# Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mailman
 COMPONENT_VERSION=	2.1.18-1
 IPS_COMPONENT_VERSION=	2.1.18.1
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.list.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH=	sha256:ce70ed8b58d719cab80758f39a7258c0a28f8e8e859facdaa8c29add620a5c2c
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/mailman
 
 TPNO=			18736
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/gnu-component.mk
 
 CONFIGURE_ENV	+=	MAILMAN_USER=mailman
 CONFIGURE_ENV	+=	MAILMAN_GROUP=mailman
 
-CONFIGURE_PREFIX= /usr/lib/mailman
-CONFIGURE_OPTIONS +=	--with-var-prefix=/var/mailman
+CONFIGURE_PREFIX= $(USRLIBDIR)/mailman
+CONFIGURE_OPTIONS +=	--with-var-prefix=$(VARDIR)/mailman
 CONFIGURE_OPTIONS +=	--with-mail-gid=other
 CONFIGURE_OPTIONS +=	--with-cgi-gid=webservd
-CONFIGURE_OPTIONS +=	--with-python=/usr/bin/python2.7
+CONFIGURE_OPTIONS +=	--with-python=$(PYTHON.2.7)
 CONFIGURE_OPTIONS +=	--without-permcheck
 CONFIGURE_OPTIONS +=	--with-mailhost=localhost
 CONFIGURE_OPTIONS +=	--with-urlhost=localhost
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
-
-ASLR_MODE = $(ASLR_ENABLE)
 
 # Copy generated file to proto area.  Then py-compile several files that are
 # used as modules in a devious way.
@@ -62,21 +57,8 @@ COMPONENT_POST_INSTALL_ACTION=	\
 	 $(PYTHON.2.7) -m py_compile $(PROTOUSRLIBDIR)/mailman/*/paths.py \
 		$(PROTOUSRLIBDIR)/mailman/Mailman/Defaults.py)
 
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
-PKG_PROTO_DIRS +=	$(COMPONENT_DIR)/files
-
 REQUIRED_PACKAGES += library/python/dnspython-27
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/network

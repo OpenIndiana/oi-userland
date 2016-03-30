@@ -18,26 +18,22 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
-# OFED only builds with GCC
-COMPILER=gcc
-
-include ../../../make-rules/shared-macros.mk
+BUILD_BITS= 64_and_32
+include ../ofed-component-macros.mk
 
 COMPONENT_NAME=		libibverbs
 COMPONENT_VERSION=	1.1.4
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-1.22.g7257cd3.tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:1e04aa9d518e3dc372fdda6bd25bf072caae4c85c38d0ae095a614104aa583d4
-COMPONENT_ARCHIVE_URL=	http://www.openfabrics.org/downloads/libibverbs/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/ofuv_lib
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include ../ofed.mk
+INSTALL_TARGET=
+include ../ofed-component.mk
 
 MAN3FILES =	ibv_alloc_shpd.3 \
 		ibv_reg_mr_relaxed.3 \
@@ -51,9 +47,7 @@ include $(WS_MAKE_RULES)/shared-targets.mk
 CPPFLAGS +=	-I$(PWD)/../libmlx4/libmlx4-1.0.1/src
 CPPFLAGS +=	-I$(PWD)/../librdmacm/librdmacm-1.0.14.1/include
 
-LIBS +=	-lsocket -lnsl -lkstat
-
-CONFIGURE_OPTIONS +=	--bindir=$(USRBINDIR)
+LIBS +=	-lkstat
 
 # --disable-libcheck is not a supported option for this component
 DISABLE_LIBCHECK=
@@ -66,23 +60,15 @@ COMPONENT_PREP_ACTION = \
 
 COMPONENT_POST_INSTALL_ACTION = \
 	$(RM) $(PROTO_DIR)/$(CONFIGURE_BINDIR.$(BITS))/ibv_uc_pingpong; \
-	$(RM) $(PROTO_DIR)/$(CONFIGURE_MANDIR)/man1/ibv_uc_pingpong.1 \
-	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man3/ibv_reg_xrc_rcv_qp.3 \
-	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man3/ibv_create_xrc_srq.3 \
-	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man3/ibv_open_xrc_domain.3 \
-	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man3/ibv_close_xrc_domain.3 \
-	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man3/ibv_unreg_xrc_rcv_qp.3 \
-	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man3/ibv_query_xrc_rcv_qp.3 \
-	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man3/ibv_create_xrc_rcv_qp.3 \
-	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man3/ibv_modify_xrc_rcv_qp.3
-	
-# common targets
-configure:	$(CONFIGURE_32_and_64)
-
-build:		$(BUILD_32_and_64)
+	$(RM) $(PROTOUSRSHAREMAN1DIR)/ibv_uc_pingpong.1 \
+	$(PROTOUSRSHAREMAN3DIR)/ibv_reg_xrc_rcv_qp.3 \
+	$(PROTOUSRSHAREMAN3DIR)/ibv_create_xrc_srq.3 \
+	$(PROTOUSRSHAREMAN3DIR)/ibv_open_xrc_domain.3 \
+	$(PROTOUSRSHAREMAN3DIR)/ibv_close_xrc_domain.3 \
+	$(PROTOUSRSHAREMAN3DIR)/ibv_unreg_xrc_rcv_qp.3 \
+	$(PROTOUSRSHAREMAN3DIR)/ibv_query_xrc_rcv_qp.3 \
+	$(PROTOUSRSHAREMAN3DIR)/ibv_create_xrc_rcv_qp.3 \
+	$(PROTOUSRSHAREMAN3DIR)/ibv_modify_xrc_rcv_qp.3
 
 install:	$(INSTALL_32_and_64) $(PROTOMAN3FILES)
 
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)

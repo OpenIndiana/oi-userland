@@ -18,9 +18,13 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-COMPILER = gcc
+BUILD_ARCH= sparc
+BUILD_BITS= 64
+COMPILER= gcc
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libsif
@@ -33,9 +37,7 @@ COMPONENT_SERVER=      download.oracle.com
 COMPONENT_ARCHIVE_URL= http://$(COMPONENT_SERVER)/otn-pub/oss/networking/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/ofuv_psif
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include ../ofed.mk
+include ../ofed-component.mk
 
 REMOVE_OLD_SRC= sif.h sif_user.h sif_int_user.h os_header.h psif_api.h psif_endian.h psif_hw_print.h psif_hw_data* psif_hw_setget* psif_hw_macro* kernel_types.h
 # --disable-libcheck is not a supported option for this component
@@ -44,9 +46,7 @@ DISABLE_LIBCHECK=
 LIBS +=	-libverbs
 LDFLAGS +=	-L$(PROTO_DIR)/$(CONFIGURE_LIBDIR.$(BITS))
 
-CONFIGURE_ENV += CPPFLAGS=" -DSOLARIS $(CPPFLAGS) -I../../include/sif/ -I../../include/psifapi/ -I../../$(COMPONENT_SRC)/src/ "
-
-CONFIGURE_OPTIONS +=	LDFLAGS="$(LDFLAGS)"
+CPPFLAGS += -DSOLARIS -I../../include/sif/ -I../../include/psifapi/ -I../../$(COMPONENT_SRC)/src/
 
 COMPONENT_PREP_ACTION += cd $(COMPONENT_SRC)/src/ ; rm $(REMOVE_OLD_SRC) ; cd - ; \
                 (cd $(@D); \
@@ -58,30 +58,4 @@ COMPONENT_PREP_ACTION += cd $(COMPONENT_SRC)/src/ ; rm $(REMOVE_OLD_SRC) ; cd - 
 
 COMPONENT_POST_INSTALL_ACTION =\
 	$(RM) $(PROTO_DIR)/$(CONFIGURE_LIBDIR.32)/$(COMPONENT_NAME).la;\
-	$(RM) $(PROTO_DIR)/$(CONFIGURE_LIBDIR.64)/$(COMPONENT_NAME).la;\
-
-# common targets
-configure:	$(CONFIGURE_64)
-
-build_sparc:	$(BUILD_64)
-
-build_i386:
-		@echo "Not available."
-
-build:		build_$(MACH)
-
-install_sparc:	$(INSTALL_64)
-
-install_i386:
-		@echo "Not available."
-
-install:	install_$(MACH)
-
-# we're sparc-only
-ifeq ($(MACH), i386)
-PUBLISH_STAMP=
-endif
-
-test:		$(NO_TESTS)
-
-system-test:	$(NO_TESTS)
+	$(RM) $(PROTO_DIR)/$(CONFIGURE_LIBDIR.64)/$(COMPONENT_NAME).la;

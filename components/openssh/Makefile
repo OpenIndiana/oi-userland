@@ -18,14 +18,17 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+BUILD_BITS= 64
+COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openssh
 COMPONENT_VERSION=	7.1p2
 HUMAN_VERSION=		$(COMPONENT_VERSION)
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 
 # Version for IPS.  The encoding rules are:
 #   OpenSSH <x>.<y>p<n>     => IPS <x>.<y>.0.<n>
@@ -33,16 +36,14 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 IPS_COMPONENT_VERSION=	7.1.0.2
 
 COMPONENT_PROJECT_URL=	http://www.openssh.org/
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:dd75f024dcf21e06a0d6421d582690bf987a1f6323e32ad6619392f3bfde6bbd
 COMPONENT_ARCHIVE_URL=	http://mirror.team-cymru.org/pub/OpenBSD/OpenSSH/portable/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=utility/openssh
 
 TPNO_OPENSSH=		26419
 TPNO_GSSKEX=		20377
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
+# Because of set up requirements, test suite is in stc gate.
+TEST_TARGET= $(SKIP_TEST)
 
 # 11.3 has conflicts with ON's SunSSH package, which had not yet added
 # mediated links, thus cannot be updated to.
@@ -52,12 +53,7 @@ INSTALL_64=
 PUBLISH_STAMP=
 endif
 
-include $(WS_MAKE_RULES)/ips.mk
-
-# Enable ASLR for this component
-ASLR_MODE = $(ASLR_ENABLE)
-
-COMPILER=	gcc
+include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS += -DSET_USE_PAM
 CFLAGS += -DDEPRECATE_SUNSSH_OPT
@@ -72,21 +68,17 @@ CFLAGS += -DPER_SESSION_XAUTHFILE
 CFLAGS += -DWITHOUT_CAST128
 CFLAGS += -DENABLE_OPENSSL_FIPS
 
-CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)" 
-
 # We need to disable lazyloading of dynamic dependent libraries. During the
 # pre-authentication phase, sshd will chroot to /var/empty which doesn't
 # contain any files. If we use lazyloading, sshd will fail to find any
 # libraries that it needs.
-LDFLAGS += -B direct -z nolazyload
+LDFLAGS += $(LD_B_DIRECT) -z nolazyload
 
 # Enable nxheap and nxstack security extensions
 LDFLAGS += -z nxheap=enable -z nxstack=enable
 
-# Just $(BUILD_64) option was not propogating the 64 bit flags to all the
-# necessary places. Hence the -m64 option is added to LDFLAGS for
-# CONFIGURE_OPTIONS.64.
-CONFIGURE_OPTIONS.64 += LDFLAGS="$(LDFLAGS) -m64"
+# Fix 64-bit linking via compiler.
+LDFLAGS += $(CC_BITS)
 
 CONFIGURE_OPTIONS += --with-audit=solaris
 CONFIGURE_OPTIONS += --with-libedit
@@ -96,13 +88,12 @@ CONFIGURE_OPTIONS += --with-sandbox=no
 CONFIGURE_OPTIONS += --with-solaris-contracts
 CONFIGURE_OPTIONS += --with-tcp-wrappers
 CONFIGURE_OPTIONS += --with-4in6
-CONFIGURE_OPTIONS += --with-xauth=/usr/bin/xauth
-CONFIGURE_OPTIONS += --enable-strip=no
+CONFIGURE_OPTIONS += --with-xauth=$(USRBINDIR)/xauth
+CONFIGURE_OPTIONS += --disable-strip
 CONFIGURE_OPTIONS += --without-rpath
-CONFIGURE_OPTIONS += --libexecdir=/usr/lib/ssh
-CONFIGURE_OPTIONS += --sbindir=/usr/lib/ssh
-CONFIGURE_OPTIONS += --sysconfdir=/etc/ssh
-CONFIGURE_OPTIONS += --bindir=/usr/bin
+CONFIGURE_OPTIONS += --libexecdir=$(USRLIBDIR)/ssh
+CONFIGURE_OPTIONS += --sbindir=$(USRLIBDIR)/ssh
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)/ssh
 CONFIGURE_OPTIONS += --disable-lastlog
 
 # Copy the sftp dtrace provider file and the header file to source directory
@@ -114,26 +105,11 @@ COMPONENT_PRE_BUILD_ACTION = \
 # Copy source files that are not yet part of a patch
 COMPONENT_PREP_ACTION += ($(CP) sources/*.c $(@D)/)
 
-# common targets
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-# Because of certain set up requirement, the regress test suite is ported to
-# the STC gate.
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
-
 REQUIRED_PACKAGES += library/libedit
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += system/core-os
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
 REQUIRED_PACKAGES += system/library/security/gss
 REQUIRED_PACKAGES += system/network

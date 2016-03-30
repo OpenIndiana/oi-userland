@@ -22,10 +22,8 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
-
-PATH=/usr/bin:/usr/gnu/bin
 
 COMPONENT_NAME=		vim
 COMPONENT_VERSION=	7.4
@@ -38,19 +36,14 @@ HG_REV=		v7-4
 HG_HASH= sha256:0c823290aebf4ea341be2f8280cc5906cdbbf772c54fa675afb0845983f23b60
 
 
-COMPONENT_BUGDB=	utility/vim
-
 TPNO=			21780
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+INSTALL_TARGET=
+include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL =	0
 
 PKG_MACROS +=	VIMVER=vim74
-
-ASLR_MODE =	$(ASLR_ENABLE)
 
 X_VARIANT =	$(BUILD_DIR)/$(MACH64)-gvim
 NOX_VARIANT =	$(BUILD_DIR)/$(MACH64)-vim
@@ -70,11 +63,6 @@ TEST_64 = 	$(NOX_VARIANT)/.tested
 # Necessary to pass 64-bit flags to the link stage.
 CC +=			$(CC_BITS)
 
-# Put all the binaries directly in /usr/bin, not in /usr/bin/64.
-CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/bin
-
-# Necessary to pass 64-bit flags to the compilation stage.
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	--with-features=huge
 CONFIGURE_OPTIONS +=	--with-compiledby="the Solaris Userland build environment"
 CONFIGURE_OPTIONS +=	--with-modified-by="Solaris Userland <userland-discuss@opensolaris.org>"
@@ -112,16 +100,7 @@ $(BUILD_DIR)/license: $(SOURCE_DIR)/runtime/doc/uganda.txt
 	nawk '/begin of license/ {p=1; getline; next} /end of license/ {p=0} p == 1 {print}' $< > $@
 
 # common targets
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
 install:	$(INSTALL_64) $(X_VARIANT)/.built $(BUILD_DIR)/license
-
-test:		$(TEST_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
 
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
@@ -129,7 +108,6 @@ REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libice
 REQUIRED_PACKAGES += x11/library/libsm

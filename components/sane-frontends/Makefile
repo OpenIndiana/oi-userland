@@ -18,15 +18,16 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sane-frontends
 COMPONENT_VERSION=	1.0.14
 COMPONENT_PROJECT_URL=	http://www.sane-project.org/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:e7839dac1b70b5bb39124615aba8a136f5275d0e78bafd3d52ed76964ffea4a9
 COMPONENT_ARCHIVE_URL=	ftp://ftp2.sane-project.org/pub/sane/sane-frontends-1.0.14/$(COMPONENT_ARCHIVE)
@@ -34,36 +35,23 @@ COMPONENT_BUGDB=	library/libsane
 
 TPNO=			8865
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS +=	--with-sane-prefix=/usr
+LDFLAGS += -lsane
+
+CONFIGURE_OPTIONS +=	--with-sane-prefix=$(USRDIR)
 CONFIGURE_OPTIONS +=	--disable-sanetest
 CONFIGURE_OPTIONS +=	--disable-gtktest
 CONFIGURE_OPTIONS +=	--disable-gimptest
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS +=	LDFLAGS="-lsane -m64"
 CONFIGURE_OPTIONS +=	--disable-gimp
-
-configure:	$(CONFIGURE_64)
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
 
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
-
 REQUIRED_PACKAGES += image/scanner/xsane/sane-backends
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxcursor

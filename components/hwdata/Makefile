@@ -18,18 +18,22 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= NO_ARCH
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         hwdata
 COMPONENT_VERSION=      0.5.11
+COMPONENT_SRC=
 
 TPNO_PCI=	21782
 TPNO_USB=	21783
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/ips.mk
+BUILD_STYLE= archive
+include $(WS_MAKE_RULES)/common.mk
 
 # Since upstream only offers the latest snapshot for download, without
 # any way to retrieve a specific version, we just keep the currently
@@ -52,8 +56,6 @@ COMPONENT_ARCHIVE_URL_pci.ids =	http://pciids.sourceforge.net/v2.2/pci.ids
 COMPONENT_ARCHIVE_URL_usb.ids =	http://www.linux-usb.org/usb.ids
 COMPONENT_ARCHIVE_URLS = $(foreach i,$(ID_FILES),$(COMPONENT_ARCHIVE_URL_$(i)))
 
-COMPONENT_BUGDB=	utility/hwdata
-
 # Retrieve version from ids file
 ID_VERSION_EXTRACT_COMMAND=$(GSED) -n -e '/Version:/ { s/^.*: //p' -e ' q }'
 
@@ -71,8 +73,6 @@ $(ID_FILES):
 # License files for packaging are generated during the build
 LICENSES = $(ID_FILES:%=%.license)
 BUILT_LICENSES = $(LICENSES:%=$(BUILD_DIR)/%)
-
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # Extract the header up to the first blank line
 $(BUILD_DIR)/%.header: %
@@ -102,7 +102,4 @@ test: $(BUILD_DIR)
 	done
 
 system-test: $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
-clobber clean::
-	$(RM) -r $(BUILD_DIR)
 

@@ -18,15 +18,16 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libarchive
 COMPONENT_VERSION=	3.1.2
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.libarchive.org/
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:eb87eacd8fe49e8d90c8fdc189813023ccc319c5e752b01fb6ad0cc7b2c53d5e
 COMPONENT_ARCHIVE_URL=	\
@@ -35,9 +36,7 @@ COMPONENT_BUGDB=	library/libarchive
 
 TPNO=			24584
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # Userland default includes -mt which links with libthread which we don't need.
 studio_MT =
@@ -64,17 +63,15 @@ COMPONENT_TEST_ENV +=	TMPDIR="$(COMPONENT_TEST_BUILD_DIR)"
 # We then convert BSD-style section numbers in the libarchive man pages to
 # Solaris-style section numbers.
 COMPONENT_PREP_ACTION = \
-	cd $(@D)/doc/man ; rm *.[135] ; env PATH=/usr/gnu/bin:$$PATH gmake all ; \
+	cd $(@D)/doc/man ; rm *.[135] ; env PATH=$(GNUBIN):$$PATH gmake all ; \
 	cd $(@D)/libarchive ; \
-	find . -name "*\.[35]" | xargs /usr/bin/gsed -i 's/\(Xr.*\|Dt.*\)3/\13ARCHIVE/' ; \
-	find . -name "*\.[35]" | xargs /usr/bin/gsed -i \
+	find . -name "*\.[35]" | xargs $(GSED) -i 's/\(Xr.*\|Dt.*\)3/\13ARCHIVE/' ; \
+	find . -name "*\.[35]" | xargs $(GSED) -i \
 	-e 's/Xr \(malloc\|getpwuid\|getgrgud\|strerror\|printf\|getpwnam\|getgrnam\) 3ARCHIVE/Xr \13C/' \
 	-e 's/\(Dt.*LIBARCHIVE.*\)3ARCHIVE/\13LIB/' \
 	-e 's/Xr \(libarchive\|archive\) 3ARCHIVE/Xr libarchive 3LIB/';
 
 PKG_PROTO_DIRS += $(COMPONENT_SRC)/doc/man
-
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_TRANSFORMS += \
@@ -90,16 +87,8 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|^make.*\*\*\*.*Error.*$$|XXX_CC_XXX|g" ' \
 	'-e "/^XXX_CC_XXX$$/d"'
 
-configure:	$(CONFIGURE_32_and_64)
-build:		$(BUILD_32_and_64)
-install:	$(INSTALL_32_and_64)
-test:		$(TEST_32_and_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += system/library

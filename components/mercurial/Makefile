@@ -22,16 +22,14 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 32
 include ../../make-rules/shared-macros.mk
 
-PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
+PATH=$(USRBINDIR):$(GNUBIN):$(USRSBINDIR)
 
 COMPONENT_NAME=		mercurial
 COMPONENT_VERSION=	3.7.1
 COMPONENT_PROJECT_URL=	http://mercurial.selenic.com/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:96d37d1f444a032295e190318b3166e9d05abb55916d2b3adb618a8f16c5cfed
 COMPONENT_ARCHIVE_URL=	http://www.selenic.com/mercurial/release/$(COMPONENT_ARCHIVE)
@@ -43,9 +41,10 @@ TPNO=			26646
 # Mercurial does not yet support Python 3.
 PYTHON_VERSIONS = $(PYTHON2_VERSIONS)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/setup.py.mk
-include $(WS_MAKE_RULES)/ips.mk
+BUILD_STYLE= setup.py
+TEST_TARGET= install $(TEST_32)
+# Add install dependency when system-test target is implemented.
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_POST_INSTALL_ACTION = \
 	(cd $(PROTO_DIR)/usr/bin ; $(MV) -f hg hg-$(PYTHON_VERSION))
@@ -106,15 +105,3 @@ patches/manpages.patch: $(SOURCE_DIR)/.unpacked \
 			diff -u $(COMPONENT_SRC)/doc/$$f.orig $(COMPONENT_SRC)/doc/$$f; \
 		done > $@; \
 	fi || true
-
-# common targets
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		install $(TEST_32)
-
-# Add install dependency as above after system-test targets are implemented.
-system-test: 	$(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
-REQUIRED_PACKAGES += system/library

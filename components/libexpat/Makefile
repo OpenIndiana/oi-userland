@@ -20,17 +20,15 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libexpat
 COMPONENT_VERSION=	2.1.0
 COMPONENT_PROJECT_URL=	http://expat.sourceforge.net/
 COMPONENT_SRC_NAME=	expat
-COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:823705472f816df21c8f6aa026dd162b280806838bb55b3432b0fb1fcca7eb86
 COMPONENT_ARCHIVE_URL= \
@@ -39,25 +37,6 @@ COMPONENT_BUGDB=	library/libexpat
 
 TPNO=			5498
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS) $(CPP_LARGEFILES)"
-CONFIGURE_OPTIONS += CXXFLAGS="$(CXXFLAGS)"
-
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
-# common targets
-configure:	$(CONFIGURE_32_and_64)
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
-
-REQUIRED_PACKAGES += system/library
+CFLAGS += $(CPP_LARGEFILES)

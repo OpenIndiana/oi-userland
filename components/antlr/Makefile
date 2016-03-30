@@ -20,16 +20,14 @@
 #
 
 #
-# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		antlr
 COMPONENT_VERSION=	2.7.7
 COMPONENT_PROJECT_URL=	http://www.antlr.org/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:853aeb021aef7586bda29e74a6b03006bcb565a755c86b66032d8ec31b67dbb9
 COMPONENT_ARCHIVE_URL=	http://www.antlr2.org/download/$(COMPONENT_ARCHIVE)
@@ -38,11 +36,9 @@ COMPONENT_BUGDB=	java-class/antlr
 TPNO=			5546
 
 # Use version of Java defined in ../../make-rules/shared-macros.mk
-PATH=$(SPRO_VROOT)/bin:$(JAVA_HOME)/bin:/usr/bin
+PATH=$(SPRO_VROOT)/bin:$(JAVA_HOME)/bin:$(USRBINDIR)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL =		0
 
@@ -65,24 +61,9 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/^ANTLR Parser Generator.*$$/d"' \
 	'-e "/^XXX_JAVA_XXX$$/d" '
 
-# Needed to find the antlr man page.
-PKG_PROTO_DIRS +=	$(COMPONENT_DIR)/files
-
 COMPONENT_TEST_TARGETS = test
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
-# common targets
-configure:	$(CONFIGURE_32)
-
-build:          $(BUILD_32)
-
-install:        $(INSTALL_32)
-
-test:           $(TEST_32)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
 
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += shell/ksh93

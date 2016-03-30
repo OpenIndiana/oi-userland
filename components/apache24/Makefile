@@ -18,16 +18,17 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		apache2
 COMPONENT_VERSION=	2.4.16
 COMPONENT_PROJECT_URL=	http://httpd.apache.org/
 COMPONENT_SRC_NAME=	httpd
-COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:2fc18017801944cfcfde76a24f16c1276c866c2a6e512ee895f566bef9368fae
 COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/httpd/$(COMPONENT_ARCHIVE)
@@ -36,12 +37,8 @@ COMPONENT_BUGDB=	utility/apache
 TPNO=	23618
 	
 CONFIGURE_DEFAULT_DIRS=no
-
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-ASLR_MODE = $(ASLR_ENABLE)
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL=0
 
@@ -53,7 +50,7 @@ COMPONENT_PREP_ACTION +=($(CP) mod_auth_gss/mod_auth_gss.c $(@D)/modules/aaa);
 COMPONENT_PREP_ACTION +=($(CP) mod_auth_gss/mod_auth_gss.html $(@D)/docs/manual/mod);
 COMPONENT_PREP_ACTION +=(cd $(@D); autoreconf);
 
-CONFIGURE_PREFIX =	/usr/apache2/2.4
+CONFIGURE_PREFIX =	$(USRDIR)/apache2/2.4
 
 CONFIGURE_OPTIONS +=	--enable-layout=Solaris
 CONFIGURE_OPTIONS +=	--enable-mpms-shared=all
@@ -62,27 +59,18 @@ CONFIGURE_OPTIONS +=	--enable-exception-hook
 CONFIGURE_OPTIONS +=	--enable-cgi
 CONFIGURE_OPTIONS +=	--enable-suexec
 CONFIGURE_OPTIONS +=	--with-suexec-caller=webservd
-CONFIGURE_OPTIONS +=	--with-apr=/usr/apr/1.5/bin/$(MACH64)/apr-1-config
-CONFIGURE_OPTIONS +=	--with-apr-util=/usr/apr-util/1.5/bin/$(MACH64)/apu-1-config
+CONFIGURE_OPTIONS +=	--with-apr=$(USRDIR)/apr/1.5/bin/$(MACH64)/apr-1-config
+CONFIGURE_OPTIONS +=	--with-apr-util=$(USRDIR)/apr-util/1.5/bin/$(MACH64)/apu-1-config
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	LTFLAGS="--silent --tag=CC"
 
-PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)
-PATH=$(PARFAIT_TOOLS):$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
+PATH=$(PARFAIT_TOOLS):$(SPRO_VROOT)/bin:$(USRBINDIR):$(GNUBIN)
+else
+PATH=$(SPRO_VROOT)/bin:$(USRBINDIR):$(GNUBIN)
 endif
 
 COMPONENT_POST_INSTALL_ACTION += ($(KSH93) Solaris/customization.sh $(PROTO_DIR))
-
-configure:	$(CONFIGURE_64)
-
-build: $(BUILD_64)
-
-install: $(INSTALL_64)
-
-test: $(NO_TESTS)
-
-system-test:    $(NO_TESTS)
 
 REQUIRED_PACKAGES += library/apr-15
 REQUIRED_PACKAGES += library/apr-util-15
@@ -99,7 +87,6 @@ REQUIRED_PACKAGES += runtime/lua
 REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/security/gss
 REQUIRED_PACKAGES += system/network

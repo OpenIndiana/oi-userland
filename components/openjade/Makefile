@@ -20,20 +20,17 @@
 #
 
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openjade
 COMPONENT_VERSION=	1.3.2
 COMPONENT_PROJECT_URL=	http://openjade.sourceforge.net/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:1d2d7996cc94f9b87d0c51cf0e028070ac177c4123ecbfd7ac1cb8d0b7d322d1
 COMPONENT_ARCHIVE_URL=	http://prdownloads.sourceforge.net/openjade/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/openjade
 
 TPNO=			9620
 
@@ -45,26 +42,26 @@ PKG_PROTO_DIRS += $(COMPONENT_SRC)/spgrove
 PKG_PROTO_DIRS += $(COMPONENT_SRC)/generic
 PKG_PROTO_DIRS += $(COMPONENT_SRC)/dsssl
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION += ($(CLONEY) $(SOURCE_DIR) $(@D))
+
+# Prevent libtool from embedding runpath (via -R).
+COMPONENT_POST_CONFIGURE_ACTION += \
+	$(GSED) -i -e 's/hardcode_into_libs=yes/hardcode_into_libs=no/' $(@D)/libtool; \
+	$(GSED) -i -e 's/hardcode_libdir_flag_spec=.*/hardcode_libdir_flag_spec=""/' $(@D)/libtool;
+
 CONFIGURE_SCRIPT = 	$(@D)/configure
 
-CXX +=			$(studio_NORUNPATH)
+# Expects GNU install.
+CONFIGURE_ENV += INSTALL="$(INSTALL)"
 
-CONFIGURE_OPTIONS +=    --enable-spincludedir=/usr/include/OpenSP
-CONFIGURE_OPTIONS.32 += --enable-splibdir=/usr/lib
-CONFIGURE_OPTIONS.64 +=	--enable-splibdir=/usr/lib/$(MACH64)
+CONFIGURE_OPTIONS +=    --enable-spincludedir=$(USRINCDIR)/OpenSP
+CONFIGURE_OPTIONS +=	--enable-splibdir=$(USRLIB.$(BITS))
 CONFIGURE_OPTIONS +=    --enable-mif
 CONFIGURE_OPTIONS +=	--disable-http
-CONFIGURE_OPTIONS += \
---enable-default-catalog="CATALOG:/etc/sgml/catalog:usr/share/sgml/CATALOG"   
-CONFIGURE_OPTIONS +=	--datadir=/usr/share/sgml/$(COMPONENT_NAME)
-CONFIGURE_OPTIONS +=	CXX="$(CXX)"
-CONFIGURE_OPTIONS +=	CXXFLAGS="$(CXXFLAGS)"
-CONFIGURE_OPTIONS +=	LDFLAGS="$(LDFLAGS)"
+CONFIGURE_OPTIONS +=	--enable-default-catalog="CATALOG:/etc/sgml/catalog:/usr/share/sgml/CATALOG"
+CONFIGURE_OPTIONS +=	--datadir=$(USRSHAREDIR)/sgml/$(COMPONENT_NAME)
 
 COMPONENT_TEST_DIR =	$(BUILD_DIR)/$(MACH$(BITS))/testsuite
 COMPONENT_TEST_ARGS =   -k -i
@@ -72,21 +69,12 @@ COMPONENT_TEST_TARGETS =all
 
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
-COMPONENT_INSTALL_TARGETS = install install-man
+COMPONENT_INSTALL_TARGETS += install-man
 
-ASLR_MODE =	$(ASLR_ENABLE)
-
-configure:	$(CONFIGURE_32_and_64)
-
-build:          $(BUILD_32_and_64)
-
-install:        $(INSTALL_32_and_64)
-
-test:           $(TEST_32_and_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+# Workaround broken install targets.
+COMPONENT_PRE_INSTALL_ACTION.32 += \
+	$(MKDIR) $(PROTOUSRBINDIR)/$(MACH32);
 
 REQUIRED_PACKAGES += developer/documentation-tool/opensp
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/c++-runtime
 REQUIRED_PACKAGES += system/library/math

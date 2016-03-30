@@ -138,7 +138,7 @@ CONFIGURE_ENV +=	PKG_CONFIG_PATH=$(CONFIGURE_LIBDIR.$(BITS))/pkgconfig
 CONFIGURE_ENV +=	OS_DEFINES="-D__USE_LEGACY_PROTOTYPES__"
 # -L.../dist/bin needs to be set otherwise it will report missing libnss3.so, 
 # libssl3.so, etc, while linking.
-CONFIGURE_ENV +=	LDFLAGS="-z ignore -z interpose -B nodirect -L$(BUILD_DIR_32)/dist/lib"
+CONFIGURE_ENV +=	LDFLAGS="$(LD_Z_IGNORE) -z interpose -B nodirect -L$(BUILD_DIR_32)/dist/lib"
 
 CONFIGURE_ENV +=	MOZCONFIG=$(MOZCONFIG)
 CONFIGURE_ENV +=	"CC=$(CC)"

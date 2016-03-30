@@ -20,30 +20,25 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64
 # we really need to use studio, mostly because that's what
-# sigc++ uses, so we don't like that parfait is g++ in disguise
+# sigc++ uses, so we don't like that parfait is clang/llvm in disguise
 export PARFAIT_BUILD=no
-
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rtorrent
 COMPONENT_VERSION=	0.8.2
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://libtorrent.rakshasa.no/
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:76135a63869e43fa0392829bb45d94c0aa55e94350dddc272685ccfac1bbb2ed
 COMPONENT_ARCHIVE_URL=	http://libtorrent.rakshasa.no/downloads/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/rtorrent
 
 TPNO=			8824
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -67,31 +62,14 @@ endif
 
 CXXFLAGS +=	-i
 CXXFLAGS +=	-template=no%extdef
-CXXFLAGS +=	$(studio_XREGS)
-CXXFLAGS +=	-I/usr/include/ncurses
+CXXFLAGS +=	-I$(USRINCDIR)/ncurses
 CONFIGURE_OPTIONS.64 +=         --srcdir=$(BUILD_DIR_64)
 CONFIGURE_OPTIONS +=		--disable-debug
-CONFIGURE_OPTIONS +=		CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS +=		LDFLAGS="$(LDFLAGS)"
-CONFIGURE_OPTIONS +=		CXXFLAGS="$(CXXFLAGS)"
 
-ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
+REQUIRED_PACKAGES += developer/build/automake-111
 REQUIRED_PACKAGES += library/c++/sigcpp
 REQUIRED_PACKAGES += library/libtorrent
 REQUIRED_PACKAGES += library/ncurses
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/c++-runtime
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += web/curl

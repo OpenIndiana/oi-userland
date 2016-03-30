@@ -20,37 +20,30 @@
 #
 
 #
-# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mod_wsgi
 COMPONENT_VERSION=	4.3.0
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:89dfcc8564bb8781f36370c80c6fbeef9ec0723dec273231f4f760760d8e813d
 COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/source/m/mod_wsgi/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://code.google.com/p/modwsgi/
-COMPONENT_BUGDB=	utility/apache
 
 TPNO=			19269
 
-include $(WS_MAKE_RULES)/prep.mk
 # Don't use default CPPFLAGS; it causes Apache's custom CPP to fail.
 CONFIGURE_CPPFLAGS=
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+VARIANTS_64 = $(BUILD_DIR)/apache24-python27 $(BUILD_DIR)/apache24-python34
 include ../modules.mk
 
-APACHE_USR_PREFIX = /usr/apache2/
+# Fix 64-bit linking via compiler.
+LDFLAGS += $(CC_BITS)
 
-VARIANT_AP_24_PY27 = $(BUILD_DIR)/apache24-python27
-VARIANT_AP_24_PY34 = $(BUILD_DIR)/apache24-python34
-
-VARIANTS_64 = $(VARIANT_AP_24_PY27) $(VARIANT_AP_24_PY34)
-
-$(BUILD_DIR)/apache24-%/$(MACH64)/.configured: APXS=$(APACHE_USR_PREFIX)/2.4/bin/apxs
+$(BUILD_DIR)/apache24-%/$(MACH64)/.configured: APXS=$(APACHE_24_USR_PREFIX)/bin/apxs BITS=64
+$(BUILD_DIR)/apache24-%/$(MACH64)/.built: BITS=64
+$(BUILD_DIR)/apache24-%/$(MACH64)/.tested: BITS=64
 
 $(BUILD_DIR)/apache2%-python27/$(MACH64)/.configured: PYTHON=$(PYTHON.2.7.64)
 $(BUILD_DIR)/apache2%-python34/$(MACH64)/.configured: PYTHON=$(PYTHON.3.4.64)
@@ -59,20 +52,7 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_OPTIONS += --with-python=$(PYTHON)
-CONFIGURE_OPTIONS += --with-apxs=$(APXS)
-
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
-# common targets
-configure:	$(MODULES_CONFIGURE)
-
-build:		$(MODULES_BUILD)
-
-install:	$(MODULES_INSTALL)
-
-system-test:	$(NO_TESTS)
 
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += runtime/python-34
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

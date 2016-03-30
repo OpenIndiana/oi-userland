@@ -20,45 +20,32 @@
 #
 
 #
-# Copyright (c) 2010, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libtasn1
 COMPONENT_VERSION=	2.8
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=  http://ftp.gnu.org/gnu/libtasn1/
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
     sha256:2b7d74f4b10b18ae2f0291fcafabe30e42c9ededdea41add8c622302132d545a
-COMPONENT_ARCHIVE_URL=  http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libtasn1
 
 TPNO=			9381
 
 COMPONENT_BUILD_TARGETS = all info
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/gnu-component.mk
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --includedir=$(CONFIGURE_INCLUDEDIR)
 CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-shared
-CONFIGURE_OPTIONS.64 += CC="$(CC) -m64"
 
 ASLR_MODE = $(ASLR_ENABLE)
 
 include ../../make-rules/shared-targets.mk
-
-configure:      $(CONFIGURE_32_and_64)
-
-build:          $(BUILD_32_and_64)
-
-install:        $(INSTALL_32_and_64)
 
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
@@ -67,8 +54,3 @@ COMPONENT_TEST_TRANSFORMS += \
         '-e "/FAIL/p" ' \
         '-e "/All/p" '
 
-test:           $(TEST_32_and_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
-REQUIRED_PACKAGES += system/library

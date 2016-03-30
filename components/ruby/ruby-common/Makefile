@@ -18,6 +18,8 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
@@ -25,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		ruby-meta
 # the latest version of Ruby
 COMPONENT_VERSION=	2.1
+COMPONENT_SRC=
 COMPONENT_PROJECT_URL=	http://www.ruby-lang.org/
 COMPONENT_BUGDB=	utility/ruby
 

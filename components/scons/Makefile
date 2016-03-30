@@ -18,19 +18,19 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= NO_ARCH
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		scons
 COMPONENT_VERSION=	2.3.4
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.scons.org/
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:4b57d72066fed3b6ff65a7dd9f73633c9b1c09f87520e9b3aae84b3e4864b441
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/$(COMPONENT_NAME)/files/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
-COMPONENT_BUGDB=	utility/scons
 
 TPNO=			22207
 
@@ -39,9 +39,9 @@ TPNO=			22207
 # this time.
 PYTHON_VERSIONS =	2.7
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/setup.py.mk
-include $(WS_MAKE_RULES)/ips.mk
+BUILD_STYLE= setup.py
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # pkgdepend doesn't like the first line of a Python script to be:
 # '#!/usr/bin/env python' so turn it into '#!/usr/bin/python$(PYTHON_VERSION)'
@@ -56,14 +56,6 @@ COMPONENT_POST_INSTALL_ACTION += \
 		$(PROTOUSRBINDIR)/sconsign-2.3.4;
 
 PKG_PROTO_DIRS +=	$(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES)
-
-ASLR_MODE = $(ASLR_ENABLE)
-
-build:		$(BUILD_NO_ARCH)
-
-install:	$(INSTALL_NO_ARCH)
-
-test:		$(NO_TESTS)
 
 REQUIRED_PACKAGES += library/python/setuptools-27
 REQUIRED_PACKAGES += runtime/python-27

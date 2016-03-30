@@ -18,15 +18,16 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		librsync
 COMPONENT_VERSION=	0.9.7
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://librsync.sourceforge.net/
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:6633e4605662763a03bb6388529cbdfd3b11a9ec55b8845351c1bd9a92bc41d6
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/$(COMPONENT_NAME)/files/librsync/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
@@ -49,9 +50,7 @@ TPNO=			9087
 
 CLEAN_PATHS += $(COMPONENT_NAME_1)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D)) ; \
@@ -59,13 +58,9 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 
 CFLAGS += -features=no%extinl
 
-CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
-
 CONFIGURE_OPTIONS  +=	--enable-shared
 
 PROTOUSRSHAREDOCDIR = $(PROTOUSRSHAREDIR)/doc/librsync-0.9.7
-
-PATCH_LEVEL = 1
 
 ASLR_MODE = $(ASLR_ENABLE)
 
@@ -80,19 +75,9 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|^.*source=.*libtool=no.*$$|XXX_CC_XXX|g" ' \
 	'-e "/^XXX_CC_XXX$$/d" '
 
-configure:	$(CONFIGURE_32_and_64)
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
+COMPONENT_POST_INSTALL_ACTION += \
 	$(MKDIR) -p $(PROTOUSRSHAREDOCDIR) ; \
 	$(CP) librsync-docs/librsync.pdf $(PROTOUSRSHAREDOCDIR) ; \
 	$(CP) -r librsync-docs/html $(PROTOUSRSHAREDOCDIR)
 
-test: $(TEST_32_and_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
-
 REQUIRED_PACKAGES += library/popt
-REQUIRED_PACKAGES += system/library

@@ -20,19 +20,16 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		readline
 COMPONENT_VERSION=	6.3
 COMPONENT_PROJECT_URL=	http://cnswww.cns.cwru.edu/php/chet/readline/rltop.html
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:56ba6071b9462f980c5a72ab0023893b65ba6debb4eeb475d7a563dc65cafd43
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/readline/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/readline
 
 TPNO_V6=		22356
@@ -49,22 +46,19 @@ COMPONENT_ARCHIVE_HASH_1 = \
 COMPONENT_ARCHIVE_URL_1 = http://ftp.gnu.org/gnu/readline/$(COMPONENT_ARCHIVE_1)
 SOURCE_DIR_1 =          $(COMPONENT_DIR)/$(COMPONENT_SRC_1)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-include $(WS_MAKE_RULES)/lint-libraries.mk
+BUILD_TARGET=
+INSTALL_TARGET=
+TEST_TARGET= install $(TEST_32_and_64)
+SYSTEM_TEST_TARGET= configure $(SYSTEM_TEST_32_and_64)
+include $(WS_MAKE_RULES)/gnu-component.mk
 
-LINT_FLAGS += -I$(PROTO_DIR)/usr/include
-
-CC += $(CC_BITS)
+LINT_FLAGS += -I$(PROTOUSRINCDIR)
 
 # readline likes to use ld directly and this is the easiest
 # way to get it to add -lc
 LDFLAGS += -lc
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		--enable-shared
-CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS  +=		LDFLAGS="$(LDFLAGS)"
 
 # Build the readline examples as well.
 COMPONENT_BUILD_TARGETS =	everything
@@ -113,17 +107,6 @@ INSTALL_64 += $(BUILD_OLD_DIR_64)/.installed
 $(BUILD_DIR_32)/.installed:     $(BUILD_OLD_DIR_32)/.installed
 $(BUILD_DIR_64)/.installed:     $(BUILD_OLD_DIR_64)/.installed
 
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
-configure:	$(CONFIGURE_32_and_64)
-
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
-
-test:		install $(TEST_32_and_64)
-
-system-test:    configure $(SYSTEM_TEST_32_and_64)
-
-
-REQUIRED_PACKAGES += system/library

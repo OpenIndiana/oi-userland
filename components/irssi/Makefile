@@ -22,52 +22,33 @@
 #
 # Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         irssi
 COMPONENT_VERSION=	0.8.15
 COMPONENT_PROJECT_URL=	https://irssi.org/
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=\
 	sha256:c12d16fb605103d7c256ddce44012dc396af57f3771e086d0387c195a052a0a6
 COMPONENT_ARCHIVE_URL=	https://github.com/irssi-import/irssi/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/irssi
 
 TPNO=		7900
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-ASLR_MODE = $(ASLR_ENABLE)
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # Part of the build just runs "cc" (not the path that configure finds).
 COMPONENT_BUILD_ENV +=  PATH=$(dir $(CC)):$(PATH)
 
 CONFIGURE_ENV += "ac_cv_path_perlpath=$(PERL)"
 
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
-
-CONFIGURE_OPTIONS +=	--bindir=/usr/bin
-CONFIGURE_OPTIONS +=    --sysconfdir=/etc
-CONFIGURE_OPTIONS +=    --with-perl=yes
+CONFIGURE_OPTIONS +=    --sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS +=    --with-perl
 CONFIGURE_OPTIONS +=    --with-proxy
-CONFIGURE_OPTIONS +=    --with-perl-lib=/usr/perl5/vendor_perl/$(PERL_VERSION)
-
-configure:	$(CONFIGURE_64)
-
-build:          $(BUILD_64)
-
-install:        $(INSTALL_64)
-
-test:           $(NO_TESTS)
-
-system-test:    $(NO_TESTS)
+CONFIGURE_OPTIONS +=    --with-perl-lib=$(USRDIR)/perl5/vendor_perl/$(PERL_VERSION)
 
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += $(PERL_PKG)
-REQUIRED_PACKAGES += system/library

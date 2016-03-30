@@ -22,30 +22,26 @@
 #
 # Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         mlocate
 COMPONENT_VERSION=      0.26
 COMPONENT_PROJECT_URL=  https://fedorahosted.org/mlocate
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
     sha256:3063df79fe198fb9618e180c54baf3105b33d88fe602ff2d8570aaf944f1263e
 COMPONENT_ARCHIVE_URL=  https://fedorahosted.org/releases/m/l/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/mlocate
 
 TPNO=			27159
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+SYSTEM_TEST_TARGET= configure $(SYSTEM_TEST_64)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_OPTIONS.64 +=    CC="$(CC) -m64"
-CONFIGURE_OPTIONS += --localstatedir="/var/cache"
-CONFIGURE_OPTIONS += --sysconfdir="/etc"
+CONFIGURE_OPTIONS += --localstatedir="$(VARDIR)/cache"
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 
 COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -f && automake)
 COMPONENT_POST_INSTALL_ACTION= \
@@ -73,18 +69,3 @@ COMPONENT_SYSTEM_TEST_ENV +=	PATH="$(GNUBIN):$(USRBINDIR):$(USRSBINDIR)"
 COMPONENT_SYSTEM_TEST_CMD =	$(SHELL) $(SOURCE_DIR)/tests/testsuite
 COMPONENT_SYSTEM_TEST_ARGS =	AUTOTEST_PATH=$(GNUBIN):$(USRBINDIR):$(USRSBINDIR)
 COMPONENT_SYSTEM_TEST_TARGETS =
-
-ASLR_MODE = $(ASLR_ENABLE)
-
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
-
-system-test:    configure $(SYSTEM_TEST_64)
-
-
-REQUIRED_PACKAGES += system/library

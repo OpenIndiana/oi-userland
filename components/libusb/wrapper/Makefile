@@ -18,7 +18,9 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+
+#
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -27,6 +29,7 @@ COMPONENT_VERSION=	0.1.8
 IPS_COMPONENT_VERSION=	0.5.11
 COMPONENT_PROJECT_URL=	http://libusb.sf.net/
 COMPONENT_SRC=		src
+COMPONENT_ARCHIVE=
 COMPONENT_BUGDB=	library/libusb
 
 TPNO=			9184

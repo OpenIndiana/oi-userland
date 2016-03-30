@@ -18,37 +18,27 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mod_dtrace
 COMPONENT_VERSION=	0.3.1
 COMPONENT_SRC=		src
+COMPONENT_ARCHIVE=
 COMPONENT_PROJECT_URL=	http://prefetch.net/projects/apache_modtrace/
-COMPONENT_BUGDB=	utility/apache
 
 TPNO=			8876
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+BUILD_STYLE= justmake
+MODULES_INSTALL=
 include ../modules.mk
 
 COMPONENT_BUILD_ARGS +=	APXS=$(APXS)
-COMPONENT_BUILD_ARGS +=	DTRACE="/usr/sbin/dtrace -$(BITS)"
+COMPONENT_BUILD_ARGS +=	DTRACE="$(USRSBINDIR)/dtrace -$(BITS)"
 COMPONENT_BUILD_ARGS +=	PATH="$(PATH)"
 
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
-clean::
-	$(RM) $(SOURCE_DIR)/.prep
-
-build: $(MODULES_BUILD)
-
-test: $(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
-
-REQUIRED_PACKAGES += system/library
+CLEAN_PATHS += $(SOURCE_DIR)/.prep

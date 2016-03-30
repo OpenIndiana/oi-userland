@@ -20,44 +20,42 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64
 # Can't use the Studio compilers as they don't support the GNU 
 # __attribute__ extension
-COMPILER =	gcc
-
+COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         nmap
 COMPONENT_VERSION=      6.25
 COMPONENT_PROJECT_URL=	http://nmap.org/
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH= \
     sha256:42c54fd5cc5f05e5df909757d62307102a8ff1dfaf5c2626b1cb5f2ecd009e57
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)dist/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/nmap
 
 TPNO=			9217
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
 PKG_MACROS +=		PYVER=$(PYTHON_VERSION)
 
-CONFIGURE_OPTIONS  +=   CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS  +=   CXX="$(CXX)"
-CONFIGURE_OPTIONS  +=   CXXFLAGS="$(CXXFLAGS)"
-CONFIGURE_OPTIONS  +=   LDFLAGS="$(LDFLAGS) -m64"
+ifeq ($(OS_VERSION),5.11)
 CONFIGURE_OPTIONS  +=   LIBS="-lsocket -lnsl"
+endif
+
+# Fix 64-bit linking via compiler.
+LDFLAGS += $(CC_BITS)
+
 CONFIGURE_OPTIONS  +=   PYTHON="$(PYTHON.$(PYTHON_VERSION))"
 CONFIGURE_OPTIONS  +=   --srcdir=$(BUILD_DIR_64)
-CONFIGURE_OPTIONS  +=   --localstatedir=/var 
+CONFIGURE_OPTIONS  +=   --localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS  +=   --without-localdirs 
 CONFIGURE_OPTIONS  +=   --with-zenmap 
 CONFIGURE_OPTIONS  +=   --with-openssl
@@ -73,26 +71,12 @@ COMPONENT_POST_INSTALL_ACTION += \
         $(GSED) -i -e "s?env python?python$(PYTHON_VERSION)?" \
                 $(PROTOUSRBINDIR)/uninstall_zenmap
 
-ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-		
-install:	$(INSTALL_64) 
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += library/python/pygobject-27
 REQUIRED_PACKAGES += library/python/pygtk2-27
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += runtime/lua
 REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
 REQUIRED_PACKAGES += system/library/gcc/gcc-c++-runtime
 REQUIRED_PACKAGES += system/library/libpcap

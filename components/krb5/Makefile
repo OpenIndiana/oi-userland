@@ -65,7 +65,7 @@ CPPFLAGS += -I$(USRINCDIR)/openldap
 # depends on implicit binding of libc.  Here we explicitly link with libc to
 # satisfy this dependency.
 # If you make changes to LDFLAGS, check krb5-config and 052-krb5-config.patch.
-LDFLAGS += -lc -z defs
+LDFLAGS += -lc $(LD_Z_DEFS)
 
 CONFIGURE_ENV += LDFLAGS="$(LDFLAGS)"
 CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
@@ -134,7 +134,7 @@ COMPONENT_PREP_ACTION += ;\
 	$(CP) $(SRCLIB)/rpc/dyntest.c $(SRCLIB)/kadm5/srv/; \
 
 # Common flags used to create the filter libs below
-FILTLIBFLAGS = -G -Bdirect -z defs -z text
+FILTLIBFLAGS = -G $(LD_B_DIRECT) $(LD_Z_DEFS) $(LD_Z_TEXT)
 
 $(BUILD_32): COMPONENT_POST_BUILD_ACTION= \
 	$(CC) -o $(BUILD_DIR)/$(MACH32)/lib/libgss.so.1 \

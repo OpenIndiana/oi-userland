@@ -18,15 +18,17 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+# Prefer 32-bit as only "binary" delivered is a script with embedded paths.
+BUILD_BITS= 32_and_64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		daq
 COMPONENT_VERSION=	2.0.2
 COMPONENT_PROJECT_URL=	http://www.snort.org/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:d65d1e67c4994e02c3142c49a648642e780b7e3d942b4a51f605309beac269a8
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/snort/files/snort/$(COMPONENT_ARCHIVE)/download
@@ -34,38 +36,18 @@ COMPONENT_BUGDB=	library/daq
 
 TPNO=			19384
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # Solaris should really define these. See CR #15431883 and 15537286.
 CFLAGS +=	-Du_int8_t=uint8_t
 CFLAGS +=	-Du_int16_t=uint16_t
 CFLAGS +=	-Du_int32_t=uint32_t
 
-# Set -m32 or -m64 correctly for 32 and 64 bit versions.
-CC +=		$(CC_BITS)
-
 CONFIGURE_OPTIONS +=	--disable-ipfw-module
 CONFIGURE_OPTIONS +=    --enable-static=no
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
-
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
-# common targets
-configure:	$(CONFIGURE_32_and_64)
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
 
 REQUIRED_PACKAGES += developer/lexer/flex
 REQUIRED_PACKAGES += developer/parser/bison
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libpcap

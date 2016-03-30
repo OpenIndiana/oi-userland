@@ -20,9 +20,9 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= NO_ARCH
 include ../../make-rules/shared-macros.mk
 
 # The version of rpm2cpio.pl delivered in Userland does not seem to be
@@ -39,17 +39,15 @@ COMPONENT_BUGDB=	utility/rpm
 
 TPNO=			17824
 
-include $(WS_MAKE_RULES)/prep.mk
+BUILD_STYLE= archive
+COMMON_TARGETS= no
+include $(WS_MAKE_RULES)/common.mk
 
 # Do not clean the sources (set in prep.mk)
 #
 CLEAN_PATHS=
 
-include $(WS_MAKE_RULES)/ips.mk
-
-CLEAN_PATHS+= $(BUILD_DIR)
-
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+CLEAN_PATHS += $(BUILD_DIR)
 
 # Common targets
 #

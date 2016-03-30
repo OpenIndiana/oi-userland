@@ -18,7 +18,9 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2015, Oracle and/or its affiliates. All rights reserved.
+
+#
+# Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 #
@@ -54,19 +56,34 @@
 #	COMPONENT_TEST_TARGETS
 #
 
-CONFIGURE_PREFIX =	/usr
+CONFIGURE_PREFIX ?=	/usr
 
-CONFIGURE_BINDIR.32 =	$(CONFIGURE_PREFIX)/bin
-CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/bin/$(MACH64)
-CONFIGURE_LIBDIR.32 =	$(CONFIGURE_PREFIX)/lib
-CONFIGURE_LIBDIR.64 =	$(CONFIGURE_PREFIX)/lib/$(MACH64)
-CONFIGURE_SBINDIR.32 =	$(CONFIGURE_PREFIX)/sbin
-CONFIGURE_SBINDIR.64 =	$(CONFIGURE_PREFIX)/sbin/$(MACH64)
-CONFIGURE_MANDIR =	$(CONFIGURE_PREFIX)/share/man
-CONFIGURE_LOCALEDIR =	$(CONFIGURE_PREFIX)/share/locale
+# If the component prefers 64-bit binaries, then ensure builds deliver 64-bit
+# binaries to the standard directories and 32-bit binaries to the non-standard
+# location.  This allows simplification of package manifests and makes it
+# easier to deliver the 64-bit binaries as the default.
+ifeq ($(strip $(PREFERRED_BITS)),64)
+CONFIGURE_BINDIR.32 ?=	$(CONFIGURE_PREFIX)/bin/$(MACH32)
+CONFIGURE_SBINDIR.32 ?=	$(CONFIGURE_PREFIX)/sbin/$(MACH32)
+CONFIGURE_BINDIR.64 ?=	$(CONFIGURE_PREFIX)/bin
+CONFIGURE_SBINDIR.64 ?=	$(CONFIGURE_PREFIX)/sbin
+else
+CONFIGURE_BINDIR.32 ?=	$(CONFIGURE_PREFIX)/bin
+CONFIGURE_SBINDIR.32 ?=	$(CONFIGURE_PREFIX)/sbin
+CONFIGURE_BINDIR.64 ?=	$(CONFIGURE_PREFIX)/bin/$(MACH64)
+CONFIGURE_SBINDIR.64 ?=	$(CONFIGURE_PREFIX)/sbin/$(MACH64)
+endif
+
+# Regardless of PREFERRED_BITS, 64-bit libraries should always be delivered to
+# the appropriate subdirectory by default.
+CONFIGURE_LIBDIR.32 ?=	$(CONFIGURE_PREFIX)/lib
+CONFIGURE_LIBDIR.64 ?=	$(CONFIGURE_PREFIX)/lib/$(MACH64)
+
+CONFIGURE_MANDIR ?=	$(CONFIGURE_PREFIX)/share/man
+CONFIGURE_LOCALEDIR ?=	$(CONFIGURE_PREFIX)/share/locale
 # all texinfo documentation seems to go to /usr/share/info no matter what
-CONFIGURE_INFODIR =	/usr/share/info
-CONFIGURE_INCLUDEDIR =	/usr/include
+CONFIGURE_INFODIR ?=	/usr/share/info
+CONFIGURE_INCLUDEDIR ?=	/usr/include
 
 CONFIGURE_ENV = CONFIG_SHELL="$(CONFIG_SHELL)"
 
@@ -76,16 +93,18 @@ CONFIGURE_ENV += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
 CONFIGURE_ENV += CC="$(CC)"
 CONFIGURE_ENV += CXX="$(CXX)"
 
+# Ensure that 64-bit versions of *-config scripts are preferred.
+CONFIGURE_ENV.64 += PATH="$(USRBIN.64):$(PATH)"
+
+# A full build must be performed if any new options are added here as not all
+# components use autoconf-based configure scripts and some have patched theirs
+# to reject "unknown" options (which may be supported by newer versions of
+# autoconf's configure).
 CONFIGURE_OPTIONS += --prefix=$(CONFIGURE_PREFIX)
 ifeq ($(CONFIGURE_DEFAULT_DIRS),yes)
 CONFIGURE_OPTIONS += --mandir=$(CONFIGURE_MANDIR)
-ifeq ($(INITIAL_BITS),64)
-CONFIGURE_OPTIONS += --bindir=$(CONFIGURE_BINDIR.32)
-CONFIGURE_OPTIONS += --sbindir=$(CONFIGURE_SBINDIR.32)
-else
 CONFIGURE_OPTIONS += --bindir=$(CONFIGURE_BINDIR.$(BITS))
 CONFIGURE_OPTIONS += --sbindir=$(CONFIGURE_SBINDIR.$(BITS))
-endif
 CONFIGURE_OPTIONS += --libdir=$(CONFIGURE_LIBDIR.$(BITS))
 endif
 CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(BITS))
@@ -116,13 +135,19 @@ endif
 # during ./configure).
 COMPONENT_BUILD_ENV += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
 
-# CC_FOR_BUILD is used by autoconf to set the compiler and required flags for
-# generating native executables and is typically used for host detection and
-# other tests during the autoconf process.  Explicitly specifying the target
-# bits ensures that autoconf reliably detects 32-bit and 64-bit builds.
+# CC_FOR_BUILD and CXX_FOR_BUILD are used by autoconf to set the compiler and
+# required flags for generating native executables and is typically used for
+# host detection and other tests during the autoconf process.  Explicitly
+# specifying the target bits ensures that autoconf reliably detects 32-bit and
+# 64-bit builds.
 CC_FOR_BUILD ?= "$(CC) $(CC_BITS)"
 ifneq  ($(strip $(CC_FOR_BUILD)),)
 CONFIGURE_ENV += CC_FOR_BUILD=$(CC_FOR_BUILD)
+endif
+
+CXX_FOR_BUILD ?= "$(CXX) $(CC_BITS)"
+ifneq  ($(strip $(CXX_FOR_BUILD)),)
+CONFIGURE_ENV += CXX_FOR_BUILD=$(CXX_FOR_BUILD)
 endif
 
 # Similar idea for CPP as above; there's a common macro found in lib-prefix.m4
@@ -131,7 +156,7 @@ endif
 # autoconf reliably detects 32-bit and 64-bit builds.
 CONFIGURE_CPPFLAGS ?= $(CC_BITS)
 ifneq  ($(strip $(CONFIGURE_CPPFLAGS)),)
-CONFIGURE_ENV += CPPFLAGS="$(CONFIGURE_CPPFLAGS) $(CPPFLAGS)"
+CONFIGURE_ENV += CPPFLAGS="$(strip $(CONFIGURE_CPPFLAGS) $(CPPFLAGS))"
 endif
 
 # temporarily work around some issues
@@ -221,6 +246,11 @@ $(BUILD_DIR)/%/.system-tested:    $(SOURCE_DIR)/.prep
 	$(COMPONENT_POST_SYSTEM_TEST_ACTION)
 	$(COMPONENT_SYSTEM_TEST_CLEANUP)
 	$(TOUCH) $@
+
+# If BUILD_STYLE is set, provide a default configure target.
+ifeq   ($(strip $(BUILD_STYLE)),configure)
+configure:	$(CONFIGURE_$(MK_BITS))
+endif
 
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)
 parfait: build

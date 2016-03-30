@@ -20,6 +20,7 @@
 #
 # Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ftp-proxy
@@ -28,21 +29,11 @@ IPS_COMPONENT_VERSION=	5.5
 COMPONENT_PROJECT_URL=	http://www.openbsd.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE_SRC=	cache
 COMPONENT_ARCHIVE_HASH= sha256:372dbe0ca8c6b090842a9f0fbdd13b320dc37883137d3dc674d588448aa2d5e9
-CLEAN_PATHS +=		$(COMPONENT_SRC)
-CLOBBER_PATHS +=	$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	service/ftp-proxy
 
 TPNO=	24255
-
-#
-# Don't overwrite CFLAGS here, just add our options there.
-#
-COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS) -D_SOLARIS_ -DOBSD_COMP -lscf"
-COMPONENT_BUILD_ARGS +=	CC="$(CC)"
-
-include ../../make-rules/prep.mk
-include ../../make-rules/justmake.mk
 
 # Depends on S12-only changes in ON.
 ifeq ($(BUILD_TYPE), evaluation)
@@ -51,20 +42,18 @@ INSTALL_64=
 PUBLISH_STAMP=
 endif
 
-include ../../make-rules/ips.mk
+BUILD_STYLE= justmake
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
+
+#
+# Don't overwrite CFLAGS here, just add our options there.
+#
+COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS) -D_SOLARIS_ -DOBSD_COMP -lscf"
 
 COMPONENT_INSTALL_ARGS +=	PREFIX=$(PROTOUSRDIR)
 COMPONENT_INSTALL_ARGS +=	MANDIR=$(PROTOUSRSHAREMANDIR)
-COMPONENT_INSTALL_ARGS +=	INSTALL=/usr/gnu/bin/install
-
-ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
+COMPONENT_INSTALL_ARGS +=	INSTALL=$(INSTALL)
 
 # Here we just download the cached source archive. In order to update
 # the cache, we have to get the sources via CVS manually and ask gatekeepers
@@ -80,4 +69,3 @@ REQUIRED_PACKAGES += network/firewall
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
 REQUIRED_PACKAGES += system/header
-REQUIRED_PACKAGES += system/library

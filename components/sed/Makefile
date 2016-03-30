@@ -20,29 +20,25 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sed
 COMPONENT_VERSION=	4.2.2
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/sed/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:fea0a94d4b605894f3e2d5572e3f96e4413bcad3a085aae7367c2cf07908b2ff
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/sed/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gnu-sed
 
 TPNO=			12595
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+SYSTEM_TEST_TARGET= configure $(SYSTEM_TEST_64)
+include $(WS_MAKE_RULES)/gnu-component.mk
+
+CONFIGURE_BINDIR.64= $(GNUBIN)
 
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 
 COMPONENT_TEST_DIR =		$(@D)/testsuite
 
@@ -64,21 +60,6 @@ COMPONENT_PRE_SYSTEM_TEST_ACTION += \
 	($(GSED) -i -e "s|../sed/sed|/usr/gnu/bin/sed|" \
                 $(SOURCE_DIR)/testsuite/eval.sed) ;
 
-COMPONENT_SYSTEM_TEST_ENV +=	SED=/usr/gnu/bin/sed
+COMPONENT_SYSTEM_TEST_ENV +=	SED=$(GNUBIN)/sed
 COMPONENT_SYSTEM_TEST_ENV +=	PATH="$(GNUBIN):$(PATH)"
 COMPONENT_SYSTEM_TEST_DIR =	$(@D)/testsuite
-
-ASLR_MODE = $(ASLR_ENABLE)
-
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
-
-system-test:    configure $(SYSTEM_TEST_64)
-
-
-REQUIRED_PACKAGES += system/library

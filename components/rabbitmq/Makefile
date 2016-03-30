@@ -22,7 +22,7 @@
 #
 # Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 32
 include ../../make-rules/shared-macros.mk
 
 PATH=/usr/gnu/bin:/usr/bin:/usr/sbin
@@ -30,8 +30,6 @@ PATH=/usr/gnu/bin:/usr/bin:/usr/sbin
 COMPONENT_NAME=		rabbitmq-server
 COMPONENT_VERSION=	3.5.6
 COMPONENT_PROJECT_URL=	http://www.rabbitmq.com/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:24be1433234112db391e0c5ef32bfb2ca111e51b2e57998cc0f3d97ba361671f
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/releases/$(COMPONENT_NAME)/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
@@ -39,9 +37,8 @@ COMPONENT_BUGDB=	service/rabbitmq
 
 TPNO=			25764
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+BUILD_STYLE= justmake
+include $(WS_MAKE_RULES)/common.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
@@ -59,15 +56,6 @@ COMPONENT_INSTALL_ENV +=	MAN_DIR=$(PROTO_DIR)/usr/share/man
 COMPONENT_TEST_DIR =		$(COMPONENT_DIR)
 COMPONENT_TEST_CMD =		$(PYTHON)
 COMPONENT_TEST_TARGETS =	test.py $(TEST_32)
-
-# common targets
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(TEST_32)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
 PKG_PROTO_DIRS +=	$(COMPONENT_DIR)/files
 

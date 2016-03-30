@@ -18,8 +18,11 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mrtg
@@ -30,38 +33,22 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:5efa7fae8040159208472e5f889be5b41d8c8a2ea6b31616f0f75cc7f48d2365
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/pub/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/mrtg
 
 TPNO=			25709
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure-64.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS += --with-gd-inc=/usr/include/gd2
-CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS) -I$(BUILD_DIR_64)/bin"
-CONFIGURE_OPTIONS += LDFLAGS="$(LDFLAGS) $(CC_BITS)"
+CFLAGS += -I$(BUILD_DIR_64)/bin
+# Fix 64-bit linking via compiler.
+LDFLAGS += $(CC_BITS)
+CONFIGURE_OPTIONS += --with-gd-inc=$(USRINCDIR)/gd2
 
-CONFIGURE_BINDIR.64 = $(USRBINDIR)
 CONFIGURE_LIBDIR.64 = $(USRLIBDIR)
 
 # Build process expects a bin directory in compilation area.
 COMPONENT_PRE_BUILD_ACTION=(cd $(@D) ; mkdir -p bin)
 
-# Enable ASLR for this component
-ASLR_MODE = $(ASLR_ENABLE)
-
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
-
-system-test:	$(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
 REQUIRED_PACKAGES += library/gd
 REQUIRED_PACKAGES += runtime/perl-512
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

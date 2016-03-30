@@ -20,9 +20,9 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         tcl
@@ -37,12 +37,10 @@ COMPONENT_BUGDB=	library/libtcl
 
 TPNO=			9083
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = \
-	(cd $(SOURCE_DIR)/unix ; autoreconf -f; \
+	(cd $(SOURCE_DIR)/unix ; autoreconf -fi; \
 	 cd ../doc; \
             for i in *.n ; do manbase="$$(basename "$$i" .n)"; mv "$$i" "$${manbase}.1t"; done ; \
             for i in *.3 ; do manbase="$$(basename "$$i" .3)"; mv "$$i" "$${manbase}.3tcl"; done) 
@@ -50,18 +48,20 @@ COMPONENT_PREP_ACTION = \
 COMPONENT_PRE_CONFIGURE_ACTION = \
         ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-# Look for the configure file at the pointed location.
 CONFIGURE_SCRIPT = $(SOURCE_DIR)/unix/configure
 
-CFLAGS += $(studio_XREGS) -xstrconst $(XPG6MODE) $(studio_C99_ENABLE)
+# LDFLAGS is embedded into the tclConfig.sh script.
 LDFLAGS += $(CC_BITS)
 
-CONFIGURE_OPTIONS 	+= CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS 	+= LDFLAGS="$(LDFLAGS)"
-CONFIGURE_OPTIONS	+= --enable-shared
-CONFIGURE_OPTIONS	+= --enable-man-symlinks
-CONFIGURE_OPTIONS	+= --enable-threads
-CONFIGURE_OPTIONS.64	+= --enable-64bit
+CFLAGS.studio += -xstrconst $(XPG6MODE) $(studio_C99_ENABLE)
+
+# 64-bit executables should also be delivered to relevant MACH subdirectory.
+CONFIGURE_BINDIR.64= $(USRBINDIR64)
+CONFIGURE_OPTIONS +=		--enable-shared
+CONFIGURE_OPTIONS +=		--enable-man-symlinks
+CONFIGURE_OPTIONS +=		--enable-threads
+CONFIGURE_OPTIONS.64 +=		--enable-64bit
+CONFIGURE_OPTIONS.sparc.64 +=	--enable-64bit-vis
 
 COMPONENT_TEST_ENV	+= "TZ=GMT"
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
@@ -73,21 +73,12 @@ COMPONENT_TEST_TRANSFORMS =     "'/append.test/ {results = 1}; /httpold.test/ {r
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-configure:	$(CONFIGURE_32_and_64)
+COMPONENT_POST_INSTALL_ACTION += \
+	sed -f $(COMPONENT_DIR)/files/tclsed.$(BITS) \
+		$(PROTO_DIR)$(USRLIB.$(BITS))/tclConfig.sh > \
+		$(PROTO_DIR)$(USRLIB.$(BITS))/tclConfig.sh.new; \
+	$(MV) $(PROTO_DIR)$(USRLIB.$(BITS))/tclConfig.sh.new \
+		$(PROTO_DIR)$(USRLIB.$(BITS))/tclConfig.sh; \
+	$(CHMOD) 555 $(PROTO_DIR)$(USRLIB.$(BITS))/tclConfig.sh
 
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64) $(PROTOUSRLIBDIR)/tclConfig.sh 
-
-$(PROTOUSRLIBDIR)/tclConfig.sh:		$(INSTALL_32)	
-					sed -f $(COMPONENT_DIR)/files/tclsed $(PROTOUSRLIBDIR)/tclConfig.sh > \
-						$(PROTOUSRLIBDIR)/tclConfig.sh.new
-					$(MV) $(PROTOUSRLIBDIR)/tclConfig.sh.new $(PROTOUSRLIBDIR)/tclConfig.sh
-					$(CHMOD) 555 $(PROTOUSRLIBDIR)/tclConfig.sh
-
-test: 		$(TEST_32_and_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

@@ -18,19 +18,18 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 export PARFAIT_BUILD=no
-
-COMPILER=gcc
-
+BUILD_BITS= 64
+COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gcc
 COMPONENT_VERSION=	5.3.0
 COMPONENT_PROJECT_URL=	http://gcc.gnu.org/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
     sha256:b7f5f56bd7db6f4fcaa95511dbf69fc596115b976b5352c06531c2fc95ece2f4
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/gcc/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
@@ -38,12 +37,15 @@ COMPONENT_BUGDB=        utility/gnu-compiler
 
 TPNO=			26089
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+# Use gcc's default flags instead of userland's.
+CFLAGS=
+CPPFLAGS=
+CXXFLAGS=
+
+include $(WS_MAKE_RULES)/common.mk
 
 # The GNU compiler wants the GNU utilities.
-PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
+PATH=$(GNUBIN):$(USRBINDIR):$(USRDIR)/perl5/bin
 
 PARCH =         $(MACH64:amd64=x86_64-pc)
 GNU_ARCH =      $(PARCH:sparc=sparcv9-sun)-solaris$(SOLARIS_VERSION)
@@ -62,11 +64,8 @@ LD_B_DIRECT=
 # /usr/lib/ld/map.noexdata destroys Intel
 LD_MAP_NOEXDATA.i386=
 
-# /usr/lib/ld/map.noexbss  destroys SPARC
-ifeq ($(MACH),sparc)
-LD_MAP_NOEXBSS=
-endif
-
+# /usr/lib/ld/map.noexbss destroys SPARC
+LD_MAP_NOEXBSS.sparc=
 
 # for some reason the fixincludes target fails with bash on Solaris.
 CONFIG_SHELL = /bin/sh
@@ -74,7 +73,8 @@ MAKESHELL = /bin/sh
 COMPONENT_BUILD_ENV += SHELL=$(CONFIG_SHELL)
 COMPONENT_BUILD_ENV += MAKESHELL=$(MAKESHELL)
 
-CONFIGURE_PREFIX = /usr/gcc/5.3
+CONFIGURE_PREFIX =	/usr/gcc/$(GCC_VERSION)
+CONFIGURE_INFODIR =	$(CONFIGURE_PREFIX)/share/info
 
 # We are going to build the 64-bit version of the compiler and tools, but we
 # want it to install in the normal .../{bin|lib}/... locations.  GCC will
@@ -83,7 +83,7 @@ CONFIGURE_PREFIX = /usr/gcc/5.3
 CONFIGURE_BINDIR.64 = $(CONFIGURE_PREFIX)/bin
 CONFIGURE_LIBDIR.64 = $(CONFIGURE_PREFIX)/lib
 
-CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_PREFIX)/share/info
+CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_PREFIX)/lib
 CONFIGURE_OPTIONS +=	--enable-languages="c,c++,fortran,objc"
 CONFIGURE_OPTIONS +=	--enable-shared
@@ -91,10 +91,10 @@ CONFIGURE_OPTIONS +=	--enable-initfini-array
 CONFIGURE_OPTIONS +=	--disable-rpath
 CONFIGURE_OPTIONS +=	--with-system-zlib
 CONFIGURE_OPTIONS +=	--with-build-config=no
-CONFIGURE_OPTIONS +=	--with-gmp-include=/usr/include/gmp
-CONFIGURE_OPTIONS +=	--with-mpfr-include=/usr/include/mpfr
-CONFIGURE_OPTIONS +=	--without-gnu-ld --with-ld=/usr/bin/ld
-CONFIGURE_OPTIONS +=	--with-gnu-as --with-as=/usr/gnu/bin/as
+CONFIGURE_OPTIONS +=	--with-gmp-include=$(USRINCDIR)/gmp
+CONFIGURE_OPTIONS +=	--with-mpfr-include=$(USRINCDIR)/mpfr
+CONFIGURE_OPTIONS +=	--without-gnu-ld --with-ld=$(USRBINDIR)/ld
+CONFIGURE_OPTIONS +=	--with-gnu-as --with-as=$(GNUBIN)/as
 
 # If the compiler used to build matches the compiler being built, there is no
 # need for a 3 stage build.
@@ -112,21 +112,11 @@ CONFIGURE_OPTIONS +=    $(GNU_ARCH)
 
 CONFIGURE_ENV     += PYTHON="$(PYTHON)"
 
-CONFIGURE_ENV +=	CXX_FOR_BUILD="$(CXX) $(CC_BITS)"
-
 # compile python modules
 COMPONENT_POST_INSTALL_ACTION = \
 	( gfind $(PROTO_DIR)$(CONFIGURE_PREFIX) -name '*.py' | \
 	  xargs -n 1 dirname | sort -u | \
 	  xargs $(PYTHON) -m compileall )
-
-ASLR_MODE=$(ASLR_ENABLE)
-
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
 
 # To ensure that all tests that are expected to pass actually
 # pass, we have to increase the stacksize limit to at least
@@ -138,11 +128,11 @@ COMPONENT_PRE_TEST_ACTION = ulimit -Ss 16384
 COMPONENT_TEST_ARGS = -k -i
 COMPONENT_TEST_TARGETS = check check-target
 
-COMPONENT_TEST_ENV += TCL_LIBRARY="/usr/lib/tcl8.5"
+COMPONENT_TEST_ENV += TCL_LIBRARY="$(USRLIBDIR)/tcl8.5"
 
 # We don't have DejaGNU in S11.
 ifeq ($(OS_VERSION), 5.12)
-  COMPONENT_TEST_ENV += DEJAGNULIBS="/usr/share/dejagnu"
+  COMPONENT_TEST_ENV += DEJAGNULIBS="$(USRSHAREDIR)/dejagnu"
 endif
 
 COMPONENT_TEST_TRANSFORMS += \
@@ -156,11 +146,6 @@ COMPONENT_TEST_TRANSFORMS += \
 COMPONENT_TEST_MASTER = \
 	$(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH)-$(BITS).master
 
-test:	$(TEST_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
-
 REQUIRED_PACKAGES += developer/test/dejagnu
 REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += library/isl
@@ -170,5 +155,4 @@ REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

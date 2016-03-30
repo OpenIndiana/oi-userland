@@ -21,7 +21,7 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sudo
@@ -34,18 +34,18 @@ else
 COMPONENT_VERSION=	$(SRC_VERSION)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(SRC_VERSION)
 endif
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:4316381708324da8b6cb151f655c1a11855207c7c02244d8ffdea5104d7cc308
 COMPONENT_ARCHIVE_URL=	http://www.sudo.ws/sudo/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://www.sudo.ws/
-COMPONENT_BUGDB=	utility/sudo
 
 TPNO=			26593
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
+
+# Fix 64-bit linking via compiler.
+LDFLAGS += $(CC_BITS)
+LDFLAGS += -lldap_r-2.4
 
 # Allows zero-sized struct/union declarations and void functions with return
 # statements returning a value to work.
@@ -53,10 +53,8 @@ CFLAGS += -features=extensions
 
 COMPONENT_PREP_ACTION = ( cd $(@D) ; $(AUTORECONF) -f -I m4 )
 
-CONFIGURE_ENV +=	"CFLAGS=$(CFLAGS)"
+CPPFLAGS += -I$(USRINCDIR)/openldap
 CONFIGURE_ENV +=	"MAKE=$(GMAKE)"
-CONFIGURE_ENV +=	"CPPFLAGS=$(CPPFLAGS) -I/usr/include/openldap"
-CONFIGURE_ENV +=	"LDFLAGS=$(LDFLAGS) -m64 -lldap_r-2.4"
 
 CONFIGURE_OPTIONS +=	--with-ldap
 CONFIGURE_OPTIONS +=	--with-project
@@ -69,15 +67,10 @@ CONFIGURE_OPTIONS +=	--without-insults
 CONFIGURE_OPTIONS +=	--without-lecture
 CONFIGURE_OPTIONS +=	--with-ignore-dot
 CONFIGURE_OPTIONS +=	--with-solaris-audit
-CONFIGURE_OPTIONS +=	--libexecdir=/usr/lib/$(MACH64)/sudo
+CONFIGURE_OPTIONS +=	--libexecdir=$(USRLIBDIR64)/sudo
 CONFIGURE_OPTIONS +=	"sudo_cv_var_nroff_opt_Tascii=no"
 
-COMPONENT_BUILD_ENV +=	CC=$(CC) CXX=$(CXX)
-COMPONENT_BUILD_ENV +=	"CFLAGS=$(CFLAGS)"
-
 COMPONENT_INSTALL_TARGETS = install
-COMPONENT_INSTALL_ARGS += bindir=$(USRBINDIR)
-COMPONENT_INSTALL_ARGS += sbindir=$(USRSBINDIR)
 
 # Avoid calling "chown 0" on installed files
 COMPONENT_INSTALL_ARGS += INSTALL_OWNER=
@@ -97,25 +90,9 @@ COMPONENT_TEST_CMD = \
 COMPONENT_TEST_TRANSFORMS += '-e "/^parse_gids_test\|^strsplit_test\|^atofoo_test\|^hltq_test\|^sudo_conf\|^sudo_parseln\|^check_addr\|^check_base64\|^check_fill\|^iolog_path\|^check_symbols\|^sudoers\|^testsudoers\|^visudo\|^check_ttyname/!d"'
 COMPONENT_TEST_TRANSFORMS += '-e "s/\(\/dev\/pts\/\)[0-9][0-9]*/\1\#/"'
 
-# Enable aslr for this component
-ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
-
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
 VISUDO=$(BUILD_DIR_64)/plugins/sudoers/visudo
-test:		$(TEST_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
 
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/crypto
 REQUIRED_PACKAGES += text/groff/groff-core

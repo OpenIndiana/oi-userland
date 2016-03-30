@@ -20,32 +20,26 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		groff
 COMPONENT_VERSION=	1.22.2
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/groff/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
     sha256:380864dac4772e0c0d7b1282d25d0c5fd7f63baf45c87c4657afed22a13d2076
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/groff
 
 TPNO=			8829
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
+TEST_TARGET= $(NO_TESTS)
 
 # Complex dependencies on ON only available in S12.
 ifeq ($(BUILD_TYPE), evaluation)
 PUBLISH_STAMP=
 endif
 
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/gnu-component.mk
 
 # The grog.sh script needs GNU awk not the Solaris one.
 COMPONENT_PRE_CONFIGURE_ACTION = \
@@ -64,16 +58,11 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 		-e 's/_GL_INLINE_HEADER_END//' \
 		$(SOURCE_DIR)/src/libs/gnulib/lib/wctype.in.h
 
-# Everything is under /usr/bin and /usr/lib so set bindir and libdir correctly.
-CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/bin
-CONFIGURE_LIBDIR.64 =	$(CONFIGURE_PREFIX)/lib
+# Deliver scripts from 64-bit build to the 32-bit location.
+CONFIGURE_LIBDIR.64 =	$(CONFIGURE_LIBDIR.32)
 
 CONFIGURE_OPTIONS += \
     --with-appresdir=$(CONFIGURE_PREFIX)/X11/lib/X11/app-defaults
-
-CONFIGURE_OPTIONS +=	CXX="$(CXX)"
-CONFIGURE_OPTIONS +=	CXXFLAGS="$(CXXFLAGS)"
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 
 # Don't generate tmac wrappers for the Solaris troff macro packages.
 # Some man pages (such as groff.1) use long macro name definitions
@@ -88,25 +77,10 @@ COMPONENT_INSTALL_ARGS += sys_tmac_prefix=$(PROTOUSRSHARELIBDIR)/tmac/
 COMPONENT_PRE_INSTALL_ACTION = \
 	($(MKDIR) $(PROTOUSRBINDIR) )
 
-ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
-
 REQUIRED_PACKAGES += runtime/perl-512
 REQUIRED_PACKAGES += runtime/perl-520
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/c++-runtime
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += text/doctools

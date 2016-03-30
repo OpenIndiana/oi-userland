@@ -20,31 +20,25 @@
 #
 
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		check
 COMPONENT_VERSION=	0.9.14
 COMPONENT_PROJECT_URL=	http://check.sourceforge.net/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:c272624645b1b738cf57fd5d81a3e4d9b722b99d6133ee3f3c4007d4d279840a
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/$(COMPONENT_NAME)/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/check
 
 TPNO=			19836
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+SYSTEM_TEST_TARGET= configure $(SYSTEM_TEST_32_and_64)
+include $(WS_MAKE_RULES)/common.mk
 
 # Several tests fail when the Studio compiler is used.
 COMPILER =      gcc
-
-CC +=		$(CC_BITS)
 
 # Override tests in m4/acx_pthread.m4 that try to set obsolete/incompatible
 # flags for linking threaded code on Solaris.
@@ -73,20 +67,9 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/PASS/p" ' \
         '-e "/FAIL/p" '
 
-COMPONENT_SYSTEM_TEST_ENV =	CHECKMK_SCRIPT=/usr/bin/checkmk
+COMPONENT_SYSTEM_TEST_ENV =	CHECKMK_SCRIPT=$(USRBINDIR)/checkmk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-configure:	$(CONFIGURE_32_and_64)
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-
-system-test:    configure $(SYSTEM_TEST_32_and_64)
-
-REQUIRED_PACKAGES +=	system/library
 REQUIRED_PACKAGES +=	system/library/math
 REQUIRED_PACKAGES +=	text/gawk

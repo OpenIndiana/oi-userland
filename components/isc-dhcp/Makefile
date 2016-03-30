@@ -18,8 +18,11 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		isc-dhcp
@@ -27,8 +30,6 @@ COMPONENT_VERSION=	4.1-ESV-R7
 HUMAN_VERSION=		$(COMPONENT_VERSION)-P1
 IPS_COMPONENT_VERSION=	4.1.0.7.1
 COMPONENT_SRC_NAME=	dhcp
-COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	http://www.isc.org/software/dhcp/
 COMPONENT_ARCHIVE_URL=  \
     http://ftp.isc.org/isc/dhcp/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
@@ -38,10 +39,8 @@ COMPONENT_BUGDB=	service/dhcp-server
 
 TPNO=			10383
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-include $(WS_MAKE_RULES)/lint-libraries.mk
+INSTALL_TARGET=
+include $(WS_MAKE_RULES)/common.mk
 
 LINT_FLAGS +=   -I$(BUILD_DIR_32)/includes \
 	-I$(BUILD_DIR_64)/includes -I$(SOURCE_DIR)/includes -I.
@@ -62,22 +61,12 @@ CONFIGURE_OPTIONS  +=	--with-pic
 
 # Disable message in omapip/errwarn.c.
 CPPFLAGS  +=	        -DNOMINUM
-CONFIGURE_OPTIONS  +=   CPPFLAGS="$(CPPFLAGS)"
 
 CFLAGS += -g -fPIC
-CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 
 COMPONENT_TEST_DIR =	$(@D)
 
-configure:	$(CONFIGURE_32_and_64)
-
-build:		$(BUILD_32_and_64)
-
 install:	build $(INSTALL_32_and_64) $(PROTO_DIR)/dhcpd.leases
-
-test:		$(TEST_32_and_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
 $(PROTO_DIR)/dhcpd.leases:	$(INSTALL_32_and_64)
 	$(TOUCH) $@
@@ -85,5 +74,4 @@ $(PROTO_DIR)/dhcpd.leases:	$(INSTALL_32_and_64)
 
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/network

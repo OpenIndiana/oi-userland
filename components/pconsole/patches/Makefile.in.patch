@@ -1,0 +1,32 @@
+Honor DESTDIR when installing files; simplifies build and packaging.
+
+Appropriate for upstream.
+--- pconsole-1.0.old/Makefile.in	2001-04-06 18:38:45.000000000 -0700
++++ pconsole-1.0/Makefile.in	2015-12-09 14:18:22.312611616 -0800
+@@ -79,19 +79,19 @@
+ install: all
+ 	@( \
+ 		echo "installing pconsole ..."; \
+-		mkdir -p $(bindir) 2>/dev/null ; \
+-		@INSTALL_PROGRAM@ pconsole $(bindir) ;		\
+-		@INSTALL_SCRIPT@ pconsole.sh $(bindir) ;	\
+-		@INSTALL_SCRIPT@ ssh.sh $(bindir) ;			\
++		mkdir -p "$(DESTDIR)$(bindir)" 2>/dev/null ; \
++		@INSTALL_PROGRAM@ pconsole "$(DESTDIR)$(bindir)" ;		\
++		@INSTALL_SCRIPT@ pconsole.sh "$(DESTDIR)$(bindir)" ;	\
++		@INSTALL_SCRIPT@ ssh.sh "$(DESTDIR)$(bindir)" ;			\
+ 		echo ;	\
+ 		echo "Note: You may want to make pconsole setuid root with the following commands:";	\
+ 		echo ;	\
+-		echo "   chown root $(bindir)/pconsole ; chmod 4110 $(bindir)/pconsole" ; \
++		echo "   chown root $(DESTDIR)$(bindir)/pconsole ; chmod 4110 $(DESTDIR)$(bindir)/pconsole" ; \
+ 		echo \
+ 	)
+ 
+ uninstall:
+-	rm -f $(bindir)/pconsole $(bindir)/pconsole.sh $(bindir)/ssh.sh ; \
+-	rmdir $(bindir) 2>/dev/null
++	rm -f $(DESTDIR)$(bindir)/pconsole $(DESTDIR)$(bindir)/pconsole.sh $(DESTDIR)$(bindir)/ssh.sh ; \
++	rmdir $(DESTDIR)$(bindir) 2>/dev/null
+ 
+ # EOB

@@ -20,35 +20,32 @@
 #
 
 #
-# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ncurses
 COMPONENT_VERSION=	5.7
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/ncurses/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
     sha256:0a9bdea5c7de8ded5c9327ed642915f2cc380753f12d4ad120ef7da3ea3498f4
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/ncurses
 
 TPNO=			5931
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/gnu-component.mk
 
 # Needed to make "gmake test" work.
-COMPONENT_PRE_CONFIGURE_ACTION = \
+COMPONENT_PRE_CONFIGURE_ACTION += \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_PREFIX =	/usr/gnu
 
-# Needed to correctly build that 64-bit library.
+# Fix 64-bit linking via compiler.
 LDFLAGS += $(CC_BITS)
+
+# Expects GNU install.
+CONFIGURE_ENV += INSTALL="$(INSTALL)"
 
 CONFIGURE_OPTIONS +=	--with-shared
 CONFIGURE_OPTIONS +=	--with-normal
@@ -57,17 +54,17 @@ CONFIGURE_OPTIONS +=	--enable-widec
 CONFIGURE_OPTIONS +=	--includedir=$(USRINCDIR)/ncurses
 CONFIGURE_OPTIONS +=	--with-default-terminfo-dir=$(GNUSHARE)/terminfo
 
-# Needed to pass -m32 or -m64 to the C/C++ compiler and linker.
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS +=	CXXFLAGS="$(CXXFLAGS)"
-CONFIGURE_OPTIONS +=	LDFLAGS="$(LDFLAGS)"
-
 # XXX: Ugly hack copied directly from the desktop SUNWncurses.spec file:
 # The sun-color terminfo included in ncurses does not work;
 # copying the one shipped with Sun's curses fixes it:
 COMPONENT_POST_INSTALL_ACTION += \
 	$(CP) /usr/share/lib/terminfo/s/sun-color \
-	$(PROTO_DIR)$(GNUSHARE)/terminfo/s/
+	$(PROTO_DIR)$(GNUSHARE)/terminfo/s/;
+
+# We only deliver 64-bit binaries and in /usr/bin.
+COMPONENT_POST_INSTALL_ACTION.32 += \
+	$(GSED) -i -e 's|$(GNUBIN)/i86|$(GNUBIN)|' \
+		$(PROTOGNUBIN)/$(MACH32)/ncurses5-config;
 
 # There is no master test file because tests are interactive and not
 # tied to the build.
@@ -78,17 +75,6 @@ ASLR_MODE = $(ASLR_ENABLE)
 
 $(SKIP_TEST_AT_TOP_LEVEL)
 
-# common targets
-configure:	$(CONFIGURE_32_and_64)
-
-build:          $(BUILD_32_and_64)
-
-install:        $(INSTALL_32_and_64)
-
-test:           $(TEST_32_and_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
-
 REQUIRED_PACKAGES += shell/bash
-REQUIRED_PACKAGES += system/library
+# Required by this Makefile.
+REQUIRED_PACKAGES += system/data/terminfo/terminfo-core

@@ -18,12 +18,22 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
-#
 
 #
-# This file sets up the default options and base requirements for
-# autoconf-based components that should be built architecture independent.
+# Copyright (c) 2007, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-include $(WS_MAKE_RULES)/configure.mk
-configure:      $(CONFIGURE_NO_ARCH)
+/^TK_BUILD_LIB_SPEC=/c\
+TK_BUILD_LIB_SPEC='-ltk8.5'
+
+/^TK_SRC_DIR=/c\
+TK_SRC_DIR=
+
+/^TK_BUILD_STUB_LIB_SPEC=/c\
+TK_BUILD_STUB_LIB_SPEC='-ltkstub8.5'
+
+/^TK_BUILD_STUB_LIB_PATH=/c\
+TK_BUILD_STUB_LIB_PATH='/usr/lib/64/libtkstub8.5.a'
+
+s,-lsunmath,,
+s,-L/usr/lib/amd64 ,,
+s,-L/usr/lib/sparcv9 ,,

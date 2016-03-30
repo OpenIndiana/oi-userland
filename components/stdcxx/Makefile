@@ -18,23 +18,21 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
-
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 64_and_32
 # we really need to use studio so we don't like that
-# parfait is g++ in disguise
+# parfait is clang/llvm in disguise
 export PARFAIT_BUILD=no
-
 include ../../make-rules/shared-macros.mk
 
-PATH=$(dir $(CC)):/usr/gnu/bin:/usr/bin
+PATH=$(dir $(CC)):$(GNUBIN):$(USRBINDIR)
 
 COMPONENT_NAME=		stdcxx
 COMPONENT_VERSION=	4.2.1
 COMPONENT_PROJECT_URL=	http://stdcxx.apache.org/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://stdcxx.apache.org/
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:00854223cbd947bf1bd85d9dabd1b2829706d9062e0007d5022082a5e4b7e15e
 COMPONENT_ARCHIVE_URL=	http://www.apache.org/dist/stdcxx/$(COMPONENT_ARCHIVE)
@@ -44,9 +42,8 @@ TPNO=			9048
 
 CLEAN_PATHS += install.sh
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+INSTALL_TARGET=
+include $(WS_MAKE_RULES)/common.mk
 
 SUNPRO_VERSION	:= $(shell $(CXX) -V 2>&1 | head -n1 \
   | sed 's/.*C++ *\([^ ]*\).*/\1/')
@@ -90,12 +87,8 @@ ISA_PATCHES_32 = $(ISA_PATCHES_$(MACH))
 ISA_PATCHES_64 = $(ISA_PATCHES_$(MACH64))
 ISA_PATCHES = $(ISA_PATCHES_$(BITS))
 
-PATCH_LEVEL = 1
-
 TOPDIR = $(COMPONENT_DIR)/$(COMPONENT_SRC)
 LOCAL_BUILDDIR = $(TOPDIR)/build
-MARG = -m$(BITS)
-PICFLAG = -KPIC -DPIC
 
 # Please see the README file in this directory for a detailed explanation
 # about these flags, what they do, and why we need them.
@@ -106,7 +99,7 @@ FLAGS_amd64 = -m64 -xarch=generic
 CFLAGS_sparc = -Xc -features=extinl  -xvis=yes
 CFLAGS_sparc += -Qoption cg -xregs=no%appl -xbuiltin=%none -xO4 $(PICFLAG)
 CFLAGS_i386 = -Xc -features=extinl -xregs=no%frameptr
-CFLAGS_i386 += -xO3 -xbuiltin=%none $(PICFLAG)
+CFLAGS_i386 += -xO3 -xbuiltin=%none $(CC_PIC)
 
 CFLAGS_32 = $(FLAGS_$(MACH)) $(CFLAGS_$(MACH))
 CFLAGS_64 = $(FLAGS_$(MACH64)) $(CFLAGS_$(MACH))
@@ -137,7 +130,7 @@ CXXFLAGS_GENERIC += -xlang=c99
 CXXFLAGS_GENERIC += -xbuiltin=%none
 CXXFLAGS_GENERIC += -xinline=
 CXXFLAGS_GENERIC += -xlibmieee
-CXXFLAGS_GENERIC += -z ignore $(PICFLAG)
+CXXFLAGS_GENERIC += $(LD_Z_IGNORE) $(PICFLAG)
 CXXFLAGS_GENERIC += -mt -D_REENTRANT -DNDEBUG
 CXXFLAGS_GENERIC += -D_IN_BUILD_STDCXX
 CXXFLAGS_GENERIC += -D__EXTENSIONS__
@@ -160,29 +153,25 @@ CPPFLAGS += -I$(TOPDIR)/include
 # -mt will automatically pass -lthread unless we pass -lpthread
 #  on link line. -lthread causes regressions. see man CC(1) and -mt.
 #  -lumem must be passed before -lc.
-LDFLAGS = -lpthread -lumem -lm -lc -s -z ignore
+LDFLAGS = -lpthread -lumem -lm -lc -s $(LD_Z_IGNORE)
 
 # We cannot have -B direct
 LD_OPTIONS = -M /usr/lib/ld/map.noexstk -M /usr/lib/ld/map.noexdata 
 LD_OPTIONS += -M /usr/lib/ld/map.pagealign
-LD_OPTIONS += -lpthread -lumem -lm -lc -s -z ignore
+LD_OPTIONS += -lpthread -lumem -lm -lc -s $(LD_Z_IGNORE)
 
 # If I name it NLSPATH, gmake insists on getting its value from the
 # running environment. Also, it all has to be on one line. += prepends
 # a whitespace.
 BUILD_NLSPATH = :%N.cat:/usr/lib/locale/%L/%N.cat:/usr/share/locale/%L/%N.cat:$(BUILD_DIR_$(BITS))/lib/rwstderr.cat
 
-CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_ENV +=	CPPFLAGS="$(CPPFLAGS)"
-CONFIGURE_ENV +=	CXXFLAGS="$(CXXFLAGS)"
-CONFIGURE_ENV +=	LDFLAGS="$(LDFLAGS)"
 CONFIGURE_ENV +=	LD_OPTIONS="$(LD_OPTIONS)"
 CONFIGURE_ENV +=	LD="$(CXX) $(CXXFLAGS) $(LDFLAGS)"
 CONFIGURE_ENV +=	MAKE="$(MAKE)"
 CONFIGURE_ENV +=	TOPDIR="$(TOPDIR)"
 CONFIGURE_ENV +=	MAKEFLAGS=""
 
-CONFIGURE_OPTIONS  =		$(MARG)
+CONFIGURE_OPTIONS  =		$(CC_BITS)
 CONFIGURE_OPTIONS  +=		-topdir=$(TOPDIR)
 CONFIGURE_OPTIONS  +=		-builddir=$(LOCAL_BUILDDIR)
 
@@ -257,12 +246,6 @@ COMPONENT_TEST_CMD = \
 
 COMPONENT_TEST_TARGETS =
 
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
-configure:	$(CONFIGURE_32_and_64)
-
-build: $(BUILD_32_and_64)
-
 install: $(BUILD_DIR_32)/.built $(BUILD_DIR_64)/.built
 	$(CP) $(COMPONENT_DIR)/Solaris/install.sh $(COMPONENT_DIR)/
 	$(CHMOD) 0755 $(COMPONENT_DIR)/install.sh
@@ -282,15 +265,11 @@ install: $(BUILD_DIR_32)/.built $(BUILD_DIR_64)/.built
 	    -mach64=$(MACH64) )
 	test -d $(TOPDIR) || $(MKDIR) $(TOPDIR)
 
-test:	$(TEST_32_and_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+CLEAN_PATHS += $(COMPONENT_SRC)-32 $(COMPONENT_SRC)-64
 
 clean::
-	$(RM) -r $(COMPONENT_SRC) $(COMPONENT_SRC)-32 $(COMPONENT_SRC)-64
 	$(RM) -f *.sed *.out
 
 
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/c++-runtime
 REQUIRED_PACKAGES += system/library/math

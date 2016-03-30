@@ -18,34 +18,32 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
-
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+# Normally, 64-bit binaries are preferred over 32-bit ones, but we prefer
+# 32-bit for this component to keep the historical defaults used by autogen for
+# 32-bit and 64-bit.
+BUILD_BITS= 32_and_64
 # built in SFW with gcc and builds cleanly now only with gcc
-COMPILER =	gcc
-
+COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		autogen
 COMPONENT_VERSION=	5.16.2
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/autogen/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:aa51f5adbf49c2cb48a7d6de3dbab15b89e0a04e7152195fe6fb3380e05c4991
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/autogen/rel$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/autogen
 
 TPNO=			11805
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+# Tests need to be built.
+SYSTEM_TEST_TARGET= build $(SYSTEM_TEST_32_and_64)
+include $(WS_MAKE_RULES)/gnu-component.mk
 
 # build target is incorrect without this 
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
-
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 
 # strip the environment or install target fails
 ENV +=	-i
@@ -74,29 +72,14 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/FAIL/p" ' \
 	'-e "/passed/p" '
 
-COMPONENT_SYSTEM_TEST_ENV +=	CLexe=/usr/bin/columns
-COMPONENT_SYSTEM_TEST_ENV +=	GDexe=/usr/bin/getdefs
-COMPONENT_SYSTEM_TEST_ENV +=	AGexe=/usr/bin/autogen
-
-ASLR_MODE = $(ASLR_ENABLE)
-
-configure:	$(CONFIGURE_32_and_64)
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-
-# Tests need to be built.
-system-test:	build $(SYSTEM_TEST_32_and_64)
-
+COMPONENT_SYSTEM_TEST_ENV +=	CLexe=$(USRBINDIR)/columns
+COMPONENT_SYSTEM_TEST_ENV +=	GDexe=$(USRBINDIR)/getdefs
+COMPONENT_SYSTEM_TEST_ENV +=	AGexe=$(USRBINDIR)/autogen
 
 REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += library/guile
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += shell/bash
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/gcc-3-runtime
 REQUIRED_PACKAGES += system/library/gcc-45-runtime
 REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime

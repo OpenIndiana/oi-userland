@@ -18,25 +18,26 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pigz
 COMPONENT_VERSION=	2.2.5
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://zlib.net/pigz/
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:e37498cbf3a475d7ebe2519751188c29564bf8dd27ba68bd3c7fe1ac08792759
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/pigz
 
 TPNO=			11152
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+BUILD_STYLE= justmake
+INSTALL_TARGET= build
+SYSTEM_TEST_TARGET= $(SYSTEM_TEST_64)
+include $(WS_MAKE_RULES)/common.mk
 
 PKG_PROTO_DIRS += $(BUILD_DIR_64)
 
@@ -46,19 +47,11 @@ CC += $(CC_BITS)
 COMPONENT_BUILD_ARGS += CC="$(CC)"
 COMPONENT_BUILD_ARGS += CFLAGS="$(CFLAGS) -DHAVE_PTHREAD_SETNAME_NP"
 COMPONENT_SYSTEM_TEST_TARGETS=	test
-COMPONENT_SYSTEM_TEST_ENV=	TARGETDIR=/usr/bin
+COMPONENT_SYSTEM_TEST_ENV=	TARGETDIR=$(USRBINDIR)
 COMPONENT_TEST_TARGETS=	test
 # Ignore these warnings that can come in random order.
 COMPONENT_TEST_TRANSFORMS += \
     '-e "/^.*does not .* -- skipping/d" ' \
     '-e "s|/usr/bin|\\$$(@D)|g" '
 
-ASLR_MODE = $(ASLR_ENABLE)
-
-build:		$(BUILD_64)
-install:	$(BUILD_64)
-test:		$(TEST_64)
-system-test:    $(SYSTEM_TEST_64)
-
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += system/library

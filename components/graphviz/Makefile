@@ -22,26 +22,25 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		graphviz
 COMPONENT_VERSION=	2.28.0
 COMPONENT_PROJECT_URL=	http://www.graphviz.org/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:d3aa7973c578cae4cc26d9d6498c57ed06680cab9a4e940d0357a3c6527afc76
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)pub/graphviz/stable/SOURCES/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/graphviz
 
 TPNO=			17707
 
 PERL_VERSIONS = $(PERL_VERSION)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+# There are tests, but they fail consistently because the test samples are out
+# of date and not generated with a known configuration.  See
+# http://graphviz.org/bugs/b2063.html
+TEST_TARGET= $(SKIP_TEST)
+include $(WS_MAKE_RULES)/common.mk
 
 PATH =		/usr/php/5.6/bin:/usr/bin:/usr/gnu/bin
 
@@ -54,9 +53,6 @@ CPPFLAGS +=	-I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/solaris
 CPPFLAGS +=	$(shell PATH=$(PATH) php-config --includes)
 CXX +=		$(studio_NORUNPATH)
 
-CONFIGURE_ENV +=	CPPFLAGS="$(CPPFLAGS)"
-CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_ENV +=	CXXFLAGS="$(CXXFLAGS)"
 # Make sure to use the right python, depending on the 32/64-bit build.
 CONFIGURE_ENV +=	PYTHON27=$(PYTHON.2.7)
 CONFIGURE_OPTIONS +=	--without-included-ltdl
@@ -64,7 +60,7 @@ CONFIGURE_OPTIONS +=	--enable-python=no
 CONFIGURE_OPTIONS +=	--enable-python27=yes
 CONFIGURE_OPTIONS +=	--x-libraries=$(CONFIGURE_LIBDIR.$(BITS))
 
-COMPONENT_BUILD_ARGS += 	GREP=/usr/bin/ggrep
+COMPONENT_BUILD_ARGS += 	GREP=$(USRBINDIR)/ggrep
 
 # perl, ruby, php ship 64-bit only.
 $(CONFIGURE_32): CONFIGURE_OPTIONS +=	--enable-perl=no
@@ -77,36 +73,24 @@ $(INSTALL_64): COMPONENT_INSTALL_ARGS += PHP_INSTALL_DIR=$(shell PATH=$(PATH) ph
 # is no place to stick 64-bit modules, so skip it.  On the other hand, make
 # sure to find the right tcl bits when building 32-bit.
 $(CONFIGURE_64): CONFIGURE_OPTIONS +=	--enable-tcl=no
-$(CONFIGURE_32): CONFIGURE_OPTIONS +=	--with-tclsh=/usr/bin/$(MACH32)/tclsh
-$(CONFIGURE_32): CONFIGURE_ENV += 	TCLCONFIG=/usr/lib/tclConfig.sh
+$(CONFIGURE_32): CONFIGURE_OPTIONS +=	--with-tclsh=$(USRBINDIR)/$(MACH32)/tclsh
+$(CONFIGURE_32): CONFIGURE_ENV += 	TCLCONFIG=$(USRLIBDIR)/tclConfig.sh
 # Put the 64-bit lua module in a 64-bit directory.
-$(INSTALL_32): COMPONENT_INSTALL_ARGS += LUA_INSTALL_DIR=/usr/lib/lua/5.2
-$(INSTALL_64): COMPONENT_INSTALL_ARGS += LUA_INSTALL_DIR=/usr/lib/lua/5.2/64
+$(INSTALL_32): COMPONENT_INSTALL_ARGS += LUA_INSTALL_DIR=$(USRLIBDIR)/lua/5.2
+$(INSTALL_64): COMPONENT_INSTALL_ARGS += LUA_INSTALL_DIR=$(USRLIBDIR)/lua/5.2/64
 # Use GNU ln, which supports the -r (--relative) option.
 COMPONENT_INSTALL_ARGS += LN_S="gln -s"
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 # We build 32 and 64 bit because we build libraries, and we build modules for
 # runtimes which provide 64 or 32 (or both) bit environments.
-configure:	$(CONFIGURE_32_and_64)
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-	env LD_LIBRARY_PATH=$(PROTO_DIR)/usr/lib GVBINDIR=$(PROTO_DIR)/usr/lib/graphviz $(PROTO_DIR)/usr/bin/dot -c
+COMPONENT_POST_INSTALL_ACTION += \
+	env LD_LIBRARY_PATH=$(PROTOUSRLIBDIR) GVBINDIR=$(PROTOUSRLIBDIR)/graphviz \
+		$(PROTOUSRBINDIR)/dot -c; \
 	$(PYTHON.2.7.32) -m compileall $(PROTO_DIR)/$(PYTHON.2.7.VENDOR_PACKAGES)
 
 # The test infrastructure doesn't run in a VPATHed environment.
 COMPONENT_PRE_TEST_ACTION = \
 	(cd $(@D)/rtest; ln -s $(SOURCE_DIR)/rtest/* .)
-
-# There are tests, but they fail consistently because the test samples are out
-# of date and not generated with a known configuration.  See
-# http://graphviz.org/bugs/b2063.html
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
 
 REQUIRED_PACKAGES += image/graphviz
 REQUIRED_PACKAGES += image/library/libjpeg
@@ -129,7 +113,6 @@ REQUIRED_PACKAGES += $(PERL_PKG)
 REQUIRED_PACKAGES += runtime/ruby-21
 REQUIRED_PACKAGES += runtime/tk-8
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/c++-runtime
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2

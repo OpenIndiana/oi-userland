@@ -20,16 +20,14 @@
 #
 
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME         = libdaemon
 COMPONENT_VERSION      = 0.14
 COMPONENT_PROJECT_URL  = http://0pointer.de/lennart/projects/libdaemon/
-COMPONENT_SRC          = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE      = $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH = \
 	 sha256:fd23eb5f6f986dcc7e708307355ba3289abe03cc381fc47a80bca4a50aa6b834
 COMPONENT_ARCHIVE_URL  = http://0pointer.de/lennart/projects/libdaemon/$(COMPONENT_ARCHIVE)
@@ -37,24 +35,8 @@ COMPONENT_BUGDB        = library/daemon
 
 TPNO                   = 9316
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -if)
 
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-
-CONFIGURE_ENV         += "CFLAGS=$(CFLAGS)"
-
-configure:	$(CONFIGURE_32_and_64)
-
-build:          $(BUILD_32_and_64)
-
-install:        $(INSTALL_32_and_64)
-
-test:           $(TEST_32_and_64)
-
-system-test:	$(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
-REQUIRED_PACKAGES += system/library

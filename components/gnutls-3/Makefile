@@ -22,12 +22,11 @@
 #
 # Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnutls
 COMPONENT_VERSION=	3.4.6
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  ftp://ftp.gnutls.org/gcrypt/gnutls/v3.4
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
@@ -39,10 +38,6 @@ TPNO=			25396
 
 COMPONENT_BUILD_TARGETS = all info
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
 # The GnuTLS API and ABI have incompatible changes between versions 2.8.6
 # and 3.4.1; but the basic symlink name 'libgnutls.so' and pkg-config file
 # name 'gnutls.pc' are unchanged.  As a result, it's not possible to have
@@ -52,9 +47,6 @@ include $(WS_MAKE_RULES)/ips.mk
 # called gnutls-3 temporarily.  The plan is to integrate 3.4.1 and move all
 # programs to 3.4.1; after all usage of 2.8.6  excised, move 3.4.1 to the
 # default location.
-
-MCS = mcs
-STRIP = strip
 
 # We need to build an extra static version of this library for
 # GRUB/Wanboot support.
@@ -70,6 +62,18 @@ BUILD_32_and_64 += $(WANBOOT_BUILD)
 INSTALL_32_and_64 += $(WANBOOT_INSTALL)
 
 endif
+
+include $(WS_MAKE_RULES)/common.mk
+
+CFLAGS += -I$(USRINCDIR)/gmp
+CFLAGS += -I$(USRINCDIR)/idn
+
+# Force libtool to pass this flag through using -Wc.
+# https://www.gnu.org/software/libtool/manual/html_node/Stripped-link-flags.html
+CXXFLAGS.studio += -Wc,$(studio_NORUNPATH)
+
+MCS = mcs
+STRIP = strip
 
 # Set the wanboot CFLAGS as needed for the wanboot compilation
 
@@ -248,32 +252,26 @@ CONFIGURE_OPTIONS.wanboot += ac_cv_libnsl=no
 CONFIGURE_OPTIONS.wanboot += ac_cv_libpthread=no
 CONFIGURE_OPTIONS.wanboot += ac_cv_librt=no
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc 
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS += --mandir=/usr/share/$(COMPONENT_NAME)-3/man
-CONFIGURE_OPTIONS += --includedir=/usr/include/$(COMPONENT_NAME)-3/
-CONFIGURE_OPTIONS.32 += --libdir=/usr/lib/$(COMPONENT_NAME)-3/
-CONFIGURE_OPTIONS.64 += --libdir=/usr/lib/$(MACH64)/$(COMPONENT_NAME)-3/
-CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib/pkgconfig/$(COMPONENT_NAME)-3/
-CONFIGURE_OPTIONS.64 += --libexecdir=/usr/lib/$(MACH64)/pkgconfig/$(COMPONENT_NAME)-3/
-CONFIGURE_OPTIONS += --localedir=/usr/share/locale/$(COMPONENT_NAME)-3/
-CONFIGURE_OPTIONS += --localstatedir=/var 
+CONFIGURE_OPTIONS += --mandir=$(USRSHAREDIR)/$(COMPONENT_NAME)-3/man
+CONFIGURE_OPTIONS += --includedir=$(USRINCDIR)/$(COMPONENT_NAME)-3/
+CONFIGURE_OPTIONS.32 += --libdir=$(USRLIBDIR)/$(COMPONENT_NAME)-3/
+CONFIGURE_OPTIONS.64 += --libdir=$(USRLIBDIR64)/$(COMPONENT_NAME)-3/
+CONFIGURE_OPTIONS.32 += --libexecdir=$(USRLIBDIR)/pkgconfig/$(COMPONENT_NAME)-3/
+CONFIGURE_OPTIONS.64 += --libexecdir=$(USRLIBDIR64)/pkgconfig/$(COMPONENT_NAME)-3/
+CONFIGURE_OPTIONS += --localedir=$(USRSHARELOCALEDIR)/$(COMPONENT_NAME)-3/
+CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS += --enable-guile=no
 CONFIGURE_OPTIONS += --with-included-libtasn1
 CONFIGURE_OPTIONS += --without-p11-kit
 CONFIGURE_OPTIONS += --disable-ecdhe
 CONFIGURE_OPTIONS += --disable-openssl-compatibility
 CONFIGURE_OPTIONS += --disable-tests
-CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS) -I/usr/include/gmp -I/usr/include/idn $(CC_BITS)"
-CONFIGURE_OPTIONS += CXX="$(CXX) -norunpath $(CC_BITS)"
-
-CONFIGURE_ENV += LDFLAGS="$(LDFLAGS) $(CC_BITS)" 
 
 ASLR_MODE = $(ASLR_ENABLE)
 
 include ../../make-rules/shared-targets.mk
-
-configure:      $(CONFIGURE_32_and_64)
 
 $(BUILD_DIR)/wanboot-amd64/.configured: BITS=64
 $(BUILD_DIR)/wanboot-amd64/.configured: COMPILER=gcc
@@ -281,26 +279,22 @@ $(BUILD_DIR)/wanboot-amd64/.configured: CFLAGS += $(CFLAGS.wanboot)
 $(BUILD_DIR)/wanboot-amd64/.configured: \
 	CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.wanboot)
 
-build:          $(BUILD_32_and_64)
-
-install:        $(INSTALL_32_and_64)
-
 $(BUILD_DIR)/wanboot-amd64/.installed: \
 	COMPONENT_POST_INSTALL_ACTION += \
-	$(MKDIR) $(PROTO_DIR)/usr/lib/grub/wanboot;
+	$(MKDIR) $(PROTOUSRLIBDIR)/grub/wanboot;
 $(BUILD_DIR)/wanboot-amd64/.installed: \
 	COMPONENT_POST_INSTALL_ACTION += \
-	$(MV) $(PROTO_DIR)/usr/lib/amd64/$(COMPONENT_NAME)-3/libgnutls.a \
-	$(PROTO_DIR)/usr/lib/grub/wanboot/libgnutls.a;
+	$(MV) $(PROTOUSRLIBDIR64)/$(COMPONENT_NAME)-3/libgnutls.a \
+	$(PROTOUSRLIBDIR)/grub/wanboot/libgnutls.a;
 $(BUILD_DIR)/wanboot-amd64/.installed: \
 	COMPONENT_POST_INSTALL_ACTION += \
-	$(STRIP) -x  $(PROTO_DIR)/usr/lib/grub/wanboot/libgnutls.a;
+	$(STRIP) -x  $(PROTOUSRLIBDIR)/grub/wanboot/libgnutls.a;
 $(BUILD_DIR)/wanboot-amd64/.installed: \
 	COMPONENT_POST_INSTALL_ACTION += \
-	$(MCS) -d $(PROTO_DIR)/usr/lib/grub/wanboot/libgnutls.a;
+	$(MCS) -d $(PROTOUSRLIBDIR)/grub/wanboot/libgnutls.a;
 $(BUILD_DIR)/wanboot-amd64/.installed: \
 	COMPONENT_POST_INSTALL_ACTION += \
-	$(AR) ts $(PROTO_DIR)/usr/lib/grub/wanboot/libgnutls.a;
+	$(AR) ts $(PROTOUSRLIBDIR)/grub/wanboot/libgnutls.a;
 
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
@@ -311,15 +305,10 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/TOTAL/p" ' \
 	'-e "/ERROR/p" '
 
-test:		$(TEST_32_and_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
 REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += library/libidn
 REQUIRED_PACKAGES += library/libtasn1
 REQUIRED_PACKAGES += library/security/nettle
 REQUIRED_PACKAGES += library/security/trousers
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/c++-runtime

@@ -18,19 +18,21 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
-#
 
 #
-# This file sets up the default options and base requirements for components
-# that are architecture independent.
+# Copyright (c) 2007, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-include $(WS_MAKE_RULES)/ips.mk
+/^TK_BUILD_LIB_SPEC=/c\
+TK_BUILD_LIB_SPEC='-ltk8.5'
 
-ASLR_MODE= $(ASLR_NOT_APPLICABLE)
+/^TK_SRC_DIR=/c\
+TK_SRC_DIR=
 
-# common targets
-build:          $(BUILD_NO_ARCH)
-install:        $(INSTALL_NO_ARCH)
-test:           $(TEST_NO_ARCH)
-system-test:    $(SYSTEM_TEST_NO_ARCH)
+/^TK_BUILD_STUB_LIB_SPEC=/c\
+TK_BUILD_STUB_LIB_SPEC='-ltkstub8.5'
+
+/^TK_BUILD_STUB_LIB_PATH=/c\
+TK_BUILD_STUB_LIB_PATH='/usr/lib/libtkstub8.5.a'
+
+s,-lsunmath,,
+s,-L/usr/lib ,,

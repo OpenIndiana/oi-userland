@@ -18,19 +18,20 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+# net-snmp has a "special" build where only 32-bit items are installed into
+# proto area; so prefer 32-bit to preserve existing sourcing.
+BUILD_BITS= 32_and_64
 include ../../make-rules/shared-macros.mk
 
-PATH=$(SPRO_VROOT)/bin:/usr/gnu/bin:/usr/bin
-DOXYGEN=/usr/bin/doxygen
+PATH=$(SPRO_VROOT)/bin:$(GNUBIN):$(USRBINDIR)
 
 COMPONENT_NAME=		net-snmp
 COMPONENT_VERSION=	5.4.1
 COMPONENT_PROJECT_URL=	http://www.net-snmp.org/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
     sha256:0ea976722c993c87dede8eb6348e6feb059e3851bbef2de824bf18ac97cdb565
 #COMPONENT_ARCHIVE_URL=	http://ftp.ntua.gr/mirror/net-snmp/net-snmp/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
@@ -39,11 +40,11 @@ COMPONENT_BUGDB=	service/net-snmp utility/net-snmp library/net-snmp
 
 TPNO=			5702
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+BUILD_32_and_64 += $(BUILD_DIR_32)/.docs
+INSTALL_TARGET= build $(INSTALL_32_and_64)
+include $(WS_MAKE_RULES)/common.mk
 
-CFLAGS += $(studio_C99_ENABLE)
+studio_C99MODE= $(studio_C99_ENABLE)
 CPPFLAGS += "-DFALSE_SHARING_ALIGN=64"
 
 CONFIGURE_ENV +=	PYTHONPROG=$(PYTHON.$(BITS))
@@ -51,18 +52,18 @@ CONFIGURE_ENV +=	PYTHONPROG=$(PYTHON.$(BITS))
 CONFIGURE_OPTIONS  +=	--with-default-snmp-version=3
 CONFIGURE_OPTIONS  +=	--with-sys-contact="root@localhost"
 CONFIGURE_OPTIONS  +=	--with-sys-location=Unknown
-CONFIGURE_OPTIONS  +=	--with-logfile=/var/log/snmpd.log
-CONFIGURE_OPTIONS  +=	--with-persistent-directory=/var/net-snmp
+CONFIGURE_OPTIONS  +=	--with-logfile=$(VARDIR)/log/snmpd.log
+CONFIGURE_OPTIONS  +=	--with-persistent-directory=$(VARDIR)/net-snmp
 
-CONFIGURE_OPTIONS  +=	--with-mibdirs=/etc/net-snmp/snmp/mibs
-CONFIGURE_OPTIONS  +=	--datadir=/etc/net-snmp
+CONFIGURE_OPTIONS  +=	--with-mibdirs=$(ETCDIR)/net-snmp/snmp/mibs
+CONFIGURE_OPTIONS  +=	--datadir=$(ETCDIR)/net-snmp
 CONFIGURE_OPTIONS  +=	--enable-agentx-dom-sock-only
 CONFIGURE_OPTIONS  +=	--enable-ucd-snmp-compatibility
 CONFIGURE_OPTIONS  +=	--enable-ipv6
 CONFIGURE_OPTIONS  +=	--enable-mfd-rewrites
 CONFIGURE_OPTIONS  +=	--with-pkcs
 CONFIGURE_OPTIONS  +=	--with-transports="UDP TCP UDPIPv6 TCPIPv6"
-CONFIGURE_OPTIONS  +=   --sysconfdir=/etc/net-snmp
+CONFIGURE_OPTIONS  +=   --sysconfdir=$(ETCDIR)/net-snmp
 
 # Which MIB modules do we want to build
 MIB_MOBULES.sparc = ucd-snmp/lmSensors
@@ -82,10 +83,6 @@ CONFIGURE_OPTIONS.64  +=	PERLPROG="$(PERL)"
 CONFIGURE_OPTIONS.64  +=	--with-perl-modules="$(PERL_ARGS)"
 CONFIGURE_OPTIONS.64  +=	--disable-perl-cc-checks
 
-CONFIGURE_OPTIONS	+=	CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS	+=	CPPFLAGS="$(CPPFLAGS)"
-CONFIGURE_OPTIONS	+=	CC="$(CC)"
-
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D); $(CLONEY) $(COMPONENT_DIR)/sun $(@D)/sun)
 
@@ -93,8 +90,8 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 ARCH=32
 ARCH=$(BITS:64=$(MACH64))
 
-CCSMAKE_ARGS =	CC="$(CC)" CFGPREFIX=/usr CFGLIB64=/usr/lib/$(MACH64)
-CCSMAKE_ARGS +=	CFGLIB=/usr/lib ARCH=$(ARCH) ROOT=$(PROTO_DIR)
+CCSMAKE_ARGS =	CC="$(CC)" CFGPREFIX=$(USRDIR) CFGLIB64=$(USRLIBDIR64)
+CCSMAKE_ARGS +=	CFGLIB=$(USRLIBDIR) ARCH=$(ARCH) ROOT=$(PROTO_DIR)
 
 COMPONENT_TEST_DIR =		$(COMPONENT_DIR)
 COMPONENT_TEST_CMD =		$(KSH93)
@@ -119,18 +116,7 @@ $(INSTALL_64): COMPONENT_POST_INSTALL_ACTION= \
 	($(MKDIR) -p $(BUILD_DIR)/prototype/$(MACH64)/etc/net-snmp/snmp/mibs; \
 	 cd $(BUILD_DIR)/$(MACH64)/sun ; ls agent; $(CCSMAKE) -e $(CCSMAKE_ARGS) install)
 
-# common targets
-configure:	$(CONFIGURE_32_and_64)
-
-build:	$(BUILD_32_and_64) $(BUILD_DIR_32)/.docs
-
 $(INSTALL_64): COMPONENT_INSTALL_ARGS += DESTDIR=$(BUILD_DIR)/prototype/$(MACH64)
-
-install:	build $(INSTALL_32_and_64)
-
-test:	$(TEST_32_and_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
 # build the docs
 $(BUILD_DIR_32)/.docs:
@@ -144,7 +130,6 @@ REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/pkcs11
 REQUIRED_PACKAGES += system/management/snmp/net-snmp
 REQUIRED_PACKAGES += system/network

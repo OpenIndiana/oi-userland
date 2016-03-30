@@ -18,44 +18,26 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		which
 COMPONENT_VERSION=	2.21
 COMPONENT_PROJECT_URL=	https://savannah.gnu.org/projects/which/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:f4a245b94124b377d8b49646bf421f9155d36aa7614b6ebf83705d3ffc76eaad
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/which/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gnu-which
 
 TPNO=			27233
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/gnu-component.mk
 
-CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/bin
-
-CONFIGURE_PREFIX    =	/usr/gnu
+CONFIGURE_PREFIX    =	$(USRDIR)/gnu
 CONFIGURE_OPTIONS  +=	--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=	--disable-iberty
 CONFIGURE_OPTIONS  +=	--disable-dependency-tracking
-CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
-
-ASLR_MODE = $(ASLR_ENABLE)
-
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
-REQUIRED_PACKAGES += system/library

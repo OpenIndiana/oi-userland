@@ -18,15 +18,16 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sane-backends
 COMPONENT_VERSION=	1.0.19
 COMPONENT_PROJECT_URL=	http://www.sane-project.org/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:13271a7eb4dc4aa6072162abbd78848e4faad32c468b9b44e7f95cde96a4e17e
 COMPONENT_ARCHIVE_URL=	ftp://ftp2.sane-project.org/pub/sane/old-versions/sane-backends-1.0.19/$(COMPONENT_ARCHIVE)
@@ -34,33 +35,27 @@ COMPONENT_BUGDB=	library/libsane
 
 TPNO=			8865
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
+
+# Fix 64-bit linking via compiler.
+LDFLAGS += $(CC_BITS)
 
 CONFIGURE_OPTIONS +=	--disable-locking
-CONFIGURE_OPTIONS +=	--sysconfdir=/etc
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)" 
+CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
 
-configure:	$(CONFIGURE_32_and_64)
+# We only deliver 64-bit binaries and in /usr/bin, /usr/sbin.
+COMPONENT_POST_INSTALL_ACTION.32 += \
+	$(GSED) -i \
+		-e 's|$(USRBINDIR)/$(MACH32)|$(USRBINDIR)|' \
+		-e 's|$(USRSBINDIR)/$(MACH32)|$(USRSBINDIR)|' \
+		$(PROTOUSRBINDIR)/$(MACH32)/sane-config;
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
 
-COMPONENT_BUILD_ARGS += LDFLAGS="$(CC_BITS)"
-
-build:          $(BUILD_32_and_64)
-
-install:        $(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
-
 REQUIRED_PACKAGES += image/library/libjpeg
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/usb/libusb

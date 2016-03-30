@@ -22,9 +22,8 @@
 #
 # Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
-COMPILER =	gcc
-
+COMPILER= gcc
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		webalizer
@@ -36,13 +35,14 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-src.tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:b37524fbd98e97052a80d59f75e69f857468752cf74cc0eb0972e5fab02eb6f7
 COMPONENT_ARCHIVE_URL=	ftp://ftp.mrunix.net/pub/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/webalizer
 
 TPNO=			27276
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
+
+# Fix 64-bit linking via compiler.
+LDFLAGS += $(CC_BITS)
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -53,34 +53,14 @@ COMPONENT_PRE_BUILD_ACTION += \
 		$(SOURCE_DIR)/sample.conf
 
 CONFIGURE_OPTIONS +=	--enable-dns
-CONFIGURE_OPTIONS +=	--with-gd=/usr/include/gd2
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS +=	LDFLAGS="$(LDFLAGS)"
+CONFIGURE_OPTIONS +=	--with-gd=$(USRINCDIR)/gd2
 
 # webalizer is defining u_int64_t but also uses db.h
 # which typedefs it, and parfait and gcc 4.7 aren't happy.
 CC += -Du_int64_t=uint64_t
 CONFIGURE_OPTIONS +=	c_cv_type_u_int64_t=yes
 
-# Needed to correctly build that 64-bit library.
-LDFLAGS += $(CC_BITS)
-
-ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
-configure:	$(CONFIGURE_64)
-
-build:          $(BUILD_64)
-
-install:        $(INSTALL_64)
-
-test:           $(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
-
 REQUIRED_PACKAGES += database/berkeleydb-5
 REQUIRED_PACKAGES += library/gd
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

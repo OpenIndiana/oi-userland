@@ -20,15 +20,14 @@
 #
 
 #
-# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sg3_utils
 COMPONENT_VERSION=	1.33
 COMPONENT_PROJECT_URL=	http://sg.danny.cz/sg/sg3_utils.html
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH= \
     sha256:3034a4e798404cc963fc46437b0ceeb0edc635e02471ab13aa18acd8b716a27b
@@ -37,16 +36,13 @@ COMPONENT_BUGDB=	utility/sg3utils
 
 TPNO=			17711
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-CC += $(CC_BITS)
+# Even though "gmake check" goes to completion, it doesn't really do anything.
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 CPPFLAGS += -I$(COMPONENT_DIR)/$(COMPONENT_SRC)/include
 
 CONFIGURE_OPTIONS +=	--disable-static
-CONFIGURE_OPTIONS += CPPFLAGS="$(CPPFLAGS)"
 
 COMPONENT_INSTALL_ARGS += bindir=$(USRBINDIR)
 
@@ -55,17 +51,3 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 	(cd $(@D) ; \
 	$(GSED) -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool ; \
 	$(GSED) -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool)
-
-PKG_PROTO_DIRS +=	$(COMPONENT_DIR)/files
-
-ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
-configure:	$(CONFIGURE_32_and_64)
-build:          $(BUILD_32_and_64)
-install:        $(INSTALL_32_and_64)
-# Even though "gmake check" goes to completion, it doesn't really do anything.
-test:           $(NO_TESTS)
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
-REQUIRED_PACKAGES += system/library

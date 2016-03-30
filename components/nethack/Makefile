@@ -20,28 +20,26 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
-PATH=$(dir $(CC)):/usr/bin:/usr/gnu/bin
+PATH=$(dir $(CC)):$(USRBINDIR):$(GNUBIN)
 
 COMPONENT_NAME=		nethack
 COMPONENT_VERSION=	3.4.3
 COMPONENT_PROJECT_URL=	http://www.nethack.org/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-343-src.tgz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:bb39c3d2a9ee2df4a0c8fdde708fbc63740853a7608d2f4c560b488124866fe4
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/$(COMPONENT_NAME)/files/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
-COMPONENT_BUGDB=	utility/nethack
 
 TPNO=			9239
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+BUILD_STYLE= justmake
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL=0
 
@@ -68,26 +66,15 @@ COMPONENT_INSTALL_ENV += CFLAGS="$(CFLAGS) -I../include"
 COMPONENT_INSTALL_ENV += LFLAGS="$(CC_BITS)"
 COMPONENT_INSTALL_ENV += MAKEFLAGS=-e
 
-PKG_PROTO_DIRS += $(COMPONENT_SRC)/doc
-
-ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-	sed -e 's/^!\(NetHack.tomb\)/\1/' -e 's/^!\(NetHack.pet\)/\1/' \
+COMPONENT_POST_INSTALL_ACTION += \
+	$(GSED) -e 's/^!\(NetHack.tomb\)/\1/' -e 's/^!\(NetHack.pet\)/\1/' \
 		-e 's/^!\(NetHack.tile_file\)/\1/' \
 		$(COMPONENT_SRC)/win/X11/NetHack.ad \
 		> $(PROTO_DIR)/usr/lib/nethack/NetHack.ad
 
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
+PKG_PROTO_DIRS += $(COMPONENT_SRC)/doc
 
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/compatibility/links-xorg
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxpm

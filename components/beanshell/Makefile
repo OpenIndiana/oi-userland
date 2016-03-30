@@ -18,15 +18,16 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		beanshell
 COMPONENT_VERSION=	2.0b4
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.beanshell.org/
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:a6f02b46796ed6b6a212cfc2d17e4797212db3206e21a3f4959adb60bddfff5f
 # This should come from http://www.beanshell.org/ however they do not
@@ -36,15 +37,12 @@ COMPONENT_ARCHIVE_HASH=	\
 # more attention at the google code repository of late.
 COMPONENT_ARCHIVE_URL=	$(EXTERNAL_ARCHIVE_MIRROR)/$(SOURCE_ARCHIVE)
 
-COMPONENT_BUGDB=	utility/beanshell
-
 IPS_COMPONENT_VERSION=	2.0
 
 TPNO=			6200
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/ant.mk
-include $(WS_MAKE_RULES)/ips.mk
+BUILD_STYLE= ant
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_BUILD_ARGS +=	-Ddist-dir=${PROTO_DIR}
 COMPONENT_BUILD_ARGS +=	-Djavadoc-dir=${PROTO_DIR}
@@ -56,19 +54,6 @@ COMPONENT_BUILD_TARGETS +=	dist
 # associated beanshell.p5m file.
 PUBLISH_TRANSFORMS += solaris-transform
 # Needed to pick up scripts/bsh and bshcommands-bshdoc.xml
-PKG_PROTO_DIRS += $(COMPONENT_DIR) 
 PKG_PROTO_DIRS += $(BUILD_DIR_32)
-
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
-# common targets
-build:		$(BUILD_32)
-
-install:	build
-
-test:	$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
 
 REQUIRED_PACKAGES += shell/ksh93

@@ -19,29 +19,28 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+# Prefer 32-bit due to ghostcript's hybrid build system.
+BUILD_BITS= 32_and_64
 include ../../make-rules/shared-macros.mk
 
 
 COMPONENT_NAME=         ghostscript
 COMPONENT_VERSION=      9.00
 COMPONENT_PROJECT_URL=	http://ghostscript.com/
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
     sha256:9e754c315d68d91a65ef208b9a8bda1fb57e45a7be18aa9397acfcc5ff59de16
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)releases/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/ghostscript
 
 TPNO=			3796
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/ips.mk
-include $(WS_MAKE_RULES)/configure.mk
+COMMON_TARGETS= no
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
+PATH=$(SPRO_VROOT)/bin:$(USRBINDIR):$(GNUBIN)
 
 # ghostscript uses a non-standard hybrid-build to build both 32 and 64-bit;
 # override these to prevent build failure.
@@ -66,7 +65,7 @@ $(BUILD_DIR)/$(MACH64)/ijs/.configured: CONFIGURE_OPTIONS += CC="$(CC) -m64"
 
 # config env
 CONFIGURE_ENV += LDFLAGS_SO="-G"
-CONFIGURE_ENV += CUPSCONFIG=/usr/bin/cups-config
+CONFIGURE_ENV += CUPSCONFIG=$(USRBINDIR)/cups-config
 
 GS_VARIANT = $(BUILD_DIR)/$(MACH32)
 GS_VARIANT_64 = $(BUILD_DIR)/$(MACH64)
@@ -103,6 +102,9 @@ $(IJS_VARIANT_64)/.configured: COMPONENT_PRE_CONFIGURE_ACTION = \
 
 CONFIGURE_SCRIPT = ./configure
 
+# ASLR disabled until sufficient testing can be performed.
+ASLR_MODE= $(ASLR_DISABLE)
+
 # configure gs and ijs
 configure: $(VARIANTS:%=%/.configured)
 
@@ -126,7 +128,6 @@ REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += print/cups
 REQUIRED_PACKAGES += runtime/perl-512
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11

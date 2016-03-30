@@ -20,28 +20,23 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lighttpd
 COMPONENT_VERSION=	1.4.35
 COMPONENT_PROJECT_URL=	http://www.lighttpd.net/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:62c23de053fd82e1bf64f204cb6c6e44ba3c16c01ff1e09da680d982802ef1cc
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/lighttpd
 
 TPNO=			17006
 
-LIGHTTPD_INSTALLDIR=/usr/lighttpd/1.4
+LIGHTTPD_INSTALLDIR=$(USRDIR)/lighttpd/1.4
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL=0
 
@@ -52,36 +47,22 @@ COMPONENT_PREP_ACTION = ( cd $(@D) ; $(CONFIG_SHELL) autogen.sh )
 # using just source file names (without full absolute paths).
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_PREFIX= /usr/lighttpd/1.4
+CONFIGURE_PREFIX= $(LIGHTTPD_INSTALLDIR)
 CONFIGURE_MANDIR= $(CONFIGURE_PREFIX)/man
 
 # Force lighttpd binaries and private modules to standard path
-CONFIGURE_SBINDIR.64 = $(CONFIGURE_PREFIX)/sbin
 CONFIGURE_LIBDIR.64 = $(CONFIGURE_PREFIX)/lib
+
+CFLAGS += "-I/usr/include/openldap"
+LDFLAGS += "-lldap_r-2.4"
 
 CONFIGURE_OPTIONS +=	--with-pic
 CONFIGURE_OPTIONS +=	--with-lua
 CONFIGURE_OPTIONS +=	--with-openssl
 CONFIGURE_OPTIONS +=	--with-pcre
 CONFIGURE_OPTIONS +=	--with-ldap
-CONFIGURE_OPTIONS +=	--with-mysql=/usr/mysql/5.5/bin/mysql_config
-CONFIGURE_OPTIONS +=    CFLAGS="$(CFLAGS) -I/usr/include/openldap -lldap_r-2.4"
-CONFIGURE_OPTIONS +=    PCRECONFIG="/usr/bin/$(MACH64)/pcre-config"
-
-# Enable ASLR for this component
-ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
+CONFIGURE_OPTIONS +=	--with-mysql=$(USRDIR)/mysql/5.5/bin/mysql_config
+CONFIGURE_OPTIONS +=    PCRECONFIG="$(USRBINDIR64)/pcre-config"
 
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += database/mysql-55
@@ -93,6 +74,5 @@ REQUIRED_PACKAGES += library/security/openssl/openssl-fips-140
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/lua
 REQUIRED_PACKAGES += system/core-os
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/network
 REQUIRED_PACKAGES += web/fastcgi/spawn-fcgi

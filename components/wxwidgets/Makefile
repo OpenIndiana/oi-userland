@@ -18,16 +18,17 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
-#
 
+#
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+# 32-bit preferred as only *-config and source generation scripts delivered.
+BUILD_BITS= 32_and_64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		wxwidgets
 COMPONENT_VERSION=	2.8.12
 COMPONENT_SRC_NAME=	wxGTK
-COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:13cf89f2c29bcb90bb56a31ac1af10f23003d3d43c3e4b24991518f5dc4e5abe
 COMPONENT_ARCHIVE_URL=	http://prdownloads.sourceforge.net/wxwindows/$(COMPONENT_ARCHIVE)
@@ -36,9 +37,12 @@ COMPONENT_BUGDB=	library/wxwidgets
 
 TPNO=			9216
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+BUILD_32_and_64 += $(BUILD_DIR_32)/contrib/.built \
+	$(BUILD_DIR_64)/contrib/.built
+INSTALL_32_and_64 += $(BUILD_DIR_32)/contrib/.installed \
+	$(BUILD_DIR_64)/contrib/.installed
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PKG_PROTO_DIRS += $(COMPONENT_DIR)/man
 
@@ -46,8 +50,6 @@ PKG_PROTO_DIRS += $(COMPONENT_DIR)/man
 LDFLAGS += $(studio_NORUNPATH)
 LDFLAGS += $(CC_BITS)
 LDFLAGS += $(studio_CXXLIB_CSTD)
-
-CXXFLAGS += $(studio_XREGS)
 
 CONFIGURE_OPTIONS += --with-gtk
 CONFIGURE_OPTIONS += --enable-gtk2
@@ -62,30 +64,12 @@ CONFIGURE_OPTIONS += --without-gnomeprint
 CONFIGURE_OPTIONS += --without-gnomevfs
 CONFIGURE_OPTIONS += --with-opengl
 CONFIGURE_OPTIONS += --without-libmpack
-CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS += CXXFLAGS="$(CXXFLAGS)"
-CONFIGURE_OPTIONS += LDFLAGS="$(LDFLAGS)"
 
 # I want to use userland's "build" target in contrib subdirectory, but I need
 # to skip the configure phase
 $(BUILD_DIR_32)/contrib/.configured \
 $(BUILD_DIR_64)/contrib/.configured:
 	$(TOUCH) $@
-
-# common targets
-configure:	$(CONFIGURE_32_and_64)
-
-build:		$(BUILD_32_and_64) \
-		$(BUILD_DIR_32)/contrib/.built \
-		$(BUILD_DIR_64)/contrib/.built
-
-install:	$(INSTALL_32_and_64) \
-		$(BUILD_DIR_32)/contrib/.installed \
-		$(BUILD_DIR_64)/contrib/.installed
-
-test: 		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
 
 REQUIRED_PACKAGES += image/library/libjpeg
 REQUIRED_PACKAGES += image/library/libpng
@@ -99,7 +83,6 @@ REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/sdl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/c++-runtime
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libsm

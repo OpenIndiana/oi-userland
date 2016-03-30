@@ -21,9 +21,7 @@
 # Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
-#
-# This file sets up the default options and base requirements for
-# autoconf-based components that should be built for 64-bit only.
-#
-include $(WS_MAKE_RULES)/configure.mk
-configure:      $(CONFIGURE_64)
+# OFED only builds with GCC
+COMPILER= gcc
+
+include ../../../make-rules/shared-macros.mk

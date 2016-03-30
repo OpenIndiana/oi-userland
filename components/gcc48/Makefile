@@ -18,19 +18,18 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+BUILD_BITS= 32
+COMPILER= gcc
 export PARFAIT_BUILD=no
-
-COMPILER=gcc
-
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gcc
 COMPONENT_VERSION=	4.8.2
 COMPONENT_PROJECT_URL=	http://gcc.gnu.org/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
     sha256:2ea77114344a06c45dd5791275311e91d306545aa5ec9db31d24174f6965e880
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/gcc/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
@@ -38,12 +37,10 @@ COMPONENT_BUGDB=        utility/gnu-compiler
 
 TPNO=			15448
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/gnu-component.mk
 
 # The GNU compiler wants the GNU utilities.
-PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
+PATH=$(GNUBIN):$(USRBINDIR):/usr/perl5/bin
 
 PARCH =         $(MACH:i386=i386-pc)
 GNU_ARCH =      $(PARCH:sparc=sparc-sun)-solaris$(SOLARIS_VERSION)
@@ -74,9 +71,7 @@ LD_B_DIRECT=
 LD_MAP_NOEXDATA.i386=
 
 # /usr/lib/ld/map.noexbss  destroys SPARC
-ifeq ($(MACH),sparc)
-LD_MAP_NOEXBSS=
-endif
+LD_MAP_NOEXBSS.sparc=
 
 
 # for some reason the fixincludes target fails with bash on Solaris.
@@ -85,28 +80,25 @@ MAKESHELL = /bin/sh
 COMPONENT_BUILD_ENV += SHELL=$(CONFIG_SHELL)
 COMPONENT_BUILD_ENV += MAKESHELL=$(MAKESHELL)
 
-CONFIGURE_PREFIX = /usr/gcc/4.8
+CONFIGURE_PREFIX =	/usr/gcc/4.8
+CONFIGURE_INFODIR =	$(CONFIGURE_PREFIX)/share/info
 
-CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_PREFIX)/share/info
+CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_PREFIX)/lib
 CONFIGURE_OPTIONS +=	--enable-languages="c,c++,fortran,objc"
 CONFIGURE_OPTIONS +=	--enable-shared
 CONFIGURE_OPTIONS +=	--with-build-config=no
-CONFIGURE_OPTIONS +=	--with-gmp-include=/usr/include/gmp
-CONFIGURE_OPTIONS +=	--with-mpfr-include=/usr/include/mpfr
-CONFIGURE_OPTIONS +=	--without-gnu-ld --with-ld=/usr/bin/ld
+CONFIGURE_OPTIONS +=	--with-gmp-include=$(USRINCDIR)/gmp
+CONFIGURE_OPTIONS +=	--with-mpfr-include=$(USRINCDIR)/mpfr
+CONFIGURE_OPTIONS +=	--without-gnu-ld --with-ld=$(LD)
 CONFIGURE_OPTIONS +=   --with-isl=no
 CONFIGURE_OPTIONS +=   --with-cloog=no
 
 CONFIGURE_ENV     += PYTHON="$(PYTHON)"
 
 # sparc and x86 use different assemblers
-CONFIGURE_OPTIONS.sparc +=	--without-gnu-as --with-as=/usr/bin/as
-CONFIGURE_OPTIONS.i386 +=	--with-gnu-as --with-as=/usr/gnu/bin/as
-CONFIGURE_OPTIONS +=    $(CONFIGURE_OPTIONS.$(MACH))
-
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS +=	CXXFLAGS="$(CXXFLAGS)"
+CONFIGURE_OPTIONS.sparc +=	--without-gnu-as --with-as=$(USRBINDIR)/as
+CONFIGURE_OPTIONS.i386 +=	--with-gnu-as --with-as=$(GNUBIN)/as
 
 COMPONENT_BUILD_TARGETS=bootstrap
 
@@ -122,12 +114,6 @@ COMPONENT_POST_INSTALL_ACTION += ; \
 # ASLR has side-effects with libitm and libgomp.
 # Disable ASLR for now.
 ASLR_MODE=$(ASLR_DISABLE)
-
-configure:	$(CONFIGURE_32)
-
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
 
 # To ensure that all tests that are expected to pass actually
 # pass, we have to increase the stacksize limit to at least
@@ -150,16 +136,11 @@ COMPONENT_TEST_TRANSFORMS += \
 COMPONENT_TEST_MASTER = \
 	$(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH)-$(BITS).master
 
-test:	$(TEST_32)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
 
 REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += library/mpc
 REQUIRED_PACKAGES += library/mpfr
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
 REQUIRED_PACKAGES += system/library/math

@@ -20,48 +20,30 @@
 #
 
 #
-# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		procmail
 COMPONENT_VERSION=	3.22
 COMPONENT_PROJECT_URL=	http://www.procmail.org
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:087c75b34dd33d8b9df5afe9e42801c9395f4bf373a784d9bc97153b0062e117
-COMPONENT_BUGDB=	utility/procmail
 
 # ftp://ftp.procmail.org/pub/procmail/procmail-3.22.tar.gz no longer works.
 COMPONENT_ARCHIVE_URL=	ftp://ftp.ucsb.edu/pub/mirrors/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 
 TPNO=			9003
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+BUILD_STYLE= justmake
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_BUILD_ENV += CC="$(CC) -m64"
+COMPONENT_BUILD_ENV += RPM_OPT_FLAGS="$(CFLAGS)"
 
 COMPONENT_INSTALL_ARGS +=	BASENAME=$(PROTOUSRDIR)
 COMPONENT_INSTALL_ARGS +=	MANDIR=$(PROTOUSRSHAREMANDIR)
 
-PKG_PROTO_DIRS +=	$(COMPONENT_DIR)/files
-
-ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
-build:          $(BUILD_64)
-
-install:        $(INSTALL_64)
-
-test:           $(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
-
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

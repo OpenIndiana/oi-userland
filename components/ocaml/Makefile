@@ -20,17 +20,16 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 32
 include ../../make-rules/shared-macros.mk
 
-PATH=/usr/bin:/usr/gnu/bin:/usr/sbin:$(SPRO_VROOT)/bin
+PATH=$(USRBINDIR):$(GNUBIN):$(USRSBINDIR):$(SPRO_VROOT)/bin
 
 COMPONENT_NAME=		ocaml
 COMPONENT_VERSION=	3.11.2
 COMPONENT_PROJECT_URL=	http://www.ocaml.org
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
     sha256:86f3387a0d7e7c8be2a3c53af083a5a726e333686208d5ea0dd6bb5ac3f58143
@@ -53,18 +52,10 @@ COMPONENT_ARCHIVE_HASH_3= \
     sha256:48eedc6a870bef84562b2d0ed25d9c3b15ab646f72ecfb4c6c2cbaccc6b4081d
 COMPONENT_ARCHIVE_URL_3= http://caml.inria.fr/distrib/ocaml-3.11/$(COMPONENT_ARCHIVE_3)
 
-COMPONENT_BUGDB=	utility/ocaml
-
 TPNO=			9233
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
-
-# We don't support 64-bit yet, but this will be needed when we do.
-CONFIGURE_ENV.64 += UL_LDFLAGS="-m64"
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # Ocaml does not use a standard configure script, but has its own handwritten
 # one.  So we must specify the arguments it accepts by hand.
@@ -103,7 +94,7 @@ UL_PROTO_EXAM       = $(UL_PROTO_DOCDIR)/otherlibs/labltk
 #
 
 COMPONENT_POST_BUILD_ACTION = (cd $(@D); \
-                export LD_EXEC_OPTIONS="-z aslr=disable"; \
+                export LD_EXEC_OPTIONS="$(ASLR_DISABLE)"; \
                 $(UNPACK) $(UNPACK_ARGS) ../../$(COMPONENT_ARCHIVE_1); \
                 $(UNPACK) $(UNPACK_ARGS) ../../$(COMPONENT_ARCHIVE_3); \
                 $(CP) $(COMPONENT_DIR)/files/ocamlbyteinfo.ml $(@D); \
@@ -153,21 +144,8 @@ ASLR_MODE = $(ASLR_DISABLE)
 #
 PKG_PROTO_DIRS +=       $(BUILD_DIR_$(BITS))
 
-# common targets
-configure:	$(CONFIGURE_32)
-
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
-
 REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += runtime/tk-8
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11

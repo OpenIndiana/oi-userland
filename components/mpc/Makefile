@@ -20,54 +20,36 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mpc
 COMPONENT_VERSION=	0.9
 COMPONENT_PROJECT_URL=	http://www.multiprecision.org/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:fd3efe422f0d454592059e80f2c00d1a2e381bf2beda424c5094abd4deb049ac
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)mpc/download/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/mpc
 
 TPNO=			4706
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= install $(TEST_32_and_64)
+# Add install dependency when system-test target is implemented.
+include $(WS_MAKE_RULES)/common.mk
 
 export SHELL
-SHELL=/bin/sh
+SHELL=$(BINDIR)/sh
 
 CFLAGS +=		`pkg-config --cflags libmpfr`
 
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=		--disable-static
 
 COMPONENT_TEST_DIR =		$(BUILD_DIR)/$(MACH$(BITS))/tests
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-# common targets
-configure:	$(CONFIGURE_32_and_64)
-
-build:	$(BUILD_32_and_64)
-
-
-install:	$(INSTALL_32_and_64)	
-
-test:		install $(TEST_32_and_64)
-
-# Add install dependency as above when system-test targets are implemented.
-system-test: 	$(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
 REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += library/mpfr
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

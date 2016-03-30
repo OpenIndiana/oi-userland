@@ -18,18 +18,17 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
-COMPILER =	gcc
-
+BUILD_BITS= 64_and_32
+COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libffi
 COMPONENT_VERSION=	3.0.9
 COMPONENT_PROJECT_URL=	http://sourceware.org/libffi/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
     sha256:589d25152318bc780cd8919b14670793f4971d9838dab46ed38c32b3ee92c452
 COMPONENT_ARCHIVE_URL=	ftp://sources.redhat.com/pub/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
@@ -37,11 +36,7 @@ COMPONENT_BUGDB=	library/libffi
 
 TPNO=		5930
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-CC +=		$(CC_BITS)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_TEST_DIR =	$(@D)/testsuite
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
@@ -55,20 +50,8 @@ COMPONENT_TEST_TRANSFORMS += \
 
 CFLAGS += -DFFI_MMAP_EXEC_WRIT=1
 
-CONFIGURE_OPTIONS += --enable-raw-api=no
-CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
+CONFIGURE_OPTIONS += --disable-raw-api
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-configure:	$(CONFIGURE_32_and_64)
-
-build:          $(BUILD_32_and_64)
-
-install:        $(INSTALL_32_and_64)
-
-test:           $(TEST_32_and_64)
-
-system-test:    $(NO_TESTS)
-
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime

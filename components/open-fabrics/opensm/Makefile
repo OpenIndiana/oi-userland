@@ -18,71 +18,54 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
-# OFED only builds with GCC
-COMPILER=gcc
-
-include ../../../make-rules/shared-macros.mk
+BUILD_BITS= 64_and_32
+include ../ofed-component-macros.mk
 
 COMPONENT_NAME=		opensm
 COMPONENT_VERSION=	3.3.9
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:b8f333815e9d145cbb29310a38d2f2e39f9727b30eb6b15cb0d81fb9db39a2e1
 COMPONENT_ARCHIVE_URL=	http://www.openfabrics.org/downloads/management/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/ofuv_lib
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include ../ofed.mk
+include ../ofed-component.mk
 
 CFLAGS += -std=gnu99
-LIBS +=	-libverbs -lsocket -lnsl -libumad -libmad
 
-CONFIGURE_ENV	+=	CPPFLAGS="$(CPPFLAGS)"
+LIBS +=	-libverbs -libumad -libmad
 
 CLEANUP_FILES = \
-	$(PROTO_DIR)/$(CONFIGURE_LIBDIR.32)/libosmcomp.la \
-	$(PROTO_DIR)/$(CONFIGURE_LIBDIR.64)/libosmcomp.la \
-        $(PROTO_DIR)/$(CONFIGURE_LIBDIR.32)/libosmvendor.la \
-	$(PROTO_DIR)/$(CONFIGURE_LIBDIR.64)/libosmvendor.la \
-        $(PROTO_DIR)/$(CONFIGURE_LIBDIR.32)/libopensm.la \
-	$(PROTO_DIR)/$(CONFIGURE_LIBDIR.64)/libopensm.la \
+	$(PROTOUSRLIBDIR)/libosmcomp.la \
+	$(PROTOUSRLIBDIR64)/libosmcomp.la \
+	$(PROTOUSRLIBDIR)/libosmvendor.la \
+	$(PROTOUSRLIBDIR64)/libosmvendor.la \
+	$(PROTOUSRLIBDIR)/libopensm.la \
+	$(PROTOUSRLIBDIR64)/libopensm.la \
 	$(PROTOUSRSBINDIR)/opensm \
 	$(PROTOUSRSBINDIR)/osmtest \
-        $(PROTO_DIR)/usr/etc/init.d/opensmd \
-	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man8/opensm.8 \
-        $(PROTO_DIR)/$(CONFIGURE_MANDIR)/man8/osmtest.8
+	$(PROTOETCDIR)/init.d/opensmd \
+	$(PROTOUSRSHAREMAN8DIR)/opensm.8 \
+	$(PROTOUSRSHAREMAN8DIR)/osmtest.8
 
 COMPONENT_POST_INSTALL_ACTION = \
 	$(RM) $(CLEANUP_FILES);\
-	$(RM) $(PROTO_DIR)/$(CONFIGURE_LIBDIR.32)/$(COMPONENT_NAME).la;\
-	$(RM) $(PROTO_DIR)/$(CONFIGURE_LIBDIR.64)/$(COMPONENT_NAME).la;\
-	$(RM) -r $(PROTO_DIR)/usr/etc
+	$(RM) $(PROTOUSRLIBDIR)/$(COMPONENT_NAME).la;\
+	$(RM) $(PROTOUSRLIBDIR64)/$(COMPONENT_NAME).la;\
+	$(RM) -r $(PROTOETCDIR)
 
 COMPONENT_PRE_BUILD_ACTION =\
-	$(MV) $(PROTO_DIR)/$(CONFIGURE_LIBDIR.32)/libibverbs.la\
-	$(PROTO_DIR)/$(CONFIGURE_LIBDIR.32)/.libibverbs.la;\
-	$(MV) $(PROTO_DIR)/$(CONFIGURE_LIBDIR.64)/libibverbs.la\
-	$(PROTO_DIR)/$(CONFIGURE_LIBDIR.64)/.libibverbs.la
+	$(MV) $(PROTOUSRLIBDIR)/libibverbs.la\
+		$(PROTOUSRLIBDIR)/.libibverbs.la;\
+	$(MV) $(PROTOUSRLIBDIR64)/libibverbs.la\
+		$(PROTOUSRLIBDIR64)/.libibverbs.la
 
 COMPONENT_POST_BUILD_ACTION =\
-	$(MV) $(PROTO_DIR)/$(CONFIGURE_LIBDIR.32)/.libibverbs.la\
-	$(PROTO_DIR)/$(CONFIGURE_LIBDIR.32)/libibverbs.la;\
-	$(MV) $(PROTO_DIR)/$(CONFIGURE_LIBDIR.64)/.libibverbs.la\
-	$(PROTO_DIR)/$(CONFIGURE_LIBDIR.64)/libibverbs.la
-
-# common targets
-configure:	$(CONFIGURE_32_and_64)
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
+	$(MV) $(PROTOUSRLIBDIR)/.libibverbs.la\
+		$(PROTOUSRLIBDIR)/libibverbs.la;\
+	$(MV) $(PROTOUSRLIBDIR64)/.libibverbs.la\
+		$(PROTOUSRLIBDIR64)/libibverbs.la
 

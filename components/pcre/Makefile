@@ -19,15 +19,13 @@
 # CDDL HEADER END
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pcre
 COMPONENT_VERSION=	8.38
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:9883e419c336c63b0cb5202b09537c140966d585e4d0da66147dc513da13e629
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/pcre/files/pcre/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
@@ -37,10 +35,7 @@ COMPONENT_BUGDB=	library/pcre
 
 TPNO=			25877
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-include $(WS_MAKE_RULES)/lint-libraries.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # pick up -xc99=all in CFLAGS
 studio_C99MODE=        $(studio_C99_ENABLE)
@@ -66,15 +61,12 @@ CXXFLAGS+=	$(CPP_LARGEFILES)
 CXXFLAGS+=	$(XPG5MODE)
 
 # We need to do this because libtool adds wrong paths to RPATH.
-LDFLAGS += -L$(CONFIGURE_LIBDIR.$(BITS)) -R$(CONFIGURE_LIBDIR.$(BITS))
+# LDFLAGS += -L$(CONFIGURE_LIBDIR.$(BITS)) -R$(CONFIGURE_LIBDIR.$(BITS))
 
 LINTFLAGS+=	-I. $(studio_XBITS) $(CPP_LARGEFILES)
 
-CONFIGURE_ENV+=	"CFLAGS=$(CFLAGS)"
 CONFIGURE_ENV+=	"CPP=$(CC) $(CPPFLAGS) $(CFLAGS) -E"
-CONFIGURE_ENV+=	"CXXFLAGS=$(CXXFLAGS)"
 CONFIGURE_ENV+=	"CXXCPP=$(CXX) $(CPPFLAGS) $(CXXFLAGS) -E"
-CONFIGURE_ENV+=	"LDFLAGS=$(LDFLAGS)"
 CONFIGURE_ENV+=	"CXXLDFLAGS=$(LDFLAGS)"
 CONFIGURE_ENV+= "CXXLD=$(CXX) $(CXXFLAGS) $(LDFLAGS)"
 CONFIGURE_ENV+= "INSTALL=$(INSTALL)"
@@ -84,7 +76,7 @@ CONFIGURE_ENV.64+= "CXXLINKLIB=$(CXX) $(CCFLAGS) $(LDFLAGS)"
 CONFIGURE_ENV.64+= "MACH64=$(MACH64)"
 
 CONFIGURE_OPTIONS+=	--includedir=$(CONFIGURE_INCLUDEDIR)/pcre
-CONFIGURE_OPTIONS+=	--localstatedir=/var
+CONFIGURE_OPTIONS+=	--localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS+=	--disable-static
 CONFIGURE_OPTIONS+=	--enable-cpp
 CONFIGURE_OPTIONS+=	--enable-rebuild-chartables
@@ -119,21 +111,7 @@ ASLR_MODE = $(ASLR_ENABLE)
 COMPONENT_INSTALL_ARGS+=	"INSTALL=$(INSTALL)"
 COMPONENT_INSTALL_ARGS+=	"MAKE=$(GMAKE)"
 
-# common targets
-
-configure:	$(CONFIGURE_32_and_64)
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
-
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/c++-runtime

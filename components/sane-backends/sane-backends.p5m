@@ -144,10 +144,11 @@ file path=etc/sane.d/umax1220u.conf owner=root group=bin mode=0644 \
     original_name=SUNWsane-backend:etc/sane.d/umax1220u.conf preserve=renamenew
 file path=etc/sane.d/umax_pp.conf owner=root group=bin mode=0644 \
     original_name=SUNWsane-backend:etc/sane.d/umax_pp.conf preserve=renamenew
-file path=usr/bin/$(MACH64)/sane-config
-file path=usr/bin/sane-config
-file usr/bin/$(MACH64)/sane-find-scanner path=usr/bin/sane-find-scanner
-file usr/bin/$(MACH64)/scanimage path=usr/bin/scanimage
+# sane-config contains embedded paths, so swap these around.
+file usr/bin/sane-config path=usr/bin/$(MACH64)/sane-config
+file usr/bin/$(MACH32)/sane-config path=usr/bin/sane-config
+file path=usr/bin/sane-find-scanner
+file path=usr/bin/scanimage
 file path=usr/include/sane/sane.h
 file path=usr/include/sane/saneopts.h
 link path=usr/lib/$(MACH64)/libsane.so target=libsane.so.$(COMPONENT_VERSION)

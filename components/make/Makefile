@@ -20,34 +20,28 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		make
 COMPONENT_VERSION=	4.1
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/make/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:0bc7613389650ee6a24554b52572a272f7356164fd2c4132b0bcf13123e4fca5
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/make/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gnu-make
 
 TPNO=			24441
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+# the test suite needs to be configured first
+SYSTEM_TEST_TARGET= configure $(SYSTEM_TEST_64)
+include $(WS_MAKE_RULES)/gnu-component.mk
 
-PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
-
-CONFIGURE_BINDIR.64 =   $(CONFIGURE_PREFIX)/bin
+PATH=$(SPRO_VROOT)/bin:$(USRBINDIR):$(GNUBIN)
 
 CONFIGURE_OPTIONS  +=		--program-prefix=g
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=		--without-guile
 
 # force re-runs to be the same
@@ -73,21 +67,3 @@ COMPONENT_TEST_TRANSFORMS += \
     '-e "s|^make.*: Leaving directory.*$$|XXX_CC_XXX|g" ' \
     '-e "s|^make.*: Entering directory.*$$|XXX_CC_XXX|g" ' \
     '-e "/^XXX_CC_XXX$$/d" '
-
-
-ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
-
-# the test suite needs to be configured first
-system-test:	configure $(SYSTEM_TEST_64)
-
-
-REQUIRED_PACKAGES += system/library

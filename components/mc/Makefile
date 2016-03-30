@@ -22,50 +22,30 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mc
 COMPONENT_VERSION=	4.8.15
 COMPONENT_PROJECT_URL=	http://www.midnight-commander.org/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:f74e3da70410975cdeb27ee9a66d1dd812250b6d3ede364bca728dd5a48e5471
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)downloads/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/mc
 
 TPNO=			26430
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-
-CONFIGURE_OPTIONS += --sysconfdir=/usr/share
-CONFIGURE_OPTIONS += --libexecdir=/usr/share
+CONFIGURE_OPTIONS += --sysconfdir=$(USRSHAREDIR)
+CONFIGURE_OPTIONS += --libexecdir=$(USRSHAREDIR)
 CONFIGURE_OPTIONS += --with-samba
 CONFIGURE_OPTIONS += --with-x
 CONFIGURE_OPTIONS += --enable-charset
 CONFIGURE_OPTIONS += --without-ext2undel
 CONFIGURE_OPTIONS += --with-screen=slang
 CONFIGURE_OPTIONS += "mc_cv_nroff_tascii="
-CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
-
-# Enable Address Space Layout Randomization
-ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
-
-system-test:	$(NO_TESTS)
-
 
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libssh2
@@ -73,4 +53,3 @@ REQUIRED_PACKAGES += library/slang
 REQUIRED_PACKAGES += runtime/perl-512
 REQUIRED_PACKAGES += runtime/perl-520
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library

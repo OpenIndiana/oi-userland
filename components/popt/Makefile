@@ -22,14 +22,12 @@
 #
 # Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		popt
 COMPONENT_VERSION=	1.16
 COMPONENT_PROJECT_URL=	http://freecode.com/projects/popt/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
     sha256:e728ed296fe9f069a0e005003c3d6b2dde3d9cad453422a10d6558616d304cc8
 COMPONENT_ARCHIVE_URL=	https://launchpad.net/$(COMPONENT_NAME)/head/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE)
@@ -37,10 +35,7 @@ COMPONENT_BUGDB=	library/popt
 
 TPNO=			27265
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-include $(WS_MAKE_RULES)/lint-libraries.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = \
         (cd $(@D) ; $(TOUCH) config.rpath) ;
@@ -50,32 +45,14 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
 # Add /usr/gnu/bin at the front of $PATH for GNU gettext.
-CONFIGURE_ENV +=	PATH=/usr/gnu/bin:$(PATH)
+CONFIGURE_ENV +=	PATH=$(GNUBIN):$(PATH)
 
 CONFIGURE_OPTIONS +=	--disable-nls
-
-CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS += LDFLAGS="$(LDFLAGS)"
-
-PKG_PROTO_DIRS +=	$(COMPONENT_DIR)/files
 
 # Master test results are the same for 32-bit and 64-bit, so override
 # here, rather than create multiple identical master files.
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
-configure:	$(CONFIGURE_32_and_64)
-
-build:          $(BUILD_32_and_64)
-
-install:        $(INSTALL_32_and_64)
-
 # api-sanity-autotest.pl is part of the API Sanity Checker
 # http://ispras.linuxbase.org/index.php/API_Sanity_Autotest
 # (which we don't have in Solaris), so expect that test to fail.
-test:           $(TEST_32_and_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
-REQUIRED_PACKAGES += system/library

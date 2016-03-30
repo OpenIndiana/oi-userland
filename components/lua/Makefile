@@ -18,19 +18,19 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lua
 COMPONENT_VERSION=	5.2.1
 COMPONENT_PROJECT_URL=	http://www.lua.org/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:64304da87976133196f9e4c15250b70f444467b6ed80d7cfd7b3b982b5177be5
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)ftp/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/lua
 
 LUA_TESTS=		lua-5.2.1-tests
 COMPONENT_ARCHIVE_1=	$(LUA_TESTS).tar.gz
@@ -40,13 +40,14 @@ COMPONENT_ARCHIVE_URL_1= $(COMPONENT_PROJECT_URL)/tests/5.2/$(COMPONENT_ARCHIVE_
 
 TPNO=			5814
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+BUILD_STYLE= justmake
+INSTALL_32_and_64 += $(BUILD_DIR)/lua-64.pc
+SYSTEM_TEST_TARGET= $(SYSTEM_TEST_32_and_64)
+include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL= 0
 
-# This is because lua uses $(CC) to build it's shared libraries.
+# This is because lua uses $(CC) to build its shared libraries.
 CC +=		$(CC_BITS)
 
 CFLAGS +=	$(CC_PIC) $(CPP_LARGEFILES)
@@ -59,9 +60,7 @@ $(INSTALL_64):	COMPONENT_INSTALL_ARGS += INSTALL_LIB=$(PROTOUSRLIBDIR64)
 $(INSTALL_64):	COMPONENT_INSTALL_ARGS += INSTALL_BIN=$(PROTOUSRBINDIR64)
 
 $(BUILD_DIR)/lua-64.pc:		files/lua-64.pc
-	/bin/sed -e "s#MACH64#$(MACH64)#g" < $< > $@
-
-ASLR_MODE = $(ASLR_ENABLE)
+	$(GSED) -e "s#MACH64#$(MACH64)#g" < $< > $@
 
 CLEAN_PATHS +=	$(LUA_TESTS)
 
@@ -105,17 +104,8 @@ COMPONENT_PRE_SYSTEM_TEST_ACTION = \
 	fi)
 
 COMPONENT_SYSTEM_TEST_DIR =	$(LUA_TESTS)
-COMPONENT_SYSTEM_TEST_CMD =	/usr/bin/lua
+COMPONENT_SYSTEM_TEST_CMD =	$(USRBINDIR)/lua
 COMPONENT_SYSTEM_TEST_ARGS =	-e"_U=true"
 COMPONENT_SYSTEM_TEST_TARGETS =	all.lua
 
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64) $(BUILD_DIR)/lua-64.pc
-
-test: 		$(TEST_32_and_64)
-
-system-test:	$(SYSTEM_TEST_32_and_64)
-
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

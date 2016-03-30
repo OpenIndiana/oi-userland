@@ -20,17 +20,22 @@
 #
 # Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.
 #
+COMPONENT_BUGDB ?=	utility/apache
 
-MODULES_CONFIGURE = $(CONFIGURE_64)
-MODULES_BUILD = $(BUILD_64)
-MODULES_INSTALL = $(INSTALL_64)
-MODULES_TEST = $(TEST_64)
+COMMON_TARGETS=no
+include $(WS_MAKE_RULES)/common.mk
+
+MODULES_CONFIGURE ?= $(CONFIGURE_64)
+MODULES_BUILD ?= $(BUILD_64)
+MODULES_INSTALL ?= $(INSTALL_64)
+MODULES_TEST ?= $(NO_TESTS)
+MODULES_SYSTEM_TEST ?= $(NO_TESTS)
 
 APACHE_24_USR_PREFIX=/usr/apache2/2.4
 
 VARIANT_APACHE_24 =	$(BUILD_DIR)/apache24
 
-VARIANTS_64 = $(VARIANT_APACHE_22) $(VARIANT_APACHE_24)
+VARIANTS_64 ?= $(VARIANT_APACHE_24)
 
 BUILD_64 = $(VARIANTS_64:%=%/$(MACH64)/.built)
 
@@ -54,16 +59,44 @@ $(BUILD_DIR)/apache24/$(MACH64)/.configured: APXS=$(APACHE_USR_PREFIX)/bin/apxs
 
 $(BUILD_DIR)/apache24/$(MACH64)/.built: APXS=$(APACHE_USR_PREFIX)/bin/apxs
 
-DEFAULT_COMPILER?=yes
+ASLR_MODE= $(ASLR_NOT_APPLICABLE)
+
+DEFAULT_COMPILER ?= yes
+
+ifeq ($(strip $(BUILD_STYLE)),configure)
+CONFIGURE_OPTIONS += --with-apxs=$(APXS)
+endif
+
+# Attempt to define shared module targets.
+ifeq ($(strip $(MODULES_CONFIGURE)),configure)
+configure:	$(MODULES_CONFIGURE)
+endif
+
+ifneq ($(strip $(MODULES_BUILD)),)
+build:          $(MODULES_BUILD)
+endif
+
+ifneq ($(strip $(MODULES_INSTALL)),)
+install:        $(MODULES_INSTALL)
+endif
+
+ifneq ($(strip $(MODULES_TEST)),)
+test:           $(MODULES_TEST)
+endif
+
+ifneq ($(strip $(MODULES_SYSTEM_TEST)),)
+system-test:    $(MODULES_SYSTEM_TEST)
+endif
 
 ifeq   ($(strip $(DEFAULT_COMPILER)),no)
 CC=
 CXX=
 endif
 
-PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)
-PATH=$(PARFAIT_TOOLS):$(SPRO_VROOT)/bin:/usr/bin
+PATH=$(PARFAIT_TOOLS):$(SPRO_VROOT)/bin:$(USRBINDIR)
+else
+PATH=$(SPRO_VROOT)/bin:$(USRBINDIR):$(GNUBIN)
 endif
 
 REQUIRED_PACKAGES += web/server/apache-24

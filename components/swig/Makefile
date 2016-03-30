@@ -18,38 +18,33 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+
+#
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 # parfait is suddenly unhappy with us (21638460)
 export PARFAIT_BUILD=no
-
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		swig
 COMPONENT_VERSION=	3.0.5
 COMPONENT_PROJECT_URL=	http://www.swig.org/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:9f4cb9e8f213f041853646f58fe5e8428d63250d05f5c943b6fa759c77322a3c
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/swig/swig/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/swig
 
 TPNO=			22223
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(SPRO_VROOT)/bin:$(JAVA_HOME)/bin:/usr/bin
+PATH=$(SPRO_VROOT)/bin:$(JAVA_HOME)/bin:$(USRBINDIR)
 
 # This is needed because the community provided 'check' target is not viewpath aware
 COMPONENT_PRE_CONFIGURE_ACTION =      ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_ENV += JAVA_HOME="$(JAVA_HOME)"
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS +=	CXXFLAGS="$(CXXFLAGS)"
 CONFIGURE_OPTIONS +=	--with-javaincl="$(JAVA_HOME)/include"
 
 # The additional swig specific set of transforms to be applied to the
@@ -71,20 +66,7 @@ COMPONENT_TEST_TARGETS = \
 	partialcheck-python-test-suite \
 	partialcheck-ruby-test-suite
 
-ASLR_MODE = $(ASLR_ENABLE)
-
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/c++-runtime
 REQUIRED_PACKAGES += system/library/math

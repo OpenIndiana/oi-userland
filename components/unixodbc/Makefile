@@ -18,17 +18,19 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+# 32-bit is preferred until sufficient testing can be done.
+BUILD_BITS= 32_and_64
 include ../../make-rules/shared-macros.mk
 
-PATH=$(dir $(CC)):/usr/bin:/usr/gnu/bin
+PATH=$(dir $(CC)):$(USRBINDIR):$(GNUBIN)
 
 COMPONENT_NAME=		unixODBC
 COMPONENT_VERSION=	2.3.1
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://unixodbc.org/
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:1f5be3edecff9e31072ef738ea1d8019594c4f0c2e3ab427e6eef153491db6a2
 COMPONENT_ARCHIVE_URL=	http://ftp.unixodbc.org/pub/unixODBC/$(COMPONENT_ARCHIVE)
@@ -36,9 +38,8 @@ COMPONENT_BUGDB=	library/unixodbc
 
 TPNO=			9099
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL = 0
 
@@ -46,27 +47,29 @@ PATCH_LEVEL = 0
 studio_C99MODE = -Xc $(studio_C99_ENABLE)
 
 # -xinline=%auto -- we like inlining where appropriate
-CFLAGS += -xinline=%auto
+CFLAGS.studio += -xinline=%auto
 
 # -xbuiltin=%none -- builtins have been known to be buggy
-CFLAGS += -xbuiltin=%none
+CFLAGS.studio += -xbuiltin=%none
 
 CFLAGS += $(CPP_LARGEFILES)
 CFLAGS += $(XPG6MODE)
 CFLAGS += $(CPP_POSIX)
 CFLAGS += $(CPP_C99_EXTENDED_MATH)
-CFLAGS += $(studio_PIC)
+CFLAGS.studio += $(studio_PIC)
 
-GSED = /usr/gnu/bin/sed
+X11LIB.32 = $(CONFIGURE_LIBDIR.32)
+X11LIB.64 = $(CONFIGURE_LIBDIR.64)
 
-X11LIB.32 = $(CONFIGURE_PREFIX)/lib
-X11LIB.64 = $(CONFIGURE_PREFIX)/lib/$(MACH64)
+ifeq ($(OS_VERSION),5.11)
+LD_OPTIONS += -lsocket -lnsl
+endif
 
-LD_OPTIONS += -lsocket -lresolv -lnsl -lgen
+LD_OPTIONS += -lresolv -lgen
 
 CONFIGURE_OPTIONS  +=	--includedir=$(CONFIGURE_PREFIX)/include/odbc
-CONFIGURE_OPTIONS  +=	--localstatedir=/var
-CONFIGURE_OPTIONS  +=	--sysconfdir=/etc/odbc
+CONFIGURE_OPTIONS  +=	--localstatedir=$(VARDIR)
+CONFIGURE_OPTIONS  +=	--sysconfdir=$(ETCDIR)/odbc
 CONFIGURE_OPTIONS  +=	--x-includes="$(CONFIGURE_PREFIX)/include"
 CONFIGURE_OPTIONS  +=	--x-libraries="$(X11LIB.$(BITS))"
 CONFIGURE_OPTIONS  +=	--enable-shared
@@ -92,38 +95,26 @@ CONFIGURE_OPTIONS  +=	--disable-ltdl-install
 CONFIGURE_OPTIONS  +=	--with-pic
 
 CONFIGURE_ENV  +=   LD="$(CC) $(CFLAGS) $(LDFLAGS)"
-CONFIGURE_ENV  +=   CFLAGS="$(CFLAGS)"
-CONFIGURE_ENV  +=   LDFLAGS="$(LDFLAGS)"
 CONFIGURE_ENV  +=   INSTALL="$(INSTALL)"
-
-PROTOPKGCONFIGDIR32 = $(PROTOUSRLIBDIR)/pkgconfig
-PROTOPKGCONFIGDIR64 = $(PROTOUSRLIBDIR64)/pkgconfig
 
 ASLR_MODE =	$(ASLR_ENABLE)
 
-configure:	$(CONFIGURE_32_and_64)
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-	$(MKDIR) $(PROTOPKGCONFIGDIR32)
-	$(MKDIR) $(PROTOPKGCONFIGDIR64)
-	$(GSED) -e "s#SED_SIZEOF_LONG#4#g" \
+COMPONENT_POST_INSTALL_ACTION.32 += \
+	($(MKDIR) $(PROTOPKGCONFIGDIR); \
+	$(GSED) -e 's|SED_SIZEOF_LONG|4|g' \
 	    $(COMPONENT_DIR)/Solaris/unixODBC.pc > \
-	    $(PROTOPKGCONFIGDIR32)/unixODBC.pc
-	$(GSED) -e "s#SED_SIZEOF_LONG#8#g" \
+	    $(PROTOPKGCONFIGDIR)/unixODBC.pc);
+
+COMPONENT_POST_INSTALL_ACTION.64 += \
+	($(MKDIR) $(PROTOPKGCONFIGDIR64); \
+	$(GSED) -e 's|SED_SIZEOF_LONG|8|g' \
 	    $(COMPONENT_DIR)/Solaris/unixODBC.pc > \
-	    $(COMPONENT_DIR)/unixODBC.pc.1
-	$(GSED) -e 's#/lib#/lib/$(MACH64)#g' \
+	    $(COMPONENT_DIR)/unixODBC.pc.1; \
+	$(GSED) -e 's|/lib|/lib/$(MACH64)|g' \
 	    $(COMPONENT_DIR)/unixODBC.pc.1 > \
-	    $(PROTOPKGCONFIGDIR64)/unixODBC.pc
-	$(RM) -f $(COMPONENT_DIR)/unixODBC.pc.1
-
-test: $(NO_TESTS)
-
-system-test:    $(NO_TESTS)
+	    $(PROTOPKGCONFIGDIR64)/unixODBC.pc; \
+	$(RM) -f $(COMPONENT_DIR)/unixODBC.pc.1);
 
 REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/readline
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

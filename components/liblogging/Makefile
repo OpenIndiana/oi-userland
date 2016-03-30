@@ -20,16 +20,14 @@
 #
 
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		liblogging
 COMPONENT_VERSION=	1.0.4
 COMPONENT_PROJECT_URL=	http://www.liblogging.org/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:aceb5d2aa8bdc771ff66f407f9adf4176b654db63e34a8605795b68be537b81c
 COMPONENT_ARCHIVE_URL=	\
@@ -37,9 +35,8 @@ COMPONENT_ARCHIVE_URL=	\
 COMPONENT_BUGDB=	service/rsyslog
 TPNO=			20535
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # Means build only stdlog
 CONFIGURE_OPTIONS +=    --disable-journal
@@ -47,20 +44,3 @@ CONFIGURE_OPTIONS +=    --disable-journal
 # There are built man pages in the tarball, which we shall patch. Making them
 # here would require python-docutils.
 CONFIGURE_OPTIONS +=	--disable-man-pages
-CONFIGURE_OPTIONS +=    --bindir=$(USRBINDIR)
-
-# Set -m32 or -m64 correctly for 32 and 64 bit versions.
-CC +=	$(CC_BITS)
-
-ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
-
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-REQUIRED_PACKAGES += system/library

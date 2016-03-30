@@ -20,33 +20,26 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64
 # There are a large number of macros in the GCB code written
 # specifically for GCC's preprocessor. Studio does not expand
 # these macros the same way GCC does, and the resulting gdb is
 # not usable. Building gdb with a GCC >= 4.7.2 produces very
 # good results, even on SPARC.
-COMPILER=gcc
-
+COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gdb
 COMPONENT_VERSION=	7.6
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:8070389a5dcc104eb0be483d582729f98ed4d761ad19cedd3f17b5d2502faa36
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/gdb/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL =	http://www.gnu.org/software/gdb/
-COMPONENT_BUGDB=	utility/gdb
 
 TPNO=			17258
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/gnu-component.mk
 
 
 # GDB wants the GNU utilities
@@ -60,16 +53,7 @@ CFLAGS_EXTRA = -Wall -Wno-long-long -Wcast-align -fno-omit-frame-pointer
 
 CFLAGS = $(CC_BITS) $(CFLAGS_EXTRA) $(CFLAGS_$(MACH))
 CXXFLAGS = $(CC_BITS) $(CFLAGS_EXTRA) $(CFLAGS_$(MACH))
-CPPFLAGS = -D_REENTRANT -I/usr/include/ncurses
-
-# `echo $(CFLAGS)` and `echo $(LDFLAGS)` used to
-# work around problem with extra blank characters
-# inserted into configrue option strings during
-# nested configure invocations within the gdb build.
-
-CONFIGURE_ENV += CFLAGS="`echo $(CFLAGS)`"
-CONFIGURE_ENV += CPPFLAGS="`echo $(CPPFLAGS)`"
-CONFIGURE_ENV += LDFLAGS="`echo $(LDFLAGS)`"
+CPPFLAGS = -D_REENTRANT -I$(USRINCDIR)/ncurses
 
 CONFIGURE_OPTIONS += --with-x=no
 CONFIGURE_OPTIONS += --with-curses
@@ -78,7 +62,7 @@ CONFIGURE_OPTIONS += --enable-plugins
 CONFIGURE_OPTIONS += --enable-tui
 CONFIGURE_OPTIONS += --without-auto-load-safe-path
 CONFIGURE_OPTIONS += --with-python=yes
-CONFIGURE_OPTIONS += --with-libexpat-prefix=/usr/lib
+CONFIGURE_OPTIONS += --with-libexpat-prefix=$(USRLIBDIR)
 CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
 
 # Generate the newly added Solaris instruction and
@@ -94,7 +78,7 @@ COMPONENT_POST_INSTALL_ACTION = \
       $(PYTHON) -m compileall . ; \
     cd  $(PROTOUSRDIR)/share/gdb/python/gdb/function ; \
       $(PYTHON) -m compileall . ; \
-    cd  $(PROTOUSRBINDIR64)/ ; \
+    cd  $(PROTOUSRBINDIR)/ ; \
       /usr/bin/strip -x gdb ; \
     cd  $(COMPONENT_DIR) ; \
       $(INSTALL) -m 0755 $(COMPONENT_DIR)/Solaris/gdbtui \
@@ -130,24 +114,11 @@ COMPONENT_POST_INSTALL_ACTION = \
 # altering the results of the debugging experiment.
 ASLR_MODE=$(ASLR_DISABLE)
 
-# common targets
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
-
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += text/texinfo

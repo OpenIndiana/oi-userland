@@ -18,7 +18,9 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+
+#
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 #
@@ -36,7 +38,7 @@
 # llib-l{libname}
 #
 
-LINT_LIBRARIES = $(wildcard llib-*)
+LINT_LIBRARIES ?= $(wildcard llib-*)
 
 LINT_FLAGS = -nsvx -I$(@D) -I$(SOURCE_DIR)/include -I$(SOURCE_DIR)
 

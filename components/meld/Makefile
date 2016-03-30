@@ -18,46 +18,37 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
-#
 
+#
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		meld
 COMPONENT_VERSION=	1.8.6
 COMPONENT_PROJECT_URL=	http://meld.sourceforge.net/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:af96682b8f4bf3ad4221c853b1516218d62a17ff43c38f4a83e7e8ac6736e8a5
 COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/gnome/sources/meld/1.8/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/meld
 
 TPNO=			21932
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+BUILD_STYLE= justmake
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # Needed to find the GNU version of install.
-PATH =			/usr/gnu/bin:/usr/bin
+PATH =			$(GNUBIN):$(USRBINDIR)
 
 PKG_MACROS +=		PYVER=$(PYTHON_VERSION)
 
 # Meld has no configure however it honors DESTDIR which is necessary so
-# we don't try to install into roots /usr but rather our proto areas usr
+# we don't try to install into /usr but rather our proto areas usr
 COMPONENT_INSTALL_ARGS +=	DESTDIR=$(PROTO_DIR)
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
-# common targets
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
 
 REQUIRED_PACKAGES += developer/gnome/gettext
 REQUIRED_PACKAGES += library/python/pygtk2-27

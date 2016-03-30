@@ -17,37 +17,33 @@
 # information: Portions Copyright [yyyy] [name of copyright owner]
 #
 # CDDL HEADER END
+#
 
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= NO_ARCH
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pylint
 COMPONENT_VERSION=	1.4.3
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=		\
 	sha256:1dce8c143a5aa15e0638887c2b395e2e823223c63ebaf8d5f432a99e44b29f60
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=  https://bitbucket.org/logilab/pylint
-COMPONENT_BUGDB=	utility/pylint
 
 TPNO=			22903
 
 # Since Pylint 1.4, it only supports Python 2.7+ and Python 3.3+.
 PYTHON_VERSIONS=	2.7
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/setup.py.mk
-include $(WS_MAKE_RULES)/ips.mk
+BUILD_STYLE= setup.py
+include $(WS_MAKE_RULES)/common.mk
 
 # There are several pylint documentation files that setup.py isn't installing
 # but are present in the pylint package on other distributions. Copy them into
 # the proto area "manually", so they can be included in the package.
-PDOC =			$(PROTO_DIR)/usr/share/doc
-PDOC_PYLINT =		$(PDOC)/pylint
+PDOC_PYLINT =		$(PROTOUSRSHAREDOCDIR)/pylint
 PDOC_PYLINT_EXAMPLES =	$(PDOC_PYLINT)/examples
 
 COMPONENT_POST_INSTALL_ACTION += \
@@ -82,12 +78,8 @@ COMPONENT_POST_INSTALL_ACTION += \
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-# common targets
-
-build:		$(BUILD_NO_ARCH)
-
-install:	$(INSTALL_NO_ARCH)
-	$(PYTHON.2.7.32) -m py_compile $(PROTO_DIR)/usr/lib/python2.7/vendor-packages/pylint/testutils.py
+COMPONENT_POST_INSTALL_ACTION += \
+	$(PYTHON.2.7.32) -m py_compile $(PROTOUSRLIBDIR)/python2.7/vendor-packages/pylint/testutils.py
 
 # The tests are run using python 2.7 only and require that
 # the python-27 package is installed (does not have to be the default python). 
@@ -117,10 +109,6 @@ COMPONENT_TEST_TRANSFORMS = "'/Ran (.+) test cases/{ sub(/in(.+)\)/, \"\"); prin
 
 COMPONENT_SYSTEM_TEST_CMD = /usr/bin/pytest-$(PYTHON_VERSION)
 COMPONENT_SYSTEM_TEST_ARGS =
-
-test:		$(TEST_NO_ARCH)
-
-system-test:    $(SYSTEM_TEST_NO_ARCH)
 
 REQUIRED_PACKAGES += library/python/logilab-common-27
 REQUIRED_PACKAGES += library/python/astroid-27

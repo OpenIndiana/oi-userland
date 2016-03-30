@@ -20,16 +20,14 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmng
 COMPONENT_VERSION=	1.0.10
 COMPONENT_PROJECT_URL=	http://www.libmng.com/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:03a79dac9b9316d37227057614a248a946f997c4d1a3437fb569e9a63897f911
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/libmng/files/libmng-devel/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
@@ -58,19 +56,16 @@ COMPONENT_BUGDB=	library/libmng
 
 TPNO=			5583
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-include $(WS_MAKE_RULES)/lint-libraries.mk
+INSTALL_TARGET=
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # because Solaris installed the lcms headers elsewhere
 CFLAGS += `pkg-config --cflags lcms`
 # because it's unclear that --enable-largefile works properly
 CFLAGS += $(CPP_LARGEFILES)
 
-CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
-
-CONFIGURE_OPTIONS += --includedir=/usr/include/libmng
+CONFIGURE_OPTIONS += --includedir=$(USRINCDIR)/libmng
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --with-pic
 CONFIGURE_OPTIONS += --enable-shared 
@@ -94,25 +89,14 @@ COMPONENT_PREP_ACTION = \
 	    $(CP) makefiles/configure.in makefiles/Makefile.am . ; \
 	    ACLOCAL=aclocal-1.11 AUTOMAKE=automake-1.11 autoreconf -fiv)
 
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
 $(BUILD_DIR)/libmng-64.pc:	Solaris/libmng-64.pc
 	/bin/sed -e "s#MACH64#$(MACH64)#g" <$< >$@
 
 # common targets
-configure:	$(CONFIGURE_32_and_64)
-
-build:		$(BUILD_32_and_64)
-
 install:	$(INSTALL_32_and_64) $(BUILD_DIR)/libmng-64.pc
 
-test:	$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
-
+REQUIRED_PACKAGES += developer/build/automake-111
 REQUIRED_PACKAGES += image/library/libjpeg
 REQUIRED_PACKAGES += library/lcms
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

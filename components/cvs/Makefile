@@ -18,33 +18,28 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
-#
 
+#
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cvs
 COMPONENT_VERSION=	1.12.13
 COMPONENT_PROJECT_URL=	http://www.nongnu.org/cvs/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:78853613b9a6873a30e1cc2417f738c330e75f887afdaf7b3d0800cb19ca515e
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/non-gnu/cvs/source/feature/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/cvs
 
 TPNO=			6323
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+SYSTEM_TEST_TARGET= $(SYSTEM_TEST_64)
+include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS += -D__ATTRIBUTE_DISABLED
 CONFIGURE_OPTIONS  +=	--with-external-zlib
-CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
-
-# Enable ASLR for this component
-ASLR_MODE = $(ASLR_ENABLE)
 
 # need gnu grep
 COMPONENT_TEST_ENV += PATH=$(GNUBIN):$(PATH)
@@ -55,7 +50,7 @@ COMPONENT_TEST_TARGETS = localcheck
 COMPONENT_SYSTEM_TEST_DIR = $(SOURCE_DIR)/src
 COMPONENT_SYSTEM_TEST_ENV += PATH=$(GNUBIN):$(PATH)
 COMPONENT_SYSTEM_TEST_CMD = ./sanity.sh
-COMPONENT_SYSTEM_TEST_ARGS = /usr/bin/cvs
+COMPONENT_SYSTEM_TEST_ARGS = $(USRBINDIR)/cvs
 COMPONENT_SYSTEM_TEST_TARGETS =
 
 # extract just the final results
@@ -66,16 +61,4 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/^[mM]ake/d" ' \
 	'-e "/^cp.*/d" '
 
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
-
-system-test:	$(SYSTEM_TEST_64)
-
-
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += system/library

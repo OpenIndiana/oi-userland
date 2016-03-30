@@ -18,15 +18,16 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         openexr
 COMPONENT_VERSION=      1.6.1
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  http://www.openexr.com/
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
     sha256:c616906ab958de9c37bb86ca7547cfedbdfbad5e1ca2a4ab98983c9afa6a5950
 COMPONENT_ARCHIVE_URL=  http://download.savannah.nongnu.org/releases/openexr/$(COMPONENT_ARCHIVE)
@@ -34,9 +35,7 @@ COMPONENT_BUGDB=	library/openexr
 
 TPNO=			10771
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL = 0
 
@@ -60,8 +59,6 @@ COMPONENT_TEST_TRANSFORMS += \
      '-e "/-m64/d"' \
      '-e "/DEPDIR=/d"'
 
-CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
-CONFIGURE_ENV += CXXFLAGS="$(CXXFLAGS)"
 CONFIGURE_ENV += LIBS="$(LIBS)"
 
 CONFIGURE_OPTIONS  +=           --disable-static
@@ -69,8 +66,8 @@ CONFIGURE_OPTIONS  +=           --enable-threading
 CONFIGURE_OPTIONS  +=           --enable-posix-sem
 CONFIGURE_OPTIONS  +=           --with-pic
 
-PROTOPKGCONFIGDIR.32 = $(PROTOUSRLIBDIR)/pkgconfig
-PROTOPKGCONFIGDIR.64 = $(PROTOUSRLIBDIR64)/pkgconfig
+PROTOPKGCONFIGDIR.32 = $(PROTOPKGCONFIGDIR)
+PROTOPKGCONFIGDIR.64 = $(PROTOPKGCONFIGDIR64)
 
 COMPONENT_POST_INSTALL_ACTION = \
 	( cd $(PROTOPKGCONFIGDIR.$(BITS)) ; \
@@ -78,19 +75,7 @@ COMPONENT_POST_INSTALL_ACTION = \
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-configure:	$(CONFIGURE_32_and_64)
-
-build: $(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
 REQUIRED_PACKAGES += library/ilmbase
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/c++-runtime
 REQUIRED_PACKAGES += system/library/math
-

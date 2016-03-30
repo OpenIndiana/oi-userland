@@ -22,13 +22,12 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openldap
 COMPONENT_VERSION=	2.4.30
 COMPONENT_PROJECT_URL=	http://www.openldap.org/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:fc013e528616f8578d9f221409c48af9b8937a62005e0bec88f6f1c4c8ff3d81
@@ -46,15 +45,12 @@ COMPONENT_ARCHIVE_HASH_1= \
 COMPONENT_ARCHIVE_URL_1= ftp://ftp.eenet.ee/pub/cpan/authors/id/I/IA/IANC/$(COMPONENT_ARCHIVE_1)
 
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-
 # This depends on libsasl which cannot be installed on S11.
 ifeq ($(BUILD_TYPE), evaluation)
 PUBLISH_STAMP=
 endif
 
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
         ($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -68,15 +64,13 @@ COMPONENT_PRE_BUILD_ACTION = \
 # we need to enable large file support and build PIC for our shared libraries
 CFLAGS += $(CPP_LARGEFILES) $(CC_PIC) $(studio_NORUNPATH)
 
-CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
 CONFIGURE_ENV += "ac_cv_lib_net_main=no"
 CONFIGURE_ENV += "ac_cv_lib_net_socket==no"
 CONFIGURE_ENV += "ac_cv_lib_inet_socket==no"
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib
-CONFIGURE_OPTIONS.64 += --libexecdir=/usr/lib/$(MACH64)
-CONFIGURE_OPTIONS += --localstatedir=/var/openldap
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS += --libexecdir=$(USRLIB.$(BITS))
+CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)/openldap
 CONFIGURE_OPTIONS += --includedir=$(USRINCDIR)/openldap
 CONFIGURE_OPTIONS += --docdir=$(USRSHAREDOCDIR)
 CONFIGURE_OPTIONS += --disable-static
@@ -95,27 +89,21 @@ CONFIGURE_OPTIONS += --with-cyrus-sasl
 CONFIGURE_OPTIONS += --with-threads
 CONFIGURE_OPTIONS += --with-tls=openssl
 
-PROTOULD = $(PROTOUSRLIBDIR)
-COMPONENT_TEST_ENV += LD_LIBRARY_PATH="$(PROTOULD):$(PROTOULD)/$(MACH64):"
+COMPONENT_TEST_ENV += LD_LIBRARY_PATH="$(PROTOUSRLIBDIR):$(PROTOUSRLIBDIR64):"
 COMPONENT_TEST_ARGS += -e
-
-# Enable ASLR for this component
-ASLR_MODE = $(ASLR_ENABLE)
 
 #
 # OpenLDAP must be built with cyrus-sasl out of the gate instead of the
 # installed copy.
 #
 CYRUS_SASL_ROOT = $(WS_COMPONENTS)/cyrus-sasl/build/prototype/$(MACH)
-LDFLAGS.32 +="-L$(CYRUS_SASL_ROOT)/usr/lib"
-LDFLAGS.64 +="-L$(CYRUS_SASL_ROOT)/usr/lib/$(MACH64)"
+LDFLAGS.32 +="-L$(CYRUS_SASL_ROOT)$(USRLIBDIR)"
+LDFLAGS.64 +="-L$(CYRUS_SASL_ROOT)$(USRLIBDIR64)"
 LDFLAGS +=$(LDFLAGS.$(BITS))
-CPPFLAGS +="-I$(CYRUS_SASL_ROOT)/usr/include"
-CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
-CONFIGURE_ENV += LDFLAGS="$(LDFLAGS)"
+CPPFLAGS +="-I$(CYRUS_SASL_ROOT)$(USRINCDIR)"
 # make sure that we don't add the cyrus-sasl proto area to the RUNPATH
-LD_UNSET.32="-R$(CYRUS_SASL_ROOT)/usr/lib"
-LD_UNSET.64="-R$(CYRUS_SASL_ROOT)/usr/lib/$(MACH64)"
+LD_UNSET.32="-R$(CYRUS_SASL_ROOT)$(USRLIBDIR)"
+LD_UNSET.64="-R$(CYRUS_SASL_ROOT)$(USRLIBDIR.$(BITS))"
 LD_UNSET += $(LD_UNSET.$(BITS))
 COMPONENT_BUILD_ENV += LD_UNSET="$(LD_UNSET)"
 COMPONENT_INSTALL_ENV += LD_UNSET="$(LD_UNSET)"
@@ -127,28 +115,15 @@ COMPONENT_INSTALL_ENV += LD_UNSET="$(LD_UNSET)"
 $(CONFIGURE_32):       ../cyrus-sasl/build/$(MACH32)/.installed
 $(CONFIGURE_64):       ../cyrus-sasl/build/$(MACH64)/.installed
 
-# common targets
-configure:	$(CONFIGURE_32_and_64)
-
-build:	$(BUILD_32_and_64)
+COMPONENT_POST_BUILD_ACTION += \
 	(cd $(BUILD_DIR_32)/doc/guide/admin; \
 	$(PERL) -I$(SDFBLIB)/lib $(SDFBLIB)/script/sdf -2html guide.sdf; \
 	$(PERL) -I$(SDFBLIB)/lib $(SDFBLIB)/script/sdf -2html index.sdf)
-
-install:	$(INSTALL_32_and_64)
-
-# build does this always
-test:	$(TEST_32_and_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
-
 
 REQUIRED_PACKAGES += database/berkeleydb-5
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/libsasl
 REQUIRED_PACKAGES += system/library/security/libsasl2
 REQUIRED_PACKAGES += system/network

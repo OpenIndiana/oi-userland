@@ -35,10 +35,11 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2015/122
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-file path=usr/bin/$(MACH64)/gsl-config
-file path=usr/bin/gsl-config
-file usr/bin/$(MACH64)/gsl-histogram path=usr/bin/gsl-histogram
-file usr/bin/$(MACH64)/gsl-randist path=usr/bin/gsl-randist
+# gsl-config needs swapping because it embeds library paths.
+file usr/bin/gsl-config path=usr/bin/$(MACH64)/gsl-config
+file usr/bin/$(MACH32)/gsl-config path=usr/bin/gsl-config
+file path=usr/bin/gsl-histogram
+file path=usr/bin/gsl-randist
 file path=usr/include/gsl/gsl_blas.h
 file path=usr/include/gsl/gsl_blas_types.h
 file path=usr/include/gsl/gsl_block.h

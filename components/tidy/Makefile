@@ -20,16 +20,14 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tidy
 COMPONENT_VERSION=	1.0.0
 COMPONENT_PROJECT_URL=	http://tidy.sourceforge.net/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:074023e48ed151db743d194af1028e4a17fa72a18e4069b4f18d4683db4bb9cf
 COMPONENT_ARCHIVE_URL=	$(EXTERNAL_ARCHIVE_MIRROR)/$(SOURCE_ARCHIVE)
@@ -37,10 +35,8 @@ COMPONENT_BUGDB=	library/tidy
 
 TPNO=			9098
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-include $(WS_MAKE_RULES)/lint-libraries.mk
+SYSTEM_TEST_TARGET= $(SYSTEM_TEST_32_and_64)
+include $(WS_MAKE_RULES)/common.mk
 
 #tree.js, treeview.js, tidyenum_8h.html are installed 
 #from files directory manually as doxygen didn't generate them.
@@ -53,15 +49,11 @@ CONFIGURE_OPTIONS  +=       --disable-static
 CONFIGURE_OPTIONS  +=       --enable-access 
 CONFIGURE_OPTIONS  +=       --enable-utf16 
 CONFIGURE_OPTIONS  +=       --enable-asian
-CONFIGURE_OPTIONS  +=	    CFLAGS="$(CFLAGS)"
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CP) -r $(SOURCE_DIR)/test $(@D))
 
-PROTODOCDIR=$(PROTOUSRSHAREDIR)/doc/tidy
-
-$(PROTODOCDIR):
-	$(MKDIR) $@
+PROTODOCDIR=$(PROTOUSRSHAREDOCDIR)/tidy
 
 COMPONENT_TEST_DIR =    $(@D)/test
 COMPONENT_TEST_CMD =	./testall.sh
@@ -78,17 +70,8 @@ COMPONENT_SYSTEM_TEST_TARGETS =
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-# common targets
-configure:	$(CONFIGURE_32_and_64)
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64) $(PROTODOCDIR)
-		$(CP) -r $(SOURCE_DIR)/htmldoc/api $(PROTODOCDIR)
-
-test:		$(TEST_32_and_64)
-
-system-test:    $(SYSTEM_TEST_32_and_64)
+COMPONENT_POST_INSTALL_ACTION += \
+		($(MKDIR) $(PROTODOCDIR); \
+		$(CP) -r $(SOURCE_DIR)/htmldoc/api $(PROTODOCDIR))
 
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen
-REQUIRED_PACKAGES += system/library

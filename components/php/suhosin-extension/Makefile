@@ -20,16 +20,14 @@
 #
 
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 include $(WS_COMPONENTS)/php/php-metadata.mk
 
 COMPONENT_NAME=		suhosin
 COMPONENT_VERSION=	0.9.37.1
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
     sha256:322ba104a17196bae63d39404da103fd011b09fde0f02484dc44366511c586ba
 COMPONENT_ARCHIVE_URL=	http://download.suhosin.org/$(COMPONENT_ARCHIVE)
@@ -37,20 +35,10 @@ COMPONENT_PROJECT_URL=	http://www.suhosin.org/
 
 TPNO=			22432
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
+include $(WS_MAKE_RULES)/common.mk
 include $(PHP_TOP_DIR)/phpize.mk
 
 CONFIGURE_OPTIONS += --enable-suhosin
 
 # Run MySQL tests - requires MySQL (and maybe configuration!)
 #COMPONENT_TEST_ENV += TEST_SUHOSIN_MYSQL=1
-
-configure: $(CONFIGURE_64)
-build: $(BUILD_64)
-install: $(INSTALL_64)
-test: $(TEST_64)
-
-REQUIRED_PACKAGES += system/library

@@ -22,7 +22,7 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 PATH=$(SPRO_VROOT)/bin:/usr/bin
@@ -31,17 +31,12 @@ COMPONENT_NAME=		berkeleydb
 COMPONENT_VERSION=	5.3.21
 COMPONENT_PROJECT_URL=	http://www.oracle.com/technetwork/database/berkeleydb/overview/index.html
 COMPONENT_SRC_NAME=	db
-COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:ddd92a930317df92021054c03992392db9ea5cddba43bef8920d392a82114fb8
 COMPONENT_ARCHIVE_URL=	http://download.oracle.com/berkeley-db/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	database/berkeley
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
         ($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -67,27 +62,23 @@ COMPONENT_POST_TEST_ACTION = \
 CONFIGURE_SCRIPT = dist/configure
 
 # adding to the C++ compiler because libtool appears to strip it from CXXFLAGS
-CXX +=	$(studio_NORUNPATH)
+CXX +=	$($(COMPILER)_NORUNPATH)
 
 # we need to enable large file support and build PIC for our shared libraries
 CFLAGS += $(CPP_LARGEFILES) $(CC_PIC)
 CXXFLAGS += $(CPP_LARGEFILES)
 
-CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
-CONFIGURE_ENV += CXXFLAGS="$(CXXFLAGS)"
-
 # BerkeleyDB < 6 does not support Java 8. Java 7 is EOL & removed.
 CONFIGURE_OPTIONS += --disable-java
-CONFIGURE_OPTIONS += --disable-jdbc 
-
-CONFIGURE_OPTIONS += --includedir=/usr/include
+CONFIGURE_OPTIONS += --disable-jdbc
+CONFIGURE_OPTIONS += --includedir=$(USRINCDIR)
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-cxx
 CONFIGURE_OPTIONS += --enable-sql
 CONFIGURE_OPTIONS += --enable-sql_codegen
 CONFIGURE_OPTIONS += --enable-tcl
-CONFIGURE_OPTIONS += --with-tcl=/usr/lib
+CONFIGURE_OPTIONS += --with-tcl=$(USRLIBDIR)
 CONFIGURE_OPTIONS += --enable-dbm
 CONFIGURE_OPTIONS += $(configure_test)
 
@@ -95,30 +86,17 @@ COMPONENT_TEST_TARGETS = test
 
 $(SKIP_TEST_AT_TOP_LEVEL)
 
-# Enable ASLR for this component
-ASLR_MODE = $(ASLR_ENABLE)
-
 $(BUILD_DIR)/%/.tested: configure_test= --enable-test
 
 # Do not apply the standard licence transforms for this component.
 LICENSE_TRANSFORMS =
 
-# common targets
-configure:	$(CONFIGURE_32_and_64)
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-		$(CP) berkeleydb.license $(PROTOUSRDIR)/docs/LICENSE
-
-test:		$(TEST_32_and_64) 
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+COMPONENT_POST_INSTALL_ACTION += \
+	$(CP) berkeleydb.license $(PROTOUSRDIR)/docs/LICENSE
 
 # By default "gmake test" runs standard tests, takes ~2 days per $(BITS).
 RUN=run_std
 
 
 REQUIRED_PACKAGES += system/core-os
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/c++-runtime

@@ -18,19 +18,18 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gawk
 COMPONENT_VERSION=	4.1.3
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/gawk/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:e3cf55e91e31ea2845f8338bedd91e40671fc30e4d82ea147d220e687abda625
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/gawk/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/gawk
 
 # The additional gawk specific set of transforms to be applied to the
 # test results to try to normalize them.
@@ -39,35 +38,19 @@ COMPONENT_TEST_TRANSFORMS += \
 
 TPNO=			26217	
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+# must build tests before using
+SYSTEM_TEST_TARGET= build $(SYSTEM_TEST_64)
+include $(WS_MAKE_RULES)/gnu-component.mk
 
-CONFIGURE_BINDIR.64 =   $(CONFIGURE_PREFIX)/bin
+# Utility executables are intentionally delivered to the 32-bit lib directory.
 CONFIGURE_LIBDIR.64 =   $(CONFIGURE_PREFIX)/lib
 
 CONFIGURE_OPTIONS	+=	--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS	+=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
-CONFIGURE_OPTIONS	+=	CFLAGS="$(CFLAGS)"
 
-COMPONENT_SYSTEM_TEST_ARGS = AWKPROG=/usr/bin/gawk
-
-ASLR_MODE = $(ASLR_ENABLE)
-
-
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
-
-# must build tests before using
-system-test:    build $(SYSTEM_TEST_64)
+COMPONENT_SYSTEM_TEST_ARGS = AWKPROG=$(USRBINDIR)/gawk
 
 REQUIRED_PACKAGES += library/libsigsegv
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

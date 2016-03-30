@@ -22,7 +22,7 @@
 #
 # Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sqlite
@@ -30,7 +30,6 @@ TARBALL_VERSION=	3090200
 COMPONENT_VERSION=	3.9.2
 COMPONENT_PROJECT_URL=	http://www.sqlite.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-autoconf-$(TARBALL_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
     sha256:064c0abe9c9177534d4c770bca7a5902f9924b629ac886b4c08956be6dfbc36b
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)2015/$(COMPONENT_ARCHIVE)
@@ -47,22 +46,28 @@ PKG_PROTO_DIRS +=       $(COMPONENT_SRC_1)
 
 TPNO=			26531
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
+TEA_CONFIGURE_OPTIONS.32 += --with-tcl="$(USRLIBDIR)"
+TEA_CONFIGURE_OPTIONS.64 += --with-tcl="$(USRLIBDIR64)"
+TEA_CONFIGURE_OPTIONS.64 += --enable-64bit
+TEA_CONFIGURE_OPTIONS.sparc.64 += --enable-64bit-vis
+TEA_CONFIGURE_OPTIONS = --enable-shared
+TEA_CONFIGURE_OPTIONS += $(TEA_CONFIGURE_OPTIONS.$(BITS))
+TEA_CONFIGURE_OPTIONS += $(TEA_CONFIGURE_OPTIONS.$(MACH))
+TEA_CONFIGURE_OPTIONS += $(TEA_CONFIGURE_OPTIONS.$(MACH).$(BITS))
+
 COMPONENT_POST_CONFIGURE_ACTION = \
 	(cd $(@D)/tea ; $(ENV) $(CONFIGURE_ENV) $(CONFIG_SHELL) \
-	./configure --enable-shared --with-tcl="/usr/lib");
+	./configure $(TEA_CONFIGURE_OPTIONS));
 
 COMPONENT_POST_BUILD_ACTION = \
 	(cd $(@D)/tea ; $(ENV) $(COMPONENT_BUILD_ENV) \
 	$(GMAKE) $(COMPONENT_BUILD_ARGS) $(COMPONENT_BUILD_TARGETS));
-
-CC +=		$(CC_BITS)
 
 CFLAGS +=	-D_POSIX_PTHREAD_SEMANTICS
 CFLAGS +=	-DNDEBUG
@@ -80,23 +85,9 @@ CFLAGS +=	-DSQLITE_MAX_DEFAULT_PAGE_SIZE=32768
 CFLAGS +=	-DSQLITE_DEFAULT_PCACHE_INITSZ=0
 CFLAGS +=	-I.
 
-CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	--enable-threadsafe
 CONFIGURE_OPTIONS +=	--enable-dynamic-extensions
 CONFIGURE_OPTIONS +=	--enable-shared
 CONFIGURE_OPTIONS +=	--disable-static
 
-ASLR_MODE =	$(ASLR_ENABLE)
-
-configure:	$(CONFIGURE_32_and_64)
-
-build:          $(BUILD_32_and_64)
-
-install:        $(INSTALL_32_and_64)
-
-test:           $(NO_TESTS)
-
-system-test:	$(NO_TESTS)
-
 REQUIRED_PACKAGES += library/readline
-REQUIRED_PACKAGES += system/library

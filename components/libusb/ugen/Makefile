@@ -18,8 +18,11 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libusb-ugen
@@ -29,9 +32,8 @@ COMPONENT_PROJECT_URL=	http://libusb.sf.net/
 COMPONENT_SRC=		src
 COMPONENT_BUGDB=	library/libusb
 
-include $(WS_MAKE_RULES)/prep.mk
+BUILD_STYLE= justmake
 include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
 
 $(BUILD_DIR_32)/.built:	BITS=32
 $(BUILD_DIR_64)/.built:	BITS=64
@@ -48,15 +50,6 @@ ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 CLEAN_PATHS +=	$(SOURCE_DIR)/.prep
 
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-# enumerates USB devices plugged into your system
-test:		$(TEST_32_and_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
+# test enumerates USB devices plugged into your system
 
 REQUIRED_PACKAGES += system/io/usb
-REQUIRED_PACKAGES += system/library

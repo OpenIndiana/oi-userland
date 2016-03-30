@@ -18,26 +18,21 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
-# OFED only builds with GCC
-COMPILER=gcc
-
-include ../../../make-rules/shared-macros.mk
+BUILD_BITS= 64_and_32
+include ../ofed-component-macros.mk
 
 COMPONENT_NAME=		libsdp
 COMPONENT_VERSION=	1.1.108
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-0.15.gd7fdb72.tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:b72d4d84c7a02207c261082d1837757f8c131942193ceaf017daf684d61e8be1
-COMPONENT_ARCHIVE_URL=	http://www.openfabrics.org/downloads/libsdp/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/ofuv_lib
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include ../ofed.mk
+include ../ofed-component.mk
 
 MAN3FILES = libsdp.3lib
 MAN5FILES = libsdp.conf.5
@@ -46,10 +41,8 @@ SUFFIX.64 = $(MACH64)
 
 CFLAGS += -D_POSIX_PTHREAD_SEMANTICS
 
-LIBS += -lsocket -lnsl
-
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS += --libdir=/usr/lib/secure/$(SUFFIX.$(BITS))
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS += --libdir=$(USRLIBDIR)/secure/$(SUFFIX.$(BITS))
 
 CLEANUP_DIRS =	$(PROTOUSRBINDIR)/linux
 CLEANUP_FILES =\
@@ -64,13 +57,3 @@ COMPONENT_POST_INSTALL_ACTION=\
 	$(RM) $(CLEANUP_FILES);\
 	$(RM) $(CLEANUP_DIRS)
 
-# common targets
-configure:	$(CONFIGURE_32_and_64)
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)

@@ -22,7 +22,7 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= NO_ARCH
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tomcat
@@ -30,11 +30,9 @@ COMPONENT_VERSION=	8.0.32
 COMPONENT_PROJECT_URL=	http://tomcat.apache.org/
 COMPONENT_SRC_NAME=	apache-tomcat
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)-src
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:b8f7770ae947a0c0aed9b5a6f3e2ff18fd27a07f068cc6029f019b5d4c6de560
 COMPONENT_ARCHIVE_URL=	http://www.apache.org/dist/tomcat/tomcat-8/v$(COMPONENT_VERSION)/src/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/tomcat
 
 # Tomcat subcomponents
 COMPONENT_ARCHIVE_1= ecjsrc-4.4.2.jar
@@ -44,9 +42,10 @@ COMPONENT_ARCHIVE_URL_1= http://archive.eclipse.org/eclipse/downloads/drops4/R-4
 
 TPNO=			26981
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/ant.mk
-include $(WS_MAKE_RULES)/ips.mk
+BUILD_STYLE= ant
+TEST_TARGET= $(SKIP_TEST)
+SYSTEM_TEST_TARGET= $(SKIP_TEST)
+include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL=0
 
@@ -69,15 +68,8 @@ COMPONENT_POST_BUILD_ACTION= \
 	(cd $(PROTO_DIR) ; $(RM) conf/CONF.tar.gz ; \
 	    gtar cfz conf/CONF.tar.gz conf/* )
 
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
-build:	$(BUILD_NO_ARCH)
-
-install: build
-
-test:	$(SKIP_TEST)
-
-system-test:	$(SKIP_TEST)
+# Used by this Makefile
+REQUIRED_PACKAGES += archiver/gnu-tar
 
 REQUIRED_PACKAGES += developer/java/junit
 REQUIRED_PACKAGES += runtime/java/jre-8

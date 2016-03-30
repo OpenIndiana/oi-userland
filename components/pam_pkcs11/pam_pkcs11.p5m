@@ -41,17 +41,18 @@ set name=org.opensolaris.arc-caseid value=PSARC/2006/283
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 dir  path=etc/security/pam_pkcs11/cacerts
 dir  path=etc/security/pam_pkcs11/crls
-file usr/share/pam_pkcs11/digest_mapping.example \
-    path=etc/security/pam_pkcs11/digest_mapping.example
-file usr/share/pam_pkcs11/mail_mapping.example \
-    path=etc/security/pam_pkcs11/mail_mapping.example
-file usr/bin/make_hash_link.sh path=etc/security/pam_pkcs11/make_hash_link.sh \
-    mode=0555
+# The other example files such as pam_d.login.example and
+# pam_pkcs11.conf.example, are intentionally omitted here either because the
+# examples are not applicable to Solaris or we already provide default
+# configuration.
+file path=etc/security/pam_pkcs11/digest_mapping.example
+file path=etc/security/pam_pkcs11/mail_mapping.example
+file usr/lib/pam_pkcs11/make_hash_link.sh \
+    path=etc/security/pam_pkcs11/make_hash_link.sh mode=0555
 file pam_pkcs11.conf path=etc/security/pam_pkcs11/pam_pkcs11.conf mode=0644 \
     original_name=SUNWpampkcs11:etc/security/pam_pkcs11/pam_pkcs11.conf \
     preserve=renamenew
-file usr/share/pam_pkcs11/subject_mapping.example \
-    path=etc/security/pam_pkcs11/subject_mapping.example
+file path=etc/security/pam_pkcs11/subject_mapping.example
 file usr/lib/$(MACH64)/pam_pkcs11/ldap_mapper.so \
     path=usr/lib/pam_pkcs11/$(MACH64)/ldap_mapper.so
 file usr/lib/$(MACH64)/pam_pkcs11/opensc_mapper.so \
@@ -61,11 +62,11 @@ file usr/lib/$(MACH64)/pam_pkcs11/openssh_mapper.so \
 file path=usr/lib/pam_pkcs11/ldap_mapper.so
 file path=usr/lib/pam_pkcs11/opensc_mapper.so
 file path=usr/lib/pam_pkcs11/openssh_mapper.so
-file usr/bin/pkcs11_inspect path=usr/lib/pam_pkcs11/pkcs11_inspect mode=0555
-file usr/bin/pklogin_finder path=usr/lib/pam_pkcs11/pklogin_finder mode=0555
+file path=usr/lib/pam_pkcs11/pkcs11_inspect mode=0555
+file path=usr/lib/pam_pkcs11/pklogin_finder mode=0555
 file usr/lib/$(MACH64)/security/pam_pkcs11.so \
     path=usr/lib/security/$(MACH64)/pam_pkcs11.so
-file usr/lib/security/pam_pkcs11.so path=usr/lib/security/pam_pkcs11.so
+file path=usr/lib/security/pam_pkcs11.so
 file doc/mappers_api.html path=usr/share/doc/pam_pkcs11/mappers_api.html
 file doc/pam_pkcs11.html path=usr/share/doc/pam_pkcs11/pam_pkcs11.html
 file path=usr/share/locale/fr/LC_MESSAGES/pam_pkcs11.mo

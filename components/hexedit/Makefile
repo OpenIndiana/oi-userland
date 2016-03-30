@@ -20,9 +20,9 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		hexedit
@@ -33,40 +33,22 @@ COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).src.tgz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:6a126da30a77f5c0b08038aa7a881d910e3b65d13767fb54c58c983963b88dd7
 COMPONENT_ARCHIVE_URL=	http://rigaux.org/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/hexedit
 
 TPNO=			18059
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
+
+# Fix 64-bit linking done via compiler.
+LDFLAGS += $(CC_BITS)
 
 COMPONENT_PRE_CONFIGURE_ACTION =  \
         ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 # Without this, initscr32 and w32attrset are undefined at link time.
 # The usual Solaris curses.h vs ncurses/curses.h mess.
-CFLAGS +=			-I/usr/include/ncurses
+CFLAGS += -I/usr/include/ncurses
 
 CFLAGS += "-Dinline"
 
-CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS  +=		LDFLAGS="$(LDFLAGS) $(CC_BITS)"
-
-ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
-TPNO=			9060
-
 REQUIRED_PACKAGES += library/ncurses
-REQUIRED_PACKAGES += system/library

@@ -22,24 +22,21 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
 # Built in SFW with gcc and builds cleanly now only with gcc
-COMPILER =	gcc
-
+BUILD_BITS= 64
+COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
-PATH=$(JAVA_HOME)/bin:/usr/bin
+PATH=$(JAVA_HOME)/bin:$(USRBINDIR)
 
 COMPONENT_NAME=			erlang
 COMPONENT_VERSION=		17.5
 COMPONENT_PROJECT_URL=	http://www.erlang.org/
 COMPONENT_SRC_NAME=	otp_src
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)_$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:3c28820c981b30c50df8ac2a4a238e5813454fa3ed2ad530bc7948a282846474
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/erlang
 
 # manpages
 COMPONENT_NAME_1=	otp_doc_man
@@ -63,12 +60,13 @@ PKG_PROTO_DIRS +=	$(COMPONENT_SRC_2)
 
 TPNO=			18548
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+SYSTEM_TEST_TARGET= configure $(SYSTEM_TEST_64)
+include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS += CPPFLAGS="$(CPPFLAGS) -I/usr/include/gd2"
+# Fix 64-bit linking.
+LDFLAGS += $(CC_BITS)
+
+CPPFLAGS += "-I/usr/include/gd2"
 CONFIGURE_OPTIONS += --enable-smp-support
 CONFIGURE_OPTIONS += --enable-threads
 # The HiPE portion is a bit sensitive, and only seems to work 64-bit on
@@ -77,11 +75,6 @@ CONFIGURE_OPTIONS += --enable-threads
 CONFIGURE_OPTIONS += --enable-hipe
 CONFIGURE_OPTIONS += --with-ssl
 CONFIGURE_OPTIONS += --enable-dynamic-ssl-lib
-
-CONFIGURE_BINDIR.64 =   $(CONFIGURE_PREFIX)/bin
-
-CONFIGURE_OPTIONS.64 += LDFLAGS="$(LDFLAGS) -m64"
-CONFIGURE_OPTIONS.64 += LIBS="-m64"
 
 # Use cp(1) instead of cloney because erlang's 'install' target uses 'tar'
 # to copy files and our tar doesn't handle long links by default.  Between
@@ -105,29 +98,18 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|/ldisk/tests|XXX_UID_XXX|g" ' \
 	'-e "/XXX_UID_XXX/d" '
 
-COMPONENT_SYSTEM_TEST_ENV +=		ERL_TOP=$(BUILD_DIR_64)
+COMPONENT_SYSTEM_TEST_ENV +=	ERL_TOP=$(BUILD_DIR_64)
 COMPONENT_SYSTEM_TEST_TARGETS =	tests
 
-ASLR_MODE = $(ASLR_ENABLE)
-
-configure:	$(CONFIGURE_64)
-
-build:	$(BUILD_64)
-
-install:	$(INSTALL_64)
-	# remove INSTALL_PREFIX from path
+# remove INSTALL_PREFIX from path
+COMPONENT_POST_INSTALL_ACTION += \
 	$(PERL) -pi -e "s|$(PROTO_DIR)||g" \
-		$(PROTO_DIR)/usr/lib/$(MACH64)/erlang/bin/erl \
-		$(PROTO_DIR)/usr/lib/$(MACH64)/erlang/releases/RELEASES
-
-test:	$(TEST_64)
-
-system-test:	configure $(SYSTEM_TEST_64)
+		$(PROTOUSRLIBDIR64)/erlang/bin/erl \
+		$(PROTOUSRLIBDIR64)/erlang/releases/RELEASES
 
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

@@ -18,14 +18,15 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+BUILD_BITS= 32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		foomatic-db-engine
 COMPONENT_VERSION=	3.0-20080903
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:668f2020eb136359523090cc17151e6aad0c56bce0e4ae91217a9eba19eec917
 COMPONENT_ARCHIVE_URL=	$(EXTERNAL_ARCHIVE_MIRROR)/$(COMPONENT_ARCHIVE)
@@ -34,13 +35,11 @@ COMPONENT_BUGDB=	utility/foomatic
 
 TPNO=			6399
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)" 
 CONFIGURE_OPTIONS +=	PERL=$(PERL)
-CONFIGURE_OPTIONS +=	FILEUTIL=/bin/true
+CONFIGURE_OPTIONS +=	FILEUTIL=$(BINDIR)/true
 CONFIGURE_OPTIONS +=    --sysconfdir=$(ETCDIR)/gnu
 
 # the build system does not support building outside of the source tree
@@ -62,20 +61,6 @@ COMPONENT_POST_INSTALL_ACTION = \
      >> $(PROTO_DIR)/$(PACKLIST).fixed ; \
  $(MV) $(PROTO_DIR)/$(PACKLIST).fixed $(PROTO_DIR)/$(PACKLIST)
 
-
-# common targets
-configure:	$(CONFIGURE_32)
-
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
-
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += $(PERL_PKG)
 REQUIRED_PACKAGES += shell/bash
-REQUIRED_PACKAGES += system/library

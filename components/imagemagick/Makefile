@@ -22,7 +22,7 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			ImageMagick
@@ -30,7 +30,6 @@ COMPONENT_VERSION=		6.8.3
 COMPONENT_SUBVERSION=		5
 HUMAN_VERSION=			$(COMPONENT_VERSION)-$(COMPONENT_SUBVERSION)
 COMPONENT_PROJECT_URL=		http://www.imagemagick.org/
-COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC)-$(COMPONENT_SUBVERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:daead80170bc6d44cf6a54b4817446cbb7211b8ee445532b64033af190265fe3
@@ -39,11 +38,9 @@ COMPONENT_BUGDB=	utility/imagemagick
 
 TPNO=			17708
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
+PATH=$(SPRO_VROOT)/bin:$(USRBINDIR):$(GNUBIN)
 
 # IPS_COMPONENT_VERSION is by default set to $(COMPONENT_VERSION) but in
 # this case we need to replace the '-' by '.'.
@@ -54,7 +51,7 @@ COMPONENT_POST_UNPACK_ACTION= ( $(MV) $(COMPONENT_SRC)-$(COMPONENT_SUBVERSION) \
 
 # To get the Perl modules built it is necessary to copy the PerlMagick
 # directory to the build directory
-COMPONENT_PRE_CONFIGURE_ACTION= ($(CP) -R $(SOURCE_DIR)/PerlMagick $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION += ($(CP) -R $(SOURCE_DIR)/PerlMagick $(@D))
 
 ifeq ($(OS_VERSION),5.11)
 LIBS += -lsocket -lnsl
@@ -62,21 +59,22 @@ CONFIGURE_ENV += LIBS="$(LIBS)"
 endif
 
 # Show name of "error tag" as part of the warning
-CFLAGS += -errtags=yes
+CFLAGS.studio += -errtags=yes
+
+studio_C99MODE= $(studio_C99_ENABLE)
+
 # To remove the compiler complaints about __restrict keyword,
 # -D_magickcore_restrict should be used.
-CFLAGS += -xc99=%all -D_magickcore_restrict=
+CFLAGS += -D_magickcore_restrict=
 
 # Needed to generate a decent RUNPATH for Magick.so
 #
 COMPONENT_BUILD_ARGS += LD="$(CC)"
 COMPONENT_BUILD_ARGS += LD_RUN_PATH="$(CONFIGURE_LIBDIR.$(BITS))"
 
-CONFIGURE_OPTIONS+= CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS+= CXXFLAGS="$(CXXFLAGS)"
 CONFIGURE_OPTIONS+= --with-modules
-CONFIGURE_OPTIONS+= --enable-shared=yes
-CONFIGURE_OPTIONS+= --enable-static=no
+CONFIGURE_OPTIONS+= --enable-shared
+CONFIGURE_OPTIONS+= --disable-static
 CONFIGURE_OPTIONS+= --without-gvc
 CONFIGURE_OPTIONS+= --disable-openmp
 # Using option 'with-fontconfig=no' so that the fonts/fonts path specified in
@@ -100,8 +98,6 @@ unexport SHELLOPTS
 # Tests hang waiting for input unless stdin is redirected.
 COMPONENT_TEST_TARGETS = check < /dev/null
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 # Master test transforms
 COMPONENT_TEST_TRANSFORMS += \
 	'-n '\
@@ -111,33 +107,27 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/FAIL/p" ' \
 	'-e "/ERROR/p" ' 
 
-configure:	$(CONFIGURE_32_and_64)
-
-build:		$(BUILD_32_and_64)
-
 # Remove build machine runpath from libMagick++-6.Q16.so.1.0.0 and
 # libMagickCore-6.Q16.so.1.0.0
-install:	$(INSTALL_32_and_64)
-	/usr/bin/elfedit -e 'dyn:delete RUNPATH' \
-	    $(PROTO_DIR)/usr/lib/libMagick++-6.Q16.so.1.0.0; \
-	/usr/bin/elfedit -e 'dyn:delete RUNPATH' \
-	    $(PROTO_DIR)/usr/lib/$(MACH64)/libMagick++-6.Q16.so.1.0.0; \
-	/usr/bin/elfedit -e 'dyn:delete RPATH' \
-	    $(PROTO_DIR)/usr/lib/libMagick++-6.Q16.so.1.0.0; \
-	/usr/bin/elfedit -e 'dyn:delete RPATH' \
-	    $(PROTO_DIR)/usr/lib/$(MACH64)/libMagick++-6.Q16.so.1.0.0
-	/usr/bin/elfedit -e 'dyn:delete RUNPATH' \
-	    $(PROTO_DIR)/usr/lib/libMagickCore-6.Q16.so.1.0.0; \
-	/usr/bin/elfedit -e 'dyn:delete RUNPATH' \
-	    $(PROTO_DIR)/usr/lib/$(MACH64)/libMagickCore-6.Q16.so.1.0.0; \
-	/usr/bin/elfedit -e 'dyn:delete RPATH' \
-	    $(PROTO_DIR)/usr/lib/libMagickCore-6.Q16.so.1.0.0; \
-	/usr/bin/elfedit -e 'dyn:delete RPATH' \
-	    $(PROTO_DIR)/usr/lib/$(MACH64)/libMagickCore-6.Q16.so.1.0.0
+COMPONENT_POST_INSTALL_ACTION.32 += \
+	$(ELFEDIT) -e 'dyn:delete RUNPATH' \
+	    $(PROTOUSRLIBDIR)/libMagick++-6.Q16.so.1.0.0; \
+	$(ELFEDIT) -e 'dyn:delete RPATH' \
+	    $(PROTOUSRLIBDIR)/libMagick++-6.Q16.so.1.0.0; \
+	$(ELFEDIT) -e 'dyn:delete RUNPATH' \
+	    $(PROTOUSRLIBDIR)/libMagickCore-6.Q16.so.1.0.0; \
+	$(ELFEDIT) -e 'dyn:delete RPATH' \
+	    $(PROTOUSRLIBDIR)/libMagickCore-6.Q16.so.1.0.0
 
-test:		$(TEST_32_and_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+COMPONENT_POST_INSTALL_ACTION.64 += \
+	$(ELFEDIT) -e 'dyn:delete RUNPATH' \
+	    $(PROTOUSRLIBDIR64)/libMagick++-6.Q16.so.1.0.0; \
+	$(ELFEDIT) -e 'dyn:delete RPATH' \
+	    $(PROTOUSRLIBDIR64)/libMagick++-6.Q16.so.1.0.0; \
+	$(ELFEDIT) -e 'dyn:delete RUNPATH' \
+	    $(PROTOUSRLIBDIR64)/libMagickCore-6.Q16.so.1.0.0; \
+	$(ELFEDIT) -e 'dyn:delete RPATH' \
+	    $(PROTOUSRLIBDIR64)/libMagickCore-6.Q16.so.1.0.0
 
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/xz
@@ -153,7 +143,6 @@ REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/c++-runtime
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2

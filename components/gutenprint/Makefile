@@ -18,27 +18,25 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gutenprint
 COMPONENT_VERSION=	5.2.7
 COMPONENT_PROJECT_URL=	http://www.gutenprint.org/software/gutenprint/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:114c899227e3ebb0753c1db503e6a5c1afaa4b1f1235fdfe02fb6bbd533beed1
 COMPONENT_ARCHIVE_URL=	http://voxel.dl.sourceforge.net/project/gimp-print/gutenprint-5.2/5.2.7/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/gutenprint
 
 TPNO=			8943
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	 --infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS +=    --enable-escputil
 CONFIGURE_OPTIONS +=    --without-gimp2
@@ -55,18 +53,7 @@ COMPONENT_BUILD_TARGETS = all
 
 $(SKIP_TEST_AT_TOP_LEVEL)
 
-configure:	$(CONFIGURE_32)
-
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
 # the tests mostly pass, but it can't find several drivers for ppd files
-test:		$(TEST_32)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
-
 
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/glib2
@@ -76,7 +63,6 @@ REQUIRED_PACKAGES += print/cups
 REQUIRED_PACKAGES += runtime/perl-512
 REQUIRED_PACKAGES += runtime/perl-520
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxcursor

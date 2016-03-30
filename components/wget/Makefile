@@ -18,25 +18,22 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		wget
 COMPONENT_VERSION=	1.17.1
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/wget/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:fe559b61eb9cc01635ac6206a14e02cb51591838c35fa83c7a4aacae0bdd97c9
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/wget/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/wget
 
 TPNO=			26307
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/gnu-component.mk
 
 # Keep just the final test report
 COMPONENT_TEST_TRANSFORMS += '-ne "/^PASS/p" '
@@ -46,17 +43,13 @@ COMPONENT_TEST_TRANSFORMS += '-ne "/^\# /p" '
 COMPONENT_TEST_TRANSFORMS += '-ne "/^See/p" '
 COMPONENT_TEST_TRANSFORMS += '-ne "/^Please/p" '
 
-# Enforce wget binary to standard path
-CONFIGURE_BINDIR.64 = $(CONFIGURE_PREFIX)/bin
-
 # Enforce openssl (--with-ssl=openssl) instead of default gnutls
 # (--with-ssl) as wget doesn't work for secure connections with gnutls. 
 # Set PATH to find /usr/perl5/bin/pod2man, so that the man page wget.1
 # can be automatically generated
-CONFIGURE_OPTIONS +=	--sysconfdir=/etc
+CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS +=	--with-ssl=openssl
 CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)" 
 CONFIGURE_OPTIONS +=	PATH="$(PATH):/usr/perl5/bin"
 
 # Wget test suite will skip majority of tests with few Perl modules
@@ -82,23 +75,8 @@ CONFIGURE_OPTIONS +=	PATH="$(PATH):/usr/perl5/bin"
 	gtar --get $(SOCK)/lib/IO/Socket/SSL $(SOCK)/lib/IO/Socket/SSL.pm \
 	     --strip-components=2 -f $(SOCK).tar.gz; )
 
-# Enable ASLR for this component
-ASLR_MODE = $(ASLR_ENABLE)
-
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
-
 REQUIRED_PACKAGES += library/libidn
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += text/texinfo

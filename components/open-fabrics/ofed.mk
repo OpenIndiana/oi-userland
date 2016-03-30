@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 # Since we are building these as a set and not packaging them individually at
@@ -26,9 +26,10 @@
 # so we override PROTO_DIR
 PROTO_DIR = $(WS_COMPONENTS)/open-fabrics/prototype/$(MACH)
 
-PATH=$(GCC_ROOT)/bin:/usr/bin:/usr/gnu/bin
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)
-PATH=$(PARFAIT_TOOLS):$(GCC_ROOT)/bin:/usr/bin
+PATH=$(PARFAIT_TOOLS):$(GCC_ROOT)/bin:$(USRBINDIR)
+else
+PATH=$(GCC_ROOT)/bin:$(USRBINDIR):$(GNUBIN)
 endif
 
 
@@ -39,7 +40,7 @@ CFLAGS += -D_REENTRANT -D__USE_SUNOS_SOCKETS__
 # and we still need headers and to link with the components that we are
 # building, we need to point the compiler and linker at a common proto area
 # for OFED component headers and libraries.
-SHARED_INCLUDES += -I$(PROTO_DIR)/usr/include
+SHARED_INCLUDES += -I$(PROTOUSRINCDIR)
 
 # We need to insert the shared "proto" area include directories at the front
 # of any compile line to preempt the system headers.  It seems that the "best"
@@ -51,7 +52,6 @@ CXX += $(SHARED_INCLUDES)
 # This is generally required, but must be overridable
 DISABLE_LIBCHECK =	--disable-libcheck
 
-CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_ENV +=	LD_OPTIONS="-R$(PROTO_DIR)/$(CONFIGURE_LIBDIR.$(BITS))"
 
 COMPONENT_INSTALL_ENV +=	LDFLAGS="-L$(PROTO_DIR)/$(CONFIGURE_LIBDIR.$(BITS))"

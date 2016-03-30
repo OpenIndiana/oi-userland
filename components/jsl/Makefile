@@ -18,31 +18,30 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+
+#
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 # Preferred compiler set to gcc and not Studio as on Sparc architecture
 # some assembler code is required for locking which fails to compile on
 # solaris, when using gcc this is inlined (see jslock.c)
 COMPILER =	gcc
-
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		jsl
 COMPONENT_VERSION=	0.3.0
 COMPONENT_PROJECT_URL=	http://www.javascriptlint.com
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-src.tar.gz
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:86f16792d71fc59b96f65eca65b1b7466dc046efe6d5ac04c6632f1315e83cfa
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/download/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/jsl
 
 TPNO=			10774
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+BUILD_STYLE= justmake
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_BUILD_ARGS += -f src/Makefile
 COMPONENT_BUILD_ARGS += CC="$(CC)"
@@ -59,17 +58,8 @@ COMPONENT_TEST_DIR =		$(COMPONENT_SRC)/tests
 COMPONENT_TEST_CMD =            $(PERL) ./run_tests.pl
 COMPONENT_TEST_TARGETS =        $(PROTOUSRBINDIR64)/jsl
 
-# Enable ASLR for this component
-ASLR_MODE = $(ASLR_ENABLE)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
 test:		install $(TEST_64)
 
 # Add install dependency as above when system test targets are implemented.
-system-test:	$(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

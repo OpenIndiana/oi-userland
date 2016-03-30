@@ -19,18 +19,16 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
-PATH=$(dir $(CC)):/usr/bin:/usr/gnu/bin
+PATH=$(dir $(CC)):$(USRBINDIR):$(GNUBIN)
 
 COMPONENT_NAME=         mpfr
 COMPONENT_VERSION=      2.4.2
 COMPONENT_PROJECT_URL=	http://www.mpfr.org/
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
     sha256:246d7e184048b1fc48d3696dd302c9774e24e921204221540745e5464022b637
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
@@ -38,10 +36,7 @@ COMPONENT_BUGDB=	library/libmpfr
 
 TPNO=			17709
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-include $(WS_MAKE_RULES)/lint-libraries.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CLEAN_PATHS += libmpfr.pc
 PATCH_LEVEL = 0
@@ -62,12 +57,8 @@ MPN64_sparc = sparc64 generic
 MPN32 = $(MPN32_$(MACH))
 MPN64 = $(MPN64_$(MACH))
 
-GMPINCDIR = /usr/include/gmp
-GMPLIBDIR_32 = /usr/lib
-GMPLIBDIR_64 = /usr/lib/$(MACH64)
+GMPINCDIR = $(USRINCDIR)/gmp
 MPFRMULHIGH = 2048
-
-GSED = /usr/bin/gsed
 
 COMPONENT_TEST_TRANSFORMS += \
      '-e "/libtool/d"' \
@@ -76,35 +67,28 @@ COMPONENT_TEST_TRANSFORMS += \
      '-e "/DEPDIR=/d"' \
      '-e "s/^make\[[0-9]\{1,\}\]/make/g"'
 
-CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
 CONFIGURE_ENV += LD="$(CC) $(CFLAGS) $(LDFLAGS)"
-CONFIGURE_ENV += LDFLAGS="$(LDFLAGS)"
 CONFIGURE_ENV += CPP="$(CC) $(CPPFLAGS) $(CFLAGS) -E"
 CONFIGURE_ENV += INSTALL="$(INSTALL)"
 CONFIGURE_ENV += SED="$(GSED)"
 CONFIGURE_ENV += ABI="$(BITS)"
 CONFIGURE_ENV += "MPN_PATH=$(MPN_$(BITS))"
 
-CONFIGURE_OPTIONS += --includedir=/usr/include/mpfr
-CONFIGURE_OPTIONS += --localstatedir=/var
+CONFIGURE_OPTIONS += --includedir=$(USRINCDIR)/mpfr
+CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --disable-libtool-lock
 CONFIGURE_OPTIONS += --enable-thread-safe
 CONFIGURE_OPTIONS += --enable-tests-timeout=0
 CONFIGURE_OPTIONS += --with-gmp-include=$(GMPINCDIR)
-CONFIGURE_OPTIONS += --with-gmp-lib=$(GMPLIBDIR_$(BITS))
+CONFIGURE_OPTIONS += --with-gmp-lib=$(USRLIB.$(BITS))
 CONFIGURE_OPTIONS += --with-mulhigh-size=$(MPFRMULHIGH)
 CONFIGURE_OPTIONS += --with-pic
 
-LINT_FLAGS += -I/usr/include/gmp
+LINT_FLAGS += -I$(GMPINCDIR)
 
-PROTOUSRSHAREINFODIR = $(PROTOUSRSHAREDIR)/info
-PROTOUSRSHAREHTMLDIR = $(PROTOUSRSHAREDIR)/doc/mpfr/html
-PROTOUSRSHAREMAN3DIR = $(PROTOUSRSHAREDIR)/man/man3
-PROTOUSRINCLUDEDIR = $(PROTOUSRDIR)/include
-PROTOPKGCONFIGDIR = $(PROTOUSRLIBDIR)/pkgconfig
-PROTOPKGCONFIGDIR64 = $(PROTOUSRLIBDIR64)/pkgconfig
+PROTOUSRSHAREHTMLDIR = $(PROTOUSRSHAREDOCDIR)/mpfr/html
 
 COMPONENT_POST_INSTALL_ACTION = \
     ( $(MKDIR) $(PROTOUSRSHAREHTMLDIR) ; \
@@ -112,11 +96,11 @@ COMPONENT_POST_INSTALL_ACTION = \
       $(MKDIR) $(PROTOPKGCONFIGDIR) ; \
       $(MKDIR) $(PROTOPKGCONFIGDIR64) ; \
       $(GSED) -e "s^\#include <gmp.h>^\#include <gmp/gmp.h>^g" \
-	$(PROTOUSRINCLUDEDIR)/mpfr/mpfr.h > \
-	$(PROTOUSRINCLUDEDIR)/mpfr/mpfr.h.sed ; \
-      $(CP) -fp $(PROTOUSRINCLUDEDIR)/mpfr/mpfr.h.sed \
-	$(PROTOUSRINCLUDEDIR)/mpfr/mpfr.h ; \
-      $(RM) -f $(PROTOUSRINCLUDEDIR)/mpfr/mpfr.h.sed ; \
+	$(PROTOUSRINCDIR)/mpfr/mpfr.h > \
+	$(PROTOUSRINCDIR)/mpfr/mpfr.h.sed ; \
+      $(CP) -fp $(PROTOUSRINCDIR)/mpfr/mpfr.h.sed \
+	$(PROTOUSRINCDIR)/mpfr/mpfr.h ; \
+      $(RM) -f $(PROTOUSRINCDIR)/mpfr/mpfr.h.sed ; \
       $(GSED) -e "s/MACH64/$(MACH64)/g" \
 	$(COMPONENT_DIR)/Solaris/libmpfr-64.pc > $(COMPONENT_DIR)/libmpfr.pc ; \
       $(INSTALL) -m 0644 $(COMPONENT_DIR)/Solaris/index.html \
@@ -128,18 +112,4 @@ COMPONENT_POST_INSTALL_ACTION = \
       $(INSTALL) -m 0644 $(COMPONENT_DIR)/Solaris/libmpfr.3 \
 	$(PROTOUSRSHAREMAN3DIR)/ )
 
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
-# common targets
-configure:	$(CONFIGURE_32_and_64)
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
 REQUIRED_PACKAGES += library/gmp
-REQUIRED_PACKAGES += system/library

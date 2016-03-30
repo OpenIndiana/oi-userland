@@ -20,16 +20,14 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		memcached
 COMPONENT_VERSION=	1.4.17
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://memcached.org/
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:d9173ef6d99ba798c982ea4566cb4f0e64eb23859fdbf9926a89999d8cdc0458
 COMPONENT_ARCHIVE_URL=	http://memcached.org/files/$(COMPONENT_ARCHIVE)
@@ -37,11 +35,9 @@ COMPONENT_BUGDB=	database/memcached
 
 TPNO=			16265
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=/usr/bin:/usr/gnu/bin:/usr/perl5/bin
+PATH=$(USRBINDIR):$(GNUBIN):$(USRDIR)/perl5/bin
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
     ($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -52,8 +48,8 @@ studio_OPT = -xO5
 
 CFLAGS += -D__ATTRIBUTE_DISABLED
 
-CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/lib/$(MACH64)
-CONFIGURE_OPTIONS.64 +=	--with-libevent=/usr/lib/$(MACH64)
+CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/lib
+CONFIGURE_OPTIONS.64 +=	--with-libevent=$(USRLIBDIR64)
 # The below works around a bug in configure/configure.ac that sets
 # an incorrect runpath.
 # Setting ac_cv_libevent bypasses libevent checks in configure,
@@ -61,8 +57,7 @@ CONFIGURE_OPTIONS.64 +=	--with-libevent=/usr/lib/$(MACH64)
 # because libevent is in a default library directory.
 CONFIGURE_OPTIONS.64 +=	"ac_cv_libevent_dir=/usr/lib/$(MACH64)"
 CONFIGURE_OPTIONS +=	--enable-dtrace --disable-docs --disable-coverage
-CONFIGURE_OPTIONS +=	--localstatedir=/var
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
+CONFIGURE_OPTIONS +=	--localstatedir=$(VARDIR)
 
 # Transforms remove unnecessary text from results
 COMPONENT_TEST_TRANSFORMS += \
@@ -71,22 +66,7 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/\(slab class\).*/d" ' \
 	'-e "/\(<\).*/d" ' 
 
-ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
-
 REQUIRED_PACKAGES += library/libevent
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/network

@@ -18,35 +18,28 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
-
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 64_and_32
 # Built in SFW with gcc and builds cleanly now only with gcc
-COMPILER =	gcc
-
+COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		guile
 COMPONENT_VERSION=	1.8.6
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/guile/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:69a2f9491480ff756d1cc4c8ea2bdc13d40ea8ddc8f93f26957bade8219a1d86
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/guile/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/guile
 
 TPNO=			8939
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/gnu-component.mk
 
-CONFIGURE_OPTIONS +=	CPPFLAGS="-I/usr/include/gmp -D__USE_LEGACY_PROTOTYPES__"
+CONFIGURE_ENV +=	CPPFLAGS="-I/usr/include/gmp -D__USE_LEGACY_PROTOTYPES__"
 CONFIGURE_OPTIONS +=	--disable-static 
 CONFIGURE_OPTIONS +=	--disable-error-on-warning
 CONFIGURE_OPTIONS +=	ac_cv_type_complex_double=no
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 
 # Remove the GNU specific "-pthreads" Cflags option from the guile config
 # files. In case we need to back-port this to earlier versions of Solaris,
@@ -54,12 +47,17 @@ CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 # interfaces behave as specified in the POSIX standard (even though it does
 # nothing for Solaris 12).
 
-PROTOPKGCONFIGDIR.32 = $(PROTOUSRLIBDIR)/pkgconfig
-PROTOPKGCONFIGDIR.64 = $(PROTOUSRLIBDIR64)/pkgconfig
+PROTOPKGCONFIGDIR.32 = $(PROTOPKGCONFIGDIR)
+PROTOPKGCONFIGDIR.64 = $(PROTOPKGCONFIGDIR64)
 
 COMPONENT_POST_INSTALL_ACTION += \
 	$(GSED) -i -e 's/-pthreads/-D_POSIX_PTHREAD_SEMANTICS/' \
-		$(PROTOPKGCONFIGDIR.$(BITS))/guile-1.8.pc
+		$(PROTOPKGCONFIGDIR.$(BITS))/guile-1.8.pc;
+
+# We only deliver 64-bit binaries and in /usr/bin.
+COMPONENT_POST_INSTALL_ACTION.32 += \
+	$(GSED) -i -e 's|$(USRBINDIR)/$(MACH32)|$(USRBINDIR)|' \
+		$(PROTOUSRBINDIR)/$(MACH32)/guile-config;
 
 # Master test results are the same for 32-bit and 64-bit, so override
 # here, rather than create multiple identical master files.
@@ -72,25 +70,11 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/^XXX_GCC_ROOT_XXX$$/d" ' \
 	'-e "/^WARNING:/d" '
 
-ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
-configure:	$(CONFIGURE_32_and_64)
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
 REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/gcc-3-runtime
 REQUIRED_PACKAGES += system/library/gcc-45-runtime
 REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime

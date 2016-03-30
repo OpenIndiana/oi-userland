@@ -18,12 +18,12 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
-
-COMPONENT_BUGDB=    utility/ksh93
 
 COMPONENT_PROJECT_URL= http://www2.research.att.com/sw/download/
 
@@ -150,30 +150,17 @@ ifeq ($(BUILD_TYPE), evaluation)
 BUILD_32_and_64=
 INSTALL_32_and_64=
 PUBLISH_STAMP=
-endif
 
-# common targets
-build:		$(BUILD_32_and_64)
-	
-install:	$(INSTALL_32_and_64)	
-ifneq ($(BUILD_TYPE), evaluation)
+COMPONENT_POST_INSTALL_ACTION += \
 	(for binary in msgcvt msgcpp msgget msggen ksh shcomp alias; do \
 		/usr/bin/elfedit -e 'dyn:delete RPATH' -e 'dyn:delete RUNPATH' \
 		    "$(PROTO_DIR)/$(MACH64)/bin/$$binary" ; \
 	done )
 endif
 
-test:		$(TEST_32_and_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
-PKG_PROTO_DIRS +=   $(COMPONENT_DIR)/files
-
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/attpackagemake.mk
-include $(WS_MAKE_RULES)/ips.mk
+BUILD_STYLE= attpackagemake
+include $(WS_MAKE_RULES)/common.mk
 
 REQUIRED_PACKAGES += system/core-os
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/security/crypto

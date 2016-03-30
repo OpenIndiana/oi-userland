@@ -20,13 +20,13 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 # i18n component requires GNU xgettext
-PATH=/usr/gnu/bin:/usr/bin:/usr/sbin
+PATH=$(GNUBIN):$(USRBINDIR):$(USRSBINDIR)
 
 COMPONENT_NAME=		dnsmasq
 COMPONENT_VERSION=	2.68
@@ -40,33 +40,19 @@ COMPONENT_BUGDB=	service/dnsmasq
 
 TPNO=			16307
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-# Enable ASLR for this component
-ASLR_MODE = $(ASLR_ENABLE)
+BUILD_STYLE= justmake
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ARGS += CC="$(CC)"
 COMPONENT_BUILD_ARGS += CFLAGS="$(CFLAGS)"
-COMPONENT_BUILD_ARGS += PREFIX="/usr"
-COMPONENT_BUILD_ARGS += LOCALEDIR="/usr/share/locale"
-COMPONENT_BUILD_ARGS += LDFLAGS="$(LDFLAGS) -m64"
+COMPONENT_BUILD_ARGS += LOCALEDIR="$(USRSHARELOCALEDIR)"
+COMPONENT_BUILD_ARGS += LDFLAGS="$(LDFLAGS) $(CC_BITS)"
 COMPONENT_BUILD_TARGETS = "all-i18n"
-COMPONENT_INSTALL_ARGS += PREFIX="/usr"
+COMPONENT_INSTALL_ARGS += PREFIX="$(USRDIR)"
+COMPONENT_INSTALL_ARGS += BINDIR="$(USRLIBDIR)/inet"
 COMPONENT_INSTALL_TARGETS = "install-i18n"
-
-# common targets
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
 
 REQUIRED_PACKAGES += library/libidn
 REQUIRED_PACKAGES += system/core-os
-REQUIRED_PACKAGES += system/library

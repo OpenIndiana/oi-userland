@@ -28,12 +28,10 @@ include ../../make-rules/shared-macros.mk
 COMPONENT_NAME=		git
 COMPONENT_VERSION=	2.7.4
 COMPONENT_PROJECT_URL=	http://git-scm.com/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:dee574defbe05ec7356a0842ddbda51315926f2fa7e39c2539f2c3dcc52e457b
 COMPONENT_ARCHIVE_URL=	https://www.kernel.org/pub/software/scm/git/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/git
 
 TPNO=			27482
 
@@ -48,9 +46,7 @@ COMPONENT_ARCHIVE_URL_1 = https://www.kernel.org/pub/software/scm/git/$(COMPONEN
 UNPACK_ARGS_1 =		-r $(COMPONENT_SRC_1)
 PKG_PROTO_DIRS +=	$(COMPONENT_SRC_1)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PKG_HARDLINKS +=	usr/lib/git-core/git
 PKG_HARDLINKS +=	usr/lib/git-core/git-cvsserver
@@ -61,18 +57,15 @@ PKG_HARDLINKS +=	usr/lib/git-core/git-upload-pack
 
 PKG_MACROS +=		PYVER=$(PYTHON_VERSION)
 
-CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/bin
 CONFIGURE_LIBDIR.64 =	$(CONFIGURE_PREFIX)/lib
-
 CONFIGURE_SCRIPT    =	$(@D)/configure
-CONFIGURE_PREFIX    =	/usr
-CONFIGURE_OPTIONS  +=	--sysconfdir=/etc
-CONFIGURE_OPTIONS  +=	--libexecdir=/usr/lib
+CPPFLAGS += "-I/usr/include/pcre"
+
+CONFIGURE_OPTIONS  +=	--sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS  +=	--libexecdir=$(USRLIBDIR)
 CONFIGURE_OPTIONS  +=	--with-libpcre
 CONFIGURE_OPTIONS  +=	--with-perl=$(PERL)
 CONFIGURE_OPTIONS  +=	--with-python=$(PYTHON.$(PYTHON_VERSION))
-CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS  +=	CPPFLAGS="-I/usr/include/pcre"
 
 # Build fails if environment variable PROFILE is set.
 COMPONENT_BUILD_ENV+=	PROFILE=
@@ -117,17 +110,6 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 COMPONENT_PRE_CONFIGURE_ACTION += ; (cd $(@D); $(GMAKE) configure)
 
-ASLR_MODE = $(ASLR_ENABLE)
-
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
-
-system-test:	$(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
 REQUIRED_PACKAGES += crypto/gnupg
 REQUIRED_PACKAGES += library/expat
@@ -138,6 +120,5 @@ REQUIRED_PACKAGES += $(PERL_PKG)
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += web/curl
 REQUIRED_PACKAGES += web/server/apache-24

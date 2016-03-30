@@ -22,27 +22,23 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64_and_32
 # for the tests
-COMPILER=gcc
-
+COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bison
 COMPONENT_VERSION=	3.0.4
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/bison/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:a72428c7917bdf9fa93cb8181c971b6e22834125848cf1d03ce10b1bb0716fe1
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/bison/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/bison
 
 TPNO=			24440
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(TEST_64)
+# we need to first generate the test suite
+SYSTEM_TEST_TARGET= build $(SYSTEM_TEST_64)
+include $(WS_MAKE_RULES)/gnu-component.mk
 
 CONFIGURE_LIBDIR.32 =   $(GNULIB)
 CONFIGURE_LIBDIR.64 =   $(GNULIB)/$(MACH64)
@@ -50,8 +46,6 @@ CONFIGURE_LIBDIR.64 =   $(GNULIB)/$(MACH64)
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=		M4="/usr/gnu/bin/m4"
 CONFIGURE_OPTIONS  += 		--disable-silent-rules
 
@@ -62,6 +56,8 @@ COMPONENT_BUILD_ARGS += CC_PIC="$(CC_PIC)"
 # get compiled with the CFLAGS we built bison
 # with, so they are 32-bit otherwise.
 CONFIGURE_OPTIONS  +=		WARN_CXXFLAGS_TEST="$(CFLAGS)"
+
+CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
 
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
@@ -103,23 +99,4 @@ COMPONENT_TEST_TRANSFORMS += \
     '-e "s|^rm:.*directory renamed.*$$|XXX_CC_XXX|g" ' \
     '-e "/^XXX_CC_XXX$$/d" '
 
-# Enable ASLR for this component
-ASLR_MODE = $(ASLR_ENABLE)
-
-$(INSTALL_32):	$(INSTALL_64)
-
-# common targets
-configure:	$(CONFIGURE_32_and_64)
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_64)
-
-# we need to first generate the test suite,
-system-test:    build $(SYSTEM_TEST_64)
-
-
 REQUIRED_PACKAGES += developer/macro/gnu-m4
-REQUIRED_PACKAGES += system/library

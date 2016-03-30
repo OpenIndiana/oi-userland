@@ -18,19 +18,16 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2007, 2011, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-/^TK_BUILD_LIB_SPEC/c\
-TK_BUILD_LIB_SPEC='-ltk8.5'
 
-/^TK_SRC_DIR/c\
-TK_SRC_DIR=
+#
+# This file sets up the standard, default options and base requirements for
+# GNU userland components.
+#
+COMPONENT_PROJECT_URL ?=	http://www.gnu.org/software/$(COMPONENT_NAME)
+COMPONENT_ARCHIVE_URL ?=	http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 
-/^TK_BUILD_STUB_LIB_SPEC/c\
-TK_BUILD_STUB_LIB_SPEC='-ltkstub8.5'
-
-/^TK_BUILD_STUB_LIB_PATH/c\
-TK_BUILD_STUB_LIB_PATH='/usr/lib/libtkstub8.5.a'
-
-s,-lsunmath,,
+include $(WS_MAKE_RULES)/common.mk

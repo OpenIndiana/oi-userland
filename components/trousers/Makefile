@@ -18,15 +18,15 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
-#
 
+#
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		trousers
 COMPONENT_VERSION=	0.3.6
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	http://sourceforge.net/projects/trousers/files/trousers/
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:91025f60248af44df192e8df16fa6b0c0f1e48c54f6dc51626567ed95758b0d6
@@ -35,27 +35,26 @@ COMPONENT_BUGDB=	utility/tss
 
 TPNO=			8341
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-include $(WS_MAKE_RULES)/lint-libraries.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL=0
 
-LIBS=-lnsl -lsocket -lgen
-
+ifeq ($(OS_VERSION),5.11)
+LIBS=-lnsl -lsocket
 CFLAGS += "-D_POSIX_PTHREAD_SEMANTICS"
+endif
 
-CONFIGURE_OPTIONS += --sbindir=/usr/lib
+LIBS += -lgen
+
+LDFLAGS += -lbsm -lscf -lresolv
+
+CONFIGURE_OPTIONS += --sbindir=$(USRLIBDIR)
+# 'openssl' is an undocumented option that causes trousers to use OpenSSL's UI
+# interfaces for text-based PIN entry.
 CONFIGURE_OPTIONS += --with-gui=openssl
-CONFIGURE_OPTIONS += CC="$(CC)"
 CONFIGURE_OPTIONS += LD="$(CC)"
-CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS += LDFLAGS="$(LDFLAGS) -lpthread -lbsm -lscf -lresolv"
 CONFIGURE_OPTIONS += LIBS="$(LIBS)"
-
-# Enable ASLR for this component
-ASLR_MODE = $(ASLR_ENABLE)
 
 COMPONENT_POST_CONFIGURE_ACTION = (cd $(COMPONENT_SRC); \
 	for f in `ls src/include/tss/*.h` ; do \
@@ -87,22 +86,9 @@ COMPONENT_TEST_TARGETS =
 
 COMPONENT_BUILD_TARGETS = all
 
-# common targets
-configure:	$(CONFIGURE_32_and_64)
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
-
 REQUIRED_PACKAGES += developer/build/automake-110
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/security/openssl/openssl-fips-140
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/network

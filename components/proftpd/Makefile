@@ -20,9 +20,9 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		proftpd
@@ -49,9 +49,9 @@ COMPONENT_ARCHIVE_URL_1= http://downloads.sourceforge.net/gssmod/$(COMPONENT_ARC
 TPNO_PROFTPD=		17783
 TPNO_MOD_GSS=		13480
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+# libcheck and specific Perl Test::Unit version is required for full test
+TEST_TARGET= $(SKIP_TEST)
+include $(WS_MAKE_RULES)/common.mk
 
 # IPS_COMPONENT_VERSION is by default set to $(COMPONENT_VERSION) but it is not
 # enough for us. We need to include the $(COMPONENT_SUBVERSION) somehow.
@@ -59,14 +59,13 @@ include $(WS_MAKE_RULES)/ips.mk
 # instead of 'e'.
 IPS_COMPONENT_VERSION=  $(COMPONENT_VERSION)
 
-# Remove -D_POSIX_PTHREAD_SEMANTICS and this comment after move to S12_45.
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS) -I/usr/include/kerberosv5 -DHAVE_KRB5_H=1 -DKRB5_DLLIMP= -DHAVE__GETGRPSBYMEMBER -D_POSIX_PTHREAD_SEMANTICS -D_SOLARIS_DTRACE"
+CFLAGS += -I$(USRINCDIR)/kerberosv5 -DHAVE_KRB5_H=1 -DKRB5_DLLIMP= -DHAVE__GETGRPSBYMEMBER -D_SOLARIS_DTRACE
 # Force immediate binding because of chroot().
 CONFIGURE_OPTIONS +=	LDFLAGS="-z guidance=nolazyload -z nolazyload -lbsm"
 CONFIGURE_OPTIONS +=	install_user=`id -nu`
 CONFIGURE_OPTIONS +=	install_group=`groups | cut -f 1 -d ' '`
 CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
-CONFIGURE_OPTIONS +=	--localstatedir=/var/run
+CONFIGURE_OPTIONS +=	--localstatedir=$(VARDIR)/run
 CONFIGURE_OPTIONS +=	--libexecdir=$(USRLIBDIR)/proftpd
 CONFIGURE_OPTIONS +=	--enable-ipv6
 CONFIGURE_OPTIONS +=	--enable-ctrls
@@ -104,22 +103,9 @@ CONFIGURE_SCRIPT =	$(@D)/configure
 # attributes.
 LICENSE_TRANSFORMS =
 
-configure:	$(CONFIGURE_32)
-
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-# libcheck and specific Perl Test::Unit version is required for full test
-
-
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/gss
 REQUIRED_PACKAGES += system/network

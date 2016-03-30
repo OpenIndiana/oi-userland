@@ -20,20 +20,15 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		enscript
 COMPONENT_VERSION=	1.6.4
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/enscript
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:45299a4db47c9c08c3649d4f62b211ae79ef5143360c264a40371a728f6ad99b
-COMPONENT_ARCHIVE_URL=  http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/enscript
 
 # Ruby enscript support
 COMPONENT_ARCHIVE_1=    ruby-enscript.tar.gz
@@ -49,11 +44,7 @@ COMPONENT_ARCHIVE_URL_2= http://home.raxnet.net/downloads/viewcvs/php.st
 
 TPNO=			4380
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-PATCH_LEVEL = 1
+include $(WS_MAKE_RULES)/gnu-component.mk
 
 # Get just the ruby enscript support file out of the downloaded tarball, and
 # move ruby.st and php.st into the correct directory for "gmake install".
@@ -68,30 +59,16 @@ COMPONENT_PREP_ACTION +=(cd $(@D); ACLOCAL=aclocal-1.11 AUTOMAKE=automake-1.11 \
 				   autoreconf -fiv);
 
 # Needed so that enscript can find the enscript.cfg file.
-CONFIGURE_OPTIONS +=    --sysconfdir=/etc
+CONFIGURE_OPTIONS +=    --sysconfdir=$(ETCDIR)
 
 CONFIGURE_OPTIONS +=	--with-media=Letter
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS +=	LDFLAGS="$(LDFLAGS)"
 
 COMPONENT_POST_INSTALL_ACTION = \
-	$(LN) $(PROTOUSRBINDIR)/$(MACH64)/enscript \
-		$(PROTOUSRBINDIR)/$(MACH64)/nenscript
-
-# common targets
-configure:	$(CONFIGURE_64)
-
-build:          $(BUILD_64)
-
-install:        $(INSTALL_64)
-
-test:           $(TEST_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+	$(LN) $(PROTOUSRBINDIR)/enscript \
+		$(PROTOUSRBINDIR)/nenscript
 
 
 REQUIRED_PACKAGES += runtime/perl-512
 REQUIRED_PACKAGES += runtime/perl-520
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

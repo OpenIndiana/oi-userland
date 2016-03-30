@@ -18,13 +18,17 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+include ../../make-rules/shared-macros.mk
 
 LD_Z_IGNORE =
 
 COMPONENT_NAME=	open-fabrics
 COMPONENT_VERSION=1.5.3
+COMPONENT_SRC=
 
 COMPONENT_PROJECT_URL=	http://www.openfabrics.org/
 COMPONENT_BUGDB=	library/ofuv_lib
@@ -43,8 +47,6 @@ TPNO_PERFTEST=		5081
 TPNO_QPERF=		5083
 TPNO_RDS_TOOLS=		5092
 
-include ../../make-rules/shared-macros.mk
-
 # sensitive to kernel interface changes.
 ifeq ($(BUILD_TYPE), evaluation)
 PUBLISH_STAMP=
@@ -54,8 +56,8 @@ else
 SUBDIRS =	$(shell echo */Makefile | sed -e 's;/Makefile;;g')
 endif
 
-include $(WS_MAKE_RULES)/ips.mk
 include ofed.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Do not apply the standard license transforms for this component. The
 # license actions in the open-fabrics.p5m file are already tagged with the
@@ -113,7 +115,6 @@ REQUIRED_PACKAGES += runtime/perl-520
 REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
 REQUIRED_PACKAGES += system/library/gcc/gcc-c++-runtime
 REQUIRED_PACKAGES += system/library/math

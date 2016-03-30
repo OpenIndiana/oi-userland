@@ -18,16 +18,18 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
-PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
+PATH=$(SPRO_VROOT)/bin:$(USRBINDIR):$(GNUBIN)
 
 COMPONENT_NAME=		libdnet
 COMPONENT_VERSION=	1.12
 COMPONENT_PROJECT_URL=	http://code.google.com/p/libdnet/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:83b33039787cf99990e977cef7f18a5d5e7aaffc4505548a83d31bd3515eb026
@@ -36,9 +38,13 @@ COMPONENT_BUGDB=	library/libdnet
 
 TPNO=			9402
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= install $(TEST_32_and_64)
+SYSTEM_TEST_TARGET= configure $(SYSTEM_TEST_32_and_64)
+include $(WS_MAKE_RULES)/common.mk
+
+# Fix 64-bit linking done via compiler.
+LDFLAGS += $(CC_BITS)
+COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 # Needed to generate libraries with a .so extension.
 COMPONENT_PREP_ACTION = \
@@ -48,10 +54,6 @@ COMPONENT_PREP_ACTION = \
 		automake --add-missing --copy ; \
 		autoconf)
 
-# Set -m32 or -m64 correctly for 32 and 64 bit versions.
-CC +=	$(CC_BITS)
-LDFLAGS += $(CC_BITS)
-
 # Remove Linux specific functionality.
 CONFIGURE_OPTIONS += ac_cv_dnet_linux_pf_packet=no
 
@@ -59,9 +61,6 @@ CONFIGURE_OPTIONS +=	--with-check=/usr
 
 # Currently only support for Python 2.7.
 CONFIGURE_OPTIONS +=	--with-python
-
-COMPONENT_BUILD_ARGS +=	CC="$(CC)"
-COMPONENT_BUILD_ARGS +=	LDFLAGS="$(LDFLAGS)"
 
 PKG_MACROS +=		MACHINE=$(shell uname -m)
 
@@ -98,17 +97,6 @@ COMPONENT_TEST_ENV +=	LD_LIBRARY_PATH=$(TEST_LIBPATH.$(BITS))
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-configure:	$(CONFIGURE_32_and_64)
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		install $(TEST_32_and_64)
-
-system-test:    configure $(SYSTEM_TEST_32_and_64)
-
 REQUIRED_PACKAGES += developer/test/check
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library

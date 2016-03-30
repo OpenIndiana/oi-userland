@@ -18,17 +18,16 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64_and_32
 export PARFAIT_BUILD=no
-
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME        = mysql
 COMPONENT_VERSION     = 5.5.48
-COMPONENT_SRC         = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE     = $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
     sha256:cc3f8745879eee0508de1a70fc2d267a2d06b7433faa8bb07a787768dcfed781
 COMPONENT_ARCHIVE_URL = http://cdn.mysql.com/Downloads/MySQL-5.5/$(COMPONENT_ARCHIVE)
@@ -40,22 +39,20 @@ CLONEY = echo
 COMPONENT_PRE_BUILD_ACTION += \
   $(CP) -rp $(SOURCE_DIR)/* $(@D);
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/ips.mk
-include $(WS_MAKE_RULES)/cmake.mk
+BUILD_STYLE= cmake
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
+
 
 # Remove "-z ignore" to avoid link problem, missing C++ runtime
 # references in libmysqlclient.so
 LD_Z_IGNORE =
 
-# Enable ASLR for this component
-ASLR_MODE           = $(ASLR_ENABLE)
-
 # This component uses cmake to generate Makefiles and thus does not
 # run any configure script
-CMAKE_PREFIX        = /usr/mysql/5.5
-CONFDIR             = /etc/mysql/5.5
-DATA_PREFIX         = /var/mysql/5.5
+CMAKE_PREFIX        = $(USRDIR)/mysql/5.5
+CONFDIR             = $(ETCDIR)/mysql/5.5
+DATA_PREFIX         = $(VARDIR)/mysql/5.5
 
 CMAKE_BINDIR.32     = bin/$(MACH32)
 CMAKE_BINDIR.64     = bin
@@ -63,15 +60,10 @@ CMAKE_LIBDIR.32     = lib
 CMAKE_LIBDIR.64     = lib/$(MACH64)
 CMAKE_PLUGINDIR.32  = lib/plugin
 CMAKE_PLUGINDIR.64  = lib/$(MACH64)/plugin
-CMAKE_CFLAGS.64     = "-m64 -norunpath"
-CMAKE_CXXFLAGS.64   = "-m64 -norunpath"
-CMAKE_CFLAGS.32     = -norunpath
-CMAKE_CXXFLAGS.32   = -norunpath
 
 # Providing component specific build options to cmake
 CMAKE_OPTIONS += -DBUILD_CONFIG=mysql_release
 CMAKE_OPTIONS += -DINSTALL_LAYOUT=STANDALONE
-CMAKE_OPTIONS += -DCMAKE_INSTALL_PREFIX=$(CMAKE_PREFIX)
 CMAKE_OPTIONS += -DINSTALL_BINDIR=$(CMAKE_BINDIR.$(BITS))
 CMAKE_OPTIONS += -DINSTALL_SBINDIR=$(CMAKE_BINDIR.$(BITS))
 CMAKE_OPTIONS += -DINSTALL_SCRIPTDIR=$(CMAKE_BINDIR.$(BITS))
@@ -89,19 +81,8 @@ CMAKE_OPTIONS += -DWITH_BLACKHOLE_STORAGE_ENGINE=1
 CMAKE_OPTIONS += -DWITH_EXAMPLE_STORAGE_ENGINE=1
 CMAKE_OPTIONS += -DWITH_FEDERATED_STORAGE_ENGINE=1
 CMAKE_OPTIONS += -DWITH_INNOBASE_STORAGE_ENGINE=1
-CMAKE_OPTIONS += -DCMAKE_EXE_LINKER_FLAGS="-norunpath"
-CMAKE_OPTIONS += -DCMAKE_C_FLAGS=$(CMAKE_CFLAGS.$(BITS))
-CMAKE_OPTIONS += -DCMAKE_CXX_FLAGS=$(CMAKE_CXXFLAGS.$(BITS))
 CMAKE_OPTIONS += '-DCOMPILATION_COMMENT=MySQL Community Server (GPL)'
 CMAKE_OPTIONS += -DFEATURE_SET=community
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
-
-system-test: $(NO_TESTS)
 
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += runtime/perl-512

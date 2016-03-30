@@ -67,8 +67,6 @@ include $(WS_MAKE_RULES)/ips.mk
 
 # directory to search for "include" in samba.p5m
 PKG_OPTIONS += -I $(COMPONENT_DIR)
-# Set the pkg... path to search files in ./Solaris/ dir (mainly the SMF manifests are there)
-PKG_PROTO_DIRS += $(COMPONENT_DIR)
 
 # Oracle HSM is not supported on 12.0 yet but the libsam.so target should rather be commented out than removed
 # (note) change compiler bitness here when Samba became 64bits
@@ -125,7 +123,7 @@ LDFLAGS +=	$(LIBS)
 $(BUILD_DIR_SMB)/.configured:	LDFLAGS +=	$(LIBS4SMBD)
 
 ASLR_MODE =	$(ASLR_ENABLE)
-LD_OPTIONS += 	-B direct
+LD_OPTIONS += 	$(LD_B_DIRECT)
 
 # --enable-fhs should not be on
 CONFIGURE_OPTIONS =	--exec-prefix=/usr

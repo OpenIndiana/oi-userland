@@ -18,23 +18,24 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= NO_ARCH
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mysql-common
 COMPONENT_VERSION=	5.11
+COMPONENT_SRC=
 COMPONENT_PROJECT_URL=	http://dev.mysql.com/
 COMPONENT_BUGDB=	database/mysql
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-# ASLR Mode should be set as not applicable
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+BUILD_STYLE= pkg
+COMMON_TARGETS= no
+include $(WS_MAKE_RULES)/common.mk
 
 # nothing to download or build; just package
-build install test system-test:
 
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os

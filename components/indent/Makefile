@@ -17,33 +17,29 @@
 # information: Portions Copyright [yyyy] [name of copyright owner]
 #
 # CDDL HEADER END
-
-#
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
+#
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		indent
 COMPONENT_VERSION=	2.2.9
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_PROJECT_URL=  https://www.gnu.org/software/indent/
 COMPONENT_ARCHIVE_HASH=	\
     sha256:0b9387bda5639ed54cf91bd607ab055624a07414f7f6882a75be97fd776ce466
-COMPONENT_ARCHIVE_URL=	ftp://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gnu-indent
 
 TPNO=			12225
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= install $(TEST_64)
+SYSTEM_TEST_TARGET= configure $(SYSTEM_TEST_64)
+include $(WS_MAKE_RULES)/gnu-component.mk
 
 # Needed to get "gmake test" working.
 COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
 
 COMPONENT_TEST_TRANSFORMS += \
@@ -54,26 +50,12 @@ COMPONENT_TEST_TRANSFORMS += \
 COMPONENT_TEST_DIR =		$(@D)/regression
 # Need to put /usr/gnu/bin at the front of $PATH for GNU diff.
 COMPONENT_TEST_CMD =		./TEST
-COMPONENT_TEST_ENV +=		PATH=$(GNUBIN):/usr/bin
+COMPONENT_TEST_ENV +=		PATH=$(GNUBIN):$(USRBINDIR)
 COMPONENT_TEST_TARGETS =
 
 COMPONENT_SYSTEM_TEST_DIR =	$(@D)/regression
 COMPONENT_SYSTEM_TEST_CMD =	./TEST
 # Need to put /usr/gnu/bin at the front of $PATH for GNU diff.
-COMPONENT_SYSTEM_TEST_ENV +=	PATH=$(GNUBIN):/usr/bin
-COMPONENT_SYSTEM_TEST_ENV +=	INDENT_BIN=/usr/bin/indent
+COMPONENT_SYSTEM_TEST_ENV +=	PATH=$(GNUBIN):$(USRBINDIR)
+COMPONENT_SYSTEM_TEST_ENV +=	INDENT_BIN=$(USRBINDIR)/indent
 COMPONENT_SYSTEM_TEST_TARGETS =
-
-ASLR_MODE = $(ASLR_ENABLE)
-
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		install $(TEST_64)
-
-system-test:	configure $(SYSTEM_TEST_64)
-
-REQUIRED_PACKAGES += system/library

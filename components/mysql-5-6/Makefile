@@ -18,39 +18,35 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
-
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 64_and_32
 export PARFAIT_BUILD=no
-
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME        = mysql
 COMPONENT_VERSION     = 5.6.25
-COMPONENT_SRC         = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE     = $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
          sha256:15079c0b83d33a092649cbdf402c9225bcd3f33e87388407be5cdbf1432c7fbd
 COMPONENT_ARCHIVE_URL = http://cdn.mysql.com/Downloads/MySQL-5.6/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://dev.mysql.com/ 
 COMPONENT_BUGDB       = database/mysql
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-# Enable ASLR for this component
-ASLR_MODE           = $(ASLR_ENABLE)
+BUILD_STYLE= justmake
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 # MySQL being one of Oracle's own product doesn't require to have a
 # TPNO License number.
 
 # This component uses cmake to generate Makefiles and thus does not
 # run any configure script
-CMAKE               = /usr/bin/cmake
-CMAKE_PREFIX        = /usr/mysql/5.6
-CONFDIR             = /etc/mysql/5.6
-DATA_PREFIX         = /var/mysql/5.6
+CMAKE               = $(shell which cmake)
+CMAKE_PREFIX        = $(USRDIR)/mysql/5.6
+CONFDIR             = $(ETCDIR)/mysql/5.6
+DATA_PREFIX         = $(VARDIR)/mysql/5.6
 
 CMAKE_BINDIR.32     = bin/$(MACH32)
 CMAKE_BINDIR.64     = bin
@@ -98,14 +94,6 @@ COMPONENT_PRE_BUILD_ACTION += export LDFLAGS=$(CMAKE_CXXFLAGS.$(BITS));
 COMPONENT_PRE_BUILD_ACTION += echo Running cmake with $(CMAKE_OPTIONS);
 COMPONENT_PRE_BUILD_ACTION += $(CMAKE) . $(CMAKE_OPTIONS);
 
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
 REQUIRED_PACKAGES += database/mysql-56/client
 REQUIRED_PACKAGES += developer/build/cmake
 REQUIRED_PACKAGES += library/security/openssl
@@ -113,7 +101,6 @@ REQUIRED_PACKAGES += runtime/perl-512
 REQUIRED_PACKAGES += runtime/perl-520
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/c++-runtime
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/network

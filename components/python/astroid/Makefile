@@ -20,16 +20,14 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= NO_ARCH
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		astroid
 COMPONENT_VERSION=	1.3.6
 COMPONENT_PROJECT_URL=	http://bitbucket.org/logilab/$(COMPONENT_NAME)
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:1241ef961448c57b4616beb8dcc959724641dca1e22914663f79d67fec26f854
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
@@ -41,17 +39,13 @@ TPNO=			22825
 # this likewise. And astroid only supports 2.7+ now.
 PYTHON_VERSIONS=	2.7
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/ips.mk
-include $(WS_MAKE_RULES)/setup.py.mk
+BUILD_STYLE= setup.py
+SYSTEM_TEST_TARGET= $(SYSTEM_TEST_NO_ARCH)
+include $(WS_MAKE_RULES)/common.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # common targets
-
-build:		$(BUILD_NO_ARCH)
-
-install:	$(INSTALL_NO_ARCH)
 
 # The tests are run using python 2.7 only and require that
 # the python-27 package is installed (does not have to be the default python). 
@@ -95,10 +89,6 @@ COMPONENT_SYSTEM_TEST_CMD = /usr/bin/pytest-$(PYTHON_VERSION)
 COMPONENT_SYSTEM_TEST_ARGS =
 COMPONENT_POST_SYSTEM_TEST_ACTION += \
 	$(MV) $(COMPONENT_SRC)/astroid/tests/unittest_modutils.py-orig $(COMPONENT_SRC)/astroid/tests/unittest_modutils.py
-
-test:		$(TEST_NO_ARCH)
-
-system-test:    $(SYSTEM_TEST_NO_ARCH)
 
 REQUIRED_PACKAGES += library/python/logilab-common-27
 REQUIRED_PACKAGES += library/python/six-27

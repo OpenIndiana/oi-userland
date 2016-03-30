@@ -18,7 +18,9 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2015, Oracle and/or its affiliates. All rights reserved.
+
+#
+# Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 SVN =		/usr/bin/svn
@@ -36,6 +38,7 @@ ifdef SVN_REV$(1)
 
 COMPONENT_SRC$(1) = $$(COMPONENT_NAME$(1))-$$(SVN_REV$(1))
 COMPONENT_ARCHIVE$(1) = $$(COMPONENT_SRC$(1)).tar.bz2
+COMPONENT_ARCHIVE_SRC$(1) = svn
 
 CLEAN_PATHS += $$(COMPONENT_SRC$(1))
 CLOBBER_PATHS += COMPONENT_ARCHIVE$(1)

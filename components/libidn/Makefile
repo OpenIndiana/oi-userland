@@ -18,20 +18,19 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
-PATH=$(dir $(CC)):$(JAVA_HOME)/bin:/usr/bin:/usr/gnu/bin
+PATH=$(dir $(CC)):$(JAVA_HOME)/bin:$(USRBINDIR):$(GNUBIN)
 
 COMPONENT_NAME=		libidn
 COMPONENT_VERSION=	1.19
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/libidn/
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:8ed2e936b1ae3e30b45b54ca3672deaa83ee0f4d20db5ad83dc1af7222d39f41
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/libidn/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libidn
 
 COMPONENT_ARCHIVE_1 =   tld-0.7.tar.gz
@@ -41,10 +40,8 @@ COMPONENT_ARCHIVE_URL_1 = http://download.berlios.de/tldchk/$(COMPONENT_ARCHIVE_
 
 TPNO=			8441
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-include $(WS_MAKE_RULES)/lint-libraries.mk
+INSTALL_TARGET=
+include $(WS_MAKE_RULES)/gnu-component.mk
 
 PATCH_LEVEL = 0
 LINT_FLAGS += -I$(PROTOUSRINCDIR)/idn
@@ -53,10 +50,10 @@ LINT_FLAGS += -I$(PROTOUSRINCDIR)/idn
 studio_C99MODE = -Xc $(studio_C99_ENABLE)
 
 # -xinline=%auto -- we like inlining where appropriate
-CFLAGS += -xinline=%auto
+CFLAGS.studio += -xinline=%auto
 
 # -xbuiltin=%none -- builtins have been known to be buggy
-CFLAGS += -xbuiltin=%none
+CFLAGS.studio += -xbuiltin=%none
 
 CFLAGS += $(CPP_LARGEFILES)
 CFLAGS += $(XPG6MODE)
@@ -91,17 +88,10 @@ COMPONENT_TEST_TRANSFORMS += \
      '-e "/wrapped in unpack at/d"' \
      '-e "s/^make\[[0-9]\{1,\}\]/make/g"'
 
-GUNZIP = /usr/bin/gunzip
-TAR = /usr/bin/tar
-FIND = /usr/bin/find
-
-CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_ENV +=	LDFLAGS="$(LDFLAGS)"
 CONFIGURE_ENV +=	INSTALL="$(INSTALL)"
 
-CONFIGURE_OPTIONS  +=		--bindir=/usr/bin
-CONFIGURE_OPTIONS  +=		--includedir=/usr/include/idn
-CONFIGURE_OPTIONS  +=		--localstatedir=/var
+CONFIGURE_OPTIONS  +=		--includedir=$(USRINCDIR)/idn
+CONFIGURE_OPTIONS  +=		--localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		--enable-shared
 CONFIGURE_OPTIONS  +=		--disable-static
@@ -117,7 +107,6 @@ CONFIGURE_OPTIONS  +=		--with-libintl-prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS  +=		--with-html-dir=$(CONFIGURE_PREFIX)/share/doc
 CONFIGURE_OPTIONS  +=		--with-pic
 
-PROTOUSRSHAREDOCDIR = $(PROTOUSRSHAREDIR)/doc
 IDNDOCDIR = $(PROTOUSRSHAREDOCDIR)/idn
 HTMLDOCDIR = $(IDNDOCDIR)/html
 HTMLDOCLIST = libidn-components.png libidn.html
@@ -145,10 +134,6 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-configure:	$(CONFIGURE_32_and_64)
-
-build: $(BUILD_32_and_64)
-
 install: $(INSTALL_32_and_64)
 	$(MKDIR) $(HTMLDOCDIR) ; \
 	list1='$(HTMLDOCLIST)' ; for f in $$list1; do \
@@ -165,9 +150,3 @@ install: $(INSTALL_32_and_64)
 	    $(IDNDOCDIR)/
 	$(CP) -Rp $(PROTOUSRSHAREDIR)/locale/en@boldquot \
 	    $(PROTOUSRSHAREDIR)/locale/en
-
-test: $(TEST_32_and_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
-REQUIRED_PACKAGES += system/library

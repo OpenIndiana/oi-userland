@@ -20,57 +20,36 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		flex
 COMPONENT_VERSION=	2.5.35
 COMPONENT_PROJECT_URL=	http://flex.sourceforge.net/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:0becbd4b2b36b99c67f8c22ab98f7f80c9860aec70f0350a0018f29a88704e7b
 COMPONENT_ARCHIVE_URL=	http://softlayer.dl.sourceforge.net/project/flex/flex/flex-2.5.35/flex-2.5.35.tar.bz2
-COMPONENT_BUGDB=	utility/flex
 
 TPNO=			14883
 
 SONAME=libfl.so.1
-LDFLAGS = $(CC_BITS)
+LDFLAGS += $(CC_BITS)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS  +=		CXXFLAGS="$(CXXFLAGS)"
-CONFIGURE_OPTIONS  +=		LDFLAGS="$(LDFLAGS)"
-CONFIGURE_OPTIONS  +=		M4="/usr/gnu/bin/m4"
+CONFIGURE_OPTIONS  +=		M4="$(GNUBIN)/m4"
 
 COMPONENT_BUILD_ENV +=		SONAME="$(SONAME)"
 COMPONENT_INSTALL_ENV +=	SONAME="$(SONAME)"
 
-COMPONENT_TEST_ENV +=		PATH=/usr/gnu/bin:/usr/bin
+COMPONENT_TEST_ENV +=		PATH=$(GNUBIN):$(USRBINDIR)
 
 COMPONENT_BUILD_TARGETS += $(SONAME)
 COMPONENT_INSTALL_TARGETS += $(SONAME)
 
-ASLR_MODE=$(ASLR_ENABLE)
-
-# common targets
-configure:	$(CONFIGURE_32_and_64)
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64) 
-
-test:		$(TEST_32_and_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
 REQUIRED_PACKAGES += developer/macro/gnu-m4
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

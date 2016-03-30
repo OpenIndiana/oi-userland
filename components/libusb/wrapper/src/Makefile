@@ -18,7 +18,9 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+
+#
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 LIBNAME =	libusb.so.1
@@ -26,10 +28,6 @@ LIBNAME =	libusb.so.1
 all:	$(LIBNAME)
 
 include ../../../../../make-rules/shared-macros.mk
-
-incdir =	/usr/include
-libdir =	/usr/lib
-docdir =	/usr/share/doc/libusb
 
 SRCS =		wr_libusb.c
 OBJS =		$(SRCS:%.c=%.o)

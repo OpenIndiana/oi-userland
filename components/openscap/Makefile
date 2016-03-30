@@ -21,20 +21,16 @@
 #
 # Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
-COMPILER =	gcc
-
+BUILD_BITS= 64
+COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openscap
 COMPONENT_VERSION=	1.2.6
 COMPONENT_PROJECT_URL=  http://www.open-scap.org
 COMPONENT_DOWNLOAD_URL= https://fedorahosted.org/releases/o/p/openscap
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= sha256:95f2345e041e9ba838ad8065b68ce0ec4b0971d7afc72d601489236bbfc0c652
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_DOWNLOAD_URL)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=        utility/openscap
 
 TPNO =			25520
 
@@ -46,12 +42,13 @@ PYTHON_VERSIONS=	$(PYTHON2_VERSIONS)
 
 PERL_VERSIONS = $(PERL_VERSION)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/bin
-CPPFLAGS +=	-I/usr/include/openldap
+CPPFLAGS +=	-I$(USRINCDIR)/openldap
+
+# XXX This shouldn't be necessary, but is; investigate why.
+CFLAGS += -D_FILE_OFFSET_BITS=64
 
 # Perl related patch needs configure script recreation.
 COMPONENT_PREP_ACTION +=(cd $(@D); autoreconf);
@@ -62,18 +59,16 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 
 COMPONENT_POST_INSTALL_ACTION =	\
 	$(RM) $(PROTO_DIR)/usr/share/openscap/cpe/* && \
-	$(CP) files/cpe/* $(PROTO_DIR)/usr/share/openscap/cpe
+	$(CP) files/cpe/* $(PROTO_DIR)/usr/share/openscap/cpe;
 
 
 # Needed to make "gmake test" work.
 CPPFLAGS +=	-I$(SOURCE_DIR)/src/OVAL
 CPPFLAGS +=	-I$(SOURCE_DIR)/src/OVAL/probes
-CPPFLAGS +=	-I/usr/include/pcre
+CPPFLAGS +=	-I$(USRINCDIR)/pcre
 
 CONFIGURE_ENV +=        PERL="$(PERL)"
 CONFIGURE_ENV +=        PYTHON="$(PYTHON.$(BITS))"
-CONFIGURE_OPTIONS.64 +=	CFLAGS="$(CFLAGS) -D_FILE_OFFSET_BITS=64"
-CONFIGURE_OPTIONS +=	CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_OPTIONS +=	--enable-debug=no
 CONFIGURE_OPTIONS +=	--enable-sce=yes
 CONFIGURE_OPTIONS +=	--enable-perl=yes
@@ -89,19 +84,9 @@ CONFIGURE_OPTIONS +=	LIBS="$(EXTRA_LIBS)"
 
 DOCS_DIR = $(PROTO_DIR)/usr/share/doc/openscap/html/
 
-ASLR_MODE = $(ASLR_ENABLE)
-
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-		$(MKDIR) $(DOCS_DIR)
-		$(CP) -r $(SOURCE_DIR)/docs/html/* $(DOCS_DIR)
-
-test:		$(TEST_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+COMPONENT_POST_INSTALL_ACTION += \
+	$(MKDIR) $(DOCS_DIR); \
+	$(CP) -r $(SOURCE_DIR)/docs/html/* $(DOCS_DIR);
 
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += developer/swig
@@ -114,7 +99,6 @@ REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += $(PERL_PKG)
 REQUIRED_PACKAGES += runtime/python-27
 REQUIRED_PACKAGES += security/compliance/openscap
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/gcc-3-runtime
 REQUIRED_PACKAGES += system/library/gcc-45-runtime
 REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime

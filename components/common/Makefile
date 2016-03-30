@@ -29,6 +29,8 @@ include ../../make-rules/shared-macros.mk
 COMPONENT_NAME=		gnu-common
 COMPONENT_VERSION=	0.5.11
 COMPONENT_BUGDB=	gate-stuff/userland
+COMPONENT_SRC=
+COMPONENT_ARCHIVE=
 
 include $(WS_MAKE_RULES)/prep.mk
 

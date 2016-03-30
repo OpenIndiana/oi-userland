@@ -22,47 +22,36 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
-COMPILER =	gcc
-
+BUILD_BITS= 64
+COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
-PATH=/usr/bin:/usr/gnu/bin:/usr/sbin:/usr/perl5/bin
+PATH=$(USRBINDIR):$(GNUBIN):$(USRSBINDIR):$(USRDIR)/perl5/bin
 
 COMPONENT_NAME=         squid
 COMPONENT_VERSION=      3.5.5
 COMPONENT_PROJECT_URL=  http://www.squid-cache.org/
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
     sha256:23793da6b23871765188becae59a6f4b6c3672c256ba9be90743b46a3c7921cf
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)Versions/v3/3.5/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/squid
 
 TPNO=			23264
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-CC += $(CC_BITS)
-CXX += $(CC_BITS)
-
-CFLAGS += -I/usr/include/kerberosv5
+CFLAGS += -I$(USRINCDIR)/kerberosv5
 CFLAGS += $(CPP_LARGEFILES)
 
-CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/bin
 CONFIGURE_LIBDIR.64 =	$(CONFIGURE_PREFIX)/lib
-CONFIGURE_OPTIONS.64 += LDFLAGS="$(LDFLAGS) -m64"
-CONFIGURE_OPTIONS.64 += LIBS="-m64"
 
 # Squid has own prefix
-CONFIGURE_PREFIX =	/usr/squid
+CONFIGURE_PREFIX =	$(USRDIR)/squid
 
-CONFIGURE_OPTIONS +=   CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_PREFIX)/libexec
-CONFIGURE_OPTIONS += --localstatedir=/var/squid
-CONFIGURE_OPTIONS += --sharedstatedir=/var/squid
+CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)/squid
+CONFIGURE_OPTIONS += --sharedstatedir=$(VARDIR)/squid
 CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)/squid
 CONFIGURE_OPTIONS += --mandir=$(CONFIGURE_PREFIX)/man
 CONFIGURE_OPTIONS += --sbindir=$(CONFIGURE_PREFIX)/sbin
@@ -96,23 +85,12 @@ CONFIGURE_OPTIONS += --with-pthreads
 CONFIGURE_OPTIONS += --without-nettle
 CONFIGURE_OPTIONS += --disable-arch-native
 
-COMPONENT_BUILD_ARGS += CFLAGS="$(CFLAGS)"
-
 # Appends the following line to the end of the squid.conf configuration
 # file. This line is necessary for running squid for testing. 
 # This starts up squid as user webservd. 
 COMPONENT_POST_INSTALL_ACTION += \
 	(cd $(PROTO_DIR)/etc/squid ; \
  	echo '\ncache_effective_user webservd' >> squid.conf)
-
-ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
 
 # configure says it needs cppunit to test with.
 # After some work I can get cppunit to build but it quickly
@@ -145,18 +123,12 @@ install:	$(INSTALL_64)
 # Enter <squid server URL>:897 in your web browser and squid should complain.
 # Squid is working properly.
 
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
-
 REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += runtime/perl-512
 REQUIRED_PACKAGES += runtime/perl-520
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
 REQUIRED_PACKAGES += system/library/gcc/gcc-c++-runtime
 REQUIRED_PACKAGES += system/library/math

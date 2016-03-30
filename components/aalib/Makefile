@@ -23,13 +23,15 @@
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
+# Prefer 32-bit over 64-bit as we have to manually shuffle the resulting
+# binaries around anyway in the package manifest.
+BUILD_BITS= 32_and_64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		aalib
 COMPONENT_VERSION=	1.4.0
 HUMAN_VERSION=		1.4rc5
 IPS_COMPONENT_VERSION =	1.4.5
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://aa-project.sourceforge.net/aalib/
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
@@ -39,14 +41,10 @@ COMPONENT_BUGDB=	library/aalib
 
 TPNO=			6118
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-include $(WS_MAKE_RULES)/lint-libraries.mk
+SYSTEM_TEST_TARGET= $(SYSTEM_TEST_32_and_64)
+include $(WS_MAKE_RULES)/common.mk
 
 LINT_FLAGS += -I$(SOURCE_DIR)/src
-
-PKG_PROTO_DIRS +=	$(COMPONENT_SRC)
 
 # Ensure ancient autoconf scripts are overwritten with fixed versions that
 # properly detect SunOS 5.x hosts.
@@ -59,8 +57,6 @@ CONFIGURE_OPTIONS       += --with-curses-driver
 CONFIGURE_OPTIONS       += --without-slang-driver
 CONFIGURE_OPTIONS	+= --x-includes=$(USRINCDIR)
 CONFIGURE_OPTIONS	+= --x-libraries=$(CONFIGURE_LIBDIR.$(BITS))
-
-CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
 
 COMPONENT_TEST_DIR =	$(@D)/src
 COMPONENT_TEST_CMD =	perl -E 'say "\n" x 40' | ./aatest
@@ -76,21 +72,7 @@ COMPONENT_SYSTEM_TEST_TARGETS =
 # here, rather than create multiple identical master files.
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
-ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
-configure:	$(CONFIGURE_32_and_64)
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(TEST_32_and_64)
-system-test:	$(SYSTEM_TEST_32_and_64)
-
-
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11

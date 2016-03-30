@@ -22,14 +22,12 @@
 #
 # Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		R
 COMPONENT_VERSION=	3.2.3
 COMPONENT_PROJECT_URL=	http://www.r-project.org/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:b93b7d878138279234160f007cb9b7f81b8a72c012a15566e9ec5395cfd9b6c1
 COMPONENT_ARCHIVE_URL=	http://cran.mtu.edu/src/base/R-3/$(COMPONENT_ARCHIVE)
@@ -37,9 +35,9 @@ COMPONENT_BUGDB=	utility/r
 
 TPNO=			26540
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+# Need to build the tests before using them.
+SYSTEM_TEST_TARGET= build $(SYSTEM_TEST_64)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -52,8 +50,8 @@ LDFLAGS += $(CC_BITS)
 LDFLAGS += $(studio_PIC)
 LDFLAGS += $(LD_DEF_LIBS)
 
-STUDIO_LIBS_PATH =	/usr/lib/studio/64
-R_LIBS_PATH =		/usr/lib/$(MACH64)/R/lib
+STUDIO_LIBS_PATH =	$(USRLIBDIR)/studio/64
+R_LIBS_PATH =		$(USRLIBDIR64)/R/lib
 JAVA_LIBS_PATH =	$(JAVA8_HOME)/jre/lib/$(MACH64)/server
 
 LDFLAGS += -L$(STUDIO_LIBS_PATH) -R$(STUDIO_LIBS_PATH) \
@@ -62,23 +60,31 @@ LDFLAGS += -L$(STUDIO_LIBS_PATH) -R$(STUDIO_LIBS_PATH) \
 # Augment the PATH and set CC/CXX/F95 such that the build environment doesn't
 # leak into usr/lib/64/etc/Makeconf and force consumers to have a setup like
 # our build environment to build R modules.
-export PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
+export PATH=$(SPRO_VROOT)/bin:$(USRBINDIR):$(GNUBIN)
 CC =		cc
 CXX =		CC
 F95 =		f95
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)
-export PATH=$(PARFAIT_TOOLS):$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
+export PATH=$(PARFAIT_TOOLS):$(SPRO_VROOT)/bin:$(USRBINDIR):$(GNUBIN)
 endif
 
 
 CONFIGURE_ENV += F77="$(F95) $(CC_BITS)"
 CONFIGURE_ENV += FC="$(F95) $(CC_BITS)"
 
-CONFIGURE_ENV += CPICFLAGS="$(studio_PIC)"
-CONFIGURE_ENV += CFLAGS="-xO3 -xc99 -xlibmieee $(CC_BITS)"
-# Needed to successfully compile R packages using C++ code.
-CONFIGURE_ENV += CXX="$(CXX) -std=c++11"
+# For now, R is built with a very specific set of optimization flags to match
+# Oracle-provided builds.  These should be re-evaluated when upgrading to
+# Studio 12.5 or later or when next upgrading R.
+studio_OPT= -xO3
+studio_XBITS=
+studio_XREGS=
+studio_IROPTS=
+studio_C99MODE= $(studio_C99_ENABLE)
+studio_ALIGN=
+studio_MT=
 
+CFLAGS.studio += -xlibmieee
+CXXFLAGS += -std=c++11
 # We (the Userland) team don't need -D__MATHERR_RENAME_EXCEPTION for the
 # creation of the R packages we provide in Solaris. It would be needed by
 # our customers that try to install R packages that use C++. And they would
@@ -87,13 +93,15 @@ CONFIGURE_ENV += CXX="$(CXX) -std=c++11"
 # code is compiled with "-std=c++11". When that version of the Studio
 # compilers is released, we should encourage customers to install it, but
 # for those still using Studio 12.4, this definition will continue to be needed.
-CONFIGURE_ENV += CXXFLAGS="$(CC_BITS) -std=c++11 -D__MATHERR_RENAME_EXCEPTION"
+CXXFLAGS += -D__MATHERR_RENAME_EXCEPTION
+LDFLAGS += -L$(R_LIBS_PATH) -R$(R_LIBS_PATH)
+
+CONFIGURE_ENV += CPICFLAGS="$(studio_PIC)"
 CONFIGURE_ENV += FPICFLAGS="$(studio_PIC)"
-CONFIGURE_ENV += FFLAGS="-xO3 $(CC_BITS)"
-CONFIGURE_ENV += FCFLAGS="-xO3 $(CC_BITS)"
+CONFIGURE_ENV += FFLAGS="$(studio_OPT) $(CC_BITS)"
+CONFIGURE_ENV += FCFLAGS="$(studio_OPT) $(CC_BITS)"
 CONFIGURE_ENV += FCLIBS="-lsunperf -lfsu -lsunmath"
 CONFIGURE_ENV += FLIBS="-lsunperf -lfsu -lsunmath"
-CONFIGURE_ENV += LDFLAGS="$(LDFLAGS) -L$(R_LIBS_PATH) -R$(R_LIBS_PATH)"
 # Needed so that R packages using C++ code can link against the standard
 # C++ libraries.
 CONFIGURE_ENV += SHLIB_CXXLDFLAGS="-lCrunG3"
@@ -106,9 +114,7 @@ CONFIGURE_ENV += JAVA_LIBS="-L$(JAVA_LIBS_PATH) -R$(JAVA_LIBS_PATH) -ljvm"
 # You need to define this option on SPARC, otherwise you will get quad
 # arithmetic on SPARC but not on x86.  Really makes some R functions run
 # very slow on SPARC (COR path).
-CONFIGURE_OPTIONS.i386 =
-CONFIGURE_OPTIONS.sparc =	--disable-long-double
-CONFIGURE_OPTIONS +=		$(CONFIGURE_OPTIONS.$(MACH))
+CONFIGURE_OPTIONS.sparc +=	--disable-long-double
 
 CONFIGURE_OPTIONS += --enable-R-shlib
 CONFIGURE_OPTIONS += --with-blas='-lsunperf'
@@ -139,29 +145,16 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/comparing.*reg-examples3.Rout/d" ' \
 	'-e "/^  comparing /p" '
 
-ASLR_MODE = $(ASLR_ENABLE)
-
 # Use the installed version of R, not the one in the build area.
 # These definitions override those found in .../test/Makefile.
-COMPONENT_SYSTEM_TEST_ARGS += R="LANGUAGE=en LC_ALL=C SRCDIR=$(BUILD_DIR_64)/tests R_DEFAULT_PACKAGES= /usr/bin/R --vanilla"
-COMPONENT_SYSTEM_TEST_ARGS += R2="R_DEFAULT_PACKAGES= /usr/bin/R --vanilla"
-COMPONENT_SYSTEM_TEST_ARGS += R3="/usr/bin/R CMD check"
-COMPONENT_SYSTEM_TEST_ARGS += RDIFF="/usr/bin/R CMD Rdiff"
-COMPONENT_SYSTEM_TEST_ARGS += RDCONV="LC_CTYPE=C /usr/bin/R CMD Rdconv"
+COMPONENT_SYSTEM_TEST_ARGS += R="LANGUAGE=en LC_ALL=C SRCDIR=$(BUILD_DIR_64)/tests R_DEFAULT_PACKAGES= $(USRBINDIR)/R --vanilla"
+COMPONENT_SYSTEM_TEST_ARGS += R2="R_DEFAULT_PACKAGES= $(USRBINDIR)/R --vanilla"
+COMPONENT_SYSTEM_TEST_ARGS += R3="$(USRBINDIR)/R CMD check"
+COMPONENT_SYSTEM_TEST_ARGS += RDIFF="$(USRBINDIR)/R CMD Rdiff"
+COMPONENT_SYSTEM_TEST_ARGS += RDCONV="LC_CTYPE=C $(USRBINDIR)/R CMD Rdconv"
 
 COMPONENT_TEST_ARGS =		-k -i
 COMPONENT_SYSTEM_TEST_ARGS +=	-k -i
-
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
-
-# Need to build the tests before use them.
-system-test:	build $(SYSTEM_TEST_64)
 
 REQUIRED_PACKAGES += image/library/libjpeg
 REQUIRED_PACKAGES += image/library/libpng
@@ -174,7 +167,6 @@ REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/bash
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fortran-runtime
 REQUIRED_PACKAGES += system/library/iconv
 REQUIRED_PACKAGES += system/library/math

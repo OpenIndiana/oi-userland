@@ -18,32 +18,27 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2012, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		wdiff
 COMPONENT_VERSION=	1.2.2
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/wdiff/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:34ff698c870c87e6e47a838eeaaae729fa73349139fc8db12211d2a22b78af6b
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/wdiff/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/wdiff
 
 TPNO=			21556
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+SYSTEM_TEST_TARGET= configure $(SYSTEM_TEST_64)
+include $(WS_MAKE_RULES)/gnu-component.mk
 
-CONFIGURE_OPTIONS +=	CC="$(CC) -m64"
 CONFIGURE_OPTIONS +=	--enable-experimental
 
-CFLAGS +=	-DDIFF_PROGRAM="/usr/gnu/bin/diff"
-
-COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
+# Used directly as a macro in C code, so literal quotes must be left intact.
+CFLAGS +=	-DDIFF_PROGRAM=\\\"$(GDIFF)\\\"
 
 COMPONENT_TEST_DIR =		$(SOURCE_DIR)/tests
 COMPONENT_TEST_CMD =		./testsuite
@@ -56,20 +51,6 @@ COMPONENT_SYSTEM_TEST_ARGS =	AUTOTEST_PATH="src"
 COMPONENT_SYSTEM_TEST_TARGETS =
 
 # Get wdiff from /usr/bin
-COMPONENT_SYSTEM_TEST_ENV +=   PATH="/usr/bin"
+COMPONENT_SYSTEM_TEST_ENV +=   PATH="$(USRBINDIR)"
 
-ASLR_MODE = $(ASLR_ENABLE)
-
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
-
-system-test:    configure $(SYSTEM_TEST_64)
-
-
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += text/gnu-diffutils

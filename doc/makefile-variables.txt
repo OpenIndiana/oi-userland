@@ -3,13 +3,17 @@ Makefiles.  To distinguish these from the Makefile(s) that are part of each
 component distribution, the latter will be referred to as native Makefiles.
 
 The following are the basics that just about every Makefile should have.
+
+* BUILD_BITS declares which bits this component should be built for and
+  which binaries are the preferred ones (i.e. should be installed in /usr/bin);
+  values are: 64, 64_and_32, 32, 32_and_64.
 * COMPONENT_NAME is typically a short name (e.g., vim).
 * COMPONENT_VERSION is typically numbers separated by dots (e.g. 7.3).
-* COMPONENT_SRC is where the archive is extracted.  A common value for this is
+* COMPONENT_SRC is where the archive is extracted; it has a default value of
   "$(COMPONENT_NAME)-$(COMPONENT_VERSION)".
 * COMPONENT_PROJECT_URL is the general web site for the component.
-* COMPONENT_ARCHIVE is the base name of the archive to be downloaded.  A common
-  value for this is "$(COMPONENT_SRC).tar.gz".
+* COMPONENT_ARCHIVE is the base name of the archive to be downloaded; it has
+  a default value of "$(COMPONENT_SRC).tar.gz".
 * COMPONENT_ARCHIVE_HASH is typically "sha256:" followed by the first output
   field of `sha256sum $(COMPONENT_ARCHIVE)`.
 * COMPONENT_ARCHIVE_URL is where the archive can be downloaded from.  This is
@@ -27,9 +31,6 @@ The following are the basics that just about every Makefile should have.
 			gpg2 --homedir=$WS/tools/.gnupg --import;
 	done
   before you 'hg commit' your merge.
-* COMPONENT_BUGDB is the lower-case rendering of the BugDB cat/subcat.
-* REQUIRED_PACKAGES is a list of packages required to build or run the
-  component and its tests.
 
 * GIT_REPO can be used in place of COMPONENT_ARCHIVE_URL to pull the component
   source from the GIT repository referenced in the value.
@@ -42,6 +43,79 @@ The following are the basics that just about every Makefile should have.
 * SVN_REPO can be used in place of COMPONENT_ARCHIVE_URL to pull the component
   source from the Subversion repository referenced in the value.
 * SVN_REV is the tag or changeset that you wish to pull from Subversion.
+
+The following are basic variables that can be overridden but provide default
+values:
+
+* BUILD_ARCH declares which architecture this component should be built for;
+  possible values are: i386, sparc.  If not set, the component will be built
+  for both.
+* COMPONENT_SRC is where the archive is extracted; it has a default value of
+  "$(COMPONENT_NAME)-$(COMPONENT_VERSION)".
+* COMPONENT_ARCHIVE is the base name of the archive to be downloaded; it has
+  a default value of "$(COMPONENT_SRC).tar.gz".
+* COMPONENT_BUGDB is the lower-case rendering of the BugDB cat/subcat; it has
+  a default value of "utility/$(COMPONENT_NAME)".
+* REQUIRED_PACKAGES is a list of packages required to build or run the
+  component and its tests; it includes "system/library" by default.
+
+* GIT_REPO can be used in place of COMPONENT_ARCHIVE_URL to pull the component
+  source from the GIT repository referenced in the value.
+* GIT_REV is the tag or changeset that you wish to pull from GIT.
+
+* HG_REPO can be used in place of COMPONENT_ARCHIVE_URL to pull the component
+  source from the Mercurial repository referenced in the value.
+* HG_REV is the tag or changeset that you wish to pull from Mercurial.
+
+* SVN_REPO can be used in place of COMPONENT_ARCHIVE_URL to pull the component
+  source from the Subversion repository referenced in the value.
+* SVN_REV is the tag or changeset that you wish to pull from Subversion.
+
+The following are basic variables that must be set before including common.mk
+if overriding the default:
+
+* BUILD_STYLE declares what type of build process this component uses;
+  possible values are: ant, archive (extract and copy), attpackagemake, cmake,
+  configure, gnu-component, justmake, pkg (publish only), and setup.py.  See
+  the corresponding file in make-rules for details.  The default value is
+  'configure'.
+
+  Based on the value of BUILD_STYLE, other variables are affected as follows:
+
+  - If BUILD_STYLE is configure, CONFIGURE_ENV will automatically include
+    CFLAGS, CXXFLAGS, and LDFLAGS.
+  - If BUILD_STYLE is justmake, COMPONENT_BUILD_ENV will automatically include
+    CC, CXX, CFLAGS, CXXFLAGS, and LDFLAGS.
+
+* COMMON_TARGETS controls whether the standard build, configure, install,
+  test, system-test targets are provided automatically.  Possible values
+  are 'yes' and 'no'.  The default value is 'yes'.
+
+* BUILD_TARGET, INSTALL_TARGET, TEST_TARGET, SYSTEM_TEST_TARGET allow
+  overriding the default targets provided by COMMON_TARGETS.  If set to a
+  non-empty value, they act as an override.  If set to an empty value the
+  target will not be defined by common.mk.  Instead of overriding the standard
+  targets, it is suggested that the appropriate COMPONENT_PRE_*_ACTION or
+  COMPONENT_POST_*_ACTION variables be used instead.
+
+* BUILD_TARGET defaults to $(BUILD_$(BUILD_BITS))
+
+* INSTALL_TARGET defaults to $(INSTALL_$(BUILD_BITS))
+
+* TEST_TARGET defaults to $(TEST_$(BUILD_BITS))
+
+* SYSTEM_TEST_TARGET default is determined by $(TEST_TARGET); if TEST_TARGET
+  is not $(NO_TESTS) or $(SKIP_TEST), the default value is
+  $(SYSTEM_TESTS_NOT_IMPLEMENTED)
+
+The following variables alter the compilation or build process for components:
+
+* ASLR_MODE controls the application of Address Space Layout Randomization to
+  ELF binaries during the build.  The possible values are: $(ASLR_ENABLE),
+  $(ASLR_DISABLE), $(ASLR_NOT_APPLICABLE).  If $(BUILD_BITS) is $(NO_ARCH),
+  $(BUILD_STYLE) is 'ant', or $(COMPONENT_BUGDB) starts with 'library',
+  $(ASLR_NOT_APPLICABLE) is the default.  Otherwise, the default is
+  $(ASLR_ENABLE).
 
 When using a source code management system as the canonical source for a
 component, the build automatically generates a source archive for the
@@ -118,8 +192,8 @@ that need to be applied to the test output for just this component.
 
 * SKIP_TEST_AT_TOP_LEVEL inclusion of this variable in a component Makefile
   will cause that component's tests to be skipped when running "gmake test"
-  at the top level.  It's often used for excluding long-running tests 
-  that may slow down comprehensive component testing.  
+  at the top level.  It's often used for excluding long-running tests
+  that may slow down comprehensive component testing.
 
 * COMPONENT_POST_UNPACK_ACTION is for making minor alterations to the unpacked
   source directory before any patching has taken place.  It should almost never
@@ -130,25 +204,26 @@ that need to be applied to the test output for just this component.
 For components that have a configure target, the following macros are used to
 control the options and arguments passed:
 
-* If BITS is set before shared-macros.mk is included, the default directories
+* If BUILD_BITS is set before shared-macros.mk is included, the default directories
   used for various configure options as documented below will change.  For
   example:
 
-  if BITS=64 explicitly:
+  if BUILD_BITS=64 or BUILD_BITS= 64_and_32 explicitly:
   	32-bit binaries -> $(CONFIGURE_PREFIX)/bin/$(MACH32)
 	32-bit libraries -> $(CONFIGURE_PREFIX)/lib
   	64-bit binaries -> $(CONFIGURE_PREFIX)/bin
 	64-bit libraries -> $(CONFIGURE_PREFIX)/lib/$(MACH64)
 
-  if BITS=32 explicitly or BITS is unspecified:
+  if BUILD_BITS=32 or BUILD_BITS=32_and_64 explicitly or BITS is unspecified:
   	32-bit binaries -> $(CONFIGURE_PREFIX)/bin
 	32-bit libraries -> $(CONFIGURE_PREFIX)/lib
   	64-bit binaries -> $(CONFIGURE_PREFIX)/bin/$(MACH64)
 	64-bit libraries -> $(CONFIGURE_PREFIX)/lib/$(MACH64)
-* CC_FOR_BUILD is included in CONFIGURE_ENV by default to ensure that 32-bit
-  and 64-bit host detection works as expected for autoconf-based components by
-  specifying the exact compiler and relevant $(CC_BITS) for the current build.
-  It can be set to "" to omit it from CONFIGURE_ENV.
+* CC_FOR_BUILD and CXX_FOR_BUILD is included in CONFIGURE_ENV by default to
+  ensure that 32-bit and 64-bit host detection works as expected for
+  autoconf-based components by specifying the exact compiler and relevant
+  $(CC_BITS) for the current build.  It can be set to "" to omit it from
+  CONFIGURE_ENV.
 * CONFIGURE_CPPFLAGS contains the default set of CPPFLAGS to be included in
   CONFIGURE_ENV.  It can be set to "" to omit it from CONFIGURE_ENV.
 * CONFIGURE_DEFAULT_DIRS should be "yes" or "no".  A value of "yes" (the
@@ -158,13 +233,13 @@ control the options and arguments passed:
   * CONFIGURE_LIBDIR.$(BITS) is the value for the --libdir= option.
   * CONFIGURE_MANDIR.$(BITS) is the value for the --mandir= option.
   * CONFIGURE_SBINDIR.$(BITS) is the value for the --sbindir= option.
-* CONFIGURE_ENV is mainly used for passing CFLAGS and other common Makefile
-  variables to configure.  When should this be used as opposed to
-  CONFIGURE_OPTIONS and COMPONENT_BUILD_{ARGS,ENV}?  In general, you want
-  to tell configure how to build the software using CONFIGURE_OPTIONS.  But
-  sometimes you need to pass values in via the calling environment.  On rare
-  occasions, you still need to do things like override MACRO settings in the
-  generated Makefiles with COMPONENT_BUILD_ARGS.
+* CONFIGURE_ENV is mainly used for passing Makefile variables to configure.
+  When should this be used as opposed to CONFIGURE_OPTIONS and
+  COMPONENT_BUILD_{ARGS,ENV}?  In general, you want to tell configure how to
+  build the software using CONFIGURE_OPTIONS.  But sometimes you need to pass
+  values in via the calling environment.  On rare occasions, you still need to
+  do things like override MACRO settings in the generated Makefiles with
+  COMPONENT_BUILD_ARGS.
 * CONFIGURE_LOCALEDIR is a cousin of the other *DIR variables above, but
   rarely used and hence not triggered by CONFIGURE_DEFAULT_DIRS.
 * CONFIGURE_OPTIONS is extremely useful, possibly our most used "add-on"
@@ -182,13 +257,17 @@ components, the following macros are provided:
 * CFLAGS by default contains the preferred set of compilation flags for most
   components, which usually includes optimization flags, language mode,
   alignment flags, and multi-threading flags for the current COMPILER.
-  CFLAGS.$(COMPILER) and CFLAGS.$(COMPILERS).$(BITS) versions are also
-  available for specifying additional flags or overriding the default.
+  CFLAGS.$(COMPILER), CFLAGS.$(COMPILERS).$(BITS),
+  CFLAGS.$(COMPILERS).$(MACH), and CFLAGS.$(COMPILERS).$(MACH).$(BITS)
+  versions are also available for specifying additional flags or overriding
+  the default.
 * CXXFLAGS by default contains the preferred set of compilation flags for most
   C++ components, which usually includes optimization flags, language mode,
   alignment flags, and multi-threading flags for the current COMPILER.
-  CXXFLAGS.$(COMPILER) and CXXFLAGS.$(COMPILERS).$(BITS) versions are also
-  available for specifying additional flags or overriding the default.
+  CXXFLAGS.$(COMPILER), CXXFLAGS.$(COMPILERS).$(BITS),
+  CXXFLAGS.$(COMPILERS).$(MACH), and CXXFLAGS.$(COMPILERS).$(MACH).$(BITS)
+  versions are also available for specifying additional flags or overriding
+  the default.
 * gcc_OPT has a default value of "-O3".  Bugs in the optimizer have been found
   which have required altering this to "-O2".
 * studio_OPT has a default value of "-xO4".  Occasional bugs in the optimizer

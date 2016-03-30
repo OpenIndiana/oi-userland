@@ -18,43 +18,32 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nicstat
 COMPONENT_VERSION=	1.95
 COMPONENT_PROJECT_URL=	http://sourceforge.net/projects/nicstat/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:c4cc33f8838f4523f27c3d7584eedbe59f4c587f0821612f5ac2201adc18b367
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)files/$(COMPONENT_ARCHIVE)/download
-COMPONENT_BUGDB=	utility/nicstat
 
 TPNO=			20669
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+BUILD_STYLE= justmake
+# Makefile.Solaris is pretty useless for working in Userland.
+INSTALL_TARGET= build
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_BUILD_ENV +=	CC="$(CC) -m64"
-COMPONENT_BUILD_ARGS =	-f Makefile.Solaris
+COMPONENT_BUILD_ARGS += COPT="$(CFLAGS)"
+COMPONENT_BUILD_ARGS +=	-f Makefile.Solaris
 
 PATCH_LEVEL =		0
 
 # Just get stuff from the build directory.
 PKG_PROTO_DIRS += $(BUILD_DIR_64)
-
-ASLR_MODE = $(ASLR_ENABLE)
-
-build:		$(BUILD_64)
-
-# Makefile.Solaris is pretty useless for working in Userland.
-install:	$(BUILD_64)
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
-REQUIRED_PACKAGES += system/library

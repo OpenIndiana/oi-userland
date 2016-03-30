@@ -20,47 +20,26 @@
 #
 
 #
-# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tmux
 COMPONENT_VERSION=	1.9
 COMPONENT_MICRO_VERSION=	a
 IPS_COMPONENT_VERSION=	1.9.1
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)$(COMPONENT_MICRO_VERSION)
+HUMAN_VERSION=		$(COMPONENT_VERSION)$(COMPONENT_MICRO_VERSION)
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_PROJECT_URL=	http://tmux.sourceforge.net
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:c5e3b22b901cf109b20dab54a4a651f0471abd1f79f6039d79b250d21c2733f5
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/tmux/files/tmux/$(COMPONENT_NAME)-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/tmux
 
 TPNO=			20510
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS  +=	CXXFLAGS="$(CXXFLAGS)"
-
-# Enable ASLR for this component
-ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
 REQUIRED_PACKAGES += library/libevent
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library

@@ -20,30 +20,24 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		m4
 COMPONENT_VERSION=	1.4.17
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/m4/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:f0543c3beb51fa6b3337d8025331591e0e18d8ec2886ed391f1aade43477d508
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/m4/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gnu-m4
 
 TPNO=			25279
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/gnu-component.mk
 
 CONFIGURE_PREFIX =	/usr/gnu
 CONFIGURE_OPTIONS  +=	--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
 
 # test failures; keep going
 COMPONENT_TEST_ARGS += -k -i
@@ -56,19 +50,5 @@ COMPONENT_TEST_TRANSFORMS += '-n' \
 	'-e /FAIL/p'  \
 	'-e /ERROR/p'
 
-ASLR_MODE = $(ASLR_ENABLE)
-
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
-
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-
-
 REQUIRED_PACKAGES += library/libsigsegv
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

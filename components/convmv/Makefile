@@ -22,24 +22,20 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		convmv
 COMPONENT_VERSION=	2.0
 COMPONENT_PROJECT_URL=	http://www.j3e.de/linux/convmv/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:170cf675be1fca77868ff472e9340ca828b1463865a63d4f4b7b3bf4053db93f
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/convmv
 
 TPNO=			27095
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+BUILD_STYLE= justmake
+include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL=0
 
@@ -49,7 +45,7 @@ COMPONENT_TEST_TRANSFORMS += \
 
 COMPONENT_TEST_TARGETS=		test
 COMPONENT_SYSTEM_TEST_TARGETS=	test
-COMPONENT_SYSTEM_TEST_ENV=	CONVMV=/usr/bin/convmv
+COMPONENT_SYSTEM_TEST_ENV=	CONVMV=$(USRBINDIR)/convmv
 
 # Adjust the '#!/usr/bin/perl' at the beginning of the convmv script to use
 # '#!/usr/perl5/$(PERL_VERSION)/bin/perl'
@@ -58,12 +54,6 @@ COMPONENT_POST_INSTALL_ACTION += \
 		$(PROTOUSRBINDIR)/convmv;
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
 
 system-test:    $(SYSTEM_TEST_64)
 

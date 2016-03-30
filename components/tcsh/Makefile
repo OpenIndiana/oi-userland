@@ -22,25 +22,22 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tcsh
 COMPONENT_VERSION=	6.19.00
 IPS_COMPONENT_VERSION=	6.19.0
 COMPONENT_PROJECT_URL=	http://www.tcsh.org/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:12e271e0b89e4259d9d6e8d525322e77340e7244cfbd199a591e5f8146285c49
 COMPONENT_ARCHIVE_URL=	ftp://ftp.astron.com/pub/tcsh/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/tcsh
 
 TPNO=			24443
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+# the testsuite needs to be configured first
+SYSTEM_TEST_TARGET= configure $(SYSTEM_TEST_64)
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -49,18 +46,14 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 COMPONENT_PRE_TEST_ACTION = \
     ($(RM) $(SOURCE_DIR)/tests/package.m4)
 
-
 COMPONENT_PREP_ACTION = \
 	(cd $(@D) ; autoconf )
 
 LOCALEDIR=$(PROTO_DIR)/$(CONFIGURE_LOCALEDIR)
 
-CONFIGURE_BINDIR.64 =   $(CONFIGURE_PREFIX)/bin
-
 CONFIGURE_OPTIONS  +=		--localedir=$(CONFIGURE_LOCALEDIR)
-CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 
-COMPONENT_TEST_ENV += PATH=/usr/gnu/bin:/usr/bin
+COMPONENT_TEST_ENV += PATH=$(GNUBIN):$(USRBINDIR)
 COMPONENT_SYSTEM_TEST_TARGETS= system-test
 
 # Strip compilation lines from test output
@@ -71,21 +64,4 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|^make.*: Entering directory.*$$|XXX_CC_XXX|g" ' \
 	'-e "/^XXX_CC_XXX$$/d" '
 
-
-ASLR_MODE = $(ASLR_ENABLE)
-
-# common targets
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test: 		$(TEST_64)
-
-# the testsuite needs to be configured first
-system-test:    configure $(SYSTEM_TEST_64)
-
-
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += text/locale

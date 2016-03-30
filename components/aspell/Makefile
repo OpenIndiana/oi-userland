@@ -18,20 +18,19 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-COMPILER =		gcc
-
+BUILD_BITS= 64_and_32
+COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		aspell
 COMPONENT_VERSION=	0.60.6.1
 COMPONENT_PROJECT_URL=	http://aspell.net/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:f52583a83a63633701c5f71db3dc40aab87b7f76b29723aeb27941eff42df6e1
-COMPONENT_ARCHIVE_URL=	ftp://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 
 COMPONENT_NAME_1=	aspell6-en
 COMPONENT_VERSION_1=	7.1-0
@@ -42,16 +41,13 @@ COMPONENT_ARCHIVE_HASH_1= \
 COMPONENT_ARCHIVE_URL_1= ftp://ftp.gnu.org/gnu/$(COMPONENT_NAME)/dict/en/$(COMPONENT_ARCHIVE_1)
 SOURCE_DIR_1=		$(COMPONENT_DIR)/$(COMPONENT_SRC_1)
 
-COMPONENT_BUGDB=	utility/aspell
-
 TPNO=			23575
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/gnu-component.mk
 
-ASPELL_BIN_DIR.32 =	$(PROTOUSRBINDIR)
-ASPELL_BIN_DIR.64 =	$(PROTOUSRBINDIR64)
+ASPELL_BIN_DIR.32 =	$(PROTOUSRBINDIR)/$(MACH32)
+ASPELL_BIN_DIR.64 =	$(PROTOUSRBINDIR)
 ASPELL_BIN_DIR =	$(ASPELL_BIN_DIR.$(BITS))
 
 ASPELL_LIB_DIR.32 =	$(PROTOUSRLIBDIR)
@@ -74,28 +70,14 @@ COMPONENT_POST_INSTALL_ACTION += \
 		PATH="$(ASPELL_BIN_DIR):$(PATH)" \
 		$(GMAKE) install);
 
-CXX +=			$(CC_BITS)
-CC +=			$(CC_BITS)
-
 CONFIGURE_ENV +=	LD_OPTIONS="$(LD_OPTIONS)"
 
 CLEAN_PATHS +=		$(SOURCE_DIR_1)
 PKG_PROTO_DIRS +=	$(SOURCE_DIR_1)
 
-ASLR_MODE = $(ASLR_ENABLE)
-
-configure:	$(CONFIGURE_32_and_64)
-
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
-
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += $(PERL_PKG)
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/gcc/gcc-c++-runtime
 REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
 REQUIRED_PACKAGES += system/library/math

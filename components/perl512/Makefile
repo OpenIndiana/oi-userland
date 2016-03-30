@@ -18,11 +18,14 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+BUILD_BITS= 32
 include ../../make-rules/shared-macros.mk
 
-PATH=$(dir $(CC)):/usr/bin:/usr/gnu/bin
+PATH=$(dir $(CC)):$(USRBINDIR):$(GNUBIN)
 
 # I want to override PERL_VERSION and PERL_ARCH because when building
 # a new version of perl it probably isn't installed so shared-macros.mk
@@ -32,17 +35,16 @@ COMPONENT_NAME=		perl
 COMPONENT_VERSION=	5.12.5
 PERL_VERSION=		5.12
 COMPONENT_PROJECT_URL=	http://www.perl.org/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:10749417fd3010aae320a34181ad4cd6a4855c1fc63403b87fa4d630b18e966c
 COMPONENT_ARCHIVE_URL=	http://www.cpan.org/src/5.0/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/perl
 TPNO=			9223
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+BUILD_TARGET=
+INSTALL_TARGET=
+TEST_TARGET=
+include $(WS_MAKE_RULES)/common.mk
 
 #
 # Override these compiler settings because they are causing problems
@@ -71,15 +73,21 @@ studio_OPT.sparc.32=-xO3
 # If that changes the sed filter needs to change.
 #
 
+PERLDIR=	$(USRDIR)/perl5
+PERLLIBDIR=	$(PERLVERDIR)/lib
+PERLVERDIR=	$(PERLDIR)/$(PERL_VERSION)
+PERLSITEDIR=	$(PERLDIR)/site_perl/$(PERL_VERSION)
+PERLVENDORDIR=	$(PERLDIR)/vendor_perl/$(PERL_VERSION)
+
 CONFIGURE_SCRIPT = $(SOURCE_DIR)/Configure
 CONFIGURE_ENV += MAKE=$(GMAKE)
-CONFIGURE_ENV += PATH=$(dir $(CC)):$(PATH)
+CONFIGURE_ENV += PATH="$(PATH)"
 CONFIGURE_OPTIONS = \
-			    -Dprefix=/usr/perl5/$(PERL_VERSION) \
-			    -Dprivlib=/usr/perl5/$(PERL_VERSION)/lib \
-			    -Dsitelib=/usr/perl5/site_perl/$(PERL_VERSION) \
-			    -Dvendorprefix=/usr/perl5/$(PERL_VERSION) \
-			    -Dvendorlib=/usr/perl5/vendor_perl/$(PERL_VERSION) \
+			    -Dprefix=$(PERLVERDIR) \
+			    -Dprivlib=$(PERLLIBDIR) \
+			    -Dsitelib=$(PERLSITEDIR) \
+			    -Dvendorprefix=$(PERLVERDIR) \
+			    -Dvendorlib=$(PERLVENDORDIR) \
 			    -Dlibperl=libperl.so \
 			    -Duseshrplib \
 			    -Dusedtrace \
@@ -135,27 +143,18 @@ BUILD_32 =	$(VARIANTS:%=%/.built)
 INSTALL_32 =	$(VARIANTS:%=%/.installed)
 TEST_32 =	$(VARIANTS:%=%/.tested)
 
-configure:	$(CONFIGURE_32)
-
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
 
 test:		$(TEST_32)
 
-system-test:    $(SYSTEM_TESTS_NOT_IMPLEMENTED)
-	#
-	#
-	# All tests should pass.
-	#
-	#
-
-
+# not yet tested with ASLR
+ASLR_MODE= $(ASLR_DISABLE)
 
 REQUIRED_PACKAGES += database/berkeleydb-5
 REQUIRED_PACKAGES += developer/lexer/flex
 REQUIRED_PACKAGES += developer/parser/bison
 REQUIRED_PACKAGES += library/database/gdbm
-REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += text/groff/groff-core

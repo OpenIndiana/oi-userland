@@ -18,45 +18,27 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
-# OFED only builds with GCC
-COMPILER=gcc
-
-include ../../../make-rules/shared-macros.mk
+BUILD_BITS= 64
+include ../ofed-component-macros.mk
 
 COMPONENT_NAME=		qperf
 COMPONENT_VERSION=	0.4.6
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-0.1.gb81434e.tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:304b89d1b006c959cad3b132346a6d061526fe626953ef99c764df396e43f959
-COMPONENT_ARCHIVE_URL=	http://www.openfabrics.org/downloads/qperf/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/ofuv_tools
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include ../ofed.mk
+include ../ofed-component.mk
 
-LIBS +=         -lsocket -lnsl -lkstat -lrdmacm -libverbs
-
-CONFIGURE_OPTIONS +=	--bindir=$(USRBINDIR)
+LIBS += -lkstat -lrdmacm -libverbs
 
 COMPONENT_INSTALL_ENV +=	INSTALL="$(INSTALL) -m 755"
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
         (mkdir $(@D)/src ; cd $(@D)/src ; ln -s $(SOURCE_DIR)/src/help.txt ; \
          ln -s $(SOURCE_DIR)/src/mkhelp ; ln -s $(SOURCE_DIR)/src/mkman)
-
-# common targets
-configure:	$(CONFIGURE_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
 

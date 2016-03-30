@@ -22,9 +22,8 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
-COMPILER =	gcc
-
+BUILD_BITS= 64
+COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bcc
@@ -35,16 +34,18 @@ COMPONENT_ARCHIVE=	Dev86src-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:52ed4980c0e4b68d2624aadb0ceb0339cb3fd8dd7c2175419d4f77a451846cbe
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/bcc
 
 TPNO=			8334
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+BUILD_STYLE= justmake
+INSTALL_TARGET= build
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
+
+# Fix 64-bit linking via compiler.
+LDFLAGS += "$(CC_BITS)"
 
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
-CC += $(CC_BITS)
 
 # Create the Makefile before we build
 COMPONENT_PRE_BUILD_ACTION = (cd $(@D) ; CC="$(CC)" $(GMAKE) make.fil)
@@ -55,15 +56,6 @@ COMPONENT_BUILD_ARGS += MAKE="$(GMAKE)"
 COMPONENT_BUILD_ARGS += VERSION="$(COMPONENT_VERSION)"
 COMPONENT_BUILD_ARGS += TOPDIR="$(@D)"
 COMPONENT_BUILD_ARGS += CC="$(CC)"
+COMPONENT_BUILD_ARGS += CFLAGS="$(CFLAGS)"
+COMPONENT_BUILD_ARGS += LDFLAGS="$(LDFLAGS)"
 COMPONENT_BUILD_TARGETS = bcc86 as86 ld86 ar86
-
-
-# common targets
-install build:		$(BUILD_64)
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
-
-REQUIRED_PACKAGES += system/library

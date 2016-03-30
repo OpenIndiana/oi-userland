@@ -19,16 +19,15 @@
 # CDDL HEADER END
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_BITS= 32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		memcached-java
 COMPONENT_VERSION=	2.0.1
 COMPONENT_RELEASE=	release_$(COMPONENT_VERSION)
 COMPONENT_SRC=		java_memcached-$(COMPONENT_RELEASE)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:f0978f387cd6c42191a3ec366ecc5519f66ee03e686c5d080eb2516ebbecdcc4
 COMPONENT_ARCHIVE_URL=	http://img.whalin.com/memcached/jdk5/standard/$(COMPONENT_ARCHIVE)
@@ -37,9 +36,8 @@ COMPONENT_BUGDB=	database/memcached
 
 TPNO=			5586
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/ant.mk
-include $(WS_MAKE_RULES)/ips.mk
+BUILD_STYLE= ant
+include $(WS_MAKE_RULES)/common.mk
 
 # Make sure we remove unneeded pieces from the source (the test dir)
 # and also the existing source files which will be generated anew 
@@ -69,20 +67,5 @@ COMPONENT_POST_BUILD_ACTION += \
 # Nothing is installed into the proto area.
 # All files in the package will come from the build directory.
 PKG_PROTO_DIRS +=	$(BUILD_DIR_$(BITS))
-
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
-
-# common targets
-
-build:		$(BUILD_32)
-
-# Nothing needed for install; all files are generated
-# during the build.
-install:	build
-
-test:		$(NO_TESTS)
-
-system-test:    $(NO_TESTS)
-
 
 REQUIRED_PACKAGES += runtime/java/jre-8
