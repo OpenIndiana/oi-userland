@@ -544,7 +544,6 @@ PYTHON_LIB= /usr/lib/python$(PYTHON_VERSION)/vendor-packages
 PYTHON_DATA= $(PYTHON_LIB)
 
 JAVA8_HOME =	/usr/jdk/instances/jdk1.8.0
-JAVA7_HOME =	/usr/jdk/instances/jdk1.7.0
 JAVA_HOME = $(JAVA8_HOME)
 
 # This is the default BUILD version of perl
@@ -1022,7 +1021,6 @@ REQUIRED_PACKAGES += system/linker
 REQUIRED_PACKAGES += text/gawk
 REQUIRED_PACKAGES += text/gnu-grep
 REQUIRED_PACKAGES += text/gnu-sed
-REQUIRED_PACKAGES += developer/java/jdk-7
 REQUIRED_PACKAGES += developer/java/jdk-8
 REQUIRED_PACKAGES += security/sudo
 
