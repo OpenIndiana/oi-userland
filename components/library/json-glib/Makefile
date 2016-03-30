@@ -12,7 +12,7 @@
 # Copyright (c) 2014 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		json-glib
 COMPONENT_VERSION=	0.14.2
