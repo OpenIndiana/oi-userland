@@ -18,28 +18,31 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+
 #
-include ../../make-rules/shared-macros.mk
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
+include ../../../make-rules/shared-macros.mk
 
 PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
 
 COMPONENT_NAME=		mercurial
-COMPONENT_VERSION=	3.4.2
+COMPONENT_VERSION=	3.7.3
 COMPONENT_PROJECT_URL=	http://mercurial.selenic.com/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:dcc90e4a8476149ecc8af13c08202860b4c9c987a94c4f3c18b28294b6fd8ecd
+    sha256:c099c42d74e2d520b61dd372cd996b0fa7605c06617834fd7b13c79b9a9a5b30
 COMPONENT_ARCHIVE_URL=	http://www.selenic.com/mercurial/release/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/hg
 
-# Fails to build: not Python 3 ready.
+# Mercurial does not yet support Python 3.
 PYTHON_VERSIONS = 2.7 2.6
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/setup.py.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_POST_INSTALL_ACTION = \
 	(cd $(PROTO_DIR)/usr/bin ; $(MV) -f hg hg-$(PYTHON_VERSION))
@@ -52,18 +55,26 @@ PKG_PROTO_DIRS +=	$(COMPONENT_SRC)/doc
 # tests which try to check all the code in the userland gate.  And finally,
 # test the bits from the proto area, rather than rebuilding.  Given the way the
 # test suite works, the hg executable must be named "hg".
+TEST_BLACKLIST = \
+	test-check-code.t \
+	test-check-config.t \
+	test-hghave.t \
+	test-module-imports.t \
+	test-run-tests.t
 COMPONENT_PRE_TEST_ACTION = \
 	(cd $(BUILD_DIR); rm -f sh; ln -s /bin/bash sh; \
-	echo "test-check-code-hg.t\ntest-module-imports.t" > blacklist); \
+	printf "%s\n" $(TEST_BLACKLIST) > blacklist); \
 	(cd $(PROTOUSRBINDIR); rm -f hg; ln -s hg-$(PYTHON_VERSION) hg)
 
 COMPONENT_TEST_DIR =	$(COMPONENT_SRC)/tests
-COMPONENT_TEST_ENV =	PYTHONPATH=$(PROTO_DIR)/$(PYTHON_LIB) TERM=dumb
+COMPONENT_TEST_ENV =	PYTHONPATH=$(PROTO_DIR)/$(PYTHON_LIB)
+COMPONENT_TEST_ENV +=	TERM=dumb
+COMPONENT_TEST_ENV +=	HGTEST_JOBS=$(or $(HGTEST_JOBS),1)
+COMPONENT_TEST_ENV +=	PATH=/usr/gnu/bin:/usr/bin
 COMPONENT_TEST_ARGS =	./run-tests.py \
 			--shell $(BUILD_DIR)/sh \
 			--with-hg $(PROTOUSRBINDIR)/hg \
 			--blacklist $(BUILD_DIR)/blacklist
-
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
@@ -73,7 +84,12 @@ ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 # patched with the older manpages.patch or against a fresh tarball.  Eventually
 # we'll have docutils in the CBE and we'll be able to regenerate the manpages
 # as part of the build, rather than patching them.
-patches/manpages.patch:
+#
+# Only build this target if it doesn't already exist, since this recipe is just
+# for the component maintainer's benefit.
+patches/manpages.patch: $(SOURCE_DIR)/.unpacked \
+    $(SOURCE_DIR)/.patched-rst.patch $(SOURCE_DIR)/.patched-hgmanpage.patch
+	if [[ -f $@ ]]; then exit 0; fi; \
 	if [[ -f $(COMPONENT_SRC)/doc/hg.1.~1~ ]]; then \
 		cd $(COMPONENT_SRC)/doc; gmake man || true; cd ../..; \
 		for f in hg.1 hgignore.5 hgrc.5; do \
@@ -94,8 +110,4 @@ build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
 
-test:	install $(TEST_32)
-
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include $(WS_TOP)/make-rules/depend.mk
+test:		install $(TEST_32)
