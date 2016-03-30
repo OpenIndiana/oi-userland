@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	augeas
 COMPONENT_VERSION=	1.4.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Augeas-Tools is a configuration-file editing C library and shell toolkit
 COMPONENT_SRC=	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
