@@ -74,6 +74,8 @@ class UserlandActionChecker(base.ActionChecker):
 			"amd64-solaris" + solaris_ver,	# ruby path
 			"sparcv9-solaris" + solaris_ver,# ruby path
 			"sparcv9-sun-solaris" + solaris_ver,# ruby path
+                        "amd64-solaris-" + solaris_ver,  # ruby path
+                        "sparcv9-solaris-" + solaris_ver,# ruby path
 			"x86_64-pc-solaris" + solaris_ver  # GCC path
 		]
 		self.runpath_re = [
