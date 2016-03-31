@@ -3,12 +3,12 @@ names, SMF services, filesystem locations, etc.
 
 This patch has not yet been submitted upstream.
 
---- puppetlabs-apache-1.4.0/manifests/params.pp.orig	2015-05-27 11:04:52.423946815 -0600
-+++ puppetlabs-apache-1.4.0/manifests/params.pp	2015-05-27 13:45:14.205705497 -0600
-@@ -416,6 +416,65 @@ class apache::params inherits ::apache::
-     $wsgi_socket_prefix   = undef
-     $docroot              = '/var/www/localhost/htdocs'
-     $error_documents_path = '/usr/share/apache2/error'
+--- puppetlabs-apache-1.8.1/manifests/params.pp.orig    2016-03-31 11:05:50.763682325 -0700
++++ puppetlabs-apache-1.8.1/manifests/params.pp 2016-03-31 11:08:32.016651366 -0700
+@@ -183,6 +183,66 @@
+       'base_rules/modsecurity_crs_59_outbound_blocking.conf',
+       'base_rules/modsecurity_crs_60_correlation.conf'
+     ]
 +  } elsif $::osfamily == 'Solaris' {
 +    $user                = 'webservd'
 +    $group               = 'webservd'
@@ -68,6 +68,8 @@ This patch has not yet been submitted upstream.
 +    $modsec_default_rules   = undef
 +    $error_documents_path   = '/var/apache2/2.4/error'
 +    $wsgi_socket_prefix     = undef
-   } else {
-     fail("Class['apache::params']: Unsupported osfamily: ${::osfamily}")
-   }
++    $alias_icons_path       = '/var/apache2/2.4/icons'
+   } elsif $::osfamily == 'Debian' {
+     $user                = 'www-data'
+     $group               = 'www-data'
+

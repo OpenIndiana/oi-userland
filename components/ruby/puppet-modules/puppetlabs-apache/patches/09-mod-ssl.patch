@@ -1,17 +1,18 @@
 Patch to add Solaris specific paths for mod-ssl.  This patch has not
 yet been submitted upstream.
 
---- puppetlabs-apache-1.4.0/manifests/mod/ssl.pp.orig	Thu Mar 24 13:28:37 2016
-+++ puppetlabs-apache-1.4.0/manifests/mod/ssl.pp	Thu Mar 24 14:38:48 2016
-@@ -8,11 +8,28 @@
-   $apache_version         = $::apache::apache_version,
-   $package_name           = undef,
- ) {
+--- puppetlabs-apache-1.8.1/manifests/mod/ssl.pp.orig   2016-03-31 11:38:48.810710927 -0700
++++ puppetlabs-apache-1.8.1/manifests/mod/ssl.pp        2016-03-31 11:40:38.688179788 -0700
+@@ -40,12 +40,31 @@
+     }
+   }
+
 -  $session_cache = $::osfamily ? {
 -    'debian'  => "\${APACHE_RUN_DIR}/ssl_scache(512000)",
 -    'redhat'  => '/var/cache/mod_ssl/scache(512000)',
 -    'freebsd' => '/var/run/ssl_scache(512000)',
 -    'gentoo'  => '/var/run/ssl_scache(512000)',
+-    'Suse'    => '/var/lib/apache2/ssl_scache(512000)'
 +  case $::osfamily {
 +    'debian': {
 +      $session_cache = "\${APACHE_RUN_DIR}/ssl_scache(512000)"
@@ -25,32 +26,19 @@ yet been submitted upstream.
 +    'gentoo': {
 +      $session_cache = '/var/run/ssl_scache(512000)'
 +    }
++    'Suse': {
++      $session_cache = '/var/lib/apache2/ssl_scache(512000)'
++    }
 +    'solaris': {
 +      if versioncmp($apache_version, '2.4') == 0 {
-+	$session_cache = '/var/run/apache2/2.4/ssl_scache(512000)'
++       $session_cache = '/var/run/apache2/2.4/ssl_scache(512000)'
 +      } elsif versioncmp($apache_version, '2.2') == 0 {
-+	$session_cache = '/var/run/apache2/2.2/ssl_scache(512000)'
++       $session_cache = '/var/run/apache2/2.2/ssl_scache(512000)'
 +      } else {
-+	$session_cache = '/var/run/ssl_scache(512000)'
++       $session_cache = '/var/run/ssl_scache(512000)'
 +      }
 +    }
    }
- 
-   case $::osfamily {
-@@ -34,6 +51,15 @@
-     'gentoo': {
-       $ssl_mutex = 'default'
-     }
-+    'solaris': {
-+      if versioncmp($apache_version, '2.4') == 0 {
-+        $ssl_mutex = 'default'
-+      } elsif versioncmp($apache_version, '2.2') == 0 {
-+        $ssl_mutex = 'file:/var/run/apache2/2.2/ssl_mutex'
-+      } else {
-+        $ssl_mutex = "file:/var/run/ssl_mutex"
-+      }
-+    }
-     default: {
-       fail("Unsupported osfamily ${::osfamily}")
-     }
+
+   ::apache::mod { 'ssl':
 
