@@ -64,9 +64,7 @@ CONFIGURE_OPTIONS +=	--enable-fixed-rrset
 CONFIGURE_LIBDIR.32 =	$(CONFIGURE_PREFIX)/lib/dns
 CONFIGURE_LIBDIR.64 =	$(CONFIGURE_PREFIX)/lib/dns/$(MACH64)
 # - Traditionally all BIND executables are installed in sbin not bin.
-CONFIGURE_BINDIR.32 =	$(CONFIGURE_SBINDIR.32)
-CONFIGURE_BINDIR.64 =	$(CONFIGURE_SBINDIR.32)
-CONFIGURE_SBINDIR.64 =	$(CONFIGURE_SBINDIR.32)
+CONFIGURE_BINDIR.64 =	$(CONFIGURE_SBINDIR.64)
 CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS +=	--localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS +=	--with-randomdev=/dev/random
@@ -158,9 +156,6 @@ test-named-version: install
 
 test-clean:
 	$(RM) $(TEST_32_and_64)
-
-# Common Command line targets
-.PHONY: configure build install test system-test
 
 # Package dependencies
 # Created by 'gmake REQUIRED_PACKAGES', manually verified.
