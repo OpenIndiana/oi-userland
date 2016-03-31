@@ -1,0 +1,107 @@
+Changes to the /usr/lib/64/R/etc/Makeconf file to use the
+GNU C, C++ and Fortran compilers. These are applied to the
+Makeconf file in the prototype build area as a post install
+action in the Makefile.
+
+--- Makeconf.GNU.orig	2016-03-30 18:48:11.403166611 -0700
++++ Makeconf.GNU	2016-03-30 18:53:12.985544279 -0700
+@@ -13,38 +13,38 @@
+ ## Used by packages 'maps' and 'mapdata'
+ AWK = gawk
+ BLAS_LIBS = -lsunperf
+-C_VISIBILITY = 
+-CC = cc
+-CFLAGS = -m64 -xO3 -xc99=all -xlibmieee $(LTO)
+-CPICFLAGS = -KPIC -DPIC
++C_VISIBILITY = -fvisibility=hidden
++CC = gcc -std=gnu99
++CFLAGS = -g -O2 -Wformat -Werror=format-security -D_FORTIFY_SOURCE=2 $(LTO)
++CPICFLAGS = -fpic
+ CPPFLAGS = -m64
+-CXX = CC
++CXX = g++
+ CXXCPP = $(CXX) -E
+-CXXFLAGS = -norunpath -m64 -xO3 -std=c++11 -D__MATHERR_RENAME_EXCEPTION $(LTO)
+-CXXPICFLAGS = -KPIC
+-CXX1X = CC
+-CXX1XFLAGS = -norunpath -m64 -xO3 -std=c++11 -D__MATHERR_RENAME_EXCEPTION
+-CXX1XPICFLAGS = -KPIC
+-CXX1XSTD =  
++CXXFLAGS = -m64 -g -O2 -Wformat -Werror=format-security -D_FORTIFY_SOURCE=2 $(LTO)
++CXXPICFLAGS = -fpic
++CXX1X = g++
++CXX1XFLAGS = -m64 -g -O2 -Wformat -Werror=format-security -D_FORTIFY_SOURCE=2
++CXX1XPICFLAGS = -fpic
++CXX1XSTD = -std=c++11
+ DYLIB_EXT = .so
+ DYLIB_LD = $(CC)
+-DYLIB_LDFLAGS = -G -fopenmp# $(CFLAGS) $(CPICFLAGS)
++DYLIB_LDFLAGS = -shared -fopenmp# $(CFLAGS) $(CPICFLAGS)
+ DYLIB_LINK = $(DYLIB_LD) $(DYLIB_LDFLAGS) $(LDFLAGS)
+ ECHO = echo
+ ECHO_C = \c
+ ECHO_N = 
+ ECHO_T = 
+ ## NB, set FC before F77 as on Solaris make, setting FC sets F77
+-FC = f95 -m64
+-FCFLAGS = -xO3 -m64 $(LTO)
++FC = gfortran -m64
++FCFLAGS = -g -O2 -m64 $(LTO)
+ ## additional libs needed when linking with $(FC), e.g. on Solaris
+ FCLIBS = -lsunperf -lfsu -lsunmath
+-F77 = f95 -m64
+-F77_VISIBILITY = 
+-FFLAGS = -xO3 -m64 $(LTO)
+-FLIBS = -lsunperf -lfsu -lsunmath
+-FCPICFLAGS = -PIC
+-FPICFLAGS = -KPIC -DPIC
++F77 = gfortran -m64
++F77_VISIBILITY = -fvisibility=hidden
++FFLAGS = -g -O2 -m64 $(LTO)
++FLIBS = -lsunperf -lfsu -lsunmath -lgfortran -lm -lquadmath
++FCPICFLAGS = -fpic
++FPICFLAGS = -fpic
+ FOUNDATION_CPPFLAGS = 
+ FOUNDATION_LIBS = 
+ JAR = /usr/bin/jar
+@@ -68,11 +68,11 @@
+ ## needed by R CMD config
+ LIBnn = lib
+ LIBTOOL = $(SHELL) "$(R_HOME)/bin/libtool"
+-LDFLAGS = -norunpath -m64 -KPIC -DPIC -lc -L/usr/lib/studio/64 -R/usr/lib/studio/64 -lsunperf -lfsu -lmtsk -lpicl -lkstat -L/usr/lib/amd64/R/lib -R/usr/lib/amd64/R/lib
++LDFLAGS = -m64 -fpic -lc -L/usr/lib/studio/64 -R/usr/lib/studio/64 -lsunperf -lfsu -lmtsk -lpicl -lkstat -L/usr/lib/64/R/lib -R/usr/lib/64/R/lib
+ LTO = 
+ ## needed to build applications linking to static libR
+ MAIN_LD = $(CC)
+-MAIN_LDFLAGS = -fopenmp
++MAIN_LDFLAGS = -Wl,--export-dynamic -fopenmp
+ MAIN_LINK = $(MAIN_LD) $(MAIN_LDFLAGS) $(LDFLAGS)
+ MKINSTALLDIRS = $(R_HOME)/bin/mkinstalldirs
+ OBJC = gcc
+@@ -81,21 +81,21 @@
+ OBJCXX = 
+ R_ARCH = 
+ RANLIB = ranlib
+-SAFE_FFLAGS = -xO3 -m64
++SAFE_FFLAGS = -g -O2 -m64 -ffloat-store
+ SED = /usr/xpg4/bin/sed
+ SHELL = /bin/bash
+ SHLIB_CFLAGS = 
+ SHLIB_CXXFLAGS = 
+ SHLIB_CXXLD = $(CXX)
+-SHLIB_CXXLDFLAGS = -lCrunG3 -G
++SHLIB_CXXLDFLAGS = -shared
+ SHLIB_CXX1XLD = $(CXX1X) $(CXX1XSTD)
+-SHLIB_CXX1XLDFLAGS = -lCrunG3 -G
++SHLIB_CXX1XLDFLAGS = -shared
+ SHLIB_EXT = .so
+ SHLIB_FCLD = $(FC)
+-SHLIB_FCLDFLAGS = -G
++SHLIB_FCLDFLAGS = -shared
+ SHLIB_FFLAGS = 
+ SHLIB_LD = $(CC)
+-SHLIB_LDFLAGS = -G# $(CFLAGS) $(CPICFLAGS)
++SHLIB_LDFLAGS = -shared# $(CFLAGS) $(CPICFLAGS)
+ SHLIB_LIBADD = 
+ ## We want to ensure libR is picked up from $(R_HOME)/lib
+ ## before e.g. /usr/local/lib if a version is already installed.

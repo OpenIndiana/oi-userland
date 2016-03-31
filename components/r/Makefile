@@ -124,6 +124,16 @@ CONFIGURE_OPTIONS += --with-recommended-packages
 CONFIGURE_OPTIONS += --with-tcltk
 CONFIGURE_OPTIONS += --enable-prebuilt-html
 
+# Supply Makeconf files for both the Studio and the GNU C, C++ and Fortran
+# compilers.
+COMPONENT_POST_INSTALL_ACTION += \
+	$(MV) $(PROTOUSRLIBDIR64)/R/etc/Makeconf \
+	      $(PROTOUSRLIBDIR64)/R/etc/Makeconf.Studio ; \
+	$(CP) $(PROTOUSRLIBDIR64)/R/etc/Makeconf.Studio \
+	      $(PROTOUSRLIBDIR64)/R/etc/Makeconf.GNU ; \
+	(cd $(PROTOUSRLIBDIR64)/R/etc ; $(GPATCH) --strip=0 \
+	      < $(COMPONENT_DIR)/files/Makeconf-GNU.patch) ;
+
 COMPONENT_PRE_TEST_ACTION = \
 	$(RM) $(BUILD_DIR_64)/tests/Examples/*.prev
 
