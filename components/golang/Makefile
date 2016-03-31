@@ -22,10 +22,11 @@
 #
 # Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
+BUILD_ARCH= i386
+BUILD_BITS= 64
+COMPILER= gcc
 # The golang build process just doesn't work with Parfait.
 export PARFAIT_BUILD=no
-
 include ../../make-rules/shared-macros.mk
 
 PATCH_EACH_ARCHIVE= 1
@@ -33,14 +34,12 @@ PATCH_EACH_ARCHIVE= 1
 COMPONENT_NAME=		golang
 COMPONENT_VERSION=	1.5
 COMPONENT_MAJOR_VERSION=	$(shell echo $(COMPONENT_VERSION) | $(GSED) -e 's/\([0-9]\+\.[0-9]\+\).*/\1/')
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://golang.org/
 COMPONENT_ARCHIVE=	go$(COMPONENT_VERSION).src.tar.gz
 COMPONENT_ARCHIVE_URL=	https://storage.googleapis.com/golang/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH=	 \
 	sha256:be81abec996d5126c05f2d36facc8e58a94d9183a56f026fc9441401d80062db
 COMPONENT_PROJECT_URL=	https://golang.org
-COMPONENT_BUGDB=	utility/golang
 
 ARC_CASE=		PSARC/2015/203
 TPNO=			23679
@@ -51,28 +50,14 @@ TPNO=			23679
 # delivering them within the same build component build process is the best
 # option for now.
 
-# This version is Go is not actually packaged; it is only used to bootstrap the
-# actual version of the Go that will be packaged.  The long-term plan is
-# roughly as follows:
+# The long-term plan for packaging Go is roughly as follows:
 #
-# - verify 1.5 produces "correct" result for bootstrapping 1.5 (upstream
-#   still uses 1.4 officially)
-# - after 1.5 has been available for at least a few builds in the WOS, switch
-#   to building Go with system version of Go
 # - when SPARC support is integrated into Go upstream, build upstream version
 #   using system Go for x86, then build Go for SPARC using upstream version
 #   just built for x86 (cross-compilation), package both at the same time
 # - after SPARC version has been available for at least a few builds in the
 #   WOS, switch to building Go with system version for x86 and SPARC
 #
-COMPONENT_NAME_1=		golang
-COMPONENT_VERSION_1=		1.4.2
-COMPONENT_SRC_NAME_1=		$(COMPONENT_NAME_1)$(COMPONENT_VERSION_1)
-COMPONENT_SRC_1=		$(COMPONENT_SRC_NAME_1)
-COMPONENT_ARCHIVE_1=		go$(COMPONENT_VERSION_1).src.tar.gz
-COMPONENT_ARCHIVE_HASH_1=	\
-	sha256:299a6fd8f8adfdce15bc06bde926e7b252ae8e24dd5b16b7d8791ed79e7b5e9b
-COMPONENT_ARCHIVE_URL_1=	https://storage.googleapis.com/golang/$(COMPONENT_ARCHIVE_1)
 
 # Supplementary packages; these are delivered as source only for now as the
 # paths to the compiled packages are written directly into the binaries and
@@ -142,7 +127,7 @@ GOEXPERIMENT=		framepointer
 COMPONENT_BUILD_ENV +=	GOROOT_FINAL="$(GOROOT_FINAL)"
 COMPONENT_BUILD_ENV +=	GOEXPERIMENT="$(GOEXPERIMENT)"
 COMPONENT_BUILD_ENV +=	\
-	GOROOT_BOOTSTRAP="$(BUILD_DIR_64)/$(COMPONENT_SRC_NAME_1)"
+	GOROOT_BOOTSTRAP="$(USRLIBDIR)/golang/1.5"
 
 # Install root for supplementary packages.
 SUPP_ROOT=$(PROTOUSRLIBDIR)/gocode/$(COMPONENT_MAJOR_VERSION)
@@ -152,9 +137,10 @@ COMPONENT_INSTALL_ENV += PATH="$(PROTO_DIR)$(GOROOT_FINAL)/bin:$(PATH)"
 COMPONENT_INSTALL_ENV += GOROOT="$(PROTO_DIR)$(GOROOT_FINAL)"
 COMPONENT_INSTALL_ENV += GOPATH="$(SUPP_ROOT)"
 
-include ../../make-rules/prep.mk
-include ../../make-rules/justmake.mk
-include ../../make-rules/ips.mk
+BUILD_STYLE= justmake
+BUILD_64 += $(BUILD_DIR)/man1/go.1
+INSTALL_64 := build $(INSTALL_64)
+include $(WS_MAKE_RULES)/common.mk
 
 # Simplify source copying for install by eliding patch detritus.
 GPATCH_BACKUP=
@@ -206,24 +192,11 @@ PUBLISH_TRANSFORMS +=	$(NO_ELFSIGN_MOG)
 COMPONENT_POST_UNPACK_ACTION= \
 	$(MV) go $(COMPONENT_SRC)
 
-COMPONENT_POST_UNPACK_ACTION_1= \
-	$(MV) go $(COMPONENT_SRC_1) && \
-	$(CP) -r $(COMPONENT_SRC_1) $(COMPONENT_SRC)/$(COMPONENT_SRC_1)
-
 # Fixup compressed data affected by patches.
 COMPONENT_PREP_ACTION= \
 	cd $(COMPONENT_SRC) && \
 	bzip2 -c src/compress/testdata/Mark.Twain-Tom.Sawyer.txt > \
 		src/compress/bzip2/testdata/Mark.Twain-Tom.Sawyer.txt.bz2
-
-# Build the bootstrap compiler before attempting to build Go 1.5+.  For the
-# bootstrap compiler ensure GOROOT_FINAL is unset as it will be executed out of
-# the build area, and ensure GOROOT_BOOTSTRAP is also not set.  GOEXPERIMENT
-# must also be unset as it is 1.5+ only.
-COMPONENT_PRE_BUILD_ACTION= \
-	cd $(@D)/$(COMPONENT_SRC_NAME_1)/src; \
-	$(ENV) $(COMPONENT_BUILD_ENV) \
-	GOEXPERIMENT= GOROOT_BOOTSTRAP= GOROOT_FINAL= ./make.bash
 
 # Go doesn't have a standard Makefile-based build process, so override the
 # default.
@@ -262,18 +235,15 @@ XML2ROFF= $(USRSHAREDIR)/xml/xsolbook/python/xml2roff.py
 $(BUILD_DIR)/man1/go.1:
 	$(XML2ROFF) $(COMPONENT_DIR)/docs/go.1 -o $(BUILD_DIR)
 
-BUILD_amd64= $(BUILD_64) $(BUILD_DIR)/man1/go.1
-
 define COMPONENT_INSTALL_ACTION=
 	($(MKDIR) $(COMPONENT_TARGET_DIR)/src); \
 	(cd $(SOURCE_DIR) && \
-	/usr/gnu/bin/find . -maxdepth 1 -path "./$(COMPONENT_SRC_NAME_1)" \
-	  -prune -o \( ! -iname ".*" \) -print \
-	  -exec /usr/gnu/bin/cp -r \
+	$(GNUBIN)/find . -maxdepth 1 -print \
+	  -exec $(GNUBIN)/cp -r \
 	  --parents {} $(COMPONENT_TARGET_DIR) \;); \
 	(cd $(BUILD_DIR_64) && \
-	/usr/gnu/bin/find src -type f \
-		-exec /usr/gnu/bin/cp --parents {} $(COMPONENT_TARGET_DIR) \;); \
+	$(GNUBIN)/find src -type f \
+		-exec $(GNUBIN)/cp --parents {} $(COMPONENT_TARGET_DIR) \;); \
 	(cd $(BUILD_DIR_64) && $(CP) -r bin $(COMPONENT_TARGET_DIR)/); \
 	(cd $(BUILD_DIR_64) && $(CP) -r pkg $(COMPONENT_TARGET_DIR)/); \
 	($(MKDIR) $(PROTOUSRSHAREMAN1DIR)); \
@@ -281,22 +251,13 @@ define COMPONENT_INSTALL_ACTION=
 	($(RM) $(NO_ELFSIGN_MOG))
 endef
 
-INSTALL_amd64= $(INSTALL_64)
-
-TEST_amd64= $(TEST_64)
-
-# common targets
-build:		$(BUILD_$(MACH64))
-
-install:	build $(INSTALL_$(MACH64))
-
 #
 # Magic to deliver supplemental package source into proto area.
 #
 define install-rules
 $(MANIFEST_BASE)-$(1)-15.mogrified: PKG_PROTO_DIRS= $(MANGLED_DIR) $(PROTO_DIR) $(@D) $(COMPONENT_DIR) $(COMPONENT_SRC_$(1))
 
-BUILD_amd64 += $$(UNPACK_STAMP_$(1))
+BUILD_64 += $$(UNPACK_STAMP_$(1))
 
 COMPONENT_POST_INSTALL_ACTION += \
 	($(MKDIR) \
@@ -332,11 +293,14 @@ $(foreach suffix,$(SUPP_PACKAGES), $(eval $(call install-rules,$(suffix))))
 #		-asmflags -trimpath=$(SUPP_ROOT) -gcflags -trimpath=$(SUPP_ROOT) \
 #		"github.com/golang/...");
 
-test:		$(TEST_$(MACH64))
-
 # Go's test suite is currently designed to be run from the build area.
-system-test:	$(SYSTEM_TESTS_NOT_IMPLEMENTED)
 
+# Used during the build.
+REQUIRED_PACKAGES += developer/gcc
+ifneq ($(MACH), sparc)
+# Go 1.5 now bootstraps itself using 1.5; 1.6 will bootstrap using 1.5 as well.
+REQUIRED_PACKAGES += developer/golang-15
+endif
 # Used in this Makefile.
 REQUIRED_PACKAGES += file/gnu-findutils
 REQUIRED_PACKAGES += text/gnu-sed
@@ -346,4 +310,7 @@ REQUIRED_PACKAGES += developer/documentation-tool/xml2roff
 REQUIRED_PACKAGES += runtime/perl-520
 REQUIRED_PACKAGES += system/header
 REQUIRED_PACKAGES += system/library
+# Used for cgo support at runtime; we don't add a package dependency since cgo
+# support is optional.
+REQUIRED_PACKAGES += system/library/gcc/gcc-c-runtime
 REQUIRED_PACKAGES += system/linker
