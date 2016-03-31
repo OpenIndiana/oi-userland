@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -29,7 +29,7 @@ include ../../../make-rules/shared-macros.mk
 # the automatic (and lengthy) manifest manipulation that it does, which we
 # really don't need to do for these static, uninteresting packages.  So we just
 # write a simple set of publication rules to get the packages into the repo.
-
+COMPONENT_SRC=
 include $(WS_MAKE_RULES)/prep.mk
 
 PKGSEND =	/usr/bin/pkgsend

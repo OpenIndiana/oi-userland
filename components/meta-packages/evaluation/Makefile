@@ -20,14 +20,13 @@
 #
 
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-
 include ../../../make-rules/shared-macros.mk
-include $(WS_MAKE_RULES)/prep.mk
 
 COMPONENT_NAME=		evaluation
 COMPONENT_VERSION=	1.0
+COMPONENT_SRC=
 COMPONENT_BUGDB=	gate-stuff/userland
 
 ifneq ($(BUILD_TYPE), evaluation)
@@ -38,4 +37,5 @@ endif
 CLEAN_PATHS=	$(BUILD_DIR)
 CLOBBER_PATHS=	$(BUILD_DIR)
 
-include $(WS_MAKE_RULES)/ips.mk
+BUILD_STYLE= pkg
+include $(WS_MAKE_RULES)/common.mk

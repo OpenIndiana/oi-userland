@@ -28,6 +28,15 @@
 # userland components.
 #
 
+# Assume that if no COMPONENT_ARCHIVE_URL or COMPONENT_ARCHIVE_SRC has been
+# defined that no COMPONENT_ARCHIVE exists; this allows providing a default
+# value for COMPONENT_ARCHIVE while avoiding prep errors.
+ifndef COMPONENT_ARCHIVE_URL
+ifndef COMPONENT_ARCHIVE_SRC
+COMPONENT_ARCHIVE=
+endif
+endif
+
 include $(WS_MAKE_RULES)/prep.mk
 
 # Override this to limit builds and publication to a single architecture.
@@ -101,15 +110,6 @@ ASLR_MODE= $(ASLR_ENABLE)
 endif # BUILD_BITS NO_ARCH
 endif # BUILD_STYLE ant
 endif # findstring library
-
-# Assume that if no COMPONENT_ARCHIVE_URL or COMPONENT_ARCHIVE_SRC has been
-# defined that no COMPONENT_ARCHIVE exists; this allows providing a default
-# value for COMPONENT_ARCHIVE while avoiding prep errors.
-ifndef COMPONENT_ARCHIVE_URL
-ifndef COMPONENT_ARCHIVE_SRC
-COMPONENT_ARCHIVE=
-endif
-endif
 
 # Determine if we should automatically include lint libraries in build and
 # install targets based on presence of llib* files in component directory. This

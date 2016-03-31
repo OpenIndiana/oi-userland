@@ -33,7 +33,7 @@ COMPONENT_SRC=		src
 COMPONENT_BUGDB=	library/libusb
 
 BUILD_STYLE= justmake
-include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/common.mk
 
 $(BUILD_DIR_32)/.built:	BITS=32
 $(BUILD_DIR_64)/.built:	BITS=64
