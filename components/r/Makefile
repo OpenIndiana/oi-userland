@@ -51,7 +51,11 @@ LDFLAGS += $(studio_PIC)
 LDFLAGS += $(LD_DEF_LIBS)
 
 STUDIO_LIBS_PATH =	$(USRLIBDIR)/studio/64
-R_LIBS_PATH =		$(USRLIBDIR64)/R/lib
+# R_LIBS_PATH is used when creating /usr/lib/64/R/etc/Makeconf
+# Using a resolved pathname here (rather than say $(USRLIBDIR64)/R/lib) so
+# that the Makeconf-GNU.patch patch used by the COMPONENT_POST_INSTALL_ACTION
+# will just work on both platforms.
+R_LIBS_PATH =		/usr/lib/64/R/lib
 JAVA_LIBS_PATH =	$(JAVA8_HOME)/jre/lib/$(MACH64)/server
 
 LDFLAGS += -L$(STUDIO_LIBS_PATH) -R$(STUDIO_LIBS_PATH) \
