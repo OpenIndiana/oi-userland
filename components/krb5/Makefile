@@ -137,19 +137,19 @@ COMPONENT_PREP_ACTION += ;\
 FILTLIBFLAGS = -G $(LD_B_DIRECT) $(LD_Z_DEFS) $(LD_Z_TEXT)
 
 $(BUILD_32): COMPONENT_POST_BUILD_ACTION= \
-	$(CC) -o $(BUILD_DIR)/$(MACH32)/lib/libgss.so.1 \
+	$(CC) -m32 -o $(BUILD_DIR)/$(MACH32)/lib/libgss.so.1 \
 	    -hlibgss.so.1 $(FILTLIBFLAGS) -lc \
 	    -M$(COMPONENT_DIR)/Solaris/libgss.mapfile-vers \
 	    -R$(USRLIBDIR)/krb5 \
 	    -z discard-unused=dependencies \
 	    -L $(BUILD_DIR)/$(MACH32)/lib -lkrb5support \
 	    $(BUILD_DIR)/$(MACH32)/lib/gssapi/mechglue/libgss_stubs.o && \
-	$(CC) -o $(BUILD_DIR)/$(MACH32)/lib/libkrb5.so.1 \
+	$(CC) -m32 -o $(BUILD_DIR)/$(MACH32)/lib/libkrb5.so.1 \
 	    -hlibkrb5.so.1 $(FILTLIBFLAGS) \
 	    -M$(COMPONENT_DIR)/Solaris/libkrb5.mapfile-vers \
 	    $(BUILD_DIR)/$(MACH32)/lib/krb5/missing_interfaces.o \
 	    $(BUILD_DIR)/$(MACH32)/lib/krb5/privacy_allowed.o && \
-	$(LD) -o $(BUILD_DIR)/$(MACH32)/lib/libkadm5clnt.so.1 \
+	$(LD) -m32 -o $(BUILD_DIR)/$(MACH32)/lib/libkadm5clnt.so.1 \
 	    -hlibkadm5clnt.so.1 $(FILTLIBFLAGS) \
 	    -M$(COMPONENT_DIR)/Solaris/libkadm5clnt.mapfile-vers;
 
