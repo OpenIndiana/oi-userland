@@ -10,6 +10,7 @@
 
 #
 # Copyright 2014 Alexander Pyhalov. All rights reserved.
+# Copyright 2016 Jim Klimov
 #
 
 set name=pkg.fmri value=pkg:/data/docbook/dtds@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -20,6 +21,9 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license docbook-dtds.license license='docbook'
+
+# We must refresh (not just restart) the FMRI so it deletes old catalogs
+<transform file path=.* ->  default refresh_fmri svc:/application/desktop-cache/docbook-catalog-update:default>
 
 file path=usr/share/sgml/docbook/sgml-dtd-3.0-$(COMPONENT_VERSION)-30.1/cals-tbl.dtd
 file path=usr/share/sgml/docbook/sgml-dtd-3.0-$(COMPONENT_VERSION)-30.1/catalog
@@ -205,3 +209,33 @@ file path=usr/share/sgml/docbook/xml-dtd-4.4-$(COMPONENT_VERSION)-30.1/ent/isopu
 file path=usr/share/sgml/docbook/xml-dtd-4.4-$(COMPONENT_VERSION)-30.1/ent/isotech.ent
 file path=usr/share/sgml/docbook/xml-dtd-4.4-$(COMPONENT_VERSION)-30.1/htmltblx.mod
 file path=usr/share/sgml/docbook/xml-dtd-4.4-$(COMPONENT_VERSION)-30.1/soextblx.dtd
+file path=usr/share/sgml/docbook/xml-dtd-4.5-$(COMPONENT_VERSION)-30.1/calstblx.dtd
+file path=usr/share/sgml/docbook/xml-dtd-4.5-$(COMPONENT_VERSION)-30.1/catalog
+file path=usr/share/sgml/docbook/xml-dtd-4.5-$(COMPONENT_VERSION)-30.1/dbcentx.mod
+file path=usr/share/sgml/docbook/xml-dtd-4.5-$(COMPONENT_VERSION)-30.1/dbgenent.mod
+file path=usr/share/sgml/docbook/xml-dtd-4.5-$(COMPONENT_VERSION)-30.1/dbhierx.mod
+file path=usr/share/sgml/docbook/xml-dtd-4.5-$(COMPONENT_VERSION)-30.1/dbnotnx.mod
+file path=usr/share/sgml/docbook/xml-dtd-4.5-$(COMPONENT_VERSION)-30.1/dbpoolx.mod
+file path=usr/share/sgml/docbook/xml-dtd-4.5-$(COMPONENT_VERSION)-30.1/docbookx.dtd
+file path=usr/share/sgml/docbook/xml-dtd-4.5-$(COMPONENT_VERSION)-30.1/ent/README
+file path=usr/share/sgml/docbook/xml-dtd-4.5-$(COMPONENT_VERSION)-30.1/ent/isoamsa.ent
+file path=usr/share/sgml/docbook/xml-dtd-4.5-$(COMPONENT_VERSION)-30.1/ent/isoamsb.ent
+file path=usr/share/sgml/docbook/xml-dtd-4.5-$(COMPONENT_VERSION)-30.1/ent/isoamsc.ent
+file path=usr/share/sgml/docbook/xml-dtd-4.5-$(COMPONENT_VERSION)-30.1/ent/isoamsn.ent
+file path=usr/share/sgml/docbook/xml-dtd-4.5-$(COMPONENT_VERSION)-30.1/ent/isoamso.ent
+file path=usr/share/sgml/docbook/xml-dtd-4.5-$(COMPONENT_VERSION)-30.1/ent/isoamsr.ent
+file path=usr/share/sgml/docbook/xml-dtd-4.5-$(COMPONENT_VERSION)-30.1/ent/isobox.ent
+file path=usr/share/sgml/docbook/xml-dtd-4.5-$(COMPONENT_VERSION)-30.1/ent/isocyr1.ent
+file path=usr/share/sgml/docbook/xml-dtd-4.5-$(COMPONENT_VERSION)-30.1/ent/isocyr2.ent
+file path=usr/share/sgml/docbook/xml-dtd-4.5-$(COMPONENT_VERSION)-30.1/ent/isodia.ent
+file path=usr/share/sgml/docbook/xml-dtd-4.5-$(COMPONENT_VERSION)-30.1/ent/isogrk1.ent
+file path=usr/share/sgml/docbook/xml-dtd-4.5-$(COMPONENT_VERSION)-30.1/ent/isogrk2.ent
+file path=usr/share/sgml/docbook/xml-dtd-4.5-$(COMPONENT_VERSION)-30.1/ent/isogrk3.ent
+file path=usr/share/sgml/docbook/xml-dtd-4.5-$(COMPONENT_VERSION)-30.1/ent/isogrk4.ent
+file path=usr/share/sgml/docbook/xml-dtd-4.5-$(COMPONENT_VERSION)-30.1/ent/isolat1.ent
+file path=usr/share/sgml/docbook/xml-dtd-4.5-$(COMPONENT_VERSION)-30.1/ent/isolat2.ent
+file path=usr/share/sgml/docbook/xml-dtd-4.5-$(COMPONENT_VERSION)-30.1/ent/isonum.ent
+file path=usr/share/sgml/docbook/xml-dtd-4.5-$(COMPONENT_VERSION)-30.1/ent/isopub.ent
+file path=usr/share/sgml/docbook/xml-dtd-4.5-$(COMPONENT_VERSION)-30.1/ent/isotech.ent
+file path=usr/share/sgml/docbook/xml-dtd-4.5-$(COMPONENT_VERSION)-30.1/htmltblx.mod
+file path=usr/share/sgml/docbook/xml-dtd-4.5-$(COMPONENT_VERSION)-30.1/soextblx.dtd
