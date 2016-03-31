@@ -60,6 +60,10 @@ include $(WS_MAKE_RULES)/common.mk
 IPS_COMPONENT_VERSION=  $(COMPONENT_VERSION)
 
 CFLAGS += -I$(USRINCDIR)/kerberosv5 -DHAVE_KRB5_H=1 -DKRB5_DLLIMP= -DHAVE__GETGRPSBYMEMBER -D_SOLARIS_DTRACE
+ifeq ($(OS_VERSION), 5.11)
+CFLAGS += -D_POSIX_PTHREAD_SEMANTICS
+endif
+
 # Force immediate binding because of chroot().
 CONFIGURE_OPTIONS +=	LDFLAGS="-z guidance=nolazyload -z nolazyload -lbsm"
 CONFIGURE_OPTIONS +=	install_user=`id -nu`
