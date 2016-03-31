@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004, 2015, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2004, 2016, Oracle and/or its affiliates. All rights reserved.
  */
 
 /* crypto/engine/e_pk11.c */
@@ -103,13 +103,6 @@
 #define	PK11_DBG	"PKCS#11 ENGINE DEBUG"
 /* prints a lot of debug messages on stderr about slot selection process */
 #undef	DEBUG_SLOT_SELECTION
-/*
- * Solaris specific code. See comment at check_hw_mechanisms() for more
- * information.
- */
-#if defined(__SVR4) && defined(__sun)
-#define	SOLARIS_HW_SLOT_SELECTION
-#endif
 
 #ifdef DEBUG_SLOT_SELECTION
 #define	DEBUG_SLOT_SEL(...) fprintf(stderr, __VA_ARGS__)
@@ -135,15 +128,6 @@ static CK_BBOOL pk11_false = CK_FALSE;
  * RSA keys by reference feature.
  */
 pthread_mutex_t *uri_lock = NULL;
-
-#ifdef	SOLARIS_HW_SLOT_SELECTION
-/*
- * Tables for symmetric ciphers and digest mechs found in the pkcs11_kernel
- * library. See comment at check_hw_mechanisms() for more information.
- */
-int *hw_cnids;
-int *hw_dnids;
-#endif	/* SOLARIS_HW_SLOT_SELECTION */
 
 /* PKCS#11 session caches and their locks for all operation types */
 static PK11_CACHE session_cache[OP_MAX];
@@ -336,11 +320,6 @@ static void pk11_get_digest(CK_FUNCTION_LIST_PTR pflist, int slot_id,
 
 static int pk11_init_all_locks(void);
 static void pk11_free_all_locks(void);
-
-#ifdef	SOLARIS_HW_SLOT_SELECTION
-static int check_hw_mechanisms(void);
-static int nid_in_table(int nid, int *nid_table);
-#endif	/* SOLARIS_HW_SLOT_SELECTION */
 
 #define	TRY_OBJ_DESTROY(sp, obj_hdl, retval, uselock, alg_type)	\
 	{								\
@@ -1183,11 +1162,6 @@ static int pk11_library_init(ENGINE *e)
 			}
 		}
 
-#ifdef	SOLARIS_HW_SLOT_SELECTION
-	if (check_hw_mechanisms() == 0)
-		goto err;
-#endif	/* SOLARIS_HW_SLOT_SELECTION */
-
 	/* get the C_GetFunctionList function from the loaded library */
 	p = (CK_C_GetFunctionList)DSO_bind_func(pk11_dso,
 		PK11_GET_FUNCTION_LIST);
@@ -1618,10 +1592,6 @@ pk11_get_session(PK11_OPTYPE optype)
 		 * See pk11_library_init()'s usage of this function for more
 		 * information.
 		 */
-#ifdef	SOLARIS_HW_SLOT_SELECTION
-		if (check_hw_mechanisms() == 0)
-			goto err;
-#endif	/* SOLARIS_HW_SLOT_SELECTION */
 		if (pk11_choose_slots(NULL) == 0)
 			goto err;
 
@@ -3125,11 +3095,6 @@ pk11_choose_slots(int *any_slot_found)
 	if (pSlotList != NULL)
 		OPENSSL_free(pSlotList);
 
-#ifdef  SOLARIS_HW_SLOT_SELECTION
-	OPENSSL_free(hw_cnids);
-	OPENSSL_free(hw_dnids);
-#endif  /* SOLARIS_HW_SLOT_SELECTION */
-
 	if (any_slot_found != NULL)
 		*any_slot_found = 1;
 	return (1);
@@ -3321,21 +3286,8 @@ static void pk11_get_symmetric_cipher(CK_FUNCTION_LIST_PTR pflist,
 			    mech_info.ulMinKeySize, mech_info.ulMaxKeySize);
 			return;
 			}
-#ifdef  SOLARIS_HW_SLOT_SELECTION
-		if (nid_in_table(cipher->nid, hw_cnids))
-#endif  /* SOLARIS_HW_SLOT_SELECTION */
-			{
-			DEBUG_SLOT_SEL(" usable\n");
-			local_cipher_nids[(*current_slot_n_cipher)++] =
-			    cipher->nid;
-			}
-#ifdef  SOLARIS_HW_SLOT_SELECTION
-		else
-			{
-			DEBUG_SLOT_SEL(
-			    " rejected, software implementation only\n");
-			}
-#endif  /* SOLARIS_HW_SLOT_SELECTION */
+		DEBUG_SLOT_SEL(" usable\n");
+		local_cipher_nids[(*current_slot_n_cipher)++] = cipher->nid;
 		}
 	else
 		{
@@ -3362,21 +3314,8 @@ static void pk11_get_digest(CK_FUNCTION_LIST_PTR pflist, int slot_id,
 
 	if (mech_info.flags & CKF_DIGEST)
 		{
-#ifdef	SOLARIS_HW_SLOT_SELECTION
-		if (nid_in_table(digest->nid, hw_dnids))
-#endif	/* SOLARIS_HW_SLOT_SELECTION */
-			{
-			DEBUG_SLOT_SEL(" usable\n");
-			local_digest_nids[(*current_slot_n_digest)++] =
-			    digest->nid;
-			}
-#ifdef	SOLARIS_HW_SLOT_SELECTION
-		else
-			{
-			DEBUG_SLOT_SEL(
-			    " rejected, software implementation only\n");
-			}
-#endif	/* SOLARIS_HW_SLOT_SELECTION */
+		DEBUG_SLOT_SEL(" usable\n");
+		local_digest_nids[(*current_slot_n_digest)++] = digest->nid;
 		}
 	else
 		{
@@ -3411,257 +3350,6 @@ static void pk11_find_digests(CK_FUNCTION_LIST_PTR pflist,
 		    local_digest_nids, &digests[i]);
 		}
 	}
-
-#ifdef	SOLARIS_HW_SLOT_SELECTION
-/*
- * It would be great if we could use pkcs11_kernel directly since this library
- * offers hardware slots only. That's the easiest way to achieve the situation
- * where we use the hardware accelerators when present and OpenSSL native code
- * otherwise. That presumes the fact that OpenSSL native code is faster than the
- * code in the soft token. It's a logical assumption - Crypto Framework has some
- * inherent overhead so going there for the software implementation of a
- * mechanism should be logically slower in contrast to the OpenSSL native code,
- * presuming that both implementations are of similar speed. For example, the
- * soft token for AES is roughly three times slower than OpenSSL for 64 byte
- * blocks and still 20% slower for 8KB blocks. So, if we want to ship products
- * that use the PKCS#11 engine by default, we must somehow avoid that regression
- * on machines without hardware acceleration. That's why switching to the
- * pkcs11_kernel library seems like a very good idea.
- *
- * The problem is that OpenSSL built with SunStudio is roughly 2x slower for
- * asymmetric operations (RSA/DSA/DH) than the soft token built with the same
- * compiler. That means that if we switched to pkcs11_kernel from the libpkcs11
- * library, we would have had a performance regression on machines without
- * hardware acceleration for asymmetric operations for all applications that use
- * the PKCS#11 engine. There is one such application - Apache web server since
- * it's shipped configured to use the PKCS#11 engine by default. Having said
- * that, we can't switch to the pkcs11_kernel library now and have to come with
- * a solution that, on non-accelerated machines, uses the OpenSSL native code
- * for all symmetric ciphers and digests while it uses the soft token for
- * asymmetric operations.
- *
- * This is the idea: dlopen() pkcs11_kernel directly and find out what
- * mechanisms are there. We don't care about duplications (more slots can
- * support the same mechanism), we just want to know what mechanisms can be
- * possibly supported in hardware on that particular machine. As said before,
- * pkcs11_kernel will show you hardware providers only.
- *
- * Then, we rely on the fact that since we use libpkcs11 library we will find
- * the metaslot. When we go through the metaslot's mechanisms for symmetric
- * ciphers and digests, we check that any found mechanism is in the table
- * created using the pkcs11_kernel library. So, as a result we have two arrays
- * of mechanisms that were advertised as supported in hardware which was the
- * goal of that whole exercise. Thus, we can use libpkcs11 but avoid soft token
- * code for symmetric ciphers and digests. See pk11_choose_slots() for more
- * information.
- *
- * This is Solaris specific code, if SOLARIS_HW_SLOT_SELECTION is not defined
- * the code won't be used.
- */
-#if defined(__sparcv9) || defined(__x86_64) || defined(__amd64)
-static const char pkcs11_kernel[] = "/usr/lib/security/64/pkcs11_kernel.so.1";
-#else
-static const char pkcs11_kernel[] = "/usr/lib/security/pkcs11_kernel.so.1";
-#endif
-
-/*
- * Check hardware capabilities of the machines. The output are two lists,
- * hw_cnids and hw_dnids, that contain hardware mechanisms found in all hardware
- * providers together. They are not sorted and may contain duplicate mechanisms.
- */
-static int check_hw_mechanisms(void)
-	{
-	int i;
-	CK_RV rv;
-	void *handle;
-	CK_C_GetFunctionList p;
-	CK_TOKEN_INFO token_info;
-	CK_ULONG ulSlotCount = 0;
-	int n_cipher = 0, n_digest = 0;
-	CK_FUNCTION_LIST_PTR pflist = NULL;
-	CK_SLOT_ID_PTR pSlotList = NULL_PTR;
-	int *tmp_hw_cnids = NULL, *tmp_hw_dnids = NULL;
-	int hw_ctable_size, hw_dtable_size;
-
-	DEBUG_SLOT_SEL("%s: SOLARIS_HW_SLOT_SELECTION code running\n",
-	    PK11_DBG);
-	/*
-	 * Use RTLD_GROUP to limit the pkcs11_kernel provider to its own
-	 * symbols, which prevents it from mistakenly accessing C_* functions
-	 * from the top-level PKCS#11 library.
-	 */
-	if ((handle = dlopen(pkcs11_kernel, RTLD_LAZY | RTLD_GROUP)) == NULL)
-		{
-		PK11err(PK11_F_CHECK_HW_MECHANISMS, PK11_R_DSO_FAILURE);
-		goto err;
-		}
-
-	if ((p = (CK_C_GetFunctionList)dlsym(handle,
-	    PK11_GET_FUNCTION_LIST)) == NULL)
-		{
-		PK11err(PK11_F_CHECK_HW_MECHANISMS, PK11_R_DSO_FAILURE);
-		goto err;
-		}
-
-	/* get the full function list from the loaded library */
-	if (p(&pflist) != CKR_OK)
-		{
-		PK11err(PK11_F_CHECK_HW_MECHANISMS, PK11_R_DSO_FAILURE);
-		goto err;
-		}
-
-	rv = pflist->C_Initialize(NULL_PTR);
-	if ((rv != CKR_OK) && (rv != CKR_CRYPTOKI_ALREADY_INITIALIZED))
-		{
-		PK11err_add_data(PK11_F_CHECK_HW_MECHANISMS,
-		    PK11_R_INITIALIZE, rv);
-		goto err;
-		}
-
-	if (pflist->C_GetSlotList(0, NULL_PTR, &ulSlotCount) != CKR_OK)
-		{
-		PK11err(PK11_F_CHECK_HW_MECHANISMS, PK11_R_GETSLOTLIST);
-		goto err;
-		}
-
-	/* no slots, set the hw mechanism tables as empty */
-	if (ulSlotCount == 0)
-		{
-		DEBUG_SLOT_SEL("%s: no hardware mechanisms found\n", PK11_DBG);
-		hw_cnids = OPENSSL_malloc(sizeof (int));
-		hw_dnids = OPENSSL_malloc(sizeof (int));
-		if (hw_cnids == NULL || hw_dnids == NULL)
-			{
-			PK11err(PK11_F_CHECK_HW_MECHANISMS,
-			    PK11_R_MALLOC_FAILURE);
-			return (0);
-			}
-		/* this means empty tables */
-		hw_cnids[0] = NID_undef;
-		hw_dnids[0] = NID_undef;
-		return (1);
-		}
-
-	pSlotList = OPENSSL_malloc(ulSlotCount * sizeof (CK_SLOT_ID));
-	if (pSlotList == NULL)
-		{
-		PK11err(PK11_F_CHECK_HW_MECHANISMS, PK11_R_MALLOC_FAILURE);
-		goto err;
-		}
-
-	/* Get the slot list for processing */
-	if (pflist->C_GetSlotList(0, pSlotList, &ulSlotCount) != CKR_OK)
-		{
-		PK11err(PK11_F_CHECK_HW_MECHANISMS, PK11_R_GETSLOTLIST);
-		goto err;
-		}
-
-	/*
-	 * We don't care about duplicate mechanisms in multiple slots and also
-	 * reserve one slot for the terminal NID_undef which we use to stop the
-	 * search.
-	 */
-	hw_ctable_size = ulSlotCount * PK11_CIPHER_MAX + 1;
-	hw_dtable_size = ulSlotCount * PK11_DIGEST_MAX + 1;
-	tmp_hw_cnids = OPENSSL_malloc(hw_ctable_size * sizeof (int));
-	tmp_hw_dnids = OPENSSL_malloc(hw_dtable_size * sizeof (int));
-	if (tmp_hw_cnids == NULL || tmp_hw_dnids == NULL)
-		{
-		PK11err(PK11_F_CHECK_HW_MECHANISMS, PK11_R_MALLOC_FAILURE);
-		goto err;
-		}
-
-	/*
-	 * Do not use memset since we should not rely on the fact that NID_undef
-	 * is zero now.
-	 */
-	for (i = 0; i < hw_ctable_size; ++i)
-		tmp_hw_cnids[i] = NID_undef;
-	for (i = 0; i < hw_dtable_size; ++i)
-		tmp_hw_dnids[i] = NID_undef;
-
-	DEBUG_SLOT_SEL("%s: provider: %s\n", PK11_DBG, pkcs11_kernel);
-	DEBUG_SLOT_SEL("%s: found %d hardware slots\n", PK11_DBG, ulSlotCount);
-	DEBUG_SLOT_SEL("%s: now looking for mechs supported in hw\n",
-	    PK11_DBG);
-
-	for (i = 0; i < ulSlotCount; i++)
-		{
-		if (pflist->C_GetTokenInfo(pSlotList[i], &token_info) != CKR_OK)
-			continue;
-
-		DEBUG_SLOT_SEL("%s: token label: %.32s\n", PK11_DBG,
-		    token_info.label);
-
-		/*
-		 * We are filling the hw mech tables here. Global tables are
-		 * still NULL so all mechanisms are put into tmp tables.
-		 */
-		pk11_find_symmetric_ciphers(pflist, pSlotList[i],
-		    &n_cipher, tmp_hw_cnids);
-		pk11_find_digests(pflist, pSlotList[i],
-		    &n_digest, tmp_hw_dnids);
-		}
-
-	/*
-	 * Since we are part of a library (libcrypto.so), calling this function
-	 * may have side-effects. Also, C_Finalize() is triggered by
-	 * dlclose(3C).
-	 */
-#if 0
-	pflist->C_Finalize(NULL);
-#endif
-	OPENSSL_free(pSlotList);
-	(void) dlclose(handle);
-	hw_cnids = tmp_hw_cnids;
-	hw_dnids = tmp_hw_dnids;
-
-	DEBUG_SLOT_SEL("%s: hw mechs check complete\n", PK11_DBG);
-	return (1);
-
-err:
-	if (pSlotList != NULL)
-		OPENSSL_free(pSlotList);
-	if (tmp_hw_cnids != NULL)
-		OPENSSL_free(tmp_hw_cnids);
-	if (tmp_hw_dnids != NULL)
-		OPENSSL_free(tmp_hw_dnids);
-
-	return (0);
-	}
-
-/*
- * Check presence of a NID in the table of NIDs unless the mechanism is
- * supported directly in a CPU instruction set. The table may be NULL (i.e.,
- * non-existent).
- */
-static int nid_in_table(int nid, int *nid_table)
-	{
-	int i = 0;
-
-	/*
-	 * Special case first. NULL means that we are initializing a new table.
-	 */
-	if (nid_table == NULL)
-		return (1);
-
-	/*
-	 * the table is never full, there is always at least one
-	 * NID_undef.
-	 */
-	while (nid_table[i] != NID_undef)
-		{
-		if (nid_table[i++] == nid)
-			{
-			DEBUG_SLOT_SEL(" (NID %d in hw table, idx %d)", nid, i);
-			return (1);
-			}
-		}
-
-	return (0);
-	}
-
-#endif	/* SOLARIS_HW_SLOT_SELECTION */
 
 #endif	/* OPENSSL_NO_HW_PK11 */
 #endif	/* OPENSSL_NO_HW */
