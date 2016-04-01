@@ -15,7 +15,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		hunspell-fr
-COMPONENT_VERSION=	5.5
+COMPONENT_VERSION=	5.6
 COMPONENT_PROJECT_URL=	http://www.dicollecte.org/
 COMPONENT_SUMMARY=	Myspell and Hunspell spell dictionary files for French
 COMPONENT_LICENSE=	MPLv2.0
@@ -26,7 +26,7 @@ COMPONENT_CLASSIFICATION	= System/Localizations
 COMPONENT_SRC=            hunspell-french-dictionaries-v$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).zip
 COMPONENT_ARCHIVE_HASH=        \
-    sha256:3dd3ab81cf4cf828a7b1e39ea1a6ef37f634160eb1dab787fa211d5fd3dab9a9
+    sha256:0e3e27aac53b60590dcd33a0bae32df58d767d5b0e0fbf0c4b23c755e87987c3
 COMPONENT_ARCHIVE_URL=   http://www.dicollecte.org/download/fr/$(COMPONENT_ARCHIVE)
 UNPACK_ARGS+=-r $(COMPONENT_SRC)
 
