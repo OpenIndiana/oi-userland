@@ -28,9 +28,9 @@ include ../../make-rules/shared-macros.mk
 PATH=$(dir $(CC)):$(JAVA_HOME)/bin:$(USRBINDIR):$(GNUBIN)
 
 COMPONENT_NAME=		libidn
-COMPONENT_VERSION=	1.19
+COMPONENT_VERSION=	1.32
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:8ed2e936b1ae3e30b45b54ca3672deaa83ee0f4d20db5ad83dc1af7222d39f41
+    sha256:ba5d5afee2beff703a34ee094668da5c6ea5afa38784cebba8924105e185c4f5
 COMPONENT_BUGDB=	library/libidn
 
 COMPONENT_ARCHIVE_1 =   tld-0.7.tar.gz
@@ -38,13 +38,14 @@ COMPONENT_ARCHIVE_HASH_1 = \
     sha256:7423f48d15fb1377ee0050c3e1f22e8a91668c2f158afed57b8ead3fed908785
 COMPONENT_ARCHIVE_URL_1 = http://download.berlios.de/tldchk/$(COMPONENT_ARCHIVE_1)
 
-TPNO=			8441
+TPNO=			27576
 
 INSTALL_TARGET=
 include $(WS_MAKE_RULES)/gnu-component.mk
 
 PATCH_LEVEL = 0
 LINT_FLAGS += -I$(PROTOUSRINCDIR)/idn
+LINT_FLAGS += -DGNULIB_defined_stdint_types
 
 # Enable C99 mode + -Xc for its additional warnings.
 studio_C99MODE = -Xc $(studio_C99_ENABLE)
@@ -60,33 +61,18 @@ CFLAGS += $(XPG6MODE)
 CFLAGS += $(CPP_POSIX)
 CFLAGS += $(CPP_C99_EXTENDED_MATH)
 CFLAGS += $(studio_PIC)
+CFLAGS += -DGNULIB_defined_stdint_types
 
 COMPONENT_TEST_MASTER = \
 	$(COMPONENT_TEST_RESULTS_DIR)/results-libidn.master
 
 COMPONENT_TEST_TRANSFORMS += \
-     '-e "/libtool/d"' \
-     '-e "/warning:/d"' \
-     '-e "/Generat/d"' \
-     '-e "/Creat/d"' \
-     '-e "/Compos/d"' \
-     '-e "/Writ/d"' \
-     '-e "/Read/d"' \
-     '-e "/from/d"' \
-     '-e "/--run/d"' \
-     '-e "/rm -f/d"' \
-     '-e "/Nothing/d"' \
-     '-e "/Leaving/d"' \
-     '-e "/Entering/d"' \
-     '-e "/Making/d"' \
-     '-e "/make/d"' \
-     '-e "/-m32/d"' \
-     '-e "/-m64/d"' \
-     '-e "/DEPDIR/d"' \
-     '-e "/ar cru/d"' \
-     '-e "/ranlib/d"' \
-     '-e "/wrapped in unpack at/d"' \
-     '-e "s/^make\[[0-9]\{1,\}\]/make/g"'
+	'-n ' \
+	'-e "/SKIP/p" ' \
+	'-e "/PASS/p" ' \
+	'-e "/FAIL/p" ' \
+	'-e "/====/p" ' \
+	'-e "/passed/p" '
 
 CONFIGURE_ENV +=	INSTALL="$(INSTALL)"
 
