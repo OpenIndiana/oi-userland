@@ -13,7 +13,7 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		apg
 COMPONENT_VERSION=	2.3.0b
@@ -30,9 +30,9 @@ COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_LICENSE=	BSD
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
 
-include ../../make-rules/prep.mk
-include ../../make-rules/justmake.mk
-include ../../make-rules/ips.mk
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/justmake.mk
+include $(WS_TOP)/make-rules/ips.mk
 
 COMPONENT_POST_UNPACK_ACTION += ( find $(COMPONENT_SRC) -type d -exec chmod u+rwx \{\} \; )
 
