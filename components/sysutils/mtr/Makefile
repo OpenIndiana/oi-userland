@@ -11,7 +11,7 @@
 #
 # Copyright 2012, Jon Tibble
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mtr
 COMPONENT_VERSION=	0.82
