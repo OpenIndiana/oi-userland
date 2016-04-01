@@ -18,34 +18,36 @@
 #
 # CDDL HEADER END
 #
-
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
-#
+include ../../../make-rules/shared-macros.mk
 
-include ../../make-rules/shared-macros.mk
-
-COMPONENT_NAME=		less
-COMPONENT_VERSION=	481
-COMPONENT_PROJECT_URL=	http://www.greenwoodsoftware.com/less/
+COMPONENT_NAME=		screen
+COMPONENT_VERSION=	4.0.3
+COMPONENT_PROJECT_URL=	http://www.gnu.org/software/screen/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-    sha256:3fa38f2cf5e9e040bb44fffaa6c76a84506e379e47f5a04686ab78102090dda5
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/less
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:78f0d5b1496084a5902586304d4a73954b2bfe33ea13edceecf21615c39e6c77
+COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/screen/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/screen
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/configure.mk
+include $(WS_TOP)/make-rules/ips.mk
 
-CC += $(CC_BITS)
+CONFIGURE_OPTIONS +=	--enable-colors256
+CONFIGURE_OPTIONS +=	--with-sys-screenrc=/etc/screenrc
+CONFIGURE_OPTIONS +=	--disable-socket-dir
+CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
 
-CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
+PROTOTERMINFODIR=$(PROTOUSRSHAREDIR)/lib/terminfo
 
-ASLR_MODE = $(ASLR_ENABLE)
+$(PROTOTERMINFODIR):
+	$(MKDIR) $@
 
-# common targets
+$(INSTALL_32):	$(PROTOTERMINFODIR)
+
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
@@ -54,4 +56,4 @@ test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_TOP)/make-rules/depend.mk

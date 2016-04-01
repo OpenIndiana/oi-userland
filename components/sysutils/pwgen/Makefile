@@ -23,7 +23,7 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pwgen
 COMPONENT_VERSION=	2.07
@@ -35,9 +35,9 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)files/pwgen/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)	
 COMPONENT_BUGDB=	utility/pwgen
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/configure.mk
+include $(WS_TOP)/make-rules/ips.mk
 
 # IPS Package versions contain sequences of non-negative (for now) integers,
 # separated by dots.  Leading zeroes are not allowed, due to ordering
@@ -68,4 +68,4 @@ test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_TOP)/make-rules/depend.mk
