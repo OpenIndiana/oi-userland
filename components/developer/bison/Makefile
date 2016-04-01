@@ -23,34 +23,39 @@
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		sed
-COMPONENT_VERSION=	4.2.2
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/sed/
+COMPONENT_NAME=		bison
+COMPONENT_VERSION=	2.7.1
+COMPONENT_PROJECT_URL=	http://www.gnu.org/software/bison/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:fea0a94d4b605894f3e2d5572e3f96e4413bcad3a085aae7367c2cf07908b2ff
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/sed/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/gnu-sed
+    sha256:08e2296b024bab8ea36f3bb3b91d071165b22afda39a17ffc8ff53ade2883431
+COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/bison/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/bison
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/configure.mk
+include $(WS_TOP)/make-rules/ips.mk
+
+CONFIGURE_LIBDIR.32 =   $(GNULIB)
+CONFIGURE_LIBDIR.64 =   $(GNULIB)/$(MACH64)
 
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
 
+$(INSTALL_32):	$(INSTALL_64)
+
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_32_and_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_32_and_64)
 
-test:		$(TEST_32)
+test:		$(TEST_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_TOP)/make-rules/depend.mk

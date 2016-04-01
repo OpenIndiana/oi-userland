@@ -23,34 +23,34 @@
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		m4
-COMPONENT_VERSION=	1.4.17
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/m4/
+COMPONENT_NAME=		sed
+COMPONENT_VERSION=	4.2.2
+COMPONENT_PROJECT_URL=	http://www.gnu.org/software/sed/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:3ce725133ee552b8b4baca7837fb772940b25e81b2a9dc92537aeaf733538c9e
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/m4/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/gnu-m4
+    sha256:fea0a94d4b605894f3e2d5572e3f96e4413bcad3a085aae7367c2cf07908b2ff
+COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/sed/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/gnu-sed
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/configure.mk
+include $(WS_TOP)/make-rules/ips.mk
 
-CONFIGURE_PREFIX =	/usr/gnu
-CONFIGURE_OPTIONS  +=	--infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 
+# Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_32)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_32)
 
-test:		$(TEST_32_and_64)
+test:		$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_TOP)/make-rules/depend.mk
