@@ -1,0 +1,1273 @@
+This patchset is for bug:
+
+22726259 - Nova needs to support MySQL Cluster
+
+This fixes the following aspects of Nova:
+1. Implementation of an oslo.db configuration parameter to specify the MySQL 
+   storage engine (mysql_storage_engine).
+2. Replacement of hardcoded SQL statements that set the engine to "InnoDB" 
+   to the above configuration value.
+3. Logic to handle SQL differences between MySQL InnoDB and MySQL Cluster (NDB). 
+   This includes column lengths, constraints, foreign keys, and indexes.
+
+This has not been committed upstream, but has been filed in launchpad:
+
+https://bugs.launchpad.net/nova/+bug/1564110
+
+
+--- nova-2015.1.2/nova/tests/unit/db/test_migrations.py.orig	2016-03-29 17:22:24.000000000 -0600
++++ nova-2015.1.2/nova/tests/unit/db/test_migrations.py	2016-03-30 16:22:31.345781715 -0600
+@@ -59,6 +59,9 @@ from nova import exception
+ from nova import test
+ from nova.tests import fixtures as nova_fixtures
+ 
++from oslo_config import cfg
++
++CONF = cfg.CONF
+ 
+ LOG = logging.getLogger(__name__)
+ 
+@@ -905,9 +908,10 @@ class TestNovaMigrationsMySQL(NovaMigrat
+             "SELECT count(*) "
+             "FROM information_schema.TABLES "
+             "WHERE TABLE_SCHEMA='%(database)s' "
+-            "AND ENGINE != 'InnoDB' "
++            "AND ENGINE != '%(mysql_storage_engine)s' "
+             "AND TABLE_NAME != 'migrate_version'" %
+-            {'database': self.migrate_engine.url.database})
++            {'database': self.migrate_engine.url.database, 
++             'mysql_storage_engine': CONF.database.mysql_storage_engine})
+         count = noninnodb.scalar()
+         self.assertEqual(count, 0, "%d non InnoDB tables created" % count)
+ 
+--- nova-2015.1.2/nova/db/sqlalchemy/utils.py.orig	2016-03-29 17:22:24.000000000 -0600
++++ nova-2015.1.2/nova/db/sqlalchemy/utils.py	2016-03-29 17:23:21.832584350 -0600
+@@ -27,6 +27,9 @@ from nova.db.sqlalchemy import api as db
+ from nova import exception
+ from nova.i18n import _, _LE
+ 
++from oslo_config import cfg
++
++CONF = cfg.CONF
+ 
+ LOG = logging.getLogger(__name__)
+ 
+@@ -120,7 +123,7 @@ def create_shadow_table(migrate_engine,
+ 
+     shadow_table_name = db._SHADOW_TABLE_PREFIX + table.name
+     shadow_table = Table(shadow_table_name, meta, *columns,
+-                         mysql_engine='InnoDB')
++                         mysql_engine=CONF.database.mysql_storage_engine)
+     try:
+         shadow_table.create()
+         return shadow_table
+--- nova-2015.1.2/nova/db/sqlalchemy/api_migrations/migrate_repo/versions/002_instance_mapping.py.orig	2016-03-29 17:22:24.000000000 -0600
++++ nova-2015.1.2/nova/db/sqlalchemy/api_migrations/migrate_repo/versions/002_instance_mapping.py	2016-03-29 17:23:21.832858639 -0600
+@@ -20,6 +20,9 @@ from sqlalchemy import MetaData
+ from sqlalchemy import String
+ from sqlalchemy import Table
+ 
++from oslo_config import cfg
++
++CONF = cfg.CONF
+ 
+ def upgrade(migrate_engine):
+     meta = MetaData()
+@@ -39,7 +42,7 @@ def upgrade(migrate_engine):
+         Index('project_id_idx', 'project_id'),
+         ForeignKeyConstraint(columns=['cell_id'],
+             refcolumns=[cell_mappings.c.id]),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+     instance_mappings.create(checkfirst=True)
+--- nova-2015.1.2/nova/db/sqlalchemy/api_migrations/migrate_repo/versions/001_cell_mapping.py.orig	2016-03-29 17:22:24.000000000 -0600
++++ nova-2015.1.2/nova/db/sqlalchemy/api_migrations/migrate_repo/versions/001_cell_mapping.py	2016-03-29 17:23:21.833110868 -0600
+@@ -20,6 +20,9 @@ from sqlalchemy import String
+ from sqlalchemy import Table
+ from sqlalchemy import Text
+ 
++from oslo_config import cfg
++
++CONF = cfg.CONF
+ 
+ def upgrade(migrate_engine):
+     meta = MetaData()
+@@ -35,7 +38,7 @@ def upgrade(migrate_engine):
+         Column('database_connection', Text()),
+         UniqueConstraint('uuid', name='uniq_cell_mappings0uuid'),
+         Index('uuid_idx', 'uuid'),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+--- nova-2015.1.2/nova/db/sqlalchemy/migrate_repo/versions/252_add_instance_extra_table.py.orig	2016-03-29 17:22:24.000000000 -0600
++++ nova-2015.1.2/nova/db/sqlalchemy/migrate_repo/versions/252_add_instance_extra_table.py	2016-03-29 17:23:21.833360742 -0600
+@@ -21,6 +21,9 @@ from sqlalchemy import String
+ from sqlalchemy import Table
+ from sqlalchemy import Text
+ 
++from oslo_config import cfg
++
++CONF = cfg.CONF
+ 
+ def upgrade(migrate_engine):
+     meta = MetaData()
+@@ -42,7 +45,7 @@ def upgrade(migrate_engine):
+             continue
+         _columns = tuple([Column(*args, **kwargs)
+                           for args, kwargs in columns])
+-        table = Table(basename, meta, *_columns, mysql_engine='InnoDB',
++        table = Table(basename, meta, *_columns, mysql_engine=CONF.database.mysql_storage_engine,
+                       mysql_charset='utf8')
+         table.create()
+ 
+--- nova-2015.1.2/nova/db/sqlalchemy/migrate_repo/versions/267_instance_uuid_non_nullable.py.orig	2016-03-29 17:22:24.000000000 -0600
++++ nova-2015.1.2/nova/db/sqlalchemy/migrate_repo/versions/267_instance_uuid_non_nullable.py	2016-03-29 17:23:21.833658136 -0600
+@@ -23,6 +23,10 @@ from nova.i18n import _
+ 
+ LOG = logging.getLogger(__name__)
+ 
++from oslo_config import cfg
++
++CONF = cfg.CONF
++
+ UC_NAME = 'uniq_instances0uuid'
+ 
+ 
+@@ -90,6 +94,12 @@ def process_null_records(meta, scan=True
+ 
+ 
+ def upgrade(migrate_engine):
++
++    # MySQL Cluster, a.k.a. NDB, has non-NULL records from the beginning.
++    # If we are using NDB, we will return without migrating as it is not required.
++    if CONF.database.mysql_storage_engine == "NDBCLUSTER":
++        return
++
+     # NOTE(mriedem): We're going to load up all of the tables so we can find
+     # any with an instance_uuid column since those may be foreign keys back
+     # to the instances table and we want to cleanup those records first. We
+--- nova-2015.1.2/nova/db/sqlalchemy/migrate_repo/versions/250_remove_instance_groups_metadata.py.orig	2016-03-29 17:22:24.000000000 -0600
++++ nova-2015.1.2/nova/db/sqlalchemy/migrate_repo/versions/250_remove_instance_groups_metadata.py	2016-03-29 17:23:21.833942694 -0600
+@@ -17,6 +17,9 @@
+ from sqlalchemy import MetaData, Table, Column, DateTime, Integer, String, \
+     ForeignKey
+ 
++from oslo_config import cfg
++
++CONF = cfg.CONF
+ 
+ def upgrade(migrate_engine):
+     """Remove the instance_group_metadata table."""
+@@ -49,7 +52,7 @@ def downgrade(migrate_engine):
+             Column('value', String(length=255)),
+             Column('group_id', Integer, ForeignKey('instance_groups.id'),
+                    nullable=False),
+-            mysql_engine='InnoDB',
++            mysql_engine=CONF.database.mysql_storage_engine,
+             mysql_charset='utf8',
+             )
+         group_metadata.create()
+@@ -65,7 +68,7 @@ def downgrade(migrate_engine):
+             Column('group_id', Integer,
+                    ForeignKey('shadow_instance_groups.id'),
+                    nullable=False),
+-            mysql_engine='InnoDB',
++            mysql_engine=CONF.database.mysql_storage_engine,
+             mysql_charset='utf8',
+             )
+         shadow_group_metadata.create()
+--- nova-2015.1.2/nova/db/sqlalchemy/migrate_repo/versions/216_havana.py.orig	2016-03-29 17:22:24.000000000 -0600
++++ nova-2015.1.2/nova/db/sqlalchemy/migrate_repo/versions/216_havana.py	2016-03-29 17:23:21.835352443 -0600
+@@ -25,6 +25,15 @@ from nova.i18n import _LE
+ 
+ LOG = logging.getLogger(__name__)
+ 
++from oslo_config import cfg
++
++CONF = cfg.CONF
++
++if CONF.database.mysql_storage_engine == "NDBCLUSTER":
++    db_string_length = 128
++else:
++    db_string_length = 255
++
+ 
+ # Note on the autoincrement flag: this is defaulted for primary key columns
+ # of integral type, so is no longer set explicitly in such cases.
+@@ -76,7 +85,7 @@ def _create_shadow_tables(migrate_engine
+ 
+         shadow_table_name = 'shadow_' + table_name
+         shadow_table = Table(shadow_table_name, meta, *columns,
+-                             mysql_engine='InnoDB')
++                             mysql_engine=CONF.database.mysql_storage_engine)
+         try:
+             shadow_table.create()
+         except Exception:
+@@ -167,7 +176,7 @@ def _create_dump_tables(migrate_engine):
+             else:
+                 columns.append(column.copy())
+         table_dump = Table(dump_table_name, meta, *columns,
+-                           mysql_engine='InnoDB')
++                           mysql_engine=CONF.database.mysql_storage_engine)
+         table_dump.create()
+ 
+ 
+@@ -180,14 +189,14 @@ def upgrade(migrate_engine):
+         Column('updated_at', DateTime),
+         Column('deleted_at', DateTime),
+         Column('id', Integer, primary_key=True, nullable=False),
+-        Column('hypervisor', String(length=255)),
+-        Column('os', String(length=255)),
+-        Column('architecture', String(length=255)),
+-        Column('version', String(length=255)),
+-        Column('url', String(length=255)),
+-        Column('md5hash', String(length=255)),
++        Column('hypervisor', String(length=db_string_length)),
++        Column('os', String(length=db_string_length)),
++        Column('architecture', String(length=db_string_length)),
++        Column('version', String(length=db_string_length)),
++        Column('url', String(length=db_string_length)),
++        Column('md5hash', String(length=db_string_length)),
+         Column('deleted', Integer),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -196,11 +205,11 @@ def upgrade(migrate_engine):
+         Column('updated_at', DateTime),
+         Column('deleted_at', DateTime),
+         Column('id', Integer, primary_key=True, nullable=False),
+-        Column('host', String(length=255)),
++        Column('host', String(length=db_string_length)),
+         Column('aggregate_id', Integer, ForeignKey('aggregates.id'),
+               nullable=False),
+         Column('deleted', Integer),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -211,10 +220,10 @@ def upgrade(migrate_engine):
+         Column('id', Integer, primary_key=True, nullable=False),
+         Column('aggregate_id', Integer, ForeignKey('aggregates.id'),
+               nullable=False),
+-        Column('key', String(length=255), nullable=False),
+-        Column('value', String(length=255), nullable=False),
++        Column('key', String(length=db_string_length), nullable=False),
++        Column('value', String(length=db_string_length), nullable=False),
+         Column('deleted', Integer),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -223,9 +232,9 @@ def upgrade(migrate_engine):
+         Column('updated_at', DateTime),
+         Column('deleted_at', DateTime),
+         Column('id', Integer, primary_key=True, nullable=False),
+-        Column('name', String(length=255)),
++        Column('name', String(length=db_string_length)),
+         Column('deleted', Integer),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -234,7 +243,7 @@ def upgrade(migrate_engine):
+         Column('updated_at', DateTime),
+         Column('deleted_at', DateTime),
+         Column('id', Integer, primary_key=True, nullable=False),
+-        Column('device_name', String(length=255), nullable=True),
++        Column('device_name', String(length=db_string_length), nullable=True),
+         Column('delete_on_termination', Boolean),
+         Column('snapshot_id', String(length=36), nullable=True),
+         Column('volume_id', String(length=36), nullable=True),
+@@ -243,14 +252,14 @@ def upgrade(migrate_engine):
+         Column('connection_info', MediumText()),
+         Column('instance_uuid', String(length=36)),
+         Column('deleted', Integer),
+-        Column('source_type', String(length=255), nullable=True),
+-        Column('destination_type', String(length=255), nullable=True),
+-        Column('guest_format', String(length=255), nullable=True),
+-        Column('device_type', String(length=255), nullable=True),
+-        Column('disk_bus', String(length=255), nullable=True),
++        Column('source_type', String(length=db_string_length), nullable=True),
++        Column('destination_type', String(length=db_string_length), nullable=True),
++        Column('guest_format', String(length=db_string_length), nullable=True),
++        Column('device_type', String(length=db_string_length), nullable=True),
++        Column('disk_bus', String(length=db_string_length), nullable=True),
+         Column('boot_index', Integer),
+         Column('image_id', String(length=36), nullable=True),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -263,12 +272,12 @@ def upgrade(migrate_engine):
+         Column('last_refreshed', DateTime),
+         Column('bw_in', BigInteger),
+         Column('bw_out', BigInteger),
+-        Column('mac', String(length=255)),
++        Column('mac', String(length=db_string_length)),
+         Column('uuid', String(length=36)),
+         Column('last_ctr_in', BigInteger()),
+         Column('last_ctr_out', BigInteger()),
+         Column('deleted', Integer),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -277,14 +286,14 @@ def upgrade(migrate_engine):
+         Column('updated_at', DateTime),
+         Column('deleted_at', DateTime),
+         Column('id', Integer, primary_key=True, nullable=False),
+-        Column('api_url', String(length=255)),
++        Column('api_url', String(length=db_string_length)),
+         Column('weight_offset', Float),
+         Column('weight_scale', Float),
+-        Column('name', String(length=255)),
++        Column('name', String(length=db_string_length)),
+         Column('is_parent', Boolean),
+         Column('deleted', Integer),
+-        Column('transport_url', String(length=255), nullable=False),
+-        mysql_engine='InnoDB',
++        Column('transport_url', String(length=db_string_length), nullable=False),
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -293,11 +302,11 @@ def upgrade(migrate_engine):
+         Column('updated_at', DateTime),
+         Column('deleted_at', DateTime),
+         Column('id', Integer, primary_key=True, nullable=False),
+-        Column('user_id', String(length=255)),
+-        Column('project_id', String(length=255)),
+-        Column('file_name', String(length=255)),
++        Column('user_id', String(length=db_string_length)),
++        Column('project_id', String(length=db_string_length)),
++        Column('file_name', String(length=db_string_length)),
+         Column('deleted', Integer),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -307,10 +316,10 @@ def upgrade(migrate_engine):
+         Column('deleted_at', DateTime),
+         Column('id', Integer, primary_key=True, nullable=False),
+         Column('compute_node_id', Integer, nullable=False),
+-        Column('key', String(length=255), nullable=False),
+-        Column('value', String(length=255)),
++        Column('key', String(length=db_string_length), nullable=False),
++        Column('value', String(length=db_string_length)),
+         Column('deleted', Integer),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -334,12 +343,12 @@ def upgrade(migrate_engine):
+         Column('free_disk_gb', Integer),
+         Column('current_workload', Integer),
+         Column('running_vms', Integer),
+-        Column('hypervisor_hostname', String(length=255)),
++        Column('hypervisor_hostname', String(length=db_string_length)),
+         Column('deleted', Integer),
+         Column('host_ip', InetSmall()),
+         Column('supported_instances', Text),
+         Column('pci_stats', Text, nullable=True),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -349,14 +358,14 @@ def upgrade(migrate_engine):
+         Column('deleted_at', DateTime),
+         Column('id', Integer, primary_key=True, nullable=False),
+         Column('address', InetSmall()),
+-        Column('username', String(length=255)),
+-        Column('password', String(length=255)),
+-        Column('console_type', String(length=255)),
+-        Column('public_hostname', String(length=255)),
+-        Column('host', String(length=255)),
+-        Column('compute_host', String(length=255)),
++        Column('username', String(length=db_string_length)),
++        Column('password', String(length=db_string_length)),
++        Column('console_type', String(length=db_string_length)),
++        Column('public_hostname', String(length=db_string_length)),
++        Column('host', String(length=db_string_length)),
++        Column('compute_host', String(length=db_string_length)),
+         Column('deleted', Integer),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -365,15 +374,15 @@ def upgrade(migrate_engine):
+         Column('updated_at', DateTime),
+         Column('deleted_at', DateTime),
+         Column('id', Integer, primary_key=True, nullable=False),
+-        Column('instance_name', String(length=255)),
+-        Column('password', String(length=255)),
++        Column('instance_name', String(length=db_string_length)),
++        Column('password', String(length=db_string_length)),
+         Column('port', Integer),
+         Column('pool_id', Integer, ForeignKey('console_pools.id')),
+         Column('instance_uuid', String(length=36),
+                ForeignKey('instances.uuid',
+                           name='consoles_instance_uuid_fkey')),
+         Column('deleted', Integer),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -382,11 +391,11 @@ def upgrade(migrate_engine):
+         Column('updated_at', DateTime),
+         Column('deleted_at', DateTime),
+         Column('deleted', Boolean),
+-        Column('domain', String(length=255), primary_key=True, nullable=False),
+-        Column('scope', String(length=255)),
+-        Column('availability_zone', String(length=255)),
+-        Column('project_id', String(length=255)),
+-        mysql_engine='InnoDB',
++        Column('domain', String(length=db_string_length), primary_key=True, nullable=False),
++        Column('scope', String(length=db_string_length)),
++        Column('availability_zone', String(length=db_string_length)),
++        Column('project_id', String(length=db_string_length)),
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -401,10 +410,10 @@ def upgrade(migrate_engine):
+         Column('leased', Boolean),
+         Column('reserved', Boolean),
+         Column('virtual_interface_id', Integer),
+-        Column('host', String(length=255)),
++        Column('host', String(length=db_string_length)),
+         Column('instance_uuid', String(length=36)),
+         Column('deleted', Integer),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -415,13 +424,13 @@ def upgrade(migrate_engine):
+         Column('id', Integer, primary_key=True, nullable=False),
+         Column('address', InetSmall()),
+         Column('fixed_ip_id', Integer),
+-        Column('project_id', String(length=255)),
+-        Column('host', String(length=255)),
++        Column('project_id', String(length=db_string_length)),
++        Column('host', String(length=db_string_length)),
+         Column('auto_assigned', Boolean),
+-        Column('pool', String(length=255)),
+-        Column('interface', String(length=255)),
++        Column('pool', String(length=db_string_length)),
++        Column('interface', String(length=db_string_length)),
+         Column('deleted', Integer),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -432,11 +441,11 @@ def upgrade(migrate_engine):
+         Column('id', Integer, primary_key=True, nullable=False),
+         Column('instance_uuid', String(length=36)),
+         Column('code', Integer, nullable=False),
+-        Column('message', String(length=255)),
++        Column('message', String(length=db_string_length)),
+         Column('details', MediumText()),
+-        Column('host', String(length=255)),
++        Column('host', String(length=db_string_length)),
+         Column('deleted', Integer),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -447,7 +456,7 @@ def upgrade(migrate_engine):
+         Column('id', Integer, primary_key=True, nullable=False),
+         Column('uuid', String(36), nullable=False),
+         Column('deleted', Integer),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -459,7 +468,7 @@ def upgrade(migrate_engine):
+         Column('network_info', MediumText()),
+         Column('instance_uuid', String(length=36), nullable=False),
+         Column('deleted', Integer),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -469,13 +478,13 @@ def upgrade(migrate_engine):
+         Column('deleted_at', DateTime),
+         Column('deleted', Integer),
+         Column('id', Integer, primary_key=True, nullable=False),
+-        Column('user_id', String(length=255)),
+-        Column('project_id', String(length=255)),
++        Column('user_id', String(length=db_string_length)),
++        Column('project_id', String(length=db_string_length)),
+         Column('uuid', String(length=36), nullable=False),
+-        Column('name', String(length=255)),
++        Column('name', String(length=db_string_length)),
+         UniqueConstraint('uuid', 'deleted',
+                          name='uniq_instance_groups0uuid0deleted'),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8',
+     )
+ 
+@@ -485,11 +494,11 @@ def upgrade(migrate_engine):
+         Column('deleted_at', DateTime),
+         Column('deleted', Integer),
+         Column('id', Integer, primary_key=True, nullable=False),
+-        Column('key', String(length=255)),
+-        Column('value', String(length=255)),
++        Column('key', String(length=db_string_length)),
++        Column('value', String(length=db_string_length)),
+         Column('group_id', Integer, ForeignKey('instance_groups.id'),
+                nullable=False),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8',
+     )
+ 
+@@ -499,10 +508,10 @@ def upgrade(migrate_engine):
+         Column('deleted_at', DateTime),
+         Column('deleted', Integer),
+         Column('id', Integer, primary_key=True, nullable=False),
+-        Column('policy', String(length=255)),
++        Column('policy', String(length=db_string_length)),
+         Column('group_id', Integer, ForeignKey('instance_groups.id'),
+                nullable=False),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8',
+     )
+ 
+@@ -512,10 +521,10 @@ def upgrade(migrate_engine):
+         Column('deleted_at', DateTime),
+         Column('deleted', Integer),
+         Column('id', Integer, primary_key=True, nullable=False),
+-        Column('instance_id', String(length=255)),
++        Column('instance_id', String(length=db_string_length)),
+         Column('group_id', Integer, ForeignKey('instance_groups.id'),
+                nullable=False),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8',
+     )
+ 
+@@ -524,11 +533,11 @@ def upgrade(migrate_engine):
+         Column('updated_at', DateTime),
+         Column('deleted_at', DateTime),
+         Column('id', Integer, primary_key=True, nullable=False),
+-        Column('key', String(length=255)),
+-        Column('value', String(length=255)),
++        Column('key', String(length=db_string_length)),
++        Column('value', String(length=db_string_length)),
+         Column('instance_uuid', String(length=36), nullable=True),
+         Column('deleted', Integer),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -538,10 +547,10 @@ def upgrade(migrate_engine):
+         Column('deleted_at', DateTime),
+         Column('id', Integer, primary_key=True, nullable=False),
+         Column('instance_uuid', String(length=36), nullable=False),
+-        Column('key', String(length=255), nullable=False),
+-        Column('value', String(length=255)),
++        Column('key', String(length=db_string_length), nullable=False),
++        Column('value', String(length=db_string_length)),
+         Column('deleted', Integer),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -552,10 +561,10 @@ def upgrade(migrate_engine):
+         Column('id', Integer, primary_key=True, nullable=False),
+         Column('instance_type_id', Integer, ForeignKey('instance_types.id'),
+                nullable=False),
+-        Column('key', String(length=255)),
+-        Column('value', String(length=255)),
++        Column('key', String(length=db_string_length)),
++        Column('value', String(length=db_string_length)),
+         Column('deleted', Integer),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -565,9 +574,9 @@ def upgrade(migrate_engine):
+         Column('deleted_at', DateTime),
+         Column('id', Integer, primary_key=True, nullable=False),
+         Column('instance_type_id', Integer, nullable=False),
+-        Column('project_id', String(length=255)),
++        Column('project_id', String(length=db_string_length)),
+         Column('deleted', Integer),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -575,20 +584,20 @@ def upgrade(migrate_engine):
+         Column('created_at', DateTime),
+         Column('updated_at', DateTime),
+         Column('deleted_at', DateTime),
+-        Column('name', String(length=255)),
++        Column('name', String(length=db_string_length)),
+         Column('id', Integer, primary_key=True, nullable=False),
+         Column('memory_mb', Integer, nullable=False),
+         Column('vcpus', Integer, nullable=False),
+         Column('swap', Integer, nullable=False),
+         Column('vcpu_weight', Integer),
+-        Column('flavorid', String(length=255)),
++        Column('flavorid', String(length=db_string_length)),
+         Column('rxtx_factor', Float),
+         Column('root_gb', Integer),
+         Column('ephemeral_gb', Integer),
+         Column('disabled', Boolean),
+         Column('is_public', Boolean),
+         Column('deleted', Integer),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -599,54 +608,54 @@ def upgrade(migrate_engine):
+         Column('deleted_at', DateTime),
+         Column('id', Integer, primary_key=True, nullable=False),
+         Column('internal_id', Integer),
+-        Column('user_id', String(length=255)),
+-        Column('project_id', String(length=255)),
+-        Column('image_ref', String(length=255)),
+-        Column('kernel_id', String(length=255)),
+-        Column('ramdisk_id', String(length=255)),
++        Column('user_id', String(length=db_string_length)),
++        Column('project_id', String(length=db_string_length)),
++        Column('image_ref', String(length=db_string_length)),
++        Column('kernel_id', String(length=db_string_length)),
++        Column('ramdisk_id', String(length=db_string_length)),
+         Column('launch_index', Integer),
+-        Column('key_name', String(length=255)),
++        Column('key_name', String(length=db_string_length)),
+         Column('key_data', MediumText()),
+         Column('power_state', Integer),
+-        Column('vm_state', String(length=255)),
++        Column('vm_state', String(length=db_string_length)),
+         Column('memory_mb', Integer),
+         Column('vcpus', Integer),
+-        Column('hostname', String(length=255)),
+-        Column('host', String(length=255)),
++        Column('hostname', String(length=db_string_length)),
++        Column('host', String(length=db_string_length)),
+         Column('user_data', MediumText()),
+-        Column('reservation_id', String(length=255)),
++        Column('reservation_id', String(length=db_string_length)),
+         Column('scheduled_at', DateTime),
+         Column('launched_at', DateTime),
+         Column('terminated_at', DateTime),
+-        Column('display_name', String(length=255)),
+-        Column('display_description', String(length=255)),
+-        Column('availability_zone', String(length=255)),
++        Column('display_name', String(length=db_string_length)),
++        Column('display_description', String(length=db_string_length)),
++        Column('availability_zone', String(length=db_string_length)),
+         Column('locked', Boolean),
+-        Column('os_type', String(length=255)),
++        Column('os_type', String(length=db_string_length)),
+         Column('launched_on', MediumText()),
+         Column('instance_type_id', Integer),
+-        Column('vm_mode', String(length=255)),
+-        Column('uuid', String(length=36)),
+-        Column('architecture', String(length=255)),
+-        Column('root_device_name', String(length=255)),
++        Column('vm_mode', String(length=db_string_length)),
++        Column('uuid', String(length=36), nullable=False),
++        Column('architecture', String(length=db_string_length)),
++        Column('root_device_name', String(length=db_string_length)),
+         Column('access_ip_v4', InetSmall()),
+         Column('access_ip_v6', InetSmall()),
+-        Column('config_drive', String(length=255)),
+-        Column('task_state', String(length=255)),
+-        Column('default_ephemeral_device', String(length=255)),
+-        Column('default_swap_device', String(length=255)),
++        Column('config_drive', String(length=db_string_length)),
++        Column('task_state', String(length=db_string_length)),
++        Column('default_ephemeral_device', String(length=db_string_length)),
++        Column('default_swap_device', String(length=db_string_length)),
+         Column('progress', Integer),
+         Column('auto_disk_config', Boolean),
+         Column('shutdown_terminate', Boolean),
+         Column('disable_terminate', Boolean),
+         Column('root_gb', Integer),
+         Column('ephemeral_gb', Integer),
+-        Column('cell_name', String(length=255)),
+-        Column('node', String(length=255)),
++        Column('cell_name', String(length=db_string_length)),
++        Column('node', String(length=db_string_length)),
+         Column('deleted', Integer),
+         Column('locked_by', inst_lock_enum),
+         Column('cleaned', Integer, default=0),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -655,16 +664,16 @@ def upgrade(migrate_engine):
+         Column('updated_at', DateTime),
+         Column('deleted_at', DateTime),
+         Column('id', Integer, primary_key=True, nullable=False),
+-        Column('action', String(length=255)),
++        Column('action', String(length=db_string_length)),
+         Column('instance_uuid', String(length=36)),
+-        Column('request_id', String(length=255)),
+-        Column('user_id', String(length=255)),
+-        Column('project_id', String(length=255)),
++        Column('request_id', String(length=db_string_length)),
++        Column('user_id', String(length=db_string_length)),
++        Column('project_id', String(length=db_string_length)),
+         Column('start_time', DateTime),
+         Column('finish_time', DateTime),
+-        Column('message', String(length=255)),
++        Column('message', String(length=db_string_length)),
+         Column('deleted', Integer),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8',
+     )
+ 
+@@ -673,14 +682,14 @@ def upgrade(migrate_engine):
+         Column('updated_at', DateTime),
+         Column('deleted_at', DateTime),
+         Column('id', Integer, primary_key=True, nullable=False),
+-        Column('event', String(length=255)),
++        Column('event', String(length=db_string_length)),
+         Column('action_id', Integer, ForeignKey('instance_actions.id')),
+         Column('start_time', DateTime),
+         Column('finish_time', DateTime),
+-        Column('result', String(length=255)),
++        Column('result', String(length=db_string_length)),
+         Column('traceback', Text),
+         Column('deleted', Integer),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8',
+     )
+ 
+@@ -690,10 +699,10 @@ def upgrade(migrate_engine):
+         Column('deleted_at', DateTime),
+         Column('id', Integer, primary_key=True, nullable=False),
+         Column('target_num', Integer),
+-        Column('host', String(length=255)),
++        Column('host', String(length=db_string_length)),
+         Column('volume_id', String(length=36), nullable=True),
+         Column('deleted', Integer),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -702,12 +711,12 @@ def upgrade(migrate_engine):
+         Column('updated_at', DateTime),
+         Column('deleted_at', DateTime),
+         Column('id', Integer, primary_key=True, nullable=False),
+-        Column('name', String(length=255)),
+-        Column('user_id', String(length=255)),
+-        Column('fingerprint', String(length=255)),
++        Column('name', String(length=db_string_length)),
++        Column('user_id', String(length=db_string_length)),
++        Column('fingerprint', String(length=db_string_length)),
+         Column('public_key', MediumText()),
+         Column('deleted', Integer),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -716,17 +725,17 @@ def upgrade(migrate_engine):
+         Column('updated_at', DateTime),
+         Column('deleted_at', DateTime),
+         Column('id', Integer, primary_key=True, nullable=False),
+-        Column('source_compute', String(length=255)),
+-        Column('dest_compute', String(length=255)),
+-        Column('dest_host', String(length=255)),
+-        Column('status', String(length=255)),
++        Column('source_compute', String(length=db_string_length)),
++        Column('dest_compute', String(length=db_string_length)),
++        Column('dest_host', String(length=db_string_length)),
++        Column('status', String(length=db_string_length)),
+         Column('instance_uuid', String(length=36)),
+         Column('old_instance_type_id', Integer),
+         Column('new_instance_type_id', Integer),
+-        Column('source_node', String(length=255)),
+-        Column('dest_node', String(length=255)),
++        Column('source_node', String(length=db_string_length)),
++        Column('dest_node', String(length=db_string_length)),
+         Column('deleted', Integer),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -738,7 +747,7 @@ def upgrade(migrate_engine):
+         Column('injected', Boolean),
+         Column('cidr', Inet()),
+         Column('netmask', InetSmall()),
+-        Column('bridge', String(length=255)),
++        Column('bridge', String(length=db_string_length)),
+         Column('gateway', InetSmall()),
+         Column('broadcast', InetSmall()),
+         Column('dns1', InetSmall()),
+@@ -747,20 +756,20 @@ def upgrade(migrate_engine):
+         Column('vpn_public_port', Integer),
+         Column('vpn_private_address', InetSmall()),
+         Column('dhcp_start', InetSmall()),
+-        Column('project_id', String(length=255)),
+-        Column('host', String(length=255)),
++        Column('project_id', String(length=db_string_length)),
++        Column('host', String(length=db_string_length)),
+         Column('cidr_v6', Inet()),
+         Column('gateway_v6', InetSmall()),
+-        Column('label', String(length=255)),
++        Column('label', String(length=db_string_length)),
+         Column('netmask_v6', InetSmall()),
+-        Column('bridge_interface', String(length=255)),
++        Column('bridge_interface', String(length=db_string_length)),
+         Column('multi_host', Boolean),
+         Column('dns2', InetSmall()),
+         Column('uuid', String(length=36)),
+         Column('priority', Integer),
+         Column('rxtx_base', Integer),
+         Column('deleted', Integer),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -776,8 +785,8 @@ def upgrade(migrate_engine):
+         Column('product_id', String(4)),
+         Column('vendor_id', String(4)),
+         Column('dev_type', String(8)),
+-        Column('dev_id', String(255)),
+-        Column('label', String(255), nullable=False),
++        Column('dev_id', String(db_string_length)),
++        Column('label', String(db_string_length), nullable=False),
+         Column('status', String(36), nullable=False),
+         Column('extra_info', Text, nullable=True),
+         Column('instance_uuid', String(36), nullable=True),
+@@ -788,7 +797,7 @@ def upgrade(migrate_engine):
+         UniqueConstraint('compute_node_id',
+                         'address', 'deleted',
+                         name=pci_devices_uc_name),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8')
+ 
+     provider_fw_rules = Table('provider_fw_rules', meta,
+@@ -801,7 +810,7 @@ def upgrade(migrate_engine):
+         Column('to_port', Integer),
+         Column('cidr', Inet()),
+         Column('deleted', Integer),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -810,11 +819,11 @@ def upgrade(migrate_engine):
+         Column('updated_at', DateTime),
+         Column('deleted_at', DateTime),
+         Column('id', Integer, primary_key=True, nullable=False),
+-        Column('class_name', String(length=255)),
+-        Column('resource', String(length=255)),
++        Column('class_name', String(length=db_string_length)),
++        Column('resource', String(length=db_string_length)),
+         Column('hard_limit', Integer),
+         Column('deleted', Integer),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -823,14 +832,14 @@ def upgrade(migrate_engine):
+         Column('updated_at', DateTime),
+         Column('deleted_at', DateTime),
+         Column('id', Integer, primary_key=True, nullable=False),
+-        Column('project_id', String(length=255)),
+-        Column('resource', String(length=255)),
++        Column('project_id', String(length=db_string_length)),
++        Column('resource', String(length=db_string_length)),
+         Column('in_use', Integer, nullable=False),
+         Column('reserved', Integer, nullable=False),
+         Column('until_refresh', Integer),
+         Column('deleted', Integer),
+-        Column('user_id', String(length=255)),
+-        mysql_engine='InnoDB',
++        Column('user_id', String(length=db_string_length)),
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -839,11 +848,11 @@ def upgrade(migrate_engine):
+         Column('created_at', DateTime),
+         Column('updated_at', DateTime),
+         Column('deleted_at', DateTime),
+-        Column('project_id', String(length=255)),
+-        Column('resource', String(length=255), nullable=False),
++        Column('project_id', String(length=db_string_length)),
++        Column('resource', String(length=db_string_length), nullable=False),
+         Column('hard_limit', Integer),
+         Column('deleted', Integer),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -856,18 +865,18 @@ def upgrade(migrate_engine):
+                         Column('deleted_at', DateTime),
+                         Column('deleted', Integer),
+                         Column('user_id',
+-                               String(length=255),
++                               String(length=db_string_length),
+                                nullable=False),
+                         Column('project_id',
+-                               String(length=255),
++                               String(length=db_string_length),
+                                nullable=False),
+                         Column('resource',
+-                               String(length=255),
++                               String(length=db_string_length),
+                                nullable=False),
+                         Column('hard_limit', Integer, nullable=True),
+                         UniqueConstraint('user_id', 'project_id', 'resource',
+                                          'deleted', name=uniq_name),
+-                        mysql_engine='InnoDB',
++                        mysql_engine=CONF.database.mysql_storage_engine,
+                         mysql_charset='utf8',
+                         )
+ 
+@@ -878,13 +887,13 @@ def upgrade(migrate_engine):
+         Column('id', Integer, primary_key=True, nullable=False),
+         Column('uuid', String(length=36), nullable=False),
+         Column('usage_id', Integer, nullable=False),
+-        Column('project_id', String(length=255)),
+-        Column('resource', String(length=255)),
++        Column('project_id', String(length=db_string_length)),
++        Column('resource', String(length=db_string_length)),
+         Column('delta', Integer, nullable=False),
+         Column('expire', DateTime),
+         Column('deleted', Integer),
+-        Column('user_id', String(length=255)),
+-        mysql_engine='InnoDB',
++        Column('user_id', String(length=db_string_length)),
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -895,7 +904,7 @@ def upgrade(migrate_engine):
+         Column('id', Integer, primary_key=True, nullable=False),
+         Column('uuid', String(length=36), nullable=False),
+         Column('deleted', Integer),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -908,7 +917,7 @@ def upgrade(migrate_engine):
+         Column('security_group_id', Integer),
+         Column('instance_uuid', String(length=36)),
+         Column('deleted', Integer),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -918,13 +927,13 @@ def upgrade(migrate_engine):
+         Column('deleted_at', DateTime),
+         Column('id', Integer, primary_key=True, nullable=False),
+         Column('parent_group_id', Integer, ForeignKey('security_groups.id')),
+-        Column('protocol', String(length=255)),
++        Column('protocol', String(length=db_string_length)),
+         Column('from_port', Integer),
+         Column('to_port', Integer),
+         Column('cidr', Inet()),
+         Column('group_id', Integer, ForeignKey('security_groups.id')),
+         Column('deleted', Integer),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -933,12 +942,12 @@ def upgrade(migrate_engine):
+         Column('updated_at', DateTime),
+         Column('deleted_at', DateTime),
+         Column('id', Integer, primary_key=True, nullable=False),
+-        Column('name', String(length=255)),
+-        Column('description', String(length=255)),
+-        Column('user_id', String(length=255)),
+-        Column('project_id', String(length=255)),
++        Column('name', String(length=db_string_length)),
++        Column('description', String(length=db_string_length)),
++        Column('user_id', String(length=db_string_length)),
++        Column('project_id', String(length=db_string_length)),
+         Column('deleted', Integer),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -952,7 +961,7 @@ def upgrade(migrate_engine):
+         Column('from_port', Integer),
+         Column('to_port', Integer),
+         Column('cidr', Inet()),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8',
+     )
+ 
+@@ -961,14 +970,14 @@ def upgrade(migrate_engine):
+         Column('updated_at', DateTime),
+         Column('deleted_at', DateTime),
+         Column('id', Integer, primary_key=True, nullable=False),
+-        Column('host', String(length=255)),
+-        Column('binary', String(length=255)),
+-        Column('topic', String(length=255)),
++        Column('host', String(length=db_string_length)),
++        Column('binary', String(length=db_string_length)),
++        Column('topic', String(length=db_string_length)),
+         Column('report_count', Integer, nullable=False),
+         Column('disabled', Boolean),
+         Column('deleted', Integer),
+-        Column('disabled_reason', String(length=255)),
+-        mysql_engine='InnoDB',
++        Column('disabled_reason', String(length=db_string_length)),
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -979,7 +988,7 @@ def upgrade(migrate_engine):
+         Column('id', Integer, primary_key=True, nullable=False),
+         Column('uuid', String(length=36), nullable=False),
+         Column('deleted', Integer),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -989,16 +998,16 @@ def upgrade(migrate_engine):
+         Column('deleted_at', DateTime),
+         Column('id', String(length=36), primary_key=True, nullable=False),
+         Column('volume_id', String(length=36), nullable=False),
+-        Column('user_id', String(length=255)),
+-        Column('project_id', String(length=255)),
+-        Column('status', String(length=255)),
+-        Column('progress', String(length=255)),
++        Column('user_id', String(length=db_string_length)),
++        Column('project_id', String(length=db_string_length)),
++        Column('status', String(length=db_string_length)),
++        Column('progress', String(length=db_string_length)),
+         Column('volume_size', Integer),
+         Column('scheduled_at', DateTime),
+-        Column('display_name', String(length=255)),
+-        Column('display_description', String(length=255)),
++        Column('display_name', String(length=db_string_length)),
++        Column('display_description', String(length=db_string_length)),
+         Column('deleted', String(length=36)),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -1007,16 +1016,16 @@ def upgrade(migrate_engine):
+         Column('updated_at', DateTime),
+         Column('deleted_at', DateTime),
+         Column('id', Integer, primary_key=True, nullable=False),
+-        Column('task_name', String(length=255), nullable=False),
+-        Column('state', String(length=255), nullable=False),
+-        Column('host', String(length=255), nullable=False),
++        Column('task_name', String(length=db_string_length), nullable=False),
++        Column('state', String(length=db_string_length), nullable=False),
++        Column('host', String(length=db_string_length), nullable=False),
+         Column('period_beginning', DateTime, nullable=False),
+         Column('period_ending', DateTime, nullable=False),
+-        Column('message', String(length=255), nullable=False),
++        Column('message', String(length=db_string_length), nullable=False),
+         Column('task_items', Integer),
+         Column('errors', Integer),
+         Column('deleted', Integer),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -1025,12 +1034,12 @@ def upgrade(migrate_engine):
+         Column('updated_at', DateTime),
+         Column('deleted_at', DateTime),
+         Column('id', Integer, primary_key=True, nullable=False),
+-        Column('address', String(length=255)),
++        Column('address', String(length=db_string_length)),
+         Column('network_id', Integer),
+         Column('uuid', String(length=36)),
+         Column('instance_uuid', String(length=36), nullable=True),
+         Column('deleted', Integer),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -1041,7 +1050,7 @@ def upgrade(migrate_engine):
+         Column('id', Integer, primary_key=True, nullable=False),
+         Column('uuid', String(length=36), nullable=False),
+         Column('deleted', Integer),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -1050,20 +1059,20 @@ def upgrade(migrate_engine):
+         Column('updated_at', DateTime),
+         Column('deleted_at', DateTime),
+         Column('id', String(length=36), primary_key=True, nullable=False),
+-        Column('ec2_id', String(length=255)),
+-        Column('user_id', String(length=255)),
+-        Column('project_id', String(length=255)),
+-        Column('host', String(length=255)),
++        Column('ec2_id', String(length=db_string_length)),
++        Column('user_id', String(length=db_string_length)),
++        Column('project_id', String(length=db_string_length)),
++        Column('host', String(length=db_string_length)),
+         Column('size', Integer),
+-        Column('availability_zone', String(length=255)),
+-        Column('mountpoint', String(length=255)),
+-        Column('status', String(length=255)),
+-        Column('attach_status', String(length=255)),
++        Column('availability_zone', String(length=db_string_length)),
++        Column('mountpoint', String(length=db_string_length)),
++        Column('status', String(length=db_string_length)),
++        Column('attach_status', String(length=db_string_length)),
+         Column('scheduled_at', DateTime),
+         Column('launched_at', DateTime),
+         Column('terminated_at', DateTime),
+-        Column('display_name', String(length=255)),
+-        Column('display_description', String(length=255)),
++        Column('display_name', String(length=db_string_length)),
++        Column('display_description', String(length=db_string_length)),
+         Column('provider_location', String(length=256)),
+         Column('provider_auth', String(length=256)),
+         Column('snapshot_id', String(length=36)),
+@@ -1071,7 +1080,7 @@ def upgrade(migrate_engine):
+         Column('instance_uuid', String(length=36)),
+         Column('attach_time', DateTime),
+         Column('deleted', String(length=36)),
+-        mysql_engine='InnoDB',
++        mysql_engine=CONF.database.mysql_storage_engine,
+         mysql_charset='utf8'
+     )
+ 
+@@ -1095,8 +1104,8 @@ def upgrade(migrate_engine):
+             Column("instance_uuid", String(length=36)),
+             Column("project_id", String(length=36)),
+             Column("user_id", String(length=36)),
+-            Column("availability_zone", String(length=255)),
+-            mysql_engine='InnoDB',
++            Column("availability_zone", String(length=db_string_length)),
++            mysql_engine=CONF.database.mysql_storage_engine,
+             mysql_charset='utf8'
+     )
+ 
+@@ -1223,15 +1232,21 @@ def upgrade(migrate_engine):
+                      table=aggregate_hosts,
+                      name=uc_name).create()
+ 
+-    uc_name = 'uniq_aggregate_metadata0aggregate_id0key0deleted'
+-    UniqueConstraint('aggregate_id', 'key', 'deleted',
+-                     table=aggregate_metadata,
+-                     name=uc_name).create()
+-
+-    uc_name = 'uniq_instance_type_extra_specs0instance_type_id0key0deleted'
+-    UniqueConstraint('instance_type_id', 'key', 'deleted',
+-                     table=instance_type_extra_specs,
+-                     name=uc_name).create()
++    # Constraint does not work in MySQL Cluster, a.k.a NDB.
++    # 
++    if CONF.database.mysql_storage_engine != "NDBCLUSTER":
++        uc_name = 'uniq_aggregate_metadata0aggregate_id0key0deleted'
++        UniqueConstraint('aggregate_id', 'key', 'deleted',
++                         table=aggregate_metadata,
++                         name=uc_name).create()
++
++    # Constraint does not work in MySQL Cluster, a.k.a NDB.
++    # 
++    if CONF.database.mysql_storage_engine != "NDBCLUSTER":
++        uc_name = 'uniq_instance_type_extra_specs0instance_type_id0key0deleted'
++        UniqueConstraint('instance_type_id', 'key', 'deleted',
++                         table=instance_type_extra_specs,
++                         name=uc_name).create()
+ 
+     # created first (to preserve ordering for schema diffs)
+     mysql_pre_indexes = [
+--- nova-2015.1.2/nova/db/sqlalchemy/migrate_repo/versions/266_add_instance_tags.py.orig	2016-03-29 17:22:24.000000000 -0600
++++ nova-2015.1.2/nova/db/sqlalchemy/migrate_repo/versions/266_add_instance_tags.py	2016-03-29 17:23:21.835566671 -0600
+@@ -12,6 +12,9 @@
+ 
+ import sqlalchemy as sa
+ 
++from oslo_config import cfg
++
++CONF = cfg.CONF
+ 
+ def upgrade(migrate_engine):
+     meta = sa.MetaData(bind=migrate_engine)
+@@ -22,7 +25,7 @@ def upgrade(migrate_engine):
+                     sa.Column('tag', sa.Unicode(80), primary_key=True,
+                               nullable=False),
+                     sa.Index('tags_tag_idx', 'tag'),
+-                    mysql_engine='InnoDB',
++                    mysql_engine=CONF.database.mysql_storage_engine,
+                     mysql_charset='utf8')
+     tags.create()
+ 
+--- nova-2015.1.2/nova/db/sqlalchemy/migrate_repo/versions/233_add_stats_in_compute_nodes.py.orig	2016-03-29 17:22:24.000000000 -0600
++++ nova-2015.1.2/nova/db/sqlalchemy/migrate_repo/versions/233_add_stats_in_compute_nodes.py	2016-03-29 17:23:21.835820531 -0600
+@@ -25,6 +25,9 @@ from sqlalchemy import String
+ from sqlalchemy import Table
+ from sqlalchemy import Text
+ 
++from oslo_config import cfg
++
++CONF = cfg.CONF
+ 
+ def upgrade(engine):
+     meta = MetaData()
+@@ -73,7 +76,7 @@ def downgrade(engine):
+                 index=True),
+             Index('compute_node_stats_node_id_and_deleted_idx',
+                   'compute_node_id', 'deleted'),
+-            mysql_engine='InnoDB',
++            mysql_engine=CONF.database.mysql_storage_engine,
+             mysql_charset='utf8'
+     )
+     table.create()
+@@ -88,7 +91,7 @@ def downgrade(engine):
+             Column('key', String(255), nullable=False),
+             Column('value', String(255), nullable=True),
+             Column('compute_node_id', Integer),
+-            mysql_engine='InnoDB',
++            mysql_engine=CONF.database.mysql_storage_engine,
+             mysql_charset='utf8'
+     )
+     table.create()

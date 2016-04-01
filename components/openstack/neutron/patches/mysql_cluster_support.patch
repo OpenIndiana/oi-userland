@@ -1,0 +1,1052 @@
+This patchset is for bug:
+
+22726251 - Neutron needs to support MySQL Cluster
+
+This fixes the following aspects of Neutron:
+1. Implementation of an oslo.db configuration parameter to specify the MySQL 
+   storage engine (mysql_storage_engine).
+2. Replacement of hardcoded SQL statements that set the engine to "InnoDB" 
+   to the above configuration value.
+3. Logic to handle SQL differences between MySQL InnoDB and MySQL Cluster (NDB). 
+   This includes column lengths, constraints, foreign keys, and indexes.
+
+This has not been committed upstream, but has been filed in launchpad:
+
+https://bugs.launchpad.net/neutron/+bug/1564110
+
+--- neutron-2015.1.2/neutron/tests/functional/db/test_migrations.py.orig	2016-03-29 17:20:23.000000000 -0600
++++ neutron-2015.1.2/neutron/tests/functional/db/test_migrations.py	2016-03-29 17:21:15.448412716 -0600
+@@ -35,6 +35,10 @@ LOG = logging.getLogger(__name__)
+ 
+ cfg.CONF.import_opt('core_plugin', 'neutron.common.config')
+ 
++from alembic import context
++config = context.config
++CONF = config.neutron_config
++
+ CORE_PLUGIN = 'neutron.plugins.ml2.plugin.Ml2Plugin'
+ 
+ # These tables are still in the neutron database, but their models have moved
+@@ -195,7 +199,7 @@ class _TestModelsMigrations(test_migrati
+         self.assertTrue(len(tables) > 0,
+                         "No tables found. Wrong schema?")
+         noninnodb = [table for table in tables if
+-                     insp.get_table_options(table)['mysql_engine'] != 'InnoDB'
++                     insp.get_table_options(table)['mysql_engine'] != CONF.database.mysql_storage_engine
+                      and table != 'alembic_version']
+         self.assertEqual(0, len(noninnodb), "%s non InnoDB tables created" %
+                                             noninnodb)
+--- neutron-2015.1.2/neutron/plugins/ml2/drivers/cisco/apic/apic_model.py.orig	2016-03-29 17:20:23.000000000 -0600
++++ neutron-2015.1.2/neutron/plugins/ml2/drivers/cisco/apic/apic_model.py	2016-03-30 16:19:14.369511272 -0600
+@@ -22,6 +22,16 @@ from neutron.db import model_base
+ from neutron.db import models_v2
+ from neutron.plugins.ml2 import models as models_ml2
+ 
++from oslo_config import cfg
++
++from alembic import context
++config = context.config
++CONF = config.neutron_config
++
++if CONF.database.mysql_storage_engine == "NDBCLUSTER":
++    router_string_length = 64
++else:
++    router_string_length = 36
+ 
+ class RouterContract(model_base.BASEV2, models_v2.HasTenant):
+ 
+@@ -34,8 +44,8 @@ class RouterContract(model_base.BASEV2,
+ 
+     __tablename__ = 'cisco_ml2_apic_contracts'
+ 
+-    router_id = sa.Column(sa.String(64), sa.ForeignKey('routers.id',
+-                                                       ondelete='CASCADE'),
++    router_id = sa.Column(sa.String(router_string_length), 
++                          sa.ForeignKey('routers.id', ondelete='CASCADE'),
+                           primary_key=True)
+ 
+ 
+--- neutron-2015.1.2/neutron/db/extradhcpopt_db.py.orig	2016-03-29 17:20:23.000000000 -0600
++++ neutron-2015.1.2/neutron/db/extradhcpopt_db.py	2016-03-30 13:31:06.518157426 -0600
+@@ -23,36 +23,64 @@ from neutron.db import model_base
+ from neutron.db import models_v2
+ from neutron.extensions import extra_dhcp_opt as edo_ext
+ 
++from oslo_config import cfg
+ 
+-LOG = logging.getLogger(__name__)
+-
++from alembic import context
++config = context.config
++CONF = config.neutron_config
+ 
+-class ExtraDhcpOpt(model_base.BASEV2, models_v2.HasId):
+-    """Represent a generic concept of extra options associated to a port.
++LOG = logging.getLogger(__name__)
+ 
+-    Each port may have none to many dhcp opts associated to it that can
+-    define specifically different or extra options to DHCP clients.
+-    These will be written to the <network_id>/opts files, and each option's
+-    tag will be referenced in the <network_id>/host file.
+-    """
+-    port_id = sa.Column(sa.String(36),
+-                        sa.ForeignKey('ports.id', ondelete="CASCADE"),
+-                        nullable=False)
+-    opt_name = sa.Column(sa.String(64), nullable=False)
+-    opt_value = sa.Column(sa.String(255), nullable=False)
+-    ip_version = sa.Column(sa.Integer, server_default='4', nullable=False)
+-    __table_args__ = (sa.UniqueConstraint(
+-        'port_id',
+-        'opt_name',
+-        'ip_version',
+-        name='uniq_extradhcpopts0portid0optname0ipversion'),
+-                      model_base.BASEV2.__table_args__,)
+-
+-    # Add a relationship to the Port model in order to instruct SQLAlchemy to
+-    # eagerly load extra_dhcp_opts bindings
+-    ports = orm.relationship(
+-        models_v2.Port,
+-        backref=orm.backref("dhcp_opts", lazy='joined', cascade='delete'))
++# MySQL Cluster NDB does not support this constraint.
++# TODO (oorgeron) Look into making this workable.
++if CONF.database.mysql_storage_engine == "NDBCLUSTER":
++    class ExtraDhcpOpt(model_base.BASEV2, models_v2.HasId):
++        """Represent a generic concept of extra options associated to a port.
++
++        Each port may have none to many dhcp opts associated to it that can
++        define specifically different or extra options to DHCP clients.
++        These will be written to the <network_id>/opts files, and each option's
++        tag will be referenced in the <network_id>/host file.
++        """
++        port_id = sa.Column(sa.String(36),
++                            sa.ForeignKey('ports.id', ondelete="CASCADE"),
++                            nullable=False)
++        opt_name = sa.Column(sa.String(64), nullable=False)
++        opt_value = sa.Column(sa.String(255), nullable=False)
++        ip_version = sa.Column(sa.Integer, server_default='4', nullable=False)
++
++        # Add a relationship to the Port model in order to instruct SQLAlchemy to
++        # eagerly load extra_dhcp_opts bindings
++        ports = orm.relationship(
++            models_v2.Port,
++            backref=orm.backref("dhcp_opts", lazy='joined', cascade='delete'))
++else:
++    class ExtraDhcpOpt(model_base.BASEV2, models_v2.HasId):
++        """Represent a generic concept of extra options associated to a port.
++
++        Each port may have none to many dhcp opts associated to it that can
++        define specifically different or extra options to DHCP clients.
++        These will be written to the <network_id>/opts files, and each option's
++        tag will be referenced in the <network_id>/host file.
++        """
++        port_id = sa.Column(sa.String(36),
++                            sa.ForeignKey('ports.id', ondelete="CASCADE"),
++                            nullable=False)
++        opt_name = sa.Column(sa.String(64), nullable=False)
++        opt_value = sa.Column(sa.String(255), nullable=False)
++        ip_version = sa.Column(sa.Integer, server_default='4', nullable=False)
++        __table_args__ = (sa.UniqueConstraint(
++            'port_id',
++            'opt_name',
++            'ip_version',
++            name='uniq_extradhcpopts0portid0optname0ipversion'),
++                          model_base.BASEV2.__table_args__,)
++
++        # Add a relationship to the Port model in order to instruct SQLAlchemy to
++        # eagerly load extra_dhcp_opts bindings
++        ports = orm.relationship(
++            models_v2.Port,
++            backref=orm.backref("dhcp_opts", lazy='joined', cascade='delete'))
+ 
+ 
+ class ExtraDhcpOptMixin(object):
+--- neutron-2015.1.2/neutron/db/models_v2.py.orig	2016-03-29 17:20:23.000000000 -0600
++++ neutron-2015.1.2/neutron/db/models_v2.py	2016-03-30 13:32:09.835579720 -0600
+@@ -21,6 +21,12 @@ from neutron.common import constants
+ from neutron.db import model_base
+ from neutron.openstack.common import uuidutils
+ 
++from oslo_config import cfg
++from oslo_db import options as oslo_db_options
++
++from alembic import context
++config = context.config
++CONF = config.neutron_config
+ 
+ class HasTenant(object):
+     """Tenant mixin, add to subclasses that have a tenant."""
+@@ -126,47 +132,89 @@ class SubnetRoute(model_base.BASEV2, Rou
+                           primary_key=True)
+ 
+ 
+-class Port(model_base.BASEV2, HasId, HasTenant):
+-    """Represents a port on a Neutron v2 network."""
+-
+-    name = sa.Column(sa.String(attr.NAME_MAX_LEN))
+-    network_id = sa.Column(sa.String(36), sa.ForeignKey("networks.id"),
+-                           nullable=False)
+-    fixed_ips = orm.relationship(IPAllocation, backref='ports', lazy='joined')
+-    mac_address = sa.Column(sa.String(32), nullable=False)
+-    admin_state_up = sa.Column(sa.Boolean(), nullable=False)
+-    status = sa.Column(sa.String(16), nullable=False)
+-    device_id = sa.Column(sa.String(attr.DEVICE_ID_MAX_LEN), nullable=False)
+-    device_owner = sa.Column(sa.String(attr.DEVICE_OWNER_MAX_LEN),
+-                             nullable=False)
+-    __table_args__ = (
+-        sa.Index(
+-            'ix_ports_network_id_mac_address', 'network_id', 'mac_address'),
+-        sa.Index(
+-            'ix_ports_network_id_device_owner', 'network_id', 'device_owner'),
+-        sa.UniqueConstraint(
+-            network_id, mac_address,
+-            name='uniq_ports0network_id0mac_address'),
+-        model_base.BASEV2.__table_args__
+-    )
+-
+-    def __init__(self, id=None, tenant_id=None, name=None, network_id=None,
+-                 mac_address=None, admin_state_up=None, status=None,
+-                 device_id=None, device_owner=None, fixed_ips=None):
+-        self.id = id
+-        self.tenant_id = tenant_id
+-        self.name = name
+-        self.network_id = network_id
+-        self.mac_address = mac_address
+-        self.admin_state_up = admin_state_up
+-        self.device_owner = device_owner
+-        self.device_id = device_id
+-        # Since this is a relationship only set it if one is passed in.
+-        if fixed_ips:
+-            self.fixed_ips = fixed_ips
++# MySQL Cluster NDB does not support this constraint.
++# TODO (oorgeron) Look into making this workable.
++if CONF.database.mysql_storage_engine == "NDBCLUSTER":
++    class Port(model_base.BASEV2, HasId, HasTenant):
++        """Represents a port on a Neutron v2 network."""
++
++        name = sa.Column(sa.String(attr.NAME_MAX_LEN))
++        network_id = sa.Column(sa.String(36), sa.ForeignKey("networks.id"),
++                               nullable=False)
++        fixed_ips = orm.relationship(IPAllocation, backref='ports', lazy='joined')
++        mac_address = sa.Column(sa.String(32), nullable=False)
++        admin_state_up = sa.Column(sa.Boolean(), nullable=False)
++        status = sa.Column(sa.String(16), nullable=False)
++        device_id = sa.Column(sa.String(attr.DEVICE_ID_MAX_LEN), nullable=False)
++        device_owner = sa.Column(sa.String(attr.DEVICE_OWNER_MAX_LEN),
++                                 nullable=False)
++        __table_args__ = (
++            sa.Index(
++                'ix_ports_network_id_mac_address', 'network_id', 'mac_address'),
++            sa.Index(
++                'ix_ports_network_id_device_owner', 'network_id', 'device_owner'),
++            model_base.BASEV2.__table_args__
++        )
++
++        def __init__(self, id=None, tenant_id=None, name=None, network_id=None,
++                     mac_address=None, admin_state_up=None, status=None,
++                     device_id=None, device_owner=None, fixed_ips=None):
++            self.id = id
++            self.tenant_id = tenant_id
++            self.name = name
++            self.network_id = network_id
++            self.mac_address = mac_address
++            self.admin_state_up = admin_state_up
++            self.device_owner = device_owner
++            self.device_id = device_id
++            # Since this is a relationship only set it if one is passed in.
++            if fixed_ips:
++                self.fixed_ips = fixed_ips
++
++            # NOTE(arosen): status must be set last as an event is triggered on!
++            self.status = status            
++else:
++    class Port(model_base.BASEV2, HasId, HasTenant):
++        """Represents a port on a Neutron v2 network."""
++
++        name = sa.Column(sa.String(attr.NAME_MAX_LEN))
++        network_id = sa.Column(sa.String(36), sa.ForeignKey("networks.id"),
++                               nullable=False)
++        fixed_ips = orm.relationship(IPAllocation, backref='ports', lazy='joined')
++        mac_address = sa.Column(sa.String(32), nullable=False)
++        admin_state_up = sa.Column(sa.Boolean(), nullable=False)
++        status = sa.Column(sa.String(16), nullable=False)
++        device_id = sa.Column(sa.String(attr.DEVICE_ID_MAX_LEN), nullable=False)
++        device_owner = sa.Column(sa.String(attr.DEVICE_OWNER_MAX_LEN),
++                                 nullable=False)
++        __table_args__ = (
++            sa.Index(
++                'ix_ports_network_id_mac_address', 'network_id', 'mac_address'),
++            sa.Index(
++                'ix_ports_network_id_device_owner', 'network_id', 'device_owner'),
++            sa.UniqueConstraint(
++                network_id, mac_address,
++                name='uniq_ports0network_id0mac_address'),
++            model_base.BASEV2.__table_args__
++        )
++
++        def __init__(self, id=None, tenant_id=None, name=None, network_id=None,
++                     mac_address=None, admin_state_up=None, status=None,
++                     device_id=None, device_owner=None, fixed_ips=None):
++            self.id = id
++            self.tenant_id = tenant_id
++            self.name = name
++            self.network_id = network_id
++            self.mac_address = mac_address
++            self.admin_state_up = admin_state_up
++            self.device_owner = device_owner
++            self.device_id = device_id
++            # Since this is a relationship only set it if one is passed in.
++            if fixed_ips:
++                self.fixed_ips = fixed_ips
+ 
+-        # NOTE(arosen): status must be set last as an event is triggered on!
+-        self.status = status
++            # NOTE(arosen): status must be set last as an event is triggered on!
++            self.status = status
+ 
+ 
+ class DNSNameServer(model_base.BASEV2):
+--- neutron-2015.1.2/neutron/db/db_base_plugin_v2.py.orig	2016-03-29 17:20:23.000000000 -0600
++++ neutron-2015.1.2/neutron/db/db_base_plugin_v2.py	2016-03-30 13:34:25.949250250 -0600
+@@ -46,6 +46,10 @@ from neutron.plugins.common import const
+ 
+ LOG = logging.getLogger(__name__)
+ 
++from alembic import context
++config = context.config
++CONF = config.neutron_config
++
+ # Ports with the following 'device_owner' values will not prevent
+ # network deletion.  If delete_network() finds that all ports on a
+ # network have these owners, it will explicitly delete each port
+@@ -1797,8 +1801,16 @@ class NeutronDbPluginV2(neutron_plugin_b
+                 # within a transaction, so that it can be rolled back to the
+                 # point before its failure while maintaining the enclosing
+                 # transaction
+-                return self._create_port_with_mac(
+-                    context, network_id, port_data, mac, nested=True)
++
++                # MySQL Cluster NDB does not support nested transactions
++                # TODO (oorgeron) Look into making this workable.
++                if CONF.database.mysql_storage_engine == "NDBCLUSTER":
++                    return self._create_port_with_mac(
++                        context, network_id, port_data, mac, nested=False)
++                else:
++                    return self._create_port_with_mac(
++                        context, network_id, port_data, mac, nested=True)
++
+             except n_exc.MacAddressInUse:
+                 LOG.debug('Generated mac %(mac_address)s exists on '
+                           'network %(network_id)s',
+--- neutron-2015.1.2/neutron/db/api.py.orig	2016-03-29 17:20:23.000000000 -0600
++++ neutron-2015.1.2/neutron/db/api.py	2016-03-30 13:35:09.208949269 -0600
+@@ -19,6 +19,9 @@ from oslo_config import cfg
+ from oslo_db.sqlalchemy import session
+ from sqlalchemy import exc
+ 
++from alembic import context
++config = context.config
++CONF = config.neutron_config
+ 
+ _FACADE = None
+ 
+@@ -50,10 +53,18 @@ def get_session(autocommit=True, expire_
+ @contextlib.contextmanager
+ def autonested_transaction(sess):
+     """This is a convenience method to not bother with 'nested' parameter."""
+-    try:
+-        session_context = sess.begin_nested()
+-    except exc.InvalidRequestError:
++
++    # MySQL Cluster NDB does not support nested transactions
++    # TODO (oorgeron) Look into making this workable.
++    if CONF.database.mysql_storage_engine == "NDBCLUSTER":
+         session_context = sess.begin(subtransactions=True)
+-    finally:
+         with session_context as tx:
+             yield tx
++    else:
++        try:
++            session_context = sess.begin_nested()
++        except exc.InvalidRequestError:
++            session_context = sess.begin(subtransactions=True)
++        finally:
++            with session_context as tx:
++                yield tx
+--- neutron-2015.1.2/neutron/db/model_base.py.orig	2016-03-29 17:20:23.000000000 -0600
++++ neutron-2015.1.2/neutron/db/model_base.py	2016-03-29 17:21:15.450203678 -0600
+@@ -17,27 +17,55 @@ from oslo_db.sqlalchemy import models
+ from sqlalchemy.ext import declarative
+ from sqlalchemy import orm
+ 
++from oslo_config import cfg
++from oslo_db import options as oslo_db_options
+ 
+-class NeutronBase(models.ModelBase):
+-    """Base class for Neutron Models."""
+-
+-    __table_args__ = {'mysql_engine': 'InnoDB'}
+-
+-    def __iter__(self):
+-        self._i = iter(orm.object_mapper(self).columns)
+-        return self
+-
+-    def next(self):
+-        n = self._i.next().name
+-        return n, getattr(self, n)
+-
+-    def __repr__(self):
+-        """sqlalchemy based automatic __repr__ method."""
+-        items = ['%s=%r' % (col.name, getattr(self, col.name))
+-                 for col in self.__table__.columns]
+-        return "<%s.%s[object at %x] {%s}>" % (self.__class__.__module__,
+-                                               self.__class__.__name__,
+-                                               id(self), ', '.join(items))
++from alembic import context
++config = context.config
++CONF = config.neutron_config
++
++if CONF.database.mysql_storage_engine == "NDBCLUSTER":
++    class NeutronBase(models.ModelBase):
++        """Base class for Neutron Models."""
++
++        __table_args__ = {'mysql_engine': 'NDBCLUSTER'}
++
++        def __iter__(self):
++            self._i = iter(orm.object_mapper(self).columns)
++            return self
++
++        def next(self):
++            n = self._i.next().name
++            return n, getattr(self, n)
++
++        def __repr__(self):
++            """sqlalchemy based automatic __repr__ method."""
++            items = ['%s=%r' % (col.name, getattr(self, col.name))
++                     for col in self.__table__.columns]
++            return "<%s.%s[object at %x] {%s}>" % (self.__class__.__module__,
++                                                   self.__class__.__name__,
++                                                   id(self), ', '.join(items))
++else:
++    class NeutronBase(models.ModelBase):
++        """Base class for Neutron Models."""
++
++        __table_args__ = {'mysql_engine': 'InnoDB'}
++
++        def __iter__(self):
++            self._i = iter(orm.object_mapper(self).columns)
++            return self
++
++        def next(self):
++            n = self._i.next().name
++            return n, getattr(self, n)
++
++        def __repr__(self):
++            """sqlalchemy based automatic __repr__ method."""
++            items = ['%s=%r' % (col.name, getattr(self, col.name))
++                     for col in self.__table__.columns]
++            return "<%s.%s[object at %x] {%s}>" % (self.__class__.__module__,
++                                                   self.__class__.__name__,
++                                                   id(self), ', '.join(items))
+ 
+ 
+ class NeutronBaseV2(NeutronBase):
+--- neutron-2015.1.2/neutron/db/migration/cli.py.orig	2016-03-29 17:20:23.000000000 -0600
++++ neutron-2015.1.2/neutron/db/migration/cli.py	2016-03-29 17:21:15.450420340 -0600
+@@ -59,6 +59,9 @@ _db_opts = [
+     cfg.StrOpt('engine',
+                default='',
+                help=_('Database engine')),
++    cfg.StrOpt('mysql_storage_engine',
++               default='',
++               help=_('MySQL Storage Engine')),
+ ]
+ 
+ CONF = cfg.ConfigOpts()
+--- neutron-2015.1.2/neutron/db/migration/models/frozen.py.orig	2016-03-29 17:20:23.000000000 -0600
++++ neutron-2015.1.2/neutron/db/migration/models/frozen.py	2016-03-30 13:55:30.300409126 -0600
+@@ -32,6 +32,11 @@ from sqlalchemy import schema
+ from neutron.db import model_base
+ from neutron.openstack.common import uuidutils
+ 
++from oslo_config import cfg
++
++from alembic import context
++config = context.config
++CONF = config.neutron_config
+ 
+ # Dictionary of all tables that was renamed:
+ # {new_table_name: old_table_name}
+@@ -77,6 +82,10 @@ DHCPV6_STATELESS = 'dhcpv6-stateless'
+ 
+ BASEV2 = declarative.declarative_base(cls=model_base.NeutronBaseV2)
+ 
++if CONF.database.mysql_storage_engine == "NDBCLUSTER":
++   db_string_length = 128
++else:
++   db_string_length = 256
+ 
+ #neutron/db/models_v2.py
+ class HasTenant(object):
+@@ -218,17 +227,30 @@ class Agent(BASEV2, HasId):
+                             name='uniq_agents0agent_type0host'),
+     )
+ 
+-    agent_type = sa.Column(sa.String(255), nullable=False)
+-    binary = sa.Column(sa.String(255), nullable=False)
+-    topic = sa.Column(sa.String(255), nullable=False)
+-    host = sa.Column(sa.String(255), nullable=False)
+-    admin_state_up = sa.Column(sa.Boolean, default=True,
+-                               server_default=sa.sql.true(), nullable=False)
+-    created_at = sa.Column(sa.DateTime, nullable=False)
+-    started_at = sa.Column(sa.DateTime, nullable=False)
+-    heartbeat_timestamp = sa.Column(sa.DateTime, nullable=False)
+-    description = sa.Column(sa.String(255))
+-    configurations = sa.Column(sa.String(4095), nullable=False)
++    if CONF.database.mysql_storage_engine == "NDBCLUSTER":
++        agent_type = sa.Column(sa.String(db_string_length), nullable=False)
++        binary = sa.Column(sa.String(db_string_length), nullable=False)
++        topic = sa.Column(sa.String(db_string_length), nullable=False)
++        host = sa.Column(sa.String(db_string_length), nullable=False)
++        admin_state_up = sa.Column(sa.Boolean, default=True,
++                                   server_default=sa.sql.true(), nullable=False)
++        created_at = sa.Column(sa.DateTime, nullable=False)
++        started_at = sa.Column(sa.DateTime, nullable=False)
++        heartbeat_timestamp = sa.Column(sa.DateTime, nullable=False)
++        description = sa.Column(sa.String(db_string_length))
++        configurations = sa.Column(sa.Text(4095), nullable=False)
++    else:
++        agent_type = sa.Column(sa.String(db_string_length), nullable=False)
++        binary = sa.Column(sa.String(db_string_length), nullable=False)
++        topic = sa.Column(sa.String(db_string_length), nullable=False)
++        host = sa.Column(sa.String(db_string_length), nullable=False)
++        admin_state_up = sa.Column(sa.Boolean, default=True,
++                                   server_default=sa.sql.true(), nullable=False)
++        created_at = sa.Column(sa.DateTime, nullable=False)
++        started_at = sa.Column(sa.DateTime, nullable=False)
++        heartbeat_timestamp = sa.Column(sa.DateTime, nullable=False)
++        description = sa.Column(sa.String(db_string_length))
++        configurations = sa.Column(sa.String(4095), nullable=False)
+ 
+ 
+ #neutron/db/agentschedulers_db.py
+@@ -431,10 +453,15 @@ class Vip(BASEV2, HasId, HasTenant, HasS
+ 
+ #neutron/db/loadbalancer/loadbalancer_db.py
+ class Member(BASEV2, HasId, HasTenant, HasStatusDescription):
+-    __table_args__ = (
+-        sa.schema.UniqueConstraint('pool_id', 'address', 'protocol_port',
+-                                   name='uniq_member0pool_id0address0port'),
+-    )
++    
++    # MySQL Cluster NDB does not support this constraint.
++    # TODO (oorgeron) Look into making this workable.
++    if CONF.database.mysql_storage_engine != "NDBCLUSTER":
++        __table_args__ = (
++            sa.schema.UniqueConstraint('pool_id', 'address', 'protocol_port',
++                                       name='uniq_member0pool_id0address0port'),
++        )
++
+     pool_id = sa.Column(sa.String(36), sa.ForeignKey("pools.id"),
+                         nullable=False)
+     address = sa.Column(sa.String(64), nullable=False)
+@@ -1229,8 +1256,15 @@ class PortBinding(BASEV2):
+     profile = sa.Column(sa.String(BINDING_PROFILE_LEN), nullable=False,
+                         default='', server_default='')
+     vif_type = sa.Column(sa.String(64), nullable=False)
+-    vif_details = sa.Column(sa.String(4095), nullable=False, default='',
++    if CONF.database.mysql_storage_engine == "NDBCLUSTER":
++        vif_details = sa.Column(sa.Text(4095), nullable=False)
++        profile = sa.Column(sa.Text(length=4095),nullable=False)
++    else:
++        vif_details = sa.Column(sa.String(4095), nullable=False,
++                                server_default='')
++        profile = sa.Column(sa.String(length=4095),nullable=False,
+                             server_default='')
++
+     driver = sa.Column(sa.String(64))
+     segment = sa.Column(sa.String(36),
+                         sa.ForeignKey('ml2_network_segments.id',
+@@ -1827,10 +1861,17 @@ class PoolPort(BASEV2):
+ class IdentifierMap(BASEV2, HasTenant):
+     __tablename__ = 'cisco_csr_identifier_map'
+ 
+-    ipsec_site_conn_id = sa.Column(sa.String(64),
+-                                   sa.ForeignKey('ipsec_site_connections.id',
+-                                                 ondelete="CASCADE"),
+-                                   primary_key=True)
++    if CONF.database.mysql_storage_engine == "NDBCLUSTER":
++        ipsec_site_conn_id = sa.Column(sa.String(36),
++                                       sa.ForeignKey('ipsec_site_connections.id',
++                                                     ondelete="CASCADE"),
++                                       primary_key=True)
++    else:
++        ipsec_site_conn_id = sa.Column(sa.String(64),
++                                       sa.ForeignKey('ipsec_site_connections.id',
++                                                     ondelete="CASCADE"),
++                                       primary_key=True)
++
+     csr_tunnel_id = sa.Column(sa.Integer, nullable=False)
+     csr_ike_policy_id = sa.Column(sa.Integer, nullable=False)
+     csr_ipsec_policy_id = sa.Column(sa.Integer, nullable=False)
+--- neutron-2015.1.2/neutron/db/migration/alembic_migrations/heal_script.py.orig	2016-03-29 17:20:23.000000000 -0600
++++ neutron-2015.1.2/neutron/db/migration/alembic_migrations/heal_script.py	2016-03-29 17:21:15.451095269 -0600
+@@ -29,6 +29,12 @@ from sqlalchemy import types
+ from neutron.db.migration.models import frozen as frozen_models
+ from neutron.i18n import _LI, _LW
+ 
++from oslo_config import cfg
++
++from alembic import context
++config = context.config
++CONF = config.neutron_config
++
+ LOG = logging.getLogger(__name__)
+ 
+ METHODS = {}
+@@ -70,7 +76,10 @@ def heal():
+         'compare_server_default': _compare_server_default,
+     }
+     mc = alembic.migration.MigrationContext.configure(op.get_bind(), opts=opts)
+-    set_storage_engine(op.get_bind(), "InnoDB")
++    if CONF.database.mysql_storage_engine == "NDBCLUSTER":
++        set_storage_engine(op.get_bind(), 'NDBCLUSTER')
++    else:
++        set_storage_engine(op.get_bind(), 'InnoDB')
+     diff = autogen.compare_metadata(mc, models_metadata)
+     for el in diff:
+         execute_alembic_command(el)
+@@ -286,4 +295,4 @@ def set_storage_engine(bind, engine):
+     if bind.dialect.name == 'mysql':
+         for table in insp.get_table_names():
+             if insp.get_table_options(table)['mysql_engine'] != engine:
+-                op.execute("ALTER TABLE %s ENGINE=%s" % (table, engine))
++                op.execute("ALTER TABLE %(db_table)s Engine=%(mysql_storage_engine)s" % dict(db_table=table, mysql_storage_engine=CONF.database.mysql_storage_engine))
+--- neutron-2015.1.2/neutron/db/migration/alembic_migrations/agent_init_ops.py.orig	2016-03-29 17:20:23.000000000 -0600
++++ neutron-2015.1.2/neutron/db/migration/alembic_migrations/agent_init_ops.py	2016-03-30 13:57:42.770400120 -0600
+@@ -21,19 +21,44 @@
+ from alembic import op
+ import sqlalchemy as sa
+ 
++from alembic import context
++config = context.config
++
++CONF = config.neutron_config
++
++if CONF.database.mysql_storage_engine == "NDBCLUSTER":
++   db_string_length = 128
++else:
++   db_string_length = 256
+ 
+ def upgrade():
+-    op.create_table(
+-        'agents',
+-        sa.Column('id', sa.String(length=36), nullable=False),
+-        sa.Column('agent_type', sa.String(length=255), nullable=False),
+-        sa.Column('binary', sa.String(length=255), nullable=False),
+-        sa.Column('topic', sa.String(length=255), nullable=False),
+-        sa.Column('host', sa.String(length=255), nullable=False),
+-        sa.Column('admin_state_up', sa.Boolean(), nullable=False),
+-        sa.Column('created_at', sa.DateTime(), nullable=False),
+-        sa.Column('started_at', sa.DateTime(), nullable=False),
+-        sa.Column('heartbeat_timestamp', sa.DateTime(), nullable=False),
+-        sa.Column('description', sa.String(length=255), nullable=True),
+-        sa.Column('configurations', sa.String(length=4095), nullable=False),
+-        sa.PrimaryKeyConstraint('id'))
++    if CONF.database.mysql_storage_engine == "NDBCLUSTER":
++        op.create_table(
++            'agents',
++            sa.Column('id', sa.String(length=36), nullable=False),
++            sa.Column('agent_type', sa.String(length=db_string_length), nullable=False),
++            sa.Column('binary', sa.String(length=db_string_length), nullable=False),
++            sa.Column('topic', sa.String(length=db_string_length), nullable=False),
++            sa.Column('host', sa.String(length=db_string_length), nullable=False),
++            sa.Column('admin_state_up', sa.Boolean(), nullable=False),
++            sa.Column('created_at', sa.DateTime(), nullable=False),
++            sa.Column('started_at', sa.DateTime(), nullable=False),
++            sa.Column('heartbeat_timestamp', sa.DateTime(), nullable=False),
++            sa.Column('description', sa.String(length=db_string_length), nullable=True),
++            sa.Column('configurations', sa.Text(length=4095), nullable=False),
++            sa.PrimaryKeyConstraint('id'))
++    else:
++        op.create_table(
++            'agents',
++            sa.Column('id', sa.String(length=36), nullable=False),
++            sa.Column('agent_type', sa.String(length=db_string_length), nullable=False),
++            sa.Column('binary', sa.String(length=db_string_length), nullable=False),
++            sa.Column('topic', sa.String(length=db_string_length), nullable=False),
++            sa.Column('host', sa.String(length=db_string_length), nullable=False),
++            sa.Column('admin_state_up', sa.Boolean(), nullable=False),
++            sa.Column('created_at', sa.DateTime(), nullable=False),
++            sa.Column('started_at', sa.DateTime(), nullable=False),
++            sa.Column('heartbeat_timestamp', sa.DateTime(), nullable=False),
++            sa.Column('description', sa.String(length=db_string_length), nullable=True),
++            sa.Column('configurations', sa.String(length=4095), nullable=False),
++            sa.PrimaryKeyConstraint('id'))
+--- neutron-2015.1.2/neutron/db/migration/alembic_migrations/versions/86d6d9776e2b_cisco_apic_driver_update_l3.py.orig	2016-03-29 17:20:23.000000000 -0600
++++ neutron-2015.1.2/neutron/db/migration/alembic_migrations/versions/86d6d9776e2b_cisco_apic_driver_update_l3.py	2016-03-29 17:21:15.451521500 -0600
+@@ -29,15 +29,29 @@ down_revision = '236b90af57ab'
+ from alembic import op
+ import sqlalchemy as sa
+ 
++from oslo_config import cfg
++
++from alembic import context
++config = context.config
++CONF = config.neutron_config
++
+ 
+ def upgrade():
+ 
+     op.drop_table('cisco_ml2_apic_contracts')
+     op.drop_table('cisco_ml2_apic_epgs')
+ 
+-    op.create_table(
+-        'cisco_ml2_apic_contracts',
+-        sa.Column('tenant_id', sa.String(length=255)),
+-        sa.Column('router_id', sa.String(length=64), nullable=False),
+-        sa.ForeignKeyConstraint(['router_id'], ['routers.id']),
+-        sa.PrimaryKeyConstraint('router_id'))
++    if CONF.database.mysql_storage_engine == "NDBCLUSTER":
++        op.create_table(
++            'cisco_ml2_apic_contracts',
++            sa.Column('tenant_id', sa.String(length=255)),
++            sa.Column('router_id', sa.String(length=36), nullable=False),
++            sa.ForeignKeyConstraint(['router_id'], ['routers.id']),
++            sa.PrimaryKeyConstraint('router_id'))
++    else:
++        op.create_table(
++            'cisco_ml2_apic_contracts',
++            sa.Column('tenant_id', sa.String(length=255)),
++            sa.Column('router_id', sa.String(length=64), nullable=False),
++            sa.ForeignKeyConstraint(['router_id'], ['routers.id']),
++            sa.PrimaryKeyConstraint('router_id'))
+--- neutron-2015.1.2/neutron/db/migration/alembic_migrations/versions/327ee5fde2c7_set_innodb_engine.py.orig	2016-03-29 17:20:23.000000000 -0600
++++ neutron-2015.1.2/neutron/db/migration/alembic_migrations/versions/327ee5fde2c7_set_innodb_engine.py	2016-03-29 17:21:15.451795926 -0600
+@@ -28,6 +28,12 @@ down_revision = '4eba2f05c2f4'
+ 
+ from alembic import op
+ 
++from oslo_config import cfg
++
++from alembic import context
++config = context.config
++CONF = config.neutron_config
++
+ # This list contain tables that could be deployed before change that converts
+ # all tables to InnoDB appeared
+ TABLES = ['router_extra_attributes', 'dvr_host_macs', 'ml2_dvr_port_bindings',
+@@ -37,4 +43,4 @@ TABLES = ['router_extra_attributes', 'dv
+ def upgrade():
+     if op.get_bind().dialect.name == 'mysql':
+         for table in TABLES:
+-            op.execute("ALTER TABLE %s ENGINE=InnoDB" % table)
++            op.execute("ALTER TABLE %(db_table)s ENGINE=%(mysql_storage_engine)s" % dict(db_table=table, mysql_storage_engine=CONF.database.mysql_storage_engine))
+--- neutron-2015.1.2/neutron/db/migration/alembic_migrations/versions/e197124d4b9_add_unique_constrain.py.orig	2016-03-29 17:20:23.000000000 -0600
++++ neutron-2015.1.2/neutron/db/migration/alembic_migrations/versions/e197124d4b9_add_unique_constrain.py	2016-03-30 13:38:00.739890667 -0600
+@@ -29,12 +29,24 @@ from alembic import op
+ 
+ from neutron.db import migration
+ 
++from oslo_config import cfg
++
++from alembic import context
++config = context.config
++CONF = config.neutron_config
+ 
+ CONSTRAINT_NAME = 'uniq_member0pool_id0address0port'
+ TABLE_NAME = 'members'
+ 
+ 
+ def upgrade():
++
++    # MySQL Cluster, a.k.a. NDB, does not support this migration step.
++    # This test will skip this migration.
++    # TODO (oorgeron) Look into making this workable.
++    if CONF.database.mysql_storage_engine == "NDBCLUSTER":
++        return
++
+     if migration.schema_has_table(TABLE_NAME):
+         op.create_unique_constraint(
+             name=CONSTRAINT_NAME,
+--- neutron-2015.1.2/neutron/db/migration/alembic_migrations/versions/157a5d299379_ml2_binding_profile.py.orig	2016-03-29 17:20:23.000000000 -0600
++++ neutron-2015.1.2/neutron/db/migration/alembic_migrations/versions/157a5d299379_ml2_binding_profile.py	2016-03-29 17:21:15.452255941 -0600
+@@ -30,9 +30,20 @@ import sqlalchemy as sa
+ 
+ from neutron.db import migration
+ 
++from alembic import context
++config = context.config
++
++CONF = config.neutron_config
+ 
+ def upgrade():
+     if migration.schema_has_table('ml2_port_bindings'):
+-        op.add_column('ml2_port_bindings',
+-                      sa.Column('profile', sa.String(length=4095),
+-                                nullable=False, server_default=''))
++        # MySQL Cluster (NDB) does not support rows longer than 14000.
++        # This configures the profile column as TEXT to keep the row size down.
++        if CONF.database.mysql_storage_engine == "NDBCLUSTER":
++            op.add_column('ml2_port_bindings',
++                          sa.Column('profile', sa.Text(length=4095),
++                                    nullable=False))
++        else:
++            op.add_column('ml2_port_bindings',
++                          sa.Column('profile', sa.String(length=4095),
++                                    nullable=False, server_default=''))
+--- neutron-2015.1.2/neutron/db/migration/alembic_migrations/versions/16cdf118d31d_extra_dhcp_options_ipv6_support.py.orig	2016-03-29 17:20:23.000000000 -0600
++++ neutron-2015.1.2/neutron/db/migration/alembic_migrations/versions/16cdf118d31d_extra_dhcp_options_ipv6_support.py	2016-03-30 13:38:40.736552814 -0600
+@@ -30,6 +30,12 @@ import sqlalchemy as sa
+ 
+ from neutron.db import migration
+ 
++from oslo_config import cfg
++
++from alembic import context
++config = context.config
++CONF = config.neutron_config
++
+ CONSTRAINT_NAME_OLD = 'uidx_portid_optname'
+ CONSTRAINT_NAME_NEW = 'uniq_extradhcpopts0portid0optname0ipversion'
+ TABLE_NAME = 'extradhcpopts'
+@@ -47,8 +53,11 @@ def upgrade():
+                   server_default='4', nullable=False))
+         op.execute("UPDATE extradhcpopts SET ip_version = 4")
+ 
+-    op.create_unique_constraint(
+-        name=CONSTRAINT_NAME_NEW,
+-        source='extradhcpopts',
+-        local_cols=['port_id', 'opt_name', 'ip_version']
+-    )
++    # MySQL Cluster NDB does not support this constraint.
++    # TODO (oorgeron) Look into making this workable.
++    if CONF.database.mysql_storage_engine != "NDBCLUSTER":
++        op.create_unique_constraint(
++            name=CONSTRAINT_NAME_NEW,
++            source='extradhcpopts',
++            local_cols=['port_id', 'opt_name', 'ip_version']
++        )
+--- neutron-2015.1.2/neutron/db/migration/alembic_migrations/versions/2026156eab2f_l2_dvr_models.py.orig	2016-03-29 17:20:23.000000000 -0600
++++ neutron-2015.1.2/neutron/db/migration/alembic_migrations/versions/2026156eab2f_l2_dvr_models.py	2016-03-29 17:21:15.452765470 -0600
+@@ -29,34 +29,71 @@ down_revision = '3927f7f7c456'
+ from alembic import op
+ import sqlalchemy as sa
+ 
++from alembic import context
++config = context.config
++
++CONF = config.neutron_config
+ 
+ def upgrade():
+-    op.create_table(
+-        'dvr_host_macs',
+-        sa.Column('host', sa.String(length=255), nullable=False),
+-        sa.Column('mac_address', sa.String(length=32),
+-                  nullable=False, unique=True),
+-        sa.PrimaryKeyConstraint('host')
+-    )
+-    op.create_table(
+-        'ml2_dvr_port_bindings',
+-        sa.Column('port_id', sa.String(length=36), nullable=False),
+-        sa.Column('host', sa.String(length=255), nullable=False),
+-        sa.Column('router_id', sa.String(length=36), nullable=True),
+-        sa.Column('vif_type', sa.String(length=64), nullable=False),
+-        sa.Column('vif_details', sa.String(length=4095),
+-                  nullable=False, server_default=''),
+-        sa.Column('vnic_type', sa.String(length=64),
+-                  nullable=False, server_default='normal'),
+-        sa.Column('profile', sa.String(length=4095),
+-                  nullable=False, server_default=''),
+-        sa.Column('cap_port_filter', sa.Boolean(), nullable=False),
+-        sa.Column('driver', sa.String(length=64), nullable=True),
+-        sa.Column('segment', sa.String(length=36), nullable=True),
+-        sa.Column(u'status', sa.String(16), nullable=False),
+-        sa.ForeignKeyConstraint(['port_id'], ['ports.id'],
+-                                ondelete='CASCADE'),
+-        sa.ForeignKeyConstraint(['segment'], ['ml2_network_segments.id'],
+-                                ondelete='SET NULL'),
+-        sa.PrimaryKeyConstraint('port_id', 'host')
+-    )
++    # MySQL Cluster (NDB) does not support rows longer than 14000.
++    # This reduces the size of columns or converts them to TEXT to keep the row size down.
++    if CONF.database.mysql_storage_engine == "NDBCLUSTER":
++        op.create_table(
++            'dvr_host_macs',
++            sa.Column('host', sa.String(length=128), nullable=False),
++            sa.Column('mac_address', sa.String(length=32),
++                      nullable=False, unique=True),
++            sa.PrimaryKeyConstraint('host')
++        )
++        op.create_table(
++            'ml2_dvr_port_bindings',
++            sa.Column('port_id', sa.String(length=36), nullable=False),
++            sa.Column('host', sa.String(length=128), nullable=False),
++            sa.Column('router_id', sa.String(length=36), nullable=True),
++            sa.Column('vif_type', sa.String(length=64), nullable=False),
++            sa.Column('vif_details', sa.Text(length=4095),
++                      nullable=False, server_default=''),
++            sa.Column('vnic_type', sa.String(length=64),
++                      nullable=False, server_default='normal'),
++            sa.Column('profile', sa.Text(length=4095),
++                      nullable=False, server_default=''),
++            sa.Column('cap_port_filter', sa.Boolean(), nullable=False),
++            sa.Column('driver', sa.String(length=64), nullable=True),
++            sa.Column('segment', sa.String(length=36), nullable=True),
++            sa.Column(u'status', sa.String(16), nullable=False),
++            sa.ForeignKeyConstraint(['port_id'], ['ports.id'],
++                                    ondelete='CASCADE'),
++            sa.ForeignKeyConstraint(['segment'], ['ml2_network_segments.id'],
++                                    ondelete='SET NULL'),
++            sa.PrimaryKeyConstraint('port_id', 'host')
++        )
++    else:
++        op.create_table(
++            'dvr_host_macs',
++            sa.Column('host', sa.String(length=255), nullable=False),
++            sa.Column('mac_address', sa.String(length=32),
++                      nullable=False, unique=True),
++            sa.PrimaryKeyConstraint('host')
++        )
++        op.create_table(
++            'ml2_dvr_port_bindings',
++            sa.Column('port_id', sa.String(length=36), nullable=False),
++            sa.Column('host', sa.String(length=255), nullable=False),
++            sa.Column('router_id', sa.String(length=36), nullable=True),
++            sa.Column('vif_type', sa.String(length=64), nullable=False),
++            sa.Column('vif_details', sa.String(length=4095),
++                      nullable=False, server_default=''),
++            sa.Column('vnic_type', sa.String(length=64),
++                      nullable=False, server_default='normal'),
++            sa.Column('profile', sa.String(length=4095),
++                      nullable=False, server_default=''),
++            sa.Column('cap_port_filter', sa.Boolean(), nullable=False),
++            sa.Column('driver', sa.String(length=64), nullable=True),
++            sa.Column('segment', sa.String(length=36), nullable=True),
++            sa.Column(u'status', sa.String(16), nullable=False),
++            sa.ForeignKeyConstraint(['port_id'], ['ports.id'],
++                                    ondelete='CASCADE'),
++            sa.ForeignKeyConstraint(['segment'], ['ml2_network_segments.id'],
++                                    ondelete='SET NULL'),
++            sa.PrimaryKeyConstraint('port_id', 'host')
++        )
+--- neutron-2015.1.2/neutron/db/migration/alembic_migrations/versions/50d5ba354c23_ml2_binding_vif_details.py.orig	2016-03-29 17:20:23.000000000 -0600
++++ neutron-2015.1.2/neutron/db/migration/alembic_migrations/versions/50d5ba354c23_ml2_binding_vif_details.py	2016-03-29 17:21:15.452989732 -0600
+@@ -30,6 +30,10 @@ import sqlalchemy as sa
+ 
+ from neutron.db import migration
+ 
++from alembic import context
++config = context.config
++
++CONF = config.neutron_config
+ 
+ def upgrade():
+ 
+@@ -38,9 +42,17 @@ def upgrade():
+         # did not create the ml2_port_bindings table.
+         return
+ 
+-    op.add_column('ml2_port_bindings',
+-                  sa.Column('vif_details', sa.String(length=4095),
+-                            nullable=False, server_default=''))
++    # MySQL Cluster (NDB) does not support rows longer than 14000.
++    # This converts vif_details to TEXT to keep the row size down.
++    if CONF.database.mysql_storage_engine == "NDBCLUSTER":
++        op.add_column('ml2_port_bindings',
++                      sa.Column('vif_details', sa.Text(length=4095),
++                                nullable=False))
++    else:
++        op.add_column('ml2_port_bindings',
++                      sa.Column('vif_details', sa.String(length=4095),
++                                nullable=False, server_default=''))
++
+     if op.get_bind().engine.name == 'ibm_db_sa':
+         op.execute(
+             "UPDATE ml2_port_bindings SET"
+--- neutron-2015.1.2/neutron/db/migration/alembic_migrations/versions/2a1ee2fb59e0_add_mac_address_unique_constraint.py.orig	2016-03-29 17:20:23.000000000 -0600
++++ neutron-2015.1.2/neutron/db/migration/alembic_migrations/versions/2a1ee2fb59e0_add_mac_address_unique_constraint.py	2016-03-30 13:39:17.728617445 -0600
+@@ -27,13 +27,25 @@ down_revision = '41662e32bce2'
+ 
+ from alembic import op
+ 
++from oslo_config import cfg
++
++from alembic import context
++config = context.config
++CONF = config.neutron_config
++
+ TABLE_NAME = 'ports'
+ CONSTRAINT_NAME = 'uniq_ports0network_id0mac_address'
+ 
+ 
+ def upgrade():
+-    op.create_unique_constraint(
+-        name=CONSTRAINT_NAME,
+-        source=TABLE_NAME,
+-        local_cols=['network_id', 'mac_address']
+-    )
++
++    # MySQL Cluster NDB does not support this constraint.
++    # TODO (oorgeron) Look into making this workable.
++    if CONF.database.mysql_storage_engine == "NDBCLUSTER":
++        return
++    else:
++        op.create_unique_constraint(
++            name=CONSTRAINT_NAME,
++            source=TABLE_NAME,
++            local_cols=['network_id', 'mac_address']
++        )
+--- neutron-2015.1.2/neutron/db/migration/alembic_migrations/versions/24c7ea5160d7_cisco_csr_vpnaas.py.orig	2016-03-29 17:20:23.000000000 -0600
++++ neutron-2015.1.2/neutron/db/migration/alembic_migrations/versions/24c7ea5160d7_cisco_csr_vpnaas.py	2016-03-29 17:21:15.453456539 -0600
+@@ -28,20 +28,39 @@ import sqlalchemy as sa
+ 
+ from neutron.db import migration
+ 
++from oslo_config import cfg
++
++from alembic import context
++config = context.config
++CONF = config.neutron_config
+ 
+ def upgrade():
+     if not migration.schema_has_table('ipsec_site_connections'):
+         # The vpnaas service plugin was not configured.
+         return
+-    op.create_table(
+-        'cisco_csr_identifier_map',
+-        sa.Column('tenant_id', sa.String(length=255), nullable=True),
+-        sa.Column('ipsec_site_conn_id', sa.String(length=64),
+-                  primary_key=True),
+-        sa.Column('csr_tunnel_id', sa.Integer(), nullable=False),
+-        sa.Column('csr_ike_policy_id', sa.Integer(), nullable=False),
+-        sa.Column('csr_ipsec_policy_id', sa.Integer(), nullable=False),
+-        sa.ForeignKeyConstraint(['ipsec_site_conn_id'],
+-                                ['ipsec_site_connections.id'],
+-                                ondelete='CASCADE')
+-    )
++    if CONF.database.mysql_storage_engine == "NDBCLUSTER":
++        op.create_table(
++            'cisco_csr_identifier_map',
++            sa.Column('tenant_id', sa.String(length=255), nullable=True),
++            sa.Column('ipsec_site_conn_id', sa.String(length=36),
++                      primary_key=True),
++            sa.Column('csr_tunnel_id', sa.Integer(), nullable=False),
++            sa.Column('csr_ike_policy_id', sa.Integer(), nullable=False),
++            sa.Column('csr_ipsec_policy_id', sa.Integer(), nullable=False),
++            sa.ForeignKeyConstraint(['ipsec_site_conn_id'],
++                                    ['ipsec_site_connections.id'],
++                                    ondelete='CASCADE')
++        )
++    else:  
++        op.create_table(
++            'cisco_csr_identifier_map',
++            sa.Column('tenant_id', sa.String(length=255), nullable=True),
++            sa.Column('ipsec_site_conn_id', sa.String(length=64),
++                      primary_key=True),
++            sa.Column('csr_tunnel_id', sa.Integer(), nullable=False),
++            sa.Column('csr_ike_policy_id', sa.Integer(), nullable=False),
++            sa.Column('csr_ipsec_policy_id', sa.Integer(), nullable=False),
++            sa.ForeignKeyConstraint(['ipsec_site_conn_id'],
++                                    ['ipsec_site_connections.id'],
++                                    ondelete='CASCADE')
++        )
