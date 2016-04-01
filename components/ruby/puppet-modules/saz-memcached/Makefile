@@ -26,16 +26,16 @@
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		saz-memcached
-COMPONENT_VERSION=	2.7.1
+COMPONENT_VERSION=	2.8.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:d89cb474eef11f1b8762df5322efa5a1bfb99ee40895e96c40c27f9477b21f66
+    sha256:ec397e17e76d910cab3e30b0808f8cc67586990eebbe04edce1953827448e598
 COMPONENT_ARCHIVE_URL=	http://forgeapi.puppetlabs.com/v3/files/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://www.openstack.org/
 COMPONENT_BUGDB=	utility/puppet
 
-TPNO=			24167
+TPNO=			27494
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/puppetmodule.mk
