@@ -20,7 +20,7 @@
 #
 # Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openssh
 COMPONENT_VERSION=	7.1p2
