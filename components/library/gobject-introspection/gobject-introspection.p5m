@@ -1,14 +1,16 @@
 #
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL"). You may
-# only use this file in accordance with the terms of the CDDL.
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
-# source. A copy of the CDDL is also available via the Internet at
+# source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
 #
 
 #
+# Copyright 2016 Marcel Telka <marcel@telka.sk>
 # Copyright 2014 Alexander Pyhalov. All rights reserved.
 #
 
@@ -25,10 +27,12 @@ file usr/lib/$(MACH64)/gobject-introspection/giscanner/_giscanner.so  path=usr/l
 
 file path=usr/bin/$(MACH64)/g-ir-annotation-tool pkg.depend.bypass-generate=.*
 file path=usr/bin/$(MACH64)/g-ir-compiler
+file path=usr/bin/$(MACH64)/g-ir-doc-tool pkg.depend.bypass-generate=.*
 file path=usr/bin/$(MACH64)/g-ir-generate
 file path=usr/bin/$(MACH64)/g-ir-scanner pkg.depend.bypass-generate=.*
 file path=usr/bin/g-ir-annotation-tool pkg.depend.bypass-generate=.*
 file path=usr/bin/g-ir-compiler
+file path=usr/bin/g-ir-doc-tool pkg.depend.bypass-generate=.*
 file path=usr/bin/g-ir-generate
 file path=usr/bin/g-ir-scanner pkg.depend.bypass-generate=.*
 file path=usr/include/gobject-introspection-1.0/giarginfo.h
@@ -50,6 +54,7 @@ file path=usr/include/gobject-introspection-1.0/gitypeinfo.h
 file path=usr/include/gobject-introspection-1.0/gitypelib.h
 file path=usr/include/gobject-introspection-1.0/gitypes.h
 file path=usr/include/gobject-introspection-1.0/giunioninfo.h
+file path=usr/include/gobject-introspection-1.0/giversionmacros.h
 file path=usr/include/gobject-introspection-1.0/givfuncinfo.h
 file path=usr/lib/$(MACH64)/girepository-1.0/DBus-1.0.typelib
 file path=usr/lib/$(MACH64)/girepository-1.0/DBusGLib-1.0.typelib
@@ -63,6 +68,7 @@ file path=usr/lib/$(MACH64)/girepository-1.0/cairo-1.0.typelib
 file path=usr/lib/$(MACH64)/girepository-1.0/fontconfig-2.0.typelib
 file path=usr/lib/$(MACH64)/girepository-1.0/freetype2-2.0.typelib
 file path=usr/lib/$(MACH64)/girepository-1.0/libxml2-2.0.typelib
+file path=usr/lib/$(MACH64)/girepository-1.0/win32-1.0.typelib
 file path=usr/lib/$(MACH64)/girepository-1.0/xfixes-4.0.typelib
 file path=usr/lib/$(MACH64)/girepository-1.0/xft-2.0.typelib
 file path=usr/lib/$(MACH64)/girepository-1.0/xlib-2.0.typelib
@@ -86,6 +92,7 @@ file path=usr/lib/girepository-1.0/cairo-1.0.typelib
 file path=usr/lib/girepository-1.0/fontconfig-2.0.typelib
 file path=usr/lib/girepository-1.0/freetype2-2.0.typelib
 file path=usr/lib/girepository-1.0/libxml2-2.0.typelib
+file path=usr/lib/girepository-1.0/win32-1.0.typelib
 file path=usr/lib/girepository-1.0/xfixes-4.0.typelib
 file path=usr/lib/girepository-1.0/xft-2.0.typelib
 file path=usr/lib/girepository-1.0/xlib-2.0.typelib
@@ -97,16 +104,69 @@ file path=usr/lib/gobject-introspection/giscanner/annotationmain.py
 file path=usr/lib/gobject-introspection/giscanner/annotationmain.pyc
 file path=usr/lib/gobject-introspection/giscanner/annotationparser.py
 file path=usr/lib/gobject-introspection/giscanner/annotationparser.pyc
-file path=usr/lib/gobject-introspection/giscanner/annotationpatterns.py
-file path=usr/lib/gobject-introspection/giscanner/annotationpatterns.pyc
 file path=usr/lib/gobject-introspection/giscanner/ast.py
 file path=usr/lib/gobject-introspection/giscanner/ast.pyc
 file path=usr/lib/gobject-introspection/giscanner/cachestore.py
 file path=usr/lib/gobject-introspection/giscanner/cachestore.pyc
+file path=usr/lib/gobject-introspection/giscanner/ccompiler.py
+file path=usr/lib/gobject-introspection/giscanner/ccompiler.pyc
 file path=usr/lib/gobject-introspection/giscanner/codegen.py
 file path=usr/lib/gobject-introspection/giscanner/codegen.pyc
+file path=usr/lib/gobject-introspection/giscanner/collections/__init__.py
+file path=usr/lib/gobject-introspection/giscanner/collections/__init__.pyc
+file path=usr/lib/gobject-introspection/giscanner/collections/counter.py
+file path=usr/lib/gobject-introspection/giscanner/collections/counter.pyc
+file path=usr/lib/gobject-introspection/giscanner/collections/ordereddict.py
+file path=usr/lib/gobject-introspection/giscanner/collections/ordereddict.pyc
 file path=usr/lib/gobject-introspection/giscanner/docmain.py
 file path=usr/lib/gobject-introspection/giscanner/docmain.pyc
+file path=usr/lib/gobject-introspection/giscanner/doctemplates/C/callback.tmpl
+file path=usr/lib/gobject-introspection/giscanner/doctemplates/C/class.tmpl
+file path=usr/lib/gobject-introspection/giscanner/doctemplates/C/constructor.tmpl
+file path=usr/lib/gobject-introspection/giscanner/doctemplates/C/default.tmpl
+file path=usr/lib/gobject-introspection/giscanner/doctemplates/C/enum.tmpl
+file path=usr/lib/gobject-introspection/giscanner/doctemplates/C/field.tmpl
+file path=usr/lib/gobject-introspection/giscanner/doctemplates/C/function.tmpl
+file path=usr/lib/gobject-introspection/giscanner/doctemplates/C/interface.tmpl
+file path=usr/lib/gobject-introspection/giscanner/doctemplates/C/method.tmpl
+file path=usr/lib/gobject-introspection/giscanner/doctemplates/C/namespace.tmpl
+file path=usr/lib/gobject-introspection/giscanner/doctemplates/C/property.tmpl
+file path=usr/lib/gobject-introspection/giscanner/doctemplates/C/record.tmpl
+file path=usr/lib/gobject-introspection/giscanner/doctemplates/C/signal.tmpl
+file path=usr/lib/gobject-introspection/giscanner/doctemplates/C/vfunc.tmpl
+file path=usr/lib/gobject-introspection/giscanner/doctemplates/Gjs/callback.tmpl
+file path=usr/lib/gobject-introspection/giscanner/doctemplates/Gjs/class.tmpl
+file path=usr/lib/gobject-introspection/giscanner/doctemplates/Gjs/constructor.tmpl
+file path=usr/lib/gobject-introspection/giscanner/doctemplates/Gjs/default.tmpl
+file path=usr/lib/gobject-introspection/giscanner/doctemplates/Gjs/enum.tmpl
+file path=usr/lib/gobject-introspection/giscanner/doctemplates/Gjs/field.tmpl
+file path=usr/lib/gobject-introspection/giscanner/doctemplates/Gjs/function.tmpl
+file path=usr/lib/gobject-introspection/giscanner/doctemplates/Gjs/interface.tmpl
+file path=usr/lib/gobject-introspection/giscanner/doctemplates/Gjs/method.tmpl
+file path=usr/lib/gobject-introspection/giscanner/doctemplates/Gjs/namespace.tmpl
+file path=usr/lib/gobject-introspection/giscanner/doctemplates/Gjs/property.tmpl
+file path=usr/lib/gobject-introspection/giscanner/doctemplates/Gjs/record.tmpl
+file path=usr/lib/gobject-introspection/giscanner/doctemplates/Gjs/signal.tmpl
+file path=usr/lib/gobject-introspection/giscanner/doctemplates/Gjs/vfunc.tmpl
+file path=usr/lib/gobject-introspection/giscanner/doctemplates/Python/callback.tmpl
+file path=usr/lib/gobject-introspection/giscanner/doctemplates/Python/class.tmpl
+file path=usr/lib/gobject-introspection/giscanner/doctemplates/Python/constructor.tmpl
+file path=usr/lib/gobject-introspection/giscanner/doctemplates/Python/default.tmpl
+file path=usr/lib/gobject-introspection/giscanner/doctemplates/Python/enum.tmpl
+file path=usr/lib/gobject-introspection/giscanner/doctemplates/Python/field.tmpl
+file path=usr/lib/gobject-introspection/giscanner/doctemplates/Python/function.tmpl
+file path=usr/lib/gobject-introspection/giscanner/doctemplates/Python/interface.tmpl
+file path=usr/lib/gobject-introspection/giscanner/doctemplates/Python/method.tmpl
+file path=usr/lib/gobject-introspection/giscanner/doctemplates/Python/namespace.tmpl
+file path=usr/lib/gobject-introspection/giscanner/doctemplates/Python/property.tmpl
+file path=usr/lib/gobject-introspection/giscanner/doctemplates/Python/record.tmpl
+file path=usr/lib/gobject-introspection/giscanner/doctemplates/Python/signal.tmpl
+file path=usr/lib/gobject-introspection/giscanner/doctemplates/Python/vfunc.tmpl
+file path=usr/lib/gobject-introspection/giscanner/doctemplates/base.tmpl
+file path=usr/lib/gobject-introspection/giscanner/doctemplates/class.tmpl
+file path=usr/lib/gobject-introspection/giscanner/doctemplates/namespace.tmpl
+file path=usr/lib/gobject-introspection/giscanner/docwriter.py
+file path=usr/lib/gobject-introspection/giscanner/docwriter.pyc
 file path=usr/lib/gobject-introspection/giscanner/dumper.py
 file path=usr/lib/gobject-introspection/giscanner/dumper.pyc
 file path=usr/lib/gobject-introspection/giscanner/gdumpparser.py
@@ -121,32 +181,12 @@ file path=usr/lib/gobject-introspection/giscanner/libtoolimporter.py
 file path=usr/lib/gobject-introspection/giscanner/libtoolimporter.pyc
 file path=usr/lib/gobject-introspection/giscanner/maintransformer.py
 file path=usr/lib/gobject-introspection/giscanner/maintransformer.pyc
-file path=usr/lib/gobject-introspection/giscanner/mallard-C-class.tmpl
-file path=usr/lib/gobject-introspection/giscanner/mallard-C-default.tmpl
-file path=usr/lib/gobject-introspection/giscanner/mallard-C-enum.tmpl
-file path=usr/lib/gobject-introspection/giscanner/mallard-C-function.tmpl
-file path=usr/lib/gobject-introspection/giscanner/mallard-C-namespace.tmpl
-file path=usr/lib/gobject-introspection/giscanner/mallard-C-property.tmpl
-file path=usr/lib/gobject-introspection/giscanner/mallard-C-record.tmpl
-file path=usr/lib/gobject-introspection/giscanner/mallard-C-signal.tmpl
-file path=usr/lib/gobject-introspection/giscanner/mallard-C-vfunc.tmpl
-file path=usr/lib/gobject-introspection/giscanner/mallard-Python-class.tmpl
-file path=usr/lib/gobject-introspection/giscanner/mallard-Python-default.tmpl
-file path=usr/lib/gobject-introspection/giscanner/mallard-Python-enum.tmpl
-file path=usr/lib/gobject-introspection/giscanner/mallard-Python-function.tmpl
-file path=usr/lib/gobject-introspection/giscanner/mallard-Python-namespace.tmpl
-file path=usr/lib/gobject-introspection/giscanner/mallard-Python-property.tmpl
-file path=usr/lib/gobject-introspection/giscanner/mallard-Python-record.tmpl
-file path=usr/lib/gobject-introspection/giscanner/mallard-Python-signal.tmpl
-file path=usr/lib/gobject-introspection/giscanner/mallard-Python-vfunc.tmpl
-file path=usr/lib/gobject-introspection/giscanner/mallardwriter.py
-file path=usr/lib/gobject-introspection/giscanner/mallardwriter.pyc
 file path=usr/lib/gobject-introspection/giscanner/message.py
 file path=usr/lib/gobject-introspection/giscanner/message.pyc
-file path=usr/lib/gobject-introspection/giscanner/odict.py
-file path=usr/lib/gobject-introspection/giscanner/odict.pyc
 file path=usr/lib/gobject-introspection/giscanner/scannermain.py
 file path=usr/lib/gobject-introspection/giscanner/scannermain.pyc
+file path=usr/lib/gobject-introspection/giscanner/sectionparser.py
+file path=usr/lib/gobject-introspection/giscanner/sectionparser.pyc
 file path=usr/lib/gobject-introspection/giscanner/shlibs.py
 file path=usr/lib/gobject-introspection/giscanner/shlibs.pyc
 file path=usr/lib/gobject-introspection/giscanner/sourcescanner.py
@@ -177,6 +217,7 @@ file path=usr/share/gir-1.0/cairo-1.0.gir
 file path=usr/share/gir-1.0/fontconfig-2.0.gir
 file path=usr/share/gir-1.0/freetype2-2.0.gir
 file path=usr/share/gir-1.0/libxml2-2.0.gir
+file path=usr/share/gir-1.0/win32-1.0.gir
 file path=usr/share/gir-1.0/xfixes-4.0.gir
 file path=usr/share/gir-1.0/xft-2.0.gir
 file path=usr/share/gir-1.0/xlib-2.0.gir
