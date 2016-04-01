@@ -12,7 +12,7 @@
 # Copyright 2011, 2013, EveryCity Ltd. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tmux
 COMPONENT_FMRI=		terminal/tmux
@@ -27,9 +27,9 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:795f4b4446b0ea968b9201c25e8c1ef8a6ade710ebca4657dd879c35916ad362
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/configure.mk
+include $(WS_TOP)/make-rules/ips.mk
 
 CFLAGS +=	-I/usr/include/ncurses
 LDFLAGS +=	-L/usr/gnu/lib -R/usr/gnu/lib
@@ -40,4 +40,4 @@ build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
 
-include ../../make-rules/depend.mk
+include $(WS_TOP)/make-rules/depend.mk
