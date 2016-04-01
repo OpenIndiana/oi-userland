@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
  *
  * This software is available to you under a choice of one of two
  * licenses.  You may choose to be licensed under the terms of the GNU
@@ -35,8 +35,6 @@
  */
 #if defined(__SVR4) && defined(__sun)
 
-#pragma ident	"@(#)solaris_set_nodedesc.c	1.2	11/01/25 SMI"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -55,6 +53,7 @@
 #include <infiniband/verbs.h>
 #include <infiniband/arch.h>
 #include <infiniband/umad.h>
+#include "ibdiag_common.h"
 
 #include <sys/ib/adapters/hermon/hermon_ioctl.h>
 
@@ -78,7 +77,6 @@
 #define	NODEDESC_UPDATE_HCA_STRING	0x00000002
 #define	NODEDESC_READ			0x80000000
 
-#include "ibdiag_common.h"
 
 static char *devpath_prefix = "/devices";
 static char *devpath_suffix = ":devctl";
@@ -198,7 +196,7 @@ do_driver_read_ioctl(char *drivername)
 		(void) snprintf(access_devname, devlength, "%s%s%s",
 		    devpath_prefix, devpath, devpath_suffix);
 		if ((devfd = open(access_devname, O_RDONLY)) < 0) {
-			IBERROR("open device file %s failed", access_devname);
+			IBEXIT("open device file %s failed", access_devname);
 			free(access_devname);
 			hcanode = di_drv_next_node(hcanode);
 			continue;
@@ -208,7 +206,7 @@ do_driver_read_ioctl(char *drivername)
 
 			if ((rc = ioctl(devfd, HERMON_IOCTL_GET_NODEDESC,
 			    (void *)&nodedesc_ioctl)) != 0) {
-				IBERROR("hermon ioctl failure");
+				IBEXIT("hermon ioctl failure");
 				free(access_devname);
 				close(devfd);
 				hcanode = di_drv_next_node(hcanode);
@@ -217,7 +215,7 @@ do_driver_read_ioctl(char *drivername)
 			add_read_info_arr((char *)nodedesc_ioctl.node_desc_str,
 			    *hca_guid);
 		} else {
-			IBERROR("drivername != hermon: %s", drivername);
+			IBEXIT("drivername != hermon: %s", drivername);
 		}
 
 		free(access_devname);
@@ -262,7 +260,7 @@ do_driver_update_ioctl(char *drivername, char *node_desc, char *hca_desc,
 
 	if ((hca_desc && childnode == DI_NODE_NIL) ||
 	    hcanode == DI_NODE_NIL) {
-		IBERROR("matching GUID not found");
+		IBEXIT("matching GUID not found");
 		return (-1);
 	}
 
@@ -273,7 +271,7 @@ do_driver_update_ioctl(char *drivername, char *node_desc, char *hca_desc,
 	(void) snprintf(access_devname, devlength, "%s%s%s",
 	    devpath_prefix, devpath, devpath_suffix);
 	if ((devfd = open(access_devname, O_RDONLY)) < 0) {
-		IBERROR("open device file %s failed", access_devname);
+		IBEXIT("open device file %s failed", access_devname);
 		free(access_devname);
 		return (rc);
 	}
@@ -288,15 +286,15 @@ do_driver_update_ioctl(char *drivername, char *node_desc, char *hca_desc,
 			nodedesc_ioctl.node_desc_update_flag =
 			    HERMON_NODEDESC_UPDATE_HCA_STRING;
 		else {
-			IBERROR("Invalid option");
+			IBEXIT("Invalid option");
 			exit(-1);
 		}
 		if ((rc = ioctl(devfd, HERMON_IOCTL_SET_NODEDESC,
 		    (void *)&nodedesc_ioctl)) != 0) {
-			IBERROR("hermon ioctl failure");
+			IBEXIT("hermon ioctl failure");
 		}
 	} else {
-		IBERROR("drivername != hermon: %s", drivername);
+		IBEXIT("drivername != hermon: %s", drivername);
 	}
 
 	free(access_devname);
@@ -311,7 +309,7 @@ read_nodedesc()
 
 	if ((di_rootnode = di_init("/", DINFOCPYALL | DINFOFORCE))
 	    == DI_NODE_NIL) {
-		IBERROR("read_nodedesc di_init failure");
+		IBEXIT("read_nodedesc di_init failure");
 		return;
 	}
 	for (i = 0; ib_hca_driver_list[i]; i++)
@@ -327,7 +325,7 @@ update_nodedesc(char *cmn_nodedesc, char *hca_nodedesc, uint64_t guid,
 
 	if ((di_rootnode = di_init("/", DINFOCPYALL | DINFOFORCE))
 	    == DI_NODE_NIL) {
-		IBERROR("di_init failure");
+		IBEXIT("di_init failure");
 		return (-1);
 	}
 	for (i = 0; ib_hca_driver_list[i]; i++) {
@@ -338,7 +336,7 @@ update_nodedesc(char *cmn_nodedesc, char *hca_nodedesc, uint64_t guid,
 			break;
 	}
 	if (rc)
-		IBERROR("Updated failed for all HCA drivers");
+		IBEXIT("Updated failed for all HCA drivers");
 
 	di_fini(di_rootnode);
 	return (rc);
@@ -504,7 +502,7 @@ main(int argc, char **argv)
 	}
 
 	if (hcadesc && guid_inited == B_FALSE) {
-		IBERROR("No GUID specified for HCA Node descriptor");
+		IBEXIT("No GUID specified for HCA Node descriptor");
 		usage();
 		rc = -1;
 		goto free_and_ret;
@@ -514,7 +512,7 @@ main(int argc, char **argv)
 		rc = update_nodedesc(nodedesc, NULL, 0,
 		    NODEDESC_UPDATE_STRING);
 		if (rc) {
-			IBERROR("write common node descriptor "
+			IBEXIT("write common node descriptor "
 			    "failed");
 			rc = -1;
 			goto free_and_ret;
@@ -525,7 +523,7 @@ main(int argc, char **argv)
 		rc = update_nodedesc(NULL, hcadesc, hca_guid,
 		    NODEDESC_UPDATE_HCA_STRING);
 		if (rc) {
-			IBERROR("update_hca_noddesc failed");
+			IBEXIT("update_hca_noddesc failed");
 			rc = -1;
 			goto free_and_ret;
 		}
@@ -535,7 +533,7 @@ main(int argc, char **argv)
 
 	if (nodedesc == NULL) {
 		if (uname(&uts_name) < 0) {
-			IBERROR("Node descriptor unspecified"
+			IBEXIT("Node descriptor unspecified"
 			    "& uts_name failed");
 			rc = -1;
 			goto free_and_ret;
@@ -553,7 +551,7 @@ main(int argc, char **argv)
 		rc = update_nodedesc(nodename, NULL, 0,
 		    NODEDESC_UPDATE_STRING);
 		if (rc) {
-			IBERROR("write common node descriptor failed");
+			IBEXIT("write common node descriptor failed");
 			rc = -1;
 		}
 	}

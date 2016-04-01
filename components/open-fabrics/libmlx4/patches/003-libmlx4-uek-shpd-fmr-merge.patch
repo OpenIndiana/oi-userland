@@ -1,0 +1,55 @@
+#This patch was developed both in-house and from outside. We plan to submit it
+#upstream, but do not yet have a target date for doing so
+#
+# HG changeset patch
+# Parent  feb9bdbadf6c3ec5d4c5c98487f14d9c894076eb
+
+diff -r feb9bdbadf6c src/mlx4.c
+--- a/src/mlx4.c	Thu Nov 19 10:26:02 2015 -0800
++++ b/src/mlx4.c	Thu Nov 19 14:04:18 2015 -0800
+@@ -90,9 +90,9 @@
+ 	.query_device  = mlx4_query_device,
+ 	.query_port    = mlx4_query_port,
+ 	.alloc_pd      = mlx4_alloc_pd,
+-	.dealloc_pd    = mlx4_free_pd,
+ 	.alloc_shpd    = mlx4_alloc_shpd,
+ 	.share_pd      = mlx4_share_pd,
++	.dealloc_pd    = mlx4_free_pd,
+ 	.reg_mr	       = mlx4_reg_mr,
+ 	.reg_mr_relaxed	       = mlx4_reg_mr_relaxed,
+ 	.dereg_mr      = mlx4_dereg_mr,
+diff -r feb9bdbadf6c src/mlx4.h
+--- a/src/mlx4.h	Thu Nov 19 10:26:02 2015 -0800
++++ b/src/mlx4.h	Thu Nov 19 14:04:18 2015 -0800
+@@ -374,9 +374,9 @@
+ int mlx4_close_xrcd(struct ibv_xrcd *xrcd);
+ 
+ struct ibv_mr *mlx4_reg_mr(struct ibv_pd *pd, void *addr,
+-			    size_t length, int access);
++			   size_t length, int access);
+ struct ibv_mr *mlx4_reg_mr_relaxed(struct ibv_pd *pd, void *addr,
+-			    size_t length, int access);
++				   size_t length, enum ibv_access_flags access);
+ int mlx4_dereg_mr(struct ibv_mr *mr);
+ int mlx4_dereg_mr_relaxed(struct ibv_mr *mr);
+ int mlx4_flush_relaxed_mr(struct ibv_pd *pd);
+diff -r feb9bdbadf6c src/verbs.c
+--- a/src/verbs.c	Thu Nov 19 10:26:02 2015 -0800
++++ b/src/verbs.c	Thu Nov 19 14:04:18 2015 -0800
+@@ -208,7 +208,7 @@
+ }
+ 
+ struct ibv_mr *mlx4_reg_mr_relaxed(struct ibv_pd *pd, void *addr, size_t length,
+-			   int access)
++			   enum ibv_access_flags access)
+ {
+ 	struct ibv_mr *mr;
+ 	struct ibv_reg_mr cmd;
+@@ -437,6 +437,7 @@
+ 	struct mlx4_resize_cq_resp	resp;
+ 	void				*cqbuf;
+ #endif
++
+ 	/* Sanity check CQ size before proceeding */
+ 	if (cqe > 0x3fffff)
+ 		return EINVAL;

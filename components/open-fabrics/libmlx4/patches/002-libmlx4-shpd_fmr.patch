@@ -1,0 +1,174 @@
+#This patch was developed both in-house and from outside. We plan to submit it
+#upstream, but do not yet have a target date for doing so
+#
+# HG changeset patch
+# Parent  cb9a51f3fdf99efd32b1dbadb44a974593c50163
+
+diff -r cb9a51f3fdf9 src/mlx4-abi.h
+--- a/src/mlx4-abi.h	Fri Nov 13 00:56:50 2015 -0800
++++ b/src/mlx4-abi.h	Fri Nov 13 00:58:16 2015 -0800
+@@ -78,6 +78,12 @@
+ 	__u32				reserved;
+ };
+ 
++struct mlx4_share_pd_resp {
++	struct ibv_share_pd_resp	ibv_resp;
++	__u32				pdn;
++	__u32				reserved;
++};
++
+ struct mlx4_create_cq {
+ 	struct ibv_create_cq		ibv_cmd;
+ #if !(defined(__SVR4) && defined(__sun))
+diff -r cb9a51f3fdf9 src/mlx4.c
+--- a/src/mlx4.c	Fri Nov 13 00:56:50 2015 -0800
++++ b/src/mlx4.c	Fri Nov 13 00:58:16 2015 -0800
+@@ -91,8 +91,13 @@
+ 	.query_port    = mlx4_query_port,
+ 	.alloc_pd      = mlx4_alloc_pd,
+ 	.dealloc_pd    = mlx4_free_pd,
++	.alloc_shpd    = mlx4_alloc_shpd,
++	.share_pd      = mlx4_share_pd,
+ 	.reg_mr	       = mlx4_reg_mr,
++	.reg_mr_relaxed	       = mlx4_reg_mr_relaxed,
+ 	.dereg_mr      = mlx4_dereg_mr,
++	.dereg_mr_relaxed      = mlx4_dereg_mr_relaxed,
++	.flush_relaxed_mr      = mlx4_flush_relaxed_mr,
+ 	.create_cq     = mlx4_create_cq,
+ 	.poll_cq       = mlx4_poll_cq,
+ 	.req_notify_cq = mlx4_arm_cq,
+diff -r cb9a51f3fdf9 src/mlx4.h
+--- a/src/mlx4.h	Fri Nov 13 00:56:50 2015 -0800
++++ b/src/mlx4.h	Fri Nov 13 00:58:16 2015 -0800
+@@ -366,6 +366,8 @@
+ 		     struct ibv_port_attr *attr);
+ 
+ struct ibv_pd *mlx4_alloc_pd(struct ibv_context *context);
++struct ibv_shpd *mlx4_alloc_shpd(struct ibv_pd *pd, uint64_t share_key, struct ibv_shpd *shpd);
++struct ibv_pd *mlx4_share_pd(struct ibv_context *context, struct ibv_shpd *shpd, uint64_t share_key);
+ int mlx4_free_pd(struct ibv_pd *pd);
+ struct ibv_xrcd *mlx4_open_xrcd(struct ibv_context *context,
+ 				struct ibv_xrcd_init_attr *attr);
+@@ -373,7 +375,11 @@
+ 
+ struct ibv_mr *mlx4_reg_mr(struct ibv_pd *pd, void *addr,
+ 			    size_t length, int access);
++struct ibv_mr *mlx4_reg_mr_relaxed(struct ibv_pd *pd, void *addr,
++			    size_t length, int access);
+ int mlx4_dereg_mr(struct ibv_mr *mr);
++int mlx4_dereg_mr_relaxed(struct ibv_mr *mr);
++int mlx4_flush_relaxed_mr(struct ibv_pd *pd);
+ 
+ struct ibv_cq *mlx4_create_cq(struct ibv_context *context, int cqe,
+ 			       struct ibv_comp_channel *channel,
+diff -r cb9a51f3fdf9 src/verbs.c
+--- a/src/verbs.c	Fri Nov 13 00:56:50 2015 -0800
++++ b/src/verbs.c	Fri Nov 13 00:58:16 2015 -0800
+@@ -103,6 +103,39 @@
+ 	return &pd->ibv_pd;
+ }
+ 
++struct ibv_shpd *mlx4_alloc_shpd(struct ibv_pd *pd, uint64_t share_key, struct ibv_shpd *shpd)
++{
++	struct ibv_alloc_shpd cmd;
++	struct ibv_alloc_shpd_resp resp;
++
++	if (ibv_cmd_alloc_shpd(pd->context, pd, share_key, shpd, &cmd, sizeof cmd,
++			     &resp, sizeof resp)) {
++		return NULL;
++	}
++
++	return shpd;
++}
++
++
++struct ibv_pd *mlx4_share_pd(struct ibv_context *context, struct ibv_shpd *shpd, uint64_t share_key)
++{
++	struct ibv_share_pd       cmd;
++	struct mlx4_share_pd_resp resp;
++	struct mlx4_pd		 *pd;
++
++	pd = malloc(sizeof *pd);
++	if (!pd)
++		return NULL;
++
++	if (ibv_cmd_share_pd(context, shpd, share_key, &pd->ibv_pd, &cmd, sizeof cmd,
++			     &resp.ibv_resp, sizeof resp)) {
++		free(pd);
++		return NULL;
++	}
++	pd->pdn = resp.pdn;
++	return &pd->ibv_pd;
++}
++
+ int mlx4_free_pd(struct ibv_pd *pd)
+ {
+ 	int ret;
+@@ -174,6 +207,37 @@
+ 	return mr;
+ }
+ 
++struct ibv_mr *mlx4_reg_mr_relaxed(struct ibv_pd *pd, void *addr, size_t length,
++			   int access)
++{
++	struct ibv_mr *mr;
++	struct ibv_reg_mr cmd;
++	int ret;
++
++	mr = malloc(sizeof *mr);
++	if (!mr)
++		return NULL;
++
++#ifdef IBV_CMD_REG_MR_RELAXED_HAS_RESP_PARAMS
++	{
++		struct ibv_reg_mr_resp resp;
++
++		ret = ibv_cmd_reg_mr_relaxed(pd, addr, length, (uintptr_t) addr,
++				     access, mr, &cmd, sizeof cmd,
++				     &resp, sizeof resp);
++	}
++#else
++	ret = ibv_cmd_reg_mr_relaxed(pd, addr, length, (uintptr_t) addr, access, mr,
++			     &cmd, sizeof cmd);
++#endif
++	if (ret) {
++		free(mr);
++		return NULL;
++	}
++
++	return mr;
++}
++
+ int mlx4_dereg_mr(struct ibv_mr *mr)
+ {
+ 	int ret;
+@@ -186,6 +250,29 @@
+ 	return 0;
+ }
+ 
++int mlx4_dereg_mr_relaxed(struct ibv_mr *mr)
++{
++	int ret;
++
++	ret = ibv_cmd_dereg_mr_relaxed(mr);
++	if (ret)
++		return ret;
++
++	free(mr);
++	return 0;
++}
++
++int mlx4_flush_relaxed_mr(struct ibv_pd *pd)
++{
++	int ret;
++
++	ret = ibv_cmd_flush_relaxed_mr(pd);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++
+ int align_queue_size(int req)
+ {
+ 	int nent;

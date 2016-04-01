@@ -1,0 +1,115 @@
+#This patch was developed both in-house and from outside. We plan to submit it
+#upstream, but do not yet have a target date for doing so
+#
+# HG changeset patch
+# Parent  56ebd417e6ed24cfa11c23bd564417ec7d2e5812
+Disable xrc routines in libmlx4
+
+diff -r 56ebd417e6ed src/srq.c
+--- a/src/srq.c	Wed Dec 02 15:27:52 2015 -0800
++++ b/src/srq.c	Wed Dec 02 15:47:02 2015 -0800
+@@ -286,6 +286,13 @@
+ struct ibv_srq *mlx4_create_xrc_srq(struct ibv_context *context,
+ 				    struct ibv_srq_init_attr_ex *attr_ex)
+ {
++#if defined(__SVR4) && defined(__sun)
++	/*
++	 * Not supported by Solaris kernel driver.  When/if supported
++	 * this routine will need to be ported.
++	 */
++	return NULL;
++#else
+ 	struct mlx4_create_xsrq cmd;
+ 	struct mlx4_create_srq_resp resp;
+ 	struct mlx4_srq *srq;
+@@ -362,10 +369,18 @@
+ err:
+ 	free(srq);
+ 	return NULL;
++#endif
+ }
+ 
+ int mlx4_destroy_xrc_srq(struct ibv_srq *srq)
+ {
++#if defined(__SVR4) && defined(__sun)
++        /*
++         * Not supported by Solaris kernel driver.  When/if supported
++         * this routine will need to be ported.
++         */
++        return NULL;
++#else
+ 	struct mlx4_context *mctx = to_mctx(srq->context);
+ 	struct mlx4_srq *msrq = to_msrq(srq);
+ 	struct mlx4_cq *mcq;
+@@ -391,4 +406,5 @@
+ 	free(msrq);
+ 
+ 	return 0;
++#endif
+ }
+diff -r 56ebd417e6ed src/verbs.c
+--- a/src/verbs.c	Wed Dec 02 15:27:52 2015 -0800
++++ b/src/verbs.c	Wed Dec 02 15:47:02 2015 -0800
+@@ -151,6 +151,13 @@
+ struct ibv_xrcd *mlx4_open_xrcd(struct ibv_context *context,
+ 				struct ibv_xrcd_init_attr *attr)
+ {
++#if defined(__SVR4) && defined(__sun)
++        /*
++         * Not supported by Solaris kernel driver.  When/if supported
++         * this routine will need to be ported.
++         */
++        return NULL;
++#else
+ 	struct ibv_open_xrcd cmd;
+ 	struct ibv_open_xrcd_resp resp;
+ 	struct verbs_xrcd *xrcd;
+@@ -170,10 +177,18 @@
+ err:
+ 	free(xrcd);
+ 	return NULL;
++#endif
+ }
+ 
+ int mlx4_close_xrcd(struct ibv_xrcd *ib_xrcd)
+ {
++#if defined(__SVR4) && defined(__sun)
++        /*
++         * Not supported by Solaris kernel driver.  When/if supported
++         * this routine will need to be ported.
++         */
++        return NULL;
++#else
+ 	struct verbs_xrcd *xrcd = container_of(ib_xrcd, struct verbs_xrcd, xrcd);
+ 	int ret;
+ 
+@@ -182,6 +197,7 @@
+ 		free(xrcd);
+ 
+ 	return ret;
++#endif
+ }
+ 
+ struct ibv_mr *mlx4_reg_mr(struct ibv_pd *pd, void *addr, size_t length,
+@@ -1031,6 +1047,13 @@
+ 
+ struct ibv_qp *mlx4_open_qp(struct ibv_context *context, struct ibv_qp_open_attr *attr)
+ {
++#if defined(__SVR4) && defined(__sun)
++        /*
++         * Not supported by Solaris kernel driver.  When/if supported
++         * this routine will need to be ported.
++         */
++        return NULL;
++#else
+ 	struct ibv_open_qp cmd;
+ 	struct ibv_create_qp_resp resp;
+ 	struct mlx4_qp *qp;
+@@ -1050,6 +1073,7 @@
+ err:
+ 	free(qp);
+ 	return NULL;
++#endif
+ }
+ 
+ int mlx4_query_qp(struct ibv_qp *ibqp, struct ibv_qp_attr *attr,

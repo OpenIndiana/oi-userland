@@ -1,0 +1,36 @@
+#This patch was developed both in-house and from outside. We plan to submit it
+#upstream, but do not yet have a target date for doing so
+#
+# HG changeset patch
+# Parent  9b6cc8c68b03b28d0b674dbf0fec4e6e143bd185
+Added comments for XRC support not available in the man pages
+
+diff -r 9b6cc8c68b03 man/rdma_create_id.3
+--- a/man/rdma_create_id.3	Thu Nov 19 11:19:08 2015 -0800
++++ b/man/rdma_create_id.3	Fri Dec 04 17:46:54 2015 -0800
+@@ -48,7 +48,7 @@
+ Provides unreliable, connectionless QP communication.  Supports both datagram
+ and multicast communication.
+ .IP RDMA_PS_IB
+-Provides for any IB services (UD, UC, RC, XRC, etc.).
++Provides for any IB services (UD, UC, RC, etc.). Currently, it does not support XRC.
+ .SH "SEE ALSO"
+ rdma_cm(7), rdma_create_event_channel(3), rdma_destroy_id(3), rdma_get_devices(3),
+ rdma_bind_addr(3), rdma_resolve_addr(3), rdma_connect(3), rdma_listen(3),
+diff -r 9b6cc8c68b03 man/rdma_create_srq.3
+--- a/man/rdma_create_srq.3	Thu Nov 19 11:19:08 2015 -0800
++++ b/man/rdma_create_srq.3	Fri Dec 04 17:46:54 2015 -0800
+@@ -35,10 +35,12 @@
+ allocated by the rdma_cm for the SRQ, along with corresponding completion
+ channels.  Completion channels and CQ data created by the rdma_cm are
+ exposed to the user through the rdma_cm_id structure.
++Currently, the creation of XRC SRQs are not supported by this function in
++the Solaris specific implementation.
+ .P
+ The actual capabilities and properties of the created SRQ will be
+ returned to the user through the attr parameter.  An rdma_cm_id
+-may only be associated with a single SRQ.
++may only be associated with a single SRQ. 
+ .SH "SEE ALSO"
+ rdma_bind_addr(3), rdma_resolve_addr(3), rdma_create_ep(3),
+ rdma_destroy_srq(3), ibv_create_srq(3), ibv_create_xsrq(3)

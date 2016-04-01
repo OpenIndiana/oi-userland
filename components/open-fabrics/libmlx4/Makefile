@@ -22,14 +22,14 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-BUILD_BITS= 64_and_32
+BUILD_BITS= 64
 include ../ofed-component-macros.mk
 
 COMPONENT_NAME=		libmlx4
-COMPONENT_VERSION=	1.0.1
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-1.18.gb810a27.tar.gz
+COMPONENT_VERSION=	1.0.6
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:ac3aa335d5749a8edc471630b1f5049122c8b7b66bab88c299e255122028e19c
+	sha256:f680ecbb60b01ad893490c158b4ce8028a3014bb8194c2754df508d53aa848a8
+COMPONENT_ARCHIVE_URL= https://www.openfabrics.org/downloads/mlx4/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/ofuv_lib
 
 include ../ofed-component.mk
@@ -39,6 +39,8 @@ DISABLE_LIBCHECK=
 
 LIBS=	-libverbs
 LDFLAGS +=	-L$(PROTO_DIR)/$(CONFIGURE_LIBDIR.$(BITS))
+
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)/infiniband
 
 # requires an older automake to reconfigure
 COMPONENT_PREP_ACTION += (if [ x$(MACH) = "xi386" ]; then \

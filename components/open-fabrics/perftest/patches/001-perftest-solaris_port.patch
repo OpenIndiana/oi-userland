@@ -1,10 +1,14 @@
-# This patch was developed in-house. Since it is Solaris-specific,
-# it is not suitable for upstream.
+#This patch was developed both in-house and from outside. We plan to submit it
+#upstream, but do not yet have a target date for doing so
 #
-diff -r -u /tmp/perftest-1.3.0/Makefile perftest-1.3.0/Makefile
---- /tmp/perftest-1.3.0/Makefile	Thu Jan 20 01:37:35 2011
-+++ perftest-1.3.0/Makefile	Fri Feb 11 04:12:45 2011
-@@ -2,10 +2,11 @@
+# HG changeset patch
+# Parent  8cb431a3e51bc17ea032c64d150ea7799c778321
+#
+
+diff -r 8cb431a3e51b Makefile
+--- a/Makefile	Tue Feb 23 22:34:35 2016 -0800
++++ b/Makefile	Tue Feb 23 22:34:53 2016 -0800
+@@ -2,23 +2,25 @@
  MCAST_TESTS = send_bw send_lat
  TESTS = write_bw_postlist write_lat write_bw read_lat read_bw
  UTILS = clock_test
@@ -17,7 +21,6 @@ diff -r -u /tmp/perftest-1.3.0/Makefile perftest-1.3.0/Makefile
  BASIC_FILES = get_clock.c
  EXTRA_FILES = perftest_resources.c
  MCAST_FILES = multicast_resources.c
-@@ -12,13 +13,14 @@
  BASIC_HEADERS = get_clock.h
  EXTRA_HEADERS = perftest_resources.h
  MCAST_HEADERS = multicast_resources.h
@@ -46,9 +49,9 @@ diff -r -u /tmp/perftest-1.3.0/Makefile perftest-1.3.0/Makefile
  clean:
  	$(foreach fname,${RDMACM_TESTS}, rm -f ${fname})
  	$(foreach fname,${MCAST_TESTS}, rm -f ib_${fname})
-diff -r -u /tmp/perftest-1.3.0/clock_test.c perftest-1.3.0/clock_test.c
---- /tmp/perftest-1.3.0/clock_test.c	Sun Nov  1 03:09:16 2009
-+++ perftest-1.3.0/clock_test.c	Fri Sep 30 08:08:29 2011
+diff -r 8cb431a3e51b clock_test.c
+--- a/clock_test.c	Tue Feb 23 22:34:35 2016 -0800
++++ b/clock_test.c	Tue Feb 23 22:34:53 2016 -0800
 @@ -20,6 +20,10 @@
  		c1 = get_cycles();
  		sleep(1);
@@ -60,9 +63,9 @@ diff -r -u /tmp/perftest-1.3.0/clock_test.c perftest-1.3.0/clock_test.c
 +#endif
  	}
  }
-diff -r -u /tmp/perftest-1.3.0/get_clock.c perftest-1.3.0/get_clock.c
---- /tmp/perftest-1.3.0/get_clock.c	Sun Dec 19 06:36:26 2010
-+++ perftest-1.3.0/get_clock.c	Fri Feb 11 04:12:46 2011
+diff -r 8cb431a3e51b get_clock.c
+--- a/get_clock.c	Tue Feb 23 22:34:35 2016 -0800
++++ b/get_clock.c	Tue Feb 23 22:34:53 2016 -0800
 @@ -45,6 +45,10 @@
  #include <unistd.h>
  #include <stdio.h>
@@ -179,9 +182,9 @@ diff -r -u /tmp/perftest-1.3.0/get_clock.c perftest-1.3.0/get_clock.c
 +
  	return proc;
  }
-diff -r -u /tmp/perftest-1.3.0/get_clock.h perftest-1.3.0/get_clock.h
---- /tmp/perftest-1.3.0/get_clock.h	Sun Nov  1 03:09:16 2009
-+++ perftest-1.3.0/get_clock.h	Fri Feb 11 04:12:46 2011
+diff -r 8cb431a3e51b get_clock.h
+--- a/get_clock.h	Tue Feb 23 22:34:35 2016 -0800
++++ b/get_clock.h	Tue Feb 23 22:34:53 2016 -0800
 @@ -36,8 +36,18 @@
  
  #ifndef GET_CLOCK_H
@@ -202,9 +205,178 @@ diff -r -u /tmp/perftest-1.3.0/get_clock.h perftest-1.3.0/get_clock.h
  /* Note: only x86 CPUs which have rdtsc instruction are supported. */
  typedef unsigned long long cycles_t;
  static inline cycles_t get_cycles()
-diff -r -u /tmp/perftest-1.3.0/rdma_bw.c perftest-1.3.0/rdma_bw.c
---- /tmp/perftest-1.3.0/rdma_bw.c	Wed Apr  7 09:44:56 2010
-+++ perftest-1.3.0/rdma_bw.c	Fri Feb 11 04:12:46 2011
+diff -r 8cb431a3e51b multicast_resources.c
+--- a/multicast_resources.c	Tue Feb 23 22:34:35 2016 -0800
++++ b/multicast_resources.c	Tue Feb 23 22:34:53 2016 -0800
+@@ -4,7 +4,9 @@
+ #include <unistd.h>
+ #include <string.h>
+ #include <limits.h>
++#if !(defined(__SVR4) && defined(__sun))
+ #include <byteswap.h>
++#endif
+ #include <arpa/inet.h>
+ #include <sys/types.h>
+ #include <sys/socket.h>
+diff -r 8cb431a3e51b multicast_resources.h
+--- a/multicast_resources.h	Tue Feb 23 22:34:35 2016 -0800
++++ b/multicast_resources.h	Tue Feb 23 22:34:53 2016 -0800
+@@ -68,7 +68,7 @@
+ #define DEF_PKEY_IDX        		0
+ #define DEF_SLL              		0
+ #define MAX_POLL_ITERATION_TIMEOUT  1000000
+-#define MCG_GID {255,1,0,0,0,2,201,133,0,0,0,0,0,0,0,0}
++#define MCG_GID {255,21,0,0,0,2,201,133,0,0,0,0,0,0,0,0}
+ 
+ //  Definitions section for MADs 
+ #define SUBN_ADM_ATTR_MC_MEMBER_RECORD 0x38
+@@ -80,10 +80,11 @@
+ #define DEF_TCLASS                     0
+ #define DEF_FLOW_LABLE                 0
+ 
++#if !(defined(__SVR4) && defined(__sun))
+ // Macro for 64 bit variables to switch to from net 
+ #define ntohll(x) (((u_int64_t)(ntohl((int)((x << 32) >> 32))) << 32) | (unsigned int)ntohl(((int)(x >> 32)))) 
+ #define htonll(x) ntohll(x)
+-
++#endif
+ // generate a bit mask S bits width 
+ #define MASK32(S)  ( ((u_int32_t) ~0L) >> (32-(S)) )
+ 
+diff -r 8cb431a3e51b perftest_resources.c
+--- a/perftest_resources.c	Tue Feb 23 22:34:35 2016 -0800
++++ b/perftest_resources.c	Tue Feb 23 22:34:53 2016 -0800
+@@ -11,7 +11,9 @@
+ #include <sys/socket.h>
+ #include <netdb.h>
+ #include <math.h>
++#if !(defined(__SVR4) && defined(__sun))
+ // #include <byteswap.h>
++#endif
+ #include "perftest_resources.h"
+ 
+ 
+@@ -566,8 +568,22 @@
+ 
+ 	// User did not ask for specific mtu.
+ 	if (params->mtu == 0) {
++#if !(defined(__SVR4) && defined(__sun))
+ 		params->curr_mtu = port_attr.active_mtu;
++#else
++		struct ibv_device_attr device_attr;
+ 
++		if (ibv_query_device(context, &device_attr)) {
++                        fprintf(stderr, "Failed to query device props");
++                        return -1;
++                }
++
++		if (device_attr.vendor_part_id == 23108) {
++			params->curr_mtu = IBV_MTU_1024;
++		} else {
++			params->curr_mtu = IBV_MTU_2048;
++		}
++#endif
+ 	} else {
+ 
+ 		switch (params->mtu) {
+@@ -791,7 +807,7 @@
+ 
+ 	n = getaddrinfo(servername, service, &hints, &res);
+ 
+-	if (n < 0) {
++	if (n != 0) {
+ 		fprintf(stderr, "%s for %s:%d\n", gai_strerror(n), servername, port);
+ 		return n;
+ 	}
+@@ -835,7 +851,7 @@
+ 
+ 	n = getaddrinfo(NULL, service, &hints, &res);
+ 
+-	if (n < 0) {
++	if (n != 0) {
+ 		fprintf(stderr, "%s for port %d\n", gai_strerror(n), port);
+ 		return n;
+ 	}
+@@ -869,7 +885,6 @@
+ 		close(sockfd);
+ 		return connfd;
+ 	}
+-
+ 	close(sockfd);
+ 	return connfd;
+ }
+@@ -882,6 +897,8 @@
+ 				   struct pingpong_dest *my_dest,
+ 				   struct pingpong_dest *rem_dest) {
+ 
++    int	temp_reads = 0;
++
+     // Client.
+     if (params->machine == CLIENT) {
+ 		if (ctx_write_keys(my_dest,params)) {
+@@ -904,6 +921,21 @@
+ 			return -1;
+ 		}
+     }
++
++    /*
++     * If we have different HCA's at either end of the connection with
++     * different RDMA attributes, then to avoid a modify QP error set
++     * max_rd_atomic to lowest on either side of connection.
++     */
++    if (rem_dest->out_reads > my_dest->out_reads)
++	temp_reads =  my_dest->out_reads;
++
++    if (my_dest->out_reads > rem_dest->out_reads)
++	my_dest->out_reads = rem_dest->out_reads;
++
++    if (temp_reads)
++	rem_dest->out_reads = temp_reads;
++
+     return 0;
+ }
+ 
+diff -r 8cb431a3e51b perftest_resources.h
+--- a/perftest_resources.h	Tue Feb 23 22:34:35 2016 -0800
++++ b/perftest_resources.h	Tue Feb 23 22:34:53 2016 -0800
+@@ -128,10 +128,10 @@
+ #define KEY_MSG_SIZE_GID    98 // Message size with gid (MGID as well).
+ 
+ // The Format of the message we pass through sockets , without passing Gid.
+-#define KEY_PRINT_FMT "%04x:%04x:%06x:%06x:%08x:%016Lx"
++#define KEY_PRINT_FMT "%04x:%04x:%06x:%06x:%08x:%016llx"
+ 
+ // The Format of the message we pass through sockets (With Gid).
+-#define KEY_PRINT_FMT_GID "%04x:%04x:%06x:%06x:%08x:%016Lx:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x"
++#define KEY_PRINT_FMT_GID "%04x:%04x:%06x:%06x:%08x:%016llx:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x"
+ 
+ // The Basic print format for all verbs.
+ #define BASIC_ADDR_FMT " %s address: LID %#04x QPN %#06x PSN %#06x"
+@@ -140,7 +140,7 @@
+ #define READ_FMT       " OUT %#04x"
+ 
+ // The print format of the pingpong_dest element for RDMA verbs.
+-#define RDMA_FMT       " RKey %#08x VAddr %#016Lx"
++#define RDMA_FMT       " RKey %#08x VAddr %#016llx"
+ 
+ // The print format of a global address or a multicast address.
+ #define GID_FMT " %s: %02d:%02d:%02d:%02d:%02d:%02d:%02d:%02d:%02d:%02d:%02d:%02d:%02d:%02d:%02d:%02d\n"
+@@ -154,10 +154,10 @@
+ #define RESULT_FMT_LAT " #bytes #iterations    t_min[usec]    t_max[usec]  t_typical[usec]\n"
+ 
+ // Result print format
+-#define REPORT_FMT     " %-7lu   %d           %-7.2f            %-7.2f\n"
++#define REPORT_FMT     " %-7"PRIu64"   %d           %-7.2f            %-7.2f\n"
+ 
+ // Result print format for latency tests.
+-#define REPORT_FMT_LAT " %-7lu %d          %-7.2f        %-7.2f      %-7.2f\n"
++#define REPORT_FMT_LAT " %-7"PRIu64" %d          %-7.2f        %-7.2f      %-7.2f\n"
+ 
+ // Macro for allocating.
+ #define ALLOCATE(var,type,size)                                  \
+diff -r 8cb431a3e51b rdma_bw.c
+--- a/rdma_bw.c	Tue Feb 23 22:34:35 2016 -0800
++++ b/rdma_bw.c	Tue Feb 23 22:34:53 2016 -0800
 @@ -50,8 +50,11 @@
  #include <malloc.h>
  #include <getopt.h>
@@ -256,7 +428,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_bw.c perftest-1.3.0/rdma_bw.c
  			goto err2;
  		}
  	
-@@ -195,7 +198,7 @@
+@@ -195,14 +198,14 @@
  
  		if (event->event != RDMA_CM_EVENT_ROUTE_RESOLVED) {
  			fprintf(stderr, "%d:%s: unexpected CM event %d\n", 
@@ -265,7 +437,6 @@ diff -r -u /tmp/perftest-1.3.0/rdma_bw.c perftest-1.3.0/rdma_bw.c
  			rdma_ack_cm_event(event);
  			goto err1;
  		}
-@@ -202,7 +205,7 @@
  		rdma_ack_cm_event(event);
  		ctx = pp_init_ctx(data->cm_id, data);
  		if (!ctx) {
@@ -308,7 +479,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_bw.c perftest-1.3.0/rdma_bw.c
  			goto err3;
  		}
  		ctx = pp_init_ctx(data->ib_dev, data);
-@@ -287,13 +290,13 @@
+@@ -287,20 +290,20 @@
  	int parsed;
  	
  	if (!data->use_cma) {
@@ -324,7 +495,6 @@ diff -r -u /tmp/perftest-1.3.0/rdma_bw.c perftest-1.3.0/rdma_bw.c
  			goto err;
  		}
  	
-@@ -300,7 +303,7 @@
  		if (read(data->sockfd, msg, sizeof msg) != sizeof msg) {
  			perror("client read");
  			fprintf(stderr, "%d:%s: Couldn't read remote address\n", 
@@ -486,7 +656,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_bw.c perftest-1.3.0/rdma_bw.c
  							__func__);
  			return NULL;
  		}
-@@ -558,7 +561,7 @@
+@@ -558,14 +561,14 @@
  		ctx->context = ibv_open_device(ib_dev);
  		if (!ctx->context) {
  			fprintf(stderr, "%d:%s: Couldn't get context for %s\n", 
@@ -495,7 +665,6 @@ diff -r -u /tmp/perftest-1.3.0/rdma_bw.c perftest-1.3.0/rdma_bw.c
  			return NULL;
  		}
  	}
-@@ -565,7 +568,7 @@
  
  	ctx->pd = ibv_alloc_pd(ctx->context);
  	if (!ctx->pd) {
@@ -504,7 +673,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_bw.c perftest-1.3.0/rdma_bw.c
  		return NULL;
  	}
  
-@@ -575,7 +578,7 @@
+@@ -575,28 +578,28 @@
  	ctx->mr = ibv_reg_mr(ctx->pd, ctx->buf, ctx->size * 2,
  			     IBV_ACCESS_REMOTE_WRITE | IBV_ACCESS_LOCAL_WRITE);
  	if (!ctx->mr) {
@@ -513,7 +682,6 @@ diff -r -u /tmp/perftest-1.3.0/rdma_bw.c perftest-1.3.0/rdma_bw.c
  		return NULL;
  	}
  
-@@ -582,7 +585,7 @@
  
  	ctx->ch = ibv_create_comp_channel(ctx->context);
  	if (!ctx->ch) {
@@ -522,7 +690,6 @@ diff -r -u /tmp/perftest-1.3.0/rdma_bw.c perftest-1.3.0/rdma_bw.c
  								 __func__);
  		return NULL;
  	}
-@@ -589,7 +592,7 @@
  
  	ctx->rcq = ibv_create_cq(ctx->context, 1, NULL, NULL, 0);
  	if (!ctx->rcq) {
@@ -531,7 +698,6 @@ diff -r -u /tmp/perftest-1.3.0/rdma_bw.c perftest-1.3.0/rdma_bw.c
  								 __func__);
  		return NULL;
  	}
-@@ -596,7 +599,7 @@
  
  	ctx->scq = ibv_create_cq(ctx->context, ctx->tx_depth, ctx, ctx->ch, 0);
  	if (!ctx->scq) {
@@ -845,9 +1011,9 @@ diff -r -u /tmp/perftest-1.3.0/rdma_bw.c perftest-1.3.0/rdma_bw.c
  	}
  	
  	print_report(iters, data.size, duplex, tposted, tcompleted);
-diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
---- /tmp/perftest-1.3.0/rdma_lat.c	Wed Apr  7 09:44:33 2010
-+++ perftest-1.3.0/rdma_lat.c	Fri Feb 11 04:12:46 2011
+diff -r 8cb431a3e51b rdma_lat.c
+--- a/rdma_lat.c	Tue Feb 23 22:34:35 2016 -0800
++++ b/rdma_lat.c	Tue Feb 23 22:34:53 2016 -0800
 @@ -50,8 +50,11 @@
  #include <malloc.h>
  #include <getopt.h>
@@ -930,7 +1096,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
  			goto err2;
  		}
  	
-@@ -271,7 +280,7 @@
+@@ -271,14 +280,14 @@
  
  		if (event->event != RDMA_CM_EVENT_ROUTE_RESOLVED) {
  			fprintf(stderr, "%d:%s: unexpected CM event %d\n", 
@@ -939,7 +1105,6 @@ diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
  			rdma_ack_cm_event(event);
  			goto err1;
  		}
-@@ -278,7 +287,7 @@
  		rdma_ack_cm_event(event);
  		ctx = pp_init_ctx(data->cm_id, data);
  		if (!ctx) {
@@ -1082,7 +1247,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
  							__func__);
  			return NULL;
  		}
-@@ -575,7 +584,7 @@
+@@ -575,14 +584,14 @@
  		ctx->context = ibv_open_device(ib_dev);
  		if (!ctx->context) {
  			fprintf(stderr, "%d:%s: Couldn't get context for %s\n", 
@@ -1091,7 +1256,6 @@ diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
  			return NULL;
  		}
  	}
-@@ -582,7 +591,7 @@
  
  	ctx->pd = ibv_alloc_pd(ctx->context);
  	if (!ctx->pd) {
@@ -1100,7 +1264,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
  		return NULL;
  	}
  
-@@ -592,13 +601,13 @@
+@@ -592,20 +601,20 @@
  	ctx->mr = ibv_reg_mr(ctx->pd, ctx->buf, ctx->size * 2,
  			     IBV_ACCESS_REMOTE_WRITE | IBV_ACCESS_LOCAL_WRITE);
  	if (!ctx->mr) {
@@ -1116,7 +1280,6 @@ diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
  								 __func__);
  		return NULL;
  	}
-@@ -605,7 +614,7 @@
  
  	ctx->scq = ibv_create_cq(ctx->context, ctx->tx_depth, ctx, NULL, 0);
  	if (!ctx->scq) {
@@ -1345,165 +1508,9 @@ diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
                          data.rem_dest->lid, data.rem_dest->qpn, data.rem_dest->psn,
                          data.rem_dest->rkey, data.rem_dest->vaddr);
  
-diff -r -u /tmp/perftest-1.3.0/multicast_resources.h perftest-1.3.0/multicast_resources.h
---- /tmp/perftest-1.3.0/multicast_resources.h	Wed Mar  2 11:01:36 2011
-+++ perftest-1.3.0/multicast_resources.h	Fri Aug 26 05:14:56 2011
-@@ -68,7 +68,7 @@
- #define DEF_PKEY_IDX        		0
- #define DEF_SLL              		0
- #define MAX_POLL_ITERATION_TIMEOUT  1000000
--#define MCG_GID {255,1,0,0,0,2,201,133,0,0,0,0,0,0,0,0}
-+#define MCG_GID {255,21,0,0,0,2,201,133,0,0,0,0,0,0,0,0}
- 
- //  Definitions section for MADs 
- #define SUBN_ADM_ATTR_MC_MEMBER_RECORD 0x38
-@@ -80,10 +80,11 @@
- #define DEF_TCLASS                     0
- #define DEF_FLOW_LABLE                 0
- 
-+#if !(defined(__SVR4) && defined(__sun))
- // Macro for 64 bit variables to switch to from net 
- #define ntohll(x) (((u_int64_t)(ntohl((int)((x << 32) >> 32))) << 32) | (unsigned int)ntohl(((int)(x >> 32)))) 
- #define htonll(x) ntohll(x)
--
-+#endif
- // generate a bit mask S bits width 
- #define MASK32(S)  ( ((u_int32_t) ~0L) >> (32-(S)) )
- 
-diff -r -u /tmp/perftest-1.3.0/perftest_resources.c perftest-1.3.0/perftest_resources.c
---- /tmp/perftest-1.3.0/perftest_resources.c	Tue Jan 25 23:31:57 2011
-+++ perftest-1.3.0/perftest_resources.c	Fri Feb 11 04:12:48 2011
-@@ -11,7 +11,9 @@
- #include <sys/socket.h>
- #include <netdb.h>
- #include <math.h>
-+#if !(defined(__SVR4) && defined(__sun))
- // #include <byteswap.h>
-+#endif
- #include "perftest_resources.h"
- 
- 
-@@ -566,8 +568,22 @@
- 
- 	// User did not ask for specific mtu.
- 	if (params->mtu == 0) {
-+#if !(defined(__SVR4) && defined(__sun))
- 		params->curr_mtu = port_attr.active_mtu;
-+#else
-+		struct ibv_device_attr device_attr;
- 
-+		if (ibv_query_device(context, &device_attr)) {
-+                        fprintf(stderr, "Failed to query device props");
-+                        return -1;
-+                }
-+
-+		if (device_attr.vendor_part_id == 23108) {
-+			params->curr_mtu = IBV_MTU_1024;
-+		} else {
-+			params->curr_mtu = IBV_MTU_2048;
-+		}
-+#endif
- 	} else {
- 
- 		switch (params->mtu) {
-@@ -791,7 +807,7 @@
- 
- 	n = getaddrinfo(servername, service, &hints, &res);
- 
--	if (n < 0) {
-+	if (n != 0) {
- 		fprintf(stderr, "%s for %s:%d\n", gai_strerror(n), servername, port);
- 		return n;
- 	}
-@@ -835,7 +851,7 @@
- 
- 	n = getaddrinfo(NULL, service, &hints, &res);
- 
--	if (n < 0) {
-+	if (n != 0) {
- 		fprintf(stderr, "%s for port %d\n", gai_strerror(n), port);
- 		return n;
- 	}
-@@ -869,7 +885,6 @@
- 		close(sockfd);
- 		return connfd;
- 	}
--
- 	close(sockfd);
- 	return connfd;
- }
-@@ -882,6 +897,8 @@
- 				   struct pingpong_dest *my_dest,
- 				   struct pingpong_dest *rem_dest) {
- 
-+    int	temp_reads = 0;
-+
-     // Client.
-     if (params->machine == CLIENT) {
- 		if (ctx_write_keys(my_dest,params)) {
-@@ -904,6 +921,21 @@
- 			return -1;
- 		}
-     }
-+
-+    /*
-+     * If we have different HCA's at either end of the connection with
-+     * different RDMA attributes, then to avoid a modify QP error set
-+     * max_rd_atomic to lowest on either side of connection.
-+     */
-+    if (rem_dest->out_reads > my_dest->out_reads)
-+	temp_reads =  my_dest->out_reads;
-+
-+    if (my_dest->out_reads > rem_dest->out_reads)
-+	my_dest->out_reads = rem_dest->out_reads;
-+
-+    if (temp_reads)
-+	rem_dest->out_reads = temp_reads;
-+
-     return 0;
- }
- 
-diff -r -u /tmp/perftest-1.3.0/perftest_resources.h perftest-1.3.0/perftest_resources.h
---- /tmp/perftest-1.3.0/perftest_resources.h	Tue Jan 25 23:31:57 2011
-+++ perftest-1.3.0/perftest_resources.h	Fri Feb 11 04:12:48 2011
-@@ -128,10 +128,10 @@
- #define KEY_MSG_SIZE_GID    98 // Message size with gid (MGID as well).
- 
- // The Format of the message we pass through sockets , without passing Gid.
--#define KEY_PRINT_FMT "%04x:%04x:%06x:%06x:%08x:%016Lx"
-+#define KEY_PRINT_FMT "%04x:%04x:%06x:%06x:%08x:%016llx"
- 
- // The Format of the message we pass through sockets (With Gid).
--#define KEY_PRINT_FMT_GID "%04x:%04x:%06x:%06x:%08x:%016Lx:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x"
-+#define KEY_PRINT_FMT_GID "%04x:%04x:%06x:%06x:%08x:%016llx:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x"
- 
- // The Basic print format for all verbs.
- #define BASIC_ADDR_FMT " %s address: LID %#04x QPN %#06x PSN %#06x"
-@@ -140,7 +140,7 @@
- #define READ_FMT       " OUT %#04x"
- 
- // The print format of the pingpong_dest element for RDMA verbs.
--#define RDMA_FMT       " RKey %#08x VAddr %#016Lx"
-+#define RDMA_FMT       " RKey %#08x VAddr %#016llx"
- 
- // The print format of a global address or a multicast address.
- #define GID_FMT " %s: %02d:%02d:%02d:%02d:%02d:%02d:%02d:%02d:%02d:%02d:%02d:%02d:%02d:%02d:%02d:%02d\n"
-@@ -154,10 +154,10 @@
- #define RESULT_FMT_LAT " #bytes #iterations    t_min[usec]    t_max[usec]  t_typical[usec]\n"
- 
- // Result print format
--#define REPORT_FMT     " %-7lu   %d           %-7.2f            %-7.2f\n"
-+#define REPORT_FMT     " %-7"PRIu64"   %d           %-7.2f            %-7.2f\n"
- 
- // Result print format for latency tests.
--#define REPORT_FMT_LAT " %-7lu %d          %-7.2f        %-7.2f      %-7.2f\n"
-+#define REPORT_FMT_LAT " %-7"PRIu64" %d          %-7.2f        %-7.2f      %-7.2f\n"
- 
- // Macro for allocating.
- #define ALLOCATE(var,type,size)                                  \
-diff -r -u /tmp/perftest-1.3.0/read_bw.c perftest-1.3.0/read_bw.c
---- /tmp/perftest-1.3.0/read_bw.c	Tue Jan 25 23:31:57 2011
-+++ perftest-1.3.0/read_bw.c	Fri Feb 11 04:12:47 2011
+diff -r 8cb431a3e51b read_bw.c
+--- a/read_bw.c	Tue Feb 23 22:34:35 2016 -0800
++++ b/read_bw.c	Tue Feb 23 22:34:53 2016 -0800
 @@ -44,6 +44,7 @@
  // #include <limits.h>
  #include <malloc.h>
@@ -1573,9 +1580,9 @@ diff -r -u /tmp/perftest-1.3.0/read_bw.c perftest-1.3.0/read_bw.c
 +		return ret; 
  	
  }
-diff -r -u /tmp/perftest-1.3.0/read_lat.c perftest-1.3.0/read_lat.c
---- /tmp/perftest-1.3.0/read_lat.c	Tue Jan 25 23:31:57 2011
-+++ perftest-1.3.0/read_lat.c	Fri Feb 11 04:12:47 2011
+diff -r 8cb431a3e51b read_lat.c
+--- a/read_lat.c	Tue Feb 23 22:34:35 2016 -0800
++++ b/read_lat.c	Tue Feb 23 22:34:53 2016 -0800
 @@ -46,6 +46,7 @@
  #include <malloc.h>
  #include <getopt.h>
@@ -1604,34 +1611,9 @@ diff -r -u /tmp/perftest-1.3.0/read_lat.c perftest-1.3.0/read_lat.c
  		units = "usec";
  	}
  
-diff -r -u /tmp/perftest-1.3.0/send_bw.c perftest-1.3.0/send_bw.c
---- /tmp/perftest-1.3.0/send_bw.c	Thu Jan 20 07:37:18 2011
-+++ perftest-1.3.0/send_bw.c	Fri Feb 11 04:12:47 2011
-@@ -320,9 +320,6 @@
- 		user_parm->size = MTU_SIZE(user_parm->curr_mtu);
- 	}
- 
--	if (is_dev_hermon(ctx->context) != NOT_HERMON && user_parm->inline_size != 0)
--		user_parm->inline_size = 0;
--
- 	printf(" Inline data is used up to %d bytes message\n", user_parm->inline_size);
- 
- 	ctx->size = user_parm->size;
-@@ -649,7 +646,11 @@
- 			}
- 	}
- 
-+#if !(defined(__sparc))
- 	cycles_to_units = get_cpu_mhz(user_param->cpu_freq_f) * 1000000;
-+#else
-+	cycles_to_units = 1000000000;
-+#endif
- 
- 	tsize = user_param->duplex ? 2 : 1;
- 	tsize = tsize * user_param->size;
-diff -r -u /tmp/perftest-1.3.0/send_lat.c perftest-1.3.0/send_lat.c
---- /tmp/perftest-1.3.0/send_lat.c	Wed Mar  2 16:04:50 2011
-+++ perftest-1.3.0/send_lat.c	Fri Aug 26 05:29:53 2011
+diff -r 8cb431a3e51b send_lat.c
+--- a/send_lat.c	Tue Feb 23 22:34:35 2016 -0800
++++ b/send_lat.c	Tue Feb 23 22:34:53 2016 -0800
 @@ -61,7 +61,8 @@
  	struct ibv_sge          *sge_list;
  	struct ibv_recv_wr      *rwr;
@@ -1642,7 +1624,7 @@ diff -r -u /tmp/perftest-1.3.0/send_lat.c perftest-1.3.0/send_lat.c
  	struct ibv_pd           *pd;
  	struct ibv_mr           *mr;
  	struct ibv_cq           *rcq;
-@@ -259,13 +260,20 @@
+@@ -259,9 +260,16 @@
  		test_result = 1;
  	}
  
@@ -1652,20 +1634,16 @@ diff -r -u /tmp/perftest-1.3.0/send_lat.c perftest-1.3.0/send_lat.c
 +	if (ctx->rx_channel) {
 +		if (ibv_destroy_comp_channel(ctx->rx_channel)) {
 +			fprintf(stderr, "failed to destroy rx_channel \n");
- 			test_result = 1;
- 		}
- 	}
- 	
-+	if (ctx->tx_channel) {
-+		if (ibv_destroy_comp_channel(ctx->tx_channel)) {
-+			fprintf(stderr, "failed to destroy tx_channel \n");
 +			test_result = 1;
 +		}
 +	}
 +	
- 	if (ibv_close_device(ctx->context)) {
- 		fprintf(stderr, "failed to close device context\n");
- 		test_result = 1;
++	if (ctx->tx_channel) {
++		if (ibv_destroy_comp_channel(ctx->tx_channel)) {
++			fprintf(stderr, "failed to destroy tx_channel \n");
+ 			test_result = 1;
+ 		}
+ 	}
 @@ -328,13 +336,20 @@
  	memset(ctx->buf, 0,buff_size);
  
@@ -1748,22 +1726,9 @@ diff -r -u /tmp/perftest-1.3.0/send_lat.c perftest-1.3.0/send_lat.c
  					fprintf(stderr , " Failed to notify events to CQ");
  					return 1;
  				}
-diff -r -u /tmp/perftest-1.3.0/multicast_resources.c perftest-1.3.0/multicast_resources.c
---- /tmp/perftest-1.3.0/multicast_resources.c	Thu Dec 16 08:21:05 2010
-+++ perftest-1.3.0/multicast_resources.c	Fri Feb 11 04:12:48 2011
-@@ -4,7 +4,9 @@
- #include <unistd.h>
- #include <string.h>
- #include <limits.h>
-+#if !(defined(__SVR4) && defined(__sun))
- #include <byteswap.h>
-+#endif
- #include <arpa/inet.h>
- #include <sys/types.h>
- #include <sys/socket.h>
-diff -r -u /tmp/perftest-1.3.0/write_bw.c perftest-1.3.0/write_bw.c
---- /tmp/perftest-1.3.0/write_bw.c	Wed Mar  2 11:48:20 2011
-+++ perftest-1.3.0/write_bw.c	Tue Mar 15 12:04:28 2011
+diff -r 8cb431a3e51b write_bw.c
+--- a/write_bw.c	Tue Feb 23 22:34:35 2016 -0800
++++ b/write_bw.c	Tue Feb 23 22:34:53 2016 -0800
 @@ -45,6 +45,7 @@
  #include <limits.h>
  #include <malloc.h>
@@ -1802,9 +1767,9 @@ diff -r -u /tmp/perftest-1.3.0/write_bw.c perftest-1.3.0/write_bw.c
  
  	tsize = user_param->duplex ? 2 : 1;
  	tsize = tsize * user_param->size;
-diff -r -u /tmp/perftest-1.3.0/write_bw_postlist.c perftest-1.3.0/write_bw_postlist.c
---- /tmp/perftest-1.3.0/write_bw_postlist.c	Thu Mar  3 17:03:54 2011
-+++ perftest-1.3.0/write_bw_postlist.c	Tue Mar 15 11:59:53 2011
+diff -r 8cb431a3e51b write_bw_postlist.c
+--- a/write_bw_postlist.c	Tue Feb 23 22:34:35 2016 -0800
++++ b/write_bw_postlist.c	Tue Feb 23 22:34:53 2016 -0800
 @@ -46,6 +46,7 @@
  #include <malloc.h>
  #include <getopt.h>
@@ -1825,9 +1790,9 @@ diff -r -u /tmp/perftest-1.3.0/write_bw_postlist.c perftest-1.3.0/write_bw_postl
  
  	tsize = user_param->duplex ? 2 : 1;
  	tsize = tsize * user_param->size;
-diff -r -u /tmp/perftest-1.3.0/write_lat.c perftest-1.3.0/write_lat.c
---- /tmp/perftest-1.3.0/write_lat.c	Sat Feb 26 01:02:48 2011
-+++ perftest-1.3.0/write_lat.c	Tue Mar 15 12:01:35 2011
+diff -r 8cb431a3e51b write_lat.c
+--- a/write_lat.c	Tue Feb 23 22:34:35 2016 -0800
++++ b/write_lat.c	Tue Feb 23 22:34:53 2016 -0800
 @@ -46,6 +46,7 @@
  #include <malloc.h>
  #include <getopt.h>

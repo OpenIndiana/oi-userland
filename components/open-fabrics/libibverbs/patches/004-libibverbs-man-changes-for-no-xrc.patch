@@ -1,0 +1,231 @@
+#This patch was developed both in-house and from outside. We plan to submit it
+#upstream, but do not yet have a target date for doing so
+#
+# HG changeset patch
+# Parent  3903116dd520bb552df4e8fa55f573d1cb9b9097
+remove xrc man pages
+
+diff -r 3903116dd520 Makefile.am
+--- a/Makefile.am	Wed Jan 13 09:20:30 2016 -0800
++++ b/Makefile.am	Wed Jan 13 09:32:13 2016 -0800
+@@ -63,8 +63,7 @@
+     man/ibv_query_pkey.3 man/ibv_query_port.3 man/ibv_query_qp.3	\
+     man/ibv_query_srq.3 man/ibv_rate_to_mult.3 man/ibv_reg_mr.3		\
+     man/ibv_req_notify_cq.3 man/ibv_resize_cq.3 man/ibv_rate_to_mbps.3  \
+-    man/ibv_create_qp_ex.3 man/ibv_create_srq_ex.3 man/ibv_open_xrcd.3  \
+-    man/ibv_get_srq_num.3 man/ibv_open_qp.3
++    man/ibv_open_xrcd.3 man/ibv_open_qp.3
+ 
+ DEBIAN = debian/changelog debian/compat debian/control debian/copyright \
+     debian/ibverbs-utils.install debian/libibverbs1.install \
+diff -r 3903116dd520 Makefile.in
+--- a/Makefile.in	Wed Jan 13 09:20:30 2016 -0800
++++ b/Makefile.in	Wed Jan 13 09:32:13 2016 -0800
+@@ -494,8 +494,7 @@
+     man/ibv_query_pkey.3 man/ibv_query_port.3 man/ibv_query_qp.3	\
+     man/ibv_query_srq.3 man/ibv_rate_to_mult.3 man/ibv_reg_mr.3		\
+     man/ibv_req_notify_cq.3 man/ibv_resize_cq.3 man/ibv_rate_to_mbps.3  \
+-    man/ibv_create_qp_ex.3 man/ibv_create_srq_ex.3 man/ibv_open_xrcd.3  \
+-    man/ibv_get_srq_num.3 man/ibv_open_qp.3
++    man/ibv_open_xrcd.3 man/ibv_open_qp.3
+ 
+ DEBIAN = debian/changelog debian/compat debian/control debian/copyright \
+     debian/ibverbs-utils.install debian/libibverbs1.install \
+diff -r 3903116dd520 man/ibv_create_qp_ex.3
+--- a/man/ibv_create_qp_ex.3	Wed Jan 13 09:20:30 2016 -0800
++++ /dev/null	Thu Jan 01 00:00:00 1970 +0000
+@@ -1,83 +0,0 @@
+-.\" -*- nroff -*-
+-.\"
+-.TH IBV_CREATE_QP_EX 3 2013-06-26 libibverbs "Libibverbs Programmer's Manual"
+-.SH "NAME"
+-ibv_create_qp_ex, ibv_destroy_qp \- create or destroy a queue pair (QP)
+-.SH "SYNOPSIS"
+-.nf
+-.B #include <infiniband/verbs.h>
+-.sp
+-.BI "struct ibv_qp *ibv_create_qp_ex(struct ibv_context " "*context" ,
+-.BI "                                struct ibv_qp_init_attr_ex " "*qp_init_attr" );
+-.sp
+-.BI "int ibv_destroy_qp(struct ibv_qp " "*qp" );
+-.fi
+-.SH "DESCRIPTION"
+-.B ibv_create_qp_ex()
+-creates a queue pair (QP) associated with the protection domain
+-.I pd\fR.
+-The argument
+-.I qp_init_attr_ex
+-is an ibv_qp_init_attr_ex struct, as defined in <infiniband/verbs.h>.
+-.PP
+-.nf
+-struct ibv_qp_init_attr_ex {
+-.in +8
+-void                   *qp_context;     /* Associated context of the QP */
+-struct ibv_cq          *send_cq;        /* CQ to be associated with the Send Queue (SQ) */
+-struct ibv_cq          *recv_cq;        /* CQ to be associated with the Receive Queue (RQ) */
+-struct ibv_srq         *srq;            /* SRQ handle if QP is to be associated with an SRQ, otherwise NULL */
+-struct ibv_qp_cap       cap;            /* QP capabilities */
+-enum ibv_qp_type        qp_type;        /* QP Transport Service Type: IBV_QPT_RC, IBV_QPT_UC, IBV_QPT_UD or IBV_QPT_RAW_PACKET */
+-int                     sq_sig_all;     /* If set, each Work Request (WR) submitted to the SQ generates a completion entry */
+-uint32_t                comp_mask;	/* Identifies valid fields */
+-struct ibv_pd          *pd;		/* PD to be associated with the QP */
+-struct ibv_xrcd        *xrcd;		/* XRC domain to be associated with the target QP */
+-enum ibv_qp_create_flags create_flags;	/* Creation flags for this QP */
+-.in -8
+-};
+-.sp
+-.nf
+-struct ibv_qp_cap {
+-.in +8
+-uint32_t                max_send_wr;    /* Requested max number of outstanding WRs in the SQ */
+-uint32_t                max_recv_wr;    /* Requested max number of outstanding WRs in the RQ */
+-uint32_t                max_send_sge;   /* Requested max number of scatter/gather (s/g) elements in a WR in the SQ */
+-uint32_t                max_recv_sge;   /* Requested max number of s/g elements in a WR in the SQ */
+-uint32_t                max_inline_data;/* Requested max number of data (bytes) that can be posted inline to the SQ, otherwise 0 */
+-.in -8
+-};
+-.fi
+-.PP
+-The function
+-.B ibv_create_qp_ex()
+-will update the
+-.I qp_init_attr_ex\fB\fR->cap
+-struct with the actual \s-1QP\s0 values of the QP that was created;
+-the values will be greater than or equal to the values requested.
+-.PP
+-.B ibv_destroy_qp()
+-destroys the QP
+-.I qp\fR.
+-.SH "RETURN VALUE"
+-.B ibv_create_qp_ex()
+-returns a pointer to the created QP, or NULL if the request fails.
+-Check the QP number (\fBqp_num\fR) in the returned QP.
+-.PP
+-.B ibv_destroy_qp()
+-returns 0 on success, or the value of errno on failure (which indicates the failure reason).
+-.SH "NOTES"
+-.PP
+-The attributes max_recv_wr and max_recv_sge are ignored by
+-.B ibv_create_qp_ex()
+-if the QP is to be associated with an SRQ.
+-.PP
+-.B ibv_destroy_qp()
+-fails if the QP is attached to a multicast group.
+-.SH "SEE ALSO"
+-.BR ibv_alloc_pd (3),
+-.BR ibv_modify_qp (3),
+-.BR ibv_query_qp (3)
+-.SH "AUTHORS"
+-.TP
+-Yishai Hadas <yishaih@mellanox.com>
+diff -r 3903116dd520 man/ibv_create_srq_ex.3
+--- a/man/ibv_create_srq_ex.3	Wed Jan 13 09:20:30 2016 -0800
++++ /dev/null	Thu Jan 01 00:00:00 1970 +0000
+@@ -1,71 +0,0 @@
+-.\" -*- nroff -*-
+-.\"
+-.TH IBV_CREATE_SRQ_EX 3 2013-06-26 libibverbs "Libibverbs Programmer's Manual"
+-.SH "NAME"
+-ibv_create_srq_ex, ibv_destroy_srq \- create or destroy a shared receive queue (SRQ)
+-.SH "SYNOPSIS"
+-.nf
+-.B #include <infiniband/verbs.h>
+-.sp
+-.BI "struct ibv_srq *ibv_create_srq_ex(struct ibv_context " "*context" ", struct "
+-.BI "                               ibv_srq_init_attr_ex " "*srq_init_attr_ex" );
+-.sp
+-.BI "int ibv_destroy_srq(struct ibv_srq " "*srq" );
+-.fi
+-.SH "DESCRIPTION"
+-.B ibv_create_srq_ex()
+-creates a shared receive queue (SRQ) supporting both basic and xrc modes.
+-The argument
+-.I srq_init_attr_ex
+-is an ibv_srq_init_attr_ex struct, as defined in <infiniband/verbs.h>.
+-.PP
+-.nf
+-struct ibv_srq_init_attr_ex {
+-.in +8
+-void                   *srq_context;    /* Associated context of the SRQ */
+-struct ibv_srq_attr     attr;           /* SRQ attributes */
+-uint32_t                comp_mask;      /* Identifies valid fields */
+-enum ibv_srq_type       srq_type;       /* Basic / XRC */
+-struct ibv_pd          *pd;             /* PD associated with the SRQ */
+-struct ibv_xrcd        *xrcd;           /* XRC domain to associate with the SRQ */
+-struct ibv_cq          *cq;             /* CQ to associate with the SRQ for XRC mode */
+-.in -8
+-};
+-.sp
+-.nf
+-struct ibv_srq_attr {
+-.in +8
+-uint32_t                max_wr;         /* Requested max number of outstanding work requests (WRs) in the SRQ */
+-uint32_t                max_sge;        /* Requested max number of scatter elements per WR */
+-uint32_t                srq_limit;      /* The limit value of the SRQ */
+-.in -8
+-};
+-.fi
+-.PP
+-The function
+-.B ibv_create_srq_ex()
+-will update the
+-.I srq_init_attr_ex
+-struct with the original values of the SRQ that was created; the
+-values of max_wr and max_sge will be greater than or equal to the
+-values requested.
+-.PP
+-.B ibv_destroy_srq()
+-destroys the SRQ
+-.I srq\fR.
+-.SH "RETURN VALUE"
+-.B ibv_create_srq_ex()
+-returns a pointer to the created SRQ, or NULL if the request fails.
+-.PP
+-.B ibv_destroy_srq()
+-returns 0 on success, or the value of errno on failure (which indicates the failure reason).
+-.SH "NOTES"
+-.B ibv_destroy_srq()
+-fails if any queue pair is still associated with this SRQ.
+-.SH "SEE ALSO"
+-.BR ibv_alloc_pd (3),
+-.BR ibv_modify_srq (3),
+-.BR ibv_query_srq (3)
+-.SH "AUTHORS"
+-.TP
+-Yishai Hadas <yishaih@mellanox.com>
+diff -r 3903116dd520 man/ibv_get_srq_num.3
+--- a/man/ibv_get_srq_num.3	Wed Jan 13 09:20:30 2016 -0800
++++ /dev/null	Thu Jan 01 00:00:00 1970 +0000
+@@ -1,32 +0,0 @@
+-.\" -*- nroff -*-
+-.\"
+-.TH IBV_GET_SRQ_NUM 3 2013-06-26 libibverbs "Libibverbs Programmer's Manual"
+-.SH "NAME"
+-ibv_get_srq_num  \- return srq number associated with the given shared receive queue (SRQ)
+-.SH "SYNOPSIS"
+-.nf
+-.B #include <infiniband/verbs.h>
+-.sp
+-.BI "int ibv_get_srq_num(struct ibv_srq " "*srq" ,
+-.BI "                    uint32_t " "*srq_num" );
+-.fi
+-.SH "DESCRIPTION"
+-.B ibv_get_srq_num()
+-return srq number associated with the given shared receive queue
+-The argument
+-.I srq
+-is an ibv_srq struct, as defined in <infiniband/verbs.h>.
+-.I srq_num
+-is an output parameter that holds the returned srq number.
+-.PP
+-.nf
+-.SH "RETURN VALUE"
+-.B ibv_get_srq_num()
+-returns 0 on success, or the value of errno on failure (which indicates the failure reason).
+-.SH "SEE ALSO"
+-.BR ibv_alloc_pd (3),
+-.BR ibv_modify_srq (3),
+-.BR ibv_create_srq_ex (3)
+-.SH "AUTHORS"
+-.TP
+-Yishai Hadas <yishaih@mellanox.com>

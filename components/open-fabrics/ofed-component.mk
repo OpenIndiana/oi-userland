@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 #
@@ -26,7 +26,7 @@
 # openfabrics userland components.
 #
 COMPONENT_PROJECT_URL ?=	http://www.openfabrics.org/
-COMPONENT_ARCHIVE_URL ?=	http://www.openfabrics.org/downloads/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL ?=	https://www.openfabrics.org/downloads/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 
 # component default overrides
 TEST_TARGET=
@@ -34,8 +34,7 @@ SYSTEM_TEST_TARGET=
 include $(WS_MAKE_RULES)/common.mk
 include ../ofed.mk
 
-# None of the components have yet been tested with ASLR.
-ASLR_MODE= $(ASLR_DISABLE)
+ASLR_MODE= $(ASLR_ENABLE)
 
 # Almost every component requires these before Solaris 12.  Those that do not
 # can simply override.

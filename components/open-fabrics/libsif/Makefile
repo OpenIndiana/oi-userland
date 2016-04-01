@@ -48,6 +48,8 @@ LDFLAGS +=	-L$(PROTO_DIR)/$(CONFIGURE_LIBDIR.$(BITS))
 
 CPPFLAGS += -DSOLARIS -I../../include/sif/ -I../../include/psifapi/ -I../../$(COMPONENT_SRC)/src/
 
+CONFIGURE_OPTIONS +=   --sysconfdir=$(ETCDIR)/infiniband
+
 COMPONENT_PREP_ACTION += cd $(COMPONENT_SRC)/src/ ; rm $(REMOVE_OLD_SRC) ; cd - ; \
                 (cd $(@D); \
 		autoreconf -ivf ; \

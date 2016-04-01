@@ -1,6 +1,24 @@
-diff -r -u /tmp/ibutils-1.5.7/config/osm.m4 ibutils-1.5.7/config/osm.m4
---- /tmp/ibutils-1.5.7/config/osm.m4	Thu Feb 18 03:31:34 2010
-+++ ibutils-1.5.7/config/osm.m4	Thu Feb 24 16:51:16 2011
+#This patch was developed both in-house and from outside. We plan to submit it
+#upstream, but do not yet have a target date for doing so
+#
+# HG changeset patch
+# Parent  01104fa59c22a3fdd1e4e52ed903205a69a5dd9d
+
+diff -r 01104fa59c22 Makefile.in
+--- a/Makefile.in	Wed Oct 14 12:54:37 2015 -0700
++++ b/Makefile.in	Fri Nov 13 06:47:32 2015 -0800
+@@ -54,7 +54,7 @@
+ pkglibdir = $(libdir)/@PACKAGE@
+ pkglibexecdir = $(libexecdir)/@PACKAGE@
+ am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd
+-install_sh_DATA = $(install_sh) -c -m 644
++install_sh_DATA = $(install_sh) -c -m 744
+ install_sh_PROGRAM = $(install_sh) -c
+ install_sh_SCRIPT = $(install_sh) -c
+ INSTALL_HEADER = $(INSTALL_DATA)
+diff -r 01104fa59c22 config/osm.m4
+--- a/config/osm.m4	Wed Oct 14 12:54:37 2015 -0700
++++ b/config/osm.m4	Fri Nov 13 06:47:32 2015 -0800
 @@ -179,7 +179,7 @@
        osm_debug_flags=
     fi
@@ -10,9 +28,66 @@ diff -r -u /tmp/ibutils-1.5.7/config/osm.m4 ibutils-1.5.7/config/osm.m4
  else
     dnl dummy values
     with_osm=disabled
-diff -r -u /tmp/ibutils-1.5.7/ibdiag/doc/ibdiagnet.pod ibutils-1.5.7/ibdiag/doc/ibdiagnet.pod
---- /tmp/ibutils-1.5.7/ibdiag/doc/ibdiagnet.pod	Mon Nov  1 16:03:43 2010
-+++ ibutils-1.5.7/ibdiag/doc/ibdiagnet.pod	Thu Jun  2 12:30:13 2011
+diff -r 01104fa59c22 configure
+--- a/configure	Wed Oct 14 12:54:37 2015 -0700
++++ b/configure	Fri Nov 13 06:47:32 2015 -0800
+@@ -1858,7 +1858,7 @@
+ 
+ test -z "$INSTALL_SCRIPT" && INSTALL_SCRIPT='${INSTALL}'
+ 
+-test -z "$INSTALL_DATA" && INSTALL_DATA='${INSTALL} -m 644'
++test -z "$INSTALL_DATA" && INSTALL_DATA='${INSTALL} -m 744'
+ 
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether build environment is sane" >&5
+ $as_echo_n "checking whether build environment is sane... " >&6; }
+@@ -2483,7 +2483,7 @@
+       osm_debug_flags=
+    fi
+ 
+-   OSM_CFLAGS="-I$osm_include_dir $osm_extra_includes $osm_debug_flags $osm_vendor_sel -D_XOPEN_SOURCE=600 -D_BSD_SOURCE=1"
++   OSM_CFLAGS="-I$osm_include_dir $osm_extra_includes $osm_debug_flags $osm_vendor_sel -D_BSD_SOURCE=1"
+ else
+       with_osm=disabled
+    OSM_CLFAGS=disabled
+diff -r 01104fa59c22 ibdiag/Makefile.in
+--- a/ibdiag/Makefile.in	Wed Oct 14 12:54:37 2015 -0700
++++ b/ibdiag/Makefile.in	Fri Nov 13 06:47:32 2015 -0800
+@@ -54,7 +54,7 @@
+ pkglibdir = $(libdir)/@PACKAGE@
+ pkglibexecdir = $(libexecdir)/@PACKAGE@
+ am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd
+-install_sh_DATA = $(install_sh) -c -m 644
++install_sh_DATA = $(install_sh) -c -m 744
+ install_sh_PROGRAM = $(install_sh) -c
+ install_sh_SCRIPT = $(install_sh) -c
+ INSTALL_HEADER = $(INSTALL_DATA)
+diff -r 01104fa59c22 ibdiag/configure
+--- a/ibdiag/configure	Wed Oct 14 12:54:37 2015 -0700
++++ b/ibdiag/configure	Fri Nov 13 06:47:32 2015 -0800
+@@ -1845,7 +1845,7 @@
+ 
+ test -z "$INSTALL_SCRIPT" && INSTALL_SCRIPT='${INSTALL}'
+ 
+-test -z "$INSTALL_DATA" && INSTALL_DATA='${INSTALL} -m 644'
++test -z "$INSTALL_DATA" && INSTALL_DATA='${INSTALL} -m 744'
+ 
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether build environment is sane" >&5
+ $as_echo_n "checking whether build environment is sane... " >&6; }
+diff -r 01104fa59c22 ibdiag/doc/Makefile.in
+--- a/ibdiag/doc/Makefile.in	Wed Oct 14 12:54:37 2015 -0700
++++ b/ibdiag/doc/Makefile.in	Fri Nov 13 06:47:32 2015 -0800
+@@ -52,7 +52,7 @@
+ pkglibdir = $(libdir)/@PACKAGE@
+ pkglibexecdir = $(libexecdir)/@PACKAGE@
+ am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd
+-install_sh_DATA = $(install_sh) -c -m 644
++install_sh_DATA = $(install_sh) -c -m 744
+ install_sh_PROGRAM = $(install_sh) -c
+ install_sh_SCRIPT = $(install_sh) -c
+ INSTALL_HEADER = $(INSTALL_DATA)
+diff -r 01104fa59c22 ibdiag/doc/ibdiagnet.pod
+--- a/ibdiag/doc/ibdiagnet.pod	Wed Oct 14 12:54:37 2015 -0700
++++ b/ibdiag/doc/ibdiagnet.pod	Fri Nov 13 06:47:32 2015 -0800
 @@ -122,7 +122,6 @@
  
  =over
@@ -183,9 +258,9 @@ diff -r -u /tmp/ibutils-1.5.7/ibdiag/doc/ibdiagnet.pod ibutils-1.5.7/ibdiag/doc/
  Prints the tool's environment variables and their values
  
  =back
-diff -r -u /tmp/ibutils-1.5.7/ibdiag/doc/ibdiagnet.txt ibutils-1.5.7/ibdiag/doc/ibdiagnet.txt
---- /tmp/ibutils-1.5.7/ibdiag/doc/ibdiagnet.txt	Sun Jun 15 07:37:31 2008
-+++ ibutils-1.5.7/ibdiag/doc/ibdiagnet.txt	Wed Nov 13 09:02:35 2013
+diff -r 01104fa59c22 ibdiag/doc/ibdiagnet.txt
+--- a/ibdiag/doc/ibdiagnet.txt	Wed Oct 14 12:54:37 2015 -0700
++++ b/ibdiag/doc/ibdiagnet.txt	Fri Nov 13 06:47:32 2015 -0800
 @@ -39,7 +39,8 @@
                    (default = 10)
    -v            : Instructs the tool to run in verbose mode
@@ -196,10 +271,10 @@ diff -r -u /tmp/ibutils-1.5.7/ibdiag/doc/ibdiagnet.txt ibutils-1.5.7/ibdiag/doc/
    -s <sys-name> : Specifies the local system name. Meaningful only if a topology
                    file is specified
    -i <dev-index>: Specifies the index of the device of the port used to connect
-diff -r -u /tmp/ibutils-1.5.7/ibdiag/doc/Makefile.in ibutils-1.5.7/ibdiag/doc/Makefile.in
---- /tmp/ibutils-1.5.7/ibdiag/doc/Makefile.in	Tue Mar  8 03:09:32 2011
-+++ ibutils-1.5.7/ibdiag/doc/Makefile.in	Thu Feb 24 16:51:16 2011
-@@ -52,7 +52,7 @@
+diff -r 01104fa59c22 ibdiag/src/Makefile.in
+--- a/ibdiag/src/Makefile.in	Wed Oct 14 12:54:37 2015 -0700
++++ b/ibdiag/src/Makefile.in	Fri Nov 13 06:47:32 2015 -0800
+@@ -53,7 +53,7 @@
  pkglibdir = $(libdir)/@PACKAGE@
  pkglibexecdir = $(libexecdir)/@PACKAGE@
  am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd
@@ -208,9 +283,41 @@ diff -r -u /tmp/ibutils-1.5.7/ibdiag/doc/Makefile.in ibutils-1.5.7/ibdiag/doc/Ma
  install_sh_PROGRAM = $(install_sh) -c
  install_sh_SCRIPT = $(install_sh) -c
  INSTALL_HEADER = $(INSTALL_DATA)
-diff -r -u /tmp/ibutils-1.5.7/ibdiag/src/ibdebug.tcl ibutils-1.5.7/ibdiag/src/ibdebug.tcl
---- /tmp/ibutils-1.5.7/ibdiag/src/ibdebug.tcl	Tue Mar  8 03:08:02 2011
-+++ ibutils-1.5.7/ibdiag/src/ibdebug.tcl	Thu Jun 27 22:46:57 2013
+@@ -244,7 +244,7 @@
+ 	     if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
+ 	     test -z "$$files" || { \
+ 	       echo " $(INSTALL_SCRIPT) $$files '$(DESTDIR)$(bindir)$$dir'"; \
+-	       $(INSTALL_SCRIPT) $$files "$(DESTDIR)$(bindir)$$dir" || exit $$?; \
++	       $(INSTALL_SCRIPT) -m 755 $$files "$(DESTDIR)$(bindir)$$dir" || exit $$?; \
+ 	     } \
+ 	; done
+ 
+@@ -426,12 +426,14 @@
+ 	sed -e 's=%ibdiag_libdir%='$(DESTDIR)$(libdir)'=' \
+ 	    -e 's=%with_ibdm_lib%='$(with_ibdm_lib)'=' \
+ 	    -e 's=%with_ibis_bindir%='$(DESTDIR)$(bindir)'=' \
++	    -e 's=%with_ibis_sbindir%='$(DESTDIR)$(sbindir)'=' \
+ 	    -e 's=%with_ibis%='$(with_ibis)'=' $(srcdir)/ibdiagnet.in > ibdiagnet
+ 
+ ibdiagpath: ibdiagpath.in
+ 	sed -e 's=%ibdiag_libdir%='$(DESTDIR)$(libdir)'=' \
+ 	    -e 's=%with_ibdm_lib%='$(with_ibdm_lib)'=' \
+ 	    -e 's=%with_ibis_bindir%='$(DESTDIR)$(bindir)'=' \
++	    -e 's=%with_ibis_sbindir%='$(DESTDIR)$(sbindir)'=' \
+ 	    -e 's=%with_ibis%='$(with_ibis)'=' $(srcdir)/ibdiagpath.in > ibdiagpath
+ 
+ ibdiagui: ibdiagui.in
+@@ -440,6 +442,7 @@
+ 	    -e 's=%with_tk_lib%='$(with_tk_lib)'=' \
+ 	    -e 's=%with_graphviz_lib%='$(with_graphviz_lib)'=' \
+ 	    -e 's=%with_ibis_bindir%='$(DESTDIR)$(bindir)'=' \
++	    -e 's=%with_ibis_sbindir%='$(DESTDIR)$(sbindir)'=' \
+ 	    -e 's=%with_ibis%='$(with_ibis)'=' $(srcdir)/ibdiagui.in > ibdiagui
+ 
+ clean:
+diff -r 01104fa59c22 ibdiag/src/ibdebug.tcl
+--- a/ibdiag/src/ibdebug.tcl	Wed Oct 14 12:54:37 2015 -0700
++++ b/ibdiag/src/ibdebug.tcl	Fri Nov 13 06:47:32 2015 -0800
 @@ -352,13 +352,16 @@
      if {[file exists $ibisOutDir/$ibisLogFile] && (![file writable $ibisOutDir/$ibisLogFile])} {
  	set ibisLogFile $ibisLogFile.[pid]
@@ -251,9 +358,9 @@ diff -r -u /tmp/ibutils-1.5.7/ibdiag/src/ibdebug.tcl ibutils-1.5.7/ibdiag/src/ib
      set FileID [InitializeOutputFile $G(var:tool.name).db]
  
      foreach {array_name data} {G data* Neighbor *} {
-diff -r -u /tmp/ibutils-1.5.7/ibdiag/src/ibdebug_if.tcl ibutils-1.5.7/ibdiag/src/ibdebug_if.tcl
---- /tmp/ibutils-1.5.7/ibdiag/src/ibdebug_if.tcl	Thu Oct  7 07:29:56 2010
-+++ ibutils-1.5.7/ibdiag/src/ibdebug_if.tcl	Wed Jun 19 07:43:17 2013
+diff -r 01104fa59c22 ibdiag/src/ibdebug_if.tcl
+--- a/ibdiag/src/ibdebug_if.tcl	Wed Oct 14 12:54:37 2015 -0700
++++ b/ibdiag/src/ibdebug_if.tcl	Fri Nov 13 06:47:32 2015 -0800
 @@ -675,6 +675,16 @@
      }
  
@@ -293,9 +400,9 @@ diff -r -u /tmp/ibutils-1.5.7/ibdiag/src/ibdebug_if.tcl ibutils-1.5.7/ibdiag/src
          "-W-loading:old.osm.version" {
  	    append msgText "OSM: The current OSM version is not up-to-date"
  	}
-diff -r -u /tmp/ibutils-1.5.7/ibdiag/src/Makefile.in ibutils-1.5.7/ibdiag/src/Makefile.in
---- /tmp/ibutils-1.5.7/ibdiag/src/Makefile.in	Tue Mar  8 03:09:32 2011
-+++ ibutils-1.5.7/ibdiag/src/Makefile.in	Thu Feb 24 16:51:16 2011
+diff -r 01104fa59c22 ibdm/Clusters/Makefile.in
+--- a/ibdm/Clusters/Makefile.in	Wed Oct 14 12:54:37 2015 -0700
++++ b/ibdm/Clusters/Makefile.in	Fri Nov 13 06:47:32 2015 -0800
 @@ -53,7 +53,7 @@
  pkglibdir = $(libdir)/@PACKAGE@
  pkglibexecdir = $(libexecdir)/@PACKAGE@
@@ -305,42 +412,9 @@ diff -r -u /tmp/ibutils-1.5.7/ibdiag/src/Makefile.in ibutils-1.5.7/ibdiag/src/Ma
  install_sh_PROGRAM = $(install_sh) -c
  install_sh_SCRIPT = $(install_sh) -c
  INSTALL_HEADER = $(INSTALL_DATA)
-@@ -244,7 +244,7 @@
- 	     if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
- 	     test -z "$$files" || { \
- 	       echo " $(INSTALL_SCRIPT) $$files '$(DESTDIR)$(bindir)$$dir'"; \
--	       $(INSTALL_SCRIPT) $$files "$(DESTDIR)$(bindir)$$dir" || exit $$?; \
-+	       $(INSTALL_SCRIPT) -m 755 $$files "$(DESTDIR)$(bindir)$$dir" || exit $$?; \
- 	     } \
- 	; done
- 
-@@ -426,6 +426,7 @@
- 	sed -e 's=%ibdiag_libdir%='$(DESTDIR)$(libdir)'=' \
- 	    -e 's=%with_ibdm_lib%='$(with_ibdm_lib)'=' \
- 	    -e 's=%with_ibis_bindir%='$(DESTDIR)$(bindir)'=' \
-+	    -e 's=%with_ibis_sbindir%='$(DESTDIR)$(sbindir)'=' \
- 	    -e 's=%with_ibis%='$(with_ibis)'=' $(srcdir)/ibdiagnet.in > ibdiagnet
- 
- ibdiagpath: ibdiagpath.in
-@@ -432,6 +433,7 @@
- 	sed -e 's=%ibdiag_libdir%='$(DESTDIR)$(libdir)'=' \
- 	    -e 's=%with_ibdm_lib%='$(with_ibdm_lib)'=' \
- 	    -e 's=%with_ibis_bindir%='$(DESTDIR)$(bindir)'=' \
-+	    -e 's=%with_ibis_sbindir%='$(DESTDIR)$(sbindir)'=' \
- 	    -e 's=%with_ibis%='$(with_ibis)'=' $(srcdir)/ibdiagpath.in > ibdiagpath
- 
- ibdiagui: ibdiagui.in
-@@ -440,6 +442,7 @@
- 	    -e 's=%with_tk_lib%='$(with_tk_lib)'=' \
- 	    -e 's=%with_graphviz_lib%='$(with_graphviz_lib)'=' \
- 	    -e 's=%with_ibis_bindir%='$(DESTDIR)$(bindir)'=' \
-+	    -e 's=%with_ibis_sbindir%='$(DESTDIR)$(sbindir)'=' \
- 	    -e 's=%with_ibis%='$(with_ibis)'=' $(srcdir)/ibdiagui.in > ibdiagui
- 
- clean:
-diff -r -u /tmp/ibutils-1.5.7/ibdiag/Makefile.in ibutils-1.5.7/ibdiag/Makefile.in
---- /tmp/ibutils-1.5.7/ibdiag/Makefile.in	Tue Mar  8 03:09:32 2011
-+++ ibutils-1.5.7/ibdiag/Makefile.in	Thu Feb 24 16:51:16 2011
+diff -r 01104fa59c22 ibdm/Makefile.in
+--- a/ibdm/Makefile.in	Wed Oct 14 12:54:37 2015 -0700
++++ b/ibdm/Makefile.in	Fri Nov 13 06:47:32 2015 -0800
 @@ -54,7 +54,7 @@
  pkglibdir = $(libdir)/@PACKAGE@
  pkglibexecdir = $(libexecdir)/@PACKAGE@
@@ -350,33 +424,9 @@ diff -r -u /tmp/ibutils-1.5.7/ibdiag/Makefile.in ibutils-1.5.7/ibdiag/Makefile.i
  install_sh_PROGRAM = $(install_sh) -c
  install_sh_SCRIPT = $(install_sh) -c
  INSTALL_HEADER = $(INSTALL_DATA)
-diff -r -u /tmp/ibutils-1.5.7/ibdiag/configure ibutils-1.5.7/ibdiag/configure
---- /tmp/ibutils-1.5.7/ibdiag/configure	Tue Mar  8 03:09:33 2011
-+++ ibutils-1.5.7/ibdiag/configure	Thu Mar 10 18:33:24 2011
-@@ -1811,7 +1811,7 @@
- 
- test -z "$INSTALL_SCRIPT" && INSTALL_SCRIPT='${INSTALL}'
- 
--test -z "$INSTALL_DATA" && INSTALL_DATA='${INSTALL} -m 644'
-+test -z "$INSTALL_DATA" && INSTALL_DATA='${INSTALL} -m 744'
- 
- { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether build environment is sane" >&5
- $as_echo_n "checking whether build environment is sane... " >&6; }
-diff -r -u /tmp/ibutils-1.5.7/ibdm/Clusters/Makefile.in ibutils-1.5.7/ibdm/Clusters/Makefile.in
---- /tmp/ibutils-1.5.7/ibdm/Clusters/Makefile.in	Tue Mar  8 03:09:40 2011
-+++ ibutils-1.5.7/ibdm/Clusters/Makefile.in	Thu Feb 24 16:51:16 2011
-@@ -53,7 +53,7 @@
- pkglibdir = $(libdir)/@PACKAGE@
- pkglibexecdir = $(libexecdir)/@PACKAGE@
- am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd
--install_sh_DATA = $(install_sh) -c -m 644
-+install_sh_DATA = $(install_sh) -c -m 744
- install_sh_PROGRAM = $(install_sh) -c
- install_sh_SCRIPT = $(install_sh) -c
- INSTALL_HEADER = $(INSTALL_DATA)
-diff -r -u /tmp/ibutils-1.5.7/ibdm/aclocal.m4 ibutils-1.5.7/ibdm/aclocal.m4
---- /tmp/ibutils-1.5.7/ibdm/aclocal.m4	Tue Mar  8 03:09:38 2011
-+++ ibutils-1.5.7/ibdm/aclocal.m4	Thu Feb 24 16:51:16 2011
+diff -r 01104fa59c22 ibdm/aclocal.m4
+--- a/ibdm/aclocal.m4	Wed Oct 14 12:54:37 2015 -0700
++++ b/ibdm/aclocal.m4	Fri Nov 13 06:47:32 2015 -0800
 @@ -1389,7 +1389,7 @@
  
  # Determine commands to create old-style static archives.
@@ -386,7 +436,7 @@ diff -r -u /tmp/ibutils-1.5.7/ibdm/aclocal.m4 ibutils-1.5.7/ibdm/aclocal.m4
  old_postuninstall_cmds=
  
  if test -n "$RANLIB"; then
-@@ -2610,6 +2610,23 @@
+@@ -2601,6 +2601,23 @@
    hardcode_into_libs=yes
    # ldd complains unless libraries are executable
    postinstall_cmds='chmod +x $lib'
@@ -410,9 +460,96 @@ diff -r -u /tmp/ibutils-1.5.7/ibdm/aclocal.m4 ibutils-1.5.7/ibdm/aclocal.m4
    ;;
  
  sunos4*)
-diff -r -u /tmp/ibutils-1.5.7/ibdm/doc/Makefile.in ibutils-1.5.7/ibdm/doc/Makefile.in
---- /tmp/ibutils-1.5.7/ibdm/doc/Makefile.in	Tue Mar  8 03:09:41 2011
-+++ ibutils-1.5.7/ibdm/doc/Makefile.in	Thu Feb 24 16:51:17 2011
+diff -r 01104fa59c22 ibdm/configure
+--- a/ibdm/configure	Wed Oct 14 12:54:37 2015 -0700
++++ b/ibdm/configure	Fri Nov 13 06:47:32 2015 -0800
+@@ -2799,7 +2799,7 @@
+ 
+ test -z "$INSTALL_SCRIPT" && INSTALL_SCRIPT='${INSTALL}'
+ 
+-test -z "$INSTALL_DATA" && INSTALL_DATA='${INSTALL} -m 644'
++test -z "$INSTALL_DATA" && INSTALL_DATA='${INSTALL} -m 744'
+ 
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether build environment is sane" >&5
+ $as_echo_n "checking whether build environment is sane... " >&6; }
+@@ -6668,7 +6668,7 @@
+ 
+ # Determine commands to create old-style static archives.
+ old_archive_cmds='$AR $AR_FLAGS $oldlib$oldobjs'
+-old_postinstall_cmds='chmod 644 $oldlib'
++old_postinstall_cmds='chmod 744 $oldlib'
+ old_postuninstall_cmds=
+ 
+ if test -n "$RANLIB"; then
+@@ -10350,6 +10350,7 @@
+ 	;;
+       esac
+       link_all_deplibs=yes
++      hardcode_libdir_flag_spec=
+       ;;
+ 
+     sunos4*)
+@@ -11268,6 +11269,24 @@
+   hardcode_into_libs=yes
+   # ldd complains unless libraries are executable
+   postinstall_cmds='chmod +x $lib'
++
++  if echo "$CFLAGS" | grep '\-m64' >/dev/null ; then
++    sys_lib_search_path_spec=`$CC -m64 -print-search-dirs | grep "^libraries:" | $SED -e "s/^libraries://" -e "s,=/,/,g"`
++    sys_lib_search_path_spec=`echo "$sys_lib_search_path_spec" | $SED  -e "s/$PATH_SEPARATOR/ /g"`
++
++    solaris_arch=`uname -p`
++    if [ $solaris_arch = "i386" ]; then
++      lib64=amd64
++    else
++      lib64=sparcv9
++    fi
++
++    if ! echo "$sys_lib_search_path_spec" | grep $lib64 >/dev/null  ; then
++      solaris_lib64path=`echo "$sys_lib_search_path_spec" | $SED  -e "s/ /$lib64\/ /g" | cut -d " " -f2-`
++      solaris_lib64path="$solaris_lib64path""$lib64"/
++      sys_lib_search_path_spec="$solaris_lib64path $sys_lib_search_path_spec"
++    fi
++  fi
+   ;;
+ 
+ sunos4*)
+@@ -13211,6 +13230,7 @@
+ 	    fi
+ 	    ;;
+         esac
++	hardcode_libdir_flag_spec_CXX=
+         ;;
+ 
+     sysv4*uw2* | sysv5OpenUNIX* | sysv5UnixWare7.[01].[10]* | unixware7* | sco3.2v5.0.[024]*)
+@@ -14724,6 +14744,24 @@
+   hardcode_into_libs=yes
+   # ldd complains unless libraries are executable
+   postinstall_cmds='chmod +x $lib'
++
++  if echo "$CFLAGS" | grep '\-m64' >/dev/null ; then
++    sys_lib_search_path_spec=`$CC -m64 -print-search-dirs | grep "^libraries:" | $SED -e "s/^libraries://" -e "s,=/,/,g"`
++    sys_lib_search_path_spec=`echo "$sys_lib_search_path_spec" | $SED  -e "s/$PATH_SEPARATOR/ /g"`
++
++    solaris_arch=`uname -p`
++    if [ $solaris_arch = "i386" ]; then
++      lib64=amd64
++    else
++      lib64=sparcv9
++    fi
++
++    if ! echo "$sys_lib_search_path_spec" | grep $lib64 >/dev/null  ; then
++      solaris_lib64path=`echo "$sys_lib_search_path_spec" | $SED  -e "s/ /$lib64\/ /g" | cut -d " " -f2-`
++      solaris_lib64path="$solaris_lib64path""$lib64"/
++      sys_lib_search_path_spec="$solaris_lib64path $sys_lib_search_path_spec"
++    fi
++  fi
+   ;;
+ 
+ sunos4*)
+diff -r 01104fa59c22 ibdm/doc/Makefile.in
+--- a/ibdm/doc/Makefile.in	Wed Oct 14 12:54:37 2015 -0700
++++ b/ibdm/doc/Makefile.in	Fri Nov 13 06:47:32 2015 -0800
 @@ -52,7 +52,7 @@
  pkglibdir = $(libdir)/@PACKAGE@
  pkglibexecdir = $(libexecdir)/@PACKAGE@
@@ -422,57 +559,9 @@ diff -r -u /tmp/ibutils-1.5.7/ibdm/doc/Makefile.in ibutils-1.5.7/ibdm/doc/Makefi
  install_sh_PROGRAM = $(install_sh) -c
  install_sh_SCRIPT = $(install_sh) -c
  INSTALL_HEADER = $(INSTALL_DATA)
-diff -r -u /tmp/ibutils-1.5.7/ibdm/ibnl/Makefile.in ibutils-1.5.7/ibdm/ibnl/Makefile.in
---- /tmp/ibutils-1.5.7/ibdm/ibnl/Makefile.in	Tue Mar  8 03:09:41 2011
-+++ ibutils-1.5.7/ibdm/ibnl/Makefile.in	Thu Feb 24 16:51:17 2011
-@@ -53,7 +53,7 @@
- pkglibdir = $(libdir)/@PACKAGE@
- pkglibexecdir = $(libexecdir)/@PACKAGE@
- am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd
--install_sh_DATA = $(install_sh) -c -m 644
-+install_sh_DATA = $(install_sh) -c -m 744
- install_sh_PROGRAM = $(install_sh) -c
- install_sh_SCRIPT = $(install_sh) -c
- INSTALL_HEADER = $(INSTALL_DATA)
-diff -r -u /tmp/ibutils-1.5.7/ibdm/src/Makefile.in ibutils-1.5.7/ibdm/src/Makefile.in
---- /tmp/ibutils-1.5.7/ibdm/src/Makefile.in	Tue Mar  8 03:09:41 2011
-+++ ibutils-1.5.7/ibdm/src/Makefile.in	Thu Feb 24 16:51:17 2011
-@@ -57,7 +57,7 @@
- pkglibdir = $(libdir)/@PACKAGE@
- pkglibexecdir = $(libexecdir)/@PACKAGE@
- am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd
--install_sh_DATA = $(install_sh) -c -m 644
-+install_sh_DATA = $(install_sh) -c -m 744
- install_sh_PROGRAM = $(install_sh) -c
- install_sh_SCRIPT = $(install_sh) -c
- INSTALL_HEADER = $(INSTALL_DATA)
-diff -r -u /tmp/ibutils-1.5.7/ibdm/Makefile.in ibutils-1.5.7/ibdm/Makefile.in
---- /tmp/ibutils-1.5.7/ibdm/Makefile.in	Tue Mar  8 03:09:42 2011
-+++ ibutils-1.5.7/ibdm/Makefile.in	Thu Feb 24 16:51:16 2011
-@@ -54,7 +54,7 @@
- pkglibdir = $(libdir)/@PACKAGE@
- pkglibexecdir = $(libexecdir)/@PACKAGE@
- am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd
--install_sh_DATA = $(install_sh) -c -m 644
-+install_sh_DATA = $(install_sh) -c -m 744
- install_sh_PROGRAM = $(install_sh) -c
- install_sh_SCRIPT = $(install_sh) -c
- INSTALL_HEADER = $(INSTALL_DATA)
-diff -r -u /tmp/ibutils-1.5.7/ibdm/scripts/Makefile.in ibutils-1.5.7/ibdm/scripts/Makefile.in
---- /tmp/ibutils-1.5.7/ibdm/scripts/Makefile.in	Tue Mar  8 03:09:41 2011
-+++ ibutils-1.5.7/ibdm/scripts/Makefile.in	Thu Feb 24 16:51:17 2011
-@@ -53,7 +53,7 @@
- pkglibdir = $(libdir)/@PACKAGE@
- pkglibexecdir = $(libexecdir)/@PACKAGE@
- am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd
--install_sh_DATA = $(install_sh) -c -m 644
-+install_sh_DATA = $(install_sh) -c -m 744
- install_sh_PROGRAM = $(install_sh) -c
- install_sh_SCRIPT = $(install_sh) -c
- INSTALL_HEADER = $(INSTALL_DATA)
-diff -r -u /tmp/ibutils-1.5.7/ibdm/ibdm/Fabric.cpp ibutils-1.5.7/ibdm/ibdm/Fabric.cpp
---- /tmp/ibutils-1.5.7/ibdm/ibdm/Fabric.cpp	Thu Oct  7 07:29:56 2010
-+++ ibutils-1.5.7/ibdm/ibdm/Fabric.cpp	Mon Sep 19 12:03:07 2011
+diff -r 01104fa59c22 ibdm/ibdm/Fabric.cpp
+--- a/ibdm/ibdm/Fabric.cpp	Wed Oct 14 12:54:37 2015 -0700
++++ b/ibdm/ibdm/Fabric.cpp	Fri Nov 13 06:47:32 2015 -0800
 @@ -1954,6 +1954,7 @@
          }*/
      }
@@ -481,9 +570,9 @@ diff -r -u /tmp/ibutils-1.5.7/ibdm/ibdm/Fabric.cpp ibutils-1.5.7/ibdm/ibdm/Fabri
  
      // Make second pass and build the tables
      f.open(fn.c_str(),ifstream::in);
-diff -r -u /tmp/ibutils-1.5.7/ibdm/ibdm/Fabric.h ibutils-1.5.7/ibdm/ibdm/Fabric.h
---- /tmp/ibutils-1.5.7/ibdm/ibdm/Fabric.h	Thu Oct  7 07:29:56 2010
-+++ ibutils-1.5.7/ibdm/ibdm/Fabric.h	Thu Feb 24 16:51:17 2011
+diff -r 01104fa59c22 ibdm/ibdm/Fabric.h
+--- a/ibdm/ibdm/Fabric.h	Wed Oct 14 12:54:37 2015 -0700
++++ b/ibdm/ibdm/Fabric.h	Fri Nov 13 06:47:32 2015 -0800
 @@ -54,6 +54,7 @@
  #include <iostream>
  #include <sstream>
@@ -501,22 +590,9 @@ diff -r -u /tmp/ibutils-1.5.7/ibdm/ibdm/Fabric.h ibutils-1.5.7/ibdm/ibdm/Fabric.
  #define PRIx64 "llx"
  #endif
  using namespace std;
-diff -r -u /tmp/ibutils-1.5.7/ibdm/ibdm/TopoMatch.cpp ibutils-1.5.7/ibdm/ibdm/TopoMatch.cpp
---- /tmp/ibutils-1.5.7/ibdm/ibdm/TopoMatch.cpp	Mon Nov  1 16:03:44 2010
-+++ ibutils-1.5.7/ibdm/ibdm/TopoMatch.cpp	Thu Feb 24 16:51:17 2011
-@@ -57,6 +57,9 @@
- #include "Regexp.h"
- #include <iomanip>
- #include <sstream>
-+#if defined(__SVR4) && defined(__sun)
-+#include <strings.h>
-+#endif
- 
- 
- //////////////////////////////////////////////////////////////////////////////
-diff -r -u /tmp/ibutils-1.5.7/ibdm/ibdm/Makefile.in ibutils-1.5.7/ibdm/ibdm/Makefile.in
---- /tmp/ibutils-1.5.7/ibdm/ibdm/Makefile.in	Tue Mar  8 03:09:41 2011
-+++ ibutils-1.5.7/ibdm/ibdm/Makefile.in	Thu Feb 24 16:51:17 2011
+diff -r 01104fa59c22 ibdm/ibdm/Makefile.in
+--- a/ibdm/ibdm/Makefile.in	Wed Oct 14 12:54:37 2015 -0700
++++ b/ibdm/ibdm/Makefile.in	Fri Nov 13 06:47:32 2015 -0800
 @@ -55,7 +55,7 @@
  pkglibdir = $(libdir)/@PACKAGE@
  pkglibexecdir = $(libexecdir)/@PACKAGE@
@@ -535,9 +611,22 @@ diff -r -u /tmp/ibutils-1.5.7/ibdm/ibdm/Makefile.in ibutils-1.5.7/ibdm/ibdm/Make
  libibdmcom_la_LDFLAGS = -version-info $(LIB_VER_TRIPLET)
  libibdm_la_SOURCES = ibdm_wrap.cpp ibdm.i $(common_SOURCES)
  libibdm_la_LIBADD = $(TCL_LIBS) 
-diff -r -u /tmp/ibutils-1.5.7/ibdm/ibdm/ibdm_wrap.cpp ibutils-1.5.7/ibdm/ibdm/ibdm_wrap.cpp
---- /tmp/ibutils-1.5.7/ibdm/ibdm/ibdm_wrap.cpp	Thu Oct  7 07:28:58 2010
-+++ ibutils-1.5.7/ibdm/ibdm/ibdm_wrap.cpp	Thu Feb 24 16:51:17 2011
+diff -r 01104fa59c22 ibdm/ibdm/TopoMatch.cpp
+--- a/ibdm/ibdm/TopoMatch.cpp	Wed Oct 14 12:54:37 2015 -0700
++++ b/ibdm/ibdm/TopoMatch.cpp	Fri Nov 13 06:47:32 2015 -0800
+@@ -57,6 +57,9 @@
+ #include "Regexp.h"
+ #include <iomanip>
+ #include <sstream>
++#if defined(__SVR4) && defined(__sun)
++#include <strings.h>
++#endif
+ 
+ 
+ //////////////////////////////////////////////////////////////////////////////
+diff -r 01104fa59c22 ibdm/ibdm/ibdm_wrap.cpp
+--- a/ibdm/ibdm/ibdm_wrap.cpp	Wed Oct 14 12:54:37 2015 -0700
++++ b/ibdm/ibdm/ibdm_wrap.cpp	Fri Nov 13 06:47:32 2015 -0800
 @@ -23,6 +23,9 @@
  #include INCLUDE_TCL
  #include <string.h>
@@ -548,9 +637,9 @@ diff -r -u /tmp/ibutils-1.5.7/ibdm/ibdm/ibdm_wrap.cpp ibutils-1.5.7/ibdm/ibdm/ib
  #define SWIGTCL
  #define SWIGTCL8
  /*
-diff -r -u /tmp/ibutils-1.5.7/ibdm/ibdm/ibdmsh_wrap.cpp ibutils-1.5.7/ibdm/ibdm/ibdmsh_wrap.cpp
---- /tmp/ibutils-1.5.7/ibdm/ibdm/ibdmsh_wrap.cpp	Thu Oct  7 07:28:58 2010
-+++ ibutils-1.5.7/ibdm/ibdm/ibdmsh_wrap.cpp	Thu Feb 24 16:51:17 2011
+diff -r 01104fa59c22 ibdm/ibdm/ibdmsh_wrap.cpp
+--- a/ibdm/ibdm/ibdmsh_wrap.cpp	Wed Oct 14 12:54:37 2015 -0700
++++ b/ibdm/ibdm/ibdmsh_wrap.cpp	Fri Nov 13 06:47:32 2015 -0800
 @@ -22,6 +22,9 @@
  #define INCLUDE_TK     <tk.h>
  #include INCLUDE_TCL
@@ -561,96 +650,57 @@ diff -r -u /tmp/ibutils-1.5.7/ibdm/ibdm/ibdmsh_wrap.cpp ibutils-1.5.7/ibdm/ibdm/
  #include <stdlib.h>
  #define SWIGTCL
  #define SWIGTCL8
-diff -r -u /tmp/ibutils-1.5.7/ibdm/configure ibutils-1.5.7/ibdm/configure
---- /tmp/ibutils-1.5.7/ibdm/configure	Tue Mar  8 03:09:43 2011
-+++ ibutils-1.5.7/ibdm/configure	Thu Mar 10 18:33:25 2011
-@@ -2764,7 +2764,7 @@
- 
- test -z "$INSTALL_SCRIPT" && INSTALL_SCRIPT='${INSTALL}'
- 
--test -z "$INSTALL_DATA" && INSTALL_DATA='${INSTALL} -m 644'
-+test -z "$INSTALL_DATA" && INSTALL_DATA='${INSTALL} -m 744'
- 
- { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether build environment is sane" >&5
- $as_echo_n "checking whether build environment is sane... " >&6; }
-@@ -6633,7 +6633,7 @@
- 
- # Determine commands to create old-style static archives.
- old_archive_cmds='$AR $AR_FLAGS $oldlib$oldobjs'
--old_postinstall_cmds='chmod 644 $oldlib'
-+old_postinstall_cmds='chmod 744 $oldlib'
- old_postuninstall_cmds=
- 
- if test -n "$RANLIB"; then
-@@ -10321,6 +10321,7 @@
- 	;;
-       esac
-       link_all_deplibs=yes
-+      hardcode_libdir_flag_spec=
-       ;;
- 
-     sunos4*)
-@@ -11248,6 +11249,24 @@
-   hardcode_into_libs=yes
-   # ldd complains unless libraries are executable
-   postinstall_cmds='chmod +x $lib'
-+
-+  if echo "$CFLAGS" | grep '\-m64' >/dev/null ; then
-+    sys_lib_search_path_spec=`$CC -m64 -print-search-dirs | grep "^libraries:" | $SED -e "s/^libraries://" -e "s,=/,/,g"`
-+    sys_lib_search_path_spec=`echo "$sys_lib_search_path_spec" | $SED  -e "s/$PATH_SEPARATOR/ /g"`
-+
-+    solaris_arch=`uname -p`
-+    if [ $solaris_arch = "i386" ]; then
-+      lib64=amd64
-+    else
-+      lib64=sparcv9
-+    fi
-+
-+    if ! echo "$sys_lib_search_path_spec" | grep $lib64 >/dev/null  ; then
-+      solaris_lib64path=`echo "$sys_lib_search_path_spec" | $SED  -e "s/ /$lib64\/ /g" | cut -d " " -f2-`
-+      solaris_lib64path="$solaris_lib64path""$lib64"/
-+      sys_lib_search_path_spec="$solaris_lib64path $sys_lib_search_path_spec"
-+    fi
-+  fi
-   ;;
- 
- sunos4*)
-@@ -13191,6 +13210,7 @@
- 	    fi
- 	    ;;
-         esac
-+	hardcode_libdir_flag_spec_CXX=
-         ;;
- 
-     sysv4*uw2* | sysv5OpenUNIX* | sysv5UnixWare7.[01].[10]* | unixware7* | sco3.2v5.0.[024]*)
-@@ -14716,6 +14736,24 @@
-   hardcode_into_libs=yes
-   # ldd complains unless libraries are executable
-   postinstall_cmds='chmod +x $lib'
-+
-+  if echo "$CFLAGS" | grep '\-m64' >/dev/null ; then
-+    sys_lib_search_path_spec=`$CC -m64 -print-search-dirs | grep "^libraries:" | $SED -e "s/^libraries://" -e "s,=/,/,g"`
-+    sys_lib_search_path_spec=`echo "$sys_lib_search_path_spec" | $SED  -e "s/$PATH_SEPARATOR/ /g"`
-+
-+    solaris_arch=`uname -p`
-+    if [ $solaris_arch = "i386" ]; then
-+      lib64=amd64
-+    else
-+      lib64=sparcv9
-+    fi
-+
-+    if ! echo "$sys_lib_search_path_spec" | grep $lib64 >/dev/null  ; then
-+      solaris_lib64path=`echo "$sys_lib_search_path_spec" | $SED  -e "s/ /$lib64\/ /g" | cut -d " " -f2-`
-+      solaris_lib64path="$solaris_lib64path""$lib64"/
-+      sys_lib_search_path_spec="$solaris_lib64path $sys_lib_search_path_spec"
-+    fi
-+  fi
-   ;;
- 
- sunos4*)
-diff -r -u /tmp/ibutils-1.5.7/ibis/aclocal.m4 ibutils-1.5.7/ibis/aclocal.m4
---- /tmp/ibutils-1.5.7/ibis/aclocal.m4	Tue Mar  8 03:09:48 2011
-+++ ibutils-1.5.7/ibis/aclocal.m4	Thu Feb 24 16:51:17 2011
+diff -r 01104fa59c22 ibdm/ibnl/Makefile.in
+--- a/ibdm/ibnl/Makefile.in	Wed Oct 14 12:54:37 2015 -0700
++++ b/ibdm/ibnl/Makefile.in	Fri Nov 13 06:47:32 2015 -0800
+@@ -53,7 +53,7 @@
+ pkglibdir = $(libdir)/@PACKAGE@
+ pkglibexecdir = $(libexecdir)/@PACKAGE@
+ am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd
+-install_sh_DATA = $(install_sh) -c -m 644
++install_sh_DATA = $(install_sh) -c -m 744
+ install_sh_PROGRAM = $(install_sh) -c
+ install_sh_SCRIPT = $(install_sh) -c
+ INSTALL_HEADER = $(INSTALL_DATA)
+diff -r 01104fa59c22 ibdm/scripts/Makefile.in
+--- a/ibdm/scripts/Makefile.in	Wed Oct 14 12:54:37 2015 -0700
++++ b/ibdm/scripts/Makefile.in	Fri Nov 13 06:47:32 2015 -0800
+@@ -53,7 +53,7 @@
+ pkglibdir = $(libdir)/@PACKAGE@
+ pkglibexecdir = $(libexecdir)/@PACKAGE@
+ am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd
+-install_sh_DATA = $(install_sh) -c -m 644
++install_sh_DATA = $(install_sh) -c -m 744
+ install_sh_PROGRAM = $(install_sh) -c
+ install_sh_SCRIPT = $(install_sh) -c
+ INSTALL_HEADER = $(INSTALL_DATA)
+diff -r 01104fa59c22 ibdm/src/Makefile.in
+--- a/ibdm/src/Makefile.in	Wed Oct 14 12:54:37 2015 -0700
++++ b/ibdm/src/Makefile.in	Fri Nov 13 06:47:32 2015 -0800
+@@ -57,7 +57,7 @@
+ pkglibdir = $(libdir)/@PACKAGE@
+ pkglibexecdir = $(libexecdir)/@PACKAGE@
+ am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd
+-install_sh_DATA = $(install_sh) -c -m 644
++install_sh_DATA = $(install_sh) -c -m 744
+ install_sh_PROGRAM = $(install_sh) -c
+ install_sh_SCRIPT = $(install_sh) -c
+ INSTALL_HEADER = $(INSTALL_DATA)
+diff -r 01104fa59c22 ibis/Makefile.in
+--- a/ibis/Makefile.in	Wed Oct 14 12:54:37 2015 -0700
++++ b/ibis/Makefile.in	Fri Nov 13 06:47:32 2015 -0800
+@@ -54,7 +54,7 @@
+ pkglibdir = $(libdir)/@PACKAGE@
+ pkglibexecdir = $(libexecdir)/@PACKAGE@
+ am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd
+-install_sh_DATA = $(install_sh) -c -m 644
++install_sh_DATA = $(install_sh) -c -m 744
+ install_sh_PROGRAM = $(install_sh) -c
+ install_sh_SCRIPT = $(install_sh) -c
+ INSTALL_HEADER = $(INSTALL_DATA)
+diff -r 01104fa59c22 ibis/aclocal.m4
+--- a/ibis/aclocal.m4	Wed Oct 14 12:54:37 2015 -0700
++++ b/ibis/aclocal.m4	Fri Nov 13 06:47:32 2015 -0800
 @@ -1389,7 +1389,7 @@
  
  # Determine commands to create old-style static archives.
@@ -660,9 +710,74 @@ diff -r -u /tmp/ibutils-1.5.7/ibis/aclocal.m4 ibutils-1.5.7/ibis/aclocal.m4
  old_postuninstall_cmds=
  
  if test -n "$RANLIB"; then
-diff -r -u /tmp/ibutils-1.5.7/ibis/doc/Makefile.in ibutils-1.5.7/ibis/doc/Makefile.in
---- /tmp/ibutils-1.5.7/ibis/doc/Makefile.in	Tue Mar  8 03:09:51 2011
-+++ ibutils-1.5.7/ibis/doc/Makefile.in	Thu Feb 24 16:51:18 2011
+diff -r 01104fa59c22 ibis/configure
+--- a/ibis/configure	Wed Oct 14 12:54:37 2015 -0700
++++ b/ibis/configure	Fri Nov 13 06:47:32 2015 -0800
+@@ -2798,7 +2798,7 @@
+ 
+ test -z "$INSTALL_SCRIPT" && INSTALL_SCRIPT='${INSTALL}'
+ 
+-test -z "$INSTALL_DATA" && INSTALL_DATA='${INSTALL} -m 644'
++test -z "$INSTALL_DATA" && INSTALL_DATA='${INSTALL} -m 744'
+ 
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether build environment is sane" >&5
+ $as_echo_n "checking whether build environment is sane... " >&6; }
+@@ -6430,7 +6430,7 @@
+ 
+ # Determine commands to create old-style static archives.
+ old_archive_cmds='$AR $AR_FLAGS $oldlib$oldobjs'
+-old_postinstall_cmds='chmod 644 $oldlib'
++old_postinstall_cmds='chmod 744 $oldlib'
+ old_postuninstall_cmds=
+ 
+ if test -n "$RANLIB"; then
+@@ -10113,6 +10113,7 @@
+ 	;;
+       esac
+       link_all_deplibs=yes
++      hardcode_libdir_flag_spec=
+       ;;
+ 
+     sunos4*)
+@@ -12974,6 +12975,7 @@
+ 	    fi
+ 	    ;;
+         esac
++	  hardcode_libdir_flag_spec_CXX=
+         ;;
+ 
+     sysv4*uw2* | sysv5OpenUNIX* | sysv5UnixWare7.[01].[10]* | unixware7* | sco3.2v5.0.[024]*)
+@@ -15288,8 +15290,8 @@
+       else
+          osm_lib_dir=lib
+       fi
++      with_osm_libs=$with_osm/$osm_lib_dir
+    fi
+-   with_osm_libs=$with_osm/$osm_lib_dir
+ 
+       if test -d $with_osm/include/infiniband; then
+       OSM_BUILD=openib
+@@ -15299,7 +15301,7 @@
+    { $as_echo "$as_me:${as_lineno-$LINENO}: OSM: build type $OSM_BUILD" >&5
+ $as_echo "$as_me: OSM: build type $OSM_BUILD" >&6;}
+ 
+-   OSM_LDFLAGS="-Wl,-rpath -Wl,$with_osm_libs -L$with_osm_libs"
++   OSM_LDFLAGS="-L$with_osm_libs"
+          if test $OSM_BUILD = openib; then
+             osm_include_dir="$with_osm/include/infiniband"
+       osm_extra_includes="-I$with_osm/include"
+@@ -15381,7 +15383,7 @@
+       osm_debug_flags=
+    fi
+ 
+-   OSM_CFLAGS="-I$osm_include_dir $osm_extra_includes $osm_debug_flags $osm_vendor_sel -D_XOPEN_SOURCE=600 -D_BSD_SOURCE=1"
++   OSM_CFLAGS="-I$osm_include_dir $osm_extra_includes $osm_debug_flags $osm_vendor_sel -D_BSD_SOURCE=1"
+ else
+       with_osm=disabled
+    OSM_CLFAGS=disabled
+diff -r 01104fa59c22 ibis/doc/Makefile.in
+--- a/ibis/doc/Makefile.in	Wed Oct 14 12:54:37 2015 -0700
++++ b/ibis/doc/Makefile.in	Fri Nov 13 06:47:32 2015 -0800
 @@ -52,7 +52,7 @@
  pkglibdir = $(libdir)/@PACKAGE@
  pkglibexecdir = $(libexecdir)/@PACKAGE@
@@ -672,9 +787,9 @@ diff -r -u /tmp/ibutils-1.5.7/ibis/doc/Makefile.in ibutils-1.5.7/ibis/doc/Makefi
  install_sh_PROGRAM = $(install_sh) -c
  install_sh_SCRIPT = $(install_sh) -c
  INSTALL_HEADER = $(INSTALL_DATA)
-diff -r -u /tmp/ibutils-1.5.7/ibis/src/Makefile.in ibutils-1.5.7/ibis/src/Makefile.in
---- /tmp/ibutils-1.5.7/ibis/src/Makefile.in	Tue Mar  8 03:09:51 2011
-+++ ibutils-1.5.7/ibis/src/Makefile.in	Thu Feb 24 16:51:18 2011
+diff -r 01104fa59c22 ibis/src/Makefile.in
+--- a/ibis/src/Makefile.in	Wed Oct 14 12:54:37 2015 -0700
++++ b/ibis/src/Makefile.in	Fri Nov 13 06:47:32 2015 -0800
 @@ -55,7 +55,7 @@
  pkglibdir = $(libdir)/@PACKAGE@
  pkglibexecdir = $(libexecdir)/@PACKAGE@
@@ -684,9 +799,9 @@ diff -r -u /tmp/ibutils-1.5.7/ibis/src/Makefile.in ibutils-1.5.7/ibis/src/Makefi
  install_sh_PROGRAM = $(install_sh) -c
  install_sh_SCRIPT = $(install_sh) -c
  INSTALL_HEADER = $(INSTALL_DATA)
-diff -r -u /tmp/ibutils-1.5.7/ibis/src/ibbbm_base.h ibutils-1.5.7/ibis/src/ibbbm_base.h
---- /tmp/ibutils-1.5.7/ibis/src/ibbbm_base.h	Wed Feb 24 02:09:25 2010
-+++ ibutils-1.5.7/ibis/src/ibbbm_base.h	Thu Feb 24 16:51:18 2011
+diff -r 01104fa59c22 ibis/src/ibbbm_base.h
+--- a/ibis/src/ibbbm_base.h	Wed Oct 14 12:54:37 2015 -0700
++++ b/ibis/src/ibbbm_base.h	Fri Nov 13 06:47:32 2015 -0800
 @@ -30,11 +30,14 @@
   * SOFTWARE.
   *
@@ -703,9 +818,9 @@ diff -r -u /tmp/ibutils-1.5.7/ibis/src/ibbbm_base.h ibutils-1.5.7/ibis/src/ibbbm
  
  #define BBM_CLASS         0x05
  #define BBM_ATTR_BKEYINFO 0x10
-diff -r -u /tmp/ibutils-1.5.7/ibis/src/ibcr_base.h ibutils-1.5.7/ibis/src/ibcr_base.h
---- /tmp/ibutils-1.5.7/ibis/src/ibcr_base.h	Wed Feb 24 02:09:25 2010
-+++ ibutils-1.5.7/ibis/src/ibcr_base.h	Thu Feb 24 16:51:18 2011
+diff -r 01104fa59c22 ibis/src/ibcr_base.h
+--- a/ibis/src/ibcr_base.h	Wed Oct 14 12:54:37 2015 -0700
++++ b/ibis/src/ibcr_base.h	Fri Nov 13 06:47:32 2015 -0800
 @@ -34,7 +34,11 @@
  #ifndef _IBCR_BASE_H_
  #define _IBCR_BASE_H_
@@ -718,9 +833,9 @@ diff -r -u /tmp/ibutils-1.5.7/ibis/src/ibcr_base.h ibutils-1.5.7/ibis/src/ibcr_b
  
  #define CR_CLASS        0x09
  #define CR_ATTR_50      0x50
-diff -r -u /tmp/ibutils-1.5.7/ibis/src/ibis_base.h ibutils-1.5.7/ibis/src/ibis_base.h
---- /tmp/ibutils-1.5.7/ibis/src/ibis_base.h	Wed Feb 24 02:09:25 2010
-+++ ibutils-1.5.7/ibis/src/ibis_base.h	Mon Mar 24 15:09:53 2014
+diff -r 01104fa59c22 ibis/src/ibis_base.h
+--- a/ibis/src/ibis_base.h	Wed Oct 14 12:54:37 2015 -0700
++++ b/ibis/src/ibis_base.h	Fri Nov 13 06:47:32 2015 -0800
 @@ -64,7 +64,7 @@
  #define IBIS_FILE_PATH_MAX	PATH_MAX
  #endif
@@ -730,9 +845,9 @@ diff -r -u /tmp/ibutils-1.5.7/ibis/src/ibis_base.h ibutils-1.5.7/ibis/src/ibis_b
  #define DISP_HANDLE_MAX 32
  
  END_C_DECLS
-diff -r -u /tmp/ibutils-1.5.7/ibis/src/ibis_wrap.c ibutils-1.5.7/ibis/src/ibis_wrap.c
---- /tmp/ibutils-1.5.7/ibis/src/ibis_wrap.c	Mon Nov  1 16:03:44 2010
-+++ ibutils-1.5.7/ibis/src/ibis_wrap.c	Mon Jun  6 15:35:52 2011
+diff -r 01104fa59c22 ibis/src/ibis_wrap.c
+--- a/ibis/src/ibis_wrap.c	Wed Oct 14 12:54:37 2015 -0700
++++ b/ibis/src/ibis_wrap.c	Fri Nov 13 06:47:32 2015 -0800
 @@ -2722,18 +2722,18 @@
    typedef ib_mad_notice_attr_t  smNotice;
  
@@ -764,11 +879,11 @@ diff -r -u /tmp/ibutils-1.5.7/ibis/src/ibis_wrap.c ibutils-1.5.7/ibis/src/ibis_w
  
    /* TODO - define a Vendor Specific CR Read/Write attributes to use VL15 */
  
-@@ -35180,7 +35180,18 @@
+@@ -35181,7 +35181,18 @@
  }
      return TCL_OK;
  }
-+#ifdef __sparcv9
++#ifdef __sparc
 +#define _ibsm_node_info_sys_guid_set(_swigobj,_swigval)  _ibsm_node_info_sys_guid_set_64(_swigobj, _swigval)
 +static inline ib_net64_t *
 +_ibsm_node_info_sys_guid_set_64(smNodeInfo *_swigobj, ib_net64_t *swigval)
@@ -783,11 +898,11 @@ diff -r -u /tmp/ibutils-1.5.7/ibis/src/ibis_wrap.c ibutils-1.5.7/ibis/src/ibis_w
  static int _wrap_smNodeInfo_sys_guid_set(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
  
      ib_net64_t * _result;
-@@ -35238,7 +35249,17 @@
+@@ -35239,7 +35250,17 @@
  }
      return TCL_OK;
  }
-+#ifdef __sparcv9
++#ifdef __sparc
 +#define _ibsm_node_info_sys_guid_get(_swigobj)  _ibsm_node_info_sys_guid_get_64(_swigobj)
 +static inline ib_net64_t * _ibsm_node_info_sys_guid_get_64(smNodeInfo *_swigobj){
 +	static uint32_t	val[2];
@@ -801,11 +916,11 @@ diff -r -u /tmp/ibutils-1.5.7/ibis/src/ibis_wrap.c ibutils-1.5.7/ibis/src/ibis_w
  static int _wrap_smNodeInfo_sys_guid_get(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
  
      ib_net64_t * _result;
-@@ -35290,7 +35311,18 @@
+@@ -35291,7 +35312,18 @@
  }
      return TCL_OK;
  }
-+#ifdef __sparcv9
++#ifdef __sparc
 +#define _ibsm_node_info_node_guid_set(_swigobj,_swigval)  _ibsm_node_info_node_guid_set_64(_swigobj, _swigval)
 +static inline ib_net64_t *
 +_ibsm_node_info_node_guid_set_64(smNodeInfo *_swigobj, ib_net64_t *swigval)
@@ -820,11 +935,11 @@ diff -r -u /tmp/ibutils-1.5.7/ibis/src/ibis_wrap.c ibutils-1.5.7/ibis/src/ibis_w
  static int _wrap_smNodeInfo_node_guid_set(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
  
      ib_net64_t * _result;
-@@ -35348,7 +35380,17 @@
+@@ -35349,7 +35381,17 @@
  }
      return TCL_OK;
  }
-+#ifdef __sparcv9
++#ifdef __sparc
 +#define _ibsm_node_info_node_guid_get(_swigobj)  _ibsm_node_info_node_guid_get_64(_swigobj)
 +static inline ib_net64_t * _ibsm_node_info_node_guid_get_64(smNodeInfo *_swigobj){
 +	static uint32_t	val[2];
@@ -838,11 +953,11 @@ diff -r -u /tmp/ibutils-1.5.7/ibis/src/ibis_wrap.c ibutils-1.5.7/ibis/src/ibis_w
  static int _wrap_smNodeInfo_node_guid_get(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
  
      ib_net64_t * _result;
-@@ -35400,7 +35442,18 @@
+@@ -35401,7 +35443,18 @@
  }
      return TCL_OK;
  }
-+#ifdef __sparcv9
++#ifdef __sparc
 +#define _ibsm_node_info_port_guid_set(_swigobj,_swigval)  _ibsm_node_info_port_guid_set_64(_swigobj, _swigval)
 +static inline ib_net64_t *
 +_ibsm_node_info_port_guid_set_64(smNodeInfo *_swigobj, ib_net64_t *swigval)
@@ -857,11 +972,11 @@ diff -r -u /tmp/ibutils-1.5.7/ibis/src/ibis_wrap.c ibutils-1.5.7/ibis/src/ibis_w
  static int _wrap_smNodeInfo_port_guid_set(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
  
      ib_net64_t * _result;
-@@ -35458,7 +35511,17 @@
+@@ -35459,7 +35512,17 @@
  }
      return TCL_OK;
  }
-+#ifdef __sparcv9
++#ifdef __sparc
 +#define _ibsm_node_info_port_guid_get(_swigobj)  _ibsm_node_info_port_guid_get_64(_swigobj)
 +static inline ib_net64_t * _ibsm_node_info_port_guid_get_64(smNodeInfo *_swigobj){
 +	static uint32_t	val[2];
@@ -875,52 +990,9 @@ diff -r -u /tmp/ibutils-1.5.7/ibis/src/ibis_wrap.c ibutils-1.5.7/ibis/src/ibis_w
  static int _wrap_smNodeInfo_port_guid_get(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
  
      ib_net64_t * _result;
-diff -r -u /tmp/ibutils-1.5.7/ibis/src/ibpm_base.h ibutils-1.5.7/ibis/src/ibpm_base.h
---- /tmp/ibutils-1.5.7/ibis/src/ibpm_base.h	Wed Feb 24 02:09:25 2010
-+++ ibutils-1.5.7/ibis/src/ibpm_base.h	Thu Feb 24 16:51:18 2011
-@@ -34,7 +34,11 @@
- #ifndef _IBPM_BASE_H_
- #define _IBPM_BASE_H_
- 
-+#if !(defined(__SVR4) && defined(__sun))
- #include <endian.h>
-+#else
-+#include <infiniband/ofa_solaris.h>
-+#endif
- 
- #define PERF_CLASS      0x04
- #define PERF_CLASS_PORT_INFO 0x01
-diff -r -u /tmp/ibutils-1.5.7/ibis/src/ibvs_base.h ibutils-1.5.7/ibis/src/ibvs_base.h
---- /tmp/ibutils-1.5.7/ibis/src/ibvs_base.h	Wed Feb 24 02:09:25 2010
-+++ ibutils-1.5.7/ibis/src/ibvs_base.h	Thu Feb 24 16:51:18 2011
-@@ -34,7 +34,11 @@
- #ifndef _IBVS_BASE_H_
- #define _IBVS_BASE_H_
- 
-+#if !(defined(__SVR4) && defined(__sun))
- #include <endian.h>
-+#else
-+#include <infiniband/ofa_solaris.h>
-+#endif
- 
- #define VS_CLASS             0x0a
- #define VS_CLASS_PORT_INFO   0x01
-diff -r -u /tmp/ibutils-1.5.7/ibis/src/swig_extended_obj.c ibutils-1.5.7/ibis/src/swig_extended_obj.c
---- /tmp/ibutils-1.5.7/ibis/src/swig_extended_obj.c	Tue Mar 23 02:21:00 2010
-+++ ibutils-1.5.7/ibis/src/swig_extended_obj.c	Thu Feb 24 16:51:18 2011
-@@ -30,6 +30,9 @@
-  * SOFTWARE.
-  *
-  */
-+#if defined(__SVR4) && defined(__sun)
-+#include <strings.h>
-+#endif
- 
- /*--------------------------------------------------------------------
-  * This file holds an extended implementation for SWIG TCL Objects.
-diff -r -u /tmp/ibutils-1.5.7/ibis/src/ibissh_wrap.cpp ibutils-1.5.7/ibis/src/ibissh_wrap.cpp
---- /tmp/ibutils-1.5.7/ibis/src/ibissh_wrap.cpp	Mon Nov  1 16:03:44 2010
-+++ ibutils-1.5.7/ibis/src/ibissh_wrap.cpp	Thu Feb 24 16:51:18 2011
+diff -r 01104fa59c22 ibis/src/ibissh_wrap.cpp
+--- a/ibis/src/ibissh_wrap.cpp	Wed Oct 14 12:54:37 2015 -0700
++++ b/ibis/src/ibissh_wrap.cpp	Fri Nov 13 06:47:32 2015 -0800
 @@ -13,6 +13,11 @@
   * Do not make changes to this file--changes will be lost!
   *
@@ -976,11 +1048,11 @@ diff -r -u /tmp/ibutils-1.5.7/ibis/src/ibissh_wrap.cpp ibutils-1.5.7/ibis/src/ib
  
    /* TODO - define a Vendor Specific CR Read/Write attributes to use VL15 */
  
-@@ -35242,7 +35251,18 @@
+@@ -35243,7 +35252,18 @@
  }
      return TCL_OK;
  }
-+#ifdef __sparcv9
++#ifdef __sparc
 +#define _ibsm_node_info_sys_guid_set(_swigobj,_swigval)  _ibsm_node_info_sys_guid_set_64(_swigobj, _swigval)
 +static inline ib_net64_t *
 +_ibsm_node_info_sys_guid_set_64(smNodeInfo *_swigobj, ib_net64_t *swigval)
@@ -995,12 +1067,12 @@ diff -r -u /tmp/ibutils-1.5.7/ibis/src/ibissh_wrap.cpp ibutils-1.5.7/ibis/src/ib
  static int _wrap_smNodeInfo_sys_guid_set(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
  
      ib_net64_t * _result;
-@@ -35300,7 +35320,18 @@
+@@ -35301,7 +35321,18 @@
  }
      return TCL_OK;
  }
 +
-+#ifdef __sparcv9
++#ifdef __sparc
 +#define _ibsm_node_info_sys_guid_get(_swigobj)  _ibsm_node_info_sys_guid_get_64(_swigobj)
 +static inline ib_net64_t * _ibsm_node_info_sys_guid_get_64(smNodeInfo *_swigobj){
 +	static uint32_t	val[2];
@@ -1014,7 +1086,7 @@ diff -r -u /tmp/ibutils-1.5.7/ibis/src/ibissh_wrap.cpp ibutils-1.5.7/ibis/src/ib
  static int _wrap_smNodeInfo_sys_guid_get(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
  
      ib_net64_t * _result;
-@@ -35340,6 +35371,7 @@
+@@ -35341,6 +35372,7 @@
    ibis_tcl_error = 0;
        _result = (ib_net64_t *)_ibsm_node_info_sys_guid_get(_arg0);
  ;
@@ -1022,11 +1094,11 @@ diff -r -u /tmp/ibutils-1.5.7/ibis/src/ibissh_wrap.cpp ibutils-1.5.7/ibis/src/ib
    if (ibis_tcl_error) {
  	 Tcl_SetStringObj(Tcl_GetObjResult(interp), ibis_tcl_error_msg, -1);
  	 return TCL_ERROR;
-@@ -35352,7 +35384,18 @@
+@@ -35353,7 +35385,18 @@
  }
      return TCL_OK;
  }
-+#ifdef __sparcv9
++#ifdef __sparc
 +#define _ibsm_node_info_node_guid_set(_swigobj,_swigval)  _ibsm_node_info_node_guid_set_64(_swigobj, _swigval)
 +static inline ib_net64_t *
 +_ibsm_node_info_node_guid_set_64(smNodeInfo *_swigobj, ib_net64_t *swigval)
@@ -1041,11 +1113,11 @@ diff -r -u /tmp/ibutils-1.5.7/ibis/src/ibissh_wrap.cpp ibutils-1.5.7/ibis/src/ib
  static int _wrap_smNodeInfo_node_guid_set(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
  
      ib_net64_t * _result;
-@@ -35410,7 +35453,17 @@
+@@ -35411,7 +35454,17 @@
  }
      return TCL_OK;
  }
-+#ifdef __sparcv9
++#ifdef __sparc
 +#define _ibsm_node_info_node_guid_get(_swigobj)  _ibsm_node_info_node_guid_get_64(_swigobj)
 +static inline ib_net64_t * _ibsm_node_info_node_guid_get_64(smNodeInfo *_swigobj){
 +	static uint32_t	val[2];
@@ -1059,11 +1131,11 @@ diff -r -u /tmp/ibutils-1.5.7/ibis/src/ibissh_wrap.cpp ibutils-1.5.7/ibis/src/ib
  static int _wrap_smNodeInfo_node_guid_get(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
  
      ib_net64_t * _result;
-@@ -35462,7 +35515,18 @@
+@@ -35463,7 +35516,18 @@
  }
      return TCL_OK;
  }
-+#ifdef __sparcv9
++#ifdef __sparc
 +#define _ibsm_node_info_port_guid_set(_swigobj,_swigval)  _ibsm_node_info_port_guid_set_64(_swigobj, _swigval)
 +static inline ib_net64_t *
 +_ibsm_node_info_port_guid_set_64(smNodeInfo *_swigobj, ib_net64_t *swigval)
@@ -1078,11 +1150,11 @@ diff -r -u /tmp/ibutils-1.5.7/ibis/src/ibissh_wrap.cpp ibutils-1.5.7/ibis/src/ib
  static int _wrap_smNodeInfo_port_guid_set(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
  
      ib_net64_t * _result;
-@@ -35520,7 +35584,17 @@
+@@ -35521,7 +35585,17 @@
  }
      return TCL_OK;
  }
-+#ifdef __sparcv9
++#ifdef __sparc
 +#define _ibsm_node_info_port_guid_get(_swigobj)  _ibsm_node_info_port_guid_get_64(_swigobj)
 +static inline ib_net64_t * _ibsm_node_info_port_guid_get_64(smNodeInfo *_swigobj){
 +	static uint32_t	val[2];
@@ -1096,9 +1168,52 @@ diff -r -u /tmp/ibutils-1.5.7/ibis/src/ibissh_wrap.cpp ibutils-1.5.7/ibis/src/ib
  static int _wrap_smNodeInfo_port_guid_get(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
  
      ib_net64_t * _result;
-diff -r -u /tmp/ibutils-1.5.7/ibis/tests/Makefile.in ibutils-1.5.7/ibis/tests/Makefile.in
---- /tmp/ibutils-1.5.7/ibis/tests/Makefile.in	Tue Mar  8 03:09:51 2011
-+++ ibutils-1.5.7/ibis/tests/Makefile.in	Thu Feb 24 16:51:18 2011
+diff -r 01104fa59c22 ibis/src/ibpm_base.h
+--- a/ibis/src/ibpm_base.h	Wed Oct 14 12:54:37 2015 -0700
++++ b/ibis/src/ibpm_base.h	Fri Nov 13 06:47:32 2015 -0800
+@@ -34,7 +34,11 @@
+ #ifndef _IBPM_BASE_H_
+ #define _IBPM_BASE_H_
+ 
++#if !(defined(__SVR4) && defined(__sun))
+ #include <endian.h>
++#else
++#include <infiniband/ofa_solaris.h>
++#endif
+ 
+ #define PERF_CLASS      0x04
+ #define PERF_CLASS_PORT_INFO 0x01
+diff -r 01104fa59c22 ibis/src/ibvs_base.h
+--- a/ibis/src/ibvs_base.h	Wed Oct 14 12:54:37 2015 -0700
++++ b/ibis/src/ibvs_base.h	Fri Nov 13 06:47:32 2015 -0800
+@@ -34,7 +34,11 @@
+ #ifndef _IBVS_BASE_H_
+ #define _IBVS_BASE_H_
+ 
++#if !(defined(__SVR4) && defined(__sun))
+ #include <endian.h>
++#else
++#include <infiniband/ofa_solaris.h>
++#endif
+ 
+ #define VS_CLASS             0x0a
+ #define VS_CLASS_PORT_INFO   0x01
+diff -r 01104fa59c22 ibis/src/swig_extended_obj.c
+--- a/ibis/src/swig_extended_obj.c	Wed Oct 14 12:54:37 2015 -0700
++++ b/ibis/src/swig_extended_obj.c	Fri Nov 13 06:47:32 2015 -0800
+@@ -30,6 +30,9 @@
+  * SOFTWARE.
+  *
+  */
++#if defined(__SVR4) && defined(__sun)
++#include <strings.h>
++#endif
+ 
+ /*--------------------------------------------------------------------
+  * This file holds an extended implementation for SWIG TCL Objects.
+diff -r 01104fa59c22 ibis/tests/Makefile.in
+--- a/ibis/tests/Makefile.in	Wed Oct 14 12:54:37 2015 -0700
++++ b/ibis/tests/Makefile.in	Fri Nov 13 06:47:32 2015 -0800
 @@ -53,7 +53,7 @@
  pkglibdir = $(libdir)/@PACKAGE@
  pkglibexecdir = $(libexecdir)/@PACKAGE@
@@ -1108,9 +1223,9 @@ diff -r -u /tmp/ibutils-1.5.7/ibis/tests/Makefile.in ibutils-1.5.7/ibis/tests/Ma
  install_sh_PROGRAM = $(install_sh) -c
  install_sh_SCRIPT = $(install_sh) -c
  INSTALL_HEADER = $(INSTALL_DATA)
-diff -r -u /tmp/ibutils-1.5.7/ibis/Makefile.in ibutils-1.5.7/ibis/Makefile.in
---- /tmp/ibutils-1.5.7/ibis/Makefile.in	Tue Mar  8 03:09:51 2011
-+++ ibutils-1.5.7/ibis/Makefile.in	Thu Feb 24 16:51:17 2011
+diff -r 01104fa59c22 ibmgtsim/Makefile.in
+--- a/ibmgtsim/Makefile.in	Wed Oct 14 12:54:37 2015 -0700
++++ b/ibmgtsim/Makefile.in	Fri Nov 13 06:47:32 2015 -0800
 @@ -54,7 +54,7 @@
  pkglibdir = $(libdir)/@PACKAGE@
  pkglibexecdir = $(libexecdir)/@PACKAGE@
@@ -1120,74 +1235,9 @@ diff -r -u /tmp/ibutils-1.5.7/ibis/Makefile.in ibutils-1.5.7/ibis/Makefile.in
  install_sh_PROGRAM = $(install_sh) -c
  install_sh_SCRIPT = $(install_sh) -c
  INSTALL_HEADER = $(INSTALL_DATA)
-diff -r -u /tmp/ibutils-1.5.7/ibis/configure ibutils-1.5.7/ibis/configure
---- /tmp/ibutils-1.5.7/ibis/configure	Tue Mar  8 03:09:53 2011
-+++ ibutils-1.5.7/ibis/configure	Thu Mar 10 18:33:26 2011
-@@ -2764,7 +2764,7 @@
- 
- test -z "$INSTALL_SCRIPT" && INSTALL_SCRIPT='${INSTALL}'
- 
--test -z "$INSTALL_DATA" && INSTALL_DATA='${INSTALL} -m 644'
-+test -z "$INSTALL_DATA" && INSTALL_DATA='${INSTALL} -m 744'
- 
- { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether build environment is sane" >&5
- $as_echo_n "checking whether build environment is sane... " >&6; }
-@@ -6398,7 +6398,7 @@
- 
- # Determine commands to create old-style static archives.
- old_archive_cmds='$AR $AR_FLAGS $oldlib$oldobjs'
--old_postinstall_cmds='chmod 644 $oldlib'
-+old_postinstall_cmds='chmod 744 $oldlib'
- old_postuninstall_cmds=
- 
- if test -n "$RANLIB"; then
-@@ -10087,6 +10087,7 @@
- 	;;
-       esac
-       link_all_deplibs=yes
-+      hardcode_libdir_flag_spec=
-       ;;
- 
-     sunos4*)
-@@ -12957,6 +12958,7 @@
- 	    fi
- 	    ;;
-         esac
-+	  hardcode_libdir_flag_spec_CXX=
-         ;;
- 
-     sysv4*uw2* | sysv5OpenUNIX* | sysv5UnixWare7.[01].[10]* | unixware7* | sco3.2v5.0.[024]*)
-@@ -15284,8 +15286,8 @@
-       else
-          osm_lib_dir=lib
-       fi
-+      with_osm_libs=$with_osm/$osm_lib_dir
-    fi
--   with_osm_libs=$with_osm/$osm_lib_dir
- 
-       if test -d $with_osm/include/infiniband; then
-       OSM_BUILD=openib
-@@ -15295,7 +15297,7 @@
-    { $as_echo "$as_me:${as_lineno-$LINENO}: OSM: build type $OSM_BUILD" >&5
- $as_echo "$as_me: OSM: build type $OSM_BUILD" >&6;}
- 
--   OSM_LDFLAGS="-Wl,-rpath -Wl,$with_osm_libs -L$with_osm_libs"
-+   OSM_LDFLAGS="-L$with_osm_libs"
-          if test $OSM_BUILD = openib; then
-             osm_include_dir="$with_osm/include/infiniband"
-       osm_extra_includes="-I$with_osm/include"
-@@ -15378,7 +15380,7 @@
-       osm_debug_flags=
-    fi
- 
--   OSM_CFLAGS="-I$osm_include_dir $osm_extra_includes $osm_debug_flags $osm_vendor_sel -D_XOPEN_SOURCE=600 -D_BSD_SOURCE=1"
-+   OSM_CFLAGS="-I$osm_include_dir $osm_extra_includes $osm_debug_flags $osm_vendor_sel -D_BSD_SOURCE=1"
- else
-       with_osm=disabled
-    OSM_CLFAGS=disabled
-diff -r -u /tmp/ibutils-1.5.7/ibmgtsim/aclocal.m4 ibutils-1.5.7/ibmgtsim/aclocal.m4
---- /tmp/ibutils-1.5.7/ibmgtsim/aclocal.m4	Tue Mar  8 03:09:58 2011
-+++ ibutils-1.5.7/ibmgtsim/aclocal.m4	Thu Feb 24 16:51:18 2011
+diff -r 01104fa59c22 ibmgtsim/aclocal.m4
+--- a/ibmgtsim/aclocal.m4	Wed Oct 14 12:54:37 2015 -0700
++++ b/ibmgtsim/aclocal.m4	Fri Nov 13 06:47:32 2015 -0800
 @@ -1389,7 +1389,7 @@
  
  # Determine commands to create old-style static archives.
@@ -1197,9 +1247,39 @@ diff -r -u /tmp/ibutils-1.5.7/ibmgtsim/aclocal.m4 ibutils-1.5.7/ibmgtsim/aclocal
  old_postuninstall_cmds=
  
  if test -n "$RANLIB"; then
-diff -r -u /tmp/ibutils-1.5.7/ibmgtsim/doc/Makefile.in ibutils-1.5.7/ibmgtsim/doc/Makefile.in
---- /tmp/ibutils-1.5.7/ibmgtsim/doc/Makefile.in	Tue Mar  8 03:10:01 2011
-+++ ibutils-1.5.7/ibmgtsim/doc/Makefile.in	Thu Feb 24 16:51:18 2011
+diff -r 01104fa59c22 ibmgtsim/configure
+--- a/ibmgtsim/configure	Wed Oct 14 12:54:37 2015 -0700
++++ b/ibmgtsim/configure	Fri Nov 13 06:47:32 2015 -0800
+@@ -2803,7 +2803,7 @@
+ 
+ test -z "$INSTALL_SCRIPT" && INSTALL_SCRIPT='${INSTALL}'
+ 
+-test -z "$INSTALL_DATA" && INSTALL_DATA='${INSTALL} -m 644'
++test -z "$INSTALL_DATA" && INSTALL_DATA='${INSTALL} -m 744'
+ 
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether build environment is sane" >&5
+ $as_echo_n "checking whether build environment is sane... " >&6; }
+@@ -6472,7 +6472,7 @@
+ 
+ # Determine commands to create old-style static archives.
+ old_archive_cmds='$AR $AR_FLAGS $oldlib$oldobjs'
+-old_postinstall_cmds='chmod 644 $oldlib'
++old_postinstall_cmds='chmod 744 $oldlib'
+ old_postuninstall_cmds=
+ 
+ if test -n "$RANLIB"; then
+@@ -15362,7 +15362,7 @@
+       osm_debug_flags=
+    fi
+ 
+-   OSM_CFLAGS="-I$osm_include_dir $osm_extra_includes $osm_debug_flags $osm_vendor_sel -D_XOPEN_SOURCE=600 -D_BSD_SOURCE=1"
++   OSM_CFLAGS="-I$osm_include_dir $osm_extra_includes $osm_debug_flags $osm_vendor_sel -D_BSD_SOURCE=1"
+ else
+       with_osm=disabled
+    OSM_CLFAGS=disabled
+diff -r 01104fa59c22 ibmgtsim/doc/Makefile.in
+--- a/ibmgtsim/doc/Makefile.in	Wed Oct 14 12:54:37 2015 -0700
++++ b/ibmgtsim/doc/Makefile.in	Fri Nov 13 06:47:32 2015 -0800
 @@ -52,7 +52,7 @@
  pkglibdir = $(libdir)/@PACKAGE@
  pkglibexecdir = $(libexecdir)/@PACKAGE@
@@ -1209,9 +1289,9 @@ diff -r -u /tmp/ibutils-1.5.7/ibmgtsim/doc/Makefile.in ibutils-1.5.7/ibmgtsim/do
  install_sh_PROGRAM = $(install_sh) -c
  install_sh_SCRIPT = $(install_sh) -c
  INSTALL_HEADER = $(INSTALL_DATA)
-diff -r -u /tmp/ibutils-1.5.7/ibmgtsim/src/Makefile.in ibutils-1.5.7/ibmgtsim/src/Makefile.in
---- /tmp/ibutils-1.5.7/ibmgtsim/src/Makefile.in	Tue Mar  8 03:10:01 2011
-+++ ibutils-1.5.7/ibmgtsim/src/Makefile.in	Thu Feb 24 16:51:18 2011
+diff -r 01104fa59c22 ibmgtsim/src/Makefile.in
+--- a/ibmgtsim/src/Makefile.in	Wed Oct 14 12:54:37 2015 -0700
++++ b/ibmgtsim/src/Makefile.in	Fri Nov 13 06:47:32 2015 -0800
 @@ -55,7 +55,7 @@
  pkglibdir = $(libdir)/@PACKAGE@
  pkglibexecdir = $(libexecdir)/@PACKAGE@
@@ -1221,9 +1301,9 @@ diff -r -u /tmp/ibutils-1.5.7/ibmgtsim/src/Makefile.in ibutils-1.5.7/ibmgtsim/sr
  install_sh_PROGRAM = $(install_sh) -c
  install_sh_SCRIPT = $(install_sh) -c
  INSTALL_HEADER = $(INSTALL_DATA)
-diff -r -u /tmp/ibutils-1.5.7/ibmgtsim/tests/Makefile.in ibutils-1.5.7/ibmgtsim/tests/Makefile.in
---- /tmp/ibutils-1.5.7/ibmgtsim/tests/Makefile.in	Tue Mar  8 03:10:01 2011
-+++ ibutils-1.5.7/ibmgtsim/tests/Makefile.in	Thu Feb 24 16:51:19 2011
+diff -r 01104fa59c22 ibmgtsim/tests/Makefile.in
+--- a/ibmgtsim/tests/Makefile.in	Wed Oct 14 12:54:37 2015 -0700
++++ b/ibmgtsim/tests/Makefile.in	Fri Nov 13 06:47:32 2015 -0800
 @@ -53,7 +53,7 @@
  pkglibdir = $(libdir)/@PACKAGE@
  pkglibexecdir = $(libexecdir)/@PACKAGE@
@@ -1233,9 +1313,9 @@ diff -r -u /tmp/ibutils-1.5.7/ibmgtsim/tests/Makefile.in ibutils-1.5.7/ibmgtsim/
  install_sh_PROGRAM = $(install_sh) -c
  install_sh_SCRIPT = $(install_sh) -c
  INSTALL_HEADER = $(INSTALL_DATA)
-diff -r -u /tmp/ibutils-1.5.7/ibmgtsim/utils/Makefile.in ibutils-1.5.7/ibmgtsim/utils/Makefile.in
---- /tmp/ibutils-1.5.7/ibmgtsim/utils/Makefile.in	Tue Mar  8 03:10:02 2011
-+++ ibutils-1.5.7/ibmgtsim/utils/Makefile.in	Thu Feb 24 16:51:19 2011
+diff -r 01104fa59c22 ibmgtsim/utils/Makefile.in
+--- a/ibmgtsim/utils/Makefile.in	Wed Oct 14 12:54:37 2015 -0700
++++ b/ibmgtsim/utils/Makefile.in	Fri Nov 13 06:47:32 2015 -0800
 @@ -53,7 +53,7 @@
  pkglibdir = $(libdir)/@PACKAGE@
  pkglibexecdir = $(libexecdir)/@PACKAGE@
@@ -1245,78 +1325,3 @@ diff -r -u /tmp/ibutils-1.5.7/ibmgtsim/utils/Makefile.in ibutils-1.5.7/ibmgtsim/
  install_sh_PROGRAM = $(install_sh) -c
  install_sh_SCRIPT = $(install_sh) -c
  INSTALL_HEADER = $(INSTALL_DATA)
-diff -r -u /tmp/ibutils-1.5.7/ibmgtsim/Makefile.in ibutils-1.5.7/ibmgtsim/Makefile.in
---- /tmp/ibutils-1.5.7/ibmgtsim/Makefile.in	Tue Mar  8 03:10:02 2011
-+++ ibutils-1.5.7/ibmgtsim/Makefile.in	Thu Feb 24 16:51:18 2011
-@@ -54,7 +54,7 @@
- pkglibdir = $(libdir)/@PACKAGE@
- pkglibexecdir = $(libexecdir)/@PACKAGE@
- am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd
--install_sh_DATA = $(install_sh) -c -m 644
-+install_sh_DATA = $(install_sh) -c -m 744
- install_sh_PROGRAM = $(install_sh) -c
- install_sh_SCRIPT = $(install_sh) -c
- INSTALL_HEADER = $(INSTALL_DATA)
-diff -r -u /tmp/ibutils-1.5.7/ibmgtsim/configure ibutils-1.5.7/ibmgtsim/configure
---- /tmp/ibutils-1.5.7/ibmgtsim/configure	Tue Mar  8 03:10:03 2011
-+++ ibutils-1.5.7/ibmgtsim/configure	Thu Mar 10 18:33:27 2011
-@@ -2769,7 +2769,7 @@
- 
- test -z "$INSTALL_SCRIPT" && INSTALL_SCRIPT='${INSTALL}'
- 
--test -z "$INSTALL_DATA" && INSTALL_DATA='${INSTALL} -m 644'
-+test -z "$INSTALL_DATA" && INSTALL_DATA='${INSTALL} -m 744'
- 
- { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether build environment is sane" >&5
- $as_echo_n "checking whether build environment is sane... " >&6; }
-@@ -6440,7 +6440,7 @@
- 
- # Determine commands to create old-style static archives.
- old_archive_cmds='$AR $AR_FLAGS $oldlib$oldobjs'
--old_postinstall_cmds='chmod 644 $oldlib'
-+old_postinstall_cmds='chmod 744 $oldlib'
- old_postuninstall_cmds=
- 
- if test -n "$RANLIB"; then
-@@ -15360,7 +15360,7 @@
-       osm_debug_flags=
-    fi
- 
--   OSM_CFLAGS="-I$osm_include_dir $osm_extra_includes $osm_debug_flags $osm_vendor_sel -D_XOPEN_SOURCE=600 -D_BSD_SOURCE=1"
-+   OSM_CFLAGS="-I$osm_include_dir $osm_extra_includes $osm_debug_flags $osm_vendor_sel -D_BSD_SOURCE=1"
- else
-       with_osm=disabled
-    OSM_CLFAGS=disabled
-diff -r -u /tmp/ibutils-1.5.7/Makefile.in ibutils-1.5.7/Makefile.in
---- /tmp/ibutils-1.5.7/Makefile.in	Tue Mar  8 03:09:29 2011
-+++ ibutils-1.5.7/Makefile.in	Thu Mar 10 18:33:24 2011
-@@ -54,7 +54,7 @@
- pkglibdir = $(libdir)/@PACKAGE@
- pkglibexecdir = $(libexecdir)/@PACKAGE@
- am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd
--install_sh_DATA = $(install_sh) -c -m 644
-+install_sh_DATA = $(install_sh) -c -m 744
- install_sh_PROGRAM = $(install_sh) -c
- install_sh_SCRIPT = $(install_sh) -c
- INSTALL_HEADER = $(INSTALL_DATA)
-diff -r -u /tmp/ibutils-1.5.7/configure ibutils-1.5.7/configure
---- /tmp/ibutils-1.5.7/configure	Tue Mar  8 03:09:29 2011
-+++ ibutils-1.5.7/configure	Wed Apr  1 01:47:48 2015
-@@ -1824,7 +1824,7 @@
- 
- test -z "$INSTALL_SCRIPT" && INSTALL_SCRIPT='${INSTALL}'
- 
--test -z "$INSTALL_DATA" && INSTALL_DATA='${INSTALL} -m 644'
-+test -z "$INSTALL_DATA" && INSTALL_DATA='${INSTALL} -m 744'
- 
- { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether build environment is sane" >&5
- $as_echo_n "checking whether build environment is sane... " >&6; }
-@@ -2450,7 +2450,7 @@
-       osm_debug_flags=
-    fi
- 
--   OSM_CFLAGS="-I$osm_include_dir $osm_extra_includes $osm_debug_flags $osm_vendor_sel -D_XOPEN_SOURCE=600 -D_BSD_SOURCE=1"
-+   OSM_CFLAGS="-I$osm_include_dir $osm_extra_includes $osm_debug_flags $osm_vendor_sel -D_BSD_SOURCE=1"
- else
-       with_osm=disabled
-    OSM_CLFAGS=disabled

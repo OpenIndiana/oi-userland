@@ -22,14 +22,14 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-BUILD_BITS= 64_and_32
+BUILD_BITS= 64
 include ../ofed-component-macros.mk
 
 COMPONENT_NAME=		libibumad
-COMPONENT_VERSION=	1.3.7
+COMPONENT_VERSION=	1.3.10.2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:4999cb9ff5c7243027d8a154d6b27d1efffaa4359b84447731c5ef545fb72229
-COMPONENT_ARCHIVE_URL=	http://www.openfabrics.org/downloads/management/$(COMPONENT_ARCHIVE)
+	sha256:500f74e31bd9f3d6c32dea912de3a2d1b299f3f23d7abd893652dd45c77a7e2e
+COMPONENT_ARCHIVE_URL=	https://www.openfabrics.org/downloads/management/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/ofuv_lib
 
 include ../ofed-component.mk

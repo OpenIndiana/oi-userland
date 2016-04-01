@@ -22,14 +22,14 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-BUILD_BITS= 64_and_32
+BUILD_BITS= 64
 include ../ofed-component-macros.mk
 
 COMPONENT_NAME=		infiniband-diags
-COMPONENT_VERSION=	1.5.8
+COMPONENT_VERSION=	1.6.5
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:0baf6694d54602a66dfc2b82a765c933b24534fd8e2bda7e9b89abf503b29c02
-COMPONENT_ARCHIVE_URL=	http://www.openfabrics.org/downloads/management/$(COMPONENT_ARCHIVE)
+    sha256:53c4ffbc74bec30ea7fdba7bad957b557c6ee6759e337d0a130c1b0817f51307
+COMPONENT_ARCHIVE_URL=	https://www.openfabrics.org/downloads/management/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/ofuv_tools
 
 INSTALL_TARGET=
@@ -37,14 +37,27 @@ include ../ofed-component.mk
 
 CFLAGS += -I$(PROTOUSRINCDIR)/infiniband
 
-LIBS +=	-lopensm -losmvendor -losmcomp -libumad -libmad -libverbs -ldevinfo
+LIBS +=	-lopensm -losmvendor -losmcomp -libumad -libmad -libverbs -ldevinfo -lglib-2.0
 
 COMPONENT_PREP_ACTION = \
         cp solaris_set_nodedesc.c $(@D)/src
 
 COMPONENT_INSTALL_ENV +=	PERL=$(PERL.5.12)
 
+LDFLAGS += -L$(PROTOUSRLIBDIR64)
 CONFIGURE_ENV +=	PERL=$(PERL.5.12)
+
+#
+# For some weird reason PKG_CONFIG is generating
+# additional linker flags for 64bit builds. We are enforcing
+# the GLIB_LIBS with only glib-2.0 here.
+#
+CONFIGURE_ENV +=       GLIB_LIBS="-lglib-2.0"
+
+CONFIGURE_OPTIONS +=   --sysconfdir=$(ETCDIR)/infiniband
+CONFIGURE_OPTIONS +=   --disable-rdma-ndd
+CONFIGURE_OPTIONS +=   --enable-compat-utils
+CONFIGURE_OPTIONS +=   --enable-test-utils
 
 # it apears that configure is broken
 COMPONENT_BUILD_ARGS  +=	LIBS="$(LIBS)"
@@ -75,5 +88,5 @@ COMPONENT_POST_INSTALL_ACTION =\
 	$(INSTALL) -m 644 manpages/set_nodedesc.sh.8 $(PROTOUSRSHAREMAN8DIR)
 
 # common targets
-install:	$(INSTALL_32_and_64) #$(PROTOMAN8FILES)
+install:	$(INSTALL_64)
 

@@ -22,7 +22,7 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-BUILD_BITS= 64_and_32
+BUILD_BITS= 64
 include ../ofed-component-macros.mk
 
 COMPONENT_NAME=		libsdp
@@ -41,7 +41,7 @@ SUFFIX.64 = $(MACH64)
 
 CFLAGS += -D_POSIX_PTHREAD_SEMANTICS
 
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)/infiniband
 CONFIGURE_OPTIONS += --libdir=$(USRLIBDIR)/secure/$(SUFFIX.$(BITS))
 
 CLEANUP_DIRS =	$(PROTOUSRBINDIR)/linux

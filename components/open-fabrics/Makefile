@@ -27,24 +27,23 @@ include ../../make-rules/shared-macros.mk
 LD_Z_IGNORE =
 
 COMPONENT_NAME=	open-fabrics
-COMPONENT_VERSION=1.5.3
+COMPONENT_VERSION=3.18
 COMPONENT_SRC=
 
 COMPONENT_PROJECT_URL=	http://www.openfabrics.org/
 COMPONENT_BUGDB=	library/ofuv_lib
 
-TPNO_OPEN_FABRICS=	3369
-TPNO_IBUTILS=		5084
-TPNO_INFINIBAND_DIAGS=	5085
-TPNO_LIBIBMAD=		5086
-TPNO_LIBIBUMAD=		5087
-TPNO_LIBIBVERBS=	5082
-TPNO_LIBMLX4=		5088
-TPNO_LIBRDMACM=		5089
+TPNO_IBUTILS=		24918   
+TPNO_INFINIBAND_DIAGS=	24917   
+TPNO_LIBIBMAD=		24856   
+TPNO_LIBIBUMAD=		24914   
+TPNO_LIBIBVERBS=	25232   
+TPNO_LIBMLX4=		25233
+TPNO_LIBRDMACM=		25227   
+TPNO_OPENSM=		24915
+TPNO_QPERF=		24916
 TPNO_LIBSDP=		5080
-TPNO_OPENSM=		5091
 TPNO_PERFTEST=		5081
-TPNO_QPERF=		5083
 TPNO_RDS_TOOLS=		5092
 
 # sensitive to kernel interface changes.
@@ -99,7 +98,7 @@ $(SUBDIRS):	FORCE
 librdmacm:		libibverbs
 libmlx4:		libibverbs
 rds-tools:		libibverbs
-perftest:		libibverbs librdmacm libibverbs
+perftest:		libibverbs librdmacm
 qperf:			libibverbs librdmacm
 libibumad:		libibverbs
 libibmad:		libibumad
@@ -110,6 +109,7 @@ libsif: 		libibverbs
 
 FORCE:
 
+REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += runtime/perl-512
 REQUIRED_PACKAGES += runtime/perl-520
 REQUIRED_PACKAGES += runtime/tcl-8

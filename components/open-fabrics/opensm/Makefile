@@ -22,14 +22,14 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-BUILD_BITS= 64_and_32
+BUILD_BITS= 64
 include ../ofed-component-macros.mk
 
 COMPONENT_NAME=		opensm
-COMPONENT_VERSION=	3.3.9
+COMPONENT_VERSION=	3.3.19
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:b8f333815e9d145cbb29310a38d2f2e39f9727b30eb6b15cb0d81fb9db39a2e1
-COMPONENT_ARCHIVE_URL=	http://www.openfabrics.org/downloads/management/$(COMPONENT_ARCHIVE)
+    sha256:2ff7729d5566e6569a387603aa188580dede20c929c0f22baf8eb6d36d8925b6
+COMPONENT_ARCHIVE_URL=	https://www.openfabrics.org/downloads/management/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/ofuv_lib
 
 include ../ofed-component.mk

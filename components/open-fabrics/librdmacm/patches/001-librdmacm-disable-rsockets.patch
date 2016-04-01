@@ -1,0 +1,509 @@
+#This patch was developed both in-house and from outside. We plan to submit it
+#upstream, but do not yet have a target date for doing so
+#
+# HG changeset patch
+# Parent  276da03b3ce08017654f5b4571b019a4b00c19d5
+Add option to disable compilation of rsocket
+
+Added an option enable-rsocket-utils to control the compilation of
+rsocket utilities and examples from the top level build file.
+By default the parameter is set to no to disable the code which would
+correspondingly set the ENABLE_RSOCKET flag in the code.
+
+diff -r 276da03b3ce0 Makefile.am
+--- a/Makefile.am	Wed Oct 14 12:54:37 2015 -0700
++++ b/Makefile.am	Mon Nov 16 17:13:21 2015 -0800
+@@ -1,14 +1,20 @@
+ AM_CPPFLAGS = -I$(srcdir)/include
+ 
++if ENABLE_RSOCKET
+ rslibdir = $(libdir)/rsocket
++endif
+ lib_LTLIBRARIES = src/librdmacm.la
++if ENABLE_RSOCKET
+ rslib_LTLIBRARIES = src/librspreload.la
++endif
+ 
+ ACLOCAL_AMFLAGS = -I config
+ AM_CFLAGS = -g -Wall -D_GNU_SOURCE -DSYSCONFDIR=\"$(sysconfdir)\" -DRDMADIR=\"@rdmadir@\"
+ 
+ src_librdmacm_la_CFLAGS = $(AM_CFLAGS)
++if ENABLE_RSOCKET
+ src_librspreload_la_CFLAGS = $(AM_CFLAGS)
++endif
+ 
+ if HAVE_LD_VERSION_SCRIPT
+     librdmacm_version_script = -Wl,--version-script=$(srcdir)/src/librdmacm.map
+@@ -17,19 +23,27 @@
+ endif
+ 
+ src_librdmacm_la_SOURCES = src/cma.c src/addrinfo.c src/acm.c \
+-		src/rsocket.c src/indexer.c
++		src/indexer.c
++if ENABLE_RSOCKET
++src_librdmacm_la_SOURCES += src/rsocket.c
++endif
+ src_librdmacm_la_LDFLAGS = -version-info 1 -export-dynamic \
+ 			   $(librdmacm_version_script)
+ src_librdmacm_la_DEPENDENCIES =  $(srcdir)/src/librdmacm.map
+ 
++if ENABLE_RSOCKET
+ src_librspreload_la_SOURCES = src/preload.c src/indexer.c
+ src_librspreload_la_LDFLAGS = -version-info 1 -export-dynamic
+ src_librspreload_la_LIBADD = $(top_builddir)/src/librdmacm.la
++endif
+ 
+ bin_PROGRAMS = examples/ucmatose examples/rping examples/udaddy examples/mckey \
+ 	       examples/rdma_client examples/rdma_server examples/rdma_xclient \
+-	       examples/rdma_xserver examples/rstream examples/rcopy \
+-	       examples/riostream examples/udpong examples/cmtime
++	       examples/rdma_xserver examples/cmtime
++if ENABLE_RSOCKET
++bin_PROGRAMS += examples/rstream examples/rcopy examples/riostream examples/udpong
++endif
++
+ examples_ucmatose_SOURCES = examples/cmatose.c examples/common.c
+ examples_ucmatose_LDADD = $(top_builddir)/src/librdmacm.la
+ examples_rping_SOURCES = examples/rping.c
+@@ -46,6 +60,7 @@
+ examples_rdma_xclient_LDADD = $(top_builddir)/src/librdmacm.la
+ examples_rdma_xserver_SOURCES = examples/rdma_xserver.c
+ examples_rdma_xserver_LDADD = $(top_builddir)/src/librdmacm.la
++if ENABLE_RSOCKET
+ examples_rstream_SOURCES = examples/rstream.c examples/common.c
+ examples_rstream_LDADD = $(top_builddir)/src/librdmacm.la
+ examples_riostream_SOURCES = examples/riostream.c examples/common.c
+@@ -54,6 +69,7 @@
+ examples_rcopy_LDADD = $(top_builddir)/src/librdmacm.la
+ examples_udpong_SOURCES = examples/udpong.c examples/common.c
+ examples_udpong_LDADD = $(top_builddir)/src/librdmacm.la
++endif
+ examples_cmtime_SOURCES = examples/cmtime.c examples/common.c
+ examples_cmtime_LDADD = $(top_builddir)/src/librdmacm.la
+ 
+@@ -62,8 +78,10 @@
+ 
+ librdmacminclude_HEADERS = $(top_srcdir)/include/rdma/rdma_cma_abi.h \
+ 			   $(top_srcdir)/include/rdma/rdma_cma.h \
+-			   $(top_srcdir)/include/rdma/rdma_verbs.h \
+-			   $(top_srcdir)/include/rdma/rsocket.h
++			   $(top_srcdir)/include/rdma/rdma_verbs.h
++if ENABLE_RSOCKET
++librdmacminclude_HEADERS += $(top_srcdir)/include/rdma/rsocket.h
++endif
+ 
+ infinibandinclude_HEADERS = $(top_srcdir)/include/infiniband/ib.h
+ 
+@@ -125,11 +143,15 @@
+ 	man/rdma_client.1 \
+ 	man/rdma_xserver.1 \
+ 	man/rdma_xclient.1 \
++	man/rdma_cm.7 
++
++if ENABLE_RSOCKET
++man_MANS += \
+ 	man/riostream.1 \
+ 	man/rstream.1 \
+ 	man/rcopy.1 \
+-	man/rdma_cm.7 \
+ 	man/rsocket.7
++endif
+ 
+ EXTRA_DIST = src/cma.h src/indexer.h src/librdmacm.map \
+ 	examples/common.h librdmacm.spec.in $(man_MANS)
+diff -r 276da03b3ce0 Makefile.in
+--- a/Makefile.in	Wed Oct 14 12:54:37 2015 -0700
++++ b/Makefile.in	Mon Nov 16 17:13:21 2015 -0800
+@@ -36,13 +36,20 @@
+ POST_UNINSTALL = :
+ build_triplet = @build@
+ host_triplet = @host@
++@ENABLE_RSOCKET_TRUE@am__append_1 = src/rsocket.c
+ bin_PROGRAMS = examples/ucmatose$(EXEEXT) examples/rping$(EXEEXT) \
+ 	examples/udaddy$(EXEEXT) examples/mckey$(EXEEXT) \
+ 	examples/rdma_client$(EXEEXT) examples/rdma_server$(EXEEXT) \
+ 	examples/rdma_xclient$(EXEEXT) examples/rdma_xserver$(EXEEXT) \
+-	examples/rstream$(EXEEXT) examples/rcopy$(EXEEXT) \
+-	examples/riostream$(EXEEXT) examples/udpong$(EXEEXT) \
+-	examples/cmtime$(EXEEXT)
++	examples/cmtime$(EXEEXT) $(am__EXEEXT_1)
++@ENABLE_RSOCKET_TRUE@am__append_2 = examples/rstream examples/rcopy examples/riostream examples/udpong
++@ENABLE_RSOCKET_TRUE@am__append_3 = $(top_srcdir)/include/rdma/rsocket.h
++@ENABLE_RSOCKET_TRUE@am__append_4 = \
++@ENABLE_RSOCKET_TRUE@	man/riostream.1 \
++@ENABLE_RSOCKET_TRUE@	man/rstream.1 \
++@ENABLE_RSOCKET_TRUE@	man/rcopy.1 \
++@ENABLE_RSOCKET_TRUE@	man/rsocket.7
++
+ subdir = .
+ DIST_COMMON = README $(am__configure_deps) \
+ 	$(infinibandinclude_HEADERS) $(librdmacminclude_HEADERS) \
+@@ -93,11 +100,13 @@
+ 	"$(DESTDIR)$(librdmacmincludedir)"
+ LTLIBRARIES = $(lib_LTLIBRARIES) $(rslib_LTLIBRARIES)
+ src_librdmacm_la_LIBADD =
++am__src_librdmacm_la_SOURCES_DIST = src/cma.c src/addrinfo.c src/acm.c \
++	src/indexer.c src/rsocket.c
+ am__dirstamp = $(am__leading_dot)dirstamp
++@ENABLE_RSOCKET_TRUE@am__objects_1 = src/src_librdmacm_la-rsocket.lo
+ am_src_librdmacm_la_OBJECTS = src/src_librdmacm_la-cma.lo \
+ 	src/src_librdmacm_la-addrinfo.lo src/src_librdmacm_la-acm.lo \
+-	src/src_librdmacm_la-rsocket.lo \
+-	src/src_librdmacm_la-indexer.lo
++	src/src_librdmacm_la-indexer.lo $(am__objects_1)
+ src_librdmacm_la_OBJECTS = $(am_src_librdmacm_la_OBJECTS)
+ AM_V_lt = $(am__v_lt_$(V))
+ am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
+@@ -106,14 +115,22 @@
+ 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
+ 	$(src_librdmacm_la_CFLAGS) $(CFLAGS) \
+ 	$(src_librdmacm_la_LDFLAGS) $(LDFLAGS) -o $@
+-src_librspreload_la_DEPENDENCIES = $(top_builddir)/src/librdmacm.la
+-am_src_librspreload_la_OBJECTS = src/src_librspreload_la-preload.lo \
+-	src/src_librspreload_la-indexer.lo
++@ENABLE_RSOCKET_TRUE@src_librspreload_la_DEPENDENCIES =  \
++@ENABLE_RSOCKET_TRUE@	$(top_builddir)/src/librdmacm.la
++am__src_librspreload_la_SOURCES_DIST = src/preload.c src/indexer.c
++@ENABLE_RSOCKET_TRUE@am_src_librspreload_la_OBJECTS =  \
++@ENABLE_RSOCKET_TRUE@	src/src_librspreload_la-preload.lo \
++@ENABLE_RSOCKET_TRUE@	src/src_librspreload_la-indexer.lo
+ src_librspreload_la_OBJECTS = $(am_src_librspreload_la_OBJECTS)
+ src_librspreload_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
+ 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
+ 	$(src_librspreload_la_CFLAGS) $(CFLAGS) \
+ 	$(src_librspreload_la_LDFLAGS) $(LDFLAGS) -o $@
++@ENABLE_RSOCKET_TRUE@am_src_librspreload_la_rpath = -rpath $(rslibdir)
++@ENABLE_RSOCKET_TRUE@am__EXEEXT_1 = examples/rstream$(EXEEXT) \
++@ENABLE_RSOCKET_TRUE@	examples/rcopy$(EXEEXT) \
++@ENABLE_RSOCKET_TRUE@	examples/riostream$(EXEEXT) \
++@ENABLE_RSOCKET_TRUE@	examples/udpong$(EXEEXT)
+ PROGRAMS = $(bin_PROGRAMS)
+ am_examples_cmtime_OBJECTS = examples/cmtime.$(OBJEXT) \
+ 	examples/common.$(OBJEXT)
+@@ -122,9 +139,12 @@
+ am_examples_mckey_OBJECTS = examples/mckey.$(OBJEXT)
+ examples_mckey_OBJECTS = $(am_examples_mckey_OBJECTS)
+ examples_mckey_DEPENDENCIES = $(top_builddir)/src/librdmacm.la
+-am_examples_rcopy_OBJECTS = examples/rcopy.$(OBJEXT)
++am__examples_rcopy_SOURCES_DIST = examples/rcopy.c
++@ENABLE_RSOCKET_TRUE@am_examples_rcopy_OBJECTS =  \
++@ENABLE_RSOCKET_TRUE@	examples/rcopy.$(OBJEXT)
+ examples_rcopy_OBJECTS = $(am_examples_rcopy_OBJECTS)
+-examples_rcopy_DEPENDENCIES = $(top_builddir)/src/librdmacm.la
++@ENABLE_RSOCKET_TRUE@examples_rcopy_DEPENDENCIES =  \
++@ENABLE_RSOCKET_TRUE@	$(top_builddir)/src/librdmacm.la
+ am_examples_rdma_client_OBJECTS = examples/rdma_client.$(OBJEXT)
+ examples_rdma_client_OBJECTS = $(am_examples_rdma_client_OBJECTS)
+ examples_rdma_client_DEPENDENCIES = $(top_builddir)/src/librdmacm.la
+@@ -137,17 +157,25 @@
+ am_examples_rdma_xserver_OBJECTS = examples/rdma_xserver.$(OBJEXT)
+ examples_rdma_xserver_OBJECTS = $(am_examples_rdma_xserver_OBJECTS)
+ examples_rdma_xserver_DEPENDENCIES = $(top_builddir)/src/librdmacm.la
+-am_examples_riostream_OBJECTS = examples/riostream.$(OBJEXT) \
+-	examples/common.$(OBJEXT)
++am__examples_riostream_SOURCES_DIST = examples/riostream.c \
++	examples/common.c
++@ENABLE_RSOCKET_TRUE@am_examples_riostream_OBJECTS =  \
++@ENABLE_RSOCKET_TRUE@	examples/riostream.$(OBJEXT) \
++@ENABLE_RSOCKET_TRUE@	examples/common.$(OBJEXT)
+ examples_riostream_OBJECTS = $(am_examples_riostream_OBJECTS)
+-examples_riostream_DEPENDENCIES = $(top_builddir)/src/librdmacm.la
++@ENABLE_RSOCKET_TRUE@examples_riostream_DEPENDENCIES =  \
++@ENABLE_RSOCKET_TRUE@	$(top_builddir)/src/librdmacm.la
+ am_examples_rping_OBJECTS = examples/rping.$(OBJEXT)
+ examples_rping_OBJECTS = $(am_examples_rping_OBJECTS)
+ examples_rping_DEPENDENCIES = $(top_builddir)/src/librdmacm.la
+-am_examples_rstream_OBJECTS = examples/rstream.$(OBJEXT) \
+-	examples/common.$(OBJEXT)
++am__examples_rstream_SOURCES_DIST = examples/rstream.c \
++	examples/common.c
++@ENABLE_RSOCKET_TRUE@am_examples_rstream_OBJECTS =  \
++@ENABLE_RSOCKET_TRUE@	examples/rstream.$(OBJEXT) \
++@ENABLE_RSOCKET_TRUE@	examples/common.$(OBJEXT)
+ examples_rstream_OBJECTS = $(am_examples_rstream_OBJECTS)
+-examples_rstream_DEPENDENCIES = $(top_builddir)/src/librdmacm.la
++@ENABLE_RSOCKET_TRUE@examples_rstream_DEPENDENCIES =  \
++@ENABLE_RSOCKET_TRUE@	$(top_builddir)/src/librdmacm.la
+ am_examples_ucmatose_OBJECTS = examples/cmatose.$(OBJEXT) \
+ 	examples/common.$(OBJEXT)
+ examples_ucmatose_OBJECTS = $(am_examples_ucmatose_OBJECTS)
+@@ -156,10 +184,13 @@
+ 	examples/common.$(OBJEXT)
+ examples_udaddy_OBJECTS = $(am_examples_udaddy_OBJECTS)
+ examples_udaddy_DEPENDENCIES = $(top_builddir)/src/librdmacm.la
+-am_examples_udpong_OBJECTS = examples/udpong.$(OBJEXT) \
+-	examples/common.$(OBJEXT)
++am__examples_udpong_SOURCES_DIST = examples/udpong.c examples/common.c
++@ENABLE_RSOCKET_TRUE@am_examples_udpong_OBJECTS =  \
++@ENABLE_RSOCKET_TRUE@	examples/udpong.$(OBJEXT) \
++@ENABLE_RSOCKET_TRUE@	examples/common.$(OBJEXT)
+ examples_udpong_OBJECTS = $(am_examples_udpong_OBJECTS)
+-examples_udpong_DEPENDENCIES = $(top_builddir)/src/librdmacm.la
++@ENABLE_RSOCKET_TRUE@examples_udpong_DEPENDENCIES =  \
++@ENABLE_RSOCKET_TRUE@	$(top_builddir)/src/librdmacm.la
+ DEFAULT_INCLUDES = -I.@am__isrc@
+ depcomp = $(SHELL) $(top_srcdir)/config/depcomp
+ am__depfiles_maybe = depfiles
+@@ -195,21 +226,28 @@
+ 	$(examples_rping_SOURCES) $(examples_rstream_SOURCES) \
+ 	$(examples_ucmatose_SOURCES) $(examples_udaddy_SOURCES) \
+ 	$(examples_udpong_SOURCES)
+-DIST_SOURCES = $(src_librdmacm_la_SOURCES) \
+-	$(src_librspreload_la_SOURCES) $(examples_cmtime_SOURCES) \
+-	$(examples_mckey_SOURCES) $(examples_rcopy_SOURCES) \
++DIST_SOURCES = $(am__src_librdmacm_la_SOURCES_DIST) \
++	$(am__src_librspreload_la_SOURCES_DIST) \
++	$(examples_cmtime_SOURCES) $(examples_mckey_SOURCES) \
++	$(am__examples_rcopy_SOURCES_DIST) \
+ 	$(examples_rdma_client_SOURCES) \
+ 	$(examples_rdma_server_SOURCES) \
+ 	$(examples_rdma_xclient_SOURCES) \
+-	$(examples_rdma_xserver_SOURCES) $(examples_riostream_SOURCES) \
+-	$(examples_rping_SOURCES) $(examples_rstream_SOURCES) \
++	$(examples_rdma_xserver_SOURCES) \
++	$(am__examples_riostream_SOURCES_DIST) \
++	$(examples_rping_SOURCES) $(am__examples_rstream_SOURCES_DIST) \
+ 	$(examples_ucmatose_SOURCES) $(examples_udaddy_SOURCES) \
+-	$(examples_udpong_SOURCES)
++	$(am__examples_udpong_SOURCES_DIST)
+ man1dir = $(mandir)/man1
+ man3dir = $(mandir)/man3
+ man7dir = $(mandir)/man7
+ NROFF = nroff
+ MANS = $(man_MANS)
++am__librdmacminclude_HEADERS_DIST =  \
++	$(top_srcdir)/include/rdma/rdma_cma_abi.h \
++	$(top_srcdir)/include/rdma/rdma_cma.h \
++	$(top_srcdir)/include/rdma/rdma_verbs.h \
++	$(top_srcdir)/include/rdma/rsocket.h
+ HEADERS = $(infinibandinclude_HEADERS) $(librdmacminclude_HEADERS)
+ ETAGS = etags
+ CTAGS = ctags
+@@ -338,25 +376,24 @@
+ top_builddir = @top_builddir@
+ top_srcdir = @top_srcdir@
+ AM_CPPFLAGS = -I$(srcdir)/include
+-rslibdir = $(libdir)/rsocket
++@ENABLE_RSOCKET_TRUE@rslibdir = $(libdir)/rsocket
+ lib_LTLIBRARIES = src/librdmacm.la
+-rslib_LTLIBRARIES = src/librspreload.la
++@ENABLE_RSOCKET_TRUE@rslib_LTLIBRARIES = src/librspreload.la
+ ACLOCAL_AMFLAGS = -I config
+ AM_CFLAGS = -g -Wall -D_GNU_SOURCE -DSYSCONFDIR=\"$(sysconfdir)\" -DRDMADIR=\"@rdmadir@\"
+ src_librdmacm_la_CFLAGS = $(AM_CFLAGS)
+-src_librspreload_la_CFLAGS = $(AM_CFLAGS)
++@ENABLE_RSOCKET_TRUE@src_librspreload_la_CFLAGS = $(AM_CFLAGS)
+ @HAVE_LD_VERSION_SCRIPT_FALSE@librdmacm_version_script = 
+ @HAVE_LD_VERSION_SCRIPT_TRUE@librdmacm_version_script = -Wl,--version-script=$(srcdir)/src/librdmacm.map
+ src_librdmacm_la_SOURCES = src/cma.c src/addrinfo.c src/acm.c \
+-		src/rsocket.c src/indexer.c
+-
++	src/indexer.c $(am__append_1)
+ src_librdmacm_la_LDFLAGS = -version-info 1 -export-dynamic \
+ 			   $(librdmacm_version_script)
+ 
+ src_librdmacm_la_DEPENDENCIES = $(srcdir)/src/librdmacm.map
+-src_librspreload_la_SOURCES = src/preload.c src/indexer.c
+-src_librspreload_la_LDFLAGS = -version-info 1 -export-dynamic
+-src_librspreload_la_LIBADD = $(top_builddir)/src/librdmacm.la
++@ENABLE_RSOCKET_TRUE@src_librspreload_la_SOURCES = src/preload.c src/indexer.c
++@ENABLE_RSOCKET_TRUE@src_librspreload_la_LDFLAGS = -version-info 1 -export-dynamic
++@ENABLE_RSOCKET_TRUE@src_librspreload_la_LIBADD = $(top_builddir)/src/librdmacm.la
+ examples_ucmatose_SOURCES = examples/cmatose.c examples/common.c
+ examples_ucmatose_LDADD = $(top_builddir)/src/librdmacm.la
+ examples_rping_SOURCES = examples/rping.c
+@@ -373,23 +410,21 @@
+ examples_rdma_xclient_LDADD = $(top_builddir)/src/librdmacm.la
+ examples_rdma_xserver_SOURCES = examples/rdma_xserver.c
+ examples_rdma_xserver_LDADD = $(top_builddir)/src/librdmacm.la
+-examples_rstream_SOURCES = examples/rstream.c examples/common.c
+-examples_rstream_LDADD = $(top_builddir)/src/librdmacm.la
+-examples_riostream_SOURCES = examples/riostream.c examples/common.c
+-examples_riostream_LDADD = $(top_builddir)/src/librdmacm.la
+-examples_rcopy_SOURCES = examples/rcopy.c
+-examples_rcopy_LDADD = $(top_builddir)/src/librdmacm.la
+-examples_udpong_SOURCES = examples/udpong.c examples/common.c
+-examples_udpong_LDADD = $(top_builddir)/src/librdmacm.la
++@ENABLE_RSOCKET_TRUE@examples_rstream_SOURCES = examples/rstream.c examples/common.c
++@ENABLE_RSOCKET_TRUE@examples_rstream_LDADD = $(top_builddir)/src/librdmacm.la
++@ENABLE_RSOCKET_TRUE@examples_riostream_SOURCES = examples/riostream.c examples/common.c
++@ENABLE_RSOCKET_TRUE@examples_riostream_LDADD = $(top_builddir)/src/librdmacm.la
++@ENABLE_RSOCKET_TRUE@examples_rcopy_SOURCES = examples/rcopy.c
++@ENABLE_RSOCKET_TRUE@examples_rcopy_LDADD = $(top_builddir)/src/librdmacm.la
++@ENABLE_RSOCKET_TRUE@examples_udpong_SOURCES = examples/udpong.c examples/common.c
++@ENABLE_RSOCKET_TRUE@examples_udpong_LDADD = $(top_builddir)/src/librdmacm.la
+ examples_cmtime_SOURCES = examples/cmtime.c examples/common.c
+ examples_cmtime_LDADD = $(top_builddir)/src/librdmacm.la
+ librdmacmincludedir = $(includedir)/rdma
+ infinibandincludedir = $(includedir)/infiniband
+ librdmacminclude_HEADERS = $(top_srcdir)/include/rdma/rdma_cma_abi.h \
+-			   $(top_srcdir)/include/rdma/rdma_cma.h \
+-			   $(top_srcdir)/include/rdma/rdma_verbs.h \
+-			   $(top_srcdir)/include/rdma/rsocket.h
+-
++	$(top_srcdir)/include/rdma/rdma_cma.h \
++	$(top_srcdir)/include/rdma/rdma_verbs.h $(am__append_3)
+ infinibandinclude_HEADERS = $(top_srcdir)/include/infiniband/ib.h
+ man_MANS = \
+ 	man/rdma_accept.3 \
+@@ -449,11 +484,8 @@
+ 	man/rdma_client.1 \
+ 	man/rdma_xserver.1 \
+ 	man/rdma_xclient.1 \
+-	man/riostream.1 \
+-	man/rstream.1 \
+-	man/rcopy.1 \
+ 	man/rdma_cm.7 \
+-	man/rsocket.7
++	$(am__append_4)
+ 
+ EXTRA_DIST = src/cma.h src/indexer.h src/librdmacm.map \
+ 	examples/common.h librdmacm.spec.in $(man_MANS)
+diff -r 276da03b3ce0 configure
+--- a/configure	Wed Oct 14 12:54:37 2015 -0700
++++ b/configure	Mon Nov 16 17:13:21 2015 -0800
+@@ -747,6 +747,8 @@
+ am__EXEEXT_TRUE
+ LTLIBOBJS
+ LIBOBJS
++ENABLE_RSOCKET_FALSE
++ENABLE_RSOCKET_TRUE
+ rdmadir
+ HAVE_LD_VERSION_SCRIPT_FALSE
+ HAVE_LD_VERSION_SCRIPT_TRUE
+@@ -870,6 +872,7 @@
+ enable_libtool_lock
+ with_valgrind
+ enable_libcheck
++enable_rsocket_utils
+ '
+       ac_precious_vars='build_alias
+ host_alias
+@@ -1511,6 +1514,7 @@
+   --enable-dependency-tracking   do not reject slow dependency extractors
+   --disable-libtool-lock  avoid locking (might break parallel builds)
+   --disable-libcheck      do not test for presence of ib libraries
++  --enable-rsocket-utils build rsocket (default=no)
+ 
+ Optional Packages:
+   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
+@@ -11830,6 +11834,30 @@
+ 
+ fi
+ 
++{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for --enable-rsocket-utils" >&5
++$as_echo_n "checking for --enable-rsocket-utils... " >&6; }
++# Check whether --enable-rsocket-utils was given.
++if test "${enable_rsocket_utils+set}" = set; then :
++  enableval=$enable_rsocket_utils; case "${enableval}" in
++  yes) rsocketutils=yes ;;
++  no)  rsocketutils=no ;;
++  *) as_fn_error $? "bad value ${enableval} for --enable-rsocket-utils" "$LINENO" 5 ;;
++esac
++else
++  rsocketutils=no
++fi
++
++ if test x$rsocketutils = xyes; then
++  ENABLE_RSOCKET_TRUE=
++  ENABLE_RSOCKET_FALSE='#'
++else
++  ENABLE_RSOCKET_TRUE='#'
++  ENABLE_RSOCKET_FALSE=
++fi
++
++{ $as_echo "$as_me:${as_lineno-$LINENO}: result: ${rsocketutils=no}" >&5
++$as_echo "${rsocketutils=no}" >&6; }
++
+ ac_config_files="$ac_config_files Makefile librdmacm.spec"
+ 
+ cat >confcache <<\_ACEOF
+@@ -11954,6 +11982,10 @@
+   as_fn_error $? "conditional \"HAVE_LD_VERSION_SCRIPT\" was never defined.
+ Usually this means the macro was only invoked conditionally." "$LINENO" 5
+ fi
++if test -z "${ENABLE_RSOCKET_TRUE}" && test -z "${ENABLE_RSOCKET_FALSE}"; then
++  as_fn_error $? "conditional \"ENABLE_RSOCKET\" was never defined.
++Usually this means the macro was only invoked conditionally." "$LINENO" 5
++fi
+ 
+ : ${CONFIG_STATUS=./config.status}
+ ac_write_fail=0
+diff -r 276da03b3ce0 configure.ac
+--- a/configure.ac	Wed Oct 14 12:54:37 2015 -0700
++++ b/configure.ac	Mon Nov 16 17:13:21 2015 -0800
+@@ -104,5 +104,17 @@
+    AC_SUBST(rdmadir, rdma)
+ fi
+ 
++dnl Check if we should include rsocket utilities and examples 
++AC_MSG_CHECKING(for --enable-rsocket-utils)
++AC_ARG_ENABLE(rsocket-utils,
++[  --enable-rsocket-utils build rsocket (default=no)],
++[case "${enableval}" in
++  yes) rsocketutils=yes ;;
++  no)  rsocketutils=no ;;
++  *) AC_MSG_ERROR(bad value ${enableval} for --enable-rsocket-utils) ;;
++esac],[rsocketutils=no])
++AM_CONDITIONAL(ENABLE_RSOCKET, test x$rsocketutils = xyes)
++AC_MSG_RESULT(${rsocketutils=no})
++
+ AC_CONFIG_FILES([Makefile librdmacm.spec])
+ AC_OUTPUT
+diff -r 276da03b3ce0 examples/common.c
+--- a/examples/common.c	Wed Oct 14 12:54:37 2015 -0700
++++ b/examples/common.c	Mon Nov 16 17:13:21 2015 -0800
+@@ -45,7 +45,11 @@
+ #include <rdma/rdma_cma.h>
+ #include "common.h"
+ 
++#if ENABLE_RSOCKET
+ int use_rs = 1;
++#else
++int use_rs = 0;
++#endif
+ 
+ int get_rdma_addr(char *src, char *dst, char *port,
+ 		  struct rdma_addrinfo *hints, struct rdma_addrinfo **rai)
+diff -r 276da03b3ce0 examples/common.h
+--- a/examples/common.h	Wed Oct 14 12:54:37 2015 -0700
++++ b/examples/common.h	Mon Nov 16 17:13:21 2015 -0800
+@@ -51,6 +51,7 @@
+ 
+ extern int use_rs;
+ 
++#if ENABLE_RSOCKET 
+ #define rs_socket(f,t,p)  use_rs ? rsocket(f,t,p)  : socket(f,t,p)
+ #define rs_bind(s,a,l)    use_rs ? rbind(s,a,l)    : bind(s,a,l)
+ #define rs_listen(s,b)    use_rs ? rlisten(s,b)    : listen(s,b)
+@@ -71,6 +72,30 @@
+ #define rs_getsockopt(s,l,n,v,ol) \
+ 	use_rs ? rgetsockopt(s,l,n,v,ol) : getsockopt(s,l,n,v,ol)
+ 
++#else
++
++#define rs_socket(f,t,p)  socket(f,t,p)
++#define rs_bind(s,a,l)    bind(s,a,l)
++#define rs_listen(s,b)    listen(s,b)
++#define rs_connect(s,a,l) connect(s,a,l)
++#define rs_accept(s,a,l)  accept(s,a,l)
++#define rs_shutdown(s,h)  shutdown(s,h)
++#define rs_close(s)       close(s)
++#define rs_recv(s,b,l,f)  recv(s,b,l,f)
++#define rs_send(s,b,l,f)  send(s,b,l,f)
++#define rs_recvfrom(s,b,l,f,a,al) \
++	recvfrom(s,b,l,f,a,al)
++#define rs_sendto(s,b,l,f,a,al) \
++	sendto(s,b,l,f,a,al)
++#define rs_poll(f,n,t)	  poll(f,n,t)
++#define rs_fcntl(s,c,p)   fcntl(s,c,p)
++#define rs_setsockopt(s,l,n,v,ol) \
++	setsockopt(s,l,n,v,ol)
++#define rs_getsockopt(s,l,n,v,ol) \
++	getsockopt(s,l,n,v,ol)
++
++#endif
++
+ union socket_addr {
+ 	struct sockaddr		sa;
+ 	struct sockaddr_in	sin;

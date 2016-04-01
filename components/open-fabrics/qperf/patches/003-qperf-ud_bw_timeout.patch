@@ -1,0 +1,42 @@
+#This patch was developed both in-house and from outside. We plan to submit it
+#upstream, but do not yet have a target date for doing so
+#
+# HG changeset patch
+# Parent  bed9e1f4976b9258363d26ec587075f77ac65042
+22689609 qperf returns failed to receive results: timed out for ud_bw tests
+
+diff -r bed9e1f4976b src/rdma.c
+--- a/src/rdma.c	Thu Feb 11 05:13:36 2016 -0800
++++ b/src/rdma.c	Tue Feb 23 21:03:12 2016 -0800
+@@ -987,9 +987,14 @@
+ {
+     DEVICE dev;
+ 
+-    rd_open(&dev, transport, 0, NCQE);
++    /*
++     * Post more receive buffers for the server, A fast client can cause receive WR
++     * exhaustion, which in turn can cause packet drop (in case of UD) or cause
++     * re-transmits (in case of RC).
++     */   
++    rd_open(&dev, transport, 0, (4 * NCQE));
+     rd_prep(&dev, 0);
+-    rd_post_recv_std(&dev, NCQE);
++    rd_post_recv_std(&dev, (4 * NCQE));
+     sync_test();
+     while (!Finished) {
+         int i;
+@@ -2574,6 +2579,14 @@
+ {
+     int n;
+ 
++    /*
++     * We will attempt to poll the CQ first.
++     * If CQ is empty we could wait for CQ notification.
++     */
++    n = ibv_poll_cq(dev->cq, nwc, wc);
++    if (n > 0)
++    	return n;
++
+     if (!Req.poll_mode && !Finished) {
+         void *ectx;
+         struct ibv_cq *ecq;

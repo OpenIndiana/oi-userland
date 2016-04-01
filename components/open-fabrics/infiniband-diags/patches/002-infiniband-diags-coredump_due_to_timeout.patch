@@ -1,0 +1,39 @@
+#This patch was developed both in-house and from outside. We plan to submit it
+#upstream, but do not yet have a target date for doing so
+#
+# HG changeset patch
+# Parent  5e57ae27f93879abc0e8c269ff7166fcf8d896e0
+22271413 ibnetdiscover has segmentation fault when link state is at 2
+
+modified:
+   libibnetdisc/src/ibnetdisc.c
+   src/ibnetdiscover.c
+
+diff -r 5e57ae27f938 libibnetdisc/src/ibnetdisc.c
+--- a/libibnetdisc/src/ibnetdisc.c	Mon Nov 30 08:20:29 2015 -0800
++++ b/libibnetdisc/src/ibnetdisc.c	Thu Dec 03 05:31:40 2015 -0800
+@@ -744,6 +744,7 @@
+ 	if (!scan.ibmad_port) {
+ 		IBND_ERROR("can't open MAD port (%s:%d)\n", ca_name, ca_port);
+ 		smp_engine_destroy(&engine);
++		free(f_int);
+ 		return (NULL);
+ 	}
+ 	mad_rpc_set_timeout(scan.ibmad_port, cfg->timeout_ms);
+diff -r 5e57ae27f938 src/ibnetdiscover.c
+--- a/src/ibnetdiscover.c	Mon Nov 30 08:20:29 2015 -0800
++++ b/src/ibnetdiscover.c	Thu Dec 03 05:31:40 2015 -0800
+@@ -552,6 +552,13 @@
+ 		fprintf(f, "# Reported max hops discovered: %u\n"
+ 			"# Total MADs used: %u\n",
+ 			fabric->maxhops_discovered, fabric->total_mads_used);
++
++	/*
++	 * If from_node data is not available then return.
++	 */
++	if (!fabric->from_node)
++		return i;
++
+ 	fprintf(f, "# Initiated from node %016" PRIx64 " port %016" PRIx64 "\n",
+ 		fabric->from_node->guid,
+ 		mad_get_field64(fabric->from_node->info, 0,

@@ -1,0 +1,752 @@
+#This patch was developed both in-house and from outside. We plan to submit it
+#upstream, but do not yet have a target date for doing so
+#
+# HG changeset patch
+# Parent  bdcd456aae19405169aa2090c74f0ba1ca151896
+opensm solaris specific changes
+
+diff -r bdcd456aae19 complib/Makefile.in
+--- a/complib/Makefile.in	Wed Oct 14 12:54:37 2015 -0700
++++ b/complib/Makefile.in	Fri Nov 13 06:01:25 2015 -0800
+@@ -248,7 +248,8 @@
+ lib_LTLIBRARIES = libosmcomp.la
+ @DEBUG_FALSE@DBGFLAGS = -g
+ @DEBUG_TRUE@DBGFLAGS = -ggdb -D_DEBUG_
+-libosmcomp_la_CFLAGS = -Wall -Wwrite-strings $(DBGFLAGS) -D_XOPEN_SOURCE=600 -D_BSD_SOURCE=1
++libosmcomp_la_CFLAGS = -Wall $(DBGFLAGS) -D_XOPEN_SOURCE=600 -D_BSD_SOURCE=1 \
++	-D__EXTENSIONS__
+ @HAVE_LD_VERSION_SCRIPT_FALSE@libosmcomp_version_script = 
+ @HAVE_LD_VERSION_SCRIPT_TRUE@libosmcomp_version_script = -Wl,--version-script=$(srcdir)/libosmcomp.map
+ complib_api_version = $(shell grep LIBVERSION= $(srcdir)/libosmcomp.ver | sed 's/LIBVERSION=//')
+@@ -352,7 +353,7 @@
+ 	done; \
+ 	test -z "$$list2" || { \
+ 	  echo " $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$list2 '$(DESTDIR)$(libdir)'"; \
+-	  $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$list2 "$(DESTDIR)$(libdir)"; \
++	  $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) -m 755 $(INSTALL_STRIP_FLAG) $$list2 "$(DESTDIR)$(libdir)"; \
+ 	}
+ 
+ uninstall-libLTLIBRARIES:
+diff -r bdcd456aae19 complib/cl_spinlock.c
+--- a/complib/cl_spinlock.c	Wed Oct 14 12:54:37 2015 -0700
++++ b/complib/cl_spinlock.c	Fri Nov 13 06:01:25 2015 -0800
+@@ -63,7 +63,21 @@
+ void cl_spinlock_destroy(IN cl_spinlock_t * const p_spinlock)
+ {
+ 	CL_ASSERT(p_spinlock);
++#if !(defined(__SVR4) && defined(__sun))
++/*
++ * Solaris dumps cores when ibdiagnet is run with any of
++ * these three options: --help, --version, and --vars.
++ * The core dumping seems to be triggered by the "exit 0"
++ * in ibdebug_if.tcl after the appropriate message, such as
++ * the help message, is printed. The stack trace from the
++ * core dump shows the following CL_ASSERT fails with
++ * p_spinlock->state being 0, an invalid state. It's not
++ * clear why the TCL "exit 0" dumps cores on Solaris but
++ * not on Linux. As a workaround, the CL_ASSERT() is skipped
++ * to avoid dumping cores.
++ */
+ 	CL_ASSERT(cl_is_state_valid(p_spinlock->state));
++#endif 
+ 
+ 	if (p_spinlock->state == CL_INITIALIZED) {
+ 		p_spinlock->state = CL_UNINITIALIZED;
+diff -r bdcd456aae19 configure
+--- a/configure	Wed Oct 14 12:54:37 2015 -0700
++++ b/configure	Fri Nov 13 06:01:25 2015 -0800
+@@ -8096,7 +8096,7 @@
+     # are reset later if shared libraries are not supported. Putting them
+     # here allows them to be overridden if necessary.
+     runpath_var=LD_RUN_PATH
+-    hardcode_libdir_flag_spec='${wl}-rpath ${wl}$libdir'
++    hardcode_libdir_flag_spec='${wl}-R ${wl}$libdir'
+     export_dynamic_flag_spec='${wl}--export-dynamic'
+     # ancient GNU ld didn't support --whole-archive et. al.
+     if $LD --help 2>&1 | $GREP 'no-whole-archive' > /dev/null; then
+@@ -8319,7 +8319,7 @@
+ 	  # DT_RUNPATH tag from executables and libraries.  But doing so
+ 	  # requires that you compile everything twice, which is a pain.
+ 	  if $LD --help 2>&1 | $GREP ': supported targets:.* elf' > /dev/null; then
+-	    hardcode_libdir_flag_spec='${wl}-rpath ${wl}$libdir'
++	    hardcode_libdir_flag_spec='${wl}-R ${wl}$libdir'
+ 	    archive_cmds='$CC -shared $libobjs $deplibs $compiler_flags ${wl}-soname $wl$soname -o $lib'
+ 	    archive_expsym_cmds='$CC -shared $libobjs $deplibs $compiler_flags ${wl}-soname $wl$soname ${wl}-retain-symbols-file $wl$export_symbols -o $lib'
+ 	  else
+@@ -8567,7 +8567,7 @@
+       ;;
+ 
+     bsdi[45]*)
+-      export_dynamic_flag_spec=-rdynamic
++      export_dynamic_flag_spec=
+       ;;
+ 
+     cygwin* | mingw* | pw32* | cegcc*)
+@@ -8896,6 +8896,7 @@
+ 	;;
+       esac
+       link_all_deplibs=yes
++      hardcode_libdir_flag_spec=
+       ;;
+ 
+     sunos4*)
+diff -r bdcd456aae19 include/complib/cl_byteswap_osd.h
+--- a/include/complib/cl_byteswap_osd.h	Wed Oct 14 12:54:37 2015 -0700
++++ b/include/complib/cl_byteswap_osd.h	Fri Nov 13 06:01:25 2015 -0800
+@@ -44,8 +44,12 @@
+ /*
+  * This provides defines __LITTLE_ENDIAN, __BIG_ENDIAN and __BYTE_ORDER
+  */
++#if !(defined(__SVR4) && defined(__sun))
+ #include <endian.h>
+ #include <byteswap.h>
++#else
++#include <infiniband/ofa_solaris.h>
++#endif
+ 
+ #ifdef __cplusplus
+ #  define BEGIN_C_DECLS extern "C" {
+diff -r bdcd456aae19 include/complib/cl_debug_osd.h
+--- a/include/complib/cl_debug_osd.h	Wed Oct 14 12:54:37 2015 -0700
++++ b/include/complib/cl_debug_osd.h	Fri Nov 13 06:01:25 2015 -0800
+@@ -42,7 +42,6 @@
+ #define _CL_DEBUG_OSD_H_
+ 
+ #include <complib/cl_types.h>
+-#include <bits/wordsize.h>
+ 
+ #ifdef __cplusplus
+ #  define BEGIN_C_DECLS extern "C" {
+diff -r bdcd456aae19 include/complib/cl_map.h
+--- a/include/complib/cl_map.h	Wed Oct 14 12:54:37 2015 -0700
++++ b/include/complib/cl_map.h	Fri Nov 13 06:01:25 2015 -0800
+@@ -275,7 +275,11 @@
+ 	 * The map's pool of map items is the last thing initialized.
+ 	 * We can therefore use it to test for initialization.
+ 	 */
++#if !(defined(__SVR4) && defined(__sun))
+ 	return (cl_is_qpool_inited(&p_map->pool));
++#else
++	return (boolean_t)(cl_is_qpool_inited(&p_map->pool));
++#endif
+ }
+ 
+ /*
+diff -r bdcd456aae19 include/complib/cl_qlist.h
+--- a/include/complib/cl_qlist.h	Wed Oct 14 12:54:37 2015 -0700
++++ b/include/complib/cl_qlist.h	Fri Nov 13 06:01:25 2015 -0800
+@@ -508,7 +508,11 @@
+ 	/* CL_ASSERT that the list was initialized. */
+ 	CL_ASSERT(p_list->state == CL_INITIALIZED);
+ 
++#if !(defined(__SVR4) && defined(__sun))
+ 	return (!cl_qlist_count(p_list));
++#else
++	return (boolean_t)(!cl_qlist_count(p_list));
++#endif
+ }
+ 
+ /*
+diff -r bdcd456aae19 include/complib/cl_qmap.h
+--- a/include/complib/cl_qmap.h	Wed Oct 14 12:54:37 2015 -0700
++++ b/include/complib/cl_qmap.h	Fri Nov 13 06:01:25 2015 -0800
+@@ -346,7 +346,11 @@
+ 	CL_ASSERT(p_map);
+ 	CL_ASSERT(p_map->state == CL_INITIALIZED);
+ 
++#if !(defined(__SVR4) && defined(__sun))
+ 	return (p_map->count == 0);
++#else
++	return (boolean_t)(p_map->count == 0);
++#endif
+ }
+ 
+ /*
+diff -r bdcd456aae19 include/complib/cl_thread_osd.h
+--- a/include/complib/cl_thread_osd.h	Wed Oct 14 12:54:37 2015 -0700
++++ b/include/complib/cl_thread_osd.h	Fri Nov 13 06:01:25 2015 -0800
+@@ -61,7 +61,11 @@
+ 
+ static inline boolean_t cl_is_blockable(void)
+ {
++#if !(defined(__SVR4) && defined(__sun))
+ 	return TRUE;
++#else
++	return ((boolean_t)TRUE);
++#endif
+ }
+ 
+ END_C_DECLS
+diff -r bdcd456aae19 include/complib/cl_types.h
+--- a/include/complib/cl_types.h	Wed Oct 14 12:54:37 2015 -0700
++++ b/include/complib/cl_types.h	Fri Nov 13 06:01:25 2015 -0800
+@@ -428,8 +428,13 @@
+ */
+ static inline boolean_t cl_is_state_valid(IN const cl_state_t state)
+ {
++#if !(defined(__SVR4) && defined(__sun))
+ 	return ((state == CL_UNINITIALIZED) || (state == CL_INITIALIZED) ||
+ 		(state == CL_DESTROYING) || (state == CL_DESTROYED));
++#else
++	return (boolean_t)((state == CL_UNINITIALIZED) || (state == CL_INITIALIZED) ||
++		(state == CL_DESTROYING) || (state == CL_DESTROYED));
++#endif
+ }
+ 
+ /*
+diff -r bdcd456aae19 include/complib/cl_types_osd.h
+--- a/include/complib/cl_types_osd.h	Wed Oct 14 12:54:37 2015 -0700
++++ b/include/complib/cl_types_osd.h	Fri Nov 13 06:01:25 2015 -0800
+@@ -84,7 +84,12 @@
+ /*
+  * Types not explicitly defined are native to the platform.
+  */
++#if !(defined(__SVR4) && defined(__sun))
+ typedef int boolean_t;
++#else
++#include <infiniband/ofa_solaris.h>
++#endif
++
+ typedef volatile int32_t atomic32_t;
+ 
+ #ifndef NULL
+diff -r bdcd456aae19 include/iba/ib_types.h
+--- a/include/iba/ib_types.h	Wed Oct 14 12:54:37 2015 -0700
++++ b/include/iba/ib_types.h	Fri Nov 13 06:01:25 2015 -0800
+@@ -580,8 +580,13 @@
+ static inline boolean_t OSM_API
+ ib_class_is_vendor_specific_low(IN const uint8_t class_code)
+ {
++#if !(defined(__SVR4) && defined(__sun))
+ 	return ((class_code >= IB_MCLASS_VENDOR_LOW_RANGE_MIN) &&
+ 		(class_code <= IB_MCLASS_VENDOR_LOW_RANGE_MAX));
++#else
++	return (boolean_t)((class_code >= IB_MCLASS_VENDOR_LOW_RANGE_MIN) &&
++		(class_code <= IB_MCLASS_VENDOR_LOW_RANGE_MAX));
++#endif
+ }
+ 
+ /*
+@@ -612,8 +617,13 @@
+ static inline boolean_t OSM_API
+ ib_class_is_vendor_specific_high(IN const uint8_t class_code)
+ {
++#if !(defined(__SVR4) && defined(__sun))
+ 	return ((class_code >= IB_MCLASS_VENDOR_HIGH_RANGE_MIN) &&
+ 		(class_code <= IB_MCLASS_VENDOR_HIGH_RANGE_MAX));
++#else
++	return (boolean_t)((class_code >= IB_MCLASS_VENDOR_HIGH_RANGE_MIN) &&
++		(class_code <= IB_MCLASS_VENDOR_HIGH_RANGE_MAX));
++#endif
+ }
+ 
+ /*
+@@ -643,8 +653,13 @@
+ static inline boolean_t OSM_API
+ ib_class_is_vendor_specific(IN const uint8_t class_code)
+ {
++#if !(defined(__SVR4) && defined(__sun))
+ 	return (ib_class_is_vendor_specific_low(class_code) ||
+ 		ib_class_is_vendor_specific_high(class_code));
++#else
++	return (boolean_t)(ib_class_is_vendor_specific_low(class_code) ||
++		ib_class_is_vendor_specific_high(class_code));
++#endif
+ }
+ 
+ /*
+@@ -673,11 +688,19 @@
+ */
+ static inline boolean_t OSM_API ib_class_is_rmpp(IN const uint8_t class_code)
+ {
++#if !(defined(__SVR4) && defined(__sun))
+ 	return ((class_code == IB_MCLASS_SUBN_ADM) ||
+ 		(class_code == IB_MCLASS_DEV_MGMT) ||
+ 		(class_code == IB_MCLASS_DEV_ADM) ||
+ 		(class_code == IB_MCLASS_BIS) ||
+ 		ib_class_is_vendor_specific_high(class_code));
++#else
++	return (boolean_t)((class_code == IB_MCLASS_SUBN_ADM) ||
++		(class_code == IB_MCLASS_DEV_MGMT) ||
++		(class_code == IB_MCLASS_DEV_ADM) ||
++		(class_code == IB_MCLASS_BIS) ||
++		ib_class_is_vendor_specific_high(class_code));
++#endif
+ }
+ 
+ /*
+@@ -2200,7 +2223,11 @@
+ */
+ static inline boolean_t OSM_API ib_pkey_is_full_member(IN const ib_net16_t pkey)
+ {
++#if !(defined(__SVR4) && defined(__sun))
+ 	return ((pkey & IB_PKEY_TYPE_MASK) == IB_PKEY_TYPE_MASK);
++#else
++	return (boolean_t)((pkey & IB_PKEY_TYPE_MASK) == IB_PKEY_TYPE_MASK);
++#endif
+ }
+ 
+ /*
+@@ -2231,7 +2258,11 @@
+ */
+ static inline boolean_t OSM_API ib_pkey_is_invalid(IN const ib_net16_t pkey)
+ {
++#if !(defined(__SVR4) && defined(__sun))
+ 	return ib_pkey_get_base(pkey) == 0x0000 ? TRUE : FALSE;
++#else
++	return ib_pkey_get_base(pkey) == 0x0000 ? (boolean_t)TRUE : (boolean_t)FALSE;
++#endif
+ }
+ 
+ /*
+@@ -2294,7 +2325,11 @@
+ */
+ static inline boolean_t OSM_API ib_gid_is_multicast(IN const ib_gid_t * p_gid)
+ {
++#if !(defined(__SVR4) && defined(__sun))
+ 	return (p_gid->raw[0] == 0xFF);
++#else
++	return (boolean_t)(p_gid->raw[0] == 0xFF);
++#endif
+ }
+ 
+ /****f* IBA Base: Types/ib_gid_get_scope
+@@ -2402,8 +2437,13 @@
+ static inline boolean_t OSM_API
+ ib_gid_is_link_local(IN const ib_gid_t * const p_gid)
+ {
++#if !(defined(__SVR4) && defined(__sun))
+ 	return ((ib_gid_get_subnet_prefix(p_gid) &
+ 		 CL_HTON64(0xFFC0000000000000ULL)) == IB_DEFAULT_SUBNET_PREFIX);
++#else
++	return (boolean_t)((ib_gid_get_subnet_prefix(p_gid) &
++		 CL_HTON64(0xFFC0000000000000ULL)) == IB_DEFAULT_SUBNET_PREFIX);
++#endif
+ }
+ 
+ /*
+@@ -2434,9 +2474,15 @@
+ static inline boolean_t OSM_API
+ ib_gid_is_site_local(IN const ib_gid_t * const p_gid)
+ {
++#if !(defined(__SVR4) && defined(__sun))
+ 	return ((ib_gid_get_subnet_prefix(p_gid) &
+ 		 CL_HTON64(0xFFFFFFFFFFFF0000ULL)) ==
+ 		CL_HTON64(0xFEC0000000000000ULL));
++#else
++	return (boolean_t)((ib_gid_get_subnet_prefix(p_gid) &
++		 CL_HTON64(0xFFFFFFFFFFFF0000ULL)) ==
++		CL_HTON64(0xFEC0000000000000ULL));
++#endif
+ }
+ 
+ /*
+@@ -3954,8 +4000,13 @@
+ ib_mad_is_response(IN const ib_mad_t * const p_mad)
+ {
+ 	CL_ASSERT(p_mad);
++#if !(defined(__SVR4) && defined(__sun))
+ 	return (p_mad->method & IB_MAD_METHOD_RESP_MASK ||
+ 		p_mad->method == IB_MAD_METHOD_TRAP_REPRESS);
++#else
++	return (boolean_t)(p_mad->method & IB_MAD_METHOD_RESP_MASK ||
++		p_mad->method == IB_MAD_METHOD_TRAP_REPRESS);
++#endif
+ }
+ 
+ /*
+@@ -4010,7 +4061,11 @@
+ 		    IN const uint8_t flag)
+ {
+ 	CL_ASSERT(p_rmpp_mad);
++#if !(defined(__SVR4) && defined(__sun))
+ 	return ((p_rmpp_mad->rmpp_flags & flag) == flag);
++#else
++	return (boolean_t)((p_rmpp_mad->rmpp_flags & flag) == flag);
++#endif
+ }
+ 
+ /*
+@@ -4231,7 +4286,11 @@
+ */
+ static inline boolean_t OSM_API ib_smp_is_d(IN const ib_smp_t * const p_smp)
+ {
++#if !(defined(__SVR4) && defined(__sun))
+ 	return ((p_smp->status & IB_SMP_DIRECTION) == IB_SMP_DIRECTION);
++#else
++	return (boolean_t)((p_smp->status & IB_SMP_DIRECTION) == IB_SMP_DIRECTION);
++#endif
+ }
+ 
+ /*
+@@ -6507,7 +6566,11 @@
+ static inline boolean_t OSM_API
+ ib_switch_info_get_state_change(IN const ib_switch_info_t * const p_si)
+ {
++#if !(defined(__SVR4) && defined(__sun))
+ 	return ((p_si->life_state & IB_SWITCH_PSC) == IB_SWITCH_PSC);
++#else
++	return (boolean_t)((p_si->life_state & IB_SWITCH_PSC) == IB_SWITCH_PSC);
++#endif
+ }
+ 
+ /*
+@@ -6591,7 +6654,11 @@
+ static inline boolean_t OSM_API
+ ib_switch_info_get_opt_sl2vlmapping(IN const ib_switch_info_t * const p_si)
+ {
++#if !(defined(__SVR4) && defined(__sun))
+         return ((p_si->life_state & 0x01) == 0x01);
++#else
++        return (boolean_t)((p_si->life_state & 0x01) == 0x01);
++#endif
+ }
+ 
+ /*
+@@ -6653,7 +6720,11 @@
+ static inline boolean_t OSM_API
+ ib_switch_info_is_enhanced_port0(IN const ib_switch_info_t * const p_si)
+ {
++#if !(defined(__SVR4) && defined(__sun))
+ 	return ((p_si->flags & 0x08) == 0x08);
++#else
++	return (boolean_t)((p_si->flags & 0x08) == 0x08);
++#endif
+ }
+ 
+ /*
+@@ -7947,7 +8018,11 @@
+ static inline boolean_t OSM_API
+ ib_notice_is_generic(IN const ib_mad_notice_attr_t * p_ntc)
+ {
++#if !(defined(__SVR4) && defined(__sun))
+ 	return (p_ntc->generic_type & 0x80);
++#else
++	return (boolean_t)(p_ntc->generic_type & 0x80);
++#endif
+ }
+ 
+ /*
+@@ -8951,6 +9026,7 @@
+ * ib_dm_mad_t, ib_svc_entry_t
+ *********/
+ 
++#if !(defined(__SVR4) && defined(__sun))
+ static inline void OSM_API
+ ib_dm_get_slot_lo_hi(IN const ib_net32_t slot_lo_hi,
+ 		     OUT uint8_t * const p_slot,
+@@ -8965,6 +9041,27 @@
+ 	if (p_lo)
+ 		*p_lo = (uint8_t) ((tmp_slot_lo_hi >> 0) & 0xff);
+ }
++#else
++/*
++ * Due to the way some dependencies have cropped up a solaris 
++ * header included by solaris_set_node_desc has an alternate
++ * define for p_slot and causes problems.
++ */
++static inline void OSM_API
++ib_dm_get_slot_lo_hi(IN const ib_net32_t slot_lo_hi,
++		     OUT uint8_t * const psol_slot,
++		     OUT uint8_t * const p_lo, OUT uint8_t * const p_hi)
++{
++	ib_net32_t tmp_slot_lo_hi = CL_NTOH32(slot_lo_hi);
++
++	if (psol_slot)
++		*psol_slot = (uint8_t) ((tmp_slot_lo_hi >> 16) & 0x0f);
++	if (p_hi)
++		*p_hi = (uint8_t) ((tmp_slot_lo_hi >> 8) & 0xff);
++	if (p_lo)
++		*p_lo = (uint8_t) ((tmp_slot_lo_hi >> 0) & 0xff);
++}
++#endif
+ 
+ /*
+  *	IBA defined information describing an I/O controller
+diff -r bdcd456aae19 include/opensm/osm_helper.h
+--- a/include/opensm/osm_helper.h	Wed Oct 14 12:54:37 2015 -0700
++++ b/include/opensm/osm_helper.h	Fri Nov 13 06:01:25 2015 -0800
+@@ -182,7 +182,11 @@
+ */
+ static inline boolean_t ib_gid_is_notzero(IN const ib_gid_t * p_gid)
+ {
++#if !(defined(__SVR4) && defined(__sun))
+ 	return memcmp(p_gid, &ib_zero_gid, sizeof(*p_gid));
++#else
++	return (boolean_t)memcmp(p_gid, &ib_zero_gid, sizeof(*p_gid));
++#endif
+ }
+ 
+ /*
+diff -r bdcd456aae19 include/opensm/osm_log.h
+--- a/include/opensm/osm_log.h	Wed Oct 14 12:54:37 2015 -0700
++++ b/include/opensm/osm_log.h	Fri Nov 13 06:01:25 2015 -0800
+@@ -449,7 +449,11 @@
+ static inline boolean_t osm_log_is_active(IN const osm_log_t * p_log,
+ 					  IN osm_log_level_t level)
+ {
++#if !(defined(__SVR4) && defined(__sun))
+ 	return ((p_log->level & level) != 0);
++#else
++	return (boolean_t)((p_log->level & level) != 0);
++#endif
+ }
+ 
+ /*
+@@ -475,11 +479,19 @@
+ 					     IN osm_log_level_t level,
+ 					     IN const int file_id)
+ {
++#if !(defined(__SVR4) && defined(__sun))
+ 	if ((p_log->level & level) != 0)
+ 		return 1;
+ 	if ((level & p_log->per_mod_log_tbl[file_id]))
+ 		return 1;
+ 	return 0;
++#else
++	if ((p_log->level & level) != 0)
++		return (boolean_t)1;
++	if ((level & p_log->per_mod_log_tbl[file_id]))
++		return (boolean_t)1;
++	return (boolean_t)0;
++#endif
+ }
+ 
+ extern void osm_log_msg_box(osm_log_t *log, osm_log_level_t level,
+diff -r bdcd456aae19 include/opensm/osm_madw.h
+--- a/include/opensm/osm_madw.h	Wed Oct 14 12:54:37 2015 -0700
++++ b/include/opensm/osm_madw.h	Fri Nov 13 06:01:25 2015 -0800
+@@ -524,7 +524,11 @@
+ 	p_madw->mad_size = mad_size;
+ 	if (p_mad_addr)
+ 		p_madw->mad_addr = *p_mad_addr;
++#if !(defined(__SVR4) && defined(__sun))
+ 	p_madw->resp_expected = FALSE;
++#else
++	p_madw->resp_expected = (boolean_t)FALSE;
++#endif
+ }
+ 
+ /*
+diff -r bdcd456aae19 libvendor/Makefile.in
+--- a/libvendor/Makefile.in	Wed Oct 14 12:54:37 2015 -0700
++++ b/libvendor/Makefile.in	Fri Nov 13 06:01:25 2015 -0800
+@@ -434,7 +434,7 @@
+ 	done; \
+ 	test -z "$$list2" || { \
+ 	  echo " $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$list2 '$(DESTDIR)$(libdir)'"; \
+-	  $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$list2 "$(DESTDIR)$(libdir)"; \
++	  $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) -m 755 $(INSTALL_STRIP_FLAG) $$list2 "$(DESTDIR)$(libdir)"; \
+ 	}
+ 
+ uninstall-libLTLIBRARIES:
+diff -r bdcd456aae19 libvendor/osm_vendor_ibumad.c
+--- a/libvendor/osm_vendor_ibumad.c	Wed Oct 14 12:54:37 2015 -0700
++++ b/libvendor/osm_vendor_ibumad.c	Fri Nov 13 06:01:25 2015 -0800
+@@ -345,7 +345,8 @@
+ 					   &length, -1)) < 0) {
+ 			if (length <= MAD_BLOCK_SIZE) {
+ 				OSM_LOG(p_ur->p_log, OSM_LOG_ERROR, "ERR 5404: "
+-					"recv error on MAD sized umad (%m)\n");
++					"recv error on MAD sized umad (%s)\n",
++					strerror(errno));
+ 				continue;
+ 			} else {
+ 				umad_free(umad);
+@@ -364,8 +365,9 @@
+ 							   -1)) < 0) {
+ 					OSM_LOG(p_ur->p_log, OSM_LOG_ERROR,
+ 						"ERR 5406: "
+-						"recv error on umad length %d (%m)\n",
+-						length);
++						"recv error on umad length %d "
++						"(%s)\n", length,
++						strerror(errno));
+ 					continue;
+ 				}
+ 			}
+@@ -1197,9 +1199,9 @@
+ 			     p_bind->max_retries)) < 0) {
+ 		OSM_LOG(p_vend->p_log, OSM_LOG_ERROR, "ERR 5430: "
+ 			"Send p_madw = %p of size %d, Class 0x%x, Method 0x%X, "
+-			"Attr 0x%X, TID 0x%" PRIx64 " failed %d (%m)\n",
++			"Attr 0x%X, TID 0x%" PRIx64 " failed %d (%s)\n",
+ 			p_madw, sent_mad_size, p_mad->mgmt_class,
+-			p_mad->method, cl_ntoh16(p_mad->attr_id), tid, ret);
++			p_mad->method, cl_ntoh16(p_mad->attr_id), tid, ret, strerror(errno));
+ 		if (resp_expected) {
+ 			get_madw(p_vend, &p_mad->trans_id,
+ 				 p_mad->mgmt_class);	/* remove from aging table */
+diff -r bdcd456aae19 opensm/Makefile.am
+--- a/opensm/Makefile.am	Wed Oct 14 12:54:37 2015 -0700
++++ b/opensm/Makefile.am	Fri Nov 13 06:01:25 2015 -0800
+@@ -25,7 +25,7 @@
+ libopensm_la_DEPENDENCIES = $(srcdir)/libopensm.map
+ 
+ sbin_PROGRAMS = opensm
+-opensm_LDFLAGS = -rdynamic
++opensm_LDFLAGS =
+ opensm_DEPENDENCIES = libopensm.la
+ opensm_SOURCES = main.c osm_console_io.c osm_console.c osm_db_files.c \
+ 		 osm_db_pack.c osm_drop_mgr.c osm_guid_info_rcv.c \
+diff -r bdcd456aae19 opensm/Makefile.in
+--- a/opensm/Makefile.in	Wed Oct 14 12:54:37 2015 -0700
++++ b/opensm/Makefile.in	Fri Nov 13 06:01:25 2015 -0800
+@@ -297,7 +297,8 @@
+ top_builddir = @top_builddir@
+ top_srcdir = @top_srcdir@
+ INCLUDES = $(OSMV_INCLUDES)
+-AM_CFLAGS = -Wall -Wwrite-strings $(DBGFLAGS) -D_XOPEN_SOURCE=600 -D_BSD_SOURCE=1
++AM_CFLAGS = -Wall -Wwrite-strings $(DBGFLAGS) -D_XOPEN_SOURCE=600 -D_BSD_SOURCE=1 \
++	-D__EXTENSIONS__
+ lib_LTLIBRARIES = libopensm.la
+ @DEBUG_FALSE@DBGFLAGS = -g
+ @DEBUG_TRUE@DBGFLAGS = -ggdb -D_DEBUG_
+@@ -309,7 +310,7 @@
+ 	-export-dynamic $(libopensm_version_script)
+ 
+ libopensm_la_DEPENDENCIES = $(srcdir)/libopensm.map
+-opensm_LDFLAGS = -rdynamic
++opensm_LDFLAGS =
+ opensm_DEPENDENCIES = libopensm.la
+ opensm_SOURCES = main.c osm_console_io.c osm_console.c osm_db_files.c \
+ 		 osm_db_pack.c osm_drop_mgr.c osm_guid_info_rcv.c \
+@@ -456,7 +457,7 @@
+ 	done; \
+ 	test -z "$$list2" || { \
+ 	  echo " $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$list2 '$(DESTDIR)$(libdir)'"; \
+-	  $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$list2 "$(DESTDIR)$(libdir)"; \
++	  $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) -m 755 $(INSTALL_STRIP_FLAG) $$list2 "$(DESTDIR)$(libdir)"; \
+ 	}
+ 
+ uninstall-libLTLIBRARIES:
+diff -r bdcd456aae19 opensm/osm_db_files.c
+--- a/opensm/osm_db_files.c	Wed Oct 14 12:54:37 2015 -0700
++++ b/opensm/osm_db_files.c	Fri Nov 13 06:01:25 2015 -0800
+@@ -415,7 +415,7 @@
+ 					p_accum_val);
+ 
+ 				/* check that the key is a number */
+-				if (!strtouq(p_key, &endptr, 0)
++				if (!strtoull(p_key, &endptr, 0)
+ 				    && *endptr != '\0') {
+ 					OSM_LOG(p_log, OSM_LOG_ERROR,
+ 						"ERR 610B: "
+diff -r bdcd456aae19 opensm/osm_helper.c
+--- a/opensm/osm_helper.c	Wed Oct 14 12:54:37 2015 -0700
++++ b/opensm/osm_helper.c	Fri Nov 13 06:01:25 2015 -0800
+@@ -48,6 +48,7 @@
+ #include <stdio.h>
+ #include <string.h>
+ #include <arpa/inet.h>
++#include <netinet/in.h>
+ #include <complib/cl_debug.h>
+ #include <iba/ib_types.h>
+ #include <opensm/osm_file_ids.h>
+diff -r bdcd456aae19 opensm/osm_log.c
+--- a/opensm/osm_log.c	Wed Oct 14 12:54:37 2015 -0700
++++ b/opensm/osm_log.c	Fri Nov 13 06:01:25 2015 -0800
+@@ -193,7 +193,7 @@
+ 		    (result.tm_mon <
+ 		     12 ? month_str[result.tm_mon] : "???"),
+ 		    result.tm_mday, result.tm_hour, result.tm_min,
+-		    result.tm_sec, usecs, pid, verbosity, buffer);
++		    result.tm_sec, usecs, (int)pid, verbosity, buffer);
+ #endif
+ 
+ 	/*  flush log */
+diff -r bdcd456aae19 opensm/osm_opensm.c
+--- a/opensm/osm_opensm.c	Wed Oct 14 12:54:37 2015 -0700
++++ b/opensm/osm_opensm.c	Fri Nov 13 06:01:25 2015 -0800
+@@ -47,7 +47,11 @@
+ 
+ #include <stdio.h>
+ #include <stdlib.h>
++#if !(defined(__SVR4) && defined(__sun))
+ #include <string.h>
++#else
++#include <strings.h>
++#endif
+ #include <complib/cl_dispatcher.h>
+ #include <complib/cl_passivelock.h>
+ #include <opensm/osm_file_ids.h>
+diff -r bdcd456aae19 opensm/osm_qos_parser_y.h
+--- a/opensm/osm_qos_parser_y.h	Wed Oct 14 12:54:37 2015 -0700
++++ b/opensm/osm_qos_parser_y.h	Fri Nov 13 06:01:25 2015 -0800
+@@ -1,23 +1,24 @@
+-
+-/* A Bison parser, made by GNU Bison 2.4.1.  */
++/* A Bison parser, made by GNU Bison 2.3.  */
+ 
+ /* Skeleton interface for Bison's Yacc-like parsers in C
+-   
+-      Copyright (C) 1984, 1989, 1990, 2000, 2001, 2002, 2003, 2004, 2005, 2006
++
++   Copyright (C) 1984, 1989, 1990, 2000, 2001, 2002, 2003, 2004, 2005, 2006
+    Free Software Foundation, Inc.
+-   
+-   This program is free software: you can redistribute it and/or modify
++
++   This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+-   the Free Software Foundation, either version 3 of the License, or
+-   (at your option) any later version.
+-   
++   the Free Software Foundation; either version 2, or (at your option)
++   any later version.
++
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+-   
++
+    You should have received a copy of the GNU General Public License
+-   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
++   along with this program; if not, write to the Free Software
++   Foundation, Inc., 51 Franklin Street, Fifth Floor,
++   Boston, MA 02110-1301, USA.  */
+ 
+ /* As a special exception, you may create a larger work that contains
+    part or all of the Bison parser skeleton and distribute that work
+@@ -28,11 +29,10 @@
+    special exception, which will cause the skeleton and the resulting
+    Bison output files to be licensed under the GNU General Public
+    License without this special exception.
+-   
++
+    This special exception was added by the Free Software Foundation in
+    version 2.2 of Bison.  */
+ 
+-
+ /* Tokens.  */
+ #ifndef YYTOKENTYPE
+ # define YYTOKENTYPE
+@@ -202,11 +202,10 @@
+ 
+ #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
+ typedef int YYSTYPE;
+-# define YYSTYPE_IS_TRIVIAL 1
+ # define yystype YYSTYPE /* obsolescent; will be withdrawn */
+ # define YYSTYPE_IS_DECLARED 1
++# define YYSTYPE_IS_TRIVIAL 1
+ #endif
+ 
+ extern YYSTYPE yylval;
+ 
+-
+diff -r bdcd456aae19 opensm/osm_qos_policy.c
+--- a/opensm/osm_qos_policy.c	Wed Oct 14 12:54:37 2015 -0700
++++ b/opensm/osm_qos_policy.c	Fri Nov 13 06:01:25 2015 -0800
+@@ -46,7 +46,11 @@
+ #include <stdio.h>
+ #include <assert.h>
+ #include <stdlib.h>
++#if !(defined(__SVR4) && defined(__sun))
+ #include <string.h>
++#else
++#include <strings.h>
++#endif
+ #include <ctype.h>
+ #include <arpa/inet.h>
+ #include <opensm/osm_file_ids.h>

@@ -1,0 +1,78 @@
+#This patch was developed both in-house and from outside. We plan to submit it
+#upstream, but do not yet have a target date for doing so
+#
+# HG changeset patch
+# Parent  c28a7753d5943989e04b1f8f505eda68d0a7fa77
+libibmad solaris specific changes
+
+diff -r c28a7753d594 Makefile.in
+--- a/Makefile.in	Wed Oct 14 12:54:37 2015 -0700
++++ b/Makefile.in	Fri Nov 13 07:26:11 2015 -0800
+@@ -478,8 +478,8 @@
+ 	test -z "$$list2" || { \
+ 	  echo " $(MKDIR_P) '$(DESTDIR)$(libdir)'"; \
+ 	  $(MKDIR_P) "$(DESTDIR)$(libdir)" || exit 1; \
+-	  echo " $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$list2 '$(DESTDIR)$(libdir)'"; \
+-	  $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$list2 "$(DESTDIR)$(libdir)"; \
++	  echo " $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) -m 755 $(INSTALL_STRIP_FLAG) $$list2 '$(DESTDIR)$(libdir)'"; \
++	  $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) -m 755 $(INSTALL_STRIP_FLAG) $$list2 "$(DESTDIR)$(libdir)"; \
+ 	}
+ 
+ uninstall-libLTLIBRARIES:
+diff -r c28a7753d594 include/infiniband/mad.h
+--- a/include/infiniband/mad.h	Wed Oct 14 12:54:37 2015 -0700
++++ b/include/infiniband/mad.h	Fri Nov 13 07:26:11 2015 -0800
+@@ -1660,6 +1660,10 @@
+ 
+ extern MAD_EXPORT int ibdebug;
+ 
++#if !(defined(__SVR4) && defined(__sun))
++#include <endian.h>
++#include <byteswap.h>
++
+ #if __BYTE_ORDER == __LITTLE_ENDIAN
+ #ifndef ntohll
+ static inline uint64_t ntohll(uint64_t x)
+@@ -1687,6 +1691,10 @@
+ }
+ #endif
+ #endif				/* __BYTE_ORDER == __BIG_ENDIAN */
++#else
++#include <infiniband/ofa_solaris.h>
++#endif
++
+ 
+ /* Misc. macros: */
+ /** align value \a l to \a size (ceil) */
+diff -r c28a7753d594 include/infiniband/mad_osd.h
+--- a/include/infiniband/mad_osd.h	Wed Oct 14 12:54:37 2015 -0700
++++ b/include/infiniband/mad_osd.h	Fri Nov 13 07:26:11 2015 -0800
+@@ -39,7 +39,9 @@
+ #include <stdio.h>
+ #include <sys/types.h>
+ #include <unistd.h>
++#if !(defined(__SVR4) && defined(__sun))
+ #include <byteswap.h>
++#endif
+ #include <inttypes.h>
+ #include <arpa/inet.h>
+ 
+diff -r c28a7753d594 src/sa.c
+--- a/src/sa.c	Wed Oct 14 12:54:37 2015 -0700
++++ b/src/sa.c	Fri Nov 13 07:26:11 2015 -0800
+@@ -38,6 +38,7 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
++#include <errno.h>
+ 
+ #include <infiniband/mad.h>
+ #include "mad_internal.h"
+@@ -56,6 +57,7 @@
+ 
+ 	if (portid->lid <= 0) {
+ 		IBWARN("only lid routes are supported");
++		errno = EIO;
+ 		return NULL;
+ 	}
+ 

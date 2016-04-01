@@ -3,7 +3,7 @@
 # and submit these changes to it, but do not yet have a target date of doing it.
 diff -r 1584d5cbb44d src/cq.c
 --- a/src/cq.c	Wed Feb 10 12:40:22 2016 +0530
-+++ b/src/cq.c	Tue Mar 08 15:00:55 2016 +0530
++++ b/src/cq.c	Mon Mar 21 15:04:35 2016 +0530
 @@ -43,7 +43,9 @@
  #include <strings.h>
  #include <pthread.h>
@@ -82,7 +82,7 @@ diff -r 1584d5cbb44d src/cq.c
  			lcqe.status, lcqe.vendor_err);
 diff -r 1584d5cbb44d src/encoding.h
 --- a/src/encoding.h	Wed Feb 10 12:40:22 2016 +0530
-+++ b/src/encoding.h	Tue Mar 08 15:00:55 2016 +0530
++++ b/src/encoding.h	Mon Mar 21 15:04:35 2016 +0530
 @@ -37,16 +37,25 @@
  #define _SIF_ENCODING_H
  
@@ -129,7 +129,7 @@ diff -r 1584d5cbb44d src/encoding.h
  #undef wmb
 diff -r 1584d5cbb44d src/hwprint.c
 --- a/src/hwprint.c	Wed Feb 10 12:40:22 2016 +0530
-+++ b/src/hwprint.c	Tue Mar 08 15:00:55 2016 +0530
++++ b/src/hwprint.c	Mon Mar 21 15:04:35 2016 +0530
 @@ -34,6 +34,8 @@
   * hwprint.c: User level wrapper for hardware (generated) struct print support
   */
@@ -141,7 +141,7 @@ diff -r 1584d5cbb44d src/hwprint.c
  #include "psif_hw_print.c"
 diff -r 1584d5cbb44d src/mr.c
 --- a/src/mr.c	Wed Feb 10 12:40:22 2016 +0530
-+++ b/src/mr.c	Tue Mar 08 15:00:55 2016 +0530
++++ b/src/mr.c	Mon Mar 21 15:04:35 2016 +0530
 @@ -45,6 +45,7 @@
  #include "sif_abi.h"
  #include "mr.h"
@@ -199,7 +199,7 @@ diff -r 1584d5cbb44d src/mr.c
      fprintf(stderr, PFX "%s Not implemented\n", __func__);
 diff -r 1584d5cbb44d src/sif.c
 --- a/src/sif.c	Wed Feb 10 12:40:22 2016 +0530
-+++ b/src/sif.c	Tue Mar 08 15:00:55 2016 +0530
++++ b/src/sif.c	Mon Mar 21 15:04:35 2016 +0530
 @@ -44,6 +44,7 @@
  #include <sys/mman.h>
  #include <pthread.h>
@@ -344,7 +344,7 @@ diff -r 1584d5cbb44d src/sif.c
      dev->ibv_dev.ops = sif_dev_ops;
 diff -r 1584d5cbb44d src/sif.h.in
 --- a/src/sif.h.in	Wed Feb 10 12:40:22 2016 +0530
-+++ b/src/sif.h.in	Tue Mar 08 15:00:55 2016 +0530
++++ b/src/sif.h.in	Mon Mar 21 15:04:35 2016 +0530
 @@ -34,6 +34,9 @@
   * sif.h.in: TBD: **insert desc here**
   */
@@ -360,11 +360,11 @@ diff -r 1584d5cbb44d src/sif.h.in
  #define PCI_DEVICE_ID_SIBS_PF       0x2188
  #define PCI_DEVICE_ID_SIBS_VF       0x2189
 +#define PCI_DEVICE_ID_SIBS2_PF      0x2198
-+#define PCI_DEVICE_ID_SIBS2_VF      0x2199
++#define PCI_DEVICE_ID_SIBS2_VF      0x2199	
  #endif
  
  #define HIDDEN      __attribute__((visibility ("hidden")))
-@@ -64,6 +69,19 @@
+@@ -64,6 +69,16 @@
  #define SOD_EXPLICIT_WC 0x1
  #define SOD_WC_TO_SQ 0x2
  
@@ -373,9 +373,6 @@ diff -r 1584d5cbb44d src/sif.h.in
 +#define SIF_PAGE_SIZE	(1 << SIF_PAGE_SHIFT)
 +
 +#define        SIF_DOORBELL_IOCTL      30464
-+#define container_of(ptr, type, member) ({                      \
-+        const typeof( ((type *)0)->member ) *__mptr = (ptr);    \
-+        (type *)( (char *)__mptr - offsetof(type,member) );})
 +#define SIFPRIx64 PRIx64
 +#include "sif_user.h"
 +#else
@@ -384,7 +381,7 @@ diff -r 1584d5cbb44d src/sif.h.in
  enum sif_vendor_flags
  {
      MMU_special   =  0x1,  /* Use special mmu setup in associated mappings
-@@ -102,9 +120,10 @@
+@@ -102,9 +117,10 @@
      FLUSH_SQ,
      FLUSH_RQ
  };
@@ -396,7 +393,7 @@ diff -r 1584d5cbb44d src/sif.h.in
      uint16_t            abi_version;
      uint32_t 		mr_size;  /* Maximal number of MRs in the system */
      uint64_t		min_resp_ms; /* Universal timeout scaling for sif */
-@@ -160,7 +179,7 @@
+@@ -160,7 +176,7 @@
  
  struct sif_rq {
      struct sif_map m;
@@ -405,7 +402,7 @@ diff -r 1584d5cbb44d src/sif.h.in
      uint32_t index;
      uint32_t entries;
      uint32_t mask;     /* entries - 1 for modulo using & */
-@@ -185,7 +204,7 @@
+@@ -185,7 +201,7 @@
  };
  
  struct sif_context {
@@ -414,7 +411,7 @@ diff -r 1584d5cbb44d src/sif.h.in
      enum sif_vendor_flags default_flags;
      enum sif_vendor_flags kernel_flags; /* Vendor flags set by the kernel */
      enum sif_mem_type mem_type;
-@@ -198,6 +217,9 @@
+@@ -198,6 +214,9 @@
      struct sif_mr **bypass_mr_ref;
      int bypass_cnt; /* Number of bypass MRs initiated - to avoid slow lookup unless bypass */
      uint64_t debug_mask;
@@ -424,7 +421,7 @@ diff -r 1584d5cbb44d src/sif.h.in
      uint64_t opt_disable_mask;
      void (* fast_copy)(void *dst, const void *src, int len);
  };
-@@ -222,7 +244,7 @@
+@@ -222,7 +241,7 @@
  };
  
  struct sif_qp {
@@ -433,7 +430,7 @@ diff -r 1584d5cbb44d src/sif.h.in
      uint32_t qp_idx;
      uint32_t magic;
      uint8_t  qosl;
-@@ -245,7 +267,11 @@
+@@ -245,7 +264,11 @@
  
  struct sif_mr {
      struct ibv_mr   ibv_mr;
@@ -445,7 +442,7 @@ diff -r 1584d5cbb44d src/sif.h.in
      enum sif_mem_type mem_type;
  };
  
-@@ -298,12 +324,12 @@
+@@ -298,12 +321,12 @@
  
  static inline struct sif_qp *to_sqp(struct ibv_qp *ibqp)
  {
@@ -460,7 +457,7 @@ diff -r 1584d5cbb44d src/sif.h.in
  }
  
  static inline struct sif_ah *to_sah(struct ibv_ah *ibah)
-@@ -353,6 +379,10 @@
+@@ -353,6 +376,10 @@
                          struct ibv_pd *pd, void *addr, size_t length,
                          int access);
  int sif_dereg_mr(struct ibv_mr *mr);
@@ -471,7 +468,7 @@ diff -r 1584d5cbb44d src/sif.h.in
  struct ibv_mw *sif_alloc_mw(struct ibv_pd *pd, enum ibv_mw_type type);
  int sif_bind_mw(struct ibv_qp *qp, struct ibv_mw *mw, struct ibv_mw_bind *mw_bind);
  int sif_dealloc_mw(struct ibv_mw *mw);
-@@ -366,9 +396,13 @@
+@@ -366,9 +393,13 @@
  
  struct ibv_qp *sif_create_qp(struct ibv_pd *pd,
                     struct ibv_qp_init_attr *attr);
@@ -485,7 +482,7 @@ diff -r 1584d5cbb44d src/sif.h.in
  int sif_query_qp(struct ibv_qp *qp, struct ibv_qp_attr *attr,
             int attr_mask, struct ibv_qp_init_attr *init_attr);
  int sif_modify_qp(struct ibv_qp *qp, struct ibv_qp_attr *attr,
-@@ -382,8 +416,6 @@
+@@ -382,8 +413,6 @@
  
  struct ibv_srq *sif_create_srq(struct ibv_pd *pd,
                   struct ibv_srq_init_attr *attr);
@@ -496,7 +493,7 @@ diff -r 1584d5cbb44d src/sif.h.in
               int attr_mask);
 diff -r 1584d5cbb44d src/sif_abi.h
 --- a/src/sif_abi.h	Wed Feb 10 12:40:22 2016 +0530
-+++ b/src/sif_abi.h	Tue Mar 08 15:00:55 2016 +0530
++++ b/src/sif_abi.h	Mon Mar 21 15:04:35 2016 +0530
 @@ -142,10 +142,12 @@
  	struct sif_create_srq_ext e;
  };
@@ -512,7 +509,7 @@ diff -r 1584d5cbb44d src/sif_abi.h
  	struct ibv_create_srq_resp ibv_resp;
 diff -r 1584d5cbb44d src/sndrcv.c
 --- a/src/sndrcv.c	Wed Feb 10 12:40:22 2016 +0530
-+++ b/src/sndrcv.c	Tue Mar 08 15:00:55 2016 +0530
++++ b/src/sndrcv.c	Mon Mar 21 15:04:35 2016 +0530
 @@ -45,10 +45,15 @@
  #include <errno.h>
  #include <netinet/in.h>
@@ -826,7 +823,7 @@ diff -r 1584d5cbb44d src/sndrcv.c
  
 diff -r 1584d5cbb44d src/sndrcv.h
 --- a/src/sndrcv.h	Wed Feb 10 12:40:22 2016 +0530
-+++ b/src/sndrcv.h	Tue Mar 08 15:00:55 2016 +0530
++++ b/src/sndrcv.h	Mon Mar 21 15:04:35 2016 +0530
 @@ -36,7 +36,9 @@
  
  #ifndef _SIF_SNDRCV_H
@@ -839,7 +836,7 @@ diff -r 1584d5cbb44d src/sndrcv.h
  int sif_post_send(struct ibv_qp *ibqp, struct ibv_send_wr *wr, struct ibv_send_wr **bad_wr);
 diff -r 1584d5cbb44d src/uverbs.c
 --- a/src/uverbs.c	Wed Feb 10 12:40:22 2016 +0530
-+++ b/src/uverbs.c	Tue Mar 08 15:00:55 2016 +0530
++++ b/src/uverbs.c	Mon Mar 21 15:04:35 2016 +0530
 @@ -50,8 +50,11 @@
  #include "encoding.h"
  #include "sif_user.h"
@@ -852,7 +849,7 @@ diff -r 1584d5cbb44d src/uverbs.c
  
  unsigned roundup_pwr2(unsigned x)
  {
-@@ -74,16 +77,24 @@
+@@ -74,16 +77,28 @@
      }
  }
  
@@ -870,9 +867,12 @@ diff -r 1584d5cbb44d src/uverbs.c
  {
      int i;
      void *base = NULL;
--#ifdef HAVE_VERBS_REGISTER_DRIVER
 +#if defined(__SVR4) && defined(__sun)
+ #ifdef HAVE_VERBS_REGISTER_DRIVER
++    int fd = sctx->verbs_ctx.context.mmap_fd;
++#else
 +    int fd = sctx->ibv_ctx.mmap_fd;
++#endif /* HAVE_VERBS_REGISTER_DRIVER */
 +#else
      int fd = sctx->verbs_ctx.context.cmd_fd;
 -#else
@@ -880,7 +880,7 @@ diff -r 1584d5cbb44d src/uverbs.c
  #endif
      struct sif_desc_cache* dc = &sctx->dc[type];
      uint32_t blk_idx = index / sctx->dc[type].ba.entry_per_block;
-@@ -93,14 +104,22 @@
+@@ -93,14 +108,22 @@
          if (dc->d[i].cmd == SIF_MAP_NONE) {
              enum sif_mmap_cmd cmd = dt_to_mmap(type);
              /* The requested block is not mapped, try to map it: */
@@ -906,13 +906,16 @@ diff -r 1584d5cbb44d src/uverbs.c
                  base = NULL;
                  break;
              }
-@@ -204,10 +223,10 @@
+@@ -204,10 +227,14 @@
  
  int map_rq(struct sif_rq *rq, struct sif_context *sctx)
  {
--#ifdef HAVE_VERBS_REGISTER_DRIVER
 +#if defined(__SVR4) && defined(__sun)
+ #ifdef HAVE_VERBS_REGISTER_DRIVER
++    int fd = sctx->verbs_ctx.context.mmap_fd;
++#else
 +    int fd = sctx->ibv_ctx.mmap_fd;
++#endif /* HAVE_VERBS_REGISTER_DRIVER */
 +#else
      int fd = sctx->verbs_ctx.context.cmd_fd;
 -#else
@@ -920,7 +923,7 @@ diff -r 1584d5cbb44d src/uverbs.c
  #endif
      rq->m.sz = rq->extent * rq->entries;
  
-@@ -225,8 +244,14 @@
+@@ -225,8 +252,14 @@
  
      if (rq->m.sz) {
          /* Map the receive queue for this QP */
@@ -935,7 +938,7 @@ diff -r 1584d5cbb44d src/uverbs.c
          if (rq->m.base == MAP_FAILED)
              return errno;
      } else {
-@@ -240,10 +265,18 @@
+@@ -240,10 +273,18 @@
  
  int sif_map_qp(struct sif_qp *qp)
  {
@@ -954,7 +957,7 @@ diff -r 1584d5cbb44d src/uverbs.c
      int ret;
  
      qp->sq.m.sz = qp->sq.extent * qp->sq.entries;
-@@ -266,19 +299,29 @@
+@@ -266,19 +307,29 @@
              return errno;
      }
  
@@ -986,7 +989,7 @@ diff -r 1584d5cbb44d src/uverbs.c
          ret = map_rq(qp->rq, sctx);
          if (ret)
              goto rq_map_failed;
-@@ -301,7 +344,11 @@
+@@ -301,7 +352,11 @@
          if (ret)
              return ret;
      }
@@ -998,7 +1001,7 @@ diff -r 1584d5cbb44d src/uverbs.c
          struct sif_rq *rq = qp->rq;
          ret = munmap(rq->m.base, rq->m.sz);
          rq->m.sz = 0;
-@@ -315,10 +362,14 @@
+@@ -315,10 +370,14 @@
      struct ibv_context *ctx = cq->ibv_cq.context;
      struct sif_device *dev = to_sdev(ctx->device);
      struct sif_context *sctx = to_sctx(ctx);
@@ -1014,7 +1017,7 @@ diff -r 1584d5cbb44d src/uverbs.c
      cq->mask = gross_cqe - 1;
      cq->extent = sizeof(struct psif_cq_entry);
      cq->m.sz = gross_cqe * cq->extent;
-@@ -334,8 +385,14 @@
+@@ -334,8 +393,14 @@
          return errno;
  
      if (cq->m.sz) {
@@ -1029,7 +1032,7 @@ diff -r 1584d5cbb44d src/uverbs.c
          if (cq->m.base == MAP_FAILED)
              return errno;
      } else
-@@ -372,10 +429,15 @@
+@@ -372,10 +437,15 @@
  {
      struct ibv_context *ctx = pd->ibv_pd.context;
      struct sif_device *dev = to_sdev(ctx->device);
@@ -1046,7 +1049,7 @@ diff -r 1584d5cbb44d src/uverbs.c
  
      if (dev->abi_version < abi_ver(3,0)) {
              fprintf(stderr, "driver v.%d.%d does not support direct user level access\n",
-@@ -384,9 +446,16 @@
+@@ -384,9 +454,16 @@
      }
  
      offset = mmap_set_cmd(SIF_MAP_CB, cb->index);
@@ -1066,7 +1069,7 @@ diff -r 1584d5cbb44d src/uverbs.c
      return 0;
 diff -r 1584d5cbb44d src/uverbs.h
 --- a/src/uverbs.h	Wed Feb 10 12:40:22 2016 +0530
-+++ b/src/uverbs.h	Tue Mar 08 15:00:55 2016 +0530
++++ b/src/uverbs.h	Mon Mar 21 15:04:35 2016 +0530
 @@ -75,6 +75,10 @@
  
  static inline bool has_srq(struct sif_qp *qp)
@@ -1080,7 +1083,7 @@ diff -r 1584d5cbb44d src/uverbs.h
  #endif
 diff -r 1584d5cbb44d src/verbs.c
 --- a/src/verbs.c	Wed Feb 10 12:40:22 2016 +0530
-+++ b/src/verbs.c	Tue Mar 08 15:00:55 2016 +0530
++++ b/src/verbs.c	Mon Mar 21 15:04:35 2016 +0530
 @@ -64,7 +64,7 @@
      unsigned major, minor, sub_minor;
      struct ibv_query_device cmd;
@@ -1340,7 +1343,7 @@ diff -r 1584d5cbb44d src/verbs.c
      }
  
      if (qp->sq.wr_hdl)
-@@ -489,7 +602,50 @@
+@@ -489,12 +602,59 @@
      return 0;
  }
  
@@ -1391,7 +1394,41 @@ diff -r 1584d5cbb44d src/verbs.c
  struct ibv_srq *sif_create_srq_ex(struct ibv_context *context,
                                    struct ibv_srq_init_attr_ex *attr)
  {
-@@ -540,9 +696,13 @@
+     struct sif_rq *rq;
++#if defined(__SVR4) && defined(__sun)
++    struct sif_create_srq_cmd cmd;
++#else
+     struct sif_create_xsrq_cmd cmd;
++#endif
+     struct sif_create_srq_resp resp;
+     struct sif_context *sctx = to_sctx(context);
+     int ret;
+@@ -503,13 +663,24 @@
+     if (!rq)
+         return NULL;
+     memset(rq, 0, sizeof(*rq));
++    memset(&cmd, 0, sizeof(cmd));
++    memset(&resp, 0, sizeof(resp));
++
+     cmd.e.flags = sif_get_default_flags(context);
+     cmd.e.res1 = 0;
+ 
++#if HAVE_IBV_XRC_OPS    
+     ret = ibv_cmd_create_srq_ex(context, &rq->verbs_srq,
+                                 sizeof(rq->verbs_srq),
+                                 attr, &cmd.ibv_cmd, sizeof(cmd),
+                                 &resp.ibv_resp, sizeof(resp));
++#else
++    ret = ibv_cmd_create_srq(attr->pd, &rq->verbs_srq.srq,
++				(struct ibv_srq_init_attr *)attr,
++			       	&cmd.ibv_cmd, sizeof(cmd),
++				&resp.ibv_resp, sizeof(resp));
++#endif
++
+     if (ret) {
+         sif_log(sctx, SIF_INFO, "%s: failed to create srq, ret %d\n", __func__, ret);
+         free(rq);
+@@ -540,9 +711,13 @@
      return &rq->verbs_srq.srq;
  }
  
@@ -1405,7 +1442,7 @@ diff -r 1584d5cbb44d src/verbs.c
      struct ibv_srq_init_attr_ex attr_ex;
      struct ibv_srq *srq;
      attr_ex.srq_context = attr->srq_context;
-@@ -554,6 +714,7 @@
+@@ -554,6 +729,7 @@
      if (srq)
          attr->attr = attr_ex.attr;
      return srq;
@@ -1413,7 +1450,7 @@ diff -r 1584d5cbb44d src/verbs.c
  }
  
  
-@@ -577,11 +738,6 @@
+@@ -577,11 +753,6 @@
      int ret;
      sif_log(sctx, SIF_SRQ, "rq %d", rq->index);
  
@@ -1425,7 +1462,7 @@ diff -r 1584d5cbb44d src/verbs.c
      ret = ibv_cmd_destroy_srq(ibsrq);
      if (ret) {
          sif_log(sctx, SIF_INFO, "ibv_cmd_destroy_srq %d failed with errno %d",
-@@ -589,6 +745,11 @@
+@@ -589,6 +760,11 @@
          return ret;
      }
  
@@ -1439,7 +1476,7 @@ diff -r 1584d5cbb44d src/verbs.c
  }
 diff -r 1584d5cbb44d src/xrc.c
 --- a/src/xrc.c	Wed Feb 10 12:40:22 2016 +0530
-+++ b/src/xrc.c	Tue Mar 08 15:00:55 2016 +0530
++++ b/src/xrc.c	Mon Mar 21 15:04:35 2016 +0530
 @@ -44,6 +44,7 @@
  #include "xrc.h"
  #include "encoding.h"
@@ -1455,7 +1492,7 @@ diff -r 1584d5cbb44d src/xrc.c
 +#endif
 diff -r 1584d5cbb44d src/xrc.h
 --- a/src/xrc.h	Wed Feb 10 12:40:22 2016 +0530
-+++ b/src/xrc.h	Tue Mar 08 15:00:55 2016 +0530
++++ b/src/xrc.h	Mon Mar 21 15:04:35 2016 +0530
 @@ -34,12 +34,16 @@
   * xrc.h: XRC support device specific calls.
   */

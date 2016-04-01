@@ -22,27 +22,23 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-BUILD_BITS= 64_and_32
+BUILD_BITS= 64
 include ../ofed-component-macros.mk
 
 COMPONENT_NAME=		librdmacm
-COMPONENT_VERSION=	1.0.14.1
+COMPONENT_VERSION=	1.0.21
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:b74d367415b4f294f3821955428f3e362b91f779042c88970f99941216c13a7c
-COMPONENT_ARCHIVE_URL=	http://www.openfabrics.org/downloads/rdmacm/$(COMPONENT_ARCHIVE)
+	sha256:bd99d29d24338f0bcc7258f7cde32dc06e5a85139938c2f655c5d5dd4ae6a27b
+COMPONENT_ARCHIVE_URL= https://www.openfabrics.org/downloads/rdmacm/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/ofuv_lib
 
 include ../ofed-component.mk
 
 LIBS += -libverbs
 
+CONFIGURE_OPTIONS += --disable-rsocket-utils
+
 CLEANUP_FILES =\
-	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man1/rdma_server.1\
-	$(PROTO_DIR)/$(CONFIGURE_MANDIR)/man1/rdma_client.1\
-	$(PROTOUSRBINDIR)/rdma_server\
-	$(PROTOUSRBINDIR)/rdma_client\
-	$(PROTOUSRBINDIR)/$(MACH32)/rdma_server\
-	$(PROTOUSRBINDIR)/$(MACH32)/rdma_client\
 	$(PROTOUSRINCDIR)/infiniband/ib.h\
 	$(PROTOUSRINCDIR)/rdma/rdma_cma_abi.h\
 	$(PROTOUSRLIBDIR)/$(COMPONENT_NAME).la\

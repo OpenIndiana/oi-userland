@@ -1,0 +1,50 @@
+#This patch was developed both in-house and from outside. We plan to submit it
+#upstream, but do not yet have a target date for doing so
+#
+# HG changeset patch
+# Parent  c45c7e5a56f16c37b46ec2376d2eac3c924a2473
+22219198 - librdmacm: cmtime gets segmentation fault when given invalid argument with -b
+
+When -b option is passed an invalid address, the example crashes with Segmentation Fault.
+Fixed the error by cleaning and exiting the example once the error is encountered.
+Also, ignore the error print when EBADF error is encountered in rdma_get_cm_event
+
+diff -r c45c7e5a56f1 examples/cmtime.c
+--- a/examples/cmtime.c	Mon Nov 16 17:47:33 2015 -0800
++++ b/examples/cmtime.c	Mon Nov 16 18:01:01 2015 -0800
+@@ -420,8 +420,14 @@
+ 		if (!ret) {
+ 			cma_handler(event->id, event);
+ 		} else {
+-			perror("failure in rdma_get_cm_event in process_server_events");
+-			ret = errno;
++			/*
++			 * If the retry of read() syscall returned EBADF, as the
++			 * file was closed on process exit. Ignore this error.
++			 */
++			if (!(ret && errno == EBADF)) {
++				perror("failure in rdma_get_cm_event in process_server_events");
++				ret = errno;
++			}
+ 		}
+ 	}
+ 	return NULL;
+@@ -680,6 +686,11 @@
+ 	} else {
+ 		hints.ai_flags |= RAI_PASSIVE;
+ 		ret = run_server();
++		/* Check if server setup fails */
++		if (ret != 0) {
++			rdma_destroy_event_channel(channel);
++			goto out;
++		}
+ 	}
+ 
+ 	cleanup_nodes();
+@@ -689,5 +700,6 @@
+ 
+ 	show_perf();
+ 	free(nodes);
++	out:
+ 	return ret;
+ }

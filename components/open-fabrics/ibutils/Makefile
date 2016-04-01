@@ -22,20 +22,21 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-BUILD_BITS= 64_and_32
+BUILD_BITS= 64
 include ../ofed-component-macros.mk
 
 COMPONENT_NAME=		ibutils
 COMPONENT_VERSION=	1.5.7
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-0.2.gbd7e502.tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:8db2fcb20102c37e7037826c58b899092df034aac870d3d50a13263746f17f18
+    sha256:67a3b417c8d0820400045dd7143674824086c6793a40ded333be50e498d9a703
 COMPONENT_BUGDB=	utility/ofuv_tools
 
 include ../ofed-component.mk
 
 LIBS +=	-lopensm -losmvendor -losmcomp -libumad -libmad
 
-LDFLAGS.64 +=	-L $(PROTOUSRLIBDIR64)
+LDFLAGS += -L$(PROTOUSRLIBDIR64)
 
 # we want to use the libcheck here
 DISABLE_LIBCHECK=
@@ -45,6 +46,7 @@ CONFIGURE_ENV +=	INSTALL_DATA="$(INSTALL) -m 644"
 CONFIGURE_BINDIR.64= $(USRSBINDIR)
 CONFIGURE_OPTIONS +=	CXXFLAGS="$(CC_BITS)"
 CONFIGURE_OPTIONS +=	--with-osm=$(PROTOUSRDIR)
+CONFIGURE_OPTIONS +=	--with-osm-libs=$(PROTOUSRLIBDIR64)
 
 CLEANUP_FILES =\
 	$(PROTOUSRLIBDIR)/libibdm.la\

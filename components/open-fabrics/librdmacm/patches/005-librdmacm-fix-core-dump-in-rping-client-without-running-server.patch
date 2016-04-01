@@ -1,0 +1,63 @@
+#This patch was developed both in-house and from outside. We plan to submit it
+#upstream, but do not yet have a target date for doing so
+# HG changeset patch
+# Parent  68a7383fdd511ce1ea9a0dfc24404b3d74e67055
+
+diff -r 68a7383fdd51 examples/rping.c
+--- a/examples/rping.c	Tue Mar 15 19:57:38 2016 -0700
++++ b/examples/rping.c	Thu Mar 17 00:08:03 2016 -0700
+@@ -88,6 +88,7 @@
+ 	RDMA_READ_COMPLETE,
+ 	RDMA_WRITE_ADV,
+ 	RDMA_WRITE_COMPLETE,
++	CALLING_DISCONNECT,
+ 	DISCONNECTED,
+ 	ERROR
+ };
+@@ -290,6 +291,20 @@
+ 
+ 		if (wc.status) {
+ 			if (wc.status == IBV_WC_WR_FLUSH_ERR) {
++				/*
++				 * FLUSH Error can be polled before RDMA-CM
++				 * DISCONNECT is notified. Ensure that cb_state
++				 * is set appropriately in such a case.
++				 * sleep for sometime if Disconnect has not
++				 * been called. The FLUSH WR can be because
++				 * the remote end initiated the disconnect.
++				 */
++				if (!(cb->state == CALLING_DISCONNECT || cb->state == DISCONNECTED))
++					sleep(2);
++
++				if (cb->state == DISCONNECTED)
++					return (0);
++
+ 				flushed = 1;
+ 				continue;
+ 
+@@ -824,7 +839,9 @@
+ 	}
+ 
+ 	rping_test_server(cb);
++	cb->state = CALLING_DISCONNECT;
+ 	rdma_disconnect(cb->child_cm_id);
++	pthread_cancel(cb->cqthread);
+ 	pthread_join(cb->cqthread, NULL);
+ 	rping_free_buffers(cb);
+ 	rping_free_qp(cb);
+@@ -943,6 +960,7 @@
+ 
+ 	ret = 0;
+ err3:
++	cb->state = CALLING_DISCONNECT;
+ 	rdma_disconnect(cb->child_cm_id);
+ 	pthread_join(cb->cqthread, NULL);
+ 	rdma_destroy_id(cb->child_cm_id);
+@@ -1122,6 +1140,7 @@
+ 
+ 	ret = 0;
+ err4:
++	cb->state = CALLING_DISCONNECT;
+ 	rdma_disconnect(cb->cm_id);
+ err3:
+ 	pthread_join(cb->cqthread, NULL);

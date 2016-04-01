@@ -20,7 +20,7 @@
 #
 # Copyright (c) 2010, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-<transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
+<transform file path=usr.*/man/.+ -> default mangler.man.stability "pass-through volatile">
 set name=pkg.fmri \
     value=pkg:/network/open-fabrics@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary \
@@ -32,23 +32,29 @@ set name=info.classification \
     value="org.opensolaris.category.2008:System/Administration and Configuration"
 set name=info.source-url \
     value=http://download.oracle.com/otn-pub/oss/networking/libsif-1.0.tar.gz \
-    value=http://www.openfabrics.org/downloads/ibutils/ibutils-1.5.7.tar.gz \
-    value=http://www.openfabrics.org/downloads/libibverbs/libibverbs-1.1.4-1.22.g7257cd3.tar.gz \
-    value=http://www.openfabrics.org/downloads/libmlx4/libmlx4-1.0.1-1.18.gb810a27.tar.gz \
-    value=http://www.openfabrics.org/downloads/libsdp/libsdp-1.1.108-0.15.gd7fdb72.tar.gz \
-    value=http://www.openfabrics.org/downloads/management/infiniband-diags-1.5.8.tar.gz \
-    value=http://www.openfabrics.org/downloads/management/libibmad-1.3.7.tar.gz \
-    value=http://www.openfabrics.org/downloads/management/libibumad-1.3.7.tar.gz \
-    value=http://www.openfabrics.org/downloads/management/opensm-3.3.9.tar.gz \
-    value=http://www.openfabrics.org/downloads/perftest/perftest-1.3.0-0.42.gf350d3d.tar.gz \
-    value=http://www.openfabrics.org/downloads/qperf/qperf-0.4.6-0.1.gb81434e.tar.gz \
-    value=http://www.openfabrics.org/downloads/rdmacm/librdmacm-1.0.14.1.tar.gz \
-    value=http://www.openfabrics.org/downloads/rds-tools/rds-tools-2.0.4.tar.gz
+    value=https://www.openfabrics.org/downloads/ibutils/ibutils-1.5.7-0.2.gbd7e502.tar.gz \
+    value=https://www.openfabrics.org/downloads/libibverbs/libibverbs-1.1.8.tar.gz \
+    value=https://www.openfabrics.org/downloads/libmlx4/libmlx4-1.0.6.tar.gz \
+    value=https://www.openfabrics.org/downloads/libsdp/libsdp-1.1.108-0.15.gd7fdb72.tar.gz \
+    value=https://www.openfabrics.org/downloads/management/infiniband-diags-1.6.5.tar.gz \
+    value=https://www.openfabrics.org/downloads/management/libibmad-1.3.12.tar.gz \
+    value=https://www.openfabrics.org/downloads/management/libibumad-1.3.10.2.tar.gz \
+    value=https://www.openfabrics.org/downloads/management/opensm-3.3.19.tar.gz \
+    value=https://www.openfabrics.org/downloads/perftest/perftest-1.3.0-0.42.gf350d3d.tar.gz \
+    value=https://www.openfabrics.org/downloads/qperf/qperf-0.4.9.tar.gz \
+    value=https://www.openfabrics.org/downloads/rdmacm/librdmacm-1.0.21.tar.gz \
+    value=https://www.openfabrics.org/downloads/rds-tools/rds-tools-2.0.4.tar.gz
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid value=PSARC/2010/346
+set name=org.opensolaris.arc-caseid value=PSARC/2016/109
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 set name=variant.opensolaris.zone value=global value=nonglobal
-file path=etc/libsdp.conf mode=0644 preserve=renameold
+file path=etc/infiniband/infiniband-diags/error_thresholds mode=0644 \
+    preserve=renameold
+file path=etc/infiniband/infiniband-diags/ibdiag.conf mode=0644 \
+    preserve=renameold
+file path=etc/infiniband/libibverbs.d/mlx4.driver
+file path=etc/infiniband/libibverbs.d/sif.driver variant.arch=sparc
+file path=etc/infiniband/libsdp.conf mode=0644 preserve=renameold
 link path=usr/bin/$(MACH64)/ib_clock_test target=../ib_clock_test
 link path=usr/bin/$(MACH64)/ib_read_bw target=../ib_read_bw
 link path=usr/bin/$(MACH64)/ib_read_lat target=../ib_read_lat
@@ -63,6 +69,7 @@ link path=usr/bin/$(MACH64)/rdma_lat target=../rdma_lat
 link path=usr/bin/$(MACH64)/rds-info target=../rds-info
 link path=usr/bin/$(MACH64)/rds-ping target=../rds-ping
 link path=usr/bin/$(MACH64)/rds-stress target=../rds-stress
+file path=usr/bin/cmtime
 file path=usr/bin/ib_clock_test
 file path=usr/bin/ib_read_bw
 file path=usr/bin/ib_read_lat
@@ -80,14 +87,15 @@ file path=usr/bin/ibv_ud_pingpong
 file path=usr/bin/mckey
 file path=usr/bin/qperf
 file path=usr/bin/rdma_bw
+file path=usr/bin/rdma_client
 file path=usr/bin/rdma_lat
+file path=usr/bin/rdma_server
 file path=usr/bin/rds-info
 file path=usr/bin/rds-ping
 file path=usr/bin/rds-stress
 file path=usr/bin/rping
 file path=usr/bin/ucmatose
 file path=usr/bin/udaddy
-dir  path=usr/include/infiniband
 file path=usr/include/infiniband/arch.h
 file path=usr/include/infiniband/driver.h
 file path=usr/include/infiniband/kern-abi.h
@@ -97,16 +105,13 @@ file path=usr/include/infiniband/ofa_solaris.h
 file path=usr/include/infiniband/sa.h
 file path=usr/include/infiniband/umad.h
 file path=usr/include/infiniband/verbs.h
-dir  path=usr/include/rdma
 file path=usr/include/rdma/rdma_cma.h
 file path=usr/include/rdma/rdma_verbs.h
-dir  path=usr/lib/$(MACH64)/ibdiagnet1.5.7
 file path=usr/lib/$(MACH64)/ibdiagnet1.5.7/git_version.tcl
 file path=usr/lib/$(MACH64)/ibdiagnet1.5.7/ibdebug.tcl
 file path=usr/lib/$(MACH64)/ibdiagnet1.5.7/ibdebug_if.tcl
 file path=usr/lib/$(MACH64)/ibdiagnet1.5.7/ibdiagnet.tcl
 file path=usr/lib/$(MACH64)/ibdiagnet1.5.7/pkgIndex.tcl
-dir  path=usr/lib/$(MACH64)/ibdm1.5.7
 file path=usr/lib/$(MACH64)/ibdm1.5.7/ibnl/Buffalo.ibnl
 file path=usr/lib/$(MACH64)/ibdm1.5.7/ibnl/Buffalo8.topo
 file path=usr/lib/$(MACH64)/ibdm1.5.7/ibnl/Cheetah.ibnl
@@ -143,28 +148,27 @@ file path=usr/lib/$(MACH64)/ibdm1.5.7/ibnl/SingleRhino.topo
 file path=usr/lib/$(MACH64)/ibdm1.5.7/ibnl/subnet.lst
 file path=usr/lib/$(MACH64)/ibdm1.5.7/libibdm.so.1.5.7
 file path=usr/lib/$(MACH64)/ibdm1.5.7/pkgIndex.tcl
-dir  path=usr/lib/$(MACH64)/ibis1.5.7
 file path=usr/lib/$(MACH64)/ibis1.5.7/libibis.so.1.5.7
 file path=usr/lib/$(MACH64)/ibis1.5.7/pkgIndex.tcl
-link path=usr/lib/$(MACH64)/libibmad.so target=libibmad.so.5.1.2
-link path=usr/lib/$(MACH64)/libibmad.so.5 target=libibmad.so.5.1.2
-file path=usr/lib/$(MACH64)/libibmad.so.5.1.2
-link path=usr/lib/$(MACH64)/libibnetdisc.so.5 target=libibnetdisc.so.5.0.1
-file path=usr/lib/$(MACH64)/libibnetdisc.so.5.0.1
-link path=usr/lib/$(MACH64)/libibumad.so target=libibumad.so.3.0.2
-link path=usr/lib/$(MACH64)/libibumad.so.3 target=libibumad.so.3.0.2
-file path=usr/lib/$(MACH64)/libibumad.so.3.0.2
+link path=usr/lib/$(MACH64)/libibmad.so target=libibmad.so.5.5.0
+link path=usr/lib/$(MACH64)/libibmad.so.5 target=libibmad.so.5.5.0
+file path=usr/lib/$(MACH64)/libibmad.so.5.5.0
+link path=usr/lib/$(MACH64)/libibnetdisc.so.5 target=libibnetdisc.so.5.3.0
+file path=usr/lib/$(MACH64)/libibnetdisc.so.5.3.0
+link path=usr/lib/$(MACH64)/libibumad.so target=libibumad.so.3.1.0
+link path=usr/lib/$(MACH64)/libibumad.so.3 target=libibumad.so.3.1.0
+file path=usr/lib/$(MACH64)/libibumad.so.3.1.0
 link path=usr/lib/$(MACH64)/libibverbs.so target=libibverbs.so.1.0.0
 link path=usr/lib/$(MACH64)/libibverbs.so.1 target=libibverbs.so.1.0.0
 file path=usr/lib/$(MACH64)/libibverbs.so.1.0.0
 file path=usr/lib/$(MACH64)/libmlx4-rdmav2.so
 link path=usr/lib/$(MACH64)/libmlx4.so target=libmlx4-rdmav2.so
-link path=usr/lib/$(MACH64)/libopensm.so.4 target=libopensm.so.4.0.2
-file path=usr/lib/$(MACH64)/libopensm.so.4.0.2
-link path=usr/lib/$(MACH64)/libosmcomp.so.3 target=libosmcomp.so.3.0.4
-file path=usr/lib/$(MACH64)/libosmcomp.so.3.0.4
-link path=usr/lib/$(MACH64)/libosmvendor.so.3 target=libosmvendor.so.3.0.5
-file path=usr/lib/$(MACH64)/libosmvendor.so.3.0.5
+link path=usr/lib/$(MACH64)/libopensm.so.5 target=libopensm.so.5.2.2
+file path=usr/lib/$(MACH64)/libopensm.so.5.2.2
+link path=usr/lib/$(MACH64)/libosmcomp.so.3 target=libosmcomp.so.3.0.9
+file path=usr/lib/$(MACH64)/libosmcomp.so.3.0.9
+link path=usr/lib/$(MACH64)/libosmvendor.so.4 target=libosmvendor.so.4.0.1
+file path=usr/lib/$(MACH64)/libosmvendor.so.4.0.1
 link path=usr/lib/$(MACH64)/librdmacm.so target=librdmacm.so.1.0.0
 link path=usr/lib/$(MACH64)/librdmacm.so.1 target=librdmacm.so.1.0.0
 file path=usr/lib/$(MACH64)/librdmacm.so.1.0.0
@@ -173,13 +177,7 @@ link path=usr/lib/$(MACH64)/libsif.so target=libsif-rdmav2.so variant.arch=sparc
 link path=usr/lib/secure/$(MACH64)/libsdp.so target=libsdp.so.1.0.0
 link path=usr/lib/secure/$(MACH64)/libsdp.so.1 target=libsdp.so.1.0.0
 file path=usr/lib/secure/$(MACH64)/libsdp.so.1.0.0
-link path=usr/lib/secure/libsdp.so target=libsdp.so.1.0.0
-link path=usr/lib/secure/libsdp.so.1 target=libsdp.so.1.0.0
-file path=usr/lib/secure/libsdp.so.1.0.0
-file path=usr/perl5/site_perl/5.12/i86pc-solaris-64int/IBswcountlimits.pm \
-    group=root mode=0444 variant.arch=i386
-file path=usr/perl5/site_perl/5.12/sun4-solaris-64int/IBswcountlimits.pm \
-    group=root mode=0444 variant.arch=sparc
+file path=usr/perl5/vendor_perl/5.12/IBswcountlimits.pm
 file path=usr/sbin/dump2psl.pl
 file path=usr/sbin/dump2slvl.pl
 file path=usr/sbin/ibaddr
@@ -226,9 +224,7 @@ file path=usr/sbin/sminfo
 file path=usr/sbin/smpdump
 file path=usr/sbin/smpquery
 file path=usr/sbin/solaris_set_nodedesc variant.opensolaris.zone=global
-dir  path=usr/share/libibverbs.d
-file path=usr/share/libibverbs.d/mlx4.driver
-file path=usr/share/libibverbs.d/sif.driver variant.arch=sparc
+file path=usr/share/man/man1/cmtime.1
 file path=usr/share/man/man1/ib_clock_test.1
 file path=usr/share/man/man1/ib_read_bw.1
 link path=usr/share/man/man1/ib_read_lat.1 target=ib_read_bw.1
@@ -248,7 +244,9 @@ file path=usr/share/man/man1/ibv_ud_pingpong.1
 file path=usr/share/man/man1/mckey.1
 file path=usr/share/man/man1/qperf.1
 file path=usr/share/man/man1/rdma_bw.1
+file path=usr/share/man/man1/rdma_client.1
 link path=usr/share/man/man1/rdma_lat.1 target=rdma_bw.1
+file path=usr/share/man/man1/rdma_server.1
 file path=usr/share/man/man1/rds-info.1
 file path=usr/share/man/man1/rds-ping.1
 file path=usr/share/man/man1/rds-stress.1
@@ -302,6 +300,7 @@ file path=usr/share/man/man3/ibv_query_pkey.3
 file path=usr/share/man/man3/ibv_query_port.3
 file path=usr/share/man/man3/ibv_query_qp.3
 file path=usr/share/man/man3/ibv_query_srq.3
+file path=usr/share/man/man3/ibv_rate_to_mbps.3
 file path=usr/share/man/man3/ibv_rate_to_mult.3
 file path=usr/share/man/man3/ibv_reg_mr.3
 file path=usr/share/man/man3/ibv_reg_mr_relaxed.3
@@ -311,6 +310,7 @@ file path=usr/share/man/man3/ibv_resize_cq.3
 file path=usr/share/man/man3/ibv_share_pd.3
 link path=usr/share/man/man3/ibv_unregister_sm_events.3 \
     target=ibv_register_sm_events.3
+file path=usr/share/man/man3/mbps_to_ibv_rate.3
 link path=usr/share/man/man3/mult_to_ibv_rate.3 target=ibv_rate_to_mult.3
 file path=usr/share/man/man3/rdma_accept.3
 file path=usr/share/man/man3/rdma_ack_cm_event.3
@@ -319,9 +319,11 @@ file path=usr/share/man/man3/rdma_connect.3
 file path=usr/share/man/man3/rdma_create_event_channel.3
 file path=usr/share/man/man3/rdma_create_id.3
 file path=usr/share/man/man3/rdma_create_qp.3
+file path=usr/share/man/man3/rdma_create_srq.3
 file path=usr/share/man/man3/rdma_destroy_event_channel.3
 file path=usr/share/man/man3/rdma_destroy_id.3
 file path=usr/share/man/man3/rdma_destroy_qp.3
+file path=usr/share/man/man3/rdma_destroy_srq.3
 file path=usr/share/man/man3/rdma_disconnect.3
 file path=usr/share/man/man3/rdma_event_str.3
 file path=usr/share/man/man3/rdma_free_devices.3
@@ -343,7 +345,6 @@ file path=usr/share/man/man3/rdma_set_option.3
 file path=usr/share/man/man3lib/libsdp.3lib
 file path=usr/share/man/man5/libsdp.conf.5
 file path=usr/share/man/man7/rdma_cm.7
-file path=usr/share/man/man7/verbs.7
 file path=usr/share/man/man8/ibaddr.8
 file path=usr/share/man/man8/ibcheckerrors.8
 file path=usr/share/man/man8/ibcheckerrs.8
@@ -377,6 +378,7 @@ file path=usr/share/man/man8/ibswitches.8
 file path=usr/share/man/man8/ibswportwatch.8
 file path=usr/share/man/man8/ibsysstat.8
 file path=usr/share/man/man8/ibtracert.8
+file path=usr/share/man/man8/infiniband-diags.8
 file path=usr/share/man/man8/perfquery.8
 file path=usr/share/man/man8/saquery.8
 file path=usr/share/man/man8/set_nodedesc.sh.8 variant.opensolaris.zone=global
@@ -393,53 +395,52 @@ license libsif/libsif.license license=BSD3 \
     com.oracle.info.name=libsif com.oracle.info.version=1.0
 license open-fabrics.license license=open-fabrics \
     com.oracle.info.description="the OpenFabrics Enterprise Distribution" \
-    com.oracle.info.name=open-fabrics \
-    com.oracle.info.tpno=$(TPNO_OPEN_FABRICS) com.oracle.info.version=1.5.3
-license open-fabrics.license license="open-fabrics (ibutils)" \
+    com.oracle.info.name=open-fabrics com.oracle.info.version=3.18
+license ibutils.license license="open-fabrics (ibutils)" \
     com.oracle.info.description="the OpenFabrics User Level InfiniBand Management Utilities" \
     com.oracle.info.name=ibutils com.oracle.info.tpno=$(TPNO_IBUTILS) \
     com.oracle.info.version=1.5.7
-license open-fabrics.license license="open-fabrics (infiniband-diags)" \
+license infiniband-diags.license license="open-fabrics (infiniband-diags)" \
     com.oracle.info.description="the OpenFabrics Diagnostic Tools" \
     com.oracle.info.name=infiniband-diags \
-    com.oracle.info.tpno=$(TPNO_INFINIBAND_DIAGS) com.oracle.info.version=1.5.8
-license open-fabrics.license license="open-fabrics (libibmad)" \
+    com.oracle.info.tpno=$(TPNO_INFINIBAND_DIAGS) com.oracle.info.version=1.6.5
+license libibmad.license license="open-fabrics (libibmad)" \
     com.oracle.info.description="the OpenFabrics InfiniBand MAD library" \
     com.oracle.info.name=libibmad com.oracle.info.tpno=$(TPNO_LIBIBMAD) \
-    com.oracle.info.version=1.3.7
-license open-fabrics.license license="open-fabrics (libibumad)" \
+    com.oracle.info.version=1.3.12
+license libibumad.license license="open-fabrics (libibumad)" \
     com.oracle.info.description="the OpenFabrics user MAD interface library" \
     com.oracle.info.name=libibumad com.oracle.info.tpno=$(TPNO_LIBIBUMAD) \
-    com.oracle.info.version=1.3.7
-license open-fabrics.license license="open-fabrics (libibverbs)" \
+    com.oracle.info.version=1.3.10.2
+license libibverbs.license license="open-fabrics (libibverbs)" \
     com.oracle.info.description="the OpenFabrics RDMA verbs library" \
     com.oracle.info.name=libibverbs com.oracle.info.tpno=$(TPNO_LIBIBVERBS) \
     com.oracle.info.version=1.1.4
-license open-fabrics.license license="open-fabrics (libmlx4)" \
+license libmlx4.license license="open-fabrics (libmlx4)" \
     com.oracle.info.description="the OpenFabrics Mellanox ConnectX driver" \
     com.oracle.info.name=libmlx4 com.oracle.info.tpno=$(TPNO_LIBMLX4) \
     com.oracle.info.version=1.0.1
-license open-fabrics.license license="open-fabrics (librdmacm)" \
+license librdmacm.license license="open-fabrics (librdmacm)" \
     com.oracle.info.description="the OpenFabrics RDMA cm library" \
     com.oracle.info.name=librdmacm com.oracle.info.tpno=$(TPNO_LIBRDMACM) \
     com.oracle.info.version=1.0.14.1
-license open-fabrics.license license="open-fabrics (libsdp)" \
+license libsdp.license license="open-fabrics (libsdp)" \
     com.oracle.info.description="the OpenFabrics InfiniBand SDP library" \
     com.oracle.info.name=libsdp com.oracle.info.tpno=$(TPNO_LIBSDP) \
     com.oracle.info.version=1.1.108
-license open-fabrics.license license="open-fabrics (opensm)" \
+license opensm.license license="open-fabrics (opensm)" \
     com.oracle.info.description="the OpenFabrics InfiniBand Subnet Manager and Administrator" \
     com.oracle.info.name=opensm com.oracle.info.tpno=$(TPNO_OPENSM) \
-    com.oracle.info.version=3.3.9
-license open-fabrics.license license="open-fabrics (perftest)" \
+    com.oracle.info.version=3.3.19
+license perftest.license license="open-fabrics (perftest)" \
     com.oracle.info.description="the OpenFabrics performance tests" \
     com.oracle.info.name=perftest com.oracle.info.tpno=$(TPNO_PERFTEST) \
     com.oracle.info.version=1.3.0
-license open-fabrics.license license="open-fabrics (qperf)" \
+license qperf.license license="open-fabrics (qperf)" \
     com.oracle.info.description="the OpenFabrics RDMA and IP performance tests" \
     com.oracle.info.name=qperf com.oracle.info.tpno=$(TPNO_QPERF) \
-    com.oracle.info.version=0.4.6
-license open-fabrics.license license="open-fabrics (rds-tools)" \
+    com.oracle.info.version=0.4.9
+license rds-tools.license license="open-fabrics (rds-tools)" \
     com.oracle.info.description="the OpenFabrics RDS support tools" \
     com.oracle.info.name=rds-tools com.oracle.info.tpno=$(TPNO_RDS_TOOLS) \
     com.oracle.info.version=2.0.4

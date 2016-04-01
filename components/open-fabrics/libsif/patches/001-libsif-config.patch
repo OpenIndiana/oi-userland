@@ -3,7 +3,7 @@
 # and submit these changes to it, but do not yet have a target date of doing it.
 diff -r 1584d5cbb44d Makefile.am
 --- a/Makefile.am	Wed Feb 10 12:40:22 2016 +0530
-+++ b/Makefile.am	Tue Mar 01 16:24:16 2016 +0530
++++ b/Makefile.am	Mon Mar 07 19:29:59 2016 +0530
 @@ -9,7 +9,11 @@
    -avoid-version \
    -release @IBV_DEVICE_LIBRARY_EXTENSION@
@@ -17,19 +17,17 @@ diff -r 1584d5cbb44d Makefile.am
  src_libsif_la_SOURCES = \
      src/cpu_features.c \
      src/cq.c \
-@@ -24,14 +28,20 @@
+@@ -24,14 +28,18 @@
  
  src_libsif_la_LDFLAGS = $(SIF_LDFLAGS) $(sif_version_script)
  
-+if SIF_SOLARIS
-+sifconfdir = $(datadir)/libibverbs.d
-+else
++if !SIF_SOLARIS
  src_libsifwa_la_SOURCES = src/sif_eps.c
  src_libsifwa_la_CFLAGS = $(AM_CFLAGS) $(NETLINK_CFLAGS)
  src_libsifwa_la_LDFLAGS = $(SIF_LDFLAGS) $(NETLINK_LIBS) $(sifwa_version_script)
++endif
  
  sifconfdir = $(sysconfdir)/libibverbs.d
-+endif
  sifconf_DATA = sif.driver
  
 +if !SIF_SOLARIS
@@ -38,7 +36,7 @@ diff -r 1584d5cbb44d Makefile.am
  
  EXTRA_DIST = \
      libsif.spec.in \
-@@ -67,8 +77,10 @@
+@@ -67,8 +75,10 @@
      src/psif_hw_print.c
  
  libsif_includedir = $(includedir)/infiniband
@@ -53,7 +51,7 @@ diff -r 1584d5cbb44d Makefile.am
  	@rm -f $(distdir)/m4/{sifdrv,psifapi}.m4
 diff -r 1584d5cbb44d configure.ac
 --- a/configure.ac	Wed Feb 10 12:40:22 2016 +0530
-+++ b/configure.ac	Tue Mar 01 16:24:16 2016 +0530
++++ b/configure.ac	Mon Mar 07 19:29:59 2016 +0530
 @@ -10,6 +10,10 @@
  # Silent rules by default - use make V=1 for verbose
  AM_SILENT_RULES([yes])
@@ -91,7 +89,7 @@ diff -r 1584d5cbb44d configure.ac
  dnl Checks for header files.
  AC_CHECK_HEADER(infiniband/driver.h, [],
      AC_MSG_ERROR([<infiniband/driver.h> not found.  libsif requires libibverbs.]))
-@@ -86,11 +91,34 @@
+@@ -86,11 +91,22 @@
  AC_SUBST(IBV_DEVICE_LIBRARY_EXTENSION)
  
  SIF_GET_CONTEXT_CONTAINER="return container_of(ibctx, struct sif_context, ibv_ctx);"
@@ -99,26 +97,14 @@ diff -r 1584d5cbb44d configure.ac
 +SIF_GET_SRQ_CONTAINER="return container_of(ibsrq, struct sif_rq, ibv_srq);"
 +SIF_GET_STRUCT="ibv"
  
--AM_CONDITIONAL([HAVE_VERBS_REGISTER_DRIVER],dnl
-+if test $os_type = Linux; then
-+    AM_CONDITIONAL([HAVE_VERBS_REGISTER_DRIVER],dnl
- 	[SIF_GET_CONTEXT_CONTAINER="return container_of(ibctx, struct sif_context, verbs_ctx.context);"])
-+    AM_CONDITIONAL([HAVE_VERBS_REGISTER_DRIVER],dnl
-+        [SIF_GET_QP_CONTAINER="return container_of(ibqp, struct sif_qp, verbs_qp.qp);"])
-+    AM_CONDITIONAL([HAVE_VERBS_REGISTER_DRIVER],dnl
-+        [SIF_GET_SRQ_CONTAINER="return container_of(ibsrq, struct sif_rq, verbs_srq.srq);"])
-+    AM_CONDITIONAL([HAVE_VERBS_REGISTER_DRIVER], [SIF_GET_STRUCT="verbs"])
-+fi
-+
-+if test $os_type = SunOS ; then
-+    AM_CONDITIONAL([HAVE_VERBS_REGISTER_DRIVER],dnl
-+        [SIF_GET_CONTEXT_CONTAINER="return container_of(ibctx, struct sif_context, ibv_ctx);"])
-+    AM_CONDITIONAL([HAVE_VERBS_REGISTER_DRIVER],dnl
-+        [SIF_GET_QP_CONTAINER="return container_of(ibqp, struct sif_qp, ibv_qp);"])
-+    AM_CONDITIONAL([HAVE_VERBS_REGISTER_DRIVER],dnl
-+        [SIF_GET_SRQ_CONTAINER="return container_of(ibsrq, struct sif_rq, ibv_srq);"])
-+    AM_CONDITIONAL([HAVE_VERBS_REGISTER_DRIVER], [SIF_GET_STRUCT="ibv"])
-+fi
+ AM_CONDITIONAL([HAVE_VERBS_REGISTER_DRIVER],dnl
+-	[SIF_GET_CONTEXT_CONTAINER="return container_of(ibctx, struct sif_context, verbs_ctx.context);"])
++    [SIF_GET_CONTEXT_CONTAINER="return container_of(ibctx, struct sif_context, verbs_ctx.context);"])
++AM_CONDITIONAL([HAVE_VERBS_REGISTER_DRIVER],dnl
++    [SIF_GET_QP_CONTAINER="return container_of(ibqp, struct sif_qp, verbs_qp.qp);"])
++AM_CONDITIONAL([HAVE_VERBS_REGISTER_DRIVER],dnl
++    [SIF_GET_SRQ_CONTAINER="return container_of(ibsrq, struct sif_rq, verbs_srq.srq);"])
++AM_CONDITIONAL([HAVE_VERBS_REGISTER_DRIVER], [SIF_GET_STRUCT="verbs"])
  
  AC_SUBST([SIF_GET_CONTEXT_CONTAINER])
 +AC_SUBST([SIF_GET_STRUCT])
@@ -129,7 +115,7 @@ diff -r 1584d5cbb44d configure.ac
      [if test -n "`$LD --help < /dev/null 2>/dev/null | grep version-script`"; then
 diff -r 1584d5cbb44d sif.driver
 --- a/sif.driver	Wed Feb 10 12:40:22 2016 +0530
-+++ b/sif.driver	Tue Mar 01 16:24:16 2016 +0530
++++ b/sif.driver	Mon Mar 07 19:29:59 2016 +0530
 @@ -1,1 +1,6 @@
 +#
 +# Copyright (c) 2014, 2016, Oracle America, Inc. and its Affiliates

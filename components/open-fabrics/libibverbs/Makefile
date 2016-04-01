@@ -22,14 +22,14 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-BUILD_BITS= 64_and_32
+BUILD_BITS= 64
 include ../ofed-component-macros.mk
 
 COMPONENT_NAME=		libibverbs
-COMPONENT_VERSION=	1.1.4
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-1.22.g7257cd3.tar.gz
+COMPONENT_VERSION=	1.1.8
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:1e04aa9d518e3dc372fdda6bd25bf072caae4c85c38d0ae095a614104aa583d4
+	sha256:7c766e679e1e6dbcb37bdfc624c64310787e3a380baf7ee1eebde39c6991828f
+COMPONENT_ARCHIVE_URL= https://www.openfabrics.org/downloads/verbs/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/ofuv_lib
 
 INSTALL_TARGET=
@@ -44,10 +44,12 @@ MAN3FILES =	ibv_alloc_shpd.3 \
 include $(WS_MAKE_RULES)/shared-targets.mk
 
 # add flags to get at extra bits from other components' source trees
-CPPFLAGS +=	-I$(PWD)/../libmlx4/libmlx4-1.0.1/src
-CPPFLAGS +=	-I$(PWD)/../librdmacm/librdmacm-1.0.14.1/include
+CPPFLAGS +=	-I$(PWD)/../libmlx4/libmlx4-1.0.6/src
+CPPFLAGS +=	-I$(PWD)/../librdmacm/librdmacm-1.0.21/include
 
 LIBS +=	-lkstat
+
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)/infiniband
 
 # --disable-libcheck is not a supported option for this component
 DISABLE_LIBCHECK=
@@ -70,5 +72,5 @@ COMPONENT_POST_INSTALL_ACTION = \
 	$(PROTOUSRSHAREMAN3DIR)/ibv_create_xrc_rcv_qp.3 \
 	$(PROTOUSRSHAREMAN3DIR)/ibv_modify_xrc_rcv_qp.3
 
-install:	$(INSTALL_32_and_64) $(PROTOMAN3FILES)
+install:	$(INSTALL_64) $(PROTOMAN3FILES)
 

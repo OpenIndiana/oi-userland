@@ -1,38 +1,14 @@
-# This patch was developed both in-house and from outside. We plan to submit it
-# upstream, but do not yet have a target date for doing so
+#This patch was developed both in-house and from outside. We plan to submit it
+#upstream, but do not yet have a target date for doing so
 #
-diff -r -u /tmp/730054/qperf-0.4.6/src/socket.c qperf-0.4.6/src/socket.c
---- /tmp/730054/qperf-0.4.6/src/socket.c	Mon Aug 31 00:00:40 2009
-+++ qperf-0.4.6/src/socket.c	Mon Nov  8 11:10:20 2010
-@@ -44,7 +44,9 @@
- /*
-  * Parameters.
-  */
-+#if !(defined(__SVR4) && defined(__sun))
- #define AF_INET_SDP 27                  /* Family for SDP */
-+#endif
- 
- 
- /*
-@@ -707,10 +709,14 @@
-     ailist = getaddrinfo_port(serverflag ? 0 : ServerName, port, &hints);
-     for (aip = ailist; aip; aip = aip->ai_next) {
-         if (kind == K_SDP) {
-+#if (defined(__SVR4) && defined(__sun))
-+		aip->ai_protocol = PROTO_SDP;
-+#else
-             if (aip->ai_family == AF_INET || aip->ai_family == AF_INET6)
-                 aip->ai_family = AF_INET_SDP;
-             else
-                 aip->ai_family = 0;
-+#endif
-         } else if (kind == K_SCTP) {
-             if (aip->ai_protocol == IPPROTO_TCP)
-                 aip->ai_protocol = IPPROTO_SCTP;
-diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
---- /tmp/730054/qperf-0.4.6/src/qperf.c	Mon Aug 31 00:00:40 2009
-+++ qperf-0.4.6/src/qperf.c	Mon Nov  8 11:10:17 2010
-@@ -53,7 +53,17 @@
+# HG changeset patch
+# Parent  6728b98439b2997b8420c1b74055a7a118b2d9af
+qperf solaris specific changes.
+
+diff -r 6728b98439b2 src/qperf.c
+--- a/src/qperf.c	Wed Oct 14 12:54:37 2015 -0700
++++ b/src/qperf.c	Fri Nov 13 07:33:20 2015 -0800
+@@ -53,6 +53,16 @@
  #include <sys/utsname.h>
  #include "qperf.h"
  
@@ -44,12 +20,11 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
 +#include <sys/procset.h>
 +#include <strings.h>
 +#include <infiniband/ofa_solaris.h>
- 
-+#endif
 +
++#endif
+ 
  /*
   * Configurable parameters.  If your change makes this version of qperf
-  * incompatible with previous versions (usually a change to the Req structure),
 @@ -165,6 +175,10 @@
      char        qperf[STRSIZE];         /* Qperf version */
  } CONF;
@@ -104,7 +79,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
  
  
  /*
-@@ -601,6 +621,9 @@
+@@ -603,6 +623,9 @@
      initialize();
      set_signals();
      do_args(&argv[1]);
@@ -114,7 +89,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
      return 0;
  }
  
-@@ -617,14 +640,19 @@
+@@ -619,14 +642,19 @@
      for (i = 0; i < P_N; ++i)
          if (ParInfo[i].index != i)
              error(BUG, "initialize: ParInfo: out of order: %d", i);
@@ -134,7 +109,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
  /*
   * Look for a colon and skip past it and any spaces.
   */
-@@ -643,6 +671,7 @@
+@@ -645,12 +673,14 @@
          s++;
      return s;
  }
@@ -142,7 +117,6 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
  
  
  /*
-@@ -649,6 +678,7 @@
   * A case insensitive string compare.  s2 must at least contain all of s1 but
   * can be longer.
   */
@@ -150,7 +124,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
  static int
  cmpsub(char *s2, char *s1)
  {
-@@ -664,6 +694,7 @@
+@@ -666,6 +696,7 @@
              return 0;
      }
  }
@@ -158,28 +132,29 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
  
  
  /*
-@@ -1667,13 +1698,18 @@
+@@ -1669,13 +1700,18 @@
  {
      char count[STRSIZE];
      char speed[STRSIZE];
--    char buf[BUFSIZE];
-     char cpu[BUFSIZE];
--    char mhz[BUFSIZE];
-     int cpus = 0;
++    char cpu[BUFSIZE];
++    int cpus = 0;
 +#if !(defined(__SVR4) && defined(__sun))
-+    char buf[BUFSIZE];
-+    char mhz[BUFSIZE];
+     char buf[BUFSIZE];
+-    char cpu[BUFSIZE];
+     char mhz[BUFSIZE];
+-    int cpus = 0;
      int mixed = 0;
      FILE *fp = fopen("/proc/cpuinfo", "r");
+-
 +#else
 +   sol_cpu_info_t	*info;
 +#endif
- 
++
 +#if !(defined(__SVR4) && defined(__sun))
      if (!fp)
          error(0, "cannot open /proc/cpuinfo");
      cpu[0] = '\0';
-@@ -1732,6 +1768,7 @@
+@@ -1734,6 +1770,7 @@
  
      /* CPU speed */
      speed[0] = '\0';
@@ -187,14 +162,14 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
      if (!mixed) {
          int n = strlen(cpu);
          if (n < 3 || cpu[n-2] != 'H' || cpu[n-1] != 'z') {
-@@ -1745,7 +1782,24 @@
+@@ -1747,6 +1784,23 @@
              }
          }
      }
 +#else
 +    cpu[0] = '\0';
 +    speed[0] = '\0';
- 
++
 +    if ((cpus = sol_get_cpu_info(&info)) > 0 ) {
 +	(void) strcpy(cpu, info[0].cpu_name);
 +
@@ -208,24 +183,10 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
 +	return;
 +    }
 +#endif
-+
+ 
      /* Number of CPUs */
      if (cpus == 1)
-         count[0] = '\0';
-@@ -1776,11 +1830,10 @@
- static void
- run_server_quit(void)
- {
--    int z;
-     char buf[1];
- 
-     sync_test();
--    z = read(RemoteFD, buf, sizeof(buf));
-+    (void)read(RemoteFD, buf, sizeof(buf));
-     kill(getppid(), SIGQUIT);
-     exit(0);
- }
-@@ -2296,6 +2349,7 @@
+@@ -2297,6 +2351,7 @@
      char *tab[] ={ "ns/GB", "us/GB", "ms/GB", "sec/GB" };
  
      value *=  1E9;
@@ -233,35 +194,36 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
      if (!verbose(type, value))
          return;
      if (!UnifyUnits) {
-@@ -2371,21 +2425,20 @@
+@@ -2372,21 +2427,21 @@
  view_band(int type, char *pref, char *name, double value)
  {
      int n, s;
 -    char **tab;
 -
 +    char **tab, **t;
-+    n = s = 0; 
++
++    n = s = 0;
      if (!verbose(type, value))
          return;
      if (UseBitsPerSec) {
--        char *t[] ={ "bits/sec", "Kb/sec", "Mb/sec", "Gb/sec", "Tb/sec" };
+-        static char *t[] ={ "bits/sec", "Kb/sec", "Mb/sec", "Gb/sec", "Tb/sec" };
 -        s = cardof(t);
-+        t=&t_bits[0];
-+        s = s_bits;
++	t=&t_bits[0];
++	s = s_bits;
          tab = t;
          value *= 8;
      } else {
--        char *t[] ={ "bytes/sec", "KB/sec", "MB/sec", "GB/sec", "TB/sec" };
+-        static char *t[] ={ "bytes/sec", "KB/sec", "MB/sec", "GB/sec", "TB/sec" };
 -        s = cardof(t);
-+        t=&t_bytes[0];
-+        s = s_bytes; 
++	t=&t_bytes[0];
++	s = s_bytes;
          tab = t;
      }
 -
      n = 0;
      if (!UnifyUnits) {
          while (value >= 1000 && n < s-1) {
-@@ -2515,10 +2568,13 @@
+@@ -2516,10 +2571,13 @@
  static void
  place_val(char *pref, char *name, char *unit, double value)
  {
@@ -277,7 +239,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
      if (*p == '-')
          ++p;
      while (isdigit(*p++))
-@@ -2570,6 +2626,7 @@
+@@ -2571,6 +2629,7 @@
      for (i = 0; i < ShowIndex; ++i) {
          int n;
          SHOW *show = &ShowTable[i];
@@ -285,7 +247,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
          n = (show->pref ? strlen(show->pref) : 0) + strlen(show->name);
          if (n > nameLen)
              nameLen = n;
-@@ -2615,14 +2672,20 @@
+@@ -2616,14 +2675,20 @@
  static void
  set_affinity(void)
  {
@@ -306,7 +268,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
          error(SYS, "cannot set processor affinity (cpu %d)", a-1);
  }
  
-@@ -2771,9 +2834,36 @@
+@@ -2772,6 +2837,33 @@
  /*
   * Get various temporal parameters.
   */
@@ -314,9 +276,9 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
 +
 +#define	NSEC_TO_TICK(v)		(v * sysconf(_SC_CLK_TCK)/1000000000)
 +
- static void
- get_times(CLOCK timex[T_N])
- {
++static void
++get_times(CLOCK timex[T_N])
++{
 +	struct tms tms;
 +	sol_cpu_stats_t stats;  
 + 
@@ -337,13 +299,10 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
 +
 +#else
 +
-+static void
-+get_times(CLOCK timex[T_N])
-+{
-     int n;
-     char *p;
-     char buf[BUFSIZE];
-@@ -2802,6 +2892,7 @@
+ static void
+ get_times(CLOCK timex[T_N])
+ {
+@@ -2803,6 +2895,7 @@
      while (n < T_N)
          timex[n++] = 0;
  }
@@ -351,9 +310,20 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
  
  
  /*
-diff -r -u /tmp/730054/qperf-0.4.6/src/rdma.c qperf-0.4.6/src/rdma.c
---- /tmp/730054/qperf-0.4.6/src/rdma.c	Mon Aug 31 00:00:40 2009
-+++ qperf-0.4.6/src/rdma.c	Mon Nov  8 11:10:19 2010
+diff -r 6728b98439b2 src/qperf.h
+--- a/src/qperf.h	Wed Oct 14 12:54:37 2015 -0700
++++ b/src/qperf.h	Fri Nov 13 07:33:20 2015 -0800
+@@ -193,6 +193,7 @@
+     uint32_t    no_cpus;                /* Number of processors */
+     uint32_t    no_ticks;               /* Ticks per second */
+     uint32_t    max_cqes;               /* Maximum CQ entries */
++    __attribute__ ((aligned (8)))	/* align with 32-bit & 64-bit binary */
+     CLOCK       time_s[T_N];            /* Start times */
+     CLOCK       time_e[T_N];            /* End times */
+     USTAT       s;                      /* Send statistics */
+diff -r 6728b98439b2 src/rdma.c
+--- a/src/rdma.c	Wed Oct 14 12:54:37 2015 -0700
++++ b/src/rdma.c	Fri Nov 13 07:33:20 2015 -0800
 @@ -37,7 +37,11 @@
  #include <errno.h>
  #include <stdio.h>
@@ -536,20 +506,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/rdma.c qperf-0.4.6/src/rdma.c
  }
  
  
-@@ -1599,11 +1652,11 @@
-         ibv_destroy_ah(dev->ah);
-     if (dev->cq)
-         ibv_destroy_cq(dev->cq);
-+    rd_mrfree(dev);
-     if (dev->pd)
-         ibv_dealloc_pd(dev->pd);
-     if (dev->channel)
-         ibv_destroy_comp_channel(dev->channel);
--    rd_mrfree(dev);
- 
-     if (!Req.use_cm)
-         ib_close2(dev);
-@@ -1864,10 +1917,16 @@
+@@ -1874,10 +1927,16 @@
          error(0, "rdma_bind_addr failed");
      port = ntohs(rdma_get_src_port(cm->id));
      encode_uint32(&port, port);
@@ -566,40 +523,10 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/rdma.c qperf-0.4.6/src/rdma.c
      cm_expect_event(dev, RDMA_CM_EVENT_CONNECT_REQUEST);
      rd_create_qp(dev, cm->event->id->verbs, cm->event->id);
  
-@@ -2012,7 +2071,7 @@
-         char *p = index(Req.id, ':');
- 
-         if (p) {
--            *p++ = '\0';
-+            p++;
-             port = atoi(p);
-             if (port < 1)
-                 error(0, "bad IB port: %d; must be at least 1", port);
-@@ -2050,10 +2109,18 @@
-             device = *dev->ib.devlist;
-         else {
-             struct ibv_device **d = dev->ib.devlist;
--            while ((device = *d++))
--                if (streq(ibv_get_device_name(device), name))
-+            size_t n = strlen(name);
-+            char *p = index(Req.id, ':');
-+            if (p) {
-+                n = p - Req.id;
-+            }
-+            while ((device = *d++)) {
-+                if (streqn(ibv_get_device_name(device), name, n)) {
-                     break;
-+                }
-+            }
-         }
-+
-         if (!device)
-             error(SYS, "failed to find InfiniBand device");
-         dev->ib.context = ibv_open_device(device);
-diff -r -u /tmp/730054/qperf-0.4.6/src/rds.c qperf-0.4.6/src/rds.c
---- /tmp/730054/qperf-0.4.6/src/rds.c	Mon Aug 31 00:00:40 2009
-+++ qperf-0.4.6/src/rds.c	Mon Nov  8 11:10:19 2010
-@@ -44,6 +44,9 @@
+diff -r 6728b98439b2 src/rds.c
+--- a/src/rds.c	Wed Oct 14 12:54:37 2015 -0700
++++ b/src/rds.c	Fri Nov 13 07:33:20 2015 -0800
+@@ -45,6 +45,9 @@
  #include <netinet/in.h>
  #include "qperf.h"
  
@@ -609,15 +536,15 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/rds.c qperf-0.4.6/src/rds.c
  
  /*
   * Parameters.
-@@ -50,6 +53,7 @@
-  */
- #define AF_INET_RDS 28                  /* Family for RDS */
+@@ -90,6 +93,7 @@
+ #define AF_RDS get_af_rds()
+ #endif
  
 +#endif
  
  /*
   * Function prototypes.
-@@ -298,13 +302,19 @@
+@@ -338,13 +342,19 @@
      if (bind(lfd, (SA *)&laddr, sizeof(laddr)) < 0)
          error(SYS, "bind INET failed");
  
@@ -640,19 +567,19 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/rds.c qperf-0.4.6/src/rds.c
      rlen = sizeof(raddr);
      fd = accept(lfd, (SA *)&raddr, &rlen);
      if (fd < 0)
-@@ -352,7 +362,11 @@
+@@ -392,7 +402,11 @@
      SS sockaddr;
      socklen_t socklen;
  
 +#if (defined(__SVR4) && defined(__sun))
 +    sockfd = socket(PF_RDS, SOCK_SEQPACKET, 0);
 +#else
-     sockfd = socket(AF_INET_RDS, SOCK_SEQPACKET, 0);
+     sockfd = socket(AF_RDS, SOCK_SEQPACKET, 0);
 +#endif
      if (sockfd < 0)
          error(SYS, "socket failed");
      setsockopt_one(sockfd, SO_REUSEADDR);
-@@ -373,7 +387,11 @@
+@@ -413,7 +427,11 @@
      struct sockaddr_in *sap = (struct sockaddr_in *)addr;
  
      memset(sap, 0, sizeof(*sap));
@@ -664,7 +591,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/rds.c qperf-0.4.6/src/rds.c
      inet_pton(AF_INET, host, &sap->sin_addr.s_addr);
      sap->sin_port = htons(port);
      *len = sizeof(struct sockaddr_in);
-@@ -431,6 +449,14 @@
+@@ -471,6 +489,14 @@
  
      if (getsockname(fd, (SA *)&sa, &salen) < 0)
          error(SYS, "getsockname failed");
@@ -679,106 +606,51 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/rds.c qperf-0.4.6/src/rds.c
      qgetnameinfo((SA *)&sa, salen, 0, 0, p, sizeof(p), NI_NUMERICSERV);
      port = atoi(p);
      if (!port)
-diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.h qperf-0.4.6/src/qperf.h
---- /tmp/730054/qperf-0.4.6/src/qperf.h	Mon Aug 31 00:00:40 2009
-+++ qperf-0.4.6/src/qperf.h	Tue Oct 18 16:40:59 2011
-@@ -49,6 +49,7 @@
- #define cardof(a)       (sizeof(a)/sizeof(*a))
- #define endof(a)        (&a[cardof(a)])
- #define streq(a, b)     (strcmp(a, b) == 0)
-+#define streqn(a, b, n)	(strncmp(a, b, n) == 0)
- #define offset(t, e)    ((long)&((t *)0)->e)
- #define is_client()     (ServerName != 0)
- #define is_sender()     (Req.flip ? !is_client() : is_client())
-@@ -193,6 +194,7 @@
-     uint32_t    no_cpus;                /* Number of processors */
-     uint32_t    no_ticks;               /* Ticks per second */
-     uint32_t    max_cqes;               /* Maximum CQ entries */
-+    __attribute__ ((aligned (8)))	/* align with 32-bit & 64-bit binary */
-     CLOCK       time_s[T_N];            /* Start times */
-     CLOCK       time_e[T_N];            /* End times */
-     USTAT       s;                      /* Send statistics */
-diff -r -u /tmp/730054/qperf-0.4.6/src/support.c qperf-0.4.6/src/support.c
---- /tmp/730054/qperf-0.4.6/src/support.c	Mon Aug 31 00:00:40 2009
-+++ qperf-0.4.6/src/support.c	Mon Jun  8 15:01:41 2015
-@@ -212,18 +212,17 @@
- void
- touch_data(void *p, int n)
- {
--    uint64_t a;
+diff -r 6728b98439b2 src/socket.c
+--- a/src/socket.c	Wed Oct 14 12:54:37 2015 -0700
++++ b/src/socket.c	Fri Nov 13 07:33:20 2015 -0800
+@@ -44,7 +44,9 @@
+ /*
+  * Parameters.
+  */
++#if !(defined(__SVR4) && defined(__sun))
+ #define AF_INET_SDP 27                  /* Family for SDP */
++#endif
+ 
+ 
+ /*
+@@ -707,10 +709,14 @@
+     ailist = getaddrinfo_port(serverflag ? 0 : ServerName, port, &hints);
+     for (aip = ailist; aip; aip = aip->ai_next) {
+         if (kind == K_SDP) {
++#if (defined(__SVR4) && defined(__sun))
++		aip->ai_protocol = PROTO_SDP;
++#else
+             if (aip->ai_family == AF_INET || aip->ai_family == AF_INET6)
+                 aip->ai_family = AF_INET_SDP;
+             else
+                 aip->ai_family = 0;
++#endif
+         } else if (kind == K_SCTP) {
+             if (aip->ai_protocol == IPPROTO_TCP)
+                 aip->ai_protocol = IPPROTO_SCTP;
+diff -r 6728b98439b2 src/support.c
+--- a/src/support.c	Wed Oct 14 12:54:37 2015 -0700
++++ b/src/support.c	Fri Nov 13 07:33:20 2015 -0800
+@@ -215,14 +215,14 @@
      volatile uint64_t *p64 = p;
  
      while (n >= sizeof(*p64)) {
--        a = *p64++;
+-        (void) *p64++;
          n -= sizeof(*p64);
-+	*p64++;
++        *p64++;
      }
      if (n) {
          volatile uint8_t *p8 = (uint8_t *)p64;
          while (n >= sizeof(*p8)) {
--            a = *p8++;
+-            (void) *p8++;
              n -= sizeof(*p8);
-+	    *p8++;
++            *p8++;
          }
      }
  }
-@@ -419,7 +418,6 @@
- void
- urgent(void)
- {
--    int z;
-     char *p, *q;
-     char buffer[256];
- 
-@@ -471,7 +469,7 @@
-             remote_failure_error();
-         if (s)
-             break;
--        z = read(RemoteFD, p, q-p);
-+        (void)read(RemoteFD, p, q-p);
-     }
- 
-     while (p < q) {
-@@ -484,7 +482,7 @@
-     timeout_end();
- 
-     buf_end(&p, q);
--    z = write(2, buffer, p+1-buffer);
-+    (void)write(2, buffer, p+1-buffer);
-     die();
- }
- 
-@@ -505,7 +503,6 @@
- static void
- remote_failure_error(void)
- {
--    int z;
-     char buffer[256];
-     char *p = buffer;
-     char *q = p + sizeof(buffer);
-@@ -513,7 +510,7 @@
-     buf_app(&p, q, remote_name());
-     buf_app(&p, q, " failure");
-     buf_end(&p, q);
--    z = write(2, buffer, p+1-buffer);
-+    (void)write(2, buffer, p+1-buffer);
-     die();
- }
- 
-@@ -539,7 +536,6 @@
- int
- error(int actions, char *fmt, ...)
- {
--    int z;
-     va_list alist;
-     char buffer[256];
-     char *p = buffer;
-@@ -561,7 +557,7 @@
- 
-     if (RemoteFD >= 0) {
-         send(RemoteFD, "?", 1, MSG_OOB);
--        z = write(RemoteFD, buffer, p-buffer);
-+        (void)write(RemoteFD, buffer, p-buffer);
-         shutdown(RemoteFD, SHUT_WR);
-         timeout_set(ERROR_TIMEOUT, sig_alrm_die);
-         while (read(RemoteFD, buffer, sizeof(buffer)) > 0)
