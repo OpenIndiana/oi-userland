@@ -23,7 +23,7 @@
 # Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		antlr
 COMPONENT_VERSION=	2.7.7
@@ -38,9 +38,9 @@ COMPONENT_BUGDB=	java-class/antlr
 # Use version of Java defined in ../../make-rules/shared-macros.mk
 PATH=$(SPRO_VROOT)/bin:$(JAVA_HOME)/bin:/usr/bin
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/configure.mk
+include $(WS_TOP)/make-rules/ips.mk
 
 PATCH_LEVEL =		0
 
@@ -73,4 +73,4 @@ test:           $(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_TOP)/make-rules/depend.mk
