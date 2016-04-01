@@ -42,9 +42,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL=0
 
-$(BUILD_DIR)/$(MACH64)/.built: PERL=/usr/perl5/5.20/bin/perl
-
-$(BUILD_DIR)/$(MACH64)/.built: APACHE_USR_PREFIX=/usr/apache2/2.4
+APACHE_USR_PREFIX=/usr/apache2/2.4
 
 AP_PERL5LIB=$(APACHE_USR_PREFIX)/lib/perl
 AP_PERL5BIN=$(APACHE_USR_PREFIX)/bin
@@ -92,8 +90,8 @@ COMPONENT_TEST_TRANSFORMS += \
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
+REQUIRED_PACKAGES += $(PERL_PKG)
 REQUIRED_PACKAGES += library/apr-15
 REQUIRED_PACKAGES += library/apr-util-15
-REQUIRED_PACKAGES += runtime/perl-520
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += web/server/apache-24

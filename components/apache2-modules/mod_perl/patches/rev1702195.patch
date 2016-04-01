@@ -1,0 +1,24 @@
+http://svn.apache.org/viewvc?view=revision&revision=1702195
+
+--- t/lib/TestAPRlib/uri.pm	2015/09/10 08:56:17	1702194
++++ t/lib/TestAPRlib/uri.pm	2015/09/10 08:58:55	1702195
+@@ -88,7 +88,7 @@
+     # - if no flags are passed to unparse, APR::Const::URI_UNP_OMITPASSWORD
+     #   is passed by default -- it hides the password
+     my $url1 = sprintf "%s://%s\@%s%s",
+-        map { $url{$_}[1] } grep !/^(password|port)$/, @keys_urls;
++        map { $url{$_}[1] } qw(scheme user hostname path);
+     ok t_cmp($url_unparsed, $url1, "unparsed url");
+ 
+     # various unparse flags #
+--- t/response/TestAPI/uri.pm	2015/09/10 08:56:17	1702194
++++ t/response/TestAPI/uri.pm	2015/09/10 08:58:55	1702195
+@@ -105,7 +105,7 @@
+     }
+     {
+         # this time include args and a pool object
+-        my $curl = $r->construct_url(sprintf "%s?%s", $r->uri, $r->args,
++        my $curl = $r->construct_url(sprintf("%s?%s", $r->uri, $r->args),
+                                      $r->pool->new);
+         t_debug("construct_url: $curl");
+         t_debug("r->uri: ", $r->uri);

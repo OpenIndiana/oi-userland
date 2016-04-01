@@ -1,0 +1,19 @@
+http://svn.apache.org/viewvc?view=revision&revision=1702395
+
+--- xs/Apache2/RequestIO/Apache2__RequestIO.h	2015/09/11 08:19:17	1702394
++++ xs/Apache2/RequestIO/Apache2__RequestIO.h	2015/09/11 08:28:54	1702395
+@@ -111,6 +111,14 @@
+ 
+     rcfg = modperl_config_req_get(r);
+ 
++    /* Reduce items by 1 for threaded builds since it otherwise includes
++     * the thread context, which shouldn't be included in the count of
++     * arguments being given to the sprintf() call.
++     */
++#ifdef USE_ITHREADS
++    --items;
++#endif
++
+     /* XXX: we could have an rcfg->sprintf_buffer to reuse this SV
+      * across requests
+      */
