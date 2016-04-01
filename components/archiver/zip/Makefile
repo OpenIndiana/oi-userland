@@ -22,7 +22,7 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		zip
 COMPONENT_VERSION=	3.0
@@ -36,9 +36,9 @@ COMPONENT_BUGDB=	utility/zip
 
 LD_OPTIONS=
 
-include ../../make-rules/prep.mk
-include ../../make-rules/justmake.mk
-include ../../make-rules/ips.mk
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/justmake.mk
+include $(WS_TOP)/make-rules/ips.mk
 
 # remove the unwanted file.
 COMPONENT_PREP_ACTION = rm -f $(SOURCE_DIR)/match.S
@@ -61,6 +61,6 @@ test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_TOP)/make-rules/depend.mk
 
 
