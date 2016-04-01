@@ -13,7 +13,7 @@
 # Copyright 2013, Adam Stevko. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cabextract
 COMPONENT_VERSION=	1.4
@@ -23,9 +23,9 @@ COMPONENT_ARCHIVE_HASH=	sha256:f7ba8ba2c2d71912846eaaa2bed9200a7722ef0addeec32db
 COMPONENT_PROJECT_URL=	http://www.cabextract.org.uk/
 COMPONENT_ARCHIVE_URL=	http://www.cabextract.org.uk/$(COMPONENT_ARCHIVE)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/configure.mk
+include $(WS_TOP)/make-rules/ips.mk
 
 build:		$(BUILD_32)
 
