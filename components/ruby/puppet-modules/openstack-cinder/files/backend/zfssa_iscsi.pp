@@ -8,8 +8,8 @@
 #    (optional) Allows for the volume_backend_name to be separate of $name.
 #    Defaults to: $name
 #
-# [*ip*]
-#   (required) IP address of ZFS Storage Appliance.
+# [*hostname*]
+#   (required) Hostname of ZFS Storage Appliance.
 #
 # [*login*]
 #   (required) Username to login to ZFS Storage Appliance.
@@ -108,7 +108,7 @@ define cinder::backend::zfssa_iscsi(
     "${name}/volume_driver":           value => 'cinder.volume.drivers.zfssa.zfssaiscsi.ZFSSAISCSIDriver';
     "${name}/san_ip":                  value => $hostname;
     "${name}/san_login":               value => $login;
-    "${name}/san_password":            value => $zfssa_password, secret => true;
+    "${name}/san_password":            value => $password, secret => true;
     "${name}/zfssa_pool":              value => $zfssa_pool;
     "${name}/zfssa_project":           value => $zfssa_project;
     "${name}/zfssa_target_portal":     value => $zfssa_target_portal;

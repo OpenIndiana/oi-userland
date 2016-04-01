@@ -4,8 +4,8 @@
 #
 # === Parameters
 #
-# [*ip*]
-#   (required) IP address of ZFS Storage Appliance.
+# [*hostname*]
+#   (required) Hostname of ZFS Storage Appliance.
 #
 # [*login*]
 #   (required) Username to login to ZFS Storage Appliance.
