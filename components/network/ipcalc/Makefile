@@ -12,7 +12,7 @@
 # Copyright (c) 2013 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ipcalc
 COMPONENT_VERSION=	0.41
