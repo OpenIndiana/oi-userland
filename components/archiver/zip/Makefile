@@ -22,34 +22,30 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		unzip
-COMPONENT_VERSION=	6.0
-COMPONENT_REVISION=	3
-COMPONENT_SRC=		$(COMPONENT_NAME)60
+COMPONENT_NAME=		zip
+COMPONENT_VERSION=	3.0
+COMPONENT_PROJECT_URL=	http://www.info-zip.org/Zip.html
+COMPONENT_SRC=		$(COMPONENT_NAME)30
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:036d96991646d0449ed0aa952e4fbe21b476ce994abc276e49d30e686708bd37
+    sha256:f0e8bb1f9b7eb0b01285495a2699df3a4b766784c1765a8f1aeedf63c0806369
 COMPONENT_ARCHIVE_URL=	ftp://ftp.info-zip.org/pub/infozip/src/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=http://www.info-zip.org/UnZip.html
 COMPONENT_BUGDB=	utility/zip
 
 LD_OPTIONS=
 
-include ../../make-rules/prep.mk
-include ../../make-rules/justmake.mk
-include ../../make-rules/ips.mk
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/justmake.mk
+include $(WS_TOP)/make-rules/ips.mk
 
 # remove the unwanted file.
-COMPONENT_PREP_ACTION = $(RM) $(SOURCE_DIR)/crc_i386.S
-
-COMPONENT_BUILD_ENV += \
- "LOCAL_UNZIP=-DUNICODE_SUPPORT -DNO_WORKING_ISPRINT -DUNICODE_WCHAR -DNO_LCHMOD"
+COMPONENT_PREP_ACTION = rm -f $(SOURCE_DIR)/match.S
 
 # The Makefile we want is under unix/Makefile
 COMPONENT_BUILD_ARGS += -f unix/Makefile
-COMPONENT_BUILD_TARGETS += generic CC="$(CC)"
+COMPONENT_BUILD_TARGETS += generic CC=$(CC)
 COMPONENT_INSTALL_ARGS += -f unix/Makefile
 
 # This doesn't respect DESTDIR, so overload BINDIR and MANDIR when we install.
@@ -57,7 +53,6 @@ COMPONENT_INSTALL_ARGS += BINDIR=$(PROTOUSRBINDIR)
 COMPONENT_INSTALL_ARGS += MANDIR=$(PROTOUSRSHAREMAN1DIR)
 
 # common targets
-
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
@@ -66,4 +61,6 @@ test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_TOP)/make-rules/depend.mk
+
+
