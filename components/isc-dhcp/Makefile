@@ -26,24 +26,25 @@ BUILD_BITS= 64_and_32
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		isc-dhcp
-COMPONENT_VERSION=	4.1-ESV-R7
-HUMAN_VERSION=		$(COMPONENT_VERSION)-P1
-IPS_COMPONENT_VERSION=	4.1.0.7.1
+COMPONENT_VERSION=	4.3.3-P1
+HUMAN_VERSION=		$(COMPONENT_VERSION)
+IPS_COMPONENT_VERSION=	4.3.3.1
 COMPONENT_SRC_NAME=	dhcp
 COMPONENT_PROJECT_URL=	http://www.isc.org/software/dhcp/
 COMPONENT_ARCHIVE_URL=  \
     http://ftp.isc.org/isc/dhcp/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= \
-    sha256:25d579291a13ccce39c5dbb0e2f2ce8e974c82015bc4e3ee653cf95a4ed15ca4
+    sha256:c11e896dffa1bfbc49462965d3f6dec45534e34068603546d9a236f2aa669921
 COMPONENT_BUGDB=	service/dhcp-server
 
-TPNO=			10383
+TPNO=			27530
 
 INSTALL_TARGET=
 include $(WS_MAKE_RULES)/common.mk
 
 LINT_FLAGS +=   -I$(BUILD_DIR_32)/includes \
-	-I$(BUILD_DIR_64)/includes -I$(SOURCE_DIR)/includes -I.
+	-I$(BUILD_DIR_64)/includes -I$(BUILD_DIR_32)/bind/include \
+	-I$(BUILD_DIR_64)/bind/include -I$(SOURCE_DIR)/includes -I.
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -57,10 +58,7 @@ CONFIGURE_OPTIONS  +=	--bindir=$(USRSBINDIR)
 CONFIGURE_OPTIONS  +=	--enable-use-sockets
 CONFIGURE_OPTIONS  +=	--enable-ipv4-pktinfo
 CONFIGURE_OPTIONS  +=	--with-pic
-
-
-# Disable message in omapip/errwarn.c.
-CPPFLAGS  +=	        -DNOMINUM
+CONFIGURE_OPTIONS +=	--srcdir=$(BUILD_DIR_$(BITS))
 
 CFLAGS += -g -fPIC
 
@@ -71,7 +69,8 @@ install:	build $(INSTALL_32_and_64) $(PROTO_DIR)/dhcpd.leases
 $(PROTO_DIR)/dhcpd.leases:	$(INSTALL_32_and_64)
 	$(TOUCH) $@
 
-
+# Package dependencies
+# Created by 'gmake REQUIRED_PACKAGES', manually verified.
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/core-os
 REQUIRED_PACKAGES += system/network

@@ -1,61 +1,21 @@
-This patch file was developed in-house to fix a bug specific to solaris only.
-(Bug #17423148). We are working with upstream, but it is unclear at this point whether 
-they are going to accept it or not. This is a higly visible bug which many customers 
-have run into and it is very much desired that that this fix  makes it to S12.
+This patch file was developed in-house to fix a Solaris specific bug. We are
+working with upstream, but it is unclear at this point whether or not they are
+going to accept it. This is a highly visible bug which many customers have
+encountered.
 
---- old/includes/dhcpd.h	Tue Nov 10 16:43:33 2015
-+++ new/includes/dhcpd.h	Tue Nov 10 16:38:06 2015
-@@ -1150,6 +1150,9 @@
- 	int configured;			/* If set to 1, interface has at least
- 					 * one valid IP address.
- 					 */
-+#if defined (sun)
-+	int set_arp_socket;		/* IOCTL socket to set entry in cache */
-+#endif
- 	u_int32_t flags;		/* Control flags... */
- #define INTERFACE_REQUESTED 1
- #define INTERFACE_AUTOMATIC 2
-@@ -2173,6 +2176,10 @@
- 		       struct sockaddr_in6 *, struct hardware *);
- #endif
- 
-+#if defined (sun)
-+int setup_arp(struct interface_info *, struct in_addr, unsigned char *);
-+#endif
-+
- #ifdef USE_SOCKET_SEND
- void if_reinitialize_send (struct interface_info *);
- void if_register_send (struct interface_info *);
---- old/relay/dhcrelay.c	Thu Aug 23 12:23:54 2012
-+++ new/relay/dhcrelay.c	Tue Nov 10 16:36:52 2015
-@@ -630,6 +630,13 @@
- 			to.sin_addr = packet->yiaddr;
- 			to.sin_port = remote_port;
- 
-+#if defined (sun)
-+			if (setup_arp(out, packet->yiaddr, packet->chaddr)) {
-+				log_error("do_relay4 : Set arp entry failed");
-+				return;
-+			}
-+#endif	
-+
- 			/* and hardware address is not broadcast */
- 			htop = &hto;
- 		} else {
---- old/common/socket.c	Thu Aug 23 12:23:53 2012
-+++ new/common/socket.c	Tue Nov 10 16:33:30 2015
-@@ -46,6 +46,10 @@
+--- old/common/socket.c	Tue Mar  1 19:45:19 2016
++++ new/common/socket.c	Tue Mar  1 19:45:18 2016
+@@ -39,6 +39,9 @@
+ #include <sys/ioctl.h>
  #include <sys/uio.h>
  #include <sys/uio.h>
- #include <signal.h>
-+#include <sys/types.h>
 +#if defined (sun)
 +#include <sys/ethernet.h>
 +#endif
  
  #if defined(sun) && defined(USE_V4_PKTINFO)
  #include <sys/sysmacros.h>
-@@ -93,6 +97,33 @@
+@@ -87,6 +90,33 @@
  static int once = 0;
  #endif /* !defined(SO_BINDTODEVICE) && !defined(USE_FALLBACK) */
  
@@ -89,7 +49,7 @@ have run into and it is very much desired that that this fix  makes it to S12.
  /* Reinitializes the specified interface after an address change.   This
     is not required for packet-filter APIs. */
  
-@@ -328,6 +359,9 @@
+@@ -337,6 +367,9 @@
  #else
  	info->wfdesc = info->rfdesc;
  #endif
@@ -99,7 +59,7 @@ have run into and it is very much desired that that this fix  makes it to S12.
  	if (!quiet_interface_discovery)
  		log_info ("Sending on   Socket/%s%s%s",
  		      info->name,
-@@ -344,6 +378,9 @@
+@@ -353,6 +386,9 @@
  	close (info -> wfdesc);
  #endif
  	info -> wfdesc = -1;
@@ -109,7 +69,7 @@ have run into and it is very much desired that that this fix  makes it to S12.
  
  	if (!quiet_interface_discovery)
  		log_info ("Disabling output on Socket/%s%s%s",
-@@ -1006,7 +1043,11 @@
+@@ -1088,7 +1124,11 @@
  int can_unicast_without_arp (ip)
  	struct interface_info *ip;
  {
@@ -121,9 +81,48 @@ have run into and it is very much desired that that this fix  makes it to S12.
  }
  
  int can_receive_unicast_unconfigured (ip)
---- old/server/bootp.c	Mon Aug 13 17:15:04 2012
-+++ new/server/bootp.c	Tue Nov 10 15:23:38 2015
-@@ -408,7 +408,12 @@
+--- old/includes/dhcpd.h	Tue Mar  1 19:45:19 2016
++++ new/includes/dhcpd.h	Tue Mar  1 19:45:18 2016
+@@ -1354,6 +1354,9 @@
+ 	int configured;			/* If set to 1, interface has at least
+ 					 * one valid IP address.
+ 					 */
++#if defined (sun)
++	int set_arp_socket;		/* IOCTL socket to set entry in cache */
++#endif
+ 	u_int32_t flags;		/* Control flags... */
+ #define INTERFACE_REQUESTED 1
+ #define INTERFACE_AUTOMATIC 2
+@@ -2563,6 +2566,10 @@
+ 		       struct sockaddr_in6 *, struct hardware *);
+ #endif
+ 
++#if defined (sun)
++int setup_arp(struct interface_info *, struct in_addr, unsigned char *);
++#endif
++
+ #ifdef USE_SOCKET_SEND
+ void if_reinitialize_send (struct interface_info *);
+ void if_register_send (struct interface_info *);
+--- old/relay/dhcrelay.c	Tue Mar  1 19:45:19 2016
++++ new/relay/dhcrelay.c	Tue Mar  1 19:45:18 2016
+@@ -653,6 +653,13 @@
+ 			to.sin_addr = packet->yiaddr;
+ 			to.sin_port = remote_port;
+ 
++#if defined (sun)
++			if (setup_arp(out, packet->yiaddr, packet->chaddr)) {
++				log_error("do_relay4 : Set arp entry failed");
++				return;
++			}
++#endif	
++
+ 			/* and hardware address is not broadcast */
+ 			htop = &hto;
+ 		} else {
+--- old/server/bootp.c	Tue Mar  1 19:45:19 2016
++++ new/server/bootp.c	Tue Mar  1 19:45:18 2016
+@@ -410,7 +410,12 @@
  		   can_unicast_without_arp (packet -> interface)) {
  		to.sin_addr = raw.yiaddr;
  		to.sin_port = remote_port;
@@ -137,18 +136,18 @@ have run into and it is very much desired that that this fix  makes it to S12.
  	/* Otherwise, broadcast it on the local network. */
  	} else {
  		to.sin_addr = limited_broadcast;
---- old/server/dhcp.c	Tue Nov 10 16:43:33 2015
-+++ new/server/dhcp.c	Tue Nov 10 16:39:46 2015
-@@ -36,6 +36,8 @@
+--- old/server/dhcp.c	Tue Mar  1 19:45:19 2016
++++ new/server/dhcp.c	Tue Mar  1 19:45:18 2016
+@@ -30,6 +30,8 @@
  #include <errno.h>
  #include <limits.h>
  #include <sys/time.h>
 +#include <sys/sockio.h>
 +#include <sys/ioccom.h>
  
- static void commit_leases_ackout(void *foo);
- 
-@@ -3246,7 +3248,12 @@
+ static void maybe_return_agent_options(struct packet *packet,
+ 				       struct option_state *options);
+@@ -3745,7 +3747,12 @@
  		   can_unicast_without_arp (state -> ip)) {
  		to.sin_addr = raw.yiaddr;
  		to.sin_port = remote_port;
@@ -162,7 +161,7 @@ have run into and it is very much desired that that this fix  makes it to S12.
  	/* Otherwise, broadcast it on the local network. */
  	} else {
  		to.sin_addr = limited_broadcast;
-@@ -3268,7 +3275,9 @@
+@@ -3767,7 +3774,9 @@
  
  	/* Free all of the entries in the option_state structure
  	   now that we're done with them. */

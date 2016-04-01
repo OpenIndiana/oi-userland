@@ -1,45 +1,105 @@
-# HG changeset patch
-# User Praveen Kumar Muthuswamy <praveen.muthuswamy@oracle.com>
-# Date 1428520414 25200
-#      Wed Apr 08 12:13:34 2015 -0700
-# Node ID 045f212982ea4578a9dafb925ad62cf366802dc6
-# Parent  6470d3cc3ce1677a8283cdf15257c2b8c0ab43c9
-/*
- * This patch file (dhcp-dynamiclibraries.patch) was developed in-house to
- * allow isc-dhcp to build and package shared objects for libomapi, libdhcpctl,
- * and libdst. Upstream (ISC) has been made aware of this requirement and the
- * the patch through a service ticket and they are actively working on
- * developing the patch.
- */
+This patch file was developed in-house to allow isc-dhcp to build and package
+shared objects for libomapi and libdhcpctl. Upstream (ISC) has been made aware of
+this requirement and the the patch through a service ticket and they are actively
+working on developing a patch.
 
-diff --git a/client/Makefile.am b/client/Makefile.am
---- a/client/Makefile.am
-+++ b/client/Makefile.am
-@@ -5,7 +5,7 @@
+--- old/bind/Makefile.in	Fri Mar 11 11:59:19 2016
++++ new/bind/Makefile.in	Fri Mar 11 11:59:19 2016
+@@ -24,6 +24,17 @@
+ # GMAKE=
+ include ./bindvar.tmp
+ 
++
++CC = @CC@
++CFLAGS = @CFLAGS@
++CPPFLAGS = @CPPFLAGS@
++
++ENV = /usr/bin/env
++CONFIG_SHELL =  /bin/bash
++CONFIGURE_ENV = CONFIG_SHELL="$(CONFIG_SHELL)"
++CONFIGURE_ENV += CC="$(CC)"
++
++
+ bindsrcdir=bind-${version}
+ 
+ bindconfig = --disable-kqueue --disable-epoll --disable-devpoll \
+@@ -30,7 +41,8 @@
+ 	--without-openssl --without-libxml2 --enable-exportlib \
+ 	--with-gssapi=no --enable-threads=no @BINDCONFIG@ \
+ 	--with-export-includedir=${binddir}/include \
+-	--with-export-libdir=${binddir}/lib
++	--with-export-libdir=${binddir}/lib --with-libtool \
++	CPPFLAGS="$(CPPFLAGS)" CFLAGS="$(CFLAGS)"
+ 
+ @BIND_ATF_FALSE@cleandirs = ./lib ./include
+ @BIND_ATF_TRUE@cleandirs = ./lib ./include ./atf
+@@ -64,6 +76,7 @@
+ 		echo Configuring BIND Export libraries for DHCP. ;      \
+ 		rm -rf ${cleandirs} ${cleanfiles} ;                     \
+ 		(cd ${bindsrcdir} &&                                    \
++		$(ENV) $(CONFIGURE_ENV) $(CONFIG_SHELL)			\
+                  ./configure ${bindconfig} > ${binddir}/configure.log); \
+ 	fi
+ 
+--- old/client/Makefile.am	Fri Mar 11 11:59:19 2016
++++ new/client/Makefile.am	Fri Mar 11 11:59:19 2016
+@@ -10,7 +10,7 @@
+ 		   scripts/bsdos scripts/freebsd scripts/linux scripts/macos \
  		   scripts/netbsd scripts/nextstep scripts/openbsd \
  		   scripts/solaris scripts/openwrt
- dhclient_LDADD = ../common/libdhcp.a ../minires/libres.a \
--		 ../omapip/libomapi.a ../dst/libdst.a
-+		 ../omapip/libomapi.la ../dst/libdst.la
+-dhclient_LDADD = ../common/libdhcp.a ../omapip/libomapi.a ../bind/lib/libirs.a \
++dhclient_LDADD = ../common/libdhcp.a ../omapip/libomapi.la ../bind/lib/libirs.a \
+ 		 ../bind/lib/libdns.a ../bind/lib/libisccfg.a ../bind/lib/libisc.a
  man_MANS = dhclient.8 dhclient-script.8 dhclient.conf.5 dhclient.leases.5
  EXTRA_DIST = $(man_MANS)
+--- old/client/tests/Makefile.am	Fri Mar 11 11:59:20 2016
++++ new/client/tests/Makefile.am	Fri Mar 11 11:59:19 2016
+@@ -15,8 +15,8 @@
  
-diff --git a/common/tests/Makefile.am b/common/tests/Makefile.am
---- a/common/tests/Makefile.am
-+++ b/common/tests/Makefile.am
-@@ -13,7 +13,7 @@
+ DHCPSRC = ../clparse.c ../dhc6.c ../dhclient.c
+ 
+-DHCPLIBS = $(top_builddir)/common/libdhcp.a $(top_builddir)/omapip/libomapi.a    \
+-          $(top_builddir)/dhcpctl/libdhcpctl.a $(top_builddir)/bind/lib/libirs.a \
++DHCPLIBS = $(top_builddir)/common/libdhcp.a $(top_builddir)/omapip/libomapi.la    \
++          $(top_builddir)/dhcpctl/libdhcpctl.la $(top_builddir)/bind/lib/libirs.a \
+ 	  $(top_builddir)/bind/lib/libdns.a $(top_builddir)/bind/lib/libisccfg.a \
+ 	  $(top_builddir)/bind/lib/libisc.a
+ 
+--- old/common/tests/Makefile.am	Fri Mar 11 11:59:19 2016
++++ new/common/tests/Makefile.am	Fri Mar 11 11:59:19 2016
+@@ -13,25 +13,25 @@
  alloc_unittest_SOURCES = test_alloc.c $(top_srcdir)/tests/t_api_dhcp.c
  alloc_unittest_LDADD = $(ATF_LDFLAGS)
  alloc_unittest_LDADD += ../libdhcp.a  \
--	../../omapip/libomapi.a ../../dst/libdst.a ../../minires/libres.a
-+	../../omapip/libomapi.la ../../dst/libdst.la ../../minires/libres.a
+-	../../omapip/libomapi.a ../../bind/lib/libirs.a \
++	../../omapip/libomapi.la ../../bind/lib/libirs.a \
+ 	../../bind/lib/libdns.a ../../bind/lib/libisccfg.a  ../../bind/lib/libisc.a
+ 
+ dns_unittest_SOURCES = dns_unittest.c $(top_srcdir)/tests/t_api_dhcp.c
+ dns_unittest_LDADD = $(ATF_LDFLAGS)
+ dns_unittest_LDADD += ../libdhcp.a  \
+-	../../omapip/libomapi.a ../../bind/lib/libirs.a \
++	../../omapip/libomapi.la ../../bind/lib/libirs.a \
+ 	../../bind/lib/libdns.a ../../bind/lib/libisccfg.a  ../../bind/lib/libisc.a
+ 
+ misc_unittest_SOURCES = misc_unittest.c $(top_srcdir)/tests/t_api_dhcp.c
+ misc_unittest_LDADD = $(ATF_LDFLAGS)
+ misc_unittest_LDADD += ../libdhcp.a  \
+-	../../omapip/libomapi.a ../../bind/lib/libirs.a \
++	../../omapip/libomapi.la ../../bind/lib/libirs.a \
+ 	../../bind/lib/libdns.a ../../bind/lib/libisccfg.a  ../../bind/lib/libisc.a
+ 
+ ns_name_unittest_SOURCES = ns_name_test.c $(top_srcdir)/tests/t_api_dhcp.c
+ ns_name_unittest_LDADD = $(ATF_LDFLAGS)
+ ns_name_unittest_LDADD += ../libdhcp.a  \
+-	../../omapip/libomapi.a ../../bind/lib/libirs.a \
++	../../omapip/libomapi.la ../../bind/lib/libirs.a \
+ 	../../bind/lib/libdns.a ../../bind/lib/libisccfg.a  ../../bind/lib/libisc.a
  
  check: $(ATF_TESTS)
- 	atf-run | atf-report
-diff --git a/configure.ac b/configure.ac
---- a/configure.ac
-+++ b/configure.ac
-@@ -37,7 +37,7 @@
+--- old/./configure.ac	Fri Mar 11 11:59:19 2016
++++ new/./configure.ac	Fri Mar 11 11:59:19 2016
+@@ -43,7 +43,7 @@
  # Use this to define _GNU_SOURCE to pull in the IPv6 Advanced Socket API.
  AC_USE_SYSTEM_EXTENSIONS
  
@@ -48,10 +108,9 @@ diff --git a/configure.ac b/configure.ac
  AC_CONFIG_HEADERS([includes/config.h])
  
  # we sometimes need to know byte order for building packets
-diff --git a/dhcpctl/Makefile.am b/dhcpctl/Makefile.am
---- a/dhcpctl/Makefile.am
-+++ b/dhcpctl/Makefile.am
-@@ -1,15 +1,16 @@
+--- old/dhcpctl/Makefile.am	Fri Mar 11 11:59:19 2016
++++ new/dhcpctl/Makefile.am	Fri Mar 11 11:59:19 2016
+@@ -1,17 +1,18 @@
  bin_PROGRAMS = omshell
 -lib_LIBRARIES = libdhcpctl.a
 +lib_LTLIBRARIES = libdhcpctl.la
@@ -61,37 +120,31 @@ diff --git a/dhcpctl/Makefile.am b/dhcpctl/Makefile.am
  EXTRA_DIST = $(man_MANS)
  
  omshell_SOURCES = omshell.c
--omshell_LDADD = libdhcpctl.a ../common/libdhcp.a ../minires/libres.a \
--                ../omapip/libomapi.a ../dst/libdst.a
-+omshell_LDADD = libdhcpctl.la ../common/libdhcp.a ../minires/libres.a \
-+                ../omapip/libomapi.la ../dst/libdst.la
+-omshell_LDADD = libdhcpctl.a ../common/libdhcp.a ../omapip/libomapi.a \
++omshell_LDADD = libdhcpctl.la ../common/libdhcp.a ../omapip/libomapi.la \
+ 	        ../bind/lib/libirs.a ../bind/lib/libdns.a \
+ 	        ../bind/lib/libisccfg.a ../bind/lib/libisc.a
  
 -libdhcpctl_a_SOURCES = dhcpctl.c callback.c remote.c
 +libdhcpctl_la_SOURCES = dhcpctl.c callback.c remote.c
  
  cltest_SOURCES = cltest.c
--cltest_LDADD = libdhcpctl.a ../common/libdhcp.a ../minires/libres.a \
--               ../omapip/libomapi.a ../dst/libdst.a
-+cltest_LDADD = libdhcpctl.la ../common/libdhcp.a ../minires/libres.a \
-+               ../omapip/libomapi.la ../dst/libdst.la
-diff --git a/dst/Makefile.am b/dst/Makefile.am
---- a/dst/Makefile.am
-+++ b/dst/Makefile.am
-@@ -1,8 +1,9 @@
- AM_CPPFLAGS = -DMINIRES_LIB -DHMAC_MD5
+-cltest_LDADD = libdhcpctl.a ../common/libdhcp.a ../omapip/libomapi.a \
++cltest_LDADD = libdhcpctl.la ../common/libdhcp.a ../omapip/libomapi.la \
+ 	       ../bind/lib/libirs.a ../bind/lib/libdns.a \
+                ../bind/lib/libisccfg.a ../bind/lib/libisc.a
+--- old/includes/omapip/omapip.h	Fri Mar 11 11:59:20 2016
++++ new/includes/omapip/omapip.h	Fri Mar 11 11:59:19 2016
+@@ -29,6 +29,7 @@
  
--lib_LIBRARIES = libdst.a
-+lib_LTLIBRARIES = libdst.la
-+libdst_la_LDFLAGS = -version-info 1
+ #ifndef _OMAPIP_H_
+ #define _OMAPIP_H_
++#include "config.h"
+ #include "result.h"
+ #include <stdarg.h>
  
--libdst_a_SOURCES = dst_support.c dst_api.c hmac_link.c md5_dgst.c \
-+libdst_la_SOURCES = dst_support.c dst_api.c hmac_link.c md5_dgst.c \
- 		   base64.c prandom.c
- 
- EXTRA_DIST = dst_internal.h md5.h md5_locl.h
-diff --git a/omapip/Makefile.am b/omapip/Makefile.am
---- a/omapip/Makefile.am
-+++ b/omapip/Makefile.am
+--- old/omapip/Makefile.am	Fri Mar 11 11:59:19 2016
++++ new/omapip/Makefile.am	Fri Mar 11 11:59:19 2016
 @@ -1,7 +1,8 @@
 -lib_LIBRARIES = libomapi.a
 +lib_LTLIBRARIES = libomapi.la
@@ -102,53 +155,52 @@ diff --git a/omapip/Makefile.am b/omapip/Makefile.am
 +libomapi_la_SOURCES = protocol.c buffer.c alloc.c result.c connection.c \
  		     errwarn.c listener.c dispatch.c generic.c support.c \
  		     handle.c message.c convert.c hash.c auth.c inet_addr.c \
- 		     array.c trace.c mrtrace.c toisc.c iscprint.c
-@@ -9,5 +10,5 @@
+ 		     array.c trace.c toisc.c iscprint.c isclib.c
+@@ -10,6 +11,6 @@
  EXTRA_DIST = $(man_MANS)
  
  svtest_SOURCES = test.c
--svtest_LDADD = libomapi.a ../dst/libdst.a
-+svtest_LDADD = libomapi.la ../dst/libdst.la
+-svtest_LDADD = libomapi.a ../bind/lib/libirs.a ../bind/lib/libdns.a \
++svtest_LDADD = libomapi.la ../bind/lib/libirs.a ../bind/lib/libdns.a \
+ 		../bind/lib/libisccfg.a ../bind/lib/libisc.a
  
-diff --git a/relay/Makefile.am b/relay/Makefile.am
---- a/relay/Makefile.am
-+++ b/relay/Makefile.am
+--- old/relay/Makefile.am	Fri Mar 11 11:59:20 2016
++++ new/relay/Makefile.am	Fri Mar 11 11:59:19 2016
 @@ -2,7 +2,7 @@
  
  sbin_PROGRAMS = dhcrelay
  dhcrelay_SOURCES = dhcrelay.c
--dhcrelay_LDADD = ../common/libdhcp.a ../omapip/libomapi.a ../dst/libdst.a ../minires/libres.a
-+dhcrelay_LDADD = ../common/libdhcp.a ../omapip/libomapi.la ../dst/libdst.la ../minires/libres.a
+-dhcrelay_LDADD = ../common/libdhcp.a ../omapip/libomapi.a \
++dhcrelay_LDADD = ../common/libdhcp.a ../omapip/libomapi.la \
+ 		 ../bind/lib/libirs.a ../bind/lib/libdns.a \
+ 		 ../bind/lib/libisccfg.a ../bind/lib/libisc.a
  man_MANS = dhcrelay.8
- EXTRA_DIST = $(man_MANS)
+--- old/server/Makefile.am	Fri Mar 11 11:59:20 2016
++++ new/server/Makefile.am	Fri Mar 11 11:59:19 2016
+@@ -13,10 +13,10 @@
+ 		dhcpv6.c mdb6.c ldap.c ldap_casa.c leasechain.c ldap_krb_helper.c
  
-diff --git a/server/Makefile.am b/server/Makefile.am
---- a/server/Makefile.am
-+++ b/server/Makefile.am
-@@ -13,9 +13,9 @@
- 		dhcpv6.c mdb6.c
- 
- # libomapi.a this is here twice to handle circular library dependencies :(
--dhcpd_LDADD = ../common/libdhcp.a ../omapip/libomapi.a ../dst/libdst.a \
--	      ../dhcpctl/libdhcpctl.a ../minires/libres.a \
--	      ../omapip/libomapi.a
-+dhcpd_LDADD = ../common/libdhcp.a ../omapip/libomapi.la ../dst/libdst.la \
-+	      ../dhcpctl/libdhcpctl.la ../minires/libres.a \
-+	      ../omapip/libomapi.la
+ dhcpd_CFLAGS = $(LDAP_CFLAGS)
+-dhcpd_LDADD = ../common/libdhcp.a ../omapip/libomapi.a \
+-	      ../dhcpctl/libdhcpctl.a ../bind/lib/libirs.a \
++dhcpd_LDADD = ../common/libdhcp.a ../omapip/libomapi.la \
++	      ../dhcpctl/libdhcpctl.la ../bind/lib/libirs.a \
+ 	      ../bind/lib/libdns.a ../bind/lib/libisccfg.a ../bind/lib/libisc.a \
+-	      $(LDAP_LIBS)		
++	      $(LDAP_LIBS)
  
  man_MANS = dhcpd.8 dhcpd.conf.5 dhcpd.leases.5
  EXTRA_DIST = $(man_MANS)
-diff --git a/server/tests/Makefile.am b/server/tests/Makefile.am
---- a/server/tests/Makefile.am
-+++ b/server/tests/Makefile.am
+--- old/server/tests/Makefile.am	Fri Mar 11 11:59:19 2016
++++ new/server/tests/Makefile.am	Fri Mar 11 11:59:19 2016
 @@ -17,8 +17,8 @@
            ../ddns.c ../dhcpleasequery.c ../dhcpv6.c ../mdb6.c        \
-           ../dhcpd.c
+           ../ldap.c ../ldap_casa.c ../dhcpd.c ../leasechain.c
  
 -DHCPLIBS = $(top_builddir)/common/libdhcp.a $(top_builddir)/omapip/libomapi.a    \
--          $(top_builddir)/dhcpctl/libdhcpctl.a $(top_builddir)/dst/libdst.a \
+-          $(top_builddir)/dhcpctl/libdhcpctl.a $(top_builddir)/bind/lib/libirs.a \
 +DHCPLIBS = $(top_builddir)/common/libdhcp.a $(top_builddir)/omapip/libomapi.la    \
-+          $(top_builddir)/dhcpctl/libdhcpctl.la $(top_builddir)/dst/libdst.la \
-           $(top_builddir)/minires/libres.a
++          $(top_builddir)/dhcpctl/libdhcpctl.la $(top_builddir)/bind/lib/libirs.a \
+ 	  $(top_builddir)/bind/lib/libdns.a $(top_builddir)/bind/lib/libisccfg.a \
+ 	  $(top_builddir)/bind/lib/libisc.a
  
- ATF_TESTS =
