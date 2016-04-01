@@ -20,37 +20,41 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		iperf
-COMPONENT_VERSION=	2.0.5
+# i18n component requires GNU xgettext
+PATH=/usr/gnu/bin:/usr/bin:/usr/sbin
+
+COMPONENT_NAME=		dnsmasq
+COMPONENT_VERSION=	2.68
+COMPONENT_PROJECT_URL=	http://www.thekelleys.org.uk
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://sourceforge.net/projects/iperf/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:636b4eff0431cea80667ea85a67ce4c68698760a9837e1e9d13096d20362265b
-COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/iperf/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/iperf
+    sha256:402019d61f53f1ccc04cc6218719fd3b158ea3fca9a83ab55471f981a2097c2f
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	service/dnsmasq
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+TPNO=			16307
 
-COMPONENT_PRE_CONFIGURE_ACTION = \
-	($(CLONEY) $(SOURCE_DIR) $(@D))
-
-CONFIGURE_OPTIONS  +=	PTHREAD_CFLAGS=-pthreads
-
-# these default to unnecessary gcc options, which
-# are all that prevents us from using studio. so null them.
-COMPONENT_BUILD_ARGS  +=	AM_CXXFLAGS=""
-COMPONENT_BUILD_ARGS  +=	AM_CFLAGS=""
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/justmake.mk
+include $(WS_TOP)/make-rules/ips.mk
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
+
+COMPONENT_BUILD_ARGS += CC="$(CC)"
+COMPONENT_BUILD_ARGS += CFLAGS="$(CFLAGS)"
+COMPONENT_BUILD_ARGS += PREFIX="/usr"
+COMPONENT_BUILD_ARGS += LOCALEDIR="/usr/share/locale"
+COMPONENT_BUILD_ARGS += LDFLAGS="$(LDFLAGS) -m$(BITS)"
+COMPONENT_BUILD_TARGETS = "all-i18n"
+COMPONENT_INSTALL_ARGS += PREFIX="/usr"
+COMPONENT_INSTALL_TARGETS = "install-i18n"
 
 # common targets
 build:		$(BUILD_32)
@@ -61,4 +65,4 @@ test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_TOP)/make-rules/depend.mk
