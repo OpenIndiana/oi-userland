@@ -24,7 +24,7 @@
 # Copyright 2014 Josef 'Jeff' Sipek <jeffpc@josefsipek.net>
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lftp
 COMPONENT_VERSION=	4.3.8
@@ -36,9 +36,9 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://lftp.yar.ru/ftp/old/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/lftp
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/configure.mk
+include $(WS_TOP)/make-rules/ips.mk
 
 PATCH_LEVEL =   0
 
@@ -60,4 +60,4 @@ test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_TOP)/make-rules/depend.mk
