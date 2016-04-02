@@ -38,6 +38,9 @@ TPNO=			17705
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
+# Ensure CC-based linking does not embed runpaths.
+LDFLAGS += $(studio_NORUNPATH)
+
 # don't use LD_Z_IGNORE: causes linker problems
 LD_Z_IGNORE=
 
@@ -51,10 +54,15 @@ CFLAGS= $(CFLAGS.stripped)
 CXXFLAGS.stripped := $(patsubst -m32,,$(CXXFLAGS))
 CXXFLAGS= $(CXXFLAGS.stripped)
 
+CONFIGURE_ENV += "ac_cv_search_getifaddrs=no"
+CONFIGURE_ENV += "ac_cv_func_statfs=no"
+# Ensure dynamic shared objects are linked using same LDFLAGS as executables.
+CONFIGURE_ENV += DSOFLAGS="$(LDFLAGS)"
+
 CONFIGURE_OPTIONS +=	--localedir=$(USRSHARELOCALEDIR)
 CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS +=	--localstatedir=$(VARDIR)
-CONFIGURE_OPTIONS +=	--with-fontpath=/usr/openwin/lib
+CONFIGURE_OPTIONS +=	--with-fontpath=$(USRSHAREFONTSDIR)
 CONFIGURE_OPTIONS +=	--with-logdir=$(VARDIR)/log/cups
 CONFIGURE_OPTIONS +=	--with-domainsocket=$(VARDIR)/run/cups-socket
 CONFIGURE_OPTIONS +=	--with-smfmanifestdir=$(LIBDIR)/svc/manifest/application
@@ -71,11 +79,6 @@ CONFIGURE_OPTIONS +=	--enable-threads
 CONFIGURE_OPTIONS +=	--enable-64bit
 CONFIGURE_OPTIONS +=	--enable-auditing
 CONFIGURE_OPTIONS +=	--without-php
-
-CONFIGURE_OPTIONS += 	ARCH64FLAGS=-m64
-CONFIGURE_OPTIONS += 	DSO64FLAGS="$(LDLIBS) -G"
-CONFIGURE_OPTIONS += 	"ac_cv_search_getifaddrs=no"
-CONFIGURE_OPTIONS += 	"ac_cv_func_statfs=no"
 
 $(BUILD_DIR)/%/.installed:	ENV +=	DSTROOT="$(PROTO_DIR)"
 

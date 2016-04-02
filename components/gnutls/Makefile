@@ -36,6 +36,10 @@ TPNO=			9291
 
 COMPONENT_BUILD_TARGETS = all info
 
+# Tell libtool to pass this flag through using -Wc.
+# https://www.gnu.org/software/libtool/manual/html_node/Stripped-link-flags.html
+studio_NORUNPATH := -Wc,$(studio_NORUNPATH)
+
 include $(WS_MAKE_RULES)/gnu-component.mk
 
 PATH=$(dir $(CC)):$(USRLIBDIR):$(USRBINDIR):$(USRSBINDIR):$(GNUBIN)
@@ -43,7 +47,7 @@ PATH=$(dir $(CC)):$(USRLIBDIR):$(USRBINDIR):$(USRSBINDIR):$(GNUBIN)
 CONFIGURE_OPTIONS  += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS  += --infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  += --localstatedir=$(VARDIR)
-CONFIGURE_OPTIONS  += --enable-guile=no 
+CONFIGURE_OPTIONS  += --disable-guile
 CONFIGURE_OPTIONS  += --disable-camellia
 
 ASLR_MODE = $(ASLR_ENABLE)

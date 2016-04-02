@@ -51,6 +51,9 @@ COMPONENT_PREP_ACTION = \
 
 CFLAGS +=	"-I$(USRINCDIR)/libxml2"
 LDFLAGS +=	$(CC_BITS) -lgmodule-2.0 -lm
+# Tell libtool to pass this flag through using -Wc.
+# https://www.gnu.org/software/libtool/manual/html_node/Stripped-link-flags.html
+LDFLAGS +=	-Wc,$(studio_NORUNPATH)
 
 CONFIGURE_OPTIONS +=	--libexecdir="$(USRLIB)"
 CONFIGURE_OPTIONS +=	--sysconfdir="$(ETCDIR)"
@@ -59,8 +62,6 @@ CONFIGURE_OPTIONS +=	--enable-thumbnailer
 
 # Assumes GNU msgfmt is in PATH.
 COMPONENT_BUILD_ENV += PATH="$(PATH)"
-
-COMPONENT_BUILD_ENV += LDFLAGS="$(LDFLAGS) $(studio_NORUNPATH)"
 
 # Always show the build and link lines for easier debugging.
 COMPONENT_BUILD_ARGS += V=1

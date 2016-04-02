@@ -40,7 +40,10 @@ TPNO=			8415
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS += --bindir=$(USRBINDIR)
+# Tell libtool to pass this flag through using -Wc.
+# https://www.gnu.org/software/libtool/manual/html_node/Stripped-link-flags.html
+LDFLAGS +=	-Wc,$(studio_NORUNPATH)
+
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --with-pic
 CONFIGURE_OPTIONS += --includedir=$(CONFIGURE_INCLUDEDIR)/fastcgi
