@@ -38,9 +38,6 @@ CONFIGURE_CPPFLAGS=
 VARIANTS_64 = $(BUILD_DIR)/apache24-python27 $(BUILD_DIR)/apache24-python34
 include ../modules.mk
 
-# Fix 64-bit linking via compiler.
-LDFLAGS += $(CC_BITS)
-
 $(BUILD_DIR)/apache24-%/$(MACH64)/.configured: APXS=$(APACHE_24_USR_PREFIX)/bin/apxs BITS=64
 $(BUILD_DIR)/apache24-%/$(MACH64)/.built: BITS=64
 $(BUILD_DIR)/apache24-%/$(MACH64)/.tested: BITS=64

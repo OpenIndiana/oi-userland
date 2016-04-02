@@ -40,6 +40,10 @@ CONFIGURE_DEFAULT_DIRS=no
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
+# This is baked into the Apache module build configuration and is used by apxs
+# to build modules.
+LDFLAGS += $(CC_BITS)
+
 PATCH_LEVEL=0
 
 # We will build two separate mod_ssl versions.

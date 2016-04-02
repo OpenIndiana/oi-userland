@@ -59,8 +59,9 @@ CONFIGURE_OPTIONS.64 +=	--enable-layout=Solaris-$(MACH64)
 
 COMPONENT_TEST_TARGETS=	test
 
-# Some patches need configure script recreation.
-COMPONENT_PREP_ACTION += (cd $(@D); autoreconf -fi);
+# Some patches need configure script recreation; autoreconf is not used here as
+# it will overwrite the patch to the libtool scripts.
+COMPONENT_PREP_ACTION += (cd $(@D); autoconf);
 
 # 32 and 64 bits apr.h headers need to be merged to the final one.
 APRH=include/apr.h
