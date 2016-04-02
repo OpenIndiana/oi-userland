@@ -22,17 +22,20 @@
 #
 # Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
 #
+
 BUILD_BITS= 64
+COMPILER =	gcc
+
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		postfix
-COMPONENT_VERSION=	2.11.3
+COMPONENT_VERSION=	3.1.0
 COMPONENT_PROJECT_URL=	http://www.postfix.org
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:04e5146e6e56261baae9f63c590348a4b12ce22d3d46260e26e97233f40802c3
+    sha256:88ac3e92755629077d9363319b1fa0db406efb10c2f22cdbb941bd8ab36fd733
 COMPONENT_ARCHIVE_URL=	http://mirrors-usa.go-parts.com/$(COMPONENT_NAME)/source/official/$(COMPONENT_ARCHIVE)
 
-TPNO=			7492
+TPNO=			27578
 
 BUILD_STYLE= justmake
 TEST_TARGET= $(NO_TESTS)
@@ -69,6 +72,7 @@ COMPONENT_INSTALL_TARGETS = non-interactive-package install_root="$(PROTO_DIR)"
 
 REQUIRED_PACKAGES += database/berkeleydb-5
 REQUIRED_PACKAGES += database/sqlite-3
+REQUIRED_PACKAGES += library/icu
 REQUIRED_PACKAGES += library/pcre
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += shell/ksh93

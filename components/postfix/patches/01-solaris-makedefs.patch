@@ -1,8 +1,8 @@
 Upstream contribution is planned but has not yet occurred.
 
---- postfix-2.11.1/makedefs.orig	2014-01-16 11:49:11.000000000 -0800
-+++ postfix-2.11.1/makedefs	2014-09-19 13:43:56.091926293 -0700
-@@ -217,9 +217,13 @@
+--- postfix-3.1.0/makedefs.~1~	2016-02-21 14:39:45.000000000 -0800
++++ postfix-3.1.0/makedefs	2016-04-01 17:53:50.389724370 -0700
+@@ -358,15 +358,22 @@
  		case $RELEASE in
  		    5.[0-8]|5.[0-8].*) CCARGS="$CCARGS -DNO_CLOSEFROM -DNO_DEV_URANDOM -DNO_FUTIMESAT -DSTREAM_CONNECTIONS";;
  		esac
@@ -15,6 +15,20 @@ Upstream contribution is planned but has not yet occurred.
 +		# libsocket & libnsl were merged into libc in Solaris 12.
 +		case $RELEASE in
 +		    5.1[2-9]*) SYSLIBS="-lresolv -ldl"
++		esac
++		# Work around broken str*casecmp(), fixed in Solaris 9. Do
++		# it all here instead of having half the solution in the
++		# sys_defs.h file.
++		case $RELEASE in
++		    5.[0-8]|5.[0-8].*) CCARGS="$CCARGS -Dstrcasecmp=fix_strcasecmp -Dstrncasecmp=fix_strncasecmp"
++		                       STRCASE="strcasecmp.o"
++		                       ;;
  		esac
- 		# Work around broken str*casecmp(). Do it all here instead
- 		# of having half the solution in the sys_defs.h file.
+-		# Work around broken str*casecmp(). Do it all here instead
+-		# of having half the solution in the sys_defs.h file.
+-		CCARGS="$CCARGS -Dstrcasecmp=fix_strcasecmp \
+-		    -Dstrncasecmp=fix_strncasecmp"
+-		STRCASE="strcasecmp.o"
+ 		# Avoid common types of braindamage
+ 		case "$LD_LIBRARY_PATH" in
+ 		?*) error "Don't set LD_LIBRARY_PATH";;
