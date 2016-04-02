@@ -13,7 +13,7 @@
 # Copyright 2016 Alexander Pyhalov
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= audiofile
 COMPONENT_VERSION= 0.2.7
@@ -30,9 +30,9 @@ COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_LICENSE_FILE= audiofile.license
 COMPONENT_LICENSE= LGPLv2,GPLv2
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/configure.mk
+include $(WS_TOP)/make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
