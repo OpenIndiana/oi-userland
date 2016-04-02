@@ -1,0 +1,89 @@
+This fix has been developed inhouse and has been submitted to the community
+but not accepted yet.
+Details of submission can be found at
+https://github.com/att/ast/pull/1
+--- INIT.2011-02-08.old/src/cmd/ksh93/include/jobs.h	2015-03-03 00:21:58.242706370 -0800
++++ INIT.2011-02-08/src/cmd/ksh93/include/jobs.h	2015-03-03 00:40:48.894575330 -0800
+@@ -203,6 +203,7 @@
+ 	extern int	job_close(Shell_t*);
+ 	extern int	job_list(struct process*,int);
+ 	extern int	job_terminate(struct process*,int);
++	extern int	job_hup(struct process *, int);
+ 	extern int	job_switch(struct process*,int);
+ 	extern void	job_fork(pid_t);
+ 	extern int	job_reap(int);
+--- INIT.2011-02-08.old/src/cmd/ksh93/sh/fault.c	2015-03-03 00:21:58.214056350 -0800
++++ INIT.2011-02-08/src/cmd/ksh93/sh/fault.c	2015-03-03 00:40:44.367029380 -0800
+@@ -635,7 +635,7 @@
+ #endif
+ #ifdef JOBS
+ 	if((sh_isoption(SH_INTERACTIVE) && shp->login_sh) || (!sh_isoption(SH_INTERACTIVE) && (sig==SIGHUP)))
+-		job_walk(sfstderr,job_terminate,SIGHUP,NIL(char**));
++		job_walk(sfstderr, job_hup, SIGHUP, NIL(char**));
+ #endif	/* JOBS */
+ 	job_close(shp);
+ 	if(nv_search("VMTRACE", shp->var_tree,0))
+--- INIT.2011-02-08.old/src/cmd/ksh93/sh/jobs.c	2015-03-03 00:22:16.741450850 -0800
++++ INIT.2011-02-08/src/cmd/ksh93/sh/jobs.c	2015-03-03 00:44:48.323265420 -0800
+@@ -1211,6 +1211,61 @@
+ }
+ 
+ /*
++ * Similar to job_kill, but dedicated to SIGHUP handling when session is
++ * being disconnected.
++ */
++int
++job_hup(struct process *pw, int sig)
++{
++	struct process	*px;
++	pid_t	pid;
++	int	r;
++
++	if (pw->p_pgrp == 0 || (pw->p_flag & P_DISOWN))
++		return (0);
++
++#if SHOPT_COSHELL
++	if(pw->p_cojob) {
++		job_lock();
++		r = cokill(pw->p_cojob->coshell,pw->p_cojob,sig);
++		job_unlock();
++		return (r);
++	}
++#endif /* SHOPT_COSHELL */
++
++	job_lock();
++	if (pw->p_pgrp != 0) {
++		int	palive = 0;
++
++		for (px = pw; px != NULL; px = px->p_nxtproc) {
++			if ((px->p_flag & P_DONE) == 0) {
++				palive = 1;
++				break;
++			}
++		}
++		/*
++		 * If all the processes have been dead, there is no guarantee
++		 * that the p_pgrp is still the valid process group that we
++		 * made, ie pid may have been recycled and same p_pgrp may
++		 * have been assigned to unrelated processes.
++		 */
++		if (palive) {
++			if (killpg(pw->p_pgrp, SIGHUP) >= 0)
++				job_unstop(pw);
++		}
++	}
++	for (; pw != NULL && pw->p_pgrp == 0; pw = pw->p_nxtproc) {
++		if (pw->p_flag & P_DONE)
++			continue;
++		if (kill(pw->p_pid, SIGHUP) >= 0)
++			(void) kill(pw->p_pid, SIGCONT);
++		pw = pw->p_nxtproc;
++	}
++	job_unlock();
++	return(0);
++}
++
++/*
+  * Get process structure from first letters of jobname
+  *
+  */

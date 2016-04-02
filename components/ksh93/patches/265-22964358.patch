@@ -1,0 +1,20 @@
+This fix was developed inhouse on top of the ksh93 alpha version(2013-10-10-alpha).
+This has been submitted to the community but not been accepted yet.
+Details can be found at
+https://github.com/att/ast/issues/5
+--- INIT.2011-02-08.old/src/cmd/ksh93/sh/macro.c	2015-05-04 13:33:02.298225000 -0700
++++ INIT.2011-02-08/src/cmd/ksh93/sh/macro.c	2015-06-03 13:20:45.726236100 -0700
+@@ -1195,6 +1195,13 @@
+ 		}
+ 		else
+ 			v = 0;
++		if(!v && sh_isoption(SH_NOUNSET))
++		{
++			d=fcget();
++			fcseek(-1);
++			if(d=='\0' || !strchr(":+-?=",d))
++				errormsg(SH_DICT,ERROR_exit(1),e_notset,ltos(c));
++		}
+ 		break;
+ 	    case S_ALP:
+ 		if(c=='.' && type==0)
