@@ -56,6 +56,8 @@ CC_BITS=
 # enabling this causes libstdc++ to break
 LD_B_DIRECT=
 
+CFLAGS += -std=gnu89
+
 CONFIGURE_PREFIX =	/usr/gcc/3.4
 CONFIGURE_INFODIR =	$(CONFIGURE_PREFIX)/share/info
 
