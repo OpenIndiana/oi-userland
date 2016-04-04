@@ -76,7 +76,7 @@ include $(WS_MAKE_RULES)/ips.mk
 
 # /usr/gnu/bin needed to pick up the GNU version of tail and readelf.
 # /usr/sbin needed for dtrace.
-PATH =			/usr/gnu/bin:/usr/bin:/usr/sbin
+PATH =			$(dirname $(CC)):/usr/gnu/bin:/usr/bin:/usr/sbin
 
 CLEAN_PATHS +=		$(COMPONENT_SRC)
 

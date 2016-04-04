@@ -94,7 +94,7 @@ endif
 include $(WS_MAKE_RULES)/ips.mk
 
 # /usr/sbin needed for dtrace.
-PATH =         /usr/gnu/bin:/usr/bin:/usr/sbin
+PATH =         $(dirname $(CC)):/usr/gnu/bin:/usr/bin:/usr/sbin
 
 MOZCONFIG =	$(BUILD_DIR_32)/mozconfig
 

@@ -1,0 +1,17 @@
+#
+# Building freebl should use the supplied top level compiler to drive the
+# assembler and not whichever gcc it happens to pick up.
+#
+--- a/security/nss/lib/freebl/Makefile	Mon Dec 21 14:32:54 2015
++++ b/security/nss/lib/freebl/Makefile	Sun Apr  3 18:03:44 2016
+@@ -426,8 +426,8 @@
+ else
+     # Solaris for non-sparc family CPUs
+     ifdef NS_USE_GCC
+-	LD = gcc
+-	AS = gcc
++	LD = $(CC)
++	AS = $(CC)
+ 	ASFLAGS = -x assembler-with-cpp
+     endif
+     ifeq ($(USE_64),1)
