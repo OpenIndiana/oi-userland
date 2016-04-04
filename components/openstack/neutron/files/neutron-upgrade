@@ -90,11 +90,12 @@ def start():
 
         modify_conf('/etc/neutron/api-paste.ini')
         modify_conf('/etc/neutron/dhcp_agent.ini')
-        modify_conf('/etc/neutron/l3_agent.ini', None, L3_AGENT_EXCEPTIONS)
+        modify_conf('/etc/neutron/l3_agent.ini', mapping=None,
+                    exception_list=L3_AGENT_EXCEPTIONS)
         modify_conf('/etc/neutron/neutron.conf', NEUTRON_CONF_MAPPINGS,
                     NEUTRON_CONF_EXCEPTIONS)
-        modify_conf('/etc/neutron/metadata_agent.ini', None,
-                    METADATA_AGENT_EXCEPTIONS)
+        modify_conf('/etc/neutron/metadata_agent.ini', mapping=None,
+                    exception_list=METADATA_AGENT_EXCEPTIONS)
 
     config = iniparse.RawConfigParser()
     config.read('/etc/neutron/neutron.conf')
