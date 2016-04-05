@@ -26,22 +26,19 @@ BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lighttpd
-COMPONENT_VERSION=	1.4.35
+COMPONENT_VERSION=	1.4.39
 COMPONENT_PROJECT_URL=	http://www.lighttpd.net/
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:62c23de053fd82e1bf64f204cb6c6e44ba3c16c01ff1e09da680d982802ef1cc
+    sha256:bc5f910f78b8cbae3e8fe1a1d8558259f09dbe50dd3907db771404bfab27bb2e
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
 
-TPNO=			17006
+TPNO=			27512
 
 LIGHTTPD_INSTALLDIR=$(USRDIR)/lighttpd/1.4
 
 include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL=0
-
-# We need to run autogen because we patch configure.ac file
-COMPONENT_PREP_ACTION = ( cd $(@D) ; $(CONFIG_SHELL) autogen.sh )
 
 # lighttpd is logging using __FILE__ macro. Cloning will make this happen
 # using just source file names (without full absolute paths).
@@ -64,6 +61,9 @@ CONFIGURE_OPTIONS +=	--with-ldap
 CONFIGURE_OPTIONS +=	--with-mysql=$(USRDIR)/mysql/5.5/bin/mysql_config
 CONFIGURE_OPTIONS +=    PCRECONFIG="$(USRBINDIR64)/pcre-config"
 
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "s/[0-9][0-9]* wallclock secs (.*CPU)$$/<TIMINGS REMOVED>/" ' 
+
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += database/mysql-55
 REQUIRED_PACKAGES += database/mysql-55/library
@@ -73,6 +73,7 @@ REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/security/openssl/openssl-fips-140
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/lua
+REQUIRED_PACKAGES += runtime/perl-522
 REQUIRED_PACKAGES += system/core-os
 REQUIRED_PACKAGES += system/network
 REQUIRED_PACKAGES += web/fastcgi/spawn-fcgi

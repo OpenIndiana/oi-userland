@@ -1,0 +1,17 @@
+Patch origin: in-house
+Patch status: Solaris-specific; not suitable for upstream
+
+Makes Perl tests independent on perl mediator setting. Note that there
+might be different test results depending on used Perl version.
+
+--- tests/Makefile.in
++++ tests/Makefile.in
+@@ -449,7 +449,7 @@
+ 	var-include-sub.conf \
+ 	var-include.conf
+ 
+-TESTS_ENVIRONMENT = $(srcdir)/wrapper.sh $(srcdir) $(top_builddir)
++TESTS_ENVIRONMENT = PATH="/usr/perl5/5.22/bin:$(PATH)" $(srcdir)/wrapper.sh $(srcdir) $(top_builddir)
+ EXTRA_DIST = \
+ 	$(CONFS) \
+ 	$(TESTS) \

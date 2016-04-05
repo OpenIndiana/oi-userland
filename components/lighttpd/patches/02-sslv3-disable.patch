@@ -1,16 +1,16 @@
 Patch origin: in-house
-Patch status: submitted to upstream
+Patch status: Not suitable for upstream.
 
-http://redmine.lighttpd.net/issues/2647
+Always disable SSLv3 and don't allow to enable it ever again.
 
---- src/configfile.c
-+++ src/configfile.c
-@@ -182,7 +182,7 @@
- 		s->ssl_honor_cipher_order = 1;
- 		s->ssl_empty_fragments = 0;
- 		s->ssl_use_sslv2 = 0;
--		s->ssl_use_sslv3 = 1;
-+		s->ssl_use_sslv3 = 0;
- 		s->use_ipv6      = 0;
- 		s->set_v6only    = 1;
- 		s->defer_accept  = 0;
+--- src/network.c
++++ src/network.c
+@@ -780,7 +780,7 @@
+ 			}
+ 		}
+ 
+-		if (!s->ssl_use_sslv3) {
++		if (1) {
+ 			/* disable SSLv3 */
+ 			if (!(SSL_OP_NO_SSLv3 & SSL_CTX_set_options(s->ssl_ctx, SSL_OP_NO_SSLv3))) {
+ 				log_error_write(srv, __FILE__, __LINE__, "ss", "SSL:",
