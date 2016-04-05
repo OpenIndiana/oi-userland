@@ -1,8 +1,8 @@
 Enhance the zone type to configure zones using a zonecfg export file format.
 Enhance the output of the puppet resource zone.
 
---- puppet-3.6.2/lib/puppet/type/zone.rb.orig	2014-06-09 15:08:19.000000000 -0600
-+++ puppet-3.6.2/lib/puppet/type/zone.rb	2014-06-25 15:52:29.120145393 -0600
+--- puppet-3.8.3/lib/puppet/type/zone.rb.orig	2015-09-21 14:46:28.000000000 -0700
++++ puppet-3.8.3/lib/puppet/type/zone.rb	2015-11-25 15:06:43.877815091 -0800
 @@ -1,10 +1,5 @@
 -require 'puppet/property/list'
  Puppet::Type.newtype(:zone) do
@@ -45,7 +45,7 @@ Enhance the output of the puppet resource zone.
        method = nil
        direction = up? ? :up : :down
  
-@@ -131,135 +126,34 @@
+@@ -131,132 +126,34 @@
  
    newparam(:name) do
      desc "The name of the zone."
@@ -89,8 +89,7 @@ Enhance the output of the puppet resource zone.
 -
 -    # overridden so that we match with self.should
 -    def insync?(is)
--      return true unless is
--      is = [] if is == :absent
+-      is = [] if !is || is == :absent
 -      is.sort == self.should.sort
 -    end
 -  end
@@ -156,8 +155,7 @@ Enhance the output of the puppet resource zone.
 -
 -    # overridden so that we match with self.should
 -    def insync?(is)
--      return true unless is
--      is = [] if is == :absent
+-      is = [] if !is || is == :absent
 -      is.sort == self.should.sort
 -    end
 -
@@ -180,8 +178,7 @@ Enhance the output of the puppet resource zone.
 -
 -    # overridden so that we match with self.should
 -    def insync?(is)
--      return true unless is
--      is = [] if is == :absent
+-      is = [] if !is || is == :absent
 -      is.sort == self.should.sort
 -    end
 -
@@ -199,7 +196,7 @@ Enhance the output of the puppet resource zone.
    end
  
    # Specify the sysidcfg file.  This is pretty hackish, because it's
-@@ -296,70 +190,11 @@
+@@ -293,70 +190,11 @@
        so Puppet only checks for it at that time.}
    end
  
@@ -270,7 +267,7 @@ Enhance the output of the puppet resource zone.
      hash = provider.properties
      return setstatus(hash) unless hash.nil? or hash[:ensure] == :absent
      # Return all properties as absent.
-@@ -382,4 +217,25 @@
+@@ -379,4 +217,25 @@
      end
      prophash
    end

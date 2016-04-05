@@ -1,17 +1,16 @@
-Add auditing hooks for puppet apply
-
---- puppet-3.6.2/lib/puppet/application/apply.rb.orig	2014-06-09 15:08:19.000000000 -0600
-+++ puppet-3.6.2/lib/puppet/application/apply.rb	2014-06-25 14:57:54.627534169 -0600
-@@ -1,5 +1,8 @@
+--- puppet-3.8.3/lib/puppet/application/apply.rb.orig	2015-09-21 14:46:28.000000000 -0700
++++ puppet-3.8.3/lib/puppet/application/apply.rb	2015-12-01 10:21:17.911069347 -0800
+@@ -1,6 +1,9 @@
  require 'puppet/application'
  require 'puppet/configurer'
+ require 'puppet/util/profiler/aggregate'
 +if Facter.value(:osfamily) == "Solaris"
 +  require 'PuppetAudit'
 +end
  
  class Puppet::Application::Apply < Puppet::Application
  
-@@ -209,6 +212,12 @@
+@@ -217,6 +220,12 @@
        end
  
        begin
@@ -24,7 +23,7 @@ Add auditing hooks for puppet apply
          # Compile our catalog
          starttime = Time.now
          catalog = Puppet::Resource::Catalog.indirection.find(node.name, :use_node => node)
-@@ -237,6 +246,12 @@
+@@ -245,6 +254,12 @@
        rescue => detail
          Puppet.log_exception(detail)
          exit(1)
@@ -36,4 +35,4 @@ Add auditing hooks for puppet apply
 +        end
        end
      end
-   end
+ 

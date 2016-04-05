@@ -1,8 +1,8 @@
 Enhance the zone provider to configure zones using a zonecfg export file format.
 Enhance the output of puppet resource zone, and fix zone clone functionality, which omitted '-c'.
 
---- puppet-3.6.2/lib/puppet/provider/zone/solaris.rb.~1~	2014-06-09 14:08:19.000000000 -0700
-+++ puppet-3.6.2/lib/puppet/provider/zone/solaris.rb	2015-06-11 12:57:24.736534091 -0700
+--- puppet-3.8.3/lib/puppet/provider/zone/solaris.rb.orig	2015-09-21 14:46:28.000000000 -0700
++++ puppet-3.8.3/lib/puppet/provider/zone/solaris.rb	2015-11-25 15:17:51.503592308 -0800
 @@ -1,5 +1,5 @@
  Puppet::Type.type(:zone).provide(:solaris) do
 -  desc "Provider for Solaris Zones."
@@ -40,7 +40,7 @@ Enhance the output of puppet resource zone, and fix zone clone functionality, wh
  
 -  def multi_conf(name, should, &action)
 -    has = properties[name]
--    has = [] if has == :absent
+-    has = [] if !has || has == :absent
 -    rms = has - should
 -    adds = should - has
 -    (rms.map{|o| action.call(:rm,o)} + adds.map{|o| action.call(:add,o)}).join("\n")
