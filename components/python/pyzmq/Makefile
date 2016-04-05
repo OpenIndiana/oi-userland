@@ -10,15 +10,32 @@
 
 #
 # Copyright (c) 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright 2016 Jim Klimov
 #
 
+# See zeromq configure.ac for ABI version mapping to software version
+# NOTE: This requires functionality offered by libzmq-4.1.2 (and hopefully
+# subsequent releases) which we package in a dedicated subtree
+NEEDED_ZEROMQ_VER = 4.1
+
+# The zeromq components define this directory structure
+ZEROMQ_DIR = $(USRDIR)/zeromq-$(NEEDED_ZEROMQ_VER)
+
+# We define these before including any common structure makefiles
+CXXFLAGS   = -I$(ZEROMQ_DIR)/include
+CPPFLAGS   = -I$(ZEROMQ_DIR)/include
+CFLAGS     = -I$(ZEROMQ_DIR)/include
+LDFLAGS.32 = -L$(ZEROMQ_DIR)/lib
+LDFLAGS.64 = -L$(ZEROMQ_DIR)/lib/$(MACH64)
+
+# This should be after the CFLAGS and CXXFLAGS above, so the preferred
+# versions of includes are looked at before the mediated-installed ones.
 include ../../../make-rules/shared-macros.mk
 
 PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
 
 COMPONENT_NAME=		pyzmq
-COMPONENT_VERSION=	14.0.1
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	14.7.0
 COMPONENT_PROJECT_URL=	https://github.com/zeromq/pyzmq
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -35,4 +52,4 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-test:           $(TEST_32_and_64)
+test:	$(TEST_32_and_64)
