@@ -1,0 +1,74 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016 Jim Klimov
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)/cgi@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY) - NUT CGI clients"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+<transform file path=$(NUTCGIDIR)/+ -> default mode 0555>
+<transform dir path=$(NUTCGIDIR) -> set group bin>
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+
+depend fmri=$(COMPONENT_FMRI)-common@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=require
+
+### NUT CGI clients, require libgd
+file path=$(NUTCGIDIR)/$(MACH64)/upsimage.cgi
+file path=$(NUTCGIDIR)/$(MACH64)/upsset.cgi
+file path=$(NUTCGIDIR)/$(MACH64)/upsstats.cgi
+file path=$(NUTCGIDIR)/upsimage.cgi
+file path=$(NUTCGIDIR)/upsset.cgi
+file path=$(NUTCGIDIR)/upsstats.cgi
+
+file path=usr/share/man/man5/upsset.conf.5
+file path=usr/share/man/man5/upsstats.html.5
+
+file path=usr/share/man/man8/upsimage.cgi.8
+file path=usr/share/man/man8/upsset.cgi.8
+file path=usr/share/man/man8/upsstats.cgi.8
+
+# Default rights inspired by scripts/Solaris/postinstall.in
+file $(NUTETCDIR)/hosts.conf.sample \
+    path=$(NUTETCSAMPLEDIR)/hosts.conf.sample \
+    group=$(NUTGROUP) owner=root mode=0440
+file $(NUTETCDIR)/upsset.conf.sample \
+    path=$(NUTETCSAMPLEDIR)/upsset.conf.sample \
+    group=$(NUTGROUP) owner=root mode=0440
+file $(NUTETCDIR)/upsstats-single.html.sample \
+    path=$(NUTETCSAMPLEDIR)/upsstats-single.html.sample \
+    group=$(NUTGROUP) owner=root mode=0440
+file $(NUTETCDIR)/upsstats.html.sample \
+    path=$(NUTETCSAMPLEDIR)/upsstats.html.sample \
+    group=$(NUTGROUP) owner=root mode=0440
+
+# We can actually deliver the sample configs as the ones to use,
+# at worst they have no actual information inside and do nothing.
+# Also, the CGIs are disabled by default `upsset.conf` contents
+file $(NUTETCDIR)/hosts.conf.sample \
+    path=$(NUTETCDIR)/hosts.conf \
+    group=$(NUTGROUP) owner=root mode=0440 preserve=true
+file $(NUTETCDIR)/upsset.conf.sample \
+    path=$(NUTETCDIR)/upsset.conf \
+    group=$(NUTGROUP) owner=root mode=0440 preserve=true
+file $(NUTETCDIR)/upsstats-single.html.sample \
+    path=$(NUTETCDIR)/upsstats-single.html \
+    group=$(NUTGROUP) owner=root mode=0440 preserve=true
+file $(NUTETCDIR)/upsstats.html.sample \
+    path=$(NUTETCDIR)/upsstats.html \
+    group=$(NUTGROUP) owner=root mode=0440 preserve=true
