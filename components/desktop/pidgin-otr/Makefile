@@ -38,8 +38,6 @@ COMPONENT_PREP_ACTION =        ( cd $(@D) && \
                                         autoconf )
 
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-
 CONFIGURE_ENV+=	PERL=$(PERL)
 CONFIGURE_ENV+=	INTLTOOL_PERL=$(PERL)
 CONFIGURE_ENV+=	PYTHON=$(PYTHON)

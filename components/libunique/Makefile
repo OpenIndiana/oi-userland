@@ -43,8 +43,6 @@ COMPONENT_PREP_ACTION =        ( cd $(@D) && \
 					automake -a -f -c &&\
 					autoconf )
 
-
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --enable-introspection=yes
 CONFIGURE_OPTIONS+= --enable-maintainer-flags=no
 

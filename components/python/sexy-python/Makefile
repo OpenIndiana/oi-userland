@@ -58,7 +58,6 @@ COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 					automake -c -f -a &&\
 					autoconf )
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_ENV+=		PYTHON=$(PYTHON)
 CONFIGURE_ENV+=		am_cv_python_pyexecdir=$(am_cv_python_pyexecdir)
 

@@ -34,7 +34,6 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-CONFIGURE_OPTIONS +=  --localstatedir=/var
 CONFIGURE_OPTIONS +=  --enable-shared=yes
 CONFIGURE_OPTIONS +=  --enable-static=no
 CONFIGURE_OPTIONS +=  --with-pic

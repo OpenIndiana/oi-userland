@@ -37,8 +37,6 @@ include $(WS_MAKE_RULES)/ips.mk
 
 CFLAGS += -D__EXTENSIONS__
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-
 CONFIGURE_ENV+= PYTHON=$(PYTHON)
 
 build: $(BUILD_32_and_64)

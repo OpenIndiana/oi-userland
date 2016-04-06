@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2016 Alexander Pyhalov
+# Copyright 2014-2016 Alexander Pyhalov
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -34,11 +34,10 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH = /usr/gnu/bin:/usr/bin
+PATH = $(GNUBIN):$(USRBINDIR)
 
-CPPFLAGS += -I/usr/include/gmp
+CPPFLAGS += -I$(CONFIGURE_INCLUDEROOTDIR)/gmp
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --enable-guile=no
 CONFIGURE_OPTIONS += --disable-camellia
 CONFIGURE_OPTIONS += --without-p11-kit

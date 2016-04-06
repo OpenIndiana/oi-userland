@@ -37,7 +37,6 @@ include $(WS_TOP)/make-rules/ips.mk
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f -i )
 
-CONFIGURE_OPTIONS +=  --localstatedir=/var
 CONFIGURE_OPTIONS +=  --enable-shared=yes
 CONFIGURE_OPTIONS +=  --enable-static=no
 CONFIGURE_OPTIONS +=  --with-pic

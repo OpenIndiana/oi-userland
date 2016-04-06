@@ -45,12 +45,11 @@ COMPONENT_BUILD_ARGS =
 CONFIGURE_SCRIPT	= $(@D)/configure
 COMPONENT_PRE_CONFIGURE_ACTION+=	$(CP) -R $(SOURCE_DIR)/* $(@D)/
 
-CONFIGURE_OPTIONS  +=	--sysconfdir=$(ETCDIR)/inet
-CONFIGURE_OPTIONS  +=	--sbindir=$(USRLIBDIR)/inet
-CONFIGURE_OPTIONS  +=	--bindir=$(USRSBINDIR)
+CONFIGURE_SYSCONFDIR =  $(ETCDIR)/inet
+CONFIGURE_SBINDIR.$(BITS) = $(CONFIGURE_LIBDIR.$(BITS))/inet
+
 CONFIGURE_OPTIONS  +=	--enable-use-sockets
 CONFIGURE_OPTIONS  +=	--enable-ipv4-pktinfo
-
 
 # Disable message in omapip/errwarn.c.
 CPPFLAGS  +=	        -DNOMINUM

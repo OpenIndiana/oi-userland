@@ -34,8 +34,6 @@ include ../../make-rules/ips.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
-CONFIGURE_OPTIONS+= --libexecdir=/usr/lib
 CONFIGURE_OPTIONS+= --with-browser=/usr/bin/firefox
 
 build: $(BUILD_32)

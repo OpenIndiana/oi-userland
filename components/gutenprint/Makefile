@@ -36,7 +36,6 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-CONFIGURE_OPTIONS +=	 --infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS +=    --enable-escputil
 CONFIGURE_OPTIONS +=    --without-gimp2
 CONFIGURE_OPTIONS +=    --enable-cups-1_2-enhancements

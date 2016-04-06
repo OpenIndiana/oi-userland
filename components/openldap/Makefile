@@ -69,12 +69,10 @@ CONFIGURE_ENV += "ac_cv_lib_net_main=no"
 CONFIGURE_ENV += "ac_cv_lib_net_socket==no"
 CONFIGURE_ENV += "ac_cv_lib_inet_socket==no"
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib
-CONFIGURE_OPTIONS.64 += --libexecdir=/usr/lib/$(MACH64)
-CONFIGURE_OPTIONS += --localstatedir=/var/openldap
-CONFIGURE_OPTIONS += --includedir=$(USRINCDIR)/openldap
-CONFIGURE_OPTIONS += --docdir=$(USRSHAREDOCDIR)
+CONFIGURE_LOCALSTATEDIR = /var/openldap
+CONFIGURE_INCLUDEDIR = $(CONFIGURE_INCLUDEROOTDIR)/$(COMPONENT_NAME)
+CONFIGURE_DOCDIR = $(USRSHAREDOCDIR)
+
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-overlays
 CONFIGURE_OPTIONS += --disable-dynamic

@@ -28,12 +28,12 @@ COMPONENT_ARCHIVE_URL= \
   http://xorg.freedesktop.org/archive/individual/driver/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
 
-include $(WS_TOP)/make-rules/prep.mk
+include $(WS_MAKE_RULES)/prep.mk
 
 CONFIGURE_DEFAULT_DIRS = no
 
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATCH_LEVEL=0
 
@@ -46,15 +46,15 @@ COMPONENT_PREP_ACTION =        ( cd $(@D) && \
                                         automake -a -f -c &&\
                                         autoconf )
 
-# Paths to find libraries/modules to link with 
+# Paths to find libraries/modules to link with
 
 SERVERMOD_SUBDIR.64=/$(MACH64)
 SERVERMOD_SUBDIR=$(SERVERMOD_SUBDIR.$(BITS))
-X11_SERVERMODS_DIR=/usr/lib/xorg/modules
-MESA_XSERVERMODS_DIR=/usr/lib/mesa/modules
-X11_SERVERLIBS_DIR=/usr/lib
+X11_SERVERMODS_DIR=$(USRLIBDIR)/xorg/modules
+MESA_XSERVERMODS_DIR=$(USRLIBDIR)/mesa/modules
+X11_SERVERLIBS_DIR=$(USRLIBDIR)
 
-LDFLAGS += -R/usr/lib/xorg$(SERVERMOD_SUBDIR)
+LDFLAGS += -R$(USRLIBDIR)/xorg$(SERVERMOD_SUBDIR)
 
 LD_OPTIONS+= \
         -L$(X11_SERVERMODS_DIR)$(SERVERMOD_SUBDIR) \
@@ -77,12 +77,13 @@ COMPONENT_COMMON_ARGS = ch7017_ladir='$(DRIVER_DIR)' \
 
 CPPFLAGS += -DXF86DRI
 
-CONFIGURE_OPTIONS += --bindir=$(CONFIGURE_BINDIR.$(BITS))
+# Bitness is already inside those variables
+CONFIGURE_LIBDIR.$(BITS)=$(X11_SERVERLIBS_DIR)$(SERVERMOD_SUBDIR)
+
 CONFIGURE_OPTIONS += --enable-dri
 CONFIGURE_OPTIONS += --enable-xvmc
 CONFIGURE_OPTIONS += --libdir=$(X11_SERVERLIBS_DIR)$(SERVERMOD_SUBDIR)
-CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
-CONFIGURE_OPTIONS += --enable-sna 
+CONFIGURE_OPTIONS += --enable-sna
 CONFIGURE_OPTIONS += --enable-uxa
 CONFIGURE_OPTIONS += --enable-rendernode
 CONFIGURE_OPTIONS += --enable-create2

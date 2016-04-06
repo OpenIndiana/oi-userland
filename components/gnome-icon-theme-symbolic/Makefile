@@ -33,8 +33,6 @@ include $(WS_TOP)/make-rules/ips.mk
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-
 # common targets
 build:		$(BUILD_32)
 

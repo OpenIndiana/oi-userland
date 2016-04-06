@@ -42,7 +42,6 @@ COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 
 LIBS = -lm
 
-CONFIGURE_OPTIONS +=	--sysconfdir=/etc
 CONFIGURE_ENV +=	LIBS="$(LIBS)"
 
 # common targets

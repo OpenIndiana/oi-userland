@@ -40,9 +40,9 @@ COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/$(COMPONENT_NAME)/$(COMPONENT_
 COMPONENT_FMRI=	library/ncurses
 COMPONENT_LICENSE=	MIT
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Needed to make "gmake test" work.
 COMPONENT_PRE_CONFIGURE_ACTION = \
@@ -56,12 +56,13 @@ LDFLAGS += -D_XPG6
 CPPFLAGS += -D_XPG6
 CFLAGS += -std=c99 -D_POSIX_C_SOURCE=200112L
 
+CONFIGURE_INCLUDEDIR = $(CONFIGURE_INCLUDEROOTDIR)/$(COMPONENT_NAME)
+
 CONFIGURE_OPTIONS +=	--with-shared
 CONFIGURE_OPTIONS +=	--with-normal
 CONFIGURE_OPTIONS +=	--enable-rpath
 CONFIGURE_OPTIONS +=	--enable-widec
 CONFIGURE_OPTIONS +=	--enable-pc-files
-CONFIGURE_OPTIONS +=	--includedir=$(USRINCDIR)/ncurses
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 

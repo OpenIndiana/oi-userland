@@ -23,25 +23,23 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:9160d4f277646400d3bb6b4fa73636cc6d1a865a32b9d0760e1e9e6ee624976b
-    
+
 COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.32/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+CONFIGURE_SYSCONFDIR.32 = $(ETCDIR)
+CONFIGURE_SYSCONFDIR.64 = $(ETCDIR)/$(MACH64)
 
-PATH=/usr/gnu/bin:/usr/bin
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
+
+PATH=$(GNUBIN):$(USRBINDIR)
 
 COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 					libtoolize --copy --force &&\
 					aclocal -I . &&\
 					automake -c -f -a &&\
 					autoconf )
-
-CONFIGURE_OPTIONS.32 += --sysconfdir=/etc
-CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib
-CONFIGURE_OPTIONS.64 += --sysconfdir=/etc/$(MACH64)
-CONFIGURE_OPTIONS.64 += --libexecdir=/usr/lib/$(MACH64)
 
 # common targets
 build:		$(BUILD_32_and_64)
@@ -52,4 +50,4 @@ test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

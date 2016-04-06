@@ -35,10 +35,6 @@ PATH = /usr/gnu/bin:/usr/bin
 CFLAGS += -I/usr/X11/include
 LDFLAGS += -lgdk_pixbuf-2.0
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib
-CONFIGURE_OPTIONS.64 += --libexecdir=/usr/lib/$(MACH64)
-
 # Tell g-ir-scanner about compiler
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ENV += CC="$(CC)"

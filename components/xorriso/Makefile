@@ -38,10 +38,10 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-CONFIGURE_OPTIONS  +=           --enable-shared
-CONFIGURE_OPTIONS  +=           --disable-static
-CONFIGURE_OPTIONS  +=           --sysconfdir=/etc/gnu
-CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_SYSCONFDIR =  $(ETCDIR)/gnu
+
+CONFIGURE_OPTIONS  +=		--enable-shared
+CONFIGURE_OPTIONS  +=		--disable-static
 CONFIGURE_OPTIONS  +=		CPPFLAGS="$(CPPFLAGS)"
 
 # The tarball for this version already has a config.status file so remove it.

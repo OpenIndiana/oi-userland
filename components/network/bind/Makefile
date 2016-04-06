@@ -54,11 +54,9 @@ COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
 # DNS libraries are in usr/lib/dns - Override settings from configure.mk
 CONFIGURE_BINDIR.32 =	$(CONFIGURE_PREFIX)/sbin
 CONFIGURE_LIBDIR.32 =	$(CONFIGURE_PREFIX)/lib/dns
+CONFIGURE_SBINDIR.$(BITS)=$(CONFIGURE_BINDIR.$(BITS))
 
 CONFIGURE_OPTIONS +=	--with-libtool
-CONFIGURE_OPTIONS +=	--sbindir=$(CONFIGURE_BINDIR.$(BITS))
-CONFIGURE_OPTIONS +=	--sysconfdir=/etc
-CONFIGURE_OPTIONS +=	--localstatedir=/var
 CONFIGURE_OPTIONS +=	--with-openssl
 CONFIGURE_OPTIONS +=	--enable-threads=yes
 CONFIGURE_OPTIONS +=	--enable-devpoll=yes

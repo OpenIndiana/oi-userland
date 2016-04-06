@@ -37,10 +37,6 @@ PATH=/usr/gnu/bin:/usr/bin
 
 CFLAGS+= -I/usr/include/idn
 
-CONFIGURE_OPTIONS.32 += --sysconfdir=/etc
-CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib
-CONFIGURE_OPTIONS.64 += --libexecdir=/usr/lib/$(MACH64)
-
 # common targets
 build:		$(BUILD_32_and_64)
 

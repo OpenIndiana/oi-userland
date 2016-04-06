@@ -46,7 +46,6 @@ $(VARIANT_PYTHON27)/$(MACH32)/.configured: am_cv_python_pythondir=$(PYTHON.2.7.V
 
 PATH=/usr/gnu/bin:/usr/bin
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_ENV+=		PYTHON=$(PYTHON)
 CONFIGURE_ENV+=		am_cv_python_pyexecdir=$(am_cv_python_pyexecdir)
 CONFIGURE_ENV+=		am_cv_python_pythondir=$(am_cv_python_pythondir)

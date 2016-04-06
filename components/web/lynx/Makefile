@@ -45,11 +45,12 @@ COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 CFLAGS +=	-I/usr/include/ncurses
 CFLAGS +=	-I/usr/include/openssl
 
+CONFIGURE_SYSCONFDIR =  $(ETCDIR)/lynx
+
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	--enable-nls
 CONFIGURE_OPTIONS +=	--enable-japanese-utf8
 CONFIGURE_OPTIONS +=	--enable-widec
-CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)/lynx
 CONFIGURE_OPTIONS +=	--with-ssl
 CONFIGURE_OPTIONS +=	--with-screen=ncurses
 

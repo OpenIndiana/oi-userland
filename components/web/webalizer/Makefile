@@ -55,7 +55,6 @@ LDFLAGS += -L$(GNULIB) -L$(GNULIB64)
 CONFIGURE_OPTIONS +=	--enable-dns
 CONFIGURE_OPTIONS +=	--enable-bz2
 CONFIGURE_OPTIONS +=	--with-gd=/usr/include/gd2
-CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
 
 # Needed to correctly build that 64-bit library.
 LDFLAGS += $(CC_BITS)

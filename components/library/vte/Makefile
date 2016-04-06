@@ -9,7 +9,7 @@
 #
 
 #
-# Copyright 2016 Alexander Pyhalov
+# Copyright 2014-2016 Alexander Pyhalov
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -27,9 +27,9 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:8d04e202b617373dfb47689e5e628febe2c58840b34cccc4af4feb88c48df903
 COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/0.28/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
@@ -41,16 +41,15 @@ COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 					autoheader &&\
 					automake -c -f -a )
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
+CONFIGURE_LOCALSTATEDIR=/var/lib
+
 CONFIGURE_OPTIONS+=	--disable-scrollkeeper
-CONFIGURE_OPTIONS+=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
-CONFIGURE_OPTIONS+=	--localstatedir=/var/lib
 CONFIGURE_OPTIONS+=	--disable-Bsymbolic
 
 CONFIGURE_ENV +=	PYTHON=$(PYTHON)
 
-COMPONENT_POST_INSTALL_ACTION = ( mv -f $(PROTO_DIR)/usr/lib/python2.7/site-packages/gtk-2.0/vtemodule.so \
-	$(PROTO_DIR)/usr/lib/python2.7/site-packages/gtk-2.0/vtemodule-$(BITS).so)
+COMPONENT_POST_INSTALL_ACTION = ( mv -f $(PROTOUSRLIBDIR)/python2.7/site-packages/gtk-2.0/vtemodule.so \
+	$(PROTOUSRLIBDIR)/python2.7/site-packages/gtk-2.0/vtemodule-$(BITS).so)
 
 # common targets
 
@@ -62,14 +61,6 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
-REQUIRED_PACKAGES += library/desktop/atk
-REQUIRED_PACKAGES += library/desktop/cairo
-REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
-REQUIRED_PACKAGES += library/desktop/gtk2
-REQUIRED_PACKAGES += library/desktop/pango
-REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/ncurses
-REQUIRED_PACKAGES += runtime/python-27
-REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += x11/library/libx11
+BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
+
+include $(WS_MAKE_RULES)/depend.mk

@@ -41,13 +41,12 @@ PATH = /usr/gnu/bin:/usr/bin
 COMPONENT_PREP_ACTION =        (chmod -R u+rw  $(SOURCE_DIR))
 
 # Missing files in build dir for configure without this.
+# TODO: Use $(CLONEY) ? Or are real copies needed rather than symlinks?
 COMPONENT_PRE_CONFIGURE_ACTION =        ( cp -a $(SOURCE_DIR)/* $(@D))
 
 CONFIGURE_SCRIPT=$(@D)/configure
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib
-CONFIGURE_OPTIONS+=	--localstatedir=/var/lib
+CONFIGURE_LOCALSTATEDIR=/var/lib
 
 # common targets
 build:		$(BUILD_32)

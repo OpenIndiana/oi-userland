@@ -47,9 +47,6 @@ COMPONENT_PRE_CONFIGURE_ACTION =        (chmod -R u+r $(SOURCE_DIR) && cp -rp $(
                                         cp -r $(COMPONENT_DIR)/files/po-sun $(@D) && \
                                         cd $(@D)/po-sun && $(MAKE) all )
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib
-
 CONFIGURE_ENV+=	PYTHON=$(PYTHON)
 CONFIGURE_ENV+= am_cv_python_pythondir="$(PYTHON.$(PYTHON_VERSION).VENDOR_PACKAGES.32)"
 

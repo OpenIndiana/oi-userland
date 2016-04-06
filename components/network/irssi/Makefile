@@ -39,8 +39,6 @@ CONFIGURE_OPTIONS +=	--with-socks
 CONFIGURE_OPTIONS +=	--with-proxy
 CONFIGURE_OPTIONS +=	--with-modules
 CONFIGURE_OPTIONS +=	--with-perl-lib=$(CONFIGURE_PREFIX)/perl5/vendor_perl/$(PERL_VERSION)
-CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
-CONFIGURE_OPTIONS +=	--includedir=$(CONFIGURE_INCLUDEDIR)
 
 CONFIGURE_ENV     +=    perlpath=$(PERL)
 

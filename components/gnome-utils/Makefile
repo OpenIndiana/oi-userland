@@ -47,8 +47,6 @@ COMPONENT_PRE_CONFIGURE_ACTION =	(cp -rp $(SOURCE_DIR)/* $(@D) && \
 					cd $(@D)/po-sun && $(MAKE) all )
 
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib
 CONFIGURE_OPTIONS+=	--disable-scrollkeeper
 CONFIGURE_OPTIONS+=	--disable-static
 CONFIGURE_OPTIONS+=	--with-grep="/usr/xpg4/bin/grep"

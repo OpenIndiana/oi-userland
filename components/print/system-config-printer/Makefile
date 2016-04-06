@@ -31,16 +31,14 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(GNUBIN):$(USRBINDIR)
 
-CFLAGS += -I/usr/X11/include
+CFLAGS += -I$(USRDIR)/X11/include
 
 COMPONENT_PRE_CONFIGURE_ACTION =	(chmod -R u+r  $(SOURCE_DIR) && \
 					cp -r $(SOURCE_DIR)/* $(@D))
 
 CONFIGURE_SCRIPT = $(@D)/configure
-
-CONFIGURE_OPTIONS += --sysconfdir=/etc
 
 CONFIGURE_ENV	+= PYTHON=$(PYTHON)
 

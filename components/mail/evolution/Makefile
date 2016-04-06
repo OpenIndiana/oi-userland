@@ -48,9 +48,6 @@ gcc_OPT		= -O2
 LDFLAGS+=       -L/usr/lib/mps -R/usr/lib/mps
 LDFLAGS+=	-lgmodule-2.0 -lgthread-2.0
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib
-CONFIGURE_OPTIONS+=	--localstatedir=/var
 CONFIGURE_OPTIONS+=	--enable-nss=yes
 CONFIGURE_OPTIONS+=	--enable-smime=yes
 CONFIGURE_OPTIONS+=	--with-sunldap=/usr

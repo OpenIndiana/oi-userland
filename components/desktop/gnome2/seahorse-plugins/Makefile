@@ -41,8 +41,6 @@ COMPONENT_PREP_ACTION =        ( cd $(@D) && \
 
 CPPFLAGS = -DMOZ_DEFAULT_TOOLKIT=\"cairo-gtk2\" -I/usr/include/firefox -I/usr/include/firefox/nspr
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib
 CONFIGURE_OPTIONS+=	--disable-update-mime-database
 CONFIGURE_ENV+= 	CPPFLAGS="$(CPPFLAGS)"
 

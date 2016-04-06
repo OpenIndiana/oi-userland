@@ -10,10 +10,10 @@
 #
 
 #
-# Copyright 2016 Alexander Pyhalov
+# Copyright 2013-2016 Alexander Pyhalov
 #
 
-include ../../../make-rules/shared-macros.mk
+include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libproxy
 
@@ -38,14 +38,13 @@ COMPONENT_PREP_ACTION= ( cd $(@D) && \
                 automake -a -c -f &&\
                 autoconf )
 
-COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D)) 
+COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CFLAGS+= -D__EXTENSIONS__
 
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
-CONFIGURE_OPTIONS+= --includedir=/usr/include/libproxy
-CONFIGURE_OPTIONS+= --libexecdir=/usr/lib
-CONFIGURE_OPTIONS+= --localstatedir=/var/lib
+CONFIGURE_INCLUDEDIR=$(CONFIGURE_INCLUDEROOTDIR)/$(COMPONENT_NAME)
+CONFIGURE_LOCALSTATEDIR=/var/lib
+
 CONFIGURE_OPTIONS+= --with-gnome
 CONFIGURE_OPTIONS+= --without-dotnet
 CONFIGURE_OPTIONS+= --with-direct
@@ -62,7 +61,6 @@ CONFIGURE_ENV    += PERL=$(PERL)
 CONFIGURE_ENV    += PYTHON="$(PYTHON)"
 CONFIGURE_ENV    += am_cv_python_pythondir="$(PYTHON_VENDOR_PACKAGES)"
 CONFIGURE_ENV    += am_cv_python_pyexecdir="$(PYTHON_VENDOR_PACKAGES)"
-
 
 COMPONENT_INSTALL_ENV+= GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 

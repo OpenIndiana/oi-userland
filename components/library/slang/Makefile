@@ -42,7 +42,7 @@ include $(WS_TOP)/make-rules/ips.mk
 COMPONENT_PRE_CONFIGURE_ACTION = $(CLONEY) $(SOURCE_DIR) $(@D)
 CONFIGURE_SCRIPT = $(@D)/configure
 
-CONFIGURE_OPTIONS  +=		--sysconfdir=$(ETCDIR)/slsh
+CONFIGURE_SYSCONFDIR=$(ETCDIR)/slsh
 
 COMPONENT_BUILD_ARGS=
 

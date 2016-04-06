@@ -33,8 +33,6 @@ include ../../make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)

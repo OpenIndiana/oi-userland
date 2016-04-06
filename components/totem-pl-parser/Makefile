@@ -40,9 +40,7 @@ COMPONENT_PREP_ACTION =        ( cd $(@D) && \
 					automake -a -f -c &&\
 					autoconf )
 
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
-CONFIGURE_OPTIONS+= --localstatedir=/var/lib
-CONFIGURE_OPTIONS+= --libexecdir=/usr/lib
+CONFIGURE_LOCALSTATEDIR=/var/lib
 
 COMPONENT_BUILD_ENV += CC=$(CC)
 

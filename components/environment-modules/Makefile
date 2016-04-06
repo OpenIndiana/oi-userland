@@ -42,8 +42,9 @@ CONFIGURE_PREFIX=	$(USRLIBDIR)
 CONFIGURE_DEFAULT_DIRS=	no
 
 # Need to workaround a bug in the install system: specify the bindir path
-CONFIGURE_OPTIONS+=	--bindir=$(CONFIGURE_PREFIX)/Modules/$(COMPONENT_VERSION)/bin
-CONFIGURE_OPTIONS+=	--mandir=$(USRSHAREMANDIR)
+CONFIGURE_BINDIR.32=	$(CONFIGURE_PREFIX)/Modules/$(COMPONENT_VERSION)/bin
+CONFIGURE_MANDIR   =	$(USRSHAREMANDIR)
+
 CONFIGURE_OPTIONS+=	--enable-versioning
 CONFIGURE_OPTIONS+=	--enable-logging
 CONFIGURE_OPTIONS+=	--with-module-path=$(MODULE_PATH)

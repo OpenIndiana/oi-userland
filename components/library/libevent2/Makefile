@@ -33,13 +33,14 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
+CONFIGURE_INCLUDEDIR = $(CONFIGURE_INCLUDEROOTDIR)/$(COMPONENT_NAME)
+
 CONFIGURE_OPTIONS+=	--disable-static
-CONFIGURE_OPTIONS+=	--includedir=/usr/include/libevent2
 
 # Setup event-config.h file to support 32 & 64 bit.
 #
 COMPONENT_POST_INSTALL_ACTION= \
-            ($(MV) $(PROTO_DIR)/usr/include/libevent2/event2/event-config.h $(PROTO_DIR)/usr/include/libevent2/event2/event-config-$(BITS).h )
+            ($(MV) $(PROTO_DIR)$(CONFIGURE_INCLUDEDIR)/event2/event-config.h $(PROTO_DIR)$(CONFIGURE_INCLUDEDIR)/event2/event-config-$(BITS).h )
 
 # common targets
 build:		$(BUILD_32_and_64)

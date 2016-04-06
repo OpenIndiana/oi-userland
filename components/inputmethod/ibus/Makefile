@@ -27,9 +27,12 @@ COMPONENT_ARCHIVE_URL= \
   http://ibus.googlecode.com/files/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://code.google.com/p/ibus/
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+CONFIGURE_SYSCONFDIR.32 = $(ETCDIR)
+CONFIGURE_SYSCONFDIR.64 = $(ETCDIR)/$(MACH64)
+
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 gcc_OPT = -O2
 
@@ -43,16 +46,15 @@ PKG_MACROS += GTK_BIN_VER=$(GTK_BIN_VER)
 COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
 CONFIGURE_SCRIPT= $(@D)/configure
 
+CONFIGURE_LIBEXECDIR.32 = $(CONFIGURE_LIBDIR.32)/ibus
+CONFIGURE_LIBEXECDIR.64 = $(CONFIGURE_LIBEXECDIR.32)/$(MACH64)
+
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-gtk2
 CONFIGURE_OPTIONS += --enable-xim
 CONFIGURE_OPTIONS += --disable-gtk-doc
 CONFIGURE_OPTIONS += --enable-introspection
-CONFIGURE_OPTIONS.32 += --sysconfdir=/etc
-CONFIGURE_OPTIONS.64 += --sysconfdir=/etc/$(MACH64)
-CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib/ibus
-CONFIGURE_OPTIONS.64 += --libexecdir=/usr/lib/ibus/$(MACH64)
-CONFIGURE_OPTIONS.64 += --with-gtk-im-module-dir=/usr/lib/$(MACH64)/gtk-2.0/$(GTK_BIN_VER)/immodules/
+CONFIGURE_OPTIONS.64 += --with-gtk-im-module-dir=$(USRLIBDIR64)/gtk-2.0/$(GTK_BIN_VER)/immodules/
 
 CONFIGURE_ENV += PYTHON="$(PYTHON)"
 CONFIGURE_ENV += am_cv_python_pythondir="$(PYTHON_VENDOR_PACKAGES)"

@@ -37,10 +37,6 @@ include ../../make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib
-CONFIGURE_OPTIONS.64 += --libexecdir=/usr/lib/$(MACH64)
-
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)

@@ -47,7 +47,6 @@ CONFIGURE_SCRIPT = $(@D)/configure
 # implementation (GNU mkdir will understand --version option).
 PATH=/usr/gnu/bin:/usr/bin
 
-CONFIGURE_OPTIONS +=	--sysconfdir=/etc
 CONFIGURE_OPTIONS +=	--with-server-file=/etc/nntpserver
 CONFIGURE_OPTIONS +=	--with-slrnpull=/var/spool/slrnpull
 CONFIGURE_OPTIONS +=	--enable-spool

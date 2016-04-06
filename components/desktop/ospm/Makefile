@@ -34,8 +34,6 @@ include $(WS_TOP)/make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-
 CONFIGURE_ENV+=	PERL=$(PERL)
 CONFIGURE_ENV+=	PYTHON=$(PYTHON)
 

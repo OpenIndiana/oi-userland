@@ -34,8 +34,6 @@ PATH=/usr/gnu/bin:/usr/bin
 # Missing files in build dir for xml2po without this.
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-
 CONFIGURE_ENV+=  PERL=$(PERL)
 CONFIGURE_ENV+=  PYTHON=$(PYTHON)
 CONFIGURE_ENV+=  am_cv_python_pythondir="$(PYTHON.$(PYTHON_VERSION).VENDOR_PACKAGES.32)"

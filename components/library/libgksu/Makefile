@@ -39,8 +39,6 @@ COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
                                         autoconf &&\
 					intltoolize --force  --copy )
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib
 CONFIGURE_OPTIONS+=	--disable-scrollkeeper
 
 # common targets

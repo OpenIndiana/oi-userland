@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2016 Alexander Pyhalov
+# Copyright 2014-2016 Alexander Pyhalov
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -34,7 +34,7 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=$(GNUBIN):$(USRBINDIR)
 
 LDFLAGS += -lz
 
@@ -42,12 +42,9 @@ COMPONENT_PRE_CONFIGURE_ACTION = ( \
 	$(CP) $(COMPONENT_DIR)/files/krb5-config $(BUILD_DIR) && \
 	chmod u+x $(BUILD_DIR)/krb5-config )
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --disable-gtk-doc
 CONFIGURE_OPTIONS += --disable-vala
 CONFIGURE_OPTIONS += --with-krb5-config=$(BUILD_DIR)/krb5-config
-CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib
-CONFIGURE_OPTIONS.64 += --libexecdir=/usr/lib/$(MACH64)
 
 COMPONENT_INSTALL_ENV+= GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 

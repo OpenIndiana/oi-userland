@@ -41,7 +41,6 @@ gcc_OPT = -O2
 
 PATH=/usr/gnu/bin:/usr/bin
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --disable-esd
 
 COMPONENT_INSTALL_ENV+=  GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1

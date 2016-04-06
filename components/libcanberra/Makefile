@@ -46,7 +46,6 @@ COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 
 CFLAGS += -I/usr/include/gconf/2
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --enable-gtk
 CONFIGURE_OPTIONS += --disable-static
 

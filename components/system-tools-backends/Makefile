@@ -34,8 +34,6 @@ PATH=$(shell dirname $(PERL)):/usr/gnu/bin:/usr/bin
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-
 COMPONENT_POST_INSTALL_ACTION  = ( \
      for file in $(PROTO_DIR)/usr/share/setup-tool-backends/scripts/* ; do \
         $(GSED) -i -e "s:\#!/usr/bin/env perl:\#!$(PERL):" $$file ;\

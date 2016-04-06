@@ -39,8 +39,6 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
-
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
 

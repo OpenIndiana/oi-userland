@@ -47,8 +47,9 @@ include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 
-CONFIGURE_OPTIONS += --sysconfdir=/usr/share
-CONFIGURE_OPTIONS += --libexecdir=/usr/share
+CONFIGURE_SYSCONFDIR=/usr/share
+CONFIGURE_LIBEXECDIR.$(BITS)=/usr/share
+
 CONFIGURE_OPTIONS += --with-samba
 CONFIGURE_OPTIONS += --with-x
 CONFIGURE_OPTIONS += --enable-charset

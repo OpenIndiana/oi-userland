@@ -46,9 +46,9 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
+CONFIGURE_DOCDIR =  $(CONFIGURE_DATAROOTDIR)/doc/$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+
 CONFIGURE_OPTIONS  +=	--program-transform-name=s/$$/-$(COMPONENT_VERSION)/
-CONFIGURE_OPTIONS  +=	--docdir=$(CONFIGURE_PREFIX)/share/doc/$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-CONFIGURE_OPTIONS  +=	--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=	PERL="$(PERL)"
 
 # common targets

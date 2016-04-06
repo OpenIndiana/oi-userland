@@ -36,7 +36,6 @@ include ../../make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --disable-static
 
 # For tests to pass

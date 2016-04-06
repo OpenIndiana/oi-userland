@@ -39,9 +39,6 @@ COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
                                         automake -c -f -a &&\
                                         autoconf )
 
-
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
-
 build: $(BUILD_32)
 
 install: $(INSTALL_32)

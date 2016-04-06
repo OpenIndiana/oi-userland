@@ -33,7 +33,8 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 # Ugly hack for fixing problems with missing files in source directory
 CONFIGURE_SCRIPT=	$(BUILD_DIR_$(BITS))/configure
 
-CONFIGURE_OPTIONS +=    --sysconfdir=/etc/zabbix
+CONFIGURE_SYSCONFDIR =	$(ETCDIR)/zabbix
+
 CONFIGURE_OPTIONS +=	--enable-ipv6
 CONFIGURE_OPTIONS +=	--enable-agent
 

@@ -39,8 +39,6 @@ include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_ENV +=	INSTALL="$(INSTALL)"
 
-CONFIGURE_OPTIONS  +=		--localstatedir=/var
-CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		--enable-shared
 CONFIGURE_OPTIONS  +=		--disable-static
 CONFIGURE_OPTIONS  +=		--with-gpg-error-prefix=$(CONFIGURE_PREFIX)

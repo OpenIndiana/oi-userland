@@ -38,7 +38,6 @@ COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f)
 
 gcc_OPT = -O2
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
 # breaks gir-scanner
 CONFIGURE_OPTIONS += --disable-fvisibility-hidden
 

@@ -32,8 +32,6 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-
 CONFIGURE_ENV+= PYTHON="$(PYTHON)"
 CONFIGURE_ENV+= am_cv_python_pythondir="$(PYTHON.$(PYTHON_VERSION).VENDOR_PACKAGES.32)"
 CONFIGURE_ENV+= am_cv_python_pyexecdir="$(PYTHON.$(PYTHON_VERSION).VENDOR_PACKAGES.32)"
