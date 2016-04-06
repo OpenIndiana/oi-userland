@@ -108,6 +108,10 @@ SOURCE_DIR =	$(COMPONENT_DIR)/$(COMPONENT_SRC)
 BUILD_DIR =	$(COMPONENT_DIR)/build
 PROTO_DIR =	$(BUILD_DIR)/prototype/$(MACH)
 
+# Note: the "configure.mk" file defines a similar structure independently,
+# although referring to some of the definitions from this "shared-macros.mk"
+# file. In case of large reorganizations, make sure to be consistent in all
+# locations ;)
 ETCDIR =	/etc
 USRDIR =	/usr
 BINDIR =	/bin
