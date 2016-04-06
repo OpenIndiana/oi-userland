@@ -1,0 +1,28 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2016 Jim Klimov
+#
+
+# Set version of the grouper same as core
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY) - Grouping for all of augtools"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value="$(COMPONENT_PROJECT_URL)"
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+depend fmri=$(COMPONENT_FMRI)-lenses@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)	type=require
+depend fmri=$(COMPONENT_FMRI)-libs@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)	type=require
+depend fmri=$(COMPONENT_FMRI)-tools@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)	type=require
+depend fmri=$(COMPONENT_FMRI)-vim@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)	type=conditional	predicate=editor/vim
