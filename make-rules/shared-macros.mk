@@ -309,6 +309,9 @@ COMPONENT_TEST_COMPARE = \
 # set the default env command to use for test of the component
 COMPONENT_TEST_ENV_CMD =	$(ENV)
 
+# set the default test environment (none) that we can append to later
+COMPONENT_TEST_ENV_CMD =
+
 # set the default command to use for test of the component
 COMPONENT_TEST_CMD =	$(GMAKE)
 
@@ -345,6 +348,51 @@ export PARFAIT_NATIVESUNCXX=$(SPRO_VROOT)/bin/CC
 export PARFAIT_NATIVEGCC=$(GCC_ROOT)/bin/gcc
 export PARFAIT_NATIVEGXX=$(GCC_ROOT)/bin/g++
 
+# The CCACHE makefile variable should evaluate to empty string or a pathname
+# like /usr/bin/ccache depending on your PATH value and "which" implementation.
+# The assignment via ":=" is important, to only do this once in a Makefile,
+# and not on every reference to the value as "=" assignment would result in.
+# Review `man ccache` for optional configuration tuning, like cache size etc.
+#
+# For production builds or suspected errors you can disable this feature by
+# setting ENABLE_CCACHE=false (as makefile or environment variable, which
+# is currently the default) to not even define the usage of wrapper in the
+# userland-building makefile system.
+# If you want to speed up your re-builds, you must set ENABLE_CCACHE=true.
+# For legacy reasons, the inverted CCACHE_DISABLE variable (configuration of
+# "ccache" program itself) is also supported, but direct use is discouraged.
+#
+# Still, absence of ccache in PATH is not considered a fatal error since the
+# build would just proceed well with original compiler.
+# Note: In code below we fast-track if the makefile CCACHE variable is defined
+# but fall back to shell executability tests if just envvar CCACHE is passed.
+export CCACHE := $(shell \
+    if test -n "$(CCACHE)" ; then \
+        echo "$(CCACHE)"; \
+    else \
+        if test x"$${CCACHE_DISABLE-}" = xtrue -o x"$(CCACHE_DISABLE)" = xtrue \
+             -o x"$${ENABLE_CCACHE-}" = xfalse -o x"$(ENABLE_CCACHE)" = xfalse \
+        ; then \
+                echo "NOT USING CCACHE FOR OI-USERLAND because explicitly disabled" >&2 ; \
+        else \
+            if test x"$${CCACHE_DISABLE-}" = xfalse -o x"$(CCACHE_DISABLE)" = xfalse \
+                 -o x"$${ENABLE_CCACHE-}" = xtrue -o x"$(ENABLE_CCACHE)" = xtrue \
+            ; then \
+                for F in \
+                    "$$CCACHE" \
+                    `which ccache 2>/dev/null | egrep '^/'` \
+                    /usr/bin/ccache \
+                ; do if test -n "$$F" && test -x "$$F" ; then \
+                        echo "$$F" ; \
+                        echo "USING CCACHE FOR OI-USERLAND: $$F" >&2 ; \
+                        exit 0; \
+                    fi; \
+                done; \
+                echo "NOT USING CCACHE FOR OI-USERLAND because not found" >&2 ; \
+            fi; \
+        fi; \
+    fi)
+
 GCC_ROOT =	/usr/gcc/4.9
 
 CC.studio.32 =	$(SPRO_VROOT)/bin/cc
@@ -367,6 +415,27 @@ CXX.gcc.64 =	$(GCC_ROOT)/bin/g++
 F77.gcc.64 =	$(GCC_ROOT)/bin/gfortran
 FC.gcc.64 =	$(GCC_ROOT)/bin/gfortran
 
+ifneq ($(strip $(CCACHE)),)
+
+CCACHE_WRAP_ROOT   =	$(WS_TOOLS)/ccache-wrap
+export CC_gcc_32  :=	$(CC.gcc.32)
+export CC_gcc_64  :=	$(CC.gcc.64)
+export CXX_gcc_32 :=	$(CXX.gcc.32)
+export CXX_gcc_64 :=	$(CXX.gcc.64)
+CC.gcc.32  :=	$(CCACHE_WRAP_ROOT)/CC.gcc.32
+CC.gcc.64  :=	$(CCACHE_WRAP_ROOT)/CC.gcc.64
+CXX.gcc.32 :=	$(CCACHE_WRAP_ROOT)/CXX.gcc.32
+CXX.gcc.64 :=	$(CCACHE_WRAP_ROOT)/CXX.gcc.64
+
+ifneq ($(strip $(CCACHE_DIR)),)
+export CCACHE_DIR :=	$(CCACHE_DIR)
+endif
+
+ifneq ($(strip $(CCACHE_LOGFILE)),)
+export CCACHE_LOGFILE :=	$(CCACHE_LOGFILE)
+endif
+
+endif
 
 lint.32 =	$(SPRO_VROOT)/bin/lint -m32
 lint.64 =	$(SPRO_VROOT)/bin/lint -m64
@@ -852,6 +921,43 @@ PERL_STUDIO_OVERWRITE = cc="$(CC)" cccdlflags="$(CC_PIC)" ld="$(CC)" ccname="$(s
 
 # Allow user to override default maximum number of archives
 NUM_EXTRA_ARCHIVES= 1 2 3 4 5 6 7 8 9 10
+
+# Rewrite absolute source-code paths into relative for ccache, so that any
+# workspace with a shared CCACHE_DIR can benefit when compiling a component
+ifneq ($(strip $(CCACHE)),)
+export CCACHE_BASEDIR = $(BUILD_DIR_$(BITS))
+COMPONENT_BUILD_ENV += CCACHE="$(CCACHE)"
+COMPONENT_INSTALL_ENV += CCACHE="$(CCACHE)"
+COMPONENT_TEST_ENV += CCACHE="$(CCACHE)"
+COMPONENT_BUILD_ENV += CC_gcc_32="$(CC_gcc_32)"
+COMPONENT_BUILD_ENV += CC_gcc_64="$(CC_gcc_32)"
+COMPONENT_BUILD_ENV += CXX_gcc_32="$(CXX_gcc_64)"
+COMPONENT_BUILD_ENV += CXX_gcc_64="$(CXX_gcc_64)"
+COMPONENT_INSTALL_ENV += CC_gcc_32="$(CC_gcc_32)"
+COMPONENT_INSTALL_ENV += CC_gcc_64="$(CC_gcc_32)"
+COMPONENT_INSTALL_ENV += CXX_gcc_32="$(CXX_gcc_64)"
+COMPONENT_INSTALL_ENV += CXX_gcc_64="$(CXX_gcc_64)"
+COMPONENT_TEST_ENV += CC_gcc_32="$(CC_gcc_32)"
+COMPONENT_TEST_ENV += CC_gcc_64="$(CC_gcc_32)"
+COMPONENT_TEST_ENV += CXX_gcc_32="$(CXX_gcc_64)"
+COMPONENT_TEST_ENV += CXX_gcc_64="$(CXX_gcc_64)"
+COMPONENT_BUILD_ENV.$(BITS) += CCACHE_BASEDIR="$(BUILD_DIR_$(BITS))"
+COMPONENT_INSTALL_ENV.$(BITS) += CCACHE_BASEDIR="$(BUILD_DIR_$(BITS))"
+COMPONENT_TEST_ENV.$(BITS) += CCACHE_BASEDIR="$(BUILD_DIR_$(BITS))"
+
+ifneq ($(strip $(CCACHE_DIR)),)
+COMPONENT_BUILD_ENV += CCACHE_DIR="$(CCACHE_DIR)"
+COMPONENT_INSTALL_ENV += CCACHE_DIR="$(CCACHE_DIR)"
+COMPONENT_TEST_ENV += CCACHE_DIR="$(CCACHE_DIR)"
+endif
+
+ifneq ($(strip $(CCACHE_LOGFILE)),)
+COMPONENT_BUILD_ENV += CCACHE_LOGFILE="$(CCACHE_LOGFILE)"
+COMPONENT_INSTALL_ENV += CCACHE_LOGFILE="$(CCACHE_LOGFILE)"
+COMPONENT_TEST_ENV += CCACHE_LOGFILE="$(CCACHE_LOGFILE)"
+endif
+
+endif
 
 # Add any bit-specific settings
 COMPONENT_BUILD_ENV += $(COMPONENT_BUILD_ENV.$(BITS))

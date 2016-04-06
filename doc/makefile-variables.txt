@@ -107,3 +107,48 @@ that need to be applied to the test output for just this component.
   have been found which have required altering this to "-xO3".  There are also
   studio_OPT.$(MACH).$(BITS) versions of this available if greater specificity
   is needed.
+
+If you frequently rebuild the same code, such as when you maintain a build server
+or iterate recipes for the same component, you can benefit by caching the build
+products with "ccache" - so for repeated input conditions you'd get same output
+objects quickly.
+
+Being experimental, the "ccache" integration in OI-Userland build system is
+disabled by default. See below for hints how to enable and optionally configure it.
+
+* To enable the "ccache" integration in OI-Userland build system you must
+  `export ENABLE_CCACHE=true` in the calling shell, or set the make-variable
+  like this: `gmake ENABLE_CCACHE=true build`
+* The "ccache" program supports an inverted toggle CCACHE_DISABLE, which our
+  shared-macros.mk Makefile also honours. By original project's intent, if you
+  execute "ccache" then you want it to do its job. If you are debugging it or
+  unsure if it causes problems, you can easily temporarily disable the "ccache"
+  logic by `export CCACHE_DISABLE=true` so it quickly calls the real compiler.
+  So to enable the caching feature you can also `export CCACHE_DISABLE=false`.
+* In case of conflicting environtment and/or makefile variables regarding this
+  feature, any explicit request to disable use of "ccache" takes precedence.
+* With default settings (only `ENABLE_CCACHE=true` in place), the cache and
+  non-volatile configuration will be kept in your `$HOME/.ccache` subdirectory.
+* To trace progress of "ccache" with your userland component build, you can
+  instrument the compilation-wrapper scripts in `tools/ccache-wrap` directory
+  (then `ccache -p` can be helpful to inspect actual parsing of configuration),
+  and/or use `export CCACHE_LOGFILE=/tmp/ccache.log` to trace its activities.
+* You can dedicate a cache directory different from the default `$HOME/.ccache`
+  for example with `export CCACHE_DIR=/tmp/ccache-dir; mkdir -p $CCACHE_DIR`.
+* Troubleshooting: If no files appear in the cache, verify permissions and disk
+  space. Also enable the log file and/or inspect configuration with `ccache -p`
+  (see above) to see details about wrapped compilations. In particular,
+  "ccache" might not actually cache the build products if the file types are
+  unsupported (see the `man ccache` page for options on extending the support),
+  if files are detected to have dynamic contents (e.g. `__TIME__` and similar
+  macros), or when a build product is comprised of several source files (like
+  running `gcc -o binprog *.c`).
+* You can inspect caching statistics with `ccache -s` and wipe the cache with
+  `ccache -C -z`.
+* The cache directory can contain a configuration file for "ccache" program,
+  which is the recommended way to provide tweaks to your setup. While exported
+  environment variables (e.g. from shell profile) may work, our Makefiles do
+  not make any guarantees about passing each and every possible variable into
+  sub-processes. We do make a best effort to pass the variables listed above.
+* See `man ccache` for more details about the program and its configuration.
+
