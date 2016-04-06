@@ -35,9 +35,9 @@ COMPONENT_BUGDB=	utility/tcpdump
 # Prevent macro redefinition error
 CFLAGS += -D _NETINET_IP_H
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # fix my alignment issues instead of falling over on sparc
 studio_ALIGN.sparc.64=-xmemalign=16i
@@ -71,4 +71,4 @@ test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

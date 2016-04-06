@@ -33,9 +33,9 @@ COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)files/$(COMPONENT_ARCHIVE)/downl
 PATH=			$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
 COMPONENT_BUGDB=	utility/cdrtools
 
-include ../../make-rules/prep.mk
-include ../../make-rules/justmake.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_INSTALL_ARGS +=  GMAKE_NOWARN=true
 COMPONENT_BUILD_ARGS += GMAKE_NOWARN=true
@@ -48,4 +48,4 @@ test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

@@ -47,9 +47,9 @@ COMPONENT_CLASSIFICATION=	Development/Perl
 COMPONENT_LICENSE=	Artistic
 COMPONENT_LICENSE_FILE=	Artistic
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 LD_B_DIRECT=		""
 
@@ -105,4 +105,4 @@ test:		$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

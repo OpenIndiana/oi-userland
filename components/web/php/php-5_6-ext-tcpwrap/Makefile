@@ -25,9 +25,9 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH=	sha256:afd435399724b5032d2e65105a2c85a7fddb22bc5633571257299d32d46d9d54
 COMPONENT_ARCHIVE_URL=  http://pecl.php.net/get/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CLEAN_PATHS +=	package.xml
 

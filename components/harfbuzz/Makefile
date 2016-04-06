@@ -36,9 +36,9 @@ COMPONENT_LICENSE=      MIT
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 COMPONENT_SUMMARY=      HarfBuzz - an OpenType text shaping engine.
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS+=	--enable-shared
 CONFIGURE_OPTIONS+=	--disable-static
@@ -57,5 +57,5 @@ test: $(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =    $(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk
 

@@ -26,9 +26,9 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:8f8d773864695fd57e6ff21f430994369ad74c69a5e66ce510bbba8ca55333aa
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/rss-glx/rss-glx/$(HUMAN_VERSION)/$(COMPONENT_ARCHIVE)
 
-include ../../../make-rules/prep.mk
-include ../../../make-rules/configure.mk
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION += chmod -R u+r $(SOURCE_DIR)/ && \
 			cp -r $(SOURCE_DIR)/* $(@D)
@@ -60,6 +60,6 @@ test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
-include ../../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk
 
 

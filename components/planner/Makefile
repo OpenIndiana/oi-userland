@@ -24,9 +24,9 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:130d29e6d6b8c1994017deba2acca05a4bf83ba1e169635ec8c5c7878abe0696
 COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/0.14/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
 
@@ -54,4 +54,4 @@ test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

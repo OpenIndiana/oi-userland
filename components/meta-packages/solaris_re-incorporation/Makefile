@@ -18,7 +18,7 @@ COMPONENT_NAME=		solaris_re-incorporation
 COMPONENT_VERSION=	0.5.11
 COMPONENT_SUMMARY=	This incorporation constrains packages from the solaris_re consolidation
 
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 #PKGLINT=/bin/true
 

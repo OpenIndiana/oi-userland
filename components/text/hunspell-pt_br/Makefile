@@ -31,8 +31,8 @@ COMPONENT_ARCHIVE_HASH=        \
 COMPONENT_ARCHIVE_URL=   http://pt-br.libreoffice.org/assets/Uploads/PT-BR-Documents/VERO/$(COMPONENT_ARCHIVE)
 UNPACK_ARGS+=-r $(COMPONENT_SRC)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 DESTDIR=/usr/share/spell/hunspell
 LINKDIR=/usr/share/spell/myspell

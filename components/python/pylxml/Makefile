@@ -39,9 +39,9 @@ COMPONENT_BUGDB=	python-mod/lxml
 studio_OPT.i386.32 =
 studio_OPT.i386.64 =
 
-include $(WS_TOP)/make-rules/prep.mk
+include $(WS_MAKE_RULES)/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
@@ -60,4 +60,4 @@ test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

@@ -29,9 +29,9 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:e2882295097e47fe089f8ac741a95fef47e0a73a3f3cdf21b56990638f626ea0
 COMPONENT_ARCHIVE_URL=	http://download.qt-project.org/official_releases/qt/$(COMPONENT_VERSION_MJR)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 MYSQL_BINDIR.32=/usr/mariadb/5.5/bin
 MYSQL_BINDIR.64=/usr/mariadb/5.5/bin/$(MACH64)

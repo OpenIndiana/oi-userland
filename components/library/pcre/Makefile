@@ -40,9 +40,9 @@ COMPONENT_CLASSIFICATION=	Development/C
 COMPONENT_LICENSE=	BSD
 COMPONENT_LICENSE_FILE=	LICENCE
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # pick up -std=c99 in CFLAGS
 CFLAGS+=	-std=c99
@@ -119,4 +119,4 @@ test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

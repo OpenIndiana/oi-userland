@@ -32,9 +32,9 @@ COMPONENT_ARCHIVE_HASH	= \
 	sha256:fb99b0ac038c4a7e48b44b61836cb41d4eeba36b4d0ee757beeab59031a1d3b6
 COMPONENT_ARCHIVE_URL=	http://www.sqlite.org/2015/$(COMPONENT_ARCHIVE)
 
-include ../../../make-rules/prep.mk
-include ../../../make-rules/configure.mk
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
                                         libtoolize --copy --force &&\
@@ -67,7 +67,7 @@ CONFIGURE_OPTIONS	+= --enable-threadsafe
 CONFIGURE_OPTIONS	+= --enable-shared
 CONFIGURE_OPTIONS	+= --disable-static
 
-include ../../../make-rules/shared-targets.mk
+include $(WS_MAKE_RULES)/shared-targets.mk
 
 build:		$(BUILD_32) $(BUILD_64)
 
@@ -77,4 +77,4 @@ test:		$(TEST_32) $(TEST_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

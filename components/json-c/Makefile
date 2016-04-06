@@ -22,9 +22,9 @@ COMPONENT_ARCHIVE_HASH=	sha256:000c01b2b3f82dcb4261751eb71f1b084404fb7d6a282f060
 COMPONENT_PROJECT_URL=	https://github.com/json-c/json-c
 COMPONENT_ARCHIVE_URL=	https://s3.amazonaws.com/json-c_releases/releases/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS += --disable-static
 

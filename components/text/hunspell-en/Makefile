@@ -47,8 +47,8 @@ COMPONENT_ARCHIVE_HASH_2=        \
 COMPONENT_ARCHIVE_URL_2=   https://sourceforge.net/projects/wordlist/files/speller/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE_2)
 UNPACK_ARGS_2+=-r $(COMPONENT_SRC_2)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 DESTDIR=/usr/share/spell/hunspell
 LINKDIR=/usr/share/spell/myspell

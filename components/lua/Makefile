@@ -43,9 +43,9 @@ COMPONENT_ARCHIVE_URL_1= $(COMPONENT_PROJECT_URL)tests/$(COMPONENT_ARCHIVE_1)
 CLEAN_PATHS += $(LUA_TESTS)
 
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATCH_LEVEL= 0
 
@@ -84,5 +84,5 @@ test: 		install
 
 BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk
 

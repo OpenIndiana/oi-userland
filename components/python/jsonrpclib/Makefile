@@ -35,9 +35,9 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=https://github.com/joshmarshall/jsonrpclib/tarball/$(COMPONENT_HASH)
 COMPONENT_BUGDB=	python-mod/jsonrpclib
 
-include $(WS_TOP)/make-rules/prep.mk
+include $(WS_MAKE_RULES)/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # common targets
 build:		$(BUILD_NO_ARCH)
@@ -48,4 +48,4 @@ test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

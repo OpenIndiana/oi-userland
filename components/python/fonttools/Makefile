@@ -28,9 +28,9 @@ COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/source/F/FontTools/$(COM
 # Uses code which python 2.6 doesn't understand
 PYTHON_VERSIONS=	2.7
 
-include $(WS_TOP)/make-rules/prep.mk
+include $(WS_MAKE_RULES)/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 FONTTOOLS_CMDS=pyftinspect pyftmerge pyftsubset ttx
 

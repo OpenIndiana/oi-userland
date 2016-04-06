@@ -30,9 +30,9 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH=	sha256:0c78dcb194d1f0316c51f277ea09ec20efd175bbd45f0a3f81bf1202c33301e4
 COMPONENT_ARCHIVE_URL=	http://www.maier-komor.de/software/mbuffer/$(COMPONENT_ARCHIVE)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 build:		$(BUILD_32_and_64)
 

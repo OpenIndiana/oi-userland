@@ -24,9 +24,9 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).zip
 COMPONENT_ARCHIVE_HASH=	sha256:c44859428b3e82fd31353acdce3a95ed52a114b5c9b9babea09c24ccde7806ed
 COMPONENT_ARCHIVE_URL=	http://archive.eclipse.org/eclipse/downloads/drops/R-3.8.2-201301310800/$(COMPONENT_ARCHIVE)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/justmake.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 UNPACK_ARGS+=-r $(COMPONENT_SRC)
 COMPONENT_POST_UNPACK_ACTION = ( cd $(SOURCE_DIR) ; /usr/bin/unzip -o src.zip)

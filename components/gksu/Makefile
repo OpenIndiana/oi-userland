@@ -25,9 +25,9 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:a1de3dca039d88c195fcdc9516379439a1d699750417f1e655aa2101a955ee5a
 COMPONENT_ARCHIVE_URL=	http://people.debian.org/~kov/gksu/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
@@ -59,4 +59,4 @@ test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

@@ -30,9 +30,9 @@ COMPONENT_ARCHIVE=	php-memcached-libmemcached-$(MEMCACHED_COMMIT).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:0292011ed3ad06aae83c7bf7003b98b60ae456a68fec332c139b048b2ed6c766
 COMPONENT_ARCHIVE_URL=	https://github.com/paravoid/php-memcached/archive/$(MEMCACHED_COMMIT).tar.gz
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CLEAN_PATHS +=  package.xml
 

@@ -27,9 +27,9 @@ COMPONENT_ARCHIVE_URL= \
   ftp://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.31/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://cairographics.org
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 gcc_OPT = -O2
 

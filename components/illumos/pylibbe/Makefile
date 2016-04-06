@@ -23,8 +23,8 @@ COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Python library to work with boot environments
 COMPONENT_PROJECT_URL = http://www.illumos.org
 
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"

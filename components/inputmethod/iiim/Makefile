@@ -27,8 +27,8 @@ COMPONENT_ARCHIVE_URL= \
   http://dlc.openindiana.org/oi-build/source-archives/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.oracle.com/technetwork/opensource/systems-solaris-1562786.html
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH = /usr/gnu/bin:/usr/bin
 

@@ -30,13 +30,13 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:0baf6694d54602a66dfc2b82a765c933b24534fd8e2bda7e9b89abf503b29c02
 COMPONENT_ARCHIVE_URL=	https://www.openfabrics.org/downloads/management/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
 include ../ofed.mk
 
 MAN1MFILES = set_nodedesc.sh.1m
 
-include $(WS_TOP)/make-rules/shared-targets.mk
+include $(WS_MAKE_RULES)/shared-targets.mk
 
 CFLAGS += -I$(PROTO_DIR)/usr/include/infiniband
 LIBS +=	-lsocket -lnsl -lopensm -losmvendor -losmcomp -libumad -libmad -libverbs -ldevinfo
@@ -87,4 +87,4 @@ BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 test:		$(NO_TESTS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

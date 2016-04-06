@@ -29,9 +29,9 @@ COMPONENT_ARCHIVE_URL=	http://launchpad.net/jokosher/trunk/$(COMPONENT_VERSION)/
 # they are provided for Python 2.6 only
 PYTHON_VERSIONS = 2.6
 
-include $(WS_TOP)/make-rules/prep.mk
+include $(WS_MAKE_RULES)/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PYTHON_DATA = /usr
 
@@ -47,4 +47,4 @@ COMPONENT_POST_INSTALL_ACTION = \
 
 test:           $(NO_TEST)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

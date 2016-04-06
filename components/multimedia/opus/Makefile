@@ -25,9 +25,9 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:b9727015a58affcf3db527322bf8c4d2fcf39f5f6b8f15dbceca20206cbe1d95
 COMPONENT_ARCHIVE_URL=	http://downloads.xiph.org/releases/opus/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS  +=	--disable-static
 CONFIGURE_OPTIONS  +=	--enable-shared

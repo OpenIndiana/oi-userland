@@ -34,9 +34,9 @@ COMPONENT_ARCHIVE_HASH	= \
 COMPONENT_ARCHIVE_URL=	http://www.sqlite.org/2013/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://www.sqlite.org/
 
-include ../../../make-rules/prep.mk
-include ../../../make-rules/configure.mk
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CFLAGS			+= -D_POSIX_PTHREAD_SEMANTICS
 CFLAGS			+= -DNDEBUG
@@ -56,7 +56,7 @@ CONFIGURE_OPTIONS.32	+= --with-tcl="/usr/lib"
 CONFIGURE_OPTIONS.64	+= --with-tcl="/usr/lib/$(MACH64)"
 CONFIGURE_OPTIONS.64	+= LIBS="-m64"
 
-include ../../../make-rules/shared-targets.mk
+include $(WS_MAKE_RULES)/shared-targets.mk
 
 build:		$(BUILD_32) $(BUILD_64)
 
@@ -66,4 +66,4 @@ test:		$(TEST_32) $(TEST_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

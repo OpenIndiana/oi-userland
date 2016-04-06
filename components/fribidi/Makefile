@@ -27,9 +27,9 @@ COMPONENT_ARCHIVE_URL= \
   http://fribidi.org/download/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://fribidi.org/
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 build: $(BUILD_32_and_64)
 

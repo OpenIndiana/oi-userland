@@ -35,9 +35,9 @@ COMPONENT_LICENSE=      MIT
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 COMPONENT_SUMMARY=      The X protocol C-language Binding (XCB): client and window-manager helpers for EWMH and ICCCM
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 build: $(BUILD_32_and_64)
 
@@ -47,5 +47,5 @@ test: $(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk
 

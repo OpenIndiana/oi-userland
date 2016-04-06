@@ -41,9 +41,9 @@ COMPONENT_BUGDB=	utility/ruby
 
 TPNO=			15969
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/ips.mk
-include $(WS_TOP)/make-rules/configure.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/configure.mk
 
 # COMPONENT_VERSION <major>.<minor>.<teeny>
 # is transformed into <major>.<minor> for RUBY_VER.
@@ -147,7 +147,7 @@ ASLR_MODE =		$(ASLR_DISABLE)
 CLEAN_PATHS +=		Solaris/gem.1 Solaris/rbconfig.sedscript.mod \
 			Solaris/ruby.1.sedscript.mod
 
-include $(WS_TOP)/make-rules/shared-targets.mk
+include $(WS_MAKE_RULES)/shared-targets.mk
 
 # common targets
 
@@ -159,4 +159,4 @@ test:	$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

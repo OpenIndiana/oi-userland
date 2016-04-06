@@ -24,9 +24,9 @@ COMPONENT_ARCHIVE_HASH= sha256:7891adeb94ce2977db5bca05c402117eaac422fc98e507c45
 COMPONENT_PROJECT_URL=	https://github.com/gmarler/nicstat/
 COMPONENT_ARCHIVE_URL= 	https://codeload.github.com/gmarler/nicstat/legacy.tar.gz/$(COMPONENT_GIT_REV)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/justmake.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATCH_LEVEL=0
 

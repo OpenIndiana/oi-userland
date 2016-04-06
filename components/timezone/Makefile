@@ -35,7 +35,7 @@ TZFILES= africa antarctica asia australasia etcetera europe \
 	 factory northamerica pacificnew solar87 solar88 solar89 \
 	 southamerica backward
 
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 POFILE=zoneinfo.po
 
@@ -59,5 +59,5 @@ clean:
 
 clobber: clean
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk
 

@@ -32,9 +32,9 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://pypi.python.org/packages/source/m/mock/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/mock
 
-include $(WS_TOP)/make-rules/prep.mk
+include $(WS_MAKE_RULES)/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_TEST_DIR =	$(SOURCE_DIR)
 COMPONENT_TEST_ARGS =	setup.py test
@@ -48,4 +48,4 @@ test:		$(TEST_NO_ARCH)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

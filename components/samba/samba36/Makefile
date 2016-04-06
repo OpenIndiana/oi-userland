@@ -35,7 +35,7 @@ COMPONENT_ARCHIVE_HASH=	sha256:8f2c8a7f2bd89b0dfd228ed917815852f7c625b2bc0936304
 COMPONENT_ARCHIVE_URL=	http://us1.samba.org/samba/ftp/stable/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/samba
 
-include ../../../make-rules/prep.mk
+include $(WS_MAKE_RULES)/prep.mk
 
 ifeq ($(strip $(USERLAND_ARCHIVES)),)
   DISTFILES_LOCATION=../
@@ -48,8 +48,8 @@ SRC_OFFSET =	source3
 BUILD_DIR_32 = $(BUILD_DIR)/$(MACH32)/$(SRC_OFFSET)
 BUILD_DIR_64 = $(BUILD_DIR)/$(MACH64)/$(SRC_OFFSET)
 
-include ../../../make-rules/configure.mk
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # dirs to search for "include" in samba.p5m
 PKG_OPTIONS += -I $(COMPONENT_DIR)
@@ -173,4 +173,4 @@ test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

@@ -23,9 +23,9 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:cdd077ee7844507e3f1a92a22a55da0d17bd582f2c62832fd55bf7b01e1bde1e
 COMPONENT_ARCHIVE_URL=	http://mirrors.omniti.com/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = $(CLONEY) $(SOURCE_DIR) $(@D)
 

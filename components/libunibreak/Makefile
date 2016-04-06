@@ -27,9 +27,9 @@ COMPONENT_ARCHIVE_URL= \
   http://sourceforge.net/projects/vimgadgets/files/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_PROJECT_URL = http://vimgadgets.sourceforge.net/libunibreak/
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 build: $(BUILD_32_and_64)
 

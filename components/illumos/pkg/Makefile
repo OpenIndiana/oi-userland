@@ -30,7 +30,7 @@ PKG_REPO=$(SOURCE_DIR)/packages/$(MACH)/repo
 
 CLEAN_PATHS += $(BUILD_DIR)
 
-include $(WS_TOP)/make-rules/prep.mk
+include $(WS_MAKE_RULES)/prep.mk
 
 #export CC
 

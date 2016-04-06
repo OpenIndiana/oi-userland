@@ -37,9 +37,9 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://download.oracle.com/berkeley-db/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	database/berkeley
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:$(JAVA_HOME)/bin:/usr/bin
 
@@ -115,4 +115,4 @@ RUN=run_std
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS) $(TCLSH)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

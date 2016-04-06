@@ -38,9 +38,9 @@ TPNO=                   18210
 COMPONENT_POST_UNPACK_ACTION= \
     $(GEM) spec $(USERLAND_ARCHIVES)/$(COMPONENT_ARCHIVE) > $(SOURCE_DIR)/$(GEMSPEC)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/ips.mk
-include $(WS_TOP)/make-rules/gem.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/gem.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
@@ -52,4 +52,4 @@ test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

@@ -23,9 +23,9 @@ COMPONENT_ARCHIVE_HASH=	\
 	sha256:3f47d246e3346f2ba4d7c9e882db3ad9ebd3fcbd2e8b732f946e0e3eeb9f429f
 COMPONENT_ARCHIVE_URL=	http://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --disable-doxygen
@@ -40,4 +40,4 @@ test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

@@ -59,9 +59,9 @@ COMPONENT_ARCHIVE_HASH_3= \
 CLEAN_PATHS += $(COMPONENT_SRC_3)
 COMPONENT_POST_UNPACK_ACTION_3 += ( $(RM) -r $(COMPONENT_SRC)/$(GMP_NAME) && $(CP) -r $(COMPONENT_SRC_3) $(COMPONENT_SRC)/$(GMP_NAME) )
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CC_BITS=
 CFLAGS=         -g -O2

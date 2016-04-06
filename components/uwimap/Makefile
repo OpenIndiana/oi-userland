@@ -30,9 +30,9 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:4b1137b87249782496ec3eeacaf83bbf09312a7d2ae3aead262179041b55565f
 COMPONENT_ARCHIVE_URL=	ftp://ftp.cac.washington.edu/imap/$(COMPONENT_ARCHIVE)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/justmake.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 IPS_COMPONENT_VERSION=	0.2007.5
 

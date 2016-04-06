@@ -27,8 +27,8 @@ COMPONENT_ARCHIVE_URL= \
   http://downloads.sourceforge.net/awstats/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://awstats.sourceforge.net/
 
-include ../../make-rules/prep.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CLEAN_PATHS += $(BUILD_DIR) $(PROTO_DIR)
 

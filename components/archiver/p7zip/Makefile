@@ -37,9 +37,9 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/p7zip/p7zip/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/p7zip
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 
 COMPONENT_TEST_DIR =           $(@D)
@@ -75,4 +75,4 @@ test:	$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

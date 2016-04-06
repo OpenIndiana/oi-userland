@@ -40,9 +40,9 @@ COMPONENT_ARCHIVE_URL=	http://www.cmake.org/files/v2.8/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://www.cmake.org/
 COMPONENT_BUGDB=	utility/cmake
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Need to remove this option from LD_OPTIONS (only affects sparc build);
 # it causes a SegFault failure in kwsys/testSystemInformation
@@ -96,4 +96,4 @@ test:		$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

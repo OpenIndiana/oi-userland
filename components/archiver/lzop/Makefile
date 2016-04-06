@@ -23,9 +23,9 @@ COMPONENT_ARCHIVE_HASH=	sha256:c1425b8c77d49f5a679d5a126c90ea6ad99585a55e335a613
 COMPONENT_PROJECT_URL=	http://www.lzop.org
 COMPONENT_ARCHIVE_URL=	http://www.lzop.org/download/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 build:		$(BUILD_32)
 

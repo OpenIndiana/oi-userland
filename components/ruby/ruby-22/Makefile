@@ -37,9 +37,9 @@ COMPONENT_ARCHIVE_URL=	\
 	http://ftp.ruby-lang.org/pub/ruby/2.2/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/ruby
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/ips.mk
-include $(WS_TOP)/make-rules/configure.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/configure.mk
 
 PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
 
@@ -114,7 +114,7 @@ CFLAGS +=		-DFFI_NO_RAW_API
 CLEAN_PATHS +=		Solaris/gem.1 Solaris/rbconfig.sedscript.mod \
 			Solaris/ruby.1.sedscript.mod
 
-include $(WS_TOP)/make-rules/shared-targets.mk
+include $(WS_MAKE_RULES)/shared-targets.mk
 
 # common targets
 
@@ -129,4 +129,4 @@ test:	$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

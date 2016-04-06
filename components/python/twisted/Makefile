@@ -35,9 +35,9 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL=	http://twistedmatrix.com/Releases/$(COMPONENT_NAME)/10.1/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/twisted
 
-include $(WS_TOP)/make-rules/prep.mk
+include $(WS_MAKE_RULES)/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_TEST_DIR= $(COMPONENT_SRC)
 COMPONENT_TEST_CMD= $(@D)/scripts-2.6/trial twisted
@@ -61,4 +61,4 @@ test:           $(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

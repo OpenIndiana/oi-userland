@@ -38,9 +38,9 @@ COMPONENT_BUGDB=	utility/flex
 SONAME=libfl.so.1
 LDFLAGS = $(CC_BITS)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		M4="/usr/gnu/bin/m4"
@@ -53,7 +53,7 @@ COMPONENT_TEST_ENV +=		PATH=/usr/gnu/bin:/usr/bin
 COMPONENT_BUILD_TARGETS += $(SONAME)
 COMPONENT_INSTALL_TARGETS += $(SONAME)
 
-include ../../make-rules/shared-targets.mk
+include $(WS_MAKE_RULES)/shared-targets.mk
 
 ASLR_MODE=$(ASLR_ENABLE)
 
@@ -66,5 +66,5 @@ test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk
 

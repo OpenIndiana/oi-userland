@@ -28,9 +28,9 @@ COMPONENT_ARCHIVE_URL= \
   http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/3.6/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gnome.org
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PKG_CONFIG_PATH.32   = /usr/g++/lib/pkgconfig:/usr/lib/pkgconfig
 

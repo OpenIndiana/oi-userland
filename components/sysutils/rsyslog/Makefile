@@ -32,9 +32,9 @@ COMPONENT_ARCHIVE_HASH=	sha256:ab1d26da2bfd38db34dd991a9c5d93034ef1373d01f9d5a09
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)files/download/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	service/rsyslog
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
                                         autoreconf -f -i)
@@ -60,4 +60,4 @@ BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 PKG_PROTO_DIRS +=	$(COMPONENT_DIR)/files
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

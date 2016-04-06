@@ -26,9 +26,9 @@ COMPONENT_ARCHIVE_URL= \
   http://sourceforge.net/projects/pgbarman/files/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://pgbarman.org/
 
-include $(WS_TOP)/make-rules/prep.mk
+include $(WS_MAKE_RULES)/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_POST_INSTALL_ACTION = \
         ($(MV) $(PROTO_DIR)/usr/bin/barman $(PROTO_DIR)/usr/bin/barman-$(PYTHON_VERSION))

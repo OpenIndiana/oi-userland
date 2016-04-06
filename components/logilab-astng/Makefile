@@ -35,8 +35,8 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://pkgs.fedoraproject.org/repo/pkgs/python-logilab-astng/$(COMPONENT_ARCHIVE)/9383047bfe2be4405af491fbe5c7f1c6/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/logilab-astng
 
-include ../../make-rules/prep.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
 include ../../make-rules/setup.py.mk
 
 # common targets
@@ -86,4 +86,4 @@ test:		$(TEST_NO_ARCH)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

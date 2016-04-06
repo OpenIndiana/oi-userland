@@ -26,9 +26,9 @@ COMPONENT_ARCHIVE_URL= \
   http://ftp.gnome.org/mirror/gnome.org/sources/$(COMPONENT_NAME)/1.6/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.clutter-project.org/
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH = /usr/gnu/bin:/usr/bin
 

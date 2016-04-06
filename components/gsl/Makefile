@@ -23,13 +23,13 @@ COMPONENT_ARCHIVE_HASH	= \
 	sha256:73bc2f51b90d2a780e6d266d43e487b3dbd78945dd0b04b14ca5980fe28d2f53
 COMPONENT_ARCHIVE_URL=	http://gnu.mirrorcatalogs.com/gsl/$(COMPONENT_ARCHIVE)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_BUILD_ENV +=	CFLAGS="$(CFLAGS)"
 
-include ../../make-rules/shared-targets.mk
+include $(WS_MAKE_RULES)/shared-targets.mk
 
 build:		$(BUILD_32_and_64)
 #$(BUILD_64)
@@ -42,4 +42,4 @@ test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

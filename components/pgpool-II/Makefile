@@ -29,9 +29,9 @@ COMPONENT_PROJECT_URL = http://pgpool.net/
 # Don't depend on host default pg_config
 PATH=$(PG_BINDIR.$(BITS)):/usr/sbin:/usr/bin
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION =        (cp -a $(SOURCE_DIR)/* $(@D))
 

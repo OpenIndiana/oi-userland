@@ -34,10 +34,10 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL=  http://pkgs.fedoraproject.org/repo/pkgs/gd/$(COMPONENT_ARCHIVE)/6c6c3dbb7bf079e0bb5fbbfd3bb8a71c/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/gd2
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
-include ../../make-rules/lint-libraries.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/lint-libraries.mk
 
 PATCH_LEVEL = 0
 
@@ -73,5 +73,5 @@ test: 	$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk
 

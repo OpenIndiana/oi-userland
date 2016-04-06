@@ -20,9 +20,9 @@ COMPONENT_ARCHIVE_HASH=	sha256:24b2f9cb05797170f2021ef0e0372d4b5225ee4199f0568a1
 COMPONENT_PROJECT_URL=	http://www.nlnetlabs.nl/projects/ldns/
 COMPONENT_ARCHIVE_URL=	http://www.nlnetlabs.nl/downloads/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS +=    --with-examples
 CONFIGURE_OPTIONS +=    --with-drill

@@ -23,9 +23,9 @@ COMPONENT_ARCHIVE_HASH= sha256:ee6ed7ac109cd3196309217137a8f8bd031e3c4e0696f1f1f
 COMPONENT_PROJECT_URL=	http://www.zabbix.com/
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/zabbix/files/ZABBIX%20Latest%20Stable/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPILER=		gcc
 

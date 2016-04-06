@@ -21,7 +21,7 @@
 # Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 include ofed.mk
 
 LD_Z_IGNORE =

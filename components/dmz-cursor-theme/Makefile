@@ -28,9 +28,9 @@ COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Theming
 COMPONENT_LICENSE=	CC-BY-SA-3.0
 COMPONENT_LICENSE_FILE=	dmz-cursor-theme.license
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION =        ( cp $(COMPONENT_DIR)/files/Makefile $(@D))
 

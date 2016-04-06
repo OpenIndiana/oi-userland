@@ -26,9 +26,9 @@ COMPONENT_ARCHIVE_URL= \
   http://prdownloads.sourceforge.net/docbook/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=http://docbook.sourceforge.net/
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION +=(cp $(COMPONENT_DIR)/files/docbook-style-dsssl.Makefile $(@D)/Makefile)
 

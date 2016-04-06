@@ -28,9 +28,9 @@ COMPONENT_LICENSE_FILE=	COPYING.LGPL
 COMPONENT_FMRI= text/hunspell
 COMPONENT_CLASSIFICATION = System/Text Tools
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
 

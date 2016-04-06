@@ -35,9 +35,9 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/tcl/files/Tcl/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_BUGDB=	library/libtk
 
-include ../../../make-rules/prep.mk
-include ../../../make-rules/configure.mk
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION = \
 	(cd $(@D)/unix ; autoreconf -f)
@@ -82,4 +82,4 @@ $(CONFIGURE_64):	../tcl/build/$(MACH64)/.built
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

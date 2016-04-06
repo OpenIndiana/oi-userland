@@ -33,9 +33,9 @@ COMPONENT_ARCHIVE_HASH=	\
 	sha256:b5b14added7d78a8d1ca70b5cb75fef57ce2197264f4f5835326b0df22ac9f22
 COMPONENT_BUGDB=	utility/gnu-binutils
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
@@ -71,4 +71,4 @@ BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 test: $(TEST_32)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

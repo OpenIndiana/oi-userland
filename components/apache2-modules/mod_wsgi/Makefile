@@ -37,9 +37,9 @@ COMPONENT_ARCHIVE_URL=	http://modwsgi.googlecode.com/files/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://code.google.com/p/modwsgi/
 COMPONENT_BUGDB=	utility/apache
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 APACHE_USR_PREFIX=/usr/apache2/2.2
 

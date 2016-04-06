@@ -40,10 +40,10 @@ COMPONENT_BUILD_ENV += $(COMPONENT_ENV)
 COMPONENT_INSTALL_ENV.64 = ARCH=/$(MACH64)
 COMPONENT_INSTALL_ENV += $(COMPONENT_ENV)
 
-include $(WS_TOP)/make-rules/encumbered.mk
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/encumbered.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 $(INSTALL_32): $(INSTALL_64)
 

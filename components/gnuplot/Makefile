@@ -40,9 +40,9 @@ COMPONENT_BUGDB=	utility/gnuplot
 
 COMPONENT_BUILD_TARGETS = all info
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS  += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS  += --sysconfdir=/etc/gnu
@@ -51,7 +51,7 @@ CONFIGURE_OPTIONS  += --x-libraries=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS  += CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  += CXXFLAGS="$(CXXFLAGS)"
 
-include ../../make-rules/shared-targets.mk
+include $(WS_MAKE_RULES)/shared-targets.mk
 
 # common targets
 build:		$(BUILD_32)
@@ -62,4 +62,4 @@ test:		$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

@@ -28,9 +28,9 @@ COMPONENT_ARCHIVE_URL= \
   ftp://ftp.gnu.org/gnu/gnutls/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gnutls.org
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 gcc_OPT = -O2
 PATH = /usr/gnu/bin:/usr/bin

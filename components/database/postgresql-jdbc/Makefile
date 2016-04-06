@@ -29,9 +29,9 @@ COMPONENT_ARCHIVE_URL= \
   http://jdbc.postgresql.org/download/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://jdbc.postgresql.org/
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/ant.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ant.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_BUILD_ARGS =
 

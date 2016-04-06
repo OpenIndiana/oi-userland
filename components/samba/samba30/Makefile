@@ -42,15 +42,15 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://www.samba.org/samba/ftp/stable/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/samba
 
-include ../../../make-rules/prep.mk
+include $(WS_MAKE_RULES)/prep.mk
 
 COMPONENT_BUILD_ARGS=
 
 SRC_OFFSET =	source
 BUILD_DIR_32 = $(BUILD_DIR)/$(MACH32)/$(SRC_OFFSET)
 
-include ../../../make-rules/configure.mk
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_SCRIPT = $(BUILD_DIR_32)/configure
 
@@ -140,7 +140,7 @@ LICENSE_TRANSFORMS =
 # common targets
 build:		$(BUILD_32)
 
-include ../../../make-rules/shared-targets.mk
+include $(WS_MAKE_RULES)/shared-targets.mk
 
 install:	$(INSTALL_32)
 
@@ -151,4 +151,4 @@ clean::
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

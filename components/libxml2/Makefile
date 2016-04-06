@@ -43,10 +43,10 @@ COMPONENT_ARCHIVE_HASH_1= \
     sha256:96151685cec997e1f9f3387e3626d61e6284d4d6e66e0e440c209286c03e9cc7
 COMPONENT_ARCHIVE_URL_1= http://www.w3.org/XML/Test/$(COMPONENT_ARCHIVE_1)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
-include ../../make-rules/lint-libraries.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/lint-libraries.mk
 
 CFLAGS +=	$(CPP_LARGEFILES)
 LDFLAGS +=	$(CC_BITS) $(LD_Z_DEFS) $(LD_Z_TEXT) -lpthread
@@ -103,4 +103,4 @@ test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

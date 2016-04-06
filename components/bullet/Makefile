@@ -35,9 +35,9 @@ COMPONENT_LICENSE=      BSD3c
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 COMPONENT_SUMMARY=      Bullet Physics Library
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/cmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/cmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 LIB_SUFFIX32=
 LIB_SUFFIX64=$(MACH64)
@@ -60,5 +60,5 @@ test: $(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =    $(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk
 

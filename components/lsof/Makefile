@@ -26,9 +26,9 @@ COMPONENT_ARCHIVE_URL=	ftp://sunsite.ualberta.ca/pub/Mirror/$(COMPONENT_NAME)/$(
 COMPONENT_ARCHIVE_HASH=	\
     sha256:81ac2fc5fdc944793baf41a14002b6deb5a29096b387744e28f8c30a360a3718
 
-include ../../make-rules/prep.mk
-include ../../make-rules/justmake.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Snatched from espeak component
 BINDIR.32=/usr/bin
@@ -66,4 +66,4 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

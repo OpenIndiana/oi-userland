@@ -37,9 +37,9 @@ COMPONENT_BUGDB=	utility/zip
 
 LD_OPTIONS=
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # remove the unwanted file.
 COMPONENT_PREP_ACTION = $(RM) $(SOURCE_DIR)/crc_i386.S
@@ -66,4 +66,4 @@ test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

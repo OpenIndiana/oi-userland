@@ -18,7 +18,7 @@ COMPONENT_NAME=		ogg-vorbis
 COMPONENT_VERSION=	2.30.1
 COMPONENT_SUMMARY=	Ogg bitstream and Vorbis audio codec libraries
 
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 #PKGLINT=/bin/true
 

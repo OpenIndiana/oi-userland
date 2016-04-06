@@ -24,9 +24,9 @@ COMPONENT_PROJECT_URL=	http://alioth.debian.org/projects/pkg-isocodes
 #COMPONENT_ARCHIVE_URL=	http://pkg-isocodes.alioth.debian.org/downloads/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_URL=	http://ftp.lfs-matrix.net/pub/blfs/conglomeration/iso-codes/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 build:		$(BUILD_32)
 

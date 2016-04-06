@@ -37,9 +37,9 @@ COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_BUGDB=	library/libsamplerate
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS  +=		--disable-static
 CONFIGURE_OPTIONS  +=		--enable-shared
@@ -53,4 +53,4 @@ test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

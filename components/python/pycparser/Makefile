@@ -37,9 +37,9 @@ COMPONENT_BUGDB=	python-mod/pycparser
 
 TPNO=			16938
 
-include $(WS_TOP)/make-rules/prep.mk
+include $(WS_MAKE_RULES)/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
@@ -63,4 +63,4 @@ test:		$(TEST_NO_ARCH)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

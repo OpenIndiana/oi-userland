@@ -30,9 +30,9 @@ COMPONENT_LICENSE_FILE = COPYING
 COMPONENT_CLASSIFICATION = System/Multimedia Libraries
 COMPONENT_FMRI = library/audio/openal
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/cmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/cmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CMAKE_OPTIONS += -DSSE=OFF
 CMAKE_OPTIONS += -DEXAMPLES:INTERNAL=OFF

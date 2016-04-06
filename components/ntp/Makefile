@@ -40,9 +40,9 @@ PATCH_LEVEL = 0
 
 ASLR_MODE= $(ASLR_ENABLE)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_BUILD_ARGS=
 
@@ -72,4 +72,4 @@ build:		$(BUILD_32)
 install:	$(INSTALL_32)
 test:		$(NO_TESTS)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

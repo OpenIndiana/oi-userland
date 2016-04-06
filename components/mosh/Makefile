@@ -35,9 +35,9 @@ COMPONENT_LICENSE=      GPLv3+
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_SUMMARY=	Mosh (mobile shell) - Remote terminal application that allows roaming, supports intermittent connectivity, and provides intelligent local echo and line editing of user keystrokes (replacement for SSH).
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--enable-examples
@@ -51,4 +51,4 @@ test: $(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =    $(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

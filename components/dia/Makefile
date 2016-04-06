@@ -24,9 +24,9 @@ COMPONENT_ARCHIVE_HASH=        \
     sha256:22914e48ef48f894bb5143c5efc3d01ab96e0a0cde80de11058d3b4301377d34
 COMPONENT_ARCHIVE_URL=        http://ftp.gnome.org/pub/GNOME/sources/dia/0.97/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
 
@@ -45,4 +45,4 @@ install:     		$(INSTALL_32)
 
 test:			$(NO_TESTS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

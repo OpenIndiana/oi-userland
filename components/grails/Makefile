@@ -35,9 +35,9 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://dlc.openindiana.org/oi-build/source-archives/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/grails
 
-include ../../make-rules/prep.mk
-include ../../make-rules/ant.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ant.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Make sure we use the specially modified versions of grails and grails-debug
 COMPONENT_POST_UNPACK_ACTION = \
@@ -77,4 +77,4 @@ test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

@@ -39,9 +39,9 @@ COMPONENT_SUMMARY=	abook addressbook program
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = (cp -r $(SOURCE_DIR)/* $(BUILD_DIR_$(BITS))/)
 COMPONENT_BUILD_ARGS=

@@ -30,9 +30,9 @@ COMPONENT_LICENSE_FILE=	LICENSE
 COMPONENT_LICENSE=	CDDL
 COMPONENT_FMRI=	benchmark/filebench
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATCH_LEVEL=0
 

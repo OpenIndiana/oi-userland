@@ -27,8 +27,8 @@ COMPONENT_LICENSE=	BSD-PublicDomain
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_SUMMARY=	sbcl - Steel Bank Common Lisp
 
-include ../../make-rules/prep.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_ENV  =	PATH=/usr/bin:/usr/sbin:/bin:/sbin:/usr/gnu/bin
 COMPONENT_ENV +=	GNUMAKE=$(GMAKE)
@@ -58,4 +58,4 @@ clean::
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS) sbcl
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

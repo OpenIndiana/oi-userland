@@ -31,10 +31,10 @@ COMPONENT_LICENSE_FILE = COPYING
 COMPONENT_CLASSIFICATION = System/Multimedia Libraries
 COMPONENT_FMRI = library/audio/libmad
 
-include $(WS_TOP)/make-rules/encumbered.mk
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/encumbered.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS.32 += --enable-fpm=default
 CONFIGURE_OPTIONS.64 += --enable-fpm=64bit

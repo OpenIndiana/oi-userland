@@ -23,9 +23,9 @@ COMPONENT_ARCHIVE_HASH=	sha256:f7ba8ba2c2d71912846eaaa2bed9200a7722ef0addeec32db
 COMPONENT_PROJECT_URL=	http://www.cabextract.org.uk/
 COMPONENT_ARCHIVE_URL=	http://www.cabextract.org.uk/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 build:		$(BUILD_32)
 

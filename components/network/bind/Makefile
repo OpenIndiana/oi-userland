@@ -36,9 +36,9 @@ COMPONENT_ARCHIVE_URL=	\
 	http://ftp.isc.org/isc/bind9/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	service/dns-server
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Missing files in build dir without this.
 COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -75,7 +75,7 @@ ASLR_MODE = $(ASLR_ENABLE)
 .PHONY: build
 build:		$(BUILD_32)
 
-include $(WS_TOP)/make-rules/shared-targets.mk
+include $(WS_MAKE_RULES)/shared-targets.mk
 
 # Install.
 #
@@ -163,4 +163,4 @@ test-clean:
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

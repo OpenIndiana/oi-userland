@@ -35,8 +35,8 @@ COMPONENT_ARCHIVE_URL= \
   http://dlc-int.openindiana.org/hipster/broadcom/BRCMbnx-S11-i386-7.8.2.tar.Z
 COMPONENT_PROJECT_URL = http://www.broadcom.com/support/ethernet_nic/netxtremeii.php
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CLEAN_PATHS += $(BUILD_DIR)
 

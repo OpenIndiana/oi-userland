@@ -38,9 +38,9 @@ COMPONENT_ARCHIVE_URL=	http://pkgs.fedoraproject.org/repo/pkgs/$(COMPONENT_NAME)
 
 COMPONENT_BUGDB=	utility/stunnel
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # need /usr/perl5/bin on path to access pod2man perl script, used by
 # the build to create docs.
@@ -79,4 +79,4 @@ test:           $(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

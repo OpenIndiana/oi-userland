@@ -38,9 +38,9 @@ COMPONENT_ARCHIVE_1=		lightning-$(LIGHTNING_VERSION).xpi
 COMPONENT_ARCHIVE_HASH_1=	sha256:8f37425b3d780d72793592cb238424d17543254f76ff4da6f42a7ed2a72a5868
 COMPONENT_ARCHIVE_URL_1=	https://addons.mozilla.org/thunderbird/downloads/file/389076/lightning-4.0.5.2-sm+tb-linux.xpi
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 

@@ -31,9 +31,9 @@ COMPONENT_CLASSIFICATION = Applications/Universal Access
 COMPONENT_LICENSE = GPLv3
 COMPONENT_LICENSE_FILE = License.txt
 
-include ../../make-rules/prep.mk
-include ../../make-rules/justmake.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CXXFLAGS += -fpermissive
 

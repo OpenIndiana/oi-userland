@@ -26,8 +26,8 @@ download::
 	$(IPS2TGZ) $(COMPONENT_SRC) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE) http://pkg.openindiana.org/legacy \
 	pkg://opensolaris.org/developer/sunstudio12u1@12.1.1,5.11-0.111:20100306T002245Z
 
-include ../../make-rules/prep.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 $(SOURCE_DIR)/build/$(MACH)/.installed:
 	@$(MKDIR) $(PROTO_DIR)

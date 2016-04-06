@@ -30,9 +30,9 @@ COMPONENT_LICENSE_FILE = COPYING.TXT
 COMPONENT_CLASSIFICATION = System/Multimedia Libraries
 COMPONENT_FMRI = library/audio/soundtouch
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 					$(CONFIG_SHELL) bootstrap )

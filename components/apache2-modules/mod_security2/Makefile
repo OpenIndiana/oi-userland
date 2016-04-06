@@ -52,9 +52,9 @@ $(VARIANT_APACHE24)/$(MACH64)/.configured:  BITS=64
 $(VARIANT_APACHE22)/%/.configured: APACHE_USR_PREFIX=/usr/apache2/2.2
 $(VARIANT_APACHE24)/%/.configured: APACHE_USR_PREFIX=/usr/apache2/2.4
 
-include ../../../make-rules/prep.mk
-include ../../../make-rules/configure.mk
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 APXS.32=	$(APACHE_USR_PREFIX)/bin/apxs
 APXS.64=	$(APACHE_USR_PREFIX)/bin/$(MACH64)/apxs
@@ -76,4 +76,4 @@ test: $(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

@@ -39,9 +39,9 @@ COMPONENT_ARCHIVE_HASH_1 = \
     sha256:7423f48d15fb1377ee0050c3e1f22e8a91668c2f158afed57b8ead3fed908785
 COMPONENT_ARCHIVE_URL_1 = http://sourceforge.net/projects/tldchk.berlios/files/$(COMPONENT_ARCHIVE_1)/download
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATCH_LEVEL = 0
 LINT_FLAGS += -I$(PROTOUSRINCDIR)/idn
@@ -127,5 +127,5 @@ test: $(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk
 

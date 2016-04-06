@@ -31,9 +31,9 @@ COMPONENT_CLASSIFICATION = System/X11
 COMPONENT_LICENSE = MIT
 COMPONENT_LICENSE_FILE = COPYING
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CPPFLAGS += -I/usr/include/freetype2  -I/usr/include/X11  -I/usr/include/xcb  -DSUNSOFT -DMOTIFBC -DSUNSOFT_KBD
 

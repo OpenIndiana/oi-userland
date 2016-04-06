@@ -29,8 +29,8 @@ COMPONENT_SRC=		src
 COMPONENT_PROJECT_URL=	http://prefetch.net/projects/apache_modtrace/
 COMPONENT_BUGDB=	utility/apache
 
-include ../../../make-rules/justmake.mk
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 VARIANT_APACHE22 =       $(BUILD_DIR)/apache-22
 VARIANT_APACHE24 =       $(BUILD_DIR)/apache-24
@@ -78,4 +78,4 @@ test: $(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

@@ -18,7 +18,7 @@ COMPONENT_NAME=		libpng
 COMPONENT_VERSION=	1.4.17
 COMPONENT_SUMMARY=	Portable Network Graphics library
 
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 #PKGLINT=/bin/true
 

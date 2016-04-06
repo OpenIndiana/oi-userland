@@ -25,9 +25,9 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:9656a169cb83da34d732b0eb72b39373d48774aee009a3d1272b7ea2ce109cde
 COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/source/n/netifaces/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
+include $(WS_MAKE_RULES)/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # common targets
 build:		$(BUILD_32)
@@ -36,4 +36,4 @@ install:	$(INSTALL_32)
 
 test:           $(NO_TEST)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

@@ -27,9 +27,9 @@ COMPONENT_ARCHIVE_URL= \
   http://sourceforge.net/projects/libexif/files/libexif-gtk/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_PROJECT_URL = http://sourceforge.net/projects/libexif
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 gcc_OPT = -O2
 

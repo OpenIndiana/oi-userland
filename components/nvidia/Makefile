@@ -26,8 +26,8 @@ COMPONENT_ARCHIVE_HASH= \
 #COMPONENT_ARCHIVE_URL=	http://download.nvidia.com/solaris/$(COMPONENT_VERSION)/NVIDIA-Solaris-x86-$(COMPONENT_VERSION).run
 COMPONENT_ARCHIVE_URL=	http://us.download.nvidia.com/solaris/$(COMPONENT_VERSION)/NVIDIA-Solaris-x86-$(COMPONENT_VERSION).run
 
-include ../../make-rules/prep.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 $(SOURCE_DIR)/.unpacked: download Makefile $(PATCHES)
 	$(RM) -r $(SOURCE_DIR)

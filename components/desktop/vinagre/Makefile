@@ -28,9 +28,9 @@ COMPONENT_ARCHIVE_URL= \
   http://download.gnome.org/sources/$(COMPONENT_NAME)/2.30/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gnome.org/projects/vinagre
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 LDFLAGS += -lgmodule-2.0
 

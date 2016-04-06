@@ -31,9 +31,9 @@ COMPONENT_LICENSE = BSD-like
 COMPONENT_FMRI = image/library/libtiff
 COMPONENT_CLASSIFICATION = System/Multimedia Libraries
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS += --disable-cxx

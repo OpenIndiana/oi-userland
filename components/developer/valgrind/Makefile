@@ -42,9 +42,9 @@ COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Use GNU utilities
 PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
@@ -74,4 +74,4 @@ test:		$(TEST_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

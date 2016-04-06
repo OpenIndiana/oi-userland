@@ -28,9 +28,9 @@ COMPONENT_ARCHIVE_URL= \
   http://libproxy.googlecode.com/files/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://code.google.com/p/libproxy/
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # I believe it increases cross GCC/Sun Studio compatibility
 gcc_OPT=-O2

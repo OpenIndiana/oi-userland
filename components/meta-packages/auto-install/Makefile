@@ -18,7 +18,7 @@ COMPONENT_NAME=		auto_install
 COMPONENT_VERSION=	0.1
 COMPONENT_SUMMARY=	Cluster for the Automated Installer client
 
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 #PKGLINT=/bin/true
 

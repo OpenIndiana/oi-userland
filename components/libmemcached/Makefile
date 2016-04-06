@@ -35,9 +35,9 @@ COMPONENT_ARCHIVE_URL=  https://launchpad.net/libmemcached/1.0/1.0.17/+download/
 COMPONENT_PROJECT_URL=  http://libmemcached.org/libMemcached.html
 COMPONENT_BUGDB=	database/memcached
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CXXFLAGS += -D__EXTENSIONS__ -D_XPG5
 LDFLAGS += -D__EXTENSIONS__ -D_XPG5 -lsocket -lnsl
@@ -97,4 +97,4 @@ test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

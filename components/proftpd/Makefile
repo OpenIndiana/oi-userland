@@ -47,9 +47,9 @@ COMPONENT_ARCHIVE_HASH_1= \
     sha256:bd1cb3f8ba0668981beb54d8b4de10ab204199327a464debd9da19196bbb23c4
 COMPONENT_ARCHIVE_URL_1= http://downloads.sourceforge.net/gssmod/$(COMPONENT_ARCHIVE_1)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # IPS_COMPONENT_VERSION is by default set to $(COMPONENT_VERSION) but it is not
 # enough for us. We need to include the $(COMPONENT_SUBVERSION) somehow.
@@ -113,4 +113,4 @@ test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

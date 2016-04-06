@@ -32,9 +32,9 @@ COMPONENT_ARCHIVE_HASH = \
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/bash/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/bash
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 BASH_PATCHLEVEL=$(shell grep -h "define PATCHLEVEL" $(COMPONENT_DIR)/patches/bash* | nawk '{print $$NF}' | sort -n | tail -1)
 IPS_COMPONENT_VERSION = $(COMPONENT_VERSION).$(BASH_PATCHLEVEL)

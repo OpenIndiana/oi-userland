@@ -25,7 +25,7 @@ include ../../make-rules/shared-macros.mk
 COMPONENT_NAME=         hwdata
 COMPONENT_VERSION=      0.5.11
 
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Since upstream only offers the latest snapshot for download, without
 # any way to retrieve a specific version, we just keep the currently
@@ -84,4 +84,4 @@ test:	$(NO_TESTS)
 clobber clean::
 	$(RM) -r $(BUILD_DIR)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

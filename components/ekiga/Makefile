@@ -25,9 +25,9 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:f25a1309b68eafe69f0d7aed461bc9a8196939060543d09bd2f19e0bb1e3fd8f
 COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/ekiga/3.2/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
 
@@ -56,4 +56,4 @@ test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

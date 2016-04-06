@@ -33,9 +33,9 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://dlc.openindiana.org/oi-build/source-archives/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gnu-compiler
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PARCH =		$(MACH:i386=i386-pc)
 GNU_ARCH =	$(PARCH:sparc=sparc-sun)-solaris$(SOLARIS_VERSION)
@@ -92,4 +92,4 @@ BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 test: $(TEST_32)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

@@ -26,9 +26,9 @@ COMPONENT_ARCHIVE_URL= \
   https://pypi.python.org/packages/source/d/dulwich/dulwich-0.9.5.tar.gz#md5=7ace33f90cd61c7fcd32816eb73d1f5a
 COMPONENT_PROJECT_URL = https://pypi.python.org/pypi/dulwich
 
-include $(WS_TOP)/make-rules/prep.mk
+include $(WS_MAKE_RULES)/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMMANDS = dul-daemon  dul-receive-pack  dul-upload-pack  dul-web  dulwich
 

@@ -18,7 +18,7 @@ COMPONENT_NAME=		gui_install
 COMPONENT_VERSION=	0.1
 COMPONENT_SUMMARY=	A meta-package that installs common applications for the Live CD and desktops
 
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 #PKGLINT=/bin/true
 

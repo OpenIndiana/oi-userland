@@ -25,9 +25,9 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:0d6d69437b5e1e45f3e66270fe369344943de8a1190e498fafa5296315a27db0
 COMPONENT_ARCHIVE_URL=	http://www.xchat.org/files/source/2.8/$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.bz2
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
 
@@ -60,4 +60,4 @@ test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

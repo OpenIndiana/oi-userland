@@ -19,7 +19,7 @@ COMPONENT_VERSION= 2.30.0
 COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= docbook SGML and XML stylesheets
 
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 download:
 

@@ -24,9 +24,9 @@ COMPONENT_ARCHIVE_HASH=	sha256:f8d132e464506b551ef498719f18cfe9d777709c7a1589dc3
 COMPONENT_ARCHIVE_URL=	http://ftp.postgresql.org/pub/source/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://www.postgresql.org/
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=	/usr/bin:/usr/sfw/bin:/usr/ccs/bin:/usr/sbin:/usr/gnu/bin
 

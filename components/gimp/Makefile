@@ -26,9 +26,9 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:d82a958641c9c752d68e35f65840925c08e314cea90222ad845892a40e05b22d
 COMPONENT_ARCHIVE_URL=	http://download.gimp.org/pub/gimp/v2.8/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
@@ -59,4 +59,4 @@ test:		$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

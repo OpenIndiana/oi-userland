@@ -18,7 +18,7 @@ COMPONENT_NAME=		amp
 COMPONENT_VERSION=	0.5.11
 COMPONENT_SUMMARY=	Cluster containing an AMP (Apache, MySQL, PHP) deployment kit
 
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 #PKGLINT=/bin/true
 

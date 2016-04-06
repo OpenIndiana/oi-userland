@@ -36,9 +36,9 @@ COMPONENT_ARCHIVE_HASH = \
     sha256:f76337e0933225914111fcc3319ff4db359b1abfd1aa56dff2df5378db0e2d55
 COMPONENT_ARCHIVE_URL=	http://search.cpan.org/CPAN/authors/id/G/GA/GAAS/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/makemaker.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/makemaker.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 
 COMPONENT_TEST_TARGETS = test
@@ -51,4 +51,4 @@ test:		$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

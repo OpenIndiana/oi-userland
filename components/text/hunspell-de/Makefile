@@ -30,9 +30,9 @@ COMPONENT_ARCHIVE_HASH=        \
     sha256:5964178dc87b9be9dfe7cb256c2e35e139e86063225c19cb1fe2cc7cb11d7e4e
 COMPONENT_ARCHIVE_URL=   https://www.j3e.de/ispell/igerman98/dict/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_BUILD_TARGETS = hunspell-all
 

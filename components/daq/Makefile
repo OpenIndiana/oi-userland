@@ -32,9 +32,9 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://distfiles.gentoo.org/distfiles/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/daq
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Set -m32 or -m64 correctly for 32 and 64 bit versions.
 CC +=		$(CC_BITS)
@@ -52,4 +52,4 @@ test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

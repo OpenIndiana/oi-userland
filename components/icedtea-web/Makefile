@@ -26,9 +26,9 @@ COMPONENT_ARCHIVE_URL= \
    http://icedtea.wildebeest.org/download/source/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://icedtea.classpath.org/wiki/Main_Page
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_POST_UNPACK_ACTION += ($(GSED) -i -e 's/mozilla-plugin/firefox-plugin/' $(SOURCE_DIR)/acinclude.m4)
 COMPONENT_PREP_ACTION += (cd $(@D) && autoreconf -if)

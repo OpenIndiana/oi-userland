@@ -25,9 +25,9 @@ COMPONENT_ARCHIVE_HASH=        \
     sha256:f10d728afcdf35c3f7e6cff57f478114f14d5db4b1c9bdc2dc2e582bcaedc21a
 COMPONENT_ARCHIVE_URL=        https://launchpad.net/awn/0.2/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
 
@@ -41,4 +41,4 @@ install:     		$(INSTALL_32)
 
 test:			$(NO_TESTS)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

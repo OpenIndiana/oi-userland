@@ -35,9 +35,9 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/diffutils/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gnu-diffutils
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_BINDIR.32 =		$(CONFIGURE_PREFIX)/gnu/bin
 
@@ -54,4 +54,4 @@ test:		$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

@@ -27,9 +27,9 @@ COMPONENT_ARCHIVE_URL= \
   https://pypi.python.org/packages/source/p/psycopg2/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://pypi.python.org/pypi/psycopg2
 
-include $(WS_TOP)/make-rules/prep.mk
+include $(WS_MAKE_RULES)/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Don't depend on host default pg_config
 PATH=           $(PG_BINDIR.$(BITS)):/usr/sbin:/usr/bin

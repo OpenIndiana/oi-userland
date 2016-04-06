@@ -33,8 +33,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:ec9884b56b31961d287190323764af7f3b00ad2658d5f3005fa8dc71c637e54c
 COMPONENT_ARCHIVE_URL=	ftp://ftp.mozilla.org/pub/mozilla.org/directory/c-sdk/releases/v$(COMPONENT_VERSION)/src/$(COMPONENT_ARCHIVE)
 
-include ../../../make-rules/prep.mk
-include ../../../make-rules/configure.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
 
 # Define a private space
 PATCH_LEVEL =	0
@@ -71,7 +71,7 @@ COMPONENT_PREP_ACTION = \
 # common targets
 build:		$(BUILD_32_and_64)
 
-include ../../../make-rules/shared-targets.mk
+include $(WS_MAKE_RULES)/shared-targets.mk
 
 # mozldap proto looks to ugly after "gmake install ..."
 # so some cleanup is needed
@@ -87,4 +87,4 @@ test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

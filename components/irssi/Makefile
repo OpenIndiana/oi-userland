@@ -22,9 +22,9 @@ COMPONENT_ARCHIVE_HASH=	sha256:c12d16fb605103d7c256ddce44012dc396af57f3771e086d0
 COMPONENT_ARCHIVE_URL=	http://irssi.org/files/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://irssi.org/
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
 
@@ -47,4 +47,4 @@ test:		$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

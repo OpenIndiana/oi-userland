@@ -20,7 +20,7 @@ COMPONENT_VERSION=	2.32.1
 COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GNOME CORBA ORB and component framework
 
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 #PKGLINT=/bin/true
 

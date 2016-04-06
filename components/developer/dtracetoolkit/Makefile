@@ -25,8 +25,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:f4f5df564b79103088731813cbc5c1bab0cb4dec98d2700b8583af190c695266
 COMPONENT_ARCHIVE_URL=	http://www.brendangregg.com/DTraceToolkit/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # common targets
 build:		$(BUILD_32)

@@ -29,9 +29,9 @@ COMPONENT_PROJECT_URL = http://xorg.freedesktop.org
 
 LD_OPTIONS += -M $(COMPONENT_DIR)/mapfile-vers
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 build: $(BUILD_32_and_64)
 

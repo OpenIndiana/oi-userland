@@ -18,7 +18,7 @@ COMPONENT_NAME=		server_install
 COMPONENT_VERSION=	0.1
 COMPONENT_SUMMARY=	Cluster with common applications for servers
 
-include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 #PKGLINT=/bin/true
 

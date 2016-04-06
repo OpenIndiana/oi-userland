@@ -27,9 +27,9 @@ COMPONENT_ARCHIVE=	$(COMPONENT_NAME)_$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:df19830fe61017a874e23d8cf751f44611109622362ef68840a16fdd07f84fee
 COMPONENT_ARCHIVE_URL=	http://pkgs.fedoraproject.org/repo/pkgs/php-idn/$(COMPONENT_ARCHIVE)/d47be0c38ad91e6464e599825b82e6b0/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CLEAN_PATHS +=	package.xml
 

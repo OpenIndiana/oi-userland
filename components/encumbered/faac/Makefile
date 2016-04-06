@@ -30,10 +30,10 @@ COMPONENT_LICENSE_FILE = COPYING
 COMPONENT_CLASSIFICATION = Applications/Sound and Video
 COMPONENT_FMRI = audio/faac
 
-include $(WS_TOP)/make-rules/encumbered.mk
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/encumbered.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))

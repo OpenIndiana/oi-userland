@@ -21,9 +21,9 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:25bc4723955f4e352935258002af14a14a9810b491a19400d76fcdfa9d04b28f
 COMPONENT_ARCHIVE_URL=	http://ru2.php.net/get/$(COMPONENT_ARCHIVE)/from/this/mirror
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH= /usr/bin:/usr/gnu/bin:/usr/sbin
 

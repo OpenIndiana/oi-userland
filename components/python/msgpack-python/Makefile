@@ -25,9 +25,9 @@ COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 
 PYTHON_VERSIONS=        2.6 2.7 3.4
 
-include $(WS_TOP)/make-rules/prep.mk
+include $(WS_MAKE_RULES)/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # common targets
 build:		$(BUILD_32)
@@ -36,4 +36,4 @@ install:	$(INSTALL_32)
 
 test:           $(NO_TEST)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

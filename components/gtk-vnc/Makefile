@@ -27,9 +27,9 @@ COMPONENT_ARCHIVE_URL= \
   http://download.gnome.org/sources/$(COMPONENT_NAME)/0.5/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://wiki.gnome.org/Projects/gtk-vnc
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 PATH = /usr/bin:/usr/gnu/bin:/usr/perl5/bin
 

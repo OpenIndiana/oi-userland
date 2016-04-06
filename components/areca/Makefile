@@ -41,9 +41,9 @@ COMPONENT_ARCHIVE_URL=	$(EXTERNAL_ARCHIVE_MIRROR)/$(COMPONENT_ARCHIVE)
 
 COMPONENT_BUGDB=	utility/areca
 
-include ../../make-rules/prep.mk
-include ../../make-rules/ant.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ant.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_BUILD_TARGETS += install -buildfile build.xml
 COMPONENT_BUILD_ENV += ANT_OPTS="-Dfile.encoding=iso-8859-1"
@@ -58,4 +58,4 @@ test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

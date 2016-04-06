@@ -58,9 +58,9 @@ CFLAGS += -erroff=E_TRAILING_COMMA_IN_ENUM
 CFLAGS += -erroff=E_STATEMENT_NOT_REACHED
 CFLAGS += -erroff=E_EMPTY_TRANSLATION_UNIT
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS +=	--with-cflags="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	--enable-opaque-lsa
@@ -83,4 +83,4 @@ build:		$(BUILD_32)
 install:	$(INSTALL_32)
 test:	$(NO_TESTS)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

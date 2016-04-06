@@ -35,8 +35,8 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	https://pkgs.fedoraproject.org/repo/extras/python-logilab-common/$(COMPONENT_ARCHIVE)/a745888475d988300a76b0c87a5f4381/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/logilab-common
 
-include ../../make-rules/prep.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
 include ../../make-rules/setup.py.mk
 
 # rename pytest to its versioned name; mediated links (depending on
@@ -77,4 +77,4 @@ test:	$(TEST_NO_ARCH)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

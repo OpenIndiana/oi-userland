@@ -30,9 +30,9 @@ COMPONENT_LICENSE = GPLv2
 COMPONENT_FMRI = library/desktop/libvisual/plugins
 COMPONENT_CLASSIFICATION = Desktop (GNOME)/Libraries
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc

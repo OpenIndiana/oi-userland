@@ -36,9 +36,9 @@ COMPONENT_ARCHIVE_HASH= \
     sha256:c11e896dffa1bfbc49462965d3f6dec45534e34068603546d9a236f2aa669921
 COMPONENT_BUGDB=	service/dhcp-server
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Parallel build fails
 COMPONENT_BUILD_ARGS =
@@ -70,4 +70,4 @@ test:	$(TEST_32)
 $(PROTO_DIR)/dhcpd.leases:	$(INSTALL_32)
 	$(TOUCH) $@
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

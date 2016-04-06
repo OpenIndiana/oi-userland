@@ -25,9 +25,9 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL= \
   ftp://sources.redhat.com/pub/docbook-tools/new-trials/SOURCES/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 XMLCATALOG=$(PROTO_DIR)/etc/xml/catalog
 

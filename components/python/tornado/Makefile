@@ -25,9 +25,9 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:14d392cf14698eba75b9299748fa83716f7c02fc49684dfc5011668c30ba6b00
 COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/source/t/tornado/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
+include $(WS_MAKE_RULES)/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # common targets
 build:		$(BUILD_32_and_64)
@@ -36,4 +36,4 @@ install:	$(INSTALL_32_and_64)
 
 test:           $(NO_TEST)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

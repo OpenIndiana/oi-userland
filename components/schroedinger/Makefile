@@ -30,9 +30,9 @@ COMPONENT_LICENSE_FILE = COPYING.LGPL
 COMPONENT_CLASSIFICATION = System/Media
 COMPONENT_FMRI = library/video/libschroedinger
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # Build can't create generated sources without this
 COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))

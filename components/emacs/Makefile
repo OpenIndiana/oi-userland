@@ -32,9 +32,9 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/emacs/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/emacs
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 # we build three different variants of emacs for our users. As Solaris
 # always has a 64-bit kernel, and 64-bit emacs can handle larger files,
@@ -180,4 +180,4 @@ test:	$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk

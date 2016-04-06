@@ -25,9 +25,9 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:1298a2f1b2f4c4a7b921cccd159e4e42f6d7b0fb75c86c0cdecfc71f061833fa
 COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/source/j/jsonschema/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
+include $(WS_MAKE_RULES)/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_POST_INSTALL_ACTION = \
         (cd $(PROTO_DIR)/usr/bin ; \
@@ -40,4 +40,4 @@ install:	$(INSTALL_NO_ARCH)
 
 test:           $(NO_TEST)
 
-include $(WS_TOP)/make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk
