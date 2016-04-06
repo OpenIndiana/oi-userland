@@ -23,7 +23,7 @@
 #
 
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 . /lib/svc/share/smf_include.sh
@@ -57,8 +57,7 @@ typeset -r PFEXEC=/usr/bin/pfexec
 typeset -r MKDIR=/usr/bin/mkdir
 typeset -r CHOWN=/usr/bin/chown
 typeset -r PKILL=/usr/bin/pkill
-typeset -r DLADM=/usr/sbin/dladm
-typeset -r FLOWADM=/usr/sbin/flowadm
+typeset -r IPADM=/usr/sbin/ipadm
 
 errlog () {
 	echo $1 >&2
@@ -93,7 +92,7 @@ start_ovsdb_server() {
 	typeset -r OVSDB_PIDFILE=${OVS_TMP_DIR}/ovsdb-server.pid
 
 	${OVSDB_SERVER_PATH} ${OVSDB_DATABASE} \
-	    -vconsole:emer -vsyslog:err -vfile:info \
+	    -vconsole:emer -vsyslog:off -vfile:info \
 	    --remote=punix:${OVSDB_REMOTE} \
 	    --remote=db:Open_vSwitch,Open_vSwitch,manager_options \
 	    --private-key=db:Open_vSwitch,SSL,private_key \
@@ -127,6 +126,7 @@ stop_vswitch_server() {
 
         ${OVS_VSCTL} list-br |
                 while read BRIDGENAME; do
+			${PFEXEC} ${IPADM} disable-if -t ${BRIDGENAME} >/dev/null 2>&1
                         ${OVS_CLEAN_PATH} delete-vnic ${BRIDGENAME}
                         if [ $? -ne 0 ]; then
                                 errlog "Error $? removing ${BRIDGENAME} VNIC"
@@ -155,8 +155,8 @@ start_vswitch_server() {
 
 	create_ovs_tempdir
 
-	${OVS_VSWITCHD_PATH} unix:${OVSDB_REMOTE} \
-	    -vconsole:emer -vsyslog:err -vfile:info --mlockall --no-chdir \
+	 ${PFEXEC} ${OVS_VSWITCHD_PATH} unix:${OVSDB_REMOTE} \
+	    -vconsole:emer -vsyslog:off -vfile:info --mlockall --no-chdir \
 	    --log-file=${VSWITCHD_LOGFILE} \
 	    --pidfile=${VSWITCHD_PIDFILE} \
 	    --detach
@@ -164,6 +164,12 @@ start_vswitch_server() {
 		errlog "${OVS_VSWITCHD} failed with $?"
 		exit $SMF_EXIT_ERR_FATAL
 	fi
+
+
+	${OVS_VSCTL} list-br |
+		while read BRIDGENAME; do
+			${PFEXEC} ${IPADM} enable-if -t ${BRIDGENAME} >/dev/null 2>&1
+		done
 }
 
 case "$1" in

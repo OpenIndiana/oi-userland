@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
  */
 
 /*
@@ -25,14 +25,24 @@
 #include <stdbool.h>
 
 /*
+ * When network devices are constructed, the internal devices (i.e., bridges)
+ * are initially created over this etherstub and are moved when uplink ports
+ * are added to the bridge.
+ */
+#define	NETDEV_IMPL_ETHERSTUB	"ovs.etherstub0"
+
+/*
  * These functions are Solaris specific, so they should be used directly only by
  * Solaris-specific code.
  */
 
 struct netdev;
 
+extern struct shash port_to_bridge_map;
+
 int netdev_create_impl_etherstub(void);
 void netdev_delete_impl_etherstub(void);
 boolean_t netdev_impl_etherstub_exists(void);
+char *netdev_solaris_get_class(struct netdev *);
 
 #endif	/* NETDEV_SOLARIS_H */

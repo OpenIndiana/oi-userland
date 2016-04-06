@@ -20,7 +20,7 @@ information: Portions Copyright [yyyy] [name of copyright owner]
 
 CDDL HEADER END
 
- Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+ Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 
  NOTE:  This service manifest is not editable; its contents will
  be overwritten by package or patch operations, including
@@ -32,11 +32,11 @@ CDDL HEADER END
 
     <service name="application/openvswitch/vswitch-server" type="service" version="1">
         <dependency
-            name='multiuser'
+            name='net-physical'
             grouping='require_all'
-            restart_on='error'
+            restart_on='none'
             type='service'>
-            <service_fmri value='svc:/milestone/multi-user:default'/>
+            <service_fmri value='svc:/network/physical:default'/>
         </dependency>
 
         <dependency
@@ -47,6 +47,23 @@ CDDL HEADER END
             <service_fmri
                 value='svc:/application/openvswitch/ovsdb-server:default'/>
         </dependency>
+
+	<dependency
+            name='rad-local'
+            grouping='require_all'
+            restart_on='refresh'
+            type='service'>
+            <service_fmri
+                value='svc:/system/rad:local'/>
+	</dependency> 
+
+	<dependent
+	    name='ovs-network'
+	    grouping='optional_all'
+	    restart_on='none'>
+	    <service_fmri
+		value='svc:/milestone/network' />
+	</dependent>
 
         <instance name='default' enabled='true'>
             <exec_method

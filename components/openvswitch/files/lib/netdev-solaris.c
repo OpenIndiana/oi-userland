@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
  */
 
 /*
@@ -65,6 +65,7 @@
 
 #include "netdev-solaris.h"
 #include "util-solaris.h"
+#include "dpif-solaris.h"
 
 /*
  * Enable vlog() for this module
@@ -124,13 +125,6 @@ enum {
 };
 
 /*
- * When network devices are constructed, the internal devices (i.e., bridges)
- * are initially created over this etherstub and are moved when uplink ports
- * are added to the bridge.
- */
-#define	NETDEV_IMPL_ETHERSTUB	"ovs.etherstub0"
-
-/*
  * Used to track state of IP plumbing on network devices.
  */
 #define	SOLARIS_IPV4 0x01
@@ -152,6 +146,9 @@ static struct ovs_mutex	kstat_mutex = OVS_MUTEX_INITIALIZER;
 
 static int netdev_solaris_init(void);
 static struct netdev_solaris *netdev_solaris_cast(const struct netdev *);
+
+/* Maintaining a mapping of every netdev->name to its bridge name. */
+struct shash port_to_bridge_map = SHASH_INITIALIZER(&port_to_bridge_map);
 
 /*
  * An instance of a traffic control class.
@@ -465,6 +462,12 @@ netdev_solaris_cast(const struct netdev *netdev)
 	return (CONTAINER_OF(netdev, struct netdev_solaris, up));
 }
 
+char *
+netdev_solaris_get_class(struct netdev *netdev)
+{
+	return ((netdev_solaris_cast(netdev))->class);
+}
+
 static int
 netdev_solaris_plumb(const struct netdev *netdev_, sa_family_t af)
 {
@@ -524,13 +527,19 @@ netdev_solaris_unplumb(const struct netdev *netdev_, sa_family_t af)
 		proto = SOLARIS_IPV6;
 	}
 
-	if ((netdev->implicitly_plumbed & proto) == 0)
+	if ((netdev->implicitly_plumbed & proto) == 0 &&
+	    (netdev->up.netdev_class != &netdev_internal_class)) {
 		return (0);
+	}
 
 	error = solaris_unplumb_if(sock, netdev_name, af);
 	if (error != 0) {
-		VLOG_ERR("%s device could not be unplumbed", netdev_name);
-		return (error);
+		if (error == ENXIO &&
+		    netdev->up.netdev_class == &netdev_internal_class) {
+			return (0);
+		}
+		VLOG_ERR("%s device could not be unplumbed %d", netdev_name,
+		    error);
 	}
 	VLOG_ERR("%s device unplumbed for %s", netdev_name, astring);
 	netdev->implicitly_plumbed &= ~proto;
@@ -707,20 +716,75 @@ netdev_solaris_alloc(void)
 	return (&netdev->up);
 }
 
+static void
+netdev_solaris_add_port_to_bridge_mapping(const struct netdev
+		*netdev, const char *brname)
+{
+	VLOG_DBG("netdev_solaris_add_port_to_bridge_mapping: adding a mapping "
+	    "<%s,%s> to port_to_bridge_map", netdev->name, brname);
+	shash_add_nocopy(&port_to_bridge_map, netdev->name, brname);
+}
+
 static int
 netdev_solaris_unconfigure_uplink(const struct netdev *netdev_)
 {
 	struct netdev_solaris	*netdev = netdev_solaris_cast(netdev_);
 	const char		*netdev_name = netdev_get_name(netdev_);
 	int			error;
+	char			curr_lower[DLADM_PROP_VAL_MAX];
+	struct netdev		*netdev_to_migrate = NULL;
+	char			*new_lower = NULL;
+	bool			b_error = false;
 
 	VLOG_DBG("netdev_solaris_unconfigure_uplink device %s", netdev_name);
 
-	error = solaris_modify_vnic(NETDEV_IMPL_ETHERSTUB, netdev->brname);
-	if (error != 0 && error != ENODEV) {
-		VLOG_ERR("failed to unconfigure %s as uplink for %s: "
-		    "%s", netdev_name, netdev->brname,
-		    ovs_strerror(error));
+	error = solaris_get_dlprop(netdev->brname, "lower-link", "current",
+	    curr_lower, sizeof (curr_lower));
+	if (error) {
+		VLOG_ERR("netdev_solaris_unconfigure_uplink couldn't obtain "
+		    "bridge(%s) lowerlink", netdev->brname);
+		return (0);
+	}
+
+	if (strcmp(netdev_name, curr_lower) == 0) {
+		/*
+		 * The uplink which we are trying to remove has bridge vnic on
+		 * top of it. We need to migrate bridge vnic to a different
+		 * uplink or to ovs.etherstub0 if uplink_port_list is empty.
+		 */
+		VLOG_DBG("netdev_solaris_unconfigure_uplink: unconfiguring the "
+		    "uplink (%s) which is the bridge %s's lowerlink (%s)",
+		    netdev_name, netdev->brname, curr_lower);
+
+		netdev_to_migrate = dpif_solaris_obtain_netdev_to_migrate(
+		    netdev->brname, &b_error);
+		if (b_error) {
+			VLOG_ERR("netdev_solaris_unconfigure_uplink: couldn't "
+			    "obtain netdev_to_migrate for bridge vnic %s",
+			    netdev->brname);
+			return (0);
+		}
+
+		if (netdev_to_migrate == NULL)
+			new_lower = NETDEV_IMPL_ETHERSTUB;
+		else
+			new_lower = netdev_to_migrate->name;
+
+		VLOG_DBG("netdev_solaris_unconfigure_uplink migrating bridge "
+		    "vnic to %s", new_lower);
+
+		error = solaris_modify_vnic(new_lower, netdev->brname);
+		if (error != 0) {
+			VLOG_ERR("failed to unconfigure %s as uplink for %s: "
+			    "%s", netdev_name, netdev->brname,
+			    ovs_strerror(error));
+			return (0);
+		}
+
+		/*
+		 * reset internal port's physname and refresh its port channel.
+		 */
+		dpif_solaris_migrate_internal_port(netdev->brname, new_lower);
 	}
 	return (0);
 }
@@ -730,11 +794,14 @@ netdev_solaris_configure_uplink(const struct netdev *netdev_,
     const char *brname)
 {
 	struct netdev_solaris	*netdev = netdev_solaris_cast(netdev_);
-	const char		*netdev_name = netdev_get_name(netdev_);
-	char			buffer[DLADM_PROP_VAL_MAX];
+	const char		*new_uplink = netdev_get_name(netdev_);
+	char			curr_lower[DLADM_PROP_VAL_MAX];
 	int			error;
+	const char		*netdev_existing_class;
+	struct netdev		*i_netdev;
+	boolean_t		migrated = B_FALSE;
 
-	VLOG_DBG("netdev_solaris_configure_uplink device %s", netdev_name);
+	VLOG_DBG("netdev_solaris_configure_uplink device %s", new_uplink);
 
 	/*
 	 * Normally, we would expect to see that the bridge VNIC has already
@@ -745,12 +812,19 @@ netdev_solaris_configure_uplink(const struct netdev *netdev_,
 	 * already exist.
 	 */
 	error = solaris_get_dlprop(brname, "lower-link", "current",
-	    buffer, sizeof (buffer));
+	    curr_lower, sizeof (curr_lower));
+	VLOG_DBG("netdev_solaris_configure_uplink lower-link:%s", curr_lower);
+
 	if (error == ENODEV) {
-		VLOG_DBG("%s vnic being created on %s",
-		    brname, netdev_name);
-		error = solaris_create_vnic(netdev_name, brname);
-		if (error != 0) {
+		/*
+		 * No implicit VNIC being created yet, create it now
+		 */
+		VLOG_DBG("%s vnic being created on %s", brname, new_uplink);
+		error = solaris_create_vnic(new_uplink, brname);
+		if (error == 0) {
+			(void) strlcpy(netdev->brname, brname,
+			    sizeof (netdev->brname));
+		} else {
 			VLOG_ERR("Failed to create vnic for %s: %s",
 			    brname, ovs_strerror(error));
 		}
@@ -765,34 +839,65 @@ netdev_solaris_configure_uplink(const struct netdev *netdev_,
 	 * If the lower-link is already set correctly, then return with
 	 * success.
 	 */
-	if (strcmp(buffer, netdev_name) == 0) {
+	if (strcmp(curr_lower, new_uplink) == 0) {
+		VLOG_DBG("netdev_solaris_configure_uplink lower-link(%s) is "
+		    "already correctly set. (%s)", curr_lower, new_uplink);
 		error = 0;
 		goto exit;
 	}
 
-	/*
-	 * If the lower-link is already set to something other than the
-	 * etherstub, something is wrong.
-	 */
-	if (strcmp(buffer, NETDEV_IMPL_ETHERSTUB) != 0) {
-		VLOG_ERR("Bridge already has uplink %s", buffer);
-		error = EEXIST;
-		goto exit;
-	}
+	if (strcmp(curr_lower, NETDEV_IMPL_ETHERSTUB) == 0) {
+		/*
+		 * Bridge vnic is on ovs.etherstub0. We have to migrate the
+		 * bridge vnic to the uplink
+		 */
+		VLOG_DBG("bridge vnic %s is on %s, migrating it to %s",
+		    brname, curr_lower, new_uplink);
 
-	/*
-	 * This is the "normal" case, where the bridge VNIC existed and had
-	 * the etherstub as its lower-link. Move the VNIC to its uplink.
-	 */
-	error = solaris_modify_vnic(netdev_name, brname);
-	if (error != 0) {
-		VLOG_ERR("failed to configure %s as uplink: %s",
-		    netdev_name, ovs_strerror(error));
-		goto exit;
+		error = solaris_modify_vnic(new_uplink, brname);
+		if (error != 0) {
+			VLOG_ERR("failed to configure %s as uplink: %s",
+			    new_uplink, ovs_strerror(error));
+			goto exit;
+		}
+		migrated = B_TRUE;
+	} else {
+		/*
+		 * Bridge vnic is already on an uplink. Now we see if the
+		 * uplink to be added is other than etherstub or not.
+		 * If the bridge vnic is currently residing on an etherstub
+		 * and the one to be configured is not etherstub,
+		 * then we migrate the bridge vnic.
+		 */
+		i_netdev = netdev_from_name(curr_lower);
+		if (!i_netdev) {
+			VLOG_ERR("netdev_solaris_configure_uplink error "
+			    "in fetching lower-link netdev for %s", curr_lower);
+			goto exit;
+		}
+		/* i_netdev->ref_cnt--; */
+		netdev_close(i_netdev);
+
+		netdev_existing_class = netdev_solaris_get_class(i_netdev);
+		if ((strcmp(netdev_existing_class, "etherstub") == 0) &&
+		    (strcmp(netdev->class, "etherstub") != 0)) {
+			error = solaris_modify_vnic(new_uplink, brname);
+			if (error != 0) {
+				VLOG_ERR("failed to configure %s as uplink: %s",
+				    new_uplink, ovs_strerror(error));
+				goto exit;
+			}
+			migrated = B_TRUE;
+		}
 	}
 	(void) strlcpy(netdev->brname, brname, sizeof (netdev->brname));
 
 exit:
+	/*
+	 * reset internal port's physname and refresh its port channel.
+	 */
+	if (migrated)
+		dpif_solaris_migrate_internal_port(brname, new_uplink);
 	return (error);
 }
 
@@ -2339,6 +2444,7 @@ netdev_internal_get_status(const struct netdev *netdev OVS_UNUSED,
 	netdev_solaris_update_flags,					\
 	netdev_solaris_configure_uplink,				\
 	netdev_solaris_is_uplink,					\
+	netdev_solaris_add_port_to_bridge_mapping,			\
 	NULL,								\
 	NULL,								\
 	NULL,								\

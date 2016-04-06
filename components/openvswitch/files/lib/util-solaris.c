@@ -629,8 +629,8 @@ solaris_init_rad()
 		rc_free_uri(rc_uri);
 		if (rad_conn == NULL)
 			return (ENODEV); /* Not sure what to return */
-	}
-	return (0);
+		}
+		return (0);
 }
 
 static rc_err_t
@@ -972,7 +972,6 @@ solaris_create_vnic(const char *linkname, const char *vnicname)
 	dlmgr_DatalinkError_t		*derrp = NULL;
 	dlmgr_DLValue_t			*old_val = NULL;
 	dlmgr_DLValue_t			name_val;
-	dlmgr_DLValue_t			temp_val;
 	dlmgr_DLValue_t			type_val;
 	dlmgr_DLValue_t			macaddr_info_val;
 	rc_instance_t			*linkmgr = NULL;
@@ -994,16 +993,6 @@ solaris_create_vnic(const char *linkname, const char *vnicname)
 	name_val.ddlv_sval = strdupa(linkname);
 	status = dlmgr__rad_dict_string_DLValue_put(prop, "lower-link",
 	    &name_val, &old_val);
-	if (status != RCE_OK)
-		goto out;
-	dlmgr_DLValue_free(old_val);
-	old_val = NULL;
-
-	bzero(&temp_val, sizeof (temp_val));
-	temp_val.ddlv_type = DDLVT_BOOLEAN;
-	temp_val.ddlv_bval = &b_true;
-	status = dlmgr__rad_dict_string_DLValue_put(prop, "temporary",
-	    &temp_val, &old_val);
 	if (status != RCE_OK)
 		goto out;
 	dlmgr_DLValue_free(old_val);
@@ -1143,39 +1132,17 @@ out:
 int
 solaris_delete_vnic(const char *vnicname)
 {
-	dlmgr__rad_dict_string_DLValue_t *prop = NULL;
 	dlmgr_DatalinkError_t		*derrp = NULL;
-	dlmgr_DLValue_t			*old_val = NULL;
-	dlmgr_DLValue_t			temp_val;
 	rc_instance_t			*linkmgr = NULL;
 	rc_err_t			status;
 	int				err = 0;
 
 	status = dlmgr_DatalinkManager__rad_lookup(rad_conn, B_TRUE,
 	    &linkmgr, 0);
-	if (status != RCE_OK) {
-		err = EINVAL;
-		goto out;
-	}
+	if (status != RCE_OK)
+		return (EINVAL);
 
-	prop = dlmgr__rad_dict_string_DLValue_create(linkmgr);
-	if (prop == NULL) {
-		err = EINVAL;
-		goto out;
-	}
-
-	bzero(&temp_val, sizeof (temp_val));
-	temp_val.ddlv_type = DDLVT_BOOLEAN;
-	temp_val.ddlv_bval = &b_true;
-	status = dlmgr__rad_dict_string_DLValue_put(prop, "temporary",
-	    &temp_val, &old_val);
-	if (status != RCE_OK) {
-		err = EINVAL;
-		goto out;
-	}
-	dlmgr_DLValue_free(old_val);
-
-	status = dlmgr_DatalinkManager_deleteVNIC(linkmgr, vnicname, prop,
+	status = dlmgr_DatalinkManager_deleteVNIC(linkmgr, vnicname, NULL,
 	    &derrp);
 	if (status != RCE_OK) {
 		err = -1;
@@ -1188,8 +1155,6 @@ solaris_delete_vnic(const char *vnicname)
 	}
 	dlmgr_DatalinkError_free(derrp);
 
-out:
-	dlmgr__rad_dict_string_DLValue_free(prop);
 	rc_instance_rele(linkmgr);
 	return (err);
 }
@@ -1197,10 +1162,7 @@ out:
 int
 solaris_create_etherstub(const char *name)
 {
-	dlmgr__rad_dict_string_DLValue_t *prop = NULL;
 	dlmgr_DatalinkError_t		*derrp = NULL;
-	dlmgr_DLValue_t			*old_val = NULL;
-	dlmgr_DLValue_t			temp_val;
 	rc_instance_t			*linkmgr = NULL;
 	rc_instance_t			*etherstub = NULL;
 	rc_err_t			status;
@@ -1208,22 +1170,9 @@ solaris_create_etherstub(const char *name)
 	status = dlmgr_DatalinkManager__rad_lookup(rad_conn, B_TRUE,
 	    &linkmgr, 0);
 	if (status != RCE_OK)
-		goto out;
+		return (ENOTSUP);
 
-	prop = dlmgr__rad_dict_string_DLValue_create(linkmgr);
-	if (prop == NULL)
-		goto out;
-
-	bzero(&temp_val, sizeof (temp_val));
-	temp_val.ddlv_type = DDLVT_BOOLEAN;
-	temp_val.ddlv_bval = &b_true;
-	status = dlmgr__rad_dict_string_DLValue_put(prop, "temporary",
-	    &temp_val, &old_val);
-	if (status != RCE_OK)
-		goto out;
-	dlmgr_DLValue_free(old_val);
-
-	status = dlmgr_DatalinkManager_createEtherstub(linkmgr, name, prop,
+	status = dlmgr_DatalinkManager_createEtherstub(linkmgr, name, NULL,
 	    &etherstub, &derrp);
 	if (status == RCE_SERVER_OBJECT) {
 		dpif_log(derrp->dde_err,
@@ -1232,9 +1181,6 @@ solaris_create_etherstub(const char *name)
 	}
 	rc_instance_rele(etherstub);
 	dlmgr_DatalinkError_free(derrp);
-
-out:
-	dlmgr__rad_dict_string_DLValue_free(prop);
 	rc_instance_rele(linkmgr);
 
 	return ((status != RCE_OK) ? ENOTSUP : 0);
@@ -1243,32 +1189,16 @@ out:
 int
 solaris_delete_etherstub(const char *name)
 {
-	dlmgr__rad_dict_string_DLValue_t *prop = NULL;
 	dlmgr_DatalinkError_t		*derrp = NULL;
-	dlmgr_DLValue_t			*old_val = NULL;
-	dlmgr_DLValue_t			temp_val;
 	rc_instance_t			*linkmgr = NULL;
 	rc_err_t			status;
 
 	status = dlmgr_DatalinkManager__rad_lookup(rad_conn, B_TRUE,
 	    &linkmgr, 0);
 	if (status != RCE_OK)
-		goto out;
+		return (ENOTSUP);
 
-	prop = dlmgr__rad_dict_string_DLValue_create(linkmgr);
-	if (prop == NULL)
-		goto out;
-
-	bzero(&temp_val, sizeof (temp_val));
-	temp_val.ddlv_type = DDLVT_BOOLEAN;
-	temp_val.ddlv_bval = &b_true;
-	status = dlmgr__rad_dict_string_DLValue_put(prop, "temporary",
-	    &temp_val, &old_val);
-	if (status != RCE_OK)
-		goto out;
-	dlmgr_DLValue_free(old_val);
-
-	status = dlmgr_DatalinkManager_deleteEtherstub(linkmgr, name, prop,
+	status = dlmgr_DatalinkManager_deleteEtherstub(linkmgr, name, NULL,
 	    &derrp);
 	if (status == RCE_SERVER_OBJECT) {
 		dpif_log(derrp->dde_err,
@@ -1276,10 +1206,8 @@ solaris_delete_etherstub(const char *name)
 		    name, derrp->dde_errmsg);
 	}
 	dlmgr_DatalinkError_free(derrp);
-
-out:
-	dlmgr__rad_dict_string_DLValue_free(prop);
 	rc_instance_rele(linkmgr);
+
 	return ((status != RCE_OK) ? ENOTSUP : 0);
 }
 
@@ -1436,66 +1364,39 @@ flow_addr2str(struct in6_addr *f6, struct in6_addr *m6, uint32_t f4,
 	}
 }
 
+#define	FP_NAME_VAL_DELIM		'@'
+#define	FP_MULTI_ACTION_DELIM		'#'
+#define	FP_ACTION_NAME_VALUE_DELIM	'-'
+#define	FP_ACTION_MULTI_VAL_DELIM	'^'
+#define	FP_MULTI_ACTION_DELIM_STR	"#"
+
 static int
-flow_ofports2propstr(uint32_t *ofports, int nofports, char ***ofportstr,
-    int *cnt)
+flow_ofports2propstr(char *str, size_t strsize, uint32_t *ofports,
+    int nofports)
 {
-	dladm_status_t		dlstatus;
-	mac_propval_range_t	*pv_range = NULL;
-	mac_propval_uint32_range_t *ur;
-	char			buf[DLADM_STRSIZE];
-	int			i, error = 0;
-	char			**strs;
+	char	buf[DLADM_STRSIZE];
+	int	i;
 
-	*ofportstr = NULL;
-	*cnt = 0;
-	if (nofports != 0) {
-		/* Sort OF port list and convert it to a mac_propval_range */
-		dlstatus = dladm_list2range(ofports, nofports,
-		    MAC_PROPVAL_UINT32, &pv_range);
-		if (dlstatus != DLADM_STATUS_OK) {
-			error = EINVAL;
-			goto out;
-		}
+	if (nofports == 0) {
+		(void) snprintf(buf, sizeof (buf), "%soutports%cdrop",
+		    strlen(str) == 0 ? "" : FP_MULTI_ACTION_DELIM_STR,
+		    FP_NAME_VAL_DELIM);
 
-		strs = calloc(pv_range->mpr_count, sizeof (char *));
-		if (strs == NULL) {
-			error = ENOMEM;
-			goto out;
-		}
-		/*
-		 * Write ranges and individual elements into their own
-		 * buffer.
-		 */
-		for (i = 0; i < pv_range->mpr_count; i++, ur++) {
-			ur = &pv_range->mpr_range_uint32[i];
-			if (ur->mpur_min == ur->mpur_max) {
-				/* single element */
-				(void) snprintf(buf, sizeof (buf), "%u",
-				    ur->mpur_min);
-				strs[i] = strdup(buf);
-			} else {
-				/* range of elements */
-				(void) snprintf(buf, sizeof (buf), "%u-%u",
-				    ur->mpur_min, ur->mpur_max);
-				strs[i] = strdup(buf);
-			}
-			if (strs[i] == NULL) {
-				while (i >= 0) {
-					free(strs[i]);
-					i--;
-				}
-				free(strs);
-				error = ENOMEM;
-				goto out;
-			}
-		}
-		*cnt = pv_range->mpr_count;
-		*ofportstr = strs;
+		if (strlcat(str, buf, strsize) >= strsize)
+			return (EINVAL);
+
+		return (0);
 	}
-out:
-	free(pv_range);
-	return (error);
+
+	for (i = 0; i < nofports; i++) {
+		(void) snprintf(buf, sizeof (buf), "%soutports%c%u",
+		    (i == 0) && strlen(str) == 0 ? "" :
+		    FP_MULTI_ACTION_DELIM_STR, FP_NAME_VAL_DELIM, ofports[i]);
+
+		if (strlcat(str, buf, strsize) >= strsize)
+			return (EINVAL);
+	}
+	return (0);
 }
 
 static int
@@ -1506,7 +1407,7 @@ dlmgr_DLValue_putstring(dlmgr__rad_dict_string_DLValue_t *ddvp,
 	dlmgr_DLValue_t  new_val;
 	rc_err_t status;
 
-	if (strlen(buf) != 0) {
+	if (strlen(key) != 0) {
 		bzero(&new_val, sizeof (new_val));
 		new_val.ddlv_type = DDLVT_STRING;
 		new_val.ddlv_sval = buf;
@@ -1549,41 +1450,6 @@ dlmgr_DLValue_fm_putstring(dlmgr__rad_dict_string_DLValue_t *ddvp,
 		snprintf(dstr, dstrlen, "%s,%s=%s/%s", dstr, key, buf, rbuf);
 	}
 	return (0);
-}
-
-/*
- * Caller allocated "pvals" is freed here
- */
-static int
-dlmgr_DLValue_putstrings(dlmgr__rad_dict_string_DLValue_t *ddvp,
-    const char *key, char **pvals, int pvalcnt, char *dstr, size_t dstrlen)
-{
-	dlmgr_DLValue_t  *old_val = NULL;
-	dlmgr_DLValue_t  new_val;
-	rc_err_t status;
-	int i, err = 0;
-
-	if (pvalcnt != 0) {
-		bzero(&new_val, sizeof (new_val));
-		new_val.ddlv_type = DDLVT_STRINGS;
-		new_val.ddlv_slist = pvals;
-		new_val.ddlv_slist_count = pvalcnt;
-		status = dlmgr__rad_dict_string_DLValue_put(
-		    ddvp, key, &new_val, &old_val);
-		if (status != RCE_OK) {
-			err = EINVAL;
-			goto out;
-		}
-		for (i = 0; i < pvalcnt; i++)
-			snprintf(dstr, dstrlen, "%s,%s=%s", dstr, key,
-			    pvals[i]);
-		dlmgr_DLValue_free(old_val);
-out:
-		for (i = 0; i < pvalcnt; i++)
-			free(pvals[i]);
-		free(pvals);
-	}
-	return (err);
 }
 
 static int
@@ -1815,7 +1681,7 @@ solaris_flow_to_DLVal(struct flow *f, struct flow *m,
 			goto out;
 	}
 
-	if (f->vlan_tci != 0 || m->vlan_tci != 0) {
+	if ((f->vlan_tci != 0) || (m->vlan_tci != htons(0xffff))) {
 		err = dlmgr_DLValue_fm_putulong(ddvp, ddmp,
 		    "vlan-tci", ntohs(f->vlan_tci),
 		    ntohs(m->vlan_tci), dstr, sizeof (dstr));
@@ -1843,7 +1709,7 @@ out:
 }
 
 static int
-solaris_outports_action_to_DLVal(dlmgr__rad_dict_string_DLValue_t *prop,
+solaris_maxbw_action_to_DLVal(dlmgr__rad_dict_string_DLValue_t *prop,
     void *cookie, uint32_t ofports[], int nofports, uint32_t queueid,
     char *dstr, size_t dstrlen)
 {
@@ -1851,248 +1717,187 @@ solaris_outports_action_to_DLVal(dlmgr__rad_dict_string_DLValue_t *prop,
 	const char *max_rate = NULL;
 	uint64_t maxbw;
 	char *endp = NULL;
-	char **pvals = NULL;
-	int  pvalcnt, err;
+	int err;
 
 	smap_init(&details);
 	if (queueid == UINT32_MAX || nofports != 1)
-		goto outport;
+		goto done;
 
 	if ((err = dpif_solaris_get_priority_details(cookie, ofports[0],
 	    queueid, &details)) != 0) {
-		smap_destroy(&details);
-		goto outport;
+		goto done;
 	}
 	/* min-rate and priority not currently used */
 	max_rate = smap_get(&details, "max-rate");
 	if (max_rate == NULL)
-		goto outport;
+		goto done;
 
 	errno = 0;
 	maxbw = strtoull(max_rate, &endp, 10);
 	if (errno != 0 || *endp != '\0')
-		goto outport;
+		goto done;
 
 	err = dlmgr_DLValue_putulong(prop, "max-bw", maxbw, dstr, dstrlen);
 
-outport:
-	err = flow_ofports2propstr(ofports, nofports, &pvals, &pvalcnt);
-	if (err == 0) {
-		err = dlmgr_DLValue_putstrings(prop, "outports", pvals,
-		    pvalcnt, dstr, dstrlen);
-	}
+done:
 	smap_destroy(&details);
-
-	dpif_log(err, "dpif_solaris_to_outport_action PROP: %s", dstr);
 	return (err);
 }
 
 static int
-solaris_setether_action_to_DLVal(dlmgr__rad_dict_string_DLValue_t *prop,
-    const struct ovs_key_ethernet *ek, char *ds, size_t dslen)
+solaris_setether_action_to_str(char *str, size_t strsize,
+    const struct ovs_key_ethernet *ek)
 {
 	char *sstr = NULL, *dstr = NULL;
-	char **pvals = NULL;
 	char buf[DLADM_STRSIZE];
-	int err;
+	int err = 0;
 
 	sstr = _link_ntoa(ek->eth_src, NULL, ETHERADDRL, IFT_ETHER);
 	dstr = _link_ntoa(ek->eth_dst, NULL, ETHERADDRL, IFT_ETHER);
 	if (sstr != NULL && dstr != NULL) {
-		(void) snprintf(buf, sizeof (buf), "ether_src:%s,ether_dst:%s",
-		    sstr, dstr);
+		(void) snprintf(buf, sizeof (buf),
+		    "%ssetether%cether_src%c%s%cether_dst%c%s",
+		    (strlen(str) == 0) ? "" : FP_MULTI_ACTION_DELIM_STR,
+		    FP_NAME_VAL_DELIM, FP_ACTION_NAME_VALUE_DELIM, sstr,
+		    FP_ACTION_MULTI_VAL_DELIM, FP_ACTION_NAME_VALUE_DELIM,
+		    dstr);
+		if (strlcat(str, buf, strsize) >= strsize)
+			err = EINVAL;
 	}
 	free(sstr);
 	free(dstr);
-	if (sstr == NULL || dstr == NULL) {
+	if (sstr == NULL || dstr == NULL)
 		err = ENOMEM;
-		goto out;
-	}
-	pvals = calloc(1, sizeof (char *));
-	if (pvals == NULL) {
-		err = ENOMEM;
-		goto out;
-	}
-	pvals[0] = strdup(buf);
-	if (pvals[0] == NULL) {
-		err = ENOMEM;
-		free(pvals);
-		goto out;
-	}
-
-	/* TODO(gmoodalb): this should be two entries. fix later */
-	err = dlmgr_DLValue_putstrings(prop, "set-ether", pvals, 1, ds,
-	    dslen);
-
-out:
-	dpif_log(err, "solaris_setether_action_to_DLVal PROP: %s", ds);
 	return (err);
 }
 
 static int
-solaris_setipv4_action_to_DLVal(dlmgr__rad_dict_string_DLValue_t *prop,
-    const struct ovs_key_ipv4 *ipv4, char *dstr, size_t dstrlen)
+solaris_setipv4_action_to_str(char *str, size_t strsize,
+    const struct ovs_key_ipv4 *ipv4)
 {
 	struct in_addr ipaddr;
 	char *cp;
-	char **pvals = NULL;
 	char buf[DLADM_STRSIZE];
-	int err;
+	int err = 0;
 
 	ipaddr.s_addr = ipv4->ipv4_src;
 	cp = inet_ntoa(ipaddr);
-	(void) snprintf(buf, sizeof (buf), "src:%s,", cp);
+	(void) snprintf(buf, sizeof (buf), "%sset-ipv4%cdst%c%s%c",
+	    (strlen(str) == 0) ? "" : FP_MULTI_ACTION_DELIM_STR,
+	    FP_NAME_VAL_DELIM, FP_ACTION_NAME_VALUE_DELIM, cp,
+	    FP_ACTION_MULTI_VAL_DELIM);
+
 	ipaddr.s_addr = ipv4->ipv4_dst;
 	cp = inet_ntoa(ipaddr);
 	(void) snprintf(buf, sizeof (buf),
-	    "%sdst:%s,protocol:%s,tos:0x%x,hoplimit:%d",
-	    buf, cp, solaris_proto2str(ipv4->ipv4_proto), ipv4->ipv4_tos,
-	    ipv4->ipv4_ttl);
+	    "%sdst%c%s%cprotocol%c%s%ctos%c0x%x%choplimit%c%d",
+	    buf, FP_ACTION_NAME_VALUE_DELIM, cp, FP_ACTION_MULTI_VAL_DELIM,
+	    FP_ACTION_NAME_VALUE_DELIM, solaris_proto2str(ipv4->ipv4_proto),
+	    FP_ACTION_MULTI_VAL_DELIM, FP_ACTION_NAME_VALUE_DELIM,
+	    ipv4->ipv4_tos, FP_ACTION_MULTI_VAL_DELIM,
+	    FP_ACTION_NAME_VALUE_DELIM, ipv4->ipv4_ttl);
+	if (strlcat(str, buf, strsize) >= strsize)
+		err = EINVAL;
 
-	pvals = calloc(1, sizeof (char *));
-	if (pvals == NULL) {
-		err = ENOMEM;
-		goto out;
-	}
-	pvals[0] = strdup(buf);
-	if (pvals[0] == NULL) {
-		err = ENOMEM;
-		free(pvals);
-		goto out;
-	}
-
-	err = dlmgr_DLValue_putstrings(prop, "set-ipv4", pvals, 1, dstr,
-	    dstrlen);
-
-out:
-	dpif_log(err, "solaris_setipv4_action_to_DLVal PROP: %s", dstr);
 	return (err);
 }
 
 static int
-solaris_setipv6_action_to_DLVal(dlmgr__rad_dict_string_DLValue_t *prop,
-    const struct ovs_key_ipv6 *ipv6, char *dstr, size_t dstrlen)
+solaris_setipv6_action_to_str(char *str, size_t strsize,
+    const struct ovs_key_ipv6 *ipv6)
 {
 	char abuf[INET6_ADDRSTRLEN];
-	char **pvals = NULL;
 	char buf[DLADM_STRSIZE];
-	int err;
+	int err = 0;
 
 	(void) inet_ntop(AF_INET6, ipv6->ipv6_src, abuf, INET6_ADDRSTRLEN);
-	(void) snprintf(buf, sizeof (buf), "src:%s,", abuf);
+	(void) snprintf(buf, sizeof (buf),
+	    "%sset-ipv6%csrc%c%s%c", (strlen(str) == 0) ? "" :
+	    FP_MULTI_ACTION_DELIM_STR, FP_NAME_VAL_DELIM,
+	    FP_ACTION_NAME_VALUE_DELIM, abuf, FP_ACTION_MULTI_VAL_DELIM);
+
 	(void) inet_ntop(AF_INET6, ipv6->ipv6_dst, abuf, INET6_ADDRSTRLEN);
 	(void) snprintf(buf, sizeof (buf),
-	    "%sdst:%s,label:0x%x,protocol:%s,tos:0x%x,hoplimit:%d", buf, abuf,
-	    ipv6->ipv6_label, solaris_proto2str(ipv6->ipv6_proto),
-	    ipv6->ipv6_tclass, ipv6->ipv6_hlimit);
+	    "%sdst%c%s%clabel%c0x%x%cprotocol%c%s%ctos%c0x%x%choplimit%c%d",
+	    buf, FP_ACTION_NAME_VALUE_DELIM, abuf, FP_ACTION_MULTI_VAL_DELIM,
+	    FP_ACTION_NAME_VALUE_DELIM, ipv6->ipv6_label,
+	    FP_ACTION_MULTI_VAL_DELIM, FP_ACTION_NAME_VALUE_DELIM,
+	    solaris_proto2str(ipv6->ipv6_proto), FP_ACTION_MULTI_VAL_DELIM,
+	    FP_ACTION_NAME_VALUE_DELIM, ipv6->ipv6_tclass,
+	    FP_ACTION_MULTI_VAL_DELIM, FP_ACTION_NAME_VALUE_DELIM,
+	    ipv6->ipv6_hlimit);
+	if (strlcat(str, buf, strsize) >= strsize)
+		err = EINVAL;
 
-	pvals = calloc(1, sizeof (char *));
-	if (pvals == NULL) {
-		err = ENOMEM;
-		goto out;
-	}
-
-	pvals[0] = strdup(buf);
-	if (pvals[0] == NULL) {
-		err = ENOMEM;
-		free(pvals);
-		goto out;
-	}
-
-	err = dlmgr_DLValue_putstrings(prop, "set-ipv6", pvals, 1, dstr,
-	    dstrlen);
-
-out:
-	dpif_log(err, "solaris_setipv6_action_to_DLVal PROP: %s", dstr);
 	return (err);
 }
 
 static int
-solaris_settransport_action_to_DLVal(dlmgr__rad_dict_string_DLValue_t *prop,
-    const char *key, uint16_t src, uint16_t dst, char *dstr, size_t dstrlen)
+solaris_settransport_action_to_str(char *str, size_t strsize, const char *key,
+    uint16_t src, uint16_t dst)
 {
-	char **pvals = NULL;
 	char buf[DLADM_STRSIZE];
-	int err;
+	int err = 0;
 
-	(void) snprintf(buf, sizeof (buf), "sport:%d,dport:%d", src, dst);
+	(void) snprintf(buf, sizeof (buf),
+	    "%s%s%csport%c%d%cdport%c%d", (strlen(str) == 0) ? "" :
+	    FP_MULTI_ACTION_DELIM_STR, key, FP_NAME_VAL_DELIM,
+	    FP_ACTION_NAME_VALUE_DELIM, src, FP_ACTION_MULTI_VAL_DELIM,
+	    FP_ACTION_NAME_VALUE_DELIM, dst);
+	if (strlcat(str, buf, strsize) >= strsize)
+		err = EINVAL;
 
-	pvals = calloc(1, sizeof (char *));
-	if (pvals == NULL) {
-		err = ENOMEM;
-		goto out;
-	}
-	pvals[0] = strdup(buf);
-	if (pvals[0] == NULL) {
-		err = ENOMEM;
-		free(pvals);
-		goto out;
-	}
-
-	err = dlmgr_DLValue_putstrings(prop, key, pvals, 1, dstr, dstrlen);
-
-out:
-	dpif_log(err, "solaris_settransport_action_to_DLVal PROP: %s %s", key,
-	    dstr);
 	return (err);
 }
 
 static int
-solaris_settnl_action_to_DLVal(dlmgr__rad_dict_string_DLValue_t *prop,
-    const struct flow_tnl *tnl, char *dstr, size_t dstrlen)
+solaris_settnl_action_to_str(char *str, size_t strsize,
+    const struct flow_tnl *tnl)
 {
 	struct in_addr ipaddr;
 	char *cp;
-	char **pvals = NULL;
 	char buf[DLADM_STRSIZE];
-	int err;
+	int err = 0;
 
 	ipaddr.s_addr = tnl->ip_src;
 	cp = inet_ntoa(ipaddr);
-	(void) snprintf(buf, sizeof (buf), "src:%s,", cp);
+	(void) snprintf(buf, sizeof (buf), "%sset-tunnel%csrc%c%s%c",
+	    (strlen(str) == 0) ? "" : FP_MULTI_ACTION_DELIM_STR,
+	    FP_NAME_VAL_DELIM, FP_ACTION_NAME_VALUE_DELIM, cp,
+	    FP_ACTION_MULTI_VAL_DELIM);
+
 	ipaddr.s_addr = tnl->ip_dst;
 	cp = inet_ntoa(ipaddr);
 	(void) snprintf(buf, sizeof (buf),
-	    "%sdst:%s,tun_id:0x%"PRIx64",tos:0x%x,hoplimit:%d",
-	    buf, cp, ntohll(tnl->tun_id), tnl->ip_tos, tnl->ip_ttl);
+	    "%sdst%c%s%ctun_id%c0x%"PRIx64"%ctos%c0x%x%choplimit%c%d",
+	    buf, FP_ACTION_NAME_VALUE_DELIM, cp, FP_ACTION_MULTI_VAL_DELIM,
+	    FP_ACTION_NAME_VALUE_DELIM, ntohll(tnl->tun_id),
+	    FP_ACTION_MULTI_VAL_DELIM, FP_ACTION_NAME_VALUE_DELIM,
+	    tnl->ip_tos, FP_ACTION_MULTI_VAL_DELIM, FP_ACTION_NAME_VALUE_DELIM,
+	    tnl->ip_ttl);
+	if (strlcat(str, buf, strsize) >= strsize)
+		err = EINVAL;
 
-	pvals = calloc(1, sizeof (char *));
-	if (pvals == NULL) {
-		err = ENOMEM;
-		goto out;
-	}
-	pvals[0] = strdup(buf);
-	if (pvals[0] == NULL) {
-		err = ENOMEM;
-		free(pvals);
-		goto out;
-	}
-
-	err = dlmgr_DLValue_putstrings(prop, "set-tunnel", pvals, 1, dstr,
-	    dstrlen);
-
-out:
-	dpif_log(err, "solaris_setipv6_action_to_DLVal PROP: %s", dstr);
 	return (err);
 }
 
 static int
 solaris_nlattr_to_DLVal(void *cookie,
     const struct nlattr *actions_nlattr, size_t actions_len,
-    dlmgr__rad_dict_string_DLValue_t **propp)
+    dlmgr__rad_dict_string_DLValue_t *prop)
 {
 	const struct nlattr *a;
 	unsigned int left;
-	dlmgr__rad_dict_string_DLValue_t *prop = *propp;
 	char buf[DLADM_STRSIZE];
+	char str[DLADM_STRSIZE];
 	char dstr[DLADM_STRSIZE];
-	char **pvals;
 	int err = 0, nofports = 0;
 	uint32_t ofports[MAC_OF_MAXPORT];
 	enum ovs_action_attr type = -1, lasttype;
 	uint_t queueid = UINT32_MAX;
 
 	dstr[0] = '\0';
+	str[0] = '\0';
 	err = dlmgr_DLValue_putboolean(prop, "temporary", B_TRUE, dstr,
 	    sizeof (dstr));
 	if (err != 0)
@@ -2100,20 +1905,7 @@ solaris_nlattr_to_DLVal(void *cookie,
 
 	/* if actions_len == 0, then the action is drop */
 	if (actions_len == 0) {
-		pvals = calloc(1, sizeof (char *));
-		if (pvals == NULL) {
-			err = ENOMEM;
-			goto out;
-		}
-		(void) snprintf(buf, sizeof (buf), "drop");
-		pvals[0] = strdup(buf);
-		if (pvals[0] == NULL) {
-			err = ENOMEM;
-			free(pvals);
-			goto out;
-		}
-		err = dlmgr_DLValue_putstrings(prop, "outports", pvals, 1,
-		    dstr, sizeof (dstr));
+		err = flow_ofports2propstr(str, sizeof (str), ofports, 0);
 		goto out;
 	}
 
@@ -2125,11 +1917,13 @@ solaris_nlattr_to_DLVal(void *cookie,
 			if (lasttype == OVS_ACTION_ATTR_OUTPUT) {
 				dpif_log(0, "solaris_nlattr_to_DLVal outports "
 				    "total %d ports", nofports);
-				err = solaris_outports_action_to_DLVal(prop,
-				    cookie, ofports, nofports, queueid,
-				    dstr, sizeof (dstr));
+				err = flow_ofports2propstr(str, sizeof (str),
+				    ofports, nofports);
 				if (err != 0)
 					goto out;
+				(void) solaris_maxbw_action_to_DLVal(prop,
+				    cookie, ofports, nofports, queueid, dstr,
+				    sizeof (dstr));
 			}
 			nofports = 0;
 		}
@@ -2174,21 +1968,14 @@ solaris_nlattr_to_DLVal(void *cookie,
 			if (cookie.slow_path.reason != SLOW_CONTROLLER)
 				break;
 
-			pvals = calloc(1, sizeof (char *));
-			if (pvals == NULL) {
-				err = ENOMEM;
+			(void) snprintf(buf, sizeof (buf), "%scontroller%c%u",
+			    (strlen(str) == 0) ? "" : FP_MULTI_ACTION_DELIM_STR,
+			    FP_NAME_VAL_DELIM, PORT_PF_PACKET_UPLINK);
+
+			if (strlcat(str, buf, sizeof (str)) >= sizeof (str)) {
+				err = EINVAL;
 				break;
 			}
-			(void) snprintf(buf, sizeof (buf), "%u",
-			    PORT_PF_PACKET_UPLINK);
-			pvals[0] = strdup(buf);
-			if (pvals[0] == NULL) {
-				err = ENOMEM;
-				free(pvals);
-				break;
-			}
-			err = dlmgr_DLValue_putstrings(prop, "controller",
-			    pvals, 1, dstr, sizeof (dstr));
 			break;
 		}
 		case OVS_ACTION_ATTR_SET: {
@@ -2204,8 +1991,8 @@ solaris_nlattr_to_DLVal(void *cookie,
 
 				ek = nl_attr_get_unspec(aset,
 				    sizeof (struct ovs_key_ethernet));
-				err = solaris_setether_action_to_DLVal(prop,
-				    ek, dstr, sizeof (dstr));
+				err = solaris_setether_action_to_str(str,
+				    sizeof (str), ek);
 				break;
 			}
 			case OVS_KEY_ATTR_IPV4: {
@@ -2213,8 +2000,8 @@ solaris_nlattr_to_DLVal(void *cookie,
 
 				eip4 = nl_attr_get_unspec(aset,
 				    sizeof (struct ovs_key_ipv4));
-				err = solaris_setipv4_action_to_DLVal(prop,
-				    eip4, dstr, sizeof (dstr));
+				err = solaris_setipv4_action_to_str(str,
+				    sizeof (str), eip4);
 				break;
 			}
 			case OVS_KEY_ATTR_IPV6: {
@@ -2222,35 +2009,35 @@ solaris_nlattr_to_DLVal(void *cookie,
 
 				eip6 = nl_attr_get_unspec(aset,
 				    sizeof (struct ovs_key_ipv6));
-				err = solaris_setipv6_action_to_DLVal(prop,
-				    eip6, dstr, sizeof (dstr));
+				err = solaris_setipv6_action_to_str(str,
+				    sizeof (str), eip6);
 				break;
 			}
 			case OVS_KEY_ATTR_TCP: {
 				const struct ovs_key_tcp *etcp;
 				etcp = nl_attr_get_unspec(aset,
 				    sizeof (struct ovs_key_tcp));
-				err = solaris_settransport_action_to_DLVal(
-				    prop, "set-tcp", etcp->tcp_src,
-				    etcp->tcp_dst, dstr, sizeof (dstr));
+				err = solaris_settransport_action_to_str(
+				    str, sizeof (str), "set-tcp", etcp->tcp_src,
+				    etcp->tcp_dst);
 				break;
 			}
 			case OVS_KEY_ATTR_UDP: {
 				const struct ovs_key_udp *eudp;
 				eudp = nl_attr_get_unspec(aset,
 				    sizeof (struct ovs_key_udp));
-				err = solaris_settransport_action_to_DLVal(
-				    prop, "set-udp", eudp->udp_src,
-				    eudp->udp_dst, dstr, sizeof (dstr));
+				err = solaris_settransport_action_to_str(
+				    str, sizeof (str), "set-udp", eudp->udp_src,
+				    eudp->udp_dst);
 				break;
 			}
 			case OVS_KEY_ATTR_SCTP: {
 				const struct ovs_key_sctp *esctp;
 				esctp = nl_attr_get_unspec(aset,
 				    sizeof (struct ovs_key_sctp));
-				err = solaris_settransport_action_to_DLVal(
-				    prop, "set-sctp", esctp->sctp_src,
-				    esctp->sctp_dst, dstr, sizeof (dstr));
+				err = solaris_settransport_action_to_str(str,
+				    sizeof (str), "set-sctp", esctp->sctp_src,
+				    esctp->sctp_dst);
 				break;
 			}
 			case OVS_KEY_ATTR_TUNNEL: {
@@ -2260,8 +2047,8 @@ solaris_nlattr_to_DLVal(void *cookie,
 				memset(&tnl, 0, sizeof (tnl));
 				fitness = odp_tun_key_from_attr(aset, &tnl);
 				ovs_assert(fitness != ODP_FIT_ERROR);
-				err = solaris_settnl_action_to_DLVal(
-				    prop, &tnl, dstr, sizeof (dstr));
+				err = solaris_settnl_action_to_str(
+				    str, sizeof (str), &tnl);
 				break;
 			}
 			default:
@@ -2278,16 +2065,25 @@ solaris_nlattr_to_DLVal(void *cookie,
 			vlan = nl_attr_get_unspec(a,
 			    sizeof (struct ovs_action_push_vlan));
 
-			(void) snprintf(buf, sizeof (buf), "%u",
-			    ntohs(vlan->vlan_tci));
-			err = dlmgr_DLValue_putstring(prop, "vlan-tag", buf,
-			    dstr, sizeof (dstr));
+			(void) snprintf(buf, sizeof (buf), "%svlan-tag%c%u",
+			    (strlen(str) == 0) ? "" : FP_MULTI_ACTION_DELIM_STR,
+			    FP_NAME_VAL_DELIM, ntohs(vlan->vlan_tci));
+
+			if (strlcat(str, buf, sizeof (str)) >= sizeof (str)) {
+				err = EINVAL;
+				break;
+			}
 			break;
 		}
 		case OVS_ACTION_ATTR_POP_VLAN:
-			(void) snprintf(buf, sizeof (buf), "on");
-			err = dlmgr_DLValue_putstring(prop,
-			    "vlan-strip", buf, dstr, sizeof (dstr));
+			(void) snprintf(buf, sizeof (buf), "%svlan-strip%c%s",
+			    (strlen(str) == 0) ? "" : FP_MULTI_ACTION_DELIM_STR,
+			    FP_NAME_VAL_DELIM, "on");
+
+			if (strlcat(str, buf, sizeof (str)) >= sizeof (str)) {
+				err = EINVAL;
+				break;
+			}
 			break;
 		case OVS_ACTION_ATTR_RECIRC:
 		case OVS_ACTION_ATTR_HASH:
@@ -2308,11 +2104,21 @@ solaris_nlattr_to_DLVal(void *cookie,
 	if (type == OVS_ACTION_ATTR_OUTPUT) {
 		dpif_log(0, "solaris_nlattr_to_DLVal outports total %d ports",
 		    nofports);
-		err = solaris_outports_action_to_DLVal(prop, cookie, ofports,
+		err = flow_ofports2propstr(str, sizeof (str),
+		    ofports, nofports);
+		if (err != 0)
+			goto out;
+		(void) solaris_maxbw_action_to_DLVal(prop, cookie, ofports,
 		    nofports, queueid, dstr, sizeof (dstr));
 	}
+
+	err = dlmgr_DLValue_putstring(prop, "ofaction", str, dstr,
+	    sizeof (dstr));
 out:
-	dpif_log(err, "solaris_nlattr_to_DLVal %s", dstr);
+
+	if (err == 0)
+		dpif_log(err, "solaris_nlattr_to_DLVal %s", dstr);
+
 	return (err);
 }
 
@@ -2362,7 +2168,7 @@ solaris_add_flow(void *cookie, const char *linkname,
 		goto out;
 
 	err = solaris_nlattr_to_DLVal(cookie, actions_nlattr,
-	    actions_len, &prop);
+	    actions_len, prop);
 	if (err != 0)
 		goto out;
 
@@ -2377,7 +2183,6 @@ solaris_add_flow(void *cookie, const char *linkname,
 			    flowname, linkname, derrp->dde_errmsg);
 		}
 	}
-
 	rc_instance_rele(flow);
 	dlmgr_DatalinkError_free(derrp);
 
@@ -2399,6 +2204,7 @@ solaris_modify_flow(void *cookie, const char *flowname,
 	rc_err_t status;
 	int err;
 
+	dpif_log(0, "solaris_modify_flow(%s)", flowname);
 	status = dlmgr_Flow__rad_lookup(rad_conn, B_TRUE, &flow, 1,
 	    "name", flowname);
 	if (status != RCE_OK) {
@@ -2413,7 +2219,7 @@ solaris_modify_flow(void *cookie, const char *flowname,
 	}
 
 	err = solaris_nlattr_to_DLVal(cookie, actions_nlattr,
-	    actions_len, &prop);
+	    actions_len, prop);
 	if (err != 0)
 		goto out;
 
@@ -2553,6 +2359,8 @@ solaris_flowinfo2flowmap(const char *key, dlmgr_DLValue_t *val, void *arg)
 	}
 
 out:
+	if (err != 0)
+		dpif_log(err, "solaris_flowinfo2flowmap %s failed", key);
 	dlmgr_DLValue_free(val);
 	return (err == 0 ? RCE_OK : -1);
 }
@@ -2638,40 +2446,22 @@ solaris_get_flowattr(const char *flowname, struct flow *f, struct flow *m)
 }
 
 static int
-flow_propval2action_drop(char **propvals, int nval,
-    struct ofpbuf *action OVS_UNUSED)
+flow_propval2action_outports_drop(char **propvals, int nval OVS_UNUSED,
+    struct ofpbuf *action)
 {
-	if (nval == 1 && strcmp(propvals[0], "drop") == 0)
+	char *endp = NULL;
+	int64_t n;
+
+	if (strcmp(propvals[0], "drop") == 0)
 		return (0);
 
-	return (EINVAL);
-}
+	errno = 0;
+	n = strtoull(propvals[0], &endp, 10);
+	if ((errno != 0) || *endp != '\0')
+		return (EINVAL);
 
-static int
-flow_propval2action_outports(char **propvals, int nval, struct ofpbuf *action)
-{
-	mac_propval_range_t *pv_range = NULL;
-	uint32_t ofports[MAC_OF_MAXPORT], i, nofports = MAC_OF_MAXPORT;
-	dladm_status_t status;
-	int err = 0;
-
-	status = dladm_strs2range(propvals, nval, MAC_PROPVAL_UINT32,
-	    &pv_range);
-	if (status != DLADM_STATUS_OK)
-		return (solaris_dladm_status2error(status));
-
-	/* Convert mac_propval_range to a single ofports list */
-	status = dladm_range2list(pv_range, ofports, &nofports);
-	if (status != DLADM_STATUS_OK) {
-		err = solaris_dladm_status2error(status);
-		goto out;
-	}
-	for (i = 0; i < nofports; i++)
-		nl_msg_put_u32(action, OVS_ACTION_ATTR_OUTPUT, ofports[i]);
-
-out:
-	free(pv_range);
-	return (err);
+	nl_msg_put_u32(action, OVS_ACTION_ATTR_OUTPUT, (uint32_t)n);
+	return (0);
 }
 
 static int
@@ -2745,14 +2535,15 @@ flow_propval2action_setether(char **propvals, int nval, struct ofpbuf *action)
 	int err = 0;
 
 	/*
-	 * The property value is in the format of "ether_src:xxx"
-	 * "ether_dst:xxx"
+	 * The property value is in the format of "ether_src-xxx"
+	 * "ether_dst-xxx"
 	 */
 	bzero(&eth_key, sizeof (eth_key));
 	src_set = dst_set = B_FALSE;
+
 	for (i = 0; i < nval; i++) {
-		bcopy(propvals[i], pval, strlen(propvals[i]) + 1);
-		if ((sep = strchr(pval, ':')) == NULL) {
+		(void) strlcpy(pval, propvals[i], sizeof (pval));
+		if ((sep = strchr(pval, FP_ACTION_NAME_VALUE_DELIM)) == NULL) {
 			err = EINVAL;
 			goto out;
 		}
@@ -2820,8 +2611,8 @@ flow_propval2action_setipv4(char **propvals, int nval, struct ofpbuf *action)
 	 */
 	bzero(&ipv4, sizeof (ipv4));
 	for (i = 0; i < nval; i++) {
-		bcopy(propvals[i], pval, strlen(propvals[i]) + 1);
-		if ((sep = strchr(pval, ':')) == NULL) {
+		(void) strlcpy(pval, propvals[i], sizeof (pval));
+		if ((sep = strchr(pval, FP_ACTION_NAME_VALUE_DELIM)) == NULL) {
 			err = EINVAL;
 			goto out;
 		}
@@ -2893,8 +2684,8 @@ flow_propval2action_setipv6(char **propvals, int nval, struct ofpbuf *action)
 	 */
 	bzero(&ipv6, sizeof (ipv6));
 	for (i = 0; i < nval; i++) {
-		bcopy(propvals[i], pval, strlen(propvals[i]) + 1);
-		if ((sep = strchr(pval, ':')) == NULL)
+		(void) strlcpy(pval, propvals[i], sizeof (pval));
+		if ((sep = strchr(pval, FP_ACTION_NAME_VALUE_DELIM)) == NULL)
 			goto out;
 		*sep = '\0';
 		sep++;
@@ -2971,10 +2762,10 @@ flow_propval2action_settransport(char **propvals, int nval,
 	int err = EINVAL;
 	uint16_t sport = 0, dport = 0;
 
-	/* The property value is in the format of "sport:xxx" "dport:xxx" */
+	/* The property value is in the format of "sport-xxx" "dport-xxx" */
 	for (i = 0; i < nval; i++) {
-		bcopy(propvals, pval, strlen(propvals[i]) + 1);
-		if ((sep = strchr(pval, ':')) == NULL)
+		(void) strlcpy(pval, propvals[i], sizeof (pval));
+		if ((sep = strchr(pval, FP_ACTION_NAME_VALUE_DELIM)) == NULL)
 			goto out;
 		*sep = '\0';
 		sep++;
@@ -3106,7 +2897,7 @@ flow_propval2action_settnl(char **propvals, int nval, struct ofpbuf *action)
 	char *sep, *endp;
 	uint_t i, value;
 	struct flow_tnl tnl;
-	size_t start_ofs;
+	size_t start_ofs, tun_key_ofs;
 	boolean_t id_set, src_set, dst_set, tos_set, ttl_set;
 	int err = 0;
 
@@ -3118,8 +2909,8 @@ flow_propval2action_settnl(char **propvals, int nval, struct ofpbuf *action)
 	 */
 	tnl.ip_tos = 0xff;
 	for (i = 0; i < nval; i++) {
-		bcopy(propvals[i], pval, strlen(propvals[i]) + 1);
-		if ((sep = strchr(pval, ':')) == NULL)
+		(void) strlcpy(pval, propvals[i], sizeof (pval));
+		if ((sep = strchr(pval, FP_ACTION_NAME_VALUE_DELIM)) == NULL)
 			return (EINVAL);
 		*sep = '\0';
 		sep++;
@@ -3173,32 +2964,155 @@ flow_propval2action_settnl(char **propvals, int nval, struct ofpbuf *action)
 	}
 
 	start_ofs = nl_msg_start_nested(action, OVS_ACTION_ATTR_SET);
-	nl_msg_put_be64(action, OVS_TUNNEL_KEY_ATTR_ID, (uint64_t)tnl.tun_id);
+	tun_key_ofs = nl_msg_start_nested(action, OVS_KEY_ATTR_TUNNEL);
+	nl_msg_put_be64(action, OVS_TUNNEL_KEY_ATTR_ID,
+	    ntohll((uint64_t)tnl.tun_id));
 	nl_msg_put_be32(action, OVS_TUNNEL_KEY_ATTR_IPV4_SRC, tnl.ip_src);
 	nl_msg_put_be32(action, OVS_TUNNEL_KEY_ATTR_IPV4_DST, tnl.ip_dst);
 	nl_msg_put_u8(action, OVS_TUNNEL_KEY_ATTR_TOS, tnl.ip_tos);
 	nl_msg_put_u8(action, OVS_TUNNEL_KEY_ATTR_TTL, tnl.ip_ttl);
 	nl_msg_put_flag(action, OVS_TUNNEL_KEY_ATTR_DONT_FRAGMENT);
+	nl_msg_end_nested(action, tun_key_ofs);
 	nl_msg_end_nested(action, start_ofs);
 	return (0);
 }
 
+static int
+flow_propstr2vals(char *key, char *val, char ***propvalsp, int *valcntp)
+{
+	char **propvals = *propvalsp, *curr;
+	int i, j, len;
+	char c;
+
+	dpif_log(0, "flow_propstr2vals key %s val %s", key, val);
+	len = strlen(val);
+	for (i = 0, j = 0, curr = val; i < len; i++) {
+		if ((c = val[i]) != FP_ACTION_MULTI_VAL_DELIM && i != len -1)
+			continue;
+
+		if (c == FP_ACTION_MULTI_VAL_DELIM)
+			val[i] = '\0';
+
+		if (strlcpy(propvals[j++], curr, DLADM_PROP_VAL_MAX) >=
+		    DLADM_PROP_VAL_MAX) {
+			dpif_log(EINVAL, "flow_propstr2vals key %s %dth string "
+			    "too long %s", key, j - 1, curr);
+			return (EINVAL);
+		}
+		curr = val + i + 1;
+	}
+
+	*valcntp = j;
+	for (i = 0; i < j; i++)
+		dpif_log(0, "flow_propstr2vals key %s %dth: %s", key, i+1,
+		    propvals[i]);
+	return (0);
+}
+
+static int
+flow_propval2action_ofaction(char *propval, struct ofpbuf *action)
+{
+	char ofaction_str[DLADM_STRSIZE];
+	char **pvals, *buf = NULL;
+	size_t len;
+	char *curr, *key, c;
+	boolean_t match;
+	int nval, err = 0, i;
+
+	buf = malloc((sizeof (char *) +
+	    DLADM_PROP_VAL_MAX) * DLADM_MAX_PROP_VALCNT);
+
+	pvals = (char **)(void *)buf;
+	for (i = 0; i < DLADM_MAX_PROP_VALCNT; i++) {
+		pvals[i] = buf + sizeof (char *) * DLADM_MAX_PROP_VALCNT +
+		    i * DLADM_PROP_VAL_MAX;
+	}
+
+	if (strlcpy(ofaction_str, propval, sizeof (ofaction_str)) >=
+	    sizeof (ofaction_str)) {
+		err = EINVAL;
+		goto done;
+	}
+
+	len = strlen(ofaction_str);
+	curr = ofaction_str;
+	key = NULL;
+	for (i = 0; i < len; i++) {
+		c = ofaction_str[i];
+
+		match = (c == FP_NAME_VAL_DELIM || c == FP_MULTI_ACTION_DELIM);
+		if (!match && i != len - 1)
+			continue;
+		if (match) {
+			ofaction_str[i] = '\0';
+			if (*curr == '\0') {
+				err = EINVAL;
+				goto done;
+			}
+		}
+		if (c == FP_NAME_VAL_DELIM) {
+			key = curr;
+			curr = ofaction_str + i + 1;
+			continue;
+		}
+
+		if (key == NULL) {
+			err = EINVAL;
+			goto done;
+		}
+
+		err = flow_propstr2vals(key, curr, &pvals, &nval);
+		if (err != 0)
+			goto done;
+
+		if (strcmp(key, "outports") == 0)
+			err = flow_propval2action_outports_drop(pvals, nval,
+			    action);
+		else if (strcmp(key, "max-bw") == 0)
+			err = flow_propval2action_setpri(pvals, nval, action);
+		else if (strcmp(key, "controller") == 0)
+			err = flow_propval2action_controller(pvals, nval,
+			    action);
+		else if (strcmp(key, "vlan-tag") == 0)
+			err = flow_propval2action_pushvlan(pvals, nval, action);
+		else if (strcmp(key, "vlan-strip") == 0)
+			err = flow_propval2action_popvlan(pvals, nval, action);
+		else if (strcmp(key, "set-ether") == 0)
+			err = flow_propval2action_setether(pvals, nval, action);
+		else if (strcmp(key, "set-ipv4") == 0)
+			err = flow_propval2action_setipv4(pvals, nval, action);
+		else if (strcmp(key, "set-ipv6") == 0)
+			err = flow_propval2action_setipv6(pvals, nval, action);
+		else if (strcmp(key, "set-tcp") == 0)
+			err = flow_propval2action_settcp(pvals, nval, action);
+		else if (strcmp(key, "set-udp") == 0)
+			err = flow_propval2action_setudp(pvals, nval, action);
+		else if (strcmp(key, "set-sctp") == 0)
+			err = flow_propval2action_setsctp(pvals, nval, action);
+		else if (strcmp(key, "set-tunnel") == 0)
+			err = flow_propval2action_settnl(pvals, nval, action);
+		else
+			err = EINVAL;
+
+		if (err != 0)
+			goto done;
+
+		key = NULL;
+		curr = ofaction_str + i + 1;
+	}
+done:
+	free(buf);
+	return (err);
+}
+
+/* valcnt must be 1 */
 static rc_err_t
 solaris_flowinfo2actionmap(const char *key, dlmgr_DLValue_t *val,
     void *arg)
 {
 	struct ofpbuf *action = arg;
-	char **propvals, *buf = NULL;
-	int valcnt, err = 0, i;
-
-	buf = malloc((sizeof (char *) +
-	    DLADM_PROP_VAL_MAX) * DLADM_MAX_PROP_VALCNT);
-
-	propvals = (char **)(void *)buf;
-	for (i = 0; i < DLADM_MAX_PROP_VALCNT; i++) {
-		propvals[i] = buf + sizeof (char *) * DLADM_MAX_PROP_VALCNT +
-		    i * DLADM_PROP_VAL_MAX;
-	}
+	char propval[DLADM_STRSIZE];
+	int valcnt, err = 0;
 
 	switch (val->ddlv_type) {
 	case DDLVT_STRING:
@@ -3207,24 +3121,25 @@ solaris_flowinfo2actionmap(const char *key, dlmgr_DLValue_t *val,
 		if (strlen(val->ddlv_sval) == 0)
 			goto out;
 		valcnt = 1;
-		memcpy(propvals[0], val->ddlv_sval, DLADM_PROP_VAL_MAX);
+		if (strlcpy(propval, val->ddlv_sval, DLADM_STRSIZE) >=
+		    DLADM_STRSIZE)
+			goto out;
 		break;
 	case DDLVT_STRINGS:
 		if (val->ddlv_slist_count == 0)
 			goto out;
 		valcnt = val->ddlv_slist_count;
-		if (valcnt == 1 && strlen(val->ddlv_slist[0]) == 0)
+		if (valcnt != 1 || strlen(val->ddlv_slist[0]) == 0)
 			goto out;
-		for (i = 0; i < val->ddlv_slist_count; i++) {
-			memcpy(propvals[i], val->ddlv_slist[i],
-			    DLADM_PROP_VAL_MAX);
-		}
+		if (strlcpy(propval, val->ddlv_slist[0], DLADM_STRSIZE) >=
+		    DLADM_STRSIZE)
+			goto out;
 		break;
 	case DDLVT_ULONG:
 		if (val->ddlv_ulval == NULL || *val->ddlv_ulval == 0)
 			goto out;
 		valcnt = 1;
-		(void) snprintf(propvals[0], DLADM_PROP_VAL_MAX, "%llu",
+		(void) snprintf(propval, DLADM_STRSIZE, "%llu",
 		    *val->ddlv_ulval);
 		break;
 	case DDLVT_BOOLEAN:
@@ -3238,40 +3153,13 @@ solaris_flowinfo2actionmap(const char *key, dlmgr_DLValue_t *val,
 		goto out;
 	}
 	dpif_log(0, "solaris_flowinfo2actionmap %s:%d %s", key, valcnt,
-	    propvals[0]);
+	    propval);
 
-	if (strcmp(key, "outports") == 0) {
-		err = flow_propval2action_drop(propvals, valcnt, action);
-		if (err == 0)
-			goto out;
+	if (strcmp(key, "ofaction") == 0)
+		err = flow_propval2action_ofaction(propval, action);
 
-		err = flow_propval2action_outports(propvals, valcnt, action);
-	} else if (strcmp(key, "max-bw") == 0) {
-		err = flow_propval2action_setpri(propvals, valcnt, action);
-	} else if (strcmp(key, "controller") == 0) {
-		err = flow_propval2action_controller(propvals, valcnt, action);
-	} else if (strcmp(key, "vlan-tag") == 0) {
-		err = flow_propval2action_pushvlan(propvals, valcnt, action);
-	} else if (strcmp(key, "vlan-strip") == 0) {
-		err = flow_propval2action_popvlan(propvals, valcnt, action);
-	} else if (strcmp(key, "set-ether") == 0) {
-		err = flow_propval2action_setether(propvals, valcnt, action);
-	} else if (strcmp(key, "set-ipv4") == 0) {
-		err = flow_propval2action_setipv4(propvals, valcnt, action);
-	} else if (strcmp(key, "set-ipv6") == 0) {
-		err = flow_propval2action_setipv6(propvals, valcnt, action);
-	} else if (strcmp(key, "set-tcp") == 0) {
-		err = flow_propval2action_settcp(propvals, valcnt, action);
-	} else if (strcmp(key, "set-udp") == 0) {
-		err = flow_propval2action_setudp(propvals, valcnt, action);
-	} else if (strcmp(key, "set-sctp") == 0) {
-		err = flow_propval2action_setsctp(propvals, valcnt, action);
-	} else if (strcmp(key, "set-tunnel") == 0) {
-		err = flow_propval2action_settnl(propvals, valcnt, action);
-	}
 out:
 	dlmgr_DLValue_free(val);
-	free(buf);
 	return (err == 0 ? RCE_OK : -1);
 }
 
@@ -3286,14 +3174,20 @@ solaris_flowinfo2action(dlmgr__rad_dict_string_DLValue_t *flowinfo,
 
 	status = dlmgr__rad_dict_string_DLValue_get(flowinfo, "properties",
 	    &flist);
-	if (status != RCE_OK)
+	if (status != RCE_OK) {
+		dpif_log(EINVAL, "solaris_flowinfo2action get properties failed"
+		    " %d", status);
 		return (EINVAL);
+	}
 
 	fdict = flist->ddlv_dval;
 	status = dlmgr__rad_dict_string_DLValue_map(fdict,
 	    solaris_flowinfo2actionmap, action);
-	if (status != RCE_OK)
+	if (status != RCE_OK) {
 		err = EINVAL;
+		dpif_log(EINVAL, "solaris_flowinfo2action get walk actionmap "
+		    "failed %d", status);
+	}
 
 	dlmgr_DLValue_free(flist);
 	return (err);
@@ -3545,6 +3439,7 @@ solaris_port_walk(void *arg, void (*fn)(void *, const char *, char *,
 		dlmgr_DLValue_free(dlval);
 		dlmgr_DLDict_array_free(dlist, ndlist);
 	}
+
 	for (i = 0; i < anamecnt; i++)
 		adr_name_rele(anamearr[i]);
 	free(anamearr);
@@ -3595,7 +3490,11 @@ solaris_flow_walk(void *arg, struct ofpbuf *action, boolean_t no_default,
 				continue;
 			else
 				is_default = B_TRUE;
+		} else if (strstr(adr_name_key(anamearr[i], "name"),
+		    "sys.of") == NULL) {
+			continue;
 		}
+
 		rerr = rc_lookup(rad_conn, anamearr[i], NULL, B_FALSE, &rip);
 		if (rerr != RCE_OK)
 			continue;
@@ -3678,7 +3577,7 @@ solaris_flow_walk(void *arg, struct ofpbuf *action, boolean_t no_default,
 			err = solaris_flowinfo2action(flowinfo, action);
 			if (err != 0) {
 				dpif_log(err, "solaris_flow_walk "
-				    "flowinfo2flow failed for %s: %d",
+				    "flowinfo2action failed for %s: %d",
 				    adr_name_key(anamearr[i], "name"), err);
 				goto done;
 			}
@@ -3698,6 +3597,7 @@ done:
 	for (i = 0; i < anamecnt; i++)
 		adr_name_rele(anamearr[i]);
 	free(anamearr);
+
 	return (n_flows);
 }
 

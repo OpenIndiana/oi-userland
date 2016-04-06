@@ -1,6 +1,6 @@
 This patch fixes a bug in the self test.
 
-This patch has not been proposed upstream but will be proposed for 2.4.
+This patch has not been proposed upstream but will be proposed for 2.5.
 
 diff --git a/tests/ofp-print.at b/tests/ofp-print.at
 index c25da53..07cea7b 100644
@@ -48,10 +48,10 @@ index c25da53..07cea7b 100644
  AT_CLEANUP
  
 diff --git a/tests/ofproto-dpif.at b/tests/ofproto-dpif.at
-index 1fcd937..97433a8 100644
+index d350b40..f7e921e 100644
 --- a/tests/ofproto-dpif.at
 +++ b/tests/ofproto-dpif.at
-@@ -55,147 +55,156 @@ OVS_VSWITCHD_STOP
+@@ -55,148 +55,157 @@ OVS_VSWITCHD_STOP
  AT_CLEANUP
  
  AT_SETUP([ofproto-dpif, active-backup bonding])
@@ -73,6 +73,7 @@ index 1fcd937..97433a8 100644
 -   add-port br1 p3 -- set interface p3 type=dummy options:stream=unix:$OVS_RUNDIR/p1.sock ofport_request=3 -- \
 -   add-port br1 p4 -- set interface p4 type=dummy options:stream=unix:$OVS_RUNDIR/p2.sock ofport_request=4 -- \
 -   add-port br1 p8 -- set interface p8 ofport_request=8 type=dummy --])
+-WAIT_FOR_DUMMY_PORTS([p3], [p4])
 -AT_CHECK([ovs-appctl vlog/set dpif:dbg])
 -
 -AT_CHECK([ovs-ofctl add-flow br0 action=normal])
@@ -114,6 +115,7 @@ index 1fcd937..97433a8 100644
 +#   add-port br1 p3 -- set interface p3 type=dummy options:stream=unix:$OVS_RUNDIR/p1.sock ofport_request=3 -- \
 +#   add-port br1 p4 -- set interface p4 type=dummy options:stream=unix:$OVS_RUNDIR/p2.sock ofport_request=4 -- \
 +#   add-port br1 p8 -- set interface p8 ofport_request=8 type=dummy --])
++#WAIT_FOR_DUMMY_PORTS([p3], [p4])
 +#AT_CHECK([ovs-appctl vlog/set dpif:dbg])
 +#
 +#AT_CHECK([ovs-ofctl add-flow br0 action=normal])
@@ -167,12 +169,11 @@ index 1fcd937..97433a8 100644
 -   add-port br1 p5 -- set interface p5 type=dummy options:stream=unix:$OVS_RUNDIR/p2.sock ofport_request=5 -- \
 -   add-port br1 p6 -- set interface p6 type=dummy options:stream=unix:$OVS_RUNDIR/p3.sock ofport_request=6 -- \
 -   add-port br1 p8 -- set interface p8 ofport_request=8 type=dummy --])
--
+-WAIT_FOR_DUMMY_PORTS([p4], [p5], [p6])
 -AT_CHECK([ovs-ofctl add-flow br0 action=normal])
 -AT_CHECK([ovs-ofctl add-flow br1 action=normal])
 -AT_CHECK([ovs-appctl netdev-dummy/set-admin-state up], 0, [OK
 -])
--ovs-appctl netdev-dummy/set-admin-state up
 -ovs-appctl time/stop
 -ovs-appctl time/warp 100
 -(
@@ -184,6 +185,12 @@ index 1fcd937..97433a8 100644
 -)
 -ovs-appctl time/warp 100
 -AT_CHECK([ovs-appctl dpif/dump-flows br1 > br1_flows.txt])
+-# Make sure there is resonable distribution to all three ports.
+-# We don't want to make this check precise, in case hash function changes.
+-AT_CHECK([test `egrep 'in_port\(4\)' br1_flows.txt |wc -l` -gt 3])
+-AT_CHECK([test `egrep 'in_port\(5\)' br1_flows.txt |wc -l` -gt 3])
+-AT_CHECK([test `egrep 'in_port\(6\)' br1_flows.txt |wc -l` -gt 3])
+-OVS_VSWITCHD_STOP
 +#OVS_VSWITCHD_START(
 +#  [add-bond br0 bond0 p1 p2 p3 bond_mode=balance-slb --\
 +#   set interface p1 type=dummy options:pstream=punix:$OVS_RUNDIR/p1.sock ofport_request=1 -- \
@@ -198,12 +205,11 @@ index 1fcd937..97433a8 100644
 +#   add-port br1 p5 -- set interface p5 type=dummy options:stream=unix:$OVS_RUNDIR/p2.sock ofport_request=5 -- \
 +#   add-port br1 p6 -- set interface p6 type=dummy options:stream=unix:$OVS_RUNDIR/p3.sock ofport_request=6 -- \
 +#   add-port br1 p8 -- set interface p8 ofport_request=8 type=dummy --])
-+
++#WAIT_FOR_DUMMY_PORTS([p4], [p5], [p6])
 +#AT_CHECK([ovs-ofctl add-flow br0 action=normal])
 +#AT_CHECK([ovs-ofctl add-flow br1 action=normal])
 +#AT_CHECK([ovs-appctl netdev-dummy/set-admin-state up], 0, [OK
 +#])
-+#ovs-appctl netdev-dummy/set-admin-state up
 +#ovs-appctl time/stop
 +#ovs-appctl time/warp 100
 +#(
@@ -215,12 +221,8 @@ index 1fcd937..97433a8 100644
 +#)
 +#ovs-appctl time/warp 100
 +#AT_CHECK([ovs-appctl dpif/dump-flows br1 > br1_flows.txt])
- # Make sure there is resonable distribution to all three ports.
- # We don't want to make this check precise, in case hash function changes.
--AT_CHECK([test `egrep 'in_port\(4\)' br1_flows.txt |wc -l` -gt 3])
--AT_CHECK([test `egrep 'in_port\(5\)' br1_flows.txt |wc -l` -gt 3])
--AT_CHECK([test `egrep 'in_port\(6\)' br1_flows.txt |wc -l` -gt 3])
--OVS_VSWITCHD_STOP
++## Make sure there is resonable distribution to all three ports.
++## We don't want to make this check precise, in case hash function changes.
 +#AT_CHECK([test `egrep 'in_port\(4\)' br1_flows.txt |wc -l` -gt 3])
 +#AT_CHECK([test `egrep 'in_port\(5\)' br1_flows.txt |wc -l` -gt 3])
 +#AT_CHECK([test `egrep 'in_port\(6\)' br1_flows.txt |wc -l` -gt 3])
@@ -258,7 +260,7 @@ index 1fcd937..97433a8 100644
 -AT_CHECK([ovs-ofctl add-flow br1 action=normal])
 -AT_CHECK([ovs-appctl upcall/disable-megaflows], [0], [megaflows disabled
 -], [])
--sleep 1;
+-OVS_WAIT_WHILE([ovs-appctl bond/show | grep "may_enable: false"])
 -ovs-appctl time/stop
 -ovs-appctl time/warp 100
 -ovs-appctl lacp/show > lacp.txt
@@ -280,6 +282,7 @@ index 1fcd937..97433a8 100644
 -AT_CHECK([test `grep in_port.4 br1_flows.txt |wc -l` -gt 24])
 -AT_CHECK([test `grep in_port.5 br1_flows.txt |wc -l` -gt 24])
 -AT_CHECK([test `grep in_port.6 br1_flows.txt |wc -l` -gt 24])
+-
 -OVS_VSWITCHD_STOP()
 +#OVS_VSWITCHD_START(
 +#  [add-bond br0 bond0 p1 p2 p3 bond_mode=balance-tcp lacp=active \
@@ -304,7 +307,7 @@ index 1fcd937..97433a8 100644
 +#AT_CHECK([ovs-ofctl add-flow br1 action=normal])
 +#AT_CHECK([ovs-appctl upcall/disable-megaflows], [0], [megaflows disabled
 +#], [])
-+#sleep 1;
++#OVS_WAIT_WHILE([ovs-appctl bond/show | grep "may_enable: false"])
 +#ovs-appctl time/stop
 +#ovs-appctl time/warp 100
 +#ovs-appctl lacp/show > lacp.txt
@@ -326,10 +329,11 @@ index 1fcd937..97433a8 100644
 +#AT_CHECK([test `grep in_port.4 br1_flows.txt |wc -l` -gt 24])
 +#AT_CHECK([test `grep in_port.5 br1_flows.txt |wc -l` -gt 24])
 +#AT_CHECK([test `grep in_port.6 br1_flows.txt |wc -l` -gt 24])
++#
 +#OVS_VSWITCHD_STOP()
  AT_CLEANUP
  
- AT_SETUP([ofproto-dpif - resubmit])
+ # Makes sure recirculation does not change the way packet is handled.
 diff --git a/tests/cfm.at b/tests/cfm.at
 index 06cab90..a8572f0 100644
 --- a/tests/cfm.at

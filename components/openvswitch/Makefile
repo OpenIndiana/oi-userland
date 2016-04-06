@@ -31,14 +31,14 @@ BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openvswitch
-COMPONENT_VERSION=	2.3.1
+COMPONENT_VERSION=	2.3.2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:d6d96e45fd9c070cc2696a4a09b4cc4b48dd7fc367c0455725d00f7daa343bf0
+    sha256:386b11df94d06c68d391ee4091832360095bd3a14c72d454325fab284dad9887
 COMPONENT_PROJECT_URL=  http://openvswitch.org/
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	service/openvswitch
 
-TPNO=			21407
+TPNO=			26090
 
 # Depends on S12-only changes in ON to build.
 ifeq ($(BUILD_TYPE), evaluation)

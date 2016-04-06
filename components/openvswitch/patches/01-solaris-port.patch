@@ -15,23 +15,22 @@ on Solaris. The specific changes are:
     lib/socket_util.h
 
     lib/socket-util.c      Fix set_dscp setsockopt error return for Solaris
-    python/ovs/socket_util.py
 
     vswitchd/automake.mk   Solaris sed whitespace fix
     vtep/automake.mk
 
-    lib/socket-util.c      Rename 'sun' argument
+    lib/socket-util.c      Rename 'sun' variables.
     lib/lib-stream-unix.c
 
 This patch has not been proposed upstream because we are not yet
 proposing Solaris specific requirements upstream.
 
 diff --git a/acinclude.m4 b/acinclude.m4
-index 8d10360..2b5944e 100644
+index 0f53ea7..f729947 100644
 --- a/acinclude.m4
 +++ b/acinclude.m4
-@@ -378,6 +378,22 @@ AC_DEFUN([OVS_CHECK_IF_DL],
-       AC_SEARCH_LIBS([pcap_open_live], [pcap])
+@@ -407,6 +407,22 @@ AC_DEFUN([OVS_CHECK_IF_PACKET],
+                 [Define to 1 if net/if_packet.h is available.])
     fi])
  
 +dnl Checks for rad/client/1/dlmgr.h
@@ -50,11 +49,24 @@ index 8d10360..2b5944e 100644
 +      LDFLAGS="$LDFLAGS -R /usr/lib/rad/client/c/64"
 +   fi])
 +
- dnl Checks for buggy strtok_r.
+ dnl Checks for net/if_dl.h.
  dnl
- dnl Some versions of glibc 2.7 has a bug in strtok_r when compiling
+ dnl (We use this as a proxy for checking whether we're building on FreeBSD
+@@ -415,6 +431,12 @@ AC_DEFUN([OVS_CHECK_IF_DL],
+   [AC_CHECK_HEADER([net/if_dl.h],
+                    [HAVE_IF_DL=yes],
+                    [HAVE_IF_DL=no])
++   AC_CHECK_HEADER([rad/client/1/dlmgr.h],
++                   [HAVE_DLMGR=yes],
++                   [HAVE_DLMGR=no])
++   if test "$HAVE_DLMGR" = yes; then
++      HAVE_IF_DL=no
++   fi
+    AM_CONDITIONAL([HAVE_IF_DL], [test "$HAVE_IF_DL" = yes])
+    if test "$HAVE_IF_DL" = yes; then
+       AC_DEFINE([HAVE_IF_DL], [1],
 diff --git a/configure.ac b/configure.ac
-index 5c1f398..56ce096 100644
+index ae38a1e..0db0e6e 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -61,6 +61,7 @@ OVS_CHECK_PYTHON_COMPAT
@@ -77,7 +89,7 @@ index 37a6f77..302329e 100644
  include include/sparse/automake.mk
  include include/windows/automake.mk
 diff --git a/lib/automake.mk b/lib/automake.mk
-index de3f068..5029dd3 100644
+index de3f068..b96eca7 100644
 --- a/lib/automake.mk
 +++ b/lib/automake.mk
 @@ -13,8 +13,21 @@ if WIN32
@@ -102,7 +114,7 @@ index de3f068..5029dd3 100644
  lib_libopenvswitch_la_SOURCES = \
  	lib/aes128.c \
  	lib/aes128.h \
-@@ -304,6 +317,16 @@ lib_libopenvswitch_la_SOURCES += \
+@@ -304,6 +317,17 @@ lib_libopenvswitch_la_SOURCES += \
  	lib/route-table.h
  endif
  
@@ -112,6 +124,7 @@ index de3f068..5029dd3 100644
 +	lib/dpif-solaris.h \
 +	lib/netdev-solaris.c \
 +	lib/netdev-solaris.h \
++	lib/route-table-solaris.c \
 +	lib/util-solaris.c \
 +	lib/util-solaris.h
 +endif
@@ -119,23 +132,15 @@ index de3f068..5029dd3 100644
  if DPDK_NETDEV
  lib_libopenvswitch_la_SOURCES += \
         lib/netdev-dpdk.c \
-@@ -322,12 +345,16 @@ lib_libopenvswitch_la_SOURCES += \
+@@ -321,7 +345,7 @@ lib_libopenvswitch_la_SOURCES += \
+         lib/route-table-stub.c
  endif
  
- if HAVE_IF_DL
-+if SOLARIS
+-if HAVE_IF_DL
++if HAVE_IF_DL 
  lib_libopenvswitch_la_SOURCES += \
-+	lib/route-table-solaris.c
-+else
  	lib/netdev-bsd.c \
  	lib/rtbsd.c \
- 	lib/rtbsd.h \
- 	lib/route-table-bsd.c
- endif
-+endif
- 
- if HAVE_OPENSSL
- lib_libopenvswitch_la_SOURCES += lib/stream-ssl.c
 diff --git a/lib/byte-order.h b/lib/byte-order.h
 index 544f46f..b63a2b9 100644
 --- a/lib/byte-order.h
@@ -189,7 +194,7 @@ index c6cde7f..2279a62 100644
      SFL_DSCLASS_IFINDEX = 0,
      SFL_DSCLASS_VLAN = 1,
 diff --git a/lib/socket-util.h b/lib/socket-util.h
-index 2acc974..ebd3ae5 100644
+index 63f1d5f..f99a6ee 100644
 --- a/lib/socket-util.h
 +++ b/lib/socket-util.h
 @@ -27,6 +27,10 @@
@@ -202,66 +207,12 @@ index 2acc974..ebd3ae5 100644
 +
  int set_nonblocking(int fd);
  void xset_nonblocking(int fd);
- int set_dscp(int fd, uint8_t dscp);
+ int set_dscp(int fd, int family, uint8_t dscp);
 diff --git a/lib/socket-util.c b/lib/socket-util.c
-index aa0c719..afc607e 100644
+index e32aa2b..e9c8ae5 100644
 --- a/lib/socket-util.c
 +++ b/lib/socket-util.c
-@@ -111,6 +111,7 @@ set_dscp(int fd, uint8_t dscp)
- {
-     int val;
-     bool success;
-+    int err = 0;
- 
-     if (dscp > 63) {
-         return EINVAL;
-@@ -120,29 +121,39 @@ set_dscp(int fd, uint8_t dscp)
-     success = false;
-     val = dscp << 2;
-     if (setsockopt(fd, IPPROTO_IP, IP_TOS, &val, sizeof val)) {
-+	err = sock_errno();
-+#ifndef __sun
- #ifndef _WIN32
--        if (sock_errno() != ENOPROTOOPT) {
-+        if (err != ENOPROTOOPT) {
- #else
--        if (sock_errno() != WSAENOPROTOOPT) {
-+        if (err != WSAENOPROTOOPT) {
- #endif
--            return sock_errno();
-+            return err;
-         }
-+#endif
-     } else {
-         success = true;
-     }
-     if (setsockopt(fd, IPPROTO_IPV6, IPV6_TCLASS, &val, sizeof val)) {
-+	err = sock_errno();
-+#ifndef __sun
- #ifndef _WIN32
--        if (sock_errno() != ENOPROTOOPT) {
-+        if (err != ENOPROTOOPT) {
- #else
--        if (sock_errno() != WSAENOPROTOOPT) {
-+        if (err != WSAENOPROTOOPT) {
- #endif
--            return sock_errno();
-+            return err;
-         }
-+#endif
-     } else {
-         success = true;
-     }
-     if (!success) {
-+#ifndef __sun
-         return ENOPROTOOPT;
-+#else
-+	return err;
-+#endif
-     }
- 
-     return 0;
-@@ -505,11 +516,11 @@ free_sockaddr_un(int dirfd, const char *linkname)
+@@ -493,11 +493,11 @@ free_sockaddr_un(int dirfd, const char *linkname)
  
  /* Binds Unix domain socket 'fd' to a file with permissions 0700. */
  static int
@@ -275,7 +226,7 @@ index aa0c719..afc607e 100644
      umask(old_umask);
      return error;
  }
-@@ -1115,15 +1126,15 @@ describe_sockaddr(struct ds *string, int fd,
+@@ -1103,15 +1103,15 @@ describe_sockaddr(struct ds *string, int fd,
                            ss_get_port(&ss));
  #ifndef _WIN32
          } else if (ss.ss_family == AF_UNIX) {
@@ -297,7 +248,7 @@ index aa0c719..afc607e 100644
          }
  #ifdef HAVE_NETLINK
 diff --git a/lib/stream-unix.c b/lib/stream-unix.c
-index b3d70b6..a8cacc4 100644
+index fafdc8d..53dddb7 100644
 --- a/lib/stream-unix.c
 +++ b/lib/stream-unix.c
 @@ -108,12 +108,12 @@ static int
@@ -315,24 +266,6 @@ index b3d70b6..a8cacc4 100644
      } else {
          strcpy(name, "unix");
      }
-diff --git a/python/ovs/socket_util.py b/python/ovs/socket_util.py
-index 1af6474..b334d7e 100644
---- a/python/ovs/socket_util.py
-+++ b/python/ovs/socket_util.py
-@@ -302,11 +302,11 @@ def set_dscp(sock, dscp):
-     try:
-         sock.setsockopt(socket.IPPROTO_IP, socket.IP_TOS, val)
-     except socket.error, e:
--        if get_exception_errno(e) != errno.ENOPROTOOPT:
-+        if get_exception_errno(e) != errno.EINVAL:
-             raise
-     success = True
-     try:
-         sock.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_TCLASS, val)
-     except socket.error, e:
--        if get_exception_errno(e) != errno.ENOPROTOOPT or not success:
-+        if get_exception_errno(e) != errno.EINVAL or not success:
-             raise
 diff --git a/vswitchd/automake.mk b/vswitchd/automake.mk
 index a09605f..19bf9ea 100644
 --- a/vswitchd/automake.mk

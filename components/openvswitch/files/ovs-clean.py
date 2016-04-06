@@ -23,7 +23,7 @@
 #
 
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 from rad.bindings.com.oracle.solaris.rad.dlmgr import *
@@ -136,8 +136,9 @@ def removeFlows(argv, numargs, rc):
                 datalink.removeFlow(flow_name._kvpairs["name"])
             except radcli.ObjectError as ex:
                 dlerr = ex.get_payload()
-                # ignore if the flow is no longer found
-                if dlerr.err == DLSTATUS.NOT_FOUND._value:
+                # ignore if the flow is no longer found or is a system
+		# generated flow (e.g., vxlan system flows)
+                if dlerr.err == DLSTATUS.NOT_FOUND._value or dlerr.err == DLSTATUS.SYSTEM_FLOW._value:
                     continue
                 printError(ex)
                 rval = False
@@ -153,7 +154,6 @@ def deleteEtherstub(argv, numargs, rc, dm):
     try:
         etherstub = rc.get_object(Etherstub(), ADRGlobPattern({'name': name}))
         etherstub.setProperties({
-            'temporary': DLValue(type=DLValueType.BOOLEAN, bval="True"),
             'openvswitch': DLValue(type=DLValueType.BOOLEAN, bval=None)
             })
         dm.deleteEtherstub(name)
