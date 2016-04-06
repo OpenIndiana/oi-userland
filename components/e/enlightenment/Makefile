@@ -47,7 +47,7 @@ CONFIGURE_OPTIONS+=	--disable-device-udev
 CONFIGURE_OPTIONS+=     --disable-mount-udisks
 CONFIGURE_OPTIONS+=     --disable-device-hal
 
-# Need to regenerate configure 
+# Need to regenerate configure
 COMPONENT_PRE_CONFIGURE_ACTION= pushd $(SOURCE_DIR); aclocal -I m4 --install && autoconf && automake -a; popd;
 
 

@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2015, Aurelien Larcher 
+# Copyright (c) 2015, Aurelien Larcher
 #
 include ../../make-rules/shared-macros.mk
 

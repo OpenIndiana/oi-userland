@@ -38,7 +38,7 @@ include ../../make-rules/ips.mk
 
 CONFIGURE_OPTIONS +=	--disable-locking
 CONFIGURE_OPTIONS +=	--sysconfdir=/etc
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)" 
+CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 
 build:		$(BUILD_32)
 

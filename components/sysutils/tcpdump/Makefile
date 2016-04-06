@@ -32,7 +32,7 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)release/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/tcpdump
 
-# Prevent macro redefinition error 
+# Prevent macro redefinition error
 CFLAGS += -D _NETINET_IP_H
 
 include $(WS_TOP)/make-rules/prep.mk

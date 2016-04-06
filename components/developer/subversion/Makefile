@@ -133,13 +133,13 @@ CONFIGURE_OPTIONS += --bindir=$(CONFIGURE_BINDIR.$(BITS))
 CONFIGURE_OPTIONS += --sbindir=$(CONFIGURE_SBINDIR.$(BITS))
 CONFIGURE_OPTIONS += --libdir=$(LIBSVNDIR.$(BITS))
 CONFIGURE_OPTIONS += --localstatedir=/var
-CONFIGURE_OPTIONS += --enable-shared 
+CONFIGURE_OPTIONS += --enable-shared
 #CONFIGURE_OPTIONS += --disable-static
-CONFIGURE_OPTIONS += --disable-libtool-lock 
+CONFIGURE_OPTIONS += --disable-libtool-lock
 CONFIGURE_OPTIONS += --disable-neon-version-check
 CONFIGURE_OPTIONS += --disable-experimental-libtool
 CONFIGURE_OPTIONS += --with-apxs=$(APXS.$(BITS))
-CONFIGURE_OPTIONS += --with-ssl 
+CONFIGURE_OPTIONS += --with-ssl
 CONFIGURE_OPTIONS += --with-zlib=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --with-jdk=$(JAVA_ROOT)
 CONFIGURE_OPTIONS += --with-apr=/usr/apr

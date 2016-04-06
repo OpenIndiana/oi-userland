@@ -44,7 +44,7 @@ X11_SERVERMODS_DIR=/usr/lib/xorg/modules
 X11_SERVERLIBS_DIR=/usr/lib/xorg
 
 LDFLAGS= -L$(X11_SERVERLIBS_DIR)$(ARCHLIBSUBDIR) \
-                -R$(X11_SERVERLIBS_DIR)$(ARCHLIBSUBDIR) 
+                -R$(X11_SERVERLIBS_DIR)$(ARCHLIBSUBDIR)
 
 build: $(BUILD_32_and_64)
 

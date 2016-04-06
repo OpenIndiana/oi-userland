@@ -31,7 +31,7 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-COMPONENT_PRE_CONFIGURE_ACTION =    ($(CLONEY) $(SOURCE_DIR) $(@D)) 
+COMPONENT_PRE_CONFIGURE_ACTION =    ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --enable-threads=posix

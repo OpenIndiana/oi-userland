@@ -48,7 +48,7 @@ COMPONENT_PRE_BUILD_ACTION = \
 		-name *.py -exec $(GSED) -i -e 's///g' "{}" \; ;
 
 # After we have done each Python build, copy it to its own version specific
-# source hierarchy and then adjust the shebang lines as needed, before we 
+# source hierarchy and then adjust the shebang lines as needed, before we
 # build for Python 2.6. Note that this assumes we are only doing Python 2.7
 # and Python 2.6, and we are doing them in that order.
 COMPONENT_POST_BUILD_ACTION = \

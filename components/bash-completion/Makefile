@@ -10,7 +10,7 @@
 
 #
 # Copyright 2013, Aurelien Larcher. All rights reserved.
-# 
+#
 
 include ../../make-rules/shared-macros.mk
 

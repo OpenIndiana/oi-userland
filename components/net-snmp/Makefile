@@ -60,8 +60,8 @@ CONFIGURE_OPTIONS  +=	--enable-mfd-rewrites
 CONFIGURE_OPTIONS  +=	--with-pkcs
 CONFIGURE_OPTIONS  +=	--with-transports="UDP TCP UDPIPv6 TCPIPv6"
 
-# Embedded perl is disabled, because it causes 
-# failures during illumos build 
+# Embedded perl is disabled, because it causes
+# failures during illumos build
 # (  https://www.illumos.org/issues/4190 )
 # If you want to enable it, also turn on --enable-as-needed,
 # uncomment #dep_rpath="$dep_rpath $flag" in ltmain.sh patch

@@ -42,19 +42,19 @@ LDFLAGS += -lsocket -lnsl
 
 CONFIGURE_ENV +=	MAKE=$(GMAKE)
 
-# Need the GNU sed in our path because of assumptions 
+# Need the GNU sed in our path because of assumptions
 # in the configure script.
 CONFIGURE_ENV +=	PATH=/usr/gnu/bin:$(PATH)
 
 CONFIGURE_OPTIONS += --disable-dynamic-loading
 CONFIGURE_OPTIONS += --with-included-algos="\
 	rijndael-128,rijndael-192,rinjndael-256,enigma,arcfour,blowfish,des,\
-	tripledes,ecb,cbc,cfb,ctr,ncfb,nofb,ofb,stream" 
+	tripledes,ecb,cbc,cfb,ctr,ncfb,nofb,ofb,stream"
 
 # Use cloney to symlink to everything in the source directory because
-# some of parts of the build seem to reference directories relative 
+# some of parts of the build seem to reference directories relative
 # to the current (build) directory, but are expecting to find files (e.g.,
-# header files) which reside in the source dir. 
+# header files) which reside in the source dir.
 #
 # We also must remove the config.status file; otherwise, configure
 # thinks it has already been configured.

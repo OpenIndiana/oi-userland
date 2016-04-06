@@ -33,7 +33,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	 \
     sha256:f3d90ae9dcf423fa116962bb22346101a45105914fc47e3d7b7c4202560eb917
 
-# Using our own special version of the source tarball. It's not clear 
+# Using our own special version of the source tarball. It's not clear
 # where the source archive came from.  The community web has the
 # following for the source download link:
 #        http://downloads.sourceforge.net/areca/areca-7.1-src.zip

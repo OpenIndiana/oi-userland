@@ -35,7 +35,7 @@ include $(WS_TOP)/make-rules/ips.mk
 PATH=/usr/gnu/bin:/usr/bin
 
 COMPONENT_PREP_ACTION =        ( cd $(@D) && for f in gnome2-user-guide/bg/*.xml gnome2-user-guide/zh_CN/*.xml; do \
-					dos2unix -ascii $$f $$f ; done) 
+					dos2unix -ascii $$f $$f ; done)
 
 CONFIGURE_OPTIONS+=	--disable-scrollkeeper
 

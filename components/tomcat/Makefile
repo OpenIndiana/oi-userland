@@ -55,7 +55,7 @@ include ../../make-rules/ips.mk
 
 ifeq ($(strip $(USERLAND_ARCHIVES)),)
   DISTFILES_LOCATION=\$${base.path}/../../
-else 
+else
   DISTFILES_LOCATION=$(USERLAND_ARCHIVES)
 endif
 

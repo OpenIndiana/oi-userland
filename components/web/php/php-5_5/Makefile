@@ -199,7 +199,7 @@ CONFIGURE_ENV +=	CPPFLAGS="$(CPPFLAGS)"
 #$(BUILD_DIR)/$(MACH64).cgi/.installed:      BITS=64
 
 
-build:		$(BUILD_32_and_64) 
+build:		$(BUILD_32_and_64)
 # \
 #    $(BUILD_DIR)/$(MACH32).cgi/.built \
 #    $(BUILD_DIR)/$(MACH64).cgi/.built

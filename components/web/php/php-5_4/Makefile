@@ -175,7 +175,7 @@ COMPONENT_PRE_INSTALL_ACTION+= \
 	  )
 
 # Environment Variables
-COMPONENT_BUILD_ENV+=	CC="$(CC) $(CC_BITS)" CXX="$(CXX)" CFLAGS="$(CFLAGS)" CPPFLAGS="$(CPPFLAGS)" LDFLAGS="$(LDFLAGS)" 
+COMPONENT_BUILD_ENV+=	CC="$(CC) $(CC_BITS)" CXX="$(CXX)" CFLAGS="$(CFLAGS)" CPPFLAGS="$(CPPFLAGS)" LDFLAGS="$(LDFLAGS)"
 CONFIGURE_ENV.32 +=     EXTENSION_DIR=$(PHP_PREFIX)/extensions
 CONFIGURE_ENV.64 +=     EXTENSION_DIR=$(PHP_PREFIX)/extensions/$(MACH64)
 CONFIGURE_ENV.32 +=     ICU_CONFIG=/usr/bin/icu-config
@@ -199,7 +199,7 @@ CONFIGURE_ENV +=	CPPFLAGS="$(CPPFLAGS)"
 #$(BUILD_DIR)/$(MACH64).cgi/.installed:      BITS=64
 
 
-build:		$(BUILD_32_and_64) 
+build:		$(BUILD_32_and_64)
 # \
 #    $(BUILD_DIR)/$(MACH32).cgi/.built \
 #    $(BUILD_DIR)/$(MACH64).cgi/.built

@@ -62,14 +62,14 @@ COMPONENT_PREP_ACTION =        ( cd $(@D) && \
 COMPONENT_PRE_CONFIGURE_ACTION = \
     ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-# need /usr/perl5/bin on path to access pod2man perl script, used by 
+# need /usr/perl5/bin on path to access pod2man perl script, used by
 # the build to create docs
 COMPONENT_BUILD_ENV +=	PATH=/usr/perl5/bin:$(PATH)
 
-COMPONENT_BUILD_ENV +=	MAKE="$(GMAKE)"	
+COMPONENT_BUILD_ENV +=	MAKE="$(GMAKE)"
 
 # Libmemcached's configure script sets an incorrect CFLAGS in the Makefiles
-# it generates.  Make sure we use the correct one by passing CFLAGS in 
+# it generates.  Make sure we use the correct one by passing CFLAGS in
 # as a build argument (CFLAGS in the environment won't take precedence
 # over the Makefile one).
 COMPONENT_BUILD_ARGS +=	CFLAGS="$(CFLAGS)"

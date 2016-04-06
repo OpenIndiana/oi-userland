@@ -42,14 +42,14 @@ include $(WS_MAKE_RULES)/ips.mk
 PATCH_LEVEL=0
 
 CONFIGURE_OPTIONS+=	CFLAGS="$(CFLAGS) -D__EXTENSIONS__"
-CONFIGURE_OPTIONS+=	--enable-fribidi 
+CONFIGURE_OPTIONS+=	--enable-fribidi
 CONFIGURE_OPTIONS+=	--with-opengl=full
 # OpenGL ES 2.0 headers marked not present if x11/library/mesa not installed
 CONFIGURE_OPTIONS+=	--enable-lua-old
 CONFIGURE_OPTIONS+=	--disable-pulseaudio # Not packaged
-CONFIGURE_OPTIONS+=	--disable-physics # Disable physics since bullet is missing 
-CONFIGURE_OPTIONS+=	--enable-gstreamer # Select series 0.10 over 1.0 
-CONFIGURE_OPTIONS+=	--disable-gstreamer1 # Select series 0.10 over 1.0 
+CONFIGURE_OPTIONS+=	--disable-physics # Disable physics since bullet is missing
+CONFIGURE_OPTIONS+=	--enable-gstreamer # Select series 0.10 over 1.0
+CONFIGURE_OPTIONS+=	--disable-gstreamer1 # Select series 0.10 over 1.0
 CONFIGURE_OPTIONS+=	--disable-doc # Broken in 1.8.2
 CONFIGURE_OPTIONS+=     --enable-i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-aba
 
@@ -61,7 +61,7 @@ CONFIGURE_OPTIONS+=     --enable-i-really-know-what-i-am-doing-and-that-this-wil
 COMPONENT_POST_CONFIGURE_ACTION=$(RM) $(SOURCE_DIR)/src/lib/eina/eina_config.h;
 
 # pkgdepend fails to resolve the python version if env is used
-COMPONENT_POST_INSTALL_ACTION=sed -i -e '1 s|^.*$$|\#!/usr/bin/python$(PYTHON_VERSION)|' $(PROTO_DIR)/usr/bin/eina-bench-cmp; 
+COMPONENT_POST_INSTALL_ACTION=sed -i -e '1 s|^.*$$|\#!/usr/bin/python$(PYTHON_VERSION)|' $(PROTO_DIR)/usr/bin/eina-bench-cmp;
 
 build: $(BUILD_32)
 

@@ -60,7 +60,7 @@ $(BUILD_DIR)/%/.installed:      $(BUILD_DIR)/%/.built
 	$(COMPONENT_POST_INSTALL_ACTION)
 	$(TOUCH) $@
 
-install: $(INSTALL_32) 
+install: $(INSTALL_32)
 
 build: $(BUILD_32)
 

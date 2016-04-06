@@ -55,8 +55,8 @@ LOCALE_LIB_DIR.32=/usr/lib/X11/locale
 LOCALE_LIB_DIR.64=/usr/lib/X11/locale/$(MACH64)
 
 
-CONFIGURE_OPTIONS +=  --without-xmlto 
-CONFIGURE_OPTIONS +=  --with-asciidoc 
+CONFIGURE_OPTIONS +=  --without-xmlto
+CONFIGURE_OPTIONS +=  --with-asciidoc
 CONFIGURE_OPTIONS +=  --without-fop
 CONFIGURE_OPTIONS +=  --localstatedir=/var
 CONFIGURE_OPTIONS +=  --enable-shared=yes
@@ -64,14 +64,14 @@ CONFIGURE_OPTIONS +=  --enable-static=no
 CONFIGURE_OPTIONS +=  --without-lint
 CONFIGURE_OPTIONS +=  --disable-lint-library
 CONFIGURE_OPTIONS +=  --with-pic
-CONFIGURE_OPTIONS +=  --enable-xthreads 
-CONFIGURE_OPTIONS +=  --enable-loadable-i18n 
+CONFIGURE_OPTIONS +=  --enable-xthreads
+CONFIGURE_OPTIONS +=  --enable-loadable-i18n
 CONFIGURE_OPTIONS +=  --enable-xf86bigfont
-CONFIGURE_OPTIONS +=  --with-xcb=yes 
-CONFIGURE_OPTIONS +=  --enable-loadable-xcursor 
+CONFIGURE_OPTIONS +=  --with-xcb=yes
+CONFIGURE_OPTIONS +=  --enable-loadable-xcursor
 CONFIGURE_OPTIONS +=  --enable-xcms
-CONFIGURE_OPTIONS +=  --enable-xlocaledir 
-CONFIGURE_OPTIONS +=  --enable-xkb  
+CONFIGURE_OPTIONS +=  --enable-xlocaledir
+CONFIGURE_OPTIONS +=  --enable-xkb
 CONFIGURE_OPTIONS +=  --with-locale-lib-dir="$(LOCALE_LIB_DIR.$(BITS))"
 
 COMPONENT_BUILD_ARGS.64=ADD_libX11_LDFLAGS="-Wl,-M$(COMPONENT_DIR)/mapfile-vers-64"

@@ -82,7 +82,7 @@ CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_PREFIX)/lib
 CONFIGURE_OPTIONS +=	--with-gif=no
 CONFIGURE_OPTIONS +=	ac_cv_sys_long_file_names=yes
 
-# ASLR should remain disabled for emacs (the default); 
+# ASLR should remain disabled for emacs (the default);
 # build consistently core dumps with ASLR
 ASLR_MODE = $(ASLR_DISABLE)
 
@@ -174,7 +174,7 @@ COMPONENT_POST_INSTALL_ACTION += $(RM) $(PROTO_DIR)/usr/share/info/dir ;
 # common targets
 build:          $(BUILD_32)
 
-install:	$(BUILD_32) $(BUILD_DIR)/$(MACH32)-x/.installed 
+install:	$(BUILD_32) $(BUILD_DIR)/$(MACH32)-x/.installed
 
 test:	$(NO_TESTS)
 

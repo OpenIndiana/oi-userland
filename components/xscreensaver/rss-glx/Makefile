@@ -31,7 +31,7 @@ include ../../../make-rules/configure.mk
 include ../../../make-rules/ips.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION += chmod -R u+r $(SOURCE_DIR)/ && \
-			cp -r $(SOURCE_DIR)/* $(@D) 
+			cp -r $(SOURCE_DIR)/* $(@D)
 
 PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
 

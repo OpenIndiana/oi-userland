@@ -47,7 +47,7 @@ include $(WS_TOP)/make-rules/configure.mk
 
 # COMPONENT_VERSION <major>.<minor>.<teeny>
 # is transformed into <major>.<minor> for RUBY_VER.
-# First change the separator '.' to ' ', so we can use "word" to pull the 
+# First change the separator '.' to ' ', so we can use "word" to pull the
 # first two space-separated words from the string.
 RUBY_VER_WORDS=	$(subst ., ,$(COMPONENT_VERSION))
 RUBY_VER=$(word 1,$(RUBY_VER_WORDS)).$(word 2,$(RUBY_VER_WORDS))
@@ -63,10 +63,10 @@ PKG_MACROS+=	RUBY_VER=$(RUBY_VER) RUBY_LIB_VER=$(RUBY_LIB_VER)
 # Apply some of the edits here--including to the sed scripts themselves.
 # These modifications of ruby.1 must occur after ruby
 # is installed, not before.  Although there are some other patches
-# to ruby.1 that occur before, the ruby installation does some 
+# to ruby.1 that occur before, the ruby installation does some
 # formatting of ruby.1 that won't occur if the below changes
 # are applied.
-# Fix generated rbconfig.rb using /usr/bin/sed; gsed doesn't 
+# Fix generated rbconfig.rb using /usr/bin/sed; gsed doesn't
 # work for some of the commands in rbconfig.sedscript.
 COMPONENT_POST_INSTALL_ACTION += \
 	$(GSED) -e "s/RUBY_VER/$(RUBY_VER)/" \
@@ -89,23 +89,23 @@ COMPONENT_POST_INSTALL_ACTION += \
 # after compiling with this option
 LD_B_DIRECT=
 
-# don't use LD_Z_IGNORE: causes ruby linker problems with 
+# don't use LD_Z_IGNORE: causes ruby linker problems with
 # unreferenced symbol tgetent in libreadline, similar to bug #15617172
 LD_Z_IGNORE=
 
-# i386 build runs into a Solaris ube compiler bug (#16775467) 
+# i386 build runs into a Solaris ube compiler bug (#16775467)
 # while compiling load.c; it's having trouble with -xO4, so work around
 # by using -xO3 instead.  16775467 was patched for 12.1 compiler, so
-# the below should not no longer be necessary when we switch to 
+# the below should not no longer be necessary when we switch to
 # the 12.3 compiler
 studio_OPT.i386.64 = -xO3
 
 # sparc build sometimes fails with studio 12.3 because of 17537968.
 studio_OPT.sparc.64 = -xO3
 
-# without this define, config fails frequently on i386 when including 
+# without this define, config fails frequently on i386 when including
 # /usr/include/sys/isa_defs.h with error: "ISA not supported";
-# many extensions don't get built and at least one error causes 
+# many extensions don't get built and at least one error causes
 # the build to fail
 studio_XBITS.i386.64 += -D__amd64
 
@@ -133,14 +133,14 @@ CONFIGURE_OPTIONS +=	--with-openssl
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 
 # fiddle.so (ext/fiddle) links to libffi, which does not define
-# ffi_raw_size(), although its prototype is in libffi's 
-# /usr/lib/libffi-3.0/include/ffi.h header file.  
+# ffi_raw_size(), although its prototype is in libffi's
+# /usr/lib/libffi-3.0/include/ffi.h header file.
 # Defining FFI_NO_RAW_API avoids use of ffi_raw_size().
 # This is a workaround to bug
 # 17349280 - libffi is missing ffi_raw_size()
 CFLAGS +=		-DFFI_NO_RAW_API
 
-# keep ASLR disabled; 
+# keep ASLR disabled;
 # miniruby may core dump on sparc during build
 ASLR_MODE =		$(ASLR_DISABLE)
 

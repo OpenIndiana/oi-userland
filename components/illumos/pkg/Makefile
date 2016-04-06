@@ -32,7 +32,7 @@ CLEAN_PATHS += $(BUILD_DIR)
 
 include $(WS_TOP)/make-rules/prep.mk
 
-#export CC 
+#export CC
 
 COMPONENT_ENV = CC=$(CC)
 COMPONENT_BUILD_ENV = $(COMPONENT_ENV)
@@ -53,7 +53,7 @@ update:
 
 download:: $(SOURCE_DIR)/.downloaded
 
-$(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.downloaded 
+$(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.downloaded
 	$(MKDIR) $(@D) && \
 	cd $(SOURCE_DIR)/src && \
 	$(ENV) $(COMPONENT_BUILD_ENV) $(MAKE) && $(ENV) $(COMPONENT_INSTALL_ENV) $(MAKE) install && \

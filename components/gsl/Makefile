@@ -30,7 +30,7 @@ include ../../make-rules/ips.mk
 COMPONENT_BUILD_ENV +=	CFLAGS="$(CFLAGS)"
 
 include ../../make-rules/shared-targets.mk
-	
+
 build:		$(BUILD_32_and_64)
 #$(BUILD_64)
 

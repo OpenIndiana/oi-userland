@@ -184,6 +184,6 @@ CONFIGURE_ENV.64 +=     ICU_CONFIG=/usr/bin/amd64/icu-config
 COMPONENT_BUILD_TARGETS = libphp5.la
 COMPONENT_INSTALL_TARGETS = install-sapi
 
-build:		$(BUILD_32_and_64) 
+build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)

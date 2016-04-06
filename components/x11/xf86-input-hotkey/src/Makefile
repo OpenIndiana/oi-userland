@@ -33,7 +33,7 @@ hotkey_drv.so: $(OBJS)
 .c.o:	Makefile ../../Makefile
 	$(CC) -fpic -DPIC $(CFLAGS) $(CPPFLAGS) -c $<
 
-install: hotkey_drv.so 
+install: hotkey_drv.so
 	mkdir -p $(INSTDIR)
 	$(INSTALL) hotkey_drv.so $(INSTDIR)/hotkey_drv.so
 

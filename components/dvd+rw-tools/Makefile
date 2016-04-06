@@ -38,7 +38,7 @@ CFLAGS += -DI_KNOW_ALL_ABOUT_SUDO
 COMPONENT_BUILD_ARGS += CC=$(CC)
 COMPONENT_BUILD_ARGS += CXX=$(CXX)
 COMPONENT_BUILD_ARGS += CFLAGS="$(CFLAGS)"
-                                        
+
 # common targets
 build:                $(BUILD_32)
 

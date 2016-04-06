@@ -83,7 +83,7 @@ DOCLIST = libidn-components.pdf libidn.pdf
 
 ifeq ($(strip $(USERLAND_ARCHIVES)),)
   TLD_FILE=$(COMPONENT_DIR)/$(COMPONENT_ARCHIVE_1)
-else 
+else
   TLD_FILE=$(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1)
 endif
 

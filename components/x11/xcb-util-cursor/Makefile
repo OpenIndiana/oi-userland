@@ -32,7 +32,7 @@ COMPONENT_ARCHIVE_HASH=	sha256:517a1febcede3bc994e356c4c066e297a12ca219063b7d390
 COMPONENT_ARCHIVE_URL=	http://xcb.freedesktop.org/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      MIT
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
-COMPONENT_SUMMARY=      The X protocol C-language Binding (XCB): 
+COMPONENT_SUMMARY=      The X protocol C-language Binding (XCB):
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk

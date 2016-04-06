@@ -51,7 +51,7 @@ CONFIGURE_OPTIONS +=	--disable-nls
 CONFIGURE_OPTIONS +=	--enable-default-catalog="CATALOG:/etc/sgml/catalog:/usr/share/sgml/CATALOG"
 
 # 21786575 for gmake test failures
-COMPONENT_TEST_DIR =	$(BUILD_DIR)/$(MACH$(BITS))/tests 
+COMPONENT_TEST_DIR =	$(BUILD_DIR)/$(MACH$(BITS))/tests
 COMPONENT_TEST_ARGS = 	-k -i
 COMPONENT_TEST_TRANSFORMS += \
         '-n ' \

@@ -34,7 +34,7 @@ PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
 COMPONENT_PRE_CONFIGURE_ACTION =        (cp -r $(SOURCE_DIR)/* $(@D) && \
 					cp -r $(COMPONENT_DIR)/files/po-sun $(@D) && \
 					cd $(@D)/po-sun && $(MAKE) all )
-					
+
 CFLAGS+=	-DSOLARIS -D__EXTENSIONS__
 CXXFLAGS+=	-DSOLARIS -D__EXTENSIONS__
 

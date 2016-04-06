@@ -19,7 +19,7 @@ COMPONENT_NAME= ca-certificates
 
 COMPONENT_VERSION= 3.15.5
 COMPONENT_REVISION=1
-IPS_COMPONENT_VERSION=	1.0 
+IPS_COMPONENT_VERSION=	1.0
 COMPONENT_SUMMARY= Common CA certificates
 COMPONENT_SRC= nss-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -57,7 +57,7 @@ $(BUILD_DIR_32)/ca-bundle.processed: $(BUILD_DIR_32)/ca-bundle.crt
 
 $(BUILD_DIR_32)/ca-bundle.crt: $(BUILD_DIR_32)/certdata.txt
 	cd $(BUILD_DIR_32) && $(PERL) $(COMPONENT_DIR)/mk-ca-bundle.pl -n
-	
+
 
 $(BUILD_DIR_32)/certdata.txt: $(SOURCE_DIR)/nss/lib/ckfw/builtins/certdata.txt
 	$(MKDIR)  $(BUILD_DIR_32)
@@ -72,9 +72,9 @@ $(INSTALL_32):	$(BUILD_32)
 	for i in *.pem ; do  \
 	   HASH=$$(openssl x509 -noout -hash -in $$i); \
            ln -fs ../../certs/CA/$${i} ../../openssl/certs/$${HASH}.0; \
-	done; 
+	done;
 	touch $@
-	
+
 build: $(BUILD_32)
 
 install: $(INSTALL_32)

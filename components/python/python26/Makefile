@@ -39,8 +39,8 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-# Need to preserve timestamp for Grammar files.  If the pickle files are older, 
-# Python will try to rebuild them.  
+# Need to preserve timestamp for Grammar files.  If the pickle files are older,
+# Python will try to rebuild them.
 PKGSEND_PUBLISH_OPTIONS += -T \*Grammar\*.txt
 PKGSEND_PUBLISH_OPTIONS += -T \*Grammar\*.pickle
 
@@ -96,7 +96,7 @@ COMPONENT_POST_INSTALL_ACTION= \
             (cd $(PROTOUSRDIR) ;  \
              $(MV) include/python2.6/pyconfig.h include/python2.6/pyconfig-$(BITS).h ; \
              $(TOUCH) lib/python2.6/lib2to3/*.pickle)
-                
+
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets

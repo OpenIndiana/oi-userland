@@ -72,9 +72,9 @@ $(BUILD_DIR)/lua-64.pc:		files/lua-64.pc
 
 # common targets
 build:		$(BUILD_32_and_64)
-		
+
 install:	$(INSTALL_32_and_64) $(BUILD_DIR)/lua-64.pc
-		
+
 test: 		install
 		(gzip -dc $(USERLAND_ARCHIVES)$(LUA_TESTS).tar.gz | tar xopf -; \
 		cd $(LUA_TESTS); $(ENV) LD_LIBRARY_PATH=$(PROTOUSRLIBDIR) \

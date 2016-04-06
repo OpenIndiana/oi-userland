@@ -44,7 +44,7 @@ build: $(BUILD_32)
 install: $(INSTALL_32)
 
 $(BUILD_DIR)/%/.installed: $(BUILD_32)
-	$(MKDIR) $(PROTO_DIR)/opt/DTT 
+	$(MKDIR) $(PROTO_DIR)/opt/DTT
 	/usr/gnu/bin/tar cpf - -C $(SOURCE_DIR) --exclude './.*' . | /usr/gnu/bin/tar xpvf - -C $(PROTO_DIR)/opt/DTT
 	rm $(PROTO_DIR)/opt/DTT/install
 	$(TOUCH) $@

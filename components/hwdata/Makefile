@@ -29,12 +29,12 @@ include ../../make-rules/ips.mk
 
 # Since upstream only offers the latest snapshot for download, without
 # any way to retrieve a specific version, we just keep the currently
-# shipped versions of these two text files directly in the gate and 
+# shipped versions of these two text files directly in the gate and
 # simply check in new versions to update them.
 #
 # When it's time to update, you can use these rules to download with
 # 'gmake -B pci.ids usb.ids'   After updating the data files, ensure
-# that the header with version/date and license info is still being 
+# that the header with version/date and license info is still being
 # correctly extracted and copied into the generated license files.
 
 download::
@@ -72,7 +72,7 @@ $(BUILD_DIR)/%.header: %
 	$(GSED) -e '/^$$/ q' $< > $@
 
 # Generate license files for each document by substituting in templates:
-# __HEADER__ - read in contents of generated header file, then delete the 
+# __HEADER__ - read in contents of generated header file, then delete the
 #		__HEADER__ line
 $(BUILD_DIR)/%.license: $(BUILD_DIR)/%.header
 	$(GSED) -e '/__HEADER__/ r $<' -e '/__HEADER__/ d' ids.license.tmpl > $@

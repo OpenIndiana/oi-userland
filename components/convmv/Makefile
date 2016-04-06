@@ -42,7 +42,7 @@ include ../../make-rules/ips.mk
 
 PATCH_LEVEL=0
 
-COMPONENT_TEST_TARGETS= test 
+COMPONENT_TEST_TARGETS= test
 
 # common targets
 build:		$(BUILD_32)

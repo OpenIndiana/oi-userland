@@ -45,7 +45,7 @@ COMPONENT_PREP_ACTION =        ( cd $(@D) && \
                                         automake -a -f -c &&\
                                         autoconf )
 
-# Paths to find libraries/modules to link with 
+# Paths to find libraries/modules to link with
 
 SERVERMOD_SUBDIR.64=/$(MACH64)
 SERVERMOD_SUBDIR=$(SERVERMOD_SUBDIR.$(BITS))
@@ -79,7 +79,7 @@ CPPFLAGS += -DXF86DRI
 CONFIGURE_OPTIONS += --enable-dri
 CONFIGURE_OPTIONS += --enable-xvmc
 CONFIGURE_OPTIONS += --libdir=$(X11_SERVERLIBS_DIR)$(SERVERMOD_SUBDIR)
-CONFIGURE_OPTIONS += --disable-sna 
+CONFIGURE_OPTIONS += --disable-sna
 CONFIGURE_OPTIONS += --enable-uxa
 CONFIGURE_OPTIONS += --disable-selective-werror
 CONFIGURE_OPTIONS += --disable-silent-rules

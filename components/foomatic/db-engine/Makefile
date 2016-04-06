@@ -37,7 +37,7 @@ include ../../../make-rules/prep.mk
 include ../../../make-rules/configure.mk
 include ../../../make-rules/ips.mk
 
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)" 
+CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	PERL=$(PERL)
 CONFIGURE_OPTIONS +=	FILEUTIL=/bin/true
 CONFIGURE_OPTIONS +=    --sysconfdir=$(ETCDIR)/gnu

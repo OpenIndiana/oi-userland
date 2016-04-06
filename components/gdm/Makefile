@@ -51,7 +51,7 @@ COMPONENT_PREP_ACTION =        ( cp $(COMPONENT_DIR)/files/box-openindiana.png $
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 LDFLAGS += -lsecdb
-                                        
+
 CONFIGURE_SCRIPT=       $(@D)/configure
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc

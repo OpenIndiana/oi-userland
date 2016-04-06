@@ -48,7 +48,7 @@ CONFIGURE_OPTIONS += --with-macrobasedir=/usr/share/lib/java/javadoc/java-gnome
 CONFIGURE_OPTIONS += --with-jardir=/usr/share/lib/java
 CONFIGURE_OPTIONS += --with-srcjar
 CONFIGURE_OPTIONS += --with-srcjardir=/usr/share/lib/java/src/java-gnome
-CONFIGURE_OPTIONS += --without-gcj-compile               
+CONFIGURE_OPTIONS += --without-gcj-compile
 
 CONFIGURE_OPTIONS += JAVA_HOME=$(JAVA_HOME)
 

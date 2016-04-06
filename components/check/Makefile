@@ -39,7 +39,7 @@ include $(WS_MAKE_RULES)/ips.mk
 CONFIGURE_OPTIONS+=	--includedir=$(CONFIGURE_PREFIX)/include/check
 CONFIGURE_OPTIONS+=	--enable-shared
 CONFIGURE_OPTIONS+=	--disable-static
-CONFIGURE_OPTIONS+= --enable-gcov           
+CONFIGURE_OPTIONS+= --enable-gcov
 CONFIGURE_OPTIONS+= --enable-timeout-tests
 
 build:		$(BUILD_32_and_64)

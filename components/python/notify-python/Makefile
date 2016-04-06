@@ -55,7 +55,7 @@ include ../../../make-rules/prep.mk
 include ../../../make-rules/configure.mk
 include ../../../make-rules/ips.mk
 
-# There was reference to now unavailable http://trac.galago-project.org/ticket/121 
+# There was reference to now unavailable http://trac.galago-project.org/ticket/121
 # for the reason to remove the file
 COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 					rm src/pynotify.c)

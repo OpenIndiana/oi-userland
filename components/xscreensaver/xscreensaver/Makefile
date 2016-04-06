@@ -46,22 +46,22 @@ CONFIGURE_SCRIPT=	$(@D)/configure
 
 CFLAGS+=	-funsafe-math-optimizations -Wall -I$(SOURCE_DIR)/mesa/GL  -std=gnu99 -D_FILE_OFFSET_BITS=64
 CXXFLAGS+=	-funsafe-math-optimizations -Wall -I$(SOURCE_DIR)/mesa/GL -D_FILE_OFFSET_BITS=64
-LDFLAGS+=	-I$(@D)/mesa/GL 
+LDFLAGS+=	-I$(@D)/mesa/GL
 
 CONFIGURE_ENV+=	"XGETTEXT=/usr/gnu/bin/xgettext"
 CONFIGURE_ENV+= "GNOME_DATADIR=/usr/lib/xscreensaver/config"
 CONFIGURE_ENV+= "GLADE_DATADIR=/usr/lib/xscreensaver/config"
 
 
-CONFIGURE_OPTIONS+=	--enable-maintainer-mode 
-CONFIGURE_OPTIONS+=	--with-gnome 
+CONFIGURE_OPTIONS+=	--enable-maintainer-mode
+CONFIGURE_OPTIONS+=	--with-gnome
 CONFIGURE_OPTIONS+=	--enable-gtk-doc
 CONFIGURE_OPTIONS+=	--with-gtk2=/usr
-CONFIGURE_OPTIONS+=	--with-pixbuf=/usr 
+CONFIGURE_OPTIONS+=	--with-pixbuf=/usr
 CONFIGURE_OPTIONS+=	--enable-locking
-CONFIGURE_OPTIONS+=	--with-pam=/usr 
+CONFIGURE_OPTIONS+=	--with-pam=/usr
 CONFIGURE_OPTIONS+=	--without-shadow
-CONFIGURE_OPTIONS+=	--without-kerberos 
+CONFIGURE_OPTIONS+=	--without-kerberos
 CONFIGURE_OPTIONS+=	--with-dpms
 CONFIGURE_OPTIONS+=	--with-xinput-ext
 CONFIGURE_OPTIONS+=	--with-randr-ext
@@ -69,7 +69,7 @@ CONFIGURE_OPTIONS+=	--enable-root-passwd
 CONFIGURE_OPTIONS+=	--with-gl=/usr
 CONFIGURE_OPTIONS+=	--without-motif
 CONFIGURE_OPTIONS+=	--with-jpeg=/usr
-CONFIGURE_OPTIONS+=	--with-hackdir=/usr/lib/xscreensaver/hacks 
+CONFIGURE_OPTIONS+=	--with-hackdir=/usr/lib/xscreensaver/hacks
 CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib/xscreensaver/bin
 CONFIGURE_OPTIONS+=	--with-configdir=/usr/lib/xscreensaver/config/control-center-2.0
 CONFIGURE_OPTIONS+=	--with-image-directory=/usr/share/pixmaps/backgrounds

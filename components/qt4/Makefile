@@ -40,8 +40,8 @@ PATH=$(PG_BINDIR.$(BITS)):$(MYSQL_BINDIR.$(BITS)):/usr/bin
 
 MYSQL_LIBDIR.32=/usr/mariadb/5.5/lib
 MYSQL_LIBDIR.64=/usr/mariadb/5.5/lib/$(MACH64)
-LDFLAGS +=   -L$(MYSQL_LIBDIR.$(BITS)) -R$(MYSQL_LIBDIR.$(BITS)) 
-LDFLAGS +=   -L$(PG_LIBDIR.$(BITS)) -R$(PG_LIBDIR.$(BITS)) 
+LDFLAGS +=   -L$(MYSQL_LIBDIR.$(BITS)) -R$(MYSQL_LIBDIR.$(BITS))
+LDFLAGS +=   -L$(PG_LIBDIR.$(BITS)) -R$(PG_LIBDIR.$(BITS))
 
 # Missing files in build dir without this.
 COMPONENT_PRE_CONFIGURE_ACTION =        (cp -r $(SOURCE_DIR)/* $(@D))
@@ -83,7 +83,7 @@ COMPONENT_POST_INSTALL_ACTION.32= ( cd $(PROTO_DIR)/usr/lib/qt/$(COMPONENT_VERSI
 	mv tests tests.32 ; \
 	find $(PROTO_DIR)/usr/lib/qt/$(COMPONENT_VERSION_MJR)/tests.32 -type f | \
 		xargs -n 1 /usr/bin/elfedit -e 'dyn:runpath "/usr/lib:/usr/lib/qt/$(COMPONENT_VERSION_MJR)/lib"')
-	
+
 
 COMPONENT_POST_INSTALL_ACTION.64= ( cd $(PROTO_DIR)/usr/lib/qt/$(COMPONENT_VERSION_MJR)/mkspecs ; \
 	mv qconfig.pri qconfig.pri.64 ; ln -s qconfig.pri.32 qconfig.pri ; \

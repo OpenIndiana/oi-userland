@@ -58,7 +58,7 @@ COMPONENT_PRE_CONFIGURE_ACTION =        (cp -a $(SOURCE_DIR)/* $(@D) )
 CPPFLAGS = -I/usr/X11/include/drm -D__EXTENSIONS__
 
 LDFLAGS= -L$(PROTODIR)$(X11_SERVERLIBS_DIR)$(ARCHLIBSUBDIR) \
-                -R$(X11_SERVERLIBS_DIR)$(ARCHLIBSUBDIR) 
+                -R$(X11_SERVERLIBS_DIR)$(ARCHLIBSUBDIR)
 
 LD_OPTIONS += -M $(COMPONENT_DIR)/mapfile.externs
 
@@ -68,7 +68,7 @@ DRI_DRIVER_LIST=i915 i965 r200 radeon swrast
 CONFIGURE_OPTIONS += --with-dri-driverdir='$(X11_SERVERMODS_DIR)/dri$(SERVERMOD_SUBDIR)'
 CONFIGURE_OPTIONS += --with-dri-drivers='$(DRI_DRIVER_LIST)'
 CONFIGURE_OPTIONS += --disable-gallium-llvm
-CONFIGURE_OPTIONS += --disable-egl 
+CONFIGURE_OPTIONS += --disable-egl
 CONFIGURE_OPTIONS += --with-gallium-drivers=
 CONFIGURE_OPTIONS += --enable-shared-glapi
 CONFIGURE_OPTIONS += --enable-texture-float

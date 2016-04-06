@@ -43,7 +43,7 @@ PKG_OPTIONS += -I $(COMPONENT_DIR)
 
 # We need to be able to return from void functions
 # CC += $(studio_FEATURES_EXTENSIONS)
-# CXX += $(studio_FEATURES_EXTENSIONS) $(studio_NORUNPATH) $(studio_CXXLIB_CSTD) 
+# CXX += $(studio_FEATURES_EXTENSIONS) $(studio_NORUNPATH) $(studio_CXXLIB_CSTD)
 
 ROOTPPDCACHE =  $(PROTO_DIR)/usr/lib/lp/caches/SUNWhpijs.cache
 

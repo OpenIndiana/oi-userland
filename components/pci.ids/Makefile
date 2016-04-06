@@ -29,7 +29,7 @@ COMPONENT_PROJECT_URL=	https://pci-ids.ucw.cz/
 include $(WS_TOP)/make-rules/ips.mk
 
 CURL=/usr/bin/curl
-GZIP=/usr/bin/gzip 
+GZIP=/usr/bin/gzip
 
 download:
 
@@ -48,4 +48,4 @@ install: prep
 
 clean:
 	$(RM) -r $(BUILD_DIR)
-	$(RM) -r $(SOURCE_DIR) 
+	$(RM) -r $(SOURCE_DIR)

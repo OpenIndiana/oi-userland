@@ -32,7 +32,7 @@ include $(WS_TOP)/make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-CFLAGS += -D__LITTLE_ENDIAN=1234 
+CFLAGS += -D__LITTLE_ENDIAN=1234
 CFLAGS += -D__BYTE_ORDER=1234
 
 CONFIGURE_OPTIONS += --exec-prefix=/usr

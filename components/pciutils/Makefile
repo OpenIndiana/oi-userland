@@ -30,7 +30,7 @@ include ../../make-rules/prep.mk
 include ../../make-rules/justmake.mk
 include ../../make-rules/ips.mk
 
-COMPONENT_BUILD_GMAKE_ARGS += CC=$(CC) 
+COMPONENT_BUILD_GMAKE_ARGS += CC=$(CC)
 COMPONENT_BUILD_GMAKE_ARGS += OPT="-O2 -DBYTE_ORDER=1234 -DLITTLE_ENDIAN=1234"
 COMPONENT_BUILD_GMAKE_ARGS += PREFIX="/usr"
 

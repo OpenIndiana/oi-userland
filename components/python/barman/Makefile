@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	barman
 COMPONENT_VERSION= 	1.3.3
-COMPONENT_SUMMARY= 	An administration tool for disaster recovery of PostgreSQL servers 
+COMPONENT_SUMMARY= 	An administration tool for disaster recovery of PostgreSQL servers
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \

@@ -36,7 +36,7 @@ PATH=/usr/gnu/bin:/usr/bin
 COMPONENT_BUILD_ARGS += --prefix=/usr
 
 COMPONENT_INSTALL_ARGS = --prefix=/usr
-COMPONENT_INSTALL_ARGS +=       --root $(PROTO_DIR) 
+COMPONENT_INSTALL_ARGS +=       --root $(PROTO_DIR)
 COMPONENT_INSTALL_ARGS +=       --install-lib=$(PYTHON_LIB)
 COMPONENT_INSTALL_ARGS +=       --install-purelib=$(PYTHON_LIB)
 COMPONENT_INSTALL_ARGS +=       --install-platlib=$(PYTHON_LIB)

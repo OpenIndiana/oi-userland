@@ -48,7 +48,7 @@ CONFIGURE_OPTIONS+= --with-add-fonts='/etc/X11/fontpath.d,/usr/share/ghostscript
 CONFIGURE_OPTIONS+= --with-cache-dir=/var/cache/fontconfig
 
 $(BUILD_DIR)/.fonts_installed: $(INSTALL_32_and_64)
-	$(RM) -r $(PROTO_DIR)/etc/fonts/conf.d 
+	$(RM) -r $(PROTO_DIR)/etc/fonts/conf.d
 	$(RM) -r $(PROTO_DIR)/etc/fonts/conf.avail
 	$(MKDIR) $(PROTO_DIR)/etc/fonts/conf.d
 	$(MV) $(PROTO_DIR)/usr/share/fontconfig/conf.avail $(PROTO_DIR)/etc/fonts/conf.avail

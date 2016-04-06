@@ -91,7 +91,7 @@ ENV +=	MOZ_PKG_FORMAT=BZ2
 ENV +=	PKG_SKIP_STRIP=1
 ENV +=	MOZILLA_PKG_NAME=thunderbird
 ENV +=	CXXFLAGS="$(CXXFLAGS)"
-# -L.../dist/bin needs to be set otherwise it will report missing libnss3.so, 
+# -L.../dist/bin needs to be set otherwise it will report missing libnss3.so,
 # libssl3.so, etc, while linking.
 ENV +=  LDFLAGS="-z ignore -z interpose -B nodirect -L$(BUILD_DIR_32)/dist/lib"
 ENV +=  OS_DEFINES="-D__USE_LEGACY_PROTOTYPES__"
@@ -106,7 +106,7 @@ CLEAN_PATHS += $(LANG_FILES)
 
 COMPONENT_BUILD_ARGS =
 
-$(LANG_FILES): 
+$(LANG_FILES):
 	$(FETCH) --file $@  --url $(LANG_FILES_LOCATION)/$@
 
 COMPONENT_POST_INSTALL_ACTION += \

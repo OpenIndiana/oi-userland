@@ -8,7 +8,7 @@
 # http://www.illumos.org/license/CDDL.
 #
 
-# 
+#
 # Copyright 2013, Adam Stevko. All rights reserved.
 #
 

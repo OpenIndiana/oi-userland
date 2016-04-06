@@ -39,7 +39,7 @@ PATH=/usr/gnu/bin:/usr/bin
 
 COMPONENT_BUILD_ARGS =
 
-COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f -i ) 
+COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f -i )
 
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION =        ( cp -a $(SOURCE_DIR)/* $(@D))

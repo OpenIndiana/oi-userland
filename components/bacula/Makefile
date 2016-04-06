@@ -33,7 +33,7 @@ include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
 # Missing files in build dir for configure without this.
-COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D)) 
+COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 MYSQL_BINDIR.32=/usr/mariadb/5.5/bin
 MYSQL_BINDIR.64=/usr/mariadb/5.5/bin/64

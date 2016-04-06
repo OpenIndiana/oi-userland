@@ -38,7 +38,7 @@ include ../../make-rules/ips.mk
 
 CC +=		$(CC_BITS)
 
-# Override the values in the Makefile but get optimization level etc. from 
+# Override the values in the Makefile but get optimization level etc. from
 # make-rules/shared-macros.mk.
 COMPONENT_BUILD_ARGS += CFLAGS="$(CFLAGS) -DVERSION=\\\"$(COMPONENT_VERSION)\\\""
 COMPONENT_BUILD_ARGS += WFLAGS=""

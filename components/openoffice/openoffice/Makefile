@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		openoffice
 COMPONENT_VERSION=      4.1.1
 COMPONENT_REVISION=	1
-COMPONENT_PROJECT_URL=  http://openoffice.apache.org/ 
+COMPONENT_PROJECT_URL=  http://openoffice.apache.org/
 COMPONENT_SUMMARY=	Apache OpenOffice Suite
 COMPONENT_SRC=		aoo-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	apache-openoffice-$(COMPONENT_VERSION)-r1617669-src.tar.bz2

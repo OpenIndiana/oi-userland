@@ -47,7 +47,7 @@ CONFIGURE_OPTIONS +=	--disable-hardening
 CONFIGURE_OPTIONS +=	--with-ldap
 CONFIGURE_OPTIONS +=	--with-project
 CONFIGURE_OPTIONS +=	--with-timedir=/var/run/sudo
-CONFIGURE_OPTIONS +=	--with-pam 
+CONFIGURE_OPTIONS +=	--with-pam
 CONFIGURE_OPTIONS +=	--with-pam-login
 CONFIGURE_OPTIONS +=	--disable-pam-session
 CONFIGURE_OPTIONS +=	--with-tty-tickets

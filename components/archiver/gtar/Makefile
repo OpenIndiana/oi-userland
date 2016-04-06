@@ -51,7 +51,7 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-# Failed tests: 
+# Failed tests:
 #25: terminal input FAILED (iotty.at:29)
 #87: incremental dump when the parent directory is unreadable FAILED (listed03.at:27)
 

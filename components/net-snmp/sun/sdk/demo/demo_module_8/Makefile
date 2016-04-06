@@ -16,7 +16,7 @@
 #
 #
 # Makefile to generate demo_module_8.so
-# 
+#
 # usage:
 # setenv CC /usr/bin/cc (or correct path)
 # "make" : generate library for 64bit
@@ -51,11 +51,11 @@ all: $(TARGETS)
 demo_module_8: $(OBJS1)
 	$(CC) -o demo_module_8  $(OBJS1) $(BUILDLIBS) $(BUILDAGENTLIBS)
 
-clean: 
+clean:
 	rm $(OBJS1) $(TARGETS)
 
 # compile module source, producing module object file
-# produce (-G) and load module shared object from module object file, 
+# produce (-G) and load module shared object from module object file,
 # using dynamic linking (-dy)
 me1LoadGroup.so: me1LoadGroup.o Makefile
 	$(CC) $(CFLAGS) -c -o me1LoadGroup.o me1LoadGroup.c

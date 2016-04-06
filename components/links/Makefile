@@ -38,7 +38,7 @@ include ../../make-rules/ips.mk
 
 # Configure in links does not understand CC, CXX, etc.  Need to generate a
 # new configure for it to configure and build properly.
-COMPONENT_PREP_ACTION=	(cd $(@D) ; autoconf) 
+COMPONENT_PREP_ACTION=	(cd $(@D) ; autoconf)
 
 ASLR_MODE = $(ASLR_ENABLE)
 

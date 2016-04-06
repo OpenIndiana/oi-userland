@@ -35,7 +35,7 @@ include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
-					
+
 COMPONENT_PREP_ACTION = 	( cp $(COMPONENT_DIR)/files/jade_style-sheet.dtd  $(@D)/dsssl &&\
 					cd  $(@D) &&\
 					rm -f aclocal.m4 missing &&\
@@ -48,7 +48,7 @@ COMPONENT_PREP_ACTION = 	( cp $(COMPONENT_DIR)/files/jade_style-sheet.dtd  $(@D)
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_SCRIPT = $(@D)/configure
-                                        
+
 CONFIGURE_OPTIONS += --enable-spincludedir=/usr/include/OpenSP
 CONFIGURE_OPTIONS += --datadir=/usr/share/sgml/openjade
 CONFIGURE_OPTIONS += --enable-splibdir=/usr/lib

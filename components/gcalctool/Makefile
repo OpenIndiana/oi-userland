@@ -27,7 +27,7 @@ COMPONENT_ARCHIVE_URL= \
   http://download.gnome.org/sources/$(COMPONENT_NAME)/5.30/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://wiki.gnome.org/Gcalctool
 COMPONENT_FMRI= desktop/calculator/gcalctool
-COMPONENT_CLASSIFICATION= Applications/Accessories 
+COMPONENT_CLASSIFICATION= Applications/Accessories
 COMPONENT_LICENSE= GPLv2
 COMPONENT_LICENSE_FILE= COPYING
 

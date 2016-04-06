@@ -40,7 +40,7 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-LINT_FLAGS +=	-I/usr/include/libxml2 
+LINT_FLAGS +=	-I/usr/include/libxml2
 
 CFLAGS +=	$(CPP_LARGEFILES)
 LDFLAGS +=	$(LD_Z_DEFS) $(LD_Z_TEXT) -lpthread

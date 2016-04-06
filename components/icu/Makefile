@@ -35,7 +35,7 @@ include ../../make-rules/ips.mk
 #COMPONENT_POST_UNPACK_ACTION += ( chmod +x $(@D)/source/configure  $(@D)/source/runConfigureICU )
 
 # Missing files in build dir for configure without this.
-#COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D) && cd $(@D) && autoconf ) 
+#COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D) && cd $(@D) && autoconf )
 
 CONFIGURE_SCRIPT = $(SOURCE_DIR)/source/runConfigureICU
 CONFIGURE_OPTIONS = Solaris/GCC
@@ -49,7 +49,7 @@ CONFIGURE_OPTIONS+= --bindir=$(CONFIGURE_BINDIR.$(BITS))
 
 CONFIGURE_OPTIONS.32+= --disable-64bit-libs
 
-COMPONENT_POST_CONFIGURE_ACTION =        (echo 'CPPFLAGS += -DICU_DATA_DIR=\"$(CONFIGURE_PREFIX)/share/icu/$(COMPONENT_VERSION)\"' >> $(@D)/icudefs.mk ) 
+COMPONENT_POST_CONFIGURE_ACTION =        (echo 'CPPFLAGS += -DICU_DATA_DIR=\"$(CONFIGURE_PREFIX)/share/icu/$(COMPONENT_VERSION)\"' >> $(@D)/icudefs.mk )
 
 build: $(BUILD_32_and_64)
 

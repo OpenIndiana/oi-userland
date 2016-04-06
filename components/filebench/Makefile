@@ -41,7 +41,7 @@ COMPONENT_PREP_ACTION =        (cd $(@D) &&\
                                         autoheader &&\
                                         automake -a -f -c --gnu &&\
                                         autoconf &&\
-					$(RM) config.h ) 
+					$(RM) config.h )
 
 CONFIGURE_PREFIX=/usr/benchmarks/filebench
 

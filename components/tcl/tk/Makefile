@@ -45,8 +45,8 @@ COMPONENT_PREP_ACTION = \
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
-#This macro will help to look for the configure 
-#file at the pointed location 
+#This macro will help to look for the configure
+#file at the pointed location
 CONFIGURE_SCRIPT = $(SOURCE_DIR)/unix/configure
 
 CFLAGS += $(XPG6MODE) -std=c99
@@ -63,9 +63,9 @@ COMPONENT_TEST_TARGETS = test
 # common targets
 build:		$(BUILD_32_and_64)
 
-install:	$(INSTALL_32_and_64) $(PROTOUSRLIBDIR)/tkConfig.sh 
+install:	$(INSTALL_32_and_64) $(PROTOUSRLIBDIR)/tkConfig.sh
 
-$(PROTOUSRLIBDIR)/tkConfig.sh:  $(INSTALL_32)  
+$(PROTOUSRLIBDIR)/tkConfig.sh:  $(INSTALL_32)
 				sed -f $(COMPONENT_DIR)/files/tksed $(PROTOUSRLIBDIR)/tkConfig.sh > \
 					$(PROTOUSRLIBDIR)/tkConfig.sh.new
 				$(MV) $(PROTOUSRLIBDIR)/tkConfig.sh.new $(PROTOUSRLIBDIR)/tkConfig.sh

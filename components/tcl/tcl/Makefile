@@ -44,13 +44,13 @@ COMPONENT_PREP_ACTION = \
 	(cd $(SOURCE_DIR)/unix ; autoreconf -f; \
 	 cd ../doc; \
             for i in *.n ; do manbase="$$(basename "$$i" .n)"; mv "$$i" "$${manbase}.1t"; done ; \
-            for i in *.3 ; do manbase="$$(basename "$$i" .3)"; mv "$$i" "$${manbase}.3tcl"; done) 
+            for i in *.3 ; do manbase="$$(basename "$$i" .3)"; mv "$$i" "$${manbase}.3tcl"; done)
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
         ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-#This macro will help to look for the configure 
-#file at the pointed location 
+#This macro will help to look for the configure
+#file at the pointed location
 CONFIGURE_SCRIPT = $(SOURCE_DIR)/unix/configure
 
 CONFIGURE_OPTIONS	+= --enable-shared
@@ -63,9 +63,9 @@ COMPONENT_TEST_TARGETS = test
 # common targets
 build:		$(BUILD_32_and_64)
 
-install:	$(INSTALL_32_and_64) $(PROTOUSRLIBDIR)/tclConfig.sh 
+install:	$(INSTALL_32_and_64) $(PROTOUSRLIBDIR)/tclConfig.sh
 
-$(PROTOUSRLIBDIR)/tclConfig.sh:		$(INSTALL_32)	
+$(PROTOUSRLIBDIR)/tclConfig.sh:		$(INSTALL_32)
 					sed -f $(COMPONENT_DIR)/files/tclsed $(PROTOUSRLIBDIR)/tclConfig.sh > \
 						$(PROTOUSRLIBDIR)/tclConfig.sh.new
 					$(MV) $(PROTOUSRLIBDIR)/tclConfig.sh.new $(PROTOUSRLIBDIR)/tclConfig.sh

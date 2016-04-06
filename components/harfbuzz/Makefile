@@ -34,7 +34,7 @@ COMPONENT_ARCHIVE_HASH=	sha256:6736f383b4edfcaaeb6f3292302ca382d617d8c79948bb2dd
 COMPONENT_ARCHIVE_URL=	http://www.freedesktop.org/software/harfbuzz/release/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      MIT
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
-COMPONENT_SUMMARY=      HarfBuzz - an OpenType text shaping engine. 
+COMPONENT_SUMMARY=      HarfBuzz - an OpenType text shaping engine.
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk

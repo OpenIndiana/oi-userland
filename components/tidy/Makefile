@@ -40,16 +40,16 @@ include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 include ../../make-rules/lint-libraries.mk
 
-#tree.js, treeview.js, tidyenum_8h.html are installed 
+#tree.js, treeview.js, tidyenum_8h.html are installed
 #from files directory manually as doxygen didn't generate them.
-#This needs to be fixed later. 
+#This needs to be fixed later.
 
 COMPONENT_PREP_ACTION =  \
         (cd $(SOURCE_DIR); doxygen htmldoc/doxygen.cfg)
 
-CONFIGURE_OPTIONS  +=       --disable-static 
-CONFIGURE_OPTIONS  +=       --enable-access 
-CONFIGURE_OPTIONS  +=       --enable-utf16 
+CONFIGURE_OPTIONS  +=       --disable-static
+CONFIGURE_OPTIONS  +=       --enable-access
+CONFIGURE_OPTIONS  +=       --enable-utf16
 CONFIGURE_OPTIONS  +=       --enable-asian
 
 COMPONENT_PRE_CONFIGURE_ACTION = \

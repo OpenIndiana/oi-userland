@@ -29,7 +29,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).gem
 COMPONENT_ARCHIVE_HASH=	\
     sha256:a3c85385ddda64916d453efeeb965151dc2454428d88f04f40d539559af27020
 COMPONENT_ARCHIVE_URL=	http://rubygems.org/gems/$(COMPONENT_SRC).gem
-COMPONENT_PROJECT_URL=  https://github.com/puppetlabs/hiera	
+COMPONENT_PROJECT_URL=  https://github.com/puppetlabs/hiera
 COMPONENT_BUGDB=	utility/puppet
 
 TPNO=                   18210

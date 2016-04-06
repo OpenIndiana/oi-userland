@@ -16,7 +16,7 @@
 #
 #
 # Makefile to generate demo_module_4.so
-# 
+#
 # usage:
 # To point to a particular compiler, set CC.
 # Example: setenv CC /usr/dist/share/forte_dev/bin/cc

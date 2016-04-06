@@ -81,7 +81,7 @@ COMPONENT_POST_INSTALL_ACTION= \
 			-o -name \*.qbk -o -name \*.pattern \) | \
 		$(GTAR) -cf - --files-from=- | $(GTAR) -C $(PROTO_DIR)$(DOCDIR) -xf - ; \
 	$(MODULE_UNLOAD) mpich/gcc/$(BITS)/latest
- 
+
 
 
 $(BUILD_DIR)/%/.built:    $(SOURCE_DIR)/.prep

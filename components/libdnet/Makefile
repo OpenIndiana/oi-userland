@@ -30,7 +30,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:83b33039787cf99990e977cef7f18a5d5e7aaffc4505548a83d31bd3515eb026
 COMPONENT_ARCHIVE_URL=	http://libdnet.googlecode.com/files/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	library/libdnet 
+COMPONENT_BUGDB=	library/libdnet
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

@@ -38,5 +38,5 @@ build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
 
-# test_shutdown_stress fails 
+# test_shutdown_stress fails
 test: $(TEST_32_and_64)

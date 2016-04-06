@@ -108,6 +108,6 @@ CONFIGURE_ENV.64 +=     EXTENSION_DIR=$(PHP_PREFIX)/extensions/$(MACH64)
 COMPONENT_BUILD_TARGETS = libphp5.la
 COMPONENT_INSTALL_TARGETS = install-sapi
 
-build:		$(BUILD_32_and_64) 
+build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)

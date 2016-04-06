@@ -46,7 +46,7 @@ CONFIGURE_OPTIONS+=	--enable-software-x11
 CONFIGURE_OPTIONS+=	--with-x
 
 # pkgdepend fails to resolve the python version if env is used
-COMPONENT_POST_INSTALL_ACTION=sed -i -e '1 s|^.*$$|\#!/usr/bin/python$(PYTHON_VERSION)|' $(PROTO_DIR)/usr/bin/expedite-cmp; 
+COMPONENT_POST_INSTALL_ACTION=sed -i -e '1 s|^.*$$|\#!/usr/bin/python$(PYTHON_VERSION)|' $(PROTO_DIR)/usr/bin/expedite-cmp;
 
 
 build: $(BUILD_32)

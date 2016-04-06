@@ -39,7 +39,7 @@ include ../../../make-rules/prep.mk
 
 ifeq ($(strip $(USERLAND_ARCHIVES)),)
   DISTFILES_LOCATION=../
-else 
+else
   DISTFILES_LOCATION=$(USERLAND_ARCHIVES)
 endif
 

@@ -39,7 +39,7 @@ include ../../make-rules/ips.mk
 # Built in SFW with gcc and builds cleanly now only with gcc
 COMPILER = gcc
 CONFIGURE_OPTIONS +=	CPPFLAGS="-I/usr/include/gmp -D__USE_LEGACY_PROTOTYPES__"
-CONFIGURE_OPTIONS +=	--disable-static 
+CONFIGURE_OPTIONS +=	--disable-static
 CONFIGURE_OPTIONS +=	--disable-error-on-warning
 CONFIGURE_OPTIONS +=	ac_cv_type_complex_double=no
 

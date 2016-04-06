@@ -8,10 +8,10 @@
 # http://www.illumos.org/license/CDDL.
 #
 
-# Special thanks goes to Lou Picciano <Lou@Picciano.org> for additional testing 
+# Special thanks goes to Lou Picciano <Lou@Picciano.org> for additional testing
 # and his guidance and Michal Hanula <michal@hanu.la> for further testing.
-# 
-# Copyright (c) 2015, Adam Stevko <adam.stevko@gmail.com> 
+#
+# Copyright (c) 2015, Adam Stevko <adam.stevko@gmail.com>
 
 include ../../make-rules/shared-macros.mk
 

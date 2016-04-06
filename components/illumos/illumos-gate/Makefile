@@ -132,7 +132,7 @@ $(BUILD_DIR)/$(MACH)/.overlay: $(BUILD_DIR)/$(MACH)/.built
 	# Boot Splash Images
 	$(CP) $(BUILD_DIR)/$(MACH)/overlay/boot/splashimage.xpm \
 	    $(BUILD_DIR)/$(MACH)/overlay/boot/solaris.xpm || true
-	
+
 	# Fix closed lc_core.h header
 	# Patch was taken from here https://www.illumos.org/issues/3853
 

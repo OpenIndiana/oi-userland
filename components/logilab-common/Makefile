@@ -54,9 +54,9 @@ COMPONENT_POST_INSTALL_ACTION = \
 build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
-	
+
 # The tests are run using python 2.7 only and require that the
-# python-27 package is installed (does not have to be the default python). 
+# python-27 package is installed (does not have to be the default python).
 # Testing using python-26 is done manually, since it requires
 # downloading and installing the unittest2 component (not part of Solaris).
 # which provides python 2.7 functionality to the unittest python library

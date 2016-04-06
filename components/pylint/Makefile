@@ -91,7 +91,7 @@ build:		$(BUILD_NO_ARCH)
 install:	$(INSTALL_NO_ARCH)
 
 # The tests are run using python 2.7 only and require that
-# the python-27 package is installed (does not have to be the default python). 
+# the python-27 package is installed (does not have to be the default python).
 # Testing using python-26 is done manually, since it requires
 # downloading and installing the unittest2 component (not part of Solaris),
 # which provides python 2.7 functionality to the unittest python library
@@ -111,7 +111,7 @@ COMPONENT_PRE_TEST_ACTION = ($(GMAKE) -C \
 
 COMPONENT_TEST_ENV = PYTHONPATH=$(COMPONENT_DIR)/../logilab-common/build/prototype/$(MACH)$(PYTHON_VENDOR_PACKAGES):$(COMPONENT_DIR)/../logilab-astng/build/prototype/$(MACH)$(PYTHON_VENDOR_PACKAGES):$(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES)
 
-# Run pytest-2.7 from logilab-common's proto area for now, until the 
+# Run pytest-2.7 from logilab-common's proto area for now, until the
 # new version of logilab-common containing pytest is in CBE.
 # Then we can change it to /usr/bin/pytest-$(PYTHON_VERSION).
 COMPONENT_TEST_CMD = $(COMPONENT_DIR)/../logilab-common/build/prototype/$(MACH)/usr/bin/pytest-$(PYTHON_VERSION)

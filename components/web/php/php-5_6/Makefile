@@ -180,6 +180,6 @@ CONFIGURE_ENV.32 +=     ICU_CONFIG=/usr/bin/icu-config
 CONFIGURE_ENV.64 +=     ICU_CONFIG=/usr/bin/amd64/icu-config
 CONFIGURE_ENV +=	CPPFLAGS="$(CPPFLAGS)"
 
-build:		$(BUILD_32_and_64) 
+build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)

@@ -47,7 +47,7 @@ COMPONENT_PREP_ACTION = 	( cd  $(@D) &&\
 
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
-                                        
+
 LDFLAGS += -lsecdb  -lsocket  -lnsl
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc

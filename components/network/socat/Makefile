@@ -9,7 +9,7 @@
 #
 
 #
-# Copyright (c) 2012, Adam Stevko <adam.stevko@gmail.com> 
+# Copyright (c) 2012, Adam Stevko <adam.stevko@gmail.com>
 #
 
 include ../../../make-rules/shared-macros.mk

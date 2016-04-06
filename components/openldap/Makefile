@@ -84,7 +84,7 @@ CONFIGURE_OPTIONS += --enable-bdb
 CONFIGURE_OPTIONS += --enable-hdb
 CONFIGURE_OPTIONS += --enable-null
 CONFIGURE_OPTIONS += --enable-ldap
-CONFIGURE_OPTIONS += --enable-passwd	 
+CONFIGURE_OPTIONS += --enable-passwd
 CONFIGURE_OPTIONS += --enable-shell
 CONFIGURE_OPTIONS += --with-cyrus-sasl
 CONFIGURE_OPTIONS += --with-threads
@@ -115,7 +115,7 @@ install:	$(INSTALL_32_and_64)
 # build does this always
 test:	$(TEST_32_and_64)
 
-	
+
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 include ../../make-rules/depend.mk

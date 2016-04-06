@@ -25,7 +25,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:489e0d06c28c3a11b817e7d6e49573ad4942a9cd426ad62dbbf94f3cca03dedb
 COMPONENT_ARCHIVE_URL=	http://launchpad.net/jokosher/trunk/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE)
 
-# gtk and gstreamer modules are required, but 
+# gtk and gstreamer modules are required, but
 # they are provided for Python 2.6 only
 PYTHON_VERSIONS = 2.6
 
