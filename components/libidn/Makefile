@@ -58,9 +58,8 @@ FIND = /usr/bin/find
 
 CONFIGURE_ENV +=	INSTALL="$(INSTALL)"
 
-CONFIGURE_OPTIONS  +=		--includedir=/usr/include/idn
-CONFIGURE_OPTIONS  +=		--localstatedir=/var
-CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_INCLUDEDIR=$(CONFIGURE_INCLUDEROOTDIR)/idn
+
 CONFIGURE_OPTIONS  +=		--enable-shared
 CONFIGURE_OPTIONS  +=		--disable-static
 CONFIGURE_OPTIONS  +=		--disable-csharp
@@ -72,10 +71,9 @@ CONFIGURE_OPTIONS  +=		--disable-gtk-doc
 CONFIGURE_OPTIONS  +=		--enable-java
 CONFIGURE_OPTIONS  +=		--with-libiconv-prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS  +=		--with-libintl-prefix=$(CONFIGURE_PREFIX)
-CONFIGURE_OPTIONS  +=		--with-html-dir=$(CONFIGURE_PREFIX)/share/doc
 CONFIGURE_OPTIONS  +=		--with-pic
 
-PROTOUSRSHAREDOCDIR = $(PROTOUSRSHAREDIR)/doc
+PROTOUSRSHAREDOCDIR = $(PROTO_DIR)/$(CONFIGURE_DOCDIR)
 IDNDOCDIR = $(PROTOUSRSHAREDOCDIR)/idn
 HTMLDOCDIR = $(IDNDOCDIR)/html
 HTMLDOCLIST = libidn-components.png libidn.html

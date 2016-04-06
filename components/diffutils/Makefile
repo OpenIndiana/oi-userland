@@ -41,8 +41,6 @@ include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_BINDIR.32 =		$(CONFIGURE_PREFIX)/gnu/bin
 
-CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
-
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets

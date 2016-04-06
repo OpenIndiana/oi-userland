@@ -36,7 +36,6 @@ include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_SCRIPT = $(SOURCE_DIR)/autogen.sh
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --enable-static=no
 CONFIGURE_OPTIONS += --disable-Bsymbolic
 

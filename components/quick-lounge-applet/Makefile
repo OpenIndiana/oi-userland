@@ -34,9 +34,7 @@ PATH=/usr/gnu/bin:/usr/bin
 
 CONFIGURE_ENV	+= LIBS="-lm"
 
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
-CONFIGURE_OPTIONS+= --libexecdir=/usr/lib
-CONFIGURE_OPTIONS+= --localstatedir=/var/lib
+CONFIGURE_LOCALSTATEDIR=/var/lib
 
 COMPONENT_INSTALL_ENV += GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 

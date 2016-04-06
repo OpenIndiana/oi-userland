@@ -50,10 +50,11 @@ COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf --force --install )
 
 CFLAGS +=	-std=c99 -D_XOPEN_SOURCE=600 -D__EXTENSIONS__
 
-CONFIGURE_OPTIONS +=	--bindir=/usr/sbin
+CONFIGURE_SYSCONFDIR =  $(ETCDIR)/inet
+CONFIGURE_BINDIR.$(BITS) = $(CONFIGURE_SBINDIR.$(BITS))
+CONFIGURE_LIBEXECDIR.$(BITS) =   $(CONFIGURE_LIBDIR.$(BITS))/inet
+
 CONFIGURE_OPTIONS +=	--with-binsubdir=sbin
-CONFIGURE_OPTIONS +=	--libexecdir=/usr/lib/inet
-CONFIGURE_OPTIONS +=	--sysconfdir=/etc/inet
 CONFIGURE_OPTIONS +=	--enable-getifaddrs
 CONFIGURE_OPTIONS +=	--enable-all-clocks
 CONFIGURE_OPTIONS +=	--enable-debugging

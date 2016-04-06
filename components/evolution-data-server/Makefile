@@ -39,8 +39,6 @@ CFLAGS+=	-D__EXTENSIONS__
 
 CONFIGURE_ENV+=		INTLTOOL_PERL=$(PERL)
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib
 CONFIGURE_OPTIONS+=	--with-sunldap=/usr
 CONFIGURE_OPTIONS+=	--with-krb5=/usr
 CONFIGURE_OPTIONS+=	--enable-smime=yes

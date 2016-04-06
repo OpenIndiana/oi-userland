@@ -32,7 +32,6 @@ PATH=/usr/gnu/bin:/usr/bin
 
 gcc_OPT		= -O2
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--with-dbus-user=root
 CONFIGURE_OPTIONS+=	--with-dbus-daemondir=/usr/lib
 CONFIGURE_OPTIONS+=	--disable-static

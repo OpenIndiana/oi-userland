@@ -32,10 +32,7 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS += --localstatedir=/var/lib
-CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib
-CONFIGURE_OPTIONS.64 += --libexecdir=/usr/lib/$(MACH64)
+CONFIGURE_LOCALSTATEDIR=/var/lib
 CONFIGURE_OPTIONS += --enable-all-translations-in-one-xml
 CONFIGURE_OPTIONS += --with-zoneinfo-dir=/usr/share/lib/zoneinfo
 

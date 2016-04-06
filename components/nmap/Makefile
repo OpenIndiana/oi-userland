@@ -51,7 +51,6 @@ CONFIGURE_OPTIONS  +=   CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_OPTIONS  +=   LIBS="-lsocket -lnsl"
 CONFIGURE_OPTIONS  +=   PYTHON="$(PYTHON)"
 CONFIGURE_OPTIONS  +=   --srcdir=$(BUILD_DIR_32)
-CONFIGURE_OPTIONS  +=   --localstatedir=/var
 CONFIGURE_OPTIONS  +=   --without-localdirs
 CONFIGURE_OPTIONS  +=   --with-zenmap
 CONFIGURE_OPTIONS  +=   --with-openssl

@@ -30,11 +30,21 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+# Note: currently only 32-bit build is of interest, but with a location
+# under /usr/lib, the PREFIX should consider bitness in this recipe
+XSCREENSAVER_PREFIX.32 = $(USRLIBDIR)/xscreensaver
+XSCREENSAVER_PREFIX.64 = $(USRLIBDIR64)/xscreensaver
+XSCREENSAVER_PREFIX    = $(XSCREENSAVER_PREFIX.$(BITS))
+XSCREENSAVER_HACKDIR.$(BITS)   = $(XSCREENSAVER_PREFIX.$(BITS))/hacks
+XSCREENSAVER_CONFDIR   = $(XSCREENSAVER_PREFIX.32)/config
+
+CONFIGURE_LIBEXECDIR.$(BITS) = $(XSCREENSAVER_PREFIX.$(BITS))/bin
+
 COMPONENT_POST_UNPACK_ACTION=	( cp -r $(COMPONENT_DIR)/files/po-sun/* $(SOURCE_DIR)/po && \
 					cp $(COMPONENT_DIR)/files/*.p5i.in $(SOURCE_DIR)/driver && \
 					chmod a+x  $(SOURCE_DIR)/install-sh && \
 					mkdir -p $(SOURCE_DIR)/mesa/GL && \
-					ln -s /usr/include/mesa/*.h $(SOURCE_DIR)/mesa/GL )
+					ln -s $(USRINCDIR)/mesa/*.h $(SOURCE_DIR)/mesa/GL )
 
 COMPONENT_PRE_CONFIGURE_ACTION += chmod -R u+r $(SOURCE_DIR)/ && \
 			cp -r $(SOURCE_DIR)/* $(@D) && \
@@ -49,32 +59,30 @@ CXXFLAGS+=	-funsafe-math-optimizations -Wall -I$(SOURCE_DIR)/mesa/GL -D_FILE_OFF
 LDFLAGS+=	-I$(@D)/mesa/GL
 
 CONFIGURE_ENV+=	"XGETTEXT=/usr/gnu/bin/xgettext"
-CONFIGURE_ENV+= "GNOME_DATADIR=/usr/lib/xscreensaver/config"
-CONFIGURE_ENV+= "GLADE_DATADIR=/usr/lib/xscreensaver/config"
-
+CONFIGURE_ENV+= "GNOME_DATADIR=$(XSCREENSAVER_CONFDIR)"
+CONFIGURE_ENV+= "GLADE_DATADIR=$(XSCREENSAVER_CONFDIR)"
 
 CONFIGURE_OPTIONS+=	--enable-maintainer-mode
 CONFIGURE_OPTIONS+=	--with-gnome
 CONFIGURE_OPTIONS+=	--enable-gtk-doc
-CONFIGURE_OPTIONS+=	--with-gtk2=/usr
-CONFIGURE_OPTIONS+=	--with-pixbuf=/usr
+CONFIGURE_OPTIONS+=	--with-gtk2=$(USRDIR)
+CONFIGURE_OPTIONS+=	--with-pixbuf=$(USRDIR)
 CONFIGURE_OPTIONS+=	--enable-locking
-CONFIGURE_OPTIONS+=	--with-pam=/usr
+CONFIGURE_OPTIONS+=	--with-pam=$(USRDIR)
 CONFIGURE_OPTIONS+=	--without-shadow
 CONFIGURE_OPTIONS+=	--without-kerberos
 CONFIGURE_OPTIONS+=	--with-dpms
 CONFIGURE_OPTIONS+=	--with-xinput-ext
 CONFIGURE_OPTIONS+=	--with-randr-ext
 CONFIGURE_OPTIONS+=	--enable-root-passwd
-CONFIGURE_OPTIONS+=	--with-gl=/usr
+CONFIGURE_OPTIONS+=	--with-gl=$(USRDIR)
 CONFIGURE_OPTIONS+=	--without-motif
-CONFIGURE_OPTIONS+=	--with-jpeg=/usr
-CONFIGURE_OPTIONS+=	--with-hackdir=/usr/lib/xscreensaver/hacks
-CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib/xscreensaver/bin
-CONFIGURE_OPTIONS+=	--with-configdir=/usr/lib/xscreensaver/config/control-center-2.0
-CONFIGURE_OPTIONS+=	--with-image-directory=/usr/share/pixmaps/backgrounds
+CONFIGURE_OPTIONS+=	--with-jpeg=$(USRDIR)
+CONFIGURE_OPTIONS+=	--with-hackdir=$(XSCREENSAVER_HACKDIR.$(BITS))
+CONFIGURE_OPTIONS+=	--with-configdir=$(XSCREENSAVER_CONFDIR)/control-center-2.0
+CONFIGURE_OPTIONS+=	--with-image-directory=$(USRSHAREDIR)/pixmaps/backgrounds
 CONFIGURE_OPTIONS+=	--with-text-file=/etc/motd
-CONFIGURE_OPTIONS+=	--with-x-app-defaults=/usr/share/X11/app-defaults
+CONFIGURE_OPTIONS+=	--with-x-app-defaults=$(USRSHAREDIR)/X11/app-defaults
 
 COMPONENT_POST_CONFIGURE_ACTION+=	( \
 	cd $(@D)/po && \
@@ -92,7 +100,7 @@ COMPONENT_INSTALL_ENV += MAKEFLAGS=-e install_prefix=$(PROTO_DIR)
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32) ../rss-glx/build/i86/.built
-	perl ../rss-glx/build/i86/utils/rss-glx_install.pl $(PROTO_DIR)/usr/share/X11/app-defaults/XScreenSaver
+	perl ../rss-glx/build/i86/utils/rss-glx_install.pl $(PROTO_DIR)$(USRSHAREDIR)/X11/app-defaults/XScreenSaver
 test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)

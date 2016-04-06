@@ -42,7 +42,6 @@ include $(WS_MAKE_RULES)/ips.mk
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_OPTIONS  +=		--srcdir=.
-CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		PERL="$(PERL)"
 
 # common targets

@@ -37,7 +37,6 @@ COMPONENT_PREP_ACTION =        ( cd $(@D) && \
 					automake -a -f -c &&\
 					autoconf )
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--disable-update-mimedb
 
 CONFIGURE_ENV+=	PERL=$(PERL)

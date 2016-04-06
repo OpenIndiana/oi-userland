@@ -44,8 +44,6 @@ COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_SCRIPT=       $(@D)/configure
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib
 CONFIGURE_OPTIONS+=	--enable-dbus
 CONFIGURE_OPTIONS+=	--enable-ipv6
 

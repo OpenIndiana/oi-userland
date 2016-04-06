@@ -76,9 +76,11 @@ COMPONENT_COMMON_ARGS = ch7017_ladir='$(DRIVER_DIR)' \
 
 CPPFLAGS += -DXF86DRI
 
+# Bitness is already inside those variables
+CONFIGURE_LIBDIR.$(BITS)=$(X11_SERVERLIBS_DIR)$(SERVERMOD_SUBDIR)
+
 CONFIGURE_OPTIONS += --enable-dri
 CONFIGURE_OPTIONS += --enable-xvmc
-CONFIGURE_OPTIONS += --libdir=$(X11_SERVERLIBS_DIR)$(SERVERMOD_SUBDIR)
 CONFIGURE_OPTIONS += --disable-sna
 CONFIGURE_OPTIONS += --enable-uxa
 CONFIGURE_OPTIONS += --disable-selective-werror

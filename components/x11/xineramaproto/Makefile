@@ -36,11 +36,9 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --without-xmlto
 CONFIGURE_OPTIONS+= --with-asciidoc
 CONFIGURE_OPTIONS+= --without-fop
-CONFIGURE_OPTIONS+= --localstatedir=/var
 
 COMPONENT_INSTALL_ARGS += pkgconfigdir=/usr/share/pkgconfig
 

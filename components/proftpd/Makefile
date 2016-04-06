@@ -59,6 +59,8 @@ IPS_COMPONENT_VERSION=  $(COMPONENT_VERSION)
 
 CONFIGURE_BINDIR.32 =   $(USRLIBDIR)/proftpd/bin
 CONFIGURE_SBINDIR.32 =  $(USRLIBDIR)/proftpd/sbin
+CONFIGURE_LIBEXECDIR.32=$(USRLIBDIR)/proftpd
+CONFIGURE_LOCALSTATEDIR=/var/run
 
 # Remove -D_POSIX_PTHREAD_SEMANTICS and this comment after move to S12_45.
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS) -I/usr/include/kerberosv5 -DHAVE_KRB5_H=1 -DKRB5_DLLIMP= -DHAVE__GETGRPSBYMEMBER -D_POSIX_PTHREAD_SEMANTICS"
@@ -66,9 +68,6 @@ CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS) -I/usr/include/kerberosv5 -DHAVE_KRB5_H=1
 CONFIGURE_OPTIONS +=	LDFLAGS="-z guidance=nolazyload -z nolazyload -lbsm"
 CONFIGURE_OPTIONS +=	install_user=`id -nu`
 CONFIGURE_OPTIONS +=	install_group=`groups | cut -f 1 -d ' '`
-CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
-CONFIGURE_OPTIONS +=	--localstatedir=/var/run
-CONFIGURE_OPTIONS +=	--libexecdir=$(USRLIBDIR)/proftpd
 CONFIGURE_OPTIONS +=	--enable-ipv6
 CONFIGURE_OPTIONS +=	--enable-ctrls
 CONFIGURE_OPTIONS +=	--enable-facl

@@ -45,9 +45,9 @@ COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 ICU_CONFIG.32=/usr/bin/icu-config
 ICU_CONFIG.64=/usr/bin/$(MACH64)/icu-config
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
+CONFIGURE_LOCALSTATEDIR=/var/lib
+
 CONFIGURE_OPTIONS += --disable-tcl-bindings
-CONFIGURE_OPTIONS += --localstatedir=/var/lib
 CONFIGURE_OPTIONS += --disable-speech-support
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"

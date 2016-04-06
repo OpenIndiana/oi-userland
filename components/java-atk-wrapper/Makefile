@@ -39,7 +39,6 @@ PATH=/usr/gnu/bin:/usr/bin
 CPPFLAGS += -I$(JAVA_HOME)/include
 CPPFLAGS += -I$(JAVA_HOME)/include/solaris
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += JAVA_HOME=$(JAVA_HOME)
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"

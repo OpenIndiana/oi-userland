@@ -54,10 +54,7 @@ LDFLAGS += -lsecdb
 
 CONFIGURE_SCRIPT=       $(@D)/configure
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS += --localstatedir=/var
-CONFIGURE_OPTIONS += --libexecdir=/usr/lib
-CONFIGURE_OPTIONS += --with-pam-prefix=/etc
+CONFIGURE_OPTIONS += --with-pam-prefix=$(ETCDIR)
 CONFIGURE_OPTIONS += --disable-scrollkeeper
 CONFIGURE_OPTIONS += --with-default-path=/usr/bin
 CONFIGURE_OPTIONS += --enable-rbac-shutdown=solaris.system.shutdown

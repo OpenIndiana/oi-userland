@@ -45,8 +45,6 @@ COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 					autoconf )
 
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib
 CONFIGURE_OPTIONS+=	--disable-scrollkeeper
 CONFIGURE_OPTIONS+=	--disable-static
 CONFIGURE_OPTIONS+=	--with-grep="/usr/xpg4/bin/grep"

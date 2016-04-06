@@ -40,7 +40,6 @@ CPPFLAGS += -D_FILE_OFFSET_BITS=64
 
 LDFLAGS += -lhal -ldbus-1
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--disable-cpp-progs
 CONFIGURE_OPTIONS+=	--disable-cxx
 CONFIGURE_OPTIONS+=	--disable-static

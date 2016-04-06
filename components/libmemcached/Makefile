@@ -44,8 +44,6 @@ LDFLAGS += -D__EXTENSIONS__ -D_XPG5 -lsocket -lnsl
 
 CONFIGURE_ENV +=	MAKE=$(GMAKE)
 
-CONFIGURE_OPTIONS +=	--includedir=$(CONFIGURE_INCLUDEDIR)
-
 CONFIGURE_OPTIONS +=    --disable-static
 CONFIGURE_OPTIONS +=    --without-mysql
 CONFIGURE_OPTIONS +=    --without-gearmand

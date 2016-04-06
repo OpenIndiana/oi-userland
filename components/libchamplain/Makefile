@@ -33,7 +33,6 @@ PATH=/usr/gnu/bin:/usr/bin
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f)
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--enable-introspection=no
 CONFIGURE_OPTIONS+=	--disable-static
 

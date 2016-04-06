@@ -45,9 +45,6 @@ CPPFLAGS += $(CPP_LARGEFILES)
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
-CONFIGURE_OPTIONS += --localstatedir=/var
-CONFIGURE_OPTIONS += --mandir=/usr/share/man
-CONFIGURE_OPTIONS += --infodir=/usr/share/info
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-webdav

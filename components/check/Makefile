@@ -35,8 +35,8 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+CONFIGURE_INCLUDEDIR =	$(CONFIGURE_INCLUDEROOTDIR)/$(COMPONENT_NAME)
 
-CONFIGURE_OPTIONS+=	--includedir=$(CONFIGURE_PREFIX)/include/check
 CONFIGURE_OPTIONS+=	--enable-shared
 CONFIGURE_OPTIONS+=	--disable-static
 CONFIGURE_OPTIONS+= --enable-gcov

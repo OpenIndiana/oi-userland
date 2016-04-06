@@ -35,7 +35,6 @@ COMPONENT_PREP_ACTION = \
         ( cd $(@D) ; \
  		autoreconf -f -i )
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_ENV+=		PYTHON=$(PYTHON)
 
 # common targets

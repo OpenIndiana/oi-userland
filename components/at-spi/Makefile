@@ -43,9 +43,6 @@ COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 					automake -c -f -a &&\
 					autoconf )
 
-
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS += --enable-xevie=no
 
 CONFIGURE_ENV += PYTHON=$(PYTHON)

@@ -44,7 +44,6 @@ COMPONENT_PRE_CONFIGURE_ACTION =        (chmod -R u+r $(SOURCE_DIR) && cp -rp $(
                                         cp -r $(COMPONENT_DIR)/files/po-sun $(@D) && \
                                         cd $(@D)/po-sun && $(MAKE) all )
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--disable-static
 CONFIGURE_OPTIONS+=	--enable-introspection=no
 

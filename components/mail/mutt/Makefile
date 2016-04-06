@@ -40,8 +40,9 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+CONFIGURE_SYSCONFDIR=$(ETCDIR)/$(COMPONENT_NAME)
+
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS  +=		--sysconfdir="$(ETCDIR)/$(COMPONENT_NAME)"
 CONFIGURE_OPTIONS  +=		--enable-pop
 CONFIGURE_OPTIONS  +=		--enable-imap
 CONFIGURE_OPTIONS  +=		--enable-smtp

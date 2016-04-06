@@ -76,7 +76,6 @@ TEST_PATH = "PATH=$(BUILD_DIR_32):$(GNUBIN):$(USRBINDIR)"
 
 CONFIGURE_ENV +=	LIBS="$(LIBS)"
 
-CONFIGURE_OPTIONS  +=		--localstatedir=/var
 CONFIGURE_OPTIONS  += 		--enable-alias
 CONFIGURE_OPTIONS  += 		--enable-arith-for-command
 CONFIGURE_OPTIONS  += 		--enable-array-variables
@@ -117,7 +116,6 @@ CONFIGURE_OPTIONS  += 		--enable-nls
 CONFIGURE_OPTIONS  += 		--with-bash-malloc=yes
 CONFIGURE_OPTIONS  += 		--with-curses
 CONFIGURE_OPTIONS  += 		--with-installed-readline=no
-CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 
 COMPONENT_TEST_DIR =		$(BUILD_DIR_32)
 COMPONENT_TEST_ENV =		- $(TEST_PATH)

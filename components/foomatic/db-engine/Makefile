@@ -37,10 +37,11 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+CONFIGURE_SYSCONFDIR=$(ETCDIR)/gnu
+
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	PERL=$(PERL)
 CONFIGURE_OPTIONS +=	FILEUTIL=/bin/true
-CONFIGURE_OPTIONS +=    --sysconfdir=$(ETCDIR)/gnu
 
 # the build system does not support building outside of the source tree
 COMPONENT_PRE_CONFIGURE_ACTION = $(CLONEY) $(SOURCE_DIR) $(@D) ;

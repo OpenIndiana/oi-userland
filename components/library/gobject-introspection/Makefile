@@ -46,7 +46,6 @@ COMPONENT_PREP_ACTION += ( cd $(@D)&& \
                                         automake -a -f -c --gnu &&\
                                         autoconf )
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --disable-tests
 
 CONFIGURE_ENV += PYTHON=$(PYTHON)

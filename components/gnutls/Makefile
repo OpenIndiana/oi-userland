@@ -35,7 +35,6 @@ include $(WS_MAKE_RULES)/ips.mk
 gcc_OPT = -O2
 PATH = /usr/gnu/bin:/usr/bin
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --enable-guile=no
 CONFIGURE_OPTIONS += --disable-camellia
 

@@ -46,7 +46,6 @@ COMPONENT_PREP_ACTION =        ( cp files/* $(@D)/src && cd $(@D)  && \
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--enable-compile-warnings=no
 CONFIGURE_OPTIONS+=	--disable-gtk-doc
 CONFIGURE_OPTIONS+=	--disable-static

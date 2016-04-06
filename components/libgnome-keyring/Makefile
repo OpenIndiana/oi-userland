@@ -34,11 +34,6 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-CONFIGURE_OPTIONS.32=	--libexecdir=/usr/lib
-CONFIGURE_OPTIONS.64=	--libexecdir=/usr/lib/$(MACH64)
-
-CONFIGURE_OPTIONS+=	$(CONFIGURE_OPTIONS.$(BITS))
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--disable-static
 
 COMPONENT_INSTALL_ENV+= GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1

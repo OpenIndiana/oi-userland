@@ -66,7 +66,6 @@ COMPONENT_PREP_ACTION= (cd $(@D) && autoreconf -f -i)
 
 CFLAGS += $(gcc_C99_ENABLE)
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--without-ffi
 CONFIGURE_ENV+=		PYTHON=$(PYTHON)
 

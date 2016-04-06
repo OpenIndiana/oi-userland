@@ -78,7 +78,6 @@ COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 CONFIGURE_OPTIONS+= --with-installed-zlib
 CONFIGURE_OPTIONS+= --with-system-jpeg
 CONFIGURE_OPTIONS+= --without-simd
-CONFIGURE_OPTIONS+= --localstatedir=/var
 
 CONFIGURE_LIBDIR = /usr/lib/vnc
 
@@ -95,7 +94,8 @@ JAVA_INSTALL_DIR = $(PROTO_DIR)/usr/share/vnc/classes
 
 XVNC_CONFIGURE_SCRIPT=	$(BUILD_DIR_32)/unix/xserver/configure
 
-XVNC_CONFIGURE_OPTIONS += --bindir=/usr/bin
+XVNC_CONFIGURE_OPTIONS.$(BITS) = --bindir=$(CONFIGURE_BINDIR.$(BITS))
+
 XVNC_CONFIGURE_OPTIONS += --disable-builddocs
 XVNC_CONFIGURE_OPTIONS += --disable-config-hal
 XVNC_CONFIGURE_OPTIONS += --disable-dga
@@ -119,20 +119,22 @@ XVNC_CONFIGURE_OPTIONS += --enable-shared
 XVNC_CONFIGURE_OPTIONS += --enable-xcsecurity
 XVNC_CONFIGURE_OPTIONS += --enable-xdm-auth-1
 XVNC_CONFIGURE_OPTIONS += --enable-xdmcp
-XVNC_CONFIGURE_OPTIONS += --prefix=/usr
+XVNC_CONFIGURE_OPTIONS += --prefix=$(CONFIGURE_PREFIX)
 XVNC_CONFIGURE_OPTIONS += --with-builderstring="Solaris ABI: $(BITS)-bit"
 XVNC_CONFIGURE_OPTIONS += --with-default-font-path='catalogue:/etc/X11/fontpath.d'
 XVNC_CONFIGURE_OPTIONS += --with-default-xkb-model=pc105
-XVNC_CONFIGURE_OPTIONS += --with-dri-driver-path=/usr/lib/xorg/modules/dri
+XVNC_CONFIGURE_OPTIONS.$(BITS) += --with-dri-driver-path=$(CONFIGURE_LIBDIR.$(BITS))/xorg/modules/dri
 XVNC_CONFIGURE_OPTIONS += --with-log-dir=/var/log
-XVNC_CONFIGURE_OPTIONS += --with-module-dir=/usr/lib/xorg/modules
+XVNC_CONFIGURE_OPTIONS.$(BITS) += --with-module-dir=$(CONFIGURE_LIBDIR.$(BITS))/xorg/modules
 XVNC_CONFIGURE_OPTIONS += --with-os-name="`uname -srm`"
 XVNC_CONFIGURE_OPTIONS += --with-vendor-name="Project OpenIndiana"
 XVNC_CONFIGURE_OPTIONS += --with-vendor-web="http://openindiana.org"
-XVNC_CONFIGURE_OPTIONS += --with-xkb-bin-directory=/usr/bin
+XVNC_CONFIGURE_OPTIONS.$(BITS) += --with-xkb-bin-directory=$(CONFIGURE_BINDIR.$(BITS))
 XVNC_CONFIGURE_OPTIONS += --with-xkb-output=/var/run/xkb
 XVNC_CONFIGURE_OPTIONS += --without-int10
 XVNC_CONFIGURE_OPTIONS += --disable-selective-werror
+
+XVNC_CONFIGURE_OPTIONS += $(XVNC_CONFIGURE_OPTIONS.$(BITS))
 
 $(BUILD_DIR)/.built_jar: $(BULD_32)
 	$(ENV) $(COMPONENT_BUILD_ENV) \

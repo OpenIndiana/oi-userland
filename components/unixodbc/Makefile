@@ -54,9 +54,9 @@ PKG_CONFIG_PATH_64 = /usr/lib/$(MACH64)/pkgconfig
 
 LD_OPTIONS += -lsocket -lresolv -lnsl -lgen
 
-CONFIGURE_OPTIONS  +=	--includedir=$(CONFIGURE_PREFIX)/include/odbc
-CONFIGURE_OPTIONS  +=	--localstatedir=/var
-CONFIGURE_OPTIONS  +=	--sysconfdir=/etc/odbc
+CONFIGURE_INCLUDEDIR=$(CONFIGURE_INCLUDEROOTDIR)/odbc
+CONFIGURE_SYSCONFDIR=/etc/odbc
+
 CONFIGURE_OPTIONS  +=	--x-includes="$(CONFIGURE_PREFIX)/include"
 CONFIGURE_OPTIONS  +=	--x-libraries="$(X11LIB.$(BITS))"
 CONFIGURE_OPTIONS  +=	--enable-shared

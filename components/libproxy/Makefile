@@ -45,12 +45,9 @@ COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CFLAGS+= -D__EXTENSIONS__
 
-CONFIGURE_OPTIONS.64 += --without-mozjs
+CONFIGURE_INCLUDEDIR=$(CONFIGURE_INCLUDEROOTDIR)/$(COMPONENT_NAME)
+CONFIGURE_LOCALSTATEDIR=/var/lib
 
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
-CONFIGURE_OPTIONS+= --includedir=/usr/include/libproxy
-CONFIGURE_OPTIONS+= --libexecdir=/usr/lib
-CONFIGURE_OPTIONS+= --localstatedir=/var/lib
 CONFIGURE_OPTIONS+= --with-gnome
 CONFIGURE_OPTIONS+= --without-dotnet
 CONFIGURE_OPTIONS+= --with-direct
@@ -60,7 +57,6 @@ CONFIGURE_OPTIONS+= --with-wpad
 CONFIGURE_OPTIONS+= --without-networkmanager
 CONFIGURE_OPTIONS+= --without-webkit
 CONFIGURE_OPTIONS+= --without-mozjs
-CONFIGURE_OPTIONS+= $(CONFIGURE_OPTIONS.$(BITS))
 
 CONFIGURE_ENV    += XGETTEXT=/usr/gnu/bin/xgettext
 CONFIGURE_ENV    += MSGFMT=/usr/gnu/bin/msgfmt
@@ -79,7 +75,7 @@ COMPONENT_POST_INSTALL_ACTION += \
         if test -d site-packages-64 ; then \
             $(MV) site-packages-64/* site-packages/64/ ; \
             $(MV) site-packages-32/* site-packages/ ; \
-	    $(RM) -rf site-packages-64 site-packages-32 ; \
+            $(RM) -rf site-packages-64 site-packages-32 ; \
         fi ; )
 
 

@@ -45,8 +45,6 @@ COMPONENT_PREP_ACTION= ( cd $(@D) && \
 
 COMPONENT_PRE_CONFIGURE_ACTION =        ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
-CONFIGURE_OPTIONS+= --libexecdir=/usr/bin
 CONFIGURE_OPTIONS+= --disable-warnings
 CONFIGURE_OPTIONS+= --enable-external-sqlite
 CONFIGURE_OPTIONS+= --disable-evolution-push-module

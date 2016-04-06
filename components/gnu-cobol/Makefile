@@ -39,7 +39,6 @@ include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 CONFGIURE_OPTIONS +=	--with-cflags="$(CFLAGS)"
-CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
 
 build:		$(BUILD_32)
 

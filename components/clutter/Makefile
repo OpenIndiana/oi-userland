@@ -43,7 +43,6 @@ CXXFLAGS+=	-I$(@D)/mesa
 LDFLAGS.32 =	-L/usr/lib/mesa -L/usr/X11/lib -R/usr/X11/lib -lX11
 LDFLAGS.64 =	-L/usr/lib/mesa/$(MACH64) -L/usr/X11/lib/$(MACH64) -R/usr/X11/lib/$(MACH64) -lX11
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--disable-static
 CONFIGURE_OPTIONS+=	--enable-gtk-doc
 

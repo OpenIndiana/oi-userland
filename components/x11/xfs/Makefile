@@ -36,7 +36,6 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-CONFIGURE_OPTIONS += --sysconfdir=/usr/lib
 CONFIGURE_OPTIONS += --enable-syslog
 CONFIGURE_OPTIONS += --enable-inetd
 CONFIGURE_OPTIONS += --disable-devel-docs

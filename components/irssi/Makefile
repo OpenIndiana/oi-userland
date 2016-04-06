@@ -31,8 +31,6 @@ PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
 CONFIGURE_OPTIONS +=	--with-perl=yes
 CONFIGURE_OPTIONS +=	--with-proxy
 CONFIGURE_OPTIONS +=	--with-perl-lib=$(CONFIGURE_PREFIX)/perl5/vendor_perl/$(PERL_VERSION)
-CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
-CONFIGURE_OPTIONS +=	--includedir=$(CONFIGURE_INCLUDEDIR)
 
 CONFIGURE_ENV     +=    perlpath=$(PERL)
 

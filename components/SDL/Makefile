@@ -38,10 +38,6 @@ PATH=/usr/gnu/bin:/usr/bin
 COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 					$(CONFIG_SHELL) autogen.sh )
 
-
-
-CONFIGURE_OPTIONS +=	--sysconfdir=/etc
-CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS +=	--disable-static
 CONFIGURE_OPTIONS +=	--disable-assembly
 

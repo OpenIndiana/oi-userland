@@ -39,13 +39,14 @@ include $(WS_MAKE_RULES)/ips.mk
 COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
                                         autoreconf -f -i)
 
+CONFIGURE_SBINDIR.$(BITS) = $(CONFIGURE_LIBDIR.$(BITS))/rsyslog
+
 CONFIGURE_OPTIONS +=    --enable-imsolaris
 CONFIGURE_OPTIONS +=    --enable-cached-man-pages
 CONFIGURE_OPTIONS +=    --enable-mail
 #CONFIGURE_OPTIONS +=    --enable-gssapi_krb5
 CONFIGURE_OPTIONS +=    --enable-gnutls
 CONFIGURE_OPTIONS +=    --disable-klog
-CONFIGURE_OPTIONS +=    --sbindir=/usr/lib/rsyslog
 
 ASLR_MODE = $(ASLR_ENABLE)
 

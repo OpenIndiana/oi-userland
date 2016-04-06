@@ -64,9 +64,8 @@ COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_SCRIPT = $(@D)/configure
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS += --libexecdir=/usr/lib
-CONFIGURE_OPTIONS += --localstatedir=/var/lib
+CONFIGURE_LOCALSTATEDIR=/var/lib
+
 CONFIGURE_OPTIONS += --enable-private-nwam-headers
 
 COMPONENT_INSTALL_ENV += GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1

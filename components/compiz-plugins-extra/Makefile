@@ -38,7 +38,6 @@ COMPONENT_PREP_ACTION =        ( cd $(@D) && \
 					autoconf &&\
 					find $(@D) -name '*_options.c' -o -name '*_options.h' -exec rm -f {} \; )
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--enable-schemas
 
 CONFIGURE_ENV+=	INTLTOOL_PERL=$(PERL)

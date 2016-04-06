@@ -44,7 +44,6 @@ SHELL=/bin/sh
 
 CFLAGS +=		`pkg-config --cflags libmpfr`
 
-CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		--disable-static
 
 include $(WS_MAKE_RULES)/shared-targets.mk

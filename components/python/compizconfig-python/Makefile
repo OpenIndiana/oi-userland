@@ -39,7 +39,6 @@ COMPONENT_PREP_ACTION = \
                                         automake -a -f -c &&\
                                         autoconf )
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_ENV+=		PYTHON=$(PYTHON)
 
 # common targets

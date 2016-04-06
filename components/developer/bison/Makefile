@@ -42,8 +42,6 @@ include $(WS_MAKE_RULES)/ips.mk
 CONFIGURE_LIBDIR.32 =   $(GNULIB)
 CONFIGURE_LIBDIR.64 =   $(GNULIB)/$(MACH64)
 
-CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
-
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
 

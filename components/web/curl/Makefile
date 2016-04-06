@@ -47,7 +47,7 @@ CPPFLAGS += `pkg-config --cflags libidn`
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS) -I/usr/include/openldap"
 
-CONFIGURE_OPTIONS += --localstatedir=/var --enable-shared --disable-static
+CONFIGURE_OPTIONS += --enable-shared --disable-static
 CONFIGURE_OPTIONS += --enable-http --enable-ftp
 CONFIGURE_OPTIONS += --enable-file --enable-dict
 CONFIGURE_OPTIONS += --enable-manual --disable-libgcc

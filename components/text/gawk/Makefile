@@ -36,9 +36,6 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-CONFIGURE_OPTIONS	+=	--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS	+=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
-
 COMPONENT_TEST_TRANSFORMS += '-e "/\/usr\/gnu\/bin\/make/d"'
 
 # common targets

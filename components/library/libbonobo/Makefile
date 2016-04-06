@@ -23,8 +23,10 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:9160d4f277646400d3bb6b4fa73636cc6d1a865a32b9d0760e1e9e6ee624976b
-
 COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.32/$(COMPONENT_ARCHIVE)
+
+CONFIGURE_SYSCONFDIR.32 = $(ETCDIR)
+CONFIGURE_SYSCONFDIR.64 = $(ETCDIR)/$(MACH64)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -37,11 +39,6 @@ COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 					aclocal -I . &&\
 					automake -c -f -a &&\
 					autoconf )
-
-CONFIGURE_OPTIONS.32 += --sysconfdir=/etc
-CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib
-CONFIGURE_OPTIONS.64 += --sysconfdir=/etc/$(MACH64)
-CONFIGURE_OPTIONS.64 += --libexecdir=/usr/lib/$(MACH64)
 
 # common targets
 build:		$(BUILD_32_and_64)

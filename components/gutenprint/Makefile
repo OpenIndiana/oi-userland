@@ -36,7 +36,6 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-CONFIGURE_OPTIONS +=	 --infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS +=    --enable-escputil
 CONFIGURE_OPTIONS +=    --without-gimp2
 CONFIGURE_OPTIONS +=    --enable-cups-1_2-enhancements

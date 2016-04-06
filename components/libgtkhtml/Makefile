@@ -33,8 +33,6 @@ include $(WS_MAKE_RULES)/ips.mk
 
 gcc_OPT = -O2
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)

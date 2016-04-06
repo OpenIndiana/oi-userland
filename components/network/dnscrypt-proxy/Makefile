@@ -37,8 +37,6 @@ include $(WS_MAKE_RULES)/ips.mk
 # Missing files in build dir without this.
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
-
 build: $(BUILD_32)
 
 install: $(INSTALL_32)

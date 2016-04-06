@@ -40,7 +40,6 @@ CXXFLAGS+=	-DSOLARIS -D__EXTENSIONS__
 
 CONFIGURE_SCRIPT=       $(@D)/configure
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--disable-ldap
 CONFIGURE_OPTIONS+=	--disable-notify
 CONFIGURE_OPTIONS+=	--enable-xv

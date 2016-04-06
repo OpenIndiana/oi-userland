@@ -13,6 +13,11 @@
 # Copyright 2013 Aurelien Larcher.  All rights reserved.
 #
 
+CONFIGURE_PROTO_DIRS:=no
+CONFIGURE_DEFAULT_DIRS:=no
+CONFIGURE_DEFAULT_EXTRA_DIRS:=no
+CONFIGURE_DEFAULT_STATE_DIRS:=no
+
 include ../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/mpi-macros.mk
 

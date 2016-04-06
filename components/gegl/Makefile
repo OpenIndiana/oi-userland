@@ -42,9 +42,6 @@ CFLAGS += -std=gnu99
 CFLAGS.32 = -D_FILE_OFFSET_BITS=64
 CFLAGS += $(CFLAGS.$(BITS))
 
-CONFIGURE_OPTIONS+= --sysconfdir=$(ETCDIR)
-CONFIGURE_OPTIONS+= --datadir=$(USRSHAREDIR)
-CONFIGURE_OPTIONS+= --infodir=$(USRSHAREDIR)/info
 CONFIGURE_OPTIONS+= --without-libspiro
 CONFIGURE_OPTIONS+= --without-libavformat
 CONFIGURE_OPTIONS+= --without-libv4l

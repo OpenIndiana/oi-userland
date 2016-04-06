@@ -34,8 +34,6 @@ PATH=/usr/gnu/bin:/usr/bin
 
 CFLAGS +=	-I/usr/java/include -I/usr/java/include/solaris
 
-CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--with-docbasedir=/usr/share/lib/java/javadoc/java-gnome
 CONFIGURE_OPTIONS+=	--with-jardir=/usr/share/lib/java
 CONFIGURE_OPTIONS+=	--with-srcjar

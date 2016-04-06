@@ -40,8 +40,6 @@ COMPONENT_PREP_ACTION =        ( cd $(@D) && \
 
 COMPONENT_PRE_CONFIGURE_ACTION = ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)

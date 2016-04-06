@@ -13,6 +13,11 @@
 # Copyright 2013-2015 Aurelien Larcher.  All rights reserved.
 #
 
+CONFIGURE_PROTO_DIRS:=no
+CONFIGURE_DEFAULT_DIRS:=no
+CONFIGURE_DEFAULT_EXTRA_DIRS:=no
+CONFIGURE_DEFAULT_STATE_DIRS:=no
+
 include ../../make-rules/shared-macros.mk
 MPI_IMPLEMENTATION  = openmpi
 include $(WS_MAKE_RULES)/mpi-macros.mk

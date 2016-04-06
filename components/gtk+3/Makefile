@@ -13,6 +13,8 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
+CONFIGURE_DEFAULT_STATE_DIRS:=no
+
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gtk+
@@ -30,6 +32,9 @@ COMPONENT_LICENSE= LGPLv2
 COMPONENT_LICENSE_FILE= COPYING
 COMPONENT_CLASSIFICATION = Desktop (GNOME)/Libraries
 COMPONENT_FMRI = library/desktop/gtk3
+
+CONFIGURE_SYSCONFDIR.32 = $(ETCDIR)
+CONFIGURE_SYSCONFDIR.64 = $(ETCDIR)/$(MACH64)
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
@@ -50,8 +55,6 @@ COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_SCRIPT = $(@D)/configure
 
-CONFIGURE_OPTIONS.32 = --sysconfdir=/etc
-CONFIGURE_OPTIONS.64 = --sysconfdir=/etc/$(MACH64)
 CONFIGURE_OPTIONS += --with-native-locale=yes
 CONFIGURE_OPTIONS += --with-xinput=xfree
 CONFIGURE_OPTIONS += --enable-shm

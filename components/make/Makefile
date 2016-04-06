@@ -40,7 +40,6 @@ include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS  +=		--program-prefix=g
-CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 
 ASLR_MODE = $(ASLR_ENABLE)
 

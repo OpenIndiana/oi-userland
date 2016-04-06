@@ -42,7 +42,6 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		M4="/usr/gnu/bin/m4"
 
 COMPONENT_BUILD_ENV +=		SONAME="$(SONAME)"

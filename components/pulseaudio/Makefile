@@ -42,9 +42,6 @@ LDFLAGS += -lnsl -lsocket -lgobject-2.0
 
 CPPFLAGS += -I/usr/include/gc
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS += --localstatedir=/var
-CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS += --disable-samplerate
 CONFIGURE_OPTIONS += --disable-bluez
 

@@ -43,7 +43,6 @@ COMPONENT_PREP_ACTION =        ( cd $(@D) && \
 					autoconf &&\
                                         intltoolize )
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--enable-gnome
 CONFIGURE_OPTIONS+=	--disable-kde
 CONFIGURE_OPTIONS+=	--disable-kde4

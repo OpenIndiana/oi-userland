@@ -37,8 +37,9 @@ include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_OPTIONS +=	--enable-threads
 
-CONFIGURE_OPTIONS.32 += --libdir=/usr/lib/tcl8.5/pgtcl1.9
-CONFIGURE_OPTIONS.64 += --libdir=/usr/lib/tcl8.5/pgtcl1.9/$(MACH64)
+CONFIGURE_LIBDIR.32=/usr/lib/tcl8.5/pgtcl1.9
+CONFIGURE_LIBDIR.64=/usr/lib/tcl8.5/pgtcl1.9/$(MACH64)
+
 #CONFIGURE_OPTIONS.32    += --with-tcl="/usr/lib"
 #CONFIGURE_OPTIONS.64    += --with-tcl="/usr/lib/$(MACH64)"
 

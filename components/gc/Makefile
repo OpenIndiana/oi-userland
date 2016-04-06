@@ -33,7 +33,6 @@ include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION =    ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --enable-threads=posix
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-large-config

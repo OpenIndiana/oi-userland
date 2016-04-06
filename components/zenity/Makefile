@@ -32,7 +32,6 @@ PATH=/usr/gnu/bin:/usr/bin
 
 LDFLAGS += -lX11
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --disable-scrollkeeper
 
 # common targets

@@ -42,7 +42,7 @@ LDFLAGS.64=	$(LDFLAGS) -L$(GNULIB64) -R $(GNULIB64)
 
 COMPONENT_PRE_CONFIGURE_ACTION += cp -r $(SOURCE_DIR)/* $(@D) && \
 			cd $(@D) && autoconf
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
+
 CONFIGURE_OPTIONS+=	--enable-shared
 CONFIGURE_OPTIONS+=	--disable-static
 CONFIGURE_OPTIONS+=	--with-pic

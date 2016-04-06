@@ -45,8 +45,6 @@ COMPONENT_PRE_CONFIGURE_ACTION =	(chmod -R u+r  $(SOURCE_DIR) && \
 
 CONFIGURE_SCRIPT = $(@D)/configure
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-
 CONFIGURE_ENV    += XGETTEXT=/usr/gnu/bin/xgettext
 CONFIGURE_ENV    += MSGFMT=/usr/gnu/bin/msgfmt
 CONFIGURE_ENV    += PYTHON=$(PYTHON)

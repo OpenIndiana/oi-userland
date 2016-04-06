@@ -47,10 +47,10 @@ COMPONENT_PRE_CONFIGURE_ACTION =        (chmod -R u+r $(SOURCE_DIR) && cp -rp $(
                                         cp -r $(COMPONENT_DIR)/files/po-sun $(@D) && \
                                         cd $(@D)/po-sun && $(MAKE) all )
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
+CONFIGURE_LOCALSTATEDIR=/var/lib
+
 CONFIGURE_OPTIONS+=	--disable-static
 CONFIGURE_OPTIONS+=	--disable-scrollkeeper
-CONFIGURE_OPTIONS+=	--localstatedir=/var/lib
 CONFIGURE_OPTIONS+=	--with-gnome-distributor="The OpenIndiana Project"
 CONFIGURE_OPTIONS+=	--with-gnome-distributor-version="GNOME $(COMPONENT_VERSION) Desktop"
 

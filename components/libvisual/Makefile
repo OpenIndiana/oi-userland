@@ -46,7 +46,6 @@ COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 					autoconf )
 
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --enable-shared=yes
 CONFIGURE_OPTIONS += --enable-static=no
 

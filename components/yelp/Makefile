@@ -34,8 +34,7 @@ include $(WS_MAKE_RULES)/ips.mk
 CXXFLAGS+= -std=gnu++0x
 LDFLAGS+= -lgthread-2.0
 
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
-CONFIGURE_OPTIONS+= --localstatedir=/var/lib
+CONFIGURE_LOCALSTATEDIR=/var/lib
 CONFIGURE_ENV    += XGETTEXT=/usr/gnu/bin/xgettext
 CONFIGURE_ENV    += MSGFMT=/usr/gnu/bin/msgfmt
 

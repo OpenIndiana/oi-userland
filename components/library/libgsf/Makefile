@@ -53,7 +53,6 @@ CONFIGURE_ENV+=	am_cv_python_pyexecdir=$(PYTHON.2.6.VENDOR_PACKAGES.$(BITS))
 CONFIGURE_ENV+=	am_cv_python_pythondir=$(PYTHON.2.6.VENDOR_PACKAGES.$(BITS))
 CONFIGURE_ENV+=	PYTHON=$(PYTHON)
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --enable-static=no
 CONFIGURE_OPTIONS += --with-python
 CONFIGURE_OPTIONS += --with-bz2

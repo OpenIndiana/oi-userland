@@ -27,6 +27,9 @@ COMPONENT_ARCHIVE_URL= \
   http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.43/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gtk.org/
 
+CONFIGURE_SYSCONFDIR.32 = $(ETCDIR)
+CONFIGURE_SYSCONFDIR.64 = $(ETCDIR)/$(MACH64)
+
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
@@ -48,8 +51,6 @@ COMPONENT_PRE_CONFIGURE_ACTION = ( cp -a $(SOURCE_DIR)/* $(@D))
 
 CONFIGURE_SCRIPT = $(@D)/configure
 
-CONFIGURE_OPTIONS.32 = --sysconfdir=/etc
-CONFIGURE_OPTIONS.64 = --sysconfdir=/etc/$(MACH64)
 CONFIGURE_OPTIONS += --disable-fam
 CONFIGURE_OPTIONS += --disable-dtrace
 CONFIGURE_OPTIONS += --disable-static

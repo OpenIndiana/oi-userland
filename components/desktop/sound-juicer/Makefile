@@ -44,8 +44,6 @@ CONFIGURE_SCRIPT=       $(@D)/configure
 
 gcc_OPT		= -O2
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--localstatedir=/var
 CONFIGURE_OPTIONS+=	--disable-scrollkeeper
 
 COMPONENT_INSTALL_ENV+=	GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1

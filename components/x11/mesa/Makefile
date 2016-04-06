@@ -73,7 +73,6 @@ CONFIGURE_OPTIONS += --with-gallium-drivers=
 CONFIGURE_OPTIONS += --enable-shared-glapi
 CONFIGURE_OPTIONS += --enable-texture-float
 CONFIGURE_OPTIONS += --enable-osmesa
-CONFIGURE_OPTIONS += --sysconfdir=/etc
 
 CONFIGURE_ENV+=PYTHON=$(PYTHON)
 CONFIGURE_ENV+=CPPFLAGS="$(CPPFLAGS)"

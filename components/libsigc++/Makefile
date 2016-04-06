@@ -34,7 +34,6 @@ include $(WS_MAKE_RULES)/ips.mk
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_OPTIONS+= --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS +=	MAKE=$(GMAKE)
 
 build: $(BUILD_32_and_64)

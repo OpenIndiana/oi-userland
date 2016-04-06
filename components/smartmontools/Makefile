@@ -40,7 +40,6 @@ include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 
-CONFIGURE_OPTIONS +=	--sysconfdir=/etc
 CONFIGURE_OPTIONS +=	--enable-attributelog
 CONFIGURE_OPTIONS +=	--enable-savestates
 CONFIGURE_OPTIONS +=	--enable-drivedb

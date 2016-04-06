@@ -37,7 +37,7 @@ include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 CONFIGURE_PREFIX    =	/usr/gnu
-CONFIGURE_OPTIONS  +=	--infodir=$(CONFIGURE_INFODIR)
+
 CONFIGURE_OPTIONS  +=	--disable-iberty
 CONFIGURE_OPTIONS  +=	--disable-dependency-tracking
 

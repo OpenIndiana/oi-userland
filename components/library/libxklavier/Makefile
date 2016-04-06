@@ -47,8 +47,6 @@ COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 # Missing files in build dir without this.
 COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-
 # CFLAGS are not passed to compiler when g-ir-scanner is used
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"

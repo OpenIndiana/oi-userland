@@ -42,7 +42,6 @@ include $(WS_MAKE_RULES)/ips.mk
 
 # Prevent gzip compilation using assembly code, which segv's with Studio 12.3.
 CONFIGURE_OPTIONS +=	gzip_cv_assembler=no
-CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
 
 # Needed for "gmake test" to work successfully.
 # If SHELLOPTS is exported (as it is by the userland makefiles),

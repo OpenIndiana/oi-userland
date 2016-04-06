@@ -40,8 +40,6 @@ COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 					automake -c -f -a &&\
 					autoconf )
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib
 CONFIGURE_OPTIONS+=	--disable-static
 CONFIGURE_OPTIONS+=	--disable-pam
 

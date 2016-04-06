@@ -36,8 +36,6 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
-
 build: $(BUILD_32)
 
 install: $(INSTALL_32)

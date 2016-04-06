@@ -35,7 +35,7 @@ include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION =        (cp -a $(SOURCE_DIR)/* $(@D))
 
-CONFIGURE_OPTIONS	+=	--sysconfdir=/etc/pgpool-II
+CONFIGURE_SYSCONFDIR =  $(ETCDIR)/pgpool-II
 
 build: $(BUILD_32)
 

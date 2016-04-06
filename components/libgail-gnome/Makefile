@@ -36,9 +36,6 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
-
 CONFIGURE_ENV += PYTHON=$(PYTHON)
 
 build: $(BUILD_32)

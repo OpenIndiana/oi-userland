@@ -33,7 +33,6 @@ PATH=/usr/gnu/bin:/usr/bin
 
 gcc_OPT		= -O2
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--disable-gnomeprint
 CONFIGURE_OPTIONS+=	--disable-gnomeprintui
 CONFIGURE_OPTIONS+=	--disable-gtksourceview

@@ -39,7 +39,6 @@ include $(WS_MAKE_RULES)/ips.mk
 CONFIGURE_OPTIONS +=	--enable-colors256
 CONFIGURE_OPTIONS +=	--with-sys-screenrc=/etc/screenrc
 CONFIGURE_OPTIONS +=	--disable-socket-dir
-CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
 
 PROTOTERMINFODIR=$(PROTOUSRSHAREDIR)/lib/terminfo
 

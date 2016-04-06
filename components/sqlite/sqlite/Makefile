@@ -62,7 +62,6 @@ CFLAGS			+= -DSQLITE_ENABLE_STMT_SCANSTATUS
 #Fixes firefox crash with new sqlite, don't remove until proper fix
 gcc_OPT                 =  -O2
 
-CONFIGURE_OPTIONS	+= --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS	+= --enable-threadsafe
 CONFIGURE_OPTIONS	+= --enable-shared
 CONFIGURE_OPTIONS	+= --disable-static

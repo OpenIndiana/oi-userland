@@ -38,8 +38,6 @@ PATH=/usr/gnu/bin:/usr/bin
 # Missing files in build dir for gmake install without this.
 COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-
 $(BUILD_DIR_32)/.installed_pixmaps:	$(BUILD_32)
 	$(RM) -fr $(PROTO_DIR)/usr/share/pixmaps
 	$(MKDIR) -p $(PROTO_DIR)/usr/share/pixmaps

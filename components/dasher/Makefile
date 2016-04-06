@@ -47,8 +47,6 @@ COMPONENT_PRE_CONFIGURE_ACTION =        (cp -rp $(SOURCE_DIR)/* $(@D) && \
                                         cp -r $(COMPONENT_DIR)/files/po-sun $(@D) && \
                                         cd $(@D)/po-sun && $(MAKE) all )
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-
 CONFIGURE_ENV+= PYTHON="$(PYTHON)"
 CONFIGURE_ENV+= PERL="$(PERL)"
 

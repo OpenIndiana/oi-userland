@@ -34,8 +34,6 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-CONFIGURE_OPTIONS +=	--sysconfdir=/etc
-CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 # mpeg libraries are disabled for future
 # in case we ever have hipster-encumbered
 CONFIGURE_OPTIONS +=	--disable-smpeg
@@ -43,7 +41,6 @@ CONFIGURE_OPTIONS +=	--disable-mpglib
 CONFIGURE_OPTIONS +=	--disable-mikmod
 CONFIGURE_OPTIONS +=	--disable-modplug
 CONFIGURE_OPTIONS +=	--disable-physfs
-
 
 # common targets
 build:		$(BUILD_32_and_64)

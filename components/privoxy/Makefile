@@ -47,10 +47,6 @@ COMPONENT_PREP_ACTION = \
             autoheader; \
             autoconf )
 
-# Needed to installed most of the files into the proto area.
-CONFIGURE_OPTIONS +=	--sysconfdir=/etc
-CONFIGURE_OPTIONS +=	--localstatedir=/var
-
 # common targets
 build:		$(BUILD_32)
 

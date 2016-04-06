@@ -42,8 +42,6 @@ gcc_OPT=-O2
 # This is needed to find mapfile
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)

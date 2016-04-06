@@ -65,7 +65,6 @@ PATH=/usr/gnu/bin:/usr/bin
 CFLAGS.$(BITS)+=	-I$(PYTHON_VENDOR_PACKAGES.$(BITS))/numpy/core/include
 CFLAGS+=	$(CFLAGS.$(BITS))
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_ENV+=		PYTHON=$(PYTHON)
 CONFIGURE_ENV+=		am_cv_python_pythondir="$(am_cv_python_pythondir)"
 CONFIGURE_ENV+=		am_cv_python_pyexecdir="$(am_cv_python_pyexecdir)"

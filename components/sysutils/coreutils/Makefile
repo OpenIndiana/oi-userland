@@ -43,8 +43,9 @@ PATH=/usr/gnu/bin:/usr/bin
 PATCH_LEVEL=		0
 
 CONFIGURE_PREFIX	 =	/usr/gnu
-CONFIGURE_OPTIONS	+=	--libdir=/usr/lib
-CONFIGURE_OPTIONS	+=	--infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_LIBDIR.32	 =	$(USRLIBDIR)
+CONFIGURE_LIBDIR.64	 =	$(USRLIBDIR64)
+
 CONFIGURE_OPTIONS	+=	CPPFLAGS=-I/usr/include/gmp
 
 # Enable ASLR for this component

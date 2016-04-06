@@ -42,11 +42,10 @@ COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D) && cd $(@
 		automake -a -c -f&&\
 		autoconf)
 
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
+CONFIGURE_LOCALSTATEDIR=/var/lib
+
 CONFIGURE_OPTIONS+= --disable-browser-plugin
 CONFIGURE_OPTIONS+= --enable-gstreamer
-CONFIGURE_OPTIONS+= --libexecdir=/usr/lib
-CONFIGURE_OPTIONS+= --localstatedir=/var/lib
 CONFIGURE_OPTIONS+= --with-mtp=no
 CONFIGURE_ENV    += XGETTEXT=/usr/gnu/bin/xgettext
 CONFIGURE_ENV    += MSGFMT=/usr/gnu/bin/msgfmt

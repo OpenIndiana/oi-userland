@@ -62,9 +62,7 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 # tail with -n is needed
 CONFIGURE_ENV += "PATH=/usr/xpg4/bin:/usr/bin"
 
-CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS +=	--with-erlang=$(USRBINDIR)
-CONFIGURE_OPTIONS +=	--localstatedir=/var
 CONFIGURE_OPTIONS +=	--enable-odbc
 
 COMPONENT_BUILD_TARGETS = all

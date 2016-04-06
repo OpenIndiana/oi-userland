@@ -1,5 +1,3 @@
-#! /usr/bin/sh
-#
 #
 # This file and its contents are supplied under the terms of the
 # Common Development and Distribution License ("CDDL"), version 1.0.
@@ -41,9 +39,6 @@ COMPONENT_PREP_ACTION += \
 
 # For GNU gettext
 CONFIGURE_ENV += PATH=/usr/gnu/bin:$(PATH)
-
-CONFIGURE_OPTIONS+= --libexecdir=/usr/lib
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
 
 build:		$(BUILD_32)
 

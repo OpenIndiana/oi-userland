@@ -45,9 +45,7 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
-CONFIGURE_PREFIX    =	/usr
 CONFIGURE_OPTIONS  +=	--without-openssl
-CONFIGURE_OPTIONS  +=	--libexecdir=/usr/lib
 CONFIGURE_OPTIONS  +=	--with-perl=$(PERL)
 CONFIGURE_OPTIONS  +=	--with-python=$(PYTHON)
 

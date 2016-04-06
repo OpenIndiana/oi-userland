@@ -51,9 +51,6 @@ LDFLAGS.32 = -L/usr/sfw/lib -R/usr/sfw/lib
 LDFLAGS.64 = -L/usr/sfw/lib/$(MACH64) -R/usr/sfw/lib/$(MACH64)
 LDFLAGS += $(LDFLAGS.$(BITS))
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib
-CONFIGURE_OPTIONS.64 += --libexecdir=/usr/lib/$(MACH64)
 CONFIGURE_OPTIONS.64 += --disable-avahi
 
 CONFIGURE_ENV+= PERL=$(PERL)

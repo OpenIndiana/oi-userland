@@ -51,8 +51,6 @@ COMPONENT_PRE_CONFIGURE_ACTION =        (cp -rp $(SOURCE_DIR)/* $(@D) && \
 LDFLAGS += -lsecdb
 
 CONFIGURE_OPTIONS+=	--enable-policykit
-CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_OPTIONS+=	--disable-scrollkeeper
 
 CONFIGURE_ENV+= PYTHON="$(PYTHON)"

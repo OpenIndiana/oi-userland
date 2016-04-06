@@ -48,20 +48,22 @@ CFLAGS+=$(CFLAGS.$(BITS))
 
 PATH=$(MYSQL_BINDIR.$(BITS)):$(PG_BINDIR.$(BITS)):/usr/bin:/usr/sbin
 
-CONFIGURE_OPTIONS+= --sysconfdir=/etc/bacula
-CONFIGURE_OPTIONS+= --with-scriptdir=/etc/bacula/scripts
-CONFIGURE_OPTIONS+= --with-working-dir=/var/bacula
-CONFIGURE_OPTIONS+= --sharedstatedir=/var/bacula
-CONFIGURE_OPTIONS+= --localstatedir=/var/bacula
-CONFIGURE_OPTIONS+= --with-logdir=/var/bacula
-CONFIGURE_OPTIONS+= --with-pid-dir=/var/bacula
+# Note: Perhaps use $(COMPONENT_NAME) instead of explicit "bacula" here?
+CONFIGURE_SYSCONFDIR=/etc/bacula
+CONFIGURE_LOCALSTATEDIR=/var/bacula
+CONFIGURE_SHAREDSTATEDIR=$(CONFIGURE_LOCALSTATEDIR)
+
+CONFIGURE_OPTIONS+= --with-scriptdir=$(CONFIGURE_SYSCONFDIR)/scripts
+CONFIGURE_OPTIONS+= --with-working-dir=$(CONFIGURE_SHAREDSTATEDIR)
+CONFIGURE_OPTIONS+= --with-logdir=$(CONFIGURE_SHAREDSTATEDIR)
+CONFIGURE_OPTIONS+= --with-pid-dir=$(CONFIGURE_SHAREDSTATEDIR)
 CONFIGURE_OPTIONS+= --with-smtp-host=localhost
 CONFIGURE_OPTIONS+= --with-sqlite3
 CONFIGURE_OPTIONS+= --with-postgresql
 CONFIGURE_OPTIONS+= --with-mysql
 CONFIGURE_OPTIONS+= --with-openssl
 CONFIGURE_OPTIONS+= --with-tcp-wrappers
-CONFIGURE_OPTIONS+= --with-readline=/usr/include/readline
+CONFIGURE_OPTIONS+= --with-readline=$(USRINCDIR)/readline
 CONFIGURE_OPTIONS+= --disable-conio
 CONFIGURE_ENV    += PYTHON="$(PYTHON)"
 

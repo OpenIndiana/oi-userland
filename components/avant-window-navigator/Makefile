@@ -31,7 +31,6 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
 
-CONFIGURE_OPTIONS+=        --sysconfdir=/etc
 CONFIGURE_OPTIONS+=        --with-desktop=gnome
 
 # common targets

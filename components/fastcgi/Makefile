@@ -40,9 +40,10 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+CONFIGURE_INCLUDEDIR = $(CONFIGURE_INCLUDEROOTDIR)/$(COMPONENT_NAME)
+
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --with-pic
-CONFIGURE_OPTIONS += --includedir=$(CONFIGURE_INCLUDEDIR)/fastcgi
 
 COMPONENT_BUILD_ARGS=
 # common targets

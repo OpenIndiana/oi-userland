@@ -97,7 +97,10 @@ CFLAGS.gcc	+=	-std=c99
 
 SAMBA36DIR	=	/usr/lib/samba/samba36
 CONFIGURE_PREFIX =	$(SAMBA36DIR)
+CONFIGURE_SYSCONFDIR =	/etc/samba
 SAMBA36INCDIR	=	$(SAMBA36DIR)/include
+CONFIGURE_INCLUDEDIR = $(SAMBA36INCDIR)
+CONFIGURE_LOCALSTATEDIR =	/var/samba
 
 #CPPFLAGS +=	-DSAMBA_VERSION_VENDOR_SUFFIX=\\\"Placeholder_for_vendor_suffix\\\"
 CPPFLAGS +=	$(CPP_LARGEFILES)
@@ -121,15 +124,12 @@ else
 LDFLAGS +=      $(LDFLAGS.$(BITS)) $(LD_OPTIONS:%=-Xlinker %)
 endif
 
-CONFIGURE_OPTIONS +=	--includedir=$(SAMBA36INCDIR)
-CONFIGURE_OPTIONS +=	--sysconfdir=/etc/samba
-CONFIGURE_OPTIONS +=	--with-configdir=/etc/samba
-CONFIGURE_OPTIONS +=	--with-privatedir=/etc/samba/private
+CONFIGURE_OPTIONS +=	--with-configdir=$(CONFIGURE_SYSCONFDIR)
+CONFIGURE_OPTIONS +=	--with-privatedir=$(CONFIGURE_SYSCONFDIR)/private
 CONFIGURE_OPTIONS +=	--with-swatdir=$(SAMBA36DIR)/swat
-CONFIGURE_OPTIONS +=	--localstatedir=/var/samba
-CONFIGURE_OPTIONS +=	--with-lockdir=/var/samba/locks
-CONFIGURE_OPTIONS +=	--with-piddir=/var/samba/locks
-CONFIGURE_OPTIONS +=	--with-logfilebase=/var/samba/log
+CONFIGURE_OPTIONS +=	--with-lockdir=$(CONFIGURE_LOCALSTATEDIR)/locks
+CONFIGURE_OPTIONS +=	--with-piddir=$(CONFIGURE_LOCALSTATEDIR)/locks
+CONFIGURE_OPTIONS +=	--with-logfilebase=$(CONFIGURE_LOCALSTATEDIR)/log
 CONFIGURE_OPTIONS +=	--enable-shared=yes
 CONFIGURE_OPTIONS +=	--enable-static=no
 CONFIGURE_OPTIONS.32 +=	--with-static-modules=vfs_solarisacl

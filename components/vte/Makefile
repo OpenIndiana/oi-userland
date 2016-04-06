@@ -41,10 +41,8 @@ COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 					autoheader &&\
 					automake -c -f -a )
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
+CONFIGURE_LOCALSTATEDIR=/var/lib
 CONFIGURE_OPTIONS+=	--disable-scrollkeeper
-CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib
-CONFIGURE_OPTIONS+=	--localstatedir=/var/lib
 CONFIGURE_OPTIONS+=	--disable-Bsymbolic
 
 CONFIGURE_ENV +=	PYTHON=$(PYTHON)

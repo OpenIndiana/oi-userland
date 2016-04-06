@@ -34,7 +34,6 @@ include $(WS_MAKE_RULES)/ips.mk
 
 LD_OPTIONS=
 
-CONFIGURE_OPTIONS += --localstatedir=/var
 CONFIGURE_OPTIONS += --disable-skdb-update
 CONFIGURE_OPTIONS += --with-convert-dir=/usr/share/omf
 

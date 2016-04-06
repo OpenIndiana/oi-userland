@@ -44,8 +44,6 @@ COMPONENT_PRE_CONFIGURE_ACTION =        (cp -rp $(SOURCE_DIR)/* $(@D) && \
 
 LDFLAGS += -lglib-2.0
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-
 # common targets
 build:		$(BUILD_32)
 

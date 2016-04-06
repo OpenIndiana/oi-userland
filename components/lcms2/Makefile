@@ -42,8 +42,8 @@ include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 include $(WS_MAKE_RULES)/lint-libraries.mk
 
+CONFIGURE_INCLUDEDIR = $(CONFIGURE_INCLUDEROOTDIR)/$(COMPONENT_NAME)
 
-CONFIGURE_OPTIONS  +=           --includedir=/usr/include/lcms2
 CONFIGURE_OPTIONS  +=           --enable-shared
 CONFIGURE_OPTIONS  +=           --disable-static
 CONFIGURE_OPTIONS  +=           --with-zlib

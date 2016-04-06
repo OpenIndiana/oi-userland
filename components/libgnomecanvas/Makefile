@@ -39,8 +39,6 @@ PATH=/usr/gnu/bin:/usr/bin
 # Missing files in build dir without this.
 COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-
 # 64-bit build requires libart, but it's 32-bit only for now
 build: $(BUILD_32)
 

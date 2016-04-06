@@ -53,9 +53,6 @@ CFLAGS += -I/usr/X11/include -I/usr/include/freetype2 -DANSICPP -D__EXTENSIONS__
 LDFLAGS +=  -L/usr/X11/lib -R/usr/X11/lib -lXrender
 LDFLAGS += -lgthread-2.0
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib
-
 COMPONENT_INSTALL_ENV+= GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 
 # common targets

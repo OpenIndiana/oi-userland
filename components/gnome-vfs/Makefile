@@ -51,13 +51,12 @@ CONFIGURE_SCRIPT=       $(@D)/configure
 
 PATH=/usr/gnu/bin:/usr/bin
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --enable-fam
 CONFIGURE_OPTIONS += --enable-samba
 CONFIGURE_OPTIONS += --with-samba-includes=/usr/include/samba
 CONFIGURE_OPTIONS += --with-samba-libs=/usr/lib/samba
-CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib
-CONFIGURE_OPTIONS.64 += --libexecdir=/usr/lib/$(MACH64)
+
+# avahi is only available in 32-bit build at this time
 CONFIGURE_OPTIONS.64 += --disable-avahi
 
 CONFIGURE_ENV+= PERL=$(PERL)

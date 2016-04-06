@@ -40,8 +40,6 @@ COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 					automake -c -f -a &&\
 					autoconf )
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS += --localstatedir=/var
 CONFIGURE_OPTIONS += --with-myspell-dir=/usr/share/spell/myspell
 CONFIGURE_OPTIONS += --disable-aspell
 CONFIGURE_OPTIONS += --disable-static

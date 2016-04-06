@@ -42,10 +42,6 @@ COMPONENT_PREP_ACTION =        ( cd $(@D) && \
 					automake -a -f -c &&\
 					autoconf )
 
-
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib
-
 COMPONENT_INSTALL_ENV+= GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 
 # common targets

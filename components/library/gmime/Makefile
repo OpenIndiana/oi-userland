@@ -33,10 +33,6 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib
-CONFIGURE_OPTIONS.64 += --libexecdir=/usr/lib/$(MACH64)
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-
 COMPONENT_PREP_ACTION += \
     cd $(@D); autoreconf --install --force
 
