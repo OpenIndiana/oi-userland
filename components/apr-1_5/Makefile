@@ -28,14 +28,14 @@ BUILD_BITS= 32_and_64
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		apr
-COMPONENT_VERSION=	1.5.1
+COMPONENT_VERSION=	1.5.2
 COMPONENT_PROJECT_URL=	http://apr.apache.org/
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:94b1c9d9835cc9e902838b95d62ecc9a39b698f23e3e706812ec65a78ba41af7
+    sha256:1af06e1720a58851d90694a984af18355b65bb0d047be03ec7d659c746d6dbdb
 COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/apr/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/apache
 
-TPNO=			20711
+TPNO=			27510
 
 CONFIGURE_DEFAULT_DIRS=no
 include $(WS_MAKE_RULES)/common.mk
@@ -58,6 +58,11 @@ CONFIGURE_OPTIONS.32 +=	--enable-layout=Solaris
 CONFIGURE_OPTIONS.64 +=	--enable-layout=Solaris-$(MACH64)
 
 COMPONENT_TEST_TARGETS=	test
+
+COMPONENT_TEST_TRANSFORMS += \
+        '-e "/microseconds: [0-9]* usec/d" '  \
+	'-e "/^APR Lock Performance Test/,/make\[2\]: Leaving directory/p" ' \
+	'-e "/.*/d" '
 
 # Some patches need configure script recreation; autoreconf is not used here as
 # it will overwrite the patch to the libtool scripts.
