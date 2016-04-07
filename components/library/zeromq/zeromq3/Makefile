@@ -20,7 +20,12 @@ COMPONENT_NAME= zeromq
 
 # See configure.ac for ABI version mapping to software version
 COMPONENT_VERSION_ABI= 3
-COMPONENT_VERSION= 3.2.5
+COMPONENT_VERSION_MAJ= 3
+COMPONENT_VERSION_MIN= 2
+COMPONENT_VERSION_PAT= 5
+COMPONENT_VERSION_MAJ_MIN= $(COMPONENT_VERSION_MAJ).$(COMPONENT_VERSION_MIN)
+COMPONENT_VERSION= $(COMPONENT_VERSION_MAJ_MIN).$(COMPONENT_VERSION_PAT)
+
 COMPONENT_SUMMARY= Open source message queue optimised for performance
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -38,7 +43,15 @@ include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
 
+# Note: This USR path is used in build prefix and in p5m manifest,
+# except where we mediate the links and the relative SUB path is used
+COMPONENT_SUB_DIR=zeromq-$(COMPONENT_VERSION_MAJ_MIN)
+COMPONENT_USR_DIR=$(USRDIR)/$(COMPONENT_SUB_DIR)
+
 PKG_OPTIONS +=	-D COMPONENT_VERSION_ABI="$(COMPONENT_VERSION_ABI)"
+PKG_OPTIONS +=	-D COMPONENT_VERSION_MAJ_MIN="$(COMPONENT_VERSION_MAJ_MIN)"
+PKG_OPTIONS +=	-D COMPONENT_SUB_DIR="$(COMPONENT_SUB_DIR)"
+PKG_OPTIONS +=	-D COMPONENT_USR_DIR="$(COMPONENT_USR_DIR)"
 
 COMPONENT_PREP_ACTION =	\
 	( cd $(@D) && \
@@ -50,21 +63,22 @@ COMPONENT_PREP_ACTION =	\
 
 COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_OPTIONS +=	--with-documentation
-CONFIGURE_OPTIONS +=	--enable-static=no
+# Build docs just once (for one ARCH), parameter varies from version to version
+CONFIGURE_OPTIONS.32 +=	--with-documentation --with-docs
+CONFIGURE_OPTIONS.64 +=	--without-documentation --without-docs
 
-COMPONENT_POST_INSTALL_ACTION=	( cd $(PROTO_DIR)/usr && \
-    for D in lib include share/man/* ; do \
-        $(MKDIR) "./share/zeromq$(COMPONENT_VERSION_ABI)/$$D" && \
-        $(CLONEY) "$(PROTO_DIR)/usr/$$D" "$(PROTO_DIR)/usr/share/zeromq$(COMPONENT_VERSION_ABI)/$$D" || exit ; \
-    done \
-)
+CONFIGURE_OPTIONS +=	--enable-static=no
+CONFIGURE_OPTIONS +=	--with-libsodium
+
+CONFIGURE_PREFIX   =	$(COMPONENT_USR_DIR)
+
+CONFIGURE_OPTIONS +=	--sysconfdir=/etc
+CONFIGURE_OPTIONS +=	--localstatedir=/var
 
 build: $(BUILD_32_and_64)
 
 install: $(INSTALL_32_and_64)
 
-# test_shutdown_stress fails
 test: $(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
