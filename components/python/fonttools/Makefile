@@ -29,7 +29,7 @@ COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/source/F/FontTools/$(COM
 PYTHON_VERSIONS=	2.7
 
 include $(WS_MAKE_RULES)/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
+include $(WS_MAKE_RULES)/setup.py.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 FONTTOOLS_CMDS=pyftinspect pyftmerge pyftsubset ttx

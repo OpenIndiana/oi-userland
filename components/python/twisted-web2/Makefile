@@ -36,7 +36,7 @@ COMPONENT_ARCHIVE_URL=	http://twistedmatrix.com/Releases/Web2/8.1/$(COMPONENT_AR
 COMPONENT_BUGDB=	python-mod/twisted-web2
 
 include $(WS_MAKE_RULES)/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
+include $(WS_MAKE_RULES)/setup.py.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 # common targets

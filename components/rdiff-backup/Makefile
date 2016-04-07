@@ -37,7 +37,7 @@ COMPONENT_BUGDB=	utility/rdiff-backup
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
-include $(WS_TOP)/make-rules/setup.py.mk
+include $(WS_MAKE_RULES)/setup.py.mk
 
 # common targets
 

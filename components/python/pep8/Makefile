@@ -36,7 +36,7 @@ COMPONENT_ARCHIVE_URL=	http://pypi.python.org/packages/source/p/$(COMPONENT_NAME
 COMPONENT_BUGDB=	python-mod/pep8
 
 include $(WS_MAKE_RULES)/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
+include $(WS_MAKE_RULES)/setup.py.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 # Replace "#!/usr/bin/env ..." shebang lines with properly versioned ones.

@@ -27,7 +27,7 @@ COMPONENT_ARCHIVE_URL= \
 COMPONENT_PROJECT_URL = https://pypi.python.org/pypi/dulwich
 
 include $(WS_MAKE_RULES)/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
+include $(WS_MAKE_RULES)/setup.py.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 COMMANDS = dul-daemon  dul-receive-pack  dul-upload-pack  dul-web  dulwich

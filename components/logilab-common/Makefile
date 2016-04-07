@@ -37,7 +37,7 @@ COMPONENT_BUGDB=	python-mod/logilab-common
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
-include ../../make-rules/setup.py.mk
+include $(WS_MAKE_RULES)/setup.py.mk
 
 # rename pytest to its versioned name; mediated links (depending on
 # the python version) in the manifest will create the link from pytest

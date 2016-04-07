@@ -38,7 +38,7 @@ COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/mysql-python/$(COMPONENT
 COMPONENT_BUGDB=	python-mod/mysql
 
 include $(WS_MAKE_RULES)/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
+include $(WS_MAKE_RULES)/setup.py.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 CFLAGS.32 =	-L/usr/mariadb/5.5/lib -R/usr/mariadb/5.5/lib

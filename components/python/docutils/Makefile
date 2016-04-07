@@ -26,7 +26,7 @@ COMPONENT_ARCHIVE_URL= \
 COMPONENT_PROJECT_URL = https://pypi.python.org/pypi/docutils
 
 include $(WS_MAKE_RULES)/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
+include $(WS_MAKE_RULES)/setup.py.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 build: $(BUILD_32)

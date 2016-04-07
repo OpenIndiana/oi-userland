@@ -33,7 +33,7 @@ COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/source/n/netaddr/$(COMPO
 COMPONENT_BUGDB=	python-mod/netaddr
 
 include $(WS_MAKE_RULES)/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
+include $(WS_MAKE_RULES)/setup.py.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 COMPONENT_POST_INSTALL_ACTION = \

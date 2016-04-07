@@ -24,7 +24,7 @@ COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/source/p/pip/$(COMPONENT
 COMPONENT_PROJECT_URL=	https://github.com/pypa/pip
 
 include $(WS_MAKE_RULES)/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
+include $(WS_MAKE_RULES)/setup.py.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 build:		$(BUILD_32)

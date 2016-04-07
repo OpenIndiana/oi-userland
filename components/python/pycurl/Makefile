@@ -40,7 +40,7 @@ IPS_COMPONENT_VERSION=  7.19.0.1
 PATCH_LEVEL = 0
 
 include $(WS_MAKE_RULES)/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
+include $(WS_MAKE_RULES)/setup.py.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 # to make sure that the docs get installed in the right place.
