@@ -62,7 +62,9 @@ CONFIGURE_OPTIONS +=	--with-mysql=$(USRDIR)/mysql/5.5/bin/mysql_config
 CONFIGURE_OPTIONS +=    PCRECONFIG="$(USRBINDIR64)/pcre-config"
 
 COMPONENT_TEST_TRANSFORMS += \
-	'-e "s/[0-9][0-9]* wallclock secs (.*CPU)$$/<TIMINGS REMOVED>/" ' 
+	'-e "s/[0-9][0-9]* wallclock secs (.*CPU)$$/<TIMINGS REMOVED>/" ' \
+	'-e "/^preparing infrastructure/,/make\[4\]: Leaving directory/p" ' \
+	'-e "/.*/d" '
 
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += database/mysql-55
