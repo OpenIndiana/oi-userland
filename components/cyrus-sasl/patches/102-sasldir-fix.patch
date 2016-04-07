@@ -1,6 +1,5 @@
 Developed in-house at Oracle 
-sasl install destination for plugins needs to be configurable
-Intended to go upstream
+Bugzilla Bug 3401 sasldir and plugindir in Makefile.am
 
 diff -rupN old/configure.in new/configure.in
 --- old/configure.in	2015-01-16 16:06:51.953695234 -0800
@@ -10,8 +9,8 @@ diff -rupN old/configure.in new/configure.in
  AC_SUBST(configdir)
  
 +AC_ARG_WITH(sasldir, [  --with-sasldir=DIR    set the directory where plugins
-+	     will be installed, possibly 32 vs 64 [[/usr/lib/sasl]] ],
-+	     sasldir=$withval, sasldir=/usr/lib/sasl)
++	     will be installed, possibly 32 vs 64 [[/usr/lib/sasl2]] ],
++	     sasldir=$withval, sasldir=/usr/lib/sasl2)
 +AC_DEFINE_UNQUOTED(SASLDIR, "$sasldir", [Installtime plugin location])
 +AC_SUBST(sasldir)
 +

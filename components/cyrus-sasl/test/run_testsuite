@@ -1,0 +1,65 @@
+#!/bin/bash
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+
+# TODO: save old Kerberos configuration?
+
+./setup_testsuite
+
+export MACH32 MACH64
+case `uname -p` in
+	i386)
+		MACH32="i86"
+		MACH64="amd64"
+		;;
+
+	sparc)	MACH32="sparcv7"
+		MACH64="sparcv9"
+		;;
+
+	*)  	echo "Architecture unknown"
+		exit 1
+		;;
+esac
+
+
+RAW_FILE_BASE=cyrus-sasl.$$
+RESULTS_FILE=test-cyrus-sasl.$$
+ ./testsuite 2>&1 | tee $RAW_FILE_BASE.64
+32/testsuite 2>&1 | tee $RAW_FILE_BASE.32
+
+
+EXITVAL=0
+for i in 64 32 ; do
+    ./transform-results $RAW_FILE_BASE.$i
+    DIFF=`diff $RESULTS_FILE.$i results.master-all`
+
+    if [ -n "$DIFF" ] ; then
+	    echo "TEST $RESULTS_FILE.$i FAILED"
+	    EXITVAL=1
+    fi
+done
+if (( $EXITVAL == 0 ))
+then
+	echo "Test PASSED"
+	exit 0
+fi
+exit 1

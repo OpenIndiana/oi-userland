@@ -51,8 +51,11 @@ TPNO=			21351
 
 SASL2.32 = $(USRLIBDIR)/sasl2
 SASL2.64 = $(USRLIBDIR)/sasl2/$(MACH64)
-SASL_CONFDIR = $(ETCDIR)/sasl
+SASL_CONFDIR = $(ETCDIR)/sasl2
 PROTO_CONFDIR = $(PROTO_DIR)$(SASL_CONFDIR)
+
+TESTS_DIR=$(PROTO_DIR)/$(SASL2)/tests
+TESTS_32_DIR=$(TESTS_DIR)/$(MACH32)
 
 # Migrated from ON in S12, including stuff from system/header, so this
 # cannot be installed on an S11 box.
@@ -68,7 +71,8 @@ include $(WS_MAKE_RULES)/common.mk
 studio_MT=
 
 CPPFLAGS += -I$(USRINCDIR)/openldap
-LDFLAGS += -lbsm -lscf -lresolv $(CC_BITS)
+LDFLAGS += $(CC_BITS)  -lscf -lresolv 
+
 CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --enable-auth-sasldb
 CONFIGURE_OPTIONS += --with-dblib=berkeley
@@ -82,20 +86,15 @@ CONFIGURE_OPTIONS.64 += --with-sasldir=$(SASL2.64)
 CONFIGURE_OPTIONS += --with-ipctype=doors
 CONFIGURE_OPTIONS += --with-ldap=$(USRDIR)
 CONFIGURE_OPTIONS += --enable-sample
-CONFIGURE_OPTIONS += --with-configdir=$(ETCDIR)/sasl
+CONFIGURE_OPTIONS += --enable-login
+CONFIGURE_OPTIONS += --with-configdir=$(ETCDIR)/sasl2
+
+# 23044356 must be fixed before this can be enabled
+# bugzilla.cyrusimap.org 3926 must be fixed before this can be useful
+# except for testing
+# CONFIGURE_OPTIONS += --enable-ldapdb
 
 PKG_PROTO_DIRS += $(SOURCE_DIR)/doc $(COMPONENT_DIR)/Solaris
-
-# TODO -- make these work or rule them out in Phase II, second integration
-#CONFIGURE_OPTIONS += --with-dbpath=$(SASL_CONFDIR)/sasl2db
-#CONFIGURE_OPTIONS += --with-mysql=$?????
-#CONFIGURE_OPTIONS += --enable-sql=yes
-#CONFIGURE_OPTIONS += --enable-ldapdb=yes
-# postfix or AD might need --enable-login and --enable-ntlm
-#CONFIGURE_OPTIONS += --enable-login=yes
-#CONFIGURE_OPTIONS += --enable-ntlm=yes
-# test xalias levels:
-#CFLAGS += -xalias_level=strict
 
 LINTINCDIR= $(SOURCE_DIR)/include/sasl
 
@@ -106,6 +105,8 @@ INCLIST= hmac-md5.h \
 	sasl.h \
 	saslplug.h \
 	saslutil.h
+
+export CONFIG_SITE=$(WS_COMPONENTS)/$(COMPONENT_NAME)/Solaris/config.site
 
 CFG_COMPILE=/usr/share/automake-1.15
 
@@ -135,14 +136,35 @@ INSTALL_64 +=	$(PROTOUSRLIBDIR64)/libsasl.so.1
 # common targets
 install:	build $(INSTALL_32_and_64)
 
-$(BUILD_32):  	COMPONENT_POST_BUILD_ACTION = \
-    $(LD) -F libsasl2.so.3 -o $(BUILD_DIR)/$(MACH32)/lib/.libs/libsasl.so.1 \
-    -G -hlibsasl.so.1 $(LD_B_DIRECT) $(LD_Z_DEFS) -M$(COMPONENT_DIR)/mapfile 
+COMPONENT_POST_BUILD_ACTION += \
+    $(LD) -F libsasl2.so.3 $(LD_BITS) \
+    -o $(BUILD_DIR_$(BITS))/lib/.libs/libsasl.so.1 \
+    -G -hlibsasl.so.1 $(LD_B_DIRECT) $(LD_Z_DEFS) -M$(COMPONENT_DIR)/mapfile ; \
+    (cd $(BUILD_DIR_$(BITS))/sample; $(ENV) $(COMPONENT_BUILD_ENV) \
+    	$(MAKE) sample-client sample-server) ; \
+    (cd $(BUILD_DIR_$(BITS))/utils; $(ENV) $(COMPONENT_BUILD_ENV) \
+    	$(MAKE) testsuite) ;
 
-$(BUILD_64):	COMPONENT_POST_BUILD_ACTION = \
-     $(LD) -F libsasl2.so.3 -64 -G \
-    -o $(BUILD_DIR)/$(MACH64)/lib/.libs/libsasl.so.1 \
-    -hlibsasl.so.1 $(LD_B_DIRECT) -Wl,$(LD_Z_DEFS) -Wl,-M$(COMPONENT_DIR)/mapfile
+COMPONENT_POST_INSTALL_ACTION += \
+        $(CP) $(BUILD_DIR_$(BITS))/utils/.libs/testsuite \
+		$(PROTO_DIR)/$(SASL2.$(BITS))/testsuite ; \
+        $(CP) $(BUILD_DIR_$(BITS))/sample/.libs/sample-server \
+		$(PROTO_DIR)/$(SASL2.$(BITS))/sample-server ; \
+        $(CP) $(BUILD_DIR_$(BITS))/sample/.libs/sample-client \
+		$(PROTO_DIR)/$(SASL2.$(BITS))/sample-client ;
+
+COMPONENT_POST_INSTALL_ACTION.32 += \
+        $(MKDIR) $(TESTS_DIR) ; \
+        $(MKDIR) $(TESTS_32_DIR) ; \
+        $(CP) $(BUILD_DIR_32)/utils/.libs/testsuite $(TESTS_32_DIR) ; \
+        $(CP) $(BUILD_DIR_32)/sample/.libs/sample-server $(TESTS_32_DIR) ; \
+        $(CP) $(BUILD_DIR_32)/sample/.libs/sample-client $(TESTS_32_DIR) ;
+
+COMPONENT_POST_INSTALL_ACTION.64 += \
+        $(MKDIR) $(TESTS_DIR) ; \
+        $(CP) $(BUILD_DIR_64)/utils/.libs/testsuite $(TESTS_DIR) ; \
+        $(CP) $(BUILD_DIR_64)/sample/.libs/sample-server $(TESTS_DIR) ; \
+        $(CP) $(BUILD_DIR_64)/sample/.libs/sample-client $(TESTS_DIR) ;
 
 $(PROTOUSRLIBDIR)/libsasl.so.1:	$(BUILD_DIR)/$(MACH32)/lib/.libs/libsasl.so.1	
 	$(CP) $< $@
@@ -150,8 +172,23 @@ $(PROTOUSRLIBDIR)/libsasl.so.1:	$(BUILD_DIR)/$(MACH32)/lib/.libs/libsasl.so.1
 $(PROTOUSRLIBDIR64)/libsasl.so.1:	$(BUILD_DIR)/$(MACH64)/lib/.libs/libsasl.so.1	
 	$(CP) $< $@
 
+TARBALL_DIR=sasltest
+CLEAN_PATHS += $(TARBALL_DIR)
+
+test_tarball:	sasltest.tgz
+TEST_SCRIPTS= setup_testsuite run_testsuite transform-results cleanup
+
+sasltest.tgz:	install
+	$(MKDIR) $(TARBALL_DIR)
+	$(CHMOD) 0777 $(TARBALL_DIR)
+	$(CP) -r $(TESTS_DIR)/* $(TARBALL_DIR)
+	$(CP) $(COMPONENT_DIR)/test/* $(TARBALL_DIR)
+	(cd $(TARBALL_DIR) && $(CHMOD) 0777 $(TEST_SCRIPTS))
+	gtar czf sasltest.tgz $(TARBALL_DIR)
+
 ASLR_MODE = $(ASLR_ENABLE)
 
+REQUIRED_PACKAGES += archiver/gnu-tar
 REQUIRED_PACKAGES += database/berkeleydb-5
 REQUIRED_PACKAGES += developer/build/automake-115
 REQUIRED_PACKAGES += library/openldap

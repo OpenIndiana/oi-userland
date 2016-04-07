@@ -17,9 +17,31 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 
 Configuration files for applications using libsasl and other sasl features
-should go in /etc/sasl or else in configuration directories expected by
+should go in /etc/sasl2 or else in configuration directories expected by
 the specific application.
+
+IMPORTANT:  sasl will try to use everything it finds in /usr/lib/sasl2 unless
+precluded by configuration files.  Since much more is provided than any
+one application configuration should use, it is important to actively
+choose the contents of the auxprop_plugin and mech_list, and possibly the 
+canon_user_plugin, so that only the desired subset is configured for a
+specific application.
+
+These lines show all the default possibilities:
+#auxprop_plugin: sasldb
+#canon_user_plugin: INTERNAL
+#mech_list:  LOGIN PLAIN EXTERNAL OTP  GSSAPI SCRAM-SHA-1
+
+These lines show some recommended configurations:
+
+auxprop_plugin:
+mech_list:  PLAIN LOGIN
+
+Or
+auxprop_plugin:
+mech_list:  GSSAPI
+
 

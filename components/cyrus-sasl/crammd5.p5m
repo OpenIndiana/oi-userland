@@ -1,0 +1,53 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+#
+
+# openldap.p5m is dependent on this package inside the workspace, must
+# be kept in sync
+set name=pkg.fmri \
+    value=pkg:/system/library/security/sasl/crammd5@$(COMPONENT_VERSION),$(BUILD_VERSION)
+#
+set name=pkg.summary \
+    value="CRAM-MD5 plugin for SASL --Simple Authentication and Security Layer"
+set name=com.oracle.info.description value="sasl CRAM-MD5 mechanism plugin"
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value=org.opensolaris.category.2008:System/Libraries
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2016/158
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+link path=usr/lib/sasl2/$(MACH64)/libcrammd5.so target=libcrammd5.so.3.0.0 \
+    pkg.linted.dupaction010.2=true
+link path=usr/lib/sasl2/$(MACH64)/libcrammd5.so.3 target=libcrammd5.so.3.0.0 \
+    pkg.linted.dupaction010.2=true
+file path=usr/lib/sasl2/$(MACH64)/libcrammd5.so.3.0.0 \
+    pkg.linted.dupaction010.2=true
+link path=usr/lib/sasl2/libcrammd5.so target=libcrammd5.so.3.0.0 \
+    pkg.linted.dupaction010.2=true
+link path=usr/lib/sasl2/libcrammd5.so.3 target=libcrammd5.so.3.0.0 \
+    pkg.linted.dupaction010.2=true
+file path=usr/lib/sasl2/libcrammd5.so.3.0.0 pkg.linted.dupaction010.2=true
+license libsasl2.license license="BSD with attribution to CMU, MIT, others"
+depend type=require fmri=system/library/security/libsasl2@2.1.26

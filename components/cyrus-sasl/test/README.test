@@ -1,0 +1,68 @@
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+
+This suite also runs fuzz tests, which means it pumps out a lot of
+random warnings and scary messages.  Ignore them, except to mentally note
+that the fuzz testing did occur.  The transform-results script gets rid
+of everything that varies from test to test or architecture to architecture,
+and decides PASS/FAIL based upon the results of the transform.
+
+NOTE: cleanup does not restore the previous Kerberos setup.
+
+TODO: debug GSS-SPNEGO mechansim and/or test
+
+To run testsuite:
+
+PREP:  gmake tarball in comoponents/cyrus-sasl
+
+On a build machine with kernel zones:
+
+    log into kz as yourself
+    cd [ your workspace /components/cyrus-sasl ]
+    gmake tarball   (if you didn't already do this)
+    su 
+    cd [ your workspace /components/cyrus-sasl/sasltest ]
+    ./run_testsuite
+    [ answer y to "Existing KDC config will be destroyed, okay to proceed?" ]
+
+    [ you can do more runs, setup_testsuite will not be re-run unless you 
+    	do ./cleanup ]
+
+    [gather results]
+
+    optional:  ./cleanup  
+
+On a lab machine:
+
+    make sure you are ready and willing to destroy your kerberos setup
+    cd /var/tmp
+    gtar zxf sasltest.tgz
+    cd sasltest
+
+    ./run_testsuite
+    [ answer y to "Existing KDC config will be destroyed, okay to proceed?" ]
+
+    [ you can do more runs, setup_testsuite will not be re-run unless you 
+    	do ./cleanup ]
+
+    [gather results]
+
+    optional:  ./cleanup  

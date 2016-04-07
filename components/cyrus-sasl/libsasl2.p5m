@@ -26,6 +26,8 @@
 <transform file path=usr.*/man/.+ -> default mangler.man.stability "pass-through volatile">
 <transform file path=(.+)/man/man3sasl/(.+).3sasl$ -> \
     set action.hash %<1>/man/man3/%<2>.3>
+<transform file path=usr/share/doc/libsasl2/.* -> \
+    default facet.doc.html true>
 
 # openldap.p5m is dependent on this package inside the workspace, must
 # be kept in sync
@@ -42,8 +44,8 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2015/194
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-dir  path=etc/sasl owner=root group=sys mode=0755
-file README.Solaris path=etc/sasl/README.Solaris
+dir  path=etc/sasl2 owner=root group=sys mode=0755
+file README path=etc/sasl2/README
 file path=usr/include/sasl/hmac-md5.h
 file path=usr/include/sasl/md5.h
 file path=usr/include/sasl/md5global.h
@@ -74,18 +76,12 @@ file path=usr/lib/llib-lsasl2.ln
 link path=usr/lib/pkgconfig/libsasl.pc target=libsasl2.pc
 file path=usr/lib/pkgconfig/libsasl2.pc
 link path=usr/lib/sasl target=./sasl2
-link path=usr/lib/sasl2/$(MACH64)/libanonymous.so target=libanonymous.so.3.0.0
-link path=usr/lib/sasl2/$(MACH64)/libanonymous.so.3 target=libanonymous.so.3.0.0
-file path=usr/lib/sasl2/$(MACH64)/libanonymous.so.3.0.0
-link path=usr/lib/sasl2/$(MACH64)/libcrammd5.so target=libcrammd5.so.3.0.0
-link path=usr/lib/sasl2/$(MACH64)/libcrammd5.so.3 target=libcrammd5.so.3.0.0
-file path=usr/lib/sasl2/$(MACH64)/libcrammd5.so.3.0.0
-link path=usr/lib/sasl2/$(MACH64)/libdigestmd5.so target=libdigestmd5.so.3.0.0
-link path=usr/lib/sasl2/$(MACH64)/libdigestmd5.so.3 target=libdigestmd5.so.3.0.0
-file path=usr/lib/sasl2/$(MACH64)/libdigestmd5.so.3.0.0
 link path=usr/lib/sasl2/$(MACH64)/libgssapiv2.so target=libgssapiv2.so.3.0.0
 link path=usr/lib/sasl2/$(MACH64)/libgssapiv2.so.3 target=libgssapiv2.so.3.0.0
 file path=usr/lib/sasl2/$(MACH64)/libgssapiv2.so.3.0.0
+link path=usr/lib/sasl2/$(MACH64)/liblogin.so target=liblogin.so.3.0.0
+link path=usr/lib/sasl2/$(MACH64)/liblogin.so.3 target=liblogin.so.3.0.0
+file path=usr/lib/sasl2/$(MACH64)/liblogin.so.3.0.0
 link path=usr/lib/sasl2/$(MACH64)/libotp.so target=libotp.so.3.0.0
 link path=usr/lib/sasl2/$(MACH64)/libotp.so.3 target=libotp.so.3.0.0
 file path=usr/lib/sasl2/$(MACH64)/libotp.so.3.0.0
@@ -99,18 +95,12 @@ link path=usr/lib/sasl2/$(MACH64)/libscram.so target=libscram.so.3.0.0
 link path=usr/lib/sasl2/$(MACH64)/libscram.so.3 target=libscram.so.3.0.0
 file path=usr/lib/sasl2/$(MACH64)/libscram.so.3.0.0
 link path=usr/lib/sasl2/64 target=./$(MACH64)
-link path=usr/lib/sasl2/libanonymous.so target=libanonymous.so.3.0.0
-link path=usr/lib/sasl2/libanonymous.so.3 target=libanonymous.so.3.0.0
-file path=usr/lib/sasl2/libanonymous.so.3.0.0
-link path=usr/lib/sasl2/libcrammd5.so target=libcrammd5.so.3.0.0
-link path=usr/lib/sasl2/libcrammd5.so.3 target=libcrammd5.so.3.0.0
-file path=usr/lib/sasl2/libcrammd5.so.3.0.0
-link path=usr/lib/sasl2/libdigestmd5.so target=libdigestmd5.so.3.0.0
-link path=usr/lib/sasl2/libdigestmd5.so.3 target=libdigestmd5.so.3.0.0
-file path=usr/lib/sasl2/libdigestmd5.so.3.0.0
 link path=usr/lib/sasl2/libgssapiv2.so target=libgssapiv2.so.3.0.0
 link path=usr/lib/sasl2/libgssapiv2.so.3 target=libgssapiv2.so.3.0.0
 file path=usr/lib/sasl2/libgssapiv2.so.3.0.0
+link path=usr/lib/sasl2/liblogin.so target=liblogin.so.3.0.0
+link path=usr/lib/sasl2/liblogin.so.3 target=liblogin.so.3.0.0
+file path=usr/lib/sasl2/liblogin.so.3.0.0
 link path=usr/lib/sasl2/libotp.so target=libotp.so.3.0.0
 link path=usr/lib/sasl2/libotp.so.3 target=libotp.so.3.0.0
 file path=usr/lib/sasl2/libotp.so.3.0.0
@@ -123,11 +113,38 @@ file path=usr/lib/sasl2/libsasldb.so.3.0.0
 link path=usr/lib/sasl2/libscram.so target=libscram.so.3.0.0
 link path=usr/lib/sasl2/libscram.so.3 target=libscram.so.3.0.0
 file path=usr/lib/sasl2/libscram.so.3.0.0
+file usr/lib/sasl2/sample-client \
+    path=usr/lib/sasl2/tests/$(MACH32)/sample-client mode=0554
+file usr/lib/sasl2/sample-server \
+    path=usr/lib/sasl2/tests/$(MACH32)/sample-server mode=0554
+file usr/lib/sasl2/testsuite path=usr/lib/sasl2/tests/$(MACH32)/testsuite \
+    mode=0554 facet.optional.test=true
+file usr/lib/sasl2/$(MACH64)/sample-client \
+    path=usr/lib/sasl2/tests/sample-client mode=0554
+file usr/lib/sasl2/$(MACH64)/sample-server \
+    path=usr/lib/sasl2/tests/sample-server mode=0554
+file testing.txt path=usr/lib/sasl2/tests/testing.txt
+file usr/sbin/testsaslauthd path=usr/lib/sasl2/tests/testsaslauthd mode=0554
+file usr/lib/sasl2/$(MACH64)/testsuite path=usr/lib/sasl2/tests/testsuite \
+    mode=0554 facet.optional.test=true
 file path=usr/sbin/pluginviewer
 file path=usr/sbin/saslauthd
 file path=usr/sbin/sasldblistusers2
 file path=usr/sbin/saslpasswd2
-file path=usr/sbin/testsaslauthd
+file advanced.html path=usr/share/doc/libsasl2/advanced.html
+file appconvert.html path=usr/share/doc/libsasl2/appconvert.html
+file components.html path=usr/share/doc/libsasl2/components.html
+file gssapi.html path=usr/share/doc/libsasl2/gssapi.html
+file index.html path=usr/share/doc/libsasl2/index.html
+file install.html path=usr/share/doc/libsasl2/install.html
+file macosx.html path=usr/share/doc/libsasl2/macosx.html
+file mechanisms.html path=usr/share/doc/libsasl2/mechanisms.html
+file options.html path=usr/share/doc/libsasl2/options.html
+file plugprog.html path=usr/share/doc/libsasl2/plugprog.html
+file programming.html path=usr/share/doc/libsasl2/programming.html
+file sysadmin.html path=usr/share/doc/libsasl2/sysadmin.html
+file upgrading.html path=usr/share/doc/libsasl2/upgrading.html
+file windows.html path=usr/share/doc/libsasl2/windows.html
 link path=usr/share/man/man3sasl/prop_clear.3sasl target=sasl_auxprop.3sasl
 link path=usr/share/man/man3sasl/prop_dispose.3sasl target=sasl_auxprop.3sasl
 link path=usr/share/man/man3sasl/prop_dup.3sasl target=sasl_auxprop.3sasl
