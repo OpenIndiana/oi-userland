@@ -41,6 +41,9 @@ CFLAGS.32=-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
 CXXFLAGS+=$(CXXFLAGS.$(BITS))
 CFLAGS+=$(CFLAGS.$(BITS))
 
+LDFLAGS.32= -L$(USRLIBDIR) -R $(USRLIBDIR) $(LDFLAGS) -L$(GNULIB) -R $(GNULIB)
+LDFLAGS.64= -L$(USRLIBDIR64) -R $(USRLIBDIR64) $(LDFLAGS) -L$(GNULIB64) -R $(GNULIB64)
+
 COMPONENT_PREP_ACTION =	( cd $(SOURCE_DIR) && ./autogen.sh )
 
 COMPONENT_PRE_CONFIGURE_ACTION =	( $(CLONEY) $(SOURCE_DIR) $(@D) )
@@ -51,10 +54,18 @@ CONFIGURE_OPTIONS +=	--with-hotplug-dir=/etc/hotplug
 CONFIGURE_OPTIONS +=	--with-udev-dir=/usr/lib/udev
 CONFIGURE_OPTIONS +=	--with-dev
 
-# Note: the CGI binary has some linking problems (picks 32-bit GDlib
-# and net-snmp) and we don't need both versions anyway.
+CONFIGURE_OPTIONS.32+=	LDFLAGS="$(LDFLAGS.32)"
+CONFIGURE_OPTIONS.64+=	LDFLAGS="$(LDFLAGS.64)"
+
+CONFIGURE_ENV.32+=	LDFLAGS="$(LDFLAGS.32)"
+CONFIGURE_ENV.64+=	LDFLAGS="$(LDFLAGS.64)"
+
+# Note: the CGI binary has some linking problems (picks 32-bit GDlib since we
+# only deliver one config program) and we don't need both versions anyway.
 CONFIGURE_OPTIONS.32 +=	--with-cgi
 CONFIGURE_OPTIONS.64 +=	--without-cgi
+CONFIGURE_OPTIONS.32 +=	--with-gdlib-config=$(USRBINDIR)/gdlib-config
+#CONFIGURE_OPTIONS.64 +=	--with-gdlib-config=$(USRBINDIR64)/gdlib-config
 
 # Note: building the numerous documents of this projects is time-consuming
 # and we only need one copy. Also, we don't ship "dblatex" (needed here for
@@ -67,8 +78,18 @@ CONFIGURE_OPTIONS.64 +=	--with-doc="no"
 CONFIGURE_OPTIONS +=	ASCIIDOC_VERBOSE="-v"
 CONFIGURE_ENV     +=	ASCIIDOC_VERBOSE="-v"
 
+CONFIGURE_OPTIONS +=	--with-snmp=yes
+CONFIGURE_OPTIONS +=	--with-net-snmp-config=net-snmp-config-$(BITS)
+
+CONFIGURE_OPTIONS +=	$(CONFIGURE_OPTIONS.$(BITS))
+
+# Temporary for tests
+$(BUILD_32): $(BUILD_64)
+
 build: $(BUILD_32_and_64)
 
+# Ensure configs etc. match 32-bit
+$(INSTALL_32): $(INSTALL_64)
 install: $(INSTALL_32_and_64)
 
 test: $(TEST_32_and_64)
