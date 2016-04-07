@@ -64,6 +64,7 @@ CONFIGURE_ENV.64+=	LDFLAGS="$(LDFLAGS.64)"
 # only deliver one config program) and we don't need both versions anyway.
 CONFIGURE_OPTIONS.32 +=	--with-cgi
 CONFIGURE_OPTIONS.64 +=	--without-cgi
+CONFIGURE_OPTIONS.64 +=	--without-gdlib
 CONFIGURE_OPTIONS.32 +=	--with-gdlib-config=$(USRBINDIR)/gdlib-config
 #CONFIGURE_OPTIONS.64 +=	--with-gdlib-config=$(USRBINDIR64)/gdlib-config
 
