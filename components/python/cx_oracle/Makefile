@@ -19,22 +19,22 @@
 # CDDL HEADER END
 
 #
-# Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cx_Oracle
-COMPONENT_VERSION=	5.2
+COMPONENT_VERSION=	5.2.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=		\
-	sha256:c580d5e7fa9748326dbae22f5832401f229ddda5354ec17120d9b28893925bbb
+	sha256:3dfedd9538f50dee41493020c1f589e5c61835a0c8fd14f5a6c47b5919258e81
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=  http://cx-oracle.sourceforge.net/
 COMPONENT_BUGDB=	python-mod/cx_oracle
 
-TPNO=			23247
+TPNO=			26442
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
