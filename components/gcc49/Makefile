@@ -68,6 +68,9 @@ GNU_SECTIONS_MAPFILE = $(COMPONENT_DIR)/Solaris/map.gnu-sections
 CC += $(CC_BITS)
 CXX += $(CC_BITS)
 
+# Specify the C Standard to use when building
+CC += -std=gnu89
+
 CFLAGS.i386 = -mtune=opteron -march=opteron -fno-strict-aliasing
 CFLAGS.sparc = -mtune=ultrasparc3 -mcpu=ultrasparc3 -mvis2 \
   -mno-unaligned-doubles -mhard-float -fno-strict-aliasing
