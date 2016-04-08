@@ -48,39 +48,69 @@ COMPONENT_PREP_ACTION =	( cd $(SOURCE_DIR) && ./autogen.sh )
 
 COMPONENT_PRE_CONFIGURE_ACTION =	( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
-CONFIGURE_OPTIONS +=	--disable-static
-CONFIGURE_OPTIONS +=	--enable-shared
-CONFIGURE_OPTIONS +=	--with-hotplug-dir=/etc/hotplug
-CONFIGURE_OPTIONS +=	--with-udev-dir=/usr/lib/udev
-CONFIGURE_OPTIONS +=	--with-dev
+CONFIGURE_ENV.32+=	LDFLAGS="$(LDFLAGS.32)"
+CONFIGURE_ENV.64+=	LDFLAGS="$(LDFLAGS.64)"
 
 CONFIGURE_OPTIONS.32+=	LDFLAGS="$(LDFLAGS.32)"
 CONFIGURE_OPTIONS.64+=	LDFLAGS="$(LDFLAGS.64)"
 
-CONFIGURE_ENV.32+=	LDFLAGS="$(LDFLAGS.32)"
-CONFIGURE_ENV.64+=	LDFLAGS="$(LDFLAGS.64)"
+CONFIGURE_OPTIONS +=	--disable-static
+CONFIGURE_OPTIONS +=	--enable-shared
+CONFIGURE_OPTIONS +=	--with-hotplug-dir=/etc/hotplug
+CONFIGURE_OPTIONS +=	--with-udev-dir=/usr/lib/udev
+CONFIGURE_OPTIONS +=	--with-statepath=/var/state/ups
+CONFIGURE_OPTIONS +=	--with-systemdsystemunitdir=no
+CONFIGURE_OPTIONS +=	--with-dev
+CONFIGURE_OPTIONS +=	--with-libltdl
+CONFIGURE_OPTIONS +=	--with-ssl
+CONFIGURE_OPTIONS +=	--with-openssl
+
+# No separate toggle for this yet
+#CONFIGURE_OPTIONS +=	--with-nut-scanner
+
+# Minimize guesswork: these are features we can and do build and deliver in
+# package manifest, so the build host must have relevant packages installed
+CONFIGURE_OPTIONS +=	--with-serial
+CONFIGURE_OPTIONS +=	--with-usb
+CONFIGURE_OPTIONS +=	--with-neon
+CONFIGURE_OPTIONS +=	--with-avahi
+
+# TODO: Revise NUT package when this gate provides (GNU) freeipmi >= 1.0.1
+CONFIGURE_OPTIONS +=	--with-ipmi=no
+CONFIGURE_OPTIONS +=	--with-freeipmi=no
+
+# TODO: Revise NUT package when/if this gate provides powerman
+# See https://github.com/chaos/powerman
+CONFIGURE_OPTIONS +=	--with-powerman=no
+
+# Likely we'll not have this backend working any time soon
+CONFIGURE_OPTIONS +=	--with-linux_i2c=no
+CONFIGURE_OPTIONS +=	--with-macosx_ups=no
+
+# Note: Link with the correct ISA of net-snmp and gdlib
+CONFIGURE_OPTIONS +=	--with-snmp
+CONFIGURE_OPTIONS +=	--with-net-snmp-config=net-snmp-config-$(BITS)
 
 # Note: the CGI binary has some linking problems (picks 32-bit GDlib since we
 # only deliver one config program) and we don't need both versions anyway.
 CONFIGURE_OPTIONS.32 +=	--with-cgi
 CONFIGURE_OPTIONS.64 +=	--without-cgi
+
+# Todo: revise after integration of updated gdlib component
 CONFIGURE_OPTIONS.64 +=	--without-gdlib
-CONFIGURE_OPTIONS.32 +=	--with-gdlib-config=$(USRBINDIR)/gdlib-config
+CONFIGURE_OPTIONS.32 +=	--with-gdlib-config=$(USRBINDIR.$(BITS))/gdlib-config
 #CONFIGURE_OPTIONS.64 +=	--with-gdlib-config=$(USRBINDIR64)/gdlib-config
 
 # Note: building the numerous documents of this projects is time-consuming
 # and we only need one copy. Also, we don't ship "dblatex" (needed here for
 # compiling PDFs) and probably don't require "html-chunked" chapters.
-CONFIGURE_OPTIONS.32 +=	--with-doc="html-single"
+CONFIGURE_OPTIONS.32 +=	--with-doc="man"
 CONFIGURE_OPTIONS.64 +=	--with-doc="no"
 
 #CONFIGURE_OPTIONS +=	--with-doc="auto"
 ### Avoid occasionally possible hangs with chunked HTML doc
 CONFIGURE_OPTIONS +=	ASCIIDOC_VERBOSE="-v"
 CONFIGURE_ENV     +=	ASCIIDOC_VERBOSE="-v"
-
-CONFIGURE_OPTIONS +=	--with-snmp=yes
-CONFIGURE_OPTIONS +=	--with-net-snmp-config=net-snmp-config-$(BITS)
 
 CONFIGURE_OPTIONS +=	$(CONFIGURE_OPTIONS.$(BITS))
 
