@@ -45,6 +45,9 @@ include $(WS_MAKE_RULES)/gnu-component.mk
 # GDB wants the GNU utilities
 PATH=/usr/gnu/bin:$(GCC_ROOT)/bin:/usr/bin:/usr/perl5/bin
 
+# Specify the C Standard to use when building
+CC += -std=gnu89
+
 CFLAGS_sparc =	-g -O2 -mcpu=ultrasparc -mtune=ultrasparc
 CFLAGS_sparc +=	-mno-unaligned-doubles
 CFLAGS_sparc += -mapp-regs -mhard-float
