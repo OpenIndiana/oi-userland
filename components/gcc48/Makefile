@@ -57,6 +57,9 @@ PKG_MACROS +=	GCC_BASEDIR=usr/gcc/$(GCC_VERSION)
 CC += $(CC_BITS)
 CXX += $(CC_BITS)
 
+# Specify the C Standard to use when building
+CC += -std=gnu89
+
 CFLAGS.i386 = -mtune=opteron -march=opteron
 CFLAGS.sparc = -mtune=ultrasparc -mcpu=ultrasparc -mno-unaligned-doubles
 CFLAGS = -g -O2 
