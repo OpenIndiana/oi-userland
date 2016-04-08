@@ -1,23 +1,26 @@
 Changes needed in server.cfg, mainly :
     Making use of RabbitMQ (default is ActiveMQ)
-    The default port used to connect to RabbiMQ is 61613
+    The default port used to connect to RabbitMQ is 61613
     Default user : 'mcollective' & passwd : 'changeme'
+    Change RabbitMQ to log to /dev/stderr, so it goes to the SMF log
+
 NOTE : This patch is developed in-house (and Solaris specific)
 
---- ORIG/etc/server.cfg.dist	2016-02-23 13:46:36.467260235 +0000
-+++ mcollective-2.8.2/etc/server.cfg.dist	2016-02-24 17:17:34.551817568 +0000
-@@ -1,7 +1,8 @@
+--- mcollective-2.8.2/etc/server.cfg.dist.orig	2015-05-14 08:50:32.000000000 -0700
++++ mcollective-2.8.2/etc/server.cfg.dist	2016-04-08 12:04:13.523097348 -0700
+@@ -1,7 +1,9 @@
  main_collective = mcollective
  collectives = mcollective
 -libdir = /usr/libexec/mcollective
 -logfile = /var/log/mcollective.log
 +libdir = /usr/share/mcollective
 +logger_type = file
-+logfile = /dev/stderr       # Send output to SMF service log
++# Send output to SMF service log
++logfile = /dev/stderr
  loglevel = info
  daemonize = 1
  
-@@ -9,12 +10,13 @@
+@@ -9,13 +11,14 @@
  securityprovider = psk
  plugin.psk = unset
  
@@ -37,3 +40,4 @@ NOTE : This patch is developed in-house (and Solaris specific)
  
  # Facts
  factsource = yaml
+ plugin.yaml = /etc/mcollective/facts.yaml
