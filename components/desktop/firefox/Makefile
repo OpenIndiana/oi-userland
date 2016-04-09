@@ -30,6 +30,9 @@ COMPILER =	gcc
 
 include ../../../make-rules/shared-macros.mk
 
+# gcc 5.3 can't compile this version of firefox yet, so keep using 4.8 for now.
+GCC_ROOT = /usr/gcc/4.8
+
 COMPONENT_NAME =		firefox
 COMPONENT_VERSION =		38.5.0esr
 COMPONENT_PROJECT_URL =		http://www.mozilla.com/firefox

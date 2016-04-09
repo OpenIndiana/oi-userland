@@ -27,6 +27,9 @@ BUILD_BITS= 32
 COMPILER= gcc
 include ../../make-rules/shared-macros.mk
 
+# build with itself until it's gone
+GCC_ROOT =	/usr/gcc/3.4
+
 COMPONENT_NAME=		gcc
 COMPONENT_VERSION=	3.4.3
 COMPONENT_PROJECT_URL=	http://gcc.gnu.org/

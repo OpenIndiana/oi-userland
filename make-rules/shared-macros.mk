@@ -470,7 +470,7 @@ export PARFAIT_NATIVESUNCXX=$(SPRO_VROOT)/bin/CC
 export PARFAIT_NATIVEGCC=$(GCC_ROOT)/bin/gcc
 export PARFAIT_NATIVEGXX=$(GCC_ROOT)/bin/g++
 
-GCC_ROOT =	/usr/gcc/4.8
+GCC_ROOT =	/usr/gcc/5.3
 
 CC.studio.32 =	$(SPRO_VROOT)/bin/cc
 CXX.studio.32 =	$(SPRO_VROOT)/bin/CC
@@ -1041,7 +1041,7 @@ CLOBBER_PATHS +=	$(PROTO_DIR)
 REQUIRED_PACKAGES += developer/build/gnu-make
 REQUIRED_PACKAGES += developer/build/make
 ifeq ($(COMPILER),gcc)
-REQUIRED_PACKAGES += developer/gcc-48
+REQUIRED_PACKAGES += developer/gcc-53
 endif
 ifeq ($(COMPILER),studio)
 ifneq ($(findstring /opt/solarisstudio12.4,$(CC)),)
