@@ -71,6 +71,8 @@ $(BUILD_DIR_32)/contrib/.configured \
 $(BUILD_DIR_64)/contrib/.configured:
 	$(TOUCH) $@
 
+ASLR_MODE =   $(ASLR_ENABLE)
+
 REQUIRED_PACKAGES += image/library/libjpeg
 REQUIRED_PACKAGES += image/library/libpng
 REQUIRED_PACKAGES += image/library/libtiff

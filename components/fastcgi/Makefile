@@ -50,4 +50,6 @@ CONFIGURE_OPTIONS += --includedir=$(CONFIGURE_INCLUDEDIR)/fastcgi
 
 COMPONENT_PREP_ACTION = (cd $(@D) ; touch NEWS AUTHORS ChangeLog ; autoreconf -if)
 
+ASLR_MODE = $(ASLR_ENABLE)
+
 REQUIRED_PACKAGES += system/library/c++-runtime

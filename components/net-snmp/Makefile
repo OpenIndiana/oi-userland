@@ -124,6 +124,8 @@ $(BUILD_DIR_32)/.docs:
 	    $(ENV) srcdir=$(@D) $(DOXYGEN) $(@D)/doxygen.conf)
 	$(TOUCH) $@
 
+ASLR_MODE = $(ASLR_ENABLE)
+
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen
 REQUIRED_PACKAGES += $(PERL_PKG)
 REQUIRED_PACKAGES += runtime/python-27
