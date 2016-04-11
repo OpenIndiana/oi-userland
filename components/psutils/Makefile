@@ -22,7 +22,7 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
-BUILD_BITS= 32
+BUILD_BITS= 64
 include ../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/shared-targets.mk
 
@@ -50,6 +50,9 @@ include $(WS_MAKE_RULES)/common.mk
 # is pre-2.0
 IPS_COMPONENT_VERSION=1.17
 
+# Make 64-bit linking work.
+CC += $(CC_BITS) 
+
 # to stay compatible with nevada settings, letter is default paper size
 CFLAGS += -DPAPER=\\\"letter\\\" -DUNIX
 
@@ -71,7 +74,7 @@ COMPONENT_INSTALL_ENV += INSTALLMAN="$(INSTALL) -m 0444"
 # make
 COMPONENT_INSTALL_ARGS = -e -f Makefile.unix
 
-$(INSTALL_32):	$(PROTOUSRSHAREMAN1DIR) $(PROTOUSRBIN)
+$(INSTALL_64):	$(PROTOUSRSHAREMAN1DIR) $(PROTOUSRBIN)
 
 REQUIRED_PACKAGES += $(PERL_PKG)
 REQUIRED_PACKAGES += shell/ksh93
