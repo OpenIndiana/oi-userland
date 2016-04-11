@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
@@ -34,11 +34,15 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=LSARC/2008/476
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+link path=usr/bin/$(MACH32)/wx-config \
+    target=../../lib/wx/config/gtk2-unicode-release-2.8
+file usr/bin/wxrc path=usr/bin/$(MACH32)/wxrc
 link path=usr/bin/$(MACH64)/wx-config \
     target=../../lib/$(MACH64)/wx/config/gtk2-unicode-release-2.8
-file path=usr/bin/$(MACH64)/wxrc
-link path=usr/bin/wx-config target=../lib/wx/config/gtk2-unicode-release-2.8
-file path=usr/bin/wxrc
+link path=usr/bin/$(MACH64)/wxrc target=../wxrc
+link path=usr/bin/wx-config \
+    target=../lib/$(MACH64)/wx/config/gtk2-unicode-release-2.8
+file usr/bin/$(MACH64)/wxrc path=usr/bin/wxrc
 file path=usr/include/wx-2.8/wx/aboutdlg.h
 file path=usr/include/wx-2.8/wx/accel.h
 file path=usr/include/wx-2.8/wx/access.h
