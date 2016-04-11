@@ -26,14 +26,14 @@ BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libotr
-COMPONENT_VERSION=	4.1.0
+COMPONENT_VERSION=	4.1.1
 COMPONENT_PROJECT_URL=	http://www.cypherpunks.ca/otr/
 COMPONENT_ARCHIVE_HASH= \
-    sha256:4fdb891940ec89d300190a98f69a9138248dcb8c8d337633fb981b8d0a9cd930
+    sha256:8b3b182424251067a952fb4e6c7b95a21e644fbb27fbd5f8af2b2ed87ca419f5
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/pidgin
 
-TPNO=			21688
+TPNO=			27468
 
 # Pidgin is on the do-not-publish list (depends on S12-only changes in ON &
 # Desktop), so no point publishing this without that.
