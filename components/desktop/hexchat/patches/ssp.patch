@@ -1,12 +1,12 @@
-diff -urN hexchat-2.10.2.orig/plugins/perl/Makefile.in hexchat-2.10.2/plugins/perl/Makefile.in
---- hexchat-2.10.2.orig/plugins/perl/Makefile.in	2014-11-25 19:04:10.000000000 +0100
-+++ hexchat-2.10.2/plugins/perl/Makefile.in	2015-12-13 00:36:13.167301918 +0100
-@@ -474,7 +474,7 @@
- 	}
+diff -urN hexchat-2.12.0.orig/src/fe-gtk/Makefile.in hexchat-2.12.0/src/fe-gtk/Makefile.in
+--- hexchat-2.12.0.orig/src/fe-gtk/Makefile.in	2016-03-12 09:05:22.000000000 +0100
++++ hexchat-2.12.0/src/fe-gtk/Makefile.in	2016-04-04 00:16:13.688933195 +0200
+@@ -577,7 +577,7 @@
  
- perl.la: $(perl_la_OBJECTS) $(perl_la_DEPENDENCIES) $(EXTRA_perl_la_DEPENDENCIES) 
--	$(AM_V_CCLD)$(perl_la_LINK) -rpath $(libdir) $(perl_la_OBJECTS) $(perl_la_LIBADD) $(LIBS)
-+	$(AM_V_CCLD)$(perl_la_LINK) -rpath $(libdir) $(perl_la_OBJECTS) $(perl_la_LIBADD) $(LIBS) -lssp_nonshared
+ hexchat$(EXEEXT): $(hexchat_OBJECTS) $(hexchat_DEPENDENCIES) $(EXTRA_hexchat_DEPENDENCIES) 
+ 	@rm -f hexchat$(EXEEXT)
+-	$(AM_V_OBJCLD)$(hexchat_LINK) $(hexchat_OBJECTS) $(hexchat_LDADD) $(LIBS) -lkstat
++	$(AM_V_OBJCLD)$(hexchat_LINK) $(hexchat_OBJECTS) $(hexchat_LDADD) $(LIBS) -lkstat -lssp -lssp_nonshared
  
  mostlyclean-compile:
  	-rm -f *.$(OBJEXT)
