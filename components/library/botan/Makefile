@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		botan
 COMPONENT_VERSION=      1.10.9
+COMPONENT_REVISION=     1
 COMPONENT_LICENSE=      BSD
 COMPONENT_PROJECT_URL=  http://botan.randombit.net/
 COMPONENT_SUMMARY= 	Crypto and TLS for C++11
@@ -35,9 +36,14 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 CONFIG_SHELL =  /usr/bin/python
 CONFIGURE_SCRIPT= $(SOURCE_DIR)/configure.py
 
+CONFIGURE_OPTIONS.64= --cpu=x86_64
+CONFIGURE_OPTIONS.32= --cpu=x86_32
+
 CONFIGURE_OPTIONS=  --prefix=/usr
+CONFIGURE_OPTIONS+= $(CONFIGURE_OPTIONS.$(BITS))
+CONFIGURE_OPTIONS+= --bindir=$(CONFIGURE_BINDIR.$(BITS))
 CONFIGURE_OPTIONS+= --docdir=/usr/share/doc
-CONFIGURE_OPTIONS+= --libdir=/usr/lib
+CONFIGURE_OPTIONS+= --libdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS+= --includedir=/usr/include
 CONFIGURE_OPTIONS+= --cc gcc
 CONFIGURE_OPTIONS+= --cc-bin $(CXX)
@@ -50,7 +56,10 @@ CONFIGURE_OPTIONS+= --disable-modules=ecdsa
 CONFIGURE_OPTIONS+= --with-bzip2
 CONFIGURE_OPTIONS+= --with-zlib
 
+COMPONENT_POST_INSTALL_ACTION= \
+            (cd $(PROTOUSRDIR) ;  \
+             $(MV)  include/botan-1.10/botan/build.h include/botan-1.10/botan/build-$(BITS).h )
+
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
-
