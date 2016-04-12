@@ -1,0 +1,20 @@
+--- php-7.0.5/configure.in.orig	2016-04-21 12:18:15.141026758 +0300
++++ php-7.0.5/configure.in	2016-04-21 12:18:23.032290327 +0300
+@@ -431,11 +431,12 @@
+
+ dnl Check for /usr/pkg/{lib,include} which is where NetBSD puts binary
+ dnl and source packages.  This should be harmless on other OSs.
+-if test -d /usr/pkg/include -a -d /usr/pkg/lib ; then
+-   CPPFLAGS="$CPPFLAGS -I/usr/pkg/include"
+-   LDFLAGS="$LDFLAGS -L/usr/pkg/lib"
+-fi
+-test -d /usr/ucblib && PHP_ADD_LIBPATH(/usr/ucblib)
++dnl But it is harmful for OpenIndiana :(
++dnl if test -d /usr/pkg/include -a -d /usr/pkg/lib ; then
++dnl    CPPFLAGS="$CPPFLAGS -I/usr/pkg/include"
++dnl    LDFLAGS="$LDFLAGS -L/usr/pkg/lib"
++dnl fi
++dnl test -d /usr/ucblib && PHP_ADD_LIBPATH(/usr/ucblib)
+
+
+ dnl First, library checks.
