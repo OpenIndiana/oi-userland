@@ -15,14 +15,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		hexchat
-COMPONENT_VERSION=	2.10.2
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	2.12.0
 COMPONENT_PROJECT_URL=	https://hexchat.github.io/
 COMPONENT_SUMMARY=	HexChat IRC client
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:87ebf365c576656fa3f23f51d319b3a6d279e4a932f2f8961d891dd5a5e1b52c
+    sha256:c2072f97510c0fe6ecfb0878750d27179633e08199066972fa00e5a23e67d69d
 COMPONENT_ARCHIVE_URL=	https://dl.hexchat.net/hexchat/$(COMPONENT_ARCHIVE)
 # We need to use non-default User-Agent for the fetch, otherwise we are denied
 # to download the source file.
@@ -33,6 +32,8 @@ include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
+
+CONFIGURE_OPTIONS += --enable-python=python2.7
 
 build:          $(BUILD_32)
 

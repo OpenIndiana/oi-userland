@@ -348,6 +348,7 @@ export PARFAIT_NATIVESUNCXX=$(SPRO_VROOT)/bin/CC
 export PARFAIT_NATIVEGCC=$(GCC_ROOT)/bin/gcc
 export PARFAIT_NATIVEGXX=$(GCC_ROOT)/bin/g++
 
+#
 # The CCACHE makefile variable should evaluate to empty string or a pathname
 # like /usr/bin/ccache depending on your PATH value and "which" implementation.
 # The assignment via ":=" is important, to only do this once in a Makefile,
@@ -359,23 +360,25 @@ export PARFAIT_NATIVEGXX=$(GCC_ROOT)/bin/g++
 # is currently the default) to not even define the usage of wrapper in the
 # userland-building makefile system.
 # If you want to speed up your re-builds, you must set ENABLE_CCACHE=true.
-# For legacy reasons, the inverted CCACHE_DISABLE variable (configuration of
-# "ccache" program itself) is also supported, but direct use is discouraged.
+# For legacy reasons, the CCACHE_DISABLE and CCACHE_NODISABLE variables (from
+# configuration of the "ccache" program itself) are also supported, but direct
+# use is discouraged, since their syntax and usage are counter-intuitive.
 #
 # Still, absence of ccache in PATH is not considered a fatal error since the
 # build would just proceed well with original compiler.
 # Note: In code below we fast-track if the makefile CCACHE variable is defined
 # but fall back to shell executability tests if just envvar CCACHE is passed.
+#
 export CCACHE := $(shell \
     if test -n "$(CCACHE)" ; then \
         echo "$(CCACHE)"; \
     else \
-        if test x"$${CCACHE_DISABLE-}" = xtrue -o x"$(CCACHE_DISABLE)" = xtrue \
+        if test x"$${CCACHE_DISABLE-}" != x -o x"$(CCACHE_DISABLE)" != x \
              -o x"$${ENABLE_CCACHE-}" = xfalse -o x"$(ENABLE_CCACHE)" = xfalse \
         ; then \
                 echo "NOT USING CCACHE FOR OI-USERLAND because explicitly disabled" >&2 ; \
         else \
-            if test x"$${CCACHE_DISABLE-}" = xfalse -o x"$(CCACHE_DISABLE)" = xfalse \
+            if test x"$${CCACHE_NODISABLE-}" != x -o x"$(CCACHE_NODISABLE)" != x \
                  -o x"$${ENABLE_CCACHE-}" = xtrue -o x"$(ENABLE_CCACHE)" = xtrue \
             ; then \
                 for F in \
@@ -385,6 +388,9 @@ export CCACHE := $(shell \
                 ; do if test -n "$$F" && test -x "$$F" ; then \
                         echo "$$F" ; \
                         echo "USING CCACHE FOR OI-USERLAND: $$F" >&2 ; \
+                        if test x"$${CCACHE_DISABLE-}" != x ; then \
+                            echo "WARNING: envvar CCACHE_DISABLE is set, so effectively ccache will not act!" >&2 ; \
+                        fi; \
                         exit 0; \
                     fi; \
                 done; \
