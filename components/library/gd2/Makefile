@@ -20,11 +20,11 @@
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gd2
 COMPONENT_VERSION=      2.0.35
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SRC_NAME=	gd
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  http://www.libgd.org/
@@ -34,10 +34,10 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL=  http://pkgs.fedoraproject.org/repo/pkgs/gd/$(COMPONENT_ARCHIVE)/6c6c3dbb7bf079e0bb5fbbfd3bb8a71c/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/gd2
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
-include ../../make-rules/lint-libraries.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/configure.mk
+include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/lint-libraries.mk
 
 PATCH_LEVEL = 0
 
@@ -73,5 +73,5 @@ test: 	$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_MAKE_RULES)/depend.mk
 

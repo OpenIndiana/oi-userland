@@ -38,21 +38,54 @@ set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid \
     value=PSARC/2007/166
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-#
-#
-file path=usr/bin/annotate
-file path=usr/bin/gd2copypal
-file path=usr/bin/gd2time
-file path=usr/bin/gd2togif
-file path=usr/bin/gd2topng
-file path=usr/bin/gdcmpgif
-file path=usr/bin/gdlib-config
-file path=usr/bin/gdparttopng
-file path=usr/bin/gdtopng
-file path=usr/bin/giftogd2
-file path=usr/bin/pngtogd
-file path=usr/bin/pngtogd2
-file path=usr/bin/webpng
+
+# Scripts
+file path=usr/bin/bdftogd
+
+file usr/bin/gdlib-config path=usr/bin/$(MACH32)/gdlib-config
+file path=usr/bin/$(MACH64)/gdlib-config
+link path=usr/bin/gdlib-config target=./$(MACH32)/gdlib-config
+
+# Binaries
+file usr/bin/annotate path=usr/bin/$(MACH32)/annotate
+file usr/bin/gd2copypal path=usr/bin/$(MACH32)/gd2copypal
+file usr/bin/gd2time path=usr/bin/$(MACH32)/gd2time
+file usr/bin/gd2togif path=usr/bin/$(MACH32)/gd2togif
+file usr/bin/gd2topng path=usr/bin/$(MACH32)/gd2topng
+file usr/bin/gdcmpgif path=usr/bin/$(MACH32)/gdcmpgif
+file usr/bin/gdparttopng path=usr/bin/$(MACH32)/gdparttopng
+file usr/bin/gdtopng path=usr/bin/$(MACH32)/gdtopng
+file usr/bin/giftogd2 path=usr/bin/$(MACH32)/giftogd2
+file usr/bin/pngtogd path=usr/bin/$(MACH32)/pngtogd
+file usr/bin/pngtogd2 path=usr/bin/$(MACH32)/pngtogd2
+file usr/bin/webpng path=usr/bin/$(MACH32)/webpng
+
+file path=usr/bin/$(MACH64)/annotate
+file path=usr/bin/$(MACH64)/gd2copypal
+file path=usr/bin/$(MACH64)/gd2time
+file path=usr/bin/$(MACH64)/gd2togif
+file path=usr/bin/$(MACH64)/gd2topng
+file path=usr/bin/$(MACH64)/gdcmpgif
+file path=usr/bin/$(MACH64)/gdparttopng
+file path=usr/bin/$(MACH64)/gdtopng
+file path=usr/bin/$(MACH64)/giftogd2
+file path=usr/bin/$(MACH64)/pngtogd
+file path=usr/bin/$(MACH64)/pngtogd2
+file path=usr/bin/$(MACH64)/webpng
+
+hardlink path=usr/bin/annotate target=../lib/isaexec pkg.linted=true
+hardlink path=usr/bin/gd2copypal target=../lib/isaexec pkg.linted=true
+hardlink path=usr/bin/gd2time target=../lib/isaexec pkg.linted=true
+hardlink path=usr/bin/gd2togif target=../lib/isaexec pkg.linted=true
+hardlink path=usr/bin/gd2topng target=../lib/isaexec pkg.linted=true
+hardlink path=usr/bin/gdcmpgif target=../lib/isaexec pkg.linted=true
+hardlink path=usr/bin/gdparttopng target=../lib/isaexec pkg.linted=true
+hardlink path=usr/bin/gdtopng target=../lib/isaexec pkg.linted=true
+hardlink path=usr/bin/giftogd2 target=../lib/isaexec pkg.linted=true
+hardlink path=usr/bin/pngtogd target=../lib/isaexec pkg.linted=true
+hardlink path=usr/bin/pngtogd2 target=../lib/isaexec pkg.linted=true
+hardlink path=usr/bin/webpng target=../lib/isaexec pkg.linted=true
+
 file path=usr/include/gd2/entities.h
 file path=usr/include/gd2/gd.h
 file path=usr/include/gd2/gd_io.h
@@ -66,11 +99,13 @@ file path=usr/include/gd2/gdfx.h
 file path=usr/include/gd2/gdhelpers.h
 file path=usr/include/gd2/jisx0208.h
 file path=usr/include/gd2/wbmp.h
+
 file path=usr/lib/$(MACH64)/libgd.so.2.0.0
 file path=usr/lib/$(MACH64)/llib-lgd.ln
 file path=usr/lib/libgd.so.2.0.0
 file llib-lgd path=usr/lib/llib-lgd
 file path=usr/lib/llib-lgd.ln
+
 file entities.html path=usr/share/doc/gd2/html/entities.html
 file index.html path=usr/share/doc/gd2/html/index.html
 file Solaris/libgd2.1-extra path=usr/share/man/man1/annotate.1
@@ -92,6 +127,5 @@ license gd2.license license="GD2 License"
 link path=usr/lib/$(MACH64)/libgd.so target=libgd.so.2.0.0
 link path=usr/lib/$(MACH64)/libgd.so.2 target=libgd.so.2.0.0
 link path=usr/lib/libgd.so target=libgd.so.2.0.0
-#
 link path=usr/lib/libgd.so.2 target=libgd.so.2.0.0
 
