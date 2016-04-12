@@ -210,9 +210,13 @@ COMPONENT_TARGET_DIR= \
 # -z aslr=... option. So just override where needed in the .p5m files.
 ASLR_MODE = $(ASLR_DISABLE)
 
+# The timestamp is generated immediately once when the Makefile is evaluated to
+# ensure every package gets the same one.
+GOTS := $(shell date +"%Y%m%dT%H%M%SZ")
+
 # Make sure the source code and object files have identical timestamps so
 # the Go compiler doesn't try to rebuild them.
-PKG_MACROS += TIMESTAMP=$(shell date +"%Y%m%dT%H%M%SZ")
+PKG_MACROS += TIMESTAMP=$(GOTS)
 # Extra macros for packaging convenience.
 PKG_MACROS += COMPONENT_MAJOR_VERSION=$(COMPONENT_MAJOR_VERSION)
 # COMPONENT_MAJOR_VERSION suitable for use in regular expressions.
@@ -268,11 +272,6 @@ COMPONENT_POST_INSTALL_ACTION += \
 endef
 
 $(foreach suffix,$(SUPP_PACKAGES), $(eval $(call install-rules,$(suffix))))
-
-# XXX For now, the install of supplementary packages is intentionally disabled
-# as the result cannot be used as expected due to an unknown issue with the Go
-# compilers.
-#
 # Install supplementary packages (this cannot be done one-by-one); install
 # tools/go/types first to avoid quirk with trimpath and dependencies.  This is
 # technically a build and install, but go's build command won't "install"
@@ -280,18 +279,21 @@ $(foreach suffix,$(SUPP_PACKAGES), $(eval $(call install-rules,$(suffix))))
 # directory.
 #
 # The -trimpath option used here ensures that the paths recorded in the
-# pre-built packages are relative to the $(SUPP_ROOT) so that when a devleoper
-# sets their GOPATH to that directory, things work as expected.
-#COMPONENT_POST_INSTALL_ACTION += \
-#	($(ENV) $(COMPONENT_INSTALL_ENV) go install \
-#		-asmflags -trimpath=$(SUPP_ROOT) -gcflags -trimpath=$(SUPP_ROOT) \
-#		"golang.org/x/tools/go/types"; \
-#	$(ENV) $(COMPONENT_INSTALL_ENV) go install \
-#		-asmflags -trimpath=$(SUPP_ROOT) -gcflags -trimpath=$(SUPP_ROOT) \
-#		"golang.org/x/..."; \
-#	$(ENV) $(COMPONENT_INSTALL_ENV) go install \
-#		-asmflags -trimpath=$(SUPP_ROOT) -gcflags -trimpath=$(SUPP_ROOT) \
-#		"github.com/golang/...");
+# pre-built packages do not contain the containing directory; the result is a
+# path that Go will evaluate relative to $GOPATH and so will pass the "stale"
+# object checks that Go performs at build time allowing reuse of the pre-built
+# packages.
+PROTO_ROOT= $(SUPP_ROOT)
+COMPONENT_POST_INSTALL_ACTION += \
+	($(ENV) $(COMPONENT_INSTALL_ENV) go install \
+		-asmflags -trimpath=$(PROTO_ROOT) -gcflags -trimpath=$(PROTO_ROOT) \
+		"golang.org/x/tools/go/types"; \
+	$(ENV) $(COMPONENT_INSTALL_ENV) go install \
+		-asmflags -trimpath=$(PROTO_ROOT) -gcflags -trimpath=$(PROTO_ROOT) \
+		"golang.org/x/..."; \
+	$(ENV) $(COMPONENT_INSTALL_ENV) go install \
+		-asmflags -trimpath=$(PROTO_ROOT) -gcflags -trimpath=$(PROTO_ROOT) \
+		"github.com/golang/...");
 
 # Go's test suite is currently designed to be run from the build area.
 
