@@ -43,8 +43,13 @@ dir path=var/www group=webservd owner=webservd mode=0700 preserve=true
 # would fail to start if enabled, and will not open up unconfigured
 # security breaches, not use resources until something reasonable
 # and meaningful is manually configured, etc.
-file Solaris/tntnet.xml.sample path=etc/tntnet/tntnet.xml.sample
+file Solaris/tntnet.xml.sample path=usr/share/tntnet/examples/tntnet.xml.sample
 
+# The example manifest is delivered, but will stay inactive until
+# an /etc/tntnet/tntnet.xml is provided by user or another package:
+file Solaris/http-tntnet.xml path=lib/svc/manifest/network/http-tntnet.xml
+
+# These are referenced both from the sample SMF manifest above, and
+# from the actual service instance delivered by "demos" sub-package:
 file Solaris/auth_attr path=etc/security/auth_attr.d/tntnet
 file Solaris/prof_attr path=etc/security/prof_attr.d/tntnet
-file Solaris/http-tntnet.xml path=lib/svc/manifest/network/http-tntnet.xml
