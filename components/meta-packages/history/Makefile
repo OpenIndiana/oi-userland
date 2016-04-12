@@ -32,10 +32,6 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_SRC=
 include $(WS_MAKE_RULES)/prep.mk
 
-PKGSEND =	/usr/bin/pkgsend
-PKGLINT =	/usr/bin/pkglint
-PKGMOGRIFY =	/usr/bin/pkgmogrify
-
 COMPONENT_NAME=		"Package History"
 COMPONENT_BUGDB=	gate-stuff/userland
 

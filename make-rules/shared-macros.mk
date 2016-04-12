@@ -622,6 +622,7 @@ GUNZIP =	/usr/bin/gunzip
 
 PKGREPO =	/usr/bin/pkgrepo
 PKGSEND =	/usr/bin/pkgsend
+PKGMOGRIFY =	/usr/bin/pkgmogrify
 ifeq   ($(strip $(PKGLINT_COMPONENT)),)
 PKGLINT =	/usr/bin/pkglint
 else

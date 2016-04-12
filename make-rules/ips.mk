@@ -39,13 +39,6 @@
 
 PKGDEPEND =	/usr/bin/pkgdepend
 PKGFMT =	/usr/bin/pkgfmt
-PKGMOGRIFY =	/usr/bin/pkgmogrify
-PKGSEND =	/usr/bin/pkgsend
-ifeq   ($(strip $(PKGLINT_COMPONENT)),)
-PKGLINT =	/usr/bin/pkglint
-else
-PKGLINT =	${WS_TOOLS}/pkglint
-endif
 PKGMANGLE =	$(WS_TOOLS)/userland-mangler
 
 GENERATE_HISTORY= $(WS_TOOLS)/generate-history
