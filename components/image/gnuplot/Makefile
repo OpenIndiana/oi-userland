@@ -23,13 +23,13 @@
 # Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 #libreadline.so needs libcurses.so, but -z ignore will not leave a dependency.
 LD_Z_IGNORE=
 
 COMPONENT_NAME=		gnuplot
 COMPONENT_VERSION=	4.6.0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  http://gnuplot.info/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -40,9 +40,9 @@ COMPONENT_BUGDB=	utility/gnuplot
 
 COMPONENT_BUILD_TARGETS = all info
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/configure.mk
+include $(WS_TOP)/make-rules/ips.mk
 
 CONFIGURE_OPTIONS  += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS  += --sysconfdir=/etc/gnu
@@ -51,15 +51,9 @@ CONFIGURE_OPTIONS  += --x-libraries=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS  += CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  += CXXFLAGS="$(CXXFLAGS)"
 
-include ../../make-rules/shared-targets.mk
-
 # common targets
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
 
 test:		$(TEST_32)
-
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
