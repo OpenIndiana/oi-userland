@@ -22,23 +22,26 @@
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
-set name=pkg.fmri \
-    value=pkg:/web/wget@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+
+set name=pkg.fmri value=pkg:/web/wget@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="wget - GNU wget"
 set name=pkg.description \
     value="GNU wget - a utility to retrieve files from the World Wide Web"
-set name=pkg.summary value="wget - GNU wget"
 set name=com.oracle.info.description value="GNU wget"
 set name=info.classification \
     value=org.opensolaris.category.2008:Applications/Internet
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid \
-    value=PSARC/2000/488
+set name=org.opensolaris.arc-caseid value=PSARC/2000/488
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-file path=etc/wgetrc group=sys mode=0644 original_name=SUNWwget:etc/wgetrc \
-    preserve=renamenew
+
+file path=etc/wgetrc group=sys mode=0644 preserve=true
+file usr/bin/wget path=usr/bin/$(MACH32)/wget
 file path=usr/bin/$(MACH64)/wget
-file path=usr/bin/wget
+hardlink path=usr/bin/wget target=../lib/isaexec \
+    pkg.linted.userland.action002.0=true
+link path=usr/sfw/bin/$(MACH64)/wget target=../../../bin/$(MACH64)/wget
+link path=usr/sfw/bin/wget target=../../bin/wget
 file path=usr/share/info/wget.info
 file path=usr/share/locale/be/LC_MESSAGES/wget.mo
 file path=usr/share/locale/bg/LC_MESSAGES/wget.mo
@@ -80,10 +83,4 @@ file path=usr/share/locale/vi/LC_MESSAGES/wget.mo
 file path=usr/share/locale/zh_CN/LC_MESSAGES/wget.mo
 file path=usr/share/locale/zh_TW/LC_MESSAGES/wget.mo
 file path=usr/share/man/man1/wget.1
-legacy pkg=SUNWwget \
-    desc="GNU wget - a utility to retrieve files from the World Wide Web" \
-    name="wget - GNU wget"
-
 license wget.license license="GPLv3, FDLv1.2"
-link path=usr/sfw/bin/$(MACH64)/wget target=../../../bin/$(MACH64)/wget
-link path=usr/sfw/bin/wget target=../../bin/wget

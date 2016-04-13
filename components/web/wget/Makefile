@@ -20,21 +20,21 @@
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		wget
-COMPONENT_VERSION=	1.16.3
+COMPONENT_VERSION=	1.17.1
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/wget/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:67f7b7b0f5c14db633e3b18f53172786c001e153d545cfc85d82759c5c2ffb37
+    sha256:fe559b61eb9cc01635ac6206a14e02cb51591838c35fa83c7a4aacae0bdd97c9
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/wget/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/wget
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/configure.mk
+include $(WS_TOP)/make-rules/ips.mk
 
 # Enforce openssl (--with-ssl=openssl) instead of default gnutls
 # (--with-ssl) as wget doesn't work for secure connections with gnutls. 
@@ -45,27 +45,14 @@ CONFIGURE_OPTIONS +=	--with-ssl=openssl
 CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS +=	PATH="$(PATH):/usr/perl5/bin"
 
-# Wget test suite will skip majority of tests with few Perl modules
-# missing on system. By uncommenting following lines it will pass 68
-# tests  out of 70 total tests (2 tests are skipped).
-#URI=URI-1.60
-#WWW=libwww-perl-5.837
-#COMPONENT_TEST_ENV = "http_proxy="
-#COMPONENT_PRE_TEST_ACTION = ( \
-	cd $(COMPONENT_SRC)/tests; \
-	wget http://search.cpan.org/CPAN/authors/id/G/GA/GAAS/$(URI).tar.gz; \
-	wget http://search.cpan.org/CPAN/authors/id/G/GA/GAAS/$(WWW).tar.gz; \
-	gtar --get $(URI)/URI $(URI)/URI.pm \
-	     --strip-components=1 -f $(URI).tar.gz; \
-	gtar --get $(WWW)/lib/HTTP $(WWW)/lib/LWP $(WWW)/lib/LWP.pm \
-	     --strip-components=2 -f $(WWW).tar.gz; )
-
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
+# TOTAL: 85
+# PASS:  82
+# SKIP:  3
+# XFAIL: 0
+# FAIL:  0
+# XPASS: 0
 test:		$(TEST_32_and_64)
-
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-include ../../make-rules/depend.mk
