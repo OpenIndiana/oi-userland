@@ -93,13 +93,14 @@ CONFIGURE_OPTIONS +=	--with-net-snmp-config=net-snmp-config-$(BITS)
 
 # Note: the CGI binary has some linking problems (picks 32-bit GDlib since we
 # only deliver one config program) and we don't need both versions anyway.
-CONFIGURE_OPTIONS.32 +=	--with-cgi
-CONFIGURE_OPTIONS.64 +=	--without-cgi
+CONFIGURE_OPTIONS +=	--with-cgi
+#CONFIGURE_OPTIONS.32 +=	--with-cgi
+#CONFIGURE_OPTIONS.64 +=	--without-cgi
 
 # Todo: revise after integration of updated gdlib component
-CONFIGURE_OPTIONS.64 +=	--without-gdlib
+#CONFIGURE_OPTIONS.64 +=	--without-gdlib
 CONFIGURE_OPTIONS.32 +=	--with-gdlib-config=$(USRBINDIR.$(BITS))/gdlib-config
-#CONFIGURE_OPTIONS.64 +=	--with-gdlib-config=$(USRBINDIR64)/gdlib-config
+CONFIGURE_OPTIONS.64 +=	--with-gdlib-config=$(USRBINDIR64)/gdlib-config
 
 # Note: building the numerous documents of this projects is time-consuming
 # and we only need one copy. Also, we don't ship "dblatex" (needed here for

@@ -5,10 +5,10 @@ diff --git a/configure.ac b/configure.ac
 index e16cf86..2e3c461 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -629,52 +629,167 @@ dnl Always check for AsciiDoc prerequisites, since even if --with-doc
+@@ -629,4 +629,54 @@ dnl Always check for AsciiDoc prerequisites, since even if --with-doc
  dnl is set to 'no', we may still want to build some doc targets manually
  NUT_CHECK_ASCIIDOC
- 
++
 +AC_MSG_CHECKING([if asciidoc version can build manpages (minimum required 8.6.3)])
 +AX_COMPARE_VERSION([${ASCIIDOC_VERSION}], [ge], [8.6.3], [
 +	AC_MSG_RESULT(yes)
@@ -58,17 +58,20 @@ index e16cf86..2e3c461 100644
 +dnl building
 +AM_CONDITIONAL([HAVE_ASCIIDOC], [test "${nut_have_asciidoc}" = "yes"])
 +
-+
+ 
  case "${nut_with_doc}" in
--	yes|all|auto)
+@@ -632,15 +632,21 @@ dnl Always check for AsciiDoc prerequisites, since even if --with-doc
+ case "${nut_with_doc}" in
+ 	yes|all)
 -		nut_doc_build_list="html-single html-chunked pdf"
-+	yes|all)
 +		nut_doc_build_list="man html-single html-chunked pdf"
-+		;;
-+	auto)
+ 		;;
+ 	auto)
+-		nut_doc_build_list="html-single=auto html-chunked=auto pdf=auto"
 +		nut_doc_build_list="man=auto html-single=auto html-chunked=auto pdf=auto"
  		;;
- 	no)
+-	no|"")
++	no)
  		nut_doc_build_list=""
  		;;
 +dnl If user passed --with-doc='' they they want nothing, right?
@@ -82,11 +85,15 @@ index e16cf86..2e3c461 100644
  		;;
  esac
  
+@@ -644,43 +700,93 @@
+ 		;;
+ esac
+ 
 -for nut_doc_build_target in ${nut_doc_build_list}; do
 +dnl Note: Do not cover ${nut_doc_build_list} in braces or quotes here,
 +dnl to ensure that it is processed as several space-separated tokens
 +for nut_doc_build_target in $nut_doc_build_list; do
-+	case "${nut_doc_build_target}" in
+ 	case "${nut_doc_build_target}" in
 +	*=*=*) AC_MSG_ERROR([Invalid documentation format option: ${nut_doc_build_target}]) ;;
 +	*=*)
 +		nut_doc_build_target_base="`echo "${nut_doc_build_target}" | sed 's,=.*$,,'`"
@@ -105,9 +112,7 @@ index e16cf86..2e3c461 100644
 +	AC_MSG_CHECKING([desire and ability to build ${nut_doc_build_target_base} documentation])
 +	AC_MSG_RESULT([${nut_doc_build_target_flag}])
 +
- 	case "${nut_doc_build_target}" in
--	html-single)
--		AC_MSG_CHECKING([if asciidoc version can build ${nut_doc_build_target} (minimum required 8.6.3)])
++	case "${nut_doc_build_target}" in
 +	*=no|*=skip)
 +		DOC_SKIPBUILD_LIST="${DOC_SKIPBUILD_LIST} ${nut_doc_build_target_base}"
 +		;;
@@ -116,16 +121,17 @@ index e16cf86..2e3c461 100644
 +dnl by default means "yes"), "yes" which is a requirement, or "auto"
 +dnl to detect if we can build the wanted documentation format and yet
 +dnl not fail if we have no tools to generate it.
-+
-+	html-single*)
+ 	html-single*)
+-		AC_MSG_CHECKING([if asciidoc version can build ${nut_doc_build_target} (minimum required 8.6.3)])
 +		AC_MSG_CHECKING([if asciidoc version can build ${nut_doc_build_target_base} (minimum required 8.6.3)])
  		AX_COMPARE_VERSION([${ASCIIDOC_VERSION}], [ge], [8.6.3], [
  			AC_MSG_RESULT(yes)
--			DOC_BUILD_LIST="${DOC_BUILD_LIST} ${nut_doc_build_target}"
+-			DOC_BUILD_LIST="${DOC_BUILD_LIST} `basename ${nut_doc_build_target} =auto`"
 +			DOC_BUILD_LIST="${DOC_BUILD_LIST} ${nut_doc_build_target_base}"
  		], [
+-			case "${nut_doc_build_target}" in *=auto) ;; *) AC_MSG_ERROR([Unable to build ${nut_doc_build_target} documentation which you requested]) ;; esac
  			AC_MSG_RESULT(no)
--			DOC_NOBUILD_LIST="${DOC_NOBUILD_LIST} ${nut_doc_build_target}"
+-			DOC_NOBUILD_LIST="${DOC_NOBUILD_LIST} `basename ${nut_doc_build_target} =auto`"
 +			if test "${nut_doc_build_target}" = "yes" ; then
 +				AC_MSG_ERROR([Unable to build ${nut_doc_build_target_base} documentation which you requested])
 +			fi
@@ -133,17 +139,17 @@ index e16cf86..2e3c461 100644
  		])
  		;;
  
--	html-chunked)
+ 	html-chunked*)
 -		AC_MSG_CHECKING([if a2x version can build ${nut_doc_build_target} (minimum required 8.6.3)])
-+	html-chunked*)
 +		AC_MSG_CHECKING([if a2x version can build ${nut_doc_build_target_base} (minimum required 8.6.3)])
  		AX_COMPARE_VERSION([${A2X_VERSION}], [ge], [8.6.3], [
  			AC_MSG_RESULT(yes)
--			DOC_BUILD_LIST="${DOC_BUILD_LIST} ${nut_doc_build_target}"
+-			DOC_BUILD_LIST="${DOC_BUILD_LIST} `basename ${nut_doc_build_target} =auto`"
 +			DOC_BUILD_LIST="${DOC_BUILD_LIST} ${nut_doc_build_target_base}"
  		], [
+-			case "${nut_doc_build_target}" in *=auto) ;; *) AC_MSG_ERROR([Unable to build ${nut_doc_build_target} documentation which you requested]) ;; esac
  			AC_MSG_RESULT(no)
--			DOC_NOBUILD_LIST="${DOC_NOBUILD_LIST} ${nut_doc_build_target}"
+-			DOC_NOBUILD_LIST="${DOC_NOBUILD_LIST} `basename ${nut_doc_build_target} =auto`"
 +			if test "${nut_doc_build_target}" = "yes" ; then
 +				AC_MSG_ERROR([Unable to build ${nut_doc_build_target_base} documentation which you requested])
 +			fi
@@ -151,24 +157,23 @@ index e16cf86..2e3c461 100644
  		])
  		;;
  
--	pdf)
+ 	pdf*)
 -		AC_MSG_CHECKING([if dblatex version can build ${nut_doc_build_target} (minimum required 0.2.5)])
-+	pdf*)
 +		AC_MSG_CHECKING([if dblatex version can build ${nut_doc_build_target_base} (minimum required 0.2.5)])
  		AX_COMPARE_VERSION([${DBLATEX_VERSION}], [ge], [0.2.5], [
  			AC_MSG_RESULT(yes)
--			DOC_BUILD_LIST="${DOC_BUILD_LIST} ${nut_doc_build_target}"
+-			DOC_BUILD_LIST="${DOC_BUILD_LIST} `basename ${nut_doc_build_target} =auto`"
 +			DOC_BUILD_LIST="${DOC_BUILD_LIST} ${nut_doc_build_target_base}"
  		], [
+-			case "${nut_doc_build_target}" in *=auto) ;; *) AC_MSG_ERROR([Unable to build ${nut_doc_build_target} documentation which you requested]) ;; esac
  			AC_MSG_RESULT(no)
--			DOC_NOBUILD_LIST="${DOC_NOBUILD_LIST} ${nut_doc_build_target}"
+-			DOC_NOBUILD_LIST="${DOC_NOBUILD_LIST} `basename ${nut_doc_build_target} =auto`"
 +			if test "${nut_doc_build_target}" = "yes" ; then
 +				AC_MSG_ERROR([Unable to build ${nut_doc_build_target_base} documentation which you requested])
 +			fi
 +			DOC_CANNOTBUILD_LIST="${DOC_CANNOTBUILD_LIST} ${nut_doc_build_target_base}"
  		])
  		;;
-+
 +	man*)
 +		AC_MSG_CHECKING([if we can build ${nut_doc_build_target_base}])
 +		if test "${nut_have_asciidoc}" = yes ; then
@@ -184,11 +189,10 @@ index e16cf86..2e3c461 100644
 +		;;
 +
 +	*) AC_MSG_ERROR([--with-doc option refers to unknown documentation format: $nut_doc_build_target]) ;;
-+
  	esac
  done
  
-@@ -685,70 +800,34 @@ auto)
+@@ -691,70 +806,34 @@ auto)
  	else
  		nut_with_doc="no"
  	fi
@@ -276,7 +280,7 @@ index e16cf86..2e3c461 100644
  
  dnl ----------------------------------------------------------------------
  dnl checks related to --with-dev
-@@ -993,17 +1072,22 @@ if test "${DRIVER_BUILD_LIST}" != "all"; then
+@@ -999,17 +1078,22 @@ if test "${DRIVER_BUILD_LIST}" != "all"; then
  fi
  
  AC_MSG_CHECKING(which driver man pages to install)
@@ -308,22 +312,6 @@ index e16cf86..2e3c461 100644
  fi
  
  AC_MSG_CHECKING(whether to strip debug symbols)
-@@ -1046,13 +1130,13 @@ fi
- AM_CONDITIONAL(WITH_PKG_CONFIG, test -n "${pkgconfigdir}")
- 
- PKG_PROG_PKG_CONFIG
--systemdsystemunitdir=`$PKG_CONFIG --variable=systemdsystemunitdir systemd`
- AC_MSG_CHECKING(whether to install systemd files)
- AC_ARG_WITH([systemdsystemunitdir],
- 	AS_HELP_STRING([--with-systemdsystemunitdir=DIR], [Directory for systemd service files (auto)]),
- [
- 	case "${withval}" in
--	yes|auto)
-+	yes|auto|"")
-+		systemdsystemunitdir=`$PKG_CONFIG --variable=systemdsystemunitdir systemd`
- 		;;
- 	no)
- 		systemdsystemunitdir=""
 diff --git a/docs/man/Makefile.am b/docs/man/Makefile.am
 index e793657..c83bd6c 100644
 --- a/docs/man/Makefile.am
