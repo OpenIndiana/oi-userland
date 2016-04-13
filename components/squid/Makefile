@@ -38,7 +38,7 @@ COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)Versions/v3/3.5/$(COMPONENT_ARCH
 
 TPNO=			23264
 
-TEST_TARGET= $(NO_TESTS)
+TEST_TARGET= $(TEST_64)
 include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS += -I$(USRINCDIR)/kerberosv5
@@ -92,11 +92,6 @@ COMPONENT_POST_INSTALL_ACTION += \
 	(cd $(PROTO_DIR)/etc/squid ; \
  	echo '\ncache_effective_user webservd' >> squid.conf)
 
-# configure says it needs cppunit to test with.
-# After some work I can get cppunit to build but it quickly
-# falls over during test so giving up.
-# I don't think the test suite really tests squid's functionality anyways.
-#
 # To test manually follow along in the book
 # Squid Proxy Server 3.1 Beginner's Guide Page 34
 #
@@ -122,6 +117,17 @@ COMPONENT_POST_INSTALL_ACTION += \
 # and seeing files stored in the http server on that machine.
 # Enter <squid server URL>:897 in your web browser and squid should complain.
 # Squid is working properly.
+
+COMPONENT_TEST_TRANSFORMS += \
+	'-n ' \
+	'-e "/Testsuite/p" ' \
+	'-e "/=====/p" ' \
+	'-e "/TOTAL/p" ' \
+	'-e "/SKIP/p" ' \
+	'-e "/PASS/p" ' \
+	'-e "/FAIL/p" ' \
+	'-e "/Can not open file/d" ' \
+	'-e "/ERROR/p" '
 
 REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/security/openssl
