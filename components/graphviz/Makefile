@@ -40,6 +40,13 @@ PERL_VERSIONS = $(PERL_VERSION)
 # of date and not generated with a known configuration.  See
 # http://graphviz.org/bugs/b2063.html
 TEST_TARGET= $(SKIP_TEST)
+
+# We want to build a couple of extra things after the installs are done, so set
+# the install targets appropriately.
+INSTALL_TARGET = $(INSTALL_$(MK_BITS))
+INSTALL_TARGET += $(PROTOUSRLIBDIR)/graphviz/config6
+INSTALL_TARGET += $(PROTO_DIR)/$(PYTHON.2.7.VENDOR_PACKAGES)/gv.pyc
+
 include $(WS_MAKE_RULES)/common.mk
 
 PATH =		/usr/php/5.6/bin:/usr/bin:/usr/gnu/bin
@@ -81,12 +88,20 @@ $(INSTALL_64): COMPONENT_INSTALL_ARGS += LUA_INSTALL_DIR=$(USRLIBDIR)/lua/5.2/64
 # Use GNU ln, which supports the -r (--relative) option.
 COMPONENT_INSTALL_ARGS += LN_S="gln -s"
 
-# We build 32 and 64 bit because we build libraries, and we build modules for
-# runtimes which provide 64 or 32 (or both) bit environments.
-COMPONENT_POST_INSTALL_ACTION += \
+# Create the config file once the 32-bit build is complete.  This runs the bits
+# we just built, so we have to set a handful of variables to the right place.
+# The 32-bit executables are in their own directory, so we have to point to
+# that version of dot explicitly.
+$(PROTOUSRLIBDIR)/graphviz/config6: $(INSTALL_32)
 	env LD_LIBRARY_PATH=$(PROTOUSRLIBDIR) GVBINDIR=$(PROTOUSRLIBDIR)/graphviz \
-		$(PROTOUSRBINDIR)/dot -c; \
-	$(PYTHON.2.7.32) -m compileall $(PROTO_DIR)/$(PYTHON.2.7.VENDOR_PACKAGES)
+		$(PROTOUSRBINDIR)/$(MACH32)/dot -c
+
+# Once the build is complete, compile the .py file.  There's no need to compile
+# the one in the "64" directory, so don't recurse.  And make sure that the
+# build path doesn't get embedded in the .pyc file.
+$(PROTO_DIR)/$(PYTHON.2.7.VENDOR_PACKAGES)/gv.pyc: $(INSTALL_32)
+	$(PYTHON.2.7.32) -m compileall -l -d $(PYTHON.2.7.VENDOR_PACKAGES) \
+		$(PROTO_DIR)/$(PYTHON.2.7.VENDOR_PACKAGES)
 
 # The test infrastructure doesn't run in a VPATHed environment.
 COMPONENT_PRE_TEST_ACTION = \
